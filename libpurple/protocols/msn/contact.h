@@ -27,6 +27,8 @@
 
 #include "session.h"
 
+#define MSN_APPLICATION_ID "CFE80F9D-180F-4399-82AB-413F33A1FA11"
+
 #define MSN_CONTACT_SERVER	"contacts.msn.com"
 
 /* Get Contact List */
@@ -43,7 +45,7 @@
 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId xmlns=\"http://www.msn.com/webservices/AddressBook\">09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId xmlns=\"http://www.msn.com/webservices/AddressBook\">" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration xmlns=\"http://www.msn.com/webservices/AddressBook\">false</IsMigration>"\
 			"<PartnerScenario xmlns=\"http://www.msn.com/webservices/AddressBook\">%s</PartnerScenario>"\
 		 "</ABApplicationHeader>"\
@@ -85,7 +87,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>Initial</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -126,7 +128,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>%s</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -155,7 +157,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>Initial</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -215,7 +217,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>ContactSave</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -244,7 +246,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>ContactSave</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -281,7 +283,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>Timer</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -308,7 +310,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>Timer</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -341,7 +343,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>Timer</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -396,7 +398,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>%s</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -432,7 +434,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>%s</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -476,7 +478,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>GroupSave</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -518,7 +520,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>Timer</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -549,7 +551,7 @@
 	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
 			"<PartnerScenario>Timer</PartnerScenario>"\
 		"</ABApplicationHeader>"\
@@ -669,8 +671,6 @@ void msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 			     const gchar *passport, const MsnListId list);
 void msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 			       const gchar *passport, const MsnListId list);
-
-void msn_contact_connect_init(MsnSoapConn *soapconn);
 
 #endif /* _MSN_CONTACT_H_ */
 

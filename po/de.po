@@ -7,13 +7,12 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
-# Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-12 18:33+0200\n"
-"PO-Revision-Date: 2008-06-12 18:32+0200\n"
+"POT-Creation-Date: 2008-07-06 14:20+0200\n"
+"PO-Revision-Date: 2008-07-06 14:20+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -622,7 +621,6 @@ msgstr "Einladungsnachricht"
 msgid "Invite"
 msgstr "Einladen"
 
-#, fuzzy
 msgid ""
 "Please enter the name of the user you wish to invite,\n"
 "along with an optional invite message."
@@ -6282,9 +6280,8 @@ msgstr "Live-Video"
 msgid "Camera"
 msgstr "Kamera"
 
-#, fuzzy
 msgid "Screen Sharing"
-msgstr "Screen Sharing"
+msgstr "Gemeinsamer Bildschirm"
 
 msgid "Free For Chat"
 msgstr "Bereit zum Chatten"
@@ -6372,7 +6369,6 @@ msgstr ""
 "versuchen Sie es noch einmal. Wenn Sie es weiterversuchen, müssen Sie sogar "
 "noch länger warten."
 
-#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
@@ -7339,10 +7335,6 @@ msgstr "Anmeldung fehlgeschlagen, Debugmitschnitt beachten."
 msgid "Unable to login"
 msgstr "Anmeldung fehlgeschlagen"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "Verbindung nicht möglich."
-
 #, c-format
 msgid "Unknown-%d"
 msgstr "Unbekannt-%d"
@@ -7368,12 +7360,16 @@ msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>Letzte Aktualisierung</b>: %s<br>\n"
 
 #, c-format
+msgid "<b>Server</b>: %s: %d<br>\n"
+msgstr "<b>Server</b>: %s: %d<br>\n"
+
+#, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Verbindungsmodus</b>: %s<br>\n"
 
 #, c-format
-msgid "<b>Server IP</b>: %s: %d<br>\n"
-msgstr "<b>Server-IP</b>: %s: %d<br>\n"
+msgid "<b>Real hostname</b>: %s: %d<br>\n"
+msgstr "<b>Wirklicher Hostname</b>: %s: %d<br>\n"
 
 #, c-format
 msgid "<b>My Public IP</b>: %s<br>\n"
@@ -7425,11 +7421,48 @@ msgstr "QQ-Protokoll-Plugin"
 msgid "Connect using TCP"
 msgstr "Über TCP verbinden"
 
+msgid "Failed to connect server"
+msgstr "Verbinden zum Server fehlgeschlagen"
+
 msgid "Socket error"
 msgstr "Socket-Fehler"
 
+#, c-format
+msgid ""
+"Lost connection with server:\n"
+"%d, %s"
+msgstr ""
+"Verbindung zum Server verloren:\n"
+"%d, %s"
+
 msgid "Unable to read from socket"
 msgstr "Socket kann nicht gelesen werden"
+
+msgid "Write Error"
+msgstr "Schreibfehler"
+
+msgid "Connection lost"
+msgstr "Verbindung verloren"
+
+msgid "Login failed, no reply"
+msgstr "Anmeldung fehlgeschlagen, keine Antwort"
+
+msgid "Couldn't resolve host"
+msgstr "Kann den Hostnamen nicht auflösen"
+
+msgid "hostname is NULL or port is 0"
+msgstr "Hostname ist NULL oder Port ist 0"
+
+#, c-format
+msgid "Connecting server %s, retries %d"
+msgstr "Verbinde zu Server %s, %d Wiederholungen"
+
+#. we didn't successfully connect. tdt->toc_fd is valid here
+msgid "Unable to connect."
+msgstr "Verbindung nicht möglich."
+
+msgid "Could not resolve hostname"
+msgstr "Konnte den Hostnamen nicht auflösen"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7441,12 +7474,6 @@ msgstr "Dateiübertragung"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d hat die Übertragung von %s abgebrochen"
-
-msgid "Connection lost"
-msgstr "Verbindung verloren"
-
-msgid "Login failed, no reply"
-msgstr "Anmeldung fehlgeschlagen, keine Antwort"
 
 msgid "Do you want to add this buddy?"
 msgstr "Möchten Sie diesen Buddy hinzufügen?"
@@ -8505,6 +8532,10 @@ msgstr "Kann das SILC-Protokoll nicht initialisieren"
 msgid "Error loading SILC key pair"
 msgstr "Fehler beim Laden des SILC-Schlüsselpaares"
 
+#, c-format
+msgid "Download %s: %s"
+msgstr "Download %s: %s"
+
 msgid "Your Current Mood"
 msgstr "Ihre momentane Stimmung"
 
@@ -8948,12 +8979,6 @@ msgstr "Unbekannte Serverantwort."
 
 msgid "Could not create listen socket"
 msgstr "Kann Listen-Socket nicht erstellen"
-
-msgid "Couldn't resolve host"
-msgstr "Kann den Hostnamen nicht auflösen"
-
-msgid "Could not resolve hostname"
-msgstr "Konnte den Hostnamen nicht auflösen"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-Benutzernamen dürfen keine Leerzeichen oder @-Symbole enthalten"
@@ -9401,9 +9426,6 @@ msgstr "Konnte Dateibeschreibung nicht erstellen."
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s versucht, Ihnen eine Gruppe von %d Dateien zu senden.\n"
 
-msgid "Write Error"
-msgstr "Schreibfehler"
-
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo!-Japan-Profil"
 
@@ -9766,7 +9788,6 @@ msgstr "Die Tastenkombination für den Smiley"
 msgid "Stored Image"
 msgstr "Gespeichertes Bild"
 
-#, fuzzy
 msgid "Stored Image. (that'll have to do for now)"
 msgstr "Gespeichertes Bild. (Das muss erstmal reichen)"
 
@@ -11446,9 +11467,8 @@ msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
 msgid "Color to draw the name of an action message."
 msgstr "Farbe, mit der der Name in einer Aktions-Nachricht dargestellt wird."
 
-#, fuzzy
 msgid "Action Message Name Color for Whispered Message"
-msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
+msgstr "Farbe des Absendernamens für geflüsterte Aktions-Nachrichten"
 
 msgid "Whisper Message Name Color"
 msgstr "Farbe des Absendernamens für Flüster-Nachrichten"
@@ -11523,7 +11543,6 @@ msgstr "Bild speichern"
 msgid "_Save Image..."
 msgstr "Bild _speichern..."
 
-#, fuzzy
 msgid "_Add Custom Smiley..."
 msgstr "Benutzerdefinierten Smiley _hinzufügen..."
 
@@ -11577,7 +11596,6 @@ msgstr ""
 msgid "Smile!"
 msgstr "Lächeln!"
 
-#, fuzzy
 msgid "_Manage custom smileys"
 msgstr "Benutzerdefinierte Smileys _verwalten"
 

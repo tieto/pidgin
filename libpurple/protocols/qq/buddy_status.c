@@ -3,7 +3,7 @@
  *
  * purple
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property ofr its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -33,10 +33,9 @@
 #include "header_info.h"
 #include "keep_alive.h"
 #include "packet_parse.h"
-#include "send_core.h"
 #include "utils.h"
 
-#include "qq_proxy.h"
+#include "qq_network.h"
 
 #define QQ_MISC_STATUS_HAVING_VIIDEO      0x00000001
 #define QQ_CHANGE_ONLINE_STATUS_REPLY_OK 	0x30	/* ASCII value of "0" */
@@ -57,7 +56,7 @@ void qq_buddy_status_dump_unclear(qq_buddy_status *s)
 	g_string_append_printf(dump, "013-014:     %04x   (client_version)\n", s->client_version);
 	/* g_string_append_printf(dump, "015-030:     %s   (unknown key)\n", s->unknown_key); */
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Buddy status entry, %s", dump->str);
-	_qq_show_packet("Unknown key", s->unknown_key, QQ_KEY_LENGTH);
+	qq_show_packet("Unknown key", s->unknown_key, QQ_KEY_LENGTH);
 	g_string_free(dump, TRUE);
 }
 
@@ -66,35 +65,33 @@ void qq_buddy_status_dump_unclear(qq_buddy_status *s)
  * using different accounts to get info. */
 
 /* parse the data into qq_buddy_status */
-gint qq_buddy_status_read(guint8 *data, guint8 **cursor, gint len, qq_buddy_status *s)
+gint qq_buddy_status_read(qq_buddy_status *s, guint8 *data)
 {
-	gint bytes;
+	gint bytes = 0;
 
-	g_return_val_if_fail(data != NULL && *cursor != NULL && s != NULL, -1);
-
-	bytes = 0;
+	g_return_val_if_fail(data != NULL && s != NULL, -1);
 
 	/* 000-003: uid */
-	bytes += read_packet_dw(data, cursor, len, &s->uid);
+	bytes += qq_get32(&s->uid, data + bytes);
 	/* 004-004: 0x01 */
-	bytes += read_packet_b(data, cursor, len, &s->unknown1);
+	bytes += qq_get8(&s->unknown1, data + bytes);
 	/* this is no longer the IP, it seems QQ (as of 2006) no longer sends
 	 * the buddy's IP in this packet. all 0s */
 	/* 005-008: ip */
 	s->ip = g_new0(guint8, 4);
-	bytes += read_packet_data(data, cursor, len, s->ip, 4);
+	bytes += qq_getdata(s->ip, 4, data + bytes);
 	/* port info is no longer here either */
 	/* 009-010: port */
-	bytes += read_packet_w(data, cursor, len, &s->port);
+	bytes += qq_get16(&s->port, data + bytes);
 	/* 011-011: 0x00 */
-	bytes += read_packet_b(data, cursor, len, &s->unknown2);
+	bytes += qq_get8(&s->unknown2, data + bytes);
 	/* 012-012: status */
-	bytes += read_packet_b(data, cursor, len, &s->status);
+	bytes += qq_get8(&s->status, data + bytes);
 	/* 013-014: client_version */
-	bytes += read_packet_w(data, cursor, len, &s->client_version);
+	bytes += qq_get16(&s->client_version, data + bytes);
 	/* 015-030: unknown key */
 	s->unknown_key = g_new0(guint8, QQ_KEY_LENGTH);
-	bytes += read_packet_data(data, cursor, len, s->unknown_key, QQ_KEY_LENGTH);
+	bytes += qq_getdata(s->unknown_key, QQ_KEY_LENGTH, data + bytes);
 
 	if (s->uid == 0 || bytes != 31)
 		return -1;
@@ -106,17 +103,17 @@ gint qq_buddy_status_read(guint8 *data, guint8 **cursor, gint len, qq_buddy_stat
 gboolean is_online(guint8 status)
 {
 	switch(status) {
-	case QQ_BUDDY_ONLINE_NORMAL:
-	case QQ_BUDDY_ONLINE_AWAY:
-	case QQ_BUDDY_ONLINE_INVISIBLE:
-		return TRUE;
-	case QQ_BUDDY_ONLINE_OFFLINE:
-		return FALSE;
+		case QQ_BUDDY_ONLINE_NORMAL:
+		case QQ_BUDDY_ONLINE_AWAY:
+		case QQ_BUDDY_ONLINE_INVISIBLE:
+			return TRUE;
+		case QQ_BUDDY_ONLINE_OFFLINE:
+			return FALSE;
 	}
 	return FALSE;
 }
 
- /* Help calculate the correct icon index to tell the server. */
+/* Help calculate the correct icon index to tell the server. */
 gint get_icon_offset(PurpleConnection *gc)
 { 
 	PurpleAccount *account;
@@ -131,7 +128,7 @@ gint get_icon_offset(PurpleConnection *gc)
 			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)
 			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_UNAVAILABLE)) {
 		return 1;
-        } else {
+	} else {
 		return 0;
 	}
 }
@@ -140,7 +137,9 @@ gint get_icon_offset(PurpleConnection *gc)
 void qq_send_packet_change_status(PurpleConnection *gc)
 {
 	qq_data *qd;
-	guint8 *raw_data, *cursor, away_cmd;
+	guint8 raw_data[16] = {0};
+	gint bytes = 0;
+	guint8 away_cmd;
 	guint32 misc_status;
 	gboolean fake_video;
 	PurpleAccount *account;
@@ -163,28 +162,24 @@ void qq_send_packet_change_status(PurpleConnection *gc)
 		away_cmd = QQ_BUDDY_ONLINE_NORMAL;
 	}
 
-	raw_data = g_new0(guint8, 5);
-	cursor = raw_data;
 	misc_status = 0x00000000;
-
 	fake_video = purple_prefs_get_bool("/plugins/prpl/qq/show_fake_video");
 	if (fake_video)
 		misc_status |= QQ_MISC_STATUS_HAVING_VIIDEO;
 
-	create_packet_b(raw_data, &cursor, away_cmd);
-	create_packet_dw(raw_data, &cursor, misc_status);
+	bytes = 0;
+	bytes += qq_put8(raw_data + bytes, away_cmd);
+	bytes += qq_put32(raw_data + bytes, misc_status);
 
-	qq_send_cmd(gc, QQ_CMD_CHANGE_ONLINE_STATUS, TRUE, 0, TRUE, raw_data, 5);
-
-	g_free(raw_data);
+	qq_send_cmd(qd, QQ_CMD_CHANGE_ONLINE_STATUS, raw_data, bytes);
 }
 
 /* parse the reply packet for change_status */
 void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	gint len;
-	guint8 *data, *cursor, reply;
+	gint len, bytes;
+	guint8 *data, reply;
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	gchar *name;
@@ -195,21 +190,22 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection 
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		cursor = data;
-		read_packet_b(data, &cursor, len, &reply);
-		if (reply != QQ_CHANGE_ONLINE_STATUS_REPLY_OK) {
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Change status fail\n");
-		} else {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Change status OK\n");
-			name = uid_to_purple_name(qd->uid);
-			b = purple_find_buddy(gc->account, name);
-			g_free(name);
-			q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-			qq_update_buddy_contact(gc, q_bud);
-		}
-	} else {
+	if ( !qq_decrypt(buf, buf_len, qd->session_key, data, &len) ) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt chg status reply\n");
+		return;
+	}
+
+	bytes = 0;
+	bytes = qq_get8(&reply, data + bytes);
+	if (reply != QQ_CHANGE_ONLINE_STATUS_REPLY_OK) {
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Change status fail\n");
+	} else {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Change status OK\n");
+		name = uid_to_purple_name(qd->uid);
+		b = purple_find_buddy(gc->account, name);
+		g_free(name);
+		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+		qq_update_buddy_contact(gc, q_bud);
 	}
 }
 
@@ -219,7 +215,7 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection
 	qq_data *qd;
 	gint len, bytes;
 	guint32 my_uid;
-	guint8 *data, *cursor;
+	guint8 *data;
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	qq_buddy_status *s;
@@ -230,51 +226,53 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection
 	qd = (qq_data *) gc->proto_data;
 	len = buf_len;
 	data = g_newa(guint8, len);
-	cursor = data;
 
-	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		s = g_new0(qq_buddy_status, 1);
-		bytes = 0;
-		/* 000-030: qq_buddy_status */
-		bytes += qq_buddy_status_read(data, &cursor, len, s);
-		/* 031-034: my uid */ 
-		/* This has a value of 0 when we've changed our status to 
-		 * QQ_BUDDY_ONLINE_INVISIBLE */
-		bytes += read_packet_dw(data, &cursor, len, &my_uid);
+	if ( !qq_decrypt(buf, buf_len, qd->session_key, data, &len) ) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt buddy status change packet\n");
+		return;
+	}
 
-		if (bytes != 35) {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "bytes(%d) != 35\n", bytes);
-			g_free(s->ip);
-			g_free(s->unknown_key);
-			g_free(s);
-			return;
-		}
+	s = g_new0(qq_buddy_status, 1);
+	bytes = 0;
+	/* 000-030: qq_buddy_status */
+	bytes += qq_buddy_status_read(s, data + bytes);
+	/* 031-034: my uid */ 
+	/* This has a value of 0 when we've changed our status to 
+	 * QQ_BUDDY_ONLINE_INVISIBLE */
+	bytes += qq_get32(&my_uid, data + bytes);
 
-		name = uid_to_purple_name(s->uid);
-		b = purple_find_buddy(gc->account, name);
-		g_free(name);
-		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-		if (q_bud) {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "s->uid = %d, q_bud->uid = %d\n", s->uid , q_bud->uid);
-			if(0 != *((guint32 *)s->ip)) { 
-				g_memmove(q_bud->ip, s->ip, 4);
-				q_bud->port = s->port;
-			}
-			q_bud->status = s->status;
-			if(0 != s->client_version) 
-				q_bud->client_version = s->client_version; 
-			if (q_bud->status == QQ_BUDDY_ONLINE_NORMAL)
-				qq_send_packet_get_level(gc, q_bud->uid);
-			qq_update_buddy_contact(gc, q_bud);
-		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
-					"got information of unknown buddy %d\n", s->uid);
-		}
-
+	if (bytes != 35) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "bytes(%d) != 35\n", bytes);
 		g_free(s->ip);
 		g_free(s->unknown_key);
 		g_free(s);
-	} else {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt buddy status change packet\n");
+		return;
 	}
+
+	name = uid_to_purple_name(s->uid);
+	b = purple_find_buddy(gc->account, name);
+	g_free(name);
+	q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+	if (q_bud) {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "s->uid = %d, q_bud->uid = %d\n", s->uid , q_bud->uid);
+		if(0 != *((guint32 *)s->ip)) { 
+			g_memmove(q_bud->ip, s->ip, 4);
+			q_bud->port = s->port;
+		}
+		q_bud->status = s->status;
+		if(0 != s->client_version) {
+			q_bud->client_version = s->client_version; 
+		}
+		if (q_bud->status == QQ_BUDDY_ONLINE_NORMAL) {
+			qq_send_packet_get_level(gc, q_bud->uid);
+		}
+		qq_update_buddy_contact(gc, q_bud);
+	} else {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
+				"got information of unknown buddy %d\n", s->uid);
+	}
+
+	g_free(s->ip);
+	g_free(s->unknown_key);
+	g_free(s);
 }

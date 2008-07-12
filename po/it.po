@@ -3833,8 +3833,8 @@ msgid "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, 
 msgstr "Impossibile trovare un'installazione di ActiveTCL. Se vuoi usare i plugin TCL, installa ActiveTCL da http://www.activestate.com\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:107
-msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging for more information."
-msgstr "Il toolkit Apple Bonjour per Windows non è stato trovato. Leggi le FAQ su: http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging per maggiori informazioni."
+msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d.pidgin.im/BonjourWindows for more information."
+msgstr "Il toolkit Apple Bonjour per Windows non è stato trovato. Leggi le FAQ su: http://d.pidgin.im/BonjourWindows per maggiori informazioni."
 
 #: ../libpurple/protocols/bonjour/bonjour.c:126
 msgid "Unable to listen for incoming IM connections\n"

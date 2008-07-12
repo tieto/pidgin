@@ -1102,7 +1102,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	char *msgtext;
 	const char *username;
 
-	purple_debug_info("MSNP14","send IM {%s} to %s\n",message,who);
+	purple_debug_info("msn", "send IM {%s} to %s\n",message,who);
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
 
@@ -1141,7 +1141,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(msgformat);
 		g_free(msgtext);
 
-		purple_debug_info("MSNP14","prepare to send online Message\n");
+		purple_debug_info("msn", "prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, username))
 		{
 			MsnEmoticon *smile;
@@ -1150,10 +1150,10 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 
 			if(msn_user_is_yahoo(account,who)){
 				/*we send the online and offline Message to Yahoo User via UBM*/
-				purple_debug_info("MSNP14","send to Yahoo User\n");
+				purple_debug_info("msn", "send to Yahoo User\n");
 				uum_send_msg(session,msg);
 			}else{
-				purple_debug_info("MSNP14","send via switchboard\n");
+				purple_debug_info("msn", "send via switchboard\n");
 				swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
 				smileys = msn_msg_grab_emoticons(message, username);
 				while (smileys) {
@@ -1206,7 +1206,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		/*send Offline Instant Message,only to MSN Passport User*/
 		char *friendname;
 
-		purple_debug_info("MSNP14","prepare to send offline Message\n");
+		purple_debug_info("msn", "prepare to send offline Message\n");
 
 		friendname = msn_encode_mime(account->username);
 		msn_oim_prep_send_msg_info(session->oim,
@@ -1356,7 +1356,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
-	purple_debug_info("MSN","Add user:%s to group:%s\n", who, (group && group->name) ? group->name : "(null)");
+	purple_debug_info("msn", "Add user:%s to group:%s\n", who, (group && group->name) ? group->name : "(null)");
 	if (!session->logged_in)
 	{
 #if 0
@@ -1736,12 +1736,12 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
-	purple_debug_info("MSN", "Remove group %s\n", group->name);
+	purple_debug_info("msn", "Remove group %s\n", group->name);
 	/*we can't delete the default group*/
 	if(!strcmp(group->name, MSN_INDIVIDUALS_GROUP_NAME)||
 		!strcmp(group->name, MSN_NON_IM_GROUP_NAME))
 	{
-		purple_debug_info("MSN", "This group can't be removed, returning.\n");
+		purple_debug_info("msn", "This group can't be removed, returning.\n");
 		return ;
 	}
 
@@ -2241,7 +2241,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
 	photo_url_text = msn_get_photo_url(url_text);
-	purple_debug_info("MSNP14","photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
+	purple_debug_info("msn", "photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
 
 	/* Marshall the existing state */
 	info2_data = g_new0(MsnGetInfoStepTwoData, 1);
@@ -2551,11 +2551,11 @@ init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 
 	option = purple_account_option_string_new(_("Server"), "server",
-											WLM_SERVER);
+											MSN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = purple_account_option_int_new(_("Port"), "port", WLM_PORT);
+	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

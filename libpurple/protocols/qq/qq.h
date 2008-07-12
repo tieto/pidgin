@@ -28,6 +28,9 @@
 #include <glib.h>
 #include "internal.h"
 #include "ft.h"
+#include "circbuffer.h"
+#include "dnsquery.h"
+#include "dnssrv.h"
 #include "proxy.h"
 #include "roomlist.h"
 
@@ -66,7 +69,39 @@ struct _qq_buddy {
 };
 
 struct _qq_data {
-	gint fd;			/* socket file handler */
+	PurpleConnection *gc;
+
+	/* common network resource */
+	GList *servers;
+	gchar *user_server;
+	gint user_port;
+	gboolean use_tcp;		/* network in tcp or udp */
+	
+	gchar *server_name;
+	gboolean is_redirect;
+	gchar *real_hostname;	/* from real connction */
+	guint16 real_port;
+	guint reconnect_timeout;
+	gint reconnect_times;
+
+	PurpleProxyConnectData *connect_data;
+	gint fd;				/* socket file handler */
+	gint tx_handler; 	/* socket can_write handle, use in udp connecting and tcp send out */
+
+	GList *send_trans;	/* check ack packet and resend */
+	guint resend_timeout;
+
+	guint8 rcv_window[1 << 13];		/* windows for check duplicate packet */
+	GQueue *rcv_trans;		/* queue to store packet can not process before login */
+	
+	/* tcp related */
+	PurpleCircBuffer *tcp_txbuf;
+	guint8 *tcp_rxqueue;
+	int tcp_rxlen;
+	
+	/* udp related */
+	PurpleDnsQueryData *udp_query_data;
+
 	guint32 uid;			/* QQ number */
 	guint8 *inikey;			/* initial key to encrypt login packet */
 	guint8 *pwkey;			/* password in md5 (or md5' md5) */
@@ -76,17 +111,9 @@ struct _qq_data {
 	guint16 send_seq;		/* send sequence number */
 	guint8 login_mode;		/* online of invisible */
 	gboolean logged_in;		/* used by qq-add_buddy */
-	gboolean use_tcp;		/* network in tcp or udp */
-
-	PurpleProxyType proxy_type;
-	PurpleConnection *gc;
 
 	PurpleXfer *xfer;			/* file transfer handler */
-	struct sockaddr_in dest_sin;
 
-	/* from real connction */
-	gchar *server_ip;
-	guint16 server_port;
 	/* get from login reply packet */
 	time_t login_time;
 	time_t last_login_time;
@@ -99,9 +126,6 @@ struct _qq_data {
 	guint32 all_online;		/* the number of online QQ users */
 	time_t last_get_online;		/* last time send get_friends_online packet */
 
-	guint8 window[1 << 13];		/* check up for duplicated packet */
-	gint sendqueue_timeout;
-
 	PurpleRoomlist *roomlist;
 	gint channel;			/* the id for opened chat conversation */
 
@@ -112,16 +136,12 @@ struct _qq_data {
 	GList *buddies;
 	GList *contact_info_window;
 	GList *group_info_window;
-	GList *sendqueue;
 	GList *info_query;
 	GList *add_buddy_request;
-	GQueue *before_login_packets;
 
 	/* TODO pass qq_send_packet_get_info() a callback and use signals to get rid of these */
 	gboolean modifying_info;
 	gboolean modifying_face;
 };
-
-void qq_function_not_implemented(PurpleConnection *gc);
 
 #endif

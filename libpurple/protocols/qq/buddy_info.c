@@ -34,7 +34,7 @@
 #include "crypt.h"
 #include "header_info.h"
 #include "keep_alive.h"
-#include "send_core.h"
+#include "qq_network.h"
 
 #define QQ_PRIMARY_INFORMATION _("Primary Information")
 #define QQ_ADDITIONAL_INFORMATION _("Additional Information")
@@ -94,6 +94,46 @@ typedef struct _qq_info_query {
 	gboolean modify_info;
 } qq_info_query;
 
+typedef struct _contact_info {
+	gchar *uid;
+	gchar *nick;
+	gchar *country;
+	gchar *province;
+	gchar *zipcode;
+	gchar *address;
+	gchar *tel;
+	gchar *age;
+	gchar *gender;
+	gchar *name;
+	gchar *email;
+	gchar *pager_sn;
+	gchar *pager_num;
+	gchar *pager_sp;
+	gchar *pager_base_num;
+	gchar *pager_type;
+	gchar *occupation;
+	gchar *homepage;
+	gchar *auth_type;
+	gchar *unknown1;
+	gchar *unknown2;
+	gchar *face;
+	gchar *hp_num;
+	gchar *hp_type;
+	gchar *intro;
+	gchar *city;
+	gchar *unknown3;
+	gchar *unknown4;
+	gchar *unknown5;
+	gchar *is_open_hp;
+	gchar *is_open_contact;
+	gchar *college;
+	gchar *horoscope;
+	gchar *zodiac;
+	gchar *blood;
+	gchar *qq_show;
+	gchar *unknown6;        /* always 0x2D */
+} contact_info;
+
 /* We get an info packet on ourselves before we modify our information.
  * Even though not all of the information is modifiable, it still
  * all needs to be there when we send out the modify info packet */
@@ -137,7 +177,7 @@ static gchar *field_value(const gchar *field, const gchar **choice, gint choice_
 			} else {
 				return NULL;
 			}
-		/* else ASCIIized index */
+			/* else ASCIIized index */
 		} else {
 			if (strcmp(choice[index], "-") != 0)
 				return g_strdup(choice[index]);
@@ -161,14 +201,14 @@ static gboolean append_field_value(PurpleNotifyUserInfo *user_info, const gchar 
 	if (value != NULL) {
 		purple_notify_user_info_add_pair(user_info, title, value);
 		g_free(value);
-		
+
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
-static PurpleNotifyUserInfo *
+	static PurpleNotifyUserInfo *
 info_to_notify_user_info(const contact_info *info)
 {
 	PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
@@ -209,25 +249,25 @@ info_to_notify_user_info(const contact_info *info)
 
 	/* for debugging */
 	/*
-	g_string_append_printf(info_text, "<br /><br /><b>%s</b><br />", "Miscellaneous");
-	append_field_value(info_text, info->pager_sn, "pager_sn", NULL, 0);
-	append_field_value(info_text, info->pager_num, "pager_num", NULL, 0);
-	append_field_value(info_text, info->pager_sp, "pager_sp", NULL, 0);
-	append_field_value(info_text, info->pager_base_num, "pager_base_num", NULL, 0);
-	append_field_value(info_text, info->pager_type, "pager_type", NULL, 0);
-	append_field_value(info_text, info->auth_type, "auth_type", NULL, 0);
-	append_field_value(info_text, info->unknown1, "unknown1", NULL, 0);
-	append_field_value(info_text, info->unknown2, "unknown2", NULL, 0);
-	append_field_value(info_text, info->face, "face", NULL, 0);
-	append_field_value(info_text, info->hp_type, "hp_type", NULL, 0);
-	append_field_value(info_text, info->unknown3, "unknown3", NULL, 0);
-	append_field_value(info_text, info->unknown4, "unknown4", NULL, 0);
-	append_field_value(info_text, info->unknown5, "unknown5", NULL, 0);
-	append_field_value(info_text, info->is_open_hp, "is_open_hp", NULL, 0);
-	append_field_value(info_text, info->is_open_contact, "is_open_contact", NULL, 0);
-	append_field_value(info_text, info->qq_show, "qq_show", NULL, 0);
-	append_field_value(info_text, info->unknown6, "unknown6", NULL, 0);
-	*/
+	   g_string_append_printf(info_text, "<br /><br /><b>%s</b><br />", "Miscellaneous");
+	   append_field_value(info_text, info->pager_sn, "pager_sn", NULL, 0);
+	   append_field_value(info_text, info->pager_num, "pager_num", NULL, 0);
+	   append_field_value(info_text, info->pager_sp, "pager_sp", NULL, 0);
+	   append_field_value(info_text, info->pager_base_num, "pager_base_num", NULL, 0);
+	   append_field_value(info_text, info->pager_type, "pager_type", NULL, 0);
+	   append_field_value(info_text, info->auth_type, "auth_type", NULL, 0);
+	   append_field_value(info_text, info->unknown1, "unknown1", NULL, 0);
+	   append_field_value(info_text, info->unknown2, "unknown2", NULL, 0);
+	   append_field_value(info_text, info->face, "face", NULL, 0);
+	   append_field_value(info_text, info->hp_type, "hp_type", NULL, 0);
+	   append_field_value(info_text, info->unknown3, "unknown3", NULL, 0);
+	   append_field_value(info_text, info->unknown4, "unknown4", NULL, 0);
+	   append_field_value(info_text, info->unknown5, "unknown5", NULL, 0);
+	   append_field_value(info_text, info->is_open_hp, "is_open_hp", NULL, 0);
+	   append_field_value(info_text, info->is_open_contact, "is_open_contact", NULL, 0);
+	   append_field_value(info_text, info->qq_show, "qq_show", NULL, 0);
+	   append_field_value(info_text, info->unknown6, "unknown6", NULL, 0);
+	   */
 
 	return user_info;
 }
@@ -243,7 +283,7 @@ void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_wi
 
 	qd = (qq_data *) gc->proto_data;
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
-	qq_send_cmd(gc, QQ_CMD_GET_USER_INFO, TRUE, 0, TRUE, (guint8 *) uid_str, strlen(uid_str));
+	qq_send_cmd(qd, QQ_CMD_GET_USER_INFO, (guint8 *) uid_str, strlen(uid_str));
 
 	query = g_new0(qq_info_query, 1);
 	query->uid = uid;
@@ -271,27 +311,141 @@ void qq_prepare_modify_info(PurpleConnection *gc)
 }
 
 /* send packet to modify personal information */
-static void qq_send_packet_modify_info(PurpleConnection *gc, gchar **segments)
+static void qq_send_packet_modify_info(PurpleConnection *gc, contact_info *info)
 {
-	gint i;
-	guint8 *raw_data, *cursor, bar;
+	qq_data *qd = (qq_data *) gc->proto_data;
+	gint bytes = 0;
+	guint8 raw_data[MAX_PACKET_SIZE - 128] = {0};
+	guint8 bar;
 
-	g_return_if_fail(segments != NULL);
+	g_return_if_fail(info != NULL);
 
 	bar = 0x1f;
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 128);
-	cursor = raw_data;
 
-	create_packet_b(raw_data, &cursor, bar);
+	bytes += qq_put8(raw_data + bytes, bar);
 
 	/* important! skip the first uid entry */
-	for (i = 1; i < QQ_CONTACT_FIELDS; i++) {
-		create_packet_b(raw_data, &cursor, bar);
-		create_packet_data(raw_data, &cursor, (guint8 *) segments[i], strlen(segments[i]));
-	}
-	create_packet_b(raw_data, &cursor, bar);
+	/*
+	   for (i = 1; i < QQ_CONTACT_FIELDS; i++) {
+	   create_packet_b(raw_data, &cursor, bar);
+	   create_packet_data(raw_data, &cursor, (guint8 *) segments[i], strlen(segments[i]));
+	   }
+	   */
+	/* uid */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->uid, strlen(info->uid));
+	/* nick */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->nick, strlen(info->nick));
+	/* country */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->country, strlen(info->country));
+	/* province */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->province, strlen(info->province));
+	/* zipcode */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->zipcode, strlen(info->zipcode));
+	/* address */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->address, strlen(info->address));
+	/* tel */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->tel, strlen(info->tel));
+	/* age */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->age, strlen(info->age));
+	/* gender */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->gender, strlen(info->gender));
+	/* name */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->name, strlen(info->name));
+	/* email */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->email, strlen(info->email));
+	/* pager_sn */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->pager_sn, strlen(info->pager_sn));
+	/* pager_num */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->pager_num, strlen(info->pager_num));
+	/* pager_sp */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->pager_sp, strlen(info->pager_sp));
+	/* pager_base_num */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->pager_base_num, strlen(info->pager_base_num));
+	/* pager_type */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->pager_type, strlen(info->pager_type));
+	/* occupation */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->occupation, strlen(info->occupation));
+	/* homepage */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->homepage, strlen(info->homepage));
+	/* auth_type */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->auth_type, strlen(info->auth_type));
+	/* unknown1 */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->unknown1, strlen(info->unknown1));
+	/* unknown2 */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->unknown2, strlen(info->unknown2));
+	/* face */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->face, strlen(info->face));
+	/* hp_num */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->hp_num, strlen(info->hp_num));
+	/* hp_type */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->hp_type, strlen(info->hp_type));
+	/* intro */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->intro, strlen(info->intro));
+	/* city */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->city, strlen(info->city));
+	/* unknown3 */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->unknown3, strlen(info->unknown3));
+	/* unknown4 */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->unknown4, strlen(info->unknown4));
+	/* unknown5 */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->unknown5, strlen(info->unknown5));
+	/* is_open_hp */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->is_open_hp, strlen(info->is_open_hp));
+	/* is_open_contact */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->is_open_contact, strlen(info->is_open_contact));
+	/* college */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->college, strlen(info->college));
+	/* horoscope */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->horoscope, strlen(info->horoscope));
+	/* zodiac */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->zodiac, strlen(info->zodiac));
+	/* blood */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->blood, strlen(info->blood));
+	/* qq_show */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->qq_show, strlen(info->qq_show));
+	/* unknown6 */
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)info->unknown6, strlen(info->unknown6));
 
-	qq_send_cmd(gc, QQ_CMD_UPDATE_INFO, TRUE, 0, TRUE, raw_data, cursor - raw_data);
+	bytes += qq_put8(raw_data + bytes, bar);
+
+	qq_send_cmd(qd, QQ_CMD_UPDATE_INFO, raw_data, bytes);
 
 }
 
@@ -407,8 +561,11 @@ static void modify_info_ok_cb(modify_info_data *mid, PurpleRequestFields *fields
 		groups = groups->next;
 	}
 
-	/* This casting looks like a horrible idea to me -DAA */
-	qq_send_packet_modify_info(gc, (gchar **) info);
+	/* This casting looks like a horrible idea to me -DAA
+	 * yes, rewritten -s3e
+	 * qq_send_packet_modify_info(gc, (gchar **) info);
+	 */
+	qq_send_packet_modify_info(gc, info);
 
 	g_strfreev((gchar **) mid->info);
 	g_free(mid);
@@ -520,11 +677,11 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 		mid->info->unknown6 = g_strdup(info->unknown6);
 
 		purple_request_fields(gc, _("Modify my information"),
-			_("Modify my information"), NULL, fields,
-			_("Update my information"), G_CALLBACK(modify_info_ok_cb),
-			_("Cancel"), G_CALLBACK(modify_info_cancel_cb),
-			purple_connection_get_account(gc), NULL, NULL,
-			mid);
+				_("Modify my information"), NULL, fields,
+				_("Update my information"), G_CALLBACK(modify_info_ok_cb),
+				_("Cancel"), G_CALLBACK(modify_info_cancel_cb),
+				purple_connection_get_account(gc), NULL, NULL,
+				mid);
 	}
 }
 
@@ -578,10 +735,9 @@ void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const 
 	gchar *data;
 	gsize len;
 
-	if (!g_file_get_contents(iconfile, &data, &len, NULL))
+	if (!g_file_get_contents(iconfile, &data, &len, NULL)) {
 		g_return_if_reached();
-	else
-	{
+	} else {
 		purple_buddy_icons_set_for_user(account, who, data, len, icon_num);
 	}
 }
@@ -608,10 +764,10 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 	/* make sure we're using an appropriate icon */
 	if (!(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
-		&& icon_path[dir_len] == G_DIR_SEPARATOR
-			&& g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
-			&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
-			&& icon_len <= 3)) {
+				&& icon_path[dir_len] == G_DIR_SEPARATOR
+				&& g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
+				&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
+				&& icon_len <= 3)) {
 		if (icon_global)
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", errmsg);
 		else
@@ -650,13 +806,13 @@ static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gin
 		old_icon_num = purple_buddy_icons_get_checksum_for_user(buddy);
 
 	if (old_icon_num == NULL ||
-	    strcmp(icon_num_str, old_icon_num))
+			strcmp(icon_num_str, old_icon_num))
 	{
 		gchar *icon_path;
 
 		icon_path = g_strconcat(qq_buddy_icon_dir(), G_DIR_SEPARATOR_S,
-		                        QQ_ICON_PREFIX, icon_num_str,
-		                        QQ_ICON_SUFFIX, NULL);
+				QQ_ICON_PREFIX, icon_num_str,
+				QQ_ICON_SUFFIX, NULL);
 
 		qq_set_buddy_icon_for_user(account, name, icon_num_str, icon_path);
 		g_free(icon_path);
@@ -665,7 +821,7 @@ static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gin
 }
 
 /* after getting info or modify myself, refresh the buddy list accordingly */
-void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc)
+static void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc)
 {
 	PurpleBuddy *b;
 	qq_data *qd;
@@ -728,7 +884,7 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 			qd->modifying_face = FALSE;
 			g_free(info->face);
 			info->face = icon;
-			qq_send_packet_modify_info(gc, segments);
+			qq_send_packet_modify_info(gc, (contact_info *)segments);
 		}
 
 		qq_refresh_buddy_and_myself(info, gc);
@@ -777,39 +933,41 @@ void qq_info_query_free(qq_data *qd)
 
 void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid)
 {
-	guint8 buf[5];
-	guint32 tmp = g_htonl(uid);
-	buf[0] = 0;
-	memcpy(buf+1, &tmp, 4);
-	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, 5);
+	qq_data *qd = (qq_data *) gc->proto_data;
+	guint8 buf[16] = {0};
+	gint bytes = 0;
+
+	bytes += qq_put8(buf + bytes, 0x00);
+	bytes += qq_put32(buf + bytes, uid);
+
+	qd = (qq_data *) gc->proto_data;
+	qq_send_cmd(qd, QQ_CMD_GET_LEVEL, buf, bytes);
 }
 
 void qq_send_packet_get_buddies_levels(PurpleConnection *gc)
 {
-	guint8 *buf, *tmp;
+	guint8 *buf;
 	guint16 size;
 	qq_buddy *q_bud;
 	qq_data *qd = (qq_data *) gc->proto_data;
 	GList *node = qd->buddies;
+	gint bytes = 0;
 
 	if (qd->buddies) {
 		/* server only sends back levels for online buddies, no point
- 	 	* in asking for anyone else */
-		size = 4*g_list_length(qd->buddies) + 1;
+		 * in asking for anyone else */
+		size = 4 * g_list_length(qd->buddies) + 1;
 		buf = g_new0(guint8, size);
-		tmp = buf + 1;
+		bytes += 1;
 
-		while (node != NULL) {
-			guint32 tmp4;
+		while (NULL != node) {
 			q_bud = (qq_buddy *) node->data;
-			if (q_bud != NULL) {
-				tmp4 = g_htonl(q_bud->uid);
-				memcpy(tmp, &tmp4, 4);
-				tmp += 4;
+			if (NULL != q_bud) {
+				bytes += qq_put32(buf + bytes, q_bud->uid);
 			}
 			node = node->next;
 		}
-		qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, size);
+		qq_send_cmd(qd, QQ_CMD_GET_LEVEL, buf, size);
 		g_free(buf);
 	}
 }
@@ -822,10 +980,11 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	gint decr_len, i;
-	guint8 *decr_buf, *tmp;
+	guint8 *decr_buf;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	qq_data *qd = (qq_data *) gc->proto_data;
-	
+	gint bytes = 0;
+
 	decr_len = buf_len;
 	decr_buf = g_new0(guint8, buf_len);
 	if (!qq_decrypt(buf, buf_len, qd->session_key, decr_buf, &decr_len)) {
@@ -835,28 +994,23 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	decr_len--; 
 	if (decr_len % 12 != 0) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
-			"Get levels list of abnormal length. Truncating last %d bytes.\n", decr_len % 12);
+				"Get levels list of abnormal length. Truncating last %d bytes.\n", decr_len % 12);
 		decr_len -= (decr_len % 12);
 	}
-		
-	tmp = decr_buf + 1;
+
+	bytes += 1;
 	/* this byte seems random */
 	/*
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Byte one of get_level packet: %d\n", buf[0]);
-	*/
+	   purple_debug(PURPLE_DEBUG_INFO, "QQ", "Byte one of get_level packet: %d\n", buf[0]);
+	   */
 	for (i = 0; i < decr_len; i += 12) {
-		uid = g_ntohl(*(guint32 *) tmp);
-		tmp += 4;
-		onlineTime = g_ntohl(*(guint32 *) tmp);
-		tmp += 4;
-		level = g_ntohs(*(guint16 *) tmp);
-		tmp += 2;
-		timeRemainder = g_ntohs(*(guint16 *) tmp);
-		tmp += 2;
-		/*
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Level packet entry:\nuid: %d\nonlineTime: %d\nlevel: %d\ntimeRemainder: %d\n", 
+		bytes += qq_get32(&uid, decr_buf + bytes);
+		bytes += qq_get32(&onlineTime, decr_buf + bytes);
+		bytes += qq_get16(&level, decr_buf + bytes);
+		bytes += qq_get16(&timeRemainder, decr_buf + bytes);
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", 
+				"Level packet entry:\nuid: %d\nonlineTime: %d\nlevel: %d\ntimeRemainder: %d\n", 
 				uid, onlineTime, level, timeRemainder);
-		*/
 		purple_name = uid_to_purple_name(uid);
 		b = purple_find_buddy(account, purple_name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
@@ -872,7 +1026,7 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 			}
 		} else {
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
-				"Got an online buddy %d, but not in my buddy list\n", uid);
+					"Got an online buddy %d, but not in my buddy list\n", uid);
 		}
 		g_free(purple_name);
 	}

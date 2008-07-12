@@ -57,15 +57,10 @@
 
 #define MSN_BUF_LEN 8192
 
-#define USEROPT_MSNSERVER 3
+/* Windows Live Messenger Server*/
 #define MSN_SERVER "messenger.hotmail.com"
 #define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
-#define USEROPT_MSNPORT 4
 #define MSN_PORT 1863
-
-/* Windows Live Messenger Server*/
-#define WLM_SERVER			"muser.messenger.hotmail.com"
-#define WLM_PORT			1863
 #define WLM_PROT_VER		15
 
 #define WLM_MAX_PROTOCOL	15
@@ -74,16 +69,13 @@
 #define MSN_TYPING_RECV_TIMEOUT 6
 #define MSN_TYPING_SEND_TIMEOUT	4
 
-#define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"w3
-#define PASSPORT_URL "http://lc1.law13.hotmail.passport.com/cgi-bin/dologin?login="
 #define PROFILE_URL "http://spaces.live.com/profile.aspx?mem="
 #define PHOTO_URL	" contactparams:photopreauthurl=\""
 
-#define USEROPT_HOTMAIL 0
-
 #define BUDDY_ALIAS_MAXLEN 387
 
-#define MSN_FT_GUID "{5D3E02AB-6190-11d3-BBBB-00C04F795683}"
+#define MSN_FT_GUID "5D3E02AB-6190-11D3-BBBB-00C04F795683"
+#define MSN_OBJ_GUID "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"
 
 #define MSN_CLIENTINFO \
 	"Client-Name: Purple/" VERSION "\r\n" \

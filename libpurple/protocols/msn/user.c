@@ -82,37 +82,36 @@ void
 msn_user_update(MsnUser *user)
 {
 	PurpleAccount *account;
+	gboolean offline;
 
 	account = user->userlist->session->account;
 
-	if (user->status != NULL) {
-		gboolean offline = (strcmp(user->status, "offline") == 0);
+	offline = (user->status == NULL);
 
-		if (!offline) {
-			purple_prpl_got_user_status(account, user->passport, user->status,
-					"message", user->statusline, NULL);
+	if (!offline) {
+		purple_prpl_got_user_status(account, user->passport, user->status,
+				"message", user->statusline, NULL);
+	} else {
+		if (user->mobile) {
+			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
+			purple_prpl_got_user_status(account, user->passport, "available", NULL);
 		} else {
-			if (user->mobile) {
-				purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
-				purple_prpl_got_user_status(account, user->passport, "available", NULL);
-			} else {
-				purple_prpl_got_user_status(account, user->passport, user->status, NULL);
-			}
+			purple_prpl_got_user_status(account, user->passport, "offline", NULL);
 		}
+	}
 
-		if (!offline || !user->mobile) {
-			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
-		}
+	if (!offline || !user->mobile) {
+		purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
+	}
 
-		if (!offline && user->media.title) {
-			purple_prpl_got_user_status(account, user->passport, "tune",
-					PURPLE_TUNE_ARTIST, user->media.artist,
-					PURPLE_TUNE_ALBUM, user->media.album,
-					PURPLE_TUNE_TITLE, user->media.title,
-					NULL);
-		} else {
-			purple_prpl_got_user_status_deactive(account, user->passport, "tune");
-		}
+	if (!offline && user->media.title) {
+		purple_prpl_got_user_status(account, user->passport, "tune",
+				PURPLE_TUNE_ARTIST, user->media.artist,
+				PURPLE_TUNE_ALBUM, user->media.album,
+				PURPLE_TUNE_TITLE, user->media.title,
+				NULL);
+	} else {
+		purple_prpl_got_user_status_deactive(account, user->passport, "tune");
 	}
 
 	if (user->idle)
@@ -125,6 +124,11 @@ void
 msn_user_set_state(MsnUser *user, const char *state)
 {
 	const char *status;
+
+	if (state == NULL) {
+		user->status = NULL;
+		return;
+	}
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status = "busy";
@@ -253,7 +257,7 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 
 	group_name = msn_userlist_find_group_name(userlist, group_id);
 
-	purple_debug_info("User","group id:%s,name:%s,user:%s\n", group_id, group_name, passport);
+	purple_debug_info("msn", "User: group id:%s,name:%s,user:%s\n", group_id, group_name, passport);
 
 	g = purple_find_group(group_name);
 

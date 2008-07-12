@@ -40,19 +40,16 @@
 #include "header_info.h"
 #include "im.h"
 #include "packet_parse.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "send_file.h"
 #include "utils.h"
 
 #define QQ_SEND_IM_REPLY_OK       0x00
 #define DEFAULT_FONT_NAME_LEN 	  4
 
-/* a debug function */
-void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
-
 enum
 {
-        QQ_NORMAL_IM_TEXT = 0x000b,
+	QQ_NORMAL_IM_TEXT = 0x000b,
 	QQ_NORMAL_IM_FILE_REQUEST_TCP = 0x0001,
 	QQ_NORMAL_IM_FILE_APPROVE_TCP = 0x0003,
 	QQ_NORMAL_IM_FILE_REJECT_TCP = 0x0005,
@@ -121,9 +118,9 @@ struct _qq_recv_im_header {
 #define DEFAULT_FONT_NAME "\0xcb\0xce\0xcc\0xe5"
 
 guint8 *qq_get_send_im_tail(const gchar *font_color,
-			    const gchar *font_size,
-			    const gchar *font_name,
-			    gboolean is_bold, gboolean is_italic, gboolean is_underline, gint tail_len)
+		const gchar *font_size,
+		const gchar *font_name,
+		gboolean is_bold, gboolean is_italic, gboolean is_underline, gint tail_len)
 {
 	gchar *s1;
 	unsigned char *rgb;
@@ -141,7 +138,7 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 	send_im_tail = g_new0(guint8, tail_len);
 
 	g_strlcpy((gchar *) (send_im_tail + QQ_SEND_IM_AFTER_MSG_HEADER_LEN),
-		  font_name, tail_len - QQ_SEND_IM_AFTER_MSG_HEADER_LEN);
+			font_name, tail_len - QQ_SEND_IM_AFTER_MSG_HEADER_LEN);
 	send_im_tail[tail_len - 1] = (guint8) tail_len;
 
 	send_im_tail[0] = 0x00;
@@ -182,39 +179,39 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 	send_im_tail[5] = 0x00;
 	send_im_tail[6] = 0x86;
 	send_im_tail[7] = 0x22;	/* encoding, 0x8622=GB, 0x0000=EN, define BIG5 support here */
-	_qq_show_packet("QQ_MESG", send_im_tail, tail_len);
+	qq_show_packet("QQ_MESG", send_im_tail, tail_len);
 	return (guint8 *) send_im_tail;
 }
 
 static const gchar *qq_get_recv_im_type_str(gint type)
 {
 	switch (type) {
-	case QQ_RECV_IM_TO_BUDDY:
-		return "QQ_RECV_IM_TO_BUDDY";
-	case QQ_RECV_IM_TO_UNKNOWN:
-		return "QQ_RECV_IM_TO_UNKNOWN";
-	case QQ_RECV_IM_UNKNOWN_QUN_IM:
-		return "QQ_RECV_IM_UNKNOWN_QUN_IM";
-	case QQ_RECV_IM_ADD_TO_QUN:
-		return "QQ_RECV_IM_ADD_TO_QUN";
-	case QQ_RECV_IM_DEL_FROM_QUN:
-		return "QQ_RECV_IM_DEL_FROM_QUN";
-	case QQ_RECV_IM_APPLY_ADD_TO_QUN:
-		return "QQ_RECV_IM_APPLY_ADD_TO_QUN";
-	case QQ_RECV_IM_CREATE_QUN:
-		return "QQ_RECV_IM_CREATE_QUN";
-	case QQ_RECV_IM_SYS_NOTIFICATION:
-		return "QQ_RECV_IM_SYS_NOTIFICATION";
-	case QQ_RECV_IM_APPROVE_APPLY_ADD_TO_QUN:
-		return "QQ_RECV_IM_APPROVE_APPLY_ADD_TO_QUN";
-	case QQ_RECV_IM_REJCT_APPLY_ADD_TO_QUN:
-		return "QQ_RECV_IM_REJCT_APPLY_ADD_TO_QUN";
-	case QQ_RECV_IM_TEMP_QUN_IM:
-		return "QQ_RECV_IM_TEMP_QUN_IM";
-	case QQ_RECV_IM_QUN_IM:
-		return "QQ_RECV_IM_QUN_IM";
-	default:
-		return "QQ_RECV_IM_UNKNOWN";
+		case QQ_RECV_IM_TO_BUDDY:
+			return "QQ_RECV_IM_TO_BUDDY";
+		case QQ_RECV_IM_TO_UNKNOWN:
+			return "QQ_RECV_IM_TO_UNKNOWN";
+		case QQ_RECV_IM_UNKNOWN_QUN_IM:
+			return "QQ_RECV_IM_UNKNOWN_QUN_IM";
+		case QQ_RECV_IM_ADD_TO_QUN:
+			return "QQ_RECV_IM_ADD_TO_QUN";
+		case QQ_RECV_IM_DEL_FROM_QUN:
+			return "QQ_RECV_IM_DEL_FROM_QUN";
+		case QQ_RECV_IM_APPLY_ADD_TO_QUN:
+			return "QQ_RECV_IM_APPLY_ADD_TO_QUN";
+		case QQ_RECV_IM_CREATE_QUN:
+			return "QQ_RECV_IM_CREATE_QUN";
+		case QQ_RECV_IM_SYS_NOTIFICATION:
+			return "QQ_RECV_IM_SYS_NOTIFICATION";
+		case QQ_RECV_IM_APPROVE_APPLY_ADD_TO_QUN:
+			return "QQ_RECV_IM_APPROVE_APPLY_ADD_TO_QUN";
+		case QQ_RECV_IM_REJCT_APPLY_ADD_TO_QUN:
+			return "QQ_RECV_IM_REJCT_APPLY_ADD_TO_QUN";
+		case QQ_RECV_IM_TEMP_QUN_IM:
+			return "QQ_RECV_IM_TEMP_QUN_IM";
+		case QQ_RECV_IM_QUN_IM:
+			return "QQ_RECV_IM_QUN_IM";
+		default:
+			return "QQ_RECV_IM_UNKNOWN";
 	}
 }
 
@@ -222,27 +219,29 @@ static const gchar *qq_get_recv_im_type_str(gint type)
  * we send an ACK which is the first 16 bytes of incoming packet */
 static void _qq_send_packet_recv_im_ack(PurpleConnection *gc, guint16 seq, guint8 *data)
 {
-	qq_send_cmd(gc, QQ_CMD_RECV_IM, FALSE, seq, FALSE, data, 16);
+	qq_data *qd;
+
+	qd = (qq_data *) gc->proto_data;
+	qq_send_cmd_detail(qd, QQ_CMD_RECV_IM, seq, FALSE, data, 16);
 }
 
 /* read the common parts of the normal_im,
  * returns the bytes read if succeed, or -1 if there is any error */
-static gint _qq_normal_im_common_read(guint8 *data, guint8 **cursor, gint len, qq_recv_normal_im_common *common)
+static gint _qq_normal_im_common_read(guint8 *data, gint len, qq_recv_normal_im_common *common)
 {
 	gint bytes;
 	g_return_val_if_fail(data != NULL && len != 0 && common != NULL, -1);
 
 	bytes = 0;
 	/* now push data into common header */
-	bytes += read_packet_w(data, cursor, len, &(common->sender_ver));
-	bytes += read_packet_dw(data, cursor, len, &(common->sender_uid));
-	bytes += read_packet_dw(data, cursor, len, &(common->receiver_uid));
+	bytes += qq_get16(&(common->sender_ver), data + bytes);
+	bytes += qq_get32(&(common->sender_uid), data + bytes);
+	bytes += qq_get32(&(common->receiver_uid), data + bytes);
 
-	common->session_md5 = g_memdup(*cursor, QQ_KEY_LENGTH);
+	common->session_md5 = g_memdup(data + bytes, QQ_KEY_LENGTH);
 	bytes += QQ_KEY_LENGTH;
-	*cursor += QQ_KEY_LENGTH;
 
-	bytes += read_packet_w(data, cursor, len, &(common->normal_im_type));
+	bytes += qq_get16(&(common->normal_im_type), data + bytes);
 
 	if (bytes != 28) {	/* read common place fail */
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Expect 28 bytes, read %d bytes\n", bytes);
@@ -253,8 +252,7 @@ static gint _qq_normal_im_common_read(guint8 *data, guint8 **cursor, gint len, q
 }
 
 /* process received normal text IM */
-static void _qq_process_recv_normal_im_text
-    (guint8 *data, guint8 **cursor, gint len, qq_recv_normal_im_common *common, PurpleConnection *gc)
+static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_normal_im_common *common, PurpleConnection *gc)
 {
 	guint16 purple_msg_type;
 	gchar *name;
@@ -262,50 +260,52 @@ static void _qq_process_recv_normal_im_text
 	gchar *msg_utf8_encoded;
 	qq_data *qd;
 	qq_recv_normal_im_text *im_text;
+	gint bytes = 0;
 
 	g_return_if_fail(common != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	/* now it is QQ_NORMAL_IM_TEXT */
-	if (*cursor >= (data + len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received normal IM text is empty\n");
-		return;
-	} else
-		im_text = g_newa(qq_recv_normal_im_text, 1);
+	/*
+	   if (*cursor >= (data + len - 1)) {
+	   purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received normal IM text is empty\n");
+	   return;
+	   } else
+	   */
+	im_text = g_newa(qq_recv_normal_im_text, 1);
 
 	im_text->common = common;
 
 	/* push data into im_text */
-	read_packet_w(data, cursor, len, &(im_text->msg_seq));
-	read_packet_dw(data, cursor, len, &(im_text->send_time));
-	read_packet_w(data, cursor, len, &(im_text->sender_icon));
-	read_packet_data(data, cursor, len, (guint8 *) & (im_text->unknown2), 3);
-	read_packet_b(data, cursor, len, &(im_text->is_there_font_attr));
+	bytes += qq_get16(&(im_text->msg_seq), data + bytes);
+	bytes += qq_get32(&(im_text->send_time), data + bytes);
+	bytes += qq_get16(&(im_text->sender_icon), data + bytes);
+	bytes += qq_getdata((guint8 *) & (im_text->unknown2), 3, data + bytes);
+	bytes += qq_get8(&(im_text->is_there_font_attr), data + bytes);
 	/**
 	 * from lumaqq	for unknown3
 	 *	totalFragments = buf.get() & 255;
-         *	fragmentSequence = buf.get() & 255;
-         *	messageId = buf.getChar();
+	 *	fragmentSequence = buf.get() & 255;
+	 *	messageId = buf.getChar();
 	 */
-	read_packet_data(data, cursor, len, (guint8 *) & (im_text->unknown3), 4);
-	read_packet_b(data, cursor, len, &(im_text->msg_type));
+	bytes += qq_getdata((guint8 *) & (im_text->unknown3), 4, data + bytes);
+	bytes += qq_get8(&(im_text->msg_type), data + bytes);
 
 	/* we need to check if this is auto-reply
 	 * QQ2003iii build 0304, returns the msg without font_attr
 	 * even the is_there_font_attr shows 0x01, and msg does not ends with 0x00 */
 	if (im_text->msg_type == QQ_IM_AUTO_REPLY) {
 		im_text->is_there_font_attr = 0x00;	/* indeed there is no this flag */
-		im_text->msg = g_strndup(*(gchar **) cursor, data + len - *cursor);
+		im_text->msg = g_strndup((gchar *)(data + bytes), len - bytes);
 	} else {		/* it is normal mesasge */
 		if (im_text->is_there_font_attr) {
-			im_text->msg = g_strdup(*(gchar **) cursor);
-			*cursor += strlen(im_text->msg) + 1;
-			im_text->font_attr_len = data + len - *cursor;
-			im_text->font_attr = g_memdup(*cursor, im_text->font_attr_len);
+			im_text->msg = g_strdup((gchar *)(data + bytes));
+			bytes += strlen(im_text->msg) + 1; /* length decided by strlen! will it cause a crash? */
+			im_text->font_attr_len = len - bytes;
+			im_text->font_attr = g_memdup(data + bytes, im_text->font_attr_len);
 		} else		/* not im_text->is_there_font_attr */
-			im_text->msg = g_strndup(*(gchar **) cursor, data + len - *cursor);
+			im_text->msg = g_strndup((gchar *)(data + bytes), len - bytes);
 	}			/* if im_text->msg_type */
-	_qq_show_packet("QQ_MESG recv", data, *cursor - data);
 
 	name = uid_to_purple_name(common->sender_uid);
 	if (purple_find_buddy(gc->account, name) == NULL)
@@ -315,9 +315,9 @@ static void _qq_process_recv_normal_im_text
 
 	msg_with_purple_smiley = qq_smiley_to_purple(im_text->msg);
 	msg_utf8_encoded = im_text->is_there_font_attr ?
-	    qq_encode_to_purple(im_text->font_attr,
-			      im_text->font_attr_len,
-			      msg_with_purple_smiley) : qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
+		qq_encode_to_purple(im_text->font_attr,
+				im_text->font_attr_len,
+				msg_with_purple_smiley) : qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 
 	/* send encoded to purple, note that we use im_text->send_time,
 	 * not the time we receive the message
@@ -333,81 +333,69 @@ static void _qq_process_recv_normal_im_text
 }
 
 /* it is a normal IM, maybe text or video request */
-static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+static void _qq_process_recv_normal_im(guint8 *data, gint len, PurpleConnection *gc)
 {
-	gint bytes;
+	gint bytes = 0;
 	qq_recv_normal_im_common *common;
 	qq_recv_normal_im_unprocessed *im_unprocessed;
-	gchar *hex_dump;
 
 	g_return_if_fail (data != NULL && len != 0);
 
-	if (*cursor >= (data + len - 1)) {
-		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
-			    "Received normal IM is empty\n");
-		return;
-	}
-	else
-		common = g_newa (qq_recv_normal_im_common, 1);
+	common = g_newa (qq_recv_normal_im_common, 1);
 
-	bytes = _qq_normal_im_common_read (data, cursor, len, common);
+	bytes = _qq_normal_im_common_read(data, len, common);
 	if (bytes < 0) {
 		purple_debug (PURPLE_DEBUG_ERROR, "QQ",
-			    "Fail read the common part of normal IM\n");
+				"Fail read the common part of normal IM\n");
 		return;
 	}
 
 	switch (common->normal_im_type) {
-	case QQ_NORMAL_IM_TEXT:
-		purple_debug (PURPLE_DEBUG_INFO,
-			    "QQ",
-			    "Normal IM, text type:\n [%d] => [%d], src: %s\n",
-			    common->sender_uid, common->receiver_uid,
-			    qq_get_source_str (common->sender_ver));
-		_qq_process_recv_normal_im_text (data, cursor, len, common,
-						 gc);
-		break;
-	case QQ_NORMAL_IM_FILE_REJECT_UDP:
-		qq_process_recv_file_reject (data, cursor, len,
-					     common->sender_uid, gc);
-		break;
-	case QQ_NORMAL_IM_FILE_APPROVE_UDP:
-		qq_process_recv_file_accept (data, cursor, len,
-					     common->sender_uid, gc);
-		break;
-	case QQ_NORMAL_IM_FILE_REQUEST_UDP:
-		qq_process_recv_file_request (data, cursor, len,
-					      common->sender_uid, gc);
-		break;
-	case QQ_NORMAL_IM_FILE_CANCEL:
-		qq_process_recv_file_cancel (data, cursor, len,
-					     common->sender_uid, gc);
-		break;
-	case QQ_NORMAL_IM_FILE_NOTIFY:
-		qq_process_recv_file_notify (data, cursor, len,
-				common->sender_uid, gc);
-		break;
-	default:
-		im_unprocessed = g_newa (qq_recv_normal_im_unprocessed, 1);
-		im_unprocessed->common = common;
-		im_unprocessed->unknown = *cursor;
-		im_unprocessed->length = data + len - *cursor;
-		/* a simple process here, maybe more later */
-		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
-			    "Normal IM, unprocessed type [0x%04x]\n",
-			    common->normal_im_type);
-	       	hex_dump = hex_dump_to_str(im_unprocessed->unknown, im_unprocessed->length);
-		purple_debug (PURPLE_DEBUG_WARNING, "QQ", "Dump unknown part.\n%s", hex_dump);
-		g_free(hex_dump);
-		g_free (common->session_md5);
-		return;
+		case QQ_NORMAL_IM_TEXT:
+			purple_debug (PURPLE_DEBUG_INFO, "QQ",
+					"Normal IM, text type:\n [%d] => [%d], src: %s\n",
+					common->sender_uid, common->receiver_uid,
+					qq_get_source_str (common->sender_ver));
+			if (bytes >= len - 1) {
+				purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received normal IM text is empty\n");
+				return;
+			}
+			_qq_process_recv_normal_im_text(data + bytes, len - bytes, common, gc);
+			break;
+		case QQ_NORMAL_IM_FILE_REJECT_UDP:
+			qq_process_recv_file_reject(data + bytes, len - bytes, common->sender_uid, gc);
+			break;
+		case QQ_NORMAL_IM_FILE_APPROVE_UDP:
+			qq_process_recv_file_accept(data + bytes, len - bytes, common->sender_uid, gc);
+			break;
+		case QQ_NORMAL_IM_FILE_REQUEST_UDP:
+			qq_process_recv_file_request(data + bytes, len - bytes, common->sender_uid, gc);
+			break;
+		case QQ_NORMAL_IM_FILE_CANCEL:
+			qq_process_recv_file_cancel(data + bytes, len - bytes, common->sender_uid, gc);
+			break;
+		case QQ_NORMAL_IM_FILE_NOTIFY:
+			qq_process_recv_file_notify(data + bytes, len - bytes, common->sender_uid, gc);
+			break;
+		default:
+			im_unprocessed = g_newa (qq_recv_normal_im_unprocessed, 1);
+			im_unprocessed->common = common;
+			im_unprocessed->unknown = data + bytes;
+			im_unprocessed->length = len - bytes;
+			/* a simple process here, maybe more later */
+			purple_debug (PURPLE_DEBUG_WARNING, "QQ",
+					"Normal IM, unprocessed type [0x%04x], len %d\n",
+					common->normal_im_type, im_unprocessed->length);
+			qq_show_packet ("QQ unk-im", im_unprocessed->unknown, im_unprocessed->length);
+			g_free (common->session_md5);
+			return;
 	}
 
 	g_free (common->session_md5);
 }
 
 /* process im from system administrator */
-static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len, PurpleConnection *gc)
+static void _qq_process_recv_sys_im(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	gint len;
 	guint8 reply;
@@ -415,14 +403,9 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	if (*cursor >= (data + data_len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received sys IM is empty\n");
-		return;
-	}
+	len = data_len;
 
-	len = data + data_len - *cursor;
-
-	if (NULL == (segments = split_data(*cursor, len, "\x2f", 2)))
+	if (NULL == (segments = split_data(data, len, "\x2f", 2)))
 		return;
 
 	reply = strtol(segments[0], NULL, 10);
@@ -436,7 +419,7 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint type)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data, *send_im_tail;
+	guint8 *raw_data, *send_im_tail;
 	guint16 client_tag, normal_im_type;
 	gint msg_len, raw_len, font_name_len, tail_len, bytes;
 	time_t now;
@@ -500,52 +483,51 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 
 	raw_len = QQ_SEND_IM_BEFORE_MSG_LEN + msg_len + tail_len;
 	raw_data = g_newa(guint8, raw_len);
-	cursor = raw_data;
 	bytes = 0;
 
 	/* 000-003: receiver uid */
-	bytes += create_packet_dw(raw_data, &cursor, qd->uid);
+	bytes += qq_put32(raw_data + bytes, qd->uid);
 	/* 004-007: sender uid */
-	bytes += create_packet_dw(raw_data, &cursor, to_uid);
+	bytes += qq_put32(raw_data + bytes, to_uid);
 	/* 008-009: sender client version */
-	bytes += create_packet_w(raw_data, &cursor, client_tag);
+	bytes += qq_put16(raw_data + bytes, client_tag);
 	/* 010-013: receiver uid */
-	bytes += create_packet_dw(raw_data, &cursor, qd->uid);
+	bytes += qq_put32(raw_data + bytes, qd->uid);
 	/* 014-017: sender uid */
-	bytes += create_packet_dw(raw_data, &cursor, to_uid);
+	bytes += qq_put32(raw_data + bytes, to_uid);
 	/* 018-033: md5 of (uid+session_key) */
-	bytes += create_packet_data(raw_data, &cursor, qd->session_md5, 16);
+	bytes += qq_putdata(raw_data + bytes, qd->session_md5, 16);
 	/* 034-035: message type */
-	bytes += create_packet_w(raw_data, &cursor, normal_im_type);
+	bytes += qq_put16(raw_data + bytes, normal_im_type);
 	/* 036-037: sequence number */
-	bytes += create_packet_w(raw_data, &cursor, qd->send_seq);
+	bytes += qq_put16(raw_data + bytes, qd->send_seq);
 	/* 038-041: send time */
-	bytes += create_packet_dw(raw_data, &cursor, (guint32) now);
+	bytes += qq_put32(raw_data + bytes, (guint32) now);
 	/* 042-043: sender icon */
-	bytes += create_packet_w(raw_data, &cursor, qd->my_icon);
+	bytes += qq_put16(raw_data + bytes, qd->my_icon);
 	/* 044-046: always 0x00 */
-	bytes += create_packet_w(raw_data, &cursor, 0x0000);
-	bytes += create_packet_b(raw_data, &cursor, 0x00);
+	bytes += qq_put16(raw_data + bytes, 0x0000);
+	bytes += qq_put8(raw_data + bytes, 0x00);
 	/* 047-047: we use font attr */
-	bytes += create_packet_b(raw_data, &cursor, 0x01);
+	bytes += qq_put8(raw_data + bytes, 0x01);
 	/* 048-051: always 0x00 */
-	bytes += create_packet_dw(raw_data, &cursor, 0x00000000);
+	bytes += qq_put32(raw_data + bytes, 0x00000000);
 	/* 052-052: text message type (normal/auto-reply) */
-	bytes += create_packet_b(raw_data, &cursor, type);
+	bytes += qq_put8(raw_data + bytes, type);
 	/* 053-   : msg ends with 0x00 */
-	bytes += create_packet_data(raw_data, &cursor, (guint8 *) msg_filtered, msg_len);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *) msg_filtered, msg_len);
 	send_im_tail = qq_get_send_im_tail(font_color, font_size, font_name, is_bold,
-						   is_italic, is_underline, tail_len);
-	_qq_show_packet("QQ_MESG debug", send_im_tail, tail_len);
-	bytes += create_packet_data(raw_data, &cursor, send_im_tail, tail_len);
+			is_italic, is_underline, tail_len);
+	qq_show_packet("QQ_send_im_tail debug", send_im_tail, tail_len);
+	bytes += qq_putdata(raw_data + bytes, send_im_tail, tail_len);
 
-	_qq_show_packet("QQ_MESG raw", raw_data, cursor - raw_data);
+	qq_show_packet("QQ_raw_data debug", raw_data, bytes);
 
 	if (bytes == raw_len)	/* create packet OK */
-		qq_send_cmd(gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, cursor - raw_data);
+		qq_send_cmd(qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Fail creating send_im packet, expect %d bytes, build %d bytes\n", raw_len, bytes);
+				"Fail creating send_im packet, expect %d bytes, build %d bytes\n", raw_len, bytes);
 
 	if (font_color)
 		g_free(font_color);
@@ -560,7 +542,8 @@ void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len;
-	guint8 *data, *cursor, reply;
+	guint8 *data, reply;
+	gint bytes = 0;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -569,8 +552,7 @@ void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	data = g_newa(guint8, len);
 
 	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		cursor = data;
-		read_packet_b(data, &cursor, len, &reply);
+		bytes += qq_get8(&reply, data + bytes);
 		if (reply != QQ_SEND_IM_REPLY_OK) {
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Send IM fail\n");
 			purple_notify_error(gc, _("Error"), _("Failed to send IM."), NULL);
@@ -588,7 +570,7 @@ void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 {
 	qq_data *qd;
 	gint len, bytes;
-	guint8 *data, *cursor;
+	guint8 *data;
 	qq_recv_im_header *im_header;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
@@ -597,98 +579,107 @@ void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		if (len < 16) {	/* we need to ack with the first 16 bytes */
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM is too short\n");
-			return;
-		} else
-			_qq_send_packet_recv_im_ack(gc, seq, data);
+	if (!qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt rev im\n");
+	}
 
-		cursor = data;
-		bytes = 0;
-		im_header = g_newa(qq_recv_im_header, 1);
-		bytes += read_packet_dw(data, &cursor, len, &(im_header->sender_uid));
-		bytes += read_packet_dw(data, &cursor, len, &(im_header->receiver_uid));
-		bytes += read_packet_dw(data, &cursor, len, &(im_header->server_im_seq));
-		/* if the message is delivered via server, it is server IP/port */
-		bytes += read_packet_data(data, &cursor, len, (guint8 *) & (im_header->sender_ip), 4);
-		bytes += read_packet_w(data, &cursor, len, &(im_header->sender_port));
-		bytes += read_packet_w(data, &cursor, len, &(im_header->im_type));
+	if (len < 16) {	/* we need to ack with the first 16 bytes */
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM is too short\n");
+		return;
+	} else {
+		_qq_send_packet_recv_im_ack(gc, seq, data);
+	}
 
-		if (bytes != 20) {	/* length of im_header */
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-				   "Fail read recv IM header, expect 20 bytes, read %d bytes\n", bytes);
-			return;
-		}
+	/* check len first */
+	if (len < 20) {	/* length of im_header */
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+				"Fail read recv IM header, len should longer than 20 bytes, read %d bytes\n", len);
+		return;
+	}
 
-		if (im_header->receiver_uid != qd->uid) {	/* should not happen */
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM to [%d], NOT me\n", im_header->receiver_uid);
-			return;
-		}
+	bytes = 0;
+	im_header = g_newa(qq_recv_im_header, 1);
+	bytes += qq_get32(&(im_header->sender_uid), data + bytes);
+	bytes += qq_get32(&(im_header->receiver_uid), data + bytes);
+	bytes += qq_get32(&(im_header->server_im_seq), data + bytes);
+	/* if the message is delivered via server, it is server IP/port */
+	bytes += qq_getdata((guint8 *) & (im_header->sender_ip), 4, data + bytes);
+	bytes += qq_get16(&(im_header->sender_port), data + bytes);
+	bytes += qq_get16(&(im_header->im_type), data + bytes);
+	/* im_header prepared */
 
-		switch (im_header->im_type) {
+	if (im_header->receiver_uid != qd->uid) {	/* should not happen */
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM to [%d], NOT me\n", im_header->receiver_uid);
+		return;
+	}
+
+	/* check bytes */
+	if (bytes >= len - 1) {
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ", "Received IM is empty\n");
+		return;
+	}
+
+	switch (im_header->im_type) {
 		case QQ_RECV_IM_TO_BUDDY:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM from buddy [%d], I am in his/her buddy list\n", im_header->sender_uid);
-			_qq_process_recv_normal_im(data, &cursor, len, gc);
+					"IM from buddy [%d], I am in his/her buddy list\n", im_header->sender_uid);
+			_qq_process_recv_normal_im(data + bytes, len - bytes, gc); /* position and rest length */
 			break;
 		case QQ_RECV_IM_TO_UNKNOWN:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM from buddy [%d], I am a stranger to him/her\n", im_header->sender_uid);
-			_qq_process_recv_normal_im(data, &cursor, len, gc);
+					"IM from buddy [%d], I am a stranger to him/her\n", im_header->sender_uid);
+			_qq_process_recv_normal_im(data + bytes, len - bytes, gc);
 			break;
 		case QQ_RECV_IM_UNKNOWN_QUN_IM:
 		case QQ_RECV_IM_TEMP_QUN_IM:
 		case QQ_RECV_IM_QUN_IM:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "IM from group, internal_id [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
-			qq_process_recv_group_im(data, &cursor, len, im_header->sender_uid, gc, im_header->im_type);
+			qq_process_recv_group_im(data + bytes, len - bytes, im_header->sender_uid, gc, im_header->im_type);
 			break;
 		case QQ_RECV_IM_ADD_TO_QUN:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM from group, added by group internal_id [%d]\n", im_header->sender_uid);
+					"IM from group, added by group internal_id [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id
 			 * we need this to create a dummy group and add to blist */
-			qq_process_recv_group_im_been_added(data, &cursor, len, im_header->sender_uid, gc);
+			qq_process_recv_group_im_been_added(data + bytes, len - bytes, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_DEL_FROM_QUN:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM from group, removed by group internal_ID [%d]\n", im_header->sender_uid);
+					"IM from group, removed by group internal_ID [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
-			qq_process_recv_group_im_been_removed(data, &cursor, len, im_header->sender_uid, gc);
+			qq_process_recv_group_im_been_removed(data + bytes, len - bytes, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_APPLY_ADD_TO_QUN:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM from group, apply to join group internal_ID [%d]\n", im_header->sender_uid);
+					"IM from group, apply to join group internal_ID [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
-			qq_process_recv_group_im_apply_join(data, &cursor, len, im_header->sender_uid, gc);
+			qq_process_recv_group_im_apply_join(data + bytes, len - bytes, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_APPROVE_APPLY_ADD_TO_QUN:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM for group system info, approved by group internal_id [%d]\n",
-				   im_header->sender_uid);
+					"IM for group system info, approved by group internal_id [%d]\n",
+					im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
-			qq_process_recv_group_im_been_approved(data, &cursor, len, im_header->sender_uid, gc);
+			qq_process_recv_group_im_been_approved(data + bytes, len - bytes, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_REJCT_APPLY_ADD_TO_QUN:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM for group system info, rejected by group internal_id [%d]\n",
-				   im_header->sender_uid);
+					"IM for group system info, rejected by group internal_id [%d]\n",
+					im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
-			qq_process_recv_group_im_been_rejected(data, &cursor, len, im_header->sender_uid, gc);
+			qq_process_recv_group_im_been_rejected(data + bytes, len - bytes, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_SYS_NOTIFICATION:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "IM from [%d], should be a system administrator\n", im_header->sender_uid);
-			_qq_process_recv_sys_im(data, &cursor, len, gc);
+					"IM from [%d], should be a system administrator\n", im_header->sender_uid);
+			_qq_process_recv_sys_im(data + bytes, len - bytes, gc);
 			break;
 		default:
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				   "IM from [%d], [0x%02x] %s is not processed\n",
-				   im_header->sender_uid,
-				   im_header->im_type, qq_get_recv_im_type_str(im_header->im_type));
-		}
-	} else {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt rev im\n");
+					"IM from [%d], [0x%02x] %s is not processed\n",
+					im_header->sender_uid,
+					im_header->im_type, qq_get_recv_im_type_str(im_header->im_type));
 	}
 }
+

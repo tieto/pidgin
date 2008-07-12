@@ -203,7 +203,7 @@ connect_cb(gpointer data, gint source, const char *error_message)
 }
 
 gboolean
-msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
+msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean force)
 {
 	MsnSession *session;
 
@@ -223,7 +223,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	{
 		/* HTTP Connection. */
 
-		if (!servconn->httpconn->connected)
+		if (!servconn->httpconn->connected || force)
 			if (!msn_httpconn_connect(servconn->httpconn, host, port))
 				return FALSE;
 
@@ -393,21 +393,16 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
 	servconn->session->account->gc->last_received = time(NULL);
 
-	if (len <= 0) {
-		switch (errno) {
+	if (len < 0 && errno == EAGAIN) {
+		return;
 
-			case 0:
+	} else if (len <= 0) {
+		purple_debug_error("msn", "servconn read error,"
+		                          "len: %d, errno: %d, error: %s\n",
+		                          len, errno, g_strerror(errno));
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
-			case EBADF:
-			case EAGAIN: return;
-
-			default: purple_debug_error("msn", "servconn read error,"
-						"len: %d, errno: %d, error: %s\n",
-						len, errno, g_strerror(errno));
-				 msn_servconn_got_error(servconn,
-						 MSN_SERVCONN_ERROR_READ);
-				 return;
-		}
+		return;
 	}
 
 	buf[len] = '\0';

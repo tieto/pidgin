@@ -588,7 +588,8 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t body_len)
 
 	if (httpconn->virgin)
 	{
-		host = "gateway.messenger.hotmail.com";
+		/* QuLogic: This doesn't look right to me, but it still seems to work */
+		host = MSN_HTTPCONN_SERVER;
 
 		/* The first time servconn->host is the host we should connect to. */
 		params = g_strdup_printf("Action=open&Server=%s&IP=%s",
