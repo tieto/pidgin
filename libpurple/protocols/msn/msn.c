@@ -393,6 +393,8 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Cancel"), NULL);
 }
 
+/* QuLogic: Disabled until confirmed correct. */
+#if 0
 static void
 msn_show_blocked_text(PurplePluginAction *action)
 {
@@ -415,6 +417,7 @@ msn_show_blocked_text(PurplePluginAction *action)
 	}
 	g_free(title);
 }
+#endif
 
 static void
 msn_show_hotmail_inbox(PurplePluginAction *action)
@@ -856,10 +859,13 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 			msn_show_set_mobile_pages);
 	m = g_list_append(m, act);
 
+/* QuLogic: Disabled until confirmed correct. */
+#if 0
 	m = g_list_append(m, NULL);
 	act = purple_plugin_action_new(_("View Blocked Text..."),
 			msn_show_blocked_text);
 	m = g_list_append(m, act);
+#endif
 
 	account = purple_connection_get_account(gc);
 	user = msn_normalize(account, purple_account_get_username(account));
