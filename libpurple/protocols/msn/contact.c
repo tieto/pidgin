@@ -776,10 +776,8 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	purple_debug_misc("msn", "Got the Address Book!\n");
 
 	if (msn_parse_addressbook(session, resp->xml)) {
-		if (!session->logged_in) {
-			msn_send_privacy(session->account->gc);
-			msn_notification_dump_contact(session);
-		}
+		msn_send_privacy(session->account->gc);
+		msn_notification_dump_contact(session);
 	} else {
 		/* This is making us loop infinitely when we fail to parse the
 		  address book, disable for now (we should re-enable when we
