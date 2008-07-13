@@ -51,6 +51,7 @@
 #define PREF_PATH		PREF_PREFIX "/path"
 #define PREF_STRANGER	PREF_PREFIX "/reject_stranger"
 #define PREF_NOTIFY		PREF_PREFIX "/notify"
+#define PREF_NEWDIR     PREF_PREFIX "/newdir"
 
 typedef enum
 {
@@ -116,7 +117,11 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 			{
 				int count = 1;
 				const char *escape;
-				dirname = g_build_filename(pref, purple_normalize(account, xfer->who), NULL);
+
+				if (purple_prefs_get_bool(PREF_NEWDIR))
+					dirname = g_build_filename(pref, purple_normalize(account, xfer->who), NULL);
+				else
+					dirname = g_build_filename(pref, NULL);
 
 				if (!ensure_path_exists(dirname))
 				{
@@ -236,6 +241,10 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 					  "(only when there's no conversation with the sender)"));
 	purple_plugin_pref_frame_add(frame, pref);
 
+	pref = purple_plugin_pref_new_with_name_and_label(PREF_NEWDIR,
+			_("Create a new directory for each user"));
+	purple_plugin_pref_frame_add(frame, pref);
+
 	return frame;
 }
 
@@ -294,6 +303,7 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_PATH, dirname);
 	purple_prefs_add_bool(PREF_STRANGER, TRUE);
 	purple_prefs_add_bool(PREF_NOTIFY, TRUE);
+	purple_prefs_add_bool(PREF_NEWDIR, TRUE);
 	g_free(dirname);
 }
 
