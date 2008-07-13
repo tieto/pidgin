@@ -10,6 +10,21 @@ version 2.5.0 (??/??/2008):
 	  we don't install our SSL CA certs, so it's important that the
 	  libpurple package depend on the CA certificates.
 
+	MSN:
+	* Update MSN support to protocol 15 (Elliott Sales de Andrade, Jorge
+	  Villaseñor, Mike Ruprecht, Carlos Silva, Ma Yuan, Dimmuxx and others)
+	* Personal messages are now supported. They are treated as status
+	  messages.
+	* Offline IM is now supported.
+	* Aliasing is now supported server-side.
+	* Buddies are now emblemed. Bots and web clients should now be
+	  distinguished.
+	* Failing to update a buddy icon when the buddy has gone offline no
+	  longer crashes.
+	* Custom smileys received in a chat no longer go to a new window.
+	* Processing is no longer completely frozen after the servers block a
+	  message because it contains (what they consider) inappropriate text.
+
 	Pidgin:
 	* Custom buddy icons can now be added to and removed from buddy list
 	  entries via the buddy list entry right-click menu.
