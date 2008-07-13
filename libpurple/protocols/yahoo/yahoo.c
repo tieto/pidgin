@@ -2034,13 +2034,19 @@ static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 			yahoo_process_auth_new(gc, seed);
 			break;
 		default:
-			buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
-						"authentication method.  You will probably not be able "
-						"to successfully sign on to Yahoo.  Check %s for updates."), PURPLE_WEBSITE);
-			purple_notify_error(gc, "", _("Failed Yahoo! Authentication"),
-					  buf);
-			g_free(buf);
-			yahoo_process_auth_new(gc, seed); /* Can't hurt to try it anyway. */
+			{
+				GHashTable *ui_info = purple_core_get_ui_info();
+
+				buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
+							"authentication method.  You will probably not be able "
+							"to successfully sign on to Yahoo.  Check %s for updates."),
+							((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+				purple_notify_error(gc, "", _("Failed Yahoo! Authentication"),
+							buf);
+				g_free(buf);
+				yahoo_process_auth_new(gc, seed); /* Can't hurt to try it anyway. */
+				break;
+			}
 		}
 	}
 }

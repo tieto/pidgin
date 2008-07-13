@@ -65,9 +65,12 @@ msn_command_from_string(const char *string)
 		for (c = 0; cmd->params[c]; c++);
 		cmd->param_count = c;
 
-		param = cmd->params[0];
-
-		cmd->trId = is_num(param) ? atoi(param) : 0;
+		if (cmd->param_count) {
+			char *param = cmd->params[0];
+			cmd->trId = is_num(param) ? atoi(param) : 0;
+		} else {
+			cmd->trId = 0;
+		}
 	}
 	else
 		cmd->trId = 0;

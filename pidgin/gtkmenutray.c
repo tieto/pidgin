@@ -84,18 +84,23 @@ pidgin_menu_tray_get_property(GObject *obj, guint param_id, GValue *value,
 }
 
 static void
-pidgin_menu_tray_finalize(GObject *obj) {
+pidgin_menu_tray_finalize(GObject *obj)
+{
+	PidginMenuTray *tray = PIDGIN_MENU_TRAY(obj);
 #if 0
 	/* This _might_ be leaking, but I have a sneaking suspicion that the widget is
 	 * getting destroyed in GtkContainer's finalize function.  But if were are
 	 * leaking here, be sure to figure out why this causes a crash.
 	 *	-- Gary
 	 */
-	PidginMenuTray *tray = PIDGIN_MENU_TRAY(obj);
 
 	if(GTK_IS_WIDGET(tray->tray))
 		gtk_widget_destroy(GTK_WIDGET(tray->tray));
 #endif
+
+	if (tray->tooltips) {
+		gtk_object_sink(GTK_OBJECT(tray->tooltips));
+	}
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }

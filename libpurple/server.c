@@ -727,6 +727,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		PurpleStatusPrimitive primitive;
 		const gchar *auto_reply_pref;
 		const char *away_msg = NULL;
+		gboolean mobile = FALSE;
 
 		auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 
@@ -734,9 +735,10 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		status = purple_presence_get_active_status(presence);
 		status_type = purple_status_get_type(status);
 		primitive = purple_status_type_get_primitive(status_type);
+		mobile = purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE);
 		if ((primitive == PURPLE_STATUS_AVAILABLE) ||
 			(primitive == PURPLE_STATUS_INVISIBLE) ||
-			(primitive == PURPLE_STATUS_MOBILE) ||
+			mobile ||
 		    !strcmp(auto_reply_pref, "never") ||
 		    (!purple_presence_is_idle(presence) && !strcmp(auto_reply_pref, "awayidle")))
 		{

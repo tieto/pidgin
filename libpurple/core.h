@@ -180,6 +180,12 @@ gboolean purple_core_ensure_single_instance(void);
  *
  *   <dt><tt>version</tt></dt>
  *   <dd>a user-readable description of the current version of the UI.</dd>
+ *
+ *   <dt><tt>website</tt></dt>
+ *   <dd>the UI's website, such as http://pidgin.im.</dd>
+ *
+ *   <dt><tt>dev_website</tt></dt>
+ *   <dd>the UI's development/support website, such as http://developer.pidgin.im.</dd>
  * </dl>
  *
  * @return A GHashTable with strings for keys and values.  This
