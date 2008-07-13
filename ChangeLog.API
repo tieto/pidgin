@@ -28,6 +28,9 @@ version 2.5.0 (??/??/2008):
 		* purple_buddy_icons_set_custom_icon
 		* pidgin_set_custom_buddy_icon
 
+		Changed:
+		* xmlnode_copy now copies the prefix and namespace map for nodes.
+
 	pidgin:
 		Added:
 		* gtk_imhtml_smiley_create, gtk_imhtml_smiley_reload and

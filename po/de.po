@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-06 14:20+0200\n"
-"PO-Revision-Date: 2008-07-06 14:20+0200\n"
+"POT-Creation-Date: 2008-07-11 17:26+0200\n"
+"PO-Revision-Date: 2008-07-11 17:25+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -3232,10 +3232,8 @@ msgid "Bad mode"
 msgstr "Falscher Modus"
 
 #, c-format
-msgid "Ban on %s by %s, set %ld second ago"
-msgid_plural "Ban on %s by %s, set %ld seconds ago"
-msgstr[0] "Verbot zu %s von %s, gesetzt vor %ld Sekunde"
-msgstr[1] "Verbot zu %s von %s, gesetzt vor %ld Sekunden"
+msgid "Ban on %s by %s, set %s ago"
+msgstr "Verbot zu %s von %s, gesetzt vor %s"
 
 #, c-format
 msgid "Ban on %s"
