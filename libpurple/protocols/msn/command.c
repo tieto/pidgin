@@ -51,14 +51,14 @@ msn_command_from_string(const char *string)
 	if (param_start)
 	{
 		*param_start++ = '\0';
-		cmd->params = g_strsplit(param_start, " ", 0);
+		cmd->params = g_strsplit_set(param_start, " ", 0);
 	}
 
 	if (cmd->params != NULL)
 	{
 		int c;
 
-		for (c = 0; cmd->params[c]; c++);
+		for (c = 0; cmd->params[c] && cmd->params[c][0]; c++);
 		cmd->param_count = c;
 
 		if (cmd->param_count) {
