@@ -1238,34 +1238,6 @@ reg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	g_strfreev(params);
 }
 
-#if 0
-static void
-rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSession *session;
-	MsnUser *user;
-	const char *group_id, *list, *passport;
-	MsnListId list_id;
-
-	session = cmdproc->session;
-	list = cmd->params[1];
-	passport = cmd->params[3];
-	user = msn_userlist_find_user(session->userlist, passport);
-
-	g_return_if_fail(user != NULL);
-
-	list_id = msn_get_list_id(list);
-
-	if (cmd->param_count == 5)
-		group_id = cmd->params[4];
-	else
-		group_id = NULL;
-
-	msn_got_rem_user(session, user, list_id, group_id);
-	msn_user_update(user);
-}
-#endif
-
 static void
 rmg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -1292,39 +1264,6 @@ rmg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	g_strfreev(params);
 }
-
-#if 0
-static void
-syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSession *session;
-	MsnSync *sync;
-	int total_users;
-
-	session = cmdproc->session;
-
-	if (cmd->param_count == 2)
-	{
-		/*
-		 * This can happen if we sent a SYN with an up-to-date
-		 * buddy list revision, but we send 0 to get a full list.
-		 * So, error out.
-		 */
-
-		msn_session_set_error(cmdproc->session, MSN_ERROR_BAD_BLIST, NULL);
-		return;
-	}
-
-	total_users  = atoi(cmd->params[2]);
-
-	sync = msn_sync_new(session);
-	sync->total_users = total_users;
-	sync->old_cbs_table = cmdproc->cbs_table;
-
-	session->sync = sync;
-	cmdproc->cbs_table = sync->cbs_table;
-}
-#endif
 
 /**************************************************************************
  * Misc commands
