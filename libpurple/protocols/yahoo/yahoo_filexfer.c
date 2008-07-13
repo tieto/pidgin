@@ -1050,7 +1050,10 @@ void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 	/* To determine if we should use yahoo p15 for transfer.  Check other user's
 	 * reported version, but if we're on Yahoo Japan, ignore it. */
 	if(yf && yf->version_id > 500000 && !yd->jp)
-		ver = 15; 
+		ver = 15;
+	/* Default to ver 15 if user isn't a friend */
+	if(!yf)
+		ver = 15;
 
 	g_return_if_fail(xfer != NULL);
 
