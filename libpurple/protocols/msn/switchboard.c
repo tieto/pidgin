@@ -1144,7 +1144,6 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
 		msg_error_helper(swboard->cmdproc, msg,
 							 MSN_MSG_ERROR_SB);
-		msn_message_unref(msg);
 	}
 	cal_error_helper(trans, reason);
 }
