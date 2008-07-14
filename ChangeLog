@@ -12,7 +12,8 @@ version 2.5.0 (??/??/2008):
 
 	MSN:
 	* Update MSN support to protocol 15 (Elliott Sales de Andrade, Jorge
-	  Villaseñor, Mike Ruprecht, Carlos Silva, Ma Yuan, Dimmuxx and others)
+	  Villaseñor, Mike Ruprecht, Carlos Silva, Ma Yuan, Daniel Ljungborg
+	  and others)
 	* Personal messages are now supported. They are treated as status
 	  messages.
 	* Offline IM is now supported.
