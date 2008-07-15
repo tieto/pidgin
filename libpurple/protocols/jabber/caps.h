@@ -88,4 +88,9 @@ void jabber_caps_calculate_own_hash();
 **/
 const gchar* jabber_caps_get_own_hash();
 
+/**
+ *
+ */
+void jabber_caps_broadcast_change();
+
 #endif /* _PURPLE_JABBER_CAPS_H_ */

@@ -845,3 +845,16 @@ const gchar* jabber_caps_get_own_hash() {
 	return caps_hash;
 }
 
+void jabber_caps_broadcast_change() {
+	GList *active_accounts = purple_accounts_get_all_active();
+	for (active_accounts = purple_accounts_get_all_active(); active_accounts; active_accounts = active_accounts->next) {
+		PurpleAccount *account = active_accounts->data;
+		if (!strcmp(account->protocol_id, "jabber")) {
+			PurpleConnection *conn = account->gc;
+			JabberStream *js = conn->proto_data;
+			xmlnode *presence = jabber_presence_create_js(js, JABBER_BUDDY_STATE_UNKNOWN, 0, 0);
+			jabber_send(js, presence);
+		}
+	}
+}
+

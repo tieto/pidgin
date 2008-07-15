@@ -2480,6 +2480,7 @@ jabber_ipc_add_feature(gchar *feature)
 	jabber_add_feature(feature, 0);
 	
 	// send presence with new caps info for all connected accounts
+	jabber_caps_broadcast_change();
 }
 
 void
