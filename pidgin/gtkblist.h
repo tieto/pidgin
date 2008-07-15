@@ -256,14 +256,14 @@ void pidgin_blist_add_alert(GtkWidget *widget);
  *
  * @param theme	the new theme to use
  */
-void pidgin_blist_set_theme(PidginBuddyListTheme *theme);
+void pidgin_blist_set_theme(PidginBlistTheme *theme);
 
 /**
  * Gets Pidgin's current buddy list theme
  *
  * @returns	the current theme 
  */
-PidginBuddyListTheme *pidgin_blist_get_theme(void);
+PidginBlistTheme *pidgin_blist_get_theme(void);
 
 /**************************************************************************
  * @name GTK+ Buddy List sorting functions

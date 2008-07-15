@@ -26,6 +26,8 @@
 #ifndef _PURPLE_XMLNODE_H_
 #define _PURPLE_XMLNODE_H_
 
+#include <glib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

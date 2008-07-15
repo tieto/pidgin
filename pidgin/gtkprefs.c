@@ -74,6 +74,9 @@ static GtkTreeRowReference *previous_smiley_row = NULL;
 static gboolean prefs_themes_unsorted = TRUE;
 static GtkListStore *prefs_sound_themes;
 static GtkTreeIter prefs_sound_iter;
+static GtkListStore *prefs_blist_themes;
+static GtkTreeIter prefs_blist_iter;
+ 
 
 /*
  * PROTOTYPES
@@ -568,10 +571,11 @@ prefs_themes_sort(PurpleTheme *theme)
 	GdkPixbuf *pixbuf = NULL;
 	GtkTreeIter iter;
 	gchar *image_full;
+	const gchar *pref;
 	
 	if (PURPLE_IS_SOUND_THEME(theme)){
-		/* TODO: string leaks? */
-		const gchar *pref = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
+
+		pref = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
 		
 		image_full = purple_theme_get_image_full(theme);
 		if (image_full != NULL){
@@ -586,31 +590,56 @@ prefs_themes_sort(PurpleTheme *theme)
 		if (pixbuf != NULL)
 			gdk_pixbuf_unref(pixbuf);
 
-		if (pref && strlen(pref) && !strcmp(purple_theme_get_name(theme), pref))
+		if (g_str_equal(purple_theme_get_name(theme), pref))
 			prefs_sound_iter = iter;
+
+	} else if (PIDGIN_IS_BLIST_THEME(theme)){
+
+		pref = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme");
+
+		image_full = purple_theme_get_image_full(theme);
+		if (image_full != NULL){
+			pixbuf = gdk_pixbuf_new_from_file(image_full, NULL);
+			g_free(image_full);
+		}
+		else pixbuf = NULL; 
+
+		gtk_list_store_append (prefs_blist_themes, &iter);
+		gtk_list_store_set (prefs_blist_themes, &iter, 0, pixbuf, 1, purple_theme_get_name(theme), 2, theme, -1);
+
+		if (pixbuf != NULL)
+			gdk_pixbuf_unref(pixbuf);
+
+		if (g_str_equal(purple_theme_get_name(theme), pref))
+			prefs_blist_iter = iter;
 
 	}
 }
 
 /* init all the theme variables so that the themes can be sorted later and used by pref pages */
 static void
-prefs_themes_init(void)
+prefs_themes_init()
 {
 	GdkPixbuf *pixbuf = NULL;
 	gchar *filename;
-
-	/* sound themes */
-	prefs_sound_themes = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
 	filename = g_build_filename(DATADIR, "icons", "hicolor", "16x16", "apps", "pidgin.png", NULL);
 	pixbuf= gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
-	gtk_list_store_append (prefs_sound_themes, &prefs_sound_iter);
+	/* sound themes */
+	prefs_sound_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
-	gtk_list_store_set (prefs_sound_themes, &prefs_sound_iter, 0, pixbuf, 1, _("(Default)"), 2, NULL, -1);
+	gtk_list_store_append(prefs_sound_themes, &prefs_sound_iter);
+	gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 0, pixbuf, 1, _("(Default)"), 2, NULL, -1);
 
-	gdk_pixbuf_unref (pixbuf);
+	/* blist themes */
+	prefs_blist_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, PIDGIN_TYPE_BLIST_THEME);
+
+	gtk_list_store_append(prefs_blist_themes, &prefs_blist_iter);
+	gtk_list_store_set(prefs_blist_themes, &prefs_blist_iter, 0, pixbuf, 1, _("(Default)"), 2, NULL, -1);
+
+	gdk_pixbuf_unref(pixbuf);
 }
 
 /* sets the current sound theme */
@@ -628,7 +657,7 @@ prefs_set_sound_theme(GtkComboBox *combo_box, gpointer user_data)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &prefs_sound_iter, 1, &theme_name, -1);
 
-	if (strcmp(theme_name, "(Default)") == 0){
+	if (g_str_equal(theme_name, "(Default)")){
 		g_free(theme_name);
 		theme_name = g_strdup("");
 	}
@@ -1023,6 +1052,21 @@ keyboard_shortcuts(GtkWidget *page)
 	gtk_box_pack_start(GTK_BOX(vbox), checkbox, FALSE, FALSE, 0);
 }
 
+/* sets the current buddy list theme */
+static void
+prefs_set_blist_theme(GtkComboBox *combo_box, gpointer user_data)
+{
+	PidginBlistTheme *theme;
+	
+	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &prefs_blist_iter));
+	gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &prefs_blist_iter, 1, &theme, -1);
+
+	pidgin_blist_set_theme(theme);
+
+	g_object_unref(theme);
+}
+
+
 static GtkWidget *
 interface_page(void)
 {
@@ -1030,6 +1074,8 @@ interface_page(void)
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *label;
+	GtkWidget *combo_box;
+	GtkCellRenderer *cell_rend;
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
@@ -1038,6 +1084,23 @@ interface_page(void)
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
+	/* Buddy List Themes */
+	vbox = pidgin_make_frame(ret, _("Buddy List Theme"));
+	combo_box = gtk_combo_box_new_with_model(GTK_TREE_MODEL (prefs_blist_themes));
+	gtk_box_pack_start (GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
+
+	cell_rend = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "pixbuf", 0, NULL);
+	
+	cell_rend = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 1, NULL);
+
+	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &prefs_blist_iter);
+	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_blist_theme, NULL);
+
+	/* System Tray */	
 	vbox = pidgin_make_frame(ret, _("System Tray Icon"));
 	label = pidgin_prefs_dropdown(vbox, _("_Show system tray icon:"), PURPLE_PREF_STRING,
 					PIDGIN_PREFS_ROOT "/docklet/show",

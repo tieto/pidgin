@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PIDGIN_BUDDY_LIST_THEME_LOADER_H_
-#define _PIDGIN_BUDDY_LIST_THEME_LOADER_H_
+#ifndef _PIDGIN_BLIST_THEME_LOADER_H_
+#define _PIDGIN_BLIST_THEME_LOADER_H_
 
 #include <glib.h>
 #include <glib-object.h>
@@ -34,24 +34,24 @@
  * A pidgin buddy list theme loader. extends PurpleThemeLoader (theme-loader.h)
  * This is a class designed to build sound themes
  *
- * PidginBuddyListThemeLoader is a GObject.
+ * PidginBlistThemeLoader is a GObject.
  */
-typedef struct _PidginBuddyListThemeLoader        PidginBuddyListThemeLoader;
-typedef struct _PidginBuddyListThemeLoaderClass   PidginBuddyListThemeLoaderClass;
+typedef struct _PidginBlistThemeLoader        PidginBlistThemeLoader;
+typedef struct _PidginBlistThemeLoaderClass   PidginBlistThemeLoaderClass;
 
-#define PIDGIN_TYPE_BUDDY_LIST_THEME_LOADER			  (pidgin_buddy_list_theme_loader_get_type ())
-#define PIDGIN_BUDDY_LIST_THEME_LOADER(obj)			  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_BUDDY_LIST_THEME_LOADER, PidginBuddyListThemeLoader))
-#define PIDGIN_BUDDY_LIST_THEME_LOADER_CLASS(klass)		  (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_BUDDY_LIST_THEME_LOADER, PidginBuddyListThemeLoaderClass))
-#define PIDGIN_IS_BUDDY_LIST_THEME_LOADER(obj)	  	  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_BUDDY_LIST_THEME_LOADER))
-#define PIDGIN_IS_BUDDY_LIST_THEME_LOADER_CLASS(klass) 	  (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_BUDDY_LIST_THEME_LOADER))
-#define PIDGIN_BUDDY_LIST_THEME_LOADER_GET_CLASS(obj)  	  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_BUDDY_LIST_THEME_LOADER, PidginBuddyListThemeLoaderClass))
+#define PIDGIN_TYPE_BLIST_THEME_LOADER			  (pidgin_blist_theme_loader_get_type ())
+#define PIDGIN_BLIST_THEME_LOADER(obj)			  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_BLIST_THEME_LOADER, PidginBlistThemeLoader))
+#define PIDGIN_BLIST_THEME_LOADER_CLASS(klass)		  (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_BLIST_THEME_LOADER, PidginBlistThemeLoaderClass))
+#define PIDGIN_IS_BLIST_THEME_LOADER(obj)	  	  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_BLIST_THEME_LOADER))
+#define PIDGIN_IS_BLIST_THEME_LOADER_CLASS(klass) 	  (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_BLIST_THEME_LOADER))
+#define PIDGIN_BLIST_THEME_LOADER_GET_CLASS(obj)  	  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_BLIST_THEME_LOADER, PidginBlistThemeLoaderClass))
 
-struct _PidginBuddyListThemeLoader
+struct _PidginBlistThemeLoader
 {
 	PurpleThemeLoader parent;
 };
 
-struct _PidginBuddyListThemeLoaderClass
+struct _PidginBlistThemeLoaderClass
 {
 	PurpleThemeLoaderClass parent_class;
 };
@@ -65,7 +65,7 @@ G_BEGIN_DECLS
  * GObject foo.
  * @internal.
  */
-GType pidgin_buddy_list_theme_loader_get_type(void);
+GType pidgin_blist_theme_loader_get_type(void);
 
 G_END_DECLS
-#endif /* _PIDGIN_BUDDY_LIST_THEME_LOADER_H_ */
+#endif /* _PIDGIN_BLIST_THEME_LOADER_H_ */
