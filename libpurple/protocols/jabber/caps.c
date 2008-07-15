@@ -201,27 +201,27 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 	xmlnode *client = xmlnode_new_child(root,"client");
 	GList *iter;
 
-	xmlnode_set_attrib(client,"node",clientinfo->node);
-	xmlnode_set_attrib(client,"ver",clientinfo->ver);
-	xmlnode_set_attrib(client,"hash",clientinfo->hash);
+	xmlnode_set_attrib(client,"node",g_strdup(clientinfo->node));
+	xmlnode_set_attrib(client,"ver",g_strdup(clientinfo->ver));
+	xmlnode_set_attrib(client,"hash",g_strdup(clientinfo->hash));
 	for(iter = props->identities; iter; iter = g_list_next(iter)) {
 		JabberCapsIdentity *id = iter->data;
 		xmlnode *identity = xmlnode_new_child(client, "identity");
-		xmlnode_set_attrib(identity, "category", id->category);
-		xmlnode_set_attrib(identity, "type", id->type);
+		xmlnode_set_attrib(identity, "category", g_strdup(id->category));
+		xmlnode_set_attrib(identity, "type", g_strdup(id->type));
 		if (id->name)
-			xmlnode_set_attrib(identity, "name", id->name);
+			xmlnode_set_attrib(identity, "name", g_strdup(id->name));
 	}
 
 	for(iter = props->features; iter; iter = g_list_next(iter)) {
 		const char *feat = iter->data;
 		xmlnode *feature = xmlnode_new_child(client, "feature");
-		xmlnode_set_attrib(feature, "var", feat);
+		xmlnode_set_attrib(feature, "var", g_strdup(feat));
 	}
 	
 	for(iter = props->forms; iter; iter = g_list_next(iter)) {
 		xmlnode *xdata = iter->data;
-		xmlnode_insert_child(client, xdata);
+		xmlnode_insert_child(client, xmlnode_copy(xdata));
 	}
 }
 
@@ -529,9 +529,9 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 	userdata->ver = g_strdup(ver);
 	userdata->hash = g_strdup(hash);
 
-	key->node = (char *)node;
-	key->ver = (char *)ver;
-	key->hash = (char*)hash;
+	key->node = g_strdup(node);
+	key->ver = g_strdup(ver);
+	key->hash = g_strdup(hash);
 	
 	client = g_hash_table_lookup(capstable, key);
 
