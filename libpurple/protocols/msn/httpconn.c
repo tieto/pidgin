@@ -381,6 +381,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		else
 		{
 			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
+			servconn->payload_len = servconn->cmdproc->last_cmd->payload_len;
 		}
 	} while (servconn->connected && servconn->rx_len > 0);
 
