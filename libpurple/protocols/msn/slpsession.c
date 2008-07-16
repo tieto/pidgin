@@ -38,7 +38,6 @@ msn_slp_session_new(MsnSlpCall *slpcall)
 
 	slpsession->slpcall = slpcall;
 	slpsession->id = slpcall->session_id;
-	slpsession->call_id = slpcall->id;
 	slpsession->app_id = slpcall->app_id;
 
 	slpcall->slplink->slp_sessions =
@@ -51,9 +50,6 @@ void
 msn_slp_session_destroy(MsnSlpSession *slpsession)
 {
 	g_return_if_fail(slpsession != NULL);
-
-	if (slpsession->call_id != NULL)
-		g_free(slpsession->call_id);
 
 	slpsession->slpcall->slplink->slp_sessions =
 		g_list_remove(slpsession->slpcall->slplink->slp_sessions, slpsession);
