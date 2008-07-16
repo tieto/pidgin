@@ -274,22 +274,27 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 	char *oim_base64;
 	char *c;
 	int len;
+	size_t base64_len;
 
 	purple_debug_info("msn", "Encoding OIM Message...\n");
 	len = strlen(body);
 	c = oim_base64 = purple_base64_encode((const guchar *)body, len);
+	base64_len = strlen(oim_base64);
 	purple_debug_info("msn", "Encoded base64 body:{%s}\n", oim_base64);
 
 	oim_body = g_string_new(NULL);
 	g_string_printf(oim_body, MSN_OIM_MSG_TEMPLATE,
-	                oim->run_id, oim->send_seq);
+		oim->run_id, oim->send_seq, "");
 
-	len = ((len / 3) + 1) * 4 - 76;
-	while ((c - oim_base64) < len) {
-		g_string_append_len(oim_body, c, 76);
+#define OIM_LINE_LEN 76
+	while (base64_len > OIM_LINE_LEN) {
+		g_string_append_len(oim_body, c, OIM_LINE_LEN);
 		g_string_append_c(oim_body, '\n');
-		c += 76;
+		c += OIM_LINE_LEN;
+		base64_len -= OIM_LINE_LEN;
 	}
+#undef OIM_LINE_LEN
+
 	g_string_append(oim_body, c);
 
 	g_free(oim_base64);
