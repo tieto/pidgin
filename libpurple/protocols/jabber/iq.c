@@ -405,7 +405,9 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
 	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
 	jabber_iq_register_handler("urn:xmpp:ping", urn_xmpp_ping_parse);
+#ifdef USE_VV
 	jabber_iq_register_handler("urn:xmpp:tmp:jingle", jabber_jingle_session_parse);
+#endif
 }
 
 void jabber_iq_uninit(void)
