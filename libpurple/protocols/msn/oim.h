@@ -99,8 +99,7 @@
 	"Content-Transfer-Encoding: base64\n"\
 	"X-OIM-Message-Type: OfflineMessage\n"\
 	"X-OIM-Run-Id: {%s}\n"\
-	"X-OIM-Sequence-Num: %d\n\n"\
-	"%s"
+	"X-OIM-Sequence-Num: %d\n\n"
 
 #define MSN_OIM_SEND_HOST	"ows.messenger.msn.com"
 #define MSN_OIM_SEND_URL	"/OimWS/oim.asmx"

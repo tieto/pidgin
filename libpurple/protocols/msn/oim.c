@@ -284,7 +284,7 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 
 	oim_body = g_string_new(NULL);
 	g_string_printf(oim_body, MSN_OIM_MSG_TEMPLATE,
-		oim->run_id, oim->send_seq, "");
+		oim->run_id, oim->send_seq);
 
 #define OIM_LINE_LEN 76
 	while (base64_len > OIM_LINE_LEN) {
