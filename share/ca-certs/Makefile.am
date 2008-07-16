@@ -1,4 +1,6 @@
 CERTIFICATES = \
+		CAcert_Root.pem \
+		CAcert_Class3.pem \
 		Equifax_Secure_CA.pem \
 		GTE_CyberTrust_Global_Root.pem \
 		Microsoft_Secure_Server_Authority.pem \

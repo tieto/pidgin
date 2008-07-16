@@ -293,12 +293,12 @@ static gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 	str = g_string_new("");
 	for (i = 0; i < bytes; i += 16) {
 		/* length label */
-		g_string_append_printf(str, "%04d: ", i);
+		g_string_append_printf(str, "%07x: ", i);
 
 		/* dump hex value */
 		for (j = 0; j < 16; j++)
 			if ((i + j) < bytes)
-				g_string_append_printf(str, " %02X", buffer[i + j]);
+				g_string_append_printf(str, " %02x", buffer[i + j]);
 			else
 				g_string_append(str, "   ");
 		g_string_append(str, "  ");

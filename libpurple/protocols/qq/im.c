@@ -384,8 +384,9 @@ static void _qq_process_recv_normal_im(guint8 *data, gint len, PurpleConnection 
 			im_unprocessed->length = len - bytes;
 			/* a simple process here, maybe more later */
 			purple_debug (PURPLE_DEBUG_WARNING, "QQ",
-					"Normal IM, unprocessed type [0x%04x], unknown [0x%02x], len %d\n",
-					common->normal_im_type, im_unprocessed->unknown, im_unprocessed->length);
+					"Normal IM, unprocessed type [0x%04x], len %d\n",
+					common->normal_im_type, im_unprocessed->length);
+			qq_show_packet ("QQ unk-im", im_unprocessed->unknown, im_unprocessed->length);
 			g_free (common->session_md5);
 			return;
 	}

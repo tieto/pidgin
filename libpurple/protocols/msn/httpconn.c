@@ -381,6 +381,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		else
 		{
 			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
+			servconn->payload_len = servconn->cmdproc->last_cmd->payload_len;
 		}
 	} while (servconn->connected && servconn->rx_len > 0);
 
@@ -588,7 +589,8 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t body_len)
 
 	if (httpconn->virgin)
 	{
-		host = "gateway.messenger.hotmail.com";
+		/* QuLogic: This doesn't look right to me, but it still seems to work */
+		host = MSN_HTTPCONN_SERVER;
 
 		/* The first time servconn->host is the host we should connect to. */
 		params = g_strdup_printf("Action=open&Server=%s&IP=%s",

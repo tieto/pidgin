@@ -22,6 +22,7 @@
 #include "silcpurple.h"
 #include "version.h"
 #include "wb.h"
+#include "core.h"
 
 extern SilcClientOperations ops;
 static PurplePlugin *silc_plugin = NULL;
@@ -669,13 +670,31 @@ silcpurple_close(PurpleConnection *gc)
 #if __SILC_TOOLKIT_VERSION >= SILC_VERSION(1,1,1)
 	SilcPurpleTask task;
 #endif /* __SILC_TOOLKIT_VERSION */
+	GHashTable *ui_info;
+	const char *ui_name = NULL, *ui_website = NULL;
+	char *quit_msg;
 
 	g_return_if_fail(sg != NULL);
 
+	ui_info = purple_core_get_ui_info();
+	
+	if(ui_info) {
+		ui_name = g_hash_table_lookup(ui_info, "name");
+		ui_website = g_hash_table_lookup(ui_info, "website");
+	}
+	
+	if(!ui_name || !ui_website) {
+		ui_name = "Pidgin";
+		ui_website = PURPLE_WEBSITE;
+	}
+	quit_msg = g_strdup_printf(_("Download %s: %s"),
+							   ui_name, ui_website);
+
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", "Download Pidgin: " PURPLE_WEBSITE,
+				 "QUIT", quit_msg,
 				 NULL);
+	g_free(quit_msg);
 
 	if (sg->conn)
 		silc_client_close_connection(sg->client, sg->conn);
@@ -1816,7 +1835,10 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 {
 	PurpleConnection *gc;
 	SilcPurple sg;
-
+	GHashTable *ui_info;
+	const char *ui_name = NULL, *ui_website = NULL;
+	char *quit_msg;
+								   
 	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
@@ -1827,8 +1849,23 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 	if (sg == NULL)
 		return PURPLE_CMD_RET_FAILED;
 
+	ui_info = purple_core_get_ui_info();
+	
+	if(ui_info) {
+		ui_name = g_hash_table_lookup(ui_info, "name");
+		ui_website = g_hash_table_lookup(ui_info, "website");
+	}
+	
+	if(!ui_name || !ui_website) {
+		ui_name = "Pidgin";
+		ui_website = PURPLE_WEBSITE;
+	}
+	quit_msg = g_strdup_printf(_("Download %s: %s"),
+							   ui_name, ui_website);
+
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", (args && args[0]) ? args[0] : "Download Pidgin: " PURPLE_WEBSITE, NULL);
+				 "QUIT", (args && args[0]) ? args[0] : quit_msg, NULL);
+	g_free(quit_msg);
 
 	return PURPLE_CMD_RET_OK;
 }

@@ -38,7 +38,6 @@ struct _MsnSlpSession
 	long id;
 
 	long app_id;
-	char *call_id;
 };
 
 MsnSlpSession *msn_slp_session_new(MsnSlpCall *slpcall);

@@ -641,7 +641,6 @@ initialize_default_account_values(void)
 	struct passwd *info;
 #endif
 	const char *fullname = NULL, *splitpoint, *tmp;
-	char hostname[255];
 	gchar *conv = NULL;
 
 #ifndef _WIN32
@@ -691,13 +690,7 @@ initialize_default_account_values(void)
 
 	/* Try to figure out a good host name to use */
 	/* TODO: Avoid 'localhost,' if possible */
-	if (gethostname(hostname, sizeof(hostname)) != 0) {
-		purple_debug_warning("bonjour", "Error when getting host name: %s.  Using \"localhost.\"\n",
-				g_strerror(errno));
-		strcpy(hostname, "localhost");
-	}
-	hostname[sizeof(hostname) - 1] = '\0';
-	default_hostname = g_strdup(hostname);
+	default_hostname = g_strdup(purple_get_host_name());
 }
 
 static void

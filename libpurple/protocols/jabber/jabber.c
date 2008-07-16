@@ -440,12 +440,17 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 			jabber_stream_init(js);
 	}
 
-	if(errno == EAGAIN)
+	if(len < 0 && errno == EAGAIN)
 		return;
-	else
+	else {
+		if (len == 0)
+			purple_debug_info("jabber", "Server closed the connection.\n");
+		else
+			purple_debug_info("jabber", "Disconnected: %s\n", g_strerror(errno));
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Read Error"));
+	}
 }
 
 static void
@@ -480,9 +485,13 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
-	} else if(errno == EAGAIN) {
+	} else if(len < 0 && errno == EAGAIN) {
 		return;
 	} else {
+		if (len == 0)
+			purple_debug_info("jabber", "Server closed the connection.\n");
+		else
+			purple_debug_info("jabber", "Disconnected: %s\n", g_strerror(errno));
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Read Error"));
