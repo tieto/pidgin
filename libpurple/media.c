@@ -945,6 +945,27 @@ purple_media_src_pad_added_cb(FsStream *stream, GstPad *srcpad,
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
 }
 
+static gchar *
+purple_media_get_stun_pref_ip()
+{
+	const gchar *stun_pref =
+			purple_prefs_get_string("/purple/network/stun_server");
+	struct hostent *host;
+
+	if ((host = gethostbyname(stun_pref)) && host->h_addr) {
+		gchar *stun_ip = g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
+				host->h_addr[0], host->h_addr[1],
+				host->h_addr[2], host->h_addr[3]);
+		purple_debug_info("media", "IP address for %s found: %s\n",
+				stun_pref, stun_ip);
+		return stun_ip;
+	} else {
+		purple_debug_info("media", "Unable to resolve %s IP address\n",
+				stun_pref);
+		return NULL;
+	}
+}
+
 static gboolean
 purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				 const gchar *who, FsMediaType type,
@@ -1025,10 +1046,31 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 	if (!stream) {
 		GError *err = NULL;
+		gchar *stun_ip = NULL;
 
-		stream = fs_session_new_stream(session->session, participant, 
-					       type_direction, transmitter, 0,
-					       NULL, &err);
+		if (!strcmp(transmitter, "rawudp") &&
+				(stun_ip = purple_media_get_stun_pref_ip())) {
+			GParameter param[2];
+			memset(param, 0, sizeof(GParameter) * 2);
+
+			param[0].name = "stun-ip";
+			g_value_init(&param[0].value, G_TYPE_STRING);
+			g_value_set_string(&param[0].value, stun_ip);
+
+			g_free(stun_ip);
+
+			param[1].name = "stun-timeout";
+			g_value_init(&param[1].value, G_TYPE_UINT);
+			g_value_set_uint(&param[1].value, 5);
+
+			stream = fs_session_new_stream(session->session,
+					participant, type_direction,
+					transmitter, 2, param, &err);
+		} else {
+			stream = fs_session_new_stream(session->session,
+					participant, type_direction,
+					transmitter, 0, NULL, &err);
+		}
 
 		if (err) {
 			purple_debug_error("media", "Error creating stream: %s\n",
