@@ -1220,7 +1220,7 @@ jabber_jingle_session_handle_session_accept(JingleSession *session, xmlnode *jin
 
 	if (!strcmp(action, "session-accept")) {
 		purple_media_got_accept(jabber_jingle_session_get_media(session));
-		purple_debug_info("jingle", "Got session-accept");
+		purple_debug_info("jingle", "Got session-accept\n");
 	}
 
 	jabber_iq_send(jabber_jingle_session_create_ack(session, jingle));
@@ -1245,7 +1245,7 @@ jabber_jingle_session_handle_session_initiate(JingleSession *session, xmlnode *j
 	GList *codecs = NULL;
 
 	if (!jingle) {
-		purple_debug_error("jingle", "Malformed request");
+		purple_debug_error("jingle", "Malformed request\n");
 		return;
 	}
 
