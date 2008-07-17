@@ -263,7 +263,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans = NULL;
 
 	if (cmd->trId)
-		trans = msn_history_find(cmdproc->history, cmd->trId);
+		cmd->trans = trans = msn_history_find(cmdproc->history, cmd->trId);
 
 	if (trans != NULL)
 		if (trans->timer) {
@@ -309,8 +309,6 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (cb == NULL && trans != NULL)
 	{
-		cmd->trans = trans;
-
 		if (trans->callbacks != NULL)
 			cb = g_hash_table_lookup(trans->callbacks, cmd->command);
 	}
