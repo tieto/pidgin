@@ -208,8 +208,8 @@ static gboolean append_field_value(PurpleNotifyUserInfo *user_info, const gchar 
 	return FALSE;
 }
 
-	static PurpleNotifyUserInfo *
-info_to_notify_user_info(const contact_info *info)
+static PurpleNotifyUserInfo *
+	info_to_notify_user_info(const contact_info *info)
 {
 	PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 	const gchar *intro;
@@ -826,7 +826,8 @@ static void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc
 	PurpleBuddy *b;
 	qq_data *qd;
 	qq_buddy *q_bud;
-	gchar *alias_utf8, *purple_name;
+	gchar *alias_utf8;
+	gchar *purple_name;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	qd = (qq_data *) gc->proto_data;
@@ -1009,7 +1010,7 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		bytes += qq_get16(&level, decr_buf + bytes);
 		bytes += qq_get16(&timeRemainder, decr_buf + bytes);
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", 
-				"Level packet entry:\nuid: %d\nonlineTime: %d\nlevel: %d\ntimeRemainder: %d\n", 
+				"Level uid: %d, onlineTime: %d, level: %d, timeRemainder: %d\n", 
 				uid, onlineTime, level, timeRemainder);
 		purple_name = uid_to_purple_name(uid);
 		b = purple_find_buddy(account, purple_name);

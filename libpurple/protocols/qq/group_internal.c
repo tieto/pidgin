@@ -230,9 +230,7 @@ void qq_set_pending_id(GSList **list, guint32 id, gboolean pending)
 		*list = g_slist_remove(*list, GINT_TO_POINTER(id));
 }
 
-/**
- * @brief Return the location of id in list, or NULL if not found (返回id在链表中的位置,没有找到则返回NULL)
- */
+/* Return the location of id in list, or NULL if not found */
 GSList *qq_get_pending_id(GSList *list, guint32 id)
 {
         return g_slist_find(list, GINT_TO_POINTER(id));
