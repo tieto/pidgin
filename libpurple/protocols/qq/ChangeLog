@@ -1,3 +1,11 @@
+2008.07.12 - ccpaging <ecc_hy(at)hotmail.com>
+	* Fixed: Always lost connection. Now send keep alive packet in every 30 seconds
+	* Minor fix for debug information
+	* Filter \r\n and replace with SPCAE in group notive
+	* Fixed a memory leak
+	* Tickets:
+	* Fixes #4024.
+
 2008.06.29 - csyfek <csyfek(at)gmail.com>
 	* Minor bug fix
 	* Add some doxygen syntax for preparing development documentation
