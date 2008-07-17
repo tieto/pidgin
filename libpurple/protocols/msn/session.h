@@ -118,6 +118,7 @@ struct _MsnSession
 		char *file;
 		char *client_ip;
 		int client_port;
+		gulong mail_timestamp;
 	} passport_info;
 
 	GHashTable *soap_table;
