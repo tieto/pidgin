@@ -135,20 +135,24 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 {
 	PurpleMedia *media;
 	FsConference *conference = FS_CONFERENCE(gst_element_factory_make(conference_type, NULL));
-	GstStateChangeReturn ret = gst_element_set_state(GST_ELEMENT(conference), GST_STATE_READY);
-
-	if (ret == GST_STATE_CHANGE_FAILURE) {
-		purple_conv_present_error(remote_user,
-					  purple_connection_get_account(gc),
-					  _("Error creating conference."));
-		return NULL;
-	}
+	GstStateChangeReturn ret;
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "screenname", remote_user,
 			     "connection", gc, 
 			     "farsight-conference", conference,
 			     NULL));
+
+	ret = gst_element_set_state(purple_media_get_pipeline(media), GST_STATE_PLAYING);
+
+	if (ret == GST_STATE_CHANGE_FAILURE) {
+		purple_conv_present_error(remote_user,
+					  purple_connection_get_account(gc),
+					  _("Error creating conference."));
+		g_object_unref(media);
+		return NULL;
+	}
+
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
 	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0, media);
 	return media;

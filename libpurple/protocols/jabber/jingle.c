@@ -819,8 +819,7 @@ jabber_jingle_session_send_session_accept(JingleSession *session)
 	if (purple_media_candidates_prepared(media, remote_jid)) {
 		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
 
-		purple_debug_info("jingle", "Sent session accept, starting stream\n");
-		gst_element_set_state(purple_media_get_pipeline(session->media), GST_STATE_PLAYING);
+		purple_debug_info("jingle", "Sent session accept.\n");
 		jabber_jingle_session_set_state(session, ACTIVE);
 	} else
 		jabber_jingle_session_set_state(session, ACCEPTED);
@@ -922,9 +921,7 @@ jabber_jingle_session_candidate_pair_established_cb(PurpleMedia *media,
 				jabber_jingle_session_get_remote_jid(session))) {
 		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
 		
-		purple_debug_info("jingle", "Sent session accept, starting stream\n");
-		gst_element_set_state(purple_media_get_pipeline(session->media),
-				      GST_STATE_PLAYING);
+		purple_debug_info("jingle", "Sent session accept.\n");
 		jabber_jingle_session_set_state(session, ACTIVE);
 	}
 }
@@ -1223,9 +1220,7 @@ jabber_jingle_session_handle_session_accept(JingleSession *session, xmlnode *jin
 
 	if (!strcmp(action, "session-accept")) {
 		purple_media_got_accept(jabber_jingle_session_get_media(session));
-		purple_debug_info("jingle", "Got session-accept, starting stream\n");
-		gst_element_set_state(purple_media_get_pipeline(session->media),
-				      GST_STATE_PLAYING);
+		purple_debug_info("jingle", "Got session-accept");
 	}
 
 	jabber_iq_send(jabber_jingle_session_create_ack(session, jingle));
@@ -1332,8 +1327,6 @@ jabber_jingle_session_handle_session_terminate(JingleSession *session, xmlnode *
 
 	/* maybe we should look at the reasoncode to determine if it was
 	   a hangup or a reject, and call different callbacks to purple_media */
-	gst_element_set_state(purple_media_get_pipeline(session->media), GST_STATE_NULL);
-
 	purple_media_got_hangup(jabber_jingle_session_get_media(session));
 	jabber_iq_send(jabber_jingle_session_create_ack(session, jingle));
 	jabber_jingle_session_destroy(session);

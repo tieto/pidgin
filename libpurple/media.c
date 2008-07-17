@@ -219,9 +219,21 @@ static void
 purple_media_finalize (GObject *media)
 {
 	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
+	GList *sessions = g_hash_table_get_values(priv->sessions);
 	purple_debug_info("media","purple_media_finalize\n");
 
 	g_free(priv->name);
+
+	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+		PurpleMediaSession *session = sessions->data;
+		GList *streams = g_hash_table_get_values(session->streams);
+
+		for (; streams; streams = g_list_delete_link(streams, streams)) {
+			g_object_unref(streams->data);
+		}
+
+		g_object_unref(session->session);
+	}
 
 	if (priv->pipeline) {
 		gst_element_set_state(priv->pipeline, GST_STATE_NULL);
@@ -928,11 +940,9 @@ static void
 purple_media_src_pad_added_cb(FsStream *stream, GstPad *srcpad,
 			      FsCodec *codec, PurpleMediaSession *session)
 {
-	GstElement *pipeline = purple_media_get_pipeline(session->media);
 	GstPad *sinkpad = gst_element_get_static_pad(session->sink, "ghostsink");
 	purple_debug_info("media", "connecting new src pad: %s\n", 
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
-	gst_element_set_state(pipeline, GST_STATE_PLAYING);
 }
 
 static gboolean

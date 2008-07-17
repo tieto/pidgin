@@ -288,15 +288,12 @@ create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
-	GstElement *element = purple_media_get_pipeline(media);
-
 	GstElement *audiosendbin = NULL, *audiosendlevel = NULL;
 	GstElement *audiorecvbin = NULL, *audiorecvlevel = NULL;
 	GstElement *videosendbin = NULL;
 	GstElement *videorecvbin = NULL;
 
 	GList *sessions = purple_media_get_session_names(media);
-	GstBus *bus;
 
 	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
 		if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_AUDIO) {
@@ -306,6 +303,9 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				purple_media_audio_init_recv(&audiorecvbin, &audiorecvlevel);
 			purple_media_set_src(media, sessions->data, audiosendbin);
 			purple_media_set_sink(media, sessions->data, audiorecvbin);
+
+			gst_element_set_state(audiosendbin, GST_STATE_READY);
+			gst_element_set_state(audiorecvbin, GST_STATE_READY);
 		} else if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_VIDEO) {
 			if (!videosendbin)
 				purple_media_video_init_src(&videosendbin);
@@ -313,6 +313,9 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				purple_media_video_init_recv(&videorecvbin);
 			purple_media_set_src(media, sessions->data, videosendbin);
 			purple_media_set_sink(media, sessions->data, videorecvbin);
+
+			gst_element_set_state(videosendbin, GST_STATE_READY);
+			gst_element_set_state(videorecvbin, GST_STATE_READY);
 		}
 	}
 
@@ -321,14 +324,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				       "recv-level", audiorecvlevel,
 				       NULL);
 	}
-
-	bus = gst_pipeline_get_bus(GST_PIPELINE(element));
-	gst_bus_add_signal_watch(GST_BUS(bus));
-	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
-			 "message", G_CALLBACK(level_message_cb), gtkmedia);
-	if (videorecvbin || videosendbin)
-		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
-	gst_object_unref(bus);
 }
 
 static void
@@ -344,10 +339,12 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	GtkWidget *send_widget = NULL, *recv_widget = NULL;
 
+	GstElement *pipeline = purple_media_get_pipeline(media);
 	GstElement *audiosendbin = NULL;
 	GstElement *audiorecvbin = NULL;
 	GstElement *videosendbin = NULL;
 	GstElement *videorecvbin = NULL;
+	GstBus *bus;
 
 	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
 	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
@@ -392,6 +389,9 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		gtkmedia->priv->local_video = local_video;
 		gtkmedia->priv->remote_video = remote_video;
+
+		gst_element_set_state(videosendbin, GST_STATE_PLAYING);
+		gst_element_set_state(videorecvbin, GST_STATE_PLAYING);
 	}
 
 	if (audiorecvbin || audiosendbin) {
@@ -415,7 +415,20 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		gtk_widget_show(gtkmedia->priv->send_progress);
 		gtk_widget_show(gtkmedia->priv->recv_progress);
+
+		gst_element_set_state(audiosendbin, GST_STATE_PLAYING);
+		gst_element_set_state(audiorecvbin, GST_STATE_PLAYING);
 	}
+
+	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+	if (audiorecvbin || audiosendbin) {
+		gst_bus_add_signal_watch(GST_BUS(bus));
+		g_signal_connect(G_OBJECT(bus), "message",
+				G_CALLBACK(level_message_cb), gtkmedia);
+	}
+	if (videorecvbin || videosendbin)
+		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
+	gst_object_unref(bus);
 }
 
 static void
