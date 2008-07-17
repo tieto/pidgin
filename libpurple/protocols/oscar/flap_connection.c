@@ -304,7 +304,7 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		if (conn->type == SNAC_FAMILY_CHAT)
 		{
 			oscar_chat_destroy(conn->new_conn_data);
-			conn->connect_data = NULL;
+			conn->new_conn_data = NULL;
 		}
 	}
 
