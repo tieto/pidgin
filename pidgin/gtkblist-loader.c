@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include "xmlnode.h"
+
 #include "gtkblist-loader.h"
 #include "gtkblist-theme.h"
 
@@ -31,7 +32,7 @@
  * Globals
  *****************************************************************************/
 /*****************************************************************************
- * Sound Theme Builder                                                      
+ * Buddy List Theme Builder                                                      
  *****************************************************************************/
 
 static gpointer
@@ -39,21 +40,12 @@ pidgin_blist_loader_build(const gchar *dir)
 {
 	xmlnode *root_node, *sub_node, *sub_sub_node;
 	gchar *filename, *filename_full, *data;
-	const gchar *icon_theme;
-	GdkColor *bgcolor = NULL, 
-		 *expanded_bgcolor = NULL,
-		 *minimized_bgcolor = NULL, 
-		 *buddy_bgcolor1 = NULL,
-		 *buddy_bgcolor2 = NULL;
-	font_color_pair *expanded = g_new0(font_color_pair, 1), 
-			*minimized = g_new0(font_color_pair, 1), 
-			*online = g_new0(font_color_pair, 1),
-			*away = g_new0(font_color_pair, 1),
-			*offline = g_new0(font_color_pair, 1), 
-			*message = g_new0(font_color_pair, 1), 
-			*status = g_new0(font_color_pair, 1);
+	const gchar *icon_theme = NULL, *tmp;
+	gboolean sucess = TRUE;
+	GdkColor *bgcolor, *expanded_bgcolor, *collapsed_bgcolor, *buddy_bgcolor1, *buddy_bgcolor2;
+	FontColorPair *expanded, *collapsed, *online, *away, *offline, *message, *status;
 	gdouble transparency;
-	blist_layout *layout = g_new0(blist_layout, 1);
+	PidginBlistLayout *layout = g_new0(PidginBlistLayout, 1);
 	GDir *gdir;
 	PidginBlistTheme *theme;
 
@@ -64,85 +56,180 @@ pidgin_blist_loader_build(const gchar *dir)
 	while ((filename = g_strdup(g_dir_read_name(gdir))) != NULL && ! g_str_has_suffix(filename, ".xml"))
 		g_free(filename);
 	
-	g_return_val_if_fail(filename != NULL, NULL);
+	if (filename == NULL){
+		g_dir_close(gdir);
+		return NULL;
+	}
 	
 	/* Build the xml tree */
 	filename_full = g_build_filename(dir, filename, NULL);
 
-	root_node = xmlnode_from_file(dir, filename, "sound themes", "sound-loader");
+	root_node = xmlnode_from_file(dir, filename, "blist themes", "blist-loader");
 	g_return_val_if_fail(root_node != NULL, NULL);
+
+	/* colors */
+	bgcolor = g_new0(GdkColor, 1);
+	expanded_bgcolor = g_new0(GdkColor, 1);
+	collapsed_bgcolor = g_new0(GdkColor, 1); 
+	buddy_bgcolor1 = g_new0(GdkColor, 1);
+	buddy_bgcolor2 = g_new0(GdkColor, 1);
+	
+	/* font color pairs */
+	expanded = g_new0(FontColorPair, 1);
+	expanded->color = g_new0(GdkColor, 1);
+	collapsed = g_new0(FontColorPair, 1);
+	collapsed->color = g_new0(GdkColor, 1);
+	online = g_new0(FontColorPair, 1);
+	online->color = g_new0(GdkColor, 1);
+	away = g_new0(FontColorPair, 1);
+	away->color = g_new0(GdkColor, 1);
+	offline = g_new0(FontColorPair, 1);
+	offline->color = g_new0(GdkColor, 1); 
+	message = g_new0(FontColorPair, 1);
+	message->color = g_new0(GdkColor, 1); 
+	status = g_new0(FontColorPair, 1);
+	status->color = g_new0(GdkColor, 1);
 
 	/* Parse the tree */	
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
 
 	/* <icon_theme> */
-	sub_node = xmlnode_get_child(root_node, "icon_theme");
-	icon_theme = xmlnode_get_attrib(sub_node, "name");
+	if ((sucess = (sub_node = xmlnode_get_child(root_node, "icon_theme")) != NULL))
+		icon_theme = xmlnode_get_attrib(sub_node, "name");
 
 	/* <blist> */
-	sub_node = xmlnode_get_child(root_node, "blist");
-	transparency = atof(xmlnode_get_attrib(sub_node, "transparency"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_node, "color"), bgcolor))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), bgcolor, FALSE, TRUE);
-	
+	if ((sucess = sucess && (sub_node = xmlnode_get_child(root_node, "blist")) != NULL)) {
+		transparency = atof(xmlnode_get_attrib(sub_node, "transparency"));
+
+		if ((tmp = xmlnode_get_attrib(sub_node, "color")) != NULL && gdk_color_parse(tmp, bgcolor))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), bgcolor, FALSE, TRUE);
+		else {
+			g_free(bgcolor);
+			bgcolor = NULL;
+		}
+	}
 
 	/* <groups> */
-	sub_node = xmlnode_get_child(root_node, "groups");
-	sub_sub_node = xmlnode_get_child(root_node, "expanded");
-	expanded->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), expanded->color))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), expanded->color, FALSE, TRUE);
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "background"), expanded_bgcolor))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), expanded_bgcolor, FALSE, TRUE);
+	if ((sucess = sucess && (sub_node = xmlnode_get_child(root_node, "groups")) != NULL
+		     && (sub_sub_node = xmlnode_get_child(sub_node, "expanded")) != NULL)) {
 
-	sub_sub_node = xmlnode_get_child(root_node, "minimized");
-	minimized->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), minimized->color))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), minimized->color, FALSE, TRUE);
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "background"), minimized_bgcolor))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), minimized_bgcolor, FALSE, TRUE);
+		expanded->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+
+		if ((tmp = xmlnode_get_attrib(sub_sub_node, "color")) != NULL && gdk_color_parse(tmp, expanded->color))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), expanded->color, FALSE, TRUE);
+		else {
+			g_free(expanded->color);
+			expanded->color = NULL;
+		}
+	
+
+		if ((tmp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(tmp, expanded_bgcolor))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), expanded_bgcolor, FALSE, TRUE);
+		else {
+			g_free(expanded_bgcolor);
+			expanded_bgcolor = NULL;
+		}
+	}
+
+	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL)) {
+		collapsed->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+
+		if((tmp = xmlnode_get_attrib(sub_sub_node, "color")) != NULL && gdk_color_parse(tmp, collapsed->color))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), collapsed->color, FALSE, TRUE);
+		else {
+			g_free(collapsed->color);
+			collapsed->color = NULL;
+		}
+		if ((tmp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(tmp, collapsed_bgcolor))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), collapsed_bgcolor, FALSE, TRUE);
+		else {
+			g_free(collapsed_bgcolor);
+			collapsed_bgcolor = NULL;
+		}
+	}
 
 	/* <buddys> */
-	sub_node = xmlnode_get_child(root_node, "buddys");
-	sub_sub_node = xmlnode_get_child(root_node, "placement");
-	layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "status_icon"));
-	layout->text = atoi(xmlnode_get_attrib(sub_sub_node, "name"));
-	layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "buddy_icon"));
-	layout->protocol_icon = atoi(xmlnode_get_attrib(sub_sub_node, "protocol_icon"));
-	layout->emblem = atoi(xmlnode_get_attrib(sub_sub_node, "emblem"));
-	layout->show_status = (gboolean) atoi(xmlnode_get_attrib(sub_sub_node, "status_icon"));
+	if ((sucess = sucess && (sub_node = xmlnode_get_child(root_node, "buddys")) != NULL &&
+		     (sub_sub_node = xmlnode_get_child(sub_node, "placement")) != NULL)) { 
 
-	sub_sub_node = xmlnode_get_child(root_node, "background");
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color1"), buddy_bgcolor1))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), buddy_bgcolor1, FALSE, TRUE);
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color2"), buddy_bgcolor2))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), buddy_bgcolor2, FALSE, TRUE);
+		layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "status_icon"));
+		layout->text = atoi(xmlnode_get_attrib(sub_sub_node, "name"));
+		layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "buddy_icon"));
+		layout->protocol_icon = atoi(xmlnode_get_attrib(sub_sub_node, "protocol_icon"));
+		layout->emblem = atoi(xmlnode_get_attrib(sub_sub_node, "emblem"));
+		layout->show_status = atoi(xmlnode_get_attrib(sub_sub_node, "status_icon")) != 0;
+	}
 
-	sub_sub_node = xmlnode_get_child(root_node, "online_text");
-	online->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), (online->color)))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), (online->color), FALSE, TRUE);
+	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "background")) != NULL)) {
 
-	sub_sub_node = xmlnode_get_child(root_node, "away_text");
-	away->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), away->color))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), away->color, FALSE, TRUE);
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color1"), buddy_bgcolor1))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), buddy_bgcolor1, FALSE, TRUE);
+		else {
+			g_free(buddy_bgcolor1);
+			buddy_bgcolor1 = NULL;
+		}
+
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color2"), buddy_bgcolor2))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), buddy_bgcolor2, FALSE, TRUE);
+		else {
+			g_free(buddy_bgcolor2);
+			buddy_bgcolor2 = NULL;
+		}
+	}
+
+	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "online_text")) != NULL)) {
+		online->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), online->color))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), online->color, FALSE, TRUE);
+		else {
+			g_free(online->color);
+			online->color = NULL;
+		}
+	}
+
+	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "away_text")) != NULL)) {
+		away->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), away->color))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), away->color, FALSE, TRUE);
+		else {
+			g_free(away->color);
+			away->color = NULL;
+		}
+	}
+
+	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "offline_text")) != NULL)) {
+		offline->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), offline->color))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), offline->color, FALSE, TRUE);
+		else {
+			g_free(offline->color);
+			online->color = NULL;
+		}
+	}
 	
-	sub_sub_node = xmlnode_get_child(root_node, "offline_text");
-	offline->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), offline->color))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), offline->color, FALSE, TRUE);
+	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "message_text")) != NULL)) {
+		message->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), message->color))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), message->color, FALSE, TRUE);
+		else {
+			g_free(message->color);
+			message->color = NULL;
+		}
+	}
 	
-	sub_sub_node = xmlnode_get_child(root_node, "message_text");
-	message->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), message->color))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), message->color, FALSE, TRUE);
-	
-	sub_sub_node = xmlnode_get_child(root_node, "status_text");
-	status->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-	if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), status->color))
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), status->color, FALSE, TRUE);
+	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "status_text")) != NULL)) {
+		status->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), status->color))
+			gdk_colormap_alloc_color(gdk_colormap_get_system(), status->color, FALSE, TRUE);
+		else {
+			g_free(status->color);
+			status->color = NULL;
+		}
+	}
+
+	/* name is required for theme manager */
+	sucess = sucess && xmlnode_get_attrib(root_node, "name") != NULL;
 
 	/* the new theme */
 	theme = g_object_new(PIDGIN_TYPE_BLIST_THEME,
@@ -158,8 +245,8 @@ pidgin_blist_loader_build(const gchar *dir)
 			    "layout", layout,
 			    "expanded-color", expanded_bgcolor,
 			    "expanded-text", expanded,
-			    "minimized-color", minimized_bgcolor,
-			    "minimized-text", minimized,
+			    "collapsed-color", collapsed_bgcolor,
+			    "collapsed-text", collapsed,
 			    "buddy-bgcolor1", buddy_bgcolor1,
 			    "buddy-bgcolor2", buddy_bgcolor2,
 			    "online", online,
@@ -167,9 +254,14 @@ pidgin_blist_loader_build(const gchar *dir)
 			    "offline", offline,
 			    "message", message,
 			    "status", status, NULL);
+
+	/* malformed xml file */
+	if (!sucess) {
+		g_object_unref(theme);
+		theme = NULL;
+	}
 	
 	xmlnode_free(sub_node);
-
 	xmlnode_free(root_node);	
 	g_dir_close(gdir);
 	g_free(filename_full);

@@ -5980,7 +5980,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 		GtkTreeIter iter;
 		GtkTreePath *path;
 		gboolean expanded;
-		GdkColor *bgcolor;
+		GdkColor bgcolor;
 		GdkPixbuf *avatar = NULL;
 		PidginBlistTheme *theme;
 
@@ -5989,11 +5989,15 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 
 		theme = pidgin_blist_get_theme();
 
-		if(theme == NULL)
+		/*if(theme == NULL){
 			bgcolor = &(gtkblist->treeview->style->bg[GTK_STATE_ACTIVE]);
+	
+		}
 		else if(purple_blist_node_get_bool(gnode, "collapsed"))
 			bgcolor = (pidgin_blist_theme_get_collapsed_text_info(theme))->color;
-		else bgcolor = (pidgin_blist_theme_get_expanded_text_info(theme))->color;
+		else bgcolor = (pidgin_blist_theme_get_expanded_text_info(theme))->color;*/
+
+		g_print("\n\n\%s\n\n", gdk_color_to_string(&bgcolor));
 
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
@@ -7232,6 +7236,8 @@ void pidgin_blist_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/height", 405); /* Golden ratio, baby */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay", 500);
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
+
+	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_BLIST_THEME_LOADER, "type", "blist", NULL));
 
 	/* Register our signals */
 	purple_signal_register(gtk_blist_handle, "gtkblist-hiding",
