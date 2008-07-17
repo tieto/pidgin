@@ -63,7 +63,7 @@ pidgin_mini_dialog_get_type (void)
 			sizeof (PidginMiniDialog),
 			0,      /* n_preallocs */
 			(GInstanceInitFunc) pidgin_mini_dialog_init,
-			NULL,
+			NULL /* value_table */
 		};
 		g_define_type_id = g_type_register_static (GTK_TYPE_VBOX,
 			"PidginMiniDialog", &g_define_type_info, 0);

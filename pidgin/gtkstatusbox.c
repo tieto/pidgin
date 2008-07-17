@@ -203,8 +203,8 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 	const PurpleStatusType *statustype = NULL;
 	const char *message;
 
-	statustype = purple_status_type_find_with_id((GList *)purple_account_get_status_types(account),
-	                                           (char *)purple_status_type_get_id(purple_status_get_type(newstatus)));
+	statustype = purple_status_type_find_with_id(purple_account_get_status_types(account),
+						     purple_status_type_get_id(purple_status_get_type(newstatus)));
 
 	for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
@@ -376,7 +376,7 @@ static gboolean
 icon_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, PidginStatusBox *box)
 {
 	gdk_window_set_cursor(widget->window, box->arrow_cursor);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon) ;
+	gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon);
 	return FALSE;
 }
 

@@ -242,6 +242,7 @@ char *jabber_get_next_id(JabberStream *js);
  */
 char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleConnectionError *reason);
 
+void jabber_features_uninit(void);
 void jabber_add_feature(const gchar *shortname, const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
 void jabber_remove_feature(const gchar *shortname);
 
@@ -266,6 +267,7 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy);
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
+void jabber_unregister_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
 
 #endif /* _PURPLE_JABBER_H_ */

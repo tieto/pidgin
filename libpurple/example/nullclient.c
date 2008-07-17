@@ -27,7 +27,12 @@
 
 #include <signal.h>
 #include <string.h>
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include "win32/win32dep.h"
+#endif
+
 
 #include "defines.h"
 
@@ -80,7 +85,11 @@ static guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInput
 	if (condition & PURPLE_INPUT_WRITE)
 		cond |= PURPLE_GLIB_WRITE_COND;
 
+#if defined _WIN32 && !defined WINPIDGIN_USE_GLIB_IO_CHANNEL
+	channel = wpurple_g_io_channel_win32_new_socket(fd);
+#else
 	channel = g_io_channel_unix_new(fd);
+#endif
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      purple_glib_io_invoke, closure, purple_glib_io_destroy);
 
@@ -253,12 +262,14 @@ int main(int argc, char *argv[])
 	PurpleSavedStatus *status;
 	char *res;
 
+#ifndef _WIN32
 	/* libpurple's built-in DNS resolution forks processes to perform
 	 * blocking lookups without blocking the main process.  It does not
 	 * handle SIGCHLD itself, so if the UI does not you quickly get an army
 	 * of zombie subprocesses marching around.
 	 */
 	signal(SIGCHLD, SIG_IGN);
+#endif
 
 	init_libpurple();
 
@@ -294,7 +305,8 @@ int main(int argc, char *argv[])
 	account = purple_account_new(name, prpl);
 
 	/* Get the password for the account */
-	password = getpass("Password: ");
+	//password = getpass("Password: ");
+	password = "";
 	purple_account_set_password(account, password);
 
 	/* It's necessary to enable the account first. */

@@ -22,7 +22,7 @@ CATALOGS = $(patsubst %.po,%.gmo,$(wildcard *.po))
 ##
 
 .po.gmo:
-	rm -f $@ && $(GMSGFMT) --statistics -o $@ $<
+	rm -f $@ && $(GMSGFMT) -c --statistics -o $@ $<
 
 ##
 ## TARGETS

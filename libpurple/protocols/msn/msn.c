@@ -1343,6 +1343,7 @@ fake_userlist_add_buddy(MsnUserList *userlist,
 
 	if (group_id >= 0)
 	{
+		/* This is wrong... user->group_ids contains g_strdup()'d data now */
 		user->group_ids = g_list_append(user->group_ids,
 										GINT_TO_POINTER(group_id));
 	}
