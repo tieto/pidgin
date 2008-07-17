@@ -113,11 +113,6 @@ void jabber_caps_init(void) {
 	jabber_caps_load();
 }
 
-void jabber_caps_uninit(void) {
-	g_hash_table_destroy(capstable);
-	capstable = NULL;
-}
-
 static void jabber_caps_load(void) {
 	xmlnode *capsdata = purple_util_read_xml_from_file(JABBER_CAPS_FILENAME, "XMPP capabilities cache");
 	xmlnode *client;

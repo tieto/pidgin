@@ -534,9 +534,6 @@ purple_connection_error_reason (PurpleConnection *gc,
 	if (gc->disconnect_timeout)
 		return;
 
-	purple_debug_info("connection", "Disconnecting connection %p with reason %s (%d)\n",
-					  gc, description, reason);
-
 	gc->wants_to_die = purple_connection_error_is_fatal (reason);
 
 	ops = purple_connections_get_ui_ops();

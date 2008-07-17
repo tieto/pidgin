@@ -148,14 +148,6 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 	gboolean unicode = FALSE;
 	char *message = NULL;
 
-	if (pkt->service == YAHOO_SERVICE_LOGON && pkt->status == -1) {
-		if (!purple_account_get_remember_password(account))
-			purple_account_set_password(account, NULL);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NAME_IN_USE,
-			_("System is busy, please try again later."));
-		return;
-	}
-
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);

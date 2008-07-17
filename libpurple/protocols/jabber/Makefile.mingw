@@ -125,7 +125,7 @@ endif
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
 $(TARGET).dll $(TARGET).dll.a: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 $(XMPP_TARGET).dll: $(TARGET).dll.a $(XMPP_OBJECTS)
 	$(CC) -shared $(XMPP_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(XMPP_TARGET).dll

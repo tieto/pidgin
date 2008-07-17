@@ -28,7 +28,7 @@
 /* #define MSN_DEBUG_SLPMSG 1 */
 /* #define MSN_DEBUG_HTTP 1 */
 
-#define MSN_DEBUG_SLP 1
+/* #define MSN_DEBUG_SLP 1 */
 /* #define MSN_DEBUG_SLP_VERBOSE 1 */
 /* #define MSN_DEBUG_SLP_FILES 1 */
 

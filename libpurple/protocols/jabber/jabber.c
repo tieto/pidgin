@@ -61,7 +61,6 @@
 
 static PurplePlugin *my_protocol = NULL;
 GList *jabber_features = NULL;
-static GSList *registered_commands = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 
@@ -1391,15 +1390,6 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	js->idle = idle ? time(NULL) - idle : idle;
 }
 
-void jabber_features_uninit(void) {
-	for(; jabber_features; jabber_features = g_list_delete_link(jabber_features, jabber_features)) {
-		JabberFeature *feat = (JabberFeature*)jabber_features->data;
-		g_free(feat->shortname);
-		g_free(feat->namespace);
-		g_free(feat);
-	}
-}
-
 void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {
 	JabberFeature *feat;
 
@@ -2348,126 +2338,88 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
-void jabber_unregister_commands(void) {
-	for(; registered_commands; registered_commands = g_slist_delete_link(registered_commands, registered_commands)) {
-		purple_cmd_unregister(GPOINTER_TO_INT(registered_commands->data));
-	}
-}
-
 void jabber_register_commands(void)
 {
-	PurpleCmdId cid;
-
-	cid = purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("config:  Configure a chat room."), NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("configure", "", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("configure", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("configure:  Configure a chat room."), NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("nick", "s", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("nick", "s", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_nick,
 	                  _("nick &lt;new nickname&gt;:  Change your nickname."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_part, _("part [room]:  Leave the room."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("register", "", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("register", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_register,
 	                  _("register:  Register with a chat room."), NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
 	/* XXX: there needs to be a core /topic cmd, methinks */
-	cid = purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_topic,
 	                  _("topic [new topic]:  View or change the topic."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("ban", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("ban", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_ban,
 	                  _("ban &lt;user&gt; [reason]:  Ban a user from the room."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_affiliate,
 	                  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("role", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("role", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_role,
 	                  _("role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's role in the room."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_invite,
 	                  _("invite &lt;user&gt; [message]:  Invite a user to the room."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_join,
 	                  _("join: &lt;room&gt; [password]:  Join a chat on this server."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_kick,
 	                  _("kick &lt;user&gt; [reason]:  Kick a user from the room."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_msg,
 	                  _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."),
 	                  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("ping", "w", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("ping", "w", PURPLE_CMD_P_PRPL,
 					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
 					  PURPLE_CMD_FLAG_PRPL_ONLY,
 					  "prpl-jabber", jabber_cmd_ping,
 					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
 					  NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
-	cid = purple_cmd_register("buzz", "s", PURPLE_CMD_P_PRPL,
+	purple_cmd_register("buzz", "s", PURPLE_CMD_P_PRPL,
 					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
-	if (cid > 0)
-		registered_commands = g_slist_prepend(registered_commands, GINT_TO_POINTER(cid));
 }
 
 void

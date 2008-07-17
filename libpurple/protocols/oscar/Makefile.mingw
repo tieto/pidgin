@@ -109,7 +109,7 @@ install: all $(DLL_INSTALL_DIR)
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
 $(TARGET).dll.a $(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 $(AIM_TARGET).dll: $(TARGET).dll.a $(AIM_OBJECTS)
 	$(CC) -shared $(AIM_OBJECTS) $(LIB_PATHS) $(LIBS) -loscar $(DLL_LD_FLAGS) -o $(AIM_TARGET).dll

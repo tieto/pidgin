@@ -235,19 +235,21 @@ msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 
 /*add group id to User object*/
 void
-msn_user_add_group_id(MsnUser *user, const char* group_id)
+msn_user_add_group_id(MsnUser *user, const char* id)
 {
 	MsnUserList *userlist;
 	PurpleAccount *account;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	const char *passport;
+	char *group_id;
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(group_id != NULL);
+	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_append(user->group_ids, g_strdup(group_id));
+	group_id = g_strdup(id);
+	user->group_ids = g_list_append(user->group_ids, group_id);
 
 	userlist = user->userlist;
 	account = userlist->session->account;
@@ -259,7 +261,7 @@ msn_user_add_group_id(MsnUser *user, const char* group_id)
 
 	g = purple_find_group(group_name);
 
-	if ((group_id == NULL) && (g == NULL))
+	if ((id == NULL) && (g == NULL))
 	{
 		g = purple_group_new(group_name);
 		purple_blist_add_group(g, NULL);

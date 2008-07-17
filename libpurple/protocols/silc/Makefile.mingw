@@ -79,7 +79,7 @@ install: all $(DLL_INSTALL_DIR) $(PURPLE_INSTALL_DIR)
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
 $(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--image-base,0x74000000 -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--image-base,0x64000000 -o $(TARGET).dll
 
 ##
 ## CLEAN RULES

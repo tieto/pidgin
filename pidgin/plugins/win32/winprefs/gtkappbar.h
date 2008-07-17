@@ -33,7 +33,7 @@ typedef struct {
 	/** The rectangle of the screen area used for docking */
 	RECT docked_rect;
 	/** The height of the window prior to docking */
-	int undocked_height;
+	UINT undocked_height;
 	/** The side of the screen to which the window is docked*/
 	UINT side;
 	/** Is the window currently docked? */

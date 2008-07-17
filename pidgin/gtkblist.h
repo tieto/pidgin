@@ -194,14 +194,11 @@ void pidgin_blist_update_columns(void);
 void pidgin_blist_update_refresh_timeout(void);
 
 /**
- * Returns the blist emblem.
- *
- * This may be an existing pixbuf that has been given an additional ref,
- * so it shouldn't be modified.
+ * Returns the blist emblem
  *
  * @param node   The node to return an emblem for
  *
- * @return  A GdkPixbuf for the emblem to show, or NULL
+ * @return  A newly created GdkPixbuf, or NULL
  */
 GdkPixbuf *
 pidgin_blist_get_emblem(PurpleBlistNode *node);

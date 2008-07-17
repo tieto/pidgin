@@ -89,8 +89,9 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 			const char *err_msg = get_win32_error_message(retv);
 
 			printf("Could not read reg key '%s' subkey '%s' value: '%s'.\nMessage: (%ld) %s\n",
-					(key == HKEY_LOCAL_MACHINE) ? "HKLM"
-					 : ((key == HKEY_CURRENT_USER) ? "HKCU" : "???"),
+					((key == HKEY_LOCAL_MACHINE) ? "HKLM" :
+					 (key == HKEY_CURRENT_USER) ? "HKCU" :
+					 "???"),
 					sub_key, val_name, retv, err_msg);
 		}
 		RegCloseKey(hkey);
@@ -215,13 +216,13 @@ static void portable_mode_dll_prep(const char *pidgin_dir) {
 
 	/* Set up the settings dir base to be \\path\to
 	 * The actual settings dir will be \\path\to\.purple */
-	_snprintf(path2, sizeof(path2), "PURPLEHOME=%s", path);
+	snprintf(path2, sizeof(path2), "PURPLEHOME=%s", path);
 	printf("Setting settings dir: %s\n", path2);
-	_putenv(path2);
+	putenv(path2);
 
-	_snprintf(path2, sizeof(path2), "PIDGIN_ASPELL_DIR=%s\\Aspell\\bin", path);
+	snprintf(path2, sizeof(path2), "PIDGIN_ASPELL_DIR=%s\\Aspell\\bin", path);
 	printf("%s\n", path2);
-	_putenv(path2);
+	putenv(path2);
 
 	/* set the GTK+ path to be \\path\to\GTK\bin */
 	strcat(path, "\\GTK\\bin");
@@ -320,7 +321,7 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 			break;
 		case LANG_PUNJABI: posix = "pa"; break;
 		case LANG_POLISH: posix = "pl"; break;
-//		case LANG_PASHTO: posix = "ps"; break;
+		case LANG_PASHTO: posix = "ps"; break;
 		case LANG_PORTUGUESE:
 			switch (sub_id) {
 				case SUBLANG_PORTUGUESE_BRAZILIAN:
@@ -436,9 +437,9 @@ static void winpidgin_set_locale() {
 
 	locale = winpidgin_get_locale();
 
-	_snprintf(envstr, 25, "LANG=%s", locale);
+	snprintf(envstr, 25, "LANG=%s", locale);
 	printf("Setting locale: %s\n", envstr);
-	_putenv(envstr);
+	putenv(envstr);
 }
 
 #define PIDGIN_WM_FOCUS_REQUEST (WM_APP + 13)
@@ -477,7 +478,7 @@ static BOOL winpidgin_set_running(BOOL fail_if_running) {
 
 static void handle_protocol(char *cmd) {
 	char *remote_msg, *tmp1, *tmp2;
-	SIZE_T len;
+	int len;
 	SIZE_T len_written;
 	HWND msg_win;
 	DWORD pid;
@@ -597,10 +598,10 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	} else {
 		DWORD dw = GetLastError();
 		const char *err_msg = get_win32_error_message(dw);
-		_snprintf(errbuf, 512,
+		snprintf(errbuf, 512,
 			"Error getting module filename.\nError: (%u) %s",
 			(UINT) dw, err_msg);
-		printf("%s\n", errbuf);
+		printf("%s", errbuf);
 		MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
 		pidgin_dir[0] = '\0';
 	}
@@ -644,11 +645,11 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		BOOL mod_not_found = (dw == ERROR_MOD_NOT_FOUND || dw == ERROR_DLL_NOT_FOUND);
 		const char *err_msg = get_win32_error_message(dw);
 
-		_snprintf(errbuf, 512, "Error loading pidgin.dll.\nError: (%u) %s%s%s",
+		snprintf(errbuf, 512, "Error loading pidgin.dll.\nError: (%u) %s%s%s",
 			(UINT) dw, err_msg,
 			mod_not_found ? "\n" : "",
 			mod_not_found ? "This probably means that GTK+ can't be found." : "");
-		printf("%s\n", errbuf);
+		printf("%s", errbuf);
 		MessageBox(NULL, errbuf, TEXT("Error"), MB_OK | MB_TOPMOST);
 
 		return 0;

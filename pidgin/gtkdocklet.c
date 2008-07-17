@@ -95,10 +95,6 @@ get_pending_list(guint max)
 						       PIDGIN_UNSEEN_TEXT,
 						       FALSE, max);
 
-	/* Short circuit if we have our information already */
-	if (max == 1 && l_im != NULL)
-		return l_im;
-
 	l_chat = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
 		 					 PIDGIN_UNSEEN_NICK,
 							 FALSE, max);
@@ -634,7 +630,6 @@ build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
 }
 
 
-
 static void
 docklet_plugin_actions(GtkWidget *menu)
 {
@@ -670,6 +665,7 @@ docklet_plugin_actions(GtkWidget *menu)
 	if(c>0)
 		pidgin_separator(menu);
 }
+
 static void
 docklet_menu(void)
 {

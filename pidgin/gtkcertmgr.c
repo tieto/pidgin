@@ -57,7 +57,7 @@ typedef struct {
 	PurpleCertificatePool *tls_peers;
 } tls_peers_mgmt_data;
 
-static tls_peers_mgmt_data *tpm_dat = NULL;
+tls_peers_mgmt_data *tpm_dat = NULL;
 
 /* Columns
    See http://developer.gnome.org/doc/API/2.0/gtk/TreeWidget.html */
@@ -113,7 +113,7 @@ tls_peers_mgmt_repopulate_list(void)
 static void
 tls_peers_mgmt_mod_cb(PurpleCertificatePool *pool, const gchar *id, gpointer data)
 {
-	g_return_if_fail(pool == tpm_dat->tls_peers);
+	g_assert (pool == tpm_dat->tls_peers);
 
 	tls_peers_mgmt_repopulate_list();
 }
@@ -234,7 +234,7 @@ tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 {
 	PurpleCertificate *crt = (PurpleCertificate *) data;
 
-	g_return_if_fail(filename);
+	g_assert(filename);
 
 	if (!purple_certificate_export(filename, crt)) {
 		/* Errors! Oh no! */
@@ -617,6 +617,7 @@ pidgin_certmgr_show(void)
 	g_signal_connect(G_OBJECT(win), "delete_event",
 			 G_CALLBACK(certmgr_close_cb), dlg);
 
+
 	/* TODO: Retrieve the user-set window size and use it */
 	gtk_window_set_default_size(GTK_WINDOW(win), 400, 400);
 
@@ -647,12 +648,10 @@ pidgin_certmgr_show(void)
 void
 pidgin_certmgr_hide(void)
 {
-printf("pidgin_certmgr_hide\n");
 	/* If it isn't open, do nothing */
 	if (certmgr_dialog == NULL) {
 		return;
 	}
-printf("pidgin_certmgr_hide - ref_count=%d\n", G_OBJECT(certmgr_dialog->window)->ref_count);
 
 	purple_signals_disconnect_by_handle(certmgr_dialog);
 	purple_prefs_disconnect_by_handle(certmgr_dialog);

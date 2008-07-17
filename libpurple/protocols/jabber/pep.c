@@ -39,13 +39,6 @@ void jabber_pep_init(void) {
 	}
 }
 
-void jabber_pep_uninit(void) {
-	/* TODO: This should be removing the feature registered by jabber_add_feature(),
-	 * but I don't see a good way of doing that right now. */
-	g_hash_table_destroy(pep_handlers);
-	pep_handlers = NULL;
-}
-
 void jabber_pep_init_actions(GList **m) {
 	/* register the PEP-specific actions */
 	jabber_mood_init_action(m);
