@@ -381,11 +381,11 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 					} else if (g_str_equal(faultcode_str, "q0:InvalidContent")) {
 						str_reason = _("Message was not sent because an unknown "
-						               "encoding error occured.");
+						               "encoding error occurred.");
 
 					} else {
 						str_reason = _("Message was not sent because an unknown "
-						               "error occured.");
+						               "error occurred.");
 					}
 					
 					msn_session_report_user(oim->session, msg->to_member, 
