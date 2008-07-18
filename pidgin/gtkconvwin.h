@@ -49,7 +49,11 @@ struct _PidginWindow
 		GtkWidget *menubar;
 
 		GtkWidget *view_log;
-
+#ifdef USE_VV
+		GtkWidget *audio_call;
+		GtkWidget *video_call;
+		GtkWidget *audio_video_call;
+#endif
 		GtkWidget *send_file;
 		GtkWidget *add_pounce;
 		GtkWidget *get_info;

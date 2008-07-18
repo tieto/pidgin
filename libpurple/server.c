@@ -37,6 +37,9 @@
 #include "server.h"
 #include "status.h"
 #include "util.h"
+#ifdef USE_VV
+#include "media.h"
+#endif
 
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
@@ -1053,3 +1056,58 @@ void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 		}
 	}
 }
+
+#ifdef USE_VV
+PurpleMedia *serv_initiate_media(PurpleConnection *gc, const char *who,
+								 PurpleMediaStreamType type)
+{
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	if (gc)
+		prpl = purple_connection_get_prpl(gc);
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info && prpl_info->initiate_media) {
+		/* should check that the protol supports this media type here.... */
+		return prpl_info->initiate_media(gc, who, type);
+	} else {
+		return NULL;
+	}
+}
+
+gboolean
+serv_can_do_media(PurpleConnection *gc, const char *who, 
+                  PurpleMediaStreamType type)
+{
+    PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	
+	if (gc)
+		prpl = purple_connection_get_prpl(gc);
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	
+	if (prpl_info && prpl_info->can_do_media) {
+		/* should check that the protol supports this media type here.... */
+		return prpl_info->can_do_media(gc, who, type);
+	} else {
+		return FALSE;
+	}
+}
+#else
+void *
+serv_initiate_media(void *gc, void *who, void *type)
+{
+	purple_debug_info("serv", "Blank serv_initiate_media called\n");
+	return NULL;
+}
+
+void *
+serv_can_do_media(void *gc, void *who, void *type)
+{
+	purple_debug_info("serv", "Blank serv_can_do_media called\n");
+	return NULL;
+}
+#endif /* USE_VV */

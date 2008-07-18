@@ -29,6 +29,7 @@
 #include "account.h"
 #include "conversation.h"
 #include "prpl.h"
+#include "media.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -182,6 +183,17 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file);
 
+#ifdef USE_VV
+PurpleMedia *serv_initiate_media(PurpleConnection *gc, const char *who,
+						  PurpleMediaStreamType type);
+gboolean serv_can_do_media(PurpleConnection *gc, const char *who, 
+                           PurpleMediaStreamType type);
+#else
+/* hmm, is this really nice? */
+void *serv_initiate_media(void*, void*, void*);
+void *serv_can_do_media(void *, void *, void *);
+#endif
+	
 #ifdef __cplusplus
 }
 #endif

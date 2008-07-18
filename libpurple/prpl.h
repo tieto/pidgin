@@ -65,6 +65,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "conversation.h"
 #include "ft.h"
 #include "imgstore.h"
+#include "media.h"
 #include "notify.h"
 #include "proxy.h"
 #include "plugin.h"
@@ -72,8 +73,8 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "status.h"
 #include "whiteboard.h"
 
-
 /** @copydoc PurpleBuddyIconSpec */
+
 struct _PurpleBuddyIconSpec {
 	/** This is a comma-delimited list of image formats or @c NULL if icons
 	 *  are not supported.  Neither the core nor the prpl will actually
@@ -404,7 +405,7 @@ struct _PurplePluginProtocolInfo
 	 * reasons.
 	 */
 	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
-	
+
 	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
@@ -440,6 +441,24 @@ struct _PurplePluginProtocolInfo
 	 *         destroyed by the caller when it's no longer needed.
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
+
+#ifdef USE_VV
+	/** Initiate media with the given buddy */
+	PurpleMedia  *(*initiate_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
+
+	gboolean (*can_do_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
+    
+    /*
+	gboolean (*can_receive_video)(PurpleConnection *conn, const char *who);
+	gboolean (*can_send_video)(PurpleConnection *conn, const char *who);
+	gboolean (*can_receive_audio)(PurpleConnection *conn, const char *who);
+	gboolean (*can_send_audio)(PurpleConnection *conn, const char *who);
+	*/
+    
+#else
+	void (*initiate_media)(void);
+	void (*can_do_media)(void);
+#endif
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
@@ -714,3 +733,4 @@ PurplePlugin *purple_find_prpl(const char *id);
 #endif
 
 #endif /* _PRPL_H_ */
+

@@ -55,6 +55,8 @@ typedef struct _JabberStream JabberStream;
 #include "dnssrv.h"
 #include "roomlist.h"
 #include "sslconn.h"
+#include "media.h"
+#include "mediamanager.h"
 
 #include "jutil.h"
 #include "xmlnode.h"
@@ -201,6 +203,11 @@ struct _JabberStream
 	
 	/* A purple timeout tag for the keepalive */
 	int keepalive_timeout;
+
+#ifdef USE_VV
+	/* keep a hash table of JingleSessions */
+	GHashTable *sessions;
+#endif
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
@@ -267,5 +274,10 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
+
+#ifdef USE_VV
+PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+#endif
 
 #endif /* _PURPLE_JABBER_H_ */
