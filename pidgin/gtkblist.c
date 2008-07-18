@@ -5980,7 +5980,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 		GtkTreeIter iter;
 		GtkTreePath *path;
 		gboolean expanded;
-		GdkColor *bgcolor;
+		GdkColor *bgcolor = NULL;
 		GdkPixbuf *avatar = NULL;
 		PidginBlistTheme *theme;
 
@@ -5989,15 +5989,11 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 
 		theme = pidgin_blist_get_theme();
 
-		/*if(theme == NULL){
+		if (theme == NULL)
 			bgcolor = &(gtkblist->treeview->style->bg[GTK_STATE_ACTIVE]);
-g_print("\nNULL\n");
-		}
-		else if(purple_blist_node_get_bool(gnode, "collapsed"))
-			bgcolor = (pidgin_blist_theme_get_collapsed_text_info(theme))->color;
-		else bgcolor = (pidgin_blist_theme_get_expanded_text_info(theme))->color;
-
-g_print("\n\n\%s\n\n", gdk_color_to_string(&bgcolor));*/
+		else if (purple_blist_node_get_bool(gnode, "collapsed") || count <= 0)
+			bgcolor = pidgin_blist_theme_get_collapsed_background_color(theme);
+		else bgcolor = pidgin_blist_theme_get_expanded_background_color(theme);
 
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
@@ -6015,7 +6011,7 @@ g_print("\n\n\%s\n\n", gdk_color_to_string(&bgcolor));*/
 				   STATUS_ICON_COLUMN, NULL,
 				   NAME_COLUMN, title,
 				   NODE_COLUMN, gnode,
-				   BGCOLOR_COLUMN, &bgcolor,
+				   BGCOLOR_COLUMN, bgcolor,
 				   GROUP_EXPANDER_COLUMN, TRUE,
 				   GROUP_EXPANDER_VISIBLE_COLUMN, TRUE,
 				   CONTACT_EXPANDER_VISIBLE_COLUMN, FALSE,

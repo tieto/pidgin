@@ -303,12 +303,12 @@ pidgin_blist_theme_class_init (PidginBlistThemeClass *klass)
 	pspec = g_param_spec_pointer("collapsed-color", "Collapsed Background Color",
 				    "The background color of a collapsed group",
 				    G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_EXPANDED_COLOR, pspec);
+	g_object_class_install_property(obj_class, PROP_COLLAPSED_COLOR, pspec);
 
 	pspec = g_param_spec_pointer("collapsed-text", "Collapsed Text",
                                      "The text information for when a group is collapsed",
                                      G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_EXPANDED_TEXT, pspec);
+	g_object_class_install_property(obj_class, PROP_COLLAPSED_TEXT, pspec);
 
 	/* Buddy */
 	pspec = g_param_spec_pointer("buddy-bgcolor1", "Buddy Background Color 1",
