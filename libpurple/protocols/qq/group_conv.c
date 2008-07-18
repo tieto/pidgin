@@ -99,9 +99,7 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 			list = list->next;
 		}
 
-		if (names != NULL && flags != NULL) {
-			purple_conv_chat_add_users(PURPLE_CONV_CHAT(conv), names, NULL, flags, FALSE);
-		}
+		purple_conv_chat_add_users(PURPLE_CONV_CHAT(conv), names, NULL, flags, FALSE);
 	}
 	/* clean up names */
 	while (names != NULL) {

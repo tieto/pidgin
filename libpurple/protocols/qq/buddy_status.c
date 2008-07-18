@@ -205,9 +205,7 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection 
 		b = purple_find_buddy(gc->account, name);
 		g_free(name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-		if (q_bud != NULL) {
-			qq_update_buddy_contact(gc, q_bud);
-		}
+		qq_update_buddy_contact(gc, q_bud);
 	}
 }
 

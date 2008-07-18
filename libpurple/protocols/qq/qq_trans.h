@@ -30,7 +30,7 @@
 
 void qq_send_trans_append(qq_data *qd, guint8 *buf, gint bus_len, guint16 cmd, guint16 seq);
 void qq_send_trans_remove(qq_data *qd, gpointer data);
-gpointer qq_send_trans_find(qq_data *qd, guint16 cmd, guint16 seq);
+gpointer qq_send_trans_find(qq_data *qd, guint16 seq);
 void qq_send_trans_remove_all(qq_data *qd);
 
 gint qq_send_trans_scan(qq_data *qd, gint *start, guint8 *buf, gint maxlen, guint16 *cmd, gint *retries);

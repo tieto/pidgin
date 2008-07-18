@@ -189,13 +189,13 @@ static gboolean packet_is_dup(qq_data *qd, guint16 seq)
 	return FALSE;		/* set mask */
 }
 
-static gboolean packet_check_ack(qq_data *qd, guint16 cmd, guint16 seq)
+static gboolean packet_check_ack(qq_data *qd, guint16 seq)
 {
 	gpointer trans;
 
 	g_return_val_if_fail(qd != NULL, FALSE);
 
-	trans = qq_send_trans_find(qd, cmd, seq);
+	trans = qq_send_trans_find(qd, seq);
 	if (trans == NULL) {
 		return FALSE;
 	}
@@ -360,7 +360,7 @@ static void packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 
 	/* ack packet, we need to update send tranactions */
 	/* we do not check duplication for server ack */
-	is_reply = packet_check_ack(qd, cmd, seq);
+	is_reply = packet_check_ack(qd, seq);
 	if ( !is_reply ) {
 		if ( !qd->logged_in ) {
 			/* packets before login */
@@ -460,10 +460,7 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	/* keep alive will be sent in 30 seconds since last_receive
-	 *  QQ need a keep alive packet in every 60 seconds
-	 gc->last_received = time(NULL);
-	*/
+	gc->last_received = time(NULL);
 	purple_debug(PURPLE_DEBUG_INFO, "TCP_PENDING",
 			   "Read %d bytes from socket, rxlen is %d\n", buf_len, qd->tcp_rxlen);
 	qd->tcp_rxqueue = g_realloc(qd->tcp_rxqueue, buf_len + qd->tcp_rxlen);
@@ -568,10 +565,7 @@ static void udp_pending(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	/* keep alive will be sent in 30 seconds since last_receive
-	 *  QQ need a keep alive packet in every 60 seconds
-	 gc->last_received = time(NULL);
-	*/
+	gc->last_received = time(NULL);
 
 	if (buf_len < QQ_UDP_HEADER_LENGTH) {
 		if (buf[0] != QQ_PACKET_TAG || buf[buf_len - 1] != QQ_PACKET_TAIL) {
@@ -1246,6 +1240,7 @@ gint qq_send_cmd_detail(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack
 	}
 
 	if (QQ_DEBUG) {
+		qq_show_packet("QQ_SEND_CMD", buf, buf_len);
 		purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				"<== [%05d], %s, total %d bytes is sent %d\n", 
 				seq, qq_get_cmd_desc(cmd), buf_len, bytes_sent);

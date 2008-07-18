@@ -234,11 +234,12 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnec
 				"qq_process_get_buddies_online_reply: Dangerous error! maybe protocol changed, notify developers!\n");
 	}
 
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Received %d online buddies, nextposition=%u\n",
-							count, (guint) position);
-	if (position != QQ_FRIENDS_ONLINE_POSITION_END
-		  && position != QQ_FRIENDS_ONLINE_POSITION_START) {
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Requesting for more online buddies\n"); 
+	if (position != QQ_FRIENDS_ONLINE_POSITION_END) {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Received %d online buddies, nextposition=%u\n",
+								count, (guint) position);
+		if (position != QQ_FRIENDS_ONLINE_POSITION_START) {
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Requesting for more online buddies\n"); 
+		}
 		qq_send_packet_get_buddies_online(gc, position);
 	} else {
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "All online buddies received\n"); 
@@ -317,8 +318,8 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnecti
 
 		if (QQ_DEBUG) {
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-					"buddy [%09d]: flag1=0x%02x, comm_flag=0x%02x, nick=%s\n",
-					q_bud->uid, q_bud->flag1, q_bud->comm_flag, q_bud->nickname);
+					"buddy [%09d]: flag1=0x%02x, comm_flag=0x%02x\n",
+					q_bud->uid, q_bud->flag1, q_bud->comm_flag);
 		}
 
 		name = uid_to_purple_name(q_bud->uid);
@@ -431,9 +432,7 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, PurpleC
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Get all list done, %d buddies and %d Quns\n", i, j);
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Received %d buddies and %d groups, nextposition=%u\n", i, j, (guint) position);
-
-	if (position != QQ_FRIENDS_ALL_LIST_POSITION_START
-		&& position != QQ_FRIENDS_ALL_LIST_POSITION_END) {
+	if (position != QQ_FRIENDS_ALL_LIST_POSITION_START && position != QQ_FRIENDS_ALL_LIST_POSITION_START) {
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Requesting for more buddies and groups\n");
 		qq_send_packet_get_all_list_with_group(gc, position);
 	} else {
