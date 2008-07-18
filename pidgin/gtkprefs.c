@@ -73,9 +73,7 @@ static GtkTreeRowReference *previous_smiley_row = NULL;
 
 static gboolean prefs_themes_unsorted = TRUE;
 static GtkListStore *prefs_sound_themes;
-static GtkTreeIter prefs_sound_iter;
 static GtkListStore *prefs_blist_themes;
-static GtkTreeIter prefs_blist_iter;
  
 
 /*
@@ -558,10 +556,27 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 /* sets the current sound theme to customized or NULL */
 static void
 pref_set_sound_customized()
-{
-	if (pidgin_sound_is_customized())
-		gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, "(Custom)", -1);
-	else gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, NULL, -1);
+{	
+	gboolean custom = pidgin_sound_is_customized();
+	const gchar *current_theme = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
+	gchar *theme;
+	GtkTreeIter iter;
+
+	if (g_str_equal(current_theme, ""))
+		current_theme = "(Default)";
+	
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(prefs_sound_themes), &iter)) {
+		do {
+			gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &iter, 1, &theme, -1);
+
+			if (custom && g_str_equal(current_theme, theme))
+				gtk_list_store_set(prefs_sound_themes, &iter, 2, "(Custom)", -1);
+			else gtk_list_store_set(prefs_sound_themes, &iter, 2, NULL, -1);
+
+			g_free(theme);
+
+		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(prefs_sound_themes), &iter));
+	}
 }
 
 /* adds the themes to the theme list from the manager so they can be sisplayed in prefs */
@@ -590,9 +605,6 @@ prefs_themes_sort(PurpleTheme *theme)
 		if (pixbuf != NULL)
 			gdk_pixbuf_unref(pixbuf);
 
-		if (g_str_equal(purple_theme_get_name(theme), pref))
-			prefs_sound_iter = iter;
-
 	} else if (PIDGIN_IS_BLIST_THEME(theme)){
 
 		pref = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme");
@@ -605,14 +617,10 @@ prefs_themes_sort(PurpleTheme *theme)
 		else pixbuf = NULL; 
 
 		gtk_list_store_append (prefs_blist_themes, &iter);
-		gtk_list_store_set (prefs_blist_themes, &iter, 0, pixbuf, 1, purple_theme_get_name(theme), 2, theme, -1);
+		gtk_list_store_set (prefs_blist_themes, &iter, 0, pixbuf, 1, purple_theme_get_name(theme), -1);
 
 		if (pixbuf != NULL)
 			gdk_pixbuf_unref(pixbuf);
-
-		if (g_str_equal(purple_theme_get_name(theme), pref))
-			prefs_blist_iter = iter;
-
 	}
 }
 
@@ -622,6 +630,7 @@ prefs_themes_init()
 {
 	GdkPixbuf *pixbuf = NULL;
 	gchar *filename;
+	GtkTreeIter iter;
 
 	filename = g_build_filename(DATADIR, "icons", "hicolor", "16x16", "apps", "pidgin.png", NULL);
 	pixbuf= gdk_pixbuf_new_from_file(filename, NULL);
@@ -630,40 +639,43 @@ prefs_themes_init()
 	/* sound themes */
 	prefs_sound_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
-	gtk_list_store_append(prefs_sound_themes, &prefs_sound_iter);
-	gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 0, pixbuf, 1, _("(Default)"), 2, NULL, -1);
+	gtk_list_store_append(prefs_sound_themes, &iter);
+	gtk_list_store_set(prefs_sound_themes, &iter, 0, pixbuf, 1, _("(Default)"), 2, NULL, -1);
 
 	/* blist themes */
-	prefs_blist_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, PIDGIN_TYPE_BLIST_THEME);
+	prefs_blist_themes = gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
 
-	gtk_list_store_append(prefs_blist_themes, &prefs_blist_iter);
-	gtk_list_store_set(prefs_blist_themes, &prefs_blist_iter, 0, pixbuf, 1, _("(Default)"), 2, NULL, -1);
+	gtk_list_store_append(prefs_blist_themes, &iter);
+	gtk_list_store_set(prefs_blist_themes, &iter, 0, pixbuf, 1, _("(Default)"), -1);
 
 	gdk_pixbuf_unref(pixbuf);
 }
 
 /* sets the current sound theme */
 static void
-prefs_set_sound_theme(GtkComboBox *combo_box, gpointer user_data)
+prefs_set_sound_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 {
 	gint i;
 	gchar *pref;
-	gchar *theme_name; 
+	gchar *new_theme;
+	gboolean sucess;
+	GtkTreeIter new_iter;
 	
-	/* remove "(custom)" */
-	gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, NULL, -1);
 
-	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &prefs_sound_iter));
+	sucess = gtk_combo_box_get_active_iter(combo_box, &new_iter);
+	g_return_if_fail(sucess);
 
-	gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &prefs_sound_iter, 1, &theme_name, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &new_iter, 1, &new_theme, -1);
 
-	if (g_str_equal(theme_name, "(Default)")){
-		g_free(theme_name);
-		theme_name = g_strdup("");
+	/* The default theme is stored as NULL */
+	if (g_str_equal(new_theme, "(Default)")){
+		g_free(new_theme);
+		new_theme = g_strdup("");
 	}
 
-	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/sound/theme", theme_name);
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/sound/theme", new_theme);
 
+	/* New theme removes all customization */
 	for(i=0; i <  PURPLE_NUM_SOUNDS; i++){
 		pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s",
 					pidgin_sound_get_event_option(i));
@@ -671,9 +683,12 @@ prefs_set_sound_theme(GtkComboBox *combo_box, gpointer user_data)
 		g_free(pref);
 	}
 
+	/* gets rid of the "(Custom)" from the last selection */
+	pref_set_sound_customized();
+
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), _("(default)"));
 
-	g_free(theme_name);
+	g_free(new_theme);
 }
 
 /* Does same as normal sort, except "none" is sorted first */
@@ -1054,16 +1069,19 @@ keyboard_shortcuts(GtkWidget *page)
 
 /* sets the current buddy list theme */
 static void
-prefs_set_blist_theme(GtkComboBox *combo_box, gpointer user_data)
+prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 {
 	PidginBlistTheme *theme;
+	GtkTreeIter iter;
+	gchar *name = NULL;
 	
-	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &prefs_blist_iter));
-	gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &prefs_blist_iter, 1, &theme, -1);
+	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &iter));
+	gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 1, &name, -1);
 
+	theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
 	pidgin_blist_set_theme(theme);
 
-	g_object_unref(theme);
+	g_free(name);
 }
 
 
@@ -1077,7 +1095,10 @@ interface_page(void)
 	GtkWidget *combo_box;
 	GtkCellRenderer *cell_rend;
 	GtkSizeGroup *sg;
+	GtkTreeIter iter;
 	GList *names = NULL;
+	gchar *theme;
+	const gchar *current_theme;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
@@ -1097,8 +1118,23 @@ interface_page(void)
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 1, NULL);
 
-	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &prefs_blist_iter);
-	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_blist_theme, NULL);
+	current_theme = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme");
+
+	if (g_str_equal(current_theme, ""))
+		current_theme = "(Default)";
+	
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(prefs_blist_themes), &iter)) {
+		do {
+			gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 1, &theme, -1);
+
+			if (g_str_equal(current_theme, theme))
+				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &iter);
+			
+			g_free(theme);
+		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(prefs_blist_themes), &iter));
+	}
+
+	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_blist_theme_cb, NULL);
 
 	/* System Tray */	
 	vbox = pidgin_make_frame(ret, _("System Tray Icon"));
@@ -2013,8 +2049,8 @@ sound_page(void)
 	GtkTreePath *path;
 	GtkWidget *hbox;
 	int j;
-	const char *file;
-	char *pref;
+	const char *file, *current_theme;
+	char *pref, *theme;
 	GtkCellRenderer *cell_rend;
 #ifndef _WIN32
 	GtkWidget *dd;
@@ -2106,24 +2142,41 @@ sound_page(void)
 
 	/* SOUND THEMES */
 	combo_box = gtk_combo_box_new_with_model(GTK_TREE_MODEL (prefs_sound_themes));
-	gtk_box_pack_start (GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
 
-	cell_rend = gtk_cell_renderer_pixbuf_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "pixbuf", 0, NULL);
+	cell_rend = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT (combo_box), cell_rend, "pixbuf", 0, NULL);
 	
-	cell_rend = gtk_cell_renderer_text_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 1, NULL);
+	cell_rend = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 1, NULL);
 
-	cell_rend = gtk_cell_renderer_text_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 2, NULL);
+	cell_rend = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 2, NULL);
 
-	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &prefs_sound_iter);
-	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_sound_theme, NULL);
+	current_theme = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
 
-	pref_set_sound_customized();
+	if (g_str_equal(current_theme, ""))
+		current_theme = "(Default)";
+	
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(prefs_sound_themes), &iter)) {
+		do {
+			gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &iter, 1, &theme, -1);
+
+			if (g_str_equal(current_theme, theme)){
+				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &iter);
+
+				if(pidgin_sound_is_customized())
+					gtk_list_store_set(prefs_sound_themes, &iter, 2, "(Custom)", -1);
+			}
+
+			g_free(theme);
+		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(prefs_sound_themes), &iter));
+	}
+
+	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_sound_theme_cb, NULL);
 
 	/* SOUND SELECTION */
 	sw = gtk_scrolled_window_new(NULL,NULL);

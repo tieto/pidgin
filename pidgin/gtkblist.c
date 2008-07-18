@@ -5980,7 +5980,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 		GtkTreeIter iter;
 		GtkTreePath *path;
 		gboolean expanded;
-		GdkColor bgcolor;
+		GdkColor *bgcolor;
 		GdkPixbuf *avatar = NULL;
 		PidginBlistTheme *theme;
 
@@ -5991,13 +5991,13 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 
 		/*if(theme == NULL){
 			bgcolor = &(gtkblist->treeview->style->bg[GTK_STATE_ACTIVE]);
-	
+g_print("\nNULL\n");
 		}
 		else if(purple_blist_node_get_bool(gnode, "collapsed"))
 			bgcolor = (pidgin_blist_theme_get_collapsed_text_info(theme))->color;
-		else bgcolor = (pidgin_blist_theme_get_expanded_text_info(theme))->color;*/
+		else bgcolor = (pidgin_blist_theme_get_expanded_text_info(theme))->color;
 
-		g_print("\n\n\%s\n\n", gdk_color_to_string(&bgcolor));
+g_print("\n\n\%s\n\n", gdk_color_to_string(&bgcolor));*/
 
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
@@ -7191,11 +7191,12 @@ void
 pidgin_blist_set_theme(PidginBlistTheme *theme)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	
-	g_return_if_fail(PIDGIN_IS_BLIST_THEME(theme));	
-	
-	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", 
+
+	if (theme != NULL)
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", 
 				purple_theme_get_name(PURPLE_THEME(theme)));
+	else purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
+
 	priv->current_theme = theme;
 
 	pidgin_blist_refresh(purple_get_blist());

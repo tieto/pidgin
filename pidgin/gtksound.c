@@ -580,7 +580,7 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
-		theme_name = g_strdup(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
+		theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
 		
 		if (theme_name && strlen(theme_name) && (!filename || !strlen(filename))){ /* Use theme */
 			g_free(filename);
@@ -604,7 +604,6 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 
 		purple_sound_play_file(filename, NULL);
 
-		g_free(theme_name);
 		g_free(filename);
 	}
 
