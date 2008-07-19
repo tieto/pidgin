@@ -327,8 +327,11 @@ char* wpurple_strerror(int errornum) {
 			case WSAETIMEDOUT: /* 10060 */
 				g_snprintf(errbuf, sizeof(errbuf), _("Connection timed out."));
 				break;
-			case WSAECONNREFUSED: /*10061 */
+			case WSAECONNREFUSED: /* 10061 */
 				g_snprintf(errbuf, sizeof(errbuf), _("Connection refused."));
+				break;
+			case WSAEADDRINUSE: /* 10048 */
+				g_snprintf(errbuf, sizeof(errbuf), _("Address already in use."));
 				break;
 			default:
 				g_snprintf(errbuf, sizeof(errbuf), "Windows socket error #%d", errornum);
