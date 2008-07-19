@@ -49,7 +49,7 @@ GList * InternalKeyring_passwordlist = NULL;		/* use hashtable ? */
  * retrieve the InternalKeyring_PasswordInfo structure for an account
  * TODO : rewrite this to use hashtables rather than GList
  */
-InternalKeyring_PasswordInfo * 
+static InternalKeyring_PasswordInfo * 
 InternalKeyring_get_account_info(const PurpleAccount * account)
 {
 	GList * p;
@@ -69,14 +69,14 @@ InternalKeyring_get_account_info(const PurpleAccount * account)
  * XXX : rewrite this to use hashtables rather than GList
  *        (fix InternalKeyring_Close() as well)
  */
-void
+static void
 InternalKeyring_add_passwordinfo(InternalKeyring_PasswordInfo * info)
 {
 	InternalKeyring_passwordlist = g_list_prepend(InternalKeyring_passwordlist, info);
 	return;
 }
 
-void
+static void
 InternalKeyring_free_passwordinfo(InternalKeyring_PasswordInfo * info)
 {
 	g_free(info->password);
@@ -89,7 +89,7 @@ InternalKeyring_free_passwordinfo(InternalKeyring_PasswordInfo * info)
  * wrapper so we can use it in close
  * TODO : find a more elegant way
  */
-void
+static void
 InternalKeyring_free_passwordinfo_from_g_list(gpointer info, gpointer data)
 {
 	InternalKeyring_free_passwordinfo((InternalKeyring_PasswordInfo*)info);
@@ -110,10 +110,10 @@ InternalKeyring_is_valid_cleartext(const PurpleKeyringPasswordNode * node)
 	data = purple_keyring_password_node_get_data(node);
 	account = purple_keyring_password_node_get_account(node);
 
-	if (((enc == NULL) || (strcmp(enc, KEYRINGNAME) == 0))
-	  &&((mode == NULL) || (strcmp(mode, "cleartext") == 0))
-	  &&(data != NULL)
-	  &&(account != NULL)) {
+	if ((enc == NULL || strcmp(enc, KEYRINGNAME) == 0)&&
+	    (mode == NULL || strcmp(mode, "cleartext") == 0)&&
+	    data != NULL &&
+	    account != NULL) {
 
 		return TRUE;
 
@@ -306,6 +306,27 @@ InternalKeyring_export_password(const PurpleAccount * account,
 }
 
 
+
+/******************************/
+/** Keyring plugin stuff      */
+/******************************/
+
+PurpleKeyring InternalKeyring_KeyringInfo =
+{
+	"internalkeyring",
+	InternalKeyring_read,
+	InternalKeyring_save,
+	InternalKeyring_close,
+	InternalKeyring_free,
+	NULL,				/* change_master */
+	InternalKeyring_import_password,
+	InternalKeyring_export_password,
+	NULL,				/* RESERVED */
+	NULL,				/* RESERVED */
+	NULL				/* RESERVED */
+};
+
+
 /******************************/
 /** Plugin interface          */
 /******************************/
@@ -313,7 +334,7 @@ InternalKeyring_export_password(const PurpleAccount * account,
 gboolean 
 InternalKeyring_load(PurplePlugin *plugin)
 {
-//	purple_plugin_keyring_register(InternalKeyring_KeyringInfo);	/* FIXME : structure doesn't exist yet */
+	purple_plugin_keyring_register(&InternalKeyring_KeyringInfo);	/* FIXME : structure should be hidden */
 	return TRUE;
 }
 
@@ -334,26 +355,6 @@ InternalKeyring_destroy(PurplePlugin *plugin)
 	InternalKeyring_close(NULL);
 	return;
 }
-
-/******************************/
-/** Generic plugin stuff      */
-/******************************/
-
-PurpleKeyring InternalKeyring_KeyringInfo =
-{
-	"internalkeyring",
-	InternalKeyring_read,
-	InternalKeyring_save,
-	InternalKeyring_close,
-	InternalKeyring_free,
-	NULL,				/* change_master */
-	InternalKeyring_import_password,
-	InternalKeyring_export_password,
-	NULL,				/* RESERVED */
-	NULL,				/* RESERVED */
-	NULL				/* RESERVED */
-};
-
 
 
 PurplePluginInfo plugininfo =
@@ -385,3 +386,5 @@ PurplePluginInfo plugininfo =
 	NULL,
 	NULL,
 };
+
+

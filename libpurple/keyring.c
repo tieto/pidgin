@@ -34,7 +34,7 @@
  *  - unregister
  *  - use accessors
  *  - purple_keyring_init()
- *  - purple_keyring_set_inuse() needs to be async for error checking an reversability.
+ *  - purple_keyring_set_inuse() needs to be async for error checking and reversability.
  *
  * Questions :
  *  - cleanup
@@ -253,13 +253,17 @@ purple_keyring_set_inuse(PurpleKeyring * new,
  *	 validate input ? add magix field ?
  */
 void 
-purple_plugin_keyring_register(PurpleKeyring * info)
+purple_keyring_register(PurpleKeyring * info)
 {
+	// TODO : emit signal
 	purple_keyring_keyringlist = g_list_prepend(purple_keyring_keyringlist,
 		info);
 }
 
-
+purple_keyring_unregister(PurpleKeyring * info)
+{
+	
+}
 /**
  * wrappers to import and export passwords
  */
@@ -563,7 +567,6 @@ purple_keyring_error_domain()
 void purple_keyring_init()
 {//FIXME
 	/**
-	 * init error GQuark (FIXME change it in headers as well)
 	 * read safe to use in confing
 	 * make sure said safe is loaded
 	 * else fallback
