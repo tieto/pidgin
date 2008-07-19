@@ -83,7 +83,7 @@ void qq_send_trans_remove(qq_data *qd, gpointer data)
 	g_free(trans);
 }
 
-gpointer qq_send_trans_find(qq_data *qd, guint16 seq)
+gpointer qq_send_trans_find(qq_data *qd, guint16 cmd, guint16 seq)
 {
 	GList *curr;
 	GList *next;
@@ -93,7 +93,7 @@ gpointer qq_send_trans_find(qq_data *qd, guint16 seq)
 	while(curr) {
 		next = curr->next;
 		trans = (transaction *) (curr->data);
-		if(trans->seq == seq) {
+		if(trans->cmd == cmd && trans->seq == seq) {
 			return trans;
 		}
 		curr = next;

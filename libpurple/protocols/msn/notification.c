@@ -918,29 +918,7 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	MsnSession *session;
-	static int count = 0;
-	const char *passport;
-	PurpleAccount *account;
-
-	session = cmdproc->session;
-	account = session->account;
-
-	if (session->passport_info.file == NULL)
-		return;
-
-	passport = purple_normalize(account, purple_account_get_username(account));
-
-	if ((strstr(passport, "@hotmail.") == NULL) &&
-		(strstr(passport, "@live.com") == NULL) &&
-		(strstr(passport, "@msn.com") == NULL))
-		return;
-
-	if (count++ < 26)
-		return;
-
-	count = 0;
-	msn_cmdproc_send(cmdproc, "URL", "%s", "INBOX");
+	/* TODO: Call PNG after the timeout specified. */
 }
 
 
@@ -1273,45 +1251,38 @@ static void
 url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
+	PurpleConnection *gc;
 	PurpleAccount *account;
 	const char *rru;
 	const char *url;
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
-	guchar digest[16];
+	PurpleCipherContext *cipher;
+	gchar digest[33];
 	FILE *fd;
 	char *buf;
-	char buf2[3];
-	char sendbuf[64];
-	int i;
+
+	gulong tmp_timestamp;
 
 	session = cmdproc->session;
 	account = session->account;
+	gc = account->gc;
 
 	rru = cmd->params[1];
 	url = cmd->params[2];
 
+	session->passport_info.mail_timestamp = time(NULL);
+	tmp_timestamp = session->passport_info.mail_timestamp - session->passport_info.sl;
+
 	buf = g_strdup_printf("%s%lu%s",
 			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
-			   time(NULL) - session->passport_info.sl,
-			   purple_connection_get_password(account->gc));
+			   tmp_timestamp,
+			   purple_connection_get_password(gc));
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_cipher_context_new_by_name("md5", NULL);
+	purple_cipher_context_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_context_digest_to_str(cipher, sizeof(digest), digest, NULL);
+	purple_cipher_context_destroy(cipher);
 
 	g_free(buf);
-
-	memset(sendbuf, 0, sizeof(sendbuf));
-
-	for (i = 0; i < 16; i++)
-	{
-		g_snprintf(buf2, sizeof(buf2), "%02x", digest[i]);
-		strcat(sendbuf, buf2);
-	}
 
 	if (session->passport_info.file != NULL)
 	{
@@ -1324,6 +1295,11 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		purple_debug_error("msn",
 						 "Error opening temp passport file: %s\n",
 						 g_strerror(errno));
+		/* The user wanted to check his or her email */
+		if (cmd->trans && cmd->trans->data)
+			/* TODO: This error might be a bit technical... */
+			purple_notify_error(gc, NULL,
+							  _("Error opening temporary passport file."), NULL);
 	}
 	else
 	{
@@ -1355,14 +1331,14 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 					session->passport_info.kv);
 		fprintf(fd, "<input type=\"hidden\" name=\"id\" value=\"2\">\n");
 		fprintf(fd, "<input type=\"hidden\" name=\"sl\" value=\"%ld\">\n",
-				time(NULL) - session->passport_info.sl);
+				tmp_timestamp);
 		fprintf(fd, "<input type=\"hidden\" name=\"rru\" value=\"%s\">\n",
 				rru);
 		if (session->passport_info.mspauth != NULL)
 			fprintf(fd, "<input type=\"hidden\" name=\"auth\" value=\"%s\">\n",
 					session->passport_info.mspauth);
 		fprintf(fd, "<input type=\"hidden\" name=\"creds\" value=\"%s\">\n",
-				sendbuf); /* TODO Digest me (huh? -- ChipX86) */
+				digest); /* TODO Digest me (huh? -- ChipX86) */
 		fprintf(fd, "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n");
 		fprintf(fd, "<input type=\"hidden\" name=\"js\" value=\"yes\">\n");
 		fprintf(fd, "</form></body>\n");
@@ -1373,6 +1349,12 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			purple_debug_error("msn",
 							 "Error closing temp passport file: %s\n",
 							 g_strerror(errno));
+
+			/* The user wanted to check his or her email */
+			if (cmd->trans && cmd->trans->data)
+				/* TODO: This error might be a bit technical... */
+				purple_notify_error(gc, NULL,
+								  _("Error closing temporary passport file."), NULL);
 
 			g_unlink(session->passport_info.file);
 			g_free(session->passport_info.file);
@@ -1402,6 +1384,10 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			}
 		}
 #endif
+
+		/* The user wants to check his or her email */
+		if (cmd->trans && cmd->trans->data)
+			purple_notify_uri(purple_account_get_connection(account), session->passport_info.file);
 	}
 }
 /**************************************************************************

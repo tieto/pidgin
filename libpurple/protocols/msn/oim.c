@@ -138,6 +138,9 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	xmlnode *fault = NULL;
 	xmlnode *faultcode = NULL;
 
+	if (response == NULL)
+		return;
+
 	fault = xmlnode_get_child(response->xml, "Body/Fault");
 	if (fault)
 		faultcode = xmlnode_get_child(fault, "faultcode");

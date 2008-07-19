@@ -428,14 +428,25 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 	gc = (PurpleConnection *) action->context;
 	session = gc->proto_data;
 
-	if (session->passport_info.file == NULL)
-	{
+	/** apparently the correct value is 777, use 750 as a failsafe */ 
+	if (time (NULL) - session->passport_info.mail_timestamp >= 750) {
+		MsnTransaction *trans;
+		MsnCmdProc *cmdproc;
+
+		cmdproc = session->notification->cmdproc;
+
+		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
+		msn_transaction_set_data(trans, GUINT_TO_POINTER (TRUE));
+
+		msn_cmdproc_send_trans(cmdproc, trans);
+
+	} else if (session->passport_info.file != NULL) {
+		purple_notify_uri(gc, session->passport_info.file);
+
+	} else {
 		purple_notify_error(gc, NULL,
 						  _("This Hotmail account may not be active."), NULL);
-		return;
 	}
-
-	purple_notify_uri(gc, session->passport_info.file);
 }
 
 static void
@@ -824,10 +835,6 @@ msn_status_types(PurpleAccount *account)
 static GList *
 msn_actions(PurplePlugin *plugin, gpointer context)
 {
-	PurpleConnection *gc = (PurpleConnection *)context;
-	PurpleAccount *account;
-	const char *user;
-
 	GList *m = NULL;
 	PurplePluginAction *act;
 
@@ -867,17 +874,10 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 #endif
 
-	account = purple_connection_get_account(gc);
-	user = msn_normalize(account, purple_account_get_username(account));
-
-	if ((strstr(user, "@hotmail.") != NULL) ||
-		(strstr(user, "@msn.com") != NULL))
-	{
-		m = g_list_append(m, NULL);
-		act = purple_plugin_action_new(_("Open Hotmail Inbox"),
-				msn_show_hotmail_inbox);
-		m = g_list_append(m, act);
-	}
+	m = g_list_append(m, NULL);
+	act = purple_plugin_action_new(_("Open Hotmail Inbox"),
+			msn_show_hotmail_inbox);
+	m = g_list_append(m, act);
 
 	return m;
 }
