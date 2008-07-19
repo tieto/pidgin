@@ -978,7 +978,13 @@ datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		account = cmdproc->session->account;
 		user = msg->remote_user;
 
-		serv_got_attention(account->gc, user, MSN_NUDGE);
+		if (swboard->current_users > 1 ||
+			((swboard->conv != NULL) &&
+			 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+			purple_prpl_got_attention_in_chat(account->gc, swboard->chat_id, user, MSN_NUDGE);
+
+		else
+			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
 
 	} else if (!strcmp(id, "2")) {
 		/* Wink */

@@ -989,7 +989,8 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	PurpleConnection *gc;
 	MsnUserList *userlist;
 	char *who = NULL, *text = NULL;
-	xmlnode *payloadNode, *from, *textNode;
+	const char *id = NULL;
+	xmlnode *payloadNode, *from, *msg, *textNode;
 
 	purple_debug_misc("msn", "Incoming Page: {%s}\n", payload);
 
@@ -1014,9 +1015,27 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	   </NOTIFICATION>
 	*/
 
+	/* This is the payload if your message was too long:
+	   <NOTIFICATION id="TrID" siteid="111100400" siteurl="http://mobile.msn.com/">
+	     <TO name="passport@example.com">
+	       <VIA agent="mobile"/>
+	     </TO>
+	     <FROM name="tel:+XXXXXXXXXXX"/>
+	     <MSG pri="1" id="407">
+	       <CAT Id="110110001"/>
+	       <ACTION url="2wayIM.asp"/>
+	       <SUBSCR url="2wayIM.asp"/>
+	       <BODY lcid="1033">
+	         <TEXT></TEXT>
+	       </BODY>
+	     </MSG>
+	   </NOTIFICATION>
+	*/
+
 	if (!(payloadNode = xmlnode_from_str(payload, len)) ||
 		!(from = xmlnode_get_child(payloadNode, "FROM")) ||
-		!(textNode = xmlnode_get_child(payloadNode, "MSG/BODY/TEXT")))
+		!(msg = xmlnode_get_child(payloadNode, "MSG")) ||
+		!(textNode = xmlnode_get_child(msg, "BODY/TEXT")))
 		return;
 
 	who = g_strdup(xmlnode_get_attrib(from, "name"));
@@ -1026,7 +1045,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	/* Match number to user's mobile number, FROM is a phone number if the
 	   other side page you using your phone number */
-	if(!strncmp(who, "tel:+", 5)) {
+	if (!strncmp(who, "tel:+", 5)) {
 		MsnUser *user =
 			msn_userlist_find_user_with_mobile_phone(userlist, who + 4);
 
@@ -1036,7 +1055,20 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 		}
 	}
 
-	serv_got_im(gc, who, text, 0, time(NULL));
+	id = xmlnode_get_attrib(msg, "id");
+
+	if (id && !strcmp(id, "407")) {
+		/* TODO: Use this to NAK the transaction, maybe print the text, too.
+		unsigned int trId;
+		id = xmlnode_get_attrib(payloadNode, "id");
+		trId = atol(id);
+		*/
+		purple_conv_present_error(who, gc->account,
+			_("Mobile message was not sent because it was too long."));
+
+	} else {
+		serv_got_im(gc, who, text, 0, time(NULL));
+	}
 
 	g_free(text);
 	g_free(who);
