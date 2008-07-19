@@ -6380,13 +6380,17 @@ gray_stuff_out(PidginConversation *gtkconv)
 #ifdef USE_VV
 		/* check if account support voice calls, and if the current buddy
 			supports it */
-		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-			gboolean audio = serv_can_do_media(gc, purple_conversation_get_name(conv), 
-							   PURPLE_MEDIA_AUDIO);
-			gboolean video = serv_can_do_media(gc, purple_conversation_get_name(conv), 
-							   PURPLE_MEDIA_VIDEO);
-			gboolean av = serv_can_do_media(gc, purple_conversation_get_name(conv),
-							PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
+		if (account != NULL && purple_conversation_get_type(conv)
+					== PURPLE_CONV_TYPE_IM) {
+			gboolean audio = purple_prpl_can_do_media(account,
+					purple_conversation_get_name(conv),
+					PURPLE_MEDIA_AUDIO);
+			gboolean video = purple_prpl_can_do_media(account,
+					purple_conversation_get_name(conv),
+					PURPLE_MEDIA_VIDEO);
+			gboolean av = purple_prpl_can_do_media(account,
+					purple_conversation_get_name(conv),
+					PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 
 			gtk_widget_set_sensitive(win->menu.audio_call, audio ? TRUE : FALSE);
 			gtk_widget_set_sensitive(win->menu.video_call, video ? TRUE : FALSE);
@@ -7684,12 +7688,12 @@ menu_initiate_audio_call_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = (PidginWindow *)data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleAccount *account = purple_conversation_get_account(conv);
 
 	PurpleMedia *media =
-		serv_initiate_media(gc,
-				    purple_conversation_get_name(conv),
-				    PURPLE_MEDIA_AUDIO);
+		purple_prpl_initiate_media(account,
+					   purple_conversation_get_name(conv),
+					   PURPLE_MEDIA_AUDIO);
 
 	if (media)
 		purple_media_wait(media);
@@ -7700,12 +7704,12 @@ menu_initiate_video_call_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = (PidginWindow *)data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleAccount *account = purple_conversation_get_account(conv);
 
 	PurpleMedia *media =
-		serv_initiate_media(gc,
-				    purple_conversation_get_name(conv),
-				    PURPLE_MEDIA_VIDEO);
+		purple_prpl_initiate_media(account,
+					   purple_conversation_get_name(conv),
+					   PURPLE_MEDIA_VIDEO);
 
 	if (media)
 		purple_media_wait(media);
@@ -7716,12 +7720,12 @@ menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget
 {
 	PidginWindow *win = (PidginWindow *)data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleAccount *account = purple_conversation_get_account(conv);
 
 	PurpleMedia *media =
-		serv_initiate_media(gc,
-				    purple_conversation_get_name(conv),
-				    PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
+		purple_prpl_initiate_media(account,
+					   purple_conversation_get_name(conv),
+					   PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 
 	if (media)
 		purple_media_wait(media);

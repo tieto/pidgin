@@ -433,10 +433,10 @@ static PurpleCmdRet
 call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 		char **eror, gpointer data)
 {
-	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurpleAccount *account = purple_conversation_get_account(conv);
 
 	PurpleMedia *media =
-		serv_initiate_media(gc,
+		purple_prpl_initiate_media(account,
 							purple_conversation_get_name(conv),
 							PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO);
 

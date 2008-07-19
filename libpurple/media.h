@@ -50,6 +50,12 @@ typedef struct _PurpleMediaClass PurpleMediaClass;
 typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
 typedef struct _PurpleMediaSession PurpleMediaSession;
 
+#else
+
+typedef void PurpleMedia;
+
+#endif /* USE_VV */
+
 typedef enum {
 	PURPLE_MEDIA_NONE	= 0,
 	PURPLE_MEDIA_RECV_AUDIO = 1 << 0,
@@ -59,6 +65,8 @@ typedef enum {
 	PURPLE_MEDIA_AUDIO = PURPLE_MEDIA_RECV_AUDIO | PURPLE_MEDIA_SEND_AUDIO,
 	PURPLE_MEDIA_VIDEO = PURPLE_MEDIA_RECV_VIDEO | PURPLE_MEDIA_SEND_VIDEO
 } PurpleMediaStreamType;
+
+#ifdef USE_VV
 
 struct _PurpleMediaClass
 {

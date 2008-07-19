@@ -442,23 +442,10 @@ struct _PurplePluginProtocolInfo
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
 
-#ifdef USE_VV
 	/** Initiate media with the given buddy */
 	PurpleMedia  *(*initiate_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
 
 	gboolean (*can_do_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
-    
-    /*
-	gboolean (*can_receive_video)(PurpleConnection *conn, const char *who);
-	gboolean (*can_send_video)(PurpleConnection *conn, const char *who);
-	gboolean (*can_receive_audio)(PurpleConnection *conn, const char *who);
-	gboolean (*can_send_audio)(PurpleConnection *conn, const char *who);
-	*/
-    
-#else
-	void (*initiate_media)(void);
-	void (*can_do_media)(void);
-#endif
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
@@ -711,6 +698,32 @@ void purple_prpl_change_account_status(PurpleAccount *account,
  * @return List of statuses
  */
 GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence);
+
+/**
+ * Determines if the contact supports the given media session type.
+ *
+ * @param account The account the user is on.
+ * @param who The name of the contact to check capabilities for.
+ * @param type The type of media session to check for.
+ *
+ * @return @c TRUE if the contact supports the session type, else @c FALSE.
+ */
+gboolean purple_prpl_can_do_media(PurpleAccount *account,
+				  const char *who, 
+				  PurpleMediaStreamType type);
+
+/**
+ * Initiates a media session with the given contact.
+ *
+ * @param account The account the user is on.
+ * @param who The name of the contact to start a session with.
+ * @param type The type of media session to start.
+ *
+ * @return The newly created session object.
+ */
+PurpleMedia *purple_prpl_initiate_media(PurpleAccount *account,
+					const char *who,
+					PurpleMediaStreamType type);
 
 /*@}*/
 
