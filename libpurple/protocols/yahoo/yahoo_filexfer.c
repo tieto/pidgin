@@ -1417,7 +1417,6 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 	gchar *filename;
 	const char *local_ip;
 	gchar *url_to_send = NULL;
-	char **split;
 	char *filename_without_spaces = NULL;
 
 	xfer = data;
@@ -1434,8 +1433,8 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 		xd->yahoo_local_p2p_ft_server_port = purple_network_get_port_from_fd(listenfd);
 
 		filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
-		split = g_strsplit(filename, " ", 0);
-		filename_without_spaces = g_strjoinv("+", split);
+		filename_without_spaces = g_strdup(filename);
+		purple_util_chrreplace(filename_without_spaces, ' ', '+');
 		xd->xfer_url = g_strdup_printf("/Messenger.%s.%d000%s?AppID=Messenger&UserID=%s&K=lc9lu2u89gz1llmplwksajkjx", xfer->who, (int)time(NULL), filename_without_spaces, xfer->who);
 		url_to_send = g_strdup_printf("http://%s:%d%s", local_ip, xd->yahoo_local_p2p_ft_server_port, xd->xfer_url);
 
@@ -1467,7 +1466,6 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 
 		g_free(filename);
 		g_free(url_to_send);
-		g_strfreev(split);
 		g_free(filename_without_spaces);
 	}
 
