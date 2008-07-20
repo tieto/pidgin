@@ -214,7 +214,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x04b2); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, /* High priority? */ FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -497,7 +497,7 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 	byte_stream_put16(&bs, strlen(uin));
 	byte_stream_putstr(&bs, uin);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x000, snacid, &bs, /* High priority? */ FALSE);
 
 	byte_stream_destroy(&bs);
 
