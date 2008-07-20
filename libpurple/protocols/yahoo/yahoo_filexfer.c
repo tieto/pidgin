@@ -1043,28 +1043,16 @@ void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
 	struct yahoo_xfer_data *xfer_data;
 	struct yahoo_data *yd = gc->proto_data;
-	int ver = 0;
 	PurpleXfer *xfer = yahoo_new_xfer(gc, who);
-	YahooFriend *yf = yahoo_friend_find(gc, who);
-
-	/* To determine if we should use yahoo p15 for transfer.  Check other user's
-	 * reported version, but if we're on Yahoo Japan, ignore it. */
-	if(yf && yf->version_id > 500000 && !yd->jp)
-		ver = 15;
-	/* Default to ver 15 if user isn't a friend */
-	if(!yf)
-		ver = 15;
 
 	g_return_if_fail(xfer != NULL);
 
-	if(ver == 15) {
-		xfer_data = xfer->data;
-		xfer_data->status_15 = STARTED;
-		purple_xfer_set_init_fnc(xfer, yahoo_xfer_init_15);
-		xfer_data->version = 15;
-		xfer_data->xfer_peer_idstring = yahoo_xfer_new_xfer_id();
-		g_hash_table_insert(yd->xfer_peer_idstring_map, xfer_data->xfer_peer_idstring, xfer);
-	}
+	xfer_data = xfer->data;
+	xfer_data->status_15 = STARTED;
+	purple_xfer_set_init_fnc(xfer, yahoo_xfer_init_15);
+	xfer_data->version = 15;
+	xfer_data->xfer_peer_idstring = yahoo_xfer_new_xfer_id();
+	g_hash_table_insert(yd->xfer_peer_idstring_map, xfer_data->xfer_peer_idstring, xfer);
 
 	/* Now perform the request */
 	if (file)
@@ -1822,7 +1810,7 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 	PurpleAccount *account;
 	long val_66 = 0;
 	gchar *url = NULL;
-	int val_249;
+	int val_249 = 0;
 
 	yd = gc->proto_data;
 	for (l = pkt->hash; l; l = l->next) {
