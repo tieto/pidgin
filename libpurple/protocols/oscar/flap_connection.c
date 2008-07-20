@@ -263,7 +263,7 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 void
 flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data)
 {
-	flap_connection_send_snac_with_priority(od, conn, family, subtype, flags, snacid, data, /* High priority? */ TRUE);
+	flap_connection_send_snac_with_priority(od, conn, family, subtype, flags, snacid, data, TRUE);
 }
 
 /**
