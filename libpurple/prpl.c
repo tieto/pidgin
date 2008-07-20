@@ -389,6 +389,110 @@ purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence)
 	return statuses;
 }
 
+void
+purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code)
+{
+	PurpleAttentionType *attn;
+	PurpleMessageFlags flags;
+	PurplePlugin *prpl;
+	PurpleConversation *conv;
+	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
+	PurpleBuddy *buddy;
+	const char *alias;	
+	gchar *description;
+	time_t mtime;
+
+	g_return_if_fail(gc != NULL);
+	g_return_if_fail(who != NULL);
+
+	prpl = purple_find_prpl(purple_account_get_protocol_id(gc->account));
+	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
+	g_return_if_fail(send_attention != NULL);
+
+	mtime = time(NULL);
+
+	attn = purple_get_attention_type_from_code(gc->account, type_code);
+
+	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
+		alias = purple_buddy_get_contact_alias(buddy);
+	else
+		alias = who;
+
+	if (attn && purple_attention_type_get_outgoing_desc(attn)) {
+		description = g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
+	} else {
+		description = g_strdup_printf(_("Requesting %s's attention..."), alias);
+	}
+	
+	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
+
+	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
+			description, who);
+
+	if (!send_attention(gc, who, type_code))
+		return;
+
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, gc->account, who);
+	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
+
+	g_free(description);
+}
+
+static void
+got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
+{
+	PurpleMessageFlags flags;
+	PurpleAttentionType *attn;
+	PurpleBuddy *buddy;
+	const char *alias;
+	gchar *description;
+	time_t mtime;
+
+	mtime = time(NULL);
+
+	attn = purple_get_attention_type_from_code(gc->account, type_code);
+
+	/* PURPLE_MESSAGE_NOTIFY is for attention messages. */
+	flags = PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_RECV;
+
+	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
+	 * it next to the attention command. And if it is null, display a generic icon. */
+
+	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
+		alias = purple_buddy_get_contact_alias(buddy);
+	else
+		alias = who;
+
+	if (attn && purple_attention_type_get_incoming_desc(attn)) {
+		description = g_strdup_printf(purple_attention_type_get_incoming_desc(attn), alias);
+	} else {
+		description = g_strdup_printf(_("%s has requested your attention!"), alias);
+	}
+
+	purple_debug_info("server", "got_attention: got '%s' from %s\n",
+			description, who);
+
+	if (id == -1)
+		serv_got_im(gc, who, description, flags, mtime);
+	else
+		serv_got_chat_in(gc, id, who, flags, description, mtime);
+
+	/* TODO: sounds (depending on PurpleAttentionType), shaking, etc. */
+
+	g_free(description);
+}
+
+void
+purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code)
+{
+	got_attention(gc, -1, who, type_code);
+}
+
+void
+purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code)
+{
+	got_attention(gc, id, who, type_code);
+}
 
 /**************************************************************************
  * Protocol Plugin Subsystem API
