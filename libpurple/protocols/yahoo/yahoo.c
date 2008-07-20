@@ -39,6 +39,7 @@
 #include "server.h"
 #include "util.h"
 #include "version.h"
+#include "xmlnode.h"
 
 #include "yahoo.h"
 #include "yahoochat.h"
@@ -780,6 +781,67 @@ struct _yahoo_im {
 	int buddy_icon;
 	char *msg;
 };
+
+static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet *pkt)
+{
+	PurpleAccount *account;
+	GSList *l = pkt->hash;
+	struct _yahoo_im *sms = NULL;
+	struct yahoo_data *yd;
+	char *server_msg = NULL;
+	char *m;
+	
+	yd = gc->proto_data;	
+	account = purple_connection_get_account(gc);
+
+	while (l != NULL) {
+		struct yahoo_pair *pair = l->data;
+		if (pair->key == 4)	{
+			sms = g_new0(struct _yahoo_im, 1);
+			sms->from = g_strdup_printf("+%s", pair->value);
+			sms->time = time(NULL);
+			sms->utf8 = TRUE;
+		}
+		if (pair->key == 14) {
+			if (sms)
+				sms->msg = pair->value;
+		}
+		if (pair->key == 68)
+			if(sms)
+				g_hash_table_insert(yd->sms_carrier, g_strdup(sms->from), g_strdup(pair->value));
+		if (pair->key == 16)
+			server_msg = pair->value;
+		l = l->next;
+	}
+
+	if( (pkt->status == -1) || (pkt->status == YAHOO_STATUS_DISCONNECTED) )	{
+		if (server_msg)	{
+			PurpleConversation *c;
+			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms->from, account);
+			if (c == NULL)
+				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sms->from);
+			purple_conversation_write(c, NULL, server_msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+		else
+			purple_notify_error(gc, NULL, _("Your SMS was not delivered"), NULL);
+		
+		g_free(sms->from);
+		g_free(sms);
+		return ;
+	}
+
+	if (!sms->from || !sms->msg) {
+		g_free(sms);
+		return;
+	}
+
+	m = yahoo_string_decode(gc, sms->msg, sms->utf8);
+	serv_got_im(gc, sms->from, m, 0, sms->time);
+		
+	g_free(m);
+	g_free(sms->from);
+	g_free(sms);
+}
 
 /* pkt_type is YAHOO_PKT_TYPE_SERVER if pkt arrives from yahoo server, YAHOO_PKT_TYPE_P2P if pkt arrives through p2p */
 static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt, yahoo_pkt_type pkt_type)
@@ -2905,6 +2967,9 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_FILETRANS_ACC_15:
 		yahoo_process_filetrans_acc_15(gc, pkt);
 		break;
+	case YAHOO_SERVICE_SMS_MSG:
+		yahoo_process_sms_message(gc, pkt);
+		break;
 
 	default:
 		purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
@@ -3427,6 +3492,7 @@ static void yahoo_login(PurpleAccount *account) {
 	yd->imvironments = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	yd->peers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_p2p_disconnect_destroy_data);
+	yd->sms_carrier = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
@@ -3491,6 +3557,7 @@ static void yahoo_close(PurpleConnection *gc) {
 	if (yd->in_chat)
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
+	g_hash_table_destroy(yd->sms_carrier);
 	g_hash_table_destroy(yd->peers);
 	g_hash_table_destroy(yd->friends);
 	g_hash_table_destroy(yd->imvironments);
@@ -4043,10 +4110,129 @@ static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	return m;
 }
 
+struct yahoo_sms_carrier_cb_data	{
+	PurpleConnection *gc;
+	char *who;
+	char *what;
+};
+
+static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags);
+
+static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *webdata, size_t len, const gchar *error_message)
+{
+	struct yahoo_sms_carrier_cb_data *sms_cb_data = user_data;
+	PurpleConnection *gc = sms_cb_data->gc;
+	struct yahoo_data *yd = gc->proto_data;
+	char *mobile_no = NULL;
+	char *status = NULL;
+	char *carrier = NULL;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
+
+	if (error_message != NULL)	{
+		purple_conversation_write(conv, NULL, "Cant send SMS, Unable to obtain mobile carrier", PURPLE_MESSAGE_SYSTEM, time(NULL));
+
+		g_free(sms_cb_data->who);
+		g_free(sms_cb_data->what);
+		g_free(sms_cb_data);
+		return ;
+	}
+	else if (len > 0 && webdata && *webdata) {
+		xmlnode *validate_data_root = xmlnode_from_str(webdata, -1);
+		xmlnode *validate_data_child = xmlnode_get_child(validate_data_root, "mobile_no");
+		mobile_no = (char *)xmlnode_get_attrib(validate_data_child, "msisdn");
+		
+		validate_data_root = xmlnode_copy(validate_data_child);
+		validate_data_child = xmlnode_get_child(validate_data_root, "status");
+		status = xmlnode_get_data(validate_data_child);
+
+		validate_data_child = xmlnode_get_child(validate_data_root, "carrier");
+		carrier = xmlnode_get_data(validate_data_child);
+
+		purple_debug_info("yahoo","SMS validate data: Mobile:%s, Status:%s, Carrier:%s\n", mobile_no, status, carrier);
+
+		if( strcmp(status, "Valid") == 0)	{
+			g_hash_table_insert(yd->sms_carrier, g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
+			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who, sms_cb_data->what, PURPLE_MESSAGE_SEND);
+		}
+		else	{
+			g_hash_table_insert(yd->sms_carrier, g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
+			purple_conversation_write(conv, NULL, "Cant send SMS, Unknown mobile carrier", PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+
+		xmlnode_free(validate_data_child);
+		xmlnode_free(validate_data_root);
+		g_free(sms_cb_data->who);
+		g_free(sms_cb_data->what);
+		g_free(sms_cb_data);
+		g_free(mobile_no);
+		g_free(status);
+		g_free(carrier);
+	}
+}
+
+static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	PurpleUtilFetchUrlData *url_data;
+	struct yahoo_sms_carrier_cb_data *sms_cb_data;
+	char *validate_request_str = NULL;
+	char *request = NULL;
+	gboolean use_whole_url = FALSE;
+	xmlnode *validate_request_root = NULL;
+	xmlnode *validate_request_child = NULL;
+
+	if(!(sms_cb_data = data))
+		return;
+
+	validate_request_root = xmlnode_new("validate");
+	xmlnode_set_attrib(validate_request_root, "intl", "us");
+	xmlnode_set_attrib(validate_request_root, "version", YAHOO_CLIENT_VERSION);
+	xmlnode_set_attrib(validate_request_root, "qos", "0");
+
+	validate_request_child = xmlnode_new_child(validate_request_root, "mobile_no");
+	xmlnode_set_attrib(validate_request_child, "msisdn", sms_cb_data->who + 1);
+
+	validate_request_str = xmlnode_to_str(validate_request_root, NULL);
+
+	xmlnode_free(validate_request_child);
+	xmlnode_free(validate_request_root);
+
+	request = g_strdup_printf(
+		"POST /mobileno?intl=us&version=%s HTTP/1.1\r\n"
+		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s; path=/; domain=.yahoo.com;\r\n"
+		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"Host: validate.msg.yahoo.com\r\n"
+		"Content-Length: %d\r\n"
+		"Cache-Control: no-cache\r\n\r\n%s",
+		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
+
+	/* use whole URL if using HTTP Proxy */
+	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	    use_whole_url = TRUE;
+
+	url_data = purple_util_fetch_url_request(YAHOO_SMS_CARRIER_URL, use_whole_url,
+			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
+			yahoo_get_sms_carrier_cb, data);
+
+	g_free(request);
+	g_free(validate_request_str);
+
+	if (!url_data)	{
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
+		purple_conversation_write(conv, NULL, "Cant send SMS, Unable to obtain mobile carrier", PURPLE_MESSAGE_SYSTEM, time(NULL));
+		g_free(sms_cb_data->who);
+		g_free(sms_cb_data->what);
+		g_free(sms_cb_data);
+	}
+}
+
 static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
-	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
+	struct yahoo_packet *pkt;
 	char *msg = yahoo_html_to_codes(what);
 	char *msg2;
 	gboolean utf8 = TRUE;
@@ -4057,6 +4243,56 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
+	if( strncmp(who, "+", 1) == 0 )	{
+		/* we have an sms to be sent */
+		gchar *carrier = NULL;
+		const char *alias = NULL;
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
+
+		carrier = g_hash_table_lookup(yd->sms_carrier, who);
+		if (!carrier)	{
+			struct yahoo_sms_carrier_cb_data *sms_cb_data;
+			sms_cb_data = g_malloc(sizeof(struct yahoo_sms_carrier_cb_data));
+			sms_cb_data->gc = gc;
+			sms_cb_data->who = g_malloc(strlen(who));
+			sms_cb_data->what = g_malloc(strlen(what));
+			strcpy(sms_cb_data->who, who);
+			strcpy(sms_cb_data->what, what);
+
+			purple_conversation_write(conv, NULL, "Getting mobile carrier to send the sms", PURPLE_MESSAGE_SYSTEM, time(NULL));
+			
+			yahoo_get_sms_carrier(gc, sms_cb_data);
+
+			g_free(msg);
+			g_free(msg2);
+			return ret;
+		}
+		else if( strcmp(carrier,"Unknown") == 0 ) {
+			purple_conversation_write(conv, NULL, "Cant send SMS, Unknown mobile carrier", PURPLE_MESSAGE_SYSTEM, time(NULL));
+
+			g_free(msg);
+			g_free(msg2);
+			return -1;
+		}
+
+		alias = purple_account_get_alias(account);
+		pkt = yahoo_packet_new(YAHOO_SERVICE_SMS_MSG, YAHOO_STATUS_AVAILABLE, 0);
+		yahoo_packet_hash(pkt, "sssss",
+			1, purple_connection_get_display_name(gc),
+			69, alias,
+			5, who + 1,
+			68, carrier,
+			14, msg2);
+		yahoo_packet_send_and_free(pkt, yd);
+
+		g_free(msg);
+		g_free(msg2);
+
+		return ret;
+	}
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
 	yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, who);
 	if ((f = yahoo_friend_find(gc, who)) && f->protocol)
 		yahoo_packet_hash_int(pkt, 241, f->protocol);
@@ -4126,6 +4362,10 @@ static unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, Pur
 	struct yahoo_p2p_data *p2p_data;
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
+
+	/* Don't do anything if sms is being typed */
+	if( strncmp(who, "+", 1) == 0 )
+		return 0;
 
 	/* check to see if p2p link exists, send through it */
 	if( (p2p_data = g_hash_table_lookup(yd->peers, who)) )	{

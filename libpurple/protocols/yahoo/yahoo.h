@@ -56,6 +56,8 @@
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
+#define YAHOO_SMS_CARRIER_URL "http://lookup.msg.vip.mud.yahoo.com"
+
 #define YAHOO_PICURL_SETTING "picture_url"
 #define YAHOO_PICCKSUM_SETTING "picture_checksum"
 #define YAHOO_PICEXPIRE_SETTING "picture_expire"
@@ -200,6 +202,7 @@ struct yahoo_data {
 	GHashTable *peers;	/* information about p2p data */
 	int yahoo_local_p2p_server_fd;
 	int yahoo_p2p_server_watcher;
+	GHashTable *sms_carrier;	/* sms carrier data */
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
