@@ -1893,6 +1893,39 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	return 1;
 }
 
+static gboolean purple_requesticqstatusnote(gpointer data)
+{
+	PurpleConnection *gc = data;
+	OscarData *od = gc->proto_data;
+	char *sn;
+	struct aim_ssi_item *ssi_item;
+	aim_tlv_t *note_hash;
+
+	if (!od->statusnotes_queue) {
+		purple_debug_misc("oscar", "No more ICQ status notes to request");
+		od->statusnotes_queue_timer = 0;
+		return FALSE;
+	}
+
+	sn = od->statusnotes_queue->data;
+
+	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
+										 NULL, sn, AIM_SSI_TYPE_BUDDY);
+	if (ssi_item != NULL)
+	{
+		note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
+		if (note_hash != NULL) {
+			aim_icq_getstatusnote(od, sn, note_hash->value, note_hash->length);
+		}
+	}
+	
+	od->statusnotes_queue = g_slist_remove(od->statusnotes_queue, sn);
+	free(sn);
+	
+	return TRUE;
+}
+
+
 static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
 	PurpleConnection *gc;
@@ -2074,8 +2107,20 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		if (ssi_item != NULL)
 		{
 			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-			if (note_hash != NULL)
-				aim_icq_getstatusnote(od, info->sn, note_hash->value, note_hash->length);
+			if (note_hash != NULL) {
+				/* We do automatic rate limiting, so a flood of requests would not disconnect us.
+				 * However, they would mean that we had to wait a potentially long time to be able to message
+				 * in real time again.  Also, since we're requesting with every purple_parse_oncoming() call,
+				 * which often come in groups, we should coalesce to do a single lookup.
+				 */
+				if (!od->statusnotes_queue || (g_slist_find_custom(od->statusnotes_queue, info->sn, (GCompareFunc)strcmp) == NULL)) {
+					od->statusnotes_queue = g_slist_append(od->statusnotes_queue, g_strdup(info->sn));
+
+					if (od->statusnotes_queue_timer)
+						purple_timeout_remove(od->statusnotes_queue_timer);
+					od->statusnotes_queue_timer = purple_timeout_add_seconds(2, purple_requesticqstatusnote, gc);
+				}
+			}
 		}
 	}
 

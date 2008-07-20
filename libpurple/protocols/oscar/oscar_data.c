@@ -92,6 +92,14 @@ oscar_data_destroy(OscarData *od)
 		od->requesticon = g_slist_remove(od->requesticon, sn);
 		g_free(sn);
 	}
+	while (od->statusnotes_queue)
+	{
+		gchar *sn = od->statusnotes_queue->data;
+		od->statusnotes_queue = g_slist_remove(od->statusnotes_queue, sn);
+		g_free(sn);
+	}
+	if (od->statusnotes_queue_timer)
+		purple_timeout_remove(od->statusnotes_queue_timer);
 	g_free(od->email);
 	g_free(od->newp);
 	g_free(od->oldp);

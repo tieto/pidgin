@@ -544,6 +544,10 @@ struct _OscarData
 
 	/** A linked list containing PeerConnections. */
 	GSList *peer_connections;
+	
+	/** Queue of ICQ Status Notes to request. */
+	GSList *statusnotes_queue;
+	gint statusnotes_queue_timer;
 };
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
