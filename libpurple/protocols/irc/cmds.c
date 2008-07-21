@@ -79,8 +79,7 @@ int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, cons
 		return 0;
 
 	/* TODO:strip newlines or send each line as separate ctcp or something
-	 * actually, this shouldn't be done here but somewhere else since irc should support escaping newlines
-	 * utf8 could pose additional problems here since it allows some of weird chars (NULL) to be part of bigger chars */ 
+	 * actually, this shouldn't be done here but somewhere else since irc should support escaping newlines */
 
 	string = g_string_new(args[1]);
 	g_string_prepend_c (string,'\001');
@@ -88,17 +87,10 @@ int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, cons
 	buf = irc_format(irc, "vn:", "PRIVMSG", args[0], string->str);
 	g_string_free(string,TRUE);
 
-	/* check if line is small enough to send
-	 * XXX: strlen will prolly not work for UTF-8 */
-	if (strlen(buf) >= 512)
-		return 0;
-
 	irc_send(irc, buf);
 	g_free(buf);
 	
-
 	return 1;
-	
 }
 
 int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
