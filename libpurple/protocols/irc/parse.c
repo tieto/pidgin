@@ -123,6 +123,7 @@ static struct _irc_user_cmd {
 } _irc_cmds[] = {
 	{ "action", ":", irc_cmd_ctcp_action, N_("action &lt;action to perform&gt;:  Perform an action.") },
 	{ "away", ":", irc_cmd_away, N_("away [message]:  Set an away message, or use no message to return from being away.") },
+	{ "ctcp", "t:", irc_cmd_ctcp, N_("ctcp <nick> <msg>: sends ctcp msg to nick.") },
 	{ "chanserv", ":", irc_cmd_service, N_("chanserv: Send a command to chanserv") },
 	{ "deop", ":", irc_cmd_op, N_("deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from someone. You must be a channel operator to do this.") },
 	{ "devoice", ":", irc_cmd_op, N_("devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from someone, preventing them from speaking if the channel is moderated (+m). You must be a channel operator to do this.") },
