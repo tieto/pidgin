@@ -1901,12 +1901,6 @@ static gboolean purple_requesticqstatusnote(gpointer data)
 	struct aim_ssi_item *ssi_item;
 	aim_tlv_t *note_hash;
 
-	if (!od->statusnotes_queue) {
-		purple_debug_misc("oscar", "No more ICQ status notes to request");
-		od->statusnotes_queue_timer = 0;
-		return FALSE;
-	}
-
 	sn = od->statusnotes_queue->data;
 
 	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
@@ -1918,10 +1912,17 @@ static gboolean purple_requesticqstatusnote(gpointer data)
 			aim_icq_getstatusnote(od, sn, note_hash->value, note_hash->length);
 		}
 	}
-	
+
 	od->statusnotes_queue = g_slist_remove(od->statusnotes_queue, sn);
-	free(sn);
-	
+	g_free(sn);
+
+	if (od->statusnotes_queue == NULL)
+	{
+		purple_debug_misc("oscar", "No more ICQ status notes to request");
+		od->statusnotes_queue_timer = 0;
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -2108,17 +2109,24 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		{
 			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
 			if (note_hash != NULL) {
-				/* We do automatic rate limiting, so a flood of requests would not disconnect us.
-				 * However, they would mean that we had to wait a potentially long time to be able to message
-				 * in real time again.  Also, since we're requesting with every purple_parse_oncoming() call,
-				 * which often come in groups, we should coalesce to do a single lookup.
+				/* We do automatic rate limiting at the FLAP level, so
+				 * a flood of requests won't disconnect us.  However,
+				 * it WOULD mean that we would have to wait a
+				 * potentially long time to be able to message in real
+				 * time again.  Also, since we're requesting with every
+				 * purple_parse_oncoming() call, which often come in
+				 * groups, we should coalesce to do only one lookup per
+				 * buddy.
 				 */
-				if (!od->statusnotes_queue || (g_slist_find_custom(od->statusnotes_queue, info->sn, (GCompareFunc)strcmp) == NULL)) {
-					od->statusnotes_queue = g_slist_append(od->statusnotes_queue, g_strdup(info->sn));
+				if (od->statusnotes_queue == NULL ||
+					g_slist_find_custom(od->statusnotes_queue, info->sn, (GCompareFunc)strcmp) == NULL)
+				{
+					od->statusnotes_queue = g_slist_prepend(od->statusnotes_queue,
+							g_strdup(info->sn));
 
-					if (od->statusnotes_queue_timer)
-						purple_timeout_remove(od->statusnotes_queue_timer);
-					od->statusnotes_queue_timer = purple_timeout_add_seconds(2, purple_requesticqstatusnote, gc);
+					if (od->statusnotes_queue_timer == 0)
+						od->statusnotes_queue_timer = purple_timeout_add_seconds(2,
+								purple_requesticqstatusnote, gc);
 				}
 			}
 		}
