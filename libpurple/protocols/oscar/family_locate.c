@@ -1386,7 +1386,7 @@ aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
 	byte_stream_putstr(&bs, sn);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, sn, strlen(sn)+1);
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, snacid, &bs, /* High priority? */ FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 

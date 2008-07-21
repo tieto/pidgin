@@ -265,7 +265,7 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x04ba); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, /* High priority? */ FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -309,7 +309,7 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x051f); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, /* High priority? */ FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -883,7 +883,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 				info->next = od->icq_info;
 				od->icq_info = info;
 
-				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs, /* High priority? */ FALSE);
+				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs, FALSE);
 
 				byte_stream_destroy(&bs);
 			}
