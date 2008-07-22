@@ -1897,33 +1897,31 @@ static gboolean purple_requesticqstatusnote(gpointer data)
 {
 	PurpleConnection *gc = data;
 	OscarData *od = gc->proto_data;
-	char *sn;
-	struct aim_ssi_item *ssi_item;
-	aim_tlv_t *note_hash;
 
-	sn = od->statusnotes_queue->data;
-
-	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
-										 NULL, sn, AIM_SSI_TYPE_BUDDY);
-	if (ssi_item != NULL)
+	while (od->statusnotes_queue != NULL)
 	{
-		note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-		if (note_hash != NULL) {
-			aim_icq_getstatusnote(od, sn, note_hash->value, note_hash->length);
+		char *sn;
+		struct aim_ssi_item *ssi_item;
+		aim_tlv_t *note_hash;
+
+		sn = od->statusnotes_queue->data;
+
+		ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
+											 NULL, sn, AIM_SSI_TYPE_BUDDY);
+		if (ssi_item != NULL)
+		{
+			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
+			if (note_hash != NULL) {
+				aim_icq_getstatusnote(od, sn, note_hash->value, note_hash->length);
+			}
 		}
+
+		od->statusnotes_queue = g_slist_remove(od->statusnotes_queue, sn);
+		g_free(sn);
 	}
 
-	od->statusnotes_queue = g_slist_remove(od->statusnotes_queue, sn);
-	g_free(sn);
-
-	if (od->statusnotes_queue == NULL)
-	{
-		purple_debug_misc("oscar", "No more ICQ status notes to request");
-		od->statusnotes_queue_timer = 0;
-		return FALSE;
-	}
-
-	return TRUE;
+	od->statusnotes_queue_timer = 0;
+	return FALSE;
 }
 
 
@@ -2126,7 +2124,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 					if (od->statusnotes_queue_timer > 0)
 						purple_timeout_remove(od->statusnotes_queue_timer);
-					od->statusnotes_queue_timer = purple_timeout_add_seconds(2,
+					od->statusnotes_queue_timer = purple_timeout_add_seconds(3,
 							purple_requesticqstatusnote, gc);
 				}
 			}
