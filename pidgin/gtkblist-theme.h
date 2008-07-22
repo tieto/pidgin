@@ -63,17 +63,17 @@ struct _PidginBlistThemeClass
 typedef struct
 {
 	gchar *font;
-	GdkColor *color;
+	gchar *color;
 
 } FontColorPair;
 
 typedef struct
 {
-	gint buddy_icon;
-	gint text;
 	gint status_icon;
-	gint protocol_icon;
+	gint text;
 	gint emblem;
+	gint protocol_icon;
+	gint buddy_icon;
 	gboolean show_status; 
 
 } PidginBlistLayout;

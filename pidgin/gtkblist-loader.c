@@ -31,6 +31,7 @@
 /******************************************************************************
  * Globals
  *****************************************************************************/
+#define DEFAULT_TEXT_COLOR "black"
 /*****************************************************************************
  * Buddy List Theme Builder                                                      
  *****************************************************************************/
@@ -43,9 +44,10 @@ pidgin_blist_loader_build(const gchar *dir)
 	const gchar *icon_theme = NULL, *tmp;
 	gboolean sucess = TRUE;
 	GdkColor *bgcolor, *expanded_bgcolor, *collapsed_bgcolor, *buddy_bgcolor1, *buddy_bgcolor2;
+	GdkColor color;
 	FontColorPair *expanded, *collapsed, *online, *away, *offline, *message, *status;
 	gdouble transparency;
-	PidginBlistLayout *layout = g_new0(PidginBlistLayout, 1);
+	PidginBlistLayout *layout;
 	GDir *gdir;
 	PidginBlistTheme *theme;
 
@@ -67,28 +69,22 @@ pidgin_blist_loader_build(const gchar *dir)
 	root_node = xmlnode_from_file(dir, filename, "blist themes", "blist-loader");
 	g_return_val_if_fail(root_node != NULL, NULL);
 
-	/* colors */
+	/* init all structs and colors */
 	bgcolor = g_new0(GdkColor, 1);
 	expanded_bgcolor = g_new0(GdkColor, 1);
 	collapsed_bgcolor = g_new0(GdkColor, 1); 
 	buddy_bgcolor1 = g_new0(GdkColor, 1);
 	buddy_bgcolor2 = g_new0(GdkColor, 1);
-	
-	/* font color pairs */
+
+	layout = g_new0(PidginBlistLayout, 1);
+
 	expanded = g_new0(FontColorPair, 1);
-	expanded->color = g_new0(GdkColor, 1);
 	collapsed = g_new0(FontColorPair, 1);
-	collapsed->color = g_new0(GdkColor, 1);
 	online = g_new0(FontColorPair, 1);
-	online->color = g_new0(GdkColor, 1);
 	away = g_new0(FontColorPair, 1);
-	away->color = g_new0(GdkColor, 1);
 	offline = g_new0(FontColorPair, 1);
-	offline->color = g_new0(GdkColor, 1); 
-	message = g_new0(FontColorPair, 1);
-	message->color = g_new0(GdkColor, 1); 
+	message = g_new0(FontColorPair, 1); 
 	status = g_new0(FontColorPair, 1);
-	status->color = g_new0(GdkColor, 1);
 
 	/* Parse the tree */	
 	sub_node = xmlnode_get_child(root_node, "description");
@@ -116,12 +112,9 @@ pidgin_blist_loader_build(const gchar *dir)
 
 		expanded->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 
-		if ((tmp = xmlnode_get_attrib(sub_sub_node, "color")) != NULL && gdk_color_parse(tmp, expanded->color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), expanded->color, FALSE, TRUE);
-		else {
-			g_free(expanded->color);
-			expanded->color = NULL;
-		}
+		if ((tmp = xmlnode_get_attrib(sub_sub_node, "text_color")) != NULL && gdk_color_parse(tmp, &color))
+			expanded->color = g_strdup(tmp);
+		else expanded->color = DEFAULT_TEXT_COLOR;
 	
 
 		if ((tmp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(tmp, expanded_bgcolor))
@@ -135,12 +128,10 @@ pidgin_blist_loader_build(const gchar *dir)
 	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL)) {
 		collapsed->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 
-		if((tmp = xmlnode_get_attrib(sub_sub_node, "color")) != NULL && gdk_color_parse(tmp, collapsed->color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), collapsed->color, FALSE, TRUE);
-		else {
-			g_free(collapsed->color);
-			collapsed->color = NULL;
-		}
+		if((tmp = xmlnode_get_attrib(sub_sub_node, "text_color")) != NULL && gdk_color_parse(tmp, &color))
+			collapsed->color = g_strdup(tmp);
+		else collapsed->color = DEFAULT_TEXT_COLOR;
+
 		if ((tmp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(tmp, collapsed_bgcolor))
 			gdk_colormap_alloc_color(gdk_colormap_get_system(), collapsed_bgcolor, FALSE, TRUE);
 		else {
@@ -153,11 +144,11 @@ pidgin_blist_loader_build(const gchar *dir)
 	if ((sucess = sucess && (sub_node = xmlnode_get_child(root_node, "buddys")) != NULL &&
 		     (sub_sub_node = xmlnode_get_child(sub_node, "placement")) != NULL)) { 
 
-		layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "status_icon"));
+		layout->status_icon = atoi(xmlnode_get_attrib(sub_sub_node, "status_icon"));
 		layout->text = atoi(xmlnode_get_attrib(sub_sub_node, "name"));
-		layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "buddy_icon"));
-		layout->protocol_icon = atoi(xmlnode_get_attrib(sub_sub_node, "protocol_icon"));
 		layout->emblem = atoi(xmlnode_get_attrib(sub_sub_node, "emblem"));
+		layout->protocol_icon = atoi(xmlnode_get_attrib(sub_sub_node, "protocol_icon"));
+		layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "buddy_icon"));		
 		layout->show_status = atoi(xmlnode_get_attrib(sub_sub_node, "status_icon")) != 0;
 	}
 
@@ -180,52 +171,37 @@ pidgin_blist_loader_build(const gchar *dir)
 
 	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "online_text")) != NULL)) {
 		online->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), online->color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), online->color, FALSE, TRUE);
-		else {
-			g_free(online->color);
-			online->color = NULL;
-		}
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), &color))
+			online->color = g_strdup(tmp);
+		else online->color = DEFAULT_TEXT_COLOR;
 	}
 
 	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "away_text")) != NULL)) {
 		away->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), away->color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), away->color, FALSE, TRUE);
-		else {
-			g_free(away->color);
-			away->color = NULL;
-		}
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), &color))
+			away->color = g_strdup(tmp);
+		else away->color = DEFAULT_TEXT_COLOR;
 	}
 
 	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "offline_text")) != NULL)) {
 		offline->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), offline->color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), offline->color, FALSE, TRUE);
-		else {
-			g_free(offline->color);
-			online->color = NULL;
-		}
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), &color))
+			online->color = g_strdup(tmp);
+		else online->color = DEFAULT_TEXT_COLOR;
 	}
 	
 	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "message_text")) != NULL)) {
 		message->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), message->color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), message->color, FALSE, TRUE);
-		else {
-			g_free(message->color);
-			message->color = NULL;
-		}
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), &color))
+			message->color = g_strdup(tmp);
+		else message->color = DEFAULT_TEXT_COLOR;
 	}
 	
 	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "status_text")) != NULL)) {
 		status->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
-		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), status->color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), status->color, FALSE, TRUE);
-		else {
-			g_free(status->color);
-			status->color = NULL;
-		}
+		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), &color))
+			status->color = g_strdup(tmp);
+		else status->color = DEFAULT_TEXT_COLOR;
 	}
 
 	/* name is required for theme manager */
