@@ -2124,9 +2124,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 					od->statusnotes_queue = g_slist_prepend(od->statusnotes_queue,
 							g_strdup(info->sn));
 
-					if (od->statusnotes_queue_timer == 0)
-						od->statusnotes_queue_timer = purple_timeout_add_seconds(2,
-								purple_requesticqstatusnote, gc);
+					if (od->statusnotes_queue_timer > 0)
+						purple_timeout_remove(od->statusnotes_queue_timer);
+					od->statusnotes_queue_timer = purple_timeout_add_seconds(2,
+							purple_requesticqstatusnote, gc);
 				}
 			}
 		}
