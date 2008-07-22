@@ -2597,6 +2597,11 @@ static void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13
 
 	f = yahoo_friend_find(gc, who);
 	account = purple_connection_get_account(gc);
+
+	/* One shouldn't try to connect to self */
+	if( strcmp(purple_normalize(account, purple_account_get_username(account)), who) == 0)
+		return;
+
 	/* send packet to only those friends who arent p2p connected and to whom we havent already sent. Do not send if this condition doesn't hold good */ 
 	if( !( f && (yahoo_friend_get_p2p_status(f) == YAHOO_P2PSTATUS_NOT_CONNECTED) && (f->p2p_packet_sent == 0)) )
 		return;
