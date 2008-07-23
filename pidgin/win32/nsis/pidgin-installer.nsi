@@ -505,11 +505,20 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ; If this is under NT4, delete the SILC support stuff
     ; there is a bug that will prevent any account from connecting
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
+    ; Also, remove the GSSAPI SASL plugin and associated files as they aren't
+    ; compatible with NT4.
     ${If} ${IsNT}
     ${AndIf} ${IsWinNT4}
+      ;SILC
       Delete "$INSTDIR\plugins\libsilc.dll"
       Delete "$INSTDIR\libsilcclient-1-1-2.dll"
       Delete "$INSTDIR\libsilc-1-1-2.dll"
+      ;GSSAPI
+      Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
+      Delete "$INSTDIR\gssapi32.dll"
+      Delete "$INSTDIR\k5sprt32.dll"
+      Delete "$INSTDIR\krb5_32.dll"
+      Delete "$INSTDIR\comerr32.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
