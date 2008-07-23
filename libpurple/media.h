@@ -147,6 +147,8 @@ gboolean purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id
 
 gboolean purple_media_candidates_prepared(PurpleMedia *media, const gchar *name);
 
+gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *codec);
+
 G_END_DECLS
 
 #endif  /* USE_VV */

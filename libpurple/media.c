@@ -1237,4 +1237,20 @@ purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
 	return TRUE;
 }
 
+gboolean
+purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *codec)
+{
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	GError *err = NULL;
+
+	fs_session_set_send_codec(session->session, codec, &err);
+
+	if (err) {
+		purple_debug_error("media", "Error setting send codec\n");
+		g_error_free(err);
+		return FALSE;
+	}
+	return TRUE;
+}
+
 #endif  /* USE_VV */

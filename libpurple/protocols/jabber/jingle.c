@@ -1196,6 +1196,10 @@ jabber_jingle_session_handle_session_accept(JingleSession *session, xmlnode *jin
 
 			/* we have found a suitable codec, but we will not start the stream
 			   just yet, wait for transport negotiation to complete... */
+			purple_media_set_send_codec(
+					jabber_jingle_session_get_media(session),
+					xmlnode_get_attrib(content, "name"),
+					codec_intersection->data);
 		}
 		/* if we also got transport candidates, add them to our streams
 		   list of known remote candidates */
@@ -1288,6 +1292,8 @@ jabber_jingle_session_handle_session_initiate(JingleSession *session, xmlnode *j
 
 	for (content = xmlnode_get_child(jingle, "content"); content;
 			content = xmlnode_get_next_twin(content)) {
+		GList *codec_intersection = NULL;
+
 		/* init media */
 		if (!content) {
 			purple_debug_error("jingle", "jingle tag must contain content tag\n");
@@ -1307,9 +1313,18 @@ jabber_jingle_session_handle_session_initiate(JingleSession *session, xmlnode *j
 		purple_media_set_remote_codecs(session->media,
 					       xmlnode_get_attrib(content, "name"),
 					       initiator, codecs);
+
+		codec_intersection = purple_media_get_negotiated_codecs(session->media,
+				xmlnode_get_attrib(content, "name"));
 		purple_debug_info("jingle", "codec intersection: %i\n",
-				g_list_length(purple_media_get_negotiated_codecs(session->media,
-				xmlnode_get_attrib(content, "name"))));
+				g_list_length(codec_intersection));
+
+		if (g_list_length(codec_intersection) > 0) {
+			purple_media_set_send_codec(
+					jabber_jingle_session_get_media(session),
+					xmlnode_get_attrib(content, "name"),
+					codec_intersection->data);
+		}
 	}
 	jabber_iq_send(jabber_jingle_session_create_ack(session, jingle));
 	jabber_iq_send(jabber_jingle_session_create_session_info(session, "ringing"));
