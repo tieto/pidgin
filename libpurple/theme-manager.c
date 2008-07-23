@@ -21,7 +21,8 @@
  *
  */
 
-#include <stdarg.h>
+#include <string.h>
+
 #include "theme-manager.h"
 
 /******************************************************************************
@@ -65,8 +66,8 @@ purple_theme_manager_get_type (void)
 static gchar *
 purple_theme_manager_make_key(const gchar *name, const gchar *type)
 {
-	g_return_val_if_fail(name, NULL);
-	g_return_val_if_fail(type, NULL);		
+	g_return_val_if_fail(name && strlen(name), NULL);
+	g_return_val_if_fail(type && strlen(type), NULL);		
 	return g_strconcat(type, "/", name, NULL);
 }
 

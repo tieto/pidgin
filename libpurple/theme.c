@@ -53,7 +53,7 @@ static GObjectClass *parent_class = NULL;
 enum {
 	PROP_ZERO = 0,
 	PROP_NAME,
-	PROP_DESCRIPION,
+	PROP_DESCRIPTION,
 	PROP_AUTHOR,
 	PROP_TYPE,
 	PROP_DIR,
@@ -74,7 +74,7 @@ purple_theme_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_NAME:
 			g_value_set_string(value, purple_theme_get_name(theme));
 			break;
-		case PROP_DESCRIPION:
+		case PROP_DESCRIPTION:
 			g_value_set_string(value, purple_theme_get_description(theme));
 			break;
 		case PROP_AUTHOR:
@@ -105,7 +105,7 @@ purple_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 		case PROP_NAME:
 			purple_theme_set_name(theme, g_value_get_string(value));
 			break;
-		case PROP_DESCRIPION:
+		case PROP_DESCRIPTION:
 			purple_theme_set_description(theme, g_value_get_string(value));
 			break;
 		case PROP_AUTHOR:
@@ -168,30 +168,35 @@ purple_theme_class_init (PurpleThemeClass *klass)
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_NAME, pspec);
-	/* DESCRIPION */
+
+	/* DESCRIPTION */
 	pspec = g_param_spec_string("description", "Description",
 				    "The description of the theme",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
-	g_object_class_install_property(obj_class, PROP_DESCRIPION, pspec);
+	g_object_class_install_property(obj_class, PROP_DESCRIPTION, pspec);
+
 	/* AUTHOR */
 	pspec = g_param_spec_string("author", "Author",
 				    "The author of the theme",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_AUTHOR, pspec);
+
 	/* TYPE STRING (read only) */
 	pspec = g_param_spec_string("type", "Type",
 				    "The string represtenting the type of the theme",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_TYPE, pspec);
+
 	/* DIRECTORY */
 	pspec = g_param_spec_string("directory", "Directory",
 				    "The directory that contains the theme and all its files",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_DIR, pspec);
+
 	/* PREVIEW IMAGE */
 	pspec = g_param_spec_string("image", "Image",
 				    "A preview image of the theme",

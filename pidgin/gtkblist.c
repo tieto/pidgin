@@ -3917,7 +3917,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 				ihrs = ((t - idle_secs) / 60 / 60) % 24;
 				imin = ((t - idle_secs) / 60) % 60;
 
-                if (iday)
+               			if (iday)
 					idletime = g_strdup_printf(_("Idle %dd %dh %02dm"), iday, ihrs, imin);
 				else if (ihrs)
 					idletime = g_strdup_printf(_("Idle %dh %02dm"), ihrs, imin);
@@ -3936,8 +3936,8 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 					(idletime != NULL && statustext != NULL) ? " - " : "",
 					statustext != NULL ? statustext : "");
 			}
-		}
-		else if (!selected && !statustext) {/* We handle selected text later */
+
+		} else if (!selected && !statustext) {/* We handle selected text later */
 			g_free(text);
 			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
 		} else if (!selected && !text) {
