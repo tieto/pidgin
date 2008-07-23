@@ -757,6 +757,7 @@ void
 purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 {
 	GstElement *src;
+	GstElement *volume;
 	GstPad *pad;
 	GstPad *ghost;
 	const gchar *audio_device = purple_prefs_get_string("/purple/media/audio/device");
@@ -765,9 +766,11 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 
 	*sendbin = gst_bin_new("purplesendaudiobin");
 	src = gst_element_factory_make("alsasrc", "asrc");
+	volume = gst_element_factory_make("volume", "purpleaudiovolume");
 	*sendlevel = gst_element_factory_make("level", "sendlevel");
-	gst_bin_add_many(GST_BIN(*sendbin), src, *sendlevel, NULL);
-	gst_element_link(src, *sendlevel);
+	gst_bin_add_many(GST_BIN(*sendbin), src, volume, *sendlevel, NULL);
+	gst_element_link(src, volume);
+	gst_element_link(volume, *sendlevel);
 	pad = gst_element_get_pad(*sendlevel, "src");
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_element_add_pad(*sendbin, ghost);
@@ -1251,6 +1254,22 @@ purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *c
 		return FALSE;
 	}
 	return TRUE;
+}
+
+void purple_media_mute(PurpleMedia *media, gboolean active)
+{
+	GList *sessions = g_hash_table_get_values(media->priv->sessions);
+	purple_debug_info("media", "Turning mute %s\n", active ? "on" : "off");
+
+	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+		PurpleMediaSession *session = sessions->data;
+		if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
+			GstElement *volume = gst_bin_get_by_name(
+					GST_BIN(session->src),
+					"purpleaudiovolume");
+			g_object_set(volume, "mute", active, NULL);
+		}
+	}
 }
 
 #endif  /* USE_VV */

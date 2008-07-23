@@ -58,6 +58,7 @@ struct _PidginMediaPrivate
 	GtkWidget *accept;
 	GtkWidget *reject;
 	GtkWidget *hangup;
+	GtkWidget *mute;
 
 	GtkWidget *send_progress;
 	GtkWidget *recv_progress;
@@ -157,6 +158,12 @@ pidgin_media_class_init (PidginMediaClass *klass)
 	g_type_class_add_private(klass, sizeof(PidginMediaPrivate));
 }
 
+static void
+pidgin_media_mute_toggled(GtkToggleButton *toggle, PidginMedia *media)
+{
+	purple_media_mute(media->priv->media,
+			gtk_toggle_button_get_active(toggle));
+}
 
 static void
 pidgin_media_init (PidginMedia *media)
@@ -166,11 +173,16 @@ pidgin_media_init (PidginMedia *media)
 	media->priv->hangup = gtk_button_new_with_label("Hangup");
 	media->priv->accept = gtk_button_new_with_label("Accept");
 	media->priv->reject = gtk_button_new_with_label("Reject");
+	media->priv->mute = gtk_toggle_button_new_with_label("Mute");
+
+	g_signal_connect(media->priv->mute, "toggled",
+			G_CALLBACK(pidgin_media_mute_toggled), media);
 
 	gtk_box_pack_start(GTK_BOX(media), media->priv->calling, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->hangup, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->accept, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->reject, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(media), media->priv->mute, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
@@ -572,18 +584,21 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 			gtk_widget_hide(gtkmedia->priv->accept);
 			gtk_widget_hide(gtkmedia->priv->reject);
 			gtk_widget_show(gtkmedia->priv->hangup);
+			gtk_widget_hide(gtkmedia->priv->mute);
 			break;
 		case PIDGIN_MEDIA_REQUESTED:
 			gtk_widget_hide(gtkmedia->priv->calling);
 			gtk_widget_show(gtkmedia->priv->accept);
 			gtk_widget_show(gtkmedia->priv->reject);
 			gtk_widget_hide(gtkmedia->priv->hangup);
+			gtk_widget_hide(gtkmedia->priv->mute);
 			break;
 		case PIDGIN_MEDIA_ACCEPTED:
 			gtk_widget_show(gtkmedia->priv->hangup);
 			gtk_widget_hide(gtkmedia->priv->calling);
 			gtk_widget_hide(gtkmedia->priv->accept);
 			gtk_widget_hide(gtkmedia->priv->reject);
+			gtk_widget_show(gtkmedia->priv->mute);
 			break;
 		default:
 			break;

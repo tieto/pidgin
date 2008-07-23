@@ -149,6 +149,8 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
 
 gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *codec);
 
+void purple_media_mute(PurpleMedia *media, gboolean active);
+
 G_END_DECLS
 
 #endif  /* USE_VV */
