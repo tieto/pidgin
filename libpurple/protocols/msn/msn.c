@@ -582,15 +582,22 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 {
 	PurpleAccount *account;
 	char *normal;
+	MsnSession *session;
+	MsnUser *user;
 	gboolean ret;
 
 	account = purple_connection_get_account(gc);
 
 	normal = g_strdup(msn_normalize(account, purple_account_get_username(account)));
-
 	ret = strcmp(normal, msn_normalize(account, who));
-
 	g_free(normal);
+
+	if (ret) {
+		session = gc->proto_data;
+		user = msn_userlist_find_user(session->userlist, who);
+		ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
+		/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
+	}
 
 	return ret;
 }
