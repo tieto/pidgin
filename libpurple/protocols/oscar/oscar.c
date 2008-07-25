@@ -3136,7 +3136,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	oscar_user_info_append_status(gc, user_info, /* PurpleBuddy */ NULL, userinfo, /* strip_html_tags */ FALSE);
 
-	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
+	if ((userinfo->present & AIM_USERINFO_PRESENT_IDLE) && userinfo->idletime != 0) {
 		tmp = purple_str_seconds_to_string(userinfo->idletime*60);
 		oscar_user_info_add_pair(user_info, _("Idle"), tmp);
 		g_free(tmp);
