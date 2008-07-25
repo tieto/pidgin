@@ -360,7 +360,8 @@ static void irc_login(PurpleAccount *account)
 
 static gboolean do_login(PurpleConnection *gc) {
 	char *buf, *tmp = NULL;
-	const char *hostname;
+	char *hostname, *server;
+	const char *hosttmp;
 	const char *username, *realname;
 	struct irc_conn *irc = gc->proto_data;
 	const char *pass = purple_connection_get_password(gc);
@@ -374,7 +375,6 @@ static gboolean do_login(PurpleConnection *gc) {
 		g_free(buf);
 	}
 
-	hostname = purple_get_host_name();
 	realname = purple_account_get_string(irc->account, "realname", "");
 	username = purple_account_get_string(irc->account, "username", "");
 
@@ -389,9 +389,29 @@ static gboolean do_login(PurpleConnection *gc) {
 		}
 	}
 
-	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, hostname, irc->server,
-			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
+	hosttmp = purple_get_host_name();
+	if (*hosttmp == ':') {
+		/* This is either an IPv6 address, or something which
+		 * doesn't belong here.  Either way, we need to escape
+		 * it. */
+		hostname = g_strdup_printf("0%s", hosttmp);
+	} else {
+		/* Ugly, I know. */
+		hostname = g_strdup(hosttmp);
+	}
+
+	if (*irc->server == ':') {
+		/* Same as hostname, above. */
+		server = g_strdup_printf("0%s", irc->server);
+	} else {
+		server = g_strdup(irc->server);
+	}
+
+	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, hostname, server,
+	                 strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	g_free(tmp);
+	g_free(hostname);
+	g_free(server);
 	if (irc_send(irc, buf) < 0) {
 		g_free(buf);
 		return FALSE;
