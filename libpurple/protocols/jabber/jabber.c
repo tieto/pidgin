@@ -1362,10 +1362,10 @@ void jabber_close(PurpleConnection *gc)
 	if (js->keepalive_timeout != -1)
 		purple_timeout_remove(js->keepalive_timeout);
 
-	g_free(js);
-
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
+
+	g_free(js);
 
 	gc->proto_data = NULL;
 }
