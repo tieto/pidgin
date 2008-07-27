@@ -35,6 +35,7 @@
 #define IRC_DEFAULT_SSL_PORT 994
 
 #define IRC_DEFAULT_CHARSET "UTF-8"
+#define IRC_DEFAULT_AUTODETECT FALSE
 #define IRC_DEFAULT_ALIAS "purple"
 
 #define IRC_DEFAULT_QUIT "Leaving."
