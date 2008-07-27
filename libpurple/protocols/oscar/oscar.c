@@ -1512,6 +1512,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			/* Suspended account */
 			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended."));
 			break;
+		case 0x02:
 		case 0x14:
 			/* service temporarily unavailable */
 			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
