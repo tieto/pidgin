@@ -32,7 +32,10 @@ magic_free_object(pTHX_ SV *sv, MAGIC *mg)
 
 static MGVTBL vtbl_free_object =
 {
-	NULL, NULL, NULL, NULL, magic_free_object, NULL, NULL
+	0, 0, 0, 0, magic_free_object, 0, 0
+#if PERL_API_REVISION > 5 || (PERL_API_REVISION == 5 && PERL_API_VERSION >= 10)
+	, 0
+#endif
 };
 
 static SV *

@@ -5,12 +5,11 @@
 #
 
 PIDGIN_TREE_TOP := ../../../..
+GCCWARNINGS := -Wno-comment -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wpointer-arith -Wundef -Wno-unused
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = Pidgin
 EXTUTILS ?= C:/perl/lib/ExtUtils
-
-CFLAGS += -Wno-comment -Wno-unused
 
 ##
 ## INCLUDE PATHS
@@ -72,7 +71,7 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-LIBS =			-lperl58 \
+LIBS =			-lperl510 \
 			-lperl \
 			-lpurple \
 			-lpidgin \

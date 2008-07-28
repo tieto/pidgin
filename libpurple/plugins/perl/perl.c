@@ -67,6 +67,10 @@
 #undef group
 
 /* perl module support */
+#ifdef _WIN32
+EXTERN_C void boot_Win32CORE (pTHX_ CV* cv);
+#endif
+
 #ifdef OLD_PERL
 extern void boot_DynaLoader _((CV * cv));
 #else
@@ -127,10 +131,14 @@ xs_init(pTHX)
 #endif
 {
 	char *file = __FILE__;
+	dXSUB_SYS;
 
 	/* This one allows dynamic loading of perl modules in perl scripts by
 	 * the 'use perlmod;' construction */
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
+#ifdef _WIN32
+	newXS("Win32CORE::bootstrap", boot_Win32CORE, file);
+#endif
 }
 
 static void
@@ -240,18 +248,26 @@ purple_perl_callXS(void (*subaddr)(pTHX_ CV *cv), CV *cv, SV **mark)
 static gboolean
 probe_perl_plugin(PurplePlugin *plugin)
 {
-	/* XXX This would be much faster if I didn't create a new
-	 *     PerlInterpreter every time I probed a plugin */
 
-	PerlInterpreter *prober = perl_alloc();
-	char *argv[] = {"", plugin->path };
+	char *args[] = {"", plugin->path };
+	char **argv = args;
+	int argc = 2;
+	PerlInterpreter *prober;
 	gboolean status = TRUE;
 	HV *plugin_info;
+
+	PERL_SYS_INIT(&argc, &argv);
+
+	/* XXX This would be much faster if we didn't create a new
+	 *     PerlInterpreter every time we probe a plugin */
+	prober = perl_alloc();
+
 	PERL_SET_CONTEXT(prober);
+
 	PL_perl_destruct_level = 1;
 	perl_construct(prober);
 
-	perl_parse(prober, xs_init, 2, argv, NULL);
+	perl_parse(prober, xs_init, argc, argv, NULL);
 
 	perl_run(prober);
 
@@ -578,7 +594,7 @@ static PurplePluginLoaderInfo loader_info =
 	load_perl_plugin,                                 /**< load           */
 	unload_perl_plugin,                               /**< unload         */
 	destroy_perl_plugin,                              /**< destroy        */
-	
+
 	/* padding */
 	NULL,
 	NULL,
