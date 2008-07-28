@@ -621,14 +621,14 @@ msn_list_emblems(PurpleBuddy *b)
 		if (user->clientid & MSN_CLIENT_CAP_BOT)
 			return "bot";
 		if (user->clientid & MSN_CLIENT_CAP_WIN_MOBILE)
-			return "hiptop"; /* XXX: Rename to Mobile / Use different icon? */
+			return "mobile";
 #if 0
 		/* XXX: Since we don't support this, there's no point in showing it just yet */
 		if (user->clientid & MSN_CLIENT_CAP_SCHANNEL)
 			return "secure";
 #endif
 		if (user->clientid & MSN_CLIENT_CAP_WEBMSGR)
-			return "web";
+			return "external";
 		if (user->networkid == MSN_NETWORK_YAHOO)
 			return "yahoo";
 	}
