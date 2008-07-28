@@ -267,6 +267,24 @@ probe_perl_plugin(PurplePlugin *plugin)
 	PL_perl_destruct_level = 1;
 	perl_construct(prober);
 
+/* Fix IO redirection to match where pidgin's is going.
+ * Without this, we lose stdout/stderr unless we redirect to a file */
+#ifdef _WIN32
+{
+	PerlIO* newprlIO = PerlIO_open("CONOUT$", "w");
+	if (newprlIO) {
+		int stdout_fd = PerlIO_fileno(PerlIO_stdout());
+		int stderr_fd = PerlIO_fileno(PerlIO_stderr());
+		PerlIO_close(PerlIO_stdout());
+		PerlIO_close(PerlIO_stderr());
+		PerlLIO_dup2(PerlIO_fileno(newprlIO), stdout_fd);
+		PerlLIO_dup2(PerlIO_fileno(newprlIO), stderr_fd);
+
+		PerlIO_close(newprlIO);
+	}
+}
+#endif
+
 	perl_parse(prober, xs_init, argc, argv, NULL);
 
 	perl_run(prober);
