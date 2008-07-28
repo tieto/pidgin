@@ -5,9 +5,9 @@
 #ifdef _WIN32
 #undef pipe
 #endif
+#include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>
-#include <EXTERN.h>
 
 /* XXX: perl defines it's own _ but I think it's safe to undef it */
 #undef _
