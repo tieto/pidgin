@@ -428,6 +428,12 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 	gc = (PurpleConnection *) action->context;
 	session = gc->proto_data;
 
+	if (!session->passport_info.email_enabled) {
+		purple_notify_error(gc, NULL,
+						  _("This account does not have email enabled."), NULL);
+		return;
+	}
+
 	/** apparently the correct value is 777, use 750 as a failsafe */ 
 	if (time (NULL) - session->passport_info.mail_timestamp >= 750) {
 		MsnTransaction *trans;
@@ -436,16 +442,12 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 		cmdproc = session->notification->cmdproc;
 
 		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
-		msn_transaction_set_data(trans, GUINT_TO_POINTER (TRUE));
+		msn_transaction_set_data(trans, GUINT_TO_POINTER(TRUE));
 
 		msn_cmdproc_send_trans(cmdproc, trans);
 
 	} else if (session->passport_info.file != NULL) {
 		purple_notify_uri(gc, session->passport_info.file);
-
-	} else {
-		purple_notify_error(gc, NULL,
-						  _("This Hotmail account may not be active."), NULL);
 	}
 }
 
