@@ -228,8 +228,8 @@ msn_create_address_book(MsnSession *session)
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_ADD_ADDRESSBOOK_SOAP_ACTION,
 			xmlnode_from_str(body, -1)),
-		MSN_CONTACT_SERVER, MSN_ADDRESS_BOOK_POST_URL, msn_create_address_cb,
-		session);
+		MSN_CONTACT_SERVER, MSN_ADDRESS_BOOK_POST_URL, FALSE,
+		msn_create_address_cb, session);
 
 	g_free(body);
 }
@@ -415,7 +415,7 @@ msn_get_contact_list(MsnSession *session,
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_GET_CONTACT_SOAP_ACTION,
 			xmlnode_from_str(body, -1)),
-		MSN_CONTACT_SERVER, MSN_GET_CONTACT_POST_URL,
+		MSN_CONTACT_SERVER, MSN_GET_CONTACT_POST_URL, FALSE,
 		msn_get_contact_list_cb, g_memdup(&cb_data, sizeof(cb_data)));
 
 	g_free(update_str);
@@ -815,8 +815,8 @@ msn_get_address_book(MsnSession *session,
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_GET_ADDRESS_SOAP_ACTION,
 			xmlnode_from_str(body, -1)),
-		MSN_CONTACT_SERVER, MSN_ADDRESS_BOOK_POST_URL, msn_get_address_cb,
-		session);
+		MSN_CONTACT_SERVER, MSN_ADDRESS_BOOK_POST_URL, FALSE,
+		msn_get_address_cb, session);
 
 	g_free(update_str);
 	g_free(body);
@@ -917,7 +917,8 @@ msn_contact_request(MsnCallbackState *state)
 		msn_nexus_get_token_str(state->session->nexus, MSN_AUTH_CONTACTS), -1);
 	msn_soap_message_send(state->session,
 		msn_soap_message_new(state->post_action, xmlnode_copy(state->body)),
-		MSN_CONTACT_SERVER, state->post_url, msn_contact_request_cb, state);
+		MSN_CONTACT_SERVER, state->post_url, FALSE,
+		msn_contact_request_cb, state);
 	return FALSE;
 }
 

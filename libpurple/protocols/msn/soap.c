@@ -42,6 +42,7 @@
 typedef struct _MsnSoapRequest {
 	char *path;
 	MsnSoapMessage *message;
+	gboolean secure;
 	MsnSoapCallback cb;
 	gpointer cb_data;
 } MsnSoapRequest;
@@ -76,8 +77,8 @@ static MsnSoapConnection *msn_soap_connection_new(MsnSession *session,
 static void msn_soap_connection_handle_next(MsnSoapConnection *conn);
 static void msn_soap_connection_destroy(MsnSoapConnection *conn);
 
-static void msn_soap_message_send_internal(MsnSession *session,
-	MsnSoapMessage *message, const char *host, const char *path,
+static void msn_soap_message_send_internal(MsnSession *session, MsnSoapMessage *message,
+	const char *host, const char *path, gboolean secure,
 	MsnSoapCallback cb, gpointer cb_data, gboolean first);
 
 static void msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message);
@@ -187,8 +188,8 @@ msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 	char *path;
 
 	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
-		msn_soap_message_send_internal(conn->session,
-			conn->current_request->message,	host, path,
+		msn_soap_message_send_internal(conn->session, conn->current_request->message,
+			host, path, conn->current_request->secure,
 			conn->current_request->cb, conn->current_request->cb_data, TRUE);
 
 		msn_soap_request_destroy(conn->current_request, TRUE);
@@ -309,6 +310,11 @@ msn_soap_process(MsnSoapConnection *conn) {
 	char *cursor;
 	char *linebreak;
 
+#ifndef MSN_UNSAFE_DEBUG
+	if (conn->current_request->secure)
+		purple_debug_info("soap", "Received secure request.\n");
+	else
+#endif
 	purple_debug_info("soap", "current %s\n", conn->buf->str);
 
 	cursor = conn->buf->str + conn->handled_len;
@@ -506,6 +512,11 @@ msn_soap_connection_run(gpointer data)
 			g_string_append(conn->buf, "\r\n");
 			g_string_append(conn->buf, body);
 
+#ifndef MSN_UNSAFE_DEBUG
+			if (req->secure)
+				purple_debug_info("soap", "Sending secure request.\n");
+			else
+#endif
 			purple_debug_info("soap", "%s\n", conn->buf->str);
 
 			conn->handled_len = 0;
@@ -534,16 +545,16 @@ msn_soap_connection_run(gpointer data)
 
 void
 msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
-	const char *host, const char *path,
+	const char *host, const char *path, gboolean secure,
 	MsnSoapCallback cb, gpointer cb_data)
 {
-	msn_soap_message_send_internal(session, message, host, path, cb, cb_data,
-		FALSE);
+	msn_soap_message_send_internal(session, message, host, path, secure,
+		cb, cb_data, FALSE);
 }
 
 static void
-msn_soap_message_send_internal(MsnSession *session,
-	MsnSoapMessage *message, const char *host, const char *path,
+msn_soap_message_send_internal(MsnSession *session, MsnSoapMessage *message,
+	const char *host, const char *path, gboolean secure,
 	MsnSoapCallback cb, gpointer cb_data, gboolean first)
 {
 	MsnSoapConnection *conn = msn_soap_get_connection(session, host);
@@ -551,6 +562,7 @@ msn_soap_message_send_internal(MsnSession *session,
 
 	req->path = g_strdup(path);
 	req->message = message;
+	req->secure = secure;
 	req->cb = cb;
 	req->cb_data = cb_data;
 
