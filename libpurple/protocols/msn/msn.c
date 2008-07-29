@@ -583,9 +583,7 @@ static gboolean
 msn_can_receive_file(PurpleConnection *gc, const char *who)
 {
 	PurpleAccount *account;
-	char *normal;
-	MsnSession *session;
-	MsnUser *user;
+	gchar *normal;
 	gboolean ret;
 
 	account = purple_connection_get_account(gc);
@@ -595,9 +593,10 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 	g_free(normal);
 
 	if (ret) {
-		session = gc->proto_data;
-		user = msn_userlist_find_user(session->userlist, who);
-		ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
+		MsnSession *session = gc->proto_data;
+		MsnUser *user = msn_userlist_find_user(session->userlist, who);
+		if (user)
+			ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
 		/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
 	}
 
@@ -1352,6 +1351,7 @@ fake_userlist_add_buddy(MsnUserList *userlist,
 
 	if (group_id >= 0)
 	{
+		/* This is wrong... user->group_ids contains g_strdup()'d data now */
 		user->group_ids = g_list_append(user->group_ids,
 										GINT_TO_POINTER(group_id));
 	}
