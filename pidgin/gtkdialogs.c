@@ -73,7 +73,8 @@ static const struct developer developers[] = {
 	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Thomas Butter",				N_("developer"), NULL},
-	{"Ka-Hing Cheung",				N_("developer"), NULL},
+	/* feel free to not translate this */
+	{N_("Ka-Hing Cheung"),			N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), "mark@kingant.net"},
 	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
@@ -424,11 +425,11 @@ void pidgin_dialogs_about()
 	for (i = 0; developers[i].name != NULL; i++) {
 		if (developers[i].email != NULL) {
 			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					developers[i].name, _(developers[i].role),
+					_(developers[i].name), _(developers[i].role),
 					developers[i].email, developers[i].email);
 		} else {
 			g_string_append_printf(str, "  %s (%s)<br/>",
-					developers[i].name, _(developers[i].role));
+					_(developers[i].name), _(developers[i].role));
 		}
 	}
 	g_string_append(str, "<BR/>");

@@ -13684,6 +13684,11 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
+#. feel free to not translate this
+#: ../pidgin/gtkdialogs.c:77
+msgid "Ka-Hing Cheung"
+msgstr "張家興"
+
 #~ msgid "_Resume"
 #~ msgstr "恢復(_R)"
 
