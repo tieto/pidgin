@@ -115,10 +115,11 @@ struct _MsnSession
 		char *sid;
 		char *mspauth;
 		unsigned long sl;
-		char *file;
 		char *client_ip;
 		int client_port;
+		char *mail_url;
 		gulong mail_timestamp;
+		gboolean email_enabled;
 	} passport_info;
 
 	GHashTable *soap_table;

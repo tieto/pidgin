@@ -411,7 +411,7 @@ msn_nexus_connect(MsnNexus *nexus)
 
 	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL,
+	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
 	                      nexus_got_response_cb, nexus);
 }
 
@@ -597,7 +597,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 
 	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL,
+	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
 	                      nexus_got_update_cb, ud);
 }
 

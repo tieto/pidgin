@@ -428,25 +428,27 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 	gc = (PurpleConnection *) action->context;
 	session = gc->proto_data;
 
+	if (!session->passport_info.email_enabled) {
+		purple_notify_error(gc, NULL,
+						  _("This account does not have email enabled."), NULL);
+		return;
+	}
+
 	/** apparently the correct value is 777, use 750 as a failsafe */ 
-	if (time (NULL) - session->passport_info.mail_timestamp >= 750) {
+	if ((session->passport_info.mail_url == NULL)
+		|| (time (NULL) - session->passport_info.mail_timestamp >= 750)) {
 		MsnTransaction *trans;
 		MsnCmdProc *cmdproc;
 
 		cmdproc = session->notification->cmdproc;
 
 		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
-		msn_transaction_set_data(trans, GUINT_TO_POINTER (TRUE));
+		msn_transaction_set_data(trans, GUINT_TO_POINTER(TRUE));
 
 		msn_cmdproc_send_trans(cmdproc, trans);
 
-	} else if (session->passport_info.file != NULL) {
-		purple_notify_uri(gc, session->passport_info.file);
-
-	} else {
-		purple_notify_error(gc, NULL,
-						  _("This Hotmail account may not be active."), NULL);
-	}
+	} else
+		purple_notify_uri(gc, session->passport_info.mail_url);
 }
 
 static void
@@ -582,15 +584,22 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 {
 	PurpleAccount *account;
 	char *normal;
+	MsnSession *session;
+	MsnUser *user;
 	gboolean ret;
 
 	account = purple_connection_get_account(gc);
 
 	normal = g_strdup(msn_normalize(account, purple_account_get_username(account)));
-
 	ret = strcmp(normal, msn_normalize(account, who));
-
 	g_free(normal);
+
+	if (ret) {
+		session = gc->proto_data;
+		user = msn_userlist_find_user(session->userlist, who);
+		ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
+		/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
+	}
 
 	return ret;
 }
@@ -614,14 +623,14 @@ msn_list_emblems(PurpleBuddy *b)
 		if (user->clientid & MSN_CLIENT_CAP_BOT)
 			return "bot";
 		if (user->clientid & MSN_CLIENT_CAP_WIN_MOBILE)
-			return "hiptop"; /* XXX: Rename to Mobile / Use different icon? */
+			return "mobile";
 #if 0
 		/* XXX: Since we don't support this, there's no point in showing it just yet */
 		if (user->clientid & MSN_CLIENT_CAP_SCHANNEL)
 			return "secure";
 #endif
 		if (user->clientid & MSN_CLIENT_CAP_WEBMSGR)
-			return "web";
+			return "external";
 		if (user->networkid == MSN_NETWORK_YAHOO)
 			return "yahoo";
 	}

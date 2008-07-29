@@ -219,7 +219,8 @@ msn_oim_request_helper(MsnOimRequestData *data)
 
 	msn_soap_message_send(session,
 		msn_soap_message_new(data->action, xmlnode_copy(data->body)),
-		data->host, data->url, msn_oim_request_cb, data);
+		data->host, data->url, FALSE,
+		msn_oim_request_cb, data);
 }
 
 
@@ -692,7 +693,7 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 	{
 		char *unread = xmlnode_get_data(iu_node);
 		const char *passport = msn_user_get_passport(session->user);
-		const char *url = session->passport_info.file;
+		const char *url = session->passport_info.mail_url;
 		int count = atoi(unread);
 
 		/* XXX/khc: pretty sure this is wrong */
