@@ -85,6 +85,7 @@ static const struct developer developers[] = {
 	{"Bartosz Oler",		N_("developer"), NULL},
 	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
+	{"Elliott 'QuLogic' Sales de Andrade",	N_("developer"),	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
@@ -100,7 +101,6 @@ static const struct developer patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
-	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
 	{"Jorge 'Masca' Villaseñor", 	NULL, 	NULL},
 	{NULL, NULL, NULL}
