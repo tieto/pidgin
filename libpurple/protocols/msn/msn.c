@@ -435,7 +435,8 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 	}
 
 	/** apparently the correct value is 777, use 750 as a failsafe */ 
-	if (time (NULL) - session->passport_info.mail_timestamp >= 750) {
+	if ((session->passport_info.mail_url == NULL)
+		|| (time (NULL) - session->passport_info.mail_timestamp >= 750)) {
 		MsnTransaction *trans;
 		MsnCmdProc *cmdproc;
 
@@ -446,9 +447,8 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 
 		msn_cmdproc_send_trans(cmdproc, trans);
 
-	} else if (session->passport_info.file != NULL) {
-		purple_notify_uri(gc, session->passport_info.file);
-	}
+	} else
+		purple_notify_uri(gc, session->passport_info.mail_url);
 }
 
 static void
