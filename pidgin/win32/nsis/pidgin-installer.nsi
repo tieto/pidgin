@@ -376,7 +376,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
     StrCmp $R0 "2" +2 ; Upgrade isn't optional
     MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE /S /D=$GTK_FOLDER'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
     IfErrors gtk_install_error done
 
     gtk_install_error:
@@ -1315,12 +1315,12 @@ Function .onInit
   ;Reset ShellVarContext because we may have changed it
   SetShellVarContext "current"
 
-  StrCpy $ISSILENT "/NOUI"
+  StrCpy $ISSILENT "/S"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
   ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
   IfSilent 0 set_gtk_normal
-      StrCpy $ISSILENT "/S"
+      StrCpy $ISSILENT "/NOUI"
   set_gtk_normal:
 
   ${GetParameters} $R0
