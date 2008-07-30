@@ -441,45 +441,77 @@ static void winpidgin_set_locale() {
 	_putenv(envstr);
 }
 
-static void winpidgin_add_perl_to_path() {
+
+static void winpidgin_add_stuff_to_path() {
 	char perl_path[MAX_PATH + 1];
-	DWORD plen = sizeof(perl_path);
+	char *ppath = NULL;
+	char mit_kerberos_path[MAX_PATH + 1];
+	char *mpath = NULL;
+	DWORD plen;
 
 	printf("%s", "Looking for Perl... ");
 
+	plen = sizeof(perl_path);
 	if (read_reg_string(HKEY_LOCAL_MACHINE, "SOFTWARE\\Perl", "",
 			    (LPBYTE) &perl_path, &plen)) {
-		const char *path = getenv("PATH");
-		/* Enough to add "PATH=" + ";"  + perl_path + "\\bin" + \0 */
-
 		/* We *could* check for perl510.dll, but it seems unnecessary. */
-
 		printf("found in '%s'.\n", perl_path);
 
-		if (perl_path[strlen(perl_path) - 1] != '\\') {
+		if (perl_path[strlen(perl_path) - 1] != '\\')
 			strcat(perl_path, "\\");
-		}
 		strcat(perl_path, "bin");
 
-		if (path == NULL || !strstr(path, perl_path)) {
-			int newlen = (path ? strlen(path) : 0) + strlen(perl_path) + 10;
-			char *newpath = malloc(newlen);
-			*newpath = '\0';
-
-			_snprintf(newpath, newlen, "PATH=%s%s%s",
-				  path ? path : "",
-				  path ? ";" : "",
-				  perl_path);
-
-			printf("Adding Perl to PATH: %s\n", newpath);
-
-			_putenv(newpath);
-			free(newpath);
-		} else
-			printf("%s\n", "Perl already in PATH.");
+		ppath = perl_path;
 	} else
 		printf("%s", "not found.\n");
 
+	printf("%s", "Looking for MIT Kerberos... ");
+
+	plen = sizeof(mit_kerberos_path);
+	if (read_reg_string(HKEY_LOCAL_MACHINE, "SOFTWARE\\MIT\\Kerberos", "InstallDir",
+			    (LPBYTE) &mit_kerberos_path, &plen)) {
+		/* We *could* check for gssapi32.dll */
+		printf("found in '%s'.\n", mit_kerberos_path);
+
+		if (mit_kerberos_path[strlen(mit_kerberos_path) - 1] != '\\')
+			strcat(mit_kerberos_path, "\\");
+		strcat(mit_kerberos_path, "bin");
+
+		mpath = mit_kerberos_path;
+	} else
+		printf("%s", "not found.\n");
+
+	if (ppath != NULL || mpath != NULL) {
+		const char *path = getenv("PATH");
+		BOOL add_ppath = ppath != NULL && (path == NULL || !strstr(path, ppath));
+		BOOL add_mpath = mpath != NULL && (path == NULL || !strstr(path, mpath));
+		char *newpath;
+		int newlen;
+
+		if (add_ppath || add_mpath) {
+			/* Enough to add "PATH=" + path + ";"  + ppath + ";" + mpath + \0 */
+			newlen = 6 + (path ? strlen(path) + 1 : 0);
+			if (add_ppath)
+				newlen += strlen(ppath) + 1;
+			if (add_mpath)
+				newlen += strlen(mpath) + 1;
+			newpath = malloc(newlen);
+			*newpath = '\0';
+
+			_snprintf(newpath, newlen, "PATH=%s%s%s%s%s%s",
+				  path ? path : "",
+				  path ? ";" : "",
+				  add_ppath ? ppath : "",
+				  add_ppath ? ";" : "",
+				  add_mpath ? mpath : "",
+				  add_mpath ? ";" : "");
+
+			printf("New PATH: %s\n", newpath);
+
+			_putenv(newpath);
+			free(newpath);
+		}
+	}
 }
 
 #define PIDGIN_WM_FOCUS_REQUEST (WM_APP + 13)
@@ -672,7 +704,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	winpidgin_set_locale();
 
-	winpidgin_add_perl_to_path();
+	winpidgin_add_stuff_to_path();
 
 	/* If help, version or multiple flag used, do not check Mutex */
 	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
