@@ -557,6 +557,7 @@ unload_perl_plugin(PurplePlugin *plugin)
 	purple_perl_cmd_clear_for_plugin(plugin);
 	purple_perl_signal_clear_for_plugin(plugin);
 	purple_perl_timeout_clear_for_plugin(plugin);
+	purple_perl_pref_cb_clear_for_plugin(plugin);
 
 	destroy_package(gps->package);
 

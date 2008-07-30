@@ -8,6 +8,7 @@ extern PerlInterpreter *my_perl;
 static GList *cmd_handlers = NULL;
 static GList *signal_handlers = NULL;
 static GList *timeout_handlers = NULL;
+static GSList *pref_handlers = NULL;
 
 /* perl < 5.8.0 doesn't define PERL_MAGIC_ext */
 #ifndef PERL_MAGIC_ext
@@ -714,4 +715,142 @@ purple_perl_cmd_unregister(PurpleCmdId id)
 
 	purple_cmd_unregister(id);
 	destroy_cmd_handler(handler);
+}
+
+static void
+perl_pref_cb(const char *name, PurplePrefType type, gconstpointer value,
+			 gpointer data)
+{
+	PurplePerlPrefsHandler *handler = data;
+	STRLEN na;
+
+	dSP;
+	ENTER;
+	SAVETMPS;
+	PUSHMARK(sp);
+	XPUSHs(sv_2mortal(newSVpv(name, 0)));
+
+	XPUSHs(sv_2mortal(newSViv(type)));
+
+	switch(type) {
+		case PURPLE_PREF_INT:
+			XPUSHs(sv_2mortal(newSViv(GPOINTER_TO_INT(value))));
+			break;
+		case PURPLE_PREF_BOOLEAN:
+			XPUSHs((GPOINTER_TO_INT(value) == FALSE) ? &PL_sv_no : &PL_sv_yes);
+			break;
+		case PURPLE_PREF_STRING:
+		case PURPLE_PREF_PATH:
+			XPUSHs(sv_2mortal(newSVGChar(value)));
+			break;
+		case PURPLE_PREF_STRING_LIST:
+		case PURPLE_PREF_PATH_LIST:
+			{
+				AV* av = newAV();
+				const GList *l = value;
+
+				/* Append stuff backward to preserve order */
+				while (l && l->next) l = l->next;
+				while (l) {
+					av_push(av, sv_2mortal(newSVGChar(l->data)));
+					l = l->prev;
+				}
+				XPUSHs(sv_2mortal(newRV_noinc((SV *) av)));
+			} break;
+		default:
+		case PURPLE_PREF_NONE:
+			XPUSHs(&PL_sv_undef);
+			break;
+	}
+
+	XPUSHs((SV *)handler->data);
+	PUTBACK;
+	call_sv(handler->callback, G_EVAL | G_VOID | G_DISCARD);
+	SPAGAIN;
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl prefs callback function exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
+	}
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+}
+
+guint
+purple_perl_prefs_connect_callback(PurplePlugin *plugin, const char *name,
+								   SV *callback, SV *data)
+{
+	PurplePerlPrefsHandler *handler;
+
+	if (plugin == NULL) {
+		croak("Invalid handle in adding perl prefs handler.\n");
+		return 0;
+	}
+
+	handler = g_new0(PurplePerlPrefsHandler, 1);
+
+	handler->plugin   = plugin;
+	handler->callback = (callback != NULL && callback != &PL_sv_undef
+	                     ? newSVsv(callback) : NULL);
+	handler->data     = (data != NULL && data != &PL_sv_undef
+	                     ? newSVsv(data) : NULL);
+
+	pref_handlers = g_slist_prepend(pref_handlers, handler);
+
+	handler->iotag = purple_prefs_connect_callback(plugin, name, perl_pref_cb, handler);
+
+	return handler->iotag;
+}
+
+static void
+destroy_prefs_handler(PurplePerlPrefsHandler *handler)
+{
+	pref_handlers = g_slist_remove(pref_handlers, handler);
+
+	if (handler->iotag > 0)
+		purple_prefs_disconnect_callback(handler->iotag);
+
+	if (handler->callback != NULL)
+		SvREFCNT_dec(handler->callback);
+
+	if (handler->data != NULL)
+		SvREFCNT_dec(handler->data);
+
+	g_free(handler);
+}
+
+void purple_perl_prefs_disconnect_callback(guint callback_id)
+{
+	GSList *l, *l_next;
+	PurplePerlPrefsHandler *handler;
+
+	for (l = pref_handlers; l != NULL; l = l_next) {
+		l_next = l->next;
+		handler = l->data;
+
+		if (handler->iotag == callback_id) {
+			destroy_prefs_handler(handler);
+			return;
+		}
+	}
+
+	purple_debug_info("perl", "No prefs handler found with handle %u.\n",
+	                  callback_id);
+}
+
+void purple_perl_pref_cb_clear_for_plugin(PurplePlugin *plugin)
+{
+	GSList *l, *l_next;
+	PurplePerlPrefsHandler *handler;
+
+	for (l = pref_handlers; l != NULL; l = l_next) {
+		l_next = l->next;
+		handler = l->data;
+
+		if (handler->plugin == plugin)
+			destroy_prefs_handler(handler);
+	}
 }
