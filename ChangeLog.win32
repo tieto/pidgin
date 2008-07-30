@@ -2,6 +2,7 @@ version 2.5.0 (??/??/2008):
 	* Don't install the GSSAPI SASL plugin on NT4 to avoid an error popup.
 	* Upgrade to Perl 5.10 (System Perl runtime must be upgraded for Perl
 	  plugins to continue to work).
+	* Upgrade SILC to use the 1.1.7 toolkit
 
 version 2.4.3 (07/01/2008):
 	* No changes
