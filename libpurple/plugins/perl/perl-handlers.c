@@ -5,9 +5,9 @@
 #include "signals.h"
 
 extern PerlInterpreter *my_perl;
-static GList *cmd_handlers = NULL;
-static GList *signal_handlers = NULL;
-static GList *timeout_handlers = NULL;
+static GSList *cmd_handlers = NULL;
+static GSList *signal_handlers = NULL;
+static GSList *timeout_handlers = NULL;
 static GSList *pref_handlers = NULL;
 
 /* perl < 5.8.0 doesn't define PERL_MAGIC_ext */
@@ -71,7 +71,7 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 	STRLEN na;
 	dSP;
 
-	gps = (PurplePerlScript *)plugin->info->extra_info;
+	gps = plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
@@ -132,7 +132,7 @@ purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 	STRLEN na;
 	dSP;
 
-	gps = (PurplePerlScript *)plugin->info->extra_info;
+	gps = plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
@@ -213,7 +213,7 @@ destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 {
 	gboolean ret = FALSE;
 
-	timeout_handlers = g_list_remove(timeout_handlers, handler);
+	timeout_handlers = g_slist_remove(timeout_handlers, handler);
 
 	if (handler->iotag > 0)
 		ret = purple_timeout_remove(handler->iotag);
@@ -232,7 +232,7 @@ destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 static void
 destroy_signal_handler(PurplePerlSignalHandler *handler)
 {
-	signal_handlers = g_list_remove(signal_handlers, handler);
+	signal_handlers = g_slist_remove(signal_handlers, handler);
 
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
@@ -247,7 +247,7 @@ destroy_signal_handler(PurplePerlSignalHandler *handler)
 static gboolean
 perl_timeout_cb(gpointer data)
 {
-	PurplePerlTimeoutHandler *handler = (PurplePerlTimeoutHandler *)data;
+	PurplePerlTimeoutHandler *handler = data;
 	gboolean ret = FALSE;
 	STRLEN na;
 
@@ -283,7 +283,7 @@ typedef void *DATATYPE;
 static void *
 perl_signal_cb(va_list args, void *data)
 {
-	PurplePerlSignalHandler *handler = (PurplePerlSignalHandler *)data;
+	PurplePerlSignalHandler *handler = data;
 	void *ret_val = NULL;
 	int i;
 	int count;
@@ -415,10 +415,10 @@ static PurplePerlSignalHandler *
 find_signal_handler(PurplePlugin *plugin, void *instance, const char *signal)
 {
 	PurplePerlSignalHandler *handler;
-	GList *l;
+	GSList *l;
 
 	for (l = signal_handlers; l != NULL; l = l->next) {
-		handler = (PurplePerlSignalHandler *)l->data;
+		handler = l->data;
 
 		if (handler->plugin == plugin &&
 			handler->instance == instance &&
@@ -448,9 +448,9 @@ purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *dat
 	handler->data     = (data != NULL && data != &PL_sv_undef
 	                     ? newSVsv(data) : NULL);
 
-	timeout_handlers = g_list_append(timeout_handlers, handler);
+	timeout_handlers = g_slist_append(timeout_handlers, handler);
 
-	handler->iotag = purple_timeout_add(seconds * 1000, perl_timeout_cb, handler);
+	handler->iotag = purple_timeout_add_seconds(seconds, perl_timeout_cb, handler);
 
 	return handler->iotag;
 }
@@ -458,14 +458,12 @@ purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *dat
 gboolean
 purple_perl_timeout_remove(guint handle)
 {
-	GList *l, *l_next;
+	PurplePerlTimeoutHandler *handler;
+	GSList *l, *l_next;
 
 	for (l = timeout_handlers; l != NULL; l = l_next) {
-		PurplePerlTimeoutHandler *handler;
-
+		handler =  l->data;
 		l_next = l->next;
-
-		handler = (PurplePerlTimeoutHandler *)l->data;
 
 		if (handler->iotag == handle)
 			return destroy_timeout_handler(handler);
@@ -479,14 +477,12 @@ purple_perl_timeout_remove(guint handle)
 void
 purple_perl_timeout_clear_for_plugin(PurplePlugin *plugin)
 {
-	GList *l, *l_next;
+	PurplePerlTimeoutHandler *handler;
+	GSList *l, *l_next;
 
 	for (l = timeout_handlers; l != NULL; l = l_next) {
-		PurplePerlTimeoutHandler *handler;
-
+		handler = l->data;
 		l_next = l->next;
-
-		handler = (PurplePerlTimeoutHandler *)l->data;
 
 		if (handler->plugin == plugin)
 			destroy_timeout_handler(handler);
@@ -517,7 +513,7 @@ purple_perl_signal_connect(PurplePlugin *plugin, void *instance,
 	handler->data     = (data != NULL &&
 	                     data != &PL_sv_undef ? newSVsv(data) : NULL);
 
-	signal_handlers = g_list_append(signal_handlers, handler);
+	signal_handlers = g_slist_append(signal_handlers, handler);
 
 	purple_signal_connect_priority_vargs(instance, signal, plugin,
 	                                   PURPLE_CALLBACK(perl_signal_cb),
@@ -545,12 +541,11 @@ void
 purple_perl_signal_clear_for_plugin(PurplePlugin *plugin)
 {
 	PurplePerlSignalHandler *handler;
-	GList *l, *l_next;
+	GSList *l, *l_next;
 
 	for (l = signal_handlers; l != NULL; l = l_next) {
 		l_next = l->next;
-
-		handler = (PurplePerlSignalHandler *)l->data;
+		handler = l->data;
 
 		if (handler->plugin == plugin)
 			destroy_signal_handler(handler);
@@ -571,7 +566,7 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
 	int i = 0, count, ret_value = PURPLE_CMD_RET_OK;
 	STRLEN na;
 	SV *cmdSV, *tmpSV, *convSV;
-	PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)data;
+	PurplePerlCmdHandler *handler = data;
 
 	dSP;
 	ENTER;
@@ -646,7 +641,7 @@ purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
 	else
 		handler->data = NULL;
 
-	cmd_handlers = g_list_append(cmd_handlers, handler);
+	cmd_handlers = g_slist_append(cmd_handlers, handler);
 
 	handler->id = purple_cmd_register(command, args, priority, flag, prpl_id,
 	                                PURPLE_CMD_FUNC(perl_cmd_cb), helpstr,
@@ -658,7 +653,7 @@ purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
 static void
 destroy_cmd_handler(PurplePerlCmdHandler *handler)
 {
-	cmd_handlers = g_list_remove(cmd_handlers, handler);
+	cmd_handlers = g_slist_remove(cmd_handlers, handler);
 
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
@@ -674,11 +669,11 @@ destroy_cmd_handler(PurplePerlCmdHandler *handler)
 void
 purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin)
 {
-	GList *l, *l_next;
+	PurplePerlCmdHandler *handler;
+	GSList *l, *l_next;
 
 	for (l = cmd_handlers; l != NULL; l = l_next) {
-		PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)l->data;
-
+		handler = l->data;
 		l_next = l->next;
 
 		if (handler->plugin == plugin)
@@ -689,10 +684,11 @@ purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin)
 static PurplePerlCmdHandler *
 find_cmd_handler(PurpleCmdId id)
 {
-	GList *l;
+	PurplePerlCmdHandler *handler;
+	GSList *l;
 
 	for (l = cmd_handlers; l != NULL; l = l->next) {
-		PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)l->data;
+		handler = (PurplePerlCmdHandler *)l->data;
 
 		if (handler->id == id)
 			return handler;
