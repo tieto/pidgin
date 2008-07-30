@@ -515,10 +515,6 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
       Delete "$INSTDIR\libsilc-1-1-2.dll"
       ;GSSAPI
       Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
-      Delete "$INSTDIR\gssapi32.dll"
-      Delete "$INSTDIR\k5sprt32.dll"
-      Delete "$INSTDIR\krb5_32.dll"
-      Delete "$INSTDIR\comerr32.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
