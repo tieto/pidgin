@@ -461,7 +461,7 @@ static void winpidgin_add_perl_to_path() {
 		}
 		strcat(perl_path, "bin");
 
-		if (!strstr(path, perl_path)) {
+		if (path == NULL || !strstr(path, perl_path)) {
 			int newlen = (path ? strlen(path) : 0) + strlen(perl_path) + 10;
 			char *newpath = malloc(newlen);
 			*newpath = '\0';
