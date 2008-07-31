@@ -78,6 +78,14 @@ typedef struct
 
 } PidginBlistLayout;
 
+/**************************************************************************/
+/** @name FontColorPair API 		                                  */
+/**************************************************************************/
+
+/**
+ * Frees a font and color pair
+ */
+void free_font_and_color(FontColorPair *pair);
 
 /**************************************************************************/
 /** @name Purple Buddy List Theme API                                     */
@@ -149,18 +157,18 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  FontColorPair *pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *theme);
 
 /**
- * Returns the 1st color to be used for buddys
+ * Returns the colors to be used for contacts and chats
  *
- * @returns 	a gdk color
+ * @returns 	a gdkcolor for contacts and chats
  */
- GdkColor *pidgin_blist_theme_get_buddy_color_1(PidginBlistTheme *theme);
+ GdkColor *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
 
 /**
- * Returns the 2nd color to be used for buddies
+ * Returns the text font and color to be used for expanded contacts
  *
- * @returns 	a gdk color
+ * @returns 	a font and color pair
  */
- GdkColor *pidgin_blist_theme_get_buddy_color_2(PidginBlistTheme *theme);
+ FontColorPair *pidgin_blist_theme_get_contact_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for online buddies
@@ -182,6 +190,13 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  * @returns 	a font and color pair
  */
  FontColorPair *pidgin_blist_theme_get_offline_text_info(PidginBlistTheme *theme);
+
+/**
+ * Returns the text font and color to be used for idle buddies
+ *
+ * @returns 	a font and color pair
+ */
+ FontColorPair *pidgin_blist_theme_get_idle_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for buddies with unread messages
@@ -256,18 +271,18 @@ void pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, 
 void pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, FontColorPair *pair);
 
 /**
- * Sets the background color to be used for the 1st buddy
+ * Sets the background color to be used for contacts and chats
  *
- * @param color		the color for the 1st buddy
+ * @param color		the color to use for contacts and chats
  */
-void pidgin_blist_theme_set_buddy_color_1(PidginBlistTheme *theme, GdkColor *color);
+void pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, GdkColor *color);
 
 /**
- * Sets the background color to be used for the 2nd buddy
+ * Sets the text color and font to be used for expanded contacts
  *
- * @param color		the color for the 2nd buddy
+ * @param pair		the new text font at color pair
  */
-void pidgin_blist_theme_set_buddy_color_2(PidginBlistTheme *theme, GdkColor *color);
+void pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for online buddies
@@ -289,6 +304,13 @@ void pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, FontColorPai
  * @param pair		the new text font at color pair
  */
 void pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+
+/**
+ * Sets the text color and font to be used for idle buddies
+ *
+ * @param pair		the new text font at color pair
+ */
+void pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for buddies with an unread message
