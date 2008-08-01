@@ -683,7 +683,7 @@ jabber_login(PurpleAccount *account)
 	/* no old-ssl, so if they've specified a connect server, we'll use that, otherwise we'll
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(!js->gsc) {
-		if(connect_server[0]) {
+		if(connect_server[0]) { 
 			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222));
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",

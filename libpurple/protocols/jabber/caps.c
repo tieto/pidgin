@@ -198,12 +198,12 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 	JabberCapsKey *clientinfo = key;
 	JabberCapsValue *props = value;
 	xmlnode *root = user_data;
-	xmlnode *client = xmlnode_new_child(root,"client");
+	xmlnode *client = xmlnode_new_child(root, "client");
 	GList *iter;
 
-	xmlnode_set_attrib(client,"node", clientinfo->node);
-	xmlnode_set_attrib(client,"ver", clientinfo->ver);
-	xmlnode_set_attrib(client,"hash", clientinfo->hash);
+	xmlnode_set_attrib(client, "node", clientinfo->node);
+	xmlnode_set_attrib(client, "ver", clientinfo->ver);
+	xmlnode_set_attrib(client, "hash", clientinfo->hash);
 	for(iter = props->identities; iter; iter = g_list_next(iter)) {
 		JabberCapsIdentity *id = iter->data;
 		xmlnode *identity = xmlnode_new_child(client, "identity");
