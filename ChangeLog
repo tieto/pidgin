@@ -12,6 +12,8 @@ version 2.5.0 (??/??/2008):
 
 	IRC:
 	* /ctcp command (Vladislav Guberinić)
+	* Allow for auto-detection of incoming UTF-8 formatted text on
+	  accounts which are configured to use some other encoding.
 
 	MSN:
 	* Update MSN support to protocol 15 (Elliott Sales de Andrade, Jorge

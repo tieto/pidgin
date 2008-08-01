@@ -989,6 +989,9 @@ static void _init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("Encodings"), "encoding", IRC_DEFAULT_CHARSET);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
+	option = purple_account_option_bool_new(_("Auto-detect incoming UTF-8"), "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 	option = purple_account_option_string_new(_("Username"), "username", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
