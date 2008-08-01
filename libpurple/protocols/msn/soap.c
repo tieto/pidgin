@@ -38,7 +38,7 @@
 #endif
 
 #define SOAP_TIMEOUT (5 * 60)
-
+#define MSN_UNSAFE_DEBUG 1
 typedef struct _MsnSoapRequest {
 	char *path;
 	MsnSoapMessage *message;

@@ -59,7 +59,6 @@ C_SRC =			cmdproc.c \
 			slpcall.c \
 			slplink.c \
 			slpmsg.c \
-			slpsession.c \
 			soap.c\
 			state.c \
 			switchboard.c \
