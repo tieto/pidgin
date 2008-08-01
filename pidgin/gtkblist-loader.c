@@ -162,7 +162,7 @@ pidgin_blist_loader_build(const gchar *dir)
 	}
 	
 	if ((sucess = sucess && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "contact_text")) != NULL)) {
-		online->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+		contact->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
 			contact->color = g_strdup(temp);
 		else contact->color = g_strdup(DEFAULT_TEXT_COLOR);
