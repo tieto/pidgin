@@ -594,10 +594,13 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 
 	if (ret) {
 		MsnSession *session = gc->proto_data;
-		MsnUser *user = msn_userlist_find_user(session->userlist, who);
-		if (user)
-			ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
-		/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
+		if (session) {
+			MsnUser *user = msn_userlist_find_user(session->userlist, who);
+			if (user)
+				/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
+				ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
+		} else
+			ret = FALSE;
 	}
 
 	return ret;
