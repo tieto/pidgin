@@ -6153,7 +6153,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 			else textcolor = "black";
 
 			idle = g_strdup_printf("<span color='%s' font_desc='%s'>%d:%02d</span>", textcolor, 
-					      (pair == NULL || pair->font == NULL) ? "" : pair->color, ihrs, imin);
+					      (pair == NULL || pair->font == NULL) ? "" : pair->font, ihrs, imin);
 		}
 	}
 
@@ -6245,7 +6245,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 
 				if (pair != NULL) {
 					gchar *temp = g_strdup_printf("<span foreground='%s' font_desc='%s'>%s</span>",
-								     (selected || pair->color == NULL || contact) ? "black" : pair->color,
+								     (selected || pair->color == NULL) ? "black" : pair->color,
 								     (pair->font == NULL) ? "" : pair->font, mark);
 				
 					g_free(mark);
