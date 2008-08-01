@@ -198,7 +198,7 @@ resolve(int in, int out)
 end:
 	size = g_list_length(ret);
 	write(out, &(query.type), sizeof(query.type));
-	write(out, &size, sizeof(int));
+	write(out, &size, sizeof(size));
 	while (ret != NULL)
 	{
 		if (query.type == T_SRV) write(out, ret->data, sizeof(PurpleSrvResponse));
@@ -223,7 +223,6 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 	int status;
 	
 	if (read(source, &type, sizeof(type)) == sizeof(type)) {
-		purple_debug_info("dnssrv","type: %d\n", type);
 		if (type == T_SRV) {
 			PurpleSrvResponse *res;
 			PurpleSrvResponse *tmp;
@@ -511,6 +510,7 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 {
 	char *query;
 	PurpleSrvQueryData *query_data;
+	PurpleSrvInternalQuery internal_query;
 #ifndef _WIN32
 	int in[2], out[2];
 	int pid;
@@ -552,7 +552,10 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 	close(out[1]);
 	close(in[0]);
 	
-	if (write(in[1], query, strlen(query)+1) < 0)
+	internal_query.type = T_TXT;
+	strncpy(internal_query.query, query, 255);
+	
+	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to TXT resolver\n");
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
