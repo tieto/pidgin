@@ -3,7 +3,6 @@ _Description=Pidgin smileys
 Icon=wink.png
 Author=Hylke Bons
 
-
 # Default smileys
 [default]
 smile.png           :)      :-)
@@ -125,6 +124,7 @@ thunder.png         (li)
 party.png           <:o)
 eyeroll.png         8-)
 yawn.png            |-) 
+bunny.png           ('.')
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
 
