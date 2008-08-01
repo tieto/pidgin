@@ -390,7 +390,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username = purple_account_get_username(session->account);
-	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
+	password = g_markup_escape_text(purple_connection_get_password(session->account->gc), 16);
 
 	purple_debug_info("msn", "Logging on %s, with policy '%s', nonce '%s'\n",
 	                  username, nexus->policy, nexus->nonce);
