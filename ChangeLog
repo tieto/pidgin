@@ -25,6 +25,7 @@ version 2.5.0 (??/??/2008):
 	* Aliasing is now supported server-side.
 	* Buddies are now emblemed. Bots and web clients should now be
 	  distinguished.
+	* Update smiley set for non-faces.
 	* Failing to update a buddy icon when the buddy has gone offline no
 	  longer crashes.
 	* Custom smileys received in a chat no longer go to a new window.
@@ -38,6 +39,7 @@ version 2.5.0 (??/??/2008):
 	  side.
 	* Offer to add new buddies into the same contact as existing buddies
 	  in the same group if the alias given is the same.
+	* Minor smiley style update.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy
