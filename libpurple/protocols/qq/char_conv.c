@@ -37,7 +37,7 @@
 #define QQ_CHARSET_ENG        "ISO-8859-1"
 
 #define QQ_NULL_MSG           "(NULL)"	/* return this if conversion fails */
-#define QQ_NULL_SMILEY        "(SM)"	/* return this if smiley conversion fails */
+#define QQ_NULL_SMILEY        "(Broken)"	/* return this if smiley conversion fails */
 
 const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
 	0x41, 0x43, 0x42, 0x44, 0x45, 0x46, 0x47, 0x48,
@@ -113,9 +113,9 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 	}
 	
 	/* conversion error */
-	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", error->message);
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ_CONVERT", "%s\n", error->message);
 
-	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ_CONVERT",
 		(guint8 *) str, (len == -1) ? strlen(str) : len,
 		"Dump failed text");
 
@@ -151,7 +151,7 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 	gint bytes = 0;
 
 	/* checked qq_show_packet OK */
-	qq_show_packet("QQ_MESG recv for font style", data, len);
+	/* qq_show_packet("QQ_MESG recv for font style", data, len); */
 
 	bytes += qq_get8(&font_attr, data + bytes);
 	bytes += qq_getdata(color, 3, data + bytes);	/* red,green,blue */
@@ -231,7 +231,7 @@ gchar *qq_smiley_to_purple(gchar *text)
 	GString *converted;
 
 	converted = g_string_new("");
-	segments = split_data((guint8 *) text, strlen(text), "\x14", 0);
+	segments = split_data((guint8 *) text, strlen(text), "\x14\x15", 0);
 	g_string_append(converted, segments[0]);
 
 	while ((*(++segments)) != NULL) {
@@ -286,7 +286,7 @@ void qq_filter_str(gchar *str) {
 	}
 
 	for (temp = str; *temp != 0; temp++) {
-		if (*temp == '\r' || *temp == '\n')  *temp = 0x20;
+		if (*temp == '\r' || *temp == '\n')  *temp = ' ';
 	}
 	g_strstrip(str);
 }

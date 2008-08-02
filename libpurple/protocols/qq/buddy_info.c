@@ -29,11 +29,12 @@
 
 #include "utils.h"
 #include "packet_parse.h"
+#include "buddy_list.h"
 #include "buddy_info.h"
 #include "char_conv.h"
 #include "crypt.h"
 #include "header_info.h"
-#include "keep_alive.h"
+#include "qq_base.h"
 #include "qq_network.h"
 
 #define QQ_PRIMARY_INFORMATION _("Primary Information")
@@ -85,6 +86,7 @@ static const gchar *genders[] = {
 };
 
 #define QQ_CONTACT_FIELDS                               37
+#define QQ_FACES	    100
 
 /* There is no user id stored in the reply packet for information query
  * we have to manually store the query, so that we know the query source */
@@ -954,23 +956,23 @@ void qq_send_packet_get_buddies_levels(PurpleConnection *gc)
 	GList *node = qd->buddies;
 	gint bytes = 0;
 
-	if (qd->buddies) {
-		/* server only sends back levels for online buddies, no point
-		 * in asking for anyone else */
-		size = 4 * g_list_length(qd->buddies) + 1;
-		buf = g_new0(guint8, size);
-		bytes += 1;
-
-		while (NULL != node) {
-			q_bud = (qq_buddy *) node->data;
-			if (NULL != q_bud) {
-				bytes += qq_put32(buf + bytes, q_bud->uid);
-			}
-			node = node->next;
-		}
-		qq_send_cmd(qd, QQ_CMD_GET_LEVEL, buf, size);
-		g_free(buf);
+	if ( qd->buddies == NULL) {
+		return;
 	}
+	/* server only sends back levels for online buddies, no point
+	 * in asking for anyone else */
+	size = 4 * g_list_length(qd->buddies) + 1;
+	buf = g_newa(guint8, size);
+	bytes += qq_put8(buf + bytes, 0x00);
+	
+	while (NULL != node) {
+		q_bud = (qq_buddy *) node->data;
+		if (NULL != q_bud) {
+			bytes += qq_put32(buf + bytes, q_bud->uid);
+		}
+		node = node->next;
+	}
+	qq_send_cmd(qd, QQ_CMD_GET_LEVEL, buf, size);
 }
 
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
@@ -1009,8 +1011,8 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		bytes += qq_get32(&onlineTime, decr_buf + bytes);
 		bytes += qq_get16(&level, decr_buf + bytes);
 		bytes += qq_get16(&timeRemainder, decr_buf + bytes);
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", 
-				"Level uid: %d, onlineTime: %d, level: %d, timeRemainder: %d\n", 
+		purple_debug(PURPLE_DEBUG_INFO, "QQ_LEVEL", 
+				"%d, tmOnline: %d, level: %d, tmRemainder: %d\n", 
 				uid, onlineTime, level, timeRemainder);
 		purple_name = uid_to_purple_name(uid);
 		b = purple_find_buddy(account, purple_name);
@@ -1033,3 +1035,4 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	}
 	g_free(decr_buf);
 }
+

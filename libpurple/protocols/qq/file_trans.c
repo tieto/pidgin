@@ -76,26 +76,10 @@ static guint32 _encrypt_qq_uid(guint32 uid, guint32 key)
 	return (~uid) ^ key;
 }
 
-static void _fill_filename_md5(const gchar *filename, guint8 *md5)
-{
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
-
-	g_return_if_fail(filename != NULL && md5 != NULL);
-
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (guint8 *) filename, strlen(filename));
-	purple_cipher_context_digest(context, 16, md5, NULL);
-	purple_cipher_context_destroy(context);
-}
-
 static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 {
 	FILE *fp;
 	guint8 *buffer;
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	size_t wc;
 
 	const gint QQ_MAX_FILE_MD5_LENGTH = 10002432;
@@ -118,11 +102,7 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 		return;
 	}
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, buffer, filelen);
-	purple_cipher_context_digest(context, 16, md5, NULL);
-	purple_cipher_context_destroy(context);
+	qq_get_md5(md5, QQ_KEY_LENGTH, buffer, filelen);
 }
 
 static gint _qq_get_file_header(qq_file_header *fh, guint8 *buf)
@@ -265,7 +245,7 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 	ft_info *info;
 
 	qd = (qq_data *) gc->proto_data;
-	g_return_val_if_fail(qd->session_key != NULL, -1);
+
 	info = (ft_info *) qd->xfer->data;
 
 	raw_data = g_newa(guint8, MAX_PACKET_SIZE);
@@ -395,7 +375,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 	guint8 *raw_data, filename_md5[QQ_KEY_LENGTH], file_md5[QQ_KEY_LENGTH];
 	gint bytes;
 	guint32 fragment_size = 1000;
-	gchar *filename;
+	const char *filename;
 	gint filename_len, filesize;
 	qq_data *qd;
 	ft_info *info;
@@ -403,7 +383,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 	qd = (qq_data *) gc->proto_data;
 	info = (ft_info *) qd->xfer->data;
 
-	filename = (gchar *) purple_xfer_get_filename(qd->xfer);
+	filename = purple_xfer_get_filename(qd->xfer);
 	filesize = purple_xfer_get_size(qd->xfer);
 
 	raw_data = g_newa(guint8, MAX_PACKET_SIZE);
@@ -423,11 +403,11 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 			{
 				case QQ_FILE_BASIC_INFO:
 					filename_len = strlen(filename);
-					_fill_filename_md5(filename, filename_md5);
+					qq_get_md5(filename_md5, sizeof(filename_md5), (guint8 *)filename, filename_len);
 					_fill_file_md5(purple_xfer_get_local_filename(qd->xfer),
 							purple_xfer_get_size(qd->xfer),
 							file_md5);
-
+					
 					info->fragment_num = (filesize - 1) / QQ_FILE_FRAGMENT_MAXLEN + 1;
 					info->fragment_len = QQ_FILE_FRAGMENT_MAXLEN;
 

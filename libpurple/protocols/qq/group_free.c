@@ -26,7 +26,7 @@
 
 #include "debug.h"
 
-#include "buddy_status.h"
+#include "buddy_list.h"
 #include "group_free.h"
 #include "group_network.h"
 

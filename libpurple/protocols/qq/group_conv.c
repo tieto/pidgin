@@ -27,8 +27,8 @@
 
 #include "conversation.h"
 
-#include "buddy_status.h"
 #include "group_conv.h"
+#include "buddy_list.h"
 #include "utils.h"
 
 /* show group conversation window */

@@ -30,6 +30,8 @@
 
 #include "debug.h"
 
+void qq_get_md5(guint8 *md5, gint md5_len, const guint8* const src, gint src_len);
+
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount);
 gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount);
 gint qq_string_to_dec_value(const gchar *str);

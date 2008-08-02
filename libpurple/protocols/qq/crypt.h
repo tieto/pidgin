@@ -1,4 +1,4 @@
-/**
+ /**
  * @file crypt.h
  *
  * purple
@@ -19,13 +19,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef _QQ_CRYPT_H_
 #define _QQ_CRYPT_H_
 
 #include <glib.h>
+
+#define DECRYPT 0x00
+#define ENCRYPT 0x01
 
 void qq_encrypt(const guint8 *const instr, gint instrlen, 
 		const guint8 *const key, 
@@ -34,14 +37,4 @@ void qq_encrypt(const guint8 *const instr, gint instrlen,
 gint qq_decrypt(const guint8 *const instr, gint instrlen, 
 		const guint8 *const key,
 		guint8 *outstr, gint *outstrlen_ptr);
-		
-/*
-#define DECRYPT 0x00
-#define ENCRYPT 0x01
-
-gint qq_crypt(gint flag,
-	     const guint8 *const instr, gint instrlen, 
-	     const guint8 *const key, 
-	     guint8 *outstr, gint *outstrlen_ptr);
-*/
 #endif

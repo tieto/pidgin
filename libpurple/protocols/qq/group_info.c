@@ -27,12 +27,11 @@
 #include "conversation.h"
 #include "debug.h"
 
-#include "buddy_status.h"
 #include "char_conv.h"
 #include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
-#include "buddy_status.h"
+#include "buddy_list.h"
 #include "group_network.h"
 
 /* we check who needs to update member info every minutes
@@ -77,6 +76,27 @@ void qq_send_cmd_group_get_group_info(PurpleConnection *gc, qq_group *group)
 }
 
 /* send packet to get online group member, called by keep_alive */
+void qq_send_cmd_group_all_get_online_members(PurpleConnection *gc)
+{
+	qq_data *qd;
+	qq_group *group;
+	GList *list;
+
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
+	list = qd->groups;
+	while (list != NULL) {
+		group = (qq_group *) list->data;
+		if (group->my_status == QQ_GROUP_MEMBER_STATUS_IS_MEMBER ||
+		    group->my_status == QQ_GROUP_MEMBER_STATUS_IS_ADMIN)
+			/* no need to get info time and time again, online members enough */
+			qq_send_cmd_group_get_online_members(gc, group);
+
+		list = list->next;
+	}
+}
+
 void qq_send_cmd_group_get_online_members(PurpleConnection *gc, qq_group *group)
 {
 	guint8 raw_data[16] = {0};
@@ -87,7 +107,7 @@ void qq_send_cmd_group_get_online_members(PurpleConnection *gc, qq_group *group)
 	/* only get online members when conversation window is on */
 	if (NULL == purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,group->group_name_utf8, purple_connection_get_account(gc))) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				"Conversation for \"%s\" is not open, ignore to get online members\n", group->group_name_utf8);
+				"Conversation \"%s\" is not open, ignore to get online members\n", group->group_name_utf8);
 		return;
 	}
 
@@ -113,7 +133,7 @@ void qq_send_cmd_group_get_members_info(PurpleConnection *gc, qq_group *group)
 	}
 
 	if (num <= 0) {
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "No group member needs to to update info now.\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "No group member info needs to be updated now.\n");
 		return;
 	}
 
@@ -209,9 +229,11 @@ void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnectio
 		bytes += qq_get8(&organization, data + bytes);
 		bytes += qq_get8(&role, data + bytes);
 
+		/*
 		if(organization != 0 || role != 0) {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "group member %d: organization=%d, role=%d\n", member_uid, organization, role);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ_GRP", "%d, organization=%d, role=%d\n", member_uid, organization, role);
 		}
+		*/
 		member = qq_group_find_or_add_member(gc, group, member_uid);
 		if (member != NULL)
 			member->role = role;
@@ -231,7 +253,7 @@ void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnectio
 			group->group_name_utf8, purple_connection_get_account(gc));
 	if(NULL == purple_conv) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				"Conversation for \"%s\" is not open, do not set topic\n", group->group_name_utf8);
+				"Conversation \"%s\" is not open, do not set topic\n", group->group_name_utf8);
 		return;
 	}
 
@@ -322,7 +344,7 @@ void qq_process_group_cmd_get_members_info(guint8 *data, gint len, PurpleConnect
 		bytes += qq_get8(&(member->gender), data + bytes);
 		bytes += convert_as_pascal_string(data + bytes, &nick, QQ_CHARSET_DEFAULT);
 		bytes += qq_get16(&unknown, data + bytes);
-		bytes += qq_get8(&(member->flag1), data + bytes);
+		bytes += qq_get8(&(member->ext_flag), data + bytes);
 		bytes += qq_get8(&(member->comm_flag), data + bytes);
 
 		/* filter \r\n in nick */
@@ -333,8 +355,8 @@ void qq_process_group_cmd_get_members_info(guint8 *data, gint len, PurpleConnect
 		/*
 		if (QQ_DEBUG) {
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-					"member [%09d]: flag1=0x%02x, comm_flag=0x%02x, nick=%s\n",
-					member_uid, member->flag1, member->comm_flag, member->nickname);
+					"member [%09d]: ext_flag=0x%02x, comm_flag=0x%02x, nick=%s\n",
+					member_uid, member->ext_flag, member->comm_flag, member->nickname);
 		}
 		*/
 

@@ -1,3 +1,57 @@
+2008.08.02 - csyfek <csyfek(at)gmail.com>
+	* Commit to Pidgin
+	* Tickets:
+		Fixes #1861
+		Fixes #1902
+		References #5112
+
+2008.08.02 - ccpaging <ecc_hy(at)hotmail.com>
+	* Store all keys and md5 values of qq_data in char[QQ_KEY_LENGTH]
+	* Use random value in inikey
+	* TEA header padding in crypt.c
+	* Rewrite login part of qq_process
+
+2008.07.31 - ccpaging <ecc_hy(at)hotmail.com>
+	* Fixed: send reply when get duplicate server command. The server may not get our reply before.
+	* Tag custom picture as text "(Broken)"
+
+2008.07.30 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Change some debug message
+	* Modify buddy status flag according to eva for QQ2006
+	* Modify buddy status parse and correspond to eva2
+	* Add getIP/putIP functions to packet_parse.c, and replace some gen_ip_str
+	* Replace guint32 *ip with struct in_addr, and reduce g_new/g_free operation
+	* Source file changed:
+   		Merge buddy_status into buddy_list
+   		Change login_logout to qq_base
+   		Merge keep_alive into qq_base
+   		New qq_process extract from qq_network
+	* Fixed: Byte alignment bug in crypt.c, tested in ARM PDA
+	* Fixed: group chat message may get in before getting group info, and so group info is empty
+	* Add qq_send_cmd_group_get_group_info when joined a group chat in group_im.c
+	* Add some new group command identify according eva but further program
+	* Add some new QQ client version identify
+	* Fixed: Identify buddy's client version by IM packet, and not by status
+	* Add some new info in buddy's tooltip text
+	* Add video falg to buddy's emblem. But those flag in buddy status may not prasing correctly
+	* Use new timeout function to handle send keep_alive, resend packet, update buddy status
+	* Add new advanced options:
+		The end user may change interval of keep_alive, resend packet, update buddy status to feed their need.
+		For example, saving network flow when use mobile phone.
+		Keep alive packet must be sent in 60-120 seconds whatever client rcved data of not.
+		The intervals of keep alive and update status should be multiple of resend's interval,
+		Since we use counter not time() in a single timeout function for efficiency.
+	* Rewrite qq_trans.c, and use one g_list to manage:
+		Store server packet before login, and prase all of them when get login
+		Store client send packet for resend scanning, confirm server reply, filter duplicate server reply
+		Store server packet for filter out duplicate
+	* Add QQ_MSG_SYS_NOTICE = 0x06 in sys_msg.c
+	* Rewrite qq_proc_cmd_reply and qq_proc_cmd_server:
+		In QQ protocol, one packet reply may need a new packet send later.
+		We may call it packet trigger. The triggers always is hided in every qq_process_reply.
+		Now we try to extract those triggers and put into a single function, 
+		and then every trigger should be obviously and easy to manage.
+	
 2008.07.12 - ccpaging <ecc_hy(at)hotmail.com>
 	* Fixed: Always lost connection. Now send keep alive packet in every 30 seconds
 	* Minor fix for debug information

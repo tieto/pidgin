@@ -59,8 +59,8 @@ C_SRC = \
 	group_search.c \
 	header_info.c \
 	im.c \
-	keep_alive.c \
-	login_logout.c \
+	qq_process.c \
+	qq_base.c \
 	packet_parse.c \
 	qq.c \
 	qq_network.c \
