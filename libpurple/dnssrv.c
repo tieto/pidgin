@@ -122,6 +122,7 @@ resolve(int in, int out)
 	gchar name[256];
 	guint16 type, dlen, pref, weight, port;
 	PurpleSrvInternalQuery query;
+	int n;
 
 #ifdef HAVE_SIGNAL_H
 	purple_restore_default_signal_handlers();
@@ -134,10 +135,9 @@ resolve(int in, int out)
 	}
 
 	size = res_query( query.query, C_IN, query.type, (u_char*)&answer, sizeof( answer));
-
+	
 	qdcount = ntohs(answer.hdr.qdcount);
 	ancount = ntohs(answer.hdr.ancount);
-
 	cp = (guchar*)&answer + sizeof(HEADER);
 	end = (guchar*)&answer + size;
 
@@ -152,16 +152,13 @@ resolve(int in, int out)
 		size = dn_expand((unsigned char*)&answer, end, cp, name, 256);
 		if(size < 0)
 			goto end;
-
 		cp += size;
-
 		GETSHORT(type,cp);
 
 		/* skip ttl and class since we already know it */
 		cp += 6;
 
 		GETSHORT(dlen,cp);
-
 		if (query.type == T_SRV) {
 			GETSHORT(pref,cp);
 
@@ -183,13 +180,10 @@ resolve(int in, int out)
 
 			ret = g_list_insert_sorted(ret, srvres, responsecompare);
 		} else if (query.type == T_TXT) {
-			size = dn_expand( (unsigned char*)&answer, end, cp, name, 256);
-			if(size < 0 )
-				goto end;
 			txtres = g_new0(PurpleTxtResponse, 1);
-			strcpy(txtres->content, name);
-			
+			strncpy(txtres->content, ++cp, dlen-1);
 			ret = g_list_append(ret, txtres);
+			cp += dlen - 1;
 		} else {
 			cp += dlen;
 		}
