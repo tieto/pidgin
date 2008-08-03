@@ -459,7 +459,6 @@ jabber_jingle_session_add_description_vv(const JingleSessionContent *jsc,
 {
 	xmlnode_set_attrib(description, "media", 
 			jabber_jingle_session_content_get_subtype(jsc));
-	xmlnode_set_attrib(description, "profile", "RTP/AVP");
 	return description;
 }
 
@@ -748,8 +747,7 @@ jabber_jingle_session_create_session_terminate(const JingleSession *sess,
 		jabber_jingle_session_add_jingle(sess, request,
 						 "session-terminate");
 	xmlnode *reason = xmlnode_new_child(jingle, "reason");
-	xmlnode *condition = xmlnode_new_child(reason, "condition");
-	xmlnode_new_child(condition, reasoncode);
+	xmlnode_new_child(reason, reasoncode);
 	if (reasontext) {
 		xmlnode *text = xmlnode_new_child(reason, "text");
 		xmlnode_insert_data(text, reasontext, strlen(reasontext));
