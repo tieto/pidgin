@@ -528,7 +528,7 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 	JabberStream *js = gc->proto_data;
 	int n;
 	
-	if (results > 0) {
+	if (results == 0) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not find alternative XMPP connection methods after failing to connect directly.\n"));
 		purple_connection_error_reason (gc,
@@ -537,7 +537,15 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 	}
 	
 	for (n = 0; n < results; n++) {
-		purple_debug_info("dnssrv","TXT RDATA: %s\n", resp[n].content);	
+		gchar **token;
+		token = g_strsplit(resp[n].content, "=", 2);
+		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
+			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
+			js->bosh.url = g_strdup(token[1]);
+			g_strfreev(token);
+			break;
+		}
+		g_strfreev(token);
 	}
 }
 
@@ -2484,7 +2492,7 @@ jabber_ipc_contact_has_feature(gchar *fulljid, gchar *feature)
 	if (!caps_info) return FALSE;
 	capabilities = g_hash_table_lookup(capstable, caps_info);
 	
-	if (g_list_find(capabilities->features, feature) == NULL) return FALSE ;
+	if (g_list_find_custom(capabilities->features, feature, strcmp) == NULL) return FALSE ;
 	return TRUE;
 }
 
