@@ -59,6 +59,7 @@ typedef struct _JabberStream JabberStream;
 #include "jutil.h"
 #include "xmlnode.h"
 #include "buddy.h"
+#include "bosh.h"
 
 #ifdef HAVE_CYRUS_SASL
 #include <sasl/sasl.h>
@@ -201,6 +202,9 @@ struct _JabberStream
 	
 	/* A purple timeout tag for the keepalive */
 	int keepalive_timeout;
+	
+	/* BOSH stuff*/
+    PurpleBOSHConnection bosh;
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);
