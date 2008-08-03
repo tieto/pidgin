@@ -521,6 +521,25 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 }
 
+static void 
+txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
+{
+	PurpleConnection *gc = data;
+	JabberStream *js = gc->proto_data;
+	int n;
+	
+	if (results > 0) {
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not find alternative XMPP connection methods after failing to connect directly.\n"));
+		purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);	
+	}
+	
+	for (n = 0; n < results; n++) {
+		purple_debug_info("dnssrv","TXT RDATA: %s\n", resp[n].content);	
+	}
+}
 
 static void
 jabber_login_callback(gpointer data, gint source, const gchar *error)
@@ -529,12 +548,8 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 	JabberStream *js = gc->proto_data;
 
 	if (source < 0) {
-		gchar *tmp;
-		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
-				error);
-		purple_connection_error_reason (gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
+		purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
+		purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, gc);
 		return;
 	}
 
