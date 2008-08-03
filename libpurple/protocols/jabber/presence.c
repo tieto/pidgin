@@ -261,11 +261,16 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	}
 
 	/* JEP-0115 */
+	/* calculate hash */
+	jabber_caps_calculate_own_hash(js);
+	/* create xml */
 	c = xmlnode_new_child(presence, "c");
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
 	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
-	xmlnode_set_attrib(c, "ver", VERSION);
-	
+	xmlnode_set_attrib(c, "hash", "sha-1");
+	xmlnode_set_attrib(c, "ver", jabber_caps_get_own_hash());
+
+#if 0
 	if(js != NULL) {
 		/* add the extensions */
 		char extlist[1024];
@@ -277,7 +282,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 			JabberFeature *feat = (JabberFeature*)feature->data;
 			unsigned featlen;
 			
-			if(feat->is_enabled != NULL && feat->is_enabled(js, feat->shortname, feat->namespace) == FALSE)
+			if(feat->is_enabled != NULL && feat->is_enabled(js, feat->namespace) == FALSE)
 				continue; /* skip this feature */
 			
 			featlen = strlen(feat->shortname);
@@ -297,7 +302,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		if(remaining < 1023)
 			xmlnode_set_attrib(c, "ext", extlist);
 	}
-	
+#endif
 	return presence;
 }
 
@@ -748,16 +753,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
 					state, status);
 			if(caps) {
+				/* handle XEP-0115 */
 				const char *node = xmlnode_get_attrib(caps,"node");
 				const char *ver = xmlnode_get_attrib(caps,"ver");
-				const char *ext = xmlnode_get_attrib(caps,"ext");
+				const char *hash = xmlnode_get_attrib(caps,"hash");
 				
-				if(node && ver) {
+				if(node && ver && hash) {
 					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
 					userdata->js = js;
 					userdata->jb = jb;
 					userdata->from = g_strdup(from);
-					jabber_caps_get_info(js, from, node, ver, ext, jabber_presence_set_capabilities, userdata);
+					jabber_caps_get_info(js, from, node, ver, hash, jabber_presence_set_capabilities, userdata);
 				}
 			}
 		}
