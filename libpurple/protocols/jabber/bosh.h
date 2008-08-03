@@ -22,13 +22,54 @@
 #ifndef _PURPLE_JABBER_BOSH_H_
 #define _PURPLE_JABBER_BOSH_H_
 
+#include <glib.h>
+
+typedef struct _PurpleHTTPRequest PurpleHTTPRequest;
+typedef struct _PurpleHTTPResponse PurpleHTTPResponse;
+typedef struct _PurpleHTTPHeaderField PurpleHTTPHeaderField;
+
+typedef void (*PurpleHTTPRequestCallback)(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata);
+
+typedef struct {
+    int fd;
+    PurpleConnection *conn;
+    GQueue *requests;
+    void *userdata;
+} PurpleHTTPConnection;
+
 typedef struct {
     char *url;
     gboolean pipelining;
+    PurpleHTTPConnection *conn_a;
+    PurpleHTTPConnection *conn_b;
 } PurpleBOSHConnection;
 
-typedef struct {
-    
-} PurpleHTTPRequest;
+struct _PurpleHTTPRequest {
+    PurpleHTTPRequestCallback cb;
+    char *method;
+    char *url;
+    GList *header;
+    char *data;
+    void *userdata;
+};
 
+struct _PurpleHTTPResponse {
+    int status;
+    GList *header;
+    char *data;
+};
+
+struct _PurpleHTTPHeaderField {
+    char *name;
+    char *value;
+};
+
+PurpleHTTPHeaderField *jabber_bosh_http_header_field(const char *name, const char *value);
+
+void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
+void jabber_bosh_http_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req);
+void jabber_bosh_http_connection_clean(PurpleHTTPConnection *conn);
+
+void jabber_bosh_http_request_init(PurpleHTTPRequest *req, const char *method, const char *url, PurpleHTTPRequestCallback cb, void *userdata);
+void jabber_bosh_http_request_clean(PurpleHTTPRequest *req);
 #endif /* _PURPLE_JABBER_BOSH_H_ */

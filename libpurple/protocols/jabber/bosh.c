@@ -37,3 +37,13 @@
 #include "pep.h"
 #include "adhoccommands.h"
 
+PurpleHTTPHeaderField* jabber_bosh_http_header_field(const char *name, *const char *value) {
+	PurpleHTTPHeaderField *tmp = g_new0(PurpleHTTPHeaderField, 0);
+	tmp->name = g_strdup(name);
+	tmp->value = g_strdup(value);
+	return tmp;
+}
+
+void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn) {
+	
+}
