@@ -689,7 +689,8 @@ static gchar *_qq_get_chat_buddy_real_name(PurpleConnection *gc, gint channel, c
 	return chat_name_to_purple_name(who);
 }
 
-static PurplePluginProtocolInfo prpl_info	= {
+static PurplePluginProtocolInfo prpl_info =
+{
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_USE_POINTSIZE,
 	NULL,							/* user_splits	*/
 	NULL,							/* protocol_options */
@@ -752,11 +753,11 @@ static PurplePluginProtocolInfo prpl_info	= {
 	NULL,							/* PurpleWhiteboardPrplOps */
 	NULL,							/* send_raw */
 	NULL,							/* roomlist_room_serialize */
+	NULL,							/* unregister_user */
+	NULL,							/* send_attention */
+	NULL,							/* get attention_types */
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
+	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	NULL
 };
 
