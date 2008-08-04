@@ -37,7 +37,11 @@
  */
 #define MAX_PACKET_SIZE 65535
 
+#ifndef _WIN32
 #include <netinet/in.h>
+#else
+#include "win32dep.h"
+#endif
 
 gint qq_get8(guint8 *b, guint8 *buf);
 gint qq_get16(guint16 *w, guint8 *buf);

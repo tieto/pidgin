@@ -42,7 +42,6 @@ C_SRC = \
 	buddy_info.c \
 	buddy_list.c \
 	buddy_opt.c \
-	buddy_status.c \
 	char_conv.c \
 	crypt.c \
 	file_trans.c \
@@ -59,13 +58,13 @@ C_SRC = \
 	group_search.c \
 	header_info.c \
 	im.c \
-	qq_process.c \
-	qq_base.c \
 	packet_parse.c \
 	qq.c \
+	qq_base.c \
 	qq_network.c \
-	send_file.c \
+	qq_process.c \
 	qq_trans.c \
+	send_file.c \
 	sys_msg.c \
 	utils.c
 
