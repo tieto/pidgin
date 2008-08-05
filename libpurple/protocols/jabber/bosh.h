@@ -26,23 +26,44 @@
 
 typedef struct _PurpleHTTPRequest PurpleHTTPRequest;
 typedef struct _PurpleHTTPResponse PurpleHTTPResponse;
-typedef struct _PurpleHTTPHeaderField PurpleHTTPHeaderField;
+typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
+typedef struct _PurpleBOSHConnection PurpleBOSHConnection;
 
+typedef void (*PurpleHTTPConnectionConnectFunction)(PurpleHTTPConnection *conn);
 typedef void (*PurpleHTTPRequestCallback)(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata);
+typedef void (*PurpleBOSHConnectionConnectFunction)(PurpleBOSHConnection *conn);
+typedef void (*PurpleBOSHConnectionReciveFunction)(PurpleBOSHConnection *conn, xmlnode *node);
 
-typedef struct {
-    int fd;
-    PurpleConnection *conn;
-    GQueue *requests;
+struct _PurpleBOSHConnection {
+    /* decoded URL */
+    char *host;
+    int port;
+    char *path; 
+    char *user;
+    char *passwd;
+    
     void *userdata;
-} PurpleHTTPConnection;
-
-typedef struct {
-    char *url;
+    PurpleAccount *account;
     gboolean pipelining;
     PurpleHTTPConnection *conn_a;
     PurpleHTTPConnection *conn_b;
-} PurpleBOSHConnection;
+    
+    PurpleBOSHConnectionConnectFunction connect_cb;
+    PurpleBOSHConnectionReciveFunction receive_cb;
+};
+
+struct _PurpleHTTPConnection {
+    int fd;
+    char *host;
+    int port;
+    int handle;
+    PurpleConnection *conn;
+    PurpleAccount *account;
+    GQueue *requests;
+    
+    PurpleHTTPConnectionConnectFunction connect_cb;
+    void *userdata;
+};
 
 struct _PurpleHTTPRequest {
     PurpleHTTPRequestCallback cb;
@@ -55,21 +76,18 @@ struct _PurpleHTTPRequest {
 
 struct _PurpleHTTPResponse {
     int status;
-    GList *header;
+    GHashTable *header;
     char *data;
 };
 
-struct _PurpleHTTPHeaderField {
-    char *name;
-    char *value;
-};
+void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *account, char *url);
+void jabber_bosh_connection_connect(PurpleBOSHConnection *conn);
 
-PurpleHTTPHeaderField *jabber_bosh_http_header_field(const char *name, const char *value);
-
+void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount *account, char *host, int port);
 void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
 void jabber_bosh_http_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req);
 void jabber_bosh_http_connection_clean(PurpleHTTPConnection *conn);
 
-void jabber_bosh_http_request_init(PurpleHTTPRequest *req, const char *method, const char *url, PurpleHTTPRequestCallback cb, void *userdata);
+void jabber_bosh_http_request_init(PurpleHTTPRequest *req, const char *method, const char *path, PurpleHTTPRequestCallback cb, void *userdata);
 void jabber_bosh_http_request_clean(PurpleHTTPRequest *req);
 #endif /* _PURPLE_JABBER_BOSH_H_ */
