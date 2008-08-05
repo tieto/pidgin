@@ -31,6 +31,36 @@
 
 #include <string.h>
 
+/*
+ * This boolean was added to eliminate a heinous bug where we would
+ * get into a loop with the server and move a buddy back and forth
+ * from one group to another.
+ *
+ * The sequence goes something like this:
+ * 1. Our resource and another resource both approve an authorization
+ *    request at the exact same time.  We put the buddy in group A and
+ *    the other resource put the buddy in group B.
+ * 2. The server receives the roster add for group B and sends us a
+ *    roster push.
+ * 3. We receive this roster push and modify our local blist.  This
+ *    triggers us to send a roster add for group B.
+ * 4. The server recieves our earlier roster add for group A and sends
+ *    us a roster push.
+ * 5. We receive this roster push and modify our local blist.  This
+ *    triggers us to send a roster add for group A.
+ * 6. The server receives our earlier roster add for group B and sends
+ *    us a roster push.
+ * (repeat steps 3 through 6 ad infinitum)
+ *
+ * This boolean is used to short-circuit the sending of a roster add
+ * when we receive a roster push.
+ *
+ * See these bug reports:
+ * http://trac.adiumx.com/ticket/8834
+ * http://developer.pidgin.im/ticket/5484
+ * http://developer.pidgin.im/ticket/6188
+ */
+static gboolean parsing_from_server = FALSE;
 
 void jabber_roster_request(JabberStream *js)
 {
@@ -169,6 +199,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 	if(!query)
 		return;
 
+	parsing_from_server = TRUE;
+
 	for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item))
 	{
 		const char *jid, *name, *subscription, *ask;
@@ -251,6 +283,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
+	parsing_from_server = FALSE;
+
 	/* if we're just now parsing the roster for the first time,
 	 * then now would be the time to send our initial presence */
 	if(!js->roster_parsed) {
@@ -268,6 +302,9 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	GSList *groups = NULL, *l;
 	JabberIq *iq;
 	xmlnode *query, *item, *group;
+
+	if (parsing_from_server)
+		return;
 
 	if(!(b = purple_find_buddy(js->gc->account, name)))
 		return;
