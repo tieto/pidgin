@@ -556,7 +556,6 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 	}
 	if (js->bosh.host) {
 		js->bosh.userdata = gc;
-		js->bosh.connect_cb = jabber_bosh_login_callback;
 		jabber_bosh_connection_connect(&(js->bosh));
 	} else {
 		purple_debug_info("jabber","Didn't find an alternative connection method.\n");

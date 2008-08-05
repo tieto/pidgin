@@ -52,9 +52,19 @@ void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *acco
 	conn->conn_a->userdata = conn;
 }
 
+static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
+    
+}
+
+void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
+	
+}
+
 static void jabber_bosh_connection_connected(PurpleHTTPConnection *conn) {
 	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	if (bosh_conn->connect_cb) bosh_conn->connect_cb(bosh_conn);
+	
+	if (bosh->ready && bosh_conn->connect_cb) bosh_conn->connect_cb(bosh_conn);
+	else jabber_bosh_connection_boot(conn);
 }
 
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
@@ -62,6 +72,9 @@ void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
 	jabber_bosh_http_connection_connect(conn->conn_a);	
 }
 
+static void jabber_bosh_http_connection_receive(gpointer data, gint source, PurpleInputCondition condition) {
+	PurpleHTTPConnection conn = data;
+}
 
 void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount *account, char *host, int port) {
 	conn->account = account;
@@ -77,11 +90,12 @@ static void jabber_bosh_http_connection_callback(gpointer data, gint source, con
 		return;
 	}
 	conn->fd = source;
+	conn->ie_handle = purple_input_add(conn->fd, jabber_bosh_http_connection_receive, PURPLE_INPUT_READ, cond);
 	if (conn->connect_cb) conn->connect_cb(conn);
 }
 
 void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn) {
 	if((purple_proxy_connect(&(conn->handle), conn->account, conn->host, conn->port, jabber_bosh_http_connection_callback, conn)) == NULL) {
 		purple_debug_info("jabber", "Unable to connect to %s.\n", conn->host);
-	}
+	} 
 }

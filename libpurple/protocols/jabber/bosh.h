@@ -48,6 +48,7 @@ struct _PurpleBOSHConnection {
     PurpleHTTPConnection *conn_a;
     PurpleHTTPConnection *conn_b;
     
+    gboolean ready;
     PurpleBOSHConnectionConnectFunction connect_cb;
     PurpleBOSHConnectionReciveFunction receive_cb;
 };
@@ -57,10 +58,11 @@ struct _PurpleHTTPConnection {
     char *host;
     int port;
     int handle;
+    int ie_handle;
     PurpleConnection *conn;
     PurpleAccount *account;
     GQueue *requests;
-    
+    int pih
     PurpleHTTPConnectionConnectFunction connect_cb;
     void *userdata;
 };
@@ -82,6 +84,7 @@ struct _PurpleHTTPResponse {
 
 void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *account, char *url);
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn);
+void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node);
 
 void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount *account, char *host, int port);
 void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
