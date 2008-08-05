@@ -27,6 +27,7 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "debug.h"
+#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "util.h"
@@ -107,6 +108,11 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		}
 
 		l = l->next;
+	}
+
+	if (!purple_privacy_check(purple_connection_get_account(gc), who)) {
+		purple_debug_info("yahoo", "Picture packet from %s dropped.\n", who);
+		return;
 	}
 
 	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
