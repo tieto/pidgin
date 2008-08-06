@@ -58,6 +58,8 @@
 #define PROXYUSER 2
 #define PROXYPASS 3
 
+#define PREFS_OPTIMAL_ICON_SIZE 32
+
 static int sound_row_sel = 0;
 static GtkWidget *prefsnotebook;
 
@@ -599,14 +601,14 @@ prefs_themes_sort(PurpleTheme *theme)
 {
 	GdkPixbuf *pixbuf = NULL;
 	GtkTreeIter iter;
-	gchar *image_full, *markup;
+	gchar *image_full = NULL, *markup;
 	const gchar *name, *author, *description;
 	
 	if (PURPLE_IS_SOUND_THEME(theme)){
 		
 		image_full = purple_theme_get_image_full(theme);
 		if (image_full != NULL){
-			pixbuf = gdk_pixbuf_new_from_file(image_full, NULL);
+			pixbuf = gdk_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
 			g_free(image_full);
 		} else pixbuf = NULL; 
 
@@ -620,7 +622,7 @@ prefs_themes_sort(PurpleTheme *theme)
 
 		image_full = purple_theme_get_image_full(theme);
 		if (image_full != NULL){
-			pixbuf = gdk_pixbuf_new_from_file(image_full, NULL);
+			pixbuf = gdk_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
 			g_free(image_full);
 		} else pixbuf = NULL; 
 
@@ -648,8 +650,8 @@ prefs_themes_init()
 	gchar *filename;
 	GtkTreeIter iter;
 
-	filename = g_build_filename(DATADIR, "icons", "hicolor", "16x16", "apps", "pidgin.png", NULL);
-	pixbuf= gdk_pixbuf_new_from_file(filename, NULL);
+	filename = g_build_filename(DATADIR, "icons", "hicolor", "32x32", "apps", "pidgin.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file_at_scale(filename, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
 	g_free(filename);
 
 	/* sound themes */
@@ -1122,6 +1124,7 @@ interface_page(void)
 	gtk_box_pack_start(GTK_BOX (vbox), combo_box, TRUE, TRUE, 0);
 
 	cell_rend = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_renderer_set_fixed_size(cell_rend, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "pixbuf", 0, NULL);
 	
@@ -2155,6 +2158,7 @@ sound_page(void)
 	gtk_box_pack_start(GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
 
 	cell_rend = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_renderer_set_fixed_size(cell_rend, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "pixbuf", 0, NULL);
 	
