@@ -27,6 +27,7 @@
 
 #include "msn.h"
 #include "accountopt.h"
+#include "contact.h"
 #include "msg.h"
 #include "page.h"
 #include "pluginpref.h"
@@ -392,6 +393,32 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Cancel"), NULL);
 }
 
+/* QuLogic: Disabled until confirmed correct. */
+#if 0
+static void
+msn_show_blocked_text(PurplePluginAction *action)
+{
+	PurpleConnection *pc = (PurpleConnection *) action->context;
+	MsnSession *session;
+	char *title;
+
+	session = pc->proto_data;
+
+	title = g_strdup_printf(_("Blocked Text for %s"), session->account->username);
+	if (session->blocked_text == NULL) {
+		purple_notify_formatted(pc, title, title, NULL, _("No text is blocked for this account."), NULL, NULL);
+	} else {
+		char *blocked_text;
+		blocked_text = g_strdup_printf(_("MSN servers are currently blocking the following regular expressions:<br/>%s"),
+		                               session->blocked_text);
+		
+		purple_notify_formatted(pc, title, title, NULL, blocked_text, NULL, NULL);
+		g_free(blocked_text);
+	}
+	g_free(title);
+}
+#endif
+
 static void
 msn_show_hotmail_inbox(PurplePluginAction *action)
 {
@@ -401,14 +428,27 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 	gc = (PurpleConnection *) action->context;
 	session = gc->proto_data;
 
-	if (session->passport_info.file == NULL)
-	{
+	if (!session->passport_info.email_enabled) {
 		purple_notify_error(gc, NULL,
-						  _("This Hotmail account may not be active."), NULL);
+						  _("This account does not have email enabled."), NULL);
 		return;
 	}
 
-	purple_notify_uri(gc, session->passport_info.file);
+	/** apparently the correct value is 777, use 750 as a failsafe */ 
+	if ((session->passport_info.mail_url == NULL)
+		|| (time (NULL) - session->passport_info.mail_timestamp >= 750)) {
+		MsnTransaction *trans;
+		MsnCmdProc *cmdproc;
+
+		cmdproc = session->notification->cmdproc;
+
+		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
+		msn_transaction_set_data(trans, GUINT_TO_POINTER(TRUE));
+
+		msn_cmdproc_send_trans(cmdproc, trans);
+
+	} else
+		purple_notify_uri(gc, session->passport_info.mail_url);
 }
 
 static void
@@ -543,16 +583,25 @@ static gboolean
 msn_can_receive_file(PurpleConnection *gc, const char *who)
 {
 	PurpleAccount *account;
-	char *normal;
+	gchar *normal;
 	gboolean ret;
 
 	account = purple_connection_get_account(gc);
 
 	normal = g_strdup(msn_normalize(account, purple_account_get_username(account)));
-
 	ret = strcmp(normal, msn_normalize(account, who));
-
 	g_free(normal);
+
+	if (ret) {
+		MsnSession *session = gc->proto_data;
+		if (session) {
+			MsnUser *user = msn_userlist_find_user(session->userlist, who);
+			if (user)
+				/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
+				ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
+		} else
+			ret = FALSE;
+	}
 
 	return ret;
 }
@@ -565,6 +614,30 @@ static const char *
 msn_list_icon(PurpleAccount *a, PurpleBuddy *b)
 {
 	return "msn";
+}
+
+static const char *
+msn_list_emblems(PurpleBuddy *b)
+{
+	MsnUser *user = b->proto_data;
+
+	if (user != NULL) {
+		if (user->clientid & MSN_CLIENT_CAP_BOT)
+			return "bot";
+		if (user->clientid & MSN_CLIENT_CAP_WIN_MOBILE)
+			return "mobile";
+#if 0
+		/* XXX: Since we don't support this, there's no point in showing it just yet */
+		if (user->clientid & MSN_CLIENT_CAP_SCHANNEL)
+			return "secure";
+#endif
+		if (user->clientid & MSN_CLIENT_CAP_WEBMSGR)
+			return "external";
+		if (user->networkid == MSN_NETWORK_YAHOO)
+			return "yahoo";
+	}
+
+	return NULL;
 }
 
 /*
@@ -773,10 +846,6 @@ msn_status_types(PurpleAccount *account)
 static GList *
 msn_actions(PurplePlugin *plugin, gpointer context)
 {
-	PurpleConnection *gc = (PurpleConnection *)context;
-	PurpleAccount *account;
-	const char *user;
-
 	GList *m = NULL;
 	PurplePluginAction *act;
 
@@ -808,17 +877,18 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 			msn_show_set_mobile_pages);
 	m = g_list_append(m, act);
 
-	account = purple_connection_get_account(gc);
-	user = msn_normalize(account, purple_account_get_username(account));
+/* QuLogic: Disabled until confirmed correct. */
+#if 0
+	m = g_list_append(m, NULL);
+	act = purple_plugin_action_new(_("View Blocked Text..."),
+			msn_show_blocked_text);
+	m = g_list_append(m, act);
+#endif
 
-	if ((strstr(user, "@hotmail.") != NULL) ||
-		(strstr(user, "@msn.com") != NULL))
-	{
-		m = g_list_append(m, NULL);
-		act = purple_plugin_action_new(_("Open Hotmail Inbox"),
-				msn_show_hotmail_inbox);
-		m = g_list_append(m, act);
-	}
+	m = g_list_append(m, NULL);
+	act = purple_plugin_action_new(_("Open Hotmail Inbox"),
+			msn_show_hotmail_inbox);
+	m = g_list_append(m, act);
 
 	return m;
 }
@@ -1042,14 +1112,19 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 {
 	PurpleAccount *account;
 	PurpleBuddy *buddy = purple_find_buddy(gc->account, who);
+	MsnSession *session;
+	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
 	const char *username;
 
-	purple_debug_info("MSNP14","send IM {%s} to %s\n",message,who);
+	purple_debug_info("msn", "send IM {%s} to %s\n",message,who);
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
+
+	session = gc->proto_data;
+	swboard = msn_session_find_swboard(session, who);
 
 	if (buddy) {
 		PurplePresence *p = purple_buddy_get_presence(buddy);
@@ -1062,10 +1137,12 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
-	if(msn_user_is_online(account, who)||
-		msn_user_is_yahoo(account, who)){
-		/*User online,then send Online Instant Message*/
-
+	if (msn_user_is_online(account, who)||
+		msn_user_is_yahoo(account, who) ||
+		swboard != NULL){
+		/*User online or have a swboard open because it's invisible
+		 * and sent us a message,then send Online Instant Message*/
+ 
 		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
 		{
 			g_free(msgformat);
@@ -1081,22 +1158,19 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(msgformat);
 		g_free(msgtext);
 
-		purple_debug_info("MSNP14","prepare to send online Message\n");
+		purple_debug_info("msn", "prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, username))
 		{
-			MsnSession *session;
-			MsnSwitchBoard *swboard;
 			MsnEmoticon *smile;
 			GSList *smileys;
 			GString *emoticons = NULL;
 
-			session = gc->proto_data;
 			if(msn_user_is_yahoo(account,who)){
 				/*we send the online and offline Message to Yahoo User via UBM*/
-				purple_debug_info("MSNP14","send to Yahoo User\n");
+				purple_debug_info("msn", "send to Yahoo User\n");
 				uum_send_msg(session,msg);
 			}else{
-				purple_debug_info("MSNP14","send via switchboard\n");
+				purple_debug_info("msn", "send via switchboard\n");
 				swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
 				smileys = msn_msg_grab_emoticons(message, username);
 				while (smileys) {
@@ -1145,19 +1219,20 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		}
 
 		msn_message_destroy(msg);
-	}else	{
+	} else {
 		/*send Offline Instant Message,only to MSN Passport User*/
-		MsnSession *session;
 		char *friendname;
 
-		purple_debug_info("MSNP14","prepare to send offline Message\n");
-		session = gc->proto_data;
+		purple_debug_info("msn", "prepare to send offline Message\n");
 
 		friendname = msn_encode_mime(account->username);
 		msn_oim_prep_send_msg_info(session->oim,
 			purple_account_get_username(account),
-			friendname, who,	message);
+			friendname, who, msgtext);
 		msn_oim_send_msg(session->oim);
+
+		g_free(msgformat);
+		g_free(msgtext);
 		g_free(friendname);
 	}
 
@@ -1279,6 +1354,7 @@ fake_userlist_add_buddy(MsnUserList *userlist,
 
 	if (group_id >= 0)
 	{
+		/* This is wrong... user->group_ids contains g_strdup()'d data now */
 		user->group_ids = g_list_append(user->group_ids,
 										GINT_TO_POINTER(group_id));
 	}
@@ -1298,7 +1374,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
-	purple_debug_info("MSN","Add user:%s to group:%s\n", who, (group && group->name) ? group->name : "(null)");
+	purple_debug_info("msn", "Add user:%s to group:%s\n", who, (group && group->name) ? group->name : "(null)");
 	if (!session->logged_in)
 	{
 #if 0
@@ -1369,10 +1445,10 @@ msn_add_permit(PurpleConnection *gc, const char *who)
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
 		/* delete contact from Block list and add it to Allow in the callback */
-		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
+		msn_del_contact_from_list(session, NULL, who, MSN_LIST_BL);
 	} else {
 		/* just add the contact to Allow list */
-		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_AL);
+		msn_add_contact_to_list(session, NULL, who, MSN_LIST_AL);
 	}
 
 
@@ -1397,10 +1473,10 @@ msn_add_deny(PurpleConnection *gc, const char *who)
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
 		/* delete contact from Allow list and add it to Block in the callback */
-		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
+		msn_del_contact_from_list(session, NULL, who, MSN_LIST_AL);
 	} else {
 		/* just add the contact to Block list */
-		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_BL);
+		msn_add_contact_to_list(session, NULL, who, MSN_LIST_BL);
 	}
 
 	msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
@@ -1423,7 +1499,7 @@ msn_rem_permit(PurpleConnection *gc, const char *who)
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
-	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
+	msn_del_contact_from_list(session, NULL, who, MSN_LIST_AL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
@@ -1446,7 +1522,7 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
-	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
+	msn_del_contact_from_list(session, NULL, who, MSN_LIST_BL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);
@@ -1574,6 +1650,15 @@ msn_keepalive(PurpleConnection *gc)
 	}
 }
 
+static void msn_alias_buddy(PurpleConnection *pc, const char *name, const char *alias)
+{
+	MsnSession *session;
+
+	session = pc->proto_data;
+
+	msn_update_contact(session, name, MSN_UPDATE_ALIAS, alias);
+}
+
 static void
 msn_group_buddy(PurpleConnection *gc, const char *who,
 				const char *old_group_name, const char *new_group_name)
@@ -1669,12 +1754,12 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
-	purple_debug_info("MSN", "Remove group %s\n", group->name);
+	purple_debug_info("msn", "Remove group %s\n", group->name);
 	/*we can't delete the default group*/
 	if(!strcmp(group->name, MSN_INDIVIDUALS_GROUP_NAME)||
 		!strcmp(group->name, MSN_NON_IM_GROUP_NAME))
 	{
-		purple_debug_info("MSN", "This group can't be removed, returning.\n");
+		purple_debug_info("msn", "This group can't be removed, returning.\n");
 		return ;
 	}
 
@@ -1739,7 +1824,7 @@ msn_get_photo_url(const char *url_text)
 }
 
 static void msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
-		const gchar *url_text, size_t len, const gchar *error_message);
+		const gchar *url_text, gsize len, const gchar *error_message);
 
 #endif
 
@@ -2174,7 +2259,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
 	photo_url_text = msn_get_photo_url(url_text);
-	purple_debug_info("MSNP14","photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
+	purple_debug_info("msn", "photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
 
 	/* Marshall the existing state */
 	info2_data = g_new0(MsnGetInfoStepTwoData, 1);
@@ -2375,7 +2460,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* protocol_options */
 	{"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
-	NULL,				/* list_emblems */
+	msn_list_emblems,		/* list_emblems */
 	msn_status_text,		/* status_text */
 	msn_tooltip_text,		/* tooltip_text */
 	msn_status_types,		/* away_states */
@@ -2411,7 +2496,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
 	NULL,					/* get_cb_away */
-	NULL,					/* alias_buddy */
+	msn_alias_buddy,		/* alias_buddy */
 	msn_group_buddy,		/* group_buddy */
 	msn_rename_group,		/* rename_group */
 	NULL,					/* buddy_free */
@@ -2484,11 +2569,11 @@ init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 
 	option = purple_account_option_string_new(_("Server"), "server",
-											WLM_SERVER);
+											MSN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = purple_account_option_int_new(_("Port"), "port", WLM_PORT);
+	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

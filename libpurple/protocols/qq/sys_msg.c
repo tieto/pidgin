@@ -44,6 +44,7 @@ enum {
 	QQ_MSG_SYS_ADD_CONTACT_REQUEST = 0x02,
 	QQ_MSG_SYS_ADD_CONTACT_APPROVED = 0x03,
 	QQ_MSG_SYS_ADD_CONTACT_REJECTED = 0x04,
+	QQ_MSG_SYS_NOTICE= 0x06,
 	QQ_MSG_SYS_NEW_VERSION = 0x09
 };
 
@@ -277,6 +278,20 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	g_free(name);
 }
 
+static void _qq_process_msg_sys_notice(PurpleConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
+{
+	gchar *title, *content;
+
+	g_return_if_fail(from != NULL && to != NULL);
+
+	title = g_strdup_printf(_("Notice from: %s"), from);
+	content = g_strdup_printf(_("%s"), msg_utf8);
+
+	purple_notify_info(gc, NULL, title, content);
+	g_free(title);
+	g_free(content);
+}
+
 void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc)
 {
 	qq_data *qd;
@@ -320,9 +335,12 @@ void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 		case QQ_MSG_SYS_ADD_CONTACT_REJECTED:
 			_qq_process_msg_sys_add_contact_rejected(gc, from, to, msg_utf8);
 			break;
+		case QQ_MSG_SYS_NOTICE:
+			_qq_process_msg_sys_notice(gc, from, to, msg_utf8);
+			break;
 		case QQ_MSG_SYS_NEW_VERSION:
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				   "QQ server says there is newer version than %s\n", qq_get_source_str(QQ_CLIENT));
+				   "QQ server says there is newer version than %s\n", qq_get_ver_desc(QQ_CLIENT));
 			break;
 		default:
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Recv unknown sys msg code: %s\n", code);

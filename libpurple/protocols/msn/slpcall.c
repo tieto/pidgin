@@ -24,7 +24,6 @@
 #include "msn.h"
 #include "msnutils.h"
 #include "slpcall.h"
-#include "slpsession.h"
 
 #include "slp.h"
 
@@ -115,12 +114,8 @@ msn_slp_call_init(MsnSlpCall *slpcall, MsnSlpCallType type)
 void
 msn_slp_call_session_init(MsnSlpCall *slpcall)
 {
-	MsnSlpSession *slpsession;
-
-	slpsession = msn_slp_session_new(slpcall);
-
 	if (slpcall->session_init_cb)
-		slpcall->session_init_cb(slpsession);
+		slpcall->session_init_cb(slpcall);
 
 	slpcall->started = TRUE;
 }

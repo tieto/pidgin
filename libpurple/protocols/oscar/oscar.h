@@ -258,6 +258,15 @@ struct _ClientInfo
 	"us", "en", \
 }
 
+#define CLIENTINFO_ICQ6_6_0_6059 { \
+	"ICQ Client", \
+	0x010a, \
+	0x0006, 0x0000, \
+	0x0000, 0x17ab, \
+	0x00007535, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_ICQBASIC_14_3_1068 { \
 	"ICQBasic", \
 	0x010a, \
@@ -302,9 +311,9 @@ struct _ClientInfo
 #define CLIENTINFO_PURPLE_ICQ { \
 	"Purple/" VERSION, \
 	0x010a, \
-	0x0014, 0x0034, \
-	0x0000, 0x0bb8, \
-	0x0000043d, \
+	0x0006, 0x0000, \
+	0x0000, 0x17ab, \
+	0x00007535, \
 	"us", "en", \
 }
 
@@ -344,16 +353,16 @@ typedef enum
 	OSCAR_CAPABILITY_TRILLIANCRYPT        = 0x00010000,
 	OSCAR_CAPABILITY_UNICODE              = 0x00020000,
 	OSCAR_CAPABILITY_INTEROPERATE         = 0x00040000,
-	OSCAR_CAPABILITY_ICHAT                = 0x00080000,
+	OSCAR_CAPABILITY_SHORTCAPS            = 0x00080000,
 	OSCAR_CAPABILITY_HIPTOP               = 0x00100000,
 	OSCAR_CAPABILITY_SECUREIM             = 0x00200000,
 	OSCAR_CAPABILITY_SMS                  = 0x00400000,
-	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x00800000,
-	OSCAR_CAPABILITY_VIDEO                = 0x01000000,
-	OSCAR_CAPABILITY_ICHATAV              = 0x02000000,
-	OSCAR_CAPABILITY_LIVEVIDEO            = 0x04000000,
-	OSCAR_CAPABILITY_CAMERA               = 0x08000000,
-	OSCAR_CAPABILITY_ICHAT_SCREENSHARE	  = 0x10000000,
+	OSCAR_CAPABILITY_VIDEO                = 0x00800000,
+	OSCAR_CAPABILITY_ICHATAV              = 0x01000000,
+	OSCAR_CAPABILITY_LIVEVIDEO            = 0x02000000,
+	OSCAR_CAPABILITY_CAMERA               = 0x04000000,
+	OSCAR_CAPABILITY_ICHAT_SCREENSHARE    = 0x08000000,
+	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x10000000,
 	OSCAR_CAPABILITY_LAST                 = 0x20000000
 } OscarCapability;
 
@@ -424,6 +433,7 @@ struct _FlapConnection
 	GSList *rateclasses; /* Contains nodes of struct rateclass. */
 
 	GQueue *queued_snacs; /**< Contains QueuedSnacs. */
+	GQueue *queued_lowpriority_snacs; /**< Contains QueuedSnacs to send only once queued_snacs is empty */
 	guint queued_timeout;
 
 	void *internal; /* internal conn-specific libfaim data */
@@ -534,6 +544,10 @@ struct _OscarData
 
 	/** A linked list containing PeerConnections. */
 	GSList *peer_connections;
+
+	/** Queue of ICQ Status Notes to request. */
+	GSList *statusnotes_queue;
+	guint statusnotes_queue_timer;
 };
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
@@ -616,6 +630,7 @@ void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
 void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data);
+void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
 void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
 FlapFrame *flap_frame_new(OscarData *od, guint16 channel, int datalen);
 

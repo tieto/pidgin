@@ -19,8 +19,8 @@ LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.6.30
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2_daa1
 NSPR_TOP ?= $(WIN32_DEV_TOP)/nspr-4.6.4
 NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.11.4
-PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl58
-SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.5
+PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10.0
+SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.7
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 
@@ -56,7 +56,7 @@ PIDGIN_DLL := $(PIDGIN_TOP)/pidgin.dll
 PIDGIN_EXE := $(PIDGIN_TOP)/pidgin.exe
 PIDGIN_PORTABLE_EXE := $(PIDGIN_TOP)/pidgin-portable.exe
 
-GCCWARNINGS := -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
+GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 
 # parse the version number from the configure.ac file if it is newer
 #m4_define([purple_major_version], [2])

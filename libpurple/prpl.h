@@ -693,6 +693,41 @@ void purple_prpl_change_account_status(PurpleAccount *account,
  */
 GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence);
 
+/** Send an attention request message.
+ *
+ * @param gc The connection to send the message on.
+ * @param who Whose attention to request.
+ * @param type_code An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send. 0 if prpl only defines one
+ * 	(for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
+ *
+ * Note that you can't send arbitrary PurpleAttentionType's, because there is
+ * only a fixed set of attention commands.
+ * @since 2.5.0
+ */
+void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code);
+
+/** Process an incoming attention message. 
+ *
+ * @param gc The connection that received the attention message.
+ * @param who Who requested your attention.
+ * @param type_code An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send.
+ * @since 2.5.0
+ */
+void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code);
+
+/** Process an incoming attention message in a chat. 
+ *
+ * @param gc The connection that received the attention message.
+ * @param id The chat id.
+ * @param who Who requested your attention.
+ * @param type_code An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send. 
+ * @since 2.5.0
+ */
+void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
+
 /*@}*/
 
 /**************************************************************************/

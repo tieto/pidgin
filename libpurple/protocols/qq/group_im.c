@@ -65,7 +65,7 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 	g_return_if_fail(group != NULL && msg != NULL);
 
 	msg_filtered = purple_markup_strip_html(msg);
-	purple_debug_info("QQ_MESG", "filterd qq qun mesg: %s\n", msg_filtered);
+	purple_debug_info("QQ_MESG", "Send qun mesg filterd: %s\n", msg_filtered);
 	msg_len = strlen(msg_filtered);
 
 	data_len = 7 + msg_len + QQ_SEND_IM_AFTER_MSG_LEN;
@@ -311,9 +311,7 @@ void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_grou
 
 	qd = (qq_data *) gc->proto_data;
 
-	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
-		data, data_len,
-		"group im hex dump");
+	/* qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", data, data_len, "group im hex dump"); */
 
 	im_group = g_newa(qq_recv_group_im, 1);
 
@@ -379,6 +377,9 @@ void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_grou
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->group_name_utf8, purple_connection_get_account(gc));
 	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/prompt_group_msg_on_recv")) {
+		/* New conv should open, get group info*/
+		qq_send_cmd_group_get_group_info(gc, group);
+		
 		serv_got_joined_chat(gc, qd->channel++, group->group_name_utf8);
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->group_name_utf8, purple_connection_get_account(gc));
 	}

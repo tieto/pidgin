@@ -1,5 +1,5 @@
 /**
- * @file login_logout.c
+ * @file qq_base.c
  *
  * purple
  *
@@ -29,12 +29,11 @@
 
 #include "buddy_info.h"
 #include "buddy_list.h"
-#include "buddy_status.h"
 #include "char_conv.h"
 #include "crypt.h"
 #include "group.h"
 #include "header_info.h"
-#include "login_logout.h"
+#include "qq_base.h"
 #include "packet_parse.h"
 #include "qq.h"
 #include "qq_network.h"
@@ -43,13 +42,6 @@
 #define QQ_LOGIN_DATA_LENGTH		    416
 #define QQ_LOGIN_REPLY_OK_PACKET_LEN        139
 #define QQ_LOGIN_REPLY_REDIRECT_PACKET_LEN  11
-
-#define QQ_REQUEST_LOGIN_TOKEN_REPLY_OK 	0x00
-
-#define QQ_LOGIN_REPLY_OK                   0x00
-#define QQ_LOGIN_REPLY_REDIRECT             0x01
-#define QQ_LOGIN_REPLY_PWD_ERROR            0x05
-#define QQ_LOGIN_REPLY_MISC_ERROR           0xff	/* defined by myself */
 
 /* for QQ 2003iii 0117, fixed value */
 /* static const guint8 login_23_51[29] = {
@@ -114,23 +106,23 @@ typedef struct _qq_login_reply_redirect qq_login_reply_redirect_packet;
 
 struct _qq_login_reply_ok {
 	guint8 result;
-	guint8 *session_key;
+	guint8 session_key[QQ_KEY_LENGTH];
 	guint32 uid;
-	guint8 client_ip[4];	/* those detected by server */
+	struct in_addr client_ip;	/* those detected by server */
 	guint16 client_port;
-	guint8 server_ip[4];
+	struct in_addr server_ip;
 	guint16 server_port;
 	time_t login_time;
 	guint8 unknown1[26];
-	guint8 unknown_server1_ip[4];
+	struct in_addr unknown_server1_ip;
 	guint16 unknown_server1_port;
-	guint8 unknown_server2_ip[4];
+	struct in_addr unknown_server2_ip;
 	guint16 unknown_server2_port;
 	guint16 unknown2;	/* 0x0001 */
 	guint16 unknown3;	/* 0x0000 */
 	guint8 unknown4[32];
 	guint8 unknown5[12];
-	guint8 last_client_ip[4];
+	struct in_addr last_client_ip;
 	time_t last_login_time;
 	guint8 unknown6[8];
 };
@@ -138,33 +130,24 @@ struct _qq_login_reply_ok {
 struct _qq_login_reply_redirect {
 	guint8 result;
 	guint32 uid;
-	guint8 new_server_ip[4];
+	struct in_addr new_server_ip;
 	guint16 new_server_port;
 };
 
 /* generate a md5 key using uid and session_key */
-static guint8 *gen_session_md5(gint uid, guint8 *session_key)
+static void get_session_md5(guint8 *session_md5, guint32 uid, guint8 *session_key)
 {
-	guint8 *src, md5_str[QQ_KEY_LENGTH];
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
+	guint8 src[QQ_KEY_LENGTH + QQ_KEY_LENGTH];
+	gint bytes = 0;
+	
+	bytes += qq_put32(src + bytes, uid);
+	bytes += qq_putdata(src + bytes, session_key, QQ_KEY_LENGTH);
 
-	src = g_newa(guint8, 20);
-	/* bug found by QuLogic */
-	memcpy(src, &uid, sizeof(uid));
-	memcpy(src + sizeof(uid), session_key, QQ_KEY_LENGTH);
-
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, src, 20);
-	purple_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-	purple_cipher_context_destroy(context);
-
-	return g_memdup(md5_str, QQ_KEY_LENGTH);
+	qq_get_md5(session_md5, QQ_KEY_LENGTH, src, bytes);
 }
 
 /* process login reply which says OK */
-static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
+static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gint bytes;
 	qq_data *qd;
@@ -177,17 +160,16 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	/* 000-000: reply code */
 	bytes += qq_get8(&lrop.result, data + bytes);
 	/* 001-016: session key */
-	lrop.session_key = g_memdup(data + bytes, QQ_KEY_LENGTH);
-	bytes += QQ_KEY_LENGTH;
+	bytes += qq_getdata(lrop.session_key, sizeof(lrop.session_key), data + bytes);
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Get session_key done\n");
 	/* 017-020: login uid */
 	bytes += qq_get32(&lrop.uid, data + bytes);
 	/* 021-024: server detected user public IP */
-	bytes += qq_getdata((guint8 *) &lrop.client_ip, 4, data + bytes);
+	bytes += qq_getIP(&lrop.client_ip, data + bytes);
 	/* 025-026: server detected user port */
 	bytes += qq_get16(&lrop.client_port, data + bytes);
 	/* 027-030: server detected itself ip 127.0.0.1 ? */
-	bytes += qq_getdata((guint8 *) &lrop.server_ip, 4, data + bytes);
+	bytes += qq_getIP(&lrop.server_ip, data + bytes);
 	/* 031-032: server listening port */
 	bytes += qq_get16(&lrop.server_port, data + bytes);
 	/* 033-036: login time for current session */
@@ -195,11 +177,11 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	/* 037-062: 26 bytes, unknown */
 	bytes += qq_getdata((guint8 *) &lrop.unknown1, 26, data + bytes);
 	/* 063-066: unknown server1 ip address */
-	bytes += qq_getdata((guint8 *) &lrop.unknown_server1_ip, 4, data + bytes);
+	bytes += qq_getIP(&lrop.unknown_server1_ip, data + bytes);
 	/* 067-068: unknown server1 port */
 	bytes += qq_get16(&lrop.unknown_server1_port, data + bytes);
 	/* 069-072: unknown server2 ip address */
-	bytes += qq_getdata((guint8 *) &lrop.unknown_server2_ip, 4, data + bytes);
+	bytes += qq_getIP(&lrop.unknown_server2_ip, data + bytes);
 	/* 073-074: unknown server2 port */
 	bytes += qq_get16(&lrop.unknown_server2_port, data + bytes);
 	/* 075-076: 2 bytes unknown */
@@ -211,7 +193,7 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	/* 111-122: 12 bytes unknown */
 	bytes += qq_getdata((guint8 *) &lrop.unknown5, 12, data + bytes);
 	/* 123-126: login IP of last session */
-	bytes += qq_getdata((guint8 *) &lrop.last_client_ip, 4, data + bytes);
+	bytes += qq_getIP(&lrop.last_client_ip, data + bytes);
 	/* 127-130: login time of last session */
 	bytes += qq_getime(&lrop.last_login_time, data + bytes);
 	/* 131-138: 8 bytes unknown */
@@ -223,47 +205,24 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 			   QQ_LOGIN_REPLY_OK_PACKET_LEN, bytes);
 	}			/* but we still go on as login OK */
 
-	g_return_val_if_fail(qd->session_key == NULL, QQ_LOGIN_REPLY_MISC_ERROR);
-	qd->session_key = lrop.session_key;
+	memcpy(qd->session_key, lrop.session_key, sizeof(qd->session_key));
+	get_session_md5(qd->session_md5, qd->uid, qd->session_key);
 	
-	g_return_val_if_fail(qd->session_md5 == NULL, QQ_LOGIN_REPLY_MISC_ERROR);
-	qd->session_md5 = gen_session_md5(qd->uid, qd->session_key);
-	
-	g_return_val_if_fail(qd->my_ip == NULL, QQ_LOGIN_REPLY_MISC_ERROR);
-	qd->my_ip = gen_ip_str(lrop.client_ip);
+	qd->my_ip.s_addr = lrop.client_ip.s_addr;
 	
 	qd->my_port = lrop.client_port;
 	qd->login_time = lrop.login_time;
 	qd->last_login_time = lrop.last_login_time;
-	qd->last_login_ip = gen_ip_str(lrop.last_client_ip);
-
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
-	qd->logged_in = TRUE;	/* must be defined after sev_finish_login */
-
-	/* now initiate QQ Qun, do it first as it may take longer to finish */
-	qq_group_init(gc);
-
-	/* Now goes on updating my icon/nickname, not showing info_window */
-	qd->modifying_face = FALSE;
-	qq_send_packet_get_info(gc, qd->uid, FALSE);
-	/* grab my level */
-	qq_send_packet_get_level(gc, qd->uid);
-
-	qq_send_packet_change_status(gc);
-
-	/* refresh buddies */
-	qq_send_packet_get_buddies_list(gc, QQ_FRIENDS_LIST_POSITION_START);
-	/* refresh groups */
-	qq_send_packet_get_all_list_with_group(gc, QQ_FRIENDS_LIST_POSITION_START);
+	qd->last_login_ip = g_strdup( inet_ntoa(lrop.last_client_ip) );
 
 	return QQ_LOGIN_REPLY_OK;
 }
 
 /* process login reply packet which includes redirected new server address */
-static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint len)
+static gint8 process_login_redirect(PurpleConnection *gc, guint8 *data, gint len)
 {
-	gint bytes, ret;
 	qq_data *qd;
+	gint bytes;
 	qq_login_reply_redirect_packet lrrp;
 
 	qd = (qq_data *) gc->proto_data;
@@ -273,7 +232,7 @@ static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint 
 	/* 001-004: login uid */
 	bytes += qq_get32(&lrrp.uid, data + bytes);
 	/* 005-008: redirected new server IP */
-	bytes += qq_getdata(lrrp.new_server_ip, 4, data + bytes);
+	bytes += qq_getIP(&lrrp.new_server_ip, data + bytes);
 	/* 009-010: redirected new server port */
 	bytes += qq_get16(&lrrp.new_server_port, data + bytes);
 
@@ -281,30 +240,24 @@ static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint 
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail parsing login redirect packet, expect %d bytes, read %d bytes\n",
 			   QQ_LOGIN_REPLY_REDIRECT_PACKET_LEN, bytes);
-		ret = QQ_LOGIN_REPLY_MISC_ERROR;
-	} else {
-		/* redirect to new server, do not disconnect or connect here
-		 * those connect should be called at packet_process */
-		if (qd->real_hostname) {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "free real_hostname\n");
-			g_free(qd->real_hostname);
-			qd->real_hostname = NULL;
-		}
-		qd->real_hostname = gen_ip_str(lrrp.new_server_ip);
-		qd->real_port = lrrp.new_server_port;
-		qd->is_redirect = TRUE;
-
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-			   "Redirected to new server: %s:%d\n", qd->real_hostname, qd->real_port);
-
-		ret = QQ_LOGIN_REPLY_REDIRECT;
+		return QQ_LOGIN_REPLY_ERR_MISC;
 	}
+	
+	/* redirect to new server, do not disconnect or connect here
+	 * those connect should be called at packet_process */
+	if (qd->real_hostname) {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "free real_hostname\n");
+		g_free(qd->real_hostname);
+		qd->real_hostname = NULL;
+	}
+	qd->real_hostname = g_strdup( inet_ntoa(lrrp.new_server_ip) );
+	qd->real_port = lrrp.new_server_port;
 
-	return ret;
+	return QQ_LOGIN_REPLY_REDIRECT;
 }
 
 /* process login reply which says wrong password */
-static gint _qq_process_login_wrong_pwd(PurpleConnection *gc, guint8 *data, gint len)
+static gint8 process_login_wrong_pwd(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gchar *server_reply, *server_reply_utf8;
 	server_reply = g_new0(gchar, len);
@@ -314,11 +267,11 @@ static gint _qq_process_login_wrong_pwd(PurpleConnection *gc, guint8 *data, gint
 	g_free(server_reply);
 	g_free(server_reply_utf8);
 
-	return QQ_LOGIN_REPLY_PWD_ERROR;
+	return QQ_LOGIN_REPLY_ERR_PWD;
 }
 
 /* request before login */
-void qq_send_packet_request_login_token(PurpleConnection *gc)
+void qq_send_packet_token(PurpleConnection *gc)
 {
 	qq_data *qd;
 	guint8 buf[16] = {0};
@@ -329,11 +282,12 @@ void qq_send_packet_request_login_token(PurpleConnection *gc)
 
 	bytes += qq_put8(buf + bytes, 0);
 	
-	qq_send_data(qd, QQ_CMD_REQUEST_LOGIN_TOKEN, buf, bytes);
+	qd->send_seq++;
+	qq_send_data(qd, QQ_CMD_TOKEN, qd->send_seq, TRUE, buf, bytes);
 }
 
 /* send login packet to QQ server */
-static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guint8 *token)
+void qq_send_packet_login(PurpleConnection *gc)
 {
 	qq_data *qd;
 	guint8 *buf, *raw_data;
@@ -344,19 +298,24 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
+	g_return_if_fail(qd->token != NULL && qd->token_len > 0);
+
 	raw_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH);
 	memset(raw_data, 0, QQ_LOGIN_DATA_LENGTH);
 
 	encrypted_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH + 16);	/* 16 bytes more */
-	if (qd->inikey) {
-		g_free(qd->inikey);
+#ifdef DEBUG
+	memset(qd->inikey, 0x01, sizeof(qd->inikey));
+#else
+	for (bytes = 0; bytes < sizeof(qd->inikey); bytes++)	{
+		qd->inikey[bytes] = (guint8) (g_random_int_range(0, 255) % 256);
 	}
-	qd->inikey = (guint8 *) g_strnfill(QQ_KEY_LENGTH, 0x01);
+#endif
 
 	bytes = 0;
 	/* now generate the encrypted data
-	 * 000-015 use pwkey as key to encrypt empty string */
-	qq_encrypt((guint8 *) "", 0, qd->pwkey, raw_data + bytes, &encrypted_len);
+	 * 000-015 use password_twice_md5 as key to encrypt empty string */
+	qq_encrypt((guint8 *) "", 0, qd->password_twice_md5, raw_data + bytes, &encrypted_len);
 	bytes += 16;
 	/* 016-016 */
 	bytes += qq_put8(raw_data + bytes, 0x00);
@@ -371,9 +330,9 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 	/* 053-068, fixed value, maybe related to per machine */
 	bytes += qq_putdata(raw_data + bytes, login_53_68, 16);
 	/* 069, login token length */
-	bytes += qq_put8(raw_data + bytes, token_length);
+	bytes += qq_put8(raw_data + bytes, qd->token_len);
 	/* 070-093, login token, normally 24 bytes */
-	bytes += qq_putdata(raw_data + bytes, token, token_length);
+	bytes += qq_putdata(raw_data + bytes, qd->token, qd->token_len);
 	/* 100 bytes unknown */
 	bytes += qq_putdata(raw_data + bytes, login_100_bytes, 100);
 	/* all zero left */
@@ -386,43 +345,50 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 	bytes += qq_putdata(buf + bytes, qd->inikey, QQ_KEY_LENGTH);
 	bytes += qq_putdata(buf + bytes, encrypted_data, encrypted_len);
 
-	qq_send_data(qd, QQ_CMD_LOGIN, buf, bytes);
+	qd->send_seq++;
+	qq_send_data(qd, QQ_CMD_LOGIN, qd->send_seq, TRUE, buf, bytes);
 }
 
-void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+guint8 qq_process_token_reply(PurpleConnection *gc, gchar *error_msg, guint8 *buf, gint buf_len)
 {
 	qq_data *qd;
-	gchar *error_msg;
+	guint8 ret;
+	int token_len;
 
-	g_return_if_fail(buf != NULL && buf_len != 0);
+	g_return_val_if_fail(buf != NULL && buf_len != 0, -1);
 
+	g_return_val_if_fail(gc != NULL  && gc->proto_data != NULL, -1);
 	qd = (qq_data *) gc->proto_data;
 
-	if (buf[0] == QQ_REQUEST_LOGIN_TOKEN_REPLY_OK) {
-		if (buf[1] != buf_len-2) {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-					"Malformed login token reply packet. Packet specifies length of %d, actual length is %d\n", buf[1], buf_len-2);
-			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-					"Attempting to proceed with the actual packet length.\n");
-		}
-		qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
-				buf+2, buf_len-2,
-				"<<< got a token -> [default] decrypt and dump");
-		qq_send_packet_login(gc, buf_len-2, buf+2);
-	} else {
+	ret = buf[0];
+	
+	if (ret != QQ_TOKEN_REPLY_OK) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown request login token reply code : %d\n", buf[0]);
 		qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 				buf, buf_len,
 				">>> [default] decrypt and dump");
 		error_msg = try_dump_as_gbk(buf, buf_len);
-		if (error_msg) {
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_msg);
-			g_free(error_msg);
-		} else {
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Error requesting login token"));
-		}
+		return ret;
 	}
+	
+	token_len = buf_len-2;
+	if (token_len <= 0) {
+		error_msg = g_strdup_printf( _("Invalid token len, %d"), token_len);
+		return -1;
+	}
+	
+	if (buf[1] != token_len) {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
+				"Invalid token len. Packet specifies length of %d, actual length is %d\n", buf[1], buf_len-2);
+	}
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+			buf+2, token_len,
+			"<<< got a token -> [default] decrypt and dump");
+			
+	qd->token = g_new0(guint8, token_len);
+	qd->token_len = token_len;
+	g_memmove(qd->token, buf + 2, qd->token_len);
+	return ret;
 }
 
 /* send logout packets to QQ server */
@@ -433,88 +399,125 @@ void qq_send_packet_logout(PurpleConnection *gc)
 
 	qd = (qq_data *) gc->proto_data;
 	for (i = 0; i < 4; i++)
-		qq_send_cmd_detail(qd, QQ_CMD_LOGOUT, 0xffff, FALSE, qd->pwkey, QQ_KEY_LENGTH);
+		qq_send_cmd_detail(qd, QQ_CMD_LOGOUT, 0xffff, FALSE, qd->password_twice_md5, QQ_KEY_LENGTH);
 
 	qd->logged_in = FALSE;	/* update login status AFTER sending logout packets */
 }
 
 /* process the login reply packet */
-void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+guint8 qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
-	gint len, ret, bytes;
-	guint8 *data;
 	qq_data *qd;
+	guint8 *data;
+	gint data_len;
 	gchar* error_msg;
 
-	g_return_if_fail(buf != NULL && buf_len != 0);
+	g_return_val_if_fail(buf != NULL && buf_len != 0, QQ_LOGIN_REPLY_ERR_MISC);
+
+	qd = (qq_data *) gc->proto_data;
+
+	data_len = buf_len;
+	data = g_newa(guint8, data_len);
+
+	if (qq_decrypt(buf, buf_len, qd->inikey, data, &data_len)) {
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
+				"Decrypt login reply packet with inikey, %d bytes\n", data_len);
+	} else {
+		/* reset data_len since it may changed */
+		data_len = buf_len;
+		if (qq_decrypt(buf, buf_len, qd->password_twice_md5, data, &data_len)) {
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
+				"Decrypt login reply packet with password_twice_md5, %d bytes\n", data_len);
+		} else {
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+					"No idea how to decrypt login reply\n");
+			return QQ_LOGIN_REPLY_ERR_MISC;
+		}
+	}
+	
+	switch (data[0]) {
+		case QQ_LOGIN_REPLY_OK:
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login reply is OK\n");
+			return process_login_ok(gc, data, data_len);
+		case QQ_LOGIN_REPLY_REDIRECT:
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login reply is redirect\n");
+			return process_login_redirect(gc, data, data_len);
+		case QQ_LOGIN_REPLY_ERR_PWD:
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login reply is error password\n");
+			return process_login_wrong_pwd(gc, data, data_len);
+		case QQ_LOGIN_REPLY_NEED_REACTIVE:
+		case QQ_LOGIN_REPLY_REDIRECT_EX:
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login reply is not actived or redirect extend\n");
+		default:
+		break;
+	}
+
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown reply code: %d\n", data[0]);
+			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+			data, data_len,
+			">>> [default] decrypt and dump");
+	error_msg = try_dump_as_gbk(data, data_len);
+	if (error_msg)	{
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_msg);
+			g_free(error_msg);
+	}
+	return QQ_LOGIN_REPLY_ERR_MISC;
+}
+
+/* send keep-alive packet to QQ server (it is a heart-beat) */
+void qq_send_packet_keep_alive(PurpleConnection *gc)
+{
+	qq_data *qd;
+	guint8 raw_data[16] = {0};
+	gint bytes= 0;
+
+	qd = (qq_data *) gc->proto_data;
+
+	/* In fact, we can send whatever we like to server
+	 * with this command, server return the same result including
+	 * the amount of online QQ users, my ip and port */
+	bytes += qq_put32(raw_data + bytes, qd->uid);
+
+	qq_send_cmd(qd, QQ_CMD_KEEP_ALIVE, raw_data, 4);
+}
+
+/* parse the return of keep-alive packet, it includes some system information */
+gboolean qq_process_keep_alive(guint8 *buf, gint buf_len, PurpleConnection *gc) 
+{
+	qq_data *qd;
+	gint len;
+	gchar **segments;
+	guint8 *data;
+
+	g_return_val_if_fail(buf != NULL && buf_len != 0, FALSE);
 
 	qd = (qq_data *) gc->proto_data;
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_decrypt(buf, buf_len, qd->pwkey, data, &len)) {
-		/* should be able to decrypt with pwkey */
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Decrypt login reply packet with pwkey, %d bytes\n", len);
-		if (data[0] == QQ_LOGIN_REPLY_OK) {
-			ret = _qq_process_login_ok(gc, data, len);
-		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown login reply code : %d\n", data[0]);
-			ret = QQ_LOGIN_REPLY_MISC_ERROR;
-		}
-	} else {		/* decrypt with pwkey error */
-		len = buf_len;	/* reset len, decrypt will fail if len is too short */
-		if (qq_decrypt(buf, buf_len, qd->inikey, data, &len)) {
-			/* decrypt ok with inipwd, it might be password error */
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
-					"Decrypt login reply packet with inikey, %d bytes\n", len);
-			bytes = 0;
-			switch (data[0]) {
-			case QQ_LOGIN_REPLY_REDIRECT:
-				ret = _qq_process_login_redirect(gc, data, len);
-				break;
-			case QQ_LOGIN_REPLY_PWD_ERROR:
-				ret = _qq_process_login_wrong_pwd(gc, data, len);
-				break;
-			default:
-				purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown reply code: %d\n", data[0]);
-				qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
-						data, len,
-						">>> [default] decrypt and dump");
-				error_msg = try_dump_as_gbk(data, len);
-				if (error_msg)	{
-					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_msg);
-					g_free(error_msg);
-				}
-				ret = QQ_LOGIN_REPLY_MISC_ERROR;
-			}
-		} else {	/* no idea how to decrypt */
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "No idea how to decrypt login reply\n");
-			ret = QQ_LOGIN_REPLY_MISC_ERROR;
-		}
+	if ( !qq_decrypt(buf, buf_len, qd->session_key, data, &len) ) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt keep alive reply\n");
+		return FALSE;
 	}
 
-	switch (ret) {
-	case QQ_LOGIN_REPLY_PWD_ERROR:
-		if (!purple_account_get_remember_password(gc->account))
-			purple_account_set_password(gc->account, NULL);
-		purple_connection_error_reason(gc,
-			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
-		break;
-	case QQ_LOGIN_REPLY_MISC_ERROR:
-			if (purple_debug_is_enabled())
-				purple_connection_error_reason(gc,
-					PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to login. Check debug log."));
-			else
-				purple_connection_error_reason(gc,
-					PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to login"));				
-		break;
-	case QQ_LOGIN_REPLY_OK:
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login repliess OK; everything is fine\n");
-		break;
-	case QQ_LOGIN_REPLY_REDIRECT:
-		/* the redirect has been done in _qq_process_login_reply */
-		break;
-	default:{;
-		}
+	/* qq_show_packet("Keep alive reply packet", data, len); */
+
+	/* the last one is 60, don't know what it is */
+	if (NULL == (segments = split_data(data, len, "\x1f", 6)))
+			return TRUE;
+			
+	/* segments[0] and segment[1] are all 0x30 ("0") */
+	qd->total_online = strtol(segments[2], NULL, 10);
+	if(0 == qd->total_online) {
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Keep alive error"));
 	}
+	qd->my_ip.s_addr = inet_addr(segments[3]);
+	qd->my_port = strtol(segments[4], NULL, 10);
+
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "keep alive, %s:%d\n",
+		inet_ntoa(qd->my_ip), qd->my_port);
+	
+	g_strfreev(segments);
+	return TRUE;
 }

@@ -72,7 +72,7 @@ SetDateSave on
 !define GTK_MIN_VERSION				"2.6.10"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
-!define PERL_DLL				"perl58.dll"
+!define PERL_DLL				"perl510.dll"
 !define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
 !define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime*.exe"
 
@@ -376,7 +376,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
     StrCmp $R0 "2" +2 ; Upgrade isn't optional
     MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE /S /D=$GTK_FOLDER'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
     IfErrors gtk_install_error done
 
     gtk_install_error:
@@ -505,11 +505,16 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ; If this is under NT4, delete the SILC support stuff
     ; there is a bug that will prevent any account from connecting
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
+    ; Also, remove the GSSAPI SASL plugin and associated files as they aren't
+    ; compatible with NT4.
     ${If} ${IsNT}
     ${AndIf} ${IsWinNT4}
+      ;SILC
       Delete "$INSTDIR\plugins\libsilc.dll"
       Delete "$INSTDIR\libsilcclient-1-1-2.dll"
       Delete "$INSTDIR\libsilc-1-1-2.dll"
+      ;GSSAPI
+      Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -704,6 +709,8 @@ Section Uninstall
     Push "ymsgr"
     Call un.UnregisterURIHandler
 
+    Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"
+    Delete "$INSTDIR\ca-certs\CAcert_Root.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
@@ -1304,12 +1311,12 @@ Function .onInit
   ;Reset ShellVarContext because we may have changed it
   SetShellVarContext "current"
 
-  StrCpy $ISSILENT "/NOUI"
+  StrCpy $ISSILENT "/S"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
   ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
   IfSilent 0 set_gtk_normal
-      StrCpy $ISSILENT "/S"
+      StrCpy $ISSILENT "/NOUI"
   set_gtk_normal:
 
   ${GetParameters} $R0

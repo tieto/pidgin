@@ -67,6 +67,10 @@
 #undef group
 
 /* perl module support */
+#ifdef _WIN32
+EXTERN_C void boot_Win32CORE (pTHX_ CV* cv);
+#endif
+
 #ifdef OLD_PERL
 extern void boot_DynaLoader _((CV * cv));
 #else
@@ -127,10 +131,14 @@ xs_init(pTHX)
 #endif
 {
 	char *file = __FILE__;
+	dXSUB_SYS;
 
 	/* This one allows dynamic loading of perl modules in perl scripts by
 	 * the 'use perlmod;' construction */
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
+#ifdef _WIN32
+	newXS("Win32CORE::bootstrap", boot_Win32CORE, file);
+#endif
 }
 
 static void
@@ -240,20 +248,66 @@ purple_perl_callXS(void (*subaddr)(pTHX_ CV *cv), CV *cv, SV **mark)
 static gboolean
 probe_perl_plugin(PurplePlugin *plugin)
 {
-	/* XXX This would be much faster if I didn't create a new
-	 *     PerlInterpreter every time I probed a plugin */
 
-	PerlInterpreter *prober = perl_alloc();
-	char *argv[] = {"", plugin->path };
+	char *args[] = {"", plugin->path };
+	char **argv = args;
+	int argc = 2, ret;
+	PerlInterpreter *prober;
 	gboolean status = TRUE;
 	HV *plugin_info;
+
+	PERL_SYS_INIT(&argc, &argv);
+
+	/* XXX This would be much faster if we didn't create a new
+	 *     PerlInterpreter every time we probe a plugin */
+	prober = perl_alloc();
+
 	PERL_SET_CONTEXT(prober);
+
 	PL_perl_destruct_level = 1;
 	perl_construct(prober);
 
-	perl_parse(prober, xs_init, 2, argv, NULL);
+/* Fix IO redirection to match where pidgin's is going.
+ * Without this, we lose stdout/stderr unless we redirect to a file */
+#ifdef _WIN32
+{
+	PerlIO* newprlIO = PerlIO_open("CONOUT$", "w");
+	if (newprlIO) {
+		int stdout_fd = PerlIO_fileno(PerlIO_stdout());
+		int stderr_fd = PerlIO_fileno(PerlIO_stderr());
+		PerlIO_close(PerlIO_stdout());
+		PerlIO_close(PerlIO_stderr());
+		PerlLIO_dup2(PerlIO_fileno(newprlIO), stdout_fd);
+		PerlLIO_dup2(PerlIO_fileno(newprlIO), stderr_fd);
 
-	perl_run(prober);
+		PerlIO_close(newprlIO);
+	}
+}
+#endif
+
+	ret = perl_parse(prober, xs_init, argc, argv, NULL);
+
+	if (ret != 0) {
+		STRLEN len;
+		const char * errmsg = "Unknown error";
+		if (SvTRUE(ERRSV))
+			errmsg = SvPV(ERRSV, len);
+		purple_debug_error("perl", "Unable to parse plugin %s (%d:%s)\n",
+						   plugin->path, ret, errmsg);
+		goto cleanup;
+	}
+
+	ret = perl_run(prober);
+
+	if (ret != 0) {
+		STRLEN len;
+		const char * errmsg = "Unknown error";
+		if (SvTRUE(ERRSV))
+			errmsg = SvPV(ERRSV, len);
+		purple_debug_error("perl", "Unable to run perl interpreter on plugin %s (%d:%s)\n",
+						   plugin->path, ret, errmsg);
+		goto cleanup;
+	}
 
 	plugin_info = perl_get_hv("PLUGIN_INFO", FALSE);
 
@@ -401,6 +455,7 @@ probe_perl_plugin(PurplePlugin *plugin)
 		}
 	}
 
+	cleanup:
 	PL_perl_destruct_level = 1;
 	PERL_SET_CONTEXT(prober);
 	perl_destruct(prober);
@@ -523,6 +578,7 @@ unload_perl_plugin(PurplePlugin *plugin)
 	purple_perl_cmd_clear_for_plugin(plugin);
 	purple_perl_signal_clear_for_plugin(plugin);
 	purple_perl_timeout_clear_for_plugin(plugin);
+	purple_perl_pref_cb_clear_for_plugin(plugin);
 
 	destroy_package(gps->package);
 
@@ -578,7 +634,7 @@ static PurplePluginLoaderInfo loader_info =
 	load_perl_plugin,                                 /**< load           */
 	unload_perl_plugin,                               /**< unload         */
 	destroy_perl_plugin,                              /**< destroy        */
-	
+
 	/* padding */
 	NULL,
 	NULL,

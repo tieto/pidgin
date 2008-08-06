@@ -53,7 +53,6 @@ struct _MsnSlpLink
 	MsnDirectConn *directconn;
 
 	GList *slp_calls;
-	GList *slp_sessions;
 	GList *slp_msgs;
 
 	GQueue *slp_msg_queue;
@@ -74,8 +73,6 @@ MsnSlpLink *msn_session_find_slplink(MsnSession *session,
  */
 MsnSlpLink *msn_session_get_slplink(MsnSession *session, const char *username);
 
-MsnSlpSession *msn_slplink_find_slp_session(MsnSlpLink *slplink,
-											long session_id);
 void msn_slplink_add_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall);
 void msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall);
 MsnSlpCall *msn_slplink_find_slp_call(MsnSlpLink *slplink,

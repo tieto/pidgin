@@ -88,10 +88,6 @@ INCLUDE_PATHS += -I$(CYRUS_SASL_TOP)/include
 LIB_PATHS += -L$(CYRUS_SASL_TOP)/bin
 LIBS += -llibsasl
 CYRUS_SASL_DLLS = \
-			$(CYRUS_SASL_TOP)/bin/comerr32.dll \
-			$(CYRUS_SASL_TOP)/bin/gssapi32.dll \
-			$(CYRUS_SASL_TOP)/bin/k5sprt32.dll \
-			$(CYRUS_SASL_TOP)/bin/krb5_32.dll \
 			$(CYRUS_SASL_TOP)/bin/libsasl.dll
 
 CYRUS_SASL_PLUGINS = \

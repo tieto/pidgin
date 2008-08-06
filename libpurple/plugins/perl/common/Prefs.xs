@@ -1,4 +1,5 @@
 #include "module.h"
+#include "../perl-handlers.h"
 
 MODULE = Purple::Prefs  PACKAGE = Purple::Prefs  PREFIX = purple_prefs_
 PROTOTYPES: ENABLE
@@ -62,13 +63,28 @@ PPCODE:
 void
 purple_prefs_destroy()
 
+guint
+purple_prefs_connect_callback(plugin, name, callback, data = 0);
+	Purple::Plugin plugin
+	const char *name
+	SV *callback
+	SV *data
+CODE:
+	RETVAL = purple_perl_prefs_connect_callback(plugin, name, callback, data);
+OUTPUT:
+	RETVAL
+
 void
-purple_prefs_disconnect_by_handle(handle)
-	void * handle
+purple_prefs_disconnect_by_handle(plugin)
+	Purple::Plugin plugin
+CODE:
+	purple_perl_pref_cb_clear_for_plugin(plugin);
 
 void
 purple_prefs_disconnect_callback(callback_id)
 	guint callback_id
+CODE:
+	purple_perl_prefs_disconnect_callback(callback_id);
 
 gboolean
 purple_prefs_exists(name)

@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *
  * QQ encryption algorithm
@@ -28,7 +28,7 @@
  * Puzzlebird, Nov-Dec 2002
  */
 
-/*Notes: (QQ uses 16 rounds, and modified something...)
+/* Notes: (QQ uses 16 rounds, and modified something...)
 
 IN : 64  bits of data in v[0] - v[1].
 OUT: 64  bits of data in w[0] - w[1].
@@ -45,6 +45,13 @@ the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
 #include "crypt.h"
 #include "debug.h"
 
+/* 1, fixed alignment problem, when compiled on different platform
+ * 2, whether we need core debug
+ * 20070717, s3e */
+#if 0 
+#define CORE_DEBUG
+#endif
+
 /********************************************************************
  * encryption 
  *******************************************************************/
@@ -52,7 +59,8 @@ the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
 /* Tiny Encryption Algorithm (TEA) */
 static void qq_encipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
-	register guint32 y = g_ntohl(v[0]), 
+	register guint32
+		y = g_ntohl(v[0]), 
 		 z = g_ntohl(v[1]), 
 		 a = g_ntohl(k[0]), 
 		 b = g_ntohl(k[1]), 
@@ -72,24 +80,86 @@ static void qq_encipher(guint32 *const v, const guint32 *const k, guint32 *const
 	w[1] = g_htonl(z);
 }
 
-static gint rand(void) {	/* it can be the real random seed function */
-	return 0xdead;
-}			/* override with number, convenient for debug */
+/* it can be the real random seed function */
+/* override with number, convenient for debug */
+#ifdef DEBUG
+static gint rand(void) {	
+	return 0xdead; 
+}
+#else
+#include <stdlib.h>
+#endif
 
 /* 64-bit blocks and some kind of feedback mode of operation */
-static void encrypt_block(guint8 *plain, guint8 *plain_pre_8, guint8 **crypted, 
+static inline void encrypt_block(guint8 *plain, guint8 *plain_pre_8, guint8 **crypted, 
 		guint8 **crypted_pre_8, const guint8 *const key, gint *count, 
 		gint *pos_in_block, gint *is_header) 
 {
+	/* loop it */
+	int j;
+	/* ships in encipher */
+	guint32 ptr_p[2];	/* 64 bits, guint32[2] */
+	guint32 ptr_k[4];	/* 128 bits, guint32[4] */
+	guint32 ptr_c[2];	/* 64 bits, guint32[2] */
+
 	/* prepare input text */
-	if (!*is_header)
-		*(guint64 *) plain ^= **(guint64 **) crypted_pre_8;
+#ifdef CORE_DEBUG
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ_CORE_DEBUG",
+		"!we are in encrypt_block! *pos_in_block comes: %d, *is_header comes: %d\n",
+		*pos_in_block, *is_header);
+#endif
+	for(j = 0; j < 8; j++) {
+#ifdef CORE_DEBUG
+		purple_debug(PURPLE_DEBUG_INFO, "QQ_CORE_DEBUG",
+			"plain[%d]: 0x%02x, plain_pre_8[%d]: 0x%02x\n",
+			j, plain[j], j, plain_pre_8[j]);
+#endif
+		if (!*is_header) {
+#ifdef CORE_DEBUG
+			purple_debug(PURPLE_DEBUG_INFO, "QQ_CORE_DEBUG",
+				"(*crypted_pre_8 + %d): 0x%02x\n",
+				j, *(*crypted_pre_8 + j));
+#endif
+			plain[j] ^= (*(*crypted_pre_8 + j));
+#ifdef CORE_DEBUG
+			purple_debug(PURPLE_DEBUG_INFO, "QQ_CORE_DEBUG",
+				"NOW plain[%d]: 0x%02x\n",
+				j, plain[j]);
+#endif
+		} else {
+			plain[j] ^= plain_pre_8[j];
+#ifdef CORE_DEBUG
+			purple_debug(PURPLE_DEBUG_INFO, "QQ_CORE_DEBUG",
+				"NOW plain[%d]: 0x%02x\n",
+				j, plain[j]);
+#endif
+		}
+	}
+
+	g_memmove(ptr_p, plain, 8);
+	g_memmove(ptr_k, key, 16);
+	g_memmove(ptr_c, *crypted, 8);
 
 	/* encrypt it */
-	qq_encipher((guint32 *) plain, (guint32 *) key, (guint32 *) *crypted);
+	qq_encipher(ptr_p, ptr_k, ptr_c);
+	
+	g_memmove(plain, ptr_p, 8);
+	g_memmove(*crypted, ptr_c, 8);
 
-	**(guint64 **) crypted ^= *(guint64 *) plain_pre_8;
-
+	for(j = 0; j < 8; j++) {
+#ifdef CORE_DEBUG
+		purple_debug(PURPLE_DEBUG_INFO, "QQ_CORE_DEBUG",
+			"j: %d, *(*crypted + %d): 0x%02x, plain_pre_8[%d]: 0x%02x\n",
+			j, j, *(*crypted + j), j, plain_pre_8[j]);
+#endif
+		(*(*crypted + j)) ^= plain_pre_8[j];
+#ifdef CORE_DEBUG
+		purple_debug(PURPLE_DEBUG_INFO, "QQ_CORE_DEBUG",
+			"NOW *(*crypted + [%d]): 0x%02x\n",
+			j, *(*crypted + j));
+#endif
+	}
+	
 	memcpy(plain_pre_8, plain, 8);	/* prepare next */
 
 	*crypted_pre_8 = *crypted;	/* store position of previous 8 byte */
@@ -171,7 +241,8 @@ void qq_encrypt(const guint8 *const instr, gint instrlen,
 
 static void qq_decipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
-	register guint32 y = g_ntohl(v[0]), 
+	register guint32
+		y = g_ntohl(v[0]), 
 		z = g_ntohl(v[1]), 
 		a = g_ntohl(k[0]), 
 		b = g_ntohl(k[1]), 
@@ -196,12 +267,25 @@ static gint decrypt_block(const guint8 **crypt_buff, const gint instrlen,
 		const guint8 *const key, gint *context_start, 
 		guint8 *decrypted, gint *pos_in_block)
 {
+	/* loop */
+	int i;
+	/* ships in decipher */
+	guint32 ptr_v[2];
+	guint32 ptr_k[4];
+
 	if (*context_start == instrlen)
 		return 1;
 
-	*(guint64 *) decrypted ^= **(guint64 **) crypt_buff;
+	for(i = 0; i < 8; i++) {
+		decrypted[i] ^= (*(*crypt_buff + i));
+	}
+	
+	g_memmove(ptr_v, decrypted, 8);
+	g_memmove(ptr_k, key, 16);
 
-	qq_decipher((guint32 *) decrypted, (guint32 *) key, (guint32 *) decrypted);
+	qq_decipher(ptr_v, ptr_k, ptr_v);
+
+	g_memmove(decrypted, ptr_v, 8);
 
 	*context_start += 8;
 	*crypt_buff += 8;
@@ -218,6 +302,10 @@ gint qq_decrypt(const guint8 *const instr, gint instrlen,
 	guint8 decrypted[8], m[8], *outp;
 	const guint8 *crypt_buff, *crypt_buff_pre_8;
 	gint count, context_start, pos_in_block, padding;
+	/* ships */
+	guint32 ptr_instr[2];
+	guint32 ptr_key[4];
+	guint32 ptr_decr[2];
 
 	/* at least 16 bytes and %8 == 0 */
 	if ((instrlen % 8) || (instrlen < 16)) { 
@@ -226,8 +314,14 @@ gint qq_decrypt(const guint8 *const instr, gint instrlen,
 			instrlen);
 		return 0;
 	}
-	/* get information from header */
-	qq_decipher((guint32 *) instr, (guint32 *) key, (guint32 *) decrypted);
+	g_memmove(ptr_instr, instr, 8);
+	g_memmove(ptr_key, key, 16);
+	g_memmove(ptr_decr, decrypted, 8);
+
+	qq_decipher(ptr_instr, ptr_key, ptr_decr);
+
+	g_memmove(decrypted, ptr_decr, 8);
+
 	pos_in_block = decrypted[0] & 0x7;
 	count = instrlen - pos_in_block - 10;	/* this is the plaintext length */
 	/* return if outstr buffer is not large enough or error plaintext length */
@@ -294,22 +388,6 @@ gint qq_decrypt(const guint8 *const instr, gint instrlen,
 			}
 		}
 	}
-	return 1;
-}
-
-/* return 1 is succeed, otherwise return 0
-gint qq_crypt(gint flag,
-		const guint8 *const instr, gint instrlen, 
-		const guint8 *const key, 
-		guint8 *outstr, gint *outstrlen_ptr)
-{
-	if (flag == DECRYPT)
-		return qq_decrypt(instr, instrlen, key, outstr, outstrlen_ptr);
-	else if (flag == ENCRYPT)
-		qq_encrypt(instr, instrlen, key, outstr, outstrlen_ptr);
-	else 
-		return 0;
 
 	return 1;
 }
-*/

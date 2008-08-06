@@ -1,5 +1,5 @@
 /**
- * @file slpsession.h SLP Session functions
+ * @file qq_process.h
  *
  * purple
  *
@@ -21,28 +21,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SLPSESSION_H_
-#define _MSN_SLPSESSION_H_
 
-typedef struct _MsnSlpSession MsnSlpSession;
+#ifndef _QQ_PROCESS_H
+#define _QQ_PROCESS_H
 
-#include "slpcall.h"
-#include "slpsession.h"
-#include "slpmsg.h"
+#include <glib.h>
+#include "connection.h"
 
-struct _MsnSlpSession
-{
-	/* MsnSlpLink *slplink; */
-	MsnSlpCall *slpcall;
+#include "qq.h"
 
-	long id;
+void qq_proc_cmd_reply(PurpleConnection *gc,
+		guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+void qq_proc_cmd_server(PurpleConnection *gc,
+	guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+#endif
 
-	long app_id;
-	char *call_id;
-};
-
-MsnSlpSession *msn_slp_session_new(MsnSlpCall *slpcall);
-void msn_slp_session_destroy(MsnSlpSession *slpsession);
-void msn_slpsession_send_slpmsg(MsnSlpSession *slpsession,
-								MsnSlpMessage *slpmsg);
-#endif /* _MSN_SLPSESSION_H_ */

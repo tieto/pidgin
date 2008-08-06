@@ -27,8 +27,8 @@
 
 #include "conversation.h"
 
-#include "buddy_status.h"
 #include "group_conv.h"
+#include "buddy_list.h"
 #include "utils.h"
 
 /* show group conversation window */
@@ -99,7 +99,9 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 			list = list->next;
 		}
 
-		purple_conv_chat_add_users(PURPLE_CONV_CHAT(conv), names, NULL, flags, FALSE);
+		if (names != NULL && flags != NULL) {
+			purple_conv_chat_add_users(PURPLE_CONV_CHAT(conv), names, NULL, flags, FALSE);
+		}
 	}
 	/* clean up names */
 	while (names != NULL) {

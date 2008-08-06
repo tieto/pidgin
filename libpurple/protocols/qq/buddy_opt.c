@@ -34,7 +34,7 @@
 #include "crypt.h"
 #include "header_info.h"
 #include "im.h"
-#include "keep_alive.h"
+#include "qq_base.h"
 #include "packet_parse.h"
 #include "qq_network.h"
 #include "utils.h"
@@ -67,7 +67,7 @@ static void _qq_send_packet_remove_buddy(PurpleConnection *gc, guint32 uid)
 	g_return_if_fail(uid > 0);
 
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
-	qq_send_cmd(qd, QQ_CMD_DEL_FRIEND, (guint8 *) uid_str, strlen(uid_str));
+	qq_send_cmd(qd, QQ_CMD_DEL_BUDDY, (guint8 *) uid_str, strlen(uid_str));
 }
 
 /* try to remove myself from someone's buddy list */
@@ -95,7 +95,7 @@ static void _qq_send_packet_add_buddy(PurpleConnection *gc, guint32 uid)
 
 	/* we need to send the ascii code of this uid to qq server */
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
-	qq_send_cmd(qd, QQ_CMD_ADD_FRIEND_WO_AUTH, (guint8 *) uid_str, strlen(uid_str));
+	qq_send_cmd(qd, QQ_CMD_ADD_BUDDY_WO_AUTH, (guint8 *) uid_str, strlen(uid_str));
 
 	/* must be set after sending packet to get the correct send_seq */
 	req = g_new0(qq_add_buddy_request, 1);
@@ -481,7 +481,7 @@ PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboo
 		b->proto_data = q_bud;
 		qd->buddies = g_list_append(qd->buddies, q_bud);
 		qq_send_packet_get_info(gc, q_bud->uid, FALSE);
-		qq_send_packet_get_buddies_online(gc, QQ_FRIENDS_ONLINE_POSITION_START);
+		qq_send_packet_get_buddies_online(gc, 0);
 	}
 
 	purple_blist_add_buddy(b, NULL, g, NULL);

@@ -721,7 +721,6 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 	JabberSIXfer *jsx;
 	JabberIq *iq;
 	xmlnode *query, *streamhost;
-	const char *ft_proxies;
 	char port[6];
 	GList *tmp;
 	JabberBytestreamsStreamhost *sh, *sh2;
@@ -783,52 +782,6 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		/* The listener for the local proxy */
 		xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
 				jabber_si_xfer_bytestreams_send_connected_cb, xfer);
-	}
-
-	/* insert proxies here */
-	ft_proxies = purple_account_get_string(xfer->account, "ft_proxies", NULL);
-	if (ft_proxies) {
-		int i, portnum;
-		char *tmp;
-		gchar **ft_proxy_list = g_strsplit(ft_proxies, ",", 0);
-
-		g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
-		g_list_free(jsx->streamhosts);
-		jsx->streamhosts = NULL;
-
-		for(i = 0; ft_proxy_list[i]; i++) {
-			g_strstrip(ft_proxy_list[i]);
-			if(!(*ft_proxy_list[i]))
-				continue;
-
-			if((tmp = strchr(ft_proxy_list[i], ':'))) {
-				portnum = atoi(tmp + 1);
-				*tmp = '\0';
-			} else
-				portnum = 7777;
-
-			g_snprintf(port, sizeof(port), "%hu", portnum);
-
-			purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and ft_proxy_list[%i] %p\n",
-							  jsx, jsx->streamhosts, i, ft_proxy_list[i]);
-			if(g_list_find_custom(jsx->streamhosts, ft_proxy_list[i], jabber_si_compare_jid) != NULL)
-				continue;
-
-			streamhost_count++;
-			streamhost = xmlnode_new_child(query, "streamhost");
-			xmlnode_set_attrib(streamhost, "jid", ft_proxy_list[i]);
-			xmlnode_set_attrib(streamhost, "host", ft_proxy_list[i]);
-			xmlnode_set_attrib(streamhost, "port", port);
-
-			sh = g_new0(JabberBytestreamsStreamhost, 1);
-			sh->jid = g_strdup(ft_proxy_list[i]);
-			sh->host = g_strdup(ft_proxy_list[i]);
-			sh->port = portnum;
-
-			jsx->streamhosts = g_list_prepend(jsx->streamhosts, sh);
-		}
-
-		g_strfreev(ft_proxy_list);
 	}
 
 	for (tmp = jsx->js->bs_proxies; tmp; tmp = tmp->next) {

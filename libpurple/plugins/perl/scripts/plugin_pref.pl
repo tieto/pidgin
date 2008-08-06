@@ -44,8 +44,8 @@ sub foo {
 	$ppref = Purple::PluginPref->new_with_name_and_label(
 	    "/plugins/core/perl_test/choice", "Choice Preference");
 	$ppref->set_type(1);
-	$ppref->add_choice("ch0", $frame);
-	$ppref->add_choice("ch1", $frame);
+	$ppref->add_choice("ch0", "ch0-val");
+	$ppref->add_choice("ch1", "ch1-val");
 	$frame->add($ppref);
 	
 	$ppref = Purple::PluginPref->new_with_name_and_label(
@@ -56,11 +56,16 @@ sub foo {
 	return $frame;
 }
 
+sub pref_cb {
+	my ($pref, $type, $value, $data) = @_;
+	
+	print "pref changed: [$pref]($type)=$value data=$data\n";
+}
+
 sub plugin_init { 
 	
 	return %PLUGIN_INFO; 
 } 
-
 
 # This is the sub defined in %PLUGIN_INFO to be called when the plugin is loaded
 #	Note: The plugin has a reference to itself on top of the argument stack.
@@ -75,7 +80,11 @@ sub plugin_load {
 	Purple::Prefs::add_bool("/plugins/core/perl_test/bool", 1);	
 	Purple::Prefs::add_string("/plugins/core/perl_test/choice", "ch1");	
 	Purple::Prefs::add_string("/plugins/core/perl_test/text", "Foobar");	
-	
+
+	Purple::Prefs::connect_callback($plugin, "/plugins/core/perl_test", \&pref_cb, "none");
+	Purple::Prefs::connect_callback($plugin, "/plugins/core/perl_test/bool", \&pref_cb, "bool");
+	Purple::Prefs::connect_callback($plugin, "/plugins/core/perl_test/choice", \&pref_cb, "choice");
+	Purple::Prefs::connect_callback($plugin, "/plugins/core/perl_test/text", \&pref_cb, "text");
 
 	print "\n\n" . "#" x 80 . "\n\n";
 } 
