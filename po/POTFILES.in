@@ -140,8 +140,6 @@ libpurple/protocols/qq/group_join.c
 libpurple/protocols/qq/group_network.c
 libpurple/protocols/qq/group_opt.c
 libpurple/protocols/qq/im.c
-libpurple/protocols/qq/keep_alive.c
-libpurple/protocols/qq/login_logout.c
 libpurple/protocols/qq/qq.c
 libpurple/protocols/qq/qq_network.c
 libpurple/protocols/qq/send_file.c
