@@ -198,9 +198,9 @@ typedef gboolean (*PurpleKeyringImportPassword)(PurpleAccount * account,
  */
 typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount * account,
 						const char ** mode,
-						const char ** data,
+						char ** data,
 						GError ** error,
-						GDestroyNotify ** destroy);
+						GDestroyNotify * destroy);
 
 
 /*@}*/
@@ -215,25 +215,25 @@ typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount * account,
  * Prepare stuff at startup.
  */
 void 
-purple_keyring_init();
+purple_keyring_init(void);
 
 /**
  * Do some cleanup.
  */
 void
-purple_keyring_uninit();
+purple_keyring_uninit(void);
 
 /**
  * Get the keyring list. Used by the UI.
  */
 const GList * 
-purple_keyring_get_keyrings();
+purple_keyring_get_keyrings(void);
 
 /**
  * Get the keyring being used.
  */
 const PurpleKeyring * 
-purple_keyring_get_inuse();
+purple_keyring_get_inuse(void);
 
 /**
  * Set the keyring to use. This function will move all passwords from
@@ -259,7 +259,7 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
  * @param keyrint The keyring to register.
  */
 void 
-purple_plugin_keyring_register(PurpleKeyring * keyring);
+purple_keyring_register(PurpleKeyring * keyring);
 
 /**
  * Unregister a keyring plugin. In case the keyring is in use,
@@ -268,7 +268,7 @@ purple_plugin_keyring_register(PurpleKeyring * keyring);
  * @param keyrint The keyring to unregister.
  */
 void 
-purple_plugin_keyring_unregister(PurpleKeyring * keyring);
+purple_keyring_unregister(PurpleKeyring * keyring);
 
 /*@}*/
 
@@ -284,8 +284,9 @@ purple_plugin_keyring_unregister(PurpleKeyring * keyring);
  * @param keyringid The plugin ID that was stored in the xml file. Can be NULL.
  * @param mode A keyring specific option that was stored. Can be NULL.
  * @param data Data that was stored, can be NULL.
+ * @return TRUE if the input was accepted, FALSE otherwise.
  */
-void purple_keyring_import_password(PurpleAccount * account, 
+gboolean purple_keyring_import_password(PurpleAccount * account, 
 				    char * keyringid,
 				    char * mode,
 				    char * data,
@@ -299,14 +300,15 @@ void purple_keyring_import_password(PurpleAccount * account,
  * @param data The data to be stored in the XML node. This string must be freed using destroy() once not needed anymore if it is not NULL.
  * @param error Will be set if a problem occured.
  * @param destroy A function to be called, if non NULL, to free data.
+ * @return TRUE if the info was exported successfully, FALSE otherwise.
  */
-void 
+gboolean
 purple_keyring_export_password(PurpleAccount * account,
 			       const char ** keyringid,
 			       const char ** mode,
-			       const char ** data,
+			       char ** data,
 			       GError ** error,
-			       GDestroyNotify ** destroy);
+			       GDestroyNotify * destroy);
 
 
 
@@ -398,7 +400,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 /***************************************/
 /*@{*/
 
-PurpleKeyring * purple_keyring_new();
+PurpleKeyring * purple_keyring_new(void);
 void purple_keyring_free(PurpleKeyring * keyring);
 
 const char * purple_keyring_get_name(const PurpleKeyring * info);

@@ -28,6 +28,7 @@
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
+#include "keyring.h"
 #include "network.h"
 #include "notify.h"
 #include "pounce.h"
@@ -44,8 +45,6 @@
 /**
  * TODO :
  *  - grab Trannie's code for asynch connection
- *  - re-write account parsing and syncing as async
- *  - read password _after_ the rest of the account
  */
 
 
@@ -368,8 +367,13 @@ account_to_xmlnode(PurpleAccount *account)
 
 	xmlnode *node, *child;
 	const char *tmp;
+	const char *keyring_id;
+	const char *mode;
+	char *data;
 	PurplePresence *presence;
 	PurpleProxyInfo *proxy_info;
+	GError * error;
+	GDestroyNotify destroy;
 
 	node = xmlnode_new("account");
 
@@ -379,11 +383,25 @@ account_to_xmlnode(PurpleAccount *account)
 	child = xmlnode_new_child(node, "name");
 	xmlnode_insert_data(child, purple_account_get_username(account), -1);
 
-	if (purple_account_get_remember_password(account) &&			//  FIXME : change this so it asks the plugin for the node
-		((tmp = purple_account_get_password(account)) != NULL))
+	if (purple_account_get_remember_password(account))
 	{
-		child = xmlnode_new_child(node, "password");
-		xmlnode_insert_data(child, tmp, -1);
+		purple_keyring_export_password(account, &keyring_id, 
+			&mode, &data, &error, &destroy);
+
+		if (error != NULL) {
+
+			/* Output debug info */
+
+		} else {
+
+			child = xmlnode_new_child(node, "password");
+			xmlnode_set_attrib(child, "keyringid", keyring_id);
+			xmlnode_set_attrib(child, "mode", mode);
+			xmlnode_insert_data(child, data, -1);
+
+			if (destroy != NULL)
+				destroy(data);
+		}
 	}
 
 	if ((tmp = purple_account_get_alias(account)) != NULL)
@@ -773,7 +791,10 @@ parse_account(xmlnode *node)
 	xmlnode *child;
 	char *protocol_id = NULL;
 	char *name = NULL;
-	char *data;
+	char *keyring_id = NULL;
+	char *mode = NULL;
+	char *data = NULL;
+	GError * error = NULL;
 
 	child = xmlnode_get_child(node, "protocol");
 	if (child != NULL)
@@ -800,15 +821,6 @@ parse_account(xmlnode *node)
 	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
 	g_free(name);
 	g_free(protocol_id);
-
-	/* Read the password */
-	child = xmlnode_get_child(node, "password");					// FIXME : call plugin 
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
-	{
-		purple_account_set_remember_password(ret, TRUE);
-		purple_account_set_password(ret, data);
-		g_free(data);
-	}
 
 	/* Read the alias */
 	child = xmlnode_get_child(node, "alias");
@@ -880,6 +892,24 @@ parse_account(xmlnode *node)
 	if (child != NULL)
 	{
 		parse_current_error(child, ret);
+	}
+
+	/* Read the password */
+	child = xmlnode_get_child(node, "password");					// FIXME : call plugin 
+
+	if (child != NULL)
+	{
+		purple_keyring_import_password(ret, keyring_id, mode, data, &error);
+
+		if (error == NULL) {
+			purple_account_set_remember_password(ret, TRUE);
+			g_free(keyring_id);
+			g_free(mode);
+			g_free(data);
+		} else {
+
+			// FIXME handle error
+		}
 	}
 
 	return ret;
@@ -1502,8 +1532,14 @@ purple_account_set_password(PurpleAccount *account, const char *password)
 {
 	g_return_if_fail(account != NULL);
 
-	g_free(account->password);
-	account->password = g_strdup(password);
+	if (account->password != NULL)
+		g_free(account->password);
+
+	if (purple_account_get_remember_password(account) == FALSE)
+		account->password = g_strdup(password);
+
+	else
+		purple_keyring_set_password_sync(account, password);
 
 	schedule_accounts_save();
 }
@@ -1895,12 +1931,18 @@ purple_account_get_username(const PurpleAccount *account)
 	return account->username;
 }
 
+/* XXX will be replaced by the async code in 3.0 */
 const char *
 purple_account_get_password(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return account->password;
+	if (account->password != NULL)
+		return account->password;
+
+	else
+	
+		return purple_keyring_get_password_sync(account);
 }
 
 const char *

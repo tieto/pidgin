@@ -28,6 +28,7 @@
  */
 
 #include <glib.h>
+#include <string.h>>
 #include "account.h"
 #include "keyring.h"
 #include "signals.h"
@@ -336,11 +337,9 @@ purple_keyring_drop_passwords(const PurpleKeyring * keyring)
 	GList * cur;
 	PurpleKeyringSave save;
 
-	GError * error;
-
 	save = purple_keyring_get_save_password(keyring);
 
-	r_return_if_fail(save != NULL);
+	g_return_if_fail(save != NULL);
 
 	for (cur = purple_accounts_get_all(); 
 	     cur != NULL;
@@ -363,7 +362,7 @@ struct _PurpleKeyringChangeTracker
 	gboolean force;
 };
 
-void
+static void
 purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 					GError * error,
 					gpointer data)
@@ -379,7 +378,7 @@ purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 
 	tracker->read_outstanding--;
 
-	name = purple_account_get_username(account);
+	name = purple_account_get_username(account);;
 
 
 	if ((error != NULL) && (error->domain == ERR_PIDGINKEYRING)) {
@@ -389,16 +388,18 @@ purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 		switch(error->code) {
 
 			case ERR_NOCAP :
-				g_debug("Keyring could not save passwords : %s", name, error->message);
+				g_debug("Keyring could not save password for account %s : %s", name, error->message);
 				break;
 
 			case ERR_NOPASSWD :
-				g_debug("No password found while changing keyring for account %s", name, error->message);
+				g_debug("No password found while changing keyring for account %s : %s",
+					 name, error->message);
 				break;
 
 			case ERR_NOCHANNEL :
-				g_debug("Failed to communicate with backend while changing keyring for account %s : %s Aborting changes.", name, error->message);
-				tracker->abort == TRUE;
+				g_debug("Failed to communicate with backend while changing keyring for account %s : %s Aborting changes.",
+					 name, error->message);
+				tracker->abort = TRUE;
 				break;
 
 			default :
@@ -434,7 +435,7 @@ purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 }
 
 
-void
+static void
 purple_keyring_set_inuse_got_pw_cb(const PurpleAccount * account, 
 				  gchar * password, 
 				  GError * error, 
@@ -501,7 +502,9 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 	PurpleKeyringRead read;
 	PurpleKeyringClose close;
 	struct _PurpleKeyringChangeTracker * tracker;
-	GError * error;
+	GError * error = NULL; 
+
+	oldkeyring = purple_keyring_get_inuse();
 
 	read = purple_keyring_get_read_password(oldkeyring);
 
@@ -567,7 +570,7 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 
 
 void 
-purple_plugin_keyring_register(PurpleKeyring * keyring)
+purple_keyring_register(PurpleKeyring * keyring)
 {
 	const char * keyring_id;
 	PurpleCore * core;
@@ -598,7 +601,7 @@ purple_plugin_keyring_register(PurpleKeyring * keyring)
 
 
 void 
-purple_plugin_keyring_unregister(PurpleKeyring * keyring)
+purple_keyring_unregister(PurpleKeyring * keyring)
 {
 	PurpleCore * core;
 	const PurpleKeyring * inuse;
@@ -632,11 +635,12 @@ purple_plugin_keyring_unregister(PurpleKeyring * keyring)
 /*@{*/
 
 
-void purple_keyring_import_password(PurpleAccount * account, 
-				    char * keyringid,
-				    char * mode,
-				    char * data,
-				    GError ** error)
+gboolean
+purple_keyring_import_password(PurpleAccount * account, 
+			       char * keyringid,
+			       char * mode,
+			       char * data,
+			       GError ** error)
 {
 	const PurpleKeyring * inuse;
 	PurpleKeyringImportPassword import;
@@ -648,7 +652,7 @@ void purple_keyring_import_password(PurpleAccount * account,
 		*error = g_error_new(ERR_PIDGINKEYRING , ERR_NOKEYRING,
 			"No keyring configured, cannot import password info");
 		g_debug("No keyring configured, cannot import password info");
-		return;
+		return FALSE;
 	}
 
 	realid = purple_keyring_get_name(inuse);
@@ -662,7 +666,7 @@ void purple_keyring_import_password(PurpleAccount * account,
 		*error = g_error_new(ERR_PIDGINKEYRING , ERR_INVALID,
 			"Specified keyring id does not match the configured one.");
 		g_debug("Specified keyring id does not match the configured one.");
-		return;
+		return FALSE;
 	}
 
 	import = purple_keyring_get_import_password(inuse);
@@ -670,25 +674,22 @@ void purple_keyring_import_password(PurpleAccount * account,
 		*error = g_error_new(ERR_PIDGINKEYRING , ERR_NOCAP,
 			"Keyring cannot import password info.");
 		g_debug("Keyring cannot import password info. This might be normal");
-		return;
+		return FALSE;
 	}
 	
-	import(account, mode, data, error);
-
-	return;
+	return import(account, mode, data, error);
 }
 
-void 
+gboolean
 purple_keyring_export_password(PurpleAccount * account,
 			       const char ** keyringid,
 			       const char ** mode,
-			       const char ** data,
+			       char ** data,
 			       GError ** error,
-			       GDestroyNotify ** destroy)
+			       GDestroyNotify * destroy)
 {
 	const PurpleKeyring * inuse;
 	PurpleKeyringExportPassword export;
-	const char * realid;
 
 	inuse = purple_keyring_get_inuse();
 
@@ -705,7 +706,7 @@ purple_keyring_export_password(PurpleAccount * account,
 		*error = g_error_new(ERR_PIDGINKEYRING , ERR_INVALID,
 			"Plugin does not have a keyring id");
 		g_debug("Plugin does not have a keyring id");
-		return;
+		return FALSE;
 	}
 
 	export = purple_keyring_get_export_password(inuse);
@@ -714,12 +715,10 @@ purple_keyring_export_password(PurpleAccount * account,
 		*error = g_error_new(ERR_PIDGINKEYRING , ERR_NOCAP,
 			"Keyring cannot export password info.");
 		g_debug("Keyring cannot export password info. This might be normal");
-		return;
+		return FALSE;
 	}
 
-	export(account, mode, data, error, destroy);
-
-	return;
+	return export(account, mode, data, error, destroy);
 }
 
 
@@ -843,7 +842,6 @@ const char *
 purple_keyring_get_password_sync(const PurpleAccount * account)
 {
 	PurpleKeyringReadSync read;
-	PurpleKeyring * keyring;
 	const PurpleKeyring * inuse;
 
 	if (account == NULL) {
@@ -859,7 +857,7 @@ purple_keyring_get_password_sync(const PurpleAccount * account)
 
 		} else {
 
-			read = purple_keyring_get_read_sync(keyring);
+			read = purple_keyring_get_read_sync(inuse);
 
 			if (read == NULL){
 
@@ -978,7 +976,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 /***************************************/
 /*@{*/
 
-GQuark purple_keyring_error_domain()
+GQuark purple_keyring_error_domain(void)
 {
 	return g_quark_from_static_string("Libpurple keyring");
 }
