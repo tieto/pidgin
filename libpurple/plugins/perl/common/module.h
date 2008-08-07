@@ -86,6 +86,7 @@ typedef PurpleCipher *			Purple__Cipher;
 typedef PurpleCipherCaps			Purple__CipherCaps;
 typedef PurpleCipherContext *		Purple__Cipher__Context;
 typedef PurpleCipherOps *			Purple__Cipher__Ops;
+typedef PurpleCipherBatchMode		Purple__Cipher__BatchMode;
 
 /* cmds.h */
 typedef PurpleCmdFlag			Purple__Cmd__Flag;

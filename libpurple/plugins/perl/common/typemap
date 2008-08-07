@@ -18,7 +18,7 @@ gchar					T_IV
 gchar *					T_PV
 gchar_own *				T_GCHAR_OWN
 guchar					T_IV
-guchar *				T_PTR
+guchar *				T_PV
 guchar **				T_PTR
 const guchar *				T_PV
 char *					T_PV
@@ -30,7 +30,7 @@ va_list					T_PTR
 GString *				T_PTR
 GData *					T_PTR
 GData **				T_PTR
-const unsigned char *			T_PTR
+const unsigned char *			T_PV
 struct tm *				T_PTR
 const struct tm *			T_PTR
 xmlnode *				T_PTR
@@ -176,6 +176,7 @@ XMLNode::Type				T_IV
 /* enums */
 
 /* cipher.h */
+Purple::Cipher::BatchMode	T_IV
 
 /* blist.h */
 
