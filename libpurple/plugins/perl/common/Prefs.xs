@@ -60,6 +60,28 @@ PPCODE:
 	g_list_free(t_GL);
 
 void
+purple_prefs_add_path(name, value)
+	const char *name
+	const char *value
+
+void
+purple_prefs_add_path_list(name, value)
+	const char *name
+	SV *value
+PREINIT:
+	GList *t_GL;
+	int i, t_len;
+PPCODE:
+	t_GL = NULL;
+	t_len = av_len((AV *)SvRV(value));
+
+	for (i = 0; i < t_len; i++)
+		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(value), i, 0)));
+
+	purple_prefs_add_path_list(name, t_GL);
+	g_list_free(t_GL);
+
+void
 purple_prefs_destroy()
 
 guint
@@ -88,6 +110,21 @@ CODE:
 gboolean
 purple_prefs_exists(name)
 	const char *name
+
+const char *
+purple_prefs_get_path(name)
+	const char *name
+
+void
+purple_prefs_get_path_list(name)
+	const char *name
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = purple_prefs_get_path_list(name); l != NULL; l = g_list_delete_link(l, l)) {
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
+		g_free(l->data);
+	}
 
 gboolean
 purple_prefs_get_bool(name)
@@ -172,6 +209,29 @@ PPCODE:
 
 	purple_prefs_set_string_list(name, t_GL);
 	g_list_free(t_GL);
+
+void
+purple_prefs_set_path(name, value)
+	const char *name
+	const char *value
+
+void
+purple_prefs_set_path_list(name, value)
+	const char *name
+	SV *value
+PREINIT:
+	GList *t_GL;
+	int i, t_len;
+PPCODE:
+	t_GL = NULL;
+	t_len = av_len((AV *)SvRV(value));
+
+	for (i = 0; i < t_len; i++)
+		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(value), i, 0)));
+
+	purple_prefs_set_path_list(name, t_GL);
+	g_list_free(t_GL);
+
 
 void
 purple_prefs_trigger_callback(name)
