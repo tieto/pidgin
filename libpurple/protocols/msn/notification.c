@@ -1288,7 +1288,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *rru;
 	const char *url;
 	PurpleCipherContext *cipher;
-	gchar digest[33];
+	gchar creds[33];
 	char *buf;
 
 	gulong tmp_timestamp;
@@ -1310,16 +1310,16 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	cipher = purple_cipher_context_new_by_name("md5", NULL);
 	purple_cipher_context_append(cipher, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest_to_str(cipher, sizeof(digest), digest, NULL);
+	purple_cipher_context_digest_to_str(cipher, sizeof(creds), creds, NULL);
 	purple_cipher_context_destroy(cipher);
 
 	g_free(buf);
 
 	g_free(session->passport_info.mail_url);
-	session->passport_info.mail_url = g_strdup_printf("%s&auth=%s&creds=%s&sl=%ld&username=%s&mode=ttl&sid=%s&id=2&rru=%ssvc_mail&js=yes",
+	session->passport_info.mail_url = g_strdup_printf("%s&auth=%s&creds=%s&sl=%ld&username=%s&mode=ttl&sid=%s&id=2&rru=%s&svc=mail&js=yes",
                                                         url,
-                                                        session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
-                                                        buf,
+                                                        session->passport_info.mspauth ? purple_url_encode(session->passport_info.mspauth) : "BOGUS",
+                                                        creds,
                                                         tmp_timestamp,
                                                         msn_user_get_passport(session->user),
                                                         session->passport_info.sid,
