@@ -356,10 +356,8 @@ gchar_own *
 purple_str_size_to_units(size)
 	size_t size
 
-#TODO: Fix this to handle str being modified in-place
 void
-purple_str_strip_char(str, thechar)
-	char *str
+purple_str_strip_char(IN_OUT char str, thechar)
 	char thechar
 
 time_t
@@ -514,10 +512,8 @@ purple_util_set_current_song(title, artist, album)
 	const char *artist
 	const char *album
 
-#TODO: Fix this to handle str being modified in-place
 void
-purple_util_chrreplace(string, delimiter, replacement)
-	char* string
+purple_util_chrreplace(IN_OUT char string, delimiter, replacement)
 	char delimiter
 	char replacement
 
