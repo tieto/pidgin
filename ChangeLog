@@ -10,6 +10,14 @@ version 2.5.0 (??/??/2008):
 	  we don't install our SSL CA certs, so it's important that the
 	  libpurple package depend on the CA certificates.
 
+	XMPP:
+	* Fix a bug that caused the UI to not refresh and caused the client
+	  to use 99% CPU when an XMPP account lost its connection to the
+	  server.
+	* Possibly fix a bug where some clients could get into a state
+	  where they moved a buddy back and forth between two groups in
+	  an endless loop.
+
 	IRC:
 	* /ctcp command (Vladislav Guberinić)
 	* Allow for auto-detection of incoming UTF-8 formatted text on
