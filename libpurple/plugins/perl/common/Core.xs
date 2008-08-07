@@ -19,10 +19,3 @@ purple_core_get_version()
 const char *
 purple_core_get_ui()
 
-void
-purple_core_set_ui_ops(ops)
-    Purple::Core::UiOps ops
-
-Purple::Core::UiOps
-purple_core_get_ui_ops()
-

@@ -246,13 +246,6 @@ purple_blist_schedule_save()
 void
 purple_blist_request_add_group()
 
-void
-purple_blist_set_ui_ops(ops)
-	Purple::BuddyList::UiOps ops
-
-Purple::BuddyList::UiOps
-purple_blist_get_ui_ops()
-
 Purple::Handle
 purple_blist_get_handle()
 

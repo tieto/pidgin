@@ -87,12 +87,5 @@ PPCODE:
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Connection")));
 	}
 
-void
-purple_connections_set_ui_ops(ops)
-	Purple::Connection::UiOps ops
-
-Purple::Connection::UiOps
-purple_connections_get_ui_ops()
-
 Purple::Handle
 purple_connections_get_handle()

@@ -310,12 +310,5 @@ purple_accounts_find(name, protocol)
     const char * name
     const char * protocol
 
-void
-purple_accounts_set_ui_ops(ops)
-    Purple::Account::UiOps ops
-
-Purple::Account::UiOps
-purple_accounts_get_ui_ops()
-
 Purple::Handle
 purple_accounts_get_handle()

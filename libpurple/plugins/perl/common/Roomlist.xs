@@ -45,10 +45,6 @@ Purple::Roomlist
 purple_roomlist_get_list(gc)
 	Purple::Connection gc
 
-Purple::Roomlist::UiOps
-purple_roomlist_get_ui_ops()
- 
-
 Purple::Roomlist
 purple_roomlist_new(account)
 	Purple::Account account
@@ -93,10 +89,6 @@ void
 purple_roomlist_set_in_progress(list, in_progress)
 	Purple::Roomlist list
 	gboolean in_progress
-
-void 
-purple_roomlist_set_ui_ops(ops)
-	Purple::Roomlist::UiOps ops
 
 void 
 purple_roomlist_show_with_account(account)
