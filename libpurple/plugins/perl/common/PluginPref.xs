@@ -176,5 +176,7 @@ CODE:
 		gpp_type = PURPLE_PLUGIN_PREF_CHOICE;
 	} else if (type == 2) {
 		gpp_type = PURPLE_PLUGIN_PREF_INFO;
+	} else if (type == 3) {
+		gpp_type = PURPLE_PLUGIN_PREF_STRING_FORMAT;
 	}
 	purple_plugin_pref_set_type(pref, gpp_type);
