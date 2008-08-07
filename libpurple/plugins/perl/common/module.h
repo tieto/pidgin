@@ -20,6 +20,7 @@ typedef struct group *Purple__Group;
 #include "accountopt.h"
 #include "blist.h"
 #include "buddyicon.h"
+#include "certificate.h"
 #include "cipher.h"
 #include "cmds.h"
 #include "connection.h"
@@ -36,6 +37,7 @@ typedef struct group *Purple__Group;
 #include "gtkconv.h"
 #include "gtkutils.h"
 #endif
+#include "idle.h"
 #include "imgstore.h"
 #include "network.h"
 #include "notify.h"
@@ -59,6 +61,7 @@ typedef struct group *Purple__Group;
 /* Ewww. perl has it's own util.h which is in the include path :( */
 #include "libpurple/util.h"
 #include "value.h"
+#include "whiteboard.h"
 #include "xmlnode.h"
 
 /* account.h */
@@ -80,6 +83,14 @@ typedef PurpleGroup *			Purple__BuddyList__Group;
 
 /* buddyicon.h */
 typedef PurpleBuddyIcon *			Purple__Buddy__Icon;
+
+/* certificate.h */
+typedef PurpleCertificate *			Purple__Certificate;
+typedef PurpleCertificatePool *			Purple__Certificate__Pool;
+typedef PurpleCertificateScheme *		Purple__Certificate__Scheme;
+typedef PurpleCertificateVerifier *		Purple__Certificate__Verifier;
+typedef PurpleCertificateVerificationRequest *	Purple__Certificate__VerificationRequest;
+typedef PurpleCertificateVerificationStatus	Purple__Certificate__VerificationStatus;
 
 /* cipher.h */
 typedef PurpleCipher *			Purple__Cipher;
@@ -274,6 +285,9 @@ typedef PurpleMenuAction *		Purple__Menu__Action;
 /* value.h */
 typedef PurpleValue *			Purple__Value;
 
+/* whiteboard.h */
+typedef PurpleWhiteboard *		Purple__Whiteboard;
+
 /* xmlnode.h */
 typedef xmlnode *			Purple__XMLNode;
 typedef XMLNodeType			XMLNode__Type;
@@ -287,3 +301,4 @@ typedef struct _constiv {
 	const char *name;
 	IV iv;
 } constiv;
+

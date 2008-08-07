@@ -39,11 +39,13 @@ XS_FILES =		Account.xs \
 				BuddyList.xs \
 				Cipher.xs \
 				Cmds.xs \
+				Certificate.xs \
 				Connection.xs \
 				Conversation.xs \
 				Core.xs \
 				Debug.xs \
 				FT.xs \
+				Idle.xs \
 				Purple.xs \
 				ImgStore.xs \
 				Log.xs \
@@ -67,6 +69,7 @@ XS_FILES =		Account.xs \
 				Status.xs \
 				Stringref.xs \
 				Util.xs \
+				Whiteboard.xs \
 				XMLNode.xs
 
 #FALLBACKS =	const-c.inc const-xs.inc
