@@ -2031,8 +2031,12 @@ purple_markup_linkify(const char *text)
 	gunichar g;
 	gboolean inside_html = FALSE;
 	int inside_paren = 0;
-	GString *ret = g_string_new("");
-	/* Assumes you have a buffer able to carry at least BUF_LEN * 2 bytes */
+	GString *ret;
+
+	if (text == NULL)
+		return NULL;
+
+	ret = g_string_new("");
 
 	c = text;
 	while (*c) {
