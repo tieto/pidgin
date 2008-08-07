@@ -7,9 +7,6 @@ Purple::Privacy::UiOps
 purple_privacy_get_ui_ops()
 
 void
-purple_privacy_init()
-
-void
 purple_privacy_set_ui_ops(ops)
 	Purple::Privacy::UiOps ops
 

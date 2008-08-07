@@ -319,9 +319,3 @@ purple_accounts_get_ui_ops()
 
 Purple::Handle
 purple_accounts_get_handle()
-
-void
-purple_accounts_init()
-
-void
-purple_accounts_uninit()

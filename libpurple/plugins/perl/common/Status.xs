@@ -341,12 +341,6 @@ purple_status_set_attr_string(status, id, value)
 	const char *id
 	const char *value
 
-void
-purple_status_init()
-
-void
-purple_status_uninit()
-
 MODULE = Purple::Status  PACKAGE = Purple::StatusType  PREFIX = purple_status_type_
 PROTOTYPES: ENABLE
 

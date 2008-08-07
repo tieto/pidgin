@@ -202,7 +202,7 @@ gchar_own*
 purple_utf8_ncr_encode(in)
 	const char* in
 
-gchar*
+gchar_own*
 purple_utf8_salvage(str)
 	const char* str
 
@@ -356,6 +356,7 @@ gchar_own *
 purple_str_size_to_units(size)
 	size_t size
 
+#TODO: Fix this to handle str being modified in-place
 void
 purple_str_strip_char(str, thechar)
 	char *str
@@ -513,6 +514,7 @@ purple_util_set_current_song(title, artist, album)
 	const char *artist
 	const char *album
 
+#TODO: Fix this to handle str being modified in-place
 void
 purple_util_chrreplace(string, delimiter, replacement)
 	char* string

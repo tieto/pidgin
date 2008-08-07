@@ -259,12 +259,6 @@ purple_blist_get_handle()
 Purple::BuddyList::Node
 purple_blist_get_root()
 
-void
-purple_blist_init()
-
-void
-purple_blist_uninit()
-
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Node  PREFIX = purple_blist_node_
 PROTOTYPES: ENABLE
 

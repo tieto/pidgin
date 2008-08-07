@@ -128,12 +128,6 @@ PPCODE:
 Purple::Handle
 purple_ciphers_get_handle()
 
-void
-purple_ciphers_init()
-
-void
-purple_ciphers_uninit()
-
 MODULE = Purple::Cipher  PACKAGE = Purple::Cipher::Context  PREFIX = purple_cipher_context_
 PROTOTYPES: ENABLE
 

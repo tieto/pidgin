@@ -124,12 +124,6 @@ PROTOTYPES: ENABLE
 Purple::Handle
 purple_conversations_get_handle()
 
-void
-purple_conversations_init()
-
-void
-purple_conversations_uninit()
-
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversation  PREFIX = purple_conversation_
 PROTOTYPES: ENABLE
 

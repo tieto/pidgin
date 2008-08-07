@@ -119,9 +119,6 @@ Purple::PrefType
 purple_prefs_get_type(name)
 	const char *name
 
-void
-purple_prefs_init()
-
 gboolean
 purple_prefs_load()
 
@@ -190,9 +187,6 @@ PPCODE:
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 		g_free(l->data);
 	}
-
-void
-purple_prefs_uninit()
 
 void
 purple_prefs_update_old()
