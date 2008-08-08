@@ -57,17 +57,35 @@ msn_session_destroy(MsnSession *session)
 
 	session->destroying = TRUE;
 
-	if (session->connected)
-		msn_session_disconnect(session);
+	if (session->soap_cleanup_handle)
+		purple_timeout_remove(session->soap_cleanup_handle);
 
-	if (session->notification != NULL)
-		msn_notification_destroy(session->notification);
+	if (session->soap_table != NULL)
+		g_hash_table_destroy(session->soap_table);
+
+	while (session->slplinks != NULL)
+		msn_slplink_destroy(session->slplinks->data);
 
 	while (session->switches != NULL)
 		msn_switchboard_destroy(session->switches->data);
 
-	while (session->slplinks != NULL)
-		msn_slplink_destroy(session->slplinks->data);
+	if (session->sync != NULL)
+		msn_sync_destroy(session->sync);
+
+	if (session->oim != NULL)
+		msn_oim_destroy(session->oim);
+
+	if (session->nexus != NULL)
+		msn_nexus_destroy(session->nexus);
+
+	if (session->user != NULL)
+		msn_user_destroy(session->user);
+
+	if (session->notification != NULL)
+		msn_notification_destroy(session->notification);
+
+	if (session->connected)
+		msn_session_disconnect(session);
 
 	msn_userlist_destroy(session->userlist);
 
@@ -79,26 +97,7 @@ msn_session_destroy(MsnSession *session)
 	g_free(session->passport_info.sid);
 	g_free(session->passport_info.mspauth);
 	g_free(session->passport_info.client_ip);
-
 	g_free(session->passport_info.mail_url);
-
-	if (session->sync != NULL)
-		msn_sync_destroy(session->sync);
-
-	if (session->nexus != NULL)
-		msn_nexus_destroy(session->nexus);
-
-	if (session->oim != NULL)
-		msn_oim_destroy(session->oim);
-
-	if (session->user != NULL)
-		msn_user_destroy(session->user);
-
-	if (session->soap_table != NULL)
-		g_hash_table_destroy(session->soap_table);
-
-	if (session->soap_cleanup_handle)
-		purple_timeout_remove(session->soap_cleanup_handle);
 
 	g_free(session);
 }
