@@ -718,6 +718,12 @@ purple_date_format_short(const struct tm *tm)
 const char *
 purple_date_format_long(const struct tm *tm)
 {
+	/*
+	 * This string determines how some dates are displayed.  The default
+	 * string "%x %X" shows the date then the time.  Translators can
+	 * change this to "%X %x" if they want the time to be shown first,
+	 * followed by the date.
+	 */
 	return purple_utf8_strftime(_("%x %X"), tm);
 }
 
