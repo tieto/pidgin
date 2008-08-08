@@ -88,7 +88,7 @@ psychic_la_SOURCES          = psychic.c
 signals_test_la_SOURCES		= signals-test.c
 simple_la_SOURCES			= simple.c
 statenotify_la_SOURCES      = statenotify.c
-internalkeyring_la_SOURCES  = keyrings/internalkeyring.c
+internalkeyring_la_SOURCES  = internalkeyring.c
 
 autoaccept_la_LIBADD        = $(GLIB_LIBS)
 buddynote_la_LIBADD         = $(GLIB_LIBS)

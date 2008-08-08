@@ -34,6 +34,11 @@
 #include <glib.h>
 #include "account.h"
 
+/**
+ * Default keyring
+ */
+#define FALLBACK_KEYRING	"core-scrouaf-internalkeyring"
+
 /*******************************************************/
 /** @name data structures and types                    */
 /*******************************************************/

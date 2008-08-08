@@ -27,22 +27,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#ifndef PURPLE_PLUGINS
+# define PURPLE_PLUGINS
+#endif
+
 #include <glib.h>
+
+#ifndef G_GNUC_NULL_TERMINATED
+# if __GNUC__ >= 4
+#  define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
+# else
+#  define G_GNUC_NULL_TERMINATED
+# endif
+#endif
+
 #include "account.h"
 #include "version.h"
 #include "keyring.h"
+#include "debug.h"
+#include "plugin.h"
 
-
-#define KEYRINGNAME			"internal_keyring"
+#define KEYRINGNAME			FALLBACK_KEYRING
 #define INTERNALKEYRING_VERSION		"0.7"
 #define INTERNALKEYRING_DESCRIPTION	"This plugin provides the default password storage behaviour for libpurple."
 #define	INTERNALKEYRING_AUTHOR		"Scrouaf (scrouaf[at]soc.pidgin.im)"
 #define INTERNALKEYRING_ID		"core-internalkeyring-scrouaf"
 
+
 #define GET_PASSWORD(account) \
 	g_hash_table_lookup (internal_keyring_passwords, account)
 #define SET_PASSWORD(account, password) \
 	g_hash_table_replace(internal_keyring_passwords, account, password)
+
 
 GHashTable * internal_keyring_passwords = NULL;
 static PurpleKeyring * keyring_handler = NULL;
@@ -55,8 +75,8 @@ static void 		internal_keyring_save_sync(PurpleAccount *, const gchar *);
 static void		internal_keyring_close(GError **);
 static gboolean		internal_keyring_import_password(PurpleAccount *, char *, char *, GError **);
 static gboolean 	internal_keyring_export_password(PurpleAccount *, const char **, char **, GError **, GDestroyNotify *);
-void 			internal_keyring_init(void);
-void 			internal_keyring_uninit(void);
+static void		internal_keyring_init(void);
+static void		internal_keyring_uninit(void);
 static gboolean		internal_keyring_load(PurplePlugin *);
 static gboolean		internal_keyring_unload(PurplePlugin *);
 static void		internal_keyring_destroy(PurplePlugin *);
@@ -112,6 +132,7 @@ internal_keyring_save(const PurpleAccount * account,
 static const char * 
 internal_keyring_read_sync(const PurpleAccount * account)
 {
+	purple_debug_info("keyring", "password was read\n");
 	return GET_PASSWORD(account);
 }
 
@@ -127,6 +148,7 @@ internal_keyring_save_sync(PurpleAccount * account,
 		copy = g_strdup(password);
 		SET_PASSWORD(account, copy);
 	}
+	purple_debug_info("keyring", "password was set\n");
 	return;
 }
 
@@ -184,7 +206,7 @@ internal_keyring_export_password(PurpleAccount * account,
 
 
 
-void
+static void
 internal_keyring_init()
 {
 	keyring_handler = purple_keyring_new();
@@ -204,7 +226,7 @@ internal_keyring_init()
 	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
 }
 
-void
+static void
 internal_keyring_uninit()
 {
 	purple_keyring_free(keyring_handler);
@@ -215,6 +237,7 @@ internal_keyring_uninit()
 }
 
 
+
 /***********************************************/
 /*     Plugin interface                        */
 /***********************************************/
@@ -222,21 +245,21 @@ internal_keyring_uninit()
 static gboolean
 internal_keyring_load(PurplePlugin *plugin)
 {
-	purple_keyring_init();
+	internal_keyring_init();
 	return TRUE;
 }
 
 static gboolean
 internal_keyring_unload(PurplePlugin *plugin)
 {
-	purple_keyring_uninit();
+	internal_keyring_uninit();
 	return TRUE;
 }
 
 static void
 internal_keyring_destroy(PurplePlugin *plugin)
 {
-	purple_keyring_uninit();
+	internal_keyring_uninit();
 	return;
 }
 
@@ -269,4 +292,12 @@ PurplePluginInfo plugininfo =
 	NULL,
 	NULL,
 };
+
+static void                        
+init_plugin(PurplePlugin *plugin)
+{                                  
+	purple_debug_info("internalkeyring", "init plugin called.\n");
+}
+
+PURPLE_INIT_PLUGIN(internal_keyring, init_plugin, plugininfo)
 

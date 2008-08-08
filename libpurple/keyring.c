@@ -33,8 +33,7 @@
 #include "keyring.h"
 #include "signals.h"
 #include "core.h"
-
-#define FALLBACK_KEYRING	"core-scrouaf-internalkeyring"
+#include "debug.h"
 
 /******************************************/
 /** @name PurpleKeyring                   */
@@ -62,7 +61,7 @@ struct _PurpleKeyring
 PurpleKeyring * 
 purple_keyring_new()
 {
-	return g_malloc(sizeof(PurpleKeyring));
+	return g_malloc0(sizeof(PurpleKeyring));
 }
 
 /* Destructor */
@@ -258,6 +257,8 @@ purple_keyring_init()
 	PurpleCore * core;
 	const char * touse;
 
+	purple_debug_info("keyring", "keyring_it");
+
 	/* Make sure we don't have junk */
 	purple_keyring_keyrings = NULL;
 	purple_keyring_inuse = NULL;
@@ -309,7 +310,7 @@ purple_keyring_find_keyring_by_id(char * id)
 		keyring = l->data;
 		name = purple_keyring_get_name(keyring);
 
-		if (strcmp(id, name) == 0)
+		if (g_strcmp0(id, name) == 0)
 			return keyring;
 	}
 
@@ -499,14 +500,17 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 {
 	GList * cur;
 	const PurpleKeyring * oldkeyring;
-	PurpleKeyringRead read;
+	PurpleKeyringRead read = NULL;
 	PurpleKeyringClose close;
 	struct _PurpleKeyringChangeTracker * tracker;
 	GError * error = NULL; 
 
+	purple_debug_info("keyring", "changing in use keyring\n");
+
 	oldkeyring = purple_keyring_get_inuse();
 
-	read = purple_keyring_get_read_password(oldkeyring);
+	if (oldkeyring != NULL)
+		read = purple_keyring_get_read_password(oldkeyring);
 
 	if (read == NULL) {
 		error = g_error_new(ERR_PIDGINKEYRING , ERR_NOCAP,
@@ -556,13 +560,11 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 		}
 
 	} else { /* no keyring was set before. */
-
+		purple_debug_info("keyring", "setting keyring for the first time\n");
 		purple_keyring_inuse = newkeyring;
 
 		if (cb != NULL)
-			cb(newkeyring, TRUE, error, data);
-
-		g_error_free(error);
+			cb(newkeyring, TRUE, NULL, data);
 
 		return;
 	}
@@ -575,6 +577,7 @@ purple_keyring_register(PurpleKeyring * keyring)
 	const char * keyring_id;
 	PurpleCore * core;
 
+	purple_debug_info("keyring", "registering keyring.\n");
 	g_return_if_fail(keyring != NULL);
 	
 	keyring_id = purple_keyring_get_name(keyring);
@@ -584,7 +587,7 @@ purple_keyring_register(PurpleKeyring * keyring)
 
 	/* If this is the configured keyring, use it. */
 	if (purple_keyring_inuse == NULL &&
-	    strcmp(keyring_id, purple_keyring_to_use) == 0) {
+	    g_strcmp0(keyring_id, purple_keyring_to_use) == 0) {
 
 		/** @todo add callback to make sure all is ok */
 		purple_keyring_set_inuse(keyring, TRUE, NULL, NULL);
@@ -594,6 +597,7 @@ purple_keyring_register(PurpleKeyring * keyring)
 	core = purple_get_core();
 
 	purple_signal_emit(core, "keyring-register", keyring_id, keyring);
+	purple_debug_info("keyring", "registered keyring : %s.\n", keyring_id);
 
 	purple_keyring_keyrings = g_list_prepend(purple_keyring_keyrings,
 		keyring);
@@ -646,6 +650,8 @@ purple_keyring_import_password(PurpleAccount * account,
 	PurpleKeyringImportPassword import;
 	const char * realid;
 
+	purple_debug_info("keyring", "importing password.\n");
+
 	inuse = purple_keyring_get_inuse();
 
 	if (inuse == NULL) {
@@ -661,8 +667,8 @@ purple_keyring_import_password(PurpleAccount * account,
 	 *  - there is a keyringid specified and it matches the one configured
 	 *  - or the configured keyring is the fallback, compatible one.
 	 */
-	if ((keyringid != NULL && strcmp(realid, keyringid) != 0) ||
-	    strcmp(FALLBACK_KEYRING, realid)) {
+	if ((keyringid != NULL && g_strcmp0(realid, keyringid) != 0) ||
+	    g_strcmp0(FALLBACK_KEYRING, realid)) {
 		*error = g_error_new(ERR_PIDGINKEYRING , ERR_INVALID,
 			"Specified keyring id does not match the configured one.");
 		g_debug("Specified keyring id does not match the configured one.");
@@ -690,6 +696,8 @@ purple_keyring_export_password(PurpleAccount * account,
 {
 	const PurpleKeyring * inuse;
 	PurpleKeyringExportPassword export;
+
+	purple_debug_info("keyring", "exporting password.\n");
 
 	inuse = purple_keyring_get_inuse();
 

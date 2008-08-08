@@ -385,6 +385,7 @@ account_to_xmlnode(PurpleAccount *account)
 
 	if (purple_account_get_remember_password(account))
 	{
+		purple_debug_info("accounts", "Exporting password.\n");
 		purple_keyring_export_password(account, &keyring_id, 
 			&mode, &data, &error, &destroy);
 
@@ -794,6 +795,7 @@ parse_account(xmlnode *node)
 	char *keyring_id = NULL;
 	char *mode = NULL;
 	char *data = NULL;
+	gboolean result;
 	GError * error = NULL;
 
 	child = xmlnode_get_child(node, "protocol");
@@ -895,19 +897,23 @@ parse_account(xmlnode *node)
 	}
 
 	/* Read the password */
-	child = xmlnode_get_child(node, "password");					// FIXME : call plugin 
-
+	child = xmlnode_get_child(node, "password");
 	if (child != NULL)
 	{
-		purple_keyring_import_password(ret, keyring_id, mode, data, &error);
+		keyring_id = xmlnode_get_attrib(child, "keyring_id");
+		mode = xmlnode_get_attrib(child, "mode");
+		data = xmlnode_get_data(child);
 
-		if (error == NULL) {
+		result = purple_keyring_import_password(ret, keyring_id, mode, data, &error);
+
+		if (result == TRUE) {
+			purple_debug_info("accounts", "password imported successfully.\n");
 			purple_account_set_remember_password(ret, TRUE);
 			g_free(keyring_id);
 			g_free(mode);
 			g_free(data);
 		} else {
-
+			purple_debug_info("accounts", "failed to imported password.\n");
 			// FIXME handle error
 		}
 	}
@@ -1937,12 +1943,16 @@ purple_account_get_password(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	if (account->password != NULL)
-		return account->password;
-
-	else
+	if (account->password != NULL) {
 	
+		purple_debug_info("keyring", "password was read from stored\n");
+		return account->password;
+	
+
+	} else {
+		purple_debug_info("keyring", "reading password from keyring\n");	
 		return purple_keyring_get_password_sync(account);
+	}
 }
 
 const char *
