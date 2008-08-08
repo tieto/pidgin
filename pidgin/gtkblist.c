@@ -3829,7 +3829,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	presence = purple_buddy_get_presence(b);
 
 	/* Name is all that is needed */
-	if (!aliased && biglist) {
+	if (aliased && biglist) {
 
 		/* Status Info */
 		prpl = purple_find_prpl(purple_account_get_protocol_id(b->account));
@@ -3954,13 +3954,13 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		status_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 	}
 
-	if (!aliased && selected) {
+	if (aliased && selected) {
 		name_color = "black";
 		status_color = "black";
 	}
 
 	/* Put it all together */
-	if (!aliased && biglist && (statustext || idletime)) {
+	if (aliased && biglist && (statustext || idletime)) {
 		/* using <span size='smaller'> breaks the status, so it must be seperated into <small><span>*/
 		text = g_strdup_printf("<span font_desc='%s' foreground='%s'>%s</span>\n"
 				 	"<small><span font_desc='%s' foreground='%s'>%s%s%s</span></small>", 
