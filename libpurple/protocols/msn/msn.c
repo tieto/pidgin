@@ -490,23 +490,19 @@ msn_offline_message(const PurpleBuddy *buddy) {
 void
 msn_send_privacy(PurpleConnection *gc)
 {
-       PurpleAccount *account;
-        MsnSession *session;
-        MsnCmdProc *cmdproc;
+	PurpleAccount *account;
+	MsnSession *session;
+	MsnCmdProc *cmdproc;
 
-        account = purple_connection_get_account(gc);
-        session = gc->proto_data;
-        cmdproc = session->notification->cmdproc;
+	account = purple_connection_get_account(gc);
+	session = gc->proto_data;
+	cmdproc = session->notification->cmdproc;
 
-        if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
-                account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
-        {
-                msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
-        }
-        else
-        {
-                msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
-        }
+	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
+	    account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
+		msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
+	else
+		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
 }
 
 static void
@@ -517,6 +513,8 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+
+	const char *alias;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
@@ -534,8 +532,13 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 	swboard->flag = MSN_SB_FLAG_IM;
 
+	/* Local alias > Display name > Username */
+	if ((alias = purple_account_get_alias(buddy->account)) == NULL)
+		if ((alias = purple_connection_get_display_name(gc)) == NULL)
+			alias = purple_account_get_username(buddy->account);
+
 	purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
-							purple_account_get_username(buddy->account), NULL, PURPLE_CBFLAGS_NONE, TRUE);
+	                          alias, NULL, PURPLE_CBFLAGS_NONE, TRUE);
 }
 
 static void
@@ -955,7 +958,7 @@ msn_login(PurpleAccount *account)
 
 	if (!purple_ssl_is_supported())
 	{
-		purple_connection_error_reason (gc,
+		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			_("SSL support is needed for MSN. Please install a supported "
 			  "SSL library."));
@@ -986,7 +989,7 @@ msn_login(PurpleAccount *account)
 		purple_account_set_username(account, username);
 
 	if (!msn_session_connect(session, host, port, http_method))
-		purple_connection_error_reason (gc,
+		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Failed to connect to server."));
 }
@@ -1119,7 +1122,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	char *msgtext;
 	const char *username;
 
-	purple_debug_info("msn", "send IM {%s} to %s\n",message,who);
+	purple_debug_info("msn", "send IM {%s} to %s\n", message, who);
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
 
@@ -1137,9 +1140,9 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
-	if (msn_user_is_online(account, who)||
+	if (msn_user_is_online(account, who) ||
 		msn_user_is_yahoo(account, who) ||
-		swboard != NULL){
+		swboard != NULL) {
 		/*User online or have a swboard open because it's invisible
 		 * and sent us a message,then send Online Instant Message*/
  
@@ -1165,11 +1168,11 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			GSList *smileys;
 			GString *emoticons = NULL;
 
-			if(msn_user_is_yahoo(account,who)){
+			if (msn_user_is_yahoo(account, who)) {
 				/*we send the online and offline Message to Yahoo User via UBM*/
 				purple_debug_info("msn", "send to Yahoo User\n");
-				uum_send_msg(session,msg);
-			}else{
+				uum_send_msg(session, msg);
+			} else {
 				purple_debug_info("msn", "send via switchboard\n");
 				swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
 				smileys = msn_msg_grab_emoticons(message, username);
@@ -1817,7 +1820,7 @@ msn_get_photo_url(const char *url_text)
 	{
 		p += strlen(PHOTO_URL);
 	}
-	if (p && (strncmp(p, "http://",strlen("http://")) == 0) && ((q = strchr(p, '"')) != NULL))
+	if (p && (strncmp(p, "http://", strlen("http://")) == 0) && ((q = strchr(p, '"')) != NULL))
 			return g_strndup(p, q - p);
 
 	return NULL;

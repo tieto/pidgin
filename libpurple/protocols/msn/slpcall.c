@@ -70,10 +70,6 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 	if (slpcall->timer)
 		purple_timeout_remove(slpcall->timer);
 
-	g_free(slpcall->id);
-	g_free(slpcall->branch);
-	g_free(slpcall->data_info);
-
 	for (e = slpcall->slplink->slp_msgs; e != NULL; )
 	{
 		MsnSlpMessage *slpmsg = e->data;
@@ -101,6 +97,10 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 		slpcall->xfer->data = NULL;
 		purple_xfer_unref(slpcall->xfer);
 	}
+
+	g_free(slpcall->id);
+	g_free(slpcall->branch);
+	g_free(slpcall->data_info);
 
 	g_free(slpcall);
 }
