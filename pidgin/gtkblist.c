@@ -50,6 +50,7 @@
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkft.h"
+#include "gtkicon-theme.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"
@@ -5384,6 +5385,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
 	priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"), "blist"));
+
+	pidgin_stock_load_status_icon_theme(PIDGIN_ICON_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme"), "status_icon")));
 
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);

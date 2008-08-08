@@ -96,6 +96,8 @@ pidgin_SOURCES = \
 	gtkeventloop.c \
 	gtkexpander.c \
 	gtkft.c \
+	gtkicon-theme.c \
+	gtkicon-loader.c \
 	gtkidle.c \
 	gtkimhtml.c \
 	gtkimhtmltoolbar.c \
@@ -150,6 +152,8 @@ pidgin_headers = \
 	gtkeventloop.h \
 	gtkexpander.h \
 	gtkft.h \
+	gtkicon-theme.h \
+	gtkicon-loader.h \
 	gtkidle.h \
 	gtkgaim-compat.h \
 	gtkimhtml.h \
