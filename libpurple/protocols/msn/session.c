@@ -343,6 +343,9 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 	PurpleConnectionError reason;
 	char *msg;
 
+	if (session->destroying)
+		return;
+
 	gc = purple_account_get_connection(session->account);
 
 	switch (error)
