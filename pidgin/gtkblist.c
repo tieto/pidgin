@@ -3788,14 +3788,14 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 gchar *
 pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased)
 {
-	const char *name;
-	char *text = NULL, *name_color, *name_font, *status_color, *status_font;
+	const char *name, *name_color, *name_font, *status_color, *status_font;
+	char *text = NULL;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleContact *contact;
 	PurplePresence *presence;
 	struct _pidgin_blist_node *gtkcontactnode = NULL;
-	char *idletime = NULL, *statustext = NULL, *nametext;
+	char *idletime = NULL, *statustext = NULL, *nametext = NULL;
 	PurpleConversation *conv = find_conversation_with_buddy(b);
 	gboolean hidden_conv = FALSE;
 	gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
@@ -3970,6 +3970,12 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 				        statustext != NULL ? statustext : ""); 
 
 	} else text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>", name_font, name_color, nametext); 
+
+	g_free(nametext);
+	if (statustext)
+		g_free(statustext);
+	if (idletime)
+		g_free(idletime);
 
 	if (hidden_conv) {
 		char *tmp = text;

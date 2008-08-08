@@ -39,7 +39,7 @@ purple_sound_loader_build(const gchar *dir)
 	xmlnode *root_node, *sub_node;
 	gchar *filename, *filename_full, *data;
 	GDir *gdir;
-	PurpleSoundTheme *theme;
+	PurpleSoundTheme *theme = NULL;
 
 	/* Find the theme file */
 	gdir = g_dir_open(dir, 0, NULL);
@@ -60,21 +60,23 @@ purple_sound_loader_build(const gchar *dir)
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
 
-	theme = g_object_new(PURPLE_TYPE_SOUND_THEME,
-			    "type", "sound",
-			    "name", xmlnode_get_attrib(root_node, "name"),
-			    "author", xmlnode_get_attrib(root_node, "author"),
-			    "image", xmlnode_get_attrib(root_node, "image"),
-			    "directory", dir,
-			    "description", data, NULL);
+	if (xmlnode_get_attrib(root_node, "name") != NULL) {
+		theme = g_object_new(PURPLE_TYPE_SOUND_THEME,
+				    "type", "sound",
+				    "name", xmlnode_get_attrib(root_node, "name"),
+				    "author", xmlnode_get_attrib(root_node, "author"),
+				    "image", xmlnode_get_attrib(root_node, "image"),
+				    "directory", dir,
+				    "description", data, NULL);
 	
-	xmlnode_free(sub_node);
-
-	while ((sub_node = xmlnode_get_child(root_node, "event")) != NULL){
-		purple_sound_theme_set_file(theme,
-					    xmlnode_get_attrib(sub_node, "name"),
-					    xmlnode_get_attrib(sub_node, "file"));
 		xmlnode_free(sub_node);
+
+		while ((sub_node = xmlnode_get_child(root_node, "event")) != NULL){
+			purple_sound_theme_set_file(theme,
+						    xmlnode_get_attrib(sub_node, "name"),
+						    xmlnode_get_attrib(sub_node, "file"));
+			xmlnode_free(sub_node);
+		}
 	}
 
 	xmlnode_free(root_node);	

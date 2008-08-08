@@ -22,6 +22,9 @@
  */
 
 #include "theme.h"
+#include "util.h"
+
+#include <string.h>
 
 #define PURPLE_THEME_GET_PRIVATE(PurpleTheme) \
 	((PurpleThemePrivate *) ((PurpleTheme)->priv))
@@ -230,9 +233,21 @@ purple_theme_get_type (void)
   return type;
 }
 
+/******************************************************************************
+ * Helper Functions
+ *****************************************************************************/
+
+static gchar*
+theme_clean_text(const gchar *text)
+{
+	gchar *clean_text = g_markup_escape_text(text, strlen(text));	
+	g_strdelimit(clean_text, "\n", ' ');
+	purple_str_strip_char(clean_text, '\r');
+	return clean_text;
+}
 
 /*****************************************************************************
- * Public API functions                                                      *
+ * Public API functions                                                      
  *****************************************************************************/
 
 const gchar *
@@ -256,7 +271,7 @@ purple_theme_set_name(PurpleTheme *theme, const gchar *name)
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 
 	g_free(priv->name);
-	priv->name = g_strdup(name);
+	priv->name = theme_clean_text(name);
 }
 
 const gchar *
@@ -280,7 +295,7 @@ purple_theme_set_description(PurpleTheme *theme, const gchar *description)
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 
 	g_free(priv->description);
-	priv->description = g_strdup(description);
+	priv->description = theme_clean_text(description);
 }
 
 const gchar *
@@ -304,7 +319,7 @@ purple_theme_set_author(PurpleTheme *theme, const gchar *author)
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 
 	g_free(priv->author);
-	priv->author = g_strdup(author);
+	priv->author = theme_clean_text(author);
 }
 
 const gchar *
