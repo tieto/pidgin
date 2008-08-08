@@ -21,6 +21,8 @@ version 2.5.0 (??/??/2008):
 		* purple_cmds_get_handle, purple_cmds_init, purple_cmds_uninit
 		* cmd-added and cmd-removed signals
 		* purple_get_host_name
+		* purple_util_fetch_url_len (temporary function overload to add max_len param)
+		* purple_util_fetch_url_request_len
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
@@ -28,6 +30,8 @@ version 2.5.0 (??/??/2008):
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
 		* pidgin_set_custom_buddy_icon
+		* purple_util_fetch_url_len
+		* purple_util_fetch_url_request_len
 
 		Changed:
 		* xmlnode_copy now copies the prefix and namespace map for nodes.
