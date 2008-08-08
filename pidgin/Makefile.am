@@ -120,6 +120,7 @@ pidgin_SOURCES = \
 	gtksourceiter.c \
 	gtksourceundomanager.c \
 	gtksourceview-marshal.c \
+	gtkstatus-icon-theme.c \
 	gtkstatusbox.c \
 	gtkthemes.c \
 	gtkutils.c \
@@ -177,6 +178,7 @@ pidgin_headers = \
 	gtksourceiter.h \
 	gtksourceundomanager.h \
 	gtksourceview-marshal.h \
+	gtkstatus-icon-theme.h \
 	gtkstatusbox.h \
 	pidginstock.h \
 	gtkthemes.h \

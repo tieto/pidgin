@@ -263,7 +263,7 @@ do_alphashift(GdkPixbuf *dest, GdkPixbuf *src)
 }
 
 static gchar *
-find_icon_file(PidginIconTheme *theme, const gchar *size, SizedStockIcon sized_icon, gboolean rtl)
+find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon sized_icon, gboolean rtl)
 {
 	const gchar *file, *dir;
 	gchar *file_full = NULL;
@@ -288,7 +288,7 @@ find_icon_file(PidginIconTheme *theme, const gchar *size, SizedStockIcon sized_i
 }
 
 static void
-add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
+add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginStatusIconTheme *theme,
 		const char *size, SizedStockIcon sized_icon, gboolean translucent)
 {
 	char *filename;
@@ -348,7 +348,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
  *****************************************************************************/
 
 void
-pidgin_stock_load_status_icon_theme(PidginIconTheme *theme)
+pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 {
 	GtkIconFactory *icon_factory;
 	gint i;
@@ -356,7 +356,11 @@ pidgin_stock_load_status_icon_theme(PidginIconTheme *theme)
 	GtkIconSet *translucent = NULL;
 	GtkWidget *win;
 
-	g_return_if_fail(stock_initted);
+	if (theme != NULL)
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/icon/status/theme", 
+				purple_theme_get_name(PURPLE_THEME(theme)));
+	else purple_prefs_set_string(PIDGIN_PREFS_ROOT "/icon/status/theme", "");
+
 	
 	icon_factory = gtk_icon_factory_new();
 
@@ -411,7 +415,7 @@ pidgin_stock_init(void)
 	stock_initted = TRUE;
 
 	/* Setup the theme */
-	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "icon", NULL));
+	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL));
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/icon/status");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/icon/status/theme", "");
 

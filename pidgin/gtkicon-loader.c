@@ -22,7 +22,7 @@
  */
 
 #include "gtkicon-loader.h"
-#include "gtkicon-theme.h"
+#include "gtkstatus-icon-theme.h"
 
 #include "xmlnode.h"
 
@@ -54,7 +54,7 @@ pidgin_icon_loader_build(const gchar *dir)
 	/* Build the xml tree */
 	filename_full = g_build_filename(dir, filename, NULL);
 
-	root_node = xmlnode_from_file(dir, filename, "icon themes", "icon-loader");
+	root_node = xmlnode_from_file(dir, filename, "status icon themes", "icon-loader");
 	g_return_val_if_fail(root_node != NULL, NULL);
 
 	/* Parse the tree */	
@@ -62,8 +62,8 @@ pidgin_icon_loader_build(const gchar *dir)
 	data = xmlnode_get_data(sub_node);
 
 	if (xmlnode_get_attrib(root_node, "name") != NULL) {
-		theme = g_object_new(PIDGIN_TYPE_ICON_THEME,
-				    "type", "icon",
+		theme = g_object_new(PIDGIN_TYPE_STATUS_ICON_THEME,
+				    "type", "status-icon",
 				    "name", xmlnode_get_attrib(root_node, "name"),
 				    "author", xmlnode_get_attrib(root_node, "author"),
 				    "image", xmlnode_get_attrib(root_node, "image"),

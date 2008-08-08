@@ -44,12 +44,12 @@
 #include "gtkconv.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
-#include "gtkicon-theme.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtkprefs.h"
 #include "gtksavedstatuses.h"
 #include "gtksound.h"
+#include "gtkstatus-icon-theme.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
@@ -614,13 +614,13 @@ prefs_themes_sort(PurpleTheme *theme)
 			g_free(image_full);
 		} else pixbuf = NULL; 
 
-		gtk_list_store_append (prefs_sound_themes, &iter);
-		gtk_list_store_set (prefs_sound_themes, &iter, 0, pixbuf, 2, purple_theme_get_name(theme), -1);
+		gtk_list_store_append(prefs_sound_themes, &iter);
+		gtk_list_store_set(prefs_sound_themes, &iter, 0, pixbuf, 2, purple_theme_get_name(theme), -1);
 
 		if (pixbuf != NULL)
 			gdk_pixbuf_unref(pixbuf);
 
-	} else if (PIDGIN_IS_BLIST_THEME(theme) || PIDGIN_IS_ICON_THEME(theme)){
+	} else if (PIDGIN_IS_BLIST_THEME(theme) || PIDGIN_IS_STATUS_ICON_THEME(theme)){
 		GtkListStore *store;
 
 		if (PIDGIN_IS_BLIST_THEME(theme)) 
@@ -640,8 +640,8 @@ prefs_themes_sort(PurpleTheme *theme)
 		markup = g_strdup_printf("<b>%s</b>%s%s\n<span foreground='dim grey'>%s</span>", name, author != NULL ? " - " : "",
 					 author != NULL ? author : "", description != NULL ? description : "");
 
-		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, pixbuf, 1, markup, 2, name, -1);
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter, 0, pixbuf, 1, markup, 2, name, -1);
 
 		g_free(markup);
 		if (pixbuf != NULL)
@@ -1152,14 +1152,14 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 static void
 prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 {
-	PidginIconTheme *theme;
+	PidginStatusIconTheme *theme;
 	GtkTreeIter iter;
 	gchar *name = NULL;
 	
 	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &iter));
 	gtk_tree_model_get(GTK_TREE_MODEL(prefs_status_icon_themes), &iter, 2, &name, -1);
 
-	theme = PIDGIN_ICON_THEME(purple_theme_manager_find_theme(name, "icon"));
+	theme = PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(name, "status-icon"));
 	g_free(name);
 
 	pidgin_stock_load_status_icon_theme(theme);
@@ -1189,7 +1189,7 @@ interface_page(void)
 	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_blist_theme_cb, NULL);
 
 	/* Status Icon Themes */
-	combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/theme"));
+	combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme"));
 	gtk_box_pack_start(GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_status_icon_theme_cb, NULL);
 

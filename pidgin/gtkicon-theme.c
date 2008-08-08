@@ -44,42 +44,9 @@ typedef struct {
 
 static GObjectClass *parent_class = NULL;
 
-static const GtkStockItem stock_icons[] =
-{
-    { PIDGIN_STOCK_TRAY_AVAILABLE,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_INVISIBLE,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_AWAY,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_BUSY,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_XA,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_OFFLINE,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_CONNECT,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_PENDING,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_TRAY_EMAIL,		"",     0, 0, NULL },
-
-    { PIDGIN_STOCK_STATUS_AVAILABLE,    "",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_AVAILABLE_I,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_AWAY,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_AWAY_I,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_BUSY,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_BUSY_I,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_CHAT,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_INVISIBLE,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_XA,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_XA_I,		"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_LOGIN,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_LOGOUT,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_OFFLINE,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_OFFLINE_I,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_PERSON,	"",     0, 0, NULL },
-    { PIDGIN_STOCK_STATUS_MESSAGE,	"",     0, 0, NULL }
-};
-
-
-
 /******************************************************************************
  * Enums
  *****************************************************************************/
-
 /******************************************************************************
  * GObject Stuff                                                              
  *****************************************************************************/
@@ -141,7 +108,7 @@ pidgin_icon_theme_get_type (void)
     };
     type = g_type_register_static (PURPLE_TYPE_THEME,
                                    "PidginIconTheme",
-                                   &info, 0 /*G_TYPE_FLAG_ABSTRACT*/);
+                                   &info, G_TYPE_FLAG_ABSTRACT);
   }
   return type;
 }

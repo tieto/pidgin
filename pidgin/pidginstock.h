@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <gtk/gtkstock.h>
-#include "gtkicon-theme.h"
+#include "gtkstatus-icon-theme.h"
 
 #ifndef _PIDGIN_STOCK_H_
 #define _PIDGIN_STOCK_H_
@@ -161,7 +161,7 @@
  * 
  * @param theme		the theme to load, or null to load all the default icons
  */
-void pidgin_stock_load_status_icon_theme(PidginIconTheme *theme);
+void pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme);
 
 /**
  * Sets up the purple stock repository.

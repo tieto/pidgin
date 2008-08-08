@@ -5386,7 +5386,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"), "blist"));
 
-	pidgin_stock_load_status_icon_theme(PIDGIN_ICON_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme"), "status_icon")));
+	pidgin_stock_load_status_icon_theme(PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme"), "status-icon")));
 
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
