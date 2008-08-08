@@ -292,17 +292,16 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 		const char *size, SizedStockIcon sized_icon, gboolean translucent)
 {
 	char *filename;
-	GtkIconSource *source;	
+	GtkIconSource *source;
 	GdkPixbuf *pixbuf;
 
 	filename = find_icon_file(theme, size, sized_icon, FALSE);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	if (translucent)
+		do_alphashift(pixbuf, pixbuf);
 
 	source = gtk_icon_source_new();
-	if (translucent) {
-		do_alphashift(pixbuf, pixbuf);
-       		gtk_icon_source_set_pixbuf(source, pixbuf);
-	} else gtk_icon_source_set_filename(source, filename);
+	gtk_icon_source_set_pixbuf(source, pixbuf);
 	gtk_icon_source_set_direction(source, GTK_TEXT_DIR_LTR);
         gtk_icon_source_set_direction_wildcarded(source, !sized_icon.rtl);
 	gtk_icon_source_set_size(source, sizeid);
@@ -313,9 +312,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 
 	if (sizeid == gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL)) {
 		source = gtk_icon_source_new();
-	        if (translucent) 
-       			gtk_icon_source_set_pixbuf(source, pixbuf);
-		else gtk_icon_source_set_filename(source, filename);
+	        gtk_icon_source_set_pixbuf(source, pixbuf);
         	gtk_icon_source_set_direction_wildcarded(source, TRUE);
 	        gtk_icon_source_set_size(source, GTK_ICON_SIZE_MENU);
 	        gtk_icon_source_set_size_wildcarded(source, FALSE);
@@ -328,12 +325,13 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 
        if (sized_icon.rtl) {
 		filename = find_icon_file(theme, size, sized_icon, TRUE);
- 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		source = gtk_icon_source_new();
-                if (translucent) {
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		if (translucent)
 			do_alphashift(pixbuf, pixbuf);
-       			gtk_icon_source_set_pixbuf(source, pixbuf);
-		} else gtk_icon_source_set_filename(source, filename);
+
+		source = gtk_icon_source_new();
+        	gtk_icon_source_set_pixbuf(source, pixbuf);
+                gtk_icon_source_set_filename(source, filename);
                 gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
                 gtk_icon_source_set_size(source, sizeid);
                 gtk_icon_source_set_size_wildcarded(source, FALSE);
@@ -374,9 +372,9 @@ pidgin_stock_load_status_icon_theme(PidginIconTheme *theme)
 			translucent = gtk_icon_set_new();
 
 #define ADD_SIZED_ICON(name, size) if (sized_status_icons[i].name) { \
-					add_sized_icon(normal, name, theme, size, sized_status_icons[i], FALSE);  \
+					add_sized_icon(normal, name, theme, size, sized_status_icons[i], FALSE); \
 					if (sized_status_icons[i].translucent_name) \
-						add_sized_icon(normal, name, theme, size, sized_status_icons[i], TRUE);  \
+						add_sized_icon(translucent, name, theme, size, sized_status_icons[i], TRUE); \
 				   }
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
@@ -390,11 +388,11 @@ pidgin_stock_load_status_icon_theme(PidginIconTheme *theme)
 		gtk_icon_set_unref(normal);
 
 		if (sized_status_icons[i].translucent_name) {
-
 			gtk_icon_factory_add(icon_factory, sized_status_icons[i].translucent_name, translucent);
 			gtk_icon_set_unref(translucent);
 		}
 	}
+
 
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
