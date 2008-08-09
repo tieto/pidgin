@@ -130,6 +130,11 @@
 #define PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR "pidgin-select-avatar"
 #define PIDGIN_STOCK_TOOLBAR_SEND_FILE    "pidgin-send-file"
 #define PIDGIN_STOCK_TOOLBAR_TRANSFER     "pidgin-transfer"
+#ifdef USE_VV
+#define PIDGIN_STOCK_TOOLBAR_AUDIO_CALL   "pidgin-audio-call"
+#define PIDGIN_STOCK_TOOLBAR_VIDEO_CALL   "pidgin-video-call"
+#define PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL "pidgin-audio-video-call"
+#endif
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"

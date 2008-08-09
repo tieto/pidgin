@@ -28,6 +28,7 @@
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
+#include "jingle.h"
 #include "oob.h"
 #include "roster.h"
 #include "si.h"
@@ -313,7 +314,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	const char *xmlns;
 	const char *type, *id, *from;
 	JabberIqHandler *jih;
-
+	
 	query = xmlnode_get_child(packet, "query");
 	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
@@ -337,6 +338,11 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 	}
+	
+	if (xmlnode_get_child_with_namespace(packet, "session", "http://www.google.com/session")) {
+		jabber_google_session_parse(js, packet);
+		return;
+	}
 
 	if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
 		jabber_si_parse(js, packet);
@@ -348,12 +354,17 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 	
-	purple_debug_info("jabber", "jabber_iq_parse\n");
-
 	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
 		jabber_ping_parse(js, packet);
 		return;
 	}
+	
+#ifdef USE_VV
+	if (xmlnode_get_child_with_namespace(packet, "jingle", "urn:xmpp:tmp:jingle")) {
+		jabber_jingle_session_parse(js, packet);
+		return;
+	}
+#endif
 
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 	if(type && (!strcmp(type, "set") || !strcmp(type, "get"))) {
@@ -394,6 +405,9 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
 	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
 	jabber_iq_register_handler("urn:xmpp:ping", urn_xmpp_ping_parse);
+#ifdef USE_VV
+	jabber_iq_register_handler("urn:xmpp:tmp:jingle", jabber_jingle_session_parse);
+#endif
 }
 
 void jabber_iq_uninit(void)

@@ -19,6 +19,8 @@ JABBERSOURCES = auth.c \
 			  iq.h \
 			  jabber.c \
 			  jabber.h \
+			  jingle.c \
+			  jingle.h \
 			  jutil.c \
 			  jutil.h \
 			  message.c \
@@ -69,7 +71,7 @@ st =
 pkg_LTLIBRARIES = libjabber.la libxmpp.la
 noinst_LIBRARIES =
 
-libjabber_la_SOURCES = $(JABBERSOURCES)
+libjabber_la_SOURCES = $(JABBERSOURCES)		
 libjabber_la_LIBADD = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
 
 libxmpp_la_SOURCES = libxmpp.c
@@ -82,4 +84,6 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
 	$(LIBXML_CFLAGS)

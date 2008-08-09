@@ -53,6 +53,8 @@ typedef struct _JabberStream JabberStream;
 #include "circbuffer.h"
 #include "connection.h"
 #include "dnssrv.h"
+#include "media.h"
+#include "mediamanager.h"
 #include "roomlist.h"
 #include "sslconn.h"
 
@@ -236,6 +238,11 @@ struct _JabberStream
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
 	guint max_srv_rec_idx;
+
+#ifdef USE_VV
+	/* keep a hash table of JingleSessions */
+	GHashTable *sessions;
+#endif
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
@@ -302,5 +309,10 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
+
+#ifdef USE_VV
+PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+#endif
 
 #endif /* _PURPLE_JABBER_H_ */
