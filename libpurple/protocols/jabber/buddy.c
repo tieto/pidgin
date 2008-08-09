@@ -37,6 +37,8 @@
 #include "pep.h"
 #include "adhoccommands.h"
 
+#define MAX_HTTP_BUDDYICON_BYTES (200 * 1024)
+
 typedef struct {
 	long idle_seconds;
 } JabberBuddyInfoResource;
@@ -1535,18 +1537,27 @@ void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xml
 			}
 		}
 		if(goodinfo) {
-			const char *url = xmlnode_get_attrib(goodinfo,"url");
+			const char *url = xmlnode_get_attrib(goodinfo, "url");
 			const char *id = xmlnode_get_attrib(goodinfo,"id");
 			
 			/* the avatar might either be stored in a pep node, or on a HTTP/HTTPS URL */
 			if(!url)
 				jabber_pep_request_item(js, from, AVATARNAMESPACEDATA, id, do_buddy_avatar_update_data);
 			else {
+				PurpleUtilFetchUrlData *url_data;
 				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
 				info->js = js;
-				info->from = g_strdup(from);
-				info->id = g_strdup(id);
-				purple_util_fetch_url(url, TRUE, NULL, TRUE, do_buddy_avatar_update_fromurl, info);
+
+				url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE,
+										  MAX_HTTP_BUDDYICON_BYTES,
+										  do_buddy_avatar_update_fromurl, info);
+				if (url_data) {
+					info->from = g_strdup(from);
+					info->id = g_strdup(id);
+					js->url_datas = g_slist_prepend(js->url_datas, url_data);
+				} else
+					g_free(info);
+
 			}
 		}
 	}
