@@ -441,10 +441,27 @@ struct _PurplePluginProtocolInfo
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
 
-	/** Initiate media with the given buddy */
-	PurpleMedia  *(*initiate_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
+	/**
+	 * Initiate a media session with the given contact.
+	 *
+	 * @param conn The connection to initiate the media session on.
+	 * @param who The remote user to initiate the session with.
+	 * @param type The type of media session to initiate.
+	 * @return The newly created media object.
+	 */
+	PurpleMedia  *(*initiate_media)(PurpleConnection *gc, const char *who,
+					PurpleMediaStreamType type);
 
-	gboolean (*can_do_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
+	/**
+	 * Checks to see if the given contact supports the given type of media session.
+	 *
+	 * @param conn The connection the contact is on.
+	 * @param who The remote user to check for media capability with.
+	 * @param type The type of media session to check for.
+	 * @return @c TRUE The contact supports the given media type, or @c FALSE otherwise.
+	 */
+	gboolean (*can_do_media)(PurpleConnection *gc, const char *who,
+				 PurpleMediaStreamType type);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

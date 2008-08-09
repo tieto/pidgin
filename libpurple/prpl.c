@@ -494,30 +494,6 @@ purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who,
 	got_attention(gc, id, who, type_code);
 }
 
-/**************************************************************************
- * Protocol Plugin Subsystem API
- **************************************************************************/
-
-PurplePlugin *
-purple_find_prpl(const char *id)
-{
-	GList *l;
-	PurplePlugin *plugin;
-
-	g_return_val_if_fail(id != NULL, NULL);
-
-	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
-		plugin = (PurplePlugin *)l->data;
-
-		if (!strcmp(plugin->info->id, id))
-			return plugin;
-	}
-
-	return NULL;
-}
-
-
-
 PurpleMedia *
 purple_prpl_initiate_media(PurpleAccount *account,
 			   const char *who,
@@ -535,7 +511,7 @@ purple_prpl_initiate_media(PurpleAccount *account,
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if (prpl_info && prpl_info->initiate_media) {
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, initiate_media)) {
 		/* should check that the protocol supports this media type here? */
 		return prpl_info->initiate_media(gc, who, type);
 	} else {
@@ -563,7 +539,7 @@ purple_prpl_can_do_media(PurpleAccount *account,
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	
-	if (prpl_info && prpl_info->can_do_media) {
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, can_do_media)) {
 		return prpl_info->can_do_media(gc, who, type);
 	} else {
 		return FALSE;
@@ -571,5 +547,27 @@ purple_prpl_can_do_media(PurpleAccount *account,
 #else
 	return FALSE;
 #endif
+}
+
+/**************************************************************************
+ * Protocol Plugin Subsystem API
+ **************************************************************************/
+
+PurplePlugin *
+purple_find_prpl(const char *id)
+{
+	GList *l;
+	PurplePlugin *plugin;
+
+	g_return_val_if_fail(id != NULL, NULL);
+
+	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
+		plugin = (PurplePlugin *)l->data;
+
+		if (!strcmp(plugin->info->id, id))
+			return plugin;
+	}
+
+	return NULL;
 }
 
