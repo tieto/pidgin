@@ -105,7 +105,16 @@ void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
 
 static void jabber_bosh_http_connection_receive(gpointer data, gint source, PurpleInputCondition condition) {
 	PurpleHTTPConnection *conn = data;
+	PurpleHTTPResponse *response = conn->current_response;
+	
 	purple_debug_info("jabber", "jabber_bosh_http_connection_receive\n");
+	if (response) {
+		// data for current response
+		
+	} else {
+		// new response
+		response = conn->current_response = g_new0(PurpleHTTPResponse, 1);
+	}
 }
 
 void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount *account, char *host, int port) {
@@ -113,6 +122,7 @@ void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount 
 	conn->host = host;
 	conn->port = port;
 	conn->connect_cb = NULL;
+	conn->current_response = NULL;
 	conn->requests = g_queue_new();
 }
 

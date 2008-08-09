@@ -65,6 +65,7 @@ struct _PurpleHTTPConnection {
     PurpleConnection *conn;
     PurpleAccount *account;
     GQueue *requests;
+    PurpleHTTPResponse *current_response;
     int pih;
     PurpleHTTPConnectionConnectFunction connect_cb;
     void *userdata;
