@@ -2401,13 +2401,13 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 
 PurpleMedia *
 jabber_initiate_media(PurpleConnection *gc, const char *who, 
-		      PurpleMediaStreamType type)
+		      PurpleMediaSessionType type)
 {
 	return jabber_jingle_session_initiate_media(gc->proto_data, who, type);
 }
 
 gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
-                             PurpleMediaStreamType type)
+                             PurpleMediaSessionType type)
 {
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;

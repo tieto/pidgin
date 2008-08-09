@@ -47,7 +47,7 @@ struct _PurpleMediaSession
 	GstElement *sink;
 	FsSession *session;
 	GHashTable *streams;		/* FsStream list map to participant's name */
-	PurpleMediaStreamType type;
+	PurpleMediaSessionType type;
 	GHashTable *local_candidates;	/* map to participant's name? */
 
 	/*
@@ -300,7 +300,7 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 }
 
 FsMediaType
-purple_media_to_fs_media_type(PurpleMediaStreamType type)
+purple_media_to_fs_media_type(PurpleMediaSessionType type)
 {
 	if (type & PURPLE_MEDIA_AUDIO)
 		return FS_MEDIA_TYPE_AUDIO;
@@ -311,7 +311,7 @@ purple_media_to_fs_media_type(PurpleMediaStreamType type)
 }
 
 FsStreamDirection
-purple_media_to_fs_stream_direction(PurpleMediaStreamType type)
+purple_media_to_fs_stream_direction(PurpleMediaSessionType type)
 {
 	if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_AUDIO ||
 			(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
@@ -326,10 +326,10 @@ purple_media_to_fs_stream_direction(PurpleMediaStreamType type)
 		return FS_DIRECTION_NONE;
 }
 
-PurpleMediaStreamType
+PurpleMediaSessionType
 purple_media_from_fs(FsMediaType type, FsStreamDirection direction)
 {
-	PurpleMediaStreamType result = PURPLE_MEDIA_NONE;
+	PurpleMediaSessionType result = PURPLE_MEDIA_NONE;
 	if (type == FS_MEDIA_TYPE_AUDIO) {
 		if (direction & FS_DIRECTION_SEND)
 			result |= PURPLE_MEDIA_SEND_AUDIO;
@@ -344,11 +344,11 @@ purple_media_from_fs(FsMediaType type, FsStreamDirection direction)
 	return result;
 }
 
-PurpleMediaStreamType
+PurpleMediaSessionType
 purple_media_get_overall_type(PurpleMedia *media)
 {
 	GList *values = g_hash_table_get_values(media->priv->sessions);
-	PurpleMediaStreamType type = PURPLE_MEDIA_NONE;
+	PurpleMediaSessionType type = PURPLE_MEDIA_NONE;
 
 	for (; values; values = g_list_delete_link(values, values)) {
 		PurpleMediaSession *session = values->data;
@@ -1111,7 +1111,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 gboolean
 purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
-			PurpleMediaStreamType type,
+			PurpleMediaSessionType type,
 			const gchar *transmitter)
 {
 	FsStreamDirection type_direction;
@@ -1143,7 +1143,7 @@ purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const gchar
 	
 }
 
-PurpleMediaStreamType
+PurpleMediaSessionType
 purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id)
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);

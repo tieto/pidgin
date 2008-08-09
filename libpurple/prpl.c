@@ -497,7 +497,7 @@ purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who,
 PurpleMedia *
 purple_prpl_initiate_media(PurpleAccount *account,
 			   const char *who,
-			   PurpleMediaStreamType type)
+			   PurpleMediaSessionType type)
 {
 #ifdef USE_VV
 	PurpleConnection *gc = NULL;
@@ -525,7 +525,7 @@ purple_prpl_initiate_media(PurpleAccount *account,
 gboolean
 purple_prpl_can_do_media(PurpleAccount *account,
 			 const char *who, 
-			 PurpleMediaStreamType type)
+			 PurpleMediaSessionType type)
 {
 #ifdef USE_VV
 	PurpleConnection *gc = NULL;

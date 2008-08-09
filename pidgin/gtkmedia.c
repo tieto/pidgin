@@ -453,7 +453,7 @@ pidgin_media_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 static void
 pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
-	PurpleMediaStreamType type = purple_media_get_overall_type(media);
+	PurpleMediaSessionType type = purple_media_get_overall_type(media);
 	gchar *message;
 
 	if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {

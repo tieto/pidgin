@@ -450,7 +450,7 @@ struct _PurplePluginProtocolInfo
 	 * @return The newly created media object.
 	 */
 	PurpleMedia  *(*initiate_media)(PurpleConnection *gc, const char *who,
-					PurpleMediaStreamType type);
+					PurpleMediaSessionType type);
 
 	/**
 	 * Checks to see if the given contact supports the given type of media session.
@@ -461,7 +461,7 @@ struct _PurplePluginProtocolInfo
 	 * @return @c TRUE The contact supports the given media type, or @c FALSE otherwise.
 	 */
 	gboolean (*can_do_media)(PurpleConnection *gc, const char *who,
-				 PurpleMediaStreamType type);
+				 PurpleMediaSessionType type);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
@@ -761,7 +761,7 @@ void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char 
  */
 gboolean purple_prpl_can_do_media(PurpleAccount *account,
 				  const char *who, 
-				  PurpleMediaStreamType type);
+				  PurpleMediaSessionType type);
 
 /**
  * Initiates a media session with the given contact.
@@ -774,7 +774,7 @@ gboolean purple_prpl_can_do_media(PurpleAccount *account,
  */
 PurpleMedia *purple_prpl_initiate_media(PurpleAccount *account,
 					const char *who,
-					PurpleMediaStreamType type);
+					PurpleMediaSessionType type);
 
 /*@}*/
 

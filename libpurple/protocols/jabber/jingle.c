@@ -841,7 +841,7 @@ jabber_jingle_session_send_session_terminate(JingleSession *session)
 
 static void
 jabber_jingle_session_content_create_media(JingleSession *session,
-					     PurpleMediaStreamType type)
+					     PurpleMediaSessionType type)
 {
 	gchar sender[10] = "";
 
@@ -1037,7 +1037,7 @@ jabber_jingle_session_initiate_result_cb(JabberStream *js, xmlnode *packet, gpoi
 
 PurpleMedia *
 jabber_jingle_session_initiate_media(JabberStream *js, const char *who, 
-				     PurpleMediaStreamType type)
+				     PurpleMediaSessionType type)
 {
 	/* create content negotiation */
 	JabberIq *request;

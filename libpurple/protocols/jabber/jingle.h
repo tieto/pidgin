@@ -37,7 +37,7 @@ void jabber_jingle_session_parse(JabberStream *js, xmlnode *packet);
 
 PurpleMedia *jabber_jingle_session_initiate_media(JabberStream *js,
 						  const char *who,
-						  PurpleMediaStreamType type);
+						  PurpleMediaSessionType type);
 
 void jabber_jingle_session_terminate_session_media(JabberStream *js, const gchar *who);
 void jabber_jingle_session_terminate_sessions(JabberStream *js);

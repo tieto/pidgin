@@ -311,8 +311,8 @@ void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
 
 #ifdef USE_VV
-PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
-gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaSessionType type);
+gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, PurpleMediaSessionType type);
 #endif
 
 #endif /* _PURPLE_JABBER_H_ */

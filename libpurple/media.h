@@ -67,7 +67,7 @@ typedef enum {
 	PURPLE_MEDIA_SEND_VIDEO = 1 << 3,
 	PURPLE_MEDIA_AUDIO = PURPLE_MEDIA_RECV_AUDIO | PURPLE_MEDIA_SEND_AUDIO,
 	PURPLE_MEDIA_VIDEO = PURPLE_MEDIA_RECV_VIDEO | PURPLE_MEDIA_SEND_VIDEO
-} PurpleMediaStreamType;
+} PurpleMediaSessionType;
 
 #ifdef USE_VV
 
@@ -101,43 +101,43 @@ GType purple_media_get_type(void);
 /*@{*/
 
 /**
- * Converts a PurpleMediaStreamType to an FsMediaType.
+ * Converts a PurpleMediaSessionType to an FsMediaType.
  *
  * @param type The type to derive FsMediaType from
  *
  * @return The FsMediaType derived from type
  */
-FsMediaType purple_media_to_fs_media_type(PurpleMediaStreamType type);
+FsMediaType purple_media_to_fs_media_type(PurpleMediaSessionType type);
 
 /**
- * Converts a PurpleMediaStreamType to an FsStreamDirection.
+ * Converts a PurpleMediaSessionType to an FsStreamDirection.
  *
  * @param type The type to derive FsMediaType from
  *
  * @return The FsMediaDirection derived from type
  */
-FsStreamDirection purple_media_to_fs_stream_direction(PurpleMediaStreamType type);
+FsStreamDirection purple_media_to_fs_stream_direction(PurpleMediaSessionType type);
 
 /**
- * Converts an FsMediaType and FsStreamDirection into a PurpleMediaStreamType.
+ * Converts an FsMediaType and FsStreamDirection into a PurpleMediaSessionType.
  *
- * @param type The type used to construct PurpleMediaStreamType
- * @param direction The direction used to construct PurpleMediaStreamType
+ * @param type The type used to construct PurpleMediaSessionType
+ * @param direction The direction used to construct PurpleMediaSessionType
  *
- * @return The PurpleMediaStreamType constructed
+ * @return The PurpleMediaSessionType constructed
  */
-PurpleMediaStreamType purple_media_from_fs(FsMediaType type, FsStreamDirection direction);
+PurpleMediaSessionType purple_media_from_fs(FsMediaType type, FsStreamDirection direction);
 
 /*@}*/
 
 /**
- * Combines all the separate session types into a single PurpleMediaStreamType.
+ * Combines all the separate session types into a single PurpleMediaSessionType.
  *
  * @param media The media session to retrieve session types from.
  *
  * @return Combined type.
  */
-PurpleMediaStreamType purple_media_get_overall_type(PurpleMedia *media);
+PurpleMediaSessionType purple_media_get_overall_type(PurpleMedia *media);
 
 /**
  * Gets a list of session names.
@@ -382,7 +382,7 @@ void purple_media_video_init_recv(GstElement **sendbin);
  * @return @c TRUE The stream was added successfully, @c FALSE otherwise.
  */
 gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
-			     PurpleMediaStreamType type, const gchar *transmitter);
+			     PurpleMediaSessionType type, const gchar *transmitter);
 
 /**
  * Removes a stream from a session.
@@ -401,7 +401,7 @@ void purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const 
  *
  * @return The retreived session type.
  */
-PurpleMediaStreamType purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id);
+PurpleMediaSessionType purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id);
 
 /**
  * Gets the negotiated codecs from a session.
