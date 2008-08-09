@@ -1,8 +1,9 @@
 /**
  * @file media.c Media API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -748,7 +749,7 @@ GstElement *
 purple_media_get_element(const gchar *factory_name)
 {
 	GstElementFactory *factory = gst_element_factory_find(factory_name);
-	GstElement *element = gst_element_factory_create(factory, "video_src");
+	GstElement *element = gst_element_factory_create(factory, NULL);
 	gst_object_unref(factory);
 	return element;
 }

@@ -1,8 +1,9 @@
 /**
  * @file mediamanager.h Media Manager API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -28,7 +29,6 @@
 
 #ifdef USE_VV
 
-#include <gst/farsight/fs-session.h>
 #include <glib.h>
 #include <glib-object.h>
 
@@ -44,27 +44,69 @@ G_BEGIN_DECLS
 #define PURPLE_IS_MEDIA_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_MANAGER))
 #define PURPLE_MEDIA_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerClass))
 
+/** @copydoc _PurpleMediaManager */
 typedef struct _PurpleMediaManager PurpleMediaManager;
+/** @copydoc _PurpleMediaManagerClass */
 typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
+/** @copydoc _PurpleMediaManagerPrivate */
 typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
 
+/** The media manager class. */
 struct _PurpleMediaManagerClass
 {
-	GObjectClass parent_class;
+	GObjectClass parent_class;       /**< The parent class. */
 };
 
+/** The media manager's data. */
 struct _PurpleMediaManager
 {
-	GObject parent;
-	PurpleMediaManagerPrivate *priv;
+	GObject parent;                  /**< The parent of this manager. */
+	PurpleMediaManagerPrivate *priv; /**< Private data for the manager. */
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**************************************************************************/
+/** @cname Media Manager API                                              */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Gets the media manager's GType.
+ *
+ * @return The media manager's GType.
+ */
 GType purple_media_manager_get_type(void);
+
+/**
+ * Gets the "global" media manager object. It's created if it doesn't already exist.
+ *
+ * @return The "global" instance of the media manager object.
+ */
 PurpleMediaManager *purple_media_manager_get(void);
+
+/**
+ * Creates a media session.
+ *
+ * @param manager The media manager to create the session under.
+ * @param gc The connection to create the session on.
+ * @param conference_type The conference type to feed into Farsight2.
+ * @param remote_user The remote user to initiate the session with.
+ *
+ * @return A newly created media session.
+ */
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 						PurpleConnection *gc,
 						const char *conference_type,
 						const char *remote_user);
+
+/*}@*/
+
+#ifdef __cplusplus
+}
+#endif
 
 G_END_DECLS
 

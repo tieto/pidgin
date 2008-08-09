@@ -29,7 +29,6 @@
 #include "account.h"
 #include "conversation.h"
 #include "prpl.h"
-#include "media.h"
 
 #ifdef __cplusplus
 extern "C" {
