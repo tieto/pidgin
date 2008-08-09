@@ -36,8 +36,9 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
+#include "connection.h"
 
-void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *account, char *url) {
+void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *account, JabberStream *js, char *url) {
 	conn->pipelining = TRUE;
 	conn->account = account;
 	if (!purple_url_parse(url, &(conn->host), &(conn->port), &(conn->path), &(conn->user), &(conn->passwd))) {
@@ -47,33 +48,64 @@ void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *acco
 	if (conn->user || conn->passwd) {
 		purple_debug_info("jabber", "Sorry, HTTP Authentication isn't supported yet. Username and password in the BOSH URL will be ignored.\n");
 	}
+	conn->js = js;
+	conn->rid = rand() % 100000 + 1728679472;
+	
 	conn->conn_a = g_new0(PurpleHTTPConnection, 1);
 	jabber_bosh_http_connection_init(conn->conn_a, conn->account, conn->host, conn->port);
 	conn->conn_a->userdata = conn;
 }
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
-    
+	char *tmp;
+	xmlnode *init = xmlnode_new("body");
+	xmlnode_set_attrib(init, "content", "text/xml; charset=utf-8");
+	xmlnode_set_attrib(init, "secure", "true");
+	//xmlnode_set_attrib(init, "route", tmp = g_strdup_printf("xmpp:%s:5222", conn->js->user->domain));
+	//g_free(tmp);
+	xmlnode_set_attrib(init, "to", conn->js->user->domain);
+	xmlnode_set_attrib(init, "xml:lang", "en");
+	xmlnode_set_attrib(init, "xmpp:version", "1.0");
+	xmlnode_set_attrib(init, "ver", "1.6");
+	xmlnode_set_attrib(init, "xmlns:xmpp", "urn:xmpp:xbosh"); 
+	xmlnode_set_attrib(init, "rid", tmp = g_strdup_printf("%d", conn->rid));
+	g_free(tmp);
+	xmlnode_set_attrib(init, "wait", "60"); /* this should be adjusted automatically according to real time network behavior */
+	xmlnode_set_attrib(init, "ack", "0");
+	xmlnode_set_attrib(init, "xmlns", "http://jabber.org/protocol/httpbind");
+	xmlnode_set_attrib(init, "hold", "1");
+	
+	jabber_bosh_connection_send(conn, init);
+}
+
+void jabber_bosh_connection_login_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata) {
+	purple_debug_info("jabber", "RECEIVED FIRST HTTP RESPONSE\n");
 }
 
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
-	
+	PurpleHTTPRequest *request = g_new0(PurpleHTTPRequest, 1);
+	jabber_bosh_http_request_init(request, "POST", g_strdup_printf("/%s", conn->path), jabber_bosh_connection_login_cb, conn);
+	jabber_bosh_http_request_add_to_header(request, "Content-Encoding", "text/xml; charset=utf-8");
+	request->data = xmlnode_to_str(node, &(request->data_len));
+	jabber_bosh_http_request_add_to_header(request, "Content-Length", g_strdup_printf("%d", (int)strlen(request->data)));
+	jabber_bosh_http_connection_send_request(conn->conn_a, request);
 }
 
 static void jabber_bosh_connection_connected(PurpleHTTPConnection *conn) {
 	PurpleBOSHConnection *bosh_conn = conn->userdata;
 	
-	if (bosh->ready && bosh_conn->connect_cb) bosh_conn->connect_cb(bosh_conn);
-	else jabber_bosh_connection_boot(conn);
+	if (bosh_conn->ready && bosh_conn->connect_cb) bosh_conn->connect_cb(bosh_conn);
+	else jabber_bosh_connection_boot(bosh_conn);
 }
 
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
 	conn->conn_a->connect_cb = jabber_bosh_connection_connected;
-	jabber_bosh_http_connection_connect(conn->conn_a);	
+	jabber_bosh_http_connection_connect(conn->conn_a);
 }
 
 static void jabber_bosh_http_connection_receive(gpointer data, gint source, PurpleInputCondition condition) {
-	PurpleHTTPConnection conn = data;
+	PurpleHTTPConnection *conn = data;
+	purple_debug_info("jabber", "jabber_bosh_http_connection_receive\n");
 }
 
 void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount *account, char *host, int port) {
@@ -81,6 +113,11 @@ void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount 
 	conn->host = host;
 	conn->port = port;
 	conn->connect_cb = NULL;
+	conn->requests = g_queue_new();
+}
+
+void jabber_bosh_http_connection_clean(PurpleHTTPConnection *conn) {
+	g_queue_free(conn->requests);
 }
 
 static void jabber_bosh_http_connection_callback(gpointer data, gint source, const gchar *error) {
@@ -90,7 +127,7 @@ static void jabber_bosh_http_connection_callback(gpointer data, gint source, con
 		return;
 	}
 	conn->fd = source;
-	conn->ie_handle = purple_input_add(conn->fd, jabber_bosh_http_connection_receive, PURPLE_INPUT_READ, cond);
+	conn->ie_handle = purple_input_add(conn->fd, PURPLE_INPUT_READ, jabber_bosh_http_connection_receive, conn);
 	if (conn->connect_cb) conn->connect_cb(conn);
 }
 
@@ -98,4 +135,49 @@ void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn) {
 	if((purple_proxy_connect(&(conn->handle), conn->account, conn->host, conn->port, jabber_bosh_http_connection_callback, conn)) == NULL) {
 		purple_debug_info("jabber", "Unable to connect to %s.\n", conn->host);
 	} 
+}
+
+static void jabber_bosh_http_connection_send_request_add_field_to_string(gpointer key, gpointer value, gpointer user_data) {
+	char **ppacket = user_data;
+	char *tmp = *ppacket;
+	char *field = key;
+	char *val = value;
+	*ppacket = g_strdup_printf("%s%s: %s\r\n", tmp, field, val);
+	g_free(tmp);
+}
+
+void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req) {
+	char *packet;
+	char *tmp;
+	jabber_bosh_http_request_add_to_header(req, "Host", conn->host);
+	
+	packet = tmp = g_strdup_printf("%s %s HTTP/1.1\r\n", req->method, req->path);
+	g_hash_table_foreach(req->header, jabber_bosh_http_connection_send_request_add_field_to_string, &packet);
+	tmp = packet;
+	packet = g_strdup_printf("%s\r\n%s", tmp, req->data);
+	g_free(tmp);
+	if (write(conn->fd, packet, strlen(packet)) == -1) purple_debug_info("jabber", "send error\n");
+	g_queue_push_tail(conn->requests, req);
+}
+
+void jabber_bosh_http_request_init(PurpleHTTPRequest *req, const char *method, const char *path, PurpleHTTPRequestCallback cb, void *userdata) {
+	req->method = g_strdup(method);
+	req->path = g_strdup(path);
+	req->cb = cb;
+	req->userdata = userdata;
+	req->header = g_hash_table_new(g_str_hash, g_str_equal);
+}
+
+void jabber_bosh_http_request_add_to_header(PurpleHTTPRequest *req, const char *field, const char *value) {
+	g_hash_table_replace(req->header, field, value);
+}
+
+void jabber_bosh_http_request_set_data(PurpleHTTPRequest *req, char *data, int len) {
+	req->data = data;
+	req->data_len = len;
+}
+
+void jabber_bosh_http_request_clean(PurpleHTTPRequest *req) {
+	g_free(req->method);
+	g_free(req->path);
 }

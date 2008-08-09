@@ -548,7 +548,7 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 		token = g_strsplit(resp[n].content, "=", 2);
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
-			jabber_bosh_connection_init(&(js->bosh), gc->account, token[1]);
+			jabber_bosh_connection_init(&(js->bosh), gc->account, js, token[1]);
 			g_strfreev(token);
 			break;
 		}

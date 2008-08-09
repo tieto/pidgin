@@ -42,6 +42,9 @@ struct _PurpleBOSHConnection {
     char *user;
     char *passwd;
     
+    int rid;
+    
+    JabberStream *js;
     void *userdata;
     PurpleAccount *account;
     gboolean pipelining;
@@ -62,7 +65,7 @@ struct _PurpleHTTPConnection {
     PurpleConnection *conn;
     PurpleAccount *account;
     GQueue *requests;
-    int pih
+    int pih;
     PurpleHTTPConnectionConnectFunction connect_cb;
     void *userdata;
 };
@@ -70,9 +73,10 @@ struct _PurpleHTTPConnection {
 struct _PurpleHTTPRequest {
     PurpleHTTPRequestCallback cb;
     char *method;
-    char *url;
-    GList *header;
+    char *path;
+    GHashTable *header;
     char *data;
+    int data_len;
     void *userdata;
 };
 
@@ -80,17 +84,20 @@ struct _PurpleHTTPResponse {
     int status;
     GHashTable *header;
     char *data;
+    int data_len;
 };
 
-void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *account, char *url);
+void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *account, JabberStream *js, char *url);
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn);
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node);
 
 void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount *account, char *host, int port);
 void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
-void jabber_bosh_http_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req);
+void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req);
 void jabber_bosh_http_connection_clean(PurpleHTTPConnection *conn);
 
 void jabber_bosh_http_request_init(PurpleHTTPRequest *req, const char *method, const char *path, PurpleHTTPRequestCallback cb, void *userdata);
+void jabber_bosh_http_request_add_to_header(PurpleHTTPRequest *req, const char *field, const char *value);
+void jabber_bosh_http_request_set_data(PurpleHTTPRequest *req, char *data, int len);
 void jabber_bosh_http_request_clean(PurpleHTTPRequest *req);
 #endif /* _PURPLE_JABBER_BOSH_H_ */
