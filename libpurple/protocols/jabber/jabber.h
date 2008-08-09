@@ -236,6 +236,11 @@ struct _JabberStream
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
 	guint max_srv_rec_idx;
+	/**
+	 * This linked list contains PurpleUtilFetchUrlData structs
+	 * for when we lookup buddy icons from a url
+	 */
+	GSList *url_datas;
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);

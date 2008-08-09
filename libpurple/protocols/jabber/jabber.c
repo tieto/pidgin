@@ -1322,6 +1322,11 @@ void jabber_close(PurpleConnection *gc)
 		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
 	}
 
+	while(js->url_datas) {
+		purple_util_fetch_url_cancel(js->url_datas->data);
+		js->url_datas = g_slist_delete_link(js->url_datas, js->url_datas);
+	}
+
 	g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
