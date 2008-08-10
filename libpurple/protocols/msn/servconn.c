@@ -301,7 +301,8 @@ static void
 servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn = data;
-	int ret, writelen;
+	gssize ret;
+	int writelen;
 
 	writelen = purple_circ_buffer_get_max_read(servconn->tx_buf);
 
@@ -385,7 +386,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnSession *session;
 	char buf[MSN_BUF_LEN];
 	char *cur, *end, *old_rx_buf;
-	int len, cur_len;
+	gssize len;
+	int cur_len;
 
 	servconn = data;
 	session = servconn->session;
@@ -399,7 +401,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	} else if (len <= 0) {
 		purple_debug_error("msn", "servconn read error,"
-		                          "len: %d, errno: %d, error: %s\n",
+		                          "len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
 		                          len, errno, g_strerror(errno));
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
