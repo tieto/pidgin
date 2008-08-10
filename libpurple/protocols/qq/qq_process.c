@@ -366,7 +366,6 @@ void qq_proc_cmd_reply(PurpleConnection *gc,
 	guint8 *data;
 	gint data_len;
 
-	gboolean ret_bool = FALSE;
 	guint8 ret_8 = 0;
 	guint16 ret_16 = 0;
 	guint32 ret_32 = 0;
