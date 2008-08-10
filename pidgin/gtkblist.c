@@ -50,7 +50,6 @@
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkft.h"
-#include "gtkicon-theme.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"
@@ -5304,7 +5303,6 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_signal_connect(G_OBJECT(rend), "editing-canceled", G_CALLBACK(gtk_blist_renderer_editing_cancelled_cb), list);
 #endif
 			g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), list);
-			g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 			g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
@@ -5391,8 +5389,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
 	priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"), "blist"));
-
-	pidgin_stock_load_status_icon_theme(PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme"), "status-icon")));
 
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);

@@ -706,6 +706,9 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme)
 	cell_rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "markup", 1, NULL);
+/*#if GTK_CHECK_VERSION(2,6,0)
+			g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif*/
 	
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter)) {
 		do {
@@ -1189,7 +1192,7 @@ interface_page(void)
 	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_blist_theme_cb, NULL);
 
 	/* Status Icon Themes */
-	combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme"));
+	combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"));
 	gtk_box_pack_start(GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_status_icon_theme_cb, NULL);
 

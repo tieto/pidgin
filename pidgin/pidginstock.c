@@ -269,7 +269,7 @@ find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon s
 	gchar *file_full = NULL;
 
 	if (theme != NULL) {
-		file = pidgin_icon_theme_get_file(theme, sized_icon.name);
+		file = pidgin_icon_theme_get_file(PIDGIN_ICON_THEME(theme), sized_icon.name);
 		dir = purple_theme_get_dir(PURPLE_THEME(theme));
 
 		if (rtl)
@@ -356,11 +356,16 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 	GtkIconSet *translucent = NULL;
 	GtkWidget *win;
 
-	if (theme != NULL)
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/icon/status/theme", 
-				purple_theme_get_name(PURPLE_THEME(theme)));
-	else purple_prefs_set_string(PIDGIN_PREFS_ROOT "/icon/status/theme", "");
-
+	if (theme != NULL) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/status/icon-theme", 
+				        purple_theme_get_name(PURPLE_THEME(theme)));
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", 
+				      purple_theme_get_dir(PURPLE_THEME(theme)));
+	}
+	else {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
+	}
 	
 	icon_factory = gtk_icon_factory_new();
 
@@ -408,16 +413,19 @@ pidgin_stock_init(void)
 	GtkIconFactory *icon_factory;
 	size_t i;
 	GtkWidget *win;
+	PidginIconThemeLoader *loader;
+	const gchar *path = NULL;
 
 	if (stock_initted)
 		return;
 
 	stock_initted = TRUE;
 
-	/* Setup the theme */
-	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL));
-	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/icon/status");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/icon/status/theme", "");
+	/* Setup the status icon theme */
+	loader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL);
+	purple_theme_manager_register_type(PURPLE_THEME_LOADER(loader));
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
 
 	/* Setup the icon factory. */
 	icon_factory = gtk_icon_factory_new();
@@ -497,7 +505,15 @@ pidgin_stock_init(void)
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
 
-	pidgin_stock_load_status_icon_theme(NULL);
+	/* Pre-load Status icon theme*/
+	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") && 
+	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
+		
+		PidginStatusIconTheme *theme = purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path);
+		pidgin_stock_load_status_icon_theme(theme);
+		g_object_unref(G_OBJECT(theme));
+
+	} else pidgin_stock_load_status_icon_theme(NULL);
 
 	/* Register the stock items. */
 	gtk_stock_add_static(stock_items, G_N_ELEMENTS(stock_items));
