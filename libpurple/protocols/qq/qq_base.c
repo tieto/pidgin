@@ -30,7 +30,7 @@
 #include "buddy_info.h"
 #include "buddy_list.h"
 #include "char_conv.h"
-#include "crypt.h"
+#include "qq_crypt.h"
 #include "group.h"
 #include "header_info.h"
 #include "qq_base.h"
@@ -161,7 +161,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	bytes += qq_get8(&lrop.result, data + bytes);
 	/* 001-016: session key */
 	bytes += qq_getdata(lrop.session_key, sizeof(lrop.session_key), data + bytes);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Get session_key done\n");
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Got session_key\n");
 	/* 017-020: login uid */
 	bytes += qq_get32(&lrop.uid, data + bytes);
 	/* 021-024: server detected user public IP */
@@ -300,23 +300,26 @@ void qq_send_packet_login(PurpleConnection *gc)
 
 	g_return_if_fail(qd->token != NULL && qd->token_len > 0);
 
-	raw_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH);
-	memset(raw_data, 0, QQ_LOGIN_DATA_LENGTH);
-
-	encrypted_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH + 16);	/* 16 bytes more */
 #ifdef DEBUG
 	memset(qd->inikey, 0x01, sizeof(qd->inikey));
 #else
 	for (bytes = 0; bytes < sizeof(qd->inikey); bytes++)	{
-		qd->inikey[bytes] = (guint8) (g_random_int_range(0, 255) % 256);
+		qd->inikey[bytes] = (guint8) (rand() & 0xff);
 	}
 #endif
 
+	raw_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH);
+	memset(raw_data, 0, QQ_LOGIN_DATA_LENGTH);
+
+	encrypted_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH + 16);	/* 16 bytes more */
+	
 	bytes = 0;
 	/* now generate the encrypted data
 	 * 000-015 use password_twice_md5 as key to encrypt empty string */
-	qq_encrypt((guint8 *) "", 0, qd->password_twice_md5, raw_data + bytes, &encrypted_len);
-	bytes += 16;
+	encrypted_len = qq_encrypt(raw_data + bytes, (guint8 *) "", 0, qd->password_twice_md5);
+	g_return_if_fail(encrypted_len == 16);
+	bytes += encrypted_len;
+	
 	/* 016-016 */
 	bytes += qq_put8(raw_data + bytes, 0x00);
 	/* 017-020, used to be IP, now zero */
@@ -337,7 +340,7 @@ void qq_send_packet_login(PurpleConnection *gc)
 	bytes += qq_putdata(raw_data + bytes, login_100_bytes, 100);
 	/* all zero left */
 
-	qq_encrypt(raw_data, QQ_LOGIN_DATA_LENGTH, qd->inikey, encrypted_data, &encrypted_len);
+	encrypted_len = qq_encrypt(encrypted_data, raw_data, QQ_LOGIN_DATA_LENGTH, qd->inikey);
 
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 	memset(buf, 0, MAX_PACKET_SIZE);
@@ -405,36 +408,15 @@ void qq_send_packet_logout(PurpleConnection *gc)
 }
 
 /* process the login reply packet */
-guint8 qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+guint8 qq_process_login_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	guint8 *data;
-	gint data_len;
 	gchar* error_msg;
 
-	g_return_val_if_fail(buf != NULL && buf_len != 0, QQ_LOGIN_REPLY_ERR_MISC);
+	g_return_val_if_fail(data != NULL && data_len != 0, QQ_LOGIN_REPLY_ERR_MISC);
 
 	qd = (qq_data *) gc->proto_data;
 
-	data_len = buf_len;
-	data = g_newa(guint8, data_len);
-
-	if (qq_decrypt(buf, buf_len, qd->inikey, data, &data_len)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
-				"Decrypt login reply packet with inikey, %d bytes\n", data_len);
-	} else {
-		/* reset data_len since it may changed */
-		data_len = buf_len;
-		if (qq_decrypt(buf, buf_len, qd->password_twice_md5, data, &data_len)) {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				"Decrypt login reply packet with password_twice_md5, %d bytes\n", data_len);
-		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-					"No idea how to decrypt login reply\n");
-			return QQ_LOGIN_REPLY_ERR_MISC;
-		}
-	}
-	
 	switch (data[0]) {
 		case QQ_LOGIN_REPLY_OK:
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login reply is OK\n");
@@ -452,7 +434,7 @@ guint8 qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		break;
 	}
 
-	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown reply code: %d\n", data[0]);
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown reply code: 0x%02X\n", data[0]);
 			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 			data, data_len,
 			">>> [default] decrypt and dump");
@@ -482,28 +464,19 @@ void qq_send_packet_keep_alive(PurpleConnection *gc)
 }
 
 /* parse the return of keep-alive packet, it includes some system information */
-gboolean qq_process_keep_alive(guint8 *buf, gint buf_len, PurpleConnection *gc) 
+gboolean qq_process_keep_alive(guint8 *data, gint data_len, PurpleConnection *gc) 
 {
 	qq_data *qd;
-	gint len;
 	gchar **segments;
-	guint8 *data;
 
-	g_return_val_if_fail(buf != NULL && buf_len != 0, FALSE);
+	g_return_val_if_fail(data != NULL && data_len != 0, FALSE);
 
 	qd = (qq_data *) gc->proto_data;
-	len = buf_len;
-	data = g_newa(guint8, len);
-
-	if ( !qq_decrypt(buf, buf_len, qd->session_key, data, &len) ) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt keep alive reply\n");
-		return FALSE;
-	}
 
 	/* qq_show_packet("Keep alive reply packet", data, len); */
 
 	/* the last one is 60, don't know what it is */
-	if (NULL == (segments = split_data(data, len, "\x1f", 6)))
+	if (NULL == (segments = split_data(data, data_len, "\x1f", 6)))
 			return TRUE;
 			
 	/* segments[0] and segment[1] are all 0x30 ("0") */

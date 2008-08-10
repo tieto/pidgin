@@ -42,7 +42,6 @@
 #include "buddy_opt.h"
 #include "buddy_list.h"
 #include "char_conv.h"
-#include "crypt.h"
 #include "group.h"
 #include "group_find.h"
 #include "group_im.h"
@@ -551,7 +550,7 @@ static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 			   _("Input Qun name here"),
 			   _("Only QQ members can create permanent Qun"),
 			   "OpenQ", FALSE, FALSE, NULL,
-			   _("Create"), G_CALLBACK(qq_group_create_with_name), _("Cancel"), NULL, gc);
+			   _("Create"), G_CALLBACK(qq_room_create_new), _("Cancel"), NULL, gc);
 }
 */
 
@@ -689,8 +688,8 @@ static gchar *_qq_get_chat_buddy_real_name(PurpleConnection *gc, gint channel, c
 	return chat_name_to_purple_name(who);
 }
 
-static PurplePluginProtocolInfo prpl_info =
-{
+PurplePlugin *my_protocol = NULL;
+static PurplePluginProtocolInfo prpl_info	= {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_USE_POINTSIZE,
 	NULL,							/* user_splits	*/
 	NULL,							/* protocol_options */
@@ -753,11 +752,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* PurpleWhiteboardPrplOps */
 	NULL,							/* send_raw */
 	NULL,							/* roomlist_room_serialize */
-	NULL,							/* unregister_user */
-	NULL,							/* send_attention */
-	NULL,							/* get attention_types */
 
-	sizeof(PurplePluginProtocolInfo), /* struct_size */
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -819,6 +818,8 @@ static void init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_int_new(_("Update interval(s)"), "update_interval", 300);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	my_protocol = plugin;
 
 	purple_prefs_add_none("/plugins/prpl/qq");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);

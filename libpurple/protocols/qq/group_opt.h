@@ -33,7 +33,7 @@
 
 typedef struct _group_member_opt {
 	PurpleConnection *gc;
-	guint32 internal_group_id;
+	guint32 id;
 	guint32 member;
 } group_member_opt;
 
@@ -48,7 +48,7 @@ enum {
 };
 
 void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new_members);
-void qq_group_modify_info(PurpleConnection *gc, qq_group *group);
+void qq_room_change_info(PurpleConnection *gc, qq_group *group);
 
 void qq_group_approve_application_with_struct(group_member_opt *g);
 void qq_group_reject_application_with_struct(group_member_opt *g);
@@ -57,8 +57,7 @@ void qq_group_search_application_with_struct(group_member_opt *g);
 void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection *gc);
 void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnection *gc);
 void qq_group_manage_group(PurpleConnection *gc, GHashTable *data);
-void qq_group_create_with_name(PurpleConnection *gc, const gchar *name);
-void qq_group_activate_group(PurpleConnection *gc, guint32 internal_group_id);
+void qq_room_create_new(PurpleConnection *gc, const gchar *name);
 void qq_group_process_activate_group_reply(guint8 *data, gint len, PurpleConnection *gc);
 void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnection *gc);
 

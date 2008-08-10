@@ -31,9 +31,11 @@
 #include "group_free.h"
 #include "group_internal.h"
 #include "group_join.h"
-#include "group_network.h"
 #include "group_search.h"
 #include "utils.h"
+#include "header_info.h"
+#include "packet_parse.h"
+#include "qq_network.h"
 
 enum {
 	QQ_GROUP_SEARCH_TYPE_BY_ID = 0x01,
@@ -41,20 +43,19 @@ enum {
 };
 
 /* send packet to search for qq_group */
-void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 external_group_id)
+void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 ext_id)
 {
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
 	guint8 type;
 
-	type = (external_group_id == 0x00000000) ? QQ_GROUP_SEARCH_TYPE_DEMO : QQ_GROUP_SEARCH_TYPE_BY_ID;
+	type = (ext_id == 0x00000000) ? QQ_GROUP_SEARCH_TYPE_DEMO : QQ_GROUP_SEARCH_TYPE_BY_ID;
 
 	bytes = 0;
-	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_SEARCH_GROUP);
 	bytes += qq_put8(raw_data + bytes, type);
-	bytes += qq_put32(raw_data + bytes, external_group_id);
+	bytes += qq_put32(raw_data + bytes, ext_id);
 
-	qq_send_group_cmd(gc, NULL, raw_data, bytes);
+	qq_send_room_cmd_noid(gc, QQ_ROOM_CMD_SEARCH, raw_data, bytes);
 }
 
 static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
@@ -63,14 +64,14 @@ static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
 	gchar field[11];
 
 	room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
-	g_snprintf(field, sizeof(field), "%d", group->external_group_id);
+	g_snprintf(field, sizeof(field), "%d", group->ext_id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->creator_uid);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	purple_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
-	g_snprintf(field, sizeof(field), "%d", group->internal_group_id);
+	g_snprintf(field, sizeof(field), "%d", group->id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
-	g_snprintf(field, sizeof(field), "%d", group->group_type);
+	g_snprintf(field, sizeof(field), "%d", group->type8);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->auth_type);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
@@ -99,9 +100,9 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 	bytes += qq_get8(&search_type, data + bytes);
 
 	/* now it starts with group_info_entry */
-	bytes += qq_get32(&(group.internal_group_id), data + bytes);
-	bytes += qq_get32(&(group.external_group_id), data + bytes);
-	bytes += qq_get8(&(group.group_type), data + bytes);
+	bytes += qq_get32(&(group.id), data + bytes);
+	bytes += qq_get32(&(group.ext_id), data + bytes);
+	bytes += qq_get8(&(group.type8), data + bytes);
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get32(&(group.creator_uid), data + bytes);
@@ -119,12 +120,12 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 			"group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
 	}
 
-	pending_id = qq_get_pending_id(qd->joining_groups, group.external_group_id);
+	pending_id = qq_get_pending_id(qd->joining_groups, group.ext_id);
 	if (pending_id != NULL) {
-		qq_set_pending_id(&qd->joining_groups, group.external_group_id, FALSE);
-		if (qq_group_find_by_id(gc, group.internal_group_id, QQ_INTERNAL_ID) == NULL)
+		qq_set_pending_id(&qd->joining_groups, group.ext_id, FALSE);
+		if (qq_room_search_id(gc, group.id) == NULL)
 			qq_group_create_internal_record(gc, 
-					group.internal_group_id, group.external_group_id, group.group_name_utf8);
+					group.id, group.ext_id, group.group_name_utf8);
 		qq_send_cmd_group_join_group(gc, &group);
 	} else {
 		_qq_setup_roomlist(qd, &group);

@@ -46,9 +46,9 @@ void qq_block_buddy_with_gc_and_uid(gc_and_uid *g);
 void qq_do_nothing_with_gc_and_uid(gc_and_uid *g, const gchar *msg);
 
 void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_process_remove_self_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc);
-void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_remove_self_reply(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_add_buddy_reply(guint8 *data, gint data_len, guint16 seq, PurpleConnection *gc);
+void qq_process_add_buddy_auth_reply(guint8 *data, gint data_len, PurpleConnection *gc);
 PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboolean is_known, gboolean create);
 void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
