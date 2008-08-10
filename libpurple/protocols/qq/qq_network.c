@@ -34,7 +34,7 @@
 #include "buddy_info.h"
 #include "group_info.h"
 #include "group_free.h"
-#include "crypt.h"
+#include "qq_crypt.h"
 #include "header_info.h"
 #include "qq_base.h"
 #include "buddy_list.h"
@@ -167,6 +167,9 @@ static void packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	guint16 source_tag;
 	guint16 cmd;
 	guint16 seq;		/* May be ack_seq or send_seq, depends on cmd */
+	
+	guint8 room_cmd;
+	guint32 room_id;
 
 	qq_transaction *trans;
 
@@ -180,12 +183,11 @@ static void packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	bytes = 0;
 	bytes += packet_get_header(&header_tag, &source_tag, &cmd, &seq, buf + bytes);
 
-	if (QQ_DEBUG) {
+#if 1
 		purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				"==> [%05d] 0x%04X %s, from (0x%04X %s)\n",
-				seq, cmd, qq_get_cmd_desc(cmd), source_tag, qq_get_ver_desc(source_tag));
-	}
-	
+				"==> [%05d] 0x%04X %s, from (0x%04X %s) len %d\n",
+				seq, cmd, qq_get_cmd_desc(cmd), source_tag, qq_get_ver_desc(source_tag), buf_len);
+#endif	
 	bytes_not_read = buf_len - bytes - 1;
 
 	/* ack packet, we need to update send tranactions */
@@ -214,8 +216,19 @@ static void packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	}
 
 	/* this is the length of all the encrypted data (also remove tail tag */
-	qq_proc_cmd_reply(gc, cmd, seq, buf + bytes, bytes_not_read);
-
+	if (cmd == QQ_CMD_ROOM) {
+		room_cmd = qq_trans_get_room_cmd(trans);
+		room_id = qq_trans_get_room_id(trans);
+#if 1
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
+				"%s (0x%02X ) for room %d, len %d\n",
+				qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, buf_len);
+#endif	
+		qq_proc_room_cmd_reply(gc, seq, room_cmd, room_id, buf + bytes, bytes_not_read);
+	} else {
+		qq_proc_cmd_reply(gc, cmd, seq, buf + bytes, bytes_not_read);
+	}
+	
 	/* check is redirect or not, and do it now */
 	if (qd->is_redirect) {
 	 	/* free resource except real_hostname and port */
@@ -933,7 +946,6 @@ void qq_disconnect(PurpleConnection *gc)
 
 	qd->my_ip.s_addr = 0;
 
-	qq_group_packets_free(qd);
 	qq_group_free_all(qd);
 	qq_add_buddy_request_free(qd);
 	qq_info_query_free(qd);
@@ -945,16 +957,8 @@ static gint encap(qq_data *qd, guint8 *buf, gint maxlen, guint16 cmd, guint16 se
 {
 	gint bytes = 0;
 	g_return_val_if_fail(qd != NULL && buf != NULL && maxlen > 0, -1);
+	g_return_val_if_fail(data != NULL && data_len > 0, -1);
 	
-	if (data == NULL) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail encap packet, data is NULL\n");
-		return -1;
-	}
-	if (data_len <= 0) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail encap packet, data len <= 0\n");
-		return -1;
-	}
-
 	/* QQ TCP packet has two bytes in the begining defines packet length
 	 * so leave room here to store packet size */
 	if (qd->use_tcp) {
@@ -1007,12 +1011,12 @@ gint qq_send_data(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
 		qq_trans_add_client_cmd(qd, cmd, seq, data, data_len);
 	}
 	
-	if (QQ_DEBUG) {
+#if 1
 		/* qq_show_packet("QQ_SEND_DATA", buf, buf_len); */
 		purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				"<== [%05d], %s, total %d bytes is sent %d\n", 
-				seq, qq_get_cmd_desc(cmd), buf_len, bytes_sent);
-	}
+				"<== [%05d], 0x%04X %s, total %d bytes is sent %d\n", 
+				seq, cmd, qq_get_cmd_desc(cmd), buf_len, bytes_sent);
+#endif
 	return bytes_sent;
 }
 
@@ -1026,11 +1030,26 @@ gint qq_send_cmd_detail(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack
 	g_return_val_if_fail(qd != NULL, -1);
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
 
-	encrypted_len = data_len + 16;	/* at most 16 bytes more */
-	encrypted_data = g_newa(guint8, encrypted_len);
+	/* at most 16 bytes more */
+	encrypted_data = g_newa(guint8, data_len + 16);
+#if 0
+	purple_debug(PURPLE_DEBUG_INFO, "QQ_ENCRYPT",
+			"Before %d: [%05d] 0x%04X %s\n",
+			data_len, seq, cmd, qq_get_cmd_desc(cmd));
+#endif
+	encrypted_len = qq_encrypt(encrypted_data, data, data_len, qd->session_key);
+	if (encrypted_len < 16) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ_ENCRYPT",
+				"Error len %d: [%05d] 0x%04X %s\n",
+				encrypted_len, seq, cmd, qq_get_cmd_desc(cmd));
+		return -1;
+	}
 
-	qq_encrypt(data, data_len, qd->session_key, encrypted_data, &encrypted_len);
-
+#if 0
+	purple_debug(PURPLE_DEBUG_INFO, "QQ_ENCRYPT",
+			"After %d: [%05d] 0x%04X %s\n",
+			encrypted_len, seq, cmd, qq_get_cmd_desc(cmd));
+#endif
 	return qq_send_data(qd, cmd, seq, need_ack, encrypted_data, encrypted_len);
 }
 
@@ -1042,4 +1061,82 @@ gint qq_send_cmd(qq_data *qd, guint16 cmd, guint8 *data, gint data_len)
 
 	qd->send_seq++;
 	return qq_send_cmd_detail(qd, cmd, qd->send_seq, TRUE, data, data_len);
+}
+
+gint qq_send_room_cmd_noid(PurpleConnection *gc, guint8 room_cmd, 
+		guint8 *data, gint data_len)
+{
+	return qq_send_room_cmd(gc, room_cmd, 0, data, data_len);
+}
+
+gint qq_send_room_cmd_only(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
+{
+	g_return_val_if_fail(room_cmd > 0 && room_id > 0, -1);
+	return qq_send_room_cmd(gc, room_cmd, room_id, NULL, 0);
+}
+
+gint qq_send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
+		guint8 *data, gint data_len)
+{
+	qq_data *qd;
+
+	guint8 *buf;
+	gint buf_len;
+	guint8 *encrypted_data;
+	gint encrypted_len;
+	gint bytes_sent;
+	guint16 seq;
+	
+	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
+	qd = (qq_data *) gc->proto_data;
+
+	buf = g_newa(guint8, MAX_PACKET_SIZE);
+	memset(buf, 0, MAX_PACKET_SIZE);
+
+	/* encap room_cmd and room id to buf*/
+	buf_len = 0;
+	buf_len += qq_put8(buf + buf_len, room_cmd);
+	if (room_id != 0) {
+		/* id 0 is for QQ Demo Group, now there are not existed*/
+		buf_len += qq_put32(buf + buf_len, room_id);
+	}
+	if (data != NULL && data_len > 0) {
+		buf_len += qq_putdata(buf + buf_len, data, data_len);
+	}
+	qd->send_seq++;
+	seq = qd->send_seq;
+
+	/* Encrypt to encrypted_data with session_key */
+	/* at most 16 bytes more */
+	encrypted_data = g_newa(guint8, buf_len + 16);
+	encrypted_len = qq_encrypt(encrypted_data, buf, buf_len, qd->session_key);
+	if (encrypted_len < 16) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ_ENCRYPT",
+				"Error len %d: [%05d] QQ_CMD_ROOM.(0x%02X %s)\n",
+				encrypted_len, seq, room_cmd, qq_get_room_cmd_desc(room_cmd));
+		return -1;
+	}
+
+	/* Encap header to buf */
+	buf_len = encap(qd, buf, MAX_PACKET_SIZE, QQ_CMD_ROOM, seq, encrypted_data, encrypted_len);
+	if (buf_len <= 0) {
+		return -1;
+	}
+
+	if (qd->use_tcp) {
+		bytes_sent = tcp_send_out(qd, buf, buf_len);
+	} else {
+		bytes_sent = udp_send_out(qd, buf, buf_len);
+	}
+
+	qq_trans_add_room_cmd(qd, seq, room_cmd, room_id, buf, buf_len);
+	
+#if 1
+		/* qq_show_packet("QQ_SEND_DATA", buf, buf_len); */
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
+				"<== [%05d], QQ_CMD_ROOM.(0x%02X %s) to room %d, total %d bytes is sent %d\n", 
+				seq, room_cmd, qq_get_room_cmd_desc(room_cmd), room_id,
+				buf_len, bytes_sent);
+#endif
+	return bytes_sent;
 }

@@ -34,7 +34,6 @@
 #include "buddy_list.h"
 #include "buddy_opt.h"
 #include "char_conv.h"
-#include "crypt.h"
 #include "header_info.h"
 #include "qq_base.h"
 #include "group.h"
@@ -103,7 +102,7 @@ void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position)
 }
 
 /* get all list, buddies & Quns with groupsid support */
-void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 position)
+void qq_send_packet_get_buddies_and_rooms(PurpleConnection *gc, guint32 position)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
 	guint8 raw_data[16] = {0};
@@ -117,7 +116,7 @@ void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 positi
 	bytes += qq_put32(raw_data + bytes, 0x00000000);
 	bytes += qq_put32(raw_data + bytes, position);
 
-	qq_send_cmd(qd, QQ_CMD_GET_ALL_LIST_WITH_GROUP, raw_data, bytes);
+	qq_send_cmd(qd, QQ_CMD_GET_BUDDIES_AND_ROOMS, raw_data, bytes);
 }
 
 /* parse the data into qq_buddy_status */
@@ -158,28 +157,20 @@ static gint get_buddy_status(qq_buddy_status *bs, guint8 *data)
 #define QQ_ONLINE_BUDDY_ENTRY_LEN       38
 
 /* process the reply packet for get_buddies_online packet */
-guint8 qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+guint8 qq_process_get_buddies_online_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	gint len, bytes, bytes_buddy;
+	gint bytes, bytes_buddy;
 	gint count;
-	guint8 *data, position;
+	guint8  position;
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	qq_buddy_online bo;
+	gchar *purple_name;
 
-	g_return_val_if_fail(buf != NULL && buf_len != 0, -1);
+	g_return_val_if_fail(data != NULL && data_len != 0, -1);
 
 	qd = (qq_data *) gc->proto_data;
-	len = buf_len;
-	data = g_newa(guint8, len);
-
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "processing get_buddies_online_reply\n");
-
-	if (!qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt buddies online");
-		return -1;
-	}
 
 	/* qq_show_packet("Get buddies online reply packet", data, len); */
 
@@ -187,11 +178,11 @@ guint8 qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConn
 	bytes += qq_get8(&position, data + bytes);
 
 	count = 0;
-	while (bytes < len) {
-		if (len - bytes < QQ_ONLINE_BUDDY_ENTRY_LEN) {
+	while (bytes < data_len) {
+		if (data_len - bytes < QQ_ONLINE_BUDDY_ENTRY_LEN) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					"[buddies online] only %d, need %d", 
-					(len - bytes), QQ_ONLINE_BUDDY_ENTRY_LEN);
+					(data_len - bytes), QQ_ONLINE_BUDDY_ENTRY_LEN);
 			break;
 		}
 		memset(&bo, 0 ,sizeof(bo));
@@ -219,9 +210,22 @@ guint8 qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConn
 			continue;
 		}	/* check if it is a valid entry */
 
+		if (bo.bs.uid == qd->uid) {
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
+					"I am in online list %d\n", bo.bs.uid);
+			continue;
+		}
+
 		/* update buddy information */
-		b = purple_find_buddy(purple_connection_get_account(gc), 
-												uid_to_purple_name(bo.bs.uid) );
+		purple_name = uid_to_purple_name(bo.bs.uid);
+		if (purple_name == NULL) {
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
+					"Got an online buddy %d, but not find purple name\n", bo.bs.uid);
+			continue;
+		}
+		b = purple_find_buddy(purple_connection_get_account(gc), purple_name);
+		g_free(purple_name);
+		
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 		if (q_bud == NULL) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
@@ -242,7 +246,7 @@ guint8 qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConn
 		count++;
 	}
 
-	if(bytes > len) {
+	if(bytes > data_len) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 				"qq_process_get_buddies_online_reply: Dangerous error! maybe protocol changed, notify developers!\n");
 	}
@@ -254,32 +258,31 @@ guint8 qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConn
 
 
 /* process reply for get_buddies_list */
-guint16 qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+guint16 qq_process_get_buddies_list_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	qq_buddy *q_bud;
-	gint len, bytes_expected, count;
+	gint bytes_expected, count;
 	gint bytes, buddy_bytes;
 	guint16 position, unknown;
-	guint8 *data, pascal_len;
+	guint8 pascal_len;
 	gchar *name;
 	PurpleBuddy *b;
 
-	g_return_val_if_fail(buf != NULL && buf_len != 0, -1);
+	g_return_val_if_fail(data != NULL && data_len != 0, -1);
 
 	qd = (qq_data *) gc->proto_data;
-	len = buf_len;
-	data = g_newa(guint8, len);
 
-	if (!qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt buddies list");
+	if (data_len <= 2) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "empty buddies list");
 		return -1;
 	}
+	/* qq_show_packet("QQ get buddies list", data, data_len); */
 	bytes = 0;
 	bytes += qq_get16(&position, data + bytes);
 	/* the following data is buddy list in this packet */
 	count = 0;
-	while (bytes < len) {
+	while (bytes < data_len) {
 		q_bud = g_new0(qq_buddy, 1);
 		/* set flag */
 		buddy_bytes = bytes;
@@ -311,11 +314,11 @@ guint16 qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConne
 			count++;
 		}
 
-		if (QQ_DEBUG) {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-					"buddy [%09d]: ext_flag=0x%02x, comm_flag=0x%02x, nick=%s\n",
-					q_bud->uid, q_bud->ext_flag, q_bud->comm_flag, q_bud->nickname);
-		}
+#if 1
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
+				"buddy [%09d]: ext_flag=0x%02x, comm_flag=0x%02x, nick=%s\n",
+				q_bud->uid, q_bud->ext_flag, q_bud->comm_flag, q_bud->nickname);
+#endif
 
 		name = uid_to_purple_name(q_bud->uid);
 		b = purple_find_buddy(gc->account, name);
@@ -330,7 +333,7 @@ guint16 qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConne
 		qq_update_buddy_contact(gc, q_bud);
 	}
 
-	if(bytes > len) {
+	if(bytes > data_len) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 				"qq_process_get_buddies_list_reply: Dangerous error! maybe protocol changed, notify developers!");
 	}
@@ -340,36 +343,29 @@ guint16 qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConne
 	return position;
 }
 
-guint32 qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	gint len, i, j;
-	gint bytes = 0;
-	guint8 *data;
+	gint i, j;
+	gint bytes;
 	guint8 sub_cmd, reply_code;
 	guint32 unknown, position;
 	guint32 uid;
 	guint8 type, groupid;
 	qq_group *group;
 
-	g_return_val_if_fail(buf != NULL && buf_len != 0, -1);
+	g_return_val_if_fail(data != NULL && data_len != 0, -1);
 
 	qd = (qq_data *) gc->proto_data;
-	len = buf_len;
-	data = g_newa(guint8, len);
 
-	if (!qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt all list with group");
-		return -1;
-	}
-
+	bytes = 0;
 	bytes += qq_get8(&sub_cmd, data + bytes);
 	g_return_val_if_fail(sub_cmd == 0x01, -1);
 
 	bytes += qq_get8(&reply_code, data + bytes);
 	if(0 != reply_code) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
-				"Get all list with group reply, reply_code(%d) is not zero", reply_code);
+				"qq_process_get_buddies_and_rooms, %d", reply_code);
 	}
 
 	bytes += qq_get32(&unknown, data + bytes);
@@ -377,7 +373,7 @@ guint32 qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, Purp
 	/* the following data is all list in this packet */
 	i = 0;
 	j = 0;
-	while (bytes < len) {
+	while (bytes < data_len) {
 		/* 00-03: uid */
 		bytes += qq_get32(&uid, data + bytes);
 		/* 04: type 0x1:buddy 0x4:Qun */
@@ -398,24 +394,24 @@ guint32 qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, Purp
 			 * qq_send_packet_get_buddies_list */
 			++i;
 		} else { /* a group */
-			group = qq_group_find_by_id(gc, uid, QQ_INTERNAL_ID);
+			group = qq_room_search_id(gc, uid);
 			if(group == NULL) {
+				purple_debug(PURPLE_DEBUG_INFO, "QQ",
+					"Not find room id %d in qq_process_get_buddies_and_rooms\n", uid);
 				qq_set_pending_id(&qd->adding_groups_from_server, uid, TRUE);
-				group = g_newa(qq_group, 1);
-				group->internal_group_id = uid;
-				qq_send_cmd_group_get_group_info(gc, group);
+				qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_INFO, uid);
 			} else {
 				group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 				qq_group_refresh(gc, group);
-				qq_send_cmd_group_get_group_info(gc, group);
+				qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_INFO, group->id);
 			}
 			++j;
 		}
 	}
 
-	if(bytes > len) {
+	if(bytes > data_len) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
-				"qq_process_get_all_list_with_group_reply: Dangerous error! maybe protocol changed, notify developers!");
+				"qq_process_get_buddies_and_rooms: Dangerous error! maybe protocol changed, notify developers!");
 	}
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Received %d buddies and %d groups, nextposition=%u\n", i, j, (guint) position);
@@ -505,26 +501,19 @@ void qq_send_packet_change_status(PurpleConnection *gc)
 }
 
 /* parse the reply packet for change_status */
-void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+void qq_process_change_status_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	gint len, bytes;
-	guint8 *data, reply;
+	gint bytes;
+	guint8 reply;
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	gchar *name;
 
-	g_return_if_fail(buf != NULL && buf_len != 0);
+	g_return_if_fail(data != NULL && data_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
-	len = buf_len;
-	data = g_newa(guint8, len);
-
-	if ( !qq_decrypt(buf, buf_len, qd->session_key, data, &len) ) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt chg status reply\n");
-		return;
-	}
-
+	
 	bytes = 0;
 	bytes = qq_get8(&reply, data + bytes);
 	if (reply != QQ_CHANGE_ONLINE_STATUS_REPLY_OK) {
@@ -543,28 +532,19 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection 
 }
 
 /* it is a server message indicating that one of my buddies has changed its status */
-void qq_process_buddy_change_status(guint8 *buf, gint buf_len, PurpleConnection *gc) 
+void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnection *gc) 
 {
 	qq_data *qd;
 	gint bytes;
 	guint32 my_uid;
-	guint8 *data;
-	gint data_len;
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	qq_buddy_status bs;
 	gchar *name;
 
-	g_return_if_fail(buf != NULL && buf_len != 0);
+	g_return_if_fail(data != NULL && data_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
-	data_len = buf_len;
-	data = g_newa(guint8, data_len);
-
-	if ( !qq_decrypt(buf, buf_len, qd->session_key, data, &data_len) ) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[buddy status change] Failed decrypt\n");
-		return;
-	}
 
 	if (data_len < 35) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[buddy status change] only %d, need 35 bytes\n", data_len);
@@ -606,18 +586,22 @@ void qq_process_buddy_change_status(guint8 *buf, gint buf_len, PurpleConnection 
 /*TODO: maybe this should be qq_update_buddy_status() ?*/
 void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 {
-	gchar *name;
+	gchar *purple_name;
 	PurpleBuddy *bud;
 	gchar *status_id;
 	
 	g_return_if_fail(q_bud != NULL);
 
-	name = uid_to_purple_name(q_bud->uid);
-	bud = purple_find_buddy(gc->account, name);
+	purple_name = uid_to_purple_name(q_bud->uid);
+	if (purple_name == NULL) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Not find purple name: %d\n", q_bud->uid);
+		return;
+	}
 
+	bud = purple_find_buddy(gc->account, purple_name);
 	if (bud == NULL) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
-		g_free(name);
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Not find buddy: %d\n", q_bud->uid);
+		g_free(purple_name);
 		return;
 	}
 	
@@ -650,19 +634,19 @@ void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 		break;
 	}
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "buddy %d %s\n", q_bud->uid, status_id);
-	purple_prpl_got_user_status(gc->account, name, status_id, NULL);
+	purple_prpl_got_user_status(gc->account, purple_name, status_id, NULL);
 
 	if (q_bud->comm_flag & QQ_COMM_FLAG_MOBILE && q_bud->status != QQ_BUDDY_OFFLINE)
-		purple_prpl_got_user_status(gc->account, name, "mobile", NULL);
+		purple_prpl_got_user_status(gc->account, purple_name, "mobile", NULL);
 	else
-		purple_prpl_got_user_status_deactive(gc->account, name, "mobile");
+		purple_prpl_got_user_status_deactive(gc->account, purple_name, "mobile");
 
 	if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO && q_bud->status != QQ_BUDDY_OFFLINE)
-		purple_prpl_got_user_status(gc->account, name, "video", NULL);
+		purple_prpl_got_user_status(gc->account, purple_name, "video", NULL);
 	else
-		purple_prpl_got_user_status_deactive(gc->account, name, "video");
+		purple_prpl_got_user_status_deactive(gc->account, purple_name, "video");
 
-	g_free(name);
+	g_free(purple_name);
 }
 
 /* refresh all buddies online/offline,

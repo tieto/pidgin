@@ -314,7 +314,7 @@ static gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 			if ((i + j) < bytes)
 				g_string_append_printf(str, " %02x", buffer[i + j]);
 			else
-				g_string_append(str, "   ");
+				g_string_append(str, " --");
 		g_string_append(str, "  ");
 
 		/* dump ascii value */
