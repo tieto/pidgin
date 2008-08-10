@@ -33,7 +33,7 @@
  * Sound Theme Builder                                                      
  *****************************************************************************/
 
-static gpointer
+static PurpleTheme *
 purple_sound_loader_build(const gchar *dir)
 {
 	xmlnode *root_node, *sub_node;
@@ -83,7 +83,7 @@ purple_sound_loader_build(const gchar *dir)
 	g_dir_close(gdir);
 	g_free(filename_full);
 	g_free(data);
-	return theme;
+	return PURPLE_THEME(theme);
 }
 
 /******************************************************************************

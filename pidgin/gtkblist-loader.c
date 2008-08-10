@@ -36,7 +36,7 @@
  * Buddy List Theme Builder                                                      
  *****************************************************************************/
 
-static gpointer
+static PurpleTheme *
 pidgin_blist_loader_build(const gchar *dir)
 {
 	xmlnode *root_node, *sub_node, *sub_sub_node;
@@ -248,7 +248,7 @@ pidgin_blist_loader_build(const gchar *dir)
 	g_dir_close(gdir);
 	g_free(filename_full);
 	g_free(data);
-	return theme;
+	return PURPLE_THEME(theme);
 }
 
 /******************************************************************************
