@@ -80,6 +80,7 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 
 void jabber_bosh_connection_login_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata) {
 	purple_debug_info("jabber", "RECEIVED FIRST HTTP RESPONSE\n");
+	printf("\nDATA\n\n%s\n", res->data);
 }
 
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -104,16 +105,73 @@ void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
 }
 
 static void jabber_bosh_http_connection_receive(gpointer data, gint source, PurpleInputCondition condition) {
+	char buffer[1024];
+	int len;
 	PurpleHTTPConnection *conn = data;
 	PurpleHTTPResponse *response = conn->current_response;
 	
 	purple_debug_info("jabber", "jabber_bosh_http_connection_receive\n");
-	if (response) {
-		// data for current response
-		
-	} else {
+	if (!response) {
 		// new response
 		response = conn->current_response = g_new0(PurpleHTTPResponse, 1);
+		jabber_bosh_http_response_init(response);
+	}
+	
+	len = read(source, buffer, 1024);
+	if (len > 0) {
+		char *found = NULL;
+		if (found = g_strstr_len(buffer, len, "\r\n\r\n")) {
+			char *beginning = buffer;
+			char *field = NULL;
+			char *value = NULL;
+			char *cl = NULL;
+			
+			while (*beginning != 'H') ++beginning;
+			beginning[12] = 0;
+			response->status = atoi(&beginning[9]);
+			beginning = &beginning[13];
+			do {
+				++beginning;
+			} while (*beginning != '\n');
+			++beginning;
+			/* parse HTTP response header */
+			for (;beginning != found; ++beginning) {
+				if (!field) field = beginning;
+				if (*beginning == ':') {
+					*beginning = 0;
+					value = beginning + 1;
+				} else if (*beginning == '\r') {
+					*beginning = 0;
+					g_hash_table_replace(response->header, g_strdup(field), g_strdup(value));
+					value = field = 0;
+					++beginning;
+				}
+			}
+			++found; ++found; ++found; ++found;
+			
+			cl = g_hash_table_lookup(response->header, "Content-Length");
+			if (cl) {
+				PurpleHTTPRequest *request = NULL;
+				response->data_len = atoi(cl);
+				if (response->data <= len - (found - buffer)) response->data = g_memdup(found, response->data_len);
+				else printf("\nDidn't receive complete content");
+				
+				request = g_queue_pop_head(conn->requests);
+				if (request) {
+					request->cb(request, response, conn->userdata);
+					jabber_bosh_http_request_clean(request);
+					jabber_bosh_http_response_clean(response);
+				} else {
+					purple_debug_info("jabber", "received HTTP response but haven't requested anything yet.\n");
+				}
+			} else {
+				printf("\ndidn't receive length.\n");
+			}
+		} else {
+			printf("\nDid not receive complete HTTP header!\n");
+		}
+	} else {
+		purple_debug_info("jabber", "jabber_bosh_http_connection_receive: problem receiving data\n");
 	}
 }
 
@@ -123,6 +181,7 @@ void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount 
 	conn->port = port;
 	conn->connect_cb = NULL;
 	conn->current_response = NULL;
+	conn->current_data = NULL;
 	conn->requests = g_queue_new();
 }
 
@@ -188,6 +247,18 @@ void jabber_bosh_http_request_set_data(PurpleHTTPRequest *req, char *data, int l
 }
 
 void jabber_bosh_http_request_clean(PurpleHTTPRequest *req) {
+	g_hash_table_destroy(req->header);
 	g_free(req->method);
 	g_free(req->path);
+}
+
+void jabber_bosh_http_response_init(PurpleHTTPResponse *res) {
+	res->status = 0;
+	res->header = g_hash_table_new(g_str_hash, g_str_equal);
+}
+
+
+void jabber_bosh_http_response_clean(PurpleHTTPResponse *res) {
+	g_hash_table_destroy(res->header);
+	g_free(res->data);
 }

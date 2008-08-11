@@ -65,7 +65,10 @@ struct _PurpleHTTPConnection {
     PurpleConnection *conn;
     PurpleAccount *account;
     GQueue *requests;
+    
     PurpleHTTPResponse *current_response;
+    char *current_data;
+    
     int pih;
     PurpleHTTPConnectionConnectFunction connect_cb;
     void *userdata;
@@ -101,4 +104,7 @@ void jabber_bosh_http_request_init(PurpleHTTPRequest *req, const char *method, c
 void jabber_bosh_http_request_add_to_header(PurpleHTTPRequest *req, const char *field, const char *value);
 void jabber_bosh_http_request_set_data(PurpleHTTPRequest *req, char *data, int len);
 void jabber_bosh_http_request_clean(PurpleHTTPRequest *req);
+
+void jabber_bosh_http_response_init(PurpleHTTPResponse *res);
+void jabber_bosh_http_response_clean(PurpleHTTPResponse *res);
 #endif /* _PURPLE_JABBER_BOSH_H_ */
