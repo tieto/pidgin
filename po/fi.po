@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-06 16:01+0300\n"
-"PO-Revision-Date: 2008-08-06 16:01+0300\n"
+"POT-Creation-Date: 2008-08-11 12:39+0300\n"
+"PO-Revision-Date: 2008-08-11 12:39+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -7290,13 +7290,6 @@ msgstr ""
 "Huomaa, että olet samalla Qunin luoja, \n"
 "Tämä toiminto poistaa lopulta tämän Qunin."
 
-#, c-format
-msgid "Code [0x%02X]: %s"
-msgstr "Koodi [0x%02X]: %s"
-
-msgid "Group Operation Error"
-msgstr "Ryhmätoimintovirhe"
-
 #. we want to see window
 msgid "Do you want to approve the request?"
 msgstr "Haluatko hyväksyä pyynnön?"
@@ -7494,6 +7487,28 @@ msgstr "Ei voi kirjautua. Tarkista virheenjäljitysloki."
 
 msgid "Unable to login"
 msgstr "Ei voi kirjautua"
+
+#, c-format
+msgid ""
+"Reply %s(0x%02X )\n"
+"Sent %s(0x%02X )\n"
+"Room id %d, reply [0x%02X]: \n"
+"%s"
+msgstr ""
+"Vastaus %s(0x%02X )\n"
+"Lähetetty %s(0x%02X )\n"
+"Huoneen tunniste %d, vastaus [0x%02X]: \n"
+"%s"
+
+msgid "Failed room reply"
+msgstr "Epäonnistunut huoneen vastaus"
+
+#, c-format
+msgid "You are not a member of group \"%s\"\n"
+msgstr "Sinä et ole ryhmän \"%s\" jäsen\n"
+
+msgid "Can not decrypt login reply"
+msgstr "Kirjautumisvastauksen salausta ei voi purkaa"
 
 #, c-format
 msgid "Invalid token reply code, 0x%02X"
@@ -9870,6 +9885,12 @@ msgstr "+++ %s on jouten"
 msgid "+++ %s became unidle"
 msgstr "+++ %s on aktiivinen"
 
+#.
+#. * This string determines how some dates are displayed.  The default
+#. * string "%x %X" shows the date then the time.  Translators can
+#. * change this to "%X %x" if they want the time to be shown first,
+#. * followed by the date.
+#.
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
@@ -13672,6 +13693,12 @@ msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
 
+#~ msgid "Code [0x%02X]: %s"
+#~ msgstr "Koodi [0x%02X]: %s"
+
+#~ msgid "Group Operation Error"
+#~ msgstr "Ryhmätoimintovirhe"
+
 #~ msgid "Error setting socket options"
 #~ msgstr "Virhe asetettaessa pistokevalintoja"
 
@@ -13708,9 +13735,6 @@ msgstr ""
 
 #~ msgid "UDP Address"
 #~ msgstr "UDP-osoite"
-
-#~ msgid "Login failed, no reply"
-#~ msgstr "Kirjautuminen epäonnistui, ei vastausta"
 
 #~ msgid "Screen name:"
 #~ msgstr "Näyttönimi:"
