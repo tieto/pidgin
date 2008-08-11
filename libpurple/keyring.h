@@ -69,7 +69,7 @@ typedef struct _PurpleKeyring PurpleKeyring;				/* public (for now) */
  * @param data Data passed to the callback.
  */
 typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account,
-					  gchar * password,
+					  const gchar * password,
 					  GError * error,
 					  gpointer data);
 
@@ -121,7 +121,7 @@ typedef void (*PurpleKeyringSetInUseCallback)(const PurpleKeyring * keyring,
  * @param cb A callback to be used once the password is found.
  * @param data Data to be passed to the callback.
  */
-typedef void (*PurpleKeyringRead)(const PurpleAccount * account,
+typedef void (*PurpleKeyringRead)(PurpleAccount * account,
 				  PurpleKeyringReadCallback cb,
 				  gpointer data);
 
@@ -136,7 +136,7 @@ typedef void (*PurpleKeyringRead)(const PurpleAccount * account,
  * @param cb A callback to be called once the password is saved.
  * @param data A pointer to be passed to the callback
  */
-typedef void (*PurpleKeyringSave)(const PurpleAccount * account,
+typedef void (*PurpleKeyringSave)(PurpleAccount * account,
 				  gchar * password,
 				  GDestroyNotify destroypassword,
 				  PurpleKeyringSaveCallback cb,
