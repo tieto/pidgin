@@ -402,6 +402,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
+	char *password = NULL;
 
 	if (dialog->protocol_menu != NULL)
 	{
@@ -561,9 +562,10 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		if (purple_account_get_password(dialog->account))
-			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
-							   purple_account_get_password(dialog->account));
+		password = purple_account_get_password(dialog->account);
+
+		if (password)
+			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), password);
 
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),

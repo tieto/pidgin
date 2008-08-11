@@ -216,6 +216,15 @@ typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount * account,
 /***************************************/
 /*@{*/
 
+PurpleKeyring *
+purple_keyring_get_keyring_by_id(const char * id);
+GList *
+purple_keyring_get_options(void);
+void 
+purple_keyring_pref_cb(const char *pref,
+		       PurplePrefType type,
+		       gconstpointer name,
+		       gpointer data);
 /**
  * Prepare stuff at startup.
  */
@@ -336,7 +345,7 @@ purple_keyring_export_password(PurpleAccount * account,
  * @param data A pointer passed to the callback.
  */
 void 
-purple_keyring_get_password_async(const PurpleAccount * account,
+purple_keyring_get_password_async(PurpleAccount * account,
 				  PurpleKeyringReadCallback cb,
 				  gpointer data);
 
@@ -409,6 +418,7 @@ PurpleKeyring * purple_keyring_new(void);
 void purple_keyring_free(PurpleKeyring * keyring);
 
 const char * purple_keyring_get_name(const PurpleKeyring * info);
+const char * purple_keyring_get_id(const PurpleKeyring * info);
 PurpleKeyringRead purple_keyring_get_read_password(const PurpleKeyring * info);
 PurpleKeyringSave purple_keyring_get_save_password(const PurpleKeyring * info);
 PurpleKeyringReadSync purple_keyring_get_read_sync(const PurpleKeyring * info);
@@ -418,7 +428,8 @@ PurpleKeyringChangeMaster purple_keyring_get_change_master(const PurpleKeyring *
 PurpleKeyringImportPassword purple_keyring_get_import_password(const PurpleKeyring * info);
 PurpleKeyringExportPassword purple_keyring_get_export_password(const PurpleKeyring * info);
 
-void purple_keyring_set_name(PurpleKeyring * info, char * name);		/* must be static, will not be auto-freed upon destruction */
+void purple_keyring_set_name(PurpleKeyring * info, char * name);
+void purple_keyring_set_id(PurpleKeyring * info, char * id);
 void purple_keyring_set_read_sync(PurpleKeyring * info, PurpleKeyringReadSync read);
 void purple_keyring_set_save_sync(PurpleKeyring * info, PurpleKeyringSaveSync save);
 void purple_keyring_set_read_password(PurpleKeyring * info, PurpleKeyringRead read);
@@ -441,7 +452,7 @@ void purple_keyring_set_export_password(PurpleKeyring * info, PurpleKeyringExpor
  */
 #define ERR_PIDGINKEYRING 	purple_keyring_error_domain()
 /** stuff here too */
-GQuark purple_keyring_error_domain();
+GQuark purple_keyring_error_domain(void);
 
 /** error codes for keyrings. */
 enum PurpleKeyringError

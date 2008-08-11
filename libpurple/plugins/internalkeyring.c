@@ -1,6 +1,6 @@
 /**
  * @file internalkeyring.c internal keyring
- * @ingroup core
+ * @ingroup plugins
  *
  * @todo 
  *   cleanup error handling and reporting
@@ -51,11 +51,11 @@
 #include "debug.h"
 #include "plugin.h"
 
-#define KEYRINGNAME			FALLBACK_KEYRING
+#define INTERNALKEYRING_NAME		"Internal keyring"
 #define INTERNALKEYRING_VERSION		"0.7"
 #define INTERNALKEYRING_DESCRIPTION	"This plugin provides the default password storage behaviour for libpurple."
 #define	INTERNALKEYRING_AUTHOR		"Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define INTERNALKEYRING_ID		"core-internalkeyring-scrouaf"
+#define INTERNALKEYRING_ID		FALLBACK_KEYRING
 
 
 #define GET_PASSWORD(account) \
@@ -211,7 +211,8 @@ internal_keyring_init()
 {
 	keyring_handler = purple_keyring_new();
 
-	purple_keyring_set_name(keyring_handler, KEYRINGNAME);
+	purple_keyring_set_name(keyring_handler, INTERNALKEYRING_NAME);
+	purple_keyring_set_id(keyring_handler, INTERNALKEYRING_ID);
 	purple_keyring_set_read_sync(keyring_handler, internal_keyring_read_sync);
 	purple_keyring_set_save_sync(keyring_handler, internal_keyring_save_sync);
 	purple_keyring_set_read_password(keyring_handler, internal_keyring_read);
@@ -274,7 +275,7 @@ PurplePluginInfo plugininfo =
 	NULL,								/* dependencies */
 	PURPLE_PRIORITY_DEFAULT,					/* priority */
 	INTERNALKEYRING_ID,						/* id */
-	"internal-keyring",						/* name */
+	INTERNALKEYRING_NAME,						/* name */
 	INTERNALKEYRING_VERSION,					/* version */
 	"Internal Keyring Plugin",					/* summary */
 	INTERNALKEYRING_DESCRIPTION,					/* description */
