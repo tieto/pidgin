@@ -37,6 +37,7 @@
 #include "sound.h"
 #include "util.h"
 #include "network.h"
+#include "keyring.h"
 
 #include "gtkblist.h"
 #include "gtkconv.h"
@@ -1631,6 +1632,37 @@ logging_page(void)
 	return ret;
 }
 
+
+static GtkWidget *
+keyring_page(void)
+{
+	GtkWidget *ret;
+	GtkWidget *vbox;
+	GtkWidget *menu;
+	GtkWidget *changemaster;
+	GList *names;
+
+
+	purple_debug_info("prefs", "drawing keyring prefs page");
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
+
+
+	vbox = pidgin_make_frame (ret, _("Keyring"));
+
+	names = purple_keyring_get_options();
+
+	pidgin_prefs_dropdown_from_list(vbox, _("Keyring"), PURPLE_PREF_STRING,
+				 "/purple/keyring/active", names);
+
+	g_list_free(names);
+
+
+	gtk_widget_show_all(ret);
+
+	return ret;
+}
+
 #ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
@@ -2153,6 +2185,7 @@ static void prefs_notebook_init(void) {
 	}
 #endif
 	prefs_notebook_add_page(_("Logging"), logging_page(), notebook_page++);
+	prefs_notebook_add_page(_("Password Storage"), keyring_page(), notebook_page++);
 	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);
 }
 

@@ -1,4 +1,4 @@
-DIST_SUBDIRS = mono perl ssl tcl
+DIST_SUBDIRS = mono perl ssl tcl keyrings
 
 if USE_PERL
 PERL_DIR = perl
@@ -20,7 +20,8 @@ SUBDIRS = \
 	$(MONO_DIR) \
 	$(PERL_DIR) \
 	ssl \
-	$(TCL_DIR)
+	$(TCL_DIR) \
+	keyrings
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -41,6 +42,7 @@ psychic_la_LDFLAGS          = -module -avoid-version
 signals_test_la_LDFLAGS		= -module -avoid-version
 simple_la_LDFLAGS			= -module -avoid-version
 statenotify_la_LDFLAGS      = -module -avoid-version
+internalkeyring_la_LDFLAGS  = -module -avoid-version
 
 # this can't be in a conditional otherwise automake 1.4 yells
 dbus_example_la_LDFLAGS     = -module -avoid-version
@@ -57,7 +59,8 @@ plugin_LTLIBRARIES = \
 	offlinemsg.la       \
 	psychic.la          \
 	statenotify.la      \
-	$(DBUS_LTLIB)
+	$(DBUS_LTLIB)       \
+	internalkeyring.la
 
 noinst_LTLIBRARIES = \
 	ciphertest.la \
@@ -86,6 +89,7 @@ psychic_la_SOURCES          = psychic.c
 signals_test_la_SOURCES		= signals-test.c
 simple_la_SOURCES			= simple.c
 statenotify_la_SOURCES      = statenotify.c
+internalkeyring_la_SOURCES  = internalkeyring.c
 
 autoaccept_la_LIBADD        = $(GLIB_LIBS)
 buddynote_la_LIBADD         = $(GLIB_LIBS)
@@ -102,6 +106,7 @@ psychic_la_LIBADD           = $(GLIB_LIBS)
 signals_test_la_LIBADD		= $(GLIB_LIBS)
 simple_la_LIBADD			= $(GLIB_LIBS)
 statenotify_la_LIBADD       = $(GLIB_LIBS)
+internalkeyring_la_LIBADD   = $(GLIB_LIBS)
 
 if ENABLE_DBUS
 

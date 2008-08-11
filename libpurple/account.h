@@ -46,6 +46,7 @@ typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean s
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
+#include "keyring.h"
 
 /**
  * Account request types.
@@ -549,13 +550,24 @@ gboolean purple_account_is_disconnected(const PurpleAccount *account);
 const char *purple_account_get_username(const PurpleAccount *account);
 
 /**
- * Returns the account's password.
+ * Returns the account's password (deprecated, use async code instead).
  *
  * @param account The account.
  *
  * @return The password.
  */
 const char *purple_account_get_password(const PurpleAccount *account);
+
+
+/**
+ * Reads the password for the account and passes it to the callback
+ *
+ * @param account The account to read the password for.
+ * @param cb The callback to pass the password to.
+ * @param data A pointer passed to the callback.
+ */
+void purple_account_get_password_async(PurpleAccount * account, 
+	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
  * Returns the account's alias.
