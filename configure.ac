@@ -2391,6 +2391,7 @@ AC_OUTPUT([Makefile
 		   libpurple/purple.pc
 		   libpurple/purple-uninstalled.pc
 		   libpurple/plugins/Makefile
+		   libpurple/plugins/keyrings/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile
 		   libpurple/plugins/mono/loader/Makefile
