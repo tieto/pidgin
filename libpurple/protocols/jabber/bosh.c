@@ -56,6 +56,15 @@ void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *acco
 	conn->conn_a->userdata = conn;
 }
 
+void jabber_bosh_connection_bood_response(PurpleBOSHConnection *conn, xmlnode *node) {
+	
+}
+
+void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
+	xmlnode_free(node);
+}
+
+
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	char *tmp;
 	xmlnode *init = xmlnode_new("body");
@@ -75,17 +84,24 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	xmlnode_set_attrib(init, "xmlns", "http://jabber.org/protocol/httpbind");
 	xmlnode_set_attrib(init, "hold", "1");
 	
+	conn->receive_cb = jabber_bosh_connection_bood_response;
 	jabber_bosh_connection_send(conn, init);
 }
 
-void jabber_bosh_connection_login_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata) {
-	purple_debug_info("jabber", "RECEIVED FIRST HTTP RESPONSE\n");
-	printf("\nDATA\n\n%s\n", res->data);
+void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata) {
+	PurpleBOSHConnection *conn = userdata;
+	if (conn->receive_cb) {
+		xmlnode *node = xmlnode_from_str(res->data, res->data_len);
+		char *txt = xmlnode_to_formatted_str(node, NULL);
+		printf("\njabber_bosh_connection_http_received_cb\n%s\n", txt);
+		g_free(txt);
+		conn->receive_cb(conn, node);
+	} else purple_debug_info("jabber", "missing receive_cb of PurpleBOSHConnection.\n");
 }
 
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
 	PurpleHTTPRequest *request = g_new0(PurpleHTTPRequest, 1);
-	jabber_bosh_http_request_init(request, "POST", g_strdup_printf("/%s", conn->path), jabber_bosh_connection_login_cb, conn);
+	jabber_bosh_http_request_init(request, "POST", g_strdup_printf("/%s", conn->path), jabber_bosh_connection_http_received_cb, conn);
 	jabber_bosh_http_request_add_to_header(request, "Content-Encoding", "text/xml; charset=utf-8");
 	request->data = xmlnode_to_str(node, &(request->data_len));
 	jabber_bosh_http_request_add_to_header(request, "Content-Length", g_strdup_printf("%d", (int)strlen(request->data)));
@@ -94,7 +110,7 @@ void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
 
 static void jabber_bosh_connection_connected(PurpleHTTPConnection *conn) {
 	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	
+	bosh_conn->receive_cb = jabber_bosh_connection_received;
 	if (bosh_conn->ready && bosh_conn->connect_cb) bosh_conn->connect_cb(bosh_conn);
 	else jabber_bosh_connection_boot(bosh_conn);
 }
