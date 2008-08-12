@@ -743,6 +743,9 @@ static void udp_host_resolved(GSList *hosts, gpointer data, const char *error_me
 	/* we use non-blocking mode to speed up connection */
 	flags = fcntl(fd, F_GETFL);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	/* From Unix-socket-FAQ: http://www.faqs.org/faqs/unix-faq/socket/
 	 *
