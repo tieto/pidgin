@@ -235,7 +235,7 @@ void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, Purple
 	char *packet;
 	char *tmp;
 	jabber_bosh_http_request_add_to_header(req, "Host", conn->host);
-	
+	jabber_bosh_http_request_add_to_header(req, "User-Agent", "libpurple");
 	packet = tmp = g_strdup_printf("%s %s HTTP/1.1\r\n", req->method, req->path);
 	g_hash_table_foreach(req->header, jabber_bosh_http_connection_send_request_add_field_to_string, &packet);
 	tmp = packet;
