@@ -637,6 +637,9 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	flags = fcntl(client_socket, F_GETFL);
 	fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(client_socket, F_SETFD, FD_CLOEXEC);
+#endif
 
 	/* Look for the buddy that has opened the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);

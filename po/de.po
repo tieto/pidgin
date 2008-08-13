@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-06 17:47+0200\n"
-"PO-Revision-Date: 2008-08-06 17:47+0200\n"
+"POT-Creation-Date: 2008-08-12 17:23+0200\n"
+"PO-Revision-Date: 2008-08-12 17:21+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -652,11 +652,11 @@ msgstr "Klänge aktivieren"
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
 
-#, fuzzy, c-format
+#, c-format
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
-msgstr[0] "Liste der Benutzer:\n"
-msgstr[1] "Liste der Benutzer:\n"
+msgstr[0] "Liste von %d Benutzer:\n"
+msgstr[1] "Liste von %d Benutzern:\n"
 
 msgid "Supported debug options are:  version"
 msgstr "Unterstützte Debug-Optionen sind:  version"
@@ -2820,8 +2820,9 @@ msgid ""
 "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
 "pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Apples Bonjour-Toolkit für Windows konnte nicht gefunden werden, für weitere "
-"Informationen besuchen Sie die FAQ unter: http://d.pidgin.im/BonjourWindows"
+"Apples Bonjour-Toolkit für Windows konnte nicht gefunden werden. Besuchen "
+"Sie die FAQ unter http://d.pidgin.im/BonjourWindows für weitere "
+"Informationen."
 
 msgid "Unable to listen for incoming IM connections\n"
 msgstr "Kann nicht auf eingehende IM-Verbindungen hören\n"
@@ -7330,13 +7331,6 @@ msgstr ""
 "Beachten Sie, dass diese Operation den Qun entfernen könnte, \n"
 "wenn Sie der Ersteller sind."
 
-#, c-format
-msgid "Code [0x%02X]: %s"
-msgstr "Code [0x%02X]: %s"
-
-msgid "Group Operation Error"
-msgstr "Gruppenoperationsfehler"
-
 #. we want to see window
 msgid "Do you want to approve the request?"
 msgstr "Wollen sie die Anfrage akzeptieren?"
@@ -7381,26 +7375,23 @@ msgstr " VIP"
 msgid " TCP"
 msgstr " TCP"
 
-#, fuzzy
 msgid " FromMobile"
-msgstr "Mobil"
+msgstr " FromMobile"
 
-#, fuzzy
 msgid " BindMobile"
-msgstr "Mobil"
+msgstr "BindMobile"
 
 msgid " Video"
 msgstr " Video"
 
-#, fuzzy
 msgid " Space"
-msgstr "MySpace"
+msgstr " Raum"
 
 msgid "Flag"
-msgstr ""
+msgstr "Flagge"
 
 msgid "Ver"
-msgstr ""
+msgstr "Ver"
 
 msgid "Invalid name"
 msgstr "QQ: Ungültiger Name"
@@ -7476,18 +7467,17 @@ msgid "Connect using TCP"
 msgstr "Über TCP verbinden"
 
 msgid "resend interval(s)"
-msgstr ""
+msgstr "Neusenden-Intervall(e)"
 
-#, fuzzy
 msgid "Keep alive interval(s)"
-msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
+msgstr "Intervall(e) zum Aufrechterhalten der Verbindung (Keep alive)"
 
 msgid "Update interval(s)"
-msgstr ""
+msgstr "Aktualisierungsintervall(e)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid token len, %d"
-msgstr "Ungültige Bezeichnung"
+msgstr "Ungültige Länge des Tokens, %d"
 
 msgid "Keep alive error"
 msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
@@ -7539,8 +7529,30 @@ msgid "Unable to login"
 msgstr "Anmeldung fehlgeschlagen"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid ""
+"Reply %s(0x%02X )\n"
+"Sent %s(0x%02X )\n"
+"Room id %d, reply [0x%02X]: \n"
+"%s"
 msgstr ""
+"Antwort %s(0x%02X )\n"
+"Gesendet %s(0x%02X )\n"
+"Raum-ID %d, Antwort [0x%02X]: \n"
+"%s"
+
+msgid "Failed room reply"
+msgstr "Antwort vom Raum gescheitert"
+
+#, c-format
+msgid "You are not a member of group \"%s\"\n"
+msgstr "Sie sind ein Mitglied der Gruppe „%s“\n"
+
+msgid "Can not decrypt login reply"
+msgstr "Kann die Antwort der Anmeldung nicht entschlüsseln"
+
+#, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr "Ungültiger Token-Antwort-Code, 0x%02X"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7589,7 +7601,7 @@ msgstr "Nachricht: %s"
 msgid "%s is not in your buddy list"
 msgstr "%s ist nicht in Ihrer Buddy-Liste"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Notice from: %s"
 msgstr "Ankündigung von %s"
 
@@ -9932,6 +9944,12 @@ msgstr "+++ %s wurde untätig"
 msgid "+++ %s became unidle"
 msgstr "+++ %s wurde tätig"
 
+#.
+#. * This string determines how some dates are displayed.  The default
+#. * string "%x %X" shows the date then the time.  Translators can
+#. * change this to "%X %x" if they want the time to be shown first,
+#. * followed by the date.
+#.
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"

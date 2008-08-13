@@ -61,23 +61,23 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 
 	psmNode = xmlnode_new("PSM");
 	if(psmstr != NULL){
-		xmlnode_insert_data(psmNode,psmstr,strlen(psmstr));
+		xmlnode_insert_data(psmNode, psmstr, -1);
 	}
-	xmlnode_insert_child(dataNode,psmNode);
+	xmlnode_insert_child(dataNode, psmNode);
 
 	mediaNode = xmlnode_new("CurrentMedia");
 	if(mediastr != NULL){
-		xmlnode_insert_data(mediaNode,mediastr,strlen(mediastr));
+		xmlnode_insert_data(mediaNode, mediastr, -1);
 	}
-	xmlnode_insert_child(dataNode,mediaNode);
+	xmlnode_insert_child(dataNode, mediaNode);
 
 	guidNode = xmlnode_new("MachineGuid");
 	if(guidstr != NULL){
-		xmlnode_insert_data(guidNode,guidstr,strlen(guidstr));
+		xmlnode_insert_data(guidNode, guidstr, -1);
 	}
-	xmlnode_insert_child(dataNode,guidNode);
+	xmlnode_insert_child(dataNode, guidNode);
 
-	result = xmlnode_to_str(dataNode,&length);
+	result = xmlnode_to_str(dataNode, &length);
 	xmlnode_free(dataNode);
 	return result;
 }
