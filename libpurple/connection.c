@@ -39,6 +39,8 @@
 #include "util.h"
 
 #define KEEPALIVE_INTERVAL 30
+static void purple_connection_disconnect_got_pw_cb(PurpleAccount * account,
+       gchar * password, GError * error, gpointer data);
 
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
@@ -483,11 +485,23 @@ static gboolean
 purple_connection_disconnect_cb(gpointer data)
 {
 	PurpleAccount *account = data;
-	char *password = g_strdup(purple_account_get_password(account));
-	purple_account_disconnect(account);
-	purple_account_set_password(account, password);
-	g_free(password);
+	purple_account_get_password_async(account, 
+		purple_connection_disconnect_got_pw_cb, NULL);
+
 	return FALSE;
+}
+
+static void
+purple_connection_disconnect_got_pw_cb(PurpleAccount * account,
+				       gchar * password,
+				       GError * error,
+				       gpointer data)
+{
+	/* FIXME : handle error */
+	char * pw = g_strdup(password);
+
+	purple_account_disconnect(account);
+	purple_account_set_password(account, pw);
 }
 
 void
