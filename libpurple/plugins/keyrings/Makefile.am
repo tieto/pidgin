@@ -7,6 +7,7 @@ gnomekeyring_la_LDFLAGS     = -module -avoid-version
 internalkeyring_la_LDFLAGS  = -module -avoid-version
 
 GNOME_KEYRING_CFLAGS = -I/usr/include/gnome-keyring-1
+GNOME_KEYRING_LIBS   = -lgnome-keyring
 
 GKRSOURCES = gnomekeyring.c
 IKSOURCES = internalkeyring.c

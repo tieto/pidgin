@@ -191,6 +191,12 @@ gkp_save(PurpleAccount * account,
 	storage->user_data = data;
 
 	if(password != NULL) {
+
+		purple_debug_info("Gnome keyring plugin",
+			"Updating password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+
 		gnome_keyring_store_password(GNOME_KEYRING_NETWORK_PASSWORD,
 					     NULL, 	/*default keyring */
 					     g_strdup_printf("pidgin-%s", purple_account_get_username(account)),
@@ -206,6 +212,11 @@ gkp_save(PurpleAccount * account,
 			destroy(password);
 
 	} else {	/* password == NULL, delete password. */
+
+		purple_debug_info("Gnome keyring plugin",
+			"Forgetting password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 
 		gnome_keyring_delete_password(GNOME_KEYRING_NETWORK_PASSWORD,
 					      gkp_save_continue,
@@ -232,6 +243,10 @@ gkp_save_continue(GnomeKeyringResult result,
 		switch(result)
 		{
 			case GNOME_KEYRING_RESULT_NO_MATCH :
+				purple_debug_info("Gnome keyring plugin",
+					"Could not update password for %s (%s) : not found.\n",
+					purple_account_get_username(account),
+					purple_account_get_protocol_id(account));
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
 					ERR_NOPASSWD, "Could not update password for %s : not found",
 					purple_account_get_username(account));
@@ -242,6 +257,10 @@ gkp_save_continue(GnomeKeyringResult result,
 
 			case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON :
 			case GNOME_KEYRING_RESULT_IO_ERROR :
+				purple_debug_info("Gnome keyring plugin",
+					"Failed to communicate with gnome keyring (account : %s (%s)).\n",
+					purple_account_get_username(account),
+					purple_account_get_protocol_id(account));
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
 					ERR_NOCHANNEL, "Failed to communicate with gnome keyring (account : %s).",
 					purple_account_get_username(account));
@@ -251,6 +270,10 @@ gkp_save_continue(GnomeKeyringResult result,
 				return;
 
 			default :
+				purple_debug_info("Gnome keyring plugin",
+					"Unknown error (account : %s (%s)).\n",
+					purple_account_get_username(account),
+					purple_account_get_protocol_id(account));
 				error = g_error_new(ERR_GNOMEKEYRINGPLUGIN, 
 					ERR_NOCHANNEL, "Unknown error (account : %s).",
 					purple_account_get_username(account));
@@ -309,7 +332,7 @@ gkp_save_sync(PurpleAccount * account,
 static void
 gkp_close(GError ** error)
 {
-	gkp_uninit();
+	return;
 }
 
 static gboolean
@@ -318,6 +341,8 @@ gkp_import_password(PurpleAccount * account,
 		    char * data,
 		    GError ** error)
 {
+	purple_debug_info("Gnome Keyring plugin",
+		"Importing password.\n");
 	return TRUE;
 }
 
@@ -328,9 +353,11 @@ gkp_export_password(PurpleAccount * account,
 				 GError ** error,
 				 GDestroyNotify * destroy)
 {
+	purple_debug_info("Gnome Keyring plugin",
+		"Exporting password.\n");
 	*data = NULL;
 	*mode = NULL;
-	destroy = NULL;
+	*destroy = NULL;
 
 	return TRUE;
 }
@@ -341,6 +368,8 @@ gkp_export_password(PurpleAccount * account,
 static gboolean
 gkp_init()
 {
+	purple_debug_info("gnome-keyring-plugin", "init.\n");
+
 	if (gnome_keyring_is_available()) {
 
 		keyring_handler = purple_keyring_new();
@@ -371,6 +400,9 @@ gkp_init()
 static void
 gkp_uninit()
 {
+	purple_debug_info("gnome-keyring-plugin", "uninit.\n");
+	gkp_close(NULL);
+	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);
 	keyring_handler = NULL;
 }

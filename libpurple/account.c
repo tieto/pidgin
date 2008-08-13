@@ -44,7 +44,7 @@
 
 /**
  * TODO :
- *  - grab Trannie's code for asynch connection
+ *  - grab Trannie's code for async connection
  */
 
 
@@ -381,7 +381,7 @@ account_to_xmlnode(PurpleAccount *account)
 	char *data;
 	PurplePresence *presence;
 	PurpleProxyInfo *proxy_info;
-	GError * error;
+	GError * error = NULL;
 	GDestroyNotify destroy;
 
 	node = xmlnode_new("account");
@@ -394,18 +394,22 @@ account_to_xmlnode(PurpleAccount *account)
 
 	if (purple_account_get_remember_password(account))
 	{
-		purple_debug_info("accounts", "Exporting password.\n");
+		purple_debug_info("accounts", "Exporting password for account %s.\n",
+			purple_account_get_username(account));
 		purple_keyring_export_password(account, &keyring_id, 
 			&mode, &data, &error, &destroy);
 
 		if (error != NULL) {
 
-			/* Output debug info */
+			purple_debug_info("accounts",
+				"failed to export password for account %s : %s.\n",
+				purple_account_get_username(account),
+				error->message);
 
 		} else {
 
 			child = xmlnode_new_child(node, "password");
-			xmlnode_set_attrib(child, "keyringid", keyring_id);
+			xmlnode_set_attrib(child, "keyring_id", keyring_id);
 			xmlnode_set_attrib(child, "mode", mode);
 			xmlnode_insert_data(child, data, -1);
 
@@ -486,6 +490,8 @@ sync_accounts(void)
 						 "they were read!\n");
 		return;
 	}
+
+	purple_debug_info("account", "Syncing accounts.\n");
 
 	node = accounts_to_xmlnode();
 	data = xmlnode_to_formatted_str(node, NULL);
@@ -804,7 +810,7 @@ parse_account(xmlnode *node)
 	const char *keyring_id = NULL;
 	const char *mode = NULL;
 	char *data = NULL;
-	gboolean result;
+	gboolean result = FALSE;
 	GError * error = NULL;
 
 	child = xmlnode_get_child(node, "protocol");
@@ -906,6 +912,7 @@ parse_account(xmlnode *node)
 	}
 
 	/* Read the password */
+
 	child = xmlnode_get_child(node, "password");
 	if (child != NULL)
 	{
@@ -918,12 +925,14 @@ parse_account(xmlnode *node)
 		if (result == TRUE) {
 			purple_debug_info("accounts", "password imported successfully.\n");
 			purple_account_set_remember_password(ret, TRUE);
-			g_free(keyring_id);
-			g_free(mode);
-			g_free(data);
+			/*
+			g_free(keyring_id);	TODO :
+			g_free(mode);		This was commented becaus eof a double free.
+			g_free(data); 		I should figure out which one causes the bug to avoid leaks
+			*/
 		} else {
 			purple_debug_info("accounts", "failed to imported password.\n");
-			// FIXME handle error
+			/* TODO handle error */
 		}
 	}
 
@@ -1610,6 +1619,38 @@ purple_account_set_password(PurpleAccount *account, const char *password)
 	schedule_accounts_save();
 }
 
+void 
+purple_account_set_password_async(PurpleAccount * account, 
+				  gchar * password,
+				  GDestroyNotify destroypassword,
+				  PurpleKeyringSaveCallback cb,
+				  gpointer data)
+{
+	/**
+	 * This is so we can force an account sync by calling
+	 * it with account == NULL.
+	 */
+	if(account != NULL) {
+
+		if (purple_account_get_remember_password(account) == FALSE) {
+
+			account->password = g_strdup(password);
+			purple_debug_info("account",
+				"Password for %s set, not sent to keyring.\n",
+				purple_account_get_username(account));
+
+			if (cb != NULL)
+				cb(account, NULL, data);
+
+		} else {
+
+			purple_keyring_set_password_async(account, password,
+				destroypassword, cb, data);
+
+		}
+	}
+	schedule_accounts_save();
+}
 void
 purple_account_set_alias(PurpleAccount *account, const char *alias)
 {
@@ -1677,6 +1718,10 @@ purple_account_set_connection(PurpleAccount *account, PurpleConnection *gc)
 	account->gc = gc;
 }
 
+/**
+ * FIXME :
+ *  This should add/remove the password to/from the keyring
+ */
 void
 purple_account_set_remember_password(PurpleAccount *account, gboolean value)
 {

@@ -4,7 +4,6 @@
  *
  * @todo 
  *  - Offer a way to prompt the user for a password or for a password change.
- *  - write accessors and types for sync access.
  */
 
 /* purple
@@ -216,26 +215,28 @@ typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount * account,
 /***************************************/
 /*@{*/
 
-PurpleKeyring *
-purple_keyring_get_keyring_by_id(const char * id);
-GList *
-purple_keyring_get_options(void);
-void 
-purple_keyring_pref_cb(const char *pref,
-		       PurplePrefType type,
-		       gconstpointer name,
-		       gpointer data);
+/**
+ * Find a keyring from it's keyring id.
+ * @param id The id for the keyring.
+ * @return The keyring, or NULL if not found.
+ */
+PurpleKeyring * purple_keyring_get_keyring_by_id(const char * id);
+
+/**
+ * Get a list of id/name pairs (for preferences)
+ * @return The list.
+ */
+GList * purple_keyring_get_options(void);
+
 /**
  * Prepare stuff at startup.
  */
-void 
-purple_keyring_init(void);
+void purple_keyring_init(void);
 
 /**
  * Do some cleanup.
  */
-void
-purple_keyring_uninit(void);
+void purple_keyring_uninit(void);
 
 /**
  * Get the keyring list. Used by the UI.

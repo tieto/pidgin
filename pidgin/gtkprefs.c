@@ -1643,7 +1643,7 @@ keyring_page(void)
 	GList *names;
 
 
-	purple_debug_info("prefs", "drawing keyring prefs page");
+	purple_debug_info("prefs", "drawing keyring prefs page.\n");
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 

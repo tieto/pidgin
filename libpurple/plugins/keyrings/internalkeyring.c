@@ -62,17 +62,22 @@
 	g_hash_table_lookup (internal_keyring_passwords, account)
 #define SET_PASSWORD(account, password) \
 	g_hash_table_replace(internal_keyring_passwords, account, password)
+#define ACTIVATE()\
+	if (internal_keyring_is_active == FALSE)\
+		internal_keyring_open();	
+	
 
-
-GHashTable * internal_keyring_passwords = NULL;
+static GHashTable * internal_keyring_passwords = NULL;
 static PurpleKeyring * keyring_handler = NULL;
+static gboolean internal_keyring_is_active = FALSE;
 
 /* a few prototypes : */
-static void 		internal_keyring_read(const PurpleAccount *, PurpleKeyringReadCallback, gpointer);
-static void 		internal_keyring_save(const PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
+static void 		internal_keyring_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
+static void 		internal_keyring_save(PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
 static const char * 	internal_keyring_read_sync(const PurpleAccount *);
 static void 		internal_keyring_save_sync(PurpleAccount *, const gchar *);
 static void		internal_keyring_close(GError **);
+static void		internal_keyring_open(void);
 static gboolean		internal_keyring_import_password(PurpleAccount *, char *, char *, GError **);
 static gboolean 	internal_keyring_export_password(PurpleAccount *, const char **, char **, GError **, GDestroyNotify *);
 static void		internal_keyring_init(void);
@@ -85,28 +90,37 @@ static void		internal_keyring_destroy(PurplePlugin *);
 /*     Keyring interface                       */
 /***********************************************/
 static void 
-internal_keyring_read(const PurpleAccount * account,
+internal_keyring_read(PurpleAccount * account,
 		      PurpleKeyringReadCallback cb,
 		      gpointer data)
 {
 	char * password;
 	GError * error;
 
+	ACTIVATE();
+
+	purple_debug_info("Internal Keyring",
+		"Reading password for account %s (%s).\n",
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
+
 	password = GET_PASSWORD(account);
 
 	if (password != NULL) {
-		cb(account, password, NULL, data);
+		if(cb != NULL)
+			cb(account, password, NULL, data);
 	} else {
 		error = g_error_new(ERR_PIDGINKEYRING, 
 			ERR_NOPASSWD, "password not found");
-		cb(account, NULL, error, data);
+		if(cb != NULL)
+			cb(account, NULL, error, data);
 		g_error_free(error);
 	}
 	return;
 }
 
 static void
-internal_keyring_save(const PurpleAccount * account,
+internal_keyring_save(PurpleAccount * account,
 		      gchar * password,
 		      GDestroyNotify destroy,
 		      PurpleKeyringSaveCallback cb,
@@ -114,17 +128,29 @@ internal_keyring_save(const PurpleAccount * account,
 {
 	gchar * copy;
 
+	ACTIVATE();
+
 	if (password == NULL) {
 		g_hash_table_remove(internal_keyring_passwords, account);
+		purple_debug_info("Internal Keyring",
+			"Deleted password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 	} else {
 		copy = g_strdup(password);
 		SET_PASSWORD((void *)account, copy);	/* cast prevents warning because account is const */
+		purple_debug_info("Internal Keyring",
+			"Updated password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+
 	}
 
 	if(destroy != NULL)
 		destroy(password);
 
-	cb(account, NULL, data);
+	if (cb != NULL)
+		cb(account, NULL, data);
 	return;
 }
 
@@ -132,7 +158,13 @@ internal_keyring_save(const PurpleAccount * account,
 static const char * 
 internal_keyring_read_sync(const PurpleAccount * account)
 {
-	purple_debug_info("keyring", "password was read\n");
+	ACTIVATE();
+
+	purple_debug_info("Internal Keyring (sync)", 
+		"Password for %s (%s) was read.\n",
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
+
 	return GET_PASSWORD(account);
 }
 
@@ -142,20 +174,41 @@ internal_keyring_save_sync(PurpleAccount * account,
 {
 	gchar * copy;
 
+	ACTIVATE();
+
 	if (password == NULL) {
 		g_hash_table_remove(internal_keyring_passwords, account);
+		purple_debug_info("Internal Keyring (sync)", 
+			"Password for %s (%s) was deleted.\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 	} else {
 		copy = g_strdup(password);
 		SET_PASSWORD(account, copy);
+		purple_debug_info("Internal Keyring (sync)", 
+			"Password for %s (%s) was set.\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 	}
-	purple_debug_info("keyring", "password was set\n");
+
 	return;
 }
 
 static void
 internal_keyring_close(GError ** error)
 {
-	internal_keyring_uninit();
+	internal_keyring_is_active = FALSE;
+
+	g_hash_table_destroy(internal_keyring_passwords);
+	internal_keyring_passwords = NULL;
+}
+
+static void
+internal_keyring_open()
+{
+	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash,
+		g_direct_equal, NULL, g_free);
+	internal_keyring_is_active = TRUE;
 }
 
 static gboolean
@@ -165,6 +218,11 @@ internal_keyring_import_password(PurpleAccount * account,
 				 GError ** error)
 {
 	gchar * copy;
+
+	ACTIVATE();
+
+	purple_debug_info("Internal keyring",
+		"Importing password");
 
 	if (account != NULL && 
 	    data != NULL &&
@@ -180,6 +238,8 @@ internal_keyring_import_password(PurpleAccount * account,
 		return FALSE;
 
 	}
+
+	return TRUE;
 }
 
 static gboolean 
@@ -190,6 +250,11 @@ internal_keyring_export_password(PurpleAccount * account,
 				 GDestroyNotify * destroy)
 {
 	gchar * password;
+
+	ACTIVATE();
+
+	purple_debug_info("Internal keyring",
+		"Exporting password");
 
 	password = GET_PASSWORD(account);
 
@@ -223,18 +288,14 @@ internal_keyring_init()
 	purple_keyring_set_export_password(keyring_handler, internal_keyring_export_password);
 
 	purple_keyring_register(keyring_handler);
-
-	internal_keyring_passwords = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
 }
 
 static void
 internal_keyring_uninit()
 {
-	purple_keyring_free(keyring_handler);
-	keyring_handler = NULL;
+	internal_keyring_close(NULL);
+	purple_keyring_unregister(keyring_handler);
 
-	g_hash_table_destroy(internal_keyring_passwords);
-	internal_keyring_passwords = NULL;
 }
 
 
@@ -254,6 +315,10 @@ static gboolean
 internal_keyring_unload(PurplePlugin *plugin)
 {
 	internal_keyring_uninit();
+
+	purple_keyring_free(keyring_handler);
+	keyring_handler = NULL;
+
 	return TRUE;
 }
 
