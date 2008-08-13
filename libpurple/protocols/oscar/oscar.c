@@ -1635,6 +1635,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	char in = '\0';
 	int x = 0;
 	unsigned char m[17];
+	GString *msg;
 
 	while (read(pos->fd, &in, 1) == 1) {
 		if (in == '\n')
@@ -1665,14 +1666,14 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 				"from " AIMHASHDATA "--that's bad.\n");
 	}
 	m[16] = '\0';
-	{
-		GString *msg = g_string_new("Sending hash: ");
-		for (x = 0; x < 16; x++)
-			g_string_append_printf(msg, "%02hhx ", (unsigned char)m[x]);
-		g_string_append(msg, "\n");
-		purple_debug_misc("oscar", msg->str);
-		g_string_free(msg, TRUE);
-	}
+
+	msg = g_string_new("Sending hash: ");
+	for (x = 0; x < 16; x++)
+		g_string_append_printf(msg, "%02hhx ", (unsigned char)m[x]);
+	g_string_append(msg, "\n");
+	purple_debug_misc("oscar", msg->str);
+	g_string_free(msg, TRUE);
+
 	purple_input_remove(pos->inpa);
 	close(pos->fd);
 	aim_sendmemblock(od, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
@@ -4929,20 +4930,19 @@ static int purple_ssi_parserights(OscarData *od, FlapConnection *conn, FlapFrame
 	va_list ap;
 	int numtypes;
 	guint16 *maxitems;
+	GString *msg;
 
 	va_start(ap, fr);
 	numtypes = va_arg(ap, int);
 	maxitems = va_arg(ap, guint16 *);
 	va_end(ap);
 
-	{
-		GString *msg = g_string_new("ssi rights:");
-		for (i=0; i<numtypes; i++)
-			g_string_append_printf(msg, " max type 0x%04x=%hd,", i, maxitems[i]);
-		g_string_append(msg, "\n");
-		purple_debug_misc("oscar", msg->str);
-		g_string_free(msg, TRUE);
-	}
+	msg = g_string_new("ssi rights:");
+	for (i=0; i<numtypes; i++)
+		g_string_append_printf(msg, " max type 0x%04x=%hd,", i, maxitems[i]);
+	g_string_append(msg, "\n");
+	purple_debug_misc("oscar", msg->str);
+	g_string_free(msg, TRUE);
 
 	if (numtypes >= 0)
 		od->rights.maxbuddies = maxitems[0];
