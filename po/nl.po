@@ -590,7 +590,7 @@ msgstr "Fout bij toevoegen van groep"
 
 #: ../finch/gntblist.c:760
 msgid "You must give a name for the group to add."
-msgstr "Geef alsjeblieft de naam van de toe te voegen groep."
+msgstr "Geef de naam van de toe te voegen groep."
 
 #: ../finch/gntblist.c:773
 msgid "A group with the name already exists."
@@ -827,7 +827,7 @@ msgstr "Deblokkeren"
 
 #: ../finch/gntblist.c:2657
 msgid "Please enter the username or alias of the person you would like to Block/Unblock."
-msgstr "Geef alsjeblieft de gebruikersnaam of bijnaam van de persoon wie je wilt Blokkeren/Deblokkeren."
+msgstr "Geef de gebruikersnaam of bijnaam van de persoon wie je wilt Blokkeren/Deblokkeren."
 
 #. Not multiline
 #. Not masked?
@@ -893,7 +893,7 @@ msgstr "Nieuw bericht"
 #: ../finch/gntblist.c:2708
 #: ../pidgin/gtkdialogs.c:768
 msgid "Please enter the username or alias of the person you would like to IM."
-msgstr "Geef alsjeblieft de gebruikersnaam van de persoon aan wie je een bericht zou willen sturen."
+msgstr "Geef de gebruikersnaam van de persoon aan wie je een bericht zou willen sturen."
 
 #: ../finch/gntblist.c:2769
 msgid "Channel"
@@ -916,7 +916,7 @@ msgstr "Deelnemen"
 #: ../finch/gntblist.c:2844
 #: ../pidgin/gtkdialogs.c:999
 msgid "Please enter the username or alias of the person whose log you would like to view."
-msgstr "Geef alsjeblieft de gebruikersnaam of bijnaam van de persoon waarvan je het logboek wilt opvragen."
+msgstr "Geef de gebruikersnaam of bijnaam van de persoon waarvan je het logboek wilt opvragen."
 
 #. Create the "Options" frame.
 #: ../finch/gntblist.c:2898
@@ -15758,7 +15758,7 @@ msgstr "Gebruikersinfo"
 
 #: ../pidgin/gtkdialogs.c:907
 msgid "Please enter the username or alias of the person whose info you would like to view."
-msgstr "Geef alsjeblieft de gebruikersnaam of bijnaamvan de persoon waarvan u de informatie wilt opvragen."
+msgstr "Geef de gebruikersnaam of bijnaamvan de persoon waarvan u de informatie wilt opvragen."
 
 #: ../pidgin/gtkdialogs.c:997
 msgid "View User Log"
@@ -17348,11 +17348,11 @@ msgstr "Meer gegevens vereist"
 
 #: ../pidgin/gtksmiley.c:256
 msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Geef alsjeblieft een snelkoppeling om te associëren met de smiley."
+msgstr "Geef een snelkoppeling om te associëren met de smiley."
 
 #: ../pidgin/gtksmiley.c:257
 msgid "Please select an image for the smiley."
-msgstr "Selecteer alsjeblieft een afbeelding uit de lijst voor de smiley"
+msgstr "Selecteer een afbeelding uit de lijst voor de smiley"
 
 #: ../pidgin/gtksmiley.c:346
 msgid "Edit Smiley"
