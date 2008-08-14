@@ -407,7 +407,7 @@ msgid ""
 "Online: %d\n"
 "Total: %d"
 msgstr ""
-"On-line: %d\n"
+"Online: %d\n"
 "Totaal: %d"
 
 #: ../finch/gntblist.c:274
@@ -888,7 +888,7 @@ msgstr "OK"
 #: ../finch/gntblist.c:2706
 #: ../pidgin/gtkdialogs.c:766
 msgid "New Instant Message"
-msgstr "Nieuw express-bericht"
+msgstr "Nieuw bericht"
 
 #: ../finch/gntblist.c:2708
 #: ../pidgin/gtkdialogs.c:768
@@ -3849,7 +3849,7 @@ msgid ""
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it at your own risk!"
 msgstr ""
-"Bij het weergeven van logboeken zal deze plugin ook de logboeken van andere clients voor expresberichten tonen. Op dit moment kunnen we dit doen voor Adium, MSN Messenger en Trillian.\n"
+"Bij het weergeven van logboeken zal deze plugin ook de logboeken van andere clients voor berichten tonen. Op dit moment kunnen we dit doen voor Adium, MSN Messenger en Trillian.\n"
 "\n"
 "WAARSCHUWING: Deze plugin is testcode en kan (regelmatig) crashen. Op eigen risico dus!"
 
@@ -4460,7 +4460,7 @@ msgstr "Vrouw"
 
 #: ../libpurple/protocols/gg/gg.c:662
 msgid "Only online"
-msgstr "Alleen on-line"
+msgstr "Alleen online"
 
 #: ../libpurple/protocols/gg/gg.c:666
 #: ../libpurple/protocols/gg/gg.c:667
@@ -4689,7 +4689,7 @@ msgstr "Gadu-Gadu-protocol-plugin"
 #. summary
 #: ../libpurple/protocols/gg/gg.c:2194
 msgid "Polish popular IM"
-msgstr "Populaire Poolse client voor Expresberichten"
+msgstr "Populaire Poolse client voor berichten"
 
 #: ../libpurple/protocols/gg/gg.c:2248
 msgid "Gadu-Gadu User"
@@ -4965,7 +4965,7 @@ msgstr "Inactief in"
 
 #: ../libpurple/protocols/irc/msgs.c:389
 msgid "Online since"
-msgstr "On-line sinds"
+msgstr "Online sinds"
 
 #: ../libpurple/protocols/irc/msgs.c:393
 msgid "<b>Defining adjective:</b>"
@@ -9059,7 +9059,7 @@ msgstr ""
 #: ../pidgin/gtkutils.c:2485
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:336
 msgid "Buddy Icon"
-msgstr "Contactplaatje"
+msgstr "pictogram"
 
 #: ../libpurple/protocols/oscar/oscar.c:645
 msgid "Voice"
@@ -9489,7 +9489,7 @@ msgstr "Gebruikersinformatie niet beschikbaar: %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3151
 msgid "Online Since"
-msgstr "On-line sinds"
+msgstr "Online sinds"
 
 #: ../libpurple/protocols/oscar/oscar.c:3156
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1188
@@ -10405,7 +10405,7 @@ msgstr "Ongeldige bijnaam"
 #: ../libpurple/protocols/qq/qq.c:515
 #, c-format
 msgid "<b>Current Online</b>: %d<br>\n"
-msgstr "<b>Nu on-line</b>: %d<br>\n"
+msgstr "<b>Nu online</b>: %d<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:516
 #, c-format
@@ -12284,7 +12284,7 @@ msgstr "Uw huidige status"
 #: ../libpurple/protocols/silc/silc.c:1025
 #: ../libpurple/protocols/silc10/silc.c:726
 msgid "Online Services"
-msgstr "On-line diensten"
+msgstr "Online diensten"
 
 #: ../libpurple/protocols/silc/silc.c:1028
 #: ../libpurple/protocols/silc10/silc.c:729
@@ -12310,12 +12310,12 @@ msgstr "Tijdzone (UTC)"
 #: ../libpurple/protocols/silc10/silc.c:754
 #: ../libpurple/protocols/silc10/silc.c:755
 msgid "User Online Status Attributes"
-msgstr "On-line gebruikersgegevens"
+msgstr "Online gebruikersgegevens"
 
 #: ../libpurple/protocols/silc/silc.c:1053
 #: ../libpurple/protocols/silc10/silc.c:756
 msgid "You can let other users see your online status information and your personal information. Please fill the information you would like other users to see about yourself."
-msgstr "U kunt andere gebruikers uw on-line gegevens lateninzien. Geef de informatie waarvan u vind dat anderen die mogen zien."
+msgstr "U kunt andere gebruikers uw online gegevens laten inzien. Geef de informatie waarvan u vind dat anderen die mogen zien."
 
 #: ../libpurple/protocols/silc/silc.c:1094
 #: ../libpurple/protocols/silc/silc.c:1100
@@ -12387,7 +12387,7 @@ msgstr "Sleutelpaar aanmaken"
 #: ../libpurple/protocols/silc/silc.c:1308
 #: ../libpurple/protocols/silc10/silc.c:1009
 msgid "Online Status"
-msgstr "On-line status"
+msgstr "Online status"
 
 #: ../libpurple/protocols/silc/silc.c:1316
 #: ../libpurple/protocols/silc10/silc.c:1017
@@ -13275,7 +13275,7 @@ msgstr "Niet in de serverlijst"
 #: ../libpurple/protocols/yahoo/yahoo.c:3297
 #: ../libpurple/protocols/yahoo/yahoo.c:3355
 msgid "Appear Online"
-msgstr "On-line weergeven"
+msgstr "Online weergeven"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3300
 #: ../libpurple/protocols/yahoo/yahoo.c:3376
@@ -14041,11 +14041,11 @@ msgstr "Expresberichten"
 
 #: ../pidgin.desktop.in.h:2
 msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Expresberichten"
+msgstr "Pidgin Internet Messenger"
 
 #: ../pidgin.desktop.in.h:3
 msgid "Send instant messages over multiple protocols"
-msgstr "Multi-protocol programma voor expresberichten"
+msgstr "Stuur chatberichten over verschillende diensten."
 
 #: ../pidgin/eggtrayicon.c:128
 msgid "Orientation"
@@ -14423,11 +14423,11 @@ msgstr "/Contacten/Weergave/Inactieve _tijden"
 
 #: ../pidgin/gtkblist.c:3252
 msgid "/Buddies/Show/_Protocol Icons"
-msgstr "/Contacten/Weergave/_Protocol plaatjes"
+msgstr "/Contacten/Weergave/_Protocol pictogrammen"
 
 #: ../pidgin/gtkblist.c:3253
 msgid "/Buddies/_Sort Buddies"
-msgstr "/Contacten/Contacten _Sorteren"
+msgstr "/Contacten/Contacten _sorteren"
 
 #: ../pidgin/gtkblist.c:3255
 msgid "/Buddies/_Add Buddy..."
@@ -14507,7 +14507,7 @@ msgstr "/_Hulp"
 
 #: ../pidgin/gtkblist.c:3281
 msgid "/Help/Online _Help"
-msgstr "/Hulp/On-line _hulp"
+msgstr "/Hulp/Online _hulp"
 
 #: ../pidgin/gtkblist.c:3282
 msgid "/Help/_Debug Window"
@@ -14571,7 +14571,7 @@ msgstr "Rocken"
 
 #: ../pidgin/gtkblist.c:3552
 msgid "Total Buddies"
-msgstr "Totaa aantal contacten"
+msgstr "Aantal contacten"
 
 #: ../pidgin/gtkblist.c:3914
 #, c-format
@@ -14722,7 +14722,7 @@ msgstr "/Contacten/Weergave/Inactieve tijden"
 
 #: ../pidgin/gtkblist.c:5599
 msgid "/Buddies/Show/Protocol Icons"
-msgstr "/Contacten/Weergave/Protocol plaatjes"
+msgstr "/Contacten/Weergave/Protocol pictogrammen"
 
 #: ../pidgin/gtkblist.c:6565
 msgid "Add a buddy.\n"
@@ -14813,7 +14813,7 @@ msgstr "Onbekende opdracht."
 #: ../pidgin/gtkconv.c:770
 #: ../pidgin/gtkconv.c:797
 msgid "That buddy is not on the same protocol as this chat."
-msgstr "Die gebruiker is niet on-line met hetzelfde protocol als het chatgesprek"
+msgstr "Die gebruiker is niet online met hetzelfde protocol als het chatgesprek"
 
 #: ../pidgin/gtkconv.c:791
 msgid "You are not currently signed on with an account that can invite that buddy."
@@ -14876,7 +14876,7 @@ msgstr "Laatst gezegd"
 
 #: ../pidgin/gtkconv.c:2730
 msgid "Unable to save icon file to disk."
-msgstr "Kan contactplaatje niet opslaan op schijf."
+msgstr "Kan pictogram niet opslaan op schijf."
 
 #: ../pidgin/gtkconv.c:2829
 msgid "Save Icon"
@@ -15513,7 +15513,7 @@ msgstr "Georgisch"
 
 #: ../pidgin/gtkdialogs.c:183
 msgid "Ubuntu Georgian Translators"
-msgstr "Ubuntu Georgische Vertaleers"
+msgstr "Ubuntu Georgische Vertalers"
 
 #: ../pidgin/gtkdialogs.c:184
 msgid "Kannada"
@@ -15702,7 +15702,7 @@ msgstr "Over %s"
 #: ../pidgin/gtkdialogs.c:401
 #, c-format
 msgid "%s is a graphical modular messaging client based on libpurple which is capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
-msgstr "%s is een modulair programma voor expresberichten en kan gebruik maken van de netwerken van AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and QQ en nog allemaal tegelijk ook. Het is geschreven met behulp van GTK+. <BR><BR>U mag het programma aanpassen en verspreiden als u zich houdt aan de GPL (versie 2 of nieuwer). Er is een kopie van deze licentie meegeleverd in het bestandje 'COPYING' geleverd met %s. Het copyright van %s ligt bij de mensen die  hiereen hebben meegewerkt. Zie voor een volledige lijst van de bijdragers het bestand 'COPYRIGHT'. Dit programma wordt geleverd zonder enige garantie.<BR><BR>"
+msgstr "%s is een grafisch modulair programma voor chatberichten en kan tegelijkertijd gebruik maken van de netwerken: AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, en QQ. Pidgin is geschreven met behulp van GTK+. <BR><BR>U mag het programma aanpassen en verspreiden als u zich houdt aan de GPL (versie 2 of nieuwer). Er is een kopie van deze licentie meegeleverd in het bestand 'COPYING' geleverd met %s. Het copyright van %s ligt bij de mensen die hier aan hebben meegewerkt. Zie voor een volledige lijst van de bijdragers het bestand 'COPYRIGHT'. Dit programma wordt geleverd zonder enige garantie.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:419
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
@@ -15718,7 +15718,7 @@ msgstr "Gestoorde patch-schrijvers"
 
 #: ../pidgin/gtkdialogs.c:454
 msgid "Retired Developers"
-msgstr "Ex-ontwikkelaars"
+msgstr "Gestopte ontwikkelaars"
 
 #: ../pidgin/gtkdialogs.c:469
 msgid "Retired Crazy Patch Writers"
@@ -15734,7 +15734,7 @@ msgstr "Huidige vertalers"
 
 #: ../pidgin/gtkdialogs.c:519
 msgid "Past Translators"
-msgstr "Ex-vertalers"
+msgstr "Gestopte vertalers"
 
 #: ../pidgin/gtkdialogs.c:537
 msgid "Debugging Information"
@@ -15894,7 +15894,7 @@ msgstr "Geluiden _dempen"
 
 #: ../pidgin/gtkdocklet.c:734
 msgid "_Blink on New Message"
-msgstr "Bij nieuw bericht _knipperen..."
+msgstr "_Knipperen bij nieuw bericht..."
 
 #: ../pidgin/gtkdocklet.c:744
 msgid "_Quit"
@@ -16796,7 +16796,7 @@ msgstr "Laat ge_detaileerde informatie zien"
 
 #: ../pidgin/gtkprefs.c:1052
 msgid "Enable buddy ic_on animation"
-msgstr "Bewegende _contactplaatjes weergeven"
+msgstr "Bewegende _pictograms weergeven"
 
 #: ../pidgin/gtkprefs.c:1059
 msgid "_Notify buddies that you are typing to them"
@@ -17364,7 +17364,7 @@ msgstr "Smiley toevoegen"
 
 #: ../pidgin/gtksmiley.c:367
 msgid "Smiley _Image"
-msgstr "_Smiley-aafbeelding"
+msgstr "_Smiley-afbeelding"
 
 #. Smiley shortcut
 #: ../pidgin/gtksmiley.c:398
@@ -17373,11 +17373,11 @@ msgstr "Sneltoets smiley"
 
 #: ../pidgin/gtksmiley.c:494
 msgid "Smiley"
-msgstr "Smiley"
+msgstr "Eigen smileys"
 
 #: ../pidgin/gtksmiley.c:691
 msgid "Custom Smiley Manager"
-msgstr "Beheer eigen smileys"
+msgstr "Eigen smileys beheren"
 
 #: ../pidgin/gtkstatusbox.c:689
 msgid "Waiting for network connection"
@@ -17393,7 +17393,7 @@ msgstr "Opgeslagen statussen..."
 
 #: ../pidgin/gtkstatusbox.c:1782
 msgid "Status Selector"
-msgstr "Status-selectieveld"
+msgstr "Statusselectie"
 
 #: ../pidgin/gtkutils.c:685
 msgid "Google Talk"
@@ -17428,12 +17428,12 @@ msgstr "Je hebt een afbeelding hierheen gesleept"
 
 #: ../pidgin/gtkutils.c:1596
 msgid "You can send this image as a file transfer, embed it into this message, or use it as the buddy icon for this user."
-msgstr "U kunt deze afbeelding overzenden, in dit gesprek invoegen, of als contactplaatje gebruiken voor deze gebruiker."
+msgstr "U kunt deze afbeelding overzenden, in dit gesprek invoegen, of als pictogram gebruiken voor deze gebruiker."
 
 #: ../pidgin/gtkutils.c:1602
 #: ../pidgin/gtkutils.c:1622
 msgid "Set as buddy icon"
-msgstr "Instellen als contactplaatje"
+msgstr "Instellen als pictogram"
 
 #: ../pidgin/gtkutils.c:1603
 #: ../pidgin/gtkutils.c:1623
@@ -17447,15 +17447,15 @@ msgstr "Invoegen in gesprek"
 
 #: ../pidgin/gtkutils.c:1608
 msgid "Would you like to set it as the buddy icon for this user?"
-msgstr "Wilt u het instellen als het contactplaatje van deze gebruiker?"
+msgstr "Wilt u het instellen als het pictogram van deze gebruiker?"
 
 #: ../pidgin/gtkutils.c:1615
 msgid "You can send this image as a file transfer, or use it as the buddy icon for this user."
-msgstr "U kunt deze afbeelding verzenden via bestandsoverdracht, in dit gesprek invoegen, of als contactplaatje gebruiken voor deze gebruiker."
+msgstr "U kunt deze afbeelding verzenden via bestandsoverdracht, in dit gesprek invoegen, of als pictogram gebruiken voor deze gebruiker."
 
 #: ../pidgin/gtkutils.c:1616
 msgid "You can insert this image into this message, or use it as the buddy icon for this user"
-msgstr "U kunt deze afbeelding in dit gesprek invoegen, of als contactplaatje gebruiken voor deze gebruiker."
+msgstr "U kunt deze afbeelding in dit gesprek invoegen, of als pictogram gebruiken voor deze gebruiker."
 
 #. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
 #. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
@@ -18032,7 +18032,7 @@ msgstr "Muzieksessie geaccepteerd."
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:430
 msgid "Music Messaging"
-msgstr "Expresberichten met muziek"
+msgstr "Berichten met muziek"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:431
 msgid "There was a conflict in running the command:"
@@ -18049,7 +18049,7 @@ msgstr "De volgende fout is opgetreden:"
 #. Configuration frame
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:639
 msgid "Music Messaging Configuration"
-msgstr "Instellingen voor expresberichten met muziek"
+msgstr "Instellingen voor berichten met muziek"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:643
 msgid "Score Editor Path"
@@ -18210,7 +18210,7 @@ msgstr ""
 "Dit is een erg gave plugin die een hoop dingen doet:\n"
 "- Het vertelt je wie het programma geschreven heeft bij aanmelden\n"
 "- Het keert alle binnenkomende tekst om\n"
-"- Het stuurt direct een bericht naar mensen wanneer ze on-line komen"
+"- Het stuurt direct een bericht naar mensen wanneer ze online komen"
 
 #: ../pidgin/plugins/pidginrc.c:49
 msgid "Cursor Color"
@@ -19000,7 +19000,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "/Options/Show Buddy _Icon"
 #~ msgstr "/Opties/Contact_plaatjes weergeven"
 #~ msgid "/Options/Show Buddy Icon"
-#~ msgstr "/Opties/Contactplaatjes weergeven"
+#~ msgstr "/Opties/pictograms weergeven"
 #~ msgid "Timestamps"
 #~ msgstr "Tijd in gesprek"
 #~ msgid "Jabber developer"
@@ -19036,7 +19036,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "or use it as the buddy icon for this user."
 #~ msgstr ""
 #~ "U kunt deze afbeelding overzenden, in dit gesprek invoegen, of als "
-#~ "contactplaatje gebruiken voor deze gebruiker."
+#~ "pictogram gebruiken voor deze gebruiker."
 #~ msgid "Error initializing libdbi."
 #~ msgstr "Fout bij initialiseren van libdbi."
 #~ msgid "Contact Availability Prediction Configuration"
@@ -19355,7 +19355,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Block invites"
 #~ msgstr "Uitnodigingen blokkeren"
 #~ msgid "Reject online status attribute requests"
-#~ msgstr "Opvragen van uw on-line status weigeren"
+#~ msgstr "Opvragen van uw online status weigeren"
 #~ msgid "Wrong Password"
 #~ msgstr "Wachtwoord onjuist"
 #~ msgid "TOC has sent a PAUSE command."
@@ -20488,7 +20488,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "DBus"
 #~ msgstr "DBus"
 #~ msgid "Buddy icon:"
-#~ msgstr "Contactplaatje:"
+#~ msgstr "pictogram:"
 #~ msgid "IM the user"
 #~ msgstr "Gebruiker IM sturen"
 #~ msgid "Ignore the user"
@@ -20757,7 +20757,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Roomlist Error"
 #~ msgstr "Fout in lijst avn ruimtes"
 #~ msgid "Update Buddy Icon"
-#~ msgstr "Contactplaatje bijwerken"
+#~ msgstr "pictogram bijwerken"
 #~ msgid "Syncing with server"
 #~ msgstr "Synchronisatie met server"
 #~ msgid "MSN error for account %s"
