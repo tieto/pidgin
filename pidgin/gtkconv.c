@@ -6381,7 +6381,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* check if account support voice calls, and if the current buddy
 			supports it */
 		if (account != NULL && purple_conversation_get_type(conv)
-					== PURPLE_CONV_TYPE_IM) {
+					== PURPLE_CONV_TYPE_IM
+					&& gtkconv->gtkmedia == NULL) {
 			gboolean audio = purple_prpl_can_do_media(account,
 					purple_conversation_get_name(conv),
 					PURPLE_MEDIA_AUDIO);
@@ -7732,6 +7733,13 @@ menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget
 }
 
 static void
+pidgin_conv_gtkmedia_destroyed(GtkWidget *widget, PidginConversation *gtkconv)
+{
+	gtk_widget_destroyed(widget, &(gtkconv->gtkmedia));
+	gray_stuff_out(gtkconv);
+}
+
+static void
 pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpointer nul)
 {
 	GtkWidget *gtkmedia;
@@ -7751,10 +7759,13 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
 
 	gtkconv->gtkmedia = gtkmedia;
-	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(gtk_widget_destroyed), &(gtkconv->gtkmedia));
+	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(
+			pidgin_conv_gtkmedia_destroyed), gtkconv);
 
 	gtk_paned_pack2(GTK_PANED(gtkconv->middle_hpaned),
 			pidgin_media_get_display_widget(gtkmedia), FALSE, TRUE);
+
+	gray_stuff_out(gtkconv);
 }
 
 #endif

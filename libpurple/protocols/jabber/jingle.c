@@ -1414,6 +1414,13 @@ jabber_jingle_session_parse(JabberStream *js, xmlnode *packet)
 			purple_debug_error("jingle", "Jingle session with "
 					"id={%s} already exists\n", sid);
 			/* send iq error */
+		} else if ((session = jabber_jingle_session_find_by_jid(js,
+				xmlnode_get_attrib(packet, "from")))) {
+			purple_debug_fatal("jingle", "Jingle session with "
+					"jid={%s} already exists\n",
+					xmlnode_get_attrib(packet, "from"));
+			/* send jingle redirect packet */
+			return;
 		} else {
 			session = jabber_jingle_session_create_by_id(js, sid);
 			jabber_jingle_session_handle_session_initiate(session, jingle);
