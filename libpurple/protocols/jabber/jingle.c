@@ -277,7 +277,8 @@ jabber_jingle_session_find_by_id(JabberStream *js, const char *id)
 static JingleSession *
 jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid)
 {
-	GList *values = g_hash_table_get_values(js->sessions);
+	GList *values = (js->sessions) ? 
+			g_hash_table_get_values(js->sessions) : NULL;
 	gboolean use_bare = strchr(jid, '/') == NULL;
 
 	for (; values; values = g_list_delete_link(values, values)) {
