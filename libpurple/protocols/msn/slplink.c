@@ -27,6 +27,8 @@
 #include "switchboard.h"
 #include "slp.h"
 
+#define MSN_DEBUG_SLPLINK
+
 void msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 
 #ifdef MSN_DEBUG_SLP_FILES
