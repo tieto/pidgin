@@ -25,6 +25,7 @@ SMILEYS = 	act-up.png \
     car.png \
     cat.png \
     chicken.png \
+    cigarette.png \
     clap.png \
     clock.png \
     cloudy.png \
@@ -147,7 +148,6 @@ SMILEYS = 	act-up.png \
     shut-mouth.png \
     sick.png \
     sidefrown.png \
-    sigarette.png \
     silly.png \
     sinister.png \
     skeleton.png \
