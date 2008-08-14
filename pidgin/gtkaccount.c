@@ -144,6 +144,8 @@ static GHashTable *account_pref_wins;
 static void add_account_to_liststore(PurpleAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  PurpleAccount *account, GdkPixbuf *global_buddyicon);
+static void add_login_options_continue(PurpleAccount * account, 
+	const gchar * password, GError * error, gpointer user_data);
 
 /**************************************************************************
  * Add/Modify Account dialog
@@ -390,9 +392,33 @@ update_editable(PurpleConnection *gc, AccountPrefsDialog *dialog)
 		gtk_widget_set_sensitive((GtkWidget *)l->data, set);
 }
 
+typedef struct _AddLoginOptionsCalbackData {
+	AccountPrefsDialog *dialog;
+	GtkWidget *parent;
+} AddLoginOptionsCallbackData;
+
 static void
 add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
+
+	AddLoginOptionsCallbackData *data;
+	data = g_new(AddLoginOptionsCallbackData, 1);
+
+	data->dialog = dialog;
+	data->parent = parent;
+
+	purple_account_get_password_async(dialog->account, add_login_options_continue, data);
+}
+
+static void
+add_login_options_continue(PurpleAccount * account,
+			   const gchar * password,
+			   GError * error,
+			   gpointer user_data)
+{
+	AddLoginOptionsCallbackData * data = user_data;
+	AccountPrefsDialog *dialog = data->dialog;
+	GtkWidget *parent = data->parent;
 	GtkWidget *frame;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -402,7 +428,10 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
-	char *password = NULL;
+
+	/* XXX : report error ? */
+	if (error)
+		g_error_free(error);
 
 	if (dialog->protocol_menu != NULL)
 	{
@@ -562,7 +591,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		password = purple_account_get_password(dialog->account);
 
 		if (password)
 			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), password);

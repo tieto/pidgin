@@ -67,8 +67,8 @@ typedef struct _PurpleKeyring PurpleKeyring;				/* public (for now) */
  * @param error Error that could have occured. Must be freed by the calling function.
  * @param data Data passed to the callback.
  */
-typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account,
-					  const gchar * password,
+typedef void (*PurpleKeyringReadCallback)(PurpleAccount * account,
+					  gchar * password,
 					  GError * error,
 					  gpointer data);
 

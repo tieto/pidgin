@@ -58,6 +58,9 @@ typedef struct
 
 static FinchAccountList accounts;
 
+static void edit_account_continue(PurpleAccount * account, 
+	const gchar * password, GError * error, gpointer user_data);
+
 typedef struct
 {
 	PurpleAccount *account;          /* NULL for a new account */
@@ -173,9 +176,9 @@ save_account_cb(AccountEditDialog *dialog)
 			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->remember)));
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->password));
 	if (value && *value)
-		purple_account_set_password(account, value);
+		purple_account_set_password_async(account, g_strdup(value), g_free, NULL, NULL);
 	else
-		purple_account_set_password(account, NULL);
+		purple_account_set_password_async(account, NULL, NULL, NULL, NULL);
 
 	/* Mail notification */
 	purple_account_set_check_mail(account,
@@ -484,10 +487,20 @@ prpl_changed_cb(GntWidget *combo, PurplePlugin *old, PurplePlugin *new, AccountE
 static void
 edit_account(PurpleAccount *account)
 {
+	purple_account_get_password_async(account, edit_account_continue, account);
+}
+
+static void
+edit_account_continue(PurpleAccount * account, 
+	const gchar * password, GError * error, gpointer user_data)
+{
 	GntWidget *window, *hbox;
 	GntWidget *combo, *button, *entry;
 	GList *list, *iter;
 	AccountEditDialog *dialog;
+
+	if (error)
+		g_error_free(error);
 
 	if (account)
 	{
@@ -563,7 +576,7 @@ edit_account(PurpleAccount *account)
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Password:")));
 	gnt_box_add_widget(GNT_BOX(hbox), entry);
 	if (account)
-		gnt_entry_set_text(GNT_ENTRY(entry), purple_account_get_password(account));
+		gnt_entry_set_text(GNT_ENTRY(entry), password);
 
 	hbox = gnt_hbox_new(TRUE);
 	gnt_box_set_pad(GNT_BOX(hbox), 0);

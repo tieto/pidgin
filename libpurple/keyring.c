@@ -1,6 +1,8 @@
 /**
  * @file keyring.c Keyring plugin API
  * @ingroup core
+ * @todo ? : add dummy callback to all calls to prevent poorly written
+ * plugins from segfaulting on NULL callback ?
  */
 
 /* purple
@@ -32,6 +34,7 @@
 #include "core.h"
 #include "debug.h"
 
+typedef struct _PurpleKeyringCbInfo PurpleKeyringCbInfo;
 typedef struct _PurpleKeyringChangeTracker PurpleKeyringChangeTracker;
 
 static void purple_keyring_pref_cb(const char *, PurplePrefType, gconstpointer, gpointer);
@@ -74,6 +77,12 @@ struct _PurpleKeyringChangeTracker
 	gboolean finished;
 	gboolean abort;
 	gboolean force;
+};
+
+struct _PurpleKeyringCbInfo
+{
+	gpointer cb;
+	gpointer data;
 };
 
 /* Constructor */
@@ -279,8 +288,6 @@ purple_keyring_set_export_password(PurpleKeyring * keyring, PurpleKeyringExportP
 
 /***************************************/
 /** @name Keyring API                  */
-/** @todo (maybe)                      */
-/**  - rename as purple_keyrings       */
 /***************************************/
 /*@{*/
 
@@ -375,7 +382,6 @@ purple_keyring_get_inuse()
 
 
 /* fire and forget */
-/** @todo ? : add dummy callback ? */
 static void
 purple_keyring_drop_passwords(const PurpleKeyring * keyring)
 {
@@ -451,10 +457,7 @@ purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 	if (tracker->finished == TRUE && tracker->read_outstanding == 0) {
 	
 		if (tracker->abort == TRUE && tracker->force == FALSE) {
-			/**
-			 * TODO :
-			 *  - create faulty keyring to test this code.
-			 */
+
 			if (tracker->cb != NULL)
 				tracker->cb(tracker->old, FALSE, tracker->error, tracker->data);
 
@@ -467,8 +470,8 @@ purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 			purple_debug_info("keyring",
 				"Failed to change keyring, aborting");
 
-			/* FIXME : this should maybe be in a callback
-			 *  cancel the prefs change 
+			/**
+			 * FIXME : call purple_notify()
 			 */
 			purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
 			purple_prefs_set_string("/purple/keyring/active",
@@ -664,7 +667,7 @@ purple_keyring_pref_cb(const char *pref,
 	new = purple_keyring_get_keyring_by_id(id);
 	g_return_if_fail(new != NULL);
 
-	purple_keyring_set_inuse(new, FALSE, NULL, data);	/* FIXME Maybe this should have a callback that can cancel the action */
+	purple_keyring_set_inuse(new, FALSE, NULL, data);
 
 	return;
 }
@@ -733,7 +736,6 @@ purple_keyring_register(PurpleKeyring * keyring)
 
 		purple_debug_info("keyring", "Keyring %s matches keyring to use, using it.\n",
 			keyring->id);
-		/** @todo add callback to make sure all is ok */
 		purple_keyring_set_inuse(keyring, TRUE, NULL, NULL);
 
 	}
@@ -771,7 +773,6 @@ purple_keyring_unregister(PurpleKeyring * keyring)
 
 	if (inuse == keyring) {
 		if (inuse != fallback) {
-			/* TODO : check result ? */
 			purple_keyring_set_inuse(fallback, TRUE, NULL, NULL);
 
 		} else {
@@ -783,7 +784,7 @@ purple_keyring_unregister(PurpleKeyring * keyring)
 	purple_keyring_keyrings = g_list_remove(purple_keyring_keyrings,
 		keyring);
 
-	//purple_debug_info("keyring", "Keyring %s unregistered", keyring->id);
+	purple_debug_info("keyring", "Keyring %s unregistered", keyring->id);
 }
 
 
@@ -971,6 +972,7 @@ purple_keyring_set_password_async(const PurpleAccount * account,
 	GError * error = NULL;
 	const PurpleKeyring * inuse;
 	PurpleKeyringSave save;
+	PurpleKeyringCbInfo * cbinfo;
 
 	if (account == NULL) {
 		error = g_error_new(ERR_PIDGINKEYRING, ERR_INVALID,
@@ -1006,7 +1008,10 @@ purple_keyring_set_password_async(const PurpleAccount * account,
 				g_error_free(error);
 
 			} else {
-				save(account, password, destroypassword, cb, data);
+				cbinfo->cb = cb;
+				cbinfo->data = data;
+				save(account, password, destroypassword,
+					purple_keyring_set_password_async, data);
 			}
 		}
 	}
@@ -1014,7 +1019,22 @@ purple_keyring_set_password_async(const PurpleAccount * account,
 	return;
 }
 
+void 
+purple_keyring_set_password_async_cb(PurpleAccount * account, 
+				     GError * error,
+				     gpointer data)
+{
+	PurpleKeyringCbInfo * cbinfo = data;
+	PurpleKeyringSaveCallback cb = cbinfo->cb;
 
+	if (error != NULL) {
+		/* FIXME : purple_notify_warning() */
+	}
+
+	if (cb != NULL)
+		cb(account, error, cbinfo->data);
+	g_free(data);
+}
 /**
  * This should be dropped at 3.0 (it's here for compatibility)
  */
