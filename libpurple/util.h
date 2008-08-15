@@ -576,6 +576,21 @@ const char * purple_markup_unescape_entity(const char *text, int *length);
 char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
 
 
+/**
+ *
+ * Formats arguments according to @a format, escaping all string and character
+ * arguments in the fashion of g_markup_escape_text(). This is useful when you
+ * want to insert literal strings into XML-style markup output, without having
+ * to worry that the strings might themselves contain markup.
+ *
+ * This exists for Glib backwards compatibility reasons.
+ *
+ * @param format The format
+ *
+ * @return The string
+ */
+char * purple_markup_printf_escaped(const char *format, ...);
+
 /*@}*/
 
 

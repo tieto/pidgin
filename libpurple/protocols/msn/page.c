@@ -53,7 +53,7 @@ msn_page_gen_payload(const MsnPage *page, size_t *ret_size)
 
 	g_return_val_if_fail(page != NULL, NULL);
 
-	str = g_markup_printf_escaped(
+	str = purple_markup_printf_escaped(
 			"<TEXT xml:space=\"preserve\" enc=\"utf-8\">%s</TEXT>",
 			msn_page_get_body(page));
 
