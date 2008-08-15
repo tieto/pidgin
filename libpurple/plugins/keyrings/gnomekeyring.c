@@ -239,6 +239,8 @@ gkp_save_continue(GnomeKeyringResult result,
 	GError * error;
 	PurpleAccount * account = storage->account;
 
+	g_return_if_fail(storage != NULL);
+
 	if (result != GNOME_KEYRING_RESULT_OK) {
 		switch(result)
 		{
@@ -290,6 +292,7 @@ gkp_save_continue(GnomeKeyringResult result,
 
 		if(cb != NULL)
 			cb(account, NULL, storage->user_data);
+
 		return;
 	
 	}

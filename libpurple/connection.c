@@ -443,7 +443,12 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : purple_account_get_password(gc->account);
+	if (gc->password) {
+		return gc->password;
+	} else {
+		purple_debug_info("connection",
+			"Password was unknown, getting password from account");
+		return purple_account_get_password(gc->account);
 }
 
 void
@@ -452,7 +457,7 @@ purple_connection_get_password_async(PurpleConnection *gc,
 				     gpointer data)
 {
 	char * password;
-	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_if_fail(gc != NULL);
 
 	if (gc->password != NULL) {
 		/* casted to prevent warning */
@@ -517,11 +522,9 @@ purple_connection_disconnect_got_pw_cb(PurpleAccount * account,
 				       GError * error,
 				       gpointer data)
 {
-	/* FIXME : handle error */
-	char * pw = g_strdup(password);
-
+	/* FIXME : needs to be async */
 	purple_account_disconnect(account);
-	purple_account_set_password_async(account, g_strdup(pw), g_free, NULL, NULL);
+	purple_account_set_password(account, password);
 }
 
 void

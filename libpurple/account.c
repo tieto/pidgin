@@ -1168,7 +1168,7 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 		purple_account_set_remember_password(account, TRUE);
 
 	/* XXX this might be a problem if a read occurs before the write is finished */
-	purple_account_set_password_async(account, g_strdup(entry), g_free, NULL, NULL);
+	purple_account_set_password(account, entry);
 
 	purple_connection_new(account, FALSE, entry);
 }
@@ -1615,7 +1615,7 @@ purple_account_set_password(PurpleAccount *account, const char *password)
 		account->password = g_strdup(password);
 
 	else
-		purple_keyring_set_password_async(account, g_strdup(password), g_free, NULL, NULL);
+		purple_keyring_set_password_sync(account, password);
 
 	schedule_accounts_save();
 }

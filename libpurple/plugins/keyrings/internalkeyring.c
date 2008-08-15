@@ -146,7 +146,7 @@ internal_keyring_save(PurpleAccount * account,
 
 	}
 
-	if(destroy != NULL)
+	if(destroy && password)
 		destroy(password);
 
 	if (cb != NULL)
