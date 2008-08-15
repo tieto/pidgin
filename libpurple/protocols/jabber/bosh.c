@@ -56,8 +56,31 @@ void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *acco
 	conn->conn_a->userdata = conn;
 }
 
-void jabber_bosh_connection_bood_response(PurpleBOSHConnection *conn, xmlnode *node) {
+void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *node) {
+
+}
+
+void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xmlnode *node) {
+	char *version;
+	if (xmlnode_get_attrib(node, "sid")) {
+		conn->sid = g_strdup(xmlnode_get_attrib(node, "sid"));
+	} else {
+		purple_debug_info("jabber", "Connection manager doesn't behave BOSH-like!\n");
+	}
 	
+	if (version = xmlnode_get_attrib(node, "ver")) {
+		version[1] = 0;
+		if (!(atoi(version) >= 1 && atoi(&version[2]) >= 6)) purple_debug_info("jabber", 	"Unsupported version of BOSH protocol. The connection manager must at least support version 1.6!\n");
+		else {
+			xmlnode *packet = xmlnode_get_child(node, "features");
+			conn->js->use_bosh = TRUE;
+			conn->receive_cb = jabber_bosh_connection_auth_response;
+			jabber_stream_features_parse(conn->js, packet);
+		}
+		version[1] = '.';
+	} else {
+		purple_debug_info("jabber", "Missing version in session creation response!\n");	
+	}
 }
 
 void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -80,12 +103,11 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	xmlnode_set_attrib(init, "rid", tmp = g_strdup_printf("%d", conn->rid));
 	g_free(tmp);
 	xmlnode_set_attrib(init, "wait", "60"); /* this should be adjusted automatically according to real time network behavior */
-	xmlnode_set_attrib(init, "ack", "0");
 	xmlnode_set_attrib(init, "xmlns", "http://jabber.org/protocol/httpbind");
 	xmlnode_set_attrib(init, "hold", "1");
 	
-	conn->receive_cb = jabber_bosh_connection_bood_response;
-	jabber_bosh_connection_send(conn, init);
+	conn->receive_cb = jabber_bosh_connection_boot_response;
+	jabber_bosh_connection_send_native(conn, init);
 }
 
 void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata) {
@@ -100,7 +122,27 @@ void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPR
 }
 
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
+	xmlnode *packet = xmlnode_new("body");
+	char *tmp;
+	conn->rid++;
+	xmlnode_set_attrib(packet, "xmlns", "http://jabber.org/protocol/httpbind");
+	xmlnode_set_attrib(packet, "sid", conn->sid);
+	tmp = g_strdup_printf("%d", conn->rid);
+	xmlnode_set_attrib(packet, "rid", tmp);
+	g_free(tmp);
+	
+	xmlnode_insert_child(packet, node);
+	
+	jabber_bosh_connection_send_native(conn, packet);
+}
+
+void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node) {
 	PurpleHTTPRequest *request = g_new0(PurpleHTTPRequest, 1);
+	
+	char *txt = xmlnode_to_formatted_str(node, NULL);
+	printf("\njabber_bosh_connection_send\n%s\n", txt);
+	g_free(txt);
+	
 	jabber_bosh_http_request_init(request, "POST", g_strdup_printf("/%s", conn->path), jabber_bosh_connection_http_received_cb, conn);
 	jabber_bosh_http_request_add_to_header(request, "Content-Encoding", "text/xml; charset=utf-8");
 	request->data = xmlnode_to_str(node, &(request->data_len));
@@ -177,6 +219,7 @@ static void jabber_bosh_http_connection_receive(gpointer data, gint source, Purp
 					request->cb(request, response, conn->userdata);
 					jabber_bosh_http_request_clean(request);
 					jabber_bosh_http_response_clean(response);
+					conn->current_response = NULL;
 				} else {
 					purple_debug_info("jabber", "received HTTP response but haven't requested anything yet.\n");
 				}

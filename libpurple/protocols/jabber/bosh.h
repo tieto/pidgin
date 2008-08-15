@@ -43,6 +43,8 @@ struct _PurpleBOSHConnection {
     char *passwd;
     
     int rid;
+    char *sid;
+    int wait;
     
     JabberStream *js;
     void *userdata;
@@ -93,6 +95,7 @@ struct _PurpleHTTPResponse {
 
 void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *account, JabberStream *js, char *url);
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn);
+void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node);
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node);
 
 void jabber_bosh_http_connection_init(PurpleHTTPConnection *conn, PurpleAccount *account, char *host, int port);

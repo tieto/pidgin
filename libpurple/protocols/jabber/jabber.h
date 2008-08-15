@@ -204,6 +204,7 @@ struct _JabberStream
 	int keepalive_timeout;
 	
 	/* BOSH stuff*/
+    gboolean use_bosh;
     PurpleBOSHConnection bosh;
 };
 

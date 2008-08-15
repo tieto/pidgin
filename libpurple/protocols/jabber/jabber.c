@@ -145,7 +145,7 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 	jabber_session_init(js);
 }
 
-static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
+void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
 	if(xmlnode_get_child(packet, "starttls")) {
 		if(jabber_process_starttls(js, packet))
@@ -388,9 +388,13 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	if(NULL == packet)
 		return;
 
-	txt = xmlnode_to_str(packet, &len);
-	jabber_send_raw(js, txt, len);
-	g_free(txt);
+	if (js->use_bosh) {
+		jabber_bosh_connection_send(&(js->bosh), packet);
+	} else {
+		txt = xmlnode_to_str(packet, &len);
+		jabber_send_raw(js, txt, len);
+		g_free(txt);
+	}
 }
 
 static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
