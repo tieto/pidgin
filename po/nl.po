@@ -59,7 +59,7 @@ msgstr ""
 #: ../pidgin/gtkmain.c:736
 #, c-format
 msgid "%s encountered errors migrating your settings from %s to %s. Please investigate and complete the migration by hand. Please report this error at http://developer.pidgin.im"
-msgstr "%s zorgde voor fouten tijdens het verplaatsen van je instellingen van %s naar %s. Verplaats het alstublieft handmatig. Rapporteer deze fout alstublieft op http://developer.pidgin.im"
+msgstr "%s zorgde voor fouten tijdens het verplaatsen van je instellingen van %s naar %s. Verplaats het handmatig. Rapporteer deze fout alstublieft op http://developer.pidgin.im"
 
 #: ../finch/gntaccount.c:126
 #: ../finch/gntaccount.c:505
@@ -407,7 +407,7 @@ msgid ""
 "Online: %d\n"
 "Total: %d"
 msgstr ""
-"On-line: %d\n"
+"Online: %d\n"
 "Totaal: %d"
 
 #: ../finch/gntblist.c:274
@@ -571,7 +571,7 @@ msgstr "Groep"
 #: ../finch/gntblist.c:742
 #: ../finch/gntblist.c:1150
 msgid "Auto-join"
-msgstr "Auto-deelnemen"
+msgstr "Automatisch deelnemen"
 
 #: ../finch/gntblist.c:745
 #: ../finch/gntblist.c:1185
@@ -590,7 +590,7 @@ msgstr "Fout bij toevoegen van groep"
 
 #: ../finch/gntblist.c:760
 msgid "You must give a name for the group to add."
-msgstr "Geef alsjeblieft de naam van de toe te voegen groep."
+msgstr "Geef de naam van de toe te voegen groep."
 
 #: ../finch/gntblist.c:773
 msgid "A group with the name already exists."
@@ -645,7 +645,7 @@ msgstr "Verkrijg info"
 
 #: ../finch/gntblist.c:1253
 msgid "Add Buddy Pounce"
-msgstr "Contact-alarm toevoegen"
+msgstr "Contactalarm toevoegen"
 
 #. if (q_bud && is_online(q_bud->status)) {
 #: ../finch/gntblist.c:1260
@@ -827,7 +827,7 @@ msgstr "Deblokkeren"
 
 #: ../finch/gntblist.c:2657
 msgid "Please enter the username or alias of the person you would like to Block/Unblock."
-msgstr "Geef alsjeblieft de gebruikersnaam of bijnaam van de persoon wie je wilt Blokkeren/Deblokkeren."
+msgstr "Geef de gebruikersnaam of bijnaam van de persoon wie je wilt Blokkeren/Deblokkeren."
 
 #. Not multiline
 #. Not masked?
@@ -888,12 +888,12 @@ msgstr "OK"
 #: ../finch/gntblist.c:2706
 #: ../pidgin/gtkdialogs.c:766
 msgid "New Instant Message"
-msgstr "Nieuw express-bericht"
+msgstr "Nieuw bericht"
 
 #: ../finch/gntblist.c:2708
 #: ../pidgin/gtkdialogs.c:768
 msgid "Please enter the username or alias of the person you would like to IM."
-msgstr "Geef alsjeblieft de gebruikersnaam van de persoon aan wie je een bericht zou willen sturen."
+msgstr "Geef de gebruikersnaam van de persoon aan wie je een bericht zou willen sturen."
 
 #: ../finch/gntblist.c:2769
 msgid "Channel"
@@ -916,7 +916,7 @@ msgstr "Deelnemen"
 #: ../finch/gntblist.c:2844
 #: ../pidgin/gtkdialogs.c:999
 msgid "Please enter the username or alias of the person whose log you would like to view."
-msgstr "Geef alsjeblieft de gebruikersnaam of bijnaam van de persoon waarvan je het logboek wilt opvragen."
+msgstr "Geef de gebruikersnaam of bijnaam van de persoon waarvan je het logboek wilt opvragen."
 
 #. Create the "Options" frame.
 #: ../finch/gntblist.c:2898
@@ -1247,7 +1247,7 @@ msgid ""
 "Please enter the name of the user you wish to invite,\n"
 "along with an optional invite message."
 msgstr ""
-"Geef alstublieft de bijnaam van de persoon die u wilt uitnodigen,\n"
+"Geef de bijnaam van de persoon die u wilt uitnodigen,\n"
 "eventueel met een uitnodigende tekst."
 
 #: ../finch/gntconv.c:610
@@ -1265,7 +1265,7 @@ msgstr "Tijd in gesprek"
 
 #: ../finch/gntconv.c:638
 msgid "Add Buddy Pounce..."
-msgstr "Contact-alarm toevoegen..."
+msgstr "Contactalarm toevoegen..."
 
 #: ../finch/gntconv.c:652
 msgid "Invite..."
@@ -1760,12 +1760,12 @@ msgstr "Vul een vriend in om een alarm voor in te stellen."
 #: ../finch/gntpounce.c:338
 #: ../pidgin/gtkpounce.c:538
 msgid "New Buddy Pounce"
-msgstr "Nieuw contact-alarm"
+msgstr "Nieuw contactalarm"
 
 #: ../finch/gntpounce.c:338
 #: ../pidgin/gtkpounce.c:538
 msgid "Edit Buddy Pounce"
-msgstr "Contact-alarm bewerken"
+msgstr "Contactalarm bewerken"
 
 #: ../finch/gntpounce.c:343
 msgid "Pounce Who"
@@ -1785,47 +1785,47 @@ msgstr "Contactnaam:"
 #: ../finch/gntpounce.c:386
 #: ../pidgin/gtkpounce.c:606
 msgid "Pounce When Buddy..."
-msgstr "Allarmeren als..."
+msgstr "Alarmeren als contactpersoon..."
 
 #: ../finch/gntpounce.c:388
 msgid "Signs on"
-msgstr "Aanmeldt"
+msgstr "...zich aanmeldt"
 
 #: ../finch/gntpounce.c:389
 msgid "Signs off"
-msgstr "Afmeldt"
+msgstr "...zich afmeldt"
 
 #: ../finch/gntpounce.c:390
 msgid "Goes away"
-msgstr "Weggaat"
+msgstr "...weggaat"
 
 #: ../finch/gntpounce.c:391
 msgid "Returns from away"
-msgstr "Van afwezigheid terugkeert "
+msgstr "...van afwezigheid terugkeert "
 
 #: ../finch/gntpounce.c:392
 msgid "Becomes idle"
-msgstr "Inactief wordt"
+msgstr "...inactief wordt"
 
 #: ../finch/gntpounce.c:393
 msgid "Is no longer idle"
-msgstr "Weer actief wordt"
+msgstr "...weer actief wordt"
 
 #: ../finch/gntpounce.c:394
 msgid "Starts typing"
-msgstr "Start met typen"
+msgstr "...start met typen"
 
 #: ../finch/gntpounce.c:395
 msgid "Pauses while typing"
-msgstr "Pauzeert tijdens het typen"
+msgstr "...pauzeert tijdens het typen"
 
 #: ../finch/gntpounce.c:396
 msgid "Stops typing"
-msgstr "Stopt met typen"
+msgstr "...stopt met typen"
 
 #: ../finch/gntpounce.c:397
 msgid "Sends a message"
-msgstr "Een bericht verstuurt"
+msgstr "...een bericht verstuurt"
 
 #. Create the "Action" frame.
 #: ../finch/gntpounce.c:426
@@ -1878,13 +1878,13 @@ msgstr ""
 #: ../pidgin/gtkpounce.c:1132
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
-msgstr "Wilt u het contact-alarm van %s op %s echt verwijderen?"
+msgstr "Wilt u het contactalarm van %s op %s echt verwijderen?"
 
 #: ../finch/gntpounce.c:708
 #: ../finch/gntui.c:96
 #: ../pidgin/gtkpounce.c:1361
 msgid "Buddy Pounces"
-msgstr "Contact-alarmen"
+msgstr "Contactalarmen"
 
 #: ../finch/gntpounce.c:817
 #: ../pidgin/gtkpounce.c:1460
@@ -1949,7 +1949,7 @@ msgstr "%s heeft u een bericht toegestuurd. (%s)"
 #: ../finch/gntpounce.c:845
 #: ../pidgin/gtkpounce.c:1479
 msgid "Unknown pounce event. Please report this!"
-msgstr "Onbekend contact-alarm. Rapporteer dit alstublieft!"
+msgstr "Onbekend contactalarm. Rapporteer dit alstublieft!"
 
 #: ../finch/gntprefs.c:92
 msgid "Based on keyboard use"
@@ -2367,7 +2367,7 @@ msgstr "Dubbele titel"
 #  Different status message expander
 #: ../finch/gntstatus.c:311
 msgid "Please enter a different title for the status."
-msgstr "Geef alstublieft een andere titel aan de status."
+msgstr "Geef een andere titel aan de status."
 
 #: ../finch/gntstatus.c:452
 msgid "Substatus"
@@ -3849,7 +3849,7 @@ msgid ""
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it at your own risk!"
 msgstr ""
-"Bij het weergeven van logboeken zal deze plugin ook de logboeken van andere clients voor expresberichten tonen. Op dit moment kunnen we dit doen voor Adium, MSN Messenger en Trillian.\n"
+"Bij het weergeven van logboeken zal deze plugin ook de logboeken van andere clients voor berichten tonen. Op dit moment kunnen we dit doen voor Adium, MSN Messenger en Trillian.\n"
 "\n"
 "WAARSCHUWING: Deze plugin is testcode en kan (regelmatig) crashen. Op eigen risico dus!"
 
@@ -4460,7 +4460,7 @@ msgstr "Vrouw"
 
 #: ../libpurple/protocols/gg/gg.c:662
 msgid "Only online"
-msgstr "Alleen on-line"
+msgstr "Alleen online"
 
 #: ../libpurple/protocols/gg/gg.c:666
 #: ../libpurple/protocols/gg/gg.c:667
@@ -4689,7 +4689,7 @@ msgstr "Gadu-Gadu-protocol-plugin"
 #. summary
 #: ../libpurple/protocols/gg/gg.c:2194
 msgid "Polish popular IM"
-msgstr "Populaire Poolse client voor Expresberichten"
+msgstr "Populaire Poolse client voor berichten"
 
 #: ../libpurple/protocols/gg/gg.c:2248
 msgid "Gadu-Gadu User"
@@ -4965,7 +4965,7 @@ msgstr "Inactief in"
 
 #: ../libpurple/protocols/irc/msgs.c:389
 msgid "Online since"
-msgstr "On-line sinds"
+msgstr "Online sinds"
 
 #: ../libpurple/protocols/irc/msgs.c:393
 msgid "<b>Defining adjective:</b>"
@@ -6112,11 +6112,11 @@ msgstr "Registratie ongedaan maken"
 
 #: ../libpurple/protocols/jabber/jabber.c:1079
 msgid "Please fill out the information below to change your account registration."
-msgstr "Vul alstublieft onderstaand formulier in om je account te veranderen."
+msgstr "Vul onderstaand formulier in om je account te veranderen."
 
 #: ../libpurple/protocols/jabber/jabber.c:1082
 msgid "Please fill out the information below to register your new account."
-msgstr "Vul alstublieft onderstaand formulier in om uw nieuwe account te registreren."
+msgstr "Vul onderstaand formulier in om uw nieuwe account te registreren."
 
 #: ../libpurple/protocols/jabber/jabber.c:1090
 #: ../libpurple/protocols/jabber/jabber.c:1091
@@ -6806,7 +6806,7 @@ msgstr "Kan bestand niet verzenden naar %s, niet aangemeld bij gebruikers-aanwez
 #: ../libpurple/protocols/jabber/si.c:1092
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
-msgstr "Geef alstublieft de bron van %s naar degene wie je een bestand wil sturen"
+msgstr "Geef de bron van %s naar degene wie je een bestand wil sturen"
 
 #: ../libpurple/protocols/jabber/si.c:1108
 msgid "Select a Resource"
@@ -8793,7 +8793,7 @@ msgstr "%s lijkt niet aangemeld te zijn en heeft uw bericht niet ontvangen."
 
 #: ../libpurple/protocols/novell/novell.c:2185
 msgid "Unable to connect to server. Please enter the address of the server you wish to connect to."
-msgstr "Kan geen verbinding makenmet server. Geef alstublieft de naam op van de server waarmee u contact wilt maken."
+msgstr "Kan geen verbinding makenmet server. Geef de naam op van de server waarmee u contact wilt maken."
 
 #: ../libpurple/protocols/novell/novell.c:2214
 msgid "Error. SSL support is not installed."
@@ -9059,7 +9059,7 @@ msgstr ""
 #: ../pidgin/gtkutils.c:2485
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:336
 msgid "Buddy Icon"
-msgstr "Contactplaatje"
+msgstr "pictogram"
 
 #: ../libpurple/protocols/oscar/oscar.c:645
 msgid "Voice"
@@ -9323,7 +9323,7 @@ msgstr "Kan verbinding niet initialiseren"
 
 #: ../libpurple/protocols/oscar/oscar.c:2451
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Geef mij alstublieft toestemming zodat ik u kan toevoegen aan mijn contactenlijst."
+msgstr "Geef mij toestemming zodat ik u kan toevoegen aan mijn contactenlijst."
 
 #: ../libpurple/protocols/oscar/oscar.c:2480
 msgid "Authorization Request Message:"
@@ -9331,7 +9331,7 @@ msgstr "Tekst van toestemmingsaanvraag"
 
 #: ../libpurple/protocols/oscar/oscar.c:2481
 msgid "Please authorize me!"
-msgstr "Geef mij alstublieft toestemming"
+msgstr "Geef mij toestemming, alstublieft!"
 
 #: ../libpurple/protocols/oscar/oscar.c:2521
 #: ../libpurple/protocols/oscar/oscar.c:2529
@@ -9489,7 +9489,7 @@ msgstr "Gebruikersinformatie niet beschikbaar: %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3151
 msgid "Online Since"
-msgstr "On-line sinds"
+msgstr "Online sinds"
 
 #: ../libpurple/protocols/oscar/oscar.c:3156
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1188
@@ -9507,7 +9507,7 @@ msgstr "[kan bericht niet weergeven omdat deze ongeldige tekens bevat.]"
 
 #: ../libpurple/protocols/oscar/oscar.c:3602
 msgid "The last action you attempted could not be performed because you are over the rate limit. Please wait 10 seconds and try again."
-msgstr "Uw laatste actie is niet gebeurd omdat uw snelheid te hoog ligt. Wacht alstublieft 10 seconden en probeer het dan nogmaals."
+msgstr "Uw laatste actie is niet gebeurd omdat uw snelheid te hoog ligt. Wacht 10 seconden en probeer het dan nogmaals."
 
 #: ../libpurple/protocols/oscar/oscar.c:3687
 #: ../libpurple/protocols/toc/toc.c:977
@@ -10405,7 +10405,7 @@ msgstr "Ongeldige bijnaam"
 #: ../libpurple/protocols/qq/qq.c:515
 #, c-format
 msgid "<b>Current Online</b>: %d<br>\n"
-msgstr "<b>Nu on-line</b>: %d<br>\n"
+msgstr "<b>Nu online</b>: %d<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:516
 #, c-format
@@ -10768,7 +10768,7 @@ msgstr "Conferentie starten met gebruiker"
 #: ../libpurple/protocols/sametime/sametime.c:3433
 #, c-format
 msgid "Please enter a topic for the new conference, and an invitation message to be sent to %s"
-msgstr "Geef alstublieft een onderwerp voor deze bijeenkomst, en een uitnodiging om naar %s te sturen"
+msgstr "Geef een onderwerp voor deze bijeenkomst, en een uitnodiging om naar %s te sturen"
 
 #: ../libpurple/protocols/sametime/sametime.c:3437
 msgid "New Conference"
@@ -10819,7 +10819,7 @@ msgstr "Geen Sametime communityserver gegeven"
 #: ../libpurple/protocols/sametime/sametime.c:3691
 #, c-format
 msgid "No host or IP address has been configured for the Meanwhile account %s. Please enter one below to continue logging in."
-msgstr "Er is geen computernaam of IP-adres inegsteld in Meanwhile-account %s. Vul hieronder alstublieft een in om dor te gaan met de aanmelding."
+msgstr "Er is geen computernaam of IP-adres inegsteld in Meanwhile-account %s. Vul hieronder één in om door te gaan met de aanmelding."
 
 #: ../libpurple/protocols/sametime/sametime.c:3696
 msgid "Meanwhile Connection Setup"
@@ -11609,7 +11609,7 @@ msgstr "Wachtwoord"
 #: ../libpurple/protocols/silc10/chat.c:596
 #, c-format
 msgid "Please enter the %s channel private group name and passphrase."
-msgstr "Geef alstublieft de %s privé groepsnaam en het wachtwoord."
+msgstr "Geef de %s privé groepsnaam en het wachtwoord."
 
 #: ../libpurple/protocols/silc/chat.c:617
 #: ../libpurple/protocols/silc10/chat.c:598
@@ -12284,7 +12284,7 @@ msgstr "Uw huidige status"
 #: ../libpurple/protocols/silc/silc.c:1025
 #: ../libpurple/protocols/silc10/silc.c:726
 msgid "Online Services"
-msgstr "On-line diensten"
+msgstr "Online diensten"
 
 #: ../libpurple/protocols/silc/silc.c:1028
 #: ../libpurple/protocols/silc10/silc.c:729
@@ -12310,12 +12310,12 @@ msgstr "Tijdzone (UTC)"
 #: ../libpurple/protocols/silc10/silc.c:754
 #: ../libpurple/protocols/silc10/silc.c:755
 msgid "User Online Status Attributes"
-msgstr "On-line gebruikersgegevens"
+msgstr "Online gebruikersgegevens"
 
 #: ../libpurple/protocols/silc/silc.c:1053
 #: ../libpurple/protocols/silc10/silc.c:756
 msgid "You can let other users see your online status information and your personal information. Please fill the information you would like other users to see about yourself."
-msgstr "U kunt andere gebruikers uw on-line gegevens lateninzien. Geef de informatie waarvan u vind dat anderen die mogen zien."
+msgstr "U kunt andere gebruikers uw online gegevens laten inzien. Geef de informatie waarvan u vind dat anderen die mogen zien."
 
 #: ../libpurple/protocols/silc/silc.c:1094
 #: ../libpurple/protocols/silc/silc.c:1100
@@ -12387,7 +12387,7 @@ msgstr "Sleutelpaar aanmaken"
 #: ../libpurple/protocols/silc/silc.c:1308
 #: ../libpurple/protocols/silc10/silc.c:1009
 msgid "Online Status"
-msgstr "On-line status"
+msgstr "Online status"
 
 #: ../libpurple/protocols/silc/silc.c:1316
 #: ../libpurple/protocols/silc10/silc.c:1017
@@ -13275,7 +13275,7 @@ msgstr "Niet in de serverlijst"
 #: ../libpurple/protocols/yahoo/yahoo.c:3297
 #: ../libpurple/protocols/yahoo/yahoo.c:3355
 msgid "Appear Online"
-msgstr "On-line weergeven"
+msgstr "Online weergeven"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3300
 #: ../libpurple/protocols/yahoo/yahoo.c:3376
@@ -14041,11 +14041,11 @@ msgstr "Expresberichten"
 
 #: ../pidgin.desktop.in.h:2
 msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Expresberichten"
+msgstr "Pidgin Internet Messenger"
 
 #: ../pidgin.desktop.in.h:3
 msgid "Send instant messages over multiple protocols"
-msgstr "Multi-protocol programma voor expresberichten"
+msgstr "Stuur chatberichten over verschillende diensten."
 
 #: ../pidgin/eggtrayicon.c:128
 msgid "Orientation"
@@ -14235,7 +14235,7 @@ msgstr "_Lijst Van Ruimtes"
 
 #: ../pidgin/gtkblist.c:1060
 msgid "Please enter the appropriate information about the chat you would like to join.\n"
-msgstr "Geef alstublieft de benodigde informatie van de chat die u wilt openen.\n"
+msgstr "Geef de benodigde informatie van de chat die u wilt openen.\n"
 
 #: ../pidgin/gtkblist.c:1072
 #: ../pidgin/gtkblist.c:6939
@@ -14273,7 +14273,7 @@ msgstr "Bestand _sturen"
 
 #: ../pidgin/gtkblist.c:1450
 msgid "Add Buddy _Pounce..."
-msgstr "_Contact-alarm toevoegen"
+msgstr "_Contactalarm toevoegen"
 
 #: ../pidgin/gtkblist.c:1455
 #: ../pidgin/gtkblist.c:1459
@@ -14341,15 +14341,15 @@ msgstr "_Deelnemen"
 
 #: ../pidgin/gtkblist.c:1618
 msgid "Auto-Join"
-msgstr "Auto-deelnemen"
+msgstr "Automatisch deelnemen"
 
 #: ../pidgin/gtkblist.c:1620
 msgid "Persistent"
-msgstr "Blijvend"
+msgstr "Blijvend deelnemen"
 
 #: ../pidgin/gtkblist.c:1630
 msgid "_Edit Settings..."
-msgstr "Instellingen _Bewerken..."
+msgstr "Instellingen _bewerken..."
 
 #: ../pidgin/gtkblist.c:1664
 #: ../pidgin/gtkblist.c:1689
@@ -14423,11 +14423,11 @@ msgstr "/Contacten/Weergave/Inactieve _tijden"
 
 #: ../pidgin/gtkblist.c:3252
 msgid "/Buddies/Show/_Protocol Icons"
-msgstr "/Contacten/Weergave/_Protocol plaatjes"
+msgstr "/Contacten/Weergave/_Protocol pictogrammen"
 
 #: ../pidgin/gtkblist.c:3253
 msgid "/Buddies/_Sort Buddies"
-msgstr "/Contacten/Contacten _Sorteren"
+msgstr "/Contacten/Contacten _sorteren"
 
 #: ../pidgin/gtkblist.c:3255
 msgid "/Buddies/_Add Buddy..."
@@ -14462,7 +14462,7 @@ msgstr "/E_xtra"
 
 #: ../pidgin/gtkblist.c:3267
 msgid "/Tools/Buddy _Pounces"
-msgstr "/Extra/_Contact-alarm"
+msgstr "/Extra/_Contactalarm"
 
 #: ../pidgin/gtkblist.c:3268
 msgid "/Tools/_Certificates"
@@ -14507,7 +14507,7 @@ msgstr "/_Hulp"
 
 #: ../pidgin/gtkblist.c:3281
 msgid "/Help/Online _Help"
-msgstr "/Hulp/On-line _hulp"
+msgstr "/Hulp/Online _hulp"
 
 #: ../pidgin/gtkblist.c:3282
 msgid "/Help/_Debug Window"
@@ -14571,7 +14571,7 @@ msgstr "Rocken"
 
 #: ../pidgin/gtkblist.c:3552
 msgid "Total Buddies"
-msgstr "Totaa aantal contacten"
+msgstr "Aantal contacten"
 
 #: ../pidgin/gtkblist.c:3914
 #, c-format
@@ -14722,7 +14722,7 @@ msgstr "/Contacten/Weergave/Inactieve tijden"
 
 #: ../pidgin/gtkblist.c:5599
 msgid "/Buddies/Show/Protocol Icons"
-msgstr "/Contacten/Weergave/Protocol plaatjes"
+msgstr "/Contacten/Weergave/Protocol pictogrammen"
 
 #: ../pidgin/gtkblist.c:6565
 msgid "Add a buddy.\n"
@@ -14750,7 +14750,7 @@ msgstr "U bent op het moment niet aangemeld met een protocol die ondersteuning b
 
 #: ../pidgin/gtkblist.c:6929
 msgid "Please enter an alias, and the appropriate information about the chat you would like to add to your buddy list.\n"
-msgstr "Geef alstublieft de bijnaam en andere informatie van de chat die u wilt toevoegen aan de contactlijst.\n"
+msgstr "Geef de bijnaam en andere informatie van de chat die u wilt toevoegen aan de contactlijst.\n"
 
 #: ../pidgin/gtkblist.c:6952
 msgid "A_lias:"
@@ -14766,7 +14766,7 @@ msgstr "Verberg c_hat wanneer de verbinding verbroken wordt."
 
 #: ../pidgin/gtkblist.c:6986
 msgid "Please enter the name of the group to be added."
-msgstr "Geef alstublieft de naam van de toe te voegen groep."
+msgstr "Geef de naam van de toe te voegen groep."
 
 #: ../pidgin/gtkblist.c:7645
 msgid "Enable Account"
@@ -14813,7 +14813,7 @@ msgstr "Onbekende opdracht."
 #: ../pidgin/gtkconv.c:770
 #: ../pidgin/gtkconv.c:797
 msgid "That buddy is not on the same protocol as this chat."
-msgstr "Die gebruiker is niet on-line met hetzelfde protocol als het chatgesprek"
+msgstr "Die gebruiker is niet online met hetzelfde protocol als het chatgesprek"
 
 #: ../pidgin/gtkconv.c:791
 msgid "You are not currently signed on with an account that can invite that buddy."
@@ -14826,7 +14826,7 @@ msgstr "Contact uitnodigen in chatruimte"
 #. Put our happy label in it.
 #: ../pidgin/gtkconv.c:875
 msgid "Please enter the name of the user you wish to invite, along with an optional invite message."
-msgstr "Geef alstublieft de bijnaam van de persoon die u wilt uitnodigen, eventueel met een uitnodigende tekst"
+msgstr "Geef de bijnaam van de persoon die u wilt uitnodigen, eventueel met een uitnodigende tekst"
 
 #: ../pidgin/gtkconv.c:896
 msgid "_Buddy:"
@@ -14876,7 +14876,7 @@ msgstr "Laatst gezegd"
 
 #: ../pidgin/gtkconv.c:2730
 msgid "Unable to save icon file to disk."
-msgstr "Kan contactplaatje niet opslaan op schijf."
+msgstr "Kan pictogram niet opslaan op schijf."
 
 #: ../pidgin/gtkconv.c:2829
 msgid "Save Icon"
@@ -14937,7 +14937,7 @@ msgstr "/Gesprek/Bestand ver_zenden..."
 
 #: ../pidgin/gtkconv.c:3077
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "/Gesprek/_Contact-alarm toevoegen..."
+msgstr "/Gesprek/_Contactalarm toevoegen..."
 
 #: ../pidgin/gtkconv.c:3079
 msgid "/Conversation/_Get Info"
@@ -15032,7 +15032,7 @@ msgstr "/Gesprek/Bestand verzenden..."
 
 #: ../pidgin/gtkconv.c:3394
 msgid "/Conversation/Add Buddy Pounce..."
-msgstr "/Gesprek/Contact-alarm toevoegen..."
+msgstr "/Gesprek/Contactalarm toevoegen..."
 
 #: ../pidgin/gtkconv.c:3400
 msgid "/Conversation/Get Info"
@@ -15513,7 +15513,7 @@ msgstr "Georgisch"
 
 #: ../pidgin/gtkdialogs.c:183
 msgid "Ubuntu Georgian Translators"
-msgstr "Ubuntu Georgische Vertaleers"
+msgstr "Ubuntu Georgische Vertalers"
 
 #: ../pidgin/gtkdialogs.c:184
 msgid "Kannada"
@@ -15702,7 +15702,7 @@ msgstr "Over %s"
 #: ../pidgin/gtkdialogs.c:401
 #, c-format
 msgid "%s is a graphical modular messaging client based on libpurple which is capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
-msgstr "%s is een modulair programma voor expresberichten en kan gebruik maken van de netwerken van AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and QQ en nog allemaal tegelijk ook. Het is geschreven met behulp van GTK+. <BR><BR>U mag het programma aanpassen en verspreiden als u zich houdt aan de GPL (versie 2 of nieuwer). Er is een kopie van deze licentie meegeleverd in het bestandje 'COPYING' geleverd met %s. Het copyright van %s ligt bij de mensen die  hiereen hebben meegewerkt. Zie voor een volledige lijst van de bijdragers het bestand 'COPYRIGHT'. Dit programma wordt geleverd zonder enige garantie.<BR><BR>"
+msgstr "%s is een grafisch modulair programma voor chatberichten en kan tegelijkertijd gebruik maken van de netwerken: AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, en QQ. Pidgin is geschreven met behulp van GTK+. <BR><BR>U mag het programma aanpassen en verspreiden als u zich houdt aan de GPL (versie 2 of nieuwer). Er is een kopie van deze licentie meegeleverd in het bestand 'COPYING' geleverd met %s. Het copyright van %s ligt bij de mensen die hier aan hebben meegewerkt. Zie voor een volledige lijst van de bijdragers het bestand 'COPYRIGHT'. Dit programma wordt geleverd zonder enige garantie.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:419
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
@@ -15718,7 +15718,7 @@ msgstr "Gestoorde patch-schrijvers"
 
 #: ../pidgin/gtkdialogs.c:454
 msgid "Retired Developers"
-msgstr "Ex-ontwikkelaars"
+msgstr "Gestopte ontwikkelaars"
 
 #: ../pidgin/gtkdialogs.c:469
 msgid "Retired Crazy Patch Writers"
@@ -15734,7 +15734,7 @@ msgstr "Huidige vertalers"
 
 #: ../pidgin/gtkdialogs.c:519
 msgid "Past Translators"
-msgstr "Ex-vertalers"
+msgstr "Gestopte vertalers"
 
 #: ../pidgin/gtkdialogs.c:537
 msgid "Debugging Information"
@@ -15758,7 +15758,7 @@ msgstr "Gebruikersinfo"
 
 #: ../pidgin/gtkdialogs.c:907
 msgid "Please enter the username or alias of the person whose info you would like to view."
-msgstr "Geef alsjeblieft de gebruikersnaam of bijnaamvan de persoon waarvan u de informatie wilt opvragen."
+msgstr "Geef de gebruikersnaam of bijnaamvan de persoon waarvan u de informatie wilt opvragen."
 
 #: ../pidgin/gtkdialogs.c:997
 msgid "View User Log"
@@ -15890,11 +15890,11 @@ msgstr "Voork_euren"
 
 #: ../pidgin/gtkdocklet.c:727
 msgid "Mute _Sounds"
-msgstr "Geluiden _dempen"
+msgstr "Geluiden _dempen..."
 
 #: ../pidgin/gtkdocklet.c:734
 msgid "_Blink on New Message"
-msgstr "Bij nieuw bericht _knipperen..."
+msgstr "_Knipperen bij nieuw bericht..."
 
 #: ../pidgin/gtkdocklet.c:744
 msgid "_Quit"
@@ -16210,7 +16210,7 @@ msgstr "Lachen!"
 
 #: ../pidgin/gtkimhtmltoolbar.c:830
 msgid "_Manage custom smileys"
-msgstr "Eigen smiley's _beheren"
+msgstr "Eigen smileys _beheren"
 
 #: ../pidgin/gtkimhtmltoolbar.c:867
 msgid "This theme has no available smileys."
@@ -16274,7 +16274,7 @@ msgstr "Opmaak verwijderen"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1233
 msgid "Insert IM Image"
-msgstr "Chat-afbeelding invoegen"
+msgstr "Afbeelding invoegen"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1234
 msgid "Insert Smiley"
@@ -16286,7 +16286,7 @@ msgstr "<b>_Vet: </b>"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1311
 msgid "<i>_Italic</i>"
-msgstr " <i>(Schuin)</i>"
+msgstr " <i>_Cursief</i>"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1312
 msgid "<u>_Underline</u>"
@@ -16341,7 +16341,7 @@ msgstr "L_achen!"
 
 #: ../pidgin/gtklog.c:245
 msgid "Log Deletion Failed"
-msgstr "Verwijderen Logboek Mislukt"
+msgstr "Logboek verwijderen mislukt"
 
 #: ../pidgin/gtklog.c:246
 msgid "Check permissions and try again."
@@ -16350,17 +16350,17 @@ msgstr "Controleer permissies en probeer het opnieuw."
 #: ../pidgin/gtklog.c:292
 #, c-format
 msgid "Are you sure you want to permanently delete the log of the conversation with %s which started at %s?"
-msgstr "Weet je zeker dat je het logboek van het gesprek in met %s  dat starte op %s permanent wilt verwijderen?"
+msgstr "Weet je zeker dat je het logboek van het gesprek in met %s  dat startte op %s permanent wilt verwijderen?"
 
 #: ../pidgin/gtklog.c:303
 #, c-format
 msgid "Are you sure you want to permanently delete the log of the conversation in %s which started at %s?"
-msgstr "Weet je zeker dat je het logboek van het gesprek in %s  dat starte op %s permanent wilt verwijderen?"
+msgstr "Weet je zeker dat je het logboek van het gesprek in %s  dat startte op %s permanent wilt verwijderen?"
 
 #: ../pidgin/gtklog.c:308
 #, c-format
 msgid "Are you sure you want to permanently delete the system log which started at %s?"
-msgstr "Weet je zeker dat je het systeem-logboek dat starte op %s permanent wilt verwijderen?"
+msgstr "Weet je zeker dat je het systeem-logboek dat startte op %s permanent wilt verwijderen?"
 
 #: ../pidgin/gtklog.c:323
 msgid "Delete Log?"
@@ -16518,7 +16518,7 @@ msgstr[1] "<b>%d nieuwe e-mails.</b>"
 #: ../pidgin/gtknotify.c:1033
 #, c-format
 msgid "The browser command \"%s\" is invalid."
-msgstr "De webbrowseropdracht \"%s\" is ongeldig."
+msgstr "De webbrowser-opdracht \"%s\" is ongeldig."
 
 #: ../pidgin/gtknotify.c:1035
 #: ../pidgin/gtknotify.c:1047
@@ -16597,7 +16597,7 @@ msgstr "Kies een bestand"
 #. Create the "Pounce on Whom" frame.
 #: ../pidgin/gtkpounce.c:553
 msgid "Pounce on Whom"
-msgstr "Wie Alarmeren"
+msgstr "Wie alarmeren"
 
 #: ../pidgin/gtkpounce.c:580
 msgid "_Buddy name:"
@@ -16694,7 +16694,7 @@ msgstr "Kan smileythema niet uitpakken."
 
 #: ../pidgin/gtkprefs.c:593
 msgid "Install Theme"
-msgstr "Installeer Thema"
+msgstr "Installeer thema"
 
 #: ../pidgin/gtkprefs.c:646
 msgid "Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."
@@ -16726,7 +16726,7 @@ msgstr "Bij ongelezen berichten"
 
 #: ../pidgin/gtkprefs.c:950
 msgid "Conversation Window Hiding"
-msgstr "Gesprek-venster Verbergen"
+msgstr "Gespreksvenster verbergen"
 
 #: ../pidgin/gtkprefs.c:951
 msgid "_Hide new IM conversations:"
@@ -16772,11 +16772,11 @@ msgstr "Rechts"
 
 #: ../pidgin/gtkprefs.c:988
 msgid "Left Vertical"
-msgstr "Links vertikaal"
+msgstr "Links verticaal"
 
 #: ../pidgin/gtkprefs.c:989
 msgid "Right Vertical"
-msgstr "rechts vertikaal"
+msgstr "rechts verticaal"
 
 #: ../pidgin/gtkprefs.c:996
 msgid "N_ew conversations:"
@@ -16796,11 +16796,11 @@ msgstr "Laat ge_detaileerde informatie zien"
 
 #: ../pidgin/gtkprefs.c:1052
 msgid "Enable buddy ic_on animation"
-msgstr "Bewegende _contactplaatjes weergeven"
+msgstr "Bewegende _pictogrammen weergeven"
 
 #: ../pidgin/gtkprefs.c:1059
 msgid "_Notify buddies that you are typing to them"
-msgstr "Laat anderen weten dat je aan het _typen bent"
+msgstr "Laat anderen weten dat je naar ze aan het _typen bent"
 
 #: ../pidgin/gtkprefs.c:1062
 msgid "Highlight _misspelled words"
@@ -16816,7 +16816,7 @@ msgstr "Venster laten _knipperen wanneer gespreksberichten worden ontvangen"
 
 #: ../pidgin/gtkprefs.c:1071
 msgid "Minimi_ze new conversation windows"
-msgstr "Venster Minimaliseren "
+msgstr "Minimalizeer nieuwe gespreksvensters "
 
 #: ../pidgin/gtkprefs.c:1075
 msgid "Minimum input area height in lines:"
@@ -16907,7 +16907,7 @@ msgid ""
 "Proxy & Browser preferences are configured\n"
 "in GNOME Preferences"
 msgstr ""
-"Proxy & browser voorkeuren zijn ingesteld\n"
+"Proxy- en browser-voorkeuren zijn ingesteld\n"
 "in GNOME-instellingen"
 
 #: ../pidgin/gtkprefs.c:1317
@@ -16968,7 +16968,7 @@ msgstr "Firefox"
 
 #: ../pidgin/gtkprefs.c:1486
 msgid "Firebird"
-msgstr "Firefox"
+msgstr "Firebird"
 
 #: ../pidgin/gtkprefs.c:1487
 msgid "Epiphany"
@@ -16980,7 +16980,7 @@ msgstr "Handmatig"
 
 #: ../pidgin/gtkprefs.c:1557
 msgid "Browser Selection"
-msgstr "Browserselectie"
+msgstr "Browser-selectie"
 
 #: ../pidgin/gtkprefs.c:1561
 msgid "_Browser:"
@@ -16992,7 +16992,7 @@ msgstr "Verwijzing _openen met:"
 
 #: ../pidgin/gtkprefs.c:1571
 msgid "Browser default"
-msgstr "Standaardbrowser"
+msgstr "Standaard-browser"
 
 #: ../pidgin/gtkprefs.c:1572
 msgid "Existing window"
@@ -17086,7 +17086,7 @@ msgstr "Geluidjes inschakelen:"
 
 #: ../pidgin/gtkprefs.c:1911
 msgid "Volume:"
-msgstr "Geluid:"
+msgstr "Volume:"
 
 #: ../pidgin/gtkprefs.c:1978
 msgid "Play"
@@ -17110,7 +17110,7 @@ msgstr "Activiteit van toetsenbord en muis"
 
 #: ../pidgin/gtkprefs.c:2069
 msgid "_Auto-reply:"
-msgstr "_Auto-antwoord:"
+msgstr "_Automatisch antwoord:"
 
 #: ../pidgin/gtkprefs.c:2073
 msgid "When both away and idle"
@@ -17119,15 +17119,15 @@ msgstr "Bij afwezigheid en inactiviteit"
 #. Auto-away stuff
 #: ../pidgin/gtkprefs.c:2079
 msgid "Auto-away"
-msgstr "Auto-afwezig"
+msgstr "Automatisch afwezig"
 
 #: ../pidgin/gtkprefs.c:2081
 msgid "Change status when _idle"
-msgstr "Status op afwezig zetten _wanneer ik niets doe"
+msgstr "Status op afwezig zetten _wanneer ik inactief ben"
 
 #: ../pidgin/gtkprefs.c:2085
 msgid "_Minutes before becoming idle:"
-msgstr "_Minuten voor afwezig worden:"
+msgstr "_Minuten voor inactief worden:"
 
 #: ../pidgin/gtkprefs.c:2092
 msgid "Change _status to:"
@@ -17160,7 +17160,7 @@ msgstr "Browser"
 
 #: ../pidgin/gtkprefs.c:2156
 msgid "Status / Idle"
-msgstr "Status /Inactief"
+msgstr "Status / inactief"
 
 #: ../pidgin/gtkprivacy.c:81
 msgid "Allow all users to contact me"
@@ -17168,11 +17168,11 @@ msgstr "Alle gebruikers mogen contact met mij leggen"
 
 #: ../pidgin/gtkprivacy.c:82
 msgid "Allow only the users on my buddy list"
-msgstr "Alleen gebruikers uit mijn contactenlijst toestaan"
+msgstr "Alleen gebruikers uit mijn contactenlijst mogen contact met mij leggen"
 
 #: ../pidgin/gtkprivacy.c:83
 msgid "Allow only the users below"
-msgstr "Alleen onderstaande gebruikers toestaan"
+msgstr "Alleen onderstaande gebruikers mogen contact met mij leggen"
 
 #: ../pidgin/gtkprivacy.c:84
 msgid "Block all users"
@@ -17197,7 +17197,7 @@ msgstr "Privacy instellen voor:"
 #. Remove All button
 #: ../pidgin/gtkprivacy.c:417
 msgid "Remove Al_l"
-msgstr "Verwijderen Al_les"
+msgstr "Alles _verwijderen"
 
 #: ../pidgin/gtkprivacy.c:503
 #: ../pidgin/gtkprivacy.c:520
@@ -17210,7 +17210,7 @@ msgstr "Geef een gebruiker die contact met u mag leggen."
 
 #: ../pidgin/gtkprivacy.c:505
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr "Geef alstublieft de naam van de gebruiker die contact met u mag leggen."
+msgstr "Geef de naam van de gebruiker die contact met u mag leggen."
 
 #: ../pidgin/gtkprivacy.c:508
 #: ../pidgin/gtkprivacy.c:524
@@ -17238,7 +17238,7 @@ msgstr "Geef een gebruiker die geblokkeerd moet worden."
 
 #: ../pidgin/gtkprivacy.c:547
 msgid "Please enter the name of the user you wish to block."
-msgstr "Geef alstublieft de naam van de gebruiker die u wilt blokkeren."
+msgstr "Geef de naam van de gebruiker die u wilt blokkeren."
 
 #: ../pidgin/gtkprivacy.c:555
 #, c-format
@@ -17348,11 +17348,11 @@ msgstr "Meer gegevens vereist"
 
 #: ../pidgin/gtksmiley.c:256
 msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Geef alsjeblieft een snelkoppeling om te associëren met de smiley."
+msgstr "Geef een snelkoppeling om te associëren met de smiley."
 
 #: ../pidgin/gtksmiley.c:257
 msgid "Please select an image for the smiley."
-msgstr "Selecteer alsjeblieft een afbeelding uit de lijst voor de smiley"
+msgstr "Selecteer een afbeelding uit de lijst voor de smiley"
 
 #: ../pidgin/gtksmiley.c:346
 msgid "Edit Smiley"
@@ -17364,7 +17364,7 @@ msgstr "Smiley toevoegen"
 
 #: ../pidgin/gtksmiley.c:367
 msgid "Smiley _Image"
-msgstr "_Smiley-aafbeelding"
+msgstr "_Smiley-afbeelding"
 
 #. Smiley shortcut
 #: ../pidgin/gtksmiley.c:398
@@ -17373,11 +17373,11 @@ msgstr "Sneltoets smiley"
 
 #: ../pidgin/gtksmiley.c:494
 msgid "Smiley"
-msgstr "Smiley"
+msgstr "Eigen smileys"
 
 #: ../pidgin/gtksmiley.c:691
 msgid "Custom Smiley Manager"
-msgstr "Beheer eigen smileys"
+msgstr "Eigen smileys beheren"
 
 #: ../pidgin/gtkstatusbox.c:689
 msgid "Waiting for network connection"
@@ -17393,7 +17393,7 @@ msgstr "Opgeslagen statussen..."
 
 #: ../pidgin/gtkstatusbox.c:1782
 msgid "Status Selector"
-msgstr "Status-selectieveld"
+msgstr "Statusselectie"
 
 #: ../pidgin/gtkutils.c:685
 msgid "Google Talk"
@@ -17428,12 +17428,12 @@ msgstr "Je hebt een afbeelding hierheen gesleept"
 
 #: ../pidgin/gtkutils.c:1596
 msgid "You can send this image as a file transfer, embed it into this message, or use it as the buddy icon for this user."
-msgstr "U kunt deze afbeelding overzenden, in dit gesprek invoegen, of als contactplaatje gebruiken voor deze gebruiker."
+msgstr "U kunt deze afbeelding overzenden, in dit gesprek invoegen, of als pictogram gebruiken voor deze gebruiker."
 
 #: ../pidgin/gtkutils.c:1602
 #: ../pidgin/gtkutils.c:1622
 msgid "Set as buddy icon"
-msgstr "Instellen als contactplaatje"
+msgstr "Instellen als pictogram"
 
 #: ../pidgin/gtkutils.c:1603
 #: ../pidgin/gtkutils.c:1623
@@ -17447,15 +17447,15 @@ msgstr "Invoegen in gesprek"
 
 #: ../pidgin/gtkutils.c:1608
 msgid "Would you like to set it as the buddy icon for this user?"
-msgstr "Wilt u het instellen als het contactplaatje van deze gebruiker?"
+msgstr "Wilt u het instellen als het pictogram van deze gebruiker?"
 
 #: ../pidgin/gtkutils.c:1615
 msgid "You can send this image as a file transfer, or use it as the buddy icon for this user."
-msgstr "U kunt deze afbeelding verzenden via bestandsoverdracht, in dit gesprek invoegen, of als contactplaatje gebruiken voor deze gebruiker."
+msgstr "U kunt deze afbeelding verzenden via bestandsoverdracht, in dit gesprek invoegen, of als pictogram gebruiken voor deze gebruiker."
 
 #: ../pidgin/gtkutils.c:1616
 msgid "You can insert this image into this message, or use it as the buddy icon for this user"
-msgstr "U kunt deze afbeelding in dit gesprek invoegen, of als contactplaatje gebruiken voor deze gebruiker."
+msgstr "U kunt deze afbeelding in dit gesprek invoegen, of als pictogram gebruiken voor deze gebruiker."
 
 #. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
 #. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
@@ -18032,7 +18032,7 @@ msgstr "Muzieksessie geaccepteerd."
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:430
 msgid "Music Messaging"
-msgstr "Expresberichten met muziek"
+msgstr "Berichten met muziek"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:431
 msgid "There was a conflict in running the command:"
@@ -18049,7 +18049,7 @@ msgstr "De volgende fout is opgetreden:"
 #. Configuration frame
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:639
 msgid "Music Messaging Configuration"
-msgstr "Instellingen voor expresberichten met muziek"
+msgstr "Instellingen voor berichten met muziek"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:643
 msgid "Score Editor Path"
@@ -18210,7 +18210,7 @@ msgstr ""
 "Dit is een erg gave plugin die een hoop dingen doet:\n"
 "- Het vertelt je wie het programma geschreven heeft bij aanmelden\n"
 "- Het keert alle binnenkomende tekst om\n"
-"- Het stuurt direct een bericht naar mensen wanneer ze on-line komen"
+"- Het stuurt direct een bericht naar mensen wanneer ze online komen"
 
 #: ../pidgin/plugins/pidginrc.c:49
 msgid "Cursor Color"
@@ -18897,7 +18897,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 
 #, fuzzy
 #~ msgid "Add Buddy _Pounce"
-#~ msgstr "Contact-alarm toevoegen"
+#~ msgstr "Contactalarm toevoegen"
 #~ msgid "Add a C_hat"
 #~ msgstr "_Chat toevoegen"
 #~ msgid "/Accounts/Add\\/Edit"
@@ -18996,11 +18996,11 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "\n"
 #~ "<b>Status:</b>: Rockin'"
 #~ msgid "/Tools/Buddy Pounces"
-#~ msgstr "/Extra/Contact-alarm"
+#~ msgstr "/Extra/Contactalarm"
 #~ msgid "/Options/Show Buddy _Icon"
 #~ msgstr "/Opties/Contact_plaatjes weergeven"
 #~ msgid "/Options/Show Buddy Icon"
-#~ msgstr "/Opties/Contactplaatjes weergeven"
+#~ msgstr "/Opties/pictograms weergeven"
 #~ msgid "Timestamps"
 #~ msgstr "Tijd in gesprek"
 #~ msgid "Jabber developer"
@@ -19036,7 +19036,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "or use it as the buddy icon for this user."
 #~ msgstr ""
 #~ "U kunt deze afbeelding overzenden, in dit gesprek invoegen, of als "
-#~ "contactplaatje gebruiken voor deze gebruiker."
+#~ "pictogram gebruiken voor deze gebruiker."
 #~ msgid "Error initializing libdbi."
 #~ msgstr "Fout bij initialiseren van libdbi."
 #~ msgid "Contact Availability Prediction Configuration"
@@ -19355,7 +19355,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Block invites"
 #~ msgstr "Uitnodigingen blokkeren"
 #~ msgid "Reject online status attribute requests"
-#~ msgstr "Opvragen van uw on-line status weigeren"
+#~ msgstr "Opvragen van uw online status weigeren"
 #~ msgid "Wrong Password"
 #~ msgstr "Wachtwoord onjuist"
 #~ msgid "TOC has sent a PAUSE command."
@@ -19684,7 +19684,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "/Buddies/_Log Out"
 #~ msgstr "/Contacten/_Afsluiten"
 #~ msgid "/Tools/Buddy _Pounce"
-#~ msgstr "/Extra/_Contact-alarm"
+#~ msgstr "/Extra/_Contactalarm"
 #~ msgid "/Tools/Account Ac_tions"
 #~ msgstr "/Extra/Account-acties"
 #~ msgid "/Tools/Pl_ugin Actions"
@@ -19762,7 +19762,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Alphabetical"
 #~ msgstr "Alfabetisch"
 #~ msgid "/Tools/Buddy Pounce"
-#~ msgstr "/Extra/Contact-alarm"
+#~ msgstr "/Extra/Contactalarm"
 #~ msgid "/Tools/Account Actions"
 #~ msgstr "/Extra/Account acties"
 #~ msgid "/Tools/Plugin Actions"
@@ -19916,7 +19916,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Error launching <b>%s</b>: %s"
 #~ msgstr "Fout bij starten van \"%s\": %s"
 #~ msgid "Pounce When"
-#~ msgstr "Wanneer Alarmeren"
+#~ msgstr "Wanneer alarmeren"
 
 #, fuzzy
 #~ msgid "Si_gn on"
@@ -19948,7 +19948,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Sav_e this pounce after activation"
 #~ msgstr "Dit alarm _opslaan na activatie"
 #~ msgid "Remove Buddy Pounce"
-#~ msgstr "Contact-alarm verwijderen"
+#~ msgstr "Contactalarm verwijderen"
 #~ msgid "Display"
 #~ msgstr "Weergave"
 #~ msgid "_Highlight misspelled words"
@@ -20488,7 +20488,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "DBus"
 #~ msgstr "DBus"
 #~ msgid "Buddy icon:"
-#~ msgstr "Contactplaatje:"
+#~ msgstr "pictogram:"
 #~ msgid "IM the user"
 #~ msgstr "Gebruiker IM sturen"
 #~ msgid "Ignore the user"
@@ -20757,7 +20757,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Roomlist Error"
 #~ msgstr "Fout in lijst avn ruimtes"
 #~ msgid "Update Buddy Icon"
-#~ msgstr "Contactplaatje bijwerken"
+#~ msgstr "pictogram bijwerken"
 #~ msgid "Syncing with server"
 #~ msgstr "Synchronisatie met server"
 #~ msgid "MSN error for account %s"

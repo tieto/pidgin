@@ -2021,9 +2021,12 @@ if test "$enable_tcl" = yes; then
 	TCLCONFIG=no
 	TCLCONFIGDIRS="/usr/lib \
 			/usr/lib64 \
+			/usr/lib/tcl8.5 \
 			/usr/lib/tcl8.4 \
 			/usr/lib/tcl8.3 \
 			/usr/lib/tcl8.2 \
+			/usr/lib64/tcl8.5 \
+			/usr/lib64/tcl8.4 \
 			/System/Library/Tcl/8.3 \
 			/usr/local/lib"
 	for dir in $with_tclconfig $TCLCONFIGDIRS; do

@@ -6604,8 +6604,11 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			update_typing_icon(gtkconv);
 
 		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
-		if (pidgin_conv_window_is_active_conversation(conv))
-			gtk_window_set_title(GTK_WINDOW(win->window), title);
+		if (pidgin_conv_window_is_active_conversation(conv)) {
+			const char* current_title = gtk_window_get_title(GTK_WINDOW(win->window));
+			if (current_title == NULL || strcmp(current_title, title) != 0)
+				gtk_window_set_title(GTK_WINDOW(win->window), title);
+		}
 
 		g_free(title);
 	}
