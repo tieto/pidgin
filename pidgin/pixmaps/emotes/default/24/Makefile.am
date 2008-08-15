@@ -47,7 +47,7 @@ SMILEYS = 	act-up.png \
     dazed.png \
     desire.png \
     devil.png \
-    disapointed.png \
+    disappointed.png \
     disdain.png \
     doctor.png \
     dog.png \
