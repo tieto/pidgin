@@ -7739,7 +7739,7 @@ pidgin_conv_gtkmedia_destroyed(GtkWidget *widget, PidginConversation *gtkconv)
 	gray_stuff_out(gtkconv);
 }
 
-static void
+static gboolean
 pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpointer nul)
 {
 	GtkWidget *gtkmedia;
@@ -7750,8 +7750,11 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 				       purple_connection_get_account(purple_media_get_connection(media)),
 				       purple_media_get_screenname(media));
 	gtkconv = PIDGIN_CONVERSATION(conv);
-	if (gtkconv->gtkmedia)
-		gtk_widget_destroy(gtkconv->gtkmedia);
+
+	if (gtkconv->gtkmedia) {
+		purple_debug_info("gtkconv", "Media session exists for this conversation.\n");
+		return FALSE;
+	}
 
 	gtkmedia = pidgin_media_new(media);
 	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
@@ -7766,6 +7769,7 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 			pidgin_media_get_display_widget(gtkmedia), FALSE, TRUE);
 
 	gray_stuff_out(gtkconv);
+	return TRUE;
 }
 
 #endif

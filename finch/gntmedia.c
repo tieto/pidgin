@@ -413,7 +413,7 @@ gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *c
 	}
 }
 
-static void
+static gboolean
 finch_new_media(PurpleMediaManager *manager, PurpleMedia *media, gpointer null)
 {
 	GntWidget *gntmedia;
@@ -427,6 +427,7 @@ finch_new_media(PurpleMediaManager *manager, PurpleMedia *media, gpointer null)
 	g_signal_connect(G_OBJECT(gntmedia), "message", G_CALLBACK(gntmedia_message_cb), conv);
 	FINCH_MEDIA(gntmedia)->priv->conv = conv;
 	finch_conversation_set_info_widget(conv, gntmedia);
+	return TRUE;
 }
 
 static PurpleCmdRet

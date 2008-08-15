@@ -27,6 +27,7 @@
 #include "internal.h"
 
 #include "connection.h"
+#include "marshallers.h"
 #include "mediamanager.h"
 #include "media.h"
 
@@ -100,8 +101,8 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		G_TYPE_FROM_CLASS (klass),
 		G_SIGNAL_RUN_LAST,
 		0, NULL, NULL,
-		g_cclosure_marshal_VOID__OBJECT,
-		G_TYPE_NONE, 1, PURPLE_TYPE_MEDIA);
+		purple_smarshal_BOOLEAN__OBJECT,
+		G_TYPE_BOOLEAN, 1, PURPLE_TYPE_MEDIA);
 	g_type_class_add_private(klass, sizeof(PurpleMediaManagerPrivate));
 }
 
@@ -137,6 +138,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	PurpleMedia *media;
 	FsConference *conference = FS_CONFERENCE(gst_element_factory_make(conference_type, NULL));
 	GstStateChangeReturn ret;
+	gboolean signal_ret;
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "screenname", remote_user,
@@ -154,8 +156,15 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 		return NULL;
 	}
 
+	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0,
+			media, &signal_ret);
+
+	if (signal_ret == FALSE) {
+		g_object_unref(media);
+		return NULL;
+	}
+
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
-	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0, media);
 	return media;
 }
 

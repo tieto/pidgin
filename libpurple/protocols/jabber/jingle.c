@@ -936,8 +936,11 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 	media = purple_media_manager_create_media(purple_media_manager_get(), 
 						  session->js->gc, "fsrtpconference", remote_jid);
 
+	jabber_jingle_session_set_remote_jid(session, remote_jid);
+	jabber_jingle_session_set_initiator(session, initiator);
+
 	if (!media) {
-		purple_debug_error("jingle", "Couldn't create fsrtpconference\n");
+		purple_debug_error("jingle", "Couldn't create media session\n");
 		return FALSE;
 	}
 
@@ -959,13 +962,10 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 
 		if (!result) {
 			purple_debug_error("jingle", "Couldn't create stream\n");
-			purple_media_reject(media);
 			return FALSE;
 		}
 	}
 
-	jabber_jingle_session_set_remote_jid(session, remote_jid);
-	jabber_jingle_session_set_initiator(session, initiator);
 	jabber_jingle_session_set_media(session, media);
 
 	/* connect callbacks */
@@ -1284,8 +1284,7 @@ jabber_jingle_session_handle_session_initiate(JingleSession *session, xmlnode *j
 
 	if (!jabber_jingle_session_initiate_media_internal(session, initiator, initiator)) {
 		purple_debug_error("jingle", "Couldn't start media session with %s\n", initiator);
-		jabber_jingle_session_destroy(session);
-		/* we should create an error iq here */
+		jabber_jingle_session_send_session_reject(session);
 		return;
 	}
 
