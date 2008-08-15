@@ -21,6 +21,7 @@ version 2.5.0 (??/??/2008):
 		* purple_cmds_get_handle, purple_cmds_init, purple_cmds_uninit
 		* cmd-added and cmd-removed signals
 		* purple_get_host_name
+		* purple_markup_printf_escaped
 		* purple_util_fetch_url_len (temporary function overload to add max_len param)
 		* purple_util_fetch_url_request_len
 
