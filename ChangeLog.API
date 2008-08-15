@@ -23,6 +23,9 @@ version 2.5.0 (??/??/2008):
 		* purple_get_host_name
 		* purple_util_fetch_url_len (temporary function overload to add max_len param)
 		* purple_util_fetch_url_request_len
+		* purple_prpl_send_attention
+		* purple_prpl_got_attention
+		* purple_prpl_got_attention_in_chat
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
@@ -32,6 +35,8 @@ version 2.5.0 (??/??/2008):
 		* pidgin_set_custom_buddy_icon
 		* purple_util_fetch_url_len
 		* purple_util_fetch_url_request_len
+		* serv_send_attention
+		* serv_got_attention
 
 		Changed:
 		* xmlnode_copy now copies the prefix and namespace map for nodes.
