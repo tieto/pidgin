@@ -714,7 +714,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			char *tmp2;
 
 			if (purple_presence_is_idle(presence)) {
-				tmp2 = purple_markup_printf_escaped("%s/%s", name, _("Idle"));
+				tmp2 = g_markup_printf_escaped("%s/%s", name, _("Idle"));
 			} else {
 				tmp2 = g_markup_escape_text(name, -1);
 			}

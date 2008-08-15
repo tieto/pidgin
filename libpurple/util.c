@@ -2499,29 +2499,6 @@ purple_markup_get_tag_name(const char *tag)
 	return g_strndup(tag+1, i-1);
 }
 
-char *
-purple_markup_printf_escaped(const char *format, ...)
-{
-	va_list args;
-	char *ret;
-
-#if GLIB_CHECK_VERSION(2,4,0)
-	va_start(args, format);
-	ret = g_markup_vprintf_escaped(format, args);
-	va_end(args);
-#else
-	char *tmp;
-
-	va_start(args, format);
-	tmp = g_strdup_vprintf(format, args);
-	va_end(args);
-	ret = g_markup_escape_text(tmp, -1);
-	g_free(tmp);
-
-#endif
-
-	return ret;
-}
 /**************************************************************************
  * Path/Filename Functions
  **************************************************************************/
