@@ -713,10 +713,16 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (name != NULL && *name) {
 			char *tmp2;
 
+			tmp2 = g_markup_escape_text(name, -1);
 			if (purple_presence_is_idle(presence)) {
-				tmp2 = g_markup_printf_escaped("%s/%s", name, _("Idle"));
-			} else {
-				tmp2 = g_markup_escape_text(name, -1);
+				char *idle;
+				char *tmp3;
+				/* Never know what those translations might end up like... */
+				idle = g_markup_escape_text(_("Idle"), -1);
+				tmp3 = g_strdup_printf("%s/%s", tmp2, idle);
+				g_free(idle);
+				g_free(tmp2);
+				tmp2 = tmp3;
 			}
 
 			if (psm != NULL && *psm) {
