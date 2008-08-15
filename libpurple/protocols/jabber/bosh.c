@@ -56,8 +56,54 @@ void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *acco
 	conn->conn_a->userdata = conn;
 }
 
-void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *node) {
+void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
+	/*
+	<body rid='1573741824'
+	      sid='SomeSID'
+	      to='jabber.org'
+	      xml:lang='en'
+	      xmpp:restart='true'
+	      xmlns='http://jabber.org/protocol/httpbind'
+	      xmlns:xmpp='urn:xmpp:xbosh'/>
+	*/
+	xmlnode *restart = xmlnode_new("body");
+	char *tmp = NULL;
+	conn->rid++;
+	xmlnode_set_attrib(restart, "rid", tmp = g_strdup_printf("%d", conn->rid));
+	g_free(tmp);
+	xmlnode_set_attrib(restart, "sid", conn->sid);
+	xmlnode_set_attrib(restart, "to", conn->js->user->domain);
+	xmlnode_set_attrib(restart, "xml:lang", "en");
+	xmlnode_set_attrib(restart, "xmpp:restart", "true");
+	xmlnode_set_attrib(restart, "xmlns", "http://jabber.org/protocol/httpbind");
+	xmlnode_set_attrib(restart, "xmlns:xmpp", "urn:xmpp:xbosh"); 
+	
+	jabber_bosh_connection_send_native(conn, restart);
+}
 
+void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
+	
+	xmlnode_free(node);
+}
+
+void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *node) {
+	xmlnode *child = node->child;
+	
+	while(child != NULL && child->type != XMLNODE_TYPE_TAG) {
+		child = child->next;	
+	}
+	
+	if (child != NULL && child->type == XMLNODE_TYPE_TAG) {
+		JabberStream *js = conn->js;
+		if (!strcmp(child->name, "success")) {
+			jabber_bosh_connection_stream_restart(conn);
+			jabber_process_packet(js, &child);
+		} else {
+			js->state = JABBER_STREAM_AUTHENTICATING;
+			conn->receive_cb = jabber_bosh_connection_received;
+			jabber_process_packet(js, &child);
+		}
+	} else printf("\n!! no child!!\n");
 }
 
 void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -82,11 +128,6 @@ void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xmlnode *n
 		purple_debug_info("jabber", "Missing version in session creation response!\n");	
 	}
 }
-
-void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
-	xmlnode_free(node);
-}
-
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	char *tmp;

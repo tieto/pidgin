@@ -346,26 +346,35 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	if (len == -1)
 		len = strlen(data);
 
-	if (js->writeh == 0)
-		ret = jabber_do_send(js, data, len);
-	else {
-		ret = -1;
-		errno = EAGAIN;
-	}
-
-	if (ret < 0 && errno != EAGAIN)
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Write error"));
-	else if (ret < len) {
-		if (ret < 0)
-			ret = 0;
+	if (js->use_bosh) {
+		xmlnode *xnode = xmlnode_from_str(data, len);
+		if (xnode) jabber_bosh_connection_send(&(js->bosh), xnode);
+		else {
+			purple_connection_error_reason(js->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+							_("Someone tried to send non-XML in a Jabber world."));
+		}
+	} else {
 		if (js->writeh == 0)
-			js->writeh = purple_input_add(
-				js->gsc ? js->gsc->fd : js->fd,
-				PURPLE_INPUT_WRITE, jabber_send_cb, js);
-		purple_circ_buffer_append(js->write_buffer,
-			data + ret, len - ret);
+			ret = jabber_do_send(js, data, len);
+		else {
+			ret = -1;
+			errno = EAGAIN;
+		}
+
+		if (ret < 0 && errno != EAGAIN)
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Write error"));
+		else if (ret < len) {
+			if (ret < 0)
+				ret = 0;
+			if (js->writeh == 0)
+				js->writeh = purple_input_add(
+					js->gsc ? js->gsc->fd : js->fd,
+					PURPLE_INPUT_WRITE, jabber_send_cb, js);
+			purple_circ_buffer_append(js->write_buffer,
+				data + ret, len - ret);
+		}
 	}
 	return;
 }
@@ -388,13 +397,9 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	if(NULL == packet)
 		return;
 
-	if (js->use_bosh) {
-		jabber_bosh_connection_send(&(js->bosh), packet);
-	} else {
-		txt = xmlnode_to_str(packet, &len);
-		jabber_send_raw(js, txt, len);
-		g_free(txt);
-	}
+	txt = xmlnode_to_str(packet, &len);
+	jabber_send_raw(js, txt, len);
+	g_free(txt);
 }
 
 static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
