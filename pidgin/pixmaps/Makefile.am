@@ -146,7 +146,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/dazed.svg \
 		emotes/default/24/scalable/desire.svg \
 		emotes/default/24/scalable/devil.svg \
-		emotes/default/24/scalable/disapointed.svg \
+		emotes/default/24/scalable/disappointed.svg \
 		emotes/default/24/scalable/disdain.svg \
 		emotes/default/24/scalable/doctor.svg \
 		emotes/default/24/scalable/dog.svg \
@@ -246,7 +246,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/shut-mouth.svg \
 		emotes/default/24/scalable/sick.svg \
 		emotes/default/24/scalable/sidefrown.svg \
-		emotes/default/24/scalable/sigarette.svg \
+		emotes/default/24/scalable/cigarette.svg \
 		emotes/default/24/scalable/silly.svg \
 		emotes/default/24/scalable/sinister.svg \
 		emotes/default/24/scalable/skeleton.svg \
