@@ -34,8 +34,6 @@ static MsnTable *cbs_table;
 static void msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg,
 							 MsnMsgErrorType error);
 
-#define MSN_DEBUG_SB
-
 /**************************************************************************
  * Main
  **************************************************************************/
