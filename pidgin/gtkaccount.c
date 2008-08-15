@@ -145,7 +145,7 @@ static void add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  PurpleAccount *account, GdkPixbuf *global_buddyicon);
 static void add_login_options_continue(PurpleAccount * account, 
-	const gchar * password, GError * error, gpointer user_data);
+	gchar * password, GError * error, gpointer user_data);
 
 /**************************************************************************
  * Add/Modify Account dialog
@@ -412,7 +412,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 static void
 add_login_options_continue(PurpleAccount * account,
-			   const gchar * password,
+			   gchar * password,
 			   GError * error,
 			   gpointer user_data)
 {
@@ -428,10 +428,6 @@ add_login_options_continue(PurpleAccount * account,
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
-
-	/* XXX : report error ? */
-	if (error)
-		g_error_free(error);
 
 	if (dialog->protocol_menu != NULL)
 	{
@@ -1341,9 +1337,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * don't want to prompt them.
 	 */
 	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0'))
-		purple_account_set_password(account, value);
+		purple_account_set_password_async(account, g_strdup(value), g_free, NULL, NULL);
 	else
-		purple_account_set_password(account, NULL);
+		purple_account_set_password_async(account, NULL, NULL, NULL,NULL);
 
 	purple_account_set_username(account, username);
 	g_free(username);

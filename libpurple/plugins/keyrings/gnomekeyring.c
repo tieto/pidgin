@@ -80,7 +80,7 @@ struct _InfoStorage
 /* a few prototypes : */
 static GQuark 		gkp_error_domain(void);
 static void 		gkp_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
-static void		gkp_read_continue(GnomeKeyringResult, const char *, gpointer);
+static void		gkp_read_continue(GnomeKeyringResult, char *, gpointer);
 static void 		gkp_save(PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
 static void		gkp_save_continue(GnomeKeyringResult, gpointer);
 static const char * 	gkp_read_sync(const PurpleAccount *);
@@ -124,7 +124,7 @@ gkp_read(PurpleAccount * account,
 }
 
 static void gkp_read_continue(GnomeKeyringResult result,
-                       const char *password,
+                       char *password,
                        gpointer data)
 /* XXX : make sure list is freed on return */
 {

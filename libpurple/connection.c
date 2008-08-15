@@ -434,12 +434,32 @@ purple_connection_get_prpl(const PurpleConnection *gc)
 	return gc->prpl;
 }
 
+
+/**
+ * FIXME : all the calling tree needs to be async.
+ */
 const char *
 purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : gc->account->password;
+	return gc->password ? gc->password : purple_account_get_password(gc->account);
+}
+
+void
+purple_connection_get_password_async(PurpleConnection *gc, 
+				     PurpleKeyringReadCallback cb,
+				     gpointer data)
+{
+	char * password;
+	g_return_val_if_fail(gc != NULL, NULL);
+
+	if (gc->password != NULL) {
+		/* casted to prevent warning */
+		cb((PurpleAccount *)gc, gc->password, NULL, data);
+	} else {
+		purple_account_get_password_async(gc->account, cb, gc);
+	}
 }
 
 const char *
@@ -501,7 +521,7 @@ purple_connection_disconnect_got_pw_cb(PurpleAccount * account,
 	char * pw = g_strdup(password);
 
 	purple_account_disconnect(account);
-	purple_account_set_password(account, pw);
+	purple_account_set_password_async(account, g_strdup(pw), g_free, NULL, NULL);
 }
 
 void

@@ -144,6 +144,7 @@ typedef struct
 #include <time.h>
 
 #include "account.h"
+#include "keyring.h"
 #include "plugin.h"
 #include "status.h"
 #include "sslconn.h"
@@ -390,14 +391,25 @@ PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
 PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 
 /**
- * Returns the connection's password.
+ * Returns the connection's password. Deprecated, use
+ * purple_connection_get_password_async() instead.
  *
  * @param gc The connection.
  *
  * @return The connection's password.
  */
-const char *purple_connection_get_password(const PurpleConnection *gc);
+const char *purple_connection_get_password(const PurpleConnection *gc) __attribute__ ((deprecated));
 
+/**
+ * Passes the connection's keyring to the callback.
+ *
+ * @param gc The connection.
+ * @param cb The callback to pass the password to.
+ * @param data A pointer passed to the callback.
+ */
+void
+purple_connection_get_password_async(PurpleConnection *gc, 
+	PurpleKeyringReadCallback cb, gpointer data);
 /**
  * Returns the connection's displayed name.
  *

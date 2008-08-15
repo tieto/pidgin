@@ -807,8 +807,8 @@ parse_account(xmlnode *node)
 	xmlnode *child;
 	char *protocol_id = NULL;
 	char *name = NULL;
-	const char *keyring_id = NULL;
-	const char *mode = NULL;
+	char *keyring_id = NULL;
+	char *mode = NULL;
 	char *data = NULL;
 	gboolean result = FALSE;
 	GError * error = NULL;
@@ -1107,7 +1107,7 @@ purple_account_register_got_password_cb(PurpleAccount * account, char * password
 	g_return_if_fail(account != NULL);
 
 	/* FIXME : handle error properly */
-
+ 
 	purple_connection_new(account, TRUE, password);
 }
 
@@ -1167,7 +1167,8 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 	if(remember)
 		purple_account_set_remember_password(account, TRUE);
 
-	purple_account_set_password(account, entry);
+	/* XXX this might be a problem if a read occurs before the write is finished */
+	purple_account_set_password_async(account, g_strdup(entry), g_free, NULL, NULL);
 
 	purple_connection_new(account, FALSE, entry);
 }
@@ -1286,7 +1287,7 @@ purple_account_disconnect(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 	purple_connection_destroy(gc);
 	if (!purple_account_get_remember_password(account))
-		purple_account_set_password(account, NULL);
+		purple_account_set_password_async(account, NULL, NULL, NULL, NULL);
 	purple_account_set_connection(account, NULL);
 
 	account->disconnecting = FALSE;
@@ -1614,7 +1615,7 @@ purple_account_set_password(PurpleAccount *account, const char *password)
 		account->password = g_strdup(password);
 
 	else
-		purple_keyring_set_password_sync(account, password);
+		purple_keyring_set_password_async(account, g_strdup(password), g_free, NULL, NULL);
 
 	schedule_accounts_save();
 }
@@ -2514,7 +2515,7 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePlugin *prpl = NULL;
 	
-	purple_account_set_password(account, new_pw);
+	purple_account_set_password_async(account, g_strdup(new_pw), g_free, NULL, NULL);
 	
 	if (gc != NULL)
 	        prpl = purple_connection_get_prpl(gc);      

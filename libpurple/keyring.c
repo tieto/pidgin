@@ -1008,6 +1008,7 @@ purple_keyring_set_password_async(const PurpleAccount * account,
 				g_error_free(error);
 
 			} else {
+				cbinfo = g_malloc(sizeof(PurpleKeyringCbInfo));
 				cbinfo->cb = cb;
 				cbinfo->data = data;
 				save(account, password, destroypassword,

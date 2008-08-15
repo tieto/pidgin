@@ -325,18 +325,6 @@ purple_keyring_export_password(PurpleAccount * account,
 			       GError ** error,
 			       GDestroyNotify * destroy);
 
-
-
-/** 
- * functions called from the code to access passwords (account.h):
- *	purple_account_get_password()
- *	purple_account_set_password()
- * @todo :
- *	- rewrite these functions to use the sync functions for compatibility,
- *	- build an async way to access the async functions, and patch all libpurple 
- *	code that calls the accessors to use new ones.
- */
-
 /**
  * Read a password from the active safe.
  * This should be renamed purple_keyring_get_password() when getting

@@ -499,9 +499,6 @@ edit_account_continue(PurpleAccount * account,
 	GList *list, *iter;
 	AccountEditDialog *dialog;
 
-	if (error)
-		g_error_free(error);
-
 	if (account)
 	{
 		GList *iter;

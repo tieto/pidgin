@@ -328,7 +328,7 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
  * @param account  The account.
  * @param password The password.
  */
-void purple_account_set_password(PurpleAccount *account, const char *password);
+void purple_account_set_password(PurpleAccount *account, const char *password)  __attribute__ ((deprecated));
 
 /**
  * Set a password to be remembered.
@@ -572,8 +572,7 @@ const char *purple_account_get_username(const PurpleAccount *account);
  *
  * @return The password.
  */
-const char *purple_account_get_password(const PurpleAccount *account);
-
+const char *purple_account_get_password(const PurpleAccount *account)  __attribute__ ((deprecated));
 
 /**
  * Reads the password for the account and passes it to the callback

@@ -42,6 +42,7 @@
 #include "debug.h"
 #include "ft.h"
 #include "imgstore.h"
+#include "keyring.h"
 #include "mime.h"
 #include "notify.h"
 #include "plugin.h"
@@ -311,7 +312,8 @@ struct named_id {
 
 
 /* connection functions */
-
+static void mw_prpl_login_continue(PurpleAccount * account,
+	char * pass, GError * error, gpointer data);
 static void connect_cb(gpointer data, gint source, const gchar *error_message);
 
 
@@ -3705,11 +3707,20 @@ static void prompt_host(PurpleConnection *gc) {
 }
 
 
-static void mw_prpl_login(PurpleAccount *account) {
+static void mw_prpl_login(PurpleAccount *account)
+{
+	purple_account_get_password_async(account, mw_prpl_login_continue, NULL);
+}
+
+static void mw_prpl_login_continue(PurpleAccount * account,
+				   char * pass,
+				   GError * error,
+				   gpointer data)
+{
   PurpleConnection *gc;
   struct mwPurplePluginData *pd;
 
-  char *user, *pass, *host;
+  char *user, *host;
   guint port;
 
   gc = purple_account_get_connection(account);
@@ -3719,7 +3730,6 @@ static void mw_prpl_login(PurpleAccount *account) {
   gc->flags |= PURPLE_CONNECTION_NO_IMAGES;
 
   user = g_strdup(purple_account_get_username(account));
-  pass = g_strdup(purple_account_get_password(account));
 
   host = strrchr(user, ':');
   if(host) {

@@ -511,11 +511,25 @@ static void silcpurple_no_password_cb(PurpleConnection *gc, PurpleRequestFields 
 	silc_free(sg);
 }
 
+static void silcpurple_running_continue(PurpleAccount * account, 
+	char * password, GError * error, gpointer context);
+
 static void silcpurple_running(SilcClient client, void *context)
 {
 	SilcPurple sg = context;
 	PurpleConnection *gc = sg->gc;
+
 	PurpleAccount *account = purple_connection_get_account(gc);
+	purple_account_get_password_async(account, silcpurple_running_continue, context);
+}
+
+static void silcpurple_running_continue(PurpleAccount * account,
+					char * password,
+					GError * error,
+					gpointer context)
+{
+	SilcPurple sg = context;
+	PurpleConnection *gc = sg->gc;
 	char pkd[256], prd[256];
 
 
@@ -529,7 +543,7 @@ static void silcpurple_running(SilcClient client, void *context)
 				(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password,
 				&sg->public_key, &sg->private_key)) {
-		if (!purple_account_get_password(account)) {
+		if (!password) {
 			purple_account_request_password(account, G_CALLBACK(silcpurple_got_password_cb),
 											G_CALLBACK(silcpurple_no_password_cb), gc);
 			return;
