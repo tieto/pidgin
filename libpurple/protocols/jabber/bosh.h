@@ -70,6 +70,7 @@ struct _PurpleHTTPConnection {
     
     PurpleHTTPResponse *current_response;
     char *current_data;
+    int current_len;
     
     int pih;
     PurpleHTTPConnectionConnectFunction connect_cb;

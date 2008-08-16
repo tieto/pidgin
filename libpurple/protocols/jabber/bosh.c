@@ -82,7 +82,18 @@ void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
 }
 
 void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
+	xmlnode *child;
+	JabberStream *js = conn->js;
 	
+	if (node == NULL) return;
+	
+	child = node->child;
+	while (child != 0) {
+		if (child->type == XMLNODE_TYPE_TAG) {
+			jabber_process_packet(js, &child);
+		}
+		child = child->next;
+	}
 	xmlnode_free(node);
 }
 
@@ -98,9 +109,9 @@ void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *n
 		if (!strcmp(child->name, "success")) {
 			jabber_bosh_connection_stream_restart(conn);
 			jabber_process_packet(js, &child);
+			conn->receive_cb = jabber_bosh_connection_received;
 		} else {
 			js->state = JABBER_STREAM_AUTHENTICATING;
-			conn->receive_cb = jabber_bosh_connection_received;
 			jabber_process_packet(js, &child);
 		}
 	} else printf("\n!! no child!!\n");
@@ -155,10 +166,14 @@ void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPR
 	PurpleBOSHConnection *conn = userdata;
 	if (conn->receive_cb) {
 		xmlnode *node = xmlnode_from_str(res->data, res->data_len);
-		char *txt = xmlnode_to_formatted_str(node, NULL);
-		printf("\njabber_bosh_connection_http_received_cb\n%s\n", txt);
-		g_free(txt);
-		conn->receive_cb(conn, node);
+		if (node) {
+			char *txt = xmlnode_to_formatted_str(node, NULL);
+			printf("\njabber_bosh_connection_http_received_cb\n%s\n", txt);
+			g_free(txt);
+			conn->receive_cb(conn, node);
+		} else {
+			printf("\njabber_bosh_connection_http_received_cb: XML ERROR: %s\n", res->data); 
+		}
 	} else purple_debug_info("jabber", "missing receive_cb of PurpleBOSHConnection.\n");
 }
 
@@ -203,60 +218,83 @@ void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
 	jabber_bosh_http_connection_connect(conn->conn_a);
 }
 
+void jabber_bosh_http_connection_receive_parse_header(PurpleHTTPResponse *response, char **data, int *len) {
+	GHashTable *header = response->header;
+	char *beginning = *data;
+	char *found = g_strstr_len(*data, len, "\r\n\r\n");
+	char *field = NULL;
+	char *value = NULL;
+	char *old_data = *data;
+	
+	while (*beginning != 'H') ++beginning;
+	beginning[12] = 0;
+	response->status = atoi(&beginning[9]);
+	beginning = &beginning[13];
+	do {
+		++beginning;
+	} while (*beginning != '\n');
+	++beginning;
+	/* parse HTTP response header */
+	for (;beginning != found; ++beginning) {
+		if (!field) field = beginning;
+		if (*beginning == ':') {
+			*beginning = 0;
+			value = beginning + 1;
+		} else if (*beginning == '\r') {
+			*beginning = 0;
+			g_hash_table_replace(header, g_strdup(field), g_strdup(value));
+			value = field = 0;
+			++beginning;
+		}
+	}
+	++beginning; ++beginning; ++beginning; ++beginning;
+	/* remove the header from data buffer */
+	*data = g_strdup(beginning);
+	g_free(old_data);	
+}
+
 static void jabber_bosh_http_connection_receive(gpointer data, gint source, PurpleInputCondition condition) {
-	char buffer[1024];
+	char buffer[1025];
 	int len;
 	PurpleHTTPConnection *conn = data;
 	PurpleHTTPResponse *response = conn->current_response;
 	
 	purple_debug_info("jabber", "jabber_bosh_http_connection_receive\n");
-	if (!response) {
-		// new response
-		response = conn->current_response = g_new0(PurpleHTTPResponse, 1);
-		jabber_bosh_http_response_init(response);
-	}
 	
 	len = read(source, buffer, 1024);
 	if (len > 0) {
-		char *found = NULL;
-		if (found = g_strstr_len(buffer, len, "\r\n\r\n")) {
-			char *beginning = buffer;
-			char *field = NULL;
-			char *value = NULL;
-			char *cl = NULL;
-			
-			while (*beginning != 'H') ++beginning;
-			beginning[12] = 0;
-			response->status = atoi(&beginning[9]);
-			beginning = &beginning[13];
-			do {
-				++beginning;
-			} while (*beginning != '\n');
-			++beginning;
-			/* parse HTTP response header */
-			for (;beginning != found; ++beginning) {
-				if (!field) field = beginning;
-				if (*beginning == ':') {
-					*beginning = 0;
-					value = beginning + 1;
-				} else if (*beginning == '\r') {
-					*beginning = 0;
-					g_hash_table_replace(response->header, g_strdup(field), g_strdup(value));
-					value = field = 0;
-					++beginning;
-				}
+		buffer[len] = 0;
+		if (conn->current_data == NULL) {
+			conn->current_len = len;	
+			conn->current_data = g_strdup_printf("%s", buffer);
+		} else {
+			char *old_data = conn->current_data;
+			conn->current_len += len;	
+			conn->current_data = g_strdup_printf("%s%s", conn->current_data, buffer);
+			g_free(old_data);
+		}
+		
+		if (!response) {
+			/* check for header footer */
+			char *found = NULL;
+			if (found = g_strstr_len(conn->current_data, conn->current_len, "\r\n\r\n")) {
+				// new response
+				response = conn->current_response = g_new0(PurpleHTTPResponse, 1);
+				jabber_bosh_http_response_init(response);
+				jabber_bosh_http_connection_receive_parse_header(response, &(conn->current_data), &(conn->current_len));
+				response->data_len = atoi(g_hash_table_lookup(response->header, "Content-Length"));
+				jabber_bosh_http_connection_receive(data, source, condition);
+			} else {
+				printf("\nDATA: %s \n", conn->current_data);
+				printf("\nDid not receive HTTP header\n");
 			}
-			++found; ++found; ++found; ++found;
-			
-			cl = g_hash_table_lookup(response->header, "Content-Length");
-			if (cl) {
-				PurpleHTTPRequest *request = NULL;
-				response->data_len = atoi(cl);
-				if (response->data <= len - (found - buffer)) response->data = g_memdup(found, response->data_len);
-				else printf("\nDidn't receive complete content");
-				
-				request = g_queue_pop_head(conn->requests);
+		} 
+		
+		if (response) {
+			if (conn->current_len >= response->data_len) {
+				PurpleHTTPRequest *request = g_queue_pop_head(conn->requests);
 				if (request) {
+					response->data = g_memdup(conn->current_data, response->data_len);
 					request->cb(request, response, conn->userdata);
 					jabber_bosh_http_request_clean(request);
 					jabber_bosh_http_response_clean(response);
@@ -264,11 +302,7 @@ static void jabber_bosh_http_connection_receive(gpointer data, gint source, Purp
 				} else {
 					purple_debug_info("jabber", "received HTTP response but haven't requested anything yet.\n");
 				}
-			} else {
-				printf("\ndidn't receive length.\n");
 			}
-		} else {
-			printf("\nDid not receive complete HTTP header!\n");
 		}
 	} else {
 		purple_debug_info("jabber", "jabber_bosh_http_connection_receive: problem receiving data\n");
