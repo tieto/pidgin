@@ -1834,7 +1834,7 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	int new_status, new_status_descr;
 	const char *new_msg;
 
-	g_return_val_if_fail(msg == NULL, 0);
+	g_return_val_if_fail(msg != NULL, 0);
 
 	purple_debug_info("gg", "ggp_to_gg_status: Requested status = %s\n",
 			status_id);
