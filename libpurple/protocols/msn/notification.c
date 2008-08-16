@@ -1166,8 +1166,8 @@ not_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
 #if 0
 	MSN_SET_PARAMS("NOT %d\r\n%s", cmdproc->servconn->payload, payload);
-#endif
 	purple_debug_misc("msn", "Notification: {%s}\n", payload);
+#endif
 }
 
 static void
