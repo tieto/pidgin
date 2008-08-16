@@ -17,6 +17,10 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	Those icon changes that Hylke made, while minor, really make things look
 	a little cleaner, I think. Oh yea, did I mention that MSNP15 stuff?
 
+	Ka-Hing: "Reject"ing a certificate after your account is signed off is
+	not recommended. Deleting the file after you start sending it is also
+	discouraged.
+
 2.4.3 (07/01/2008):
 	Richard: This release includes important bug fixes.  I'm just cutting
 	the release.  Thank you to the real heroes who did the fixing!
