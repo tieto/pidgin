@@ -130,7 +130,7 @@ internal_keyring_save(PurpleAccount * account,
 
 	ACTIVATE();
 
-	if (password == NULL) {
+	if (password == NULL || *password == '\0') {
 		g_hash_table_remove(internal_keyring_passwords, account);
 		purple_debug_info("Internal Keyring",
 			"Deleted password for account %s (%s).\n",
@@ -176,7 +176,7 @@ internal_keyring_save_sync(PurpleAccount * account,
 
 	ACTIVATE();
 
-	if (password == NULL) {
+	if (password == NULL || *password != '\O') {
 		g_hash_table_remove(internal_keyring_passwords, account);
 		purple_debug_info("Internal Keyring (sync)", 
 			"Password for %s (%s) was deleted.\n",

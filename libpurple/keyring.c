@@ -1036,6 +1036,7 @@ purple_keyring_set_password_async_cb(PurpleAccount * account,
 		cb(account, error, cbinfo->data);
 	g_free(data);
 }
+
 /**
  * This should be dropped at 3.0 (it's here for compatibility)
  */

@@ -102,8 +102,10 @@ static void purple_account_register_got_password_cb(PurpleAccount * account,
 static void purple_account_unregister_got_password_cb(PurpleAccount * account,
 	char * password, GError * error, gpointer data);
 
-static void purple_account_connect_got_password_cb(const PurpleAccount * account,
+static void purple_account_connect_got_password_cb(PurpleAccount * account,
        gchar * password, GError * error, gpointer data);
+static void request_password_ok_cb_continue(const PurpleAccount * account, 
+	GError * error,	gpointer data);
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
@@ -1166,11 +1168,27 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 
 	if(remember)
 		purple_account_set_remember_password(account, TRUE);
+	else
+		purple_account_set_remember_password(account, FALSE);
 
-	/* XXX this might be a problem if a read occurs before the write is finished */
+#if 0
+	purple_account_set_password_async(account, g_strdup(entry), g_free,
+			request_password_ok_cb_continue, g_strdup(entry));
+#else
 	purple_account_set_password(account, entry);
-
 	purple_connection_new(account, FALSE, entry);
+#endif
+}
+
+static void
+request_password_ok_cb_continue(const PurpleAccount * account, 
+				GError * error,
+				gpointer data)
+{
+	char * password = data;
+
+	purple_connection_new(account, FALSE, password);
+	g_free(password);
 }
 
 static void
@@ -1255,7 +1273,7 @@ purple_account_connect(PurpleAccount *account)
 }
 
 static void
-purple_account_connect_got_password_cb(const PurpleAccount * account,
+purple_account_connect_got_password_cb(PurpleAccount * account,
 				       gchar * password,
 				       GError * error,
 				       gpointer data)
@@ -1286,10 +1304,14 @@ purple_account_disconnect(PurpleAccount *account)
 
 	gc = purple_account_get_connection(account);
 	purple_connection_destroy(gc);
+
+/* FIXME : if this works, remove the commented code. */
+#if 0
 	if (!purple_account_get_remember_password(account))
 		purple_account_set_password_async(account, NULL, NULL, NULL, NULL);
+	
+#endif
 	purple_account_set_connection(account, NULL);
-
 	account->disconnecting = FALSE;
 }
 
@@ -1721,15 +1743,25 @@ purple_account_set_connection(PurpleAccount *account, PurpleConnection *gc)
 
 /**
  * FIXME :
- *  This should add/remove the password to/from the keyring
+ *  This should be async
  */
 void
 purple_account_set_remember_password(PurpleAccount *account, gboolean value)
 {
 	g_return_if_fail(account != NULL);
 
-	account->remember_pass = value;
+	if (account->remember_pass != value) {
+		purple_debug_info("accounts",
+			"Setting remember_password for account %s to %s.\n",
+			purple_account_get_username(account),
+			(value)?"TRUE":"FALSE");
 
+		account->remember_pass = value;
+
+		if (value == FALSE)
+			purple_keyring_set_password_sync(account, NULL);
+
+	}
 	schedule_accounts_save();
 }
 

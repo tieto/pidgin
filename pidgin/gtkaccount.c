@@ -1331,15 +1331,14 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
 
 	/*
-	 * We set the password if this is a new account because new accounts
-	 * will be set to online, and if the user has entered a password into
-	 * the account editor (but has not checked the 'save' box), then we
-	 * don't want to prompt them.
+	 * The function most likely needs to be split in two here.
 	 */
 	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0'))
-		purple_account_set_password_async(account, g_strdup(value), g_free, NULL, NULL);
+/* 		purple_account_set_password_async(account, g_strdup(value), g_free, NULL, NULL); */
+		purple_account_set_password(account, value);
 	else
-		purple_account_set_password_async(account, NULL, NULL, NULL,NULL);
+/*		purple_account_set_password_async(account, NULL, NULL, NULL,NULL); */
+		purple_account_set_password(account, NULL);
 
 	purple_account_set_username(account, username);
 	g_free(username);
