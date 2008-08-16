@@ -749,7 +749,12 @@ GstElement *
 purple_media_get_element(const gchar *factory_name)
 {
 	GstElementFactory *factory = gst_element_factory_find(factory_name);
-	GstElement *element = gst_element_factory_create(factory, NULL);
+	GstElement *element;
+
+	if (factory == NULL)
+		return NULL;
+
+	element = gst_element_factory_create(factory, NULL);
 	gst_object_unref(factory);
 	return element;
 }

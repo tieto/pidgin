@@ -335,7 +335,7 @@ GValue *purple_media_element_get_device(GstElement *element);
  *
  * @param factory_name Name of the factory to create an element from.
  *
- * @return The element that was created.
+ * @return The element that was created, NULL if it couldn't find the factory.
  */
 GstElement *purple_media_get_element(const gchar *factory_name);
 

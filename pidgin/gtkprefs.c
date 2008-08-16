@@ -2112,10 +2112,14 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	const char *plugin = value;
 	const char *device = purple_prefs_get_string("/purple/media/video/device");
 	GstElement *video = purple_media_get_element(plugin);
-	GList *video_devices = purple_media_get_devices(video);
-	GList *video_items = get_device_items(video, video_devices);
+	GList *video_items = NULL;
 	GList *list;
-	g_list_free(video_devices);
+
+	if (video != NULL) {
+		GList *video_devices = purple_media_get_devices(video);
+		video_items = get_device_items(video, video_devices);
+		g_list_free(video_devices);
+	}
 
 	if (video_items == NULL) {
 		video_items = g_list_prepend(video_items, g_strdup(""));
@@ -2165,14 +2169,20 @@ media_page()
 	GstElement *video = purple_media_get_element(plugin);
 	GstElement *audio = purple_media_get_element("alsasrc");
 
-	GList *video_devices = purple_media_get_devices(video);
-	GList *audio_devices = purple_media_get_devices(audio);
+	GList *video_items = NULL;
+	GList *audio_items = NULL;
 
-	GList *video_items = get_device_items(video, video_devices);
-	GList *audio_items = get_device_items(audio, audio_devices);
+	if (video != NULL) {
+		GList *video_devices = purple_media_get_devices(video);
+		video_items = get_device_items(video, video_devices);
+		g_list_free(video_devices);
+	}
 
-	g_list_free(video_devices);
-	g_list_free(audio_devices);
+	if (audio != NULL) {		
+		GList *audio_devices = purple_media_get_devices(audio);
+		audio_items = get_device_items(audio, audio_devices);
+		g_list_free(audio_devices);
+	}
 
 	if (video_items == NULL) {
 		video_items = g_list_prepend(video_items, "");
