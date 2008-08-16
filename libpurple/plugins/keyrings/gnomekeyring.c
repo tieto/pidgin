@@ -191,7 +191,7 @@ gkp_save(PurpleAccount * account,
 	storage->cb = cb;
 	storage->user_data = data;
 
-	if(password != NULL || *password != '\O') {
+	if(password != NULL && *password != '\O') {
 
 		purple_debug_info("Gnome keyring plugin",
 			"Updating password for account %s (%s).\n",
@@ -330,7 +330,7 @@ gkp_save_sync(PurpleAccount * account,
 {
 	const char * name;
 
-	if(password != NULL || *password != '\O') {
+	if(password != NULL && *password != '\O') {
 
 		name =g_strdup_printf("pidgin-%s", purple_account_get_username(account)),
 

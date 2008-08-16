@@ -144,8 +144,6 @@ static GHashTable *account_pref_wins;
 static void add_account_to_liststore(PurpleAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  PurpleAccount *account, GdkPixbuf *global_buddyicon);
-static void add_login_options_continue(PurpleAccount * account, 
-	gchar * password, GError * error, gpointer user_data);
 
 /**************************************************************************
  * Add/Modify Account dialog
@@ -392,33 +390,9 @@ update_editable(PurpleConnection *gc, AccountPrefsDialog *dialog)
 		gtk_widget_set_sensitive((GtkWidget *)l->data, set);
 }
 
-typedef struct _AddLoginOptionsCalbackData {
-	AccountPrefsDialog *dialog;
-	GtkWidget *parent;
-} AddLoginOptionsCallbackData;
-
 static void
 add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
-
-	AddLoginOptionsCallbackData *data;
-	data = g_new(AddLoginOptionsCallbackData, 1);
-
-	data->dialog = dialog;
-	data->parent = parent;
-
-	purple_account_get_password_async(dialog->account, add_login_options_continue, data);
-}
-
-static void
-add_login_options_continue(PurpleAccount * account,
-			   gchar * password,
-			   GError * error,
-			   gpointer user_data)
-{
-	AddLoginOptionsCallbackData * data = user_data;
-	AccountPrefsDialog *dialog = data->dialog;
-	GtkWidget *parent = data->parent;
 	GtkWidget *frame;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -587,9 +561,9 @@ add_login_options_continue(PurpleAccount * account,
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-
-		if (password)
-			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), password);
+		if (purple_account_get_password(dialog->account))
+			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
+							   purple_account_get_password(dialog->account));
 
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
@@ -1212,6 +1186,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *tmp;
 	gboolean new_acct = FALSE, icon_change = FALSE;
 	PurpleAccount *account;
+	gboolean remember;
 
 	/* Build the username string. */
 	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
@@ -1317,9 +1292,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 
 	/* Remember Password */
-	purple_account_set_remember_password(account,
-			gtk_toggle_button_get_active(
-					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
+	remember = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check));
+	if(!remember)
+		purple_keyring_set_password_async(account, NULL, NULL, NULL, NULL);
+
+	purple_account_set_remember_password(account, remember);
 
 	/* Check Mail */
 	if (dialog->prpl_info && dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
@@ -1331,14 +1308,16 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
 
 	/*
-	 * The function most likely needs to be split in two here.
+	 * We set the password if this is a new account because new accounts
+	 * will be set to online, and if the user has entered a password into
+	 * the account editor (but has not checked the 'save' box), then we
+	 * don't want to prompt them.
 	 */
 	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0'))
-/* 		purple_account_set_password_async(account, g_strdup(value), g_free, NULL, NULL); */
 		purple_account_set_password(account, value);
 	else
-/*		purple_account_set_password_async(account, NULL, NULL, NULL,NULL); */
 		purple_account_set_password(account, NULL);
+
 
 	purple_account_set_username(account, username);
 	g_free(username);

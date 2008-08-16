@@ -176,7 +176,7 @@ internal_keyring_save_sync(PurpleAccount * account,
 
 	ACTIVATE();
 
-	if (password == NULL || *password != '\O') {
+	if (password == NULL || *password == '\O') {
 		g_hash_table_remove(internal_keyring_passwords, account);
 		purple_debug_info("Internal Keyring (sync)", 
 			"Password for %s (%s) was deleted.\n",
@@ -256,7 +256,13 @@ internal_keyring_export_password(PurpleAccount * account,
 	purple_debug_info("Internal keyring",
 		"Exporting password");
 
-	password = GET_PASSWORD(account);
+	/* we're using this rather than GET_PASSWORD(),
+	 * because on account creation, the account might be
+	 * exported before the password is known. This would
+	 * lead to exporting uninitialised data, which 
+	 * we obviously don't want.
+	 */
+	password = purple_account_get_password(account);
 
 	if (password == NULL) {
 		return FALSE;

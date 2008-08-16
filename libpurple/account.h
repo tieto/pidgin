@@ -572,7 +572,7 @@ const char *purple_account_get_username(const PurpleAccount *account);
  *
  * @return The password.
  */
-const char *purple_account_get_password(const PurpleAccount *account)  __attribute__ ((deprecated));
+const char *purple_account_get_password(PurpleAccount *account)  __attribute__ ((deprecated));
 
 /**
  * Reads the password for the account and passes it to the callback

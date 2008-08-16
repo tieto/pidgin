@@ -84,6 +84,12 @@ typedef struct
 	PurpleAccountRequestAuthorizationCb deny_cb;
 } PurpleAccountRequestInfo;
 
+typedef struct
+{
+	gpointer cb;
+	gpointer data;
+} CbInfo;
+
 static PurpleAccountUiOps *account_ui_ops = NULL;
 
 static GList   *accounts = NULL;
@@ -106,6 +112,9 @@ static void purple_account_connect_got_password_cb(PurpleAccount * account,
        gchar * password, GError * error, gpointer data);
 static void request_password_ok_cb_continue(const PurpleAccount * account, 
 	GError * error,	gpointer data);
+
+static void purple_account_get_password_async_finish(PurpleAccount * account,
+	char * password, GError * error, gpointer data);
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
@@ -396,8 +405,10 @@ account_to_xmlnode(PurpleAccount *account)
 
 	if (purple_account_get_remember_password(account))
 	{
-		purple_debug_info("accounts", "Exporting password for account %s.\n",
-			purple_account_get_username(account));
+		purple_debug_info("accounts", "Exporting password for account %s (%s).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+
 		purple_keyring_export_password(account, &keyring_id, 
 			&mode, &data, &error, &destroy);
 
@@ -409,7 +420,6 @@ account_to_xmlnode(PurpleAccount *account)
 				error->message);
 
 		} else {
-
 			child = xmlnode_new_child(node, "password");
 			xmlnode_set_attrib(child, "keyring_id", keyring_id);
 			xmlnode_set_attrib(child, "mode", mode);
@@ -1166,18 +1176,14 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 		return;
 	}
 
-	if(remember)
-		purple_account_set_remember_password(account, TRUE);
-	else
-		purple_account_set_remember_password(account, FALSE);
+	if(!remember)
+		purple_keyring_set_password_async(account, NULL, NULL, NULL, NULL);
 
-#if 0
-	purple_account_set_password_async(account, g_strdup(entry), g_free,
-			request_password_ok_cb_continue, g_strdup(entry));
-#else
+	purple_account_set_remember_password(account, remember);
+
 	purple_account_set_password(account, entry);
 	purple_connection_new(account, FALSE, entry);
-#endif
+
 }
 
 static void
@@ -1628,18 +1634,17 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 void
 purple_account_set_password(PurpleAccount *account, const char *password)
 {
+	schedule_accounts_save();
+
 	g_return_if_fail(account != NULL);
 
 	if (account->password != NULL)
 		g_free(account->password);
 
-	if (purple_account_get_remember_password(account) == FALSE)
-		account->password = g_strdup(password);
+	account->password = g_strdup(password);
 
-	else
+	if (purple_account_get_remember_password(account) == TRUE)
 		purple_keyring_set_password_sync(account, password);
-
-	schedule_accounts_save();
 }
 
 void 
@@ -1654,6 +1659,10 @@ purple_account_set_password_async(PurpleAccount * account,
 	 * it with account == NULL.
 	 */
 	if(account != NULL) {
+
+		if (account->password != NULL)
+			g_free(account->password);
+		account->password = g_strdup(password);
 
 		if (purple_account_get_remember_password(account) == FALSE) {
 
@@ -1750,18 +1759,8 @@ purple_account_set_remember_password(PurpleAccount *account, gboolean value)
 {
 	g_return_if_fail(account != NULL);
 
-	if (account->remember_pass != value) {
-		purple_debug_info("accounts",
-			"Setting remember_password for account %s to %s.\n",
-			purple_account_get_username(account),
-			(value)?"TRUE":"FALSE");
+	account->remember_pass = value;
 
-		account->remember_pass = value;
-
-		if (value == FALSE)
-			purple_keyring_set_password_sync(account, NULL);
-
-	}
 	schedule_accounts_save();
 }
 
@@ -2077,20 +2076,26 @@ purple_account_get_username(const PurpleAccount *account)
 
 /* XXX will be replaced by the async code in 3.0 */
 const char *
-purple_account_get_password(const PurpleAccount *account)
+purple_account_get_password(PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	if (account->password != NULL) {
-	
-		purple_debug_info("keyring", "password was read from stored\n");
-		return account->password;
-	
+	if (account->password == NULL) {
+		purple_debug_info("accounts",
+			"Reading password for account %s (%s) from sync keyring.\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+
+		account->password = g_strdup(purple_keyring_get_password_sync(account));
 
 	} else {
-		purple_debug_info("keyring", "reading password from keyring\n");	
-		return purple_keyring_get_password_sync(account);
+		purple_debug_info("accounts",
+			"Reading password for account %s (%s) from cached.\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
 	}
+
+	return account->password;
 }
 
 void
@@ -2098,10 +2103,56 @@ purple_account_get_password_async(PurpleAccount * account,
 				  PurpleKeyringReadCallback cb,
 				  gpointer data)
 {
-	purple_keyring_get_password_async(account, cb, data);
+	char * password;
+
+	CbInfo * info = g_new0(CbInfo,1);
+	info->cb = cb;
+	info->data = data;
+
+	if (account->password != NULL) {
+		purple_debug_info("accounts",
+			"Reading password for account %s (%s) from cached (async).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+		cb(account, account->password, NULL, data);
+
+	} else {
+		purple_debug_info("accounts",
+			"Reading password for account %s (%s) from async keyring.\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+		purple_keyring_get_password_async(account, 
+			purple_account_get_password_async_finish, data);
+	}
 }
 
+static void
+purple_account_get_password_async_finish(PurpleAccount * account,
+					 char * password,
+					 GError * error,
+					 gpointer data)
+{
+	CbInfo * info;
+	PurpleKeyringReadCallback cb;
 
+	purple_debug_info("accounts",
+		"Read password for account %s (%s) from async keyring.\n",
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
+
+	info = data;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(info != NULL);
+
+	account->password = g_strdup(password);
+
+	cb = info->cb;
+	if (cb != NULL)
+		cb(account, password, error, info->data);
+
+	g_free(data);
+}
 
 const char *
 purple_account_get_alias(const PurpleAccount *account)

@@ -1046,31 +1046,25 @@ purple_keyring_get_password_sync(const PurpleAccount * account)
 	PurpleKeyringReadSync read;
 	const PurpleKeyring * inuse;
 
-	if (account == NULL) {
+	g_return_val_if_fail(account != NULL, NULL);
+
+	purple_debug_info("keyring (sync)",
+		"Reading password for account %s (%s)",
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
+
+	inuse = purple_keyring_get_inuse();
+
+	if (inuse == NULL) {
 		return NULL;
 
 	} else {
+		read = purple_keyring_get_read_sync(inuse);
 
-		inuse = purple_keyring_get_inuse();
-
-		if (inuse == NULL) {
-
+		if (read == NULL)
 			return NULL;
-
-		} else {
-
-			read = purple_keyring_get_read_sync(inuse);
-
-			if (read == NULL){
-
-				return NULL;
-
-			} else {
-
-				return read(account);
-
-			}
-		}
+		else
+			return read(account);
 	}
 }
 
@@ -1084,21 +1078,23 @@ purple_keyring_set_password_sync(PurpleAccount * account,
 	PurpleKeyringSaveSync save;
 	const PurpleKeyring * inuse;
 
-	if (account != NULL) {
+	purple_debug_info("keyring (sync)",
+		"Setting password for account %s (%s)",
+		purple_account_get_username(account),
+		purple_account_get_protocol_id(account));
 
-		inuse = purple_keyring_get_inuse();
+	g_return_if_fail(account != NULL);
 
-		if (inuse != NULL) {
+	inuse = purple_keyring_get_inuse();
+	if (inuse != NULL) {
+		save = purple_keyring_get_save_sync(inuse);
 
-			save = purple_keyring_get_save_sync(inuse);
-
-			if (save != NULL){
-
-				return save(account, password);
-
-			}
-		}
+		if (save != NULL)
+			return save(account, password);
 	}
+
+	/* schedule account save */
+	purple_account_set_password(NULL, NULL);
 
 	return;
 }
