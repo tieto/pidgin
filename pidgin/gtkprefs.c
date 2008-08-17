@@ -1645,7 +1645,7 @@ keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 	PurpleKeyring * keyring;
 
 	g_return_if_fail(type == PURPLE_PREF_STRING);
-	g_return_if_fail(g_strcmp0(val,"/purple/keyring/active") == 0);
+	g_return_if_fail(g_strcmp0(name,"/purple/keyring/active") == 0);
 
 	/**
 	 * This part is annoying.
@@ -1654,6 +1654,7 @@ keyring_page_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 	 * have to rely on the prefs system, and find the keyring that
 	 * is (or will be) used, from there.
 	 */
+
 	keyring = purple_keyring_get_keyring_by_id(val);
 
 	if (purple_keyring_get_change_master(keyring))

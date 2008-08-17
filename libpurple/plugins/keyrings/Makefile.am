@@ -3,25 +3,35 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
+
+if ENABLE_GNOMEKEYRING
+
 gnomekeyring_la_LDFLAGS     = -module -avoid-version
-internalkeyring_la_LDFLAGS  = -module -avoid-version
-
-GNOME_KEYRING_CFLAGS = -I/usr/include/gnome-keyring-1
-GNOME_KEYRING_LIBS   = -lgnome-keyring
-
 GKRSOURCES = gnomekeyring.c
+#GNOME_KEYRING_CFLAGS = -I/usr/include/gnome-keyring-1
+#GNOME_KEYRING_LIBS   = -lgnome-keyring
+GNOME_KEYRING_LA = internalkeyring.la
+
+endif #ENABLE_GNOMEKEYRING
+
+internalkeyring_la_LDFLAGS  = -module -avoid-version
 IKSOURCES = internalkeyring.c
 
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	gnomekeyring.la       \
+	$(GNOME_KEYRING_LA)\
 	internalkeyring.la
 
-gnomekeyring_la_SOURCES     = gnomekeyring.c
-internalkeyring_la_SOURCES  = internalkeyring.c
 
-gnomekeyring_la_LIBADD  = $(GLIB_LIBS) $(GNOME_KEYRING_LIBS)
+if ENABLE_GNOMEKEYRING
+
+gnomekeyring_la_SOURCES     = $(GKRSOURCES)
+gnomekeyring_la_LIBADD  = $(GLIB_LIBS) $(GNOMEKEYRING_LIBS)
+
+endif #ENABLE_GNOMEKEYRING
+
+internalkeyring_la_SOURCES  = $(IKSOURCES)
 internalkeyring_la_LIBADD   = $(GLIB_LIBS)
 
 endif #PLUGINS
@@ -34,7 +44,9 @@ AM_CPPFLAGS = \
 	$(PLUGIN_CFLAGS) \
 	$(GNOME_KEYRING_CFLAGS)
 
-gnomekeyring_la_CFLAGS = $(AM_CPPFLAGS) $(GNOME_KEYRING_CFLAGS)
+if ENABLE_GNOMEKEYRING
+gnomekeyring_la_CFLAGS = $(AM_CPPFLAGS) $(GNOMEKEYRING_CFLAGS)
+endif #ENABLE_GNOMEKEYRING
 internalkeyring_la_CFLAGS = $(AM_CPPFLAGS)
 
 

@@ -1022,7 +1022,7 @@ purple_keyring_set_password_async_cb(PurpleAccount * account,
 
 	if (error != NULL) {
 		purple_notify_error(NULL, _("Keyrings"),
-			_("Failed to save password in keyring.")
+			_("Failed to save password in keyring."),
 			error->message);
 	}
 
