@@ -435,6 +435,8 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				   gtkmedia->priv->send_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->send_progress);
 		gst_element_set_state(audiosendbin, GST_STATE_PLAYING);
+
+		gtk_widget_show(gtkmedia->priv->mute);
 	}
 
 	if (audiorecvbin || audiosendbin || videorecvbin || videosendbin)
@@ -592,21 +594,18 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 			gtk_widget_hide(gtkmedia->priv->accept);
 			gtk_widget_hide(gtkmedia->priv->reject);
 			gtk_widget_show(gtkmedia->priv->hangup);
-			gtk_widget_hide(gtkmedia->priv->mute);
 			break;
 		case PIDGIN_MEDIA_REQUESTED:
 			gtk_widget_hide(gtkmedia->priv->calling);
 			gtk_widget_show(gtkmedia->priv->accept);
 			gtk_widget_show(gtkmedia->priv->reject);
 			gtk_widget_hide(gtkmedia->priv->hangup);
-			gtk_widget_hide(gtkmedia->priv->mute);
 			break;
 		case PIDGIN_MEDIA_ACCEPTED:
 			gtk_widget_show(gtkmedia->priv->hangup);
 			gtk_widget_hide(gtkmedia->priv->calling);
 			gtk_widget_hide(gtkmedia->priv->accept);
 			gtk_widget_hide(gtkmedia->priv->reject);
-			gtk_widget_show(gtkmedia->priv->mute);
 			break;
 		default:
 			break;
