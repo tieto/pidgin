@@ -328,9 +328,6 @@ ICONS_16_SCALABLE = \
 
 ICONS_16 = icons/hicolor/16x16/apps/pidgin.png
 
-ICONS_22_SCALABLE = \
-		icons/hicolor/22x22/apps/scalable/pidgin.svg
-
 ICONS_22 = icons/hicolor/22x22/apps/pidgin.png
 
 ICONS_24_SCALABLE = \
