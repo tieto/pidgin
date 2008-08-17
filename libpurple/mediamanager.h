@@ -102,6 +102,25 @@ PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 						const char *conference_type,
 						const char *remote_user);
 
+/**
+ * Gets all of the media sessions.
+ *
+ * @param manager The media manager to get all of the sessions from.
+ *
+ * @return A list of all the media sessions.
+ */
+GList *purple_media_manager_get_media(PurpleMediaManager *manager);
+
+/**
+ * Removes a media session from the media manager.
+ *
+ * @param manager The media manager to remove the media session from.
+ * @param media The media session to remove.
+ */
+void
+purple_media_manager_remove_media(PurpleMediaManager *manager,
+				  PurpleMedia *media);
+
 /*}@*/
 
 #ifdef __cplusplus

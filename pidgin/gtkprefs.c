@@ -28,6 +28,9 @@
 #include "pidgin.h"
 
 #include "debug.h"
+#ifdef USE_VV
+#include "mediamanager.h"
+#endif
 #include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
@@ -2154,6 +2157,54 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	gtk_widget_show_all(hbox);
 }
 
+static void
+prefs_media_input_volume_changed(GtkRange *range)
+{
+	double val = (double)gtk_range_get_value(GTK_RANGE(range));
+	GList *medias = purple_media_manager_get_media(purple_media_manager_get());
+	purple_prefs_set_int("/purple/media/audio/volume/input", val);
+
+	val /= 10.0;
+	for (; medias; medias = g_list_next(medias)) {
+		PurpleMedia *media = PURPLE_MEDIA(medias->data);
+		GList *sessions = purple_media_get_session_names(media);
+		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+			const gchar *session = sessions->data;
+			if (purple_media_get_session_type(media, session)
+					& PURPLE_MEDIA_SEND_AUDIO) {
+				GstElement *volume = gst_bin_get_by_name(
+						GST_BIN(purple_media_get_src(media, session)),
+						"purpleaudioinputvolume");
+				g_object_set(volume, "volume", val, NULL);
+			}
+		}
+	}
+}
+
+static void
+prefs_media_output_volume_changed(GtkRange *range)
+{
+	double val = (double)gtk_range_get_value(GTK_RANGE(range));
+	GList *medias = purple_media_manager_get_media(purple_media_manager_get());
+	purple_prefs_set_int("/purple/media/audio/volume/output", val);
+
+	val /= 10.0;
+	for (; medias; medias = g_list_next(medias)) {
+		PurpleMedia *media = PURPLE_MEDIA(medias->data);
+		GList *sessions = purple_media_get_session_names(media);
+		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+			const gchar *session = sessions->data;
+			if (purple_media_get_session_type(media, session)
+					& PURPLE_MEDIA_RECV_AUDIO) {
+				GstElement *volume = gst_bin_get_by_name(
+						GST_BIN(purple_media_get_sink(media, session)),
+						"purpleaudiooutputvolume");
+				g_object_set(volume, "volume", val, NULL);
+			}
+		}
+	}
+}
+
 static GtkWidget *
 media_page()
 {
@@ -2162,7 +2213,8 @@ media_page()
 	GtkWidget *hbox;
 	GtkWidget *dd;
 	GtkWidget *preview_button;
-	GtkSizeGroup *sg;
+	GtkWidget *sw;
+	GtkSizeGroup *sg, *sg2;
 	const char *plugin = purple_prefs_get_string("/purple/media/video/plugin");
 	const char *device = purple_prefs_get_string("/purple/media/video/device");
 
@@ -2199,8 +2251,10 @@ media_page()
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	sg2 = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = pidgin_make_frame (ret, _("Video Input"));
+	gtk_size_group_add_widget(sg2, vbox);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	dd = pidgin_prefs_dropdown(vbox, _("_Plugin:"), PURPLE_PREF_STRING,
@@ -2215,7 +2269,7 @@ media_page()
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	dd = pidgin_prefs_dropdown_from_list(hbox, _("_Device:"), PURPLE_PREF_STRING,
+	dd = pidgin_prefs_dropdown_from_list(hbox, _("Device:"), PURPLE_PREF_STRING,
 			"/purple/media/video/device",
 			video_items);
 
@@ -2236,7 +2290,8 @@ media_page()
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	vbox = pidgin_make_frame (ret, _("Audio Input"));
-	dd = pidgin_prefs_dropdown_from_list(vbox, _("_Device:"), PURPLE_PREF_STRING,
+	gtk_size_group_add_widget(sg2, vbox);
+	dd = pidgin_prefs_dropdown_from_list(vbox, _("Device:"), PURPLE_PREF_STRING,
 			"/purple/media/audio/device",
 			audio_items);
 
@@ -2245,6 +2300,35 @@ media_page()
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	/* Input Volume */
+	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
+	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
+	gtk_range_set_value(GTK_RANGE(sw),
+			purple_prefs_get_int("/purple/media/audio/volume/input"));
+	g_signal_connect (G_OBJECT (sw), "format-value",
+			  G_CALLBACK (prefs_sound_volume_format),
+			  NULL);
+	g_signal_connect (G_OBJECT (sw), "value-changed",
+			  G_CALLBACK (prefs_media_input_volume_changed),
+			  NULL);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Volume:"), sg, sw, TRUE, NULL);
+
+	vbox = pidgin_make_frame (ret, _("Audio Output"));
+	gtk_size_group_add_widget(sg2, vbox);
+
+	/* Output Volume */
+	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
+	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
+	gtk_range_set_value(GTK_RANGE(sw),
+			purple_prefs_get_int("/purple/media/audio/volume/output"));
+	g_signal_connect (G_OBJECT (sw), "format-value",
+			  G_CALLBACK (prefs_sound_volume_format),
+			  NULL);
+	g_signal_connect (G_OBJECT (sw), "value-changed",
+			  G_CALLBACK (prefs_media_output_volume_changed),
+			  NULL);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Volume:"), sg, sw, TRUE, NULL);
 
 	gtk_widget_show_all(ret);
 
@@ -2513,6 +2597,9 @@ pidgin_prefs_init(void)
 	purple_prefs_add_string("/purple/media/video/device", "");
 	purple_prefs_add_none("/purple/media/audio");
 	purple_prefs_add_string("/purple/media/audio/device", "");
+	purple_prefs_add_none("/purple/media/audio/volume");
+	purple_prefs_add_int("/purple/media/audio/volume/input", 10);
+	purple_prefs_add_int("/purple/media/audio/volume/output", 10);
 #endif /* USE_VV */
 
 	pidgin_prefs_update_old();

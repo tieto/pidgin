@@ -116,6 +116,11 @@ purple_media_manager_init (PurpleMediaManager *media)
 static void
 purple_media_manager_finalize (GObject *media)
 {
+	PurpleMediaManagerPrivate *priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
+	for (; priv->medias; priv->medias =
+			g_list_delete_link(priv->medias, priv->medias)) {
+		g_object_unref(priv->medias->data);
+	}
 	parent_class->finalize(media);
 }
 
@@ -166,6 +171,22 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
 	return media;
+}
+
+GList *
+purple_media_manager_get_media(PurpleMediaManager *manager)
+{
+	return manager->priv->medias;
+}
+
+void
+purple_media_manager_remove_media(PurpleMediaManager *manager,
+				  PurpleMedia *media)
+{
+	GList *list = g_list_find(manager->priv->medias, media);
+	if (list)
+		manager->priv->medias =
+			g_list_delete_link(manager->priv->medias, list);
 }
 
 #endif  /* USE_VV */
