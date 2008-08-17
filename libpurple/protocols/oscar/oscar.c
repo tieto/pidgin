@@ -1192,7 +1192,7 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_admin(OscarData *od, FlapConnection *conn)
 {
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 	purple_debug_info("oscar", "connected to admin\n");
 
 	if (od->chpass) {
@@ -1237,7 +1237,7 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 	struct chat_connection *chatcon;
 	static int id = 1;
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	chatcon = find_oscar_chat_by_conn(gc, conn);
 	if (chatcon) {
@@ -1249,7 +1249,7 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_chatnav(OscarData *od, FlapConnection *conn)
 {
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 	aim_chatnav_reqrights(od, conn);
 }
 
@@ -1258,7 +1258,7 @@ flap_connection_established_alert(OscarData *od, FlapConnection *conn)
 {
 	aim_email_sendcookies(od);
 	aim_email_activate(od);
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 }
 
 static void
@@ -1266,7 +1266,7 @@ flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 {
 	PurpleConnection *gc = od->gc;
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	od->iconconnecting = FALSE;
 
@@ -3770,7 +3770,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	purple_debug_info("oscar", "buddy list loaded\n");
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	if (purple_account_get_user_info(account) != NULL)
 		serv_set_info(gc, purple_account_get_user_info(account));
