@@ -328,7 +328,7 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
  * @param account  The account.
  * @param password The password.
  */
-void purple_account_set_password(PurpleAccount *account, const char *password)  __attribute__ ((deprecated));
+void purple_account_set_password(PurpleAccount *account, char *password)  __attribute__ ((deprecated));
 
 /**
  * Set a password to be remembered.

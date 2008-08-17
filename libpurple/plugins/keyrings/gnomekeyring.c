@@ -72,6 +72,7 @@ struct _InfoStorage
 	gpointer cb;
 	gpointer user_data;
 	PurpleAccount * account;
+	char * name;
 };
 
 
@@ -80,13 +81,13 @@ struct _InfoStorage
 /* a few prototypes : */
 static GQuark 		gkp_error_domain(void);
 static void 		gkp_read(PurpleAccount *, PurpleKeyringReadCallback, gpointer);
-static void		gkp_read_continue(GnomeKeyringResult, char *, gpointer);
+static void		gkp_read_continue(GnomeKeyringResult, const char *, gpointer);
 static void 		gkp_save(PurpleAccount *, gchar *, GDestroyNotify, PurpleKeyringSaveCallback, gpointer);
 static void		gkp_save_continue(GnomeKeyringResult, gpointer);
 static const char * 	gkp_read_sync(const PurpleAccount *);
 static void 		gkp_save_sync(PurpleAccount *, const gchar *);
 static void		gkp_close(GError **);
-static gboolean		gkp_import_password(PurpleAccount *, char *, char *, GError **);
+static gboolean		gkp_import_password(PurpleAccount *, const char *, const char *, GError **);
 static gboolean 	gkp_export_password(PurpleAccount *, const char **, char **, GError **, GDestroyNotify *);
 static gboolean		gkp_init(void);
 static void		gkp_uninit(void);
@@ -124,7 +125,7 @@ gkp_read(PurpleAccount * account,
 }
 
 static void gkp_read_continue(GnomeKeyringResult result,
-                       char *password,
+                       const char *password,
                        gpointer data)
 /* XXX : make sure list is freed on return */
 {
@@ -132,6 +133,7 @@ static void gkp_read_continue(GnomeKeyringResult result,
 	PurpleAccount * account =storage->account;
 	PurpleKeyringReadCallback cb = storage->cb;
 	GError * error;
+	char * copy;
 
 	if (result != GNOME_KEYRING_RESULT_OK) {
 
@@ -168,12 +170,13 @@ static void gkp_read_continue(GnomeKeyringResult result,
 
 	} else {
 
-		if(cb != NULL)
-			cb(account, password, NULL, storage->user_data);
+		if(cb != NULL) {
+			copy = g_strdup(password);
+			cb(account, copy, NULL, storage->user_data);
+			g_free(copy);
+		}
 		return;
-
 	}
-
 }
 
 
@@ -185,13 +188,15 @@ gkp_save(PurpleAccount * account,
 	 gpointer data)
 {
 	/* FIXME : the name will leak */
-	InfoStorage * storage = g_malloc(sizeof(InfoStorage));
+	InfoStorage * storage = g_new0(InfoStorage,1);
 
 	storage->account = account;
 	storage->cb = cb;
 	storage->user_data = data;
+	storage->name = g_strdup_printf("pidgin-%s",
+		purple_account_get_username(account));
 
-	if(password != NULL && *password != '\O') {
+	if(password != NULL && *password != '\0') {
 
 		purple_debug_info("Gnome keyring plugin",
 			"Updating password for account %s (%s).\n",
@@ -200,7 +205,7 @@ gkp_save(PurpleAccount * account,
 
 		gnome_keyring_store_password(GNOME_KEYRING_NETWORK_PASSWORD,
 					     NULL, 	/*default keyring */
-					     g_strdup_printf("pidgin-%s", purple_account_get_username(account)),
+					     storage->name,
 					     password,
 		                             gkp_save_continue,
 					     storage,
@@ -235,12 +240,18 @@ static void
 gkp_save_continue(GnomeKeyringResult result,
             gpointer data)
 {
-	InfoStorage * storage = data;
-	PurpleKeyringSaveCallback cb = storage->cb;
+	InfoStorage * storage;
+	PurpleKeyringSaveCallback cb;
 	GError * error;
-	PurpleAccount * account = storage->account;
+	PurpleAccount * account;
 
+	storage = data;
 	g_return_if_fail(storage != NULL);
+
+	cb = storage->cb;
+	account = storage->account;
+	
+	g_free(storage->name);
 
 	if (result != GNOME_KEYRING_RESULT_OK) {
 		switch(result)
@@ -313,6 +324,9 @@ gkp_read_sync(const PurpleAccount * account)
 	GnomeKeyringResult result;
 	static char * password = NULL;
 
+	purple_debug_info("Gnome-Keyring plugin (_sync_)", "password for %s was read.\n",
+			purple_account_get_username(account));
+
 	gnome_keyring_free_password(password);
 
 	result = gnome_keyring_find_password_sync(GNOME_KEYRING_NETWORK_PASSWORD,
@@ -325,12 +339,12 @@ gkp_read_sync(const PurpleAccount * account)
 }
 
 static void
-gkp_save_sync(PurpleAccount * account,
+gkp_save_sync(PurpleAccount * account, 
 	const char * password)
 {
 	const char * name;
 
-	if(password != NULL && *password != '\O') {
+	if(password != NULL && *password != '\0') {
 
 		name =g_strdup_printf("pidgin-%s", purple_account_get_username(account)),
 
@@ -339,7 +353,7 @@ gkp_save_sync(PurpleAccount * account,
 			"user", purple_account_get_username(account),
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
-		purple_debug_info("GnomeKeyring plugin (sync)", 
+		purple_debug_info("GnomeKeyring plugin (_sync_)", 
 			"Updated password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
@@ -349,7 +363,7 @@ gkp_save_sync(PurpleAccount * account,
 			"user", purple_account_get_username(account),
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
-		purple_debug_info("GnomeKeyring plugin (sync)", 
+		purple_debug_info("GnomeKeyring plugin (_sync_)", 
 			"Deleted password for account %s (%s).\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
@@ -365,8 +379,8 @@ gkp_close(GError ** error)
 
 static gboolean
 gkp_import_password(PurpleAccount * account, 
-		    char * mode,
-		    char * data,
+		    const char * mode,
+		    const char * data,
 		    GError ** error)
 {
 	purple_debug_info("Gnome Keyring plugin",

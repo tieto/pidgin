@@ -186,8 +186,8 @@ typedef void (*PurpleKeyringChangeMaster)(PurpleKeyringChangeMasterCallback cb,
  * @return TRUE on success, FALSE on failure.
  */
 typedef gboolean (*PurpleKeyringImportPassword)(PurpleAccount * account, 
-					    char * mode,
-					    char * data,
+					    const char * mode,
+					    const char * data,
 					    GError ** error);
 
 /**
@@ -302,9 +302,9 @@ purple_keyring_unregister(PurpleKeyring * keyring);
  * @return TRUE if the input was accepted, FALSE otherwise.
  */
 gboolean purple_keyring_import_password(PurpleAccount * account, 
-				    char * keyringid,
-				    char * mode,
-				    char * data,
+				    const char * keyringid,
+				    const char * mode,
+				    const char * data,
 				    GError ** error);
 
 /**

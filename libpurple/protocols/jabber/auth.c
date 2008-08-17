@@ -25,7 +25,6 @@
 #include "cipher.h"
 #include "core.h"
 #include "conversation.h"
-#include "keyring.h"
 #include "request.h"
 #include "sslconn.h"
 #include "util.h"
@@ -66,76 +65,50 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 	return FALSE;
 }
 
-static void finish_plaintext_authentication_continue_plain(PurpleAccount * account,
-	char * password, GError * error, gpointer data);
-static void finish_plaintext_authentication_continue_iq_auth(PurpleAccount * account,
-	char * password, GError * error, gpointer data);
-
 static void finish_plaintext_authentication(JabberStream *js)
 {
 	if(js->auth_type == JABBER_AUTH_PLAIN) {
-		 purple_connection_get_password_async(js->gc,
-			finish_plaintext_authentication_continue_plain, js);
+		xmlnode *auth;
+		GString *response;
+		gchar *enc_out;
 
+		auth = xmlnode_new("auth");
+		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
+
+		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
+		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
+
+		response = g_string_new("");
+		response = g_string_append_len(response, "\0", 1);
+		response = g_string_append(response, js->user->node);
+		response = g_string_append_len(response, "\0", 1);
+		response = g_string_append(response,
+				purple_connection_get_password(js->gc));
+
+		enc_out = purple_base64_encode((guchar *)response->str, response->len);
+
+		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
+		xmlnode_insert_data(auth, enc_out, -1);
+		g_free(enc_out);
+		g_string_free(response, TRUE);
+
+		jabber_send(js, auth);
+		xmlnode_free(auth);
 	} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
-		purple_account_get_password_async(js->gc,
-			finish_plaintext_authentication_continue_iq_auth, js);
+		JabberIq *iq;
+		xmlnode *query, *x;
+
+		iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
+		query = xmlnode_get_child(iq->node, "query");
+		x = xmlnode_new_child(query, "username");
+		xmlnode_insert_data(x, js->user->node, -1);
+		x = xmlnode_new_child(query, "resource");
+		xmlnode_insert_data(x, js->user->resource, -1);
+		x = xmlnode_new_child(query, "password");
+		xmlnode_insert_data(x, purple_connection_get_password(js->gc), -1);
+		jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
+		jabber_iq_send(iq);
 	}
-}
-
-static void finish_plaintext_authentication_continue_plain(PurpleAccount * account,
-							   char * password,
-							   GError * error,
-							   gpointer data)
-{
-	xmlnode *auth;
-	GString *response;
-	gchar *enc_out;
-	JabberStream *js = data;
-
-	auth = xmlnode_new("auth");
-	xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
-
-	xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
-	xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
-
-	response = g_string_new("");
-	response = g_string_append_len(response, "\0", 1);
-	response = g_string_append(response, js->user->node);
-	response = g_string_append_len(response, "\0", 1);
-	response = g_string_append(response,
-			purple_connection_get_password(js->gc));
-
-	enc_out = purple_base64_encode((guchar *)response->str, response->len);
-
-	xmlnode_set_attrib(auth, "mechanism", "PLAIN");
-	xmlnode_insert_data(auth, enc_out, -1);
-	g_free(enc_out);
-	g_string_free(response, TRUE);
-
-	jabber_send(js, auth);
-	xmlnode_free(auth);
-}
-
-static void finish_plaintext_authentication_continue_iq_auth(PurpleAccount * account,
-							     char * password,
-							     GError * error,
-							     gpointer data)
-{
-	JabberIq *iq;
-	xmlnode *query, *x;
-	JabberStream *js = data;
-
-	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
-	query = xmlnode_get_child(iq->node, "query");
-	x = xmlnode_new_child(query, "username");
-	xmlnode_insert_data(x, js->user->node, -1);
-	x = xmlnode_new_child(query, "resource");
-	xmlnode_insert_data(x, js->user->resource, -1);
-	x = xmlnode_new_child(query, "password");
-	xmlnode_insert_data(x, password, -1);
-	jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
-	jabber_iq_send(iq);
 }
 
 static void allow_plaintext_auth(PurpleAccount *account)

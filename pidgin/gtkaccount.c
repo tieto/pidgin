@@ -138,6 +138,7 @@ typedef struct
 
 } AccountPrefsDialog;
 
+
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
 
@@ -148,6 +149,7 @@ static void set_account(GtkListStore *store, GtkTreeIter *iter,
 /**************************************************************************
  * Add/Modify Account dialog
  **************************************************************************/
+static void pidgin_account_dialog_show_continue(PurpleAccount * account, char * password, GError * error, gpointer data);
 static void add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_protocol_options(AccountPrefsDialog *dialog,
@@ -561,9 +563,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		if (purple_account_get_password(dialog->account))
-			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
-							   purple_account_get_password(dialog->account));
+		if (purple_account_get_password(dialog->account) != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry), 
+				purple_account_get_password(dialog->account));
 
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
@@ -1457,10 +1459,23 @@ static const GtkTargetEntry dnd_targets[] = {
 	{"STRING", 0, 2}
 };
 
+
 void
 pidgin_account_dialog_show(PidginAccountDialogType type,
-							 PurpleAccount *account)
+			   PurpleAccount *account)
 {
+	/* this is to make sure the password will be cached */
+	purple_account_get_password_async(account,
+		pidgin_account_dialog_show_continue, (void*)type);
+}
+
+static void
+pidgin_account_dialog_show_continue(PurpleAccount * account,
+			   char * password,
+			   GError * error,
+			   gpointer data)
+{
+	PidginAccountDialogType type = (PidginAccountDialogType)data;
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
 	GtkWidget *main_vbox;
@@ -1524,6 +1539,7 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 
 	/* Setup the top frames. */
 	add_login_options(dialog, vbox);
+
 	add_user_options(dialog, vbox);
 
 	button = gtk_check_button_new_with_mnemonic(
@@ -2069,7 +2085,7 @@ populate_accounts_list(AccountsWindow *dialog)
 	if (global_buddyicon != NULL)
 		g_object_unref(G_OBJECT(global_buddyicon));
 
-	return ret;
+	return ret; 
 }
 
 #if !GTK_CHECK_VERSION(2,2,0)

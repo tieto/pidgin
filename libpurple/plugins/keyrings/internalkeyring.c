@@ -78,7 +78,7 @@ static const char * 	internal_keyring_read_sync(const PurpleAccount *);
 static void 		internal_keyring_save_sync(PurpleAccount *, const gchar *);
 static void		internal_keyring_close(GError **);
 static void		internal_keyring_open(void);
-static gboolean		internal_keyring_import_password(PurpleAccount *, char *, char *, GError **);
+static gboolean		internal_keyring_import_password(PurpleAccount *, const char *, const char *, GError **);
 static gboolean 	internal_keyring_export_password(PurpleAccount *, const char **, char **, GError **, GDestroyNotify *);
 static void		internal_keyring_init(void);
 static void		internal_keyring_uninit(void);
@@ -160,7 +160,7 @@ internal_keyring_read_sync(const PurpleAccount * account)
 {
 	ACTIVATE();
 
-	purple_debug_info("Internal Keyring (sync)", 
+	purple_debug_info("Internal Keyring (_sync_)", 
 		"Password for %s (%s) was read.\n",
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account));
@@ -176,16 +176,16 @@ internal_keyring_save_sync(PurpleAccount * account,
 
 	ACTIVATE();
 
-	if (password == NULL || *password == '\O') {
+	if (password == NULL || *password == '\0') {
 		g_hash_table_remove(internal_keyring_passwords, account);
-		purple_debug_info("Internal Keyring (sync)", 
+		purple_debug_info("Internal Keyring (_sync_)", 
 			"Password for %s (%s) was deleted.\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 	} else {
 		copy = g_strdup(password);
 		SET_PASSWORD(account, copy);
-		purple_debug_info("Internal Keyring (sync)", 
+		purple_debug_info("Internal Keyring (_sync_)", 
 			"Password for %s (%s) was set.\n",
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
@@ -213,8 +213,8 @@ internal_keyring_open()
 
 static gboolean
 internal_keyring_import_password(PurpleAccount * account, 
-				 char * mode,
-				 char * data,
+				 const char * mode,
+				 const char * data,
 				 GError ** error)
 {
 	gchar * copy;
@@ -262,7 +262,8 @@ internal_keyring_export_password(PurpleAccount * account,
 	 * lead to exporting uninitialised data, which 
 	 * we obviously don't want.
 	 */
-	password = purple_account_get_password(account);
+	//password = purple_account_get_password(account);
+	password = GET_PASSWORD(account);
 
 	if (password == NULL) {
 		return FALSE;

@@ -676,41 +676,12 @@ static void ggp_find_buddies(PurplePluginAction *action)
 
 /* ----- CHANGE PASSWORD ------------------------------------------------ */
 
-typedef struct _ConnectionCallbackData
-{
-	PurpleConnection *gc;
-	PurpleRequestFields *fields;
-} ConnectionCallbackData;
-
-
 /*
  */
 /* static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
-static void ggp_callback_change_passwd_ok_continue(PurpleAccount * account,
-	gchar * password, GError * error, gpointer user_data);
-
 static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	ConnectionCallbackData *data;
 	PurpleAccount *account;
-
-       	data = g_new(ConnectionCallbackData, 1);
-	account = purple_connection_get_account(gc);
-
-	data->gc = gc;
-	data->fields = fields;
-
-	purple_account_get_password_async(account, ggp_callback_change_passwd_ok_continue, data);
-}
-
-static void ggp_callback_change_passwd_ok_continue(PurpleAccount * account,
-					  gchar * password,
-					  GError * error,
-					  gpointer user_data)
-{
-	ConnectionCallbackData *data = user_data;
-	PurpleConnection *gc = data->gc;
-	PurpleRequestFields *fields = data->fields;
 	GGPInfo *info = gc->proto_data;
 	struct gg_http *h;
 	gchar *cur, *p1, *p2, *t;
@@ -742,7 +713,7 @@ static void ggp_callback_change_passwd_ok_continue(PurpleAccount * account,
 		goto exit_err;
 	}
 
-	if (g_utf8_collate(cur, password) != 0) {
+	if (g_utf8_collate(cur, purple_account_get_password(account)) != 0) {
 		purple_notify_error(account, NULL,
 			_("Your current password is different from the one that you specified."),
 			NULL);
@@ -753,7 +724,7 @@ static void ggp_callback_change_passwd_ok_continue(PurpleAccount * account,
 
 	/* XXX: this email should be a pref... */
 	h = gg_change_passwd4(ggp_get_uin(account),
-			      "user@example.net", password,
+			      "user@example.net", purple_account_get_password(account),
 			      p1, info->token->id, t, 0);
 
 	if (h == NULL) {
@@ -1714,17 +1685,7 @@ static GList *ggp_chat_info(PurpleConnection *gc)
 /* }}} */
 
 /* static void ggp_login(PurpleAccount *account) {{{ */
-static void ggp_login_continue(PurpleAccount *account, gchar * password, GError * error, gpointer data);
-
 static void ggp_login(PurpleAccount *account)
-{
-	purple_account_get_password_async(account, ggp_login_continue, NULL);
-}
-
-static void ggp_login_continue(PurpleAccount *account,
-			       gchar * password,
-			       GError * error,
-			       gpointer data)
 {
 	PurpleConnection *gc;
 	PurplePresence *presence;
@@ -1749,7 +1710,7 @@ static void ggp_login_continue(PurpleAccount *account,
 	gc->proto_data = info;
 
 	glp->uin = ggp_get_uin(account);
-	glp->password = password;
+	glp->password = (char *)purple_account_get_password(account);
 
 	presence = purple_account_get_presence(account);
 	status = purple_presence_get_active_status(presence);

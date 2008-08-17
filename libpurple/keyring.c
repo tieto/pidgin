@@ -42,6 +42,7 @@ static PurpleKeyring * purple_keyring_find_keyring_by_id(char * id);
 static void purple_keyring_drop_passwords(const PurpleKeyring * keyring);
 static void purple_keyring_set_inuse_check_error_cb(const PurpleAccount *,GError *,gpointer);
 static void purple_keyring_set_inuse_got_pw_cb(PurpleAccount *, gchar *, GError *, gpointer);
+static void purple_keyring_set_password_async_cb(PurpleAccount * account, GError * error, gpointer data);
 
 
 /******************************************/
@@ -799,9 +800,9 @@ purple_keyring_unregister(PurpleKeyring * keyring)
 
 gboolean
 purple_keyring_import_password(PurpleAccount * account, 
-			       char * keyringid,
-			       char * mode,
-			       char * data,
+			       const char * keyringid,
+			       const char * mode,
+			       const char * data,
 			       GError ** error)
 {
 	const PurpleKeyring * inuse;
@@ -974,57 +975,44 @@ purple_keyring_set_password_async(const PurpleAccount * account,
 	PurpleKeyringSave save;
 	PurpleKeyringCbInfo * cbinfo;
 
-	if (account == NULL) {
-		error = g_error_new(ERR_PIDGINKEYRING, ERR_INVALID,
-			"No account passed to the function.");
+	g_return_if_fail(account != NULL);
 
+	inuse = purple_keyring_get_inuse();
+	if (inuse == NULL) {
+		error = g_error_new(ERR_PIDGINKEYRING, ERR_NOKEYRING,
+			"No keyring configured.");
 		if (cb != NULL)
 			cb(account, error, data);
-
 		g_error_free(error);
 
 	} else {
-		inuse = purple_keyring_get_inuse();
-
-		if (inuse == NULL) {
-			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOKEYRING,
-				"No keyring configured.");
-
+		save = purple_keyring_get_save_password(inuse);
+		if (save == NULL) {
+			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
+				"Keyring cannot save password.");
 			if (cb != NULL)
 				cb(account, error, data);
-
 			g_error_free(error);
 
 		} else {
-			save = purple_keyring_get_save_password(inuse);
-
-			if (save == NULL) {
-				error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
-					"Keyring cannot save password.");
-
-				if (cb != NULL)
-					cb(account, error, data);
-
-				g_error_free(error);
-
-			} else {
-				cbinfo = g_malloc(sizeof(PurpleKeyringCbInfo));
-				cbinfo->cb = cb;
-				cbinfo->data = data;
-				save(account, password, destroypassword,
-					purple_keyring_set_password_async, data);
-			}
+			cbinfo = g_malloc(sizeof(PurpleKeyringCbInfo));
+			cbinfo->cb = cb;
+			cbinfo->data = data;
+			save(account, password, destroypassword,
+				purple_keyring_set_password_async_cb, data);
 		}
 	}
-
 	return;
 }
 
-void 
+static void 
 purple_keyring_set_password_async_cb(PurpleAccount * account, 
 				     GError * error,
 				     gpointer data)
 {
+	g_return_if_fail(data != NULL);
+	g_return_if_fail(account != NULL);
+
 	PurpleKeyringCbInfo * cbinfo = data;
 	PurpleKeyringSaveCallback cb = cbinfo->cb;
 
@@ -1048,7 +1036,7 @@ purple_keyring_get_password_sync(const PurpleAccount * account)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	purple_debug_info("keyring (sync)",
+	purple_debug_info("keyring (_sync_)",
 		"Reading password for account %s (%s)",
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account));
@@ -1078,7 +1066,7 @@ purple_keyring_set_password_sync(PurpleAccount * account,
 	PurpleKeyringSaveSync save;
 	const PurpleKeyring * inuse;
 
-	purple_debug_info("keyring (sync)",
+	purple_debug_info("keyring (_sync_)",
 		"Setting password for account %s (%s)",
 		purple_account_get_username(account),
 		purple_account_get_protocol_id(account));

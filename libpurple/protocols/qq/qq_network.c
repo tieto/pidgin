@@ -564,41 +564,15 @@ static gboolean network_timeout(gpointer data)
 
 /* the callback function after socket is built
  * we setup the qq protocol related configuration here */
-typedef struct _ConnectInfo
-{
-	PurpleConnection * gc;
-	gint source;
-	const gchar * error;
-} ConnectInfo;
-static void qq_connect_cb_continue(PurpleAccount * account, char * password, GError * error, gpointer data);
-
 static void qq_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
-	ConnectInfo * info;
-	PurpleAccount * account;
-
-	info = g_malloc(sizeof(ConnectInfo));
-	info->gc = (PurpleConnection *) data;
-	info->source = source;
-	info->error =error_message;
-	
-	account = purple_connection_get_account(info->gc);
-
-	purple_account_get_password_async(account, qq_connect_cb_continue, info);
-
-	g_free(info);
-}
-static void qq_connect_cb_continue(PurpleAccount * account,
-				   char * passwd,
-				   GError * error,
-				   gpointer data)
-{
-	ConnectInfo * info = (ConnectInfo *)data;
-	gint source			= info->source;
-	const gchar *error_message	= info->error;
-	PurpleConnection *gc		= info->gc;
 	qq_data *qd;
+	PurpleConnection *gc;
 	gchar *conn_msg;
+	const gchar *passwd;
+	PurpleAccount *account ;
+
+	gc = (PurpleConnection *) data;
 
 	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_debug(PURPLE_DEBUG_INFO, "QQ_CONN", "Invalid connection\n");
@@ -609,6 +583,7 @@ static void qq_connect_cb_continue(PurpleAccount * account,
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
+	account = purple_connection_get_account(gc);
 
 	/* Connect is now complete; clear the PurpleProxyConnectData */
 	qd->connect_data = NULL;
@@ -628,9 +603,10 @@ static void qq_connect_cb_continue(PurpleAccount * account,
 	qd->fd = source;
 	qd->logged_in = FALSE;
 	qd->channel = 1;
-	qd->uid = strtol(purple_account_get_username(account), NULL, 10);
+	qd->uid = strtol(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
 
 	/* now generate md5 processed passwd */
+	passwd = purple_account_get_password(purple_connection_get_account(gc));
 
 	/* use twice-md5 of user password as session key since QQ 2003iii */
 	qq_get_md5(qd->password_twice_md5, sizeof(qd->password_twice_md5),
