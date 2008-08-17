@@ -10,7 +10,7 @@ gnomekeyring_la_LDFLAGS     = -module -avoid-version
 GKRSOURCES = gnomekeyring.c
 #GNOME_KEYRING_CFLAGS = -I/usr/include/gnome-keyring-1
 #GNOME_KEYRING_LIBS   = -lgnome-keyring
-GNOME_KEYRING_LA = internalkeyring.la
+GNOME_KEYRING_LA = gnomekeyring.la
 
 endif #ENABLE_GNOMEKEYRING
 
@@ -47,6 +47,7 @@ AM_CPPFLAGS = \
 if ENABLE_GNOMEKEYRING
 gnomekeyring_la_CFLAGS = $(AM_CPPFLAGS) $(GNOMEKEYRING_CFLAGS)
 endif #ENABLE_GNOMEKEYRING
+
 internalkeyring_la_CFLAGS = $(AM_CPPFLAGS)
 
 
