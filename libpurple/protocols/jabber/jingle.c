@@ -847,9 +847,9 @@ jabber_jingle_session_content_create_media(JingleSession *session,
 	gchar sender[10] = "";
 
 	if (type & PURPLE_MEDIA_AUDIO) {
-		if (type == PURPLE_MEDIA_SEND_AUDIO)
+		if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_SEND_AUDIO)
 			strcpy(sender, "initiator");
-		else if (type == PURPLE_MEDIA_RECV_AUDIO)
+		else if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_RECV_AUDIO)
 			strcpy(sender, "responder");
 		else
 			strcpy(sender, "both");
@@ -858,9 +858,9 @@ jabber_jingle_session_content_create_media(JingleSession *session,
 				TRANSPORT_ICEUDP, JINGLE_RTP, "audio");
 	}
 	if (type & PURPLE_MEDIA_VIDEO) {
-		if (type == PURPLE_MEDIA_SEND_VIDEO)
+		if ((type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_SEND_VIDEO)
 			strcpy(sender, "initiator");
-		else if (type == PURPLE_MEDIA_RECV_VIDEO)
+		else if ((type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_RECV_VIDEO)
 			strcpy(sender, "responder");
 		else
 			strcpy(sender, "both");
@@ -947,16 +947,35 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 	for (; contents; contents = g_list_delete_link(contents, contents)) {
 		JingleSessionContent *jsc = contents->data;
 		gboolean result = FALSE;
+		const gchar *sender = jabber_jingle_session_content_get_sender(jsc);
+		FsStreamDirection direction = FS_DIRECTION_NONE;
+
+		if (!strcmp(sender, "initiator"))
+			direction = FS_DIRECTION_SEND;
+		else if(!strcmp(sender, "responder"))
+			direction = FS_DIRECTION_RECV;
+		else
+			direction = FS_DIRECTION_BOTH;
+
+		if (!jabber_jingle_session_is_initiator(session)
+				&& direction != FS_DIRECTION_BOTH) {
+			if (direction == FS_DIRECTION_SEND)
+				direction = FS_DIRECTION_RECV;
+			else
+				direction = FS_DIRECTION_SEND;
+		}
 
 		/* these will need to be changed to "nice" once the libnice transmitter is finished */
 		if (jabber_jingle_session_content_is_vv_type(jsc, "audio")) {
 			result = purple_media_add_stream(media, "audio-content", remote_jid,
-							 PURPLE_MEDIA_AUDIO, "rawudp");
+					purple_media_from_fs(FS_MEDIA_TYPE_AUDIO, direction),
+					"rawudp");
 			purple_debug_info("jingle", "Created Jingle audio session\n");
 		}
 		else if (jabber_jingle_session_content_is_vv_type(jsc, "video")) {
 			result = purple_media_add_stream(media, "video-content", remote_jid,
-							 PURPLE_MEDIA_VIDEO, "rawudp");
+					purple_media_from_fs(FS_MEDIA_TYPE_VIDEO, direction),
+					"rawudp");
 			purple_debug_info("jingle", "Created Jingle video session\n");
 		}
 
