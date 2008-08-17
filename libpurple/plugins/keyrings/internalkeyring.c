@@ -50,10 +50,11 @@
 #include "keyring.h"
 #include "debug.h"
 #include "plugin.h"
+#include "internal.h"
 
-#define INTERNALKEYRING_NAME		"Internal keyring"
-#define INTERNALKEYRING_VERSION		"0.7"
-#define INTERNALKEYRING_DESCRIPTION	"This plugin provides the default password storage behaviour for libpurple."
+#define INTERNALKEYRING_NAME		N_("Internal keyring")
+#define INTERNALKEYRING_VERSION		"0.8b"
+#define INTERNALKEYRING_DESCRIPTION	N_("This plugin provides the default password storage behaviour for libpurple. Password will be stored unencrypted.")
 #define	INTERNALKEYRING_AUTHOR		"Scrouaf (scrouaf[at]soc.pidgin.im)"
 #define INTERNALKEYRING_ID		FALLBACK_KEYRING
 

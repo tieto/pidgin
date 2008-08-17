@@ -398,18 +398,8 @@ PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
  *
  * @return The connection's password.
  */
-const char *purple_connection_get_password(const PurpleConnection *gc) __attribute__ ((deprecated));
+const char *purple_connection_get_password(const PurpleConnection *gc);
 
-/**
- * Passes the connection's keyring to the callback.
- *
- * @param gc The connection.
- * @param cb The callback to pass the password to.
- * @param data A pointer passed to the callback.
- */
-void
-purple_connection_get_password_async(PurpleConnection *gc, 
-	PurpleKeyringReadCallback cb, gpointer data);
 /**
  * Returns the connection's displayed name.
  *

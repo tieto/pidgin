@@ -222,8 +222,7 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 		gboolean boolean_value = purple_value_get_boolean(attr_value);
 		if (boolean_value == purple_value_get_boolean(default_value))
 			return NULL;
-		value = g_strdup(boolean_value ?
-								"true" : "false");
+		value = g_strdup(boolean_value ? "true" : "false");
 	}
 	else
 	{
@@ -1147,8 +1146,6 @@ purple_account_unregister_got_password_cb(PurpleAccount * account, char * passwo
 	
 	g_return_if_fail(account != NULL);
 
-	/* FIXME : handle error properly */
-
 	unregdata = data;
 	g_return_if_fail(unregdata != NULL);
 
@@ -1298,12 +1295,6 @@ purple_account_disconnect(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 	purple_connection_destroy(gc);
 
-/* FIXME : if this works, remove the commented code. */
-#if 0
-	if (!purple_account_get_remember_password(account))
-		purple_account_set_password_async(account, NULL, NULL, NULL, NULL);
-	
-#endif
 	purple_account_set_connection(account, NULL);
 	account->disconnecting = FALSE;
 }
@@ -1735,10 +1726,6 @@ purple_account_set_connection(PurpleAccount *account, PurpleConnection *gc)
 	account->gc = gc;
 }
 
-/**
- * FIXME :
- *  This should be async
- */
 void
 purple_account_set_remember_password(PurpleAccount *account, gboolean value)
 {

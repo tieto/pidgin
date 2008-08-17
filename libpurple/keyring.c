@@ -33,6 +33,7 @@
 #include "signals.h"
 #include "core.h"
 #include "debug.h"
+#include "internal.h"
 
 typedef struct _PurpleKeyringCbInfo PurpleKeyringCbInfo;
 typedef struct _PurpleKeyringChangeTracker PurpleKeyringChangeTracker;
@@ -471,9 +472,9 @@ purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 			purple_debug_info("keyring",
 				"Failed to change keyring, aborting");
 
-			/**
-			 * FIXME : call purple_notify()
-			 */
+			purple_notify_error(NULL, _("Keyrings"), _("Failed to change the keyring."),
+				_("Aborting changes."));
+			purple_keyring_inuse = tracker->old;
 			purple_prefs_disconnect_callback(purple_keyring_pref_cb_id);
 			purple_prefs_set_string("/purple/keyring/active",
 				purple_keyring_get_id(tracker->old));
@@ -486,7 +487,6 @@ purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
 			if (close != NULL)
 				close(&error);
 
-			purple_keyring_inuse = tracker->new;
 			purple_keyring_drop_passwords(tracker->old);
 
 			purple_debug_info("keyring",
@@ -579,7 +579,6 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 	PurpleKeyringRead read = NULL;
 	PurpleKeyringClose close;
 	PurpleKeyringChangeTracker * tracker;
-	GError * error = NULL; 
 
 	if (newkeyring != NULL)
 		purple_debug_info("keyring", "Attempting to set new keyring : %s.\n",
@@ -615,6 +614,8 @@ purple_keyring_set_inuse(const PurpleKeyring * newkeyring,
 		} else {
 			tracker = g_malloc(sizeof(PurpleKeyringChangeTracker));
 			oldkeyring = purple_keyring_get_inuse();
+
+			purple_keyring_inuse = newkeyring;
 
 			tracker->cb = cb;
 			tracker->data = data;
@@ -964,7 +965,7 @@ purple_keyring_get_password_async(PurpleAccount * account,
  * to 3.0, while dropping purple_keyring_set_password_sync().
  */
 void 
-purple_keyring_set_password_async(const PurpleAccount * account, 
+purple_keyring_set_password_async(PurpleAccount * account, 
 				  gchar * password,
 				  GDestroyNotify destroypassword,
 				  PurpleKeyringSaveCallback cb,
@@ -1010,14 +1011,19 @@ purple_keyring_set_password_async_cb(PurpleAccount * account,
 				     GError * error,
 				     gpointer data)
 {
+	PurpleKeyringCbInfo * cbinfo;
+	PurpleKeyringSaveCallback cb;
+
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(account != NULL);
 
-	PurpleKeyringCbInfo * cbinfo = data;
-	PurpleKeyringSaveCallback cb = cbinfo->cb;
+	cbinfo = data;
+	cb = cbinfo->cb;
 
 	if (error != NULL) {
-		/* FIXME : purple_notify_warning() */
+		purple_notify_error(NULL, _("Keyrings"),
+			_("Failed to save password in keyring.")
+			error->message);
 	}
 
 	if (cb != NULL)
@@ -1129,9 +1135,8 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 	if (inuse == NULL) {
 		error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
 			"Keyring doesn't support master passwords.");
-
-		cb(FALSE, error, data);
-
+		if (cb)
+			cb(FALSE, error, data);
 		g_error_free(error);
 
 	} else {
@@ -1141,8 +1146,8 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 		if (change == NULL) {
 			error = g_error_new(ERR_PIDGINKEYRING, ERR_NOCAP,
 				"Keyring doesn't support master passwords.");
-
-			cb(FALSE, error, data);
+			if (cb)
+				cb(FALSE, error, data);
 
 			g_error_free(error);
 
@@ -1164,7 +1169,7 @@ purple_keyring_change_master(PurpleKeyringChangeMasterCallback cb,
 
 GQuark purple_keyring_error_domain(void)
 {
-	return g_quark_from_static_string("Libpurple keyring");
+	return g_quark_from_static_string("libpurple keyring");
 }
 
 /*}@*/

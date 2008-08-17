@@ -39,8 +39,6 @@
 #include "util.h"
 
 #define KEEPALIVE_INTERVAL 30
-static void purple_connection_disconnect_got_pw_cb(PurpleAccount * account,
-       gchar * password, GError * error, gpointer data);
 
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
@@ -449,22 +447,6 @@ purple_connection_get_password(const PurpleConnection *gc)
 		purple_debug_info("connection",
 			"Password was unknown, getting password from account");
 		return purple_account_get_password(gc->account);
-	}
-}
-
-void
-purple_connection_get_password_async(PurpleConnection *gc, 
-				     PurpleKeyringReadCallback cb,
-				     gpointer data)
-{
-	char * password;
-	g_return_if_fail(gc != NULL);
-
-	if (gc->password != NULL) {
-		/* casted to prevent warning */
-		cb((PurpleAccount *)gc, gc->password, NULL, data);
-	} else {
-		purple_account_get_password_async(gc->account, cb, gc);
 	}
 }
 

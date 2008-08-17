@@ -79,7 +79,7 @@ typedef void (*PurpleKeyringReadCallback)(PurpleAccount * account,
  * @param account The account of which the password was saved.
  * @param data Data passed to the callback.
  */
-typedef void (*PurpleKeyringSaveCallback)(const PurpleAccount * account, 
+typedef void (*PurpleKeyringSaveCallback)(PurpleAccount * account, 
 					  GError * error,
 					  gpointer data);
 
@@ -349,7 +349,7 @@ purple_keyring_get_password_async(PurpleAccount * account,
  * @param data A pointer to be passed to the callback.
  */
 void 
-purple_keyring_set_password_async(const PurpleAccount * account, 
+purple_keyring_set_password_async(PurpleAccount * account, 
 				  gchar * password,
 				  GDestroyNotify destroypassword,
 				  PurpleKeyringSaveCallback cb,

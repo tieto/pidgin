@@ -58,9 +58,6 @@ typedef struct
 
 static FinchAccountList accounts;
 
-static void edit_account_continue(PurpleAccount * account, 
-	const gchar * password, GError * error, gpointer user_data);
-
 typedef struct
 {
 	PurpleAccount *account;          /* NULL for a new account */
@@ -85,6 +82,10 @@ typedef struct
 
 /* This is necessary to close an edit-dialog when an account is deleted */
 static GList *accountdialogs;
+
+
+static void edit_account_continue(PurpleAccount * account, 
+	gchar * password, GError * error, gpointer user_data);
 
 static void
 account_add(PurpleAccount *account)
@@ -492,7 +493,7 @@ edit_account(PurpleAccount *account)
 
 static void
 edit_account_continue(PurpleAccount * account, 
-	const gchar * password, GError * error, gpointer user_data)
+	gchar * password, GError * error, gpointer user_data)
 {
 	GntWidget *window, *hbox;
 	GntWidget *combo, *button, *entry;

@@ -54,12 +54,13 @@
 #include "keyring.h"
 #include "debug.h"
 #include "plugin.h"
+#include "internal.h"
 
-#define GNOMEKEYRING_NAME		"Gnome-Keyring"
-#define GNOMEKEYRING_VERSION		"0.2"
-#define GNOMEKEYRING_DESCRIPTION	"This plugin provides the default password storage behaviour for libpurple."
+#define GNOMEKEYRING_NAME		N_("Gnome-Keyring")
+#define GNOMEKEYRING_VERSION		"0.3b"
+#define GNOMEKEYRING_DESCRIPTION	N_("This plugin will store passwords in Gnome-Keyring.")
 #define	GNOMEKEYRING_AUTHOR		"Scrouaf (scrouaf[at]soc.pidgin.im)"
-#define GNOMEKEYRING_ID		"core-scrouaf-gnomekeyring"
+#define GNOMEKEYRING_ID			"core-scrouaf-gnomekeyring"
 
 #define ERR_GNOMEKEYRINGPLUGIN 	gkp_error_domain()
 
@@ -74,9 +75,6 @@ struct _InfoStorage
 	PurpleAccount * account;
 	char * name;
 };
-
-
-
 
 /* a few prototypes : */
 static GQuark 		gkp_error_domain(void);
@@ -94,6 +92,8 @@ static void		gkp_uninit(void);
 static gboolean		gkp_load(PurplePlugin *);
 static gboolean		gkp_unload(PurplePlugin *);
 static void		gkp_destroy(PurplePlugin *);
+
+static void		gkp_change_master(PurpleKeyringChangeMasterCallback cb, gpointer data);
 
 GQuark gkp_error_domain(void)
 {
@@ -187,7 +187,6 @@ gkp_save(PurpleAccount * account,
 	 PurpleKeyringSaveCallback cb,
 	 gpointer data)
 {
-	/* FIXME : the name will leak */
 	InfoStorage * storage = g_new0(InfoStorage,1);
 
 	storage->account = account;
@@ -404,8 +403,19 @@ gkp_export_password(PurpleAccount * account,
 	return TRUE;
 }
 
+/* this was written just to test the pref change */
+static void
+gkp_change_master(PurpleKeyringChangeMasterCallback cb, gpointer data)
+{
+	purple_debug_info("Gnome-Keyring plugin",
+		"This keyring does not support master passwords.\n");
 
-
+	purple_notify_info(NULL, _("Gnome-Keyring plugin"), 
+			_("Failed to change master password."),
+			_("This plugin does not really support master passwords, it just pretends to."));
+	if(cb)
+		cb(FALSE, NULL, data);
+}
 
 static gboolean
 gkp_init()
@@ -423,7 +433,7 @@ gkp_init()
 		purple_keyring_set_read_password(keyring_handler, gkp_read);
 		purple_keyring_set_save_password(keyring_handler, gkp_save);
 		purple_keyring_set_close_keyring(keyring_handler, gkp_close);
-		purple_keyring_set_change_master(keyring_handler, NULL);
+		purple_keyring_set_change_master(keyring_handler, gkp_change_master);
 		purple_keyring_set_import_password(keyring_handler, gkp_import_password);
 		purple_keyring_set_export_password(keyring_handler, gkp_export_password);
 
