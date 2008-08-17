@@ -50,6 +50,7 @@ purple_coresources = \
 	ft.c \
 	idle.c \
 	imgstore.c \
+	keyring.c \
 	log.c \
 	mime.c \
 	nat-pmp.c \
@@ -103,6 +104,7 @@ purple_coreheaders = \
 	gaim-compat.h \
 	idle.h \
 	imgstore.h \
+	keyring.h \
 	log.h \
 	mime.h \
 	nat-pmp.h \

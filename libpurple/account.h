@@ -46,6 +46,7 @@ typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean s
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
+#include "keyring.h"
 
 /**
  * Account request types.
@@ -327,7 +328,23 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
  * @param account  The account.
  * @param password The password.
  */
-void purple_account_set_password(PurpleAccount *account, const char *password);
+void purple_account_set_password(PurpleAccount *account, char *password);
+
+/**
+ * Set a password to be remembered.
+ * This should be renamed purple_account_set_password() when getting
+ * to 3.0. This calls the keyring function and syncs the accounts.xml
+ * @param account The account for which the password is to be saved.
+ * @param password The password to save.
+ * @param destroypassword A function called to free the password. Can be NULL.
+ * @param cb A callback for once the password is saved.
+ * @param data A pointer to be passed to the callback.
+ */
+void purple_account_set_password_async(PurpleAccount * account, 
+				  gchar * password,
+				  GDestroyNotify destroypassword,
+				  PurpleKeyringSaveCallback cb,
+				  gpointer data);
 
 /**
  * Sets the account's alias.
@@ -549,13 +566,23 @@ gboolean purple_account_is_disconnected(const PurpleAccount *account);
 const char *purple_account_get_username(const PurpleAccount *account);
 
 /**
- * Returns the account's password.
+ * Returns the account's password (deprecated, use async code instead).
  *
  * @param account The account.
  *
  * @return The password.
  */
-const char *purple_account_get_password(const PurpleAccount *account);
+const char *purple_account_get_password(PurpleAccount *account);
+
+/**
+ * Reads the password for the account and passes it to the callback
+ *
+ * @param account The account to read the password for.
+ * @param cb The callback to pass the password to.
+ * @param data A pointer passed to the callback.
+ */
+void purple_account_get_password_async(PurpleAccount * account, 
+	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
  * Returns the account's alias.
