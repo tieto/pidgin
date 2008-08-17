@@ -1265,7 +1265,6 @@ Use --disable-nm if you do not need NetworkManager support.
 	fi
 
 
-PKG_CHECK_MODULES(GNOMEKEYRING, gnome-keyring-1)
 dnl Check for gnome-keyring.h; if we don't have it, oh well
 	if test "x$enable_gnome_keyring" = "xyes" ; then
 		PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
