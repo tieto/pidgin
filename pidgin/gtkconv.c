@@ -7370,7 +7370,9 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 	if (gtkconv)
 	{
 		conv = gtkconv->active_conv;
-		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON | PIDGIN_CONV_COLORIZE_TITLE);
+		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON
+		                              | PIDGIN_CONV_COLORIZE_TITLE
+		                              | PIDGIN_CONV_BUDDY_ICON);
 		if ((purple_status_is_online(old) ^ purple_status_is_online(newstatus)) != 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}
