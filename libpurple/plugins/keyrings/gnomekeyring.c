@@ -518,8 +518,8 @@ PurplePluginInfo plugininfo =
 static void                        
 init_plugin(PurplePlugin *plugin)
 {                                  
-	purple_debug_info("internalkeyring", "init plugin called.\n");
+	purple_debug_info("Gnome Keyring plugin", "init plugin called.\n");
 }
 
-PURPLE_INIT_PLUGIN(internal_keyring, init_plugin, plugininfo)
+PURPLE_INIT_PLUGIN(gnome_keyring, init_plugin, plugininfo)
 

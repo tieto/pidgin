@@ -42,11 +42,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-/**
- * TODO :
- *  - grab Trannie's code for async connection
- */
-
 
 typedef struct
 {
