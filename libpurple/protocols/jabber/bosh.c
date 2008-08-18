@@ -75,7 +75,7 @@ void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
 gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
 	char *type;
 	
-	if (!node) return;
+	if (!node) return FALSE;
 	type = xmlnode_get_attrib(node, "type");
 	
 	if (type != NULL && !strcmp(type, "terminate")) {
@@ -108,7 +108,6 @@ void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) 
 		}
 		child = child->next;
 	}
-	xmlnode_free(node);
 }
 
 void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -144,7 +143,7 @@ void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xmlnode *n
 		purple_debug_info("jabber", "Connection manager doesn't behave BOSH-like!\n");
 	}
 	
-	if (version = xmlnode_get_attrib(node, "ver")) {
+	if ((version = xmlnode_get_attrib(node, "ver"))) {
 		version[1] = 0;
 		if (!(atoi(version) >= 1 && atoi(&version[2]) >= 6)) purple_debug_info("jabber", 	"Unsupported version of BOSH protocol. The connection manager must at least support version 1.6!\n");
 		else {
@@ -190,6 +189,7 @@ void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPR
 			printf("\njabber_bosh_connection_http_received_cb\n%s\n", txt);
 			g_free(txt);
 			conn->receive_cb(conn, node);
+			xmlnode_free(node);
 		} else {
 			printf("\njabber_bosh_connection_http_received_cb: XML ERROR: %s\n", res->data); 
 		}
@@ -439,6 +439,7 @@ void jabber_bosh_http_request_clean(PurpleHTTPRequest *req) {
 	g_hash_table_destroy(req->header);
 	g_free(req->method);
 	g_free(req->path);
+	g_free(req->data);
 }
 
 void jabber_bosh_http_response_init(PurpleHTTPResponse *res) {
@@ -448,6 +449,6 @@ void jabber_bosh_http_response_init(PurpleHTTPResponse *res) {
 
 
 void jabber_bosh_http_response_clean(PurpleHTTPResponse *res) {
-	//g_hash_table_destroy(res->header);
+	g_hash_table_destroy(res->header);
 	g_free(res->data);
 }
