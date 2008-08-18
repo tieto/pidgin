@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.0 (??/??/2008):
+version 2.5.0 (08/17/2008):
 	libpurple:
 	* Ability to create custom smileys (currently only the MSN protocol
 	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
@@ -9,6 +9,8 @@ version 2.5.0 (??/??/2008):
 	  to specify a system-wide SSL CA certificates directory.  When set,
 	  we don't install our SSL CA certs, so it's important that the
 	  libpurple package depend on the CA certificates.
+	* Add SSL Certificates support to the NSS SSL plugin. (Thanks to Lou
+	  Cipher)
 
 	XMPP:
 	* Fix a bug that caused the UI to not refresh and caused the client

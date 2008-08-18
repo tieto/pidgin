@@ -30,7 +30,6 @@
 #include "notify.h"
 
 #include "buddy_list.h"
-#include "crypt.h"
 #include "file_trans.h"
 #include "header_info.h"
 #include "im.h"

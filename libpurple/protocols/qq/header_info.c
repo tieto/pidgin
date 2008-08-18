@@ -61,58 +61,6 @@
 
 #define QQ_SERVER_0100 0x0100	/* server */
 
-/* given command alias, return the command name accordingly */
-const gchar *qq_get_cmd_desc(gint type)
-{
-	switch (type) {
-	case QQ_CMD_LOGOUT:
-		return "QQ_CMD_LOGOUT";
-	case QQ_CMD_KEEP_ALIVE:
-		return "QQ_CMD_KEEP_ALIVE";
-	case QQ_CMD_UPDATE_INFO:
-		return "QQ_CMD_UPDATE_INFO";
-	case QQ_CMD_SEARCH_USER:
-		return "QQ_CMD_SEARCH_USER";
-	case QQ_CMD_GET_USER_INFO:
-		return "QQ_CMD_GET_USER_INFO";
-	case QQ_CMD_ADD_BUDDY_WO_AUTH:
-		return "QQ_CMD_ADD_BUDDY_WO_AUTH";
-	case QQ_CMD_DEL_BUDDY:
-		return "QQ_CMD_DEL_BUDDY";
-	case QQ_CMD_BUDDY_AUTH:
-		return "QQ_CMD_BUDDY_AUTH";
-	case QQ_CMD_CHANGE_ONLINE_STATUS:
-		return "QQ_CMD_CHANGE_ONLINE_STATUS";
-	case QQ_CMD_ACK_SYS_MSG:
-		return "QQ_CMD_ACK_SYS_MSG";
-	case QQ_CMD_SEND_IM:
-		return "QQ_CMD_SEND_IM";
-	case QQ_CMD_RECV_IM:
-		return "QQ_CMD_RECV_IM";
-	case QQ_CMD_REMOVE_SELF:
-		return "QQ_CMD_REMOVE_SELF";
-	case QQ_CMD_LOGIN:
-		return "QQ_CMD_LOGIN";
-	case QQ_CMD_GET_BUDDIES_LIST:
-		return "QQ_CMD_GET_BUDDIES_LIST";
-	case QQ_CMD_GET_BUDDIES_ONLINE:
-		return "QQ_CMD_GET_BUDDIES_ONLINE";
-	case QQ_CMD_GROUP_CMD:
-		return "QQ_CMD_GROUP_CMD";
-	case QQ_CMD_GET_ALL_LIST_WITH_GROUP:
-		return "QQ_CMD_GET_ALL_LIST_WITH_GROUP";
-	case QQ_CMD_GET_LEVEL:
-		return "QQ_CMD_GET_LEVEL";
-	case QQ_CMD_TOKEN:
-		return "QQ_CMD_TOKEN";
-	case QQ_CMD_RECV_MSG_SYS:
-		return "QQ_CMD_RECV_MSG_SYS";
-	case QQ_CMD_RECV_MSG_BUDDY_CHANGE_STATUS:
-		return "QQ_CMD_RECV_MSG_BUDDY_CHANGE_STATUS";
-	default:
-		return "Unknown";
-	}
-}
 
 /* given source tag, return its description accordingly */
 const gchar *qq_get_ver_desc(gint source)
@@ -175,5 +123,114 @@ const gchar *qq_get_ver_desc(gint source)
 		return "QQ Server 0100";
 	default:
 		return "Unknown";
+	}
+}
+
+/* given command alias, return the command name accordingly */
+const gchar *qq_get_cmd_desc(gint cmd)
+{
+	switch (cmd) {
+	case QQ_CMD_LOGOUT:
+		return "QQ_CMD_LOGOUT";
+	case QQ_CMD_KEEP_ALIVE:
+		return "QQ_CMD_KEEP_ALIVE";
+	case QQ_CMD_UPDATE_INFO:
+		return "QQ_CMD_UPDATE_INFO";
+	case QQ_CMD_SEARCH_USER:
+		return "QQ_CMD_SEARCH_USER";
+	case QQ_CMD_GET_USER_INFO:
+		return "QQ_CMD_GET_USER_INFO";
+	case QQ_CMD_ADD_BUDDY_WO_AUTH:
+		return "QQ_CMD_ADD_BUDDY_WO_AUTH";
+	case QQ_CMD_DEL_BUDDY:
+		return "QQ_CMD_DEL_BUDDY";
+	case QQ_CMD_BUDDY_AUTH:
+		return "QQ_CMD_BUDDY_AUTH";
+	case QQ_CMD_CHANGE_ONLINE_STATUS:
+		return "QQ_CMD_CHANGE_ONLINE_STATUS";
+	case QQ_CMD_ACK_SYS_MSG:
+		return "QQ_CMD_ACK_SYS_MSG";
+	case QQ_CMD_SEND_IM:
+		return "QQ_CMD_SEND_IM";
+	case QQ_CMD_RECV_IM:
+		return "QQ_CMD_RECV_IM";
+	case QQ_CMD_REMOVE_SELF:
+		return "QQ_CMD_REMOVE_SELF";
+	case QQ_CMD_LOGIN:
+		return "QQ_CMD_LOGIN";
+	case QQ_CMD_GET_BUDDIES_LIST:
+		return "QQ_CMD_GET_BUDDIES_LIST";
+	case QQ_CMD_GET_BUDDIES_ONLINE:
+		return "QQ_CMD_GET_BUDDIES_ONLINE";
+	case QQ_CMD_ROOM:
+		return "QQ_CMD_ROOM";
+	case QQ_CMD_GET_BUDDIES_AND_ROOMS:
+		return "QQ_CMD_GET_BUDDIES_AND_ROOMS";
+	case QQ_CMD_GET_LEVEL:
+		return "QQ_CMD_GET_LEVEL";
+	case QQ_CMD_TOKEN:
+		return "QQ_CMD_TOKEN";
+	case QQ_CMD_RECV_MSG_SYS:
+		return "QQ_CMD_RECV_MSG_SYS";
+	case QQ_CMD_RECV_MSG_BUDDY_CHANGE_STATUS:
+		return "QQ_CMD_RECV_MSG_BUDDY_CHANGE_STATUS";
+	default:
+		return "Unknown";
+	}
+}
+
+const gchar *qq_get_room_cmd_desc(gint room_cmd)
+{
+	switch (room_cmd) {
+	case QQ_ROOM_CMD_CREATE:
+		return "QQ_ROOM_CMD_CREATE";
+	case QQ_ROOM_CMD_MEMBER_OPT:
+		return "QQ_ROOM_CMD_MEMBER_OPT";
+	case QQ_ROOM_CMD_CHANGE_INFO:
+		return "QQ_ROOM_CMD_CHANGE_INFO";
+	case QQ_ROOM_CMD_GET_INFO:
+		return "QQ_ROOM_CMD_GET_INFO";
+	case QQ_ROOM_CMD_ACTIVATE:
+		return "QQ_ROOM_CMD_ACTIVATE";
+	case QQ_ROOM_CMD_SEARCH:
+		return "QQ_ROOM_CMD_SEARCH";
+	case QQ_ROOM_CMD_JOIN:
+		return "QQ_ROOM_CMD_JOIN";
+	case QQ_ROOM_CMD_AUTH:
+		return "QQ_ROOM_CMD_AUTH";
+	case QQ_ROOM_CMD_QUIT:
+		return "QQ_ROOM_CMD_QUIT";
+	case QQ_ROOM_CMD_SEND_MSG:
+		return "QQ_ROOM_CMD_SEND_MSG";
+	case QQ_ROOM_CMD_GET_ONLINES:
+		return "QQ_ROOM_CMD_GET_ONLINES";
+	case QQ_ROOM_CMD_GET_MEMBER_INFO:
+		return "QQ_ROOM_CMD_GET_MEMBER_INFO";
+	case QQ_ROOM_CMD_CHANGE_CARD:
+		return "QQ_ROOM_CMD_CHANGE_CARD";
+	case QQ_ROOM_CMD_GET_REALNAMES:
+		return "QQ_ROOM_CMD_GET_REALNAMES";
+	case QQ_ROOM_CMD_GET_CARD:
+		return "QQ_ROOM_CMD_GET_CARD";
+	case QQ_ROOM_CMD_SEND_IM_EX:
+		return "QQ_ROOM_CMD_SEND_IM_EX";
+	case QQ_ROOM_CMD_ADMIN:
+		return "QQ_ROOM_CMD_ADMIN";
+	case QQ_ROOM_CMD_TRANSFER:
+		return "QQ_ROOM_CMD_TRANSFER";
+	case QQ_ROOM_CMD_TEMP_CREATE:
+		return "QQ_ROOM_CMD_TEMP_CREATE";
+	case QQ_ROOM_CMD_TEMP_CHANGE_MEMBER:
+		return "QQ_ROOM_CMD_TEMP_CHANGE_MEMBER";
+	case QQ_ROOM_CMD_TEMP_QUIT:
+		return "QQ_ROOM_CMD_TEMP_QUIT";
+	case QQ_ROOM_CMD_TEMP_GET_INFO:
+		return "QQ_ROOM_CMD_TEMP_GET_INFO";
+	case QQ_ROOM_CMD_TEMP_SEND_IM:
+		return "QQ_ROOM_CMD_TEMP_SEND_IM";
+	case QQ_ROOM_CMD_TEMP_GET_MEMBERS:
+		return "QQ_ROOM_CMD_TEMP_GET_MEMBERS";
+	default:
+		return "Unknown QQ Room Command";
 	}
 }

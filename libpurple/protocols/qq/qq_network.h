@@ -42,4 +42,9 @@ gint qq_send_data(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
 gint qq_send_cmd_detail(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
 	guint8 *data, gint data_len);
 
+gint qq_send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
+		guint8 *data, gint data_len);
+gint qq_send_room_cmd_only(PurpleConnection *gc, guint8 room_cmd, guint32 room_id);
+gint qq_send_room_cmd_noid(PurpleConnection *gc, guint8 room_cmd, 
+		guint8 *data, gint data_len);
 #endif

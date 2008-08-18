@@ -32,7 +32,6 @@
 #include "buddy_list.h"
 #include "buddy_info.h"
 #include "char_conv.h"
-#include "crypt.h"
 #include "header_info.h"
 #include "qq_base.h"
 #include "qq_network.h"
@@ -688,26 +687,18 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 }
 
 /* process the reply of modify_info packet */
-void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	gint len;
-	guint8 *data;
 
-	g_return_if_fail(buf != NULL && buf_len != 0);
+	g_return_if_fail(data != NULL && data_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
-	len = buf_len;
-	data = g_newa(guint8, len);
 
-	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		data[len] = '\0';
-		if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Update info ACK OK\n");
-			purple_notify_info(gc, NULL, _("Your information has been updated"), NULL);
-		}
-	} else {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt modify info reply\n");
+	data[data_len] = '\0';
+	if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Update info ACK OK\n");
+		purple_notify_info(gc, NULL, _("Your information has been updated"), NULL);
 	}
 }
 
@@ -858,10 +849,8 @@ static void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc
 }
 
 /* process reply to get_info packet */
-void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+void qq_process_get_info_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 {
-	gint len;
-	guint8 *data;
 	gchar **segments;
 	qq_info_query *query;
 	qq_data *qd;
@@ -869,52 +858,46 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	GList *list, *query_list;
 	PurpleNotifyUserInfo *user_info;
 
-	g_return_if_fail(buf != NULL && buf_len != 0);
+	g_return_if_fail(data != NULL && data_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
 	list = query_list = NULL;
-	len = buf_len;
-	data = g_newa(guint8, len);
 	info = NULL;
 
-	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		if (NULL == (segments = split_data(data, len, "\x1e", QQ_CONTACT_FIELDS)))
-			return;
+	if (NULL == (segments = split_data(data, data_len, "\x1e", QQ_CONTACT_FIELDS)))
+		return;
 
-		info = (contact_info *) segments;
-		if (qd->modifying_face && strtol(info->face, NULL, 10) != qd->my_icon) {
-			gchar *icon = g_strdup_printf("%d", qd->my_icon);
-			qd->modifying_face = FALSE;
-			g_free(info->face);
-			info->face = icon;
-			qq_send_packet_modify_info(gc, (contact_info *)segments);
-		}
-
-		qq_refresh_buddy_and_myself(info, gc);
-
-		query_list = qd->info_query;
-		/* ensure we're processing the right query */
-		while (query_list) {
-			query = (qq_info_query *) query_list->data;
-			if (query->uid == atoi(info->uid)) {
-				if (query->show_window) {
-					user_info = info_to_notify_user_info(info);
-					purple_notify_userinfo(gc, info->uid, user_info, NULL, NULL);
-					purple_notify_user_info_destroy(user_info);
-				} else if (query->modify_info) {
-					create_modify_info_dialogue(gc, info);
-				}
-				qd->info_query = g_list_remove(qd->info_query, qd->info_query->data);
-				g_free(query);
-				break;
-			}
-			query_list = query_list->next;
-		}
-
-		g_strfreev(segments);
-	} else {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt get info reply\n");
+	info = (contact_info *) segments;
+	if (qd->modifying_face && strtol(info->face, NULL, 10) != qd->my_icon) {
+		gchar *icon = g_strdup_printf("%d", qd->my_icon);
+		qd->modifying_face = FALSE;
+		g_free(info->face);
+		info->face = icon;
+		qq_send_packet_modify_info(gc, (contact_info *)segments);
 	}
+
+	qq_refresh_buddy_and_myself(info, gc);
+
+	query_list = qd->info_query;
+	/* ensure we're processing the right query */
+	while (query_list) {
+		query = (qq_info_query *) query_list->data;
+		if (query->uid == atoi(info->uid)) {
+			if (query->show_window) {
+				user_info = info_to_notify_user_info(info);
+				purple_notify_userinfo(gc, info->uid, user_info, NULL, NULL);
+				purple_notify_user_info_destroy(user_info);
+			} else if (query->modify_info) {
+				create_modify_info_dialogue(gc, info);
+			}
+			qd->info_query = g_list_remove(qd->info_query, qd->info_query->data);
+			g_free(query);
+			break;
+		}
+		query_list = query_list->next;
+	}
+
+	g_strfreev(segments);
 }
 
 void qq_info_query_free(qq_data *qd)
@@ -975,24 +958,17 @@ void qq_send_packet_get_buddies_levels(PurpleConnection *gc)
 	qq_send_cmd(qd, QQ_CMD_GET_LEVEL, buf, size);
 }
 
-void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
+void qq_process_get_level_reply(guint8 *decr_buf, gint decr_len, PurpleConnection *gc)
 {
 	guint32 uid, onlineTime;
 	guint16 level, timeRemainder;
 	gchar *purple_name;
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
-	gint decr_len, i;
-	guint8 *decr_buf;
+	gint i;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	qq_data *qd = (qq_data *) gc->proto_data;
 	gint bytes = 0;
-
-	decr_len = buf_len;
-	decr_buf = g_new0(guint8, buf_len);
-	if (!qq_decrypt(buf, buf_len, qd->session_key, decr_buf, &decr_len)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Couldn't decrypt get level packet\n");
-	}
 
 	decr_len--; 
 	if (decr_len % 12 != 0) {
@@ -1014,25 +990,34 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		purple_debug(PURPLE_DEBUG_INFO, "QQ_LEVEL", 
 				"%d, tmOnline: %d, level: %d, tmRemainder: %d\n", 
 				uid, onlineTime, level, timeRemainder);
-		purple_name = uid_to_purple_name(uid);
-		b = purple_find_buddy(account, purple_name);
-		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-
-		if (q_bud != NULL || uid == qd->uid) {
-			if (q_bud) {
-				q_bud->onlineTime = onlineTime;
-				q_bud->level = level;
-				q_bud->timeRemainder = timeRemainder;
-			}
-			if (uid == qd->uid) {
-				qd->my_level = level;
-			}
-		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
-					"Got an online buddy %d, but not in my buddy list\n", uid);
+		if (uid == qd->uid) {
+			qd->my_level = level;
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Got my levels as %d\n", qd->my_level);
+			continue;
 		}
+
+		purple_name = uid_to_purple_name(uid);
+		if (purple_name == NULL) {
+			continue;
+		}
+		
+		b = purple_find_buddy(account, purple_name);
 		g_free(purple_name);
+
+		q_bud = NULL;
+		if (b != NULL) {
+			q_bud = (qq_buddy *) b->proto_data;
+		}
+		
+		if (q_bud == NULL) {
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
+					"Got levels of %d not in my buddy list\n", uid);
+			continue;
+		}
+
+		q_bud->onlineTime = onlineTime;
+		q_bud->level = level;
+		q_bud->timeRemainder = timeRemainder;
 	}
-	g_free(decr_buf);
 }
 

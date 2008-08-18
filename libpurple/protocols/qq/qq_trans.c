@@ -90,6 +90,18 @@ gboolean qq_trans_is_dup(qq_transaction *trans)
 		return FALSE;
 }
 
+guint8 qq_trans_get_room_cmd(qq_transaction *trans)
+{
+	g_return_val_if_fail(trans != NULL, 0);
+	return trans->room_cmd;
+}
+
+guint32 qq_trans_get_room_id(qq_transaction *trans)
+{
+	g_return_val_if_fail(trans != NULL, 0);
+	return trans->room_id;
+}
+
 /* Remove a packet with seq from send trans */
 static void trans_remove(qq_data *qd, qq_transaction *trans) 
 {
@@ -120,17 +132,49 @@ void qq_trans_add_client_cmd(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data
 	trans->fd = qd->fd;
 	trans->cmd = cmd;
 	trans->seq = seq;
+	trans->room_cmd = 0;
+	trans->room_id = 0;
 	trans->send_retries = QQ_RESEND_MAX;
 	trans->rcved_times = 0;
 	trans->scan_times = 0;
+
 	trans->data = NULL;
 	trans->data_len = 0;
 	if (data != NULL && data_len > 0) {
 		trans->data = g_memdup(data, data_len);	/* don't use g_strdup, may have 0x00 */
 		trans->data_len = data_len;
 	}
-	purple_debug(PURPLE_DEBUG_ERROR, "QQ_TRANS",
+	purple_debug(PURPLE_DEBUG_INFO, "QQ_TRANS",
 			"Add client cmd, seq = %d, data = %p, len = %d\n",
+			trans->seq, trans->data, trans->data_len);
+	qd->transactions = g_list_append(qd->transactions, trans);
+}
+
+void qq_trans_add_room_cmd(qq_data *qd, guint16 seq, guint8 room_cmd, guint32 room_id,
+		guint8 *data, gint data_len)
+{
+	qq_transaction *trans = g_new0(qq_transaction, 1);
+
+	g_return_if_fail(trans != NULL);
+
+	trans->flag = 0;
+	trans->fd = qd->fd;
+	trans->seq = seq;
+	trans->cmd = QQ_CMD_ROOM;
+	trans->room_cmd = room_cmd;
+	trans->room_id = room_id;
+	trans->send_retries = QQ_RESEND_MAX;
+	trans->rcved_times = 0;
+	trans->scan_times = 0;
+
+	trans->data = NULL;
+	trans->data_len = 0;
+	if (data != NULL && data_len > 0) {
+		trans->data = g_memdup(data, data_len);	/* don't use g_strdup, may have 0x00 */
+		trans->data_len = data_len;
+	}
+	purple_debug(PURPLE_DEBUG_INFO, "QQ_TRANS",
+			"Add room cmd, seq = %d, data = %p, len = %d\n",
 			trans->seq, trans->data, trans->data_len);
 	qd->transactions = g_list_append(qd->transactions, trans);
 }
@@ -148,6 +192,8 @@ void qq_trans_add_server_cmd(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data
 	trans->fd = qd->fd;
 	trans->cmd = cmd;
 	trans->seq = seq;
+	trans->room_cmd = 0;
+	trans->room_id = 0;
 	trans->send_retries = 0;
 	trans->rcved_times = 1;
 	trans->scan_times = 0;
@@ -157,7 +203,7 @@ void qq_trans_add_server_cmd(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data
 		trans->data = g_memdup(data, data_len);	/* don't use g_strdup, may have 0x00 */
 		trans->data_len = data_len;
 	}
-	purple_debug(PURPLE_DEBUG_ERROR, "QQ_TRANS",
+	purple_debug(PURPLE_DEBUG_INFO, "QQ_TRANS",
 			"Add server cmd, seq = %d, data = %p, len = %d\n",
 			trans->seq, trans->data, trans->data_len);
 	qd->transactions = g_list_append(qd->transactions, trans);

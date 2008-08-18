@@ -12,8 +12,8 @@ QQSOURCES = \
 	buddy_opt.h \
 	char_conv.c \
 	char_conv.h \
-	crypt.c \
-	crypt.h \
+	qq_crypt.c \
+	qq_crypt.h \
 	file_trans.c \
 	file_trans.h \
 	group.c \
@@ -32,8 +32,6 @@ QQSOURCES = \
 	group_info.h \
 	group_join.c \
 	group_join.h \
-	group_network.c \
-	group_network.h \
 	group_opt.c \
 	group_opt.h \
 	group_search.c \

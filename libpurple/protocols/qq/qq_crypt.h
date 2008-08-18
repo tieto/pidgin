@@ -1,5 +1,5 @@
  /**
- * @file crypt.h
+ * @file qq_crypt.h
  *
  * purple
  *
@@ -27,14 +27,7 @@
 
 #include <glib.h>
 
-#define DECRYPT 0x00
-#define ENCRYPT 0x01
-
-void qq_encrypt(const guint8 *const instr, gint instrlen, 
-		const guint8 *const key, 
-		guint8 *outstr, gint *outstrlen_ptr);
+gint qq_encrypt(guint8* crypted, const guint8* const plain, const gint plain_len, const guint8* const key);
 		
-gint qq_decrypt(const guint8 *const instr, gint instrlen, 
-		const guint8 *const key,
-		guint8 *outstr, gint *outstrlen_ptr);
+gint qq_decrypt(guint8 *plain, const guint8* const crypted, const gint crypted_len, const guint8* const key);
 #endif

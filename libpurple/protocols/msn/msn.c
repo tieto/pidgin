@@ -48,6 +48,7 @@
 #include "slplink.h"
 
 #if PHOTO_SUPPORT
+#define MAX_HTTP_BUDDYICON_BYTES (200 * 1024)
 #include "imgstore.h"
 #endif
 
@@ -162,7 +163,7 @@ msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **
 
 	username = purple_conversation_get_name(conv);
 
-	serv_send_attention(gc, username, MSN_NUDGE);
+	purple_prpl_send_attention(gc, username, MSN_NUDGE);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -712,10 +713,16 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (name != NULL && *name) {
 			char *tmp2;
 
+			tmp2 = g_markup_escape_text(name, -1);
 			if (purple_presence_is_idle(presence)) {
-				tmp2 = g_markup_printf_escaped("%s/%s", name, _("Idle"));
-			} else {
-				tmp2 = g_markup_escape_text(name, -1);
+				char *idle;
+				char *tmp3;
+				/* Never know what those translations might end up like... */
+				idle = g_markup_escape_text(_("Idle"), -1);
+				tmp3 = g_strdup_printf("%s/%s", tmp2, idle);
+				g_free(idle);
+				g_free(tmp2);
+				tmp2 = tmp3;
 			}
 
 			if (psm != NULL && *psm) {
@@ -1886,6 +1893,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_debug_info("msn", "In msn_got_info,url_text:{%s}\n",url_text);
 
 	/* Make sure the connection is still valid */
+	/* TODO: Instead of this, we should be canceling this when we disconnect */
 	if (g_list_find(purple_connections_get_all(), info_data->gc) == NULL)
 	{
 		purple_debug_warning("msn", "invalid connection. ignoring buddy info.\n");
@@ -2275,7 +2283,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text)
 	{
-		purple_util_fetch_url(photo_url_text, FALSE, NULL, FALSE, msn_got_photo,
+		purple_util_fetch_url_len(photo_url_text, FALSE, NULL, FALSE, MAX_HTTP_BUDDYICON_BYTES, msn_got_photo,
 					   info2_data);
 	}
 	else
@@ -2301,6 +2309,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	char *photo_url_text = info2_data->photo_url_text;
 
 	/* Make sure the connection is still valid if we got here by fetching a photo url */
+	/* TODO: Instead of this, we should be canceling this when we disconnect */
 	if (url_text && (error_message != NULL ||
 					 g_list_find(purple_connections_get_all(), info_data->gc) == NULL))
 	{

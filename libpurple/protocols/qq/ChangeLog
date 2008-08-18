@@ -1,3 +1,22 @@
+2008.08.10 - csyfek <csyfek(at)gmail.com>
+	* Commit to Pidgin
+
+2008.08.06 - ccpaging <ecc_hy(at)hotmail.com>
+	* Rename names of variables, Group, to Room
+	* Functions of group_network merged into qq_network and qq_process
+	* Canceled managing glist of group packet, add sub_cmdd and room_id  to transaction
+	* Fixed error of demo group:
+		If 'room list' and 'room infor' are not setup, response received from server will emits 'room_id = 0' packet.
+
+2008.08.04 - ccpaging <ecc_hy(at)hotmail.com>
+	* Use new crypt/decrypt functions
+	* Rename crypt.c/h to qq_crypt.c/h
+	* Clean code of decrypt functions
+	* Fixed decryption failure
+
+2008.08.04 - csyfek <csyfek(at)gmail.com>
+	* Update AUTHORS
+
 2008.08.03 - csyfek <csyfek(at)gmail.com>
 	* Commit lost files to Pidgin
 

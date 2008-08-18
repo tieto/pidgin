@@ -38,7 +38,7 @@
 #endif
 
 #define SOAP_TIMEOUT (5 * 60)
-#define MSN_UNSAFE_DEBUG 1
+
 typedef struct _MsnSoapRequest {
 	char *path;
 	MsnSoapMessage *message;
@@ -312,10 +312,10 @@ msn_soap_process(MsnSoapConnection *conn) {
 
 #ifndef MSN_UNSAFE_DEBUG
 	if (conn->current_request->secure)
-		purple_debug_info("soap", "Received secure request.\n");
+		purple_debug_misc("soap", "Received secure request.\n");
 	else
 #endif
-	purple_debug_info("soap", "current %s\n", conn->buf->str);
+	purple_debug_misc("soap", "current %s\n", conn->buf->str);
 
 	cursor = conn->buf->str + conn->handled_len;
 
@@ -514,10 +514,10 @@ msn_soap_connection_run(gpointer data)
 
 #ifndef MSN_UNSAFE_DEBUG
 			if (req->secure)
-				purple_debug_info("soap", "Sending secure request.\n");
+				purple_debug_misc("soap", "Sending secure request.\n");
 			else
 #endif
-			purple_debug_info("soap", "%s\n", conn->buf->str);
+			purple_debug_misc("soap", "%s\n", conn->buf->str);
 
 			conn->handled_len = 0;
 			conn->current_request = req;

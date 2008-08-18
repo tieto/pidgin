@@ -57,6 +57,9 @@ msn_session_destroy(MsnSession *session)
 
 	session->destroying = TRUE;
 
+	if (session->connected)
+		msn_session_disconnect(session);
+
 	if (session->soap_cleanup_handle)
 		purple_timeout_remove(session->soap_cleanup_handle);
 
@@ -83,9 +86,6 @@ msn_session_destroy(MsnSession *session)
 
 	if (session->notification != NULL)
 		msn_notification_destroy(session->notification);
-
-	if (session->connected)
-		msn_session_disconnect(session);
 
 	msn_userlist_destroy(session->userlist);
 

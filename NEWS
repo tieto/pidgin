@@ -1,5 +1,31 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.5.0 (08/17/2008):
+	Daniel: Lots of good stuff in this release.  Lots of people have worked
+	very hard on the updated MSN protocol, and it's finally time to bring
+	it to the world!  There are myriad bugfixes, including some important
+	ones so you should be sure to update.
+
+	Hylke: Finally MSNP15 support. To celebrate this I refreshed a lot of
+	the smilies used in the protocol and added the long awaited indispensable
+	bunny icon. I think this is one of those releases that will make a lot
+	of users happy, especially MSN users.
+
+	Elliott: Oh look, my first NEWS! Well anyway, with that new MSNP15
+	support, this release is set up to be a huge success and a total flop
+	all at the same time. Here's hoping it's the "huge success" one for you.
+	Those icon changes that Hylke made, while minor, really make things look
+	a little cleaner, I think. Oh yea, did I mention that MSNP15 stuff?
+
+	Mark: Speaking of MSNP15, we'd like to welcome Elliott Sales de Andrade
+	as a full fledged developer!  He took the last few strides mushing the
+	new MSN code into shape.  Then he decided that wasn't enough and started
+	doing other great stuff.
+
+	Ka-Hing: "Reject"ing a certificate after your account is signed off is
+	not recommended. Deleting the file after you start sending it is also
+	discouraged.
+
 2.4.3 (07/01/2008):
 	Richard: This release includes important bug fixes.  I'm just cutting
 	the release.  Thank you to the real heroes who did the fixing!

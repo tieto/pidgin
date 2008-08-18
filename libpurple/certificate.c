@@ -746,7 +746,7 @@ x509_ca_init(void)
 						   "ca-certs", NULL));
 #else
 # ifdef SSL_CERTIFICATES_DIR
-		x509_ca_paths = g_list_append(NULL, SSL_CERTIFICATES_DIR);
+		x509_ca_paths = g_list_append(NULL, g_strdup(SSL_CERTIFICATES_DIR));
 # else
 		x509_ca_paths = g_list_append(NULL, g_build_filename(DATADIR,
 						   "purple", "ca-certs", NULL));

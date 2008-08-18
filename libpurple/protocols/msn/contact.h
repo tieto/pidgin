@@ -26,6 +26,7 @@
 #define _MSN_CONTACT_H_
 
 #include "session.h"
+#include "soap.h"
 
 #define MSN_APPLICATION_ID "CFE80F9D-180F-4399-82AB-413F33A1FA11"
 
@@ -604,7 +605,7 @@ struct _MsnCallbackState
 	xmlnode *token;
 	const gchar *post_action;
 	const gchar *post_url;
-	/* MsnSoapCallback */ void *cb;
+	MsnSoapCallback cb;
 };
 
 typedef enum

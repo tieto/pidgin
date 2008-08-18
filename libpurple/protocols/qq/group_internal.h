@@ -28,20 +28,20 @@
 #include <glib.h>
 #include "group.h"
 
-#define QQ_GROUP_KEY_MEMBER_STATUS      "my_status_code"
-#define QQ_GROUP_KEY_MEMBER_STATUS_DESC "my_status_desc"
-#define QQ_GROUP_KEY_INTERNAL_ID        "internal_group_id"
-#define QQ_GROUP_KEY_EXTERNAL_ID        "external_group_id"
-#define QQ_GROUP_KEY_GROUP_TYPE         "group_type"
-#define QQ_GROUP_KEY_CREATOR_UID        "creator_uid"
-#define QQ_GROUP_KEY_GROUP_CATEGORY     "group_category"
-#define QQ_GROUP_KEY_AUTH_TYPE          "auth_type"
-#define QQ_GROUP_KEY_GROUP_NAME_UTF8    "group_name_utf8"
-#define QQ_GROUP_KEY_GROUP_DESC_UTF8    "group_desc_utf8"
+#define QQ_GROUP_KEY_MEMBER_STATUS				"my_status_code"
+#define QQ_GROUP_KEY_MEMBER_STATUS_DESC	"my_status_desc"
+#define QQ_GROUP_KEY_INTERNAL_ID					"id"
+#define QQ_GROUP_KEY_EXTERNAL_ID					"ext_id"
+#define QQ_GROUP_KEY_TYPE								"type"
+#define QQ_GROUP_KEY_CREATOR_UID					"creator_uid"
+#define QQ_GROUP_KEY_GROUP_CATEGORY			"category"
+#define QQ_GROUP_KEY_AUTH_TYPE						"auth_type"
+#define QQ_GROUP_KEY_GROUP_NAME_UTF8			"name_utf8"
+#define QQ_GROUP_KEY_GROUP_DESC_UTF8			"desc_utf8"
 
 qq_group *qq_group_create_internal_record(PurpleConnection *gc, 
-		guint32 internal_id, guint32 external_id, gchar *group_name_utf8);
-void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id);
+		guint32 internal_id, guint32 ext_id, gchar *group_name_utf8);
+void qq_group_delete_internal_record(qq_data *qd, guint32 id);
 
 GHashTable *qq_group_to_hashtable(qq_group *group);
 qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data);

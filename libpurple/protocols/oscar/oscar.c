@@ -1192,7 +1192,7 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_admin(OscarData *od, FlapConnection *conn)
 {
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 	purple_debug_info("oscar", "connected to admin\n");
 
 	if (od->chpass) {
@@ -1237,7 +1237,7 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 	struct chat_connection *chatcon;
 	static int id = 1;
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	chatcon = find_oscar_chat_by_conn(gc, conn);
 	if (chatcon) {
@@ -1249,7 +1249,7 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_chatnav(OscarData *od, FlapConnection *conn)
 {
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 	aim_chatnav_reqrights(od, conn);
 }
 
@@ -1258,7 +1258,7 @@ flap_connection_established_alert(OscarData *od, FlapConnection *conn)
 {
 	aim_email_sendcookies(od);
 	aim_email_activate(od);
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 }
 
 static void
@@ -1266,7 +1266,7 @@ flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 {
 	PurpleConnection *gc = od->gc;
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	od->iconconnecting = FALSE;
 
@@ -1635,6 +1635,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	char in = '\0';
 	int x = 0;
 	unsigned char m[17];
+	GString *msg;
 
 	while (read(pos->fd, &in, 1) == 1) {
 		if (in == '\n')
@@ -1665,11 +1666,14 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 				"from " AIMHASHDATA "--that's bad.\n");
 	}
 	m[16] = '\0';
-	purple_debug_misc("oscar", "Sending hash: ");
-	for (x = 0; x < 16; x++)
-		purple_debug_misc(NULL, "%02hhx ", (unsigned char)m[x]);
 
-	purple_debug_misc(NULL, "\n");
+	msg = g_string_new("Sending hash: ");
+	for (x = 0; x < 16; x++)
+		g_string_append_printf(msg, "%02hhx ", (unsigned char)m[x]);
+	g_string_append(msg, "\n");
+	purple_debug_misc("oscar", msg->str);
+	g_string_free(msg, TRUE);
+
 	purple_input_remove(pos->inpa);
 	close(pos->fd);
 	aim_sendmemblock(od, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
@@ -3766,7 +3770,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	purple_debug_info("oscar", "buddy list loaded\n");
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	if (purple_account_get_user_info(account) != NULL)
 		serv_set_info(gc, purple_account_get_user_info(account));
@@ -4926,19 +4930,19 @@ static int purple_ssi_parserights(OscarData *od, FlapConnection *conn, FlapFrame
 	va_list ap;
 	int numtypes;
 	guint16 *maxitems;
+	GString *msg;
 
 	va_start(ap, fr);
 	numtypes = va_arg(ap, int);
 	maxitems = va_arg(ap, guint16 *);
 	va_end(ap);
 
-	purple_debug_misc("oscar", "ssi rights:");
-
+	msg = g_string_new("ssi rights:");
 	for (i=0; i<numtypes; i++)
-		purple_debug_misc(NULL, " max type 0x%04x=%hd,",
-				   i, maxitems[i]);
-
-	purple_debug_misc(NULL, "\n");
+		g_string_append_printf(msg, " max type 0x%04x=%hd,", i, maxitems[i]);
+	g_string_append(msg, "\n");
+	purple_debug_misc("oscar", msg->str);
+	g_string_free(msg, TRUE);
 
 	if (numtypes >= 0)
 		od->rights.maxbuddies = maxitems[0];

@@ -1173,7 +1173,7 @@ not_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 static void
 not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
+	cmd->payload_len = atoi(cmd->params[0]);
 	cmdproc->last_cmd->payload_cb = not_cmd_post;
 }
 

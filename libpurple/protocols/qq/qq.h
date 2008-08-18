@@ -35,7 +35,6 @@
 #include "roomlist.h"
 
 #define QQ_KEY_LENGTH       16
-#define QQ_DEBUG            1	/* whether we are doing DEBUG */
 
 #ifdef _WIN32
 const char *qq_win32_buddy_icon_dir(void);
@@ -138,7 +137,6 @@ struct _qq_data {
 	gint channel;			/* the id for opened chat conversation */
 
 	GList *groups;
-	GList *group_packets;
 	GSList *joining_groups;
 	GSList *adding_groups_from_server; /* internal ids of groups the server wants in my blist */
 	GList *buddies;
