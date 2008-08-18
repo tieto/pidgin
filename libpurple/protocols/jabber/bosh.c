@@ -81,15 +81,35 @@ void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
 	jabber_bosh_connection_send_native(conn, restart);
 }
 
+gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
+	char *type;
+	
+	if (!node) return;
+	type = xmlnode_get_attrib(node, "type");
+	
+	if (type != NULL && !strcmp(type, "terminate")) {
+		conn->ready = FALSE;
+		return TRUE;
+	}
+	return FALSE;
+}
+
 void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode *child;
 	JabberStream *js = conn->js;
 	
 	if (node == NULL) return;
 	
+	if (jabber_bosh_connection_error_check(conn, node) == TRUE) return;
+	
 	child = node->child;
 	while (child != 0) {
 		if (child->type == XMLNODE_TYPE_TAG) {
+			xmlnode *session = NULL;
+			if (!strcmp(child->name, "iq")) session = xmlnode_get_child(child, "session");
+			if (session) {
+				conn->ready = TRUE;
+			}
 			jabber_process_packet(js, &child);
 		}
 		child = child->next;
@@ -100,6 +120,8 @@ void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) 
 void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode *child = node->child;
 	
+	if (jabber_bosh_connection_error_check(conn, node) == TRUE) return;
+	
 	while(child != NULL && child->type != XMLNODE_TYPE_TAG) {
 		child = child->next;	
 	}
@@ -109,7 +131,6 @@ void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *n
 		if (!strcmp(child->name, "success")) {
 			jabber_bosh_connection_stream_restart(conn);
 			jabber_process_packet(js, &child);
-			conn->ready = TRUE;
 			conn->receive_cb = jabber_bosh_connection_received;
 		} else {
 			js->state = JABBER_STREAM_AUTHENTICATING;
@@ -120,6 +141,9 @@ void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *n
 
 void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xmlnode *node) {
 	char *version;
+	
+	if (jabber_bosh_connection_error_check(conn, node) == TRUE) return;
+	
 	if (xmlnode_get_attrib(node, "sid")) {
 		conn->sid = g_strdup(xmlnode_get_attrib(node, "sid"));
 	} else {
@@ -188,8 +212,10 @@ void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode_set_attrib(packet, "rid", tmp);
 	g_free(tmp);
 	
-	if (node) xmlnode_insert_child(packet, node);
-	
+	if (node) {
+		xmlnode_insert_child(packet, node);
+		if (conn->ready == TRUE) xmlnode_set_attrib(node, "xmlns", "jabber:client");
+	}
 	jabber_bosh_connection_send_native(conn, packet);
 }
 
@@ -264,6 +290,7 @@ void jabber_bosh_http_connection_receive_parse_header(PurpleHTTPResponse *respon
 	++beginning; ++beginning; ++beginning; ++beginning;
 	/* remove the header from data buffer */
 	*data = g_strdup(beginning);
+	*len = *len - (beginning - old_data);
 	g_free(old_data);	
 }
 
@@ -293,14 +320,13 @@ static void jabber_bosh_http_connection_receive(gpointer data, gint source, Purp
 			/* check for header footer */
 			char *found = NULL;
 			if (found = g_strstr_len(conn->current_data, conn->current_len, "\r\n\r\n")) {
+				
 				// new response
 				response = conn->current_response = g_new0(PurpleHTTPResponse, 1);
 				jabber_bosh_http_response_init(response);
 				jabber_bosh_http_connection_receive_parse_header(response, &(conn->current_data), &(conn->current_len));
 				response->data_len = atoi(g_hash_table_lookup(response->header, "Content-Length"));
-				jabber_bosh_http_connection_receive(data, source, condition);
 			} else {
-				printf("\nDATA: %s \n", conn->current_data);
 				printf("\nDid not receive HTTP header\n");
 			}
 		} 
@@ -316,8 +342,15 @@ static void jabber_bosh_http_connection_receive(gpointer data, gint source, Purp
 				}
 				
 				if (request) {
+					char *old_data = conn->current_data;
 					response->data = g_memdup(conn->current_data, response->data_len);
-					request->cb(request, response, conn->userdata);
+					conn->current_data = g_strdup(&conn->current_data[response->data_len]);
+					conn->current_len -= response->data_len;
+					g_free(old_data);
+					
+					if (request->cb) request->cb(request, response, conn->userdata);
+					else purple_debug_info("jabber", "missing request callback!\n");
+					
 					jabber_bosh_http_request_clean(request);
 					jabber_bosh_http_response_clean(response);
 					conn->current_response = NULL;
