@@ -57,15 +57,6 @@ void jabber_bosh_connection_init(PurpleBOSHConnection *conn, PurpleAccount *acco
 }
 
 void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
-	/*
-	<body rid='1573741824'
-	      sid='SomeSID'
-	      to='jabber.org'
-	      xml:lang='en'
-	      xmpp:restart='true'
-	      xmlns='http://jabber.org/protocol/httpbind'
-	      xmlns:xmpp='urn:xmpp:xbosh'/>
-	*/
 	xmlnode *restart = xmlnode_new("body");
 	char *tmp = NULL;
 	conn->rid++;
@@ -89,6 +80,9 @@ gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode 
 	
 	if (type != NULL && !strcmp(type, "terminate")) {
 		conn->ready = FALSE;
+		purple_connection_error_reason (conn->js->gc,
+			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+			_("The BOSH conncetion manager suggested to terminate your session."));
 		return TRUE;
 	}
 	return FALSE;
