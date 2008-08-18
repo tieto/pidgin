@@ -7745,10 +7745,13 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 	GtkWidget *gtkmedia;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
+	gchar *name = purple_media_get_screenname(media);
 
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-				       purple_connection_get_account(purple_media_get_connection(media)),
-				       purple_media_get_screenname(media));
+			purple_connection_get_account(
+			purple_media_get_connection(media)), name);
+	g_free(name);
+
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	if (gtkconv->gtkmedia) {

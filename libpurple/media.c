@@ -47,9 +47,11 @@ struct _PurpleMediaSession
 	GstElement *src;
 	GstElement *sink;
 	FsSession *session;
-	GHashTable *streams;		/* FsStream list map to participant's name */
+	/* FsStream table. Mapped by participant's name */
+	GHashTable *streams;
 	PurpleMediaSessionType type;
-	GHashTable *local_candidates;	/* map to participant's name? */
+	/* GList of FsCandidates table. Mapped by participant's name */
+	GHashTable *local_candidates;
 
 	/*
 	 * These will need to be per stream when sessions with multiple
@@ -221,7 +223,6 @@ static void
 purple_media_finalize (GObject *media)
 {
 	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
-	GList *sessions = g_hash_table_get_values(priv->sessions);
 	purple_debug_info("media","purple_media_finalize\n");
 
 	purple_media_manager_remove_media(purple_media_manager_get(),
@@ -229,15 +230,42 @@ purple_media_finalize (GObject *media)
 
 	g_free(priv->name);
 
-	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-		PurpleMediaSession *session = sessions->data;
-		GList *streams = g_hash_table_get_values(session->streams);
+	if (priv->sessions) {
+		GList *sessions = g_hash_table_get_values(priv->sessions);
+		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+			PurpleMediaSession *session = sessions->data;
+			g_free(session->id);
 
-		for (; streams; streams = g_list_delete_link(streams, streams)) {
-			g_object_unref(streams->data);
+			if (session->streams) {
+				GList *streams = g_hash_table_get_values(session->streams);
+				for (; streams; streams = g_list_delete_link(streams, streams))
+					g_object_unref(streams->data);
+				g_hash_table_destroy(session->streams);
+			}
+
+			if (session->local_candidates) {
+				GList *candidates = g_hash_table_get_values(session->local_candidates);
+				for (; candidates; candidates =
+						g_list_delete_link(candidates, candidates))
+					fs_candidate_list_destroy(candidates->data);
+				g_hash_table_destroy(session->local_candidates);
+			}
+
+			if (session->local_candidate)
+				fs_candidate_destroy(session->local_candidate);
+			if (session->remote_candidate)
+				fs_candidate_destroy(session->remote_candidate);
+
+			g_free(session);
 		}
+		g_hash_table_destroy(priv->sessions);
+	}
 
-		g_object_unref(session->session);
+	if (priv->participants) {
+		GList *participants = g_hash_table_get_values(priv->participants);
+		for (; participants; participants = g_list_delete_link(participants, participants))
+			g_object_unref(participants->data);
+		g_hash_table_destroy(priv->participants);
 	}
 
 	if (priv->pipeline) {
@@ -416,7 +444,7 @@ purple_media_add_participant(PurpleMedia *media, const gchar *name)
 		return participant;
 
 	participant = fs_conference_new_participant(media->priv->conference,
-						    g_strdup(name), &err);
+						    (gchar*)name, &err);
 
 	if (err) {
 		purple_debug_error("media", "Error creating participant: %s\n",
@@ -427,7 +455,8 @@ purple_media_add_participant(PurpleMedia *media, const gchar *name)
 
 	if (!media->priv->participants) {
 		purple_debug_info("media", "Creating hash table for participants\n");
-		media->priv->participants = g_hash_table_new(g_str_hash, g_str_equal);
+		media->priv->participants = g_hash_table_new_full(g_str_hash,
+				g_str_equal, g_free, NULL);
 	}
 
 	g_hash_table_insert(media->priv->participants, g_strdup(name), participant);
@@ -440,7 +469,8 @@ purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStr
 {
 	if (!session->streams) {
 		purple_debug_info("media", "Creating hash table for streams\n");
-		session->streams = g_hash_table_new(g_str_hash, g_str_equal);
+		session->streams = g_hash_table_new_full(g_str_hash,
+				g_str_equal, g_free, NULL);
 	}
 
 	g_hash_table_insert(session->streams, g_strdup(name), stream);
@@ -456,7 +486,8 @@ purple_media_insert_local_candidate(PurpleMediaSession *session, const gchar *na
 
 	if (!session->local_candidates) {
 		purple_debug_info("media", "Creating hash table for local candidates\n");
-		session->local_candidates = g_hash_table_new(g_str_hash, g_str_equal);
+		session->local_candidates = g_hash_table_new_full(g_str_hash,
+				g_str_equal, g_free, NULL);
 	}
 
 	g_hash_table_insert(session->local_candidates, g_strdup(name), candidates);
@@ -716,12 +747,14 @@ purple_media_get_devices(GstElement *element)
 
 		array = gst_property_probe_probe_and_get_values (probe, pspec);
 		if (array != NULL) {
-
 			for (n = 0 ; n < array->n_values ; n++) {
 				GValue *device = g_value_array_get_nth (array, n);
+				GValue *location = g_new0(GValue, 1);
 				gst_element_set_state (element, GST_STATE_NULL);
+				location = g_value_init(location, G_TYPE_STRING);
 
-				ret = g_list_append(ret, device);
+				g_value_copy(device, location);
+				ret = g_list_append(ret, location);
 
 				name = purple_media_get_device_name(GST_ELEMENT(element), device);
 				purple_debug_info("media", "Found source '%s' (%s) - device '%s' (%s)\n",
@@ -729,6 +762,7 @@ purple_media_get_devices(GstElement *element)
 						  name, g_value_get_string(device));
 				g_free(name);
 			}
+			g_value_array_free(array);
 		}
 	}
 
@@ -916,6 +950,7 @@ purple_media_new_local_candidate_cb(FsStream *stream,
 {
 	gchar *name;
 	FsParticipant *participant;
+	FsCandidate *candidate;
 	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->candidate_id);
 	g_object_get(stream, "participant", &participant, NULL);
 	g_object_get(participant, "cname", &name, NULL);
@@ -923,8 +958,10 @@ purple_media_new_local_candidate_cb(FsStream *stream,
 
 	purple_media_insert_local_candidate(session, name, fs_candidate_copy(local_candidate));
 
+	candidate = fs_candidate_copy(local_candidate);
 	g_signal_emit(session->media, purple_media_signals[NEW_CANDIDATE],
-		      0, session->id, name, fs_candidate_copy(local_candidate));
+		      0, session->id, name, candidate);
+	fs_candidate_destroy(candidate);
 
 	g_free(name);
 }
@@ -949,13 +986,18 @@ purple_media_candidate_pair_established_cb(FsStream *stream,
 					   FsCandidate *remote_candidate,
 					   PurpleMediaSession *session)
 {
+	FsCandidate *local = fs_candidate_copy(native_candidate);
+	FsCandidate *remote = fs_candidate_copy(remote_candidate);
+
 	session->local_candidate = fs_candidate_copy(native_candidate);
 	session->remote_candidate = fs_candidate_copy(remote_candidate);
 
 	purple_debug_info("media", "candidate pair established\n");
 	g_signal_emit(session->media, purple_media_signals[CANDIDATE_PAIR], 0,
-		      session->local_candidate,
-		      session->remote_candidate);
+		      local, remote);
+
+	fs_candidate_destroy(local);
+	fs_candidate_destroy(remote);
 }
 
 static void
@@ -1077,9 +1119,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 			param[0].name = "stun-ip";
 			g_value_init(&param[0].value, G_TYPE_STRING);
-			g_value_set_string(&param[0].value, stun_ip);
-
-			g_free(stun_ip);
+			g_value_take_string(&param[0].value, stun_ip);
 
 			param[1].name = "stun-timeout";
 			g_value_init(&param[1].value, G_TYPE_UINT);
@@ -1088,6 +1128,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 			stream = fs_session_new_stream(session->session,
 					participant, type_direction,
 					transmitter, 2, param, &err);
+			g_free(stun_ip);
 		} else {
 			stream = fs_session_new_stream(session->session,
 					participant, type_direction,
@@ -1181,7 +1222,8 @@ GList *
 purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	return purple_media_session_get_local_candidates(session, name);
+	return fs_candidate_list_copy(
+			purple_media_session_get_local_candidates(session, name));
 }
 
 GList *

@@ -194,7 +194,7 @@ static gboolean
 level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 {
 	const GstStructure *s;
-	const gchar *name;
+	gchar *name;
 
 	gdouble rms_db;
 	gdouble percent;
@@ -207,9 +207,8 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 		return TRUE;
 
 	s = gst_message_get_structure(message);
-	name = gst_structure_get_name(s);
 
-	if (strcmp(name, "level"))
+	if (strcmp(gst_structure_get_name(s), "level"))
 		return TRUE;
 
 	list = gst_structure_get_value(s, "rms");
@@ -223,11 +222,13 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 	if(percent > 1.0)
 		percent = 1.0;
 
-	if (!strcmp(gst_element_get_name(src), "sendlevel"))	
+	name = gst_element_get_name(src);
+	if (!strcmp(name, "sendlevel"))	
 		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress), percent);
 	else
 		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress), percent);
 
+	g_free(name);
 	return TRUE;
 }
 
@@ -465,20 +466,23 @@ pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	PurpleMediaSessionType type = purple_media_get_overall_type(media);
 	gchar *message;
+	gchar *name = purple_media_get_screenname(media);
 
 	if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {
 		message = g_strdup_printf(_("%s wishes to start an audio/video session with you."),
-					  purple_media_get_screenname(media));
+					  name);
 	} else if (type & PURPLE_MEDIA_AUDIO) {
 		message = g_strdup_printf(_("%s wishes to start an audio session with you."),
-					  purple_media_get_screenname(media));
+					  name);
 	} else if (type & PURPLE_MEDIA_VIDEO) {
 		message = g_strdup_printf(_("%s wishes to start a video session with you."),
-					  purple_media_get_screenname(media));
+					  name);
 	} else {
+		g_free(name);
 		return;
 	}
 
+	g_free(name);
 	pidgin_media_emit_message(gtkmedia, message);
 	g_free(message);
 }

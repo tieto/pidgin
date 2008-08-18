@@ -253,6 +253,8 @@ jabber_jingle_session_destroy(JingleSession *sess)
 	GList *contents;
 	g_hash_table_remove(sess->js->sessions, sess->id);
 	g_free(sess->id);
+	g_free(sess->remote_jid);
+	g_free(sess->initiator);
 
 	if (sess->media)
 		g_object_unref(sess->media);
@@ -395,9 +397,11 @@ jabber_jingle_session_get_remote_jid(const JingleSession *sess)
 
 static void
 jabber_jingle_session_set_remote_jid(JingleSession *sess, 
-									 const char *remote_jid)
+				     const char *remote_jid)
 {
-	sess->remote_jid = strdup(remote_jid);
+	if (sess->remote_jid)
+		g_free(sess->remote_jid);
+	sess->remote_jid = g_strdup(remote_jid);
 }
 
 static JingleSessionState
@@ -422,8 +426,10 @@ jabber_jingle_session_get_initiator(const JingleSession *sess)
 
 static void
 jabber_jingle_session_set_initiator(JingleSession *sess,
-									const char *initiator)
+				    const char *initiator)
 {
+	if (sess->initiator)
+		g_free(sess->initiator);
 	sess->initiator = g_strdup(initiator);
 }
 

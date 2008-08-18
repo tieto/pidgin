@@ -2121,7 +2121,11 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	if (video != NULL) {
 		GList *video_devices = purple_media_get_devices(video);
 		video_items = get_device_items(video, video_devices);
-		g_list_free(video_devices);
+		for(; video_devices; video_devices = g_list_delete_link(
+				video_devices, video_devices)) {
+			g_value_unset(video_devices->data);
+			g_free(video_devices->data);
+		}
 	}
 
 	if (video_items == NULL) {
@@ -2227,13 +2231,21 @@ media_page()
 	if (video != NULL) {
 		GList *video_devices = purple_media_get_devices(video);
 		video_items = get_device_items(video, video_devices);
-		g_list_free(video_devices);
+		for(; video_devices; video_devices = g_list_delete_link(
+				video_devices, video_devices)) {
+			g_value_unset(video_devices->data);
+			g_free(video_devices->data);
+		}
 	}
 
 	if (audio != NULL) {		
 		GList *audio_devices = purple_media_get_devices(audio);
 		audio_items = get_device_items(audio, audio_devices);
-		g_list_free(audio_devices);
+		for(; audio_devices; audio_devices = g_list_delete_link(
+				audio_devices, audio_devices)) {
+			g_value_unset(audio_devices->data);
+			g_free(audio_devices->data);
+		}
 	}
 
 	if (video_items == NULL) {
