@@ -2,16 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg2417"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.46"
    width="48"
    height="48"
    version="1.0"
@@ -19,7 +19,8 @@
    sodipodi:docname="google-talk.svg"
    inkscape:export-filename="/home/vinicius/tango-icon-theme-code/protocols/48x48/google-talk.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <metadata
      id="metadata2422">
     <rdf:RDF>
@@ -66,18 +67,6 @@
   </metadata>
   <defs
      id="defs2420">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient6020">
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0"
-         id="stop6022" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1"
-         id="stop6024" />
-    </linearGradient>
     <linearGradient
        id="linearGradient3299">
       <stop
@@ -201,35 +190,6 @@
        id="linearGradient4262"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(2.99378,0,0,2.99378,9.552849e-2,-0.965622)"
-       x1="8"
-       y1="15"
-       x2="8"
-       y2="0.9916327" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient6020"
-       id="linearGradient6026"
-       x1="11.466431"
-       y1="11.008693"
-       x2="11.466431"
-       y2="15.000141"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient6020"
-       id="linearGradient6030"
-       gradientUnits="userSpaceOnUse"
-       x1="11.466431"
-       y1="11.008693"
-       x2="11.466431"
-       y2="15.000141"
-       gradientTransform="matrix(1,0,0,1.75,0,-1.25)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3286"
-       id="linearGradient6052"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(2.99378,0,0,2.99378,-59.90447,-0.965622)"
        x1="8"
        y1="15"
        x2="8"

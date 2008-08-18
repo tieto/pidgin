@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,12 +13,13 @@
    height="16px"
    id="svg4239"
    sodipodi:version="0.32"
-   inkscape:version="0.44.1"
+   inkscape:version="0.46"
    sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/protocols/16/scalable"
    sodipodi:docname="meanwhile.svg"
    inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/protocols/16/msn.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4241">
     <linearGradient
@@ -32,50 +33,6 @@
          id="stop2232"
          offset="1"
          style="stop-color:#f56600;stop-opacity:0;" />
-    </linearGradient>
-    <linearGradient
-       gradientUnits="userSpaceOnUse"
-       y2="17.595036"
-       x2="13.090998"
-       y1="0.78084093"
-       x1="13.090998"
-       id="linearGradient4544"
-       xlink:href="#linearGradient2222"
-       inkscape:collect="always" />
-    <radialGradient
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.842757,5.698892e-16,-4.565819e-9,-0.35721,19.80716,14.19321)"
-       r="6.6449099"
-       fy="10.457643"
-       fx="10.748654"
-       cy="10.457643"
-       cx="10.748654"
-       id="radialGradient3156"
-       xlink:href="#linearGradient3150"
-       inkscape:collect="always" />
-    <linearGradient
-       id="linearGradient3150"
-       inkscape:collect="always">
-      <stop
-         id="stop3152"
-         offset="0"
-         style="stop-color:#2e3436;stop-opacity:1;" />
-      <stop
-         id="stop3154"
-         offset="1"
-         style="stop-color:#2e3436;stop-opacity:0;" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient2222"
-       inkscape:collect="always">
-      <stop
-         id="stop2224"
-         offset="0"
-         style="stop-color:#ffffff;stop-opacity:1;" />
-      <stop
-         id="stop2226"
-         offset="1"
-         style="stop-color:#ffffff;stop-opacity:0;" />
     </linearGradient>
     <linearGradient
        id="linearGradient2230"

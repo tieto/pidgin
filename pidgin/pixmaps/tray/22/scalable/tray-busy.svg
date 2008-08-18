@@ -152,15 +152,6 @@
          id="stop8714" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient8710"
-       id="linearGradient8716"
-       x1="6.924273"
-       y1="2.5071414"
-       x2="16.499542"
-       y2="15.010952"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
        id="linearGradient29418">
       <stop
          id="stop29420"
@@ -171,23 +162,6 @@
          offset="1.0000000"
          style="stop-color:#e9e9e9;stop-opacity:1.0000000;" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient29418"
-       id="linearGradient8799"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.6236299,0,0,0.6278379,30.602334,-1.5024669)"
-       x1="35.003674"
-       y1="10.957423"
-       x2="27.273300"
-       y2="24.143761" />
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 8 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="16 : 8 : 1"
-       inkscape:persp3d-origin="8 : 5.3333333 : 1"
-       id="perspective9007" />
   </defs>
   <sodipodi:namedview
      id="base"

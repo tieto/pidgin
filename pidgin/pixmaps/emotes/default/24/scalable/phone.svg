@@ -2,24 +2,25 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="24"
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/emotes"
-   sodipodi:docname="telephone.svg"
+   sodipodi:docname="phone.svg"
    inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/emotes/telephone.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
     <radialGradient
@@ -44,18 +45,6 @@
          style="stop-color:#eeeeec;stop-opacity:0;"
          offset="1"
          id="stop3564" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3535">
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:1;"
-         offset="0"
-         id="stop3537" />
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:0;"
-         offset="1"
-         id="stop3539" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
@@ -89,15 +78,6 @@
        y1="16.375282"
        x2="2.5996325"
        y2="7.3670158"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3535"
-       id="linearGradient3541"
-       x1="22.492199"
-       y1="-0.17387013"
-       x2="11.355438"
-       y2="19.115566"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
