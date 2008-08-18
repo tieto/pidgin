@@ -81,6 +81,9 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
  */
 gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info, const char *hash);
 
+/**
+ *  Calcualte SHA1 hash for own featureset.
+ */
 void jabber_caps_calculate_own_hash();
 
 /** Get the current caps hash.
@@ -89,7 +92,7 @@ void jabber_caps_calculate_own_hash();
 const gchar* jabber_caps_get_own_hash();
 
 /**
- *
+ *  Broadcast a new calculated hash using a <presence> stanza.
  */
 void jabber_caps_broadcast_change();
 
