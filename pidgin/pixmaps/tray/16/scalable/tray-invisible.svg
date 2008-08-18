@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,25 +13,15 @@
    height="16px"
    id="svg1872"
    sodipodi:version="0.32"
-   inkscape:version="0.44.1"
+   inkscape:version="0.46"
    sodipodi:docbase="/home/hbons/code/pidgin-mtn/pidgin/pixmaps/tray/16/scalable"
    sodipodi:docname="tray-invisible.svg"
    inkscape:export-filename="/home/hbons/code/pidgin-mtn/pidgin/pixmaps/tray/16/tray-invisible.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs1874">
-    <radialGradient
-       r="5"
-       fy="44"
-       fx="1"
-       cy="44"
-       cx="1"
-       gradientTransform="matrix(2,0,0,0.8,-13,-79.2)"
-       gradientUnits="userSpaceOnUse"
-       id="radialGradient7751"
-       xlink:href="#linearGradient2781"
-       inkscape:collect="always" />
     <linearGradient
        id="linearGradient2781"
        inkscape:collect="always">
@@ -44,26 +34,6 @@
          offset="1"
          style="stop-color:black;stop-opacity:0;" />
     </linearGradient>
-    <radialGradient
-       r="5"
-       fy="44"
-       fx="1"
-       cy="44"
-       cx="1"
-       gradientTransform="matrix(2,0,0,0.8,36,8.8)"
-       gradientUnits="userSpaceOnUse"
-       id="radialGradient7753"
-       xlink:href="#linearGradient2781"
-       inkscape:collect="always" />
-    <linearGradient
-       y2="40"
-       x2="21.875"
-       y1="48.000977"
-       x1="21.875"
-       gradientUnits="userSpaceOnUse"
-       id="linearGradient7755"
-       xlink:href="#linearGradient2804"
-       inkscape:collect="always" />
     <linearGradient
        id="linearGradient2804">
       <stop
@@ -79,49 +49,6 @@
          offset="1"
          style="stop-color:black;stop-opacity:0;" />
     </linearGradient>
-    <linearGradient
-       id="linearGradient2851">
-      <stop
-         id="stop2853"
-         offset="0"
-         style="stop-color:#73d216;stop-opacity:1;" />
-      <stop
-         id="stop2855"
-         offset="1"
-         style="stop-color:#5ca911;stop-opacity:1;" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient3149"
-       inkscape:collect="always">
-      <stop
-         id="stop3151"
-         offset="0"
-         style="stop-color:#eeeeec;stop-opacity:1;" />
-      <stop
-         id="stop3153"
-         offset="1"
-         style="stop-color:#eeeeec;stop-opacity:0;" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3149"
-       id="linearGradient1956"
-       gradientUnits="userSpaceOnUse"
-       x1="17.890068"
-       y1="2.2464287"
-       x2="17.890068"
-       y2="34.458977"
-       gradientTransform="matrix(0.287092,0,0,0.287092,5.363906,5.455062)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2851"
-       id="linearGradient1959"
-       gradientUnits="userSpaceOnUse"
-       x1="6.878005"
-       y1="11.789385"
-       x2="12.233074"
-       y2="27.77807"
-       gradientTransform="matrix(0.36035,0,0,0.358865,4.074001,4.193834)" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2781"
@@ -154,67 +81,6 @@
        x2="21.875"
        y2="40" />
     <linearGradient
-       gradientUnits="userSpaceOnUse"
-       y2="28.669207"
-       x2="19.461548"
-       y1="6.4422231"
-       x1="19.461548"
-       id="linearGradient5193"
-       xlink:href="#linearGradient5187"
-       inkscape:collect="always" />
-    <linearGradient
-       gradientUnits="userSpaceOnUse"
-       y2="27.77807"
-       x2="12.233074"
-       y1="11.789385"
-       x1="6.878005"
-       id="linearGradient2857"
-       xlink:href="#linearGradient2851"
-       inkscape:collect="always" />
-    <radialGradient
-       gradientTransform="matrix(0.914124,-3.896132e-15,-2.475021e-18,1.631747,2.671799,-12.00863)"
-       gradientUnits="userSpaceOnUse"
-       r="8.6620579"
-       fy="19.008621"
-       fx="31.112698"
-       cy="19.008621"
-       cx="31.112698"
-       id="radialGradient3822"
-       xlink:href="#linearGradient3816"
-       inkscape:collect="always" />
-    <linearGradient
-       id="linearGradient3816"
-       inkscape:collect="always">
-      <stop
-         id="stop3818"
-         offset="0"
-         style="stop-color:#000000;stop-opacity:1;" />
-      <stop
-         id="stop3820"
-         offset="1"
-         style="stop-color:#000000;stop-opacity:0;" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient1926">
-      <stop
-         id="stop1928"
-         offset="0"
-         style="stop-color:#73d216;stop-opacity:1;" />
-      <stop
-         id="stop1930"
-         offset="1"
-         style="stop-color:#5ca911;stop-opacity:1;" />
-    </linearGradient>
-    <linearGradient
-       y2="40.032413"
-       x2="17.890068"
-       y1="8.0617304"
-       x1="17.890068"
-       gradientUnits="userSpaceOnUse"
-       id="linearGradient2269"
-       xlink:href="#linearGradient3149"
-       inkscape:collect="always" />
-    <linearGradient
        id="linearGradient5187"
        inkscape:collect="always">
       <stop
@@ -226,64 +92,6 @@
          offset="1"
          style="stop-color:#d3d7cf;stop-opacity:0;" />
     </linearGradient>
-    <linearGradient
-       gradientUnits="userSpaceOnUse"
-       y2="28.669207"
-       x2="19.461548"
-       y1="6.4422231"
-       x1="19.461548"
-       id="linearGradient2003"
-       xlink:href="#linearGradient5187"
-       inkscape:collect="always" />
-    <linearGradient
-       gradientUnits="userSpaceOnUse"
-       y2="27.77807"
-       x2="12.233074"
-       y1="11.789385"
-       x1="6.878005"
-       id="linearGradient2001"
-       xlink:href="#linearGradient2851"
-       inkscape:collect="always" />
-    <radialGradient
-       gradientTransform="matrix(0.914124,-3.896132e-15,-2.475021e-18,1.631747,2.671799,-12.00863)"
-       gradientUnits="userSpaceOnUse"
-       r="8.6620579"
-       fy="19.008621"
-       fx="31.112698"
-       cy="19.008621"
-       cx="31.112698"
-       id="radialGradient1999"
-       xlink:href="#linearGradient3816"
-       inkscape:collect="always" />
-    <linearGradient
-       id="linearGradient1981">
-      <stop
-         id="stop1983"
-         offset="0"
-         style="stop-color:#73d216;stop-opacity:1;" />
-      <stop
-         id="stop1985"
-         offset="1"
-         style="stop-color:#5ca911;stop-opacity:1;" />
-    </linearGradient>
-    <linearGradient
-       y2="40.032413"
-       x2="17.890068"
-       y1="8.0617304"
-       x1="17.890068"
-       gradientUnits="userSpaceOnUse"
-       id="linearGradient1979"
-       xlink:href="#linearGradient3149"
-       inkscape:collect="always" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5187"
-       id="linearGradient2010"
-       gradientUnits="userSpaceOnUse"
-       x1="19.461548"
-       y1="6.4422231"
-       x2="19.461548"
-       y2="28.669207" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient5187"

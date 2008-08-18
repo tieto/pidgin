@@ -13,7 +13,7 @@
    height="16"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46+devel"
+   inkscape:version="0.46"
    version="1.0"
    inkscape:export-filename="/home/hbons/Desktop/away.png"
    inkscape:export-xdpi="90"
@@ -48,25 +48,6 @@
          offset="1"
          id="stop3280" />
     </linearGradient>
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 8 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="16 : 8 : 1"
-       inkscape:persp3d-origin="8 : 5.3333333 : 1"
-       id="perspective35" />
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient2812">
-      <stop
-         style="stop-color:#2e3436;stop-opacity:1;"
-         offset="0"
-         id="stop2814" />
-      <stop
-         style="stop-color:#2e3436;stop-opacity:0;"
-         offset="1"
-         id="stop2816" />
-    </linearGradient>
     <linearGradient
        inkscape:collect="always"
        id="linearGradient2804">
@@ -81,63 +62,12 @@
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient3149"
-       id="linearGradient2269"
-       gradientUnits="userSpaceOnUse"
-       x1="17.890068"
-       y1="8.0617304"
-       x2="17.890068"
-       y2="40.032413" />
-    <linearGradient
-       id="linearGradient2851">
-      <stop
-         style="stop-color:#73d216;stop-opacity:1;"
-         offset="0"
-         id="stop2853" />
-      <stop
-         style="stop-color:#5ca911;stop-opacity:1;"
-         offset="1"
-         id="stop2855" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3149">
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:1;"
-         offset="0"
-         id="stop3151" />
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:0;"
-         offset="1"
-         id="stop3153" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2851"
-       id="linearGradient2857"
-       x1="6.878005"
-       y1="11.789385"
-       x2="12.233074"
-       y2="27.77807"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient2804"
        id="linearGradient2810"
        x1="4.5264969"
        y1="2.6807978"
        x2="9.7444448"
        y2="9.9594812"
-       gradientUnits="userSpaceOnUse" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2812"
-       id="radialGradient2818"
-       cx="31.112698"
-       cy="19.008621"
-       fx="31.112698"
-       fy="19.008621"
-       r="8.6620579"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
@@ -172,10 +102,10 @@
      inkscape:current-layer="layer1"
      showgrid="true"
      fill="#eeeeec"
-     inkscape:window-width="1434"
+     inkscape:window-width="1432"
      inkscape:window-height="840"
-     inkscape:window-x="3"
-     inkscape:window-y="27"
+     inkscape:window-x="0"
+     inkscape:window-y="4"
      inkscape:object-paths="false"
      inkscape:grid-bbox="true"
      inkscape:guide-bbox="false"

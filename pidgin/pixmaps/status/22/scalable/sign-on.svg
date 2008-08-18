@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,13 +13,14 @@
    height="24"
    id="svg1316"
    sodipodi:version="0.32"
-   inkscape:version="0.44.1"
+   inkscape:version="0.46"
    version="1.0"
    inkscape:export-filename="/home/hbons/Desktop/logout.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    sodipodi:docbase="/home/hbons/Desktop/experiment/status/22/scalable"
-   sodipodi:docname="sign-on.svg">
+   sodipodi:docname="sign-on.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs1318">
     <linearGradient
@@ -69,27 +70,6 @@
          offset="1"
          id="stop2245" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient2203">
-      <stop
-         style="stop-color:#727e0a;stop-opacity:1;"
-         offset="0"
-         id="stop2205" />
-      <stop
-         style="stop-color:#727e0a;stop-opacity:0;"
-         offset="1"
-         id="stop2207" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2203"
-       id="linearGradient2209"
-       x1="16"
-       y1="24.34691"
-       x2="16"
-       y2="13.322957"
-       gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2241"
