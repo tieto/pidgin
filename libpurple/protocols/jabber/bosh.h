@@ -30,6 +30,7 @@ typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
 typedef struct _PurpleBOSHConnection PurpleBOSHConnection;
 
 typedef void (*PurpleHTTPConnectionConnectFunction)(PurpleHTTPConnection *conn);
+typedef void (*PurpleHTTPConnectionDisconnectFunction)(PurpleHTTPConnection *conn);
 typedef void (*PurpleHTTPRequestCallback)(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata);
 typedef void (*PurpleBOSHConnectionConnectFunction)(PurpleBOSHConnection *conn);
 typedef void (*PurpleBOSHConnectionReciveFunction)(PurpleBOSHConnection *conn, xmlnode *node);
@@ -45,7 +46,7 @@ struct _PurpleBOSHConnection {
     int rid;
     char *sid;
     int wait;
-    
+        
     JabberStream *js;
     void *userdata;
     PurpleAccount *account;
@@ -74,6 +75,7 @@ struct _PurpleHTTPConnection {
     
     int pih;
     PurpleHTTPConnectionConnectFunction connect_cb;
+    PurpleHTTPConnectionConnectFunction disconnect_cb;
     void *userdata;
 };
 
