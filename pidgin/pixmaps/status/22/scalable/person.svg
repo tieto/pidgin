@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,10 +13,11 @@
    height="22"
    id="svg7348"
    sodipodi:version="0.32"
-   inkscape:version="0.44.1"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/status/22/scalable"
-   sodipodi:docname="person.svg">
+   sodipodi:docname="person.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs7350">
     <linearGradient

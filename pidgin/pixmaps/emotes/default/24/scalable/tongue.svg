@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,10 +13,10 @@
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45.1"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/untitled folder 1"
-   sodipodi:docname="new-style-tongue.svg"
+   sodipodi:docname="tongue.svg"
    inkscape:export-filename="/home/hbons/Desktop/newstyle.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
@@ -34,18 +34,6 @@
          style="stop-color:#eeeeec;stop-opacity:0;"
          offset="1"
          id="stop3172" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3152">
-      <stop
-         style="stop-color:#a40000;stop-opacity:1;"
-         offset="0"
-         id="stop3154" />
-      <stop
-         style="stop-color:#a40000;stop-opacity:0;"
-         offset="1"
-         id="stop3156" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
@@ -82,15 +70,6 @@
          stdDeviation="1.5438116"
          id="feGaussianBlur3407" />
     </filter>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3152"
-       id="linearGradient3158"
-       x1="16.501425"
-       y1="18.109661"
-       x2="14.21859"
-       y2="17.415634"
-       gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3168"

@@ -2,24 +2,25 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="24"
    height="24"
    id="svg1307"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/emotes/scalable"
    sodipodi:docname="bomb.svg"
    inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/emotes/bomb.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs1309">
     <linearGradient
@@ -33,18 +34,6 @@
          style="stop-color:#f57900;stop-opacity:0;"
          offset="1"
          id="stop2319" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient2299">
-      <stop
-         style="stop-color:#f57900;stop-opacity:1;"
-         offset="0"
-         id="stop2301" />
-      <stop
-         style="stop-color:#f57900;stop-opacity:0;"
-         offset="1"
-         id="stop2303" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
@@ -111,17 +100,6 @@
        fy="6.3627386"
        r="8.7305231"
        gradientTransform="matrix(0.804564,1.956935e-16,-4.836956e-16,0.325512,6.497048,8.960949)"
-       gradientUnits="userSpaceOnUse" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2299"
-       id="radialGradient2305"
-       cx="19.912924"
-       cy="6.6755304"
-       fx="19.912924"
-       fy="6.6755304"
-       r="2.9665158"
-       gradientTransform="matrix(1.153269,-6.393671e-16,7.682318e-16,0.959818,-3.052043,0.211096)"
        gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
