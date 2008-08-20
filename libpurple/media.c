@@ -636,10 +636,10 @@ purple_media_get_connection(PurpleMedia *media)
 	return gc;
 }
 
-const char *
+char *
 purple_media_get_screenname(PurpleMedia *media)
 {
-	const char *ret;
+	char *ret;
 	g_object_get(G_OBJECT(media), "screenname", &ret, NULL);
 	return ret;
 }

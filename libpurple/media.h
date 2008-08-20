@@ -226,7 +226,7 @@ PurpleConnection *purple_media_get_connection(PurpleMedia *media);
  *
  * @return The retrieved screenname.
  */
-const char *purple_media_get_screenname(PurpleMedia *media);
+char *purple_media_get_screenname(PurpleMedia *media);
 
 /**
  * Set the media session to the ready state.
