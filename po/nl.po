@@ -13734,7 +13734,7 @@ msgstr ""
 #: ../libpurple/proxy.c:694
 #, c-format
 msgid "Unable to parse response from HTTP proxy: %s\n"
-msgstr "Kan antwoord van HTTP-proxy niet parsen: %S\n"
+msgstr "Kan antwoord van HTTP-proxy niet parsen: %s\n"
 
 #: ../libpurple/proxy.c:734
 #: ../libpurple/proxy.c:783
