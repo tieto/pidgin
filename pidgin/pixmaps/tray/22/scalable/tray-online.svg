@@ -9,8 +9,8 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="24"
-   height="24"
+   width="22"
+   height="22"
    id="svg11816"
    sodipodi:version="0.32"
    inkscape:version="0.46"
@@ -157,7 +157,7 @@
        gradientTransform="matrix(-0.6236299,0,0,0.6278379,30.602334,-1.5024683)"
        x1="35.003674"
        y1="10.957423"
-       x2="27.273300"
+       x2="27.2733"
        y2="24.143761" />
   </defs>
   <sodipodi:namedview
@@ -168,8 +168,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16"
-     inkscape:cx="8.7914998"
-     inkscape:cy="14.139349"
+     inkscape:cx="8.1664998"
+     inkscape:cy="10.889349"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -178,7 +178,7 @@
      inkscape:snap-nodes="false"
      objecttolerance="10"
      gridtolerance="10"
-     inkscape:window-width="641"
+     inkscape:window-width="871"
      inkscape:window-height="669"
      inkscape:window-x="4"
      inkscape:window-y="22">
@@ -205,7 +205,8 @@
      inkscape:groupmode="layer">
     <g
        inkscape:label="Layer 1"
-       id="g11010">
+       id="g11010"
+       transform="translate(-0.9999999,-1.0023017)">
       <path
          sodipodi:nodetypes="cccccccccccc"
          style="fill:url(#linearGradient11022);fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient11024);stroke-width:0.9999994;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block;overflow:visible"
