@@ -6904,6 +6904,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	if(pidgin_conv_window_is_active_conversation(conv))
 	{
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy))
+			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		gtk_window_set_icon(GTK_WINDOW(win->window), buf);
 	}
 }

@@ -515,3 +515,11 @@ not :)
 14:39 <rrobbertt> Does anyone know a way to get text to speech with pidgin?
 14:41 <elb> do you want to be rooted sooner, or later?
 14:42 <seanegan> good question"; rm -rf ~
+
+
+(11:55:03) *** elb cuts seanegn for taunting the masses with adium
+                   message styles and then dropping it
+(11:55:32) *** rekkanoryo cuts seanegn twice for the same reason
+(11:56:04) *** elb waits to see if this is an additive, fibbonaci, or
+                   exponential cutting
+(11:56:16) *** seanegn hopes for additive.
