@@ -3615,6 +3615,8 @@ static void yahoo_close(PurpleConnection *gc) {
 	if (yd->in_chat)
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
+	purple_timeout_remove(yd->yahoo_p2p_timer);
+
 	g_hash_table_destroy(yd->sms_carrier);
 	g_hash_table_destroy(yd->peers);
 	g_hash_table_destroy(yd->friends);
