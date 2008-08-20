@@ -2283,6 +2283,7 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	YahooFriend *f;
 	GSList *l = pkt->hash;
 	struct yahoo_data *yd = gc->proto_data;
+	int protocol = 0;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2297,6 +2298,9 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 		case 65:
 			group = pair->value;
 			break;
+		case 241:
+			protocol = strtol(pair->value, NULL, 10);
+			break;
 		}
 
 		l = l->next;
@@ -2310,7 +2314,9 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	if (!err || (err == 2)) { /* 0 = ok, 2 = already on serv list */
 		f = yahoo_friend_find_or_new(gc, who);
 		yahoo_update_status(gc, who, f);
-		
+		if(protocol)
+			f->protocol = protocol;
+
 		if( !g_hash_table_lookup(yd->peers, who) )	{
 			/* we are not connected as client, so set friend to not connected */
 			yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
@@ -4344,6 +4350,9 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, who);
 	if ((f = yahoo_friend_find(gc, who)) && f->protocol)
 		yahoo_packet_hash_int(pkt, 241, f->protocol);
+	else
+		if(strchr(who,'@'))
+			yahoo_packet_hash_int(pkt, 241, 2);
 
 	if (utf8)
 		yahoo_packet_hash_str(pkt, 97, "1");
@@ -4664,18 +4673,36 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssssssssss",
-	                  14, "",
-	                  65, group2,
-	                  97, "1",
-	                  1, purple_connection_get_display_name(gc),
-	                  302, "319",
-	                  300, "319",
-	                  7, buddy->name,
-	                  334, "0",
-	                  301, "319",
-	                  303, "319"
-	);
+	if(strchr(buddy->name, '@'))	{
+		yahoo_packet_hash(pkt, "sssssssssss",
+			14, "",
+			65, group2,
+			97, "1",
+			1, purple_connection_get_display_name(gc),
+			302, "319",
+			300, "319",
+			7, buddy->name,
+			241, "2",
+			334, "0",
+			301, "319",
+			303, "319"
+		);
+	}
+	else	{
+		yahoo_packet_hash(pkt, "ssssssssss",
+			14, "",
+			65, group2,
+			97, "1",
+			1, purple_connection_get_display_name(gc),
+			302, "319",
+			300, "319",
+			7, buddy->name,
+			334, "0",
+			301, "319",
+			303, "319"
+		);
+	}
+
 	if (f && f->protocol)
 		yahoo_packet_hash_int(pkt, 241, f->protocol);
 	yahoo_packet_send_and_free(pkt, yd);
@@ -4690,8 +4717,9 @@ static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleG
 	PurpleGroup *g;
 	gboolean remove = TRUE;
 	char *cg;
+	YahooFriend *f = yahoo_friend_find(gc, buddy->name);
 
-	if (!(yahoo_friend_find(gc, buddy->name)))
+	if (!f)
 		return;
 
 	buddies = purple_find_buddies(purple_connection_get_account(gc), buddy->name);
@@ -4712,6 +4740,8 @@ static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleG
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
 	                  7, buddy->name, 65, cg);
+	if(f->protocol)
+		yahoo_packet_hash_int(pkt, 241, f->protocol);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(cg);
 }
@@ -4784,11 +4814,12 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	char *gpn, *gpo;
+	YahooFriend *f = yahoo_friend_find(gc, who);
 
 	/* Step 0:  If they aren't on the server list anyway,
 	 *          don't bother letting the server know.
 	 */
-	if (!yahoo_friend_find(gc, who))
+	if (!f)
 		return;
 
 	/* If old and new are the same, we would probably
@@ -4804,7 +4835,12 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHGRP_15, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssssssss", 1, purple_connection_get_display_name(gc),
+	if(f->protocol)
+		yahoo_packet_hash(pkt, "ssssissss", 1, purple_connection_get_display_name(gc),
+	                  302, "240", 300, "240", 7, who, 241, f->protocol, 224, gpo, 264, gpn, 301,
+	                  "240", 303, "240");
+	else
+		yahoo_packet_hash(pkt, "ssssssss", 1, purple_connection_get_display_name(gc),
 	                  302, "240", 300, "240", 7, who, 224, gpo, 264, gpn, 301,
 	                  "240", 303, "240");
 	yahoo_packet_send_and_free(pkt, yd);
