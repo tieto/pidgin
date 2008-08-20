@@ -31,6 +31,7 @@
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PAGER_PORT_P2P 5101
+#define YAHOO_P2P_KEEPALIVE_SECS 300
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
@@ -200,6 +201,7 @@ struct yahoo_data {
 	 */
 	char *current_list15_grp;
 	GHashTable *peers;	/* information about p2p data */
+	int yahoo_p2p_timer;
 	int yahoo_local_p2p_server_fd;
 	int yahoo_p2p_server_watcher;
 	GHashTable *sms_carrier;	/* sms carrier data */

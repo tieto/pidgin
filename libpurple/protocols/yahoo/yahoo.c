@@ -2330,6 +2330,51 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	g_free(decoded_group);
 }
 
+/* write pkt to the source */
+static void yahoo_p2p_write_pkt(gint source, struct yahoo_packet *pkt)
+{
+	size_t pkt_len;
+	guchar *raw_packet;
+	
+	/*build the raw packet and send it to the host*/
+	pkt_len = yahoo_packet_build(pkt, 0, 0, 0, &raw_packet);
+	if(write(source, raw_packet, pkt_len) != pkt_len)
+		purple_debug_warning("yahoo","p2p: couldn't write to the source\n");
+	g_free(raw_packet);
+}
+
+static void yahoo_p2p_keepalive_cb(gpointer key, gpointer value, gpointer user_data)
+{
+	struct yahoo_p2p_data *p2p_data = value;
+	PurpleConnection *gc = user_data;
+	struct yahoo_packet *pkt_to_send;
+	PurpleAccount *account;
+	struct yahoo_data *yd = gc->proto_data;
+
+	account = purple_connection_get_account(gc);
+
+	pkt_to_send = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
+	yahoo_packet_hash(pkt_to_send, "ssisi",
+		4, purple_normalize(account, purple_account_get_username(account)),
+		5, p2p_data->host_username,
+		241, 0,		/* Protocol identifier */
+		49, "PEERTOPEER",
+		13, 7);
+	yahoo_p2p_write_pkt(p2p_data->source, pkt_to_send);
+
+	yahoo_packet_free(pkt_to_send);
+}
+
+static gboolean yahoo_p2p_keepalive(gpointer data)
+{
+	PurpleConnection *gc = data;
+	struct yahoo_data *yd = gc->proto_data;
+
+	g_hash_table_foreach(yd->peers, yahoo_p2p_keepalive_cb, gc);
+
+	return TRUE;
+}
+
 /* destroy p2p_data associated with a peer and close p2p connection.
  * g_hash_table_remove() calls this function to destroy p2p_data associated with the peer,
  * call g_hash_table_remove() instead of this fucntion if peer has an entry in the table */
@@ -2352,19 +2397,6 @@ static void yahoo_p2p_disconnect_destroy_data(gpointer data)
 	g_free(p2p_data->host_ip);
 	g_free(p2p_data->host_username);
 	g_free(p2p_data);
-}
-
-/* write pkt to the source */
-static void yahoo_p2p_write_pkt(gint source, struct yahoo_packet *pkt)
-{
-	size_t pkt_len;
-	guchar *raw_packet;
-	
-	/*build the raw packet and send it to the host*/
-	pkt_len = yahoo_packet_build(pkt, 0, 0, 0, &raw_packet);
-	if(write(source, raw_packet, pkt_len) != pkt_len)
-		purple_debug_warning("yahoo","p2p: couldn't write to the source\n");
-	g_free(raw_packet);
 }
 
 /* exchange of initial p2pfilexfer packets, service type YAHOO_SERVICE_P2PFILEXFER */
@@ -2417,7 +2449,9 @@ static void yahoo_p2p_process_p2pfilexfer(gpointer data, gint source, struct yah
 		case 1 : val_13_to_send = 5; break;
 		case 5 : val_13_to_send = 6; break;
 		case 6 : val_13_to_send = 7; break;
-		case 7 : val_13_to_send = 7; break;
+		case 7 : if( g_hash_table_lookup(yd->peers, p2p_data->host_username) )
+				return;
+			 val_13_to_send = 7; break;
 		default: purple_debug_warning("yahoo","p2p:Unknown value for key 13\n");
 			 return;
 		}
@@ -3506,6 +3540,7 @@ static void yahoo_login(PurpleAccount *account) {
 	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	yd->peers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_p2p_disconnect_destroy_data);
 	yd->sms_carrier = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	yd->yahoo_p2p_timer = purple_timeout_add_seconds(YAHOO_P2P_KEEPALIVE_SECS, yahoo_p2p_keepalive, gc);
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
