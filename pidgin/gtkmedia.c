@@ -444,11 +444,9 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_widget_show(gtkmedia->priv->display);
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-	if (audiorecvbin || audiosendbin) {
-		gst_bus_add_signal_watch(GST_BUS(bus));
-		g_signal_connect(G_OBJECT(bus), "message",
+	if (audiorecvbin || audiosendbin)
+		g_signal_connect(G_OBJECT(bus), "message::element",
 				G_CALLBACK(level_message_cb), gtkmedia);
-	}
 	if (videorecvbin || videosendbin)
 		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
 	gst_object_unref(bus);

@@ -269,6 +269,9 @@ purple_media_finalize (GObject *media)
 	}
 
 	if (priv->pipeline) {
+		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(priv->pipeline));
+		gst_bus_remove_signal_watch(bus);
+		gst_object_unref(bus);
 		gst_element_set_state(priv->pipeline, GST_STATE_NULL);
 		gst_object_unref(priv->pipeline);
 	}
@@ -619,7 +622,8 @@ purple_media_get_pipeline(PurpleMedia *media)
 		media->priv->pipeline = gst_pipeline_new(media->priv->name);
 		bus = gst_pipeline_get_bus(GST_PIPELINE(media->priv->pipeline));
 		gst_bus_add_signal_watch(GST_BUS(bus));
-		gst_bus_add_watch(bus, media_bus_call, media);
+		g_signal_connect(G_OBJECT(bus), "message",
+				G_CALLBACK(media_bus_call), media);
 		gst_object_unref(bus);
 
 		gst_bin_add(GST_BIN(media->priv->pipeline), GST_ELEMENT(media->priv->conference));
