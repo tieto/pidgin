@@ -75,8 +75,13 @@ purple_coresources = \
 	stringref.c \
 	stun.c \
 	sound.c \
+	sound-loader.c \
+	sound-theme.c \
 	sslconn.c \
 	upnp.c \
+	theme.c \
+	theme-loader.c \
+	theme-manager.c \
 	util.c \
 	value.c \
 	version.c \
@@ -128,8 +133,13 @@ purple_coreheaders = \
 	stringref.h \
 	stun.h \
 	sound.h \
+	sound-loader.h \
+	sound-theme.h \
 	sslconn.h \
 	upnp.h \
+	theme.h \
+	theme-loader.h \
+	theme-manager.h \
 	util.h \
 	value.h \
 	xmlnode.h \
