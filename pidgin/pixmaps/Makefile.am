@@ -99,34 +99,20 @@ EMBLEMS_16 = \
 		emblems/16/voice.png
 
 EMOTES_DEFAULT_24_SCALABLE = \
-		emotes/default/24/scalable/act-up.svg \
 		emotes/default/24/scalable/airplane.svg \
-		emotes/default/24/scalable/alien.svg \
-		emotes/default/24/scalable/angel.svg \
-		emotes/default/24/scalable/angry.svg \
-		emotes/default/24/scalable/arrogant.svg \
-		emotes/default/24/scalable/at-wits-end.svg \
 		emotes/default/24/scalable/bad.svg \
-		emotes/default/24/scalable/bashful.svg \
-		emotes/default/24/scalable/beat-up.svg \
-		emotes/default/24/scalable/beauty.svg \
 		emotes/default/24/scalable/beer.svg \
-		emotes/default/24/scalable/blowkiss.svg \
 		emotes/default/24/scalable/bomb.svg \
 		emotes/default/24/scalable/bowl.svg \
 		emotes/default/24/scalable/boy.svg \
 		emotes/default/24/scalable/brb.svg \
-		emotes/default/24/scalable/bulgy-eyes.svg \
-		emotes/default/24/scalable/bye.svg \
 		emotes/default/24/scalable/cake.svg \
-		emotes/default/24/scalable/call-me.svg \
 		emotes/default/24/scalable/camera.svg \
 		emotes/default/24/scalable/can.svg \
 		emotes/default/24/scalable/car.svg \
 		emotes/default/24/scalable/cat.svg \
 		emotes/default/24/scalable/chicken.svg \
 		emotes/default/24/scalable/cigarette.svg \
-		emotes/default/24/scalable/clap.svg \
 		emotes/default/24/scalable/clock.svg \
 		emotes/default/24/scalable/cloudy.svg \
 		emotes/default/24/scalable/clover.svg \
@@ -134,77 +120,25 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/coffee.svg \
 		emotes/default/24/scalable/coins.svg \
 		emotes/default/24/scalable/computer.svg \
-		emotes/default/24/scalable/confused.svg \
 		emotes/default/24/scalable/console.svg \
-		emotes/default/24/scalable/cowboy.svg \
 		emotes/default/24/scalable/cow.svg \
-		emotes/default/24/scalable/crying.svg \
-		emotes/default/24/scalable/curl-lip.svg \
-		emotes/default/24/scalable/curse.svg \
-		emotes/default/24/scalable/cute.svg \
-		emotes/default/24/scalable/cyclops.svg \
-		emotes/default/24/scalable/dance.svg \
-		emotes/default/24/scalable/dazed.svg \
-		emotes/default/24/scalable/desire.svg \
-		emotes/default/24/scalable/devil.svg \
-		emotes/default/24/scalable/disappointed.svg \
-		emotes/default/24/scalable/disdain.svg \
-		emotes/default/24/scalable/doctor.svg \
 		emotes/default/24/scalable/dog.svg \
-		emotes/default/24/scalable/doh.svg \
-		emotes/default/24/scalable/dont-know.svg \
 		emotes/default/24/scalable/drink.svg \
-		emotes/default/24/scalable/drool.svg \
-		emotes/default/24/scalable/eat.svg \
-		emotes/default/24/scalable/embarrassed.svg \
-		emotes/default/24/scalable/excruciating.svg \
-		emotes/default/24/scalable/eyeroll.svg \
-		emotes/default/24/scalable/female-fighter.svg \
 		emotes/default/24/scalable/film.svg \
-		emotes/default/24/scalable/fingers-crossed.svg \
 		emotes/default/24/scalable/flag.svg \
-		emotes/default/24/scalable/foot-in-mouth.svg \
-		emotes/default/24/scalable/freaked-out.svg \
 		emotes/default/24/scalable/ghost.svg \
-		emotes/default/24/scalable/giggle.svg \
 		emotes/default/24/scalable/girl.svg \
-		emotes/default/24/scalable/glasses-cool.svg \
-		emotes/default/24/scalable/glasses-nerdy.svg \
 		emotes/default/24/scalable/goat.svg \
-		emotes/default/24/scalable/go-away.svg \
 		emotes/default/24/scalable/good.svg \
 		emotes/default/24/scalable/hammer.svg \
 		emotes/default/24/scalable/handcuffs.svg \
-		emotes/default/24/scalable/handshake.svg \
-		emotes/default/24/scalable/highfive.svg \
-		emotes/default/24/scalable/hug-left.svg \
-		emotes/default/24/scalable/hug-right.svg \
-		emotes/default/24/scalable/hypnotized.svg \
-		emotes/default/24/scalable/in-love.svg \
 		emotes/default/24/scalable/island.svg \
 		emotes/default/24/scalable/jump.svg \
-		emotes/default/24/scalable/kissed.svg \
-		emotes/default/24/scalable/kissing.svg \
-		emotes/default/24/scalable/kiss.svg \
 		emotes/default/24/scalable/knife.svg \
 		emotes/default/24/scalable/lamp.svg \
-		emotes/default/24/scalable/lashes.svg \
-		emotes/default/24/scalable/laugh.svg \
 		emotes/default/24/scalable/liquor.svg \
-		emotes/default/24/scalable/loser.svg \
-		emotes/default/24/scalable/love-over.svg \
-		emotes/default/24/scalable/love.svg \
-		emotes/default/24/scalable/lying.svg \
-		emotes/default/24/scalable/madtongue.svg \
 		emotes/default/24/scalable/mail.svg \
-		emotes/default/24/scalable/male-fighter1.svg \
-		emotes/default/24/scalable/male-fighter2.svg \
-		emotes/default/24/scalable/mean.svg \
-		emotes/default/24/scalable/meeting.svg \
-		emotes/default/24/scalable/messed.svg \
 		emotes/default/24/scalable/mobile.svg \
-		emotes/default/24/scalable/mohawk.svg \
-		emotes/default/24/scalable/moneymouth.svg \
 		emotes/default/24/scalable/monkey.svg \
 		emotes/default/24/scalable/moon.svg \
 		emotes/default/24/scalable/msn-away.svg \
@@ -213,80 +147,33 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/msn.svg \
 		emotes/default/24/scalable/musical-note.svg \
 		emotes/default/24/scalable/music.svg \
-		emotes/default/24/scalable/nailbiting.svg \
-		emotes/default/24/scalable/neutral.svg \
-		emotes/default/24/scalable/on-the-phone.svg \
-		emotes/default/24/scalable/party.svg \
 		emotes/default/24/scalable/peace.svg \
 		emotes/default/24/scalable/phone.svg \
 		emotes/default/24/scalable/pig.svg \
 		emotes/default/24/scalable/pill.svg \
-		emotes/default/24/scalable/pirate.svg \
-		emotes/default/24/scalable/pissed-off.svg \
 		emotes/default/24/scalable/pizza.svg \
 		emotes/default/24/scalable/plate.svg \
 		emotes/default/24/scalable/poop.svg \
-		emotes/default/24/scalable/pray.svg \
 		emotes/default/24/scalable/present.svg \
 		emotes/default/24/scalable/qq.svg \
-		emotes/default/24/scalable/question.svg \
-		emotes/default/24/scalable/quiet.svg \
 		emotes/default/24/scalable/rainbow.svg \
 		emotes/default/24/scalable/rain.svg \
 		emotes/default/24/scalable/rose-dead.svg \
 		emotes/default/24/scalable/rose.svg \
-		emotes/default/24/scalable/rotfl.svg \
-		emotes/default/24/scalable/sad.svg \
-		emotes/default/24/scalable/sarcastic.svg \
 		emotes/default/24/scalable/search.svg \
-		emotes/default/24/scalable/secret.svg \
-		emotes/default/24/scalable/shame.svg \
 		emotes/default/24/scalable/sheep.svg \
-		emotes/default/24/scalable/shock.svg \
 		emotes/default/24/scalable/shout.svg \
-		emotes/default/24/scalable/shut-mouth.svg \
-		emotes/default/24/scalable/sick.svg \
-		emotes/default/24/scalable/sidefrown.svg \
-		emotes/default/24/scalable/silly.svg \
-		emotes/default/24/scalable/sinister.svg \
 		emotes/default/24/scalable/skeleton.svg \
-		emotes/default/24/scalable/skywalker.svg \
-		emotes/default/24/scalable/sleepy.svg \
-		emotes/default/24/scalable/smile-big.svg \
-		emotes/default/24/scalable/smile.svg \
-		emotes/default/24/scalable/smirk.svg \
 		emotes/default/24/scalable/snail.svg \
-		emotes/default/24/scalable/snicker.svg \
 		emotes/default/24/scalable/snowman.svg \
 		emotes/default/24/scalable/soccerball.svg \
-		emotes/default/24/scalable/soldier.svg \
 		emotes/default/24/scalable/star.svg \
-		emotes/default/24/scalable/starving.svg \
-		emotes/default/24/scalable/stop.svg \
-		emotes/default/24/scalable/struggle.svg \
 		emotes/default/24/scalable/sun.svg \
-		emotes/default/24/scalable/sweat.svg \
-		emotes/default/24/scalable/talktohand.svg \
-		emotes/default/24/scalable/teeth.svg \
-		emotes/default/24/scalable/terror.svg \
-		emotes/default/24/scalable/thinking.svg \
 		emotes/default/24/scalable/thunder.svg \
-		emotes/default/24/scalable/time-out.svg \
-		emotes/default/24/scalable/tongue.svg \
-		emotes/default/24/scalable/tremble.svg \
 		emotes/default/24/scalable/turtle.svg \
 		emotes/default/24/scalable/tv.svg \
 		emotes/default/24/scalable/umbrella.svg \
-		emotes/default/24/scalable/vampire.svg \
-		emotes/default/24/scalable/victory.svg \
-		emotes/default/24/scalable/waiting.svg \
 		emotes/default/24/scalable/watermelon.svg \
-		emotes/default/24/scalable/waving.svg \
-		emotes/default/24/scalable/weep.svg \
-		emotes/default/24/scalable/wilt.svg \
-		emotes/default/24/scalable/wink.svg \
-		emotes/default/24/scalable/worship.svg \
-		emotes/default/24/scalable/yawn.svg \
 		emotes/default/24/scalable/yin-yang.svg
 
 PROTOCOLS_16_SCALABLE = \
