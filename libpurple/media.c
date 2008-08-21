@@ -593,22 +593,11 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 				gst_structure_get_int(msg->structure, "error-no", &error_no);
 				purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
 						  gst_structure_get_string(msg->structure, "error-msg"));
-			} else {
-				gchar *name, *str;
-				name = gst_object_get_name(GST_MESSAGE_SRC (msg));
-				purple_debug_info("media", "element name: %s\n", name);
-				g_free(name);
-
-				str = gst_structure_to_string(msg->structure);
-				purple_debug_info("media", "structure: %s\n", str);
-				g_free(str);
 			}
 			break;
 		}
 		default:
-			purple_debug_info("media", "gst message type: %s\n",
-					  GST_MESSAGE_TYPE_NAME(msg));
-			return TRUE;
+			break;
 	}
 
 	return TRUE;
