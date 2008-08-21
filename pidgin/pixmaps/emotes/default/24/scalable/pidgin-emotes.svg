@@ -23,13 +23,6 @@
    style="display:inline;enable-background:new">
   <defs
      id="defs3">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 140 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="276 : 140 : 1"
-       inkscape:persp3d-origin="138 : 93.333333 : 1"
-       id="perspective2496" />
     <linearGradient
        id="linearGradient11716"
        inkscape:collect="always">
@@ -4387,26 +4380,6 @@
        y1="10.5625"
        x2="8.9999981"
        y2="12.4375" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient22526"
-       id="linearGradient10365"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(-57.27728,99.769246)"
-       x1="8.9999981"
-       y1="10.5625"
-       x2="8.9999981"
-       y2="12.4375" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient22526"
-       id="linearGradient10367"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(7.000002,1)"
-       x1="8.9999981"
-       y1="10.5625"
-       x2="8.9999981"
-       y2="12.4375" />
   </defs>
   <sodipodi:namedview
      stroke="#ef2929"
@@ -4418,8 +4391,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2"
-     inkscape:cx="189.4814"
-     inkscape:cy="160.52057"
+     inkscape:cx="190.9814"
+     inkscape:cy="167.52057"
      inkscape:current-layer="layer86"
      showgrid="false"
      inkscape:grid-bbox="true"
