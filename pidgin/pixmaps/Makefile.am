@@ -19,6 +19,37 @@ ANIMATIONS_16 = \
 		animations/16/connect6.png \
 		animations/16/connect7.png \
 		animations/16/connect8.png \
+		animations/16/process-working0.png \
+		animations/16/process-working1.png \
+		animations/16/process-working2.png \
+		animations/16/process-working3.png \
+		animations/16/process-working4.png \
+		animations/16/process-working5.png \
+		animations/16/process-working6.png \
+		animations/16/process-working7.png \
+		animations/16/process-working8.png \
+		animations/16/process-working9.png \
+		animations/16/process-working10.png \
+		animations/16/process-working11.png \
+		animations/16/process-working12.png \
+		animations/16/process-working13.png \
+		animations/16/process-working14.png \
+		animations/16/process-working15.png \
+		animations/16/process-working16.png \
+		animations/16/process-working17.png \
+		animations/16/process-working18.png \
+		animations/16/process-working19.png \
+		animations/16/process-working20.png \
+		animations/16/process-working21.png \
+		animations/16/process-working22.png \
+		animations/16/process-working23.png \
+		animations/16/process-working24.png \
+		animations/16/process-working25.png \
+		animations/16/process-working26.png \
+		animations/16/process-working27.png \
+		animations/16/process-working28.png \
+		animations/16/process-working29.png \
+		animations/16/process-working30.png \
 		animations/16/typing0.png \
 		animations/16/typing1.png \
 		animations/16/typing2.png \
@@ -133,7 +164,6 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/hammer.svg \
 		emotes/default/24/scalable/handcuffs.svg \
 		emotes/default/24/scalable/island.svg \
-		emotes/default/24/scalable/jump.svg \
 		emotes/default/24/scalable/knife.svg \
 		emotes/default/24/scalable/lamp.svg \
 		emotes/default/24/scalable/liquor.svg \
@@ -146,7 +176,6 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/msn_online.svg \
 		emotes/default/24/scalable/msn.svg \
 		emotes/default/24/scalable/musical-note.svg \
-		emotes/default/24/scalable/music.svg \
 		emotes/default/24/scalable/peace.svg \
 		emotes/default/24/scalable/phone.svg \
 		emotes/default/24/scalable/pig.svg \
