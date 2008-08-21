@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "theme-manager.h"
+#include "util.h"
 
 /******************************************************************************
  * Globals
@@ -101,41 +102,44 @@ static void
 purple_theme_manager_build_dir(const gchar *root)
 {
 
-	GDir *rdir;
-	gchar *name, *type, *purple_dir, *theme_dir;
-	GDir *dir;
+	gchar *purple_dir, *theme_dir;
+	const gchar *name = NULL, *type = NULL;
+	GDir *rdir, *tdir;
 	PurpleThemeLoader *loader;
 
-	rdir =  g_dir_open(root, 0, NULL);
+	rdir = g_dir_open(root, 0, NULL);
 
 	g_return_if_fail(rdir);
 
 	/* Parses directory by root/name/purple/type */
-	while ((name = g_strdup(g_dir_read_name (rdir)))){
-		
+	while((name = g_dir_read_name(rdir))) {
 		purple_dir = g_build_filename(root, name, "purple", NULL);
-		dir =  g_dir_open(purple_dir, 0, NULL);	
+		tdir =  g_dir_open(purple_dir, 0, NULL);
 	
-		if (dir) {
-			while ((type = g_strdup(g_dir_read_name (dir)))) {
-				if ((loader = g_hash_table_lookup (theme_table, type))){
+		if(!tdir) {
+			g_free(purple_dir);
 
-					theme_dir = g_build_filename(purple_dir, type, NULL);
-					purple_theme_manager_add_theme(purple_theme_loader_build(loader, theme_dir));
-
-				}
-				g_free(type);
-
-			}
-			g_dir_close(dir);
-
+			continue;
 		}
+
+		while((type = g_dir_read_name(tdir))) {
+			if((loader = g_hash_table_lookup(theme_table, type))) {
+				PurpleTheme *theme = NULL;
+
+				theme_dir = g_build_filename(purple_dir, type, NULL);
+
+				theme = purple_theme_loader_build(loader, theme_dir);
+
+				if(PURPLE_IS_THEME(theme))
+					purple_theme_manager_add_theme(theme);
+			}
+		}
+
+		g_dir_close(tdir);
 		g_free(purple_dir);
-		g_free(name);	
-	
 	}
+
 	g_dir_close(rdir);
-	
 }
 
 /*****************************************************************************
@@ -154,13 +158,41 @@ purple_theme_manager_init (void)
 void 
 purple_theme_manager_refresh()
 {
-	g_hash_table_foreach_remove (theme_table,
-                	             (GHRFunc) purple_theme_manager_is_theme,
-                	             NULL);	
-	
-	/* TODO: add correct directories to parse */
-	purple_theme_manager_build_dir("/usr/share/themes");
+	gchar *path = NULL;
+	const gchar *xdg = NULL;
+	gint i = 0;
 
+	g_hash_table_foreach_remove(theme_table,
+                	            (GHRFunc) purple_theme_manager_is_theme,
+                	            NULL);
+
+	/* Add themes from ~/.purple */
+	path = g_build_filename(purple_user_dir(), "themes", NULL);
+	purple_theme_manager_build_dir(path);
+	g_free(path);
+
+	/* look for XDG_DATA_HOME.  If we don't have it use ~/.local, and add it */
+	if((xdg = g_getenv("XDG_DATA_HOME")) != NULL)
+		path = g_build_filename(xdg, "themes", NULL);
+	else
+		path = g_build_filename(purple_home_dir(), ".local", "themes", NULL);
+
+	purple_theme_manager_build_dir(path);
+	g_free(path);
+
+	/* now dig through XDG_DATA_DIRS and add those too */
+	xdg = g_getenv("XDG_DATA_DIRS");
+	if(xdg) {
+		gchar **xdg_dirs = g_strsplit(xdg, G_SEARCHPATH_SEPARATOR_S, 0);
+
+		for(i = 0; xdg_dirs[i]; i++) {
+			path = g_build_filename(xdg_dirs[i], "themes", NULL);
+			purple_theme_manager_build_dir(path);
+			g_free(path);
+		}
+
+		g_strfreev(xdg_dirs);
+	}
 }
 
 void 
