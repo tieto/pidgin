@@ -2650,6 +2650,10 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	if(f->protocol)
 		return;
 
+	/* Finally, don't try to connect to buddies not online or on sms */
+	if( (f->status == YAHOO_STATUS_OFFLINE) || f->sms )
+		return;
+
 	public_ip = purple_network_get_public_ip();
 	if( (sscanf(public_ip, "%u.%u.%u.%u", &temp[0], &temp[1], &temp[2], &temp[3])) !=4 )
 		return ;
