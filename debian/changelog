@@ -1,3 +1,13 @@
+pidgin (2.4.3-2) unstable; urgency=low
+
+  * Apply patch from Miron Cuperman to fix path to CA certificates in
+    00_debian-ca-certs.path
+  * debian/patches/25_ssl-nss.patch:
+    - Apply patch from upstream to add SSL certificate checking to the NSS
+      plugin, which we use (CVE-2008-3532) (Closes: #492434)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 21 Aug 2008 23:56:42 -0400
+
 pidgin (2.4.3-1) unstable; urgency=high
 
   * New upstream release (Closes: #488930)
