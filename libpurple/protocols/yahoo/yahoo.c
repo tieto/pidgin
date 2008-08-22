@@ -2642,12 +2642,12 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	if( strcmp(purple_normalize(account, purple_account_get_username(account)), who) == 0)
 		return;
 
-	/* Dont send p2p packet to buddies of other protocols */
-	if(f->protocol)
-		return;
-
 	/* send packet to only those friends who arent p2p connected and to whom we havent already sent. Do not send if this condition doesn't hold good */ 
 	if( !( f && (yahoo_friend_get_p2p_status(f) == YAHOO_P2PSTATUS_NOT_CONNECTED) && (f->p2p_packet_sent == 0)) )
+		return;
+
+	/* Dont send p2p packet to buddies of other protocols */
+	if(f->protocol)
 		return;
 
 	public_ip = purple_network_get_public_ip();
