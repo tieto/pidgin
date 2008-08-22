@@ -2676,8 +2676,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 
 	p2p_data->gc = gc;
 	p2p_data->host_ip = NULL;
-	p2p_data->host_username = (char *)g_malloc(strlen(who));
-	strcpy(p2p_data->host_username, who);
+	p2p_data->host_username = g_strdup(who);
 	p2p_data->val_13 = val_13;
 	p2p_data->connection_type = YAHOO_P2P_WE_ARE_SERVER;
 
