@@ -1047,6 +1047,10 @@ void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 
 	g_return_if_fail(xfer != NULL);
 
+	/* if we don't have a p2p connection, try establishing it now */
+	if( !g_hash_table_lookup(yd->peers, who) )
+		yahoo_send_p2p_pkt(gc, who, 0);
+
 	xfer_data = xfer->data;
 	xfer_data->status_15 = STARTED;
 	purple_xfer_set_init_fnc(xfer, yahoo_xfer_init_15);

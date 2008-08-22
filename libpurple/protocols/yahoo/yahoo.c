@@ -2622,7 +2622,7 @@ static void yahoo_p2p_server_listen_cb(int listenfd, gpointer data)
 }
 
 /* send p2p pkt containing our encoded ip, asking peer to connect to us */
-static void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
+void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 {
 	const char *public_ip;
 	guint32 temp[4];	

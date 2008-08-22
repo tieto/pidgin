@@ -274,4 +274,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc);
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
 GList *yahoo_attention_types(PurpleAccount *account);
 
+/* send p2p pkt containing our encoded ip, asking peer to connect to us */
+void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13);
+
 #endif /* _YAHOO_H_ */
