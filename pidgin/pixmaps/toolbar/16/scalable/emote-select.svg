@@ -15,7 +15,10 @@
    sodipodi:version="0.32"
    inkscape:version="0.46"
    sodipodi:docname="emote-select.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/hbons/Bureaublad/Projecten/Pidgin/pidgin-mtn/pidgin/pixmaps/toolbar/16/emote-select.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs10337">
     <linearGradient
@@ -42,30 +45,6 @@
          offset="1"
          style="stop-color:#2e3436;stop-opacity:0;" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient11148">
-      <stop
-         style="stop-color:#2e3436;stop-opacity:1;"
-         offset="0"
-         id="stop11150" />
-      <stop
-         style="stop-color:#2e3436;stop-opacity:0;"
-         offset="1"
-         id="stop11152" />
-    </linearGradient>
-    <filter
-       inkscape:collect="always"
-       id="filter22950"
-       x="-0.15004814"
-       width="1.3000963"
-       y="-0.42113513"
-       height="1.8422703">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.83088033"
-         id="feGaussianBlur22952" />
-    </filter>
     <linearGradient
        id="linearGradient11455"
        inkscape:collect="always">
@@ -163,22 +142,6 @@
        y1="8.8493233"
        x2="8.7171106"
        y2="10" />
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 8 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="16 : 8 : 1"
-       inkscape:persp3d-origin="8 : 5.3333333 : 1"
-       id="perspective10343" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient11148"
-       id="linearGradient11154"
-       x1="9.432662"
-       y1="9.6526775"
-       x2="10.732871"
-       y2="9.6526775"
-       gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient11164"
