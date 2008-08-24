@@ -89,7 +89,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_message_send_chat,		/* chat_send */
 	jabber_keepalive,				/* keepalive */
 	jabber_register_account,		/* register_user */
-	jabber_buddy_get_info_chat,		/* get_cb_info */
+	NULL,							/* get_cb_info */
 	NULL,							/* get_cb_away */
 	jabber_roster_alias_change,		/* alias_buddy */
 	jabber_roster_group_change,		/* group_buddy */
@@ -116,7 +116,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
 
-	/* padding */
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 
@@ -194,6 +194,7 @@ init_plugin(PurplePlugin *plugin)
 {
 #ifdef HAVE_CYRUS_SASL
 #ifdef _WIN32
+	UINT old_error_mode;
 	gchar *sasldir;
 #endif
 	int ret;
@@ -236,7 +237,7 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("File transfer proxies"),
 						  "ft_proxies",
 						/* TODO: Is this an acceptable default? */
-						  "proxy.jabber.org:7777");
+						  "proxy.jabber.org");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
@@ -250,10 +251,16 @@ init_plugin(PurplePlugin *plugin)
 	sasldir = g_build_filename(wpurple_install_dir(), "sasl2", NULL);
 	sasl_set_path(SASL_PATH_TYPE_PLUGIN, sasldir);
 	g_free(sasldir);
+	/* Suppress error popups for failing to load sasl plugins */
+	old_error_mode = SetErrorMode(SEM_FAILCRITICALERRORS);
 #endif
 	if ((ret = sasl_client_init(NULL)) != SASL_OK) {
 		purple_debug_error("xmpp", "Error (%d) initializing SASL.\n", ret);
 	}
+#ifdef _WIN32
+	/* Restore the original error mode */
+	SetErrorMode(old_error_mode);
+#endif
 #endif
 	jabber_register_commands();
 	

@@ -359,7 +359,7 @@ purple_plugin_probe(const char *filename)
 	{
 		plugin->error = g_strdup_printf(_("You are using %s, but this plugin requires %s."),
 					purple_core_get_ui(), plugin->info->ui_requirement);
-		purple_debug_error("plugins", "%s is not loadable: The UI requirement is not met.\n", plugin->path);
+		purple_debug_error("plugins", "%s is not loadable: The UI requirement is not met. (%s)\n", plugin->path, plugin->error);
 		plugin->unloadable = TRUE;
 		return plugin;
 	}
@@ -474,9 +474,9 @@ purple_plugin_probe(const char *filename)
 		    (PURPLE_PLUGIN_PROTOCOL_INFO(plugin)->login == NULL) ||
 		    (PURPLE_PLUGIN_PROTOCOL_INFO(plugin)->close == NULL))
 		{
-			plugin->error = g_strdup(_("Plugin does not implement all required functions"));
-			purple_debug_error("plugins", "%s is not loadable: Plugin does not implement all required functions\n",
-					 plugin->path);
+			plugin->error = g_strdup(_("Plugin does not implement all required functions (list_icon, login and close)"));
+			purple_debug_error("plugins", "%s is not loadable: %s\n",
+					 plugin->path, plugin->error);
 			plugin->unloadable = TRUE;
 			return plugin;
 		}

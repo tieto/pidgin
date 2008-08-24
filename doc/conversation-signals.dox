@@ -7,6 +7,7 @@
   @signal sent-im-msg
   @signal receiving-im-msg
   @signal received-im-msg
+  @signal blocked-im-msg
   @signal writing-chat-msg
   @signal wrote-chat-msg
   @signal sending-chat-msg
@@ -26,7 +27,9 @@
   @signal chat-inviting-user
   @signal chat-invited-user
   @signal chat-invited
+  @signal chat-invite-blocked
   @signal chat-joined
+  @signal chat-join-failed
   @signal chat-left
   @signal chat-topic-changed
   @signal conversation-extended-menu
@@ -129,6 +132,21 @@ void (*received_im_msg)(PurpleAccount *account, char *sender, char *message,
   @param message The message that was sent.
   @param conv    The IM conversation.
   @param flags   The IM message flags.
+ @endsignaldef
+
+ @signaldef blocked-im-msg
+  @signalproto
+void (*blocked_im_msg)(PurpleAccount *account, const char *sender,
+        const char *message, PurpleMessageFlags flags, time_t when);
+  @endsignalproto
+  @signaldesc
+   Emitted after an IM is blocked due to privacy settings.
+  @param account The account the message was received on.
+  @param sender  The username of the sender.
+  @param message The message that was blocked.
+  @param flags   The IM message flags.
+  @param when    The time the message was sent.
+  @since 2.5.0
  @endsignaldef
 
  @signaldef writing-chat-msg
@@ -302,6 +320,18 @@ void (*chat_buddy_joined)(PurpleConversation *conv, const char *name,
   @param new_arrival If the buddy is a new arrival.
  @endsignaldef
 
+ @signaldef chat-join-failed
+  @signalproto
+void (*chat_join_failed)(PurpleConnection *gc, GHashTable *components);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account fails to join a chat room
+  @param gc The PurpleConnection of the account which failed to join the chat.
+  @param data    The components passed to serv_join_chat() originally.
+                 The hash function should be g_str_hash() and the equal
+                 function should be g_str_equal().
+ @endsignaldef
+
  @signaldef chat-buddy-flags
   @signalproto
 void (*chat_buddy_flags)(PurpleConversation *conv, const char *name,
@@ -389,6 +419,21 @@ gint (*chat_invited)(PurpleAccount *account, const char *inviter,
   @return Less than zero if the invitation should be rejected, greater than
           zero if the invitation should be accepted. If zero is returned, the
           default behavior will be maintained: the user will be prompted.
+ @endsignaldef
+
+ @signaldef chat-invite-blocked
+  @signalproto
+void (*chat_invite_blocked)(PurpleAccount *account, const char *inviter,
+                   const char *name, const char *message, GHashTable *data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an invitation to join a chat is blocked.
+  @param account  The account the invitation was sent to.
+  @param inviter  The name of the person sending the invitation.
+  @param name     The name of the chat invited to.
+  @param message  The invitation message sent.
+  @param data     Hashtable containing data about the invited chat.
+  @since 2.5.0
  @endsignaldef
 
  @signaldef chat-joined

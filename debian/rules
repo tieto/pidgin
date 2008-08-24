@@ -16,7 +16,8 @@ nextmicro=$(shell expr ${micro} + 1)
 DEB_BUILDDIR = $(DEB_SRCDIR)/build
 DEB_CONFIGURE_SCRIPT = $(CURDIR)/configure
 DEB_CONFIGURE_INVOKE = cd "$(DEB_BUILDDIR)"; $(DEB_CONFIGURE_SCRIPT_ENV) \
-	../configure $(DEB_CONFIGURE_NORMAL_ARGS) --enable-gevolution --enable-cap --disable-nm --with-dynamic-prpls=bonjour,gg,irc,jabber,myspace,novell,oscar,qq,sametime,zephyr
+	../configure $(DEB_CONFIGURE_NORMAL_ARGS) --enable-gevolution \
+		--enable-cap --disable-nm --with-system-ssl-certs=/etc/ssl/certs
 LDFLAGS = -Wl,--as-needed
 
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no --enable-nss=yes --enable-cyrus-sasl
@@ -41,7 +42,6 @@ common-install-impl::
 	rm -f debian/tmp/usr/lib/pidgin/relnot.so # release notification plugin
 	rm -f debian/tmp/usr/bin/nullclient # examples
 	rm -f debian/tmp/usr/bin/purple-client-example # examples
-	rm -rf debian/tmp/usr/share/purple/ca-certs # we use /etc/ssl/certs
 	find debian/tmp/usr/lib -name '*.la' -print0 | xargs -0 rm
 	# Include author lists in copyright file
 	sed -e '/@PIDGIN_COPYRIGHT@/r COPYRIGHT' \

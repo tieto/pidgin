@@ -637,6 +637,9 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	flags = fcntl(client_socket, F_GETFL);
 	fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(client_socket, F_SETFD, FD_CLOEXEC);
+#endif
 
 	/* Look for the buddy that has opened the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
@@ -672,7 +675,6 @@ gint
 bonjour_jabber_start(BonjourJabber *jdata)
 {
 	struct sockaddr_in my_addr;
-	int yes = 1;
 	int i;
 	gboolean bind_successful;
 
@@ -683,16 +685,6 @@ bonjour_jabber_start(BonjourJabber *jdata)
 		purple_connection_error_reason (jdata->account->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Cannot open socket"));
-		return -1;
-	}
-
-	/* Make the socket reusable */
-	if (setsockopt(jdata->socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != 0)
-	{
-		purple_debug_error("bonjour", "Error setting socket options: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Error setting socket options"));
 		return -1;
 	}
 
@@ -709,6 +701,8 @@ bonjour_jabber_start(BonjourJabber *jdata)
 			bind_successful = TRUE;
 			break;
 		}
+
+		purple_debug_info("bonjour", "Unable to bind to port %u.(%s)\n", jdata->port, g_strerror(errno));
 		jdata->port++;
 	}
 

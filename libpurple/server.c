@@ -151,7 +151,6 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	 */
 	auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 	if((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
-			flags & PURPLE_MESSAGE_AUTO_RESP &&
 			!purple_presence_is_available(presence) &&
 			strcmp(auto_reply_pref, "never")) {
 
@@ -324,91 +323,13 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
 void
 serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
-	PurpleAttentionType *attn;
-	PurpleMessageFlags flags;
-	PurplePlugin *prpl;
-	PurpleConversation *conv;
-	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
-	PurpleBuddy *buddy;
-	const char *alias;	
-	gchar *description;
-	time_t mtime;
-
-	g_return_if_fail(gc != NULL);
-	g_return_if_fail(who != NULL);
-
-	prpl = purple_find_prpl(purple_account_get_protocol_id(gc->account));
-	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
-	g_return_if_fail(send_attention != NULL);
-
-	mtime = time(NULL);
-
-	attn = purple_get_attention_type_from_code(gc->account, type_code);
-
-	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
-		alias = purple_buddy_get_contact_alias(buddy);
-	else
-		alias = who;
-
-	if (attn && purple_attention_type_get_outgoing_desc(attn)) {
-		description = g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
-	} else {
-		description = g_strdup_printf(_("Requesting %s's attention..."), alias);
-	}
-	
-	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
-
-	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
-			description, who);
-
-	if (!send_attention(gc, who, type_code))
-		return;
-
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, gc->account, who);
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
-
-	g_free(description);
+	purple_prpl_send_attention(gc, who, type_code);
 }
 
 void
 serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
-	PurpleMessageFlags flags;
-	PurpleAttentionType *attn;
-	PurpleBuddy *buddy;
-	const char *alias;
-	gchar *description;
-	time_t mtime;
-
-	mtime = time(NULL);
-
-	attn = purple_get_attention_type_from_code(gc->account, type_code);
-
-	/* PURPLE_MESSAGE_NOTIFY is for attention messages. */
-	flags = PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_RECV;
-
-	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
-	 * it next to the attention command. And if it is null, display a generic icon. */
-
-	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
-		alias = purple_buddy_get_contact_alias(buddy);
-	else
-		alias = who;
-
-	if (attn && purple_attention_type_get_incoming_desc(attn)) {
-		description = g_strdup_printf(purple_attention_type_get_incoming_desc(attn), alias);
-	} else {
-		description = g_strdup_printf(_("%s has requested your attention!"), alias);
-	}
-
-	purple_debug_info("server", "serv_got_attention: got '%s' from %s\n",
-			description, who);
-
-	serv_got_im(gc, who, description, flags, mtime);
-	
-	/* TODO: sounds (depending on PurpleAttentionType), shaking, etc. */
-
-	g_free(description);
+	purple_prpl_got_attention(gc, who, type_code);
 }
 
 
@@ -659,8 +580,11 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who))
+		if (!purple_privacy_check(account, who)) {
+			purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
+					account, who, msg, flags, (unsigned int)mtime);
 			return;
+		}
 	}
 
 	/*
@@ -725,6 +649,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		PurpleStatusPrimitive primitive;
 		const gchar *auto_reply_pref;
 		const char *away_msg = NULL;
+		gboolean mobile = FALSE;
 
 		auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 
@@ -732,9 +657,10 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		status = purple_presence_get_active_status(presence);
 		status_type = purple_status_get_type(status);
 		primitive = purple_status_type_get_primitive(status_type);
+		mobile = purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE);
 		if ((primitive == PURPLE_STATUS_AVAILABLE) ||
 			(primitive == PURPLE_STATUS_INVISIBLE) ||
-			(primitive == PURPLE_STATUS_MOBILE) ||
+			mobile ||
 		    !strcmp(auto_reply_pref, "never") ||
 		    (!purple_presence_is_idle(presence) && !strcmp(auto_reply_pref, "awayidle")))
 		{
@@ -879,8 +805,11 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	account = purple_connection_get_account(gc);
 	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who))
+		if (!purple_privacy_check(account, who)) {
+			purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
+					account, who, name, message, data);
 			return;
+		}
 	}
 
 	plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
@@ -965,6 +894,12 @@ void serv_got_chat_left(PurpleConnection *g, int id)
 	purple_conv_chat_left(PURPLE_CONV_CHAT(conv));
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-left", conv);
+}
+
+void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data)
+{
+	purple_signal_emit(purple_conversations_get_handle(), "chat-join-failed",
+					gc, data);
 }
 
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,

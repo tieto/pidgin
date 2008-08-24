@@ -3557,7 +3557,7 @@ msgstr "姓"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "E-メール"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
@@ -3588,16 +3588,6 @@ msgstr "Bonjour プロトコルのプラグイン"
 #: ../libpurple/protocols/bonjour/bonjour.c:610
 msgid "Purple Person"
 msgstr "Purple な人物"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "E-メール:"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5296,7 +5286,7 @@ msgstr "XMPP ユーザを検索するには一つ以上の欄を埋めて下さ�
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "E-メール・アドレス"
 
 #: ../libpurple/protocols/jabber/buddy.c:2410
@@ -6375,7 +6365,7 @@ msgstr "文法エラー (おそらくクライアント側のバグ)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "E-メール・アドレスが間違っています"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -6919,7 +6909,7 @@ msgid "Home Fax"
 msgstr "自宅の FAX"
 
 #: ../libpurple/protocols/msn/msn.c:1656
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "個人の E-メール"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -6981,7 +6971,7 @@ msgid "Work Fax"
 msgstr "勤務先の FAX"
 
 #: ../libpurple/protocols/msn/msn.c:1687
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "勤務先の E-メール"
 
 #: ../libpurple/protocols/msn/msn.c:1688
@@ -8648,7 +8638,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8855,12 +8845,12 @@ msgstr "スクリーン名"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "E-メール・アドレス %s に対する結果を得られませんでした"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "%s さんを確認するための問い合わせメールを受信して下さい"
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
@@ -8896,7 +8886,7 @@ msgstr "エラー 0x%04x: 要求されたスクリーン名が長すぎるので
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "エラー 0x%04x: このスクリーン名に対して既に要求がきているので E-メール・アド"
@@ -8905,7 +8895,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "エラー 0x%04x: たくさんのスクリーン名に割り当てられているので、この E-メー"
@@ -8914,7 +8904,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "エラー 0x%04x: このアドレスが間違っているので、この E-メール・アドレスに変更"
@@ -8927,7 +8917,7 @@ msgstr "エラー 0x%04x: 原因不明のエラーです"
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s さんの E-メール・アドレスは %s です"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
@@ -9195,15 +9185,15 @@ msgstr ""
 "う一度要求できます。"
 
 #: ../libpurple/protocols/oscar/oscar.c:6231
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "E-メールから仲間を捜す"
 
 #: ../libpurple/protocols/oscar/oscar.c:6232
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "E-メール・アドレスから仲間を検索します"
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "検索する仲間の E-メール・アドレスを入力して下さい"
 
 #: ../libpurple/protocols/oscar/oscar.c:6236
@@ -9233,11 +9223,11 @@ msgid "Confirm Account"
 msgstr "アカウントの確認"
 
 #: ../libpurple/protocols/oscar/oscar.c:6430
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "現在登録されている E-メール・アドレスの表示"
 
 #: ../libpurple/protocols/oscar/oscar.c:6434
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "現在登録されている E-メール・アドレスの変更..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6441
@@ -9245,7 +9235,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "承認を待っている仲間を表示"
 
 #: ../libpurple/protocols/oscar/oscar.c:6447
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "E-メールで仲間の検索..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6452
@@ -9333,10 +9323,6 @@ msgstr "血液型"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "学歴"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "E-メール"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12090,7 +12076,7 @@ msgstr "ユーザ名: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "E-メール: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12436,7 +12422,7 @@ msgstr "一時的にディレクトリ・サービスが利用できません"
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "E-メール検索が拒否されました"
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15342,7 +15328,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "ハイパーリンクの上にマウスをのせた時の色です"
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "E-メール・アドレスのコピー(_C)"
 
 #: ../pidgin/gtkimhtml.c:1610
@@ -15785,8 +15771,8 @@ msgstr[1] "%s には %d通の新しいメッセージがあります。"
 
 #: ../pidgin/gtknotify.c:564
 #, fuzzy, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] "<b>%d通の新しいメールがあります</b>"
 msgstr[1] "<b>%d通の新しいメールがあります</b>"
 
@@ -17033,7 +17019,7 @@ msgstr "仲間との連携(_A)"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "E-メールを送信できません"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17041,7 +17027,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "環境変数 PATH の中から Evolution の実行形式が見つかりませんでした。"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "この仲間の E-メール・アドレスがありません"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17049,7 +17035,7 @@ msgid "Add to Address Book"
 msgstr "アドレス帳へ追加する"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "E-メールを送信する"
 
 #. Configuration frame
@@ -17107,7 +17093,7 @@ msgid "Last name:"
 msgstr "姓:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "E-メール"
 
 #. *< type

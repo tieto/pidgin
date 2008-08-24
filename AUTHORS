@@ -8,14 +8,6 @@ We've got an IRC room now too, #pidgin on irc.freenode.net. Come check us out.
 Current Developers:
 ------------------
 
-Sean Egan <seanegan@gmail.com> - Lead Developer
-	AIM: SeanEgn
-	ICQ: 96642211
-	Yahoo:	SeanEgn
-	MSN:  seanegn@hotmail.com
-	XMPP:  seanegn@jabber.org
-	Gadu-Gadu:  1511497
-
 Daniel 'datallah' Atallah - Developer
 John 'rekkanoryo' Bailey - Developer
 Ethan 'Paco-Paco' Blanton - Developer
@@ -23,6 +15,7 @@ Thomas Butter - Developer
 Ka-Hing Cheung - Developer
 Sadrul Habib Chowdhury - Developer
 Mark 'KingAnt' Doliner - Developer
+Sean Egan - Developer
 Casey Harkins - Developer
 Gary 'grim' Kramlich - Developer
 Richard 'rlaager' Laager - Developer
@@ -31,6 +24,7 @@ Christopher 'siege' O'Brien - Developer
 Bartosz Oler - Developer
 Etan 'deryni' Reisner - Developer
 Tim 'marv' Ringenbach - Developer
+Elliott 'QuLogic' Sales de Andrade - Developer
 Luke 'LSchiere' Schierer - Support
 Megan 'Cae' Schneider - support/QA
 Evan Schoenberg - Developer
@@ -41,9 +35,9 @@ Nathan 'faceprint' Walp - Developer
 
 Crazy Patch Writers:
 -------------------
+Felipe 'shx' Contreras
 Dennis 'EvilDennisR' Ristuccia
 Peter 'Fmoo' Ruibal
-Elliott 'QuLogic' Sales de Andrade
 Gabriel 'Nix' Schulhof
 Jorge 'Masca' Villaseñor
 
@@ -61,7 +55,6 @@ Eric Warmenhoven <eric@warmenhoven.org> - lead developer
 
 Retired Crazy Patch Writers:
 ---------------------------
-Felipe 'shx' Contreras
 Decklin Foster
 Peter 'Bleeter' Lawler
 Robert 'Robot101' McQueen

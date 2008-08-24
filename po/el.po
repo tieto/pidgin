@@ -3856,8 +3856,8 @@ msgstr "Επώνυμο"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1067
-msgid "E-Mail"
-msgstr "E-Mail"
+msgid "Email"
+msgstr "Email"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:401
 #: ../libpurple/protocols/bonjour/bonjour.c:707
@@ -3887,16 +3887,6 @@ msgstr "Πρόσθετο πρωτοκόλλου Bonjour"
 #: ../libpurple/protocols/bonjour/bonjour.c:651
 msgid "Purple Person"
 msgstr ""
-
-#: ../libpurple/protocols/bonjour/bonjour.c:704
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:988
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "E-mail"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5559,8 +5549,8 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3747
 #: ../libpurple/protocols/oscar/oscar.c:3756
-msgid "E-Mail Address"
-msgstr "Διεύθυνση e-mail"
+msgid "Email Address"
+msgstr "Διεύθυνση email"
 
 #: ../libpurple/protocols/jabber/buddy.c:2427
 #: ../libpurple/protocols/jabber/buddy.c:2428
@@ -6606,8 +6596,8 @@ msgstr "Σφάλμα σύνταξης (πιθανώς σφάλμα κώδικα 
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
-msgstr "Μη έγκυρη διεύθυνση e-mail"
+msgid "Invalid email address"
+msgstr "Μη έγκυρη διεύθυνση email"
 
 #: ../libpurple/protocols/msn/error.c:49
 #: ../libpurple/protocols/msnp9/error.c:49
@@ -7218,8 +7208,8 @@ msgstr "Fax οικίας"
 
 #: ../libpurple/protocols/msn/msn.c:1812
 #: ../libpurple/protocols/msnp9/msn.c:1668
-msgid "Personal E-Mail"
-msgstr "Προσωπικό E-Mail"
+msgid "Personal Email"
+msgstr "Προσωπικό Email"
 
 #: ../libpurple/protocols/msn/msn.c:1813
 #: ../libpurple/protocols/msnp9/msn.c:1669
@@ -7294,8 +7284,8 @@ msgstr "Fax εργασίας"
 
 #: ../libpurple/protocols/msn/msn.c:1843
 #: ../libpurple/protocols/msnp9/msn.c:1699
-msgid "Work E-Mail"
-msgstr "E-mail εργασίας"
+msgid "Work Email"
+msgstr "Email εργασίας"
 
 #: ../libpurple/protocols/msn/msn.c:1844
 #: ../libpurple/protocols/msnp9/msn.c:1700
@@ -9125,12 +9115,12 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2500
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Λάβατε ένα ICQ e-mail από %s [%s]\n"
+"Λάβατε ένα ICQ email από %s [%s]\n"
 "\n"
 "Το μήνυμα είναι:\n"
 "%s"
@@ -9310,13 +9300,13 @@ msgstr "Εμφανιζόμενο όνομα"
 
 #: ../libpurple/protocols/oscar/oscar.c:3981
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Δε βρέθηκαν αποτελέσματα για τη διεύθυνση e-mail %s"
+msgid "No results found for email address %s"
+msgstr "Δε βρέθηκαν αποτελέσματα για τη διεύθυνση email %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4002
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "Πρέπει να λάβετε ένα e-mail επιβεβαίωσης του %s."
+msgid "You should receive an email asking to confirm %s."
+msgstr "Πρέπει να λάβετε ένα email επιβεβαίωσης του %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:4004
 msgid "Account Confirmation Requested"
@@ -9354,7 +9344,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4047
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Σφάλμα 0x%04x: Αδυναμία αλλαγής της ηλ. διεύθυνσης επειδή υπάρχει μία αίτηση "
@@ -9363,7 +9353,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4050
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Σφάλμα 0x%04x: Αδυναμία αλλαγής της ηλ. διεύθυνσης επειδή η διεύθυνση που "
@@ -9372,7 +9362,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4053
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Error 0x%04x: Αδυναμία αλλαγής της ηλ. διεύθυνσης επειδή η διεύθυνση που "
@@ -9385,8 +9375,8 @@ msgstr "Error 0x%04x: Άγνωστο σφάλμα."
 
 #: ../libpurple/protocols/oscar/oscar.c:4066
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "Η διεύθυνση e-mail του %s είναι %s"
+msgid "The email address for %s is %s"
+msgstr "Η διεύθυνση email του %s είναι %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4068
 msgid "Account Info"
@@ -9662,16 +9652,16 @@ msgstr ""
 "επάνω τους και επιλέγοντας \"Αίτηση έγκρισης (ξανά).\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6334
-msgid "Find Buddy by E-Mail"
-msgstr "Εύρεση φίλου με e-mail"
+msgid "Find Buddy by Email"
+msgstr "Εύρεση φίλου με email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6335
-msgid "Search for a buddy by e-mail address"
-msgstr "Αναζήτηση ενός φίλου με e-mail"
+msgid "Search for a buddy by email address"
+msgstr "Αναζήτηση ενός φίλου με email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6336
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Πληκτρολογείστε το e-mail του φίλου που ψάχνετε."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Πληκτρολογείστε το email του φίλου που ψάχνετε."
 
 #: ../libpurple/protocols/oscar/oscar.c:6339
 msgid "_Search"
@@ -9700,20 +9690,20 @@ msgid "Confirm Account"
 msgstr "Επιβεβαίωση λογαριασμού"
 
 #: ../libpurple/protocols/oscar/oscar.c:6533
-msgid "Display Currently Registered E-Mail Address"
-msgstr "Εμφάνιση καταχωρημένης διεύθυνσης e-mail"
+msgid "Display Currently Registered Email Address"
+msgstr "Εμφάνιση καταχωρημένης διεύθυνσης email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6537
-msgid "Change Currently Registered E-Mail Address..."
-msgstr "Αλλαγή καταχωρημένης διεύθυνσης e-mail..."
+msgid "Change Currently Registered Email Address..."
+msgstr "Αλλαγή καταχωρημένης διεύθυνσης email..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6544
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Εμφάνιση φίλων που περιμένουν έγκριση"
 
 #: ../libpurple/protocols/oscar/oscar.c:6550
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "Αναζήτηση φίλου με e-mail..."
+msgid "Search for Buddy by Email Address..."
+msgstr "Αναζήτηση φίλου με email..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6555
 msgid "Search for Buddy by Information"
@@ -9793,10 +9783,6 @@ msgstr "Τύπος αίματος"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Κολέγιο"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Email"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12521,8 +12507,8 @@ msgstr "Όνομα χρήστη: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
-msgstr "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
+msgstr "Email: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:370
 #: ../libpurple/protocols/silc10/util.c:361
@@ -12842,8 +12828,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "Η υπηρεσία καταλόγου είναι προσωρινά μη διαθέσιμη."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
-msgstr "Απαγορεύεται η εύρεση e-mail."
+msgid "Email lookup restricted."
+msgstr "Απαγορεύεται η εύρεση email."
 
 #: ../libpurple/protocols/toc/toc.c:533
 msgid "Keyword ignored."
@@ -15868,8 +15854,8 @@ msgid "Color to draw the name of an action message."
 msgstr "Χρώμα που θα ζωγραφίζεται το όνομα ενός μηνύματος ενέργειας."
 
 #: ../pidgin/gtkimhtml.c:1632
-msgid "_Copy E-Mail Address"
-msgstr "_Αντιγραφή διεύθυνσης e-mail"
+msgid "_Copy Email Address"
+msgstr "_Αντιγραφή διεύθυνσης email"
 
 #: ../pidgin/gtkimhtml.c:1644
 msgid "_Open Link in Browser"
@@ -16277,10 +16263,10 @@ msgstr[1] "%s έχει %d νέα μηνύματα."
 
 #: ../pidgin/gtknotify.c:575
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>Έχετε %d νέο e-mail.</b>"
-msgstr[1] "<b>Έχετε %d νέα e-mail.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
+msgstr[0] "<b>Έχετε %d νέο email.</b>"
+msgstr[1] "<b>Έχετε %d νέα email.</b>"
 
 #: ../pidgin/gtknotify.c:1008
 #, c-format
@@ -17596,24 +17582,24 @@ msgstr "_Συσχέτιση φίλου"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
-msgstr "Αδυναμία αποστολής e-mail"
+msgid "Unable to send email"
+msgstr "Αδυναμία αποστολής email"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
 msgid "The evolution executable was not found in the PATH."
 msgstr "Το εκτελέσιμο evolution δε βρέθηκε στη ΔΙΑΔΡΟΜΉ."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
-msgstr "Δε βρέθηκε διεύθυνση e-mail για αυτόν το φίλο."
+msgid "An email address was not found for this buddy."
+msgstr "Δε βρέθηκε διεύθυνση email για αυτόν το φίλο."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
 msgid "Add to Address Book"
 msgstr "Προσθήκη στο βιβλίο διευθύνσεων"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
-msgstr "Αποστολή e-mail"
+msgid "Send Email"
+msgstr "Αποστολή email"
 
 #. Configuration frame
 #: ../pidgin/plugins/gevolution/gevolution.c:412
@@ -17674,8 +17660,8 @@ msgid "Last name:"
 msgstr "Επώνυμο:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement

@@ -239,14 +239,14 @@ menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 		}
 		else
 		{
-			purple_notify_error(NULL, NULL, _("Unable to send e-mail"),
+			purple_notify_error(NULL, NULL, _("Unable to send email"),
 							  _("The evolution executable was not found in the PATH."));
 		}
 	}
 	else
 	{
-		purple_notify_error(NULL, NULL, _("Unable to send e-mail"),
-						  _("An e-mail address was not found for this buddy."));
+		purple_notify_error(NULL, NULL, _("Unable to send email"),
+						  _("An email address was not found for this buddy."));
 	}
 }
 
@@ -284,7 +284,7 @@ blist_node_extended_menu_cb(PurpleBlistNode *node, GList **menu)
 
 	if (mail != NULL)
 	{
-		act = purple_menu_action_new(_("Send E-Mail"),
+		act = purple_menu_action_new(_("Send Email"),
 			PURPLE_CALLBACK(menu_item_send_mail_activate_cb), NULL, NULL);
 		*menu = g_list_append(*menu, act);
 		g_free(mail);

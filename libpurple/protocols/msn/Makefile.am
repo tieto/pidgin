@@ -48,12 +48,8 @@ MSNSOURCES = \
 	slplink.h \
 	slpmsg.c \
 	slpmsg.h \
-	slpsession.c \
-	slpsession.h \
-	soap.c\
-	soap.h\
-	soap2.c \
-	soap2.h \
+	soap.c \
+	soap.h \
 	state.c \
 	state.h \
 	switchboard.c \

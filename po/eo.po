@@ -3739,7 +3739,7 @@ msgstr "Familia nomo"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:555
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1067
-msgid "E-Mail"
+msgid "Email"
 msgstr "Retadreso"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:401
@@ -3770,16 +3770,6 @@ msgstr "Bonjour Protokol-Kromaĵo"
 #: ../libpurple/protocols/bonjour/bonjour.c:651
 msgid "Purple Person"
 msgstr "Purpura Persono"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:704
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:995
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "Retadreso"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5389,7 +5379,7 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3761
 #: ../libpurple/protocols/oscar/oscar.c:3770
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Retadreso"
 
 #: ../libpurple/protocols/jabber/buddy.c:2427
@@ -6418,7 +6408,7 @@ msgstr ""
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Malvalida retadreso"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7026,7 +7016,7 @@ msgstr "Hejmfakso"
 
 #: ../libpurple/protocols/msn/msn.c:1812
 #: ../libpurple/protocols/msnp9/msn.c:1668
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Persona Retadreso"
 
 #: ../libpurple/protocols/msn/msn.c:1813
@@ -7102,7 +7092,7 @@ msgstr "Laborfakso"
 
 #: ../libpurple/protocols/msn/msn.c:1843
 #: ../libpurple/protocols/msnp9/msn.c:1699
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Laboro Retadreso"
 
 #: ../libpurple/protocols/msn/msn.c:1844
@@ -8845,7 +8835,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2507
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9022,12 +9012,12 @@ msgstr "Ekrannomo"
 
 #: ../libpurple/protocols/oscar/oscar.c:3995
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:4016
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:4018
@@ -9060,21 +9050,21 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4061
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:4064
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:4067
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 
@@ -9085,7 +9075,7 @@ msgstr "Eraro 0x%04x: Nekonata eraro."
 
 #: ../libpurple/protocols/oscar/oscar.c:4080
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "La retadreso de %s estas %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4082
@@ -9333,15 +9323,15 @@ msgstr ""
 "elekti \"Re-petu aŭtentigon.\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6355
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Trovu kunulon laŭ Retadreso"
 
 #: ../libpurple/protocols/oscar/oscar.c:6356
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Serĉu kunulon laŭ retadreso"
 
 #: ../libpurple/protocols/oscar/oscar.c:6357
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Tajpu retadreson de la kunul kiun vi serĉas."
 
 #: ../libpurple/protocols/oscar/oscar.c:6360
@@ -9371,11 +9361,11 @@ msgid "Confirm Account"
 msgstr "Konfirmu Konton"
 
 #: ../libpurple/protocols/oscar/oscar.c:6554
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Vidigu Aktualajn Aliĝintajn Retadresojn"
 
 #: ../libpurple/protocols/oscar/oscar.c:6558
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Ŝanĝu Aktualajn Aliĝintajn Retadresojn.."
 
 #: ../libpurple/protocols/oscar/oscar.c:6565
@@ -9383,7 +9373,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Montru Kunulojn Atendante Permeso"
 
 #: ../libpurple/protocols/oscar/oscar.c:6571
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Serĉu Kunulon laŭ Retadreso..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6576
@@ -9461,10 +9451,6 @@ msgstr "Sanga Tipo"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Kolegio"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Retadreso"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12100,7 +12086,7 @@ msgstr ""
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr ""
 
 #: ../libpurple/protocols/silc/util.c:370
@@ -12414,7 +12400,7 @@ msgid "Dir service temporarily unavailable."
 msgstr ""
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr ""
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15368,7 +15354,7 @@ msgid "Color to draw the name of an action message."
 msgstr ""
 
 #: ../pidgin/gtkimhtml.c:1632
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopiu Retadreson"
 
 #: ../pidgin/gtkimhtml.c:1644
@@ -15764,8 +15750,8 @@ msgstr[1] "%s havas %d novajn mesaĝojn."
 
 #: ../pidgin/gtknotify.c:575
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d nova retmesaĝo.</b>"
 msgstr[1] "<b>%d novaj retmesaĝoj.</b>"
 
@@ -17033,7 +17019,7 @@ msgstr "K_uniĝu Kunulon"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Ne eblas sendi retmesaĝon"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17041,7 +17027,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17049,7 +17035,7 @@ msgid "Add to Address Book"
 msgstr "Aldonu al adresaro"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Sendu retmesaĝon"
 
 #. Configuration frame
@@ -17107,7 +17093,7 @@ msgid "Last name:"
 msgstr "Familia nomo:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "Retadreso:"
 
 #. *< type

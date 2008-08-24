@@ -2,24 +2,25 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/emblems"
    sodipodi:docname="bot.svg"
    inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/emblems/bot.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
     <linearGradient
@@ -46,27 +47,6 @@
          offset="1"
          id="stop2385" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient2349">
-      <stop
-         style="stop-color:#729fcf;stop-opacity:1;"
-         offset="0"
-         id="stop2351" />
-      <stop
-         style="stop-color:#729fcf;stop-opacity:0;"
-         offset="1"
-         id="stop2353" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2349"
-       id="linearGradient2355"
-       x1="5.9346461"
-       y1="8.1209249"
-       x2="5.9346461"
-       y2="6.8785138"
-       gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2381"
@@ -78,15 +58,6 @@
        r="5.5"
        gradientTransform="matrix(1,0,0,0.727273,-2.499086e-17,2.590909)"
        gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2349"
-       id="linearGradient2422"
-       gradientUnits="userSpaceOnUse"
-       x1="5.9346461"
-       y1="8.1209249"
-       x2="5.9346461"
-       y2="6.8785138" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2434"

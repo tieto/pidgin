@@ -25,11 +25,12 @@
 #include "slp.h"
 #include "slpcall.h"
 #include "slpmsg.h"
-#include "slpsession.h"
 
 #include "object.h"
 #include "user.h"
 #include "switchboard.h"
+
+#include "smiley.h"
 
 /* ms to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20000
@@ -42,7 +43,7 @@ static void send_ok(MsnSlpCall *slpcall, const char *branch,
 static void send_decline(MsnSlpCall *slpcall, const char *branch,
 						 const char *type, const char *content);
 
-void msn_request_user_display(MsnUser *user);
+static void request_user_display(MsnUser *user);
 
 /**************************************************************************
  * Util
@@ -249,12 +250,11 @@ static void
 got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			   const char *euf_guid, const char *context)
 {
-	if (!strcmp(euf_guid, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"))
+	if (!strcmp(euf_guid, MSN_OBJ_GUID))
 	{
 		/* Emoticon or UserDisplay */
 		char *content;
 		gsize len;
-		MsnSlpSession *slpsession;
 		MsnSlpLink *slplink;
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
@@ -278,31 +278,36 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		type = msn_object_get_type(obj);
 		g_free(msnobj_data);
 
-		if (!(type == MSN_OBJECT_USERTILE))
+		if ((type != MSN_OBJECT_USERTILE) && (type != MSN_OBJECT_EMOTICON))
 		{
 			purple_debug_error("msn", "Wrong object?\n");
 			msn_object_destroy(obj);
 			g_return_if_reached();
 		}
 
-		img = msn_object_get_image(obj);
+		if (type == MSN_OBJECT_EMOTICON) {
+			char *path;
+			path = g_build_filename(purple_smileys_get_storing_dir(),
+					obj->location, NULL);
+			img = purple_imgstore_new_from_file(path);
+			g_free(path);
+		} else {
+			img = msn_object_get_image(obj);
+			if (img)
+				purple_imgstore_ref(img);
+		}
+		msn_object_destroy(obj);
+
 		if (img == NULL)
 		{
 			purple_debug_error("msn", "Wrong object.\n");
-			msn_object_destroy(obj);
 			g_return_if_reached();
 		}
-
-		msn_object_destroy(obj);
-
-		slpsession = msn_slplink_find_slp_session(slplink,
-												  slpcall->session_id);
 
 		/* DATA PREP */
 		slpmsg = msn_slpmsg_new(slplink);
 		slpmsg->slpcall = slpcall;
-		slpmsg->slpsession = slpsession;
-		slpmsg->session_id = slpsession->id;
+		slpmsg->session_id = slpcall->session_id;
 		msn_slpmsg_set_body(slpmsg, NULL, 4);
 #ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA PREP";
@@ -312,15 +317,15 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		/* DATA */
 		slpmsg = msn_slpmsg_new(slplink);
 		slpmsg->slpcall = slpcall;
-		slpmsg->slpsession = slpsession;
 		slpmsg->flags = 0x20;
 #ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA";
 #endif
 		msn_slpmsg_set_image(slpmsg, img);
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
+		purple_imgstore_unref(img);
 	}
-	else if (!strcmp(euf_guid, "5D3E02AB-6190-11D3-BBBB-00C04F795683"))
+	else if (!strcmp(euf_guid, MSN_FT_GUID))
 	{
 		/* File Transfer */
 		PurpleAccount *account;
@@ -372,7 +377,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			purple_xfer_request(xfer);
 		}
-	}
+	} else
+		purple_debug_warning("msn", "SLP SessionReq with unknown EUF-GUID: %s\n", euf_guid);
 }
 
 void
@@ -769,16 +775,13 @@ static void
 got_emoticon(MsnSlpCall *slpcall,
 			 const guchar *data, gsize size)
 {
-
 	PurpleConversation *conv;
-	PurpleConnection *gc;
-	const char *who;
+	MsnSwitchBoard *swboard;
 
-	gc = slpcall->slplink->session->account->gc;
-	who = slpcall->slplink->remote_user;
+	swboard = slpcall->slplink->swboard;
+	conv = swboard->conv;
 
-	if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, gc->account))) {
-
+	if (conv) {
 		/* FIXME: it would be better if we wrote the data as we received it
 		   instead of all at once, calling write multiple times and
 		   close once at the very end
@@ -796,6 +799,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
 	MsnSlpLink *slplink;
+	MsnSwitchBoard *swboard;
 	MsnObject *obj;
 	char **tokens;
 	char *smile, *body_str;
@@ -809,6 +813,9 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (!purple_account_get_bool(session->account, "custom_smileys", TRUE))
 		return;
+
+	swboard = cmdproc->data;
+	conv = swboard->conv;
 
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
@@ -834,9 +841,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
-
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who,
-												   session->account);
+		slplink->swboard = swboard;
 
 		/* If the conversation doesn't exist then this is a custom smiley
 		 * used in the first message in a MSN conversation: we need to create
@@ -918,7 +923,7 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 		username = user->passport;
 
 		userlist->buddy_icon_window--;
-		msn_request_user_display(user);
+		request_user_display(user);
 
 #ifdef MSN_DEBUG_UD
 		purple_debug_info("msn", "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
@@ -935,15 +940,15 @@ static gboolean
 msn_release_buddy_icon_request_timeout(gpointer data)
 {
 	MsnUserList *userlist = (MsnUserList *)data;
-	
+
 	/* Free one window slot */
-	userlist->buddy_icon_window++;	
-	
+	userlist->buddy_icon_window++;
+
 	/* Clear the tag for our former request timer */
 	userlist->buddy_icon_request_timer = 0;
-	
+
 	msn_release_buddy_icon_request(userlist);
-	
+
 	return FALSE;
 }
 
@@ -1050,12 +1055,12 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 	}
 
 	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
-	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY, 
+	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY,
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 
-void
-msn_request_user_display(MsnUser *user)
+static void
+request_user_display(MsnUser *user)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -1103,7 +1108,7 @@ msn_request_user_display(MsnUser *user)
 		session->userlist->buddy_icon_window++;
 
 #ifdef MSN_DEBUG_UD
-		purple_debug_info("msn", "msn_request_user_display(): buddy_icon_window++ yields =%d\n",
+		purple_debug_info("msn", "request_user_display(): buddy_icon_window++ yields =%d\n",
 						session->userlist->buddy_icon_window);
 #endif
 

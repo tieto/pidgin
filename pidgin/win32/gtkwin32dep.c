@@ -319,8 +319,10 @@ static gboolean stop_flashing(GtkWidget *widget, GdkEventFocus *event, gpointer 
 
 	winpidgin_window_flash(window, FALSE);
 
-	if ((handler_id = g_object_get_data(G_OBJECT(window), "flash_stop_handler_id")))
+	if ((handler_id = g_object_get_data(G_OBJECT(window), "flash_stop_handler_id"))) {
 		g_signal_handler_disconnect(G_OBJECT(window), (gulong) GPOINTER_TO_UINT(handler_id));
+		g_object_steal_data(G_OBJECT(window), "flash_stop_handler_id");
+	}
 
 	return FALSE;
 }
@@ -346,7 +348,10 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 		info.cbSize = sizeof(FLASHWINFO);
 		info.hwnd = GDK_WINDOW_HWND(gdkwin);
 		if (flash) {
+			DWORD flashCount;
 			info.uCount = 3;
+			if (SystemParametersInfo(SPI_GETFOREGROUNDFLASHCOUNT, 0, &flashCount, 0))
+				info.uCount = flashCount;
 			info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
 		} else
 			info.dwFlags = FLASHW_STOP;

@@ -61,10 +61,10 @@ am__pidgin_SOURCES_DIST = eggtrayicon.c pidgincombobox.c pidginstock.c \
 	gtkidle.c gtkimhtml.c gtkimhtmltoolbar.c gtklog.c gtkmain.c \
 	gtkmenutray.c gtknotify.c gtkplugin.c gtkpluginpref.c \
 	gtkpounce.c gtkprefs.c gtkprivacy.c gtkrequest.c gtkroomlist.c \
-	gtksavedstatuses.c gtkscrollbook.c gtksession.c gtksound.c \
-	gtksourceiter.c gtksourceundomanager.c gtksourceview-marshal.c \
-	gtkstatusbox.c gtkthemes.c gtkutils.c gtkwhiteboard.c \
-	minidialog.c pidgintooltip.c
+	gtksavedstatuses.c gtkscrollbook.c gtksession.c gtksmiley.c \
+	gtksound.c gtksourceiter.c gtksourceundomanager.c \
+	gtksourceview-marshal.c gtkstatusbox.c gtkthemes.c gtkutils.c \
+	gtkwhiteboard.c minidialog.c pidgintooltip.c
 @ENABLE_GTK_TRUE@am_pidgin_OBJECTS = eggtrayicon.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	pidgincombobox.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	pidginstock.$(OBJEXT) gtkaccount.$(OBJEXT) \
@@ -88,7 +88,8 @@ am__pidgin_SOURCES_DIST = eggtrayicon.c pidgincombobox.c pidginstock.c \
 @ENABLE_GTK_TRUE@	gtkrequest.$(OBJEXT) gtkroomlist.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtksavedstatuses.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtkscrollbook.$(OBJEXT) gtksession.$(OBJEXT) \
-@ENABLE_GTK_TRUE@	gtksound.$(OBJEXT) gtksourceiter.$(OBJEXT) \
+@ENABLE_GTK_TRUE@	gtksmiley.$(OBJEXT) gtksound.$(OBJEXT) \
+@ENABLE_GTK_TRUE@	gtksourceiter.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtksourceundomanager.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtksourceview-marshal.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtkstatusbox.$(OBJEXT) gtkthemes.$(OBJEXT) \
@@ -138,10 +139,10 @@ am__pidgininclude_HEADERS_DIST = eggtrayicon.h gtkaccount.h gtkblist.h \
 	gtkmenutray.h gtknickcolors.h gtknotify.h gtkplugin.h \
 	gtkpluginpref.h gtkprefs.h gtkprivacy.h gtkpounce.h \
 	gtkrequest.h gtkroomlist.h gtksavedstatuses.h gtkscrollbook.h \
-	gtksession.h gtksound.h gtksourceiter.h gtksourceundomanager.h \
-	gtksourceview-marshal.h gtkstatusbox.h pidginstock.h \
-	gtkthemes.h gtkutils.h gtkwhiteboard.h minidialog.h \
-	pidgintooltip.h pidgin.h
+	gtksession.h gtksmiley.h gtksound.h gtksourceiter.h \
+	gtksourceundomanager.h gtksourceview-marshal.h gtkstatusbox.h \
+	pidginstock.h gtkthemes.h gtkutils.h gtkwhiteboard.h \
+	minidialog.h pidgintooltip.h pidgin.h
 pidginincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(pidgininclude_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
@@ -151,6 +152,7 @@ CTAGS = ctags
 DIST_SUBDIRS = pixmaps plugins
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALLOCA = @ALLOCA@
 ALL_LINGUAS = @ALL_LINGUAS@
 AMTAR = @AMTAR@
 AR = @AR@
@@ -316,6 +318,7 @@ SILC_LIBS = @SILC_LIBS@
 SM_LIBS = @SM_LIBS@
 SQLITE3_CFLAGS = @SQLITE3_CFLAGS@
 SQLITE3_LIBS = @SQLITE3_LIBS@
+SSL_CERTIFICATES_DIR = @SSL_CERTIFICATES_DIR@
 STARTUP_NOTIFICATION_CFLAGS = @STARTUP_NOTIFICATION_CFLAGS@
 STARTUP_NOTIFICATION_LIBS = @STARTUP_NOTIFICATION_LIBS@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
@@ -509,6 +512,7 @@ EXTRA_DIST = \
 @ENABLE_GTK_TRUE@	gtksavedstatuses.c \
 @ENABLE_GTK_TRUE@	gtkscrollbook.c \
 @ENABLE_GTK_TRUE@	gtksession.c \
+@ENABLE_GTK_TRUE@	gtksmiley.c \
 @ENABLE_GTK_TRUE@	gtksound.c \
 @ENABLE_GTK_TRUE@	gtksourceiter.c \
 @ENABLE_GTK_TRUE@	gtksourceundomanager.c \
@@ -561,6 +565,7 @@ EXTRA_DIST = \
 @ENABLE_GTK_TRUE@	gtksavedstatuses.h \
 @ENABLE_GTK_TRUE@	gtkscrollbook.h \
 @ENABLE_GTK_TRUE@	gtksession.h \
+@ENABLE_GTK_TRUE@	gtksmiley.h \
 @ENABLE_GTK_TRUE@	gtksound.h \
 @ENABLE_GTK_TRUE@	gtksourceiter.h \
 @ENABLE_GTK_TRUE@	gtksourceundomanager.h \
@@ -727,6 +732,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksavedstatuses.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkscrollbook.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksession.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksmiley.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksourceiter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksourceundomanager.Po@am__quote@

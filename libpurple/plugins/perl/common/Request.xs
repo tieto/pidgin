@@ -47,7 +47,7 @@ purple_perl_request_ok_cb(void * data, PurpleRequestFields *fields)
 	SAVETMPS;
 	PUSHMARK(sp);
 
-	XPUSHs(purple_perl_bless_object(fields, "Purple::Request::Fields"));
+	XPUSHs(sv_2mortal(purple_perl_bless_object(fields, "Purple::Request::Fields")));
 	PUTBACK;
 	call_sv(gpr->ok_fun, G_EVAL | G_SCALAR);
 	SPAGAIN;
@@ -69,7 +69,7 @@ purple_perl_request_cancel_cb(void * data, PurpleRequestFields *fields)
 	SAVETMPS;
 	PUSHMARK(sp);
 
-	XPUSHs(purple_perl_bless_object(fields, "Purple::Request::Fields"));
+	XPUSHs(sv_2mortal(purple_perl_bless_object(fields, "Purple::Request::Fields")));
 	PUTBACK;
 	call_sv(gpr->cancel_fun, G_EVAL | G_SCALAR);
 	SPAGAIN;
@@ -206,12 +206,6 @@ void
 purple_request_close_with_handle(handle)
 	void * handle
 
-Purple::Request::UiOps
-purple_request_get_ui_ops()
-
-void
-purple_request_set_ui_ops(ops)
-	Purple::Request::UiOps ops
 
 MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_request_field_
 PROTOTYPES: ENABLE

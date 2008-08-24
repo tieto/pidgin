@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,13 +13,14 @@
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.44.1"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/protocols/22/scalable"
    sodipodi:docname="gadu-gadu.svg"
    inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/protocols/22/gadu-gadu.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
     <linearGradient
@@ -45,29 +46,6 @@
        r="6.6449099"
        gradientTransform="matrix(-0.842757,0,0,-0.35721,19.80716,14.19321)"
        gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient2224">
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:1;"
-         offset="0"
-         id="stop2226" />
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:0;"
-         offset="1"
-         id="stop2228" />
-    </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2224"
-       id="radialGradient2230"
-       cx="4.2036023"
-       cy="11.995501"
-       fx="4.2036023"
-       fy="11.995501"
-       r="5.9629207"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-2.006862,2.007257,-1.991603,-1.99199,40.12779,16.12866)" />
   </defs>
   <sodipodi:namedview
      id="base"

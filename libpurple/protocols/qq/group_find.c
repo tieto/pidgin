@@ -29,35 +29,7 @@
 #include "util.h"
 
 #include "group_find.h"
-#include "group_network.h"
 #include "utils.h"
-
-/* find the internal_group_id by the reply packet sequence
- * return TRUE if we have a record of it, return FALSE if not */
-gboolean qq_group_find_internal_group_id_by_seq(PurpleConnection *gc, guint16 seq, guint32 *internal_group_id)
-{
-	GList *list;
-	qq_data *qd;
-	group_packet *p;
-
-	if (internal_group_id == NULL)
-		return FALSE;
-	qd = (qq_data *) gc->proto_data;
-
-	list = qd->group_packets;
-	while (list != NULL) {
-		p = (group_packet *) (list->data);
-		if (p->send_seq == seq) {	/* found and remove */
-			*internal_group_id = p->internal_group_id;
-			qd->group_packets = g_list_remove(qd->group_packets, p);
-			g_free(p);
-			return TRUE;
-		}
-		list = list->next;
-	}
-
-	return FALSE;
-}
 
 /* find a qq_buddy by uid, called by im.c */
 qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid)
@@ -138,6 +110,9 @@ qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel)
 	group = NULL;
 	while (list != NULL) {
 		group = (qq_group *) list->data;
+		if (group->group_name_utf8 == NULL) {
+			continue;
+		}
 		if (!g_ascii_strcasecmp(purple_conversation_get_name(conv), group->group_name_utf8))
 			break;
 		list = list->next;
@@ -147,7 +122,7 @@ qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel)
 }
 
 /* find a qq_group by its id, flag is QQ_INTERNAL_ID or QQ_EXTERNAL_ID */
-qq_group *qq_group_find_by_id(PurpleConnection *gc, guint32 id, gboolean flag)
+qq_group *qq_room_search_ext_id(PurpleConnection *gc, guint32 ext_id)
 {
 	GList *list;
 	qq_group *group;
@@ -155,15 +130,38 @@ qq_group *qq_group_find_by_id(PurpleConnection *gc, guint32 id, gboolean flag)
 
 	qd = (qq_data *) gc->proto_data;
 
-	if (qd->groups == NULL || id <= 0)
+	if (qd->groups == NULL || ext_id <= 0)
 		return NULL;
 
 	list = qd->groups;
 	while (list != NULL) {
 		group = (qq_group *) list->data;
-		if (flag == QQ_INTERNAL_ID ? 
-				(group->internal_group_id == id) : (group->external_group_id == id))
+		if (group->ext_id == ext_id) {
 			return group;
+		}
+		list = list->next;
+	}
+
+	return NULL;
+}
+
+qq_group *qq_room_search_id(PurpleConnection *gc, guint32 room_id)
+{
+	GList *list;
+	qq_group *group;
+	qq_data *qd;
+
+	qd = (qq_data *) gc->proto_data;
+
+	if (qd->groups == NULL || room_id <= 0)
+		return NULL;
+
+	list = qd->groups;
+	while (list != NULL) {
+		group = (qq_group *) list->data;
+		if (group->id == room_id) {
+			return group;
+		}
 		list = list->next;
 	}
 

@@ -2754,7 +2754,7 @@ msgstr "Förnamn"
 msgid "Last name"
 msgstr "Efternamn"
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "E-post"
 
 msgid "AIM Account"
@@ -2778,9 +2778,6 @@ msgstr "Insticksmodul för Bonjour-protokollet"
 
 msgid "Purple Person"
 msgstr "Purple person"
-
-msgid "E-mail"
-msgstr "E-post"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3885,7 +3882,7 @@ msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Fyll i ett eller flera fält för att söka efter matchande XMPPanvändare."
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "E-postadress"
 
 msgid "Search for XMPP users"
@@ -4619,7 +4616,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaxfel (antagligen ett klient bug)"
 
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Ogiltig e-postadress"
 
 #, c-format
@@ -5030,7 +5027,7 @@ msgstr "Personlig mobil"
 msgid "Home Fax"
 msgstr "Hemfax"
 
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Personlig E-Post"
 
 msgid "Personal IM"
@@ -5073,7 +5070,7 @@ msgstr "Arbetssökare"
 msgid "Work Fax"
 msgstr "Arbete Fax"
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Arbete E-post"
 
 msgid "Work IM"
@@ -6425,7 +6422,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6571,11 +6568,11 @@ msgstr[0] "Följande användarnamnet är associerat med %s"
 msgstr[1] "Följande användarnamn är associerat med %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Inget resultat funnet för e-postadress %s"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Du borde få ett e-postmeddelande som ber dig bekräfta %s."
 
 msgid "Account Confirmation Requested"
@@ -6604,7 +6601,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Fel 0x%04x: Kan inte ändra e-postadressen eftersom det redan finns en "
@@ -6612,7 +6609,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Fel 0x%04x: Kan inte ändra e-postadress eftersom den angivna adressen har "
@@ -6620,7 +6617,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Fel 0x%04x: Kan inte ändra e-postadress eftersom den angivna adressen inte "
@@ -6634,7 +6631,7 @@ msgid "Error Changing Account Info"
 msgstr "Fel vid ändring av kontoinformation"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "E-postaderssen för %s är %s"
 
 msgid "Account Info"
@@ -6856,13 +6853,13 @@ msgstr ""
 "Du kan begära auktorisering igen från dessa kompisar genom att högerkilcka "
 "på dem och välja \"Begär auktorisering igen.\""
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Hitta kompis på e-postadress"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Sök efter en kompis på dess e-postadress"
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Skriv in e-postadressen för den kompis du söker efter."
 
 msgid "_Search"
@@ -6885,16 +6882,16 @@ msgstr "Ange sekretessinställningar..."
 msgid "Confirm Account"
 msgstr "Bekräfta konto"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Visa för tillfället registrerad epost-adress"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Ändra för tillfället registrerad epost-adress..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Visa kompisar som väntar på auktorisering"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Sök efter kompis på e-postadress..."
 
 msgid "Search for Buddy by Information"
@@ -6960,9 +6957,6 @@ msgstr "Blodgrupp"
 
 msgid "College"
 msgstr "Universitet"
-
-msgid "Email"
-msgstr "E-post"
 
 msgid "Zipcode"
 msgstr "Postnummer"
@@ -8722,7 +8716,7 @@ msgid "User Name: \t%s\n"
 msgstr "Användarnamn: \t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "E-Post: \t\t%s\n"
 
 #, c-format
@@ -8978,7 +8972,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Katalogtjänsten är tillfälligt onåbar."
 
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "E-postuppslagning är begränsad."
 
 #, c-format
@@ -11329,7 +11323,7 @@ msgstr "Typsnittet använt för skrivnotifieringen"
 msgid "Enable typing notification"
 msgstr ""
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopiera e-postadress"
 
 msgid "_Open Link in Browser"
@@ -11686,8 +11680,8 @@ msgstr[0] "%s har %d nytt meddelande."
 msgstr[1] "%s har %d nya meddelanden."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>Du har %d nytt epost.</b>"
 msgstr[1] "<b>Du har %d nya epost.</b>"
 
@@ -12718,19 +12712,19 @@ msgstr "_Användarinformation"
 msgid "_Associate Buddy"
 msgstr "_Associera kompis"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Kunde inte skicka e-post"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "Evolutions körfil hittades inte i sökvägarna."
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Ingen epostadress hittades för denna kompisen."
 
 msgid "Add to Address Book"
 msgstr "Lägg till i adressboken"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Skicka e-post"
 
 #. Configuration frame
@@ -12776,7 +12770,7 @@ msgstr "Förnamn:"
 msgid "Last name:"
 msgstr "Efternamn:"
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr "E-postadress:"
 
 #. *< type

@@ -35,6 +35,10 @@
 #include "signals.h"
 #include "network.h"
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
 #ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
@@ -125,7 +129,16 @@ get_rtaddrs(int bitmask, struct sockaddr *sa, struct sockaddr *addrs[])
 		if (bitmask & (1 << i)) 
 		{
 			addrs[i] = sa;
+#ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
 			sa = (struct sockaddr *)(ROUNDUP(sa->sa_len) + (char *)sa);
+#else
+			if (sa->sa_family == AF_INET)
+				sa = (struct sockaddr*)(sizeof(struct sockaddr_in) + (char *)sa);
+#ifdef AF_INET6
+			else if (sa->sa_family == AF_INET6)
+				sa = (struct sockaddr*)(sizeof(struct sockaddr_in6) + (char *)sa);
+#endif
+#endif
 		} 
 		else
 		{
@@ -146,7 +159,12 @@ is_default_route(struct sockaddr *sa, struct sockaddr *mask)
     if ((sin->sin_addr.s_addr == INADDR_ANY) &&
 		mask &&
 		(ntohl(((struct sockaddr_in *)mask)->sin_addr.s_addr) == 0L ||
-		 mask->sa_len == 0))
+#ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
+		 mask->sa_len == 0
+#else
+		0
+#endif
+		))
 		return 1;
     else
 		return 0;

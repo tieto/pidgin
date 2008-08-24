@@ -208,8 +208,10 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	else
 	{
 		char *to;
+		gboolean newwin = (emaildialog.window == NULL);
 
-		setup_email_dialog();
+		if (newwin)
+			setup_email_dialog();
 
 		to = g_strdup_printf("%s (%s)", tos ? *tos : purple_account_get_username(account),
 					purple_account_get_protocol_name(account));
@@ -219,7 +221,10 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 					*subjects),
 				NULL, NULL);
 		g_free(to);
-		gnt_widget_show(emaildialog.window);
+		if (newwin)
+			gnt_widget_show(emaildialog.window);
+		else
+			gnt_window_present(emaildialog.window);
 		return NULL;
 	}
 

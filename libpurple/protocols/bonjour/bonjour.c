@@ -384,7 +384,7 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	}
 
 	if (bb->email != NULL)
-		purple_notify_user_info_add_pair(user_info, _("E-Mail"), bb->email);
+		purple_notify_user_info_add_pair(user_info, _("Email"), bb->email);
 
 	if (bb->AIM != NULL)
 		purple_notify_user_info_add_pair(user_info, _("AIM Account"), bb->AIM);
@@ -504,6 +504,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 
@@ -640,7 +641,6 @@ initialize_default_account_values(void)
 	struct passwd *info;
 #endif
 	const char *fullname = NULL, *splitpoint, *tmp;
-	char hostname[255];
 	gchar *conv = NULL;
 
 #ifndef _WIN32
@@ -690,13 +690,7 @@ initialize_default_account_values(void)
 
 	/* Try to figure out a good host name to use */
 	/* TODO: Avoid 'localhost,' if possible */
-	if (gethostname(hostname, sizeof(hostname)) != 0) {
-		purple_debug_warning("bonjour", "Error when getting host name: %s.  Using \"localhost.\"\n",
-				g_strerror(errno));
-		strcpy(hostname, "localhost");
-	}
-	hostname[sizeof(hostname) - 1] = '\0';
-	default_hostname = g_strdup(hostname);
+	default_hostname = g_strdup(purple_get_host_name());
 }
 
 static void
@@ -718,7 +712,7 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("Last name"), "last", default_lastname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_string_new(_("E-mail"), "email", "");
+	option = purple_account_option_string_new(_("Email"), "email", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");

@@ -2766,8 +2766,8 @@ msgstr "Imia"
 msgid "Last name"
 msgstr "Proźvišča"
 
-msgid "E-Mail"
-msgstr "E-mail"
+msgid "Email"
+msgstr "Email"
 
 msgid "AIM Account"
 msgstr "Kont AIM"
@@ -2790,9 +2790,6 @@ msgstr "Plugin pratakołu Bonjour"
 
 msgid "Purple Person"
 msgstr "Asoba Purple"
-
-msgid "E-mail"
-msgstr "E-mail"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3869,8 +3866,8 @@ msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Zapoŭni adno ci niekalki paloŭ, kab šukać adpaviednych karystalnikaŭ XMPP."
 
-msgid "E-Mail Address"
-msgstr "Adras e-mail"
+msgid "Email Address"
+msgstr "Adras email"
 
 msgid "Search for XMPP users"
 msgstr "Šukaj karystalnikaŭ XMPP"
@@ -4599,8 +4596,8 @@ msgstr "Niemahčyma razabrać paviedamleńnie"
 msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaksyčnaja pamyłka (mahčyma, pamyłka klijenta)"
 
-msgid "Invalid e-mail address"
-msgstr "Niapravilny adras e-mail"
+msgid "Invalid email address"
+msgstr "Niapravilny adras email"
 
 msgid "User does not exist"
 msgstr "Karystalnik nie isnuje"
@@ -4957,8 +4954,8 @@ msgstr "Persanalny mabilnik"
 msgid "Home Fax"
 msgstr "Chatni faks"
 
-msgid "Personal E-Mail"
-msgstr "Persanalny E-mail"
+msgid "Personal Email"
+msgstr "Persanalny Email"
 
 msgid "Personal IM"
 msgstr "Persanalny kont chutkich paviedamleńniaŭ"
@@ -5000,8 +4997,8 @@ msgstr "Pracoŭny pager"
 msgid "Work Fax"
 msgstr "Pracoŭny faks"
 
-msgid "Work E-Mail"
-msgstr "Pracoŭny E-mail"
+msgid "Work Email"
+msgstr "Pracoŭny Email"
 
 msgid "Work IM"
 msgstr "Pracoŭny kont chutkich paviedamleńniaŭ"
@@ -6214,7 +6211,7 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 "Niemahčyma ŭvajści: niemahčyma ŭvajści jak %s, bo nazva karystalnika "
-"niapravilnaja. Nazvy karystalnikaŭ musiać być pravilnymi adrasami e-mail "
+"niapravilnaja. Nazvy karystalnikaŭ musiać być pravilnymi adrasami email "
 "albo pačynacca ź litary i ŭtrymlivać tolki litary, ličby j prabieły, albo "
 "tolki ličby."
 
@@ -6352,12 +6349,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Ty atrymaŭ/atrymała e-mail ICQ ad %s [%s]\n"
+"Ty atrymaŭ/atrymała email ICQ ad %s [%s]\n"
 "\n"
 "Paviedamleńnie:\n"
 "%s"
@@ -6504,11 +6501,11 @@ msgstr[1] "Nastupnyja nazvy karystalnikaŭ źviazanyja z %s"
 msgstr[2] "Nastupnyja nazvy karystalnikaŭ źviazanyja z %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Ničoha nia znojdziena dla adrasu e-maila %s"
+msgid "No results found for email address %s"
+msgstr "Ničoha nia znojdziena dla adrasu emaila %s"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Ty pavinny atrymać list z prośbaj paćvierdzić %s."
 
 msgid "Account Confirmation Requested"
@@ -6538,26 +6535,26 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Pamyłka 0x%04x: Niemahčyma źmianić adras e-mail, bo ŭžo adzin zapyt čakaje "
+"Pamyłka 0x%04x: Niemahčyma źmianić adras email, bo ŭžo adzin zapyt čakaje "
 "raźviazańnia dla hetaj nazvy karystalnika."
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Pamyłka 0x%04x: Niemahčyma źmianić adras e-mail, bo akreśleny adras maje "
+"Pamyłka 0x%04x: Niemahčyma źmianić adras email, bo akreśleny adras maje "
 "nadta šmat nazvaŭ karystalnikaŭ, źviazanych ź im."
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Pamyłka 0x%04x: Niemahčyma źmianić adras e-mail, bo akreśleny adras "
+"Pamyłka 0x%04x: Niemahčyma źmianić adras email, bo akreśleny adras "
 "niapravilny."
 
 #, c-format
@@ -6568,8 +6565,8 @@ msgid "Error Changing Account Info"
 msgstr "Pamyłka źmieny źviestak kontu"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "Adras e-mail dla %s - %s"
+msgid "The email address for %s is %s"
+msgstr "Adras email dla %s - %s"
 
 msgid "Account Info"
 msgstr "Źviestki kontu"
@@ -6639,7 +6636,7 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 "Niemahčyma dadać siabra %s, bo nazva karystalnika niapravilnaja. Hetyja "
-"nazvy pavinny być albo pravilnym adrasam e-mail, albo pačynacca ź litary i "
+"nazvy pavinny być albo pravilnym adrasam email, albo pačynacca ź litary i "
 "ŭtrymlivać tolki litary, ličby j prabieły, albo ŭtrymlivać tolki ličby."
 
 msgid "Unable To Add"
@@ -6793,14 +6790,14 @@ msgstr ""
 "Ty možaš pierazapytać aŭtaryzacyi ŭ hetych siabroŭ, praz pravy klik i "
 "abraŭšy \"Pierazapytaj aŭtaryzacyi\"."
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Šukaj siabra pavodle e-maiłu"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Šukaj siabra pavodle adrasu e-maiłu"
 
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Akreśl adras e-mail siabra, jakoha ty šukaješ."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Akreśl adras email siabra, jakoha ty šukaješ."
 
 msgid "_Search"
 msgstr "Š_ukaj"
@@ -6822,17 +6819,17 @@ msgstr "Akreśl opcyi tajemnaści..."
 msgid "Confirm Account"
 msgstr "Paćvierdź kont"
 
-msgid "Display Currently Registered E-Mail Address"
-msgstr "Pakažy dziejna zarehistravany adras e-mail"
+msgid "Display Currently Registered Email Address"
+msgstr "Pakažy dziejna zarehistravany adras email"
 
-msgid "Change Currently Registered E-Mail Address..."
-msgstr "Źmiani dziejna zarehistravany adras e-mail..."
+msgid "Change Currently Registered Email Address..."
+msgstr "Źmiani dziejna zarehistravany adras email..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Pakažy siabroŭ, što čakajuć aŭtaryzacyi"
 
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "Šukaj siabra pavodle adrasu e-mail..."
+msgid "Search for Buddy by Email Address..."
+msgstr "Šukaj siabra pavodle adrasu email..."
 
 msgid "Search for Buddy by Information"
 msgstr "Šukaj siabra pavodle źviestak"
@@ -6895,9 +6892,6 @@ msgstr "Typ kryvi"
 
 msgid "College"
 msgstr "Kaledž"
-
-msgid "Email"
-msgstr "E-mail"
 
 msgid "Zipcode"
 msgstr "Zip-kod"
@@ -8657,8 +8651,8 @@ msgid "User Name: \t%s\n"
 msgstr "Nazva karystalnika: %s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
-msgstr "E-mail: %s\n"
+msgid "Email: \t\t%s\n"
+msgstr "Email: %s\n"
 
 #, c-format
 msgid "Host Name: \t%s\n"
@@ -8895,7 +8889,7 @@ msgstr "Treba bolš udakładnieńniaŭ."
 msgid "Dir service temporarily unavailable."
 msgstr "Servis katalohu časova niedastupny."
 
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Pošuk pavodle e-maiłu abmiežavany."
 
 msgid "Keyword ignored."
@@ -11234,8 +11228,8 @@ msgstr "Šryft dziela infarmavańnia pra nabor tekstu"
 msgid "Enable typing notification"
 msgstr "Uklučy infarmavańni pra nabor tekstu"
 
-msgid "_Copy E-Mail Address"
-msgstr "_Skapijuj adras e-mail"
+msgid "_Copy Email Address"
+msgstr "_Skapijuj adras email"
 
 msgid "_Open Link in Browser"
 msgstr "_Adčyni spasyłku ŭ hartačy"
@@ -11587,8 +11581,8 @@ msgstr[1] "%s maje %d novyja paviedamleńni."
 msgstr[2] "%s maje %d novych paviedamleńniaŭ."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d novy list.</b>"
 msgstr[1] "<b>%d novyja listy.</b>"
 msgstr[2] "<b>%d novych listoŭ.</b>"
@@ -12618,19 +12612,19 @@ msgstr "Padrabiaznaści ab _karystalniku"
 msgid "_Associate Buddy"
 msgstr "_Asacyjuj siabra"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Niemahčyma dasłać list"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "Prahrama evolution nia znojdzienaja ŭ ściežcy pošuku prahram PATH."
 
-msgid "An e-mail address was not found for this buddy."
-msgstr "Adras e-mail dla hetaha siabra nia znojdzieny."
+msgid "An email address was not found for this buddy."
+msgstr "Adras email dla hetaha siabra nia znojdzieny."
 
 msgid "Add to Address Book"
 msgstr "Dadaj u adrasnuju knihu"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Dašli list"
 
 #. Configuration frame
@@ -12676,8 +12670,8 @@ msgstr "Imia:"
 msgid "Last name:"
 msgstr "Proźvišča:"
 
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement

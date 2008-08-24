@@ -49,7 +49,7 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	xmlnode *presence = user_data;
 	char *chat_full_jid;
 
-	if(!chat->conv)
+	if(!chat->conv || chat->left)
 		return;
 
 	chat_full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server,
@@ -141,6 +141,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	/* check for buzz support */
 	allowBuzz = purple_status_get_attr_boolean(status,"buzz");
 	/* changing the buzz state has to trigger a re-broadcasting of the presence for caps */
+
+	if (js->googletalk && stripped == NULL && purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
+		tune = purple_presence_get_status(p, "tune");
+		stripped = jabber_google_presence_outgoing(tune);
+	}
 	
 #define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
 					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
@@ -148,11 +153,6 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	if (allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
 		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
 		js->allowBuzz = allowBuzz;
-
-		if (js->googletalk && stripped == NULL && purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
-			tune = purple_presence_get_status(p, "tune");
-			stripped = jabber_google_presence_outgoing(tune);
-		}
 
 		presence = jabber_presence_create_js(js, state, stripped, priority);
 
@@ -178,9 +178,9 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		js->old_avatarhash = g_strdup(js->avatar_hash);
 		js->old_state = state;
 		js->old_priority = priority;
-		g_free(stripped);
 	}
-					  	
+	g_free(stripped);
+
 	/* next, check if there are any changes to the tune values */
 	tune = purple_presence_get_status(p, "tune");
 	if (tune && purple_status_is_active(tune)) {
@@ -581,12 +581,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(state == JABBER_BUDDY_STATE_ERROR) {
 			char *title, *msg = jabber_parse_error(js, packet, NULL);
 
-			if(chat->conv) {
+			if (!chat->conv) {
+				title = g_strdup_printf(_("Error joining chat %s"), from);
+				purple_serv_got_join_chat_failed(js->gc, chat->components);
+			} else {
 				title = g_strdup_printf(_("Error in chat %s"), from);
 				if (g_hash_table_size(chat->members) == 0)
 					serv_got_chat_left(js->gc, chat->id);
-			} else {
-				title = g_strdup_printf(_("Error joining chat %s"), from);
 			}
 			purple_notify_error(js->gc, title, title, msg);
 			g_free(title);
@@ -608,8 +609,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			/* If we haven't joined the chat yet, we don't care that someone
 			 * left, or it was us leaving after we closed the chat */
-			if(!chat->conv) {
-				if(jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
+			if (!chat->conv || chat->left) {
+				if (chat->left &&
+						jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
 					jabber_chat_destroy(chat);
 				jabber_id_free(jid);
 				g_free(status);

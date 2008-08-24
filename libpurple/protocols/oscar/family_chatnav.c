@@ -42,7 +42,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		return 0;
 	}
 
-	if (snac2->family != 0x000d) {
+	if (snac2->family != SNAC_FAMILY_CHATNAV) {
 		purple_debug_warning("oscar", "chatnav error: received response that maps to corrupt request (fam=%04x)\n", snac2->family);
 		return 0;
 	}
@@ -80,7 +80,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
  */
 void aim_chatnav_reqrights(OscarData *od, FlapConnection *conn)
 {
-	aim_genericreq_n_snacid(od, conn, 0x000d, 0x0002);
+	aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_CHATNAV, 0x0002);
 }
 
 /*
@@ -97,7 +97,7 @@ int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name
 
 	byte_stream_new(&bs, 1142);
 
-	snacid = aim_cachesnac(od, 0x000d, 0x0008, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_CHATNAV, 0x0008, 0x0000, NULL, 0);
 
 	/* exchange */
 	byte_stream_put16(&bs, exchange);
@@ -137,7 +137,7 @@ int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name
 
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, 0x000d, 0x0008, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_CHATNAV, 0x0008, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -460,7 +460,7 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 		return 0;
 	}
 
-	if (snac2->family != 0x000d) {
+	if (snac2->family != SNAC_FAMILY_CHATNAV) {
 		purple_debug_misc("oscar", "faim: chatnav_parse_info: received response that maps to corrupt request! (fam=%04x)\n", snac2->family);
 		return 0;
 	}
@@ -506,7 +506,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 chatnav_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x000d;
+	mod->family = SNAC_FAMILY_CHATNAV;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;

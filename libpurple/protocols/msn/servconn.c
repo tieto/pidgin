@@ -203,7 +203,7 @@ connect_cb(gpointer data, gint source, const char *error_message)
 }
 
 gboolean
-msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
+msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean force)
 {
 	MsnSession *session;
 
@@ -223,7 +223,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	{
 		/* HTTP Connection. */
 
-		if (!servconn->httpconn->connected)
+		if (!servconn->httpconn->connected || force)
 			if (!msn_httpconn_connect(servconn->httpconn, host, port))
 				return FALSE;
 
@@ -255,6 +255,12 @@ msn_servconn_disconnect(MsnServConn *servconn)
 {
 	g_return_if_fail(servconn != NULL);
 
+	if (servconn->connect_data != NULL)
+	{
+		purple_proxy_connect_cancel(servconn->connect_data);
+		servconn->connect_data = NULL;
+	}
+
 	if (!servconn->connected)
 	{
 		/* We could not connect. */
@@ -271,12 +277,6 @@ msn_servconn_disconnect(MsnServConn *servconn)
 			servconn->disconnect_cb(servconn);
 
 		return;
-	}
-
-	if (servconn->connect_data != NULL)
-	{
-		purple_proxy_connect_cancel(servconn->connect_data);
-		servconn->connect_data = NULL;
 	}
 
 	if (servconn->inpa > 0)
@@ -301,7 +301,8 @@ static void
 servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn = data;
-	int ret, writelen;
+	gssize ret;
+	int writelen;
 
 	writelen = purple_circ_buffer_get_max_read(servconn->tx_buf);
 
@@ -385,29 +386,26 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnSession *session;
 	char buf[MSN_BUF_LEN];
 	char *cur, *end, *old_rx_buf;
-	int len, cur_len;
+	gssize len;
+	int cur_len;
 
 	servconn = data;
 	session = servconn->session;
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
-	servconn->session->account->gc->last_received = time(NULL);
+	if (servconn->type == MSN_SERVCONN_NS)
+		servconn->session->account->gc->last_received = time(NULL);
 
-	if (len <= 0) {
-		switch (errno) {
+	if (len < 0 && errno == EAGAIN) {
+		return;
 
-			case 0:	
+	} else if (len <= 0) {
+		purple_debug_error("msn", "servconn read error,"
+		                          "len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
+		                          len, errno, g_strerror(errno));
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
-			case EBADF:
-			case EAGAIN: return;
-	
-			default: purple_debug_error("msn", "servconn read error,"
-						"len: %d, errno: %d, error: %s\n",
-						len, errno, g_strerror(errno));
-				 msn_servconn_got_error(servconn, 
-						 MSN_SERVCONN_ERROR_READ);
-				 return;
-		}
+		return;
 	}
 
 	buf[len] = '\0';
@@ -559,6 +557,9 @@ create_listener(int port)
 
 	flags = fcntl(fd, F_GETFL);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	return fd;
 }

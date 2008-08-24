@@ -31,6 +31,7 @@
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
+#include "gtksmiley.h"
 #include "gtkthemes.h"
 
 GSList *smiley_themes = NULL;
@@ -119,7 +120,7 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 	g_free(theme_dir);
 }
 
-void pidgin_themes_smiley_themeize(GtkWidget *imhtml)
+static void _pidgin_themes_smiley_themeize(GtkWidget *imhtml, gboolean custom)
 {
 	struct smiley_list *list;
 	if (!current_smiley_theme)
@@ -134,8 +135,28 @@ void pidgin_themes_smiley_themeize(GtkWidget *imhtml)
 			gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), sml, icons->data);
 			icons = icons->next;
 		}
+
+		if (custom == TRUE) {
+			icons = pidgin_smileys_get_all();
+
+			while (icons) {
+				gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), sml, icons->data);
+				icons = icons->next;
+			}
+		}
+
 		list = list->next;
 	}
+}
+
+void pidgin_themes_smiley_themeize(GtkWidget *imhtml)
+{
+	_pidgin_themes_smiley_themeize(imhtml, FALSE);
+}
+
+void pidgin_themes_smiley_themeize_custom(GtkWidget *imhtml)
+{
+	_pidgin_themes_smiley_themeize(imhtml, TRUE);
 }
 
 static void
@@ -274,7 +295,6 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		} else if (load && list) {
 			gboolean hidden = FALSE;
 			char *sfile = NULL;
-			gboolean have_used_sfile = FALSE;
 
 			if (*i == '!' && *(i + 1) == ' ') {
 				hidden = TRUE;
@@ -288,17 +308,12 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 						i++;
 					l[li++] = *(i++);
 				}
+				l[li] = 0;
 				if (!sfile) {
-					l[li] = 0;
 					sfile = g_build_filename(dirname, l, NULL);
 				} else {
-					GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
-					l[li] = 0;
-					smiley->file = sfile;
-					smiley->smile = g_strdup(l);
-					smiley->hidden = hidden;
+					GtkIMHtmlSmiley *smiley = gtk_imhtml_smiley_create(sfile, l, hidden, 0);
 					list->smileys = g_slist_prepend(list->smileys, smiley);
-					have_used_sfile = TRUE;
 				}
 				while (isspace(*i))
 					i++;
@@ -306,8 +321,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			}
 
 
-			if (!have_used_sfile)
-				g_free(sfile);
+			g_free(sfile);
 		}
 	}
 
@@ -340,8 +354,9 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			PurpleConversation *conv = cnv->data;
 
 			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+				/* We want to see our custom smileys on our entry if we write the shortcut */
 				pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
-				pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->entry);
+				pidgin_themes_smiley_themeize_custom(PIDGIN_CONVERSATION(conv)->entry);
 			}
 		}
 	}

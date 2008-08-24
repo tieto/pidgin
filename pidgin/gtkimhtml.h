@@ -76,6 +76,8 @@ typedef enum {
 	GTK_IMHTML_SMILEY =     1 << 11,
 	GTK_IMHTML_LINKDESC =   1 << 12,
 	GTK_IMHTML_STRIKE =     1 << 13,
+	/** Show custom smileys when appropriate. @since 2.5.0 */
+	GTK_IMHTML_CUSTOM_SMILEY = 1 << 14,
 	GTK_IMHTML_ALL =       -1
 } GtkIMHtmlButtons;
 
@@ -852,6 +854,37 @@ char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *st
  */
 void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
 
+/**
+ * Create a new GtkIMHtmlSmiley.
+ *
+ * @param file       The image file for the smiley
+ * @param shortcut   The key shortcut for the smiley
+ * @param hide       @c TRUE if the smiley should be hidden in the smiley dialog, @c FALSE otherwise
+ * @param flags      The smiley flags
+ *
+ * @return The newly created smiley
+ * @since 2.5.0
+ */
+GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut, gboolean hide,
+		GtkIMHtmlSmileyFlags flags);
+
+/**
+ * Reload the image data for the smiley.
+ *
+ * @param smiley   The smiley to reload
+ *
+ * @since 2.5.0
+ */
+void gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley);
+
+/**
+ * Destroy a GtkIMHtmlSmiley.
+ *
+ * @param smiley   The smiley to destroy
+ *
+ * @since 2.5.0
+ */
+void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
 /*@}*/
 
 #ifdef __cplusplus

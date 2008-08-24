@@ -40,9 +40,8 @@
 
 #include "buddy_info.h"
 #include "buddy_opt.h"
-#include "buddy_status.h"
+#include "buddy_list.h"
 #include "char_conv.h"
-#include "crypt.h"
 #include "group.h"
 #include "group_find.h"
 #include "group_im.h"
@@ -51,8 +50,8 @@
 #include "group_opt.h"
 #include "header_info.h"
 #include "im.h"
-#include "keep_alive.h"
-#include "login_logout.h"
+#include "qq_process.h"
+#include "qq_base.h"
 #include "packet_parse.h"
 #include "qq.h"
 #include "qq_network.h"
@@ -237,78 +236,110 @@ static gchar *_qq_status_text(PurpleBuddy *b)
 static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	qq_buddy *q_bud;
-	gchar *ip_str;
-	char *tmp;
-	const char *tmp2;
+	gchar *tmp;
+	GString *str;
 
 	g_return_if_fail(b != NULL);
 
 	q_bud = (qq_buddy *) b->proto_data;
-	g_return_if_fail(q_bud != NULL);
+	if (q_bud == NULL)
+		return;
 
-	if (PURPLE_BUDDY_IS_ONLINE(b) && q_bud != NULL)
-	{
-		ip_str = gen_ip_str(q_bud->ip);
-		if (strlen(ip_str) != 0) {
-			if (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
-				tmp2 = _("TCP Address");
-			else
-				tmp2 = _("UDP Address");
-			tmp = g_strdup_printf("%s:%d", ip_str, q_bud->port);
-			purple_notify_user_info_add_pair(user_info, tmp2, tmp);
-			g_free(tmp);
+	/* if (PURPLE_BUDDY_IS_ONLINE(b) && q_bud != NULL) */
+	if (q_bud->ip.s_addr != 0) {
+		str = g_string_new(NULL);
+		g_string_printf(str, "%s:%d", inet_ntoa(q_bud->ip), q_bud->port);
+		if (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE) {
+			g_string_append(str, " TCP");
+		} else {
+			g_string_append(str, " UDP");
 		}
-		g_free(ip_str);
-
-		tmp = g_strdup_printf("%d", q_bud->age);
-		purple_notify_user_info_add_pair(user_info, _("Age"), tmp);
-		g_free(tmp);
-
-		switch (q_bud->gender) {
-		case QQ_BUDDY_GENDER_GG:
-			purple_notify_user_info_add_pair(user_info, _("Gender"), _("Male"));
-			break;
-		case QQ_BUDDY_GENDER_MM:
-			purple_notify_user_info_add_pair(user_info, _("Gender"), _("Female"));
-			break;
-		case QQ_BUDDY_GENDER_UNKNOWN:
-			purple_notify_user_info_add_pair(user_info, _("Gender"), _("Unknown"));
-			break;
-		default:
-			tmp = g_strdup_printf("Error (%d)", q_bud->gender);
-			purple_notify_user_info_add_pair(user_info, _("Gender"), tmp);
-			g_free(tmp);
-		}
-
-		if (q_bud->level) {
-			tmp = g_strdup_printf("%d", q_bud->level);
-			purple_notify_user_info_add_pair(user_info, _("Level"), tmp);
-			g_free(tmp);
-		}
-		/* For debugging */
-		/*
-		g_string_append_printf(tooltip, "\n<b>Flag:</b> %01x", q_bud->flag1);
-		g_string_append_printf(tooltip, "\n<b>CommFlag:</b> %01x", q_bud->comm_flag);
-		g_string_append_printf(tooltip, "\n<b>Client:</b> %04x", q_bud->client_version);
-		*/
+		g_string_free(str, TRUE);
 	}
+
+	tmp = g_strdup_printf("%d", q_bud->age);
+	purple_notify_user_info_add_pair(user_info, _("Age"), tmp);
+	g_free(tmp);
+
+	switch (q_bud->gender) {
+	case QQ_BUDDY_GENDER_GG:
+		purple_notify_user_info_add_pair(user_info, _("Gender"), _("Male"));
+		break;
+	case QQ_BUDDY_GENDER_MM:
+		purple_notify_user_info_add_pair(user_info, _("Gender"), _("Female"));
+		break;
+	case QQ_BUDDY_GENDER_UNKNOWN:
+		purple_notify_user_info_add_pair(user_info, _("Gender"), _("Unknown"));
+		break;
+	default:
+		tmp = g_strdup_printf("Error (%d)", q_bud->gender);
+		purple_notify_user_info_add_pair(user_info, _("Gender"), tmp);
+		g_free(tmp);
+	}
+
+	if (q_bud->level) {
+		tmp = g_strdup_printf("%d", q_bud->level);
+		purple_notify_user_info_add_pair(user_info, _("Level"), tmp);
+		g_free(tmp);
+	}
+
+	str = g_string_new(NULL);
+	if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER) {
+		g_string_append( str, _("Member") );
+	}
+	if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_VIP) {
+		g_string_append( str, _(" VIP") );
+	}
+	if (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE) {
+		g_string_append( str, _(" TCP") );
+	}
+	if (q_bud->comm_flag & QQ_COMM_FLAG_MOBILE) {
+		g_string_append( str, _(" FromMobile") );
+	}
+	if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE) {
+		g_string_append( str, _(" BindMobile") );
+	}
+	if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO) {
+		g_string_append( str, _(" Video") );
+	}
+
+	if (q_bud->ext_flag & QQ_EXT_FLAG_SPACE) {
+		g_string_append( str, _(" Space") );
+	}
+	purple_notify_user_info_add_pair(user_info, _("Flag"), str->str);
+
+	g_string_free(str, TRUE);
+
+#ifdef DEBUG
+	tmp = g_strdup_printf( "%s (%04X)",
+										qq_get_ver_desc(q_bud->client_version),
+										q_bud->client_version );
+	purple_notify_user_info_add_pair(user_info, _("Ver"), tmp);
+	g_free(tmp);
+
+	tmp = g_strdup_printf( "Ext 0x%X, Comm 0x%X",
+												q_bud->ext_flag, q_bud->comm_flag );
+	purple_notify_user_info_add_pair(user_info, _("Flag"), tmp);
+	g_free(tmp);
+#endif
 }
 
 /* we can show tiny icons on the four corners of buddy icon, */
 static const char *_qq_list_emblem(PurpleBuddy *b)
 {
 	/* each char** are refering to a filename in pixmaps/purple/status/default/ */
-
-	qq_buddy *q_bud = b->proto_data;
-
-	if (q_bud) {
-		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
-			return "qq_member";
-		/*
-		if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
-			return "video";
-		*/
+	qq_buddy *q_bud;
+	
+	if (!b || !(q_bud = b->proto_data)) {
+		return NULL;
 	}
+
+	if (q_bud->comm_flag & QQ_COMM_FLAG_MOBILE)
+		return "mobile";
+	if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
+		return "video";
+	if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
+		return "qq_member";
 
 	return NULL;
 }
@@ -393,6 +424,7 @@ static int _qq_chat_send(PurpleConnection *gc, int channel, const char *message,
 	group = qq_group_find_by_channel(gc, channel);
 	g_return_val_if_fail(group != NULL, -1);
 
+	purple_debug_info("QQ_MESG", "Send qun mesg in utf8: %s\n", message);
 	msg = utf8_to_qq(message, QQ_CHARSET_DEFAULT);
 	msg_with_qq_smiley = purple_smiley_to_qq(msg);
 	qq_send_packet_group_im(gc, group, msg_with_qq_smiley);
@@ -479,7 +511,7 @@ static void _qq_menu_show_login_info(PurplePluginAction *action)
 	qd = (qq_data *) gc->proto_data;
 	info = g_string_new("<html><body>\n");
 
-	g_string_append_printf(info, _("<b>Current Online</b>: %d<br>\n"), qd->all_online);
+	g_string_append_printf(info, _("<b>Current Online</b>: %d<br>\n"), qd->total_online);
 	g_string_append_printf(info, _("<b>Last Refresh</b>: %s<br>\n"), ctime(&qd->last_get_online));
 
 	g_string_append(info, "<hr>\n");
@@ -487,7 +519,7 @@ static void _qq_menu_show_login_info(PurplePluginAction *action)
 	g_string_append_printf(info, _("<b>Server</b>: %s: %d<br>\n"), qd->server_name, qd->real_port);
 	g_string_append_printf(info, _("<b>Connection Mode</b>: %s<br>\n"), qd->use_tcp ? "TCP" : "UDP");
 	g_string_append_printf(info, _("<b>Real hostname</b>: %s: %d<br>\n"), qd->real_hostname, qd->real_port);
-	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), qd->my_ip);
+	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), inet_ntoa(qd->my_ip));
 
 	g_string_append(info, "<hr>\n");
 	g_string_append(info, "<i>Information below may not be accurate</i><br>\n");
@@ -518,7 +550,7 @@ static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 			   _("Input Qun name here"),
 			   _("Only QQ members can create permanent Qun"),
 			   "OpenQ", FALSE, FALSE, NULL,
-			   _("Create"), G_CALLBACK(qq_group_create_with_name), _("Cancel"), NULL, gc);
+			   _("Create"), G_CALLBACK(qq_room_create_new), _("Cancel"), NULL, gc);
 }
 */
 
@@ -636,30 +668,6 @@ static GList *_qq_buddy_menu(PurpleBlistNode * node)
 	return m;
 }
 
-
-static void qq_keep_alive(PurpleConnection *gc)
-{
-	qq_group *group;
-	qq_data *qd;
-	GList *list;
-
-	if (NULL == (qd = (qq_data *) gc->proto_data))
-		return;
-
-	list = qd->groups;
-	while (list != NULL) {
-		group = (qq_group *) list->data;
-		if (group->my_status == QQ_GROUP_MEMBER_STATUS_IS_MEMBER ||
-		    group->my_status == QQ_GROUP_MEMBER_STATUS_IS_ADMIN)
-			/* no need to get info time and time again, online members enough */
-			qq_send_cmd_group_get_online_members(gc, group);
-
-		list = list->next;
-	}
-
-	qq_send_packet_keep_alive(gc);
-}
-
 /* convert chat nickname to qq-uid to get this buddy info */
 /* who is the nickname of buddy in QQ chat-room (Qun) */
 static void _qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gchar *who)
@@ -680,8 +688,8 @@ static gchar *_qq_get_chat_buddy_real_name(PurpleConnection *gc, gint channel, c
 	return chat_name_to_purple_name(who);
 }
 
-PurplePlugin *my_protocol = NULL;
-static PurplePluginProtocolInfo prpl_info	= {
+static PurplePluginProtocolInfo prpl_info =
+{
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_USE_POINTSIZE,
 	NULL,							/* user_splits	*/
 	NULL,							/* protocol_options */
@@ -718,8 +726,8 @@ static PurplePluginProtocolInfo prpl_info	= {
 	NULL,							/* chat_invite	*/
 	NULL,							/* chat_leave */
 	NULL,							/* chat_whisper */
-	_qq_chat_send,						/* chat_send */
-	qq_keep_alive,						/* keepalive */
+	_qq_chat_send,			/* chat_send */
+	NULL,							/* keepalive */
 	NULL,							/* register_user */
 	_qq_get_chat_buddy_info,				/* get_cb_info	*/
 	NULL,							/* get_cb_away	*/
@@ -738,17 +746,17 @@ static PurplePluginProtocolInfo prpl_info	= {
 	qq_roomlist_cancel,					/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
 	NULL,							/* can_receive_file */
-	qq_send_file,						/* send_file */
+	NULL,							/* qq_send_file send_file */
 	NULL,							/* new xfer */
 	NULL,							/* offline_message */
 	NULL,							/* PurpleWhiteboardPrplOps */
 	NULL,							/* send_raw */
 	NULL,							/* roomlist_room_serialize */
+	NULL,							/* unregister_user */
+	NULL,							/* send_attention */
+	NULL,							/* get attention_types */
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
+	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	NULL
 };
 
@@ -802,7 +810,14 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Connect using TCP"), "use_tcp", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	my_protocol = plugin;
+	option = purple_account_option_int_new(_("resend interval(s)"), "resend_interval", 10);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_int_new(_("Keep alive interval(s)"), "keep_alive_interval", 60);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_int_new(_("Update interval(s)"), "update_interval", 300);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	purple_prefs_add_none("/plugins/prpl/qq");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);

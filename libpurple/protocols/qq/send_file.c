@@ -29,12 +29,11 @@
 #include "network.h"
 #include "notify.h"
 
-#include "buddy_status.h"
-#include "crypt.h"
+#include "buddy_list.h"
 #include "file_trans.h"
 #include "header_info.h"
 #include "im.h"
-#include "keep_alive.h"
+#include "qq_base.h"
 #include "packet_parse.h"
 #include "qq_network.h"
 #include "utils.h"
@@ -447,7 +446,7 @@ static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, 
 	info = g_new0(ft_info, 1);
 	info->to_uid = to_uid;
 	info->send_seq = qd->send_seq;
-	info->local_internet_ip = g_ntohl(inet_addr(qd->my_ip));
+	info->local_internet_ip = qd->my_ip.s_addr;
 	info->local_internet_port = qd->my_port;
 	info->local_real_ip = 0x00000000;
 	info->conn_method = 0x00;
@@ -784,7 +783,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 	qd = (qq_data *) gc->proto_data;
 
 	info = g_newa(ft_info, 1);
-	info->local_internet_ip = g_ntohl(inet_addr(qd->my_ip));
+	info->local_internet_ip = qd->my_ip.s_addr;
 	info->local_internet_port = qd->my_port;
 	info->local_real_ip = 0x00000000;
 	info->to_uid = sender_uid;
@@ -814,11 +813,11 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 		if (q_bud) {
 			if(0 != info->remote_real_ip) {
-				g_memmove(q_bud->ip, &info->remote_real_ip, 4);
+				g_memmove(&(q_bud->ip), &info->remote_real_ip, sizeof(q_bud->ip));
 				q_bud->port = info->remote_minor_port;
 			}
 			else if (0 != info->remote_internet_ip) {
-				g_memmove(q_bud->ip, &info->remote_internet_ip, 4);
+				g_memmove(&(q_bud->ip), &info->remote_internet_ip, sizeof(q_bud->ip));
 				q_bud->port = info->remote_major_port;
 			}
 
@@ -831,7 +830,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 
 		}
 		else 
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "buddy %d is not in my friendlist\n", sender_uid);
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "buddy %d is not in list\n", sender_uid);
 
 		g_free(sender_name);	    
 		g_strfreev(fileinfo);

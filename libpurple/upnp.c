@@ -41,6 +41,8 @@
 #define HTTP_OK "200 OK"
 #define DEFAULT_HTTP_PORT 80
 #define DISCOVERY_TIMEOUT 1000
+/* limit UPnP-triggered http downloads to 128k */
+#define MAX_UPNP_DOWNLOAD (128 * 1024)
 
 /***************************************************************
 ** Discovery/Description Defines                               *
@@ -443,8 +445,8 @@ purple_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd
 	purple_timeout_remove(dd->tima);
 	dd->tima = 0;
 
-	purple_util_fetch_url_request(descriptionURL, TRUE, NULL, TRUE, httpRequest,
-			TRUE, upnp_parse_description_cb, dd);
+	purple_util_fetch_url_request_len(descriptionURL, TRUE, NULL, TRUE, httpRequest,
+			TRUE, MAX_UPNP_DOWNLOAD, upnp_parse_description_cb, dd);
 
 	g_free(httpRequest);
 
@@ -708,8 +710,8 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 	g_free(pathOfControl);
 	g_free(soapMessage);
 
-	gfud = purple_util_fetch_url_request(control_info.control_url, FALSE, NULL, TRUE,
-				totalSendMessage, TRUE, cb, cb_data);
+	gfud = purple_util_fetch_url_request_len(control_info.control_url, FALSE, NULL, TRUE,
+				totalSendMessage,  TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
 
 	g_free(totalSendMessage);
 	g_free(addressOfControl);
@@ -1047,7 +1049,7 @@ purple_upnp_get_handle(void)
 {
 	static int handle;
 	
-	return &handle;	
+	return &handle;
 }
 
 void
@@ -1055,5 +1057,5 @@ purple_upnp_init()
 {
 	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
 						  purple_upnp_get_handle(), PURPLE_CALLBACK(purple_upnp_network_config_changed_cb),
-						  GINT_TO_POINTER(0));		
+						  NULL);
 }

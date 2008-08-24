@@ -45,7 +45,7 @@ style "my-style-name" {
   # Change the color of the typing notification
   GtkIMHtml::typing-notification-color = "#ff0000"
   # Disable the typing notification
-  GtkIMHtml::typing-notification-enable = 1
+  GtkIMHtml::typing-notification-enable = 0
 
   # The following settings will change the behaviour in all GTK+ applications
   # Change the cursor color

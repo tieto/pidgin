@@ -499,6 +499,15 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 #ifdef HAVE_CYRUS_SASL
+		/* Don't include Google Talk's X-GOOGLE-TOKEN mechanism, as we will not
+		 * support it and including it gives a false fall-back to other mechs offerred,
+		 * leading to incorrect error handling.
+		 */
+		if (mech_name && !strcmp(mech_name, "X-GOOGLE-TOKEN")) {
+			g_free(mech_name);
+			continue;
+		}
+
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 #else
@@ -580,75 +589,6 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 }
 
-/*!
- * @brief Given the server challenge (message) and the key (password), calculate the HMAC-MD5 digest
- *
- * This is the crammd5 response.  Inspired by cyrus-sasl's _sasl_hmac_md5()
- */
-static void
-auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size_t key_len, guchar *digest)
-{
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
-	int i;
-	/* inner padding - key XORd with ipad */
-	unsigned char k_ipad[65];    
-	/* outer padding - key XORd with opad */
-	unsigned char k_opad[65];    
-
-	cipher = purple_ciphers_find_cipher("md5");
-
-	/* if key is longer than 64 bytes reset it to key=MD5(key) */
-	if (strlen(key) > 64) {
-		guchar keydigest[16];
-
-		context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, (const guchar *)key, strlen(key));
-		purple_cipher_context_digest(context, 16, keydigest, NULL);
-		purple_cipher_context_destroy(context);
-
-		key = (char *)keydigest;
-		key_len = 16;
-	} 
-
-	/*
-	 * the HMAC_MD5 transform looks like:
-	 *
-	 * MD5(K XOR opad, MD5(K XOR ipad, text))
-	 *
-	 * where K is an n byte key
-	 * ipad is the byte 0x36 repeated 64 times
-	 * opad is the byte 0x5c repeated 64 times
-	 * and text is the data being protected
-	 */
-
-	/* start out by storing key in pads */
-	memset(k_ipad, '\0', sizeof k_ipad);
-	memset(k_opad, '\0', sizeof k_opad);
-	memcpy(k_ipad, (void *)key, key_len);
-	memcpy(k_opad, (void *)key, key_len);
-
-	/* XOR key with ipad and opad values */
-	for (i=0; i<64; i++) {
-		k_ipad[i] ^= 0x36;
-		k_opad[i] ^= 0x5c;
-	}
-
-	/* perform inner MD5 */
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_ipad, 64); /* start with inner pad */
-	purple_cipher_context_append(context, (const guchar *)challenge, challenge_len); /* then text of datagram */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 1st pass */
-	purple_cipher_context_destroy(context);
-
-	/* perform outer MD5 */	
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_opad, 64); /* start with outer pad */
-	purple_cipher_context_append(context, digest, 16); /* then results of 1st hash */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 2nd pass */
-	purple_cipher_context_destroy(context);
-}
-
 static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberIq *iq;
@@ -694,14 +634,19 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
 
-		} else if(js->stream_id && xmlnode_get_child(query, "crammd5")) {
+		} else if(js->stream_id && (x = xmlnode_get_child(query, "crammd5"))) {
 			const char *challenge;
-			guchar digest[16];
-			char h[33], *p;
-			int i;
+			gchar digest[33];
+			PurpleCipherContext *hmac;
 
-			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
-			auth_hmac_md5(challenge, strlen(challenge), pw, strlen(pw), digest);
+			/* Calculate the MHAC-MD5 digest */
+			challenge = xmlnode_get_attrib(x, "challenge");
+			hmac = purple_cipher_context_new_by_name("hmac", NULL);
+			purple_cipher_context_set_option(hmac, "hash", "md5");
+			purple_cipher_context_set_key(hmac, (guchar *)pw);
+			purple_cipher_context_append(hmac, (guchar *)challenge, strlen(challenge));
+			purple_cipher_context_digest_to_str(hmac, 33, digest, NULL);
+			purple_cipher_context_destroy(hmac);
 
 			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
@@ -714,11 +659,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 			x = xmlnode_new_child(query, "crammd5");
 
-			/* Translate the digest to a hexadecimal notation */
-			p = h;
-			for(i=0; i<16; i++, p+=2)
-				snprintf(p, 3, "%02x", digest[i]);
-			xmlnode_insert_data(x, h, -1);
+			xmlnode_insert_data(x, digest, 32);
 
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);

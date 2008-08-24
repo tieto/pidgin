@@ -28,15 +28,44 @@
 #include <glib.h>
 #include "qq.h"
 
-void qq_send_trans_append(qq_data *qd, guint8 *buf, gint bus_len, guint16 cmd, guint16 seq);
-void qq_send_trans_remove(qq_data *qd, gpointer data);
-gpointer qq_send_trans_find(qq_data *qd, guint16 seq);
-void qq_send_trans_remove_all(qq_data *qd);
+enum {
+	QQ_TRANS_IS_SERVER = 0x01,			/* Is server command or client command */
+	/* prefix QQ_TRANS_CLI is for client command*/
+	QQ_TRANS_CLI_EMERGE = 0x02,		/* send at once; or may wait for next reply*/
+	QQ_TRANS_CLI_IMPORT = 0x04,		/* Only notice if not get reply; or resend, disconn if reties get 0*/
+	QQ_TRANS_BEFORE_LOGIN = 0x08,	/* server command before login*/
+};
 
-gint qq_send_trans_scan(qq_data *qd, gint *start, guint8 *buf, gint maxlen, guint16 *cmd, gint *retries);
+typedef struct _qq_transaction {
+	guint8 flag;
+	guint16 seq;
+	guint16 cmd;
 
-void qq_rcv_trans_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len);
-gint qq_rcv_trans_pop(qq_data *qd, guint16 *cmd, guint16* seq, guint8 *data, gint max_len);
-void qq_rcv_trans_remove_all(qq_data *qd);
+	guint8 room_cmd;
+	guint32 room_id;
+	
+	guint8 *data;
+	gint data_len;
+
+	gint fd;
+	gint send_retries;
+	gint rcved_times;
+	gint scan_times;
+} qq_transaction;
+
+qq_transaction *qq_trans_find_rcved(qq_data *qd, guint16 cmd, guint16 seq);
+gboolean qq_trans_is_server(qq_transaction *trans) ;
+gboolean qq_trans_is_dup(qq_transaction *trans);
+guint8 qq_trans_get_room_cmd(qq_transaction *trans);
+guint32 qq_trans_get_room_id(qq_transaction *trans);
+
+void qq_trans_add_client_cmd(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+void qq_trans_add_server_cmd(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+void qq_trans_add_room_cmd(qq_data *qd, guint16 seq, guint8 room_cmd, guint32 room_id,
+	guint8 *data, gint data_len);
+
+void qq_trans_process_before_login(qq_data *qd);
+gboolean qq_trans_scan(qq_data *qd);
+void qq_trans_remove_all(qq_data *qd);
 
 #endif

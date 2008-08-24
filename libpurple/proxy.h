@@ -239,9 +239,9 @@ PurpleProxyInfo *purple_proxy_get_setup(PurpleAccount *account);
  *                   to something descriptive (hopefully).
  * @param data       User-defined data.
  *
- * @return NULL if there was an error, or a reference to a data
- *         structure that can be used to cancel the pending
- *         connection, if needed.
+ * @return NULL if there was an error, or a reference to an
+ *         opaque data structure that can be used to cancel
+ *         the pending connection, if needed.
  */
 PurpleProxyConnectData *purple_proxy_connect(void *handle,
 			PurpleAccount *account,
@@ -265,9 +265,9 @@ PurpleProxyConnectData *purple_proxy_connect(void *handle,
  *                   to something descriptive (hopefully).
  * @param data       User-defined data.
  *
- * @return NULL if there was an error, or a reference to a data
- *         structure that can be used to cancel the pending
- *         connection, if needed.
+ * @return NULL if there was an error, or a reference to an
+ *         opaque data structure that can be used to cancel
+ *         the pending connection, if needed.
  */
 PurpleProxyConnectData *purple_proxy_connect_socks5(void *handle,
 			PurpleProxyInfo *gpi,

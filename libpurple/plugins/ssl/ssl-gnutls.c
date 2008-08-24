@@ -54,8 +54,8 @@ ssl_gnutls_init_gnutls(void)
 	   If there are strange bugs, perhaps look here (yes, I am a
 	   hypocrite) */
 	gnutls_global_set_mem_functions(
-		(gnutls_alloc_function)   g_malloc0, /* malloc */
-		(gnutls_alloc_function)   g_malloc0, /* secure malloc */
+		(gnutls_alloc_function)   g_malloc, /* malloc */
+		(gnutls_alloc_function)   g_malloc, /* secure malloc */
 		NULL,      /* mem_is_secure */
 		(gnutls_realloc_function) g_realloc, /* realloc */
 		(gnutls_free_function)    g_free     /* free */

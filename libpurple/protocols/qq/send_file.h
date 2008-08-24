@@ -26,11 +26,12 @@
 #define _QQ_QQ_SEND_FILE_H_
 
 #include "ft.h"
+#include "qq.h"
 
 typedef struct _ft_info {
 	guint32 to_uid;
 	guint16 send_seq;
-	guint8 file_session_key[16];
+	guint8 file_session_key[QQ_KEY_LENGTH];
 	guint8 conn_method;
 	guint32 remote_internet_ip;
 	guint16 remote_internet_port;

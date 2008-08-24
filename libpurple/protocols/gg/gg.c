@@ -343,7 +343,8 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	purple_request_file(action, "Load buddylist from file...", NULL, FALSE,
+	purple_request_file(action, _("Load buddylist from file..."), NULL,
+			FALSE,
 			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
 			gc);
@@ -475,7 +476,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 	purple_request_fields_add_group(fields, group);
 
 	field = purple_request_field_string_new("email",
-			_("E-mail"), "", FALSE);
+			_("Email"), "", FALSE);
 	purple_request_field_string_set_masked(field, FALSE);
 	purple_request_field_group_add_field(group, field);
 
@@ -526,9 +527,11 @@ static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer us
 	form->offset = g_strdup(form->last_uin);
 
 	ggp_search_remove(info->searches, form->seq);
+	purple_debug_info("gg", "ggp_callback_show_next(): Removed seq %u", form->seq);
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
+	purple_debug_info("gg", "ggp_callback_show_next(): Added seq %u", seq);
 }
 /* }}} */
 
@@ -606,6 +609,7 @@ static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields 
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
+	purple_debug_info("gg", "ggp_callback_find_buddies(): Added seq %u", seq);
 }
 /* }}} */
 
@@ -718,7 +722,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFie
 
 	purple_debug_info("gg", "Changing password\n");
 
-	/* XXX: this e-mail should be a pref... */
+	/* XXX: this email should be a pref... */
 	h = gg_change_passwd4(ggp_get_uin(account),
 			      "user@example.net", purple_account_get_password(account),
 			      p1, info->token->id, t, 0);
@@ -926,8 +930,10 @@ static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-/* just a prototype */
+/* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
+static int ggp_to_gg_status(PurpleStatus *status, char **msg);
+
 
 /**
  * Handle change of the status of the buddy.
@@ -988,6 +994,7 @@ static void ggp_sr_close_cb(gpointer user_data)
 	GGPInfo *info = form->user_data;
 
 	ggp_search_remove(info->searches, form->seq);
+	purple_debug_info("gg", "ggp_sr_close_cb(): Removed seq %u", form->seq);
 	ggp_search_form_destroy(form);
 }
 /* }}} */
@@ -1203,7 +1210,7 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 
 	seq = gg_pubdir50_seq(req);
 	form = ggp_search_get(info->searches, seq);
-
+	purple_debug_info("gg", "ggp_pubdir_reply_handler(): seq %u --> form %p", seq, form);
 	/*
 	 * this can happen when user will request more results
 	 * and close the results window before they arrive.
@@ -1488,23 +1495,12 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_EVENT_CONN_SUCCESS:
 			{
-				PurpleAccount *account;
-				PurplePresence *presence;
-				PurpleStatus *status;
-
 				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
 				purple_input_remove(gc->inpa);
 				gc->inpa = purple_input_add(info->session->fd,
 							  PURPLE_INPUT_READ,
 							  ggp_callback_recv, gc);
 
-				/* gg_change_status(info->session, GG_STATUS_AVAIL); */
-
-				account = purple_connection_get_account(gc);
-				presence = purple_account_get_presence(account);
-				status = purple_presence_get_active_status(presence);
-
-				ggp_set_status(account, status);
 				purple_connection_set_state(gc, PURPLE_CONNECTED);
 				ggp_buddylist_send(gc);
 			}
@@ -1692,6 +1688,8 @@ static GList *ggp_chat_info(PurpleConnection *gc)
 static void ggp_login(PurpleAccount *account)
 {
 	PurpleConnection *gc;
+	PurplePresence *presence;
+	PurpleStatus *status;
 	struct gg_login_params *glp;
 	GGPInfo *info;
 
@@ -1714,8 +1712,11 @@ static void ggp_login(PurpleAccount *account)
 	glp->uin = ggp_get_uin(account);
 	glp->password = (char *)purple_account_get_password(account);
 
+	presence = purple_account_get_presence(account);
+	status = purple_presence_get_active_status(presence);
+
 	glp->async = 1;
-	glp->status = GG_STATUS_AVAIL;
+	glp->status = ggp_to_gg_status(status, &glp->status_descr);
 	glp->tls = 0;
 
 	info->session = gg_login(glp);
@@ -1822,26 +1823,20 @@ static void ggp_get_info(PurpleConnection *gc, const char *name)
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
+	purple_debug_info("gg", "ggp_get_info(): Added seq %u", seq);
 }
 /* }}} */
 
 /* static void ggp_set_status(PurpleAccount *account, PurpleStatus *status) {{{ */
-static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
+static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 {
-	PurpleConnection *gc;
-	GGPInfo *info;
-	const char *status_id, *msg;
+	const char *status_id = purple_status_get_id(status);
 	int new_status, new_status_descr;
+	const char *new_msg;
 
-	if (!purple_status_is_active(status))
-		return;
+	g_return_val_if_fail(msg != NULL, 0);
 
-	gc = purple_account_get_connection(account);
-	info = gc->proto_data;
-
-	status_id = purple_status_get_id(status);
-
-	purple_debug_info("gg", "ggp_set_status: Requested status = %s\n",
+	purple_debug_info("gg", "ggp_to_gg_status: Requested status = %s\n",
 			status_id);
 
 	if (strcmp(status_id, "available") == 0) {
@@ -1860,22 +1855,45 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 		new_status = GG_STATUS_AVAIL;
 		new_status_descr = GG_STATUS_AVAIL_DESCR;
 		purple_debug_info("gg",
-			"ggp_set_status: uknown status requested (status_id=%s)\n",
+			"ggp_set_status: unknown status requested (status_id=%s)\n",
 			status_id);
 	}
 
-	msg = purple_status_get_attr_string(status, "message");
+	new_msg = purple_status_get_attr_string(status, "message");
 
-	if (msg == NULL) {
-		gg_change_status(info->session, new_status);
-	} else {
-		gchar *tmp, *new_msg;
-
-		tmp = charset_convert(msg, "UTF-8", "CP1250");
-		new_msg = purple_markup_strip_html(tmp);
+	if(new_msg) {
+		char *tmp = purple_markup_strip_html(new_msg);
+		*msg = charset_convert(tmp, "UTF-8", "CP1250");
 		g_free(tmp);
 
-		gg_change_status_descr(info->session, new_status_descr, new_msg);
+		return new_status_descr;
+	} else {
+		*msg = NULL;
+		return new_status;
+	}
+}
+/* }}} */
+
+/* static void ggp_set_status(PurpleAccount *account, PurpleStatus *status) {{{ */
+static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
+{
+	PurpleConnection *gc;
+	GGPInfo *info;
+	int new_status;
+	char *new_msg = NULL;
+
+	if (!purple_status_is_active(status))
+		return;
+
+	gc = purple_account_get_connection(account);
+	info = gc->proto_data;
+
+	new_status = ggp_to_gg_status(status, &new_msg);
+
+	if (new_msg == NULL) {
+		gg_change_status(info->session, new_status);
+	} else {
+		gg_change_status_descr(info->session, new_status, new_msg);
 		g_free(new_msg);
 	}
 
@@ -1998,7 +2016,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 
 	serv_got_chat_in(gc, id,
 			 purple_account_get_username(purple_connection_get_account(gc)),
-			 0, message, time(NULL));
+			 flags, message, time(NULL));
 
 	return 0;
 }
@@ -2152,6 +2170,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 /* }}} */

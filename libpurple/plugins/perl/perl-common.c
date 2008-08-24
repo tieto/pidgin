@@ -32,7 +32,10 @@ magic_free_object(pTHX_ SV *sv, MAGIC *mg)
 
 static MGVTBL vtbl_free_object =
 {
-	NULL, NULL, NULL, NULL, magic_free_object, NULL, NULL
+	0, 0, 0, 0, magic_free_object, 0, 0
+#if PERL_API_REVISION > 5 || (PERL_API_REVISION == 5 && PERL_API_VERSION >= 10)
+	, 0
+#endif
 };
 
 static SV *
@@ -173,7 +176,6 @@ execute_perl(const char *function, int argc, char **args)
 {
 	int count = 0, i, ret_value = 1;
 	SV *sv_args[argc];
-	STRLEN na;
 	dSP;
 	PERL_SET_CONTEXT(my_perl);
 	/*
@@ -204,7 +206,7 @@ execute_perl(const char *function, int argc, char **args)
 	if (SvTRUE(ERRSV)) {
 		purple_debug(PURPLE_DEBUG_ERROR, "perl",
 				   "Perl function %s exited abnormally: %s\n",
-				   function, SvPV(ERRSV, na));
+				   function, SvPVutf8_nolen(ERRSV));
 		(void)POPs;
 	} else if (count != 1) {
 		/*
@@ -232,7 +234,7 @@ execute_perl(const char *function, int argc, char **args)
 			 * of hackish.  I should fix it.  Look how long this comment is.
 			 * Holy crap.
 			 */
-			args[i] = g_strdup(SvPV(sv_args[i], na));
+			args[i] = g_strdup(SvPVutf8_nolen(sv_args[i]));
 		}
 	}
 
@@ -378,7 +380,6 @@ purple_perl_sv_from_value(const PurpleValue *value, va_list list)
 void *
 purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 {
-	STRLEN na;
 
 	switch (purple_value_get_type(value)) {
 		case PURPLE_TYPE_BOOLEAN: return (void *)SvIV(sv);
@@ -388,7 +389,7 @@ purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 		case PURPLE_TYPE_ULONG:   return (void *)SvUV(sv);
 		case PURPLE_TYPE_INT64:   return (void *)SvIV(sv);
 		case PURPLE_TYPE_UINT64:  return (void *)SvUV(sv);
-		case PURPLE_TYPE_STRING:  return g_strdup((void *)SvPV(sv, na));
+		case PURPLE_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
 		case PURPLE_TYPE_POINTER: return (void *)SvIV(sv);
 		case PURPLE_TYPE_BOXED:   return (void *)SvIV(sv);
 

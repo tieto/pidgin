@@ -44,9 +44,9 @@ typedef struct _qq_group {
 	/* all these will be saved when we exit Purple */
 	qq_group_member_status my_status;	/* my status for this group */
 	gchar *my_status_desc;			/* my status description */
-	guint32 internal_group_id;
-	guint32 external_group_id;
-	guint8 group_type;			/* permanent or temporory */
+	guint32 id;
+	guint32 ext_id;
+	guint8 type8;			/* permanent or temporory */
 	guint32 creator_uid;
 	guint32 group_category;
 	guint8 auth_type;

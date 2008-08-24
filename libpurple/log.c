@@ -1067,7 +1067,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 				set->normalized_name = g_strdup(purple_normalize(account, name));
 
 				/* Chat for .chat or .system at the end of the name to determine the type. */
-				if (len > 7) {
+				if (len >= 7) {
 					gchar *tmp = &name[len - 7];
 					if (!strcmp(tmp, ".system")) {
 						set->type = PURPLE_LOG_SYSTEM;
@@ -1083,7 +1083,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 				}
 
 				/* Determine if this (account, name) combination exists as a buddy. */
-				if (account != NULL)
+				if (account != NULL && name != NULL && *name != '\0')
 					set->buddy = (purple_find_buddy(account, name) != NULL);
 				else
 					set->buddy = FALSE;

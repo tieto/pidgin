@@ -3776,7 +3776,7 @@ msgstr "Nama Belakang"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "Email"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
@@ -3807,16 +3807,6 @@ msgstr "Protokol Plugin Bonjour"
 #: ../libpurple/protocols/bonjour/bonjour.c:610
 msgid "Purple Person"
 msgstr "Orang Ungu"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "E-mail"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5429,7 +5419,7 @@ msgstr "Masukkan satu atau beberapa bagian untuk mencari pengguna XMPP yang sesu
 #: ../libpurple/protocols/novell/novell.c:1490
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Alamat Email"
 
 #: ../libpurple/protocols/jabber/buddy.c:2413
@@ -6470,7 +6460,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "Kesalahan Syntax (kemungkinan bug klien)"
 
 #: ../libpurple/protocols/msn/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Alamat email tidak valid"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -6975,8 +6965,8 @@ msgid "Home Fax"
 msgstr "Faksimili Rumah"
 
 #: ../libpurple/protocols/msn/msn.c:1766
-msgid "Personal E-Mail"
-msgstr "E-mail Pribadi"
+msgid "Personal Email"
+msgstr "Email Pribadi"
 
 #: ../libpurple/protocols/msn/msn.c:1767
 msgid "Personal IM"
@@ -7037,7 +7027,7 @@ msgid "Work Fax"
 msgstr "Faksimili Kantor"
 
 #: ../libpurple/protocols/msn/msn.c:1797
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Email Kantor"
 
 #: ../libpurple/protocols/msn/msn.c:1798
@@ -8627,12 +8617,12 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Anda menerima e-mail ICQ dari %s [%s]\n"
+"Anda menerima email ICQ dari %s [%s]\n"
 "\n"
 "Pesannya adalah:\n"
 "%s"
@@ -8805,13 +8795,13 @@ msgstr "Nama Layar"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Tidak ditemukan hasil untuk alamat e-mail %s"
+msgid "No results found for email address %s"
+msgstr "Tidak ditemukan hasil untuk alamat email %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "Anda akan menerima e-mail menanyakan konfirmasi %s."
+msgid "You should receive an email asking to confirm %s."
+msgstr "Anda akan menerima email menanyakan konfirmasi %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
 msgid "Account Confirmation Requested"
@@ -8838,17 +8828,17 @@ msgstr "Kesalahan 0x%04x: Tidak dapat memformat nama layar karena nama layar yan
 
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
 msgstr "Kesalahan 0x%04x: Tidak dapat merubah alamat email karena sudah terdapat permohonan tertunda untuk nama layar ini."
 
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
 msgstr "Kesalahan 0x%04x: Tidak dapat merubah alamat email karena alamat yang diberikan memiliki terlalu banyak nama layar yang berasosiasi dengannya."
 
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
 msgstr "Kesalahan 0x%04x: Tidak dapat merubah alamat email karena alamat yang diberikan tidak valid."
 
 #: ../libpurple/protocols/oscar/oscar.c:4023
@@ -8858,7 +8848,7 @@ msgstr "Kesalahan 0x%04x: Kesalahan tidak dikenal."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Alamat email untuk %s adalah %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
@@ -9080,15 +9070,15 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "Anda dapat mengajukan ulang otorisasi dari teman-teman ini dengan klik kanan pada mereka dan memilih \"Re-request Authorisation.\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Cari Teman berdasarkan Email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6234
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Cari teman berdasarkan alamat email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6235
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Ketika alamat email dari teman yang sedang anda cari."
 
 #: ../libpurple/protocols/oscar/oscar.c:6238
@@ -9118,11 +9108,11 @@ msgid "Confirm Account"
 msgstr "Konfirmasi Akun"
 
 #: ../libpurple/protocols/oscar/oscar.c:6432
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Tampilkan Alamat Email yang Terdaftar Sekarang"
 
 #: ../libpurple/protocols/oscar/oscar.c:6436
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Ganti Alamat Email yang Terdaftar Sekarang"
 
 #: ../libpurple/protocols/oscar/oscar.c:6443
@@ -9130,7 +9120,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Tampilkan Teman yang Menunggu Otorisasi"
 
 #: ../libpurple/protocols/oscar/oscar.c:6449
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Cari Teman berdasarkan Alamat Email..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6454
@@ -9211,10 +9201,6 @@ msgstr "Golongan Darah"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "ST/Universitas"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Email"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -11856,7 +11842,7 @@ msgstr "Nama Pengguna: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Email: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12181,7 +12167,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Layanan dir sementara tidak tersedia."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Pencarian Email dibatasi."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15045,8 +15031,8 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "Warna untuk menggambar hyperlink saat mouse berada di atasnya."
 
 #: ../pidgin/gtkimhtml.c:1583
-msgid "_Copy E-Mail Address"
-msgstr "_Salin Alamat E-Mail"
+msgid "_Copy Email Address"
+msgstr "_Salin Alamat Email"
 
 #: ../pidgin/gtkimhtml.c:1595
 msgid "_Open Link in Browser"
@@ -15452,10 +15438,10 @@ msgstr[1] "%s memiliki %d pesan-pesan baru."
 
 #: ../pidgin/gtknotify.c:569
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>%d e-mail baru.</b>"
-msgstr[1] "<b>%d beberapa e-mails baru.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
+msgstr[0] "<b>%d email baru.</b>"
+msgstr[1] "<b>%d beberapa emails baru.</b>"
 
 #: ../pidgin/gtknotify.c:997
 #, c-format
@@ -16661,24 +16647,24 @@ msgstr "_Asosiasikan Teman"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
-msgstr "Tidak dapat mengirim e-mail"
+msgid "Unable to send email"
+msgstr "Tidak dapat mengirim email"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
 msgid "The evolution executable was not found in the PATH."
 msgstr "Eksekusi Evolution tidak ditemukan dalam PATH."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
-msgstr "Alamat e-mail tidak ditemukan untuk teman ini."
+msgid "An email address was not found for this buddy."
+msgstr "Alamat email tidak ditemukan untuk teman ini."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
 msgid "Add to Address Book"
 msgstr "Tambahkan ke Buku Alamat"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
-msgstr "Kirim E-Mail"
+msgid "Send Email"
+msgstr "Kirim Email"
 
 #. Configuration frame
 #: ../pidgin/plugins/gevolution/gevolution.c:412
@@ -16735,8 +16721,8 @@ msgid "Last name:"
 msgstr "Nama belakang"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement

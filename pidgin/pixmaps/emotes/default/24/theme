@@ -26,6 +26,7 @@ shout.png           >:o     >:O
 ! monkey.png        :-(|)  :(|)     8-|)
 ! cyclops.png       O-) o-)
 
+
 # Following AIM 6.1
 [AIM]
 smile.png           :-)     :)
@@ -125,11 +126,12 @@ thunder.png         (li)
 party.png           <:o)
 eyeroll.png         8-)
 yawn.png            |-) 
+bunny.png           ('.')
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
 
 # Hidden MSN emotes
-sigarette.png      	(ci)    (CI)
+cigarette.png      	(ci)    (CI)
 handcuffs.png       (%)
 console.png			(xx)    (XX)
 fingers-crossed.png	(yn)    (YN)
@@ -251,6 +253,8 @@ kissed.png          *KISSED*
 stop.png            *STOP*
 kiss.png            :-{} :-*
 kissing.png         *KISSING* 
+victory.png         *YAHOO*
+silly.png           %)
 embarrassed.png     :-[
 devil.png           ]:->
 angel.png           O:-)
@@ -363,28 +367,28 @@ yin-yang.png        (%)
 
 # Following MySpaceIM Beta 1.0.697.0
 [MySpaceIM]
-smile-big.png		    :D      :-D
-devil.png		        }:)
-confused.png		    :Z
-glasses-nerdy.png	  B)
-bulgy-eyes.png		  %)
-freaked-out.png		  :E
-smile.png		        :)      :-)
-in-love.png		      :X
-laugh.png		        :))
-mohawk.png		      -:
-mad-tongue.png		  X(
-messed.png		      X)
-glasses-nerdy.png	  Q)
-doh.png			        :G
-pirate.png		      P)
-shock.png		        :O
-sidefrown.png		    :{
-sinister.png		    :B
-smirk.png		        :,
-neutral.png		      :|
-tongue.png		      :P      :p
-pissed-off.png		  B|
-wink.png		        ;-)     ;)
-sad.png			        :[
+smile-big.png	    :D      :-D
+devil.png	    }:)
+confused.png	    :Z
+glasses-nerdy.png   B)
+bulgy-eyes.png	    %)
+freaked-out.png	    :E
+smile.png	    :)      :-)
+in-love.png	    :X
+laugh.png	    :))
+mohawk.png	    -:
+mad-tongue.png	    X(
+messed.png	    X)
+glasses-nerdy.png   Q)
+doh.png		    :G
+pirate.png	    P)
+shock.png	    :O
+sidefrown.png	    :{
+sinister.png	    :B
+smirk.png	    :,
+neutral.png	    :|
+tongue.png	    :P      :p
+pissed-off.png	    B|
+wink.png	    ;-)     ;)
+sad.png		    :[
 kiss.png            :x

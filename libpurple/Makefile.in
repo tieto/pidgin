@@ -38,6 +38,10 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 @ENABLE_DBUS_TRUE@bin_PROGRAMS = purple-client-example$(EXEEXT)
+
+# INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.
+# We want to use SSL_CERTIFICATES_DIR when it's not empty.
+@INSTALL_SSL_CERTIFICATES_FALSE@am__append_1 = -DSSL_CERTIFICATES_DIR=\"$(SSL_CERTIFICATES_DIR)\"
 subdir = libpurple
 DIST_COMMON = $(am__libpurpleinclude_HEADERS_DIST) $(noinst_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
@@ -79,9 +83,9 @@ am__libpurple_la_SOURCES_DIST = account.c accountopt.c blist.c \
 	eventloop.c ft.c idle.c imgstore.c log.c mime.c nat-pmp.c \
 	network.c ntlm.c notify.c plugin.c pluginpref.c pounce.c \
 	prefs.c privacy.c proxy.c prpl.c request.c roomlist.c \
-	savedstatuses.c server.c signals.c dnsquery.c dnssrv.c \
-	status.c stringref.c stun.c sound.c sslconn.c upnp.c util.c \
-	value.c version.c xmlnode.c whiteboard.c dbus-server.c \
+	savedstatuses.c server.c signals.c smiley.c dnsquery.c \
+	dnssrv.c status.c stringref.c stun.c sound.c sslconn.c upnp.c \
+	util.c value.c version.c xmlnode.c whiteboard.c dbus-server.c \
 	dbus-useful.c
 am__objects_1 = account.lo accountopt.lo blist.lo buddyicon.lo \
 	certificate.lo cipher.lo circbuffer.lo cmds.lo connection.lo \
@@ -89,9 +93,9 @@ am__objects_1 = account.lo accountopt.lo blist.lo buddyicon.lo \
 	ft.lo idle.lo imgstore.lo log.lo mime.lo nat-pmp.lo network.lo \
 	ntlm.lo notify.lo plugin.lo pluginpref.lo pounce.lo prefs.lo \
 	privacy.lo proxy.lo prpl.lo request.lo roomlist.lo \
-	savedstatuses.lo server.lo signals.lo dnsquery.lo dnssrv.lo \
-	status.lo stringref.lo stun.lo sound.lo sslconn.lo upnp.lo \
-	util.lo value.lo version.lo xmlnode.lo whiteboard.lo
+	savedstatuses.lo server.lo signals.lo smiley.lo dnsquery.lo \
+	dnssrv.lo status.lo stringref.lo stun.lo sound.lo sslconn.lo \
+	upnp.lo util.lo value.lo version.lo xmlnode.lo whiteboard.lo
 @ENABLE_DBUS_TRUE@am__objects_2 = dbus-server.lo dbus-useful.lo
 am_libpurple_la_OBJECTS = $(am__objects_1) $(am__objects_2)
 libpurple_la_OBJECTS = $(am_libpurple_la_OBJECTS)
@@ -139,8 +143,8 @@ am__libpurpleinclude_HEADERS_DIST = account.h accountopt.h blist.h \
 	log.h mime.h nat-pmp.h network.h notify.h ntlm.h plugin.h \
 	pluginpref.h pounce.h prefs.h privacy.h proxy.h prpl.h \
 	request.h roomlist.h savedstatuses.h server.h signals.h \
-	dnsquery.h dnssrv.h status.h stringref.h stun.h sound.h \
-	sslconn.h upnp.h util.h value.h xmlnode.h whiteboard.h \
+	smiley.h dnsquery.h dnssrv.h status.h stringref.h stun.h \
+	sound.h sslconn.h upnp.h util.h value.h xmlnode.h whiteboard.h \
 	purple.h version.h dbus-bindings.h dbus-purple.h dbus-server.h \
 	dbus-useful.h dbus-define-api.h dbus-types.h
 libpurpleincludeHEADERS_INSTALL = $(INSTALL_HEADER)
@@ -152,6 +156,7 @@ CTAGS = ctags
 DIST_SUBDIRS = gconf plugins protocols tests . example
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALLOCA = @ALLOCA@
 ALL_LINGUAS = @ALL_LINGUAS@
 AMTAR = @AMTAR@
 AR = @AR@
@@ -317,6 +322,7 @@ SILC_LIBS = @SILC_LIBS@
 SM_LIBS = @SM_LIBS@
 SQLITE3_CFLAGS = @SQLITE3_CFLAGS@
 SQLITE3_LIBS = @SQLITE3_LIBS@
+SSL_CERTIFICATES_DIR = @SSL_CERTIFICATES_DIR@
 STARTUP_NOTIFICATION_CFLAGS = @STARTUP_NOTIFICATION_CFLAGS@
 STARTUP_NOTIFICATION_LIBS = @STARTUP_NOTIFICATION_LIBS@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
@@ -468,6 +474,7 @@ purple_coresources = \
 	savedstatuses.c \
 	server.c \
 	signals.c \
+	smiley.c \
 	dnsquery.c \
 	dnssrv.c\
 	status.c \
@@ -520,6 +527,7 @@ purple_coreheaders = \
 	savedstatuses.h \
 	server.h \
 	signals.h \
+	smiley.h \
 	dnsquery.h \
 	dnssrv.h \
 	status.h \
@@ -550,7 +558,7 @@ purple_builtheaders = purple.h version.h
 @ENABLE_DBUS_TRUE@dbus_headers = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 @ENABLE_DBUS_TRUE@dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
 @ENABLE_DBUS_TRUE@                connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
-@ENABLE_DBUS_TRUE@                savedstatuses.h status.h server.h util.h xmlnode.h prpl.h
+@ENABLE_DBUS_TRUE@                savedstatuses.h smiley.h status.h server.h util.h xmlnode.h prpl.h
 
 @ENABLE_DBUS_TRUE@purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 @ENABLE_DBUS_TRUE@		$(purple_builtheaders)
@@ -607,18 +615,12 @@ libpurple_la_LIBADD = \
 	$(INTLLIBS) \
 	-lm
 
-AM_CPPFLAGS = \
-	-DBR_PTHREADS=0 \
-	-DDATADIR=\"$(datadir)\" \
+AM_CPPFLAGS = -DBR_PTHREADS=0 -DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
-	$(GLIB_CFLAGS) \
-	$(DEBUG_CFLAGS) \
-	$(DBUS_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(NETWORKMANAGER_CFLAGS)
-
+	-DSYSCONFDIR=\"$(sysconfdir)\" $(GLIB_CFLAGS) $(DEBUG_CFLAGS) \
+	$(DBUS_CFLAGS) $(LIBXML_CFLAGS) $(NETWORKMANAGER_CFLAGS) \
+	$(am__append_1)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -790,6 +792,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/savedstatuses.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/signals.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smiley.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sound.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslconn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/status.Plo@am__quote@

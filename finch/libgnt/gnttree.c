@@ -110,13 +110,14 @@ readjust_columns(GntTree *tree)
 	gnt_widget_get_size(GNT_WIDGET(tree), &width, NULL);
 	if (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_NO_BORDER))
 		width -= 2;
+	width -= 1;  /* Exclude the scrollbar from the calculation */
 	for (i = 0, total = 0; i < tree->ncol ; i++) {
 		if (tree->columns[i].flags & GNT_TREE_COLUMN_INVISIBLE)
 			continue;
 		if (tree->columns[i].flags & GNT_TREE_COLUMN_FIXED_SIZE)
-			width -= WIDTH(i) + 1;
+			width -= WIDTH(i) + (tree->priv->lastvisible != i);
 		else
-			total += WIDTH(i) + 1;
+			total += WIDTH(i) + (tree->priv->lastvisible != i);
 	}
 
 	if (total == 0)
@@ -812,11 +813,11 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			changed = FALSE;
 		if (changed) {
 			redraw_tree(tree);
-			g_source_remove(tree->priv->search_timeout);
-			tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
 		} else {
 			gnt_bindable_perform_action_key(GNT_BINDABLE(tree), text);
 		}
+		g_source_remove(tree->priv->search_timeout);
+		tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
 		return TRUE;
 	} else if (text[0] == ' ' && text[1] == 0) {
 		/* Space pressed */

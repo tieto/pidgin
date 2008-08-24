@@ -1331,7 +1331,7 @@ msgstr "Системный журнал"
 
 #: ../finch/gntnotify.c:165
 msgid "Emails"
-msgstr "Адреса e-mail"
+msgstr "Адреса email"
 
 #: ../finch/gntnotify.c:171 ../finch/gntnotify.c:226
 msgid "You have mail!"
@@ -3852,8 +3852,8 @@ msgstr "Фамилия"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:555
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1068
-msgid "E-Mail"
-msgstr "E-mail"
+msgid "Email"
+msgstr "Email"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:402
 #: ../libpurple/protocols/bonjour/bonjour.c:708
@@ -3883,16 +3883,6 @@ msgstr "Модуль протокола Bonjour"
 #: ../libpurple/protocols/bonjour/bonjour.c:652
 msgid "Purple Person"
 msgstr ""
-
-#: ../libpurple/protocols/bonjour/bonjour.c:705
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:998
-#: ../libpurple/protocols/silc/silc.c:986
-#: ../libpurple/protocols/silc/silc.c:1227
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "E-mail"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5543,8 +5533,8 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3753
 #: ../libpurple/protocols/oscar/oscar.c:3762
-msgid "E-Mail Address"
-msgstr "Адрес e-mail"
+msgid "Email Address"
+msgstr "Адрес email"
 
 #: ../libpurple/protocols/jabber/buddy.c:2471
 #: ../libpurple/protocols/jabber/buddy.c:2472
@@ -6591,8 +6581,8 @@ msgstr "Синтаксическая ошибка (вероятно, ошибк�
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
-msgstr "Неверный адрес e-mail"
+msgid "Invalid email address"
+msgstr "Неверный адрес email"
 
 #: ../libpurple/protocols/msn/error.c:49
 #: ../libpurple/protocols/msnp9/error.c:49
@@ -7250,8 +7240,8 @@ msgstr "Домашний факс"
 
 #: ../libpurple/protocols/msn/msn.c:1826
 #: ../libpurple/protocols/msnp9/msn.c:1667
-msgid "Personal E-Mail"
-msgstr "Персональный e-mail"
+msgid "Personal Email"
+msgstr "Персональный email"
 
 #: ../libpurple/protocols/msn/msn.c:1827
 #: ../libpurple/protocols/msnp9/msn.c:1668
@@ -7326,8 +7316,8 @@ msgstr "Рабочий факс"
 
 #: ../libpurple/protocols/msn/msn.c:1857
 #: ../libpurple/protocols/msnp9/msn.c:1698
-msgid "Work E-Mail"
-msgstr "Рабочий e-mail"
+msgid "Work Email"
+msgstr "Рабочий email"
 
 #: ../libpurple/protocols/msn/msn.c:1858
 #: ../libpurple/protocols/msnp9/msn.c:1699
@@ -9137,12 +9127,12 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2495
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Вы получили ICQ e-mail от %s [%s]\n"
+"Вы получили ICQ email от %s [%s]\n"
 "\n"
 "Сообщение:\n"
 "%s"
@@ -9339,13 +9329,13 @@ msgstr[2] "Следующие имена пользователей соотне
 
 #: ../libpurple/protocols/oscar/oscar.c:3987
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Ничего не найдено для адреса e-mail %s"
+msgid "No results found for email address %s"
+msgstr "Ничего не найдено для адреса email %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4008
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "Вы должны получить e-mail с просьбой подтвердить %s."
+msgid "You should receive an email asking to confirm %s."
+msgstr "Вы должны получить email с просьбой подтвердить %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:4010
 msgid "Account Confirmation Requested"
@@ -9379,28 +9369,28 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4049
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Ошибка 0x%04x: Не удаётся изменить адрес e-mail, так как для этого имени "
+"Ошибка 0x%04x: Не удаётся изменить адрес email, так как для этого имени "
 "пользователя уже есть ожидающий запрос."
 
 #: ../libpurple/protocols/oscar/oscar.c:4051
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Ошибка 0x%04x: Не удаётся изменить адрес e-mail, так как с заданным адресом "
+"Ошибка 0x%04x: Не удаётся изменить адрес email, так как с заданным адресом "
 "соотнесено слишком много имён пользователей."
 
 #: ../libpurple/protocols/oscar/oscar.c:4053
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Ошибка 0x%04x: Не удаётся изменить адрес e-mail, так как заданный адрес "
+"Ошибка 0x%04x: Не удаётся изменить адрес email, так как заданный адрес "
 "неверен."
 
 #: ../libpurple/protocols/oscar/oscar.c:4055
@@ -9414,8 +9404,8 @@ msgstr "Ошибка изменения информации об учётной
 
 #: ../libpurple/protocols/oscar/oscar.c:4063
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "Адрес e-mail для %s: %s"
+msgid "The email address for %s is %s"
+msgstr "Адрес email для %s: %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4065
 msgid "Account Info"
@@ -9690,16 +9680,16 @@ msgstr ""
 "них правой кнопкой мыши и выбрав \"Повторный запрос авторизации\"."
 
 #: ../libpurple/protocols/oscar/oscar.c:6347
-msgid "Find Buddy by E-Mail"
-msgstr "Найти собеседника по e-mail"
+msgid "Find Buddy by Email"
+msgstr "Найти собеседника по email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6348
-msgid "Search for a buddy by e-mail address"
-msgstr "Искать собеседника по адресу e-mail"
+msgid "Search for a buddy by email address"
+msgstr "Искать собеседника по адресу email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6349
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Введите адрес e-mail собеседника, которого вы ищете."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Введите адрес email собеседника, которого вы ищете."
 
 #: ../libpurple/protocols/oscar/oscar.c:6352
 msgid "_Search"
@@ -9728,20 +9718,20 @@ msgid "Confirm Account"
 msgstr "Подтвердить учётную запись"
 
 #: ../libpurple/protocols/oscar/oscar.c:6546
-msgid "Display Currently Registered E-Mail Address"
-msgstr "Показать текущий зарегистрированный адрес e-mail"
+msgid "Display Currently Registered Email Address"
+msgstr "Показать текущий зарегистрированный адрес email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6550
-msgid "Change Currently Registered E-Mail Address..."
-msgstr "Изменить текущий зарегистрированный адрес e-mail..."
+msgid "Change Currently Registered Email Address..."
+msgstr "Изменить текущий зарегистрированный адрес email..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6557
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Показать собеседников без авторизации"
 
 #: ../libpurple/protocols/oscar/oscar.c:6563
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "Искать собеседника по адресу e-mail..."
+msgid "Search for Buddy by Email Address..."
+msgstr "Искать собеседника по адресу email..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6568
 msgid "Search for Buddy by Information"
@@ -9819,10 +9809,6 @@ msgstr "Группа крови"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr ""
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "E-mail"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12516,8 +12502,8 @@ msgstr "Имя пользователя: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:367
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
-msgstr "E-mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
+msgstr "Email: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:369
 #: ../libpurple/protocols/silc10/util.c:361
@@ -12847,8 +12833,8 @@ msgstr "Служба каталогов временно недоступна."
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
-msgstr "Поиск e-mail запрещён."
+msgid "Email lookup restricted."
+msgstr "Поиск email запрещён."
 
 #: ../libpurple/protocols/toc/toc.c:533
 #, c-format
@@ -15896,8 +15882,8 @@ msgid "Enable typing notification"
 msgstr ""
 
 #: ../pidgin/gtkimhtml.c:1688
-msgid "_Copy E-Mail Address"
-msgstr "_Скопировать адрес e-mail"
+msgid "_Copy Email Address"
+msgstr "_Скопировать адрес email"
 
 #: ../pidgin/gtkimhtml.c:1700
 msgid "_Open Link in Browser"
@@ -16303,8 +16289,8 @@ msgstr[2] "%s имеет %d новых сообщений."
 
 #: ../pidgin/gtknotify.c:599
 #, fuzzy, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>Подробности о модуле</b>"
 msgstr[1] "<b>Подробности о модуле</b>"
 msgstr[2] "<b>Подробности о модуле</b>"
@@ -17608,15 +17594,15 @@ msgstr "Соотнести собеседника"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:242
 #: ../pidgin/plugins/gevolution/gevolution.c:248
-msgid "Unable to send e-mail"
-msgstr "Не удаётся отправить e-mail"
+msgid "Unable to send email"
+msgstr "Не удаётся отправить email"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:243
 msgid "The evolution executable was not found in the PATH."
 msgstr "Исполняемый файл evolution не был найден в PATH."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:249
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:275
@@ -17624,8 +17610,8 @@ msgid "Add to Address Book"
 msgstr "Добавить в адресную книгу"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:287
-msgid "Send E-Mail"
-msgstr "Отправить e-mail"
+msgid "Send Email"
+msgstr "Отправить email"
 
 #. Configuration frame
 #: ../pidgin/plugins/gevolution/gevolution.c:414
@@ -17684,8 +17670,8 @@ msgid "Last name:"
 msgstr "Фамилия:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:380
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement

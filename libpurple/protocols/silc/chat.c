@@ -1315,7 +1315,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 			g_free(tmp);
 
 			if (ret)
-				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg, time(NULL));
+				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg, time(NULL));
 			return ret;
 		}
 	}
@@ -1326,7 +1326,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 					       (unsigned char *)msg2,
 					       strlen(msg2));
 	if (ret) {
-		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg,
+		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg,
 				 time(NULL));
 	}
 	g_free(tmp);

@@ -3913,7 +3913,7 @@ msgstr "Etternavn"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "E-post"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:401
@@ -3946,16 +3946,6 @@ msgstr "Bonjour-protokolltillegg"
 #, fuzzy
 msgid "Purple Person"
 msgstr "Ny Person"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:703
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:982
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "E-post"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5626,7 +5616,7 @@ msgstr "Fyll inn ett eller flere felt for å søke etter matchende XMPP-brukere.
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3695
 #: ../libpurple/protocols/oscar/oscar.c:3704
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "E-postadresse"
 
 #
@@ -6688,7 +6678,7 @@ msgstr "Syntaksfeil (sannsynligvis en Pidgin-bug)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Ugyldig epostadresse"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7326,7 +7316,7 @@ msgstr "Fax"
 
 #: ../libpurple/protocols/msn/msn.c:1804
 #: ../libpurple/protocols/msnp9/msn.c:1657
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "E-post"
 
 #: ../libpurple/protocols/msn/msn.c:1805
@@ -7406,7 +7396,7 @@ msgstr "Fax Jobb"
 
 #: ../libpurple/protocols/msn/msn.c:1835
 #: ../libpurple/protocols/msnp9/msn.c:1688
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "E-post Arbeid"
 
 #: ../libpurple/protocols/msn/msn.c:1836
@@ -9144,7 +9134,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2444
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9322,12 +9312,12 @@ msgstr "Skjermnavn"
 
 #: ../libpurple/protocols/oscar/oscar.c:3929
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Ingen resultater funnet for e-postadresse %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3950
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Du vil motta en e-post hvor du blir bedt om å bekrefte %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:3952
@@ -9355,17 +9345,17 @@ msgstr "Feil 0x%04x: Kunne ikke formatere skjermnavnet fordi det forespurte skje
 
 #: ../libpurple/protocols/oscar/oscar.c:3995
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
 msgstr "Feil 0x%04x: Kunne ikke endre e-postadressen fordi det finnes en utestående forespørsel for dette skjermnavnet."
 
 #: ../libpurple/protocols/oscar/oscar.c:3998
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
 msgstr "Feil 0x%04x: Kunne ikke endre e-postadressen fordi den gitte adressen har for mange skjermnavn assosiert ved seg."
 
 #: ../libpurple/protocols/oscar/oscar.c:4001
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
 msgstr "Feil 0x%04x: Kunne ikke endre e-postadressen fordi den gitte adressen er ugyldig."
 
 #: ../libpurple/protocols/oscar/oscar.c:4004
@@ -9375,7 +9365,7 @@ msgstr "Feil 0x%04x: Ukjent feil."
 
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "E-postadressen for %s er %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4016
@@ -9596,15 +9586,15 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "Du kan spørre om godkjenning på nytt hos disse kontaktene ved å høyreklikke på dem og velge «Spør på nytt om godkjenning»."
 
 #: ../libpurple/protocols/oscar/oscar.c:6256
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Finn kontakt utifra e-post"
 
 #: ../libpurple/protocols/oscar/oscar.c:6257
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Søk etter en kontakt ved hjelp av e-postadresse"
 
 #: ../libpurple/protocols/oscar/oscar.c:6258
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Skriv inn e-postadressen til den du søker etter."
 
 #: ../libpurple/protocols/oscar/oscar.c:6261
@@ -9635,11 +9625,11 @@ msgstr "Bekrefte konto"
 
 #: ../libpurple/protocols/oscar/oscar.c:6455
 #, fuzzy
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Vis nåværende registrert adresse"
 
 #: ../libpurple/protocols/oscar/oscar.c:6459
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Endre Nåværende Registrert e-post Adresse..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6466
@@ -9647,7 +9637,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Vis kontakter som venter på godkjenning"
 
 #: ../libpurple/protocols/oscar/oscar.c:6472
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Søk etter kontakter ved hjelp av e-postadresser..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6477
@@ -9731,10 +9721,6 @@ msgstr "Blodtype"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Universitet"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "E-post"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12479,7 +12465,7 @@ msgstr "Brukernavn: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "E-post: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:370
@@ -12816,7 +12802,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Katalogtjenesten er midlertidig utilgjengelig."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "E-postoppslag er begrenset."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15780,7 +15766,7 @@ msgid "Color to draw the name of an action message."
 msgstr ""
 
 #: ../pidgin/gtkimhtml.c:1631
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopier e-postadresse"
 
 #: ../pidgin/gtkimhtml.c:1643
@@ -16198,8 +16184,8 @@ msgstr[1] "%s har %d nye beskjeder."
 
 #: ../pidgin/gtknotify.c:570
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d ny e-post.</b>"
 msgstr[1] "<b>%d nye e-poster.</b>"
 
@@ -17486,7 +17472,7 @@ msgstr "_Assosier kompis"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Klarte ikke å sende e-post"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17494,7 +17480,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "Den kjørbare filen til Evolution ble ikke funnet i banen."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "En e-post adresse ble ikke funnet for denne kontakten."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17502,7 +17488,7 @@ msgid "Add to Address Book"
 msgstr "Legg til i adresseboka"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Send E-post"
 
 #. Configuration frame
@@ -17561,7 +17547,7 @@ msgid "Last name:"
 msgstr "Etternavn:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "E-post:"
 
 #. *< type

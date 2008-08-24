@@ -871,7 +871,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
 			username = g_markup_escape_text(im->from, -1);
-			serv_got_attention(gc, username, YAHOO_BUZZ);
+			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
 			g_free(im);
@@ -1995,13 +1995,19 @@ static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 			yahoo_process_auth_new(gc, seed);
 			break;
 		default:
-			buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
-						"authentication method.  You will probably not be able "
-						"to successfully sign on to Yahoo.  Check %s for updates."), PURPLE_WEBSITE);
-			purple_notify_error(gc, "", _("Failed Yahoo! Authentication"),
-					  buf);
-			g_free(buf);
-			yahoo_process_auth_new(gc, seed); /* Can't hurt to try it anyway. */
+			{
+				GHashTable *ui_info = purple_core_get_ui_info();
+
+				buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
+							"authentication method.  You will probably not be able "
+							"to successfully sign on to Yahoo.  Check %s for updates."),
+							((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+				purple_notify_error(gc, "", _("Failed Yahoo! Authentication"),
+							buf);
+				g_free(buf);
+				yahoo_process_auth_new(gc, seed); /* Can't hurt to try it anyway. */
+				break;
+			}
 		}
 	}
 }
@@ -4090,7 +4096,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	serv_send_attention(account->gc, c->name, YAHOO_BUZZ);
+	purple_prpl_send_attention(account->gc, c->name, YAHOO_BUZZ);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -4384,7 +4390,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_send_attention,
 	yahoo_attention_types,
 
-	/* padding */
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 

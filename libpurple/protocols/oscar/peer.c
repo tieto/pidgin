@@ -636,6 +636,10 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	flags = fcntl(conn->fd, F_GETFL);
 	fcntl(conn->fd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(conn->fd, F_SETFD, FD_CLOEXEC);
+#endif
+
 	purple_input_remove(conn->watcher_incoming);
 
 	peer_connection_finalize_connection(conn);

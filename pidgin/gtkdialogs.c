@@ -67,16 +67,17 @@ struct artist {
 	char *email;
 };
 
-/* Order: Lead Developer, then Alphabetical by Last Name */
+/* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
-	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
 	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
 	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Thomas Butter",				N_("developer"), NULL},
-	{"Ka-Hing Cheung",				N_("developer"), NULL},
+	/* feel free to not translate this */
+	{N_("Ka-Hing Cheung"),			N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
-	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
+	{"Mark 'KingAnt' Doliner",		N_("developer"), "mark@kingant.net"},
+	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
 	{"Casey Harkins",               N_("developer"),   NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
 	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
@@ -85,6 +86,7 @@ static const struct developer developers[] = {
 	{"Bartosz Oler",		N_("developer"), NULL},
 	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
+	{"Elliott 'QuLogic' Sales de Andrade",	N_("developer"),	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
@@ -100,7 +102,6 @@ static const struct developer patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
-	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
 	{"Jorge 'Masca' Villaseñor", 	NULL, 	NULL},
 	{NULL, NULL, NULL}
@@ -194,7 +195,7 @@ static const struct translator current_translators[] = {
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
-	{"Occitan",					"oc", "Yannig Marchegay", "yannig@marchegay.org"},
+	{N_("Occitan"),             "oc", "Yannig Marchegay", "yannig@marchegay.org"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
@@ -211,6 +212,7 @@ static const struct translator current_translators[] = {
 	{N_("Serbian"),             "sr", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Serbian"),             "sr@Latn", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
+	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
@@ -424,11 +426,11 @@ void pidgin_dialogs_about()
 	for (i = 0; developers[i].name != NULL; i++) {
 		if (developers[i].email != NULL) {
 			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					developers[i].name, _(developers[i].role),
+					_(developers[i].name), _(developers[i].role),
 					developers[i].email, developers[i].email);
 		} else {
 			g_string_append_printf(str, "  %s (%s)<br/>",
-					developers[i].name, _(developers[i].role));
+					_(developers[i].name), _(developers[i].role));
 		}
 	}
 	g_string_append(str, "<BR/>");
@@ -686,7 +688,7 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 #ifdef LIBZEPHYR_EXT
 	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> External<br/>");
 #else
-	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Not External<br/>");
+	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Internal<br/>");
 #endif
 
 #ifdef ZEPHYR_USES_KERBEROS

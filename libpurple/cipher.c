@@ -2402,7 +2402,6 @@ purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len,
 	g_return_val_if_fail(context, FALSE);
 
 	cipher = context->cipher;
-	g_return_val_if_fail(context, FALSE);
 
 	if(cipher->ops && cipher->ops->digest)
 		return cipher->ops->digest(context, in_len, digest, out_len);

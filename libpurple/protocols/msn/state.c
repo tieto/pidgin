@@ -61,23 +61,23 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 
 	psmNode = xmlnode_new("PSM");
 	if(psmstr != NULL){
-		xmlnode_insert_data(psmNode,psmstr,strlen(psmstr));
+		xmlnode_insert_data(psmNode, psmstr, -1);
 	}
-	xmlnode_insert_child(dataNode,psmNode);
+	xmlnode_insert_child(dataNode, psmNode);
 
 	mediaNode = xmlnode_new("CurrentMedia");
 	if(mediastr != NULL){
-		xmlnode_insert_data(mediaNode,mediastr,strlen(mediastr));
+		xmlnode_insert_data(mediaNode, mediastr, -1);
 	}
-	xmlnode_insert_child(dataNode,mediaNode);
+	xmlnode_insert_child(dataNode, mediaNode);
 
 	guidNode = xmlnode_new("MachineGuid");
 	if(guidstr != NULL){
-		xmlnode_insert_data(guidNode,guidstr,strlen(guidstr));
+		xmlnode_insert_data(guidNode, guidstr, -1);
 	}
-	xmlnode_insert_child(dataNode,guidNode);
+	xmlnode_insert_child(dataNode, guidNode);
 
-	result = xmlnode_to_str(dataNode,&length);
+	result = xmlnode_to_str(dataNode, &length);
 	xmlnode_free(dataNode);
 	return result;
 }
@@ -150,16 +150,16 @@ msn_get_currentmedia(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *currentmediaNode;
 	char *currentmedia;
-	
-	purple_debug_info("msn","msn get CurrentMedia\n");
+
+	purple_debug_info("msn", "Get CurrentMedia\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode){
-		purple_debug_error("msn","PSM XML parse Error!\n");
+	if (!payloadNode) {
+		purple_debug_error("msn", "PSM XML parse Error!\n");
 		return NULL;
 	}
 	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
-	if (currentmediaNode == NULL){
-		purple_debug_info("msn","No CurrentMedia Node");
+	if (currentmediaNode == NULL) {
+		purple_debug_info("msn", "No CurrentMedia Node");
 		xmlnode_free(payloadNode);
 		return NULL;
 	}
@@ -176,16 +176,16 @@ msn_get_psm(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *psmNode;
 	char *psm;
-	
-	purple_debug_info("MSNP14","msn get PSM\n");
+
+	purple_debug_info("msn", "msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
-		purple_debug_error("MSNP14","PSM XML parse Error!\n");
+		purple_debug_error("msn", "PSM XML parse Error!\n");
 		return NULL;
 	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL){
-		purple_debug_info("MSNP14","No PSM status Node");
+		purple_debug_info("msn", "No PSM status Node");
 		xmlnode_free(payloadNode);
 		return NULL;
 	}
@@ -217,7 +217,7 @@ create_media_string(PurplePresence *presence)
 	return ret;
 }
 
-/* set the MSN's PSM info,Currently Read from the status Line 
+/* set the MSN's PSM info,Currently Read from the status Line
  * Thanks for Cris Code
  */
 void
@@ -249,7 +249,7 @@ msn_set_psm(MsnSession *session)
 	session->psm = msn_build_psm(statusline_stripped, media, NULL);
 
 	payload = session->psm;
-	purple_debug_misc("MSNP14","Sending UUX command with payload: %s\n",payload);
+	purple_debug_misc("msn", "Sending UUX command with payload: %s\n", payload);
 	trans = msn_transaction_new(cmdproc, "UUX", "%" G_GSIZE_FORMAT, strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);

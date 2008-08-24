@@ -158,6 +158,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_blist_uninit@Base 2.2.0
  purple_blist_update_buddy_icon@Base 2.2.0
  purple_blist_update_buddy_status@Base 2.2.0
+ purple_blist_update_node_icon@Base 2.5.0
  purple_buddy_get_account@Base 2.2.0
  purple_buddy_get_alias@Base 2.2.0
  purple_buddy_get_alias_only@Base 2.2.0
@@ -177,13 +178,26 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_buddy_icon_get_username@Base 2.2.0
  purple_buddy_icon_new@Base 2.2.0
  purple_buddy_icon_ref@Base 2.2.0
+ purple_buddy_icon_set_data@Base 2.5.0
  purple_buddy_icon_unref@Base 2.2.0
  purple_buddy_icon_update@Base 2.2.0
+ purple_buddy_icons_find@Base 2.5.0
+ purple_buddy_icons_find_account_icon@Base 2.5.0
+ purple_buddy_icons_find_custom_icon@Base 2.5.0
+ purple_buddy_icons_get_account_icon_timestamp@Base 2.5.0
  purple_buddy_icons_get_cache_dir@Base 2.2.0
+ purple_buddy_icons_has_custom_icon@Base 2.5.0
  purple_buddy_icons_init@Base 2.2.0
  purple_buddy_icons_is_caching@Base 2.2.0
+ purple_buddy_icons_node_find_custom_icon@Base 2.5.0
+ purple_buddy_icons_node_has_custom_icon@Base 2.5.0
+ purple_buddy_icons_node_set_custom_icon@Base 2.5.0
+ purple_buddy_icons_node_set_custom_icon_from_file@Base 2.5.0
+ purple_buddy_icons_set_account_icon@Base 2.5.0
  purple_buddy_icons_set_cache_dir@Base 2.2.0
  purple_buddy_icons_set_caching@Base 2.2.0
+ purple_buddy_icons_set_custom_icon@Base 2.5.0
+ purple_buddy_icons_set_for_user@Base 2.5.0
  purple_buddy_icons_uninit@Base 2.2.0
  purple_buddy_new@Base 2.2.0
  purple_buddy_set_icon@Base 2.2.0
@@ -194,6 +208,8 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_chat_new@Base 2.2.0
  purple_connection_destroy@Base 2.2.0
  purple_connection_error@Base 2.2.0
+ purple_connection_error_is_fatal@Base 2.5.0
+ purple_connection_error_reason@Base 2.5.0
  purple_connection_get_account@Base 2.2.0
  purple_connection_get_display_name@Base 2.2.0
  purple_connection_get_password@Base 2.2.0
@@ -204,6 +220,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_connection_set_account@Base 2.2.0
  purple_connection_set_display_name@Base 2.2.0
  purple_connection_set_state@Base 2.2.0
+ purple_connection_ssl_error@Base 2.5.0
  purple_connection_update_progress@Base 2.2.0
  purple_connections_disconnect_all@Base 2.2.0
  purple_connections_get_all@Base 2.2.0
@@ -331,6 +348,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_get_chats@Base 2.2.0
  purple_get_conversations@Base 2.2.0
  purple_get_core@Base 2.2.0
+ purple_get_host_name@Base 2.5.0
  purple_get_ims@Base 2.2.0
  purple_got_protocol_handler_uri@Base 2.2.0
  purple_group_get_accounts@Base 2.2.0
@@ -405,6 +423,8 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_notify_user_info_get_text_with_newline@Base 2.2.0
  purple_notify_user_info_new@Base 2.2.0
  purple_notify_user_info_prepend_pair@Base 2.2.0
+ purple_notify_user_info_prepend_section_break@Base 2.5.0
+ purple_notify_user_info_prepend_section_header@Base 2.5.0
  purple_notify_user_info_remove_entry@Base 2.2.0
  purple_notify_user_info_remove_last_item@Base 2.2.0
  purple_prefs_add_bool@Base 2.2.0
@@ -475,9 +495,12 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_prpl_get_statuses@Base 2.3.0
  purple_prpl_got_account_idle@Base 2.3.0
  purple_prpl_got_account_login_time@Base 2.3.0
+ purple_prpl_got_attention@Base 2.5.0
+ purple_prpl_got_attention_in_chat@Base 2.5.0
  purple_prpl_got_user_idle@Base 2.3.0
  purple_prpl_got_user_login_time@Base 2.3.0
  purple_prpl_got_user_status_deactive@Base 2.3.0
+ purple_prpl_send_attention@Base 2.5.0
  purple_restore_default_signal_handlers@Base 2.2.0
  purple_roomlist_cancel_get_list@Base 2.2.0
  purple_roomlist_expand_category@Base 2.2.0
@@ -538,8 +561,25 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_savedstatuses_get_popular@Base 2.2.0
  purple_savedstatuses_init@Base 2.2.0
  purple_savedstatuses_uninit@Base 2.2.0
+ purple_serv_got_join_chat_failed@Base 2.5.0
  purple_serv_got_private_alias@Base 2.4.0
  purple_set_blist@Base 2.2.0
+ purple_smiley_delete@Base 2.5.0
+ purple_smiley_get_checksum@Base 2.5.0
+ purple_smiley_get_extension@Base 2.5.0
+ purple_smiley_get_full_path@Base 2.5.0
+ purple_smiley_get_shortcut@Base 2.5.0
+ purple_smiley_get_stored_image@Base 2.5.0
+ purple_smiley_new@Base 2.5.0
+ purple_smiley_new_from_file@Base 2.5.0
+ purple_smiley_set_data@Base 2.5.0
+ purple_smiley_set_shortcut@Base 2.5.0
+ purple_smileys_find_by_checksum@Base 2.5.0
+ purple_smileys_find_by_shortcut@Base 2.5.0
+ purple_smileys_get_all@Base 2.5.0
+ purple_smileys_get_storing_dir@Base 2.5.0
+ purple_smileys_init@Base 2.5.0
+ purple_smileys_uninit@Base 2.5.0
  purple_status_attr_destroy@Base 2.2.0
  purple_status_attr_get_id@Base 2.2.0
  purple_status_attr_get_name@Base 2.2.0
@@ -617,6 +657,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_util_set_user_dir@Base 2.2.0
  purple_util_uninit@Base 2.3.0
  purple_util_write_data_to_file@Base 2.2.0
+ purple_util_write_data_to_file_absolute@Base 2.5.0
  purple_xfer_add@Base 2.2.0
  purple_xfer_cancel_local@Base 2.2.0
  purple_xfer_cancel_remote@Base 2.2.0
@@ -780,6 +821,8 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleRoomlistUiOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSavedStatus@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSavedStatusSub@Base 2.2.0
+ PURPLE_DBUS_TYPE_PurpleSmiley@Base 2.5.0
+ PURPLE_DBUS_TYPE_PurpleSmileyClass@Base 2.5.0
  PURPLE_DBUS_TYPE_PurpleSoundUiOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSrvQueryData@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSrvResponse@Base 2.2.0
@@ -996,6 +1039,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_blist_uninit@Base 2.2.0
  purple_blist_update_buddy_icon@Base 2.2.0
  purple_blist_update_buddy_status@Base 2.2.0
+ purple_blist_update_node_icon@Base 2.5.0
  purple_buddy_get_account@Base 2.2.0
  purple_buddy_get_alias@Base 2.2.0
  purple_buddy_get_alias_only@Base 2.2.0
@@ -1029,6 +1073,10 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_buddy_icons_has_custom_icon@Base 2.2.0
  purple_buddy_icons_init@Base 2.2.0
  purple_buddy_icons_is_caching@Base 2.2.0
+ purple_buddy_icons_node_find_custom_icon@Base 2.5.0
+ purple_buddy_icons_node_has_custom_icon@Base 2.5.0
+ purple_buddy_icons_node_set_custom_icon@Base 2.5.0
+ purple_buddy_icons_node_set_custom_icon_from_file@Base 2.5.0
  purple_buddy_icons_set_account_icon@Base 2.2.0
  purple_buddy_icons_set_cache_dir@Base 2.2.0
  purple_buddy_icons_set_caching@Base 2.2.0
@@ -1129,6 +1177,9 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_cmd_list@Base 2.2.0
  purple_cmd_register@Base 2.2.0
  purple_cmd_unregister@Base 2.2.0
+ purple_cmds_get_handle@Base 2.5.0
+ purple_cmds_init@Base 2.5.0
+ purple_cmds_uninit@Base 2.5.0
  purple_connection_destroy@Base 2.2.0
  purple_connection_error@Base 2.2.0
  purple_connection_error_is_fatal@Base 2.3.0
@@ -1333,6 +1384,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_get_chats@Base 2.2.0
  purple_get_conversations@Base 2.2.0
  purple_get_core@Base 2.2.0
+ purple_get_host_name@Base 2.5.0
  purple_get_ims@Base 2.2.0
  purple_get_tzoff_str@Base 2.2.0
  purple_global_proxy_get_info@Base 2.2.0
@@ -1357,6 +1409,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_imgstore_get_handle@Base 2.2.0
  purple_imgstore_get_size@Base 2.2.0
  purple_imgstore_init@Base 2.2.0
+ purple_imgstore_new_from_file@Base 2.5.0
  purple_imgstore_ref@Base 2.2.0
  purple_imgstore_ref_by_id@Base 2.2.0
  purple_imgstore_uninit@Base 2.2.0
@@ -1522,6 +1575,8 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_notify_user_info_get_text_with_newline@Base 2.2.0
  purple_notify_user_info_new@Base 2.2.0
  purple_notify_user_info_prepend_pair@Base 2.2.0
+ purple_notify_user_info_prepend_section_break@Base 2.5.0
+ purple_notify_user_info_prepend_section_header@Base 2.5.0
  purple_notify_user_info_remove_entry@Base 2.2.0
  purple_notify_user_info_remove_last_item@Base 2.2.0
  purple_notify_userinfo@Base 2.2.0
@@ -1736,10 +1791,13 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_prpl_got_account_idle@Base 2.2.0
  purple_prpl_got_account_login_time@Base 2.2.0
  purple_prpl_got_account_status@Base 2.2.0
+ purple_prpl_got_attention@Base 2.5.0
+ purple_prpl_got_attention_in_chat@Base 2.5.0
  purple_prpl_got_user_idle@Base 2.2.0
  purple_prpl_got_user_login_time@Base 2.2.0
  purple_prpl_got_user_status@Base 2.2.0
  purple_prpl_got_user_status_deactive@Base 2.2.0
+ purple_prpl_send_attention@Base 2.5.0
  purple_quotedp_decode@Base 2.2.0
  purple_request_action@Base 2.2.0
  purple_request_action_varg@Base 2.2.0
@@ -1900,6 +1958,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_savedstatuses_get_popular@Base 2.2.0
  purple_savedstatuses_init@Base 2.2.0
  purple_savedstatuses_uninit@Base 2.2.0
+ purple_serv_got_join_chat_failed@Base 2.5.0
  purple_serv_got_private_alias@Base 2.4.0
  purple_set_blist@Base 2.2.0
  purple_signal_connect@Base 2.2.0
@@ -1918,6 +1977,24 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_signals_init@Base 2.2.0
  purple_signals_uninit@Base 2.2.0
  purple_signals_unregister_by_instance@Base 2.2.0
+ purple_smiley_delete@Base 2.5.0
+ purple_smiley_get_checksum@Base 2.5.0
+ purple_smiley_get_data@Base 2.5.0
+ purple_smiley_get_extension@Base 2.5.0
+ purple_smiley_get_full_path@Base 2.5.0
+ purple_smiley_get_shortcut@Base 2.5.0
+ purple_smiley_get_stored_image@Base 2.5.0
+ purple_smiley_get_type@Base 2.5.0
+ purple_smiley_new@Base 2.5.0
+ purple_smiley_new_from_file@Base 2.5.0
+ purple_smiley_set_data@Base 2.5.0
+ purple_smiley_set_shortcut@Base 2.5.0
+ purple_smileys_find_by_checksum@Base 2.5.0
+ purple_smileys_find_by_shortcut@Base 2.5.0
+ purple_smileys_get_all@Base 2.5.0
+ purple_smileys_get_storing_dir@Base 2.5.0
+ purple_smileys_init@Base 2.5.0
+ purple_smileys_uninit@Base 2.5.0
  purple_sound_get_ui_ops@Base 2.2.0
  purple_sound_init@Base 2.2.0
  purple_sound_play_event@Base 2.2.0
@@ -2043,7 +2120,9 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_util_chrreplace@Base 2.2.0
  purple_util_fetch_url_cancel@Base 2.2.0
  purple_util_fetch_url_request@Base 2.2.0
+ purple_util_fetch_url_request_len@Base 2.5.0
  purple_util_format_song_info@Base 2.4.0
+ purple_util_get_image_checksum@Base 2.5.0
  purple_util_get_image_extension@Base 2.2.0
  purple_util_get_image_filename@Base 2.2.0
  purple_util_init@Base 2.3.0

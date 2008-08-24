@@ -1,5 +1,68 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.0 (08/18/2008):
+	libpurple:
+	* Ability to create custom smileys (currently only the MSN protocol
+	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
+	  Marcus Lundblad, Jorge Villaseñor and other contributors)
+	* Add a configure option, --with-system-ssl-certs to allow packagers
+	  to specify a system-wide SSL CA certificates directory.  When set,
+	  we don't install our SSL CA certs, so it's important that the
+	  libpurple package depend on the CA certificates.
+	* Add SSL Certificates support to the NSS SSL plugin. (Thanks to Lou
+	  Cipher)
+
+	XMPP:
+	* Fix a bug that caused the UI to not refresh and caused the client
+	  to use 99% CPU when an XMPP account lost its connection to the
+	  server.
+	* Possibly fix a bug where some clients could get into a state
+	  where they moved a buddy back and forth between two groups in
+	  an endless loop.
+
+	IRC:
+	* /ctcp command (Vladislav Guberinić)
+	* Allow for auto-detection of incoming UTF-8 formatted text on
+	  accounts which are configured to use some other encoding.
+
+	MSN:
+	* Update MSN support to protocol 15 (Elliott Sales de Andrade, Jorge
+	  Villaseñor, Mike Ruprecht, Carlos Silva, Ma Yuan, Daniel Ljungborg
+	  and others)
+	* Personal messages are now supported. They are treated as status
+	  messages.
+	* Offline IM is now supported.
+	* Aliasing is now supported server-side.
+	* Buddies are now emblemed. Bots and web clients should now be
+	  distinguished.
+	* Update smiley set for non-faces.
+	* Failing to update a buddy icon when the buddy has gone offline no
+	  longer crashes.
+	* Custom smileys received in a chat no longer go to a new window.
+	* Processing is no longer completely frozen after the servers block a
+	  message because it contains (what they consider) inappropriate text.
+
+	Pidgin:
+	* Custom buddy icons can now be added to and removed from buddy list
+	  entries via the buddy list entry right-click menu.
+	* Resize large incoming custom smileys to a maximum of 96px on either
+	  side.
+	* Offer to add new buddies into the same contact as existing buddies
+	  in the same group if the alias given is the same.
+	* Minor smiley style update.
+
+	General:
+	* Group and Chat buddy list entries can now be given custom buddy
+	  icons.
+
+	Finch:
+	* Added "Invite..." menu to chats.
+	* Added "View All Logs" menu in the buddylist to display a list of all IM
+	  logs.
+	* Added '/msgcolor' command to change colors of different classes of
+	  messages in a conversation. See '/help msgcolor' for details.
+	* Added tab-completion for commands in conversation windows.
+
 version 2.4.3 (07/01/2008):
 	libpurple:
 	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
@@ -19,6 +82,7 @@ version 2.4.3 (07/01/2008):
 	* Various memory leak fixes
 
 version 2.4.2 (05/17/2008):
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.2
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.

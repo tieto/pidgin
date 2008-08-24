@@ -360,11 +360,11 @@ static void irc_login(PurpleAccount *account)
 
 static gboolean do_login(PurpleConnection *gc) {
 	char *buf, *tmp = NULL;
-	char hostname[256];
+	char *hostname, *server;
+	const char *hosttmp;
 	const char *username, *realname;
 	struct irc_conn *irc = gc->proto_data;
 	const char *pass = purple_connection_get_password(gc);
-	int ret;
 
 	if (pass && *pass) {
 		buf = irc_format(irc, "vv", "PASS", pass);
@@ -375,13 +375,6 @@ static gboolean do_login(PurpleConnection *gc) {
 		g_free(buf);
 	}
 
-
-	ret = gethostname(hostname, sizeof(hostname));
-	hostname[sizeof(hostname) - 1] = '\0';
-	if (ret < 0 || hostname[0] == '\0') {
-		purple_debug_warning("irc", "gethostname() failed -- is your hostname set?");
-		strcpy(hostname, "localhost");
-	}
 	realname = purple_account_get_string(irc->account, "realname", "");
 	username = purple_account_get_string(irc->account, "username", "");
 
@@ -396,9 +389,29 @@ static gboolean do_login(PurpleConnection *gc) {
 		}
 	}
 
-	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, hostname, irc->server,
-			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
+	hosttmp = purple_get_host_name();
+	if (*hosttmp == ':') {
+		/* This is either an IPv6 address, or something which
+		 * doesn't belong here.  Either way, we need to escape
+		 * it. */
+		hostname = g_strdup_printf("0%s", hosttmp);
+	} else {
+		/* Ugly, I know. */
+		hostname = g_strdup(hosttmp);
+	}
+
+	if (*irc->server == ':') {
+		/* Same as hostname, above. */
+		server = g_strdup_printf("0%s", irc->server);
+	} else {
+		server = g_strdup(irc->server);
+	}
+
+	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, hostname, server,
+	                 strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	g_free(tmp);
+	g_free(hostname);
+	g_free(server);
 	if (irc_send(irc, buf) < 0) {
 		g_free(buf);
 		return FALSE;
@@ -737,7 +750,7 @@ static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleM
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
 
-	serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, what, time(NULL));
+	serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), flags, what, time(NULL));
 	g_free(tmp);
 	return 0;
 }
@@ -909,6 +922,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 
@@ -973,6 +987,9 @@ static void _init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Encodings"), "encoding", IRC_DEFAULT_CHARSET);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Auto-detect incoming UTF-8"), "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Username"), "username", "");

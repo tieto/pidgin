@@ -132,6 +132,14 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 		data = g_realloc(data, len + trans->payload_len);
 		memcpy(data + len, trans->payload, trans->payload_len);
 		len += trans->payload_len;
+
+		/*
+		 * We're done with trans->payload.  Free it so that the memory
+		 * doesn't sit around in cmdproc->history.
+		 */
+		g_free(trans->payload);
+		trans->payload = NULL;
+		trans->payload_len = 0;
 	}
 
 	msn_servconn_write(servconn, data, len);
@@ -255,7 +263,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans = NULL;
 
 	if (cmd->trId)
-		trans = msn_history_find(cmdproc->history, cmd->trId);
+		cmd->trans = trans = msn_history_find(cmdproc->history, cmd->trId);
 
 	if (trans != NULL)
 		if (trans->timer) {
@@ -301,8 +309,6 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (cb == NULL && trans != NULL)
 	{
-		cmd->trans = trans;
-
 		if (trans->callbacks != NULL)
 			cb = g_hash_table_lookup(trans->callbacks, cmd->command);
 	}

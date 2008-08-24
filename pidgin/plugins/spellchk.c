@@ -1740,6 +1740,7 @@ static void load_conf(void)
 			"BAD wroking\nGOOD working\n"
 			"BAD wtih\nGOOD with\n"
 			"BAD wuould\nGOOD would\n"
+			"BAD wud\nGOOD would\n"
 			"BAD wut\nGOOD what\n"
 			"BAD wya\nGOOD way\n"
 			"BAD y\nGOOD why\n"

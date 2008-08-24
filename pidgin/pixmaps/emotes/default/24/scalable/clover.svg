@@ -2,24 +2,25 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="24"
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/emotes/scalable"
    sodipodi:docname="clover.svg"
    inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/clover.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
     <linearGradient
@@ -45,36 +46,6 @@
        fx="10.748654"
        fy="10.457643"
        r="6.6449099" />
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient2192">
-      <stop
-         style="stop-color:#cc0000;stop-opacity:1;"
-         offset="0"
-         id="stop2194" />
-      <stop
-         style="stop-color:#cc0000;stop-opacity:0;"
-         offset="1"
-         id="stop2196" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2192"
-       id="linearGradient2198"
-       x1="12.13016"
-       y1="15.102485"
-       x2="12.13016"
-       y2="19.816549"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2192"
-       id="linearGradient2211"
-       gradientUnits="userSpaceOnUse"
-       x1="12.13016"
-       y1="15.102485"
-       x2="12.13016"
-       y2="19.816549" />
   </defs>
   <sodipodi:namedview
      id="base"

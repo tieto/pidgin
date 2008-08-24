@@ -68,6 +68,31 @@ int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, cons
 	return 0;
 }
 
+int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	/* we have defined args as args[0] is target and args[1] is ctcp command */
+        char *buf;
+	GString *string;
+	
+	/* check if we have args */
+	if (!args || !args[0] || !args[1])
+		return 0;
+
+	/* TODO:strip newlines or send each line as separate ctcp or something
+	 * actually, this shouldn't be done here but somewhere else since irc should support escaping newlines */
+
+	string = g_string_new(args[1]);
+	g_string_prepend_c (string,'\001');
+	g_string_append_c (string,'\001');
+	buf = irc_format(irc, "vn:", "PRIVMSG", args[0], string->str);
+	g_string_free(string,TRUE);
+
+	irc_send(irc, buf);
+	g_free(buf);
+	
+	return 1;
+}
+
 int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);

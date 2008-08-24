@@ -353,16 +353,17 @@ typedef enum
 	OSCAR_CAPABILITY_TRILLIANCRYPT        = 0x00010000,
 	OSCAR_CAPABILITY_UNICODE              = 0x00020000,
 	OSCAR_CAPABILITY_INTEROPERATE         = 0x00040000,
-	OSCAR_CAPABILITY_ICHAT                = 0x00080000,
+	OSCAR_CAPABILITY_SHORTCAPS            = 0x00080000,
 	OSCAR_CAPABILITY_HIPTOP               = 0x00100000,
 	OSCAR_CAPABILITY_SECUREIM             = 0x00200000,
 	OSCAR_CAPABILITY_SMS                  = 0x00400000,
-	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x00800000,
-	OSCAR_CAPABILITY_VIDEO                = 0x01000000,
-	OSCAR_CAPABILITY_ICHATAV              = 0x02000000,
-	OSCAR_CAPABILITY_LIVEVIDEO            = 0x04000000,
-	OSCAR_CAPABILITY_CAMERA               = 0x08000000,
-	OSCAR_CAPABILITY_LAST                 = 0x10000000
+	OSCAR_CAPABILITY_VIDEO                = 0x00800000,
+	OSCAR_CAPABILITY_ICHATAV              = 0x01000000,
+	OSCAR_CAPABILITY_LIVEVIDEO            = 0x02000000,
+	OSCAR_CAPABILITY_CAMERA               = 0x04000000,
+	OSCAR_CAPABILITY_ICHAT_SCREENSHARE    = 0x08000000,
+	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x10000000,
+	OSCAR_CAPABILITY_LAST                 = 0x20000000
 } OscarCapability;
 
 /*
@@ -432,6 +433,7 @@ struct _FlapConnection
 	GSList *rateclasses; /* Contains nodes of struct rateclass. */
 
 	GQueue *queued_snacs; /**< Contains QueuedSnacs. */
+	GQueue *queued_lowpriority_snacs; /**< Contains QueuedSnacs to send only once queued_snacs is empty */
 	guint queued_timeout;
 
 	void *internal; /* internal conn-specific libfaim data */
@@ -542,6 +544,10 @@ struct _OscarData
 
 	/** A linked list containing PeerConnections. */
 	GSList *peer_connections;
+
+	/** Queue of ICQ Status Notes to request. */
+	GSList *statusnotes_queue;
+	guint statusnotes_queue_timer;
 };
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
@@ -601,12 +607,9 @@ struct aim_redirect_data
 	} chat;
 };
 
-void aim_clientready(OscarData *od, FlapConnection *conn);
 int aim_request_login(OscarData *od, FlapConnection *conn, const char *sn);
-int aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key);
+int aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key, gboolean allow_multiple_logins);
 /* 0x000b */ int aim_auth_securid_send(OscarData *od, const char *securid);
-
-void aim_cleansnacs(OscarData *, int maxage);
 
 void oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags);
 aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype);
@@ -624,6 +627,7 @@ void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
 void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data);
+void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
 void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
 FlapFrame *flap_frame_new(OscarData *od, guint16 channel, int datalen);
 
@@ -644,6 +648,7 @@ void oscar_data_destroy(OscarData *);
 
 
 /* 0x0001 - family_oservice.c */
+/* 0x0002 */ void aim_srv_clientready(OscarData *od, FlapConnection *conn);
 /* 0x0004 */ void aim_srv_requestnew(OscarData *od, guint16 serviceid);
 /* 0x0006 */ void aim_srv_reqrates(OscarData *od, FlapConnection *conn);
 /* 0x0008 */ void aim_srv_rates_addparam(OscarData *od, FlapConnection *conn);
@@ -1602,6 +1607,7 @@ void aim_initsnachash(OscarData *od);
 aim_snacid_t aim_newsnac(OscarData *, aim_snac_t *newsnac);
 aim_snacid_t aim_cachesnac(OscarData *od, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen);
 aim_snac_t *aim_remsnac(OscarData *, aim_snacid_t id);
+void aim_cleansnacs(OscarData *, int maxage);
 int aim_putsnac(ByteStream *, guint16 family, guint16 type, guint16 flags, aim_snacid_t id);
 
 struct chatsnacinfo {

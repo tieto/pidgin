@@ -72,8 +72,8 @@ aim_email_sendcookies(OscarData *od)
 	byte_stream_put16(&bs, 0xb0ee);
 	byte_stream_put16(&bs, 0x0631);
 
-	snacid = aim_cachesnac(od, 0x0018, 0x0006, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0018, 0x0006, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ALERT, 0x0006, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -188,8 +188,8 @@ aim_email_activate(OscarData *od)
 	byte_stream_put32(&bs, 0x04000000);
 	byte_stream_put32(&bs, 0x00000000);
 
-	snacid = aim_cachesnac(od, 0x0018, 0x0016, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0018, 0x0006, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ALERT, 0x0016, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -225,7 +225,7 @@ email_shutdown(OscarData *od, aim_module_t *mod)
 int
 email_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0018;
+	mod->family = SNAC_FAMILY_ALERT;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;

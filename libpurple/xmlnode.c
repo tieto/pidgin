@@ -728,6 +728,13 @@ xmlnode_from_str(const char *str, gssize size)
 	return ret;
 }
 
+static void
+xmlnode_copy_foreach_ns(gpointer key, gpointer value, gpointer user_data)
+{
+	GHashTable *ret = (GHashTable *)user_data;
+	g_hash_table_insert(ret, g_strdup(key), g_strdup(value));
+}
+
 xmlnode *
 xmlnode_copy(const xmlnode *src)
 {
@@ -739,17 +746,23 @@ xmlnode_copy(const xmlnode *src)
 
 	ret = new_node(src->name, src->type);
 	ret->xmlns = g_strdup(src->xmlns);
-	if(src->data) {
-		if(src->data_sz) {
+	if (src->data) {
+		if (src->data_sz) {
 			ret->data = g_memdup(src->data, src->data_sz);
 			ret->data_sz = src->data_sz;
 		} else {
 			ret->data = g_strdup(src->data);
 		}
 	}
+	ret->prefix = g_strdup(src->prefix);
+	if (src->namespace_map) {
+		ret->namespace_map = g_hash_table_new_full(g_str_hash, g_str_equal,
+		                                           g_free, g_free);
+		g_hash_table_foreach(src->namespace_map, xmlnode_copy_foreach_ns, ret->namespace_map);
+	}
 
-	for(child = src->child; child; child = child->next) {
-		if(sibling) {
+	for (child = src->child; child; child = child->next) {
+		if (sibling) {
 			sibling->next = xmlnode_copy(child);
 			sibling = sibling->next;
 		} else {

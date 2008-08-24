@@ -27,13 +27,15 @@
 #include "conversation.h"
 #include "debug.h"
 
-#include "buddy_status.h"
 #include "char_conv.h"
 #include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
-#include "buddy_status.h"
-#include "group_network.h"
+#include "buddy_list.h"
+#include "header_info.h"
+#include "packet_parse.h"
+#include "qq_network.h"
+#include "utils.h"
 
 /* we check who needs to update member info every minutes
  * this interval determines if their member info is outdated */
@@ -62,46 +64,47 @@ static void _qq_group_set_members_all_offline(qq_group *group)
 	}
 }
 
-/* send packet to get detailed information of one group */
-void qq_send_cmd_group_get_group_info(PurpleConnection *gc, qq_group *group)
+/* send packet to get online group member, called by keep_alive */
+void qq_send_cmd_group_all_get_online_members(PurpleConnection *gc)
 {
-	guint8 raw_data[16] = {0};
-	gint bytes = 0;
+	qq_data *qd;
+	qq_group *group;
+	GList *list;
 
-	g_return_if_fail(group != NULL);
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
 
-	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_GET_GROUP_INFO);
-	bytes += qq_put32(raw_data + bytes, group->internal_group_id);
+	list = qd->groups;
+	while (list != NULL) {
+		group = (qq_group *) list->data;
+		if (group->my_status == QQ_GROUP_MEMBER_STATUS_IS_MEMBER ||
+		    group->my_status == QQ_GROUP_MEMBER_STATUS_IS_ADMIN)
+			/* no need to get info time and time again, online members enough */
+			qq_send_cmd_group_get_online_members(gc, group);
 
-	qq_send_group_cmd(gc, group, raw_data, bytes);
+		list = list->next;
+	}
 }
 
-/* send packet to get online group member, called by keep_alive */
 void qq_send_cmd_group_get_online_members(PurpleConnection *gc, qq_group *group)
 {
-	guint8 raw_data[16] = {0};
-	gint bytes = 0;
-
 	g_return_if_fail(group != NULL);
 
 	/* only get online members when conversation window is on */
 	if (NULL == purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,group->group_name_utf8, purple_connection_get_account(gc))) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				"Conv windows for \"%s\" is not on, do not get online members\n", group->group_name_utf8);
+				"Conversation \"%s\" is not open, ignore to get online members\n", group->group_name_utf8);
 		return;
 	}
 
-	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_GET_ONLINE_MEMBER);
-	bytes += qq_put32(raw_data + bytes, group->internal_group_id);
-
-	qq_send_group_cmd(gc, group, raw_data, bytes);
+	qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
 }
 
 /* send packet to get info for each group member */
 void qq_send_cmd_group_get_members_info(PurpleConnection *gc, qq_group *group)
 {
 	guint8 *raw_data;
-	gint bytes, num, data_len;
+	gint bytes, num;
 	GList *list;
 	qq_buddy *member;
 
@@ -113,16 +116,13 @@ void qq_send_cmd_group_get_members_info(PurpleConnection *gc, qq_group *group)
 	}
 
 	if (num <= 0) {
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "No group member needs to to update info now.\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "No group member info needs to be updated now.\n");
 		return;
 	}
 
-	data_len = 5 + 4 * num;
-	raw_data = g_newa(guint8, data_len);
+	raw_data = g_newa(guint8, 4 * num);
 
 	bytes = 0;
-	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_GET_MEMBER_INFO);
-	bytes += qq_put32(raw_data + bytes, group->internal_group_id);
 
 	list = group->members;
 	while (list != NULL) {
@@ -132,19 +132,10 @@ void qq_send_cmd_group_get_members_info(PurpleConnection *gc, qq_group *group)
 		list = list->next;
 	}
 
-	if (bytes != data_len) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-				"Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_GET_MEMBER_INFO));
-		return;
-	}
-
-	qq_send_group_cmd(gc, group, raw_data, bytes);
+	qq_send_room_cmd(gc, QQ_ROOM_CMD_GET_MEMBER_INFO, group->id, raw_data, bytes);
 }
 
-/**
- * @brief 处理群信息.当前群信息的处理还不完善,由于版本的不同导致协议的解读有差异.
- */
-void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnection *gc)
+void qq_process_room_cmd_get_info(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_group *group;
 	qq_buddy *member;
@@ -152,32 +143,33 @@ void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnectio
 	PurpleConversation *purple_conv;
 	guint8 organization, role;
 	guint16 unknown, max_members;
-	guint32 member_uid, internal_group_id, external_group_id;
+	guint32 member_uid, id, ext_id;
 	GSList *pending_id;
 	guint32 unknown4;
 	guint8 unknown1;
 	gint bytes, num;
+	gchar *notice;
 
-	g_return_if_fail(data != NULL && len > 0);
+	g_return_if_fail(data != NULL && data_len > 0);
 	qd = (qq_data *) gc->proto_data;
 
 	bytes = 0;
-	bytes += qq_get32(&(internal_group_id), data + bytes);
-	g_return_if_fail(internal_group_id > 0);
+	bytes += qq_get32(&id, data + bytes);
+	g_return_if_fail(id > 0);
 
-	bytes += qq_get32(&(external_group_id), data + bytes);
-	g_return_if_fail(external_group_id > 0);
+	bytes += qq_get32(&ext_id, data + bytes);
+	g_return_if_fail(ext_id > 0);
 
-	pending_id = qq_get_pending_id(qd->adding_groups_from_server, internal_group_id);
+	pending_id = qq_get_pending_id(qd->adding_groups_from_server, id);
 	if (pending_id != NULL) {
-		qq_set_pending_id(&qd->adding_groups_from_server, internal_group_id, FALSE);
-		qq_group_create_internal_record(gc, internal_group_id, external_group_id, NULL);
+		qq_set_pending_id(&qd->adding_groups_from_server, id, FALSE);
+		qq_group_create_internal_record(gc, id, ext_id, NULL);
 	}
 
-	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
+	group = qq_room_search_id(gc, id);
 	g_return_if_fail(group != NULL);
 
-	bytes += qq_get8(&(group->group_type), data + bytes);
+	bytes += qq_get8(&(group->type8), data + bytes);
 	bytes += qq_get32(&unknown4, data + bytes);	/* unknown 4 bytes */
 	bytes += qq_get32(&(group->creator_uid), data + bytes);
 	bytes += qq_get8(&(group->auth_type), data + bytes);
@@ -186,42 +178,44 @@ void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnectio
 	bytes += qq_get32(&(group->group_category), data + bytes);
 	bytes += qq_get16(&max_members, data + bytes);
 	bytes += qq_get8(&unknown1, data + bytes);
-	/* XXX
-	 * the following, while Eva:
+	/* the following, while Eva:
 	 * 4(unk), 4(verID), 1(nameLen), nameLen(qunNameContent), 1(0x00),
 	 * 2(qunNoticeLen), qunNoticeLen(qunNoticeContent, 1(qunDescLen),
 	 * qunDestLen(qunDestcontent)) */
 	bytes += qq_get8(&unknown1, data + bytes);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "type=%u creatorid=%u category=%u\n",
-			group->group_type, group->creator_uid, group->group_category);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "maxmembers=%u", max_members); 
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "type=%u creatorid=%u category=%u maxmembers=%u\n",
+			group->type8, group->creator_uid, group->group_category, max_members);
 	
 	/* strlen + <str content> */
 	bytes += convert_as_pascal_string(data + bytes, &(group->group_name_utf8), QQ_CHARSET_DEFAULT);
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "group \"%s\"\n", group->group_name_utf8); 
 	bytes += qq_get16(&unknown, data + bytes);	/* 0x0000 */
-	bytes += convert_as_pascal_string(data + bytes, &(group->notice_utf8), QQ_CHARSET_DEFAULT);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "notice \"%s\"\n", group->notice_utf8); 
+	bytes += convert_as_pascal_string(data + bytes, &notice, QQ_CHARSET_DEFAULT);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "notice \"%s\"\n", notice); 
 	bytes += convert_as_pascal_string(data + bytes, &(group->group_desc_utf8), QQ_CHARSET_DEFAULT);
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "group_desc \"%s\"\n", group->group_desc_utf8); 
 
 	num = 0;
 	/* now comes the member list separated by 0x00 */
-	while (bytes < len) {
+	while (bytes < data_len) {
 		bytes += qq_get32(&member_uid, data + bytes);
 		num++;
 		bytes += qq_get8(&organization, data + bytes);
 		bytes += qq_get8(&role, data + bytes);
 
+#if 0
 		if(organization != 0 || role != 0) {
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "group member %d: organization=%d, role=%d\n", member_uid, organization, role);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ_GRP", "%d, organization=%d, role=%d\n", member_uid, organization, role);
 		}
+#endif
+
 		member = qq_group_find_or_add_member(gc, group, member_uid);
 		if (member != NULL)
 			member->role = role;
 	}
-	if(bytes > len) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "group_cmd_get_group_info: Dangerous error! maybe protocol changed, notify me!");
+	if(bytes > data_len) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+			"group_cmd_get_group_info: Dangerous error! maybe protocol changed, notify me!");
 	}
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "group \"%s\" has %d members\n", group->group_name_utf8, num);
@@ -235,16 +229,21 @@ void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnectio
 			group->group_name_utf8, purple_connection_get_account(gc));
 	if(NULL == purple_conv) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				"Conv windows for \"%s\" is not on, do not set topic\n", group->group_name_utf8);
+				"Conversation \"%s\" is not open, do not set topic\n", group->group_name_utf8);
+		return;
 	}
-	else {
-		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(purple_conv), NULL, group->notice_utf8);
-	}
+
+	/* filter \r\n in notice */
+	qq_filter_str(notice);
+	group->notice_utf8 = strdup(notice);
+	g_free(notice);
+	
+	purple_conv_chat_set_topic(PURPLE_CONV_CHAT(purple_conv), NULL, group->notice_utf8);
 }
 
-void qq_process_group_cmd_get_online_members(guint8 *data, gint len, PurpleConnection *gc)
+void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *gc)
 {
-	guint32 internal_group_id, member_uid;
+	guint32 id, member_uid;
 	guint8 unknown;
 	gint bytes, num;
 	qq_group *group;
@@ -258,14 +257,14 @@ void qq_process_group_cmd_get_online_members(guint8 *data, gint len, PurpleConne
 	}
 
 	bytes = 0;
-	bytes += qq_get32(&internal_group_id, data + bytes);
+	bytes += qq_get32(&id, data + bytes);
 	bytes += qq_get8(&unknown, data + bytes);	/* 0x3c ?? */
-	g_return_if_fail(internal_group_id > 0);
+	g_return_if_fail(id > 0);
 
-	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
+	group = qq_room_search_id(gc, id);
 	if (group == NULL) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
-				"We have no group info for internal id [%d]\n", internal_group_id);
+				"We have no group info for internal id [%d]\n", id);
 		return;
 	}
 
@@ -288,22 +287,27 @@ void qq_process_group_cmd_get_online_members(guint8 *data, gint len, PurpleConne
 }
 
 /* process the reply to get_members_info packet */
-void qq_process_group_cmd_get_members_info(guint8 *data, gint len, PurpleConnection *gc)
+void qq_process_room_cmd_get_members(guint8 *data, gint len, PurpleConnection *gc)
 {
 	gint bytes;
 	gint num;
-	guint32 internal_group_id, member_uid;
+	guint32 id, member_uid;
 	guint16 unknown;
 	qq_group *group;
 	qq_buddy *member;
+	gchar *nick;
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	bytes = 0;
-	bytes += qq_get32(&internal_group_id, data + bytes);
-	g_return_if_fail(internal_group_id > 0);
+#if 0
+	qq_show_packet("qq_process_room_cmd_get_members", data, len);
+#endif
 
-	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
+	bytes = 0;
+	bytes += qq_get32(&id, data + bytes);
+	g_return_if_fail(id > 0);
+
+	group = qq_room_search_id(gc, id);
 	g_return_if_fail(group != NULL);
 
 	num = 0;
@@ -318,16 +322,28 @@ void qq_process_group_cmd_get_members_info(guint8 *data, gint len, PurpleConnect
 		bytes += qq_get16(&(member->face), data + bytes);
 		bytes += qq_get8(&(member->age), data + bytes);
 		bytes += qq_get8(&(member->gender), data + bytes);
-		bytes += convert_as_pascal_string(data + bytes, &(member->nickname), QQ_CHARSET_DEFAULT);
+		bytes += convert_as_pascal_string(data + bytes, &nick, QQ_CHARSET_DEFAULT);
 		bytes += qq_get16(&unknown, data + bytes);
-		bytes += qq_get8(&(member->flag1), data + bytes);
+		bytes += qq_get8(&(member->ext_flag), data + bytes);
 		bytes += qq_get8(&(member->comm_flag), data + bytes);
+
+		/* filter \r\n in nick */
+		qq_filter_str(nick);
+		member->nickname = g_strdup(nick);
+		g_free(nick);
+		
+#if 0
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
+				"member [%09d]: ext_flag=0x%02x, comm_flag=0x%02x, nick=%s\n",
+				member_uid, member->ext_flag, member->comm_flag, member->nickname);
+#endif
 
 		member->last_refresh = time(NULL);
 	}
-	if(bytes > len) {
+	if (bytes > len) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 				"group_cmd_get_members_info: Dangerous error! maybe protocol changed, notify developers!");
 	}
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Group \"%s\" obtained %d member info\n", group->group_name_utf8, num);
 }
+

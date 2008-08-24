@@ -137,13 +137,12 @@ libpurple/protocols/qq/group.c
 libpurple/protocols/qq/group_im.c
 libpurple/protocols/qq/group_internal.c
 libpurple/protocols/qq/group_join.c
-libpurple/protocols/qq/group_network.c
 libpurple/protocols/qq/group_opt.c
 libpurple/protocols/qq/im.c
-libpurple/protocols/qq/keep_alive.c
-libpurple/protocols/qq/login_logout.c
 libpurple/protocols/qq/qq.c
+libpurple/protocols/qq/qq_base.c
 libpurple/protocols/qq/qq_network.c
+libpurple/protocols/qq/qq_process.c
 libpurple/protocols/qq/send_file.c
 libpurple/protocols/qq/sys_msg.c
 libpurple/protocols/sametime/sametime.c
@@ -174,9 +173,11 @@ libpurple/protocols/yahoo/yahoochat.c
 libpurple/protocols/yahoo/ycht.c
 libpurple/protocols/zephyr/zephyr.c
 libpurple/proxy.c
+libpurple/prpl.c
 libpurple/request.h
 libpurple/savedstatuses.c
 libpurple/server.c
+libpurple/smiley.c
 libpurple/sslconn.c
 libpurple/status.c
 libpurple/util.c
@@ -206,6 +207,7 @@ pidgin/gtkprivacy.c
 pidgin/gtkrequest.c
 pidgin/gtkroomlist.c
 pidgin/gtksavedstatuses.c
+pidgin/gtksmiley.c
 pidgin/gtksound.c
 pidgin/gtkstatusbox.c
 pidgin/gtkutils.c

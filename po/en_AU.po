@@ -1173,7 +1173,7 @@ msgstr[1] "%s has %d new message."
 #: ../finch/gntnotify.c:225 ../pidgin/gtknotify.c:341
 #, fuzzy
 msgid "New Mail"
-msgstr "E-Mail"
+msgstr "Email"
 
 #: ../finch/gntnotify.c:290 ../pidgin/gtknotify.c:940
 #, c-format
@@ -3631,8 +3631,8 @@ msgstr "Last name:"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
-msgstr "E-Mail"
+msgid "Email"
+msgstr "Email"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
 #: ../libpurple/protocols/bonjour/bonjour.c:665
@@ -3666,17 +3666,6 @@ msgstr "Yahoo Protocol Plugin"
 #, fuzzy
 msgid "Purple Person"
 msgstr "New Person"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-#, fuzzy
-msgid "E-mail"
-msgstr "E-mail:"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5443,14 +5432,14 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
-msgstr "E-Mail Address"
+msgid "Email Address"
+msgstr "Email Address"
 
 #: ../libpurple/protocols/jabber/buddy.c:2410
 #: ../libpurple/protocols/jabber/buddy.c:2411
 #, fuzzy
 msgid "Search for XMPP users"
-msgstr "Search for a buddy by e-mail address"
+msgstr "Search for a buddy by email address"
 
 #. "Search"
 #: ../libpurple/protocols/jabber/buddy.c:2412
@@ -6519,8 +6508,8 @@ msgstr "Syntax Error (probably a Gaim bug)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
-msgstr "Invalid e-mail address"
+msgid "Invalid email address"
+msgstr "Invalid email address"
 
 #: ../libpurple/protocols/msn/error.c:49
 #, c-format
@@ -7084,7 +7073,7 @@ msgstr "Home Page"
 
 #: ../libpurple/protocols/msn/msn.c:1656
 #, fuzzy
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Personal Title"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -7153,8 +7142,8 @@ msgstr ""
 
 #: ../libpurple/protocols/msn/msn.c:1687
 #, fuzzy
-msgid "Work E-Mail"
-msgstr "E-Mail"
+msgid "Work Email"
+msgstr "Email"
 
 #: ../libpurple/protocols/msn/msn.c:1688
 msgid "Work IM"
@@ -8849,12 +8838,12 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9040,13 +9029,13 @@ msgstr "_Screen name"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "No results found for e-mail address %s"
+msgid "No results found for email address %s"
+msgstr "No results found for email address %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
+msgstr "You should receive an email asking to confirm %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
 msgid "Account Confirmation Requested"
@@ -9085,28 +9074,28 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 
 #: ../libpurple/protocols/oscar/oscar.c:4023
@@ -9116,8 +9105,8 @@ msgstr "Error 0x%04x: Unknown error."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
+msgstr "The email address for %s is %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
 msgid "Account Info"
@@ -9402,16 +9391,16 @@ msgstr ""
 "them and selecting \"Re-request Authorisation.\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6231
-msgid "Find Buddy by E-Mail"
-msgstr "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
+msgstr "Find Buddy by Email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6232
-msgid "Search for a buddy by e-mail address"
-msgstr "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
+msgstr "Search for a buddy by email address"
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Type the email address of the buddy you are searching for."
 
 #: ../libpurple/protocols/oscar/oscar.c:6236
 #, fuzzy
@@ -9443,12 +9432,12 @@ msgstr "Confirm Account"
 
 #: ../libpurple/protocols/oscar/oscar.c:6430
 #, fuzzy
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Display Currently Registered Address"
 
 #: ../libpurple/protocols/oscar/oscar.c:6434
 #, fuzzy
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Change Currently Registered Address..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6441
@@ -9457,8 +9446,8 @@ msgstr "Show Buddies Awaiting Authorisation"
 
 #: ../libpurple/protocols/oscar/oscar.c:6447
 #, fuzzy
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "Search for Buddy by E-Mail..."
+msgid "Search for Buddy by Email Address..."
+msgstr "Search for Buddy by Email..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6452
 msgid "Search for Buddy by Information"
@@ -9549,10 +9538,6 @@ msgstr ""
 #, fuzzy
 msgid "College"
 msgstr "_Collapse"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Email"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 #, fuzzy
@@ -12399,7 +12384,7 @@ msgstr "User Name: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, fuzzy, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "EMail: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12754,8 +12739,8 @@ msgstr "Dir service temporarily unavailable."
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
-msgstr "E-mail lookup restricted."
+msgid "Email lookup restricted."
+msgstr "Email lookup restricted."
 
 #: ../libpurple/protocols/toc/toc.c:533
 #, c-format
@@ -14911,7 +14896,7 @@ msgstr "0 people in room"
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d person in room"
-msgstr[1] "%d person in room"
+msgstr[1] "%d people in room"
 
 #: ../pidgin/gtkconv.c:6486 ../pidgin/gtkstatusbox.c:660
 #, fuzzy
@@ -15779,8 +15764,8 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "Colour to draw hyperlinks."
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
-msgstr "_Copy E-Mail Address"
+msgid "_Copy Email Address"
+msgstr "_Copy Email Address"
 
 #: ../pidgin/gtkimhtml.c:1610
 msgid "_Open Link in Browser"
@@ -16186,8 +16171,8 @@ msgstr[1] "%s has %d new message."
 
 #: ../pidgin/gtknotify.c:564
 #, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -17507,7 +17492,7 @@ msgstr "_Associate Buddy"
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
 #, fuzzy
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Unable to send message."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17515,7 +17500,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17524,8 +17509,8 @@ msgstr "Add to Address Book"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
 #, fuzzy
-msgid "Send E-Mail"
-msgstr "E-Mail"
+msgid "Send Email"
+msgstr "Email"
 
 #. Configuration frame
 #: ../pidgin/plugins/gevolution/gevolution.c:412
@@ -17583,8 +17568,8 @@ msgid "Last name:"
 msgstr "Last name:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement
@@ -19165,8 +19150,8 @@ msgstr ""
 #~ msgid "Check Mail"
 #~ msgstr "Check Mail"
 
-#~ msgid "Check e-mail every X seconds.\n"
-#~ msgstr "Check e-mail every X seconds.\n"
+#~ msgid "Check email every X seconds.\n"
+#~ msgstr "Check email every X seconds.\n"
 
 #~ msgid "Auto-login"
 #~ msgstr "Auto-login"

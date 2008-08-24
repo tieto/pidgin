@@ -629,6 +629,17 @@ purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info, cons
 }
 
 void
+purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo *user_info, const char *label)
+{
+	PurpleNotifyUserInfoEntry *entry;
+	
+	entry = purple_notify_user_info_entry_new(label, NULL);
+	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER;
+	
+	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
+}
+
+void
 purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info)
 {
 	PurpleNotifyUserInfoEntry *entry;
@@ -637,6 +648,17 @@ purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info)
 	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK;
 
 	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+}
+
+void
+purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_info)
+{
+	PurpleNotifyUserInfoEntry *entry;
+	
+	entry = purple_notify_user_info_entry_new(NULL, NULL);
+	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK;
+	
+	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
 }
 
 void

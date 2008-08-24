@@ -27,9 +27,9 @@
 #include "internal.h"
 
 #ifndef _WIN32
+#include <arpa/nameser.h>
 #include <resolv.h>
 #include <netinet/in.h>
-#include <arpa/nameser.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #else
@@ -351,7 +351,9 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	}
 	flags = fcntl(listenfd, F_GETFL);
 	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
-
+#ifndef _WIN32
+	fcntl(listenfd, F_SETFD, FD_CLOEXEC);
+#endif
 	actual_port = purple_network_get_port_from_fd(listenfd);
 
 	purple_debug_info("network", "Listening on port: %hu\n", actual_port);

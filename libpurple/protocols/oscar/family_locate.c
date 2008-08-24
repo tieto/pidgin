@@ -53,10 +53,9 @@ static const struct {
 	 * These are in ascending numerical order.
 	 */
 
-	/*
-	 * Perhaps better called OSCAR_CAPABILITY_SHORTCAPS
-	 */
-	{OSCAR_CAPABILITY_ICHAT,
+	/* Client understands short caps, a UUID of the form
+	 * 0946XXYY-4C7F-11D1-8222-444553540000 where XXYY is the short cap. */
+	{OSCAR_CAPABILITY_SHORTCAPS,
 	 {0x09, 0x46, 0x00, 0x00, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
@@ -64,11 +63,16 @@ static const struct {
 	 {0x09, 0x46, 0x00, 0x01, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
+	/* OSCAR_CAPABILITY_XHTML_IM */
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
+	 {0x09, 0x46, 0x00, 0x02, 0x4c, 0x7f, 0x11, 0xd1,
+	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
 	{OSCAR_CAPABILITY_VIDEO,
 	 {0x09, 0x46, 0x01, 0x00, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	/* "Live Video" support in Windows AIM 5.5.3501 and newer */
+	/* "Live Video" (SIP/RTC Video) support in Windows AIM 5.5.3501 and newer */
 	{OSCAR_CAPABILITY_LIVEVIDEO,
 	 {0x09, 0x46, 0x01, 0x01, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
@@ -78,9 +82,16 @@ static const struct {
 	 {0x09, 0x46, 0x01, 0x02, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	/* In Windows AIM 5.5.3501 and newer */
+	/* "Microphone" support in Windows AIM 5.5.3501 and newer */
+	/* OSCAR_CAPABILITY_MICROPHONE */
 	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0x01, 0x03, 0x4c, 0x7f, 0x11, 0xd1,
+	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	/* Supports RTC Audio */
+	/* OSCAR_CAPABILITY_RTCAUDIO */
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
+	 {0x09, 0x46, 0x01, 0x04, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/* In iChatAV (version numbers...?) */
@@ -88,12 +99,21 @@ static const struct {
 	 {0x09, 0x46, 0x01, 0x05, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x45, 0x53, 0x54, 0x00}},
 
-	/*
-	 * Not really sure about this one.  In an email from
-	 * 26 Sep 2003, Matthew Sachs suggested that, "this
-	 * is probably the capability for the SMS features."
-	 */
-	{OSCAR_CAPABILITY_SMS,
+	/* Supports "new status message features" (Who advertises this one?) */
+	/* OSCAR_CAPABILITY_HOST_STATUS_TEXT_AWARE */ 
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
+	 {0x09, 0x46, 0x01, 0x0a, 0x4c, 0x7f, 0x11, 0xd1,
+	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	/* Supports "see as I type" (Who advertises this one?) */
+	/* OSCAR_CAPABILITY_SEE_AS_I_TYPE */
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
+	 {0x09, 0x46, 0x01, 0x0b, 0x4c, 0x7f, 0x11, 0xd1,
+	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	/* Client only asserts caps for services in which it is participating */
+	/* OSCAR_CAPABILITY_SMARTCAPS */ 
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0x01, 0xff, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
@@ -171,7 +191,7 @@ static const struct {
 	 {0x09, 0x46, 0xf0, 0x03, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{OSCAR_CAPABILITY_GENERICUNKNOWN,
+	{OSCAR_CAPABILITY_ICHAT_SCREENSHARE,
 	 {0x09, 0x46, 0xf0, 0x04, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
@@ -943,7 +963,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		return 0;
 	}
 
-	if ((snac2->family != 0x0002) && (snac2->type != 0x0015)) {
+	if ((snac2->family != SNAC_FAMILY_LOCATE) && (snac2->type != 0x0015)) {
 		purple_debug_misc("oscar", "faim: locate.c, error(): received response from invalid request! %d\n", snac2->family);
 		return 0;
 	}
@@ -1094,12 +1114,12 @@ aim_locate_setprofile(OscarData *od,
 
 	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
-	snacid = aim_cachesnac(od, 0x0002, 0x0004, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, NULL, 0);
 
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, 0x0002, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1124,12 +1144,12 @@ aim_locate_setcaps(OscarData *od, guint32 caps)
 
 	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
-	snacid = aim_cachesnac(od, 0x0002, 0x0004, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, NULL, 0);
 
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, 0x0002, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1157,13 +1177,13 @@ aim_locate_getinfo(OscarData *od, const char *sn, guint16 infotype)
 
 	byte_stream_new(&bs, 2+1+strlen(sn));
 
-	snacid = aim_cachesnac(od, 0x0002, 0x0005, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, NULL, 0);
 
 	byte_stream_put16(&bs, infotype);
 	byte_stream_put8(&bs, strlen(sn));
 	byte_stream_putstr(&bs, sn);
 
-	flap_connection_send_snac(od, conn, 0x0002, 0x0005, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1274,12 +1294,12 @@ int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, 
 
 	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
-	snacid = aim_cachesnac(od, 0x0002, 0x0009, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0009, 0x0000, NULL, 0);
 
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, 0x0002, 0x0009, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0009, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1302,12 +1322,12 @@ int aim_locate_000b(OscarData *od, const char *sn)
 
 	byte_stream_new(&bs, 1+strlen(sn));
 
-	snacid = aim_cachesnac(od, 0x0002, 0x000b, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, NULL, 0);
 
 	byte_stream_put8(&bs, strlen(sn));
 	byte_stream_putstr(&bs, sn);
 
-	flap_connection_send_snac(od, conn, 0x0002, 0x000b, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1347,12 +1367,12 @@ aim_locate_setinterests(OscarData *od, const char *interest1, const char *intere
 
 	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
-	snacid = aim_cachesnac(od, 0x0002, 0x000f, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x000f, 0x0000, NULL, 0);
 
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, 0x0002, 0x000f, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x000f, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 	return 0;
@@ -1385,8 +1405,8 @@ aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
 	byte_stream_put8(&bs, strlen(sn));
 	byte_stream_putstr(&bs, sn);
 
-	snacid = aim_cachesnac(od, 0x0002, 0x0015, 0x0000, sn, strlen(sn)+1);
-	flap_connection_send_snac(od, conn, 0x0002, 0x0015, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, sn, strlen(sn)+1);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 

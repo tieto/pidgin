@@ -8,14 +8,17 @@ PIDGIN_TREE_TOP := ../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 datadir := $(PIDGIN_INSTALL_DIR)
-include ./Makefile.am
+-include ./Makefile.am.mingw
 cacertsdir := $(PIDGIN_INSTALL_DIR)/ca-certs
 
 .PHONY: install
 
-install:
+install: ./Makefile.am.mingw
 	if test '$(cacerts_DATA)'; then \
 	  mkdir -p $(cacertsdir); \
 	  cp $(cacerts_DATA) $(cacertsdir); \
 	fi;
+
+./Makefile.am.mingw: ./Makefile.am
+	sed -e 's/^if\ INSTALL_SSL_CERTIFICATES/ifeq (\$$(INSTALL_SSL_CERTIFICATES), 1)/' ./Makefile.am > $@
 
