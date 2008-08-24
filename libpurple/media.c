@@ -757,6 +757,14 @@ purple_media_get_devices(GstElement *element)
 			}
 			g_value_array_free(array);
 		}
+
+		/* Restore autoprobe[-fps] to TRUE. */
+		if (g_object_class_find_property (klass, "autoprobe")) {
+			g_object_set (G_OBJECT (element), "autoprobe", TRUE, NULL);
+			if (g_object_class_find_property (klass, "autoprobe-fps")) {
+				g_object_set (G_OBJECT (element), "autoprobe-fps", TRUE, NULL);
+			}
+		}
 	}
 
 	return ret;
