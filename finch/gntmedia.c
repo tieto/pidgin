@@ -162,6 +162,10 @@ finch_media_init (FinchMedia *media)
 static void
 finch_media_finalize (GObject *media)
 {
+	FinchMedia *gntmedia = FINCH_MEDIA(media);
+	purple_debug_info("gntmedia", "finch_media_finalize\n");
+	if (gntmedia->priv->media)
+		g_object_unref(gntmedia->priv->media);
 }
 
 static void
@@ -170,55 +174,9 @@ finch_media_emit_message(FinchMedia *gntmedia, const char *msg)
 	g_signal_emit(gntmedia, finch_media_signals[MESSAGE], 0, msg);
 }
 
-static gboolean
-level_message_cb(GstBus *bus, GstMessage *message, FinchMedia *gntmedia)
-{
-	/* XXX: I am hesitant to just remove this function altogether, because I don't
-	 * know how necessary it is to have a callback to 'message'. If it isn't essential,
-	 * I suppose this should be removed.
-	 */
-	return TRUE;
-#if 0
-	const GstStructure *s;
-	const gchar *name;
-
-	int channels;
-	gdouble rms_db, peak_db, decay_db;
-	gdouble rms;
-	const GValue *list;
-	const GValue *value;
-
-	GstElement *src = GST_ELEMENT(message);
-
-	if (message->type != GST_MESSAGE_ELEMENT)
-		return TRUE;
-
-	s = gst_message_get_structure(message);
-	name = gst_structure_get_name(s);
-
-	if (strcmp(name, "level"))
-		return TRUE;
-
-	list = gst_structure_get_value(s, "rms");
-
-	/* Only bother with the first channel. */
-	value = gst_value_list_get_value(list, 0);
-	rms_db = g_value_get_double(value);
-
-	if (!strcmp(gst_element_get_name(src), "sendlevel"))
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gntmedia->priv->send_progress), pow(10, rms_db / 20) * 5);
-	else
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gntmedia->priv->recv_progress), pow(10, rms_db / 20) * 5);
-
-	return TRUE;
-#endif
-}
-
 static void
 finch_media_ready_cb(PurpleMedia *media, FinchMedia *gntmedia)
 {
-	GstElement *element = purple_media_get_pipeline(media);
-
 	GstElement *sendbin, *sendlevel;
 	GstElement *recvbin, *recvlevel;
 
@@ -233,18 +191,16 @@ finch_media_ready_cb(PurpleMedia *media, FinchMedia *gntmedia)
 	}
 	g_list_free(sessions);
 
-	g_object_set(gntmedia, "send-level", &sendlevel,
-		     "recv-level", &recvlevel,
+	g_object_set(gntmedia, "send-level", sendlevel,
+		     "recv-level", recvlevel,
 		     NULL);
-
-	gst_bus_add_signal_watch(GST_BUS(gst_pipeline_get_bus(GST_PIPELINE(element))));
-	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", G_CALLBACK(level_message_cb), gntmedia);
 }
 
 static void
 finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
 {
 	GntWidget *parent;
+	GstElement *sendbin = NULL, *recvbin = NULL;
 
 	finch_media_emit_message(gntmedia, _("Call in progress."));
 
@@ -267,6 +223,10 @@ finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
 		parent = parent->parent;
 	gnt_box_readjust(GNT_BOX(parent));
 	gnt_widget_draw(parent);
+
+	purple_media_get_elements(media, &sendbin, &recvbin, NULL, NULL);
+	gst_element_set_state(GST_ELEMENT(sendbin), GST_STATE_PLAYING);
+	gst_element_set_state(GST_ELEMENT(recvbin), GST_STATE_PLAYING);
 }
 
 static void
@@ -282,11 +242,6 @@ finch_media_wait_cb(PurpleMedia *media, FinchMedia *gntmedia)
 	gnt_box_add_widget(GNT_BOX(gntmedia), gntmedia->priv->calling);
 	gnt_box_add_widget(GNT_BOX(gntmedia), gntmedia->priv->hangup);
 
-	gnt_widget_destroy(gntmedia->priv->accept);
-	gnt_widget_destroy(gntmedia->priv->reject);
-	gntmedia->priv->accept = NULL;
-	gntmedia->priv->reject = NULL;
-
 	parent = GNT_WIDGET(gntmedia);
 	while (parent->parent)
 		parent = parent->parent;
@@ -300,6 +255,8 @@ finch_media_hangup_cb(PurpleMedia *media, FinchMedia *gntmedia)
 	finch_media_emit_message(gntmedia, _("You have ended the call."));
 	finch_conversation_set_info_widget(gntmedia->priv->conv, NULL);
 	gnt_widget_destroy(GNT_WIDGET(gntmedia));
+	/* XXX: This shouldn't have to be here to free the FinchMedia widget */
+	g_object_unref(gntmedia);
 }
 
 static void
@@ -308,6 +265,8 @@ finch_media_got_hangup_cb(PurpleMedia *media, FinchMedia *gntmedia)
 	finch_media_emit_message(gntmedia, _("The call has been terminated."));
 	finch_conversation_set_info_widget(gntmedia->priv->conv, NULL);
 	gnt_widget_destroy(GNT_WIDGET(gntmedia));
+	/* XXX: This shouldn't have to be here to free the FinchMedia widget */
+	g_object_unref(gntmedia);
 }
 
 static void
@@ -316,6 +275,8 @@ finch_media_reject_cb(PurpleMedia *media, FinchMedia *gntmedia)
 	finch_media_emit_message(gntmedia, _("You have rejected the call."));
 	finch_conversation_set_info_widget(gntmedia->priv->conv, NULL);
 	gnt_widget_destroy(GNT_WIDGET(gntmedia));
+	/* XXX: This shouldn't have to be here to free the FinchMedia widget */
+	g_object_unref(gntmedia);
 }
 
 static void
@@ -436,10 +397,9 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 {
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
-	PurpleMedia *media =
-		purple_prpl_initiate_media(account,
-							purple_conversation_get_name(conv),
-							PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO);
+	PurpleMedia *media = purple_prpl_initiate_media(account,
+			purple_conversation_get_name(conv),
+			PURPLE_MEDIA_AUDIO);
 
 	if (!media)
 		return PURPLE_CMD_STATUS_FAILED;
