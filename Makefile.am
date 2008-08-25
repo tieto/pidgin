@@ -30,9 +30,13 @@ dist-hook: pidgin.spec
 distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
+version-check:
+	test x`mtn automate select t:v$(PACKAGE_VERSION)` = x`mtn automate get_base_revision_id`
+	test x`mtn diff | grep -v '^#'` = x
+
 release: distcheck packages
 
-packages: dist-gzip dist-bzip2
+packages: version-check dist-gzip dist-bzip2
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.gz
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.bz2
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.gz.asc pidgin-$(PACKAGE_VERSION).tar.gz
