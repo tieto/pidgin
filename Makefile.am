@@ -30,6 +30,15 @@ dist-hook: pidgin.spec
 distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
+release: distcheck packages
+
+packages: dist-gzip dist-bzip2
+	gpg -ab pidgin-$(PACKAGE_VERSION).tar.gz
+	gpg -ab pidgin-$(PACKAGE_VERSION).tar.bz2
+	gpg --verify pidgin-$(PACKAGE_VERSION).tar.gz.asc pidgin-$(PACKAGE_VERSION).tar.gz
+	gpg --verify pidgin-$(PACKAGE_VERSION).tar.bz2.asc pidgin-$(PACKAGE_VERSION).tar.bz2
+	rpmbuild -ts --sign --with avahi --with dbus --with meanwhile --with sasl --with silc --with tcl pidgin-$(PACKAGE_VERSION).tar.bz2
+
 if ENABLE_GTK
 appsdir = $(datadir)/applications
 apps_in_files = pidgin.desktop.in
