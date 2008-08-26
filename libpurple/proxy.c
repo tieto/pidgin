@@ -347,6 +347,143 @@ purple_gnome_proxy_get_info(void)
 
 	return &info;
 }
+
+#ifdef _WIN32
+
+typedef BOOL (CALLBACK* LPFNWINHTTPGETIEPROXYCONFIG)(/*IN OUT*/ WINHTTP_CURRENT_USER_IE_PROXY_CONFIG* pProxyConfig);
+
+/* This modifies "host" in-place evilly */
+static void
+_proxy_fill_hostinfo(PurpleProxyInfo *info, char *host, int default_port)
+{
+	int port = default_port;
+	char *d;
+
+	d = g_strrstr(host, ":");
+	if (d)
+		*d = '\0';
+	d++;
+	if (*d)
+		sscanf(d, "%d", &port);
+
+	purple_proxy_info_set_host(info, host);
+	purple_proxy_info_set_port(info, port);
+}
+
+static PurpleProxyInfo *
+purple_win32_proxy_get_info(void)
+{
+	static LPFNWINHTTPGETIEPROXYCONFIG MyWinHttpGetIEProxyConfig = NULL;
+	static gboolean loaded = FALSE;
+	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
+
+	WINHTTP_CURRENT_USER_IE_PROXY_CONFIG ie_proxy_config;
+
+	if (!loaded) {
+		loaded = TRUE;
+		MyWinHttpGetIEProxyConfig = (LPFNWINHTTPGETIEPROXYCONFIG)
+			wpurple_find_and_loadproc("winhttp.dll", "WinHttpGetIEProxyConfigForCurrentUser");
+		if (!MyWinHttpGetIEProxyConfig)
+			purple_debug_info("proxy", "Unable to read Windows Proxy Settings.\n");
+	}
+
+	if (!MyWinHttpGetIEProxyConfig)
+		return NULL;
+
+	ZeroMemory(&ie_proxy_config, sizeof(ie_proxy_config));
+	if (!MyWinHttpGetIEProxyConfig(&ie_proxy_config)) {
+		purple_debug_error("proxy", "Error reading Windows Proxy Settings(%lu).\n", GetLastError());
+		return NULL;
+	}
+
+	/* We can't do much if it is autodetect*/
+	if (ie_proxy_config.fAutoDetect) {
+		purple_debug_error("proxy", "Windows Proxy Settings set to autodetect (not supported).\n");
+
+		/* TODO: For 3.0.0 we'll revisit this (maybe)*/
+
+		return NULL;
+
+	} else if (ie_proxy_config.lpszProxy) {
+		gchar *proxy_list = g_utf16_to_utf8(ie_proxy_config.lpszProxy, -1,
+									 NULL, NULL, NULL);
+
+		/* We can't do anything about the bypass list, as we don't have the url */
+		/* TODO: For 3.0.0 we'll revisit this*/
+
+		/* There are proxy settings for several protocols */
+		if (proxy_list && *proxy_list) {
+			char *specific = NULL, *tmp;
+
+			/* If there is only a global proxy, which  means "HTTP" */
+			if (!strchr(proxy_list, ';') || (specific = g_strstr_len(proxy_list, -1, "http=")) != NULL) {
+
+				if (specific) {
+					specific += strlen("http=");
+					tmp = strchr(specific, ';');
+					if (tmp)
+						*tmp = '\0';
+					/* specific now points the proxy server (and port) */
+				} else
+					specific = proxy_list;
+
+				purple_proxy_info_set_type(&info, PURPLE_PROXY_HTTP);
+				_proxy_fill_hostinfo(&info, specific, 80);
+				/* TODO: is there a way to set the username/password? */
+				purple_proxy_info_set_username(&info, NULL);
+				purple_proxy_info_set_password(&info, NULL);
+
+				purple_debug_info("proxy", "Windows Proxy Settings: HTTP proxy: '%s:%d'.\n",
+								  purple_proxy_info_get_host(&info),
+								  purple_proxy_info_get_port(&info));
+
+			} else if ((specific = g_strstr_len(proxy_list, -1, "socks=")) != NULL) {
+
+				specific += strlen("socks=");
+				tmp = strchr(specific, ';');
+				if (tmp)
+					*tmp = '\0';
+				/* specific now points the proxy server (and port) */
+
+				purple_proxy_info_set_type(&info, PURPLE_PROXY_SOCKS5);
+				_proxy_fill_hostinfo(&info, specific, 1080);
+				/* TODO: is there a way to set the username/password? */
+				purple_proxy_info_set_username(&info, NULL);
+				purple_proxy_info_set_password(&info, NULL);
+
+				purple_debug_info("proxy", "Windows Proxy Settings: SOCKS5 proxy: '%s:%d'.\n",
+								  purple_proxy_info_get_host(&info),
+								  purple_proxy_info_get_port(&info));
+
+			} else {
+
+				purple_debug_info("proxy", "Windows Proxy Settings: No supported proxy specified.\n");
+
+				purple_proxy_info_set_type(&info, PURPLE_PROXY_NONE);
+
+			}
+		}
+
+		/* TODO: Fix API to be able look at proxy bypass settings */
+
+		g_free(proxy_list);
+	} else {
+		purple_debug_info("proxy", "No Windows proxy set.\n");
+		purple_proxy_info_set_type(&info, PURPLE_PROXY_NONE);
+	}
+
+	if (ie_proxy_config.lpszAutoConfigUrl)
+		GlobalFree(ie_proxy_config.lpszAutoConfigUrl);
+	if (ie_proxy_config.lpszProxy)
+		GlobalFree(ie_proxy_config.lpszProxy);
+	if (ie_proxy_config.lpszProxyBypass)
+		GlobalFree(ie_proxy_config.lpszProxyBypass);
+
+	return &info;
+}
+#endif
+
+
 /**************************************************************************
  * Proxy API
  **************************************************************************/
@@ -1878,9 +2015,6 @@ purple_proxy_get_setup(PurpleAccount *account)
 	}
 
 	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR) {
-#ifdef _WIN32
-		wpurple_check_for_proxy_changes();
-#endif
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
 			(tmp = g_getenv("HTTPPROXY")) != NULL) {
@@ -1922,6 +2056,11 @@ purple_proxy_get_setup(PurpleAccount *account)
 
 			}
 		} else {
+#ifdef _WIN32
+			PurpleProxyInfo *wgpi;
+			if ((wgpi = purple_win32_proxy_get_info()) != NULL)
+				return wgpi;
+#endif
 			/* no proxy environment variable found, don't use a proxy */
 			purple_debug_info("proxy", "No environment settings found, not using a proxy\n");
 			gpi = tmp_none_proxy_info;
