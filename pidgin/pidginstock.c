@@ -269,7 +269,7 @@ find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon s
 	gchar *file_full = NULL;
 
 	if (theme != NULL) {
-		file = pidgin_icon_theme_get_file(PIDGIN_ICON_THEME(theme), sized_icon.name);
+		file = pidgin_icon_theme_get_icon(PIDGIN_ICON_THEME(theme), sized_icon.name);
 		dir = purple_theme_get_dir(PURPLE_THEME(theme));
 
 		if (rtl)
@@ -505,11 +505,11 @@ pidgin_stock_init(void)
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
 
-	/* Pre-load Status icon theme*/
+	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray */
 	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") && 
 	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
 		
-		PidginStatusIconTheme *theme = purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path);
+		PidginStatusIconTheme *theme = PIDGIN_STATUS_ICON_THEME(purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path));
 		pidgin_stock_load_status_icon_theme(theme);
 		g_object_unref(G_OBJECT(theme));
 

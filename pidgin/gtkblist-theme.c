@@ -30,11 +30,9 @@
  * Structs
  *****************************************************************************/
 typedef struct {
-	gchar *icon_theme;
-
 	/* Buddy list */
-	GdkColor *bgcolor;
 	gdouble opacity;
+	GdkColor *bgcolor;
 	PidginBlistLayout *layout;
 	
 	/* groups */
@@ -70,7 +68,6 @@ static GObjectClass *parent_class = NULL;
  *****************************************************************************/
 enum {
 	PROP_ZERO = 0,
-	PROP_ICON_THEME,
 	PROP_BACKGROUND_COLOR,
 	PROP_OPACITY,
 	PROP_LAYOUT,
@@ -122,9 +119,6 @@ pidgin_blist_theme_get_property(GObject *obj, guint param_id, GValue *value,
 	PidginBlistTheme *theme = PIDGIN_BLIST_THEME(obj);
 
 	switch(param_id) {
-		case PROP_ICON_THEME:
-			g_value_set_string(value, pidgin_blist_theme_get_icon_theme(theme));
-			break;
 		case PROP_BACKGROUND_COLOR:
 			g_value_set_pointer(value, pidgin_blist_theme_get_background_color(theme));
 			break;
@@ -177,15 +171,12 @@ pidgin_blist_theme_get_property(GObject *obj, guint param_id, GValue *value,
 }
 
 static void
-pidgin_blist_theme_set_property(GObject *obj, guint param_id, GValue *value,
+pidgin_blist_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 						 GParamSpec *psec)
 {
 	PidginBlistTheme *theme = PIDGIN_BLIST_THEME(obj);
 
 	switch(param_id) {
-		case PROP_ICON_THEME:
-			pidgin_blist_theme_set_icon_theme(theme, g_value_get_string(value));
-			break;
 		case PROP_BACKGROUND_COLOR:
 			pidgin_blist_theme_set_background_color(theme, g_value_get_pointer(value));
 			break;
@@ -244,7 +235,6 @@ pidgin_blist_theme_finalize (GObject *obj)
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(obj);
 
 	/* Buddy List */
-	g_free(priv->icon_theme);
 	g_free(priv->layout);
 	
 	/* Group */
@@ -275,13 +265,6 @@ pidgin_blist_theme_class_init (PidginBlistThemeClass *klass)
 	obj_class->get_property = pidgin_blist_theme_get_property;
 	obj_class->set_property = pidgin_blist_theme_set_property;
 	obj_class->finalize = pidgin_blist_theme_finalize;
-
-	/* Icon Theme */
-	pspec = g_param_spec_string("icon-theme", "Icon Theme",
-				    "The icon theme to go with this buddy list theme",
-				    NULL,
-				    G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_ICON_THEME, pspec);
 
 	/* Buddy List */
 	pspec = g_param_spec_pointer("background-color", "Background Color",
@@ -388,18 +371,6 @@ pidgin_blist_theme_get_type (void)
  *****************************************************************************/
 
 /* get methods */
-gchar *
-pidgin_blist_theme_get_icon_theme(PidginBlistTheme *theme)
-{
-	PidginBlistThemePrivate *priv;
-
-	g_return_val_if_fail(PIDGIN_IS_BLIST_THEME(theme), NULL);
-
-	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
-
-	return priv->icon_theme;
-}
-
 GdkColor *
 pidgin_blist_theme_get_background_color(PidginBlistTheme *theme)
 {
@@ -581,19 +552,6 @@ pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme)
 }
 
 /* Set Methods */
-void
-pidgin_blist_theme_set_icon_theme(PidginBlistTheme *theme, const gchar *icon_theme)
-{
-	PidginBlistThemePrivate *priv;
-
-	g_return_if_fail(PIDGIN_IS_BLIST_THEME(theme));
-
-	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
-
-	g_free(priv->icon_theme);
-	priv->icon_theme = g_strdup(icon_theme);
-}
-
 void
 pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, GdkColor *color)
 {

@@ -729,7 +729,7 @@ xmlnode_from_str(const char *str, gssize size)
 }
 
 xmlnode *
-xmlnode_from_file(const char *dir, const char *filename, const char *description, const char *process)
+xmlnode_from_file(const char *dir,const char *filename, const char *description, const char *process)
 {
 	gchar *filename_full;
 	GError *error = NULL;

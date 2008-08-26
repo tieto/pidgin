@@ -26,35 +26,25 @@
 
 #include "xmlnode.h"
 
-
-/******************************************************************************
- * Globals
- *****************************************************************************/
 /*****************************************************************************
- * Sound Theme Builder                                                      
+ * Icon Theme Builder                                                      
  *****************************************************************************/
 
 static PurpleTheme *
 pidgin_icon_loader_build(const gchar *dir)
 {
-	xmlnode *root_node, *sub_node;
-	gchar *filename, *filename_full, *data;
-	GDir *gdir;
+	xmlnode *root_node = NULL, *sub_node;
+	gchar *filename_full, *data;
 	PidginIconTheme *theme = NULL;
 
 	/* Find the theme file */
-	gdir = g_dir_open(dir, 0, NULL);
-	g_return_val_if_fail(gdir != NULL, NULL);
+	g_return_val_if_fail(dir != NULL, NULL);
+	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
-	while ((filename = g_strdup(g_dir_read_name(gdir))) != NULL && ! g_str_has_suffix(filename, ".xml"))
-		g_free(filename);
-	
-	g_return_val_if_fail(filename != NULL, NULL);
-	
-	/* Build the xml tree */
-	filename_full = g_build_filename(dir, filename, NULL);
+	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
+		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-loader");
 
-	root_node = xmlnode_from_file(dir, filename, "status icon themes", "icon-loader");
+	g_free(filename_full);
 	g_return_val_if_fail(root_node != NULL, NULL);
 
 	/* Parse the tree */	
@@ -70,19 +60,17 @@ pidgin_icon_loader_build(const gchar *dir)
 				    "directory", dir,
 				    "description", data, NULL);
 	
-		xmlnode_free(sub_node);
-	
-		while ((sub_node = xmlnode_get_child(root_node, "icon")) != NULL){
-			pidgin_icon_theme_set_file(theme,
+		sub_node = xmlnode_get_child(root_node, "icon");
+
+		while (sub_node){
+			pidgin_icon_theme_set_icon(theme,
 						   xmlnode_get_attrib(sub_node, "id"),
 						   xmlnode_get_attrib(sub_node, "file"));
-			xmlnode_free(sub_node);
+			sub_node = xmlnode_get_next_twin(sub_node);
 		}
 	}
 
 	xmlnode_free(root_node);	
-	g_dir_close(gdir);
-	g_free(filename_full);
 	g_free(data);
 	return PURPLE_THEME(theme);
 }

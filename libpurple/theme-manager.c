@@ -36,7 +36,7 @@ static GHashTable *theme_table = NULL;
  ****************************************************************************/
 
 GType 
-purple_theme_manager_get_type (void)
+purple_theme_manager_get_type(void)
 {
   static GType type = 0;
   if (type == 0) {
@@ -52,7 +52,7 @@ purple_theme_manager_get_type (void)
       NULL,    /* instance_init */
       NULL,   /* Value Table */
     };
-    type = g_type_register_static (G_TYPE_OBJECT,
+    type = g_type_register_static(G_TYPE_OBJECT,
                                    "PurpleThemeManager",
                                    &info, 0);
   }
@@ -94,7 +94,7 @@ purple_theme_manager_function_wrapper(gchar *key,
                 		      PTFunc user_data)
 {
 	if (PURPLE_IS_THEME(value))
-		(* user_data) (value);
+		(* user_data)(value);
 }
 
 static void
@@ -106,19 +106,19 @@ purple_theme_manager_build_dir(const gchar *root)
 	GDir *dir;
 	PurpleThemeLoader *loader;
 
-	rdir =  g_dir_open(root, 0, NULL);
+	rdir = g_dir_open(root, 0, NULL);
 
 	g_return_if_fail(rdir);
 
 	/* Parses directory by root/name/purple/type */
-	while ((name = g_strdup(g_dir_read_name (rdir)))){
+	while ((name = g_strdup(g_dir_read_name(rdir)))){
 		
 		purple_dir = g_build_filename(root, name, "purple", NULL);
 		dir =  g_dir_open(purple_dir, 0, NULL);	
 	
 		if (dir) {
-			while ((type = g_strdup(g_dir_read_name (dir)))) {
-				if ((loader = g_hash_table_lookup (theme_table, type))){
+			while ((type = g_strdup(g_dir_read_name(dir)))) {
+				if ((loader = g_hash_table_lookup(theme_table, type))){
 
 					theme_dir = g_build_filename(purple_dir, type, NULL);
 					purple_theme_manager_add_theme(purple_theme_loader_build(loader, theme_dir));
@@ -143,9 +143,9 @@ purple_theme_manager_build_dir(const gchar *root)
  *****************************************************************************/
 
 void
-purple_theme_manager_init (void)
+purple_theme_manager_init(void)
 {
-	theme_table = g_hash_table_new_full (g_str_hash,
+	theme_table = g_hash_table_new_full(g_str_hash,
                	                             g_str_equal,
                	                             g_free,
                	                             g_object_unref);
@@ -154,8 +154,8 @@ purple_theme_manager_init (void)
 void 
 purple_theme_manager_refresh()
 {
-	g_hash_table_foreach_remove (theme_table,
-                	             (GHRFunc) purple_theme_manager_is_theme,
+	g_hash_table_foreach_remove(theme_table,
+                	            (GHRFunc) purple_theme_manager_is_theme,
                 	             NULL);	
 	
 	/* TODO: add correct directories to parse */
@@ -164,7 +164,7 @@ purple_theme_manager_refresh()
 }
 
 void 
-purple_theme_manager_uninit ()
+purple_theme_manager_uninit()
 {
 	g_hash_table_destroy(theme_table);
 }
@@ -181,7 +181,7 @@ purple_theme_manager_register_type(PurpleThemeLoader *loader)
 	g_return_if_fail(type);
 
 	/* if something is already there do nothing */
-	if (! g_hash_table_lookup (theme_table, type)) 
+	if (! g_hash_table_lookup(theme_table, type)) 
 		g_hash_table_insert(theme_table, type, loader);
 }
 
@@ -195,13 +195,13 @@ purple_theme_manager_unregister_type(PurpleThemeLoader *loader)
 	type = purple_theme_loader_get_type_string(loader);
 	g_return_if_fail(type);
 
-	if (g_hash_table_lookup (theme_table, type) == loader){
+	if (g_hash_table_lookup(theme_table, type) == loader){
 
-		g_hash_table_remove (theme_table, type);
+		g_hash_table_remove(theme_table, type);
 
-		g_hash_table_foreach_remove (theme_table,
-                	                     (GHRFunc) purple_theme_manager_is_theme_type,
-                	                     type);		
+		g_hash_table_foreach_remove(theme_table,
+                	                    (GHRFunc)purple_theme_manager_is_theme_type,
+                	                    (gpointer)type);		
 	}/* only free if given registered loader */
 }
 

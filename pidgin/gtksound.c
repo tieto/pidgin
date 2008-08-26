@@ -560,7 +560,7 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 {
 	char *enable_pref;
 	char *file_pref;
-	char *theme_name;
+	const char *theme_name;
 	PurpleSoundTheme *theme;
 
 	if ((event == PURPLE_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
@@ -606,7 +606,6 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 
 		g_free(filename);
 	}
-
 
 	g_free(enable_pref);
 	g_free(file_pref);

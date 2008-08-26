@@ -35,7 +35,7 @@
 /**
  * extends PurpleTheme (theme.h)
  * A pidgin buddy list theme.
- * This is an object for Purple to represent a sound theme.
+ * This is an object for Purple to represent a buddy list theme.
  *
  * PidginBlistTheme is a PurpleTheme Object.
  */
@@ -99,12 +99,6 @@ G_BEGIN_DECLS
 GType pidgin_blist_theme_get_type(void);
 
 /* get methods */
-/**
- * Returns the icon theme to be used with the buddy list theme
- *
- * @returns 	the icon theme
- */
-gchar *pidgin_blist_theme_get_icon_theme(PidginBlistTheme *theme);
 
 /**
  * Returns the background color of the buddy list
@@ -213,13 +207,6 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  FontColorPair *pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme);
 
 /* Set Methods */
-
-/**
- * Sets the icon theme to be used for this buddy list theme
- *
- * @param icon_theme	the new icon theme name
- */
-void pidgin_blist_theme_set_icon_theme(PidginBlistTheme *theme, const gchar *icon_theme);
 
 /**
  * Sets the background color to be used for this buddy list theme

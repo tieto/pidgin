@@ -39,34 +39,28 @@
 static PurpleTheme *
 pidgin_blist_loader_build(const gchar *dir)
 {
-	xmlnode *root_node, *sub_node, *sub_sub_node;
-	gchar *filename, *filename_full, *data;
-	const gchar *icon_theme = NULL, *temp;
+	xmlnode *root_node = NULL, *sub_node, *sub_sub_node;
+	gchar *filename_full, *data;
+	const gchar *temp;
 	gboolean sucess = TRUE;
 	GdkColor *bgcolor, *expanded_bgcolor, *collapsed_bgcolor, *contact_color;
 	GdkColor color;
 	FontColorPair *expanded, *collapsed, *contact, *online, *away, *offline, *idle, *message, *status;
 	PidginBlistLayout *layout;
-	GDir *gdir;
 	PidginBlistTheme *theme;
 
 	/* Find the theme file */
-	gdir = g_dir_open(dir, 0, NULL);
-	g_return_val_if_fail(gdir != NULL, NULL);
+	g_return_val_if_fail(dir != NULL, NULL);
+	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
-	while ((filename = g_strdup(g_dir_read_name(gdir))) != NULL && ! g_str_has_suffix(filename, ".xml"))
-		g_free(filename);
-	
-	if (filename == NULL){
-		g_dir_close(gdir);
-		return NULL;
-	}
-	
-	/* Build the xml tree */
-	filename_full = g_build_filename(dir, filename, NULL);
+	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
+		root_node = xmlnode_from_file(dir, "theme.xml", "buddy list themes", "blist-loader");
 
-	root_node = xmlnode_from_file(dir, filename, "blist themes", "blist-loader");
+	g_free(filename_full);
 	g_return_val_if_fail(root_node != NULL, NULL);
+
+	sub_node = xmlnode_get_child(root_node, "description");
+	data = xmlnode_get_data(sub_node);
 
 	/* init all structs and colors */
 	bgcolor = g_new0(GdkColor, 1);
@@ -87,16 +81,8 @@ pidgin_blist_loader_build(const gchar *dir)
 	message = g_new0(FontColorPair, 1); 
 	status = g_new0(FontColorPair, 1);
 
-	/* Parse the tree */	
-	sub_node = xmlnode_get_child(root_node, "description");
-	data = xmlnode_get_data(sub_node);
-
-	/* <icon_theme> */
-	if ((sucess = (sub_node = xmlnode_get_child(root_node, "icon_theme")) != NULL))
-		icon_theme = xmlnode_get_attrib(sub_node, "name");
-
 	/* <blist> */
-	if ((sucess = sucess && (sub_node = xmlnode_get_child(root_node, "blist")) != NULL)) {
+	if ((sucess = (sub_node = xmlnode_get_child(root_node, "blist")) != NULL)) {
 		if ((temp = xmlnode_get_attrib(sub_node, "color")) != NULL && gdk_color_parse(temp, bgcolor))
 			gdk_colormap_alloc_color(gdk_colormap_get_system(), bgcolor, FALSE, TRUE);
 		else {
@@ -221,7 +207,6 @@ pidgin_blist_loader_build(const gchar *dir)
 			    "image", xmlnode_get_attrib(root_node, "image"),
 			    "directory", dir,
 			    "description", data,
-			    "icon-theme", icon_theme,
 			    "background-color", bgcolor,
 			    "layout", layout,
 			    "expanded-color", expanded_bgcolor,
@@ -237,17 +222,15 @@ pidgin_blist_loader_build(const gchar *dir)
 			    "message", message,
 			    "status", status, NULL);
 
-	/* malformed xml file */
+	xmlnode_free(root_node);	
+	g_free(data);
+
+	/* malformed xml file - also frees all partial data*/
 	if (!sucess) {
 		g_object_unref(theme);
 		theme = NULL;
 	}
 
-	xmlnode_free(sub_node);
-	xmlnode_free(root_node);	
-	g_dir_close(gdir);
-	g_free(filename_full);
-	g_free(data);
 	return PURPLE_THEME(theme);
 }
 
@@ -256,7 +239,7 @@ pidgin_blist_loader_build(const gchar *dir)
  *****************************************************************************/
 
 static void
-pidgin_blist_theme_loader_class_init (PidginBlistThemeLoaderClass *klass)
+pidgin_blist_theme_loader_class_init(PidginBlistThemeLoaderClass *klass)
 {
 	PurpleThemeLoaderClass *loader_klass = PURPLE_THEME_LOADER_CLASS(klass);
 
@@ -265,7 +248,7 @@ pidgin_blist_theme_loader_class_init (PidginBlistThemeLoaderClass *klass)
 
 
 GType 
-pidgin_blist_theme_loader_get_type (void)
+pidgin_blist_theme_loader_get_type(void)
 {
   static GType type = 0;
   if (type == 0) {
@@ -281,7 +264,7 @@ pidgin_blist_theme_loader_get_type (void)
       NULL,    /* instance_init */
       NULL,   /* value table */
     };
-    type = g_type_register_static (PURPLE_TYPE_THEME_LOADER,
+    type = g_type_register_static(PURPLE_TYPE_THEME_LOADER,
                                    "PidginBlistThemeLoader",
                                    &info, 0);
   }

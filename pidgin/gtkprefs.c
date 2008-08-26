@@ -693,6 +693,7 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme)
 	GtkCellRenderer *cell_rend;
 	GtkTreeIter iter;
 	gchar *theme = NULL;
+	gboolean unset = TRUE;
 
 	g_return_val_if_fail(store != NULL && current_theme != NULL, NULL);
 
@@ -714,12 +715,17 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme)
 		do {
 			gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 2, &theme, -1);
 
-			if (g_str_equal(current_theme, theme))
+			if (g_str_equal(current_theme, theme)) {
 				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &iter);
-			
+				unset = FALSE;
+			}
+
 			g_free(theme);
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter));
 	}
+
+	if (unset)
+		gtk_combo_box_set_active(GTK_COMBO_BOX(combo_box), 0);
 
 	return combo_box;
 }

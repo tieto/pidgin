@@ -26,9 +26,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-/******************************************************************************
- * Globals
- *****************************************************************************/
 /*****************************************************************************
  * Sound Theme Builder                                                      
  *****************************************************************************/
@@ -36,24 +33,18 @@
 static PurpleTheme *
 purple_sound_loader_build(const gchar *dir)
 {
-	xmlnode *root_node, *sub_node;
-	gchar *filename, *filename_full, *data;
-	GDir *gdir;
+	xmlnode *root_node = NULL, *sub_node;
+	gchar *filename_full, *data;
 	PurpleSoundTheme *theme = NULL;
 
 	/* Find the theme file */
-	gdir = g_dir_open(dir, 0, NULL);
-	g_return_val_if_fail(gdir != NULL, NULL);
+	g_return_val_if_fail(dir != NULL, NULL);
+	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
-	while ((filename = g_strdup(g_dir_read_name(gdir))) != NULL && ! g_str_has_suffix(filename, ".xml"))
-		g_free(filename);
-	
-	g_return_val_if_fail(filename != NULL, NULL);
-	
-	/* Build the xml tree */
-	filename_full = g_build_filename(dir, filename, NULL);
+	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
+		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-loader");
 
-	root_node = xmlnode_from_file(dir, filename, "sound themes", "sound-loader");
+	g_free(filename_full);
 	g_return_val_if_fail(root_node != NULL, NULL);
 
 	/* Parse the tree */	
@@ -68,20 +59,18 @@ purple_sound_loader_build(const gchar *dir)
 				    "image", xmlnode_get_attrib(root_node, "image"),
 				    "directory", dir,
 				    "description", data, NULL);
-	
-		xmlnode_free(sub_node);
 
-		while ((sub_node = xmlnode_get_child(root_node, "event")) != NULL){
+		sub_node = xmlnode_get_child(root_node, "event");
+
+		while (sub_node) {
 			purple_sound_theme_set_file(theme,
 						    xmlnode_get_attrib(sub_node, "name"),
 						    xmlnode_get_attrib(sub_node, "file"));
-			xmlnode_free(sub_node);
+			sub_node = xmlnode_get_next_twin(sub_node);
 		}
 	}
 
 	xmlnode_free(root_node);	
-	g_dir_close(gdir);
-	g_free(filename_full);
 	g_free(data);
 	return PURPLE_THEME(theme);
 }
@@ -91,7 +80,7 @@ purple_sound_loader_build(const gchar *dir)
  *****************************************************************************/
 
 static void
-purple_sound_theme_loader_class_init (PurpleSoundThemeLoaderClass *klass)
+purple_sound_theme_loader_class_init(PurpleSoundThemeLoaderClass *klass)
 {
 	PurpleThemeLoaderClass *loader_klass = PURPLE_THEME_LOADER_CLASS(klass);
 
@@ -100,7 +89,7 @@ purple_sound_theme_loader_class_init (PurpleSoundThemeLoaderClass *klass)
 
 
 GType 
-purple_sound_theme_loader_get_type (void)
+purple_sound_theme_loader_get_type(void)
 {
   static GType type = 0;
   if (type == 0) {
@@ -116,7 +105,7 @@ purple_sound_theme_loader_get_type (void)
       NULL,    /* instance_init */
       NULL,   /* value table */
     };
-    type = g_type_register_static (PURPLE_TYPE_THEME_LOADER,
+    type = g_type_register_static(PURPLE_TYPE_THEME_LOADER,
                                    "PurpleSoundThemeLoader",
                                    &info, 0);
   }
