@@ -1,18 +1,20 @@
 # translation of nl.po to
 # Pidgin Dutch translation
-# Copyright (C) 2008, Daniël Heres <danielheres@gmail.com>
-# This file is distributed under the same license as the Gaim package.
 #
-#
+# Hylke Bons <hylkebons@gmail.com>, 2008
+# Daniël Heres <danielheres@gmail.com>, 2008
 # Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006.
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004.
+#
+# This file is distributed under the same license as the Pidgin package.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-08-06 03:06-0400\n"
 "PO-Revision-Date: 2008-08-06 14:55+0100\n"
-"Last-Translator: Daniël <danielheres@gmail.com>\n"
+"Last-Translator: Hylke <hylkebons@gmail.com>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -59,7 +61,7 @@ msgstr ""
 #: ../pidgin/gtkmain.c:736
 #, c-format
 msgid "%s encountered errors migrating your settings from %s to %s. Please investigate and complete the migration by hand. Please report this error at http://developer.pidgin.im"
-msgstr "%s zorgde voor fouten tijdens het verplaatsen van je instellingen van %s naar %s. Verplaats het handmatig. Rapporteer deze fout alstublieft op http://developer.pidgin.im"
+msgstr "%s zorgde voor fouten tijdens het verplaatsen van je instellingen van %s naar %s. Verplaats het handmatig. Rapporteer deze fout a.u.b. op http://developer.pidgin.im"
 
 #: ../finch/gntaccount.c:126
 #: ../finch/gntaccount.c:505
@@ -590,11 +592,11 @@ msgstr "Fout bij toevoegen van groep"
 
 #: ../finch/gntblist.c:760
 msgid "You must give a name for the group to add."
-msgstr "Geef de naam van de toe te voegen groep."
+msgstr "Geef de naam van de toe te voegen groep"
 
 #: ../finch/gntblist.c:773
 msgid "A group with the name already exists."
-msgstr "Die groep bestaat al."
+msgstr "Er bestaat al een groep met dezelfde naam"
 
 #: ../finch/gntblist.c:780
 #: ../finch/gntblist.c:1187
@@ -1247,7 +1249,7 @@ msgid ""
 "Please enter the name of the user you wish to invite,\n"
 "along with an optional invite message."
 msgstr ""
-"Geef de bijnaam van de persoon die u wilt uitnodigen,\n"
+"Geef de bijnaam van de persoon die je wil uitnodigen,\n"
 "eventueel met een uitnodigende tekst."
 
 #: ../finch/gntconv.c:610
@@ -1705,7 +1707,7 @@ msgstr ""
 
 #: ../finch/gntplugin.c:197
 msgid "Plugin need to be loaded before you can configure it."
-msgstr "Plugins moet geladen zijn voordat u deze kunt configureren."
+msgstr "Plugin moet geladen zijn voordat je deze kunt configureren."
 
 #: ../finch/gntplugin.c:245
 msgid "No configuration options for this plugin."
@@ -1769,7 +1771,7 @@ msgstr "Contactalarm bewerken"
 
 #: ../finch/gntpounce.c:343
 msgid "Pounce Who"
-msgstr "Wie alarmeren"
+msgstr "Alarmdoel"
 
 #. Account:
 #: ../finch/gntpounce.c:346
@@ -1855,7 +1857,7 @@ msgstr "Een geluidje afspelen"
 
 #: ../finch/gntpounce.c:460
 msgid "Pounce only when my status is not Available"
-msgstr "Contactalarm alleen actief wanneer mijn status niet beschikbaar is"
+msgstr "Alarmeer alleen wanneer ik niet beschikbaar ben"
 
 #: ../finch/gntpounce.c:462
 #: ../pidgin/gtkpounce.c:1318
@@ -1878,7 +1880,7 @@ msgstr ""
 #: ../pidgin/gtkpounce.c:1132
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
-msgstr "Wilt u het contactalarm van %s op %s echt verwijderen?"
+msgstr "Wilt je het contactalarm van %s op %s echt verwijderen?"
 
 #: ../finch/gntpounce.c:708
 #: ../finch/gntui.c:96
@@ -1944,12 +1946,12 @@ msgstr "%s is weggegaan. (%s)"
 #: ../pidgin/gtkpounce.c:1478
 #, c-format
 msgid "%s has sent you a message. (%s)"
-msgstr "%s heeft u een bericht toegestuurd. (%s)"
+msgstr "%s heeft je een bericht gestuurd. (%s)"
 
 #: ../finch/gntpounce.c:845
 #: ../pidgin/gtkpounce.c:1479
 msgid "Unknown pounce event. Please report this!"
-msgstr "Onbekend contactalarm. Rapporteer dit alstublieft!"
+msgstr "Onbekend contactalarm. Rapporteer dit a.u.b!"
 
 #: ../finch/gntprefs.c:92
 msgid "Based on keyboard use"
@@ -2112,7 +2114,7 @@ msgstr "Persoon verlaat chatruimte"
 #: ../finch/gntsound.c:103
 #: ../pidgin/gtksound.c:69
 msgid "You talk in chat"
-msgstr "U praat in de chatruimte"
+msgstr "Je praat in de chatruimte"
 
 #: ../finch/gntsound.c:104
 #: ../pidgin/gtksound.c:70
@@ -2122,7 +2124,7 @@ msgstr "Anderen praten in de chatruimte"
 #: ../finch/gntsound.c:106
 #: ../pidgin/gtksound.c:73
 msgid "Someone says your username in chat"
-msgstr "Iemand zegt uw gebruikersnaam in de chatruimte"
+msgstr "Iemand zegt je gebruikersnaam in de chatruimte"
 
 #: ../finch/gntsound.c:367
 #: ../pidgin/gtksound.c:309
@@ -2519,9 +2521,9 @@ msgid ""
 "\n"
 "Enabling logs for instant messages and/or chats will activate history for the same conversation type(s)."
 msgstr ""
-"Logboek bijhouden kan worden ingeschakeld via Extra -> Voorkeuren -> Logboek.\n"
+"Logboek bijhouden kan worden ingeschakeld via Extra -> Voorkeuren -> 'Logboek bijhouden'.\n"
 "\n"
-"Het inschakelen hiervan zal u de mogelijkheid geven om geschiedenis op te vragen."
+"Het inschakelen hiervan zal je de mogelijkheid geven om geschiedenis op te vragen."
 
 #: ../finch/plugins/gnthistory.c:217
 msgid "GntHistory"
@@ -2670,7 +2672,7 @@ msgstr "Wachtwoord veranderen voor %s"
 
 #: ../libpurple/account.c:1433
 msgid "Please enter your current password and your new password."
-msgstr "Geef uw oude wachtwoord en nieuwe wachtwoord."
+msgstr "Geef je oude wachtwoord en nieuwe wachtwoord."
 
 #: ../libpurple/account.c:1464
 #, c-format
@@ -3057,12 +3059,12 @@ msgstr "%s is geen normaal bestand. Ik weiger dit te overschrijven.\n"
 #: ../libpurple/ft.c:348
 #, c-format
 msgid "%s wants to send you %s (%s)"
-msgstr "%s wil u %s toesturen (%s)"
+msgstr "%s wil je %s toesturen (%s)"
 
 #: ../libpurple/ft.c:355
 #, c-format
 msgid "%s wants to send you a file"
-msgstr "%s wil u een bestand toesturen"
+msgstr "%s wil je een bestand toesturen"
 
 #: ../libpurple/ft.c:398
 #, c-format
@@ -3601,7 +3603,7 @@ msgstr "_Activeren"
 
 #: ../libpurple/plugins/idle.c:184
 msgid "None of your accounts are idle."
-msgstr "Geen van uw accounts is inactief."
+msgstr "Geen van je accounts is inactief."
 
 #: ../libpurple/plugins/idle.c:200
 #: ../libpurple/plugins/idle.c:262
@@ -3624,7 +3626,7 @@ msgstr "Inactiviteit uitzetten voor alle accounts"
 #: ../libpurple/plugins/idle.c:320
 #: ../libpurple/plugins/idle.c:321
 msgid "Allows you to hand-configure how long you've been idle"
-msgstr "Stelt u in staat om zelf in te stellen hoe lang u afwezig bent"
+msgstr "Stelt je in staat om zelf in te stellen hoe lang je inactief bent"
 
 #. *< type
 #. *< ui_requirement
@@ -3737,7 +3739,7 @@ msgstr "De verbinding met de server is verbroken."
 
 #: ../libpurple/plugins/log_reader.c:1605
 msgid "You are currently disconnected. Messages will not be received unless you are logged in."
-msgstr "U bent op dit moment niet aangemeld. U kunt geen berichten ontvangen totdat u zich aanmeld."
+msgstr "Je bent op dit moment niet aangemeld. Je kunt geen berichten ontvangen totdat je bent aangemeld."
 
 #: ../libpurple/plugins/log_reader.c:1620
 msgid "Message could not be sent because the maximum length was exceeded."
@@ -4305,7 +4307,7 @@ msgstr "Ongeldige proxy-instellingen"
 #: ../libpurple/protocols/gg/gg.c:77
 #: ../libpurple/proxy.c:1919
 msgid "Either the host name or port number specified for your given proxy type is invalid."
-msgstr "De computernaam of poort voor uw gegeven proxy-type is ongeldig."
+msgstr "De computernaam of poort voor je gegeven proxy-type is ongeldig."
 
 #: ../libpurple/protocols/gg/gg.c:115
 #: ../libpurple/protocols/gg/gg.c:137
@@ -4469,7 +4471,7 @@ msgstr "Contacten zoeken"
 
 #: ../libpurple/protocols/gg/gg.c:668
 msgid "Please, enter your search criteria below"
-msgstr "Geef hieronder uw zoekcriteria"
+msgstr "Geef hieronder je zoekcriteria"
 
 #: ../libpurple/protocols/gg/gg.c:706
 msgid "Fill in the fields."
@@ -4477,7 +4479,7 @@ msgstr "Vul de velden in."
 
 #: ../libpurple/protocols/gg/gg.c:718
 msgid "Your current password is different from the one that you specified."
-msgstr "Je  huidige wachtwoord wijkt af van het door u gegeven wachtwoord."
+msgstr "Je huidige wachtwoord wijkt af van het opgegeven wachtwoord."
 
 #: ../libpurple/protocols/gg/gg.c:732
 msgid "Unable to change password. Error occurred.\n"
@@ -4598,7 +4600,7 @@ msgstr "Niet overeenkomende gebruikers gevonden"
 
 #: ../libpurple/protocols/gg/gg.c:1225
 msgid "There are no users matching your search criteria."
-msgstr "Er zijn geen overeenkomende gebruikers voor uw zoekcriteria"
+msgstr "Er zijn geen overeenkomende gebruikers voor je zoekcriteria"
 
 #: ../libpurple/protocols/gg/gg.c:1321
 #: ../libpurple/protocols/gg/gg.c:1476
@@ -5137,11 +5139,11 @@ msgstr "chanserv: Een opdracht naar chanserv sturen"
 
 #: ../libpurple/protocols/irc/parse.c:128
 msgid "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from someone. You must be a channel operator to do this."
-msgstr "deop &lt;bijnaam1&gt; [bijnaam2] ...:  Operator-status uitschakelen van iemand. U moet wel zelf operator zijn hiervoor."
+msgstr "deop &lt;bijnaam1&gt; [bijnaam2] ...:  Operator-status uitschakelen van iemand. Hiervoor is het nodig operator te zijn."
 
 #: ../libpurple/protocols/irc/parse.c:129
 msgid "devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from someone, preventing them from speaking if the channel is moderated (+m). You must be a channel operator to do this."
-msgstr "devoice &lt;bijnaam1&gt; [bijnaam2] ...:  Spreekstatus van iemand verwijderen, zodat deze niet meer kan praten in een gemodereerd kanaal (+m). U moet wel zelf operator zijn hiervoor."
+msgstr "devoice &lt;bijnaam1&gt; [bijnaam2] ...:  Spreekstatus van iemand verwijderen, zodat deze niet meer kan praten in een gemodereerd kanaal (+m). Hiervoor is het nodig operator te zijn."
 
 #: ../libpurple/protocols/irc/parse.c:130
 msgid "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified channel, or the current channel."
@@ -5157,7 +5159,7 @@ msgstr "j &lt;ruimte1&gt;[,ruimte2][,...] [ww1[,ww2][,...]]:  Een of meerdere ru
 
 #: ../libpurple/protocols/irc/parse.c:133
 msgid "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a channel operator to do this."
-msgstr "kick &lt;bijnaam&gt; [bericht]:  Iemand uit een ruimte schoppen. U moet wel zelf operator zijn hiervoor."
+msgstr "kick &lt;bijnaam&gt; [bericht]:  Iemand uit een ruimte schoppen. Hiervoor is het nodig operator te zijn."
 
 #: ../libpurple/protocols/irc/parse.c:134
 msgid "list:  Display a list of chat rooms on the network. <i>Warning, some servers may disconnect you upon doing this.</i>"
@@ -5186,7 +5188,7 @@ msgstr "names [ruimte]:  De gebruikers in het kanaal opsommen."
 #: ../libpurple/protocols/irc/parse.c:140
 #: ../libpurple/protocols/jabber/jabber.c:2391
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
-msgstr "nick &lt;nieuwe bijnaam&gt;:  Uw eigen bijnaam veranderen."
+msgstr "nick &lt;nieuwe bijnaam&gt;:  Je eigen bijnaam veranderen."
 
 #: ../libpurple/protocols/irc/parse.c:141
 msgid "nickserv: Send a command to nickserv"
@@ -5198,7 +5200,7 @@ msgstr "notice &lt;target&lt;:  Verzend een notitie naar een gebruiker of kanaal
 
 #: ../libpurple/protocols/irc/parse.c:143
 msgid "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You must be a channel operator to do this."
-msgstr "op &lt;bijnaam1&gt; [bijnaam2] ...:  Iemand benoemen tot operator voor het huidige kanaal. U moet wel zelf operator zijn hiervoor."
+msgstr "op &lt;bijnaam1&gt; [bijnaam2] ...:  Iemand benoemen tot operator voor het huidige kanaal. Hiervoor is het nodig operator te zijn."
 
 #: ../libpurple/protocols/irc/parse.c:144
 msgid "operwall &lt;message&gt;:  If you don't know what this is, you probably can't use it."
@@ -5230,7 +5232,7 @@ msgstr "quote [...]:  Een opdracht direct naar de server sturen."
 
 #: ../libpurple/protocols/irc/parse.c:151
 msgid "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a channel operator to do this."
-msgstr "remove &lt;bijnaam&gt; [bericht]:  Iemand uit een ruimte verwijderen. U moet wel zelf operator zijn hiervoor."
+msgstr "remove &lt;bijnaam&gt; [bericht]:  Iemand uit een ruimte verwijderen. Hiervoor is het nodig operator te zijn."
 
 #: ../libpurple/protocols/irc/parse.c:152
 msgid "time: Displays the current local time at the IRC server."
@@ -5250,11 +5252,11 @@ msgstr "version [bijnaam]: CTCP VERSION sturen aan een gebruiker"
 
 #: ../libpurple/protocols/irc/parse.c:156
 msgid "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must be a channel operator to do this."
-msgstr "voice &lt;bijnaam1&gt; [bijnaam2] ...:  Iemand spreekstatus geven. U moet wel zelf operator zijn hiervoor."
+msgstr "voice &lt;bijnaam1&gt; [bijnaam2] ...:  Iemand spreekstatus geven. Hiervoor is het nodig operator te zijn."
 
 #: ../libpurple/protocols/irc/parse.c:157
 msgid "wallops &lt;message&gt;:  If you don't know what this is, you probably can't use it."
-msgstr "wallops &lt;bericht&gt;:  Als u niet weet wat dit is, kunt u het waarschijnlijk niet gebruiken."
+msgstr "wallops &lt;bericht&gt;:  Als je niet weet wat dit is, kun je het waarschijnlijk niet gebruiken."
 
 #: ../libpurple/protocols/irc/parse.c:158
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
@@ -5319,7 +5321,7 @@ msgstr "Server vereist een identificatie via tekstaanmelding via een ongecodeerd
 #: ../libpurple/protocols/jabber/auth.c:670
 #, c-format
 msgid "%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"
-msgstr "%s vereist een identificatie via tekstaanmelding via een ongecodeerde datastroom. Wilt u hiermee doorgaan?"
+msgstr "%s vereist een identificatie d.m.v tekst via een ongecodeerde datastroom. Wil je hiermee doorgaan?"
 
 #: ../libpurple/protocols/jabber/auth.c:330
 #: ../libpurple/protocols/jabber/auth.c:331
@@ -5459,7 +5461,7 @@ msgstr "XMPP vCard bewerken"
 
 #: ../libpurple/protocols/jabber/buddy.c:755
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
-msgstr "Alle items hieronder zijn optioneel. Geef alleen die informatie die u ook openbaar wilt maken."
+msgstr "Alle items hieronder zijn optioneel. Geef alleen die informatie die je ook openbaar wilt maken."
 
 #: ../libpurple/protocols/jabber/buddy.c:811
 #: ../libpurple/protocols/jabber/buddy.c:980
@@ -5840,7 +5842,7 @@ msgstr "Achternaam"
 
 #: ../libpurple/protocols/jabber/buddy.c:2268
 msgid "The following are the results of your search"
-msgstr "Resultaten van uw zoekopdracht"
+msgstr "Resultaten van je zoekopdracht"
 
 #. current comment from Jabber User Directory users.jabber.org
 #: ../libpurple/protocols/jabber/buddy.c:2353
@@ -6116,7 +6118,7 @@ msgstr "Vul onderstaand formulier in om je account te veranderen."
 
 #: ../libpurple/protocols/jabber/jabber.c:1082
 msgid "Please fill out the information below to register your new account."
-msgstr "Vul onderstaand formulier in om uw nieuwe account te registreren."
+msgstr "Vul onderstaand formulier in om je nieuwe account te registreren."
 
 #: ../libpurple/protocols/jabber/jabber.c:1090
 #: ../libpurple/protocols/jabber/jabber.c:1091
@@ -6305,7 +6307,7 @@ msgstr "Veranderen XMPP-wachtwoord"
 
 #: ../libpurple/protocols/jabber/jabber.c:1818
 msgid "Please enter your new password"
-msgstr "Vul uw nieuwe wachtwoord in"
+msgstr "Vul je nieuwe wachtwoord in"
 
 #: ../libpurple/protocols/jabber/jabber.c:1832
 #: ../libpurple/protocols/oscar/oscar.c:6591
@@ -6757,7 +6759,7 @@ msgstr "Nieuwe ruimte maken"
 
 #: ../libpurple/protocols/jabber/presence.c:536
 msgid "You are creating a new room.  Would you like to configure it, or accept the default settings?"
-msgstr "U bent een nieuwe ruimte aan het maken. Wilt u deze instellen, of de standaardinstellingen gebruiken?"
+msgstr "Je bent een nieuwe ruimte aan het maken. Wil je deze instellen, of de standaardinstellingen gebruiken?"
 
 #: ../libpurple/protocols/jabber/presence.c:542
 msgid "_Configure Room"
@@ -6868,13 +6870,13 @@ msgstr "Synchronisatieprobleem in contactenlijst van %s (%s)"
 #: ../libpurple/protocols/msnp9/dialog.c:116
 #, c-format
 msgid "%s on the local list is inside the group \"%s\" but not on the server list. Do you want this buddy to be added?"
-msgstr "%s is op de lokale lijst in de groep \"%s\", maar niet op de serverlijst. Wilt u deze toevoegen?"
+msgstr "%s is op de lokale lijst in de groep \"%s\", maar niet op de serverlijst. Wil je deze toevoegen?"
 
 #: ../libpurple/protocols/msn/dialog.c:132
 #: ../libpurple/protocols/msnp9/dialog.c:124
 #, c-format
 msgid "%s is on the local list but not on the server list. Do you want this buddy to be added?"
-msgstr "%s is op de lokale lijst, maar niet op de serverlijst. Wilt u deze toevoegen?"
+msgstr "%s staat op de lokale lijst, maar niet op de server-lijst. Wil je deze toevoegen?"
 
 #: ../libpurple/protocols/msn/error.c:36
 #: ../libpurple/protocols/msnp9/error.c:36
@@ -7006,7 +7008,7 @@ msgstr "Niet aangemeld"
 #: ../libpurple/protocols/msn/error.c:128
 #: ../libpurple/protocols/msnp9/error.c:128
 msgid "Service temporarily unavailable"
-msgstr "Service momenteel niet toegankelijk"
+msgstr "Dienst momenteel niet toegankelijk"
 
 #: ../libpurple/protocols/msn/error.c:131
 #: ../libpurple/protocols/msnp9/error.c:131
@@ -7200,7 +7202,7 @@ msgstr "Bijnaam instellen."
 #: ../libpurple/protocols/msn/msn.c:317
 #: ../libpurple/protocols/msnp9/msn.c:299
 msgid "This is the name that other MSN buddies will see you as."
-msgstr "Dit is de naam die uw contacten zullen zien."
+msgstr "Dit is de naam die je contacten zullen zien."
 
 #: ../libpurple/protocols/msn/msn.c:335
 #: ../libpurple/protocols/msnp9/msn.c:317
@@ -7225,7 +7227,7 @@ msgstr "MSN-mobile oproepen toestaan?"
 #: ../libpurple/protocols/msn/msn.c:385
 #: ../libpurple/protocols/msnp9/msn.c:367
 msgid "Do you want to allow or disallow people on your buddy list to send you MSN Mobile pages to your cell phone or other mobile device?"
-msgstr "Wilt u dat mensen op uw contactenlijst MSN-mobile oproepen kunnen sturen naar uw mobiele telefoon of ander mobiel apparaat?"
+msgstr "Wil je dat mensen in je contactenlijst je MSN-mobile oproepen kunnen sturen naar je mobiele telefoon of ander mobiel apparaat?"
 
 #: ../libpurple/protocols/msn/msn.c:391
 #: ../libpurple/protocols/msnp9/msn.c:373
@@ -7761,7 +7763,7 @@ msgstr "%s op %s (%s)"
 #: ../libpurple/protocols/msn/notification.c:475
 #, c-format
 msgid "%s just sent you a Nudge!"
-msgstr "%s heeft u zojuist een duwtje gegeven!"
+msgstr "%s heeft je zojuist een duwtje gegeven!"
 
 #: ../libpurple/protocols/msn/notification.c:768
 #, c-format
@@ -7795,7 +7797,7 @@ msgstr "Kan gebruiker geen toestemming geven op %s (%s)"
 #: ../libpurple/protocols/msnp9/notification.c:516
 #, c-format
 msgid "%s could not be added because your buddy list is full."
-msgstr "Kan %s niet toevoegen omdat uw contactenlijst vol is."
+msgstr "Kan %s niet toevoegen omdat je contactenlijst vol is."
 
 #: ../libpurple/protocols/msn/notification.c:852
 #: ../libpurple/protocols/msnp9/notification.c:525
@@ -7834,11 +7836,11 @@ msgid_plural ""
 "\n"
 "After the maintenance has been completed, you will be able to successfully sign in."
 msgstr[0] ""
-"De MSN-server zal voor onderhoud uitgeschakeld worden over %d minuut. U zult automatisch afgemeld worden op dat moment. Rond a.u.b. al uw gesprekken af.\n"
+"De MSN-server zal voor onderhoud uitgeschakeld worden over %d minuut. Je zult automatisch worden afgemeld op dat moment. Rond a.u.b. al je gesprekken af.\n"
 "\n"
-"U zult zich weer kunnen aanmelden als het onderhoud gepleegd is."
+"Je zult je weer kunnen aanmelden als het onderhoud gepleegd is."
 msgstr[1] ""
-"De MSN-server zal voor onderhoud uitgeschakeld worden over %d minuten. U zult automatisch afgemeld worden op dat moment. Rond a.u.b. al uw gesprekken af.\n"
+"De MSN-server zal voor onderhoud uitgeschakeld worden over %d minuten. Je zult automatisch afgemeld worden op dat moment. Rond a.u.b. al je gesprekken af.\n"
 "\n"
 "U zult zich weer kunnen aanmelden als het onderhoud gepleegd is."
 
@@ -7981,12 +7983,12 @@ msgstr "Bericht is misschien niet verstuurd omdat er een time out is opgetreden:
 #: ../libpurple/protocols/msn/switchboard.c:414
 #: ../libpurple/protocols/msnp9/switchboard.c:419
 msgid "Message could not be sent, not allowed while invisible:"
-msgstr "Kan bericht niet versturen. Niet toegestaan wanneer u onzichtbaar bent:"
+msgstr "Je kan geen bericht versturen wanneer je onzichtbaar bent:"
 
 #: ../libpurple/protocols/msn/switchboard.c:418
 #: ../libpurple/protocols/msnp9/switchboard.c:423
 msgid "Message could not be sent because the user is offline:"
-msgstr "Kan bericht niet versturen omdat de ander off-line is:"
+msgstr "Kan bericht niet versturen omdat de ander offline is:"
 
 #: ../libpurple/protocols/msn/switchboard.c:422
 #: ../libpurple/protocols/msnp9/switchboard.c:427
@@ -8017,13 +8019,13 @@ msgstr "Bericht is misschien niet verstuurd wegens een onbekende fout:"
 #: ../libpurple/protocols/msnp9/userlist.c:262
 #, c-format
 msgid "%s has added you to his or her buddy list."
-msgstr "%s heeft u aan zijn/haar contactenlijst toegevoegd."
+msgstr "%s heeft je aan zijn/haar contactenlijst toegevoegd."
 
 #: ../libpurple/protocols/msn/userlist.c:284
 #: ../libpurple/protocols/msnp9/userlist.c:331
 #, c-format
 msgid "%s has removed you from his or her buddy list."
-msgstr "%s heeft u van zijn/haar contactenlijst verwijderd."
+msgstr "%s heeft je van zijn/haar contactenlijst verwijderd."
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -8610,7 +8612,7 @@ msgstr "Incompatibele protocolversie"
 
 #: ../libpurple/protocols/novell/nmuser.c:1947
 msgid "The user has blocked you"
-msgstr "De gebruiker heeft u geblokkeerd"
+msgstr "De gebruiker heeft je geblokkeerd"
 
 #: ../libpurple/protocols/novell/nmuser.c:1950
 msgid "This evaluation version does not allow more than ten users to log in at one time"
@@ -8618,7 +8620,7 @@ msgstr "Deze evaluatieversie geeft slechts de mogelijkheid voor tien gelijktijdi
 
 #: ../libpurple/protocols/novell/nmuser.c:1953
 msgid "The user is either offline or you are blocked"
-msgstr "De gebruiker is off-line of heeft u geblokkeerd"
+msgstr "De gebruiker is offline of heeft je geblokkeerd"
 
 #: ../libpurple/protocols/novell/nmuser.c:1956
 #, c-format
@@ -8638,7 +8640,7 @@ msgstr "Kan het bericht niet verzenden. Kan geen gegevens over gebruiker opvrage
 #: ../libpurple/protocols/novell/novell.c:404
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
-msgstr "Kan %s niet toevoegen aan uw contactenlijst (%s)."
+msgstr "Kan %s niet toevoegen aan je contactenlijst (%s)."
 
 #. TODO: Improve this! message to who or for what conference?
 #: ../libpurple/protocols/novell/novell.c:430
@@ -8670,7 +8672,7 @@ msgstr "Kan de gebruiker %s niet naar de map %s verplaatsen op de server. Fout b
 #: ../libpurple/protocols/novell/novell.c:640
 #, c-format
 msgid "Unable to add %s to your buddy list. Error creating folder in server side list (%s)."
-msgstr "Kan %s niet toevoegen aan uw contactenlijst. Fout bij aanmaken van map op de server (%s)."
+msgstr "Kan %s niet toevoegen aan je contactenlijst. Fout bij aanmaken van map op de server (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:713
 #, c-format
@@ -8681,22 +8683,22 @@ msgstr "Kan details niet opvragen voor de gebruiker %s (%s)."
 #: ../libpurple/protocols/novell/novell.c:905
 #, c-format
 msgid "Unable to add user to privacy list (%s)."
-msgstr "Kan de gebruiker niet toevoegen aan uw privacy-lijst (%s)."
+msgstr "Kan de gebruiker niet toevoegen aan je privacy-lijst (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:806
 #, c-format
 msgid "Unable to add %s to deny list (%s)."
-msgstr "Kan %s niet aan uw weigeringslijst toevoegen (%s)."
+msgstr "Kan %s niet aan je weigeringslijst toevoegen (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:859
 #, c-format
 msgid "Unable to add %s to permit list (%s)."
-msgstr "Kan %s niet toevoegen aan uw toestemmingslijst (%s)."
+msgstr "Kan %s niet toevoegen aan je toestemmingslijst (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:927
 #, c-format
 msgid "Unable to remove %s from privacy list (%s)."
-msgstr "Kan %s niet verwijderen van uw privacy-lijst (%s)."
+msgstr "Kan %s niet verwijderen van je privacy-lijst (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:950
 #: ../libpurple/protocols/novell/novell.c:1656
@@ -8780,20 +8782,20 @@ msgstr ""
 
 #: ../libpurple/protocols/novell/novell.c:1912
 msgid "Would you like to join the conversation?"
-msgstr "Wilt u het gesprek bijwonen?"
+msgstr "Wil je het gesprek bijwonen?"
 
 #: ../libpurple/protocols/novell/novell.c:2028
 msgid "You have been logged out because you logged in at another workstation."
-msgstr "De verbinding is verbroken omdat u zich heeft aangemeld op een andere computer."
+msgstr "De verbinding is verbroken omdat je je hebt aangemeld op een andere computer."
 
 #: ../libpurple/protocols/novell/novell.c:2085
 #, c-format
 msgid "%s appears to be offline and did not receive the message that you just sent."
-msgstr "%s lijkt niet aangemeld te zijn en heeft uw bericht niet ontvangen."
+msgstr "%s lijkt niet aangemeld te zijn en heeft je bericht niet ontvangen."
 
 #: ../libpurple/protocols/novell/novell.c:2185
 msgid "Unable to connect to server. Please enter the address of the server you wish to connect to."
-msgstr "Kan geen verbinding makenmet server. Geef de naam op van de server waarmee u contact wilt maken."
+msgstr "Kan geen verbinding maken met de server. Geef de naam op van de server waarmee je verbinding wilt maken."
 
 #: ../libpurple/protocols/novell/novell.c:2214
 msgid "Error. SSL support is not installed."
@@ -8801,7 +8803,7 @@ msgstr "Fout! Geen SSL-ondersteuning geïnstalleerd."
 
 #: ../libpurple/protocols/novell/novell.c:2522
 msgid "This conference has been closed. No more messages can be sent."
-msgstr "Deze bijeenkomst is afgesloten. Er kunnen geen nieuwe berichten verzonden worden."
+msgstr "Deze bijeenkomst is gesloten. Er kunnen geen nieuwe berichten verzonden worden."
 
 #. *< type
 #. *< ui_requirement
@@ -8915,7 +8917,7 @@ msgstr "De andere gebruiker heeft de verbinding verbroken."
 
 #: ../libpurple/protocols/oscar/odc.c:44
 msgid "The remote user has declined your request."
-msgstr "De andere gebruiker heeft uw verzoek geweigerd."
+msgstr "De andere gebruiker heeft je verzoek geweigerd."
 
 #: ../libpurple/protocols/oscar/odc.c:46
 #, c-format
@@ -9042,7 +9044,7 @@ msgstr "Niet tijdens AOL"
 
 #: ../libpurple/protocols/oscar/oscar.c:351
 msgid "(There was an error receiving this message.  The buddy you are speaking with is probably using a different encoding than expected.  If you know what encoding he is using, you can specify it in the advanced account options for your AIM/ICQ account.)"
-msgstr "(Er is een fout opgetreden bij ontvangen van het bericht. De ander gebruikt waarschijnlijk een andere tekencodering dan verwacht. Als u weet welke tekencodering er gebruikt wordt dan kunt u dit instellen bij de geavanceerde instellingen van uw AIM/ICQ-account.)"
+msgstr "(Er is een fout opgetreden bij het ontvangen van dit bericht. De ander gebruikt waarschijnlijk een andere tekencodering dan verwacht. Als je weet welke tekencodering er gebruikt wordt dan kun je dit instellen bij de geavanceerde instellingen van je AIM/ICQ-account.)"
 
 #: ../libpurple/protocols/oscar/oscar.c:460
 #, c-format
@@ -9258,7 +9260,7 @@ msgstr "Je hebt je te snel aan en afgemeld. Wacht 10 minuten en probeer het nog 
 #: ../libpurple/protocols/oscar/oscar.c:1528
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "Het programma wat u gebruikt is te oud. Haal een nieuwe versie op bij %s"
+msgstr "Het programma dat je gebruikt is te oud. Je kan upgraden op %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:1568
 msgid "Could Not Connect"
@@ -9295,7 +9297,7 @@ msgstr "_OK"
 #: ../libpurple/protocols/oscar/oscar.c:1651
 #, c-format
 msgid "You may be disconnected shortly.  You may want to use TOC until this is fixed.  Check %s for updates."
-msgstr "U wordt waarschijnlijk binnenkort afgemeld. U kunt misschien beter TOC gebruiken tot dit probleem is opgelost. Kijk op %s voor nieuwe versies."
+msgstr "U wordt waarschijnlijk binnenkort afgemeld. Je kunt misschien beter TOC gebruiken tot dit probleem is opgelost. Kijk op %s voor updates."
 
 #: ../libpurple/protocols/oscar/oscar.c:1655
 #: ../libpurple/protocols/oscar/oscar.c:1701
@@ -9323,7 +9325,7 @@ msgstr "Kan verbinding niet initialiseren"
 
 #: ../libpurple/protocols/oscar/oscar.c:2451
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Geef mij toestemming zodat ik u kan toevoegen aan mijn contactenlijst."
+msgstr "Geef mij a.u.b. toestemming zodat ik je kan toevoegen aan mijn contactenlijst."
 
 #: ../libpurple/protocols/oscar/oscar.c:2480
 msgid "Authorization Request Message:"
@@ -9331,7 +9333,7 @@ msgstr "Tekst van toestemmingsaanvraag"
 
 #: ../libpurple/protocols/oscar/oscar.c:2481
 msgid "Please authorize me!"
-msgstr "Geef mij toestemming, alstublieft!"
+msgstr "Geef mij toestemming, a.u.b!"
 
 #: ../libpurple/protocols/oscar/oscar.c:2521
 #: ../libpurple/protocols/oscar/oscar.c:2529
@@ -9410,7 +9412,7 @@ msgstr "ICQ-gebruiker %u heeft je een contact toegestuurd: %s (%s)"
 
 #: ../libpurple/protocols/oscar/oscar.c:2715
 msgid "Do you want to add this buddy to your buddy list?"
-msgstr "Wilt u deze persoon toevoegen aan uw contactenlijst?"
+msgstr "Wil je deze persoon toevoegen aan je contactenlijst?"
 
 #: ../libpurple/protocols/oscar/oscar.c:2720
 #: ../pidgin/gtkroomlist.c:315
@@ -9507,7 +9509,7 @@ msgstr "[kan bericht niet weergeven omdat deze ongeldige tekens bevat.]"
 
 #: ../libpurple/protocols/oscar/oscar.c:3602
 msgid "The last action you attempted could not be performed because you are over the rate limit. Please wait 10 seconds and try again."
-msgstr "Uw laatste actie is niet gebeurd omdat uw snelheid te hoog ligt. Wacht 10 seconden en probeer het dan nogmaals."
+msgstr "Uw laatste actie is niet gebeurd omdat je snelheid te hoog ligt. Wacht 10 seconden en probeer het dan nogmaals."
 
 #: ../libpurple/protocols/oscar/oscar.c:3687
 #: ../libpurple/protocols/toc/toc.c:977
@@ -9628,7 +9630,7 @@ msgstr "Accountinformatie"
 
 #: ../libpurple/protocols/oscar/oscar.c:4377
 msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
-msgstr "Uw chat-afbeelding is niet verstuurd. u moet een directe verbinding hebben om IM-afbeeldingen te sturen."
+msgstr "Je afbeelding is niet verstuurd. Er is een directe verbinding nodig om afbeeldingen te kunnen sturen."
 
 #: ../libpurple/protocols/oscar/oscar.c:4648
 msgid "Unable to set AIM profile."
@@ -9690,7 +9692,7 @@ msgstr "Wezen"
 #: ../libpurple/protocols/oscar/oscar.c:5260
 #, c-format
 msgid "Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."
-msgstr "Kon %s niet als contact toevoegen omdat u te veel contacten in uw lijst heeft. Verwijder eerst een ander en probeer opnieuw."
+msgstr "Kon %s niet toevoegen, lijst is vol. Verwijder een contactpersoon en probeer het opnieuw."
 
 #: ../libpurple/protocols/oscar/oscar.c:5260
 #: ../libpurple/protocols/oscar/oscar.c:5275
@@ -9705,7 +9707,7 @@ msgstr "Kan contact %s niet toevoegen voor een onbekende reden."
 #: ../libpurple/protocols/oscar/oscar.c:5408
 #, c-format
 msgid "The user %s has given you permission to add him or her to your buddy list.  Do you want to add this user?"
-msgstr "De gebruiker %s heeft u toestemming gegeven om u toe te voegen aan zijn of haar contactenlijst. Wilt u deze gebruiker toevoegen?"
+msgstr "De gebruiker %s heeft je toestemming gegeven om hem/haar toe te voegen aan je contactenlijst. Wil je deze gebruiker toevoegen?"
 
 #: ../libpurple/protocols/oscar/oscar.c:5416
 msgid "Authorization Given"
@@ -9715,7 +9717,7 @@ msgstr "Toestemming gegeven"
 #: ../libpurple/protocols/oscar/oscar.c:5489
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
-msgstr "De gebruiker %s heeft toestemming gegeven. Hij/zij wordt toegevoegd aan uw contactenlijst."
+msgstr "De gebruiker %s heeft je toestemming gegeven hem/haar toe te voegen aan je contactenlijst."
 
 #: ../libpurple/protocols/oscar/oscar.c:5490
 msgid "Authorization Granted"
@@ -9728,7 +9730,7 @@ msgid ""
 "The user %s has denied your request to add them to your buddy list for the following reason:\n"
 "%s"
 msgstr ""
-"De gebruiker %s heeft uw aanvraag om hem/haar toe te voegen aan uw contactenlijst geweigerd met de volgende reden:\n"
+"De gebruiker %s heeft je aanvraag om hem/haar toe te voegen aan je contactenlijst geweigerd met de volgende reden:\n"
 "%s"
 
 #: ../libpurple/protocols/oscar/oscar.c:5494
@@ -9742,7 +9744,7 @@ msgstr "_Uitwisselen:"
 
 #: ../libpurple/protocols/oscar/oscar.c:5643
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
-msgstr "Uw chat-afbeelding is niet verstuurd. U kunt geen IM-afbeeldingen versturen in een AIM-chat."
+msgstr "Uw afbeelding is niet verstuurd. Je kunt geen afbeeldingen versturen in een AIM-chat."
 
 #: ../libpurple/protocols/oscar/oscar.c:5979
 msgid "iTunes Music Store Link"
@@ -9764,7 +9766,7 @@ msgstr "U heeft ervoor gekozen om een directe verbinding te openen met %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:6139
 msgid "Because this reveals your IP address, it may be considered a security risk.  Do you wish to continue?"
-msgstr "Omdat dit uw IP-adres zichtbaar maakt voor de andere partij kan het worden gezien als veiligheidsrisico. Wilt u doorgaan?"
+msgstr "Omdat dit je IP-adres zichtbaar maakt voor de andere partij kan het worden gezien als veiligheidsrisico. Wil je doorgaan?"
 
 #: ../libpurple/protocols/oscar/oscar.c:6145
 #: ../libpurple/protocols/oscar/peer.c:1047
@@ -9892,7 +9894,7 @@ msgid ""
 "but does not reveal your IP address)"
 msgstr ""
 "Altijd AIM/ICQ proxy gebruiken voor\n"
-"bestandsoverdrachten en directe gesprekken(langzaam, maar verbergt uw IP-adres)"
+"bestandsoverdrachten en directe gesprekken(langzaam, maar verbergt je IP-adres)"
 
 #: ../libpurple/protocols/oscar/oscar.c:6847
 msgid "Allow multiple simultaneous logins"
@@ -9919,7 +9921,7 @@ msgstr "%s heeft net een directe verbinding met %s aangevraagd"
 
 #: ../libpurple/protocols/oscar/peer.c:1039
 msgid "This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."
-msgstr "Dit vereist een directe verbinding tussen de twee computers (nodig voor afbeeldingen via chatberichten). Dit zou als een inbreuk op de privacy beschouwd kunnen worden omdat de ander dan uw IP-adres te weten komt."
+msgstr "Dit vereist een directe verbinding tussen de twee computers (nodig voor afbeeldingen via chatberichten). Dit zou als een inbreuk op de privacy beschouwd kunnen worden omdat de ander dan je IP-adres te weten komt."
 
 #: ../libpurple/protocols/qq/buddy_info.c:40
 msgid "Primary Information"
@@ -10100,7 +10102,7 @@ msgstr "U heeft %d's verzoek geweigerd"
 
 #: ../libpurple/protocols/qq/buddy_opt.c:208
 msgid "Input your reason:"
-msgstr "Geef uw reden:"
+msgstr "Geef je reden:"
 
 #: ../libpurple/protocols/qq/buddy_opt.c:211
 msgid "Reject request"
@@ -10134,13 +10136,13 @@ msgstr "Gebruiker %d vereist autentificatie"
 #: ../libpurple/protocols/qq/buddy_opt.c:409
 #: ../libpurple/protocols/qq/group_join.c:128
 msgid "Input request here"
-msgstr "Geef hier uw verzoek"
+msgstr "Geef hier je verzoek"
 
 #. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 #: ../libpurple/protocols/qq/buddy_opt.c:410
 #: ../libpurple/protocols/qq/group_join.c:129
 msgid "Would you be my friend?"
-msgstr "Wilt u mijn vriend zijn?"
+msgstr "Wil je mijn vriend zijn?"
 
 #. multiline
 #. masked
@@ -10154,7 +10156,7 @@ msgstr "Verzenden"
 #: ../libpurple/protocols/qq/buddy_opt.c:421
 #, c-format
 msgid "You have added %d to buddy list"
-msgstr "Je hebt %d toegevoegd aan uw contactenlijst"
+msgstr "Je hebt %d toegevoegd aan je contactenlijst"
 
 #: ../libpurple/protocols/qq/buddy_opt.c:518
 msgid "QQid Error"
@@ -10250,7 +10252,7 @@ msgstr "U [%d] bent toegevoegd aan groep \"%d\""
 
 #: ../libpurple/protocols/qq/group_im.c:277
 msgid "This group has been added to your buddy list"
-msgstr "Deze groep is toegevoegd aan uw contactenlijst"
+msgstr "Deze groep is toegevoegd aan je contactenlijst"
 
 #: ../libpurple/protocols/qq/group_internal.c:41
 msgid "I am not a member"
@@ -10294,14 +10296,14 @@ msgstr "Je bent een groep ID binnengekomen buiten de accepteerbare grootte."
 
 #: ../libpurple/protocols/qq/group_join.c:342
 msgid "Are you sure you want to leave this Qun?"
-msgstr "Wilt u deze Qun echt verlaten?"
+msgstr "Wil je deze Qun echt verlaten?"
 
 #: ../libpurple/protocols/qq/group_join.c:344
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
-"Opmerking: Als u de maker bent, \n"
+"Opmerking: Als je de maker bent, \n"
 "deze opdracht verwijdert deze Qun uiteindelijk."
 
 #: ../libpurple/protocols/qq/group_network.c:116
@@ -10317,11 +10319,11 @@ msgstr "Groepsopdrachtfout"
 #: ../libpurple/protocols/qq/group_opt.c:101
 #: ../libpurple/protocols/qq/sys_msg.c:88
 msgid "Do you want to approve the request?"
-msgstr "Wilt u de aanvraag goedkeuren?"
+msgstr "Wil je de aanvraag goedkeuren?"
 
 #: ../libpurple/protocols/qq/group_opt.c:115
 msgid "Enter your reason:"
-msgstr "Geef uw reden:"
+msgstr "Geef je reden:"
 
 #: ../libpurple/protocols/qq/group_opt.c:215
 msgid "You have successfully modified Qun member"
@@ -10337,7 +10339,7 @@ msgstr "Je hebt een Qun aangemaakt"
 
 #: ../libpurple/protocols/qq/group_opt.c:382
 msgid "Would you like to set up the Qun details now?"
-msgstr "Wilt u de Qundetails nu instellen?"
+msgstr "Wil je de Qun-details nu instellen?"
 
 #: ../libpurple/protocols/qq/group_opt.c:386
 msgid "Setup"
@@ -10581,7 +10583,7 @@ msgstr "%d heeft de overdracht van %s afgebroken"
 
 #: ../libpurple/protocols/qq/sys_msg.c:112
 msgid "Do you want to add this buddy?"
-msgstr "Wilt u deze contact toevoegen?"
+msgstr "Wil je deze contactpersoon toevoegen?"
 
 #. only need to get value
 #: ../libpurple/protocols/qq/sys_msg.c:171
@@ -10592,22 +10594,22 @@ msgstr "U bent toegevoegd door %s"
 #: ../libpurple/protocols/qq/sys_msg.c:174
 #: ../libpurple/protocols/qq/sys_msg.c:269
 msgid "Would you like to add him?"
-msgstr "Wilt u hem/haar toevoegen?"
+msgstr "Wil je hem/haar toevoegen?"
 
 #: ../libpurple/protocols/qq/sys_msg.c:182
 #, c-format
 msgid "%s has added you [%s] to his or her buddy list"
-msgstr "%s heeft u [%s] aan zijn/haar contactenlijst toegevoegd"
+msgstr "%s heeft je [%s] aan zijn/haar contactenlijst toegevoegd"
 
 #: ../libpurple/protocols/qq/sys_msg.c:198
 #, c-format
 msgid "User %s rejected your request"
-msgstr "De gebruiker %s heeft uw verzoek geweigerd"
+msgstr "De gebruiker %s heeft je verzoek geweigerd"
 
 #: ../libpurple/protocols/qq/sys_msg.c:218
 #, c-format
 msgid "User %s approved your request"
-msgstr "De gebruiker %s heeft uw verzoek goedgekeurd"
+msgstr "De gebruiker %s heeft je verzoek goedgekeurd"
 
 #. TODO: this should go through purple_account_request_authorization()
 #: ../libpurple/protocols/qq/sys_msg.c:244
@@ -10623,7 +10625,7 @@ msgstr "Bericht: %s"
 #: ../libpurple/protocols/qq/sys_msg.c:267
 #, c-format
 msgid "%s is not in your buddy list"
-msgstr "%s staat niet in uw contactenlijst"
+msgstr "%s staat niet in je contactenlijst"
 
 #: ../libpurple/protocols/qq/sys_msg.c:287
 #, c-format
@@ -10793,7 +10795,7 @@ msgstr "Gebruiker uitnodigen voor een bijeenkomst"
 #: ../libpurple/protocols/sametime/sametime.c:3518
 #, c-format
 msgid "Select a conference from the list below to send an invite to user %s. Select \"Create New Conference\" if you'd like to create a new conference to invite this user to."
-msgstr "Kies een bijeenkomst uit onderstaande lijst om een uitnodiging naar %s te sturen. Kies \"Nieuwe bijeenkomst\" als u een nieuwe bijeenkomst wilt aanmaken."
+msgstr "Kies een bijeenkomst uit onderstaande lijst om een uitnodiging naar %s te sturen. Kies \"Nieuwe bijeenkomst\" als je een nieuwe bijeenkomst wilt aanmaken."
 
 #: ../libpurple/protocols/sametime/sametime.c:3523
 msgid "Invite to Conference"
@@ -10874,7 +10876,7 @@ msgstr "Kan gebruiker niet toevoegen: gebruiker niet gevonden"
 #: ../libpurple/protocols/sametime/sametime.c:4476
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community. This entry has been removed from your buddy list."
-msgstr "Identificatie '%s' heeft geen overeenkomende gebruikers in uw Sametime-groep. Deze ingang is uit uw lijst verwijderd."
+msgstr "Identificatie '%s' heeft geen overeenkomende gebruikers in je Sametime-groep. Deze ingang is uit je lijst verwijderd."
 
 #: ../libpurple/protocols/sametime/sametime.c:5067
 #, c-format
@@ -10965,7 +10967,7 @@ msgstr "Notes adresboekgroep"
 
 #: ../libpurple/protocols/sametime/sametime.c:5537
 msgid "Enter the name of a Notes Address Book group in the field below to add the group and its members to your buddy list."
-msgstr "Geef de groepsnaam in het veld hieronder om de groep en de leden toe te voegen aan uw contactenlijst."
+msgstr "Geef de groepsnaam in het veld hieronder om de groep en de leden toe te voegen aan je contactenlijst."
 
 #: ../libpurple/protocols/sametime/sametime.c:5586
 #, c-format
@@ -10975,7 +10977,7 @@ msgstr "Zoekresultaten voor '%s'"
 #: ../libpurple/protocols/sametime/sametime.c:5587
 #, c-format
 msgid "The identifier '%s' may possibly refer to any of the following users. You may add these users to your buddy list or send them messages with the action buttons below."
-msgstr "De identificatie '%s' kan naar ieder van de volgende gebruikers verwijzen. U kunt deze gebruikers toevoegen aan uw lijst of berichten sturen door middel van de knoppen hieronder."
+msgstr "De identificatie '%s' kan naar ieder van de volgende gebruikers verwijzen. Je kunt deze gebruikers toevoegen aan je lijst of berichten sturen door middel van de knoppen hieronder."
 
 #: ../libpurple/protocols/sametime/sametime.c:5594
 #: ../pidgin/gtknotify.c:794
@@ -11099,7 +11101,7 @@ msgstr "Uitwisseling van sleutels is al gestart"
 #: ../libpurple/protocols/silc/buddy.c:135
 #: ../libpurple/protocols/silc10/buddy.c:140
 msgid "Key agreement cannot be started with yourself"
-msgstr "Kan geen sleutels uitwisselen met uzelf"
+msgstr "Je kan geen sleutels uitwisselen met jezelf"
 
 #: ../libpurple/protocols/silc/buddy.c:255
 #: ../libpurple/protocols/silc/buddy.c:383
@@ -11115,7 +11117,7 @@ msgstr "De andere gebruiker is niet meer aanwezig in het netwerk"
 #: ../libpurple/protocols/silc10/buddy.c:295
 #, c-format
 msgid "Key agreement request received from %s. Would you like to perform the key agreement?"
-msgstr "Verzoek tot uitwisselen van sleutels ontvangen van %s. Wilt u sleutels met deze persoon uitwisselen?"
+msgstr "%s wil sleutels uitwisselen. Wil je sleutels met deze persoon uitwisselen?"
 
 #: ../libpurple/protocols/silc/buddy.c:302
 #: ../libpurple/protocols/silc10/buddy.c:299
@@ -11223,7 +11225,7 @@ msgstr "De persoon %s is niet betrouwbaar"
 #: ../libpurple/protocols/silc/buddy.c:726
 #: ../libpurple/protocols/silc10/buddy.c:738
 msgid "You cannot receive buddy notifications until you import his/her public key.  You can use the Get Public Key command to get the public key."
-msgstr "Je kan geen meldingen krijgen totdat u de openbare sleutel van deze gebruiker importeert.  Je kan de opdracht \"Openbare sleutel ophalen\" gebruiken om de openbare sleutel te importeren."
+msgstr "Je kan geen meldingen krijgen totdat je de openbare sleutel van deze gebruiker importeert.  Je kan de opdracht \"Openbare sleutel ophalen\" gebruiken om de openbare sleutel te importeren."
 
 #. Open file selector to select the public key.
 #: ../libpurple/protocols/silc/buddy.c:1062
@@ -11240,7 +11242,7 @@ msgstr "De %s contactpersoon is niet aanwezig op het netwerk"
 #: ../libpurple/protocols/silc/buddy.c:1076
 #: ../libpurple/protocols/silc10/buddy.c:1084
 msgid "To add the buddy you must import his/her public key. Press Import to import a public key."
-msgstr "Om de gebruiker toe te voegen moet u de openbare sleutel importeren. Klik op \"Importeren\" om de openbare sleutel te importeren."
+msgstr "Om de gebruiker toe te voegen is het nodig zijn/haar publieke sleutel te importeren. Klik op \"Importeren\" om de publieke sleutel te importeren."
 
 #: ../libpurple/protocols/silc/buddy.c:1080
 #: ../libpurple/protocols/silc10/buddy.c:1088
@@ -11690,7 +11692,7 @@ msgstr "Geheim kanaal instellen"
 #: ../libpurple/protocols/silc10/chat.c:1102
 #, c-format
 msgid "You have to join the %s channel before you are able to join the private group"
-msgstr "U moet lid zijn van het %s-kanaal voordat u mag deelnemen aan de privé-groep"
+msgstr "U moet lid zijn van het %s-kanaal voordat je kan deelnemen aan de privé-groep"
 
 #: ../libpurple/protocols/silc/chat.c:1051
 #: ../libpurple/protocols/silc10/chat.c:1104
@@ -11700,7 +11702,7 @@ msgstr "Deelnemen aan privégroep"
 #: ../libpurple/protocols/silc/chat.c:1052
 #: ../libpurple/protocols/silc10/chat.c:1105
 msgid "Cannot join private group"
-msgstr "Kan niet deelnamen aan privégroep"
+msgstr "Kan niet deelnemen aan privégroep"
 
 #: ../libpurple/protocols/silc/chat.c:1248
 #: ../libpurple/protocols/silc/silc.c:1452
@@ -12289,17 +12291,17 @@ msgstr "Online diensten"
 #: ../libpurple/protocols/silc/silc.c:1028
 #: ../libpurple/protocols/silc10/silc.c:729
 msgid "Let others see what services you are using"
-msgstr "Anderen uw gebruikte diensten laten zien"
+msgstr "Anderen je gebruikte diensten laten zien"
 
 #: ../libpurple/protocols/silc/silc.c:1034
 #: ../libpurple/protocols/silc10/silc.c:735
 msgid "Let others see what computer you are using"
-msgstr "Anderen door u gebruiket computer laten zien"
+msgstr "Laat anderen zien wat voor computer je gebruikt"
 
 #: ../libpurple/protocols/silc/silc.c:1041
 #: ../libpurple/protocols/silc10/silc.c:742
 msgid "Your VCard File"
-msgstr "Uw VCard-bestand"
+msgstr "Jouw VCard-bestand"
 
 #: ../libpurple/protocols/silc/silc.c:1047
 msgid "Timezone (UTC)"
@@ -12315,7 +12317,7 @@ msgstr "Online gebruikersgegevens"
 #: ../libpurple/protocols/silc/silc.c:1053
 #: ../libpurple/protocols/silc10/silc.c:756
 msgid "You can let other users see your online status information and your personal information. Please fill the information you would like other users to see about yourself."
-msgstr "U kunt andere gebruikers uw online gegevens laten inzien. Geef de informatie waarvan u vind dat anderen die mogen zien."
+msgstr "Je kunt andere gebruikers je online gegevens laten inzien. Geef de informatie waarvan je vind dat anderen die mogen zien."
 
 #: ../libpurple/protocols/silc/silc.c:1094
 #: ../libpurple/protocols/silc/silc.c:1100
@@ -12514,7 +12516,7 @@ msgstr "kill &lt;bijnaam&gt; [-openbsleutel|&lt;reden&gt;]:  bijnaam vernietigen
 #: ../libpurple/protocols/silc/silc.c:1961
 #: ../libpurple/protocols/silc10/silc.c:1680
 msgid "nick &lt;newnick&gt;:  Change your nickname"
-msgstr "nick &lt;nieuwebijnaam&gt;:  Uw bijnaam veranderen"
+msgstr "nick &lt;nieuwebijnaam&gt;:  Je bijnaam veranderen"
 
 #: ../libpurple/protocols/silc/silc.c:1965
 #: ../libpurple/protocols/silc10/silc.c:1684
@@ -12534,7 +12536,7 @@ msgstr "cumode &lt;kanaal&gt; +|-&lt;instellingen&gt; &lt;bijnaam&gt;:  Instelli
 #: ../libpurple/protocols/silc/silc.c:1977
 #: ../libpurple/protocols/silc10/silc.c:1696
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
-msgstr "umode &lt;gebruikersinstellingen&gt;:  Uw gebruikersinstellingen binnen het netwerk instellen"
+msgstr "umode &lt;gebruikersinstellingen&gt;:  Je gebruikersinstellingen binnen het netwerk instellen"
 
 #: ../libpurple/protocols/silc/silc.c:1981
 #: ../libpurple/protocols/silc10/silc.c:1700
@@ -12806,11 +12808,11 @@ msgstr "Geen serverstatistieken beschikbaar"
 
 #: ../libpurple/protocols/silc10/ops.c:1937
 msgid "Failure: Version mismatch, upgrade your client"
-msgstr "Mislukt: Versies komen niet overeen. Installeer een nieuwe versie van uw programma"
+msgstr "Mislukt: Versies komen niet overeen. Installeer een nieuwe versie van je programma"
 
 #: ../libpurple/protocols/silc10/ops.c:1940
 msgid "Failure: Remote does not trust/support your public key"
-msgstr "Mislukt: De andere kant vertrouwt/ondersteunt uw openbare sleutel niet"
+msgstr "Mislukt: De andere kant vertrouwt/ondersteunt je openbare sleutel niet"
 
 #: ../libpurple/protocols/silc10/ops.c:1943
 msgid "Failure: Remote does not support proposed KE group"
@@ -12964,7 +12966,7 @@ msgstr "Waarschuwing van %s is niet toegestaan."
 
 #: ../libpurple/protocols/toc/toc.c:503
 msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Een bericht is verloren gegaan. U overschreidt de snelheid van de server."
+msgstr "Een bericht is verloren gegaan. Je overschreidt de maximumsnelheid van de server."
 
 #: ../libpurple/protocols/toc/toc.c:506
 #, c-format
@@ -13067,7 +13069,7 @@ msgstr "Wacht op antwoord..."
 
 #: ../libpurple/protocols/toc/toc.c:792
 msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC werkt weer. U kunt nu weer berichten versturen."
+msgstr "TOC werkt weer. Je kunt nu weer berichten versturen."
 
 #: ../libpurple/protocols/toc/toc.c:995
 msgid "Password Change Successful"
@@ -13120,7 +13122,7 @@ msgstr[1] "%s vraagt aan %s om %d bestanden te accepteren: %s (%.2f %s)%s%s"
 #: ../libpurple/protocols/toc/toc.c:2216
 #, c-format
 msgid "%s requests you to send them a file"
-msgstr "%s vraagt u om een bestand te verzenden"
+msgstr "%s vraagt je om een bestand te verzenden"
 
 #. *< type
 #. *< ui_requirement
@@ -13158,12 +13160,12 @@ msgstr "Identificatie van weigeringsbericht:"
 #: ../libpurple/protocols/yahoo/yahoo.c:1009
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list for the following reason: %s."
-msgstr "De gebruiker %s heeft uw aanvraag om hem/haar toe te voegen aan uw contactenlijst met terugwerkende kracht geweigerd met de volgende reden: %s"
+msgstr "De gebruiker %s heeft je aanvraag om hem/haar toe te voegen aan je contactenlijst met terugwerkende kracht geweigerd met de volgende reden: %s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1012
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr "De gebruiker %s heeft geen toestemming gegeven. Hij/zij wordt NIET toegevoegd aan uw contactenlijst."
+msgstr "De gebruiker %s heeft geen toestemming gegeven. Hij/zij wordt NIET toegevoegd aan je contactenlijst."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1014
 msgid "Add buddy rejected"
@@ -13181,7 +13183,7 @@ msgstr "Yahoo! identificatie mislukt"
 #: ../libpurple/protocols/yahoo/yahoo.c:2085
 #, c-format
 msgid "You have tried to ignore %s, but the user is on your buddy list.  Clicking \"Yes\" will remove and ignore the buddy."
-msgstr "U probeert %s te negeren, maar de gebruiker staat in uw contactenlijst.  Klik op \"Ja\" om de gebruiker uit uw lijst te verwijderen en deze te negeren."
+msgstr "U probeert %s te negeren, maar de gebruiker staat in je contactenlijst.  Klik op \"Ja\" om de gebruiker uit je lijst te verwijderen en deze te negeren."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2088
 msgid "Ignore buddy?"
@@ -13189,7 +13191,7 @@ msgstr "Contact negeren?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2159
 msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Uw account is afgesloten. Meld u aan via de Yahoo website."
+msgstr "Uw account is afgesloten. Meld je aan via de Yahoo website."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2162
 #, c-format
@@ -13423,7 +13425,7 @@ msgstr "Kan geen bestandsbeschrijving aanmaken."
 #: ../libpurple/protocols/yahoo/yahoo_filexfer.c:1410
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s biedt u een collectie van %d bestanden aan.\n"
+msgstr "%s biedt je een collectie van %d bestanden aan.\n"
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:798
 msgid "Yahoo! Japan Profile"
@@ -13439,7 +13441,7 @@ msgstr "Helaas worden profielen met voor volwassenen bedoelde inhoud op dit mome
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:841
 msgid "If you wish to view this profile, you will need to visit this link in your web browser:"
-msgstr "Als u dit profiel wilt zien, zult u deze verwijzing moeten openen in uw web-browser"
+msgstr "Als je dit profiel wilt zien, zul je deze verwijzing moeten openen in je web-browser"
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1036
 msgid "Yahoo! ID"
@@ -13487,11 +13489,11 @@ msgstr "Helaas worden profielen in deze taal op dit moment nog niet ondersteund.
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1224
 msgid "Could not retrieve the user's profile. This most likely is a temporary server-side problem. Please try again later."
-msgstr "Kan gebruikersprofiel niet ophalen. Dit is waarschijnlijk een tijdelijk serverprobleem. Probeert u het later nogmaals."
+msgstr "Kan gebruikersprofiel niet ophalen. Dit is waarschijnlijk een tijdelijk serverprobleem. Probeer het later nog een keer."
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1227
 msgid "Could not retrieve the user's profile. This most likely means that the user does not exist; however, Yahoo! sometimes does fail to find a user's profile. If you know that the user exists, please try again later."
-msgstr "Kan gebruikersprofiel niet ophalen. Dit betekent waarschijnlijk dat de gebruiker niet bestaat. Soms kan Yahoo! ten onrechte een gebruiker niet vinde. Als u er zeker van bent dat de gebruiker bestaat, probeert u het dan later nogmaals."
+msgstr "Kan gebruikersprofiel niet ophalen. Dit betekent waarschijnlijk dat de gebruiker niet bestaat. Soms kan Yahoo! ten onrechte een gebruiker niet vinden. Als je er zeker van bent dat de gebruiker bestaat, probeer het dan later nogmaals."
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1234
 msgid "The user's profile is empty."
@@ -13500,7 +13502,7 @@ msgstr "Gebruikersprofiel is leeg."
 #: ../libpurple/protocols/yahoo/yahoochat.c:222
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s heeft uw uitnodiging voor ruimte \"%s\" afgeslagen omdat \"%s\"."
+msgstr "%s heeft je uitnodiging voor ruimte \"%s\" afgeslagen omdat \"%s\"."
 
 #: ../libpurple/protocols/yahoo/yahoochat.c:224
 msgid "Invitation Rejected"
@@ -13528,12 +13530,12 @@ msgstr "Niet beschikbaar"
 
 #: ../libpurple/protocols/yahoo/yahoochat.c:456
 msgid "Unknown error. You may need to logout and wait five minutes before being able to rejoin a chatroom"
-msgstr "Onbekende fout. U kunt misschien het beste afmelden en vijf minuten wachten voordta u dit weer probeert"
+msgstr "Onbekende fout. Je kunt je het beste afmelden en een paar minuten wachten voordat je je weer nij de chatruimte kan voegen"
 
 #: ../libpurple/protocols/yahoo/yahoochat.c:539
 #, c-format
 msgid "You are now chatting in %s."
-msgstr "U bent nu aan het chatten in  %s."
+msgstr "Je bent nu aan het chatten in  %s."
 
 #: ../libpurple/protocols/yahoo/yahoochat.c:728
 msgid "Failed to join buddy in chat"
@@ -13917,7 +13919,7 @@ msgstr "Fout bij lezen van %s"
 #: ../libpurple/util.c:2813
 #, c-format
 msgid "An error was encountered reading your %s.  They have not been loaded, and the old file has been renamed to %s~."
-msgstr "Er is een fout opgetreden bij lezen van uw %s. Deze is niet geladen. Het oude bestand is verplaatst naar %s~."
+msgstr "Er is een fout opgetreden bij lezen van je %s. Deze is niet geladen. Het oude bestand is verplaatst naar %s~."
 
 #: ../libpurple/util.c:3321
 msgid "Calculating..."
@@ -14133,12 +14135,12 @@ msgstr "Systeeminstellingen gebruiken"
 #. B)You are looking really closely at something that shouldn't matter.
 #: ../pidgin/gtkaccount.c:1034
 msgid "If you look real closely"
-msgstr "Als u zeer aandachtig kijkt"
+msgstr "Als je zeer aandachtig kijkt"
 
 #. This is an easter egg. See the comment on the previous line in the source.
 #: ../pidgin/gtkaccount.c:1037
 msgid "you can see the butterflies mating"
-msgstr "kunt u de vlinders zien paren"
+msgstr "kan je de vlinders zien paren"
 
 #: ../pidgin/gtkaccount.c:1058
 msgid "Proxy Options"
@@ -14222,7 +14224,7 @@ msgstr[1] "Je hebt %d contacten genaamd %s. Wil je deze samenvoegen?"
 
 #: ../pidgin/gtkblist.c:552
 msgid "Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. You can separate them again by choosing 'Expand' from the contact's context menu"
-msgstr "Samenvoeging van deze contacten zullen ze over een item verdelen bij de contactenlijst en gebruiken een enkel gespreks-venster. U kunt ze weer scheiden door weer te kiezen voor 'Uitvouwen' in het contact-menu"
+msgstr "Het samenvoegen van contacten zorgt ervoor dat contacten een enkel item beslaan in de contactenlijst en het gespreksvenster. Je kunt ze weer scheiden door te kiezen voor 'Uitvouwen' in het contact-menu"
 
 #: ../pidgin/gtkblist.c:685
 msgid "Please update the necessary fields."
@@ -14235,7 +14237,7 @@ msgstr "_Lijst Van Ruimtes"
 
 #: ../pidgin/gtkblist.c:1060
 msgid "Please enter the appropriate information about the chat you would like to join.\n"
-msgstr "Geef de benodigde informatie van de chat die u wilt openen.\n"
+msgstr "Geef de benodigde informatie van de chat die je wil openen.\n"
 
 #: ../pidgin/gtkblist.c:1072
 #: ../pidgin/gtkblist.c:6939
@@ -14750,7 +14752,7 @@ msgstr "U bent op het moment niet aangemeld met een protocol die ondersteuning b
 
 #: ../pidgin/gtkblist.c:6929
 msgid "Please enter an alias, and the appropriate information about the chat you would like to add to your buddy list.\n"
-msgstr "Geef de bijnaam en andere informatie van de chat die u wilt toevoegen aan de contactlijst.\n"
+msgstr "Geef de bijnaam en andere informatie van de chat die je wil toevoegen aan de contactlijst.\n"
 
 #: ../pidgin/gtkblist.c:6952
 msgid "A_lias:"
@@ -14826,7 +14828,7 @@ msgstr "Contact uitnodigen in chatruimte"
 #. Put our happy label in it.
 #: ../pidgin/gtkconv.c:875
 msgid "Please enter the name of the user you wish to invite, along with an optional invite message."
-msgstr "Geef de bijnaam van de persoon die u wilt uitnodigen, eventueel met een uitnodigende tekst"
+msgstr "Geef de bijnaam van de persoon die je wil uitnodigen, eventueel met een uitnodigende tekst."
 
 #: ../pidgin/gtkconv.c:896
 msgid "_Buddy:"
@@ -15758,7 +15760,7 @@ msgstr "Gebruikersinfo"
 
 #: ../pidgin/gtkdialogs.c:907
 msgid "Please enter the username or alias of the person whose info you would like to view."
-msgstr "Geef de gebruikersnaam of bijnaamvan de persoon waarvan u de informatie wilt opvragen."
+msgstr "Geef de gebruikersnaam of bijnaamvan de persoon waarvan je de informatie wil opvragen."
 
 #: ../pidgin/gtkdialogs.c:997
 msgid "View User Log"
@@ -15807,7 +15809,7 @@ msgstr "_Contact verwijderen"
 #: ../pidgin/gtkdialogs.c:1147
 #, c-format
 msgid "You are about to merge the group called %s into the group called %s. Do you want to continue?"
-msgstr "U staat op het punt om de groep %s in de groep %s samen te voegen. Wilt u doorgaan?"
+msgstr "Je staat op het punt om de groep %s in de groep %s samen te voegen. Wilt je doorgaan?"
 
 #: ../pidgin/gtkdialogs.c:1154
 msgid "Merge Groups"
@@ -15820,7 +15822,7 @@ msgstr "Groep _Samenvoegen"
 #: ../pidgin/gtkdialogs.c:1207
 #, c-format
 msgid "You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"
-msgstr "U staat op het punt om de groep %s en alle contacten in die groep van uw contactenlijst te verwijderen. Wilt u doorgaan?"
+msgstr "Je staat op het punt om de groep %s en alle contacten in die groep van je contactenlijst te verwijderen. Wil je doorgaan?"
 
 #: ../pidgin/gtkdialogs.c:1210
 msgid "Remove Group"
@@ -15833,7 +15835,7 @@ msgstr "_Groep verwijderen"
 #: ../pidgin/gtkdialogs.c:1246
 #, c-format
 msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
-msgstr "U staat op het punt om %s van uw contactenlijst te verwijderen. Wilt u doorgaan?"
+msgstr "Je staat op het punt om %s van je contactenlijst te verwijderen. Wil je doorgaan?"
 
 #: ../pidgin/gtkdialogs.c:1249
 msgid "Remove Buddy"
@@ -15846,7 +15848,7 @@ msgstr "Contact ver_wijderen"
 #: ../pidgin/gtkdialogs.c:1273
 #, c-format
 msgid "You are about to remove the chat %s from your buddy list.  Do you want to continue?"
-msgstr "U staat op het punt om de chatruimte %s van uw contactenlijst te verwijderen. Wilt u doorgaan?"
+msgstr "Je staat op het punt om de chatruimte %s van je contactenlijst te verwijderen. Wil je doorgaan?"
 
 #: ../pidgin/gtkdialogs.c:1276
 msgid "Remove Chat"
@@ -16171,11 +16173,11 @@ msgstr "_Beschrijving"
 
 #: ../pidgin/gtkimhtmltoolbar.c:425
 msgid "Please enter the URL and description of the link that you want to insert. The description is optional."
-msgstr "Geef de URL en de beschrijving van de verwijzing die u wilt invoegen. De beschrijving is optioneel."
+msgstr "Geef het adres en de beschrijving van de verwijzing die je wilt invoegen. De beschrijving is optioneel."
 
 #: ../pidgin/gtkimhtmltoolbar.c:429
 msgid "Please enter the URL of the link that you want to insert."
-msgstr "Geef de URL van de verwijzing die u wilt invoegen."
+msgstr "Geef het adres van de verwijzing die je wilt invoegen."
 
 #: ../pidgin/gtkimhtmltoolbar.c:434
 #: ../pidgin/gtkimhtmltoolbar.c:1232
@@ -16499,7 +16501,7 @@ msgstr "Alle berichten openen"
 
 #: ../pidgin/gtknotify.c:414
 msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Je hebt postl!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Je hebt post!</span>"
 
 #: ../pidgin/gtknotify.c:570
 #, c-format
@@ -16597,7 +16599,7 @@ msgstr "Kies een bestand"
 #. Create the "Pounce on Whom" frame.
 #: ../pidgin/gtkpounce.c:553
 msgid "Pounce on Whom"
-msgstr "Wie alarmeren"
+msgstr "Alarmdoel"
 
 #: ../pidgin/gtkpounce.c:580
 msgid "_Buddy name:"
@@ -16605,43 +16607,43 @@ msgstr "_Contactnaam:"
 
 #: ../pidgin/gtkpounce.c:614
 msgid "Si_gns on"
-msgstr "_Aanmelden"
+msgstr "...zich _aanmeldt"
 
 #: ../pidgin/gtkpounce.c:616
 msgid "Signs o_ff"
-msgstr "Af_melden"
+msgstr "...zich af_meld"
 
 #: ../pidgin/gtkpounce.c:618
 msgid "Goes a_way"
-msgstr "_Weggaan"
+msgstr "..._weggaat"
 
 #: ../pidgin/gtkpounce.c:620
 msgid "Ret_urns from away"
-msgstr "_Terugkeren van afwezigheid"
+msgstr "_terugkeert van afwezigheid"
 
 #: ../pidgin/gtkpounce.c:622
 msgid "Becomes _idle"
-msgstr "_Inactief is"
+msgstr "..._inactief is"
 
 #: ../pidgin/gtkpounce.c:624
 msgid "Is no longer i_dle"
-msgstr "Weer _actief is"
+msgstr "...weer _actief is"
 
 #: ../pidgin/gtkpounce.c:626
 msgid "Starts _typing"
-msgstr "Start met _typen"
+msgstr "...begint met _typen"
 
 #: ../pidgin/gtkpounce.c:628
 msgid "P_auses while typing"
-msgstr "Pauzeert tijdens typen"
+msgstr "...pauzeert tijdens het typen"
 
 #: ../pidgin/gtkpounce.c:630
 msgid "Stops t_yping"
-msgstr "Stopt _met typen"
+msgstr "...stopt _met typen"
 
 #: ../pidgin/gtkpounce.c:632
 msgid "Sends a _message"
-msgstr "Een bericht ver_stuurt"
+msgstr "...een bericht ver_stuurt"
 
 #: ../pidgin/gtkpounce.c:675
 msgid "Ope_n an IM window"
@@ -16678,7 +16680,7 @@ msgstr "_Voorbeeld"
 
 #: ../pidgin/gtkpounce.c:834
 msgid "P_ounce only when my status is not Available"
-msgstr "_Contactalarm alleen wanneer mijn status niet beschikbaar is"
+msgstr "Alarmeer alleen wanneer ik niet beschikbaar ben"
 
 #: ../pidgin/gtkpounce.c:839
 msgid "_Recurring"
@@ -16698,11 +16700,11 @@ msgstr "Installeer thema"
 
 #: ../pidgin/gtkprefs.c:646
 msgid "Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."
-msgstr "Kies een smileythema uit de lijst. U kunt nieuwe thema's installeren door deze naar de lijst te slepen."
+msgstr "Kies een smiley-thema uit de lijst. Je kunt nieuwe thema's installeren door deze naar de lijst te slepen."
 
 #: ../pidgin/gtkprefs.c:681
 msgid "Icon"
-msgstr "Pictogram"
+msgstr "Voorbeeld"
 
 #: ../pidgin/gtkprefs.c:891
 msgid "Keyboard Shortcuts"
@@ -17206,11 +17208,11 @@ msgstr "Gebruiker toestaan"
 
 #: ../pidgin/gtkprivacy.c:504
 msgid "Type a user you permit to contact you."
-msgstr "Geef een gebruiker die contact met u mag leggen."
+msgstr "Geef een gebruiker die contact met je mag leggen."
 
 #: ../pidgin/gtkprivacy.c:505
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr "Geef de naam van de gebruiker die contact met u mag leggen."
+msgstr "Geef de naam van de gebruiker die contact met je mag leggen."
 
 #: ../pidgin/gtkprivacy.c:508
 #: ../pidgin/gtkprivacy.c:524
@@ -17220,12 +17222,12 @@ msgstr "_Toestaan"
 #: ../pidgin/gtkprivacy.c:514
 #, c-format
 msgid "Allow %s to contact you?"
-msgstr "%s toestaan contact met u te leggen?"
+msgstr "%s toestaan contact met je te leggen?"
 
 #: ../pidgin/gtkprivacy.c:516
 #, c-format
 msgid "Are you sure you wish to allow %s to contact you?"
-msgstr "Weet u zeker dat u %s toestemming wilt geven?"
+msgstr "Weet je zeker dat je %s toestemming wilt geven?"
 
 #: ../pidgin/gtkprivacy.c:545
 #: ../pidgin/gtkprivacy.c:559
@@ -17238,7 +17240,7 @@ msgstr "Geef een gebruiker die geblokkeerd moet worden."
 
 #: ../pidgin/gtkprivacy.c:547
 msgid "Please enter the name of the user you wish to block."
-msgstr "Geef de naam van de gebruiker die u wilt blokkeren."
+msgstr "Geef de naam van de gebruiker die je wil blokkeren."
 
 #: ../pidgin/gtkprivacy.c:555
 #, c-format
@@ -17248,7 +17250,7 @@ msgstr "%s blokkeren?"
 #: ../pidgin/gtkprivacy.c:557
 #, c-format
 msgid "Are you sure you want to block %s?"
-msgstr "Weet u zeker dat u %s wilt blokkeren?"
+msgstr "Weet je zeker dat je %s wilt blokkeren?"
 
 #: ../pidgin/gtkrequest.c:274
 msgid "Apply"
@@ -17260,7 +17262,7 @@ msgstr "Dat bestand bestaat al."
 
 #: ../pidgin/gtkrequest.c:1505
 msgid "Would you like to overwrite it?"
-msgstr "Wilt u het overschrijven?"
+msgstr "Wil je het overschrijven?"
 
 #: ../pidgin/gtkrequest.c:1508
 msgid "Overwrite"
@@ -17297,7 +17299,7 @@ msgstr "_Gebruiken"
 
 #: ../pidgin/gtksavedstatuses.c:791
 msgid "Title already in use.  You must choose a unique title."
-msgstr "Titel al in gebruik. U dient een unieke titel te kiezen."
+msgstr "Titel al in gebruik. Kies een unieke titel."
 
 #: ../pidgin/gtksavedstatuses.c:1001
 msgid "Different"
@@ -17340,7 +17342,7 @@ msgstr "Dubbele snelkoppeling"
 
 #: ../pidgin/gtksmiley.c:231
 msgid "A custom smiley for the selected shortcut already exists. Please specify a different shortcut."
-msgstr "Een eigen smiley voor de geselecteerde snelkoppeling bestaat al reeds. Geef alsjeblieft een andere snelkoppeling."
+msgstr "Een eigen smiley voor de geselecteerde snelkoppeling bestaat al reeds. Geef een andere snelkoppeling."
 
 #: ../pidgin/gtksmiley.c:255
 msgid "More Data needed"
@@ -17418,7 +17420,7 @@ msgstr "Kan map %s niet verzenden."
 #: ../pidgin/gtkutils.c:1561
 #, c-format
 msgid "%s cannot transfer a folder. You will need to send the files within individually."
-msgstr "%s kan geen hele map ineens sturen. U zult de bestanden per stuk moeten selecteren."
+msgstr "%s kan geen hele map ineens sturen. Je zult de bestanden per stuk moeten selecteren."
 
 #: ../pidgin/gtkutils.c:1595
 #: ../pidgin/gtkutils.c:1607
@@ -17447,7 +17449,7 @@ msgstr "Invoegen in gesprek"
 
 #: ../pidgin/gtkutils.c:1608
 msgid "Would you like to set it as the buddy icon for this user?"
-msgstr "Wilt u het instellen als het pictogram van deze gebruiker?"
+msgstr "Wil je het instellen als het pictogram van deze gebruiker?"
 
 #: ../pidgin/gtkutils.c:1615
 msgid "You can send this image as a file transfer, or use it as the buddy icon for this user."
@@ -17841,7 +17843,7 @@ msgstr "Contact selecteren"
 #. Add the label.
 #: ../pidgin/plugins/gevolution/assoc-buddy.c:343
 msgid "Select a person from your address book to add this buddy to, or create a new person."
-msgstr "Kies een persoon uit uw adresboek om dit contact aan toe te voegen, of maak een nieuw persoon aan."
+msgstr "Kies een persoon uit je adresboek om dit contact aan toe te voegen, of maak een nieuw persoon aan."
 
 #. Add the expander
 #: ../pidgin/plugins/gevolution/assoc-buddy.c:431
@@ -17909,7 +17911,7 @@ msgstr "Vul hieronder de persoonsgegevens in."
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:270
 msgid "Please enter the buddy's username and account type below."
-msgstr "Vul hieronder de gebruikersnaam en accounttype van uw contact in."
+msgstr "Vul hieronder de gebruikersnaam en accounttype van je contact in."
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:290
 msgid "Account type:"
@@ -17993,7 +17995,7 @@ msgstr "Controleert op lokale e-mail."
 
 #: ../pidgin/plugins/mailchk.c:163
 msgid "Adds a small box to the buddy list that shows if you have new mail."
-msgstr "Voegt een klein vak toe aan de contactenlijst die aangeeft of u nieuwe e-mail heeft."
+msgstr "Voegt een klein vak toe aan de contactenlijst die aangeeft als je nieuwe e-mail hebt."
 
 #: ../pidgin/plugins/markerline.c:23
 msgid "Markerline"
@@ -18092,7 +18094,7 @@ msgstr "Melding geven voor"
 
 #: ../pidgin/plugins/notify.c:708
 msgid "\t_Only when someone says your username"
-msgstr "\t _Alleen wanneer iemand uw gebruikersnaam vermeldt"
+msgstr "\t _Alleen wanneer iemand je gebruikersnaam vermeldt"
 
 #: ../pidgin/plugins/notify.c:718
 msgid "_Focused windows"
@@ -18180,7 +18182,7 @@ msgstr "Bericht-attendering"
 #: ../pidgin/plugins/notify.c:927
 #: ../pidgin/plugins/notify.c:929
 msgid "Provides a variety of ways of notifying you of unread messages."
-msgstr "Geeft je een aantal manieren om u te attenderen op nieuwe berichten."
+msgstr "Geeft je een aantal manieren om je te attenderen op nieuwe berichten."
 
 #. *< type
 #. *< ui_requirement
@@ -18457,7 +18459,7 @@ msgstr "Tekstvervanging"
 #: ../pidgin/plugins/spellchk.c:2360
 #: ../pidgin/plugins/spellchk.c:2361
 msgid "Replaces text in outgoing messages according to user-defined rules."
-msgstr "Vervangt tekst in uitgaande berichten volgens uw eigen regels."
+msgstr "Vervangt tekst in uitgaande berichten volgens jouw eigen regels."
 
 #. *< type
 #. *< ui_requirement
