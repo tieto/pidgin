@@ -768,6 +768,9 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	time(&retval);
 	localtime_r(&retval, &t);
 
+	if (rest != NULL)
+		*rest = NULL;
+
 	/* 4 digit year */
 	if (sscanf(c, "%04d", &year) && year > 1900)
 	{
