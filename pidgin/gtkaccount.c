@@ -1189,7 +1189,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	gboolean new_acct = FALSE, icon_change = FALSE;
 	PurpleAccount *account;
 	gboolean remember;
-	char * copy;
 
 	/* Build the username string. */
 	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
@@ -1307,6 +1306,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
 
+
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
 
@@ -1317,9 +1317,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * don't want to prompt them.
 	 */
 	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0')) {
-		copy = g_strdup(value);
 		purple_account_set_password(account, value);
-		g_free(value);
 	} else {
 		purple_account_set_password(account, NULL);
 	}
