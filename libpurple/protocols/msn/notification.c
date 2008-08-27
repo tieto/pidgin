@@ -613,11 +613,14 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_set_attrib(adl_node, "l", "1");
 
 	/*get the userlist*/
-	for (l = session->userlist->users; l != NULL; l = l->next){
+	for (l = session->userlist->users; l != NULL; l = l->next) {
 		user = l->data;
 
 		/* skip RL & PL during initial dump */
 		if (!(user->list_op & MSN_LIST_OP_MASK))
+			continue;
+
+		if (!strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
@@ -947,10 +950,11 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	MsnUser *user;
-	MsnObject *msnobj;
+	MsnObject *msnobj = NULL;
 	unsigned long clientid;
-	int networkid;
-	const char *state, *passport, *friendly;
+	int networkid = 0;
+	const char *state, *passport;
+	char *friendly;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -958,23 +962,47 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
-	/*if a contact is actually on the WLM part or the yahoo part*/
-	networkid = atoi(cmd->params[3]);
-	friendly = purple_url_decode(cmd->params[4]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL)
+		/* Where'd this come from? */
+		return;
 
-	serv_got_alias(gc, passport, friendly);
-
-	msn_user_set_friendly_name(user, friendly);
-
-	if (cmd->param_count == 7)
-	{
+	if (cmd->param_count == 7) {
+		/* MSNP14+ with Display Picture object */
+		networkid = atoi(cmd->params[3]);
+		friendly = g_strdup(purple_url_decode(cmd->params[4]));
+		clientid = strtoul(cmd->params[5], NULL, 10);
 		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[6]));
-		msn_user_set_object(user, msnobj);
+	} else if (cmd->param_count == 6) {
+		/* Yes, this is 5. The friendly name could start with a number,
+		   but the display picture object can't... */
+		if (isdigit(cmd->params[5][0])) {
+			/* MSNP14 without Display Picture object */
+			networkid = atoi(cmd->params[3]);
+			friendly = g_strdup(purple_url_decode(cmd->params[4]));
+			clientid = strtoul(cmd->params[5], NULL, 10);
+		} else {
+			/* MSNP8+ with Display Picture object */
+			friendly = g_strdup(purple_url_decode(cmd->params[3]));
+			clientid = strtoul(cmd->params[4], NULL, 10);
+			msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
+		}
+	} else if (cmd->param_count == 5) {
+		/* MSNP8+ without Display Picture object */
+		friendly = g_strdup(purple_url_decode(cmd->params[3]));
+		clientid = strtoul(cmd->params[4], NULL, 10);
+	} else {
+		purple_debug_warning("msn", "Received ILN with unknown number of parameters.\n");
+		return;
 	}
 
-	clientid = strtoul(cmd->params[5], NULL, 10);
+	serv_got_alias(gc, passport, friendly);
+	msn_user_set_friendly_name(user, friendly);
+	g_free(friendly);
+
+	msn_user_set_object(user, msnobj);
+
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_network(user, networkid);
@@ -1481,6 +1509,13 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL) {
+		char *str = g_strndup(payload, len);
+		purple_debug_info("msn", "unknown user %s, payload is %s",
+			passport, str);
+		g_free(str);
+		return;
+	}
 
 	psm_str = msn_get_psm(cmd->payload,len);
 	msn_user_set_statusline(user, psm_str);

@@ -824,7 +824,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 				message = oscar_encoding_to_utf8(account, tmp, userinfo->away,
 												   userinfo->away_len);
 				g_free(tmp);
-				}
+			}
 		} else {
 			/* Available message? */
 			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
@@ -881,7 +881,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 					status_name = NULL;
 
 				tmp = g_strdup_printf("%s%s%s",
-									   status_name,
+									   status_name ? status_name : "",
 									   ((status_name && message) && *message) ? ": " : "",
 									   (message && *message) ? message : "");
 				g_free(message);
@@ -2002,6 +2002,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		char *message = NULL;
 		char *itmsurl = NULL;
 		char *tmp;
+		const char *tmp2;
 
 		if (info->status != NULL && info->status[0] != '\0')
 			/* Grab the available message */
@@ -2013,13 +2014,13 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
 
-		tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+		tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
 
-		if (message == NULL && itmsurl != NULL)
-			message = "";
+		if (tmp2 == NULL && itmsurl != NULL)
+			tmp2 = "";
 
 		purple_prpl_got_user_status(account, info->sn, status_id,
-				"message", tmp, "itmsurl", itmsurl, NULL);
+				"message", tmp2, "itmsurl", itmsurl, NULL);
 		g_free(tmp);
 
 		g_free(message);

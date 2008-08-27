@@ -481,11 +481,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 
 static gboolean
 msn_offline_message(const PurpleBuddy *buddy) {
-	MsnUser *user;
-	if (buddy == NULL)
-		return FALSE;
-	user = buddy->proto_data;
-	return user && user->mobile;
+	return TRUE;
 }
 
 void

@@ -6904,6 +6904,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	if(pidgin_conv_window_is_active_conversation(conv))
 	{
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy))
+			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		gtk_window_set_icon(GTK_WINDOW(win->window), buf);
 	}
 }
@@ -7370,7 +7372,9 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 	if (gtkconv)
 	{
 		conv = gtkconv->active_conv;
-		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON | PIDGIN_CONV_COLORIZE_TITLE);
+		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON
+		                              | PIDGIN_CONV_COLORIZE_TITLE
+		                              | PIDGIN_CONV_BUDDY_ICON);
 		if ((purple_status_is_online(old) ^ purple_status_is_online(newstatus)) != 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}

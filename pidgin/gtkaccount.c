@@ -2182,7 +2182,7 @@ create_accounts_list(AccountsWindow *dialog)
 						 "press <b>Add</b> again to configure them all.\n\n"
 
 						 "You can come back to this window to add, edit, or remove "
-						 "accounts from <b>Accounts->Add/Edit</b> in the Buddy "
+						 "accounts from <b>Accounts->Manage Accounts</b> in the Buddy "
 						 "List window"), PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
 	pretty = pidgin_make_pretty_arrows(tmp);
 	g_free(tmp);
