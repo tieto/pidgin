@@ -1637,8 +1637,8 @@ purple_account_set_password_async(PurpleAccount * account,
 
 	g_return_if_fail(account != NULL);
 
-	if (account->password != NULL)
-		g_free(account->password);
+	g_free(account->password);
+
 	account->password = g_strdup(password);
 
 	if (purple_account_get_remember_password(account) == FALSE) {
