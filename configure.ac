@@ -755,7 +755,7 @@ AC_ARG_ENABLE(farsight,
 	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.3 gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
 		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
 		AC_SUBST(FARSIGHT_CFLAGS)
 		AC_SUBST(FARSIGHT_LIBS)

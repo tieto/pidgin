@@ -307,8 +307,7 @@ jabber_jingle_get_codecs(xmlnode *description)
 	FsCodec *codec;
 	const gchar *media = xmlnode_get_attrib(description, "media");
 	FsMediaType type = !strcmp(media, "video") ? FS_MEDIA_TYPE_VIDEO :
-			!strcmp(media, "audio") ? FS_MEDIA_TYPE_AUDIO : 
-			FS_MEDIA_TYPE_APPLICATION;
+			!strcmp(media, "audio") ? FS_MEDIA_TYPE_AUDIO : 0;
 
 	for (codec_element = xmlnode_get_child(description, "payload-type") ;
 		 codec_element ;
