@@ -2032,7 +2032,7 @@ get_device_items(const GstElement *element,
 	for(; devices ; devices = devices->next) {
 		gchar *name = purple_media_get_device_name(GST_ELEMENT(element), devices->data);
 		ret = g_list_append(ret, name);
-		ret = g_list_append(ret, g_value_dup_string(devices->data));
+		ret = g_list_append(ret, g_strdup(devices->data));
 	}
 
 	return ret;
@@ -2123,7 +2123,6 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 		video_items = get_device_items(video, video_devices);
 		for(; video_devices; video_devices = g_list_delete_link(
 				video_devices, video_devices)) {
-			g_value_unset(video_devices->data);
 			g_free(video_devices->data);
 		}
 	}
@@ -2233,7 +2232,6 @@ media_page()
 		video_items = get_device_items(video, video_devices);
 		for(; video_devices; video_devices = g_list_delete_link(
 				video_devices, video_devices)) {
-			g_value_unset(video_devices->data);
 			g_free(video_devices->data);
 		}
 	}
@@ -2243,7 +2241,6 @@ media_page()
 		audio_items = get_device_items(audio, audio_devices);
 		for(; audio_devices; audio_devices = g_list_delete_link(
 				audio_devices, audio_devices)) {
-			g_value_unset(audio_devices->data);
 			g_free(audio_devices->data);
 		}
 	}

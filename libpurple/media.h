@@ -293,7 +293,7 @@ void purple_media_got_accept(PurpleMedia *media);
  * @return The name of the device.
  */
 gchar *purple_media_get_device_name(GstElement *element,
-				    GValue *device);
+				    const gchar *device);
 
 /**
  * Enumerates a list of devices.
@@ -310,7 +310,7 @@ GList *purple_media_get_devices(GstElement *element);
  * @param element The plugin to set the device on.
  * @param device The device to set the plugin to.
  */
-void purple_media_element_set_device(GstElement *element, GValue *device);
+void purple_media_element_set_device(GstElement *element, const gchar *device);
 
 /**
  * Sets the device from the given name.
@@ -328,7 +328,7 @@ void purple_media_element_set_device_from_name(GstElement *element,
  *
  * @return The device retrieved.
  */
-GValue *purple_media_element_get_device(GstElement *element);
+gchar *purple_media_element_get_device(GstElement *element);
 
 /**
  * Creates an element from a factory name.
