@@ -82,6 +82,14 @@ static void purple_media_finalize (GObject *object);
 static void purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void purple_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 
+static void purple_media_new_local_candidate_cb(FsStream *stream,
+		FsCandidate *local_candidate, PurpleMediaSession *session);
+static void purple_media_candidates_prepared_cb(FsStream *stream,
+		PurpleMediaSession *session);
+static void purple_media_candidate_pair_established_cb(FsStream *stream,
+		FsCandidate *native_candidate, FsCandidate *remote_candidate,
+		PurpleMediaSession *session);
+
 static GObjectClass *parent_class = NULL;
 
 
@@ -342,7 +350,7 @@ purple_media_to_fs_media_type(PurpleMediaSessionType type)
 	else if (type & PURPLE_MEDIA_VIDEO)
 		return FS_MEDIA_TYPE_VIDEO;
 	else
-		return FS_MEDIA_TYPE_APPLICATION;
+		return 0;
 }
 
 FsStreamDirection
@@ -565,6 +573,30 @@ purple_media_get_sink(PurpleMedia *media, const gchar *sess_id)
 	return purple_media_get_session(media, sess_id)->sink;
 }
 
+static PurpleMediaSession *
+purple_media_session_from_fs_stream(PurpleMedia *media, FsStream *stream)
+{
+	FsSession *fssession;
+	GList *values;
+
+	g_object_get(stream, "session", &fssession, NULL);
+
+	values = g_hash_table_get_values(media->priv->sessions);
+
+	for (; values; values = g_list_delete_link(values, values)) {
+		PurpleMediaSession *session = values->data;
+
+		if (session->session == fssession) {
+			g_list_free(values);
+			g_object_unref(fssession);
+			return session;
+		}
+	}
+
+	g_object_unref(fssession);
+	return NULL;
+}
+
 static gboolean
 media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 {
@@ -589,10 +621,43 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 		}
 		case GST_MESSAGE_ELEMENT: {
 			if (gst_structure_has_name(msg->structure, "farsight-error")) {
-				gint error_no;
-				gst_structure_get_int(msg->structure, "error-no", &error_no);
+				FsError error_no;
+				gst_structure_get_enum(msg->structure, "error-no",
+						FS_TYPE_ERROR, (gint*)&error_no);
 				purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
 						  gst_structure_get_string(msg->structure, "error-msg"));
+			} else if (gst_structure_has_name(msg->structure,
+					"farsight-new-local-candidate")) {
+				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
+				FsCandidate *local_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "candidate"));
+				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
+				purple_media_new_local_candidate_cb(stream, local_candidate, session);
+			} else if (gst_structure_has_name(msg->structure,
+					"farsight-local-candidates-prepared")) {
+				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
+				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
+				purple_media_candidates_prepared_cb(stream, session);
+			} else if (gst_structure_has_name(msg->structure,
+					"farsight-new-active-candidate-pair")) {
+				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
+				FsCandidate *local_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "local-candidate"));
+				FsCandidate *remote_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "remote-candidate"));
+				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
+				purple_media_candidate_pair_established_cb(stream, local_candidate, remote_candidate, session);
+			} else if (gst_structure_has_name(msg->structure,
+					"farsight-recv-codecs-changed")) {
+				GList *codecs = g_value_get_boxed(gst_structure_get_value(msg->structure, "codecs"));
+				FsCodec *codec = codecs->data;
+				purple_debug_info("media", "farsight-recv-codecs-changed: %s\n", codec->encoding_name);
+				
+			} else if (gst_structure_has_name(msg->structure,
+					"farsight-component-state-changed")) {
+				
+			} else if (gst_structure_has_name(msg->structure,
+					"farsight-send-codec-changed")) {
+				
+			} else if (gst_structure_has_name(msg->structure,
+					"farsight-codecs-changed")) {
 			}
 			break;
 		}
@@ -944,7 +1009,7 @@ purple_media_new_local_candidate_cb(FsStream *stream,
 	gchar *name;
 	FsParticipant *participant;
 	FsCandidate *candidate;
-	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->candidate_id);
+	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->foundation);
 	g_object_get(stream, "participant", &participant, NULL);
 	g_object_get(participant, "cname", &name, NULL);
 	g_object_unref(participant);
@@ -1036,7 +1101,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 	if (!session) {
 		GError *err = NULL;
-		GList *codec_conf;
+		GList *codec_conf = NULL;
 
 		session = g_new0(PurpleMediaSession, 1);
 
@@ -1053,15 +1118,11 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		}
 
 	/*
-	 * None of these three worked for me. THEORA is known to
-	 * not work as of at least Farsight2 0.0.2
+	 * The MPV codec didn't work for me.
+	 * MPV may not work yet as of Farsight2 0.0.3
 	 */
-		codec_conf = g_list_prepend(NULL, fs_codec_new(FS_CODEC_ID_DISABLE,
-				"THEORA", FS_MEDIA_TYPE_VIDEO, 90000));
 		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_DISABLE,
 				"MPV", FS_MEDIA_TYPE_VIDEO, 90000));
-		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_DISABLE,
-				"H264", FS_MEDIA_TYPE_VIDEO, 90000));
 
 	/* XXX: SPEEX has a latency of 5 or 6 seconds for me */
 #if 0
@@ -1072,8 +1133,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
 #endif
 
-		g_object_set(G_OBJECT(session->session), "local-codecs-config",
-			     codec_conf, NULL);
+		fs_session_set_codec_preferences(session->session, codec_conf, NULL);
 
 	/*
 	 * Temporary fix to remove a 5-7 second delay before
@@ -1139,20 +1199,11 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		}
 
 		purple_media_insert_stream(session, who, stream);
-		/* callback for new local candidate (new local candidate retreived) */
-		g_signal_connect(G_OBJECT(stream),
-				 "new-local-candidate", G_CALLBACK(purple_media_new_local_candidate_cb), session);
+
 		/* callback for source pad added (new stream source ready) */
 		g_signal_connect(G_OBJECT(stream),
 				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added_cb), session);
-		/* callback for local candidates prepared (local candidates ready to send) */
-		g_signal_connect(G_OBJECT(stream), 
-				 "local-candidates-prepared", 
-				 G_CALLBACK(purple_media_candidates_prepared_cb), session);
-		/* callback for new active candidate pair (established connection) */
-		g_signal_connect(G_OBJECT(stream),
-				 "new-active-candidate-pair", 
-				 G_CALLBACK(purple_media_candidate_pair_established_cb), session);
+
 	} else if (*direction != type_direction) {	
 		/* change direction */
 		g_object_set(stream, "direction", type_direction, NULL);
@@ -1201,13 +1252,13 @@ purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id)
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	return session->type;
 }
-
+/* XXX: Should wait until codecs-ready is TRUE before using this function */
 GList *
 purple_media_get_local_codecs(PurpleMedia *media, const gchar *sess_id)
 {
 	GList *codecs;
 	g_object_get(G_OBJECT(purple_media_get_session(media, sess_id)->session),
-		     "local-codecs", &codecs, NULL);
+		     "codecs", &codecs, NULL);
 	return codecs;
 }
 
@@ -1218,13 +1269,13 @@ purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, cons
 	return fs_candidate_list_copy(
 			purple_media_session_get_local_candidates(session, name));
 }
-
+/* XXX: Should wait until codecs-ready is TRUE before using this function */
 GList *
 purple_media_get_negotiated_codecs(PurpleMedia *media, const gchar *sess_id)
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	GList *codec_intersection;
-	g_object_get(session->session, "negotiated-codecs", &codec_intersection, NULL);
+	g_object_get(session->session, "codecs", &codec_intersection, NULL);
 	return codec_intersection;
 }
 
@@ -1234,16 +1285,14 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	FsStream *stream = purple_media_session_get_stream(session, name);
-	GList *candidates = remote_candidates;
-	for (; candidates; candidates = candidates->next) {
-		GError *err = NULL;
-		fs_stream_add_remote_candidate(stream, candidates->data, &err);
+	GError *err = NULL;
 
-		if (err) {
-			purple_debug_error("media", "Error adding remote candidate: %s\n",
-					   err->message);
-			g_error_free(err);
-		}
+	fs_stream_set_remote_candidates(stream, remote_candidates, &err);
+
+	if (err) {
+		purple_debug_error("media", "Error adding remote candidates: %s\n",
+				   err->message);
+		g_error_free(err);
 	}
 }
 
