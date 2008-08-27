@@ -53,8 +53,8 @@ static void purple_keyring_set_password_async_cb(PurpleAccount * account, GError
 
 struct _PurpleKeyring
 {
-	char * name;		// a user friendly name
-	char * id;		// same as plugin id
+	char * name;		/* a user friendly name	*/
+	char * id;		/* same as plugin id	*/
 	PurpleKeyringRead read_password;
 	PurpleKeyringSave save_password;
 	PurpleKeyringClose close_keyring;

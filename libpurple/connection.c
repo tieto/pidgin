@@ -493,23 +493,9 @@ static gboolean
 purple_connection_disconnect_cb(gpointer data)
 {
 	PurpleAccount *account = data;
-//	purple_account_get_password_async(account, purple_connection_disconnect_got_pw_cb, NULL);
 	purple_account_disconnect(account);
 	return FALSE;
 }
-
-#if 0
-static void
-purple_connection_disconnect_got_pw_cb(PurpleAccount * account,
-				       gchar * password,
-				       GError * error,
-				       gpointer data)
-{
-	/* FIXME : needs to be async */
-	purple_account_disconnect(account);
-	purple_account_set_password(account, password);
-}
-#endif
 
 void
 purple_connection_error(PurpleConnection *gc, const char *text)

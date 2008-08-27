@@ -492,7 +492,7 @@ purple_plugin_probe(const char *filename)
 	if (plugin->info->flags & PURPLE_PLUGIN_FLAG_AUTOLOAD) {
 		purple_debug_info("plugins", "Loading autoload plugin %s\n",
 						plugin->path);
-		purple_plugin_load(plugin);															//
+		purple_plugin_load(plugin);
 	}
 
 	return plugin;

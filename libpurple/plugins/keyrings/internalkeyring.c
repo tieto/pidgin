@@ -257,13 +257,6 @@ internal_keyring_export_password(PurpleAccount * account,
 	purple_debug_info("Internal keyring",
 		"Exporting password");
 
-	/* we're using this rather than GET_PASSWORD(),
-	 * because on account creation, the account might be
-	 * exported before the password is known. This would
-	 * lead to exporting uninitialised data, which 
-	 * we obviously don't want.
-	 */
-	//password = purple_account_get_password(account);
 	password = GET_PASSWORD(account);
 
 	if (password == NULL) {
