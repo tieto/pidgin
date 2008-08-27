@@ -1485,7 +1485,7 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 
 	if (!tls_peers) {
 		purple_debug_error("certificate/x509/tls_cached",
-				   "Couldn't find local peers cache %s\nPrompting the user\n",
+				   "Couldn't find local peers cache %s\n",
 				   tls_peers_name);
 
 
