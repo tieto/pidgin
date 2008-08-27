@@ -415,9 +415,12 @@ account_to_xmlnode(PurpleAccount *account)
 
 		} else {
 			child = xmlnode_new_child(node, "password");
-			xmlnode_set_attrib(child, "keyring_id", keyring_id);
-			xmlnode_set_attrib(child, "mode", mode);
-			xmlnode_insert_data(child, data, -1);
+			if (keyring_id != NULL)
+				xmlnode_set_attrib(child, "keyring_id", keyring_id);
+			if (mode != NULL)
+				xmlnode_set_attrib(child, "mode", mode);
+			if (data != NULL)
+				xmlnode_insert_data(child, data, -1);
 
 			if (destroy != NULL)
 				destroy(data);
