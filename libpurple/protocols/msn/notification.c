@@ -1509,6 +1509,13 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL) {
+		char *str = g_strndup(payload, len);
+		purple_debug_info("msn", "unknown user %s, payload is %s",
+			passport, str);
+		g_free(str);
+		return;
+	}
 
 	psm_str = msn_get_psm(cmd->payload,len);
 	msn_user_set_statusline(user, psm_str);
