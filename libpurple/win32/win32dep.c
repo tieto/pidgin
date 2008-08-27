@@ -416,106 +416,17 @@ char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valn
 	return result;
 }
 
-/* the winapi headers don't yet have winhttp.h, so we use the struct from msdn directly */
-typedef struct {
-  BOOL fAutoDetect;
-  LPWSTR lpszAutoConfigUrl;
-  LPWSTR lpszProxy;
-  LPWSTR lpszProxyBypass;
-} WINHTTP_CURRENT_USER_IE_PROXY_CONFIG;
-
-typedef BOOL (CALLBACK* LPFNWINHTTPGETIEPROXYCONFIG)(/*IN OUT*/ WINHTTP_CURRENT_USER_IE_PROXY_CONFIG* pProxyConfig);
-
-gboolean wpurple_check_for_proxy_changes(void) {
-	static gboolean loaded = FALSE;
-	static LPFNWINHTTPGETIEPROXYCONFIG MyWinHttpGetIEProxyConfig = NULL;
-
-	WINHTTP_CURRENT_USER_IE_PROXY_CONFIG ie_proxy_config;
-	char *tmp = NULL, *c = NULL;
-	gboolean changed = FALSE;
-
-	if (!loaded) {
-		loaded = TRUE;
-
-		if (getenv("HTTP_PROXY") || getenv("http_proxy") || getenv("HTTPPROXY")) {
-			purple_debug_info("wpurple", "HTTP_PROXY env. var already set.  Ignoring win32 Internet Settings.\n");
-			return FALSE;
-		}
-
-		MyWinHttpGetIEProxyConfig = (LPFNWINHTTPGETIEPROXYCONFIG)
-			wpurple_find_and_loadproc("winhttp.dll", "WinHttpGetIEProxyConfigForCurrentUser");
-		if (!MyWinHttpGetIEProxyConfig)
-			purple_debug_info("wpurple", "Unable to read Windows Proxy Settings.\n");
-	}
-
-	if (!MyWinHttpGetIEProxyConfig)
-		return FALSE;
-
-	ZeroMemory(&ie_proxy_config, sizeof(ie_proxy_config));
-	if (!MyWinHttpGetIEProxyConfig(&ie_proxy_config)) {
-		purple_debug_error("wpurple", "Error reading Windows Proxy Settings(%lu).\n", GetLastError());
-		return FALSE;
-	}
-
-	/* We can't do much if it is autodetect*/
-	if (ie_proxy_config.fAutoDetect)
-		purple_debug_error("wpurple", "Windows Proxy Settings set to autodetect (not supported).\n");
-	else if (ie_proxy_config.lpszProxy) {
-		tmp = g_utf16_to_utf8(ie_proxy_config.lpszProxy, -1,
-						NULL, NULL, NULL);
-		/* We can't do anything about the bypass list, as we don't have the url */
-	} else
-		purple_debug_info("wpurple", "No Windows Proxy Set.\n");
-
-	if (ie_proxy_config.lpszAutoConfigUrl)
-		GlobalFree(ie_proxy_config.lpszAutoConfigUrl);
-	if (ie_proxy_config.lpszProxy)
-		GlobalFree(ie_proxy_config.lpszProxy);
-	if (ie_proxy_config.lpszProxyBypass)
-		GlobalFree(ie_proxy_config.lpszProxyBypass);
-
-	/* There are proxy settings for several protocols */
-	if (tmp && (c = g_strstr_len(tmp, strlen(tmp), "http="))) {
-		char *d;
-		c += strlen("http=");
-		d = strchr(c, ';');
-		if (d)
-			*d = '\0';
-		/* c now points the proxy server (and port) */
-	/* There is only a global proxy */
-	} else if (tmp && strlen(tmp) > 0 && !strchr(tmp, ';')) {
-		c = tmp;
-	}
-
-	if (c && *c) {
-		const char *current = g_getenv("HTTP_PROXY");
-		if (!current || strcmp(current, c)) {
-			purple_debug_info("wpurple", "Setting HTTP Proxy: 'http://%s'\n", c);
-			g_setenv("HTTP_PROXY", c, TRUE);
-			changed = TRUE;
-		}
-	}
-	/* If there previously was a proxy set and there isn't one now, clear it */
-	else if (getenv("HTTP_PROXY")) {
-		purple_debug_info("wpurple", "Clearing HTTP Proxy\n");
-		g_unsetenv("HTTP_PROXY");
-		changed = TRUE;
-	}
-
-	g_free(tmp);
-
-	return changed;
-}
-
 void wpurple_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	const char *perlenv;
 	char *newenv;
 
+	if (!g_thread_supported())
+		g_thread_init(NULL);
+
 	purple_debug_info("wpurple", "wpurple_init start\n");
 	purple_debug_info("wpurple", "libpurple version: " DISPLAY_VERSION "\n");
-
 
 	purple_debug_info("wpurple", "Glib:%u.%u.%u\n",
 		glib_major_version, glib_minor_version, glib_micro_version);
@@ -543,9 +454,6 @@ void wpurple_init(void) {
 	if (!g_setenv("PERL5LIB", newenv, TRUE))
 		purple_debug_warning("wpurple", "putenv failed for PERL5LIB\n");
 	g_free(newenv);
-
-	if (!g_thread_supported())
-		g_thread_init(NULL);
 
 	purple_debug_info("wpurple", "wpurple_init end\n");
 }
