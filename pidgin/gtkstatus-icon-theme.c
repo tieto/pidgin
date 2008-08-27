@@ -24,27 +24,22 @@
 #include "gtkstatus-icon-theme.h"
 
 /******************************************************************************
- * Structs
- *****************************************************************************/
-/******************************************************************************
  * Globals
  *****************************************************************************/
 static GObjectClass *parent_class = NULL;
-/******************************************************************************
- * Enums
- *****************************************************************************/
+
 /******************************************************************************
  * GObject Stuff                                                              
  *****************************************************************************/
 
 static void 
-pidgin_status_icon_theme_finalize (GObject *obj)
+pidgin_status_icon_theme_finalize(GObject *obj)
 {
-	parent_class->finalize (obj);
+	parent_class->finalize(obj);
 }
 
 static void
-pidgin_status_icon_theme_class_init (PidginStatusIconThemeClass *klass)
+pidgin_status_icon_theme_class_init(PidginStatusIconThemeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
@@ -54,7 +49,7 @@ pidgin_status_icon_theme_class_init (PidginStatusIconThemeClass *klass)
 }
 
 GType 
-pidgin_status_icon_theme_get_type (void)
+pidgin_status_icon_theme_get_type(void)
 {
   static GType type = 0;
   if (type == 0) {
@@ -70,7 +65,7 @@ pidgin_status_icon_theme_get_type (void)
       NULL,
       NULL,   /* value table */
     };
-    type = g_type_register_static (PIDGIN_TYPE_ICON_THEME,
+    type = g_type_register_static(PIDGIN_TYPE_ICON_THEME,
                                    "PidginStatusIconTheme",
                                    &info, 0);
   }

@@ -505,7 +505,7 @@ pidgin_stock_init(void)
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
 
-	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray */
+	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray, theme is destroyed after*/
 	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") && 
 	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
 		

@@ -5291,7 +5291,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 		} else if (text == i) {
 			/* name */
 			gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
-			gtk_tree_view_column_pack_start (column, rend, TRUE);
+			gtk_tree_view_column_pack_start(column, rend, TRUE);
 			gtk_tree_view_column_set_attributes(column, rend,
 #if GTK_CHECK_VERSION(2,6,0)
 							    "cell-background-gdk", BGCOLOR_COLUMN,
@@ -5303,6 +5303,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_signal_connect(G_OBJECT(rend), "editing-canceled", G_CALLBACK(gtk_blist_renderer_editing_cancelled_cb), list);
 #endif
 			g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), list);
+			g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 			g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif

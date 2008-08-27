@@ -72,6 +72,7 @@ pidgin_icon_theme_finalize(GObject *obj)
 	priv = PIDGIN_ICON_THEME_GET_PRIVATE(obj);
 	
 	g_hash_table_destroy(priv->icon_files);
+	g_free(priv);
 
 	parent_class->finalize(obj);
 }
