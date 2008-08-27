@@ -209,6 +209,9 @@ typedef gboolean (*PurpleKeyringExportPassword)(PurpleAccount * account,
 
 /*@}*/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /***************************************/
 /** @name Keyring API                  */
@@ -458,5 +461,8 @@ enum PurpleKeyringError
 	ERR_UNKNOWN		/**< unknown error */
 };
 
+#ifdef __cplusplus
+}
+#endif
 /*}@*/
 #endif /* _PURPLE_KEYRING_H_ */
