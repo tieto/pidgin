@@ -2132,6 +2132,7 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 				video_devices, video_devices)) {
 			g_free(video_devices->data);
 		}
+		gst_object_unref(video);
 	}
 
 	if (video_items == NULL) {
@@ -2160,7 +2161,7 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 
 	preview_button = gtk_button_new_with_mnemonic(_("_Preview"));
 	g_signal_connect(G_OBJECT(preview_button), "clicked",
-			 G_CALLBACK(preview_button_clicked), video);
+			 G_CALLBACK(preview_button_clicked), NULL);
 
 	gtk_container_add(GTK_CONTAINER(hbox), preview_button);
 
@@ -2241,6 +2242,7 @@ media_page()
 				video_devices, video_devices)) {
 			g_free(video_devices->data);
 		}
+		gst_object_unref(video);
 	}
 
 	if (audio != NULL) {		
@@ -2250,6 +2252,7 @@ media_page()
 				audio_devices, audio_devices)) {
 			g_free(audio_devices->data);
 		}
+		gst_object_unref(audio);
 	}
 
 	if (video_items == NULL) {
@@ -2300,7 +2303,7 @@ media_page()
 
 	preview_button = gtk_button_new_with_mnemonic(_("_Preview"));
 	g_signal_connect(G_OBJECT(preview_button), "clicked",
-			G_CALLBACK(preview_button_clicked), video);
+			G_CALLBACK(preview_button_clicked), NULL);
 
 	gtk_container_add(GTK_CONTAINER(hbox), preview_button);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
