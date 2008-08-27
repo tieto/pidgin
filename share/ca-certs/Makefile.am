@@ -3,7 +3,6 @@ CERTIFICATES = \
 		CAcert_Class3.pem \
 		Equifax_Secure_CA.pem \
 		GTE_CyberTrust_Global_Root.pem \
-		Microsoft_Internet_Authority.pem \
 		Microsoft_Secure_Server_Authority.pem \
 		StartCom_Free_SSL_CA.pem \
 		Verisign_RSA_Secure_Server_CA.pem \
