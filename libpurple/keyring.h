@@ -357,29 +357,37 @@ purple_keyring_set_password_async(PurpleAccount * account,
 				  GDestroyNotify destroypassword,
 				  PurpleKeyringSaveCallback cb,
 				  gpointer data);
-
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Read a password in a synchronous way.
- * This is here only for compatibility reasons. Keyrings are not
- * expected to support this (and shouldn't), and new code should
- * use purple_keyring_get_password_async() instead.
+ *
  * @param account The account for which we want the password.
- * @return A pointer to the the password.
+ *
+ * @return A pointer to the the password
+ *
+ * @deprecated This is here only for compatibility reasons. Keyrings
+ * are not expected to support this, and you should use 
+ * purple_keyring_get_password_async() instead.
  */
 const char * 
 purple_keyring_get_password_sync(const PurpleAccount * account);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Save a password in a synchronous way.
- * This is here only for compatibility reasons. Keyrings are not
- * expected to support this (and shouldn't), and new code should
- * use purple_keyring_set_password_async() instead.
+ *
  * @param account The account for which we want the password.
  * @param password The password to save.
+ *
+ * @deprecated This is here only for compatibility reasons. Keyrings are not
+ * expected to support this, and you should use
+ * purple_keyring_set_password_async() instead.
  */
 void 
 purple_keyring_set_password_sync(PurpleAccount * account,
 				 const char *password);
+#endif
 
 /**
  * Close a safe.

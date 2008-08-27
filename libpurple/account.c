@@ -1619,7 +1619,7 @@ purple_account_set_password(PurpleAccount *account, const char *password)
 	account->password = g_strdup(password);
 
 	if (purple_account_get_remember_password(account) == TRUE)
-		purple_keyring_set_password_async(account, account->password, NULL, NULL, NULL);
+		purple_keyring_set_password_async(account, g_strdup(password), g_free, NULL, NULL);
 }
 
 void 
