@@ -2069,7 +2069,7 @@ preview_video_bus_call(GstBus *bus, GstMessage *msg, gpointer pipeline)
 
 	gst_element_set_state(pipeline, GST_STATE_NULL);
 	gst_object_unref(GST_PIPELINE(pipeline));
-	return TRUE;
+	return FALSE;
 }
 
 static void
@@ -2081,7 +2081,7 @@ preview_button_clicked(GtkWidget *widget, gpointer *data)
 
 	/* create a preview window... */
 	GstElement *pipeline = NULL;
-	GError *p_err;
+	GError *p_err = NULL;
 
 	gchar *test_pipeline_str = NULL;
 
@@ -2097,6 +2097,13 @@ preview_button_clicked(GtkWidget *widget, gpointer *data)
 	pipeline = gst_parse_launch (test_pipeline_str, &p_err);
 
 	g_free(test_pipeline_str);
+
+	if (pipeline == NULL) {
+		purple_debug_error("gtkprefs",
+			"Error starting preview: %s\n", p_err->message);
+		g_error_free(p_err);
+		return;
+	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 	gst_bus_add_watch(bus, preview_video_bus_call, pipeline);
