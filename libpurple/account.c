@@ -1605,19 +1605,18 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 }
 
 void
-purple_account_set_password(PurpleAccount *account, char *password)
+purple_account_set_password(PurpleAccount *account, const char *password)
 {
 	schedule_accounts_save();
 
 	g_return_if_fail(account != NULL);
 
-	if (account->password != NULL)
-		g_free(account->password);
+	g_free(account->password);
 
 	account->password = g_strdup(password);
 
 	if (purple_account_get_remember_password(account) == TRUE)
-		purple_keyring_set_password_async(account, password, NULL, NULL, NULL);
+		purple_keyring_set_password_async(account, account->password, NULL, NULL, NULL);
 }
 
 void 
