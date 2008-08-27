@@ -28,81 +28,81 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#ifdef HAVE_CONFIG_H
+ #include <config.h>
+#endif
+
+#ifndef PURPLE_PLUGINS
+ #define PURPLE_PLUGINS
+#endif
+
+#include <glib.h>
+
+#ifndef G_GNUC_NULL_TERMINATED
+ #if __GNUC__ >= 4
+  #define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
+ #else
+  #define G_GNUC_NULL_TERMINATED
+ #endif
+#endif
+
+#include "account.h"
+#include "version.h"
+#include "keyring.h"
+#include "debug.h"
+#include "plugin.h"
+#include "internal.h"
+
+
+static GQuark kwallet_plugin_error_domain(void);
+
+static void kwallet_read(PurpleAccount * account, PurpleKeyringReadCallback cb, gpointer data);
+static void kwallet_save(PurpleAccount * account, gchar * password, GDestroyNotify destroypassword, PurpleKeyringSaveCallback cb, gpointer data);
+static void kwallet_close(GError ** error);
+static void kwallet_import(PurpleAccount * account, const char * mode, const char * data, GError ** error);
+static void kwallet_export(PurpleAccount * account, const char ** mode, char ** data, GError ** error, GDestroyNotify * destroy);
+
+static gboolean kwallet_load(PurplePlugin *plugin);
+static gboolean kwallet_unload(PurplePlugin *plugin);
+static void kwallet_destroy(PurplePlugin *plugin);
+static void init_plugin(PurplePlugin *plugin)
+
+PurpleKeyring * keyring_handler;
+
+PurplePluginInfo plugininfo =
+{
+	PURPLE_PLUGIN_MAGIC,						/* magic */
+	PURPLE_MAJOR_VERSION,						/* major_version */
+	PURPLE_MINOR_VERSION,						/* minor_version */
+	PURPLE_PLUGIN_STANDARD,						/* type */
+	NULL,								/* ui_requirement */
+	PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
+	NULL,								/* dependencies */
+	PURPLE_PRIORITY_DEFAULT,					/* priority */
+	GNOMEKEYRING_ID,						/* id */
+	GNOMEKEYRING_NAME,						/* name */
+	GNOMEKEYRING_VERSION,						/* version */
+	"Internal Keyring Plugin",					/* summary */
+	GNOMEKEYRING_DESCRIPTION,					/* description */
+	GNOMEKEYRING_AUTHOR,						/* author */
+	"N/A",								/* homepage */
+	kwallet_load,							/* load */
+	kwallet_unload,							/* unload */
+	kwallet_destroy,						/* destroy */
+	NULL,								/* ui_info */
+	NULL,								/* extra_info */
+	NULL,								/* prefs_info */
+	NULL,								/* actions */
+	NULL,								/* padding... */
+	NULL,
+	NULL,
+	NULL,
+};
 
 
 extern "C"
 {
-	#ifdef HAVE_CONFIG_H
-	 #include <config.h>
-	#endif
-
-	#ifndef PURPLE_PLUGINS
-	 #define PURPLE_PLUGINS
-	#endif
-
-	#include <glib.h>
-
-	#ifndef G_GNUC_NULL_TERMINATED
-	 #if __GNUC__ >= 4
-	  #define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
-	 #else
-	  #define G_GNUC_NULL_TERMINATED
-	 #endif
-	#endif
-
-	#include "account.h"
-	#include "version.h"
-	#include "keyring.h"
-	#include "debug.h"
-	#include "plugin.h"
-	#include "internal.h"
-
-	static GQuark kwallet_plugin_error_domain(void);
-
-	static void kwallet_read(PurpleAccount * account, PurpleKeyringReadCallback cb, gpointer data);
-	static void kwallet_save(PurpleAccount * account, gchar * password, GDestroyNotify destroypassword, PurpleKeyringSaveCallback cb, gpointer data);
-	static void kwallet_close(GError ** error);
-	static void kwallet_import(PurpleAccount * account, const char * mode, const char * data, GError ** error);
-	static void kwallet_export(PurpleAccount * account, const char ** mode, char ** data, GError ** error, GDestroyNotify * destroy);
-
-	static gboolean kwallet_load(PurplePlugin *plugin);
-	static gboolean kwallet_unload(PurplePlugin *plugin);
-	static void kwallet_destroy(PurplePlugin *plugin);
-	static void init_plugin(PurplePlugin *plugin)
-
-	PurpleKeyring * keyring_handler;
-
-	PurplePluginInfo plugininfo =
-	{
-		PURPLE_PLUGIN_MAGIC,						/* magic */
-		PURPLE_MAJOR_VERSION,						/* major_version */
-		PURPLE_MINOR_VERSION,						/* minor_version */
-		PURPLE_PLUGIN_STANDARD,						/* type */
-		NULL,								/* ui_requirement */
-		PURPLE_PLUGIN_FLAG_INVISIBLE|PURPLE_PLUGIN_FLAG_AUTOLOAD,	/* flags */
-		NULL,								/* dependencies */
-		PURPLE_PRIORITY_DEFAULT,					/* priority */
-		GNOMEKEYRING_ID,						/* id */
-		GNOMEKEYRING_NAME,						/* name */
-		GNOMEKEYRING_VERSION,						/* version */
-		"Internal Keyring Plugin",					/* summary */
-		GNOMEKEYRING_DESCRIPTION,					/* description */
-		GNOMEKEYRING_AUTHOR,						/* author */
-		"N/A",								/* homepage */
-		kwallet_load,							/* load */
-		kwallet_unload,							/* unload */
-		kwallet_destroy,						/* destroy */
-		NULL,								/* ui_info */
-		NULL,								/* extra_info */
-		NULL,								/* prefs_info */
-		NULL,								/* actions */
-		NULL,								/* padding... */
-		NULL,
-		NULL,
-		NULL,
-	};
-
-	PURPLE_INIT_PLUGIN(kwallet_keyring, init_plugin, plugininfo)
+PURPLE_INIT_PLUGIN(kwallet_keyring, init_plugin, plugininfo)
 }
 
 
