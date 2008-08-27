@@ -3592,7 +3592,7 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (ret_user != NULL) *ret_user = g_strdup(user);
 	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
 
-	return TRUE;
+	return ((*host != '\0') ? TRUE : FALSE);
 }
 
 /**
