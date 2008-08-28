@@ -60,7 +60,7 @@
 #include "gtkstatusbox.h"
 #include "gtkscrollbook.h"
 #include "gtksmiley.h"
-#include "gtkblist-loader.h"
+#include "gtkblist-theme-loader.h"
 #include "gtkblist-theme.h"
 #include "gtkutils.h"
 #include "pidgin/minidialog.h"

@@ -28,7 +28,7 @@
 #include "pidgin.h"
 #include "prefs.h"
 
-#include "gtkicon-loader.h"
+#include "gtkicon-theme-loader.h"
 #include "theme-manager.h"
 
 #include "pidginstock.h"

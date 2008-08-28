@@ -21,7 +21,7 @@
  *
  */
 
-#include "gtkicon-loader.h"
+#include "gtkicon-theme-loader.h"
 #include "gtkstatus-icon-theme.h"
 
 #include "xmlnode.h"

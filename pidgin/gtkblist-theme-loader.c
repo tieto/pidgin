@@ -25,7 +25,7 @@
 
 #include "xmlnode.h"
 
-#include "gtkblist-loader.h"
+#include "gtkblist-theme-loader.h"
 #include "gtkblist-theme.h"
 
 /******************************************************************************

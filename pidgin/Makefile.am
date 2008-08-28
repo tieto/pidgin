@@ -78,7 +78,7 @@ pidgin_SOURCES = \
 	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
-	gtkblist-loader.c \
+	gtkblist-theme-loader.c \
 	gtkblist-theme.c \
 	gtkcelllayout.c \
 	gtkcellrendererexpander.c \
@@ -97,7 +97,7 @@ pidgin_SOURCES = \
 	gtkexpander.c \
 	gtkft.c \
 	gtkicon-theme.c \
-	gtkicon-loader.c \
+	gtkicon-theme-loader.c \
 	gtkidle.c \
 	gtkimhtml.c \
 	gtkimhtmltoolbar.c \
@@ -132,7 +132,7 @@ pidgin_headers = \
 	eggtrayicon.h \
 	gtkaccount.h \
 	gtkblist.h \
-	gtkblist-loader.h \
+	gtkblist-theme-loader.h \
 	gtkblist-theme.h \
 	gtkcelllayout.h \
 	gtkcellrendererexpander.h \
@@ -154,7 +154,7 @@ pidgin_headers = \
 	gtkexpander.h \
 	gtkft.h \
 	gtkicon-theme.h \
-	gtkicon-loader.h \
+	gtkicon-theme-loader.h \
 	gtkidle.h \
 	gtkgaim-compat.h \
 	gtkimhtml.h \
