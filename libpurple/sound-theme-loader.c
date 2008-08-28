@@ -21,7 +21,7 @@
  *
  */
 
-#include "sound-loader.h"
+#include "sound-theme-loader.h"
 #include "sound-theme.h"
 #include "util.h"
 #include "xmlnode.h"

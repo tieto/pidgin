@@ -25,7 +25,7 @@
 #include "blist.h"
 #include "prefs.h"
 #include "sound.h"
-#include "sound-loader.h"
+#include "sound-theme-loader.h"
 #include "theme-manager.h"
 
 static PurpleSoundUiOps *sound_ui_ops = NULL;

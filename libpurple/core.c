@@ -46,7 +46,7 @@
 #include "signals.h"
 #include "smiley.h"
 #include "sound.h"
-#include "sound-loader.h"
+#include "sound-theme-loader.h"
 #include "sslconn.h"
 #include "status.h"
 #include "stun.h"
