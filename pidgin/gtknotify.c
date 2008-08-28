@@ -362,6 +362,10 @@ pidgin_get_mail_dialog(void)
 		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
 						 PIDGIN_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
 
+		/* make "Open All Messages" the default response */
+		gtk_dialog_set_default_response(GTK_DIALOG(dialog),
+						GTK_RESPONSE_ACCEPT);
+
 		/* Setup the dialog */
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
 		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
