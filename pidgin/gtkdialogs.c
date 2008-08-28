@@ -212,6 +212,7 @@ static const struct translator current_translators[] = {
 	{N_("Serbian"),             "sr", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Serbian"),             "sr@Latn", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
+	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},

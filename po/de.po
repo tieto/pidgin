@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-11 17:26+0200\n"
-"PO-Revision-Date: 2008-07-11 17:25+0200\n"
+"POT-Creation-Date: 2008-08-12 17:23+0200\n"
+"PO-Revision-Date: 2008-08-12 17:21+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -652,9 +652,11 @@ msgstr "Klänge aktivieren"
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
 
-#. Print the list of users in the room
-msgid "List of users:\n"
-msgstr "Liste der Benutzer:\n"
+#, c-format
+msgid "List of %d user:\n"
+msgid_plural "List of %d users:\n"
+msgstr[0] "Liste von %d Benutzer:\n"
+msgstr[1] "Liste von %d Benutzern:\n"
 
 msgid "Supported debug options are:  version"
 msgstr "Unterstützte Debug-Optionen sind:  version"
@@ -2230,6 +2232,9 @@ msgstr ""
 "Dateiübertragung abgeschlossen ist\n"
 "(nur, wenn es keine Unterhaltung mit dem Sender gibt)"
 
+msgid "Create a new directory for each user"
+msgstr "Für jeden Benutzer ein neues Verzeichnis anlegen"
+
 msgid "Notes"
 msgstr "Notizen"
 
@@ -2815,8 +2820,9 @@ msgid ""
 "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
 "pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Apples Bonjour-Toolkit für Windows konnte nicht gefunden werden, für weitere "
-"Informationen besuchen Sie die FAQ unter: http://d.pidgin.im/BonjourWindows"
+"Apples Bonjour-Toolkit für Windows konnte nicht gefunden werden. Besuchen "
+"Sie die FAQ unter http://d.pidgin.im/BonjourWindows für weitere "
+"Informationen."
 
 msgid "Unable to listen for incoming IM connections\n"
 msgstr "Kann nicht auf eingehende IM-Verbindungen hören\n"
@@ -2872,9 +2878,6 @@ msgstr ""
 
 msgid "Cannot open socket"
 msgstr "Kann die Socket nicht öffnen"
-
-msgid "Error setting socket options"
-msgstr "Fehler beim Setzen der Socket-Optionen"
 
 msgid "Could not bind socket to port"
 msgstr "Kann die Socket nicht an den Port binden"
@@ -3218,6 +3221,9 @@ msgstr "Port"
 msgid "Encodings"
 msgstr "Kodierungen"
 
+msgid "Auto-detect incoming UTF-8"
+msgstr "Eingehendes UTF-8 automatisch erkennen"
+
 msgid "Real name"
 msgstr "Echter Name"
 
@@ -3402,6 +3408,9 @@ msgid ""
 msgstr ""
 "away [Nachricht]:  Setzen Sie eine Abwesenheitsnachricht. Verwenden Sie "
 "keine Nachricht, um wieder zurückzukehren."
+
+msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
+msgstr "ctcp <nick> <anfrage>: Sendet CTCP-Anfrage an nick."
 
 msgid "chanserv: Send a command to chanserv"
 msgstr "chanserv: Sendet ein Kommando zum Chanserv"
@@ -4895,8 +4904,21 @@ msgstr "Erlauben"
 msgid "Disallow"
 msgstr "Verbieten"
 
-msgid "This Hotmail account may not be active."
-msgstr "Dieses Hotmail-Konto ist vielleicht nicht aktiv."
+#, c-format
+msgid "Blocked Text for %s"
+msgstr "Blockierter Text für %s"
+
+msgid "No text is blocked for this account."
+msgstr "Für dieses Konto ist kein Text blockiert."
+
+#, c-format
+msgid ""
+"MSN servers are currently blocking the following regular expressions:<br/>%s"
+msgstr ""
+"MSN-Server blockieren momentan die folgenden regulären Ausdrücke:<br/>%s"
+
+msgid "This account does not have email enabled."
+msgstr "Dieses Konto hat E-Mail nicht aktiviert."
 
 msgid "Send a mobile message."
 msgstr "Eine SMS senden."
@@ -4954,6 +4976,9 @@ msgstr "Erlaube/verbiete mobile Geräte..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Erlaube/verbiete mobile Webseiten..."
+
+msgid "View Blocked Text..."
+msgstr "Blockierten Text anzeigen..."
 
 msgid "Open Hotmail Inbox"
 msgstr "Öffne Hotmail-Posteingang"
@@ -5158,16 +5183,8 @@ msgstr "nudge: Einen Kontakt anstoßen, um seine Aufmerksamkeit zu erhalten"
 msgid "Windows Live ID authentication:Unable to connect"
 msgstr "Windows Live ID-Authentifikation:Kann nicht verbinden"
 
-#. we must have failed!
-msgid ""
-"Windows Live ID authentication: cannot find authenticate token in server "
-"response"
-msgstr ""
-"Windows Live ID Authentifikation: Kann Authenfikationstoken nicht in der "
-"Serverantwort finden"
-
-msgid "Windows Live ID authentication Failed"
-msgstr "Windows Live ID - Authentifikation fehlgeschlagen"
+msgid "Windows Live ID authentication:Invalid response"
+msgstr "Windows Live ID-Authentifikation:Ungültige Antwort"
 
 #, c-format
 msgid "%s is not a valid group."
@@ -5214,6 +5231,9 @@ msgstr "%s ist kein gültiges Passport-Konto."
 msgid "Service Temporarily Unavailable."
 msgstr "Dienst momentan nicht verfügbar."
 
+msgid "Mobile message was not sent because it was too long."
+msgstr "Mobile Nachricht wurde nicht gesendet, da sie zu lang war."
+
 msgid "Unable to rename group"
 msgstr "Kann die Gruppe nicht umbenennen"
 
@@ -5249,6 +5269,28 @@ msgstr[1] ""
 "\n"
 "Nach Beendigung der Wartungsarbeiten können Sie sich wieder problemlos "
 "anmelden."
+
+msgid ""
+"Message was not sent because the system is unavailable. This normally "
+"happens when the user is blocked or does not exist."
+msgstr ""
+"Nachricht wurde nicht gesendet, da das System nicht erreichbar ist. Dies "
+"passiert normalerweise, wenn der Benutzer blockiert ist oder nicht existiert."
+
+msgid "Message was not sent because messages are being sent too quickly."
+msgstr ""
+"Nachricht konnte nicht gesendet werden, da Nachrichten zu schnell gesendet "
+"werden."
+
+msgid "Message was not sent because an unknown encoding error occurred."
+msgstr ""
+"Nachricht konnte nicht gesendet werden, da ein unbekannter Kodierungsfehler "
+"aufgetreten ist."
+
+msgid "Message was not sent because an unknown error occurred."
+msgstr ""
+"Nachricht konnte nicht gesendet werden, da ein unbekannter Fehler "
+"aufgetreten ist."
 
 msgid "Unable to connect"
 msgstr "Verbindung nicht möglich"
@@ -5378,6 +5420,9 @@ msgstr "Kann „%s“ nicht hinzufügen."
 
 msgid "The username specified is invalid."
 msgstr "Der angegebene Benutzername ist ungültig."
+
+msgid "This Hotmail account may not be active."
+msgstr "Dieses Hotmail-Konto ist vielleicht nicht aktiv."
 
 msgid "Has you"
 msgstr "Hat Sie"
@@ -7286,13 +7331,6 @@ msgstr ""
 "Beachten Sie, dass diese Operation den Qun entfernen könnte, \n"
 "wenn Sie der Ersteller sind."
 
-#, c-format
-msgid "Code [0x%02X]: %s"
-msgstr "Code [0x%02X]: %s"
-
-msgid "Group Operation Error"
-msgstr "Gruppenoperationsfehler"
-
 #. we want to see window
 msgid "Do you want to approve the request?"
 msgstr "Wollen sie die Anfrage akzeptieren?"
@@ -7321,30 +7359,39 @@ msgstr "Systemnachricht"
 msgid "Failed to send IM."
 msgstr "Senden der Nachricht fehlgeschlagen."
 
-msgid "Keep alive error"
-msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
-
-msgid "Error requesting login token"
-msgstr "Fehler beim Abfragen des Anmelde-Tokens"
-
-msgid "Unable to login. Check debug log."
-msgstr "Anmeldung fehlgeschlagen, Debugmitschnitt beachten."
-
-msgid "Unable to login"
-msgstr "Anmeldung fehlgeschlagen"
-
 #, c-format
 msgid "Unknown-%d"
 msgstr "Unbekannt-%d"
 
-msgid "TCP Address"
-msgstr "TCP-Adresse"
-
-msgid "UDP Address"
-msgstr "UDP-Adresse"
-
 msgid "Level"
 msgstr "Stufe"
+
+msgid "Member"
+msgstr "Mitglied"
+
+msgid " VIP"
+msgstr " VIP"
+
+msgid " TCP"
+msgstr " TCP"
+
+msgid " FromMobile"
+msgstr " FromMobile"
+
+msgid " BindMobile"
+msgstr "BindMobile"
+
+msgid " Video"
+msgstr " Video"
+
+msgid " Space"
+msgstr " Raum"
+
+msgid "Flag"
+msgstr "Flagge"
+
+msgid "Ver"
+msgstr "Ver"
 
 msgid "Invalid name"
 msgstr "QQ: Ungültiger Name"
@@ -7419,6 +7466,22 @@ msgstr "QQ-Protokoll-Plugin"
 msgid "Connect using TCP"
 msgstr "Über TCP verbinden"
 
+msgid "resend interval(s)"
+msgstr "Neusenden-Intervall(e)"
+
+msgid "Keep alive interval(s)"
+msgstr "Intervall(e) zum Aufrechterhalten der Verbindung (Keep alive)"
+
+msgid "Update interval(s)"
+msgstr "Aktualisierungsintervall(e)"
+
+#, c-format
+msgid "Invalid token len, %d"
+msgstr "Ungültige Länge des Tokens, %d"
+
+msgid "Keep alive error"
+msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
+
 msgid "Failed to connect server"
 msgstr "Verbinden zum Server fehlgeschlagen"
 
@@ -7442,9 +7505,6 @@ msgstr "Schreibfehler"
 msgid "Connection lost"
 msgstr "Verbindung verloren"
 
-msgid "Login failed, no reply"
-msgstr "Anmeldung fehlgeschlagen, keine Antwort"
-
 msgid "Couldn't resolve host"
 msgstr "Kann den Hostnamen nicht auflösen"
 
@@ -7461,6 +7521,38 @@ msgstr "Verbindung nicht möglich."
 
 msgid "Could not resolve hostname"
 msgstr "Konnte den Hostnamen nicht auflösen"
+
+msgid "Unable to login. Check debug log."
+msgstr "Anmeldung fehlgeschlagen, Debugmitschnitt beachten."
+
+msgid "Unable to login"
+msgstr "Anmeldung fehlgeschlagen"
+
+#, c-format
+msgid ""
+"Reply %s(0x%02X )\n"
+"Sent %s(0x%02X )\n"
+"Room id %d, reply [0x%02X]: \n"
+"%s"
+msgstr ""
+"Antwort %s(0x%02X )\n"
+"Gesendet %s(0x%02X )\n"
+"Raum-ID %d, Antwort [0x%02X]: \n"
+"%s"
+
+msgid "Failed room reply"
+msgstr "Antwort vom Raum gescheitert"
+
+#, c-format
+msgid "You are not a member of group \"%s\"\n"
+msgstr "Sie sind ein Mitglied der Gruppe „%s“\n"
+
+msgid "Can not decrypt login reply"
+msgstr "Kann die Antwort der Anmeldung nicht entschlüsseln"
+
+#, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr "Ungültiger Token-Antwort-Code, 0x%02X"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7508,6 +7600,14 @@ msgstr "Nachricht: %s"
 #, c-format
 msgid "%s is not in your buddy list"
 msgstr "%s ist nicht in Ihrer Buddy-Liste"
+
+#, c-format
+msgid "Notice from: %s"
+msgstr "Ankündigung von %s"
+
+#, c-format
+msgid "%s"
+msgstr "%s"
 
 msgid "Connection closed (writing)"
 msgstr "Verbindung geschlossen (schreibend)"
@@ -9724,6 +9824,14 @@ msgstr "Fehler beim Auflösen von %s"
 msgid "Could not resolve host name"
 msgstr "Kann den Hostnamen nicht auflösen"
 
+#, c-format
+msgid "Requesting %s's attention..."
+msgstr "Bitte um %ss Aufmerksamkeit..."
+
+#, c-format
+msgid "%s has requested your attention!"
+msgstr "%s hat um Ihre Aufmerksamkeit gebeten!"
+
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 #.
@@ -9751,14 +9859,6 @@ msgstr "gespeicherter Status"
 #, c-format
 msgid "%s is now known as %s.\n"
 msgstr "%s heißt jetzt %s.\n"
-
-#, c-format
-msgid "Requesting %s's attention..."
-msgstr "Bitte um %s's Aufmerksamkeit..."
-
-#, c-format
-msgid "%s has requested your attention!"
-msgstr "%s hat um Ihre Aufmerksamkeit gebeten!"
 
 #, c-format
 msgid ""
@@ -9844,6 +9944,12 @@ msgstr "+++ %s wurde untätig"
 msgid "+++ %s became unidle"
 msgstr "+++ %s wurde tätig"
 
+#.
+#. * This string determines how some dates are displayed.  The default
+#. * string "%x %X" shows the date then the time.  Translators can
+#. * change this to "%X %x" if they want the time to be shown first,
+#. * followed by the date.
+#.
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
@@ -9955,6 +10061,10 @@ msgstr "Verbindungsabbruch wegen Zeitüberschreitung."
 #. 10061
 msgid "Connection refused."
 msgstr "Verbindung abgelehnt."
+
+#. 10048
+msgid "Address already in use."
+msgstr "Adresse wird bereits benutzt."
 
 msgid "Internet Messenger"
 msgstr "Internet-Sofortnachrichtendienst"
@@ -10905,6 +11015,10 @@ msgstr "Schwerer Fehler"
 
 msgid "developer"
 msgstr "Entwickler"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "support"
 msgstr "Support"

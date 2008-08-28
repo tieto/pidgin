@@ -59,7 +59,7 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 			    gboolean is_bold, gboolean is_italic, gboolean is_underline, gint len);
 
 void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint type);
-void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc);
-void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_recv_im(guint8 *data, gint data_len, guint16 seq, PurpleConnection *gc);
+void qq_process_send_im_reply(guint8 *data, gint data_len, PurpleConnection *gc);
 
 #endif

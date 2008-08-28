@@ -1816,7 +1816,7 @@ static void mw_session_announce(struct mwSession *s,
   who = g_strdup_printf(_("Announcement from %s"), who);
   msg = purple_markup_linkify(text);
 
-  purple_conversation_write(conv, who, msg, PURPLE_MESSAGE_RECV, time(NULL));
+  purple_conversation_write(conv, who, msg ? msg : "", PURPLE_MESSAGE_RECV, time(NULL));
   g_free(who);
   g_free(msg);
 }

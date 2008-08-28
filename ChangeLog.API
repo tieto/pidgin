@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.0 (??/??/2008):
+version 2.5.0 (08/18/2008):
 	libpurple:
 		Added:
 		* Connection flag PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY to indicate
@@ -21,6 +21,11 @@ version 2.5.0 (??/??/2008):
 		* purple_cmds_get_handle, purple_cmds_init, purple_cmds_uninit
 		* cmd-added and cmd-removed signals
 		* purple_get_host_name
+		* purple_util_fetch_url_len (temporary function overload to add max_len param)
+		* purple_util_fetch_url_request_len
+		* purple_prpl_send_attention
+		* purple_prpl_got_attention
+		* purple_prpl_got_attention_in_chat
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
@@ -28,6 +33,10 @@ version 2.5.0 (??/??/2008):
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
 		* pidgin_set_custom_buddy_icon
+		* purple_util_fetch_url_len
+		* purple_util_fetch_url_request_len
+		* serv_send_attention
+		* serv_got_attention
 
 		Changed:
 		* xmlnode_copy now copies the prefix and namespace map for nodes.

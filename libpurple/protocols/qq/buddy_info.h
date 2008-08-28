@@ -71,8 +71,8 @@ void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_wi
 void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
 void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *icon_num, const gchar *iconfile);
 void qq_prepare_modify_info(PurpleConnection *gc);
-void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_get_info_reply(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_info_query_free(qq_data *qd);
 void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid);
 void qq_send_packet_get_buddies_levels(PurpleConnection *gc);

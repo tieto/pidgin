@@ -274,7 +274,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnSession *session;
 	char buf[MSN_BUF_LEN];
 	char *cur, *end, *old_rx_buf;
-	int len, cur_len;
+	gssize len;
+	int cur_len;
 	char *result_msg = NULL;
 	size_t result_len = 0;
 	gboolean error = FALSE;
@@ -405,7 +406,8 @@ static void
 httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnHttpConn *httpconn;
-	int ret, writelen;
+	gssize ret;
+	int writelen;
 
 	httpconn = data;
 	writelen = purple_circ_buffer_get_max_read(httpconn->tx_buf);
@@ -727,7 +729,8 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	}
 	else
 	{
-		purple_debug_error("msn", "HTTP: Connection error\n");
+		purple_debug_error("msn", "HTTP: Connection error: %s\n",
+		                   error_message ? error_message : "(null)");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }

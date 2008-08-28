@@ -42,14 +42,9 @@ typedef struct {
 
 /*Local Function Prototype*/
 static void msn_parse_oim_xml(MsnOim *oim, xmlnode *node);
-static void msn_oim_post_single_get_msg(MsnOim *oim, char *msgid);
-static MsnOimSendReq *msn_oim_new_send_req(const char *from_member,
-										   const char *friendname,
-										   const char* to_member,
-										   const char *msg);
 static void msn_oim_free_send_req(MsnOimSendReq *req);
-static void msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str);
-static char *msn_oim_msg_to_str(MsnOim *oim, const char *body);
+static void msn_oim_recv_data_free(MsnOimRecvData *data);
+static void msn_oim_post_single_get_msg(MsnOim *oim, MsnOimRecvData *data);
 
 /*new a OIM object*/
 MsnOim *
@@ -77,12 +72,12 @@ msn_oim_destroy(MsnOim *oim)
 	g_free(oim->run_id);
 	g_free(oim->challenge);
 
-	while((request = g_queue_pop_head(oim->send_queue)) != NULL){
+	while ((request = g_queue_pop_head(oim->send_queue)) != NULL)
 		msn_oim_free_send_req(request);
-	}
-
 	g_queue_free(oim->send_queue);
-	g_list_free(oim->oim_list);
+
+	while (oim->oim_list != NULL)
+		msn_oim_recv_data_free((MsnOimRecvData *)oim->oim_list->data);
 
 	g_free(oim);
 }
@@ -112,6 +107,36 @@ msn_oim_free_send_req(MsnOimSendReq *req)
 	g_free(req->oim_msg);
 
 	g_free(req);
+}
+
+static MsnOimRecvData *
+msn_oim_recv_data_new(MsnOim *oim, char *msg_id)
+{
+	MsnOimRecvData *data;
+
+	data = g_new0(MsnOimRecvData, 1);
+	data->oim = oim;
+	data->msg_id = msg_id;
+
+	oim->oim_list = g_list_append(oim->oim_list, data);
+
+	return data;
+}
+
+/* Probably only good for g_list_find_custom */
+static gint
+msn_recv_data_equal(MsnOimRecvData *a, const char *msg_id)
+{
+	return strcmp(a->msg_id, msg_id);
+}
+
+static void
+msn_oim_recv_data_free(MsnOimRecvData *data)
+{
+	data->oim->oim_list = g_list_remove(data->oim->oim_list, data);
+	g_free(data->msg_id);
+
+	g_free(data);
 }
 
 /****************************************
@@ -465,16 +490,12 @@ msn_oim_delete_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 {
 	MsnOimRecvData *rdata = data;
 
-	if (response && xmlnode_get_child(response->xml, "Body/Fault") == NULL) {
+	if (response && xmlnode_get_child(response->xml, "Body/Fault") == NULL)
 		purple_debug_info("msn", "Delete OIM success\n");
-		rdata->oim->oim_list = g_list_remove(rdata->oim->oim_list,
-			rdata->msg_id);
-		g_free(rdata->msg_id);
-	} else {
+	else
 		purple_debug_info("msn", "Delete OIM failed\n");
-	}
 
-	g_free(rdata);
+	msn_oim_recv_data_free(rdata);
 }
 
 /*Post to get the Offline Instant Message*/
@@ -645,10 +666,13 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			char *str = xmlnode_to_str(response->xml, NULL);
 			purple_debug_info("msn", "Unknown OIM response: %s\n", str);
 			g_free(str);
+			msn_oim_recv_data_free(rdata);
 		}
 	} else {
 		purple_debug_info("msn", "Failed to get OIM\n");
+		msn_oim_recv_data_free(rdata);
 	}
+
 }
 
 /* parse the oim XML data
@@ -723,9 +747,9 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 		}
 /*		purple_debug_info("msn", "E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
-		if (!g_list_find_custom(oim->oim_list, msgid, (GCompareFunc)strcmp)) {
-			oim->oim_list = g_list_append(oim->oim_list, msgid);
-			msn_oim_post_single_get_msg(oim, msgid);
+		if (!g_list_find_custom(oim->oim_list, msgid, (GCompareFunc)msn_recv_data_equal)) {
+			MsnOimRecvData *data = msn_oim_recv_data_new(oim, msgid);
+			msn_oim_post_single_get_msg(oim, data);
 			msgid = NULL;
 		}
 
@@ -738,17 +762,13 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 
 /*Post to get the Offline Instant Message*/
 static void
-msn_oim_post_single_get_msg(MsnOim *oim, char *msgid)
+msn_oim_post_single_get_msg(MsnOim *oim, MsnOimRecvData *data)
 {
 	char *soap_body;
-	MsnOimRecvData *data = g_new0(MsnOimRecvData, 1);
 
 	purple_debug_info("msn", "Get single OIM Message\n");
 
-	data->oim = oim;
-	data->msg_id = msgid;
-
-	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE, msgid);
+	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE, data->msg_id);
 
 	msn_oim_make_request(oim, FALSE, MSN_OIM_GET_SOAP_ACTION, MSN_OIM_RETRIEVE_HOST,
 		MSN_OIM_RETRIEVE_URL, xmlnode_from_str(soap_body, -1), msn_oim_get_read_cb,
@@ -756,3 +776,4 @@ msn_oim_post_single_get_msg(MsnOim *oim, char *msgid)
 
 	g_free(soap_body);
 }
+

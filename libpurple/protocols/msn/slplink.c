@@ -101,9 +101,6 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	session = slplink->session;
 
-	g_free(slplink->local_user);
-	g_free(slplink->remote_user);
-
 #if 0
 	if (slplink->directconn != NULL)
 		msn_directconn_destroy(slplink->directconn);
@@ -116,6 +113,9 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	session->slplinks =
 		g_list_remove(session->slplinks, slplink);
+
+	g_free(slplink->local_user);
+	g_free(slplink->remote_user);
 
 	g_free(slplink);
 }
@@ -536,10 +536,17 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 					if (xfer != NULL)
 					{
-						purple_xfer_start(slpmsg->slpcall->xfer,
-							0, NULL, 0);
-						slpmsg->fp = ((PurpleXfer *)slpmsg->slpcall->xfer)->dest_fp;
-						xfer->dest_fp = NULL; /* Disable double fclose() */
+						purple_xfer_ref(xfer);
+						purple_xfer_start(xfer,	0, NULL, 0);
+
+						if (xfer->data == NULL) {
+							purple_xfer_unref(xfer);
+							return;
+						} else {
+							purple_xfer_unref(xfer);
+							slpmsg->fp = xfer->dest_fp;
+							xfer->dest_fp = NULL; /* Disable double fclose() */
+						}
 					}
 				}
 			}

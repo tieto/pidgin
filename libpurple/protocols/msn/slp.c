@@ -814,6 +814,9 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if (!purple_account_get_bool(session->account, "custom_smileys", TRUE))
 		return;
 
+	swboard = cmdproc->data;
+	conv = swboard->conv;
+
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
 
@@ -838,10 +841,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
-
-		swboard = cmdproc->data;
 		slplink->swboard = swboard;
-		conv = swboard->conv;
 
 		/* If the conversation doesn't exist then this is a custom smiley
 		 * used in the first message in a MSN conversation: we need to create

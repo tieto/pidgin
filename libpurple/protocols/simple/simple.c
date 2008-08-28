@@ -1703,8 +1703,15 @@ static void simple_newconn_cb(gpointer data, gint source, PurpleInputCondition c
 	PurpleConnection *gc = data;
 	struct simple_account_data *sip = gc->proto_data;
 	struct sip_connection *conn;
+	int newfd, flags;
 
-	int newfd = accept(source, NULL, NULL);
+	newfd = accept(source, NULL, NULL);
+
+	flags = fcntl(newfd, F_GETFL);
+	fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(newfd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	conn = connection_create(sip, newfd);
 

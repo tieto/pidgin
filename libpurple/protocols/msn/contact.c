@@ -214,6 +214,7 @@ static void
 msn_create_address_book(MsnSession *session)
 {
 	gchar *body;
+	gchar *token_str;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->user != NULL);
@@ -221,9 +222,11 @@ msn_create_address_book(MsnSession *session)
 	
 	purple_debug_info("msn", "Creating an Address Book.\n");
 
-	body = g_markup_printf_escaped(MSN_ADD_ADDRESSBOOK_TEMPLATE,
-		msn_nexus_get_token_str(session->nexus, MSN_AUTH_CONTACTS),
-		session->user->passport);
+	token_str = g_markup_escape_text(
+		msn_nexus_get_token_str(session->nexus, MSN_AUTH_CONTACTS), -1);
+	body = g_strdup_printf(MSN_ADD_ADDRESSBOOK_TEMPLATE,
+		token_str, session->user->passport);
+	g_free(token_str);
 
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_ADD_ADDRESSBOOK_SOAP_ACTION,
@@ -398,6 +401,7 @@ msn_get_contact_list(MsnSession *session,
 {
 	gchar *body = NULL;
 	gchar *update_str = NULL;
+	gchar *token_str;
 	GetContactListCbData cb_data = { session, partner_scenario };
 	const gchar *partner_scenario_str = MsnSoapPartnerScenarioText[partner_scenario];
 
@@ -405,12 +409,14 @@ msn_get_contact_list(MsnSession *session,
 
 	if (update_time != NULL) {
 		purple_debug_info("msn", "CL Last update time: %s\n", update_time);
-		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML,update_time);
+		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML, update_time);
 	}
 
-	body = g_markup_printf_escaped(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str,
-		msn_nexus_get_token_str(session->nexus, MSN_AUTH_CONTACTS),
-		update_str ? update_str : "");
+	token_str = g_markup_escape_text(
+		msn_nexus_get_token_str(session->nexus, MSN_AUTH_CONTACTS), -1);
+	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str,
+		token_str, update_str ? update_str : "");
+	g_free(token_str);
 
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_GET_CONTACT_SOAP_ACTION,
@@ -798,6 +804,7 @@ msn_get_address_book(MsnSession *session,
 	const char *dynamicItemLastChange)
 {
 	char *body, *update_str = NULL;
+	gchar *token_str;
 
 	purple_debug_misc("msn", "Getting Address Book\n");
 
@@ -807,10 +814,13 @@ msn_get_address_book(MsnSession *session,
 	else if (LastChanged != NULL)
 		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML, LastChanged);
 
-	body = g_markup_printf_escaped(MSN_GET_ADDRESS_TEMPLATE,
+	token_str = g_markup_escape_text(
+		msn_nexus_get_token_str(session->nexus, MSN_AUTH_CONTACTS), -1);
+	body = g_strdup_printf(MSN_GET_ADDRESS_TEMPLATE,
 		MsnSoapPartnerScenarioText[partner_scenario],
-		msn_nexus_get_token_str(session->nexus, MSN_AUTH_CONTACTS),
+		token_str,
 		update_str ? update_str : "");
+	g_free(token_str);
 
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_GET_ADDRESS_SOAP_ACTION,

@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [5])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [5])
-m4_define([purple_micro_version], [0])
+m4_define([purple_micro_version], [1])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [5])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [5])
-m4_define([gnt_micro_version], [0])
+m4_define([gnt_micro_version], [1])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -2021,9 +2021,12 @@ if test "$enable_tcl" = yes; then
 	TCLCONFIG=no
 	TCLCONFIGDIRS="/usr/lib \
 			/usr/lib64 \
+			/usr/lib/tcl8.5 \
 			/usr/lib/tcl8.4 \
 			/usr/lib/tcl8.3 \
 			/usr/lib/tcl8.2 \
+			/usr/lib64/tcl8.5 \
+			/usr/lib64/tcl8.4 \
 			/System/Library/Tcl/8.3 \
 			/usr/local/lib"
 	for dir in $with_tclconfig $TCLCONFIGDIRS; do

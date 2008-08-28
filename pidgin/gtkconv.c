@@ -4619,6 +4619,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	/* Setup the label telling how many people are in the room. */
 	gtkchat->count = gtk_label_new(_("0 people in room"));
+#if GTK_CHECK_VERSION(2,6,0)
+	gtk_label_set_ellipsize(GTK_LABEL(gtkchat->count), PANGO_ELLIPSIZE_END);
+#endif
 	gtk_box_pack_start(GTK_BOX(lbox), gtkchat->count, FALSE, FALSE, 0);
 	gtk_widget_show(gtkchat->count);
 
@@ -6604,8 +6607,11 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			update_typing_icon(gtkconv);
 
 		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
-		if (pidgin_conv_window_is_active_conversation(conv))
-			gtk_window_set_title(GTK_WINDOW(win->window), title);
+		if (pidgin_conv_window_is_active_conversation(conv)) {
+			const char* current_title = gtk_window_get_title(GTK_WINDOW(win->window));
+			if (current_title == NULL || strcmp(current_title, title) != 0)
+				gtk_window_set_title(GTK_WINDOW(win->window), title);
+		}
 
 		g_free(title);
 	}
@@ -6898,6 +6904,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	if(pidgin_conv_window_is_active_conversation(conv))
 	{
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy))
+			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		gtk_window_set_icon(GTK_WINDOW(win->window), buf);
 	}
 }
@@ -7364,7 +7372,9 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 	if (gtkconv)
 	{
 		conv = gtkconv->active_conv;
-		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON | PIDGIN_CONV_COLORIZE_TITLE);
+		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON
+		                              | PIDGIN_CONV_COLORIZE_TITLE
+		                              | PIDGIN_CONV_BUDDY_ICON);
 		if ((purple_status_is_online(old) ^ purple_status_is_online(newstatus)) != 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}

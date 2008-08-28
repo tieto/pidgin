@@ -114,6 +114,11 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	session = swboard->session;
 	session->switches = g_list_remove(session->switches, swboard);
 
+	for (l = session->slplinks; l; l = l->next) {
+		MsnSlpLink *slplink = l->data;
+		if (slplink->swboard == swboard) slplink->swboard = NULL;
+	}
+
 #if 0
 	/* This should never happen or we are in trouble. */
 	if (swboard->servconn != NULL)
@@ -540,7 +545,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	payload = msn_message_gen_payload(msg, &payload_len);
 
 #ifdef MSN_DEBUG_SB
-	purple_debug_info("msn", "SB length:{%d}", payload_len);
+	purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}", payload_len);
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
