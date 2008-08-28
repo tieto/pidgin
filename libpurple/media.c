@@ -1199,6 +1199,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 					   err->message);
 			g_error_free(err);
 			g_object_unref(participant);
+			g_hash_table_remove(media->priv->participants, who);
 			purple_media_remove_session(media, session);
 			g_free(session);
 			return FALSE;

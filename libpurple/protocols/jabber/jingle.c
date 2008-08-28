@@ -949,6 +949,8 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 		return FALSE;
 	}
 
+	jabber_jingle_session_set_media(session, media);
+
 	for (; contents; contents = g_list_delete_link(contents, contents)) {
 		JingleSessionContent *jsc = contents->data;
 		gboolean result = FALSE;
@@ -986,11 +988,10 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 
 		if (!result) {
 			purple_debug_error("jingle", "Couldn't create stream\n");
+			purple_media_hangup(media);
 			return FALSE;
 		}
 	}
-
-	jabber_jingle_session_set_media(session, media);
 
 	/* connect callbacks */
 	g_signal_connect_swapped(G_OBJECT(media), "accepted", 
