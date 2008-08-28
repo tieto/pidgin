@@ -767,6 +767,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\timestamp_format.dll"
     Delete "$INSTDIR\plugins\win2ktrans.dll"
     Delete "$INSTDIR\plugins\winprefs.dll"
+    Delete "$INSTDIR\plugins\xmppconsole.dll"
     RMDir "$INSTDIR\plugins"
     RMDir /r "$INSTDIR\sasl2"
     Delete "$INSTDIR\sounds\purple\alert.wav"
