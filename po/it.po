@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 12:11-0400\n"
-"PO-Revision-Date: 2008-08-14 15:03+0100\n"
+"POT-Creation-Date: 2008-08-29 13:28-0400\n"
+"PO-Revision-Date: 2008-08-26 14:12+0100\n"
 "Last-Translator: Claudio Satriano <satriano@na.infn.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -43,8 +43,8 @@ msgstr ""
 "  -c, --config=DIR    usa DIR per i file di configurazione\n"
 "  -d, --debug         stampa messaggi di debug sullo standard output\n"
 "  -h, --help          mostra questo aiuto ed esce\n"
-"  -n, --nologin       non effettuare il login automatico  -v, --"
-"version       mostra la versione attuale ed esce\n"
+"  -n, --nologin       non effettuare il login automatico\n"
+"  -v, --version       mostra la versione attuale ed esce\n"
 
 #, c-format
 msgid ""
@@ -114,7 +114,7 @@ msgid "Are you sure you want to delete %s?"
 msgstr "Sei sicuro di voler eliminare %s?"
 
 msgid "Delete Account"
-msgstr "Cancella account"
+msgstr "Elimina account"
 
 #. Delete button
 msgid "Delete"
@@ -1451,9 +1451,8 @@ msgstr "Qualcuno pronuncia il tuo nome in una chat"
 msgid "Notify with a toaster when"
 msgstr "Segnala ai contatti che stai scrivendo"
 
-#, fuzzy
 msgid "Beep too!"
-msgstr "Bip di console"
+msgstr "Emetti anche un bip!"
 
 msgid "Set URGENT for the terminal window."
 msgstr "Imposta lo stato URGENTE per la finestra del terminale."
@@ -2420,6 +2419,9 @@ msgstr "Dimensione minima della stanza"
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Tempo massimo di inattività per l'utente (in minuti)"
 
+msgid "Apply hiding rules to buddies"
+msgstr ""
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2504,7 +2506,7 @@ msgstr "Messenger Plus!"
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
 msgid "QIP"
-msgstr ""
+msgstr "QIP"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -2971,13 +2973,11 @@ msgstr "Password"
 msgid "Password (retype)"
 msgstr "Password (di nuovo)"
 
-#, fuzzy
 msgid "Enter current token"
-msgstr "l'argomento attuale è: %s"
+msgstr "Inserisci il token corrente"
 
-#, fuzzy
 msgid "Current token"
-msgstr "Errore di token"
+msgstr "Token corrente"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Registra un nuovo account Gadu-Gadu"
@@ -3518,10 +3518,9 @@ msgstr "nick &lt;nuovo nickname&gt;: Cambia il tuo nickname."
 msgid "nickserv: Send a command to nickserv"
 msgstr "nickserv: Invia un comando al nickserv"
 
-#, fuzzy
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
 msgstr ""
-"me &lt;azione&gt;: Invia un'azione in stile IRC ad un contatto o ad una chat."
+"notice &lt;destinatario&lt;:  Invia un annuncio ad un utente o ad un canale"
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
@@ -3826,35 +3825,29 @@ msgstr "Indirizzo notiziario:"
 msgid "User Profile"
 msgstr "Profilo dell'utente"
 
-#, fuzzy
 msgid "Jingle"
-msgstr "Entra"
+msgstr "Jingle"
 
-#, fuzzy
 msgid "Jingle Audio"
-msgstr "Bitrate audio:"
+msgstr "Jingle audio"
 
 msgid "User Nickname"
 msgstr "Nickname dell'utente"
 
-#, fuzzy
 msgid "Jingle ICE UDP"
-msgstr "Porta UDP del comando"
+msgstr "Jingle ICE UDP"
 
-#, fuzzy
 msgid "Jingle ICE TCP"
-msgstr "Connetti utilizzando TCP"
+msgstr "Jingle ICE TCP"
 
-#, fuzzy
 msgid "Jingle Raw UDP"
-msgstr "Porta UDP del comando"
+msgstr "Jingle Raw UDP"
 
-#, fuzzy
 msgid "Jingle Video"
-msgstr "Video chat"
+msgstr "Jingle video"
 
 msgid "Jingle DTMF"
-msgstr ""
+msgstr "Jingle DTMF"
 
 msgid "Message Receipts"
 msgstr "Ricevute per il messaggio"
@@ -3904,7 +3897,7 @@ msgid "STUN Service Discovery for Jingle"
 msgstr ""
 
 msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
+msgstr "Negoziazione di una sessione criptata semplificata"
 
 #, fuzzy
 msgid "Hop Check"
@@ -4233,9 +4226,8 @@ msgstr "In ascolto"
 msgid "Mood Text"
 msgstr "Testo identificato"
 
-#, fuzzy
 msgid "Allow Buzz"
-msgstr "Permetti il timeshift"
+msgstr "Permetti i buzz"
 
 msgid "Tune Artist"
 msgstr "Artista del brano"
@@ -4471,30 +4463,30 @@ msgstr "Impossibile fare ping sull'utente %s"
 
 #, c-format
 msgid "Unable to buzz, because there is nothing known about user %s."
-msgstr ""
+msgstr "Impossibile richiamare %s con un buzz: non conosco nulla dell'utente."
 
 #, c-format
 msgid "Unable to buzz, because user %s might be offline."
 msgstr ""
+"Impossibile richiamare %s con un buzz: l'utente potrebbe non essere in "
+"linea. "
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to buzz, because the user %s does not support it."
-msgstr ""
-"Impossibile inviare il file a %s. L'utente non supporta il trasferimento file"
+msgstr "Impossibile richiamare %s con un buzz: l'utente non lo supporta."
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
-#, fuzzy
 msgid "Buzz"
-msgstr "Buzz!!"
+msgstr "Buzz"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s has buzzed you!"
-msgstr "%s ti ha aggiunto [%s]"
+msgstr "%s ti ha richiamato con un buzz!"
 
 #, c-format
 msgid "Buzzing %s..."
-msgstr ""
+msgstr "Sto richiamando l'attenzione di %s con un buzz..."
 
 msgid "config:  Configure a chat room."
 msgstr "config: Configura una chat room."
@@ -4518,15 +4510,15 @@ msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
 "affiliation with the room."
 msgstr ""
-"affiliate &lt;utente&gt; &lt;proprietario|admin|membro|escluso|nessuno&gt;: "
-"Imposta un'affiliazione per l'utente nella stanza."
+"affiliate &lt;utente&gt; &lt;owner|admin|member|outcast|none&gt;: Imposta "
+"un'affiliazione per l'utente nella stanza."
 
 msgid ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
 "role in the room."
 msgstr ""
-"role &lt;utente&gt; &lt;moderatore|partecipante|visitatore|nessuno&gt;: "
-"Imposta un ruolo per l'utente nella stanza."
+"role &lt;utente&gt; &lt;moderator|participant|visitor|none&gt;: Imposta un "
+"ruolo per l'utente nella stanza."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;utente&gt; [messaggio]: Invita un utente nella stanza."
@@ -4677,7 +4669,7 @@ msgid "Edit User Mood"
 msgstr "Modifica l'umore dell'utente"
 
 msgid "Please select your mood from the list."
-msgstr ""
+msgstr "Scegli il tuo umore dalla lista."
 
 msgid "Set"
 msgstr "Imposta"
@@ -7574,9 +7566,9 @@ msgstr "Errore nell'aggiunta del contatto"
 msgid "Update interval(s)"
 msgstr "Intervallo(i) per l'aggiornamento"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid token len, %d"
-msgstr "Titolo non valido"
+msgstr "Lunghezza del token non valida, %d"
 
 #, fuzzy
 msgid "Keep alive error"
@@ -7635,21 +7627,25 @@ msgid ""
 "Room id %d, reply [0x%02X]: \n"
 "%s"
 msgstr ""
+"Risposta %s(0x%02X )\n"
+"Inviato %s(0x%02X )\n"
+"Id della stanza %d, risposta [0x%02X]: \n"
+"%s"
 
 #, fuzzy
 msgid "Failed room reply"
 msgstr "Impossibile rimuovere il contatto"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You are not a member of group \"%s\"\n"
-msgstr "Tu [%d] sei stato aggiunto al gruppo \"%d\""
+msgstr "Non sei un membro del gruppo \"%s\"\n"
 
 msgid "Can not decrypt login reply"
-msgstr ""
+msgstr "Impossibile decrittare la risposta al login"
 
 #, c-format
 msgid "Invalid token reply code, 0x%02X"
-msgstr ""
+msgstr "Token non valido nel codice di risposta, 0x%02X"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7698,9 +7694,9 @@ msgstr "Messaggio: %s"
 msgid "%s is not in your buddy list"
 msgstr "%s non è nella tua lista contatti"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Notice from: %s"
-msgstr "Annuncio da %s"
+msgstr "Annuncio da: %s"
 
 #, c-format
 msgid "%s"
@@ -10311,7 +10307,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Benvenuto in %s!</span>\n"
 "\n"
@@ -10321,7 +10317,7 @@ msgstr ""
 "<b>Aggiungi</b> per configurarli tutti.\n"
 "\n"
 "Puoi tornare a questa finestra, per aggiungere, modificare o rimuovere un "
-"account, attraverso <b>Account->Aggiungi/Modifica</b> nella finestra della "
+"account, attraverso <b>Account->Gestisci account</b> nella finestra della "
 "Lista contatti."
 
 #, c-format
@@ -11130,7 +11126,7 @@ msgstr "sviluppatore"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
-msgstr ""
+msgstr "Ka-Hing Cheung"
 
 msgid "support"
 msgstr "supporto"
@@ -11173,7 +11169,7 @@ msgid "Arabic"
 msgstr "Arabo"
 
 msgid "Belarusian Latin"
-msgstr ""
+msgstr "Bielorusso latino"
 
 msgid "Bulgarian"
 msgstr "Bulgaro"
@@ -11302,7 +11298,7 @@ msgid "Norwegian Nynorsk"
 msgstr "Norvegese Nynorsk"
 
 msgid "Occitan"
-msgstr ""
+msgstr "Occitano"
 
 msgid "Punjabi"
 msgstr "Punjabi"
@@ -12726,6 +12722,12 @@ msgstr "Stato per %s"
 msgid "Custom Smiley"
 msgstr "Smiley personalizzato"
 
+msgid "More Data needed"
+msgstr "C'è bisogno di più dati"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Scegli una scorciatoia da tastiera da associare con lo smiley."
+
 msgid "Duplicate Shortcut"
 msgstr "Scorciatoia già esistente"
 
@@ -12735,12 +12737,6 @@ msgid ""
 msgstr ""
 "Esiste già uno smiley personalizzato per la scorciatoia da tastiera "
 "selezionata. Specifica una scorciatoia differente."
-
-msgid "More Data needed"
-msgstr "C'è bisogno di più dati"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Scegli una scorciatoia da tastiera da associare con lo smiley."
 
 msgid "Please select an image for the smiley."
 msgstr "Scegli un'immagine per lo smiley."
@@ -12905,9 +12901,11 @@ msgstr "_Modifica"
 msgid "_Open Mail"
 msgstr "_Leggi la Posta"
 
-#, fuzzy
+msgid "_Edit"
+msgstr "_Modifica"
+
 msgid "Pidgin Tooltip"
-msgstr "Smiley di Pidgin"
+msgstr "Tooltip di Pidgin"
 
 msgid "Pidgin smileys"
 msgstr "Smiley di Pidgin"
@@ -13905,9 +13903,3 @@ msgstr ""
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Questo plugin è utile per effettuare il debug dei server o dei client XMPP."
-
-#~ msgid "Code [0x%02X]: %s"
-#~ msgstr "Codice [0x%02X]: %s"
-
-#~ msgid "Group Operation Error"
-#~ msgstr "Errore di operazione sul gruppo"
