@@ -17549,7 +17549,7 @@ msgstr "Pidgin smileys"
 
 #: ../pidgin/pixmaps/emotes/none/none.theme.in.h:1
 msgid "Penguin Pimps"
-msgstr "Penguin oppimpen"
+msgstr "Penguin Pimps"
 
 #: ../pidgin/pixmaps/emotes/none/none.theme.in.h:2
 msgid "Selecting this disables graphical emoticons."
