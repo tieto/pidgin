@@ -777,8 +777,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 	char *p;
 	gsize max_read;
 
-	if (connect_data->read_buffer == NULL)
-	{
+	if (connect_data->read_buffer == NULL) {
 		connect_data->read_buf_len = 8192;
 		connect_data->read_buffer = g_malloc(connect_data->read_buf_len);
 		connect_data->read_len = 0;
@@ -789,15 +788,13 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 	len = read(connect_data->fd, p, max_read);
 
-	if (len == 0)
-	{
+	if (len == 0) {
 		purple_proxy_connect_data_disconnect(connect_data,
 				_("Server closed the connection."));
 		return;
 	}
 
-	if (len < 0)
-	{
+	if (len < 0) {
 		if (errno == EAGAIN)
 			/* No worries */
 			return;
@@ -822,8 +819,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 
 	error = strncmp((const char *)connect_data->read_buffer, "HTTP/", 5) != 0;
-	if (!error)
-	{
+	if (!error) {
 		int major;
 		p = (char *)connect_data->read_buffer + 5;
 		major = strtol(p, &p, 10);
@@ -843,8 +839,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 	/* Read the contents */
 	p = g_strrstr((const gchar *)connect_data->read_buffer, "Content-Length: ");
-	if (p != NULL)
-	{
+	if (p != NULL) {
 		gchar *tmp;
 		int len = 0;
 		char tmpc;
@@ -867,142 +862,123 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		}
 	}
 
-	if (error)
-	{
+	if (error) {
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to parse response from HTTP proxy: %s\n"),
 				connect_data->read_buffer);
 		return;
 	}
-	else if (status != 200)
-	{
+	else if (status != 200) {
 		purple_debug_error("proxy",
 				"Proxy server replied with:\n%s\n",
 				connect_data->read_buffer);
 
-		if (status == 407 /* Proxy Auth */)
-		{
-			gchar *ntlm;
-			char hostname[256];
-			int ret;
+		if (status == 407 /* Proxy Auth */) {
+			const char *header;
+			gchar *request;
 
-			ret = gethostname(hostname, sizeof(hostname));
-			hostname[sizeof(hostname) - 1] = '\0';
-			if (ret < 0 || hostname[0] == '\0') {
-				purple_debug_warning("proxy", "gethostname() failed -- is your hostname set?");
-				strcpy(hostname, "localhost");
-			}
-
-			ntlm = g_strrstr((const gchar *)connect_data->read_buffer,
-					"Proxy-Authenticate: NTLM ");
-			if (ntlm != NULL)
-			{
-				/* Check for Type-2 */
-				gchar *tmp = ntlm;
-				guint8 *nonce;
-				gchar *domain = (gchar*)purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username = NULL;
-				gchar *request;
+			header = g_strrstr((const gchar *)connect_data->read_buffer,
+					"Proxy-Authenticate: NTLM");
+			if (header != NULL) {
+				const char *header_end = header + strlen("Proxy-Authenticate: NTLM");
+				const char *domain = purple_proxy_info_get_username(connect_data->gpi);
+				char *username = NULL, hostname[256];
 				gchar *response;
+				int ret;
+
+				ret = gethostname(hostname, sizeof(hostname));
+				hostname[sizeof(hostname) - 1] = '\0';
+				if (ret < 0 || hostname[0] == '\0') {
+					purple_debug_warning("proxy", "gethostname() failed -- is your hostname set?");
+					strcpy(hostname, "localhost");
+				}
 
 				if (domain != NULL)
-					username = strchr(domain, '\\');
-				if (username == NULL)
-				{
+					username = (char*) strchr(domain, '\\');
+				if (username == NULL) {
 					purple_proxy_connect_data_disconnect_formatted(connect_data,
 							_("HTTP proxy connection error %d"), status);
 					return;
 				}
 				*username = '\0';
-				username++;
-				ntlm += strlen("Proxy-Authenticate: NTLM ");
-				while(*tmp != '\r' && *tmp != '\0') tmp++;
-				*tmp = '\0';
-				nonce = purple_ntlm_parse_type2(ntlm, NULL);
-				response = purple_ntlm_gen_type3(username,
-					(gchar*) purple_proxy_info_get_password(connect_data->gpi),
-					hostname,
-					domain, nonce, NULL);
-				username--;
+
+				/* Is there a message? */
+				if (*header_end == ' ') {
+					/* Check for Type-2 */
+					char *tmp = (char*) header;
+					guint8 *nonce;
+
+					header_end++;
+					username++;
+					while(*tmp != '\r' && *tmp != '\0') tmp++;
+					*tmp = '\0';
+					nonce = purple_ntlm_parse_type2(header_end, NULL);
+					response = purple_ntlm_gen_type3(username,
+						(gchar*) purple_proxy_info_get_password(connect_data->gpi),
+						hostname,
+						domain, nonce, NULL);
+					username--;
+				} else /* Empty message */
+					response = purple_ntlm_gen_type1(hostname, domain);
+
 				*username = '\\';
+
 				request = g_strdup_printf(
 					"CONNECT %s:%d HTTP/1.1\r\n"
 					"Host: %s:%d\r\n"
 					"Proxy-Authorization: NTLM %s\r\n"
 					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					connect_data->host, connect_data->port, connect_data->host,
-					connect_data->port, response);
+					connect_data->host, connect_data->port,
+					connect_data->host, connect_data->port,
+					response);
+
 				g_free(response);
 
-				g_free(connect_data->read_buffer);
-				connect_data->read_buffer = NULL;
+			} else if((header = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: Basic"))) {
+				gchar *t1, *t2;
 
-				connect_data->write_buffer = (guchar *)request;
-				connect_data->write_buf_len = strlen(request);
-				connect_data->written_len = 0;
-				connect_data->read_cb = http_canread;
+				t1 = g_strdup_printf("%s:%s",
+					purple_proxy_info_get_username(connect_data->gpi),
+					purple_proxy_info_get_password(connect_data->gpi) ?
+					purple_proxy_info_get_password(connect_data->gpi) : "");
+				t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
+				g_free(t1);
 
-				purple_input_remove(connect_data->inpa);
-				connect_data->inpa = purple_input_add(connect_data->fd,
-					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
-				proxy_do_write(connect_data, connect_data->fd, cond);
-				return;
-			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
-				gchar *ntlm_type1;
-				gchar request[2048];
-				gchar *domain = (gchar*) purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username = NULL;
-				int request_len;
+				request = g_strdup_printf(
+					"CONNECT %s:%d HTTP/1.1\r\n"
+					"Host: %s:%d\r\n"
+					"Proxy-Authorization: Basic %s\r\n",
+					connect_data->host, connect_data->port,
+					connect_data->host, connect_data->port,
+					t2);
 
-				if (domain != NULL)
-					username = strchr(domain, '\\');
-				if (username == NULL)
-				{
-					purple_proxy_connect_data_disconnect_formatted(connect_data,
-							_("HTTP proxy connection error %d"), status);
-					return;
-				}
-				*username = '\0';
+				g_free(t2);
 
-				request_len = g_snprintf(request, sizeof(request),
-						"CONNECT %s:%d HTTP/1.1\r\n"
-						"Host: %s:%d\r\n",
-						connect_data->host, connect_data->port,
-						connect_data->host, connect_data->port);
-
-				g_return_if_fail(request_len < sizeof(request));
-				ntlm_type1 = purple_ntlm_gen_type1(hostname, domain);
-				request_len += g_snprintf(request + request_len,
-					sizeof(request) - request_len,
-					"Proxy-Authorization: NTLM %s\r\n"
-					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					ntlm_type1);
-				g_free(ntlm_type1);
-				*username = '\\';
-
-				purple_input_remove(connect_data->inpa);
-				g_free(connect_data->read_buffer);
-				connect_data->read_buffer = NULL;
-
-				connect_data->write_buffer = g_memdup(request, request_len);
-				connect_data->write_buf_len = request_len;
-				connect_data->written_len = 0;
-
-				connect_data->read_cb = http_canread;
-
-				connect_data->inpa = purple_input_add(connect_data->fd,
-					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
-
-				proxy_do_write(connect_data, connect_data->fd, cond);
-				return;
 			} else {
 				purple_proxy_connect_data_disconnect_formatted(connect_data,
 						_("HTTP proxy connection error %d"), status);
 				return;
 			}
+
+			purple_input_remove(connect_data->inpa);
+			g_free(connect_data->read_buffer);
+			connect_data->read_buffer = NULL;
+
+			connect_data->write_buffer = (guchar *)request;
+			connect_data->write_buf_len = strlen(request);
+			connect_data->written_len = 0;
+
+			connect_data->read_cb = http_canread;
+
+			connect_data->inpa = purple_input_add(connect_data->fd,
+				PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+
+			proxy_do_write(connect_data, connect_data->fd, cond);
+
+			return;
 		}
-		if (status == 403)
-		{
+
+		if (status == 403) {
 			/* Forbidden */
 			purple_proxy_connect_data_disconnect_formatted(connect_data,
 					_("Access denied: HTTP proxy server forbids port %d tunneling."),

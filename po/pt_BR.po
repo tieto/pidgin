@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:59-0400\n"
-"PO-Revision-Date: 2008-08-13 13:55-0300\n"
+"POT-Creation-Date: 2008-08-29 13:36-0400\n"
+"PO-Revision-Date: 2008-08-26 18:18-0300\n"
 "Last-Translator: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "Language-Team: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "MIME-Version: 1.0\n"
@@ -2404,6 +2404,9 @@ msgstr "Tamanho mínimo da sala"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Limite de inatividade de usuário (em minutos)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Aplicar regras de sumiço para amigos"
 
 #. *< type
 #. *< ui_requirement
@@ -10233,13 +10236,13 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Bem vindo ao %s!</span>\n"
 "\n"
 "Você não tem contas de mensagens instantâneas (MI) configuradas. Para "
-"começar a usar o %s, clique no botão <b>Adicionar</b> abaixo e configure sua "
-"primeira conta. Se você deseja que o %s conecte em mais de uma conta de "
+"começar a usar com o %s, clique no botão <b>Adicionar</b> abaixo e configure "
+"sua primeira conta. Se você deseja que o %s conecte a múltiplas contas de "
 "mensagens instantâneas, clique no botão <b>Adicionar</b> novamente para "
 "configurar quantas contas quiser.\n"
 "\n"
@@ -12641,6 +12644,12 @@ msgstr "Status de %s"
 msgid "Custom Smiley"
 msgstr "Emoticon personalizado"
 
+msgid "More Data needed"
+msgstr "Mais dados necessários"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Por favor, defina um atalho para associar com o emoticon."
+
 msgid "Duplicate Shortcut"
 msgstr "Atalho duplicado"
 
@@ -12650,12 +12659,6 @@ msgid ""
 msgstr ""
 "Um emoticon personalizado para o atalho selecionado já existe. Por favor, "
 "forneça um atalho diferente."
-
-msgid "More Data needed"
-msgstr "Mais dados necessários"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Por favor, defina um atalho para associar com o emoticon."
 
 msgid "Please select an image for the smiley."
 msgstr "Por favor, favor selecione uma imagem para o emoticon."
@@ -12818,6 +12821,9 @@ msgstr "_Modificar"
 
 msgid "_Open Mail"
 msgstr "_Abrir email"
+
+msgid "_Edit"
+msgstr "_Editar"
 
 msgid "Pidgin Tooltip"
 msgstr "Dicas de Ferramentas do Pidgin"

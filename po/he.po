@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:38-0400\n"
-"PO-Revision-Date: 2008-08-10 01:11+0200\n"
+"POT-Creation-Date: 2008-08-29 15:27-0400\n"
+"PO-Revision-Date: 2008-08-27 21:03+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2328,6 +2328,9 @@ msgstr "גודל חדר מינימלי"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "חוסר פעילות משתמש (בדקות)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "החל חוקי-הסתר על אנשי-הקשר"
 
 #. *< type
 #. *< ui_requirement
@@ -7343,17 +7346,20 @@ msgid ""
 "Room id %d, reply [0x%02X]: \n"
 "%s"
 msgstr ""
+"משוב %s(0x%02X )\n"
+"נשלח %s(0x%02X )\n"
+"מזהה חדר %d, משוב [0x%02X]: \n"
+"%s"
 
-#, fuzzy
 msgid "Failed room reply"
-msgstr "לא ניתן להתחבר, אין תשובה"
+msgstr "כשל במשוב מהחדר"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You are not a member of group \"%s\"\n"
-msgstr "את/ה [%d] נוספת אל הקבוצה \"%d\""
+msgstr "אינך חבר/ה בקבוצה \"%s\"\n"
 
 msgid "Can not decrypt login reply"
-msgstr ""
+msgstr "אין אפשרות לפיענוח המשוב בעת אימות משתמש"
 
 #, c-format
 msgid "Invalid token reply code, 0x%02X"
@@ -9940,7 +9946,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>ברוכים הבאים ל-%s!</span>\n"
 "\n"
@@ -12300,6 +12306,12 @@ msgstr "מצב עבור %s"
 msgid "Custom Smiley"
 msgstr "חייכן שלך"
 
+msgid "More Data needed"
+msgstr "נחוץ מידע נוסף"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "נא להזין קיצור-דרך לקשר עם החייכן."
+
 msgid "Duplicate Shortcut"
 msgstr "כפילות בקיצורי-הדרך"
 
@@ -12307,12 +12319,6 @@ msgid ""
 "A custom smiley for the selected shortcut already exists. Please specify a "
 "different shortcut."
 msgstr "חייכן שלך כבר קיים לקיצור-הדרך שנבחר. יש לבחור קיצור-דרך אחר."
-
-msgid "More Data needed"
-msgstr "נחוץ מידע נוסף"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "נא להזין קיצור-דרך לקשר עם החייכן."
 
 msgid "Please select an image for the smiley."
 msgstr "יש לבחור תמונה עבור החייכן."
@@ -12467,6 +12473,9 @@ msgstr "_ערוך"
 
 msgid "_Open Mail"
 msgstr "_פתח דואר"
+
+msgid "_Edit"
+msgstr "ע_רוך"
 
 msgid "Pidgin Tooltip"
 msgstr "מידעון פידג'ין"

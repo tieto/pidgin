@@ -768,6 +768,9 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	time(&retval);
 	localtime_r(&retval, &t);
 
+	if (rest != NULL)
+		*rest = NULL;
+
 	/* 4 digit year */
 	if (sscanf(c, "%04d", &year) && year > 1900)
 	{
@@ -3575,7 +3578,10 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 		g_snprintf(port_str, sizeof(port_str), "80");
 	}
 
-	if (f == 1)
+	if (f == 0)
+		*host = '\0';
+
+	if (f <= 1)
 		*path = '\0';
 
 	sscanf(port_str, "%d", &port);
@@ -3586,7 +3592,7 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (ret_user != NULL) *ret_user = g_strdup(user);
 	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
 
-	return TRUE;
+	return ((*host != '\0') ? TRUE : FALSE);
 }
 
 /**
