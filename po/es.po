@@ -53,7 +53,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:42-0400\n"
+"POT-Creation-Date: 2008-08-29 13:21-0400\n"
 "PO-Revision-Date: 2008-08-10 00:10+0200\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
@@ -2462,6 +2462,9 @@ msgstr "Tamaño mínimo de sala"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Tiempo de inactividad de usuario (en minutos)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Aplicar las reglas de ocultación a los amigos"
 
 #. *< type
 #. *< ui_requirement
@@ -7630,17 +7633,20 @@ msgid ""
 "Room id %d, reply [0x%02X]: \n"
 "%s"
 msgstr ""
+"Respuesta %s(0x%02X )\n"
+"Enviado %s(0x%02X )\n"
+"ID de sala %d, respuesta [0x%02X]: \n"
+"%s"
 
-#, fuzzy
 msgid "Failed room reply"
-msgstr "Fallo en la conexión, no ha habido respuesta"
+msgstr "Fallo en la respuesta a la sala"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You are not a member of group \"%s\"\n"
-msgstr "Vd. [%d] ha sido añadido al grupo «%d»"
+msgstr "Vd. no es un miembro del grupo «%s»\n"
 
 msgid "Can not decrypt login reply"
-msgstr ""
+msgstr "No se pudo descifrar la respuesta a la autenticación"
 
 #, c-format
 msgid "Invalid token reply code, 0x%02X"
@@ -10302,14 +10308,17 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>¡Bienvenido a %s!</span>\n"
 "\n"
 "No tiene configurada ninguna cuenta de MI. Para conectarse con %s debe "
 "pulsar el botón <b>Añadir</b> que tiene más abajo y configurar su primera "
 "cuenta. Si quiere que %s se conecte a múltiples cuentas de MI, deberá pulsar "
-"<b>Añadir</b> otra vez para configurarlas todas."
+"<b>Añadir</b> otra vez para configurarlas todas.\n"
+"\n"
+"Puede volver a esta venana para añadir, editar o eliminar cuentas desde la "
+"ventana de lista de amigos seleccionando <b>Cuentas->Gestionar Cuentas</b>"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -12715,6 +12724,12 @@ msgstr "Estado de %s"
 msgid "Custom Smiley"
 msgstr "Emoticono a medida"
 
+msgid "More Data needed"
+msgstr "Son necesarios más datos"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Indique un atajo para asociarlo al emoticono."
+
 msgid "Duplicate Shortcut"
 msgstr "Atajo duplicado"
 
@@ -12724,12 +12739,6 @@ msgid ""
 msgstr ""
 "Ya existe un emoticono a medida para el atajo de teclado seleccionado. "
 "Especifique un atajo distinto."
-
-msgid "More Data needed"
-msgstr "Son necesarios más datos"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Indique un atajo para asociarlo al emoticono."
 
 msgid "Please select an image for the smiley."
 msgstr "Escoja una imagen para el emoticono."
@@ -12895,6 +12904,9 @@ msgstr "_Modificar"
 
 msgid "_Open Mail"
 msgstr "_Abrir correo"
+
+msgid "_Edit"
+msgstr "_Editar"
 
 msgid "Pidgin Tooltip"
 msgstr "Consejos de Pidgin"
