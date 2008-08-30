@@ -7,6 +7,8 @@ version 2.5.1 (??/??/????):
 	* Support SOCKS proxies specified in GNOME or Windows proxy settings.
 	* Fix some possible crashes in MSNP15.
 	* Enable a default SSL trust relationship for MSN servers.
+	* Avoid disconnecting from XMPP servers on parse errors that are
+	  non-fatal.
 
 	Pidgin:
 	* Prevent use of custom smilies without "shortcuts."
