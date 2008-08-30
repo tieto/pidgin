@@ -549,6 +549,7 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TOOLBAR_16) \
 		$(TOOLBAR_22) \
 		$(TRAY_16) \
+		$(TRAY_16_ICO) \
 		$(TRAY_22) \
 		$(TRAY_32) \
 		$(TRAY_48)
