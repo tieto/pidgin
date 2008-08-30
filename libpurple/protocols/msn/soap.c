@@ -268,6 +268,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		(something weird with the login.live.com server). With NSS it works
 		fine, so I believe it's some bug with OS X */ 
 	char buf[16 * 1024];
+	gsize cursor;
 
 	if (conn->message == NULL) {
 		conn->message = msn_soap_message_new(NULL, NULL);
@@ -276,12 +277,20 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	if (conn->buf == NULL) {
 		conn->buf = g_string_new_len(buf, 0);
 	}
-	
+
+	cursor = conn->buf->len;
 	while ((cnt = purple_ssl_read(conn->ssl, buf, sizeof(buf))) > 0) {
 		purple_debug_info("soap", "read %d bytes\n", cnt);
 		count += cnt;
 		g_string_append_len(conn->buf, buf, cnt);
 	}
+#ifndef MSN_UNSAFE_DEBUG
+	if (conn->current_request->secure)
+		purple_debug_misc("soap", "Received secure request.\n");
+	else
+#endif
+	if (count != 0)
+		purple_debug_misc("soap", "current %s\n", conn->buf->str + cursor);
 
 	/* && count is necessary for Adium, on OS X the last read always
 	   return an error, so we want to proceed anyway. See #5212 for
@@ -309,13 +318,6 @@ msn_soap_process(MsnSoapConnection *conn) {
 	gboolean handled = FALSE;
 	char *cursor;
 	char *linebreak;
-
-#ifndef MSN_UNSAFE_DEBUG
-	if (conn->current_request->secure)
-		purple_debug_misc("soap", "Received secure request.\n");
-	else
-#endif
-	purple_debug_misc("soap", "current %s\n", conn->buf->str);
 
 	cursor = conn->buf->str + conn->handled_len;
 
