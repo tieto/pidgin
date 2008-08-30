@@ -6023,9 +6023,6 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 			bgcolor = pidgin_blist_theme_get_collapsed_background_color(theme);
 		else bgcolor = pidgin_blist_theme_get_expanded_background_color(theme);
 
-		if (bgcolor == NULL)
-			bgcolor = &(gtkblist->treeview->style->bg[GTK_STATE_ACTIVE]);
-
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
 		gtk_tree_path_free(path);
