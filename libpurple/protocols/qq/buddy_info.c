@@ -746,8 +746,8 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
 	gint prefix_len = strlen(QQ_ICON_PREFIX);
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
-	gint dir_len = strlen(buddy_icon_dir);
-	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir);
+	gint dir_len = buddy_icon_dir ? strlen(buddy_icon_dir) : 0;
+	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir ? buddy_icon_dir : "(null)");
 	gboolean icon_global = purple_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
 
 	if (!icon_path)
@@ -756,7 +756,7 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
 
 	/* make sure we're using an appropriate icon */
-	if (!(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
+	if (buddy_icon_dir && !(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
 				&& icon_path[dir_len] == G_DIR_SEPARATOR
 				&& g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
 				&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
@@ -798,8 +798,8 @@ static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gin
 	if ((buddy = purple_find_buddy(account, name)))
 		old_icon_num = purple_buddy_icons_get_checksum_for_user(buddy);
 
-	if (old_icon_num == NULL ||
-			strcmp(icon_num_str, old_icon_num))
+	if ((old_icon_num == NULL ||
+			strcmp(icon_num_str, old_icon_num)) && (qq_buddy_icon_dir() != NULL))
 	{
 		gchar *icon_path;
 

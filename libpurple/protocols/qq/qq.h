@@ -36,11 +36,6 @@
 
 #define QQ_KEY_LENGTH       16
 
-#ifdef _WIN32
-const char *qq_win32_buddy_icon_dir(void);
-#define QQ_BUDDY_ICON_DIR qq_win32_buddy_icon_dir()
-#endif
-
 typedef struct _qq_data qq_data;
 typedef struct _qq_buddy qq_buddy;
 typedef struct _qq_interval qq_interval;
