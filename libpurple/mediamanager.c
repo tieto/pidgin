@@ -27,6 +27,7 @@
 #include "internal.h"
 
 #include "connection.h"
+#include "debug.h"
 #include "marshallers.h"
 #include "mediamanager.h"
 #include "media.h"
@@ -145,6 +146,14 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	GstStateChangeReturn ret;
 	gboolean signal_ret;
 
+	if (conference == NULL) {
+		purple_conv_present_error(remote_user,
+					  purple_connection_get_account(gc),
+					  _("Error creating conference."));
+		purple_debug_error("media", "Conference == NULL\n");
+		return NULL;
+	}
+
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "screenname", remote_user,
 			     "connection", gc, 
@@ -157,6 +166,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 		purple_conv_present_error(remote_user,
 					  purple_connection_get_account(gc),
 					  _("Error creating conference."));
+		purple_debug_error("media", "Failed to start conference.\n");
 		g_object_unref(media);
 		return NULL;
 	}
