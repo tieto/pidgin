@@ -673,6 +673,45 @@ account_toggled(GntWidget *widget, void *key, gpointer null)
 	purple_account_set_enabled(account, FINCH_UI, gnt_tree_get_choice(GNT_TREE(widget), key));
 }
 
+static gboolean
+account_list_key_pressed_cb(GntWidget *widget, const char *text, gpointer null)
+{
+	GntTree *tree = GNT_TREE(widget);
+	PurpleAccount *account = gnt_tree_get_selection_data(tree);
+	int move, pos, count;
+	GList *accounts;
+
+	if (!account)
+		return FALSE;
+
+	switch (text[0]) {
+		case '-':
+			move = -1;
+			break;
+		case '=':
+			move = 2;  /* XXX: This seems to be a bug in libpurple */
+			break;
+		default:
+			return FALSE;
+	}
+
+	accounts = purple_accounts_get_all();
+	count = g_list_length(accounts);
+	pos = g_list_index(accounts, account);
+	pos = (move + pos + count + 1) % (count + 1);
+	purple_accounts_reorder(account, pos);
+
+	/* I don't like this, but recreating the entire list seems to be
+	 * the easiest way of doing it */
+	gnt_tree_remove_all(tree);
+	accounts = purple_accounts_get_all();
+	for (; accounts; accounts = accounts->next)
+		account_add(accounts->data);
+	gnt_tree_set_selected(tree, account);
+
+	return TRUE;
+}
+
 static void
 reset_accounts_win(GntWidget *widget, gpointer null)
 {
@@ -712,6 +751,7 @@ void finch_accounts_show_all()
 	}
 
 	g_signal_connect(G_OBJECT(accounts.tree), "toggled", G_CALLBACK(account_toggled), NULL);
+	g_signal_connect(G_OBJECT(accounts.tree), "key_pressed", G_CALLBACK(account_list_key_pressed_cb), NULL);
 
 	gnt_tree_set_col_width(GNT_TREE(accounts.tree), 0, 40);
 	gnt_tree_set_col_width(GNT_TREE(accounts.tree), 1, 10);
