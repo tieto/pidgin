@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.2 (??/??/????):
+	Finch:
+	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
+	  hierarchies are defined by the '/' character in the group names
 
 version 2.5.1 (08/30/2008):
 	libpurple:
