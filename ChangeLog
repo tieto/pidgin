@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.1 (??/??/????):
+version 2.5.1 (08/30/2008):
 	libpurple:
 	* In the Join/Part plugin, add the ability to apply the rules to
 	  buddies.  By default, joins and parts for buddies are still shown.
@@ -9,6 +9,7 @@ version 2.5.1 (??/??/????):
 	* Enable a default SSL trust relationship for MSN servers.
 	* Avoid disconnecting from XMPP servers on parse errors that are
 	  non-fatal.
+	* Include some perl files that were mistakenly omitted in 2.5.0.
 
 	Pidgin:
 	* Prevent use of custom smilies without "shortcuts."

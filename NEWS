@@ -1,5 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.5.1 (08/30/2008):
+	Kevin: This release is mainly a bug-fix release.  It solves a few
+	known crashes and updates some of our artwork.  Google's Summer of
+	code recently finished up.  Some of our students are still working
+	on their branches and none have been merged into released code yet.
+	Look for some of those results to show up in Pidgin releases over the
+	coming months.
+
 2.5.0 (08/17/2008):
 	Daniel: Lots of good stuff in this release.  Lots of people have worked
 	very hard on the updated MSN protocol, and it's finally time to bring
