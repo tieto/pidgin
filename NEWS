@@ -8,6 +8,13 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	Look for some of those results to show up in Pidgin releases over the
 	coming months.
 
+	Elliott: I'm just commenting so Kevin wouldn't be the only one in NEWS
+	and no-one else seems to want to. Anyway, there's a couple MSN login
+	fixes, so try it out. The contact list problems might still be around,
+	but you can probably find a workaround in trac. And there's a tooltip
+	fix for our AIM friends, not that I had anything to do with it (except
+	closing many many duplicate tickets).
+
 2.5.0 (08/17/2008):
 	Daniel: Lots of good stuff in this release.  Lots of people have worked
 	very hard on the updated MSN protocol, and it's finally time to bring
