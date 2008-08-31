@@ -624,8 +624,13 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 				FsError error_no;
 				gst_structure_get_enum(msg->structure, "error-no",
 						FS_TYPE_ERROR, (gint*)&error_no);
-				purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
-						  gst_structure_get_string(msg->structure, "error-msg"));
+				/*
+				 * Unknown CName is only a problem for the
+				 * multicast transmitter which isn't used.
+				 */
+				if (error_no != FS_ERROR_UNKNOWN_CNAME)
+					purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
+						  	gst_structure_get_string(msg->structure, "error-msg"));
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-new-local-candidate")) {
 				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
