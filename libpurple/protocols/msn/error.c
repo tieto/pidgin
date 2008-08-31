@@ -247,7 +247,7 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 		case 927:
 			g_snprintf(msg, sizeof(msg),
-			           ("Passport account suspended"));
+			           _("Passport account suspended"));
 			break;
 		case 928:
 			g_snprintf(msg, sizeof(msg), _("Bad ticket"));
