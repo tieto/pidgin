@@ -1539,14 +1539,16 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			break;
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
-		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl);
+		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl ? info->errorurl : "");
 		return 1;
 	}
 
-	purple_debug_misc("oscar", "Reg status: %hu\n", info->regstatus);
-	purple_debug_misc("oscar", "Email: %s\n",
-					(info->email != NULL) ? info->email : "null");
-	purple_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
+	purple_debug_misc("oscar", "Reg status: %hu\n"
+							   "Email: %s\n"
+							   "BOSIP: %s\n",
+							   info->regstatus,
+							   info->email ? info->email : "null",
+							   info->bosip ? info->bosip : "null");
 	purple_debug_info("oscar", "Closing auth connection...\n");
 	flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_DONE, NULL);
 
@@ -1833,7 +1835,7 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	aim_send_login(od, conn, purple_account_get_username(account),
 			purple_connection_get_password(gc), truncate_pass,
 			od->icq ? &icqinfo : &aiminfo, key,
-			/* allow multple logins? */ purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
+			purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
 
 	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
 	ck[2] = 0x6c;
