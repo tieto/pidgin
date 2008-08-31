@@ -285,17 +285,6 @@ void purple_media_got_hangup(PurpleMedia *media);
 void purple_media_got_accept(PurpleMedia *media);
 
 /**
- * Gets the name of a device.
- *
- * @param element The plugin the device is from.
- * @param device The device data to retreive the name from.
- *
- * @return The name of the device.
- */
-gchar *purple_media_get_device_name(GstElement *element,
-				    const gchar *device);
-
-/**
  * Enumerates a list of devices.
  *
  * @param element The plugin from which to enumerate devices.
@@ -305,23 +294,6 @@ gchar *purple_media_get_device_name(GstElement *element,
 GList *purple_media_get_devices(GstElement *element);
 
 /**
- * Sets the device to be used with the particular plugin.
- *
- * @param element The plugin to set the device on.
- * @param device The device to set the plugin to.
- */
-void purple_media_element_set_device(GstElement *element, const gchar *device);
-
-/**
- * Sets the device from the given name.
- *
- * @param element The plugin to set the device on.
- * @param name The name of the device to set the plugin to.
- */
-void purple_media_element_set_device_from_name(GstElement *element,
-					       const gchar *name);
-
-/**
  * Gets the device the plugin is currently set to.
  *
  * @param element The plugin to retrieve the device from.
@@ -329,15 +301,6 @@ void purple_media_element_set_device_from_name(GstElement *element,
  * @return The device retrieved.
  */
 gchar *purple_media_element_get_device(GstElement *element);
-
-/**
- * Creates an element from a factory name.
- *
- * @param factory_name Name of the factory to create an element from.
- *
- * @return The element that was created, NULL if it couldn't find the factory.
- */
-GstElement *purple_media_get_element(const gchar *factory_name);
 
 /**
  * Creates a default audio source.

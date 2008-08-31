@@ -750,21 +750,6 @@ purple_media_got_accept(PurpleMedia *media)
     g_signal_emit(media, purple_media_signals[GOT_ACCEPT], 0);
 }
 
-gchar*
-purple_media_get_device_name(GstElement *element, const gchar *device)
-{
-	gchar *name;
-
-	GstElementFactory *factory = gst_element_get_factory(element);
-	GstElement *temp = gst_element_factory_create(factory, "tmp_src");
-
-	g_object_set(G_OBJECT (temp), "device", device, NULL);
-	g_object_get(G_OBJECT (temp), "device-name", &name, NULL);
-	gst_object_unref(temp);
-
-	return name;
-}
-
 GList*
 purple_media_get_devices(GstElement *element)
 {
@@ -807,12 +792,10 @@ purple_media_get_devices(GstElement *element)
 		if (array != NULL) {
 			for (n = 0 ; n < array->n_values ; n++) {
 				GValue *device = g_value_array_get_nth (array, n);
-				gst_element_set_state (element, GST_STATE_NULL);
 				
 				ret = g_list_append(ret, g_value_dup_string(device));
 
-				name = purple_media_get_device_name(GST_ELEMENT(element),
-						g_value_get_string(device));
+				g_object_get(G_OBJECT(element), "device-name", &name, NULL);
 				purple_debug_info("media", "Found source '%s' (%s) - device '%s' (%s)\n",
 						  longname, GST_PLUGIN_FEATURE (factory)->name,
 						  name, g_value_get_string(device));
@@ -833,32 +816,12 @@ purple_media_get_devices(GstElement *element)
 	return ret;
 }
 
-void
-purple_media_element_set_device(GstElement *element, const gchar *device)
-{
-	g_object_set(G_OBJECT(element), "device", device, NULL);
-}
-
 gchar *
 purple_media_element_get_device(GstElement *element)
 {
 	gchar *device;
 	g_object_get(G_OBJECT(element), "device", &device, NULL);
 	return device;
-}
-
-GstElement *
-purple_media_get_element(const gchar *factory_name)
-{
-	GstElementFactory *factory = gst_element_factory_find(factory_name);
-	GstElement *element;
-
-	if (factory == NULL)
-		return NULL;
-
-	element = gst_element_factory_create(factory, NULL);
-	gst_object_unref(factory);
-	return element;
 }
 
 void
@@ -886,21 +849,8 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 	gst_element_add_pad(*sendbin, ghost);
 	g_object_set(G_OBJECT(*sendlevel), "message", TRUE, NULL);
 
-	/* set current audio device on "src"... */
-	if (audio_device) {
-		GList *devices = purple_media_get_devices(src);
-		GList *dev = devices;
-		purple_debug_info("media", "Setting device of GstElement src to %s\n",
-				audio_device);
-		for (; dev ; dev = dev->next) {
-			gchar *device = (gchar *) dev->data;
-			char *name = purple_media_get_device_name(src, device);
-			if (strcmp(name, audio_device) == 0) {
-				purple_media_element_set_device(src, device);
-			}
-			g_free(name);
-		}
-	}
+	if (audio_device != NULL && strcmp(audio_device, ""))
+		g_object_set(G_OBJECT(src), "device", audio_device, NULL);
 }
 
 void
@@ -945,21 +895,8 @@ purple_media_video_init_src(GstElement **sendbin)
 	gst_bin_add(GST_BIN(*sendbin), local_sink);
 	gst_element_link(queue, local_sink);
 
-	/* set current video device on "src"... */
-	if (video_device) {
-		GList *devices = purple_media_get_devices(src);
-		GList *dev = devices;
-		purple_debug_info("media", "Setting device of GstElement src to %s\n",
-				video_device);
-		for (; dev ; dev = dev->next) {
-			gchar *device = (gchar *) dev->data;
-			char *name = purple_media_get_device_name(src, device);
-			if (strcmp(name, video_device) == 0) {
-				purple_media_element_set_device(src, device);
-			}
-			g_free(name);
-		}
-	}
+	if (video_device != NULL && strcmp(video_device, ""))
+		g_object_set(G_OBJECT(src), "device", video_device, NULL);
 }
 
 void

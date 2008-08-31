@@ -2030,7 +2030,8 @@ get_device_items(const GstElement *element,
 	GList *ret = NULL;
 
 	for(; devices ; devices = devices->next) {
-		gchar *name = purple_media_get_device_name(GST_ELEMENT(element), devices->data);
+		gchar *name;
+		g_object_get(G_OBJECT(element), "device-name", &name, NULL);
 		ret = g_list_append(ret, name);
 		ret = g_list_append(ret, g_strdup(devices->data));
 	}
@@ -2121,7 +2122,7 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	GtkWidget *preview_button = NULL;
 	const char *plugin = value;
 	const char *device = purple_prefs_get_string("/purple/media/video/device");
-	GstElement *video = purple_media_get_element(plugin);
+	GstElement *video = gst_element_factory_make(plugin, NULL);
 	GList *video_items = NULL;
 	GList *list;
 
@@ -2229,8 +2230,8 @@ media_page()
 	const char *plugin = purple_prefs_get_string("/purple/media/video/plugin");
 	const char *device = purple_prefs_get_string("/purple/media/video/device");
 
-	GstElement *video = purple_media_get_element(plugin);
-	GstElement *audio = purple_media_get_element("alsasrc");
+	GstElement *video = gst_element_factory_make(plugin, NULL);
+	GstElement *audio = gst_element_factory_make("alsasrc", NULL);
 
 	GList *video_items = NULL;
 	GList *audio_items = NULL;
