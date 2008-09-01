@@ -11,14 +11,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-26 22:39+0200\n"
-"PO-Revision-Date: 2008-08-26 22:32+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2008-09-01 10:30+0200\n"
+"PO-Revision-Date: 2008-09-01 10:30+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1516,6 +1517,12 @@ msgstr "Meebo"
 
 msgid "No Grouping"
 msgstr "Keine Gruppierung"
+
+msgid "Nested Subgroup"
+msgstr ""
+
+msgid "Nested Grouping (experimental)"
+msgstr ""
 
 msgid "Provides alternate buddylist grouping options."
 msgstr "Bietet alternative Einstellungen für die Kontaktlisten-Gruppierung."
@@ -4848,6 +4855,9 @@ msgstr "Kinder-Passwort ohne die Zustimmung der Eltern"
 msgid "Passport account not yet verified"
 msgstr "Passport-Konto wurde noch nicht überprüft"
 
+msgid "Passport account suspended"
+msgstr "Passport-Konto gesperrt"
+
 msgid "Bad ticket"
 msgstr "Falsches Ticket"
 
@@ -6460,7 +6470,6 @@ msgstr ""
 msgid "Unable to get a valid login hash."
 msgstr "Konnte keinen gültigen Login-Hash bekommen."
 
-#. allow multple logins?
 msgid "Password sent"
 msgstr "Passwort gesendet"
 
@@ -7949,7 +7958,7 @@ msgid "Export Sametime List..."
 msgstr "Export der Sametime-Liste..."
 
 msgid "Add Notes Address Book Group..."
-msgstr "Zum Notes-Adressbuch hinzufügen..."
+msgstr "Notes-Adressbuch-Gruppe hinzufügen..."
 
 msgid "User Search..."
 msgstr "Benutzersuche..."
@@ -11126,6 +11135,9 @@ msgstr "Finnisch"
 msgid "French"
 msgstr "Französisch"
 
+msgid "Irish"
+msgstr "Irisch"
+
 msgid "Galician"
 msgstr "Galizisch"
 
@@ -12616,6 +12628,12 @@ msgstr "Status für %s"
 msgid "Custom Smiley"
 msgstr "Benutzerdefinierter Smiley"
 
+msgid "More Data needed"
+msgstr "Weitere Daten benötigt"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Bitte geben Sie eine Tastenkombination für den Smiley an."
+
 msgid "Duplicate Shortcut"
 msgstr "Doppelte Tastenkombination"
 
@@ -12625,12 +12643,6 @@ msgid ""
 msgstr ""
 "Für diese Tastenkombination existiert bereits ein benutzerdefinierter "
 "Smiley. Bitten wählen Sie eine andere Tastenkombination."
-
-msgid "More Data needed"
-msgstr "Weitere Daten benötigt"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Bitte geben Sie eine Tastenkombination für den Smiley an."
 
 msgid "Please select an image for the smiley."
 msgstr "Bitte wählen Sie ein Bild für den Smiley."
