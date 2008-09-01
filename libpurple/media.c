@@ -1180,7 +1180,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 			return FALSE;
 		}
 	}
-	if (type & PURPLE_MEDIA_VIDEO) {
+	else if (type & PURPLE_MEDIA_VIDEO) {
 		type_direction = purple_media_to_fs_stream_direction(type & PURPLE_MEDIA_VIDEO);
 
 		if (!purple_media_add_stream_internal(media, sess_id, who,

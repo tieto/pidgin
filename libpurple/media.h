@@ -336,11 +336,16 @@ void purple_media_video_init_recv(GstElement **sendbin);
 /**
  * Adds a stream to a session.
  *
+ * It only adds a stream to one audio session or video session as
+ * the @c sess_id must be unique between sessions.
+ *
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session to add the stream to.
  * @param who The name of the remote user to add the stream for.
  * @param type The type of stream to create.
  * @param transmitter The transmitter to use for the stream.
+ * @param num_params The number of parameters to pass to Farsight.
+ * @param params The parameters to pass to Farsight.
  *
  * @return @c TRUE The stream was added successfully, @c FALSE otherwise.
  */
