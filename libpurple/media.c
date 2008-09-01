@@ -756,18 +756,20 @@ purple_media_got_accept(PurpleMedia *media)
 }
 
 GList*
-purple_media_get_devices(GstElement *element)
+purple_media_get_devices(const gchar *plugin)
 {
 	GObjectClass *klass;
 	GstPropertyProbe *probe;
 	const GParamSpec *pspec;
-
+	GstElement *element = gst_element_factory_make(plugin, NULL);
+	GstElementFactory *factory;
 	const gchar *longname = NULL;
-
-	GstElementFactory *factory =
-		gst_element_get_factory(element);
-
 	GList *ret = NULL;
+
+	if (element == NULL)
+		return NULL;
+
+	factory = gst_element_get_factory(element);
 
 	longname = gst_element_factory_get_longname(factory);
 	klass = G_OBJECT_GET_CLASS(element);
@@ -800,6 +802,8 @@ purple_media_get_devices(GstElement *element)
 				
 				ret = g_list_append(ret, g_value_dup_string(device));
 
+				g_object_set(G_OBJECT(element), "device",
+						g_value_get_string(device), NULL);
 				g_object_get(G_OBJECT(element), "device-name", &name, NULL);
 				purple_debug_info("media", "Found source '%s' (%s) - device '%s' (%s)\n",
 						  longname, GST_PLUGIN_FEATURE (factory)->name,
@@ -818,6 +822,7 @@ purple_media_get_devices(GstElement *element)
 		}
 	}
 
+	gst_object_unref(element);
 	return ret;
 }
 

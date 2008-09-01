@@ -287,11 +287,11 @@ void purple_media_got_accept(PurpleMedia *media);
 /**
  * Enumerates a list of devices.
  *
- * @param element The plugin from which to enumerate devices.
+ * @param plugin The name of the GStreamer plugin from which to enumerate devices.
  *
  * @return The list of enumerated devices.
  */
-GList *purple_media_get_devices(GstElement *element);
+GList *purple_media_get_devices(const gchar *plugin);
 
 /**
  * Gets the device the plugin is currently set to.

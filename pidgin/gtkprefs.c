@@ -2024,18 +2024,24 @@ sound_page(void)
 
 /* get a GList of pairs name / device */
 static GList *
-get_device_items(const GstElement *element, 
-		 const GList *devices)
+get_device_items(const gchar *plugin)
 {
 	GList *ret = NULL;
+	GList *devices = purple_media_get_devices(plugin);
+	GstElement *element = gst_element_factory_make(plugin, NULL);
 
-	for(; devices ; devices = devices->next) {
+	if (element == NULL)
+		return NULL;
+
+	for(; devices ; devices = g_list_delete_link(devices, devices)) {
 		gchar *name;
+		g_object_set(G_OBJECT(element), "device", devices->data, NULL);
 		g_object_get(G_OBJECT(element), "device-name", &name, NULL);
 		ret = g_list_append(ret, name);
-		ret = g_list_append(ret, g_strdup(devices->data));
+		ret = g_list_append(ret, devices->data);
 	}
 
+	gst_object_unref(element);
 	return ret;
 }
 
@@ -2122,19 +2128,8 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	GtkWidget *preview_button = NULL;
 	const char *plugin = value;
 	const char *device = purple_prefs_get_string("/purple/media/video/device");
-	GstElement *video = gst_element_factory_make(plugin, NULL);
-	GList *video_items = NULL;
+	GList *video_items = get_device_items(plugin);
 	GList *list;
-
-	if (video != NULL) {
-		GList *video_devices = purple_media_get_devices(video);
-		video_items = get_device_items(video, video_devices);
-		for(; video_devices; video_devices = g_list_delete_link(
-				video_devices, video_devices)) {
-			g_free(video_devices->data);
-		}
-		gst_object_unref(video);
-	}
 
 	if (video_items == NULL) {
 		video_items = g_list_prepend(video_items, g_strdup(""));
@@ -2229,32 +2224,8 @@ media_page()
 	GtkSizeGroup *sg, *sg2;
 	const char *plugin = purple_prefs_get_string("/purple/media/video/plugin");
 	const char *device = purple_prefs_get_string("/purple/media/video/device");
-
-	GstElement *video = gst_element_factory_make(plugin, NULL);
-	GstElement *audio = gst_element_factory_make("alsasrc", NULL);
-
-	GList *video_items = NULL;
-	GList *audio_items = NULL;
-
-	if (video != NULL) {
-		GList *video_devices = purple_media_get_devices(video);
-		video_items = get_device_items(video, video_devices);
-		for(; video_devices; video_devices = g_list_delete_link(
-				video_devices, video_devices)) {
-			g_free(video_devices->data);
-		}
-		gst_object_unref(video);
-	}
-
-	if (audio != NULL) {		
-		GList *audio_devices = purple_media_get_devices(audio);
-		audio_items = get_device_items(audio, audio_devices);
-		for(; audio_devices; audio_devices = g_list_delete_link(
-				audio_devices, audio_devices)) {
-			g_free(audio_devices->data);
-		}
-		gst_object_unref(audio);
-	}
+	GList *video_items = get_device_items(plugin);
+	GList *audio_items = get_device_items("alsasrc");
 
 	if (video_items == NULL) {
 		video_items = g_list_prepend(video_items, "");
