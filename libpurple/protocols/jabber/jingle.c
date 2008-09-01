@@ -976,13 +976,13 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 		if (jabber_jingle_session_content_is_vv_type(jsc, "audio")) {
 			result = purple_media_add_stream(media, "audio-content", remote_jid,
 					purple_media_from_fs(FS_MEDIA_TYPE_AUDIO, direction),
-					"rawudp");
+					"rawudp", 0, NULL);
 			purple_debug_info("jingle", "Created Jingle audio session\n");
 		}
 		else if (jabber_jingle_session_content_is_vv_type(jsc, "video")) {
 			result = purple_media_add_stream(media, "video-content", remote_jid,
 					purple_media_from_fs(FS_MEDIA_TYPE_VIDEO, direction),
-					"rawudp");
+					"rawudp", 0, NULL);
 			purple_debug_info("jingle", "Created Jingle video session\n");
 		}
 

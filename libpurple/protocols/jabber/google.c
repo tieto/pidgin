@@ -218,8 +218,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 							   "fsrtpconference", session->remote_jid);
 
 	/* "rawudp" will need to be changed to "nice" when libnice is finished */
+	/* GTalk will require the NICE_COMPATIBILITY_GOOGLE param */
 	purple_media_add_stream(session->media, "google-voice", session->remote_jid, 
-				PURPLE_MEDIA_AUDIO, "rawudp");
+				PURPLE_MEDIA_AUDIO, "rawudp", 0, NULL);
 
 	desc_element = xmlnode_get_child(sess, "description");
 	

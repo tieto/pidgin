@@ -345,7 +345,8 @@ void purple_media_video_init_recv(GstElement **sendbin);
  * @return @c TRUE The stream was added successfully, @c FALSE otherwise.
  */
 gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
-			     PurpleMediaSessionType type, const gchar *transmitter);
+		PurpleMediaSessionType type, const gchar *transmitter,
+		guint num_params, GParameter *params);
 
 /**
  * Removes a stream from a session.

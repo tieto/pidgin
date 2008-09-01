@@ -1040,7 +1040,8 @@ static gboolean
 purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				 const gchar *who, FsMediaType type,
 				 FsStreamDirection type_direction,
-				 const gchar *transmitter)
+				 const gchar *transmitter,
+				 guint num_params, GParameter *params)
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	FsParticipant *participant = NULL;
@@ -1115,25 +1116,26 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 		if (!strcmp(transmitter, "rawudp") &&
 				(stun_ip = purple_media_get_stun_pref_ip())) {
-			GParameter param[2];
-			memset(param, 0, sizeof(GParameter) * 2);
+			GParameter *param = g_new0(GParameter, num_params+2);
+			memcpy(param, params, sizeof(GParameter) * num_params);
 
-			param[0].name = "stun-ip";
-			g_value_init(&param[0].value, G_TYPE_STRING);
-			g_value_take_string(&param[0].value, stun_ip);
+			param[num_params].name = "stun-ip";
+			g_value_init(&param[num_params].value, G_TYPE_STRING);
+			g_value_take_string(&param[num_params].value, stun_ip);
 
-			param[1].name = "stun-timeout";
-			g_value_init(&param[1].value, G_TYPE_UINT);
-			g_value_set_uint(&param[1].value, 5);
+			param[num_params+1].name = "stun-timeout";
+			g_value_init(&param[num_params+1].value, G_TYPE_UINT);
+			g_value_set_uint(&param[num_params+1].value, 5);
 
 			stream = fs_session_new_stream(session->session,
 					participant, type_direction,
-					transmitter, 2, param, &err);
+					transmitter, num_params+2, param, &err);
+			g_free(param);
 			g_free(stun_ip);
 		} else {
 			stream = fs_session_new_stream(session->session,
 					participant, type_direction,
-					transmitter, 0, NULL, &err);
+					transmitter, num_params, params, &err);
 		}
 
 		if (err) {
@@ -1164,7 +1166,8 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 gboolean
 purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
 			PurpleMediaSessionType type,
-			const gchar *transmitter)
+			const gchar *transmitter,
+			guint num_params, GParameter *params)
 {
 	FsStreamDirection type_direction;
 
@@ -1173,7 +1176,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 
 		if (!purple_media_add_stream_internal(media, sess_id, who,
 						      FS_MEDIA_TYPE_AUDIO, type_direction,
-						      transmitter)) {
+						      transmitter, num_params, params)) {
 			return FALSE;
 		}
 	}
@@ -1182,7 +1185,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 
 		if (!purple_media_add_stream_internal(media, sess_id, who,
 						      FS_MEDIA_TYPE_VIDEO, type_direction,
-						      transmitter)) {
+						      transmitter, num_params, params)) {
 			return FALSE;
 		}
 	}
