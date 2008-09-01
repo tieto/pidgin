@@ -4301,6 +4301,15 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
+static GHashTable *
+yahoo_get_account_text_table(PurpleAccount *account)
+{
+	GHashTable *table;
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo ID..."));
+	return table;
+}
+
 static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 {
 	yahoo_doodle_start,
@@ -4389,7 +4398,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_attention_types,
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	yahoo_get_account_text_table,    /* get_account_text_table */
 };
 
 static PurplePluginInfo info =
