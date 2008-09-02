@@ -1251,7 +1251,7 @@ fi
 dnl Check for NetworkManager.h; if we don't have it, oh well
 if test "x$enable_dbus" = "xyes" ; then
 	if test "x$enable_nm" = "xyes" ; then
-		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager], [
+		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager >= 0.5.0], [
 			AC_SUBST(NETWORKMANAGER_CFLAGS)
 			AC_SUBST(NETWORKMANAGER_LIBS)
 			AC_DEFINE(HAVE_NETWORKMANAGER, 1, [Define if we have NetworkManager.])
