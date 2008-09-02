@@ -312,6 +312,8 @@ jabber_jingle_get_codecs(xmlnode *description)
 	for (codec_element = xmlnode_get_child(description, "payload-type") ;
 		 codec_element ;
 		 codec_element = xmlnode_get_next_twin(codec_element)) {
+		xmlnode *param;
+		gchar *codec_str;
 		encoding_name = xmlnode_get_attrib(codec_element, "name");
 
 		id = xmlnode_get_attrib(codec_element, "id");
@@ -320,10 +322,18 @@ jabber_jingle_get_codecs(xmlnode *description)
 		codec = fs_codec_new(atoi(id), encoding_name, 
 				     type, 
 				     clock_rate ? atoi(clock_rate) : 0);
-		purple_debug_info("jingle", "codec: %i, %s, %s, %i\n", codec->id, 
-				codec->encoding_name, codec->media_type == FS_MEDIA_TYPE_AUDIO ?
-				"FS_MEDIA_TYPE_AUDIO" : codec->media_type == FS_MEDIA_TYPE_VIDEO ?
-				"FS_MEDIA_TYPE_VIDEO" : "FS_MEDIA_TYPE_NONE", codec->clock_rate);
+
+		for (param = xmlnode_get_child(codec_element, "parameter");
+				param; param = xmlnode_get_next_twin(param)) {
+			fs_codec_add_optional_parameter(codec,
+					xmlnode_get_attrib(param, "name"),
+					xmlnode_get_attrib(param, "value"));
+		}
+
+		codec_str = fs_codec_to_string(codec);
+		purple_debug_fatal("jingle", "received codec: %s\n", codec_str);
+		g_free(codec_str);
+
 		codecs = g_list_append(codecs, codec);
 	}
 	return codecs;
@@ -445,7 +455,9 @@ jabber_jingle_session_add_payload_types(const JingleSessionContent *jsc,
 {
 	for (; codecs ; codecs = codecs->next) {
 		FsCodec *codec = (FsCodec*)codecs->data;
+		GList *iter = codec->optional_params;
 		char id[8], clockrate[10], channels[10];
+		gchar *codec_str;
 		xmlnode *payload = xmlnode_new_child(description, "payload-type");
 		
 		g_snprintf(id, sizeof(id), "%d", codec->id);
@@ -456,6 +468,17 @@ jabber_jingle_session_add_payload_types(const JingleSessionContent *jsc,
 		xmlnode_set_attrib(payload, "id", id);
 		xmlnode_set_attrib(payload, "clockrate", clockrate);
 		xmlnode_set_attrib(payload, "channels", channels);
+
+		for (; iter; iter = g_list_next(iter)) {
+			FsCodecParameter *fsparam = iter->data;
+			xmlnode *param = xmlnode_new_child(payload, "parameter");
+			xmlnode_set_attrib(param, "name", fsparam->name);
+			xmlnode_set_attrib(param, "value", fsparam->value);
+		}
+
+		codec_str = fs_codec_to_string(codec);
+		purple_debug_fatal("jingle", "adding codec: %s\n", codec_str);
+		g_free(codec_str);
 	}
 }
 
