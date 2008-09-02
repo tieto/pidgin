@@ -1246,8 +1246,10 @@ D-Bus development headers not found.
 Use --disable-dbus if you do not need D-Bus support.
 ])
 	fi])
+fi
 
 dnl Check for NetworkManager.h; if we don't have it, oh well
+if test "x$enable_dbus" = "xyes" ; then
 	if test "x$enable_nm" = "xyes" ; then
 		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager], [
 			AC_SUBST(NETWORKMANAGER_CFLAGS)
@@ -1261,8 +1263,6 @@ Use --disable-nm if you do not need NetworkManager support.
 ])
 			fi])
 	fi
-else
-	enable_nm=no
 fi
 
 dnl #######################################################################
