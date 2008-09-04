@@ -80,8 +80,6 @@ send_typed_cb(gpointer data)
 		purple_conv_im_set_type_again(PURPLE_CONV_IM(conv), 1);
 
 		serv_send_typing(gc, name, PURPLE_TYPED);
-		purple_signal_emit(purple_conversations_get_handle(),
-						 "buddy-typed", conv->account, conv->name);
 
 		purple_debug(PURPLE_DEBUG_MISC, "conversation", "typed...\n");
 	}
@@ -1621,7 +1619,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		}
 
 		quiet = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_conversations_get_handle(),
-						 "chat-buddy-joining", conv, user, flag)) |
+						 "chat-buddy-joining", conv, user, flag)) ||
 				purple_conv_chat_is_user_ignored(chat, user);
 
 		cbuddy = purple_conv_chat_cb_new(user, alias, flag);
@@ -1633,18 +1631,18 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		cbuddies = g_list_prepend(cbuddies, cbuddy);
 
 		if (!quiet && new_arrivals) {
-			char *escaped = g_markup_escape_text(alias, -1);
+			char *alias_esc = g_markup_escape_text(alias, -1);
 			char *tmp;
 
 			if (extra_msg == NULL)
-				tmp = g_strdup_printf(_("%s entered the room."), escaped);
+				tmp = g_strdup_printf(_("%s entered the room."), alias_esc);
 			else {
-				char *escaped2 = g_markup_escape_text(extra_msg, -1);
+				char *extra_msg_esc = g_markup_escape_text(extra_msg, -1);
 				tmp = g_strdup_printf(_("%s [<I>%s</I>] entered the room."),
-									  escaped, escaped2);
-				g_free(escaped2);
+				                      alias_esc, extra_msg_esc);
+				g_free(extra_msg_esc);
 			}
-			g_free(escaped);
+			g_free(alias_esc);
 
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
@@ -1832,7 +1830,7 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 
 		if (!quiet) {
 			const char *alias = user;
-			char *escaped;
+			char *alias_esc;
 			char *tmp;
 
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
@@ -1842,17 +1840,17 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 
-			escaped = g_markup_escape_text(alias, -1);
+			alias_esc = g_markup_escape_text(alias, -1);
 
 			if (reason == NULL || !*reason)
-				tmp = g_strdup_printf(_("%s left the room."), escaped);
+				tmp = g_strdup_printf(_("%s left the room."), alias_esc);
 			else {
-				char *escaped2 = g_markup_escape_text(reason, -1);
+				char *reason_esc = g_markup_escape_text(reason, -1);
 				tmp = g_strdup_printf(_("%s left the room (%s)."),
-									  escaped, escaped2);
-				g_free(escaped2);
+				                      alias_esc, reason_esc);
+				g_free(reason_esc);
 			}
-			g_free(escaped);
+			g_free(alias_esc);
 
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,

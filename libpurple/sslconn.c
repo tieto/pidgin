@@ -27,6 +27,7 @@
 
 #include "certificate.h"
 #include "debug.h"
+#include "request.h"
 #include "sslconn.h"
 
 static gboolean _ssl_initialized = FALSE;
@@ -226,6 +227,9 @@ purple_ssl_close(PurpleSslConnection *gsc)
 	PurpleSslOps *ops;
 
 	g_return_if_fail(gsc != NULL);
+
+	purple_request_close_with_handle(gsc);
+	purple_notify_close_with_handle(gsc);
 
 	ops = purple_ssl_get_ops();
 	(ops->close)(gsc);

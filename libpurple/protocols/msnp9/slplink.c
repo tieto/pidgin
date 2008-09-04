@@ -560,10 +560,17 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 					if (xfer != NULL)
 					{
-						purple_xfer_start(slpmsg->slpcall->xfer,
-							0, NULL, 0);
-						slpmsg->fp = ((PurpleXfer *)slpmsg->slpcall->xfer)->dest_fp;
-						xfer->dest_fp = NULL; /* Disable double fclose() */
+						purple_xfer_ref(xfer);
+						purple_xfer_start(xfer,	0, NULL, 0);
+
+						if (xfer->data == NULL) {
+							purple_xfer_unref(xfer);
+							return;
+						} else {
+							purple_xfer_unref(xfer);
+							slpmsg->fp = xfer->dest_fp;
+							xfer->dest_fp = NULL; /* Disable double fclose() */
+						}
 					}
 				}
 			}
@@ -597,7 +604,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 	else if (slpmsg->size)
 	{
-		if ((offset + len) > slpmsg->size)
+		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{
 			purple_debug_error("msn", "Oversized slpmsg\n");
 			g_return_if_reached();

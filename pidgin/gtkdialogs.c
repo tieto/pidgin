@@ -73,7 +73,8 @@ static const struct developer developers[] = {
 	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Thomas Butter",				N_("developer"), NULL},
-	{"Ka-Hing Cheung",				N_("developer"), NULL},
+	/* feel free to not translate this */
+	{N_("Ka-Hing Cheung"),			N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), "mark@kingant.net"},
 	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
@@ -85,6 +86,7 @@ static const struct developer developers[] = {
 	{"Bartosz Oler",		N_("developer"), NULL},
 	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
+	{"Elliott 'QuLogic' Sales de Andrade",	N_("developer"),	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
@@ -100,7 +102,6 @@ static const struct developer patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
-	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
 	{"Jorge 'Masca' Villaseñor", 	NULL, 	NULL},
 	{NULL, NULL, NULL}
@@ -169,6 +170,7 @@ static const struct translator current_translators[] = {
 	{N_("Persian"),             "fa", "Roozbeh Pournader ", "roozbeh@farsiweb.info"},
 	{N_("Finnish"),             "fi", "Timo Jyrinki", "timo.jyrinki@iki.fi"},
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
+	{N_("Irish"),               "ga", "Aaron Kearns", "ajkearns6@gmail.com"},
 	{N_("Galician"),            "gl", "Mar Castro", "mariamarcp@gmail.com"},
 	{N_("Galician"),            "gl", "Frco. Javier Rial", "fjrial@cesga.es"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
@@ -211,6 +213,7 @@ static const struct translator current_translators[] = {
 	{N_("Serbian"),             "sr", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Serbian"),             "sr@Latn", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
+	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
@@ -424,11 +427,11 @@ void pidgin_dialogs_about()
 	for (i = 0; developers[i].name != NULL; i++) {
 		if (developers[i].email != NULL) {
 			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					developers[i].name, _(developers[i].role),
+					_(developers[i].name), _(developers[i].role),
 					developers[i].email, developers[i].email);
 		} else {
 			g_string_append_printf(str, "  %s (%s)<br/>",
-					developers[i].name, _(developers[i].role));
+					_(developers[i].name), _(developers[i].role));
 		}
 	}
 	g_string_append(str, "<BR/>");

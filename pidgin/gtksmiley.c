@@ -224,6 +224,13 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 	PurpleSmiley *emoticon;
 
 	entry = gtk_entry_get_text(GTK_ENTRY(s->smile));
+	if (!entry || !*entry) {
+		purple_notify_error(s->parent, _("Custom Smiley"),
+				_("More Data needed"),
+				_("Please provide a shortcut to associate with the smiley."));
+		return;
+	}
+
 	emoticon = purple_smileys_find_by_shortcut(entry);
 	if (emoticon && emoticon != s->smiley) {
 		purple_notify_error(s->parent, _("Custom Smiley"),
@@ -275,7 +282,8 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 			g_free(buffer);
 		}
 		emoticon = purple_smiley_new_from_file(entry, s->filename);
-		pidgin_smiley_add_to_list(emoticon);
+		if (emoticon)
+			pidgin_smiley_add_to_list(emoticon);
 	}
 
 	if (smiley_manager != NULL)
@@ -345,7 +353,7 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	window = gtk_dialog_new_with_buttons(smiley ? _("Edit Smiley") : _("Add Smiley"),
 			widget ? GTK_WINDOW(widget) : NULL,
 			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,							 
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			NULL);
 	s->parent = window;
@@ -691,7 +699,7 @@ void pidgin_smiley_manager_show(void)
 			NULL,
 			GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_STOCK_ADD, GTK_RESPONSE_YES,
-			GTK_STOCK_EDIT, PIDGIN_RESPONSE_EDIT,
+			PIDGIN_STOCK_EDIT, PIDGIN_RESPONSE_EDIT,
 			GTK_STOCK_DELETE, GTK_RESPONSE_NO,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 			NULL);

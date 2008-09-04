@@ -527,9 +527,11 @@ static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer us
 	form->offset = g_strdup(form->last_uin);
 
 	ggp_search_remove(info->searches, form->seq);
+	purple_debug_info("gg", "ggp_callback_show_next(): Removed seq %u", form->seq);
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
+	purple_debug_info("gg", "ggp_callback_show_next(): Added seq %u", seq);
 }
 /* }}} */
 
@@ -607,6 +609,7 @@ static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields 
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
+	purple_debug_info("gg", "ggp_callback_find_buddies(): Added seq %u", seq);
 }
 /* }}} */
 
@@ -991,6 +994,7 @@ static void ggp_sr_close_cb(gpointer user_data)
 	GGPInfo *info = form->user_data;
 
 	ggp_search_remove(info->searches, form->seq);
+	purple_debug_info("gg", "ggp_sr_close_cb(): Removed seq %u", form->seq);
 	ggp_search_form_destroy(form);
 }
 /* }}} */
@@ -1206,7 +1210,7 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 
 	seq = gg_pubdir50_seq(req);
 	form = ggp_search_get(info->searches, seq);
-
+	purple_debug_info("gg", "ggp_pubdir_reply_handler(): seq %u --> form %p", seq, form);
 	/*
 	 * this can happen when user will request more results
 	 * and close the results window before they arrive.
@@ -1819,6 +1823,7 @@ static void ggp_get_info(PurpleConnection *gc, const char *name)
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
+	purple_debug_info("gg", "ggp_get_info(): Added seq %u", seq);
 }
 /* }}} */
 
@@ -1829,7 +1834,7 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	int new_status, new_status_descr;
 	const char *new_msg;
 
-	g_return_val_if_fail(msg == NULL, 0);
+	g_return_val_if_fail(msg != NULL, 0);
 
 	purple_debug_info("gg", "ggp_to_gg_status: Requested status = %s\n",
 			status_id);

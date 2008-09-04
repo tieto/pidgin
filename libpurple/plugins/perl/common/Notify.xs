@@ -93,13 +93,6 @@ purple_notify_userinfo(gc, who, user_info, cb, user_data)
 	Purple::NotifyCloseCallback cb
 	gpointer user_data
 
-Purple::NotifyUiOps
-purple_notify_get_ui_ops()
-
-void
-purple_notify_set_ui_ops(ops)
-	Purple::NotifyUiOps ops
-
 void *
 purple_notify_message(handle, type, title, primary, secondary, cb, user_data)
 	void * handle

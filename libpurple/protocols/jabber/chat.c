@@ -343,11 +343,17 @@ char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
 {
 	JabberStream *js = gc->proto_data;
 	JabberChat *chat;
+	JabberChatMember *jcm;
 
 	chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)
 		return NULL;
+
+	jcm = g_hash_table_lookup(chat->members, who);
+	if (jcm != NULL && jcm->jid)
+		return g_strdup(jcm->jid);
+	
 
 	return g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
 }

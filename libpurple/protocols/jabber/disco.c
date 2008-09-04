@@ -73,6 +73,15 @@ jabber_disco_bytestream_server_cb(JabberStream *js, xmlnode *packet, gpointer da
 			  "jid='%s' host='%s' port='%d' zeroconf='%s'\n",
 			   from ? from : "", sh->host ? sh->host : "",
 			   sh->port, sh->zeroconf ? sh->zeroconf : "");
+
+	/* TODO: When we support zeroconf proxies, fix this to handle them */
+	if (!(sh->jid && sh->host && sh->port > 0)) {
+		g_free(sh->jid);
+		g_free(sh->host);
+		g_free(sh->zeroconf);
+		g_free(sh);
+		js->bs_proxies = g_list_remove(js->bs_proxies, sh);
+	}
 }
 
 
@@ -329,6 +338,7 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 static void
 jabber_disco_finish_server_info_result_cb(JabberStream *js)
 {
+	const char *ft_proxies;
 
 	jabber_vcard_fetch_mine(js);
 
@@ -339,11 +349,44 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 
 	/* Send initial presence; this will trigger receipt of presence for contacts on the roster */
 	jabber_presence_send(js->gc->account, NULL);
-	
+
 	if (js->server_caps & JABBER_CAP_ADHOC) {
 		/* The server supports ad-hoc commands, so let's request the list */
 		jabber_adhoc_server_get_list(js);
 	}
+
+	/* If there are manually specified bytestream proxies, query them */
+	ft_proxies = purple_account_get_string(js->gc->account, "ft_proxies", NULL);
+	if (ft_proxies) {
+		JabberIq *iq;
+		JabberBytestreamsStreamhost *sh;
+		int i;
+		char *tmp;
+		gchar **ft_proxy_list = g_strsplit(ft_proxies, ",", 0);
+
+		for(i = 0; ft_proxy_list[i]; i++) {
+			g_strstrip(ft_proxy_list[i]);
+			if(!(*ft_proxy_list[i]))
+				continue;
+
+			/* We used to allow specifying a port directly here; get rid of it */
+			if((tmp = strchr(ft_proxy_list[i], ':')))
+				*tmp = '\0';
+
+			sh = g_new0(JabberBytestreamsStreamhost, 1);
+			sh->jid = g_strdup(ft_proxy_list[i]);
+			js->bs_proxies = g_list_prepend(js->bs_proxies, sh);
+
+			iq = jabber_iq_new_query(js, JABBER_IQ_GET,
+						 "http://jabber.org/protocol/bytestreams");
+			xmlnode_set_attrib(iq->node, "to", sh->jid);
+			jabber_iq_set_callback(iq, jabber_disco_bytestream_server_cb, sh);
+			jabber_iq_send(iq);
+		}
+
+		g_strfreev(ft_proxy_list);
+	}
+
 }
 
 static void

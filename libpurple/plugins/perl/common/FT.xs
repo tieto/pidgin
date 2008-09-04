@@ -112,10 +112,6 @@ Purple::XferType
 purple_xfer_get_type(xfer)
 	Purple::Xfer xfer
 
-Purple::XferUiOps
-purple_xfer_get_ui_ops(xfer)
-	Purple::Xfer xfer
-
 gboolean 
 purple_xfer_is_canceled(xfer)
 	Purple::Xfer xfer
@@ -188,11 +184,4 @@ purple_xfer_write(xfer, buffer, size)
 MODULE = Purple::Xfer  PACKAGE = Purple::Xfers  PREFIX = purple_xfers_
 PROTOTYPES: ENABLE
 
-Purple::XferUiOps
-purple_xfers_get_ui_ops()
- 
-
-void 
-purple_xfers_set_ui_ops(ops)
-	Purple::XferUiOps ops
 

@@ -65,6 +65,7 @@ static PurplePlugin *my_protocol = NULL;
 GList *jabber_features = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
+static void try_srv_connect(JabberStream *js);
 
 static void jabber_stream_init(JabberStream *js)
 {
@@ -275,70 +276,10 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 	purple_circ_buffer_mark_read(js->write_buffer, ret);
 }
 
-void jabber_send_raw(JabberStream *js, const char *data, int len)
+static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 {
 	int ret;
-
-	/* because printing a tab to debug every minute gets old */
-	if(strcmp(data, "\t"))
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
-				js->gsc ? " (ssl)" : "", data);
-
-	/* If we've got a security layer, we need to encode the data,
-	 * splitting it on the maximum buffer length negotiated */
-	
-	purple_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
-	if (data == NULL)
-		return;
-	
-#ifdef HAVE_CYRUS_SASL
-	if (js->sasl_maxbuf>0) {
-		int pos;
-
-		if (!js->gsc && js->fd<0)
-			return;
-		pos = 0;
-		if (len == -1)
-			len = strlen(data);
-		while (pos < len) {
-			int towrite;
-			const char *out;
-			unsigned olen;
-
-			if ((len - pos) < js->sasl_maxbuf)
-				towrite = len - pos;
-			else
-				towrite = js->sasl_maxbuf;
-
-			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
-			pos += towrite;
-
-			if (js->writeh == 0)
-				ret = jabber_do_send(js, out, olen);
-			else {
-				ret = -1;
-				errno = EAGAIN;
-			}
-
-			if (ret < 0 && errno != EAGAIN)
-				purple_connection_error_reason (js->gc,
-					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Write error"));
-			else if (ret < olen) {
-				if (ret < 0)
-					ret = 0;
-				if (js->writeh == 0)
-					js->writeh = purple_input_add(
-						js->gsc ? js->gsc->fd : js->fd,
-						PURPLE_INPUT_WRITE,
-						jabber_send_cb, js);
-				purple_circ_buffer_append(js->write_buffer,
-					out + ret, olen - ret);
-			}
-		}
-		return;
-	}
-#endif
+	gboolean success = TRUE;
 
 	if (len == -1)
 		len = strlen(data);
@@ -350,11 +291,12 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		errno = EAGAIN;
 	}
 
-	if (ret < 0 && errno != EAGAIN)
+	if (ret < 0 && errno != EAGAIN) {
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Write error"));
-	else if (ret < len) {
+		success = FALSE;
+	} else if (ret < len) {
 		if (ret < 0)
 			ret = 0;
 		if (js->writeh == 0)
@@ -364,7 +306,53 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		purple_circ_buffer_append(js->write_buffer,
 			data + ret, len - ret);
 	}
-	return;
+
+	return success;
+}
+
+void jabber_send_raw(JabberStream *js, const char *data, int len)
+{
+
+	/* because printing a tab to debug every minute gets old */
+	if(strcmp(data, "\t"))
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
+				js->gsc ? " (ssl)" : "", data);
+
+	/* If we've got a security layer, we need to encode the data,
+	 * splitting it on the maximum buffer length negotiated */
+
+	purple_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
+	if (data == NULL)
+		return;
+
+#ifdef HAVE_CYRUS_SASL
+	if (js->sasl_maxbuf>0) {
+		int pos = 0;
+
+		if (!js->gsc && js->fd<0)
+			return;
+
+		if (len == -1)
+			len = strlen(data);
+
+		while (pos < len) {
+			int towrite;
+			const char *out;
+			unsigned olen;
+
+			towrite = MIN((len - pos), js->sasl_maxbuf);
+
+			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
+			pos += towrite;
+
+			if (!do_jabber_send_raw(js, out, olen))
+				break;
+		}
+		return;
+	}
+#endif
+
+	do_jabber_send_raw(js, data, len);
 }
 
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
@@ -390,9 +378,9 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
+static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
 {
-	purple_timeout_remove(GPOINTER_TO_INT(timeout));
+	purple_timeout_remove(js->keepalive_timeout);
 	js->keepalive_timeout = -1;
 }
 
@@ -416,7 +404,7 @@ void jabber_keepalive(PurpleConnection *gc)
 		xmlnode_set_namespace(ping, "urn:xmpp:ping");
 		
 		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
-		jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
+		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
 		jabber_iq_send(iq);
 	}
 }
@@ -445,12 +433,17 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 			jabber_stream_init(js);
 	}
 
-	if(errno == EAGAIN)
+	if(len < 0 && errno == EAGAIN)
 		return;
-	else
+	else {
+		if (len == 0)
+			purple_debug_info("jabber", "Server closed the connection.\n");
+		else
+			purple_debug_info("jabber", "Disconnected: %s\n", g_strerror(errno));
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Read Error"));
+	}
 }
 
 static void
@@ -485,9 +478,13 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
-	} else if(errno == EAGAIN) {
+	} else if(len < 0 && errno == EAGAIN) {
 		return;
 	} else {
+		if (len == 0)
+			purple_debug_info("jabber", "Server closed the connection.\n");
+		else
+			purple_debug_info("jabber", "Disconnected: %s\n", g_strerror(errno));
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Read Error"));
@@ -526,14 +523,22 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 	JabberStream *js = gc->proto_data;
 
 	if (source < 0) {
-		gchar *tmp;
-		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
-				error);
-		purple_connection_error_reason (gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
+		if (js->srv_rec != NULL) {
+			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record.\n", error);
+			try_srv_connect(js);
+		} else {
+			gchar *tmp;
+			tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+					      error);
+			purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+			g_free(tmp);
+		}
 		return;
 	}
+
+	g_free(js->srv_rec);
+	js->srv_rec = NULL;
 
 	js->fd = source;
 
@@ -569,37 +574,62 @@ static void tls_init(JabberStream *js)
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 }
 
-static void jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port)
+static gboolean jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port,
+				 gboolean fatal_failure)
 {
 	/* host should be used in preference to domain to
 	 * allow SASL authentication to work with FQDN of the server,
 	 * but we use domain as fallback for when users enter IP address
 	 * in connect server */
+	g_free(js->serverFQDN);
 	if (purple_ip_address_is_valid(host))
 		js->serverFQDN = g_strdup(domain);
 	else
 		js->serverFQDN = g_strdup(host);
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
-			port, jabber_login_callback, js->gc) == NULL)
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to create socket"));
+			port, jabber_login_callback, js->gc) == NULL) {
+		if (fatal_failure) {
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to create socket"));
+		}
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static void try_srv_connect(JabberStream *js)
+{
+	while (js->srv_rec != NULL && js->srv_rec_idx < js->max_srv_rec_idx) {
+		PurpleSrvResponse *tmp_resp = js->srv_rec + (js->srv_rec_idx++);
+		if (jabber_login_connect(js, tmp_resp->hostname, tmp_resp->hostname, tmp_resp->port, FALSE))
+			return;
+	}
+
+	g_free(js->srv_rec);
+	js->srv_rec = NULL;
+
+	/* Fall back to the defaults (I'm not sure if we should actually do this) */
+	jabber_login_connect(js, js->user->domain, js->user->domain,
+		purple_account_get_int(js->gc->account, "port", 5222), TRUE);
 }
 
 static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 {
-	JabberStream *js;
-
-	js = data;
+	JabberStream *js = data;
 	js->srv_query_data = NULL;
 
 	if(results) {
-		jabber_login_connect(js, resp->hostname, resp->hostname, resp->port);
-		g_free(resp);
+		js->srv_rec = resp;
+		js->srv_rec_idx = 0;
+		js->max_srv_rec_idx = results;
+		try_srv_connect(js);
 	} else {
 		jabber_login_connect(js, js->user->domain, js->user->domain,
-			purple_account_get_int(js->gc->account, "port", 5222));
+			purple_account_get_int(js->gc->account, "port", 5222), TRUE);
 	}
 }
 
@@ -682,7 +712,7 @@ jabber_login(PurpleAccount *account)
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(!js->gsc) {
 		if(connect_server[0]) {
-			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222));
+			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222), TRUE);
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
 					"tcp", js->user->domain, srv_resolved_cb, js);
@@ -1163,7 +1193,7 @@ void jabber_register_account(PurpleAccount *account)
 		if (connect_server[0]) {
 			jabber_login_connect(js, js->user->domain, server,
 			                     purple_account_get_int(account,
-			                                          "port", 5222));
+			                                          "port", 5222), TRUE);
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
 			                                      "tcp",
@@ -1295,6 +1325,11 @@ void jabber_close(PurpleConnection *gc)
 		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
 	}
 
+	while(js->url_datas) {
+		purple_util_fetch_url_cancel(js->url_datas->data);
+		js->url_datas = g_slist_delete_link(js->url_datas, js->url_datas);
+	}
+
 	g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
@@ -1334,7 +1369,10 @@ void jabber_close(PurpleConnection *gc)
 
 	if (js->keepalive_timeout != -1)
 		purple_timeout_remove(js->keepalive_timeout);
-	
+
+	g_free(js->srv_rec);
+	js->srv_rec = NULL;
+
 	g_free(js);
 
 	gc->proto_data = NULL;

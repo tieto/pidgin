@@ -1,0 +1,144 @@
+2008.08.10 - csyfek <csyfek(at)gmail.com>
+	* Commit to Pidgin
+
+2008.08.06 - ccpaging <ecc_hy(at)hotmail.com>
+	* Rename names of variables, Group, to Room
+	* Functions of group_network merged into qq_network and qq_process
+	* Canceled managing glist of group packet, add sub_cmdd and room_id  to transaction
+	* Fixed error of demo group:
+		If 'room list' and 'room infor' are not setup, response received from server will emits 'room_id = 0' packet.
+
+2008.08.04 - ccpaging <ecc_hy(at)hotmail.com>
+	* Use new crypt/decrypt functions
+	* Rename crypt.c/h to qq_crypt.c/h
+	* Clean code of decrypt functions
+	* Fixed decryption failure
+
+2008.08.04 - csyfek <csyfek(at)gmail.com>
+	* Update AUTHORS
+
+2008.08.03 - csyfek <csyfek(at)gmail.com>
+	* Commit lost files to Pidgin
+
+2008.08.02 - csyfek <csyfek(at)gmail.com>
+	* Commit to Pidgin
+	* Tickets:
+		Fixes #1861
+		Fixes #1902
+		References #5112
+
+2008.08.02 - ccpaging <ecc_hy(at)hotmail.com>
+	* Store all keys and md5 values of qq_data in char[QQ_KEY_LENGTH]
+	* Use random value in inikey
+	* TEA header padding in crypt.c
+	* Rewrite login part of qq_process
+
+2008.07.31 - ccpaging <ecc_hy(at)hotmail.com>
+	* Fixed: send reply when get duplicate server command. The server may not get our reply before.
+	* Tag custom picture as text "(Broken)"
+
+2008.07.30 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Change some debug message
+	* Modify buddy status flag according to eva for QQ2006
+	* Modify buddy status parse and correspond to eva2
+	* Add getIP/putIP functions to packet_parse.c, and replace some gen_ip_str
+	* Replace guint32 *ip with struct in_addr, and reduce g_new/g_free operation
+	* Source file changed:
+   		Merge buddy_status into buddy_list
+   		Change login_logout to qq_base
+   		Merge keep_alive into qq_base
+   		New qq_process extract from qq_network
+	* Fixed: Byte alignment bug in crypt.c, tested in ARM PDA
+	* Fixed: group chat message may get in before getting group info, and so group info is empty
+	* Add qq_send_cmd_group_get_group_info when joined a group chat in group_im.c
+	* Add some new group command identify according eva but further program
+	* Add some new QQ client version identify
+	* Fixed: Identify buddy's client version by IM packet, and not by status
+	* Add some new info in buddy's tooltip text
+	* Add video falg to buddy's emblem. But those flag in buddy status may not prasing correctly
+	* Use new timeout function to handle send keep_alive, resend packet, update buddy status
+	* Add new advanced options:
+		The end user may change interval of keep_alive, resend packet, update buddy status to feed their need.
+		For example, saving network flow when use mobile phone.
+		Keep alive packet must be sent in 60-120 seconds whatever client rcved data of not.
+		The intervals of keep alive and update status should be multiple of resend's interval,
+		Since we use counter not time() in a single timeout function for efficiency.
+	* Rewrite qq_trans.c, and use one g_list to manage:
+		Store server packet before login, and prase all of them when get login
+		Store client send packet for resend scanning, confirm server reply, filter duplicate server reply
+		Store server packet for filter out duplicate
+	* Add QQ_MSG_SYS_NOTICE = 0x06 in sys_msg.c
+	* Rewrite qq_proc_cmd_reply and qq_proc_cmd_server:
+		In QQ protocol, one packet reply may need a new packet send later.
+		We may call it packet trigger. The triggers always is hided in every qq_process_reply.
+		Now we try to extract those triggers and put into a single function, 
+		and then every trigger should be obviously and easy to manage.
+	
+2008.07.12 - ccpaging <ecc_hy(at)hotmail.com>
+	* Fixed: Always lost connection. Now send keep alive packet in every 30 seconds
+	* Minor fix for debug information
+	* Filter \r\n and replace with SPCAE in group notive
+	* Fixed a memory leak
+	* Tickets:
+	* Fixes #4024.
+
+2008.06.29 - csyfek <csyfek(at)gmail.com>
+	* Minor bug fix
+	* Add some doxygen syntax for preparing development documentation
+	* References #6199
+
+2008.06.28 - ccpaging <ecc_hy(at)hotmail.com>, moo <phpxcache(at)gmail.com>
+	* Patches from moo<phpxcache@gmail.com> and ccpaging<ccpaging@foxmail.com>.
+	* Tickets:
+	* Fixes #4956.
+	* Fixes #2998.
+
+2008.06.07 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Clean code and apply patches from QuLogic
+
+2008.05.19 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Reconnect server 5 time in 5000 ms, when connect failed
+	* Rename sendqueue.c/sendqueue.h to qq_trans.c/qq_trans.h
+	* Rewrite packet_process
+	* Rewrite qq_send_cmd
+	* Create server list, try to connect every server when failed
+
+2008.05.14 - ccpaging <ecc_hy(at)hotmail.com>
+	* Move function for before login packets storing to sendqueue
+	* Use transaction data structure to store before login packets
+	* Rewrite tcp_pending and packet_process in qq_network.c
+
+2008.05.09 - ccpaging <ecc_hy(at)hotmail.com>
+	* Remove function _create_packet_head_seq in qq_network.c
+	* Create new function encap in qq_netowork.c
+	* Clean code of qq_send_packet_request_login_token and qq_send_packet_login in login_out.c
+
+2008.05.09 - ccpaging <ecc_hy(at)hotmail.com>
+	* Clean code of packet_parse.c, enable PARSER_DEBUG
+	* Rewrite send_queue
+
+2008.05.08 - ccpaging <ecc_hy(at)hotmail.com>
+	* Rewrite qq_network
+	* Add srv resolve function when qq_login
+	* Merge function _qq_common_clean in qq_proxy.c to qq_disconnect
+	* Move orignal qq_disconnect to qq_close
+	* qq_data alloc in qq_open and release in qq_close
+	* Network connect of QQ is created in qq_connect, and release in qq_disconnect
+
+2008.05.05 - ccpaging <ecc_hy(at)hotmail.com>
+	* Merge function _qq_common_clean in qq_proxy.c to qq_disconnect
+	* Move orignal qq_disconnect to qq_close
+	* qq_data alloc in qq_open and release in qq_close
+	* Network connect of QQ is created in qq_connect, and release in qq_disconnect
+
+2008.05.05 - ccpaging <ecc_hy(at)hotmail.com>
+	* Add qq_hex_dump function
+
+2008.04.25 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Rewrite read_packet and create_packet functions, use qq_put and qq_get functions instead
+	* New logic in accord with protocol models to handle packets, some related functions rewritten
+
+2008.03.24 - ccpaging <ecc_hy(at)hotmail.com>
+	* Remove qq_crypt function in crypt.c, use qq_crypt and qq_decrypt directly
+
+** since pidgin-2.4.0 ***

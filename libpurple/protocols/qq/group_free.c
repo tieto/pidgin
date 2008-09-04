@@ -26,9 +26,8 @@
 
 #include "debug.h"
 
-#include "buddy_status.h"
+#include "buddy_list.h"
 #include "group_free.h"
-#include "group_network.h"
 
 /* gracefully free all members in a group */
 static void qq_group_free_member(qq_group *group)
@@ -55,25 +54,11 @@ void qq_group_free(qq_group *group)
 {
 	g_return_if_fail(group != NULL);
 	qq_group_free_member(group);
+	g_free(group->my_status_desc);
 	g_free(group->group_name_utf8);
 	g_free(group->group_desc_utf8);
+	g_free(group->notice_utf8);
 	g_free(group);
-}
-
-/* clean up group_packets and free all contents */
-void qq_group_packets_free(qq_data *qd)
-{
-	group_packet *p;
-	gint i;
-
-	i = 0;
-	while (qd->group_packets != NULL) {
-		p = (group_packet *) (qd->group_packets->data);
-		qd->group_packets = g_list_remove(qd->group_packets, p);
-		g_free(p);
-		i++;
-	}
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d group packets are freed!\n", i);
 }
 
 void qq_group_free_all(qq_data *qd)

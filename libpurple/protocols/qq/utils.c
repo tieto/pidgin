@@ -22,7 +22,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "cipher.h"
 #include "limits.h"
 #include "stdlib.h"
 #include "string.h"
@@ -30,6 +29,8 @@
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
+
+#include "cipher.h"
 
 #include "char_conv.h"
 #include "debug.h"
@@ -39,6 +40,32 @@
 #include "utils.h"
 
 #define QQ_NAME_FORMAT    "%d"
+
+/* These functions are used only in development phase */
+/*
+   static void _qq_show_socket(gchar *desc, gint fd) {
+   struct sockaddr_in sin;
+   socklen_t len = sizeof(sin);
+   getsockname(fd, (struct sockaddr *)&sin, &len);
+   purple_debug(PURPLE_DEBUG_INFO, desc, "%s:%d\n",
+   inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
+   }
+   */
+
+void qq_get_md5(guint8 *md5, gint md5_len, const guint8* const src, gint src_len)
+{
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
+
+	g_return_if_fail(md5 != NULL && md5_len > 0);
+	g_return_if_fail(src != NULL && src_len > 0);
+
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, src, src_len);
+	purple_cipher_context_digest(context, md5_len, md5, NULL);
+	purple_cipher_context_destroy(context);
+}
 
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
 {
@@ -87,7 +114,7 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	g_memmove(input, data, len);
 	input[len] = 0x00;
 
-	segments = g_strsplit((gchar *) input, delimit, 0);
+	segments = g_strsplit_set((gchar *) input, delimit, 0);
 	if (expected_fields <= 0)
 		return segments;
 
@@ -113,30 +140,20 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	return segments;
 }
 
-/* generate a md5 key using uid and session_key */
-guint8 *_gen_session_md5(gint uid, guint8 *session_key)
+/* convert Purple name to original QQ UID */
+guint32 purple_name_to_uid(const gchar *const name)
 {
-	guint8 *src, md5_str[QQ_KEY_LENGTH];
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
+	guint32 ret;
+	g_return_val_if_fail(name != NULL, 0);
 
-	src = g_newa(guint8, 20);
-	memcpy(src, &uid, 4);
-	memcpy(src, session_key, QQ_KEY_LENGTH);
-
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, src, 20);
-	purple_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-	purple_cipher_context_destroy(context);
-
-	return g_memdup(md5_str, QQ_KEY_LENGTH);
+	ret = strtol(name, NULL, 10);
+	if (errno == ERANGE)
+		return 0;
+	else
+		return ret;
 }
 
-/* given a four-byte ip data, convert it into a human readable ip string
- * the return needs to be freed */
-gchar *gen_ip_str(guint8 *ip)
-{
+gchar *gen_ip_str(guint8 *ip) {
 	gchar *ret;
 	if (ip == NULL || ip[0] == 0) {
 		ret = g_new(gchar, 1);
@@ -157,19 +174,6 @@ guint8 *str_ip_gen(gchar *str) {
 	ip[2] = c;
 	ip[3] = d;
 	return ip;
-}
-
-/* convert Purple name to original QQ UID */
-guint32 purple_name_to_uid(const gchar *const name)
-{
-	guint32 ret;
-	g_return_val_if_fail(name != NULL, 0);
-
-	ret = strtol(name, NULL, 10);
-	if (errno == ERANGE)
-		return 0;
-	else
-		return ret;
 }
 
 /* convert a QQ UID to a unique name of Purple
@@ -194,7 +198,7 @@ gchar *chat_name_to_purple_name(const gchar *const name)
 }
 
 /* try to dump the data as GBK */
-void try_dump_as_gbk(const guint8 *const data, gint len)
+gchar* try_dump_as_gbk(const guint8 *const data, gint len)
 {
 	gint i;
 	guint8 *incoming;
@@ -215,8 +219,8 @@ void try_dump_as_gbk(const guint8 *const data, gint len)
 
 	if (msg_utf8 != NULL) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Try extract GB msg: %s\n", msg_utf8);
-		g_free(msg_utf8);
 	}
+	return msg_utf8;
 }
 
 /* strips whitespace */
@@ -294,7 +298,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 
 /* Dumps a chunk of raw data into an ASCII hex string.
  * The return should be freed later. */
-gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
+static gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 {
 	GString *str;
 	gchar *ret;
@@ -303,14 +307,14 @@ gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 	str = g_string_new("");
 	for (i = 0; i < bytes; i += 16) {
 		/* length label */
-		g_string_append_printf(str, "%04d: ", i);
+		g_string_append_printf(str, "%07x: ", i);
 
 		/* dump hex value */
 		for (j = 0; j < 16; j++)
 			if ((i + j) < bytes)
-				g_string_append_printf(str, " %02X", buffer[i + j]);
+				g_string_append_printf(str, " %02x", buffer[i + j]);
 			else
-				g_string_append(str, "   ");
+				g_string_append(str, " --");
 		g_string_append(str, "  ");
 
 		/* dump ascii value */
@@ -331,6 +335,51 @@ gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 	return ret;
 }
 
+void qq_hex_dump(PurpleDebugLevel level, const char *category,
+		const guint8 *pdata, gint bytes,	
+		const char *format, ...)
+{
+	va_list args;
+	char *arg_s = NULL;
+	gchar *phex = NULL;
+
+	g_return_if_fail(level != PURPLE_DEBUG_ALL);
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	arg_s = g_strdup_vprintf(format, args);
+	va_end(args);
+
+	if (bytes <= 0) {
+		purple_debug(level, category, arg_s);
+		return;
+	}
+
+	phex = hex_dump_to_str(pdata, bytes);
+	purple_debug(level, category, "%s - (len %d)\n%s", arg_s, bytes, phex);
+	g_free(phex);
+}
+
+void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
+{
+	/*
+	   char buf1[8*len+2], buf2[10];
+	   int i;
+	   buf1[0] = 0;
+	   for (i = 0; i < len; i++) {
+	   sprintf(buf2, " %02x(%d)", buf[i] & 0xff, buf[i] & 0xff);
+	   strcat(buf1, buf2);
+	   }
+	   strcat(buf1, "\n");
+	   purple_debug(PURPLE_DEBUG_INFO, desc, "%s", buf1);
+	   */
+
+	/* modified by s3e, 20080424 */
+	qq_hex_dump(PURPLE_DEBUG_INFO, desc,
+		buf, len,
+		"");
+}
+
 /* convert face num from packet (0-299) to local face (1-100) */
 gchar *face_to_icon_str(gint face)
 {
@@ -348,16 +397,5 @@ const char *qq_buddy_icon_dir(void)
 	if (purple_prefs_exists("/prpl/qq/buddy_icon_dir"))
 		return purple_prefs_get_string("/prpl/qq/buddy_icon_dir");
 	else
-		return QQ_BUDDY_ICON_DIR;
+		return NULL;
 }
-
-#ifdef _WIN32
-const char *qq_win32_buddy_icon_dir(void)
-{
-        static char *dir = NULL;
-        if (dir == NULL)
-                dir = g_build_filename(wpurple_install_dir(), "pixmaps",
-                        "purple", "buddy_icons", "qq", NULL);
-        return dir;
-}
-#endif

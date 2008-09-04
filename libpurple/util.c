@@ -65,6 +65,7 @@ struct _PurpleUtilFetchUrlData
 	char *webdata;
 	unsigned long len;
 	unsigned long data_len;
+	gssize max_len;
 };
 
 static char *custom_user_dir = NULL;
@@ -718,6 +719,12 @@ purple_date_format_short(const struct tm *tm)
 const char *
 purple_date_format_long(const struct tm *tm)
 {
+	/*
+	 * This string determines how some dates are displayed.  The default
+	 * string "%x %X" shows the date then the time.  Translators can
+	 * change this to "%X %x" if they want the time to be shown first,
+	 * followed by the date.
+	 */
 	return purple_utf8_strftime(_("%x %X"), tm);
 }
 
@@ -760,6 +767,9 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 
 	time(&retval);
 	localtime_r(&retval, &t);
+
+	if (rest != NULL)
+		*rest = NULL;
 
 	/* 4 digit year */
 	if (sscanf(c, "%04d", &year) && year > 1900)
@@ -831,6 +841,11 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				tzoff = tzhrs*60*60 + tzmins*60;
 				if (offset_positive)
 					tzoff *= -1;
+			}
+			else if ((*c == 'Z') && (c = c + 1))
+			{
+				/* 'Z' = Zulu = UTC */
+				tzoff = 0;
 			}
 			else if (utc)
 			{
@@ -2026,8 +2041,12 @@ purple_markup_linkify(const char *text)
 	gunichar g;
 	gboolean inside_html = FALSE;
 	int inside_paren = 0;
-	GString *ret = g_string_new("");
-	/* Assumes you have a buffer able to carry at least BUF_LEN * 2 bytes */
+	GString *ret;
+
+	if (text == NULL)
+		return NULL;
+
+	ret = g_string_new("");
 
 	c = text;
 	while (*c) {
@@ -3559,7 +3578,10 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 		g_snprintf(port_str, sizeof(port_str), "80");
 	}
 
-	if (f == 1)
+	if (f == 0)
+		*host = '\0';
+
+	if (f <= 1)
 		*path = '\0';
 
 	sscanf(port_str, "%d", &port);
@@ -3570,7 +3592,7 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (ret_user != NULL) *ret_user = g_strdup(user);
 	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
 
-	return TRUE;
+	return ((*host != '\0') ? TRUE : FALSE);
 }
 
 /**
@@ -3594,7 +3616,7 @@ purple_util_fetch_url_error(PurpleUtilFetchUrlData *gfud, const char *format, ..
 static void url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message);
 
 static gboolean
-parse_redirect(const char *data, size_t data_len, gint sock,
+parse_redirect(const char *data, size_t data_len,
 			   PurpleUtilFetchUrlData *gfud)
 {
 	gchar *s;
@@ -3739,6 +3761,15 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	gboolean got_eof = FALSE;
 
 	while((len = read(source, buf, sizeof(buf))) > 0) {
+
+		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
+			/* TODO: Fix this when not string frozen */
+			/*purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),*/
+			purple_util_fetch_url_error(gfud, "Error reading from %s: response too long (%d bytes limit)",
+						    gfud->website.address, gfud->max_len);
+			return;
+		}
+
 		/* If we've filled up our buffer, make it bigger */
 		if((gfud->len + len) >= gfud->data_len) {
 			while((gfud->len + len) >= gfud->data_len)
@@ -3768,7 +3799,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 					header_len, gfud->webdata);
 
 				/* See if we can find a redirect. */
-				if(parse_redirect(gfud->webdata, header_len, source, gfud))
+				if(parse_redirect(gfud->webdata, header_len, gfud))
 					return;
 
 				gfud->got_headers = TRUE;
@@ -3900,8 +3931,7 @@ url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 
 	gfud->fd = source;
 
-	if (!gfud->request)
-	{
+	if (!gfud->request) {
 		if (gfud->user_agent) {
 			/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
 			 * clients must know how to handle the "chunked" transfer encoding.
@@ -3945,6 +3975,18 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *request, gboolean include_headers,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
+	return purple_util_fetch_url_request_len(url, full,
+					     user_agent, http11,
+					     request, include_headers, -1,
+					     callback, user_data);
+}
+
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request_len(const char *url, gboolean full,
+		const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data)
+{
 	PurpleUtilFetchUrlData *gfud;
 
 	g_return_val_if_fail(url      != NULL, NULL);
@@ -3965,6 +4007,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
 	gfud->fd = -1;
+	gfud->max_len = max_len;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
@@ -4718,3 +4761,21 @@ char * purple_util_format_song_info(const char *title, const char *artist, const
 	return g_string_free(string, FALSE);
 }
 
+const gchar *
+purple_get_host_name(void)
+{
+#if GLIB_CHECK_VERSION(2,8,0)
+	return g_get_host_name();
+#else
+	static char hostname[256];
+	int ret = gethostname(hostname, sizeof(hostname));
+	hostname[sizeof(hostname) - 1] = '\0';
+
+	if (ret == -1 || hostname[0] == '\0') {
+		purple_debug_info("purple_get_host_name: ", "could not find host name");
+		return "localhost";
+	} else {
+		return hostname;
+	}
+#endif
+}

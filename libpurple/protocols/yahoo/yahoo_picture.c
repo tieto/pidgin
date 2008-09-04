@@ -27,6 +27,7 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "debug.h"
+#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "util.h"
@@ -109,6 +110,11 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
+	if (!purple_privacy_check(purple_connection_get_account(gc), who)) {
+		purple_debug_info("yahoo", "Picture packet from %s dropped.\n", who);
+		return;
+	}
+
 	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
 	if (who && got_icon_info && url && !g_ascii_strncasecmp(url, "http://", 7)) {
 		/* TODO: make this work p2p, try p2p before the url */
@@ -116,11 +122,8 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_fetch_picture_data *data;
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
 		const char *locksum = NULL;
-		gboolean use_whole_url = FALSE;
-
 		/* use whole URL if using HTTP Proxy */
-		if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
-		    use_whole_url = TRUE;
+		gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
 		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
@@ -457,7 +460,8 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	PurpleConnection *gc = d->gc;
 	PurpleAccount *account;
 	struct yahoo_data *yd;
-	gboolean use_whole_url = FALSE;
+	/* use whole URL if using HTTP Proxy */
+	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 	account = purple_connection_get_account(gc);
 	yd = gc->proto_data;
@@ -470,10 +474,6 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
 	}
-	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info)
-	    	&& (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
-		use_whole_url = TRUE;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD, YAHOO_STATUS_AVAILABLE, yd->session_id);
 

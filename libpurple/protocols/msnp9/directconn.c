@@ -159,6 +159,9 @@ create_listener(int port)
 
 	flags = fcntl(fd, F_GETFL);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	return fd;
 }

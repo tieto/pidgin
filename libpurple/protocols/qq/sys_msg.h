@@ -28,6 +28,6 @@
 #include <glib.h>
 #include "connection.h"
 
-void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc);
+void qq_process_msg_sys(guint8 *data, gint data_len, guint16 seq, PurpleConnection *gc);
 
 #endif

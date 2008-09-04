@@ -887,9 +887,8 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 			struct tm tm;
 #if defined (HAVE_TM_GMTOFF) && defined (HAVE_STRUCT_TM_TM_ZONE)
 			long tz_off;
-			const char *rest;
+			const char *rest, *end;
 			time_t stamp = purple_str_to_time(purple_unescape_filename(filename), FALSE, &tm, &tz_off, &rest);
-			char *end;
 
 			/* As zero is a valid offset, PURPLE_NO_TZ_OFF means no offset was
 			 * provided. See util.h. Yes, it's kinda ugly. */
@@ -1083,7 +1082,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 				}
 
 				/* Determine if this (account, name) combination exists as a buddy. */
-				if (account != NULL)
+				if (account != NULL && name != NULL && *name != '\0')
 					set->buddy = (purple_find_buddy(account, name) != NULL);
 				else
 					set->buddy = FALSE;

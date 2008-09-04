@@ -31,9 +31,11 @@
 #include "group_free.h"
 #include "group_internal.h"
 #include "group_join.h"
-#include "group_network.h"
 #include "group_search.h"
 #include "utils.h"
+#include "header_info.h"
+#include "packet_parse.h"
+#include "qq_network.h"
 
 enum {
 	QQ_GROUP_SEARCH_TYPE_BY_ID = 0x01,
@@ -41,26 +43,19 @@ enum {
 };
 
 /* send packet to search for qq_group */
-void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 external_group_id)
+void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 ext_id)
 {
-	guint8 *raw_data, *cursor, type;
-	gint bytes, data_len;
+	guint8 raw_data[16] = {0};
+	gint bytes = 0;
+	guint8 type;
 
-	data_len = 6;
-	raw_data = g_newa(guint8, data_len);
-	cursor = raw_data;
-	type = (external_group_id == 0x00000000) ? QQ_GROUP_SEARCH_TYPE_DEMO : QQ_GROUP_SEARCH_TYPE_BY_ID;
+	type = (ext_id == 0x00000000) ? QQ_GROUP_SEARCH_TYPE_DEMO : QQ_GROUP_SEARCH_TYPE_BY_ID;
 
 	bytes = 0;
-	bytes += create_packet_b(raw_data, &cursor, QQ_GROUP_CMD_SEARCH_GROUP);
-	bytes += create_packet_b(raw_data, &cursor, type);
-	bytes += create_packet_dw(raw_data, &cursor, external_group_id);
+	bytes += qq_put8(raw_data + bytes, type);
+	bytes += qq_put32(raw_data + bytes, ext_id);
 
-	if (bytes != data_len)
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_SEARCH_GROUP));
-	else
-		qq_send_group_cmd(gc, NULL, raw_data, data_len);
+	qq_send_room_cmd_noid(gc, QQ_ROOM_CMD_SEARCH, raw_data, bytes);
 }
 
 static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
@@ -69,14 +64,14 @@ static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
 	gchar field[11];
 
 	room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
-	g_snprintf(field, sizeof(field), "%d", group->external_group_id);
+	g_snprintf(field, sizeof(field), "%d", group->ext_id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->creator_uid);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	purple_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
-	g_snprintf(field, sizeof(field), "%d", group->internal_group_id);
+	g_snprintf(field, sizeof(field), "%d", group->id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
-	g_snprintf(field, sizeof(field), "%d", group->group_type);
+	g_snprintf(field, sizeof(field), "%d", group->type8);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->auth_type);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
@@ -89,55 +84,50 @@ static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
 }
 
 /* process group cmd reply "search group" */
-void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection *gc)
 {
+	gint bytes;
 	guint8 search_type;
 	guint16 unknown;
-	gint bytes, pascal_len;
+	qq_group group;
 	qq_data *qd;
-	qq_group *group;
 	GSList *pending_id;
 
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 
-	read_packet_b(data, cursor, len, &search_type);
-	group = g_newa(qq_group, 1);
+	bytes = 0;
+	bytes += qq_get8(&search_type, data + bytes);
 
 	/* now it starts with group_info_entry */
-	bytes = 0;
-	bytes += read_packet_dw(data, cursor, len, &(group->internal_group_id));
-	bytes += read_packet_dw(data, cursor, len, &(group->external_group_id));
-	bytes += read_packet_b(data, cursor, len, &(group->group_type));
-	bytes += read_packet_w(data, cursor, len, &(unknown));
-	bytes += read_packet_w(data, cursor, len, &(unknown));
-	bytes += read_packet_dw(data, cursor, len, &(group->creator_uid));
-	bytes += read_packet_w(data, cursor, len, &(unknown));
-	bytes += read_packet_w(data, cursor, len, &(unknown));
-	bytes += read_packet_w(data, cursor, len, &(unknown));
-	bytes += read_packet_dw(data, cursor, len, &(group->group_category));
-	pascal_len = convert_as_pascal_string(*cursor, &(group->group_name_utf8), QQ_CHARSET_DEFAULT);
-	bytes += pascal_len;
-	*cursor += pascal_len;
-	bytes += read_packet_w(data, cursor, len, &(unknown));
-	bytes += read_packet_b(data, cursor, len, &(group->auth_type));
-	pascal_len = convert_as_pascal_string(*cursor, &(group->group_desc_utf8), QQ_CHARSET_DEFAULT);
-	bytes += pascal_len;
-	*cursor += pascal_len;
+	bytes += qq_get32(&(group.id), data + bytes);
+	bytes += qq_get32(&(group.ext_id), data + bytes);
+	bytes += qq_get8(&(group.type8), data + bytes);
+	bytes += qq_get16(&(unknown), data + bytes);
+	bytes += qq_get16(&(unknown), data + bytes);
+	bytes += qq_get32(&(group.creator_uid), data + bytes);
+	bytes += qq_get16(&(unknown), data + bytes);
+	bytes += qq_get16(&(unknown), data + bytes);
+	bytes += qq_get16(&(unknown), data + bytes);
+	bytes += qq_get32(&(group.group_category), data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &(group.group_name_utf8), QQ_CHARSET_DEFAULT);
+	bytes += qq_get16(&(unknown), data + bytes);
+	bytes += qq_get8(&(group.auth_type), data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &(group.group_desc_utf8), QQ_CHARSET_DEFAULT);
 	/* end of one qq_group */
-        if(*cursor != (data + len)) {
-                         purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
-					 "group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
-        }
+	if(bytes != len) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
+			"group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
+	}
 
-	pending_id = qq_get_pending_id(qd->joining_groups, group->external_group_id);
+	pending_id = qq_get_pending_id(qd->joining_groups, group.ext_id);
 	if (pending_id != NULL) {
-		qq_set_pending_id(&qd->joining_groups, group->external_group_id, FALSE);
-		if (qq_group_find_by_id(gc, group->internal_group_id, QQ_INTERNAL_ID) == NULL)
+		qq_set_pending_id(&qd->joining_groups, group.ext_id, FALSE);
+		if (qq_room_search_id(gc, group.id) == NULL)
 			qq_group_create_internal_record(gc, 
-					group->internal_group_id, group->external_group_id, group->group_name_utf8);
-		qq_send_cmd_group_join_group(gc, group);
+					group.id, group.ext_id, group.group_name_utf8);
+		qq_send_cmd_group_join_group(gc, &group);
 	} else {
-		_qq_setup_roomlist(qd, group);
+		_qq_setup_roomlist(qd, &group);
 	}
 }

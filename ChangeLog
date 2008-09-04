@@ -1,16 +1,72 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.0 (??/??/2008):
+version 2.5.2 (??/??/????):
+	Finch:
+	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
+	  hierarchies are defined by the '/' character in the group names
+
+version 2.5.1 (08/30/2008):
+	libpurple:
+	* In the Join/Part plugin, add the ability to apply the rules to
+	  buddies.  By default, joins and parts for buddies are still shown.
+	* Support SOCKS proxies specified in GNOME or Windows proxy settings.
+	* Fix some possible crashes in MSNP15.
+	* Enable a default SSL trust relationship for MSN servers.
+	* Avoid disconnecting from XMPP servers on parse errors that are
+	  non-fatal.
+	* Include some perl files that were mistakenly omitted in 2.5.0.
+
+	Pidgin:
+	* Prevent use of custom smilies without "shortcuts."
+	* Fix a crash that could appear with AIM buddy tooltips.
+
+	Artwork:
+	* General refresh of many icons in the interface.
+	* Many cleanups to artwork source are now included in the distribution.
+	* A new "throbber" animation has been added to indicate when accounts
+	  are connecting.
+
+version 2.5.0 (08/18/2008):
 	libpurple:
 	* Ability to create custom smileys (currently only the MSN protocol
 	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
 	  Marcus Lundblad, Jorge Villaseñor and other contributors)
-	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
-	  and restoring compatibility with the web messenger (Yusuke Odate)
 	* Add a configure option, --with-system-ssl-certs to allow packagers
 	  to specify a system-wide SSL CA certificates directory.  When set,
 	  we don't install our SSL CA certs, so it's important that the
 	  libpurple package depend on the CA certificates.
+	* Add SSL Certificates support to the NSS SSL plugin. (Thanks to Lou
+	  Cipher)
+
+	XMPP:
+	* Fix a bug that caused the UI to not refresh and caused the client
+	  to use 99% CPU when an XMPP account lost its connection to the
+	  server.
+	* Possibly fix a bug where some clients could get into a state
+	  where they moved a buddy back and forth between two groups in
+	  an endless loop.
+
+	IRC:
+	* /ctcp command (Vladislav Guberinić)
+	* Allow for auto-detection of incoming UTF-8 formatted text on
+	  accounts which are configured to use some other encoding.
+
+	MSN:
+	* Update MSN support to protocol 15 (Elliott Sales de Andrade, Jorge
+	  Villaseñor, Mike Ruprecht, Carlos Silva, Ma Yuan, Daniel Ljungborg
+	  and others)
+	* Personal messages are now supported. They are treated as status
+	  messages.
+	* Offline IM is now supported.
+	* Aliasing is now supported server-side.
+	* Buddies are now emblemed. Bots and web clients should now be
+	  distinguished.
+	* Update smiley set for non-faces.
+	* Failing to update a buddy icon when the buddy has gone offline no
+	  longer crashes.
+	* Custom smileys received in a chat no longer go to a new window.
+	* Processing is no longer completely frozen after the servers block a
+	  message because it contains (what they consider) inappropriate text.
 
 	Pidgin:
 	* Custom buddy icons can now be added to and removed from buddy list
@@ -18,7 +74,8 @@ version 2.5.0 (??/??/2008):
 	* Resize large incoming custom smileys to a maximum of 96px on either
 	  side.
 	* Offer to add new buddies into the same contact as existing buddies
-          in the same group if the alias given is the same.
+	  in the same group if the alias given is the same.
+	* Minor smiley style update.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy
@@ -30,8 +87,28 @@ version 2.5.0 (??/??/2008):
 	  logs.
 	* Added '/msgcolor' command to change colors of different classes of
 	  messages in a conversation. See '/help msgcolor' for details.
+	* Added tab-completion for commands in conversation windows.
+
+version 2.4.3 (07/01/2008):
+	libpurple:
+	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
+	  and restoring compatibility with the web messenger (Yusuke Odate)
+	* Setting your buddy icon once again works for Yahoo! accounts.
+	* Fixes in the Yahoo! protocol to prevent a double free, crashes on
+	  aliases, and alias functionality
+	* Fix crashes in the bonjour protocol
+	* Always use UTF-8 for Yahoo! (#5973)
+	* Fix a crash when the given jabber id is invalid.
+	* Make the IRC "unknown message" debugging messages UTF-8 safe.
+	* Fix connecting to ICQ
+	* Fix a memleak when handling jabber xforms.
+
+	Pidgin:
+	* Include the send button plugin in the win32 build
+	* Various memory leak fixes
 
 version 2.4.2 (05/17/2008):
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.2
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.

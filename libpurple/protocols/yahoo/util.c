@@ -31,6 +31,14 @@
 #include "yahoo.h"
 
 #include <string.h>
+
+gboolean
+yahoo_account_use_http_proxy(PurpleConnection *conn)
+{
+	PurpleProxyInfo *ppi = purple_proxy_get_setup(conn->account);
+	return (ppi->type == PURPLE_PROXY_HTTP || ppi->type == PURPLE_PROXY_USE_ENVVAR);
+}
+
 /*
  * Returns cookies formatted as a null terminated string for the given connection.
  * Must g_free return value.

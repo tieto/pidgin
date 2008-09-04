@@ -393,8 +393,6 @@ fi
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
 %attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
-%{_datadir}/pixmaps/purple
-
 %if 0%{?_with_dbus:1}
 %{_bindir}/purple-client-example
 %{_bindir}/purple-remote

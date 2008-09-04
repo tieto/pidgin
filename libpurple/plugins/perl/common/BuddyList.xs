@@ -246,24 +246,11 @@ purple_blist_schedule_save()
 void
 purple_blist_request_add_group()
 
-void
-purple_blist_set_ui_ops(ops)
-	Purple::BuddyList::UiOps ops
-
-Purple::BuddyList::UiOps
-purple_blist_get_ui_ops()
-
 Purple::Handle
 purple_blist_get_handle()
 
 Purple::BuddyList::Node
 purple_blist_get_root()
-
-void
-purple_blist_init()
-
-void
-purple_blist_uninit()
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Node  PREFIX = purple_blist_node_
 PROTOTYPES: ENABLE
@@ -362,7 +349,7 @@ CODE:
 	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
 		t_key = hv_iterkey(t_HE, &len);
 		t_SV = *hv_fetch(t_HV, t_key, len, 0);
-		t_value = SvPV(t_SV, PL_na);
+		t_value = SvPVutf8_nolen(t_SV);
 
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}

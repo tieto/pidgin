@@ -211,7 +211,8 @@ static PurpleProxyInfo *
 purple_gnome_proxy_get_info(void)
 {
 	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
-	gchar *tmp;
+	gboolean use_same_proxy = FALSE;
+	gchar *tmp, *err;
 
 	tmp = g_find_program_in_path("gconftool-2");
 	if (tmp == NULL)
@@ -221,8 +222,9 @@ purple_gnome_proxy_get_info(void)
 
 	/* Check whether to use a proxy. */
 	if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode",
-			&tmp, NULL, NULL, NULL))
+			&tmp, &err, NULL, NULL))
 		return purple_global_proxy_get_info();
+	g_free(err);
 
 	if (!strcmp(tmp, "none\n")) {
 		info.type = PURPLE_PROXY_NONE;
@@ -238,9 +240,6 @@ purple_gnome_proxy_get_info(void)
 
 	g_free(tmp);
 
-	/* If we get this far then we know we're using an HTTP proxy */
-	info.type = PURPLE_PROXY_HTTP;
-
 	/* Free the old fields */
 	if (info.host) {
 		g_free(info.host);
@@ -255,56 +254,236 @@ purple_gnome_proxy_get_info(void)
 		info.password = NULL;
 	}
 
-	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host",
-			&info.host, NULL, NULL, NULL))
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_same_proxy",
+			&tmp, &err, NULL, NULL))
 		return purple_global_proxy_get_info();
-	g_strchomp(info.host);
-	if (*info.host == '\0')
-	{
-		purple_debug_info("proxy", "Gnome proxy settings are set to "
-				"'manual' but no proxy server is specified.  Using "
-				"Pidgin's proxy settings instead.\n");
-		g_free(info.host);
-		info.host = NULL;
-		return purple_global_proxy_get_info();
-	}
+	g_free(err);
 
-	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user",
-			&info.username, NULL, NULL, NULL))
-	{
-		g_free(info.host);
-		info.host = NULL;
-		return purple_global_proxy_get_info();
-	}
-	g_strchomp(info.username);
-
-	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password",
-			&info.password, NULL, NULL, NULL))
-	{
-		g_free(info.host);
-		info.host = NULL;
-		g_free(info.username);
-		info.username = NULL;
-		return purple_global_proxy_get_info();
-	}
-	g_strchomp(info.password);
-
-	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port",
-			&tmp, NULL, NULL, NULL))
-	{
-		g_free(info.host);
-		info.host = NULL;
-		g_free(info.username);
-		info.username = NULL;
-		g_free(info.password);
-		info.password = NULL;
-		return purple_global_proxy_get_info();
-	}
-	info.port = atoi(tmp);
+	if (!strcmp(tmp, "true\n"))
+		use_same_proxy = TRUE;
 	g_free(tmp);
+
+	if (!use_same_proxy && !g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_host",
+			&info.host, &err, NULL, NULL))
+		return purple_global_proxy_get_info();
+	g_free(err);
+	g_strchomp(info.host);
+
+	if (!use_same_proxy && *info.host != '\0') {
+		info.type = PURPLE_PROXY_SOCKS5;
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_port",
+				&tmp, &err, NULL, NULL))
+		{
+			g_free(info.host);
+			info.host = NULL;
+			g_free(info.username);
+			info.username = NULL;
+			g_free(info.password);
+			info.password = NULL;
+			return purple_global_proxy_get_info();
+		}
+		g_free(err);
+		info.port = atoi(tmp);
+		g_free(tmp);
+	} else {
+		g_free(info.host);
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host",
+					&info.host, &err, NULL, NULL))
+			return purple_global_proxy_get_info();
+		g_free(err);
+		/* If we get this far then we know we're using an HTTP proxy */
+		info.type = PURPLE_PROXY_HTTP;
+
+		g_strchomp(info.host);
+		if (*info.host == '\0')
+		{
+			purple_debug_info("proxy", "Gnome proxy settings are set to "
+					"'manual' but no suitable proxy server is specified.  Using "
+					"Pidgin's proxy settings instead.\n");
+			g_free(info.host);
+			info.host = NULL;
+			return purple_global_proxy_get_info();
+		}
+
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user",
+					&info.username, &err, NULL, NULL))
+		{
+			g_free(info.host);
+			info.host = NULL;
+			g_free(info.username);
+			info.username = NULL;
+			return purple_global_proxy_get_info();
+		}
+		g_free(err);
+		g_strchomp(info.username);
+
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password",
+					&info.password, &err, NULL, NULL))
+		{
+			g_free(info.host);
+			info.host = NULL;
+			g_free(info.username);
+			info.username = NULL;
+			return purple_global_proxy_get_info();
+		}
+		g_free(err);
+		g_strchomp(info.password);
+
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port",
+					&tmp, &err, NULL, NULL))
+		{
+			g_free(info.host);
+			info.host = NULL;
+			g_free(info.username);
+			info.username = NULL;
+			g_free(info.password);
+			info.password = NULL;
+			return purple_global_proxy_get_info();
+		}
+		g_free(err);
+		info.port = atoi(tmp);
+		g_free(tmp);
+	}
 
 	return &info;
 }
+
+#ifdef _WIN32
+
+typedef BOOL (CALLBACK* LPFNWINHTTPGETIEPROXYCONFIG)(/*IN OUT*/ WINHTTP_CURRENT_USER_IE_PROXY_CONFIG* pProxyConfig);
+
+/* This modifies "host" in-place evilly */
+static void
+_proxy_fill_hostinfo(PurpleProxyInfo *info, char *host, int default_port)
+{
+	int port = default_port;
+	char *d;
+
+	d = g_strrstr(host, ":");
+	if (d)
+		*d = '\0';
+	d++;
+	if (*d)
+		sscanf(d, "%d", &port);
+
+	purple_proxy_info_set_host(info, host);
+	purple_proxy_info_set_port(info, port);
+}
+
+static PurpleProxyInfo *
+purple_win32_proxy_get_info(void)
+{
+	static LPFNWINHTTPGETIEPROXYCONFIG MyWinHttpGetIEProxyConfig = NULL;
+	static gboolean loaded = FALSE;
+	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
+
+	WINHTTP_CURRENT_USER_IE_PROXY_CONFIG ie_proxy_config;
+
+	if (!loaded) {
+		loaded = TRUE;
+		MyWinHttpGetIEProxyConfig = (LPFNWINHTTPGETIEPROXYCONFIG)
+			wpurple_find_and_loadproc("winhttp.dll", "WinHttpGetIEProxyConfigForCurrentUser");
+		if (!MyWinHttpGetIEProxyConfig)
+			purple_debug_info("proxy", "Unable to read Windows Proxy Settings.\n");
+	}
+
+	if (!MyWinHttpGetIEProxyConfig)
+		return NULL;
+
+	ZeroMemory(&ie_proxy_config, sizeof(ie_proxy_config));
+	if (!MyWinHttpGetIEProxyConfig(&ie_proxy_config)) {
+		purple_debug_error("proxy", "Error reading Windows Proxy Settings(%lu).\n", GetLastError());
+		return NULL;
+	}
+
+	/* We can't do much if it is autodetect*/
+	if (ie_proxy_config.fAutoDetect) {
+		purple_debug_error("proxy", "Windows Proxy Settings set to autodetect (not supported).\n");
+
+		/* TODO: For 3.0.0 we'll revisit this (maybe)*/
+
+		return NULL;
+
+	} else if (ie_proxy_config.lpszProxy) {
+		gchar *proxy_list = g_utf16_to_utf8(ie_proxy_config.lpszProxy, -1,
+									 NULL, NULL, NULL);
+
+		/* We can't do anything about the bypass list, as we don't have the url */
+		/* TODO: For 3.0.0 we'll revisit this*/
+
+		/* There are proxy settings for several protocols */
+		if (proxy_list && *proxy_list) {
+			char *specific = NULL, *tmp;
+
+			/* If there is only a global proxy, which  means "HTTP" */
+			if (!strchr(proxy_list, ';') || (specific = g_strstr_len(proxy_list, -1, "http=")) != NULL) {
+
+				if (specific) {
+					specific += strlen("http=");
+					tmp = strchr(specific, ';');
+					if (tmp)
+						*tmp = '\0';
+					/* specific now points the proxy server (and port) */
+				} else
+					specific = proxy_list;
+
+				purple_proxy_info_set_type(&info, PURPLE_PROXY_HTTP);
+				_proxy_fill_hostinfo(&info, specific, 80);
+				/* TODO: is there a way to set the username/password? */
+				purple_proxy_info_set_username(&info, NULL);
+				purple_proxy_info_set_password(&info, NULL);
+
+				purple_debug_info("proxy", "Windows Proxy Settings: HTTP proxy: '%s:%d'.\n",
+								  purple_proxy_info_get_host(&info),
+								  purple_proxy_info_get_port(&info));
+
+			} else if ((specific = g_strstr_len(proxy_list, -1, "socks=")) != NULL) {
+
+				specific += strlen("socks=");
+				tmp = strchr(specific, ';');
+				if (tmp)
+					*tmp = '\0';
+				/* specific now points the proxy server (and port) */
+
+				purple_proxy_info_set_type(&info, PURPLE_PROXY_SOCKS5);
+				_proxy_fill_hostinfo(&info, specific, 1080);
+				/* TODO: is there a way to set the username/password? */
+				purple_proxy_info_set_username(&info, NULL);
+				purple_proxy_info_set_password(&info, NULL);
+
+				purple_debug_info("proxy", "Windows Proxy Settings: SOCKS5 proxy: '%s:%d'.\n",
+								  purple_proxy_info_get_host(&info),
+								  purple_proxy_info_get_port(&info));
+
+			} else {
+
+				purple_debug_info("proxy", "Windows Proxy Settings: No supported proxy specified.\n");
+
+				purple_proxy_info_set_type(&info, PURPLE_PROXY_NONE);
+
+			}
+		}
+
+		/* TODO: Fix API to be able look at proxy bypass settings */
+
+		g_free(proxy_list);
+	} else {
+		purple_debug_info("proxy", "No Windows proxy set.\n");
+		purple_proxy_info_set_type(&info, PURPLE_PROXY_NONE);
+	}
+
+	if (ie_proxy_config.lpszAutoConfigUrl)
+		GlobalFree(ie_proxy_config.lpszAutoConfigUrl);
+	if (ie_proxy_config.lpszProxy)
+		GlobalFree(ie_proxy_config.lpszProxy);
+	if (ie_proxy_config.lpszProxyBypass)
+		GlobalFree(ie_proxy_config.lpszProxyBypass);
+
+	return &info;
+}
+#endif
+
+
 /**************************************************************************
  * Proxy API
  **************************************************************************/
@@ -598,8 +777,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 	char *p;
 	gsize max_read;
 
-	if (connect_data->read_buffer == NULL)
-	{
+	if (connect_data->read_buffer == NULL) {
 		connect_data->read_buf_len = 8192;
 		connect_data->read_buffer = g_malloc(connect_data->read_buf_len);
 		connect_data->read_len = 0;
@@ -610,15 +788,13 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 	len = read(connect_data->fd, p, max_read);
 
-	if (len == 0)
-	{
+	if (len == 0) {
 		purple_proxy_connect_data_disconnect(connect_data,
 				_("Server closed the connection."));
 		return;
 	}
 
-	if (len < 0)
-	{
+	if (len < 0) {
 		if (errno == EAGAIN)
 			/* No worries */
 			return;
@@ -643,8 +819,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 
 	error = strncmp((const char *)connect_data->read_buffer, "HTTP/", 5) != 0;
-	if (!error)
-	{
+	if (!error) {
 		int major;
 		p = (char *)connect_data->read_buffer + 5;
 		major = strtol(p, &p, 10);
@@ -664,8 +839,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 	/* Read the contents */
 	p = g_strrstr((const gchar *)connect_data->read_buffer, "Content-Length: ");
-	if (p != NULL)
-	{
+	if (p != NULL) {
 		gchar *tmp;
 		int len = 0;
 		char tmpc;
@@ -688,142 +862,123 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		}
 	}
 
-	if (error)
-	{
+	if (error) {
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to parse response from HTTP proxy: %s\n"),
 				connect_data->read_buffer);
 		return;
 	}
-	else if (status != 200)
-	{
+	else if (status != 200) {
 		purple_debug_error("proxy",
 				"Proxy server replied with:\n%s\n",
 				connect_data->read_buffer);
 
-		if (status == 407 /* Proxy Auth */)
-		{
-			gchar *ntlm;
-			char hostname[256];
-			int ret;
+		if (status == 407 /* Proxy Auth */) {
+			const char *header;
+			gchar *request;
 
-			ret = gethostname(hostname, sizeof(hostname));
-			hostname[sizeof(hostname) - 1] = '\0';
-			if (ret < 0 || hostname[0] == '\0') {
-				purple_debug_warning("proxy", "gethostname() failed -- is your hostname set?");
-				strcpy(hostname, "localhost");
-			}
-
-			ntlm = g_strrstr((const gchar *)connect_data->read_buffer,
-					"Proxy-Authenticate: NTLM ");
-			if (ntlm != NULL)
-			{
-				/* Check for Type-2 */
-				gchar *tmp = ntlm;
-				guint8 *nonce;
-				gchar *domain = (gchar*)purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username = NULL;
-				gchar *request;
+			header = g_strrstr((const gchar *)connect_data->read_buffer,
+					"Proxy-Authenticate: NTLM");
+			if (header != NULL) {
+				const char *header_end = header + strlen("Proxy-Authenticate: NTLM");
+				const char *domain = purple_proxy_info_get_username(connect_data->gpi);
+				char *username = NULL, hostname[256];
 				gchar *response;
+				int ret;
+
+				ret = gethostname(hostname, sizeof(hostname));
+				hostname[sizeof(hostname) - 1] = '\0';
+				if (ret < 0 || hostname[0] == '\0') {
+					purple_debug_warning("proxy", "gethostname() failed -- is your hostname set?");
+					strcpy(hostname, "localhost");
+				}
 
 				if (domain != NULL)
-					username = strchr(domain, '\\');
-				if (username == NULL)
-				{
+					username = (char*) strchr(domain, '\\');
+				if (username == NULL) {
 					purple_proxy_connect_data_disconnect_formatted(connect_data,
 							_("HTTP proxy connection error %d"), status);
 					return;
 				}
 				*username = '\0';
-				username++;
-				ntlm += strlen("Proxy-Authenticate: NTLM ");
-				while(*tmp != '\r' && *tmp != '\0') tmp++;
-				*tmp = '\0';
-				nonce = purple_ntlm_parse_type2(ntlm, NULL);
-				response = purple_ntlm_gen_type3(username,
-					(gchar*) purple_proxy_info_get_password(connect_data->gpi),
-					hostname,
-					domain, nonce, NULL);
-				username--;
+
+				/* Is there a message? */
+				if (*header_end == ' ') {
+					/* Check for Type-2 */
+					char *tmp = (char*) header;
+					guint8 *nonce;
+
+					header_end++;
+					username++;
+					while(*tmp != '\r' && *tmp != '\0') tmp++;
+					*tmp = '\0';
+					nonce = purple_ntlm_parse_type2(header_end, NULL);
+					response = purple_ntlm_gen_type3(username,
+						(gchar*) purple_proxy_info_get_password(connect_data->gpi),
+						hostname,
+						domain, nonce, NULL);
+					username--;
+				} else /* Empty message */
+					response = purple_ntlm_gen_type1(hostname, domain);
+
 				*username = '\\';
+
 				request = g_strdup_printf(
 					"CONNECT %s:%d HTTP/1.1\r\n"
 					"Host: %s:%d\r\n"
 					"Proxy-Authorization: NTLM %s\r\n"
 					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					connect_data->host, connect_data->port, connect_data->host,
-					connect_data->port, response);
+					connect_data->host, connect_data->port,
+					connect_data->host, connect_data->port,
+					response);
+
 				g_free(response);
 
-				g_free(connect_data->read_buffer);
-				connect_data->read_buffer = NULL;
+			} else if((header = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: Basic"))) {
+				gchar *t1, *t2;
 
-				connect_data->write_buffer = (guchar *)request;
-				connect_data->write_buf_len = strlen(request);
-				connect_data->written_len = 0;
-				connect_data->read_cb = http_canread;
+				t1 = g_strdup_printf("%s:%s",
+					purple_proxy_info_get_username(connect_data->gpi),
+					purple_proxy_info_get_password(connect_data->gpi) ?
+					purple_proxy_info_get_password(connect_data->gpi) : "");
+				t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
+				g_free(t1);
 
-				purple_input_remove(connect_data->inpa);
-				connect_data->inpa = purple_input_add(connect_data->fd,
-					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
-				proxy_do_write(connect_data, connect_data->fd, cond);
-				return;
-			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
-				gchar *ntlm_type1;
-				gchar request[2048];
-				gchar *domain = (gchar*) purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username = NULL;
-				int request_len;
+				request = g_strdup_printf(
+					"CONNECT %s:%d HTTP/1.1\r\n"
+					"Host: %s:%d\r\n"
+					"Proxy-Authorization: Basic %s\r\n",
+					connect_data->host, connect_data->port,
+					connect_data->host, connect_data->port,
+					t2);
 
-				if (domain != NULL)
-					username = strchr(domain, '\\');
-				if (username == NULL)
-				{
-					purple_proxy_connect_data_disconnect_formatted(connect_data,
-							_("HTTP proxy connection error %d"), status);
-					return;
-				}
-				*username = '\0';
+				g_free(t2);
 
-				request_len = g_snprintf(request, sizeof(request),
-						"CONNECT %s:%d HTTP/1.1\r\n"
-						"Host: %s:%d\r\n",
-						connect_data->host, connect_data->port,
-						connect_data->host, connect_data->port);
-
-				g_return_if_fail(request_len < sizeof(request));
-				ntlm_type1 = purple_ntlm_gen_type1(hostname, domain);
-				request_len += g_snprintf(request + request_len,
-					sizeof(request) - request_len,
-					"Proxy-Authorization: NTLM %s\r\n"
-					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					ntlm_type1);
-				g_free(ntlm_type1);
-				*username = '\\';
-
-				purple_input_remove(connect_data->inpa);
-				g_free(connect_data->read_buffer);
-				connect_data->read_buffer = NULL;
-
-				connect_data->write_buffer = g_memdup(request, request_len);
-				connect_data->write_buf_len = request_len;
-				connect_data->written_len = 0;
-
-				connect_data->read_cb = http_canread;
-
-				connect_data->inpa = purple_input_add(connect_data->fd,
-					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
-
-				proxy_do_write(connect_data, connect_data->fd, cond);
-				return;
 			} else {
 				purple_proxy_connect_data_disconnect_formatted(connect_data,
 						_("HTTP proxy connection error %d"), status);
 				return;
 			}
+
+			purple_input_remove(connect_data->inpa);
+			g_free(connect_data->read_buffer);
+			connect_data->read_buffer = NULL;
+
+			connect_data->write_buffer = (guchar *)request;
+			connect_data->write_buf_len = strlen(request);
+			connect_data->written_len = 0;
+
+			connect_data->read_cb = http_canread;
+
+			connect_data->inpa = purple_input_add(connect_data->fd,
+				PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+
+			proxy_do_write(connect_data, connect_data->fd, cond);
+
+			return;
 		}
-		if (status == 403)
-		{
+
+		if (status == 403) {
 			/* Forbidden */
 			purple_proxy_connect_data_disconnect_formatted(connect_data,
 					_("Access denied: HTTP proxy server forbids port %d tunneling."),
@@ -1836,9 +1991,6 @@ purple_proxy_get_setup(PurpleAccount *account)
 	}
 
 	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR) {
-#ifdef _WIN32
-		wpurple_check_for_proxy_changes();
-#endif
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
 			(tmp = g_getenv("HTTPPROXY")) != NULL) {
@@ -1880,6 +2032,11 @@ purple_proxy_get_setup(PurpleAccount *account)
 
 			}
 		} else {
+#ifdef _WIN32
+			PurpleProxyInfo *wgpi;
+			if ((wgpi = purple_win32_proxy_get_info()) != NULL)
+				return wgpi;
+#endif
 			/* no proxy environment variable found, don't use a proxy */
 			purple_debug_info("proxy", "No environment settings found, not using a proxy\n");
 			gpi = tmp_none_proxy_info;

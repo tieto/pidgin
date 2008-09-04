@@ -67,6 +67,7 @@
 #include <gdk/gdk.h>
 
 #define HEADLINE_CLOSE_SIZE 12
+#define STEPS 50
 
 typedef struct
 {
@@ -130,6 +131,7 @@ static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
 static GdkVisibilityState gtk_blist_visibility = GDK_VISIBILITY_UNOBSCURED;
+static gboolean gtk_blist_focused = FALSE;
 static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
@@ -166,11 +168,18 @@ typedef enum {
 	PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE    =  1 << 0,  /* Whether there's pending message in a conversation */
 } PidginBlistNodeFlags;
 
+typedef enum {
+	RECENT_STATUS_NONE = 0,
+	RECENT_STATUS_SIGN_ON,
+	RECENT_STATUS_SIGN_OFF
+} RecentStatus;
+
 typedef struct _pidgin_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
-	gboolean recent_signonoff;
+	RecentStatus recent_signonoff;
 	gint recent_signonoff_timer;
+	gint recent_signonoff_steps;
 	struct {
 		PurpleConversation *conv;
 		time_t last_message;          /* timestamp for last displayed message */
@@ -3274,7 +3283,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 3, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
+	{ N_("/Tools/Mute _Sounds"), NULL, pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
@@ -3737,11 +3746,11 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 		p = purple_buddy_get_presence(buddy);
 		trans = purple_presence_is_idle(p);
 
-		if (PURPLE_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
+		/*if (PURPLE_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
 			icon = PIDGIN_STOCK_STATUS_LOGIN;
 		else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
 			icon = PIDGIN_STOCK_STATUS_LOGOUT;
-		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
+		else */if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
 			if (trans)
 				icon = PIDGIN_STOCK_STATUS_BUSY_I;
 			else
@@ -5166,9 +5175,14 @@ headline_style_set (GtkWidget *widget,
 /******************************************/
 
 static int
-blist_focus_cb(GtkWidget *widget, gpointer data, PidginBuddyList *gtkblist)
+blist_focus_cb(GtkWidget *widget, GdkEventFocus *event, PidginBuddyList *gtkblist)
 {
-	pidgin_set_urgent(GTK_WINDOW(gtkblist->window), FALSE);
+	if(event->in) {
+		gtk_blist_focused = TRUE;
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), FALSE);
+	} else {
+		gtk_blist_focused = FALSE;
+	}
 	return 0;
 }
 
@@ -5254,6 +5268,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	gtkblist->window = pidgin_create_window(_("Buddy List"), 0, "buddy_list", TRUE);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-in-event",
+			 G_CALLBACK(blist_focus_cb), gtkblist);
+	g_signal_connect(G_OBJECT(gtkblist->window), "focus-out-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
 
@@ -6030,9 +6046,11 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 	GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
 	char *mark;
 	char *idle = NULL;
+	struct _pidgin_blist_node *gtknode = ((PurpleBlistNode*)buddy)->ui_data;
 	gboolean expanded = ((struct _pidgin_blist_node *)(node->parent->ui_data))->contact_expanded;
 	gboolean selected = (gtkblist->selected_node == node);
 	gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
+	int size;
 	presence = purple_buddy_get_presence(buddy);
 
 	if (editing_blist)
@@ -6040,6 +6058,14 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 
 	status = pidgin_blist_get_status_icon((PurpleBlistNode*)buddy,
 						biglist ? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
+
+	size = biglist ? 16 : 11;
+	if (gtknode->recent_signonoff == RECENT_STATUS_SIGN_ON) {
+		size = size / 2 + (size / 2 + (STEPS - gtknode->recent_signonoff_steps)) % (size / 2);
+	} else if (gtknode->recent_signonoff == RECENT_STATUS_SIGN_OFF) {
+		size = size - (STEPS - gtknode->recent_signonoff_steps) % (size / 2);
+	}
+	status = gdk_pixbuf_scale_simple(status, size, size, GDK_INTERP_BILINEAR);
 
 	/* Speed it up if we don't want buddy icons. */
 	if(biglist)
@@ -6172,7 +6198,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 					   BUDDY_ICON_COLUMN, NULL,
 					   CONTACT_EXPANDER_COLUMN, TRUE,
 					   CONTACT_EXPANDER_VISIBLE_COLUMN, TRUE,
-				  	   GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,
+					   GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,
 					-1);
 			g_free(mark);
 			if(status)
@@ -6475,7 +6501,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		purple_account_add_buddy(data->account, b);
 
 		/* Offer to merge people with the same alias. */
-		if (whoalias != NULL)
+		if (whoalias != NULL && g != NULL)
 			gtk_blist_auto_personize((PurpleBlistNode *)g, whoalias);
 
 		/*
@@ -6988,8 +7014,15 @@ pidgin_blist_toggle_visibility()
 {
 	if (gtkblist && gtkblist->window) {
 		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
+			/* make the buddy list visible if it is iconified or if it is
+			 * obscured and not currently focused (the focus part ensures
+			 * that we do something reasonable if the buddy list is obscured
+			 * by a window set to always be on top), otherwise hide the
+			 * buddy list
+			 */
 			purple_blist_set_visible(PIDGIN_WINDOW_ICONIFIED(gtkblist->window) ||
-					gtk_blist_visibility != GDK_VISIBILITY_UNOBSCURED);
+					((gtk_blist_visibility != GDK_VISIBILITY_UNOBSCURED) &&
+					!gtk_blist_focused));
 		} else {
 			purple_blist_set_visible(TRUE);
 		}
@@ -7117,13 +7150,17 @@ pidgin_blist_get_handle() {
 static gboolean buddy_signonoff_timeout_cb(PurpleBuddy *buddy)
 {
 	struct _pidgin_blist_node *gtknode = ((PurpleBlistNode*)buddy)->ui_data;
+	gboolean cont = TRUE;
 
-	gtknode->recent_signonoff = FALSE;
-	gtknode->recent_signonoff_timer = 0;
+	if (--gtknode->recent_signonoff_steps == 0) {
+		gtknode->recent_signonoff = RECENT_STATUS_NONE;
+		gtknode->recent_signonoff_timer = 0;
+		cont = FALSE;
+	}
 
 	pidgin_blist_update(NULL, (PurpleBlistNode*)buddy);
 
-	return FALSE;
+	return cont;
 }
 
 static void buddy_signonoff_cb(PurpleBuddy *buddy)
@@ -7136,11 +7173,12 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 
 	gtknode = ((PurpleBlistNode*)buddy)->ui_data;
 
-	gtknode->recent_signonoff = TRUE;
+	gtknode->recent_signonoff = PURPLE_BUDDY_IS_ONLINE(buddy) ? RECENT_STATUS_SIGN_ON : RECENT_STATUS_SIGN_OFF;
 
 	if(gtknode->recent_signonoff_timer > 0)
 		purple_timeout_remove(gtknode->recent_signonoff_timer);
-	gtknode->recent_signonoff_timer = purple_timeout_add(10000,
+	gtknode->recent_signonoff_steps = STEPS;
+	gtknode->recent_signonoff_timer = purple_timeout_add(100,
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }
 
@@ -7617,7 +7655,10 @@ pidgin_blist_update_accounts_menu(void)
 			gtk_widget_destroy(menuitem);
 	}
 
-	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
+	if (!(accounts = purple_accounts_get_all()))
+		return;
+
+	for (; accounts; accounts = accounts->next) {
 		char *buf = NULL;
 		GtkWidget *image = NULL;
 		PurpleAccount *account = NULL;

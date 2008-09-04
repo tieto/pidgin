@@ -32,17 +32,18 @@
 #include "group_info.h"
 #include "group_search.h"
 #include "utils.h"
-
+#include "qq_network.h"
+#include "header_info.h"
 #include "group.h"
 
 static void _qq_group_search_callback(PurpleConnection *gc, const gchar *input)
 {
-	guint32 external_group_id;
+	guint32 ext_id;
 
 	g_return_if_fail(input != NULL);
-	external_group_id = qq_string_to_dec_value(input);
+	ext_id = qq_string_to_dec_value(input);
 	/* 0x00000000 means search for demo group */
-	qq_send_cmd_group_search_group(gc, external_group_id);
+	qq_send_cmd_group_search_group(gc, ext_id);
 }
 
 static void _qq_group_search_cancel_callback(PurpleConnection *gc, const gchar *input)
@@ -104,7 +105,7 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 	fields = g_list_append(fields, f);
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", QQ_GROUP_KEY_INTERNAL_ID, TRUE);
 	fields = g_list_append(fields, f);
-	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", QQ_GROUP_KEY_GROUP_TYPE, TRUE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", QQ_GROUP_KEY_TYPE, TRUE);
 	fields = g_list_append(fields, f);
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, _("Auth"), QQ_GROUP_KEY_AUTH_TYPE, TRUE);
 	fields = g_list_append(fields, f);
@@ -145,12 +146,12 @@ void qq_roomlist_cancel(PurpleRoomlist *list)
 /* this should be called upon signin, even when we did not open group chat window */
 void qq_group_init(PurpleConnection *gc)
 {
-	gint i;
 	PurpleAccount *account;
 	PurpleChat *chat;
 	PurpleGroup *purple_group;
 	PurpleBlistNode *node;
 	qq_group *group;
+	gint count;
 
 	account = purple_connection_get_account(gc);
 
@@ -160,18 +161,25 @@ void qq_group_init(PurpleConnection *gc)
 		return;
 	}
 
-	i = 0;
-	for (node = ((PurpleBlistNode *) purple_group)->child; node != NULL; node = node->next)
-		if (PURPLE_BLIST_NODE_IS_CHAT(node)) {	/* got one */
-			chat = (PurpleChat *) node;
-			if (account != chat->account)
-				continue;	/* very important here ! */
-			group = qq_group_from_hashtable(gc, chat->components);
-			if (group != NULL) {
-				i++;
-				qq_send_cmd_group_get_group_info(gc, group);	/* get group info and members */
-			}
+	count = 0;
+	for (node = ((PurpleBlistNode *) purple_group)->child; node != NULL; node = node->next) {
+		if ( !PURPLE_BLIST_NODE_IS_CHAT(node)) {
+			continue;
 		}
+		/* got one */
+		chat = (PurpleChat *) node;
+		if (account != chat->account)	/* not qq account*/
+			continue;
+		group = qq_group_from_hashtable(gc, chat->components);
+		if (group == NULL)
+			continue;
 
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Load %d QQ Qun configurations\n", i);
+		if (group->id <= 0)
+			continue;
+
+		count++;
+		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_INFO, group->id);
+	}
+
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Load %d QQ Qun configurations\n", count);
 }

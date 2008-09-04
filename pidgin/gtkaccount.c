@@ -1186,7 +1186,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *tmp;
 	gboolean new_acct = FALSE, icon_change = FALSE;
 	PurpleAccount *account;
-	PurplePluginProtocolInfo *prpl_info;
 
 	/* Build the username string. */
 	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
@@ -1254,8 +1253,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		purple_account_set_alias(account, NULL);
 
 	/* Buddy Icon */
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
-	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL)
+	if (dialog->prpl_info != NULL && dialog->prpl_info->icon_spec.format != NULL)
 	{
 		const char *filename;
 
@@ -2161,7 +2159,7 @@ create_accounts_list(AccountsWindow *dialog)
 						 "press <b>Add</b> again to configure them all.\n\n"
 
 						 "You can come back to this window to add, edit, or remove "
-						 "accounts from <b>Accounts->Add/Edit</b> in the Buddy "
+						 "accounts from <b>Accounts->Manage Accounts</b> in the Buddy "
 						 "List window"), PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
 	pretty = pidgin_make_pretty_arrows(tmp);
 	g_free(tmp);

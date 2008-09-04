@@ -171,19 +171,13 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 		html_body_node = xmlnode_get_child(html_node, "body");
 		if (html_body_node != NULL) {
 			xmlnode *html_body_font_node;
-			const char *ichat_balloon_color = NULL;
-			const char *ichat_text_color = NULL;
-			const char *font_face = NULL;
-			const char *font_size = NULL;
-			const char *font_color = NULL;
 
-			ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
-			ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
 			html_body_font_node = xmlnode_get_child(html_body_node, "font");
-
 			/* Types of messages sent by iChat */
 			if (html_body_font_node != NULL) {
 				gchar *html_body;
+				const char *font_face, *font_size, *font_color,
+					*ichat_balloon_color, *ichat_text_color;
 
 				font_face = xmlnode_get_attrib(html_body_font_node, "face");
 				/* The absolute iChat font sizes should be converted to 1..7 range */
@@ -191,22 +185,29 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 				if (font_size != NULL)
 					font_size = _font_size_ichat_to_purple(atoi(font_size));
 				font_color = xmlnode_get_attrib(html_body_font_node, "color");
+				ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
+				ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
+
 				html_body = get_xmlnode_contents(html_body_font_node);
 
 				if (html_body == NULL)
-					/* This is the kind of formated messages that Purple creates */
+					/* This is the kind of formatted messages that Purple creates */
 					html_body = xmlnode_to_str(html_body_font_node, NULL);
 
 				if (html_body != NULL) {
-					/* Use some sane defaults */
-					if (font_face == NULL) font_face = "Helvetica";
-					if (font_size == NULL) font_size = "3";
-					if (ichat_text_color == NULL) ichat_text_color = "#000000";
-					if (ichat_balloon_color == NULL) ichat_balloon_color = "#FFFFFF";
+					GString *str = g_string_new("<font");
 
-					body = g_strdup_printf("<font face='%s' size='%s' color='%s' back='%s'>%s</font>",
-								   font_face, font_size, ichat_text_color, ichat_balloon_color,
-								   html_body);
+					if (font_face)
+						g_string_append_printf(str, " face='%s'", font_face);
+					if (font_size)
+						g_string_append_printf(str, " size='%s'", font_size);
+					if (ichat_text_color)
+						g_string_append_printf(str, " color='%s'", ichat_text_color);
+					if (ichat_balloon_color)
+						g_string_append_printf(str, " back='%s'", ichat_balloon_color);
+					g_string_append_printf(str, ">%s</font>", html_body);
+
+					body = g_string_free(str, FALSE);
 
 					g_free(html_body);
 				}
@@ -637,6 +638,9 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	flags = fcntl(client_socket, F_GETFL);
 	fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(client_socket, F_SETFD, FD_CLOEXEC);
+#endif
 
 	/* Look for the buddy that has opened the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
@@ -672,7 +676,6 @@ gint
 bonjour_jabber_start(BonjourJabber *jdata)
 {
 	struct sockaddr_in my_addr;
-	int yes = 1;
 	int i;
 	gboolean bind_successful;
 
@@ -683,16 +686,6 @@ bonjour_jabber_start(BonjourJabber *jdata)
 		purple_connection_error_reason (jdata->account->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Cannot open socket"));
-		return -1;
-	}
-
-	/* Make the socket reusable */
-	if (setsockopt(jdata->socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != 0)
-	{
-		purple_debug_error("bonjour", "Error setting socket options: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Error setting socket options"));
 		return -1;
 	}
 
@@ -709,6 +702,8 @@ bonjour_jabber_start(BonjourJabber *jdata)
 			bind_successful = TRUE;
 			break;
 		}
+
+		purple_debug_info("bonjour", "Unable to bind to port %u.(%s)\n", jdata->port, g_strerror(errno));
 		jdata->port++;
 	}
 
