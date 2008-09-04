@@ -503,7 +503,7 @@ edit_account(PurpleAccount *account)
 	list = purple_plugins_get_protocols();
 	if (list == NULL) {
 		purple_notify_error(NULL, _("Error"),
-				_("There's no protocol plugins installed."),
+				_("There are no protocol plugins installed."),
 				_("(You probably forgot to 'make install'.)"));
 		return;
 	}
