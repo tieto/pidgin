@@ -7183,6 +7183,14 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 			pidgin_conv_update_buddy_icon(conv);
 		}
 	}
+
+	/* Make the tabs show/hide correctly */
+	for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
+		PidginWindow *win = l->data;
+		if (pidgin_conv_window_get_gtkconv_count(win) == 1)
+			gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
+						   GPOINTER_TO_INT(value) == 0);
+	}
 }
 
 static void
