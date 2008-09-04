@@ -1240,6 +1240,7 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_SUBST(DBUS_LIBS)
 		enable_dbus=yes
 	], [
+	enable_dbus=no
 	if test "x$force_deps" = "xyes" ; then
 		AC_MSG_ERROR([
 D-Bus development headers not found.
@@ -1256,6 +1257,7 @@ if test "x$enable_dbus" = "xyes" ; then
 			AC_SUBST(NETWORKMANAGER_LIBS)
 			AC_DEFINE(HAVE_NETWORKMANAGER, 1, [Define if we have NetworkManager.])
 		], [
+			enable_nm=no
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
 NetworkManager development headers not found.
@@ -1263,6 +1265,8 @@ Use --disable-nm if you do not need NetworkManager support.
 ])
 			fi])
 	fi
+else
+	enable_nm=no
 fi
 
 dnl #######################################################################
