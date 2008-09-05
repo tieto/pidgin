@@ -822,6 +822,26 @@ jabber_jingle_session_accept(JingleSession *session)
 			purple_media_candidates_prepared(
 				jabber_jingle_session_get_media(session),
 				jabber_jingle_session_get_remote_jid(session))) {
+		GList *contents = jabber_jingle_session_get_contents(session);
+		for (; contents; contents = contents->next) {
+			JingleSessionContent *jsc = contents->data;
+			GList *codec_intersection =
+					purple_media_get_negotiated_codecs(session->media,
+					jabber_jingle_session_content_get_name(jsc));
+			purple_debug_info("jingle", "codec intersection: %i\n",
+					g_list_length(codec_intersection));
+
+			if (codec_intersection != NULL) {
+				gchar *codec_str = fs_codec_to_string(codec_intersection->data);
+				purple_debug_info("jingle", "Setting send codec: %s\n", codec_str);
+				g_free(codec_str);
+				purple_media_set_send_codec(
+						jabber_jingle_session_get_media(session),
+						jabber_jingle_session_content_get_name(jsc),
+						codec_intersection->data);
+			}
+		}
+
 		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
 		
 		purple_debug_info("jingle", "Sent session accept.\n");
@@ -852,10 +872,6 @@ jabber_jingle_session_send_session_accept(JingleSession *session)
 			jabber_iq_send(result);
 		}
 		fs_candidate_list_destroy(candidates);
-
-		purple_debug_info("jingle", "codec intersection: %i\n",
-				g_list_length(purple_media_get_negotiated_codecs(media,
-				jabber_jingle_session_content_get_name(jsc))));
 	}
 
 	jabber_jingle_session_set_state(session, ACCEPTED);
@@ -1367,8 +1383,6 @@ jabber_jingle_session_handle_session_initiate(JingleSession *session, xmlnode *j
 
 	for (content = xmlnode_get_child(jingle, "content"); content;
 			content = xmlnode_get_next_twin(content)) {
-		GList *codec_intersection = NULL;
-
 		/* init media */
 		if (!content) {
 			purple_debug_error("jingle", "jingle tag must contain content tag\n");
@@ -1388,18 +1402,6 @@ jabber_jingle_session_handle_session_initiate(JingleSession *session, xmlnode *j
 		purple_media_set_remote_codecs(session->media,
 					       xmlnode_get_attrib(content, "name"),
 					       initiator, codecs);
-
-		codec_intersection = purple_media_get_negotiated_codecs(session->media,
-				xmlnode_get_attrib(content, "name"));
-		purple_debug_info("jingle", "codec intersection: %i\n",
-				g_list_length(codec_intersection));
-
-		if (g_list_length(codec_intersection) > 0) {
-			purple_media_set_send_codec(
-					jabber_jingle_session_get_media(session),
-					xmlnode_get_attrib(content, "name"),
-					codec_intersection->data);
-		}
 	}
 	jabber_iq_send(jabber_jingle_session_create_ack(session, jingle));
 	jabber_iq_send(jabber_jingle_session_create_session_info(session, "ringing"));
