@@ -472,6 +472,16 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
 gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *codec);
 
 /**
+ * Gets whether a session's codecs are ready to be used.
+ *
+ * @param media The media object to find the session in.
+ * @param sess_id The session id of the session to check.
+ *
+ * @return @c TRUE The codecs are ready, or @c FALSE otherwise.
+ */
+gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
+
+/**
  * Mutes or unmutes all the audio local audio sources.
  *
  * @param media The media object to mute or unmute

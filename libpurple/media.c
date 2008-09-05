@@ -106,6 +106,7 @@ enum {
 	NEW_CANDIDATE,
 	CANDIDATES_PREPARED,
 	CANDIDATE_PAIR,
+	CODECS_READY,
 	LAST_SIGNAL
 };
 static guint purple_media_signals[LAST_SIGNAL] = {0};
@@ -215,6 +216,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__BOXED_BOXED,
 					 G_TYPE_NONE, 2, FS_TYPE_CANDIDATE, FS_TYPE_CANDIDATE);
+	purple_media_signals[CODECS_READY] = g_signal_new("codecs-ready", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__STRING,
+					 G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	g_type_class_add_private(klass, sizeof(PurpleMediaPrivate));
 }
@@ -663,6 +668,18 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 				
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-codecs-changed")) {
+				GList *sessions = g_hash_table_get_values(PURPLE_MEDIA(media)->priv->sessions);
+				FsSession *fssession = g_value_get_object(gst_structure_get_value(msg->structure, "session"));
+				for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+					PurpleMediaSession *session = sessions->data;
+					if (session->session == fssession) {
+						g_signal_emit(session->media,
+								purple_media_signals[CODECS_READY],
+								0, &session->id);
+						g_list_free(sessions);
+						break;
+					}
+				}
 			}
 			break;
 		}
@@ -880,7 +897,7 @@ purple_media_video_init_src(GstElement **sendbin)
 	src = gst_element_factory_make(video_plugin, "purplevideosource");
 	gst_bin_add(GST_BIN(*sendbin), src);
 
-	tee = gst_element_factory_make("tee", NULL);
+	tee = gst_element_factory_make("tee", "purplevideosrctee");
 	gst_bin_add(GST_BIN(*sendbin), tee);
 	gst_element_link(src, tee);
 
@@ -893,13 +910,14 @@ purple_media_video_init_src(GstElement **sendbin)
 		g_object_set (G_OBJECT(src), "is-live", TRUE, NULL);
 	}
 
-	pad = gst_element_get_pad(queue, "src");
+	pad = gst_element_get_static_pad(queue, "src");
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
+	gst_object_unref(pad);
 	gst_element_add_pad(*sendbin, ghost);
 
-	queue = gst_element_factory_make("queue", NULL);
+	queue = gst_element_factory_make("queue", "purplelocalvideoqueue");
 	gst_bin_add(GST_BIN(*sendbin), queue);
-	gst_element_link(tee, queue);
+	/* The queue is linked later, when the local video is ready to be shown */
 
 	local_sink = gst_element_factory_make("autovideosink", "purplelocalvideosink");
 	gst_bin_add(GST_BIN(*sendbin), local_sink);
@@ -1314,6 +1332,15 @@ purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *c
 		return FALSE;
 	}
 	return TRUE;
+}
+
+gboolean
+purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
+{
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	gboolean ret;
+	g_object_get(session->session, "codecs-ready", &ret, NULL);
+	return ret;
 }
 
 void purple_media_mute(PurpleMedia *media, gboolean active)

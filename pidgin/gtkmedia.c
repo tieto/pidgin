@@ -314,18 +314,18 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 			if (!audiosendbin && (type & PURPLE_MEDIA_SEND_AUDIO)) {
 				purple_media_audio_init_src(&audiosendbin, &audiosendlevel);
 				purple_media_set_src(media, sessions->data, audiosendbin);
-				gst_element_set_state(audiosendbin, GST_STATE_READY);
+				gst_element_set_state(audiosendbin, GST_STATE_PLAYING);
 			}
 			if (!audiorecvbin && (type & PURPLE_MEDIA_RECV_AUDIO)) {
 				purple_media_audio_init_recv(&audiorecvbin, &audiorecvlevel);
 				purple_media_set_sink(media, sessions->data, audiorecvbin);
 				gst_element_set_state(audiorecvbin, GST_STATE_READY);
 			}
-		} else if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_VIDEO) {
+		} else if (type & PURPLE_MEDIA_VIDEO) {
 			if (!videosendbin && (type & PURPLE_MEDIA_SEND_VIDEO)) {
 				purple_media_video_init_src(&videosendbin);
 				purple_media_set_src(media, sessions->data, videosendbin);
-				gst_element_set_state(videosendbin, GST_STATE_READY);
+				gst_element_set_state(videosendbin, GST_STATE_PLAYING);
 			}
 			if (!videorecvbin && (type & PURPLE_MEDIA_RECV_VIDEO)) {
 				purple_media_video_init_recv(&videorecvbin);
@@ -401,6 +401,7 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	if (videosendbin) {
 		GtkWidget *aspect;
 		GtkWidget *local_video;
+		GstElement *tee, *queue;
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
@@ -414,7 +415,11 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		gtkmedia->priv->local_video = local_video;
 
-		gst_element_set_state(videosendbin, GST_STATE_PLAYING);
+		tee = gst_bin_get_by_name(GST_BIN(videosendbin), "purplevideosrctee");
+		queue = gst_bin_get_by_name(GST_BIN(videosendbin), "purplelocalvideoqueue");
+		gst_element_link(tee, queue);
+		gst_object_unref(tee);
+		gst_object_unref(queue);
 	}
 
 	if (audiorecvbin) {
@@ -435,7 +440,6 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_box_pack_end(GTK_BOX(send_widget),
 				   gtkmedia->priv->send_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->send_progress);
-		gst_element_set_state(audiosendbin, GST_STATE_PLAYING);
 
 		gtk_widget_show(gtkmedia->priv->mute);
 	}

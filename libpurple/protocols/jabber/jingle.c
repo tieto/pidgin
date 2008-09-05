@@ -814,6 +814,21 @@ jabber_jingle_session_send_content_accept(JingleSession *session)
 	jabber_iq_send(result);
 }
 #endif
+
+static void
+jabber_jingle_session_accept(JingleSession *session)
+{
+	if (jabber_jingle_session_get_state(session) == ACCEPTED &&
+			purple_media_candidates_prepared(
+				jabber_jingle_session_get_media(session),
+				jabber_jingle_session_get_remote_jid(session))) {
+		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
+		
+		purple_debug_info("jingle", "Sent session accept.\n");
+		jabber_jingle_session_set_state(session, ACTIVE);
+	}
+}
+
 static void
 jabber_jingle_session_send_session_accept(JingleSession *session)
 {
@@ -843,13 +858,8 @@ jabber_jingle_session_send_session_accept(JingleSession *session)
 				jabber_jingle_session_content_get_name(jsc))));
 	}
 
-	if (purple_media_candidates_prepared(media, remote_jid)) {
-		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
-
-		purple_debug_info("jingle", "Sent session accept.\n");
-		jabber_jingle_session_set_state(session, ACTIVE);
-	} else
-		jabber_jingle_session_set_state(session, ACCEPTED);
+	jabber_jingle_session_set_state(session, ACCEPTED);
+	jabber_jingle_session_accept(session);
 }
 
 static void
@@ -942,14 +952,90 @@ jabber_jingle_session_candidate_pair_established_cb(PurpleMedia *media,
 						    FsCandidate *remote_candidate,
 						    JingleSession *session)
 {
-	if (!jabber_jingle_session_is_initiator(session) &&
-			jabber_jingle_session_get_state(session) == ACCEPTED &&
-			purple_media_candidates_prepared(media,
-				jabber_jingle_session_get_remote_jid(session))) {
-		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
-		
-		purple_debug_info("jingle", "Sent session accept.\n");
-		jabber_jingle_session_set_state(session, ACTIVE);
+	if (!jabber_jingle_session_is_initiator(session)) {
+		jabber_jingle_session_accept(session);
+	}
+}
+
+static void
+jabber_jingle_session_initiate_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	const char *from = xmlnode_get_attrib(packet, "from");
+	JingleSession *session = jabber_jingle_session_find_by_jid(js, from);
+	PurpleMedia *media;
+	GList *contents;
+
+	if (!session) {
+		/* respond with an error here */
+		purple_debug_error("jingle", "Received session-initiate ack"
+				   " to nonexistent session\n");
+		return;
+	}
+
+	media = session->media;
+
+	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error")) {
+		purple_media_got_hangup(media);
+		return;
+	}
+
+	/* catch errors */
+	if (xmlnode_get_child(packet, "error")) {
+		purple_media_got_hangup(media);
+		return;
+	}
+
+	/* create transport-info packages */
+	contents = jabber_jingle_session_get_contents(session);
+	for (; contents; contents = contents->next) {
+		JingleSessionContent *jsc = contents->data;
+		GList *candidates = purple_media_get_local_candidates(
+				jabber_jingle_session_get_media(session),
+				jabber_jingle_session_content_get_name(jsc),
+				jabber_jingle_session_get_remote_jid(session));
+		purple_debug_info("jingle",
+				  "jabber_session_candidates_prepared: %d candidates\n",
+				  g_list_length(candidates));
+		for (; candidates; candidates = candidates->next) {
+			FsCandidate *candidate = candidates->data;
+			JabberIq *result = jabber_jingle_session_create_transport_info(jsc,
+					candidate);
+			jabber_iq_send(result);
+		}
+		fs_candidate_list_destroy(candidates);
+	}
+
+	jabber_jingle_session_set_state(session, GOT_ACK);
+}
+
+static void
+jabber_jingle_session_codecs_ready_cb(PurpleMedia *media,
+				      const gchar *sess_id,
+				      JingleSession *session)
+{
+	GList *contents = jabber_jingle_session_get_contents(session);
+	for (; contents; contents = g_list_delete_link(contents, contents)) {
+		JingleSessionContent *jsc = contents->data;
+		if (!purple_media_codecs_ready(media,
+				jabber_jingle_session_content_get_name(jsc))) {
+			break;
+		}
+	}
+
+	if (contents != NULL)
+		g_list_free(contents);
+	else if (jabber_jingle_session_is_initiator(session)
+			&& jabber_jingle_session_get_state(session) == PENDING) {
+		JabberIq *request;
+
+		/* create request */
+		request = jabber_jingle_session_create_session_initiate(session);
+		jabber_iq_set_callback(request, jabber_jingle_session_initiate_result_cb, NULL);
+
+		/* send request to other part */	
+		jabber_iq_send(request);
+	} else {
+		jabber_jingle_session_accept(session);
 	}
 }
 
@@ -1027,61 +1113,12 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 				 G_CALLBACK(jabber_jingle_session_new_candidate_cb), session);
 	g_signal_connect(G_OBJECT(media), "candidate-pair", 
 				 G_CALLBACK(jabber_jingle_session_candidate_pair_established_cb), session);
+	g_signal_connect(G_OBJECT(media), "codecs-ready", 
+				 G_CALLBACK(jabber_jingle_session_codecs_ready_cb), session);
 
 	purple_media_ready(media);
 
 	return TRUE;
-}
-
-static void
-jabber_jingle_session_initiate_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
-{
-	const char *from = xmlnode_get_attrib(packet, "from");
-	JingleSession *session = jabber_jingle_session_find_by_jid(js, from);
-	PurpleMedia *media;
-	GList *contents;
-
-	if (!session) {
-		/* respond with an error here */
-		purple_debug_error("jingle", "Received session-initiate ack"
-				   " to nonexistent session\n");
-		return;
-	}
-
-	media = session->media;
-
-	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error")) {
-		purple_media_got_hangup(media);
-		return;
-	}
-
-	/* catch errors */
-	if (xmlnode_get_child(packet, "error")) {
-		purple_media_got_hangup(media);
-		return;
-	}
-
-	/* create transport-info packages */
-	contents = jabber_jingle_session_get_contents(session);
-	for (; contents; contents = contents->next) {
-		JingleSessionContent *jsc = contents->data;
-		GList *candidates = purple_media_get_local_candidates(
-				jabber_jingle_session_get_media(session),
-				jabber_jingle_session_content_get_name(jsc),
-				jabber_jingle_session_get_remote_jid(session));
-		purple_debug_info("jingle",
-				  "jabber_session_candidates_prepared: %d candidates\n",
-				  g_list_length(candidates));
-		for (; candidates; candidates = candidates->next) {
-			FsCandidate *candidate = candidates->data;
-			JabberIq *result = jabber_jingle_session_create_transport_info(jsc,
-					candidate);
-			jabber_iq_send(result);
-		}
-		fs_candidate_list_destroy(candidates);
-	}
-
-	jabber_jingle_session_set_state(session, GOT_ACK);
 }
 
 PurpleMedia *
@@ -1089,7 +1126,6 @@ jabber_jingle_session_initiate_media(JabberStream *js, const char *who,
 				     PurpleMediaSessionType type)
 {
 	/* create content negotiation */
-	JabberIq *request;
 	JingleSession *session;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
@@ -1128,13 +1164,6 @@ jabber_jingle_session_initiate_media(JabberStream *js, const char *who,
 
 	g_free(jid);
 	g_free(me);
-
-	/* create request */
-	request = jabber_jingle_session_create_session_initiate(session);
-	jabber_iq_set_callback(request, jabber_jingle_session_initiate_result_cb, NULL);
-
-	/* send request to other part */	
-	jabber_iq_send(request);
 
 	return session->media;
 }
