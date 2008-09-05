@@ -25,43 +25,23 @@
 #include "conversation.h"
 #include "iq.h"
 
-/* hash table to store locally supplied data objects, by conversation and
- 	alt text (smiley shortcut) */
-static GHashTable *local_datas_by_alt = NULL;
-
-/* hash table to store locally supplied data objects, by content id */
-static GHashTable *local_datas_by_cid = NULL;
-
-/* remote supplied data objects by content id */
-static GHashTable *remote_datas_by_cid = NULL;
-
-
-void
-jabber_data_init(void)
-{
-	/* setup hash tables for storing data instances here */
-	purple_debug_info("jabber", "Setting up data handling\n");
-
-	local_datas_by_alt = g_hash_table_new(NULL, NULL);
-	local_datas_by_cid = g_hash_table_new(NULL, NULL);
-	remote_datas_by_cid = g_hash_table_new(NULL, NULL);
-}
+static GHashTable *local_data_by_alt = NULL;
+static GHashTable *local_data_by_cid = NULL;
+static GHashTable *remote_data_by_cid = NULL;
 
 JabberData *
 jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type,
-							 const char *alt)
+	JabberStream *js)
 {
 	JabberData *data = g_new0(JabberData, 1);
 	gchar *checksum = purple_util_get_image_checksum(rawdata, size);
 	gchar cid[256];
 
-	/* is there some better way to generate a content ID? */
-	g_snprintf(cid, sizeof(cid), "%s@%s", checksum, g_get_host_name());
+	g_snprintf(cid, sizeof(cid), "sha1+%s@bob.xmpp.org", checksum);
 	g_free(checksum);
 
 	data->cid = g_strdup(cid);
 	data->type = g_strdup(type);
-	data->alt = g_strdup(alt);
 	data->size = size;
 
 	data->data = g_memdup(rawdata, size);
@@ -91,8 +71,7 @@ jabber_data_create_from_xml(xmlnode *tag)
 
 	data->cid = g_strdup(xmlnode_get_attrib(tag, "cid"));
 	data->type = g_strdup(xmlnode_get_attrib(tag, "type"));
-	data->alt = g_strdup(xmlnode_get_attrib(tag, "alt"));
-
+	
 	raw_data = xmlnode_get_data(tag);
 	data->data = purple_base64_decode(raw_data, &size);
 	data->size = size;
@@ -107,7 +86,6 @@ void
 jabber_data_delete(JabberData *data)
 {
 	g_free(data->cid);
-	g_free(data->alt);
 	g_free(data->type);
 	g_free(data->data);
 	g_free(data);
@@ -119,11 +97,6 @@ jabber_data_get_cid(const JabberData *data)
 	return data->cid;
 }
 
-const char *
-jabber_data_get_alt(const JabberData *data)
-{
-	return data->alt;
-}
 
 const char *
 jabber_data_get_type(const JabberData *data)
@@ -150,7 +123,6 @@ jabber_data_get_xml_definition(const JabberData *data)
 	char *base64data = purple_base64_encode(data->data, data->size);
 
 	xmlnode_set_namespace(tag, XEP_0231_NAMESPACE);
-	xmlnode_set_attrib(tag, "alt", data->alt);
 	xmlnode_set_attrib(tag, "cid", data->cid);
 	xmlnode_set_attrib(tag, "type", data->type);
 
@@ -162,12 +134,12 @@ jabber_data_get_xml_definition(const JabberData *data)
 }
 
 xmlnode *
-jabber_data_get_xhtml_im(const JabberData *data)
+jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt)
 {
 	xmlnode *img = xmlnode_new("img");
 	char src[128];
 
-	xmlnode_set_attrib(img, "alt", data->alt);
+	xmlnode_set_attrib(img, "alt", alt);
 	g_snprintf(src, sizeof(src), "cid:%s", data->cid);
 	xmlnode_set_attrib(img, "src", src);
 
@@ -186,107 +158,36 @@ jabber_data_get_xml_request(const gchar *cid)
 }
 
 const JabberData *
-jabber_data_find_local_by_alt(const PurpleConversation *conv, const char *alt)
+jabber_data_find_local_by_alt(const gchar *alt)
 {
-	GHashTable *local_datas = g_hash_table_lookup(local_datas_by_alt, conv);
-
-	if (local_datas) {
-		return g_hash_table_lookup(local_datas, alt);
-	} else {
-		return NULL;
-	}
-}
-
-
-const JabberData *
-jabber_data_find_local_by_cid(const PurpleConversation *conv, const char *cid)
-{
-	GHashTable *local_datas = g_hash_table_lookup(local_datas_by_cid, conv);
-
-	if (local_datas) {
-		return g_hash_table_lookup(local_datas, cid);
-	} else {
-		return NULL;
-	}
+	return g_hash_table_lookup(local_data_by_alt, alt);
 }
 
 const JabberData *
-jabber_data_find_remote_by_cid(const PurpleConversation *conv, const char *cid)
+jabber_data_find_local_by_cid(const gchar *cid)
 {
-	GHashTable *remote_datas = g_hash_table_lookup(remote_datas_by_cid, conv);
+	return g_hash_table_lookup(local_data_by_cid, cid);
+}
 
-	if (remote_datas) {
-		return g_hash_table_lookup(remote_datas, cid);
-	} else {
-		return NULL;
-	}
+const JabberData *
+jabber_data_find_remote_by_cid(const gchar *cid)
+{
+	return g_hash_table_lookup(remote_data_by_cid, cid);
 }
 
 void
-jabber_data_associate_local_with_conv(JabberData *data, PurpleConversation *conv)
+jabber_data_associate_local(JabberData *data, const gchar *alt)
 {
-	GHashTable *datas_by_alt = g_hash_table_lookup(local_datas_by_alt, conv);
-	GHashTable *datas_by_cid = g_hash_table_lookup(local_datas_by_cid, conv);
-
-	if (!datas_by_alt) {
-		datas_by_alt = g_hash_table_new(g_str_hash, g_str_equal);
-		g_hash_table_insert(local_datas_by_alt, conv, datas_by_alt);
-	}
-
-	if (!datas_by_cid) {
-		datas_by_cid = g_hash_table_new(g_str_hash, g_str_equal);
-		g_hash_table_insert(local_datas_by_cid, conv, datas_by_cid);
-	}
-
-	g_hash_table_insert(datas_by_alt, g_strdup(jabber_data_get_alt(data)), data);
-	g_hash_table_insert(datas_by_cid, g_strdup(jabber_data_get_cid(data)), data);
+	g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
+	g_hash_table_insert(local_data_by_cid, g_strdup(jabber_data_get_cid(data)), 
+		data);
 }
 
 void
-jabber_data_associate_remote_with_conv(JabberData *data, PurpleConversation *conv)
+jabber_data_associate_remote(JabberData *data)
 {
-	GHashTable *datas_by_cid = g_hash_table_lookup(remote_datas_by_cid, conv);
-
-	if (!datas_by_cid) {
-		datas_by_cid = g_hash_table_new(g_str_hash, g_str_equal);
-		g_hash_table_insert(remote_datas_by_cid, conv, datas_by_cid);
-	}
-
-	g_hash_table_insert(datas_by_cid, g_strdup(jabber_data_get_cid(data)), data);
-}
-
-static void
-jabber_data_delete_from_hash_table(gpointer key, gpointer value,
-								   gpointer user_data)
-{
-	JabberData *data = (JabberData *) value;
-	jabber_data_delete(data);
-	g_free(key);
-}
-
-void
-jabber_data_delete_associated_with_conv(PurpleConversation *conv)
-{
-	GHashTable *local_datas = g_hash_table_lookup(local_datas_by_cid, conv);
-	GHashTable *remote_datas = g_hash_table_lookup(remote_datas_by_cid, conv);
-	GHashTable *local_datas_alt = g_hash_table_lookup(local_datas_by_alt, conv);
-
-	if (local_datas) {
-		g_hash_table_foreach(local_datas, jabber_data_delete_from_hash_table,
-							 NULL);
-		g_hash_table_destroy(local_datas);
-		g_hash_table_remove(local_datas_by_cid, conv);
-	}
-	if (remote_datas) {
-		g_hash_table_foreach(remote_datas, jabber_data_delete_from_hash_table,
-							 NULL);
-		g_hash_table_destroy(remote_datas);
-		g_hash_table_remove(remote_datas_by_cid, conv);
-	}
-	if (local_datas_alt) {
-		g_hash_table_destroy(local_datas_alt);
-		g_hash_table_remove(local_datas_by_alt, conv);
-	}
+	g_hash_table_insert(remote_data_by_cid, g_strdup(jabber_data_get_cid(data)), 
+		data);
 }
 
 void
@@ -294,15 +195,11 @@ jabber_data_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *result = NULL;
 	const char *who = xmlnode_get_attrib(packet, "from");
-	const PurpleConnection *gc = js->gc;
-	const PurpleAccount *account = purple_connection_get_account(gc);
-	const PurpleConversation *conv =
-		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, account);
 	xmlnode *data_node = xmlnode_get_child(packet, "data");
 	const JabberData *data =
-		jabber_data_find_local_by_cid(conv, xmlnode_get_attrib(data_node, "cid"));
+		jabber_data_find_local_by_cid(xmlnode_get_attrib(data_node, "cid"));
 
-	if (!conv || !data) {
+	if (!data) {
 		xmlnode *item_not_found = xmlnode_new("item-not-found");
 
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
@@ -317,4 +214,25 @@ jabber_data_parse(JabberStream *js, xmlnode *packet)
 							 jabber_data_get_xml_definition(data));
 	}
 	jabber_iq_send(result);
+}
+
+void
+jabber_data_init(void)
+{
+	purple_debug_info("jabber", "creating hash tables for data objects\n");
+	local_data_by_alt = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, NULL);
+	local_data_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, jabber_data_delete);
+	remote_data_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, jabber_data_delete);
+}
+
+void
+jabber_data_uninit(void)
+{
+	purple_debug_info("jabber", "destroying hash tables for data objects\n");
+	g_hash_table_destroy(local_data_by_alt);
+	g_hash_table_destroy(local_data_by_cid);
+	g_hash_table_destroy(remote_data_by_cid);
 }

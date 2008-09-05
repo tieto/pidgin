@@ -21,24 +21,20 @@
 #include "conversation.h"
 #include "jabber.h"
 
-#define XEP_0231_NAMESPACE "urn:xmpp:tmp:data-element"
-#define XEP_0231_IB_IMAGE_NAMESPACE "urn:xmpp:tmp:data-element:inband-image"
+#define XEP_0231_NAMESPACE "urn:xmpp:bob"
 
 #include <glib.h>
 
 typedef struct {
 	char *cid;
-	char *alt;
 	char *type;
 	gsize size;
 	gpointer data;
 } JabberData;
 
-void jabber_data_init(void);
-
 /* creates a JabberData instance from raw data */
 JabberData *jabber_data_create_from_data(gconstpointer data, gsize size,
-										 const char *type, const char *alt);
+										 const char *type, JabberStream *js);
 
 /* create a JabberData instance from an XML "data" element (as defined by
   XEP 0231 */
@@ -47,7 +43,6 @@ JabberData *jabber_data_create_from_xml(xmlnode *tag);
 void jabber_data_delete(JabberData *data);
 
 const char *jabber_data_get_cid(const JabberData *data);
-const char *jabber_data_get_alt(const JabberData *data);
 const char *jabber_data_get_type(const JabberData *data);
 
 gsize jabber_data_get_size(const JabberData *data);
@@ -57,27 +52,39 @@ gpointer jabber_data_get_data(const JabberData *data);
 xmlnode *jabber_data_get_xml_definition(const JabberData *data);
 
 /* returns an XHTML-IM "img" tag given a data instance */
-xmlnode *jabber_data_get_xhtml_im(const JabberData *data);
+xmlnode *jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt);
 
 /* returns a data request element (to be included in an iq stanza) for requesting
   data */
 xmlnode *jabber_data_get_xml_request(const gchar *cid);
 
 /* lookup functions */
-const JabberData *jabber_data_find_local_by_alt(const PurpleConversation *conv,
+const JabberData *jabber_data_find_local_by_alt(const gchar *alt);
+const JabberData *jabber_data_find_local_by_cid(const gchar *cid);
+const JabberData *jabber_data_find_remote_by_cid(const gchar *cid);
+/*
+const JabberData *jabber_data_find_local_by_alt(PurpleConversation *conv,
 												const char *alt);
-const JabberData *jabber_data_find_local_by_cid(const PurpleConversation *conv,
+const JabberData *jabber_data_find_local_by_cid(PurpleConversation *conv,
 												const char *cid);
-const JabberData *jabber_data_find_remote_by_cid(const PurpleConversation *conv,
+const JabberData *jabber_data_find_remote_by_cid(PurpleConversation *conv,
 												 const char *cid);
-
-/* associate data objects with a conversation */
-void jabber_data_associate_local_with_conv(JabberData *data, PurpleConversation *conv);
+*/
+												 
+/* store data objects */
+void jabber_data_associate_local(JabberData *data, const gchar *alt);
+void jabber_data_associate_remote(JabberData *data);
+/*
+void jabber_data_associate_local_with_conv(JabberData *data, PurpleConversation *conv,
+	const gchar *alt);
 void jabber_data_associate_remote_with_conv(JabberData *data, PurpleConversation *conv);
 void jabber_data_delete_associated_with_conv(PurpleConversation *conv);
+*/
 
 /* handles iq requests */
 void jabber_data_parse(JabberStream *js, xmlnode *packet);
 
+void jabber_data_init(void);
+void jabber_data_uninit(void);
 
 #endif /* JABBER_DATA_H */

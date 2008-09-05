@@ -138,7 +138,8 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
 			   
-
+	jabber_data_uninit();
+	
 	return TRUE;
 }
 
@@ -277,14 +278,14 @@ init_plugin(PurplePlugin *plugin)
 	
 	jabber_tune_init();
 	jabber_caps_init();
+	
 	jabber_data_init();
-
+	
 	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
 	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
 	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns",
 					   jabber_buzz_isenabled);
-	/* this string will need to be updated when XEP-0231 turns "draft" */
-	jabber_add_feature("smileys", XEP_0231_IB_IMAGE_NAMESPACE,
+	jabber_add_feature("bob", XEP_0231_NAMESPACE,
 					   jabber_custom_smileys_isenabled);
 
 	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);

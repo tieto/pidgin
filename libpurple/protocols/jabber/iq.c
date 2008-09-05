@@ -356,8 +356,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
-	if (xmlnode_get_child_with_namespace(packet, "data",
-		    "urn:xmpp:tmp:data-element")) {
+	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE)) {
 		jabber_data_parse(js, packet);
 		return;
 	}

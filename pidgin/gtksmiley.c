@@ -273,8 +273,8 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 			gsize size = 0;
 			gchar *filename;
 
-			gdk_pixbuf_save_to_bufferv(s->custom_pixbuf, &buffer, &size,
-									   "png", NULL, NULL, NULL);
+			gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
+				"png", NULL, "compression", "9", NULL, NULL);
 			filename = purple_util_get_image_filename(buffer, size);
 			s->filename = g_build_filename(purple_smileys_get_storing_dir(), filename, NULL);
 			purple_util_write_data_to_file_absolute(s->filename, buffer, size);

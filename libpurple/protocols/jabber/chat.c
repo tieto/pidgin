@@ -685,9 +685,7 @@ void jabber_chat_part(JabberChat *chat, const char *msg)
 		xmlnode_insert_data(status, msg, -1);
 	}
 	jabber_send(chat->js, presence);
-
-	jabber_data_delete_associated_with_conv(chat->conv);
-
+	
 	xmlnode_free(presence);
 	g_free(room_jid);
 }

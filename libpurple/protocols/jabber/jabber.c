@@ -1902,11 +1902,7 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleConversation *conv =
-		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-			who, account);
-
+	
 	if(!(jid = jabber_id_new(who)))
 		return;
 
@@ -1919,8 +1915,6 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 		if(jbr->chat_states == JABBER_CHAT_STATES_SUPPORTED)
 			jabber_message_conv_closed(js, who);
 	}
-
-	jabber_data_delete_associated_with_conv(conv);
 
 	jabber_id_free(jid);
 }
