@@ -331,7 +331,7 @@ jabber_jingle_get_codecs(xmlnode *description)
 		}
 
 		codec_str = fs_codec_to_string(codec);
-		purple_debug_fatal("jingle", "received codec: %s\n", codec_str);
+		purple_debug_info("jingle", "received codec: %s\n", codec_str);
 		g_free(codec_str);
 
 		codecs = g_list_append(codecs, codec);
@@ -477,7 +477,7 @@ jabber_jingle_session_add_payload_types(const JingleSessionContent *jsc,
 		}
 
 		codec_str = fs_codec_to_string(codec);
-		purple_debug_fatal("jingle", "adding codec: %s\n", codec_str);
+		purple_debug_info("jingle", "adding codec: %s\n", codec_str);
 		g_free(codec_str);
 	}
 }
@@ -1495,7 +1495,7 @@ jabber_jingle_session_parse(JabberStream *js, xmlnode *packet)
 			/* send iq error */
 		} else if ((session = jabber_jingle_session_find_by_jid(js,
 				xmlnode_get_attrib(packet, "from")))) {
-			purple_debug_fatal("jingle", "Jingle session with "
+			purple_debug_error("jingle", "Jingle session with "
 					"jid={%s} already exists\n",
 					xmlnode_get_attrib(packet, "from"));
 			/* send jingle redirect packet */
