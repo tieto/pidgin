@@ -2498,5 +2498,30 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			js);
 }
 
+gboolean
+jabber_buddy_has_capability(JabberBuddy *jb, const gchar *cap)
+{
+	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
+	const GList *iter = NULL;
+	
+	if (!jbr) {
+		purple_debug_error("jabber", 
+				   "Unable to find caps: buddy might be offline\n");
+		return FALSE;
+	}
+	
+	if (!jbr->caps) {
+		purple_debug_error("jabber",
+				   "Unable to find caps: nothing known about buddy\n");
+		return FALSE;
+	}
+	
+	for (iter = jbr->caps->features ; iter ; iter = g_list_next(iter)) {
+		if (strcmp(iter->data, cap) == 0)
+			return TRUE;
+	}
+	
+	return FALSE;
+}
 
 
