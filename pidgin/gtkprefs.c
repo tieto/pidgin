@@ -1914,7 +1914,7 @@ sound_page(void)
 
 	pidgin_prefs_checkbox(_("Sounds when conversation has _focus"),
 				   PIDGIN_PREFS_ROOT "/sound/conv_focus", vbox);
-	pidgin_prefs_dropdown(vbox, _("Enable sounds:"),
+	pidgin_prefs_dropdown(vbox, _("_Enable sounds:"),
 				 PURPLE_PREF_INT, "/purple/sound/while_status",
 				_("Only when available"), 1,
 				_("Only when not available"), 2,
@@ -1931,7 +1931,7 @@ sound_page(void)
 	g_signal_connect (G_OBJECT (sw), "value-changed",
 			  G_CALLBACK (prefs_sound_volume_changed),
 			  NULL);
-	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Volume:"), NULL, sw, TRUE, NULL);
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("V_olume:"), NULL, sw, TRUE, NULL);
 
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed3_cb, hbox);
