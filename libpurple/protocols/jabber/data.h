@@ -18,7 +18,6 @@
 #define JABBER_DATA_H
 
 #include "xmlnode.h"
-#include "conversation.h"
 #include "jabber.h"
 
 #define XEP_0231_NAMESPACE "urn:xmpp:bob"
@@ -62,24 +61,10 @@ xmlnode *jabber_data_get_xml_request(const gchar *cid);
 const JabberData *jabber_data_find_local_by_alt(const gchar *alt);
 const JabberData *jabber_data_find_local_by_cid(const gchar *cid);
 const JabberData *jabber_data_find_remote_by_cid(const gchar *cid);
-/*
-const JabberData *jabber_data_find_local_by_alt(PurpleConversation *conv,
-												const char *alt);
-const JabberData *jabber_data_find_local_by_cid(PurpleConversation *conv,
-												const char *cid);
-const JabberData *jabber_data_find_remote_by_cid(PurpleConversation *conv,
-												 const char *cid);
-*/
 												 
 /* store data objects */
 void jabber_data_associate_local(JabberData *data, const gchar *alt);
 void jabber_data_associate_remote(JabberData *data);
-/*
-void jabber_data_associate_local_with_conv(JabberData *data, PurpleConversation *conv,
-	const gchar *alt);
-void jabber_data_associate_remote_with_conv(JabberData *data, PurpleConversation *conv);
-void jabber_data_delete_associated_with_conv(PurpleConversation *conv);
-*/
 
 /* handles iq requests */
 void jabber_data_parse(JabberStream *js, xmlnode *packet);

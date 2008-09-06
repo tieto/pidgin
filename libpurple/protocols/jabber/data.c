@@ -22,7 +22,6 @@
 #include "debug.h"
 #include "xmlnode.h"
 #include "util.h"
-#include "conversation.h"
 #include "iq.h"
 
 static GHashTable *local_data_by_alt = NULL;
