@@ -1828,6 +1828,25 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	g_value_unset (&val);
 }
 
+
+static void
+mute_changed_cb(const char *pref_name,
+                PurplePrefType pref_type,
+                gconstpointer val,
+                gpointer data)
+{
+	GtkToggleButton *button = data;
+	gboolean muted = val;
+
+	g_return_if_fail(!strcmp (pref_name, PIDGIN_PREFS_ROOT "/sound/mute"));
+
+	/* Block the handler that re-sets the preference. */
+	g_signal_handlers_block_matched(button, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, pref_name);
+	gtk_toggle_button_set_active (button, muted);
+	g_signal_handlers_unblock_matched(button, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, pref_name);
+}
+
+
 static GtkWidget *
 sound_page(void)
 {
@@ -1889,6 +1908,10 @@ sound_page(void)
 #endif /* _WIN32 */
 
 	vbox = pidgin_make_frame (ret, _("Sound Options"));
+
+	button = pidgin_prefs_checkbox(_("M_ute sounds"), PIDGIN_PREFS_ROOT "/sound/mute", vbox);
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/mute", mute_changed_cb, button);
+
 	pidgin_prefs_checkbox(_("Sounds when conversation has _focus"),
 				   PIDGIN_PREFS_ROOT "/sound/conv_focus", vbox);
 	pidgin_prefs_dropdown(vbox, _("Enable sounds:"),
