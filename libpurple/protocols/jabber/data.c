@@ -18,6 +18,7 @@
 #include <glib.h>
 #include <string.h>
 
+#include "internal.h"
 #include "data.h"
 #include "debug.h"
 #include "xmlnode.h"
