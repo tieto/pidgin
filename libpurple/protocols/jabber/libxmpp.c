@@ -137,8 +137,6 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
-			   
-	jabber_data_uninit();
 	
 	return TRUE;
 }
@@ -150,6 +148,8 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
 	
 	purple_signal_unregister(plugin, "jabber-sending-text");
+	
+	jabber_data_uninit();
 	
 	return TRUE;
 }

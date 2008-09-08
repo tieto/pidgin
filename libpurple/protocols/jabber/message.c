@@ -606,6 +606,11 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						conv =
 							purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
 								who, account);
+						if (!conv) {
+							/* we need to create the conversation here */
+							conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
+								account, who);
+						}
 					}
 
 					/* process any newly provided smileys */
@@ -631,18 +636,24 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					const gchar *cid = ref->cid;
 					const gchar *alt = ref->alt;
 
+					purple_debug_info("jabber", 
+						"about to add custom smiley %s to the conv\n", alt);
 					if (purple_conv_custom_smiley_add(conv, alt, "cid", cid,
 						    TRUE)) {
 						const JabberData *data =
 								jabber_data_find_remote_by_cid(cid);
 						/* if data is already known, we add write it immediatly */
 						if (data) {
+							purple_debug_info("jabber", 
+								"data is already known\n"); 
 							purple_conv_custom_smiley_write(conv, alt,
 								jabber_data_get_data(data),
 								jabber_data_get_size(data));
 							purple_conv_custom_smiley_close(conv, alt);
 						} else {
 							/* we need to request the smiley (data) */
+							purple_debug_info("jabber",
+								"data is unknown, need to request it\n");
 							jabber_message_send_data_request(js, conv, cid, who,
 								alt);
 						}
@@ -1033,11 +1044,6 @@ void jabber_message_send(JabberMessage *jm)
 							"cache local smiley alt = %s, cid = %s\n",
 							shortcut, jabber_data_get_cid(new_data));
 						jabber_data_associate_local(new_data, shortcut);
-						/* if the size of the data is small enough, include it */
-						if (jabber_data_get_size(new_data) <= 1024) {
-							xmlnode_insert_child(message,
-								jabber_data_get_xml_definition(new_data));
-						}
 					}
 				}
 

@@ -160,24 +160,30 @@ jabber_data_get_xml_request(const gchar *cid)
 const JabberData *
 jabber_data_find_local_by_alt(const gchar *alt)
 {
+	purple_debug_info("jabber", "looking up local smiley with alt = %s\n", alt);
 	return g_hash_table_lookup(local_data_by_alt, alt);
 }
 
 const JabberData *
 jabber_data_find_local_by_cid(const gchar *cid)
 {
+	purple_debug_info("jabber", "lookup local smiley with cid = %s\n", cid);
 	return g_hash_table_lookup(local_data_by_cid, cid);
 }
 
 const JabberData *
 jabber_data_find_remote_by_cid(const gchar *cid)
 {
+	purple_debug_info("jabber", "lookup remote smiley with cid = %s\n", cid);
+	
 	return g_hash_table_lookup(remote_data_by_cid, cid);
 }
 
 void
 jabber_data_associate_local(JabberData *data, const gchar *alt)
 {
+	purple_debug_info("jabber", "associating local smiley\n alt = %s, cid = %s\n",
+		alt, jabber_data_get_cid(data));
 	g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
 	g_hash_table_insert(local_data_by_cid, g_strdup(jabber_data_get_cid(data)), 
 		data);
@@ -186,6 +192,8 @@ jabber_data_associate_local(JabberData *data, const gchar *alt)
 void
 jabber_data_associate_remote(JabberData *data)
 {
+	purple_debug_info("jabber", "associating remote smiley, cid = %s\n",
+		jabber_data_get_cid(data));
 	g_hash_table_insert(remote_data_by_cid, g_strdup(jabber_data_get_cid(data)), 
 		data);
 }
