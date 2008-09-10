@@ -2715,7 +2715,8 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			gtk_widget_show_all(status_box->vbox);
 			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 			gtk_widget_grab_focus(status_box->imhtml);
-			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+			if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/status/keep_status_message"))
+				gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		}
 		else
 		{

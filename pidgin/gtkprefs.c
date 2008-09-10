@@ -1005,6 +1005,12 @@ interface_page(void)
 	keyboard_shortcuts(ret);
 
 
+	/* Status selector options */
+	vbox = pidgin_make_frame(ret, _("Status Selector"));
+	pidgin_prefs_checkbox(_("Keep the status message when the status is changed"),
+				PIDGIN_PREFS_ROOT "/status/keep_status_message", vbox);
+
+
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
 	return ret;

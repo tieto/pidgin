@@ -1913,6 +1913,7 @@ pidgin_status_init(void)
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/status/dialog");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/status/dialog/width",  550);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/status/dialog/height", 250);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/status/keep_status_message", FALSE);
 }
 
 void
