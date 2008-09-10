@@ -209,7 +209,6 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 	 * the result back to our parent, when finished.
 	 */
 	while (1) {
-		const char ch = 'Y';
 		fd_set fds;
 		struct timeval tv = { .tv_sec = 40 , .tv_usec = 0 };
 		FD_ZERO(&fds);
@@ -237,8 +236,6 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 					dns_params.port);
 			_exit(1);
 		}
-		/* Tell our parent that we read the data successfully */
-		write_to_parent(child_out, &ch, sizeof(ch));
 
 		/* We have the hostname and port, now resolve the IP */
 
@@ -426,7 +423,6 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 	pid_t pid;
 	dns_params_t dns_params;
 	int rc;
-	char ch;
 
 	/* This waitpid might return the child's PID if it has recently
 	 * exited, or it might return an error if it exited "long
@@ -460,17 +456,6 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 	}
 
 	g_return_val_if_fail(rc == sizeof(dns_params), -1);
-
-	/* Did you hear me? (This avoids some race conditions) */
-	rc = read(resolver->fd_out, &ch, sizeof(ch));
-	if (rc != 1 || ch != 'Y')
-	{
-		purple_debug_warning("dns",
-				"DNS child %d not responding. Killing it!\n",
-				resolver->dns_pid);
-		purple_dnsquery_resolver_destroy(resolver);
-		return FALSE;
-	}
 
 	purple_debug_info("dns",
 			"Successfully sent DNS request to child %d\n",
