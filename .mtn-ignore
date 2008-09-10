@@ -58,6 +58,7 @@ libpurple/purple-client-bindings.c
 libpurple/purple-client-bindings.h
 libpurple/purple-client-example
 libpurple/tests/check_libpurple
+libpurple/tests/libpurple..
 libpurple/version.h$
 libpurple/win32/libpurplerc.rc$
 libtool
