@@ -412,7 +412,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 {
 	pid_t pid;
 	dns_params_t dns_params;
-	int rc;
+	ssize_t rc;
 
 	/* This waitpid might return the child's PID if it has recently
 	 * exited, or it might return an error if it exited "long
@@ -444,8 +444,13 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
-
-	g_return_val_if_fail(rc == sizeof(dns_params), -1);
+	if (rc < sizeof(dns_params)) {
+		purple_debug_error("dns", "Tried to read %" G_GSSIZE_FORMAT
+				" bytes from child but only read %" G_GSSIZE_FORMAT "\n",
+				sizeof(dns_params), rc);
+		purple_dnsquery_resolver_destroy(resolver);
+		return FALSE;
+	}
 
 	purple_debug_info("dns",
 			"Successfully sent DNS request to child %d\n",
