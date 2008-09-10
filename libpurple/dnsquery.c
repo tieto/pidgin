@@ -209,16 +209,6 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 	 * the result back to our parent, when finished.
 	 */
 	while (1) {
-		fd_set fds;
-		struct timeval tv = { .tv_sec = 40 , .tv_usec = 0 };
-		FD_ZERO(&fds);
-		FD_SET(child_in, &fds);
-		rc = select(child_in + 1, &fds, NULL, NULL, &tv);
-		if (!rc) {
-			if (show_debug)
-				printf("dns[%d]: nobody needs me... =(\n", getpid());
-			break;
-		}
 		rc = read(child_in, &dns_params, sizeof(dns_params_t));
 		if (rc < 0) {
 			fprintf(stderr, "dns[%d]: Error: Could not read dns_params: "
