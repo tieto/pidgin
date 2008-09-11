@@ -343,11 +343,12 @@ jabber_message_get_refs_from_xmlnode_internal(const xmlnode *message,
 				JabberSmileyRef *ref = g_new0(JabberSmileyRef, 1);
 				const gchar *alt = xmlnode_get_attrib(child, "alt");
 				ref->cid = temp_cid;
-				/* if there is no "alt" string, use the cid... */
+				/* if there is no "alt" string, use the cid... 
+				 include the entire src, eg. "cid:.." to avoid linkification */
 				if (alt && alt[0] != '\0') {
 					ref->alt = g_strdup(xmlnode_get_attrib(child, "alt"));
 				} else {
-					ref->alt = g_strdup(cid);
+					ref->alt = g_strdup(src);
 				}
 				g_hash_table_insert(table, temp_cid, ref);
 			}
@@ -427,7 +428,7 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 					out = g_string_append(out, escaped);
 					g_free(escaped);
 				} else {
-					out = g_string_append(out, src + 4);
+					out = g_string_append(out, src);
 				}
 				pos += pos2 - pos;
 			} else {
