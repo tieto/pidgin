@@ -359,7 +359,7 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 	qq_group_refresh(gc, group);
 
 	qq_send_room_cmd_only(gc, QQ_ROOM_CMD_ACTIVATE, id);
-	qq_room_update(gc, 0, group->id);
+	qq_update_room(gc, 0, group->id);
 
 	purple_debug_info("QQ", "Succeed in create Qun, external ID %d\n", group->ext_id);
 

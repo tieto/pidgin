@@ -40,7 +40,7 @@
 enum {
 	QQ_TRANS_IS_SERVER = 0x01,			/* Is server command or client command */
 	QQ_TRANS_IS_IMPORT = 0x02,			/* Only notice if not get reply; or resend, disconn if reties get 0*/
-	QQ_TRANS_BEFORE_LOGIN = 0x04,		/* server command before login*/
+	QQ_TRANS_REMAINED = 0x04,		/* server command before login*/
 };
 
 struct _qq_transaction {
@@ -225,16 +225,13 @@ void qq_trans_add_room_cmd(PurpleConnection *gc,
 	qd->transactions = g_list_append(qd->transactions, trans);
 }
 
-void qq_trans_add_server_cmd(PurpleConnection *gc,
-	guint16 cmd, guint16 seq, guint8 *data, gint data_len)
+void qq_trans_add_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
+		guint8 *data, gint data_len)
 {
 	qq_data *qd = (qq_data *)gc->proto_data;
 	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, data, data_len, QQ_CMD_CLASS_NONE, 0);
 
 	trans->flag = QQ_TRANS_IS_SERVER;
-	if ( !qd->is_login ) {
-		trans->flag |= QQ_TRANS_BEFORE_LOGIN;
-	}
 	trans->send_retries = 0;
 	trans->rcved_times = 1;
 #if 0
@@ -244,7 +241,24 @@ void qq_trans_add_server_cmd(PurpleConnection *gc,
 	qd->transactions = g_list_append(qd->transactions, trans);
 }
 
-void qq_trans_process_before_login(PurpleConnection *gc)
+void qq_trans_add_remain(PurpleConnection *gc, guint16 cmd, guint16 seq,
+		guint8 *data, gint data_len)
+{
+	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, data, data_len, QQ_CMD_CLASS_NONE, 0);
+
+	trans->flag = QQ_TRANS_IS_SERVER;
+	trans->flag |= QQ_TRANS_REMAINED;
+	trans->send_retries = 0;
+	trans->rcved_times = 1;
+#if 1
+	purple_debug_info("QQ_TRANS", "Add server cmd and remained, seq %d, data %p, len %d\n",
+			trans->seq, trans->data, trans->data_len);
+#endif
+	qd->transactions = g_list_append(qd->transactions, trans);
+}
+
+void qq_trans_process_remained(PurpleConnection *gc)
 {
 	qq_data *qd = (qq_data *)gc->proto_data;
 	GList *curr;
@@ -263,17 +277,18 @@ void qq_trans_process_before_login(PurpleConnection *gc)
 		if ( !(trans->flag & QQ_TRANS_IS_SERVER) ) {
 			continue;
 		}
-		if ( !(trans->flag & QQ_TRANS_BEFORE_LOGIN) ) {
+		if ( !(trans->flag & QQ_TRANS_REMAINED) ) {
 			continue;
 		}
-		/* set QQ_TRANS_BEFORE_LOGIN off */
-		trans->flag &= ~QQ_TRANS_BEFORE_LOGIN;
+		/* set QQ_TRANS_REMAINED off */
+		trans->flag &= ~QQ_TRANS_REMAINED;
 
+#if 1
 		purple_debug_info("QQ_TRANS",
-				"Process server cmd before login, seq %d, data %p, len %d, send_retries %d\n",
+				"Process server cmd remained, seq %d, data %p, len %d, send_retries %d\n",
 				trans->seq, trans->data, trans->data_len, trans->send_retries);
-
-		qq_proc_cmd_reply(gc, trans->seq, trans->cmd, trans->data, trans->data_len, trans->update_class, trans->ship32);
+#endif
+		qq_proc_server_cmd(gc, trans->cmd, trans->seq, trans->data, trans->data_len);
 	}
 
 	/* purple_debug_info("QQ_TRANS", "Scan finished\n"); */
@@ -295,7 +310,7 @@ gboolean qq_trans_scan(PurpleConnection *gc)
 		trans = (qq_transaction *) (curr->data);
 		/* purple_debug_info("QQ_TRANS", "Scan [%d]\n", trans->seq); */
 
-		if (trans->flag & QQ_TRANS_BEFORE_LOGIN) {
+		if (trans->flag & QQ_TRANS_REMAINED) {
 			/* keep server cmd before login*/
 			continue;
 		}

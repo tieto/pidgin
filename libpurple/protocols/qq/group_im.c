@@ -120,7 +120,7 @@ void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleCo
 
 	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
-	msg = g_strdup_printf(_("%d requested to join Qun %d"), user_uid, ext_id);
+	msg = g_strdup_printf(_("%d request to join Qun %d"), user_uid, ext_id);
 	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
 
 	g = g_new0(group_member_opt, 1);
@@ -171,7 +171,7 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-		(_("Your request to join Qun %d has been rejected by admin %d"), ext_id, admin_uid);
+		(_("Failed to join Qun %d, operated by admin %d"), ext_id, admin_uid);
 	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
@@ -209,7 +209,7 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-		(_("Your request to join Qun %d has been approved by admin %d"), ext_id, admin_uid);
+		(_("Successed to join Qun %d, operated by admin %d"), ext_id, admin_uid);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, NULL);
 
@@ -284,7 +284,7 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 		group = qq_group_create_internal_record(gc, id, ext_id, NULL);
 		group->my_role = QQ_ROOM_ROLE_YES;
 		qq_group_refresh(gc, group);
-		qq_room_update(gc, 0, group->id);
+		qq_update_room(gc, 0, group->id);
 		/* the return of this cmd will automatically update the group in blist */
 	}
 
@@ -380,7 +380,8 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
 	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/prompt_group_msg_on_recv")) {
 		/* New conv should open, get group info*/
-		qq_room_update(gc, 0, group->id);
+		/* qq_update_room(gc, 0, group->id); */
+		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
 
 		serv_got_joined_chat(gc, qd->channel++, group->title_utf8);
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));

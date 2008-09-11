@@ -43,7 +43,7 @@ enum {
 	QQ_CMD_KEEP_ALIVE = 0x0002,			/* get onlines from tencent */
 	QQ_CMD_UPDATE_INFO = 0x0004,			/* update information */
 	QQ_CMD_SEARCH_USER = 0x0005,			/* search for user */
-	QQ_CMD_GET_USER_INFO = 0x0006,			/* get user information */
+	QQ_CMD_GET_BUDDY_INFO = 0x0006,			/* get user information */
 	QQ_CMD_ADD_BUDDY_WO_AUTH = 0x0009,		/* add buddy without auth */
 	QQ_CMD_DEL_BUDDY = 0x000a,			/* delete a buddy  */
 	QQ_CMD_BUDDY_AUTH = 0x000b,			/* buddy authentication */
