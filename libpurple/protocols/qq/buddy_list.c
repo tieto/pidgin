@@ -424,7 +424,7 @@ gboolean is_online(guint8 status)
 		case QQ_BUDDY_ONLINE_AWAY:
 		case QQ_BUDDY_ONLINE_INVISIBLE:
 			return TRUE;
-		case QQ_BUDDY_ONLINE_OFFLINE:
+		case QQ_BUDDY_CHANGE_TO_OFFLINE:
 			return FALSE;
 	}
 	return FALSE;
@@ -556,19 +556,17 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 	g_free(name);
 	q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 	if (q_bud == NULL) {
-		purple_debug_error("QQ",
-				"got information of unknown buddy %d\n", bs.uid);
+		purple_debug_warning("QQ", "Get status of unknown buddy %d\n", bs.uid);
 		return;
 	}
 
-	purple_debug_info("QQ", "status:.uid = %d, q_bud->uid = %d\n", bs.uid , q_bud->uid);
 	if(bs.ip.s_addr != 0) {
 		q_bud->ip.s_addr = bs.ip.s_addr;
 		q_bud->port = bs.port;
 	}
 	q_bud->status =bs.status;
 
-	if (q_bud->status == QQ_BUDDY_ONLINE_NORMAL) {
+	if (q_bud->status == QQ_BUDDY_ONLINE_NORMAL && q_bud->level <= 0) {
 		qq_request_get_level(gc, q_bud->uid);
 	}
 	qq_update_buddy_contact(gc, q_bud);
@@ -610,7 +608,7 @@ void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 	case QQ_BUDDY_ONLINE_NORMAL:
 		status_id = "available";
 		break;
-	case QQ_BUDDY_ONLINE_OFFLINE:
+	case QQ_BUDDY_CHANGE_TO_OFFLINE:
 		status_id = "offline";
 		break;
 	case QQ_BUDDY_ONLINE_AWAY:
@@ -632,11 +630,6 @@ void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 	else
 		purple_prpl_got_user_status_deactive(gc->account, purple_name, "mobile");
 
-	if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO && q_bud->status != QQ_BUDDY_OFFLINE)
-		purple_prpl_got_user_status(gc->account, purple_name, "video", NULL);
-	else
-		purple_prpl_got_user_status_deactive(gc->account, purple_name, "video");
-
 	g_free(purple_name);
 }
 
@@ -657,7 +650,7 @@ void qq_refresh_all_buddy_status(PurpleConnection *gc)
 		q_bud = (qq_buddy *) list->data;
 		if (q_bud != NULL && now > q_bud->last_update + QQ_UPDATE_ONLINE_INTERVAL
 				&& q_bud->status != QQ_BUDDY_ONLINE_INVISIBLE) {
-			q_bud->status = QQ_BUDDY_ONLINE_OFFLINE;
+			q_bud->status = QQ_BUDDY_CHANGE_TO_OFFLINE;
 			qq_update_buddy_contact(gc, q_bud);
 		}
 		list = list->next;

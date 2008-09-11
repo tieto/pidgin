@@ -212,8 +212,7 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 
 	purple_debug_info("QQ", "Succeed in modify members for room %d\n", group->ext_id);
 
-	purple_notify_info(gc, _("QQ Qun Operation"),
-			_("You have successfully modified Qun member"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Change Qun member"));
 }
 
 void qq_room_change_info(PurpleConnection *gc, qq_group *group)
@@ -279,7 +278,7 @@ void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection
 	purple_debug_info("QQ", "Succeed in modify info for Qun %d\n", group->ext_id);
 	qq_group_refresh(gc, group);
 
-	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modified Qun information"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Change Qun information"));
 }
 
 /* we create a very simple group first, and then let the user to modify */

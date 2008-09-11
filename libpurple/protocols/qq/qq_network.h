@@ -36,7 +36,7 @@ gboolean qq_connect_later(gpointer data);
 void qq_disconnect(PurpleConnection *gc);
 
 gint qq_send_cmd_encrypted(PurpleConnection *gc, guint16 cmd, guint16 seq,
-		guint8 *data, gint data_len, gboolean need_ack);
+		guint8 *encrypted_data, gint encrypted_len, gboolean is_save2trans);
 gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, guint8 *data, gint datalen);
 gint qq_send_cmd_mess(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len,
 		gint update_class, guint32 ship32);

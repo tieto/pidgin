@@ -231,7 +231,7 @@ static gchar *_qq_status_text(PurpleBuddy *b)
 		g_string_append(status, _("Online"));
 		break;
 	/* TODO What does this status mean? Labelling it as offline... */
-	case QQ_BUDDY_ONLINE_OFFLINE:
+	case QQ_BUDDY_CHANGE_TO_OFFLINE:
 		g_string_append(status, _("Offline"));
 		break;
 	case QQ_BUDDY_ONLINE_AWAY:
@@ -866,7 +866,7 @@ static void init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_none("/plugins/prpl/qq");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
-	purple_prefs_add_bool("/plugins/prpl/qq/prompt_group_msg_on_recv", TRUE);
+	purple_prefs_add_bool("/plugins/prpl/qq/show_room_when_newin", TRUE);
 
 }
 
