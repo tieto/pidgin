@@ -41,9 +41,9 @@ void qq_group_conv_show_window(PurpleConnection *gc, qq_group *group)
 	qd = (qq_data *) gc->proto_data;
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, 
-			group->group_name_utf8, purple_connection_get_account(gc));
+			group->title_utf8, purple_connection_get_account(gc));
 	if (conv == NULL)	/* show only one window per group */
-		serv_got_joined_chat(gc, qd->channel++, group->group_name_utf8);
+		serv_got_joined_chat(gc, qd->channel++, group->title_utf8);
 }
 
 /* refresh online member in group conversation window */
@@ -59,7 +59,7 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 	names = NULL;
 	flags = NULL;
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-			group->group_name_utf8, purple_connection_get_account(gc));
+			group->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL && group->members != NULL) {
 		list = group->members;
 		while (list != NULL) {

@@ -56,5 +56,6 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 guint8 *hex_str_to_bytes(const gchar *buf, gint *out_len);
 
 const gchar *qq_buddy_icon_dir(void);
+const gchar *qq_win32_buddy_icon_dir(void);
 
 #endif

@@ -30,15 +30,15 @@
 #include "group.h"
 
 enum {
-	QQ_GROUP_AUTH_TYPE_NO_AUTH = 0x01,
-	QQ_GROUP_AUTH_TYPE_NEED_AUTH = 0x02,
-	QQ_GROUP_AUTH_TYPE_NO_ADD = 0x03
+	QQ_ROOM_AUTH_TYPE_NO_AUTH = 0x01,
+	QQ_ROOM_AUTH_TYPE_NEED_AUTH = 0x02,
+	QQ_ROOM_AUTH_TYPE_NO_ADD = 0x03
 };
 
 enum {
-	QQ_GROUP_AUTH_REQUEST_APPLY = 0x01,
-	QQ_GROUP_AUTH_REQUEST_APPROVE = 0x02,
-	QQ_GROUP_AUTH_REQUEST_REJECT = 0x03
+	QQ_ROOM_AUTH_REQUEST_APPLY = 0x01,
+	QQ_ROOM_AUTH_REQUEST_APPROVE = 0x02,
+	QQ_ROOM_AUTH_REQUEST_REJECT = 0x03
 };
 
 void qq_send_cmd_group_auth(PurpleConnection *gc, qq_group *group, guint8 opt, guint32 uid, const gchar *reason_utf8);

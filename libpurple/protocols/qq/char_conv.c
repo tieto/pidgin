@@ -113,7 +113,7 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 	}
 	
 	/* conversion error */
-	purple_debug(PURPLE_DEBUG_ERROR, "QQ_CONVERT", "%s\n", error->message);
+	purple_debug_error("QQ_CONVERT", "%s\n", error->message);
 
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ_CONVERT",
 		(guint8 *) str, (len == -1) ? strlen(str) : len,
@@ -182,7 +182,7 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 	g_string_append_printf(encoded,
 			"<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
 			color_code, font_name, font_size / 3);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ_MESG",
+	purple_debug_info("QQ_MESG",
 			"recv <font color=\"%s\"><font face=\"%s\"><font size=\"%d\">\n",
 			color_code, font_name, font_size / 3);
 	g_string_append(encoded, msg_utf8);
