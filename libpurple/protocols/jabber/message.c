@@ -346,7 +346,14 @@ jabber_message_get_refs_from_xmlnode_internal(const xmlnode *message,
 				/* if there is no "alt" string, use the cid... 
 				 include the entire src, eg. "cid:.." to avoid linkification */
 				if (alt && alt[0] != '\0') {
-					ref->alt = g_strdup(xmlnode_get_attrib(child, "alt"));
+					/* workaround for when "alt" is set to the value of the
+					 CID (which Jabbim seems to do), to avoid it showing up
+						 as an mailto: link */
+					if (purple_email_is_valid(alt)) {
+						ref->alt = g_strdup_printf("smiley:%s", alt); 
+					} else {
+						ref->alt = g_strdup(alt);
+					}
 				} else {
 					ref->alt = g_strdup(src);
 				}
@@ -424,9 +431,15 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 				gchar *escaped = NULL;
 				/* if the "alt" attribute is empty, put the cid as smiley string */
 				if (alt && alt[0] != '\0') {
-					escaped = g_markup_escape_text(alt, -1);
-					out = g_string_append(out, escaped);
-					g_free(escaped);
+					/* if the "alt" is the same as the CID, as Jabbim does,
+					 this prevents linkification... */
+					if (purple_email_is_valid(alt)) {
+						const gchar *safe_alt = g_strdup_printf("smiley:%s", alt);
+						out = g_string_append(out, safe_alt);
+						g_free(safe_alt);
+					} else {
+						out = g_string_append(out, alt);
+					}
 				} else {
 					out = g_string_append(out, src);
 				}
