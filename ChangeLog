@@ -31,6 +31,7 @@ version 2.5.1 (08/30/2008):
 	Pidgin:
 	* Prevent use of custom smilies without "shortcuts."
 	* Fix a crash that could appear with AIM buddy tooltips.
+	* The status selector now saves your message when changing status.
 
 	Artwork:
 	* General refresh of many icons in the interface.
