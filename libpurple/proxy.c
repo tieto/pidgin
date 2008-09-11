@@ -1578,6 +1578,10 @@ s5_parse_chap_msg(PurpleProxyConnectData *connect_data)
 							_("Authentication failed"));
 				}
 				return -1;
+			case 0x01:
+				/* We've already validated that cmdbuf[1] is sane. */
+				purple_debug_info("socks5 proxy", "Received TEXT-MESSAGE of '%.*s'\n", (int) cmdbuf[1], buf);
+				break;
 			case 0x03:
 				purple_debug_info("socks5 proxy", "Received CHALLENGE\n");
 				/* Server wants our credentials */
@@ -1589,6 +1593,7 @@ s5_parse_chap_msg(PurpleProxyConnectData *connect_data)
 				hmacmd5_chap(buf, cmdbuf[1],
 					purple_proxy_info_get_password(connect_data->gpi),
 					connect_data->write_buffer + 4);
+				/* TODO: What about USER-IDENTITY? */
 				connect_data->write_buffer[0] = 0x01;
 				connect_data->write_buffer[1] = 0x01;
 				connect_data->write_buffer[2] = 0x04;
