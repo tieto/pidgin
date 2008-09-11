@@ -44,7 +44,7 @@ PurpleConversation *qq_room_conv_create(PurpleConnection *gc, qq_group *group)
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 			group->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL)	{
-		/* show only one window per group */
+		/* show only one conversation per group */
 		return conv;
 	}
 
@@ -52,8 +52,10 @@ PurpleConversation *qq_room_conv_create(PurpleConnection *gc, qq_group *group)
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL) {
 		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, group->notice_utf8);
-		/* qq_update_room(gc, 0, group->id); */
-		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
+		if (group->is_got_info)
+			qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
+		else
+			qq_update_room(gc, 0, group->id);
 		return conv;
 	}
 	return NULL;

@@ -35,8 +35,6 @@
 #include "qq_process.h"
 #include "qq_trans.h"
 
-#define QQ_RESEND_MAX               4	/* max resend per packet */
-
 enum {
 	QQ_TRANS_IS_SERVER = 0x01,			/* Is server command or client command */
 	QQ_TRANS_IS_IMPORT = 0x02,			/* Only notice if not get reply; or resend, disconn if reties get 0*/
@@ -188,7 +186,7 @@ void qq_trans_add_client_cmd(PurpleConnection *gc,
 	if (cmd == QQ_CMD_TOKEN || cmd == QQ_CMD_LOGIN || cmd == QQ_CMD_KEEP_ALIVE) {
 		trans->flag |= QQ_TRANS_IS_IMPORT;
 	}
-	trans->send_retries = QQ_RESEND_MAX;
+	trans->send_retries = qd->resend_times;
 #if 0
 	purple_debug_info("QQ_TRANS", "Add client cmd, seq %d, data %p, len %d\n",
 			trans->seq, trans->data, trans->data_len);
@@ -228,7 +226,7 @@ void qq_trans_add_room_cmd(PurpleConnection *gc,
 
 	trans->room_cmd = room_cmd;
 	trans->room_id = room_id;
-	trans->send_retries = QQ_RESEND_MAX;
+	trans->send_retries = qd->resend_times;
 #if 0
 	purple_debug_info("QQ_TRANS", "Add room cmd, seq %d, data %p, len %d\n",
 			trans->seq, trans->data, trans->data_len);
@@ -373,6 +371,7 @@ gboolean qq_trans_scan(PurpleConnection *gc)
 				return TRUE;
 			}
 
+			qd->net_stat.lost++;
 			purple_debug_error("QQ_TRANS",
 				"Lost [%d] %s, data %p, len %d, retries %d\n",
 				trans->seq, qq_get_cmd_desc(trans->cmd),
@@ -381,6 +380,7 @@ gboolean qq_trans_scan(PurpleConnection *gc)
 			continue;
 		}
 
+		qd->net_stat.resend++;
 		purple_debug_warning("QQ_TRANS",
 				"Resend [%d] %s data %p, len %d, send_retries %d\n",
 				trans->seq, qq_get_cmd_desc(trans->cmd),

@@ -44,11 +44,20 @@ const char *qq_win32_buddy_icon_dir(void);
 typedef struct _qq_data qq_data;
 typedef struct _qq_buddy qq_buddy;
 typedef struct _qq_interval qq_interval;
+typedef struct _qq_net_stat qq_net_stat;
 
 struct _qq_interval {
 	gint resend;
 	gint keep_alive;
 	gint update;
+};
+
+struct _qq_net_stat {
+	glong sent;
+	glong resend;
+	glong lost;
+	glong rcved;
+	glong rcved_dup;
 };
 
 struct _qq_buddy {
@@ -96,6 +105,7 @@ struct _qq_data {
 	gint udp_can_write_handler; 	/* socket can_write handle, use in udp connecting and tcp send out */
 #endif
 	gint fd;							/* socket file handler */
+	qq_net_stat net_stat;
 
 	GList *servers;
 	gchar *curr_server;		/* point to servers->data, do not free*/
@@ -109,6 +119,7 @@ struct _qq_data {
 	qq_interval itv_config;
 	qq_interval itv_count;
 	guint network_watcher;
+	gint resend_times;
 
 	GList *transactions;	/* check ack packet and resend */
 
