@@ -284,6 +284,11 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		count += cnt;
 		g_string_append_len(conn->buf, buf, cnt);
 	}
+
+	perrno = errno;
+	if (cnt < 0 && perrno != EAGAIN)
+		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
+
 #ifndef MSN_UNSAFE_DEBUG
 	if (conn->current_request->secure)
 		purple_debug_misc("soap", "Received secure request.\n");
@@ -299,11 +304,9 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		return;
 
 	/* msn_soap_process could alter errno */
-	perrno = errno;
 	msn_soap_process(conn);
 	
 	if (cnt < 0 && perrno != EAGAIN) {
-		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
 		/* It's possible msn_soap_process closed the ssl connection */
 		if (conn->ssl) {
 			purple_ssl_close(conn->ssl);
