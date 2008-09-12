@@ -7,8 +7,7 @@ version 2.5.2 (??/??/????):
 	* Fixed a crash caused by certain self-signed SSL certificates.
 
 	Pidgin:
-	* A preference has been added to keep the current status message when
-	  changing the global status (from available to away, for example).
+	* The status selector now saves your message when changing status.
 	* Fix a case where a conversation window could close unexpectedly.
 	* A mute sounds option has been added to the preferences window to
 	  help with discoverability.  CTRL+S is no longer bound to mute.
@@ -31,7 +30,6 @@ version 2.5.1 (08/30/2008):
 	Pidgin:
 	* Prevent use of custom smilies without "shortcuts."
 	* Fix a crash that could appear with AIM buddy tooltips.
-	* The status selector now saves your message when changing status.
 
 	Artwork:
 	* General refresh of many icons in the interface.
