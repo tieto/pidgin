@@ -178,9 +178,9 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
 	} else {
-		message = g_strdup_printf(_("%s added you [%s] to buddy list"), from, to);
+		message = g_strdup_printf(_("%s has added you [%s] to his or her buddy list"), from, to);
 		_qq_sys_msg_log_write(gc, message, from);
-		purple_notify_info(gc, _("QQ Budy"), _("Successed:"), message);
+		purple_notify_info(gc, NULL, message, NULL);
 	}
 
 	g_free(name);
@@ -198,7 +198,7 @@ static void _qq_process_msg_sys_add_contact_rejected(PurpleConnection *gc, gchar
 	reason = g_strdup_printf(_("Message: %s"), msg_utf8);
 	_qq_sys_msg_log_write(gc, message, from);
 
-	purple_notify_info(gc, _("QQ Buddy"), message, reason);
+	purple_notify_info(gc, NULL, message, reason);
 	g_free(message);
 	g_free(reason);
 }
@@ -216,7 +216,7 @@ static void _qq_process_msg_sys_add_contact_approved(PurpleConnection *gc, gchar
 
 	message = g_strdup_printf(_("Requestion approved by %s"), from);
 	_qq_sys_msg_log_write(gc, message, from);
-	purple_notify_info(gc, _("QQ Buddy"), _("Notice:"), message);
+	purple_notify_info(gc, NULL, message, NULL);
 
 	g_free(message);
 }
@@ -284,13 +284,13 @@ static void _qq_process_msg_sys_notice(PurpleConnection *gc, gchar *from, gchar 
 
 	g_return_if_fail(from != NULL && to != NULL);
 
-	title = g_strdup_printf(_("From %s:"), from);
+	title = g_strdup_printf(_("QQ Server Notice from %s:"), from);
 	content = g_strdup_printf(_("%s"), msg_utf8);
 
 	if (qd->is_show_notice) {
-		purple_notify_info(gc, _("QQ Server Notice"), title, content);
+		purple_notify_info(gc, NULL, title, content);
 	} else {
-		purple_debug_info("QQ", "QQ Server notice from %s:\n%s", from, msg_utf8);
+		purple_debug_info("QQ", "Server notice from %s:\n%s", from, msg_utf8);
 }
 	g_free(title);
 	g_free(content);

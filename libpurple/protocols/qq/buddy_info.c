@@ -711,7 +711,7 @@ void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection 
 	data[data_len] = '\0';
 	if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
 		purple_debug_info("QQ", "Update info ACK OK\n");
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"), _("Change buddy information."));
+		purple_notify_info(gc, NULL, _("My information has been updated"), NULL);
 	}
 }
 

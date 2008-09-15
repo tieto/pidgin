@@ -37,7 +37,6 @@
 #include "group_info.h"
 #include "group_im.h"
 #include "group_opt.h"
-#include "group_conv.h"
 #include "im.h"
 #include "header_info.h"
 #include "packet_parse.h"
@@ -244,7 +243,7 @@ void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, Purple
 	g_return_if_fail(ext_id > 0 && uid > 0);
 
 	msg = g_strdup_printf(_("[%d] removed from Qun \"%d\""), uid, ext_id);
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Notice:"), msg);
+	purple_notify_info(gc, _("QQ Qun Operation"), msg, NULL);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
@@ -275,7 +274,7 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 	g_return_if_fail(ext_id > 0 && uid > 0);
 
 	msg = g_strdup_printf(_("[%d] added to Qun \"%d\""), uid, ext_id);
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Notice:"), msg);
+	purple_notify_info(gc, _("QQ Qun Operation"), msg, _("Qun is in buddy list"));
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
@@ -379,8 +378,13 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	g_return_if_fail(group != NULL);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
-	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/show_room_when_newin")) {
-		conv = qq_room_conv_create(gc, group);
+	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/prompt_group_msg_on_recv")) {
+		/* New conv should open, get group info*/
+		/* qq_update_room(gc, 0, group->id); */
+		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
+
+		serv_got_joined_chat(gc, qd->channel++, group->title_utf8);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
 	}
 
 	if (conv != NULL) {

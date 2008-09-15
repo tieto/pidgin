@@ -78,7 +78,7 @@ static void process_cmd_unknow(PurpleConnection *gc,const gchar *title, guint8 *
 
 	msg_utf8 = try_dump_as_gbk(data, data_len);
 	if (msg_utf8 != NULL) {
-		purple_notify_info(gc, _("QQ Error"), title, msg_utf8);
+		purple_notify_info(gc, title, msg_utf8, NULL);
 		g_free(msg_utf8);
 	}
 }
@@ -130,7 +130,6 @@ void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *
 static void process_room_cmd_notify(PurpleConnection *gc,
 	guint8 room_cmd, guint8 room_id, guint8 reply, guint8 *data, gint data_len)
 {
-	gchar *prim;
 	gchar *msg, *msg_utf8;
 	g_return_if_fail(data != NULL && data_len > 0);
 
@@ -138,12 +137,11 @@ static void process_room_cmd_notify(PurpleConnection *gc,
 	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
 	g_free(msg);
 
-	prim = g_strdup_printf(_("Error reply of %s(0x%02X)\nRoom %d, reply 0x%02X"),
-		qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, reply);
+	msg = g_strdup_printf(_("Command %s(0x%02X) id %d, reply [0x%02X]:\n%s"),
+		qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, reply, msg_utf8);
 
-	purple_notify_error(gc, _("QQ Qun Command"), prim, msg_utf8);
-
-	g_free(prim);
+	purple_notify_error(gc, NULL, _("Invalid QQ Qun reply"), msg);
+	g_free(msg);
 	g_free(msg_utf8);
 }
 
@@ -345,7 +343,7 @@ void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
 		purple_debug_warning("QQ",
 			"Invaild room id, [%05d], 0x%02X %s for %d, len %d\n",
 			seq, room_cmd, qq_get_room_cmd_desc(room_cmd), room_id, rcved_len);
-		/* Some room cmd has no room id, like QQ_ROOM_CMD_SEARCH */
+		return;
 	}
 
 	if (data_len <= 2) {
