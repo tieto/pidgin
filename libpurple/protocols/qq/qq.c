@@ -97,7 +97,10 @@ static void server_list_create(PurpleAccount *account)
 
 	gpi = purple_proxy_get_setup(account);
 
-	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
+	qd->use_tcp  = TRUE;
+	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_UDP) {
+		qd->use_tcp  = FALSE;
+	}
 
 	user_server = purple_account_get_string(account, "server", NULL);
 	purple_debug_info("QQ", "Select server '%s'\n", user_server);
@@ -465,7 +468,7 @@ static void _qq_get_info(PurpleConnection *gc, const gchar *who)
 		return;
 	}
 
-	qq_request_get_level(gc, uid);
+	qq_send_packet_get_level(gc, uid);
 	qq_send_packet_get_info(gc, uid, TRUE);
 }
 
@@ -842,10 +845,14 @@ static void init_plugin(PurplePlugin *plugin)
 		entry = entry->next;
 	}
 
-	option = purple_account_option_list_new(_("Server"), "server", kvlist);
+	/*
+	option = purple_account_option_string_new(_("Server"), "server", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Connect by TCP"), "use_tcp", TRUE);
+	option = purple_account_option_int_new(_("Port"), "port", 0);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	*/
+	option = purple_account_option_list_new(_("Server"), "server", kvlist);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show server notice"), "show_notice", TRUE);

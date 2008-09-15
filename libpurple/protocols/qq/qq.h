@@ -48,7 +48,7 @@ typedef struct _qq_interval qq_interval;
 struct _qq_interval {
 	gint resend;
 	gint keep_alive;
-	gint update;
+	gint update; 
 };
 
 struct _qq_buddy {
@@ -91,15 +91,11 @@ struct _qq_data {
 	GSList *openconns;
 	gboolean use_tcp;		/* network in tcp or udp */
 	PurpleProxyConnectData *conn_data;
-#ifndef purple_proxy_connect_udp
-	PurpleDnsQueryData *udp_query_data;		/* udp related */
-	gint udp_can_write_handler; 	/* socket can_write handle, use in udp connecting and tcp send out */
-#endif
 	gint fd;							/* socket file handler */
 
 	GList *servers;
 	gchar *curr_server;		/* point to servers->data, do not free*/
-
+	
 	struct in_addr redirect_ip;
 	guint16 redirect_port;
 	guint check_watcher;
@@ -109,7 +105,7 @@ struct _qq_data {
 	qq_interval itv_config;
 	qq_interval itv_count;
 	guint network_watcher;
-
+	
 	GList *transactions;	/* check ack packet and resend */
 
 	guint32 uid;			/* QQ number */
@@ -123,6 +119,7 @@ struct _qq_data {
 	guint16 send_seq;		/* send sequence number */
 	guint8 login_mode;		/* online of invisible */
 	gboolean is_login;		/* used by qq-add_buddy */
+	gboolean is_finish_update;
 
 	PurpleXfer *xfer;			/* file transfer handler */
 

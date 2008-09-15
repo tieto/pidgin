@@ -259,7 +259,7 @@ static void _qq_process_recv_news(guint8 *data, gint data_len, PurpleConnection 
 #endif
 
 	temp = g_newa(guint8, data_len);
-	bytes = 4;	/* ignore unknown 4 bytes */
+	bytes = 4;	// ignore unknown 4 bytes
 
 	bytes += qq_get8(&temp_len, data + bytes);
 	g_return_if_fail(bytes + temp_len <= data_len);

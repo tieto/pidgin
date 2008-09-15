@@ -46,10 +46,8 @@ void qq_trans_add_room_cmd(PurpleConnection *gc,
 
 void qq_trans_add_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 	guint8 *data, gint data_len);
-void qq_trans_add_remain(PurpleConnection *gc, guint16 cmd, guint16 seq,
-	guint8 *data, gint data_len);
 
-void qq_trans_process_remained(PurpleConnection *gc);
+void qq_trans_process_before_login(PurpleConnection *gc);
 gboolean qq_trans_scan(PurpleConnection *gc);
 void qq_trans_remove_all(PurpleConnection *gc);
 

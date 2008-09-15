@@ -65,7 +65,7 @@ static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
 }
 
 /* send packet to join a group without auth */
-void qq_request_room_join(PurpleConnection *gc, qq_group *group)
+void qq_send_cmd_group_join_group(PurpleConnection *gc, qq_group *group)
 {
 	g_return_if_fail(group != NULL);
 
@@ -79,12 +79,8 @@ void qq_request_room_join(PurpleConnection *gc, qq_group *group)
 	case QQ_ROOM_AUTH_TYPE_NEED_AUTH:
 		break;
 	case QQ_ROOM_AUTH_TYPE_NO_ADD:
-		if (group->my_role == QQ_ROOM_ROLE_NO
-				&& group->my_role == QQ_ROOM_ROLE_REQUESTING) {
-			purple_notify_warning(gc, NULL, _("The Qun does not allow others to join"), NULL);
-			return;
-		}
-		break;
+		purple_notify_warning(gc, NULL, _("The Qun does not allow others to join"), NULL);
+		return;
 	default:
 		purple_debug_error("QQ", "Unknown room auth type: %d\n", group->auth_type);
 		break;
@@ -249,8 +245,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 		qq_group_refresh(gc, group);
 		/* this must be shown before getting online members */
 		qq_group_conv_show_window(gc, group);
-		/* qq_update_room(gc, 0, group->id); */
-		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
+		qq_room_update(gc, 0, group->id);
 		break;
 	case QQ_ROOM_JOIN_NEED_AUTH:
 		purple_debug_info("QQ",
@@ -290,7 +285,7 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 
 	group = qq_room_search_ext_id(gc, ext_id);
 	if (group) {
-		qq_request_room_join(gc, group);
+		qq_send_cmd_group_join_group(gc, group);
 	} else {
 		qq_set_pending_id(&qd->joining_groups, ext_id, TRUE);
 		qq_send_cmd_group_search_group(gc, ext_id);

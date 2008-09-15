@@ -84,7 +84,7 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 
 	nombre = uid_to_purple_name(uid);
 	purple_request_action
-	    (gc, NULL, _("Do you approve the requestion?"), "",
+	    (gc, NULL, _("Do you want to approve the request?"), "",
 		PURPLE_DEFAULT_ACTION_NONE,
 		 purple_connection_get_account(gc), nombre, NULL,
 		 g, 2,
@@ -108,7 +108,7 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 	qq_send_packet_get_info(gc, uid, TRUE);	/* we want to see window */
 	nombre = uid_to_purple_name(uid);
 	purple_request_action
-	    (gc, NULL, _("Do you add the buddy?"), "",
+	    (gc, NULL, _("Do you want to add this buddy?"), "",
 		PURPLE_DEFAULT_ACTION_NONE,
 		 purple_connection_get_account(gc), nombre, NULL,
 		 g, 2,

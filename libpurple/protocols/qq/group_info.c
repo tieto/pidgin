@@ -154,12 +154,12 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, PurpleConnection 
 
 	/* strlen + <str content> */
 	bytes += convert_as_pascal_string(data + bytes, &(group->title_utf8), QQ_CHARSET_DEFAULT);
+	purple_debug_info("QQ", "group \"%s\"\n", group->title_utf8);
 	bytes += qq_get16(&unknown, data + bytes);	/* 0x0000 */
 	bytes += convert_as_pascal_string(data + bytes, &notice, QQ_CHARSET_DEFAULT);
+	purple_debug_info("QQ", "notice \"%s\"\n", notice);
 	bytes += convert_as_pascal_string(data + bytes, &(group->desc_utf8), QQ_CHARSET_DEFAULT);
-
-	purple_debug_info("QQ", "room [%s] notice [%s] desc [%s] unknow 0x%04X\n",
-			group->title_utf8, notice, group->desc_utf8, unknown);
+	purple_debug_info("QQ", "group_desc \"%s\"\n", group->desc_utf8);
 
 	num = 0;
 	/* now comes the member list separated by 0x00 */
