@@ -126,7 +126,7 @@ static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint
 	gint ack_len, bytes;
 
 	qd = (qq_data *) gc->proto_data;
-	
+
 	str = g_strdup_printf("%d", from);
 	bar = 0x1e;
 	ack_len = 1 + 1 + strlen(str) + 1 + 2;
@@ -142,9 +142,9 @@ static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint
 	g_free(str);
 
 	if (bytes == ack_len)	/* creation OK */
-		qq_send_cmd_detail(qd, QQ_CMD_ACK_SYS_MSG, 0, FALSE, ack, ack_len);
+		qq_send_server_reply(gc, QQ_CMD_ACK_SYS_MSG, 0, ack, ack_len);
 	else
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+		purple_debug_error("QQ",
 			   "Fail creating sys msg ACK, expect %d bytes, build %d bytes\n", ack_len, bytes);
 }
 
@@ -194,8 +194,8 @@ static void _qq_process_msg_sys_add_contact_rejected(PurpleConnection *gc, gchar
 
 	g_return_if_fail(from != NULL && to != NULL);
 
-	message = g_strdup_printf(_("User %s rejected your request"), from);
-	reason = g_strdup_printf(_("Reason: %s"), msg_utf8);
+	message = g_strdup_printf(_("Requestion rejected by %s"), from);
+	reason = g_strdup_printf(_("Message: %s"), msg_utf8);
 	_qq_sys_msg_log_write(gc, message, from);
 
 	purple_notify_info(gc, NULL, message, reason);
@@ -214,7 +214,7 @@ static void _qq_process_msg_sys_add_contact_approved(PurpleConnection *gc, gchar
 	qd = (qq_data *) gc->proto_data;
 	qq_add_buddy_by_recv_packet(gc, strtol(from, NULL, 10), TRUE, TRUE);
 
-	message = g_strdup_printf(_("User %s approved your request"), from);
+	message = g_strdup_printf(_("Requestion approved by %s"), from);
 	_qq_sys_msg_log_write(gc, message, from);
 	purple_notify_info(gc, NULL, message, NULL);
 
@@ -263,9 +263,9 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 		g2 = g_new0(gc_and_uid, 1);
 		g2->gc = gc;
 		g2->uid = strtol(from, NULL, 10);
-		message = g_strdup_printf(_("%s is not in your buddy list"), from);
+		message = g_strdup_printf(_("%s is not in buddy list"), from);
 		purple_request_action(gc, NULL, message,
-				    _("Would you like to add him?"), PURPLE_DEFAULT_ACTION_NONE,
+				    _("Would you add?"), PURPLE_DEFAULT_ACTION_NONE,
 					purple_connection_get_account(gc), name, NULL,
 					g2, 3,
 					_("Cancel"), NULL,
@@ -279,14 +279,19 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 
 static void _qq_process_msg_sys_notice(PurpleConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
 {
+	qq_data *qd = (qq_data *) gc->proto_data;
 	gchar *title, *content;
 
 	g_return_if_fail(from != NULL && to != NULL);
 
-	title = g_strdup_printf(_("Notice from: %s"), from);
+	title = g_strdup_printf(_("QQ Server Notice from %s:"), from);
 	content = g_strdup_printf(_("%s"), msg_utf8);
 
-	purple_notify_info(gc, NULL, title, content);
+	if (qd->is_show_notice) {
+		purple_notify_info(gc, NULL, title, content);
+	} else {
+		purple_debug_info("QQ", "Server notice from %s:\n%s", from, msg_utf8);
+}
 	g_free(title);
 	g_free(content);
 }
@@ -310,12 +315,19 @@ void qq_process_msg_sys(guint8 *data, gint data_len, guint16 seq, PurpleConnecti
 	_qq_send_packet_ack_msg_sys(gc, code[0], strtol(from, NULL, 10), seq);
 
 	if (strtol(to, NULL, 10) != qd->uid) {	/* not to me */
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Recv sys msg to [%s], not me!, discard\n", to);
+		purple_debug_error("QQ", "Recv sys msg to [%s], not me!, discard\n", to);
 		g_strfreev(segments);
 		return;
 	}
 
 	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
+	if (from == NULL && msg_utf8) {
+		purple_debug_error("QQ", "Recv NULL sys msg to [%s], discard\n", to);
+		g_strfreev(segments);
+		g_free(msg_utf8);
+		return;
+	}
+
 	switch (strtol(code, NULL, 10)) {
 	case QQ_MSG_SYS_BEING_ADDED:
 		_qq_process_msg_sys_being_added(gc, from, to, msg_utf8);
@@ -333,12 +345,12 @@ void qq_process_msg_sys(guint8 *data, gint data_len, guint16 seq, PurpleConnecti
 		_qq_process_msg_sys_notice(gc, from, to, msg_utf8);
 		break;
 	case QQ_MSG_SYS_NEW_VERSION:
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
+		purple_debug_warning("QQ",
 			   "QQ server says there is newer version than %s\n", qq_get_ver_desc(QQ_CLIENT));
 		break;
 	default:
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Recv unknown sys msg code: %s\n", code);
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "the msg is : %s\n", msg_utf8);
+		purple_debug_warning("QQ", "Recv unknown sys msg code: %s\n", code);
+		purple_debug_warning("QQ", "the msg is : %s\n", msg_utf8);
 	}
 	g_free(msg_utf8);
 	g_strfreev(segments);

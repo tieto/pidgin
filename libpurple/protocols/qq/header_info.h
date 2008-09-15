@@ -47,7 +47,7 @@ enum {
 	QQ_CMD_ADD_BUDDY_WO_AUTH = 0x0009,		/* add buddy without auth */
 	QQ_CMD_DEL_BUDDY = 0x000a,			/* delete a buddy  */
 	QQ_CMD_BUDDY_AUTH = 0x000b,			/* buddy authentication */
-	QQ_CMD_CHANGE_ONLINE_STATUS = 0x000d,		/* change my online status */
+	QQ_CMD_CHANGE_STATUS = 0x000d,		/* change my online status */
 	QQ_CMD_ACK_SYS_MSG = 0x0012,			/* ack system message */
 	QQ_CMD_SEND_IM = 0x0016,			/* send message */
 	QQ_CMD_RECV_IM = 0x0017,			/* receive message */
@@ -59,11 +59,11 @@ enum {
 	QQ_CMD_GET_BUDDIES_ONLINE = 0x0027,		/* get online buddies list */
 	QQ_CMD_CELL_PHONE_2 = 0x0029,			/* cell phone 2 */
 	QQ_CMD_ROOM = 0x0030,			/* room command */
-	QQ_CMD_GET_BUDDIES_AND_ROOMS = 0x0058,  
+	QQ_CMD_GET_BUDDIES_AND_ROOMS = 0x0058,
 	QQ_CMD_GET_LEVEL = 0x005C,			/* get level for one or more buddies */
 	QQ_CMD_TOKEN  = 0x0062, 		/* get login token */
 	QQ_CMD_RECV_MSG_SYS = 0x0080,			/* receive a system message */
-	QQ_CMD_RECV_MSG_BUDDY_CHANGE_STATUS = 0x0081,	/* buddy change status */
+	QQ_CMD_BUDDY_CHANGE_STATUS = 0x0081,	/* buddy change status */
 };
 
 const gchar *qq_get_cmd_desc(gint type);
@@ -80,7 +80,7 @@ enum {
 	QQ_ROOM_CMD_QUIT = 0x09,
 	QQ_ROOM_CMD_SEND_MSG = 0x0a,
 	QQ_ROOM_CMD_GET_ONLINES = 0x0b,
-	QQ_ROOM_CMD_GET_MEMBER_INFO = 0x0c,
+	QQ_ROOM_CMD_GET_BUDDIES = 0x0c,
 
 	QQ_ROOM_CMD_CHANGE_CARD = 0x0E,
 	QQ_ROOM_CMD_GET_REALNAMES = 0x0F,
