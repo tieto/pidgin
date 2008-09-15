@@ -35,12 +35,13 @@
 #include "qq_process.h"
 #include "qq_trans.h"
 
-#define QQ_RESEND_MAX               3	/* max resend per packet */
+#define QQ_RESEND_MAX               4	/* max resend per packet */
 
 enum {
 	QQ_TRANS_IS_SERVER = 0x01,			/* Is server command or client command */
 	QQ_TRANS_IS_IMPORT = 0x02,			/* Only notice if not get reply; or resend, disconn if reties get 0*/
-	QQ_TRANS_REMAINED = 0x04,		/* server command before login*/
+	QQ_TRANS_REMAINED = 0x04,				/* server command before login*/
+	QQ_TRANS_IS_REPLY = 0x08,				/* server command before login*/
 };
 
 struct _qq_transaction {
@@ -62,42 +63,6 @@ struct _qq_transaction {
 	gint update_class;
 	guint32 ship32;
 };
-
-qq_transaction *qq_trans_find_rcved(PurpleConnection *gc, guint16 cmd, guint16 seq)
-{
-	qq_data *qd = (qq_data *)gc->proto_data;
-	GList *curr;
-	GList *next;
-	qq_transaction *trans;
-
-	if (qd->transactions == NULL) {
-		return NULL;
-	}
-
-	next = qd->transactions;
-	while( (curr = next) ) {
-		next = curr->next;
-
-		trans = (qq_transaction *) (curr->data);
-		if(trans->cmd == cmd && trans->seq == seq) {
-			if (trans->rcved_times == 0) {
-				trans->scan_times = 0;
-			}
-			trans->rcved_times++;
-			/* server may not get our confirm reply before, send reply again*/
-			/* only rcved buffer stored in transaction
-			if (qq_trans_is_server(trans) && qq_trans_is_dup(trans)) {
-				if (trans->data != NULL && trans->data_len > 0) {
-					qq_send_cmd_encrypted(gc, trans->cmd, trans->seq, trans->data, trans->data_len, FALSE);
-				}
-			}
-			*/
-			return trans;
-		}
-	}
-
-	return NULL;
-}
 
 gboolean qq_trans_is_server(qq_transaction *trans)
 {
@@ -175,8 +140,11 @@ static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
 static void trans_remove(PurpleConnection *gc, qq_transaction *trans)
 {
 	qq_data *qd = (qq_data *)gc->proto_data;
-	g_return_if_fail(qd != NULL && trans != NULL);
 
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
+	g_return_if_fail(trans != NULL);
 #if 0
 	purple_debug_info("QQ_TRANS",
 				"Remove [%s%05d] retry %d rcved %d scan %d %s\n",
@@ -188,6 +156,27 @@ static void trans_remove(PurpleConnection *gc, qq_transaction *trans)
 	if (trans->data)	g_free(trans->data);
 	qd->transactions = g_list_remove(qd->transactions, trans);
 	g_free(trans);
+}
+
+static qq_transaction *trans_find(PurpleConnection *gc, guint16 cmd, guint16 seq)
+{
+	qq_data *qd;
+	GList *list;
+	qq_transaction *trans;
+
+	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
+	qd = (qq_data *) gc->proto_data;
+
+	list = qd->transactions;
+	while (list != NULL) {
+		trans = (qq_transaction *) list->data;
+		if(trans->cmd == cmd && trans->seq == seq) {
+			return trans;
+		}
+		list = list->next;
+	}
+
+	return NULL;
 }
 
 void qq_trans_add_client_cmd(PurpleConnection *gc,
@@ -205,6 +194,28 @@ void qq_trans_add_client_cmd(PurpleConnection *gc,
 			trans->seq, trans->data, trans->data_len);
 #endif
 	qd->transactions = g_list_append(qd->transactions, trans);
+}
+
+qq_transaction *qq_trans_find_rcved(PurpleConnection *gc, guint16 cmd, guint16 seq)
+{
+	qq_transaction *trans;
+
+	trans = trans_find(gc, cmd, seq);
+	if (trans == NULL) {
+		return NULL;
+	}
+
+	if (trans->rcved_times == 0) {
+		trans->scan_times = 0;
+	}
+	trans->rcved_times++;
+	/* server may not get our confirm reply before, send reply again*/
+	if (qq_trans_is_server(trans) && (trans->flag & QQ_TRANS_IS_REPLY)) {
+		if (trans->data != NULL && trans->data_len > 0) {
+			qq_send_cmd_encrypted(gc, trans->cmd, trans->seq, trans->data, trans->data_len, FALSE);
+		}
+	}
+	return trans;
 }
 
 void qq_trans_add_room_cmd(PurpleConnection *gc,
@@ -226,10 +237,10 @@ void qq_trans_add_room_cmd(PurpleConnection *gc,
 }
 
 void qq_trans_add_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
-		guint8 *data, gint data_len)
+		guint8 *rcved, gint rcved_len)
 {
 	qq_data *qd = (qq_data *)gc->proto_data;
-	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, data, data_len, QQ_CMD_CLASS_NONE, 0);
+	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, rcved, rcved_len, QQ_CMD_CLASS_NONE, 0);
 
 	trans->flag = QQ_TRANS_IS_SERVER;
 	trans->send_retries = 0;
@@ -239,6 +250,27 @@ void qq_trans_add_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			trans->seq, trans->data, trans->data_len);
 #endif
 	qd->transactions = g_list_append(qd->transactions, trans);
+}
+
+void qq_trans_add_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq,
+		guint8 *reply, gint reply_len)
+{
+	qq_transaction *trans;
+
+	g_return_if_fail(reply != NULL && reply_len > 0);
+
+	trans = trans_find(gc, cmd, seq);
+	if (trans == NULL) {
+		return;
+	}
+
+	g_return_if_fail(trans->flag & QQ_TRANS_IS_SERVER);
+	trans->flag |= QQ_TRANS_IS_REPLY;
+
+	if (trans->data)	g_free(trans->data);
+
+	trans->data = g_memdup(reply, reply_len);
+	trans->data_len = reply_len;
 }
 
 void qq_trans_add_remain(PurpleConnection *gc, guint16 cmd, guint16 seq,
@@ -349,7 +381,7 @@ gboolean qq_trans_scan(PurpleConnection *gc)
 			continue;
 		}
 
-		purple_debug_error("QQ_TRANS",
+		purple_debug_warning("QQ_TRANS",
 				"Resend [%d] %s data %p, len %d, send_retries %d\n",
 				trans->seq, qq_get_cmd_desc(trans->cmd),
 				trans->data, trans->data_len, trans->send_retries);

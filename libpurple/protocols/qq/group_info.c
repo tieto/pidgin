@@ -59,7 +59,7 @@ static void set_all_offline(qq_group *group)
 	list = group->members;
 	while (list != NULL) {
 		member = (qq_buddy *) list->data;
-		member->status = QQ_BUDDY_ONLINE_OFFLINE;
+		member->status = QQ_BUDDY_CHANGE_TO_OFFLINE;
 		list = list->next;
 	}
 }
@@ -189,6 +189,11 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, PurpleConnection 
 	if (group->creator_uid == qd->uid)
 		group->my_role = QQ_ROOM_ROLE_ADMIN;
 
+	/* filter \r\n in notice */
+	qq_filter_str(notice);
+	group->notice_utf8 = strdup(notice);
+	g_free(notice);
+
 	qq_group_refresh(gc, group);
 
 	purple_conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
@@ -199,11 +204,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, PurpleConnection 
 		return;
 	}
 
-	/* filter \r\n in notice */
-	qq_filter_str(notice);
-	group->notice_utf8 = strdup(notice);
-	g_free(notice);
-
+	purple_debug_info("QQ", "Set chat topic to %s\n", group->notice_utf8);
 	purple_conv_chat_set_topic(PURPLE_CONV_CHAT(purple_conv), NULL, group->notice_utf8);
 }
 

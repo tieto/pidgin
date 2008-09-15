@@ -38,6 +38,7 @@
 #include "group_info.h"
 #include "group_join.h"
 #include "group_opt.h"
+#include "group_conv.h"
 #include "group_search.h"
 #include "header_info.h"
 #include "packet_parse.h"
@@ -47,6 +48,7 @@
 enum {
 	QQ_ROOM_JOIN_OK = 0x01,
 	QQ_ROOM_JOIN_NEED_AUTH = 0x02,
+	QQ_ROOM_JOIN_DENIED = 0x03,
 };
 
 static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
@@ -192,7 +194,7 @@ void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *g
 			purple_blist_remove_chat(chat);
 		qq_group_delete_internal_record(qd, id);
 	}
-	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully left the Qun"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Remove from Qun"));
 }
 
 /* Process the reply to group_auth subcmd */
@@ -214,8 +216,7 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	bytes += qq_get32(&id, data + bytes);
 	g_return_if_fail(id > 0);
 
-	purple_notify_info(gc, _("QQ Qun Auth"),
-		     _("Your authorization request has been accepted by the QQ server"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Join to Qun"));
 }
 
 /* process group cmd reply "join group" */
@@ -225,6 +226,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 	guint32 id;
 	guint8 reply;
 	qq_group *group;
+	gchar *msg;
 
 	g_return_if_fail(data != NULL && len > 0);
 
@@ -244,13 +246,11 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 	g_return_if_fail(group != NULL);
 	switch (reply) {
 	case QQ_ROOM_JOIN_OK:
-		purple_debug_info("QQ", "Succeed joining group \"%s\"\n", group->title_utf8);
+		purple_debug_info("QQ", "Successed in joining group \"%s\"\n", group->title_utf8);
 		group->my_role = QQ_ROOM_ROLE_YES;
 		qq_group_refresh(gc, group);
 		/* this must be shown before getting online members */
-		qq_group_conv_show_window(gc, group);
-		/* qq_update_room(gc, 0, group->id); */
-		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
+		qq_room_conv_create(gc, group);
 		break;
 	case QQ_ROOM_JOIN_NEED_AUTH:
 		purple_debug_info("QQ",
@@ -260,10 +260,17 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 		qq_group_refresh(gc, group);
 		_qq_group_join_auth(gc, group);
 		break;
+	case QQ_ROOM_JOIN_DENIED:
+		msg = g_strdup_printf(_("Qun %d denied to join"), group->ext_id);
+		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), msg);
+		g_free(msg);
+		break;
 	default:
 		purple_debug_info("QQ",
-			   "Error joining group [%d] %s, unknown reply: 0x%02x\n",
+			   "Failed joining group [%d] %s, unknown reply: 0x%02x\n",
 			   group->ext_id, group->title_utf8, reply);
+
+		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), _("Join Qun, Unknow Reply"));
 	}
 }
 

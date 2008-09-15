@@ -1056,25 +1056,26 @@ static gint packet_send_out(PurpleConnection *gc, guint16 cmd, guint16 seq, guin
 }
 
 gint qq_send_cmd_encrypted(PurpleConnection *gc, guint16 cmd, guint16 seq,
-	guint8 *data, gint data_len, gboolean need_ack)
+	guint8 *encrypted_data, gint encrypted_len, gboolean is_save2trans)
 {
-	gint send_len;
+	gint sent_len;
 
 #if 1
+		/* qq_show_packet("qq_send_cmd_encrypted", data, data_len); */
 		purple_debug_info("QQ", "<== [%05d], %s(0x%04X), datalen %d\n",
-				seq, qq_get_cmd_desc(cmd), cmd, data_len);
+				seq, qq_get_cmd_desc(cmd), cmd, encrypted_len);
 #endif
 
-	send_len = packet_send_out(gc, cmd, seq, data, data_len);
-	if (need_ack)  {
-		qq_trans_add_client_cmd(gc, cmd, seq, data, data_len, 0, 0);
+	sent_len = packet_send_out(gc, cmd, seq, encrypted_data, encrypted_len);
+	if (is_save2trans)  {
+		qq_trans_add_client_cmd(gc, cmd, seq, encrypted_data, encrypted_len, 0, 0);
 	}
-	return send_len;
+	return sent_len;
 }
 
 /* Encrypt data with session_key, and send packet out */
 static gint send_cmd_detail(PurpleConnection *gc, guint16 cmd, guint16 seq,
-	guint8 *data, gint data_len, gboolean need_ack, gint update_class, guint32 ship32)
+	guint8 *data, gint data_len, gboolean is_save2trans, gint update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint8 *encrypted_data;
@@ -1096,8 +1097,9 @@ static gint send_cmd_detail(PurpleConnection *gc, guint16 cmd, guint16 seq,
 
 	bytes_sent = packet_send_out(gc, cmd, seq, encrypted_data, encrypted_len);
 
-	if (need_ack)  {
-		qq_trans_add_client_cmd(gc, cmd, seq, encrypted_data, encrypted_len, update_class, ship32);
+	if (is_save2trans)  {
+		qq_trans_add_client_cmd(gc, cmd, seq, encrypted_data, encrypted_len,
+				update_class, ship32);
 	}
 	return bytes_sent;
 }
@@ -1120,12 +1122,12 @@ gint qq_send_cmd_mess(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data
 	return send_cmd_detail(gc, cmd, seq, data, data_len, TRUE, update_class, ship32);
 }
 
-/* set seq and need_ack, then call send_cmd_detail */
+/* set seq and is_save2trans, then call send_cmd_detail */
 gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len)
 {
 	qq_data *qd;
 	guint16 seq;
-	gboolean need_ack;
+	gboolean is_save2trans;
 
 	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
 	qd = (qq_data *) gc->proto_data;
@@ -1133,26 +1135,47 @@ gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len)
 
 	if (cmd != QQ_CMD_LOGOUT) {
 		seq = ++qd->send_seq;
-		need_ack = TRUE;
+		is_save2trans = TRUE;
 	} else {
 		seq = 0xFFFF;
-		need_ack = FALSE;
+		is_save2trans = FALSE;
 	}
 #if 1
 		purple_debug_info("QQ", "<== [%05d], %s(0x%04X), datalen %d\n",
 				seq, qq_get_cmd_desc(cmd), cmd, data_len);
 #endif
-	return send_cmd_detail(gc, cmd, seq, data, data_len, need_ack, 0, 0);
+	return send_cmd_detail(gc, cmd, seq, data, data_len, is_save2trans, 0, 0);
 }
 
-/* set seq and need_ack, then call send_cmd_detail */
+/* set seq and is_save2trans, then call send_cmd_detail */
 gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *data, gint data_len)
 {
+	qq_data *qd;
+	guint8 *encrypted_data;
+	gint encrypted_len;
+	gint bytes_sent;
+
+	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
+	qd = (qq_data *)gc->proto_data;
+	g_return_val_if_fail(data != NULL && data_len > 0, -1);
+
 #if 1
 		purple_debug_info("QQ", "<== [SRV-%05d], %s(0x%04X), datalen %d\n",
 				seq, qq_get_cmd_desc(cmd), cmd, data_len);
 #endif
-	return send_cmd_detail(gc, cmd, seq, data, data_len, FALSE, 0, 0);
+	/* at most 16 bytes more */
+	encrypted_data = g_newa(guint8, data_len + 16);
+	encrypted_len = qq_encrypt(encrypted_data, data, data_len, qd->session_key);
+	if (encrypted_len < 16) {
+		purple_debug_error("QQ_ENCRYPT", "Error len %d: [%05d] 0x%04X %s\n",
+				encrypted_len, seq, cmd, qq_get_cmd_desc(cmd));
+		return -1;
+	}
+
+	bytes_sent = packet_send_out(gc, cmd, seq, encrypted_data, encrypted_len);
+	qq_trans_add_server_reply(gc, cmd, seq, encrypted_data, encrypted_len);
+
+	return bytes_sent;
 }
 
 static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
@@ -1198,13 +1221,14 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 
 	bytes_sent = packet_send_out(gc, QQ_CMD_ROOM, seq, encrypted_data, encrypted_len);
 #if 1
-		/* qq_show_packet("QQ_SEND_DATA", buf, buf_len); */
+		/* qq_show_packet("send_room_cmd", buf, buf_len); */
 		purple_debug_info("QQ",
 				"<== [%05d], %s (0x%02X) to room %d, datalen %d\n",
 				seq, qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, buf_len);
 #endif
 
-	qq_trans_add_room_cmd(gc, seq, room_cmd, room_id, buf, buf_len, update_class, ship32);
+	qq_trans_add_room_cmd(gc, seq, room_cmd, room_id, encrypted_data, encrypted_len,
+			update_class, ship32);
 	return bytes_sent;
 }
 
