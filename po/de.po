@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-06 17:47+0200\n"
-"PO-Revision-Date: 2008-08-06 17:47+0200\n"
+"POT-Creation-Date: 2008-09-01 10:30+0200\n"
+"PO-Revision-Date: 2008-09-01 10:30+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -332,6 +332,7 @@ msgstr "Markierung umkehren"
 msgid "Nickname"
 msgstr "Spitzname"
 
+#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Untätig"
@@ -652,11 +653,11 @@ msgstr "Klänge aktivieren"
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
 
-#, fuzzy, c-format
+#, c-format
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
-msgstr[0] "Liste der Benutzer:\n"
-msgstr[1] "Liste der Benutzer:\n"
+msgstr[0] "Liste von %d Benutzer:\n"
+msgstr[1] "Liste von %d Benutzern:\n"
 
 msgid "Supported debug options are:  version"
 msgstr "Unterstützte Debug-Optionen sind:  version"
@@ -1516,6 +1517,12 @@ msgstr "Meebo"
 
 msgid "No Grouping"
 msgstr "Keine Gruppierung"
+
+msgid "Nested Subgroup"
+msgstr ""
+
+msgid "Nested Grouping (experimental)"
+msgstr ""
 
 msgid "Provides alternate buddylist grouping options."
 msgstr "Bietet alternative Einstellungen für die Kontaktlisten-Gruppierung."
@@ -2399,6 +2406,9 @@ msgstr "Minimale Raumgröße"
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Benutzer-Inaktivitäts-Zeitüberschreitung"
 
+msgid "Apply hiding rules to buddies"
+msgstr "Regeln zum Verstecken auf Buddies anwenden"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2820,8 +2830,9 @@ msgid ""
 "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
 "pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Apples Bonjour-Toolkit für Windows konnte nicht gefunden werden, für weitere "
-"Informationen besuchen Sie die FAQ unter: http://d.pidgin.im/BonjourWindows"
+"Apples Bonjour-Toolkit für Windows konnte nicht gefunden werden. Besuchen "
+"Sie die FAQ unter http://d.pidgin.im/BonjourWindows für weitere "
+"Informationen."
 
 msgid "Unable to listen for incoming IM connections\n"
 msgstr "Kann nicht auf eingehende IM-Verbindungen hören\n"
@@ -4844,6 +4855,9 @@ msgstr "Kinder-Passwort ohne die Zustimmung der Eltern"
 msgid "Passport account not yet verified"
 msgstr "Passport-Konto wurde noch nicht überprüft"
 
+msgid "Passport account suspended"
+msgstr "Passport-Konto gesperrt"
+
 msgid "Bad ticket"
 msgstr "Falsches Ticket"
 
@@ -6456,7 +6470,6 @@ msgstr ""
 msgid "Unable to get a valid login hash."
 msgstr "Konnte keinen gültigen Login-Hash bekommen."
 
-#. allow multple logins?
 msgid "Password sent"
 msgstr "Passwort gesendet"
 
@@ -7330,13 +7343,6 @@ msgstr ""
 "Beachten Sie, dass diese Operation den Qun entfernen könnte, \n"
 "wenn Sie der Ersteller sind."
 
-#, c-format
-msgid "Code [0x%02X]: %s"
-msgstr "Code [0x%02X]: %s"
-
-msgid "Group Operation Error"
-msgstr "Gruppenoperationsfehler"
-
 #. we want to see window
 msgid "Do you want to approve the request?"
 msgstr "Wollen sie die Anfrage akzeptieren?"
@@ -7381,26 +7387,23 @@ msgstr " VIP"
 msgid " TCP"
 msgstr " TCP"
 
-#, fuzzy
 msgid " FromMobile"
-msgstr "Mobil"
+msgstr " FromMobile"
 
-#, fuzzy
 msgid " BindMobile"
-msgstr "Mobil"
+msgstr "BindMobile"
 
 msgid " Video"
 msgstr " Video"
 
-#, fuzzy
 msgid " Space"
-msgstr "MySpace"
+msgstr " Raum"
 
 msgid "Flag"
-msgstr ""
+msgstr "Flagge"
 
 msgid "Ver"
-msgstr ""
+msgstr "Ver"
 
 msgid "Invalid name"
 msgstr "QQ: Ungültiger Name"
@@ -7476,18 +7479,17 @@ msgid "Connect using TCP"
 msgstr "Über TCP verbinden"
 
 msgid "resend interval(s)"
-msgstr ""
+msgstr "Neusenden-Intervall(e)"
 
-#, fuzzy
 msgid "Keep alive interval(s)"
-msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
+msgstr "Intervall(e) zum Aufrechterhalten der Verbindung (Keep alive)"
 
 msgid "Update interval(s)"
-msgstr ""
+msgstr "Aktualisierungsintervall(e)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid token len, %d"
-msgstr "Ungültige Bezeichnung"
+msgstr "Ungültige Länge des Tokens, %d"
 
 msgid "Keep alive error"
 msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
@@ -7539,8 +7541,30 @@ msgid "Unable to login"
 msgstr "Anmeldung fehlgeschlagen"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid ""
+"Reply %s(0x%02X )\n"
+"Sent %s(0x%02X )\n"
+"Room id %d, reply [0x%02X]: \n"
+"%s"
 msgstr ""
+"Antwort %s(0x%02X )\n"
+"Gesendet %s(0x%02X )\n"
+"Raum-ID %d, Antwort [0x%02X]: \n"
+"%s"
+
+msgid "Failed room reply"
+msgstr "Antwort vom Raum gescheitert"
+
+#, c-format
+msgid "You are not a member of group \"%s\"\n"
+msgstr "Sie sind ein Mitglied der Gruppe „%s“\n"
+
+msgid "Can not decrypt login reply"
+msgstr "Kann die Antwort der Anmeldung nicht entschlüsseln"
+
+#, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr "Ungültiger Token-Antwort-Code, 0x%02X"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7589,7 +7613,7 @@ msgstr "Nachricht: %s"
 msgid "%s is not in your buddy list"
 msgstr "%s ist nicht in Ihrer Buddy-Liste"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Notice from: %s"
 msgstr "Ankündigung von %s"
 
@@ -7934,7 +7958,7 @@ msgid "Export Sametime List..."
 msgstr "Export der Sametime-Liste..."
 
 msgid "Add Notes Address Book Group..."
-msgstr "Zum Notes-Adressbuch hinzufügen..."
+msgstr "Notes-Adressbuch-Gruppe hinzufügen..."
 
 msgid "User Search..."
 msgstr "Benutzersuche..."
@@ -9932,6 +9956,12 @@ msgstr "+++ %s wurde untätig"
 msgid "+++ %s became unidle"
 msgstr "+++ %s wurde tätig"
 
+#.
+#. * This string determines how some dates are displayed.  The default
+#. * string "%x %X" shows the date then the time.  Translators can
+#. * change this to "%X %x" if they want the time to be shown first,
+#. * followed by the date.
+#.
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
@@ -10178,7 +10208,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Willkommen bei %s!</span>\n"
 "\n"
@@ -10187,7 +10217,7 @@ msgstr ""
 "Konto. Wenn Sie mehrere IM-Konten mit %s benutzen wollen, drücken Sie erneut "
 "auf <b>Hinzufügen</b> um sie einzurichten.\n"
 "\n"
-"Sie können später über <b>Konten->Hinzufügen/Bearbeiten</b> im Buddy-"
+"Sie können später über <b>Konten->Konten verwalten</b> im Buddy-"
 "Listenfenster zu diesem Dialog zurückkehren und Konten hinzufügen, "
 "bearbeiten oder löschen"
 
@@ -11104,6 +11134,9 @@ msgstr "Finnisch"
 
 msgid "French"
 msgstr "Französisch"
+
+msgid "Irish"
+msgstr "Irisch"
 
 msgid "Galician"
 msgstr "Galizisch"
@@ -12595,6 +12628,12 @@ msgstr "Status für %s"
 msgid "Custom Smiley"
 msgstr "Benutzerdefinierter Smiley"
 
+msgid "More Data needed"
+msgstr "Weitere Daten benötigt"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Bitte geben Sie eine Tastenkombination für den Smiley an."
+
 msgid "Duplicate Shortcut"
 msgstr "Doppelte Tastenkombination"
 
@@ -12604,12 +12643,6 @@ msgid ""
 msgstr ""
 "Für diese Tastenkombination existiert bereits ein benutzerdefinierter "
 "Smiley. Bitten wählen Sie eine andere Tastenkombination."
-
-msgid "More Data needed"
-msgstr "Weitere Daten benötigt"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Bitte geben Sie eine Tastenkombination für den Smiley an."
 
 msgid "Please select an image for the smiley."
 msgstr "Bitte wählen Sie ein Bild für den Smiley."
@@ -12772,6 +12805,9 @@ msgstr "_Bearbeiten"
 
 msgid "_Open Mail"
 msgstr "Mail ö_ffnen"
+
+msgid "_Edit"
+msgstr "_Bearbeiten"
 
 msgid "Pidgin Tooltip"
 msgstr "Pidgin-Tooltip"

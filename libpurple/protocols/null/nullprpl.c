@@ -1125,7 +1125,8 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* padding... */
   NULL,
   NULL,
-  NULL,
+	sizeof(PurplePluginProtocolInfo),    /* struct_size */
+  NULL
 };
 
 static void nullprpl_init(PurplePlugin *plugin)

@@ -824,7 +824,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 				message = oscar_encoding_to_utf8(account, tmp, userinfo->away,
 												   userinfo->away_len);
 				g_free(tmp);
-				}
+			}
 		} else {
 			/* Available message? */
 			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
@@ -881,7 +881,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 					status_name = NULL;
 
 				tmp = g_strdup_printf("%s%s%s",
-									   status_name,
+									   status_name ? status_name : "",
 									   ((status_name && message) && *message) ? ": " : "",
 									   (message && *message) ? message : "");
 				g_free(message);
@@ -1192,7 +1192,7 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_admin(OscarData *od, FlapConnection *conn)
 {
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 	purple_debug_info("oscar", "connected to admin\n");
 
 	if (od->chpass) {
@@ -1237,7 +1237,7 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 	struct chat_connection *chatcon;
 	static int id = 1;
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	chatcon = find_oscar_chat_by_conn(gc, conn);
 	if (chatcon) {
@@ -1249,7 +1249,7 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_chatnav(OscarData *od, FlapConnection *conn)
 {
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 	aim_chatnav_reqrights(od, conn);
 }
 
@@ -1258,7 +1258,7 @@ flap_connection_established_alert(OscarData *od, FlapConnection *conn)
 {
 	aim_email_sendcookies(od);
 	aim_email_activate(od);
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 }
 
 static void
@@ -1266,7 +1266,7 @@ flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 {
 	PurpleConnection *gc = od->gc;
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	od->iconconnecting = FALSE;
 
@@ -1539,14 +1539,16 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			break;
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
-		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl);
+		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl ? info->errorurl : "");
 		return 1;
 	}
 
-	purple_debug_misc("oscar", "Reg status: %hu\n", info->regstatus);
-	purple_debug_misc("oscar", "Email: %s\n",
-					(info->email != NULL) ? info->email : "null");
-	purple_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
+	purple_debug_misc("oscar", "Reg status: %hu\n"
+							   "Email: %s\n"
+							   "BOSIP: %s\n",
+							   info->regstatus,
+							   info->email ? info->email : "null",
+							   info->bosip ? info->bosip : "null");
 	purple_debug_info("oscar", "Closing auth connection...\n");
 	flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_DONE, NULL);
 
@@ -1635,6 +1637,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	char in = '\0';
 	int x = 0;
 	unsigned char m[17];
+	GString *msg;
 
 	while (read(pos->fd, &in, 1) == 1) {
 		if (in == '\n')
@@ -1665,11 +1668,14 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 				"from " AIMHASHDATA "--that's bad.\n");
 	}
 	m[16] = '\0';
-	purple_debug_misc("oscar", "Sending hash: ");
-	for (x = 0; x < 16; x++)
-		purple_debug_misc(NULL, "%02hhx ", (unsigned char)m[x]);
 
-	purple_debug_misc(NULL, "\n");
+	msg = g_string_new("Sending hash: ");
+	for (x = 0; x < 16; x++)
+		g_string_append_printf(msg, "%02hhx ", (unsigned char)m[x]);
+	g_string_append(msg, "\n");
+	purple_debug_misc("oscar", msg->str);
+	g_string_free(msg, TRUE);
+
 	purple_input_remove(pos->inpa);
 	close(pos->fd);
 	aim_sendmemblock(od, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
@@ -1829,7 +1835,7 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	aim_send_login(od, conn, purple_account_get_username(account),
 			purple_connection_get_password(gc), truncate_pass,
 			od->icq ? &icqinfo : &aiminfo, key,
-			/* allow multple logins? */ purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
+			purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
 
 	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
 	ck[2] = 0x6c;
@@ -1998,6 +2004,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		char *message = NULL;
 		char *itmsurl = NULL;
 		char *tmp;
+		const char *tmp2;
 
 		if (info->status != NULL && info->status[0] != '\0')
 			/* Grab the available message */
@@ -2009,13 +2016,13 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
 
-		tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+		tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
 
-		if (message == NULL && itmsurl != NULL)
-			message = "";
+		if (tmp2 == NULL && itmsurl != NULL)
+			tmp2 = "";
 
 		purple_prpl_got_user_status(account, info->sn, status_id,
-				"message", tmp, "itmsurl", itmsurl, NULL);
+				"message", tmp2, "itmsurl", itmsurl, NULL);
 		g_free(tmp);
 
 		g_free(message);
@@ -3766,7 +3773,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	purple_debug_info("oscar", "buddy list loaded\n");
 
-	aim_clientready(od, conn);
+	aim_srv_clientready(od, conn);
 
 	if (purple_account_get_user_info(account) != NULL)
 		serv_set_info(gc, purple_account_get_user_info(account));
@@ -4926,19 +4933,19 @@ static int purple_ssi_parserights(OscarData *od, FlapConnection *conn, FlapFrame
 	va_list ap;
 	int numtypes;
 	guint16 *maxitems;
+	GString *msg;
 
 	va_start(ap, fr);
 	numtypes = va_arg(ap, int);
 	maxitems = va_arg(ap, guint16 *);
 	va_end(ap);
 
-	purple_debug_misc("oscar", "ssi rights:");
-
+	msg = g_string_new("ssi rights:");
 	for (i=0; i<numtypes; i++)
-		purple_debug_misc(NULL, " max type 0x%04x=%hd,",
-				   i, maxitems[i]);
-
-	purple_debug_misc(NULL, "\n");
+		g_string_append_printf(msg, " max type 0x%04x=%hd,", i, maxitems[i]);
+	g_string_append(msg, "\n");
+	purple_debug_misc("oscar", msg->str);
+	g_string_free(msg, TRUE);
 
 	if (numtypes >= 0)
 		od->rights.maxbuddies = maxitems[0];

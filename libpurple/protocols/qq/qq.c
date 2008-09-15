@@ -716,8 +716,8 @@ static gchar *_qq_get_chat_buddy_real_name(PurpleConnection *gc, gint channel, c
 	return chat_name_to_purple_name(who);
 }
 
-PurplePlugin *my_protocol = NULL;
-static PurplePluginProtocolInfo prpl_info	= {
+static PurplePluginProtocolInfo prpl_info =
+{
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_USE_POINTSIZE,
 	NULL,							/* user_splits	*/
 	NULL,							/* protocol_options */
@@ -780,11 +780,11 @@ static PurplePluginProtocolInfo prpl_info	= {
 	NULL,							/* PurpleWhiteboardPrplOps */
 	NULL,							/* send_raw */
 	NULL,							/* roomlist_room_serialize */
+	NULL,							/* unregister_user */
+	NULL,							/* send_attention */
+	NULL,							/* get attention_types */
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
+	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	NULL
 };
 
@@ -872,8 +872,6 @@ static void init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_int_new(_("Update interval(s)"), "update_interval", 300);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	my_protocol = plugin;
 
 	purple_prefs_add_none("/plugins/prpl/qq");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);

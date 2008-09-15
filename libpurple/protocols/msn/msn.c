@@ -163,7 +163,7 @@ msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **
 
 	username = purple_conversation_get_name(conv);
 
-	serv_send_attention(gc, username, MSN_NUDGE);
+	purple_prpl_send_attention(gc, username, MSN_NUDGE);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -481,11 +481,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 
 static gboolean
 msn_offline_message(const PurpleBuddy *buddy) {
-	MsnUser *user;
-	if (buddy == NULL)
-		return FALSE;
-	user = buddy->proto_data;
-	return user && user->mobile;
+	return TRUE;
 }
 
 void
@@ -713,10 +709,16 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (name != NULL && *name) {
 			char *tmp2;
 
+			tmp2 = g_markup_escape_text(name, -1);
 			if (purple_presence_is_idle(presence)) {
-				tmp2 = g_markup_printf_escaped("%s/%s", name, _("Idle"));
-			} else {
-				tmp2 = g_markup_escape_text(name, -1);
+				char *idle;
+				char *tmp3;
+				/* Never know what those translations might end up like... */
+				idle = g_markup_escape_text(_("Idle"), -1);
+				tmp3 = g_strdup_printf("%s/%s", tmp2, idle);
+				g_free(idle);
+				g_free(tmp2);
+				tmp2 = tmp3;
 			}
 
 			if (psm != NULL && *psm) {
@@ -766,6 +768,9 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	if (full && user)
 	{
 		const char *phone;
+
+		purple_notify_user_info_add_pair(user_info, _("Has you"),
+									   ((user->list_op & (1 << MSN_LIST_RL)) ? _("Yes") : _("No")));
 
 		purple_notify_user_info_add_pair(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));

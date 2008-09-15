@@ -379,7 +379,8 @@ msn_nexus_connect(MsnNexus *nexus)
 {
 	MsnSession *session = nexus->session;
 	const char *username;
-	char *password;
+	const char *password;
+	char *password_xml;
 	GString *domains;
 	char *request;
 	int i;
@@ -390,7 +391,8 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username = purple_account_get_username(session->account);
-	password = g_markup_escape_text(purple_connection_get_password(session->account->gc), 16);
+	password = purple_connection_get_password(session->account->gc);
+	password_xml = g_markup_escape_text(password, MIN(strlen(password), 16));
 
 	purple_debug_info("msn", "Logging on %s, with policy '%s', nonce '%s'\n",
 	                  username, nexus->policy, nexus->nonce);
@@ -405,8 +407,8 @@ msn_nexus_connect(MsnNexus *nexus)
 		                           nexus->policy);
 	}
 
-	request = g_strdup_printf(MSN_SSO_TEMPLATE, username, password, domains->str);
-	g_free(password);
+	request = g_strdup_printf(MSN_SSO_TEMPLATE, username, password_xml, domains->str);
+	g_free(password_xml);
 	g_string_free(domains, TRUE);
 
 	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));

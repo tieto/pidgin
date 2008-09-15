@@ -1289,6 +1289,7 @@ cmd_show_window(PurpleConversation *conv, const char *cmd, char **args, char **e
 	return PURPLE_CMD_STATUS_OK;
 }
 
+#if GLIB_CHECK_VERSION(2,6,0)
 static PurpleCmdRet
 cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
 {
@@ -1329,6 +1330,7 @@ cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char *
 
 	return PURPLE_CMD_STATUS_OK;
 }
+#endif
 
 static PurpleCmdRet
 users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
@@ -1414,6 +1416,7 @@ void finch_conversation_init()
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  cmd_show_window, _("statuses: Show the savedstatuses window."), finch_savedstatus_show_all);
 
+#if GLIB_CHECK_VERSION(2,6,0)
 	/* Allow customizing the message colors using a command during run-time */
 	purple_cmd_register("msgcolor", "www", PURPLE_CMD_P_DEFAULT,
 			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
@@ -1423,6 +1426,7 @@ void finch_conversation_init()
 				                 "    &lt;foreground/background&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, default<br><br>"
 								 "EXAMPLE:<br>    msgcolor send cyan default"),
 			NULL);
+#endif
 
 	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
 					PURPLE_CALLBACK(update_buddy_typing), NULL);

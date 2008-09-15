@@ -137,7 +137,6 @@ libpurple/protocols/qq/group.c
 libpurple/protocols/qq/group_im.c
 libpurple/protocols/qq/group_internal.c
 libpurple/protocols/qq/group_join.c
-libpurple/protocols/qq/group_network.c
 libpurple/protocols/qq/group_opt.c
 libpurple/protocols/qq/im.c
 libpurple/protocols/qq/qq.c
@@ -184,6 +183,8 @@ libpurple/status.c
 libpurple/util.c
 libpurple/win32/libc_interface.c
 pidgin.desktop.in
+pidgin/artwork/hicolor/24x24/emotes/default.theme.in
+pidgin/artwork/hicolor/24x24/emotes/none/none.theme.in
 pidgin/eggtrayicon.c
 pidgin/gtkaccount.c
 pidgin/gtkblist.c
@@ -215,6 +216,7 @@ pidgin/gtkutils.c
 pidgin/gtkwhiteboard.c
 pidgin/pidgin.h
 pidgin/pidgincombobox.c
+pidgin/pidginstock-artwork.c
 pidgin/pidginstock.c
 pidgin/pidgintooltip.c
 pidgin/pixmaps/emotes/default/24/default.theme.in

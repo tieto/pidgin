@@ -122,11 +122,11 @@ static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, PurpleXfer *xfer
 		sin.sin_addr.s_addr = g_htonl(info->remote_real_ip);
 	}
 	purple_debug_info("QQ", "sending to channel: %d.%d.%d.%d:%d\n",
-			sin.sin_addr.s_addr & 0xff,
-			(sin.sin_addr.s_addr >> 8) & 0xff,
-			(sin.sin_addr.s_addr >> 16) & 0xff,
-			sin.sin_addr.s_addr >> 24,
-			g_ntohs(sin.sin_port)
+			(int)sin.sin_addr.s_addr & 0xff,
+			(int)(sin.sin_addr.s_addr >> 8) & 0xff,
+			(int)(sin.sin_addr.s_addr >> 16) & 0xff,
+			(int)sin.sin_addr.s_addr >> 24,
+			(int)g_ntohs(sin.sin_port)
 		  );
 	return sendto(info->sender_fd, buf, len, 0, (struct sockaddr *) &sin, sizeof(sin));
 }

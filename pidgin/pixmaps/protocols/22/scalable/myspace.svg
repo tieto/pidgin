@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,8 +13,8 @@
    height="24"
    id="svg2160"
    sodipodi:version="0.32"
-   inkscape:version="0.45"
-   sodipodi:docname="myspace48.svg"
+   inkscape:version="0.46"
+   sodipodi:docname="myspace.svg"
    sodipodi:docbase="/home/hbons/Desktop"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    sodipodi:modified="true"
@@ -33,27 +33,6 @@
          offset="1"
          id="stop3151" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3172">
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:1;"
-         offset="0"
-         id="stop3174" />
-      <stop
-         style="stop-color:#eeeeec;stop-opacity:0;"
-         offset="1"
-         id="stop3176" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3172"
-       id="linearGradient3178"
-       x1="10.549266"
-       y1="5.125"
-       x2="52.810349"
-       y2="49.864979"
-       gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3147"

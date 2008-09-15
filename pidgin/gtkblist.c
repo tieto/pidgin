@@ -3275,7 +3275,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 3, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
+	{ N_("/Tools/Mute _Sounds"), NULL, pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
@@ -6483,7 +6483,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		purple_account_add_buddy(data->account, b);
 
 		/* Offer to merge people with the same alias. */
-		if (whoalias != NULL)
+		if (whoalias != NULL && g != NULL)
 			gtk_blist_auto_personize((PurpleBlistNode *)g, whoalias);
 
 		/*

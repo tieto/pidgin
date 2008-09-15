@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-06 16:01+0300\n"
-"PO-Revision-Date: 2008-08-06 16:01+0300\n"
+"POT-Creation-Date: 2008-08-28 12:10+0300\n"
+"PO-Revision-Date: 2008-08-28 12:19+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -328,6 +328,7 @@ msgstr "Merkitse/poista merkintä"
 msgid "Nickname"
 msgstr "Kutsumanimi"
 
+#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Jouten"
@@ -2386,6 +2387,9 @@ msgstr "Huoneen minimikoko"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Käyttäjän inaktiivisuuden aikakatkaisu (minuuteissa)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Toteuta piilotussäännöt tuttaville"
 
 #. *< type
 #. *< ui_requirement
@@ -7290,13 +7294,6 @@ msgstr ""
 "Huomaa, että olet samalla Qunin luoja, \n"
 "Tämä toiminto poistaa lopulta tämän Qunin."
 
-#, c-format
-msgid "Code [0x%02X]: %s"
-msgstr "Koodi [0x%02X]: %s"
-
-msgid "Group Operation Error"
-msgstr "Ryhmätoimintovirhe"
-
 #. we want to see window
 msgid "Do you want to approve the request?"
 msgstr "Haluatko hyväksyä pyynnön?"
@@ -7494,6 +7491,28 @@ msgstr "Ei voi kirjautua. Tarkista virheenjäljitysloki."
 
 msgid "Unable to login"
 msgstr "Ei voi kirjautua"
+
+#, c-format
+msgid ""
+"Reply %s(0x%02X )\n"
+"Sent %s(0x%02X )\n"
+"Room id %d, reply [0x%02X]: \n"
+"%s"
+msgstr ""
+"Vastaus %s(0x%02X )\n"
+"Lähetetty %s(0x%02X )\n"
+"Huoneen tunniste %d, vastaus [0x%02X]: \n"
+"%s"
+
+msgid "Failed room reply"
+msgstr "Epäonnistunut huoneen vastaus"
+
+#, c-format
+msgid "You are not a member of group \"%s\"\n"
+msgstr "Sinä et ole ryhmän \"%s\" jäsen\n"
+
+msgid "Can not decrypt login reply"
+msgstr "Kirjautumisvastauksen salausta ei voi purkaa"
 
 #, c-format
 msgid "Invalid token reply code, 0x%02X"
@@ -9870,6 +9889,12 @@ msgstr "+++ %s on jouten"
 msgid "+++ %s became unidle"
 msgstr "+++ %s on aktiivinen"
 
+#.
+#. * This string determines how some dates are displayed.  The default
+#. * string "%x %X" shows the date then the time.  Translators can
+#. * change this to "%X %x" if they want the time to be shown first,
+#. * followed by the date.
+#.
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
@@ -10118,17 +10143,17 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Tervetuloa %siin!</span>\n"
 "\n"
-"Yhtäkään pikaviestintiliä ei ole määritelty. Aloittaaksesi %sin käytön "
-"napsauta <b>Lisää</b>-painiketta alla ja määritä ensimmäisen käyttäjätilisi "
+"Pikaviestintilejä ei ole määritelty. Yhdistääksesi %sillä "
+"napsauta <b>Lisää</b>-painiketta ja määritä ensimmäisen käyttäjätilisi "
 "tiedot. Jos haluat %sin yhdistävän useampiin pikaviestintileihin, napsauta "
 "uudestaan <b>Lisää</b>-painiketta määritelläksesi ne kaikki.\n"
 "\n"
 "Voit palata tähän ikkunaan lisäämään, muokkaamaan tai poistamaan tilejä "
-"valitsemalla <b>Käyttäjätilit->Lisää/muokkaa</b> Tuttavat-ikkunassa."
+"valitsemalla <b>Käyttäjätilit->Tilien hallinta</b> Tuttavat-ikkunassa."
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -12508,6 +12533,12 @@ msgstr "%s:n tila"
 msgid "Custom Smiley"
 msgstr "Oma hymiö"
 
+msgid "More Data needed"
+msgstr "Lisää tietoja tarvitaan"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Syötä hymiöön liitettävä oikotie."
+
 msgid "Duplicate Shortcut"
 msgstr "Monista oikotie"
 
@@ -12515,12 +12546,6 @@ msgid ""
 "A custom smiley for the selected shortcut already exists. Please specify a "
 "different shortcut."
 msgstr "Valitulle oikotielle on jo oma hymiö. Valitse toisenlainen oikotie."
-
-msgid "More Data needed"
-msgstr "Lisää tietoja tarvitaan"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Syötä hymiöön liitettävä oikotie."
 
 msgid "Please select an image for the smiley."
 msgstr "Valitse hymiölle kuva."
@@ -12683,6 +12708,9 @@ msgstr "_Muokkaa"
 
 msgid "_Open Mail"
 msgstr "_Avaa sähköposti"
+
+msgid "_Edit"
+msgstr "_Muokkaa"
 
 msgid "Pidgin Tooltip"
 msgstr "Pidgin-työkaluvihje"
@@ -13672,6 +13700,12 @@ msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
 
+#~ msgid "Code [0x%02X]: %s"
+#~ msgstr "Koodi [0x%02X]: %s"
+
+#~ msgid "Group Operation Error"
+#~ msgstr "Ryhmätoimintovirhe"
+
 #~ msgid "Error setting socket options"
 #~ msgstr "Virhe asetettaessa pistokevalintoja"
 
@@ -13708,9 +13742,6 @@ msgstr ""
 
 #~ msgid "UDP Address"
 #~ msgstr "UDP-osoite"
-
-#~ msgid "Login failed, no reply"
-#~ msgstr "Kirjautuminen epäonnistui, ei vastausta"
 
 #~ msgid "Screen name:"
 #~ msgstr "Näyttönimi:"

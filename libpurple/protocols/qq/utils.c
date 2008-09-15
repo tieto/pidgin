@@ -381,16 +381,5 @@ const char *qq_buddy_icon_dir(void)
 	if (purple_prefs_exists("/prpl/qq/buddy_icon_dir"))
 		return purple_prefs_get_string("/prpl/qq/buddy_icon_dir");
 	else
-		return QQ_BUDDY_ICON_DIR;
+		return NULL;
 }
-
-#ifdef _WIN32
-const char *qq_win32_buddy_icon_dir(void)
-{
-        static char *dir = NULL;
-        if (dir == NULL)
-                dir = g_build_filename(wpurple_install_dir(), "pixmaps",
-                        "purple", "buddy_icons", "qq", NULL);
-        return dir;
-}
-#endif

@@ -38,7 +38,7 @@
 #endif
 
 #define SOAP_TIMEOUT (5 * 60)
-#define MSN_UNSAFE_DEBUG 1
+
 typedef struct _MsnSoapRequest {
 	char *path;
 	MsnSoapMessage *message;
@@ -268,6 +268,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		(something weird with the login.live.com server). With NSS it works
 		fine, so I believe it's some bug with OS X */ 
 	char buf[16 * 1024];
+	gsize cursor;
 
 	if (conn->message == NULL) {
 		conn->message = msn_soap_message_new(NULL, NULL);
@@ -276,12 +277,25 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	if (conn->buf == NULL) {
 		conn->buf = g_string_new_len(buf, 0);
 	}
-	
+
+	cursor = conn->buf->len;
 	while ((cnt = purple_ssl_read(conn->ssl, buf, sizeof(buf))) > 0) {
 		purple_debug_info("soap", "read %d bytes\n", cnt);
 		count += cnt;
 		g_string_append_len(conn->buf, buf, cnt);
 	}
+
+	perrno = errno;
+	if (cnt < 0 && perrno != EAGAIN)
+		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
+
+#ifndef MSN_UNSAFE_DEBUG
+	if (conn->current_request->secure)
+		purple_debug_misc("soap", "Received secure request.\n");
+	else
+#endif
+	if (count != 0)
+		purple_debug_misc("soap", "current %s\n", conn->buf->str + cursor);
 
 	/* && count is necessary for Adium, on OS X the last read always
 	   return an error, so we want to proceed anyway. See #5212 for
@@ -290,11 +304,9 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		return;
 
 	/* msn_soap_process could alter errno */
-	perrno = errno;
 	msn_soap_process(conn);
 	
 	if (cnt < 0 && perrno != EAGAIN) {
-		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
 		/* It's possible msn_soap_process closed the ssl connection */
 		if (conn->ssl) {
 			purple_ssl_close(conn->ssl);
@@ -309,13 +321,6 @@ msn_soap_process(MsnSoapConnection *conn) {
 	gboolean handled = FALSE;
 	char *cursor;
 	char *linebreak;
-
-#ifndef MSN_UNSAFE_DEBUG
-	if (conn->current_request->secure)
-		purple_debug_info("soap", "Received secure request.\n");
-	else
-#endif
-	purple_debug_info("soap", "current %s\n", conn->buf->str);
 
 	cursor = conn->buf->str + conn->handled_len;
 
@@ -514,10 +519,10 @@ msn_soap_connection_run(gpointer data)
 
 #ifndef MSN_UNSAFE_DEBUG
 			if (req->secure)
-				purple_debug_info("soap", "Sending secure request.\n");
+				purple_debug_misc("soap", "Sending secure request.\n");
 			else
 #endif
-			purple_debug_info("soap", "%s\n", conn->buf->str);
+			purple_debug_misc("soap", "%s\n", conn->buf->str);
 
 			conn->handled_len = 0;
 			conn->current_request = req;

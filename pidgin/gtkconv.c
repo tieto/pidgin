@@ -4619,6 +4619,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	/* Setup the label telling how many people are in the room. */
 	gtkchat->count = gtk_label_new(_("0 people in room"));
+#if GTK_CHECK_VERSION(2,6,0)
+	gtk_label_set_ellipsize(GTK_LABEL(gtkchat->count), PANGO_ELLIPSIZE_END);
+#endif
 	gtk_box_pack_start(GTK_BOX(lbox), gtkchat->count, FALSE, FALSE, 0);
 	gtk_widget_show(gtkchat->count);
 
@@ -5250,8 +5253,7 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	if (conv && PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 		if (gtkconv->win == hidden_convwin) {
-			pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
-			pidgin_conv_placement_place(gtkconv);
+			pidgin_conv_attach_to_conversation(gtkconv->active_conv);
 		}
 		return;
 	}
@@ -6604,8 +6606,11 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			update_typing_icon(gtkconv);
 
 		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
-		if (pidgin_conv_window_is_active_conversation(conv))
-			gtk_window_set_title(GTK_WINDOW(win->window), title);
+		if (pidgin_conv_window_is_active_conversation(conv)) {
+			const char* current_title = gtk_window_get_title(GTK_WINDOW(win->window));
+			if (current_title == NULL || strcmp(current_title, title) != 0)
+				gtk_window_set_title(GTK_WINDOW(win->window), title);
+		}
 
 		g_free(title);
 	}
@@ -6898,6 +6903,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	if(pidgin_conv_window_is_active_conversation(conv))
 	{
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy))
+			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		gtk_window_set_icon(GTK_WINDOW(win->window), buf);
 	}
 }
@@ -7175,6 +7182,14 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 			pidgin_conv_update_buddy_icon(conv);
 		}
 	}
+
+	/* Make the tabs show/hide correctly */
+	for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
+		PidginWindow *win = l->data;
+		if (pidgin_conv_window_get_gtkconv_count(win) == 1)
+			gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
+						   GPOINTER_TO_INT(value) == 0);
+	}
 }
 
 static void
@@ -7223,8 +7238,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 		if (!l)
 			break;
 
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+		pidgin_conv_attach_to_conversation(conv);
 
 		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
 		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
@@ -7264,8 +7278,7 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 							purple_conversation_get_account(conv)))))
 			continue;
 
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+		pidgin_conv_attach_to_conversation(conv);
 	}
 }
 
@@ -7364,7 +7377,9 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 	if (gtkconv)
 	{
 		conv = gtkconv->active_conv;
-		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON | PIDGIN_CONV_COLORIZE_TITLE);
+		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON
+		                              | PIDGIN_CONV_COLORIZE_TITLE
+		                              | PIDGIN_CONV_BUDDY_ICON);
 		if ((purple_status_is_online(old) ^ purple_status_is_online(newstatus)) != 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}

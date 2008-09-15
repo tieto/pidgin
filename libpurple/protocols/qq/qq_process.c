@@ -524,7 +524,6 @@ void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 	guint8 *data;
 	gint data_len;
 
-	gboolean ret_bool = FALSE;
 	guint8 ret_8 = 0;
 	guint16 ret_16 = 0;
 	guint32 ret_32 = 0;

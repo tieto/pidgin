@@ -64,6 +64,31 @@ first account in accounts.xml will be enabled.
 .B \-v, \-\-version
 Print the current version and exit.
 
+.SH TERMS
+Pidgin uses a few terms differently from other applications.  For convenience
+they are defined here:
+.TP
+.B Buddy List
+The list of other users who the user wants to see status information for
+and have quick access to for messaging.
+.TP
+.B Buddy
+A user who has been added to the Buddy List.
+.TP
+.B Contact
+A grouping of more than one buddy who are all the same person.  A contact may
+contain buddies from any protocol and may contain as many buddies as the user
+desires.  Contact arrangements are stored locally only.
+.TP
+.B Alias
+A private "nickname" that may be set for Buddies or the user himself.  On some
+protocols, aliases are saved on the server but not visible to other users.  On
+other protocols, aliases are saved only locally.
+.TP
+.B Protocol
+A messaging service.  AIM, XMPP, MSN, Zephyr, etc. are protocols.  Others may
+call these "service types," "account types," "services," and so on.
+
 .SH BUDDY LIST
 The \fBBuddy List\fR window is Pidgin's main interface window.  Using
 this window a user can see which of his/her buddies is online, away, idle,
@@ -464,20 +489,32 @@ only if the user is set to a non-available status, such as invisible, do not
 disturb, away, etc.  If \fIRecurring\fR is checked, the pounce will remain
 until removed by the \fBDelete\fR button.
 
+.SH CUSTOM SMILIES
+Pidgin 2.5.0 introduced support for custom smilies on those protocols for which
+interested contributors have developed support.  The custom smiley manager can
+be accessed by selecting \fISmiley\fR from the \fITools\fR menu.  From here,
+custom smilies may be added, edited, or deleted by clicking the \fIAdd\fR,
+\fIEdit\fR, or \fIDelete\fR buttons, respectively.
+
+During a conversation with another user, that user's custom smileys may be
+added to the user's own custom smiley list directly from the conversation
+window by right-clicking the new custom smiley and selecting \fIAdd Custom
+Smiley...\fR
+
 .SH PLUGINS
 Pidgin allows for dynamic loading of plugins to add extra functionality
 to Pidgin.  See \fIplugins/HOWTO\fR or
 \fIhttp://developer.pidgin.im/wiki/CHowTo\fR for information on writing
 plugins.
 
-The plugins dialog can be accessed by selecting Plugins from the Tools menu.
-Each plugin available appears in this dialog with its name, version, and a
-short summary of its functionality. Plugins can be enabled with the checkbox
-beside the name and short description.  More information on the currently
-selected plugin is available by clicking the expander beside the text
-\fIPlugin Details\fR.  If the selected plugin has preferences or configuration
-options, the \fIConfigure Plugin\fR button will present the plugin's
-preferences dialog.
+The plugins dialog can be accessed by selecting \fIPlugins\fR from the
+\fITools\fR menu. Each plugin available appears in this dialog with its name,
+version, and a short summary of its functionality. Plugins can be enabled
+with the checkbox beside the name and short description.  More information on
+the currently selected plugin is available by clicking the expander beside the
+text \fIPlugin Details\fR.  If the selected plugin has preferences or
+configuration options, the \fIConfigure Plugin\fR button will present the
+plugin's preferences dialog.
 
 .SH PERL
 Pidgin allows for plugins to be written in the perl scripting language.  See
@@ -531,6 +568,8 @@ have been solved.
 
 .SH SEE ALSO
 \fIhttp://pidgin.im/\fR
+.br
+\fIhttp://developer.pidgin.im/\fR
 
 .SH LICENSE
 This program is free software; you can redistribute it and/or modify
@@ -603,6 +642,8 @@ Pidgin's active developers are:
 Our crazy patch writers include:
 .br
   Felipe 'shx' Contreras
+.br
+  Marcus 'malu' Lundblad
 .br
   Dennis 'EvilDennisR' Ristuccia
 .br

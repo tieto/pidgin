@@ -1,6 +1,43 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.0 (??/??/2008):
+version 2.5.2 (??/??/????):
+	libpurple:
+	* Restored the "Has You" feature to the MSN protocol tooltips.
+	* Fixed a crash on removing a custom buddy icon on a buddy.
+	* Fixed a crash caused by certain self-signed SSL certificates.
+
+	Pidgin:
+	* The status selector now saves your message when changing status.
+	* Fix a case where a conversation window could close unexpectedly.
+	* A mute sounds option has been added to the preferences window to
+	  help with discoverability.  CTRL+S is no longer bound to mute.
+
+	Finch:
+	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
+	  hierarchies are defined by the '/' character in the group names
+
+version 2.5.1 (08/30/2008):
+	libpurple:
+	* In the Join/Part plugin, add the ability to apply the rules to
+	  buddies.  By default, joins and parts for buddies are still shown.
+	* Support SOCKS proxies specified in GNOME or Windows proxy settings.
+	* Fix some possible crashes in MSNP15.
+	* Enable a default SSL trust relationship for MSN servers.
+	* Avoid disconnecting from XMPP servers on parse errors that are
+	  non-fatal.
+	* Include some perl files that were mistakenly omitted in 2.5.0.
+
+	Pidgin:
+	* Prevent use of custom smilies without "shortcuts."
+	* Fix a crash that could appear with AIM buddy tooltips.
+
+	Artwork:
+	* General refresh of many icons in the interface.
+	* Many cleanups to artwork source are now included in the distribution.
+	* A new "throbber" animation has been added to indicate when accounts
+	  are connecting.
+
+version 2.5.0 (08/18/2008):
 	libpurple:
 	* Ability to create custom smileys (currently only the MSN protocol
 	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
@@ -9,6 +46,8 @@ version 2.5.0 (??/??/2008):
 	  to specify a system-wide SSL CA certificates directory.  When set,
 	  we don't install our SSL CA certs, so it's important that the
 	  libpurple package depend on the CA certificates.
+	* Add SSL Certificates support to the NSS SSL plugin. (Thanks to Lou
+	  Cipher)
 
 	XMPP:
 	* Fix a bug that caused the UI to not refresh and caused the client
@@ -80,6 +119,7 @@ version 2.4.3 (07/01/2008):
 	* Various memory leak fixes
 
 version 2.4.2 (05/17/2008):
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.2
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.

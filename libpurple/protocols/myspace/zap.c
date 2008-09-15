@@ -183,7 +183,7 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 
 	zap = GPOINTER_TO_INT(zap_num_ptr);
 
-	serv_send_attention(session->gc, buddy->name, zap);
+	purple_prpl_send_attention(session->gc, buddy->name, zap);
 }
 
 /** Return menu, if any, for a buddy list node. */
@@ -241,7 +241,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 
 	zap = CLAMP(zap, 0, 9);
 
-	serv_got_attention(session->gc, username, zap);
+	purple_prpl_got_attention(session->gc, username, zap);
 
 	g_free(msg_text);
 	g_free(username);

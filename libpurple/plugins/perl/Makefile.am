@@ -40,6 +40,7 @@ common_sources = \
 	common/AccountOpts.xs \
 	common/BuddyIcon.xs \
 	common/BuddyList.xs \
+	common/Certificate.xs \
 	common/Cipher.xs \
 	common/Cmds.xs \
 	common/Core.xs \
@@ -47,6 +48,7 @@ common_sources = \
 	common/Conversation.xs \
 	common/Debug.xs \
 	common/FT.xs \
+	common/Idle.xs \
 	common/ImgStore.xs \
 	common/Log.xs \
 	common/Makefile.PL.in \
@@ -72,6 +74,7 @@ common_sources = \
 	common/Status.xs \
 	common/Stringref.xs \
 	common/Util.xs \
+	common/Whiteboard.xs \
 	common/XMLNode.xs \
 	common/module.h \
 	common/typemap

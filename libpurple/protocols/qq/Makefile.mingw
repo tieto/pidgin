@@ -57,13 +57,13 @@ C_SRC = \
 	group_search.c \
 	header_info.c \
 	im.c \
-	qq_process.c \
-	qq_base.c \
 	packet_parse.c \
 	qq.c \
+	qq_base.c \
 	qq_network.c \
-	send_file.c \
+	qq_process.c \
 	qq_trans.c \
+	send_file.c \
 	sys_msg.c \
 	utils.c
 

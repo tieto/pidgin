@@ -437,8 +437,6 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	/* collect data and fetch all exts */
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/disco#info");
-	xmlnode *child;
-	GList *iter;
 	jabber_caps_cbplususerdata *userdata = data;
 
 	/* TODO: Better error checking! */
@@ -446,6 +444,8 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	if (query) {
 		JabberCapsValue *value = g_new0(JabberCapsValue, 1);
 		JabberCapsKey *key = g_new0(JabberCapsKey, 1);
+		xmlnode *child;
+		GList *iter;
 
 		value->ext = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_caps_ext_destroy_value);
 
@@ -475,23 +475,29 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 		}
 		g_hash_table_replace(capstable, key, value);
 		jabber_caps_store();
-	}
 
-	/* fetch all exts */
-	for(iter = userdata->ext; iter; iter = g_list_next(iter)) {
-		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
-		xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", "http://jabber.org/protocol/disco#info");
-		char *node = g_strdup_printf("%s#%s", userdata->node, (const char*)iter->data);
-		jabber_ext_userdata *ext_data = g_new0(jabber_ext_userdata, 1);
-		ext_data->node = node;
-		ext_data->userdata = userdata;
 
-		xmlnode_set_attrib(query, "node", node);
-		xmlnode_set_attrib(iq->node, "to", userdata->who);
+		/* fetch all exts */
+		for(iter = userdata->ext; iter; iter = g_list_next(iter)) {
+			JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET,
+				"http://jabber.org/protocol/disco#info");
+			xmlnode *query = xmlnode_get_child_with_namespace(iq->node,
+				"query", "http://jabber.org/protocol/disco#info");
+			char *node = g_strdup_printf("%s#%s", userdata->node, (const char*)iter->data);
+			jabber_ext_userdata *ext_data = g_new0(jabber_ext_userdata, 1);
+			ext_data->node = node;
+			ext_data->userdata = userdata;
 
-		jabber_iq_set_callback(iq, jabber_caps_ext_iqcb, ext_data);
-		jabber_iq_send(iq);
-	}
+			xmlnode_set_attrib(query, "node", node);
+			xmlnode_set_attrib(iq->node, "to", userdata->who);
+
+			jabber_iq_set_callback(iq, jabber_caps_ext_iqcb, ext_data);
+			jabber_iq_send(iq);
+		}
+
+	} else
+		/* Don't wait for the ext discoveries; they aren't going to happen */
+		userdata->extOutstanding = 0;
 
 	jabber_caps_get_info_check_completion(userdata);
 }
