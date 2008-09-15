@@ -138,8 +138,8 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_UPDATE_INFO";
 	case QQ_CMD_SEARCH_USER:
 		return "QQ_CMD_SEARCH_USER";
-	case QQ_CMD_GET_USER_INFO:
-		return "QQ_CMD_GET_USER_INFO";
+	case QQ_CMD_GET_BUDDY_INFO:
+		return "QQ_CMD_GET_BUDDY_INFO";
 	case QQ_CMD_ADD_BUDDY_WO_AUTH:
 		return "QQ_CMD_ADD_BUDDY_WO_AUTH";
 	case QQ_CMD_DEL_BUDDY:
