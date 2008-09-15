@@ -116,7 +116,7 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 	bytes += convert_as_pascal_string(data + bytes, &(group.desc_utf8), QQ_CHARSET_DEFAULT);
 	/* end of one qq_group */
 	if(bytes != len) {
-		purple_debug_error("QQ",
+		purple_debug_error("QQ", 
 			"group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
 	}
 
@@ -124,9 +124,9 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 	if (pending_id != NULL) {
 		qq_set_pending_id(&qd->joining_groups, group.ext_id, FALSE);
 		if (qq_room_search_id(gc, group.id) == NULL)
-			qq_group_create_internal_record(gc,
+			qq_group_create_internal_record(gc, 
 					group.id, group.ext_id, group.title_utf8);
-		qq_request_room_join(gc, &group);
+		qq_send_cmd_group_join_group(gc, &group);
 	} else {
 		_qq_setup_roomlist(qd, &group);
 	}

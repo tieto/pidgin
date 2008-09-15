@@ -284,7 +284,7 @@ void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_wi
 
 	qd = (qq_data *) gc->proto_data;
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
-	qq_send_cmd(gc, QQ_CMD_GET_BUDDY_INFO, (guint8 *) uid_str, strlen(uid_str));
+	qq_send_cmd(gc, QQ_CMD_GET_USER_INFO, (guint8 *) uid_str, strlen(uid_str));
 
 	query = g_new0(qq_info_query, 1);
 	query->uid = uid;
@@ -303,7 +303,7 @@ void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 
 	qd = (qq_data *) gc->proto_data;
 	g_snprintf(raw_data, sizeof(raw_data), "%d", uid);
-	qq_send_cmd_mess(gc, QQ_CMD_GET_BUDDY_INFO, (guint8 *) raw_data, strlen(raw_data),
+	qq_send_cmd_mess(gc, QQ_CMD_GET_USER_INFO, (guint8 *) raw_data, strlen(raw_data),
 			update_class, ship32);
 }
 
@@ -690,9 +690,9 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 		mid->info->qq_show = g_strdup(info->qq_show);
 		mid->info->unknown6 = g_strdup(info->unknown6);
 
-		purple_request_fields(gc, _("Modify information"),
-				_("Modify information"), NULL, fields,
-				_("Update information"), G_CALLBACK(modify_info_ok_cb),
+		purple_request_fields(gc, _("Modify my information"),
+				_("Modify my information"), NULL, fields,
+				_("Update my information"), G_CALLBACK(modify_info_ok_cb),
 				_("Cancel"), G_CALLBACK(modify_info_cancel_cb),
 				purple_connection_get_account(gc), NULL, NULL,
 				mid);
@@ -759,8 +759,8 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
 	gint prefix_len = strlen(QQ_ICON_PREFIX);
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
-	gint dir_len = buddy_icon_dir ? strlen(buddy_icon_dir) : 0;
-	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir ? buddy_icon_dir : "(null)");
+	gint dir_len = strlen(buddy_icon_dir);
+	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir);
 	gboolean icon_global = purple_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
 
 	if (!icon_path)
@@ -769,7 +769,7 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
 
 	/* make sure we're using an appropriate icon */
-	if (buddy_icon_dir && !(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
+	if (!(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
 				&& icon_path[dir_len] == G_DIR_SEPARATOR
 				&& g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
 				&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
@@ -811,8 +811,8 @@ static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gin
 	if ((buddy = purple_find_buddy(account, name)))
 		old_icon_num = purple_buddy_icons_get_checksum_for_user(buddy);
 
-	if ((old_icon_num == NULL ||
-			strcmp(icon_num_str, old_icon_num)) && (qq_buddy_icon_dir() != NULL))
+	if (old_icon_num == NULL ||
+			strcmp(icon_num_str, old_icon_num))
 	{
 		gchar *icon_path;
 
@@ -862,7 +862,7 @@ static void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc
 }
 
 /* process reply to get_info packet */
-void qq_process_get_buddy_info(guint8 *data, gint data_len, PurpleConnection *gc)
+void qq_process_get_info_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	gchar **segments;
 	qq_info_query *query;
@@ -932,7 +932,7 @@ void qq_info_query_free(qq_data *qd)
 	}
 }
 
-void qq_request_get_level(PurpleConnection *gc, guint32 uid)
+void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
 	guint8 buf[16] = {0};
@@ -945,7 +945,7 @@ void qq_request_get_level(PurpleConnection *gc, guint32 uid)
 	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, buf, bytes);
 }
 
-void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
+void qq_request_get_buddies_levels(PurpleConnection *gc, gint update_class)
 {
 	guint8 *buf;
 	guint16 size;

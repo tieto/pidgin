@@ -60,7 +60,7 @@ enum {
 };
 
 /* default process, decrypt and dump */
-static void process_cmd_unknow(PurpleConnection *gc,const gchar *title, guint8 *data, gint data_len, guint16 cmd, guint16 seq)
+static void process_cmd_unknow(PurpleConnection *gc,gchar *title, guint8 *data, gint data_len, guint16 cmd, guint16 seq)
 {
 	qq_data *qd;
 	gchar *msg_utf8 = NULL;
@@ -77,13 +77,13 @@ static void process_cmd_unknow(PurpleConnection *gc,const gchar *title, guint8 *
 			seq, qq_get_cmd_desc(cmd));
 
 	msg_utf8 = try_dump_as_gbk(data, data_len);
-	if (msg_utf8 != NULL) {
-		purple_notify_info(gc, title, msg_utf8, NULL);
+	if (msg_utf8) {
+		purple_notify_info(gc, NULL, msg_utf8, NULL);
 		g_free(msg_utf8);
 	}
 }
 
-void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *rcved, gint rcved_len)
+void qq_proc_cmd_server(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *rcved, gint rcved_len)
 {
 	qq_data *qd;
 
@@ -122,7 +122,7 @@ void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *
 			qq_process_buddy_change_status(data, data_len, gc);
 			break;
 		default:
-			process_cmd_unknow(gc, _("Unknow SERVER CMD"), data, data_len, cmd, seq);
+			process_cmd_unknow(gc, "Unknow SERVER CMD", data, data_len, cmd, seq);
 			break;
 	}
 }
@@ -145,7 +145,7 @@ static void process_room_cmd_notify(PurpleConnection *gc,
 	g_free(msg_utf8);
 }
 
-void qq_update_room(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
+void qq_room_update(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 {
 	qq_data *qd;
 	qq_group *group;
@@ -198,7 +198,8 @@ static void update_all_rooms(PurpleConnection *gc, guint8 room_cmd, guint32 room
 
 	next_group = qq_room_get_next(gc, room_id);
 	if (next_group == NULL && room_id <= 0) {
-		purple_debug_info("QQ", "No room. Finished update\n");
+		purple_debug_info("QQ", "No room, nothing update\n");
+		qd->is_finish_update = TRUE;
 		return;
 	}
 	if (next_group == NULL ) {
@@ -225,7 +226,7 @@ static void update_all_rooms(PurpleConnection *gc, guint8 room_cmd, guint32 room
 			if (!is_new_turn) {
 				qq_request_room_get_buddies(gc, next_group, QQ_CMD_CLASS_UPDATE_ALL);
 			} else {
-				purple_debug_info("QQ", "Finished update\n");
+				qd->is_finish_update = TRUE;
 			}
 			break;
 		default:
@@ -244,7 +245,7 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 		case 0:
 			qq_request_buddy_info(gc, qd->uid, QQ_CMD_CLASS_UPDATE_ALL, QQ_BUDDY_INFO_UPDATE_ONLY);
 			break;
-		case QQ_CMD_GET_BUDDY_INFO:
+		case QQ_CMD_GET_USER_INFO:
 			qq_request_change_status(gc, QQ_CMD_CLASS_UPDATE_ALL);
 			break;
 		case QQ_CMD_CHANGE_STATUS:
@@ -254,7 +255,7 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 			qq_request_get_buddies_and_rooms(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);
 			break;
 		case QQ_CMD_GET_BUDDIES_AND_ROOMS:
-			qq_request_get_buddies_level(gc, QQ_CMD_CLASS_UPDATE_ALL);
+			qq_request_get_buddies_levels(gc, QQ_CMD_CLASS_UPDATE_ALL);
 			break;
 		case QQ_CMD_GET_LEVEL:
 			qq_request_get_buddies_online(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);
@@ -278,11 +279,11 @@ static void update_all_rooms_online(PurpleConnection *gc, guint8 room_cmd, guint
 
 	next_group = qq_room_get_next_conv(gc, room_id);
 	if (next_group == NULL && room_id <= 0) {
-		purple_debug_info("QQ", "No room in conversation, no update online buddies\n");
+		purple_debug_info("QQ", "No room, no update online buddies\n");
 		return;
 	}
 	if (next_group == NULL ) {
-		purple_debug_info("QQ", "finished update rooms' online buddies\n");
+		purple_debug_info("QQ", "finished update online buddies\n");
 		return;
 	}
 
@@ -315,7 +316,7 @@ void qq_update_online(PurpleConnection *gc, guint16 cmd)
 	}
 }
 
-void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
+void qq_proc_room_cmd_reply(PurpleConnection *gc, guint16 seq,
 		guint8 room_cmd, guint32 room_id, guint8 *rcved, gint rcved_len,
 		gint update_class, guint32 ship32)
 {
@@ -444,9 +445,6 @@ void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
 			   reply_cmd, qq_get_room_cmd_desc(reply_cmd));
 	}
 
-	if (update_class == QQ_CMD_CLASS_NONE)
-		return;
-
 	purple_debug_info("QQ", "Update class %d\n", update_class);
 	if (update_class == QQ_CMD_CLASS_UPDATE_ALL) {
 		update_all_rooms(gc, room_cmd, room_id);
@@ -457,11 +455,11 @@ void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
 		return;
 	}
 	if (update_class == QQ_CMD_CLASS_UPDATE_ROOM) {
-		qq_update_room(gc, room_cmd, room_id);
+		qq_room_update(gc, room_cmd, room_id);
 	}
 }
 
-void qq_proc_login_cmd(PurpleConnection *gc, guint8 *rcved, gint rcved_len)
+void qq_proc_cmd_login(PurpleConnection *gc, guint8 *rcved, gint rcved_len)
 {
 	qq_data *qd;
 	guint8 *data;
@@ -505,14 +503,11 @@ void qq_proc_login_cmd(PurpleConnection *gc, guint8 *rcved, gint rcved_len)
 	/* Now goes on updating my icon/nickname, not showing info_window */
 	qd->modifying_face = FALSE;
 
-	/* is_login, but we have packets before login */
-	qq_trans_process_remained(gc);
-
 	qq_update_all(gc, 0);
 	return;
 }
 
-void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
+void qq_proc_cmd_reply(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		guint8 *rcved, gint rcved_len, gint update_class, guint32 ship32)
 {
 	qq_data *qd;
@@ -563,8 +558,8 @@ void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		case QQ_CMD_BUDDY_AUTH:
 			qq_process_add_buddy_auth_reply(data, data_len, gc);
 			break;
-		case QQ_CMD_GET_BUDDY_INFO:
-			qq_process_get_buddy_info(data, data_len, gc);
+		case QQ_CMD_GET_USER_INFO:
+			qq_process_get_info_reply(data, data_len, gc);
 			break;
 		case QQ_CMD_CHANGE_STATUS:
 			qq_process_change_status_reply(data, data_len, gc);
@@ -607,7 +602,7 @@ void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			purple_debug_info("QQ", "All buddies and groups received\n");
 			break;
 		default:
-			process_cmd_unknow(gc, _("Unknow reply CMD"), data, data_len, cmd, seq);
+			process_cmd_unknow(gc, "Unknow reply CMD", data, data_len, cmd, seq);
 			is_unknow = TRUE;
 			break;
 	}

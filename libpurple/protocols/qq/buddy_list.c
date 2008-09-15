@@ -569,7 +569,7 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 	q_bud->status =bs.status;
 
 	if (q_bud->status == QQ_BUDDY_ONLINE_NORMAL) {
-		qq_request_get_level(gc, q_bud->uid);
+		qq_send_packet_get_level(gc, q_bud->uid);
 	}
 	qq_update_buddy_contact(gc, q_bud);
 }
