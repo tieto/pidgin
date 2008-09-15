@@ -1,6 +1,17 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.2 (??/??/????):
+	libpurple:
+	* Restored the "Has You" feature to the MSN protocol tooltips.
+	* Fixed a crash on removing a custom buddy icon on a buddy.
+	* Fixed a crash caused by certain self-signed SSL certificates.
+
+	Pidgin:
+	* The status selector now saves your message when changing status.
+	* Fix a case where a conversation window could close unexpectedly.
+	* A mute sounds option has been added to the preferences window to
+	  help with discoverability.  CTRL+S is no longer bound to mute.
+
 	Finch:
 	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
 	  hierarchies are defined by the '/' character in the group names
