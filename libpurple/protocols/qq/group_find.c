@@ -110,10 +110,10 @@ qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel)
 	group = NULL;
 	while (list != NULL) {
 		group = (qq_group *) list->data;
-		if (group->title_utf8 == NULL) {
+		if (group->group_name_utf8 == NULL) {
 			continue;
 		}
-		if (!g_ascii_strcasecmp(purple_conversation_get_name(conv), group->title_utf8))
+		if (!g_ascii_strcasecmp(purple_conversation_get_name(conv), group->group_name_utf8))
 			break;
 		list = list->next;
 	}
@@ -166,84 +166,4 @@ qq_group *qq_room_search_id(PurpleConnection *gc, guint32 room_id)
 	}
 
 	return NULL;
-}
-
-qq_group *qq_room_get_next(PurpleConnection *gc, guint32 room_id)
-{
-	GList *list;
-	qq_group *group;
-	qq_data *qd;
-	gboolean is_find = FALSE;
-	
-	qd = (qq_data *) gc->proto_data;
-
-	if (qd->groups == NULL) {
-		return NULL;
-	}
-	
-	 if (room_id <= 0) {
-		return (qq_group *) qd->groups->data;
-	}
-	
-	list = qd->groups;
-	while (list != NULL) {
-		group = (qq_group *) list->data;
-		list = list->next;
-		if (group->id == room_id) {
-			is_find = TRUE;
-			break;
-		}
-	}
-
-	if ( !is_find || list == NULL) {
-		return NULL;
-	}
-
-	return (qq_group *)list->data;
-}
-
-qq_group *qq_room_get_next_conv(PurpleConnection *gc, guint32 room_id)
-{
-	GList *list;
-	qq_group *group;
-	qq_data *qd;
-	gboolean is_find;
-
-	qd = (qq_data *) gc->proto_data;
-
- 	list = qd->groups;
-	if (room_id > 0) {
-		/* search next room */
-		is_find = FALSE;
-		while (list != NULL) {
-			group = (qq_group *) list->data;
-			list = list->next;
-			if (group->id == room_id) {
-				is_find = TRUE;
-				break;
-			}
-		}
-		if ( !is_find || list == NULL) {
-			return NULL;
-		}
-	}
-	
-	is_find = FALSE;
-	while (list != NULL) {
-		group = (qq_group *) list->data;
-		if (group->my_role == QQ_ROOM_ROLE_YES || group->my_role == QQ_ROOM_ROLE_ADMIN) {
-			if (NULL != purple_find_conversation_with_account(
-						PURPLE_CONV_TYPE_CHAT,group->title_utf8, purple_connection_get_account(gc))) {
-				/* In convseration*/
-				is_find = TRUE;
-				break;
-			}
-		}
-		list = list->next;
-	}
-
-	if ( !is_find) {
-		return NULL;
-	}
-	return group;
 }

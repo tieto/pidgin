@@ -36,11 +36,6 @@
 
 #define QQ_KEY_LENGTH       16
 
-#ifdef _WIN32
-const char *qq_win32_buddy_icon_dir(void);
-#define QQ_BUDDY_ICON_DIR qq_win32_buddy_icon_dir()
-#endif
-
 typedef struct _qq_data qq_data;
 typedef struct _qq_buddy qq_buddy;
 typedef struct _qq_interval qq_interval;
@@ -68,45 +63,44 @@ struct _qq_buddy {
 	guint16 timeRemainder;
 	time_t signon;
 	time_t idle;
-	time_t last_update;
+	time_t last_refresh;
 
 	gint8  role;		/* role in group, used only in group->members list */
-};
-
-typedef struct _qq_connection qq_connection;
-struct _qq_connection {
-	int fd;				/* socket file handler */
-	int input_handler;
-
-	/* tcp related */
-	int can_write_handler; 	/* use in tcp_send_out */
-	PurpleCircBuffer *tcp_txbuf;
-	guint8 *tcp_rxqueue;
-	int tcp_rxlen;
 };
 
 struct _qq_data {
 	PurpleConnection *gc;
 
-	GSList *openconns;
-	gboolean use_tcp;		/* network in tcp or udp */
-	PurpleProxyConnectData *conn_data;
-	gint fd;							/* socket file handler */
-
+	/* common network resource */
 	GList *servers;
-	gchar *curr_server;		/* point to servers->data, do not free*/
+	gchar *user_server;
+	gint user_port;
+	gboolean use_tcp;		/* network in tcp or udp */
 	
-	struct in_addr redirect_ip;
-	guint16 redirect_port;
-	guint check_watcher;
-	guint connect_watcher;
-	gint connect_retry;
+	gchar *server_name;
+	gboolean is_redirect;
+	gchar *real_hostname;	/* from real connction */
+	guint16 real_port;
+	guint reconnect_timeout;
+	gint reconnect_times;
+
+	PurpleProxyConnectData *connect_data;
+	gint fd;				/* socket file handler */
+	gint tx_handler; 	/* socket can_write handle, use in udp connecting and tcp send out */
 
 	qq_interval itv_config;
 	qq_interval itv_count;
-	guint network_watcher;
+	guint network_timeout;
 	
 	GList *transactions;	/* check ack packet and resend */
+
+	/* tcp related */
+	PurpleCircBuffer *tcp_txbuf;
+	guint8 *tcp_rxqueue;
+	int tcp_rxlen;
+	
+	/* udp related */
+	PurpleDnsQueryData *udp_query_data;
 
 	guint32 uid;			/* QQ number */
 	guint8 *token;		/* get from server*/
@@ -118,8 +112,7 @@ struct _qq_data {
 
 	guint16 send_seq;		/* send sequence number */
 	guint8 login_mode;		/* online of invisible */
-	gboolean is_login;		/* used by qq-add_buddy */
-	gboolean is_finish_update;
+	gboolean logged_in;		/* used by qq-add_buddy */
 
 	PurpleXfer *xfer;			/* file transfer handler */
 
@@ -150,9 +143,6 @@ struct _qq_data {
 	/* TODO pass qq_send_packet_get_info() a callback and use signals to get rid of these */
 	gboolean modifying_info;
 	gboolean modifying_face;
-
-	gboolean is_show_notice;
-	gboolean is_show_news;
 };
 
 #endif

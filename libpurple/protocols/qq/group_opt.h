@@ -38,13 +38,13 @@ typedef struct _group_member_opt {
 } group_member_opt;
 
 enum {
-	QQ_ROOM_TYPE_PERMANENT = 0x01,
-	QQ_ROOM_TYPE_TEMPORARY
+	QQ_GROUP_TYPE_PERMANENT = 0x01,
+	QQ_GROUP_TYPE_TEMPORARY
 };
 
 enum {
-	QQ_ROOM_MEMBER_ADD = 0x01,
-	QQ_ROOM_MEMBER_DEL
+	QQ_GROUP_MEMBER_ADD = 0x01,
+	QQ_GROUP_MEMBER_DEL
 };
 
 void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new_members);

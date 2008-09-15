@@ -122,7 +122,7 @@ const gchar *qq_get_ver_desc(gint source)
 	case QQ_SERVER_0100:
 		return "QQ Server 0100";
 	default:
-		return "Unknown Version";
+		return "Unknown";
 	}
 }
 
@@ -146,8 +146,8 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_DEL_BUDDY";
 	case QQ_CMD_BUDDY_AUTH:
 		return "QQ_CMD_BUDDY_AUTH";
-	case QQ_CMD_CHANGE_STATUS:
-		return "QQ_CMD_CHANGE_STATUS";
+	case QQ_CMD_CHANGE_ONLINE_STATUS:
+		return "QQ_CMD_CHANGE_ONLINE_STATUS";
 	case QQ_CMD_ACK_SYS_MSG:
 		return "QQ_CMD_ACK_SYS_MSG";
 	case QQ_CMD_SEND_IM:
@@ -172,10 +172,10 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_TOKEN";
 	case QQ_CMD_RECV_MSG_SYS:
 		return "QQ_CMD_RECV_MSG_SYS";
-	case QQ_CMD_BUDDY_CHANGE_STATUS:
-		return "QQ_CMD_BUDDY_CHANGE_STATUS";
+	case QQ_CMD_RECV_MSG_BUDDY_CHANGE_STATUS:
+		return "QQ_CMD_RECV_MSG_BUDDY_CHANGE_STATUS";
 	default:
-		return "Unknown CMD";
+		return "Unknown";
 	}
 }
 
@@ -204,8 +204,8 @@ const gchar *qq_get_room_cmd_desc(gint room_cmd)
 		return "QQ_ROOM_CMD_SEND_MSG";
 	case QQ_ROOM_CMD_GET_ONLINES:
 		return "QQ_ROOM_CMD_GET_ONLINES";
-	case QQ_ROOM_CMD_GET_BUDDIES:
-		return "QQ_ROOM_CMD_GET_BUDDIES";
+	case QQ_ROOM_CMD_GET_MEMBER_INFO:
+		return "QQ_ROOM_CMD_GET_MEMBER_INFO";
 	case QQ_ROOM_CMD_CHANGE_CARD:
 		return "QQ_ROOM_CMD_CHANGE_CARD";
 	case QQ_ROOM_CMD_GET_REALNAMES:
@@ -231,6 +231,6 @@ const gchar *qq_get_room_cmd_desc(gint room_cmd)
 	case QQ_ROOM_CMD_TEMP_GET_MEMBERS:
 		return "QQ_ROOM_CMD_TEMP_GET_MEMBERS";
 	default:
-		return "Unknown Room Command";
+		return "Unknown QQ Room Command";
 	}
 }

@@ -1,16 +1,5 @@
-2008.08.16 - ccpaging <ecc_hy(at)hotmail.com>
-	* Rename group to room. If you used pidginqq before, this may create a new room with same title, you may delete old one
-	* Replace purple_debug with purple_debug_info, purple_debug_warning, purple_debug_error
-	* Add server notice and server new, and two options to turn on/off
-	* Minor modify for reducing transaction's debug infor
-	* Minor modifies for system notice and QQ news.
-	* Add 4 new strings need translate compare with p10.
-
 2008.08.10 - csyfek <csyfek(at)gmail.com>
 	* Commit to Pidgin
-
-2008.08.07 - ccpaging <ecc_hy(at)hotmail.com>
-	* Support managing multi-connections according to simple.c
 
 2008.08.06 - ccpaging <ecc_hy(at)hotmail.com>
 	* Rename names of variables, Group, to Room

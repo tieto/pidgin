@@ -41,7 +41,6 @@
 #include "header_info.h"
 #include "packet_parse.h"
 #include "qq_network.h"
-#include "qq_process.h"
 #include "utils.h"
 
 typedef struct _qq_recv_group_im {
@@ -86,12 +85,12 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 	if (bytes == data_len)	/* create OK */
 		qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_MSG, group->id, raw_data, data_len);
 	else
-		purple_debug_error("QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 				"Fail creating group_im packet, expect %d bytes, build %d bytes\n", data_len, bytes);
 }
 
 /* this is the ACK */
-void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc)
+void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc) 
 {
 	/* return should be the internal group id
 	 * but we have nothing to do with it */
@@ -99,7 +98,7 @@ void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc)
 }
 
 /* receive an application to join the group */
-void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
+void qq_process_recv_group_im_apply_join(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
 {
 	guint32 ext_id, user_uid;
 	guint8 type8;
@@ -120,8 +119,8 @@ void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleCo
 
 	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
-	msg = g_strdup_printf(_("%d requested to join Qun %d"), user_uid, ext_id);
-	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
+	msg = g_strdup_printf(_("User %d requested to join group %d"), user_uid, ext_id);
+	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
 
 	g = g_new0(group_member_opt, 1);
 	g->gc = gc;
@@ -150,7 +149,7 @@ void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleCo
 }
 
 /* the request to join a group is rejected */
-void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_rejected(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
 {
 	guint32 ext_id, admin_uid;
 	guint8 type8;
@@ -171,14 +170,14 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-		(_("Your request to join Qun %d has been rejected by admin %d"), ext_id, admin_uid);
-	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
+		(_("Your request to join group %d has been rejected by admin %d"), ext_id, admin_uid);
+	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_NO;
+		group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
 		qq_group_refresh(gc, group);
 	}
 
@@ -188,7 +187,7 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 }
 
 /* the request to join a group is approved */
-void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_approved(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
 {
 	guint32 ext_id, admin_uid;
 	guint8 type8;
@@ -209,13 +208,13 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-		(_("Your request to join Qun %d has been approved by admin %d"), ext_id, admin_uid);
+		(_("Your request to join group %d has been approved by admin %d"), ext_id, admin_uid);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, NULL);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_YES;
+		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
 	}
 
@@ -224,7 +223,7 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 }
 
 /* process the packet when removed from a group */
-void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_removed(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
 {
 	guint32 ext_id, uid;
 	guint8 type8;
@@ -242,12 +241,12 @@ void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, Purple
 
 	g_return_if_fail(ext_id > 0 && uid > 0);
 
-	msg = g_strdup_printf(_("[%d] removed from Qun \"%d\""), uid, ext_id);
+	msg = g_strdup_printf(_("You [%d] have left group \"%d\""), uid, ext_id);
 	purple_notify_info(gc, _("QQ Qun Operation"), msg, NULL);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_NO;
+		group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
 		qq_group_refresh(gc, group);
 	}
 
@@ -255,7 +254,7 @@ void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, Purple
 }
 
 /* process the packet when added to a group */
-void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_added(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
 {
 	guint32 ext_id, uid;
 	guint8 type8;
@@ -273,18 +272,18 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 
 	g_return_if_fail(ext_id > 0 && uid > 0);
 
-	msg = g_strdup_printf(_("[%d] added to Qun \"%d\""), uid, ext_id);
-	purple_notify_info(gc, _("QQ Qun Operation"), msg, _("Qun is in buddy list"));
+	msg = g_strdup_printf(_("You [%d] have been added to group \"%d\""), uid, ext_id);
+	purple_notify_info(gc, _("QQ Qun Operation"), msg, _("This group has been added to your buddy list"));
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_YES;
+		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
 	} else {		/* no such group, try to create a dummy first, and then update */
 		group = qq_group_create_internal_record(gc, id, ext_id, NULL);
-		group->my_role = QQ_ROOM_ROLE_YES;
+		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
-		qq_room_update(gc, 0, group->id);
+		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_INFO, group->id);
 		/* the return of this cmd will automatically update the group in blist */
 	}
 
@@ -292,7 +291,7 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 }
 
 /* recv an IM from a group chat */
-void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type)
+void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type)
 {
 	gchar *msg_with_purple_smiley, *msg_utf8_encoded, *im_src_name;
 	guint16 unknown;
@@ -311,9 +310,7 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 
 	qd = (qq_data *) gc->proto_data;
 
-#if 0
-	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", data, data_len, "group im hex dump");
-#endif
+	/* qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", data, data_len, "group im hex dump"); */
 
 	im_group = g_newa(qq_recv_group_im, 1);
 
@@ -377,13 +374,13 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	group = qq_room_search_id(gc, id);
 	g_return_if_fail(group != NULL);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->group_name_utf8, purple_connection_get_account(gc));
 	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/prompt_group_msg_on_recv")) {
 		/* New conv should open, get group info*/
-		qq_room_update(gc, 0, group->id);
-
-		serv_got_joined_chat(gc, qd->channel++, group->title_utf8);
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
+		qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_INFO, group->id);
+		
+		serv_got_joined_chat(gc, qd->channel++, group->group_name_utf8);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->group_name_utf8, purple_connection_get_account(gc));
 	}
 
 	if (conv != NULL) {
