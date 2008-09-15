@@ -1,20 +1,3 @@
-2008.09.05 - ccpaging <ccpaging(at)gmail.com>
-	* Filter chars 0x01-0x20 in nickname
-
-2008.09.05 - ccpaging <ccpaging(at)gmail.com>
-	* Fixed compilation even pidgin-udp-patch not applied
-	* Place and analysis 'before login packet' after login. packages will be updated slowly and server may send lots of 'server command packet', while 'before login packet' is placed after 'finished update'
-
-2008.09.02 - ccpaging <ccpaging(at)gmail.com>
-	* Bugfix: can not send message to the QUN blocked adding
-	* Tickets:
-		Fixes #6957
-
-2008.09.02 - ccpaging <ccpaging(at)gmail.com>
-	* Use new tactics of information update:
-		1. send next package till the previous package received
-		2. fix duplicated get_room_info and get_room_buddies commands
-
 2008.08.16 - ccpaging <ecc_hy(at)hotmail.com>
 	* Rename group to room. If you used pidginqq before, this may create a new room with same title, you may delete old one
 	* Replace purple_debug with purple_debug_info, purple_debug_warning, purple_debug_error
@@ -22,8 +5,6 @@
 	* Minor modify for reducing transaction's debug infor
 	* Minor modifies for system notice and QQ news.
 	* Add 4 new strings need translate compare with p10.
-	* Tickets:
-		Fixes #6990
 
 2008.08.10 - csyfek <csyfek(at)gmail.com>
 	* Commit to Pidgin

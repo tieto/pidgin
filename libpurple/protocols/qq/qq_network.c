@@ -249,9 +249,6 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 
 	qd = (qq_data *) gc->proto_data;
 
-	qd->net_stat.rcved++;
-	if (qd->net_stat.rcved <= 0)	memset(&(qd->net_stat), 0, sizeof(qd->net_stat));
-
 	/* Len, header and tail tag have been checked before */
 	bytes = 0;
 	bytes += packet_get_header(&header_tag, &source_tag, &cmd, &seq, buf + bytes);
@@ -278,7 +275,6 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	}
 
 	if (qq_trans_is_dup(trans)) {
-		qd->net_stat.rcved_dup++;
 		purple_debug_info("QQ", "dup [%05d] %s, discard...\n", seq, qq_get_cmd_desc(cmd));
 		return TRUE;
 	}
@@ -1050,7 +1046,6 @@ static gint packet_send_out(PurpleConnection *gc, guint16 cmd, guint16 seq, guin
 		return -1;
 	}
 
-	qd->net_stat.sent++;
 	if (qd->use_tcp) {
 		bytes_sent = tcp_send_out(gc, buf, buf_len);
 	} else {

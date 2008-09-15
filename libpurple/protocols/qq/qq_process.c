@@ -438,10 +438,8 @@ void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
 		break;
 	case QQ_ROOM_CMD_GET_BUDDIES:
 		qq_process_room_cmd_get_buddies(data + bytes, data_len - bytes, gc);
-		if (group != NULL) {
-			group->is_got_info = TRUE;
+		if (group != NULL)
 			qq_group_conv_refresh_online_member(gc, group);
-		}
 		break;
 	default:
 		purple_debug_warning("QQ", "Unknow room cmd 0x%02X %s\n",

@@ -66,7 +66,7 @@ GList *qq_chat_info(PurpleConnection *gc)
 	pce->label = _("ID: ");
 	pce->identifier = QQ_ROOM_KEY_EXTERNAL_ID;
 	m = g_list_append(m, pce);
-
+	
 	return m;
 }
 
@@ -120,9 +120,9 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 	purple_request_input(gc, _("QQ Qun"),
 			   _("Please enter Qun number"),
 			   _("You can only search for permanent Qun\n"),
-			   NULL, FALSE, FALSE, NULL,
-			   _("Search"), G_CALLBACK(_qq_group_search_callback),
-			   _("Cancel"), G_CALLBACK(_qq_group_search_cancel_callback),
+			   NULL, FALSE, FALSE, NULL, 
+			   _("Search"), G_CALLBACK(_qq_group_search_callback), 
+			   _("Cancel"), G_CALLBACK(_qq_group_search_cancel_callback), 
 			   purple_connection_get_account(gc), NULL, NULL,
 			   gc);
 
@@ -170,7 +170,7 @@ void qq_group_init(PurpleConnection *gc)
 		chat = (PurpleChat *) node;
 		if (account != chat->account)	/* not qq account*/
 			continue;
-		group = qq_room_create_by_hashtable(gc, chat->components);
+		group = qq_group_from_hashtable(gc, chat->components);
 		if (group == NULL)
 			continue;
 

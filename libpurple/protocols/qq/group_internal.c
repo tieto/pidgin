@@ -143,7 +143,7 @@ GHashTable *qq_group_to_hashtable(qq_group *group)
 }
 
 /* create a qq_group from hashtable */
-qq_group *qq_room_create_by_hashtable(PurpleConnection *gc, GHashTable *data)
+qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data)
 {
 	qq_data *qd;
 	qq_group *group;
@@ -168,9 +168,9 @@ qq_group *qq_room_create_by_hashtable(PurpleConnection *gc, GHashTable *data)
 	group->title_utf8 = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_TITLE_UTF8));
 	group->desc_utf8 = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_DESC_UTF8));
 	group->my_role_desc = get_role_desc(group);
-	group->is_got_info = FALSE;
 
 	qd->groups = g_list_append(qd->groups, group);
+
 	return group;
 }
 
@@ -192,7 +192,7 @@ void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 	if (chat == NULL) {
 		return;
 	}
-
+	
 	/* we have a local record, update its info */
 	/* if there is title_utf8, we update the group name */
 	if (group->title_utf8 != NULL && strlen(group->title_utf8) > 0)
