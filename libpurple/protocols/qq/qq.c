@@ -157,8 +157,13 @@ static void qq_login(PurpleAccount *account)
 	qd->is_show_notice = purple_account_get_bool(account, "show_notice", TRUE);
 	qd->is_show_news = purple_account_get_bool(account, "show_news", TRUE);
 
-	qd->itv_config.resend = purple_account_get_int(account, "resend_interval", 10);
-	if (qd->itv_config.resend <= 0) qd->itv_config.resend = 10;
+	qd->resend_times = purple_prefs_get_int("/plugins/prpl/qq/resend_times");
+	if (qd->resend_times <= 1) qd->itv_config.resend = 4;
+
+	qd->itv_config.resend = purple_prefs_get_int("/plugins/prpl/qq/resend_interval");
+	if (qd->itv_config.resend <= 0) qd->itv_config.resend = 3;
+	purple_debug_info("QQ", "Resend interval %d, retries %d\n",
+			qd->itv_config.resend, qd->resend_times);
 
 	qd->itv_config.keep_alive = purple_account_get_int(account, "keep_alive_interval", 60);
 	if (qd->itv_config.keep_alive < 30) qd->itv_config.keep_alive = 30;
@@ -518,7 +523,7 @@ static void _qq_menu_block_buddy(PurpleBlistNode * node)
 */
 
 /* show a brief summary of what we get from login packet */
-static void _qq_menu_show_login_info(PurplePluginAction *action)
+static void _qq_menu_account_info(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
@@ -534,7 +539,15 @@ static void _qq_menu_show_login_info(PurplePluginAction *action)
 
 	g_string_append_printf(info, _("<b>Server</b>: %s<br>\n"), qd->curr_server);
 	g_string_append_printf(info, _("<b>Connection Mode</b>: %s<br>\n"), qd->use_tcp ? "TCP" : "UDP");
-	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), inet_ntoa(qd->my_ip));
+	g_string_append_printf(info, _("<b>My Internet Address</b>: %s<br>\n"), inet_ntoa(qd->my_ip));
+
+	g_string_append(info, "<hr>\n");
+	g_string_append(info, "<i>Network Status</i><br>\n");
+	g_string_append_printf(info, _("<b>Sent</b>: %lu<br>\n"), qd->net_stat.sent);
+	g_string_append_printf(info, _("<b>Resend</b>: %lu<br>\n"), qd->net_stat.resend);
+	g_string_append_printf(info, _("<b>Lost</b>: %lu<br>\n"), qd->net_stat.lost);
+	g_string_append_printf(info, _("<b>Received</b>: %lu<br>\n"), qd->net_stat.rcved);
+	g_string_append_printf(info, _("<b>Received Duplicate</b>: %lu<br>\n"), qd->net_stat.rcved_dup);
 
 	g_string_append(info, "<hr>\n");
 	g_string_append(info, "<i>Information below may not be accurate</i><br>\n");
@@ -627,7 +640,7 @@ static GList *_qq_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Change Password"), _qq_menu_change_password);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Show Login Information"), _qq_menu_show_login_info);
+	act = purple_plugin_action_new(_("Account Information"), _qq_menu_account_info);
 	m = g_list_append(m, act);
 
 	/*
@@ -854,9 +867,6 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Show server news"), "show_news", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_int_new(_("Resend interval(s)"), "resend_interval", 10);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
 	option = purple_account_option_int_new(_("Keep alive interval(s)"), "keep_alive_interval", 60);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
@@ -869,7 +879,8 @@ static void init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_room_when_newin", TRUE);
-
+	purple_prefs_add_int("/plugins/prpl/qq/resend_interval", 3);
+	purple_prefs_add_int("/plugins/prpl/qq/resend_times", 4);
 }
 
 PURPLE_INIT_PLUGIN(qq, init_plugin, info);

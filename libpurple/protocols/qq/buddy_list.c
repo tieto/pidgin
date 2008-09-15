@@ -292,6 +292,7 @@ guint16 qq_process_get_buddies_list_reply(guint8 *data, gint data_len, PurpleCon
 
 		pascal_len = convert_as_pascal_string(data + bytes, &q_bud->nickname, QQ_CHARSET_DEFAULT);
 		bytes += pascal_len;
+		qq_filter_str(q_bud->nickname);
 
 		bytes += qq_get16(&unknown, data + bytes);
 		bytes += qq_get8(&q_bud->ext_flag, data + bytes);
