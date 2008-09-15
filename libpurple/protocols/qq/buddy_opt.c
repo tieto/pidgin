@@ -282,11 +282,10 @@ void qq_process_remove_buddy_reply(guint8 *data, gint data_len, PurpleConnection
 	if (data[0] != QQ_REMOVE_BUDDY_REPLY_OK) {
 		/* there is no reason return from server */
 		purple_debug_warning("QQ", "Remove buddy fails\n");
-		purple_notify_info(gc, _("QQ Buddy"), _("Failed:"),  _("Remove buddy"));
 	} else {		/* if reply */
 		purple_debug_info("QQ", "Remove buddy OK\n");
 		/* TODO: We don't really need to notify the user about this, do we? */
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"),  _("Remove buddy"));
+		purple_notify_info(gc, NULL, _("You have successfully removed a buddy"), NULL);
 	}
 }
 
@@ -302,11 +301,11 @@ void qq_process_remove_self_reply(guint8 *data, gint data_len, PurpleConnection 
 	if (data[0] != QQ_REMOVE_SELF_REPLY_OK) {
 		/* there is no reason return from server */
 		purple_debug_warning("QQ", "Remove self fails\n");
-		purple_notify_info(gc, _("QQ Buddy"), _("Failed:"), _("Remove from other's buddy list"));
+		purple_notify_info(gc, NULL, _("Failed removing from friend's buddy list"), NULL);
 	} else {		/* if reply */
 		purple_debug_info("QQ", "Remove from a buddy OK\n");
 		/* TODO: Does the user really need to be notified about this? */
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"), _("Remove from other's buddy list"));
+		purple_notify_info(gc, NULL, _("Successed removing from friend's buddy list"), NULL);
 	}
 }
 
@@ -379,8 +378,8 @@ void qq_process_add_buddy_reply(guint8 *data, gint data_len, guint16 seq, Purple
 		g_free(nombre);
 	} else {	/* add OK */
 		qq_add_buddy_by_recv_packet(gc, for_uid, TRUE, TRUE);
-		msg = g_strdup_printf(_("Add into %d's buddy list"), for_uid);
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"), msg);
+		msg = g_strdup_printf(_("You have added %d to buddy list"), for_uid);
+		purple_notify_info(gc, NULL, msg, NULL);
 		g_free(msg);
 	}
 	g_strfreev(segments);

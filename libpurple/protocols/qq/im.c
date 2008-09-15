@@ -250,7 +250,6 @@ static void _qq_process_recv_news(guint8 *data, gint data_len, PurpleConnection 
 	guint8 *temp;
 	guint8 temp_len;
 	gchar *title, *brief, *url;
-	gchar *title_utf8;
 	gchar *content, *content_utf8;
 
 	g_return_if_fail(data != NULL && data_len != 0);
@@ -277,17 +276,15 @@ static void _qq_process_recv_news(guint8 *data, gint data_len, PurpleConnection 
 	bytes += qq_getdata(temp, temp_len, data+bytes);
 	url = g_strndup((gchar *)temp, temp_len);
 
-	title_utf8 = qq_to_utf8(title, QQ_CHARSET_DEFAULT);
-	content = g_strdup_printf(_("%s\n\n%s"), brief, url);
+	content = g_strdup_printf(_("Title: %s\nBrief: %s\n\n%s"), title, brief, url);
 	content_utf8 = qq_to_utf8(content, QQ_CHARSET_DEFAULT);
 
 	if (qd->is_show_news) {
-		purple_notify_info(gc, _("QQ Server News"), title_utf8, content_utf8);
+		purple_notify_info(gc, NULL, _("QQ Server News"), content_utf8);
 	} else {
-		purple_debug_info("QQ", "QQ Server news:\n%s\n%s", title_utf8, content_utf8);
+		purple_debug_info("QQ", "QQ Server news:\n%s", content_utf8);
 	}
 	g_free(title);
-	g_free(title_utf8);
 	g_free(brief);
 	g_free(url);
 	g_free(content);
