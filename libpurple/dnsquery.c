@@ -108,6 +108,13 @@ purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 		}
 	}
 
+	/*
+	 * Set the resolver to NULL so that it doesn't get killed so that
+	 * it sits around waiting for additional DNS requests for a few
+	 * seconds longer.
+	 */
+	query_data->resolver = NULL;
+
 	purple_dnsquery_destroy(query_data);
 }
 
@@ -209,6 +216,16 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 	 * the result back to our parent, when finished.
 	 */
 	while (1) {
+		fd_set fds;
+		struct timeval tv = { .tv_sec = 20, .tv_usec = 0 };
+		FD_ZERO(&fds);
+		FD_SET(child_in, &fds);
+		rc = select(child_in + 1, &fds, NULL, NULL, &tv);
+		if (!rc) {
+			if (show_debug)
+				printf("dns[%d]: nobody needs me... =(\n", getpid());
+			break;
+		}
 		rc = read(child_in, &dns_params, sizeof(dns_params_t));
 		if (rc < 0) {
 			fprintf(stderr, "dns[%d]: Error: Could not read dns_params: "
