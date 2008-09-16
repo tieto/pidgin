@@ -24,13 +24,17 @@
 #include "notify.h"
 #include "server.h"
 #include "util.h"
-
 #include "buddy.h"
 #include "chat.h"
+#include "data.h"
 #include "google.h"
 #include "message.h"
 #include "xmlnode.h"
 #include "pep.h"
+#include "smiley.h"
+#include "iq.h"
+
+#include <string.h>
 
 void jabber_message_free(JabberMessage *jm)
 {
@@ -312,6 +316,225 @@ static void handle_buzz(JabberMessage *jm) {
 	g_free(str);
 }
 
+/* used internally by the functions below */
+typedef struct {
+	gchar *cid;
+	gchar *alt;
+} JabberSmileyRef;
+
+
+static void
+jabber_message_get_refs_from_xmlnode_internal(const xmlnode *message,
+	GHashTable *table)
+{
+	xmlnode *child;
+	
+	for (child = xmlnode_get_child(message, "img") ; child ;
+		 child = xmlnode_get_next_twin(child)) {
+		const gchar *src = xmlnode_get_attrib(child, "src");
+		
+		if (g_str_has_prefix(src, "cid:")) {
+			const gchar *cid = src + 4;
+			
+			/* if we haven't "fetched" this yet... */
+			if (!g_hash_table_lookup(table, cid)) {
+				/* take a copy of the cid and let the SmileyRef own it... */
+				gchar *temp_cid = g_strdup(cid);
+				JabberSmileyRef *ref = g_new0(JabberSmileyRef, 1);
+				const gchar *alt = xmlnode_get_attrib(child, "alt");
+				ref->cid = temp_cid;
+				/* if there is no "alt" string, use the cid... 
+				 include the entire src, eg. "cid:.." to avoid linkification */
+				if (alt && alt[0] != '\0') {
+					/* workaround for when "alt" is set to the value of the
+					 CID (which Jabbim seems to do), to avoid it showing up
+						 as an mailto: link */
+					if (purple_email_is_valid(alt)) {
+						ref->alt = g_strdup_printf("smiley:%s", alt); 
+					} else {
+						ref->alt = g_strdup(alt);
+					}
+				} else {
+					ref->alt = g_strdup(src);
+				}
+				g_hash_table_insert(table, temp_cid, ref);
+			}
+		}
+	}
+		
+	for (child = message->child ; child ; child = child->next) {
+		jabber_message_get_refs_from_xmlnode_internal(child, table);
+	}
+}
+
+static gboolean
+jabber_message_get_refs_steal(gpointer key, gpointer value, gpointer user_data)
+{
+	GList **refs = (GList **) user_data;
+	JabberSmileyRef *ref = (JabberSmileyRef *) value;
+	
+	*refs = g_list_append(*refs, ref);
+	
+	return TRUE;
+}
+
+static GList *
+jabber_message_get_refs_from_xmlnode(const xmlnode *message)
+{
+	GList *refs = NULL;
+	GHashTable *unique_refs = g_hash_table_new(g_str_hash, g_str_equal);
+	
+	jabber_message_get_refs_from_xmlnode_internal(message, unique_refs);
+	(void) g_hash_table_foreach_steal(unique_refs, 
+		jabber_message_get_refs_steal, (gpointer) &refs);
+	g_hash_table_destroy(unique_refs);
+	return refs;
+}
+
+static gchar *
+jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
+{
+	const gchar *markup = xmlnode_to_str(xhtml, NULL);
+	int len = strlen(markup);
+	int pos = 0;
+	GString *out = g_string_new(NULL);
+
+	while (pos < len) {
+		/* this is a bit cludgy, maybe there is a better way to do this...
+		  we need to find all <img> tags within the XHTML and replace those
+			tags with the value of their "alt" attributes */
+		if (g_str_has_prefix(&(markup[pos]), "<img")) {
+			xmlnode *img = NULL;
+			int pos2 = pos;
+			const gchar *src;
+
+			for (; pos2 < len ; pos2++) {
+				if (g_str_has_prefix(&(markup[pos2]), "/>")) {
+					pos2 += 2;
+					break;
+				} else if (g_str_has_prefix(&(markup[pos2]), "</img>")) {
+					pos2 += 5;
+					break;
+				}
+			}
+
+			/* note, if the above loop didn't find the end of the <img> tag,
+			  it the parsed string will be until the end of the input string,
+			  in which case xmlnode_from_str will bail out and return NULL,
+			  in this case the "if" statement below doesn't trigger and the
+			  text is copied unchanged */
+			img = xmlnode_from_str(&(markup[pos]), pos2 - pos);
+			src = xmlnode_get_attrib(img, "src");
+
+			if (g_str_has_prefix(src, "cid:")) {
+				const gchar *alt = xmlnode_get_attrib(img, "alt");
+				gchar *escaped = NULL;
+				/* if the "alt" attribute is empty, put the cid as smiley string */
+				if (alt && alt[0] != '\0') {
+					/* if the "alt" is the same as the CID, as Jabbim does,
+					 this prevents linkification... */
+					if (purple_email_is_valid(alt)) {
+						const gchar *safe_alt = g_strdup_printf("smiley:%s", alt);
+						out = g_string_append(out, safe_alt);
+						g_free(safe_alt);
+					} else {
+						out = g_string_append(out, alt);
+					}
+				} else {
+					out = g_string_append(out, src);
+				}
+				pos += pos2 - pos;
+			} else {
+				out = g_string_append_c(out, markup[pos]);
+				pos++;
+			}
+
+			xmlnode_free(img);
+
+		} else {
+			out = g_string_append_c(out, markup[pos]);
+			pos++;
+		}
+	}
+
+	return g_string_free(out, FALSE);
+}
+
+static void
+jabber_message_add_remote_smileys(const xmlnode *message)
+{
+	xmlnode *data_tag;
+	for (data_tag = xmlnode_get_child_with_namespace(message, "data", XEP_0231_NAMESPACE) ;
+		 data_tag ;
+		 data_tag = xmlnode_get_next_twin(data_tag)) {
+		const gchar *cid = xmlnode_get_attrib(data_tag, "cid");
+		const JabberData *data = jabber_data_find_remote_by_cid(cid);
+
+		if (!data && cid != NULL) {
+			/* we haven't cached this already, let's add it */
+			JabberData *new_data = jabber_data_create_from_xml(data_tag);
+			jabber_data_associate_remote(new_data);
+		}
+	}
+}
+
+/* used in the function below to supply a conversation and shortcut for a
+ smiley */
+typedef struct {
+	PurpleConversation *conv;
+	const gchar *alt;
+} JabberDataRef;
+
+static void
+jabber_message_get_data_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	JabberDataRef *ref = (JabberDataRef *) data;
+	PurpleConversation *conv = ref->conv;
+	const gchar *alt = ref->alt;
+	xmlnode *data_element = xmlnode_get_child(packet, "data");
+	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
+
+	/* did we get a data element as result? */
+	if (data_element) {
+		JabberData *data = jabber_data_create_from_xml(data_element);
+
+		if (data) {
+			jabber_data_associate_remote(data);
+			purple_conv_custom_smiley_write(conv, alt,
+											jabber_data_get_data(data),
+											jabber_data_get_size(data));
+			purple_conv_custom_smiley_close(conv, alt);
+		}
+
+	} else if (item_not_found) {
+		purple_debug_info("jabber",
+			"Responder didn't recognize requested data\n");
+	} else {
+		purple_debug_error("jabber", "Unknown response to data request\n");
+	}
+	
+	g_free(ref);
+}
+
+static void
+jabber_message_send_data_request(JabberStream *js, PurpleConversation *conv,
+								 const gchar *cid, const gchar *who, 
+								 const gchar *alt)
+{
+	JabberIq *request = jabber_iq_new(js, JABBER_IQ_GET);
+	JabberDataRef *ref = g_new0(JabberDataRef, 1);
+	xmlnode *data_request = jabber_data_get_xml_request(cid);
+
+	xmlnode_set_attrib(request->node, "to", who);
+	ref->conv = conv;
+	ref->alt = alt;
+	jabber_iq_set_callback(request, jabber_message_get_data_cb, ref);
+	xmlnode_insert_child(request->node, data_request);
+
+	jabber_iq_send(request);
+}
+
+
 void jabber_message_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberMessage *jm;
@@ -368,13 +591,103 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "html") && !strcmp(xmlns,"http://jabber.org/protocol/xhtml-im")) {
 			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
 				char *c;
-				jm->xhtml = xmlnode_to_str(child, NULL);
-			        /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
-			 	 * treated \n as a newline for compatibility with other protocols
+
+				const PurpleConnection *gc = js->gc;
+				const gchar *who = xmlnode_get_attrib(packet, "from");
+				PurpleAccount *account = purple_connection_get_account(gc);
+				PurpleConversation *conv = NULL;
+				const GList *smiley_refs = NULL;
+				gchar *reformatted_xhtml;
+
+				if (purple_account_get_bool(account, "custom_smileys", TRUE)) {
+					/* find a list of smileys ("cid" and "alt" text pairs)
+					  occuring in the message */
+					smiley_refs = jabber_message_get_refs_from_xmlnode(child);
+					purple_debug_info("jabber", "found %d smileys\n",
+						g_list_length(smiley_refs));
+					
+					if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
+						JabberID *jid = jabber_id_new(jm->from);
+						JabberChat *chat = NULL;
+
+						if (jid) {
+							chat = jabber_chat_find(js, jid->node, jid->domain);
+							conv = chat->conv;
+						}
+
+						jabber_id_free(jid);
+					} else {
+						conv =
+							purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+								who, account);
+						if (!conv) {
+							/* we need to create the conversation here */
+							conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
+								account, who);
+						}
+					}
+
+					/* process any newly provided smileys */
+					jabber_message_add_remote_smileys(packet);
+				}
+
+				/* reformat xhtml so that img tags with a "cid:" src gets
+				  translated to the bare text of the emoticon (the "alt" attrib) */
+				/* this is done also when custom smiley retrieval is turned off,
+				  this way the receiver always sees the shortcut instead */
+				reformatted_xhtml =
+					jabber_message_xml_to_string_strip_img_smileys(child);
+
+				jm->xhtml = reformatted_xhtml;
+
+				/* add known custom emoticons to the conversation */
+				/* note: if there were no smileys in the incoming message, or
+				  	if receiving custom smileys is turned off, smiley_refs will
+					be NULL */
+				for (; smiley_refs ; smiley_refs = g_list_next(smiley_refs)) {
+					const JabberSmileyRef *ref =
+						(JabberSmileyRef *) smiley_refs->data;
+					const gchar *cid = ref->cid;
+					const gchar *alt = ref->alt;
+
+					purple_debug_info("jabber", 
+						"about to add custom smiley %s to the conv\n", alt);
+					if (purple_conv_custom_smiley_add(conv, alt, "cid", cid,
+						    TRUE)) {
+						const JabberData *data =
+								jabber_data_find_remote_by_cid(cid);
+						/* if data is already known, we add write it immediatly */
+						if (data) {
+							purple_debug_info("jabber", 
+								"data is already known\n"); 
+							purple_conv_custom_smiley_write(conv, alt,
+								jabber_data_get_data(data),
+								jabber_data_get_size(data));
+							purple_conv_custom_smiley_close(conv, alt);
+						} else {
+							/* we need to request the smiley (data) */
+							purple_debug_info("jabber",
+								"data is unknown, need to request it\n");
+							jabber_message_send_data_request(js, conv, cid, who,
+								alt);
+						}
+					}
+				}
+
+			    /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
+				 * treated \n as a newline for compatibility with other protocols
 				 */
 				for (c = jm->xhtml; *c != '\0'; c++) {
-					if (*c == '\n') 
+					if (*c == '\n')
 						*c = ' ';
+				}
+
+				/* we don't need the list of CIDs anymore */
+				for (; smiley_refs ; smiley_refs = g_list_next(smiley_refs)) {
+					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
+					g_free(ref->cid);
+					g_free(ref->alt);
+					g_free(ref);
 				}
 			}
 		} else if(!strcmp(child->name, "active") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
@@ -503,6 +816,128 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jabber_message_free(jm);
 }
 
+static const gchar *
+jabber_message_get_mimetype_from_ext(const gchar *ext)
+{
+	if (strcmp(ext, "png") == 0) {
+		return "image/png";
+	} else if (strcmp(ext, "gif") == 0) {
+		return "image/gif";
+	} else if (strcmp(ext, "jpg") == 0) {
+		return "image/jpeg";
+	} else if (strcmp(ext, "tif") == 0) {
+		return "image/tif";
+	} else {
+		return "image/x-icon"; /* or something... */
+	}
+}
+
+static GList *
+jabber_message_xhtml_find_smileys(const char *xhtml)
+{
+	GList *smileys = purple_smileys_get_all();
+	GList *found_smileys = NULL;
+
+	for (; smileys ; smileys = g_list_delete_link(smileys, smileys)) {
+		PurpleSmiley *smiley = (PurpleSmiley *) smileys->data;
+		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
+		const gssize len = strlen(shortcut);
+
+		gchar *escaped = g_markup_escape_text(shortcut, len);
+		const char *pos = strstr(xhtml, escaped);
+
+		if (pos) {
+			found_smileys = g_list_append(found_smileys, smiley);
+		}
+
+		g_free(escaped);
+	}
+
+	return found_smileys;
+}
+
+static gchar *
+jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
+{
+	/* create XML element for all smileys (img tags) */
+	GString *result = g_string_new(NULL);
+	int pos = 0;
+	int length = strlen(xhtml);
+
+	while (pos < length) {
+		const GList *iterator;
+		gboolean found_smiley = FALSE;
+
+		for (iterator = smileys ; iterator ;
+			iterator = g_list_next(iterator)) {
+			const PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
+			const gchar *shortcut = purple_smiley_get_shortcut(smiley);
+			const gssize len = strlen(shortcut);
+			gchar *escaped = g_markup_escape_text(shortcut, len);
+
+			if (g_str_has_prefix(&(xhtml[pos]), escaped)) {
+				/* we found the current smiley at this position */
+				const JabberData *data =
+					jabber_data_find_local_by_alt(shortcut);
+				xmlnode *img = jabber_data_get_xhtml_im(data, shortcut);
+				int len;
+				gchar *img_text = xmlnode_to_str(img, &len);
+
+				found_smiley = TRUE;
+				result = g_string_append(result, img_text);
+				g_free(img_text);
+				pos += strlen(escaped);
+				g_free(escaped);
+				break;
+			} else {
+				/* cleanup from the before the next round... */
+				g_free(escaped);
+			}
+		}
+		if (!found_smiley) {
+			/* there was no smiley here, just copy one byte */
+			result = g_string_append_c(result, xhtml[pos]);
+			pos++;
+		}
+	}
+
+	return g_string_free(result, FALSE);
+}
+
+static gboolean
+jabber_conv_support_custom_smileys(const PurpleConnection *gc,
+								   const PurpleConversation *conv,
+								   const gchar *who)
+{
+	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberBuddy *jb;
+	
+	if (!js) {
+		purple_debug_error("jabber", 
+			"jabber_conv_support_custom_smileys: could not find stream\n");
+		return FALSE;
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+	if (!jb) {
+		purple_debug_error("jabber",
+			"jabber_conv_support_custom smileys: could not find buddy\n");
+		return FALSE;
+	}
+	
+	
+
+	switch (purple_conversation_get_type(conv)) {
+		/* for the time being, we will not support custom smileys in MUCs */
+		case PURPLE_CONV_TYPE_IM:
+			return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+			break;
+		default:
+			return FALSE;
+			break;
+	}
+}
+
 void jabber_message_send(JabberMessage *jm)
 {
 	xmlnode *message, *child;
@@ -588,7 +1023,55 @@ void jabber_message_send(JabberMessage *jm)
 	}
 
 	if(jm->xhtml) {
-		child = xmlnode_from_str(jm->xhtml, -1);
+		PurpleAccount *account = purple_connection_get_account(jm->js->gc);
+		PurpleConversation *conv =
+			purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
+				account);
+ 
+		if (jabber_conv_support_custom_smileys(jm->js->gc, conv, jm->to)) {
+			GList *found_smileys = jabber_message_xhtml_find_smileys(jm->xhtml);
+
+			if (found_smileys) {
+				gchar *smileyfied_xhtml = NULL;
+				const GList *iterator;
+
+				for (iterator = found_smileys; iterator ;
+					iterator = g_list_next(iterator)) {
+					const PurpleSmiley *smiley =
+							(PurpleSmiley *) iterator->data;
+					const gchar *shortcut = purple_smiley_get_shortcut(smiley);
+					const JabberData *data =
+						jabber_data_find_local_by_alt(shortcut);
+							
+					/* the object has not been sent before */
+					if (!data) {
+						PurpleStoredImage *image =
+								purple_smiley_get_stored_image(smiley);
+						const gchar *ext = purple_imgstore_get_extension(image);
+						JabberStream *js = jm->js;
+						
+						JabberData *new_data =
+							jabber_data_create_from_data(purple_imgstore_get_data(image),
+								purple_imgstore_get_size(image),
+								jabber_message_get_mimetype_from_ext(ext), js);
+						purple_debug_info("jabber", 
+							"cache local smiley alt = %s, cid = %s\n",
+							shortcut, jabber_data_get_cid(new_data));
+						jabber_data_associate_local(new_data, shortcut);
+					}
+				}
+
+				smileyfied_xhtml =
+					jabber_message_get_smileyfied_xhtml(jm->xhtml, found_smileys);
+				child = xmlnode_from_str(smileyfied_xhtml, -1);
+				g_free(smileyfied_xhtml);
+				g_list_free(found_smileys);
+			} else {
+				child = xmlnode_from_str(jm->xhtml, -1);
+			}
+		} else {
+			child = xmlnode_from_str(jm->xhtml, -1);
+		}
 		if(child) {
 			xmlnode_insert_child(message, child);
 		} else {
@@ -762,3 +1245,11 @@ gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const g
 	return js->allowBuzz;
 }
 
+gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *shortname,
+										 const gchar *namespace)
+{
+	const PurpleConnection *gc = js->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	return purple_account_get_bool(account, "custom_smileys", TRUE);
+}
