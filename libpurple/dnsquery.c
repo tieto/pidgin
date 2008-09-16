@@ -490,13 +490,6 @@ handle_next_queued_request(void)
 	query_data = queued_requests->data;
 	queued_requests = g_slist_delete_link(queued_requests, queued_requests);
 
-	if (purple_dnsquery_ui_resolve(query_data))
-	{
-		/* The UI is handling the resolve; we're done */
-		handle_next_queued_request();
-		return;
-	}
-
 	/*
 	 * If we have any children, attempt to have them perform the DNS
 	 * query.  If we're able to send the query then resolver will be
@@ -607,6 +600,12 @@ resolve_host(gpointer data)
 
 	query_data = data;
 	query_data->timeout = 0;
+
+	if (purple_dnsquery_ui_resolve(query_data))
+	{
+		/* The UI is handling the resolve; we're done */
+		return FALSE;
+	}
 
 	handle_next_queued_request();
 
