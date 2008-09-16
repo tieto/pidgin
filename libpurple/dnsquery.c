@@ -133,10 +133,7 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
 	PurpleDnsQueryUiOps *ops = purple_dnsquery_get_ui_ops();
 
 	if (ops && ops->resolve_host)
-	{
-		if (ops->resolve_host(query_data, purple_dnsquery_resolved, purple_dnsquery_failed))
-			return TRUE;
-	}
+		return ops->resolve_host(query_data, purple_dnsquery_resolved, purple_dnsquery_failed);
 
 	return FALSE;
 }
@@ -634,7 +631,7 @@ purple_dnsquery_a(const char *hostname, int port,
 	query_data->data = data;
 	query_data->resolver = NULL;
 
-	if (strlen(query_data->hostname) == 0)
+	if (*query_data->hostname == '\0')
 	{
 		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
