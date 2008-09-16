@@ -108,12 +108,14 @@ purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 		}
 	}
 
+#ifdef PURPLE_DNSQUERY_USE_FORK
 	/*
-	 * Set the resolver to NULL so that it doesn't get killed so that
-	 * it sits around waiting for additional DNS requests for a few
-	 * seconds longer.
+	 * Add the resolver to the list of available resolvers, and set it
+	 * to NULL so that it doesn't get destroyed along with the query_data
 	 */
+	free_dns_children = g_slist_prepend(free_dns_children, query_data->resolver);
 	query_data->resolver = NULL;
+#endif /* PURPLE_DNSQUERY_USE_FORK */
 
 	purple_dnsquery_destroy(query_data);
 }
