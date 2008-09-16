@@ -596,7 +596,7 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 		purple_dnsquery_failed(query_data, message);
 
 	} else if (rc == 0) {
-		g_snprintf(message, sizeof(message), _("EOF while reading from resolver process"));
+		g_snprintf(message, sizeof(message), _("Resolver process exited without answering our request"));
 		purple_dnsquery_failed(query_data, message);
 	}
 
