@@ -85,7 +85,7 @@ typedef struct {
 	char hostname[512];
 	int port;
 } dns_params_t;
-#endif
+#endif /* end PURPLE_DNSQUERY_USE_FORK */
 
 static void
 purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
@@ -419,9 +419,9 @@ purple_dnsquery_resolver_new(gboolean show_debug)
 
 /**
  * @return TRUE if the request was sent succesfully.  FALSE
- * 		if the request could not be sent.  This isn't
- * 		necessarily an error.  If the child has expired,
- * 		for example, we won't be able to send the message.
+ *         if the request could not be sent.  This isn't
+ *         necessarily an error.  If the child has expired,
+ *         for example, we won't be able to send the message.
  */
 static gboolean
 send_dns_request_to_child(PurpleDnsQueryData *query_data,
@@ -912,10 +912,13 @@ purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 
 	if (query_data->resolver != NULL)
 		/*
-		 * Ideally we would tell our resolver child to stop resolving
-		 * shit and then we would add it back to the free_dns_children
-		 * linked list.  However, it's hard to tell children stuff,
-		 * they just don't listen.
+		 * This is only non-NULL when we're cancelling an in-progress
+		 * query.  Ideally we would tell our resolver child to stop
+		 * resolving shit and then we would add it back to the
+		 * free_dns_children linked list.  However, it's hard to tell
+		 * children stuff, they just don't listen.  So we'll just
+		 * kill the process and allow a new child to be started if we
+		 * have more stuff to resolve.
 		 */
 		purple_dnsquery_resolver_destroy(query_data->resolver);
 #elif defined _WIN32 /* end PURPLE_DNSQUERY_USE_FORK */
@@ -939,7 +942,7 @@ purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 		query_data->hosts = g_slist_remove(query_data->hosts, query_data->hosts->data);
 	}
 	g_free(query_data->error_message);
-#endif
+#endif /* end _WIN32 */
 
 	if (query_data->timeout > 0)
 		purple_timeout_remove(query_data->timeout);
@@ -993,5 +996,5 @@ purple_dnsquery_uninit(void)
 		purple_dnsquery_resolver_destroy(free_dns_children->data);
 		free_dns_children = g_slist_remove(free_dns_children, free_dns_children->data);
 	}
-#endif
+#endif /* end PURPLE_DNSQUERY_USE_FORK */
 }
