@@ -263,13 +263,17 @@ purple_gnome_proxy_get_info(void)
 		use_same_proxy = TRUE;
 	g_free(tmp);
 
-	if (!use_same_proxy && !g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_host",
+	if (!use_same_proxy) {
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_host",
 			&info.host, &err, NULL, NULL))
-		return purple_global_proxy_get_info();
-	g_free(err);
-	g_strchomp(info.host);
+			return purple_global_proxy_get_info();
+		g_free(err);
+	}
 
-	if (!use_same_proxy && *info.host != '\0') {
+	if(info.host != NULL)
+		g_strchomp(info.host);
+
+	if (!use_same_proxy && (info.host != NULL) && (*info.host != '\0')) {
 		info.type = PURPLE_PROXY_SOCKS5;
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_port",
 				&tmp, &err, NULL, NULL))
