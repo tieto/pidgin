@@ -50,6 +50,7 @@ C_SRC =	\
 			chat.c \
 			disco.c \
 			google.c \
+			ibb.c \
 			iq.c \
 			jabber.c \
 			jutil.c \

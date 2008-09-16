@@ -43,6 +43,7 @@
 #include "pep.h"
 #include "usertune.h"
 #include "caps.h"
+#include "ibb.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -148,6 +149,9 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
 	
 	purple_signal_unregister(plugin, "jabber-sending-text");
+
+	jabber_si_uninit();
+	jabber_ibb_uninit();
 	
 	return TRUE;
 }
@@ -269,11 +273,15 @@ init_plugin(PurplePlugin *plugin)
 	
 	jabber_tune_init();
 	jabber_caps_init();
+	
+	jabber_ibb_init();
+	jabber_si_init();
 
 	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
 	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
 	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
-	
+	jabber_add_feature("ibb", XEP_0047_NAMESPACE, NULL);
+					   
 	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
 }
 
