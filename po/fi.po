@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-11 12:39+0300\n"
-"PO-Revision-Date: 2008-08-11 12:39+0300\n"
+"POT-Creation-Date: 2008-08-28 12:10+0300\n"
+"PO-Revision-Date: 2008-08-28 12:19+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -328,6 +328,7 @@ msgstr "Merkitse/poista merkintä"
 msgid "Nickname"
 msgstr "Kutsumanimi"
 
+#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Jouten"
@@ -2386,6 +2387,9 @@ msgstr "Huoneen minimikoko"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Käyttäjän inaktiivisuuden aikakatkaisu (minuuteissa)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Toteuta piilotussäännöt tuttaville"
 
 #. *< type
 #. *< ui_requirement
@@ -10139,17 +10143,17 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Tervetuloa %siin!</span>\n"
 "\n"
-"Yhtäkään pikaviestintiliä ei ole määritelty. Aloittaaksesi %sin käytön "
-"napsauta <b>Lisää</b>-painiketta alla ja määritä ensimmäisen käyttäjätilisi "
+"Pikaviestintilejä ei ole määritelty. Yhdistääksesi %sillä "
+"napsauta <b>Lisää</b>-painiketta ja määritä ensimmäisen käyttäjätilisi "
 "tiedot. Jos haluat %sin yhdistävän useampiin pikaviestintileihin, napsauta "
 "uudestaan <b>Lisää</b>-painiketta määritelläksesi ne kaikki.\n"
 "\n"
 "Voit palata tähän ikkunaan lisäämään, muokkaamaan tai poistamaan tilejä "
-"valitsemalla <b>Käyttäjätilit->Lisää/muokkaa</b> Tuttavat-ikkunassa."
+"valitsemalla <b>Käyttäjätilit->Tilien hallinta</b> Tuttavat-ikkunassa."
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -12529,6 +12533,12 @@ msgstr "%s:n tila"
 msgid "Custom Smiley"
 msgstr "Oma hymiö"
 
+msgid "More Data needed"
+msgstr "Lisää tietoja tarvitaan"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Syötä hymiöön liitettävä oikotie."
+
 msgid "Duplicate Shortcut"
 msgstr "Monista oikotie"
 
@@ -12536,12 +12546,6 @@ msgid ""
 "A custom smiley for the selected shortcut already exists. Please specify a "
 "different shortcut."
 msgstr "Valitulle oikotielle on jo oma hymiö. Valitse toisenlainen oikotie."
-
-msgid "More Data needed"
-msgstr "Lisää tietoja tarvitaan"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Syötä hymiöön liitettävä oikotie."
 
 msgid "Please select an image for the smiley."
 msgstr "Valitse hymiölle kuva."
@@ -12704,6 +12708,9 @@ msgstr "_Muokkaa"
 
 msgid "_Open Mail"
 msgstr "_Avaa sähköposti"
+
+msgid "_Edit"
+msgstr "_Muokkaa"
 
 msgid "Pidgin Tooltip"
 msgstr "Pidgin-työkaluvihje"

@@ -554,6 +554,9 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 		else
 			add_node(node, FINCH_GET_DATA(list));
 	}
+	if (ggblist->tnode == node) {
+		draw_tooltip(ggblist);
+	}
 }
 
 static void

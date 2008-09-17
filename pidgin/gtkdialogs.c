@@ -100,6 +100,7 @@ static const struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
+	{"Marcus 'malu' Lundblad", NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
@@ -170,6 +171,7 @@ static const struct translator current_translators[] = {
 	{N_("Persian"),             "fa", "Roozbeh Pournader ", "roozbeh@farsiweb.info"},
 	{N_("Finnish"),             "fi", "Timo Jyrinki", "timo.jyrinki@iki.fi"},
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
+	{N_("Irish"),               "ga", "Aaron Kearns", "ajkearns6@gmail.com"},
 	{N_("Galician"),            "gl", "Mar Castro", "mariamarcp@gmail.com"},
 	{N_("Galician"),            "gl", "Frco. Javier Rial", "fjrial@cesga.es"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},

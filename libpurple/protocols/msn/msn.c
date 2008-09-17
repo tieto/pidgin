@@ -481,11 +481,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 
 static gboolean
 msn_offline_message(const PurpleBuddy *buddy) {
-	MsnUser *user;
-	if (buddy == NULL)
-		return FALSE;
-	user = buddy->proto_data;
-	return user && user->mobile;
+	return TRUE;
 }
 
 void
@@ -772,6 +768,9 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	if (full && user)
 	{
 		const char *phone;
+
+		purple_notify_user_info_add_pair(user_info, _("Has you"),
+									   ((user->list_op & (1 << MSN_LIST_RL)) ? _("Yes") : _("No")));
 
 		purple_notify_user_info_add_pair(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));

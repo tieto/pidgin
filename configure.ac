@@ -46,8 +46,8 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [5])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [5])
-m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [])
+m4_define([purple_micro_version], [2])
+m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
@@ -55,8 +55,8 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [5])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [5])
-m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_micro_version], [2])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -74,8 +74,7 @@ fi
 
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
-#AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([dist-bzip2 check-news])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -145,7 +144,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -1241,20 +1240,24 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_SUBST(DBUS_LIBS)
 		enable_dbus=yes
 	], [
+	enable_dbus=no
 	if test "x$force_deps" = "xyes" ; then
 		AC_MSG_ERROR([
 D-Bus development headers not found.
 Use --disable-dbus if you do not need D-Bus support.
 ])
 	fi])
+fi
 
 dnl Check for NetworkManager.h; if we don't have it, oh well
+if test "x$enable_dbus" = "xyes" ; then
 	if test "x$enable_nm" = "xyes" ; then
-		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager], [
+		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager >= 0.5.0], [
 			AC_SUBST(NETWORKMANAGER_CFLAGS)
 			AC_SUBST(NETWORKMANAGER_LIBS)
 			AC_DEFINE(HAVE_NETWORKMANAGER, 1, [Define if we have NetworkManager.])
 		], [
+			enable_nm=no
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
 NetworkManager development headers not found.
@@ -2378,7 +2381,6 @@ AC_OUTPUT([Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
 		   pidgin/pixmaps/Makefile
-		   pidgin/pixmaps/buddy_icons/qq/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/plugins/Makefile

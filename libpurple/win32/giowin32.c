@@ -52,6 +52,8 @@ typedef struct _GIOWin32Watch GIOWin32Watch;
 
 #define BUFFER_SIZE 4096
 
+GIOChannel *wpurple_g_io_channel_win32_new_socket (int socket);
+
 typedef enum {
   G_IO_WIN32_WINDOWS_MESSAGES,	/* Windows messages */
   G_IO_WIN32_FILE_DESC,		/* Unix-like file descriptors from

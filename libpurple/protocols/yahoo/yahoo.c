@@ -3531,18 +3531,16 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 
 	PurpleUtilFetchUrlData *url_data;
 	const char* base_url = "http://login.yahoo.com";
-	char *request = g_strdup_printf(
-		"POST /config/cookie_token HTTP/1.0\r\n"
+	/* use whole URL if using HTTP Proxy */
+	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
+	gchar *request = g_strdup_printf(
+		"POST %s/config/cookie_token HTTP/1.0\r\n"
 		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
 		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 		"Host: login.yahoo.com\r\n"
 		"Content-Length: 0\r\n\r\n",
+		use_whole_url ? base_url : "",
 		yd->cookie_t, yd->cookie_y);
-	gboolean use_whole_url = FALSE;
-
-	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
-	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
 			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
@@ -4303,6 +4301,15 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
+static GHashTable *
+yahoo_get_account_text_table(PurpleAccount *account)
+{
+	GHashTable *table;
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo ID..."));
+	return table;
+}
+
 static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 {
 	yahoo_doodle_start,
@@ -4391,7 +4398,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_attention_types,
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	yahoo_get_account_text_table,    /* get_account_text_table */
 };
 
 static PurplePluginInfo info =
