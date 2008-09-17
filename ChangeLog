@@ -5,6 +5,10 @@ version 2.5.2 (??/??/????):
 	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
 	  hierarchies are defined by the '/' character in the group names
 
+	XMPP:
+	* Sending and receiving custom smileys using the specification in
+	  XEP-0231 (bits of binary) and XHTML-IM
+
 version 2.5.1 (08/30/2008):
 	libpurple:
 	* In the Join/Part plugin, add the ability to apply the rules to
