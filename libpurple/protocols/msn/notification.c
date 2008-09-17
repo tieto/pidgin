@@ -613,14 +613,11 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_set_attrib(adl_node, "l", "1");
 
 	/*get the userlist*/
-	for (l = session->userlist->users; l != NULL; l = l->next) {
+	for (l = session->userlist->users; l != NULL; l = l->next){
 		user = l->data;
 
 		/* skip RL & PL during initial dump */
 		if (!(user->list_op & MSN_LIST_OP_MASK))
-			continue;
-
-		if (!strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
