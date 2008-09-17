@@ -3763,9 +3763,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	while((len = read(source, buf, sizeof(buf))) > 0) {
 
 		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
-			/* TODO: Fix this when not string frozen */
-			/*purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),*/
-			purple_util_fetch_url_error(gfud, "Error reading from %s: response too long (%d bytes limit)",
+			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),
 						    gfud->website.address, gfud->max_len);
 			return;
 		}
