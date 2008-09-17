@@ -85,7 +85,7 @@ typedef struct {
 	char hostname[512];
 	int port;
 } dns_params_t;
-#endif
+#endif /* end PURPLE_DNSQUERY_USE_FORK */
 
 static void
 purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
@@ -108,12 +108,14 @@ purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 		}
 	}
 
+#ifdef PURPLE_DNSQUERY_USE_FORK
 	/*
-	 * Set the resolver to NULL so that it doesn't get killed so that
-	 * it sits around waiting for additional DNS requests for a few
-	 * seconds longer.
+	 * Add the resolver to the list of available resolvers, and set it
+	 * to NULL so that it doesn't get destroyed along with the query_data
 	 */
+	free_dns_children = g_slist_prepend(free_dns_children, query_data->resolver);
 	query_data->resolver = NULL;
+#endif /* PURPLE_DNSQUERY_USE_FORK */
 
 	purple_dnsquery_destroy(query_data);
 }
@@ -133,10 +135,7 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
 	PurpleDnsQueryUiOps *ops = purple_dnsquery_get_ui_ops();
 
 	if (ops && ops->resolve_host)
-	{
-		if (ops->resolve_host(query_data, purple_dnsquery_resolved, purple_dnsquery_failed))
-			return TRUE;
-	}
+		return ops->resolve_host(query_data, purple_dnsquery_resolved, purple_dnsquery_failed);
 
 	return FALSE;
 }
@@ -419,9 +418,9 @@ purple_dnsquery_resolver_new(gboolean show_debug)
 
 /**
  * @return TRUE if the request was sent succesfully.  FALSE
- * 		if the request could not be sent.  This isn't
- * 		necessarily an error.  If the child has expired,
- * 		for example, we won't be able to send the message.
+ *         if the request could not be sent.  This isn't
+ *         necessarily an error.  If the child has expired,
+ *         for example, we won't be able to send the message.
  */
 static gboolean
 send_dns_request_to_child(PurpleDnsQueryData *query_data,
@@ -492,13 +491,6 @@ handle_next_queued_request(void)
 
 	query_data = queued_requests->data;
 	queued_requests = g_slist_delete_link(queued_requests, queued_requests);
-
-	if (purple_dnsquery_ui_resolve(query_data))
-	{
-		/* The UI is handling the resolve; we're done */
-		handle_next_queued_request();
-		return;
-	}
 
 	/*
 	 * If we have any children, attempt to have them perform the DNS
@@ -596,7 +588,7 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 		purple_dnsquery_failed(query_data, message);
 
 	} else if (rc == 0) {
-		g_snprintf(message, sizeof(message), _("EOF while reading from resolver process"));
+		g_snprintf(message, sizeof(message), _("Resolver process exited without answering our request"));
 		purple_dnsquery_failed(query_data, message);
 	}
 
@@ -610,6 +602,12 @@ resolve_host(gpointer data)
 
 	query_data = data;
 	query_data->timeout = 0;
+
+	if (purple_dnsquery_ui_resolve(query_data))
+	{
+		/* The UI is handling the resolve; we're done */
+		return FALSE;
+	}
 
 	handle_next_queued_request();
 
@@ -634,7 +632,7 @@ purple_dnsquery_a(const char *hostname, int port,
 	query_data->data = data;
 	query_data->resolver = NULL;
 
-	if (strlen(query_data->hostname) == 0)
+	if (*query_data->hostname == '\0')
 	{
 		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
@@ -912,10 +910,13 @@ purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 
 	if (query_data->resolver != NULL)
 		/*
-		 * Ideally we would tell our resolver child to stop resolving
-		 * shit and then we would add it back to the free_dns_children
-		 * linked list.  However, it's hard to tell children stuff,
-		 * they just don't listen.
+		 * This is only non-NULL when we're cancelling an in-progress
+		 * query.  Ideally we would tell our resolver child to stop
+		 * resolving shit and then we would add it back to the
+		 * free_dns_children linked list.  However, it's hard to tell
+		 * children stuff, they just don't listen.  So we'll just
+		 * kill the process and allow a new child to be started if we
+		 * have more stuff to resolve.
 		 */
 		purple_dnsquery_resolver_destroy(query_data->resolver);
 #elif defined _WIN32 /* end PURPLE_DNSQUERY_USE_FORK */
@@ -939,7 +940,7 @@ purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 		query_data->hosts = g_slist_remove(query_data->hosts, query_data->hosts->data);
 	}
 	g_free(query_data->error_message);
-#endif
+#endif /* end _WIN32 */
 
 	if (query_data->timeout > 0)
 		purple_timeout_remove(query_data->timeout);
@@ -993,5 +994,5 @@ purple_dnsquery_uninit(void)
 		purple_dnsquery_resolver_destroy(free_dns_children->data);
 		free_dns_children = g_slist_remove(free_dns_children, free_dns_children->data);
 	}
-#endif
+#endif /* end PURPLE_DNSQUERY_USE_FORK */
 }
