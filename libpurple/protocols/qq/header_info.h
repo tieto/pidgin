@@ -44,14 +44,14 @@ enum {
 	QQ_CMD_UPDATE_INFO = 0x0004,			/* update information */
 	QQ_CMD_SEARCH_USER = 0x0005,			/* search for user */
 	QQ_CMD_GET_BUDDY_INFO = 0x0006,			/* get user information */
-	QQ_CMD_ADD_BUDDY_WO_AUTH = 0x0009,		/* add buddy without auth */
-	QQ_CMD_DEL_BUDDY = 0x000a,			/* delete a buddy  */
-	QQ_CMD_BUDDY_AUTH = 0x000b,			/* buddy authentication */
+	QQ_CMD_BUDDY_ADD_NO_AUTH = 0x0009,		/* add buddy without auth */
+	QQ_CMD_BUDDY_REMOVE = 0x000a,			/* delete a buddy  */
+	QQ_CMD_BUDDY_ADD_AUTH = 0x000b,			/* buddy authentication */
 	QQ_CMD_CHANGE_STATUS = 0x000d,		/* change my online status */
 	QQ_CMD_ACK_SYS_MSG = 0x0012,			/* ack system message */
 	QQ_CMD_SEND_IM = 0x0016,			/* send message */
 	QQ_CMD_RECV_IM = 0x0017,			/* receive message */
-	QQ_CMD_REMOVE_SELF = 0x001c,			/* remove self */
+	QQ_CMD_REMOVE_ME = 0x001c,			/* remove self */
 	QQ_CMD_REQUEST_KEY = 0x001d,			/* request key for file transfer */
 	QQ_CMD_CELL_PHONE_1 = 0x0021,			/* cell phone 1 */
 	QQ_CMD_LOGIN = 0x0022,				/* login */
@@ -98,4 +98,12 @@ enum {
 
 const gchar *qq_get_room_cmd_desc(gint room_cmd);
 
+enum {
+	QQ_SERVER_BUDDY_ADDED = 0x01,
+	QQ_SERVER_BUDDY_ADD_REQUEST = 0x02,
+	QQ_SERVER_BUDDY_ADDED_ME = 0x03,
+	QQ_SERVER_BUDDY_REJECTED_ME = 0x04,
+	QQ_SERVER_NOTICE= 0x06,
+	QQ_SERVER_NEW_CLIENT = 0x09
+};
 #endif

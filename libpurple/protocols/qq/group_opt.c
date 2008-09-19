@@ -97,7 +97,7 @@ void qq_group_search_application_with_struct(group_member_opt *g)
 {
 	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
-	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we want to see window */
+	qq_request_buddy_info(g->gc, g->member, 0, QQ_BUDDY_INFO_DISPLAY);
 	purple_request_action(g->gc, NULL, _("Do you want to approve the request?"), "",
 				PURPLE_DEFAULT_ACTION_NONE,
 				purple_connection_get_account(g->gc), NULL, NULL,
@@ -322,17 +322,24 @@ void qq_room_create_new(PurpleConnection *gc, const gchar *name)
 	qq_send_room_cmd_noid(gc, QQ_ROOM_CMD_CREATE, data, bytes);
 }
 
-static void qq_group_setup_with_gc_and_uid(gc_and_uid *g)
+static void qq_group_setup_cb(qq_add_request *add_req)
 {
 	qq_group *group;
-	g_return_if_fail(g != NULL && g->gc != NULL && g->uid > 0);
+	g_return_if_fail(add_req != NULL);
+	if (add_req->gc == NULL || add_req->uid == 0) {
+		g_free(add_req);
+		return;
+	}
 
-	group = qq_room_search_id(g->gc, g->uid);
-	g_return_if_fail(group != NULL);
+	group = qq_room_search_id(add_req->gc, add_req->uid);
+	if (group == NULL) {
+		g_free(add_req);
+		return;
+	}
 
 	/* TODO insert UI code here */
 	/* qq_group_detail_window_show(g->gc, group); */
-	g_free(g);
+	g_free(add_req);
 }
 
 void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnection *gc)
@@ -340,7 +347,7 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 	gint bytes;
 	guint32 id, ext_id;
 	qq_group *group;
-	gc_and_uid *g;
+	qq_add_request *add_req;
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL);
@@ -362,19 +369,18 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 
 	purple_debug_info("QQ", "Succeed in create Qun, external ID %d\n", group->ext_id);
 
-	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
-	g->uid = id;
+	add_req = g_new0(qq_add_request, 1);
+	add_req->gc = gc;
+	add_req->uid = id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    _("You have successfully created a Qun"),
-			    _
-			    ("Would you like to set up the detail information now?"),
+			    _("Would you like to set up the detail information now?"),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
-				g, 2,
-				_("Setup"), G_CALLBACK(qq_group_setup_with_gc_and_uid),
-			    _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid));
+				add_req, 2,
+				_("Setup"), G_CALLBACK(qq_group_setup_cb),
+			    _("Cancel"), G_CALLBACK(qq_group_cancel_cb));
 }
 
 void qq_group_process_activate_group_reply(guint8 *data, gint len, PurpleConnection *gc)

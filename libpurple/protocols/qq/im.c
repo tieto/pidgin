@@ -355,7 +355,7 @@ static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_norm
 	name = uid_to_purple_name(common->sender_uid);
 	b = purple_find_buddy(gc->account, name);
 	if (b == NULL) {
-		qq_add_buddy_by_recv_packet(gc, common->sender_uid, FALSE, TRUE);
+		qq_create_buddy(gc, common->sender_uid, FALSE, TRUE);
 		b = purple_find_buddy(gc->account, name);
 	}
 	qq_b = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;

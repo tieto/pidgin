@@ -456,7 +456,7 @@ static int _qq_chat_send(PurpleConnection *gc, int channel, const char *message,
 }
 
 /* send packet to get who's detailed information */
-static void _qq_get_info(PurpleConnection *gc, const gchar *who)
+static void qq_show_buddy_info(PurpleConnection *gc, const gchar *who)
 {
 	guint32 uid;
 	qq_data *qd;
@@ -471,59 +471,65 @@ static void _qq_get_info(PurpleConnection *gc, const gchar *who)
 	}
 
 	qq_request_get_level(gc, uid);
-	qq_send_packet_get_info(gc, uid, TRUE);
+	qq_request_buddy_info(gc, uid, 0, QQ_BUDDY_INFO_DISPLAY);
 }
 
-/* get my own information */
-static void _qq_menu_modify_my_info(PurplePluginAction *action)
+static void action_update_all_rooms(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	qq_data *qd;
+	qd = (qq_data *) gc->proto_data;
+
+	if ( !qd->is_login ) {
+		return;
+	}
+
+	qq_update_all_rooms(gc, 0, 0);
+}
+
+static void action_modify_info_base(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
 	qd = (qq_data *) gc->proto_data;
-	qq_prepare_modify_info(gc);
+	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_BASE);
 }
 
-static void _qq_menu_change_password(PurplePluginAction *action)
+static void action_modify_info_ext(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	qq_data *qd;
+
+	qd = (qq_data *) gc->proto_data;
+	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_EXT);
+}
+
+static void action_modify_info_addr(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	qq_data *qd;
+
+	qd = (qq_data *) gc->proto_data;
+	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_ADDR);
+}
+
+static void action_modify_info_contact(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	qq_data *qd;
+
+	qd = (qq_data *) gc->proto_data;
+	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_CONTACT);
+}
+
+static void action_change_password(PurplePluginAction *action)
 {
 	purple_notify_uri(NULL, "https://password.qq.com");
 }
 
-/* remove a buddy from my list and remove myself from his list */
-/* TODO: re-enable this
-static void _qq_menu_block_buddy(PurpleBlistNode * node)
-{
-	guint32 uid;
-	gc_and_uid *g;
-	PurpleBuddy *buddy;
-	PurpleConnection *gc;
-	const gchar *who;
-
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
-	who = buddy->name;
-	g_return_if_fail(who != NULL);
-
-	uid = purple_name_to_uid(who);
-	g_return_if_fail(uid > 0);
-
-	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
-	g->uid = uid;
-
-	purple_request_action(gc, _("Block Buddy"),
-			    _("Are you sure you want to block this buddy?"), NULL,
-			    1, g, 2,
-			    _("Cancel"),
-			    G_CALLBACK(qq_do_nothing_with_gc_and_uid),
-			    _("Block"), G_CALLBACK(qq_block_buddy_with_gc_and_uid));
-}
-*/
-
 /* show a brief summary of what we get from login packet */
-static void _qq_menu_account_info(PurplePluginAction *action)
+static void action_show_account_info(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
@@ -628,19 +634,31 @@ static void _qq_menu_send_file(PurpleBlistNode * node, gpointer ignored)
 #endif
 
 /* protocol related menus */
-static GList *_qq_actions(PurplePlugin *plugin, gpointer context)
+static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m;
 	PurplePluginAction *act;
 
 	m = NULL;
-	act = purple_plugin_action_new(_("Set My Information"), _qq_menu_modify_my_info);
+	act = purple_plugin_action_new(_("Modify Information"), action_modify_info_base);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Change Password"), _qq_menu_change_password);
+	act = purple_plugin_action_new(_("Modify Extend Information"), action_modify_info_ext);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Account Information"), _qq_menu_account_info);
+	act = purple_plugin_action_new(_("Modify Address"), action_modify_info_addr);
+	m = g_list_append(m, act);
+
+	act = purple_plugin_action_new(_("Modify Contact"), action_modify_info_contact);
+	m = g_list_append(m, act);
+
+	act = purple_plugin_action_new(_("Change Password"), action_change_password);
+	m = g_list_append(m, act);
+
+	act = purple_plugin_action_new(_("Account Information"), action_show_account_info);
+	m = g_list_append(m, act);
+
+	act = purple_plugin_action_new(_("Update all QQ Quns"), action_update_all_rooms);
 	m = g_list_append(m, act);
 
 	/*
@@ -676,17 +694,18 @@ static GList *_qq_chat_menu(PurpleBlistNode *node)
 static GList *_qq_buddy_menu(PurpleBlistNode * node)
 {
 	GList *m;
+	PurpleMenuAction *act;
 
 	if(PURPLE_BLIST_NODE_IS_CHAT(node))
 		return _qq_chat_menu(node);
 
 	m = NULL;
 
+	act = purple_menu_action_new(_("Remove both side"), PURPLE_CALLBACK(qq_remove_buddy_and_me), NULL, NULL); /* add NULL by gfhuang */
+	m = g_list_append(m, act);
+
 /* TODO : not working, temp commented out by gfhuang */
 #if 0
-
-	act = purple_menu_action_new(_("Block this buddy"), PURPLE_CALLBACK(_qq_menu_block_buddy), NULL, NULL); /* add NULL by gfhuang */
-	m = g_list_append(m, act);
 /*	if (q_bud && is_online(q_bud->status)) { */
 		act = purple_menu_action_new(_("Send File"), PURPLE_CALLBACK(_qq_menu_send_file), NULL, NULL); /* add NULL by gfhuang */
 		m = g_list_append(m, act);
@@ -705,7 +724,7 @@ static void _qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gc
 
 	purple_name = chat_name_to_purple_name(who);
 	if (purple_name != NULL)
-		_qq_get_info(gc, purple_name);
+		qq_show_buddy_info(gc, purple_name);
 }
 
 /* convert chat nickname to qq-uid to invite individual IM to buddy */
@@ -735,7 +754,7 @@ static PurplePluginProtocolInfo prpl_info =
 	_qq_send_im,						/* send_im */
 	NULL,							/* set_info */
 	NULL,							/* send_typing	*/
-	_qq_get_info,						/* get_info */
+	qq_show_buddy_info,						/* get_info */
 	_qq_change_status,						/* change status */
 	NULL,							/* set_idle */
 	NULL,							/* change_passwd */
@@ -760,12 +779,12 @@ static PurplePluginProtocolInfo prpl_info =
 	_qq_get_chat_buddy_info,				/* get_cb_info	*/
 	NULL,							/* get_cb_away	*/
 	NULL,							/* alias_buddy	*/
-	NULL,							/* group_buddy	*/
+	qq_change_buddys_group,							/* group_buddy	*/
 	NULL,							/* rename_group */
 	NULL,							/* buddy_free */
 	NULL,							/* convo_closed */
 	NULL,							/* normalize */
-	qq_set_my_buddy_icon,					/* set_buddy_icon */
+	qq_set_buddy_icon,					/* set_buddy_icon */
 	NULL,							/* remove_group */
 	_qq_get_chat_buddy_real_name,				/* get_cb_real_name */
 	NULL,							/* set_chat_topic */
@@ -815,7 +834,7 @@ static PurplePluginInfo info = {
 	NULL,				/**< ui_info		*/
 	&prpl_info,			/**< extra_info		*/
 	NULL,				/**< prefs_info		*/
-	_qq_actions,
+	qq_actions,
 
 	/* padding */
 	NULL,
@@ -878,7 +897,7 @@ static void init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_room_when_newin", TRUE);
 	purple_prefs_add_int("/plugins/prpl/qq/resend_interval", 3);
-	purple_prefs_add_int("/plugins/prpl/qq/resend_times", 4);
+	purple_prefs_add_int("/plugins/prpl/qq/resend_times", 10);
 }
 
 PURPLE_INIT_PLUGIN(qq, init_plugin, info);

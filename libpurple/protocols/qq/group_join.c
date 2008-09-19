@@ -29,11 +29,9 @@
 #include "request.h"
 #include "server.h"
 
-#include "buddy_opt.h"
 #include "char_conv.h"
 #include "group_conv.h"
 #include "group_find.h"
-#include "group_free.h"
 #include "group_internal.h"
 #include "group_info.h"
 #include "group_join.h"
@@ -51,19 +49,28 @@ enum {
 	QQ_ROOM_JOIN_DENIED = 0x03,
 };
 
-static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
+static void group_quit_cb(qq_add_request *add_req)
 {
 	PurpleConnection *gc;
 	guint32 id;
 	qq_group *group;
 
-	gc = g->gc;
-	id = g->uid;
+	if (add_req->gc == NULL || add_req->uid == 0) {
+		g_free(add_req);
+		return;
+	}
+
+	gc = add_req->gc;
+	id = add_req->uid;
 
 	group = qq_room_search_id(gc, id);
-	g_return_if_fail(group != NULL);
+	if (group == NULL) {
+		g_free(add_req);
+		return;
+	}
 
 	qq_send_room_cmd_only(gc, QQ_ROOM_CMD_QUIT, group->id);
+	g_free(add_req);
 }
 
 /* send packet to join a group without auth */
@@ -95,44 +102,53 @@ void qq_request_room_join(PurpleConnection *gc, qq_group *group)
 	qq_send_room_cmd_only(gc, QQ_ROOM_CMD_JOIN, group->id);
 }
 
-static void _qq_group_join_auth_with_gc_and_id(gc_and_uid *g, const gchar *reason_utf8)
+static void group_join_cb(qq_add_request *add_req, const gchar *reason_utf8)
 {
-	PurpleConnection *gc;
 	qq_group *group;
-	guint32 id;
 
-	gc = g->gc;
-	id = g->uid;
-
-	group = qq_room_search_id(gc, id);
-	if (group == NULL) {
-		purple_debug_error("QQ", "Can not find qq_group by internal_id: %d\n", id);
+	g_return_if_fail(add_req != NULL);
+	if (add_req->gc == NULL || add_req->uid == 0) {
+		g_free(add_req);
 		return;
-	} else {		/* everything is OK */
-		qq_send_cmd_group_auth(gc, group, QQ_ROOM_AUTH_REQUEST_APPLY, 0, reason_utf8);
 	}
+
+	group = qq_room_search_id(add_req->gc, add_req->uid);
+	if (group == NULL) {
+		purple_debug_error("QQ", "Can not find qq_group by internal_id: %d\n", add_req->uid);
+		g_free(add_req);
+		return;
+	}
+
+	qq_send_cmd_group_auth(add_req->gc, group, QQ_ROOM_AUTH_REQUEST_APPLY, 0, reason_utf8);
+	g_free(add_req);
+}
+
+void qq_group_cancel_cb(qq_add_request *add_req, const gchar *msg)
+{
+	g_return_if_fail(add_req != NULL);
+	g_free(add_req);
 }
 
 static void _qq_group_join_auth(PurpleConnection *gc, qq_group *group)
 {
 	gchar *msg;
-	gc_and_uid *g;
+	qq_add_request *add_req;
 	g_return_if_fail(group != NULL);
 
 	purple_debug_info("QQ", "Group (internal id: %d) needs authentication\n", group->id);
 
 	msg = g_strdup_printf("Group \"%s\" needs authentication\n", group->title_utf8);
-	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
-	g->uid = group->id;
+	add_req = g_new0(qq_add_request, 1);
+	add_req->gc = gc;
+	add_req->uid = group->id;
 	purple_request_input(gc, NULL, msg,
 			   _("Input request here"),
 			   _("Would you be my friend?"), TRUE, FALSE, NULL,
 			   _("Send"),
-			   G_CALLBACK(_qq_group_join_auth_with_gc_and_id),
-			   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid),
+			   G_CALLBACK(group_join_cb),
+			   _("Cancel"), G_CALLBACK(qq_group_cancel_cb),
 			   purple_connection_get_account(gc), group->title_utf8, NULL,
-			   g);
+			   add_req);
 	g_free(msg);
 }
 
@@ -308,7 +324,7 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 {
 	gchar *id_ptr;
 	guint32 id;
-	gc_and_uid *g;
+	qq_add_request *add_req;
 
 	g_return_if_fail(data != NULL);
 
@@ -317,16 +333,16 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 
 	g_return_if_fail(id > 0);
 
-	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
-	g->uid = id;
+	add_req = g_new0(qq_add_request, 1);
+	add_req->gc = gc;
+	add_req->uid = id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    _("Are you sure you want to leave this Qun?"),
 			    _("Note, if you are the creator, \nthis operation will eventually remove this Qun."),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
-			    g, 2, _("Cancel"),
-			    G_CALLBACK(qq_do_nothing_with_gc_and_uid),
-			    _("Continue"), G_CALLBACK(_qq_group_exit_with_gc_and_id));
+			    add_req, 2, _("Cancel"),
+			    G_CALLBACK(qq_group_cancel_cb),
+			    _("Continue"), G_CALLBACK(group_quit_cb));
 }

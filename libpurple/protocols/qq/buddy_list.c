@@ -311,8 +311,7 @@ guint16 qq_process_get_buddies_list_reply(guint8 *data, gint data_len, PurpleCon
 		}
 
 #if 1
-		purple_debug_info("QQ",
-				"buddy [%09d]: ext_flag=0x%02x, comm_flag=0x%02x, nick=%s\n",
+		purple_debug_info("QQ", "buddy [%09d]: ext_flag=0x%02x, comm_flag=0x%02x, nick=%s\n",
 				q_bud->uid, q_bud->ext_flag, q_bud->comm_flag, q_bud->nickname);
 #endif
 
@@ -321,7 +320,7 @@ guint16 qq_process_get_buddies_list_reply(guint8 *data, gint data_len, PurpleCon
 		g_free(name);
 
 		if (b == NULL) {
-			b = qq_add_buddy_by_recv_packet(gc, q_bud->uid, TRUE, FALSE);
+			b = qq_create_buddy(gc, q_bud->uid, TRUE, FALSE);
 		}
 
 		b->proto_data = q_bud;

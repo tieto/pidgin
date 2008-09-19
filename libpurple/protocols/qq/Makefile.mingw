@@ -64,7 +64,6 @@ C_SRC = \
 	qq_process.c \
 	qq_trans.c \
 	send_file.c \
-	sys_msg.c \
 	utils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)

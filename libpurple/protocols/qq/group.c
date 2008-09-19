@@ -34,7 +34,7 @@
 #include "utils.h"
 #include "qq_network.h"
 #include "header_info.h"
-#include "group.h"
+#include "group_free.h"
 
 static void _qq_group_search_callback(PurpleConnection *gc, const gchar *input)
 {

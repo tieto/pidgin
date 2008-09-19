@@ -285,6 +285,10 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 
 	update_class = qq_trans_get_class(trans);
 	ship32 = qq_trans_get_ship(trans);
+	if (update_class != 0 || ship32 != 0) {
+		purple_debug_info("QQ", "Process in Update class %d, ship32 %d\n",
+				update_class, ship32);
+	}
 
 	switch (cmd) {
 		case QQ_CMD_TOKEN:
@@ -998,8 +1002,6 @@ void qq_disconnect(PurpleConnection *gc)
 	qd->my_ip.s_addr = 0;
 
 	qq_group_free_all(qd);
-	qq_add_buddy_request_free(qd);
-	qq_info_query_free(qd);
 	qq_buddies_list_free(gc->account, qd);
 }
 

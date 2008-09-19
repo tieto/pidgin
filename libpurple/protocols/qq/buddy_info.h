@@ -70,18 +70,19 @@
 enum {
 	QQ_BUDDY_INFO_UPDATE_ONLY = 0,
 	QQ_BUDDY_INFO_DISPLAY,
-	QQ_BUDDY_INFO_MODIFY,
+	QQ_BUDDY_INFO_SET_ICON,
+	QQ_BUDDY_INFO_MODIFY_BASE,
+	QQ_BUDDY_INFO_MODIFY_EXT,
+	QQ_BUDDY_INFO_MODIFY_ADDR,
+	QQ_BUDDY_INFO_MODIFY_CONTACT,
 };
 
-void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_window);
 void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
-		gint update_class, guint32 ship32);
-void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
-void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *icon_num, const gchar *iconfile);
-void qq_prepare_modify_info(PurpleConnection *gc);
+		gint update_class, int action);
+void qq_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
 void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection *gc);
-void qq_process_get_buddy_info(guint8 *data, gint data_len, PurpleConnection *gc);
-void qq_info_query_free(qq_data *qd);
+void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, PurpleConnection *gc);
+
 void qq_request_get_level(PurpleConnection *gc, guint32 uid);
 void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class);
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);

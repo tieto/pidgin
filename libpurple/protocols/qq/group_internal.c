@@ -63,7 +63,7 @@ static void add_room_to_blist(PurpleConnection *gc, qq_group *group)
 	PurpleChat *chat;
 	components = qq_group_to_hashtable(group);
 	chat = purple_chat_new(purple_connection_get_account(gc), group->title_utf8, components);
-	g = qq_get_purple_group(PURPLE_GROUP_QQ_QUN);
+	g = qq_create_group(PURPLE_GROUP_QQ_QUN);
 	purple_blist_add_chat(chat, g, NULL);
 	purple_debug_info("QQ", "You have added group \"%s\" to blist locally\n", group->title_utf8);
 }

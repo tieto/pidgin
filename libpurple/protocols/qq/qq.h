@@ -40,6 +40,12 @@ typedef struct _qq_data qq_data;
 typedef struct _qq_buddy qq_buddy;
 typedef struct _qq_interval qq_interval;
 typedef struct _qq_net_stat qq_net_stat;
+typedef struct _qq_add_request qq_add_request;
+
+struct _qq_add_request {
+	guint32 uid;
+	PurpleConnection *gc;
+};
 
 struct _qq_interval {
 	gint resend;
@@ -151,14 +157,7 @@ struct _qq_data {
 	GSList *joining_groups;
 	GSList *adding_groups_from_server; /* internal ids of groups the server wants in my blist */
 	GList *buddies;
-	GList *contact_info_window;
 	GList *group_info_window;
-	GList *info_query;
-	GList *add_buddy_request;
-
-	/* TODO pass qq_send_packet_get_info() a callback and use signals to get rid of these */
-	gboolean modifying_info;
-	gboolean modifying_face;
 
 	gboolean is_show_notice;
 	gboolean is_show_news;

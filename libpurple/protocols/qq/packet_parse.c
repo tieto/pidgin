@@ -38,7 +38,7 @@
 #define PARSER_DEBUG
 #endif
 
-/* read one byte from buf, 
+/* read one byte from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get8(guint8 *b, guint8 *buf)
 {
@@ -53,7 +53,7 @@ gint qq_get8(guint8 *b, guint8 *buf)
 }
 
 
-/* read two bytes as "guint16" from buf, 
+/* read two bytes as "guint16" from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get16(guint16 *w, guint8 *buf)
 {
@@ -67,7 +67,7 @@ gint qq_get16(guint16 *w, guint8 *buf)
 	return sizeof(w_dest);
 }
 
-/* read four bytes as "guint32" from buf, 
+/* read four bytes as "guint32" from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get32(guint32 *dw, guint8 *buf)
 {
@@ -87,7 +87,7 @@ gint qq_getIP(struct in_addr *ip, guint8 *buf)
 	return sizeof(struct in_addr);
 }
 
-/* read datalen bytes from buf, 
+/* read datalen bytes from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_getdata(guint8 *data, gint datalen, guint8 *buf)
 {
@@ -171,7 +171,7 @@ gint qq_putIP(guint8* buf, struct in_addr *ip)
  * return the number of bytes packed, otherwise return -1 */
 gint qq_putdata(guint8 *buf, const guint8 *data, const int datalen)
 {
-    memcpy(buf, data, datalen);
+   	memcpy(buf, data, datalen);
 #ifdef PARSER_DEBUG
 	purple_debug_info("QQ", "[DBG][putdata] buf %p\n", (void *)buf);
 #endif

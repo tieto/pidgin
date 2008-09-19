@@ -140,12 +140,12 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_SEARCH_USER";
 	case QQ_CMD_GET_BUDDY_INFO:
 		return "QQ_CMD_GET_BUDDY_INFO";
-	case QQ_CMD_ADD_BUDDY_WO_AUTH:
-		return "QQ_CMD_ADD_BUDDY_WO_AUTH";
-	case QQ_CMD_DEL_BUDDY:
-		return "QQ_CMD_DEL_BUDDY";
-	case QQ_CMD_BUDDY_AUTH:
-		return "QQ_CMD_BUDDY_AUTH";
+	case QQ_CMD_BUDDY_ADD_NO_AUTH:
+		return "QQ_CMD_BUDDY_ADD_NO_AUTH";
+	case QQ_CMD_BUDDY_REMOVE:
+		return "QQ_CMD_BUDDY_REMOVE";
+	case QQ_CMD_BUDDY_ADD_AUTH:
+		return "QQ_CMD_BUDDY_ADD_AUTH";
 	case QQ_CMD_CHANGE_STATUS:
 		return "QQ_CMD_CHANGE_STATUS";
 	case QQ_CMD_ACK_SYS_MSG:
@@ -154,8 +154,8 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_SEND_IM";
 	case QQ_CMD_RECV_IM:
 		return "QQ_CMD_RECV_IM";
-	case QQ_CMD_REMOVE_SELF:
-		return "QQ_CMD_REMOVE_SELF";
+	case QQ_CMD_REMOVE_ME:
+		return "QQ_CMD_REMOVE_ME";
 	case QQ_CMD_LOGIN:
 		return "QQ_CMD_LOGIN";
 	case QQ_CMD_GET_BUDDIES_LIST:
