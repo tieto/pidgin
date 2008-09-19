@@ -11,6 +11,8 @@ version 2.5.2 (??/??/????):
 	* Fix a case where a conversation window could close unexpectedly.
 	* A mute sounds option has been added to the preferences window to
 	  help with discoverability.  CTRL+S is no longer bound to mute.
+	* Added ability to change the color of visited links (using the theme
+	  control plugin, or setting the color in ~/.gtkrc-2.0)
 
 	Finch:
 	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
