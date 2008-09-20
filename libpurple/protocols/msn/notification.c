@@ -1132,6 +1132,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	friendly = purple_url_decode(cmd->params[3]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL) return;
 
 	old_friendly = msn_user_get_friendly_name(user);
 	if (!old_friendly || (old_friendly && (!friendly || strcmp(old_friendly, friendly))))
