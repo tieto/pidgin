@@ -17,6 +17,8 @@ version 2.5.2 (??/??/????):
 	Finch:
 	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
 	  hierarchies are defined by the '/' character in the group names
+	* A bug was fixed where some key-bindings wouldn't work with some TERMs
+	  (e.g. xterm-color, screen-linux etc.)
 
 version 2.5.1 (08/30/2008):
 	libpurple:

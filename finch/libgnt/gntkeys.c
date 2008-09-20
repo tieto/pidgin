@@ -47,12 +47,12 @@ void gnt_init_keys()
 			term = "";  /* Just in case */
 	}
 
-	if (strcmp(term, "xterm") == 0 || strcmp(term, "rxvt") == 0) {
+	if (strstr(term, "xterm") == term || strcmp(term, "rxvt") == 0) {
 		gnt_key_cup    = "\033" "[1;5A";
 		gnt_key_cdown  = "\033" "[1;5B";
 		gnt_key_cright = "\033" "[1;5C";
 		gnt_key_cleft  = "\033" "[1;5D";
-	} else if (strcmp(term, "screen") == 0 || strcmp(term, "rxvt-unicode") == 0) {
+	} else if (strstr(term, "screen") == term || strcmp(term, "rxvt-unicode") == 0) {
 		gnt_key_cup    = "\033" "Oa";
 		gnt_key_cdown  = "\033" "Ob";
 		gnt_key_cright = "\033" "Oc";
@@ -147,11 +147,11 @@ void gnt_keys_refine(char *text)
 	if (*text == 27 && *(text + 1) == '[' &&
 			(*(text + 2) >= 'A' && *(text + 2) <= 'D')) {
 		/* Apparently this is necessary for urxvt and screen and xterm */
-		if (strcmp(term, "screen") == 0 || strcmp(term, "rxvt-unicode") == 0 ||
-				strcmp(term, "xterm") == 0)
+		if (strstr(term, "screen") == term || strcmp(term, "rxvt-unicode") == 0 ||
+				strstr(term, "xterm") == term)
 			*(text + 1) = 'O';
 	} else if (*(unsigned char*)text == 195) {
-		if (*(text + 2) == 0 && strcmp(term, "xterm") == 0) {
+		if (*(text + 2) == 0 && strstr(term, "xterm") == term) {
 			*(text) = 27;
 			*(text + 1) -= 64;  /* Say wha? */
 		}
