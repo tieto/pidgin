@@ -14,12 +14,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
  
+#include <glib.h>
+#include <string.h>
+
+#include "internal.h"
 #include "ibb.h"
 #include "debug.h"
 #include "xmlnode.h"
-
-#include <glib.h>
-#include <string.h>
 
 #define JABBER_IBB_SESSION_DEFAULT_BLOCK_SIZE 4096
 
