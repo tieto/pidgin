@@ -39,8 +39,6 @@ JabberData *jabber_data_create_from_data(gconstpointer data, gsize size,
   XEP 0231 */
 JabberData *jabber_data_create_from_xml(xmlnode *tag);
 
-void jabber_data_delete(JabberData *data);
-
 const char *jabber_data_get_cid(const JabberData *data);
 const char *jabber_data_get_type(const JabberData *data);
 
@@ -61,7 +59,7 @@ xmlnode *jabber_data_get_xml_request(const gchar *cid);
 const JabberData *jabber_data_find_local_by_alt(const gchar *alt);
 const JabberData *jabber_data_find_local_by_cid(const gchar *cid);
 const JabberData *jabber_data_find_remote_by_cid(const gchar *cid);
-												 
+
 /* store data objects */
 void jabber_data_associate_local(JabberData *data, const gchar *alt);
 void jabber_data_associate_remote(JabberData *data);

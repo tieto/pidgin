@@ -428,13 +428,12 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 
 			if (g_str_has_prefix(src, "cid:")) {
 				const gchar *alt = xmlnode_get_attrib(img, "alt");
-				gchar *escaped = NULL;
 				/* if the "alt" attribute is empty, put the cid as smiley string */
 				if (alt && alt[0] != '\0') {
 					/* if the "alt" is the same as the CID, as Jabbim does,
 					 this prevents linkification... */
 					if (purple_email_is_valid(alt)) {
-						const gchar *safe_alt = g_strdup_printf("smiley:%s", alt);
+						gchar *safe_alt = g_strdup_printf("smiley:%s", alt);
 						out = g_string_append(out, safe_alt);
 						g_free(safe_alt);
 					} else {
@@ -596,7 +595,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				const gchar *who = xmlnode_get_attrib(packet, "from");
 				PurpleAccount *account = purple_connection_get_account(gc);
 				PurpleConversation *conv = NULL;
-				const GList *smiley_refs = NULL;
+				GList *smiley_refs = NULL;
 				gchar *reformatted_xhtml;
 
 				if (purple_account_get_bool(account, "custom_smileys", TRUE)) {
@@ -683,7 +682,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				}
 
 				/* we don't need the list of CIDs anymore */
-				for (; smiley_refs ; smiley_refs = g_list_next(smiley_refs)) {
+				for (; smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
 					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
 					g_free(ref->cid);
 					g_free(ref->alt);
@@ -888,6 +887,7 @@ jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
 				g_free(img_text);
 				pos += strlen(escaped);
 				g_free(escaped);
+				xmlnode_free(img);
 				break;
 			} else {
 				/* cleanup from the before the next round... */
