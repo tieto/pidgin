@@ -183,8 +183,6 @@ libpurple/status.c
 libpurple/util.c
 libpurple/win32/libc_interface.c
 pidgin.desktop.in
-pidgin/artwork/hicolor/24x24/emotes/default.theme.in
-pidgin/artwork/hicolor/24x24/emotes/none/none.theme.in
 pidgin/eggtrayicon.c
 pidgin/gtkaccount.c
 pidgin/gtkblist.c

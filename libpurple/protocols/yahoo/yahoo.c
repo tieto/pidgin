@@ -55,6 +55,12 @@
 
 /* #define TRY_WEBMESSENGER_LOGIN 0 */
 
+/* One hour */
+#define PING_TIMEOUT 3600
+
+/* One minute */
+#define KEEPALIVE_TIMEOUT 60
+
 static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *, PurpleGroup *);
 #ifdef TRY_WEBMESSENGER_LOGIN
 static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
@@ -3001,6 +3007,7 @@ static void yahoo_login(PurpleAccount *account) {
 	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	yd->confs = NULL;
 	yd->conf_id = 2;
+	yd->last_keepalive = yd->last_ping = time(NULL);
 
 	yd->current_status = get_yahoo_status_from_purple_status(status);
 
@@ -3059,7 +3066,7 @@ static void yahoo_close(PurpleConnection *gc) {
 	}
 	g_slist_free(yd->cookies);
 
-	yd->chat_online = 0;
+	yd->chat_online = FALSE;
 	if (yd->in_chat)
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
@@ -3871,21 +3878,36 @@ static GList *yahoo_status_types(PurpleAccount *account)
 
 static void yahoo_keepalive(PurpleConnection *gc)
 {
+	struct yahoo_packet *pkt;
 	struct yahoo_data *yd = gc->proto_data;
-	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_send_and_free(pkt, yd);
+	time_t now = time(NULL);
 
-	if (!yd->chat_online)
-		return;
+	/* We're only allowed to send a ping once an hour or the servers will boot us */
+	if ((now - yd->last_ping) >= PING_TIMEOUT) {
+		yd->last_ping = now;
 
-	if (yd->wm) {
-		ycht_chat_send_keepalive(yd->ycht);
-		return;
+		/* The native client will only send PING or CHATPING */
+		if (yd->chat_online) {
+			if (yd->wm) {
+				ycht_chat_send_keepalive(yd->ycht);
+			} else {
+				pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
+				yahoo_packet_hash_str(pkt, 109, purple_connection_get_display_name(gc));
+				yahoo_packet_send_and_free(pkt, yd);
+			}
+		} else {
+			pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
+			yahoo_packet_send_and_free(pkt, yd);
+		}
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash_str(pkt, 109, purple_connection_get_display_name(gc));
-	yahoo_packet_send_and_free(pkt, yd);
+	if ((now - yd->last_keepalive) >= KEEPALIVE_TIMEOUT) {
+		yd->last_keepalive = now;
+		pkt = yahoo_packet_new(YAHOO_SERVICE_KEEPALIVE, YAHOO_STATUS_AVAILABLE, 0);
+		yahoo_packet_hash_str(pkt, 0, purple_connection_get_display_name(gc));
+		yahoo_packet_send_and_free(pkt, yd);
+	}
+
 }
 
 static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)

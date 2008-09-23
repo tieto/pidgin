@@ -946,7 +946,7 @@ int
 bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *body)
 {
 	xmlnode *message_node, *node, *node2;
-	gchar *message;
+	gchar *message, *xhtml;
 	PurpleBuddy *pb;
 	BonjourBuddy *bb;
 	int ret;
@@ -958,6 +958,8 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 		return -10000;
 	}
 
+	purple_markup_html_to_xhtml(body, &xhtml, &message);
+
 	bb = pb->proto_data;
 
 	message_node = xmlnode_new("message");
@@ -967,7 +969,6 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 
 	/* Enclose the message from the UI within a "font" node */
 	node = xmlnode_new_child(message_node, "body");
-	message = purple_markup_strip_html(body);
 	xmlnode_insert_data(node, message, strlen(message));
 	g_free(message);
 
@@ -975,8 +976,9 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 	xmlnode_set_namespace(node, "http://www.w3.org/1999/xhtml");
 
 	node = xmlnode_new_child(node, "body");
-	message = g_strdup_printf("<font>%s</font>", body);
+	message = g_strdup_printf("<font>%s</font>", xhtml);
 	node2 = xmlnode_from_str(message, strlen(message));
+	g_free(xhtml);
 	g_free(message);
 	xmlnode_insert_child(node, node2);
 

@@ -11,10 +11,18 @@ version 2.5.2 (??/??/????):
 	* Fix a case where a conversation window could close unexpectedly.
 	* A mute sounds option has been added to the preferences window to
 	  help with discoverability.  CTRL+S is no longer bound to mute.
+	* Added ability to change the color of visited links (using the theme
+	  control plugin, or setting the color in ~/.gtkrc-2.0)
 
 	Finch:
 	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
 	  hierarchies are defined by the '/' character in the group names
+	* A bug was fixed where some key-bindings wouldn't work with some TERMs
+	  (e.g. xterm-color, screen-linux etc.)
+
+	XMPP:
+	* Sending and receiving custom smileys using the specification in
+	  XEP-0231 (bits of binary) and XHTML-IM
 
 version 2.5.1 (08/30/2008):
 	libpurple:
