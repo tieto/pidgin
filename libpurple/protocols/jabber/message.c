@@ -394,7 +394,7 @@ jabber_message_get_refs_from_xmlnode(const xmlnode *message)
 static gchar *
 jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 {
-	const gchar *markup = xmlnode_to_str(xhtml, NULL);
+	gchar *markup = xmlnode_to_str(xhtml, NULL);
 	int len = strlen(markup);
 	int pos = 0;
 	GString *out = g_string_new(NULL);
@@ -456,6 +456,7 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 		}
 	}
 
+	g_free(markup);
 	return g_string_free(out, FALSE);
 }
 
@@ -481,7 +482,7 @@ jabber_message_add_remote_smileys(const xmlnode *message)
  smiley */
 typedef struct {
 	PurpleConversation *conv;
-	const gchar *alt;
+	gchar *alt;
 } JabberDataRef;
 
 static void
@@ -511,7 +512,7 @@ jabber_message_get_data_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	} else {
 		purple_debug_error("jabber", "Unknown response to data request\n");
 	}
-	
+	g_free(ref->alt);
 	g_free(ref);
 }
 
@@ -526,7 +527,7 @@ jabber_message_send_data_request(JabberStream *js, PurpleConversation *conv,
 
 	xmlnode_set_attrib(request->node, "to", who);
 	ref->conv = conv;
-	ref->alt = alt;
+	ref->alt = g_strdup(alt);
 	jabber_iq_set_callback(request, jabber_message_get_data_cb, ref);
 	xmlnode_insert_child(request->node, data_request);
 
@@ -643,9 +644,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				/* note: if there were no smileys in the incoming message, or
 				  	if receiving custom smileys is turned off, smiley_refs will
 					be NULL */
-				for (; smiley_refs ; smiley_refs = g_list_next(smiley_refs)) {
-					const JabberSmileyRef *ref =
-						(JabberSmileyRef *) smiley_refs->data;
+				for (; smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
+					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
 					const gchar *cid = ref->cid;
 					const gchar *alt = ref->alt;
 
@@ -671,6 +671,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 								alt);
 						}
 					}
+					g_free(ref->cid);
+					g_free(ref->alt);
+					g_free(ref);
 				}
 
 			    /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
@@ -679,14 +682,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				for (c = jm->xhtml; *c != '\0'; c++) {
 					if (*c == '\n')
 						*c = ' ';
-				}
-
-				/* we don't need the list of CIDs anymore */
-				for (; smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
-					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
-					g_free(ref->cid);
-					g_free(ref->alt);
-					g_free(ref);
 				}
 			}
 		} else if(!strcmp(child->name, "active") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
