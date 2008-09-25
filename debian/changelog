@@ -1,3 +1,14 @@
+pidgin (2.4.3-3) unstable; urgency=low
+
+  * debian/patches/26_nss-ciphers.patch:
+    - Apply patch from upstream to add ciphers so we can connect to more
+      SSL servers (Closes: #495523, #444789)
+  * debian/patches/27_yahoo-ping.patch:
+    - Apply patch from upstream to fix frequent disconnection from Yahoo
+      (Closes: #499983)
+
+ -- Ari Pollak <ari@debian.org>  Tue, 24 Sep 2008 20:48:03 -0400
+
 pidgin (2.4.3-2) unstable; urgency=low
 
   * Apply patch from Miron Cuperman to fix path to CA certificates in
