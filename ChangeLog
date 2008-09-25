@@ -26,6 +26,10 @@ version 2.5.2 (??/??/????):
 	* Sending and receiving custom smileys using the specification in
 	  XEP-0231 (bits of binary) and XHTML-IM
 
+	Yahoo:
+	* Only send a Ping once every hour.  This prevents the account from
+	  being disconnected from the server periodically.
+
 version 2.5.1 (08/30/2008):
 	libpurple:
 	* In the Join/Part plugin, add the ability to apply the rules to
