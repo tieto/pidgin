@@ -178,6 +178,7 @@ qq_group *qq_room_create_by_hashtable(PurpleConnection *gc, GHashTable *data)
 void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 {
 	PurpleChat *chat;
+	GHashTable *components;
 	gchar *ext_id;
 	g_return_if_fail(group != NULL);
 
@@ -193,33 +194,35 @@ void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 		return;
 	}
 
+	components = purple_chat_get_components(chat);
+
 	/* we have a local record, update its info */
 	/* if there is title_utf8, we update the group name */
 	if (group->title_utf8 != NULL && strlen(group->title_utf8) > 0)
 		purple_blist_alias_chat(chat, group->title_utf8);
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_ROLE), g_strdup_printf("%d", group->my_role));
 	group->my_role_desc = get_role_desc(group);
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_ROLE_DESC), g_strdup(group->my_role_desc));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_INTERNAL_ID),
 		     g_strdup_printf("%d", group->id));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_EXTERNAL_ID),
 		     g_strdup_printf("%d", group->ext_id));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_TYPE), g_strdup_printf("%d", group->type8));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_CREATOR_UID), g_strdup_printf("%d", group->creator_uid));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_CATEGORY),
 		     g_strdup_printf("%d", group->category));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_AUTH_TYPE), g_strdup_printf("%d", group->auth_type));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_TITLE_UTF8), g_strdup(group->title_utf8));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_DESC_UTF8), g_strdup(group->desc_utf8));
 }
 

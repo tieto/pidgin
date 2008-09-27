@@ -240,6 +240,7 @@ void qq_block_buddy_with_gc_and_uid(gc_and_uid *g)
 	uid = g->uid;
 	g_return_if_fail(uid > 0);
 
+	/* XXX: This looks very wrong */
 	buddy.name = uid_to_purple_name(uid);
 	group.name = PURPLE_GROUP_QQ_BLOCKED;
 
@@ -460,16 +461,18 @@ void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	qq_data *qd;
 	guint32 uid;
 	PurpleBuddy *b;
+	const char *bname;
 
 	qd = (qq_data *) gc->proto_data;
 	if (!qd->is_login)
 		return;		/* IMPORTANT ! */
 
-	uid = purple_name_to_uid(buddy->name);
+	bname = purple_buddy_get_name(buddy);
+	uid = purple_name_to_uid(bname);
 	if (uid > 0)
 		_qq_send_packet_add_buddy(gc, uid);
 	else {
-		b = purple_find_buddy(gc->account, buddy->name);
+		b = purple_find_buddy(gc->account, bname);
 		if (b != NULL)
 			purple_blist_remove_buddy(b);
 		purple_notify_error(gc, NULL,
@@ -485,9 +488,11 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	guint32 uid;
+	const char *bname;
 
 	qd = (qq_data *) gc->proto_data;
-	uid = purple_name_to_uid(buddy->name);
+	bname = purple_buddy_get_name(buddy);
+	uid = purple_name_to_uid(bname);
 
 	if (!qd->is_login)
 		return;
@@ -495,17 +500,17 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 	if (uid > 0)
 		_qq_send_packet_remove_buddy(gc, uid);
 
-	b = purple_find_buddy(gc->account, buddy->name);
+	b = purple_find_buddy(gc->account, bname);
 	if (b != NULL) {
 		q_bud = (qq_buddy *) b->proto_data;
 		if (q_bud != NULL)
 			qd->buddies = g_list_remove(qd->buddies, q_bud);
 		else
-			purple_debug_warning("QQ", "We have no qq_buddy record for %s\n", buddy->name);
+			purple_debug_warning("QQ", "We have no qq_buddy record for %s\n", bname);
 		/* remove buddy on blist, this does not trigger qq_remove_buddy again
 		 * do this only if the request comes from block request,
 		 * otherwise purple segmentation fault */
-		if (g_ascii_strcasecmp(group->name, PURPLE_GROUP_QQ_BLOCKED) == 0)
+		if (g_ascii_strcasecmp(purple_group_get_name(group), PURPLE_GROUP_QQ_BLOCKED) == 0)
 			purple_blist_remove_buddy(b);
 	}
 }

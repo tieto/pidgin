@@ -142,7 +142,7 @@ static void
 _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 {
 	xmlnode *body_node, *html_node, *events_node;
-	PurpleConnection *gc = pb->account->gc;
+	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(pb));
 	gchar *body = NULL;
 	gboolean composing_event = FALSE;
 
@@ -225,7 +225,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 	}
 
 	/* Send the message to the UI */
-	serv_got_im(gc, pb->name, body, 0, time(NULL));
+	serv_got_im(gc, purple_buddy_get_name(pb), body, 0, time(NULL));
 
 	g_free(body);
 }
@@ -247,7 +247,7 @@ _match_buddies_by_address(gpointer key, gpointer value, gpointer data)
 	 * is the same as the account requesting the check then continue to determine
 	 * whether one of the buddies IPs matches the target IP.
 	 */
-	if (mbba->jdata->account == pb->account && pb->proto_data != NULL)
+	if (mbba->jdata->account == purple_buddy_get_account(pb) && pb->proto_data != NULL)
 	{
 		const char *ip;
 		BonjourBuddy *bb = pb->proto_data;
@@ -291,7 +291,8 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		purple_debug_error("bonjour", "Error sending message to buddy %s error: %s\n",
 				   purple_buddy_get_name(pb), error ? error : "(null)");
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name,
+				purple_buddy_get_account(pb));
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send message."),
@@ -334,7 +335,8 @@ _send_data(PurpleBuddy *pb, char *message)
 		purple_debug_error("bonjour", "Error sending message to buddy %s error: %s\n",
 				   purple_buddy_get_name(pb), error ? error : "(null)");
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name,
+				purple_buddy_get_account(pb));
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send message."),
@@ -396,7 +398,8 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		}
 		return;
 	} else if (len == 0) { /* The other end has closed the socket */
-		purple_debug_warning("bonjour", "Connection closed (without stream end) by %s.\n", (bconv->pb && bconv->pb->name) ? bconv->pb->name : "(unknown)");
+		const char *name = bconv->pb ? purple_buddy_get_name(bconv->pb) : NULL;
+		purple_debug_warning("bonjour", "Connection closed (without stream end) by %s.\n", name ? name : "(unknown)");
 		bonjour_jabber_stream_ended(bconv);
 		return;
 	} else {
@@ -416,7 +419,8 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 
 void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", bconv->pb ? bconv->pb->name : "(unknown)");
+	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n",
+			bconv->pb ? purple_buddy_get_name(bconv->pb) : "(unknown)");
 
 	/* Inform the user that the conversation has been closed */
 	if (bconv != NULL) {
@@ -748,6 +752,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 {
 	PurpleBuddy *pb = data;
 	BonjourBuddy *bb = pb->proto_data;
+	PurpleAccount *account = purple_buddy_get_account(pb);
 
 	bb->conversation->connect_data = NULL;
 
@@ -757,7 +762,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 		purple_debug_error("bonjour", "Error connecting to buddy %s at %s:%d error: %s\n",
 				   purple_buddy_get_name(pb), bb->conversation->ip, bb->port_p2pj, error ? error : "(null)");
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),
@@ -775,7 +780,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
 				   purple_buddy_get_name(pb), bb->conversation->ip, bb->port_p2pj, err ? err : "(null)");
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),
@@ -1040,7 +1045,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 				tmp_next = xfers->next;
 				/* We only need to cancel this if it hasn't actually started transferring. */
 				/* This will change if we ever support IBB transfers. */
-				if (strcmp(xfer->who, bconv->pb->name) == 0
+				if (strcmp(xfer->who, purple_buddy_get_name(bconv->pb)) == 0
 						&& (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_NOT_STARTED
 							|| purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_UNKNOWN)) {
 					purple_xfer_cancel_remote(xfer);
@@ -1164,15 +1169,18 @@ check_if_blocked(PurpleBuddy *pb)
 	gboolean blocked = FALSE;
 	GSList *l = NULL;
 	PurpleAccount *acc = NULL;
+	const char *username, *bname;
 
 	if(pb == NULL)
 		return FALSE;
 
-	acc = pb->account;
+	acc = purple_buddy_get_account(pb);
+	username = purple_account_get_username(acc);
+	bname = purple_buddy_get_name(pb);
 
 	for(l = acc->deny; l != NULL; l = l->next) {
-		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
-			purple_debug_info("bonjour", "%s has been blocked by %s.\n", pb->name, acc->username);
+		if(!purple_utf8_strcasecmp(bname, (char *)l->data)) {
+			purple_debug_info("bonjour", "%s has been blocked by %s.\n", bname, username);
 			blocked = TRUE;
 			break;
 		}
@@ -1189,8 +1197,9 @@ xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
 		return;
 
 	if(connection == NULL) {
-		if(pb->account != NULL)
-			connection = (pb->account)->gc;
+		PurpleAccount *account = purple_buddy_get_account(pb);
+		if(account != NULL)
+			connection = purple_account_get_connection(account);
 	}
 
 	if(check_if_blocked(pb))

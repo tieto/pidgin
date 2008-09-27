@@ -41,17 +41,13 @@ void ggp_buddylist_send(PurpleConnection *gc)
 	GGPInfo *info = gc->proto_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
-	PurpleBuddyList *blist;
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleBuddy *buddy;
 	uin_t *userlist = NULL;
 	gchar *types = NULL;
 	int size = 0;
 
-	if ((blist = purple_get_blist()) == NULL)
-	    return;
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next) {
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
@@ -65,13 +61,13 @@ void ggp_buddylist_send(PurpleConnection *gc)
 
 				buddy = (PurpleBuddy *)bnode;
 
-				if (buddy->account != account)
+				if (purple_buddy_get_account(buddy) != account)
 					continue;
 
 				size++;
 				userlist = (uin_t *) g_renew(uin_t, userlist, size);
 				types    = (gchar *) g_renew(gchar, types, size);
-				userlist[size - 1] = ggp_str_to_uin(buddy->name);
+				userlist[size - 1] = ggp_str_to_uin(purple_buddy_get_name(buddy));
 				types[size - 1]    = GG_USER_NORMAL;
 				purple_debug_info("gg", "ggp_buddylist_send: adding %d\n",
 						userlist[size - 1]);
@@ -173,14 +169,10 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 void ggp_buddylist_offline(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddyList *blist;
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleBuddy *buddy;
 
-	if ((blist = purple_get_blist()) == NULL)
-		return;
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next) {
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
@@ -194,15 +186,15 @@ void ggp_buddylist_offline(PurpleConnection *gc)
 
 				buddy = (PurpleBuddy *)bnode;
 
-				if (buddy->account != account)
+				if (purple_buddy_get_account(buddy) != account)
 					continue;
 
-				purple_prpl_got_user_status(
-					account, buddy->name, "offline", NULL);
+				purple_prpl_got_user_status(account,
+						purple_buddy_get_name(buddy), "offline", NULL);
 
 				purple_debug_info("gg",
 					"ggp_buddylist_offline: gone: %s\n",
-					buddy->name);
+					purple_buddy_get_name(buddy));
 			}
 		}
 	}
@@ -212,7 +204,6 @@ void ggp_buddylist_offline(PurpleConnection *gc)
 /* char *ggp_buddylist_dump(PurpleAccount *account) {{{ */
 char *ggp_buddylist_dump(PurpleAccount *account)
 {
-	PurpleBuddyList *blist;
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
@@ -220,33 +211,31 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 	char *buddylist = g_strdup("");
 	char *ptr;
 
-	if ((blist = purple_get_blist()) == NULL)
-		return NULL;
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next) {
+		const gchar *gname;
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
 		group = (PurpleGroup *)gnode;
+		gname = purple_group_get_name(group);
 
 		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				gchar *newdata, *name, *alias, *gname;
-				gchar *cp_alias, *cp_gname;
+				gchar *newdata, *cp_gname, *cp_alias;
+				const gchar *alias, *name;
 
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 
 				buddy = (PurpleBuddy *)bnode;
-				if (buddy->account != account)
+				if (purple_buddy_get_account(buddy) != account)
 					continue;
 
-				name = buddy->name;
-				alias = buddy->alias ? buddy->alias : buddy->name;
-				gname = group->name;
+				name = purple_buddy_get_name(buddy);
+				alias = buddy->alias ? buddy->alias : name;
 
 				cp_gname = charset_convert(gname, "UTF-8", "CP1250");
 				cp_alias = charset_convert(alias, "UTF-8", "CP1250");

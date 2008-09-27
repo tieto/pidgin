@@ -293,7 +293,7 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 								nm_user_record_get_display_id(user_record));
 
 		alias = purple_buddy_get_alias(buddy);
-		if (alias == NULL || *alias == '\0' || (strcmp(alias, buddy->name) == 0)) {
+		if (alias == NULL || *alias == '\0' || (strcmp(alias, purple_buddy_get_name(buddy)) == 0)) {
 			purple_blist_alias_buddy(buddy,
 								   nm_user_record_get_full_name(user_record));
 
@@ -1175,10 +1175,12 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 	const char *status_id;
 	const char *text = NULL;
 	const char *dn;
+	const char *name;
 	int idle = 0;
 	gboolean loggedin = TRUE;
 
-	account = buddy->account;
+	account = purple_buddy_get_account(buddy);
+	name = purple_buddy_get_name(buddy);
 
 	switch (novellstatus) {
 		case NM_STATUS_AVAILABLE:
@@ -1205,7 +1207,7 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 	}
 
 	/* Get status text for the user */
-	dn = nm_lookup_dn(user, buddy->name);
+	dn = nm_lookup_dn(user, name);
 	if (dn) {
 		NMUserRecord *user_record = nm_find_user_record(user, dn);
 		if (user_record) {
@@ -1213,9 +1215,9 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 		}
 	}
 
-	purple_prpl_got_user_status(account, buddy->name, status_id,
+	purple_prpl_got_user_status(account, name, status_id,
 							  "message", text, NULL);
-	purple_prpl_got_user_idle(account, buddy->name,
+	purple_prpl_got_user_idle(account, name,
 							(novellstatus == NM_STATUS_AWAY_IDLE), idle);
 }
 
@@ -1230,44 +1232,41 @@ _remove_purple_buddies(NMUser *user)
 	PurpleBlistNode *bnode;
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
-	PurpleBuddyList *blist;
 	GSList *rem_list = NULL;
 	GSList *l;
 	NMFolder *folder = NULL;
 	const char *gname = NULL;
 
-	if ((blist = purple_get_blist())) {
-		for (gnode = blist->root; gnode; gnode = gnode->next) {
-			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		group = (PurpleGroup *) gnode;
+		gname = purple_group_get_name(group);
+		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			group = (PurpleGroup *) gnode;
-			for (cnode = gnode->child; cnode; cnode = cnode->next) {
-				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
-				for (bnode = cnode->child; bnode; bnode = bnode->next) {
-					if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-					buddy = (PurpleBuddy *) bnode;
-					if (buddy->account == user->client_data) {
-						gname = group->name;
-						if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0)
-							gname = "";
-						folder = nm_find_folder(user, gname);
-						if (folder == NULL ||
-							!nm_folder_find_contact_by_display_id(folder, buddy->name)) {
-							rem_list = g_slist_append(rem_list, buddy);
-						}
+				buddy = (PurpleBuddy *) bnode;
+				if (purple_buddy_get_account(buddy) == user->client_data) {
+					if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0)
+						gname = "";
+					folder = nm_find_folder(user, gname);
+					if (folder == NULL ||
+							!nm_folder_find_contact_by_display_id(folder, purple_buddy_get_name(buddy))) {
+						rem_list = g_slist_append(rem_list, buddy);
 					}
 				}
 			}
 		}
+	}
 
-		if (rem_list) {
-			for (l = rem_list; l; l = l->next) {
-				purple_blist_remove_buddy(l->data);
-			}
-			g_slist_free(rem_list);
+	if (rem_list) {
+		for (l = rem_list; l; l = l->next) {
+			purple_blist_remove_buddy(l->data);
 		}
+		g_slist_free(rem_list);
 	}
 }
 
@@ -1613,14 +1612,14 @@ _initiate_conference_cb(PurpleBlistNode *node, gpointer ignored)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	user = gc->proto_data;
 	if (user == NULL)
 		return;
 
 	/* We should already have a userrecord for the buddy */
-	user_record = nm_find_user_record(user, buddy->name);
+	user_record = nm_find_user_record(user, purple_buddy_get_name(buddy));
 	if (user_record == NULL)
 		return;
 
@@ -2538,7 +2537,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	NMContact *contact;
 	NMUser *user;
 	NMERR_T rc = NM_OK;
-	const char *alias, *gname;
+	const char *alias, *gname, *bname;
 
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
@@ -2554,22 +2553,22 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 		return;
 
 	contact = nm_create_contact();
-	nm_contact_set_dn(contact, buddy->name);
+	nm_contact_set_dn(contact, purple_buddy_get_name(buddy));
 
 	/* Remove the PurpleBuddy (we will add it back after adding it
 	 * to the server side list). Save the alias if there is one.
 	 */
 	alias = purple_buddy_get_alias(buddy);
-	if (alias && strcmp(alias, buddy->name))
+	bname = purple_buddy_get_name(buddy);
+	if (alias && strcmp(alias, bname))
 		nm_contact_set_display_name(contact, alias);
 
 	purple_blist_remove_buddy(buddy);
 	buddy = NULL;
 
-	if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0) {
+	gname = purple_group_get_name(group);
+	if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0) {
 		gname = "";
-	} else {
-		gname = group->name;
 	}
 
 	folder = nm_find_folder(user, gname);
@@ -2603,11 +2602,10 @@ novell_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 		return;
 
 	user = (NMUser *) gc->proto_data;
-	if (user && (dn = nm_lookup_dn(user, buddy->name))) {
-		if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0) {
+	if (user && (dn = nm_lookup_dn(user, purple_buddy_get_name(buddy)))) {
+		gname = purple_group_get_name(group);
+		if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0) {
 			gname = "";
-		} else {
-			gname = group->name;
 		}
 		folder = nm_find_folder(user, gname);
 		if (folder) {
@@ -2637,7 +2635,7 @@ novell_remove_group(PurpleConnection * gc, PurpleGroup *group)
 
 	user = (NMUser *) gc->proto_data;
 	if (user) {
-		NMFolder *folder = nm_find_folder(user, group->name);
+		NMFolder *folder = nm_find_folder(user, purple_group_get_name(group));
 
 		if (folder) {
 			rc = nm_send_remove_folder(user, folder,
@@ -2777,8 +2775,9 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 
 	user = gc->proto_data;
 	if (user) {
+		const char *gname = purple_group_get_name(group);
 		/* Does new folder exist already? */
-		if (nm_find_folder(user, group->name)) {
+		if (nm_find_folder(user, gname)) {
 			/* purple_blist_rename_group() adds the buddies
 			 * to the new group and removes the old group...
 			 * so there is nothing more to do here.
@@ -2793,7 +2792,7 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 
 		folder = nm_find_folder(user, old_name);
 		if (folder) {
-			rc = nm_send_rename_folder(user, folder, group->name,
+			rc = nm_send_rename_folder(user, folder, gname,
 									   _rename_folder_resp_cb, NULL);
 			_check_for_disconnect(user, rc);
 		}
@@ -2819,12 +2818,12 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 	if (buddy == NULL)
 		return;
 
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	if (gc == NULL || (user = gc->proto_data) == NULL)
 		return;
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
-		user_record = nm_find_user_record(user, buddy->name);
+		user_record = nm_find_user_record(user, purple_buddy_get_name(buddy));
 		if (user_record) {
 			status = nm_user_record_get_status(user_record);
 			text = nm_user_record_get_status_text(user_record);
@@ -2923,14 +2922,16 @@ novell_status_text(PurpleBuddy * buddy)
 {
 	const char *text = NULL;
 	const char *dn = NULL;
+	PurpleAccount *account;
 
-	if (buddy && buddy->account) {
-		PurpleConnection *gc = purple_account_get_connection(buddy->account);
+	account = buddy ? purple_buddy_get_account(buddy) : NULL;
+	if (buddy && account) {
+		PurpleConnection *gc = purple_account_get_connection(account);
 
 		if (gc && gc->proto_data) {
 			NMUser *user = gc->proto_data;
 
-			dn = nm_lookup_dn(user, buddy->name);
+			dn = nm_lookup_dn(user, purple_buddy_get_name(buddy));
 			if (dn) {
 				NMUserRecord *user_record = nm_find_user_record(user, dn);
 

@@ -730,6 +730,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 					  MSN_INDIVIDUALS_GROUP_ID, MSN_INDIVIDUALS_GROUP_NAME);
 	if ((purple_find_group(MSN_INDIVIDUALS_GROUP_NAME)) == NULL){
 		PurpleGroup *g = purple_group_new(MSN_INDIVIDUALS_GROUP_NAME);
+		purple_group_set_is_pseudo(g, TRUE);
 		purple_blist_add_group(g, NULL);
 	}
 
@@ -738,6 +739,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
 		PurpleGroup *g = purple_group_new(MSN_NON_IM_GROUP_NAME);
+		purple_group_set_is_pseudo(g, TRUE);
 		purple_blist_add_group(g, NULL);
 	}
 

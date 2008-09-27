@@ -849,13 +849,14 @@ void
 msn_userlist_load(MsnSession *session)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleConnection *gc = purple_account_get_connection(session->account);
+	PurpleAccount *account = session->account;
+	PurpleConnection *gc = purple_account_get_connection(account);
 	GSList *l;
 	MsnUser * user;
 
 	g_return_if_fail(gc != NULL);
 
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next)
+	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next)
 	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
@@ -869,10 +870,10 @@ msn_userlist_load(MsnSession *session)
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *)bnode;
-				if (b->account == gc->account)
+				if (purple_buddy_get_account(b) == account)
 				{
 					user = msn_userlist_find_add_user(session->userlist,
-						b->name,NULL);
+						purple_buddy_get_name(b), NULL);
 					b->proto_data = user;
 					msn_user_set_op(user, MSN_LIST_FL_OP);
 				}

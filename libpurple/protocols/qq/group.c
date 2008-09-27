@@ -168,9 +168,9 @@ void qq_group_init(PurpleConnection *gc)
 		}
 		/* got one */
 		chat = (PurpleChat *) node;
-		if (account != chat->account)	/* not qq account*/
+		if (account != purple_chat_get_account(chat))	/* not qq account*/
 			continue;
-		group = qq_room_create_by_hashtable(gc, chat->components);
+		group = qq_room_create_by_hashtable(gc, purple_chat_get_components(chat));
 		if (group == NULL)
 			continue;
 

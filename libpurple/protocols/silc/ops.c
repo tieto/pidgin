@@ -431,6 +431,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 	va_list va;
 	PurpleConnection *gc = client->application;
 	SilcPurple sg = gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *convo;
 	SilcClientEntry client_entry, client_entry2;
 	SilcChannelEntry channel;
@@ -856,7 +857,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				silc_free(pk);
 
 				/* Find buddy by associated public key */
-				for (gnode = purple_get_blist()->root; gnode;
+				for (gnode = purple_blist_get_root(); gnode;
 				     gnode = gnode->next) {
 					if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 						continue;
@@ -868,7 +869,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 							if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 								continue;
 							b = (PurpleBuddy *)bnode;
-							if (b->account != gc->account)
+							if (purple_buddy_get_account(b) != account)
 								continue;
 							f = purple_blist_node_get_string(bnode, "public-key");
 							if (f && !strcmp(f, buf))

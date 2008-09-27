@@ -68,9 +68,9 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 			if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 				continue;
 			buddy = (PurpleBuddy *) bnode;
-			if (buddy->account != account)
+			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}

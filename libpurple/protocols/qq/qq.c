@@ -585,10 +585,13 @@ static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 static void _qq_menu_unsubscribe_group(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
-	GHashTable *components = chat -> components;
+	PurpleConnection *gc;
+	GHashTable *components;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
+	components = purple_chat_get_components(chat);
 
 	g_return_if_fail(components != NULL);
 	qq_group_exit(gc, components);

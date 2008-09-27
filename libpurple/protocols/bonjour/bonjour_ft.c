@@ -408,6 +408,7 @@ void
 xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 {
 	const char *type, *id;
+	const char *name;
 	BonjourData *bd;
 	PurpleXfer *xfer;
 
@@ -421,6 +422,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 	type = xmlnode_get_attrib(packet, "type");
 	id = xmlnode_get_attrib(packet, "id");
+	name = purple_buddy_get_name(pb);
 	if(type) {
 		if(!strcmp(type, "set")) {
 			const char *profile;
@@ -446,31 +448,31 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 				/* TODO: Make sure that it is advertising a bytestreams transfer */
 
-				bonjour_xfer_receive(pc, id, sid, pb->name, filesize, filename, XEP_BYTESTREAMS);
+				bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
 
 				parsed_receive = TRUE;
 			}
 
 			if (!parsed_receive) {
 				purple_debug_info("bonjour", "rejecting unrecognized si SET offer.\n");
-				xep_ft_si_reject((BonjourData *)pc->proto_data, id, pb->name, "403", "cancel");
+				xep_ft_si_reject((BonjourData *)pc->proto_data, id, name, "403", "cancel");
 				/*TODO: Send Cancel (501) */
 			}
 		} else if(!strcmp(type, "result")) {
 			purple_debug_info("bonjour", "si offer Message type - RESULT.\n");
 
-			xfer = bonjour_si_xfer_find(bd, id, pb->name);
+			xfer = bonjour_si_xfer_find(bd, id, name);
 
 			if(xfer == NULL) {
 				purple_debug_info("bonjour", "xfer find fail.\n");
-				xep_ft_si_reject((BonjourData *)pc->proto_data, id, pb->name, "403", "cancel");
+				xep_ft_si_reject((BonjourData *)pc->proto_data, id, name, "403", "cancel");
 			} else
 				bonjour_bytestreams_init(xfer);
 
 		} else if(!strcmp(type, "error")) {
 			purple_debug_info("bonjour", "si offer Message type - ERROR.\n");
 
-			xfer = bonjour_si_xfer_find(bd, id, pb->name);
+			xfer = bonjour_si_xfer_find(bd, id, name);
 
 			if(xfer == NULL)
 				purple_debug_info("bonjour", "xfer find fail.\n");
@@ -498,7 +500,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	purple_debug_info("bonjour", "xep-bytestreams-parse.\n");
 
 	type = xmlnode_get_attrib(packet, "type");
-	from = pb->name;
+	from = purple_buddy_get_name(pb);
 	query = xmlnode_get_child(packet,"query");
 	if(type) {
 		if(!strcmp(type, "set")) {
@@ -853,7 +855,8 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	if(!xf)
 		return;
 
-	p = g_strdup_printf("%s%s%s", xf->sid, pb->name, purple_account_get_username(pb->account));
+	p = g_strdup_printf("%s%s%s", xf->sid, purple_buddy_get_name(pb),
+			purple_account_get_username(purple_buddy_get_account(pb)));
 	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
 				    sizeof(hashval), hashval, NULL);
 	g_free(p);

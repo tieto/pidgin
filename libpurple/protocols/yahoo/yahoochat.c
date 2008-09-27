@@ -514,12 +514,12 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 	c = purple_find_chat(gc, YAHOO_CHAT_ID);
 
 	if (room && (!c || purple_conv_chat_has_left(PURPLE_CONV_CHAT(c))) && members &&
-	   ((g_list_length(members) > 1) ||
+	   ((members->next != NULL) ||
 	     !g_ascii_strcasecmp(members->data, purple_connection_get_display_name(gc)))) {
 		int i;
 		GList *flags = NULL;
 		for (i = 0; i < g_list_length(members); i++)
-			flags = g_list_append(flags, GINT_TO_POINTER(PURPLE_CBFLAGS_NONE));
+			flags = g_list_prepend(flags, GINT_TO_POINTER(PURPLE_CBFLAGS_NONE));
 		if (c && purple_conv_chat_has_left(PURPLE_CONV_CHAT(c))) {
 			/* this might be a hack, but oh well, it should nicely */
 			char *tmpmsg;
