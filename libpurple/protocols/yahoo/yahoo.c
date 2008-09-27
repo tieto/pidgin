@@ -3624,6 +3624,11 @@ static void yahoo_close(PurpleConnection *gc) {
 
 	purple_timeout_remove(yd->yahoo_p2p_timer);
 
+	/* close p2p server if it is waiting for a peer to connect */
+	purple_input_remove(yd->yahoo_p2p_server_watcher);
+	close(yd->yahoo_local_p2p_server_fd);
+	yd->yahoo_local_p2p_server_fd = -1;
+
 	g_hash_table_destroy(yd->sms_carrier);
 	g_hash_table_destroy(yd->peers);
 	g_hash_table_destroy(yd->friends);
