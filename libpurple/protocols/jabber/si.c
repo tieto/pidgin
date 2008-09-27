@@ -959,6 +959,7 @@ jabber_si_xfer_ibb_closed_cb(JabberIBBSession *sess)
 		purple_xfer_end(xfer);
 	} else {
 		purple_xfer_set_completed(xfer, TRUE);
+		jabber_si_xfer_free(xfer);
 	}
 }
 
@@ -970,6 +971,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 	
 	if (size <= purple_xfer_get_bytes_remaining(xfer)) {
+		purple_debug_info("jabber", "about to write %d bytes from IBB stream\n");
 		fwrite(data, size, 1, jsx->fp);
 		purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + size);
 		purple_xfer_update_progress(xfer);
@@ -1008,7 +1010,7 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 			jabber_si_xfer_ibb_error_cb);
 		
 		/* open the file to write to */
-		jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "w");
+		jsx->fp = fopen(purple_xfer_get_local_filename(xfer), "w");
 		
 		jsx->ibb_session = sess;
 		
@@ -1060,6 +1062,7 @@ jabber_si_xfer_ibb_sent_cb(JabberIBBSession *sess)
 		/* close the session */
 		jabber_ibb_session_close(sess);
 		purple_xfer_set_completed(xfer, TRUE);
+		jabber_si_xfer_free(xfer);
 	} else {
 		/* send more... */
 		jabber_si_xfer_ibb_send_data(sess);
@@ -1075,7 +1078,7 @@ jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 	purple_xfer_start(xfer, 0, NULL, 0);
 	purple_xfer_set_bytes_sent(xfer, 0);
 	purple_xfer_update_progress(xfer);
-	jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "r");
+	jsx->fp = fopen(purple_xfer_get_local_filename(xfer), "r");
 	jabber_si_xfer_ibb_send_data(sess);
 }
 
@@ -1255,7 +1258,7 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 	g_free(jsx);
 	xfer->data = NULL;
 
-	purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p", jsx);
+	purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);
 }
 
 static void jabber_si_xfer_cancel_send(PurpleXfer *xfer)

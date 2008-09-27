@@ -328,6 +328,9 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gpointer data, gsize size)
 {
 	JabberIBBSessionState state = jabber_ibb_session_get_state(sess);
 	
+	purple_debug_info("jabber", "sending data block of %d bytes on IBB stream\n",
+		size);
+	
 	if (state != JABBER_IBB_SESSION_OPENED) {
 		purple_debug_error("jabber", 
 			"trying to send data on a non-open IBB session\n");
@@ -408,10 +411,14 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 					g_free(base64);
 					
 					if (rawdata) {
+						purple_debug_info("jabber", 
+							"got %d bytes of data on IBB stream\n", size);
 						if (size > jabber_ibb_session_get_block_size(sess)) {
 							purple_debug_error("jabber",
 								"IBB: received a too large packet\n");
 						} else {
+							purple_debug_info("jabber", 
+								"calling IBB callback for received data\n");
 							sess->data_received_cb(sess, rawdata, size);
 						}
 						g_free(rawdata);
