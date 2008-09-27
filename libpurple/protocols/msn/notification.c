@@ -306,7 +306,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * to see the Local ID
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
-					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288 msmsgs %s",
+					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1302 BC01 %s",
 					 purple_account_get_username(account));
 }
 
