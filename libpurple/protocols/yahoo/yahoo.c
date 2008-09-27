@@ -2638,6 +2638,10 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	f = yahoo_friend_find(gc, who);
 	account = purple_connection_get_account(gc);
 
+	/* Do not send invitation if already listening for other connection */
+	if(yd->yahoo_local_p2p_server_fd)
+		return;
+
 	/* One shouldn't try to connect to self */
 	if( strcmp(purple_normalize(account, purple_account_get_username(account)), who) == 0)
 		return;
