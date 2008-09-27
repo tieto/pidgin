@@ -348,6 +348,9 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
+		if (t && t->image) {
+			t->image->imhtml = NULL;
+		}
 		g_free (t);
 	}
 }
@@ -1958,7 +1961,6 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	}
 }
 
-/* this isn't used yet
 static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 			GtkIMHtmlSmiley   *smiley)
 {
@@ -1974,7 +1976,7 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(int) pos - (int) t->values->str];
+			t = t->children [(unsigned int) pos - (unsigned int) t->values->str];
 		else
 			return;
 
@@ -1985,8 +1987,6 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 		t->image = NULL;
 	}
 }
-*/
-
 
 static gint
 gtk_smiley_tree_lookup (GtkSmileyTree *tree,
@@ -2044,6 +2044,25 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 		return len;
 
 	return 0;
+}
+
+static void
+gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	GtkSmileyTree *tree = (GtkSmileyTree *) value;
+	GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) user_data;
+	gtk_smiley_tree_remove(tree, smiley);
+}
+
+static void
+gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
+{
+	if (smiley->imhtml) {
+		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
+		g_hash_table_foreach(smiley->imhtml->smiley_data, 
+			gtk_imhtml_disassociate_smiley_foreach, smiley);
+	}
 }
 
 void
@@ -5617,12 +5636,14 @@ GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut
 	smiley->smile = g_strdup(shortcut);
 	smiley->hidden = hide;
 	smiley->flags = flags;
+	smiley->imhtml = NULL;
 	gtk_imhtml_smiley_reload(smiley);
 	return smiley;
 }
 
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley)
 {
+	gtk_imhtml_disassociate_smiley(smiley);
 	g_free(smiley->smile);
 	g_free(smiley->file);
 	if (smiley->icon)
