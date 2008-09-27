@@ -453,8 +453,6 @@ msn_session_finish_login(MsnSession *session)
 	PurpleConnection *gc;
 	PurpleStoredImage *img;
 
-	msn_change_status(session);
-
 	if (session->logged_in)
 		return;
 
@@ -466,6 +464,8 @@ msn_session_finish_login(MsnSession *session)
 	purple_imgstore_unref(img);
 
 	session->logged_in = TRUE;
+
+	msn_change_status(session);
 
 	purple_connection_set_state(gc, PURPLE_CONNECTED);
 
