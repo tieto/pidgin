@@ -97,6 +97,8 @@ void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource);
 const char *jabber_buddy_get_status_msg(JabberBuddy *jb);
 void jabber_buddy_get_info(PurpleConnection *gc, const char *who);
 
+gboolean jabber_buddy_has_capability(JabberBuddy *jb, const gchar *cap);
+
 GList *jabber_blist_node_menu(PurpleBlistNode *node);
 
 void jabber_set_info(PurpleConnection *gc, const char *info);

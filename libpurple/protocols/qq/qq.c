@@ -785,7 +785,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* get attention_types */
 
 	sizeof(PurplePluginProtocolInfo), /* struct_size */
-	NULL
+	NULL,							/* get_account_text_table */
+	NULL,							/* initiate_media */
+	NULL                            /* can_do_media */
 };
 
 static PurplePluginInfo info = {
