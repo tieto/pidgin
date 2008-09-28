@@ -32,6 +32,7 @@
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PAGER_PORT_P2P 5101
 #define YAHOO_P2P_KEEPALIVE_SECS 300
+#define YAHOO_P2P_SERVER_TIMEOUT 10
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
@@ -205,6 +206,7 @@ struct yahoo_data {
 	int yahoo_local_p2p_server_fd;
 	int yahoo_p2p_server_watcher;
 	GHashTable *sms_carrier;	/* sms carrier data */
+	guint yahoo_p2p_server_timeout_handle;
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)

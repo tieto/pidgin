@@ -2600,6 +2600,25 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 	p2p_data->source = acceptfd;
 }
 
+static gboolean yahoo_cancel_p2p_server_listen_cb(gpointer data)
+{
+	struct yahoo_p2p_data *p2p_data;
+	struct yahoo_data *yd;
+
+	if(!(p2p_data = data))
+		return FALSE;
+
+	yd = p2p_data->gc->proto_data;
+
+	purple_debug_warning("yahoo","yahoo p2p server timeout, peer failed to connect");
+	yahoo_p2p_disconnect_destroy_data(data);
+	purple_input_remove(yd->yahoo_p2p_server_watcher);
+	close(yd->yahoo_local_p2p_server_fd);
+	yd->yahoo_local_p2p_server_fd = -1;
+
+	return FALSE;
+}
+
 static void yahoo_p2p_server_listen_cb(int listenfd, gpointer data)
 {
 	struct yahoo_p2p_data *p2p_data;
@@ -2619,6 +2638,9 @@ static void yahoo_p2p_server_listen_cb(int listenfd, gpointer data)
 	/* Add an Input Read event to the file descriptor */
 	yd->yahoo_local_p2p_server_fd = listenfd;
 	yd->yahoo_p2p_server_watcher = purple_input_add(listenfd, PURPLE_INPUT_READ, yahoo_p2p_server_send_connected_cb,data);
+
+	/* add timeout */
+	yd->yahoo_p2p_server_timeout_handle = purple_timeout_add_seconds(YAHOO_P2P_SERVER_TIMEOUT, yahoo_cancel_p2p_server_listen_cb, data);
 }
 
 /* send p2p pkt containing our encoded ip, asking peer to connect to us */
@@ -2822,7 +2844,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 				val_11 = f->session_id;
 		}
 
-		p2p_data->host_username = g_strdup(who);
+		p2p_data->host_username = g_strdup(who);	
 		p2p_data->val_13 = val_13;
 		p2p_data->session_id = val_11;
 		p2p_data->host_ip = host_ip;
