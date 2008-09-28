@@ -971,8 +971,13 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 	
 	if (size <= purple_xfer_get_bytes_remaining(xfer)) {
-		purple_debug_info("jabber", "about to write %d bytes from IBB stream\n");
-		fwrite(data, size, 1, jsx->fp);
+		purple_debug_info("jabber", "about to write %lu bytes from IBB stream\n",
+			size);
+		if(!fwrite(data, size, 1, jsx->fp)) {
+			purple_debug_error("jabber", "error writing to file\n");
+			jabber_si_xfer_cancel_recv(xfer);
+			return;
+		}
 		purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + size);
 		purple_xfer_update_progress(xfer);
 		
@@ -1010,7 +1015,7 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 			jabber_si_xfer_ibb_error_cb);
 		
 		/* open the file to write to */
-		jsx->fp = fopen(purple_xfer_get_local_filename(xfer), "w");
+		jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "w");
 		
 		jsx->ibb_session = sess;
 		
@@ -1036,7 +1041,7 @@ jabber_si_xfer_ibb_send_data(JabberIBBSession *sess)
 	gpointer data = g_malloc(packet_size);
 	int res;
 	
-	purple_debug_info("jabber", "IBB: about to read %d bytes from file %lx\n",
+	purple_debug_info("jabber", "IBB: about to read %lu bytes from file %p\n",
 		packet_size, jsx->fp);
 	res = fread(data, packet_size, 1, jsx->fp);
 	
@@ -1078,7 +1083,7 @@ jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 	purple_xfer_start(xfer, 0, NULL, 0);
 	purple_xfer_set_bytes_sent(xfer, 0);
 	purple_xfer_update_progress(xfer);
-	jsx->fp = fopen(purple_xfer_get_local_filename(xfer), "r");
+	jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "r");
 	jabber_si_xfer_ibb_send_data(sess);
 }
 
