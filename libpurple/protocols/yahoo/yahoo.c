@@ -2822,8 +2822,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 				val_11 = f->session_id;
 		}
 
-		p2p_data->host_username = (char *)g_malloc(strlen(who));
-		strcpy(p2p_data->host_username, who);		
+		p2p_data->host_username = g_strdup(who);
 		p2p_data->val_13 = val_13;
 		p2p_data->session_id = val_11;
 		p2p_data->host_ip = host_ip;
