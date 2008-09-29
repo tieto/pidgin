@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-27 13:06+0200\n"
-"PO-Revision-Date: 2008-09-27 13:02+0200\n"
+"POT-Creation-Date: 2008-09-29 19:10+0200\n"
+"PO-Revision-Date: 2008-09-29 19:03+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1521,10 +1521,10 @@ msgid "No Grouping"
 msgstr "Keine Gruppierung"
 
 msgid "Nested Subgroup"
-msgstr ""
+msgstr "Verschachtelte Untergruppe"
 
 msgid "Nested Grouping (experimental)"
-msgstr ""
+msgstr "Verschachtelte Gruppen (experimentell)"
 
 msgid "Provides alternate buddylist grouping options."
 msgstr "Bietet alternative Einstellungen für die Kontaktlisten-Gruppierung."
@@ -5503,6 +5503,12 @@ msgstr "Der Benutzer %s hat Sie zu seiner Buddy-Liste hinzugefügt."
 msgid "%s has removed you from his or her buddy list."
 msgstr "Der Benutzer %s hat Sie von seiner Buddy-Liste gelöscht."
 
+msgid "Delete Buddy from Address Book?"
+msgstr "Buddy aus dem Adressbuch löschen?"
+
+msgid "Do you want to delete this buddy from your address book as well?"
+msgstr "Möchten Sie diesen Buddy außerdem aus Ihrem Adressbuch löschen?"
+
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -7270,12 +7276,11 @@ msgstr "Informationen aktualisieren"
 msgid "QQ Buddy"
 msgstr "QQ-Buddy"
 
-#, fuzzy
 msgid "Successed:"
-msgstr "Geschwindigkeit:"
+msgstr "Erfolgreich:"
 
 msgid "Change buddy information."
-msgstr "Buddy-Informationen bearbeiten"
+msgstr "Buddy-Informationen bearbeiten."
 
 #, c-format
 msgid ""
@@ -7309,9 +7314,8 @@ msgstr "Gescheitert:"
 msgid "Remove buddy"
 msgstr "Buddy entfernen"
 
-#, fuzzy
 msgid "Remove from other's buddy list"
-msgstr "Von seiner/ihrer Buddy-Liste entfernen"
+msgstr "Von einer anderen Buddy-Liste entfernen"
 
 #, c-format
 msgid "%d needs authentication"
@@ -7378,13 +7382,13 @@ msgstr "QQ-Qun-Operation"
 msgid "Approve"
 msgstr "Akzeptieren"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to join Qun %d, operated by admin %d"
 msgstr "Dem Qun %d, moderiert von admin %d, konnte nicht beigetreten werden"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successed to join Qun %d, operated by admin %d"
-msgstr "Ihre Anfrage, der Gruppe %d beizutreten wurde von Admin %d abgelehnt"
+msgstr "Erfolgreicher Beitritt des Qun %de, moderiert vom Admin %d"
 
 #, c-format
 msgid "[%d] removed from Qun \"%d\""
@@ -7403,7 +7407,6 @@ msgstr "Ich bin kein Mitglied"
 msgid "I am a member"
 msgstr "Ich bin Mitglied"
 
-#, fuzzy
 msgid "I am requesting"
 msgstr "Ich frage an"
 
@@ -7419,16 +7422,15 @@ msgstr "Diesen Qun können andere nicht beitreten"
 msgid "Remove from Qun"
 msgstr "vom Qun entfernen"
 
-#, fuzzy
 msgid "Join to Qun"
-msgstr "Chat betreten"
+msgstr "Qun betreten"
 
 #, c-format
 msgid "Qun %d denied to join"
-msgstr ""
+msgstr "Qun %d wurde nicht hereingelassen"
 
 msgid "Join Qun, Unknow Reply"
-msgstr ""
+msgstr "Qun-Beitritt, Unbekannte Antwort"
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr "Sie haben eine Gruppen-ID außerhalb des erlaubten Bereichs angegeben"
@@ -7447,9 +7449,8 @@ msgstr ""
 msgid "Do you want to approve the request?"
 msgstr "Wollen sie die Anfrage akzeptieren?"
 
-#, fuzzy
 msgid "Change Qun member"
-msgstr "Telefonnummer"
+msgstr "Qun-Nummer ändern"
 
 msgid "Change Qun information"
 msgstr "Qun-Informationen bearbeiten"
@@ -7457,14 +7458,13 @@ msgstr "Qun-Informationen bearbeiten"
 msgid "You have successfully created a Qun"
 msgstr "Sie haben einen Qun angelegt"
 
-#, fuzzy
 msgid "Would you like to set up the detail information now?"
-msgstr "Möchten Sie jetzt die Qun-Details einstellen?"
+msgstr "Möchten Sie jetzt Detail-Informationen einstellen?"
 
 msgid "Setup"
 msgstr "Setup"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s\n"
 "\n"
@@ -7503,12 +7503,11 @@ msgid " FromMobile"
 msgstr " FromMobile"
 
 msgid " BindMobile"
-msgstr "BindMobile"
+msgstr " BindMobile"
 
 msgid " Video"
 msgstr " Video"
 
-#, fuzzy
 msgid " Zone"
 msgstr " Zone"
 
@@ -7607,7 +7606,6 @@ msgstr "QQ-Protokoll-Plugin"
 msgid "Auto"
 msgstr "Auto"
 
-#, fuzzy
 msgid "Connect by TCP"
 msgstr "Über TCP verbinden"
 
@@ -7632,26 +7630,25 @@ msgid "Invalid token len, %d"
 msgstr "Ungültige Länge des Tokens, %d"
 
 msgid "Unable login for not support Redirect_EX now"
-msgstr ""
+msgstr "Anmeldung nicht möglich, Redirect_EX wird noch nicht unterstützt"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error password: %s"
-msgstr "Fehler beim Ändern des Passworts"
+msgstr "Passwort-Fehler: %s"
 
 #, c-format
 msgid "Need active: %s"
-msgstr ""
+msgstr "Brauche aktiv: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable login for unknow reply code 0x%02X"
-msgstr "Ungültiger Token-Antwort-Code, 0x%02X"
+msgstr "Anmeldung nicht möglich, unbekannter Antwort-Code 0x%02X"
 
 msgid "Keep alive error"
 msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
 
-#, fuzzy
 msgid "Failed to connect all servers"
-msgstr "Verbinden zum Server fehlgeschlagen"
+msgstr "Konnte nicht alle Server verbinden"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7678,9 +7675,9 @@ msgid "Connection lost"
 msgstr "Verbindung verloren"
 
 #. Update the login progress status display
-#, fuzzy, c-format
+#, c-format
 msgid "Request token"
-msgstr "Anfrage verweigert"
+msgstr "Anfragekürzel"
 
 msgid "Couldn't resolve host"
 msgstr "Kann den Hostnamen nicht auflösen"
@@ -7696,17 +7693,15 @@ msgid "QQ Error"
 msgstr "QQ-Fehler"
 
 msgid "Unknow SERVER CMD"
-msgstr ""
+msgstr "Unbekanntes SERVER CMD"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
 "Room %d, reply 0x%02X"
 msgstr ""
-"Antwort %s(0x%02X )\n"
-"Gesendet %s(0x%02X )\n"
-"Raum-ID %d, Antwort [0x%02X]: \n"
-"%s"
+"Fehlerantwort %s(0x%02X)\n"
+"Raum %d, Antwort 0x%02X"
 
 msgid "QQ Qun Command"
 msgstr "QQ-Qun-Kommando"
@@ -7718,9 +7713,8 @@ msgstr "Sie sind kein Mitglied des Qun „%s“\n"
 msgid "Can not decrypt login reply"
 msgstr "Kann die Antwort der Anmeldung nicht entschlüsseln"
 
-#, fuzzy
 msgid "Unknow reply CMD"
-msgstr "Unbekannter Grund"
+msgstr "Unbekanntes Antwort-CMD"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7733,11 +7727,9 @@ msgstr "Dateiübertragung"
 msgid "%d canceled the transfer of %s"
 msgstr "%d hat die Übertragung von %s abgebrochen"
 
-#, fuzzy
 msgid "Do you approve the requestion?"
 msgstr "Wollen sie die Anfrage akzeptieren?"
 
-#, fuzzy
 msgid "Do you add the buddy?"
 msgstr "Möchten Sie diesen Buddy hinzufügen?"
 
@@ -7749,32 +7741,30 @@ msgstr "Sie wurden von %s hinzugefügt"
 msgid "Would you like to add him?"
 msgstr "Möchten Sie ihn hinzufügen?"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s added you [%s] to buddy list"
-msgstr "%s hat Sie [%s] zu seiner Buddy-Liste hinzugefügt"
+msgstr "%s hat Sie [%s] zur Buddy-Liste hinzugefügt"
 
-#, fuzzy
 msgid "QQ Budy"
-msgstr "Buddy"
+msgstr "QQ-Buddy"
 
 #, c-format
 msgid "Requestion rejected by %s"
-msgstr ""
+msgstr "Anfrage abgelehnt von %s"
 
 #, c-format
 msgid "Requestion approved by %s"
-msgstr ""
+msgstr "Anfrage akzeptiert von %s"
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
 msgid "%s wants to add you [%s] as a friend"
 msgstr "%s möchte Sie [%s] als Freund hinzufügen"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not in buddy list"
-msgstr "%s ist nicht in Ihrer Buddy-Liste"
+msgstr "%s ist nicht in der Buddy-Liste"
 
-#, fuzzy
 msgid "Would you add?"
 msgstr "Möchten Sie ihn hinzufügen?"
 
@@ -9505,7 +9495,7 @@ msgstr "TOC-Protokoll-Plugin"
 #, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
-"%s hat Ihnen eine Webcam-Einladung gesenden, die noch nicht unterstützt wird."
+"%s hat Ihnen eine Webcam-Einladung gesendet, die noch nicht unterstützt wird."
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ihre Yahoo!-Nachricht wurde nicht verschickt."
@@ -10893,6 +10883,9 @@ msgstr "/Buddys/Buddys sortieren"
 msgid "SSL Servers"
 msgstr "SSL-Server"
 
+msgid "Network disconnected"
+msgstr "vom Netzwerk abgemeldet"
+
 msgid "Unknown command."
 msgstr "Unbekanntes Kommando."
 
@@ -11775,7 +11768,8 @@ msgstr "Farbe für besuchte Hyperlinks"
 
 msgid "Color to draw hyperlinks after it has been visited (or activated)."
 msgstr ""
-"Farbe zum Darstellen von Hyperlinks, wenn sie besucht (oder aktiviert) wurden"
+"Farbe zum Darstellen von Hyperlinks, wenn sie besucht (oder aktiviert) "
+"wurden."
 
 msgid "Hyperlink prelight color"
 msgstr "Hyperlink-Farbe"
@@ -11799,7 +11793,7 @@ msgstr ""
 "Farbe, mit der der Name in einer empfangenen Nachricht dargestellt wird."
 
 msgid "\"Attention\" Name Color"
-msgstr "Farbe des Absendernamens für \"Achtung\"-Nachrichten"
+msgstr "Farbe des Absendernamens für „Achtung“-Nachrichten"
 
 msgid "Color to draw the name of a message you received containing your name."
 msgstr ""
@@ -11826,7 +11820,7 @@ msgstr ""
 "Die Farbe, die für die Tipp-Benachrichtigungsmeldung benutzt werden soll"
 
 msgid "Typing notification font"
-msgstr "Tipp-Benachrichtigungs-Schriftart"
+msgstr "Tipp-Benachrichtigungsschriftart"
 
 msgid "The font to use for the typing notification"
 msgstr ""
@@ -12043,7 +12037,7 @@ msgid "Log Deletion Failed"
 msgstr "Löschen des Mitschnitts fehlgeschlagen"
 
 msgid "Check permissions and try again."
-msgstr "Überprüfenb Sie die Berechtigungen und versuchen Sie es erneut."
+msgstr "Überprüfen Sie die Berechtigungen und versuchen Sie es erneut."
 
 #, c-format
 msgid ""
@@ -12655,20 +12649,17 @@ msgstr ""
 "Klang-_Abspielbefehl:\n"
 "(%s für den Dateinamen)"
 
-#, fuzzy
 msgid "M_ute sounds"
 msgstr "Stu_mmschalten"
 
 msgid "Sounds when conversation has _focus"
 msgstr "Klang, wenn das Gespräch den _Fokus hat"
 
-#, fuzzy
 msgid "_Enable sounds:"
-msgstr "Klänge aktivieren:"
+msgstr "_Klänge aktivieren:"
 
-#, fuzzy
 msgid "V_olume:"
-msgstr "Lautstärke:"
+msgstr "_Lautstärke:"
 
 msgid "Play"
 msgstr "Abspielen"
