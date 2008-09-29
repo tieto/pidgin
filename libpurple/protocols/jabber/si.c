@@ -1052,7 +1052,7 @@ jabber_si_xfer_ibb_send_data(JabberIBBSession *sess)
 		purple_xfer_update_progress(xfer);
 	} else {
 		purple_debug_error("jabber", 
-			"jabber_si_xfer_ibb_opened_cb: error reading from file\n");
+			"jabber_si_xfer_ibb_send_data: error reading from file\n");
 		jabber_si_xfer_cancel_send(xfer);
 	}
 }
