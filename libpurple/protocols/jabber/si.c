@@ -1015,7 +1015,7 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 			jabber_si_xfer_ibb_error_cb);
 		
 		/* open the file to write to */
-		jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "w");
+		jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "wb");
 		
 		jsx->ibb_session = sess;
 		
@@ -1083,7 +1083,7 @@ jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 	purple_xfer_start(xfer, 0, NULL, 0);
 	purple_xfer_set_bytes_sent(xfer, 0);
 	purple_xfer_update_progress(xfer);
-	jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "r");
+	jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
 	jabber_si_xfer_ibb_send_data(sess);
 }
 
