@@ -1135,6 +1135,13 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	session = gc->proto_data;
 	swboard = msn_session_find_swboard(session, who);
 
+	if (!strncmp("tel:+", who, 5)) {
+		char *text = purple_markup_strip_html(message);
+		send_to_mobile(gc, who, text);
+		g_free(text);
+		return 1;
+	}
+
 	if (buddy) {
 		PurplePresence *p = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
