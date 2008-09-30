@@ -959,8 +959,8 @@ jabber_si_xfer_ibb_closed_cb(JabberIBBSession *sess)
 		purple_xfer_end(xfer);
 	} else {
 		purple_xfer_set_completed(xfer, TRUE);
-		jabber_si_xfer_free(xfer);
 	}
+	jabber_si_xfer_free(xfer);
 }
 
 static void
@@ -983,6 +983,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 		
 		if (purple_xfer_get_bytes_remaining(xfer) == 0) {
 			purple_xfer_set_completed(xfer, TRUE);
+			jabber_si_xfer_free(xfer);
 		}
 	} else {
 		/* trying to write past size of file transfers negotiated size,
@@ -1226,45 +1227,51 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 static void jabber_si_xfer_free(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
-	JabberStream *js = jsx->js;
-
-	js->file_transfers = g_list_remove(js->file_transfers, xfer);
-
-	if (jsx->connect_data != NULL)
-		purple_proxy_connect_cancel(jsx->connect_data);
-	if (jsx->listen_data != NULL)
-		purple_network_listen_cancel(jsx->listen_data);
-	if (jsx->iq_id != NULL)
-		jabber_iq_remove_callback_by_id(js, jsx->iq_id);
-	if (jsx->local_streamhost_fd >= 0)
-		close(jsx->local_streamhost_fd);
-	if (jsx->connect_timeout > 0)
-		purple_timeout_remove(jsx->connect_timeout);
-
-	if (jsx->streamhosts) {
-		g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
-		g_list_free(jsx->streamhosts);
-	}
-
-	if (jsx->ibb_session) {
-		purple_debug_info("jabber", 
-			"jabber_si_xfer_free: destroying IBB session\n");
-		jabber_ibb_session_destroy(jsx->ibb_session);
-	}
 	
-	if (jsx->fp) {
-		fclose(jsx->fp);
-	}
+	if (jsx) {
+		JabberStream *js = jsx->js;
+		
+		js->file_transfers = g_list_remove(js->file_transfers, xfer);
 	
-	g_free(jsx->stream_id);
-	g_free(jsx->iq_id);
-	/* XXX: free other stuff */
-	g_free(jsx->rxqueue);
-	g_free(jsx);
-	xfer->data = NULL;
+		if (jsx->connect_data != NULL)
+			purple_proxy_connect_cancel(jsx->connect_data);
+		if (jsx->listen_data != NULL)
+			purple_network_listen_cancel(jsx->listen_data);
+		if (jsx->iq_id != NULL)
+			jabber_iq_remove_callback_by_id(js, jsx->iq_id);
+		if (jsx->local_streamhost_fd >= 0)
+			close(jsx->local_streamhost_fd);
+		if (jsx->connect_timeout > 0)
+			purple_timeout_remove(jsx->connect_timeout);
+	
+		if (jsx->streamhosts) {
+			g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
+			g_list_free(jsx->streamhosts);
+		}
+	
+		if (jsx->ibb_session) {
+			purple_debug_info("jabber", 
+				"jabber_si_xfer_free: destroying IBB session\n");
+			jabber_ibb_session_destroy(jsx->ibb_session);
+		}
+		
+		if (jsx->fp) {
+			purple_debug_info("jabber", 
+				"jabber_si_xfer_free: closing file for IBB transfer\n");
+			fclose(jsx->fp);
+		}
+	
+		g_free(jsx->stream_id);
+		g_free(jsx->iq_id);
+		/* XXX: free other stuff */
+		g_free(jsx->rxqueue);
+		g_free(jsx);
+		xfer->data = NULL;
 
-	purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);
+		purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);
+	}
 }
+		
 
 static void jabber_si_xfer_cancel_send(PurpleXfer *xfer)
 {
