@@ -4663,8 +4663,6 @@ add_error_dialog(PidginBuddyList *gtkblist,
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	gtk_container_add(GTK_CONTAINER(priv->error_scrollbook), dialog);
-
-	set_urgent();
 }
 
 static GtkWidget *
@@ -4811,7 +4809,6 @@ update_generic_error_message(PurpleAccount *account,
 		GTK_CONTAINER(priv->error_scrollbook), account);
 	pidgin_mini_dialog_set_description(PIDGIN_MINI_DIALOG(mini_dialog),
 		description);
-	set_urgent();
 }
 
 
@@ -4967,8 +4964,6 @@ add_to_signed_on_elsewhere(PurpleAccount *account)
 	gtk_widget_show_all(account_label);
 
 	update_signed_on_elsewhere_minidialog_title();
-
-	set_urgent();
 }
 
 static void
@@ -4994,7 +4989,6 @@ update_signed_on_elsewhere_tooltip(PurpleAccount *account,
 	GtkContainer *c = GTK_CONTAINER(priv->signed_on_elsewhere->contents);
 	GtkWidget *label = find_child_widget_by_account(c, account);
 	gtk_widget_set_tooltip_text(label, description);
-	set_urgent();
 #endif
 }
 
