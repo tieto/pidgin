@@ -956,11 +956,11 @@ jabber_si_xfer_ibb_closed_cb(JabberIBBSession *sess)
 	if (purple_xfer_get_bytes_remaining(xfer) > 0) {
 		purple_xfer_error(purple_xfer_get_type(xfer), account,
 			jabber_ibb_session_get_who(sess), _("Transfer was closed."));
-		purple_xfer_end(xfer);
 	} else {
 		purple_xfer_set_completed(xfer, TRUE);
 	}
 	jabber_si_xfer_free(xfer);
+	purple_xfer_end(xfer);
 }
 
 static void
@@ -984,6 +984,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 		if (purple_xfer_get_bytes_remaining(xfer) == 0) {
 			purple_xfer_set_completed(xfer, TRUE);
 			jabber_si_xfer_free(xfer);
+			purple_xfer_end(xfer);
 		}
 	} else {
 		/* trying to write past size of file transfers negotiated size,
@@ -991,6 +992,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 		purple_debug_error("jabber", 
 			"IBB file transfer, trying to write past end of file\n");
 		jabber_si_xfer_cancel_recv(xfer);
+		purple_xfer_end(xfer);
 	}
 	
 }
@@ -1027,6 +1029,7 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 		/* failed to create IBB session */
 		purple_debug_error("jabber", "failed to create IBB session\n");
 		jabber_si_xfer_cancel_recv(xfer);
+		purple_xfer_end(xfer);
 		return FALSE;
 	}
 }
@@ -1069,6 +1072,7 @@ jabber_si_xfer_ibb_sent_cb(JabberIBBSession *sess)
 		jabber_ibb_session_close(sess);
 		purple_xfer_set_completed(xfer, TRUE);
 		jabber_si_xfer_free(xfer);
+		purple_xfer_end(xfer);
 	} else {
 		/* send more... */
 		jabber_si_xfer_ibb_send_data(sess);
