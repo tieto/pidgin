@@ -2315,7 +2315,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 	}
 
 	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
+		if(!strcmp(iter->data, XEP_0224_NAMESPACE)) {
 			xmlnode *buzz, *msg = xmlnode_new("message");
 			gchar *to;
 
@@ -2327,7 +2327,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 			xmlnode_set_attrib(msg, "type", "headline");
 
 			buzz = xmlnode_new_child(msg, "attention");
-			xmlnode_set_namespace(buzz, "http://www.xmpp.org/extensions/xep-0224.html#ns");
+			xmlnode_set_namespace(buzz, XEP_0224_NAMESPACE);
 
 			jabber_send(js, msg);
 			xmlnode_free(msg);
