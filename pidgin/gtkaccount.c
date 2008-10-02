@@ -451,7 +451,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->account != NULL)
 		username = g_strdup(purple_account_get_username(dialog->account));
 
-	if (!username && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
+	if (!username && dialog->prpl_info
+			&& PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
 		GdkColor color = {0, 34952, 35466, 34181};
 		GHashTable *table;
 		const char *label;
