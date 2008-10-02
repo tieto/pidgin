@@ -941,6 +941,7 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	MsnUserList *userlist;
 	MsnUser *user;
+	xmlnode *guid;
 
 	g_return_if_fail(session != NULL);
 
@@ -960,6 +961,15 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	user = msn_userlist_find_add_user(userlist, state->who, state->who);
 	msn_user_add_group_id(user, state->guid);
+
+	guid = xmlnode_get_child(resp->xml,
+		"Body/ABContactAddResponse/ABContactAddResult/guid");
+	if (guid != NULL) {
+		char *uid = xmlnode_get_data(guid);
+		msn_user_set_uid(user, uid);
+		purple_debug_info("msn", "Set %s guid to %s.\n", state->who, uid);
+		g_free(uid);
+	}
 }
 
 /* add a Contact in MSN_INDIVIDUALS_GROUP */
@@ -1016,6 +1026,15 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	if (state->action & MSN_ADD_BUDDY) {
 		MsnUser *user = msn_userlist_find_user(userlist, state->who);
+		xmlnode *guid = xmlnode_get_child(resp->xml,
+			"Body/ABGroupContactAddResponse/ABGroupContactAddResult/guid");
+
+		if (guid != NULL) {
+			char *uid = xmlnode_get_data(guid);
+			msn_user_set_uid(user, uid);
+			purple_debug_info("msn", "Set %s guid to %s.\n", state->who, uid);
+			g_free(uid);
+		}
 
 		if ( !msn_user_is_yahoo(state->session->account, state->who) ) {
 			msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
