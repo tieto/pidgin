@@ -1137,7 +1137,7 @@ msgid "Notify buddies when you are typing"
 msgstr "Meddela kompisar att du skriver till dem"
 
 msgid "Log format"
-msgstr "Logg format"
+msgstr "Loggformat"
 
 msgid "Log IMs"
 msgstr "Logga snabbmeddelanden"
@@ -11650,7 +11650,7 @@ msgstr "_Spara bild..."
 
 #, c-format
 msgid "_Add Custom Smiley..."
-msgstr "Lägg till egn smiley..."
+msgstr "Lägg till egen smiley..."
 
 msgid "Select Font"
 msgstr "Välj typsnitt"
@@ -12140,7 +12140,7 @@ msgid "Conversation Window Hiding"
 msgstr "Dölj konversationsfönster"
 
 msgid "_Hide new IM conversations:"
-msgstr "_Dölj nya IM konversationer:"
+msgstr "_Dölj nya IM-konversationer:"
 
 msgid "When away"
 msgstr "Vid frånvaro"
@@ -12611,7 +12611,7 @@ msgid "Please provide a shortcut to associate with the smiley."
 msgstr "Var god ange en genväg att assocciera med den valda smileyn."
 
 msgid "Duplicate Shortcut"
-msgstr "Duplicera genvägen"
+msgstr "Genvägen är upptagen"
 
 msgid ""
 "A custom smiley for the selected shortcut already exists. Please specify a "
@@ -13738,7 +13738,7 @@ msgstr "<font color='#777777'>Loggade ut.</font>"
 #. *< priority
 #. *< id
 msgid "XMPP Console"
-msgstr "XMPP Konsoll"
+msgstr "XMPP-konsoll"
 
 msgid "Account: "
 msgstr "Konto: "
