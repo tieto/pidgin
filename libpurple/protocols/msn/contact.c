@@ -1111,20 +1111,24 @@ msn_delete_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 /*delete a Contact*/
 void
-msn_delete_contact(MsnSession *session, const char *contactId)
+msn_delete_contact(MsnSession *session, MsnUser *user)
 {
 	gchar *body = NULL;
 	gchar *contact_id_xml = NULL ;
 	MsnCallbackState *state;
 
-	g_return_if_fail(contactId != NULL);
-	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, contactId);
+	if (user->uid != NULL) {
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
+		purple_debug_info("msn", "Deleting contact with contactId: %s\n", user->uid);
+	} else {
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_XML, user->passport);
+		purple_debug_info("msn", "Deleting contact with passport: %s\n", user->passport);
+	}
 
 	state = msn_callback_state_new(session);
-	msn_callback_state_set_uid(state, contactId);
+	msn_callback_state_set_uid(state, user->uid);
 
 	/* build SOAP request */
-	purple_debug_info("msn", "Deleting contact with contactId: %s\n", contactId);
 	body = g_strdup_printf(MSN_DEL_CONTACT_TEMPLATE, contact_id_xml);
 
 	state->body = xmlnode_from_str(body, -1);
@@ -1191,7 +1195,10 @@ msn_del_contact_from_group(MsnSession *session, const char *passport, const char
 	msn_callback_state_set_guid(state, groupId);
 	msn_callback_state_set_old_group_name(state, group_name);
 
-	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
+	if (user->uid != NULL)
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
+	else
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
 	body = g_strdup_printf(MSN_CONTACT_DEL_GROUP_TEMPLATE, contact_id_xml, groupId);
 
 	state->body = xmlnode_from_str(body, -1);
