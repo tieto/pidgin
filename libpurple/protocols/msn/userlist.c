@@ -652,7 +652,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist, const char *who)
 				NULL, ab,
 				G_CALLBACK(userlist_ab_delete_cb), G_CALLBACK(userlist_ab_delete_cb));
 		} else
-			msn_delete_contact(userlist->session, user->uid);
+			msn_delete_contact(userlist->session, user);
 	}
 }
 
