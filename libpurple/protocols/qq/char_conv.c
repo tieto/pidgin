@@ -98,7 +98,7 @@ static gboolean _check_underline(gchar font_attr)
 }
 
 /* convert a string from from_charset to to_charset, using g_convert */
-static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset, const gchar *from_charset) 
+static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset, const gchar *from_charset)
 {
 	GError *error = NULL;
 	gchar *ret;
@@ -111,9 +111,9 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 	if (error == NULL) {
 		return ret;	/* conversion is OK */
 	}
-	
+
 	/* conversion error */
-	purple_debug(PURPLE_DEBUG_ERROR, "QQ_CONVERT", "%s\n", error->message);
+	purple_debug_error("QQ_CONVERT", "%s\n", error->message);
 
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ_CONVERT",
 		(guint8 *) str, (len == -1) ? strlen(str) : len,
@@ -127,8 +127,8 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
  * take the input as a pascal string and return a converted c-string in UTF-8
  * returns the number of bytes read, return -1 if fatal error
  * the converted UTF-8 will be saved in ret
- */ 
-gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset) 
+ */
+gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset)
 {
 	guint8 len;
 
@@ -182,7 +182,7 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 	g_string_append_printf(encoded,
 			"<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
 			color_code, font_name, font_size / 3);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ_MESG",
+	purple_debug_info("QQ_MESG",
 			"recv <font color=\"%s\"><font face=\"%s\"><font size=\"%d\">\n",
 			color_code, font_name, font_size / 3);
 	g_string_append(encoded, msg_utf8);
@@ -222,7 +222,7 @@ gchar *qq_to_utf8(const gchar *str, const gchar *from_charset)
 	return _my_convert(str, -1, UTF8, from_charset);
 }
 
-/* QQ uses binary code for smiley, while purple uses strings. 
+/* QQ uses binary code for smiley, while purple uses strings.
  * There is a mapping relation between these two. */
 gchar *qq_smiley_to_purple(gchar *text)
 {
@@ -286,7 +286,8 @@ void qq_filter_str(gchar *str) {
 	}
 
 	for (temp = str; *temp != 0; temp++) {
-		if (*temp == '\r' || *temp == '\n')  *temp = ' ';
+		/*if (*temp == '\r' || *temp == '\n')  *temp = ' ';*/
+		if (*temp > 0 && *temp < 0x20)  *temp = ' ';
 	}
 	g_strstrip(str);
 }

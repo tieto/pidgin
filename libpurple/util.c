@@ -768,6 +768,9 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	time(&retval);
 	localtime_r(&retval, &t);
 
+	if (rest != NULL)
+		*rest = NULL;
+
 	/* 4 digit year */
 	if (sscanf(c, "%04d", &year) && year > 1900)
 	{
@@ -3575,7 +3578,10 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 		g_snprintf(port_str, sizeof(port_str), "80");
 	}
 
-	if (f == 1)
+	if (f == 0)
+		*host = '\0';
+
+	if (f <= 1)
 		*path = '\0';
 
 	sscanf(port_str, "%d", &port);
@@ -3586,7 +3592,7 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (ret_user != NULL) *ret_user = g_strdup(user);
 	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
 
-	return TRUE;
+	return ((*host != '\0') ? TRUE : FALSE);
 }
 
 /**
@@ -3757,9 +3763,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	while((len = read(source, buf, sizeof(buf))) > 0) {
 
 		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
-			/* TODO: Fix this when not string frozen */
-			/*purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),*/
-			purple_util_fetch_url_error(gfud, "Error reading from %s: response too long (%d bytes limit)",
+			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),
 						    gfud->website.address, gfud->max_len);
 			return;
 		}

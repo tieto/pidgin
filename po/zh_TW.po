@@ -3,7 +3,7 @@
 # Copyright (C) 2003-2008, Ambrose C. Li <acli@ada.dhs.org>
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.540 2008/08/10 08:37:23 acli Exp $
+# $InternalId: zh_TW.po,v 1.546 2008/08/27 04:00:09 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -50,8 +50,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 22:30-0400\n"
-"PO-Revision-Date: 2008-08-09 16:16-0400\n"
+"POT-Creation-Date: 2008-08-29 15:24-0400\n"
+"PO-Revision-Date: 2008-08-26 23:51-0400\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>, Paladin R. Liu "
 "<paladin@ms1.hinet.net>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -220,7 +220,7 @@ msgid ""
 "Last Seen: %s ago"
 msgstr ""
 "\n"
-"<b>最後見到：</b>%s前"
+"最後見到：%s前"
 
 msgid "Default"
 msgstr "預設"
@@ -229,7 +229,7 @@ msgid "You must provide a username for the buddy."
 msgstr "必須為好友指定帳號。"
 
 msgid "You must provide a group."
-msgstr "必須為好友指定群組。"
+msgstr "必須指定群組。"
 
 msgid "You must select an account."
 msgstr "必須指定帳號"
@@ -2459,6 +2459,9 @@ msgstr "聊天室大小下限"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "閒置時間下限（分鐘）"
+
+msgid "Apply hiding rules to buddies"
+msgstr "隱藏規則亦適用於好友"
 
 #  XXX 不通順
 #. *< type
@@ -5152,7 +5155,7 @@ msgstr "這個帳戶沒有文字被封鎖。"
 #, c-format
 msgid ""
 "MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "MSN 的伺服器目前正在封鎖乎合下列 regular expression 的文字：<br/>%s"
+msgstr "MSN 的伺服器目前正在封鎖符合下列 regular expression 的文字：<br/>%s"
 
 msgid "This account does not have email enabled."
 msgstr "這個帳號的電子郵件功能未有啟動。"
@@ -6807,15 +6810,15 @@ msgid ""
 "You missed %hu message from %s because his/her warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because his/her warning level is too high."
-msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為他（她）太邪惡了。"
-msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為他（她）太邪惡了。"
+msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為他（她）的警告等級過高。"
+msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為他（她）的警告等級過高。"
 
 #, c-format
 msgid "You missed %hu message from %s because your warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
-msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為您太邪惡了。"
-msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為您太邪惡了。"
+msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為您的警告等級過高。"
+msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為您的警告等級過高。"
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
@@ -7592,11 +7595,9 @@ msgstr " 使用行動裝置"
 msgid " BindMobile"
 msgstr " 綁定行動裝置"
 
-#, fuzzy
 msgid " Video"
 msgstr " 視訊"
 
-#, fuzzy
 msgid " Space"
 msgstr " Space"
 
@@ -7697,14 +7698,12 @@ msgstr "每隔多少秒送出 Keep Alive"
 msgid "Update interval(s)"
 msgstr "每隔多少秒更新"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid token len, %d"
-msgstr "標題無效"
+msgstr "符記長度「%d」無效"
 
-# XXX 20080810 acli - 譯文有待改進，原文也是
-#, fuzzy
 msgid "Keep alive error"
-msgstr "每隔多少秒送出 Keep Alive"
+msgstr "Keep Alive錯誤"
 
 msgid "Failed to connect server"
 msgstr "無法連線到伺服器"
@@ -7753,6 +7752,7 @@ msgstr "無法登入，請檢查除錯記錄。"
 msgid "Unable to login"
 msgstr "無法登入"
 
+# XXX This looks like some sort of debug message to me - 20080826 acli
 #, c-format
 msgid ""
 "Reply %s(0x%02X )\n"
@@ -7761,21 +7761,20 @@ msgid ""
 "%s"
 msgstr ""
 
-# FIXME 譯文有待改進  - 20070912 acli
-#, fuzzy
+# XXX 譯文有待改進  - 20080826 acli
 msgid "Failed room reply"
-msgstr "登入失敗，沒有回應"
+msgstr "聊天室回應錯誤"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You are not a member of group \"%s\"\n"
-msgstr "您 [%d] 已經被加入群組 \"%d\""
+msgstr "您並非群組「%s」的成員\n"
 
 msgid "Can not decrypt login reply"
-msgstr ""
+msgstr "登入回應解密失敗"
 
 #, c-format
 msgid "Invalid token reply code, 0x%02X"
-msgstr ""
+msgstr "符記回應碼「0x%02X」無效"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -10431,7 +10430,7 @@ msgid "Unable to save new account"
 msgstr "無法儲存新帳號"
 
 msgid "An account already exists with the specified criteria."
-msgstr "已有一個乎合指定條件的帳號。"
+msgstr "已有一個符合指定條件的帳號。"
 
 msgid "Add Account"
 msgstr "新增帳號"
@@ -10461,7 +10460,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>歡迎使用 %s!</span>\n"
 "\n"
@@ -10469,8 +10468,8 @@ msgstr ""
 "設定好您的帳號即可。如果您希望 %s 使用多個即時通訊帳號，可在完成上一步後，繼"
 "續按「加入」按紐來設定其他的帳號。\n"
 "\n"
-"您如果希望新增、修改或刪除帳號，只要透過好友清單上的「帳號->新增／編輯」指"
-"令，即可返回這個畫面。"
+"您如果希望新增、修改或刪除帳號，只要透過好友清單上的「帳號->管理帳號」指令，"
+"即可返回這個畫面。"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10647,7 +10646,7 @@ msgid "/_Accounts"
 msgstr "/帳號(_A)"
 
 msgid "/Accounts/Manage Accounts"
-msgstr "/帳號/管理"
+msgstr "/帳號/管理帳號"
 
 #. Tools
 msgid "/_Tools"
@@ -10840,9 +10839,9 @@ msgid ""
 msgstr ""
 "<span weight='bold' size='larger'>歡迎使用 %s!</span>\n"
 "\n"
-"您未有啟動任何帳號，請透過好友清單上的「帳號->管理」指令，到「帳號清單」啟動"
-"即時訊息帳號。帳號一經啟動，就隨時可以登入或變更狀態；這樣，您就可以跟您的好"
-"友通訊了！"
+"您未有啟動任何帳號，請透過好友清單上的「帳號->管理帳號」指令，到「帳號清單」"
+"啟動即時訊息帳號。帳號一經啟動，就隨時可以登入或變更狀態；這樣，您就可以跟您"
+"的好友通訊了！"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -12927,6 +12926,12 @@ msgstr "狀態：%s"
 msgid "Custom Smiley"
 msgstr "自訂表情"
 
+msgid "More Data needed"
+msgstr "需要進一步的資料"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "請給這個表情給定一個相關的捷徑。"
+
 msgid "Duplicate Shortcut"
 msgstr "重覆的表情定義"
 
@@ -12935,12 +12940,6 @@ msgid ""
 "A custom smiley for the selected shortcut already exists. Please specify a "
 "different shortcut."
 msgstr "給定的捷徑已有相關的自訂表情，請指定另一個捷徑。"
-
-msgid "More Data needed"
-msgstr "需要進一步的資料"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "請給這個表情給定一個相關的捷徑。"
 
 msgid "Please select an image for the smiley."
 msgstr "請給這個表情選擇一個圖像。"
@@ -13098,6 +13097,10 @@ msgstr "修改(_M)"
 
 msgid "_Open Mail"
 msgstr "開啟郵件(_O)"
+
+# TODO 要覆查 - 20080826
+msgid "_Edit"
+msgstr "修改(_E)"
 
 #  FIXME Tooltip中文怎寫？
 msgid "Pidgin Tooltip"

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:30-0400\n"
-"PO-Revision-Date: 2008-08-12 01:13+0100\n"
+"POT-Creation-Date: 2008-08-29 15:23-0400\n"
+"PO-Revision-Date: 2008-08-26 00:39+0100\n"
 "Last-Translator: YS Landro <nynorsk@strilen.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -2378,6 +2378,9 @@ msgstr "Minste romstorleik"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Tidsgrense for uverksame brukarar (i minutt)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Bruk skjul reglar på vennene"
 
 #. *< type
 #. *< ui_requirement
@@ -10117,18 +10120,18 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Velkomen til %s!</span>\n"
 "\n"
-"Du har ingen lynmeldingskontoar. For å kopla deg til %s trykkjer du på "
+"Du har ingen lynmeldingskontoar. For å kopla deg til %s, trykkjer du på "
 "<b>Legg til</b>-knappen nedanfor og lagrar innstillingane for den første "
 "kontoen din. Om du ønskjer at %s skal kopla seg mot fleire "
-"lynmeldingskontoar, trykkjer du på <b>Legg til</b> nok ein gong og repeterer "
-"prosedyra.\n"
+"lynmeldingskontoar, trykkjer du på <b>Legg til</b> for å endra "
+"innstillingane for alle.\n"
 "\n"
 "Du kan koma attende til dette vindauget for å leggja til, endra eller fjerna "
-"kontoar frå <b>Kontoar->Legg til/endra</b> i vennelistevindauget"
+"kontoar frå <b>Kontoar->Behandla</b> i vennelistevindauget"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -12118,7 +12121,7 @@ msgid "Minimum input area height in lines:"
 msgstr "Minimumshøgda til inndataområdet (i linjer):"
 
 msgid "Font"
-msgstr "Skrifftype"
+msgstr "Skrifttype"
 
 msgid "Use document font from _theme"
 msgstr "Bruk dokumentskrifttype frå _tema"
@@ -12511,6 +12514,12 @@ msgstr "Status for %s"
 msgid "Custom Smiley"
 msgstr "Tilpassa smilefjes"
 
+msgid "More Data needed"
+msgstr "Treng fleire opplysningar"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Før opp ein snarveg knytt til smilefjeset."
+
 msgid "Duplicate Shortcut"
 msgstr "Duplisert snarveg"
 
@@ -12520,12 +12529,6 @@ msgid ""
 msgstr ""
 "Det finst allereie eit tilpassa smilefjes til denne snarvegen. Vel ein annan "
 "snarveg."
-
-msgid "More Data needed"
-msgstr "Treng fleire opplysningar"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Før opp ein snarveg knytt til smilefjeset."
 
 msgid "Please select an image for the smiley."
 msgstr "Vel eit bilete til smilefjeset."
@@ -12687,6 +12690,9 @@ msgstr "_Endra"
 
 msgid "_Open Mail"
 msgstr "_Opna e-post"
+
+msgid "_Edit"
+msgstr "_Endra"
 
 msgid "Pidgin Tooltip"
 msgstr "Pidgin-verktøyhint"

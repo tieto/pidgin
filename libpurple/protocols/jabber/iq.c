@@ -33,6 +33,7 @@
 #include "si.h"
 #include "ping.h"
 #include "adhoccommands.h"
+#include "data.h"
 
 #ifdef _WIN32
 #include "utsname.h"
@@ -352,6 +353,11 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
 		jabber_ping_parse(js, packet);
+		return;
+	}
+
+	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE)) {
+		jabber_data_parse(js, packet);
 		return;
 	}
 

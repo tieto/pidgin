@@ -224,6 +224,13 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 	PurpleSmiley *emoticon;
 
 	entry = gtk_entry_get_text(GTK_ENTRY(s->smile));
+	if (!entry || !*entry) {
+		purple_notify_error(s->parent, _("Custom Smiley"),
+				_("More Data needed"),
+				_("Please provide a shortcut to associate with the smiley."));
+		return;
+	}
+
 	emoticon = purple_smileys_find_by_shortcut(entry);
 	if (emoticon && emoticon != s->smiley) {
 		purple_notify_error(s->parent, _("Custom Smiley"),
@@ -266,8 +273,8 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 			gsize size = 0;
 			gchar *filename;
 
-			gdk_pixbuf_save_to_bufferv(s->custom_pixbuf, &buffer, &size,
-									   "png", NULL, NULL, NULL);
+			gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
+				"png", NULL, "compression", "9", NULL, NULL);
 			filename = purple_util_get_image_filename(buffer, size);
 			s->filename = g_build_filename(purple_smileys_get_storing_dir(), filename, NULL);
 			purple_util_write_data_to_file_absolute(s->filename, buffer, size);
@@ -346,7 +353,7 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	window = gtk_dialog_new_with_buttons(smiley ? _("Edit Smiley") : _("Add Smiley"),
 			widget ? GTK_WINDOW(widget) : NULL,
 			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,							 
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			NULL);
 	s->parent = window;
