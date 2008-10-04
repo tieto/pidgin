@@ -273,11 +273,7 @@ msn_user_add_group_id(MsnUser *user, const char* group_id)
 	if (b == NULL)
 	{
 		b = purple_buddy_new(account, passport, NULL);
-		if (group_id && (!strcmp(group_id, MSN_INDIVIDUALS_GROUP_ID) ||
-					!strcmp(group_id, MSN_NON_IM_GROUP_ID)))
-			purple_blist_add_buddy_pseudo_group(b, NULL, g, NULL);
-		else
-			purple_blist_add_buddy(b, NULL, g, NULL);
+		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
 	b->proto_data = user;
 	/*Update the blist Node info*/
