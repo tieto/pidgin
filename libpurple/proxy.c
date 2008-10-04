@@ -621,7 +621,7 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
 		return;
 
-	purple_debug_info("proxy", "Connected to %s:%d.\n",
+	purple_debug_info("proxy", "Connecting to %s:%d.\n",
 					connect_data->host, connect_data->port);
 
 	/*
