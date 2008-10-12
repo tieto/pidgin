@@ -102,14 +102,14 @@ jabber_ibb_session_create_from_xmlnode(JabberStream *js, xmlnode *packet,
 void
 jabber_ibb_session_destroy(JabberIBBSession *sess)
 {
-	purple_debug_info("jabber", "IBB: destroying session %lx %s\n", sess, 
+	purple_debug_info("jabber", "IBB: destroying session %p %s\n", sess, 
 		sess->sid);
 	
 	if (jabber_ibb_session_get_state(sess) == JABBER_IBB_SESSION_OPENED) {
 		jabber_ibb_session_close(sess);
 	}
 	
-	purple_debug_info("jabber", "IBB: last_iq_id: %lx\n", sess->last_iq_id);
+	purple_debug_info("jabber", "IBB: last_iq_id: %s\n", sess->last_iq_id);
 	if (sess->last_iq_id) {
 		purple_debug_info("jabber", "IBB: removing callback for <iq/> %s\n",
 			sess->last_iq_id);
@@ -224,8 +224,12 @@ jabber_ibb_session_opened_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberIBBSession *sess = (JabberIBBSession *) data;
 
-	sess->state = JABBER_IBB_SESSION_OPENED;
-	
+	if (strcmp(xmlnode_get_attrib(packet, "type"), "error") == 0) {
+		sess->state = JABBER_IBB_SESSION_ERROR;
+	} else {
+		sess->state = JABBER_IBB_SESSION_OPENED;
+	}
+		
 	if (sess->opened_cb) {
 		sess->opened_cb(sess);
 	}
@@ -328,7 +332,7 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gpointer data, gsize size)
 {
 	JabberIBBSessionState state = jabber_ibb_session_get_state(sess);
 	
-	purple_debug_info("jabber", "sending data block of %d bytes on IBB stream\n",
+	purple_debug_info("jabber", "sending data block of %ld bytes on IBB stream\n",
 		size);
 	
 	if (state != JABBER_IBB_SESSION_OPENED) {
@@ -354,17 +358,37 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gpointer data, gsize size)
 		xmlnode_insert_child(set->node, data_element);
 	
 		purple_debug_info("jabber", 
-			"IBB: setting send <iq/> callback for session %lx %s\n", sess,
+			"IBB: setting send <iq/> callback for session %p %s\n", sess,
 			sess->sid);
 		jabber_iq_set_callback(set, jabber_ibb_session_send_acknowledge_cb, sess);
 		sess->last_iq_id = g_strdup(xmlnode_get_attrib(set->node, "id"));
-		purple_debug_info("jabber", "IBB: set sess->last_iq_id: %lx %lx\n",
+		purple_debug_info("jabber", "IBB: set sess->last_iq_id: %s %s\n",
 			sess->last_iq_id, xmlnode_get_attrib(set->node, "id"));
 		jabber_iq_send(set);
 		
 		g_free(base64);
 		(sess->send_seq)++;
 	}
+}
+
+static void
+jabber_ibb_send_error_response(JabberStream *js, xmlnode *packet)
+{
+	JabberIq *result = jabber_iq_new(js, JABBER_IQ_ERROR);
+	xmlnode *error = xmlnode_new("error");
+	xmlnode *item_not_found = xmlnode_new("item-not-found");
+	
+	xmlnode_set_namespace(item_not_found, 
+		"urn:ietf:params:xml:ns:xmpp-stanzas");
+	xmlnode_set_attrib(error, "code", "440");
+	xmlnode_set_attrib(error, "type", "cancel");
+	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	xmlnode_set_attrib(result->node, "to", 
+		xmlnode_get_attrib(packet, "from"));
+	xmlnode_insert_child(error, item_not_found);
+	xmlnode_insert_child(result->node, error);
+	
+	jabber_iq_send(result);
 }
 
 void
@@ -412,7 +436,7 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 					
 					if (rawdata) {
 						purple_debug_info("jabber", 
-							"got %d bytes of data on IBB stream\n", size);
+							"got %ld bytes of data on IBB stream\n", size);
 						if (size > jabber_ibb_session_get_block_size(sess)) {
 							purple_debug_error("jabber",
 								"IBB: received a too large packet\n");
@@ -471,23 +495,11 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 				return;
 			}
 		}
+		/* no open callback returned success, reject */
+		jabber_ibb_send_error_response(js, packet);
 	} else {
 		/* send error reply */
-		JabberIq *result = jabber_iq_new(js, JABBER_IQ_ERROR);
-		xmlnode *error = xmlnode_new("error");
-		xmlnode *item_not_found = xmlnode_new("item-not-found");
-		
-		xmlnode_set_namespace(item_not_found, 
-			"urn:ietf:params:xml:ns:xmpp-stanzas");
-		xmlnode_set_attrib(error, "code", "440");
-		xmlnode_set_attrib(error, "type", "cancel");
-		jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
-		xmlnode_set_attrib(result->node, "to", 
-			xmlnode_get_attrib(packet, "from"));
-		xmlnode_insert_child(error, item_not_found);
-		xmlnode_insert_child(result->node, error);
-		
-		jabber_iq_send(result);
+		jabber_ibb_send_error_response(js, packet);
 	}
 }
 
