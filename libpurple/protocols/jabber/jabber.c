@@ -1684,6 +1684,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
+			"buzz", _("Allow Buzz"), buzz_enabled,								 
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1697,6 +1698,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
+			"buzz", _("Allow Buzz"), buzz_enabled,								 
 			NULL);
 	types = g_list_append(types, type);
 
@@ -2292,8 +2294,13 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	GList *iter;
-
+	PurpleConnection *gc = js->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleConversation *conv = 
+		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, username,
+			account);
+	gchar *str;
+	
 	if(!username)
 		return FALSE;
 
@@ -2302,53 +2309,62 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
 		return FALSE;
 	}
-
+	
 	jbr = jabber_buddy_find_resource(jb, NULL);
-	if(!jbr) {
-		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), username);
+	if (!jbr) {
+		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), 
+			username);
 		return FALSE;
 	}
+	
+	if (jabber_resource_has_capability(jbr, XEP_0224_NAMESPACE)) {
+		xmlnode *buzz, *msg = xmlnode_new("message");
+		gchar *to;
 
-	if(!jbr->caps) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+		to = g_strdup_printf("%s/%s", username, jbr->name);
+		xmlnode_set_attrib(msg, "to", to);
+		g_free(to);
+
+		/* avoid offline storage */
+		xmlnode_set_attrib(msg, "type", "headline");
+
+		buzz = xmlnode_new_child(msg, "attention");
+		xmlnode_set_namespace(buzz, XEP_0224_NAMESPACE);
+
+		jabber_send(js, msg);
+		xmlnode_free(msg);
+
+		str = g_strdup_printf(_("Buzzing %s..."), username);
+		purple_conversation_write(conv, NULL, str, 
+			PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+		g_free(str);
+		
+		return TRUE;
+	} else {
+		*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), username);
 		return FALSE;
 	}
-
-	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp(iter->data, XEP_0224_NAMESPACE)) {
-			xmlnode *buzz, *msg = xmlnode_new("message");
-			gchar *to;
-
-			to = g_strdup_printf("%s/%s", username, jbr->name);
-			xmlnode_set_attrib(msg, "to", to);
-			g_free(to);
-
-			/* avoid offline storage */
-			xmlnode_set_attrib(msg, "type", "headline");
-
-			buzz = xmlnode_new_child(msg, "attention");
-			xmlnode_set_namespace(buzz, XEP_0224_NAMESPACE);
-
-			jabber_send(js, msg);
-			xmlnode_free(msg);
-
-			return TRUE;
-		}
-	}
-
-	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), username);
-	return FALSE;
 }
 
 static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberStream *js = conv->account->gc->proto_data;
-
-	if(!args || !args[0])
-		return PURPLE_CMD_RET_FAILED;
-
-	return _jabber_send_buzz(js, args[0], error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
+	const gchar *who;
+	gboolean result;
+	
+	if (!args || !args[0]) {
+		/* use the buddy from conversation, if it's a one-to-one conversation */
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+			who = purple_conversation_get_name(conv);
+		} else {
+			return PURPLE_CMD_RET_FAILED;
+		}
+	} else {
+		who = args[0];
+	}
+	
+	return _jabber_send_buzz(js, who, error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
 }
 
 GList *jabber_attention_types(PurpleAccount *account)
@@ -2462,6 +2478,10 @@ void jabber_register_commands(void)
 					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
 					  NULL);
 	purple_cmd_register("buzz", "s", PURPLE_CMD_P_PRPL,
+					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_buzz,
+					  _("buzz: Buzz a user to get their attention"), NULL);
+	purple_cmd_register("buzz", "", PURPLE_CMD_P_PRPL,
 					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
