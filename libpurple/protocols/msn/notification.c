@@ -620,7 +620,7 @@ msn_notification_dump_contact(MsnSession *session)
 		if (!(user->list_op & MSN_LIST_OP_MASK))
 			continue;
 
-		if (!strcmp(user->passport, "messenger@microsoft.com"))
+		if (user->passport && !strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
