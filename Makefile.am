@@ -52,9 +52,9 @@ version-check:
 # ... and have no changes in the working copy.
 	test x`mtn diff | grep -v '^#'` = x
 
-release: distcheck packages
+release: version-check distcheck packages
 
-packages: version-check
+packages:
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.gz
 	gpg -ab pidgin-$(PACKAGE_VERSION).tar.bz2
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.gz.asc pidgin-$(PACKAGE_VERSION).tar.gz
