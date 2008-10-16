@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-30 19:46+0300\n"
+"POT-Creation-Date: 2008-10-16 00:55-0700\n"
 "PO-Revision-Date: 2008-09-30 19:46+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -12699,6 +12699,14 @@ msgstr "Hymiö"
 
 msgid "Custom Smiley Manager"
 msgstr "Omien hymiöiden hallinta"
+
+#, fuzzy
+msgid "Click to change your buddyicon for this account."
+msgstr "Käytä tätä tuttavakuvaketta tälle käyttäjät_ilille:"
+
+#, fuzzy
+msgid "Click to change your buddyicon for all accounts."
+msgstr "Käytä tätä tuttavakuvaketta tälle käyttäjät_ilille:"
 
 msgid "Waiting for network connection"
 msgstr "Odotetaan verkkoyhteyttä"
