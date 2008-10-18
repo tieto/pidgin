@@ -74,7 +74,7 @@ fi
 
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([dist-bzip2 check-news])
+AM_INIT_AUTOMAKE([dist-bzip2])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
