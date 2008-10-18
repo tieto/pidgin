@@ -794,37 +794,36 @@ add_group_cb(gpointer null, const char *group)
 {
 	PurpleGroup *grp;
 
-	if (!group || !*group)
-	{
+	if (!group || !*group) {
 		purple_notify_error(NULL, _("Error"), _("Error adding group"),
 				_("You must give a name for the group to add."));
 		return;
 	}
 
 	grp = purple_find_group(group);
-	if (!grp)
-	{
+	if (!grp) {
 		grp = purple_group_new(group);
-		if (ggblist) {
-			ggblist->new_group = g_list_prepend(ggblist->new_group, grp);
-			if (!ggblist->new_group_timeout) {
-				ggblist->new_group_timeout = purple_timeout_add_seconds(SHOW_EMPTY_GROUP_TIMEOUT,
-						remove_new_empty_group, NULL);
-			}
-		}
 		purple_blist_add_group(grp, NULL);
-
-		/* Select the new group */
-		if (ggblist && ggblist->tree) {
-			FinchBlistNode *fnode = FINCH_GET_DATA((PurpleBlistNode*)grp);
-			if (fnode && fnode->row)
-				gnt_tree_set_selected(GNT_TREE(ggblist->tree), grp);
-		}
 	}
-	else
-	{
-		purple_notify_error(NULL, _("Error"), _("Error adding group"),
-				_("A group with the name already exists."));
+
+	if (!ggblist)
+		return;
+
+	/* Treat the group as a new group even if it had existed before. This should
+	 * make things easier to add buddies to empty groups (new or old) without having
+	 * to turn on 'show empty groups' setting */
+	ggblist->new_group = g_list_prepend(ggblist->new_group, grp);
+	if (ggblist->new_group_timeout)
+		purple_timeout_remove(ggblist->new_group_timeout);
+	ggblist->new_group_timeout = purple_timeout_add_seconds(SHOW_EMPTY_GROUP_TIMEOUT,
+			remove_new_empty_group, NULL);
+
+	/* Select the group */
+	if (ggblist->tree) {
+		FinchBlistNode *fnode = FINCH_GET_DATA((PurpleBlistNode*)grp);
+		if (!fnode)
+			add_node((PurpleBlistNode*)grp, ggblist);
+		gnt_tree_set_selected(GNT_TREE(ggblist->tree), grp);
 	}
 }
 
