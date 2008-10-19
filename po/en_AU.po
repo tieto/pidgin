@@ -21,7 +21,7 @@ msgstr ""
 #. It is not to be translated.
 #, fuzzy
 msgid "Finch"
-msgstr "French"
+msgstr "Finch"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
