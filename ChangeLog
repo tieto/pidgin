@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.2 (??/??/2008):
+version 2.5.2 (10/19/2008):
 	libpurple:
 	* Restored the "Has You" feature to the MSN protocol tooltips.
 	* Fixed a crash on removing a custom buddy icon on a buddy.
