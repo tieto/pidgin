@@ -27,6 +27,8 @@
 #ifndef __MEDIA_MANAGER_H_
 #define __MEDIA_MANAGER_H_
 
+#include "internal.h"
+
 #ifdef USE_VV
 
 #include <glib.h>

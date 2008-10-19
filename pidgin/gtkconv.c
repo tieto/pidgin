@@ -7770,6 +7770,8 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 	}
 
 	gtkmedia = pidgin_media_new(media);
+	g_object_unref(media);
+
 	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
 	gtk_widget_show(gtkmedia);
 	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);

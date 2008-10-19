@@ -28,6 +28,7 @@
 #include "iq.h"
 #include "disco.h"
 #include "jabber.h"
+#include "jingle/jingle.h"
 #include "presence.h"
 #include "roster.h"
 #include "pep.h"
@@ -157,10 +158,10 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://www.google.com/transport/p2p");
 			SUPPORT_FEATURE("http://www.google.com/transport/raw-udp");
 			SUPPORT_FEATURE("http://www.google.com/session/phone");
-			SUPPORT_FEATURE("urn:xmpp:tmp:jingle");
-			SUPPORT_FEATURE("urn:xmpp:tmp:jingle:apps:rtp#audio");
-			SUPPORT_FEATURE("urn:xmpp:tmp:jingle:apps:rtp#video");
-			SUPPORT_FEATURE("urn:xmpp:tmp:jingle:transports:ice-udp");
+			SUPPORT_FEATURE(JINGLE);
+			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_AUDIO);
+			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_VIDEO);
+			SUPPORT_FEATURE(JINGLE_TRANSPORT_RAWUDP);
 #endif
 		} else {
 			const char *ext = NULL;

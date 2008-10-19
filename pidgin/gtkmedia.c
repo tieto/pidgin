@@ -249,6 +249,7 @@ static void
 pidgin_media_finalize (GObject *media)
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
+	purple_debug_info("gtkmedia", "pidgin_media_finalize\n");
 	if (gtkmedia->priv->media) {
 		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
 		g_object_unref(gtkmedia->priv->media);

@@ -210,8 +210,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_TYPE_POINTER, FS_TYPE_CANDIDATE);
 	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
+					 purple_smarshal_VOID__STRING_STRING,
+					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 	purple_media_signals[CANDIDATE_PAIR] = g_signal_new("candidate-pair", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__BOXED_BOXED,
@@ -675,7 +675,7 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 					if (session->session == fssession) {
 						g_signal_emit(session->media,
 								purple_media_signals[CODECS_READY],
-								0, &session->id);
+								0, session->id);
 						g_list_free(sessions);
 						break;
 					}
@@ -1003,7 +1003,8 @@ purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *sessio
 	g_object_get(stream, "participant", &participant, NULL);
 	g_object_get(participant, "cname", &name, NULL);
 	g_object_unref(participant);
-	g_signal_emit(session->media, purple_media_signals[CANDIDATES_PREPARED], 0);
+	g_signal_emit(session->media, purple_media_signals[CANDIDATES_PREPARED],
+			0, session->id, name);
 	g_free(name);
 }
 

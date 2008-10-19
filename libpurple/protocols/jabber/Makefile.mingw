@@ -52,6 +52,12 @@ C_SRC =	\
 			google.c \
 			iq.c \
 			jabber.c \
+			jingle/jingle.c \
+			jingle/content.c \
+			jingle/rawudp.c \
+			jingle/rtp.c \
+			jingle/session.c \
+			jingle/transport.c \
 			jutil.c \
 			message.c \
 			oob.c \

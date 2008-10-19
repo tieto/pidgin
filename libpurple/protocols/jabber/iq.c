@@ -28,7 +28,7 @@
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
-#include "jingle.h"
+#include "jingle/jingle.h"
 #include "oob.h"
 #include "roster.h"
 #include "si.h"
@@ -360,8 +360,8 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	}
 	
 #ifdef USE_VV
-	if (xmlnode_get_child_with_namespace(packet, "jingle", "urn:xmpp:tmp:jingle")) {
-		jabber_jingle_session_parse(js, packet);
+	if (xmlnode_get_child_with_namespace(packet, "jingle", JINGLE)) {
+		jingle_parse(js, packet);
 		return;
 	}
 #endif
@@ -406,7 +406,7 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
 	jabber_iq_register_handler("urn:xmpp:ping", urn_xmpp_ping_parse);
 #ifdef USE_VV
-	jabber_iq_register_handler("urn:xmpp:tmp:jingle", jabber_jingle_session_parse);
+	jabber_iq_register_handler(JINGLE, jingle_parse);
 #endif
 }
 
