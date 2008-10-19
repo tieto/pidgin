@@ -716,6 +716,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
     Delete "$INSTDIR\ca-certs\StartCom_Free_SSL_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
+    Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
     RMDir "$INSTDIR\ca-certs"
     RMDir /r "$INSTDIR\locale"
@@ -766,6 +767,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\timestamp_format.dll"
     Delete "$INSTDIR\plugins\win2ktrans.dll"
     Delete "$INSTDIR\plugins\winprefs.dll"
+    Delete "$INSTDIR\plugins\xmppconsole.dll"
     RMDir "$INSTDIR\plugins"
     RMDir /r "$INSTDIR\sasl2"
     Delete "$INSTDIR\sounds\purple\alert.wav"
@@ -775,12 +777,8 @@ Section Uninstall
     Delete "$INSTDIR\sounds\purple\send.wav"
     RMDir "$INSTDIR\sounds\purple"
     RMDir "$INSTDIR\sounds"
-    Delete "$INSTDIR\comerr32.dll"
     Delete "$INSTDIR\freebl3.dll"
-    Delete "$INSTDIR\gssapi32.dll"
     Delete "$INSTDIR\idletrack.dll"
-    Delete "$INSTDIR\k5sprt32.dll"
-    Delete "$INSTDIR\krb5_32.dll"
     Delete "$INSTDIR\libgtkspell.dll"
     Delete "$INSTDIR\libjabber.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
@@ -1418,13 +1416,17 @@ Function preWelcomePage
   Push $R1
   Push $R2
 
-  ; Make the GTK+ Section RO if it is required.
   Call DoWeNeedGtk
   Pop $R0
   Pop $R2
-  IntCmp $R0 1 gtk_not_mandatory gtk_not_mandatory
+  IntCmp $R0 1 gtk_selection_done gtk_not_mandatory
+    ; Make the GTK+ Section RO if it is required.
     !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
+    Goto gtk_selection_done
   gtk_not_mandatory:
+    ; Don't select the GTK+ section if we already have this version or newer installed
+    !insertmacro UnselectSection ${SecGtk}
+  gtk_selection_done:
 
   ; If on Win95/98/ME warn them that the GTK+ version wont work
   ${Unless} ${IsNT}

@@ -83,11 +83,13 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		if((l = g_slist_find_custom(g2, g->name, (GCompareFunc)strcmp))) {
 			const char *servernick;
 
+			/* Previously stored serverside / buddy-supplied alias */
 			if((servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick")))
 				serv_got_alias(js->gc, jid, servernick);
 
+			/* Alias from our roster retrieval */
 			if(alias && (!b->alias || strcmp(b->alias, alias)))
-				purple_blist_alias_buddy(b, alias);
+				purple_serv_got_private_alias(js->gc, jid, alias);
 			g_free(l->data);
 			g2 = g_slist_delete_link(g2, l);
 		} else {

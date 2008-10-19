@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-14 11:31+0200\n"
-"PO-Revision-Date: 2008-08-14 11:29+0200\n"
+"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"PO-Revision-Date: 2008-10-02 18:55+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
 "MIME-Version: 1.0\n"
@@ -73,7 +73,8 @@ msgstr "Értesítések új levélre"
 msgid "Remember password"
 msgstr "Emlékezzen a jelszóra"
 
-msgid "There's no protocol plugins installed."
+#, fuzzy
+msgid "There are no protocol plugins installed."
 msgstr "Nincsenek protokollbővítmények telepítve."
 
 msgid "(You probably forgot to 'make install'.)"
@@ -329,6 +330,7 @@ msgstr "Címke átváltása"
 msgid "Nickname"
 msgstr "Becenév"
 
+#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Inaktív"
@@ -1507,6 +1509,12 @@ msgstr "Meebo"
 msgid "No Grouping"
 msgstr "Nincs csoportosítás"
 
+msgid "Nested Subgroup"
+msgstr "Beágyazott alcsoport"
+
+msgid "Nested Grouping (experimental)"
+msgstr "Beágyazott csoportosítás (kísérleti)"
+
 msgid "Provides alternate buddylist grouping options."
 msgstr "Alternatív partnerlista-csoportosítási lehetőségeket biztosít."
 
@@ -1823,8 +1831,8 @@ msgstr ""
 "%s"
 
 #, c-format
-msgid "EOF while reading from resolver process"
-msgstr "Fájl vége jel érkezett a feloldó folyamatból olvasás közben"
+msgid "Resolver process exited without answering our request"
+msgstr "A feloldó folyamat a kérés megválaszolása nélkül lépett ki"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2393,6 +2401,9 @@ msgstr "Szoba legkisebb mérete"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Felhasználó inaktivitási időtartama (perc)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Elrejtési szabályok alkalmazása partnerekre"
 
 #. *< type
 #. *< ui_requirement
@@ -4530,6 +4541,12 @@ msgstr "Kapcsolatkiszolgáló"
 msgid "File transfer proxies"
 msgstr "Fájlátviteli proxy-k"
 
+#. this should probably be part of global smiley theme settings later on,
+#. shared with MSN
+#, fuzzy
+msgid "Show Custom Smileys"
+msgstr "Egyéni hangulatjelek megjelenítése"
+
 #, c-format
 msgid "%s has left the conversation."
 msgstr "%s elhagyta a társalgást."
@@ -4883,6 +4900,10 @@ msgid "Passport account not yet verified"
 msgstr "Passport fiók (MSN igazolvány) még nincs ellenőrizve"
 
 #, c-format
+msgid "Passport account suspended"
+msgstr "A Passport fiók felfüggesztve"
+
+#, c-format
 msgid "Bad ticket"
 msgstr "Rossz jegy"
 
@@ -4893,6 +4914,14 @@ msgstr "Ismeretlen hibakód %d"
 #, c-format
 msgid "MSN Error: %s\n"
 msgstr "MSN hiba: %s\n"
+
+#, fuzzy
+msgid "Other Contacts"
+msgstr "Előnyben részesített kapcsolat"
+
+#, fuzzy
+msgid "Non-IM Contacts"
+msgstr "Kapcsolat eltávolítása"
 
 msgid "Nudge"
 msgstr "Bökés"
@@ -4964,6 +4993,9 @@ msgstr "Mobilüzenet küldése."
 
 msgid "Page"
 msgstr "Oldal"
+
+msgid "Has you"
+msgstr "Szerepel-e a listáján"
 
 msgid "Home Phone Number"
 msgstr "Otthoni telefonszám"
@@ -5247,6 +5279,10 @@ msgstr "Ismeretlen hiba (%d)"
 msgid "Unable to add user"
 msgstr "Nem vehető fel a felhasználó"
 
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "A keresés eredményei a következők"
+
 #, c-format
 msgid "Unable to add user on %s (%s)"
 msgstr "Nem lehet felhasználót felvenni ehhez: %s (%s)"
@@ -5433,6 +5469,14 @@ msgstr "%s felvette Önt a partnerlistájára."
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s eltávolította Önt a partnerlistájáról."
 
+#, fuzzy
+msgid "Delete Buddy from Address Book?"
+msgstr "Hozzáadás a címjegyzékhez"
+
+#, fuzzy
+msgid "Do you want to delete this buddy from your address book as well?"
+msgstr "Fel kívánja venni ezt a partnert a listájára?"
+
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -5445,9 +5489,6 @@ msgstr "A megadott felhasználónév érvénytelen."
 
 msgid "This Hotmail account may not be active."
 msgstr "Lehetséges, hogy ez a Hotmail fiók nem aktív."
-
-msgid "Has you"
-msgstr "Szerepel-e a listáján"
 
 #. *< type
 #. *< ui_requirement
@@ -6133,6 +6174,9 @@ msgstr "Érvénytelen adatok érkeztek a kapcsolaton a kiszolgálótól."
 msgid "AIM Protocol Plugin"
 msgstr "AIM protokollbővítmény"
 
+msgid "ICQ UIN..."
+msgstr "ICQ UIN…"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -6475,7 +6519,6 @@ msgstr ""
 msgid "Unable to get a valid login hash."
 msgstr "Nem kérhető le érvényes belépő hash."
 
-#. allow multple logins?
 msgid "Password sent"
 msgstr "Jelszó elküldve"
 
@@ -7173,14 +7216,24 @@ msgstr "Disznó"
 msgid "Other"
 msgstr "Egyéb"
 
-msgid "Modify my information"
+#, fuzzy
+msgid "Modify information"
 msgstr "Információk módosítása"
 
-msgid "Update my information"
+#, fuzzy
+msgid "Update information"
 msgstr "Információk frissítése"
 
-msgid "Your information has been updated"
-msgstr "Információi frissítve lettek"
+#. TODO: We don't really need to notify the user about this, do we?
+#. TODO: Does the user really need to be notified about this?
+msgid "QQ Buddy"
+msgstr "QQ partner"
+
+msgid "Successed:"
+msgstr "Sikeres:"
+
+msgid "Change buddy information."
+msgstr "Partnerinformációk módosítása."
 
 #, c-format
 msgid ""
@@ -7197,29 +7250,28 @@ msgstr "Érvénytelen QQ arckép"
 msgid "You rejected %d's request"
 msgstr "Visszautasította %d kérését"
 
-msgid "Input your reason:"
-msgstr "Indokolja meg:"
-
 msgid "Reject request"
 msgstr "Kérés visszautasítása"
 
 #. title
-msgid "Sorry, you are not my type..."
+#, fuzzy
+msgid "Sorry, you are not my style..."
 msgstr "Bocs, nem vagy az esetem…"
 
 msgid "Add buddy with auth request failed"
 msgstr "A partner felvétele felhatalmazási kéréssel meghiúsult"
 
-#. TODO: We don't really need to notify the user about this, do we?
-msgid "You have successfully removed a buddy"
-msgstr "Sikeresen eltávolított egy partnert"
+msgid "Failed:"
+msgstr "Sikertelen:"
 
-#. TODO: Does the user really need to be notified about this?
-msgid "You have successfully removed yourself from your friend's buddy list"
-msgstr "Sikeresen eltávolította magát egy partner partnerlistájáról"
+msgid "Remove buddy"
+msgstr "Partner törlése"
 
-#, c-format
-msgid "User %d needs authentication"
+msgid "Remove from other's buddy list"
+msgstr "Eltávolítás mások partnerlistájáról"
+
+#, fuzzy, c-format
+msgid "%d needs authentication"
 msgstr "A(z) %d felhasználó felhatalmazást kér"
 
 msgid "Input request here"
@@ -7236,14 +7288,14 @@ msgid "Send"
 msgstr "Küldés"
 
 #, c-format
-msgid "You have added %d to buddy list"
-msgstr "Felvette a(z) %d azonosítójú felhasználót a partnerlistájára"
+msgid "Add into %d's buddy list"
+msgstr "Hozzáadás %d partnerlistájához"
 
-msgid "QQid Error"
-msgstr "QQid hiba"
+msgid "QQ Number Error"
+msgstr "QQ számhiba"
 
-msgid "Invalid QQid"
-msgstr "Érvénytelen QQid"
+msgid "Invalid QQ Number"
+msgstr "Érvénytelen QQ szám"
 
 msgid "ID: "
 msgstr "Azonosító: "
@@ -7263,19 +7315,20 @@ msgstr "Engedélyezés"
 msgid "QQ Qun"
 msgstr "QQ Qun"
 
-msgid "Please enter external group ID"
-msgstr "Adja meg a külső csoportazonosítót"
+msgid "Please enter Qun number"
+msgstr "Adja meg a Qun számot"
 
-msgid "You can only search for permanent QQ groups\n"
-msgstr "Csak állandó QQ csoportok között kereshet\n"
+#, fuzzy
+msgid "You can only search for permanent Qun\n"
+msgstr "Csak állandó Qun-t kereshet\n"
+
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "A(z) %d felhasználó csatlakozni szeretne a(z) %d Qun-hoz"
 
 #, c-format
-msgid "User %d requested to join group %d"
-msgstr "A(z) %d felhasználó csatlakozásra jelentkezett a(z) %d csoporthoz"
-
-#, c-format
-msgid "Reason: %s"
-msgstr "Ok: %s"
+msgid "Message: %s"
+msgstr "Üzenet: %s"
 
 msgid "QQ Qun Operation"
 msgstr "QQ Qun művelet"
@@ -7283,24 +7336,25 @@ msgstr "QQ Qun művelet"
 msgid "Approve"
 msgstr "Jóváhagyás"
 
-#, c-format
-msgid "Your request to join group %d has been rejected by admin %d"
-msgstr "A csatlakozási kérelmét a(z) %d csoporthoz %d admin visszautasította"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Partner csatlakoztatása a csevegéshez sikertelen"
 
-#, c-format
-msgid "Your request to join group %d has been approved by admin %d"
-msgstr "A csatlakozási kérelmét a(z) %d csoporthoz %d admin jóváhagyta"
+#, fuzzy, c-format
+msgid "Successed to join Qun %d, operated by admin %d"
+msgstr "Partner csatlakoztatása a csevegéshez sikertelen"
 
-#, c-format
-msgid "You [%d] have left group \"%d\""
+#, fuzzy, c-format
+msgid "[%d] removed from Qun \"%d\""
 msgstr "Ön [%d] kilépett a következő csoportból: „%d”"
 
-#, c-format
-msgid "You [%d] have been added to group \"%d\""
-msgstr "Ön [%d] fel lett véve a következő csoportba: „%d”"
+#, fuzzy
+msgid "Notice:"
+msgstr "Megjegyzés"
 
-msgid "This group has been added to your buddy list"
-msgstr "A csoport fel lett véve a partnerlistájára"
+#, fuzzy, c-format
+msgid "[%d] added to Qun \"%d\""
+msgstr "Ön [%d] kilépett a következő csoportból: „%d”"
 
 msgid "I am not a member"
 msgstr "Nem vagyok tag"
@@ -7308,8 +7362,9 @@ msgstr "Nem vagyok tag"
 msgid "I am a member"
 msgstr "Tag vagyok"
 
-msgid "I am applying to join"
-msgstr "Csatlakozásra jelentkezem"
+#, fuzzy
+msgid "I am requesting"
+msgstr "Hibás kérés"
 
 msgid "I am the admin"
 msgstr "Admin vagyok"
@@ -7317,17 +7372,24 @@ msgstr "Admin vagyok"
 msgid "Unknown status"
 msgstr "Ismeretlen állapot"
 
-msgid "This group does not allow others to join"
+#, fuzzy
+msgid "The Qun does not allow others to join"
 msgstr "Ez a csoport nem engedélyezi mások csatlakozását"
 
-msgid "You have successfully left the group"
-msgstr "Sikeresen elhagyta a csoportot"
+#, fuzzy
+msgid "Remove from Qun"
+msgstr "Csoport törlése"
 
-msgid "QQ Group Auth"
-msgstr "QQ csoporthitelesítés"
+#, fuzzy
+msgid "Join to Qun"
+msgstr "Csatlakozás csevegéshez"
 
-msgid "Your authorization request has been accepted by the QQ server"
-msgstr "A hitelesítési kérését elfogadta a QQ kiszolgáló"
+#, c-format
+msgid "Qun %d denied to join"
+msgstr ""
+
+msgid "Join Qun, Unknow Reply"
+msgstr ""
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr "Az elfogadható tartományon kívüli csoportazonosítót adott meg"
@@ -7346,23 +7408,34 @@ msgstr ""
 msgid "Do you want to approve the request?"
 msgstr "Jóvá kívánja hagyni a kérést?"
 
-msgid "Enter your reason:"
-msgstr "Indokolja meg:"
+#, fuzzy
+msgid "Change Qun member"
+msgstr "Telefonszám"
 
-msgid "You have successfully modified Qun member"
-msgstr "Sikeresen módosította a Qun tagot"
-
-msgid "You have successfully modified Qun information"
-msgstr "Sikeresen módosította a Qun információkat"
+#, fuzzy
+msgid "Change Qun information"
+msgstr "Csatornainformációk"
 
 msgid "You have successfully created a Qun"
 msgstr "Sikeresen létrehozott egy Qun-t"
 
-msgid "Would you like to set up the Qun details now?"
+#, fuzzy
+msgid "Would you like to set up the detail information now?"
 msgstr "Be kívánja állítani most a Qun részleteit?"
 
 msgid "Setup"
 msgstr "Beállítás"
+
+#, fuzzy, c-format
+msgid ""
+"%s\n"
+"\n"
+"%s"
+msgstr "%s (%s)"
+
+#, fuzzy
+msgid "QQ Server News"
+msgstr "ICQ közvetítő kiszolgáló"
 
 msgid "System Message"
 msgstr "Rendszerüzenet"
@@ -7395,8 +7468,9 @@ msgstr " Mobilkapcsolat"
 msgid " Video"
 msgstr " Videó"
 
-msgid " Space"
-msgstr " Hely"
+#, fuzzy
+msgid " Zone"
+msgstr "Nincs"
 
 msgid "Flag"
 msgstr "Jelző"
@@ -7415,20 +7489,36 @@ msgstr "<b>Jelenleg elérhető</b>: %d<br>\n"
 msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>Utolsó frissítés</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Server</b>: %s: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Kiszolgáló</b>: %s: %d<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Kapcsolat módja</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Real hostname</b>: %s: %d<br>\n"
-msgstr "<b>Valódi gépnév</b>: %s: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>My Internet Address</b>: %s<br>\n"
+msgstr "<b>Kapcsolat módja</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>My Public IP</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Sent</b>: %lu<br>\n"
+msgstr "<b>Kiszolgáló</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Resend</b>: %lu<br>\n"
+msgstr "<b>Kiszolgáló</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Lost</b>: %lu<br>\n"
+msgstr "<b>Utolsó frissítés</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received</b>: %lu<br>\n"
+msgstr "<b>Kiszolgáló</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Nyilvános IP címem</b>: %s<br>\n"
 
 #, c-format
@@ -7452,10 +7542,12 @@ msgstr "Saját információk beállítása"
 msgid "Change Password"
 msgstr "Jelszó módosítása"
 
-msgid "Show Login Information"
-msgstr "Bejelentkezési információk megjelenítése"
+#, fuzzy
+msgid "Account Information"
+msgstr "Az azonosító jellemzői"
 
-msgid "Leave this QQ Qun"
+#, fuzzy
+msgid "Leave the QQ Qun"
 msgstr "Kilépés ebből a QQ Qun-ből"
 
 msgid "Block this buddy"
@@ -7474,11 +7566,21 @@ msgstr "A partner tiltása"
 msgid "QQ Protocol\tPlugin"
 msgstr "QQ protokoll\tbővítmény"
 
-msgid "Connect using TCP"
+#, fuzzy
+msgid "Auto"
+msgstr "Auto"
+
+#, fuzzy
+msgid "Connect by TCP"
 msgstr "Kapcsolódás TCP segítségével"
 
-msgid "resend interval(s)"
-msgstr "újraküldési időköz"
+#, fuzzy
+msgid "Show server notice"
+msgstr "Kiszolgáló portja"
+
+#, fuzzy
+msgid "Show server news"
+msgstr "Kiszolgáló címe"
 
 msgid "Keep alive interval(s)"
 msgstr "Kapcsolat-fenntartási időköz"
@@ -7487,14 +7589,38 @@ msgid "Update interval(s)"
 msgstr "Frissítési időköz"
 
 #, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr "Érvénytelen jelsorválaszkód, 0x%02X"
+
+#, c-format
 msgid "Invalid token len, %d"
 msgstr "Érvénytelen jelsorhossz: %d"
+
+msgid "Unable login for not support Redirect_EX now"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error password: %s"
+msgstr "Hiba a jelszó módosításakor"
+
+#, c-format
+msgid "Need active: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Unable login for unknow reply code 0x%02X"
+msgstr "Érvénytelen jelsorválaszkód, 0x%02X"
 
 msgid "Keep alive error"
 msgstr "Kapcsolat-fenntartási hiba"
 
-msgid "Failed to connect server"
+#, fuzzy
+msgid "Failed to connect all servers"
 msgstr "Nem sikerült a kiszolgálóhoz kapcsolódni"
+
+#. we didn't successfully connect. tdt->toc_fd is valid here
+msgid "Unable to connect."
+msgstr "Nem lehet kapcsolódni."
 
 msgid "Socket error"
 msgstr "Foglalathiba"
@@ -7516,54 +7642,54 @@ msgstr "Írási hiba"
 msgid "Connection lost"
 msgstr "A kapcsolat elveszett"
 
+#. Update the login progress status display
+#, fuzzy, c-format
+msgid "Request token"
+msgstr "Kérés elutasítva"
+
 msgid "Couldn't resolve host"
 msgstr "Nem sikerült a kiszolgáló feloldása"
 
-msgid "hostname is NULL or port is 0"
-msgstr "a gépnév üres vagy a port 0"
+#, fuzzy
+msgid "Invalid server or port"
+msgstr "Érvénytelen hiba"
 
 #, c-format
 msgid "Connecting server %s, retries %d"
 msgstr "Kapcsolódási a(z) %s kiszolgálóhoz, újrapróbálkozás: %d"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "Nem lehet kapcsolódni."
+#, fuzzy
+msgid "QQ Error"
+msgstr "QQid hiba"
 
-msgid "Could not resolve hostname"
-msgstr "A gépnév nem oldható fel"
+#, fuzzy
+msgid "Unknow SERVER CMD"
+msgstr "Ismeretlen ok"
 
-msgid "Unable to login. Check debug log."
-msgstr "Nem lehet bejelentkezni. Nézze meg a hibakeresési naplót."
-
-msgid "Unable to login"
-msgstr "Nem lehet bejelentkezni"
-
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Reply %s(0x%02X )\n"
-"Sent %s(0x%02X )\n"
-"Room id %d, reply [0x%02X]: \n"
-"%s"
+"Error reply of %s(0x%02X)\n"
+"Room %d, reply 0x%02X"
 msgstr ""
 "Válasz: %s(0x%02X )\n"
 "Elküldve: %s(0x%02X )\n"
 "Szobaazonosító: %d, válasz: [0x%02X]: \n"
 "%s"
 
-msgid "Failed room reply"
-msgstr "A szobaválasz sikertelen"
+#, fuzzy
+msgid "QQ Qun Command"
+msgstr "Parancs"
 
-#, c-format
-msgid "You are not a member of group \"%s\"\n"
+#, fuzzy, c-format
+msgid "You are not a member of QQ Qun \"%s\"\n"
 msgstr "Ön nem tagja a következő csoportnak: „%s”\n"
 
 msgid "Can not decrypt login reply"
 msgstr "Nem fejthető vissza a bejelentkezési válasz"
 
-#, c-format
-msgid "Invalid token reply code, 0x%02X"
-msgstr "Érvénytelen jelsorválaszkód, 0x%02X"
+#, fuzzy
+msgid "Unknow reply CMD"
+msgstr "Ismeretlen ok"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7576,7 +7702,12 @@ msgstr "Fájlküldés"
 msgid "%d canceled the transfer of %s"
 msgstr "%d megszakította a(z) %s átvitelét"
 
-msgid "Do you want to add this buddy?"
+#, fuzzy
+msgid "Do you approve the requestion?"
+msgstr "Jóvá kívánja hagyni a kérést?"
+
+#, fuzzy
+msgid "Do you add the buddy?"
 msgstr "Fel kívánja venni ezt a partnert?"
 
 #. only need to get value
@@ -7587,38 +7718,46 @@ msgstr "%s felvette"
 msgid "Would you like to add him?"
 msgstr "Szeretné felvenni?"
 
-#, c-format
-msgid "%s has added you [%s] to his or her buddy list"
-msgstr "%s felvette Önt [%s] a partnerlistájára"
+#, fuzzy, c-format
+msgid "%s added you [%s] to buddy list"
+msgstr "%s felvette Önt a partnerlistájára."
+
+#, fuzzy
+msgid "QQ Budy"
+msgstr "Partner"
 
 #, c-format
-msgid "User %s rejected your request"
-msgstr "%s felhasználó visszautasította a kérését"
+msgid "Requestion rejected by %s"
+msgstr ""
 
 #, c-format
-msgid "User %s approved your request"
-msgstr "%s felhasználó jóváhagyta kérését"
+msgid "Requestion approved by %s"
+msgstr ""
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
 msgid "%s wants to add you [%s] as a friend"
 msgstr "%s fel kívánja venni Önt [%s] barátként"
 
-#, c-format
-msgid "Message: %s"
-msgstr "Üzenet: %s"
-
-#, c-format
-msgid "%s is not in your buddy list"
+#, fuzzy, c-format
+msgid "%s is not in buddy list"
 msgstr "%s nincs a partnerlistáján"
 
-#, c-format
-msgid "Notice from: %s"
-msgstr "Értesítés a következőtől: %s"
+#, fuzzy
+msgid "Would you add?"
+msgstr "Szeretné felvenni?"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "Feladó %s:"
 
 #, c-format
 msgid "%s"
 msgstr "%s"
+
+#, fuzzy
+msgid "QQ Server Notice"
+msgstr "Kiszolgáló portja"
 
 msgid "Connection closed (writing)"
 msgstr "Kapcsolat lezárva (írás)"
@@ -9100,6 +9239,9 @@ msgstr "Ismeretlen kiszolgálóválasz."
 msgid "Could not create listen socket"
 msgstr "Nem sikerült létrehozni a figyelő foglalatot"
 
+msgid "Could not resolve hostname"
+msgstr "A gépnév nem oldható fel"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 "A SIP felhasználónevek nem tartalmazhatnak üreshely-karaktert vagy @ "
@@ -9492,6 +9634,9 @@ msgstr "list: Csatornák listázása a Yahoo hálózatán"
 
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: Kérés a felhasználóhoz egy firkálási folyamat indítására"
+
+msgid "Yahoo ID..."
+msgstr "Yahoo azonosító…"
 
 #. *< type
 #. *< ui_requirement
@@ -10047,6 +10192,10 @@ msgid "Unable to connect to %s"
 msgstr "Nem lehet csatlakozni a következőhöz: %s"
 
 #, c-format
+msgid "Error reading from %s: response too long (%d bytes limit)"
+msgstr "Hiba %s olvasása közben: a válasz túl hosszú (%d bájtos korlát)"
+
+#, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
 "server may be trying something malicious."
@@ -10229,7 +10378,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Üdvözli a %s!</span>\n"
 "\n"
@@ -10238,7 +10387,7 @@ msgstr ""
 "azt szeretné hogy a %s több fiókhoz csatlakozzon, kattintson újra a "
 "<b>Hozzáadás</b> gombra és állítsa be mindet.\n"
 "\n"
-"A Partnerlista ablak <b>Fiókok -> Hozzáadás/Szerkesztés</b> menüpontja "
+"A Partnerlista ablak <b>Fiókok -> Fiókok kezelése</b> menüpontja "
 "segítségével visszatérhet ehhez az ablakhoz fiókok hozzáadásához, "
 "szerkesztéséhez vagy eltávolításához."
 
@@ -10699,6 +10848,10 @@ msgstr "/Partnerek/Partnerek rendezése"
 msgid "SSL Servers"
 msgstr "SSL kiszolgálók"
 
+#, fuzzy
+msgid "Network disconnected"
+msgstr "A távoli fél bontotta a kapcsolatot"
+
 msgid "Unknown command."
 msgstr "Ismeretlen parancs."
 
@@ -11150,6 +11303,9 @@ msgstr "finn"
 msgid "French"
 msgstr "francia"
 
+msgid "Irish"
+msgstr "Ír"
+
 msgid "Galician"
 msgstr "galíciai"
 
@@ -11569,6 +11725,12 @@ msgstr "Hiperhivatkozás színe"
 
 msgid "Color to draw hyperlinks."
 msgstr "Hiperhivatkozások rajzolásához használt szín."
+
+msgid "Hyperlink visited color"
+msgstr "Meglátogatott hiperhivatkozás színe"
+
+msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgstr "Meglátogatott (aktivált) hiperhivatkozások rajzolásához használt szín."
 
 msgid "Hyperlink prelight color"
 msgstr "Hiperhivatkozás előfényszíne"
@@ -12436,14 +12598,19 @@ msgstr ""
 "Hanglejátszó _parancs:\n"
 "(%s fájlnév megadásához)"
 
+msgid "M_ute sounds"
+msgstr "_Hangok némítása"
+
 msgid "Sounds when conversation has _focus"
 msgstr "Hangok lejátszása, ha a társalgás ablaka a_ktív"
 
-msgid "Enable sounds:"
-msgstr "Hangok engedélyezése:"
+#, fuzzy
+msgid "_Enable sounds:"
+msgstr "Hangok _engedélyezése:"
 
-msgid "Volume:"
-msgstr "Hangerő:"
+#, fuzzy
+msgid "V_olume:"
+msgstr "H_angerő:"
 
 msgid "Play"
 msgstr "Lejátszás"
@@ -12628,6 +12795,12 @@ msgstr "%s állapota"
 msgid "Custom Smiley"
 msgstr "Egyéni hangulatjel"
 
+msgid "More Data needed"
+msgstr "További adatok szükségesek"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Adja meg a hangulatjelhez társítandó billentyűparancsot."
+
 msgid "Duplicate Shortcut"
 msgstr "Kettőzött billentyűparancs"
 
@@ -12637,12 +12810,6 @@ msgid ""
 msgstr ""
 "Már létezik egyéni hangulatjel a kiválasztott billentyűparancshoz. Adjon meg "
 "másik billentyűparancsot."
-
-msgid "More Data needed"
-msgstr "További adatok szükségesek"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Adja meg a hangulatjelhez társítandó billentyűparancsot."
 
 msgid "Please select an image for the smiley."
 msgstr "Válassza ki a képet a hangulatjelhez."
@@ -12665,6 +12832,14 @@ msgstr "Hangulatjel"
 
 msgid "Custom Smiley Manager"
 msgstr "Egyénihangulatjel-kezelő"
+
+#, fuzzy
+msgid "Click to change your buddyicon for this account."
+msgstr "Ezen _partnerikon használata a fiókhoz:"
+
+#, fuzzy
+msgid "Click to change your buddyicon for all accounts."
+msgstr "Ezen _partnerikon használata a fiókhoz:"
 
 msgid "Waiting for network connection"
 msgstr "Várakozás a hálózati kapcsolatra"
@@ -12806,6 +12981,9 @@ msgstr "_Módosítás"
 
 msgid "_Open Mail"
 msgstr "_Levél megnyitása"
+
+msgid "_Edit"
+msgstr "S_zerkesztés"
 
 msgid "Pidgin Tooltip"
 msgstr "Pidgin buboréksúgó"
@@ -13377,6 +13555,9 @@ msgstr "Másodlagos kurzor színe"
 msgid "Hyperlink Color"
 msgstr "Hiperhivatkozás színe"
 
+msgid "Visited Hyperlink Color"
+msgstr "Meglátogatott hiperhivatkozás színe"
+
 msgid "Highlighted Message Name Color"
 msgstr "Kiemelt üzenet névszíne"
 
@@ -13797,3 +13978,123 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
+
+#, fuzzy
+#~ msgid "EOF while reading from resolver process"
+#~ msgstr ""
+#~ "Hiba a feloldó folyamatból olvasás közben:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Your information has been updated"
+#~ msgstr "A jelszava meg lett változtatva."
+
+#, fuzzy
+#~ msgid "You have successfully removed a buddy"
+#~ msgstr "Sikeresen létrehozott egy Qun-t"
+
+#, fuzzy
+#~ msgid "You have successfully removed yourself from your friend's buddy list"
+#~ msgstr "%s eltávolította Önt a partnerlistájáról."
+
+#, fuzzy
+#~ msgid "You have added %d to buddy list"
+#~ msgstr "%s felvette Önt [%s] a partnerlistájára"
+
+#, fuzzy
+#~ msgid "Invalid QQid"
+#~ msgstr "Érvénytelen authzid"
+
+#, fuzzy
+#~ msgid "Please enter external group ID"
+#~ msgstr "Adja meg %s új nevét"
+
+#, fuzzy
+#~ msgid "Reason: %s"
+#~ msgstr "Verzió: \t%s\n"
+
+#, fuzzy
+#~ msgid "Your request to join group %d has been rejected by admin %d"
+#~ msgstr ""
+#~ "A csatlakozási kérelmét a(z) %d csoporthoz %d admin visszautasította"
+
+#, fuzzy
+#~ msgid "Your request to join group %d has been approved by admin %d"
+#~ msgstr ""
+#~ "A csatlakozási kérelmét a(z) %d csoporthoz %d admin visszautasította"
+
+#, fuzzy
+#~ msgid "You [%d] have left group \"%d\""
+#~ msgstr "Ön [%d] fel lett véve a következő csoportba: „%d”"
+
+#, fuzzy
+#~ msgid "You [%d] have been added to group \"%d\""
+#~ msgstr "%s felvette"
+
+#, fuzzy
+#~ msgid "This group has been added to your buddy list"
+#~ msgstr "%s felvette Önt a partnerlistájára."
+
+#, fuzzy
+#~ msgid "You have successfully left the group"
+#~ msgstr "Sikeresen létrehozott egy Qun-t"
+
+#, fuzzy
+#~ msgid "Enter your reason:"
+#~ msgstr "Írja be alább a jegyzetet…"
+
+#, fuzzy
+#~ msgid "You have successfully modified Qun member"
+#~ msgstr "Sikeresen létrehozott egy Qun-t"
+
+#, fuzzy
+#~ msgid "You have successfully modified Qun information"
+#~ msgstr "Sikeresen létrehozott egy Qun-t"
+
+#, fuzzy
+#~ msgid " Space"
+#~ msgstr "MySpace"
+
+#, fuzzy
+#~ msgid "<b>Real hostname</b>: %s: %d<br>\n"
+#~ msgstr "<b>Utolsó frissítés</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>My Public IP</b>: %s<br>\n"
+#~ msgstr "<b>Utolsó bejelentkezési IP</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "Show Login Information"
+#~ msgstr "Bejelentkezési információk"
+
+#, fuzzy
+#~ msgid "resend interval(s)"
+#~ msgstr "Frissítési időköz"
+
+#, fuzzy
+#~ msgid "Failed to connect server"
+#~ msgstr "Nem sikerült a kiszolgálóhoz kapcsolódni."
+
+#, fuzzy
+#~ msgid "Unable to login. Check debug log."
+#~ msgstr "A bővítmény nem tölthető be"
+
+#, fuzzy
+#~ msgid "Unable to login"
+#~ msgstr "A bővítmény nem tölthető be"
+
+#, fuzzy
+#~ msgid "Failed room reply"
+#~ msgstr "A partner eltávolítása sikertelen"
+
+#, fuzzy
+#~ msgid "User %s rejected your request"
+#~ msgstr "Visszautasította %d kérését"
+
+#, fuzzy
+#~ msgid "User %s approved your request"
+#~ msgstr "Jóvá kívánja hagyni a kérést?"
+
+#, fuzzy
+#~ msgid "Notice from: %s"
+#~ msgstr "Megjegyzés"

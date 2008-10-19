@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CVS Version of Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:18-0400\n"
+"POT-Creation-Date: 2008-10-16 00:55-0700\n"
 "PO-Revision-Date: 2008-06-22 21:58+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -76,7 +76,8 @@ msgstr "Thông báo thư mới"
 msgid "Remember password"
 msgstr "Ghi nhớ mật khẩu"
 
-msgid "There's no protocol plugins installed."
+#, fuzzy
+msgid "There are no protocol plugins installed."
 msgstr "Chưa cài đặt phần bổ sung giao thức."
 
 msgid "(You probably forgot to 'make install'.)"
@@ -1507,6 +1508,12 @@ msgstr "Meebo"
 msgid "No Grouping"
 msgstr "Không theo nhóm"
 
+msgid "Nested Subgroup"
+msgstr ""
+
+msgid "Nested Grouping (experimental)"
+msgstr ""
+
 msgid "Provides alternate buddylist grouping options."
 msgstr "Cung cấp thêm tùy chọn nhóm lại danh sách bạn thân."
 
@@ -1823,8 +1830,8 @@ msgstr ""
 "%s"
 
 #, c-format
-msgid "EOF while reading from resolver process"
-msgstr "Gặp kết thúc tập tin khi đọc từ tiến trình giải quyết"
+msgid "Resolver process exited without answering our request"
+msgstr ""
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2389,6 +2396,9 @@ msgstr "Kích cỡ phòng tối thiểu"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Thời hạn người dùng không hoạt động (theo phút)"
+
+msgid "Apply hiding rules to buddies"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -4541,6 +4551,12 @@ msgstr "Máy phục vụ kết nối"
 msgid "File transfer proxies"
 msgstr "Ủy nhiệm truyền tập tin"
 
+#. this should probably be part of global smiley theme settings later on,
+#. shared with MSN
+#, fuzzy
+msgid "Show Custom Smileys"
+msgstr "Hiển thị hình cười tự chọn"
+
 #, c-format
 msgid "%s has left the conversation."
 msgstr "%s đã rời cuộc thoại."
@@ -4891,6 +4907,10 @@ msgstr "Passport của trẻ không có sự đồng ý của cha mẹ"
 msgid "Passport account not yet verified"
 msgstr "Tài khoản Passport chưa được thẩm định"
 
+#, fuzzy, c-format
+msgid "Passport account suspended"
+msgstr "Tài khoản Passport chưa được thẩm định"
+
 #, c-format
 msgid "Bad ticket"
 msgstr "Phiếu sai"
@@ -4902,6 +4922,14 @@ msgstr "Mã lỗi không rõ %d"
 #, c-format
 msgid "MSN Error: %s\n"
 msgstr "Lỗi MSN: %s\n"
+
+#, fuzzy
+msgid "Other Contacts"
+msgstr "Liên lạc đã thích"
+
+#, fuzzy
+msgid "Non-IM Contacts"
+msgstr "Bỏ liên lạc"
 
 msgid "Nudge"
 msgstr "Làm nổi bật"
@@ -4974,6 +5002,9 @@ msgstr "Gửi tin nhắn tới di động."
 
 msgid "Page"
 msgstr "Nhắn tin"
+
+msgid "Has you"
+msgstr "Có bạn"
 
 msgid "Home Phone Number"
 msgstr "Số điện thoại ở nhà"
@@ -5256,6 +5287,10 @@ msgstr "Lỗi không rõ (%d)"
 msgid "Unable to add user"
 msgstr "Không thể thêm người dùng"
 
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "Dưới đây là kết quả tìm kiếm"
+
 #, c-format
 msgid "Unable to add user on %s (%s)"
 msgstr "Không thể thêm người dùng trên %s (%s)"
@@ -5434,6 +5469,14 @@ msgstr "%s đã thêm bạn vào danh sách bạn bè."
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s đã loại bỏ bạn ra khỏi danh sách bạn bè."
 
+#, fuzzy
+msgid "Delete Buddy from Address Book?"
+msgstr "Thêm vào sổ địa chỉ"
+
+#, fuzzy
+msgid "Do you want to delete this buddy from your address book as well?"
+msgstr "Bạn muốn thêm người này vào danh sách bạn bè của bạn không?"
+
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -5446,9 +5489,6 @@ msgstr "Bạn đã ghi rõ một tên người dùng không hợp lệ."
 
 msgid "This Hotmail account may not be active."
 msgstr "Tài khoản Hotmail này có lẽ chưa kích hoạt."
-
-msgid "Has you"
-msgstr "Có bạn"
 
 #. *< type
 #. *< ui_requirement
@@ -6124,6 +6164,9 @@ msgstr "Nhận dữ liệu không hợp lệ khi kết nối tới máy phục v
 msgid "AIM Protocol Plugin"
 msgstr "Phần bổ sung giao thức AIM"
 
+msgid "ICQ UIN..."
+msgstr ""
+
 # ICQ là mạng trò chuyện khác.
 #. *< type
 #. *< ui_requirement
@@ -6467,7 +6510,6 @@ msgstr ""
 msgid "Unable to get a valid login hash."
 msgstr "Không thể lấy mã đăng nhập hợp lệ."
 
-#. allow multple logins?
 msgid "Password sent"
 msgstr "Đã gửi mật khẩu"
 
@@ -7125,14 +7167,27 @@ msgstr "Hợi"
 msgid "Other"
 msgstr "Khác"
 
-msgid "Modify my information"
+#, fuzzy
+msgid "Modify information"
 msgstr "Sửa đổi thông tin của tôi"
 
-msgid "Update my information"
+#, fuzzy
+msgid "Update information"
 msgstr "Sửa đổi thông tin của tôi"
 
-msgid "Your information has been updated"
-msgstr "Thông tin của bạn đã được cập nhật"
+#. TODO: We don't really need to notify the user about this, do we?
+#. TODO: Does the user really need to be notified about this?
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Bạn chát"
+
+#, fuzzy
+msgid "Successed:"
+msgstr "Tốc độ :"
+
+#, fuzzy
+msgid "Change buddy information."
+msgstr "Hãy nhập thông tin về bạn thân."
 
 #, c-format
 msgid ""
@@ -7148,30 +7203,31 @@ msgstr "Mặt QQ không hợp lệ"
 msgid "You rejected %d's request"
 msgstr "Bạn đã từ chối yêu cầu của %d"
 
-msgid "Input your reason:"
-msgstr "Gõ lý do :"
-
 msgid "Reject request"
 msgstr "Từ chối yêu cầu"
 
 #. title
-msgid "Sorry, you are not my type..."
+#, fuzzy
+msgid "Sorry, you are not my style..."
 msgstr "Tiếc là tôi quá bận..."
 
 msgid "Add buddy with auth request failed"
 msgstr "Không thêm được bạn chát với yêu cầu sự cho phép"
 
-#. TODO: We don't really need to notify the user about this, do we?
-msgid "You have successfully removed a buddy"
-msgstr "Bạn đã gỡ bỏ thành công một bạn chát"
+#, fuzzy
+msgid "Failed:"
+msgstr "Bị lỗi"
 
-#. TODO: Does the user really need to be notified about this?
-msgid "You have successfully removed yourself from your friend's buddy list"
-msgstr ""
-"Bạn đã loại bỏ thành công bạn thân ra khỏi danh sách bạn bè của người bạn"
+#, fuzzy
+msgid "Remove buddy"
+msgstr "Bỏ bạn chát"
 
-#, c-format
-msgid "User %d needs authentication"
+#, fuzzy
+msgid "Remove from other's buddy list"
+msgstr "%s đã loại bỏ bạn ra khỏi danh sách bạn bè."
+
+#, fuzzy, c-format
+msgid "%d needs authentication"
 msgstr "Người dùng %d yêu cầu sự cho phép"
 
 msgid "Input request here"
@@ -7187,15 +7243,17 @@ msgstr "Bạn có muốn nói chuyện phải không?"
 msgid "Send"
 msgstr "Gửi"
 
-#, c-format
-msgid "You have added %d to buddy list"
-msgstr "Bạn đã thêm %d vào danh sách bạn bè"
+#, fuzzy, c-format
+msgid "Add into %d's buddy list"
+msgstr "Không thể nạp danh sách bạn bè"
 
-msgid "QQid Error"
-msgstr "Lỗi QQid"
+#, fuzzy
+msgid "QQ Number Error"
+msgstr "Số QQ"
 
-msgid "Invalid QQid"
-msgstr "QQid không hợp lệ"
+#, fuzzy
+msgid "Invalid QQ Number"
+msgstr "Mặt QQ không hợp lệ"
 
 msgid "ID: "
 msgstr "ID: "
@@ -7215,19 +7273,21 @@ msgstr "Phép"
 msgid "QQ Qun"
 msgstr "QQ Qun"
 
-msgid "Please enter external group ID"
-msgstr "Hãy nhập ID nhóm bên ngoài"
+#, fuzzy
+msgid "Please enter Qun number"
+msgstr "Hãy nhập tên mới cho %s"
 
-msgid "You can only search for permanent QQ groups\n"
+#, fuzzy
+msgid "You can only search for permanent Qun\n"
 msgstr "Bạn chỉ có khả năng tìm kiếm nhóm QQ bên bỉ\n"
 
-#, c-format
-msgid "User %d requested to join group %d"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
 msgstr "Người dùng %d đã yêu cầu tham gia nhóm %d"
 
 #, c-format
-msgid "Reason: %s"
-msgstr "Lý do : %s"
+msgid "Message: %s"
+msgstr "Tin nhẳn: %s"
 
 msgid "QQ Qun Operation"
 msgstr "Thao tác QQ Qun"
@@ -7235,24 +7295,25 @@ msgstr "Thao tác QQ Qun"
 msgid "Approve"
 msgstr "Tán thành"
 
-#, c-format
-msgid "Your request to join group %d has been rejected by admin %d"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Không tham gia được với bạn chát"
+
+#, fuzzy, c-format
+msgid "Successed to join Qun %d, operated by admin %d"
 msgstr "Quản trị %2$d đã từ chối yêu cầu tham gia nhóm %1$d của bạn"
 
-#, c-format
-msgid "Your request to join group %d has been approved by admin %d"
-msgstr "Quản trị %2$d đã tán thành yêu cầu tham gia nhóm %1$d của bạn"
-
-#, c-format
-msgid "You [%d] have left group \"%d\""
+#, fuzzy, c-format
+msgid "[%d] removed from Qun \"%d\""
 msgstr "Bạn [%d] đã rời nhóm « %d »"
 
-#, c-format
-msgid "You [%d] have been added to group \"%d\""
-msgstr "Bạn [%d] đã được thêm vào nhóm « %d »"
+#, fuzzy
+msgid "Notice:"
+msgstr "Ghi chú"
 
-msgid "This group has been added to your buddy list"
-msgstr "Nhóm này đã được thêm vào danh sách bạn bè của bạn"
+#, fuzzy, c-format
+msgid "[%d] added to Qun \"%d\""
+msgstr "Bạn [%d] đã được thêm vào nhóm « %d »"
 
 msgid "I am not a member"
 msgstr "Tôi không phải là thành viên"
@@ -7260,8 +7321,9 @@ msgstr "Tôi không phải là thành viên"
 msgid "I am a member"
 msgstr "Tôi là thành viên"
 
-msgid "I am applying to join"
-msgstr "Tôi muốn tham gia"
+#, fuzzy
+msgid "I am requesting"
+msgstr "Yêu cầu sai"
 
 msgid "I am the admin"
 msgstr "Tôi là quản trị"
@@ -7269,17 +7331,24 @@ msgstr "Tôi là quản trị"
 msgid "Unknown status"
 msgstr "Trạng thái không rõ"
 
-msgid "This group does not allow others to join"
+#, fuzzy
+msgid "The Qun does not allow others to join"
 msgstr "Nhóm này không cho phép người khác tham gia"
 
-msgid "You have successfully left the group"
-msgstr "Bạn đã rời thành công nhóm này"
+#, fuzzy
+msgid "Remove from Qun"
+msgstr "Bỏ nhóm"
 
-msgid "QQ Group Auth"
-msgstr "Phép nhóm QQ"
+#, fuzzy
+msgid "Join to Qun"
+msgstr "Tham gia chát"
 
-msgid "Your authorization request has been accepted by the QQ server"
-msgstr "Máy phục vụ QQ đã chấp nhận yêu cầu sự cho phép của bạn"
+#, c-format
+msgid "Qun %d denied to join"
+msgstr ""
+
+msgid "Join Qun, Unknow Reply"
+msgstr ""
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr "Bạn đã gõ một ID nhóm nằm bên ngoài phạm vi hợp lệ"
@@ -7298,23 +7367,34 @@ msgstr ""
 msgid "Do you want to approve the request?"
 msgstr "Bạn có muốn tán thành yêu cầu không?"
 
-msgid "Enter your reason:"
-msgstr "Gõ lý do :"
+#, fuzzy
+msgid "Change Qun member"
+msgstr "Điện thoại"
 
-msgid "You have successfully modified Qun member"
-msgstr "Bạn đã sửa đổi thành công thành viên Qun"
-
-msgid "You have successfully modified Qun information"
-msgstr "Bạn đã sửa đổi thành công thông tin Qun"
+#, fuzzy
+msgid "Change Qun information"
+msgstr "Thông tin kệnh"
 
 msgid "You have successfully created a Qun"
 msgstr "Bạn đã tạo thành công một Qun"
 
-msgid "Would you like to set up the Qun details now?"
+#, fuzzy
+msgid "Would you like to set up the detail information now?"
 msgstr "Bạn có muốn thiết lập chi tiết Qun ngay bây giờ không?"
 
 msgid "Setup"
 msgstr "Thiết lập"
+
+#, fuzzy, c-format
+msgid ""
+"%s\n"
+"\n"
+"%s"
+msgstr "%s (%s)"
+
+#, fuzzy
+msgid "QQ Server News"
+msgstr "Chuyển tiếp máy phục vụ ICQ"
 
 msgid "System Message"
 msgstr "Thông điệp hệ thống"
@@ -7351,10 +7431,9 @@ msgstr "Di động"
 msgid " Video"
 msgstr "Ảnh động trực tiếp"
 
-# Name: don't translate/Tên: đừng dịch
 #, fuzzy
-msgid " Space"
-msgstr "MySpace"
+msgid " Zone"
+msgstr "Không"
 
 msgid "Flag"
 msgstr ""
@@ -7374,7 +7453,7 @@ msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>Cập nhật cuối:</b> %s<br>\n"
 
 #, fuzzy, c-format
-msgid "<b>Server</b>: %s: %d<br>\n"
+msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>IP máy phục vụ </b>: %s: %d<br>\n"
 
 #, c-format
@@ -7382,11 +7461,27 @@ msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Chế độ kết nối:</b> %s<br>\n"
 
 #, fuzzy, c-format
-msgid "<b>Real hostname</b>: %s: %d<br>\n"
+msgid "<b>My Internet Address</b>: %s<br>\n"
+msgstr "<b>Chế độ kết nối:</b> %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Sent</b>: %lu<br>\n"
 msgstr "<b>IP máy phục vụ </b>: %s: %d<br>\n"
 
-#, c-format
-msgid "<b>My Public IP</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Resend</b>: %lu<br>\n"
+msgstr "<b>Cập nhật cuối:</b> %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Lost</b>: %lu<br>\n"
+msgstr "<b>Cập nhật cuối:</b> %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received</b>: %lu<br>\n"
+msgstr "<b>IP máy phục vụ </b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>IP công của tôi:</b> %s<br>\n"
 
 #, c-format
@@ -7410,10 +7505,12 @@ msgstr "Đặt thông tin của tôi"
 msgid "Change Password"
 msgstr "Đổi mật khẩu"
 
-msgid "Show Login Information"
-msgstr "Hiện thông tin đăng nhập"
+#, fuzzy
+msgid "Account Information"
+msgstr "Thông tin đăng nhập"
 
-msgid "Leave this QQ Qun"
+#, fuzzy
+msgid "Leave the QQ Qun"
 msgstr "Để lại QQ Qun này"
 
 msgid "Block this buddy"
@@ -7432,11 +7529,21 @@ msgstr "Chặn bạn chát này"
 msgid "QQ Protocol\tPlugin"
 msgstr "Phần bổ sung\tgiao thức QQ"
 
-msgid "Connect using TCP"
+#, fuzzy
+msgid "Auto"
+msgstr "Tác giả"
+
+#, fuzzy
+msgid "Connect by TCP"
 msgstr "Kết nối bằng TCP"
 
-msgid "resend interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Show server notice"
+msgstr "Cổng máy phục vụ"
+
+#, fuzzy
+msgid "Show server news"
+msgstr "Địa chỉ máy phục vụ"
 
 #, fuzzy
 msgid "Keep alive interval(s)"
@@ -7445,16 +7552,39 @@ msgstr "Lỗi giữ cho kết nối hoạt động"
 msgid "Update interval(s)"
 msgstr ""
 
+#, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr ""
+
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "Tựa đề không hợp lệ"
+
+msgid "Unable login for not support Redirect_EX now"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error password: %s"
+msgstr "Lỗi khi thay đổi mật khẩu"
+
+#, c-format
+msgid "Need active: %s"
+msgstr ""
+
+#, c-format
+msgid "Unable login for unknow reply code 0x%02X"
+msgstr ""
 
 msgid "Keep alive error"
 msgstr "Lỗi giữ cho kết nối hoạt động"
 
 #, fuzzy
-msgid "Failed to connect server"
+msgid "Failed to connect all servers"
 msgstr "Không kết nối được với máy phục vụ."
+
+#. we didn't successfully connect. tdt->toc_fd is valid here
+msgid "Unable to connect."
+msgstr "Không thể kết nối."
 
 msgid "Socket error"
 msgstr "Lỗi ổ cắm"
@@ -7476,11 +7606,17 @@ msgstr "Lỗi ghi"
 msgid "Connection lost"
 msgstr "Kết nối bị mất"
 
+#. Update the login progress status display
+#, fuzzy, c-format
+msgid "Request token"
+msgstr "Yêu cầu bị từ chối"
+
 msgid "Couldn't resolve host"
 msgstr "Không thể giải quyết máy"
 
-msgid "hostname is NULL or port is 0"
-msgstr ""
+#, fuzzy
+msgid "Invalid server or port"
+msgstr "Lỗi không hợp lệ"
 
 #, fuzzy, c-format
 msgid "Connecting server %s, retries %d"
@@ -7488,41 +7624,33 @@ msgstr ""
 "Lỗi kết nối từ máy phục vụ %s:\n"
 "%s"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "Không thể kết nối."
+#, fuzzy
+msgid "QQ Error"
+msgstr "Lỗi QQid"
 
-msgid "Could not resolve hostname"
-msgstr "Không thể giải quyết tên máy"
-
-msgid "Unable to login. Check debug log."
-msgstr "Không thể đăng nhập, hãy kiểm tra sổ theo dõi gỡ lỗi"
-
-msgid "Unable to login"
-msgstr "Không thể đăng nhập"
+msgid "Unknow SERVER CMD"
+msgstr ""
 
 #, c-format
 msgid ""
-"Reply %s(0x%02X )\n"
-"Sent %s(0x%02X )\n"
-"Room id %d, reply [0x%02X]: \n"
-"%s"
+"Error reply of %s(0x%02X)\n"
+"Room %d, reply 0x%02X"
 msgstr ""
 
 #, fuzzy
-msgid "Failed room reply"
-msgstr "Không đăng nhập được, không có đáp ứng"
+msgid "QQ Qun Command"
+msgstr "Lệnh"
 
 #, fuzzy, c-format
-msgid "You are not a member of group \"%s\"\n"
+msgid "You are not a member of QQ Qun \"%s\"\n"
 msgstr "Bạn [%d] đã được thêm vào nhóm « %d »"
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
-#, c-format
-msgid "Invalid token reply code, 0x%02X"
-msgstr ""
+#, fuzzy
+msgid "Unknow reply CMD"
+msgstr "Lý do không rõ"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7535,7 +7663,12 @@ msgstr "Gửi tập tin"
 msgid "%d canceled the transfer of %s"
 msgstr "%d đã thôi truyền %s"
 
-msgid "Do you want to add this buddy?"
+#, fuzzy
+msgid "Do you approve the requestion?"
+msgstr "Bạn có muốn tán thành yêu cầu không?"
+
+#, fuzzy
+msgid "Do you add the buddy?"
 msgstr "Bạn có muốn thêm bạn chát này không?"
 
 #. only need to get value
@@ -7546,38 +7679,46 @@ msgstr "Bạn đã được %s thêm"
 msgid "Would you like to add him?"
 msgstr "Bạn có muốn thêm họ không?"
 
-#, c-format
-msgid "%s has added you [%s] to his or her buddy list"
+#, fuzzy, c-format
+msgid "%s added you [%s] to buddy list"
 msgstr "%s đã thêm bạn [%s] vào danh sách bạn bè của họ"
 
-#, c-format
-msgid "User %s rejected your request"
-msgstr "Người dùng %s đã từ chối yêu cầu của bạn"
+#, fuzzy
+msgid "QQ Budy"
+msgstr "Bạn chát"
 
 #, c-format
-msgid "User %s approved your request"
-msgstr "Người dùng %s đã tán thành yêu cầu của bạn"
+msgid "Requestion rejected by %s"
+msgstr ""
+
+#, c-format
+msgid "Requestion approved by %s"
+msgstr ""
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
 msgid "%s wants to add you [%s] as a friend"
 msgstr "%s muốn thêm bạn [%s] như người bạn"
 
-#, c-format
-msgid "Message: %s"
-msgstr "Tin nhẳn: %s"
-
-#, c-format
-msgid "%s is not in your buddy list"
+#, fuzzy, c-format
+msgid "%s is not in buddy list"
 msgstr "%s không có trong danh sách bạn bè của bạn"
 
+#, fuzzy
+msgid "Would you add?"
+msgstr "Bạn có muốn thêm họ không?"
+
 #, fuzzy, c-format
-msgid "Notice from: %s"
-msgstr "Thông báo từ %s"
+msgid "From %s:"
+msgstr "Từ"
 
 #, c-format
 msgid "%s"
 msgstr ""
+
+#, fuzzy
+msgid "QQ Server Notice"
+msgstr "Cổng máy phục vụ"
 
 msgid "Connection closed (writing)"
 msgstr "Kết nối bị đóng (đang ghi)"
@@ -9051,6 +9192,9 @@ msgstr "Không rõ đáp ứng từ máy phục vụ"
 msgid "Could not create listen socket"
 msgstr "Không thể tạo ổ cắm lắng nghe"
 
+msgid "Could not resolve hostname"
+msgstr "Không thể giải quyết tên máy"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Tên người dùng SIP không được chứa dấu cách hay ký hiệu @"
 
@@ -9441,6 +9585,10 @@ msgstr "list: Liệt kê các phòng trên mạng Yahoo"
 
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: Yêu cầu người dùng bắt đầu vẽ hình"
+
+#, fuzzy
+msgid "Yahoo ID..."
+msgstr "ID Yahoo"
 
 #. *< type
 #. *< ui_requirement
@@ -9983,6 +10131,10 @@ msgstr "Không thể mở %s: chuyển hướng quá nhiều lần"
 msgid "Unable to connect to %s"
 msgstr "Không thể kết nối tới %s"
 
+#, fuzzy, c-format
+msgid "Error reading from %s: response too long (%d bytes limit)"
+msgstr "Lỗi đọc từ %s: %s"
+
 #, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
@@ -10155,7 +10307,7 @@ msgstr "Đã bật"
 msgid "Protocol"
 msgstr "Giao thức"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
@@ -10165,7 +10317,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Chào mừng đến %s!</span>\n"
 "\n"
@@ -10627,6 +10779,10 @@ msgstr "/Bạn chát/Sắp xếp bạn chát"
 msgid "SSL Servers"
 msgstr "Máy phục vụ SSL"
 
+#, fuzzy
+msgid "Network disconnected"
+msgstr "Máy ở xa đã ngắt kết nối"
+
 msgid "Unknown command."
 msgstr "Lệnh không rõ."
 
@@ -11075,6 +11231,10 @@ msgstr "Tiếng Phần Lan"
 msgid "French"
 msgstr "Tiếng Pháp"
 
+#, fuzzy
+msgid "Irish"
+msgstr "Tiếng Kuổ-đít"
+
 msgid "Galician"
 msgstr "Tiếng Ga-li-xi"
 
@@ -11488,6 +11648,14 @@ msgstr "Màu siêu liên kết"
 
 msgid "Color to draw hyperlinks."
 msgstr "Màu để vẽ siêu liên kết."
+
+#, fuzzy
+msgid "Hyperlink visited color"
+msgstr "Màu siêu liên kết"
+
+#, fuzzy
+msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgstr "Màu siêu liên kết nổi bật khi rê chuột qua"
 
 msgid "Hyperlink prelight color"
 msgstr "Màu siêu liên kết tô sáng"
@@ -12362,13 +12530,19 @@ msgstr ""
 "_Lệnh âm thanh:\n"
 "(%s cho tên tập tin)"
 
+#, fuzzy
+msgid "M_ute sounds"
+msgstr "Câm âm _thanh"
+
 msgid "Sounds when conversation has _focus"
 msgstr "Âm thanh khi cuộc thoại có tiê_u điểm"
 
-msgid "Enable sounds:"
+#, fuzzy
+msgid "_Enable sounds:"
 msgstr "Bật âm thanh:"
 
-msgid "Volume:"
+#, fuzzy
+msgid "V_olume:"
 msgstr "Âm lượng:"
 
 msgid "Play"
@@ -12552,6 +12726,12 @@ msgstr "Trạng thái cho %s"
 msgid "Custom Smiley"
 msgstr "Hình cười tự chọn"
 
+msgid "More Data needed"
+msgstr "Cần thêm dữ liệu"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Hãy cung cấp một lối tắt cần liên quan đến hình cười đó."
+
 msgid "Duplicate Shortcut"
 msgstr "Nhân đôi lối tắt"
 
@@ -12560,12 +12740,6 @@ msgid ""
 "different shortcut."
 msgstr ""
 "Đã có một hình cười tự chọn cho lối tắt đã chọn. Hãy ghi rõ một lối tắt khác."
-
-msgid "More Data needed"
-msgstr "Cần thêm dữ liệu"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Hãy cung cấp một lối tắt cần liên quan đến hình cười đó."
 
 msgid "Please select an image for the smiley."
 msgstr "Hãy chọn một ảnh cho hình cười đó."
@@ -12588,6 +12762,14 @@ msgstr "Hình cười"
 
 msgid "Custom Smiley Manager"
 msgstr "Bộ Quản lý Hình cười Tự chọn"
+
+#, fuzzy
+msgid "Click to change your buddyicon for this account."
+msgstr "Dùng biểu tượng bạn chát cho tài khoản này:"
+
+#, fuzzy
+msgid "Click to change your buddyicon for all accounts."
+msgstr "Dùng biểu tượng bạn chát cho tài khoản này:"
 
 msgid "Waiting for network connection"
 msgstr "Đợi kết nối đến mạng"
@@ -12727,6 +12909,10 @@ msgstr "_Sửa"
 
 msgid "_Open Mail"
 msgstr "_Mở thư"
+
+#, fuzzy
+msgid "_Edit"
+msgstr "Sửa"
 
 msgid "Pidgin Tooltip"
 msgstr "Gợi ý Công cụ Pidgin"
@@ -13293,6 +13479,10 @@ msgstr "Màu con trỏ phụ"
 msgid "Hyperlink Color"
 msgstr "Màu siêu liên kết"
 
+#, fuzzy
+msgid "Visited Hyperlink Color"
+msgstr "Màu siêu liên kết"
+
 msgid "Highlighted Message Name Color"
 msgstr "Màu tên tin nhẳn tô sáng"
 
@@ -13710,6 +13900,93 @@ msgstr "Gửi và nhận các đoạn dòng XMPP thô."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Phần bổ sung này có ích để gỡ lỗi máy phục vụ hay trình khách kiểu XMPP."
+
+#~ msgid "EOF while reading from resolver process"
+#~ msgstr "Gặp kết thúc tập tin khi đọc từ tiến trình giải quyết"
+
+#~ msgid "Your information has been updated"
+#~ msgstr "Thông tin của bạn đã được cập nhật"
+
+#~ msgid "Input your reason:"
+#~ msgstr "Gõ lý do :"
+
+#~ msgid "You have successfully removed a buddy"
+#~ msgstr "Bạn đã gỡ bỏ thành công một bạn chát"
+
+#~ msgid "You have successfully removed yourself from your friend's buddy list"
+#~ msgstr ""
+#~ "Bạn đã loại bỏ thành công bạn thân ra khỏi danh sách bạn bè của người bạn"
+
+#~ msgid "You have added %d to buddy list"
+#~ msgstr "Bạn đã thêm %d vào danh sách bạn bè"
+
+#~ msgid "Invalid QQid"
+#~ msgstr "QQid không hợp lệ"
+
+#~ msgid "Please enter external group ID"
+#~ msgstr "Hãy nhập ID nhóm bên ngoài"
+
+#~ msgid "Reason: %s"
+#~ msgstr "Lý do : %s"
+
+#~ msgid "Your request to join group %d has been approved by admin %d"
+#~ msgstr "Quản trị %2$d đã tán thành yêu cầu tham gia nhóm %1$d của bạn"
+
+#~ msgid "This group has been added to your buddy list"
+#~ msgstr "Nhóm này đã được thêm vào danh sách bạn bè của bạn"
+
+#~ msgid "I am applying to join"
+#~ msgstr "Tôi muốn tham gia"
+
+#~ msgid "You have successfully left the group"
+#~ msgstr "Bạn đã rời thành công nhóm này"
+
+#~ msgid "QQ Group Auth"
+#~ msgstr "Phép nhóm QQ"
+
+#~ msgid "Your authorization request has been accepted by the QQ server"
+#~ msgstr "Máy phục vụ QQ đã chấp nhận yêu cầu sự cho phép của bạn"
+
+#~ msgid "Enter your reason:"
+#~ msgstr "Gõ lý do :"
+
+#~ msgid "You have successfully modified Qun member"
+#~ msgstr "Bạn đã sửa đổi thành công thành viên Qun"
+
+#~ msgid "You have successfully modified Qun information"
+#~ msgstr "Bạn đã sửa đổi thành công thông tin Qun"
+
+# Name: don't translate/Tên: đừng dịch
+#, fuzzy
+#~ msgid " Space"
+#~ msgstr "MySpace"
+
+#, fuzzy
+#~ msgid "<b>Real hostname</b>: %s: %d<br>\n"
+#~ msgstr "<b>IP máy phục vụ </b>: %s: %d<br>\n"
+
+#~ msgid "Show Login Information"
+#~ msgstr "Hiện thông tin đăng nhập"
+
+#~ msgid "Unable to login. Check debug log."
+#~ msgstr "Không thể đăng nhập, hãy kiểm tra sổ theo dõi gỡ lỗi"
+
+#~ msgid "Unable to login"
+#~ msgstr "Không thể đăng nhập"
+
+#, fuzzy
+#~ msgid "Failed room reply"
+#~ msgstr "Không đăng nhập được, không có đáp ứng"
+
+#~ msgid "User %s rejected your request"
+#~ msgstr "Người dùng %s đã từ chối yêu cầu của bạn"
+
+#~ msgid "User %s approved your request"
+#~ msgstr "Người dùng %s đã tán thành yêu cầu của bạn"
+
+#, fuzzy
+#~ msgid "Notice from: %s"
+#~ msgstr "Thông báo từ %s"
 
 #~ msgid "Error setting socket options"
 #~ msgstr "Lỗi đặt tùy chọn ổ cắm"

@@ -33,24 +33,24 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 	switch (type) {
 		case 0:
 			g_snprintf(msg, sizeof(msg),
-					   _("Unable to parse message"));
+			           _("Unable to parse message"));
 			*debug = TRUE;
 			break;
 		case 200:
 			g_snprintf(msg, sizeof(msg),
-					   _("Syntax Error (probably a client bug)"));
+			           _("Syntax Error (probably a client bug)"));
 			*debug = TRUE;
 			break;
 		case 201:
 			g_snprintf(msg, sizeof(msg),
-					   _("Invalid email address"));
+			           _("Invalid email address"));
 			break;
 		case 205:
 			g_snprintf(msg, sizeof(msg), _("User does not exist"));
 			break;
 		case 206:
 			g_snprintf(msg, sizeof(msg),
-					   _("Fully qualified domain name missing"));
+			           _("Fully qualified domain name missing"));
 			break;
 		case 207:
 			g_snprintf(msg, sizeof(msg), _("Already logged in"));
@@ -100,8 +100,8 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 		case 231:
 			g_snprintf(msg, sizeof(msg),
-					   _("Tried to add a user to a group "
-						 "that doesn't exist"));
+			           _("Tried to add a user to a group "
+			             "that doesn't exist"));
 			break;
 		case 280:
 			g_snprintf(msg, sizeof(msg), _("Switchboard failed"));
@@ -125,7 +125,8 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 
 		case 500:
-			g_snprintf(msg, sizeof(msg), _("Service temporarily unavailable"));
+			g_snprintf(msg, sizeof(msg),
+			           _("Service temporarily unavailable"));
 			break;
 		case 501:
 			g_snprintf(msg, sizeof(msg), _("Database server error"));
@@ -144,7 +145,8 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			*debug = TRUE;
 			break;
 		case 540:
-			g_snprintf(msg, sizeof(msg), _("Wrong CHL value sent to server"));
+			g_snprintf(msg, sizeof(msg),
+			           _("Wrong CHL value sent to server"));
 			*debug = TRUE;
 			break;
 
@@ -155,7 +157,8 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			g_snprintf(msg, sizeof(msg), _("Server unavailable"));
 			break;
 		case 602:
-			g_snprintf(msg, sizeof(msg), _("Peer notification server down"));
+			g_snprintf(msg, sizeof(msg),
+			           _("Peer notification server down"));
 			*debug = TRUE;
 			break;
 		case 603:
@@ -171,12 +174,14 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 
 		case 707:
-			g_snprintf(msg, sizeof(msg), _("Error creating connection"));
+			g_snprintf(msg, sizeof(msg),
+			           _("Error creating connection"));
 			*debug = TRUE;
 			break;
 		case 710:
 			g_snprintf(msg, sizeof(msg),
-					   _("CVR parameters are either unknown or not allowed"));
+			           _("CVR parameters are either unknown "
+			             "or not allowed"));
 			*debug = TRUE;
 			break;
 		case 711:
@@ -206,7 +211,7 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 
 		case 800:
 			g_snprintf(msg, sizeof(msg),
-					   _("Friendly name changes too rapidly"));
+			           _("Friendly name changes too rapidly"));
 			break;
 
 		case 910:
@@ -234,11 +239,15 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 		case 923:
 			g_snprintf(msg, sizeof(msg),
-					   _("Kids Passport without parental consent"));
+			           _("Kids Passport without parental consent"));
 			break;
 		case 924:
 			g_snprintf(msg, sizeof(msg),
-					   _("Passport account not yet verified"));
+			           _("Passport account not yet verified"));
+			break;
+		case 927:
+			g_snprintf(msg, sizeof(msg),
+			           _("Passport account suspended"));
 			break;
 		case 928:
 			g_snprintf(msg, sizeof(msg), _("Bad ticket"));
@@ -246,7 +255,8 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 
 		default:
-			g_snprintf(msg, sizeof(msg), _("Unknown Error Code %d"), type);
+			g_snprintf(msg, sizeof(msg),
+			           _("Unknown Error Code %d"), type);
 			*debug = TRUE;
 			break;
 	}
@@ -261,9 +271,10 @@ msn_error_handle(MsnSession *session, unsigned int type)
 	gboolean debug;
 
 	g_snprintf(buf, sizeof(buf), _("MSN Error: %s\n"),
-			   msn_error_get_text(type, &debug));
+	           msn_error_get_text(type, &debug));
 	if (debug)
 		purple_debug_warning("msn", "error %d: %s\n", type, buf);
 	else
 		purple_notify_error(session->account->gc, NULL, buf, NULL);
 }
+

@@ -87,7 +87,8 @@ plugins: \
 		sendbutton.dll \
 		spellchk.dll \
 		timestamp_format.dll \
-		timestamp.dll
+		timestamp.dll \
+		xmppconsole.dll
 
 ##
 ## CLEAN RULES

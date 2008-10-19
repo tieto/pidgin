@@ -17,12 +17,24 @@
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/emotes/scalable"
    sodipodi:docname="sun.svg"
-   inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/emotes/sun.png"
+   inkscape:export-filename="/home/hbons/Bureaublad/Projecten/Pidgin objecten voor 2.5.0/bitmaps/sun.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3182">
+      <stop
+         style="stop-color:#f57900;stop-opacity:1;"
+         offset="0"
+         id="stop3184" />
+      <stop
+         style="stop-color:#a15000;stop-opacity:1"
+         offset="1"
+         id="stop3186" />
+    </linearGradient>
     <linearGradient
        inkscape:collect="always"
        id="linearGradient2205">
@@ -92,6 +104,27 @@
        r="5.9992052"
        gradientTransform="matrix(1.401653,1.200003e-16,-1.639517e-16,1.680627,-7.932524,-10.16624)"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3182"
+       id="linearGradient3188"
+       x1="10.102623"
+       y1="9.783145"
+       x2="15.693124"
+       y2="19.469957"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       inkscape:collect="always"
+       id="filter3200"
+       x="-0.44736843"
+       width="1.8947369"
+       y="-0.44736843"
+       height="1.8947369">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.2821383"
+         id="feGaussianBlur3202" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -101,16 +134,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="20.899939"
-     inkscape:cx="20.296801"
-     inkscape:cy="15.748745"
+     inkscape:cx="15.679563"
+     inkscape:cy="13.691323"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      fill="#eeeeec"
-     inkscape:window-width="1268"
-     inkscape:window-height="971"
-     inkscape:window-x="6"
-     inkscape:window-y="21" />
+     inkscape:window-width="1440"
+     inkscape:window-height="848"
+     inkscape:window-x="0"
+     inkscape:window-y="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -128,7 +161,17 @@
      id="layer1">
     <path
        sodipodi:type="arc"
-       style="opacity:1;fill:#edd400;fill-opacity:1;fill-rule:evenodd;stroke:#f57900;stroke-width:1.03548753;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#edd400;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.03548752999999993;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3200)"
+       id="path3190"
+       sodipodi:cx="12.153146"
+       sodipodi:cy="11.655466"
+       sodipodi:rx="8.803853"
+       sodipodi:ry="8.803853"
+       d="M 20.956999 11.655466 A 8.803853 8.803853 0 1 1  3.3492928,11.655466 A 8.803853 8.803853 0 1 1  20.956999 11.655466 z"
+       transform="matrix(0.965917,0,0,0.96554,0.261068,0.746627)" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:1;fill:#edd400;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient3188);stroke-width:1.03548752999999993;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path1307"
        sodipodi:cx="12.153146"
        sodipodi:cy="11.655466"

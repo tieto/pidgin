@@ -399,9 +399,11 @@ gnt_menu_hide(GntWidget *widget)
 static gboolean
 gnt_menu_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 {
-	if (!org_clicked || !org_clicked(widget, event, x, y) ||
-			!GNT_MENU(widget)->type == GNT_MENU_TOPLEVEL)
-			return FALSE;
+	if (GNT_MENU(widget)->type != GNT_MENU_POPUP)
+		return FALSE;
+
+	if (org_clicked && org_clicked(widget, event, x, y))
+		return TRUE;
 	gnt_widget_activate(widget);
 	return TRUE;
 }

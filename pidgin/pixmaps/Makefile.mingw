@@ -40,6 +40,7 @@ clean: ./Makefile.am.mingw
 		$(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) clean;\
 		done; \
 	fi;
+	rm -f ./Makefile.am.mingw
 
 ./Makefile.am.mingw: ./Makefile.am
 	sed -e 's/^if\ INSTALL_PIXMAPS/ifeq (\$$(INSTALL_PIXMAPS), 1)/' ./Makefile.am > $@

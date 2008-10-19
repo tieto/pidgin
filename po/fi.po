@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-11 12:39+0300\n"
-"PO-Revision-Date: 2008-08-11 12:39+0300\n"
+"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"PO-Revision-Date: 2008-09-30 19:46+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -73,7 +73,7 @@ msgstr "Ilmoita uudesta sähköpostista"
 msgid "Remember password"
 msgstr "Muista salasana"
 
-msgid "There's no protocol plugins installed."
+msgid "There are no protocol plugins installed."
 msgstr "Yhteyskäytäntöliitännäisiä ei ole asennettu."
 
 msgid "(You probably forgot to 'make install'.)"
@@ -298,7 +298,8 @@ msgid "Enter empty string to reset the name."
 msgstr "Syötä tyhjä merkkijono palauttaaksesi oletusnimen."
 
 msgid "Removing this contact will also remove all the buddies in the contact"
-msgstr "Kontaktin poistaminen poistaa myös kaikki kontaktissa olevat tuttavat"
+msgstr ""
+"Yhteystiedon poistaminen poistaa myös kaikki yhteystiedossa olevat tuttavat"
 
 msgid "Removing this group will also remove all the buddies in the group"
 msgstr "Ryhmän poistaminen poistaa myös kaikki ryhmässä olevat tuttavat"
@@ -328,6 +329,7 @@ msgstr "Merkitse/poista merkintä"
 msgid "Nickname"
 msgstr "Kutsumanimi"
 
+#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Jouten"
@@ -1507,6 +1509,12 @@ msgstr "Meebo"
 msgid "No Grouping"
 msgstr "Ei ryhmittelyä"
 
+msgid "Nested Subgroup"
+msgstr "Sisäkkäinen alaryhmä"
+
+msgid "Nested Grouping (experimental)"
+msgstr "Sisäkkäinen ryhmittely (kokeellinen)"
+
 msgid "Provides alternate buddylist grouping options."
 msgstr "Mahdollistaa vaihtoehtoisia tuttavien ryhmittelyvalintoja."
 
@@ -1821,8 +1829,8 @@ msgstr ""
 "%s"
 
 #, c-format
-msgid "EOF while reading from resolver process"
-msgstr "EOF luettaessa selvitysprosessista"
+msgid "Resolver process exited without answering our request"
+msgstr "Selvitinprosessi päättyi vastaamatta pyyntöön"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2386,6 +2394,9 @@ msgstr "Huoneen minimikoko"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Käyttäjän inaktiivisuuden aikakatkaisu (minuuteissa)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Toteuta piilotussäännöt tuttaville"
 
 #. *< type
 #. *< ui_requirement
@@ -4513,6 +4524,11 @@ msgstr "Yhdistä palvelimeen"
 msgid "File transfer proxies"
 msgstr "Tiedostonsiirron välipalvelimet"
 
+#. this should probably be part of global smiley theme settings later on,
+#. shared with MSN
+msgid "Show Custom Smileys"
+msgstr "Näytä omat hymiöt"
+
 #, c-format
 msgid "%s has left the conversation."
 msgstr "%s on lähtenyt keskustelusta."
@@ -4620,8 +4636,8 @@ msgid ""
 "This information is visible to all contacts on your contact list, so choose "
 "something appropriate."
 msgstr ""
-"Tämä tieto on näkyvillä kaikille tuttavissa oleville kontakteille, joten "
-"valitse jotain soveliasta."
+"Tämä tieto on näkyvillä kaikille yhteystietoluettelossa oleville "
+"yhteystiedoille, joten valitse jotain soveliasta."
 
 msgid "Set Nickname..."
 msgstr "Aseta kutsumanimi..."
@@ -4864,6 +4880,10 @@ msgid "Passport account not yet verified"
 msgstr "Passport-tiliä ei ole verifioitu"
 
 #, c-format
+msgid "Passport account suspended"
+msgstr "Passport-tili jäädytetty"
+
+#, c-format
 msgid "Bad ticket"
 msgstr "Bad ticket"
 
@@ -4874,6 +4894,12 @@ msgstr "Tuntematon virhekoodi %d"
 #, c-format
 msgid "MSN Error: %s\n"
 msgstr "MSN-virhe: %s\n"
+
+msgid "Other Contacts"
+msgstr "Muut yhteystiedot"
+
+msgid "Non-IM Contacts"
+msgstr "Pikaviestittömät yhteystiedot"
 
 msgid "Nudge"
 msgstr "Tönäise"
@@ -4945,6 +4971,9 @@ msgstr "Lähetä mobiiliviestinä"
 
 msgid "Page"
 msgstr "Lähetä"
+
+msgid "Has you"
+msgstr "Olet hänen listallaan"
 
 msgid "Home Phone Number"
 msgstr "Kotipuhelinnumero"
@@ -5225,6 +5254,9 @@ msgstr "Tuntematon virhe (%d)"
 msgid "Unable to add user"
 msgstr "Käyttäjää ei voi lisätä"
 
+msgid "The following users are missing from your addressbook"
+msgstr "Seuraavat käyttäjät puuttuvat osoitekirjastasi"
+
 #, c-format
 msgid "Unable to add user on %s (%s)"
 msgstr "Käyttäjää ei voi lisätä %s (%s)"
@@ -5409,6 +5441,12 @@ msgstr "Käyttäjä %s on lisännyt sinut tuttaviinsa."
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s on poistanut sinut tuttavistaan."
 
+msgid "Delete Buddy from Address Book?"
+msgstr "Poista tuttava osoitekirjasta?"
+
+msgid "Do you want to delete this buddy from your address book as well?"
+msgstr "Haluatko poistaa tämän tuttavan myös osoitekirjastasi?"
+
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -5421,9 +5459,6 @@ msgstr "Syötetty käyttäjänimi on virheellinen."
 
 msgid "This Hotmail account may not be active."
 msgstr "Tämä Hotmail-tili ei välttämättä ole aktiivinen."
-
-msgid "Has you"
-msgstr "Olet hänen listallaan"
 
 #. *< type
 #. *< ui_requirement
@@ -6100,6 +6135,9 @@ msgstr "Palvelimeen yhdistettäessä vastaanotettiin virheellisiä tietoja."
 msgid "AIM Protocol Plugin"
 msgstr "AIM-yhteyskäytäntöliitännäinen"
 
+msgid "ICQ UIN..."
+msgstr "ICQ UIN..."
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -6441,7 +6479,6 @@ msgstr "Yhteytesi saatetaan katkaista kohta. Tarkista päivitykset: %s."
 msgid "Unable to get a valid login hash."
 msgstr "Kelvollista sisäänkirjautumistiivistettä ei saatu."
 
-#. allow multple logins?
 msgid "Password sent"
 msgstr "Salasana lähetetty"
 
@@ -7120,14 +7157,22 @@ msgstr "sika"
 msgid "Other"
 msgstr "Muu"
 
-msgid "Modify my information"
-msgstr "Muokkaa tietojani"
+msgid "Modify information"
+msgstr "Muokkaa tietoja"
 
-msgid "Update my information"
-msgstr "Päivitä tietoni"
+msgid "Update information"
+msgstr "Päivitä tiedot"
 
-msgid "Your information has been updated"
-msgstr "Tietosi on päivitetty"
+#. TODO: We don't really need to notify the user about this, do we?
+#. TODO: Does the user really need to be notified about this?
+msgid "QQ Buddy"
+msgstr "QQ-tuttava"
+
+msgid "Successed:"
+msgstr "Onnistui:"
+
+msgid "Change buddy information."
+msgstr "Muuta tuttavan tietoja."
 
 #, c-format
 msgid ""
@@ -7143,29 +7188,27 @@ msgstr "Epäkelpo QQ-kuva (face)"
 msgid "You rejected %d's request"
 msgstr "Kieltäydyit %d:n pyynnöstä"
 
-msgid "Input your reason:"
-msgstr "Anna syy:"
-
 msgid "Reject request"
 msgstr "Kieltäydy pyynnöstä"
 
 #. title
-msgid "Sorry, you are not my type..."
+msgid "Sorry, you are not my style..."
 msgstr "Pahoittelut, en ole kiinnostunut..."
 
 msgid "Add buddy with auth request failed"
 msgstr "Lisää tuttava jolla on epäonnistunut valtuutuspyyntö"
 
-#. TODO: We don't really need to notify the user about this, do we?
-msgid "You have successfully removed a buddy"
-msgstr "Tuttava poistettu onnistuneesti"
+msgid "Failed:"
+msgstr "Epäonnistui:"
 
-#. TODO: Does the user really need to be notified about this?
-msgid "You have successfully removed yourself from your friend's buddy list"
-msgstr "Sinut on onnistuneesti poistettu kaverisi tuttavista"
+msgid "Remove buddy"
+msgstr "Poista tuttava"
+
+msgid "Remove from other's buddy list"
+msgstr "Poista toisen tuttavista"
 
 #, c-format
-msgid "User %d needs authentication"
+msgid "%d needs authentication"
 msgstr "Käyttäjä %d tarvitsee valtuutuksen"
 
 msgid "Input request here"
@@ -7182,14 +7225,14 @@ msgid "Send"
 msgstr "Lähetä"
 
 #, c-format
-msgid "You have added %d to buddy list"
-msgstr "Käyttäjä %d lisätty tuttaviisi"
+msgid "Add into %d's buddy list"
+msgstr "Lisää %d:n tuttaviin"
 
-msgid "QQid Error"
-msgstr "QQid-virhe"
+msgid "QQ Number Error"
+msgstr "QQ-numerovirhe"
 
-msgid "Invalid QQid"
-msgstr "Epäkelpo QQid"
+msgid "Invalid QQ Number"
+msgstr "Epäkelpo QQ-numero"
 
 msgid "ID: "
 msgstr "Tunniste (ID): "
@@ -7209,19 +7252,19 @@ msgstr "Valtuutus"
 msgid "QQ Qun"
 msgstr "QQ Qun"
 
-msgid "Please enter external group ID"
-msgstr "Syötä ulkopuolisen ryhmän tunniste (ID)"
+msgid "Please enter Qun number"
+msgstr "Anna Qun-numero"
 
-msgid "You can only search for permanent QQ groups\n"
-msgstr "Voit etsiä vain pysyviä QQ-ryhmiä\n"
-
-#, c-format
-msgid "User %d requested to join group %d"
-msgstr "Käyttäjä %d haki ryhmän %d jäsenyyttä"
+msgid "You can only search for permanent Qun\n"
+msgstr "Voit etsiä vain pysyviä Quneja\n"
 
 #, c-format
-msgid "Reason: %s"
-msgstr "Syy: %s"
+msgid "%d request to join Qun %d"
+msgstr "%d pyysi liittymään Quniin %d"
+
+#, c-format
+msgid "Message: %s"
+msgstr "Viesti: %s"
 
 msgid "QQ Qun Operation"
 msgstr "QQ Qun -toiminta"
@@ -7229,24 +7272,24 @@ msgstr "QQ Qun -toiminta"
 msgid "Approve"
 msgstr "Hyväksy"
 
-#, c-format
-msgid "Your request to join group %d has been rejected by admin %d"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Liittyminen tuttavan seuraan keskusteluhuoneeseen epäonnistui"
+
+#, fuzzy, c-format
+msgid "Successed to join Qun %d, operated by admin %d"
 msgstr "Pyyntösi liittyä ryhmään %d evättiin ylläpitäjän %d toimesta"
 
-#, c-format
-msgid "Your request to join group %d has been approved by admin %d"
-msgstr "Pyyntösi liittyä ryhmään %d hyväksyttiin ylläpitäjän %d toimesta"
-
-#, c-format
-msgid "You [%d] have left group \"%d\""
+#, fuzzy, c-format
+msgid "[%d] removed from Qun \"%d\""
 msgstr "Sinä [%d] olet poistunut ryhmästä \"%d\""
 
-#, c-format
-msgid "You [%d] have been added to group \"%d\""
-msgstr "Sinä [%d] olet lisätty ryhmään \"%d\""
+msgid "Notice:"
+msgstr "Huomautus:"
 
-msgid "This group has been added to your buddy list"
-msgstr "Tämä ryhmä on lisätty tuttaviisi"
+#, fuzzy, c-format
+msgid "[%d] added to Qun \"%d\""
+msgstr "Sinä [%d] olet lisätty ryhmään \"%d\""
 
 msgid "I am not a member"
 msgstr "En ole jäsen"
@@ -7254,8 +7297,8 @@ msgstr "En ole jäsen"
 msgid "I am a member"
 msgstr "Olen jäsen"
 
-msgid "I am applying to join"
-msgstr "Pyydän liittymistä"
+msgid "I am requesting"
+msgstr "Olen tekemässä pyyntöä"
 
 msgid "I am the admin"
 msgstr "Olen ylläpitäjä"
@@ -7263,17 +7306,24 @@ msgstr "Olen ylläpitäjä"
 msgid "Unknown status"
 msgstr "Tuntematon tila"
 
-msgid "This group does not allow others to join"
+#, fuzzy
+msgid "The Qun does not allow others to join"
 msgstr "Tämä ryhmä ei salli muiden liittyä"
 
-msgid "You have successfully left the group"
-msgstr "Ryhmästä poistuminen onnistui"
+#, fuzzy
+msgid "Remove from Qun"
+msgstr "Poista ryhmä"
 
-msgid "QQ Group Auth"
-msgstr "QQ-ryhmän valtuutus"
+#, fuzzy
+msgid "Join to Qun"
+msgstr "Liity ryhmäkeskusteluun"
 
-msgid "Your authorization request has been accepted by the QQ server"
-msgstr "QQ-palvelin on hyväksynyt valtuutuspyyntösi"
+#, c-format
+msgid "Qun %d denied to join"
+msgstr "Qun %d kielsi liittymisen"
+
+msgid "Join Qun, Unknow Reply"
+msgstr "Quniin liittyminen, tuntematon vastaus"
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr ""
@@ -7294,23 +7344,36 @@ msgstr ""
 msgid "Do you want to approve the request?"
 msgstr "Haluatko hyväksyä pyynnön?"
 
-msgid "Enter your reason:"
-msgstr "Anna syy:"
+#, fuzzy
+msgid "Change Qun member"
+msgstr "Puhelinnumero"
 
-msgid "You have successfully modified Qun member"
-msgstr "Qun-jäsentä muokattu onnistuneesti"
-
-msgid "You have successfully modified Qun information"
-msgstr "Qun-tietojen muokkaus onnistui"
+#, fuzzy
+msgid "Change Qun information"
+msgstr "Kanavatiedot"
 
 msgid "You have successfully created a Qun"
 msgstr "Qun:n luonti onnistui"
 
-msgid "Would you like to set up the Qun details now?"
+#, fuzzy
+msgid "Would you like to set up the detail information now?"
 msgstr "Haluatko asettaa Qun:n yksityiskohdat nyt?"
 
 msgid "Setup"
 msgstr "Asetukset"
+
+#, c-format
+msgid ""
+"%s\n"
+"\n"
+"%s"
+msgstr ""
+"%s\n"
+"\n"
+"%s"
+
+msgid "QQ Server News"
+msgstr "QQ-palvelimen uutisia"
 
 msgid "System Message"
 msgstr "Järjestelmäviesti"
@@ -7344,8 +7407,8 @@ msgstr " BindMobile"
 msgid " Video"
 msgstr " Video"
 
-msgid " Space"
-msgstr " Space"
+msgid " Zone"
+msgstr " Zone"
 
 msgid "Flag"
 msgstr "Lippu"
@@ -7365,20 +7428,36 @@ msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>Viimeisin päivitys:</b> %s<br>\n"
 
 #, c-format
-msgid "<b>Server</b>: %s: %d<br>\n"
-msgstr "<b>Palvelin:</b>: %s: %d<br>\n"
+msgid "<b>Server</b>: %s<br>\n"
+msgstr "<b>Palvelin:</b>: %s<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Yhteystila</b>: %s<br>\n"
 
 #, c-format
-msgid "<b>Real hostname</b>: %s: %d<br>\n"
-msgstr "<b>Todellinen palvelinnimi:</b>: %s: %d<br>\n"
+msgid "<b>My Internet Address</b>: %s<br>\n"
+msgstr "<b>Internet-osoitteeni:</b> %s<br>\n"
 
 #, c-format
-msgid "<b>My Public IP</b>: %s<br>\n"
-msgstr "<b>Oma julkinen IP</b>: %s<br>\n"
+msgid "<b>Sent</b>: %lu<br>\n"
+msgstr "<b>Lähetetty</b>: %lu<br>\n"
+
+#, c-format
+msgid "<b>Resend</b>: %lu<br>\n"
+msgstr "<b>Uudelleenlähetys</b>: %lu<br>\n"
+
+#, c-format
+msgid "<b>Lost</b>: %lu<br>\n"
+msgstr "<b>Hukattu</b>: %lu<br>\n"
+
+#, c-format
+msgid "<b>Received</b>: %lu<br>\n"
+msgstr "<b>Vastaanotettu</b>: %lu<br>\n"
+
+#, c-format
+msgid "<b>Received Duplicate</b>: %lu<br>\n"
+msgstr "<b>Vastaanotettiin moneen kertaan</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Login Time</b>: %s<br>\n"
@@ -7401,11 +7480,11 @@ msgstr "Aseta omat tiedot"
 msgid "Change Password"
 msgstr "Vaihda salasana"
 
-msgid "Show Login Information"
-msgstr "Näytä kirjautumistiedot"
+msgid "Account Information"
+msgstr "Tilin tiedot"
 
-msgid "Leave this QQ Qun"
-msgstr "Poistu tästä QQ-Qunista"
+msgid "Leave the QQ Qun"
+msgstr "Poistu QQ-Qunista"
 
 msgid "Block this buddy"
 msgstr "Estä tämä tuttava"
@@ -7423,11 +7502,17 @@ msgstr "Estä tämä tuttava"
 msgid "QQ Protocol\tPlugin"
 msgstr "QQ-yhteyskäytäntöliitännäinen"
 
-msgid "Connect using TCP"
+msgid "Auto"
+msgstr "Auto"
+
+msgid "Connect by TCP"
 msgstr "Yhdistetään käyttäen TCP:tä"
 
-msgid "resend interval(s)"
-msgstr "uudelleenlähetyksen aikaväli (s)"
+msgid "Show server notice"
+msgstr "Näytä palvelinhuomautukset"
+
+msgid "Show server news"
+msgstr "Näytä palvelinuutiset"
 
 msgid "Keep alive interval(s)"
 msgstr "Jatkuvan yhteydenpidon aikaväli (s)"
@@ -7436,14 +7521,38 @@ msgid "Update interval(s)"
 msgstr "Päivitysten aikaväli (s)"
 
 #, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr "Epäkelpo poletin vastauskoodi, 0x%02X"
+
+#, c-format
 msgid "Invalid token len, %d"
 msgstr "Epäkelpo poletin pituus, %d"
+
+msgid "Unable login for not support Redirect_EX now"
+msgstr "Kirjautuminen ei onnistu, koska Redirect_EX:ää ei tueta"
+
+#, fuzzy, c-format
+msgid "Error password: %s"
+msgstr "Virhe vaihdettaessa salasanaa"
+
+#, c-format
+msgid "Need active: %s"
+msgstr "Tarvitaan aktiivinen: %s"
+
+#, fuzzy, c-format
+msgid "Unable login for unknow reply code 0x%02X"
+msgstr "Epäkelpo poletin vastauskoodi, 0x%02X"
 
 msgid "Keep alive error"
 msgstr "Jatkuvan yhteydenpidon virhe"
 
-msgid "Failed to connect server"
+#, fuzzy
+msgid "Failed to connect all servers"
 msgstr "Palvelimeen ei saatu yhteyttä"
+
+#. we didn't successfully connect. tdt->toc_fd is valid here
+msgid "Unable to connect."
+msgstr "Yhteyden muodostaminen epäonnistui."
 
 msgid "Socket error"
 msgstr "Pistokevirhe"
@@ -7465,54 +7574,47 @@ msgstr "Virhe kirjoituksessa"
 msgid "Connection lost"
 msgstr "Yhteys katkesi"
 
+#. Update the login progress status display
+#, c-format
+msgid "Request token"
+msgstr "Pyydä poletti"
+
 msgid "Couldn't resolve host"
 msgstr "Yhteyttä isäntään ei voi löytää"
 
-msgid "hostname is NULL or port is 0"
-msgstr "isäntänimi on NULL tai portti on 0"
+msgid "Invalid server or port"
+msgstr "Epäkelpo palvelin tai portti"
 
 #, c-format
 msgid "Connecting server %s, retries %d"
 msgstr "Yhdistetään palvelimelle %s, uudelleenyrityskerrat %d"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "Yhteyden muodostaminen epäonnistui."
+msgid "QQ Error"
+msgstr "QQ-virhe"
 
-msgid "Could not resolve hostname"
-msgstr "Isäntänimeä ei voi selvittää"
-
-msgid "Unable to login. Check debug log."
-msgstr "Ei voi kirjautua. Tarkista virheenjäljitysloki."
-
-msgid "Unable to login"
-msgstr "Ei voi kirjautua"
+msgid "Unknow SERVER CMD"
+msgstr "Tuntematon SERVER CMD"
 
 #, c-format
 msgid ""
-"Reply %s(0x%02X )\n"
-"Sent %s(0x%02X )\n"
-"Room id %d, reply [0x%02X]: \n"
-"%s"
+"Error reply of %s(0x%02X)\n"
+"Room %d, reply 0x%02X"
 msgstr ""
-"Vastaus %s(0x%02X )\n"
-"Lähetetty %s(0x%02X )\n"
-"Huoneen tunniste %d, vastaus [0x%02X]: \n"
-"%s"
+"Virheellinen vastaus kohteesta %s(0x%02X)\n"
+"Huone %d, vastaus 0x%02X"
 
-msgid "Failed room reply"
-msgstr "Epäonnistunut huoneen vastaus"
+msgid "QQ Qun Command"
+msgstr "QQ-Qun-komento"
 
-#, c-format
-msgid "You are not a member of group \"%s\"\n"
+#, fuzzy, c-format
+msgid "You are not a member of QQ Qun \"%s\"\n"
 msgstr "Sinä et ole ryhmän \"%s\" jäsen\n"
 
 msgid "Can not decrypt login reply"
 msgstr "Kirjautumisvastauksen salausta ei voi purkaa"
 
-#, c-format
-msgid "Invalid token reply code, 0x%02X"
-msgstr "Epäkelpo poletin vastauskoodi, 0x%02X"
+msgid "Unknow reply CMD"
+msgstr "Tuntematon vastaus-CMD"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7525,8 +7627,11 @@ msgstr "Tiedoston lähetys"
 msgid "%d canceled the transfer of %s"
 msgstr "%d peruutti tiedoston %s siirron"
 
-msgid "Do you want to add this buddy?"
-msgstr "Haluatko lisätä tämän tuttavan?"
+msgid "Do you approve the requestion?"
+msgstr "Haluatko hyväksyä pyynnön?"
+
+msgid "Do you add the buddy?"
+msgstr "Haluatko lisätä tuttavan?"
 
 #. only need to get value
 #, c-format
@@ -7536,17 +7641,20 @@ msgstr "Sinut on lisännyt %s"
 msgid "Would you like to add him?"
 msgstr "Haluatko lisätä hänet?"
 
-#, c-format
-msgid "%s has added you [%s] to his or her buddy list"
+#, fuzzy, c-format
+msgid "%s added you [%s] to buddy list"
 msgstr "Käyttäjä %s on lisännyt sinut [%s] tuttaviisi"
 
-#, c-format
-msgid "User %s rejected your request"
-msgstr "Käyttäjä %s on kieltäytynyt pyynnöstäsi"
+msgid "QQ Budy"
+msgstr "QQ-tuttava"
 
 #, c-format
-msgid "User %s approved your request"
-msgstr "Käyttäjä %s on hyväksynyt pyyntösi"
+msgid "Requestion rejected by %s"
+msgstr "%s hylkäsi pyynnön"
+
+#, c-format
+msgid "Requestion approved by %s"
+msgstr "%s hyväksyi pyynnön"
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
@@ -7554,20 +7662,22 @@ msgid "%s wants to add you [%s] as a friend"
 msgstr "Käyttäjä %s tahtoo lisätä sinut [%s] kaverikseen"
 
 #, c-format
-msgid "Message: %s"
-msgstr "Viesti: %s"
+msgid "%s is not in buddy list"
+msgstr "%s ei ole tuttavissa"
+
+msgid "Would you add?"
+msgstr "Haluatko lisätä?"
 
 #, c-format
-msgid "%s is not in your buddy list"
-msgstr "%s ei ole tuttavissasi"
-
-#, c-format
-msgid "Notice from: %s"
-msgstr "Ilmoitus käyttäjältä: %s"
+msgid "From %s:"
+msgstr "Lähettäjä %s:"
 
 #, c-format
 msgid "%s"
 msgstr "%s"
+
+msgid "QQ Server Notice"
+msgstr "QQ-palvelinhuomautus"
 
 msgid "Connection closed (writing)"
 msgstr "Yhteys suljettu (kirjoitus)"
@@ -9022,6 +9132,9 @@ msgstr "Tuntematon palvelinvastaus."
 msgid "Could not create listen socket"
 msgstr "Kuuntelupistokkeen luominen epäonnistui"
 
+msgid "Could not resolve hostname"
+msgstr "Isäntänimeä ei voi selvittää"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-käyttäjänimissä ei tule olla välilyöntejä tai @-merkkejä"
 
@@ -9409,6 +9522,9 @@ msgstr "list: Listaa kanavat Yahoo-verkossa"
 
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: Pyydä käyttäjää aloittamaan piirtelyistunto"
+
+msgid "Yahoo ID..."
+msgstr "Yahoo ID..."
 
 #. *< type
 #. *< ui_requirement
@@ -9958,6 +10074,10 @@ msgid "Unable to connect to %s"
 msgstr "Kohteeseen %s ei kyetty muodostamaan yhteyttä"
 
 #, c-format
+msgid "Error reading from %s: response too long (%d bytes limit)"
+msgstr "Virhe luettaessa kohteesta %s: vastaus liian pitkä (%d tavun raja)"
+
+#, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
 "server may be trying something malicious."
@@ -10139,24 +10259,24 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Tervetuloa %siin!</span>\n"
 "\n"
-"Yhtäkään pikaviestintiliä ei ole määritelty. Aloittaaksesi %sin käytön "
-"napsauta <b>Lisää</b>-painiketta alla ja määritä ensimmäisen käyttäjätilisi "
-"tiedot. Jos haluat %sin yhdistävän useampiin pikaviestintileihin, napsauta "
-"uudestaan <b>Lisää</b>-painiketta määritelläksesi ne kaikki.\n"
+"Pikaviestintilejä ei ole määritelty. Yhdistääksesi %sillä napsauta <b>Lisää</"
+"b>-painiketta ja määritä ensimmäisen käyttäjätilisi tiedot. Jos haluat %sin "
+"yhdistävän useampiin pikaviestintileihin, napsauta uudestaan <b>Lisää</b>-"
+"painiketta määritelläksesi ne kaikki.\n"
 "\n"
 "Voit palata tähän ikkunaan lisäämään, muokkaamaan tai poistamaan tilejä "
-"valitsemalla <b>Käyttäjätilit->Lisää/muokkaa</b> Tuttavat-ikkunassa."
+"valitsemalla <b>Käyttäjätilit->Tilien hallinta</b> Tuttavat-ikkunassa."
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
-msgstr[0] "Sinulla on %d kontakti jonka nimi on %s. Haluatko yhdistää ne?"
-msgstr[1] "Sinulla on %d kontaktia joiden nimi on %s. Haluatko yhdistää ne?"
+msgstr[0] "Sinulla on %d yhteystieto jonka nimi on %s. Haluatko yhdistää ne?"
+msgstr[1] "Sinulla on %d yhteystietoa joiden nimi on %s. Haluatko yhdistää ne?"
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
@@ -10608,6 +10728,9 @@ msgstr "/Tuttavat/Lajittele tuttavat"
 msgid "SSL Servers"
 msgstr "SSL-palvelimet"
 
+msgid "Network disconnected"
+msgstr "Verkkoyhteys katkesi"
+
 msgid "Unknown command."
 msgstr "Tuntematon komento."
 
@@ -11058,6 +11181,9 @@ msgstr "suomi"
 msgid "French"
 msgstr "ranska"
 
+msgid "Irish"
+msgstr "irlanti"
+
 msgid "Galician"
 msgstr "galego"
 
@@ -11474,6 +11600,12 @@ msgstr "Hyperlinkin väri"
 
 msgid "Color to draw hyperlinks."
 msgstr "Väri jolla piirretään hyperlinkit"
+
+msgid "Hyperlink visited color"
+msgstr "Vieraillun hyperlinkin väri"
+
+msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgstr "Väri jolla piirretään vierailtu (tai aktivoitu) hyperlinkki."
 
 msgid "Hyperlink prelight color"
 msgstr "Hyperlinkin ensiväri"
@@ -12339,14 +12471,17 @@ msgstr ""
 "Äänik_omento:\n"
 "(%s tiedostonimeksi)"
 
+msgid "M_ute sounds"
+msgstr "Vaimenn_a äänet"
+
 msgid "Sounds when conversation has _focus"
 msgstr "Äänet kun keskusteluikkuna on _aktiivinen"
 
-msgid "Enable sounds:"
-msgstr "Ota äänet käyttöön:"
+msgid "_Enable sounds:"
+msgstr "Ota ään_et käyttöön:"
 
-msgid "Volume:"
-msgstr "Äänenvoimakkuus:"
+msgid "V_olume:"
+msgstr "Äänenv_oimakkuus:"
 
 msgid "Play"
 msgstr "Soita"
@@ -12529,6 +12664,12 @@ msgstr "%s:n tila"
 msgid "Custom Smiley"
 msgstr "Oma hymiö"
 
+msgid "More Data needed"
+msgstr "Lisää tietoja tarvitaan"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Syötä hymiöön liitettävä oikotie."
+
 msgid "Duplicate Shortcut"
 msgstr "Monista oikotie"
 
@@ -12536,12 +12677,6 @@ msgid ""
 "A custom smiley for the selected shortcut already exists. Please specify a "
 "different shortcut."
 msgstr "Valitulle oikotielle on jo oma hymiö. Valitse toisenlainen oikotie."
-
-msgid "More Data needed"
-msgstr "Lisää tietoja tarvitaan"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Syötä hymiöön liitettävä oikotie."
 
 msgid "Please select an image for the smiley."
 msgstr "Valitse hymiölle kuva."
@@ -12564,6 +12699,14 @@ msgstr "Hymiö"
 
 msgid "Custom Smiley Manager"
 msgstr "Omien hymiöiden hallinta"
+
+#, fuzzy
+msgid "Click to change your buddyicon for this account."
+msgstr "Käytä tätä tuttavakuvaketta tälle käyttäjät_ilille:"
+
+#, fuzzy
+msgid "Click to change your buddyicon for all accounts."
+msgstr "Käytä tätä tuttavakuvaketta tälle käyttäjät_ilille:"
 
 msgid "Waiting for network connection"
 msgstr "Odotetaan verkkoyhteyttä"
@@ -12704,6 +12847,9 @@ msgstr "_Muokkaa"
 
 msgid "_Open Mail"
 msgstr "_Avaa sähköposti"
+
+msgid "_Edit"
+msgstr "_Muokkaa"
 
 msgid "Pidgin Tooltip"
 msgstr "Pidgin-työkaluvihje"
@@ -13267,6 +13413,9 @@ msgstr "Toissijainen kohdistimen väri"
 msgid "Hyperlink Color"
 msgstr "Hyperlinkin väri"
 
+msgid "Visited Hyperlink Color"
+msgstr "Vieraillun hyperlinkin väri"
+
 msgid "Highlighted Message Name Color"
 msgstr "Korostetun viestin nimen väri"
 
@@ -13692,6 +13841,93 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
+
+#~ msgid "EOF while reading from resolver process"
+#~ msgstr "EOF luettaessa selvitysprosessista"
+
+#~ msgid "Your information has been updated"
+#~ msgstr "Tietosi on päivitetty"
+
+#~ msgid "Input your reason:"
+#~ msgstr "Anna syy:"
+
+#~ msgid "You have successfully removed a buddy"
+#~ msgstr "Tuttava poistettu onnistuneesti"
+
+#~ msgid "You have successfully removed yourself from your friend's buddy list"
+#~ msgstr "Sinut on onnistuneesti poistettu kaverisi tuttavista"
+
+#~ msgid "You have added %d to buddy list"
+#~ msgstr "Käyttäjä %d lisätty tuttaviisi"
+
+#~ msgid "Invalid QQid"
+#~ msgstr "Epäkelpo QQid"
+
+#~ msgid "Please enter external group ID"
+#~ msgstr "Syötä ulkopuolisen ryhmän tunniste (ID)"
+
+#~ msgid "Reason: %s"
+#~ msgstr "Syy: %s"
+
+#~ msgid "Your request to join group %d has been approved by admin %d"
+#~ msgstr "Pyyntösi liittyä ryhmään %d hyväksyttiin ylläpitäjän %d toimesta"
+
+#~ msgid "This group has been added to your buddy list"
+#~ msgstr "Tämä ryhmä on lisätty tuttaviisi"
+
+#~ msgid "I am applying to join"
+#~ msgstr "Pyydän liittymistä"
+
+#~ msgid "You have successfully left the group"
+#~ msgstr "Ryhmästä poistuminen onnistui"
+
+#~ msgid "QQ Group Auth"
+#~ msgstr "QQ-ryhmän valtuutus"
+
+#~ msgid "Your authorization request has been accepted by the QQ server"
+#~ msgstr "QQ-palvelin on hyväksynyt valtuutuspyyntösi"
+
+#~ msgid "Enter your reason:"
+#~ msgstr "Anna syy:"
+
+#~ msgid "You have successfully modified Qun member"
+#~ msgstr "Qun-jäsentä muokattu onnistuneesti"
+
+#~ msgid "You have successfully modified Qun information"
+#~ msgstr "Qun-tietojen muokkaus onnistui"
+
+#~ msgid " Space"
+#~ msgstr " Space"
+
+#~ msgid "<b>Real hostname</b>: %s: %d<br>\n"
+#~ msgstr "<b>Todellinen palvelinnimi:</b>: %s: %d<br>\n"
+
+#~ msgid "Show Login Information"
+#~ msgstr "Näytä kirjautumistiedot"
+
+#~ msgid "resend interval(s)"
+#~ msgstr "uudelleenlähetyksen aikaväli (s)"
+
+#~ msgid "hostname is NULL or port is 0"
+#~ msgstr "isäntänimi on NULL tai portti on 0"
+
+#~ msgid "Unable to login. Check debug log."
+#~ msgstr "Ei voi kirjautua. Tarkista virheenjäljitysloki."
+
+#~ msgid "Unable to login"
+#~ msgstr "Ei voi kirjautua"
+
+#~ msgid "Failed room reply"
+#~ msgstr "Epäonnistunut huoneen vastaus"
+
+#~ msgid "User %s rejected your request"
+#~ msgstr "Käyttäjä %s on kieltäytynyt pyynnöstäsi"
+
+#~ msgid "User %s approved your request"
+#~ msgstr "Käyttäjä %s on hyväksynyt pyyntösi"
+
+#~ msgid "Notice from: %s"
+#~ msgstr "Ilmoitus käyttäjältä: %s"
 
 #~ msgid "Code [0x%02X]: %s"
 #~ msgstr "Koodi [0x%02X]: %s"
@@ -14235,9 +14471,6 @@ msgstr ""
 #~ msgid "<span weight='bold' size='larger'>Welcome to "
 #~ msgstr "<span weight='bold' size='larger'>Tervetuloa "
 
-#~ msgid "You are using "
-#~ msgstr "Käytät ohjelmaa: "
-
 #~ msgid "_Start "
 #~ msgstr "_Käynnistä "
 
@@ -14418,9 +14651,6 @@ msgstr ""
 #~ msgid "<b>%s:</b> %s"
 #~ msgstr "<b>%s:</b> %s"
 
-#~ msgid "<b>%s:</b> %s<br>"
-#~ msgstr "<b>%s:</b> %s<br>"
-
 #~ msgid "<b>Idle for:</b> %s<br>"
 #~ msgstr "<b>Jouten:</b> %s<br>"
 
@@ -14488,12 +14718,6 @@ msgstr ""
 #~ msgid "<b>Status:</b> %s"
 #~ msgstr "<b>Tila:</b> %s"
 
-#~ msgid "<b>IP Address:</b> %s<br>"
-#~ msgstr "<b>IP-osoite:</b> %s<br>"
-
-#~ msgid "<b>User:</b> %s<br>"
-#~ msgstr "<b>Käyttäjä:</b> %s<br>"
-
 #~ msgid "Tag"
 #~ msgstr "Merkitse"
 
@@ -14517,9 +14741,6 @@ msgstr ""
 
 #~ msgid "Invalid password"
 #~ msgstr "Virheellinen salasana"
-
-#~ msgid "Invalid username or password"
-#~ msgstr "Epäkelpo käyttäjänimi tai salasana"
 
 #~ msgid ""
 #~ "The user %s requires authorization before being added to a buddy list.  "
@@ -14611,9 +14832,6 @@ msgstr ""
 
 #~ msgid "gaim_proxy_connect() failed"
 #~ msgstr "gaim_proxy_connect() epäonnistui"
-
-#~ msgid "QQ Server"
-#~ msgstr "QQ-palvelin"
 
 #~ msgid "QQ Port"
 #~ msgstr "QQ-portti"
@@ -15290,9 +15508,6 @@ msgstr ""
 #~ msgid "AIM"
 #~ msgstr "AIM"
 
-#~ msgid "ICQ UIN"
-#~ msgstr "ICQ UIN"
-
 #~ msgid "Yahoo"
 #~ msgstr "Yahoo"
 
@@ -15515,9 +15730,6 @@ msgstr ""
 #~ "\n"
 #~ "Poista poissaolotila kaikilta käyttäjätileiltä.\n"
 
-#~ msgid "Show fewer options"
-#~ msgstr "Näytä vähemmän valintoja"
-
 #~ msgid "New group name"
 #~ msgstr "Uusi ryhmänimi"
 
@@ -15581,9 +15793,6 @@ msgstr ""
 
 #~ msgid "Send a file to the user"
 #~ msgstr "Lähetä tiedosto käyttäjälle"
-
-#~ msgid "Remove the user from your buddy list"
-#~ msgstr "Poista käyttäjä tuttavalistalta"
 
 #~ msgid "Invite a user"
 #~ msgstr "Kutsu käyttäjä"

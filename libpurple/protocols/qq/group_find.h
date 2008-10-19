@@ -32,10 +32,12 @@
 qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid);
 void qq_group_remove_member_by_uid(qq_group *group, guint32 uid);
 qq_buddy *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid);
-gboolean qq_group_find_id_by_seq(PurpleConnection *gc, guint16 seq, guint32 *id);
 qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel);
 
 qq_group *qq_room_search_ext_id(PurpleConnection *gc, guint32 ext_id);
 qq_group *qq_room_search_id(PurpleConnection *gc, guint32 room_id);
+
+qq_group *qq_room_get_next(PurpleConnection *gc, guint32 room_id);
+qq_group *qq_room_get_next_conv(PurpleConnection *gc, guint32 room_id);
 
 #endif

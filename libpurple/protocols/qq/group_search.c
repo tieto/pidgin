@@ -38,8 +38,8 @@
 #include "qq_network.h"
 
 enum {
-	QQ_GROUP_SEARCH_TYPE_BY_ID = 0x01,
-	QQ_GROUP_SEARCH_TYPE_DEMO = 0x02
+	QQ_ROOM_SEARCH_TYPE_BY_ID = 0x01,
+	QQ_ROOM_SEARCH_TYPE_DEMO = 0x02
 };
 
 /* send packet to search for qq_group */
@@ -49,7 +49,7 @@ void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 ext_id)
 	gint bytes = 0;
 	guint8 type;
 
-	type = (ext_id == 0x00000000) ? QQ_GROUP_SEARCH_TYPE_DEMO : QQ_GROUP_SEARCH_TYPE_BY_ID;
+	type = (ext_id == 0x00000000) ? QQ_ROOM_SEARCH_TYPE_DEMO : QQ_ROOM_SEARCH_TYPE_BY_ID;
 
 	bytes = 0;
 	bytes += qq_put8(raw_data + bytes, type);
@@ -63,21 +63,21 @@ static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
 	PurpleRoomlistRoom *room;
 	gchar field[11];
 
-	room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
+	room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, group->title_utf8, NULL);
 	g_snprintf(field, sizeof(field), "%d", group->ext_id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->creator_uid);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
-	purple_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
+	purple_roomlist_room_add_field(qd->roomlist, room, group->desc_utf8);
 	g_snprintf(field, sizeof(field), "%d", group->id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->type8);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->auth_type);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
-	g_snprintf(field, sizeof(field), "%d", group->group_category);
+	g_snprintf(field, sizeof(field), "%d", group->category);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
-	purple_roomlist_room_add_field(qd->roomlist, room, group->group_name_utf8);
+	purple_roomlist_room_add_field(qd->roomlist, room, group->title_utf8);
 	purple_roomlist_room_add(qd->roomlist, room);
 
 	purple_roomlist_set_in_progress(qd->roomlist, FALSE);
@@ -109,14 +109,14 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get16(&(unknown), data + bytes);
-	bytes += qq_get32(&(group.group_category), data + bytes);
-	bytes += convert_as_pascal_string(data + bytes, &(group.group_name_utf8), QQ_CHARSET_DEFAULT);
+	bytes += qq_get32(&(group.category), data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &(group.title_utf8), QQ_CHARSET_DEFAULT);
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get8(&(group.auth_type), data + bytes);
-	bytes += convert_as_pascal_string(data + bytes, &(group.group_desc_utf8), QQ_CHARSET_DEFAULT);
+	bytes += convert_as_pascal_string(data + bytes, &(group.desc_utf8), QQ_CHARSET_DEFAULT);
 	/* end of one qq_group */
 	if(bytes != len) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
+		purple_debug_error("QQ",
 			"group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
 	}
 
@@ -124,9 +124,9 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 	if (pending_id != NULL) {
 		qq_set_pending_id(&qd->joining_groups, group.ext_id, FALSE);
 		if (qq_room_search_id(gc, group.id) == NULL)
-			qq_group_create_internal_record(gc, 
-					group.id, group.ext_id, group.group_name_utf8);
-		qq_send_cmd_group_join_group(gc, &group);
+			qq_group_create_internal_record(gc,
+					group.id, group.ext_id, group.title_utf8);
+		qq_request_room_join(gc, &group);
 	} else {
 		_qq_setup_roomlist(qd, &group);
 	}
