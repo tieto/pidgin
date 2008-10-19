@@ -116,9 +116,15 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_unregister_account,		/* unregister_user */
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
-
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL, /* get_account_text_table */
+#ifdef USE_VV
+	jabber_initiate_media,          /* initiate_media */
+	jabber_can_do_media             /* can_do_media */
+#else
+	NULL,					/* initiate_media */
+	NULL					/* can_do_media */
+#endif
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
@@ -289,6 +295,9 @@ init_plugin(PurplePlugin *plugin)
 					   jabber_custom_smileys_isenabled);
 
 	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+#ifdef USE_VV
+	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
+#endif
 }
 
 

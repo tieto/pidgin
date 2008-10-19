@@ -40,6 +40,8 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
+#include "debug.h"
+
 #include <gdk/gdkkeysyms.h>
 
 static GtkHBoxClass *parent_class = NULL;
@@ -449,12 +451,12 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 
 static void insert_hr_cb(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
-        GtkTextIter iter;
-        GtkTextMark *ins;
+	GtkTextIter iter;
+	GtkTextMark *ins;
 	GtkIMHtmlScalable *hr;
 
-        ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
-        gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)), &iter, ins);
+	ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
+	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)), &iter, ins);
 	hr = gtk_imhtml_hr_new();
 	gtk_imhtml_hr_add_to(hr, GTK_IMHTML(toolbar->imhtml), &iter);
 }
@@ -1297,6 +1299,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_button;
 	GtkWidget *font_button;
 	GtkWidget *smiley_button;
+
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
