@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-2.5.2 (??/??/2008):
+2.5.2 (10/19/2008):
 	Ethan: After a bit of a struggle with our services, which put
 	this release off for an unfortunate length of time, we're
 	ready for another bugfix release for your bug-free(er?)
@@ -12,6 +12,10 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	problem. Also, welcome our newest Crazy Patch Writer, Marcus Lundblad,
 	who, among various other fixes, has implemented custom smileys for the
 	XMPP protocol, included in this release. Enjoy!
+
+	Stu: I guess this is the time of year for server migrations, and
+	I've just about had enough of them. Fortunately Pidgin is still fun,
+	and this release should be superb.
 
 2.5.1 (08/30/2008):
 	Kevin: This release is mainly a bug-fix release.  It solves a few
