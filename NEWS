@@ -6,6 +6,13 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	ready for another bugfix release for your bug-free(er?)
 	messaging pleasure.
 
+	Sadrul: Despite our best efforts, this release got delayed by a
+	couple of weeks. But here it is! It is mostly a bug fix release, with
+	a couple of important fixes, e.g. fix for the Yahoo! disconnect
+	problem. Also, welcome our newest Crazy Patch Writer, Marcus Lundblad,
+	who, among various other fixes, has implemented custom smileys for the
+	XMPP protocol, included in this release. Enjoy!
+
 2.5.1 (08/30/2008):
 	Kevin: This release is mainly a bug-fix release.  It solves a few
 	known crashes and updates some of our artwork.  Google's Summer of
