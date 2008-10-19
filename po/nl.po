@@ -7470,6 +7470,7 @@ msgid ""
 msgstr ""
 "%s\n"
 "\n"
+"%s"
 
 #, fuzzy
 msgid "QQ Server News"
