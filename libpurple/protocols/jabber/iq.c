@@ -34,6 +34,7 @@
 #include "si.h"
 #include "ping.h"
 #include "adhoccommands.h"
+#include "data.h"
 
 #ifdef _WIN32
 #include "utsname.h"
@@ -314,7 +315,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	const char *xmlns;
 	const char *type, *id, *from;
 	JabberIqHandler *jih;
-	
+
 	query = xmlnode_get_child(packet, "query");
 	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
@@ -354,8 +355,15 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 	
+	purple_debug_info("jabber", "jabber_iq_parse\n");
+
 	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
 		jabber_ping_parse(js, packet);
+		return;
+	}
+
+	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE)) {
+		jabber_data_parse(js, packet);
 		return;
 	}
 	

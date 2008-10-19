@@ -1251,7 +1251,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
-				/* If we havne't found a name yet, use this one as the serverside name */
 				if (!serverside_alias)
 					serverside_alias = g_strdup(text);
 
@@ -1275,11 +1274,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					g_free(text2);
 				}
 			} else if(text && !strcmp(child->name, "NICKNAME")) {				
-				/* Prefer the Nickcname to the Full Name as the serverside alias */
-				g_free(serverside_alias);
-				serverside_alias = g_strdup(text);
-
-				purple_notify_user_info_add_pair(user_info, _("Nickname"), text);
+				/* Prefer the Nickcname to the Full Name as the serverside alias if it's not just part of the jid.
+				 * Ignore it if it's part of the jid. */
+				if (strstr(bare_jid, text) == NULL) {
+					g_free(serverside_alias);
+					serverside_alias = g_strdup(text);
+					
+					purple_notify_user_info_add_pair(user_info, _("Nickname"), text);
+				}
 			} else if(text && !strcmp(child->name, "BDAY")) {
 				purple_notify_user_info_add_pair(user_info, _("Birthday"), text);
 			} else if(!strcmp(child->name, "ADR")) {
@@ -2497,29 +2499,37 @@ void jabber_user_search_begin(PurplePluginAction *action)
 }
 
 gboolean
-jabber_buddy_has_capability(JabberBuddy *jb, const gchar *cap)
+jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 {
-	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
 	const GList *iter = NULL;
-	
-	if (!jbr) {
-		purple_debug_error("jabber", 
-				   "Unable to find caps: buddy might be offline\n");
-		return FALSE;
-	}
-	
+
 	if (!jbr->caps) {
 		purple_debug_error("jabber",
-				   "Unable to find caps: nothing known about buddy\n");
+			"Unable to find caps: nothing known about buddy\n");
 		return FALSE;
 	}
-	
+
 	for (iter = jbr->caps->features ; iter ; iter = g_list_next(iter)) {
-		if (strcmp(iter->data, cap) == 0)
+		purple_debug_info("jabber", "Found cap: %s\n", (char *)iter->data);
+		if (strcmp(iter->data, cap) == 0) {
 			return TRUE;
+		}
 	}
-	
+
 	return FALSE;
 }
 
+gboolean
+jabber_buddy_has_capability(const JabberBuddy *jb, const gchar *cap)
+{
+	JabberBuddyResource *jbr = jabber_buddy_find_resource((JabberBuddy*)jb, NULL);
+
+	if (!jbr) {
+		purple_debug_error("jabber",
+			"Unable to find caps: buddy might be offline\n");
+		return FALSE;
+	}
+
+	return jabber_resource_has_capability(jbr, cap);
+}
 

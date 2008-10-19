@@ -5288,8 +5288,7 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	if (conv && PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 		if (gtkconv->win == hidden_convwin) {
-			pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
-			pidgin_conv_placement_place(gtkconv);
+			pidgin_conv_attach_to_conversation(gtkconv->active_conv);
 		}
 		return;
 	}
@@ -7249,6 +7248,14 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 			pidgin_conv_update_buddy_icon(conv);
 		}
 	}
+
+	/* Make the tabs show/hide correctly */
+	for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
+		PidginWindow *win = l->data;
+		if (pidgin_conv_window_get_gtkconv_count(win) == 1)
+			gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
+						   GPOINTER_TO_INT(value) == 0);
+	}
 }
 
 static void
@@ -7297,8 +7304,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 		if (!l)
 			break;
 
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+		pidgin_conv_attach_to_conversation(conv);
 
 		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
 		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
@@ -7338,8 +7344,7 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 							purple_conversation_get_account(conv)))))
 			continue;
 
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+		pidgin_conv_attach_to_conversation(conv);
 	}
 }
 

@@ -176,6 +176,8 @@ struct yahoo_data {
 	 * the server expects us to keep track of the group for which it is sending us contact names.
 	 */
 	char *current_list15_grp;
+	time_t last_ping;
+	time_t last_keepalive;
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)

@@ -100,6 +100,7 @@ libpurple/protocols/jabber/xdata.c
 libpurple/protocols/msn/contact.c
 libpurple/protocols/msn/dialog.c
 libpurple/protocols/msn/error.c
+libpurple/protocols/msn/group.h
 libpurple/protocols/msn/msn.c
 libpurple/protocols/msn/nexus.c
 libpurple/protocols/msn/notification.c
@@ -216,6 +217,7 @@ pidgin/gtkutils.c
 pidgin/gtkwhiteboard.c
 pidgin/pidgin.h
 pidgin/pidgincombobox.c
+pidgin/pidginstock-artwork.c
 pidgin/pidginstock.c
 pidgin/pidgintooltip.c
 pidgin/pixmaps/emotes/default/24/default.theme.in

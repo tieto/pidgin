@@ -348,6 +348,9 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
+		if (t && t->image) {
+			t->image->imhtml = NULL;
+		}
 		g_free (t);
 	}
 }
@@ -444,6 +447,20 @@ gtk_imhtml_style_set(GtkWidget *widget, GtkStyle *prev_style)
 		}
 	}
 	parent_style_set(widget, prev_style);
+}
+
+static void
+gtk_imhtml_set_link_color(GtkIMHtml *imhtml, GtkTextTag *tag)
+{
+	GdkColor *color = NULL;
+	gboolean visited = !!g_object_get_data(G_OBJECT(tag), "visited");
+	gtk_widget_style_get(GTK_WIDGET(imhtml), visited ? "hyperlink-visited-color" : "hyperlink-color", &color, NULL);
+	if (color) {
+		g_object_set(G_OBJECT(tag), "foreground-gdk", color, NULL);
+		gdk_color_free(color);
+	} else {
+		g_object_set(G_OBJECT(tag), "foreground", visited ? "#800000" : "blue", NULL);
+	}
 }
 
 static gint
@@ -566,7 +583,6 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	int x, y;
 	char *tip = NULL;
 	GSList *tags = NULL, *templist = NULL;
-	GdkColor *norm, *pre;
 	GtkTextTag *tag = NULL, *oldprelit_tag;
 	GtkTextChildAnchor* anchor;
 	gboolean hand = TRUE;
@@ -588,13 +604,15 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 		templist = templist->next;
 	}
 
-	if (tip) {
-		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-prelight-color", &pre, NULL);
+	if (tip && (!tag || !g_object_get_data(G_OBJECT(tag), "visited"))) {
 		GTK_IMHTML(imhtml)->prelit_tag = tag;
 		if (tag != oldprelit_tag) {
-			if (pre)
+			GdkColor *pre = NULL;
+			gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-prelight-color", &pre, NULL);
+			if (pre) {
 				g_object_set(G_OBJECT(tag), "foreground-gdk", pre, NULL);
-			else
+				gdk_color_free(pre);
+			} else
 				g_object_set(G_OBJECT(tag), "foreground", "#70a0ff", NULL);
 		}
 	} else {
@@ -602,11 +620,7 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	}
 
 	if ((oldprelit_tag != NULL) && (GTK_IMHTML(imhtml)->prelit_tag != oldprelit_tag)) {
-		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
-		if (norm)
-			g_object_set(G_OBJECT(oldprelit_tag), "foreground-gdk", norm, NULL);
-		else
-			g_object_set(G_OBJECT(oldprelit_tag), "foreground", "blue", NULL);
+		gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), oldprelit_tag);
 	}
 
 	if (GTK_IMHTML(imhtml)->tip) {
@@ -670,12 +684,7 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 {
 	/* when leaving the widget, clear any current & pending tooltips and restore the cursor */
 	if (GTK_IMHTML(imhtml)->prelit_tag) {
-		GdkColor *norm;
-		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
-		if (norm)
-			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground-gdk", norm, NULL);
-		else
-			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground", "blue", NULL);
+		gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), GTK_IMHTML(imhtml)->prelit_tag);
 		GTK_IMHTML(imhtml)->prelit_tag = NULL;
 	}
 
@@ -1482,6 +1491,10 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-visited-color",
+	                                        _("Hyperlink visited color"),
+	                                        _("Color to draw hyperlinks after it has been visited (or activated)."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
 	                                        _("Hyperlink prelight color"),
 	                                        _("Color to draw hyperlinks when mouse is over them."),
@@ -1679,20 +1692,24 @@ GType gtk_imhtml_get_type()
 struct url_data {
 	GObject *object;
 	gchar *url;
+	GtkTextTag *tag;
 };
 
 static void url_data_destroy(gpointer mydata)
 {
 	struct url_data *data = mydata;
 	g_object_unref(data->object);
+	g_object_unref(data->tag);
 	g_free(data->url);
 	g_free(data);
 }
 
-static void url_open(GtkWidget *w, struct url_data *data) {
+static void url_open(GtkWidget *w, struct url_data *data)
+{
 	if(!data) return;
 	g_signal_emit(data->object, signals[URL_CLICKED], 0, data->url);
-
+	g_object_set_data(G_OBJECT(data->tag), "visited", GINT_TO_POINTER(TRUE));
+	gtk_imhtml_set_link_color(GTK_IMHTML(data->object), data->tag);
 }
 
 static void url_copy(GtkWidget *w, gchar *url) {
@@ -1706,7 +1723,8 @@ static void url_copy(GtkWidget *w, gchar *url) {
 }
 
 /* The callback for an event on a link tag. */
-static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused) {
+static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused)
+{
 	GdkEventButton *event_button = (GdkEventButton *) event;
 	if (GTK_IMHTML(imhtml)->editable)
 		return FALSE;
@@ -1723,12 +1741,15 @@ static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, Gtk
 			g_object_ref(G_OBJECT(tag));
 			g_signal_emit(imhtml, signals[URL_CLICKED], 0, g_object_get_data(G_OBJECT(tag), "link_url"));
 			g_object_unref(G_OBJECT(tag));
+			g_object_set_data(G_OBJECT(tag), "visited", GINT_TO_POINTER(TRUE));
+			gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), tag);
 			return FALSE;
 		} else if(event_button->button == 3) {
 			GtkWidget *img, *item, *menu;
 			struct url_data *tempdata = g_new(struct url_data, 1);
 			tempdata->object = g_object_ref(imhtml);
 			tempdata->url = g_strdup(g_object_get_data(G_OBJECT(tag), "link_url"));
+			tempdata->tag = g_object_ref(tag);
 
 			/* Don't want the tooltip around if user right-clicked on link */
 			if (GTK_IMHTML(imhtml)->tip_window) {
@@ -1940,7 +1961,6 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	}
 }
 
-/* this isn't used yet
 static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 			GtkIMHtmlSmiley   *smiley)
 {
@@ -1956,7 +1976,7 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(int) pos - (int) t->values->str];
+			t = t->children [(unsigned int) pos - (unsigned int) t->values->str];
 		else
 			return;
 
@@ -1967,8 +1987,6 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 		t->image = NULL;
 	}
 }
-*/
-
 
 static gint
 gtk_smiley_tree_lookup (GtkSmileyTree *tree,
@@ -2026,6 +2044,25 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 		return len;
 
 	return 0;
+}
+
+static void
+gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	GtkSmileyTree *tree = (GtkSmileyTree *) value;
+	GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) user_data;
+	gtk_smiley_tree_remove(tree, smiley);
+}
+
+static void
+gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
+{
+	if (smiley->imhtml) {
+		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
+		g_hash_table_foreach(smiley->imhtml->smiley_data, 
+			gtk_imhtml_disassociate_smiley_foreach, smiley);
+	}
 }
 
 void
@@ -5599,12 +5636,14 @@ GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut
 	smiley->smile = g_strdup(shortcut);
 	smiley->hidden = hide;
 	smiley->flags = flags;
+	smiley->imhtml = NULL;
 	gtk_imhtml_smiley_reload(smiley);
 	return smiley;
 }
 
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley)
 {
+	gtk_imhtml_disassociate_smiley(smiley);
 	g_free(smiley->smile);
 	g_free(smiley->file);
 	if (smiley->icon)

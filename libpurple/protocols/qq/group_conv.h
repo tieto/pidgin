@@ -26,9 +26,10 @@
 #define _QQ_GROUP_CONV_H_
 
 #include "connection.h"
+#include "conversation.h"
 #include "group.h"
 
-void qq_group_conv_show_window(PurpleConnection *gc, qq_group *group);
+PurpleConversation *qq_room_conv_create(PurpleConnection *gc, qq_group *group);
 void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group);
 
 #endif

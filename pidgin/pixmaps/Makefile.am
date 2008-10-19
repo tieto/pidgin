@@ -1,11 +1,10 @@
 pidginpixmapdir = $(datadir)/pixmaps/pidgin
 pidginiconsdir = $(datadir)
 
-SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
+SUBDIRS = emotes/default/24 emotes/none
 
 if INSTALL_PIXMAPS
 MAKEFILE_MINGW = \
-		buddy_icons/qq/Makefile.mingw \
 		emotes/default/24/Makefile.mingw \
 		emotes/none/Makefile.mingw
 
@@ -551,6 +550,7 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TOOLBAR_16) \
 		$(TOOLBAR_22) \
 		$(TRAY_16) \
+		$(TRAY_16_ICO) \
 		$(TRAY_22) \
 		$(TRAY_32) \
 		$(TRAY_48)

@@ -613,14 +613,11 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_set_attrib(adl_node, "l", "1");
 
 	/*get the userlist*/
-	for (l = session->userlist->users; l != NULL; l = l->next) {
+	for (l = session->userlist->users; l != NULL; l = l->next){
 		user = l->data;
 
 		/* skip RL & PL during initial dump */
 		if (!(user->list_op & MSN_LIST_OP_MASK))
-			continue;
-
-		if (!strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
@@ -771,6 +768,53 @@ adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	reason = g_strdup_printf(_("Unknown error (%d)"), error);
 	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
 	g_free(reason);
+}
+
+static void
+adl_241_error_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+	size_t len)
+{
+	/* khc: some googling suggests that error 241 means the buddy is somehow
+	   in the local list, but not the server list, and that we should add
+	   those buddies to the addressbook. For now I will just notify the user
+	   about the raw payload, because I am lazy */
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	xmlnode *adl;
+	xmlnode *domain;
+	GString *emails;
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	adl = xmlnode_from_str(payload, len);
+	emails = g_string_new(NULL);
+
+	domain = xmlnode_get_child(adl, "d");
+	while (domain) {
+		const char *domain_str = xmlnode_get_attrib(domain, "n");
+		xmlnode *contact = xmlnode_get_child(domain, "c");
+		while (contact) {
+			g_string_append_printf(emails, "%s@%s\n",
+				xmlnode_get_attrib(contact, "n"), domain_str);
+			contact = xmlnode_get_next_twin(contact);
+		}
+		domain = xmlnode_get_next_twin(domain);
+	}
+
+	purple_notify_error(gc, NULL,
+		_("The following users are missing from your addressbook"), emails->str);
+	g_string_free(emails, TRUE);
+	xmlnode_free(adl);
+}
+
+static void
+adl_241_error_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	cmdproc->last_cmd->payload_cb = adl_241_error_cmd_post;
+	cmd->payload_len = atoi(cmd->params[1]);
 }
 
 static void
@@ -1132,6 +1176,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	friendly = purple_url_decode(cmd->params[3]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL) return;
 
 	old_friendly = msn_user_get_friendly_name(user);
 	if (!old_friendly || (old_friendly && (!friendly || strcmp(old_friendly, friendly))))
@@ -1960,6 +2005,8 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "URL", url_cmd);
 
 	msn_table_add_cmd(cbs_table, "fallback", "XFR", xfr_cmd);
+
+	msn_table_add_cmd(cbs_table, NULL, "241", adl_241_error_cmd);
 
 	msn_table_add_error(cbs_table, "ADD", add_error);
 	msn_table_add_error(cbs_table, "ADL", adl_error);

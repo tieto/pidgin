@@ -42,6 +42,7 @@
 #include "auth.h"
 #include "buddy.h"
 #include "chat.h"
+#include "data.h"
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
@@ -650,7 +651,8 @@ jabber_login(PurpleAccount *account)
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	gc->flags |= PURPLE_CONNECTION_HTML |
+		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
@@ -668,7 +670,6 @@ jabber_login(PurpleAccount *account)
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
-
 #ifdef USE_VV
 	js->sessions = NULL;
 #endif
@@ -2401,7 +2402,6 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
-
 #ifdef USE_VV
 
 PurpleMedia *

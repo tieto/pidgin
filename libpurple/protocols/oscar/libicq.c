@@ -26,6 +26,14 @@
 
 
 #include "oscarcommon.h"
+static GHashTable *
+icq_get_account_text_table(PurpleAccount *account)
+{
+	GHashTable *table;
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(table, "login_label", (gpointer)_("ICQ UIN..."));
+	return table;
+}
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -95,8 +103,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* unregister_user */
 	NULL,					/* send_attention */
 	NULL,					/* get_attention_types */
+
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL,					/* get_account_text_table */
+	icq_get_account_text_table, /* get_account_text_table */
 	NULL,					/* initiate_media */
 	NULL					/* can_do_media */
 };

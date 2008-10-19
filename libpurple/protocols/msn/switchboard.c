@@ -58,7 +58,7 @@ msn_switchboard_new(MsnSession *session)
 	swboard->cmdproc->data = swboard;
 	swboard->cmdproc->cbs_table = cbs_table;
 
-	session->switches = g_list_append(session->switches, swboard);
+	session->switches = g_list_prepend(session->switches, swboard);
 
 	return swboard;
 }

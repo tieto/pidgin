@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:56-0400\n"
-"PO-Revision-Date: 2008-08-11 21:00+0100\n"
+"POT-Creation-Date: 2008-08-29 13:35-0400\n"
+"PO-Revision-Date: 2008-08-26 20:31+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2374,6 +2374,9 @@ msgstr "Minimální velikost místnosti"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Čas pro ne aktivitu uživatele (v minutách)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Aplikovat pravidlo skrývání na kamarády"
 
 #. *< type
 #. *< ui_requirement
@@ -7495,17 +7498,20 @@ msgid ""
 "Room id %d, reply [0x%02X]: \n"
 "%s"
 msgstr ""
+"Odpověď %s(0x%02X )\n"
+"Posláno %s(0x%02X )\n"
+"Id místnosti %d, odpověď [0x%02X]: \n"
+"%s"
 
-#, fuzzy
 msgid "Failed room reply"
-msgstr "Přihlášení selhalo, žádná odpověď"
+msgstr "Odpověď místnosti selhala"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You are not a member of group \"%s\"\n"
-msgstr "Vy [%d] jste byli přidáno do skupiny \"%d\""
+msgstr "Nejste členem skupiny \"%s\"\n"
 
 msgid "Can not decrypt login reply"
-msgstr ""
+msgstr "Nemohu dešifrovat přihlašovací odpověď"
 
 #, c-format
 msgid "Invalid token reply code, 0x%02X"
@@ -10138,7 +10144,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Vítá vás %s!</span>\n"
 "\n"
@@ -10148,7 +10154,7 @@ msgstr ""
 "<b>Přidat</b>.\n"
 "\n"
 "Můžete se do tohoto okna vrátit a přidávat, upravovat nebo odstraňovat účty "
-"přes <b>Účty->Přidat/Upravit</b> v okně seznamu kamarádů."
+"přes <b>Účty->Spravovat</b> v okně seznamu kamarádů."
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -12531,6 +12537,12 @@ msgstr "Stav pro %s"
 msgid "Custom Smiley"
 msgstr "Uživatelský smajlík"
 
+msgid "More Data needed"
+msgstr "Je potřeba více dat"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Nastavte klávesovou zkratku asociovanou se smajlíkem."
+
 msgid "Duplicate Shortcut"
 msgstr "Duplikovat klávesovou zkratku"
 
@@ -12540,12 +12552,6 @@ msgid ""
 msgstr ""
 "Už existuje uživatelský smajlík pro vybranou klávesovou zkratku. "
 "Specifikujte jinou."
-
-msgid "More Data needed"
-msgstr "Je potřeba více dat"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Nastavte klávesovou zkratku asociovanou se smajlíkem."
 
 msgid "Please select an image for the smiley."
 msgstr "Prosím vyberte obrázek pro smajlík."
@@ -12706,6 +12712,9 @@ msgstr "Z_měnit"
 
 msgid "_Open Mail"
 msgstr "_Otevřít poštu"
+
+msgid "_Edit"
+msgstr "_Upravit"
 
 msgid "Pidgin Tooltip"
 msgstr "Pidgin tipy"
