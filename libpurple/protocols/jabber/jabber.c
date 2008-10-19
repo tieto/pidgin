@@ -2351,7 +2351,6 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 {
 	JabberStream *js = conv->account->gc->proto_data;
 	const gchar *who;
-	gboolean result;
 	
 	if (!args || !args[0]) {
 		/* use the buddy from conversation, if it's a one-to-one conversation */
@@ -2477,12 +2476,9 @@ void jabber_register_commands(void)
 					  "prpl-jabber", jabber_cmd_ping,
 					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
 					  NULL);
-	purple_cmd_register("buzz", "s", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
-					  "prpl-jabber", jabber_cmd_buzz,
-					  _("buzz: Buzz a user to get their attention"), NULL);
-	purple_cmd_register("buzz", "", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("buzz", "w", PURPLE_CMD_P_PRPL,
+					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY | 
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
 }
