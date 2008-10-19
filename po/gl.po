@@ -20,7 +20,7 @@ msgstr ""
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr "Pidgin"
+msgstr "Finch"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
