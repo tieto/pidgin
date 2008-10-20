@@ -34,6 +34,7 @@
 #include "ping.h"
 #include "adhoccommands.h"
 #include "data.h"
+#include "ibb.h"
 
 #ifdef _WIN32
 #include "utsname.h"
@@ -361,6 +362,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
+	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0047_NAMESPACE)
+		|| xmlnode_get_child_with_namespace(packet, "close", XEP_0047_NAMESPACE)
+		|| xmlnode_get_child_with_namespace(packet, "open", XEP_0047_NAMESPACE)) {
+		jabber_ibb_parse(js, packet);
+		return;
+	}
+	
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 	if(type && (!strcmp(type, "set") || !strcmp(type, "get"))) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);
