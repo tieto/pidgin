@@ -5,7 +5,7 @@
 # Copyright (C) 2003-2008, Ambrose C. Li <acli@ada.dhs.org>
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.546 2008/08/27 04:00:09 acli Exp $
+# $InternalId: zh_TW.po,v 1.553 2008/09/30 05:14:21 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -50,10 +50,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.5.0\n"
+"Project-Id-Version: Pidgin 2.5.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
-"PO-Revision-Date: 2008-08-26 23:51-0400\n"
+"POT-Creation-Date: 2008-10-19 02:54+0100\n"
+"PO-Revision-Date: 2008-09-29 22:12-0400\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>, Paladin R. Liu "
 "<paladin@ms1.hinet.net>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -118,7 +118,6 @@ msgstr "新郵件通知"
 msgid "Remember password"
 msgstr "記住密碼"
 
-#, fuzzy
 msgid "There are no protocol plugins installed."
 msgstr "未有安裝任何通訊協定模組。"
 
@@ -291,9 +290,6 @@ msgstr "新增羣組途中發生了錯誤"
 
 msgid "You must give a name for the group to add."
 msgstr "請給你新增的羣組輸入名稱。"
-
-msgid "A group with the name already exists."
-msgstr "那個羣組已經存在"
 
 # TODO 請覆查核實：是「加入」抑或「新增」?
 msgid "Add Group"
@@ -1900,7 +1896,7 @@ msgstr ""
 
 #, c-format
 msgid "Resolver process exited without answering our request"
-msgstr ""
+msgstr "解析程序已結束，但未有回覆我方發出的請求"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -5094,9 +5090,9 @@ msgstr "未經家長同意下使用兒童護照"
 msgid "Passport account not yet verified"
 msgstr "護照帳號尚未經過驗證"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Passport account suspended"
-msgstr "護照帳號尚未經過驗證"
+msgstr "護照帳號被暫時吊銷"
 
 #  FIXME「ticket」暫無譯文，也許可譯「通行證」或「許可證」？
 #  NOTE MSN 錯誤代號 928
@@ -5505,7 +5501,7 @@ msgstr "因為好友清單已滿，以致無法新增 %s"
 
 #, c-format
 msgid "%s is not a valid passport account."
-msgstr "%s 不是一個有效的 Passport 帳號"
+msgstr "%s 不是一個有效的護照帳號"
 
 #  NOTE「暫時無法使用」應該比「暫時不存在」通順
 #  NOTE 譯文更動 by Ambrose
@@ -6380,7 +6376,7 @@ msgid "AIM Protocol Plugin"
 msgstr "AIM 協定模組"
 
 msgid "ICQ UIN..."
-msgstr ""
+msgstr "ICQ 帳號..."
 
 #. *< type
 #. *< ui_requirement
@@ -7402,28 +7398,23 @@ msgstr "豬"
 msgid "Other"
 msgstr "其他"
 
-#, fuzzy
 msgid "Modify information"
 msgstr "修改好友資訊"
 
-#, fuzzy
 msgid "Update information"
 msgstr "更新好友資訊"
 
 #. TODO: We don't really need to notify the user about this, do we?
 #. TODO: Does the user really need to be notified about this?
-#, fuzzy
 msgid "QQ Buddy"
-msgstr "好友"
+msgstr "QQ好友"
 
-#, fuzzy
 msgid "Successed:"
-msgstr "速度："
+msgstr "成功："
 
-# TODO 要覆查 - 20061025
-#, fuzzy
+# NOTE Grammatical mistake in source text; should be "Changed"
 msgid "Change buddy information."
-msgstr "請輸入好友的資訊。"
+msgstr "成功修改好友資訊。"
 
 #, c-format
 msgid ""
@@ -7445,27 +7436,23 @@ msgstr "拒絕"
 #  NOTE（法文「tu」、德文「du」）而不是「您」（「vous」、「Sie」），
 #  NOTE 中文採用「你」應該也是恰當的。
 #. title
-#, fuzzy
 msgid "Sorry, you are not my style..."
 msgstr "對不起，我和你，合不來的……"
 
 msgid "Add buddy with auth request failed"
 msgstr "連同認證要求的新增好友失敗"
 
-#, fuzzy
 msgid "Failed:"
-msgstr "失敗"
+msgstr "失敗："
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-#, fuzzy
 msgid "Remove buddy"
-msgstr "移除這個好友"
+msgstr "移除好友"
 
-#, fuzzy
 msgid "Remove from other's buddy list"
-msgstr "%s 將你從他（她）的好友清單中移除。"
+msgstr "從對方的好友清單中移除"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d needs authentication"
 msgstr "使用者 %d 需要認證"
 
@@ -7483,17 +7470,15 @@ msgstr "想同我交個朋友嗎？"
 msgid "Send"
 msgstr "送出"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Add into %d's buddy list"
-msgstr "無法讀入好友清單"
+msgstr "加入 %d 的好友清單"
 
-#, fuzzy
 msgid "QQ Number Error"
-msgstr "QQ 號碼"
+msgstr "QQ 號碼錯誤"
 
-#, fuzzy
 msgid "Invalid QQ Number"
-msgstr "無效的 QQ 表情"
+msgstr "無效的 QQ 號碼"
 
 msgid "ID: "
 msgstr "ID："
@@ -7513,16 +7498,15 @@ msgstr "認證"
 msgid "QQ Qun"
 msgstr "QQ 羣"
 
-#, fuzzy
+# NOTE 參見 hi.qq.com/intro/mo.shtml?d10.htm
 msgid "Please enter Qun number"
-msgstr "請輸入 %s 的新密碼"
+msgstr "請輸入羣組號碼"
 
 # NOTE 參見 hi.qq.com/intro/mo.shtml?d10.htm
-#, fuzzy
 msgid "You can only search for permanent Qun\n"
 msgstr "你只可搜尋永久羣組\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d request to join Qun %d"
 msgstr "使用者 %d 要求加入羣組 %d"
 
@@ -7536,25 +7520,24 @@ msgstr "QQ 羣組操作"
 msgid "Approve"
 msgstr "允許"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "無法加入好友目前所在的聊天室"
-
-#, fuzzy, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
 msgstr "管理人 %2$d 拒絕了你加入羣組 %1$d"
 
-#, fuzzy, c-format
+#, c-format
+msgid "Successed to join Qun %d, operated by admin %d"
+msgstr "管理人 %2$d 允許了你加入羣組 %1$d"
+
+#, c-format
 msgid "[%d] removed from Qun \"%d\""
-msgstr "你 [%d] 退出了羣組「%d」"
+msgstr "[%d] 退出了羣組「%d」"
 
-#, fuzzy
 msgid "Notice:"
-msgstr "備註"
+msgstr "通告："
 
-#, fuzzy, c-format
+#, c-format
 msgid "[%d] added to Qun \"%d\""
-msgstr "你 [%d] 已經被加入羣組 \"%d\""
+msgstr "[%d] 已經被加入羣組 \"%d\""
 
 msgid "I am not a member"
 msgstr "我不是成員"
@@ -7562,10 +7545,9 @@ msgstr "我不是成員"
 msgid "I am a member"
 msgstr "我是成員"
 
-# NOTE 見 http://www.jabber.org/jeps/jep-0103.html
-#, fuzzy
+# NOTE 這是 QQ_ROOM_ROLE_REQUESTING，按上文下理應係指「申請成為成員中」
 msgid "I am requesting"
-msgstr "傳送網址時發生了不明的錯誤"
+msgstr "我正在要求加入"
 
 msgid "I am the admin"
 msgstr "我是管理人"
@@ -7573,24 +7555,22 @@ msgstr "我是管理人"
 msgid "Unknown status"
 msgstr "狀態不明"
 
-#, fuzzy
 msgid "The Qun does not allow others to join"
 msgstr "這羣組不容許外人加入"
 
-#, fuzzy
 msgid "Remove from Qun"
-msgstr "移除羣組"
+msgstr "從羣組中移除"
 
-#, fuzzy
 msgid "Join to Qun"
-msgstr "加入聊天室"
+msgstr "加入羣組"
 
+# NOTE 這是 QQ_ROOM_JOIN_DENIED
 #, c-format
 msgid "Qun %d denied to join"
-msgstr ""
+msgstr "加入羣組 %d 的要求被拒絕"
 
 msgid "Join Qun, Unknow Reply"
-msgstr ""
+msgstr "加入羣組途中收到不明的回應"
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr "指定的羣組 ID 在有效範圍之外"
@@ -7607,34 +7587,34 @@ msgstr "請注意，假如你是創立者，這最終會把這個羣 (Qun) 移�
 msgid "Do you want to approve the request?"
 msgstr "允許這個要求？"
 
-#, fuzzy
 msgid "Change Qun member"
-msgstr "電話號碼"
+msgstr "修改羣組號碼"
 
-#, fuzzy
 msgid "Change Qun information"
-msgstr "頻道資訊"
+msgstr "修改羣組資訊"
 
 msgid "You have successfully created a Qun"
 msgstr "成功建立了一個羣 (Qun)"
 
-#, fuzzy
 msgid "Would you like to set up the detail information now?"
-msgstr "要立刻設定該羣 (Qun) 的詳情嗎？"
+msgstr "要立刻設定細節嗎？"
 
 msgid "Setup"
 msgstr "設定"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s\n"
 "\n"
 "%s"
-msgstr "%s (%s)"
+msgstr ""
+"%s\n"
+"\n"
+"%s"
 
-#, fuzzy
+# XXX 20080929 acli - 毫無頭緒這是什麼，這是半胡猜 =P
 msgid "QQ Server News"
-msgstr "QQ 伺服器"
+msgstr "QQ 伺服器是日訊息"
 
 msgid "System Message"
 msgstr "系統訊息"
@@ -7683,7 +7663,7 @@ msgstr " 視像"
 
 #, fuzzy
 msgid " Zone"
-msgstr "無"
+msgstr " 區"
 
 # FIXME 20080810 acli - 這是很差的譯文，但原文太差了，沒辦法
 msgid "Flag"
@@ -7705,38 +7685,38 @@ msgstr "<b>目前上線好友</b>: %d 人<br>\n"
 msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>最近更新時間：</b>%s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>伺服器位址：</b>%s：%d<br>\n"
+msgstr "<b>伺服器位址</b>：%s<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>連線模式</b>：%s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>My Internet Address</b>: %s<br>\n"
-msgstr "<b>IP 位址：</b>%s<br>"
+msgstr "<b>本地端 IP 位址</b>：%s<br>\n"
 
-#, fuzzy, c-format
+# NOTE qq_data->net_stat.sent，送出的數據封包數量（並非位元組數量）的總計
+#, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>伺服器位址：</b>%s：%d<br>\n"
+msgstr "<b>送出封包</b>：%lu 個<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>使用者：</b>%s<br>"
+msgstr "<b>重覆送出</b>：%lu 個<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>%s：</b>%s<br>"
+msgstr "<b>遺失封包</b>：%lu 個<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>伺服器位址：</b>%s：%d<br>\n"
+msgstr "<b>收到封包</b>：%lu 個<br>\n"
 
-# XXX - 20061027
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>自己位址：</b>%s<br>\n"
+msgstr "<b>重複封包</b>：%lu 個<br>\n"
 
 #, c-format
 msgid "<b>Login Time</b>: %s<br>\n"
@@ -7760,12 +7740,9 @@ msgstr "設定我的資訊"
 msgid "Change Password"
 msgstr "修改密碼"
 
-# XXX - 20061027
-#, fuzzy
 msgid "Account Information"
-msgstr "登入資訊"
+msgstr "帳號資訊"
 
-#, fuzzy
 msgid "Leave the QQ Qun"
 msgstr "離開這個 QQ 羣 (Qun)"
 
@@ -7785,21 +7762,19 @@ msgstr "封鎖這個好友"
 msgid "QQ Protocol\tPlugin"
 msgstr "QQ 協定模組"
 
-#, fuzzy
 msgid "Auto"
-msgstr "作者"
+msgstr "自動"
 
-#, fuzzy
 msgid "Connect by TCP"
 msgstr "使用 TCP 連線"
 
-#, fuzzy
+# FIXME 不知這是什麼 - 20080929 acli
 msgid "Show server notice"
-msgstr "伺服器通訊埠"
+msgstr "顯示伺服器通告"
 
-#, fuzzy
+# XXX 半胡猜，請搜尋「server news」 - 20080929 acli
 msgid "Show server news"
-msgstr "伺服器位址"
+msgstr "顯示伺服器是日訊息"
 
 # XXX 20080810 acli - 譯文有待改進，原文也是
 msgid "Keep alive interval(s)"
@@ -7818,26 +7793,27 @@ msgid "Invalid token len, %d"
 msgstr "符記長度「%d」無效"
 
 msgid "Unable login for not support Redirect_EX now"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "修改密碼期間出現錯誤"
+msgstr "無法登入，暫時不支援 Redirect_EX 功能"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
+msgid "Error password: %s"
+msgstr "密碼錯誤：%s"
 
-#, fuzzy, c-format
+# FIXME 不知這是什麼，但我想可能是這樣 - acli 20080930
+#, c-format
+msgid "Need active: %s"
+msgstr "需要啟動帳號：%s"
+
+#, c-format
 msgid "Unable login for unknow reply code 0x%02X"
-msgstr "符記回應碼「0x%02X」無效"
+msgstr "無法登入，不明回應碼「0x%02X」"
 
 msgid "Keep alive error"
 msgstr "Keep Alive錯誤"
 
-#, fuzzy
+# XXX 看不明原始碼，這是半猜 - 20080930 acli
 msgid "Failed to connect all servers"
-msgstr "無法連線到伺服器"
+msgstr "無法連線到所有伺服器"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7863,50 +7839,50 @@ msgstr "寫入錯誤"
 msgid "Connection lost"
 msgstr "連線中斷"
 
+# XXX 這是看了原始碼後的結論（但可能會錯）- acli 20080930
 #. Update the login progress status display
-#, fuzzy, c-format
+#, c-format
 msgid "Request token"
-msgstr "要求被拒"
+msgstr "送出請求符記中"
 
 msgid "Couldn't resolve host"
 msgstr "無法解析主機"
 
-#, fuzzy
 msgid "Invalid server or port"
-msgstr "使用者名稱或密碼無效"
+msgstr "伺服器或通訊埠無效"
 
 #  XXX 20080810 acli - 原文好像有問題
 #, c-format
 msgid "Connecting server %s, retries %d"
 msgstr "連線伺服器 %s 中，將會嘗試 %d 次"
 
-#, fuzzy
 msgid "QQ Error"
-msgstr "QQid 錯誤"
+msgstr "QQ 錯誤"
 
 msgid "Unknow SERVER CMD"
-msgstr ""
+msgstr "伺服器送出了一個不明的指令"
 
+# NOTE %s 是指令名稱，第一個 %02X 是指令代碼，%d 是聊天室號碼，第二個 %02X 是回應代碼
 #, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
 "Room %d, reply 0x%02X"
 msgstr ""
+"送出指令 %s（代碼 0x%02X）\n"
+"（聊天室 %d），但收到錯誤回覆 0x%02X"
 
-#, fuzzy
 msgid "QQ Qun Command"
-msgstr "指令"
+msgstr "QQ 羣組指令"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You are not a member of QQ Qun \"%s\"\n"
 msgstr "你並非羣組「%s」的成員\n"
 
 msgid "Can not decrypt login reply"
 msgstr "登入回應解密失敗"
 
-#, fuzzy
 msgid "Unknow reply CMD"
-msgstr "原因不明"
+msgstr "伺服器送出了不明的回覆指令"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7919,11 +7895,9 @@ msgstr "傳送檔案"
 msgid "%d canceled the transfer of %s"
 msgstr "%d 取消了「%s」的傳送"
 
-#, fuzzy
 msgid "Do you approve the requestion?"
 msgstr "允許這個要求？"
 
-#, fuzzy
 msgid "Do you add the buddy?"
 msgstr "你要加入這個使用者到好友清單中嗎？"
 
@@ -7936,50 +7910,44 @@ msgstr "%s 已將你加入到他（她）的好友清單"
 msgid "Would you like to add him?"
 msgstr "你要將他（她）加入你的好友清單嗎？"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s added you [%s] to buddy list"
 msgstr "%s 將你 [%s] 加入他（她）的好友清單。"
 
-#, fuzzy
 msgid "QQ Budy"
-msgstr "好友"
+msgstr "QQ 好友"
 
 #, c-format
 msgid "Requestion rejected by %s"
-msgstr ""
+msgstr "使用者「%s」拒絕了你的要求"
 
 #, c-format
 msgid "Requestion approved by %s"
-msgstr ""
+msgstr "使用者「%s」允許了你的要求"
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
 msgid "%s wants to add you [%s] as a friend"
 msgstr "%s 想要將你 [%s] 加入他（她）的好友清單"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not in buddy list"
 msgstr "%s 不在你的好友清單內"
 
 # FIXME fix the original string :P
-#, fuzzy
 msgid "Would you add?"
 msgstr "你要將他（她）加入你的好友清單嗎？"
 
-# FIXME 原文一詞兩義，根本無法翻譯
-#  NOTE gntnotify 字義為「發信人」
-#  NOTE Jabber 術語字義見「Both」條
-#, fuzzy, c-format
+#, c-format
 msgid "From %s:"
-msgstr "已認證對方"
+msgstr "由 %s 發出："
 
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#, fuzzy
 msgid "QQ Server Notice"
-msgstr "QQ 伺服器"
+msgstr "QQ 伺服器通告"
 
 msgid "Connection closed (writing)"
 msgstr "連線關閉（寫入）"
@@ -9855,9 +9823,8 @@ msgstr "list：列出Yahoo網絡上的聊天室清單"
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: 要求使用者開始 Doodle Session"
 
-#, fuzzy
 msgid "Yahoo ID..."
-msgstr "Yahoo! 帳號"
+msgstr "Yahoo 帳號"
 
 #. *< type
 #. *< ui_requirement
@@ -10434,9 +10401,9 @@ msgstr "無法打開 %s：重新導向的次數超過了上限"
 msgid "Unable to connect to %s"
 msgstr "無法連線到「%s」"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
-msgstr "讀入 %s 途中發生錯誤：%s"
+msgstr "讀入 %s 途中發生錯誤：回應過長（上限為 %d 個位元組）"
 
 #, c-format
 msgid ""
@@ -11572,11 +11539,8 @@ msgstr "芬蘭文"
 msgid "French"
 msgstr "法文"
 
-#  NOTE 港譯只有「庫爾德」，台譯有「庫德」（標準譯法，看來亦較常見）和「庫爾德」
-#  NOTE 註：因 zh_TW 和 zh_HK 正式分家，保留台式譯法「庫德」
-#, fuzzy
 msgid "Irish"
-msgstr "庫爾德文"
+msgstr "愛爾蘭文"
 
 #  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=G&page=1
 msgid "Galician"
@@ -12046,13 +12010,11 @@ msgstr "連結顏色"
 msgid "Color to draw hyperlinks."
 msgstr "顯示連結時所用的顏色。"
 
-#, fuzzy
 msgid "Hyperlink visited color"
-msgstr "連結顏色"
+msgstr "瀏覽過的連結顏色"
 
-#, fuzzy
 msgid "Color to draw hyperlinks after it has been visited (or activated)."
-msgstr "當滑鼠經過連結時的連結顏色。"
+msgstr "當滑鼠經過瀏覽過（或已啟動）的連結時的連結顏色。"
 
 msgid "Hyperlink prelight color"
 msgstr "滑鼠經過連結時的連結顏色"
@@ -12915,20 +12877,17 @@ msgstr ""
 "音效指令(_C)：\n"
 "(請以 %s 代表檔名)"
 
-#, fuzzy
 msgid "M_ute sounds"
-msgstr "靜音(_S)"
+msgstr "靜音(_U)"
 
 msgid "Sounds when conversation has _focus"
 msgstr "當交談取得輸入焦點發出音效(_F)"
 
-#, fuzzy
 msgid "_Enable sounds:"
-msgstr "啟動音效："
+msgstr "啟動音效(_E)："
 
-#, fuzzy
 msgid "V_olume:"
-msgstr "音量："
+msgstr "音量(_O)："
 
 msgid "Play"
 msgstr "播放"
@@ -13891,9 +13850,8 @@ msgstr "第二游標顏色"
 msgid "Hyperlink Color"
 msgstr "超連結顏色"
 
-#, fuzzy
 msgid "Visited Hyperlink Color"
-msgstr "超連結顏色"
+msgstr "瀏覽過的超連結顏色"
 
 # XXX TODO 我非常討厭把「Highlight」譯成「高亮度」，但譯文可以改進 - Ambrose 20061029
 # FIXME 什麼是「反白訊息名稱」？ - acli 20080511
@@ -14316,20 +14274,23 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
+#~ msgid "A group with the name already exists."
+#~ msgstr "那個羣組已經存在"
+
 #~ msgid "EOF while reading from resolver process"
 #~ msgstr "由解析程序讀取時碰到檔案結尾"
 
 #~ msgid "Your information has been updated"
-#~ msgstr "成功修改了你的好友資訊。"
+#~ msgstr "成功修改了您的好友資訊。"
 
 #~ msgid "Input your reason:"
 #~ msgstr "請輸入原因："
 
 #~ msgid "You have successfully removed a buddy"
-#~ msgstr "你成功移除了一個好友"
+#~ msgstr "您成功移除了一個好友"
 
 #~ msgid "You have successfully removed yourself from your friend's buddy list"
-#~ msgstr "你成功從對方的好友清單中移除了你自己"
+#~ msgstr "您成功從對方的好友清單中移除了您自己"
 
 #~ msgid "You have added %d to buddy list"
 #~ msgstr "成功將 %d 加入好友清單"
@@ -14344,33 +14305,33 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgstr "原因：%s"
 
 #~ msgid "Your request to join group %d has been approved by admin %d"
-#~ msgstr "管理人 %2$d 允許了你加入羣組 %1$d"
+#~ msgstr "管理人 %2$d 允許了您加入群組 %1$d"
 
 #~ msgid "This group has been added to your buddy list"
-#~ msgstr "羣組已新增至好友清單。"
+#~ msgstr "群組已新增至好友清單。"
 
 #~ msgid "I am applying to join"
 #~ msgstr "我正在要求加入"
 
 #~ msgid "You have successfully left the group"
-#~ msgstr "你成功離開羣組"
+#~ msgstr "您成功離開群組"
 
 #~ msgid "QQ Group Auth"
-#~ msgstr "QQ 羣組認證"
+#~ msgstr "QQ 群組認證"
 
 #~ msgid "Your authorization request has been accepted by the QQ server"
-#~ msgstr "QQ 伺服器接受了你的認證"
+#~ msgstr "QQ 伺服器接受了您的認證"
 
 #~ msgid "Enter your reason:"
 #~ msgstr "請輸入原因："
 
 #  NOTE QQ「member」應是「成員」
 #~ msgid "You have successfully modified Qun member"
-#~ msgstr "成功更改了羣的一個成員"
+#~ msgstr "成功更改了群的一個成員"
 
 # FIXME 暫譯 ambrose 20070415
 #~ msgid "You have successfully modified Qun information"
-#~ msgstr "成功更改了羣的資訊"
+#~ msgstr "成功更改了群的資訊"
 
 #~ msgid " Space"
 #~ msgstr " Space"
@@ -14400,10 +14361,10 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgstr "聊天室回應錯誤"
 
 #~ msgid "User %s rejected your request"
-#~ msgstr "使用者「%s」拒絕了你的要求"
+#~ msgstr "使用者「%s」拒絕了您的要求"
 
 #~ msgid "User %s approved your request"
-#~ msgstr "使用者 %s 允許了你的要求"
+#~ msgstr "使用者 %s 允許了您的要求"
 
 #~ msgid "Notice from: %s"
 #~ msgstr "自 %s 發佈的通告"

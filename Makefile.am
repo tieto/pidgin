@@ -34,6 +34,9 @@ version-check:
 # We don't want to release development versions.
 	test x`echo $(PACKAGE_VERSION) | grep dev` = x
 
+# Make sure there is a NEWS entry for this version
+	head NEWS | grep "^$(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" > /dev/null
+
 # Ensure NEWS has no spaces at the start of a line.
 # Using spaces instead of tabs there is a common mistake.
 	test x`grep "^ " NEWS` = x
@@ -45,7 +48,7 @@ version-check:
 # For all releases, check the ChangeLogs.
 	head ChangeLog | grep "^version $(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" >/dev/null
 	head ChangeLog.win32 | grep "^version $(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" >/dev/null
-	head po/ChangeLog | grep "^version $(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" >/dev/null
+	head po/ChangeLog | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
 	test x`mtn automate select t:v$(PACKAGE_VERSION)` = x`mtn automate get_base_revision_id`

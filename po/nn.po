@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
-"PO-Revision-Date: 2008-08-26 00:39+0100\n"
+"POT-Creation-Date: 2008-10-19 02:57+0100\n"
+"PO-Revision-Date: 2008-10-18 09:38+0100\n"
 "Last-Translator: YS Landro <nynorsk@strilen.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,6 @@ msgstr "Varsling om ny e-post"
 msgid "Remember password"
 msgstr "Hugs passordet"
 
-#, fuzzy
 msgid "There are no protocol plugins installed."
 msgstr "Ingen protokolltillegg er installerte."
 
@@ -232,9 +231,6 @@ msgstr "Klarte ikkje å leggja til gruppe"
 
 msgid "You must give a name for the group to add."
 msgstr "Gruppa du ønskjer å leggja til må ha eit namn."
-
-msgid "A group with the name already exists."
-msgstr "Det finst allereie ei gruppe med det namnet."
 
 msgid "Add Group"
 msgstr "Legg til gruppe"
@@ -1500,10 +1496,10 @@ msgid "No Grouping"
 msgstr "Inga gruppering"
 
 msgid "Nested Subgroup"
-msgstr ""
+msgstr "Nøsta undergruppe"
 
 msgid "Nested Grouping (experimental)"
-msgstr ""
+msgstr "Nøsta gruppering (eksperimentell)"
 
 msgid "Provides alternate buddylist grouping options."
 msgstr "Gjev andre grupperingsval for kontaktlista."
@@ -1821,7 +1817,7 @@ msgstr ""
 
 #, c-format
 msgid "Resolver process exited without answering our request"
-msgstr ""
+msgstr "Oppslagsprosessen blei avslutta utan vi fekk svar"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -4510,9 +4506,8 @@ msgstr "Mellomlager filoverføringar"
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
-#, fuzzy
 msgid "Show Custom Smileys"
-msgstr "Vis eigne smilefjes"
+msgstr "Vis tilpass smilefjes"
 
 #, c-format
 msgid "%s has left the conversation."
@@ -4863,9 +4858,9 @@ msgstr "Passport for barn utan foreldregodkjennig"
 msgid "Passport account not yet verified"
 msgstr "Passport-kontoen er enno ikkje stadfesta"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Passport account suspended"
-msgstr "Passport-kontoen er enno ikkje stadfesta"
+msgstr "Passport-kontoen er suspendert"
 
 #, c-format
 msgid "Bad ticket"
@@ -4879,13 +4874,11 @@ msgstr "Feilkoden %d er ukjend"
 msgid "MSN Error: %s\n"
 msgstr "MSN-feil: %s\n"
 
-#, fuzzy
 msgid "Other Contacts"
-msgstr "Føretrekt kontakt"
+msgstr "Andre kontaktar"
 
-#, fuzzy
 msgid "Non-IM Contacts"
-msgstr "Fjern kontakt"
+msgstr "Andre enn lynmeldingskontaktar"
 
 msgid "Nudge"
 msgstr "Dytt"
@@ -5238,9 +5231,8 @@ msgstr "ukjend feil (%d)"
 msgid "Unable to add user"
 msgstr "Klarte ikkje å leggja til brukar"
 
-#, fuzzy
 msgid "The following users are missing from your addressbook"
-msgstr "Her er resultatet frå søket ditt"
+msgstr "Desse brukarane er ikkje i adresseboka di"
 
 #, c-format
 msgid "Unable to add user on %s (%s)"
@@ -5422,13 +5414,11 @@ msgstr "%s har lagt deg til i vennelista si."
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s har fjerna deg frå vennelista si."
 
-#, fuzzy
 msgid "Delete Buddy from Address Book?"
-msgstr "Legg til i adresseboka"
+msgstr "Sletta venn frå adresseboka?"
 
-#, fuzzy
 msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "Vil du leggja til denne vennen i vennelista di?"
+msgstr "Vil du sletta denne vennen frå adresseboka di òg?"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -6112,7 +6102,7 @@ msgid "AIM Protocol Plugin"
 msgstr "AIM-protokolltillegg"
 
 msgid "ICQ UIN..."
-msgstr ""
+msgstr "ICQ UIN …"
 
 #. *< type
 #. *< ui_requirement
@@ -7130,27 +7120,22 @@ msgstr "Grisen"
 msgid "Other"
 msgstr "Anna"
 
-#, fuzzy
 msgid "Modify information"
-msgstr "Endra personlege opplysningar"
+msgstr "Endra opplysningar"
 
-#, fuzzy
 msgid "Update information"
-msgstr "Oppdatera personlege opplysningar"
+msgstr "Oppdater opplysningar"
 
 #. TODO: We don't really need to notify the user about this, do we?
 #. TODO: Does the user really need to be notified about this?
-#, fuzzy
 msgid "QQ Buddy"
-msgstr "Venn"
+msgstr "QQ-venn"
 
-#, fuzzy
 msgid "Successed:"
-msgstr "Fart:"
+msgstr "Vellykka:"
 
-#, fuzzy
 msgid "Change buddy information."
-msgstr "Skriv inn venneinformasjonen."
+msgstr "Endra vennopplysningar."
 
 #, c-format
 msgid ""
@@ -7169,28 +7154,24 @@ msgid "Reject request"
 msgstr "Avvis førespurnad"
 
 #. title
-#, fuzzy
 msgid "Sorry, you are not my style..."
-msgstr "Seier meg lei for det, men du er ikkje min tyoe…"
+msgstr "Dessverre, du er ikkje min stil…"
 
 msgid "Add buddy with auth request failed"
 msgstr "Klarer ikkje å leggja til venn ved bruk av autentiseringsførespurnad"
 
-#, fuzzy
 msgid "Failed:"
-msgstr "Feila"
+msgstr "Feila:"
 
-#, fuzzy
 msgid "Remove buddy"
 msgstr "Fjern venn"
 
-#, fuzzy
 msgid "Remove from other's buddy list"
-msgstr "%s har fjerna deg frå vennelista si."
+msgstr "Fjern frå andre si venneliste"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d needs authentication"
-msgstr "Brukar %d treng autentisering"
+msgstr "%d treng stadfesting"
 
 msgid "Input request here"
 msgstr "Skriv førespurnaden her"
@@ -7205,17 +7186,15 @@ msgstr "Vil du vera venn med meg?"
 msgid "Send"
 msgstr "Send"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Add into %d's buddy list"
-msgstr "Klarte ikkje å henta fram vennelista"
+msgstr "Legg til %d si venneliste"
 
-#, fuzzy
 msgid "QQ Number Error"
-msgstr "QQ-nummer"
+msgstr "QQ-nummerfeil"
 
-#, fuzzy
 msgid "Invalid QQ Number"
-msgstr "Ugyldig QQ-andlet"
+msgstr "Ugyldig QQ-nummer"
 
 msgid "ID: "
 msgstr "ID: "
@@ -7233,49 +7212,46 @@ msgid "Auth"
 msgstr "Aut"
 
 msgid "QQ Qun"
-msgstr "QQ Qun"
+msgstr "QQ-gruppe"
 
-#, fuzzy
 msgid "Please enter Qun number"
-msgstr "Skriv inn det nye namnet til %s"
+msgstr "Skriv inn gruppenummeret"
 
-#, fuzzy
 msgid "You can only search for permanent Qun\n"
-msgstr "Du kan berre søkja etter permanente QQ-grupper\n"
+msgstr "Du kan berre søkja etter permanente grupper\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d request to join Qun %d"
-msgstr "Brukaren %d bad om å bli med i gruppa %d"
+msgstr "%d spør om å bli med i gruppa %d"
 
 #, c-format
 msgid "Message: %s"
 msgstr "Melding: %s"
 
 msgid "QQ Qun Operation"
-msgstr "QQ Qun-handling"
+msgstr "QQ gruppehandling"
 
 msgid "Approve"
 msgstr "Godkjenn"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Klarte ikkje å bli med vennen i praterommet"
+msgstr "Klarte ikkje å bli med i gruppa %d, styrt av admin %d"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successed to join Qun %d, operated by admin %d"
-msgstr "Førespurnaden din om å bli med i gruppa %d er blitt avvist av admin %d"
+msgstr "Blei med i gruppa %d, styrt av admin %d"
 
-#, fuzzy, c-format
+#, c-format
 msgid "[%d] removed from Qun \"%d\""
-msgstr "Du [%d] har forlate gruppa  \"%d\""
+msgstr "[%dfjerna frå gruppa \"%d\""
 
-#, fuzzy
 msgid "Notice:"
-msgstr "Notat"
+msgstr "Merk:"
 
-#, fuzzy, c-format
+#, c-format
 msgid "[%d] added to Qun \"%d\""
-msgstr "Du [%d] er blitt lagt til i gruppa \"%d\""
+msgstr "[%d] lagt til gruppa \"%d\""
 
 msgid "I am not a member"
 msgstr "Eg er ikkje medlem"
@@ -7283,9 +7259,8 @@ msgstr "Eg er ikkje medlem"
 msgid "I am a member"
 msgstr "Eg er medlem"
 
-#, fuzzy
 msgid "I am requesting"
-msgstr "Ugyldig førespurnad"
+msgstr "Eg ber om"
 
 msgid "I am the admin"
 msgstr "Eg er administratoren"
@@ -7293,70 +7268,66 @@ msgstr "Eg er administratoren"
 msgid "Unknown status"
 msgstr "Ukjend tilstand"
 
-#, fuzzy
 msgid "The Qun does not allow others to join"
 msgstr "Denne gruppa tillèt ikkje at andre blir med"
 
-#, fuzzy
 msgid "Remove from Qun"
-msgstr "Fjern gruppa"
+msgstr "Fjern frå gruppa"
 
-#, fuzzy
 msgid "Join to Qun"
-msgstr "Bli med i praterom"
+msgstr "Bli med i gruppa"
 
 #, c-format
 msgid "Qun %d denied to join"
-msgstr ""
+msgstr "Gruppa %d får ikkje vera med"
 
 msgid "Join Qun, Unknow Reply"
-msgstr ""
+msgstr "Bli med i gruppa, ukjent svar"
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr "Du førte opp ein gruppe-ID utanfor godkjent område"
 
 msgid "Are you sure you want to leave this Qun?"
-msgstr "Er du sikker på at du vil forlata denne Qun-en?"
+msgstr "Er du sikker på at du vil forlata denne gruppa?"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
-"Ver merksam på at om du har laga denne Qun-en, \n"
-"vil denne handlinga fjerna han."
+"Ver merksam på at om du har laga denne gruppa, \n"
+"vil denne handlinga fjerna ho."
 
 #. we want to see window
 msgid "Do you want to approve the request?"
 msgstr "Godtek du førespurnaden?"
 
-#, fuzzy
 msgid "Change Qun member"
-msgstr "Telefonnummer"
+msgstr "Endra gruppemedlem"
 
-#, fuzzy
 msgid "Change Qun information"
-msgstr "Kanalinformasjon"
+msgstr "Endra gruppeopplysningar"
 
 msgid "You have successfully created a Qun"
-msgstr "Du har oppretta ein Qun"
+msgstr "Du har oppretta ei gruppe"
 
-#, fuzzy
 msgid "Would you like to set up the detail information now?"
-msgstr "Vil du endra Qun-innstillingane no?"
+msgstr "Vil du endra detaljopplysningane no?"
 
 msgid "Setup"
 msgstr "Innstillingar"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s\n"
 "\n"
 "%s"
-msgstr "%s (%s)"
+msgstr ""
+"%s\n"
+"\n"
+"%s"
 
-#, fuzzy
 msgid "QQ Server News"
-msgstr "ICQ tenarvidaresending"
+msgstr "QQ-tenarnyhende"
 
 msgid "System Message"
 msgstr "Systemmelding"
@@ -7389,9 +7360,8 @@ msgstr "Mobil"
 msgid " Video"
 msgstr "Video"
 
-#, fuzzy
 msgid " Zone"
-msgstr "Ingen"
+msgstr "Sone"
 
 # Er indikator betre?
 msgid "Flag"
@@ -7411,37 +7381,37 @@ msgstr "<b>Tilkopla no</b>: %d<br>\n"
 msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>Siste oppfrisking</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Tenar</b>: %s: %d<br>\n"
+msgstr "<b>Tenar</b>: %s<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Tilkoplingstilstand</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>My Internet Address</b>: %s<br>\n"
-msgstr "<b>Tilkoplingstilstand</b>: %s<br>\n"
+msgstr "<b>Internettadressa mi</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Tenar</b>: %s: %d<br>\n"
+msgstr "<b>Sendt</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Siste oppfrisking</b>: %s<br>\n"
+msgstr "<b>Send om att</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Siste oppfrisking</b>: %s<br>\n"
+msgstr "<b>Tapt</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Tenar</b>: %s: %d<br>\n"
+msgstr "<b>Motteke</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Mi offentlege IP-adresse</b>: %s<br>\n"
+msgstr "<b>Motteke duplikat</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Login Time</b>: %s<br>\n"
@@ -7464,13 +7434,11 @@ msgstr "Opplysningane mine"
 msgid "Change Password"
 msgstr "Endra passord"
 
-#, fuzzy
 msgid "Account Information"
-msgstr "Påloggingsinformasjon "
+msgstr "Kontoopplysningar"
 
-#, fuzzy
 msgid "Leave the QQ Qun"
-msgstr "Forlat denne QQ Qun-en"
+msgstr "Gå frå QQ-rommet"
 
 msgid "Block this buddy"
 msgstr "Blokker denne vennen"
@@ -7488,21 +7456,18 @@ msgstr "Blokker denne vennen"
 msgid "QQ Protocol\tPlugin"
 msgstr "QQ-protokoll\tTillegg"
 
-#, fuzzy
 msgid "Auto"
-msgstr "Forfattar"
+msgstr "Auto"
 
-#, fuzzy
 msgid "Connect by TCP"
-msgstr "Kopla til ved hjelp av TCP"
+msgstr "Kopla til med TCP"
 
-#, fuzzy
+# -merknad?
 msgid "Show server notice"
-msgstr "Tenarport"
+msgstr "Vis tenarvarsel"
 
-#, fuzzy
 msgid "Show server news"
-msgstr "Tenaradresse"
+msgstr "Vis tenarnytt"
 
 msgid "Keep alive interval(s)"
 msgstr "Intervall vedlikehaldstilkopling"
@@ -7520,25 +7485,25 @@ msgstr "Ugyldig markørlengd, %d"
 
 msgid "Unable login for not support Redirect_EX now"
 msgstr ""
+"Klarte ikkje å logga på. Tenaren bad om ei handling som ikkje er støtta."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error password: %s"
-msgstr "Feil under  endringa av passordet"
+msgstr "Passordfeil: %s"
 
 #, c-format
 msgid "Need active: %s"
-msgstr ""
+msgstr "Treng aktive: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable login for unknow reply code 0x%02X"
-msgstr "Ugyldig markørsvarkode, 0x%02X"
+msgstr "Får ikkje logga på. Ukjend svarkode 0x%02X"
 
 msgid "Keep alive error"
 msgstr "Feil på vedlikehaldssambandet"
 
-#, fuzzy
 msgid "Failed to connect all servers"
-msgstr "Klarte ikkje å kopla til tenaren"
+msgstr "Klarte ikkje å kopla opp alle tenarane"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7565,52 +7530,46 @@ msgid "Connection lost"
 msgstr "Tapt tilkopling"
 
 #. Update the login progress status display
-#, fuzzy, c-format
+#, c-format
 msgid "Request token"
-msgstr "Førsepurnad avvist"
+msgstr "Spør etter symbol"
 
 msgid "Couldn't resolve host"
 msgstr "Vertsoppslaget feila"
 
-#, fuzzy
 msgid "Invalid server or port"
-msgstr "Ugyldig feil"
+msgstr "Ugyldig tenar eller port"
 
 #, c-format
 msgid "Connecting server %s, retries %d"
 msgstr "Koplar til tenaren %s, prøver %d"
 
-#, fuzzy
 msgid "QQ Error"
-msgstr "QQ-id-feil"
+msgstr "QQ-feil"
 
 msgid "Unknow SERVER CMD"
-msgstr ""
+msgstr "Ukjend SERVER CMD"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
 "Room %d, reply 0x%02X"
 msgstr ""
-"Svar %s(0x%02X )\n"
-"Send %s(0x%02X )\n"
-"Rom-id %d, svar [0x%02X]: \n"
-"%s"
+"Feil i svar til %s(0x%02X)\n"
+"Rom %d, svar 0x%02X"
 
-#, fuzzy
 msgid "QQ Qun Command"
-msgstr "Kommando"
+msgstr "QQ-gruppekommando"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You are not a member of QQ Qun \"%s\"\n"
-msgstr "Du er ikkje medlem i gruppa \"%s\"\n"
+msgstr "Du er ikkje medlem i QQ-gruppa \"%s\"\n"
 
 msgid "Can not decrypt login reply"
 msgstr "Klarer ikkje å dekryptera påloggingssvaret"
 
-#, fuzzy
 msgid "Unknow reply CMD"
-msgstr "Ukjend årsak"
+msgstr "Ukjend svar CMD"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7623,13 +7582,11 @@ msgstr "Filsending"
 msgid "%d canceled the transfer of %s"
 msgstr "%d avbraut overføringa av %s"
 
-#, fuzzy
 msgid "Do you approve the requestion?"
 msgstr "Godtek du førespurnaden?"
 
-#, fuzzy
 msgid "Do you add the buddy?"
-msgstr "Vil du leggja til denne vennen?"
+msgstr "Vil du leggja til vennen?"
 
 #. only need to get value
 #, c-format
@@ -7639,46 +7596,44 @@ msgstr "%s har lagt deg til"
 msgid "Would you like to add him?"
 msgstr "Vil du leggja han til?"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s added you [%s] to buddy list"
-msgstr "%s har lagt deg [%s] til i vennelista si"
+msgstr "%s la deg [%s] til i vennelista"
 
-#, fuzzy
 msgid "QQ Budy"
-msgstr "Venn"
+msgstr "QQ-venn"
 
 #, c-format
 msgid "Requestion rejected by %s"
-msgstr ""
+msgstr "Førespurnaden er avvist av %s"
 
 #, c-format
 msgid "Requestion approved by %s"
-msgstr ""
+msgstr "Førespurnaden er godteken av %s"
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
 msgid "%s wants to add you [%s] as a friend"
 msgstr "%s ønskjer å leggja deg [%s] til som venn"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not in buddy list"
-msgstr "%s er ikkje på vennelista di"
+msgstr "%s er ikkje i vennelista"
 
-#, fuzzy
 msgid "Would you add?"
-msgstr "Vil du leggja han til?"
+msgstr "Vil du leggja til?"
 
-#, fuzzy, c-format
+#, c-format
 msgid "From %s:"
-msgstr "Frå"
+msgstr "Frå %s:"
 
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#, fuzzy
+# ?
 msgid "QQ Server Notice"
-msgstr "Tenarport"
+msgstr "QQ-tenarmelding"
 
 msgid "Connection closed (writing)"
 msgstr "Tilkoplinga er lukka (skrivande)"
@@ -9536,9 +9491,8 @@ msgstr "list: list romma på Yahoo-nettverket"
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: spør ein brukar om å starta ei teikneøkt"
 
-#, fuzzy
 msgid "Yahoo ID..."
-msgstr "Yahoo!-ID"
+msgstr "Yahoo-ID …"
 
 #. *< type
 #. *< ui_requirement
@@ -10087,9 +10041,9 @@ msgstr "Klarte ikkje å opna %s: vidaresendt for mange gonger"
 msgid "Unable to connect to %s"
 msgstr "Klarte ikkje å kopla til %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
-msgstr "Klarte ikkje å lesa frå %s: %s"
+msgstr "Klarte ikkje å lesa frå %s: for langt svar (%d bytar-grense)"
 
 #, c-format
 msgid ""
@@ -10739,9 +10693,8 @@ msgstr "/Vennar/Sorter vennar"
 msgid "SSL Servers"
 msgstr "SSL-tenarar"
 
-#, fuzzy
 msgid "Network disconnected"
-msgstr "Fjernnode fråkopla"
+msgstr "Nettverket er fråkopla"
 
 msgid "Unknown command."
 msgstr "Ukjend kommando."
@@ -11194,9 +11147,8 @@ msgstr "Finsk"
 msgid "French"
 msgstr "Fransk"
 
-#, fuzzy
 msgid "Irish"
-msgstr "Kurdisk"
+msgstr "Irsk"
 
 msgid "Galician"
 msgstr "Galisisk"
@@ -11616,13 +11568,11 @@ msgstr "Lenkjefarge"
 msgid "Color to draw hyperlinks."
 msgstr "Farge til å teikna lenkje."
 
-#, fuzzy
 msgid "Hyperlink visited color"
-msgstr "Lenkjefarge"
+msgstr "Farge på besøkte lenkjer"
 
-#, fuzzy
 msgid "Color to draw hyperlinks after it has been visited (or activated)."
-msgstr "Lenkjefarge når musa peikar på lenkja."
+msgstr "Lenkjefarge etter at lenkja er besøkt (eller teken i bruk)."
 
 msgid "Hyperlink prelight color"
 msgstr "Lenkjefarge"
@@ -12493,20 +12443,17 @@ msgstr ""
 "Lyd_kommando:\n"
 "(%s for filnamn)"
 
-#, fuzzy
 msgid "M_ute sounds"
-msgstr "_Demp lydar"
+msgstr "&Demp lydar"
 
 msgid "Sounds when conversation has _focus"
 msgstr "Lydar medan samtalevindauget har _fokus"
 
-#, fuzzy
 msgid "_Enable sounds:"
-msgstr "Bruk lydar:"
+msgstr "Bruk program_lydar:"
 
-#, fuzzy
 msgid "V_olume:"
-msgstr "Volum:"
+msgstr "_Volum:"
 
 msgid "Play"
 msgstr "Spel"
@@ -12727,13 +12674,11 @@ msgstr "Smilefjes"
 msgid "Custom Smiley Manager"
 msgstr "Tilpassa smilefjesbehandling"
 
-#, fuzzy
 msgid "Click to change your buddyicon for this account."
-msgstr "Bruk dette venne-_ikonet for denne kontoen:"
+msgstr "Klikk for å endra venneikonet til denne kontoen."
 
-#, fuzzy
 msgid "Click to change your buddyicon for all accounts."
-msgstr "Bruk dette venne-_ikonet for denne kontoen:"
+msgstr "Klikk for å endra venneikonet til alle kontoane."
 
 msgid "Waiting for network connection"
 msgstr "Ventar på nettverkssamband"
@@ -13436,9 +13381,8 @@ msgstr "Sekundær peikarfarge"
 msgid "Hyperlink Color"
 msgstr "Lenkjefarge"
 
-#, fuzzy
 msgid "Visited Hyperlink Color"
-msgstr "Lenkjefarge"
+msgstr "Farge besøkte lenkjer"
 
 msgid "Highlighted Message Name Color"
 msgstr "Framheva melding"
@@ -13859,6 +13803,9 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
 
+#~ msgid "A group with the name already exists."
+#~ msgstr "Det finst allereie ei gruppe med det namnet."
+
 #~ msgid "EOF while reading from resolver process"
 #~ msgstr "EOF under lesing frå oppslagsprosessen"
 
@@ -13946,6 +13893,9 @@ msgstr ""
 
 #~ msgid "Notice from: %s"
 #~ msgstr "Melding frå: %s"
+
+#~ msgid "Keep the status message when the status is changed"
+#~ msgstr "Hald på statusmeldinga når statusen blir endra"
 
 #~ msgid "Code [0x%02X]: %s"
 #~ msgstr "Kode [0x%02X]: %s"

@@ -240,7 +240,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_without_tcl:--disable-tcl} \
                                     %{?_without_text:--disable-consoleui}
 
-make %{?_smp_mflags}
+make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
 %install
 rm -rf %{buildroot}
@@ -251,7 +251,7 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      sysconfdir=%{buildroot}%{_sysconfdir} \
      install
 %else
-make DESTDIR=$RPM_BUILD_ROOT install
+make DESTDIR=$RPM_BUILD_ROOT LIBTOOL=/usr/bin/libtool install
 %endif
 
 # Delete files that we don't want to put in any of the RPMs
