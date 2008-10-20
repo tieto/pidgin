@@ -915,7 +915,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 
 static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 {
-	GtkWidget *parent = gtk_widget_get_parent_window(toolbar);
+	
 }
 
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
