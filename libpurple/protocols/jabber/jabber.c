@@ -2366,6 +2366,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		who = args[0];
 	}
 	
+	purple_conversation_attention(conv, who, 0, PURPLE_MESSAGE_SEND, time(NULL));
 	return _jabber_send_buzz(js, who, error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
 }
 
