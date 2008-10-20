@@ -91,15 +91,6 @@ JabberIq *jingle_session_to_packet(JingleSession *session, JingleActionType acti
 
 void jingle_session_handle_action(JingleSession *session, xmlnode *jingle, JingleActionType action);
 
-#define jingle_session_create_session_accept(session) \
-	jingle_session_to_packet(session, JINGLE_SESSION_ACCEPT)
-#define jingle_session_create_session_info(session) \
-	jingle_session_to_packet(session, JINGLE_SESSION_INFO)
-#define jingle_session_create_session_initiate(session) \
-	jingle_session_to_packet(session, JINGLE_SESSION_INITIATE)
-#define jingle_session_create_session_terminate(session) \
-	jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE)
-
 struct _JingleContent *jingle_session_find_content(JingleSession *session,
 					const gchar *name, const gchar *creator);
 struct _JingleContent *jingle_session_find_pending_content(JingleSession *session,

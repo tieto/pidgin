@@ -75,13 +75,6 @@ JingleTransport *jingle_transport_create(const gchar *type);
 const gchar *jingle_transport_get_transport_type(JingleTransport *transport);
 void jingle_transport_add_candidate();
 
-#define jingle_transport_create_transport_accept(session) \
-	jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT)
-#define jingle_transport_create_transport_info(session) \
-	jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO)
-#define jingle_transport_create_transport_replace(session) \
-	jingle_session_to_packet(session, JINGLE_TRANSPORT_REPLACE)
-
 JingleTransport *jingle_transport_parse(xmlnode *transport);
 xmlnode *jingle_transport_to_xml(JingleTransport *transport, xmlnode *content, JingleActionType action);
 
