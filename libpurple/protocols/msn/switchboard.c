@@ -1031,6 +1031,9 @@ datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		else
 			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
+		
+		purple_conversation_attention(swboard->conv, user, 0, 
+			PURPLE_MESSAGE_RECV, time(NULL));
 
 	} else if (!strcmp(id, "2")) {
 		/* Wink */

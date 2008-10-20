@@ -312,6 +312,7 @@ static void handle_buzz(JabberMessage *jm) {
 	str = g_strdup_printf(_("%s has buzzed you!"), username);
 	
 	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+	purple_conversation_attention(c, username, 0, PURPLE_MESSAGE_RECV, time(NULL));
 	g_free(username);
 	g_free(str);
 }
