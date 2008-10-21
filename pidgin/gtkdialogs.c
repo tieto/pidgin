@@ -88,18 +88,15 @@ static const struct developer developers[] = {
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	N_("developer"),	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
-	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
 	{"Kevin 'SimGuy' Stange",	N_("developer & webmaster"),	NULL},
 	{"Will 'resiak' Thompson",	N_("developer"),	NULL},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
-	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{NULL, NULL, NULL}
 };
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
-	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Marcus 'malu' Lundblad", NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
@@ -117,14 +114,17 @@ static const struct developer retired_developers[] = {
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
+	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Jim Seymour",			N_("XMPP developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
+	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
 	{NULL, NULL, NULL}
 };
 
 /* Order: Alphabetical by Last Name */
 static const struct developer retired_patch_writers[] = {
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
