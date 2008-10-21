@@ -31,7 +31,7 @@
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
-#define YAHOO_MAIL_URL "http://us.rd.yahoo.com/messenger/client/?http://mail.yahoo.com/"
+#define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
 #define YAHOO_XFER_PORT 80
 #define YAHOO_XFER_RELAY_HOST "relay.msg.yahoo.com"
