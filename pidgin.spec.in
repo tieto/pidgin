@@ -263,6 +263,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/liboscar.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libjabber.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
+find $RPM_BUILD_ROOT -type f -name '*.a' -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
