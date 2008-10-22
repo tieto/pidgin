@@ -27,7 +27,11 @@
 
 #include <glib.h>
 #include "connection.h"
+#include "conversation.h"
 #include "group.h"
+
+PurpleConversation *qq_room_conv_new(PurpleConnection *gc, qq_group *group);
+void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group);
 
 void qq_room_got_chat_in(PurpleConnection *gc,
 		qq_group *group, guint32 uid_from, const gchar *msg, time_t in_time);

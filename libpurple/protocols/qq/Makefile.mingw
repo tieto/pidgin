@@ -46,7 +46,6 @@ C_SRC = \
 	qq_crypt.c \
 	file_trans.c \
 	group.c \
-	group_conv.c \
 	group_find.c \
 	group_free.c \
 	group_internal.c \

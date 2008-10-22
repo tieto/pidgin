@@ -1040,8 +1040,8 @@ void qq_disconnect(PurpleConnection *gc)
 	qd->my_ip.s_addr = 0;
 	qd->my_port = 0;
 
-	qq_group_free_all(qd);
-	qq_buddies_list_free(gc->account, qd);
+	qq_group_free_all(gc);
+	qq_buddy_data_free_all(gc);
 }
 
 static gint packet_encap(qq_data *qd, guint8 *buf, gint maxlen, guint16 cmd, guint16 seq,

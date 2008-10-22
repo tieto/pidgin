@@ -245,3 +245,18 @@ const gchar *qq_get_room_cmd_desc(gint room_cmd)
 		return "Unknown Room Command";
 	}
 }
+
+/* check if status means online or offline */
+gboolean is_online(guint8 status)
+{
+	switch(status) {
+		case QQ_BUDDY_ONLINE_NORMAL:
+		case QQ_BUDDY_ONLINE_AWAY:
+		case QQ_BUDDY_ONLINE_INVISIBLE:
+		case QQ_BUDDY_ONLINE_BUSY:
+			return TRUE;
+		case QQ_BUDDY_CHANGE_TO_OFFLINE:
+			return FALSE;
+	}
+	return FALSE;
+}

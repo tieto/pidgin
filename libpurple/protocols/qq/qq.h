@@ -179,7 +179,6 @@ struct _qq_data {
 	struct in_addr my_ip;			/* my ip address detected by server */
 	guint16 my_port;		/* my port detected by server */
 	guint16 my_icon;		/* my icon index */
-	guint16 my_level;		/* my level */
 	guint32 online_total;		/* the number of online QQ users */
 	time_t online_last_update;		/* last time send get_friends_online packet */
 
@@ -189,7 +188,6 @@ struct _qq_data {
 	GList *groups;
 	GSList *joining_groups;
 	GSList *adding_groups_from_server; /* internal ids of groups the server wants in my blist */
-	GList *buddies;
 	GList *group_info_window;
 
 	gboolean is_show_notice;

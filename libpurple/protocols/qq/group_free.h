@@ -30,6 +30,6 @@
 #include "group.h"
 
 void qq_group_free(qq_group *group);
-void qq_group_free_all(qq_data *qd);
+void qq_group_free_all(PurpleConnection *gc);
 
 #endif

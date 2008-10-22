@@ -247,8 +247,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 			group->title_utf8, purple_connection_get_account(gc));
 	if(NULL == conv) {
-		purple_debug_warning("QQ",
-				"Conversation \"%s\" is not open, do not set topic\n", group->title_utf8);
+		purple_debug_warning("QQ", "Conversation \"%s\" is not opened\n", group->title_utf8);
 		return;
 	}
 

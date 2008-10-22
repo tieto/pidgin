@@ -34,7 +34,6 @@
 #include "qq_crypt.h"
 
 #include "group_search.h"
-#include "group_conv.h"
 #include "group_find.h"
 #include "group_internal.h"
 #include "group_im.h"
@@ -630,7 +629,7 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 			qq_request_change_status(gc, QQ_CMD_CLASS_UPDATE_ALL);
 			break;
 		case QQ_CMD_CHANGE_STATUS:
-			qq_request_get_buddies_list(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);
+			qq_request_get_buddies(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);
 			break;
 		case QQ_CMD_GET_BUDDIES_LIST:
 			qq_request_get_buddies_and_rooms(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);
@@ -824,13 +823,13 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 	case QQ_ROOM_CMD_GET_ONLINES:
 		qq_process_room_cmd_get_onlines(data + bytes, data_len - bytes, gc);
 		if (group != NULL)
-			qq_group_conv_refresh_online_member(gc, group);
+			qq_room_conv_set_onlines(gc, group);
 		break;
 	case QQ_ROOM_CMD_GET_BUDDIES:
 		qq_process_room_cmd_get_buddies(data + bytes, data_len - bytes, gc);
 		if (group != NULL) {
 			group->is_got_info = TRUE;
-			qq_group_conv_refresh_online_member(gc, group);
+			qq_room_conv_set_onlines(gc, group);
 		}
 		break;
 	default:
@@ -898,23 +897,16 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		case QQ_CMD_LOGIN:
 		default:
 			if (qd->client_version >= 2007) {
-				purple_debug_warning("QQ", "Decrypt login packet by pwd_twice_md5\n");
 				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_twice_md5);
 				if (data_len >= 0) {
-					purple_debug_warning("QQ", "Dpwd_twice_md5 *OK*\n");
-				}
-				else {
-					purple_debug_warning("QQ", "Dpwd_twice_md5 *FAILED*, try login_key, last data_len=%d\n", data_len);
+					purple_debug_warning("QQ", "Decrypt login packet by pwd_twice_md5\n");
+				} else {
 					data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.login_key);
 					if (data_len >= 0) {
-						purple_debug_warning("QQ", "Dlogin_key *OK*\n");
-					}
-					else {
-						purple_debug_warning("QQ", "Dlogin_key *FAILED*\n");
+						purple_debug_warning("QQ", "Decrypt login packet by login_key\n");
 					}
 				}
-			}
-			else {
+			} else {
 				/* May use password_twice_md5 in the past version like QQ2005 */
 				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.random_key);
 				if (data_len >= 0) {
@@ -999,7 +991,6 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			qq_update_all(gc, 0);
 			break;
 		default:
-			purple_debug_warning("QQ", "UNKNOWN LOGIN CMD: %d\n", cmd);
 			process_unknow_cmd(gc, _("Unknow LOGIN CMD"), data, data_len, cmd, seq);
 			return QQ_LOGIN_REPLY_ERR;
 	}
@@ -1061,7 +1052,7 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			qq_process_get_buddy_info(data, data_len, ship32, gc);
 			break;
 		case QQ_CMD_CHANGE_STATUS:
-			qq_process_change_status_reply(data, data_len, gc);
+			qq_process_change_status(data, data_len, gc);
 			break;
 		case QQ_CMD_SEND_IM:
 			do_im_ack(data, data_len, gc);
@@ -1076,23 +1067,23 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			}
 			break;
 		case QQ_CMD_GET_BUDDIES_ONLINE:
-			ret_8 = qq_process_get_buddies_online_reply(data, data_len, gc);
+			ret_8 = qq_process_get_buddies_online(data, data_len, gc);
 			if (ret_8  > 0 && ret_8 < 0xff) {
 				purple_debug_info("QQ", "Requesting for more online buddies\n");
 				qq_request_get_buddies_online(gc, ret_8, update_class);
 				return;
 			}
 			purple_debug_info("QQ", "All online buddies received\n");
-			qq_refresh_all_buddy_status(gc);
+			qq_update_buddyies_status(gc);
 			break;
 		case QQ_CMD_GET_LEVEL:
 			qq_process_get_level_reply(data, data_len, gc);
 			break;
 		case QQ_CMD_GET_BUDDIES_LIST:
-			ret_16 = qq_process_get_buddies_list_reply(data, data_len, gc);
+			ret_16 = qq_process_get_buddies(data, data_len, gc);
 			if (ret_16 > 0	&& ret_16 < 0xffff) {
 				purple_debug_info("QQ", "Requesting for more buddies\n");
-				qq_request_get_buddies_list(gc, ret_16, update_class);
+				qq_request_get_buddies(gc, ret_16, update_class);
 				return;
 			}
 			purple_debug_info("QQ", "All buddies received. Requesting buddies' levels\n");

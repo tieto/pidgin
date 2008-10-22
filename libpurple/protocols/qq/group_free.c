@@ -61,12 +61,15 @@ void qq_group_free(qq_group *group)
 	g_free(group);
 }
 
-void qq_group_free_all(qq_data *qd)
+void qq_group_free_all(PurpleConnection *gc)
 {
+	qq_data *qd;
 	qq_group *group;
 	gint count;
 
-	g_return_if_fail(qd != NULL);
+	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
 	count = 0;
 	while (qd->groups != NULL) {
 		group = (qq_group *) qd->groups->data;

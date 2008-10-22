@@ -31,13 +31,11 @@
 
 #include "char_conv.h"
 #include "im.h"
-#include "group_conv.h"
 #include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
 #include "group_join.h"
 #include "group_opt.h"
-#include "group_conv.h"
 #include "group_search.h"
 #include "group_im.h"
 #include "qq_define.h"
@@ -284,7 +282,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 		group->my_role = QQ_ROOM_ROLE_YES;
 		qq_group_refresh(gc, group);
 		/* this must be shown before getting online members */
-		qq_room_conv_create(gc, group);
+		qq_room_conv_new(gc, group);
 		break;
 	case QQ_ROOM_JOIN_NEED_AUTH:
 		purple_debug_info("QQ",

@@ -18,8 +18,6 @@ QQSOURCES = \
 	file_trans.h \
 	group.c \
 	group.h \
-	group_conv.c \
-	group_conv.h \
 	group_find.c \
 	group_find.h \
 	group_free.c \

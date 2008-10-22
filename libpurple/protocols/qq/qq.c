@@ -374,18 +374,25 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 /* we can show tiny icons on the four corners of buddy icon, */
 static const char *qq_list_emblem(PurpleBuddy *b)
 {
-	/* each char** are refering to a filename in pixmaps/purple/status/default/ */
-	qq_buddy *q_bud;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	qq_data *qd;
+	qq_buddy *buddy;
 
-	if (!b || !(q_bud = b->proto_data)) {
+	if (!b || !(account = b->account) || 
+		!(gc = purple_account_get_connection(account)) || !(qd = gc->proto_data))
 		return NULL;
+
+	buddy = (qq_buddy *)b->proto_data;
+	if (!buddy) {
+		return "not-authorized";
 	}
 
-	if (q_bud->comm_flag & QQ_COMM_FLAG_MOBILE)
+	if (buddy->comm_flag & QQ_COMM_FLAG_MOBILE)
 		return "mobile";
-	if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
+	if (buddy->comm_flag & QQ_COMM_FLAG_VIDEO)
 		return "video";
-	if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
+	if (buddy->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
 		return "qq_member";
 
 	return NULL;
@@ -512,6 +519,8 @@ static void action_update_all_rooms(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
+
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
 	qd = (qq_data *) gc->proto_data;
 
 	if ( !qd->is_login ) {
@@ -526,6 +535,7 @@ static void action_modify_info_base(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
 	qd = (qq_data *) gc->proto_data;
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_BASE);
 }
@@ -535,6 +545,7 @@ static void action_modify_info_ext(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
 	qd = (qq_data *) gc->proto_data;
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_EXT);
 }
@@ -544,6 +555,7 @@ static void action_modify_info_addr(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
 	qd = (qq_data *) gc->proto_data;
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_ADDR);
 }
@@ -553,12 +565,16 @@ static void action_modify_info_contact(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
 	qd = (qq_data *) gc->proto_data;
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_CONTACT);
 }
 
 static void action_change_password(PurplePluginAction *action)
 {
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
 	purple_notify_uri(NULL, "https://password.qq.com");
 }
 
@@ -571,6 +587,7 @@ static void action_show_account_info(PurplePluginAction *action)
 	struct tm *tm_local;
 	int index;
 
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
 	qd = (qq_data *) gc->proto_data;
 	info = g_string_new("<html><body>");
 

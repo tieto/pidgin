@@ -163,19 +163,16 @@ void qq_got_attention(PurpleConnection *gc, const gchar *msg)
 {
 	qq_data *qd;
 	gchar *from;
-	PurpleBuddy *buddy;
 	time_t now = time(NULL);
 
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL  && gc->proto_data != NULL);
+	qd = gc->proto_data;
 
 	g_return_if_fail(qd->uid > 0);
 
-	from = uid_to_purple_name(qd->uid);
-	buddy = purple_find_buddy(gc->account, from);
-	if (buddy == NULL) {
-		qq_create_buddy(gc, qd->uid, TRUE, TRUE);
-	}
+	qq_buddy_find_or_new(gc, qd->uid);
 
+	from = uid_to_purple_name(qd->uid);
 	serv_got_im(gc, from, msg, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY, now);
 	g_free(from);
 }

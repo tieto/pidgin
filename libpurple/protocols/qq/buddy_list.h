@@ -40,34 +40,23 @@ typedef struct _qq_buddy_status {
 	guint8 unknown_key[QQ_KEY_LENGTH];
 } qq_buddy_status;
 
-enum {
-	QQ_BUDDY_OFFLINE = 0x00,
-	QQ_BUDDY_ONLINE_NORMAL = 10,
-	QQ_BUDDY_CHANGE_TO_OFFLINE = 20,
-	QQ_BUDDY_ONLINE_AWAY = 30,
-	QQ_BUDDY_ONLINE_INVISIBLE = 40,
-	QQ_BUDDY_ONLINE_BUSY = 50,
-};
-
 void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, gint update_class);
-guint8 qq_process_get_buddies_online_reply(guint8 *data, gint data_len, PurpleConnection *gc);
+guint8 qq_process_get_buddies_online(guint8 *data, gint data_len, PurpleConnection *gc);
 
-void qq_request_get_buddies_list(PurpleConnection *gc, guint16 position, gint update_class);
-guint16 qq_process_get_buddies_list_reply(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_request_get_buddies(PurpleConnection *gc, guint16 position, gint update_class);
+guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc);
 
 void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, gint update_class);
 guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConnection *gc);
 
-void qq_refresh_all_buddy_status(PurpleConnection *gc);
-
-gboolean is_online(guint8 status);
-
 gint get_icon_offset(PurpleConnection *gc);
 
 void qq_request_change_status(PurpleConnection *gc, gint update_class);
-void qq_process_change_status_reply(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_change_status(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnection *gc);
 
-void qq_refresh_all_buddy_status(PurpleConnection *gc);
+void qq_update_buddyies_status(PurpleConnection *gc);
+void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, guint8 flag);
 void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud);
+void qq_buddy_data_free_all(PurpleConnection *gc);
 #endif

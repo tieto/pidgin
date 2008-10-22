@@ -291,7 +291,6 @@ static void buddy_remove_both_cb(qq_add_request *add_req)
 	qq_data *qd;
 	gchar *purple_name;
 	PurpleBuddy *buddy;
-	qq_buddy *q_buddy;
 
 	g_return_if_fail(add_req != NULL);
 	if (add_req->gc == NULL || add_req->uid == 0) {
@@ -312,12 +311,13 @@ static void buddy_remove_both_cb(qq_add_request *add_req)
 		return;
 	}
 
-	q_buddy = (qq_buddy *) buddy->proto_data;
-	if (q_buddy != NULL)
-		qd->buddies = g_list_remove(qd->buddies, q_buddy);
-	else
+	if (buddy->proto_data != NULL) {
+		qq_buddy_data_free(buddy->proto_data);
+		buddy->proto_data = NULL;
+	} else {
 		purple_debug_warning("QQ", "We have no qq_buddy record for %s\n", buddy->name);
-
+	}
+	
 	purple_blist_remove_buddy(buddy);
 	g_free(add_req);
 }
@@ -476,6 +476,7 @@ void qq_process_buddy_add_no_auth(guint8 *data, gint data_len, guint32 uid, Purp
 		g_free(nombre);
 	} else {	/* add OK */
 		qq_create_buddy(gc, uid, TRUE, TRUE);
+
 		msg = g_strdup_printf(_("Successed adding into %d's buddy list"), uid);
 		qq_got_attention(gc, msg);
 		g_free(msg);
@@ -483,7 +484,7 @@ void qq_process_buddy_add_no_auth(guint8 *data, gint data_len, guint32 uid, Purp
 	g_strfreev(segments);
 }
 
-PurpleGroup *qq_create_group(const gchar *group_name)
+PurpleGroup *qq_group_find_or_new(const gchar *group_name)
 {
 	PurpleGroup *g;
 
@@ -520,7 +521,7 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid,
 	 	group_name = g_strdup(PURPLE_GROUP_QQ_UNKNOWN);
 	}
 
-	group = qq_create_group(group_name);
+	group = qq_group_find_or_new(group_name);
 
 	buddy_name = uid_to_purple_name(uid);
 	purple_buddy = purple_find_buddy(gc->account, buddy_name);
@@ -544,7 +545,6 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid,
 		buddy = g_new0(qq_buddy, 1);
 		buddy->uid = uid;
 		purple_buddy->proto_data = buddy;
-		qd->buddies = g_list_append(qd->buddies, buddy);
 		qq_request_buddy_info(gc, uid, 0, 0);
 		qq_request_get_buddies_online(gc, 0, 0);
 		if (qd->client_version >= 2007) {
@@ -555,7 +555,7 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid,
 	}
 
 	purple_blist_add_buddy(purple_buddy, NULL, group, NULL);
-	purple_debug_warning("QQ", "Add new buddy: [%s]\n", buddy_name);
+	purple_debug_info("QQ", "Add new buddy: [%s]\n", buddy_name);
 
 	g_free(buddy_name);
 	g_free(group_name);
@@ -563,7 +563,16 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid,
 	return purple_buddy;
 }
 
-qq_buddy *qq_get_buddy(PurpleConnection *gc, guint32 uid)
+static qq_buddy *qq_buddy_data_new(guint32 uid)
+{
+	qq_buddy *buddy = g_new0(qq_buddy, 1);
+	memset(buddy, 0, sizeof(qq_buddy));
+	buddy->uid = uid;
+	buddy->status = QQ_BUDDY_ONLINE_NORMAL;
+	return buddy;
+}
+
+qq_buddy *qq_buddy_find(PurpleConnection *gc, guint32 uid)
 {
 	gchar *purple_name;
 	PurpleBuddy *purple_buddy;
@@ -574,20 +583,85 @@ qq_buddy *qq_get_buddy(PurpleConnection *gc, guint32 uid)
 
 	purple_buddy = purple_find_buddy(purple_connection_get_account(gc), purple_name);
 	g_free(purple_name);
-	if (purple_buddy == NULL)	return NULL;
-
+	if (purple_buddy == NULL) {
+		purple_debug_error("QQ", "Can not find purple buddy of %d\n", uid);
+		return NULL;
+	}
 	if (purple_buddy->proto_data == NULL) {
 		purple_debug_error("QQ", "Can not find buddy data of %d\n", uid);
 		return NULL;
 	}
-	return (qq_buddy *) purple_buddy->proto_data;
+	return (qq_buddy *)purple_buddy->proto_data;
+}
+
+void qq_buddy_data_free(qq_buddy *bd)
+{
+	g_return_if_fail(bd != NULL);
+
+	if (bd->nickname) g_free(bd->nickname);
+	g_free(bd);
+}
+
+static PurpleBuddy *qq_buddy_new(PurpleConnection *gc, gchar *who)
+{
+	PurpleBuddy *buddy;
+	PurpleGroup *group;
+	gchar *group_name;
+
+	g_return_val_if_fail(gc->account != NULL && who != NULL, NULL);
+
+	group_name = g_strdup_printf(PURPLE_GROUP_QQ_FORMAT,
+			purple_account_get_username(gc->account));
+	group = qq_group_find_or_new(group_name);
+	if (group == NULL) {
+		purple_debug_error("QQ", "Failed creating group %s\n", group_name);
+		return NULL;
+	}
+
+	buddy = purple_buddy_new(gc->account, who, NULL);	/* alias is NULL */
+	buddy->proto_data = NULL;
+
+	purple_blist_add_buddy(buddy, NULL, group, NULL);
+	purple_debug_info("QQ", "Add new purple buddy: [%s]\n", who);
+
+	g_free(group_name);
+
+	return buddy;
+}
+
+PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid)
+{
+	PurpleBuddy *buddy;
+	gchar *who;
+
+	g_return_val_if_fail(gc->account != NULL && uid != 0, NULL);
+
+	who = uid_to_purple_name(uid);
+
+	buddy = purple_find_buddy(gc->account, who);
+	if (buddy == NULL) {
+		buddy = qq_buddy_new(gc, who);
+		if (buddy == NULL) {
+			g_free(who);
+			return NULL;
+		}
+	}
+	
+	if (buddy->proto_data != NULL) {
+		g_free(who);
+		return buddy;
+	}
+
+	buddy->proto_data = qq_buddy_data_new(uid);
+
+	g_free(who);
+	return buddy;
 }
 
 /* remove a buddy and send packet to QQ server accordingly */
 void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	qq_data *qd;
-	qq_buddy *q_bud;
 	guint32 uid;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
@@ -602,42 +676,15 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 		request_buddy_remove(gc, uid);
 	}
 
-	q_bud = (qq_buddy *) buddy->proto_data;
-	if (q_bud != NULL)
-		qd->buddies = g_list_remove(qd->buddies, q_bud);
-	else
+	if (buddy->proto_data) {
+		qq_buddy_data_free(buddy->proto_data);
+		buddy->proto_data = NULL;
+	} else {
 		purple_debug_warning("QQ", "We have no qq_buddy record for %s\n", buddy->name);
-
+	}
+	
 	/* Do not call purple_blist_remove_buddy,
 	 * otherwise purple segmentation fault */
-}
-
-/* free all qq_buddy */
-void qq_buddies_list_free(PurpleAccount *account, qq_data *qd)
-{
-	gint count;
-	qq_buddy *p;
-	gchar *name;
-	PurpleBuddy *b;
-
-	count = 0;
-	while (qd->buddies) {
-		p = (qq_buddy *) (qd->buddies->data);
-		qd->buddies = g_list_remove(qd->buddies, p);
-		name = uid_to_purple_name(p->uid);
-		b = purple_find_buddy(account, name);
-		if(b != NULL)
-			b->proto_data = NULL;
-		else
-			purple_debug_info("QQ", "qq_buddy %s not found in purple proto_data\n", name);
-		g_free(name);
-
-		g_free(p);
-		count++;
-	}
-	if (count > 0) {
-		purple_debug_info("QQ", "%d qq_buddy structures are freed!\n", count);
-	}
 }
 
 /* someone wants to add you to his buddy list */
