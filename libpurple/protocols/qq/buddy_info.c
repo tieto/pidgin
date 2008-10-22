@@ -787,7 +787,7 @@ static void process_level_2007(PurpleConnection *gc, guint8 *data, gint data_len
 	
 	/* extend bytes in qq2007*/
 	bytes += 4;	/* skip 8 bytes */
-	qq_show_packet("Buddies level", data + bytes, data_len - bytes);
+	/* qq_show_packet("Buddies level", data + bytes, data_len - bytes); */
 	
 	do {
 		bytes += qq_get16(&str_len, data + bytes);

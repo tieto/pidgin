@@ -191,9 +191,10 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	purple_debug_info("QQ", "type=%u creatorid=%u category=%u maxmembers=%u\n",
 			group->type8, group->creator_uid, group->category, max_members);
 
-	/* skip 7 bytes unknow in qq2007 0x(00 00 01 00 00 00 fc)*/
-	bytes += 7;
-	
+	if (qd->client_version >= 2007) {
+		/* skip 7 bytes unknow in qq2007 0x(00 00 01 00 00 00 fc)*/
+		bytes += 7;
+	}
 	/* qq_show_packet("Room Info", data + bytes, data_len - bytes); */
 	/* strlen + <str content> */
 	bytes += convert_as_pascal_string(data + bytes, &(group->title_utf8), QQ_CHARSET_DEFAULT);
@@ -314,9 +315,7 @@ void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *g
 
 	g_return_if_fail(data != NULL && len > 0);
 
-#if 0
-	qq_show_packet("qq_process_room_cmd_get_buddies", data, len);
-#endif
+	/* qq_show_packet("qq_process_room_cmd_get_buddies", data, len); */
 
 	bytes = 0;
 	bytes += qq_get32(&id, data + bytes);
