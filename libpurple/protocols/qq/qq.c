@@ -219,6 +219,7 @@ static void qq_close(PurpleConnection *gc)
 
 	qq_disconnect(gc);
 
+	if (qd->redirect) g_free(qd->redirect);
 	if (qd->ld.token) g_free(qd->ld.token);
 	if (qd->ld.token_ex) g_free(qd->ld.token_ex);
 	if (qd->captcha.token) g_free(qd->captcha.token);

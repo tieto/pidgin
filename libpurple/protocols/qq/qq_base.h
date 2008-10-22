@@ -61,11 +61,8 @@ void qq_request_token_ex_next(PurpleConnection *gc);
 guint8 qq_process_token_ex(PurpleConnection *gc, guint8 *buf, gint buf_len);
 void qq_captcha_input_dialog(PurpleConnection *gc,qq_captcha_data *captcha);
 
-void qq_request_check_pwd_2007(PurpleConnection *gc);
-guint8 qq_process_check_pwd_2007( PurpleConnection *gc, guint8 *data, gint data_len);
-
-void qq_request_check_pwd_2008(PurpleConnection *gc);
-guint8 qq_process_check_pwd_2008( PurpleConnection *gc, guint8 *data, gint data_len);
+void qq_request_check_pwd(PurpleConnection *gc);
+guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len);
 
 void qq_request_login_2007(PurpleConnection *gc);
 guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len);

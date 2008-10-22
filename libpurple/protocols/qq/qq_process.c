@@ -663,11 +663,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		case QQ_CMD_TOKEN_EX:
 			ret_8 = qq_process_token_ex(gc, data, data_len);
 			if (ret_8 == QQ_LOGIN_REPLY_OK) {
-				if (qd->client_version == 2008) {
-					qq_request_check_pwd_2008(gc);
-				} else {
-					qq_request_check_pwd_2007(gc);
-				}
+				qq_request_check_pwd(gc);
 			} else if (ret_8 == QQ_LOGIN_REPLY_NEXT_TOKEN_EX) {
 				qq_request_token_ex_next(gc);
 			} else if (ret_8 == QQ_LOGIN_REPLY_CAPTCHA_DLG) {
@@ -678,11 +674,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			}
 			break;
 		case QQ_CMD_CHECK_PWD:
-			if (qd->client_version == 2008) {
-				ret_8 = qq_process_check_pwd_2008(gc, data, data_len);
-			} else {
-				ret_8 = qq_process_check_pwd_2007(gc, data, data_len);
-			}
+			ret_8 = qq_process_check_pwd(gc, data, data_len);
 			if (ret_8 != QQ_LOGIN_REPLY_OK) {
 				return  ret_8;
 			}
