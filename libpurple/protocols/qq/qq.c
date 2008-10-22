@@ -1093,7 +1093,7 @@ static void init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	purple_prefs_add_none("/plugins/prpl/qq");
-	purple_prefs_add_string("/plugins/prpl/qq/icon_dir", "");
+	purple_prefs_add_string("/plugins/prpl/qq/icon_dir", QQ_BUDDY_ICON_DIR);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_room_when_newin", TRUE);

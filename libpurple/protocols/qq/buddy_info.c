@@ -74,7 +74,7 @@ static const gchar *genders_zh[] = {
 	N_("\xc5\xae"),
 };
 
-#define QQ_FACES	    100
+#define QQ_FACES	    134
 
 enum {
 	QQ_INFO_UID = 0, QQ_INFO_NICK, QQ_INFO_COUNTRY, QQ_INFO_PROVINCE, QQ_INFO_ZIPCODE,
@@ -127,7 +127,7 @@ static const QQ_FIELD_INFO field_infos[] = {
 	{ QQ_FIELD_BASE, 		QQ_FIELD_BOOL, 	"auth", 				N_("Authorize adding"), NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow1",	"Unknow1", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow2",	"Unknow2", NULL, 0 },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_STRING, "face",				"Face", NULL, 0 },
+	{ QQ_FIELD_UNUSED, 		QQ_FIELD_STRING, "face",				"Face", NULL, 0 },
 	{ QQ_FIELD_CONTACT, QQ_FIELD_STRING, "mobile",		N_("Cellphone Number"), NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "mobile_type","Cellphone Type", NULL, 0 },
 	{ QQ_FIELD_BASE, 		QQ_FIELD_MULTI, 	"intro", 		N_("Personal Introduction"), NULL, 0 },
@@ -573,12 +573,28 @@ void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	g_strfreev(segments);
 }
 
+static gchar *qq_get_icon_path(gchar *icon_name)
+{
+	gchar *icon_path;
+	const gchar *icon_dir;
+	
+	icon_dir = purple_prefs_get_string("/plugins/prpl/qq/icon_dir");
+	if ( icon_dir == NULL) {
+		purple_debug_error("QQ", "Icon dir is not defined in prefs '/plugins/prpl/qq/icon_dir'\n");
+		return NULL;
+	}
+
+	icon_path = g_strconcat(icon_dir, G_DIR_SEPARATOR_S,
+			QQ_ICON_PREFIX, icon_name, QQ_ICON_SUFFIX, NULL);
+	
+	return icon_path;
+}
+
 static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint face)
 {
 	PurpleBuddy *buddy;
 	const gchar *icon_name_prev = NULL;
 	gchar *icon_name;
-	const gchar *icon_dir;
 	gchar *icon_path;
 	gchar *icon_file_content;
 	gsize icon_file_size;
@@ -595,21 +611,15 @@ static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint fac
 		g_free(icon_name);
 		return;
 	}
-	icon_dir = NULL;
-	if ( purple_prefs_exists("/plugins/prpl/qq/icon_dir") ) {
-		icon_dir = purple_prefs_get_string("/plugins/prpl/qq/icon_dir");
-	}
-	if ( icon_dir == NULL) {
-		purple_debug_info("QQ", "Icon dir is not defined in prefs '/plugins/prpl/qq/icon_dir'\n");
+
+	icon_path = qq_get_icon_path(icon_name);
+	if (icon_path == NULL) {
 		g_free(icon_name);
 		return;
 	}
 
-	icon_path = g_strconcat(icon_dir, G_DIR_SEPARATOR_S,
-			QQ_ICON_PREFIX, icon_name, QQ_ICON_SUFFIX, NULL);
-
 	if (!g_file_get_contents(icon_path, &icon_file_content, &icon_file_size, NULL)) {
-			purple_debug_error("QQ", "Failed reading icon file %s\n", icon_path);
+		purple_debug_error("QQ", "Failed reading icon file %s\n", icon_path);
 	} else {
 		purple_buddy_icons_set_for_user(account, who,
 				icon_file_content, icon_file_size, icon_name);
