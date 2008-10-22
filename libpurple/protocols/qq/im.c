@@ -298,24 +298,21 @@ void qq_got_attention(PurpleConnection *gc, const gchar *msg)
 {
 	qq_data *qd;
 	gchar *from;
-	PurpleBuddy *b;
-	qq_buddy *qq_b;
+	PurpleBuddy *buddy;
 	time_t now = time(NULL);
 
 	qd = (qq_data *) gc->proto_data;
 
-	from = uid_to_purple_name(qd->uid);
 	g_return_if_fail(qd->uid > 0);
 
-	b = purple_find_buddy(gc->account, from);
-	if (b == NULL) {
-		qq_create_buddy(gc, qd->uid, FALSE, TRUE);
-		b = purple_find_buddy(gc->account, from);
+	from = uid_to_purple_name(qd->uid);
+	buddy = purple_find_buddy(gc->account, from);
+	if (buddy == NULL) {
+		qq_create_buddy(gc, qd->uid, TRUE, TRUE);
 	}
-	qq_b = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-	g_return_if_fail(qq_b != NULL);
 
 	serv_got_im(gc, from, msg, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY, now);
+	g_free(from);
 }
 
 /* process received normal text IM */

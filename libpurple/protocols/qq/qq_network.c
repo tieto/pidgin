@@ -309,6 +309,8 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	switch (cmd) {
 		case QQ_CMD_TOKEN:
 		case QQ_CMD_GET_SERVER:
+		case QQ_CMD_TOKEN_EX:
+		case QQ_CMD_CHECK_PWD:
 		case QQ_CMD_LOGIN:
 			ret = qq_proc_login_cmds(gc, cmd, seq, buf + bytes, bytes_not_read, update_class, ship32);
 			if (ret != QQ_LOGIN_REPLY_OK) {
@@ -715,13 +717,11 @@ static void set_all_keys(PurpleConnection *gc)
 	passwd = purple_account_get_password(purple_connection_get_account(gc));
 
 	/* use twice-md5 of user password as session key since QQ 2003iii */
-	dest = qd->ld.pwd_2nd_md5;
+	dest = qd->ld.pwd_md5;
 	qq_get_md5(dest, dest_len, (guint8 *)passwd, strlen(passwd));
-	qq_get_md5(dest, dest_len, dest, dest_len);
 
-	dest = qd->ld.pwd_4th_md5;
-	qq_get_md5(dest, dest_len, qd->ld.pwd_2nd_md5, dest_len);
-	qq_get_md5(dest, dest_len, dest, dest_len);
+	dest = qd->ld.pwd_twice_md5;
+	qq_get_md5(dest, dest_len, qd->ld.pwd_md5, dest_len);
 }
 
 /* the callback function after socket is built
@@ -1021,8 +1021,8 @@ void qq_disconnect(PurpleConnection *gc)
 	qq_trans_remove_all(gc);
 
 	memset(qd->ld.random_key, 0, sizeof(qd->ld.random_key));
-	memset(qd->ld.pwd_2nd_md5, 0, sizeof(qd->ld.pwd_2nd_md5));
-	memset(qd->ld.pwd_4th_md5, 0, sizeof(qd->ld.pwd_4th_md5));
+	memset(qd->ld.pwd_md5, 0, sizeof(qd->ld.pwd_md5));
+	memset(qd->ld.pwd_twice_md5, 0, sizeof(qd->ld.pwd_twice_md5));
 	memset(qd->ld.login_key, 0, sizeof(qd->ld.login_key));
 	memset(qd->session_key, 0, sizeof(qd->session_key));
 	memset(qd->session_md5, 0, sizeof(qd->session_md5));

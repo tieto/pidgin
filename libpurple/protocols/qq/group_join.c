@@ -39,6 +39,7 @@
 #include "group_opt.h"
 #include "group_conv.h"
 #include "group_search.h"
+#include "group_im.h"
 #include "qq_define.h"
 #include "packet_parse.h"
 #include "qq_network.h"
@@ -226,6 +227,9 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	gint bytes;
 	guint32 id;
 	qq_data *qd;
+	qq_group *group;
+	gchar *msg;
+	time_t now = time(NULL);
 
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
@@ -239,7 +243,14 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	bytes += qq_get32(&id, data + bytes);
 	g_return_if_fail(id > 0);
 
-	qq_got_attention(gc, _("Successed join to Qun"));
+	group = qq_room_search_id(gc, id);
+	if (group != NULL) {
+		msg = g_strdup_printf(_("Successed join to Qun %s (%d)"), group->title_utf8, group->ext_id);
+		qq_room_got_chat_in(gc, group, 0, msg, now);
+		g_free(msg);
+	} else {
+		qq_got_attention(gc, _("Successed join to Qun"));
+	}
 }
 
 /* process group cmd reply "join group" */

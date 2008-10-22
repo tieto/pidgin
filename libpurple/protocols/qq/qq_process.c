@@ -607,18 +607,18 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			if (data_len >= 0) {
 				purple_debug_warning("QQ", "Decrypt login packet by random_key, %d bytes\n", data_len);
 			} else {
-				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_4th_md5);
+				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_twice_md5);
 				if (data_len >= 0) {
-					purple_debug_warning("QQ", "Decrypt login packet by pwd_4th_md5, %d bytes\n", data_len);
+					purple_debug_warning("QQ", "Decrypt login packet by pwd_twice_md5, %d bytes\n", data_len);
 				}
 			}
 			break;
 		case QQ_CMD_LOGIN:
 		default:
 			if (qd->client_version > 2005) {
-				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_4th_md5);
+				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_twice_md5);
 				if (data_len >= 0) {
-					purple_debug_warning("QQ", "Decrypt login packet by pwd_4th_md5\n");
+					purple_debug_warning("QQ", "Decrypt login packet by pwd_twice_md5\n");
 				} else {
 					data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.login_key);
 					if (data_len >= 0) {
@@ -631,9 +631,9 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 				if (data_len >= 0) {
 					purple_debug_warning("QQ", "Decrypt login packet by random_key\n");
 				} else {
-					data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_2nd_md5);
+					data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_twice_md5);
 					if (data_len >= 0) {
-						purple_debug_warning("QQ", "Decrypt login packet by pwd_2nd_md5\n");
+						purple_debug_warning("QQ", "Decrypt login packet by pwd_twice_md5\n");
 					}
 				}
 			}

@@ -1,3 +1,6 @@
+2008.09.29 - ccpaging <ccpaging(at)gmail.com>
+	* 'Check Password' function for protocol 2007/2008
+
 2008.09.28 - ccpaging <ccpaging(at)gmail.com>
 	* The source is only for debug, not for user:
 		1. Implement new QQ protocol 2007/2008, include login and change status

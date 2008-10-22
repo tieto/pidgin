@@ -512,7 +512,7 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid, gboolean is_know
 	g_return_val_if_fail(gc->account != NULL && uid != 0, NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	if (is_known || uid == qd->uid) {
+	if (is_known) {
 		group_name = g_strdup_printf(PURPLE_GROUP_QQ_FORMAT,
 				purple_account_get_username(gc->account));
 	 } else {
@@ -529,7 +529,7 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid, gboolean is_know
 		purple_blist_remove_buddy(buddy);
 
 	buddy = purple_buddy_new(gc->account, buddy_name, NULL);
-	if ( !is_known && uid != qd->uid) {
+	if ( !is_known) {
 		if (purple_privacy_check(gc->account, buddy_name)) {
 			purple_privacy_deny(gc->account, buddy_name, TRUE, FALSE);
 		} else {

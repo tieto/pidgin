@@ -60,8 +60,8 @@ struct _qq_login_data {
 	guint8 *token_ex;			/* get from server */
 	guint16 token_ex_len;
 
-	guint8 pwd_2nd_md5[QQ_KEY_LENGTH];			/* password in md5 (or md5' md5) */
-	guint8 pwd_4th_md5[QQ_KEY_LENGTH];
+	guint8 pwd_md5[QQ_KEY_LENGTH];			/* password in md5 (or md5' md5) */
+	guint8 pwd_twice_md5[QQ_KEY_LENGTH];
 
 	guint8 *login_token;
 	guint16 login_token_len;
@@ -73,7 +73,7 @@ struct _qq_redirect_data {
 	guint8 b1;
 	guint32 w1;
 	guint32 w2;
-	guint32 ip;
+	struct in_addr ip;
 };
 
 struct _qq_add_request {
