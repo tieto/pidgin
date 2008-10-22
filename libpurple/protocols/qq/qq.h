@@ -183,12 +183,8 @@ struct _qq_data {
 	time_t online_last_update;		/* last time send get_friends_online packet */
 
 	PurpleRoomlist *roomlist;
-	gint channel;			/* the id for opened chat conversation */
 
 	GList *groups;
-	GSList *joining_groups;
-	GSList *adding_groups_from_server; /* internal ids of groups the server wants in my blist */
-	GList *group_info_window;
 
 	gboolean is_show_notice;
 	gboolean is_show_news;

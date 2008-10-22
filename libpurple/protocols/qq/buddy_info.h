@@ -64,9 +64,6 @@
 #define QQ_BUDDY_GENDER_MM          0x01
 #define QQ_BUDDY_GENDER_UNKNOWN     0xff
 
-#define QQ_ICON_PREFIX "qq_"
-#define QQ_ICON_SUFFIX ".png"
-
 enum {
 	QQ_BUDDY_INFO_UPDATE_ONLY = 0,
 	QQ_BUDDY_INFO_DISPLAY,
@@ -76,6 +73,10 @@ enum {
 	QQ_BUDDY_INFO_MODIFY_ADDR,
 	QQ_BUDDY_INFO_MODIFY_CONTACT,
 };
+
+gchar *qq_get_icon_name(gint face);
+gchar *qq_get_icon_path(gchar *icon_name);
+void qq_change_icon_cb(PurpleConnection *gc, const char *filepath);
 
 void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 		gint update_class, int action);

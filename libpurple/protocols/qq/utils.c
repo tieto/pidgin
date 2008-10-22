@@ -91,12 +91,6 @@ gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount)
 	return g_strdup_printf("%d", index);
 }
 
-gint qq_string_to_dec_value(const gchar *str)
-{
-	g_return_val_if_fail(str != NULL, 0);
-	return strtol(str, NULL, 10);
-}
-
 /* split the given data(len) with delimit,
  * check the number of field matches the expected_fields (<=0 means all)
  * return gchar* array (needs to be freed by g_strfreev later), or NULL */
@@ -176,26 +170,6 @@ guint8 *str_ip_gen(gchar *str) {
 gchar *uid_to_purple_name(guint32 uid)
 {
 	return g_strdup_printf(QQ_NAME_FORMAT, uid);
-}
-
-/* convert name displayed in a chat channel to original QQ UID */
-gchar *chat_name_to_purple_name(const gchar *const name)
-{
-	const char *start;
-	const char *end;
-	gchar *ret;
-
-	g_return_val_if_fail(name != NULL, NULL);
-
-	/* Sample: (1234567)*/
-	start = strchr(name, '(');
-	g_return_val_if_fail(start != NULL, NULL);
-	end = strchr(start, ')');
-	g_return_val_if_fail(end != NULL && (end - start) > 1, NULL);
-
-	ret = g_strndup(start + 1, end - start - 1);
-
-	return ret;
 }
 
 /* try to dump the data as GBK */

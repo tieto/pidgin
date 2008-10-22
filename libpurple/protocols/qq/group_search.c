@@ -43,22 +43,23 @@ enum {
 };
 
 /* send packet to search for qq_group */
-void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 ext_id)
+void qq_request_room_search(PurpleConnection *gc, guint32 ext_id, int action)
 {
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
 	guint8 type;
 
+	purple_debug_info("QQ", "Search QQ Qun %d\n", ext_id);
 	type = (ext_id == 0x00000000) ? QQ_ROOM_SEARCH_TYPE_DEMO : QQ_ROOM_SEARCH_TYPE_BY_ID;
 
 	bytes = 0;
 	bytes += qq_put8(raw_data + bytes, type);
 	bytes += qq_put32(raw_data + bytes, ext_id);
 
-	qq_send_room_cmd_noid(gc, QQ_ROOM_CMD_SEARCH, raw_data, bytes);
+	qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_SEARCH, 0, raw_data, bytes, 0, action);
 }
 
-static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
+static void add_to_roomlist(qq_data *qd, qq_group *group)
 {
 	PurpleRoomlistRoom *room;
 	gchar field[11];
@@ -84,14 +85,13 @@ static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
 }
 
 /* process group cmd reply "search group" */
-void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection *gc)
+void qq_process_room_search(PurpleConnection *gc, guint8 *data, gint len, guint32 ship32)
 {
 	gint bytes;
 	guint8 search_type;
 	guint16 unknown;
 	qq_group group;
 	qq_data *qd;
-	GSList *pending_id;
 
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
@@ -120,14 +120,12 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 			"group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
 	}
 
-	pending_id = qq_get_pending_id(qd->joining_groups, group.ext_id);
-	if (pending_id != NULL) {
-		qq_set_pending_id(&qd->joining_groups, group.ext_id, FALSE);
+	if (ship32 == QQ_ROOM_SEARCH_FOR_JOIN) {
 		if (qq_room_search_id(gc, group.id) == NULL)
 			qq_group_create_internal_record(gc,
 					group.id, group.ext_id, group.title_utf8);
 		qq_request_room_join(gc, &group);
 	} else {
-		_qq_setup_roomlist(qd, &group);
+		add_to_roomlist(qd, &group);
 	}
 }

@@ -93,58 +93,6 @@ qq_buddy_data *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group
 	return member;
 }
 
-/* find a qq_group by chatroom channel */
-qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel)
-{
-	PurpleConversation *conv;
-	qq_data *qd;
-	qq_group *group;
-	GList *list;
-
-	qd = (qq_data *) gc->proto_data;
-
-	conv = purple_find_chat(gc, channel);
-	g_return_val_if_fail(conv != NULL, NULL);
-
-	list = qd->groups;
-	group = NULL;
-	while (list != NULL) {
-		group = (qq_group *) list->data;
-		if (group->title_utf8 == NULL) {
-			continue;
-		}
-		if (!g_ascii_strcasecmp(purple_conversation_get_name(conv), group->title_utf8))
-			break;
-		list = list->next;
-	}
-
-	return group;
-}
-
-/* find a qq_group by its id, flag is QQ_INTERNAL_ID or QQ_EXTERNAL_ID */
-qq_group *qq_room_search_ext_id(PurpleConnection *gc, guint32 ext_id)
-{
-	GList *list;
-	qq_group *group;
-	qq_data *qd;
-
-	qd = (qq_data *) gc->proto_data;
-
-	if (qd->groups == NULL || ext_id <= 0)
-		return NULL;
-
-	list = qd->groups;
-	while (list != NULL) {
-		group = (qq_group *) list->data;
-		if (group->ext_id == ext_id) {
-			return group;
-		}
-		list = list->next;
-	}
-
-	return NULL;
-}
-
 qq_group *qq_room_search_id(PurpleConnection *gc, guint32 room_id)
 {
 	GList *list;

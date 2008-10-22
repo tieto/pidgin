@@ -745,13 +745,6 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		return;
 	}
 
-	group = qq_room_search_id(gc, room_id);
-	if (group == NULL) {
-		purple_debug_warning("QQ",
-			"Missing room id in [%05d], 0x%02X %s for %d, len %d\n",
-			seq, room_cmd, qq_get_room_cmd_desc(room_cmd), room_id, rcved_len);
-	}
-
 	bytes = 0;
 	bytes += qq_get8(&reply_cmd, data + bytes);
 	bytes += qq_get8(&reply, data + bytes);
@@ -765,13 +758,14 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 
 	/* now process the packet */
 	if (reply != QQ_ROOM_CMD_REPLY_OK) {
-		if (group != NULL) {
-			qq_set_pending_id(&qd->joining_groups, group->ext_id, FALSE);
-		}
-
 		switch (reply) {	/* this should be all errors */
 		case QQ_ROOM_CMD_REPLY_NOT_MEMBER:
-			if (group != NULL) {
+			group = qq_room_search_id(gc, room_id);
+			if (group == NULL) {
+				purple_debug_warning("QQ",
+						"Missing room id in [%05d], 0x%02X %s for %d, len %d\n",
+						seq, room_cmd, qq_get_room_cmd_desc(room_cmd), room_id, rcved_len);
+			} else {
 				purple_debug_warning("QQ",
 					   _("You are not a member of QQ Qun \"%s\"\n"), group->title_utf8);
 				group->my_role = QQ_ROOM_ROLE_NO;
@@ -807,7 +801,7 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		qq_group_process_activate_group_reply(data + bytes, data_len - bytes, gc);
 		break;
 	case QQ_ROOM_CMD_SEARCH:
-		qq_process_group_cmd_search_group(data + bytes, data_len - bytes, gc);
+		qq_process_room_search(gc, data + bytes, data_len - bytes, ship32);
 		break;
 	case QQ_ROOM_CMD_JOIN:
 		qq_process_group_cmd_join_group(data + bytes, data_len - bytes, gc);
@@ -823,15 +817,9 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		break;
 	case QQ_ROOM_CMD_GET_ONLINES:
 		qq_process_room_cmd_get_onlines(data + bytes, data_len - bytes, gc);
-		if (group != NULL)
-			qq_room_conv_set_onlines(gc, group);
 		break;
 	case QQ_ROOM_CMD_GET_BUDDIES:
 		qq_process_room_cmd_get_buddies(data + bytes, data_len - bytes, gc);
-		if (group != NULL) {
-			group->is_got_info = TRUE;
-			qq_room_conv_set_onlines(gc, group);
-		}
 		break;
 	default:
 		purple_debug_warning("QQ", "Unknow room cmd 0x%02X %s\n",

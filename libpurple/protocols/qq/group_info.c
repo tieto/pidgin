@@ -28,6 +28,7 @@
 #include "debug.h"
 
 #include "char_conv.h"
+#include "group_im.h"
 #include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
@@ -146,7 +147,6 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	guint8 organization, role;
 	guint16 unknown, max_members;
 	guint32 member_uid, id, ext_id;
-	GSList *pending_id;
 	guint32 unknown4;
 	guint8 unknown1;
 	gint bytes, num;
@@ -165,9 +165,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	bytes += qq_get32(&ext_id, data + bytes);
 	g_return_if_fail(ext_id > 0);
 
-	pending_id = qq_get_pending_id(qd->adding_groups_from_server, id);
-	if (pending_id != NULL) {
-		qq_set_pending_id(&qd->adding_groups_from_server, id, FALSE);
+	if (action == QQ_ROOM_INFO_CREATE ) {
 		qq_group_create_internal_record(gc, id, ext_id, NULL);
 	}
 
@@ -299,6 +297,7 @@ void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *g
 	}
 
 	purple_debug_info("QQ", "Group \"%s\" has %d online members\n", group->title_utf8, num);
+	qq_room_conv_set_onlines(gc, group);
 }
 
 /* process the reply to get_members_info packet */
@@ -358,5 +357,8 @@ void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *g
 				"group_cmd_get_members_info: Dangerous error! maybe protocol changed, notify developers!");
 	}
 	purple_debug_info("QQ", "Group \"%s\" obtained %d member info\n", group->title_utf8, num);
+
+	group->is_got_buddies = TRUE;
+	qq_room_conv_set_onlines(gc, group);
 }
 

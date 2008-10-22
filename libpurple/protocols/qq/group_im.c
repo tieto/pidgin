@@ -45,7 +45,7 @@
 #include "utils.h"
 
 /* show group conversation window */
-PurpleConversation *qq_room_conv_new(PurpleConnection *gc, qq_group *group)
+PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_group *group)
 {
 	PurpleConversation *conv;
 	qq_data *qd;
@@ -61,7 +61,7 @@ PurpleConversation *qq_room_conv_new(PurpleConnection *gc, qq_group *group)
 		return conv;
 	}
 
-	serv_got_joined_chat(gc, qd->channel++, group->title_utf8);
+	serv_got_joined_chat(gc, group->id, group->title_utf8);
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL) {
 		topic_utf8 = g_strdup_printf("%d %s", group->ext_id, group->notice_utf8);
@@ -69,7 +69,7 @@ PurpleConversation *qq_room_conv_new(PurpleConnection *gc, qq_group *group)
 		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, topic_utf8);
 		g_free(topic_utf8);
 
-		if (group->is_got_info)
+		if (group->is_got_buddies)
 			qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
 		else
 			qq_update_room(gc, 0, group->id);
@@ -87,6 +87,7 @@ void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group)
 	PurpleConversation *conv;
 	gint flag;
 	gboolean is_find;
+
 	g_return_if_fail(group != NULL);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
@@ -157,14 +158,14 @@ void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group)
 }
 
 /* send IM to a group */
-void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar *msg)
+void qq_send_packet_group_im(PurpleConnection *gc, guint32 room_id, const gchar *msg)
 {
 	gint data_len, bytes;
 	guint8 *raw_data, *send_im_tail;
 	guint16 msg_len;
 	gchar *msg_filtered;
 
-	g_return_if_fail(group != NULL && msg != NULL);
+	g_return_if_fail(room_id != 0 && msg != NULL);
 
 	msg_filtered = purple_markup_strip_html(msg);
 	purple_debug_info("QQ_MESG", "Send qun mesg filterd: %s\n", msg_filtered);
@@ -184,7 +185,7 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 	g_free(msg_filtered);
 
 	if (bytes == data_len)	/* create OK */
-		qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_MSG, group->id, raw_data, data_len);
+		qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_MSG, room_id, raw_data, data_len);
 	else
 		purple_debug_error("QQ",
 				"Fail creating group_im packet, expect %d bytes, build %d bytes\n", data_len, bytes);
@@ -262,7 +263,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	conv = purple_find_conversation_with_account(
 			PURPLE_CONV_TYPE_CHAT, group->title_utf8, account);
 	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/show_room_when_newin")) {
-		conv = qq_room_conv_new(gc, group);
+		conv = qq_room_conv_open(gc, group);
 	}
 
 	if (conv == NULL) {

@@ -32,6 +32,7 @@
 enum {
 	QQ_ROOM_INFO_UPDATE_ONLY = 0,
 	QQ_ROOM_INFO_DISPLAY,
+	QQ_ROOM_INFO_CREATE,
 };
 
 gint qq_request_room_get_buddies(PurpleConnection *gc, qq_group *group, gint update_class);

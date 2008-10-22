@@ -49,8 +49,6 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, gint update_class);
 guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConnection *gc);
 
-gint get_icon_offset(PurpleConnection *gc);
-
 void qq_request_change_status(PurpleConnection *gc, gint update_class);
 void qq_process_change_status(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnection *gc);

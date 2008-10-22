@@ -402,11 +402,8 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 			if(group == NULL) {
 				purple_debug_info("QQ",
 					"Not find room id %d in qq_process_get_buddies_and_rooms\n", uid);
-				qq_set_pending_id(&qd->adding_groups_from_server, uid, TRUE);
-				//group = g_newa(qq_group, 1);
-				//group->id = uid;
 				qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, uid, NULL, 0,
-						0, 0);
+						0, QQ_ROOM_INFO_CREATE);
 			} else {
 				group->my_role = QQ_ROOM_ROLE_YES;
 				qq_group_refresh(gc, group);
@@ -430,27 +427,6 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 /* TODO: figure out what's going on with the IP region. Sometimes I get valid IP addresses,
  * but the port number's weird, other times I get 0s. I get these simultaneously on the same buddy,
  * using different accounts to get info. */
-
-/* Help calculate the correct icon index to tell the server. */
-gint get_icon_offset(PurpleConnection *gc)
-{
-	PurpleAccount *account;
-	PurplePresence *presence;
-
-	account = purple_connection_get_account(gc);
-	presence = purple_account_get_presence(account);
-
-	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
-		return 2;
-	} else if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_AWAY)
-			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)
-			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_UNAVAILABLE)) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 static guint8  get_status_from_purple(PurpleConnection *gc)
 {
 	qq_data *qd;

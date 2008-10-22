@@ -28,7 +28,12 @@
 #include <glib.h>
 #include "connection.h"
 
-void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 external_group_id);
-void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection *gc);
+enum {
+	QQ_ROOM_SEARCH_ONLY = 0,
+	QQ_ROOM_SEARCH_FOR_JOIN
+};
+
+void qq_request_room_search(PurpleConnection *gc, guint32 ext_id, int action);
+void qq_process_room_search(PurpleConnection *gc, guint8 *data, gint len, guint32 ship32);
 
 #endif

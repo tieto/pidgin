@@ -227,7 +227,6 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	qq_data *qd;
 	qq_group *group;
 	gchar *msg;
-	time_t now = time(NULL);
 
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
@@ -244,7 +243,7 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
 		msg = g_strdup_printf(_("Successed join to Qun %s (%d)"), group->title_utf8, group->ext_id);
-		qq_room_got_chat_in(gc, group, 0, msg, now);
+		qq_got_attention(gc, msg);
 		g_free(msg);
 	} else {
 		qq_got_attention(gc, _("Successed join to Qun"));
@@ -282,7 +281,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 		group->my_role = QQ_ROOM_ROLE_YES;
 		qq_group_refresh(gc, group);
 		/* this must be shown before getting online members */
-		qq_room_conv_new(gc, group);
+		qq_room_conv_open(gc, group);
 		break;
 	case QQ_ROOM_JOIN_NEED_AUTH:
 		purple_debug_info("QQ",
@@ -310,30 +309,40 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 void qq_group_join(PurpleConnection *gc, GHashTable *data)
 {
 	qq_data *qd;
-	gchar *ext_id_ptr;
+	gchar *ext_id_str;
+	gchar *id_str;
 	guint32 ext_id;
+	guint32 id;
 	qq_group *group;
 
 	g_return_if_fail(data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	ext_id_ptr = g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID);
-	g_return_if_fail(ext_id_ptr != NULL);
-	errno = 0;
-	ext_id = strtol(ext_id_ptr, NULL, 10);
-	if (errno != 0) {
-		purple_notify_error(gc, _("Error"),
-				_("You entered a group ID outside the acceptable range"), NULL);
+	ext_id_str = g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID);
+	id_str = g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID);
+	purple_debug_info("QQ", "Join room %s, extend id %s\n", id_str, ext_id_str);
+
+	if (id_str != NULL) {
+		id = strtol(id_str, NULL, 10);
+		if (id != 0) {
+			group = qq_room_search_id(gc, id);
+			if (group) {
+				qq_request_room_join(gc, group);
+				return;
+			}
+		}
+	}
+
+	purple_debug_info("QQ", "Search and join extend id %s\n", ext_id_str);
+	if (ext_id_str == NULL) {
+		return;
+	}
+	ext_id = strtol(ext_id_str, NULL, 10);
+	if (ext_id == 0) {
 		return;
 	}
 
-	group = qq_room_search_ext_id(gc, ext_id);
-	if (group) {
-		qq_request_room_join(gc, group);
-	} else {
-		qq_set_pending_id(&qd->joining_groups, ext_id, TRUE);
-		qq_send_cmd_group_search_group(gc, ext_id);
-	}
+	qq_request_room_search(gc, ext_id, QQ_ROOM_SEARCH_FOR_JOIN);
 }
 
 void qq_room_quit(PurpleConnection *gc, GHashTable *data)

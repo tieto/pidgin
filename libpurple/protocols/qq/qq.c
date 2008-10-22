@@ -474,21 +474,18 @@ static gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *mess
 }
 
 /* send a chat msg to a QQ Qun */
-static int qq_chat_send(PurpleConnection *gc, int channel, const char *message, PurpleMessageFlags flags)
+static int qq_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
 	gchar *msg, *msg_with_qq_smiley;
-	qq_group *group;
+	guint32 room_id = id;
 
 	g_return_val_if_fail(message != NULL, -1);
 	g_return_val_if_fail(strlen(message) <= QQ_MSG_IM_MAX, -E2BIG);
 
-	group = qq_group_find_by_channel(gc, channel);
-	g_return_val_if_fail(group != NULL, -1);
-
 	purple_debug_info("QQ_MESG", "Send qun mesg in utf8: %s\n", message);
 	msg = utf8_to_qq(message, QQ_CHARSET_DEFAULT);
 	msg_with_qq_smiley = purple_smiley_to_qq(msg);
-	qq_send_packet_group_im(gc, group, msg_with_qq_smiley);
+	qq_send_packet_group_im(gc, room_id, msg_with_qq_smiley);
 	g_free(msg);
 	g_free(msg_with_qq_smiley);
 
@@ -536,14 +533,28 @@ static void action_update_all_rooms(PurplePluginAction *action)
 static void action_change_icon(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
+	qq_data *qd;
+	gchar *icon_name;
+	gchar *icon_path;
 
 	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
+	qd = (qq_data *) gc->proto_data;
 
-	purple_request_file(action, _("Select icon..."), NULL,
+	if ( !qd->is_login ) {
+		return;
+	}
+
+	icon_name = qq_get_icon_name(qd->my_icon);
+	icon_path = qq_get_icon_path(icon_name);
+	g_free(icon_name);
+
+	purple_debug_info("QQ", "Change prev icon %s to ...\n", icon_path);
+	purple_request_file(action, _("Select icon..."), icon_path,
 			FALSE,
-			NULL, NULL,
+			G_CALLBACK(qq_change_icon_cb), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
 			gc);
+	g_free(icon_path);
 }
 
 static void action_modify_info_base(PurplePluginAction *action)
@@ -794,7 +805,7 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 	PurplePluginAction *act;
 
 	m = NULL;
-	act = purple_plugin_action_new(_("Change icon"), action_change_icon);
+	act = purple_plugin_action_new(_("Change Icon"), action_change_icon);
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Modify Information"), action_modify_info_base);
@@ -871,6 +882,26 @@ static GList *qq_buddy_menu(PurpleBlistNode * node)
 	return m;
 }
 
+/* convert name displayed in a chat channel to original QQ UID */
+static gchar *chat_name_to_purple_name(const gchar *const name)
+{
+	const char *start;
+	const char *end;
+	gchar *ret;
+
+	g_return_val_if_fail(name != NULL, NULL);
+
+	/* Sample: (1234567)*/
+	start = strchr(name, '(');
+	g_return_val_if_fail(start != NULL, NULL);
+	end = strchr(start, ')');
+	g_return_val_if_fail(end != NULL && (end - start) > 1, NULL);
+
+	ret = g_strndup(start + 1, end - start - 1);
+
+	return ret;
+}
+
 /* convert chat nickname to uid to get this buddy info */
 /* who is the nickname of buddy in QQ chat-room (Qun) */
 static void qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gchar *who)
@@ -879,6 +910,7 @@ static void qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gch
 	gchar *uid_str;
 	guint32 uid;
 
+	purple_debug_info("QQ", "Get chat buddy info of %s\n", who);
 	g_return_if_fail(who != NULL);
 
 	uid_str = chat_name_to_purple_name(who);
@@ -1093,7 +1125,6 @@ static void init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	purple_prefs_add_none("/plugins/prpl/qq");
-	purple_prefs_add_string("/plugins/prpl/qq/icon_dir", QQ_BUDDY_ICON_DIR);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_room_when_newin", TRUE);

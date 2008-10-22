@@ -142,8 +142,14 @@ GHashTable *qq_group_to_hashtable(qq_group *group)
 	return components;
 }
 
+static gint str2dec(const gchar *str)
+{
+	g_return_val_if_fail(str != NULL, 0);
+	return strtol(str, NULL, 10);
+}
+
 /* create a qq_group from hashtable */
-qq_group *qq_room_create_by_hashtable(PurpleConnection *gc, GHashTable *data)
+qq_group *qq_room_data_new_by_hashtable(PurpleConnection *gc, GHashTable *data)
 {
 	qq_data *qd;
 	qq_group *group;
@@ -153,23 +159,25 @@ qq_group *qq_room_create_by_hashtable(PurpleConnection *gc, GHashTable *data)
 
 	group = g_new0(qq_group, 1);
 	group->my_role =
-	    qq_string_to_dec_value
+	    str2dec
 	    (NULL ==
 	     g_hash_table_lookup(data,
 				 QQ_ROOM_KEY_ROLE) ?
 	     g_strdup_printf("%d", QQ_ROOM_ROLE_NO) :
 	     g_hash_table_lookup(data, QQ_ROOM_KEY_ROLE));
-	group->id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID));
-	group->ext_id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID));
-	group->type8 = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_ROOM_KEY_TYPE));
-	group->creator_uid = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_ROOM_KEY_CREATOR_UID));
-	group->category = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_ROOM_KEY_CATEGORY));
-	group->auth_type = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_ROOM_KEY_AUTH_TYPE));
+	group->id = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID));
+	group->ext_id = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID));
+	group->type8 = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_TYPE));
+	group->creator_uid = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_CREATOR_UID));
+	group->category = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_CATEGORY));
+	group->auth_type = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_AUTH_TYPE));
 	group->title_utf8 = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_TITLE_UTF8));
 	group->desc_utf8 = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_DESC_UTF8));
 	group->my_role_desc = get_role_desc(group);
-	group->is_got_info = FALSE;
+	group->is_got_buddies = FALSE;
 
+	purple_debug_info("QQ", "Created room info from hashtable: %s, %d, id %d\n",
+			group->title_utf8, group->ext_id, group->id);
 	qd->groups = g_list_append(qd->groups, group);
 	return group;
 }
@@ -221,22 +229,4 @@ void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 		     g_strdup(QQ_ROOM_KEY_TITLE_UTF8), g_strdup(group->title_utf8));
 	g_hash_table_replace(chat->components,
 		     g_strdup(QQ_ROOM_KEY_DESC_UTF8), g_strdup(group->desc_utf8));
-}
-
-/* NOTE: If we knew how to convert between an external and internal group id, as the official
- * client seems to, the following would be unnecessary. That would be ideal. */
-
-/* Use list to specify if id's alternate id is pending discovery. */
-void qq_set_pending_id(GSList **list, guint32 id, gboolean pending)
-{
-	if (pending)
-		*list = g_slist_prepend(*list, GINT_TO_POINTER(id));
-	else
-		*list = g_slist_remove(*list, GINT_TO_POINTER(id));
-}
-
-/* Return the location of id in list, or NULL if not found */
-GSList *qq_get_pending_id(GSList *list, guint32 id)
-{
-        return g_slist_find(list, GINT_TO_POINTER(id));
 }

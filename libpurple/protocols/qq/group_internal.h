@@ -44,11 +44,8 @@ qq_group *qq_group_create_internal_record(PurpleConnection *gc,
 void qq_group_delete_internal_record(qq_data *qd, guint32 id);
 
 GHashTable *qq_group_to_hashtable(qq_group *group);
-qq_group *qq_room_create_by_hashtable(PurpleConnection *gc, GHashTable *data);
+qq_group *qq_room_data_new_by_hashtable(PurpleConnection *gc, GHashTable *data);
 
 void qq_group_refresh(PurpleConnection *gc, qq_group *group);
-
-void qq_set_pending_id(GSList **list, guint32 id, gboolean pending);
-GSList *qq_get_pending_id(GSList *list, guint32 id);
 
 #endif

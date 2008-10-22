@@ -710,7 +710,6 @@ static void set_all_keys(PurpleConnection *gc)
 	qd->send_seq = rand() & 0xffff;
 
 	qd->is_login = FALSE;
-	qd->channel = 1;
 	qd->uid = strtol(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
 
 #ifdef DEBUG
@@ -1284,19 +1283,21 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 gint qq_send_room_cmd_mess(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
 		guint8 *data, gint data_len, gint update_class, guint32 ship32)
 {
-	g_return_val_if_fail(room_id > 0, -1);
+	g_return_val_if_fail(room_cmd > 0, -1);
 	return send_room_cmd(gc, room_cmd, room_id, data, data_len, update_class, ship32);
 }
 
 gint qq_send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
 		guint8 *data, gint data_len)
 {
+	g_return_val_if_fail(room_cmd > 0 && room_id > 0, -1);
 	return send_room_cmd(gc, room_cmd, room_id, data, data_len, 0, 0);
 }
 
 gint qq_send_room_cmd_noid(PurpleConnection *gc, guint8 room_cmd,
 		guint8 *data, gint data_len)
 {
+	g_return_val_if_fail(room_cmd > 0, -1);
 	return send_room_cmd(gc, room_cmd, 0, data, data_len, 0, 0);
 }
 

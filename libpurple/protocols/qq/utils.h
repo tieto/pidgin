@@ -34,7 +34,6 @@ void qq_get_md5(guint8 *md5, gint md5_len, const guint8* const src, gint src_len
 
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount);
 gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount);
-gint qq_string_to_dec_value(const gchar *str);
 
 gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields);
 
@@ -43,7 +42,6 @@ guint8 *str_ip_gen(gchar *str);
 
 guint32 purple_name_to_uid(const gchar *name);
 gchar *uid_to_purple_name(guint32 uid);
-gchar *chat_name_to_purple_name(const gchar *const name);
 
 gchar *try_dump_as_gbk(const guint8 *const data, gint len);
 

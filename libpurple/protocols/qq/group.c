@@ -41,9 +41,9 @@ static void _qq_group_search_callback(PurpleConnection *gc, const gchar *input)
 	guint32 ext_id;
 
 	g_return_if_fail(input != NULL);
-	ext_id = qq_string_to_dec_value(input);
+	ext_id = strtol(input, NULL, 10);
 	/* 0x00000000 means search for demo group */
-	qq_send_cmd_group_search_group(gc, ext_id);
+	qq_request_room_search(gc, ext_id, QQ_ROOM_SEARCH_ONLY);
 }
 
 static void _qq_group_search_cancel_callback(PurpleConnection *gc, const gchar *input)
@@ -155,6 +155,7 @@ void qq_group_init(PurpleConnection *gc)
 
 	account = purple_connection_get_account(gc);
 
+	purple_debug_info("QQ", "Initial QQ Qun configurations\n");
 	purple_group = purple_find_group(PURPLE_GROUP_QQ_QUN);
 	if (purple_group == NULL) {
 		purple_debug_info("QQ", "We have no QQ Qun\n");
@@ -170,7 +171,7 @@ void qq_group_init(PurpleConnection *gc)
 		chat = (PurpleChat *) node;
 		if (account != chat->account)	/* not qq account*/
 			continue;
-		group = qq_room_create_by_hashtable(gc, chat->components);
+		group = qq_room_data_new_by_hashtable(gc, chat->components);
 		if (group == NULL)
 			continue;
 

@@ -54,9 +54,9 @@ typedef struct _qq_group {
 	gchar *desc_utf8;
 	/* all these will be loaded from the network */
 	gchar *notice_utf8;	/* group notice by admin */
-	GList *members;
 
-	gboolean is_got_info;
+	gboolean is_got_buddies;
+	GList *members;
 } qq_group;
 
 GList *qq_chat_info(PurpleConnection *gc);
