@@ -1,3 +1,8 @@
+2008.10.03 - ccpaging <ccpaging(at)gmail.com>
+	* 2007 protocol:
+		1. fixed 'get room info'
+		2. fixed 'get buddy level'
+
 2008.10.02 - ccpaging <ccpaging(at)gmail.com>
 	* Added 'Captcha Display' function
 	* QQ2007 for openq, programed by Emil Alexiev:

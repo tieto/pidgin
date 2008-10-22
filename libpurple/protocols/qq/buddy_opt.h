@@ -31,6 +31,7 @@
 #include "qq.h"
 
 void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+qq_buddy *qq_get_buddy(PurpleConnection *gc, guint32 uid);
 void qq_change_buddys_group(PurpleConnection *gc, const char *who,
 		const char *old_group, const char *new_group);
 void qq_remove_buddy_and_me(PurpleBlistNode * node);

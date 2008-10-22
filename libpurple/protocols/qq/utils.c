@@ -186,13 +186,19 @@ gchar *uid_to_purple_name(guint32 uid)
 /* convert name displayed in a chat channel to original QQ UID */
 gchar *chat_name_to_purple_name(const gchar *const name)
 {
-	const gchar *tmp;
+	const char *start;
+	const char *end;
 	gchar *ret;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	tmp = (gchar *) purple_strcasestr(name, "(");
-	ret = g_strndup(tmp + 4, strlen(name) - (tmp - name) - 4 - 1);
+	/* Sample: (1234567)*/
+	start = strchr(name, '(');
+	g_return_val_if_fail(start != NULL, NULL);
+	end = strchr(start, ')');
+	g_return_val_if_fail(end != NULL && (end - start) > 1, NULL);
+	
+	ret = g_strndup(start + 1, end - start - 1);
 
 	return ret;
 }

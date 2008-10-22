@@ -359,7 +359,12 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 			qq_request_get_buddies_and_rooms(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);
 			break;
 		case QQ_CMD_GET_BUDDIES_AND_ROOMS:
-			qq_request_get_buddies_level(gc, QQ_CMD_CLASS_UPDATE_ALL);
+			if (qd->client_version >= 2007) {
+				/* QQ2007/2008 can not get buddies level*/
+				qq_request_get_buddies_online(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);
+			} else {
+				qq_request_get_buddies_level(gc, QQ_CMD_CLASS_UPDATE_ALL);
+			}
 			break;
 		case QQ_CMD_GET_LEVEL:
 			qq_request_get_buddies_online(gc, 0, QQ_CMD_CLASS_UPDATE_ALL);

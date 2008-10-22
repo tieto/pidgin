@@ -72,20 +72,20 @@ void qq_group_remove_member_by_uid(qq_group *group, guint32 uid)
 qq_buddy *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid)
 {
 	qq_buddy *member, *q_bud;
-	PurpleBuddy *buddy;
+	PurpleBuddy *purple_buddy;
 	g_return_val_if_fail(group != NULL && member_uid > 0, NULL);
 
 	member = qq_group_find_member_by_uid(group, member_uid);
 	if (member == NULL) {	/* first appear during my session */
 		member = g_new0(qq_buddy, 1);
 		member->uid = member_uid;
-		buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
-		if (buddy != NULL) {
-			q_bud = (qq_buddy *) buddy->proto_data;
+		purple_buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
+		if (purple_buddy != NULL) {
+			q_bud = (qq_buddy *) purple_buddy->proto_data;
 			if (q_bud != NULL && q_bud->nickname != NULL)
 				member->nickname = g_strdup(q_bud->nickname);
-			else if (buddy->alias != NULL)
-				member->nickname = g_strdup(buddy->alias);
+			else if (purple_buddy->alias != NULL)
+				member->nickname = g_strdup(purple_buddy->alias);
 		}
 		group->members = g_list_append(group->members, member);
 	}

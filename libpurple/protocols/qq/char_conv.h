@@ -32,7 +32,6 @@
 gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset);
 
 gchar *qq_smiley_to_purple(gchar *text);
-
 gchar *purple_smiley_to_qq(gchar *text);
 
 gchar *utf8_to_qq(const gchar *str, const gchar *to_charset);

@@ -499,7 +499,11 @@ static void qq_show_buddy_info(PurpleConnection *gc, const gchar *who)
 		return;
 	}
 
-	qq_request_get_level(gc, uid);
+	if (qd->client_version >= 2007) {
+		qq_request_get_level_2007(gc, uid);
+	} else {
+		qq_request_get_level(gc, uid);
+	}
 	qq_request_buddy_info(gc, uid, 0, QQ_BUDDY_INFO_DISPLAY);
 }
 
@@ -773,12 +777,31 @@ static GList *qq_buddy_menu(PurpleBlistNode * node)
 /* who is the nickname of buddy in QQ chat-room (Qun) */
 static void qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gchar *who)
 {
-	gchar *purple_name;
+	qq_data *qd;
+	gchar *uid_str;
+	guint32 uid;
+
 	g_return_if_fail(who != NULL);
 
-	purple_name = chat_name_to_purple_name(who);
-	if (purple_name != NULL)
-		qq_show_buddy_info(gc, purple_name);
+	uid_str = chat_name_to_purple_name(who);
+	if (uid_str == NULL) {
+		return;
+	}
+
+	qd = gc->proto_data;
+	uid = purple_name_to_uid(uid_str);
+	g_free(uid_str);
+
+	if (uid <= 0) {
+		purple_debug_error("QQ", "Not valid chat name: %s\n", who);
+		purple_notify_error(gc, NULL, _("Invalid name"), NULL);
+		return;
+	}
+
+	if (qd->client_version < 2007) {
+		qq_request_get_level(gc, uid);
+	}
+	qq_request_buddy_info(gc, uid, 0, QQ_BUDDY_INFO_DISPLAY);
 }
 
 /* convert chat nickname to uid to invite individual IM to buddy */

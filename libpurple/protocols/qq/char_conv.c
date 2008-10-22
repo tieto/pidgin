@@ -296,5 +296,3 @@ void qq_filter_str(gchar *str) {
 	}
 	g_strstrip(str);
 }
-
-

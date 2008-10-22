@@ -156,6 +156,8 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	g_return_if_fail(data != NULL && data_len > 0);
 	qd = (qq_data *) gc->proto_data;
 
+	/* qq_show_packet("Room Info", data, data_len); */
+	
 	bytes = 0;
 	bytes += qq_get32(&id, data + bytes);
 	g_return_if_fail(id > 0);
@@ -189,6 +191,10 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	purple_debug_info("QQ", "type=%u creatorid=%u category=%u maxmembers=%u\n",
 			group->type8, group->creator_uid, group->category, max_members);
 
+	/* skip 7 bytes unknow in qq2007 0x(00 00 01 00 00 00 fc)*/
+	bytes += 7;
+	
+	/* qq_show_packet("Room Info", data + bytes, data_len - bytes); */
 	/* strlen + <str content> */
 	bytes += convert_as_pascal_string(data + bytes, &(group->title_utf8), QQ_CHARSET_DEFAULT);
 	bytes += qq_get16(&unknown, data + bytes);	/* 0x0000 */

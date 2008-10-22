@@ -546,7 +546,11 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid, gboolean is_know
 		qd->buddies = g_list_append(qd->buddies, q_bud);
 		qq_request_buddy_info(gc, qd->uid, 0, 0);
 		qq_request_get_buddies_online(gc, 0, 0);
-		qq_request_get_level(gc, qd->uid);
+		if (qd->client_version >= 2007) {
+			qq_request_get_level_2007(gc, q_bud->uid);
+		} else {
+			qq_request_get_level(gc, q_bud->uid);
+		}
 	}
 
 	purple_blist_add_buddy(buddy, NULL, group, NULL);
@@ -556,6 +560,26 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid, gboolean is_know
 	g_free(group_name);
 
 	return buddy;
+}
+
+qq_buddy *qq_get_buddy(PurpleConnection *gc, guint32 uid)
+{
+	gchar *purple_name;
+	PurpleBuddy *purple_buddy;
+
+	g_return_val_if_fail(gc != NULL, NULL);
+	purple_name = uid_to_purple_name(uid);
+	if (purple_name == NULL)	return NULL;
+
+	purple_buddy = purple_find_buddy(purple_connection_get_account(gc), purple_name);
+	g_free(purple_name);
+	if (purple_buddy == NULL)	return NULL;
+	
+	if (purple_buddy->proto_data == NULL) {
+		purple_debug_error("QQ", "Null data of buddy %d\n", uid);
+		return NULL;
+	}
+	return (qq_buddy *) purple_buddy->proto_data;
 }
 
 /* remove a buddy and send packet to QQ server accordingly */

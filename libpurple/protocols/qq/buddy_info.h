@@ -84,6 +84,7 @@ void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection 
 void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, PurpleConnection *gc);
 
 void qq_request_get_level(PurpleConnection *gc, guint32 uid);
+void qq_request_get_level_2007(PurpleConnection *gc, guint32 uid);
 void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class);
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
 #endif

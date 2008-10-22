@@ -665,10 +665,23 @@ void qq_request_get_level(PurpleConnection *gc, guint32 uid)
 	guint8 buf[16] = {0};
 	gint bytes = 0;
 
-	bytes += qq_put8(buf + bytes, 0x00);
+	if (qd->client_version >= 2007) {
+		bytes += qq_put8(buf + bytes, 0x02);
+	} else {
+		bytes += qq_put8(buf + bytes, 0x00);
+	}
 	bytes += qq_put32(buf + bytes, uid);
+	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, buf, bytes);
+}
 
-	qd = (qq_data *) gc->proto_data;
+void qq_request_get_level_2007(PurpleConnection *gc, guint32 uid)
+{
+	guint8 buf[16] = {0};
+	gint bytes = 0;
+
+	bytes += qq_put8(buf + bytes, 0x08);
+	bytes += qq_put32(buf + bytes, uid);
+	bytes += qq_put8(buf + bytes, 0x00);
 	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, buf, bytes);
 }
 
@@ -684,11 +697,11 @@ void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
 	if ( qd->buddies == NULL) {
 		return;
 	}
+	
 	/* server only reply levels for online buddies */
 	size = 4 * g_list_length(qd->buddies) + 1 + 4;
 	buf = g_newa(guint8, size);
 	bytes += qq_put8(buf + bytes, 0x00);
-
 	while (NULL != node) {
 		q_bud = (qq_buddy *) node->data;
 		if (NULL != q_bud) {
@@ -696,41 +709,24 @@ void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
 		}
 		node = node->next;
 	}
-
 	/* my id should be the end if included */
 	bytes += qq_put32(buf + bytes, qd->uid);
 	qq_send_cmd_mess(gc, QQ_CMD_GET_LEVEL, buf, size, update_class, 0);
 }
 
-void qq_process_get_level_reply(guint8 *decr_buf, gint decr_len, PurpleConnection *gc)
+static void process_level(PurpleConnection *gc, guint8 *data, gint data_len)
 {
-	guint32 uid, onlineTime;
-	guint16 level, timeRemainder;
-	gchar *purple_name;
-	PurpleBuddy *b;
-	qq_buddy *q_bud;
-	gint i;
-	PurpleAccount *account = purple_connection_get_account(gc);
 	qq_data *qd = (qq_data *) gc->proto_data;
 	gint bytes = 0;
-
-	decr_len--;
-	if (decr_len % 12 != 0) {
-		purple_debug_error("QQ",
-				"Get levels list of abnormal length. Truncating last %d bytes.\n", decr_len % 12);
-		decr_len -= (decr_len % 12);
-	}
-
-	bytes += 1;
-	/* this byte seems random */
-	/*
-	   purple_debug_info("QQ", "Byte one of get_level packet: %d\n", buf[0]);
-	   */
-	for (i = 0; i < decr_len; i += 12) {
-		bytes += qq_get32(&uid, decr_buf + bytes);
-		bytes += qq_get32(&onlineTime, decr_buf + bytes);
-		bytes += qq_get16(&level, decr_buf + bytes);
-		bytes += qq_get16(&timeRemainder, decr_buf + bytes);
+	guint32 uid, onlineTime;
+	guint16 level, timeRemainder;
+	qq_buddy *buddy;
+	
+	while (data_len - bytes >= 12) {
+		bytes += qq_get32(&uid, data + bytes);
+		bytes += qq_get32(&onlineTime, data + bytes);
+		bytes += qq_get16(&level, data + bytes);
+		bytes += qq_get16(&timeRemainder, data + bytes);
 		purple_debug_info("QQ_LEVEL", "%d, tmOnline: %d, level: %d, tmRemainder: %d\n",
 				uid, onlineTime, level, timeRemainder);
 		if (uid == qd->uid) {
@@ -738,27 +734,93 @@ void qq_process_get_level_reply(guint8 *decr_buf, gint decr_len, PurpleConnectio
 			purple_debug_warning("QQ", "Got my levels as %d\n", qd->my_level);
 		}
 
-		purple_name = uid_to_purple_name(uid);
-		if (purple_name == NULL) {
-			continue;
-		}
-
-		b = purple_find_buddy(account, purple_name);
-		g_free(purple_name);
-
-		q_bud = NULL;
-		if (b != NULL) {
-			q_bud = (qq_buddy *) b->proto_data;
-		}
-
-		if (q_bud == NULL) {
+		buddy = qq_get_buddy(gc, uid);
+		if (buddy == NULL) {
 			purple_debug_error("QQ", "Got levels of %d not in my buddy list\n", uid);
 			continue;
 		}
 
-		q_bud->onlineTime = onlineTime;
-		q_bud->level = level;
-		q_bud->timeRemainder = timeRemainder;
+		buddy->onlineTime = onlineTime;
+		buddy->level = level;
+		buddy->timeRemainder = timeRemainder;
+	}
+
+	if (bytes != data_len) {
+		purple_debug_error("QQ",
+				"Wrong format of Get levels. Truncate %d bytes.\n", data_len - bytes);
+	}
+}
+
+static void process_level_2007(PurpleConnection *gc, guint8 *data, gint data_len)
+{
+	qq_data *qd = (qq_data *) gc->proto_data;
+	gint bytes;
+	guint32 uid, onlineTime;
+	guint16 level, timeRemainder;
+	qq_buddy *buddy;
+	guint16 str_len;
+	gchar *str;
+	gchar *str_utf8;
+
+	bytes = 0;
+	bytes += qq_get32(&uid, data + bytes);
+	bytes += qq_get32(&onlineTime, data + bytes);
+	bytes += qq_get16(&level, data + bytes);
+	bytes += qq_get16(&timeRemainder, data + bytes);
+	purple_debug_info("QQ_LEVEL", "%d, tmOnline: %d, level: %d, tmRemainder: %d\n",
+			uid, onlineTime, level, timeRemainder);
+
+	if (uid == qd->uid) {
+		qd->my_level = level;
+		purple_debug_warning("QQ", "Got my levels as %d\n", qd->my_level);
+	}
+
+	buddy = qq_get_buddy(gc, uid);
+	if (buddy == NULL) {
+		purple_debug_error("QQ", "Got levels of %d not in my buddy list\n", uid);
+		return;
+	}
+
+	buddy->onlineTime = onlineTime;
+	buddy->level = level;
+	buddy->timeRemainder = timeRemainder;
+	
+	/* extend bytes in qq2007*/
+	bytes += 4;	/* skip 8 bytes */
+	qq_show_packet("Buddies level", data + bytes, data_len - bytes);
+	
+	do {
+		bytes += qq_get16(&str_len, data + bytes);
+		if (str_len <= 0 || bytes + str_len > data_len) {
+			purple_debug_error("QQ",
+					"Wrong format of Get levels. Truncate %d bytes.\n", data_len - bytes);
+			break;
+		}
+		str = g_strndup((gchar *)data + bytes, str_len);
+		bytes += str_len;
+		str_utf8 = qq_to_utf8(str, QQ_CHARSET_DEFAULT);
+		purple_debug_info("QQ", "%s\n", str_utf8);
+		g_free(str_utf8);
+		g_free(str);
+	} while (bytes < data_len);
+}
+
+void qq_process_get_level_reply(guint8 *data, gint data_len, PurpleConnection *gc)
+{
+	gint bytes;
+	guint8 sub_cmd;
+
+	bytes = 0;
+	bytes += qq_get8(&sub_cmd, data + bytes);
+	switch (sub_cmd) {
+		case 0x08:
+			process_level_2007(gc, data + bytes, data_len - bytes);
+			break;
+		case 0x00:
+		case 0x02:
+		default:
+			process_level(gc, data + bytes, data_len - bytes);
+			break;
 	}
 }
 
