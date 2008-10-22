@@ -1,3 +1,8 @@
+2009.10.02 - ccpaging <ccpaging(at)gmail.com>
+	* Added 'Captcha Display' function
+	* Most functions from patch written by Emil Alexiev merged into trunk, except 'buddy operations'
+	* 'online buddy status' and 'qun buddies' still have problems
+
 2008.09.30 - ccpaging <ccpaging(at)gmail.com>
 	* Successfully login using 2007/2008 protocols
 

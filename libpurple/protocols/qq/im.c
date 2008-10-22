@@ -390,7 +390,8 @@ static void process_recv_normal_im_text(guint8 *data, gint len, qq_recv_normal_i
 	msg_utf8_encoded = im_text->is_there_font_attr ?
 		qq_encode_to_purple(im_text->font_attr,
 				im_text->font_attr_len,
-				msg_with_purple_smiley) : qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
+				msg_with_purple_smiley, qd->client_version) 
+		: qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 
 	/* send encoded to purple, note that we use im_text->send_time,
 	 * not the time we receive the message

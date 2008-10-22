@@ -667,7 +667,13 @@ static gboolean network_timeout(gpointer data)
 	qd->itv_count.keep_alive--;
 	if (qd->itv_count.keep_alive <= 0) {
 		qd->itv_count.keep_alive = qd->itv_config.keep_alive;
-		qq_request_keep_alive(gc);
+		if (qd->client_version >= 2008) {
+			qq_request_keep_alive_2008(gc);
+		} else if (qd->client_version >= 2007) {
+			qq_request_keep_alive_2007(gc);
+		} else {
+			qq_request_keep_alive(gc);
+		}
 		return TRUE;
 	}
 
@@ -691,7 +697,9 @@ static void set_all_keys(PurpleConnection *gc)
 	const gchar *passwd;
 	guint8 *dest;
 	int dest_len = QQ_KEY_LENGTH;
-
+#ifndef DEBUG
+	int bytes;
+#endif
 	/* _qq_show_socket("Got login socket", source); */
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
@@ -771,7 +779,7 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message)
 
 	set_all_keys( gc );
 
-	if (qd->client_version > 2005) {
+	if (qd->client_version >= 2007) {
 		purple_connection_update_progress(gc, _("Get server ..."), 2, QQ_CONNECT_STEPS);
 		qq_request_get_server(gc);
 		return;

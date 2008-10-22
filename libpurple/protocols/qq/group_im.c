@@ -401,12 +401,12 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 
 	/* group im_group has no flag to indicate whether it has font_attr or not */
 	msg_with_purple_smiley = qq_smiley_to_purple(packet.msg);
-	if (packet.font_attr_len > 0)
+	if (packet.font_attr_len > 0) {
 		msg_utf8_encoded = qq_encode_to_purple(packet.font_attr,
-				packet.font_attr_len, msg_with_purple_smiley);
-	else
+				packet.font_attr_len, msg_with_purple_smiley, qd->client_version);
+	} else {
 		msg_utf8_encoded = qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
-
+	}
 	group = qq_room_search_id(gc, id);
  	qq_room_got_chat_in(gc, group, packet.member_uid, msg_utf8_encoded, packet.send_time);
 

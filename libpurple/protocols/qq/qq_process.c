@@ -589,7 +589,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 	switch (cmd) {
 		case QQ_CMD_TOKEN:
 			if (qq_process_token(gc, rcved, rcved_len) == QQ_LOGIN_REPLY_OK) {
-				if (qd->client_version > 2005) {
+				if (qd->client_version >= 2007) {
 					qq_request_token_ex(gc);
 				} else {
 					qq_request_login(gc);
@@ -615,7 +615,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			break;
 		case QQ_CMD_LOGIN:
 		default:
-			if (qd->client_version > 2005) {
+			if (qd->client_version >= 2007) {
 				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_twice_md5);
 				if (data_len >= 0) {
 					purple_debug_warning("QQ", "Decrypt login packet by pwd_twice_md5\n");
@@ -696,6 +696,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 				return  ret_8;
 			}
 
+			purple_connection_update_progress(gc, _("Logined"), QQ_CONNECT_STEPS - 1, QQ_CONNECT_STEPS);
 			purple_debug_info("QQ", "Login repliess OK; everything is fine\n");
 			purple_connection_set_state(gc, PURPLE_CONNECTED);
 			qd->is_login = TRUE;	/* must be defined after sev_finish_login */
@@ -776,7 +777,13 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			qq_process_send_im_reply(data, data_len, gc);
 			break;
 		case QQ_CMD_KEEP_ALIVE:
-			qq_process_keep_alive(data, data_len, gc);
+			if (qd->client_version >= 2008) {
+				qq_process_keep_alive_2008(data, data_len, gc);
+			} else if (qd->client_version >= 2007) {
+				qq_process_keep_alive_2007(data, data_len, gc);
+			} else {
+				qq_process_keep_alive(data, data_len, gc);
+			}
 			break;
 		case QQ_CMD_GET_BUDDIES_ONLINE:
 			ret_8 = qq_process_get_buddies_online_reply(data, data_len, gc);

@@ -84,8 +84,11 @@ void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, gint u
  * server may return a position tag if list is too long for one packet */
 void qq_request_get_buddies_list(PurpleConnection *gc, guint16 position, gint update_class)
 {
+	qq_data *qd;
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
+
+	qd = (qq_data *) gc->proto_data;
 
 	/* 000-001 starting position, can manually specify */
 	bytes += qq_put16(raw_data + bytes, position);
@@ -95,7 +98,10 @@ void qq_request_get_buddies_list(PurpleConnection *gc, guint16 position, gint up
 	 * Now I tested that 00,00,00,00,00,01 work perfectly
 	 * March 22, found the 00,00,00 starts to work as well */
 	bytes += qq_put8(raw_data + bytes, 0x00);
-
+	if (qd->client_version >= 2007) {
+		bytes += qq_put16(raw_data + bytes, 0x0000);
+	}
+	
 	qq_send_cmd_mess(gc, QQ_CMD_GET_BUDDIES_LIST, raw_data, bytes, update_class, 0);
 }
 
@@ -177,7 +183,7 @@ guint8 qq_process_get_buddies_online_reply(guint8 *data, gint data_len, PurpleCo
 	count = 0;
 	while (bytes < data_len) {
 		if (data_len - bytes < QQ_ONLINE_BUDDY_ENTRY_LEN) {
-			purple_debug_error("QQ", "[buddies online] only %d, need %d",
+			purple_debug_error("QQ", "[buddies online] only %d, need %d\n",
 					(data_len - bytes), QQ_ONLINE_BUDDY_ENTRY_LEN);
 			break;
 		}
@@ -292,11 +298,18 @@ guint16 qq_process_get_buddies_list_reply(guint8 *data, gint data_len, PurpleCon
 		bytes += pascal_len;
 		qq_filter_str(q_bud->nickname);
 
+		/* Fixme: merge following as 32bit flag */
 		bytes += qq_get16(&unknown, data + bytes);
 		bytes += qq_get8(&q_bud->ext_flag, data + bytes);
 		bytes += qq_get8(&q_bud->comm_flag, data + bytes);
+		
+		if (qd->client_version >= 2007) {
+			bytes += 4;		/* skip 4 bytes */
+			bytes_expected = 16 + pascal_len;
+		} else {
+			bytes_expected = 12 + pascal_len;
+		}
 
-		bytes_expected = 12 + pascal_len;
 
 		if (q_bud->uid == 0 || (bytes - buddy_bytes) != bytes_expected) {
 			purple_debug_info("QQ",
@@ -390,6 +403,10 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 				purple_debug_info("QQ",
 					"Not find room id %d in qq_process_get_buddies_and_rooms\n", uid);
 				qq_set_pending_id(&qd->adding_groups_from_server, uid, TRUE);
+				//group = g_newa(qq_group, 1);
+				//group->id = uid;
+				qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, uid, NULL, 0,
+						0, 0);
 			} else {
 				group->my_role = QQ_ROOM_ROLE_YES;
 				qq_group_refresh(gc, group);
@@ -421,6 +438,7 @@ gboolean is_online(guint8 status)
 		case QQ_BUDDY_ONLINE_NORMAL:
 		case QQ_BUDDY_ONLINE_AWAY:
 		case QQ_BUDDY_ONLINE_INVISIBLE:
+		case QQ_BUDDY_ONLINE_BUSY:
 			return TRUE;
 		case QQ_BUDDY_CHANGE_TO_OFFLINE:
 			return FALSE;
@@ -469,6 +487,13 @@ void qq_request_change_status(PurpleConnection *gc, gint update_class)
 
 	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
 		away_cmd = QQ_BUDDY_ONLINE_INVISIBLE;
+	} else if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_UNAVAILABLE))
+	{
+		if (qd->client_version >= 2007) {
+			away_cmd = QQ_BUDDY_ONLINE_BUSY;
+		} else {
+			away_cmd = QQ_BUDDY_ONLINE_INVISIBLE;
+		}
 	} else if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_AWAY)
 			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)
 			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_UNAVAILABLE)) {
@@ -476,13 +501,13 @@ void qq_request_change_status(PurpleConnection *gc, gint update_class)
 	} else {
 		away_cmd = QQ_BUDDY_ONLINE_NORMAL;
 	}
-
+	
 	misc_status = 0x00000000;
 	fake_video = purple_prefs_get_bool("/plugins/prpl/qq/show_fake_video");
 	if (fake_video)
 		misc_status |= QQ_MISC_STATUS_HAVING_VIIDEO;
 
-	if (qd->client_version > 2005) {
+	if (qd->client_version >= 2007) {
 		bytes = 0;
 		bytes += qq_put8(raw_data + bytes, away_cmd);
 		/* status version */
@@ -624,6 +649,9 @@ void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 		break;
 	case QQ_BUDDY_ONLINE_INVISIBLE:
 		status_id = "invisible";
+		break;
+	case QQ_BUDDY_ONLINE_BUSY:
+		status_id = "busy";
 		break;
 	default:
 		status_id = "invisible";

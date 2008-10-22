@@ -267,6 +267,9 @@ static gchar *qq_status_text(PurpleBuddy *b)
 	case QQ_BUDDY_ONLINE_INVISIBLE:
 		g_string_append(status, _("Invisible"));
 		break;
+	case QQ_BUDDY_ONLINE_BUSY:
+		g_string_append(status, _("Busy"));
+		break;
 	default:
 		g_string_printf(status, _("Unknown-%d"), q_bud->status);
 	}
@@ -403,6 +406,10 @@ static GList *qq_status_types(PurpleAccount *ga)
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
 			"invisible", _("Invisible"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, status);
+
+	status = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE,
+			"busy", _("Busy"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
@@ -898,7 +905,9 @@ static void init_plugin(PurplePlugin *plugin)
 	GList *server_list = NULL;
 	GList *server_kv_list = NULL;
 	GList *it;
+//#ifdef DEBUG
 	GList *version_kv_list = NULL;
+//#endif
 
 	server_list = server_list_build('A');
 
@@ -927,7 +936,7 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_list_new(_("Select Server"), "server", server_kv_list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-#ifdef DEBUG
+//#ifdef DEBUG
 	kvp = g_new0(PurpleKeyValuePair, 1);
 	kvp->key = g_strdup(_("QQ2005"));
 	kvp->value = g_strdup("qq2005");
@@ -945,7 +954,7 @@ static void init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_list_new(_("Client Version"), "client_version", version_kv_list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-#endif
+//#endif
 
 	option = purple_account_option_bool_new(_("Connect by TCP"), "use_tcp", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

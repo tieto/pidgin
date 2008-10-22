@@ -151,7 +151,23 @@ gint qq_put16(guint8 *buf, guint16 w)
  * return the number of bytes packed, otherwise return -1 */
 gint qq_put32(guint8 *buf, guint32 dw)
 {
+	guint32 dw_dest;
+	memcpy(&dw_dest, buf, sizeof(dw_dest));
+
     guint32 dw_porter;
+    dw_porter = g_htonl(dw);
+#ifdef PARSER_DEBUG
+	purple_debug_info("QQ", "[DBG][put32] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][put32] dw 0x%08x, dw_porter 0x%08x\n", dw, dw_porter);
+#endif
+    memcpy(buf, &dw_porter, sizeof(dw_porter));
+    return sizeof(dw_porter);
+}
+
+gint qq_putime(guint8 *buf, time_t *t)
+{
+	guint32 dw, dw_porter;
+	memcpy(&dw, t, sizeof(dw));
     dw_porter = g_htonl(dw);
 #ifdef PARSER_DEBUG
 	purple_debug_info("QQ", "[DBG][put32] buf %p\n", (void *)buf);

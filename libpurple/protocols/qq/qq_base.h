@@ -52,6 +52,12 @@ void qq_request_logout(PurpleConnection *gc);
 void qq_request_keep_alive(PurpleConnection *gc);
 gboolean qq_process_keep_alive(guint8 *data, gint data_len, PurpleConnection *gc);
 
+void qq_request_keep_alive_2007(PurpleConnection *gc);
+gboolean qq_process_keep_alive_2007(guint8 *data, gint data_len, PurpleConnection *gc);
+
+void qq_request_keep_alive_2008(PurpleConnection *gc);
+gboolean qq_process_keep_alive_2008(guint8 *data, gint data_len, PurpleConnection *gc);
+
 /* for QQ2007/2008 */
 void qq_request_get_server(PurpleConnection *gc);
 guint16 qq_process_get_server(PurpleConnection *gc, guint8 *rcved, gint rcved_len);

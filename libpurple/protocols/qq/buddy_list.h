@@ -45,7 +45,8 @@ enum {
 	QQ_BUDDY_ONLINE_NORMAL = 10,
 	QQ_BUDDY_CHANGE_TO_OFFLINE = 20,
 	QQ_BUDDY_ONLINE_AWAY = 30,
-	QQ_BUDDY_ONLINE_INVISIBLE = 40
+	QQ_BUDDY_ONLINE_INVISIBLE = 40,
+	QQ_BUDDY_ONLINE_BUSY = 50,
 };
 
 void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, gint update_class);

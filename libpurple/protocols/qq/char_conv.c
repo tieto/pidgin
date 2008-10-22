@@ -141,7 +141,7 @@ gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_chars
 }
 
 /* convert QQ formatted msg to Purple formatted msg (and UTF-8) */
-gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
+gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg, const gint client_version)
 {
 	GString *encoded;
 	guint8 font_attr, font_size, color[3], bar;
@@ -153,6 +153,9 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 	/* checked qq_show_packet OK */
 	/* qq_show_packet("QQ_MESG recv for font style", data, len); */
 
+	if (client_version >= 2007) {
+		bytes += 1;
+	}
 	bytes += qq_get8(&font_attr, data + bytes);
 	bytes += qq_getdata(color, 3, data + bytes);	/* red,green,blue */
 	color_code = g_strdup_printf("#%02x%02x%02x", color[0], color[1], color[2]);
@@ -232,8 +235,10 @@ gchar *qq_smiley_to_purple(gchar *text)
 
 	converted = g_string_new("");
 	segments = split_data((guint8 *) text, strlen(text), "\x14\x15", 0);
-	g_string_append(converted, segments[0]);
+	if(segments == NULL)
+		return NULL;
 
+	g_string_append(converted, segments[0]);
 	while ((*(++segments)) != NULL) {
 		cur_seg = *segments;
 		qq_smiley = cur_seg[0];
