@@ -29,9 +29,9 @@
 #include "connection.h"
 #include "group.h"
 
-qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid);
+qq_buddy_data *qq_group_find_member_by_uid(qq_group *group, guint32 uid);
 void qq_group_remove_member_by_uid(qq_group *group, guint32 uid);
-qq_buddy *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid);
+qq_buddy_data *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid);
 qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel);
 
 qq_group *qq_room_search_ext_id(PurpleConnection *gc, guint32 ext_id);

@@ -26,7 +26,7 @@
 
 #include "debug.h"
 
-#include "buddy_list.h"
+#include "buddy_opt.h"
 #include "group_free.h"
 
 /* gracefully free all members in a group */
@@ -34,16 +34,15 @@ static void qq_group_free_member(qq_group *group)
 {
 	gint i;
 	GList *list;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 
 	g_return_if_fail(group != NULL);
 	i = 0;
 	while (NULL != (list = group->members)) {
-		member = (qq_buddy *) list->data;
+		bd = (qq_buddy_data *) list->data;
 		i++;
-		group->members = g_list_remove(group->members, member);
-		g_free(member->nickname);
-		g_free(member);
+		group->members = g_list_remove(group->members, bd);
+		qq_buddy_data_free(bd);
 	}
 
 	group->members = NULL;

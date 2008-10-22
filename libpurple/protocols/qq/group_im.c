@@ -82,7 +82,7 @@ PurpleConversation *qq_room_conv_new(PurpleConnection *gc, qq_group *group)
 void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group)
 {
 	GList *names, *list, *flags;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 	gchar *member_name, *member_uid;
 	PurpleConversation *conv;
 	gint flag;
@@ -102,20 +102,20 @@ void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group)
 
 	list = group->members;
 	while (list != NULL) {
-		member = (qq_buddy *) list->data;
+		bd = (qq_buddy_data *) list->data;
 
 		/* we need unique identifiers for everyone in the chat or else we'll
 		 * run into problems with functions like get_cb_real_name from qq.c */
-		member_name =   (member->nickname != NULL && *(member->nickname) != '\0') ?
-				g_strdup_printf("%s (%u)", member->nickname, member->uid) :
-				g_strdup_printf("(%u)", member->uid);
-		member_uid = g_strdup_printf("(%u)", member->uid);
+		member_name =   (bd->nickname != NULL && *(bd->nickname) != '\0') ?
+				g_strdup_printf("%s (%u)", bd->nickname, bd->uid) :
+				g_strdup_printf("(%u)", bd->uid);
+		member_uid = g_strdup_printf("(%u)", bd->uid);
 
 		flag = 0;
 		/* TYPING to put online above OP and FOUNDER */
-		if (is_online(member->status)) flag |= (PURPLE_CBFLAGS_TYPING | PURPLE_CBFLAGS_VOICE);
-		if(1 == (member->role & 1)) flag |= PURPLE_CBFLAGS_OP;
-		if(member->uid == group->creator_uid) flag |= PURPLE_CBFLAGS_FOUNDER;
+		if (is_online(bd->status)) flag |= (PURPLE_CBFLAGS_TYPING | PURPLE_CBFLAGS_VOICE);
+		if(1 == (bd->role & 1)) flag |= PURPLE_CBFLAGS_OP;
+		if(bd->uid == group->creator_uid) flag |= PURPLE_CBFLAGS_FOUNDER;
 
 		is_find = TRUE;
 		if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_name))
@@ -254,7 +254,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *conv;
-	qq_buddy *buddy;
+	qq_buddy_data *bd;
 	gchar *from;
 
 	g_return_if_fail(group != NULL);
@@ -270,11 +270,11 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	}
 
 	if (uid_from != 0) {
-		buddy = qq_group_find_member_by_uid(group, uid_from);
-		if (buddy == NULL || buddy->nickname == NULL)
+		bd = qq_group_find_member_by_uid(group, uid_from);
+		if (bd == NULL || bd->nickname == NULL)
 			from = g_strdup_printf("%d", uid_from);
 		else
-			from = g_strdup(buddy->nickname);
+			from = g_strdup(bd->nickname);
 	} else {
 		from = g_strdup("");
 	}

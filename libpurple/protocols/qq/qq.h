@@ -37,7 +37,7 @@
 #define QQ_KEY_LENGTH       16
 
 typedef struct _qq_data qq_data;
-typedef struct _qq_buddy qq_buddy;
+typedef struct _qq_buddy_data qq_buddy_data;
 typedef struct _qq_interval qq_interval;
 typedef struct _qq_net_stat qq_net_stat;
 typedef struct _qq_add_request qq_add_request;
@@ -86,7 +86,7 @@ struct _qq_net_stat {
 	glong rcved_dup;
 };
 
-struct _qq_buddy {
+struct _qq_buddy_data {
 	guint32 uid;
 	guint16 face;		/* index: 0 - 299 */
 	guint8 age;

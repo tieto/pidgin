@@ -57,6 +57,5 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 
 void qq_update_buddyies_status(PurpleConnection *gc);
 void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, guint8 flag);
-void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud);
 void qq_buddy_data_free_all(PurpleConnection *gc);
 #endif

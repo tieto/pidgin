@@ -41,7 +41,7 @@
  * this interval determines if their member info is outdated */
 #define QQ_GROUP_CHAT_REFRESH_NICKNAME_INTERNAL  180
 
-static gboolean check_update_interval(qq_buddy *member)
+static gboolean check_update_interval(qq_buddy_data *member)
 {
 	g_return_val_if_fail(member != NULL, FALSE);
 	return (member->nickname == NULL) ||
@@ -53,13 +53,13 @@ static gboolean check_update_interval(qq_buddy *member)
 static void set_all_offline(qq_group *group)
 {
 	GList *list;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 	g_return_if_fail(group != NULL);
 
 	list = group->members;
 	while (list != NULL) {
-		member = (qq_buddy *) list->data;
-		member->status = QQ_BUDDY_CHANGE_TO_OFFLINE;
+		bd = (qq_buddy_data *) list->data;
+		bd->status = QQ_BUDDY_CHANGE_TO_OFFLINE;
 		list = list->next;
 	}
 }
@@ -70,12 +70,12 @@ gint qq_request_room_get_buddies(PurpleConnection *gc, qq_group *group, gint upd
 	guint8 *raw_data;
 	gint bytes, num;
 	GList *list;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 
 	g_return_val_if_fail(group != NULL, 0);
 	for (num = 0, list = group->members; list != NULL; list = list->next) {
-		member = (qq_buddy *) list->data;
-		if (check_update_interval(member))
+		bd = (qq_buddy_data *) list->data;
+		if (check_update_interval(bd))
 			num++;
 	}
 
@@ -90,9 +90,9 @@ gint qq_request_room_get_buddies(PurpleConnection *gc, qq_group *group, gint upd
 
 	list = group->members;
 	while (list != NULL) {
-		member = (qq_buddy *) list->data;
-		if (check_update_interval(member))
-			bytes += qq_put32(raw_data + bytes, member->uid);
+		bd = (qq_buddy_data *) list->data;
+		if (check_update_interval(bd))
+			bytes += qq_put32(raw_data + bytes, bd->uid);
 		list = list->next;
 	}
 
@@ -140,7 +140,7 @@ static void room_info_display(PurpleConnection *gc, qq_group *group)
 void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, PurpleConnection *gc)
 {
 	qq_group *group;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 	qq_data *qd;
 	PurpleConversation *conv;
 	guint8 organization, role;
@@ -219,9 +219,9 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 		}
 #endif
 
-		member = qq_group_find_or_add_member(gc, group, member_uid);
-		if (member != NULL)
-			member->role = role;
+		bd = qq_group_find_or_add_member(gc, group, member_uid);
+		if (bd != NULL)
+			bd->role = role;
 	}
 	if(bytes > data_len) {
 		purple_debug_error("QQ",
@@ -263,7 +263,7 @@ void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *g
 	guint8 unknown;
 	gint bytes, num;
 	qq_group *group;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 
 	g_return_if_fail(data != NULL && len > 0);
 
@@ -289,9 +289,9 @@ void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *g
 	while (bytes < len) {
 		bytes += qq_get32(&member_uid, data + bytes);
 		num++;
-		member = qq_group_find_or_add_member(gc, group, member_uid);
-		if (member != NULL)
-			member->status = QQ_BUDDY_ONLINE_NORMAL;
+		bd = qq_group_find_or_add_member(gc, group, member_uid);
+		if (bd != NULL)
+			bd->status = QQ_BUDDY_ONLINE_NORMAL;
 	}
 	if(bytes > len) {
 		purple_debug_error("QQ",
@@ -309,7 +309,7 @@ void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *g
 	guint32 id, member_uid;
 	guint16 unknown;
 	qq_group *group;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 	gchar *nick;
 
 	g_return_if_fail(data != NULL && len > 0);
@@ -328,30 +328,30 @@ void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *g
 	while (bytes < len) {
 		bytes += qq_get32(&member_uid, data + bytes);
 		g_return_if_fail(member_uid > 0);
-		member = qq_group_find_member_by_uid(group, member_uid);
-		g_return_if_fail(member != NULL);
+		bd = qq_group_find_member_by_uid(group, member_uid);
+		g_return_if_fail(bd != NULL);
 
 		num++;
-		bytes += qq_get16(&(member->face), data + bytes);
-		bytes += qq_get8(&(member->age), data + bytes);
-		bytes += qq_get8(&(member->gender), data + bytes);
+		bytes += qq_get16(&(bd->face), data + bytes);
+		bytes += qq_get8(&(bd->age), data + bytes);
+		bytes += qq_get8(&(bd->gender), data + bytes);
 		bytes += qq_get_vstr(&nick, QQ_CHARSET_DEFAULT, data + bytes);
 		bytes += qq_get16(&unknown, data + bytes);
-		bytes += qq_get8(&(member->ext_flag), data + bytes);
-		bytes += qq_get8(&(member->comm_flag), data + bytes);
+		bytes += qq_get8(&(bd->ext_flag), data + bytes);
+		bytes += qq_get8(&(bd->comm_flag), data + bytes);
 
 		/* filter \r\n in nick */
 		qq_filter_str(nick);
-		member->nickname = g_strdup(nick);
+		bd->nickname = g_strdup(nick);
 		g_free(nick);
 
 #if 0
 		purple_debug_info("QQ",
 				"member [%09d]: ext_flag=0x%02x, comm_flag=0x%02x, nick=%s\n",
-				member_uid, member->ext_flag, member->comm_flag, member->nickname);
+				member_uid, bd->ext_flag, bd->comm_flag, bd->nickname);
 #endif
 
-		member->last_update = time(NULL);
+		bd->last_update = time(NULL);
 	}
 	if (bytes > len) {
 		purple_debug_error("QQ",

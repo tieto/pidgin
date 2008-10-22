@@ -143,7 +143,7 @@ void qq_group_approve_application_with_struct(group_member_opt *g)
 void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new_members)
 {
 	guint32 *old_members, *del_members, *add_members;
-	qq_buddy *q_bud;
+	qq_buddy_data *bd;
 	qq_data *qd;
 	gint i = 0, old = 0, new = 0, del = 0, add = 0;
 	GList *list;
@@ -160,9 +160,9 @@ void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new
 	/* construct the old member list */
 	list = group->members;
 	while (list != NULL) {
-		q_bud = (qq_buddy *) list->data;
-		if (q_bud != NULL)
-			old_members[i++] = q_bud->uid;
+		bd = (qq_buddy_data *) list->data;
+		if (bd != NULL)
+			old_members[i++] = bd->uid;
 		list = list->next;
 	}
 	old_members[i] = 0xffffffff;	/* this is the end */
@@ -268,7 +268,7 @@ void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection
 	guint32 id;
 	qq_group *group;
 	time_t now = time(NULL);
-	
+
 	g_return_if_fail(data != NULL);
 
 	bytes = 0;

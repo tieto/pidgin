@@ -30,16 +30,11 @@
 
 #include "qq.h"
 
-void qq_buddy_data_free(qq_buddy *bd);
-
 void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
-qq_buddy *qq_buddy_find(PurpleConnection *gc, guint32 uid);
 void qq_change_buddys_group(PurpleConnection *gc, const char *who,
 		const char *old_group, const char *new_group);
 void qq_remove_buddy_and_me(PurpleBlistNode * node);
 void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
-PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid,
-		gboolean is_known, gboolean is_create_data);
 
 void qq_process_buddy_remove(guint8 *buf, gint buf_len, PurpleConnection *gc);
 void qq_process_buddy_remove_me(guint8 *data, gint data_len, PurpleConnection *gc);
@@ -48,7 +43,11 @@ void qq_process_buddy_add_auth(guint8 *data, gint data_len, PurpleConnection *gc
 void qq_process_buddy_from_server(PurpleConnection *gc, int funct,
 		gchar *from, gchar *to, gchar *msg_utf8);
 
-PurpleGroup *qq_group_find_or_new(const gchar *group_name);
-PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid);
+qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, guint32 uid);
+void qq_buddy_data_free(qq_buddy_data *bd);
 
+PurpleBuddy *qq_buddy_new(PurpleConnection *gc, guint32 uid);
+PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid);
+PurpleBuddy *qq_buddy_find(PurpleConnection *gc, guint32 uid);
+PurpleGroup *qq_group_find_or_new(const gchar *group_name);
 #endif

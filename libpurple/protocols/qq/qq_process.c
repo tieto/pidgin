@@ -652,6 +652,7 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 		default:
 			break;
 	}
+	qd->online_last_update = time(NULL);
 }
 
 static void update_all_rooms_online(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
@@ -699,11 +700,11 @@ void qq_update_online(PurpleConnection *gc, guint16 cmd)
 		case QQ_CMD_GET_BUDDIES_ONLINE:
 			/* last command */
 			update_all_rooms_online(gc, 0, 0);
-			qd->online_last_update = time(NULL);
 			break;
 		default:
 			break;
 	}
+	qd->online_last_update = time(NULL);
 }
 
 void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,

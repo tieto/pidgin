@@ -573,7 +573,7 @@ static void qq_update_buddy_info(PurpleConnection *gc, gchar **segments)
 {
 	PurpleBuddy *buddy;
 	qq_data *qd;
-	qq_buddy *bd;
+	qq_buddy_data *bd;
 	guint32 uid;
 	gchar *who;
 	gchar *alias_utf8;
@@ -583,7 +583,7 @@ static void qq_update_buddy_info(PurpleConnection *gc, gchar **segments)
 
 	uid = strtol(segments[QQ_INFO_UID], NULL, 10);
 	who = uid_to_purple_name(uid);
-	
+
 	alias_utf8 = qq_to_utf8(segments[QQ_INFO_NICK], QQ_CHARSET_DEFAULT);
 	if (uid == qd->uid) {	/* it is me */
 		purple_debug_info("QQ", "Got my info\n");
@@ -604,7 +604,7 @@ static void qq_update_buddy_info(PurpleConnection *gc, gchar **segments)
 	}
 
 	/* update buddy list (including myself, if myself is the buddy) */
-	bd = (qq_buddy *)buddy->proto_data;
+	bd = (qq_buddy_data *)buddy->proto_data;
 
 	bd->age = strtol(segments[QQ_INFO_AGE], NULL, 10);
 	bd->gender = strtol(segments[QQ_INFO_GENDER], NULL, 10);
@@ -715,7 +715,7 @@ void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
 	PurpleBuddy *buddy;
-	qq_buddy *buddy_data;
+	qq_buddy_data *bd;
 	guint8 *buf;
 	GSList *buddies, *it;
 	gint bytes;
@@ -730,12 +730,11 @@ void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
 		buddy = it->data;
 		if (buddy == NULL) continue;
 		if (buddy->proto_data == NULL) continue;
-		buddy_data = (qq_buddy *)buddy->proto_data;
-		if (buddy_data->uid == 0) continue;
-		if (buddy_data->uid == qd->uid) continue;
-		bytes += qq_put32(buf + bytes, buddy_data->uid);
+		bd = (qq_buddy_data *)buddy->proto_data;
+		if (bd->uid == 0) continue;	/* keep me as end of packet*/
+		if (bd->uid == qd->uid) continue;
+		bytes += qq_put32(buf + bytes, bd->uid);
 	}
-	/* my uid must be the end if included */
 	bytes += qq_put32(buf + bytes, qd->uid);
 	qq_send_cmd_mess(gc, QQ_CMD_GET_LEVEL, buf, bytes, update_class, 0);
 }
@@ -745,7 +744,7 @@ static void process_level(PurpleConnection *gc, guint8 *data, gint data_len)
 	gint bytes = 0;
 	guint32 uid, onlineTime;
 	guint16 level, timeRemainder;
-	qq_buddy *buddy;
+	qq_buddy_data *bd;
 
 	while (data_len - bytes >= 12) {
 		bytes += qq_get32(&uid, data + bytes);
@@ -755,15 +754,15 @@ static void process_level(PurpleConnection *gc, guint8 *data, gint data_len)
 		purple_debug_info("QQ_LEVEL", "%d, tmOnline: %d, level: %d, tmRemainder: %d\n",
 				uid, onlineTime, level, timeRemainder);
 
-		buddy = qq_buddy_find(gc, uid);
-		if (buddy == NULL) {
+		bd = qq_buddy_data_find(gc, uid);
+		if (bd == NULL) {
 			purple_debug_error("QQ", "Got levels of %d not in my buddy list\n", uid);
 			continue;
 		}
 
-		buddy->onlineTime = onlineTime;
-		buddy->level = level;
-		buddy->timeRemainder = timeRemainder;
+		bd->onlineTime = onlineTime;
+		bd->level = level;
+		bd->timeRemainder = timeRemainder;
 	}
 
 	if (bytes != data_len) {
@@ -777,7 +776,7 @@ static void process_level_2007(PurpleConnection *gc, guint8 *data, gint data_len
 	gint bytes;
 	guint32 uid, onlineTime;
 	guint16 level, timeRemainder;
-	qq_buddy *buddy;
+	qq_buddy_data *bd;
 	guint16 str_len;
 	gchar *str;
 	gchar *str_utf8;
@@ -790,15 +789,15 @@ static void process_level_2007(PurpleConnection *gc, guint8 *data, gint data_len
 	purple_debug_info("QQ_LEVEL", "%d, tmOnline: %d, level: %d, tmRemainder: %d\n",
 			uid, onlineTime, level, timeRemainder);
 
-	buddy = qq_buddy_find(gc, uid);
-	if (buddy == NULL) {
+	bd = qq_buddy_data_find(gc, uid);
+	if (bd == NULL) {
 		purple_debug_error("QQ", "Got levels of %d not in my buddy list\n", uid);
 		return;
 	}
 
-	buddy->onlineTime = onlineTime;
-	buddy->level = level;
-	buddy->timeRemainder = timeRemainder;
+	bd->onlineTime = onlineTime;
+	bd->level = level;
+	bd->timeRemainder = timeRemainder;
 
 	/* extend bytes in qq2007*/
 	bytes += 4;	/* skip 8 bytes */

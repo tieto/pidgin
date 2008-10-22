@@ -771,7 +771,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 	gchar *sender_name, **fileinfo;
 	ft_info *info;
 	PurpleBuddy *b;
-	qq_buddy *q_bud;
+	qq_buddy_data *bd;
 	gint bytes;
 
 	g_return_if_fail (data != NULL && data_len != 0);
@@ -804,20 +804,21 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 			    "Received a FACE ip detect from %d, so he/she must be online :)\n", sender_uid);
 
 		b = purple_find_buddy(gc->account, sender_name);
-		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-		if (q_bud) {
+		bd = (b == NULL) ? NULL : (qq_buddy_data *) b->proto_data;
+		if (bd) {
 			if(0 != info->remote_real_ip) {
-				g_memmove(&(q_bud->ip), &info->remote_real_ip, sizeof(q_bud->ip));
-				q_bud->port = info->remote_minor_port;
+				g_memmove(&(bd->ip), &info->remote_real_ip, sizeof(bd->ip));
+				bd->port = info->remote_minor_port;
 			}
 			else if (0 != info->remote_internet_ip) {
-				g_memmove(&(q_bud->ip), &info->remote_internet_ip, sizeof(q_bud->ip));
-				q_bud->port = info->remote_major_port;
+				g_memmove(&(bd->ip), &info->remote_internet_ip, sizeof(bd->ip));
+				bd->port = info->remote_major_port;
 			}
 
-			if(!is_online(q_bud->status)) {
-				q_bud->status = QQ_BUDDY_ONLINE_INVISIBLE;
-				qq_update_buddy_contact(gc, q_bud);
+			if(!is_online(bd->status)) {
+				bd->status = QQ_BUDDY_ONLINE_INVISIBLE;
+				bd->last_update = time(NULL);
+				qq_update_buddy_status(gc, bd->uid, bd->status, bd->comm_flag);
 			}
 			else
 				purple_debug_info("QQ", "buddy %d is already online\n", sender_uid);

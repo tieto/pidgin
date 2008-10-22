@@ -31,18 +31,18 @@
 #include "group_find.h"
 #include "utils.h"
 
-/* find a qq_buddy by uid, called by im.c */
-qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid)
+/* find a qq_buddy_data by uid, called by im.c */
+qq_buddy_data *qq_group_find_member_by_uid(qq_group *group, guint32 uid)
 {
 	GList *list;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 	g_return_val_if_fail(group != NULL && uid > 0, NULL);
 
 	list = group->members;
 	while (list != NULL) {
-		member = (qq_buddy *) list->data;
-		if (member->uid == uid)
-			return member;
+		bd = (qq_buddy_data *) list->data;
+		if (bd->uid == uid)
+			return bd;
 		else
 			list = list->next;
 	}
@@ -50,18 +50,18 @@ qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid)
 	return NULL;
 }
 
-/* remove a qq_buddy by uid, called by qq_group_opt.c */
+/* remove a qq_buddy_data by uid, called by qq_group_opt.c */
 void qq_group_remove_member_by_uid(qq_group *group, guint32 uid)
 {
 	GList *list;
-	qq_buddy *member;
+	qq_buddy_data *bd;
 	g_return_if_fail(group != NULL && uid > 0);
 
 	list = group->members;
 	while (list != NULL) {
-		member = (qq_buddy *) list->data;
-		if (member->uid == uid) {
-			group->members = g_list_remove(group->members, member);
+		bd = (qq_buddy_data *) list->data;
+		if (bd->uid == uid) {
+			group->members = g_list_remove(group->members, bd);
 			return;
 		} else {
 			list = list->next;
@@ -69,23 +69,23 @@ void qq_group_remove_member_by_uid(qq_group *group, guint32 uid)
 	}
 }
 
-qq_buddy *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid)
+qq_buddy_data *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid)
 {
-	qq_buddy *member, *q_bud;
-	PurpleBuddy *purple_buddy;
+	qq_buddy_data *member, *bd;
+	PurpleBuddy *buddy;
 	g_return_val_if_fail(group != NULL && member_uid > 0, NULL);
 
 	member = qq_group_find_member_by_uid(group, member_uid);
 	if (member == NULL) {	/* first appear during my session */
-		member = g_new0(qq_buddy, 1);
+		member = g_new0(qq_buddy_data, 1);
 		member->uid = member_uid;
-		purple_buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
-		if (purple_buddy != NULL) {
-			q_bud = (qq_buddy *) purple_buddy->proto_data;
-			if (q_bud != NULL && q_bud->nickname != NULL)
-				member->nickname = g_strdup(q_bud->nickname);
-			else if (purple_buddy->alias != NULL)
-				member->nickname = g_strdup(purple_buddy->alias);
+		buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
+		if (buddy != NULL) {
+			bd = (qq_buddy_data *) buddy->proto_data;
+			if (bd != NULL && bd->nickname != NULL)
+				member->nickname = g_strdup(bd->nickname);
+			else if (buddy->alias != NULL)
+				member->nickname = g_strdup(buddy->alias);
 		}
 		group->members = g_list_append(group->members, member);
 	}
@@ -174,17 +174,17 @@ qq_group *qq_room_get_next(PurpleConnection *gc, guint32 room_id)
 	qq_group *group;
 	qq_data *qd;
 	gboolean is_find = FALSE;
-	
+
 	qd = (qq_data *) gc->proto_data;
 
 	if (qd->groups == NULL) {
 		return NULL;
 	}
-	
+
 	 if (room_id <= 0) {
 		return (qq_group *) qd->groups->data;
 	}
-	
+
 	list = qd->groups;
 	while (list != NULL) {
 		group = (qq_group *) list->data;
@@ -227,7 +227,7 @@ qq_group *qq_room_get_next_conv(PurpleConnection *gc, guint32 room_id)
 			return NULL;
 		}
 	}
-	
+
 	is_find = FALSE;
 	while (list != NULL) {
 		group = (qq_group *) list->data;

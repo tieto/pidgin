@@ -181,13 +181,13 @@ void qq_got_attention(PurpleConnection *gc, const gchar *msg)
 static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_header *im_header)
 {
 	guint16 purple_msg_type;
-	gchar *name;
+	gchar *who;
 	gchar *msg_with_purple_smiley;
 	gchar *msg_utf8_encoded;
 	qq_data *qd;
 	gint bytes = 0;
 	PurpleBuddy *b;
-	qq_buddy *qq_b;
+	qq_buddy_data *bd;
 
 	struct {
 		/* now comes the part for text only */
@@ -205,10 +205,10 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 
 	g_return_if_fail (data != NULL && len > 0);
 	g_return_if_fail(im_header != NULL);
-	
+
 	qd = (qq_data *) gc->proto_data;
 	memset(&im_text, 0, sizeof(im_text));
-	
+
 	/* push data into im_text */
 	bytes += qq_get16(&(im_text.msg_seq), data + bytes);
 	bytes += qq_get32(&(im_text.send_time), data + bytes);
@@ -240,15 +240,15 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 			im_text.msg = g_strndup((gchar *)(data + bytes), len - bytes);
 	}			/* if im_text.msg_type */
 
-	name = uid_to_purple_name(im_header->uid_from);
-	b = purple_find_buddy(gc->account, name);
+	who = uid_to_purple_name(im_header->uid_from);
+	b = purple_find_buddy(gc->account, who);
 	if (b == NULL) {
-		qq_create_buddy(gc, im_header->uid_from, FALSE, TRUE);
-		b = purple_find_buddy(gc->account, name);
+		/* create no-auth buddy */
+		b = qq_buddy_new(gc, im_header->uid_from);
 	}
-	qq_b = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-	if (qq_b != NULL) {
-		qq_b->client_tag = im_header->version_from;
+	bd = (b == NULL) ? NULL : (qq_buddy_data *) b->proto_data;
+	if (bd != NULL) {
+		bd->client_tag = im_header->version_from;
 	}
 
 	purple_msg_type = (im_text.msg_type == QQ_IM_AUTO_REPLY) ? PURPLE_MESSAGE_AUTO_RESP : 0;
@@ -257,17 +257,17 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 	msg_utf8_encoded = im_text.is_there_font_attr ?
 		qq_encode_to_purple(im_text.font_attr,
 				im_text.font_attr_len,
-				msg_with_purple_smiley, qd->client_version) 
+				msg_with_purple_smiley, qd->client_version)
 		: qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 
 	/* send encoded to purple, note that we use im_text.send_time,
 	 * not the time we receive the message
 	 * as it may have been delayed when I am not online. */
-	serv_got_im(gc, name, msg_utf8_encoded, purple_msg_type, (time_t) im_text.send_time);
+	serv_got_im(gc, who, msg_utf8_encoded, purple_msg_type, (time_t) im_text.send_time);
 
 	g_free(msg_utf8_encoded);
 	g_free(msg_with_purple_smiley);
-	g_free(name);
+	g_free(who);
 	g_free(im_text.msg);
 	if (im_text.font_attr)	g_free(im_text.font_attr);
 }
@@ -277,10 +277,12 @@ static void process_extend_im_text(
 		PurpleConnection *gc, guint8 *data, gint len, qq_im_header *im_header)
 {
 	guint16 purple_msg_type;
-	gchar *name;
+	gchar *who;
 	gchar *msg_with_purple_smiley;
 	gchar *msg_utf8_encoded;
 	qq_data *qd;
+	PurpleBuddy *b;
+	qq_buddy_data *bd;
 	gint bytes, text_len;
 
 	struct {
@@ -296,7 +298,7 @@ static void process_extend_im_text(
 		guint8 replyType;
 		gchar *msg;		/* no fixed length, ends with 0x00 */
 		guint8 fromMobileQQ;
-	
+
 		guint8 is_there_font_attr;
 		guint8 *font_attr;
 		gint8 font_attr_len;
@@ -314,16 +316,16 @@ static void process_extend_im_text(
 	bytes += qq_get32(&(im_text.send_time), data + bytes);
 	bytes += qq_get16(&(im_text.senderHead), data + bytes);
 	bytes += qq_get32(&(im_text.flag), data + bytes);
-	
+
 	bytes += qq_getdata(im_text.unknown2, 8, data + bytes);
 	bytes += qq_get8(&(im_text.fragmentCount), data + bytes);
 	bytes += qq_get8(&(im_text.fragmentIndex), data + bytes);
-		
+
 	bytes += qq_get16(&(im_text.messageId), data + bytes);
 	bytes += qq_get8(&(im_text.replyType), data + bytes);
-	
+
 	im_text.font_attr_len = data[len-1] & 0xff;
-	
+
 	text_len = len - bytes - im_text.font_attr_len;
 	im_text.msg = g_strndup((gchar *)(data + bytes), text_len);
 	bytes += text_len;
@@ -331,29 +333,36 @@ static void process_extend_im_text(
 		im_text.font_attr = g_memdup(data + bytes, im_text.font_attr_len);
 	else
 	{
-		purple_debug_error("QQ", "Failed to get IM's font attribute len %d\n", 
+		purple_debug_error("QQ", "Failed to get IM's font attribute len %d\n",
 			im_text.font_attr_len);
 		return;
 	}
 
 	if(im_text.fragmentCount == 0)
 		im_text.fragmentCount = 1;
-		
+
 	// Filter tail space
 	if(im_text.fragmentIndex == im_text.fragmentCount -1)
 	{
 		gint real_len = text_len;
 		while(real_len > 0 && im_text.msg[real_len - 1] == 0x20)
 			real_len --;
-		
+
 		text_len = real_len;
 		// Null string instaed of space
 		im_text.msg[text_len] = 0;
 	}
-	
-	name = uid_to_purple_name(im_header->uid_from);
-	if (purple_find_buddy(gc->account, name) == NULL)
-		qq_create_buddy(gc, im_header->uid_from, FALSE, TRUE);
+
+	who = uid_to_purple_name(im_header->uid_from);
+	b = purple_find_buddy(gc->account, who);
+	if (b == NULL) {
+		/* create no-auth buddy */
+		b = qq_buddy_new(gc, im_header->uid_from);
+	}
+	bd = (b == NULL) ? NULL : (qq_buddy_data *) b->proto_data;
+	if (bd != NULL) {
+		bd->client_tag = im_header->version_from;
+	}
 
 	purple_msg_type = 0;
 
@@ -361,17 +370,17 @@ static void process_extend_im_text(
 	msg_utf8_encoded = im_text.font_attr ?
 	    qq_encode_to_purple(im_text.font_attr,
 			      im_text.font_attr_len,
-			      msg_with_purple_smiley, qd->client_version) 
+			      msg_with_purple_smiley, qd->client_version)
 		: qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 
 	/* send encoded to purple, note that we use im_text.send_time,
 	 * not the time we receive the message
 	 * as it may have been delayed when I am not online. */
-	serv_got_im(gc, name, msg_utf8_encoded, purple_msg_type, (time_t) im_text.send_time);
+	serv_got_im(gc, who, msg_utf8_encoded, purple_msg_type, (time_t) im_text.send_time);
 
 	g_free(msg_utf8_encoded);
 	g_free(msg_with_purple_smiley);
-	g_free(name);
+	g_free(who);
 	g_free(im_text.msg);
 	if (im_text.font_attr) g_free(im_text.font_attr);
 }
