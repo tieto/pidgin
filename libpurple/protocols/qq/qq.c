@@ -435,7 +435,7 @@ static void qq_change_status(PurpleAccount *account, PurpleStatus *status)
 /* send an instant msg to a buddy */
 static gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags)
 {
-	gint type, to_uid;
+	gint type, uid_to;
 	gchar *msg, *msg_with_qq_smiley;
 	qq_data *qd;
 
@@ -446,15 +446,15 @@ static gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *mess
 	g_return_val_if_fail(strlen(message) <= QQ_MSG_IM_MAX, -E2BIG);
 
 	type = (flags == PURPLE_MESSAGE_AUTO_RESP ? QQ_IM_AUTO_REPLY : QQ_IM_TEXT);
-	to_uid = purple_name_to_uid(who);
+	uid_to = purple_name_to_uid(who);
 
 	/* if msg is to myself, bypass the network */
-	if (to_uid == qd->uid) {
+	if (uid_to == qd->uid) {
 		serv_got_im(gc, who, message, flags, time(NULL));
 	} else {
 		msg = utf8_to_qq(message, QQ_CHARSET_DEFAULT);
 		msg_with_qq_smiley = purple_smiley_to_qq(msg);
-		qq_send_packet_im(gc, to_uid, msg_with_qq_smiley, type);
+		qq_request_send_im(gc, uid_to, msg_with_qq_smiley, type);
 		g_free(msg);
 		g_free(msg_with_qq_smiley);
 	}
