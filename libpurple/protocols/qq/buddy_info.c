@@ -85,7 +85,7 @@ enum {
 	QQ_INFO_UNKNOW3, QQ_INFO_UNKNOW4, QQ_INFO_UNKNOW5,
 	QQ_INFO_IS_PUB_MOBILE, QQ_INFO_IS_PUB_CONTACT, QQ_INFO_COLLEGE, QQ_INFO_HOROSCOPE,
 	QQ_INFO_ZODIAC, QQ_INFO_BLOOD, QQ_INFO_SHOW, QQ_INFO_UNKNOW6,
-	QQ_INFO_LAST_2007, QQ_INFO_LAST,
+	QQ_INFO_LAST,
 };
 
 enum {
@@ -142,8 +142,7 @@ static const QQ_FIELD_INFO field_infos[] = {
 	{ QQ_FIELD_EXT, 		QQ_FIELD_CHOICE, "zodiac",		N_("Zodiac"), zodiac_names, QQ_ZODIAC_SIZE },
 	{ QQ_FIELD_EXT, 		QQ_FIELD_CHOICE, "blood",			N_("Blood"), blood_types, QQ_BLOOD_SIZE },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "qq_show",	"QQ Show", NULL, 0 },
-	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow6",	"Unknow6", NULL, 0 },
-	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "LAST_2005",	"LAST_2005", NULL, 0 }
+	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow6",	"Unknow6", NULL, 0 }
 };
 
 typedef struct _modify_info_request {
@@ -569,53 +568,35 @@ static void buddy_local_icon_upate(PurpleAccount *account, const gchar *name, gi
 }
 
 /* after getting info or modify myself, refresh the buddy list accordingly */
-static void qq_set_buddy_info(gchar **segments, PurpleConnection *gc)
+static void qq_refresh_buddy_and_myself(gchar **segments, PurpleConnection *gc)
 {
-	PurpleBuddy *purple_buddy;
+	PurpleBuddy *b;
 	qq_data *qd;
-	guint32 uid;
-	qq_buddy *buddy;
+	qq_buddy *q_bud;
 	gchar *alias_utf8;
 	gchar *purple_name;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	qd = (qq_data *) gc->proto_data;
-
-	uid = strtol(segments[QQ_INFO_UID], NULL, 10);
-	purple_name = uid_to_purple_name(uid);
+	purple_name = uid_to_purple_name(strtol(segments[QQ_INFO_UID], NULL, 10));
 
 	alias_utf8 = qq_to_utf8(segments[QQ_INFO_NICK], QQ_CHARSET_DEFAULT);
 	if (qd->uid == strtol(segments[QQ_INFO_UID], NULL, 10)) {	/* it is me */
-		purple_debug_info("QQ", "Got my info\n");
 		qd->my_icon = strtol(segments[QQ_INFO_FACE], NULL, 10);
 		if (alias_utf8 != NULL)
 			purple_account_set_alias(account, alias_utf8);
-
-		/* add me to buddy list */
-		purple_buddy = purple_find_buddy(gc->account, purple_name);
-		if ( purple_buddy == NULL) {
-			purple_buddy = qq_create_buddy(gc, uid, TRUE, FALSE);
-		}
-		buddy = g_new0(qq_buddy, 1);
-		buddy->uid = uid;
-		buddy->status = QQ_BUDDY_ONLINE_NORMAL;
-		purple_buddy->proto_data = buddy;
-		qd->buddies = g_list_append(qd->buddies, buddy);
 	}
-
 	/* update buddy list (including myself, if myself is the buddy) */
-	purple_buddy = purple_find_buddy(gc->account, purple_name);
-	buddy = (purple_buddy == NULL) ? NULL : (qq_buddy *) purple_buddy->proto_data;
-	if (buddy != NULL) {	/* I have this buddy */
-		buddy->age = strtol(segments[QQ_INFO_AGE], NULL, 10);
-		buddy->gender = strtol(segments[QQ_INFO_GENDER], NULL, 10);
-		buddy->face = strtol(segments[QQ_INFO_FACE], NULL, 10);
+	b = purple_find_buddy(gc->account, purple_name);
+	q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+	if (q_bud != NULL) {	/* I have this buddy */
+		q_bud->age = strtol(segments[QQ_INFO_AGE], NULL, 10);
+		q_bud->gender = strtol(segments[QQ_INFO_GENDER], NULL, 10);
+		q_bud->face = strtol(segments[QQ_INFO_FACE], NULL, 10);
 		if (alias_utf8 != NULL)
-			buddy->nickname = g_strdup(alias_utf8);
-		qq_update_buddy_contact(gc, buddy);
-		buddy_local_icon_upate(gc->account, purple_name, buddy->face);
-	} else {
-		purple_debug_info("QQ", "Can not find buddy data of %s\n", purple_name);
+			q_bud->nickname = g_strdup(alias_utf8);
+		qq_update_buddy_contact(gc, q_bud);
+		buddy_local_icon_upate(gc->account, purple_name, q_bud->face);
 	}
 	g_free(purple_name);
 	g_free(alias_utf8);
@@ -626,18 +607,12 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 {
 	qq_data *qd;
 	gchar **segments;
-	gint field_count;
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
 
-	if (qd->client_version >= 2008) {
-		field_count = QQ_INFO_LAST;
-	} else {
-		field_count = QQ_INFO_LAST_2007;
-	}
-	if (NULL == (segments = split_data(data, data_len, "\x1e", field_count)))
+	if (NULL == (segments = split_data(data, data_len, "\x1e", QQ_INFO_LAST)))
 		return;
 
 #ifdef DEBUG
@@ -652,13 +627,13 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 			segments[QQ_INFO_FACE] = icon;
 
 			request_modify_info(gc, segments);
-			qq_set_buddy_info(segments, gc);
+			qq_refresh_buddy_and_myself(segments, gc);
 		}
 		g_strfreev(segments);
 		return;
 	}
 
-	qq_set_buddy_info(segments, gc);
+	qq_refresh_buddy_and_myself(segments, gc);
 	switch (action) {
 		case QQ_BUDDY_INFO_DISPLAY:
 			info_display_only(gc, segments);
@@ -722,7 +697,7 @@ void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
 	if ( qd->buddies == NULL) {
 		return;
 	}
-
+	
 	/* server only reply levels for online buddies */
 	size = 4 * g_list_length(qd->buddies) + 1 + 4;
 	buf = g_newa(guint8, size);
@@ -746,7 +721,7 @@ static void process_level(PurpleConnection *gc, guint8 *data, gint data_len)
 	guint32 uid, onlineTime;
 	guint16 level, timeRemainder;
 	qq_buddy *buddy;
-
+	
 	while (data_len - bytes >= 12) {
 		bytes += qq_get32(&uid, data + bytes);
 		bytes += qq_get32(&onlineTime, data + bytes);
@@ -809,11 +784,11 @@ static void process_level_2007(PurpleConnection *gc, guint8 *data, gint data_len
 	buddy->onlineTime = onlineTime;
 	buddy->level = level;
 	buddy->timeRemainder = timeRemainder;
-
+	
 	/* extend bytes in qq2007*/
 	bytes += 4;	/* skip 8 bytes */
-	/* qq_show_packet("Buddies level", data + bytes, data_len - bytes); */
-
+	qq_show_packet("Buddies level", data + bytes, data_len - bytes);
+	
 	do {
 		bytes += qq_get16(&str_len, data + bytes);
 		if (str_len <= 0 || bytes + str_len > data_len) {

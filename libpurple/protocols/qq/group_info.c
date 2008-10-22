@@ -157,7 +157,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	qd = (qq_data *) gc->proto_data;
 
 	/* qq_show_packet("Room Info", data, data_len); */
-
+	
 	bytes = 0;
 	bytes += qq_get32(&id, data + bytes);
 	g_return_if_fail(id > 0);
@@ -191,16 +191,15 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	purple_debug_info("QQ", "type=%u creatorid=%u category=%u maxmembers=%u\n",
 			group->type8, group->creator_uid, group->category, max_members);
 
-	if (qd->client_version >= 2007) {
-		/* skip 7 bytes unknow in qq2007 0x(00 00 01 00 00 00 fc)*/
-		bytes += 7;
-	}
+	/* skip 7 bytes unknow in qq2007 0x(00 00 01 00 00 00 fc)*/
+	bytes += 7;
+	
 	/* qq_show_packet("Room Info", data + bytes, data_len - bytes); */
 	/* strlen + <str content> */
-	bytes += qq_get_vstr(&(group->title_utf8), QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &(group->title_utf8), QQ_CHARSET_DEFAULT);
 	bytes += qq_get16(&unknown, data + bytes);	/* 0x0000 */
-	bytes += qq_get_vstr(&notice, QQ_CHARSET_DEFAULT, data + bytes);
-	bytes += qq_get_vstr(&(group->desc_utf8), QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &notice, QQ_CHARSET_DEFAULT);
+	bytes += convert_as_pascal_string(data + bytes, &(group->desc_utf8), QQ_CHARSET_DEFAULT);
 
 	purple_debug_info("QQ", "room [%s] notice [%s] desc [%s] unknow 0x%04X\n",
 			group->title_utf8, notice, group->desc_utf8, unknown);
@@ -315,7 +314,9 @@ void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *g
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	/* qq_show_packet("qq_process_room_cmd_get_buddies", data, len); */
+#if 0
+	qq_show_packet("qq_process_room_cmd_get_buddies", data, len);
+#endif
 
 	bytes = 0;
 	bytes += qq_get32(&id, data + bytes);
@@ -336,7 +337,7 @@ void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *g
 		bytes += qq_get16(&(member->face), data + bytes);
 		bytes += qq_get8(&(member->age), data + bytes);
 		bytes += qq_get8(&(member->gender), data + bytes);
-		bytes += qq_get_vstr(&nick, QQ_CHARSET_DEFAULT, data + bytes);
+		bytes += convert_as_pascal_string(data + bytes, &nick, QQ_CHARSET_DEFAULT);
 		bytes += qq_get16(&unknown, data + bytes);
 		bytes += qq_get8(&(member->ext_flag), data + bytes);
 		bytes += qq_get8(&(member->comm_flag), data + bytes);

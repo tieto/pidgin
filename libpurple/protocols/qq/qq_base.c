@@ -66,7 +66,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	struct tm *tm_local;
 
 	qd = (qq_data *) gc->proto_data;
-	/* qq_show_packet("Login reply", data, len); */
+	qq_show_packet("Login reply", data, len);
 
 	if (len < 139) {
 		purple_connection_error_reason(gc,
@@ -665,7 +665,7 @@ guint16 qq_process_get_server(PurpleConnection *gc, guint8 *data, gint data_len)
 	qd->redirect_len = data_len;
 	qd->redirect = g_realloc(qd->redirect, qd->redirect_len);
 	qq_getdata(qd->redirect, qd->redirect_len, data);
-	/* qq_show_packet("Redirect to", qd->redirect, qd->redirect_len); */
+	qq_show_packet("Redirect to", qd->redirect, qd->redirect_len);
 
 	qq_getIP(&qd->redirect_ip, data + 11);
 	purple_debug_info("QQ", "Get server %s\n", inet_ntoa(qd->redirect_ip));
@@ -912,7 +912,7 @@ guint8 qq_process_token_ex(PurpleConnection *gc, guint8 *data, gint data_len)
 	bytes += qq_get16(&(qd->ld.token_ex_len), data + bytes);
 	qd->ld.token_ex = g_realloc(qd->ld.token_ex, qd->ld.token_ex_len);
 	bytes += qq_getdata(qd->ld.token_ex, qd->ld.token_ex_len, data + bytes);
-	/* qq_show_packet("Get token ex", qd->ld.token_ex, qd->ld.token_ex_len); */
+	qq_show_packet("Get token ex", qd->ld.token_ex, qd->ld.token_ex_len);
 	
 	if(reply != 1)
 	{
@@ -932,7 +932,7 @@ guint8 qq_process_token_ex(PurpleConnection *gc, guint8 *data, gint data_len)
 	bytes += qq_get16(&qd->captcha.token_len, data + bytes);
 	qd->captcha.token = g_realloc(qd->captcha.token, qd->captcha.token_len);
 	bytes += qq_getdata(qd->captcha.token, qd->captcha.token_len, data + bytes);
-	/* qq_show_packet("Get captcha token", qd->captcha.token, qd->captcha.token_len); */
+	qq_show_packet("Get captcha token", qd->captcha.token, qd->captcha.token_len);
 
 	purple_debug_info("QQ", "Request next captcha %d, new %d, total %d\n", 
 			qd->captcha.next_index, captcha_len, qd->captcha.data_len);
@@ -1038,7 +1038,7 @@ void qq_request_check_pwd(PurpleConnection *gc)
 	bytes += qq_put8(raw_data + bytes, qd->ld.pwd_md5[1]);
 	bytes += qq_put8(raw_data + bytes, qd->ld.pwd_md5[2]);
 
-	/* qq_show_packet("Check password", raw_data, bytes); */
+	qq_show_packet("Check password", raw_data, bytes);
 	/* Encrypted by random key*/
 	encrypted_len = qq_encrypt(encrypted, raw_data, bytes, qd->ld.random_key);
 
@@ -1068,7 +1068,7 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 	g_return_val_if_fail(gc != NULL  && gc->proto_data != NULL, QQ_LOGIN_REPLY_ERR);
 	qd = (qq_data *) gc->proto_data;
 
-	/* qq_show_packet("Check password reply", data, data_len); */
+	qq_show_packet("Check password reply", data, data_len);
 
 	bytes = 0;
 	bytes += qq_get16(&unknow_token_len, data + bytes);	/* maybe total length */
@@ -1086,11 +1086,10 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 		if (qd->ld.login_token != NULL) g_free(qd->ld.login_token);
 		qd->ld.login_token = g_new0(guint8, qd->ld.login_token_len);
 		bytes += qq_getdata(qd->ld.login_token, qd->ld.login_token_len, data + bytes);
-		/* qq_show_packet("Get login token", qd->ld.login_token, qd->ld.login_token_len); */
-
+		qq_show_packet("Get login token", qd->ld.login_token, qd->ld.login_token_len);
 		/* get login_key */
 		bytes += qq_getdata(qd->ld.login_key, sizeof(qd->ld.login_key), data + bytes);
-		/* qq_show_packet("Get login key", qd->ld.login_key, sizeof(qd->ld.login_key)); */
+		qq_show_packet("Get login key", qd->ld.login_key, sizeof(qd->ld.login_key));
 		return QQ_LOGIN_REPLY_OK;
 	}
 
@@ -1203,7 +1202,7 @@ void qq_request_login_2007(PurpleConnection *gc)
 	memset(raw_data + bytes, 0, 10);
 	bytes += 10;
 	/* redirect data, 15 bytes */
-	/* qq_show_packet("Redirect", qd->redirect, qd->redirect_len); */
+	qq_show_packet("Redirect", qd->redirect, qd->redirect_len);
 	bytes += qq_putdata(raw_data + bytes, qd->redirect, qd->redirect_len);
 	/* unknow fill */
 	bytes += qq_putdata(raw_data + bytes, login_2_16, sizeof(login_2_16));
@@ -1215,7 +1214,7 @@ void qq_request_login_2007(PurpleConnection *gc)
 	memset(raw_data + bytes, 0, 332 - sizeof(login_3_83));
 	bytes += 332 - sizeof(login_3_83);
 
-	/* qq_show_packet("Login", raw_data, bytes); */
+	qq_show_packet("Login", raw_data, bytes);
 
 	encrypted_len = qq_encrypt(encrypted, raw_data, bytes, qd->ld.login_key);
 
@@ -1243,24 +1242,27 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 	gchar *msg_utf8;
 
 	g_return_val_if_fail(data != NULL && data_len != 0, QQ_LOGIN_REPLY_ERR);
+	purple_debug_info("QQ", "FN_base, GO\n");
 
 	qd = (qq_data *) gc->proto_data;
 
 	bytes = 0;
 	bytes += qq_get8(&ret, data + bytes);
 	if (ret != 0) {
+		purple_debug_info("QQ", "FN_base, RET!=0\n");
 		msg = g_strndup((gchar *)data + bytes, data_len - bytes);
 		msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
 
+		purple_debug_info("QQ", "FN_base, SW RET now\n");
 		switch (ret) {
 			case 0x05:
+				purple_debug_info("QQ", "FN_base, RET:0x%02x\n", ret);
 				error = g_strdup_printf(
-						_("Server is busy now (0x%02X), Please try later\n%s"),
-						ret, msg_utf8);
+						_("Server is busy now, Please try later\n%s"),
+						msg_utf8);
 				break;
 			case 0x0A:
 				/* 0a 2d 9a 4b 9a 01 01 00 00 00 05 00 00 00 00 79 0e 5f fd */
-				/* Missing get server before login*/
 			default:
 				error = g_strdup_printf(
 						_("Unknow reply code when login (0x%02X):\n%s"),
@@ -1410,7 +1412,7 @@ void qq_request_login_2008(PurpleConnection *gc)
 	memset(raw_data + bytes, 0, 249);
 	bytes += 249;
 
-	/* qq_show_packet("Login request", raw_data, bytes); */
+	qq_show_packet("Login request", raw_data, bytes);
 	encrypted_len = qq_encrypt(encrypted, raw_data, bytes, qd->ld.login_key);
 
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
@@ -1448,8 +1450,8 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 		switch (ret) {
 			case 0x05:
 				error = g_strdup_printf(
-						_("Server is busy now (0x%02X), Please try later\n%s"),
-						ret, msg_utf8);
+						_("Server is busy now, Please try later\n%s"),
+						msg_utf8);
 				break;
 			default:
 				error = g_strdup_printf(

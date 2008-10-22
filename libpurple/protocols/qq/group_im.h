@@ -36,7 +36,7 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 
 void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc);
 
-void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type);
+void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type);
 
 void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 

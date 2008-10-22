@@ -110,10 +110,10 @@ void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection 
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get32(&(group.category), data + bytes);
-	bytes += qq_get_vstr(&(group.title_utf8), QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &(group.title_utf8), QQ_CHARSET_DEFAULT);
 	bytes += qq_get16(&(unknown), data + bytes);
 	bytes += qq_get8(&(group.auth_type), data + bytes);
-	bytes += qq_get_vstr(&(group.desc_utf8), QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &(group.desc_utf8), QQ_CHARSET_DEFAULT);
 	/* end of one qq_group */
 	if(bytes != len) {
 		purple_debug_error("QQ",

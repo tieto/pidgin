@@ -107,7 +107,7 @@ void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleCo
 
 	g_return_if_fail(ext_id > 0 && user_uid > 0);
 
-	bytes += qq_get_vstr(&reason_utf8, QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf(_("%d request to join Qun %d"), user_uid, ext_id);
 	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
@@ -161,7 +161,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	if (uid_from != 0) {
 		buddy = qq_group_find_member_by_uid(group, uid_from);
 		if (buddy == NULL || buddy->nickname == NULL)
-			from = g_strdup_printf("%d", uid_from);
+			from = uid_to_purple_name(uid_from);
 		else
 			from = g_strdup(buddy->nickname);
 	} else {
@@ -192,7 +192,7 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 
 	g_return_if_fail(ext_id > 0 && admin_uid > 0);
 
-	bytes += qq_get_vstr(&reason_utf8, QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
 		(_("Failed to join Qun %d, operated by admin %d"), ext_id, admin_uid);
@@ -231,7 +231,7 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 
 	g_return_if_fail(ext_id > 0 && admin_uid > 0);
 	/* it is also a "无" here, so do not display */
-	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += convert_as_pascal_string(data + bytes, &reason, QQ_CHARSET_DEFAULT);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
@@ -317,7 +317,7 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 }
 
 /* recv an IM from a group chat */
-void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type)
+void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type)
 {
 	gchar *msg_with_purple_smiley, *msg_utf8_encoded;
 	qq_data *qd;
@@ -353,7 +353,7 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	bytes += qq_get32(&(packet.ext_id), data + bytes);
 	bytes += qq_get8(&(packet.type8), data + bytes);
 
-	if(QQ_MSG_TEMP_QUN_IM == msg_type) {
+	if(QQ_RECV_IM_TEMP_QUN_IM == im_type) {
 		bytes += qq_get32(&(id), data + bytes);
 	}
 
@@ -384,7 +384,7 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	 *    buf.getInt();
 	 */
 
-	if(msg_type != QQ_MSG_UNKNOWN_QUN_IM)
+	if(im_type != QQ_RECV_IM_UNKNOWN_QUN_IM)
 		skip_len = 10;
 	else
 		skip_len = 0;

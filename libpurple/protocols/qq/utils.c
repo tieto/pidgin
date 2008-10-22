@@ -104,7 +104,7 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 {
 	guint8 *input;
 	gchar **segments;
-	gint count, j;
+	gint i, j;
 
 	g_return_val_if_fail(data != NULL && len != 0 && delimit != 0, NULL);
 
@@ -118,18 +118,22 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	if (expected_fields <= 0)
 		return segments;
 
-	for (count = 0; segments[count] != NULL; count++) {;
+	for (i = 0; segments[i] != NULL; i++) {;
 	}
-	if (count < expected_fields) {	/* not enough fields */
-		purple_debug_error("QQ", "Less fields %d then %d\n", count, expected_fields);
+	if (i < expected_fields) {	/* not enough fields */
+		purple_debug_error("QQ", "Invalid data, expect %d fields, found only %d, discard\n",
+				expected_fields, i);
+		g_strfreev(segments);
 		return NULL;
-	} else if (count > expected_fields) {	/* more fields, OK */
-		purple_debug_warning("QQ", "More fields %d than %d\n", count, expected_fields);
+	} else if (i > expected_fields) {	/* more fields, OK */
+		purple_debug_warning("QQ", "Dangerous data, expect %d fields, found %d, return all\n",
+				expected_fields, i);
 		/* free up those not used */
-		for (j = expected_fields; j < count; j++) {
+		for (j = expected_fields; j < i; j++) {
 			purple_debug_warning("QQ", "field[%d] is %s\n", j, segments[j]);
 			g_free(segments[j]);
 		}
+
 		segments[expected_fields] = NULL;
 	}
 
@@ -193,7 +197,7 @@ gchar *chat_name_to_purple_name(const gchar *const name)
 	g_return_val_if_fail(start != NULL, NULL);
 	end = strchr(start, ')');
 	g_return_val_if_fail(end != NULL && (end - start) > 1, NULL);
-
+	
 	ret = g_strndup(start + 1, end - start - 1);
 
 	return ret;

@@ -1,12 +1,5 @@
-2008.10.05 - ccpaging <ccpagint(at)gmail.com>
-	* Add my uid into buddy list
-	* Fixed a minor bug in qq_create_buddy. Not get new buddy's info.
-	* There are 38 fields in protocol 2008, one more than 2005/2007.
-	* The packet of Modifing buddy info is changed. Need sample to fix it.
-
-2008.10.04 - ccpaging <ccpagint(at)gmail.com>
-	* Update protocol for 2007
-	* Code cleanup
+2008.10.04 - lonicerae <lonicerae(at)gmail.com>
+	* fixed a bug in qq_base.c
 
 2008.10.03 - ccpaging <ccpaging(at)gmail.com>
 	* 2007 protocol:
