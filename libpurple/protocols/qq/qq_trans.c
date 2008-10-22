@@ -30,7 +30,7 @@
 #include "prefs.h"
 #include "request.h"
 
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_network.h"
 #include "qq_process.h"
 #include "qq_trans.h"

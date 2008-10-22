@@ -36,7 +36,7 @@
 #include "buddy_opt.h"
 #include "char_conv.h"
 #include "group_im.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "im.h"
 #include "packet_parse.h"
 #include "qq_network.h"
@@ -502,7 +502,7 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 {
 	qq_data *qd;
 	guint8 *raw_data, *send_im_tail;
-	guint16 client_tag, normal_im_type;
+	guint16 normal_im_type;
 	gint msg_len, raw_len, font_name_len, tail_len, bytes;
 	time_t now;
 	gchar *msg_filtered;
@@ -512,7 +512,6 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 	const gchar *start, *end, *last;
 
 	qd = (qq_data *) gc->proto_data;
-	client_tag = QQ_CLIENT;
 	normal_im_type = QQ_NORMAL_IM_TEXT;
 
 	last = msg;
@@ -572,7 +571,7 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 	/* 004-007: sender uid */
 	bytes += qq_put32(raw_data + bytes, to_uid);
 	/* 008-009: sender client version */
-	bytes += qq_put16(raw_data + bytes, client_tag);
+	bytes += qq_put16(raw_data + bytes, qd->client_version);
 	/* 010-013: receiver uid */
 	bytes += qq_put32(raw_data + bytes, qd->uid);
 	/* 014-017: sender uid */

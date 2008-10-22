@@ -38,10 +38,11 @@ enum {
 	QQ_CMD_CLASS_UPDATE_ROOM,
 };
 
-void qq_proc_login_cmd(PurpleConnection *gc, guint8 *rcved, gint rcved_len);
-void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
+guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		guint8 *rcved, gint rcved_len, gint update_class, guint32 ship32);
-void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
+void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
+		guint8 *rcved, gint rcved_len, gint update_class, guint32 ship32);
+void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		guint8 room_cmd, guint32 room_id, guint8 *rcved, gint rcved_len,
 		gint update_class, guint32 ship32);
 

@@ -44,7 +44,7 @@
 #include "group_info.h"
 #include "group_join.h"
 #include "group_opt.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "im.h"
 #include "qq_process.h"
 #include "qq_base.h"
@@ -128,6 +128,7 @@ static void qq_login(PurpleAccount *account)
 	PurpleConnection *gc;
 	qq_data *qd;
 	PurplePresence *presence;
+	const gchar *version_str;
 
 	g_return_if_fail(account != NULL);
 
@@ -153,6 +154,16 @@ static void qq_login(PurpleAccount *account)
 
 	server_list_create(account);
 	purple_debug_info("QQ", "Server list has %d\n", g_list_length(qd->servers));
+
+	version_str = purple_account_get_string(account, "client_version", NULL);
+	qd->client_version = QQ_CLIENT_0D55;	/* set default as QQ2005 */
+	qd->is_above_2007 = FALSE;
+	if (version_str != NULL && strlen(version_str) != 0) {
+		if (strcmp(version_str, "qq2007") == 0) {
+			qd->client_version = QQ_CLIENT_111D;
+			qd->is_above_2007 = TRUE;
+		}
+	}
 
 	qd->is_show_notice = purple_account_get_bool(account, "show_notice", TRUE);
 	qd->is_show_news = purple_account_get_bool(account, "show_news", TRUE);
@@ -203,6 +214,11 @@ static void qq_close(PurpleConnection *gc)
 	}
 
 	qq_disconnect(gc);
+
+	if (qd->ld.token) g_free(qd->ld.token);
+	if (qd->captcha.token) g_free(qd->captcha.token);
+	if (qd->captcha.data) g_free(qd->captcha.data);
+
 	server_list_remove_all(qd);
 
 	g_free(qd);
@@ -536,18 +552,20 @@ static void action_show_account_info(PurplePluginAction *action)
 	GString *info;
 
 	qd = (qq_data *) gc->proto_data;
-	info = g_string_new("<html><body>\n");
+	info = g_string_new("<html><body>");
 
-	g_string_append_printf(info, _("<b>Current Online</b>: %d<br>\n"), qd->total_online);
-	g_string_append_printf(info, _("<b>Last Refresh</b>: %s<br>\n"), ctime(&qd->last_get_online));
+	g_string_append_printf(info, _("<b>This Login</b>: %s<br>\n"), ctime(&qd->login_time));
+	g_string_append_printf(info, _("<b>Online Buddies</b>: %d<br>\n"), qd->online_total);
+	g_string_append_printf(info, _("<b>Last Refresh</b>: %s<br>\n"), ctime(&qd->online_last_update));
 
-	g_string_append(info, "<hr>\n");
+	g_string_append(info, "<hr>");
 
 	g_string_append_printf(info, _("<b>Server</b>: %s<br>\n"), qd->curr_server);
+	g_string_append_printf(info, _("<b>Client Version</b>: %s<br>\n"), qq_get_ver_desc(qd->client_version));
 	g_string_append_printf(info, _("<b>Connection Mode</b>: %s<br>\n"), qd->use_tcp ? "TCP" : "UDP");
-	g_string_append_printf(info, _("<b>My Internet Address</b>: %s<br>\n"), inet_ntoa(qd->my_ip));
+	g_string_append_printf(info, _("<b>My Internet IP</b>: %s<br>\n"), inet_ntoa(qd->my_ip));
 
-	g_string_append(info, "<hr>\n");
+	g_string_append(info, "<hr>");
 	g_string_append(info, "<i>Network Status</i><br>\n");
 	g_string_append_printf(info, _("<b>Sent</b>: %lu<br>\n"), qd->net_stat.sent);
 	g_string_append_printf(info, _("<b>Resend</b>: %lu<br>\n"), qd->net_stat.resend);
@@ -555,12 +573,11 @@ static void action_show_account_info(PurplePluginAction *action)
 	g_string_append_printf(info, _("<b>Received</b>: %lu<br>\n"), qd->net_stat.rcved);
 	g_string_append_printf(info, _("<b>Received Duplicate</b>: %lu<br>\n"), qd->net_stat.rcved_dup);
 
-	g_string_append(info, "<hr>\n");
+	g_string_append(info, "<hr>");
 	g_string_append(info, "<i>Information below may not be accurate</i><br>\n");
 
-	g_string_append_printf(info, _("<b>Login Time</b>: %s<br>\n"), ctime(&qd->login_time));
+	g_string_append_printf(info, _("<b>Last Login</b>: %s\n"), ctime(&qd->last_login_time));
 	g_string_append_printf(info, _("<b>Last Login IP</b>: %s<br>\n"), qd->last_login_ip);
-	g_string_append_printf(info, _("<b>Last Login Time</b>: %s\n"), ctime(&qd->last_login_time));
 
 	g_string_append(info, "</body></html>");
 
@@ -848,34 +865,52 @@ static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 	PurpleKeyValuePair *kvp;
-	GList *list = NULL;
-	GList *kvlist = NULL;
-	GList *entry;
+	GList *server_list = NULL;
+	GList *server_kv_list = NULL;
+	GList *it;
+	GList *version_kv_list = NULL;
 
-	list = server_list_build('A');
+	server_list = server_list_build('A');
 
-	purple_prefs_add_string_list("/plugins/prpl/qq/serverlist", list);
-	list = purple_prefs_get_string_list("/plugins/prpl/qq/serverlist");
+	purple_prefs_add_string_list("/plugins/prpl/qq/serverlist", server_list);
+	server_list = purple_prefs_get_string_list("/plugins/prpl/qq/serverlist");
 
-	kvlist = NULL;
+	server_kv_list = NULL;
 	kvp = g_new0(PurpleKeyValuePair, 1);
 	kvp->key = g_strdup(_("Auto"));
 	kvp->value = g_strdup("auto");
-	kvlist = g_list_append(kvlist, kvp);
+	server_kv_list = g_list_append(server_kv_list, kvp);
 
-	entry = list;
-	while(entry) {
-		if (entry->data != NULL && strlen(entry->data) > 0) {
+	it = server_list;
+	while(it) {
+		if (it->data != NULL && strlen(it->data) > 0) {
 			kvp = g_new0(PurpleKeyValuePair, 1);
-			kvp->key = g_strdup(entry->data);
-			kvp->value = g_strdup(entry->data);
-			kvlist = g_list_append(kvlist, kvp);
+			kvp->key = g_strdup(it->data);
+			kvp->value = g_strdup(it->data);
+			server_kv_list = g_list_append(server_kv_list, kvp);
 		}
-		entry = entry->next;
+		it = it->next;
 	}
 
-	option = purple_account_option_list_new(_("Server"), "server", kvlist);
+	g_list_free(server_list);
+
+	option = purple_account_option_list_new(_("Select Server"), "server", server_kv_list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+#ifdef DEBUG
+	kvp = g_new0(PurpleKeyValuePair, 1);
+	kvp->key = g_strdup(_("QQ2005"));
+	kvp->value = g_strdup("qq2005");
+	version_kv_list = g_list_append(version_kv_list, kvp);
+
+	kvp = g_new0(PurpleKeyValuePair, 1);
+	kvp->key = g_strdup(_("QQ2007"));
+	kvp->value = g_strdup("qq2007");
+	version_kv_list = g_list_append(version_kv_list, kvp);
+
+	option = purple_account_option_list_new(_("Client Version"), "client_version", version_kv_list);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#endif
 
 	option = purple_account_option_bool_new(_("Connect by TCP"), "use_tcp", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

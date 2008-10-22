@@ -35,7 +35,7 @@
 #include "group_info.h"
 #include "group_join.h"
 #include "group_opt.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "packet_parse.h"
 #include "qq_network.h"
 #include "qq_process.h"

@@ -27,7 +27,7 @@
 
 #include "group_conv.h"
 #include "buddy_list.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_network.h"
 #include "qq_process.h"
 #include "utils.h"

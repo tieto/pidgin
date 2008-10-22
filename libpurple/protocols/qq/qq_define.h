@@ -1,5 +1,5 @@
 /**
- * @file header_info.h
+ * @file qq_define.h
  *
  * purple
  *
@@ -30,10 +30,11 @@
 #define QQ_UDP_HEADER_LENGTH    7
 #define QQ_TCP_HEADER_LENGTH    9
 
-#define QQ_PACKET_TAG           0x02	/* all QQ text packets starts with it */
-#define QQ_PACKET_TAIL          0x03	/* all QQ text packets end with it */
+#define QQ_PACKET_TAG			0x02	/* all QQ text packets starts with it */
+#define QQ_PACKET_TAIL			0x03	/* all QQ text packets end with it */
 
-#define QQ_CLIENT       0x0d55
+#define QQ_CLIENT_0D55 0x0d55	/* QQ2005 used by openq before */
+#define QQ_CLIENT_111D 0x111D	/* QQ2007 */
 
 const gchar *qq_get_ver_desc(gint source);
 
@@ -64,6 +65,13 @@ enum {
 	QQ_CMD_TOKEN  = 0x0062, 		/* get login token */
 	QQ_CMD_RECV_MSG_SYS = 0x0080,			/* receive a system message */
 	QQ_CMD_BUDDY_CHANGE_STATUS = 0x0081,	/* buddy change status */
+	/* for QQ2007*/
+	QQ_CMD_GET_SERVER = 0x0091,					/* select login server */
+	QQ_CMD_TOKEN_EX = 0x00BA,						/* get LOGIN token */
+	QQ_CMD_CHECK_PWD = 0x00DD,				/* Password verify */
+	QQ_CMD_GET_CAPTCHA = 0x00AE,				/* the request verification of information */
+	QQ_CMD_BUDDY_ADD_NO_AUTH_EX = 0x00A7,			/* add friend without auth */
+	QQ_CMD_BUDDY_ADD_AUTH_EX = 0x00A8, 				/* add buddy with auth */
 };
 
 const gchar *qq_get_cmd_desc(gint type);

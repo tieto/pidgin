@@ -42,7 +42,7 @@
 #include "group_join.h"
 #include "group_opt.h"
 
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_base.h"
 #include "im.h"
 #include "qq_process.h"
@@ -176,8 +176,7 @@ static void process_server_msg(guint8 *data, gint data_len, guint16 seq, PurpleC
 			_qq_process_msg_sys_notice(gc, from, to, msg_utf8);
 			break;
 		case QQ_SERVER_NEW_CLIENT:
-			purple_debug_warning("QQ",
-				   "QQ Server has newer client than %s\n", qq_get_ver_desc(QQ_CLIENT));
+			purple_debug_warning("QQ", "QQ Server has newer client version\n");
 			break;
 		default:
 			purple_debug_warning("QQ", "Recv unknown sys msg code: %s\nMsg: %s\n", code, msg_utf8);
@@ -407,6 +406,10 @@ static void update_all_rooms_online(PurpleConnection *gc, guint8 room_cmd, guint
 
 void qq_update_online(PurpleConnection *gc, guint16 cmd)
 {
+	qq_data *qd;
+	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
 	switch (cmd) {
 		case 0:
 			qq_request_get_buddies_online(gc, 0, QQ_CMD_CLASS_UPDATE_ONLINE);
@@ -414,13 +417,14 @@ void qq_update_online(PurpleConnection *gc, guint16 cmd)
 		case QQ_CMD_GET_BUDDIES_ONLINE:
 			/* last command */
 			update_all_rooms_online(gc, 0, 0);
+			qd->online_last_update = time(NULL);
 			break;
 		default:
 			break;
 	}
 }
 
-void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
+void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		guint8 room_cmd, guint32 room_id, guint8 *rcved, gint rcved_len,
 		gint update_class, guint32 ship32)
 {
@@ -567,55 +571,108 @@ void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
 	}
 }
 
-void qq_proc_login_cmd(PurpleConnection *gc, guint8 *rcved, gint rcved_len)
+guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
+		guint8 *rcved, gint rcved_len, gint update_class, guint32 ship32)
 {
 	qq_data *qd;
-	guint8 *data;
-	gint data_len;
-	guint ret_8;
+	guint8 *data = NULL;
+	gint data_len = 0;
+	guint ret_8 = QQ_LOGIN_REPLY_ERR;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
+	g_return_val_if_fail (gc != NULL && gc->proto_data != NULL, QQ_LOGIN_REPLY_ERR);
 	qd = (qq_data *) gc->proto_data;
 
+	g_return_val_if_fail(rcved_len > 0, QQ_LOGIN_REPLY_ERR);
 	data = g_newa(guint8, rcved_len);
-	/* May use password_twice_md5 in the past version like QQ2005*/
-	data_len = qq_decrypt(data, rcved, rcved_len, qd->inikey);
-	if (data_len >= 0) {
+
+	switch (cmd) {
+		case QQ_CMD_TOKEN:
+			if (qq_process_token(gc, rcved, rcved_len) == QQ_LOGIN_REPLY_OK) {
+				if (qd->is_above_2007) {
+					qq_request_token_ex(gc);
+				} else {
+					qq_request_login(gc);
+				}
+				return QQ_LOGIN_REPLY_OK;
+			}
+			return QQ_LOGIN_REPLY_ERR;
+		case QQ_CMD_GET_SERVER:
+		case QQ_CMD_TOKEN_EX:
+			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.init_key);
+			break;
+		default:
+			/* May use password_twice_md5 in the past version like QQ2005 */
+			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.init_key);
+			if (data_len >= 0) {
+				purple_debug_warning("QQ", "Decrypt login packet by init_key, %d bytes\n", data_len);
+			} else {
+				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_twice_md5);
+				if (data_len >= 0) {
+					purple_debug_warning("QQ", "Decrypt login packet by password_twice_md5, %d bytes\n", data_len);
+				}
+			}
+			break;
+	}
+
+	if (data_len < 0) {
 		purple_debug_warning("QQ",
-				"Decrypt login reply packet with inikey, %d bytes\n", data_len);
-	} else {
-		data_len = qq_decrypt(data, rcved, rcved_len, qd->password_twice_md5);
-		if (data_len >= 0) {
-			purple_debug_warning("QQ",
-				"Decrypt login reply packet with password_twice_md5, %d bytes\n", data_len);
-		} else {
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				"Can not decrypt login cmd, [%05d], 0x%04X %s, len %d\n",
+				seq, cmd, qq_get_cmd_desc(cmd), rcved_len);
+		qq_show_packet("Can not decrypted", rcved, rcved_len);
+		purple_connection_error_reason(gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Can not decrypt login reply"));
-			return;
-		}
+		return QQ_LOGIN_REPLY_ERR_DECRYPT;
 	}
 
-	ret_8 = qq_process_login_reply(gc, data, data_len);
-	if (ret_8 != QQ_LOGIN_REPLY_OK) {
-		return;
+	switch (cmd) {
+		case QQ_CMD_GET_SERVER:
+			ret_8 = qq_process_get_server(gc, data, data_len);
+			if ( ret_8 == QQ_LOGIN_REPLY_OK) {
+				qq_request_token(gc);
+			} else if ( ret_8 == QQ_LOGIN_REPLY_REDIRECT) {
+				return QQ_LOGIN_REPLY_REDIRECT;
+			}
+			break;
+		case QQ_CMD_TOKEN_EX:
+			ret_8 = qq_process_token_ex(gc, data, data_len);
+			if (ret_8 == QQ_LOGIN_REPLY_OK) {
+				//qq_request_check_password(gc);
+			} else if (ret_8 == QQ_LOGIN_REPLY_NEXT_TOKEN_EX) {
+				qq_request_token_ex_next(gc);
+			} else if (ret_8 == QQ_LOGIN_REPLY_CAPTCHA_DLG) {
+				qq_captcha_input_dialog(gc, &(qd->captcha));
+				g_free(qd->captcha.token);
+				g_free(qd->captcha.data);
+				memset(&qd->captcha, 0, sizeof(qd->captcha));
+			}
+			break;
+		case QQ_CMD_LOGIN:
+			ret_8 = qq_process_login(gc, data, data_len);
+			if (ret_8 != QQ_LOGIN_REPLY_OK) {
+				return  ret_8;
+			}
+
+			purple_debug_info("QQ", "Login repliess OK; everything is fine\n");
+			purple_connection_set_state(gc, PURPLE_CONNECTED);
+			qd->is_login = TRUE;	/* must be defined after sev_finish_login */
+
+			/* now initiate QQ Qun, do it first as it may take longer to finish */
+			qq_group_init(gc);
+
+			/* is_login, but we have packets before login */
+			qq_trans_process_remained(gc);
+
+			qq_update_all(gc, 0);
+			break;
+		default:
+			process_cmd_unknow(gc, _("Unknow LOGIN CMD"), data, data_len, cmd, seq);
+			return QQ_LOGIN_REPLY_ERR;
 	}
-
-	purple_debug_info("QQ", "Login repliess OK; everything is fine\n");
-
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
-	qd->is_login = TRUE;	/* must be defined after sev_finish_login */
-
-	/* now initiate QQ Qun, do it first as it may take longer to finish */
-	qq_group_init(gc);
-
-	/* is_login, but we have packets before login */
-	qq_trans_process_remained(gc);
-
-	qq_update_all(gc, 0);
-	return;
+	return QQ_LOGIN_REPLY_OK;
 }
 
-void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
+void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		guint8 *rcved, gint rcved_len, gint update_class, guint32 ship32)
 {
 	qq_data *qd;
@@ -710,7 +767,7 @@ void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			purple_debug_info("QQ", "All buddies and groups received\n");
 			break;
 		default:
-			process_cmd_unknow(gc, _("Unknow reply CMD"), data, data_len, cmd, seq);
+			process_cmd_unknow(gc, _("Unknow CLIENT CMD"), data, data_len, cmd, seq);
 			is_unknow = TRUE;
 			break;
 	}

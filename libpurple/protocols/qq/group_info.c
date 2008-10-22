@@ -32,7 +32,7 @@
 #include "group_internal.h"
 #include "group_info.h"
 #include "buddy_list.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "packet_parse.h"
 #include "qq_network.h"
 #include "utils.h"

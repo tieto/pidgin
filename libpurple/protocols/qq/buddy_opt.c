@@ -32,7 +32,7 @@
 #include "buddy_list.h"
 #include "buddy_opt.h"
 #include "char_conv.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "im.h"
 #include "qq_base.h"
 #include "packet_parse.h"

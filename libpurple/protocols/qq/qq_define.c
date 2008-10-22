@@ -1,5 +1,5 @@
 /**
- * @file header_info.c
+ * @file qq_define.c
  *
  * purple
  *
@@ -24,7 +24,7 @@
 
 #include "internal.h"
 
-#include "header_info.h"
+#include "qq_define.h"
 
 #define QQ_CLIENT_062E 0x062e	/* GB QQ2000c build 0630 */
 #define QQ_CLIENT_072E 0x072e	/* EN QQ2000c build 0305 */
@@ -51,7 +51,6 @@
 #define QQ_CLIENT_0F4B 0x0F4B	/* QQ2006 Beta 3  */
 
 #define QQ_CLIENT_1105 0x1105	/* QQ2007 beta4*/
-#define QQ_CLIENT_111D 0x111D	/* QQ2007 */
 #define QQ_CLIENT_115B 0x115B	/* QQ2008 */
 #define QQ_CLIENT_1203 0x1203	/* QQ2008 */
 #define QQ_CLIENT_1205 0x1205	/* QQ2008 */
@@ -94,6 +93,7 @@ const gchar *qq_get_ver_desc(gint source)
 		return "QQ2005 beta1";
 	case QQ_CLIENT_0D51:
 		return "QQ2005 beta2";
+	case QQ_CLIENT_0D55:
 	case QQ_CLIENT_0D61:
 		return "QQ2005";
 	case QQ_CLIENT_0E1B:

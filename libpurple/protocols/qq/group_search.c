@@ -33,7 +33,7 @@
 #include "group_join.h"
 #include "group_search.h"
 #include "utils.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "packet_parse.h"
 #include "qq_network.h"
 

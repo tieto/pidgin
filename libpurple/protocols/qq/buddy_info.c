@@ -32,7 +32,7 @@
 #include "buddy_list.h"
 #include "buddy_info.h"
 #include "char_conv.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_base.h"
 #include "qq_network.h"
 
@@ -426,7 +426,11 @@ static void info_modify_dialogue(PurpleConnection *gc, gchar **segments, int icl
 	info_request->iclass = iclass;
 	info_request->segments = segments;
 
-	purple_request_fields(gc, utf8_title, utf8_prim, NULL,	fields,
+	purple_request_fields(gc,
+			utf8_title,
+			utf8_prim,
+			NULL,
+			fields,
 			_("Update"), G_CALLBACK(info_modify_ok_cb),
 			_("Cancel"), G_CALLBACK(info_modify_cancel_cb),
 			purple_connection_get_account(gc), NULL, NULL,

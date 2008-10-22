@@ -30,7 +30,7 @@
 #include "group_info.h"
 #include "group_free.h"
 #include "qq_crypt.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_base.h"
 #include "buddy_list.h"
 #include "packet_parse.h"
@@ -160,7 +160,7 @@ static gboolean connect_check(gpointer data)
 		qd->connect_watcher = 0;
 	}
 
-	if (qd->fd >= 0 && qd->token != NULL && qd->token_len >= 0) {
+	if (qd->fd >= 0 && qd->ld.token != NULL && qd->ld.token_len > 0) {
 		purple_debug_info("QQ", "Connect ok\n");
 		return FALSE;
 	}
@@ -228,6 +228,19 @@ gboolean qq_connect_later(gpointer data)
 	return FALSE;	/* timeout callback stops */
 }
 
+static void redirect_server(PurpleConnection *gc)
+{
+	qq_data *qd;
+	qd = (qq_data *) gc->proto_data;
+
+	if (qd->check_watcher > 0) {
+			purple_timeout_remove(qd->check_watcher);
+			qd->check_watcher = 0;
+	}
+	if (qd->connect_watcher > 0)	purple_timeout_remove(qd->connect_watcher);
+	qd->connect_watcher = purple_timeout_add_seconds(QQ_CONNECT_INTERVAL, qq_connect_later, gc);
+}
+
 /* process the incoming packet from qq_pending */
 static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 {
@@ -242,6 +255,7 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	guint32 room_id;
 	gint update_class;
 	guint32 ship32;
+	int ret;
 
 	qq_transaction *trans;
 
@@ -292,20 +306,13 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 
 	switch (cmd) {
 		case QQ_CMD_TOKEN:
-			if (qq_process_token_reply(gc, buf + bytes, bytes_not_read) == QQ_TOKEN_REPLY_OK) {
-				qq_send_packet_login(gc);
-			}
-			break;
+		case QQ_CMD_GET_SERVER:
 		case QQ_CMD_LOGIN:
-			qq_proc_login_cmd(gc, buf + bytes, bytes_not_read);
-			/* check is redirect or not, and do it now */
-			if (qd->redirect_ip.s_addr != 0) {
-				if (qd->check_watcher > 0) {
-					purple_timeout_remove(qd->check_watcher);
-					qd->check_watcher = 0;
+			ret = qq_proc_login_cmds(gc, cmd, seq, buf + bytes, bytes_not_read, update_class, ship32);
+			if (ret != QQ_LOGIN_REPLY_OK) {
+				if (ret == QQ_LOGIN_REPLY_REDIRECT) {
+					redirect_server(gc);
 				}
-				if (qd->connect_watcher > 0)	purple_timeout_remove(qd->connect_watcher);
-				qd->connect_watcher = purple_timeout_add_seconds(QQ_CONNECT_INTERVAL, qq_connect_later, gc);
 				return FALSE;	/* do nothing after this function and return now */
 			}
 			break;
@@ -316,10 +323,10 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 			purple_debug_info("QQ", "%s (0x%02X) for room %d, len %d\n",
 					qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, buf_len);
 #endif
-			qq_proc_room_cmd(gc, seq, room_cmd, room_id, buf + bytes, bytes_not_read, update_class, ship32);
+			qq_proc_room_cmds(gc, seq, room_cmd, room_id, buf + bytes, bytes_not_read, update_class, ship32);
 			break;
 		default:
-			qq_proc_client_cmd(gc, cmd, seq, buf + bytes, bytes_not_read, update_class, ship32);
+			qq_proc_client_cmds(gc, cmd, seq, buf + bytes, bytes_not_read, update_class, ship32);
 			break;
 	}
 
@@ -645,7 +652,7 @@ static gboolean network_timeout(gpointer data)
 	qd->itv_count.keep_alive--;
 	if (qd->itv_count.keep_alive <= 0) {
 		qd->itv_count.keep_alive = qd->itv_config.keep_alive;
-		qq_send_packet_keep_alive(gc);
+		qq_request_keep_alive(gc);
 		return TRUE;
 	}
 
@@ -663,10 +670,9 @@ static gboolean network_timeout(gpointer data)
 	return TRUE;		/* if return FALSE, timeout callback stops */
 }
 
-static void do_request_token(PurpleConnection *gc)
+static void set_all_keys(PurpleConnection *gc)
 {
 	qq_data *qd;
-	gchar *conn_msg;
 	const gchar *passwd;
 
 	/* _qq_show_socket("Got login socket", source); */
@@ -682,24 +688,27 @@ static void do_request_token(PurpleConnection *gc)
 	qd->channel = 1;
 	qd->uid = strtol(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
 
+#ifdef DEBUG
+	memset(qd->ld.init_key, 0x01, sizeof(qd->ld.init_key));
+	memset(qd->ld.captcha_key, 0x02, sizeof(qd->ld.captcha_key));
+#else
+	for (bytes = 0; bytes < sizeof(qd->ld.init_key); bytes++)	{
+		qd->ld.init_key[bytes] = (guint8) (rand() & 0xff);
+	}
+	for (bytes = 0; bytes < sizeof(qd->captcha_key); bytes++)	{
+		qd->captcha_key[bytes] = (guint8) (rand() & 0xff);
+	}
+#endif
+
 	/* now generate md5 processed passwd */
 	passwd = purple_account_get_password(purple_connection_get_account(gc));
 
 	/* use twice-md5 of user password as session key since QQ 2003iii */
-	qq_get_md5(qd->password_twice_md5, sizeof(qd->password_twice_md5),
+	qq_get_md5(qd->ld.pwd_twice_md5, sizeof(qd->ld.pwd_twice_md5),
 		(guint8 *)passwd, strlen(passwd));
-	qq_get_md5(qd->password_twice_md5, sizeof(qd->password_twice_md5),
-		qd->password_twice_md5, sizeof(qd->password_twice_md5));
+	qq_get_md5(qd->ld.pwd_twice_md5, sizeof(qd->ld.pwd_twice_md5),
+		qd->ld.pwd_twice_md5, sizeof(qd->ld.pwd_twice_md5));
 
-	g_return_if_fail(qd->network_watcher == 0);
-	qd->network_watcher = purple_timeout_add_seconds(qd->itv_config.resend, network_timeout, gc);
-
-	/* Update the login progress status display */
-	conn_msg = g_strdup_printf(_("Request token"));
-	purple_connection_update_progress(gc, conn_msg, 2, QQ_CONNECT_STEPS);
-	g_free(conn_msg);
-
-	qq_send_packet_token(gc);
 }
 
 /* the callback function after socket is built
@@ -744,7 +753,19 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message)
 		conn->input_handler = purple_input_add(source, PURPLE_INPUT_READ, udp_pending, gc);
 	}
 
-	do_request_token( gc );
+	g_return_if_fail(qd->network_watcher == 0);
+	qd->network_watcher = purple_timeout_add_seconds(qd->itv_config.resend, network_timeout, gc);
+
+	set_all_keys( gc );
+
+	if (qd->is_above_2007) {
+		purple_connection_update_progress(gc, _("Get server ..."), 2, QQ_CONNECT_STEPS);
+		qq_request_get_server(gc);
+		return;
+	}
+
+	purple_connection_update_progress(gc, _("Request token"), 2, QQ_CONNECT_STEPS);
+	qq_request_token(gc);
 }
 
 #ifndef purple_proxy_connect_udp
@@ -888,7 +909,6 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 {
 	PurpleAccount *account ;
 	qq_data *qd;
-	gchar *conn_msg;
 
 	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
 	account = purple_connection_get_account(gc);
@@ -900,9 +920,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 		return FALSE;
 	}
 
-	conn_msg = g_strdup_printf( _("Connecting server %s, retries %d"), server, port);
-	purple_connection_update_progress(gc, conn_msg, 1, QQ_CONNECT_STEPS);
-	g_free(conn_msg);
+	purple_connection_update_progress(gc, _("Connecting server ..."), 1, QQ_CONNECT_STEPS);
 
 	purple_debug_info("QQ", "Connect to %s:%d\n", server, port);
 
@@ -963,7 +981,7 @@ void qq_disconnect(PurpleConnection *gc)
 
 	/* finish  all I/O */
 	if (qd->fd >= 0 && qd->is_login) {
-		qq_send_packet_logout(gc);
+		qq_request_logout(gc);
 	}
 
 	/* not connected */
@@ -988,14 +1006,9 @@ void qq_disconnect(PurpleConnection *gc)
 
 	qq_trans_remove_all(gc);
 
-	if (qd->token) {
-		purple_debug_info("QQ", "free token\n");
-		g_free(qd->token);
-		qd->token = NULL;
-		qd->token_len = 0;
-	}
-	memset(qd->inikey, 0, sizeof(qd->inikey));
-	memset(qd->password_twice_md5, 0, sizeof(qd->password_twice_md5));
+	memset(qd->ld.init_key, 0, sizeof(qd->ld.init_key));
+	memset(qd->ld.captcha_key, 0, sizeof(qd->ld.captcha_key));
+	memset(qd->ld.pwd_twice_md5, 0, sizeof(qd->ld.pwd_twice_md5));
 	memset(qd->session_key, 0, sizeof(qd->session_key));
 	memset(qd->session_md5, 0, sizeof(qd->session_md5));
 
@@ -1019,7 +1032,7 @@ static gint packet_encap(qq_data *qd, guint8 *buf, gint maxlen, guint16 cmd, gui
 	}
 	/* now comes the normal QQ packet as UDP */
 	bytes += qq_put8(buf + bytes, QQ_PACKET_TAG);
-	bytes += qq_put16(buf + bytes, QQ_CLIENT);
+	bytes += qq_put16(buf + bytes, qd->client_version);
 	bytes += qq_put16(buf + bytes, cmd);
 
 	bytes += qq_put16(buf + bytes, seq);

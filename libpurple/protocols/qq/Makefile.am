@@ -36,8 +36,8 @@ QQSOURCES = \
 	group_opt.h \
 	group_search.c \
 	group_search.h \
-	header_info.c \
-	header_info.h \
+	qq_define.c \
+	qq_define.h \
 	im.c \
 	im.h \
 	qq_process.c \

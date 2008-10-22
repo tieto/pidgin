@@ -55,7 +55,7 @@ C_SRC = \
 	group_join.c \
 	group_opt.c \
 	group_search.c \
-	header_info.c \
+	qq_define.c \
 	im.c \
 	packet_parse.c \
 	qq.c \

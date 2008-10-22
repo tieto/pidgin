@@ -34,7 +34,7 @@
 #include "buddy_list.h"
 #include "buddy_opt.h"
 #include "char_conv.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_base.h"
 #include "group.h"
 #include "group_find.h"
@@ -78,7 +78,6 @@ void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, gint u
 	bytes += qq_put16(raw_data + bytes, 0x0000);
 
 	qq_send_cmd_mess(gc, QQ_CMD_GET_BUDDIES_ONLINE, raw_data, 5, update_class, 0);
-	qd->last_get_online = time(NULL);
 }
 
 /* position starts with 0x0000,
