@@ -613,15 +613,28 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 				}
 			}
 			break;
+		case QQ_CMD_LOGIN:
 		default:
-			/* May use password_twice_md5 in the past version like QQ2005 */
-			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.random_key);
-			if (data_len >= 0) {
-				purple_debug_warning("QQ", "Decrypt login packet by random_key, %d bytes\n", data_len);
-			} else {
-				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_2nd_md5);
+			if (qd->client_version > 2005) {
+				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_4th_md5);
 				if (data_len >= 0) {
-					purple_debug_warning("QQ", "Decrypt login packet by pwd_2nd_md5, %d bytes\n", data_len);
+					purple_debug_warning("QQ", "Decrypt login packet by pwd_4th_md5\n");
+				} else {
+					data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.login_key);
+					if (data_len >= 0) {
+						purple_debug_warning("QQ", "Decrypt login packet by login_key\n");
+					}
+				}
+			} else {
+				/* May use password_twice_md5 in the past version like QQ2005 */
+				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.random_key);
+				if (data_len >= 0) {
+					purple_debug_warning("QQ", "Decrypt login packet by random_key\n");
+				} else {
+					data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_2nd_md5);
+					if (data_len >= 0) {
+						purple_debug_warning("QQ", "Decrypt login packet by pwd_2nd_md5\n");
+					}
 				}
 			}
 			break;
@@ -680,7 +693,13 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			}
 			break;
 		case QQ_CMD_LOGIN:
-			ret_8 = qq_process_login(gc, data, data_len);
+			if (qd->client_version == 2008) {
+				ret_8 = qq_process_login_2008(gc, data, data_len);
+			} else if (qd->client_version == 2007) {
+				ret_8 = qq_process_login_2007(gc, data, data_len);
+			} else {
+				ret_8 = qq_process_login(gc, data, data_len);
+			}
 			if (ret_8 != QQ_LOGIN_REPLY_OK) {
 				return  ret_8;
 			}

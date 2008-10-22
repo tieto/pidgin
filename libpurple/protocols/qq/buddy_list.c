@@ -482,10 +482,20 @@ void qq_request_change_status(PurpleConnection *gc, gint update_class)
 	if (fake_video)
 		misc_status |= QQ_MISC_STATUS_HAVING_VIIDEO;
 
-	bytes = 0;
-	bytes += qq_put8(raw_data + bytes, away_cmd);
-	bytes += qq_put32(raw_data + bytes, misc_status);
-
+	if (qd->client_version > 2005) {
+		bytes = 0;
+		bytes += qq_put8(raw_data + bytes, away_cmd);
+		/* status version */
+		bytes += qq_put16(raw_data + bytes, 0);
+		bytes += qq_put16(raw_data + bytes, 0);
+		bytes += qq_put32(raw_data + bytes, misc_status);
+		/* Fixme: custom status message, now is empty */
+		bytes += qq_put16(raw_data + bytes, 0);
+	} else {
+		bytes = 0;
+		bytes += qq_put8(raw_data + bytes, away_cmd);
+		bytes += qq_put32(raw_data + bytes, misc_status);
+	}
 	qq_send_cmd_mess(gc, QQ_CMD_CHANGE_STATUS, raw_data, bytes, update_class, 0);
 }
 

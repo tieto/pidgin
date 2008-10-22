@@ -59,8 +59,10 @@ struct _qq_login_data {
 	guint8 token_len;
 	guint8 *token_ex;			/* get from server */
 	guint16 token_ex_len;
+
 	guint8 pwd_2nd_md5[QQ_KEY_LENGTH];			/* password in md5 (or md5' md5) */
 	guint8 pwd_4th_md5[QQ_KEY_LENGTH];
+
 	guint8 *login_token;
 	guint16 login_token_len;
 	guint8 login_key[QQ_KEY_LENGTH];
@@ -176,9 +178,11 @@ struct _qq_data {
 	PurpleXfer *xfer;			/* file transfer handler */
 
 	/* get from login reply packet */
+	struct in_addr my_local_ip;			/* my local ip address detected by server */
+	guint16 my_local_port;		/* my lcoal port detected by server */
 	time_t login_time;
-	time_t last_login_time;
-	gchar *last_login_ip;
+	time_t last_login_time[3];
+	struct in_addr last_login_ip;
 	/* get from keep_alive packet */
 	struct in_addr my_ip;			/* my ip address detected by server */
 	guint16 my_port;		/* my port detected by server */

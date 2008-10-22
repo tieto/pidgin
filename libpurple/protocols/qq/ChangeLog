@@ -1,3 +1,12 @@
+2008.09.28 - ccpaging <ccpaging(at)gmail.com>
+	* The source is only for debug, not for user:
+		1. Implement new QQ protocol 2007/2008, include login and change status
+		2. Check 2005's login reply packet, get last 3 login time.
+		3. Server's notice and news is displayed in self buddy (The new buddy created in buddy list).
+		4. The notice messages when adding/removing QQ Qun's buddy displayed in char conversation. They are displayed as purple notify windows in the past.
+		5. The notice messages when adding/removing buddy displayed in self buddy's conversation. They are displayed as purple notify windows in the past.
+		6. Client version can be selected in  account option. Now only qq2005 is working, other new version is only for debug.
+
 2008.09.26 - ccpaging <ccpaging(at)gmail.com>
 	* Added 'Request/Add/Remove Buddy' functions
 

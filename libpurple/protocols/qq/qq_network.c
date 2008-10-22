@@ -1027,7 +1027,10 @@ void qq_disconnect(PurpleConnection *gc)
 	memset(qd->session_key, 0, sizeof(qd->session_key));
 	memset(qd->session_md5, 0, sizeof(qd->session_md5));
 
+	qd->my_local_ip.s_addr = 0;
+	qd->my_local_port = 0;
 	qd->my_ip.s_addr = 0;
+	qd->my_port = 0;
 
 	qq_group_free_all(qd);
 	qq_buddies_list_free(gc->account, qd);

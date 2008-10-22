@@ -555,13 +555,21 @@ static void action_show_account_info(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 	GString *info;
+	struct tm *tm_local;
+	int index;
 
 	qd = (qq_data *) gc->proto_data;
 	info = g_string_new("<html><body>");
 
-	g_string_append_printf(info, _("<b>This Login</b>: %s<br>\n"), ctime(&qd->login_time));
+	tm_local = localtime(&qd->login_time);
+	g_string_append_printf(info, _("<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"),
+			(1900 +tm_local->tm_year), (1 + tm_local->tm_mon), tm_local->tm_mday,
+			tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
 	g_string_append_printf(info, _("<b>Online Buddies</b>: %d<br>\n"), qd->online_total);
-	g_string_append_printf(info, _("<b>Last Refresh</b>: %s<br>\n"), ctime(&qd->online_last_update));
+	tm_local = localtime(&qd->online_last_update);
+	g_string_append_printf(info, _("<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"),
+			(1900 +tm_local->tm_year), (1 + tm_local->tm_mon), tm_local->tm_mday,
+			tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
 
 	g_string_append(info, "<hr>");
 
@@ -579,10 +587,17 @@ static void action_show_account_info(PurplePluginAction *action)
 	g_string_append_printf(info, _("<b>Received Duplicate</b>: %lu<br>\n"), qd->net_stat.rcved_dup);
 
 	g_string_append(info, "<hr>");
-	g_string_append(info, "<i>Information below may not be accurate</i><br>\n");
+	g_string_append(info, "<i>Last Login Information</i><br>\n");
 
-	g_string_append_printf(info, _("<b>Last Login</b>: %s\n"), ctime(&qd->last_login_time));
-	g_string_append_printf(info, _("<b>Last Login IP</b>: %s<br>\n"), qd->last_login_ip);
+	for (index = 0; index < sizeof(qd->last_login_time) / sizeof(time_t); index++) {
+		tm_local = localtime(&qd->last_login_time[index]);
+		g_string_append_printf(info, _("<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"),
+				(1900 +tm_local->tm_year), (1 + tm_local->tm_mon), tm_local->tm_mday,
+				tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
+	}
+	if (qd->last_login_ip.s_addr != 0) {
+		g_string_append_printf(info, _("<b>IP</b>: %s<br>\n"), inet_ntoa(qd->last_login_ip));
+	}
 
 	g_string_append(info, "</body></html>");
 
