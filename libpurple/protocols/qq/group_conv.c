@@ -74,55 +74,64 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 	gchar *member_name, *member_uid;
 	PurpleConversation *conv;
 	gint flag;
+	gboolean is_find;
 	g_return_if_fail(group != NULL);
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
+			group->title_utf8, purple_connection_get_account(gc));
+
+	g_return_if_fail (conv != NULL && group->members != NULL);
 
 	names = NULL;
 	flags = NULL;
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-			group->title_utf8, purple_connection_get_account(gc));
-	if (conv != NULL && group->members != NULL) {
-		list = group->members;
-		while (list != NULL) {
-			member = (qq_buddy *) list->data;
 
-			/* we need unique identifiers for everyone in the chat or else we'll
-			 * run into problems with functions like get_cb_real_name from qq.c */
-			member_name =   (member->nickname != NULL && *(member->nickname) != '\0') ?
-					g_strdup_printf("%s (%u)", member->nickname, member->uid) :
-					g_strdup_printf("(%u)", member->uid);
-			member_uid = g_strdup_printf("(%u)", member->uid);
+	list = group->members;
+	while (list != NULL) {
+		member = (qq_buddy *) list->data;
 
-			flag = 0;
-			/* TYPING to put online above OP and FOUNDER */
-			if (is_online(member->status))
-				flag |= (PURPLE_CBFLAGS_TYPING | PURPLE_CBFLAGS_VOICE);
-			if(1 == (member->role & 1)) flag |= PURPLE_CBFLAGS_OP;
-			if(member->uid == group->creator_uid) flag |= PURPLE_CBFLAGS_FOUNDER;
+		/* we need unique identifiers for everyone in the chat or else we'll
+		 * run into problems with functions like get_cb_real_name from qq.c */
+		member_name =   (member->nickname != NULL && *(member->nickname) != '\0') ?
+				g_strdup_printf("%s (%u)", member->nickname, member->uid) :
+				g_strdup_printf("(%u)", member->uid);
+		member_uid = g_strdup_printf("(%u)", member->uid);
 
-			if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_name))
-			{
-				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(conv),
-						member_name,
-						flag);
-			} else if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_uid))
-			{
-				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(conv),
-						member_uid,
-						flag);
-				purple_conv_chat_rename_user(PURPLE_CONV_CHAT(conv), member_uid, member_name);
-			} else {
-				/* always put it even offline */
-				names = g_list_append(names, member_name);
-				flags = g_list_append(flags, GINT_TO_POINTER(flag));
-			}
-			g_free(member_uid);
-			list = list->next;
+		flag = 0;
+		/* TYPING to put online above OP and FOUNDER */
+		if (is_online(member->status)) flag |= (PURPLE_CBFLAGS_TYPING | PURPLE_CBFLAGS_VOICE);
+		if(1 == (member->role & 1)) flag |= PURPLE_CBFLAGS_OP;
+		if(member->uid == group->creator_uid) flag |= PURPLE_CBFLAGS_FOUNDER;
+
+		is_find = TRUE;
+		if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_name))
+		{
+			purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(conv),
+					member_name,
+					flag);
+		} else if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_uid))
+		{
+			purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(conv),
+					member_uid,
+					flag);
+			purple_conv_chat_rename_user(PURPLE_CONV_CHAT(conv), member_uid, member_name);
+		} else {
+			is_find = FALSE;
 		}
-
-		if (names != NULL && flags != NULL) {
-			purple_conv_chat_add_users(PURPLE_CONV_CHAT(conv), names, NULL, flags, FALSE);
+		if (!is_find) {
+			/* always put it even offline */
+			names = g_list_append(names, member_name);
+			flags = g_list_append(flags, GINT_TO_POINTER(flag));
+		} else {
+			g_free(member_name);
 		}
+		g_free(member_uid);
+		list = list->next;
 	}
+
+	if (names != NULL && flags != NULL) {
+		purple_conv_chat_add_users(PURPLE_CONV_CHAT(conv), names, NULL, flags, FALSE);
+	}
+
 	/* clean up names */
 	while (names != NULL) {
 		member_name = (gchar *) names->data;
