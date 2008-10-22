@@ -1,7 +1,10 @@
-2009.10.02 - ccpaging <ccpaging(at)gmail.com>
+2008.10.02 - ccpaging <ccpaging(at)gmail.com>
 	* Added 'Captcha Display' function
-	* Most functions from patch written by Emil Alexiev merged into trunk, except 'buddy operations'
-	* 'online buddy status' and 'qun buddies' still have problems
+	* QQ2007 for openq, programed by Emil Alexiev:
+		1. Most functions from patch written by Emil Alexiev merged into trunk, except 'buddy operations'
+		2. 'online buddy status' and 'qun buddies' still have problems
+	* QQ2008 console client, programed by Shrimp:
+		1. 'before login' and 'keep alive' parts merged into trunk
 
 2008.09.30 - ccpaging <ccpaging(at)gmail.com>
 	* Successfully login using 2007/2008 protocols
