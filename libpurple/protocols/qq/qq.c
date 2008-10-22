@@ -57,7 +57,8 @@
 #include "version.h"
 
 #define OPENQ_AUTHOR            "Puzzlebird"
-#define OPENQ_WEBSITE            "http://openq.sourceforge.net"
+#define OPENQ_WEBSITE           "http://openq.sourceforge.net"
+#define OPENQ_VERSION           DISPLAY_VERSION
 
 static GList *server_list_build(gchar select)
 {
@@ -618,6 +619,65 @@ static void action_show_account_info(PurplePluginAction *action)
 	g_string_free(info, TRUE);
 }
 
+static void action_about_openq(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	qq_data *qd;
+	GString *info;
+	gchar *title;
+
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
+	qd = (qq_data *) gc->proto_data;
+
+	info = g_string_new("<html><body>");
+	g_string_append(info, _("<p><b>Original Author</b>:<br>\n"));
+	g_string_append(info, "puzzlebird<br>\n");
+	g_string_append(info, "<br>\n");
+	g_string_append(info, _("<p><b>Code Contributors</b>:<br>\n"));
+	g_string_append(info, "gfhuang : patches for libpurple 2.0.0beta2, maintainer<br>\n");
+	g_string_append(info, "Yuan Qingyun : patches for libpurple 1.5.0, maintainer<br>\n");
+	g_string_append(info, "henryouly : file transfer, udp sock5 proxy and qq_show, maintainer<br>\n");
+	g_string_append(info, "hzhr : maintainer<br>\n");
+	g_string_append(info, "joymarquis : maintainer<br>\n");
+	g_string_append(info, "arfankai : fixed bugs in char_conv.c<br>\n");
+	g_string_append(info, "rakescar : provided filter for HTML tag<br>\n");
+	g_string_append(info, "yyw : improved performance on PPC linux<br>\n");
+	g_string_append(info, "lvxiang : provided ip to location original code<br>\n");
+	g_string_append(info, "markhuetsch : OpenQ merge into libpurple, maintainer 2006-2007<br>\n");
+	g_string_append(info, "ccpaging : maintainer since 2007<br>\n");
+	g_string_append(info, "icesky : maintainer since 2007<br>\n");
+	g_string_append(info, "csyfek : faces, maintainer since 2007<br>\n");
+	g_string_append(info, "<br>\n");
+	g_string_append(info, _("<p><b>Lovely Patch Writers</b>:<br>\n"));
+	g_string_append(info, "gnap : message displaying, documentation<br>\n");
+	g_string_append(info, "manphiz : qun processing<br>\n");
+	g_string_append(info, "moo : qun processing<br>\n");
+	g_string_append(info, "Coly Li : qun processing<br>\n");
+	g_string_append(info, "Emil Alexiev : captcha verification on login based on LumaQQ for MAC (2007), login, add buddy, remove buddy, message exchange and logout<br>\n");
+	g_string_append(info, "<br>\n");
+	g_string_append(info, _("<p><b>Acknowledgement</b>:<br>\n"));
+	g_string_append(info, "Shufeng Tan : http://sf.net/projects/perl-oicq<br>\n");
+	g_string_append(info, "Jeff Ye : http://www.sinomac.com<br>\n");
+	g_string_append(info, "Hu Zheng : http://forlinux.yeah.net<br>\n");
+	g_string_append(info, "yunfan : http://www.myswear.net<br>\n");
+	g_string_append(info, "OpenQ Team : http://openq.linuxsir.org<br>\n");
+	g_string_append(info, "LumaQQ Team : http://lumaqq.linuxsir.org<br>\n");
+	g_string_append(info, "khc(at)pidgin.im<br>\n");
+	g_string_append(info, "qulogic(at)pidgin.im<br>\n");
+	g_string_append(info, "rlaager(at)pidgin.im<br>\n");
+	g_string_append(info, "OpenQ Google Group : http://groups.google.com/group/openq<br>\n");
+	g_string_append(info, "<br>\n");
+	g_string_append(info, _("<p><i>And, all the boys in the backroom...</i><br>\n"));
+	g_string_append(info, _("<i>Feel free to join us!</i> :)"));
+	g_string_append(info, "</body></html>");
+
+	title = g_strdup_printf(_("About OpenQ %s"), OPENQ_VERSION);
+	purple_notify_formatted(gc, NULL, title, NULL, info->str, NULL, NULL);
+
+	g_free(title);
+	g_string_free(info, TRUE);
+}
+
 /*
 static void _qq_menu_search_or_add_permanent_group(PurplePluginAction *action)
 {
@@ -722,6 +782,8 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Update all QQ Quns"), action_update_all_rooms);
 	m = g_list_append(m, act);
 
+	act = purple_plugin_action_new(_("About OpenQ"), action_about_openq);
+	m = g_list_append(m, act);
 	/*
 	act = purple_plugin_action_new(_("Qun: Search a permanent Qun"), _qq_menu_search_or_add_permanent_group);
 	m = g_list_append(m, act);
