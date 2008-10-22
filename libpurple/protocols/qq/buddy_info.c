@@ -32,6 +32,7 @@
 #include "buddy_list.h"
 #include "buddy_info.h"
 #include "char_conv.h"
+#include "im.h"
 #include "qq_define.h"
 #include "qq_base.h"
 #include "qq_network.h"
@@ -452,7 +453,7 @@ void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection 
 	data[data_len] = '\0';
 	if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
 		purple_debug_info("QQ", "Update info ACK OK\n");
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"), _("Change buddy information."));
+		qq_got_attention(gc, _("Successed changing buddy information."));
 	}
 }
 
@@ -735,7 +736,6 @@ void qq_process_get_level_reply(guint8 *decr_buf, gint decr_len, PurpleConnectio
 		if (uid == qd->uid) {
 			qd->my_level = level;
 			purple_debug_warning("QQ", "Got my levels as %d\n", qd->my_level);
-			continue;
 		}
 
 		purple_name = uid_to_purple_name(uid);

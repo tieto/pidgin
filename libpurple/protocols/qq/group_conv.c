@@ -37,6 +37,7 @@ PurpleConversation *qq_room_conv_create(PurpleConnection *gc, qq_group *group)
 {
 	PurpleConversation *conv;
 	qq_data *qd;
+	gchar *topic_utf8;
 
 	g_return_val_if_fail(group != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
@@ -51,7 +52,11 @@ PurpleConversation *qq_room_conv_create(PurpleConnection *gc, qq_group *group)
 	serv_got_joined_chat(gc, qd->channel++, group->title_utf8);
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL) {
-		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, group->notice_utf8);
+		topic_utf8 = g_strdup_printf("%d %s", group->ext_id, group->notice_utf8);
+		purple_debug_info("QQ", "Set chat topic to %s\n", topic_utf8);
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, topic_utf8);
+		g_free(topic_utf8);
+
 		if (group->is_got_info)
 			qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
 		else
@@ -83,9 +88,9 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 			/* we need unique identifiers for everyone in the chat or else we'll
 			 * run into problems with functions like get_cb_real_name from qq.c */
 			member_name =   (member->nickname != NULL && *(member->nickname) != '\0') ?
-					g_strdup_printf("%s (qq-%u)", member->nickname, member->uid) :
-					g_strdup_printf("(qq-%u)", member->uid);
-			member_uid = g_strdup_printf("(qq-%u)", member->uid);
+					g_strdup_printf("%s (%u)", member->nickname, member->uid) :
+					g_strdup_printf("(%u)", member->uid);
+			member_uid = g_strdup_printf("(%u)", member->uid);
 
 			flag = 0;
 			/* TYPING to put online above OP and FOUNDER */

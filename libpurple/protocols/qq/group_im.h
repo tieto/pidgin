@@ -29,6 +29,9 @@
 #include "connection.h"
 #include "group.h"
 
+void qq_room_got_chat_in(PurpleConnection *gc,
+		qq_group *group, guint32 uid_from, const gchar *msg, time_t in_time);
+
 void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar *msg);
 
 void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc);

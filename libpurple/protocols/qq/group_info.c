@@ -101,12 +101,48 @@ gint qq_request_room_get_buddies(PurpleConnection *gc, qq_group *group, gint upd
 	return num;
 }
 
-void qq_process_room_cmd_get_info(guint8 *data, gint data_len, PurpleConnection *gc)
+static void room_info_display(PurpleConnection *gc, qq_group *group)
+{
+	PurpleNotifyUserInfo *room_info;
+	gchar *utf8_value;
+
+	g_return_if_fail(group != NULL && group->id > 0);
+
+	room_info = purple_notify_user_info_new();
+
+	purple_notify_user_info_add_pair(room_info, _("Title"), group->title_utf8);
+	purple_notify_user_info_add_pair(room_info, _("Notice"), group->notice_utf8);
+	purple_notify_user_info_add_pair(room_info, _("Detail"), group->desc_utf8);
+
+	purple_notify_user_info_add_section_break(room_info);
+
+	utf8_value = g_strdup_printf(("%d"), group->creator_uid);
+	purple_notify_user_info_add_pair(room_info, _("Creator"), utf8_value);
+	g_free(utf8_value);
+
+	purple_notify_user_info_add_pair(room_info, _("About me"), group->my_role_desc);
+
+	utf8_value = g_strdup_printf(("%d"), group->category);
+	purple_notify_user_info_add_pair(room_info, _("Category"), utf8_value);
+	g_free(utf8_value);
+
+	utf8_value = g_strdup_printf(("%d"), group->auth_type);
+	purple_notify_user_info_add_pair(room_info, _("Authorize"), utf8_value);
+	g_free(utf8_value);
+
+	utf8_value = g_strdup_printf(("%d"), group->ext_id);
+	purple_notify_userinfo(gc, utf8_value, room_info, NULL, NULL);
+	g_free(utf8_value);
+
+	purple_notify_user_info_destroy(room_info);
+}
+
+void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, PurpleConnection *gc)
 {
 	qq_group *group;
 	qq_buddy *member;
 	qq_data *qd;
-	PurpleConversation *purple_conv;
+	PurpleConversation *conv;
 	guint8 organization, role;
 	guint16 unknown, max_members;
 	guint32 member_uid, id, ext_id;
@@ -115,6 +151,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, PurpleConnection 
 	guint8 unknown1;
 	gint bytes, num;
 	gchar *notice;
+	gchar *topic_utf8;
 
 	g_return_if_fail(data != NULL && data_len > 0);
 	qd = (qq_data *) gc->proto_data;
@@ -196,16 +233,22 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, PurpleConnection 
 
 	qq_group_refresh(gc, group);
 
-	purple_conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
+	if (action == QQ_ROOM_INFO_DISPLAY) {
+		room_info_display(gc, group);
+	}
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 			group->title_utf8, purple_connection_get_account(gc));
-	if(NULL == purple_conv) {
+	if(NULL == conv) {
 		purple_debug_warning("QQ",
 				"Conversation \"%s\" is not open, do not set topic\n", group->title_utf8);
 		return;
 	}
 
-	purple_debug_info("QQ", "Set chat topic to %s\n", group->notice_utf8);
-	purple_conv_chat_set_topic(PURPLE_CONV_CHAT(purple_conv), NULL, group->notice_utf8);
+	topic_utf8 = g_strdup_printf("%d %s", group->ext_id, group->notice_utf8);
+	purple_debug_info("QQ", "Set chat topic to %s\n", topic_utf8);
+	purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, topic_utf8);
+	g_free(topic_utf8);
 }
 
 void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *gc)

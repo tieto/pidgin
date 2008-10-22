@@ -38,19 +38,19 @@ static gchar *get_role_desc(qq_group *group)
 
 	switch (group->my_role) {
 	case QQ_ROOM_ROLE_NO:
-		role_desc = _("I am not a member");
+		role_desc = _("Not member");
 		break;
 	case QQ_ROOM_ROLE_YES:
-		role_desc = _("I am a member");
+		role_desc = _("Member");
 		break;
 	case QQ_ROOM_ROLE_REQUESTING:
-		role_desc = _("I am requesting");
+		role_desc = _("Requesting");
 		break;
 	case QQ_ROOM_ROLE_ADMIN:
-		role_desc = _("I am the admin");
+		role_desc = _("Admin");
 		break;
 	default:
-		role_desc = _("Unknown status");
+		role_desc = _("Unknown");
 	}
 
 	return g_strdup(role_desc);
@@ -65,7 +65,7 @@ static void add_room_to_blist(PurpleConnection *gc, qq_group *group)
 	chat = purple_chat_new(purple_connection_get_account(gc), group->title_utf8, components);
 	g = qq_create_group(PURPLE_GROUP_QQ_QUN);
 	purple_blist_add_chat(chat, g, NULL);
-	purple_debug_info("QQ", "You have added group \"%s\" to blist locally\n", group->title_utf8);
+	purple_debug_info("QQ", "Added room \"%s\" to blist locally\n", group->title_utf8);
 }
 
 /* Create a dummy qq_group, which includes only internal_id, ext_id,

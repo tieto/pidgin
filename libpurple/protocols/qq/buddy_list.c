@@ -138,7 +138,7 @@ static gint get_buddy_status(qq_buddy_status *bs, guint8 *data)
 	bytes += qq_get8(&bs->unknown2, data + bytes);
 	/* 012-012: status */
 	bytes += qq_get8(&bs->status, data + bytes);
-	/* 013-014: client_version */
+	/* 013-014: client tag */
 	bytes += qq_get16(&bs->unknown3, data + bytes);
 	/* 015-030: unknown key */
 	bytes += qq_getdata(&(bs->unknown_key[0]), QQ_KEY_LENGTH, data + bytes);
@@ -207,7 +207,6 @@ guint8 qq_process_get_buddies_online_reply(guint8 *data, gint data_len, PurpleCo
 
 		if (bo.bs.uid == qd->uid) {
 			purple_debug_warning("QQ", "I am in online list %d\n", bo.bs.uid);
-			continue;
 		}
 
 		/* update buddy information */
@@ -228,8 +227,8 @@ guint8 qq_process_get_buddies_online_reply(guint8 *data, gint data_len, PurpleCo
 		}
 		/* we find one and update qq_buddy */
 		/*
-		if(0 != fe->s->client_version)
-			q_bud->client_version = fe->s->client_version;
+		if(0 != fe->s->client_tag)
+			q_bud->client_tag = fe->s->client_tag;
 		*/
 		q_bud->ip.s_addr = bo.bs.ip.s_addr;
 		q_bud->port = bo.bs.port;

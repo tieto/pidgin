@@ -44,6 +44,7 @@
 #include "group_info.h"
 #include "group_join.h"
 #include "group_opt.h"
+#include "group_internal.h"
 #include "qq_define.h"
 #include "im.h"
 #include "qq_process.h"
@@ -156,12 +157,15 @@ static void qq_login(PurpleAccount *account)
 	purple_debug_info("QQ", "Server list has %d\n", g_list_length(qd->servers));
 
 	version_str = purple_account_get_string(account, "client_version", NULL);
-	qd->client_version = QQ_CLIENT_0D55;	/* set default as QQ2005 */
-	qd->is_above_2007 = FALSE;
+	qd->client_tag = QQ_CLIENT_0D55;	/* set default as QQ2005 */
+	qd->client_version = 2005;
 	if (version_str != NULL && strlen(version_str) != 0) {
 		if (strcmp(version_str, "qq2007") == 0) {
-			qd->client_version = QQ_CLIENT_111D;
-			qd->is_above_2007 = TRUE;
+			qd->client_tag = QQ_CLIENT_111D;
+			qd->client_version = 2007;
+		} else if (strcmp(version_str, "qq2008") == 0) {
+			qd->client_tag = QQ_CLIENT_115B;
+			qd->client_version = 2008;
 		}
 	}
 
@@ -216,6 +220,7 @@ static void qq_close(PurpleConnection *gc)
 	qq_disconnect(gc);
 
 	if (qd->ld.token) g_free(qd->ld.token);
+	if (qd->ld.token_ex) g_free(qd->ld.token_ex);
 	if (qd->captcha.token) g_free(qd->captcha.token);
 	if (qd->captcha.data) g_free(qd->captcha.data);
 
@@ -226,14 +231,14 @@ static void qq_close(PurpleConnection *gc)
 }
 
 /* returns the icon name for a buddy or protocol */
-static const gchar *_qq_list_icon(PurpleAccount *a, PurpleBuddy *b)
+static const gchar *qq_list_icon(PurpleAccount *a, PurpleBuddy *b)
 {
 	return "qq";
 }
 
 
 /* a short status text beside buddy icon*/
-static gchar *_qq_status_text(PurpleBuddy *b)
+static gchar *qq_status_text(PurpleBuddy *b)
 {
 	qq_buddy *q_bud;
 	GString *status;
@@ -270,7 +275,7 @@ static gchar *_qq_status_text(PurpleBuddy *b)
 
 
 /* a floating text when mouse is on the icon, show connection status here */
-static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
+static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	qq_buddy *q_bud;
 	gchar *tmp;
@@ -349,8 +354,8 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 
 #ifdef DEBUG
 	tmp = g_strdup_printf( "%s (%04X)",
-										qq_get_ver_desc(q_bud->client_version),
-										q_bud->client_version );
+										qq_get_ver_desc(q_bud->client_tag),
+										q_bud->client_tag );
 	purple_notify_user_info_add_pair(user_info, _("Ver"), tmp);
 	g_free(tmp);
 
@@ -362,7 +367,7 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 }
 
 /* we can show tiny icons on the four corners of buddy icon, */
-static const char *_qq_list_emblem(PurpleBuddy *b)
+static const char *qq_list_emblem(PurpleBuddy *b)
 {
 	/* each char** are refering to a filename in pixmaps/purple/status/default/ */
 	qq_buddy *q_bud;
@@ -382,7 +387,7 @@ static const char *_qq_list_emblem(PurpleBuddy *b)
 }
 
 /* QQ away status (used to initiate QQ away packet) */
-static GList *_qq_away_states(PurpleAccount *ga)
+static GList *qq_status_types(PurpleAccount *ga)
 {
 	PurpleStatusType *status;
 	GList *types = NULL;
@@ -411,7 +416,7 @@ static GList *_qq_away_states(PurpleAccount *ga)
 }
 
 /* initiate QQ away with proper change_status packet */
-static void _qq_change_status(PurpleAccount *account, PurpleStatus *status)
+static void qq_change_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 
@@ -420,7 +425,7 @@ static void _qq_change_status(PurpleAccount *account, PurpleStatus *status)
 
 /* IMPORTANT: PurpleConvImFlags -> PurpleMessageFlags */
 /* send an instant msg to a buddy */
-static gint _qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags)
+static gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags)
 {
 	gint type, to_uid;
 	gchar *msg, *msg_with_qq_smiley;
@@ -450,7 +455,7 @@ static gint _qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *mes
 }
 
 /* send a chat msg to a QQ Qun */
-static int _qq_chat_send(PurpleConnection *gc, int channel, const char *message, PurpleMessageFlags flags)
+static int qq_chat_send(PurpleConnection *gc, int channel, const char *message, PurpleMessageFlags flags)
 {
 	gchar *msg, *msg_with_qq_smiley;
 	qq_group *group;
@@ -561,7 +566,7 @@ static void action_show_account_info(PurplePluginAction *action)
 	g_string_append(info, "<hr>");
 
 	g_string_append_printf(info, _("<b>Server</b>: %s<br>\n"), qd->curr_server);
-	g_string_append_printf(info, _("<b>Client Version</b>: %s<br>\n"), qq_get_ver_desc(qd->client_version));
+	g_string_append_printf(info, _("<b>Client Tag</b>: %s<br>\n"), qq_get_ver_desc(qd->client_tag));
 	g_string_append_printf(info, _("<b>Connection Mode</b>: %s<br>\n"), qd->use_tcp ? "TCP" : "UDP");
 	g_string_append_printf(info, _("<b>My Internet IP</b>: %s<br>\n"), inet_ntoa(qd->my_ip));
 
@@ -605,7 +610,7 @@ static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 }
 */
 
-static void _qq_menu_unsubscribe_group(PurpleBlistNode * node)
+static void action_chat_quit(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
 	PurpleConnection *gc = purple_account_get_connection(chat->account);
@@ -614,22 +619,34 @@ static void _qq_menu_unsubscribe_group(PurpleBlistNode * node)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
-	qq_group_exit(gc, components);
+	qq_room_quit(gc, components);
 }
 
-/*
-static void _qq_menu_manage_group(PurpleBlistNode * node)
+static void action_chat_get_info(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
 	PurpleConnection *gc = purple_account_get_connection(chat->account);
 	GHashTable *components = chat -> components;
+	gchar *uid_str;
+	guint32 uid;
+	qq_group *group;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
-	qq_group_manage_group(gc, components);
+
+	uid_str = g_hash_table_lookup(components, QQ_ROOM_KEY_INTERNAL_ID);
+	uid = strtol(uid_str, NULL, 10);
+
+	group = qq_room_search_id(gc, uid);
+	if (group == NULL) {
+		return;
+	}
+	g_return_if_fail(group->id > 0);
+
+	qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, group->id, NULL, 0,
+			QQ_CMD_CLASS_UPDATE_ROOM, QQ_ROOM_INFO_DISPLAY);
 }
-*/
 
 #if 0
 /* TODO: re-enable this */
@@ -690,31 +707,28 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 }
 
 /* chat-related (QQ Qun) menu shown up with right-click */
-static GList *_qq_chat_menu(PurpleBlistNode *node)
+static GList *qq_chat_menu(PurpleBlistNode *node)
 {
 	GList *m;
 	PurpleMenuAction *act;
 
 	m = NULL;
-	act = purple_menu_action_new(_("Leave the QQ Qun"), PURPLE_CALLBACK(_qq_menu_unsubscribe_group), NULL, NULL);
+	act = purple_menu_action_new(_("Get Info"), PURPLE_CALLBACK(action_chat_get_info), NULL, NULL);
 	m = g_list_append(m, act);
 
-	/* TODO: enable this
-	act = purple_menu_action_new(_("Show Details"), PURPLE_CALLBACK(_qq_menu_manage_group), NULL, NULL);
+	act = purple_menu_action_new(_("Quit Qun"), PURPLE_CALLBACK(action_chat_quit), NULL, NULL);
 	m = g_list_append(m, act);
-	*/
-
 	return m;
 }
 
 /* buddy-related menu shown up with right-click */
-static GList *_qq_buddy_menu(PurpleBlistNode * node)
+static GList *qq_buddy_menu(PurpleBlistNode * node)
 {
 	GList *m;
 	PurpleMenuAction *act;
 
 	if(PURPLE_BLIST_NODE_IS_CHAT(node))
-		return _qq_chat_menu(node);
+		return qq_chat_menu(node);
 
 	m = NULL;
 
@@ -732,9 +746,9 @@ static GList *_qq_buddy_menu(PurpleBlistNode * node)
 	return m;
 }
 
-/* convert chat nickname to qq-uid to get this buddy info */
+/* convert chat nickname to uid to get this buddy info */
 /* who is the nickname of buddy in QQ chat-room (Qun) */
-static void _qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gchar *who)
+static void qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gchar *who)
 {
 	gchar *purple_name;
 	g_return_if_fail(who != NULL);
@@ -744,9 +758,9 @@ static void _qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gc
 		qq_show_buddy_info(gc, purple_name);
 }
 
-/* convert chat nickname to qq-uid to invite individual IM to buddy */
+/* convert chat nickname to uid to invite individual IM to buddy */
 /* who is the nickname of buddy in QQ chat-room (Qun) */
-static gchar *_qq_get_chat_buddy_real_name(PurpleConnection *gc, gint channel, const gchar *who)
+static gchar *qq_get_chat_buddy_real_name(PurpleConnection *gc, gint channel, const gchar *who)
 {
 	g_return_val_if_fail(who != NULL, NULL);
 	return chat_name_to_purple_name(who);
@@ -758,21 +772,21 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* user_splits	*/
 	NULL,							/* protocol_options */
 	{"png", 96, 96, 96, 96, 0, PURPLE_ICON_SCALE_SEND}, /* icon_spec */
-	_qq_list_icon,						/* list_icon */
-	_qq_list_emblem,					/* list_emblems */
-	_qq_status_text,					/* status_text	*/
-	_qq_tooltip_text,					/* tooltip_text */
-	_qq_away_states,					/* away_states	*/
-	_qq_buddy_menu,						/* blist_node_menu */
+	qq_list_icon,						/* list_icon */
+	qq_list_emblem,					/* list_emblems */
+	qq_status_text,					/* status_text	*/
+	qq_tooltip_text,					/* tooltip_text */
+	qq_status_types,					/* away_states	*/
+	qq_buddy_menu,						/* blist_node_menu */
 	qq_chat_info,						/* chat_info */
 	qq_chat_info_defaults,					/* chat_info_defaults */
 	qq_login,							/* open */
 	qq_close,						/* close */
-	_qq_send_im,						/* send_im */
+	qq_send_im,						/* send_im */
 	NULL,							/* set_info */
 	NULL,							/* send_typing	*/
 	qq_show_buddy_info,						/* get_info */
-	_qq_change_status,						/* change status */
+	qq_change_status,						/* change status */
 	NULL,							/* set_idle */
 	NULL,							/* change_passwd */
 	qq_add_buddy,						/* add_buddy */
@@ -790,10 +804,10 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* chat_invite	*/
 	NULL,							/* chat_leave */
 	NULL,							/* chat_whisper */
-	_qq_chat_send,			/* chat_send */
+	qq_chat_send,			/* chat_send */
 	NULL,							/* keepalive */
 	NULL,							/* register_user */
-	_qq_get_chat_buddy_info,				/* get_cb_info	*/
+	qq_get_chat_buddy_info,				/* get_cb_info	*/
 	NULL,							/* get_cb_away	*/
 	NULL,							/* alias_buddy	*/
 	qq_change_buddys_group,							/* group_buddy	*/
@@ -803,7 +817,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* normalize */
 	qq_set_buddy_icon,					/* set_buddy_icon */
 	NULL,							/* remove_group */
-	_qq_get_chat_buddy_real_name,				/* get_cb_real_name */
+	qq_get_chat_buddy_real_name,				/* get_cb_real_name */
 	NULL,							/* set_chat_topic */
 	NULL,							/* find_blist_chat */
 	qq_roomlist_get_list,					/* roomlist_get_list */
@@ -906,6 +920,11 @@ static void init_plugin(PurplePlugin *plugin)
 	kvp = g_new0(PurpleKeyValuePair, 1);
 	kvp->key = g_strdup(_("QQ2007"));
 	kvp->value = g_strdup("qq2007");
+	version_kv_list = g_list_append(version_kv_list, kvp);
+
+	kvp = g_new0(PurpleKeyValuePair, 1);
+	kvp->key = g_strdup(_("QQ2008"));
+	kvp->value = g_strdup("qq2008");
 	version_kv_list = g_list_append(version_kv_list, kvp);
 
 	option = purple_account_option_list_new(_("Client Version"), "client_version", version_kv_list);

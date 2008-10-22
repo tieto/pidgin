@@ -45,18 +45,6 @@
 #include "qq_process.h"
 #include "utils.h"
 
-typedef struct _qq_recv_group_im {
-	guint32 ext_id;
-	guint8 type8;
-	guint32 member_uid;
-	guint16 msg_seq;
-	time_t send_time;
-	guint16 msg_len;
-	gchar *msg;
-	guint8 *font_attr;
-	gint font_attr_len;
-} qq_recv_group_im;
-
 /* send IM to a group */
 void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar *msg)
 {
@@ -150,6 +138,41 @@ void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleCo
 	g_free(reason_utf8);
 }
 
+void qq_room_got_chat_in(PurpleConnection *gc,
+		qq_group *group, guint32 uid_from, const gchar *msg, time_t in_time)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleConversation *conv;
+	qq_buddy *buddy;
+	gchar *from;
+
+	g_return_if_fail(group != NULL);
+
+	conv = purple_find_conversation_with_account(
+			PURPLE_CONV_TYPE_CHAT, group->title_utf8, account);
+	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/show_room_when_newin")) {
+		conv = qq_room_conv_create(gc, group);
+	}
+
+	if (conv == NULL) {
+		return;
+	}
+
+	if (uid_from != 0) {
+		buddy = qq_group_find_member_by_uid(group, uid_from);
+		if (buddy == NULL || buddy->nickname == NULL)
+			from = uid_to_purple_name(uid_from);
+		else
+			from = g_strdup(buddy->nickname);
+	} else {
+		from = g_strdup("");
+	}
+	serv_got_chat_in(gc,
+			purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
+				from, 0, msg, in_time);
+	g_free(from);
+}
+
 /* the request to join a group is rejected */
 void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
 {
@@ -157,12 +180,12 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 	guint8 type8;
 	gchar *reason_utf8, *msg, *reason;
 	qq_group *group;
-	gint bytes = 0;
+	gint bytes;
 
 	g_return_if_fail(data != NULL && len > 0);
 
 	/* FIXME: check length here */
-
+	bytes = 0;
 	bytes += qq_get32(&ext_id, data + bytes);
 	bytes += qq_get8(&type8, data + bytes);
 	bytes += qq_get32(&admin_uid, data + bytes);
@@ -183,8 +206,8 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 		qq_group_refresh(gc, group);
 	}
 
-	g_free(reason);
 	g_free(msg);
+	g_free(reason);
 	g_free(reason_utf8);
 }
 
@@ -193,26 +216,22 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 {
 	guint32 ext_id, admin_uid;
 	guint8 type8;
-	gchar *reason_utf8, *msg;
+	gchar *msg, *reason;
 	qq_group *group;
-	gint bytes = 0;
+	gint bytes;
+	time_t now;
 
 	g_return_if_fail(data != NULL && len > 0);
 
 	/* FIXME: check length here */
-
+	bytes = 0;
 	bytes += qq_get32(&ext_id, data + bytes);
 	bytes += qq_get8(&type8, data + bytes);
 	bytes += qq_get32(&admin_uid, data + bytes);
 
 	g_return_if_fail(ext_id > 0 && admin_uid > 0);
 	/* it is also a "无" here, so do not display */
-	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
-
-	msg = g_strdup_printf
-		(_("Successed to join Qun %d, operated by admin %d"), ext_id, admin_uid);
-
-	purple_notify_warning(gc, _("QQ Qun Operation"), msg, NULL);
+	bytes += convert_as_pascal_string(data + bytes, &reason, QQ_CHARSET_DEFAULT);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
@@ -220,8 +239,13 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 		qq_group_refresh(gc, group);
 	}
 
+	msg = g_strdup_printf(_("<b>Joinning Qun %d is approved by Admin %d for %s</b>"),
+			ext_id, admin_uid, reason);
+	now = time(NULL);
+	qq_room_got_chat_in(gc, group, 0, msg, now);
+
 	g_free(msg);
-	g_free(reason_utf8);
+	g_free(reason);
 }
 
 /* process the packet when removed from a group */
@@ -232,19 +256,17 @@ void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, Purple
 	gchar *msg;
 	qq_group *group;
 	gint bytes = 0;
+	time_t now = time(NULL);
 
 	g_return_if_fail(data != NULL && len > 0);
 
 	/* FIXME: check length here */
-
+	bytes = 0;
 	bytes += qq_get32(&ext_id, data + bytes);
 	bytes += qq_get8(&type8, data + bytes);
 	bytes += qq_get32(&uid, data + bytes);
 
 	g_return_if_fail(ext_id > 0 && uid > 0);
-
-	msg = g_strdup_printf(_("[%d] removed from Qun \"%d\""), uid, ext_id);
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Notice:"), msg);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
@@ -252,6 +274,8 @@ void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, Purple
 		qq_group_refresh(gc, group);
 	}
 
+	msg = g_strdup_printf(_("<b>Removed buddy %d.</b>"), uid);
+	qq_room_got_chat_in(gc, group, 0, msg, now);
 	g_free(msg);
 }
 
@@ -262,20 +286,18 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 	guint8 type8;
 	qq_group *group;
 	gchar *msg;
-	gint bytes = 0;
+	gint bytes;
+	time_t now = time(NULL);
 
 	g_return_if_fail(data != NULL && len > 0);
 
 	/* FIXME: check length here */
-
+	bytes = 0;
 	bytes += qq_get32(&ext_id, data + bytes);
 	bytes += qq_get8(&type8, data + bytes);
 	bytes += qq_get32(&uid, data + bytes);
 
 	g_return_if_fail(ext_id > 0 && uid > 0);
-
-	msg = g_strdup_printf(_("[%d] added to Qun \"%d\""), uid, ext_id);
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Notice:"), msg);
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
@@ -289,22 +311,33 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 		/* the return of this cmd will automatically update the group in blist */
 	}
 
+	msg = g_strdup_printf(_("<b>Added new buddy %d.</b>"), uid);
+	qq_room_got_chat_in(gc, group, 0, msg, now);
 	g_free(msg);
 }
 
 /* recv an IM from a group chat */
 void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type)
 {
-	gchar *msg_with_purple_smiley, *msg_utf8_encoded, *im_src_name;
-	guint16 unknown;
-	guint32 unknown4;
-	PurpleConversation *conv;
+	gchar *msg_with_purple_smiley, *msg_utf8_encoded;
 	qq_data *qd;
-	qq_buddy *member;
 	qq_group *group;
-	qq_recv_group_im *im_group;
 	gint skip_len;
-	gint bytes = 0;
+	gint bytes ;
+	struct {
+		guint32 ext_id;
+		guint8 type8;
+		guint32 member_uid;
+		guint16 unknown;
+		guint16 msg_seq;
+		time_t send_time;
+		guint32 unknown4;
+		guint16 msg_len;
+		gchar *msg;
+		guint8 *font_attr;
+		gint font_attr_len;
+	} packet;
+
 
 	g_return_if_fail(data != NULL && data_len > 0);
 
@@ -315,21 +348,20 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 #if 0
 	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", data, data_len, "group im hex dump");
 #endif
-
-	im_group = g_newa(qq_recv_group_im, 1);
-
-	bytes += qq_get32(&(im_group->ext_id), data + bytes);
-	bytes += qq_get8(&(im_group->type8), data + bytes);
+	memset(&packet, 0, sizeof(packet));
+	bytes = 0;
+	bytes += qq_get32(&(packet.ext_id), data + bytes);
+	bytes += qq_get8(&(packet.type8), data + bytes);
 
 	if(QQ_RECV_IM_TEMP_QUN_IM == im_type) {
 		bytes += qq_get32(&(id), data + bytes);
 	}
 
-	bytes += qq_get32(&(im_group->member_uid), bytes + data);
-	bytes += qq_get16(&unknown, data + bytes);	/* 0x0001? */
-	bytes += qq_get16(&(im_group->msg_seq), data + bytes);
-	bytes += qq_getime(&im_group->send_time, data + bytes);
-	bytes += qq_get32(&unknown4, data + bytes);	/* versionID */
+	bytes += qq_get32(&(packet.member_uid), bytes + data);
+	bytes += qq_get16(&packet.unknown, data + bytes);	/* 0x0001? */
+	bytes += qq_get16(&(packet.msg_seq), data + bytes);
+	bytes += qq_getime(&packet.send_time, data + bytes);
+	bytes += qq_get32(&packet.unknown4, data + bytes);	/* versionID */
 	/*
 	 * length includes font_attr
 	 * this msg_len includes msg and font_attr
@@ -340,8 +372,8 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	 * 3. font_attr
 	 */
 
-	bytes += qq_get16(&(im_group->msg_len), data + bytes);
-	g_return_if_fail(im_group->msg_len > 0);
+	bytes += qq_get16(&(packet.msg_len), data + bytes);
+	g_return_if_fail(packet.msg_len > 0);
 
 	/*
 	 * 10 bytes from lumaqq
@@ -358,44 +390,28 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 		skip_len = 0;
 	bytes += skip_len;
 
-	im_group->msg = g_strdup((gchar *) data + bytes);
-	bytes += strlen(im_group->msg) + 1;
+	packet.msg = g_strdup((gchar *) data + bytes);
+	bytes += strlen(packet.msg) + 1;
 	/* there might not be any font_attr, check it */
-	im_group->font_attr_len = im_group->msg_len - strlen(im_group->msg) - 1 - skip_len;
-	if (im_group->font_attr_len > 0)
-		im_group->font_attr = g_memdup(data + bytes, im_group->font_attr_len);
+	packet.font_attr_len = packet.msg_len - strlen(packet.msg) - 1 - skip_len;
+	if (packet.font_attr_len > 0)
+		packet.font_attr = g_memdup(data + bytes, packet.font_attr_len);
 	else
-		im_group->font_attr = NULL;
+		packet.font_attr = NULL;
 
 	/* group im_group has no flag to indicate whether it has font_attr or not */
-	msg_with_purple_smiley = qq_smiley_to_purple(im_group->msg);
-	if (im_group->font_attr_len > 0)
-		msg_utf8_encoded = qq_encode_to_purple(im_group->font_attr,
-				im_group->font_attr_len, msg_with_purple_smiley);
+	msg_with_purple_smiley = qq_smiley_to_purple(packet.msg);
+	if (packet.font_attr_len > 0)
+		msg_utf8_encoded = qq_encode_to_purple(packet.font_attr,
+				packet.font_attr_len, msg_with_purple_smiley);
 	else
 		msg_utf8_encoded = qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 
 	group = qq_room_search_id(gc, id);
-	g_return_if_fail(group != NULL);
+ 	qq_room_got_chat_in(gc, group, packet.member_uid, msg_utf8_encoded, packet.send_time);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
-	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/show_room_when_newin")) {
-		conv = qq_room_conv_create(gc, group);
-	}
-
-	if (conv != NULL) {
-		member = qq_group_find_member_by_uid(group, im_group->member_uid);
-		if (member == NULL || member->nickname == NULL)
-			im_src_name = uid_to_purple_name(im_group->member_uid);
-		else
-			im_src_name = g_strdup(member->nickname);
-		serv_got_chat_in(gc,
-				purple_conv_chat_get_id(PURPLE_CONV_CHAT
-					(conv)), im_src_name, 0, msg_utf8_encoded, im_group->send_time);
-		g_free(im_src_name);
-	}
 	g_free(msg_with_purple_smiley);
 	g_free(msg_utf8_encoded);
-	g_free(im_group->msg);
-	g_free(im_group->font_attr);
+	g_free(packet.msg);
+	g_free(packet.font_attr);
 }

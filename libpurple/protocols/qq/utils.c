@@ -191,7 +191,7 @@ gchar *chat_name_to_purple_name(const gchar *const name)
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	tmp = (gchar *) purple_strcasestr(name, "(qq-");
+	tmp = (gchar *) purple_strcasestr(name, "(");
 	ret = g_strndup(tmp + 4, strlen(name) - (tmp - name) - 4 - 1);
 
 	return ret;
@@ -335,7 +335,7 @@ static gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 }
 
 void qq_hex_dump(PurpleDebugLevel level, const char *category,
-		const guint8 *pdata, gint bytes,	
+		const guint8 *pdata, gint bytes,
 		const char *format, ...)
 {
 	va_list args;

@@ -301,7 +301,7 @@ static gint _qq_create_packet_file_header
 	/* 004-007: sender uid */
 	bytes += qq_put32 (raw_data + bytes, to_uid);
 	/* 008-009: sender client version */
-	bytes += qq_put16 (raw_data + bytes, qd->client_version);
+	bytes += qq_put16 (raw_data + bytes, qd->client_tag);
 	/* 010-013: receiver uid */
 	bytes += qq_put32 (raw_data + bytes, qd->uid);
 	/* 014-017: sender uid */
@@ -804,7 +804,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 	/* FACE from IP detector, ignored by gfhuang */
 	if(g_ascii_strcasecmp(fileinfo[0], "FACE") == 0) {
 		purple_debug_warning("QQ",
-			    "Received a FACE ip detect from qq-%d, so he/she must be online :)\n", sender_uid);
+			    "Received a FACE ip detect from %d, so he/she must be online :)\n", sender_uid);
 
 		b = purple_find_buddy(gc->account, sender_name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;

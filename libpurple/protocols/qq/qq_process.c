@@ -82,7 +82,7 @@ static void process_cmd_unknow(PurpleConnection *gc,const gchar *title, guint8 *
 }
 
 /* Send ACK if the sys message needs an ACK */
-static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint32 from, guint16 seq)
+static void ack_server_msg(PurpleConnection *gc, guint8 code, guint32 from, guint16 seq)
 {
 	qq_data *qd;
 	guint8 bar, *ack;
@@ -112,7 +112,7 @@ static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint
 			   "Fail creating sys msg ACK, expect %d bytes, build %d bytes\n", ack_len, bytes);
 }
 
-static void _qq_process_msg_sys_notice(PurpleConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
+static void process_server_notice(PurpleConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
 	gchar *title, *content;
@@ -120,13 +120,13 @@ static void _qq_process_msg_sys_notice(PurpleConnection *gc, gchar *from, gchar 
 	g_return_if_fail(from != NULL && to != NULL);
 
 	title = g_strdup_printf(_("From %s:"), from);
-	content = g_strdup_printf(_("%s"), msg_utf8);
+	content = g_strdup_printf(_("Server notice From %s: \n%s"), from, msg_utf8);
 
 	if (qd->is_show_notice) {
-		purple_notify_info(gc, _("QQ Server Notice"), title, content);
+		qq_got_attention(gc, content);
 	} else {
 		purple_debug_info("QQ", "QQ Server notice from %s:\n%s", from, msg_utf8);
-}
+	}
 	g_free(title);
 	g_free(content);
 }
@@ -148,7 +148,7 @@ static void process_server_msg(guint8 *data, gint data_len, guint16 seq, PurpleC
 	to = segments[2];
 	msg = segments[3];
 
-	_qq_send_packet_ack_msg_sys(gc, code[0], strtol(from, NULL, 10), seq);
+	ack_server_msg(gc, code[0], strtol(from, NULL, 10), seq);
 
 	if (strtol(to, NULL, 10) != qd->uid) {	/* not to me */
 		purple_debug_error("QQ", "Recv sys msg to [%s], not me!, discard\n", to);
@@ -173,13 +173,14 @@ static void process_server_msg(guint8 *data, gint data_len, guint16 seq, PurpleC
 			qq_process_buddy_from_server(gc,  funct, from, to, msg_utf8);
 			break;
 		case QQ_SERVER_NOTICE:
-			_qq_process_msg_sys_notice(gc, from, to, msg_utf8);
+			process_server_notice(gc, from, to, msg_utf8);
 			break;
 		case QQ_SERVER_NEW_CLIENT:
 			purple_debug_warning("QQ", "QQ Server has newer client version\n");
 			break;
 		default:
 			purple_debug_warning("QQ", "Recv unknown sys msg code: %s\nMsg: %s\n", code, msg_utf8);
+			break;
 	}
 	g_free(msg_utf8);
 	g_strfreev(segments);
@@ -509,7 +510,7 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 	/* seems ok so far, so we process the reply according to sub_cmd */
 	switch (reply_cmd) {
 	case QQ_ROOM_CMD_GET_INFO:
-		qq_process_room_cmd_get_info(data + bytes, data_len - bytes, gc);
+		qq_process_room_cmd_get_info(data + bytes, data_len - bytes, ship32, gc);
 		break;
 	case QQ_ROOM_CMD_CREATE:
 		qq_group_process_create_group_reply(data + bytes, data_len - bytes, gc);
@@ -588,7 +589,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 	switch (cmd) {
 		case QQ_CMD_TOKEN:
 			if (qq_process_token(gc, rcved, rcved_len) == QQ_LOGIN_REPLY_OK) {
-				if (qd->is_above_2007) {
+				if (qd->client_version > 2005) {
 					qq_request_token_ex(gc);
 				} else {
 					qq_request_login(gc);
@@ -598,17 +599,29 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			return QQ_LOGIN_REPLY_ERR;
 		case QQ_CMD_GET_SERVER:
 		case QQ_CMD_TOKEN_EX:
-			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.init_key);
+			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.random_key);
+			break;
+		case QQ_CMD_CHECK_PWD:
+			/* May use password_twice_md5 in the past version like QQ2005 */
+			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.random_key);
+			if (data_len >= 0) {
+				purple_debug_warning("QQ", "Decrypt login packet by random_key, %d bytes\n", data_len);
+			} else {
+				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_4th_md5);
+				if (data_len >= 0) {
+					purple_debug_warning("QQ", "Decrypt login packet by pwd_4th_md5, %d bytes\n", data_len);
+				}
+			}
 			break;
 		default:
 			/* May use password_twice_md5 in the past version like QQ2005 */
-			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.init_key);
+			data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.random_key);
 			if (data_len >= 0) {
-				purple_debug_warning("QQ", "Decrypt login packet by init_key, %d bytes\n", data_len);
+				purple_debug_warning("QQ", "Decrypt login packet by random_key, %d bytes\n", data_len);
 			} else {
-				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_twice_md5);
+				data_len = qq_decrypt(data, rcved, rcved_len, qd->ld.pwd_2nd_md5);
 				if (data_len >= 0) {
-					purple_debug_warning("QQ", "Decrypt login packet by password_twice_md5, %d bytes\n", data_len);
+					purple_debug_warning("QQ", "Decrypt login packet by pwd_2nd_md5, %d bytes\n", data_len);
 				}
 			}
 			break;
@@ -620,9 +633,9 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 				seq, cmd, qq_get_cmd_desc(cmd), rcved_len);
 		qq_show_packet("Can not decrypted", rcved, rcved_len);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 				_("Can not decrypt login reply"));
-		return QQ_LOGIN_REPLY_ERR_DECRYPT;
+		return QQ_LOGIN_REPLY_ERR;
 	}
 
 	switch (cmd) {
@@ -637,7 +650,11 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		case QQ_CMD_TOKEN_EX:
 			ret_8 = qq_process_token_ex(gc, data, data_len);
 			if (ret_8 == QQ_LOGIN_REPLY_OK) {
-				//qq_request_check_password(gc);
+				if (qd->client_version == 2008) {
+					qq_request_check_pwd_2008(gc);
+				} else {
+					qq_request_check_pwd_2007(gc);
+				}
 			} else if (ret_8 == QQ_LOGIN_REPLY_NEXT_TOKEN_EX) {
 				qq_request_token_ex_next(gc);
 			} else if (ret_8 == QQ_LOGIN_REPLY_CAPTCHA_DLG) {
@@ -645,6 +662,21 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 				g_free(qd->captcha.token);
 				g_free(qd->captcha.data);
 				memset(&qd->captcha, 0, sizeof(qd->captcha));
+			}
+			break;
+		case QQ_CMD_CHECK_PWD:
+			if (qd->client_version == 2008) {
+				ret_8 = qq_process_check_pwd_2008(gc, data, data_len);
+			} else {
+				ret_8 = qq_process_check_pwd_2007(gc, data, data_len);
+			}
+			if (ret_8 != QQ_LOGIN_REPLY_OK) {
+				return  ret_8;
+			}
+			if (qd->client_version == 2008) {
+				qq_request_login_2008(gc);
+			} else {
+				qq_request_login_2007(gc);
 			}
 			break;
 		case QQ_CMD_LOGIN:

@@ -51,9 +51,8 @@
 #define QQ_CLIENT_0F4B 0x0F4B	/* QQ2006 Beta 3  */
 
 #define QQ_CLIENT_1105 0x1105	/* QQ2007 beta4*/
-#define QQ_CLIENT_115B 0x115B	/* QQ2008 */
 #define QQ_CLIENT_1203 0x1203	/* QQ2008 */
-#define QQ_CLIENT_1205 0x1205	/* QQ2008 */
+#define QQ_CLIENT_1205 0x1205	/* QQ2008 Qi Fu */
 #define QQ_CLIENT_120B 0x120B	/* QQ2008 July 8.0.978.400 */
 #define QQ_CLIENT_1412 0x1412	/* QQMac 1.0 preview1 build 670 */
 #define QQ_CLIENT_1441 0x1441	/* QQ2009 preview2 */
@@ -174,6 +173,18 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_RECV_MSG_SYS";
 	case QQ_CMD_BUDDY_CHANGE_STATUS:
 		return "QQ_CMD_BUDDY_CHANGE_STATUS";
+	case QQ_CMD_GET_SERVER:
+		return "QQ_CMD_GET_SERVER";
+	case QQ_CMD_TOKEN_EX:
+		return "QQ_CMD_TOKEN_EX";
+	case QQ_CMD_CHECK_PWD:
+		return "QQ_CMD_CHECK_PWD";
+	case QQ_CMD_BUDDY_AUTH:
+		return "QQ_CMD_BUDDY_AUTH";
+	case QQ_CMD_BUDDY_ADD_NO_AUTH_EX:
+		return "QQ_CMD_BUDDY_ADD_NO_AUTH_EX";
+	case QQ_CMD_BUDDY_ADD_AUTH_EX:
+		return "QQ_CMD_BUDDY_ADD_AUTH_EX";
 	default:
 		return "Unknown CMD";
 	}

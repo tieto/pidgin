@@ -56,10 +56,12 @@ enum {
 	QQ_RECV_IM_FROM_UNKNOWN_2006 = 0x0085,
 };
 
+void qq_got_attention(PurpleConnection *gc, const gchar *msg);
+
 guint8 *qq_get_send_im_tail(const gchar *font_color,
-			    const gchar *font_size,
-			    const gchar *font_name,
-			    gboolean is_bold, gboolean is_italic, gboolean is_underline, gint len);
+		const gchar *font_size,
+		const gchar *font_name,
+		gboolean is_bold, gboolean is_italic, gboolean is_underline, gint len);
 
 void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint type);
 void qq_process_recv_im(guint8 *data, gint data_len, guint16 seq, PurpleConnection *gc);

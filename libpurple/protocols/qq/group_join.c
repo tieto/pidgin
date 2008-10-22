@@ -30,6 +30,7 @@
 #include "server.h"
 
 #include "char_conv.h"
+#include "im.h"
 #include "group_conv.h"
 #include "group_find.h"
 #include "group_internal.h"
@@ -190,6 +191,7 @@ void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *g
 	PurpleChat *chat;
 	qq_group *group;
 	qq_data *qd;
+	gchar *msg;
 
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
@@ -204,13 +206,18 @@ void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *g
 
 	group = qq_room_search_id(gc, id);
 	if (group != NULL) {
+		msg = g_strdup_printf(_("Successed quit Qun %s (%d)"),
+				group->title_utf8, group->ext_id);
 		chat = purple_blist_find_chat
 			    (purple_connection_get_account(gc), g_strdup_printf("%d", group->ext_id));
 		if (chat != NULL)
 			purple_blist_remove_chat(chat);
 		qq_group_delete_internal_record(qd, id);
+	} else {
+		msg = g_strdup(_("Successed quit Qun"));
 	}
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Remove from Qun"));
+	qq_got_attention(gc, msg);
+	g_free(msg);
 }
 
 /* Process the reply to group_auth subcmd */
@@ -232,7 +239,7 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	bytes += qq_get32(&id, data + bytes);
 	g_return_if_fail(id > 0);
 
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Join to Qun"));
+	qq_got_attention(gc, _("Successed join to Qun"));
 }
 
 /* process group cmd reply "join group" */
@@ -320,7 +327,7 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	}
 }
 
-void qq_group_exit(PurpleConnection *gc, GHashTable *data)
+void qq_room_quit(PurpleConnection *gc, GHashTable *data)
 {
 	gchar *id_ptr;
 	guint32 id;
@@ -338,7 +345,7 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 	add_req->uid = id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
-			    _("Are you sure you want to leave this Qun?"),
+			    _("Quit Qun"),
 			    _("Note, if you are the creator, \nthis operation will eventually remove this Qun."),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,

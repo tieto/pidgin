@@ -34,6 +34,7 @@
 #include "group_internal.h"
 #include "group_info.h"
 #include "group_join.h"
+#include "group_im.h"
 #include "group_opt.h"
 #include "qq_define.h"
 #include "packet_parse.h"
@@ -199,6 +200,7 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 {
 	gint bytes;
 	guint32 id;
+	time_t now = time(NULL);
 	qq_group *group;
 	g_return_if_fail(data != NULL);
 
@@ -212,7 +214,7 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 
 	purple_debug_info("QQ", "Succeed in modify members for room %d\n", group->ext_id);
 
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Change Qun member"));
+	qq_room_got_chat_in(gc, group, 0, _("Successed changing Qun member"), now);
 }
 
 void qq_room_change_info(PurpleConnection *gc, qq_group *group)
@@ -265,6 +267,8 @@ void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection
 	gint bytes;
 	guint32 id;
 	qq_group *group;
+	time_t now = time(NULL);
+	
 	g_return_if_fail(data != NULL);
 
 	bytes = 0;
@@ -278,7 +282,7 @@ void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection
 	purple_debug_info("QQ", "Succeed in modify info for Qun %d\n", group->ext_id);
 	qq_group_refresh(gc, group);
 
-	purple_notify_info(gc, _("QQ Qun Operation"), _("Successed:"), _("Change Qun information"));
+	qq_room_got_chat_in(gc, group, 0, _("Successed changing Qun information"), now);
 }
 
 /* we create a very simple group first, and then let the user to modify */

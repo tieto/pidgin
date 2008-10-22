@@ -40,8 +40,7 @@
 #include "utils.h"
 
 #define PURPLE_GROUP_QQ_FORMAT          "QQ (%s)"
-#define PURPLE_GROUP_QQ_UNKNOWN         "QQ Unknown"
-#define PURPLE_GROUP_QQ_BLOCKED         "QQ Blocked"
+#define PURPLE_GROUP_QQ_UNKNOWN      "QQ Unknown"
 
 #define QQ_REMOVE_BUDDY_REPLY_OK      0x00
 #define QQ_REMOVE_SELF_REPLY_OK       0x00
@@ -237,7 +236,7 @@ void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	if (b != NULL) {
 		purple_blist_remove_buddy(b);
 	}
-	purple_notify_error(gc, NULL, _("QQ Number Error"), _("Invalid QQ Number"));
+	purple_notify_error(gc, _("QQ Buddy"), _("QQ Number Error"), _("Invalid QQ Number"));
 }
 
 void qq_change_buddys_group(PurpleConnection *gc, const char *who,
@@ -347,6 +346,10 @@ void qq_remove_buddy_and_me(PurpleBlistNode * node)
 
 	uid = purple_name_to_uid(who);
 	g_return_if_fail(uid > 0);
+	
+	if (uid == qd->uid) {
+		return;
+	}
 
 	add_req = g_new0(qq_add_request, 1);
 	add_req->gc = gc;
@@ -373,15 +376,15 @@ void qq_process_buddy_add_auth(guint8 *data, gint data_len, PurpleConnection *gc
 	qd = (qq_data *) gc->proto_data;
 
 	if (data[0] != QQ_ADD_BUDDY_AUTH_REPLY_OK) {
-		purple_debug_warning("QQ", "Add buddy with auth request failed\n");
+		purple_debug_warning("QQ", "Failed authorizing of adding requestion\n");
 		if (NULL == (segments = split_data(data, data_len, "\x1f", 2))) {
 			return;
 		}
 		msg_utf8 = qq_to_utf8(segments[1], QQ_CHARSET_DEFAULT);
-		purple_notify_error(gc, NULL, _("Add buddy with auth request failed"), msg_utf8);
+		purple_notify_error(gc, _("QQ Buddy"), _("Failed authorizing of adding requestion"), msg_utf8);
 		g_free(msg_utf8);
 	} else {
-		purple_debug_info("QQ", "Add buddy with auth request OK\n");
+		qq_got_attention(gc, _("Successed authorizing of adding requestion"));
 	}
 }
 
@@ -399,9 +402,7 @@ void qq_process_buddy_remove(guint8 *data, gint data_len, PurpleConnection *gc)
 		purple_debug_warning("QQ", "Remove buddy fails\n");
 		purple_notify_info(gc, _("QQ Buddy"), _("Failed:"),  _("Remove buddy"));
 	} else {		/* if reply */
-		purple_debug_info("QQ", "Remove buddy OK\n");
-		/* TODO: We don't really need to notify the user about this, do we? */
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"),  _("Remove buddy"));
+		qq_got_attention(gc, _("Successed removing budy."));
 	}
 }
 
@@ -419,10 +420,7 @@ void qq_process_buddy_remove_me(guint8 *data, gint data_len, PurpleConnection *g
 		purple_debug_warning("QQ", "Remove self fails\n");
 		purple_notify_info(gc, _("QQ Buddy"), _("Failed:"), _("Remove me from other's buddy list"));
 	} else {		/* if reply */
-		purple_debug_info("QQ", "Remove from a buddy OK\n");
-#if 0
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"), _("Remove from other's buddy list"));
-#endif
+		qq_got_attention(gc, _("Successed removing me from other's budy list."));
 	}
 }
 
@@ -478,8 +476,8 @@ void qq_process_buddy_add_no_auth(guint8 *data, gint data_len, guint32 uid, Purp
 		g_free(nombre);
 	} else {	/* add OK */
 		qq_create_buddy(gc, uid, TRUE, TRUE);
-		msg = g_strdup_printf(_("Add into %d's buddy list"), uid);
-		purple_notify_info(gc, _("QQ Buddy"), _("Successed:"), msg);
+		msg = g_strdup_printf(_("Successed adding into %d's buddy list"), uid);
+		qq_got_attention(gc, msg);
 		g_free(msg);
 	}
 	g_strfreev(segments);
@@ -514,7 +512,7 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid, gboolean is_know
 	g_return_val_if_fail(gc->account != NULL && uid != 0, NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	if (is_known) {
+	if (is_known || uid == qd->uid) {
 		group_name = g_strdup_printf(PURPLE_GROUP_QQ_FORMAT,
 				purple_account_get_username(gc->account));
 	 } else {
@@ -531,7 +529,7 @@ PurpleBuddy *qq_create_buddy(PurpleConnection *gc, guint32 uid, gboolean is_know
 		purple_blist_remove_buddy(buddy);
 
 	buddy = purple_buddy_new(gc->account, buddy_name, NULL);
-	if ( !is_known ) {
+	if ( !is_known && uid != qd->uid) {
 		if (purple_privacy_check(gc->account, buddy_name)) {
 			purple_privacy_deny(gc->account, buddy_name, TRUE, FALSE);
 		} else {
@@ -701,8 +699,8 @@ static void server_buddy_added(PurpleConnection *gc, gchar *from, gchar *to, gch
 					_("Add"), G_CALLBACK(buddy_add_no_auth_cb),
 				    _("Search"), G_CALLBACK(buddy_add_check_info_cb));
 	} else {
-		message = g_strdup_printf(_("%s added you [%s] to buddy list"), from, to);
-		purple_notify_info(gc, _("QQ Budy"), _("Successed:"), message);
+		message = g_strdup_printf(_("Successed adding into %s's buddy list"), from);
+		qq_got_attention(gc, message);
 	}
 
 	g_free(name);
@@ -712,7 +710,7 @@ static void server_buddy_added(PurpleConnection *gc, gchar *from, gchar *to, gch
 /* the buddy approves your request of adding him/her as your friend */
 static void server_buddy_added_me(PurpleConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
 {
-	gchar *message;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	qq_data *qd;
 
 	g_return_if_fail(from != NULL && to != NULL);
@@ -720,10 +718,7 @@ static void server_buddy_added_me(PurpleConnection *gc, gchar *from, gchar *to, 
 	qd = (qq_data *) gc->proto_data;
 	qq_create_buddy(gc, strtol(from, NULL, 10), TRUE, TRUE);
 
-	message = g_strdup_printf(_("Requestion approved by %s"), from);
-	purple_notify_info(gc, _("QQ Buddy"), _("Notice:"), message);
-
-	g_free(message);
+	purple_account_notify_added(account, from, to, NULL, msg_utf8);
 }
 
 /* you are rejected by the person */

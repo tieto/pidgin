@@ -35,6 +35,7 @@
 
 #define QQ_CLIENT_0D55 0x0d55	/* QQ2005 used by openq before */
 #define QQ_CLIENT_111D 0x111D	/* QQ2007 */
+#define QQ_CLIENT_115B 0x115B	/* QQ2008 He Sui*/
 
 const gchar *qq_get_ver_desc(gint source);
 
@@ -69,7 +70,7 @@ enum {
 	QQ_CMD_GET_SERVER = 0x0091,					/* select login server */
 	QQ_CMD_TOKEN_EX = 0x00BA,						/* get LOGIN token */
 	QQ_CMD_CHECK_PWD = 0x00DD,				/* Password verify */
-	QQ_CMD_GET_CAPTCHA = 0x00AE,				/* the request verification of information */
+	QQ_CMD_BUDDY_AUTH = 0x00AE,				/* the request verification of information */
 	QQ_CMD_BUDDY_ADD_NO_AUTH_EX = 0x00A7,			/* add friend without auth */
 	QQ_CMD_BUDDY_ADD_AUTH_EX = 0x00A8, 				/* add buddy with auth */
 };

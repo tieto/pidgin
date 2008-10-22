@@ -222,7 +222,7 @@ static const gchar *qq_get_recv_im_type_str(gint type)
 
 /* read the common parts of the normal_im,
  * returns the bytes read if succeed, or -1 if there is any error */
-static gint _qq_normal_im_common_read(guint8 *data, gint len, qq_recv_normal_im_common *common)
+static gint normal_im_common_read(guint8 *data, gint len, qq_recv_normal_im_common *common)
 {
 	gint bytes;
 	g_return_val_if_fail(data != NULL && len != 0 && common != NULL, -1);
@@ -243,7 +243,7 @@ static gint _qq_normal_im_common_read(guint8 *data, gint len, qq_recv_normal_im_
 	return bytes;
 }
 
-static void _qq_process_recv_news(guint8 *data, gint data_len, PurpleConnection *gc)
+static void process_recv_news(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
 	gint bytes;
@@ -278,11 +278,11 @@ static void _qq_process_recv_news(guint8 *data, gint data_len, PurpleConnection 
 	url = g_strndup((gchar *)temp, temp_len);
 
 	title_utf8 = qq_to_utf8(title, QQ_CHARSET_DEFAULT);
-	content = g_strdup_printf(_("%s\n\n%s"), brief, url);
+	content = g_strdup_printf(_("Server News:\n%s\n%s\n%s"), title, brief, url);
 	content_utf8 = qq_to_utf8(content, QQ_CHARSET_DEFAULT);
 
 	if (qd->is_show_news) {
-		purple_notify_info(gc, _("QQ Server News"), title_utf8, content_utf8);
+		qq_got_attention(gc, content_utf8);
 	} else {
 		purple_debug_info("QQ", "QQ Server news:\n%s\n%s", title_utf8, content_utf8);
 	}
@@ -294,8 +294,32 @@ static void _qq_process_recv_news(guint8 *data, gint data_len, PurpleConnection 
 	g_free(content_utf8);
 }
 
+void qq_got_attention(PurpleConnection *gc, const gchar *msg)
+{
+	qq_data *qd;
+	gchar *from;
+	PurpleBuddy *b;
+	qq_buddy *qq_b;
+	time_t now = time(NULL);
+
+	qd = (qq_data *) gc->proto_data;
+
+	from = uid_to_purple_name(qd->uid);
+	g_return_if_fail(qd->uid > 0);
+
+	b = purple_find_buddy(gc->account, from);
+	if (b == NULL) {
+		qq_create_buddy(gc, qd->uid, FALSE, TRUE);
+		b = purple_find_buddy(gc->account, from);
+	}
+	qq_b = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+	g_return_if_fail(qq_b != NULL);
+
+	serv_got_im(gc, from, msg, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY, now);
+}
+
 /* process received normal text IM */
-static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_normal_im_common *common, PurpleConnection *gc)
+static void process_recv_normal_im_text(guint8 *data, gint len, qq_recv_normal_im_common *common, PurpleConnection *gc)
 {
 	guint16 purple_msg_type;
 	gchar *name;
@@ -360,7 +384,7 @@ static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_norm
 	}
 	qq_b = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 	if (qq_b != NULL) {
-		qq_b->client_version = common->sender_ver;
+		qq_b->client_tag = common->sender_ver;
 	}
 
 	purple_msg_type = (im_text->msg_type == QQ_IM_AUTO_REPLY) ? PURPLE_MESSAGE_AUTO_RESP : 0;
@@ -385,7 +409,7 @@ static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_norm
 }
 
 /* it is a normal IM, maybe text or video request */
-static void _qq_process_recv_normal_im(guint8 *data, gint len, PurpleConnection *gc)
+static void process_recv_normal_im(guint8 *data, gint len, PurpleConnection *gc)
 {
 	gint bytes = 0;
 	qq_recv_normal_im_common *common;
@@ -395,7 +419,7 @@ static void _qq_process_recv_normal_im(guint8 *data, gint len, PurpleConnection 
 
 	common = g_newa (qq_recv_normal_im_common, 1);
 
-	bytes = _qq_normal_im_common_read(data, len, common);
+	bytes = normal_im_common_read(data, len, common);
 	if (bytes < 0) {
 		purple_debug_error("QQ", "Fail read the common part of normal IM\n");
 		return;
@@ -411,7 +435,7 @@ static void _qq_process_recv_normal_im(guint8 *data, gint len, PurpleConnection 
 				purple_debug_warning("QQ", "Received normal IM text is empty\n");
 				return;
 			}
-			_qq_process_recv_normal_im_text(data + bytes, len - bytes, common, gc);
+			process_recv_normal_im_text(data + bytes, len - bytes, common, gc);
 			break;
 		case QQ_NORMAL_IM_FILE_REJECT_UDP:
 			qq_process_recv_file_reject(data + bytes, len - bytes, common->sender_uid, gc);
@@ -477,7 +501,7 @@ static void _qq_process_recv_normal_im(guint8 *data, gint len, PurpleConnection 
 }
 
 /* process im from system administrator */
-static void _qq_process_recv_sys_im(guint8 *data, gint data_len, PurpleConnection *gc)
+static void process_recv_sys_im(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	gint len;
 	guint8 reply;
@@ -571,7 +595,7 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 	/* 004-007: sender uid */
 	bytes += qq_put32(raw_data + bytes, to_uid);
 	/* 008-009: sender client version */
-	bytes += qq_put16(raw_data + bytes, qd->client_version);
+	bytes += qq_put16(raw_data + bytes, qd->client_tag);
 	/* 010-013: receiver uid */
 	bytes += qq_put32(raw_data + bytes, qd->uid);
 	/* 014-017: sender uid */
@@ -686,14 +710,14 @@ void qq_process_recv_im(guint8 *data, gint data_len, guint16 seq, PurpleConnecti
 
 	switch (im_header->im_type) {
 		case QQ_RECV_IM_NEWS:
-			_qq_process_recv_news(data + bytes, data_len - bytes, gc);
+			process_recv_news(data + bytes, data_len - bytes, gc);
 			break;
 		case QQ_RECV_IM_FROM_BUDDY_2006:
 		case QQ_RECV_IM_FROM_UNKNOWN_2006:
 		case QQ_RECV_IM_TO_UNKNOWN:
 		case QQ_RECV_IM_TO_BUDDY:
 			purple_debug_info("QQ", "MSG from buddy [%d]\n", im_header->sender_uid);
-			_qq_process_recv_normal_im(data + bytes, data_len - bytes, gc);
+			process_recv_normal_im(data + bytes, data_len - bytes, gc);
 			break;
 		case QQ_RECV_IM_UNKNOWN_QUN_IM:
 		case QQ_RECV_IM_TEMP_QUN_IM:
@@ -732,7 +756,7 @@ void qq_process_recv_im(guint8 *data, gint data_len, guint16 seq, PurpleConnecti
 			break;
 		case QQ_RECV_IM_SYS_NOTIFICATION:
 			purple_debug_info("QQ", "Admin notice from [%d]\n", im_header->sender_uid);
-			_qq_process_recv_sys_im(data + bytes, data_len - bytes, gc);
+			process_recv_sys_im(data + bytes, data_len - bytes, gc);
 			break;
 		default:
 			purple_debug_warning("QQ", "MSG from [%d], unknown type %s [0x%02x]\n",
