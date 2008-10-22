@@ -118,8 +118,7 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	if (expected_fields <= 0)
 		return segments;
 
-	for (count = 0; segments[count] != NULL; count++) {;
-	}
+	count = g_strv_length(segments);
 	if (count < expected_fields) {	/* not enough fields */
 		purple_debug_error("QQ", "Less fields %d then %d\n", count, expected_fields);
 		return NULL;
@@ -366,22 +365,3 @@ void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", buf, len, desc);
 }
 
-/* convert face num from packet (0-299) to local face (1-100) */
-gchar *face_to_icon_str(gint face)
-{
-	gchar *icon_num_str;
-	gint icon_num = face / 3 + 1;
-	icon_num_str = g_strdup_printf("%d", icon_num);
-	return icon_num_str;
-}
-
-/* return the location of the buddy icon dir
- * any application using libpurple but not installing the QQ buddy icons
- * under datadir needs to set the pref below, or buddy icons won't work */
-const char *qq_buddy_icon_dir(void)
-{
-	if (purple_prefs_exists("/prpl/qq/buddy_icon_dir"))
-		return purple_prefs_get_string("/prpl/qq/buddy_icon_dir");
-	else
-		return NULL;
-}

@@ -530,6 +530,19 @@ static void action_update_all_rooms(PurplePluginAction *action)
 	qq_update_all_rooms(gc, 0, 0);
 }
 
+static void action_change_icon(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
+
+	purple_request_file(action, _("Select icon..."), NULL,
+			FALSE,
+			NULL, NULL,
+			purple_connection_get_account(gc), NULL, NULL,
+			gc);
+}
+
 static void action_modify_info_base(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
@@ -778,6 +791,9 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 	PurplePluginAction *act;
 
 	m = NULL;
+	act = purple_plugin_action_new(_("Change icon"), action_change_icon);
+	m = g_list_append(m, act);
+
 	act = purple_plugin_action_new(_("Modify Information"), action_modify_info_base);
 	m = g_list_append(m, act);
 
@@ -940,7 +956,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* buddy_free */
 	NULL,							/* convo_closed */
 	NULL,							/* normalize */
-	qq_set_buddy_icon,					/* set_buddy_icon */
+	qq_set_custom_icon,
 	NULL,							/* remove_group */
 	qq_get_chat_buddy_real_name,				/* get_cb_real_name */
 	NULL,							/* set_chat_topic */
@@ -1074,6 +1090,7 @@ static void init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	purple_prefs_add_none("/plugins/prpl/qq");
+	purple_prefs_add_string("/plugins/prpl/qq/icon_dir", "");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_room_when_newin", TRUE);

@@ -45,16 +45,12 @@ guint32 purple_name_to_uid(const gchar *name);
 gchar *uid_to_purple_name(guint32 uid);
 gchar *chat_name_to_purple_name(const gchar *const name);
 
-gchar *face_to_icon_str(gint face);
-
 gchar *try_dump_as_gbk(const guint8 *const data, gint len);
 
 void qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
 void qq_hex_dump(PurpleDebugLevel level, const char *category,
-		const guint8 *pdata, gint bytes,	
+		const guint8 *pdata, gint bytes,
 		const char *format, ...);
 guint8 *hex_str_to_bytes(const gchar *buf, gint *out_len);
-
-const gchar *qq_buddy_icon_dir(void);
 
 #endif

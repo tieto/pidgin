@@ -127,7 +127,7 @@ static const QQ_FIELD_INFO field_infos[] = {
 	{ QQ_FIELD_BASE, 		QQ_FIELD_BOOL, 	"auth", 				N_("Authorize adding"), NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow1",	"Unknow1", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow2",	"Unknow2", NULL, 0 },
-	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "face",				"Face", NULL, 0 },
+	{ QQ_FIELD_BASE, 		QQ_FIELD_STRING, "face",				"Face", NULL, 0 },
 	{ QQ_FIELD_CONTACT, QQ_FIELD_STRING, "mobile",		N_("Cellphone Number"), NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "mobile_type","Cellphone Type", NULL, 0 },
 	{ QQ_FIELD_BASE, 		QQ_FIELD_MULTI, 	"intro", 		N_("Personal Introduction"), NULL, 0 },
@@ -478,32 +478,34 @@ static void request_set_buddy_icon(PurpleConnection *gc, gint face_num)
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_SET_ICON);
 }
 
-static void buddy_local_icon_set(PurpleAccount *account, const gchar *who, const gchar *icon_num, const gchar *iconfile)
+/* return the location of the buddy icon dir
+ * any application using libpurple but not installing the QQ buddy icons
+ * under datadir needs to set the pref below, or buddy icons won't work */
+static const char *get_icon_dir(void)
 {
-	gchar *data;
-	gsize len;
-
-	if (!g_file_get_contents(iconfile, &data, &len, NULL)) {
-		g_return_if_reached();
-	} else {
-		purple_buddy_icons_set_for_user(account, who, data, len, icon_num);
-	}
+	if (purple_prefs_exists("/plugins/prpl/qq/icon_dir"))
+		return purple_prefs_get_string("/plugins/prpl/qq/icon_dir");
+	else
+		return NULL;
 }
 
 /* TODO: custom faces for QQ members and users with level >= 16 */
-void qq_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
+void qq_set_buddy_icon_old(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	gchar *icon;
 	gint icon_num;
 	gint icon_len;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	const gchar *icon_path = purple_account_get_buddy_icon_path(account);
-	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
+	const gchar *buddy_icon_dir = get_icon_dir();
 	gint prefix_len = strlen(QQ_ICON_PREFIX);
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
 	gint dir_len = buddy_icon_dir ? strlen(buddy_icon_dir) : 0;
 	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir ? buddy_icon_dir : "(null)");
 	gboolean icon_global = purple_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
+
+	gchar *icon_file_content;
+	gsize icon_file_size;
 
 	if (!icon_path)
 		icon_path = "";
@@ -539,37 +541,85 @@ void qq_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	g_free(errmsg);
 	/* tell server my icon changed */
 	request_set_buddy_icon(gc, icon_num);
+
 	/* display in blist */
-	buddy_local_icon_set(account, account->username, icon, icon_path);
+	if (!g_file_get_contents(icon_path, &icon_file_content, &icon_file_size, NULL)) {
+		purple_debug_error("QQ", "Failed reading icon file %s\n", icon_path);
+		return;
+	}
+	purple_buddy_icons_set_for_user(account, account->username,
+			icon_file_content, icon_file_size, icon);
 }
 
+void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	const gchar *icon_path = purple_account_get_buddy_icon_path(account);
+	gchar **segments;
+	gint index;
 
-static void buddy_local_icon_upate(PurpleAccount *account, const gchar *name, gint face)
+	g_return_if_fail(icon_path != NULL);
+
+	/* Fixme:
+	 *  icon_path is always null
+	 *  purple_imgstore_get_filename is always new file
+	 *  QQ buddy may set custom icon if level is over 16 */
+	purple_debug_info("QQ", "Change my icon to %s\n", icon_path);
+	segments = g_strsplit_set(icon_path, G_DIR_SEPARATOR_S, 0);
+	for (index = 0; segments[index] != NULL; index++) {
+		purple_debug_info("QQ", "Split to %s\n", segments[index]);
+	}
+
+	g_strfreev(segments);
+}
+
+static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint face)
 {
 	PurpleBuddy *buddy;
-	gchar *icon_num_str = face_to_icon_str(face);
-	const gchar *old_icon_num = NULL;
+	const gchar *icon_name_prev = NULL;
+	gchar *icon_name;
+	const gchar *icon_dir;
+	gchar *icon_path;
+	gchar *icon_file_content;
+	gsize icon_file_size;
 
-	if ((buddy = purple_find_buddy(account, name)))
-		old_icon_num = purple_buddy_icons_get_checksum_for_user(buddy);
+	purple_debug_info("QQ", "Update %s icon to %d\n", who, face);
 
-	if ((old_icon_num == NULL ||
-			strcmp(icon_num_str, old_icon_num)) && (qq_buddy_icon_dir() != NULL))
-	{
-		gchar *icon_path;
-
-		icon_path = g_strconcat(qq_buddy_icon_dir(), G_DIR_SEPARATOR_S,
-				QQ_ICON_PREFIX, icon_num_str,
-				QQ_ICON_SUFFIX, NULL);
-
-		buddy_local_icon_set(account, name, icon_num_str, icon_path);
-		g_free(icon_path);
+	icon_name = g_strdup_printf("%d", face);
+	if ((buddy = purple_find_buddy(account, who))) {
+		icon_name_prev = purple_buddy_icons_get_checksum_for_user(buddy);
+		purple_debug_info("QQ", "Previous icon is %s\n", icon_name_prev);
 	}
-	g_free(icon_num_str);
+	if (icon_name_prev != NULL && !strcmp(icon_name, icon_name_prev)) {
+		purple_debug_info("QQ", "Icon is not changed\n");
+		g_free(icon_name);
+		return;
+	}
+	icon_dir = NULL;
+	if ( purple_prefs_exists("/plugins/prpl/qq/icon_dir") ) {
+		icon_dir = purple_prefs_get_string("/plugins/prpl/qq/icon_dir");
+	}
+	if ( icon_dir == NULL) {
+		purple_debug_info("QQ", "Icon dir is not defined in prefs '/plugins/prpl/qq/icon_dir'\n");
+		g_free(icon_name);
+		return;
+	}
+
+	icon_path = g_strconcat(icon_dir, G_DIR_SEPARATOR_S,
+			QQ_ICON_PREFIX, icon_name, QQ_ICON_SUFFIX, NULL);
+
+	if (!g_file_get_contents(icon_path, &icon_file_content, &icon_file_size, NULL)) {
+			purple_debug_error("QQ", "Failed reading icon file %s\n", icon_path);
+	} else {
+		purple_buddy_icons_set_for_user(account, who,
+				icon_file_content, icon_file_size, icon_name);
+	}
+	g_free(icon_name);
+	g_free(icon_path);
 }
 
 /* after getting info or modify myself, refresh the buddy list accordingly */
-static void qq_update_buddy_info(PurpleConnection *gc, gchar **segments)
+static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 {
 	PurpleBuddy *buddy;
 	qq_data *qd;
@@ -584,6 +634,7 @@ static void qq_update_buddy_info(PurpleConnection *gc, gchar **segments)
 	uid = strtol(segments[QQ_INFO_UID], NULL, 10);
 	who = uid_to_purple_name(uid);
 
+	qq_filter_str(segments[QQ_INFO_NICK]);
 	alias_utf8 = qq_to_utf8(segments[QQ_INFO_NICK], QQ_CHARSET_DEFAULT);
 	if (uid == qd->uid) {	/* it is me */
 		purple_debug_info("QQ", "Got my info\n");
@@ -597,7 +648,7 @@ static void qq_update_buddy_info(PurpleConnection *gc, gchar **segments)
 		buddy = purple_find_buddy(gc->account, who);
 	}
 
-	if (buddy == NULL && buddy->proto_data == NULL) {
+	if (buddy == NULL || buddy->proto_data == NULL) {
 		g_free(who);
 		g_free(alias_utf8);
 		return;
@@ -616,7 +667,9 @@ static void qq_update_buddy_info(PurpleConnection *gc, gchar **segments)
 	bd->last_update = time(NULL);
 
 	purple_blist_server_alias_buddy(buddy, bd->nickname);
-	buddy_local_icon_upate(gc->account, who, bd->face);
+
+	/* convert face num from packet (0-299) to local face (1-100) */
+	update_buddy_icon(gc->account, who, (bd->face / 3 + 1));
 
 	g_free(who);
 	g_free(alias_utf8);
@@ -628,6 +681,7 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 	qq_data *qd;
 	gchar **segments;
 	gint field_count;
+	gchar *icon_name;
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
@@ -646,25 +700,25 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 #endif
 
 	if (action == QQ_BUDDY_INFO_SET_ICON) {
+		/* send new face to server */
 		if (strtol(segments[QQ_INFO_FACE], NULL, 10) != qd->my_icon) {
-			gchar *icon = g_strdup_printf("%d", qd->my_icon);
-
+			icon_name = g_strdup_printf("%d", qd->my_icon);
 			g_free(segments[QQ_INFO_FACE]);
-			segments[QQ_INFO_FACE] = icon;
+			segments[QQ_INFO_FACE] = icon_name;
 
 			request_modify_info(gc, segments);
-			qq_update_buddy_info(gc, segments);
 		}
 		g_strfreev(segments);
 		return;
 	}
 
-	qq_update_buddy_info(gc, segments);
+	update_buddy_info(gc, segments);
 	switch (action) {
 		case QQ_BUDDY_INFO_DISPLAY:
 			info_display_only(gc, segments);
 			break;
 		case QQ_BUDDY_INFO_SET_ICON:
+			/* never reached */
 			break;
 		case QQ_BUDDY_INFO_MODIFY_BASE:
 			info_modify_dialogue(gc, segments, QQ_FIELD_BASE);
