@@ -2529,11 +2529,19 @@ parse_css_color(gchar *in_color)
 {
 	char *tmp = in_color;
 
-	if (*tmp == 'r' && *(++tmp) == 'g' && *(++tmp) == 'b'
-			&& *(++tmp) == '(' && *(++tmp)) {
+	if (*tmp == 'r' && *(++tmp) == 'g' && *(++tmp) == 'b' && *(++tmp)) {
 		int rgbval[] = {0, 0, 0};
 		int count = 0;
 		const char *v_start;
+
+		while (*tmp && g_ascii_isspace(*tmp))
+			tmp++;
+		if (*tmp != '(') {
+			/* We don't support rgba() */
+			purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
+			return in_color;
+		}
+		tmp++;
 
 		while (count < 3) {
 			/* Skip any leading spaces */
@@ -2542,6 +2550,8 @@ parse_css_color(gchar *in_color)
 
 			/* Find the subsequent contiguous digits */
 			v_start = tmp;
+			if (*v_start == '-')
+				tmp++;
 			while (*tmp && g_ascii_isdigit(*tmp))
 				tmp++;
 
