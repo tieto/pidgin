@@ -348,9 +348,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
-		if (t && t->image) {
-			t->image->imhtml = NULL;
-		}
+		
 		g_free (t);
 	}
 }
