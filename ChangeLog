@@ -1,6 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.3 (??/??/????):
+	libpurple:
+	* Fix an error with MSN offline messages by shipping the *new*
+	  "Microsoft Secure Server Authority" and the
+	  "Microsoft Internet Authority" certificates.  People that use
+	  --with-system-ssl-certs and GnuTLS need to include these in the
+	  system certs directory.
 
 version 2.5.2 (10/19/2008):
 	libpurple:
