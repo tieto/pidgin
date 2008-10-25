@@ -42,6 +42,7 @@
 #include "auth.h"
 #include "buddy.h"
 #include "chat.h"
+#include "data.h"
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
@@ -56,6 +57,7 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
+
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
@@ -129,6 +131,9 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			}
 			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
 				my_jb->subscription |= JABBER_SUB_BOTH;
+
+			purple_connection_set_display_name(js->gc, full_jid);
+
 			g_free(full_jid);
 		}
 	} else {
@@ -640,7 +645,8 @@ jabber_login(PurpleAccount *account)
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	gc->flags |= PURPLE_CONNECTION_HTML |
+		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
@@ -1899,7 +1905,7 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-
+	
 	if(!(jid = jabber_id_new(who)))
 		return;
 

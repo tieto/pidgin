@@ -137,17 +137,17 @@ purple_certificate_copy(PurpleCertificate *crt)
 GList *
 purple_certificate_copy_list(GList *crt_list)
 {
-	GList *new, *l;
+	GList *new_l, *l;
 
 	/* First, make a shallow copy of the list */
-	new = g_list_copy(crt_list);
+	new_l = g_list_copy(crt_list);
 
 	/* Now go through and actually duplicate each certificate */
-	for (l = new; l; l = l->next) {
+	for (l = new_l; l; l = l->next) {
 		l->data = purple_certificate_copy(l->data);
 	}
 
-	return new;
+	return new_l;
 }
 
 void
@@ -1485,7 +1485,7 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 
 	if (!tls_peers) {
 		purple_debug_error("certificate/x509/tls_cached",
-				   "Couldn't find local peers cache %s\nPrompting the user\n",
+				   "Couldn't find local peers cache %s\n",
 				   tls_peers_name);
 
 
@@ -1897,10 +1897,13 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 
 	/* Make messages */
 	secondary = g_strdup_printf(_("Common name: %s\n\n"
-				      "Fingerprint (SHA1): %s\n\n"
-				      "Activation date: %s\n"
-				      "Expiration date: %s\n"),
-				    cn, sha_asc, activ_str, expir_str);
+								  "Fingerprint (SHA1): %s\n\n"
+								  "Activation date: %s\n"
+								  "Expiration date: %s\n"),
+								cn ? cn : "(null)",
+								sha_asc ? sha_asc : "(null)",
+								activ_str ? activ_str : "(null)",
+								expir_str ? expir_str : "(null)");
 
 	/* Make a semi-pretty display */
 	purple_notify_info(

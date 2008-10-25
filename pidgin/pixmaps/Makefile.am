@@ -1,11 +1,10 @@
 pidginpixmapdir = $(datadir)/pixmaps/pidgin
 pidginiconsdir = $(datadir)
 
-SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
+SUBDIRS = emotes/default/24 emotes/none
 
 if INSTALL_PIXMAPS
 MAKEFILE_MINGW = \
-		buddy_icons/qq/Makefile.mingw \
 		emotes/default/24/Makefile.mingw \
 		emotes/none/Makefile.mingw
 
@@ -329,16 +328,6 @@ PROTOCOLS_48 = \
 		protocols/48/yahoo.png \
 		protocols/48/zephyr.png
 
-STATUS_11_SCALABLE = \
-		status/11/scalable/available.svg \
-		status/11/scalable/away.svg \
-		status/11/scalable/busy.svg \
-		status/11/scalable/chat.svg \
-		status/11/scalable/extended-away.svg \
-		status/11/scalable/invisible.svg \
-		status/11/scalable/offline.svg \
-		status/11/scalable/person.svg
-
 STATUS_11 = \
 		status/11/available.png \
 		status/11/away.png \
@@ -353,18 +342,6 @@ STATUS_11 = \
 
 STATUS_11_RTL = \
 		status/11/rtl/extended-away.png
-
-STATUS_16_SCALABLE = \
-		status/16/scalable/available.svg \
-		status/16/scalable/away.svg \
-		status/16/scalable/busy.svg \
-		status/16/scalable/chat.svg \
-		status/16/scalable/extended-away.svg \
-		status/16/scalable/log-in.svg \
-		status/16/scalable/log-out.svg \
-		status/16/scalable/message-pending.svg \
-		status/16/scalable/offline.svg \
-		status/16/scalable/person.svg
 
 STATUS_16 = \
 		status/16/available.png \
@@ -383,17 +360,6 @@ STATUS_16_RTL = \
 		status/16/rtl/log-in.png \
 		status/16/rtl/log-out.png
 
-STATUS_22_SCALABLE = \
-		status/22/scalable/available.svg \
-		status/22/scalable/away.svg \
-		status/22/scalable/busy.svg \
-		status/22/scalable/chat.svg \
-		status/22/scalable/extended-away.svg \
-		status/22/scalable/log-in.svg \
-		status/22/scalable/log-out.svg \
-		status/22/scalable/offline.svg \
-		status/22/scalable/person.svg
-
 STATUS_22 = \
 		status/22/available.png \
 		status/22/away.png \
@@ -410,17 +376,6 @@ STATUS_22_RTL = \
 		status/22/rtl/extended-away.png \
 		status/22/rtl/log-in.png \
 		status/22/rtl/log-out.png
-
-STATUS_32_SCALABLE = \
-		status/32/scalable/available.svg \
-		status/32/scalable/away.svg \
-		status/32/scalable/busy.svg \
-		status/32/scalable/chat.svg \
-		status/32/scalable/extended-away.svg \
-		status/32/scalable/log-in.svg \
-		status/32/scalable/log-out.svg \
-		status/32/scalable/offline.svg \
-		status/32/scalable/person.svg
 
 STATUS_32 = \
 		status/32/available.png \
@@ -487,16 +442,6 @@ TOOLBAR_22_SCALABLE = \
 TOOLBAR_22 = \
 		toolbar/22/select-avatar.png
 
-TRAY_16_SCALABLE = \
-		tray/16/scalable/tray-away.svg \
-		tray/16/scalable/tray-busy.svg \
-		tray/16/scalable/tray-connecting.svg \
-		tray/16/scalable/tray-extended-away.svg \
-		tray/16/scalable/tray-invisible.svg \
-		tray/16/scalable/tray-message.svg \
-		tray/16/scalable/tray-offline.svg \
-		tray/16/scalable/tray-online.svg
-
 TRAY_16_ICO = \
 		tray/16/available_4bit.ico \
 		tray/16/away_4bit.ico \
@@ -517,9 +462,6 @@ TRAY_16 = \
 		tray/16/tray-new-im.png \
 		tray/16/tray-offline.png \
 		tray/16/tray-online.png
-
-TRAY_22_SCALABLE = \
-		tray/22/scalable/tray-invisible.svg
 
 TRAY_22 = \
 		tray/22/tray-away.png \
@@ -567,7 +509,6 @@ EXTRA_DIST = \
 		$(DIALOGS_16_SCALABLE)	\
 		$(DIALOGS_64_SCALABLE)	\
 		$(ICONS_16_SCALABLE)	\
-		$(ICONS_22_SCALABLE)	\
 		$(ICONS_24_SCALABLE)	\
 		$(ICONS_32_SCALABLE)	\
 		$(ICONS_48_SCALABLE)	\
@@ -576,16 +517,9 @@ EXTRA_DIST = \
 		$(PROTOCOLS_16_SCALABLE)	\
 		$(PROTOCOLS_22_SCALABLE)	\
 		$(PROTOCOLS_48_SCALABLE)	\
-		$(STATUS_11_SCALABLE)	\
-		$(STATUS_16_SCALABLE)	\
-		$(STATUS_22_SCALABLE)   \
-		$(STATUS_32_SCALABLE)	\
 		$(TOOLBAR_11)		\
 		$(TOOLBAR_16_SCALABLE)	\
-		$(TOOLBAR_22_SCALABLE)	\
-		$(TRAY_16_ICO) \
-		$(TRAY_16_SCALABLE)	\
-		$(TRAY_22_SCALABLE)
+		$(TOOLBAR_22_SCALABLE)
 
 pidginbuttonpixdir = $(datadir)/pixmaps/pidgin/buttons
 pidginbuttonpix_DATA = edit.png pause.png info.png
@@ -614,6 +548,7 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TOOLBAR_16) \
 		$(TOOLBAR_22) \
 		$(TRAY_16) \
+		$(TRAY_16_ICO) \
 		$(TRAY_22) \
 		$(TRAY_32) \
 		$(TRAY_48)

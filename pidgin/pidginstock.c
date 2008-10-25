@@ -93,6 +93,7 @@ static const GtkStockItem stock_items[] =
 	{ PIDGIN_STOCK_MODIFY,              N_("_Modify"),     0, 0, NULL },
 	{ PIDGIN_STOCK_OPEN_MAIL,           N_("_Open Mail"),  0, 0, NULL },
 	{ PIDGIN_STOCK_PAUSE,               N_("_Pause"),      0, 0, NULL },
+	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, NULL }
 };
 
 static struct SizedStockIcon {

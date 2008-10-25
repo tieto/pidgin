@@ -1,3 +1,10 @@
+version 2.5.2 (10/19/2008):
+	* Updated GTK+ to 2.12.12
+	  This will resolve an issue with stuff in QQ appearing as "(NULL)"
+
+version 2.5.1 (08/30/2008):
+	* No changes
+
 version 2.5.0 (08/18/2008):
 	* Don't install the GSSAPI SASL plugin on NT4 to avoid an error popup.
 	* Use the Kerberos for Windows libraries installed on the system (if

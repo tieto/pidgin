@@ -25,25 +25,40 @@
 #include <glib.h>
 #include "qq.h"
 
-#include "conversation.h"
-
 #include "group_conv.h"
 #include "buddy_list.h"
+#include "header_info.h"
+#include "qq_network.h"
+#include "qq_process.h"
 #include "utils.h"
 
 /* show group conversation window */
-void qq_group_conv_show_window(PurpleConnection *gc, qq_group *group)
+PurpleConversation *qq_room_conv_create(PurpleConnection *gc, qq_group *group)
 {
 	PurpleConversation *conv;
 	qq_data *qd;
 
-	g_return_if_fail(group != NULL);
+	g_return_val_if_fail(group != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, 
-			group->group_name_utf8, purple_connection_get_account(gc));
-	if (conv == NULL)	/* show only one window per group */
-		serv_got_joined_chat(gc, qd->channel++, group->group_name_utf8);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
+			group->title_utf8, purple_connection_get_account(gc));
+	if (conv != NULL)	{
+		/* show only one conversation per group */
+		return conv;
+	}
+
+	serv_got_joined_chat(gc, qd->channel++, group->title_utf8);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
+	if (conv != NULL) {
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, group->notice_utf8);
+		if (group->is_got_info)
+			qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
+		else
+			qq_update_room(gc, 0, group->id);
+		return conv;
+	}
+	return NULL;
 }
 
 /* refresh online member in group conversation window */
@@ -59,7 +74,7 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 	names = NULL;
 	flags = NULL;
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-			group->group_name_utf8, purple_connection_get_account(gc));
+			group->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL && group->members != NULL) {
 		list = group->members;
 		while (list != NULL) {

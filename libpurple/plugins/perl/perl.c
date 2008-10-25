@@ -466,6 +466,7 @@ static gboolean
 load_perl_plugin(PurplePlugin *plugin)
 {
 	PurplePerlScript *gps = (PurplePerlScript *)plugin->info->extra_info;
+	gboolean loaded = TRUE;
 	char *atmp[3] = { plugin->path, NULL, NULL };
 
 	if (gps == NULL || gps->load_sub == NULL)
@@ -501,6 +502,7 @@ load_perl_plugin(PurplePlugin *plugin)
 			purple_debug(PURPLE_DEBUG_ERROR, "perl",
 			           "Perl function %s exited abnormally: %s\n",
 			           gps->load_sub, SvPVutf8_nolen(ERRSV));
+			loaded = FALSE;
 		}
 
 		PUTBACK;
@@ -508,7 +510,7 @@ load_perl_plugin(PurplePlugin *plugin)
 		LEAVE;
 	}
 
-	return TRUE;
+	return loaded;
 }
 
 static void

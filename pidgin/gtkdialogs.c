@@ -70,7 +70,7 @@ struct artist {
 /* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
-	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
+	{"John 'rekkanoryo' Bailey",	N_("developer & bug master"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Thomas Butter",				N_("developer"), NULL},
 	/* feel free to not translate this */
@@ -88,18 +88,16 @@ static const struct developer developers[] = {
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	N_("developer"),	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
-	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
 	{"Kevin 'SimGuy' Stange",	N_("developer & webmaster"),	NULL},
 	{"Will 'resiak' Thompson",	N_("developer"),	NULL},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
-	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{NULL, NULL, NULL}
 };
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
-	{"Felipe 'shx' Contreras",		NULL,	NULL},
+	{"Marcus 'malu' Lundblad", NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
@@ -116,14 +114,17 @@ static const struct developer retired_developers[] = {
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
+	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Jim Seymour",			N_("XMPP developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
+	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
 	{NULL, NULL, NULL}
 };
 
 /* Order: Alphabetical by Last Name */
 static const struct developer retired_patch_writers[] = {
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
@@ -170,6 +171,7 @@ static const struct translator current_translators[] = {
 	{N_("Persian"),             "fa", "Roozbeh Pournader ", "roozbeh@farsiweb.info"},
 	{N_("Finnish"),             "fi", "Timo Jyrinki", "timo.jyrinki@iki.fi"},
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
+	{N_("Irish"),               "ga", "Aaron Kearns", "ajkearns6@gmail.com"},
 	{N_("Galician"),            "gl", "Mar Castro", "mariamarcp@gmail.com"},
 	{N_("Galician"),            "gl", "Frco. Javier Rial", "fjrial@cesga.es"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
@@ -191,6 +193,7 @@ static const struct translator current_translators[] = {
 	{N_("Macedonian"),          "mk", "Arangel Angov ", "arangel@linux.net.mk"},
 	{N_("Macedonian"),          "mk", "Ivana Kirkovska", "ivana.kirkovska@gmail.com"},
 	{N_("Macedonian"),          "mk", "Jovan Naumovski", "jovan@lugola.net"},
+	{"Mongolian",               "mn", "gooyo", NULL},
 	{N_("Bokmål Norwegian"),    "nb", "Espen Stefansen", "espenas@gmail.com"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},

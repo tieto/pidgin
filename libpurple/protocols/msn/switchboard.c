@@ -58,7 +58,7 @@ msn_switchboard_new(MsnSession *session)
 	swboard->cmdproc->data = swboard;
 	swboard->cmdproc->cbs_table = cbs_table;
 
-	session->switches = g_list_append(session->switches, swboard);
+	session->switches = g_list_prepend(session->switches, swboard);
 
 	return swboard;
 }
@@ -375,6 +375,19 @@ cal_error_helper(MsnTransaction *trans, int reason)
 	g_strfreev(params);
 }
 
+static gboolean
+msg_resend_cb(gpointer data)
+{
+	MsnSwitchBoard *swboard = data;
+
+	purple_debug_info("msn", "unqueuing unsent message to %s", swboard->im_user);
+
+	msn_switchboard_request(swboard);
+	msn_switchboard_request_add_user(swboard, swboard->im_user);
+	swboard->reconn_timeout_h = 0;
+	return FALSE;
+}
+
 static void
 msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 {
@@ -413,6 +426,34 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		}
 		else if (error == MSN_MSG_ERROR_SB)
 		{
+			MsnSession *session = swboard->session;
+
+			if (!session->destroying && msg->retries &&	swboard->im_user &&
+				(swboard->error == MSN_SB_ERROR_CONNECTION ||
+					swboard->error == MSN_SB_ERROR_UNKNOWN)) {
+				MsnSwitchBoard *new_sw = msn_session_find_swboard(session,
+					swboard->im_user);
+
+				if (new_sw == NULL || new_sw->reconn_timeout_h == 0) {
+					new_sw = msn_switchboard_new(session);
+					new_sw->im_user = g_strdup(swboard->im_user);
+					new_sw->reconn_timeout_h = purple_timeout_add_seconds(3, msg_resend_cb, new_sw);
+					new_sw->flag |= MSN_SB_FLAG_IM;
+				}
+
+				body_str = msn_message_to_string(msg);
+				body_enc = g_markup_escape_text(body_str, -1);
+				g_free(body_str);
+
+				purple_debug_info("msn", "queuing unsent message to %s: %s",
+					swboard->im_user, body_enc);
+				g_free(body_enc);
+				msn_send_im_message(session, msg);
+				msg->retries--;
+
+				return;
+			}
+
 			switch (swboard->error)
 			{
 				case MSN_SB_ERROR_OFFLINE:

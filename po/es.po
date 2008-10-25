@@ -53,7 +53,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:42-0400\n"
+"POT-Creation-Date: 2008-10-16 00:55-0700\n"
 "PO-Revision-Date: 2008-08-10 00:10+0200\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
@@ -118,7 +118,8 @@ msgstr "Notificaciones de correo nuevo"
 msgid "Remember password"
 msgstr "Recordar contraseña"
 
-msgid "There's no protocol plugins installed."
+#, fuzzy
+msgid "There are no protocol plugins installed."
 msgstr "No se han instalado complementos de protocolo."
 
 msgid "(You probably forgot to 'make install'.)"
@@ -1565,6 +1566,12 @@ msgstr "Meebo"
 msgid "No Grouping"
 msgstr "No agrupar"
 
+msgid "Nested Subgroup"
+msgstr ""
+
+msgid "Nested Grouping (experimental)"
+msgstr ""
+
 msgid "Provides alternate buddylist grouping options."
 msgstr "Ofrece opciones adicionales para agrupar las listas de amigos."
 
@@ -1886,8 +1893,8 @@ msgstr ""
 "%s"
 
 #, c-format
-msgid "EOF while reading from resolver process"
-msgstr "Fin de fichero mientras se leía del proceso de resolución"
+msgid "Resolver process exited without answering our request"
+msgstr ""
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2462,6 +2469,9 @@ msgstr "Tamaño mínimo de sala"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Tiempo de inactividad de usuario (en minutos)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Aplicar las reglas de ocultación a los amigos"
 
 #. *< type
 #. *< ui_requirement
@@ -4606,6 +4616,12 @@ msgstr "Conectar con el servidor"
 msgid "File transfer proxies"
 msgstr "Pasarelas de transferencia de archivos"
 
+#. this should probably be part of global smiley theme settings later on,
+#. shared with MSN
+#, fuzzy
+msgid "Show Custom Smileys"
+msgstr "Mostrar emoticonos a medida"
+
 #, c-format
 msgid "%s has left the conversation."
 msgstr "%s ha abandonado la conversación."
@@ -4962,6 +4978,10 @@ msgstr "Pasaporte de menores sin consentimiento paterno"
 msgid "Passport account not yet verified"
 msgstr "Cuenta Passport no verificada aún"
 
+#, fuzzy, c-format
+msgid "Passport account suspended"
+msgstr "Cuenta Passport no verificada aún"
+
 #, c-format
 msgid "Bad ticket"
 msgstr "Ticket erróneo"
@@ -4973,6 +4993,14 @@ msgstr "Código de error desconocido %d"
 #, c-format
 msgid "MSN Error: %s\n"
 msgstr "Error MSN: %s\n"
+
+#, fuzzy
+msgid "Other Contacts"
+msgstr "Contacto preferido"
+
+#, fuzzy
+msgid "Non-IM Contacts"
+msgstr "Eliminar contacto"
 
 msgid "Nudge"
 msgstr "Codazo"
@@ -5044,6 +5072,9 @@ msgstr "Enviar un mensaje a un móvil."
 
 msgid "Page"
 msgstr "Buscapersonas"
+
+msgid "Has you"
+msgstr "Le tiene"
 
 msgid "Home Phone Number"
 msgstr "Número de teléfono de casa"
@@ -5329,6 +5360,10 @@ msgstr "Error desconocido (%d)"
 msgid "Unable to add user"
 msgstr "No puede añadir al usuario"
 
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "Éstos son los resultados de su búsqueda"
+
 #, c-format
 msgid "Unable to add user on %s (%s)"
 msgstr "No se pudo añadir al usuario a %s (%s)"
@@ -5522,6 +5557,14 @@ msgstr "El usuario %s lo ha añadido a su lista de amigos."
 msgid "%s has removed you from his or her buddy list."
 msgstr "El usuario %s lo ha quitado de su lista de amigos."
 
+#, fuzzy
+msgid "Delete Buddy from Address Book?"
+msgstr "Añadir a la agenda"
+
+#, fuzzy
+msgid "Do you want to delete this buddy from your address book as well?"
+msgstr "¿Desea añadir este amigo a su lista de amigos?"
+
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -5534,9 +5577,6 @@ msgstr "El nombre de usuario especificado no es válido."
 
 msgid "This Hotmail account may not be active."
 msgstr "Puede que esta cuenta de Hotmail no esté activa."
-
-msgid "Has you"
-msgstr "Le tiene"
 
 #. *< type
 #. *< ui_requirement
@@ -6222,6 +6262,10 @@ msgstr "Se recibieron datos inválidos al conectarse al servidor."
 msgid "AIM Protocol Plugin"
 msgstr "Complemento de protocolo AIM"
 
+#, fuzzy
+msgid "ICQ UIN..."
+msgstr "ICQ UIN"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -6566,7 +6610,6 @@ msgstr "Quizá sea desconectado en breve.  Compruebe %s para novedades."
 msgid "Unable to get a valid login hash."
 msgstr "No se pudo un «hash» de conexión válido."
 
-#. allow multple logins?
 msgid "Password sent"
 msgstr "Contraseña enviada"
 
@@ -7255,14 +7298,27 @@ msgstr "Cerdo"
 msgid "Other"
 msgstr "Otro"
 
-msgid "Modify my information"
+#, fuzzy
+msgid "Modify information"
 msgstr "Modificar mi información"
 
-msgid "Update my information"
+#, fuzzy
+msgid "Update information"
 msgstr "Actualizar mi información"
 
-msgid "Your information has been updated"
-msgstr "Se ha modificado su información."
+#. TODO: We don't really need to notify the user about this, do we?
+#. TODO: Does the user really need to be notified about this?
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Amigo"
+
+#, fuzzy
+msgid "Successed:"
+msgstr "Velocidad:"
+
+#, fuzzy
+msgid "Change buddy information."
+msgstr "Introduzca la información del amigo."
 
 #, c-format
 msgid ""
@@ -7278,29 +7334,31 @@ msgstr "Cara QQ inválida"
 msgid "You rejected %d's request"
 msgstr "Ha rechazado la solicitud de %d"
 
-msgid "Input your reason:"
-msgstr "Introduzca sus motivos:"
-
 msgid "Reject request"
 msgstr "Rechazar solicitud"
 
 #. title
-msgid "Sorry, you are not my type..."
+#, fuzzy
+msgid "Sorry, you are not my style..."
 msgstr "Lo siento, no eres mi tipo..."
 
 msgid "Add buddy with auth request failed"
 msgstr "Fallo al añadir un amigo con solicitud de autenticación"
 
-#. TODO: We don't really need to notify the user about this, do we?
-msgid "You have successfully removed a buddy"
-msgstr "Ha eliminado un amigo con éxito"
+#, fuzzy
+msgid "Failed:"
+msgstr "Falló"
 
-#. TODO: Does the user really need to be notified about this?
-msgid "You have successfully removed yourself from your friend's buddy list"
-msgstr "Se ha borrado con éxito de la lista de amigos de su amigo"
+#, fuzzy
+msgid "Remove buddy"
+msgstr "Eliminar amigo"
 
-#, c-format
-msgid "User %d needs authentication"
+#, fuzzy
+msgid "Remove from other's buddy list"
+msgstr "Eliminar al usuario de la lista de amigos"
+
+#, fuzzy, c-format
+msgid "%d needs authentication"
 msgstr "El usuario %d necesita autenticación"
 
 msgid "Input request here"
@@ -7316,15 +7374,17 @@ msgstr "¿Quieres ser mi amigo?"
 msgid "Send"
 msgstr "Enviar"
 
-#, c-format
-msgid "You have added %d to buddy list"
-msgstr "Ha añadido %d a su lista de amigos"
+#, fuzzy, c-format
+msgid "Add into %d's buddy list"
+msgstr "No se pudo cargar la lista de amigos"
 
-msgid "QQid Error"
-msgstr "Error QQid"
+#, fuzzy
+msgid "QQ Number Error"
+msgstr "Número QQ"
 
-msgid "Invalid QQid"
-msgstr "QQid inválido"
+#, fuzzy
+msgid "Invalid QQ Number"
+msgstr "Cara QQ inválida"
 
 msgid "ID: "
 msgstr "ID: "
@@ -7344,19 +7404,21 @@ msgstr "Autorizar"
 msgid "QQ Qun"
 msgstr "QQ Qun"
 
-msgid "Please enter external group ID"
-msgstr "Indique su ID de grupo externo"
+#, fuzzy
+msgid "Please enter Qun number"
+msgstr "Introduzca el nuevo nombre para %s"
 
-msgid "You can only search for permanent QQ groups\n"
+#, fuzzy
+msgid "You can only search for permanent Qun\n"
 msgstr "Sólo puede buscar grupos QQ permanentes\n"
 
-#, c-format
-msgid "User %d requested to join group %d"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
 msgstr "El usuario %d solicitó entrar en el grupo %d"
 
 #, c-format
-msgid "Reason: %s"
-msgstr "Razón: %s"
+msgid "Message: %s"
+msgstr "Mensaje: %s"
 
 msgid "QQ Qun Operation"
 msgstr "Opciones QQ Qun"
@@ -7364,26 +7426,26 @@ msgstr "Opciones QQ Qun"
 msgid "Approve"
 msgstr "Aprobar"
 
-#, c-format
-msgid "Your request to join group %d has been rejected by admin %d"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "No se pudo unir al amigo al chat"
+
+#, fuzzy, c-format
+msgid "Successed to join Qun %d, operated by admin %d"
 msgstr ""
 "Su solicitud de unirse al grupo %d ha sido rechazada por el administrador %d"
 
-#, c-format
-msgid "Your request to join group %d has been approved by admin %d"
-msgstr ""
-"Su solicitud de unirse al grupo %d ha sido aprobada por el administrador %d"
-
-#, c-format
-msgid "You [%d] have left group \"%d\""
+#, fuzzy, c-format
+msgid "[%d] removed from Qun \"%d\""
 msgstr "Vd. [%d] ha salido del grupo «%d»"
 
-#, c-format
-msgid "You [%d] have been added to group \"%d\""
-msgstr "Vd. [%d] ha sido añadido al grupo «%d»"
+#, fuzzy
+msgid "Notice:"
+msgstr "Nota"
 
-msgid "This group has been added to your buddy list"
-msgstr "Se ha añadido este grupo a su lista de amigos."
+#, fuzzy, c-format
+msgid "[%d] added to Qun \"%d\""
+msgstr "Vd. [%d] ha sido añadido al grupo «%d»"
 
 msgid "I am not a member"
 msgstr "No soy miembro"
@@ -7391,8 +7453,9 @@ msgstr "No soy miembro"
 msgid "I am a member"
 msgstr "Soy miembro"
 
-msgid "I am applying to join"
-msgstr "He solicitado unirme"
+#, fuzzy
+msgid "I am requesting"
+msgstr "Usted está utilizando "
 
 msgid "I am the admin"
 msgstr "Soy el administrador"
@@ -7400,17 +7463,24 @@ msgstr "Soy el administrador"
 msgid "Unknown status"
 msgstr "Estado desconocido"
 
-msgid "This group does not allow others to join"
+#, fuzzy
+msgid "The Qun does not allow others to join"
 msgstr "Este grupo no permite que otros se unan"
 
-msgid "You have successfully left the group"
-msgstr "Ha salido con éxito del grupo"
+#, fuzzy
+msgid "Remove from Qun"
+msgstr "Eliminar grupo"
 
-msgid "QQ Group Auth"
-msgstr "Autenticación grupo QQ"
+#, fuzzy
+msgid "Join to Qun"
+msgstr "Unirse a un chat"
 
-msgid "Your authorization request has been accepted by the QQ server"
-msgstr "El servidor QQ ha aceptado su operación de autorización"
+#, c-format
+msgid "Qun %d denied to join"
+msgstr ""
+
+msgid "Join Qun, Unknow Reply"
+msgstr ""
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr ""
@@ -7430,23 +7500,34 @@ msgstr ""
 msgid "Do you want to approve the request?"
 msgstr "¿Desea aprobar esta solicitud?"
 
-msgid "Enter your reason:"
-msgstr "Introduzca sus motivos:"
+#, fuzzy
+msgid "Change Qun member"
+msgstr "Número de teléfono"
 
-msgid "You have successfully modified Qun member"
-msgstr "Ha modificado el miembro Qun con éxito"
-
-msgid "You have successfully modified Qun information"
-msgstr "Ha modificado la información Qun con éxito"
+#, fuzzy
+msgid "Change Qun information"
+msgstr "Información de canal"
 
 msgid "You have successfully created a Qun"
 msgstr "Ha creado un Qun con éxito"
 
-msgid "Would you like to set up the Qun details now?"
+#, fuzzy
+msgid "Would you like to set up the detail information now?"
 msgstr "¿Desea establecer los detalles de Qun ahora?"
 
 msgid "Setup"
 msgstr "Configurar"
+
+#, fuzzy, c-format
+msgid ""
+"%s\n"
+"\n"
+"%s"
+msgstr "%s (%s)"
+
+#, fuzzy
+msgid "QQ Server News"
+msgstr "Servidor QQ"
 
 msgid "System Message"
 msgstr "Mensaje del sistema"
@@ -7479,8 +7560,9 @@ msgstr " BindMóvil"
 msgid " Video"
 msgstr " Vídeo"
 
-msgid " Space"
-msgstr " Space"
+#, fuzzy
+msgid " Zone"
+msgstr "Ninguno"
 
 msgid "Flag"
 msgstr "Marca"
@@ -7499,20 +7581,36 @@ msgstr "<b>Conectados actualmente</b>: %d<br>\n"
 msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>Última actualización</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Server</b>: %s: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Servidor</b>: %s: %d<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Modo de conexión</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Real hostname</b>: %s: %d<br>\n"
-msgstr "<b>Nombre real</b>: %s: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>My Internet Address</b>: %s<br>\n"
+msgstr "<b>Dirección IP:</b> %s<br>"
 
-#, c-format
-msgid "<b>My Public IP</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Sent</b>: %lu<br>\n"
+msgstr "<b>Servidor</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Resend</b>: %lu<br>\n"
+msgstr "<b>Usuario:</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Lost</b>: %lu<br>\n"
+msgstr "<b>%s:</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Received</b>: %lu<br>\n"
+msgstr "<b>Servidor</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<B>Mi IP pública</b>: %s<br>\n"
 
 #, c-format
@@ -7536,10 +7634,12 @@ msgstr "Fijar mi información"
 msgid "Change Password"
 msgstr "Cambiar contraseña"
 
-msgid "Show Login Information"
-msgstr "Mostrar la información de conexión"
+#, fuzzy
+msgid "Account Information"
+msgstr "Información de conexión"
 
-msgid "Leave this QQ Qun"
+#, fuzzy
+msgid "Leave the QQ Qun"
 msgstr "Salir de este Qun QQ"
 
 msgid "Block this buddy"
@@ -7558,11 +7658,21 @@ msgstr "Bloquear a este amigo"
 msgid "QQ Protocol\tPlugin"
 msgstr "Complemento de protocolo QQ"
 
-msgid "Connect using TCP"
+#, fuzzy
+msgid "Auto"
+msgstr "Autor"
+
+#, fuzzy
+msgid "Connect by TCP"
 msgstr "Conectando utilizando TCP"
 
-msgid "resend interval(s)"
-msgstr "intervalo/s de reenvío"
+#, fuzzy
+msgid "Show server notice"
+msgstr "Mostrar menos opciones"
+
+#, fuzzy
+msgid "Show server news"
+msgstr "Mostrar menos opciones"
 
 msgid "Keep alive interval(s)"
 msgstr "Intervalo/s de comprobación de conexión"
@@ -7571,14 +7681,38 @@ msgid "Update interval(s)"
 msgstr "Intervalo/s de actualización"
 
 #, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr "Código de respuesta token inválido, 0x%02X"
+
+#, c-format
 msgid "Invalid token len, %d"
 msgstr "Longitud de token no válida, %d"
+
+msgid "Unable login for not support Redirect_EX now"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error password: %s"
+msgstr "Error %d: %s"
+
+#, c-format
+msgid "Need active: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Unable login for unknow reply code 0x%02X"
+msgstr "Código de respuesta token inválido, 0x%02X"
 
 msgid "Keep alive error"
 msgstr "Error de comprobación de conexión"
 
-msgid "Failed to connect server"
+#, fuzzy
+msgid "Failed to connect all servers"
 msgstr "Fallo al conectar con el servidor."
+
+#. we didn't successfully connect. tdt->toc_fd is valid here
+msgid "Unable to connect."
+msgstr "No se pudo conectar."
 
 msgid "Socket error"
 msgstr "Error de socket"
@@ -7600,51 +7734,53 @@ msgstr "Error de escritura"
 msgid "Connection lost"
 msgstr "Conexión perdida"
 
+#. Update the login progress status display
+#, fuzzy, c-format
+msgid "Request token"
+msgstr "Solicitud denegada"
+
 msgid "Couldn't resolve host"
 msgstr "No se pudo resolver el nombre"
 
-msgid "hostname is NULL or port is 0"
-msgstr "el nombre de equipo es NULL o el puerto es 0"
+#, fuzzy
+msgid "Invalid server or port"
+msgstr "Nombre o contraseña de usuario no válido"
 
 #, c-format
 msgid "Connecting server %s, retries %d"
 msgstr "Conectando al servidor %s, %d reintentos"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "No se pudo conectar."
-
-msgid "Could not resolve hostname"
-msgstr "No se pudo resolver el nombre de sistema"
-
-msgid "Unable to login. Check debug log."
-msgstr "No pudo conectarse, compruebe el registro de depuración."
-
-msgid "Unable to login"
-msgstr "No pudo conectarse"
-
-#, c-format
-msgid ""
-"Reply %s(0x%02X )\n"
-"Sent %s(0x%02X )\n"
-"Room id %d, reply [0x%02X]: \n"
-"%s"
-msgstr ""
-
 #, fuzzy
-msgid "Failed room reply"
-msgstr "Fallo en la conexión, no ha habido respuesta"
+msgid "QQ Error"
+msgstr "Error QQid"
+
+msgid "Unknow SERVER CMD"
+msgstr ""
 
 #, fuzzy, c-format
-msgid "You are not a member of group \"%s\"\n"
-msgstr "Vd. [%d] ha sido añadido al grupo «%d»"
+msgid ""
+"Error reply of %s(0x%02X)\n"
+"Room %d, reply 0x%02X"
+msgstr ""
+"Respuesta %s(0x%02X )\n"
+"Enviado %s(0x%02X )\n"
+"ID de sala %d, respuesta [0x%02X]: \n"
+"%s"
+
+#, fuzzy
+msgid "QQ Qun Command"
+msgstr "Comando"
+
+#, fuzzy, c-format
+msgid "You are not a member of QQ Qun \"%s\"\n"
+msgstr "Vd. no es un miembro del grupo «%s»\n"
 
 msgid "Can not decrypt login reply"
-msgstr ""
+msgstr "No se pudo descifrar la respuesta a la autenticación"
 
-#, c-format
-msgid "Invalid token reply code, 0x%02X"
-msgstr "Código de respuesta token inválido, 0x%02X"
+#, fuzzy
+msgid "Unknow reply CMD"
+msgstr "Razón desconocida"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7657,7 +7793,12 @@ msgstr "Archivo enviado"
 msgid "%d canceled the transfer of %s"
 msgstr "%d canceló la transferencia de %s"
 
-msgid "Do you want to add this buddy?"
+#, fuzzy
+msgid "Do you approve the requestion?"
+msgstr "¿Desea aprobar esta solicitud?"
+
+#, fuzzy
+msgid "Do you add the buddy?"
 msgstr "¿Desea añadir este amigo?"
 
 #. only need to get value
@@ -7668,38 +7809,46 @@ msgstr "Ha sido añadido por %s"
 msgid "Would you like to add him?"
 msgstr "¿Desea añadirle?"
 
-#, c-format
-msgid "%s has added you [%s] to his or her buddy list"
+#, fuzzy, c-format
+msgid "%s added you [%s] to buddy list"
 msgstr "El usuario %s lo ha añadido [%s] a su lista de amigos."
 
-#, c-format
-msgid "User %s rejected your request"
-msgstr "El usuario %s rechazó su solicitud"
+#, fuzzy
+msgid "QQ Budy"
+msgstr "Amigo"
 
 #, c-format
-msgid "User %s approved your request"
-msgstr "El usuario %s ha aprobado su solicitud"
+msgid "Requestion rejected by %s"
+msgstr ""
+
+#, c-format
+msgid "Requestion approved by %s"
+msgstr ""
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
 msgid "%s wants to add you [%s] as a friend"
 msgstr "%s quiere añadirle [%s] como amigo"
 
-#, c-format
-msgid "Message: %s"
-msgstr "Mensaje: %s"
-
-#, c-format
-msgid "%s is not in your buddy list"
+#, fuzzy, c-format
+msgid "%s is not in buddy list"
 msgstr "%s no está en su lista de amigos"
 
-#, c-format
-msgid "Notice from: %s"
-msgstr "Nota de: %s"
+#, fuzzy
+msgid "Would you add?"
+msgstr "¿Desea añadirle?"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "De"
 
 #, c-format
 msgid "%s"
 msgstr "%s"
+
+#, fuzzy
+msgid "QQ Server Notice"
+msgstr "Servidor QQ"
 
 msgid "Connection closed (writing)"
 msgstr "Conexión cerrada (escribiendo)"
@@ -9175,6 +9324,9 @@ msgstr "Respuesta desconocida del servidor."
 msgid "Could not create listen socket"
 msgstr "No se pudo crear el socket de escucha"
 
+msgid "Could not resolve hostname"
+msgstr "No se pudo resolver el nombre de sistema"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 "Los nombres de usuario SIP no pueden tener espacios en blanco ni el símbolo @"
@@ -9571,6 +9723,10 @@ msgstr "list:  Mostrar los canales de la red Yahoo"
 
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: Solicitar al usuario el comienzo de una sesión Doodle"
+
+#, fuzzy
+msgid "Yahoo ID..."
+msgstr "ID Yahoo!"
 
 #. *< type
 #. *< ui_requirement
@@ -10120,6 +10276,10 @@ msgstr "No se pudo abrir %s: se produjeron demasiadas redirecciones"
 msgid "Unable to connect to %s"
 msgstr "No se pudo conectar a %s"
 
+#, fuzzy, c-format
+msgid "Error reading from %s: response too long (%d bytes limit)"
+msgstr "Error al leer de %s: %s"
+
 #, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
@@ -10302,14 +10462,17 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>¡Bienvenido a %s!</span>\n"
 "\n"
 "No tiene configurada ninguna cuenta de MI. Para conectarse con %s debe "
 "pulsar el botón <b>Añadir</b> que tiene más abajo y configurar su primera "
 "cuenta. Si quiere que %s se conecte a múltiples cuentas de MI, deberá pulsar "
-"<b>Añadir</b> otra vez para configurarlas todas."
+"<b>Añadir</b> otra vez para configurarlas todas.\n"
+"\n"
+"Puede volver a esta venana para añadir, editar o eliminar cuentas desde la "
+"ventana de lista de amigos seleccionando <b>Cuentas->Gestionar Cuentas</b>"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10766,6 +10929,10 @@ msgstr "/Amigos/Ordenar amigos"
 msgid "SSL Servers"
 msgstr "Servidores SSL"
 
+#, fuzzy
+msgid "Network disconnected"
+msgstr "Se ha desconectado el remoto"
+
 msgid "Unknown command."
 msgstr "Orden desconocida."
 
@@ -11217,6 +11384,10 @@ msgstr "Finlandés"
 msgid "French"
 msgstr "Francés"
 
+#, fuzzy
+msgid "Irish"
+msgstr "Kurdo"
+
 msgid "Galician"
 msgstr "Gallego"
 
@@ -11638,6 +11809,14 @@ msgstr "Color de hiperenlace"
 
 msgid "Color to draw hyperlinks."
 msgstr "Color para dibujar hiperenlaces."
+
+#, fuzzy
+msgid "Hyperlink visited color"
+msgstr "Color de hiperenlace"
+
+#, fuzzy
+msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgstr "Color para dibujar hiperenlaces cuando el ratón esté encima."
 
 msgid "Hyperlink prelight color"
 msgstr "Color de hiperenlace pre-iluminado"
@@ -12521,13 +12700,19 @@ msgstr ""
 "_Comando para sonido:\n"
 "(%s para nombre de archivo)"
 
+#, fuzzy
+msgid "M_ute sounds"
+msgstr "Sin s_onidos"
+
 msgid "Sounds when conversation has _focus"
 msgstr "Suena cuando la conversación obtiene el _foco"
 
-msgid "Enable sounds:"
+#, fuzzy
+msgid "_Enable sounds:"
 msgstr "Habilitar sonidos:"
 
-msgid "Volume:"
+#, fuzzy
+msgid "V_olume:"
 msgstr "Volumen:"
 
 msgid "Play"
@@ -12715,6 +12900,12 @@ msgstr "Estado de %s"
 msgid "Custom Smiley"
 msgstr "Emoticono a medida"
 
+msgid "More Data needed"
+msgstr "Son necesarios más datos"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Indique un atajo para asociarlo al emoticono."
+
 msgid "Duplicate Shortcut"
 msgstr "Atajo duplicado"
 
@@ -12724,12 +12915,6 @@ msgid ""
 msgstr ""
 "Ya existe un emoticono a medida para el atajo de teclado seleccionado. "
 "Especifique un atajo distinto."
-
-msgid "More Data needed"
-msgstr "Son necesarios más datos"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Indique un atajo para asociarlo al emoticono."
 
 msgid "Please select an image for the smiley."
 msgstr "Escoja una imagen para el emoticono."
@@ -12753,6 +12938,14 @@ msgstr "Emoticono"
 
 msgid "Custom Smiley Manager"
 msgstr "Gestor de emoticonos a medida"
+
+#, fuzzy
+msgid "Click to change your buddyicon for this account."
+msgstr "Utilizar este _icono de amigo para esta cuenta:"
+
+#, fuzzy
+msgid "Click to change your buddyicon for all accounts."
+msgstr "Utilizar este _icono de amigo para esta cuenta:"
 
 msgid "Waiting for network connection"
 msgstr "Esperando la conexión a la red"
@@ -12895,6 +13088,9 @@ msgstr "_Modificar"
 
 msgid "_Open Mail"
 msgstr "_Abrir correo"
+
+msgid "_Edit"
+msgstr "_Editar"
 
 msgid "Pidgin Tooltip"
 msgstr "Consejos de Pidgin"
@@ -13474,6 +13670,10 @@ msgstr "Color secundario del puntero"
 msgid "Hyperlink Color"
 msgstr "Color de hiperenlace"
 
+#, fuzzy
+msgid "Visited Hyperlink Color"
+msgstr "Color de hiperenlace"
+
 msgid "Highlighted Message Name Color"
 msgstr "Color para mensajes resaltados por nombre"
 
@@ -13897,6 +14097,95 @@ msgstr "Enviar y recibir entradas XMPP en crudo."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
+
+#~ msgid "EOF while reading from resolver process"
+#~ msgstr "Fin de fichero mientras se leía del proceso de resolución"
+
+#~ msgid "Your information has been updated"
+#~ msgstr "Se ha modificado su información."
+
+#~ msgid "Input your reason:"
+#~ msgstr "Introduzca sus motivos:"
+
+#~ msgid "You have successfully removed a buddy"
+#~ msgstr "Ha eliminado un amigo con éxito"
+
+#~ msgid "You have successfully removed yourself from your friend's buddy list"
+#~ msgstr "Se ha borrado con éxito de la lista de amigos de su amigo"
+
+#~ msgid "You have added %d to buddy list"
+#~ msgstr "Ha añadido %d a su lista de amigos"
+
+#~ msgid "Invalid QQid"
+#~ msgstr "QQid inválido"
+
+#~ msgid "Please enter external group ID"
+#~ msgstr "Indique su ID de grupo externo"
+
+#~ msgid "Reason: %s"
+#~ msgstr "Razón: %s"
+
+#~ msgid "Your request to join group %d has been approved by admin %d"
+#~ msgstr ""
+#~ "Su solicitud de unirse al grupo %d ha sido aprobada por el administrador %"
+#~ "d"
+
+#~ msgid "This group has been added to your buddy list"
+#~ msgstr "Se ha añadido este grupo a su lista de amigos."
+
+#~ msgid "I am applying to join"
+#~ msgstr "He solicitado unirme"
+
+#~ msgid "You have successfully left the group"
+#~ msgstr "Ha salido con éxito del grupo"
+
+#~ msgid "QQ Group Auth"
+#~ msgstr "Autenticación grupo QQ"
+
+#~ msgid "Your authorization request has been accepted by the QQ server"
+#~ msgstr "El servidor QQ ha aceptado su operación de autorización"
+
+#~ msgid "Enter your reason:"
+#~ msgstr "Introduzca sus motivos:"
+
+#~ msgid "You have successfully modified Qun member"
+#~ msgstr "Ha modificado el miembro Qun con éxito"
+
+#~ msgid "You have successfully modified Qun information"
+#~ msgstr "Ha modificado la información Qun con éxito"
+
+#~ msgid " Space"
+#~ msgstr " Space"
+
+#~ msgid "<b>Real hostname</b>: %s: %d<br>\n"
+#~ msgstr "<b>Nombre real</b>: %s: %d<br>\n"
+
+#~ msgid "Show Login Information"
+#~ msgstr "Mostrar la información de conexión"
+
+#~ msgid "resend interval(s)"
+#~ msgstr "intervalo/s de reenvío"
+
+#~ msgid "hostname is NULL or port is 0"
+#~ msgstr "el nombre de equipo es NULL o el puerto es 0"
+
+#~ msgid "Unable to login. Check debug log."
+#~ msgstr "No pudo conectarse, compruebe el registro de depuración."
+
+#~ msgid "Unable to login"
+#~ msgstr "No pudo conectarse"
+
+#~ msgid "Failed room reply"
+#~ msgstr "Fallo en la respuesta a la sala"
+
+#~ msgid "User %s rejected your request"
+#~ msgstr "El usuario %s rechazó su solicitud"
+
+#~ msgid "User %s approved your request"
+#~ msgstr "El usuario %s ha aprobado su solicitud"
+
+#~ msgid "Notice from: %s"
+#~ msgstr "Nota de: %s"
 
 #~ msgid "Code [0x%02X]: %s"
 #~ msgstr "Código [0x%02X]: %s"
@@ -14437,9 +14726,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgid "GtkTreeView Indent Expanders"
 #~ msgstr "Sangrado de los expansores GtkTreeView"
 
-#~ msgid "You are using "
-#~ msgstr "Usted está utilizando "
-
 # JFS: Is this complete? REVIEW
 #~ msgid "_Start "
 #~ msgstr "_Inicial "
@@ -14637,9 +14923,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgid "<b>%s:</b> %s"
 #~ msgstr "<b>%s:</b> %s"
 
-#~ msgid "<b>%s:</b> %s<br>"
-#~ msgstr "<b>%s:</b> %s<br>"
-
 #~ msgid "<b>Idle for:</b> %s<br>"
 #~ msgstr "<b>Inactivo desde:</b> %s<br>"
 
@@ -14687,9 +14970,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 
 #~ msgid "Invalid password"
 #~ msgstr "Contraseña inválida"
-
-#~ msgid "Invalid username or password"
-#~ msgstr "Nombre o contraseña de usuario no válido"
 
 #~ msgid ""
 #~ "The user %s requires authorization before being added to a buddy list.  "
@@ -14780,12 +15060,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgid "Wrong Password"
 #~ msgstr "Contraseña errónea"
 
-#~ msgid "<b>IP Address:</b> %s<br>"
-#~ msgstr "<b>Dirección IP:</b> %s<br>"
-
-#~ msgid "<b>User:</b> %s<br>"
-#~ msgstr "<b>Usuario:</b> %s<br>"
-
 #~ msgid "Blink tray icon for unread..."
 #~ msgstr ""
 #~ "Hacer parpadear el icono en el área de notificación del sistema para los "
@@ -14811,9 +15085,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 
 #~ msgid "gaim_proxy_connect() failed"
 #~ msgstr "Falló gaim_proxy_connect()"
-
-#~ msgid "QQ Server"
-#~ msgstr "Servidor QQ"
 
 #~ msgid "QQ Port"
 #~ msgstr "Puerto QQ"
@@ -15685,9 +15956,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ "\n"
 #~ "Establecer como activas todas las cuentas.\n"
 
-#~ msgid "Show fewer options"
-#~ msgstr "Mostrar menos opciones"
-
 #~ msgid "/Tools/Pl_ugin Actions"
 #~ msgstr "/Herramientas/Acciones del com_plemento"
 
@@ -15766,9 +16034,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 
 #~ msgid "Send a file to the user"
 #~ msgstr "Enviar un archivo al usuario"
-
-#~ msgid "Remove the user from your buddy list"
-#~ msgstr "Eliminar al usuario de la lista de amigos"
 
 #~ msgid "Invite a user"
 #~ msgstr "Invitar al usuario"
@@ -16228,9 +16493,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 
 #~ msgid "AIM"
 #~ msgstr "AIM"
-
-#~ msgid "ICQ UIN"
-#~ msgstr "ICQ UIN"
 
 #~ msgid "Yahoo"
 #~ msgstr "Yahoo"
@@ -16966,9 +17228,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 
 #~ msgid "View Error Msg"
 #~ msgstr "Ver mensaje de error"
-
-#~ msgid "Error %d: %s"
-#~ msgstr "Error %d: %s"
 
 #~ msgid "Unknown registration error"
 #~ msgstr "Error desconocido al registrar"

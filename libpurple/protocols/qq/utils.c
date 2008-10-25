@@ -47,8 +47,8 @@
    struct sockaddr_in sin;
    socklen_t len = sizeof(sin);
    getsockname(fd, (struct sockaddr *)&sin, &len);
-   purple_debug(PURPLE_DEBUG_INFO, desc, "%s:%d\n",
-   inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
+   purple_debug_info(desc, "%s:%d\n",
+			inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
    }
    */
 
@@ -121,16 +121,16 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	for (i = 0; segments[i] != NULL; i++) {;
 	}
 	if (i < expected_fields) {	/* not enough fields */
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Invalid data, expect %d fields, found only %d, discard\n", expected_fields, i);
+		purple_debug_error("QQ", "Invalid data, expect %d fields, found only %d, discard\n",
+				expected_fields, i);
 		g_strfreev(segments);
 		return NULL;
 	} else if (i > expected_fields) {	/* more fields, OK */
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-			   "Dangerous data, expect %d fields, found %d, return all\n", expected_fields, i);
+		purple_debug_warning("QQ", "Dangerous data, expect %d fields, found %d, return all\n",
+				expected_fields, i);
 		/* free up those not used */
 		for (j = expected_fields; j < i; j++) {
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "field[%d] is %s\n", j, segments[j]);
+			purple_debug_warning("QQ", "field[%d] is %s\n", j, segments[j]);
 			g_free(segments[j]);
 		}
 
@@ -218,7 +218,7 @@ gchar* try_dump_as_gbk(const guint8 *const data, gint len)
 	msg_utf8 = i < len ? qq_to_utf8((gchar *) &incoming[i], QQ_CHARSET_DEFAULT) : NULL;
 
 	if (msg_utf8 != NULL) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Try extract GB msg: %s\n", msg_utf8);
+		purple_debug_warning("QQ", "Try extract GB msg: %s\n", msg_utf8);
 	}
 	return msg_utf8;
 }
@@ -257,7 +257,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 	hex_buffer = strstrip(buffer);
 
 	if (strlen(hex_buffer) % 2 != 0) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
+		purple_debug_warning("QQ",
 			"Unable to convert an odd number of nibbles to a string of bytes!\n");
 		g_free(hex_buffer);
 		return NULL;
@@ -272,8 +272,8 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 		} else if (g_ascii_isalpha(*cursor) && (gint) *cursor - 87 < 16) {
 			nibble1 = (gint) *cursor - 87;
 		} else {
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				"Invalid char \'%c\' found in hex string!\n", *cursor);
+			purple_debug_warning("QQ", "Invalid char \'%c\' found in hex string!\n",
+					*cursor);
 			g_free(hex_str);
 			return NULL;
 		}
@@ -284,8 +284,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 		} else if (g_ascii_isalpha(*cursor) && (gint) (*cursor - 87) < 16) {
 			nibble2 = (gint) *cursor - 87;
 		} else {
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				"Invalid char found in hex string!\n");
+			purple_debug_warning("QQ", "Invalid char found in hex string!\n");
 			g_free(hex_str);
 			return NULL;
 		}
@@ -362,22 +361,7 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 
 void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 {
-	/*
-	   char buf1[8*len+2], buf2[10];
-	   int i;
-	   buf1[0] = 0;
-	   for (i = 0; i < len; i++) {
-	   sprintf(buf2, " %02x(%d)", buf[i] & 0xff, buf[i] & 0xff);
-	   strcat(buf1, buf2);
-	   }
-	   strcat(buf1, "\n");
-	   purple_debug(PURPLE_DEBUG_INFO, desc, "%s", buf1);
-	   */
-
-	/* modified by s3e, 20080424 */
-	qq_hex_dump(PURPLE_DEBUG_INFO, desc,
-		buf, len,
-		"");
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", buf, len, desc);
 }
 
 /* convert face num from packet (0-299) to local face (1-100) */
@@ -397,16 +381,5 @@ const char *qq_buddy_icon_dir(void)
 	if (purple_prefs_exists("/prpl/qq/buddy_icon_dir"))
 		return purple_prefs_get_string("/prpl/qq/buddy_icon_dir");
 	else
-		return QQ_BUDDY_ICON_DIR;
+		return NULL;
 }
-
-#ifdef _WIN32
-const char *qq_win32_buddy_icon_dir(void)
-{
-        static char *dir = NULL;
-        if (dir == NULL)
-                dir = g_build_filename(wpurple_install_dir(), "pixmaps",
-                        "purple", "buddy_icons", "qq", NULL);
-        return dir;
-}
-#endif
