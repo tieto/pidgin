@@ -208,9 +208,7 @@ static void pidgin_connection_network_disconnected (void)
 	while (l) {
 		PurpleAccount *a = (PurpleAccount*)l->data;
 		if (!purple_account_is_disconnected(a)) {
-			purple_connection_error_reason(purple_account_get_connection(a),
-			                               PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			                               _("Network disconnected"));
+			purple_account_disconnect(a);
 		}
 		l = l->next;
 	}
