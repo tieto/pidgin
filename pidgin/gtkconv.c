@@ -2242,6 +2242,11 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	old_conv = gtkconv->active_conv;
 
+	purple_debug_info("gtkconv", "setting active conversation on toolbar %p\n",
+		conv);
+	gtk_imhtmltoolbar_switch_active_conversation(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), 
+		conv);
+	
 	if (old_conv == conv)
 		return;
 

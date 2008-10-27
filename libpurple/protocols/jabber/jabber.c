@@ -2388,7 +2388,13 @@ gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint
 	gchar *error = NULL;
 
 	if (!_jabber_send_buzz(js, username, &error)) {
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurpleConversation *conv = 
+			purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+				username, account);
 		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
+		purple_conversation_write(conv, username, error,
+			PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 		g_free(error);
 		return FALSE;
 	}

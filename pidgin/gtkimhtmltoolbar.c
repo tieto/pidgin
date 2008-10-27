@@ -33,6 +33,7 @@
 #include "request.h"
 #include "pidginstock.h"
 #include "util.h"
+#include "debug.h"
 
 #include "gtkdialogs.h"
 #include "gtkimhtmltoolbar.h"
@@ -915,7 +916,12 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 
 static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 {
+	PurpleConversation *conv = toolbar->active_conv;
+	const gchar *who = purple_conversation_get_name(conv);
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
 	
+	purple_conversation_attention(conv, who, 0, PURPLE_MESSAGE_SEND, time(NULL));
+	purple_prpl_send_attention(gc, who, 0);
 }
 
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
@@ -1547,3 +1553,13 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 	g_free(toolbar->sml);
 	toolbar->sml = g_strdup(proto_id);
 }
+
+void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
+	PurpleConversation *conv)
+{
+	purple_debug_info("gtkimhtmltoolbar", "switch active conversation to %p\n",
+		conv);
+	toolbar->active_conv = conv;
+	// gray out buttons...
+}
+
