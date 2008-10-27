@@ -1207,6 +1207,20 @@ menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+menu_get_attention_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		purple_prpl_send_attention(purple_conversation_get_gc(conv), 
+			purple_conversation_get_name(conv), 0);
+		purple_conversation_attention(conv, purple_conversation_get_name(conv),
+			0, PURPLE_MESSAGE_SEND, time(NULL));
+	}
+}
+
+static void
 menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
@@ -3074,6 +3088,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_FILE },
+	{ N_("/Conversation/Get _Attention"), NULL, menu_get_attention_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 			0, "<Item>", NULL },
 	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
@@ -3389,6 +3404,9 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Send File..."));
 
+	win->menu.get_attention =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+			                    N_("/Conversation/Get Attention..."));
 	win->menu.add_pounce =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Add Buddy Pounce..."));
@@ -6258,6 +6276,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Deal with menu items */
 		gtk_widget_show(win->menu.view_log);
 		gtk_widget_show(win->menu.send_file);
+		gtk_widget_show(win->menu.get_attention);
 		gtk_widget_show(win->menu.add_pounce);
 		gtk_widget_show(win->menu.get_info);
 		gtk_widget_hide(win->menu.invite);
@@ -6286,6 +6305,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Deal with menu items */
 		gtk_widget_show(win->menu.view_log);
 		gtk_widget_hide(win->menu.send_file);
+		gtk_widget_hide(win->menu.get_attention);
 		gtk_widget_hide(win->menu.add_pounce);
 		gtk_widget_hide(win->menu.get_info);
 		gtk_widget_show(win->menu.invite);
@@ -6363,6 +6383,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_widget_set_sensitive(win->menu.send_file,
 									 (prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||
 									  prpl_info->can_receive_file(gc, purple_conversation_get_name(conv)))));
+			gtk_widget_set_sensitive(win->menu.get_attention, (prpl_info->send_attention != NULL));
 			gtk_widget_set_sensitive(win->menu.alias,
 									 (account != NULL) &&
 									 (purple_find_buddy(account, purple_conversation_get_name(conv)) != NULL));
@@ -6383,6 +6404,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(win->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(win->menu.send_file, FALSE);
+		gtk_widget_set_sensitive(win->menu.get_attention, FALSE);
 		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(win->menu.get_info, FALSE);
 		gtk_widget_set_sensitive(win->menu.invite, FALSE);
@@ -6686,6 +6708,7 @@ wrote_msg_update_unseen_cb(PurpleAccount *account, const char *who, const char *
 		conv_set_unseen(conv, unseen);
 	}
 }
+
 
 static PurpleConversationUiOps conversation_ui_ops =
 {

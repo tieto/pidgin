@@ -645,7 +645,21 @@ void purple_conversation_write(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags,
 		time_t mtime);
 
-
+/**
+ * Sends an attention to a conversation window.
+ *
+ * This is to be called by prpls to tell UIs to set off the action for
+ * an attention message
+ *
+ * @param conv		The conversation
+ * @param who		The user who sent the attention
+ * @param type		The attention type (will be 0 for protocols that only have 1 type)
+ * @param flags		The message flags (send, receive)
+ * @param mtime		The time the attentsion was sent
+ */
+void purple_conversation_attention(PurpleConversation *conv, const char *who,
+	guint attention_type, PurpleMessageFlags flags, time_t mtime);
+	
 /**
 	Set the features as supported for the given conversation.
 	@param conv      The conversation

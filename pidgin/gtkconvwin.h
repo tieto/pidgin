@@ -51,6 +51,7 @@ struct _PidginWindow
 		GtkWidget *view_log;
 
 		GtkWidget *send_file;
+		GtkWidget *get_attention;
 		GtkWidget *add_pounce;
 		GtkWidget *get_info;
 		GtkWidget *invite;

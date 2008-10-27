@@ -434,7 +434,8 @@ TOOLBAR_16 = \
 		toolbar/16/plugins.png \
 		toolbar/16/send-file.png \
 		toolbar/16/transfer.png \
-		toolbar/16/unblock.png
+		toolbar/16/unblock.png \
+		toolbar/16/get-attention.png
 
 TOOLBAR_22_SCALABLE = \
 		toolbar/22/scalable/select-avatar.svg
