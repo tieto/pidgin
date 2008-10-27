@@ -1,0 +1,183 @@
+#
+# patch "libpurple/upnp.c"
+#  from [06cd7ead155ebaaf4e736c5e7e59774b5511723f]
+#    to [7f99eb010eb284e1d53b9fc2b0e96b3f5164dca2]
+# 
+# patch "libpurple/util.c"
+#  from [2851fe33372524e5cf129907982ac4a0443dd716]
+#    to [d5bfc977156b3630b9296aa7732f9d652e20ba2c]
+# 
+# patch "libpurple/util.h"
+#  from [731af6e9837b0b89a2b263eb97a08f352d74f5ae]
+#    to [62c0624b2e3267b01a6bd6c85f825d393d1859fc]
+#
+============================================================
+--- libpurple/upnp.c	06cd7ead155ebaaf4e736c5e7e59774b5511723f
++++ libpurple/upnp.c	7f99eb010eb284e1d53b9fc2b0e96b3f5164dca2
+@@ -41,6 +41,8 @@
+ #define HTTP_OK "200 OK"
+ #define DEFAULT_HTTP_PORT 80
+ #define DISCOVERY_TIMEOUT 1000
++/* limit UPnP-triggered http downloads to 128k */
++#define MAX_UPNP_DOWNLOAD (128 * 1024)
+ 
+ /***************************************************************
+ ** Discovery/Description Defines                               *
+@@ -443,8 +445,8 @@ purple_upnp_parse_description(const gcha
+ 	purple_timeout_remove(dd->tima);
+ 	dd->tima = 0;
+ 
+-	purple_util_fetch_url_request(descriptionURL, TRUE, NULL, TRUE, httpRequest,
+-			TRUE, upnp_parse_description_cb, dd);
++	purple_util_fetch_url_request_len(descriptionURL, TRUE, NULL, TRUE, httpRequest,
++			TRUE, MAX_UPNP_DOWNLOAD, upnp_parse_description_cb, dd);
+ 
+ 	g_free(httpRequest);
+ 
+@@ -708,8 +710,8 @@ purple_upnp_generate_action_message_and_
+ 	g_free(pathOfControl);
+ 	g_free(soapMessage);
+ 
+-	gfud = purple_util_fetch_url_request(control_info.control_url, FALSE, NULL, TRUE,
+-				totalSendMessage, TRUE, cb, cb_data);
++	gfud = purple_util_fetch_url_request_len(control_info.control_url, FALSE, NULL, TRUE,
++				totalSendMessage,  TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
+ 
+ 	g_free(totalSendMessage);
+ 	g_free(addressOfControl);
+@@ -1047,7 +1049,7 @@ purple_upnp_get_handle(void)
+ {
+ 	static int handle;
+ 	
+-	return &handle;	
++	return &handle;
+ }
+ 
+ void
+@@ -1055,5 +1057,5 @@ purple_upnp_init()
+ {
+ 	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
+ 						  purple_upnp_get_handle(), PURPLE_CALLBACK(purple_upnp_network_config_changed_cb),
+-						  GINT_TO_POINTER(0));		
++						  NULL);
+ }
+============================================================
+--- libpurple/util.c	2851fe33372524e5cf129907982ac4a0443dd716
++++ libpurple/util.c	d5bfc977156b3630b9296aa7732f9d652e20ba2c
+@@ -65,6 +65,7 @@ struct _PurpleUtilFetchUrlData
+ 	char *webdata;
+ 	unsigned long len;
+ 	unsigned long data_len;
++	gssize max_len;
+ };
+ 
+ static char *custom_user_dir = NULL;
+@@ -3754,6 +3755,15 @@ url_fetch_recv_cb(gpointer url_data, gin
+ 	gboolean got_eof = FALSE;
+ 
+ 	while((len = read(source, buf, sizeof(buf))) > 0) {
++
++		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
++			/* TODO: Fix this when not string frozen */
++			/*purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),*/
++			purple_util_fetch_url_error(gfud, "Error reading from %s: response too long (%d bytes limit)",
++						    gfud->website.address, gfud->max_len);
++			return;
++		}
++
+ 		/* If we've filled up our buffer, make it bigger */
+ 		if((gfud->len + len) >= gfud->data_len) {
+ 			while((gfud->len + len) >= gfud->data_len)
+@@ -3915,8 +3925,7 @@ url_fetch_connect_cb(gpointer url_data, 
+ 
+ 	gfud->fd = source;
+ 
+-	if (!gfud->request)
+-	{
++	if (!gfud->request) {
+ 		if (gfud->user_agent) {
+ 			/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
+ 			 * clients must know how to handle the "chunked" transfer encoding.
+@@ -3960,6 +3969,18 @@ purple_util_fetch_url_request(const char
+ 		const char *request, gboolean include_headers,
+ 		PurpleUtilFetchUrlCallback callback, void *user_data)
+ {
++	return purple_util_fetch_url_request_len(url, full,
++					     user_agent, http11,
++					     request, include_headers, -1,
++					     callback, user_data);
++}
++
++PurpleUtilFetchUrlData *
++purple_util_fetch_url_request_len(const char *url, gboolean full,
++		const char *user_agent, gboolean http11,
++		const char *request, gboolean include_headers, gssize max_len,
++		PurpleUtilFetchUrlCallback callback, void *user_data)
++{
+ 	PurpleUtilFetchUrlData *gfud;
+ 
+ 	g_return_val_if_fail(url      != NULL, NULL);
+@@ -3980,6 +4001,7 @@ purple_util_fetch_url_request(const char
+ 	gfud->request = g_strdup(request);
+ 	gfud->include_headers = include_headers;
+ 	gfud->fd = -1;
++	gfud->max_len = max_len;
+ 
+ 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
+ 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
+============================================================
+--- libpurple/util.h	731af6e9837b0b89a2b263eb97a08f352d74f5ae
++++ libpurple/util.h	62c0624b2e3267b01a6bd6c85f825d393d1859fc
+@@ -1041,6 +1041,23 @@ typedef void (*PurpleUtilFetchUrlCallbac
+  *                   partial URL.
+  * @param user_agent The user agent field to use, or NULL.
+  * @param http11     TRUE if HTTP/1.1 should be used to download the file.
++ * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
++ * @param cb         The callback function.
++ * @param data       The user data to pass to the callback function.
++ * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url" and get rid of the old one
++ */
++#define purple_util_fetch_url_len(url, full, user_agent, http11, max_len, cb, data) \
++	purple_util_fetch_url_request_len(url, full, user_agent, http11, NULL, \
++		FALSE, max_len, cb, data);
++
++/**
++ * Fetches the data from a URL, and passes it to a callback function.
++ *
++ * @param url        The URL.
++ * @param full       TRUE if this is the full URL, or FALSE if it's a
++ *                   partial URL.
++ * @param user_agent The user agent field to use, or NULL.
++ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+  * @param request    A HTTP request to send to the server instead of the
+  *                   standard GET
+  * @param include_headers
+@@ -1054,6 +1071,28 @@ PurpleUtilFetchUrlData *purple_util_fetc
+ 		PurpleUtilFetchUrlCallback callback, gpointer data);
+ 
+ /**
++ * Fetches the data from a URL, and passes it to a callback function.
++ *
++ * @param url        The URL.
++ * @param full       TRUE if this is the full URL, or FALSE if it's a
++ *                   partial URL.
++ * @param user_agent The user agent field to use, or NULL.
++ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
++ * @param request    A HTTP request to send to the server instead of the
++ *                   standard GET
++ * @param include_headers
++ *                   If TRUE, include the HTTP headers in the response.
++ * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
++ * @param callback   The callback function.
++ * @param data       The user data to pass to the callback function.
++ * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
++ */
++PurpleUtilFetchUrlData *purple_util_fetch_url_request_len(const gchar *url,
++		gboolean full, const gchar *user_agent, gboolean http11,
++		const gchar *request, gboolean include_headers, gssize max_len,
++		PurpleUtilFetchUrlCallback callback, gpointer data);
++
++/**
+  * Cancel a pending URL request started with either
+  * purple_util_fetch_url_request() or purple_util_fetch_url().
+  *
