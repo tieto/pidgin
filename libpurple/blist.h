@@ -89,6 +89,8 @@ typedef enum
 /* Data Structures                                                        */
 /**************************************************************************/
 
+#ifndef PURPLE_HIDE_STRUCTS
+
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
  * This is a base class for struct buddy and struct group and for anything
@@ -153,6 +155,8 @@ struct _PurpleChat {
 	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
 	PurpleAccount *account; /**< The account this chat is attached to */
 };
+
+#endif /* PURPLE_HIDE_STRUCTS */
 
 
 /**
