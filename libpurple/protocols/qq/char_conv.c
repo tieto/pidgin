@@ -157,9 +157,6 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg, const gint 
 	/* checked qq_show_packet OK */
 	/* qq_show_packet("QQ_MESG recv for font style", data, len); */
 
-	if (client_version >= 2007) {
-		bytes += 1;
-	}
 	bytes += qq_get8(&font_attr, data + bytes);
 	bytes += qq_getdata(color, 3, data + bytes);	/* red,green,blue */
 	color_code = g_strdup_printf("#%02x%02x%02x", color[0], color[1], color[2]);

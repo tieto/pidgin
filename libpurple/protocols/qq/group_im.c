@@ -445,16 +445,14 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 		gint font_attr_len;
 	} packet;
 
-
 	g_return_if_fail(data != NULL && data_len > 0);
 
 	/* FIXME: check length here */
 
 	qd = (qq_data *) gc->proto_data;
 
-#if 1
-	qq_show_packet("Room IM", data, data_len);
-#endif
+	/* qq_show_packet("ROOM_IM", data, data_len); */
+
 	memset(&packet, 0, sizeof(packet));
 	bytes = 0;
 	bytes += qq_get32(&(packet.ext_id), data + bytes);
@@ -481,7 +479,6 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 
 	bytes += qq_get16(&(packet.msg_len), data + bytes);
 	g_return_if_fail(packet.msg_len > 0);
-
 	/*
 	 * 10 bytes from lumaqq
 	 *    contentType = buf.getChar();
@@ -497,15 +494,19 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 		skip_len = 0;
 	bytes += skip_len;
 
+	/* qq_show_packet("Message", data + bytes, data_len - bytes); */
+
 	packet.msg = g_strdup((gchar *) data + bytes);
 	bytes += strlen(packet.msg) + 1;
 	/* there might not be any font_attr, check it */
-	packet.font_attr_len = packet.msg_len - strlen(packet.msg) - 1 - skip_len;
-	if (packet.font_attr_len > 0)
+	packet.font_attr_len = data_len - bytes;
+	if (packet.font_attr_len > 0) {
 		packet.font_attr = g_memdup(data + bytes, packet.font_attr_len);
-	else
+		qq_show_packet("font_attr", packet.font_attr, packet.font_attr_len);
+	} else {
 		packet.font_attr = NULL;
-
+	}
+	
 	/* group im_group has no flag to indicate whether it has font_attr or not */
 	msg_with_purple_smiley = qq_smiley_to_purple(packet.msg);
 	if (packet.font_attr_len > 0) {

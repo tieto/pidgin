@@ -593,10 +593,10 @@ void qq_request_send_im(PurpleConnection *gc, guint32 uid_to, gchar *msg, gint t
 	bytes += qq_putdata(raw_data + bytes, (guint8 *) msg_filtered, msg_len);
 	send_im_tail = qq_get_send_im_tail(font_color, font_size, font_name, is_bold,
 			is_italic, is_underline, tail_len);
-	qq_show_packet("QQ_send_im_tail debug", send_im_tail, tail_len);
+	/* qq_show_packet("qq_get_send_im_tail", send_im_tail, tail_len); */
 	bytes += qq_putdata(raw_data + bytes, send_im_tail, tail_len);
 
-	qq_show_packet("QQ_raw_data debug", raw_data, bytes);
+	/* qq_show_packet("QQ_CMD_SEND_IM, raw_data, bytes); */
 
 	if (bytes == raw_len)	/* create packet OK */
 		qq_send_cmd(gc, QQ_CMD_SEND_IM, raw_data, bytes);

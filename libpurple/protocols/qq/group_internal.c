@@ -156,6 +156,7 @@ PurpleChat *qq_room_find_or_new(PurpleConnection *gc, guint32 id, guint32 ext_id
 	if (rmd == NULL) {
 		rmd = room_data_new(id, ext_id, NULL);
 		g_return_val_if_fail(rmd != NULL, NULL);
+		rmd->my_role = QQ_ROOM_ROLE_YES;
 		qd->groups = g_list_append(qd->groups, rmd);
 	}
 
