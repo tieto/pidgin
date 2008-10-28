@@ -1212,7 +1212,8 @@ static void init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_none("/plugins/prpl/qq");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
-	purple_prefs_add_bool("/plugins/prpl/qq/show_room_when_newin", TRUE);
+	purple_prefs_add_bool("/plugins/prpl/qq/auto_popup_conversation", FALSE);
+	purple_prefs_add_bool("/plugins/prpl/qq/auto_get_authorize_info", TRUE);
 	purple_prefs_add_int("/plugins/prpl/qq/resend_interval", 3);
 	purple_prefs_add_int("/plugins/prpl/qq/resend_times", 10);
 }

@@ -70,7 +70,7 @@ enum {
 	QQ_CMD_GET_SERVER = 0x0091,					/* select login server */
 	QQ_CMD_TOKEN_EX = 0x00BA,						/* get LOGIN token */
 	QQ_CMD_CHECK_PWD = 0x00DD,				/* Password verify */
-	QQ_CMD_BUDDY_AUTH = 0x00AE,				/* the request verification of information */
+	QQ_CMD_AUTH_INFO = 0x00AE,				/* the request verification of information */
 	QQ_CMD_BUDDY_ADD_NO_AUTH_EX = 0x00A7,			/* add friend without auth */
 	QQ_CMD_BUDDY_ADD_AUTH_EX = 0x00A8, 				/* add buddy with auth */
 };
@@ -108,12 +108,16 @@ enum {
 const gchar *qq_get_room_cmd_desc(gint room_cmd);
 
 enum {
-	QQ_SERVER_BUDDY_ADDED = 0x01,
-	QQ_SERVER_BUDDY_ADD_REQUEST = 0x02,
-	QQ_SERVER_BUDDY_ADDED_ME = 0x03,
-	QQ_SERVER_BUDDY_REJECTED_ME = 0x04,
-	QQ_SERVER_NOTICE= 0x06,
-	QQ_SERVER_NEW_CLIENT = 0x09
+	QQ_SERVER_BUDDY_ADDED = 1,
+	QQ_SERVER_BUDDY_ADD_REQUEST = 2,
+	QQ_SERVER_BUDDY_ADDED_ME = 3,
+	QQ_SERVER_BUDDY_REJECTED_ME = 4,
+	QQ_SERVER_NOTICE= 6,
+	QQ_SERVER_NEW_CLIENT = 9,
+	QQ_MSG_SYS_BEING_ADDED_EX = 40,
+	QQ_MSG_SYS_ADD_FRIEND_REQUEST_EX = 41,
+	QQ_MSG_SYS_ADDED_BY_CORRECT_ANSWER = 42,
+	QQ_MSG_SYS_ADD_FRIEND_APPROVED_AND_ADD = 43,
 };
 
 enum {

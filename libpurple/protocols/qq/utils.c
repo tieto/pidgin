@@ -336,6 +336,6 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 
 void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 {
-	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", buf, len, desc);
+	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", buf, len, desc);
 }
 

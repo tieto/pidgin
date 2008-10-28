@@ -83,42 +83,12 @@ static void room_req_cancel_cb(qq_room_req *add_req)
 		g_free(add_req);
 }
 
-static void member_join_reject_send_cb(qq_room_req *add_req, gchar *msg_utf8)
+static void member_join_authorize_cb(gpointer data)
 {
+	qq_room_req *add_req = (qq_room_req *)data;
 	qq_room_data *rmd;
-	g_return_if_fail(add_req != NULL && add_req->gc != NULL && add_req->id > 0 && add_req->member > 0);
-	rmd = qq_room_data_find(add_req->gc, add_req->id);
-	g_return_if_fail(rmd != NULL);
-	qq_send_cmd_group_auth(add_req->gc, rmd, QQ_ROOM_AUTH_REQUEST_REJECT, add_req->member, msg_utf8);
-	g_free(add_req);
-}
-
-static void member_join_reject_cb(qq_room_req *add_req)
-{
-	gchar *msg1, *msg2, *who;
-	g_return_if_fail(add_req != NULL && add_req->gc != NULL && add_req->member > 0);
-
-	msg1 = g_strdup_printf(_("You rejected %d's request"), add_req->member);
-	msg2 = g_strdup(_("Message:"));
-
-	who = uid_to_purple_name(add_req->member);
-	purple_request_input(add_req->gc, /* title */ NULL, msg1, msg2,
-			   _("Sorry, you are not my style..."), /* multiline */ TRUE, /* masked */ FALSE,
-			   /* hint */ NULL,
-			   _("Send"), G_CALLBACK(member_join_reject_send_cb),
-			   _("Cancel"), G_CALLBACK(room_req_cancel_cb),
-			   purple_connection_get_account(add_req->gc), who, NULL,
-			   add_req);
-
-	g_free(msg1);
-	g_free(msg2);
-	g_free(who);
-}
-
-static void member_join_authorize_cb(qq_room_req *add_req)
-{
-	qq_room_data *rmd;
-	g_return_if_fail(add_req != NULL && add_req->gc != NULL && add_req->id > 0 && add_req->member > 0);
+	g_return_if_fail(add_req != NULL && add_req->gc != NULL);
+	g_return_if_fail(add_req->id > 0 && add_req->member > 0);
 	rmd = qq_room_data_find(add_req->gc, add_req->id);
 	g_return_if_fail(rmd != NULL);
 
@@ -127,17 +97,37 @@ static void member_join_authorize_cb(qq_room_req *add_req)
 	g_free(add_req);
 }
 
-static void member_join_search_cb(qq_room_req *add_req)
+static void member_join_deny_reason_cb(qq_room_req *add_req, gchar *msg_utf8)
 {
-	g_return_if_fail(add_req != NULL && add_req->gc != NULL && add_req->member > 0);
+	qq_room_data *rmd;
+	g_return_if_fail(add_req != NULL && add_req->gc != NULL);
+	g_return_if_fail(add_req->id > 0 && add_req->member > 0);
+	rmd = qq_room_data_find(add_req->gc, add_req->id);
+	g_return_if_fail(rmd != NULL);
+	qq_send_cmd_group_auth(add_req->gc, rmd, QQ_ROOM_AUTH_REQUEST_REJECT, add_req->member, msg_utf8);
+	g_free(add_req);
+}
 
-	qq_request_buddy_info(add_req->gc, add_req->member, 0, QQ_BUDDY_INFO_DISPLAY);
-	purple_request_action(add_req->gc, NULL, _("Do you want to approve the request?"), "",
-				PURPLE_DEFAULT_ACTION_NONE,
-				purple_connection_get_account(add_req->gc), NULL, NULL,
-				add_req, 2,
-				_("Reject"), G_CALLBACK(member_join_reject_cb),
-				_("Approve"), G_CALLBACK(member_join_authorize_cb));
+static void member_join_deny_noreason_cb(qq_room_req *add_req, gchar *msg_utf8)
+{
+	member_join_deny_reason_cb(add_req, NULL);
+}
+
+static void member_join_deny_cb(gpointer data)
+{
+	qq_room_req *add_req = (qq_room_req *)data;
+	gchar *who;
+	g_return_if_fail(add_req != NULL && add_req->gc != NULL);
+	g_return_if_fail(add_req->id > 0 && add_req->member > 0);
+
+	who = uid_to_purple_name(add_req->member);
+	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
+			NULL, _("Sorry, you are not our style ..."), TRUE, FALSE, NULL,
+			_("OK"), G_CALLBACK(member_join_deny_reason_cb),
+			_("Cancel"), G_CALLBACK(member_join_deny_noreason_cb),
+			purple_connection_get_account(add_req->gc), who, NULL,
+			add_req);
+	g_free(who);
 }
 
 void qq_group_modify_members(PurpleConnection *gc, qq_room_data *rmd, guint32 *new_members)
@@ -425,7 +415,7 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 {
 	guint32 ext_id, member_id;
 	guint8 type8;
-	gchar *reason_utf8, *msg, *reason;
+	gchar *msg, *reason;
 	qq_room_req *add_req;
 	gchar *who;
 	gint bytes = 0;
@@ -442,7 +432,7 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 
 	g_return_if_fail(ext_id > 0 && member_id > 0);
 
-	bytes += qq_get_vstr(&reason_utf8, QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
 
 	add_req = g_new0(qq_room_req, 1);
 	add_req->gc = gc;
@@ -456,35 +446,32 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 	if (qq_room_buddy_find(rmd, member_id)) {
 		purple_debug_info("QQ", "Approve join, buddy joined before\n");
 		msg = g_strdup_printf(_("%d requested to join Qun %d for %s"),
-				member_id, ext_id, reason_utf8);
+				member_id, ext_id, reason);
 		qq_room_got_chat_in(gc, id, 0, msg, now);
 		qq_send_cmd_group_auth(gc, rmd, QQ_ROOM_AUTH_REQUEST_APPROVE, member_id, "");
 		g_free(msg);
-		g_free(reason_utf8);
+		g_free(reason);
 		return;
 	}
 
+	if (purple_prefs_get_bool("/plugins/prpl/qq/auto_get_authorize_info")) {
+		qq_request_buddy_info(gc, member_id, 0, QQ_BUDDY_INFO_DISPLAY);
+	}
 	who = uid_to_purple_name(member_id);
 	msg = g_strdup_printf(_("%d request to join Qun %d"), member_id, ext_id);
-	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			msg, reason,
 			PURPLE_DEFAULT_ACTION_NONE,
 			purple_connection_get_account(gc), who, NULL,
-			add_req, 3,
-			_("Approve"),
-			G_CALLBACK
-			(member_join_authorize_cb),
-			_("Reject"),
-			G_CALLBACK
-			(member_join_reject_cb),
-			_("Search"), G_CALLBACK(member_join_search_cb));
+			add_req, 2,
+			_("Deny"), G_CALLBACK(member_join_deny_cb),
+			_("Authorize"), G_CALLBACK(member_join_authorize_cb));
 
 	g_free(who);
 	g_free(msg);
 	g_free(reason);
-	g_free(reason_utf8);
+	g_free(reason);
 }
 
 /* the request to join a group is rejected */

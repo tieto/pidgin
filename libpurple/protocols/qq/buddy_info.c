@@ -157,6 +157,7 @@ typedef struct _modify_info_request {
 #ifdef DEBUG
 static void info_debug(gchar **segments)
 {
+#if 0
 	int index;
 	gchar *utf8_str;
 	for (index = 0; segments[index] != NULL && index < QQ_INFO_LAST; index++) {
@@ -171,6 +172,7 @@ static void info_debug(gchar **segments)
 		}
 		purple_debug_info("QQ_BUDDY_INFO", "%s: %s\n", field_infos[index].text, segments[index]);
 	}
+#endif
 }
 #endif
 
@@ -454,8 +456,8 @@ void qq_process_change_info(PurpleConnection *gc, guint8 *data, gint data_len)
 
 	data[data_len] = '\0';
 	if (qd->uid != atoi((gchar *) data)) {	/* return should be my uid */
-		purple_debug_info("QQ", "Update info ACK OK\n");
-		qq_got_attention(gc, _("Successed changing buddy information."));
+		purple_debug_info("QQ", "Failed Updating info\n");
+		qq_got_attention(gc, _("Failed changing buddy information."));
 	}
 }
 
@@ -551,7 +553,7 @@ gchar *qq_get_icon_name(gint face)
 	if (face < 1 || face > QQ_FACES) {
 		icon = 1;
 	}
-	
+
 	icon_name = g_strdup_printf("%s%d%s", QQ_ICON_PREFIX, icon, QQ_ICON_SUFFIX);
 	return icon_name;
 }
@@ -591,7 +593,7 @@ static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint fac
 	gsize icon_file_size;
 
 	g_return_if_fail(account != NULL && who != NULL);
-	
+
 	purple_debug_info("QQ", "Update %s icon to %d\n", who, face);
 
 	icon_name = qq_get_icon_name(face);

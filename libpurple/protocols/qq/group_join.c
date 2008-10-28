@@ -137,13 +137,13 @@ static void do_room_join_request(PurpleConnection *gc, qq_room_data *rmd)
 	qq_room_req *add_req;
 	g_return_if_fail(rmd != NULL);
 
-	purple_debug_info("QQ", "Group (internal id: %d) needs authentication\n", rmd->id);
+	purple_debug_info("QQ", "Room (internal id: %d) needs authentication\n", rmd->id);
 
-	msg = g_strdup_printf("Group \"%s\" needs authentication\n", rmd->title_utf8);
+	msg = g_strdup_printf("QQ Qun %d needs authentication\n", rmd->ext_id);
 	add_req = g_new0(qq_room_req, 1);
 	add_req->gc = gc;
 	add_req->id = rmd->id;
-	purple_request_input(gc, NULL, msg,
+	purple_request_input(gc, _("Join QQ Qun"), msg,
 			   _("Input request here"),
 			   _("Would you be my friend?"), TRUE, FALSE, NULL,
 			   _("Send"),

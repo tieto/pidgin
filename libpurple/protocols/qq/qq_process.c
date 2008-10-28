@@ -58,7 +58,7 @@ enum {
 static void process_unknow_cmd(PurpleConnection *gc,const gchar *title, guint8 *data, gint data_len, guint16 cmd, guint16 seq)
 {
 	qq_data *qd;
-	gchar *msg_utf8 = NULL;
+	gchar *msg;
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
@@ -71,11 +71,9 @@ static void process_unknow_cmd(PurpleConnection *gc,const gchar *title, guint8 *
 			">>> [%d] %s -> [default] decrypt and dump",
 			seq, qq_get_cmd_desc(cmd));
 
-	msg_utf8 = try_dump_as_gbk(data, data_len);
-	if (msg_utf8 != NULL) {
-		purple_notify_info(gc, _("QQ Error"), title, msg_utf8);
-		g_free(msg_utf8);
-	}
+	msg = g_strdup_printf("Unknow command 0x%02X, %s", cmd, qq_get_cmd_desc(cmd));
+	purple_notify_info(gc, _("QQ Error"), title, msg);
+	g_free(msg);
 }
 
 /* parse the reply to send_im */
@@ -356,42 +354,47 @@ static void process_private_msg(guint8 *data, gint data_len, guint16 seq, Purple
 }
 
 /* Send ACK if the sys message needs an ACK */
-static void request_server_ack(PurpleConnection *gc, guint8 code, guint32 from, guint16 seq)
+static void request_server_ack(PurpleConnection *gc, gchar *funct_str, gchar *from, guint16 seq)
 {
 	qq_data *qd;
-	guint8 bar, *ack;
-	gchar *str;
-	gint ack_len, bytes;
+	guint8 *raw_data;
+	gint bytes;
+	guint8 bar;
 
+	g_return_if_fail(funct_str != NULL && from != NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	str = g_strdup_printf("%d", from);
+
 	bar = 0x1e;
-	ack_len = 1 + 1 + strlen(str) + 1 + 2;
-	ack = g_newa(guint8, ack_len);
+	raw_data = g_newa(guint8, strlen(funct_str) + strlen(from) + 16);
 
 	bytes = 0;
-	bytes += qq_put8(ack + bytes, code);
-	bytes += qq_put8(ack + bytes, bar);
-	bytes += qq_putdata(ack + bytes, (guint8 *) str, strlen(str));
-	bytes += qq_put8(ack + bytes, bar);
-	bytes += qq_put16(ack + bytes, seq);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)funct_str, strlen(funct_str));
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)from, strlen(from));
+	bytes += qq_put8(raw_data + bytes, bar);
+	bytes += qq_put16(raw_data + bytes, seq);
 
-	g_free(str);
-
-	if (bytes == ack_len)	/* creation OK */
-		qq_send_server_reply(gc, QQ_CMD_ACK_SYS_MSG, 0, ack, ack_len);
-	else
-		purple_debug_error("QQ",
-			   "Fail creating sys msg ACK, expect %d bytes, build %d bytes\n", ack_len, bytes);
+	qq_send_server_reply(gc, QQ_CMD_ACK_SYS_MSG, 0, raw_data, bytes);
 }
 
-static void do_server_notice(PurpleConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
+static void do_server_notice(PurpleConnection *gc, gchar *from, gchar *to,
+		guint8 *data, gint data_len)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
+	gchar *msg, *msg_utf8;
 	gchar *title, *content;
 
-	g_return_if_fail(from != NULL && to != NULL);
+	g_return_if_fail(from != NULL && to != NULL && data_len > 0);
+
+	msg = g_strndup((gchar *)data, data_len);
+	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
+	g_free(msg);
+	if (msg_utf8 == NULL) {
+		purple_debug_error("QQ", "Recv NULL sys msg from %s to %s, discard\n",
+				from, to);
+		return;
+	}
 
 	title = g_strdup_printf(_("From %s:"), from);
 	content = g_strdup_printf(_("Server notice From %s: \n%s"), from, msg_utf8);
@@ -401,62 +404,72 @@ static void do_server_notice(PurpleConnection *gc, gchar *from, gchar *to, gchar
 	} else {
 		purple_debug_info("QQ", "QQ Server notice from %s:\n%s", from, msg_utf8);
 	}
+	g_free(msg_utf8);
 	g_free(title);
 	g_free(content);
 }
 
-static void process_server_msg(guint8 *data, gint data_len, guint16 seq, PurpleConnection *gc)
+static void process_server_msg(PurpleConnection *gc, guint8 *data, gint data_len, guint16 seq)
 {
 	qq_data *qd;
-	gchar **segments, *code, *from, *to, *msg, *msg_utf8;
-	int funct;
+	guint8 *data_str;
+	gchar **segments;
+	gchar *funct_str, *from, *to;
+	gint bytes, funct;
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
 
-	if (NULL == (segments = split_data(data, data_len, "\x1f", 4)))
+	data_str = g_newa(guint8, data_len + 1);
+	g_memmove(data_str, data, data_len);
+	data_str[data_len] = 0x00;
+
+	segments = g_strsplit_set((gchar *) data_str, "\x1f", 0);
+	g_return_if_fail(segments != NULL);
+	if (g_strv_length(segments) < 3) {
+		purple_debug_warning("QQ", "Server message segments is less than 3\n");
+		g_strfreev(segments);
 		return;
-	code = segments[0];
+	}
+
+	bytes = 0;
+	funct_str = segments[0];
+	bytes += strlen(funct_str) + 1;
 	from = segments[1];
+	bytes += strlen(from) + 1;
 	to = segments[2];
-	msg = segments[3];
+	bytes += strlen(to) + 1;
 
-	request_server_ack(gc, code[0], strtol(from, NULL, 10), seq);
+	request_server_ack(gc, funct_str, from, seq);
 
+	qq_show_packet("Server MSG", data, data_len);
 	if (strtol(to, NULL, 10) != qd->uid) {	/* not to me */
 		purple_debug_error("QQ", "Recv sys msg to [%s], not me!, discard\n", to);
 		g_strfreev(segments);
 		return;
 	}
 
-	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
-	if (from == NULL && msg_utf8) {
-		purple_debug_error("QQ", "Recv NULL sys msg to [%s], discard\n", to);
-		g_strfreev(segments);
-		g_free(msg_utf8);
-		return;
-	}
-
-	funct = strtol(code, NULL, 10);
+	funct = strtol(funct_str, NULL, 10);
 	switch (funct) {
 		case QQ_SERVER_BUDDY_ADDED:
 		case QQ_SERVER_BUDDY_ADD_REQUEST:
 		case QQ_SERVER_BUDDY_ADDED_ME:
 		case QQ_SERVER_BUDDY_REJECTED_ME:
-			qq_process_buddy_from_server(gc,  funct, from, to, msg_utf8);
+		case QQ_MSG_SYS_ADD_FRIEND_REQUEST_EX:
+			qq_process_buddy_from_server(gc,  funct, from, to, data + bytes, data_len - bytes);
 			break;
 		case QQ_SERVER_NOTICE:
-			do_server_notice(gc, from, to, msg_utf8);
+			do_server_notice(gc, from, to, data + bytes, data_len - bytes);
 			break;
 		case QQ_SERVER_NEW_CLIENT:
 			purple_debug_warning("QQ", "QQ Server has newer client version\n");
 			break;
 		default:
-			purple_debug_warning("QQ", "Recv unknown sys msg code: %s\nMsg: %s\n", code, msg_utf8);
+			qq_show_packet("Recv unknown sys msg", data, data_len);
+			purple_debug_warning("QQ", "Recv unknown sys msg code: %s\n", funct_str);
 			break;
 	}
-	g_free(msg_utf8);
 	g_strfreev(segments);
 }
 
@@ -493,7 +506,7 @@ void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *
 			process_private_msg(data, data_len, seq, gc);
 			break;
 		case QQ_CMD_RECV_MSG_SYS:
-			process_server_msg(data, data_len, seq, gc);
+			process_server_msg(gc, data, data_len, seq);
 			break;
 		case QQ_CMD_BUDDY_CHANGE_STATUS:
 			qq_process_buddy_change_status(data, data_len, gc);
@@ -946,8 +959,16 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		case QQ_CMD_LOGIN:
 			if (qd->client_version == 2008) {
 				ret_8 = qq_process_login_2008(gc, data, data_len);
+				if ( ret_8 == QQ_LOGIN_REPLY_REDIRECT) {
+                		qq_request_get_server(gc);
+                		return QQ_LOGIN_REPLY_OK;
+            	}
 			} else if (qd->client_version == 2007) {
 				ret_8 = qq_process_login_2007(gc, data, data_len);
+				if ( ret_8 == QQ_LOGIN_REPLY_REDIRECT) {
+                		qq_request_get_server(gc);
+                		return QQ_LOGIN_REPLY_OK;
+            	}
 			} else {
 				ret_8 = qq_process_login(gc, data, data_len);
 			}
@@ -1074,6 +1095,9 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 				return;
 			}
 			purple_debug_info("QQ", "All buddies and groups received\n");
+			break;
+		case QQ_CMD_AUTH_INFO:
+			qq_process_auth_info(gc, data, data_len, ship32);
 			break;
 		default:
 			process_unknow_cmd(gc, _("Unknow CLIENT CMD"), data, data_len, cmd, seq);

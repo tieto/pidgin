@@ -213,7 +213,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	rmd = qq_room_data_find(gc, room_id);
 	g_return_if_fail(rmd != NULL);
 
-	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/show_room_when_newin")) {
+	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/auto_popup_conversation")) {
 		conv = qq_room_conv_open(gc, rmd);
 	}
 

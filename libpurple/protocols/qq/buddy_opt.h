@@ -30,6 +30,17 @@
 
 #include "qq.h"
 
+enum {
+	QQ_AUTH_INFO_BUDDY = 0x01,
+	QQ_AUTH_INFO_ROOM = 0x02,
+
+	QQ_AUTH_INFO_ADD_BUDDY = 0x0001,
+	QQ_AUTH_INFO_TEMP_SESSION = 0x0003,
+	QQ_AUTH_INFO_CLUSTER = 0x0002,
+	QQ_AUTH_INFO_REMOVE_BUDDY = 0x0006,
+	QQ_AUTH_INFO_UPDATE_BUDDY_INFO = 0x0007,
+};
+
 void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void qq_change_buddys_group(PurpleConnection *gc, const char *who,
 		const char *old_group, const char *new_group);
@@ -41,7 +52,10 @@ void qq_process_buddy_remove_me(PurpleConnection *gc, guint8 *data, gint data_le
 void qq_process_buddy_add_no_auth(guint8 *data, gint data_len, guint32 uid, PurpleConnection *gc);
 void qq_process_buddy_add_auth(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_process_buddy_from_server(PurpleConnection *gc, int funct,
-		gchar *from, gchar *to, gchar *msg_utf8);
+		gchar *from, gchar *to, guint8 *data, gint data_len);
+
+void qq_request_auth_info(PurpleConnection *gc, guint8 cmd, guint16 sub_cmd, guint32 uid);
+void qq_process_auth_info(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
 
 qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, guint32 uid);
 void qq_buddy_data_free(qq_buddy_data *bd);

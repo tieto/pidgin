@@ -293,50 +293,44 @@ void qq_request_login(PurpleConnection *gc)
 guint8 qq_process_token(PurpleConnection *gc, guint8 *buf, gint buf_len)
 {
 	qq_data *qd;
+	gint bytes;
 	guint8 ret;
-	int token_len;
-	gchar *error_msg;
+	guint8 token_len;
+	gchar *msg;
 
 	g_return_val_if_fail(buf != NULL && buf_len != 0, QQ_LOGIN_REPLY_ERR);
 
 	g_return_val_if_fail(gc != NULL  && gc->proto_data != NULL, QQ_LOGIN_REPLY_ERR);
 	qd = (qq_data *) gc->proto_data;
 
-	ret = buf[0];
+	bytes = 0;
+	bytes += qq_get8(&ret, buf + bytes);
+	bytes += qq_get8(&token_len, buf + bytes);
 
 	if (ret != QQ_LOGIN_REPLY_OK) {
-		purple_debug_error("QQ", "Failed to request token: %d\n", buf[0]);
-		qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
-				buf, buf_len,
-				">>> [default] decrypt and dump");
-		error_msg = try_dump_as_gbk(buf, buf_len);
-		if (error_msg == NULL) {
-				error_msg = g_strdup_printf( _("Invalid token reply code, 0x%02X"), ret);
-		}
+		qq_show_packet("Failed requesting token", buf, buf_len);
+
+		msg = g_strdup_printf( _("Failed requesting token, 0x%02X"), ret );
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-				error_msg);
-		g_free(error_msg);
+				msg);
+		g_free(msg);
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
-	token_len = buf_len-2;
-	if (token_len <= 0) {
-		error_msg = g_strdup_printf( _("Invalid token len, %d"), token_len);
+	if (bytes + token_len < buf_len) {
+		msg = g_strdup_printf( _("Invalid token len, %d"), token_len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-				error_msg);
-		g_free(error_msg);
+				msg);
+		g_free(msg);
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
-	if (buf[1] != token_len) {
-		purple_debug_info("QQ",
-				"Invalid token len. Packet specifies length of %d, actual length is %d\n", buf[1], buf_len-2);
+	if (bytes + token_len > buf_len) {
+		purple_debug_info("QQ", "Extra token data, %d %d\n", token_len, buf_len - bytes);
 	}
-	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
-			buf+2, token_len,
-			"<<< got a token -> [default] decrypt and dump");
+	qq_show_packet("Got token", buf + bytes, buf_len - bytes);
 
 	if (qd->ld.token != NULL) {
 		g_free(qd->ld.token);
@@ -645,7 +639,7 @@ guint16 qq_process_get_server(PurpleConnection *gc, guint8 *data, gint data_len)
 	qd = (qq_data *) gc->proto_data;
 
 	g_return_val_if_fail (data != NULL, QQ_LOGIN_REPLY_ERR);
-	
+
 	/* qq_show_packet("Get Server", data, data_len); */
 	bytes = 0;
 	bytes += qq_get16(&ret, data + bytes);
@@ -913,7 +907,7 @@ guint8 qq_process_token_ex(PurpleConnection *gc, guint8 *data, gint data_len)
 	qd->ld.token_ex = g_realloc(qd->ld.token_ex, qd->ld.token_ex_len);
 	bytes += qq_getdata(qd->ld.token_ex, qd->ld.token_ex_len, data + bytes);
 	/* qq_show_packet("Get token ex", qd->ld.token_ex, qd->ld.token_ex_len); */
-	
+
 	if(reply != 1)
 	{
 		purple_debug_info("QQ", "Captcha verified, result %d\n", reply);
@@ -934,7 +928,7 @@ guint8 qq_process_token_ex(PurpleConnection *gc, guint8 *data, gint data_len)
 	bytes += qq_getdata(qd->captcha.token, qd->captcha.token_len, data + bytes);
 	/* qq_show_packet("Get captcha token", qd->captcha.token, qd->captcha.token_len); */
 
-	purple_debug_info("QQ", "Request next captcha %d, new %d, total %d\n", 
+	purple_debug_info("QQ", "Request next captcha %d, new %d, total %d\n",
 			qd->captcha.next_index, captcha_len, qd->captcha.data_len);
 	if(qd->captcha.next_index > 0)
 	{
@@ -1031,7 +1025,7 @@ void qq_request_check_pwd(PurpleConnection *gc)
 
 	/* put length into first 2 bytes */
 	qq_put8(raw_data + 1, bytes - 2);
-	
+
 	/* tail */
 	bytes += qq_put16(raw_data + bytes, 0x0003);
 	bytes += qq_put8(raw_data + bytes, 0);
@@ -1251,13 +1245,12 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 	if (ret != 0) {
 		msg = g_strndup((gchar *)data + bytes, data_len - bytes);
 		msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
+		g_free(msg);
 
 		switch (ret) {
 			case 0x05:
-				error = g_strdup_printf(
-						_("Server is busy now (0x%02X), Please try later\n%s"),
-						ret, msg_utf8);
-				break;
+				purple_debug_error("QQ", "Server busy for %s\n", msg_utf8);
+				return QQ_LOGIN_REPLY_REDIRECT;
 			case 0x0A:
 				/* 0a 2d 9a 4b 9a 01 01 00 00 00 05 00 00 00 00 79 0e 5f fd */
 				/* Missing get server before login*/
@@ -1277,7 +1270,6 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 
 		g_free(error);
 		g_free(msg_utf8);
-		g_free(msg);
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -1444,12 +1436,12 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 	if (ret != 0) {
 		msg = g_strndup((gchar *)data + bytes, data_len - bytes);
 		msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
+		g_free(msg);
 
 		switch (ret) {
 			case 0x05:
-				error = g_strdup_printf(
-						_("Server is busy now (0x%02X), Please try later\n%s"),
-						ret, msg_utf8);
+				purple_debug_error("QQ", "Server busy for %s\n", msg_utf8);
+				return QQ_LOGIN_REPLY_REDIRECT;
 				break;
 			default:
 				error = g_strdup_printf(
@@ -1467,7 +1459,6 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 
 		g_free(error);
 		g_free(msg_utf8);
-		g_free(msg);
 		return QQ_LOGIN_REPLY_ERR;
 	}
 

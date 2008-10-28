@@ -37,7 +37,7 @@
 #define QQ_CHARSET_ENG        "ISO-8859-1"
 
 #define QQ_NULL_MSG           "(NULL)"	/* return this if conversion fails */
-#define QQ_NULL_SMILEY        "(Broken)"	/* return this if smiley conversion fails */
+#define QQ_NULL_SMILEY        "<IMG ID=\"0\">"	/* return this if smiley conversion fails */
 
 const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
 	0x41, 0x43, 0x42, 0x44, 0x45, 0x46, 0x47, 0x48,

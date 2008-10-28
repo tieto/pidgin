@@ -31,8 +31,8 @@
 #define QQ_LOGIN_REPLY_OK							0x00
 #define QQ_LOGIN_REPLY_REDIRECT				0x01
 /* defined by myself */
-#define QQ_LOGIN_REPLY_CAPTCHA_DLG			0xfc
-#define QQ_LOGIN_REPLY_NEXT_TOKEN_EX		0xfd
+#define QQ_LOGIN_REPLY_CAPTCHA_DLG			0xfd
+#define QQ_LOGIN_REPLY_NEXT_TOKEN_EX		0xfe
 #define QQ_LOGIN_REPLY_ERR							0xff
 
 #define QQ_LOGIN_MODE_NORMAL		0x0a
