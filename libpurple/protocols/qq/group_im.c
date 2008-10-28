@@ -168,7 +168,7 @@ void qq_request_room_send_im(PurpleConnection *gc, guint32 room_id, const gchar 
 	g_return_if_fail(room_id != 0 && msg != NULL);
 
 	msg_filtered = purple_markup_strip_html(msg);
-	purple_debug_info("QQ_MESG", "Send qun mesg filterd: %s\n", msg_filtered);
+	/* purple_debug_info("QQ", "Send qun mesg filterd: %s\n", msg_filtered); */
 	msg_len = strlen(msg_filtered);
 
 	data_len = 2 + msg_len + QQ_SEND_IM_AFTER_MSG_LEN;
@@ -313,7 +313,7 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 	packet.font_attr_len = data_len - bytes;
 	if (packet.font_attr_len > 0) {
 		packet.font_attr = g_memdup(data + bytes, packet.font_attr_len);
-		qq_show_packet("font_attr", packet.font_attr, packet.font_attr_len);
+		/* qq_show_packet("font_attr", packet.font_attr, packet.font_attr_len); */
 	} else {
 		packet.font_attr = NULL;
 	}

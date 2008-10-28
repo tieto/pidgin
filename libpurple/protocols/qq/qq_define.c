@@ -185,6 +185,10 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_BUDDY_ADD_NO_AUTH_EX";
 	case QQ_CMD_BUDDY_ADD_AUTH_EX:
 		return "QQ_CMD_BUDDY_ADD_AUTH_EX";
+	case QQ_CMD_BUDDY_CHECK_CODE:
+		return "QQ_CMD_BUDDY_CHECK_CODE";
+	case QQ_CMD_BUDDY_QUESTION:
+		return "QQ_CMD_BUDDY_QUESTION";
 	default:
 		return "Unknown CMD";
 	}

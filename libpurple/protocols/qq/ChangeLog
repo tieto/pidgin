@@ -1,3 +1,6 @@
+2008.10.20 - ccpaging <ccpaging(at)gmail.com>
+	* Support incoming authorization of 'buddy_adding' protocol of QQ2007/2008
+
 2008.10.14 - ccpaging <ccpaging(at)gmail.com>
 	* 2007 remove buddy ok
 	* Removed group_search.c/h

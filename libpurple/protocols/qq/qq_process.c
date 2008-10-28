@@ -443,7 +443,7 @@ static void process_server_msg(PurpleConnection *gc, guint8 *data, gint data_len
 
 	request_server_ack(gc, funct_str, from, seq);
 
-	qq_show_packet("Server MSG", data, data_len);
+	/* qq_show_packet("Server MSG", data, data_len); */
 	if (strtol(to, NULL, 10) != qd->uid) {	/* not to me */
 		purple_debug_error("QQ", "Recv sys msg to [%s], not me!, discard\n", to);
 		g_strfreev(segments);
@@ -456,7 +456,10 @@ static void process_server_msg(PurpleConnection *gc, guint8 *data, gint data_len
 		case QQ_SERVER_BUDDY_ADD_REQUEST:
 		case QQ_SERVER_BUDDY_ADDED_ME:
 		case QQ_SERVER_BUDDY_REJECTED_ME:
-		case QQ_MSG_SYS_ADD_FRIEND_REQUEST_EX:
+		case QQ_SERVER_BUDDY_ADD_REQUEST_EX:
+		case QQ_SERVER_BUDDY_ADDING_EX:
+		case QQ_SERVER_BUDDY_ADDED_ANSWER:
+		case QQ_SERVER_BUDDY_ADDED_EX:
 			qq_process_buddy_from_server(gc,  funct, from, to, data + bytes, data_len - bytes);
 			break;
 		case QQ_SERVER_NOTICE:
@@ -466,7 +469,7 @@ static void process_server_msg(PurpleConnection *gc, guint8 *data, gint data_len
 			purple_debug_warning("QQ", "QQ Server has newer client version\n");
 			break;
 		default:
-			qq_show_packet("Recv unknown sys msg", data, data_len);
+			qq_show_packet("Unknown sys msg", data, data_len);
 			purple_debug_warning("QQ", "Recv unknown sys msg code: %s\n", funct_str);
 			break;
 	}
@@ -1036,7 +1039,7 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			qq_process_change_info(gc, data, data_len);
 			break;
 		case QQ_CMD_BUDDY_ADD_NO_AUTH:
-			qq_process_buddy_add_no_auth(data, data_len, ship32, gc);
+			qq_process_buddy_add_no_auth(gc, data, data_len, ship32);
 			break;
 		case QQ_CMD_BUDDY_REMOVE:
 			qq_process_buddy_remove(gc, data, data_len, ship32);
@@ -1098,6 +1101,12 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			break;
 		case QQ_CMD_AUTH_INFO:
 			qq_process_auth_info(gc, data, data_len, ship32);
+			break;
+		case QQ_CMD_BUDDY_ADD_NO_AUTH_EX:
+			qq_process_buddy_add_no_auth_ex(gc, data, data_len, ship32);
+			break;
+		case QQ_CMD_BUDDY_CHECK_CODE:
+			qq_process_buddy_check_code(gc, data, data_len, ship32);
 			break;
 		default:
 			process_unknow_cmd(gc, _("Unknow CLIENT CMD"), data, data_len, cmd, seq);

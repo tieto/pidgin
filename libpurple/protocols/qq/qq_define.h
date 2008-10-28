@@ -73,6 +73,8 @@ enum {
 	QQ_CMD_AUTH_INFO = 0x00AE,				/* the request verification of information */
 	QQ_CMD_BUDDY_ADD_NO_AUTH_EX = 0x00A7,			/* add friend without auth */
 	QQ_CMD_BUDDY_ADD_AUTH_EX = 0x00A8, 				/* add buddy with auth */
+	QQ_CMD_BUDDY_CHECK_CODE =  0x00B5,
+	QQ_CMD_BUDDY_QUESTION =  0x00B7,
 };
 
 const gchar *qq_get_cmd_desc(gint type);
@@ -114,10 +116,10 @@ enum {
 	QQ_SERVER_BUDDY_REJECTED_ME = 4,
 	QQ_SERVER_NOTICE= 6,
 	QQ_SERVER_NEW_CLIENT = 9,
-	QQ_MSG_SYS_BEING_ADDED_EX = 40,
-	QQ_MSG_SYS_ADD_FRIEND_REQUEST_EX = 41,
-	QQ_MSG_SYS_ADDED_BY_CORRECT_ANSWER = 42,
-	QQ_MSG_SYS_ADD_FRIEND_APPROVED_AND_ADD = 43,
+	QQ_SERVER_BUDDY_ADDING_EX = 40,
+	QQ_SERVER_BUDDY_ADD_REQUEST_EX = 41,
+	QQ_SERVER_BUDDY_ADDED_ANSWER = 42,
+	QQ_SERVER_BUDDY_ADDED_EX = 43,
 };
 
 enum {
