@@ -1472,6 +1472,10 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		G_CALLBACK(gtk_button_clicked), toolbar->attention);
 	gtk_widget_show_all(attention_button);
 	
+	g_signal_connect(G_OBJECT(toolbar->attention), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), attention_button);
+
+	
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
 	gtk_widget_show(box);
@@ -1557,9 +1561,12 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 	PurpleConversation *conv)
 {
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
 	purple_debug_info("gtkimhtmltoolbar", "switch active conversation to %p\n",
 		conv);
 	toolbar->active_conv = conv;
-	// gray out buttons...
+	
+	gtk_widget_set_sensitive(toolbar->attention, 
+		gc->flags & PURPLE_CONNECTION_ALLOW_ATTENTION);
 }
 

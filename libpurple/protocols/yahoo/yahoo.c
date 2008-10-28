@@ -2994,7 +2994,8 @@ static void yahoo_login(PurpleAccount *account) {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
+	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC |
+		PURPLE_CONNECTION_ALLOW_ATTENTION;
 
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 

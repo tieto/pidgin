@@ -289,7 +289,8 @@ msim_login(PurpleAccount *acct)
 
 	gc = purple_account_get_connection(acct);
 	gc->proto_data = msim_session_new(acct);
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC;
+	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC |
+		PURPLE_CONNECTION_ALLOW_ATTENTION;
 
 	/* 1. connect to server */
 	purple_connection_update_progress(gc, _("Connecting"),
