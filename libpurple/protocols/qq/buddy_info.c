@@ -727,7 +727,7 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 			info_display_only(gc, segments);
 			break;
 		case QQ_BUDDY_INFO_SET_ICON:
-			/* never reached */
+			g_return_if_reached();
 			break;
 		case QQ_BUDDY_INFO_MODIFY_BASE:
 			info_modify_dialogue(gc, segments, QQ_FIELD_BASE);

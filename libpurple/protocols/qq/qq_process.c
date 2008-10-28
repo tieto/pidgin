@@ -1038,17 +1038,17 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		case QQ_CMD_UPDATE_INFO:
 			qq_process_change_info(gc, data, data_len);
 			break;
-		case QQ_CMD_BUDDY_ADD_NO_AUTH:
-			qq_process_buddy_add_no_auth(gc, data, data_len, ship32);
+		case QQ_CMD_ADD_BUDDY_NO_AUTH:
+			qq_process_add_buddy_no_auth(gc, data, data_len, ship32);
 			break;
-		case QQ_CMD_BUDDY_REMOVE:
-			qq_process_buddy_remove(gc, data, data_len, ship32);
+		case QQ_CMD_REMOVE_BUDDY:
+			qq_process_remove_buddy(gc, data, data_len, ship32);
 			break;
 		case QQ_CMD_REMOVE_ME:
 			qq_process_buddy_remove_me(gc, data, data_len, ship32);
 			break;
-		case QQ_CMD_BUDDY_ADD_AUTH:
-			qq_process_buddy_add_auth(data, data_len, gc);
+		case QQ_CMD_ADD_BUDDY_AUTH:
+			qq_process_add_buddy_auth(data, data_len, gc);
 			break;
 		case QQ_CMD_GET_BUDDY_INFO:
 			qq_process_get_buddy_info(data, data_len, ship32, gc);
@@ -1102,11 +1102,11 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		case QQ_CMD_AUTH_INFO:
 			qq_process_auth_info(gc, data, data_len, ship32);
 			break;
-		case QQ_CMD_BUDDY_ADD_NO_AUTH_EX:
-			qq_process_buddy_add_no_auth_ex(gc, data, data_len, ship32);
+		case QQ_CMD_ADD_BUDDY_NO_AUTH_EX:
+			qq_process_add_buddy_no_auth_ex(gc, data, data_len, ship32);
 			break;
 		case QQ_CMD_BUDDY_CHECK_CODE:
-			qq_process_buddy_check_code(gc, data, data_len, ship32);
+			qq_process_buddy_check_code(gc, data, data_len);
 			break;
 		default:
 			process_unknow_cmd(gc, _("Unknow CLIENT CMD"), data, data_len, cmd, seq);

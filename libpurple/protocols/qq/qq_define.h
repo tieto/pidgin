@@ -46,9 +46,9 @@ enum {
 	QQ_CMD_UPDATE_INFO = 0x0004,			/* update information */
 	QQ_CMD_SEARCH_USER = 0x0005,			/* search for user */
 	QQ_CMD_GET_BUDDY_INFO = 0x0006,			/* get user information */
-	QQ_CMD_BUDDY_ADD_NO_AUTH = 0x0009,		/* add buddy without auth */
-	QQ_CMD_BUDDY_REMOVE = 0x000a,			/* delete a buddy  */
-	QQ_CMD_BUDDY_ADD_AUTH = 0x000b,			/* buddy authentication */
+	QQ_CMD_ADD_BUDDY_NO_AUTH = 0x0009,		/* add buddy without auth */
+	QQ_CMD_REMOVE_BUDDY = 0x000a,			/* delete a buddy  */
+	QQ_CMD_ADD_BUDDY_AUTH = 0x000b,			/* buddy authentication */
 	QQ_CMD_CHANGE_STATUS = 0x000d,		/* change my online status */
 	QQ_CMD_ACK_SYS_MSG = 0x0012,			/* ack system message */
 	QQ_CMD_SEND_IM = 0x0016,			/* send message */
@@ -71,8 +71,8 @@ enum {
 	QQ_CMD_TOKEN_EX = 0x00BA,						/* get LOGIN token */
 	QQ_CMD_CHECK_PWD = 0x00DD,				/* Password verify */
 	QQ_CMD_AUTH_INFO = 0x00AE,				/* the request verification of information */
-	QQ_CMD_BUDDY_ADD_NO_AUTH_EX = 0x00A7,			/* add friend without auth */
-	QQ_CMD_BUDDY_ADD_AUTH_EX = 0x00A8, 				/* add buddy with auth */
+	QQ_CMD_ADD_BUDDY_NO_AUTH_EX = 0x00A7,			/* add friend without auth */
+	QQ_CMD_ADD_BUDDY_AUTH_EX = 0x00A8, 				/* add buddy with auth */
 	QQ_CMD_BUDDY_CHECK_CODE =  0x00B5,
 	QQ_CMD_BUDDY_QUESTION =  0x00B7,
 };
