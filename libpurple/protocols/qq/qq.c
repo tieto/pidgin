@@ -39,7 +39,6 @@
 #include "buddy_list.h"
 #include "char_conv.h"
 #include "group.h"
-#include "group_find.h"
 #include "group_im.h"
 #include "group_info.h"
 #include "group_join.h"
@@ -777,7 +776,7 @@ static void action_chat_get_info(PurpleBlistNode * node)
 	g_return_if_fail(room_id != 0);
 
 	qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, room_id, NULL, 0,
-			QQ_CMD_CLASS_UPDATE_ROOM, QQ_ROOM_INFO_DISPLAY);
+			0, QQ_ROOM_INFO_DISPLAY);
 }
 
 #if 0

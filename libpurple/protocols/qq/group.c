@@ -30,11 +30,10 @@
 
 #include "group_internal.h"
 #include "group_info.h"
-#include "group_search.h"
+#include "group_join.h"
 #include "utils.h"
 #include "qq_network.h"
 #include "qq_define.h"
-#include "group_free.h"
 
 static void _qq_group_search_callback(PurpleConnection *gc, const gchar *input)
 {
@@ -129,45 +128,4 @@ void qq_roomlist_cancel(PurpleRoomlist *list)
 	qd = (qq_data *) gc->proto_data;
 	purple_roomlist_set_in_progress(list, FALSE);
 	purple_roomlist_unref(list);
-}
-
-/* this should be called upon signin, even when we did not open group chat window */
-void qq_group_init(PurpleConnection *gc)
-{
-	PurpleAccount *account;
-	PurpleChat *chat;
-	PurpleGroup *purple_group;
-	PurpleBlistNode *node;
-	qq_group *group;
-	gint count;
-
-	account = purple_connection_get_account(gc);
-
-	purple_debug_info("QQ", "Initial QQ Qun configurations\n");
-	purple_group = purple_find_group(PURPLE_GROUP_QQ_QUN);
-	if (purple_group == NULL) {
-		purple_debug_info("QQ", "We have no QQ Qun\n");
-		return;
-	}
-
-	count = 0;
-	for (node = ((PurpleBlistNode *) purple_group)->child; node != NULL; node = node->next) {
-		if ( !PURPLE_BLIST_NODE_IS_CHAT(node)) {
-			continue;
-		}
-		/* got one */
-		chat = (PurpleChat *) node;
-		if (account != chat->account)	/* not qq account*/
-			continue;
-		group = qq_room_data_new_by_hashtable(gc, chat->components);
-		if (group == NULL)
-			continue;
-
-		if (group->id <= 0)
-			continue;
-
-		count++;
-	}
-
-	purple_debug_info("QQ", "Load %d QQ Qun configurations\n", count);
 }

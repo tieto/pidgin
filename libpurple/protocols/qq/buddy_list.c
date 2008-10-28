@@ -37,7 +37,6 @@
 #include "qq_define.h"
 #include "qq_base.h"
 #include "group.h"
-#include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
 
@@ -236,13 +235,15 @@ guint8 qq_process_get_buddies_online(guint8 *data, gint data_len, PurpleConnecti
 		if(0 != fe->s->client_tag)
 			q_bud->client_tag = fe->s->client_tag;
 		*/
+		if (bd->status != bs.status || bd->comm_flag != packet.comm_flag) {
+			bd->status = bs.status;
+			bd->comm_flag = packet.comm_flag;
+			qq_update_buddy_status(gc, bd->uid, bd->status, bd->comm_flag);
+		}
 		bd->ip.s_addr = bs.ip.s_addr;
 		bd->port = bs.port;
-		bd->status = bs.status;
 		bd->ext_flag = packet.ext_flag;
-		bd->comm_flag = packet.comm_flag;
 		bd->last_update = time(NULL);
-		qq_update_buddy_status(gc, bd->uid, bd->status, bd->comm_flag);
 		count++;
 	}
 
@@ -358,7 +359,7 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 	guint32 unknown, position;
 	guint32 uid;
 	guint8 type;
-	qq_group *group;
+	qq_room_data *rmd;
 
 	g_return_val_if_fail(data != NULL && data_len != 0, -1);
 
@@ -394,15 +395,12 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 			 * qq_request_get_buddies */
 			++i;
 		} else { /* a group */
-			group = qq_room_search_id(gc, uid);
-			if(group == NULL) {
-				purple_debug_info("QQ",
-					"Not find room id %d in qq_process_get_buddies_and_rooms\n", uid);
-				qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, uid, NULL, 0,
-						0, QQ_ROOM_INFO_CREATE);
+			rmd = qq_room_data_find(gc, uid);
+			if(rmd == NULL) {
+				purple_debug_info("QQ", "Unknow room id %d", uid);
+				qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_INFO, uid);
 			} else {
-				group->my_role = QQ_ROOM_ROLE_YES;
-				qq_group_refresh(gc, group);
+				rmd->my_role = QQ_ROOM_ROLE_YES;
 			}
 			++j;
 		}
@@ -561,10 +559,11 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 		bd->ip.s_addr = bs.ip.s_addr;
 		bd->port = bs.port;
 	}
-	bd->status =bs.status;
-
+	if (bd->status != bs.status) {
+		bd->status = bs.status;
+		qq_update_buddy_status(gc, bd->uid, bd->status, bd->comm_flag);
+	}
 	bd->last_update = time(NULL);
-	qq_update_buddy_status(gc, bd->uid, bd->status, bd->comm_flag);
 
 	if (bd->status == QQ_BUDDY_ONLINE_NORMAL && bd->level <= 0) {
 		if (qd->client_version >= 2007) {
@@ -649,6 +648,7 @@ void qq_update_buddyies_status(PurpleConnection *gc)
 		if (bd->uid == qd->uid) continue;	/* my status is always online in my buddy list */
 		if (tm_limit < bd->last_update) continue;
 		if (bd->status == QQ_BUDDY_ONLINE_INVISIBLE) continue;
+		if (bd->status == QQ_BUDDY_CHANGE_TO_OFFLINE) continue;
 
 		bd->status = QQ_BUDDY_CHANGE_TO_OFFLINE;
 		bd->last_update = time(NULL);

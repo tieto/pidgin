@@ -30,11 +30,11 @@
 #include "conversation.h"
 #include "group.h"
 
-PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_group *group);
-void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group);
+PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd);
+void qq_room_conv_set_onlines(PurpleConnection *gc, qq_room_data *rmd);
 
 void qq_room_got_chat_in(PurpleConnection *gc,
-		qq_group *group, guint32 uid_from, const gchar *msg, time_t in_time);
+		guint32 room_id, guint32 uid_from, const gchar *msg, time_t in_time);
 
 void qq_send_packet_group_im(PurpleConnection *gc, guint32 room_id, const gchar *msg);
 

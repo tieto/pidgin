@@ -32,7 +32,6 @@
 #include "util.h"
 
 #include "char_conv.h"
-#include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
 #include "group_im.h"
@@ -45,41 +44,41 @@
 #include "utils.h"
 
 /* show group conversation window */
-PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_group *group)
+PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd)
 {
 	PurpleConversation *conv;
 	qq_data *qd;
 	gchar *topic_utf8;
 
-	g_return_val_if_fail(group != NULL, NULL);
+	g_return_val_if_fail(rmd != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-			group->title_utf8, purple_connection_get_account(gc));
+			rmd->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL)	{
-		/* show only one conversation per group */
+		/* show only one conversation per room */
 		return conv;
 	}
 
-	serv_got_joined_chat(gc, group->id, group->title_utf8);
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, group->title_utf8, purple_connection_get_account(gc));
+	serv_got_joined_chat(gc, rmd->id, rmd->title_utf8);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, rmd->title_utf8, purple_connection_get_account(gc));
 	if (conv != NULL) {
-		topic_utf8 = g_strdup_printf("%d %s", group->ext_id, group->notice_utf8);
+		topic_utf8 = g_strdup_printf("%d %s", rmd->ext_id, rmd->notice_utf8);
 		purple_debug_info("QQ", "Set chat topic to %s\n", topic_utf8);
 		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, topic_utf8);
 		g_free(topic_utf8);
 
-		if (group->is_got_buddies)
-			qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, group->id);
+		if (rmd->is_got_buddies)
+			qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_ONLINES, rmd->id);
 		else
-			qq_update_room(gc, 0, group->id);
+			qq_update_room(gc, 0, rmd->id);
 		return conv;
 	}
 	return NULL;
 }
 
 /* refresh online member in group conversation window */
-void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group)
+void qq_room_conv_set_onlines(PurpleConnection *gc, qq_room_data *rmd)
 {
 	GList *names, *list, *flags;
 	qq_buddy_data *bd;
@@ -88,20 +87,20 @@ void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group)
 	gint flag;
 	gboolean is_find;
 
-	g_return_if_fail(group != NULL);
+	g_return_if_fail(rmd != NULL);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-			group->title_utf8, purple_connection_get_account(gc));
+			rmd->title_utf8, purple_connection_get_account(gc));
 	if (conv == NULL) {
-		purple_debug_warning("QQ", "Conversation \"%s\" is not opened\n", group->title_utf8);
+		purple_debug_warning("QQ", "Conversation \"%s\" is not opened\n", rmd->title_utf8);
 		return;
 	}
-	g_return_if_fail(group->members != NULL);
+	g_return_if_fail(rmd->members != NULL);
 
 	names = NULL;
 	flags = NULL;
 
-	list = group->members;
+	list = rmd->members;
 	while (list != NULL) {
 		bd = (qq_buddy_data *) list->data;
 
@@ -116,7 +115,7 @@ void qq_room_conv_set_onlines(PurpleConnection *gc, qq_group *group)
 		/* TYPING to put online above OP and FOUNDER */
 		if (is_online(bd->status)) flag |= (PURPLE_CBFLAGS_TYPING | PURPLE_CBFLAGS_VOICE);
 		if(1 == (bd->role & 1)) flag |= PURPLE_CBFLAGS_OP;
-		if(bd->uid == group->creator_uid) flag |= PURPLE_CBFLAGS_FOUNDER;
+		if(bd->uid == rmd->creator_uid) flag |= PURPLE_CBFLAGS_FOUNDER;
 
 		is_find = TRUE;
 		if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_name))
@@ -251,19 +250,21 @@ void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleCo
 }
 
 void qq_room_got_chat_in(PurpleConnection *gc,
-		qq_group *group, guint32 uid_from, const gchar *msg, time_t in_time)
+		guint32 room_id, guint32 uid_from, const gchar *msg, time_t in_time)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *conv;
 	qq_buddy_data *bd;
+	qq_room_data *rmd;
 	gchar *from;
 
-	g_return_if_fail(group != NULL);
+	g_return_if_fail(gc != NULL && room_id != 0);
 
-	conv = purple_find_conversation_with_account(
-			PURPLE_CONV_TYPE_CHAT, group->title_utf8, account);
+	conv = purple_find_chat(gc, room_id);
+	rmd = qq_room_data_find(gc, room_id);
+	g_return_if_fail(rmd != NULL);
+
 	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/show_room_when_newin")) {
-		conv = qq_room_conv_open(gc, group);
+		conv = qq_room_conv_open(gc, rmd);
 	}
 
 	if (conv == NULL) {
@@ -271,7 +272,8 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	}
 
 	if (uid_from != 0) {
-		bd = qq_group_find_member_by_uid(group, uid_from);
+
+		bd = qq_room_buddy_find(rmd, uid_from);
 		if (bd == NULL || bd->nickname == NULL)
 			from = g_strdup_printf("%d", uid_from);
 		else
@@ -279,9 +281,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	} else {
 		from = g_strdup("");
 	}
-	serv_got_chat_in(gc,
-			purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
-				from, 0, msg, in_time);
+	serv_got_chat_in(gc, room_id, from, 0, msg, in_time);
 	g_free(from);
 }
 
@@ -291,7 +291,7 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 	guint32 ext_id, admin_uid;
 	guint8 type8;
 	gchar *reason_utf8, *msg, *reason;
-	qq_group *group;
+	qq_room_data *rmd;
 	gint bytes;
 
 	g_return_if_fail(data != NULL && len > 0);
@@ -312,10 +312,10 @@ void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, Purpl
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
 
-	group = qq_room_search_id(gc, id);
-	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_NO;
-		qq_group_refresh(gc, group);
+	qq_room_find_or_new(gc, id, ext_id);
+	rmd = qq_room_data_find(gc, id);
+	if (rmd != NULL) {
+		rmd->my_role = QQ_ROOM_ROLE_NO;
 	}
 
 	g_free(msg);
@@ -329,7 +329,7 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 	guint32 ext_id, admin_uid;
 	guint8 type8;
 	gchar *msg, *reason;
-	qq_group *group;
+	qq_room_data *rmd;
 	gint bytes;
 	time_t now;
 
@@ -345,16 +345,16 @@ void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, Purpl
 	/* it is also a "无" here, so do not display */
 	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
 
-	group = qq_room_search_id(gc, id);
-	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_YES;
-		qq_group_refresh(gc, group);
+	qq_room_find_or_new(gc, id, ext_id);
+	rmd = qq_room_data_find(gc, id);
+	if (rmd != NULL) {
+		rmd->my_role = QQ_ROOM_ROLE_YES;
 	}
 
 	msg = g_strdup_printf(_("<b>Joinning Qun %d is approved by Admin %d for %s</b>"),
 			ext_id, admin_uid, reason);
 	now = time(NULL);
-	qq_room_got_chat_in(gc, group, 0, msg, now);
+	qq_room_got_chat_in(gc, id, 0, msg, now);
 
 	g_free(msg);
 	g_free(reason);
@@ -366,7 +366,7 @@ void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, Purple
 	guint32 ext_id, uid;
 	guint8 type8;
 	gchar *msg;
-	qq_group *group;
+	qq_room_data *rmd;
 	gint bytes = 0;
 	time_t now = time(NULL);
 
@@ -380,14 +380,14 @@ void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, Purple
 
 	g_return_if_fail(ext_id > 0 && uid > 0);
 
-	group = qq_room_search_id(gc, id);
-	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_NO;
-		qq_group_refresh(gc, group);
+	qq_room_find_or_new(gc, id, ext_id);
+	rmd = qq_room_data_find(gc, id);
+	if (rmd != NULL) {
+		rmd->my_role = QQ_ROOM_ROLE_NO;
 	}
 
 	msg = g_strdup_printf(_("<b>Removed buddy %d.</b>"), uid);
-	qq_room_got_chat_in(gc, group, 0, msg, now);
+	qq_room_got_chat_in(gc, id, 0, msg, now);
 	g_free(msg);
 }
 
@@ -396,9 +396,9 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 {
 	guint32 ext_id, uid;
 	guint8 type8;
-	qq_group *group;
-	gchar *msg;
+	qq_room_data *rmd;
 	gint bytes;
+	gchar *msg;
 	time_t now = time(NULL);
 
 	g_return_if_fail(data != NULL && len > 0);
@@ -409,22 +409,18 @@ void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleCo
 	bytes += qq_get8(&type8, data + bytes);
 	bytes += qq_get32(&uid, data + bytes);
 
-	g_return_if_fail(ext_id > 0 && uid > 0);
+	g_return_if_fail(ext_id > 0 && id > 0);
 
-	group = qq_room_search_id(gc, id);
-	if (group != NULL) {
-		group->my_role = QQ_ROOM_ROLE_YES;
-		qq_group_refresh(gc, group);
-	} else {		/* no such group, try to create a dummy first, and then update */
-		group = qq_group_create_internal_record(gc, id, ext_id, NULL);
-		group->my_role = QQ_ROOM_ROLE_YES;
-		qq_group_refresh(gc, group);
-		qq_update_room(gc, 0, group->id);
-		/* the return of this cmd will automatically update the group in blist */
-	}
+	qq_room_find_or_new(gc, id, ext_id);
+	rmd = qq_room_data_find(gc, id);
+	g_return_if_fail(rmd != NULL);
+
+	rmd->my_role = QQ_ROOM_ROLE_YES;
+
+	qq_update_room(gc, 0, rmd->id);
 
 	msg = g_strdup_printf(_("<b>Added new buddy %d.</b>"), uid);
-	qq_room_got_chat_in(gc, group, 0, msg, now);
+	qq_room_got_chat_in(gc, id, 0, msg, now);
 	g_free(msg);
 }
 
@@ -433,7 +429,6 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 {
 	gchar *msg_with_purple_smiley, *msg_utf8_encoded;
 	qq_data *qd;
-	qq_group *group;
 	gint skip_len;
 	gint bytes ;
 	struct {
@@ -458,7 +453,7 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	qd = (qq_data *) gc->proto_data;
 
 #if 1
-	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", data, data_len, "group im hex dump");
+	qq_show_packet("Room IM", data, data_len);
 #endif
 	memset(&packet, 0, sizeof(packet));
 	bytes = 0;
@@ -519,8 +514,7 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	} else {
 		msg_utf8_encoded = qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 	}
-	group = qq_room_search_id(gc, id);
- 	qq_room_got_chat_in(gc, group, packet.member_uid, msg_utf8_encoded, packet.send_time);
+ 	qq_room_got_chat_in(gc, id, packet.member_uid, msg_utf8_encoded, packet.send_time);
 
 	g_free(msg_with_purple_smiley);
 	g_free(msg_utf8_encoded);

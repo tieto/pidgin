@@ -1,3 +1,8 @@
+2008.10.09 - ccpaging <ccpaging(at)gmail.com>
+	* Update 'group' protocol
+	* Functions of group_find, group_free, group_search merged into group_join and group_internal 
+	* Removed group_find.c/h, group_free.c/h, group_search.c/h 
+
 2008.10.08 - ccpaging <ccpaging(at)gmail.com>
 	* Update 'group' protocol
 

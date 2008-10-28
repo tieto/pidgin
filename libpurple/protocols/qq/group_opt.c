@@ -30,7 +30,6 @@
 
 #include "buddy_info.h"
 #include "char_conv.h"
-#include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
 #include "group_join.h"
@@ -58,7 +57,7 @@ static void _sort(guint32 *list)
 	qsort (list, i, sizeof (guint32), _compare_guint32);
 }
 
-static void _qq_group_member_opt(PurpleConnection *gc, qq_group *group, gint operation, guint32 *members)
+static void _qq_group_member_opt(PurpleConnection *gc, qq_room_data *rmd, gint operation, guint32 *members)
 {
 	guint8 *data;
 	gint i, count, data_len;
@@ -75,7 +74,7 @@ static void _qq_group_member_opt(PurpleConnection *gc, qq_group *group, gint ope
 	for (i = 0; i < count; i++)
 		bytes += qq_put32(data + bytes, members[i]);
 
-	qq_send_room_cmd(gc, QQ_ROOM_CMD_MEMBER_OPT, group->id, data, bytes);
+	qq_send_room_cmd(gc, QQ_ROOM_CMD_MEMBER_OPT, rmd->id, data, bytes);
 }
 
 static void _qq_group_do_nothing_with_struct(group_member_opt *g)
@@ -86,11 +85,11 @@ static void _qq_group_do_nothing_with_struct(group_member_opt *g)
 
 static void _qq_group_reject_application_real(group_member_opt *g, gchar *msg_utf8)
 {
-	qq_group *group;
+	qq_room_data *rmd;
 	g_return_if_fail(g != NULL && g->gc != NULL && g->id > 0 && g->member > 0);
-	group = qq_room_search_id(g->gc, g->id);
-	g_return_if_fail(group != NULL);
-	qq_send_cmd_group_auth(g->gc, group, QQ_ROOM_AUTH_REQUEST_REJECT, g->member, msg_utf8);
+	rmd = qq_room_data_find(g->gc, g->id);
+	g_return_if_fail(rmd != NULL);
+	qq_send_cmd_group_auth(g->gc, rmd, QQ_ROOM_AUTH_REQUEST_REJECT, g->member, msg_utf8);
 	g_free(g);
 }
 
@@ -131,16 +130,16 @@ void qq_group_reject_application_with_struct(group_member_opt *g)
 
 void qq_group_approve_application_with_struct(group_member_opt *g)
 {
-	qq_group *group;
+	qq_room_data *rmd;
 	g_return_if_fail(g != NULL && g->gc != NULL && g->id > 0 && g->member > 0);
-	group = qq_room_search_id(g->gc, g->id);
-	g_return_if_fail(group != NULL);
-	qq_send_cmd_group_auth(g->gc, group, QQ_ROOM_AUTH_REQUEST_APPROVE, g->member, "");
-	qq_group_find_or_add_member(g->gc, group, g->member);
+	rmd = qq_room_data_find(g->gc, g->id);
+	g_return_if_fail(rmd != NULL);
+	qq_send_cmd_group_auth(g->gc, rmd, QQ_ROOM_AUTH_REQUEST_APPROVE, g->member, "");
+	qq_room_buddy_find_or_new(g->gc, rmd, g->member);
 	g_free(g);
 }
 
-void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new_members)
+void qq_group_modify_members(PurpleConnection *gc, qq_room_data *rmd, guint32 *new_members)
 {
 	guint32 *old_members, *del_members, *add_members;
 	qq_buddy_data *bd;
@@ -148,7 +147,7 @@ void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new
 	gint i = 0, old = 0, new = 0, del = 0, add = 0;
 	GList *list;
 
-	g_return_if_fail(group != NULL);
+	g_return_if_fail(rmd != NULL);
 	qd = (qq_data *) gc->proto_data;
 	if (new_members[0] == 0xffffffff)
 		return;
@@ -158,7 +157,7 @@ void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new
 	add_members = g_newa(guint32, QQ_QUN_MEMBER_MAX);
 
 	/* construct the old member list */
-	list = group->members;
+	list = rmd->members;
 	while (list != NULL) {
 		bd = (qq_buddy_data *) list->data;
 		if (bd != NULL)
@@ -186,14 +185,14 @@ void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new
 	del_members[del] = add_members[add] = 0xffffffff;
 
 	for (i = 0; i < del; i++)
-		qq_group_remove_member_by_uid(group, del_members[i]);
+		qq_room_buddy_remove(rmd, del_members[i]);
 	for (i = 0; i < add; i++)
-		qq_group_find_or_add_member(gc, group, add_members[i]);
+		qq_room_buddy_find_or_new(gc, rmd, add_members[i]);
 
 	if (del > 0)
-		_qq_group_member_opt(gc, group, QQ_ROOM_MEMBER_DEL, del_members);
+		_qq_group_member_opt(gc, rmd, QQ_ROOM_MEMBER_DEL, del_members);
 	if (add > 0)
-		_qq_group_member_opt(gc, group, QQ_ROOM_MEMBER_ADD, add_members);
+		_qq_group_member_opt(gc, rmd, QQ_ROOM_MEMBER_ADD, add_members);
 }
 
 void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnection *gc)
@@ -201,7 +200,7 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 	gint bytes;
 	guint32 id;
 	time_t now = time(NULL);
-	qq_group *group;
+	qq_room_data *rmd;
 	g_return_if_fail(data != NULL);
 
 	bytes = 0;
@@ -209,26 +208,26 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 	g_return_if_fail(id > 0);
 
 	/* we should have its info locally */
-	group = qq_room_search_id(gc, id);
-	g_return_if_fail(group != NULL);
+	rmd = qq_room_data_find(gc, id);
+	g_return_if_fail(rmd != NULL);
 
-	purple_debug_info("QQ", "Succeed in modify members for room %d\n", group->ext_id);
+	purple_debug_info("QQ", "Succeed in modify members for room %d\n", rmd->ext_id);
 
-	qq_room_got_chat_in(gc, group, 0, _("Successed changing Qun member"), now);
+	qq_room_got_chat_in(gc, id, 0, _("Successed changing Qun member"), now);
 }
 
-void qq_room_change_info(PurpleConnection *gc, qq_group *group)
+void qq_room_change_info(PurpleConnection *gc, qq_room_data *rmd)
 {
 	guint8 *data;
 	gint data_len;
 	gint bytes;
 	gchar *group_name, *group_desc, *notice;
 
-	g_return_if_fail(group != NULL);
+	g_return_if_fail(rmd != NULL);
 
-	group_name = group->title_utf8 == NULL ? "" : utf8_to_qq(group->title_utf8, QQ_CHARSET_DEFAULT);
-	group_desc = group->desc_utf8 == NULL ? "" : utf8_to_qq(group->desc_utf8, QQ_CHARSET_DEFAULT);
-	notice = group->notice_utf8 == NULL ? "" : utf8_to_qq(group->notice_utf8, QQ_CHARSET_DEFAULT);
+	group_name = rmd->title_utf8 == NULL ? "" : utf8_to_qq(rmd->title_utf8, QQ_CHARSET_DEFAULT);
+	group_desc = rmd->desc_utf8 == NULL ? "" : utf8_to_qq(rmd->desc_utf8, QQ_CHARSET_DEFAULT);
+	notice = rmd->notice_utf8 == NULL ? "" : utf8_to_qq(rmd->notice_utf8, QQ_CHARSET_DEFAULT);
 
 	data_len = 64 + strlen(group_name) + strlen(group_desc) + strlen(notice);
 	data = g_newa(guint8, data_len);
@@ -236,11 +235,11 @@ void qq_room_change_info(PurpleConnection *gc, qq_group *group)
 	/* 005-005 */
 	bytes += qq_put8(data + bytes, 0x01);
 	/* 006-006 */
-	bytes += qq_put8(data + bytes, group->auth_type);
+	bytes += qq_put8(data + bytes, rmd->auth_type);
 	/* 007-008 */
 	bytes += qq_put16(data + bytes, 0x0000);
 	/* 009-010 */
-	bytes += qq_put16(data + bytes, group->category);
+	bytes += qq_put16(data + bytes, rmd->category);
 
 	bytes += qq_put8(data + bytes, strlen(group_name));
 	bytes += qq_putdata(data + bytes, (guint8 *) group_name, strlen(group_name));
@@ -259,14 +258,13 @@ void qq_room_change_info(PurpleConnection *gc, qq_group *group)
 			   data_len, bytes);
 		return;
 	}
-	qq_send_room_cmd(gc, QQ_ROOM_CMD_CHANGE_INFO, group->id, data, bytes);
+	qq_send_room_cmd(gc, QQ_ROOM_CMD_CHANGE_INFO, rmd->id, data, bytes);
 }
 
 void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection *gc)
 {
 	gint bytes;
 	guint32 id;
-	qq_group *group;
 	time_t now = time(NULL);
 
 	g_return_if_fail(data != NULL);
@@ -275,17 +273,12 @@ void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection
 	bytes += qq_get32(&id, data + bytes);
 	g_return_if_fail(id > 0);
 
-	/* we should have its info locally */
-	group = qq_room_search_id(gc, id);
-	g_return_if_fail(group != NULL);
+	purple_debug_info("QQ", "Succeed modify room info of %d\n", id);
 
-	purple_debug_info("QQ", "Succeed in modify info for Qun %d\n", group->ext_id);
-	qq_group_refresh(gc, group);
-
-	qq_room_got_chat_in(gc, group, 0, _("Successed changing Qun information"), now);
+	qq_room_got_chat_in(gc, id, 0, _("Successed changing Qun information"), now);
 }
 
-/* we create a very simple group first, and then let the user to modify */
+/* we create a very simple room first, and then let the user to modify */
 void qq_room_create_new(PurpleConnection *gc, const gchar *name)
 {
 	guint8 *data;
@@ -328,21 +321,21 @@ void qq_room_create_new(PurpleConnection *gc, const gchar *name)
 
 static void qq_group_setup_cb(qq_add_request *add_req)
 {
-	qq_group *group;
+	qq_room_data *rmd;
 	g_return_if_fail(add_req != NULL);
 	if (add_req->gc == NULL || add_req->uid == 0) {
 		g_free(add_req);
 		return;
 	}
 
-	group = qq_room_search_id(add_req->gc, add_req->uid);
-	if (group == NULL) {
+	rmd = qq_room_data_find(add_req->gc, add_req->uid);
+	if (rmd == NULL) {
 		g_free(add_req);
 		return;
 	}
 
 	/* TODO insert UI code here */
-	/* qq_group_detail_window_show(g->gc, group); */
+	/* qq_group_detail_window_show(g->gc, rmd); */
 	g_free(add_req);
 }
 
@@ -350,7 +343,7 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 {
 	gint bytes;
 	guint32 id, ext_id;
-	qq_group *group;
+	qq_room_data *rmd;
 	qq_add_request *add_req;
 	qq_data *qd;
 
@@ -363,15 +356,17 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 	bytes += qq_get32(&ext_id, data + bytes);
 	g_return_if_fail(id > 0 && ext_id);
 
-	group = qq_group_create_internal_record(gc, id, ext_id, NULL);
-	group->my_role = QQ_ROOM_ROLE_ADMIN;
-	group->creator_uid = qd->uid;
-	qq_group_refresh(gc, group);
+	qq_room_find_or_new(gc, id, ext_id);
+	rmd = qq_room_data_find(gc, id);
+	g_return_if_fail(rmd != NULL);
+
+	rmd->my_role = QQ_ROOM_ROLE_ADMIN;
+	rmd->creator_uid = qd->uid;
 
 	qq_send_room_cmd_only(gc, QQ_ROOM_CMD_ACTIVATE, id);
-	qq_update_room(gc, 0, group->id);
+	qq_update_room(gc, 0, rmd->id);
 
-	purple_debug_info("QQ", "Succeed in create Qun, external ID %d\n", group->ext_id);
+	purple_debug_info("QQ", "Succeed in create Qun, external ID %d\n", rmd->ext_id);
 
 	add_req = g_new0(qq_add_request, 1);
 	add_req->gc = gc;
@@ -391,7 +386,7 @@ void qq_group_process_activate_group_reply(guint8 *data, gint len, PurpleConnect
 {
 	gint bytes;
 	guint32 id;
-	qq_group *group;
+	qq_room_data *rmd;
 	g_return_if_fail(data != NULL);
 
 	bytes = 0;
@@ -399,17 +394,17 @@ void qq_group_process_activate_group_reply(guint8 *data, gint len, PurpleConnect
 	g_return_if_fail(id > 0);
 
 	/* we should have its info locally */
-	group = qq_room_search_id(gc, id);
-	g_return_if_fail(group != NULL);
+	rmd = qq_room_data_find(gc, id);
+	g_return_if_fail(rmd != NULL);
 
-	purple_debug_info("QQ", "Succeed in activate Qun %d\n", group->ext_id);
+	purple_debug_info("QQ", "Succeed in activate Qun %d\n", rmd->ext_id);
 }
 
 void qq_group_manage_group(PurpleConnection *gc, GHashTable *data)
 {
 	gchar *id_ptr;
 	guint32 id;
-	qq_group *group;
+	qq_room_data *rmd;
 
 	g_return_if_fail(data != NULL);
 
@@ -417,9 +412,9 @@ void qq_group_manage_group(PurpleConnection *gc, GHashTable *data)
 	id = strtol(id_ptr, NULL, 10);
 	g_return_if_fail(id > 0);
 
-	group = qq_room_search_id(gc, id);
-	g_return_if_fail(group != NULL);
+	rmd = qq_room_data_find(gc, id);
+	g_return_if_fail(rmd != NULL);
 
 	/* XXX insert UI code here */
-	/* qq_group_detail_window_show(gc, group); */
+	/* qq_group_detail_window_show(gc, rmd); */
 }

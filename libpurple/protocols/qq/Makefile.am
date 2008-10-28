@@ -18,10 +18,6 @@ QQSOURCES = \
 	file_trans.h \
 	group.c \
 	group.h \
-	group_find.c \
-	group_find.h \
-	group_free.c \
-	group_free.h \
 	group_internal.c \
 	group_internal.h \
 	group_im.c \
@@ -32,8 +28,6 @@ QQSOURCES = \
 	group_join.h \
 	group_opt.c \
 	group_opt.h \
-	group_search.c \
-	group_search.h \
 	qq_define.c \
 	qq_define.h \
 	im.c \

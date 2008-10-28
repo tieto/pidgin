@@ -28,7 +28,7 @@
 
 #include "buddy_info.h"
 #include "group_info.h"
-#include "group_free.h"
+#include "group_internal.h"
 #include "qq_crypt.h"
 #include "qq_define.h"
 #include "qq_base.h"
@@ -1039,7 +1039,7 @@ void qq_disconnect(PurpleConnection *gc)
 	qd->my_ip.s_addr = 0;
 	qd->my_port = 0;
 
-	qq_group_free_all(gc);
+	qq_room_data_free_all(gc);
 	qq_buddy_data_free_all(gc);
 }
 

@@ -47,8 +47,8 @@ enum {
 	QQ_ROOM_MEMBER_DEL
 };
 
-void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new_members);
-void qq_room_change_info(PurpleConnection *gc, qq_group *group);
+void qq_group_modify_members(PurpleConnection *gc, qq_room_data *rmd, guint32 *new_members);
+void qq_room_change_info(PurpleConnection *gc, qq_room_data *rmd);
 
 void qq_group_approve_application_with_struct(group_member_opt *g);
 void qq_group_reject_application_with_struct(group_member_opt *g);
