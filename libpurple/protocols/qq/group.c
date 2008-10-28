@@ -98,20 +98,8 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, _("Group ID"), QQ_ROOM_KEY_EXTERNAL_ID, FALSE);
 	fields = g_list_append(fields, f);
-	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, _("Creator"), QQ_ROOM_KEY_CREATOR_UID, FALSE);
-	fields = g_list_append(fields, f);
-	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING,
-				    _("Group Description"), QQ_ROOM_KEY_DESC_UTF8, FALSE);
-	fields = g_list_append(fields, f);
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", QQ_ROOM_KEY_INTERNAL_ID, TRUE);
 	fields = g_list_append(fields, f);
-	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", QQ_ROOM_KEY_TYPE, TRUE);
-	fields = g_list_append(fields, f);
-	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, _("Auth"), QQ_ROOM_KEY_AUTH_TYPE, TRUE);
-	fields = g_list_append(fields, f);
-	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", QQ_ROOM_KEY_CATEGORY, TRUE);
-	fields = g_list_append(fields, f);
-	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", QQ_ROOM_KEY_TITLE_UTF8, TRUE);
 
 	fields = g_list_append(fields, f);
 	purple_roomlist_set_fields(rl, fields);

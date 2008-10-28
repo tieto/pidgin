@@ -232,7 +232,7 @@ void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 }
 
 /* send packet to modify personal information */
-static void request_modify_info(PurpleConnection *gc, gchar **segments)
+static void request_change_info(PurpleConnection *gc, gchar **segments)
 {
 	gint bytes = 0;
 	guint8 raw_data[MAX_PACKET_SIZE - 128] = {0};
@@ -323,7 +323,7 @@ static void info_modify_ok_cb(modify_info_request *info_request, PurpleRequestFi
 				break;
 		}
 	}
-	request_modify_info(gc, segments);
+	request_change_info(gc, segments);
 
 	g_strfreev(segments);
 	g_free(info_request);
@@ -445,16 +445,15 @@ static void info_modify_dialogue(PurpleConnection *gc, gchar **segments, int icl
 }
 
 /* process the reply of modify_info packet */
-void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection *gc)
+void qq_process_change_info(PurpleConnection *gc, guint8 *data, gint data_len)
 {
 	qq_data *qd;
-
 	g_return_if_fail(data != NULL && data_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
 
 	data[data_len] = '\0';
-	if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
+	if (qd->uid != atoi((gchar *) data)) {	/* return should be my uid */
 		purple_debug_info("QQ", "Update info ACK OK\n");
 		qq_got_attention(gc, _("Successed changing buddy information."));
 	}
@@ -486,6 +485,7 @@ void qq_change_icon_cb(PurpleConnection *gc, const char *filepath)
 	const gchar *filename;
 	gint index;
 	gint face;
+	gchar *error;
 
 	g_return_if_fail(filepath != NULL);
 
@@ -507,7 +507,9 @@ void qq_change_icon_cb(PurpleConnection *gc, const char *filepath)
 	filename = segments[index];
 	index = strcspn (filename, "0123456789");
 	if (index < 0 || index >= strlen(filename)) {
-		purple_debug_info("QQ", "No digital in %s\n", filename);
+		error = g_strdup_printf(_("Can not get face number in file name (%s)"), filename);
+		purple_notify_error(gc, _("QQ Buddy"), _("Failed change icon"), error);
+		g_free(error);
 		return;
 	}
 	face = strtol(filename+index, NULL, 10);
@@ -542,16 +544,15 @@ void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 gchar *qq_get_icon_name(gint face)
 {
-	gchar *num_str, *icon_name;
+	gint icon;
+	gchar *icon_name;
 
+	icon = face / 3 + 1;
 	if (face < 1 || face > QQ_FACES) {
-		num_str = g_strdup_printf("%d", 1);
-	} else {
-		num_str = g_strdup_printf("%d", face / 3 + 1);
+		icon = 1;
 	}
-	icon_name = g_strconcat(QQ_ICON_PREFIX, num_str, QQ_ICON_SUFFIX, NULL);
-	g_free(num_str);
-
+	
+	icon_name = g_strdup_printf("%s%d%s", QQ_ICON_PREFIX, icon, QQ_ICON_SUFFIX);
 	return icon_name;
 }
 
@@ -575,7 +576,7 @@ gchar *qq_get_icon_path(gchar *icon_name)
 			icon_dir = QQ_BUDDY_ICON_DIR;
 #endif
 	}
-	icon_path = g_strconcat(icon_dir, G_DIR_SEPARATOR_S, icon_name, NULL);
+	icon_path = g_strdup_printf("%s%c%s", icon_dir, G_DIR_SEPARATOR, icon_name);
 
 	return icon_path;
 }
@@ -594,7 +595,9 @@ static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint fac
 	icon_name = qq_get_icon_name(face);
 	if ((buddy = purple_find_buddy(account, who))) {
 		icon_name_prev = purple_buddy_icons_get_checksum_for_user(buddy);
-		purple_debug_info("QQ", "Previous icon is %s\n", icon_name_prev);
+		if (icon_name_prev != NULL) {
+			purple_debug_info("QQ", "Previous icon is %s\n", icon_name_prev);
+		}
 	}
 	if (icon_name_prev != NULL && !strcmp(icon_name, icon_name_prev)) {
 		purple_debug_info("QQ", "Icon is not changed\n");
@@ -700,13 +703,15 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 #endif
 
 	if (action == QQ_BUDDY_INFO_SET_ICON) {
-		/* send new face to server */
 		if (strtol(segments[QQ_INFO_FACE], NULL, 10) != qd->my_icon) {
 			icon_name = g_strdup_printf("%d", qd->my_icon);
 			g_free(segments[QQ_INFO_FACE]);
 			segments[QQ_INFO_FACE] = icon_name;
 
-			request_modify_info(gc, segments);
+			/* Update me in buddy list */
+			update_buddy_info(gc, segments);
+			/* send new face to server */
+			request_change_info(gc, segments);
 		}
 		g_strfreev(segments);
 		return;

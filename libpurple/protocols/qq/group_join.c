@@ -345,22 +345,13 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	qq_request_room_search(gc, ext_id, QQ_ROOM_SEARCH_FOR_JOIN);
 }
 
-void qq_room_quit(PurpleConnection *gc, GHashTable *data)
+void qq_room_quit(PurpleConnection *gc, guint32 room_id)
 {
-	gchar *id_ptr;
-	guint32 id;
 	qq_add_request *add_req;
-
-	g_return_if_fail(data != NULL);
-
-	id_ptr = g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID);
-	id = strtol(id_ptr, NULL, 10);
-
-	g_return_if_fail(id > 0);
 
 	add_req = g_new0(qq_add_request, 1);
 	add_req->gc = gc;
-	add_req->uid = id;
+	add_req->uid = room_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    _("Quit Qun"),

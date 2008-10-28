@@ -43,7 +43,6 @@ typedef enum {
 typedef struct _qq_group {
 	/* all these will be saved when we exit Purple */
 	qq_room_role my_role;	/* my role for this room */
-	gchar *my_role_desc;			/* my role description */
 	guint32 id;
 	guint32 ext_id;
 	guint8 type8;			/* permanent or temporory */

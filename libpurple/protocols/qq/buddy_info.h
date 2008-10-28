@@ -81,7 +81,7 @@ void qq_change_icon_cb(PurpleConnection *gc, const char *filepath);
 void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 		gint update_class, int action);
 void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img);
-void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_change_info(PurpleConnection *gc, guint8 *data, gint data_len);
 void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, PurpleConnection *gc);
 
 void qq_request_get_level(PurpleConnection *gc, guint32 uid);

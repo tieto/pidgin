@@ -1023,7 +1023,7 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 
 	switch (cmd) {
 		case QQ_CMD_UPDATE_INFO:
-			qq_process_modify_info_reply(data, data_len, gc);
+			qq_process_change_info(gc, data, data_len);
 			break;
 		case QQ_CMD_BUDDY_ADD_NO_AUTH:
 			qq_process_buddy_add_no_auth(data, data_len, ship32, gc);

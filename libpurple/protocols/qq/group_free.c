@@ -53,7 +53,6 @@ void qq_group_free(qq_group *group)
 {
 	g_return_if_fail(group != NULL);
 	qq_group_free_member(group);
-	g_free(group->my_role_desc);
 	g_free(group->title_utf8);
 	g_free(group->desc_utf8);
 	g_free(group->notice_utf8);

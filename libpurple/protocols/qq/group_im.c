@@ -457,7 +457,7 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 
 	qd = (qq_data *) gc->proto_data;
 
-#if 0
+#if 1
 	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", data, data_len, "group im hex dump");
 #endif
 	memset(&packet, 0, sizeof(packet));

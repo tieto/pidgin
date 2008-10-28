@@ -102,6 +102,29 @@ gint qq_request_room_get_buddies(PurpleConnection *gc, qq_group *group, gint upd
 	return num;
 }
 
+static gchar *get_role_desc(qq_room_role role)
+{
+	const char *role_desc;
+	switch (role) {
+	case QQ_ROOM_ROLE_NO:
+		role_desc = _("Not member");
+		break;
+	case QQ_ROOM_ROLE_YES:
+		role_desc = _("Member");
+		break;
+	case QQ_ROOM_ROLE_REQUESTING:
+		role_desc = _("Requesting");
+		break;
+	case QQ_ROOM_ROLE_ADMIN:
+		role_desc = _("Admin");
+		break;
+	default:
+		role_desc = _("Unknown");
+	}
+
+	return g_strdup(role_desc);
+}
+
 static void room_info_display(PurpleConnection *gc, qq_group *group)
 {
 	PurpleNotifyUserInfo *room_info;
@@ -121,7 +144,9 @@ static void room_info_display(PurpleConnection *gc, qq_group *group)
 	purple_notify_user_info_add_pair(room_info, _("Creator"), utf8_value);
 	g_free(utf8_value);
 
-	purple_notify_user_info_add_pair(room_info, _("About me"), group->my_role_desc);
+	utf8_value = get_role_desc(group->my_role);
+	purple_notify_user_info_add_pair(room_info, _("About me"), utf8_value);
+	g_free(utf8_value);
 
 	utf8_value = g_strdup_printf(("%d"), group->category);
 	purple_notify_user_info_add_pair(room_info, _("Category"), utf8_value);

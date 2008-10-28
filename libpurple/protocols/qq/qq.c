@@ -746,11 +746,18 @@ static void action_chat_quit(PurpleBlistNode * node)
 	PurpleChat *chat = (PurpleChat *)node;
 	PurpleConnection *gc = purple_account_get_connection(chat->account);
 	GHashTable *components = chat -> components;
+	gchar *num_str;
+	guint32 room_id;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
-	qq_room_quit(gc, components);
+
+	num_str = g_hash_table_lookup(components, QQ_ROOM_KEY_INTERNAL_ID);
+	room_id = strtol(num_str, NULL, 10);
+	g_return_if_fail(room_id != 0);
+
+	qq_room_quit(gc, room_id);
 }
 
 static void action_chat_get_info(PurpleBlistNode * node)
@@ -758,24 +765,18 @@ static void action_chat_get_info(PurpleBlistNode * node)
 	PurpleChat *chat = (PurpleChat *)node;
 	PurpleConnection *gc = purple_account_get_connection(chat->account);
 	GHashTable *components = chat -> components;
-	gchar *uid_str;
-	guint32 uid;
-	qq_group *group;
+	gchar *num_str;
+	guint32 room_id;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
 
-	uid_str = g_hash_table_lookup(components, QQ_ROOM_KEY_INTERNAL_ID);
-	uid = strtol(uid_str, NULL, 10);
+	num_str = g_hash_table_lookup(components, QQ_ROOM_KEY_INTERNAL_ID);
+	room_id = strtol(num_str, NULL, 10);
+	g_return_if_fail(room_id != 0);
 
-	group = qq_room_search_id(gc, uid);
-	if (group == NULL) {
-		return;
-	}
-	g_return_if_fail(group->id > 0);
-
-	qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, group->id, NULL, 0,
+	qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, room_id, NULL, 0,
 			QQ_CMD_CLASS_UPDATE_ROOM, QQ_ROOM_INFO_DISPLAY);
 }
 

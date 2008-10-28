@@ -31,31 +31,6 @@
 #include "group_internal.h"
 #include "utils.h"
 
-static gchar *get_role_desc(qq_group *group)
-{
-	const char *role_desc;
-	g_return_val_if_fail(group != NULL, g_strdup(""));
-
-	switch (group->my_role) {
-	case QQ_ROOM_ROLE_NO:
-		role_desc = _("Not member");
-		break;
-	case QQ_ROOM_ROLE_YES:
-		role_desc = _("Member");
-		break;
-	case QQ_ROOM_ROLE_REQUESTING:
-		role_desc = _("Requesting");
-		break;
-	case QQ_ROOM_ROLE_ADMIN:
-		role_desc = _("Admin");
-		break;
-	default:
-		role_desc = _("Unknown");
-	}
-
-	return g_strdup(role_desc);
-}
-
 static void add_room_to_blist(PurpleConnection *gc, qq_group *group)
 {
 	GHashTable *components;
@@ -83,7 +58,6 @@ qq_group *qq_group_create_internal_record(PurpleConnection *gc,
 
         group = g_new0(qq_group, 1);
         group->my_role = QQ_ROOM_ROLE_NO;
-        group->my_role_desc = get_role_desc(group);
         group->id = internal_id;
         group->ext_id = ext_id;
         group->type8 = 0x01;       /* assume permanent Qun */
@@ -124,21 +98,12 @@ GHashTable *qq_group_to_hashtable(qq_group *group)
 {
 	GHashTable *components;
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_ROLE), g_strdup_printf("%d", group->my_role));
-	group->my_role_desc = get_role_desc(group);
 
 	g_hash_table_insert(components,
 			    g_strdup(QQ_ROOM_KEY_INTERNAL_ID), g_strdup_printf("%d", group->id));
 	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_EXTERNAL_ID),
 			    g_strdup_printf("%d", group->ext_id));
-	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_TYPE), g_strdup_printf("%d", group->type8));
-	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_CREATOR_UID), g_strdup_printf("%d", group->creator_uid));
-	g_hash_table_insert(components,
-			    g_strdup(QQ_ROOM_KEY_CATEGORY), g_strdup_printf("%d", group->category));
-	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_AUTH_TYPE), g_strdup_printf("%d", group->auth_type));
-	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_ROLE_DESC), g_strdup(group->my_role_desc));
 	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_TITLE_UTF8), g_strdup(group->title_utf8));
-	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_DESC_UTF8), g_strdup(group->desc_utf8));
 	return components;
 }
 
@@ -158,22 +123,18 @@ qq_group *qq_room_data_new_by_hashtable(PurpleConnection *gc, GHashTable *data)
 	qd = (qq_data *) gc->proto_data;
 
 	group = g_new0(qq_group, 1);
-	group->my_role =
-	    str2dec
-	    (NULL ==
-	     g_hash_table_lookup(data,
-				 QQ_ROOM_KEY_ROLE) ?
-	     g_strdup_printf("%d", QQ_ROOM_ROLE_NO) :
-	     g_hash_table_lookup(data, QQ_ROOM_KEY_ROLE));
+	memset(group, 0, sizeof(qq_group));
+	group->my_role = QQ_ROOM_ROLE_YES;
 	group->id = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID));
 	group->ext_id = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID));
-	group->type8 = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_TYPE));
-	group->creator_uid = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_CREATOR_UID));
-	group->category = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_CATEGORY));
-	group->auth_type = str2dec(g_hash_table_lookup(data, QQ_ROOM_KEY_AUTH_TYPE));
 	group->title_utf8 = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_TITLE_UTF8));
-	group->desc_utf8 = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_DESC_UTF8));
-	group->my_role_desc = get_role_desc(group);
+    group->type8 = 0x01;       /* assume permanent Qun */
+    group->creator_uid = 10000;     /* assume by QQ admin */
+    group->category = 0x01;
+    group->auth_type = 0x02;        /* assume need auth */
+    group->desc_utf8 = g_strdup("");
+    group->notice_utf8 = g_strdup("");
+    group->members = NULL;
 	group->is_got_buddies = FALSE;
 
 	purple_debug_info("QQ", "Created room info from hashtable: %s, %d, id %d\n",
@@ -206,27 +167,11 @@ void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 	if (group->title_utf8 != NULL && strlen(group->title_utf8) > 0)
 		purple_blist_alias_chat(chat, group->title_utf8);
 	g_hash_table_replace(chat->components,
-		     g_strdup(QQ_ROOM_KEY_ROLE), g_strdup_printf("%d", group->my_role));
-	group->my_role_desc = get_role_desc(group);
-	g_hash_table_replace(chat->components,
-		     g_strdup(QQ_ROOM_KEY_ROLE_DESC), g_strdup(group->my_role_desc));
-	g_hash_table_replace(chat->components,
 		     g_strdup(QQ_ROOM_KEY_INTERNAL_ID),
 		     g_strdup_printf("%d", group->id));
 	g_hash_table_replace(chat->components,
 		     g_strdup(QQ_ROOM_KEY_EXTERNAL_ID),
 		     g_strdup_printf("%d", group->ext_id));
 	g_hash_table_replace(chat->components,
-		     g_strdup(QQ_ROOM_KEY_TYPE), g_strdup_printf("%d", group->type8));
-	g_hash_table_replace(chat->components,
-		     g_strdup(QQ_ROOM_KEY_CREATOR_UID), g_strdup_printf("%d", group->creator_uid));
-	g_hash_table_replace(chat->components,
-		     g_strdup(QQ_ROOM_KEY_CATEGORY),
-		     g_strdup_printf("%d", group->category));
-	g_hash_table_replace(chat->components,
-		     g_strdup(QQ_ROOM_KEY_AUTH_TYPE), g_strdup_printf("%d", group->auth_type));
-	g_hash_table_replace(chat->components,
 		     g_strdup(QQ_ROOM_KEY_TITLE_UTF8), g_strdup(group->title_utf8));
-	g_hash_table_replace(chat->components,
-		     g_strdup(QQ_ROOM_KEY_DESC_UTF8), g_strdup(group->desc_utf8));
 }
