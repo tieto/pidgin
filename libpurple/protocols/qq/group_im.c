@@ -34,6 +34,7 @@
 #include "char_conv.h"
 #include "group_internal.h"
 #include "group_info.h"
+#include "group_join.h"
 #include "group_im.h"
 #include "group_opt.h"
 #include "im.h"
@@ -157,7 +158,7 @@ void qq_room_conv_set_onlines(PurpleConnection *gc, qq_room_data *rmd)
 }
 
 /* send IM to a group */
-void qq_send_packet_group_im(PurpleConnection *gc, guint32 room_id, const gchar *msg)
+void qq_request_room_send_im(PurpleConnection *gc, guint32 room_id, const gchar *msg)
 {
 	gint data_len, bytes;
 	guint8 *raw_data, *send_im_tail;
@@ -191,62 +192,11 @@ void qq_send_packet_group_im(PurpleConnection *gc, guint32 room_id, const gchar 
 }
 
 /* this is the ACK */
-void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc)
+void qq_process_room_send_im(PurpleConnection *gc, guint8 *data, gint len)
 {
 	/* return should be the internal group id
 	 * but we have nothing to do with it */
 	return;
-}
-
-/* receive an application to join the group */
-void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
-{
-	guint32 ext_id, user_uid;
-	guint8 type8;
-	gchar *reason_utf8, *msg, *reason;
-	group_member_opt *g;
-	gchar *nombre;
-	gint bytes = 0;
-
-	g_return_if_fail(id > 0 && data != NULL && len > 0);
-
-	/* FIXME: check length here */
-
-	bytes += qq_get32(&ext_id, data + bytes);
-	bytes += qq_get8(&type8, data + bytes);
-	bytes += qq_get32(&user_uid, data + bytes);
-
-	g_return_if_fail(ext_id > 0 && user_uid > 0);
-
-	bytes += qq_get_vstr(&reason_utf8, QQ_CHARSET_DEFAULT, data + bytes);
-
-	msg = g_strdup_printf(_("%d request to join Qun %d"), user_uid, ext_id);
-	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
-
-	g = g_new0(group_member_opt, 1);
-	g->gc = gc;
-	g->id = id;
-	g->member = user_uid;
-
-	nombre = uid_to_purple_name(user_uid);
-
-	purple_request_action(gc, _("QQ Qun Operation"),
-			msg, reason,
-			PURPLE_DEFAULT_ACTION_NONE,
-			purple_connection_get_account(gc), nombre, NULL,
-			g, 3,
-			_("Approve"),
-			G_CALLBACK
-			(qq_group_approve_application_with_struct),
-			_("Reject"),
-			G_CALLBACK
-			(qq_group_reject_application_with_struct),
-			_("Search"), G_CALLBACK(qq_group_search_application_with_struct));
-
-	g_free(nombre);
-	g_free(reason);
-	g_free(msg);
-	g_free(reason_utf8);
 }
 
 void qq_room_got_chat_in(PurpleConnection *gc,
@@ -285,147 +235,8 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	g_free(from);
 }
 
-/* the request to join a group is rejected */
-void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
-{
-	guint32 ext_id, admin_uid;
-	guint8 type8;
-	gchar *reason_utf8, *msg, *reason;
-	qq_room_data *rmd;
-	gint bytes;
-
-	g_return_if_fail(data != NULL && len > 0);
-
-	/* FIXME: check length here */
-	bytes = 0;
-	bytes += qq_get32(&ext_id, data + bytes);
-	bytes += qq_get8(&type8, data + bytes);
-	bytes += qq_get32(&admin_uid, data + bytes);
-
-	g_return_if_fail(ext_id > 0 && admin_uid > 0);
-
-	bytes += qq_get_vstr(&reason_utf8, QQ_CHARSET_DEFAULT, data + bytes);
-
-	msg = g_strdup_printf
-		(_("Failed to join Qun %d, operated by admin %d"), ext_id, admin_uid);
-	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
-
-	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
-
-	qq_room_find_or_new(gc, id, ext_id);
-	rmd = qq_room_data_find(gc, id);
-	if (rmd != NULL) {
-		rmd->my_role = QQ_ROOM_ROLE_NO;
-	}
-
-	g_free(msg);
-	g_free(reason);
-	g_free(reason_utf8);
-}
-
-/* the request to join a group is approved */
-void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
-{
-	guint32 ext_id, admin_uid;
-	guint8 type8;
-	gchar *msg, *reason;
-	qq_room_data *rmd;
-	gint bytes;
-	time_t now;
-
-	g_return_if_fail(data != NULL && len > 0);
-
-	/* FIXME: check length here */
-	bytes = 0;
-	bytes += qq_get32(&ext_id, data + bytes);
-	bytes += qq_get8(&type8, data + bytes);
-	bytes += qq_get32(&admin_uid, data + bytes);
-
-	g_return_if_fail(ext_id > 0 && admin_uid > 0);
-	/* it is also a "无" here, so do not display */
-	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
-
-	qq_room_find_or_new(gc, id, ext_id);
-	rmd = qq_room_data_find(gc, id);
-	if (rmd != NULL) {
-		rmd->my_role = QQ_ROOM_ROLE_YES;
-	}
-
-	msg = g_strdup_printf(_("<b>Joinning Qun %d is approved by Admin %d for %s</b>"),
-			ext_id, admin_uid, reason);
-	now = time(NULL);
-	qq_room_got_chat_in(gc, id, 0, msg, now);
-
-	g_free(msg);
-	g_free(reason);
-}
-
-/* process the packet when removed from a group */
-void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
-{
-	guint32 ext_id, uid;
-	guint8 type8;
-	gchar *msg;
-	qq_room_data *rmd;
-	gint bytes = 0;
-	time_t now = time(NULL);
-
-	g_return_if_fail(data != NULL && len > 0);
-
-	/* FIXME: check length here */
-	bytes = 0;
-	bytes += qq_get32(&ext_id, data + bytes);
-	bytes += qq_get8(&type8, data + bytes);
-	bytes += qq_get32(&uid, data + bytes);
-
-	g_return_if_fail(ext_id > 0 && uid > 0);
-
-	qq_room_find_or_new(gc, id, ext_id);
-	rmd = qq_room_data_find(gc, id);
-	if (rmd != NULL) {
-		rmd->my_role = QQ_ROOM_ROLE_NO;
-	}
-
-	msg = g_strdup_printf(_("<b>Removed buddy %d.</b>"), uid);
-	qq_room_got_chat_in(gc, id, 0, msg, now);
-	g_free(msg);
-}
-
-/* process the packet when added to a group */
-void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleConnection *gc)
-{
-	guint32 ext_id, uid;
-	guint8 type8;
-	qq_room_data *rmd;
-	gint bytes;
-	gchar *msg;
-	time_t now = time(NULL);
-
-	g_return_if_fail(data != NULL && len > 0);
-
-	/* FIXME: check length here */
-	bytes = 0;
-	bytes += qq_get32(&ext_id, data + bytes);
-	bytes += qq_get8(&type8, data + bytes);
-	bytes += qq_get32(&uid, data + bytes);
-
-	g_return_if_fail(ext_id > 0 && id > 0);
-
-	qq_room_find_or_new(gc, id, ext_id);
-	rmd = qq_room_data_find(gc, id);
-	g_return_if_fail(rmd != NULL);
-
-	rmd->my_role = QQ_ROOM_ROLE_YES;
-
-	qq_update_room(gc, 0, rmd->id);
-
-	msg = g_strdup_printf(_("<b>Added new buddy %d.</b>"), uid);
-	qq_room_got_chat_in(gc, id, 0, msg, now);
-	g_free(msg);
-}
-
 /* recv an IM from a group chat */
-void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type)
+void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type)
 {
 	gchar *msg_with_purple_smiley, *msg_utf8_encoded;
 	qq_data *qd;
@@ -506,7 +317,7 @@ void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleC
 	} else {
 		packet.font_attr = NULL;
 	}
-	
+
 	/* group im_group has no flag to indicate whether it has font_attr or not */
 	msg_with_purple_smiley = qq_smiley_to_purple(packet.msg);
 	if (packet.font_attr_len > 0) {

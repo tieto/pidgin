@@ -40,7 +40,6 @@ typedef struct _qq_data qq_data;
 typedef struct _qq_buddy_data qq_buddy_data;
 typedef struct _qq_interval qq_interval;
 typedef struct _qq_net_stat qq_net_stat;
-typedef struct _qq_add_request qq_add_request;
 typedef struct _qq_login_data qq_login_data;
 typedef struct _qq_captcha_data qq_captcha_data;
 
@@ -65,11 +64,6 @@ struct _qq_login_data {
 	guint8 *login_token;
 	guint16 login_token_len;
 	guint8 login_key[QQ_KEY_LENGTH];
-};
-
-struct _qq_add_request {
-	guint32 uid;
-	PurpleConnection *gc;
 };
 
 struct _qq_interval {

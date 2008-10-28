@@ -52,19 +52,19 @@ enum {
 	QQ_ROOM_SEARCH_TYPE_DEMO = 0x02
 };
 
-static void group_quit_cb(qq_add_request *add_req)
+static void group_quit_cb(qq_room_req *add_req)
 {
 	PurpleConnection *gc;
 	guint32 id;
 	qq_room_data *rmd;
 
-	if (add_req->gc == NULL || add_req->uid == 0) {
+	if (add_req->gc == NULL || add_req->id == 0) {
 		g_free(add_req);
 		return;
 	}
 
 	gc = add_req->gc;
-	id = add_req->uid;
+	id = add_req->id;
 
 	rmd = qq_room_data_find(gc, id);
 	if (rmd == NULL) {
@@ -104,19 +104,19 @@ void qq_request_room_join(PurpleConnection *gc, qq_room_data *rmd)
 	qq_send_room_cmd_only(gc, QQ_ROOM_CMD_JOIN, rmd->id);
 }
 
-static void group_join_cb(qq_add_request *add_req, const gchar *reason_utf8)
+static void group_join_cb(qq_room_req *add_req, const gchar *reason_utf8)
 {
 	qq_room_data *rmd;
 
 	g_return_if_fail(add_req != NULL);
-	if (add_req->gc == NULL || add_req->uid == 0) {
+	if (add_req->gc == NULL || add_req->id == 0) {
 		g_free(add_req);
 		return;
 	}
 
-	rmd = qq_room_data_find(add_req->gc, add_req->uid);
+	rmd = qq_room_data_find(add_req->gc, add_req->id);
 	if (rmd == NULL) {
-		purple_debug_error("QQ", "Can not find qq_room_data by internal_id: %d\n", add_req->uid);
+		purple_debug_error("QQ", "Can not find room data of %d\n", add_req->id);
 		g_free(add_req);
 		return;
 	}
@@ -125,30 +125,30 @@ static void group_join_cb(qq_add_request *add_req, const gchar *reason_utf8)
 	g_free(add_req);
 }
 
-void qq_group_cancel_cb(qq_add_request *add_req, const gchar *msg)
+static void room_join_cancel_cb(qq_room_req *add_req, const gchar *msg)
 {
 	g_return_if_fail(add_req != NULL);
 	g_free(add_req);
 }
 
-static void _qq_group_join_auth(PurpleConnection *gc, qq_room_data *rmd)
+static void do_room_join_request(PurpleConnection *gc, qq_room_data *rmd)
 {
 	gchar *msg;
-	qq_add_request *add_req;
+	qq_room_req *add_req;
 	g_return_if_fail(rmd != NULL);
 
 	purple_debug_info("QQ", "Group (internal id: %d) needs authentication\n", rmd->id);
 
 	msg = g_strdup_printf("Group \"%s\" needs authentication\n", rmd->title_utf8);
-	add_req = g_new0(qq_add_request, 1);
+	add_req = g_new0(qq_room_req, 1);
 	add_req->gc = gc;
-	add_req->uid = rmd->id;
+	add_req->id = rmd->id;
 	purple_request_input(gc, NULL, msg,
 			   _("Input request here"),
 			   _("Would you be my friend?"), TRUE, FALSE, NULL,
 			   _("Send"),
 			   G_CALLBACK(group_join_cb),
-			   _("Cancel"), G_CALLBACK(qq_group_cancel_cb),
+			   _("Cancel"), G_CALLBACK(room_join_cancel_cb),
 			   purple_connection_get_account(gc), rmd->title_utf8, NULL,
 			   add_req);
 	g_free(msg);
@@ -272,7 +272,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 			   "Fail joining group [%d] %s, needs authentication\n",
 			   rmd->ext_id, rmd->title_utf8);
 		rmd->my_role = QQ_ROOM_ROLE_NO;
-		_qq_group_join_auth(gc, rmd);
+		do_room_join_request(gc, rmd);
 		break;
 	case QQ_ROOM_JOIN_DENIED:
 		msg = g_strdup_printf(_("Qun %d denied to join"), rmd->ext_id);
@@ -330,11 +330,11 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 
 void qq_room_quit(PurpleConnection *gc, guint32 room_id)
 {
-	qq_add_request *add_req;
+	qq_room_req *add_req;
 
-	add_req = g_new0(qq_add_request, 1);
+	add_req = g_new0(qq_room_req, 1);
 	add_req->gc = gc;
-	add_req->uid = room_id;
+	add_req->id = room_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    _("Quit Qun"),
@@ -342,7 +342,7 @@ void qq_room_quit(PurpleConnection *gc, guint32 room_id)
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
 			    add_req, 2, _("Cancel"),
-			    G_CALLBACK(qq_group_cancel_cb),
+			    G_CALLBACK(room_join_cancel_cb),
 			    _("Continue"), G_CALLBACK(group_quit_cb));
 }
 
@@ -429,7 +429,7 @@ void qq_process_room_search(PurpleConnection *gc, guint8 *data, gint len, guint3
 		chat = qq_room_find_or_new(gc, rmd.id, rmd.ext_id);
 		g_return_if_fail(chat != NULL);
 
-		qq_room_update_chat_info(gc, &rmd);
+		qq_room_update_chat_info(chat, &rmd);
 		qq_request_room_join(gc, &rmd);
 	} else {
 		add_to_roomlist(qd, &rmd);

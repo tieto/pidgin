@@ -56,6 +56,4 @@ void qq_room_quit(PurpleConnection *gc, guint32 room_id);
 void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *gc);
 void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnection *gc);
 void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *gc);
-
-void qq_group_cancel_cb(qq_add_request *add_req, const gchar *msg);
 #endif

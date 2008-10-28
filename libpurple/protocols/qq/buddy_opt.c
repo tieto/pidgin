@@ -52,6 +52,11 @@ enum {
 	QQ_MY_AUTH_REQUEST = 0x32,	/* ASCII value of "2" */
 };
 
+typedef struct _qq_buddy_req {
+	guint32 uid;
+	PurpleConnection *gc;
+} qq_buddy_req;
+
 /* send packet to remove a buddy from my buddy list */
 static void request_buddy_remove(PurpleConnection *gc, guint32 uid)
 {
@@ -116,7 +121,7 @@ static void request_buddy_auth(PurpleConnection *gc, guint32 uid, const gchar re
 	qq_send_cmd(gc, QQ_CMD_BUDDY_ADD_AUTH, raw_data, bytes);
 }
 
-static void request_buddy_add_auth_cb(qq_add_request *add_req, const gchar *text)
+static void request_buddy_add_auth_cb(qq_buddy_req *add_req, const gchar *text)
 {
 	g_return_if_fail(add_req != NULL);
 	if (add_req->gc == NULL || add_req->uid == 0) {
@@ -129,7 +134,7 @@ static void request_buddy_add_auth_cb(qq_add_request *add_req, const gchar *text
 }
 
 /* the real packet to reject and request is sent from here */
-static void buddy_add_deny_reason_cb(qq_add_request *add_req, const gchar *reason)
+static void buddy_add_deny_reason_cb(qq_buddy_req *add_req, const gchar *reason)
 {
 	g_return_if_fail(add_req != NULL);
 	if (add_req->gc == NULL || add_req->uid == 0) {
@@ -142,7 +147,7 @@ static void buddy_add_deny_reason_cb(qq_add_request *add_req, const gchar *reaso
 }
 
 /* we approve other's request of adding me as friend */
-static void buddy_add_authorize_cb(qq_add_request *add_req)
+static void buddy_add_authorize_cb(qq_buddy_req *add_req)
 {
 	g_return_if_fail(add_req != NULL);
 	if (add_req->gc == NULL || add_req->uid != 0) {
@@ -155,7 +160,7 @@ static void buddy_add_authorize_cb(qq_add_request *add_req)
 }
 
 /* we reject other's request of adding me as friend */
-static void buddy_add_deny_cb(qq_add_request *add_req)
+static void buddy_add_deny_cb(qq_buddy_req *add_req)
 {
 	gint uid;
 	gchar *msg1, *msg2;
@@ -184,7 +189,7 @@ static void buddy_add_deny_cb(qq_add_request *add_req)
 }
 
 /* suggested by rakescar@linuxsir, can still approve after search */
-static void buddy_add_check_info_cb(qq_add_request *add_req)
+static void buddy_add_check_info_cb(qq_buddy_req *add_req)
 {
 	PurpleConnection *gc;
 	guint32 uid;
@@ -267,13 +272,13 @@ void qq_change_buddys_group(PurpleConnection *gc, const char *who,
 	request_buddy_add_no_auth(gc, uid);
 }
 
-static void buddy_cancel_cb(qq_add_request *add_req, const gchar *msg)
+static void buddy_cancel_cb(qq_buddy_req *add_req, const gchar *msg)
 {
 	g_return_if_fail(add_req != NULL);
 	g_free(add_req);
 }
 
-static void buddy_add_no_auth_cb(qq_add_request *add_req)
+static void buddy_add_no_auth_cb(qq_buddy_req *add_req)
 {
 	g_return_if_fail(add_req != NULL);
 	if (add_req->gc == NULL || add_req->uid == 0) {
@@ -285,7 +290,7 @@ static void buddy_add_no_auth_cb(qq_add_request *add_req)
 	g_free(add_req);
 }
 
-static void buddy_remove_both_cb(qq_add_request *add_req)
+static void buddy_remove_both_cb(qq_buddy_req *add_req)
 {
 	PurpleConnection *gc;
 	qq_data *qd;
@@ -329,7 +334,7 @@ void qq_remove_buddy_and_me(PurpleBlistNode * node)
 	PurpleConnection *gc;
 	qq_data *qd;
 	guint32 uid;
-	qq_add_request *add_req;
+	qq_buddy_req *add_req;
 	PurpleBuddy *buddy;
 	const gchar *who;
 
@@ -351,7 +356,7 @@ void qq_remove_buddy_and_me(PurpleBlistNode * node)
 		return;
 	}
 
-	add_req = g_new0(qq_add_request, 1);
+	add_req = g_new0(qq_buddy_req, 1);
 	add_req->gc = gc;
 	add_req->uid = uid;
 
@@ -429,7 +434,7 @@ void qq_process_buddy_add_no_auth(guint8 *data, gint data_len, guint32 uid, Purp
 	qq_data *qd;
 	gchar *msg, **segments, *dest_uid, *reply;
 	PurpleBuddy *b;
-	qq_add_request *add_req;
+	qq_buddy_req *add_req;
 	gchar *nombre;
 
 	g_return_if_fail(data != NULL && data_len != 0);
@@ -460,7 +465,7 @@ void qq_process_buddy_add_no_auth(guint8 *data, gint data_len, guint32 uid, Purp
 		b = purple_find_buddy(gc->account, nombre);
 		if (b != NULL)
 			purple_blist_remove_buddy(b);
-		add_req = g_new0(qq_add_request, 1);
+		add_req = g_new0(qq_buddy_req, 1);
 		add_req->gc = gc;
 		add_req->uid = uid;
 		msg = g_strdup_printf(_("%d needs authentication"), uid);
@@ -647,14 +652,14 @@ static void server_buddy_add_request(PurpleConnection *gc, gchar *from, gchar *t
 {
 	gchar *message, *reason;
 	guint32 uid;
-	qq_add_request *g, *g2;
+	qq_buddy_req *g, *g2;
 	PurpleBuddy *b;
 	gchar *name;
 
 	g_return_if_fail(from != NULL && to != NULL);
 
 	uid = strtol(from, NULL, 10);
-	g = g_new0(qq_add_request, 1);
+	g = g_new0(qq_buddy_req, 1);
 	g->gc = gc;
 	g->uid = uid;
 
@@ -680,7 +685,7 @@ static void server_buddy_add_request(PurpleConnection *gc, gchar *from, gchar *t
 	/* XXX: Is this needed once the above goes through purple_account_request_authorization()? */
 	b = purple_find_buddy(gc->account, name);
 	if (b == NULL) {	/* the person is not in my list  */
-		g2 = g_new0(qq_add_request, 1);
+		g2 = g_new0(qq_buddy_req, 1);
 		g2->gc = gc;
 		g2->uid = strtol(from, NULL, 10);
 		message = g_strdup_printf(_("%s is not in buddy list"), from);
@@ -703,7 +708,7 @@ static void server_buddy_added(PurpleConnection *gc, gchar *from, gchar *to, gch
 	gchar *message;
 	PurpleBuddy *b;
 	guint32 uid;
-	qq_add_request *add_req;
+	qq_buddy_req *add_req;
 	gchar *name;
 
 	g_return_if_fail(from != NULL && to != NULL);
@@ -713,7 +718,7 @@ static void server_buddy_added(PurpleConnection *gc, gchar *from, gchar *to, gch
 	b = purple_find_buddy(gc->account, name);
 
 	if (b == NULL) {	/* the person is not in my list */
-		add_req = g_new0(qq_add_request, 1);
+		add_req = g_new0(qq_buddy_req, 1);
 		add_req->gc = gc;
 		add_req->uid = uid;	/* only need to get value */
 		message = g_strdup_printf(_("You have been added by %s"), from);

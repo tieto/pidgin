@@ -484,7 +484,7 @@ static int qq_chat_send(PurpleConnection *gc, int id, const char *message, Purpl
 	purple_debug_info("QQ_MESG", "Send qun mesg in utf8: %s\n", message);
 	msg = utf8_to_qq(message, QQ_CHARSET_DEFAULT);
 	msg_with_qq_smiley = purple_smiley_to_qq(msg);
-	qq_send_packet_group_im(gc, room_id, msg_with_qq_smiley);
+	qq_request_room_send_im(gc, room_id, msg_with_qq_smiley);
 	g_free(msg);
 	g_free(msg_with_qq_smiley);
 
@@ -736,7 +736,7 @@ static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 			   _("Input Qun name here"),
 			   _("Only QQ members can create permanent Qun"),
 			   "OpenQ", FALSE, FALSE, NULL,
-			   _("Create"), G_CALLBACK(qq_room_create_new), _("Cancel"), NULL, gc);
+			   _("Create"), G_CALLBACK(qq_create_room), _("Cancel"), NULL, gc);
 }
 */
 

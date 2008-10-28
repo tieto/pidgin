@@ -311,35 +311,35 @@ static void process_private_msg(guint8 *data, gint data_len, guint16 seq, Purple
 		case QQ_MSG_TEMP_QUN_IM:
 		case QQ_MSG_QUN_IM:
 			purple_debug_info("QQ", "MSG from room [%d]\n", header.uid_from);
-			qq_process_room_msg_normal(data + bytes, data_len - bytes, header.uid_from, gc, header.msg_type);
+			qq_process_room_im(data + bytes, data_len - bytes, header.uid_from, gc, header.msg_type);
 			break;
 		case QQ_MSG_ADD_TO_QUN:
 			purple_debug_info("QQ", "Notice from [%d], Added\n", header.uid_from);
 			/* uid_from is group id
 			 * we need this to create a dummy group and add to blist */
-			qq_process_room_msg_been_added(data + bytes, data_len - bytes, header.uid_from, gc);
+			qq_process_room_buddy_joined(data + bytes, data_len - bytes, header.uid_from, gc);
 			break;
 		case QQ_MSG_DEL_FROM_QUN:
 			purple_debug_info("QQ", "Notice from room [%d], Removed\n", header.uid_from);
 			/* uid_from is group id */
-			qq_process_room_msg_been_removed(data + bytes, data_len - bytes, header.uid_from, gc);
+			qq_process_room_buddy_removed(data + bytes, data_len - bytes, header.uid_from, gc);
 			break;
 		case QQ_MSG_APPLY_ADD_TO_QUN:
 			purple_debug_info("QQ", "Notice from room [%d], Joined\n", header.uid_from);
 			/* uid_from is group id */
-			qq_process_room_msg_apply_join(data + bytes, data_len - bytes, header.uid_from, gc);
+			qq_process_room_buddy_request_join(data + bytes, data_len - bytes, header.uid_from, gc);
 			break;
 		case QQ_MSG_APPROVE_APPLY_ADD_TO_QUN:
 			purple_debug_info("QQ", "Notice from room [%d], Confirm add in\n",
 					header.uid_from);
 			/* uid_from is group id */
-			qq_process_room_msg_been_approved(data + bytes, data_len - bytes, header.uid_from, gc);
+			qq_process_room_buddy_approved(data + bytes, data_len - bytes, header.uid_from, gc);
 			break;
 		case QQ_MSG_REJCT_APPLY_ADD_TO_QUN:
 			purple_debug_info("QQ", "Notice from room [%d], Refuse add in\n",
 					header.uid_from);
 			/* uid_from is group id */
-			qq_process_room_msg_been_rejected(data + bytes, data_len - bytes, header.uid_from, gc);
+			qq_process_room_buddy_rejected(data + bytes, data_len - bytes, header.uid_from, gc);
 			break;
 		case QQ_MSG_SYS_30:
 			do_msg_sys_30(gc, data + bytes, data_len - bytes);
@@ -802,7 +802,7 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		qq_process_group_cmd_exit_group(data + bytes, data_len - bytes, gc);
 		break;
 	case QQ_ROOM_CMD_SEND_MSG:
-		qq_process_group_cmd_im(data + bytes, data_len - bytes, gc);
+		qq_process_room_send_im(gc, data + bytes, data_len - bytes);
 		break;
 	case QQ_ROOM_CMD_GET_ONLINES:
 		qq_process_room_cmd_get_onlines(data + bytes, data_len - bytes, gc);
