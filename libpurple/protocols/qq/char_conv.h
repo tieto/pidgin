@@ -30,6 +30,7 @@
 #define QQ_CHARSET_DEFAULT      "GB18030"
 
 gint qq_get_vstr(gchar **ret, const gchar *from_charset, guint8 *data);
+gint qq_put_vstr(guint8 *buf, const gchar *str_utf8, const gchar *to_charset);
 
 gchar *qq_smiley_to_purple(gchar *text);
 gchar *purple_smiley_to_qq(gchar *text);

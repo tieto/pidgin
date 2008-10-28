@@ -179,8 +179,8 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_TOKEN_EX";
 	case QQ_CMD_CHECK_PWD:
 		return "QQ_CMD_CHECK_PWD";
-	case QQ_CMD_AUTH_INFO:
-		return "QQ_CMD_AUTH_INFO";
+	case QQ_CMD_AUTH_CODE:
+		return "QQ_CMD_AUTH_CODE";
 	case QQ_CMD_ADD_BUDDY_NO_AUTH_EX:
 		return "QQ_CMD_ADD_BUDDY_NO_AUTH_EX";
 	case QQ_CMD_ADD_BUDDY_AUTH_EX:

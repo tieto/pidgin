@@ -144,6 +144,24 @@ gint qq_get_vstr(gchar **ret, const gchar *from_charset, guint8 *data)
 	return len + 1;
 }
 
+gint qq_put_vstr(guint8 *buf, const gchar *str_utf8, const gchar *to_charset)
+{
+	gchar *str;
+	guint8 len;
+
+	if (str_utf8 == NULL || (len = strlen(str_utf8)) == 0) {
+		buf[0] = 0;
+		return 1;
+	}
+	str = do_convert(str_utf8, -1, to_charset, UTF8);
+	len = strlen(str_utf8);
+	buf[0] = len;
+	if (len > 0) {
+		memcpy(buf + 1, str, len);
+	}
+	return 1 + len;
+}
+
 /* convert QQ formatted msg to Purple formatted msg (and UTF-8) */
 gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg, const gint client_version)
 {

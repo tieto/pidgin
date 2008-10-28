@@ -98,49 +98,30 @@ static void do_server_news(guint8 *data, gint data_len, PurpleConnection *gc)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
 	gint bytes;
-	guint8 *temp;
-	guint8 temp_len;
 	gchar *title, *brief, *url;
-	gchar *title_utf8;
-	gchar *content, *content_utf8;
+	gchar *content;
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
 	/* qq_show_packet("Rcv news", data, data_len); */
 
-	temp = g_newa(guint8, data_len);
-	bytes = 4;	/* ignore unknown 4 bytes */
+	bytes = 4;	/* skip unknown 4 bytes */
 
-	bytes += qq_get8(&temp_len, data + bytes);
-	g_return_if_fail(bytes + temp_len <= data_len);
-	bytes += qq_getdata(temp, temp_len, data+bytes);
-	title = g_strndup((gchar *)temp, temp_len);
+	bytes += qq_get_vstr(&title, QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += qq_get_vstr(&brief, QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += qq_get_vstr(&url, QQ_CHARSET_DEFAULT, data + bytes);
 
-	bytes += qq_get8(&temp_len, data + bytes);
-	g_return_if_fail(bytes + temp_len <= data_len);
-	bytes += qq_getdata(temp, temp_len, data+bytes);
-	brief = g_strndup((gchar *)temp, temp_len);
-
-	bytes += qq_get8(&temp_len, data + bytes);
-	g_return_if_fail(bytes + temp_len <= data_len);
-	bytes += qq_getdata(temp, temp_len, data+bytes);
-	url = g_strndup((gchar *)temp, temp_len);
-
-	title_utf8 = qq_to_utf8(title, QQ_CHARSET_DEFAULT);
 	content = g_strdup_printf(_("Server News:\n%s\n%s\n%s"), title, brief, url);
-	content_utf8 = qq_to_utf8(content, QQ_CHARSET_DEFAULT);
 
 	if (qd->is_show_news) {
-		qq_got_attention(gc, content_utf8);
+		qq_got_attention(gc, content);
 	} else {
-		purple_debug_info("QQ", "QQ Server news:\n%s\n%s", title_utf8, content_utf8);
+		purple_debug_info("QQ", "QQ Server news:\n%s\n", content);
 	}
 	g_free(title);
-	g_free(title_utf8);
 	g_free(brief);
 	g_free(url);
 	g_free(content);
-	g_free(content_utf8);
 }
 
 static void do_msg_sys_30(PurpleConnection *gc, guint8 *data, gint data_len)
@@ -1099,11 +1080,17 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			}
 			purple_debug_info("QQ", "All buddies and groups received\n");
 			break;
-		case QQ_CMD_AUTH_INFO:
-			qq_process_auth_info(gc, data, data_len, ship32);
+		case QQ_CMD_AUTH_CODE:
+			qq_process_auth_code(gc, data, data_len, ship32);
+			break;
+		case QQ_CMD_BUDDY_QUESTION:
+			qq_process_question(gc, data, data_len, ship32);
 			break;
 		case QQ_CMD_ADD_BUDDY_NO_AUTH_EX:
 			qq_process_add_buddy_no_auth_ex(gc, data, data_len, ship32);
+			break;
+		case QQ_CMD_ADD_BUDDY_AUTH_EX:
+			qq_process_add_buddy_auth_ex(gc, data, data_len, ship32);
 			break;
 		case QQ_CMD_BUDDY_CHECK_CODE:
 			qq_process_buddy_check_code(gc, data, data_len);

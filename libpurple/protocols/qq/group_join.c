@@ -154,31 +154,23 @@ static void do_room_join_request(PurpleConnection *gc, qq_room_data *rmd)
 	g_free(msg);
 }
 
-void qq_send_cmd_group_auth(PurpleConnection *gc, qq_room_data *rmd, guint8 opt, guint32 uid, const gchar *reason_utf8)
+void qq_send_cmd_group_auth(PurpleConnection *gc, qq_room_data *rmd, 
+		guint8 opt, guint32 uid, const gchar *reason_utf8)
 {
-	guint8 *raw_data;
-	gchar *reason_qq;
+	guint8 raw_data[MAX_PACKET_SIZE - 16];
 	gint bytes;
 
 	g_return_if_fail(rmd != NULL);
-
-	if (reason_utf8 == NULL || strlen(reason_utf8) == 0)
-		reason_qq = g_strdup("");
-	else
-		reason_qq = utf8_to_qq(reason_utf8, QQ_CHARSET_DEFAULT);
 
 	if (opt == QQ_ROOM_AUTH_REQUEST_APPLY) {
 		rmd->my_role = QQ_ROOM_ROLE_REQUESTING;
 		uid = 0;
 	}
 
-	raw_data = g_newa(guint8, 6 + strlen(reason_qq));
-
 	bytes = 0;
 	bytes += qq_put8(raw_data + bytes, opt);
 	bytes += qq_put32(raw_data + bytes, uid);
-	bytes += qq_put8(raw_data + bytes, strlen(reason_qq));
-	bytes += qq_putdata(raw_data + bytes, (guint8 *) reason_qq, strlen(reason_qq));
+	bytes += qq_put_vstr(raw_data + bytes, reason_utf8, QQ_CHARSET_DEFAULT);
 
 	qq_send_room_cmd(gc, QQ_ROOM_CMD_AUTH, rmd->id, raw_data, bytes);
 }

@@ -70,7 +70,7 @@ enum {
 	QQ_CMD_GET_SERVER = 0x0091,					/* select login server */
 	QQ_CMD_TOKEN_EX = 0x00BA,						/* get LOGIN token */
 	QQ_CMD_CHECK_PWD = 0x00DD,				/* Password verify */
-	QQ_CMD_AUTH_INFO = 0x00AE,				/* the request verification of information */
+	QQ_CMD_AUTH_CODE = 0x00AE,				/* the request verification of information */
 	QQ_CMD_ADD_BUDDY_NO_AUTH_EX = 0x00A7,			/* add friend without auth */
 	QQ_CMD_ADD_BUDDY_AUTH_EX = 0x00A8, 				/* add buddy with auth */
 	QQ_CMD_BUDDY_CHECK_CODE =  0x00B5,

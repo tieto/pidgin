@@ -209,19 +209,11 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 
 void qq_room_change_info(PurpleConnection *gc, qq_room_data *rmd)
 {
-	guint8 *data;
-	gint data_len;
+	guint8 data[MAX_PACKET_SIZE - 16];
 	gint bytes;
-	gchar *group_name, *group_desc, *notice;
 
 	g_return_if_fail(rmd != NULL);
 
-	group_name = rmd->title_utf8 == NULL ? "" : utf8_to_qq(rmd->title_utf8, QQ_CHARSET_DEFAULT);
-	group_desc = rmd->desc_utf8 == NULL ? "" : utf8_to_qq(rmd->desc_utf8, QQ_CHARSET_DEFAULT);
-	notice = rmd->notice_utf8 == NULL ? "" : utf8_to_qq(rmd->notice_utf8, QQ_CHARSET_DEFAULT);
-
-	data_len = 64 + strlen(group_name) + strlen(group_desc) + strlen(notice);
-	data = g_newa(guint8, data_len);
 	bytes = 0;
 	/* 005-005 */
 	bytes += qq_put8(data + bytes, 0x01);
@@ -232,23 +224,13 @@ void qq_room_change_info(PurpleConnection *gc, qq_room_data *rmd)
 	/* 009-010 */
 	bytes += qq_put16(data + bytes, rmd->category);
 
-	bytes += qq_put8(data + bytes, strlen(group_name));
-	bytes += qq_putdata(data + bytes, (guint8 *) group_name, strlen(group_name));
+	bytes += qq_put_vstr(data + bytes, rmd->title_utf8, QQ_CHARSET_DEFAULT);
 
 	bytes += qq_put16(data + bytes, 0x0000);
 
-	bytes += qq_put8(data + bytes, strlen(notice));
-	bytes += qq_putdata(data+ bytes, (guint8 *) notice, strlen(notice));
+	bytes += qq_put_vstr(data + bytes, rmd->notice_utf8, QQ_CHARSET_DEFAULT);
+	bytes += qq_put_vstr(data + bytes, rmd->desc_utf8, QQ_CHARSET_DEFAULT);
 
-	bytes += qq_put8(data + bytes, strlen(group_desc));
-	bytes += qq_putdata(data + bytes, (guint8 *) group_desc, strlen(group_desc));
-
-	if (bytes > data_len) {
-		purple_debug_error("QQ",
-			   "Overflow in qq_room_change_info, max %d bytes, now %d bytes\n",
-			   data_len, bytes);
-		return;
-	}
 	qq_send_room_cmd(gc, QQ_ROOM_CMD_CHANGE_INFO, rmd->id, data, bytes);
 }
 
@@ -479,7 +461,7 @@ void qq_process_room_buddy_rejected(guint8 *data, gint len, guint32 id, PurpleCo
 {
 	guint32 ext_id, admin_uid;
 	guint8 type8;
-	gchar *reason_utf8, *msg, *reason;
+	gchar *msg, *reason;
 	qq_room_data *rmd;
 	gint bytes;
 
@@ -493,11 +475,10 @@ void qq_process_room_buddy_rejected(guint8 *data, gint len, guint32 id, PurpleCo
 
 	g_return_if_fail(ext_id > 0 && admin_uid > 0);
 
-	bytes += qq_get_vstr(&reason_utf8, QQ_CHARSET_DEFAULT, data + bytes);
+	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
 
 	msg = g_strdup_printf
 		(_("Failed to join Qun %d, operated by admin %d"), ext_id, admin_uid);
-	reason = g_strdup_printf(_("Message: %s"), reason_utf8);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
 
@@ -509,7 +490,6 @@ void qq_process_room_buddy_rejected(guint8 *data, gint len, guint32 id, PurpleCo
 
 	g_free(msg);
 	g_free(reason);
-	g_free(reason_utf8);
 }
 
 /* the request to join a group is approved */
