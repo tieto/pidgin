@@ -69,37 +69,35 @@ struct artist {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
-	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
-	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
-	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
-	{"Thomas Butter",				N_("developer"), NULL},
+	{"Daniel 'datallah' Atallah",	NULL, NULL},
+	{"John 'rekkanoryo' Bailey",	N_("bug master"), NULL},
+	{"Ethan 'Paco-Paco' Blanton",	NULL, NULL},
+	{"Hylke Bons",			N_("artist"), "h.bons@student.rug.nl"},
+	{"Thomas Butter",				NULL, NULL},
 	/* feel free to not translate this */
-	{N_("Ka-Hing Cheung"),			N_("developer"), NULL},
-	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
-	{"Mark 'KingAnt' Doliner",		N_("developer"), "mark@kingant.net"},
-	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
-	{"Casey Harkins",               N_("developer"),   NULL},
-	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
-	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
-	{"Richard 'wabz' Nelson",		N_("developer"), NULL},
-	{"Christopher 'siege' O'Brien", N_("developer"), "taliesein@users.sf.net"},
-	{"Bartosz Oler",		N_("developer"), NULL},
-	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
-	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
-	{"Elliott 'QuLogic' Sales de Andrade",	N_("developer"),	NULL},
+	{N_("Ka-Hing Cheung"),			NULL, NULL},
+	{"Sadrul Habib Chowdhury",		NULL, NULL},
+	{"Mark 'KingAnt' Doliner",		NULL, "mark@kingant.net"},
+	{"Sean Egan",					NULL, "sean.egan@gmail.com"},
+	{"Casey Harkins",               NULL,   NULL},
+	{"Gary 'grim' Kramlich",		NULL, "grim@pidgin.im"},
+	{"Richard 'rlaager' Laager",	NULL, "rlaager@pidgin.im"},
+	{"Richard 'wabz' Nelson",		NULL, NULL},
+	{"Christopher 'siege' O'Brien", NULL, "taliesein@users.sf.net"},
+	{"Bartosz Oler",		NULL, NULL},
+	{"Etan 'deryni' Reisner",       NULL, NULL},
+	{"Tim 'marv' Ringenbach",		NULL, NULL},
+	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
-	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
-	{"Evan Schoenberg",		N_("developer"), NULL},
-	{"Kevin 'SimGuy' Stange",	N_("developer & webmaster"),	NULL},
-	{"Will 'resiak' Thompson",	N_("developer"),	NULL},
-	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
-	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
+	{"Evan Schoenberg",		NULL, NULL},
+	{"Kevin 'SimGuy' Stange",	N_("webmaster"),	NULL},
+	{"Will 'resiak' Thompson",	NULL,	NULL},
+	{"Stu 'nosnilmot' Tomlinson",	NULL, NULL},
 	{NULL, NULL, NULL}
 };
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
-	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Marcus 'malu' Lundblad", NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
@@ -114,17 +112,20 @@ static const struct developer retired_developers[] = {
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",			N_("maintainer"), NULL},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
-	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
+	{"Christian 'ChipX86' Hammond",	N_("webmaster"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
-	{"Jim Seymour",			N_("XMPP developer"), NULL},
+	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
+	{"Jim Seymour",			N_("XMPP"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
+	{"Nathan 'faceprint' Walp",		NULL, NULL},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
 	{NULL, NULL, NULL}
 };
 
 /* Order: Alphabetical by Last Name */
 static const struct developer retired_patch_writers[] = {
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
@@ -133,7 +134,7 @@ static const struct developer retired_patch_writers[] = {
 };
 
 /* Order: Code, then Alphabetical by Last Name */
-static const struct translator current_translators[] = {
+static const struct translator translators[] = {
 	{N_("Afrikaans"),           "af", "Samuel Murray", "afrikaans@gmail.com"},
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
@@ -193,6 +194,7 @@ static const struct translator current_translators[] = {
 	{N_("Macedonian"),          "mk", "Arangel Angov ", "arangel@linux.net.mk"},
 	{N_("Macedonian"),          "mk", "Ivana Kirkovska", "ivana.kirkovska@gmail.com"},
 	{N_("Macedonian"),          "mk", "Jovan Naumovski", "jovan@lugola.net"},
+	{"Mongolian",               "mn", "gooyo", NULL},
 	{N_("Bokmål Norwegian"),    "nb", "Espen Stefansen", "espenas@gmail.com"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
@@ -284,10 +286,44 @@ static const struct translator past_translators[] = {
 	{NULL, NULL, NULL, NULL}
 };
 
-static const struct artist artists[] = {
-	{"Hylke Bons",	"h.bons@student.rug.nl"},
-	{NULL, NULL}
-};
+static void
+add_developers(GString *str, const struct developer *list)
+{
+	for (; list->name != NULL; list++) {
+		if (list->email != NULL) {
+			g_string_append_printf(str, "  <a href=\"mailto:%s\">%s</a>%s%s%s<br/>",
+			                       list->email, _(list->name),
+			                       list->role ? " (" : "",
+			                       list->role ? _(list->role) : "",
+			                       list->role ? ")" : "");
+		} else {
+			g_string_append_printf(str, "  %s%s%s%s<br/>",
+			                       _(list->name),
+			                       list->role ? " (" : "",
+			                       list->role ? _(list->role) : "",
+			                       list->role ? ")" : "");
+		}
+	}
+}
+
+static void
+add_translators(GString *str, const struct translator *list)
+{
+	for (; list->language != NULL; list++) {
+		if (list->email != NULL) {
+			g_string_append_printf(str, "  <b>%s (%s)</b> - <a href=\"mailto:%s\">%s</a><br/>",
+			                       _(list->language),
+			                       list->abbr,
+			                       list->email,
+			                       _(list->name));
+		} else {
+			g_string_append_printf(str, "  <b>%s (%s)</b> - %s<br/>",
+			                       _(list->language),
+			                       list->abbr,
+			                       _(list->name));
+		}
+	}
+}
 
 void
 pidgin_dialogs_destroy_all()
@@ -354,7 +390,6 @@ void pidgin_dialogs_about()
 	GtkWidget *button;
 	GtkTextIter iter;
 	GString *str;
-	int i;
 	AtkObject *obj;
 	char* filename, *tmp;
 	GdkPixbuf *pixbuf;
@@ -425,116 +460,37 @@ void pidgin_dialogs_about()
 	/* Current Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Current Developers"));
-	for (i = 0; developers[i].name != NULL; i++) {
-		if (developers[i].email != NULL) {
-			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					_(developers[i].name), _(developers[i].role),
-					developers[i].email, developers[i].email);
-		} else {
-			g_string_append_printf(str, "  %s (%s)<br/>",
-					_(developers[i].name), _(developers[i].role));
-		}
-	}
+	add_developers(str, developers);
 	g_string_append(str, "<BR/>");
 
 	/* Crazy Patch Writers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Crazy Patch Writers"));
-	for (i = 0; patch_writers[i].name != NULL; i++) {
-		if (patch_writers[i].email != NULL) {
-			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					patch_writers[i].name,
-					patch_writers[i].email, patch_writers[i].email);
-		} else {
-			g_string_append_printf(str, "  %s<br/>",
-					patch_writers[i].name);
-		}
-	}
+	add_developers(str, patch_writers);
 	g_string_append(str, "<BR/>");
 
 	/* Retired Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Retired Developers"));
-	for (i = 0; retired_developers[i].name != NULL; i++) {
-		if (retired_developers[i].email != NULL) {
-			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					retired_developers[i].name, _(retired_developers[i].role),
-					retired_developers[i].email, retired_developers[i].email);
-		} else {
-			g_string_append_printf(str, "  %s (%s)<br/>",
-					retired_developers[i].name, _(retired_developers[i].role));
-		}
-	}
+	add_developers(str, retired_developers);
 	g_string_append(str, "<BR/>");
 
 	/* Retired Crazy Patch Writers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Retired Crazy Patch Writers"));
-	for (i = 0; retired_patch_writers[i].name != NULL; i++) {
-		if (retired_patch_writers[i].email != NULL) {
-			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					retired_patch_writers[i].name,
-					retired_patch_writers[i].email, retired_patch_writers[i].email);
-		} else {
-			g_string_append_printf(str, "  %s<br/>",
-					retired_patch_writers[i].name);
-		}
-	}
-	g_string_append(str, "<BR/>");
-
-	/* Artists */
-        g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-                                                   _("Artists"));
-        for (i = 0; artists[i].name != NULL; i++) {
-        	if (artists[i].email != NULL) {
-			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-			                           artists[i].name,
-			                           artists[i].email, artists[i].email);
-	        } else {
-	                g_string_append_printf(str, "  %s<br/>",
-	                                      artists[i].name);
-	        }
-	}
+	add_developers(str, retired_patch_writers);
 	g_string_append(str, "<BR/>");
 			
 	/* Current Translators */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Current Translators"));
-	for (i = 0; current_translators[i].language != NULL; i++) {
-		if (current_translators[i].email != NULL) {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-							_(current_translators[i].language),
-							current_translators[i].abbr,
-							_(current_translators[i].name),
-							current_translators[i].email,
-							current_translators[i].email);
-		} else {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s<br/>",
-							_(current_translators[i].language),
-							current_translators[i].abbr,
-							_(current_translators[i].name));
-		}
-	}
+	add_translators(str, translators);
 	g_string_append(str, "<BR/>");
 
 	/* Past Translators */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Past Translators"));
-	for (i = 0; past_translators[i].language != NULL; i++) {
-		if (past_translators[i].email != NULL) {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-							_(past_translators[i].language),
-							past_translators[i].abbr,
-							_(past_translators[i].name),
-							past_translators[i].email,
-							past_translators[i].email);
-		} else {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s<br/>",
-							_(past_translators[i].language),
-							past_translators[i].abbr,
-							_(past_translators[i].name));
-		}
-	}
+	add_translators(str, past_translators);
 	g_string_append(str, "<BR/>");
 
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><br/>", _("Debugging Information"));

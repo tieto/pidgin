@@ -212,6 +212,9 @@ static void portable_mode_dll_prep(const char *pidgin_dir) {
 		return;
 	}
 
+	/* Set $HOME so that the GTK+ settings get stored in the right place */
+	_snprintf(path2, sizeof(path2), "HOME=%s", path);
+	_putenv(path2);
 
 	/* Set up the settings dir base to be \\path\to
 	 * The actual settings dir will be \\path\to\.purple */

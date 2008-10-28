@@ -348,6 +348,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
+		
 		g_free (t);
 	}
 }
@@ -1958,7 +1959,6 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	}
 }
 
-/* this isn't used yet
 static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 			GtkIMHtmlSmiley   *smiley)
 {
@@ -1974,7 +1974,7 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(int) pos - (int) t->values->str];
+			t = t->children [(unsigned int) pos - (unsigned int) t->values->str];
 		else
 			return;
 
@@ -1985,8 +1985,6 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 		t->image = NULL;
 	}
 }
-*/
-
 
 static gint
 gtk_smiley_tree_lookup (GtkSmileyTree *tree,
@@ -2044,6 +2042,25 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 		return len;
 
 	return 0;
+}
+
+static void
+gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	GtkSmileyTree *tree = (GtkSmileyTree *) value;
+	GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) user_data;
+	gtk_smiley_tree_remove(tree, smiley);
+}
+
+static void
+gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
+{
+	if (smiley->imhtml) {
+		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
+		g_hash_table_foreach(smiley->imhtml->smiley_data, 
+			gtk_imhtml_disassociate_smiley_foreach, smiley);
+	}
 }
 
 void
@@ -2501,6 +2518,78 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 		imhtml->scroll_time = NULL;
 		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
 	}
+}
+
+/* CSS colors are either rgb (x,y,z) or #hex
+ * we need to convert to hex if it is RGB */
+static gchar*
+parse_css_color(gchar *in_color)
+{
+	char *tmp = in_color;
+
+	if (*tmp == 'r' && *(++tmp) == 'g' && *(++tmp) == 'b' && *(++tmp)) {
+		int rgbval[] = {0, 0, 0};
+		int count = 0;
+		const char *v_start;
+
+		while (*tmp && g_ascii_isspace(*tmp))
+			tmp++;
+		if (*tmp != '(') {
+			/* We don't support rgba() */
+			purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
+			return in_color;
+		}
+		tmp++;
+
+		while (count < 3) {
+			/* Skip any leading spaces */
+			while (*tmp && g_ascii_isspace(*tmp))
+				tmp++;
+
+			/* Find the subsequent contiguous digits */
+			v_start = tmp;
+			if (*v_start == '-')
+				tmp++;
+			while (*tmp && g_ascii_isdigit(*tmp))
+				tmp++;
+
+			if (tmp != v_start) {
+				char prev = *tmp;
+				*tmp = '\0';
+				rgbval[count] = atoi(v_start);
+				*tmp = prev;
+
+				/* deal with % */
+				while (*tmp && g_ascii_isspace(*tmp))
+					tmp++;
+				if (*tmp == '%') {
+					rgbval[count] = (rgbval[count] / 100.0) * 255;
+					tmp++;
+				}
+			} else {
+				purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
+				return in_color;
+			}
+
+			if (rgbval[count] > 255) {
+				rgbval[count] = 255;
+			} else if (rgbval[count] < 0) {
+				rgbval[count] = 0;
+			}
+
+			while (*tmp && g_ascii_isspace(*tmp))
+				tmp++;
+			if (*tmp == ',')
+				tmp++;
+
+			count++;
+		}
+		
+		g_free(in_color);
+		return g_strdup_printf("#%02X%02X%02X", rgbval[0], rgbval[1], rgbval[2]);
+	}
+
+	return in_color;
 }
 
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
@@ -2963,7 +3052,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							oldfont = fonts->data;
 
 						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR)) {
-							font->fore = color;
+							font->fore = parse_css_color(color);
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
 						} else {
 							if (oldfont && oldfont->fore)
@@ -2972,7 +3061,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 
 						if (background && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
-							font->back = background;
+							font->back = parse_css_color(background);
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
 						} else {
 							if (oldfont && oldfont->back)
@@ -5617,12 +5706,14 @@ GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut
 	smiley->smile = g_strdup(shortcut);
 	smiley->hidden = hide;
 	smiley->flags = flags;
+	smiley->imhtml = NULL;
 	gtk_imhtml_smiley_reload(smiley);
 	return smiley;
 }
 
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley)
 {
+	gtk_imhtml_disassociate_smiley(smiley);
 	g_free(smiley->smile);
 	g_free(smiley->file);
 	if (smiley->icon)

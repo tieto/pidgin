@@ -29,8 +29,6 @@
 
 #define SSL_NSS_PLUGIN_ID "ssl-nss"
 
-#ifdef HAVE_NSS
-
 #undef HAVE_LONG_LONG /* Make Mozilla less angry. If angry, Mozilla SMASH! */
 
 #include <nspr.h>
@@ -140,6 +138,19 @@ ssl_nss_init_nss(void)
 	SECMOD_AddNewModule("Builtins", lib, 0, 0);
 	g_free(lib);
 	NSS_SetDomesticPolicy();
+
+	SSL_CipherPrefSetDefault(TLS_DHE_RSA_WITH_AES_256_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_AES_256_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(TLS_RSA_WITH_AES_256_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_RC4_128_SHA, 1);
+	SSL_CipherPrefSetDefault(TLS_DHE_RSA_WITH_AES_128_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_AES_128_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(SSL_RSA_WITH_RC4_128_SHA, 1);
+	SSL_CipherPrefSetDefault(TLS_RSA_WITH_AES_128_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_DES_CBC_SHA, 1);
+	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_DES_CBC_SHA, 1);
 
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
@@ -878,13 +889,10 @@ static PurpleSslOps ssl_ops =
 	NULL
 };
 
-#endif /* HAVE_NSS */
-
 
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-#ifdef HAVE_NSS
 	if (!purple_ssl_get_ops()) {
 		purple_ssl_set_ops(&ssl_ops);
 	}
@@ -896,22 +904,17 @@ plugin_load(PurplePlugin *plugin)
 	purple_certificate_register_scheme(&x509_nss);
 
 	return TRUE;
-#else
-	return FALSE;
-#endif
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-#ifdef HAVE_NSS
 	if (purple_ssl_get_ops() == &ssl_ops) {
 		purple_ssl_set_ops(NULL);
 	}
 
 	/* Unregister our X.509 functions */
 	purple_certificate_unregister_scheme(&x509_nss);
-#endif
 
 	return TRUE;
 }

@@ -461,8 +461,8 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 		return FALSE;
 	}
 	if (rc < sizeof(dns_params)) {
-		purple_debug_error("dns", "Tried to read %" G_GSSIZE_FORMAT
-				" bytes from child but only read %" G_GSSIZE_FORMAT "\n",
+		purple_debug_error("dns", "Tried to write %" G_GSSIZE_FORMAT
+				" bytes to child but only wrote %" G_GSSIZE_FORMAT "\n",
 				sizeof(dns_params), rc);
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;

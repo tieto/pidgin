@@ -451,7 +451,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->account != NULL)
 		username = g_strdup(purple_account_get_username(dialog->account));
 
-	if (!username && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
+	if (!username && dialog->prpl_info
+			&& PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
 		GdkColor color = {0, 34952, 35466, 34181};
 		GHashTable *table;
 		const char *label;
@@ -724,7 +725,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
-	GtkWidget *frame, *vbox, *check, *entry, *combo, *menu, *item;
+	GtkWidget *frame, *vbox, *check, *entry, *combo;
 	GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
@@ -857,13 +858,6 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
 						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 				}
-
-				/* Google Talk default domain hackery! */
-				menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
-				item = gtk_menu_get_active(GTK_MENU(menu));
-				if (str_value == NULL && g_object_get_data(G_OBJECT(item), "fake") &&
-					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
-					str_value = "talk.google.com";
 
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
