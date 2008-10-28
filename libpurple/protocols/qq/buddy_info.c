@@ -550,7 +550,7 @@ gchar *qq_get_icon_name(gint face)
 	gchar *icon_name;
 
 	icon = face / 3 + 1;
-	if (face < 1 || face > QQ_FACES) {
+	if (icon < 1 || icon > QQ_FACES) {
 		icon = 1;
 	}
 
@@ -597,6 +597,8 @@ static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint fac
 	purple_debug_info("QQ", "Update %s icon to %d\n", who, face);
 
 	icon_name = qq_get_icon_name(face);
+	purple_debug_info("QQ", "icon file name is %s\n", icon_name);
+
 	if ((buddy = purple_find_buddy(account, who))) {
 		icon_name_prev = purple_buddy_icons_get_checksum_for_user(buddy);
 		if (icon_name_prev != NULL) {
