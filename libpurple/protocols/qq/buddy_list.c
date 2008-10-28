@@ -252,7 +252,7 @@ guint8 qq_process_get_buddies_online(guint8 *data, gint data_len, PurpleConnecti
 	}
 
 	purple_debug_info("QQ", "Received %d online buddies, nextposition=%u\n",
-							count, (guint) position);
+			count, (guint) position);
 	return position;
 }
 
@@ -357,7 +357,7 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 	guint8 sub_cmd, reply_code;
 	guint32 unknown, position;
 	guint32 uid;
-	guint8 type, groupid;
+	guint8 type;
 	qq_group *group;
 
 	g_return_val_if_fail(data != NULL && data_len != 0, -1);
@@ -383,12 +383,8 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 		bytes += qq_get32(&uid, data + bytes);
 		/* 04: type 0x1:buddy 0x4:Qun */
 		bytes += qq_get8(&type, data + bytes);
-		/* 05: groupid*4 */ /* seems to always be 0 */
-		bytes += qq_get8(&groupid, data + bytes);
-		/*
-		   purple_debug_info("QQ", "groupid: %i\n", groupid);
-		   groupid >>= 2;
-		   */
+		/* 05: skip unknow 0x00 */
+		bytes += 1;
 		if (uid == 0 || (type != 0x1 && type != 0x4)) {
 			purple_debug_info("QQ", "Buddy entry, uid=%d, type=%d", uid, type);
 			continue;

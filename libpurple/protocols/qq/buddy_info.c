@@ -165,11 +165,11 @@ static void info_debug(gchar **segments)
 				|| field_infos[index].type == QQ_FIELD_MULTI
 				|| index == QQ_INFO_GENDER)  {
 			utf8_str = qq_to_utf8(segments[index], QQ_CHARSET_DEFAULT);
-			purple_debug_info("QQ_BUDDY_INFO", "%s: %s\n", field_infos[index]. text, utf8_str);
+			purple_debug_info("QQ_BUDDY_INFO", "%s: %s\n", field_infos[index].text, utf8_str);
 			g_free(utf8_str);
 			continue;
 		}
-		purple_debug_info("QQ_BUDDY_INFO", "%s: %s\n", field_infos[index]. text, segments[index]);
+		purple_debug_info("QQ_BUDDY_INFO", "%s: %s\n", field_infos[index].text, segments[index]);
 	}
 }
 #endif
@@ -590,6 +590,8 @@ static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint fac
 	gchar *icon_file_content;
 	gsize icon_file_size;
 
+	g_return_if_fail(account != NULL && who != NULL);
+	
 	purple_debug_info("QQ", "Update %s icon to %d\n", who, face);
 
 	icon_name = qq_get_icon_name(face);
