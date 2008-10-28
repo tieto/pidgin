@@ -69,29 +69,30 @@ struct artist {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
-	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
-	{"John 'rekkanoryo' Bailey",	N_("developer & bug master"), NULL},
-	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
-	{"Thomas Butter",				N_("developer"), NULL},
+	{"Daniel 'datallah' Atallah",	NULL, NULL},
+	{"John 'rekkanoryo' Bailey",	N_("bug master"), NULL},
+	{"Ethan 'Paco-Paco' Blanton",	NULL, NULL},
+	{"Hylke Bons",			N_("artist"), "h.bons@student.rug.nl"},
+	{"Thomas Butter",				NULL, NULL},
 	/* feel free to not translate this */
-	{N_("Ka-Hing Cheung"),			N_("developer"), NULL},
-	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
-	{"Mark 'KingAnt' Doliner",		N_("developer"), "mark@kingant.net"},
-	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
-	{"Casey Harkins",               N_("developer"),   NULL},
-	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
-	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
-	{"Richard 'wabz' Nelson",		N_("developer"), NULL},
-	{"Christopher 'siege' O'Brien", N_("developer"), "taliesein@users.sf.net"},
-	{"Bartosz Oler",		N_("developer"), NULL},
-	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
-	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
-	{"Elliott 'QuLogic' Sales de Andrade",	N_("developer"),	NULL},
+	{N_("Ka-Hing Cheung"),			NULL, NULL},
+	{"Sadrul Habib Chowdhury",		NULL, NULL},
+	{"Mark 'KingAnt' Doliner",		NULL, "mark@kingant.net"},
+	{"Sean Egan",					NULL, "sean.egan@gmail.com"},
+	{"Casey Harkins",               NULL,   NULL},
+	{"Gary 'grim' Kramlich",		NULL, NULL},
+	{"Richard 'rlaager' Laager",	NULL, NULL},
+	{"Richard 'wabz' Nelson",		NULL, NULL},
+	{"Christopher 'siege' O'Brien", NULL, "taliesein@users.sf.net"},
+	{"Bartosz Oler",		NULL, NULL},
+	{"Etan 'deryni' Reisner",       NULL, NULL},
+	{"Tim 'marv' Ringenbach",		NULL, NULL},
+	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
-	{"Evan Schoenberg",		N_("developer"), NULL},
-	{"Kevin 'SimGuy' Stange",	N_("developer & webmaster"),	NULL},
-	{"Will 'resiak' Thompson",	N_("developer"),	NULL},
-	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
+	{"Evan Schoenberg",		NULL, NULL},
+	{"Kevin 'SimGuy' Stange",	N_("webmaster"),	NULL},
+	{"Will 'resiak' Thompson",	NULL,	NULL},
+	{"Stu 'nosnilmot' Tomlinson",	NULL, NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -111,13 +112,13 @@ static const struct developer retired_developers[] = {
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",			N_("maintainer"), NULL},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
-	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
+	{"Christian 'ChipX86' Hammond",	N_("webmaster"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
 	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
-	{"Jim Seymour",			N_("XMPP developer"), NULL},
+	{"Jim Seymour",			N_("XMPP"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
-	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
+	{"Nathan 'faceprint' Walp",		NULL, NULL},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
 	{NULL, NULL, NULL}
 };
@@ -285,11 +286,6 @@ static const struct translator past_translators[] = {
 	{NULL, NULL, NULL, NULL}
 };
 
-static const struct artist artists[] = {
-	{"Hylke Bons",	"h.bons@student.rug.nl"},
-	{NULL, NULL}
-};
-
 void
 pidgin_dialogs_destroy_all()
 {
@@ -428,12 +424,17 @@ void pidgin_dialogs_about()
 						   _("Current Developers"));
 	for (i = 0; developers[i].name != NULL; i++) {
 		if (developers[i].email != NULL) {
-			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					_(developers[i].name), _(developers[i].role),
-					developers[i].email, developers[i].email);
+			g_string_append_printf(str, "  <a href=\"mailto:%s\">%s</a>%s%s%s<br/>",
+					developers[i].email, _(developers[i].name),
+					developers[i].role ? " (" : "",
+					developers[i].role ? _(developers[i].role) : "",
+					developers[i].role ? ")" : "");
 		} else {
-			g_string_append_printf(str, "  %s (%s)<br/>",
-					_(developers[i].name), _(developers[i].role));
+			g_string_append_printf(str, "  %s%s%s%s<br/>",
+					_(developers[i].name),
+					developers[i].role ? " (" : "",
+					developers[i].role ? _(developers[i].role) : "",
+					developers[i].role ? ")" : "");
 		}
 	}
 	g_string_append(str, "<BR/>");
@@ -443,12 +444,17 @@ void pidgin_dialogs_about()
 						   _("Crazy Patch Writers"));
 	for (i = 0; patch_writers[i].name != NULL; i++) {
 		if (patch_writers[i].email != NULL) {
-			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					patch_writers[i].name,
-					patch_writers[i].email, patch_writers[i].email);
+			g_string_append_printf(str, "  <a href=\"mailto:%s\">%s</a>%s%s%s<br/>",
+					patch_writers[i].email, _(patch_writers[i].name),
+					patch_writers[i].role ? " (" : "",
+					patch_writers[i].role ? _(patch_writers[i].role) : "",
+					patch_writers[i].role ? ")" : "");
 		} else {
-			g_string_append_printf(str, "  %s<br/>",
-					patch_writers[i].name);
+			g_string_append_printf(str, "  %s%s%s%s<br/>",
+					_(patch_writers[i].name),
+					patch_writers[i].role ? " (" : "",
+					patch_writers[i].role ? _(patch_writers[i].role) : "",
+					patch_writers[i].role ? ")" : "");
 		}
 	}
 	g_string_append(str, "<BR/>");
@@ -458,12 +464,17 @@ void pidgin_dialogs_about()
 						   _("Retired Developers"));
 	for (i = 0; retired_developers[i].name != NULL; i++) {
 		if (retired_developers[i].email != NULL) {
-			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					retired_developers[i].name, _(retired_developers[i].role),
-					retired_developers[i].email, retired_developers[i].email);
+			g_string_append_printf(str, "  <a href=\"mailto:%s\">%s</a>%s%s%s<br/>",
+					retired_developers[i].email, _(retired_developers[i].name),
+					retired_developers[i].role ? " (" : "",
+					retired_developers[i].role ? _(retired_developers[i].role) : "",
+					retired_developers[i].role ? ")" : "");
 		} else {
-			g_string_append_printf(str, "  %s (%s)<br/>",
-					retired_developers[i].name, _(retired_developers[i].role));
+			g_string_append_printf(str, "  %s%s%s%s<br/>",
+					_(retired_developers[i].name),
+					retired_developers[i].role ? " (" : "",
+					retired_developers[i].role ? _(retired_developers[i].role) : "",
+					retired_developers[i].role ? ")" : "");
 		}
 	}
 	g_string_append(str, "<BR/>");
@@ -473,28 +484,18 @@ void pidgin_dialogs_about()
 						   _("Retired Crazy Patch Writers"));
 	for (i = 0; retired_patch_writers[i].name != NULL; i++) {
 		if (retired_patch_writers[i].email != NULL) {
-			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-					retired_patch_writers[i].name,
-					retired_patch_writers[i].email, retired_patch_writers[i].email);
+			g_string_append_printf(str, "  <a href=\"mailto:%s\">%s</a>%s%s%s<br/>",
+					retired_patch_writers[i].email, _(retired_patch_writers[i].name),
+					retired_patch_writers[i].role ? " (" : "",
+					retired_patch_writers[i].role ? _(retired_patch_writers[i].role) : "",
+					retired_patch_writers[i].role ? ")" : "");
 		} else {
-			g_string_append_printf(str, "  %s<br/>",
-					retired_patch_writers[i].name);
+			g_string_append_printf(str, "  %s%s%s%s<br/>",
+					_(retired_patch_writers[i].name),
+					retired_patch_writers[i].role ? " (" : "",
+					retired_patch_writers[i].role ? _(retired_patch_writers[i].role) : "",
+					retired_patch_writers[i].role ? ")" : "");
 		}
-	}
-	g_string_append(str, "<BR/>");
-
-	/* Artists */
-        g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-                                                   _("Artists"));
-        for (i = 0; artists[i].name != NULL; i++) {
-        	if (artists[i].email != NULL) {
-			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
-			                           artists[i].name,
-			                           artists[i].email, artists[i].email);
-	        } else {
-	                g_string_append_printf(str, "  %s<br/>",
-	                                      artists[i].name);
-	        }
 	}
 	g_string_append(str, "<BR/>");
 			
@@ -503,12 +504,11 @@ void pidgin_dialogs_about()
 						   _("Current Translators"));
 	for (i = 0; current_translators[i].language != NULL; i++) {
 		if (current_translators[i].email != NULL) {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
+			g_string_append_printf(str, "  <b>%s (%s)</b> - <a href=\"mailto:%s\">%s</a><br/>",
 							_(current_translators[i].language),
 							current_translators[i].abbr,
-							_(current_translators[i].name),
 							current_translators[i].email,
-							current_translators[i].email);
+							_(current_translators[i].name));
 		} else {
 			g_string_append_printf(str, "  <b>%s (%s)</b> - %s<br/>",
 							_(current_translators[i].language),
@@ -523,12 +523,11 @@ void pidgin_dialogs_about()
 						   _("Past Translators"));
 	for (i = 0; past_translators[i].language != NULL; i++) {
 		if (past_translators[i].email != NULL) {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
+			g_string_append_printf(str, "  <b>%s (%s)</b> - <a href=\"mailto:%s\">%s</a><br/>",
 							_(past_translators[i].language),
 							past_translators[i].abbr,
-							_(past_translators[i].name),
 							past_translators[i].email,
-							past_translators[i].email);
+							_(past_translators[i].name));
 		} else {
 			g_string_append_printf(str, "  <b>%s (%s)</b> - %s<br/>",
 							_(past_translators[i].language),
