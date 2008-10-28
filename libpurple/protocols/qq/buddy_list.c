@@ -609,7 +609,7 @@ void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, gu
 		break;
 	default:
 		status_id = "invisible";
-		purple_debug_error("QQ", "unknown status: %x\n", status);
+		purple_debug_error("QQ", "unknown status: 0x%X\n", status);
 		break;
 	}
 	purple_debug_info("QQ", "Update buddy %s status as %s\n", who, status_id);

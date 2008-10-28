@@ -1018,10 +1018,10 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			qq_process_buddy_add_no_auth(data, data_len, ship32, gc);
 			break;
 		case QQ_CMD_BUDDY_REMOVE:
-			qq_process_buddy_remove(data, data_len, gc);
+			qq_process_buddy_remove(gc, data, data_len, ship32);
 			break;
 		case QQ_CMD_REMOVE_ME:
-			qq_process_buddy_remove_me(data, data_len, gc);
+			qq_process_buddy_remove_me(gc, data, data_len, ship32);
 			break;
 		case QQ_CMD_BUDDY_ADD_AUTH:
 			qq_process_buddy_add_auth(data, data_len, gc);

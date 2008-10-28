@@ -29,6 +29,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "privacy.h"
 #include "request.h"
 #include "roomlist.h"
 #include "server.h"
@@ -441,6 +442,60 @@ static void qq_change_status(PurpleAccount *account, PurpleStatus *status)
 	qq_request_change_status(gc, 0);
 }
 
+static void qq_add_deny(PurpleConnection *gc, const char *who)
+{
+	qq_data *qd;
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
+
+	qd = (qq_data *) gc->proto_data;
+	if (!qd->is_login)
+		return;
+
+	if (!who || who[0] == '\0')
+		return;
+
+	purple_debug_info("QQ", "Add deny for %s\n", who);
+}
+
+static void qq_rem_deny(PurpleConnection *gc, const char *who)
+{
+	qq_data *qd;
+	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
+
+	qd = (qq_data *) gc->proto_data;
+	if (!qd->is_login)
+		return;
+
+	if (!who || who[0] == '\0')
+		return;
+
+	purple_debug_info("QQ", "Rem deny for %s\n", who);
+}
+
+static void qq_set_permit_deny(PurpleConnection *gc)
+{
+	PurpleAccount *account;
+	GSList *deny;
+
+	purple_debug_info("QQ", "Set permit deny\n");
+	account = purple_connection_get_account(gc);
+	switch (account->perm_deny)
+	{
+		case PURPLE_PRIVACY_ALLOW_ALL:
+			for (deny = account->deny; deny; deny = deny->next)
+				qq_rem_deny(gc, deny->data);
+			break;
+
+		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
+		case PURPLE_PRIVACY_ALLOW_USERS:
+		case PURPLE_PRIVACY_DENY_USERS:
+		case PURPLE_PRIVACY_DENY_ALL:
+			for (deny = account->deny; deny; deny = deny->next)
+				qq_add_deny(gc, deny->data);
+			break;
+	}
+}
+
 /* IMPORTANT: PurpleConvImFlags -> PurpleMessageFlags */
 /* send an instant msg to a buddy */
 static gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags)
@@ -842,6 +897,49 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 	return m;
 }
 
+static void qq_add_buddy_from_menu_cb(PurpleBlistNode *node, gpointer data)
+{
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
+
+	qq_add_buddy(gc, buddy, NULL);
+}
+
+static GList *qq_buddy_menu(PurpleBuddy *buddy)
+{
+	GList *m = NULL;
+	PurpleMenuAction *act;
+	/*
+	PurpleConnection *gc = purple_account_get_connection(buddy->account);
+	qq_data *qd = gc->proto_data;
+	*/
+	qq_buddy_data *bd = (qq_buddy_data *)buddy->proto_data;
+
+	if (bd == NULL) {
+		act = purple_menu_action_new(_("Add Buddy"),
+		                           PURPLE_CALLBACK(qq_add_buddy_from_menu_cb),
+		                           NULL, NULL);
+		m = g_list_append(m, act);
+
+		return m;
+
+	}
+
+/* TODO : not working, temp commented out by gfhuang */
+#if 0
+	if (bd && is_online(bd->status)) {
+		act = purple_menu_action_new(_("Send File"), PURPLE_CALLBACK(_qq_menu_send_file), NULL, NULL); /* add NULL by gfhuang */
+		m = g_list_append(m, act);
+	}
+#endif
+	return m;
+}
+
 /* chat-related (QQ Qun) menu shown up with right-click */
 static GList *qq_chat_menu(PurpleBlistNode *node)
 {
@@ -858,28 +956,15 @@ static GList *qq_chat_menu(PurpleBlistNode *node)
 }
 
 /* buddy-related menu shown up with right-click */
-static GList *qq_buddy_menu(PurpleBlistNode * node)
+static GList *qq_blist_node_menu(PurpleBlistNode * node)
 {
-	GList *m;
-	PurpleMenuAction *act;
-
 	if(PURPLE_BLIST_NODE_IS_CHAT(node))
 		return qq_chat_menu(node);
 
-	m = NULL;
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node))
+		return qq_buddy_menu((PurpleBuddy *) node);
 
-	act = purple_menu_action_new(_("Remove both side"), PURPLE_CALLBACK(qq_remove_buddy_and_me), NULL, NULL); /* add NULL by gfhuang */
-	m = g_list_append(m, act);
-
-/* TODO : not working, temp commented out by gfhuang */
-#if 0
-/*	if (bd && is_online(bd->status)) { */
-		act = purple_menu_action_new(_("Send File"), PURPLE_CALLBACK(_qq_menu_send_file), NULL, NULL); /* add NULL by gfhuang */
-		m = g_list_append(m, act);
-/*	} */
-#endif
-
-	return m;
+	return NULL;
 }
 
 /* convert name displayed in a chat channel to original QQ UID */
@@ -953,7 +1038,7 @@ static PurplePluginProtocolInfo prpl_info =
 	qq_status_text,					/* status_text	*/
 	qq_tooltip_text,					/* tooltip_text */
 	qq_status_types,					/* away_states	*/
-	qq_buddy_menu,						/* blist_node_menu */
+	qq_blist_node_menu,			/* blist_node_menu */
 	qq_chat_info,						/* chat_info */
 	qq_chat_info_defaults,					/* chat_info_defaults */
 	qq_login,							/* open */
@@ -970,10 +1055,10 @@ static PurplePluginProtocolInfo prpl_info =
 	qq_remove_buddy,					/* remove_buddy */
 	NULL,							/* remove_buddies */
 	NULL,							/* add_permit */
-	NULL,							/* add_deny */
+	qq_add_deny,							/* add_deny */
 	NULL,							/* rem_permit */
 	NULL,							/* rem_deny */
-	NULL,							/* set_permit_deny */
+	qq_set_permit_deny,			/* set_permit_deny */
 	qq_group_join,						/* join_chat */
 	NULL,							/* reject chat	invite */
 	NULL,							/* get_chat_name */
@@ -986,7 +1071,7 @@ static PurplePluginProtocolInfo prpl_info =
 	qq_get_chat_buddy_info,				/* get_cb_info	*/
 	NULL,							/* get_cb_away	*/
 	NULL,							/* alias_buddy	*/
-	qq_change_buddys_group,							/* group_buddy	*/
+	NULL,							/* change buddy's group	*/
 	NULL,							/* rename_group */
 	NULL,							/* buddy_free */
 	NULL,							/* convo_closed */

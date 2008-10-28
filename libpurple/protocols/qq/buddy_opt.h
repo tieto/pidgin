@@ -36,8 +36,8 @@ void qq_change_buddys_group(PurpleConnection *gc, const char *who,
 void qq_remove_buddy_and_me(PurpleBlistNode * node);
 void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
-void qq_process_buddy_remove(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_process_buddy_remove_me(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_buddy_remove(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+void qq_process_buddy_remove_me(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
 void qq_process_buddy_add_no_auth(guint8 *data, gint data_len, guint32 uid, PurpleConnection *gc);
 void qq_process_buddy_add_auth(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_process_buddy_from_server(PurpleConnection *gc, int funct,
