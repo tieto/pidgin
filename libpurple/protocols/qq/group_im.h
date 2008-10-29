@@ -27,21 +27,18 @@
 
 #include <glib.h>
 #include "connection.h"
+#include "conversation.h"
 #include "group.h"
 
-void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar *msg);
+PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd);
+void qq_room_conv_set_onlines(PurpleConnection *gc, qq_room_data *rmd);
 
-void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc);
+void qq_room_got_chat_in(PurpleConnection *gc,
+		guint32 room_id, guint32 uid_from, const gchar *msg, time_t in_time);
 
-void qq_process_room_msg_normal(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type);
+void qq_request_room_send_im(PurpleConnection *gc, guint32 room_id, const gchar *msg);
+void qq_process_room_send_im(PurpleConnection *gc, guint8 *data, gint len);
 
-void qq_process_room_msg_apply_join(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
+void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type);
 
-void qq_process_room_msg_been_rejected(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
-
-void qq_process_room_msg_been_approved(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
-
-void qq_process_room_msg_been_removed(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
-
-void qq_process_room_msg_been_added(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 #endif
