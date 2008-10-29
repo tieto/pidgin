@@ -3411,7 +3411,7 @@ setup_menubar(PidginWindow *win)
 
 	win->menu.get_attention =
 		gtk_item_factory_get_widget(win->menu.item_factory,
-			                    N_("/Conversation/Get Attention..."));
+			                    N_("/Conversation/Get Attention"));
 	win->menu.add_pounce =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Add Buddy Pounce..."));
