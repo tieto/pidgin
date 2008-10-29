@@ -1974,7 +1974,7 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(unsigned int) pos - (unsigned int) t->values->str];
+			t = t->children [pos - t->values->str];
 		else
 			return;
 
