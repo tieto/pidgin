@@ -33,6 +33,7 @@
 #include "request.h"
 #include "pidginstock.h"
 #include "util.h"
+#include "debug.h"
 
 #include "gtkdialogs.h"
 #include "gtkimhtmltoolbar.h"
@@ -913,6 +914,16 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
+static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
+{
+	PurpleConversation *conv = toolbar->active_conv;
+	const gchar *who = purple_conversation_get_name(conv);
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	
+	purple_conversation_attention(conv, who, 0, PURPLE_MESSAGE_SEND, time(NULL));
+	purple_prpl_send_attention(gc, who, 0);
+}
+
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
 {
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bold), buttons & GTK_IMHTML_BOLD);
@@ -1232,6 +1243,8 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &toolbar->image, _("Insert IM Image")},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
+		{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, &toolbar->attention,
+			_("Send Attention")},
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1297,6 +1310,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_button;
 	GtkWidget *font_button;
 	GtkWidget *smiley_button;
+	GtkWidget *attention_button;
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
@@ -1438,6 +1452,30 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_widget_show_all(smiley_button);
 
+	/* Sep */
+	sep = gtk_vseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
+	gtk_widget_show_all(sep);
+
+	/* Attention */
+	attention_button = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(attention_button), GTK_RELIEF_NONE);
+	bbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(attention_button), bbox);
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, 
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new_with_mnemonic(_("_Attention!"));
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
+	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked", 
+		G_CALLBACK(gtk_button_clicked), toolbar->attention);
+	gtk_widget_show_all(attention_button);
+	
+	g_signal_connect(G_OBJECT(toolbar->attention), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), attention_button);
+
+	
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
 	gtk_widget_show(box);
@@ -1519,3 +1557,21 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 	g_free(toolbar->sml);
 	toolbar->sml = g_strdup(proto_id);
 }
+
+void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
+	PurpleConversation *conv)
+{
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurplePlugin *prpl = purple_connection_get_prpl(gc);
+	
+	purple_debug_info("gtkimhtmltoolbar", "switch active conversation to %p\n",
+		conv);
+	toolbar->active_conv = conv;
+	
+	/* gray out attention button on protocols that don't support it
+	 for the time being it is always disabled for chats */
+	gtk_widget_set_sensitive(toolbar->attention,
+		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM && 
+		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
+}
+

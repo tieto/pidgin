@@ -45,7 +45,7 @@ typedef enum
 	PURPLE_CONNECTION_NO_URLDESC = 0x0040,  /**< Connection does not support descriptions with links */ 
 	PURPLE_CONNECTION_NO_IMAGES = 0x0080,  /**< Connection does not support sending of images */
 	PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY = 0x0100, /**< Connection supports sending and receiving custom smileys */
-
+	
 } PurpleConnectionFlags;
 
 typedef enum
