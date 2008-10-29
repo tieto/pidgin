@@ -28,29 +28,51 @@
 #include <glib.h>
 #include "connection.h"
 
-#define QQ_TOKEN_REPLY_OK 	0x00
-
 #define QQ_LOGIN_REPLY_OK							0x00
 #define QQ_LOGIN_REPLY_REDIRECT				0x01
-#define QQ_LOGIN_REPLY_ERR_PWD					0x05
-#define QQ_LOGIN_REPLY_NEED_REACTIVE		0x06
-#define QQ_LOGIN_REPLY_REDIRECT_EX			0x0A
-#define QQ_LOGIN_REPLY_ERR_MISC				0xff	/* defined by myself */
+/* defined by myself */
+#define QQ_LOGIN_REPLY_CAPTCHA_DLG			0xfd
+#define QQ_LOGIN_REPLY_NEXT_TOKEN_EX		0xfe
+#define QQ_LOGIN_REPLY_ERR							0xff
 
-#define QQ_LOGIN_MODE_NORMAL        0x0a
-#define QQ_LOGIN_MODE_AWAY	    0x1e
-#define QQ_LOGIN_MODE_HIDDEN        0x28
+#define QQ_LOGIN_MODE_NORMAL		0x0a
+#define QQ_LOGIN_MODE_AWAY	    	0x1e
+#define QQ_LOGIN_MODE_HIDDEN		0x28
 
 #define QQ_UPDATE_ONLINE_INTERVAL   300	/* in sec */
 
-void qq_send_packet_token(PurpleConnection *gc);
-guint8 qq_process_token_reply(PurpleConnection *gc, guint8 *buf, gint buf_len);
+void qq_request_token(PurpleConnection *gc);
+guint8 qq_process_token(PurpleConnection *gc, guint8 *buf, gint buf_len);
 
-void qq_send_packet_login(PurpleConnection *gc);
-guint8 qq_process_login_reply( PurpleConnection *gc, guint8 *data, gint data_len);
+void qq_request_login(PurpleConnection *gc);
+guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len);
 
-void qq_send_packet_logout(PurpleConnection *gc);
+void qq_request_logout(PurpleConnection *gc);
 
-void qq_send_packet_keep_alive(PurpleConnection *gc);
+void qq_request_keep_alive(PurpleConnection *gc);
 gboolean qq_process_keep_alive(guint8 *data, gint data_len, PurpleConnection *gc);
+
+void qq_request_keep_alive_2007(PurpleConnection *gc);
+gboolean qq_process_keep_alive_2007(guint8 *data, gint data_len, PurpleConnection *gc);
+
+void qq_request_keep_alive_2008(PurpleConnection *gc);
+gboolean qq_process_keep_alive_2008(guint8 *data, gint data_len, PurpleConnection *gc);
+
+/* for QQ2007/2008 */
+void qq_request_get_server(PurpleConnection *gc);
+guint16 qq_process_get_server(PurpleConnection *gc, guint8 *rcved, gint rcved_len);
+
+void qq_request_token_ex(PurpleConnection *gc);
+void qq_request_token_ex_next(PurpleConnection *gc);
+guint8 qq_process_token_ex(PurpleConnection *gc, guint8 *buf, gint buf_len);
+void qq_captcha_input_dialog(PurpleConnection *gc,qq_captcha_data *captcha);
+
+void qq_request_check_pwd(PurpleConnection *gc);
+guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len);
+
+void qq_request_login_2007(PurpleConnection *gc);
+guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len);
+
+void qq_request_login_2008(PurpleConnection *gc);
+guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len);
 #endif

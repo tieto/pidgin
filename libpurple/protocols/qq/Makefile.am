@@ -18,12 +18,6 @@ QQSOURCES = \
 	file_trans.h \
 	group.c \
 	group.h \
-	group_conv.c \
-	group_conv.h \
-	group_find.c \
-	group_find.h \
-	group_free.c \
-	group_free.h \
 	group_internal.c \
 	group_internal.h \
 	group_im.c \
@@ -34,10 +28,8 @@ QQSOURCES = \
 	group_join.h \
 	group_opt.c \
 	group_opt.h \
-	group_search.c \
-	group_search.h \
-	header_info.c \
-	header_info.h \
+	qq_define.c \
+	qq_define.h \
 	im.c \
 	im.h \
 	qq_process.c \
@@ -54,14 +46,17 @@ QQSOURCES = \
 	send_file.h \
 	qq_trans.c \
 	qq_trans.h \
-	sys_msg.c \
-	sys_msg.h \
 	utils.c \
 	utils.h
 
 AM_CFLAGS = $(st)
 
 libqq_la_LDFLAGS = -module -avoid-version
+
+CURRENT_REVISION=$(shell \
+		 awk 'BEGIN {"grep node .hg_archival.txt" | getline rev; \
+		 rev=substr(rev,7,6); \
+		 print rev}')
 
 if STATIC_QQ
 
@@ -84,4 +79,5 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/purple/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS) \
+	-DOPENQ_VERSION=\"$(CURRENT_REVISION)\"
