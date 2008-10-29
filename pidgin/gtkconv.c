@@ -1911,6 +1911,40 @@ move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 }
 
 static gboolean
+gtkconv_cycle_focus(PidginConversation *gtkconv, GtkDirectionType dir)
+{
+	PurpleConversation *conv = gtkconv->active_conv;
+	gboolean chat = purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT;
+	GtkWidget *next = NULL;
+	struct {
+		GtkWidget *from;
+		GtkWidget *to;
+	} transitions[] = {
+		{gtkconv->entry, gtkconv->imhtml},
+		{gtkconv->imhtml, chat ? gtkconv->u.chat->list : gtkconv->entry},
+		{chat ? gtkconv->u.chat->list : NULL, gtkconv->entry},
+		{NULL, NULL}
+	}, *ptr;
+
+	for (ptr = transitions; !next && ptr->from; ptr++) {
+		GtkWidget *from, *to;
+		if (dir == GTK_DIR_TAB_FORWARD) {
+			from = ptr->from;
+			to = ptr->to;
+		} else {
+			from = ptr->to;
+			to = ptr->from;
+		}
+		if (gtk_widget_is_focus(from))
+			next = to;
+	}
+
+	if (next)
+		gtk_widget_grab_focus(next);
+	return !!next;
+}
+
+static gboolean
 conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 {
 	PidginWindow *win;
@@ -1971,7 +2005,10 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 #endif
 				return TRUE;
 				break;
-
+			case GDK_F6:
+				if (gtkconv_cycle_focus(gtkconv, event->state & GDK_SHIFT_MASK ? GTK_DIR_TAB_BACKWARD : GTK_DIR_TAB_FORWARD))
+					return TRUE;
+				break;
 		} /* End of switch */
 	}
 
@@ -1997,6 +2034,10 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				infopane_entry_activate(gtkconv);
 				return TRUE;
 			}
+			break;
+		case GDK_F6:
+			if (gtkconv_cycle_focus(gtkconv, event->state & GDK_SHIFT_MASK ? GTK_DIR_TAB_BACKWARD : GTK_DIR_TAB_FORWARD))
+				return TRUE;
 			break;
 		}
 	}
