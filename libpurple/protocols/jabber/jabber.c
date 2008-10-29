@@ -646,8 +646,7 @@ jabber_login(PurpleAccount *account)
 	JabberBuddy *my_jb = NULL;
 
 	gc->flags |= PURPLE_CONNECTION_HTML |
-		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY |
-		PURPLE_CONNECTION_ALLOW_ATTENTION;
+		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
