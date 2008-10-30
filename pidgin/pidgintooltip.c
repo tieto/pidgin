@@ -61,7 +61,9 @@ typedef struct
 static void
 initialize_tooltip_delay()
 {
+#if GTK_CHECK_VERSION(2,14,0)
 	GtkSettings *settings;
+#endif
 
 	if (tooltip_delay != -1)
 		return;
