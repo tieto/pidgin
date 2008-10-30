@@ -186,17 +186,6 @@ typedef struct _pidgin_blist_node {
 	} conv;
 } PidginBlistNode;
 
-static char dim_grey_string[8] = "";
-static char *dim_grey(void)
-{
-	if (!gtkblist)
-		return "dim grey";
-	if (!dim_grey_string[0]) {
-		snprintf(dim_grey_string, sizeof(dim_grey_string), "%s", pidgin_get_dim_grey_string(gtkblist->treeview)); 
-	}
-	return dim_grey_string;
-}
-
 /***************************************************
  *              Callbacks                          *
  ***************************************************/
