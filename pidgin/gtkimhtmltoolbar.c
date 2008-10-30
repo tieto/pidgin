@@ -920,6 +920,8 @@ static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 	const gchar *who = purple_conversation_get_name(conv);
 	PurpleConnection *gc = purple_conversation_get_gc(conv);
 	
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->attention), FALSE, 
+		toolbar);
 	purple_conversation_attention(conv, who, 0, PURPLE_MESSAGE_SEND, time(NULL));
 	purple_prpl_send_attention(gc, who, 0);
 }
