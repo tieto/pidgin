@@ -662,8 +662,8 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	}
 
 	if (buddy) {
-		purple_blist_node_set_string(PURPLE_BLIST_NODE(buddy),
-		                             "log_reader_msn_log_filename", logfile);
+		savedfilename = purple_blist_node_get_string((PurpleBlistNode *)buddy,
+		                                             "log_reader_msn_log_filename");
 	}
 
 	if (savedfilename) {
