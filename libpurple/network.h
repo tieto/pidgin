@@ -106,7 +106,6 @@ const char *purple_network_get_local_system_ip(int fd);
  */
 const char *purple_network_get_my_ip(int fd);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Should calls to purple_network_listen() and purple_network_listen_range()
  * map the port externally using NAT-PMP or UPnP?
@@ -118,7 +117,6 @@ const char *purple_network_get_my_ip(int fd);
  * @since 2.3.0
  */
 void purple_network_listen_map_external(gboolean map_external);
-#endif
 
 /**
  * Attempts to open a listening port ONLY on the specified port number.
