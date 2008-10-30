@@ -6,7 +6,10 @@
 
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
-
+CURRENT_REVISION=$(shell \
+		 awk 'BEGIN {"grep node .hg_archival.txt" | getline rev; \
+		 rev=substr(rev,7,6); \
+		 print rev}')
 TARGET = libqq
 TYPE = PLUGIN
 
@@ -16,6 +19,7 @@ ifeq ($(TYPE),STATIC)
 	DLL_INSTALL_DIR =	$(PURPLE_INSTALL_DIR)
 else
 ifeq ($(TYPE),PLUGIN)
+	DEFINES += -DOPENQ_VERSION=\"$(CURRENT_REVISION)\"
 	DLL_INSTALL_DIR =	$(PURPLE_INSTALL_PLUGINS_DIR)
 endif
 endif
@@ -46,16 +50,12 @@ C_SRC = \
 	qq_crypt.c \
 	file_trans.c \
 	group.c \
-	group_conv.c \
-	group_find.c \
-	group_free.c \
 	group_internal.c \
 	group_im.c \
 	group_info.c \
 	group_join.c \
 	group_opt.c \
-	group_search.c \
-	header_info.c \
+	qq_define.c \
 	im.c \
 	packet_parse.c \
 	qq.c \
@@ -64,7 +64,6 @@ C_SRC = \
 	qq_process.c \
 	qq_trans.c \
 	send_file.c \
-	sys_msg.c \
 	utils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
