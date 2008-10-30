@@ -428,7 +428,6 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
 		return error;
 
-	type = purple_blist_node_get_type(node);
 	switch (cmd) {
 	case CMD_BUDDY_ALIAS:
 		if (objc != 3) {
@@ -439,6 +438,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			return error;
 		if ((node = tcl_list_to_buddy(interp, count, elems)) == NULL)
 			return TCL_ERROR;
+		type = purple_blist_node_get_type(node);
 		if (type == PURPLE_BLIST_CHAT_NODE)
 			Tcl_SetObjResult(interp,
 					 Tcl_NewStringObj(purple_chat_get_name((PurpleChat *)node), -1));
