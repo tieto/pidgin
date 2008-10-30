@@ -198,6 +198,7 @@ pidgin_DEPENDENCIES = @LIBOBJS@
 pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = \
 	@LIBOBJS@ \
+	$(GLIB_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(XSS_LIBS) \

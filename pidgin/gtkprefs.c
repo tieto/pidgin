@@ -2108,14 +2108,14 @@ mute_changed_cb(const char *pref_name,
                 gpointer data)
 {
 	GtkToggleButton *button = data;
-	gboolean muted = val;
+	gboolean muted = GPOINTER_TO_INT(val);
 
 	g_return_if_fail(!strcmp (pref_name, PIDGIN_PREFS_ROOT "/sound/mute"));
 
 	/* Block the handler that re-sets the preference. */
-	g_signal_handlers_block_matched(button, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, pref_name);
+	g_signal_handlers_block_matched(button, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, (gpointer)pref_name);
 	gtk_toggle_button_set_active (button, muted);
-	g_signal_handlers_unblock_matched(button, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, pref_name);
+	g_signal_handlers_unblock_matched(button, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, (gpointer)pref_name);
 }
 
 
