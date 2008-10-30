@@ -133,7 +133,7 @@ gchar *
 purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
 				 const gchar *event)
 {
-	gchar *filename;
+	const gchar *filename;
 
 	g_return_val_if_fail(PURPLE_IS_SOUND_THEME(theme), NULL);
 
