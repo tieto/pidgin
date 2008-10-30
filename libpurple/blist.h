@@ -89,7 +89,7 @@ typedef enum
 /* Data Structures                                                        */
 /**************************************************************************/
 
-#ifndef PURPLE_HIDE_STRUCTS
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined PURPLE_BLIST_STRUCTS)
 
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
@@ -156,7 +156,7 @@ struct _PurpleChat {
 	PurpleAccount *account; /**< The account this chat is attached to */
 };
 
-#endif /* PURPLE_HIDE_STRUCTS */
+#endif /* PURPLE_HIDE_STRUCTS && PURPLE_BLIST_STRUCTS */
 
 
 /**
