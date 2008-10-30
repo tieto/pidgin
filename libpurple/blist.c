@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#define PURPLE_BLIST_STRUCTS
+#define _PURPLE_BLIST_C_
 
 #include "internal.h"
 #include "blist.h"
@@ -447,7 +447,7 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 			purple_blist_get_last_child((PurpleBlistNode*)group));
 
 	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
-		purple_contact_set_alias(contact, alias);
+		purple_blist_alias_contact(contact, alias);
 	}
 
 	for (x = cnode->child; x; x = x->next) {
@@ -836,13 +836,11 @@ purple_blist_update_node_icon(PurpleBlistNode *node)
 		ops->update(purplebuddylist, node);
 }
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 void
 purple_blist_update_buddy_icon(PurpleBuddy *buddy)
 {
 	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
 }
-#endif
 
 /*
  * TODO: Maybe remove the call to this from server.c and call it

@@ -143,7 +143,7 @@ struct _PidginConversation
 	GtkWidget *tab_label;
 	GtkWidget *menu_icon;
 	GtkWidget *menu_label;
-#ifndef PIDGIN_DISABLE_DEPRECATED
+#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKCONV_C_)
 	/** @deprecated */
 	GtkSizeGroup *sg;
 #else
