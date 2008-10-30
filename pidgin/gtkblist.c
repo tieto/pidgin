@@ -7303,7 +7303,10 @@ void pidgin_blist_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/y", 0);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/width", 250); /* Golden ratio, baby */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/height", 405); /* Golden ratio, baby */
+#if !GTK_CHECK_VERSION(2,14,0)
+	/* This pref is used in pidgintooltip.c. */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay", 500);
+#endif
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
 
 	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_BLIST_THEME_LOADER, "type", "blist", NULL));

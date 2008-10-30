@@ -75,11 +75,11 @@ typedef enum
 
 } PurpleBlistNodeFlags;
 
-#define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (((PurpleBlistNode*)(b))->flags & (f))
+#define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (purple_blist_node_get_flags((PurpleBlistNode*)(b)) & (f))
 #define PURPLE_BLIST_NODE_SHOULD_SAVE(b) (! PURPLE_BLIST_NODE_HAS_FLAG(b, PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 
-#define PURPLE_BLIST_NODE_NAME(n) ((n)->type == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
-				     (n)->type == PURPLE_BLIST_BUDDY_NODE ? purple_buddy_get_name((PurpleBuddy*)n) : NULL)
+#define PURPLE_BLIST_NODE_NAME(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
+				     purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE ? purple_buddy_get_name((PurpleBuddy*)n) : NULL)
 
 #include "account.h"
 #include "buddyicon.h"
