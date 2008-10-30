@@ -54,9 +54,13 @@ AM_CFLAGS = $(st)
 libqq_la_LDFLAGS = -module -avoid-version
 
 CURRENT_REVISION=$(shell \
-		 awk 'BEGIN {"grep node .hg_archival.txt" | getline rev; \
-		 rev=substr(rev,7,6); \
-		 print rev}')
+		 if [ -e ./.hg_archival.txt ]; then \
+		   awk 'BEGIN {"grep node .hg_archival.txt" | getline rev; \
+		   rev=substr(rev,7,6); print rev}' > current_revision; \
+		 else \
+		   echo "!hg" > current_revision; \
+		 fi; \
+		 cat ./current_revision)
 
 if STATIC_QQ
 

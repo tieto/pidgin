@@ -1,3 +1,8 @@
+2008.10.30 - flos <lonicerae(at)gmail.com>
+	* Fixed a bug which made xgettext failed in buddy_info.c
+	* Fixed a bug in Makefile.am and Makefile.mingw
+	* Updated acknowledgement in qq.c
+
 2008.10.28 - flos <lonicerae(at)gmail.com>
 	* Updated AUTHORS
 

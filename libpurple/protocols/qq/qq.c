@@ -763,6 +763,7 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "khc(at)pidgin.im<br>\n");
 	g_string_append(info, "qulogic(at)pidgin.im<br>\n");
 	g_string_append(info, "rlaager(at)pidgin.im<br>\n");
+	g_string_append(info, "Huang Guan : http://home.xxsyzx.com<br>\n");
 	g_string_append(info, "OpenQ Google Group : http://groups.google.com/group/openq<br>\n");
 	g_string_append(info, "<br>\n");
 	g_string_append(info, _("<p><i>And, all the boys in the backroom...</i><br>\n"));
