@@ -203,11 +203,9 @@ void purple_network_listen_cancel(PurpleNetworkListenData *listen_data);
 unsigned short purple_network_get_port_from_fd(int fd);
 
 /**
- * Detects if there is an available Internet connection. Note that this call
- * could block for the amount of time specified in inet_detect_timeout, so
- * using it in a UI thread may cause uncomfortableness
+ * Detects if there is an available network connection.
  *
- * @return TRUE if the Internet is available
+ * @return TRUE if the network is available
  */
 gboolean purple_network_is_available(void);
 
