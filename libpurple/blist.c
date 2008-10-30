@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#define PURPLE_BLIST_STRUCTS
+
 #include "internal.h"
 #include "blist.h"
 #include "conversation.h"
@@ -40,60 +42,6 @@ static PurpleBlistUiOps *blist_ui_ops = NULL;
 static PurpleBuddyList *purplebuddylist = NULL;
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
-
-
-/******************************************************************************
- * Structs
- *****************************************************************************/
-#ifdef PURPLE_HIDE_STRUCTS
-struct _PurpleBlistNode {
-    PurpleBlistNodeType type;
-    PurpleBlistNode *prev;
-    PurpleBlistNode *next;
-    PurpleBlistNode *parent;
-    PurpleBlistNode *child;
-    GHashTable *settings;
-    void *ui_data;
-    PurpleBlistNodeFlags flags;
-};
-
-struct _PurpleBuddy {
-    PurpleBlistNode node;
-    char *name;
-    char *alias;
-    char *server_alias;
-    void *proto_data;
-    PurpleBuddyIcon *icon;
-    PurpleAccount *account;
-    PurplePresence *presence;
-};
-
-struct _PurpleContact {
-    PurpleBlistNode node;
-    char *alias;
-    int totalsize;
-    int currentsize;
-    int online;
-    PurpleBuddy *priority;
-    gboolean priority_valid;
-};
-
-struct _PurpleGroup {
-    PurpleBlistNode node;
-    char *name;
-    int totalsize;
-    int currentsize;
-    int online;
-};
-
-struct _PurpleChat {
-    PurpleBlistNode node;
-    char *alias;
-    GHashTable *components;
-    PurpleAccount *account;
-};
-
-#endif /* PURPLE_HIDE_STRUCTS */
 
 /*********************************************************************
  * Private utility functions                                         *
