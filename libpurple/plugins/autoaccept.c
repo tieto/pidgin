@@ -104,7 +104,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 		return;
 	}
 
-	node = node->parent;
+	node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 
 	pref = purple_prefs_get_string(PREF_PATH);
@@ -179,7 +179,7 @@ static void
 save_cb(PurpleBlistNode *node, int choice)
 {
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-		node = node->parent;
+		node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 	purple_blist_node_set_int(node, "autoaccept", choice);
 }
@@ -190,7 +190,7 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 	char *message;
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-		node = node->parent;
+		node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 
 	message = g_strdup_printf(_("When a file-transfer request arrives from %s"), 

@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#define PURPLE_BLIST_STRUCTS
+
 #include "internal.h"
 #include "blist.h"
 #include "conversation.h"
@@ -40,7 +42,6 @@ static PurpleBlistUiOps *blist_ui_ops = NULL;
 static PurpleBuddyList *purplebuddylist = NULL;
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
-
 
 /*********************************************************************
  * Private utility functions                                         *

@@ -70,7 +70,7 @@ struct artist {
 /* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	NULL, NULL},
-	{"John 'rekkanoryo' Bailey",	N_("bug master"), NULL},
+	{"John 'rekkanoryo' Bailey",	N_("bug master"), "rekkanoryo@pidgin.im"},
 	{"Ethan 'Paco-Paco' Blanton",	NULL, NULL},
 	{"Hylke Bons",			N_("artist"), "h.bons@student.rug.nl"},
 	{"Thomas Butter",				NULL, NULL},
