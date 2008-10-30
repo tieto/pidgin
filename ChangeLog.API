@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_buddy_get_protocol_data
+		* purple_buddy_set_protocol_data
+
 version 2.5.0 (08/18/2008):
 	libpurple:
 		Added:

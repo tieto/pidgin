@@ -26,8 +26,23 @@
  */
 #include "internal.h"
 #include "pidgin.h"
+#include "prefs.h"
+
+#include "gtkicon-theme-loader.h"
+#include "theme-manager.h"
 
 #include "pidginstock.h"
+
+/**************************************************************************
+ * Globals
+ **************************************************************************/
+
+static gboolean stock_initted = FALSE;
+static GtkIconSize microscopic, extra_small, small, medium, large, huge;
+
+/**************************************************************************
+ * Structures
+ **************************************************************************/
 
 static struct StockIcon
 {
@@ -35,8 +50,8 @@ static struct StockIcon
 	const char *dir;
 	const char *filename;
 
-} const stock_icons[] =
-{
+} const stock_icons[] = {
+
 	{ PIDGIN_STOCK_ACTION,          NULL,      GTK_STOCK_EXECUTE          },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_ALIAS,           NULL,      GTK_STOCK_EDIT             },
@@ -96,7 +111,7 @@ static const GtkStockItem stock_items[] =
 	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, NULL }
 };
 
-static struct SizedStockIcon {
+typedef struct {
   const char *name;
   const char *dir;
   const char *filename;
@@ -108,18 +123,9 @@ static struct SizedStockIcon {
   gboolean huge;
   gboolean rtl;
   const char *translucent_name;
-} const sized_stock_icons [] = {
-	{ PIDGIN_STOCK_STATUS_AVAILABLE,   "status", "available.png", 	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_AVAILABLE_I },
-	{ PIDGIN_STOCK_STATUS_AWAY, 	   "status", "away.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_AWAY_I },
-	{ PIDGIN_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_BUSY_I },
-	{ PIDGIN_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_STATUS_INVISIBLE,"status", "invisible.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, PIDGIN_STOCK_STATUS_XA_I },
-	{ PIDGIN_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, NULL },
-	{ PIDGIN_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, NULL },
-	{ PIDGIN_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_OFFLINE_I  },
-	{ PIDGIN_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_STATUS_MESSAGE, 	"toolbar", "message-new.png",   TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+} SizedStockIcon;
+
+const SizedStockIcon sized_stock_icons [] = {
 	
 	{ PIDGIN_STOCK_STATUS_IGNORED,	"emblems", "blocked.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_STATUS_FOUNDER,	"emblems", "founder.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
@@ -173,36 +179,55 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_ANIMATION_TYPING4,  "animations", "typing4.png",FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_ANIMATION_TYPING5,  "animations", "typing5.png",FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 
-	{ PIDGIN_STOCK_TOOLBAR_ACCOUNTS, "toolbar", "accounts.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_BGCOLOR, "toolbar", "change-bgcolor.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_BLOCK, "emblems", "blocked.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_FGCOLOR, "toolbar", "change-fgcolor.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_SMILEY, "toolbar", "emote-select.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_FONT_FACE, "toolbar", "font-face.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, "toolbar", "font-size-down.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_TEXT_LARGER, "toolbar", "font-size-up.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_INSERT, "toolbar", "insert.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, "toolbar", "insert-image.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_INSERT_LINK, "toolbar", "insert-link.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, "toolbar", "message-new.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_PENDING, "tray", "tray-new-im.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_PLUGINS, "toolbar", "plugins.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_TYPING, "toolbar", "typing.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_UNBLOCK, "toolbar", "unblock.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR, "toolbar", "select-avatar.png", FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE, "toolbar", "send-file.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_TRANSFER, "toolbar", "transfer.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-
-	{ PIDGIN_STOCK_TRAY_AVAILABLE, "tray", "tray-online.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_INVISIBLE, "tray", "tray-invisible.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_AWAY, "tray", "tray-away.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_BUSY, "tray", "tray-busy.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_XA, "tray", "tray-extended-away.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_OFFLINE, "tray", "tray-offline.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_CONNECT, "tray", "tray-connecting.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_PENDING, "tray", "tray-new-im.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_EMAIL, "tray", "tray-message.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  }
+	{ PIDGIN_STOCK_TOOLBAR_ACCOUNTS,	"toolbar", "accounts.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_BGCOLOR,		"toolbar", "change-bgcolor.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_BLOCK,		"emblems", "blocked.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_FGCOLOR,		"toolbar", "change-fgcolor.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_SMILEY,		"toolbar", "emote-select.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_FONT_FACE,	"toolbar", "font-face.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER,	"toolbar", "font-size-down.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_TEXT_LARGER,	"toolbar", "font-size-up.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_INSERT,		"toolbar", "insert.png", 	 FALSE,	TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE,	"toolbar", "insert-image.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_INSERT_LINK,	"toolbar", "insert-link.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,	"toolbar", "message-new.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_PENDING,		"toolbar", "message-new.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_PLUGINS,		"toolbar", "plugins.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_TYPING,		"toolbar", "typing.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_UNBLOCK,		"toolbar", "unblock.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR,	"toolbar", "select-avatar.png",	 FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE,	"toolbar", "send-file.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_TRANSFER,	"toolbar", "transfer.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  }
 };
+
+const SizedStockIcon sized_status_icons [] = {
+
+	{ PIDGIN_STOCK_STATUS_AVAILABLE, "status", "available.png", 	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_AVAILABLE_I },
+	{ PIDGIN_STOCK_STATUS_AWAY, 	 "status", "away.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_AWAY_I },
+	{ PIDGIN_STOCK_STATUS_BUSY, 	 "status", "busy.png", 		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_BUSY_I },
+	{ PIDGIN_STOCK_STATUS_CHAT, 	 "status", "chat.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
+	{ PIDGIN_STOCK_STATUS_INVISIBLE, "status", "invisible.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
+	{ PIDGIN_STOCK_STATUS_XA, 	 "status", "extended-away.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,  PIDGIN_STOCK_STATUS_XA_I },
+	{ PIDGIN_STOCK_STATUS_LOGIN, 	 "status", "log-in.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,  NULL },
+	{ PIDGIN_STOCK_STATUS_LOGOUT, 	 "status", "log-out.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,  NULL },
+	{ PIDGIN_STOCK_STATUS_OFFLINE, 	 "status", "offline.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_OFFLINE_I  },
+	{ PIDGIN_STOCK_STATUS_PERSON, 	 "status", "person.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_STATUS_MESSAGE, 	 "toolbar", "message-new.png",  TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+
+	{ PIDGIN_STOCK_TRAY_AVAILABLE,	"tray", "tray-online.png",	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_INVISIBLE,	"tray", "tray-invisible.png",	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_AWAY,	"tray", "tray-away.png",	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_BUSY,	"tray", "tray-busy.png", 	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_XA,		"tray", "tray-extended-away.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_OFFLINE,	"tray", "tray-offline.png",	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_CONNECT,	"tray", "tray-connecting.png",	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_PENDING,	"tray", "tray-new-im.png", 	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_EMAIL,	"tray", "tray-message.png",	  FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  }
+};
+
+/*****************************************************************************
+ * Private functions                                                      
+ *****************************************************************************/
 
 static gchar *
 find_file(const char *dir, const char *base)
@@ -223,55 +248,10 @@ find_file(const char *dir, const char *base)
 	return filename;
 }
 
-static void
-add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir, 
-	       gboolean rtl, const char *size, const char *file)
-{
-	char *filename;
-	GtkIconSource *source;	
-
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, file, NULL);
-	source = gtk_icon_source_new();
-        gtk_icon_source_set_filename(source, filename);
-	gtk_icon_source_set_direction(source, GTK_TEXT_DIR_LTR);
-        gtk_icon_source_set_direction_wildcarded(source, !rtl);
-	gtk_icon_source_set_size(source, sizeid);
-        gtk_icon_source_set_size_wildcarded(source, FALSE);
-        gtk_icon_source_set_state_wildcarded(source, TRUE);
-        gtk_icon_set_add_source(iconset, source);
-	gtk_icon_source_free(source);
-
-	if (sizeid == gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL)) {
-		source = gtk_icon_source_new();
-	        gtk_icon_source_set_filename(source, filename);
-        	gtk_icon_source_set_direction_wildcarded(source, TRUE);
-	        gtk_icon_source_set_size(source, GTK_ICON_SIZE_MENU);
-	        gtk_icon_source_set_size_wildcarded(source, FALSE);
-        	gtk_icon_source_set_state_wildcarded(source, TRUE);
-	        gtk_icon_set_add_source(iconset, source);
-	        gtk_icon_source_free(source);
-	}
-        g_free(filename);
-
-       if (rtl) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, "rtl", file, NULL);
-                source = gtk_icon_source_new();
-                gtk_icon_source_set_filename(source, filename);
-                gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
-                gtk_icon_source_set_size(source, sizeid);
-                gtk_icon_source_set_size_wildcarded(source, FALSE);
-                gtk_icon_source_set_state_wildcarded(source, TRUE);
-                gtk_icon_set_add_source(iconset, source);
-		g_free(filename);
-		gtk_icon_source_free(source);
-        }
-
-
-}
 
 /* Altered from do_colorshift in gnome-panel */
 static void
-do_alphashift (GdkPixbuf *dest, GdkPixbuf *src)
+do_alphashift(GdkPixbuf *dest, GdkPixbuf *src)
 {
         gint i, j;
         gint width, height, has_alpha, srcrowstride, destrowstride;
@@ -305,25 +285,48 @@ do_alphashift (GdkPixbuf *dest, GdkPixbuf *src)
         }
 }
 
-/* TODO: This is almost certainly not the best way to do this, but it's late, I'm tired,
- * we're a few hours from getting this thing out, and copy/paste is EASY.
- */
+static gchar *
+find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon sized_icon, gboolean rtl)
+{
+	const gchar *file, *dir;
+	gchar *file_full = NULL;
+
+	if (theme != NULL) {
+		file = pidgin_icon_theme_get_icon(PIDGIN_ICON_THEME(theme), sized_icon.name);
+		dir = purple_theme_get_dir(PURPLE_THEME(theme));
+
+		if (rtl)
+			file_full = g_build_filename(dir, size, "rtl", file, NULL);
+		else file_full = g_build_filename(dir, size, file, NULL);
+
+		if (g_file_test(file_full, G_FILE_TEST_IS_REGULAR))			
+			return file_full;
+
+		g_free(file_full);
+	} 
+
+	if (rtl)
+		return g_build_filename(DATADIR, "pixmaps", "pidgin", sized_icon.dir, size, sized_icon.filename, NULL);
+	else return g_build_filename(DATADIR, "pixmaps", "pidgin", sized_icon.dir, size, sized_icon.filename, NULL);
+}
+
 static void
-add_translucent_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
-	       gboolean rtl, const char *size, const char *file)
+add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginStatusIconTheme *theme,
+		const char *size, SizedStockIcon sized_icon, gboolean translucent)
 {
 	char *filename;
-	GtkIconSource *source;	
+	GtkIconSource *source;
 	GdkPixbuf *pixbuf;
 
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, file, NULL);
+	filename = find_icon_file(theme, size, sized_icon, FALSE);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	do_alphashift(pixbuf, pixbuf);
+	if (translucent)
+		do_alphashift(pixbuf, pixbuf);
 
 	source = gtk_icon_source_new();
-        gtk_icon_source_set_pixbuf(source, pixbuf);
+	gtk_icon_source_set_pixbuf(source, pixbuf);
 	gtk_icon_source_set_direction(source, GTK_TEXT_DIR_LTR);
-        gtk_icon_source_set_direction_wildcarded(source, !rtl);
+        gtk_icon_source_set_direction_wildcarded(source, !sized_icon.rtl);
 	gtk_icon_source_set_size(source, sizeid);
         gtk_icon_source_set_size_wildcarded(source, FALSE);
         gtk_icon_source_set_state_wildcarded(source, TRUE);
@@ -343,12 +346,15 @@ add_translucent_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *
         g_free(filename);
 	g_object_unref(pixbuf);
 
-       if (rtl) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, "rtl", file, NULL);
- 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		do_alphashift(pixbuf, pixbuf);
+       if (sized_icon.rtl) {
+		filename = find_icon_file(theme, size, sized_icon, TRUE);
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		if (translucent)
+			do_alphashift(pixbuf, pixbuf);
+
 		source = gtk_icon_source_new();
-                gtk_icon_source_set_pixbuf(source, pixbuf);
+        	gtk_icon_source_set_pixbuf(source, pixbuf);
+                gtk_icon_source_set_filename(source, filename);
                 gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
                 gtk_icon_source_set_size(source, sizeid);
                 gtk_icon_source_set_size_wildcarded(source, FALSE);
@@ -358,24 +364,91 @@ add_translucent_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *
 		g_object_unref(pixbuf);
 		gtk_icon_source_free(source);
         }
-
-
 }
 
+/*****************************************************************************
+ * Public API functions                                                      
+ *****************************************************************************/
+
+void
+pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
+{
+	GtkIconFactory *icon_factory;
+	gint i;
+	GtkIconSet *normal;
+	GtkIconSet *translucent = NULL;
+	GtkWidget *win;
+
+	if (theme != NULL) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/status/icon-theme", 
+				        purple_theme_get_name(PURPLE_THEME(theme)));
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", 
+				      purple_theme_get_dir(PURPLE_THEME(theme)));
+	}
+	else {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
+	}
+	
+	icon_factory = gtk_icon_factory_new();
+
+	gtk_icon_factory_add_default(icon_factory);
+
+	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_widget_realize(win);
+
+	for (i = 0; i < G_N_ELEMENTS(sized_status_icons); i++)
+	{
+		normal = gtk_icon_set_new();
+		if (sized_status_icons[i].translucent_name)
+			translucent = gtk_icon_set_new();
+
+#define ADD_SIZED_ICON(name, size) if (sized_status_icons[i].name) { \
+					add_sized_icon(normal, name, theme, size, sized_status_icons[i], FALSE); \
+					if (sized_status_icons[i].translucent_name) \
+						add_sized_icon(translucent, name, theme, size, sized_status_icons[i], TRUE); \
+				   }
+		ADD_SIZED_ICON(microscopic, "11");
+		ADD_SIZED_ICON(extra_small, "16");
+		ADD_SIZED_ICON(small, "22");
+		ADD_SIZED_ICON(medium, "32");
+		ADD_SIZED_ICON(large, "48");
+		ADD_SIZED_ICON(huge, "64");
+#undef ADD_SIZED_ICON
+
+		gtk_icon_factory_add(icon_factory, sized_status_icons[i].name, normal);
+		gtk_icon_set_unref(normal);
+
+		if (sized_status_icons[i].translucent_name) {
+			gtk_icon_factory_add(icon_factory, sized_status_icons[i].translucent_name, translucent);
+			gtk_icon_set_unref(translucent);
+		}
+	}
+
+
+	gtk_widget_destroy(win);
+	g_object_unref(G_OBJECT(icon_factory));
+}
 
 void
 pidgin_stock_init(void)
 {
-	static gboolean stock_initted = FALSE;
 	GtkIconFactory *icon_factory;
 	size_t i;
 	GtkWidget *win;
-	GtkIconSize microscopic, extra_small, small, medium, large, huge;
+	PidginIconThemeLoader *loader;
+	const gchar *path = NULL;
 
 	if (stock_initted)
 		return;
 
 	stock_initted = TRUE;
+
+	/* Setup the status icon theme */
+	loader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL);
+	purple_theme_manager_register_type(PURPLE_THEME_LOADER(loader));
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
 
 	/* Setup the icon factory. */
 	icon_factory = gtk_icon_factory_new();
@@ -386,6 +459,7 @@ pidgin_stock_init(void)
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_realize(win);
 
+	/* All non-sized icons */
 	for (i = 0; i < G_N_ELEMENTS(stock_icons); i++)
 	{
 		GtkIconSource *source;
@@ -425,7 +499,6 @@ pidgin_stock_init(void)
 	}
 
 	/* register custom icon sizes */
-
 	microscopic =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC, 11, 11);
 	extra_small =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL, 16, 16);
 	small =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_SMALL, 22, 22);
@@ -433,18 +506,13 @@ pidgin_stock_init(void)
 	large =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_LARGE, 48, 48);
 	huge =         gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_HUGE, 64, 64);
 
+	/* All non-status sized icons */
 	for (i = 0; i < G_N_ELEMENTS(sized_stock_icons); i++)
 	{
-		GtkIconSet *iconset;
+		GtkIconSet *iconset = gtk_icon_set_new();
 
-		iconset = gtk_icon_set_new();
-
-#define ADD_SIZED_ICON(name, size) do { \
-		if (sized_stock_icons[i].name)  \
-			add_sized_icon(iconset, name,  \
-					sized_stock_icons[i].dir, sized_stock_icons[i].rtl, \
-					size, sized_stock_icons[i].filename); \
-		} while (0)
+#define ADD_SIZED_ICON(name, size) if (sized_stock_icons[i].name) \
+					add_sized_icon(iconset, name, NULL, size, sized_stock_icons[i], FALSE);		
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
 		ADD_SIZED_ICON(small, "22");
@@ -455,31 +523,20 @@ pidgin_stock_init(void)
 
 		gtk_icon_factory_add(icon_factory, sized_stock_icons[i].name, iconset);
 		gtk_icon_set_unref(iconset);
-
-		if (sized_stock_icons[i].translucent_name) {
-			iconset = gtk_icon_set_new();
-
-#define ADD_TRANS_ICON(name, size) do { \
-			if (sized_stock_icons[i].name) \
-				add_translucent_sized_icon(iconset, name, \
-						sized_stock_icons[i].dir, sized_stock_icons[i].rtl, \
-						size, sized_stock_icons[i].filename); \
-			} while (0)
-			ADD_TRANS_ICON(microscopic, "11");
-			ADD_TRANS_ICON(extra_small, "16");
-			ADD_TRANS_ICON(small, "22");
-			ADD_TRANS_ICON(medium, "32");
-			ADD_TRANS_ICON(large, "48");
-			ADD_TRANS_ICON(huge, "64");
-#undef ADD_TRANS_ICON
-
-			gtk_icon_factory_add(icon_factory, sized_stock_icons[i].translucent_name, iconset);
-			gtk_icon_set_unref(iconset);
-		}
 	}
 
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
+
+	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray, theme is destroyed after*/
+	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") && 
+	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
+		
+		PidginStatusIconTheme *theme = PIDGIN_STATUS_ICON_THEME(purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path));
+		pidgin_stock_load_status_icon_theme(theme);
+		g_object_unref(G_OBJECT(theme));
+
+	} else pidgin_stock_load_status_icon_theme(NULL);
 
 	/* Register the stock items. */
 	gtk_stock_add_static(stock_items, G_N_ELEMENTS(stock_items));
