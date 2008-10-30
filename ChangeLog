@@ -8,6 +8,9 @@ version 2.5.3 (??/??/????):
 	  --with-system-ssl-certs and GnuTLS need to include these in the
 	  system certs directory.
 
+	Finch:
+	* Allow binding meta+arrow keys for actions.
+
 version 2.5.2 (10/19/2008):
 	libpurple:
 	* Fixed a crash on removing a custom buddy icon on a buddy.
