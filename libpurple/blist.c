@@ -2061,6 +2061,12 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy)
 	return buddy->name;
 }
 
+const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy, NULL);
+	return buddy->alias;
+}
+
 const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
 {
         g_return_val_if_fail(buddy != NULL, NULL);

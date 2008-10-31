@@ -789,10 +789,12 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				int one = 1;
 				PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 				char *tmp;
+				const char *balias;
 
 				purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
-				if (b && b->alias)
-					purple_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
+				balias = purple_buddy_get_local_buddy_alias(b);
+				if (b && balias)
+					purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
 
 				if (!nlocs) {
 					purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
@@ -1170,12 +1172,14 @@ static gint check_notify_tzc(gpointer data)
 				if ((b && pending_zloc(zephyr,bname)) || pending_zloc(zephyr,user) || pending_zloc(zephyr,local_zephyr_normalize(zephyr,user))){
 					PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 					char *tmp;
+					const char *balias;
 
 					purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
 
-					if (b && b->alias)
-						purple_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
-											
+					balias = b ? purple_buddy_get_local_buddy_alias(b) : NULL;
+					if (balias)
+						purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
+
 					if (!nlocs) {
 						purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
 					} else {

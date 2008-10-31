@@ -5049,13 +5049,15 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 								/* If the buddy is an ICQ user then load his nickname */
 								const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
 								char *alias;
+								const char *balias;
 								if (servernick)
 									serv_got_alias(gc, bname, servernick);
 
 								/* Store local alias on server */
 								alias = aim_ssi_getalias(od->ssi.local, gname, bname);
-								if (!alias && b->alias && strlen(b->alias))
-									aim_ssi_aliasbuddy(od, gname, bname, b->alias);
+								balias = purple_buddy_get_local_buddy_alias(b);
+								if (!alias && balias && *balias)
+									aim_ssi_aliasbuddy(od, gname, bname, balias);
 								g_free(alias);
 							} else {
 								purple_debug_info("oscar",

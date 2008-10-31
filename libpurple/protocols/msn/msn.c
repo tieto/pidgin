@@ -1817,9 +1817,10 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 		char *tmp;
 		const char *alias;
 
-		if (b->alias && b->alias[0])
+		alias = purple_buddy_get_local_buddy_alias(b);
+		if (alias && alias[0])
 		{
-			char *aliastext = g_markup_escape_text(b->alias, -1);
+			char *aliastext = g_markup_escape_text(alias, -1);
 			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
 			g_free(aliastext);
 		}

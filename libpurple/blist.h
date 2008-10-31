@@ -709,6 +709,14 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
 const char *purple_buddy_get_alias(PurpleBuddy *buddy);
 
 /**
+ * Returns the local alias for the buddy, or @c NULL if none exists.
+ *
+ * @param buddy  The buddy
+ * @return       The local alias for the buddy
+ */
+const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
+
+/**
  * Returns the correct name to display for a blist chat.
  *
  * @param chat   The chat whose name will be returned.

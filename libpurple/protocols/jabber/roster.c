@@ -81,14 +81,15 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		buddies = g_slist_remove(buddies, b);
 
 		if((l = g_slist_find_custom(g2, purple_group_get_name(g), (GCompareFunc)strcmp))) {
-			const char *servernick;
+			const char *servernick, *balias;
 
 			/* Previously stored serverside / buddy-supplied alias */
 			if((servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick")))
 				serv_got_alias(js->gc, jid, servernick);
 
 			/* Alias from our roster retrieval */
-			if(alias && (!b->alias || strcmp(b->alias, alias)))
+			balias = purple_buddy_get_local_buddy_alias(b);
+			if(alias && (!balias || strcmp(balias, alias)))
 				purple_serv_got_private_alias(js->gc, jid, alias);
 			g_free(l->data);
 			g2 = g_slist_delete_link(g2, l);
@@ -275,6 +276,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	GSList *groups = NULL, *l;
 	JabberIq *iq;
 	xmlnode *query, *item, *group;
+	const char *balias;
 
 	if (js->currently_parsing_roster_push)
 		return;
@@ -303,7 +305,8 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	xmlnode_set_attrib(item, "jid", name);
 
-	xmlnode_set_attrib(item, "name", b->alias ? b->alias : "");
+	balias = purple_buddy_get_local_buddy_alias(b);
+	xmlnode_set_attrib(item, "name", balias ? balias : "");
 
 	for(l = groups; l; l = l->next) {
 		group = xmlnode_new_child(item, "group");

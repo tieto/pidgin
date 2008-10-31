@@ -2687,9 +2687,11 @@ novell_alias_buddy(PurpleConnection * gc, const char *name, const char *alias)
 				}
 
 				if (group) {
+					const char *balias;
 					buddy = purple_find_buddy_in_group(user->client_data,
 													 name, group);
-					if (buddy && strcmp(buddy->alias, alias))
+					balias = buddy ? purple_buddy_get_local_buddy_alias(buddy) : NULL;
+					if (balias && strcmp(balias, alias))
 						purple_blist_alias_buddy(buddy, alias);
 				}
 

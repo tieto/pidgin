@@ -283,6 +283,7 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 	xmlnode *group;
 	PurpleBuddy *b;
 	JabberBuddy *jb;
+	const char *balias;
 
 	js = (JabberStream*)(gc->proto_data);
 
@@ -314,8 +315,9 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 		buddies = buddies->next;
 	}
 
+	balias = purple_buddy_get_local_buddy_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
-	xmlnode_set_attrib(item, "name", b->alias ? b->alias : "");
+	xmlnode_set_attrib(item, "name", balias ? balias : "");
 	xmlnode_set_attrib(item, "gr:t", "B");
 	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
 	xmlnode_set_attrib(query, "gr:ext", "2");
@@ -348,6 +350,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 	xmlnode *item;
 	xmlnode *group;
 	PurpleBuddy *b;
+	const char *balias;
 
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
@@ -380,8 +383,9 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 		buddies = buddies->next;
 	}
 
+	balias = purple_buddy_get_local_buddy_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
-	xmlnode_set_attrib(item, "name", b->alias ? b->alias : "");
+	xmlnode_set_attrib(item, "name", balias ? balias : "");
 	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
 	xmlnode_set_attrib(query, "gr:ext", "2");
 
