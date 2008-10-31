@@ -1258,13 +1258,18 @@ static gint check_loc(gpointer_data)
 	int numlocs;
 	int one = 1;
 
-	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+		for (cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+			for (bnode = purple_blist_node_get_first_child(cnode);
+					bnode;
+					bnode = purple_blist_node_get_sibling_next(bnode)) {
 				PurpleBuddy *b = (PurpleBuddy *) bnode;
 
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
@@ -1304,13 +1309,18 @@ static gint check_loc(gpointer data)
 		ald.version = NULL;
 	}
 
-	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+		for (cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+			for (bnode = purple_blist_node_get_first_child(cnode);
+					bnode;
+					bnode = purple_blist_node_get_sibling_next(bnode)) {
 				PurpleBuddy *b = (PurpleBuddy *) bnode;
 
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
@@ -1953,13 +1963,19 @@ static void write_anyone(PurpleConnection *gc)
 	}
 
 	account = purple_connection_get_account(gc);
-	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root();
+			gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+		for (cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+			for (bnode = purple_blist_node_get_first_child(cnode);
+					bnode;
+					bnode = purple_blist_node_get_sibling_next(bnode)) {
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *) bnode;
@@ -2507,8 +2523,11 @@ static PurpleChat *zephyr_find_blist_chat(PurpleAccount *account, const char *na
 	PurpleBlistNode *gnode, *cnode;
 
 	/* XXX needs to be %host%,%canon%, and %me% clean */
-	for(gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+	for(gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
+		for(cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			PurpleChat *chat = (PurpleChat*)cnode;
 			char *zclass, *inst, *recip;
 			char** triple;

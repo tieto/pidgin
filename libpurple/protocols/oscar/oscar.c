@@ -5024,16 +5024,21 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		/* Buddies */
 		cur = NULL;
 		if ((blist = purple_get_blist()) != NULL) {
-			for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+			for (gnode = purple_blist_get_root(); gnode;
+					gnode = purple_blist_node_get_sibling_next(gnode)) {
 				const char *gname;
 				if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 					continue;
 				g = (PurpleGroup *)gnode;
 				gname = purple_group_get_name(g);
-				for (cnode = gnode->child; cnode; cnode = cnode->next) {
+				for (cnode = purple_blist_node_get_first_child(gnode);
+						cnode;
+						cnode = purple_blist_node_get_sibling_next(cnode)) {
 					if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 						continue;
-					for (bnode = cnode->child; bnode; bnode = bnode->next) {
+					for (bnode = purple_blist_node_get_first_child(cnode);
+							bnode;
+							bnode = purple_blist_node_get_sibling_next(bnode)) {
 						const char *bname;
 						if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 							continue;
@@ -6435,16 +6440,21 @@ static void oscar_show_awaitingauth(PurplePluginAction *action)
 	text = g_strdup("");
 	account = purple_connection_get_account(gc);
 
-	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
 		PurpleGroup *group = (PurpleGroup *)gnode;
 		const char *gname;
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		gname = purple_group_get_name(group);
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+		for (cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+			for (bnode = purple_blist_node_get_first_child(cnode);
+					bnode;
+					bnode = purple_blist_node_get_sibling_next(bnode)) {
 				PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 				const char *bname;
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))

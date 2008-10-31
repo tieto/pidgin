@@ -1407,15 +1407,21 @@ void silcpurple_send_buddylist(PurpleConnection *gc)
 
 	account = purple_connection_get_account(gc);
 
-	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next)
+	for (gnode = purple_blist_get_root();
+			gnode != NULL;
+			gnode = purple_blist_node_get_sibling_next(gnode))
 	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+		for (cnode = purple_blist_node_get_first_child(gnode);
+				cnode != NULL;
+				cnode = purple_blist_node_get_sibling_next(cnode))
 		{
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+			for (bnode = purple_blist_node_get_first_child(cnode);
+					bnode != NULL;
+					bnode = purple_blist_node_get_sibling_next(bnode))
 			{
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
