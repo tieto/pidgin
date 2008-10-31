@@ -69,9 +69,9 @@ static const gchar *genders[] = {
 };
 
 static const gchar *genders_zh[] = {
-	N_("-"),
-	N_("\xc4\xd0"),
-	N_("\xc5\xae"),
+	"-",
+	"\xc4\xd0",
+	"\xc5\xae",
 };
 
 #define QQ_FACES	    134
