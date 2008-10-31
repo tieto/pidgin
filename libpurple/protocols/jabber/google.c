@@ -375,7 +375,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 		g = purple_buddy_get_group(b);
 
 		group = xmlnode_new_child(item, "group");
-		xmlnode_insert_data(group, purple_buddy_get_group(g), -1);
+		xmlnode_insert_data(group, purple_group_get_name(g), -1);
 
 		buddies = buddies->next;
 	}
