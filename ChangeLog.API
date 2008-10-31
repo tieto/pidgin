@@ -5,6 +5,8 @@ version 2.6.0 (??/??/????):
 		Added:
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
+		* purple_connection_get_protocol_data
+		* purple_connection_set_protocol_data
 
 version 2.5.0 (08/18/2008):
 	libpurple:
