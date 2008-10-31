@@ -1907,7 +1907,7 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 {
 	PurpleAccount *account;
 	GGPInfo *info = gc->proto_data;
-	const char *name = purple_buddy_get_name(buddy);
+	const gchar *name = purple_buddy_get_name(buddy);
 
 	gg_add_notify(info->session, ggp_str_to_uin(name));
 
