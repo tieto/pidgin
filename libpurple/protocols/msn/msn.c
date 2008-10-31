@@ -626,7 +626,7 @@ msn_list_icon(PurpleAccount *a, PurpleBuddy *b)
 static const char *
 msn_list_emblems(PurpleBuddy *b)
 {
-	MsnUser *user = b->proto_data;
+	MsnUser *user = purple_buddy_get_protocol_data(b);
 
 	if (user != NULL) {
 		if (user->clientid & MSN_CLIENT_CAP_BOT)
@@ -689,7 +689,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	PurplePresence *presence = purple_buddy_get_presence(buddy);
 	PurpleStatus *status = purple_presence_get_active_status(presence);
 
-	user = buddy->proto_data;
+	user = purple_buddy_get_protocol_data(buddy);
 
 	if (purple_presence_is_online(presence))
 	{
@@ -919,7 +919,7 @@ msn_buddy_menu(PurpleBuddy *buddy)
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	user = buddy->proto_data;
+	user = purple_buddy_get_protocol_data(buddy);
 
 	if (user != NULL)
 	{

@@ -893,9 +893,9 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				}
 			}
 
-			silc_free(b->proto_data);
-			b->proto_data = silc_memdup(&client_entry->id,
-						    sizeof(client_entry->id));
+			silc_free(purple_buddy_get_protocol_data(b));
+			purple_buddy_set_protocol_data(b, silc_memdup(&client_entry->id,
+						    sizeof(client_entry->id)));
 			if (notify == SILC_NOTIFY_TYPE_NICK_CHANGE) {
 				break;
 			} else if (notify == SILC_NOTIFY_TYPE_UMODE_CHANGE) {

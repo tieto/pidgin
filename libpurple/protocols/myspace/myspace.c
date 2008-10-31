@@ -973,7 +973,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 		buddy = purple_buddy_new(session->account, username, NULL);
 		user->buddy = buddy;
-		buddy->proto_data = (gpointer)user;
+		purple_buddy_set_protocol_data(buddy, (gpointer)user);
 	}
 
 	/* Update user structure with new information */

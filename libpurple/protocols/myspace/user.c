@@ -57,16 +57,14 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 		return NULL;
 	}
 
-	if (!buddy->proto_data) {
+	if (!(user = purple_buddy_get_protocol_data(buddy))) {
 		/* No MsimUser for this buddy; make one. */
 
 		/* TODO: where is this freed? */
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
-		buddy->proto_data = (gpointer)user;
-	} 
-
-	user = (MsimUser *)(buddy->proto_data);
+		purple_buddy_set_protocol_data(buddy, (gpointer)user);
+	}
 
 	return user;
 }

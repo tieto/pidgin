@@ -906,7 +906,7 @@ msn_userlist_load(MsnSession *session)
 				{
 					user = msn_userlist_find_add_user(session->userlist,
 						purple_buddy_get_name(b), NULL);
-					b->proto_data = user;
+					purple_buddy_set_protocol_data(b, user);
 					msn_user_set_op(user, MSN_LIST_FL_OP);
 				}
 			}

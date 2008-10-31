@@ -4897,7 +4897,7 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 				/* node is PurpleBuddy, parent is a PurpleContact.
 				 * We must go two levels up to get the Group */
 				groups = g_list_append(groups,
-						node->parent->parent);
+						purple_buddy_get_group((PurpleBuddy*)node));
 			}
 
 			purple_account_remove_buddies(account, moved_buddies, groups);

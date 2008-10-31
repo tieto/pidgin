@@ -689,6 +689,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
+		gpointer proto_data;
 		filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
 		if (filename) {
 			/* Call WHOIS.  The user info is displayed in the WHOIS
@@ -698,7 +699,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 			return;
 		}
 
-		if (!b->proto_data) {
+		if (!(proto_data = purple_buddy_get_protocol_data(b))) {
 			g_snprintf(tmp, sizeof(tmp),
 				   _("User %s is not present in the network"), purple_buddy_get_name(b));
 			purple_notify_error(gc, _("User Information"),
@@ -706,7 +707,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 			return;
 		}
 
-		client_entry = silc_client_get_client_by_id(client, conn, b->proto_data);
+		client_entry = silc_client_get_client_by_id(client, conn, proto_data);
 		if (client_entry) {
 			/* Call WHOIS.  The user info is displayed in the WHOIS
 			   command reply. */
@@ -1277,7 +1278,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 	/* The client was found.  Now get its public key and verify
 	   that before adding the buddy. */
 	memset(&userpk, 0, sizeof(userpk));
-	b->proto_data = silc_memdup(&client_entry->id, sizeof(client_entry->id));
+	purple_buddy_set_protocol_data(b, silc_memdup(&client_entry->id, sizeof(client_entry->id)));
 	r->client_id = client_entry->id;
 
 	/* Get the public key from attributes, if not present then
@@ -1436,7 +1437,7 @@ void silcpurple_send_buddylist(PurpleConnection *gc)
 void silcpurple_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 			   PurpleGroup *group)
 {
-	silc_free(buddy->proto_data);
+	silc_free(purple_buddy_get_protocol_data(buddy));
 }
 
 void silcpurple_idle_set(PurpleConnection *gc, int idle)
@@ -1482,7 +1483,7 @@ char *silcpurple_status_text(PurpleBuddy *b)
 	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	SilcClientID *client_id = b->proto_data;
+	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
 	SilcClientEntry client_entry;
 	SilcAttributePayload attr;
 	SilcAttributeMood mood = 0;
@@ -1548,7 +1549,7 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	SilcClientID *client_id = b->proto_data;
+	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
 	SilcClientEntry client_entry;
 	char *moodstr, *statusstr, *contactstr, *langstr, *devicestr, *tzstr, *geostr;
 	char tmp[256];
@@ -1658,7 +1659,7 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 	pkfile = purple_blist_node_get_string((PurpleBlistNode *) buddy, "public-key");
 	client_entry = silc_client_get_client_by_id(sg->client,
 						    sg->conn,
-						    buddy->proto_data);
+						    purple_buddy_get_protocol_data(buddy));
 
 	if (client_entry &&
 	    silc_client_private_message_key_is_set(sg->client,
