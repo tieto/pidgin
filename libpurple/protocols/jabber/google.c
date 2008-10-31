@@ -309,7 +309,7 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 		g = purple_buddy_get_group(b);
 
 		group = xmlnode_new_child(item, "group");
-		xmlnode_insert_data(group, g->name, -1);
+		xmlnode_insert_data(group, purple_group_get_name(g), -1);
 
 		buddies = buddies->next;
 	}
@@ -357,7 +357,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 	if (!js || !js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 		return;
 
-	buddies = purple_find_buddies(js->gc->account, who);
+	buddies = purple_find_buddies(purple_connection_get_account(js->gc), who);
 	if(!buddies)
 		return;
 
@@ -375,7 +375,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 		g = purple_buddy_get_group(b);
 
 		group = xmlnode_new_child(item, "group");
-		xmlnode_insert_data(group, g->name, -1);
+		xmlnode_insert_data(group, purple_buddy_get_group(g), -1);
 
 		buddies = buddies->next;
 	}
