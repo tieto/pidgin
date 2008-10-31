@@ -453,7 +453,6 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 	g_free(who);
 	g_free(msg);
 	g_free(reason);
-	g_free(reason);
 }
 
 /* the request to join a group is rejected */
