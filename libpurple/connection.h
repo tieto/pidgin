@@ -358,6 +358,7 @@ void purple_connection_set_display_name(PurpleConnection *gc, const char *name);
  *
  * @param connection The PurpleConnection.
  * @param proto_data The protocol data to set for the connection.
+ * @since 2.6.0
  */
 void purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data);
 
@@ -421,6 +422,7 @@ const char *purple_connection_get_display_name(const PurpleConnection *gc);
  * @param connection The PurpleConnection.
  *
  * @return The protocol data for the connection.
+ * @since 2.6.0
  */
 void *purple_connection_get_protocol_data(const PurpleConnection *connection);
 
