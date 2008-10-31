@@ -421,7 +421,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	 */
 
 	/* Need to disconnect or actually log in. For now, we disconnect. */
-	purple_connection_destroy(gc);
+	purple_account_disconnect(account);
 
 exit_err:
 	if(account->registration_cb)
@@ -446,7 +446,7 @@ static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 	GGPInfo *info = gc->proto_data;
 	GGPToken *token = info->token;
 
-	purple_connection_destroy(gc);
+	purple_account_disconnect(gc->account);
 
 	g_free(token->id);
 	g_free(token->data);
@@ -1907,7 +1907,7 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 {
 	PurpleAccount *account;
 	GGPInfo *info = gc->proto_data;
-	const gchar *name = purple_buddy_get_name(buddy);
+	const char *name = purple_buddy_get_name(buddy);
 
 	gg_add_notify(info->session, ggp_str_to_uin(name));
 

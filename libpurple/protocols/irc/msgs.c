@@ -79,6 +79,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	PurpleConnection *gc;
 	PurpleStatus *status;
 	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleAccount *account;
 
 	if ((gc = purple_account_get_connection(irc->account)) == NULL
 	    || PURPLE_CONNECTION_IS_CONNECTED(gc))
@@ -86,6 +87,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 
 	purple_connection_set_display_name(gc, nick);
 	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	account = purple_connection_get_account(gc);
 
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
@@ -115,7 +117,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *)bnode;
-				if(purple_buddy_get_account(b) == gc->account) {
+				if(purple_buddy_get_account(b) == account) {
 					struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
 					ib->name = g_strdup(purple_buddy_get_name(b));
 					g_hash_table_insert(irc->buddies, ib->name, ib);

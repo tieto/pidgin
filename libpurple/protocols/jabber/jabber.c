@@ -1479,13 +1479,14 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 {
 	JabberStream *js;
 	JabberBuddy *jb = NULL;
+	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(b));
 
-	if(!b->account->gc)
+	if(!gc)
 		return NULL;
 
-	js = b->account->gc->proto_data;
+	js = gc->proto_data;
 	if(js)
-		jb = jabber_buddy_find(js, b->name, FALSE);
+		jb = jabber_buddy_find(js, purple_buddy_get_name(b), FALSE);
 
 	if(!PURPLE_BUDDY_IS_ONLINE(b)) {
 		if(jb && (jb->subscription & JABBER_SUB_PENDING ||
@@ -1499,9 +1500,11 @@ char *jabber_status_text(PurpleBuddy *b)
 {
 	char *ret = NULL;
 	JabberBuddy *jb = NULL;
-	
-	if (b->account->gc && b->account->gc->proto_data)
-		jb = jabber_buddy_find(b->account->gc->proto_data, b->name, FALSE);
+	PurpleAccount *account = purple_buddy_get_account(b);
+	PurpleConnection *gc = purple_account_get_connection(account);
+
+	if (gc && gc->proto_data)
+		jb = jabber_buddy_find(gc->proto_data, purple_buddy_get_name(b), FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
@@ -1530,14 +1533,19 @@ char *jabber_status_text(PurpleBuddy *b)
 void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	JabberBuddy *jb;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
 	g_return_if_fail(b != NULL);
-	g_return_if_fail(b->account != NULL);
-	g_return_if_fail(b->account->gc != NULL);
-	g_return_if_fail(b->account->gc->proto_data != NULL);
 
-	jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
-			FALSE);
+	account = purple_buddy_get_account(b);
+	g_return_if_fail(account != NULL);
+
+	gc = purple_account_get_connection(account);
+	g_return_if_fail(gc != NULL);
+	g_return_if_fail(gc->proto_data != NULL);
+
+	jb = jabber_buddy_find(gc->proto_data, purple_buddy_get_name(b), FALSE);
 
 	if(jb) {
 		JabberBuddyResource *jbr = NULL;
@@ -1873,19 +1881,21 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 	if(!(jid = jabber_id_new(name)))
 		return NULL;
 
-	for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+	for(gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			PurpleChat *chat = (PurpleChat*)cnode;
 			const char *room, *server;
+			GHashTable *components;
 			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
 				continue;
 
-			if(chat->account != account)
+			if (purple_chat_get_account(chat) != account)
 				continue;
 
-			if(!(room = g_hash_table_lookup(chat->components, "room")))
+			components = purple_chat_get_components(chat);
+			if(!(room = g_hash_table_lookup(components, "room")))
 				continue;
-			if(!(server = g_hash_table_lookup(chat->components, "server")))
+			if(!(server = g_hash_table_lookup(components, "server")))
 				continue;
 
 			if(jid->node && jid->domain &&

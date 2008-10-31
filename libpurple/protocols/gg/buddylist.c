@@ -65,7 +65,6 @@ void ggp_buddylist_send(PurpleConnection *gc)
 			     bnode != NULL;
 			     bnode = purple_blist_node_get_sibling_next(bnode))
 			{
-				PurpleAccount *ba = NULL;
 				const gchar *name = NULL;
 
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
@@ -73,7 +72,7 @@ void ggp_buddylist_send(PurpleConnection *gc)
 
 				buddy = (PurpleBuddy *)bnode;
 
-				if ((ba = purple_buddy_get_account(buddy)) != account)
+				if (purple_buddy_get_account(buddy) != account)
 					continue;
 
 				name = purple_buddy_get_name(buddy);

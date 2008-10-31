@@ -274,12 +274,12 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues.
 	 */
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
 		PurpleGroup *group = (PurpleGroup *)gnode;
 		const char *group_name;
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		group_name = group->name;
+		group_name = purple_group_get_name(group);
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;

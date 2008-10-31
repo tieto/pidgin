@@ -715,7 +715,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 		/* Add the normal tooltip pairs */
 		yahoo_tooltip_text(b, user_info, TRUE);
 
-		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
+		if ((f = yahoo_friend_find(info_data->gc, purple_buddy_get_name(b)))) {
 			const char *ip;
 			if ((ip = yahoo_friend_get_ip(f)))
 				purple_notify_user_info_add_pair(user_info, _("IP Address"), ip);
@@ -1215,7 +1215,9 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 				 * in which case the user may or may not actually exist.
 				 * Hence this extra step.
 				 */
-				f = yahoo_friend_find(b->account->gc, b->name);
+				PurpleAccount *account = purple_buddy_get_account(b);
+				f = yahoo_friend_find(purple_account_get_connection(account),
+						purple_buddy_get_name(b));
 			}
 			g_string_append_printf(str, "%s<br><br>",
 				f?  _("Could not retrieve the user's profile. "

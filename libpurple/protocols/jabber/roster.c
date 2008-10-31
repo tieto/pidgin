@@ -80,7 +80,7 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 
 		buddies = g_slist_remove(buddies, b);
 
-		if((l = g_slist_find_custom(g2, g->name, (GCompareFunc)strcmp))) {
+		if((l = g_slist_find_custom(g2, purple_group_get_name(g), (GCompareFunc)strcmp))) {
 			const char *servernick;
 
 			/* Previously stored serverside / buddy-supplied alias */
@@ -119,11 +119,13 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		/* If we just learned about ourself, then fake our status,
 		 * because we won't be receiving a normal presence message
 		 * about ourself. */
-		if(!strcmp(b->name, my_bare_jid)) {
+		if(!strcmp(purple_buddy_get_name(b), my_bare_jid)) {
 			PurplePresence *gpresence;
 			PurpleStatus *status;
+			PurpleAccount *account;
 
-			gpresence = purple_account_get_presence(js->gc->account);
+			account = purple_connection_get_account(js->gc);
+			gpresence = purple_account_get_presence(account);
 			status = purple_presence_get_active_status(gpresence);
 			jabber_presence_fake_to_self(js, status);
 		}
@@ -289,7 +291,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 		while(buddies) {
 			b = buddies->data;
 			g = purple_buddy_get_group(b);
-			groups = g_slist_append(groups, g->name);
+			groups = g_slist_append(groups, (char *)purple_group_get_name(g));
 			buddies = g_slist_remove(buddies, b);
 		}
 	}
@@ -327,14 +329,16 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	char *my_bare_jid;
+	const char *name;
 
 	if(!js->roster_parsed)
 		return;
 
-	if(!(who = jabber_get_bare_jid(buddy->name)))
+	name = purple_buddy_get_name(buddy);
+	if(!(who = jabber_get_bare_jid(name)))
 		return;
 
-	jb = jabber_buddy_find(js, buddy->name, FALSE);
+	jb = jabber_buddy_find(js, name, FALSE);
 
 	jabber_roster_update(js, who, NULL);
 
@@ -375,6 +379,7 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	GSList *buddies, *groups = NULL;
 	PurpleBuddy *b;
 	PurpleGroup *g;
+	const char *gname;
 
 	if(!old_group || !new_group || !strcmp(old_group, new_group))
 		return;
@@ -383,10 +388,11 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	while(buddies) {
 		b = buddies->data;
 		g = purple_buddy_get_group(b);
-		if(!strcmp(g->name, old_group))
+		gname = purple_group_get_name(g);
+		if(!strcmp(gname, old_group))
 			groups = g_slist_append(groups, (char*)new_group); /* ick */
 		else
-			groups = g_slist_append(groups, g->name);
+			groups = g_slist_append(groups, (char*)gname);
 		buddies = g_slist_remove(buddies, b);
 	}
 	jabber_roster_update(gc->proto_data, name, groups);
@@ -397,15 +403,17 @@ void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
 		PurpleGroup *group, GList *moved_buddies)
 {
 	GList *l;
+	const char *gname = purple_group_get_name(group);
 	for(l = moved_buddies; l; l = l->next) {
 		PurpleBuddy *buddy = l->data;
-		jabber_roster_group_change(gc, buddy->name, old_name, group->name);
+		jabber_roster_group_change(gc, purple_buddy_get_name(buddy), old_name, gname);
 	}
 }
 
 void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group) {
-	GSList *buddies = purple_find_buddies(gc->account, buddy->name);
+	const char *name = purple_buddy_get_name(buddy);
+	GSList *buddies = purple_find_buddies(purple_connection_get_account(gc), name);
 
 	buddies = g_slist_remove(buddies, buddy);
 	if(buddies != NULL) {
@@ -416,11 +424,11 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		while(buddies) {
 			tmpbuddy = buddies->data;
 			tmpgroup = purple_buddy_get_group(tmpbuddy);
-			groups = g_slist_append(groups, tmpgroup->name);
+			groups = g_slist_append(groups, (char *)purple_group_get_name(tmpgroup));
 			buddies = g_slist_remove(buddies, tmpbuddy);
 		}
 
-		jabber_roster_update(gc->proto_data, buddy->name, groups);
+		jabber_roster_update(gc->proto_data, name, groups);
 		g_slist_free(groups);
 	} else {
 		JabberIq *iq = jabber_iq_new_query(gc->proto_data, JABBER_IQ_SET,
@@ -428,7 +436,7 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		xmlnode *query = xmlnode_get_child(iq->node, "query");
 		xmlnode *item = xmlnode_new_child(query, "item");
 
-		xmlnode_set_attrib(item, "jid", buddy->name);
+		xmlnode_set_attrib(item, "jid", name);
 		xmlnode_set_attrib(item, "subscription", "remove");
 
 		jabber_iq_send(iq);

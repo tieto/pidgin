@@ -89,7 +89,7 @@ typedef enum
 /* Data Structures                                                        */
 /**************************************************************************/
 
-#if !(defined PURPLE_HIDE_STRUCTS) || (defined PURPLE_BLIST_STRUCTS)
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BLIST_C_)
 
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
@@ -335,7 +335,7 @@ void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_stat
  */
 void purple_blist_update_node_icon(PurpleBlistNode *node);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
 /**
  * Updates a buddy's icon.
  *
@@ -587,7 +587,7 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node);
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
 /**
  * Sets the alias for a contact.
  *

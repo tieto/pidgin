@@ -341,7 +341,7 @@ static void process_extend_im_text(
 	if(im_text.fragmentCount == 0)
 		im_text.fragmentCount = 1;
 
-	// Filter tail space
+	/* Filter tail space */
 	if(im_text.fragmentIndex == im_text.fragmentCount -1)
 	{
 		gint real_len = text_len;
@@ -349,7 +349,7 @@ static void process_extend_im_text(
 			real_len --;
 
 		text_len = real_len;
-		// Null string instaed of space
+		/* Null string instead of space */
 		im_text.msg[text_len] = 0;
 	}
 

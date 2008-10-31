@@ -157,8 +157,8 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
-	purple_buddy_set_protocol_data(buddy, bonjour_buddy);
 	name = purple_buddy_get_name(buddy);
+	purple_buddy_set_protocol_data(buddy, bonjour_buddy);
 
 	/* Create the alias for the buddy using the first and the last name */
 	if (bonjour_buddy->nick)
