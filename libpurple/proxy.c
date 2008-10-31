@@ -2152,6 +2152,8 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 			break;
 
 		default:
+			purple_debug_error("proxy", "Invalid Proxy type (%d) specified.\n",
+							   purple_proxy_info_get_type(connect_data->gpi));
 			purple_proxy_connect_data_destroy(connect_data);
 			return NULL;
 	}
@@ -2160,6 +2162,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
+		purple_debug_error("proxy", "dns query failed unexpectedly.\n");
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}

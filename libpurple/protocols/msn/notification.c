@@ -306,7 +306,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * to see the Local ID
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
-					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288 msmsgs %s",
+					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1302 BC01 %s",
 					 purple_account_get_username(account));
 }
 
@@ -578,7 +578,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_PASSPORT);
 
 	/*mobile*/
-	//type_str = g_strdup_printf("4");
+	/*type_str = g_strdup_printf("4");*/
 	xmlnode_set_attrib(c_node, "t", fmt_str);
 
 	xmlnode_insert_child(d_node, c_node);
@@ -613,11 +613,14 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_set_attrib(adl_node, "l", "1");
 
 	/*get the userlist*/
-	for (l = session->userlist->users; l != NULL; l = l->next){
+	for (l = session->userlist->users; l != NULL; l = l->next) {
 		user = l->data;
 
 		/* skip RL & PL during initial dump */
 		if (!(user->list_op & MSN_LIST_OP_MASK))
+			continue;
+
+		if (user->passport && !strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
@@ -753,21 +756,46 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
+{
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	/*char *adl = g_strndup(payload, len);*/
+	char *reason = g_strdup_printf(_("Unknown error (%d)"),
+		GPOINTER_TO_INT(cmd->payload_cbdata)/*, adl*/);
+	/*g_free(adl);*/
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+	g_free(reason);
+}
+
+static void
 adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
 	MsnSession *session;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	char *reason = NULL;
+	MsnCommand *cmd = cmdproc->last_cmd;
 
 	session = cmdproc->session;
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
 	purple_debug_error("msn", "ADL error\n");
-	reason = g_strdup_printf(_("Unknown error (%d)"), error);
-	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
-	g_free(reason);
+	if (cmd->param_count > 1) {
+		cmd->payload_cb = adl_error_parse;
+		cmd->payload_len = atoi(cmd->params[1]);
+		cmd->payload_cbdata = GINT_TO_POINTER(error);
+	} else {
+		char *reason = g_strdup_printf(_("Unknown error (%d)"), error);
+		purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+		g_free(reason);
+	}
 }
 
 static void
@@ -1060,7 +1088,8 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
 	PurpleConnection *gc;
 	MsnUserList *userlist;
-	char *who = NULL, *text = NULL;
+	const char *who = NULL;
+	char *text = NULL;
 	const char *id = NULL;
 	xmlnode *payloadNode, *from, *msg, *textNode;
 
@@ -1104,13 +1133,18 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	   </NOTIFICATION>
 	*/
 
-	if (!(payloadNode = xmlnode_from_str(payload, len)) ||
-		!(from = xmlnode_get_child(payloadNode, "FROM")) ||
-		!(msg = xmlnode_get_child(payloadNode, "MSG")) ||
-		!(textNode = xmlnode_get_child(msg, "BODY/TEXT")))
+	payloadNode = xmlnode_from_str(payload, len);
+	if (!payloadNode)
 		return;
 
-	who = g_strdup(xmlnode_get_attrib(from, "name"));
+	if (!(from = xmlnode_get_child(payloadNode, "FROM")) ||
+		!(msg = xmlnode_get_child(payloadNode, "MSG")) ||
+		!(textNode = xmlnode_get_child(msg, "BODY/TEXT"))) {
+		xmlnode_free(payloadNode);
+		return;
+	}
+
+	who = xmlnode_get_attrib(from, "name");
 	if (!who) return;
 
 	text = xmlnode_get_data(textNode);
@@ -1121,10 +1155,8 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 		MsnUser *user =
 			msn_userlist_find_user_with_mobile_phone(userlist, who + 4);
 
-		if(user && user->passport) {
-			g_free(who);
-			who = g_strdup(user->passport);
-		}
+		if (user && user->passport)
+			who = user->passport;
 	}
 
 	id = xmlnode_get_attrib(msg, "id");
@@ -1143,7 +1175,6 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	}
 
 	g_free(text);
-	g_free(who);
 	xmlnode_free(payloadNode);
 }
 

@@ -63,7 +63,7 @@ foreach $index (0 .. $#pos) {
 	$trans = $fuzz = $untrans = 0;
 	$po = $pos[$index];
 	print STDERR "$po..." if($ARGV[0] eq '-v');
-	system("msgmerge -U $po.po $PACKAGE.pot 2>/dev/null");
+	system("msgmerge --no-location -U $po.po $PACKAGE.pot 2>/dev/null");
 	if (($? & 127) == 2) {
 		printf STDERR "Caught keyboard interrupt--exiting\n";
 		exit

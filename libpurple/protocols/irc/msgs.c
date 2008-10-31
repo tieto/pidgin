@@ -218,8 +218,10 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 			/* This is an extended syntax, not in RFC 1459 */
 			int t1 = atoi(args[4]);
 			time_t t2 = time(NULL);
+			char *time = purple_str_seconds_to_string(t2 - t1);
 			msg = g_strdup_printf(_("Ban on %s by %s, set %s ago"),
-			                      args[2], args[3], purple_str_seconds_to_string(t2 - t1));
+			                      args[2], args[3], time);
+			g_free(time);
 		} else {
 			msg = g_strdup_printf(_("Ban on %s"), args[2]);
 		}

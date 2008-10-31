@@ -42,6 +42,7 @@
 #include "msnutils.h"
 #include "version.h"
 
+#include "msg.h"
 #include "switchboard.h"
 #include "notification.h"
 #include "sync.h"
@@ -1121,6 +1122,31 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 	return list;
 }
 
+void
+msn_send_im_message(MsnSession *session, MsnMessage *msg)
+{
+	MsnEmoticon *smile;
+	GSList *smileys;
+	GString *emoticons = NULL;
+	const char *username = purple_account_get_username(session->account);
+	MsnSwitchBoard *swboard = msn_session_get_swboard(session, msg->remote_user, MSN_SB_FLAG_IM);
+
+	smileys = msn_msg_grab_emoticons(msg->body, username);
+	while (smileys) {
+		smile = (MsnEmoticon*)smileys->data;
+		emoticons = msn_msg_emoticon_add(emoticons, smile);
+		msn_emoticon_destroy(smile);
+		smileys = g_slist_delete_link(smileys, smileys);
+	}
+
+	if (emoticons) {
+		msn_send_emoticons(swboard, emoticons);
+		g_string_free(emoticons, TRUE);
+	}
+
+	msn_switchboard_send_msg(swboard, msg, TRUE);
+}
+
 static int
 msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			PurpleMessageFlags flags)
@@ -1140,6 +1166,13 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 
 	session = gc->proto_data;
 	swboard = msn_session_find_swboard(session, who);
+
+	if (!strncmp("tel:+", who, 5)) {
+		char *text = purple_markup_strip_html(message);
+		send_to_mobile(gc, who, text);
+		g_free(text);
+		return 1;
+	}
 
 	if (buddy) {
 		PurplePresence *p = purple_buddy_get_presence(buddy);
@@ -1176,31 +1209,13 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		purple_debug_info("msn", "prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, username))
 		{
-			MsnEmoticon *smile;
-			GSList *smileys;
-			GString *emoticons = NULL;
-
 			if (msn_user_is_yahoo(account, who)) {
 				/*we send the online and offline Message to Yahoo User via UBM*/
 				purple_debug_info("msn", "send to Yahoo User\n");
 				uum_send_msg(session, msg);
 			} else {
 				purple_debug_info("msn", "send via switchboard\n");
-				swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
-				smileys = msn_msg_grab_emoticons(message, username);
-				while (smileys) {
-					smile = (MsnEmoticon*)smileys->data;
-					emoticons = msn_msg_emoticon_add(emoticons, smile);
-					msn_emoticon_destroy(smile);
-					smileys = g_slist_delete_link(smileys, smileys);
-				}
-
-				if (emoticons) {
-					msn_send_emoticons(swboard, emoticons);
-					g_string_free(emoticons, TRUE);
-				}
-
-				msn_switchboard_send_msg(swboard, msg, TRUE);
+				msn_send_im_message(session, msg);
 			}
 		}
 		else

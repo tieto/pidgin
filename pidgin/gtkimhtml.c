@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#define _PIDGIN_GTKIMHTML_C_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -348,9 +349,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
-		if (t && t->image) {
-			t->image->imhtml = NULL;
-		}
+		
 		g_free (t);
 	}
 }
@@ -1976,7 +1975,7 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(unsigned int) pos - (unsigned int) t->values->str];
+			t = t->children [pos - t->values->str];
 		else
 			return;
 
@@ -2522,6 +2521,78 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 	}
 }
 
+/* CSS colors are either rgb (x,y,z) or #hex
+ * we need to convert to hex if it is RGB */
+static gchar*
+parse_css_color(gchar *in_color)
+{
+	char *tmp = in_color;
+
+	if (*tmp == 'r' && *(++tmp) == 'g' && *(++tmp) == 'b' && *(++tmp)) {
+		int rgbval[] = {0, 0, 0};
+		int count = 0;
+		const char *v_start;
+
+		while (*tmp && g_ascii_isspace(*tmp))
+			tmp++;
+		if (*tmp != '(') {
+			/* We don't support rgba() */
+			purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
+			return in_color;
+		}
+		tmp++;
+
+		while (count < 3) {
+			/* Skip any leading spaces */
+			while (*tmp && g_ascii_isspace(*tmp))
+				tmp++;
+
+			/* Find the subsequent contiguous digits */
+			v_start = tmp;
+			if (*v_start == '-')
+				tmp++;
+			while (*tmp && g_ascii_isdigit(*tmp))
+				tmp++;
+
+			if (tmp != v_start) {
+				char prev = *tmp;
+				*tmp = '\0';
+				rgbval[count] = atoi(v_start);
+				*tmp = prev;
+
+				/* deal with % */
+				while (*tmp && g_ascii_isspace(*tmp))
+					tmp++;
+				if (*tmp == '%') {
+					rgbval[count] = (rgbval[count] / 100.0) * 255;
+					tmp++;
+				}
+			} else {
+				purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
+				return in_color;
+			}
+
+			if (rgbval[count] > 255) {
+				rgbval[count] = 255;
+			} else if (rgbval[count] < 0) {
+				rgbval[count] = 0;
+			}
+
+			while (*tmp && g_ascii_isspace(*tmp))
+				tmp++;
+			if (*tmp == ',')
+				tmp++;
+
+			count++;
+		}
+		
+		g_free(in_color);
+		return g_strdup_printf("#%02X%02X%02X", rgbval[0], rgbval[1], rgbval[2]);
+	}
+
+	return in_color;
+}
+
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
                                     const gchar      *text,
                                     GtkIMHtmlOptions  options,
@@ -2982,7 +3053,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							oldfont = fonts->data;
 
 						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR)) {
-							font->fore = color;
+							font->fore = parse_css_color(color);
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
 						} else {
 							if (oldfont && oldfont->fore)
@@ -2991,7 +3062,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 
 						if (background && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
-							font->back = background;
+							font->back = parse_css_color(background);
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
 						} else {
 							if (oldfont && oldfont->back)

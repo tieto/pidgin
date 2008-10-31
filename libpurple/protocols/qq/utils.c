@@ -91,12 +91,6 @@ gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount)
 	return g_strdup_printf("%d", index);
 }
 
-gint qq_string_to_dec_value(const gchar *str)
-{
-	g_return_val_if_fail(str != NULL, 0);
-	return strtol(str, NULL, 10);
-}
-
 /* split the given data(len) with delimit,
  * check the number of field matches the expected_fields (<=0 means all)
  * return gchar* array (needs to be freed by g_strfreev later), or NULL */
@@ -104,7 +98,7 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 {
 	guint8 *input;
 	gchar **segments;
-	gint i, j;
+	gint count, j;
 
 	g_return_val_if_fail(data != NULL && len != 0 && delimit != 0, NULL);
 
@@ -118,22 +112,17 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	if (expected_fields <= 0)
 		return segments;
 
-	for (i = 0; segments[i] != NULL; i++) {;
-	}
-	if (i < expected_fields) {	/* not enough fields */
-		purple_debug_error("QQ", "Invalid data, expect %d fields, found only %d, discard\n",
-				expected_fields, i);
-		g_strfreev(segments);
+	count = g_strv_length(segments);
+	if (count < expected_fields) {	/* not enough fields */
+		purple_debug_error("QQ", "Less fields %d then %d\n", count, expected_fields);
 		return NULL;
-	} else if (i > expected_fields) {	/* more fields, OK */
-		purple_debug_warning("QQ", "Dangerous data, expect %d fields, found %d, return all\n",
-				expected_fields, i);
+	} else if (count > expected_fields) {	/* more fields, OK */
+		purple_debug_warning("QQ", "More fields %d than %d\n", count, expected_fields);
 		/* free up those not used */
-		for (j = expected_fields; j < i; j++) {
+		for (j = expected_fields; j < count; j++) {
 			purple_debug_warning("QQ", "field[%d] is %s\n", j, segments[j]);
 			g_free(segments[j]);
 		}
-
 		segments[expected_fields] = NULL;
 	}
 
@@ -181,20 +170,6 @@ guint8 *str_ip_gen(gchar *str) {
 gchar *uid_to_purple_name(guint32 uid)
 {
 	return g_strdup_printf(QQ_NAME_FORMAT, uid);
-}
-
-/* convert name displayed in a chat channel to original QQ UID */
-gchar *chat_name_to_purple_name(const gchar *const name)
-{
-	const gchar *tmp;
-	gchar *ret;
-
-	g_return_val_if_fail(name != NULL, NULL);
-
-	tmp = (gchar *) purple_strcasestr(name, "(qq-");
-	ret = g_strndup(tmp + 4, strlen(name) - (tmp - name) - 4 - 1);
-
-	return ret;
 }
 
 /* try to dump the data as GBK */
@@ -335,7 +310,7 @@ static gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 }
 
 void qq_hex_dump(PurpleDebugLevel level, const char *category,
-		const guint8 *pdata, gint bytes,	
+		const guint8 *pdata, gint bytes,
 		const char *format, ...)
 {
 	va_list args;
@@ -361,25 +336,6 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 
 void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 {
-	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", buf, len, desc);
+	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", buf, len, desc);
 }
 
-/* convert face num from packet (0-299) to local face (1-100) */
-gchar *face_to_icon_str(gint face)
-{
-	gchar *icon_num_str;
-	gint icon_num = face / 3 + 1;
-	icon_num_str = g_strdup_printf("%d", icon_num);
-	return icon_num_str;
-}
-
-/* return the location of the buddy icon dir
- * any application using libpurple but not installing the QQ buddy icons
- * under datadir needs to set the pref below, or buddy icons won't work */
-const char *qq_buddy_icon_dir(void)
-{
-	if (purple_prefs_exists("/prpl/qq/buddy_icon_dir"))
-		return purple_prefs_get_string("/prpl/qq/buddy_icon_dir");
-	else
-		return NULL;
-}

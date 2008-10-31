@@ -127,8 +127,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 {
 	PurpleGroup *group;
 	PurpleAccount *account = bonjour_buddy->account;
-	const char *status_id, *old_hash, *new_hash;
-	const char *name;
+	const char *status_id, *old_hash, *new_hash, *name;
 
 	/* Translate between the Bonjour status and the Purple status */
 	if (bonjour_buddy->status != NULL && g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)

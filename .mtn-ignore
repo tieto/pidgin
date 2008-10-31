@@ -13,6 +13,7 @@
 intltool-.*
 Doxyfile(\.mingw)?$
 aclocal.m4
+autogen.args
 compile
 config.cache
 config.guess
