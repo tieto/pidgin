@@ -1232,6 +1232,23 @@ purple_buddy_get_icon(const PurpleBuddy *buddy)
 	return buddy->icon;
 }
 
+gpointer
+purple_buddy_get_protocol_data(const PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	return buddy->proto_data;
+}
+
+void
+purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data)
+{
+	g_return_if_fail(buddy != NULL);
+
+	buddy->proto_data = data;
+}
+
+
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node)
 {
 	PurpleBlistNode *cnode = (PurpleBlistNode*)chat;

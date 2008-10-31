@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <gtk/gtkstock.h>
+#include "gtkstatus-icon-theme.h"
 
 #ifndef _PIDGIN_STOCK_H_
 #define _PIDGIN_STOCK_H_
@@ -176,6 +177,14 @@
 #define PIDGIN_ICON_SIZE_TANGO_MEDIUM         "pidgin-icon-size-tango-medium"
 #define PIDGIN_ICON_SIZE_TANGO_LARGE          "pidgin-icon-size-tango-large"
 #define PIDGIN_ICON_SIZE_TANGO_HUGE           "pidgin-icon-size-tango-huge"
+
+/**
+ * Loades all of the icons from the status icon theme into Pidgin stock
+ * 
+ * @param theme		the theme to load, or null to load all the default icons
+ */
+void pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme);
+
 /**
  * Sets up the purple stock repository.
  */

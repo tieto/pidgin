@@ -470,6 +470,32 @@ const char *purple_buddy_get_name(const PurpleBuddy *buddy);
 PurpleBuddyIcon *purple_buddy_get_icon(const PurpleBuddy *buddy);
 
 /**
+ * Returns a buddy's protocol-specific data.
+ *
+ * This should only be called from the associated prpl.
+ *
+ * @param buddy The buddy.
+ * @return      The protocol data.
+ *
+ * @see purple_buddy_set_protocol_data()
+ * @since 2.6.0
+ */
+gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
+
+/**
+ * Sets a buddy's protocol-specific data.
+ *
+ * This should only be called from the associated prpl.
+ *
+ * @param buddy The buddy.
+ * @param data  The data.
+ *
+ * @see purple_buddy_get_protocol_data()
+ * @since 2.6.0
+ */
+void purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data);
+
+/**
  * Returns a buddy's contact.
  *
  * @param buddy The buddy.
