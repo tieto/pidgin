@@ -496,8 +496,9 @@ view_log_cb(GntMenuItem *n, gpointer ggc)
 	buddies = purple_find_buddies(account, name);
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBlistNode *node = cur->data;
-		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL))) {
-			finch_log_show_contact((PurpleContact *)node->parent);
+		if ((node != NULL) &&
+				(purple_blist_node_get_sibling_prev(node) || purple_blist_node_get_sibling_next(node))) {
+			finch_log_show_contact((PurpleContact *)purple_blist_node_get_parent(node));
 			g_slist_free(buddies);
 			return;
 		}

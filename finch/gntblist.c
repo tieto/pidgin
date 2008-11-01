@@ -1438,16 +1438,16 @@ static void showlog_cb(PurpleBlistNode *sel, PurpleBlistNode *node)
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		PurpleBuddy *b = (PurpleBuddy*) node;
 		type = PURPLE_LOG_IM;
-		name = g_strdup(b->name);
-		account = b->account;
+		name = g_strdup(purple_buddy_get_name(b));
+		account = purple_buddy_get_account(b);
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		PurpleChat *c = (PurpleChat*) node;
 		PurplePluginProtocolInfo *prpl_info = NULL;
 		type = PURPLE_LOG_CHAT;
-		account = c->account;
+		account = purple_chat_get_account(c);
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
 		if (prpl_info && prpl_info->get_chat_name) {
-			name = prpl_info->get_chat_name(c->components);
+			name = prpl_info->get_chat_name(purple_chat_get_components(c));
 		}
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		finch_log_show_contact((PurpleContact *)node);
