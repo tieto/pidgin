@@ -208,7 +208,10 @@ static void pidgin_connection_network_disconnected (void)
 	while (l) {
 		PurpleAccount *a = (PurpleAccount*)l->data;
 		if (!purple_account_is_disconnected(a)) {
+			char *password = g_strdup(purple_account_get_password(a));
 			purple_account_disconnect(a);
+			purple_account_set_password(a, password);
+			g_free(password);
 		}
 		l = l->next;
 	}
