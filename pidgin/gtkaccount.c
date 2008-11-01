@@ -562,7 +562,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		if (purple_account_get_password(dialog->account))
+		if (purple_account_get_password(dialog->account) &&
+		    purple_account_get_remember_password(dialog->account))
 			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
 							   purple_account_get_password(dialog->account));
 
