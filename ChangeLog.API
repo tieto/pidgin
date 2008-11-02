@@ -8,6 +8,7 @@ version 2.6.0 (??/??/????):
 		* purple_connection_get_protocol_data
 		* purple_connection_set_protocol_data
 		* purple_buddy_get_local_buddy_alias
+		* purple_blist_get_buddies
 
 		Deprecated:
 		* purple_buddy_get_local_alias

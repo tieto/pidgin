@@ -665,7 +665,7 @@ purple_conversation_autoset_title(PurpleConversation *conv)
 			text = purple_buddy_get_contact_alias(b);
 	} else if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		if(account && ((chat = purple_blist_find_chat(account, name)) != NULL))
-			text = chat->alias;
+			text = purple_chat_get_name(chat);
 	}
 
 
@@ -912,7 +912,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 				if (purple_account_get_alias(account) != NULL)
 					alias = account->alias;
-				else if (b != NULL && strcmp(b->name, purple_buddy_get_contact_alias(b)))
+				else if (b != NULL && strcmp(purple_buddy_get_name(b), purple_buddy_get_contact_alias(b)))
 					alias = purple_buddy_get_contact_alias(b);
 				else if (purple_connection_get_display_name(gc) != NULL)
 					alias = purple_connection_get_display_name(gc);
