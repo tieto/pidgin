@@ -757,7 +757,7 @@ x509_issuer_dn (PurpleCertificate *crt)
 	crt_dat = X509_NSS_DATA(crt);
 	g_return_val_if_fail(crt_dat, NULL);
 
-	return g_strdup(crt_dat->subjectName);
+	return g_strdup(crt_dat->issuerName);
 }
 
 static gchar *

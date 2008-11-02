@@ -497,6 +497,19 @@ char *irc_mirc2txt (const char *string)
         return result;
 }
 
+const char *irc_nick_skip_mode(struct irc_conn *irc, const char *nick)
+{
+	static const char *default_modes = "@+%&";
+	const char *mode_chars;
+
+	mode_chars = irc->mode_chars ? irc->mode_chars : default_modes;
+
+	while (strchr(mode_chars, *nick) != NULL)
+		nick++;
+
+	return nick;
+}
+
 gboolean irc_ischannel(const char *string)
 {
 	return (string[0] == '#' || string[0] == '&');
