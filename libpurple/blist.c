@@ -699,6 +699,12 @@ purple_blist_get_root()
 	return purplebuddylist ? purplebuddylist->root : NULL;
 }
 
+GHashTable *
+purple_blist_get_buddies()
+{
+	return purplebuddylist ? purplebuddylist->buddies : NULL;
+}
+
 void purple_blist_show()
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();

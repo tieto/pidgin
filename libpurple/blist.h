@@ -156,9 +156,6 @@ struct _PurpleChat {
 	PurpleAccount *account; /**< The account this chat is attached to */
 };
 
-#endif /* PURPLE_HIDE_STRUCTS && PURPLE_BLIST_STRUCTS */
-
-
 /**
  * The Buddy List
  */
@@ -167,6 +164,8 @@ struct _PurpleBuddyList {
 	GHashTable *buddies;          /**< Every buddy in this list */
 	void *ui_data;                /**< UI-specific data. */
 };
+
+#endif /* PURPLE_HIDE_STRUCTS && PURPLE_BLIST_STRUCTS */
 
 /**
  * Buddy list UI operations.
@@ -234,6 +233,14 @@ PurpleBuddyList *purple_get_blist(void);
  * @return The root node.
  */
 PurpleBlistNode *purple_blist_get_root(void);
+
+/**
+ * Returns the hash table of every buddy in the list.
+ *
+ * @return The hash table of every buddy in the list.
+ * @since 2.6.0
+ */
+GHashTable *purple_blist_get_buddies(void);
 
 /**
  * Returns the next node of a given node. This function is to be used to iterate
