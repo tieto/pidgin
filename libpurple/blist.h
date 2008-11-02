@@ -720,6 +720,7 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy);
  *
  * @param buddy  The buddy
  * @return       The local alias for the buddy
+ * @since 2.6.0
  */
 const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
 

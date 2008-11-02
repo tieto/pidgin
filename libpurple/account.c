@@ -2248,10 +2248,8 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 
 		/* Make a list of what group each buddy is in */
 		for (cur = buddies; cur != NULL; cur = cur->next) {
-			PurpleBlistNode *node = cur->data;
-			PurpleBlistNode *parent = purple_blist_node_get_parent(node);
-			PurpleBlistNode *gparent = purple_blist_node_get_parent(parent);
-			groups = g_list_append(groups, gparent);
+			PurpleBuddy *buddy = cur->data;
+			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
 		if (prpl_info->add_buddies != NULL)

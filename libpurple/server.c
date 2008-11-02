@@ -230,7 +230,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if(b && prpl_info && prpl_info->alias_buddy) {
-		prpl_info->alias_buddy(gc, purple_buddy_get_name(b), purple_buddy_get_alias(b));
+		prpl_info->alias_buddy(gc, purple_buddy_get_name(b), purple_buddy_get_local_buddy_alias(b));
 	}
 }
 
@@ -247,11 +247,12 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 	while (buddies != NULL)
 	{
-		const gchar *server_alias = purple_buddy_get_server_alias(b);
+		const char *server_alias;
 
 		b = buddies->data;
 		buddies = g_slist_delete_link(buddies, buddies);
 
+		server_alias = purple_buddy_get_server_alias(b);
 		if((server_alias == NULL && alias == NULL) ||
 		    (server_alias && alias && !strcmp(server_alias, alias)))
 		{
@@ -290,11 +291,12 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 	buddies = purple_find_buddies(account, who);
 
 	while(buddies != NULL) {
-		const gchar *balias = purple_buddy_get_alias(b);
+		const char *balias;
 		b = buddies->data;
 
 		buddies = g_slist_delete_link(buddies, buddies);
 
+		balias = purple_buddy_get_local_buddy_alias(b);
 		if((!balias && !alias) || (balias && alias && !strcmp(balias, alias)))
 			continue;
 
