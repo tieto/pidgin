@@ -136,6 +136,7 @@ libpurple/protocols/qq/buddy_list.c
 libpurple/protocols/qq/buddy_opt.c
 libpurple/protocols/qq/group.c
 libpurple/protocols/qq/group_im.c
+libpurple/protocols/qq/group_info.c
 libpurple/protocols/qq/group_internal.c
 libpurple/protocols/qq/group_join.c
 libpurple/protocols/qq/group_opt.c
@@ -182,6 +183,7 @@ libpurple/sslconn.c
 libpurple/status.c
 libpurple/util.c
 libpurple/win32/libc_interface.c
+libpurple/xmlnode.c
 pidgin.desktop.in
 pidgin/eggtrayicon.c
 pidgin/gtkaccount.c
