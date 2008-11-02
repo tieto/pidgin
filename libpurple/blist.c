@@ -699,6 +699,12 @@ purple_blist_get_root()
 	return purplebuddylist ? purplebuddylist->root : NULL;
 }
 
+GHashTable *
+purple_blist_get_buddies()
+{
+	return purplebuddylist ? purplebuddylist->buddies : NULL;
+}
+
 void purple_blist_show()
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
@@ -1231,6 +1237,23 @@ purple_buddy_get_icon(const PurpleBuddy *buddy)
 
 	return buddy->icon;
 }
+
+gpointer
+purple_buddy_get_protocol_data(const PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	return buddy->proto_data;
+}
+
+void
+purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data)
+{
+	g_return_if_fail(buddy != NULL);
+
+	buddy->proto_data = data;
+}
+
 
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node)
 {
@@ -2042,6 +2065,12 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy)
 
 	/* The buddy's user name (i.e. no alias) */
 	return buddy->name;
+}
+
+const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy, NULL);
+	return buddy->alias;
 }
 
 const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)

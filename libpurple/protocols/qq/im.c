@@ -246,7 +246,7 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 		/* create no-auth buddy */
 		b = qq_buddy_new(gc, im_header->uid_from);
 	}
-	bd = (b == NULL) ? NULL : (qq_buddy_data *) b->proto_data;
+	bd = (b == NULL) ? NULL : purple_buddy_get_protocol_data(b);
 	if (bd != NULL) {
 		bd->client_tag = im_header->version_from;
 	}
@@ -359,7 +359,7 @@ static void process_extend_im_text(
 		/* create no-auth buddy */
 		b = qq_buddy_new(gc, im_header->uid_from);
 	}
-	bd = (b == NULL) ? NULL : (qq_buddy_data *) b->proto_data;
+	bd = (b == NULL) ? NULL : purple_buddy_get_protocol_data(b);
 	if (bd != NULL) {
 		bd->client_tag = im_header->version_from;
 	}

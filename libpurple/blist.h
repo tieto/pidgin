@@ -156,9 +156,6 @@ struct _PurpleChat {
 	PurpleAccount *account; /**< The account this chat is attached to */
 };
 
-#endif /* PURPLE_HIDE_STRUCTS && PURPLE_BLIST_STRUCTS */
-
-
 /**
  * The Buddy List
  */
@@ -167,6 +164,8 @@ struct _PurpleBuddyList {
 	GHashTable *buddies;          /**< Every buddy in this list */
 	void *ui_data;                /**< UI-specific data. */
 };
+
+#endif /* PURPLE_HIDE_STRUCTS && PURPLE_BLIST_STRUCTS */
 
 /**
  * Buddy list UI operations.
@@ -234,6 +233,14 @@ PurpleBuddyList *purple_get_blist(void);
  * @return The root node.
  */
 PurpleBlistNode *purple_blist_get_root(void);
+
+/**
+ * Returns the hash table of every buddy in the list.
+ *
+ * @return The hash table of every buddy in the list.
+ * @since 2.6.0
+ */
+GHashTable *purple_blist_get_buddies(void);
 
 /**
  * Returns the next node of a given node. This function is to be used to iterate
@@ -470,6 +477,32 @@ const char *purple_buddy_get_name(const PurpleBuddy *buddy);
 PurpleBuddyIcon *purple_buddy_get_icon(const PurpleBuddy *buddy);
 
 /**
+ * Returns a buddy's protocol-specific data.
+ *
+ * This should only be called from the associated prpl.
+ *
+ * @param buddy The buddy.
+ * @return      The protocol data.
+ *
+ * @see purple_buddy_set_protocol_data()
+ * @since 2.6.0
+ */
+gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
+
+/**
+ * Sets a buddy's protocol-specific data.
+ *
+ * This should only be called from the associated prpl.
+ *
+ * @param buddy The buddy.
+ * @param data  The data.
+ *
+ * @see purple_buddy_get_protocol_data()
+ * @since 2.6.0
+ */
+void purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data);
+
+/**
  * Returns a buddy's contact.
  *
  * @param buddy The buddy.
@@ -659,6 +692,7 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  */
 const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
 /**
  * Returns the correct alias for this user, ignoring server aliases.  Used
  * when a user-recognizable name is required.  In order: buddy's alias; buddy's
@@ -666,8 +700,10 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
  * 
  * @param buddy  The buddy whose alias will be returned.
  * @return       The appropriate name or alias.
+ * @deprecated   Try purple_buddy_get_alias(), if server aliases are okay.
  */
 const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
+#endif
 
 /**
  * Returns the correct name to display for a buddy. In order of precedence:
@@ -678,6 +714,15 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
  * @return        The appropriate name or alias, or NULL
  */
 const char *purple_buddy_get_alias(PurpleBuddy *buddy);
+
+/**
+ * Returns the local alias for the buddy, or @c NULL if none exists.
+ *
+ * @param buddy  The buddy
+ * @return       The local alias for the buddy
+ * @since 2.6.0
+ */
+const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
 
 /**
  * Returns the correct name to display for a blist chat.
