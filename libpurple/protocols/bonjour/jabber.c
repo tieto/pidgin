@@ -665,7 +665,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = address_text;
 	mbba->jdata = jdata;
-	g_hash_table_foreach(purple_get_blist()->buddies, _match_buddies_by_address, mbba);
+	g_hash_table_foreach(purple_blist_get_buddies(), _match_buddies_by_address, mbba);
 
 	if (mbba->matched_buddies == NULL) {
 		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
@@ -875,7 +875,7 @@ bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = bconv->ip;
 	mbba->jdata = jdata;
-	g_hash_table_foreach(purple_get_blist()->buddies, _match_buddies_by_address, mbba);
+	g_hash_table_foreach(purple_blist_get_buddies(), _match_buddies_by_address, mbba);
 
 	/* If there is exactly one match, use it */
 	if(mbba->matched_buddies != NULL) {
