@@ -1075,6 +1075,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 	if (!session) {
 		GError *err = NULL;
 		GList *codec_conf = NULL;
+		gchar *filename = NULL;
 
 		session = g_new0(PurpleMediaSession, 1);
 
@@ -1094,8 +1095,10 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 	 * The MPV codec didn't work for me.
 	 * MPV may not work yet as of Farsight2 0.0.3
 	 */
+#if 0
 		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_DISABLE,
 				"MPV", FS_MEDIA_TYPE_VIDEO, 90000));
+#endif
 
 	/* XXX: SPEEX has a latency of 5 or 6 seconds for me */
 #if 0
@@ -1105,6 +1108,15 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_ANY,
 				"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
 #endif
+
+		filename = g_build_filename(purple_user_dir(), "fs-codec.conf", NULL);
+		codec_conf = fs_codec_list_from_keyfile(filename, &err);
+		g_free(filename);
+
+		if (err != NULL) {
+			purple_debug_error("media", "Error reading codec configuration file: %s\n", err->message);
+			g_error_free(err);
+		}
 
 		fs_session_set_codec_preferences(session->session, codec_conf, NULL);
 
