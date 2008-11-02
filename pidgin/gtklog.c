@@ -760,7 +760,9 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		return;
 	}
 
-	for (child = contact->node.child ; child ; child = child->next) {
+	for (child = purple_blist_node_get_first_child((PurpleBlistNode*)contact) ;
+	     child != NULL ;
+	     child = purple_blist_node_get_sibling_next(child)) {
 		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
 			continue;
 
