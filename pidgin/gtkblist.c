@@ -512,9 +512,11 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	int i = 0;
 	char *a = g_utf8_casefold(alias, -1);
 
-	for (contact = group->child; contact; contact = contact->next) {
+	for (contact = purple_blist_node_get_first_child(group);
+	     contact != NULL;
+	     contact = purple_blist_node_get_sibling_next(contact)) {
 		char *node_alias;
-		if (contact->type != PURPLE_BLIST_CONTACT_NODE)
+		if (purple_blist_node_get_type(contact) != PURPLE_BLIST_CONTACT_NODE)
 			continue;
 
 		node_alias = g_utf8_casefold(purple_contact_get_alias((PurpleContact *)contact), -1);
