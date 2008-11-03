@@ -122,7 +122,8 @@ static PurpleChat *chat_new(PurpleConnection *gc, qq_room_data *rmd)
 	PurpleChat *chat;
 
 	purple_debug_info("QQ", "Add new chat: id %d, ext id %d, title %s\n",
-		rmd->id, rmd->ext_id, rmd->title_utf8);
+		rmd->id, rmd->ext_id,
+		rmd->title_utf8 == NULL ? "(NULL)" : rmd->title_utf8);
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	g_hash_table_insert(components,
