@@ -53,7 +53,7 @@ struct _JingleContentClass
 
 	xmlnode *(*to_xml) (JingleContent *content, xmlnode *jingle, JingleActionType action);
 	JingleContent *(*parse) (xmlnode *content);
-	void (*handle_action) (JingleContent *content, xmlnode *jingle, JingleActionType action);
+	void (*handle_action) (JingleContent *content, xmlnode *xmlcontent, JingleActionType action);
 	const gchar *description_type;
 };
 
@@ -105,7 +105,7 @@ void jingle_content_modify(JingleContent *content, const gchar *senders);
 
 JingleContent *jingle_content_parse(xmlnode *content);
 xmlnode *jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType action);
-void jingle_content_handle_action(JingleContent *content, xmlnode *jingle, JingleActionType action);
+void jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action);
 
 #ifdef __cplusplus
 }

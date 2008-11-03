@@ -213,12 +213,13 @@ jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
-		JingleContent *content = jingle_session_find_content(session, name, creator);
-		if (content == NULL) {
+		JingleContent *parsed_content =
+				jingle_session_find_content(session, name, creator);
+		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
 			/* XXX: send error */
 		} else {
-			jingle_content_handle_action(content, jingle,
+			jingle_content_handle_action(parsed_content, content,
 					JINGLE_SESSION_ACCEPT);
 		}
 	}
@@ -243,7 +244,7 @@ jingle_handle_session_initiate(JingleSession *session, xmlnode *jingle)
 			/* XXX: send error */
 		} else {
 			jingle_session_add_content(session, parsed_content);
-			jingle_content_handle_action(parsed_content, jingle,
+			jingle_content_handle_action(parsed_content, content,
 					JINGLE_SESSION_INITIATE);
 		}
 	}
@@ -287,12 +288,13 @@ jingle_handle_transport_info(JingleSession *session, xmlnode *jingle)
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
-		JingleContent *content = jingle_session_find_content(session, name, creator);
-		if (content == NULL) {
+		JingleContent *parsed_content = 
+				jingle_session_find_content(session, name, creator);
+		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
 			/* XXX: send error */
 		} else {
-			jingle_content_handle_action(content, jingle,
+			jingle_content_handle_action(parsed_content, content,
 					JINGLE_TRANSPORT_INFO);
 		}
 	}

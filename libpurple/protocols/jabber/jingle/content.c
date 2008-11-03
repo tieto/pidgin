@@ -447,9 +447,9 @@ jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType 
 }
 
 void
-jingle_content_handle_action(JingleContent *content, xmlnode *jingle, JingleActionType action)
+jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
 {
 	g_return_if_fail(JINGLE_IS_CONTENT(content));
-	JINGLE_CONTENT_GET_CLASS(content)->handle_action(content, jingle, action);
+	JINGLE_CONTENT_GET_CLASS(content)->handle_action(content, xmlcontent, action);
 }
 

@@ -409,9 +409,6 @@ jingle_rtp_init_media(JingleContent *content)
 	g_free(senders);
 	g_object_unref(session);
 
-	/* needs to be after all the streams have been added */
-	purple_media_ready(media);
-
 	return TRUE;
 }
 
@@ -523,25 +520,30 @@ jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionTyp
 }
 
 static void
-jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *jingle, JingleActionType action)
+jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
 {
 	switch (action) {
 		case JINGLE_SESSION_ACCEPT: {
 			JingleSession *session = jingle_content_get_session(content);
-			xmlnode *description = xmlnode_get_child(jingle, "content/description");
+			xmlnode *description = xmlnode_get_child(xmlcontent, "description");
 			GList *codecs = jingle_rtp_parse_codecs(description);
 
 			purple_media_set_remote_codecs(jingle_rtp_get_media(session),
 					jingle_content_get_name(content),
 					jingle_session_get_remote_jid(session), codecs);
 
+			/* This needs to be for the entire session, not a single content */
+			/* very hacky */
+			if (xmlnode_get_next_twin(xmlcontent) == NULL)
+				purple_media_got_accept(jingle_rtp_get_media(session));
+
 			g_object_unref(session);
 			break;
 		}
 		case JINGLE_SESSION_INITIATE: {
 			JingleSession *session = jingle_content_get_session(content);
-			xmlnode *description = xmlnode_get_child(jingle, "content/description");
-			xmlnode *transport = xmlnode_get_child(jingle, "content/transport");
+			xmlnode *description = xmlnode_get_child(xmlcontent, "description");
+			xmlnode *transport = xmlnode_get_child(xmlcontent, "transport");
 			FsCandidate *candidate = jingle_rtp_transport_to_candidate(transport);
 			GList *candidates = g_list_append(NULL, candidate);
 			GList *codecs = jingle_rtp_parse_codecs(description);
@@ -563,6 +565,10 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *jingle, Jingl
 					jingle_session_get_remote_jid(session),
 					candidates);
 
+			/* very hacky */
+			if (xmlnode_get_next_twin(xmlcontent) == NULL)
+				purple_media_ready(jingle_rtp_get_media(session));
+
 			g_object_unref(session);
 			break;
 		}
@@ -574,7 +580,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *jingle, Jingl
 		}
 		case JINGLE_TRANSPORT_INFO: {
 			JingleSession *session = jingle_content_get_session(content);
-			xmlnode *transport = xmlnode_get_child(jingle, "content/transport");
+			xmlnode *transport = xmlnode_get_child(xmlcontent, "transport");
 			FsCandidate *candidate = jingle_rtp_transport_to_candidate(transport);
 			GList *candidates = g_list_append(NULL, candidate);
 
@@ -588,7 +594,6 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *jingle, Jingl
 					jingle_content_get_name(content),
 					jingle_session_get_remote_jid(session),
 					candidates);
-			purple_media_got_accept(jingle_rtp_get_media(session));
 			g_object_unref(session);
 			break;
 		}
@@ -634,16 +639,25 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	session = jingle_session_create(js, sid, me, jid, TRUE);
 	g_free(sid);
 
-	transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
-	content = jingle_content_create(JINGLE_APP_RTP, "initiator", "session", "test-session", "both", transport);
-	jingle_session_add_content(session, content);
-	if (purple_media_to_fs_media_type(type) == FS_MEDIA_TYPE_AUDIO)
+
+	if (type & PURPLE_MEDIA_AUDIO) {
+		transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
+		content = jingle_content_create(JINGLE_APP_RTP, "initiator",
+				"session", "audio-session", "both", transport);
+		jingle_session_add_content(session, content);
 		JINGLE_RTP(content)->priv->media_type = g_strdup("audio");
-	else
+		jingle_rtp_init_media(content);
+	}
+	if (type & PURPLE_MEDIA_VIDEO) {
+		transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
+		content = jingle_content_create(JINGLE_APP_RTP, "initiator",
+				"session", "video-session", "both", transport);
+		jingle_session_add_content(session, content);
 		JINGLE_RTP(content)->priv->media_type = g_strdup("video");
+		jingle_rtp_init_media(content);
+	}
 
-	jingle_rtp_init_media(content);
-
+	purple_media_ready(jingle_rtp_get_media(session));
 	purple_media_wait(jingle_rtp_get_media(session));
 
 	g_free(jid);
