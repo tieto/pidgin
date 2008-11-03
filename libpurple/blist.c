@@ -705,6 +705,18 @@ purple_blist_get_buddies()
 	return purplebuddylist ? purplebuddylist->buddies : NULL;
 }
 
+void *
+purple_blist_get_ui_data()
+{
+	return purplebuddylist->ui_data;
+}
+
+void
+purple_blist_set_ui_data(void *ui_data)
+{
+	purplebuddylist->ui_data = ui_data;
+}
+
 void purple_blist_show()
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
@@ -778,6 +790,21 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node)
 PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node)
 {
 	return node? node->prev : NULL;
+}
+
+void *
+purple_blist_node_get_ui_data(const PurpleBlistNode *node)
+{
+	g_return_val_if_fail(node, NULL);
+
+	return node->ui_data;
+}
+
+void
+purple_blist_node_set_ui_data(PurpleBlistNode *node, void *ui_data) {
+	g_return_if_fail(node);
+
+	node->ui_data = ui_data;
 }
 
 void
