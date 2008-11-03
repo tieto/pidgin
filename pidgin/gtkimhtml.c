@@ -2045,6 +2045,29 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 	return 0;
 }
 
+/* a hack-around to prevent trying to doing gtk_smiley_tree_remove on a
+ GtkIMHtml that no longer lives... I know this is ugly, but I couldn't find
+ a better way to handle it for now, since there lives a list GtkIMHtmlSmileys
+ in gtksmiley.c and those can end up having dangling imhtml pointers */
+static gboolean
+gtk_imhtml_is_alive(const GtkIMHtml *imhtml)
+{
+	GList *convs;
+	
+	for (convs = purple_get_conversations() ; convs != NULL ;
+		 convs = g_list_next(convs)) {
+		PurpleConversation *conv = (PurpleConversation *) convs->data;
+			 
+		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+			if (GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml) == imhtml
+				|| GTK_IMHTML(PIDGIN_CONVERSATION(conv)->entry) == imhtml) {
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
 static void
 gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
 	gpointer user_data)
@@ -2057,10 +2080,11 @@ gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
 static void
 gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
 {
-	if (smiley->imhtml) {
+	if (smiley->imhtml && gtk_imhtml_is_alive(smiley->imhtml)) {
 		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
 		g_hash_table_foreach(smiley->imhtml->smiley_data, 
 			gtk_imhtml_disassociate_smiley_foreach, smiley);
+		smiley->imhtml = NULL;
 	}
 }
 
