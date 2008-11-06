@@ -37,9 +37,6 @@
 #include "server.h"
 #include "status.h"
 #include "util.h"
-#ifdef USE_VV
-#include "media.h"
-#endif
 
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
@@ -982,4 +979,3 @@ void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 		}
 	}
 }
-
