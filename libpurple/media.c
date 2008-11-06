@@ -917,7 +917,7 @@ purple_media_video_init_src(GstElement **sendbin)
 
 	queue = gst_element_factory_make("queue", "purplelocalvideoqueue");
 	gst_bin_add(GST_BIN(*sendbin), queue);
-	/* The queue is linked later, when the local video is ready to be shown */
+	gst_element_link(tee, queue);
 
 	local_sink = gst_element_factory_make("autovideosink", "purplelocalvideosink");
 	gst_bin_add(GST_BIN(*sendbin), local_sink);
@@ -1034,9 +1034,16 @@ static void
 purple_media_src_pad_added_cb(FsStream *stream, GstPad *srcpad,
 			      FsCodec *codec, PurpleMediaSession *session)
 {
-	GstPad *sinkpad = gst_element_get_static_pad(session->sink, "ghostsink");
+	PurpleMediaSessionType type = purple_media_from_fs(codec->media_type, FS_DIRECTION_RECV);
+	GstPad *sinkpad = NULL;
+	session->sink = purple_media_manager_get_element(purple_media_manager_get(), type);
+
+	gst_bin_add(GST_BIN(purple_media_get_pipeline(session->media)),
+		    session->sink);
+	sinkpad = gst_element_get_static_pad(session->sink, "ghostsink");
 	purple_debug_info("media", "connecting new src pad: %s\n", 
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
+	gst_element_set_state(session->sink, GST_STATE_PLAYING);
 }
 
 static gchar *

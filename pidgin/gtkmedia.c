@@ -302,10 +302,13 @@ create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
+	GstElement *pipeline = purple_media_get_pipeline(media);
+	GtkWidget *send_widget = NULL, *recv_widget = NULL;
 	GstElement *audiosendbin = NULL, *audiosendlevel = NULL;
-	GstElement *audiorecvbin = NULL, *audiorecvlevel = NULL;
 	GstElement *videosendbin = NULL;
-	GstElement *videorecvbin = NULL;
+	gboolean audiorecvbool = FALSE;
+	gboolean videorecvbool = FALSE;
+	GstBus *bus;
 
 	GList *sessions = purple_media_get_session_names(media);
 
@@ -317,10 +320,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				purple_media_set_src(media, sessions->data, audiosendbin);
 				gst_element_set_state(audiosendbin, GST_STATE_PLAYING);
 			}
-			if (!audiorecvbin && (type & PURPLE_MEDIA_RECV_AUDIO)) {
-				purple_media_audio_init_recv(&audiorecvbin, &audiorecvlevel);
-				purple_media_set_sink(media, sessions->data, audiorecvbin);
-				gst_element_set_state(audiorecvbin, GST_STATE_READY);
+			if (!audiorecvbool && (type & PURPLE_MEDIA_RECV_AUDIO)) {
+				audiorecvbool = TRUE;
 			}
 		} else if (type & PURPLE_MEDIA_VIDEO) {
 			if (!videosendbin && (type & PURPLE_MEDIA_SEND_VIDEO)) {
@@ -328,48 +329,13 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				purple_media_set_src(media, sessions->data, videosendbin);
 				gst_element_set_state(videosendbin, GST_STATE_PLAYING);
 			}
-			if (!videorecvbin && (type & PURPLE_MEDIA_RECV_VIDEO)) {
-				purple_media_video_init_recv(&videorecvbin);
-				purple_media_set_sink(media, sessions->data, videorecvbin);
-				gst_element_set_state(videorecvbin, GST_STATE_READY);
+			if (!videorecvbool && (type & PURPLE_MEDIA_RECV_VIDEO)) {
+				videorecvbool = TRUE;
 			}
 		}
 	}
 
-	if (audiosendlevel || audiorecvlevel) {
-		g_object_set(gtkmedia, "send-level", audiosendlevel,
-				       "recv-level", audiorecvlevel,
-				       NULL);
-	}
-}
-
-static void
-pidgin_media_wait_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_WAITING);
-}
-
-/* maybe we should have different callbacks for when we received the accept
-    and we accepted ourselves */
-static void
-pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	GtkWidget *send_widget = NULL, *recv_widget = NULL;
-
-	GstElement *pipeline = purple_media_get_pipeline(media);
-	GstElement *audiosendbin = NULL;
-	GstElement *audiorecvbin = NULL;
-	GstElement *videosendbin = NULL;
-	GstElement *videorecvbin = NULL;
-	GstBus *bus;
-
-	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
-	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
-
-	purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
-				  &videosendbin, &videorecvbin);
-
-	if (videorecvbin || audiorecvbin) {
+	if (videorecvbool || audiorecvbool) {
 		recv_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				recv_widget, TRUE, TRUE, 0);
@@ -382,7 +348,7 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_widget_show(send_widget);
 	}
 
-	if (videorecvbin) {
+	if (videorecvbool) {
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
 
@@ -397,12 +363,10 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_widget_show(aspect);
 
 		gtkmedia->priv->remote_video = remote_video;
-		gst_element_set_state(videorecvbin, GST_STATE_PLAYING);
 	}
 	if (videosendbin) {
 		GtkWidget *aspect;
 		GtkWidget *local_video;
-		GstElement *tee, *queue;
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
@@ -415,15 +379,9 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_widget_show(aspect);
 
 		gtkmedia->priv->local_video = local_video;
-
-		tee = gst_bin_get_by_name(GST_BIN(videosendbin), "purplevideosrctee");
-		queue = gst_bin_get_by_name(GST_BIN(videosendbin), "purplelocalvideoqueue");
-		gst_element_link(tee, queue);
-		gst_object_unref(tee);
-		gst_object_unref(queue);
 	}
 
-	if (audiorecvbin) {
+	if (audiorecvbool) {
 		gtkmedia->priv->recv_progress = gtk_progress_bar_new();
 		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 10, 70);
 		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress),
@@ -431,7 +389,6 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				   gtkmedia->priv->recv_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->recv_progress);
-		gst_element_set_state(audiorecvbin, GST_STATE_PLAYING);
 	}
 	if (audiosendbin) {
 		gtkmedia->priv->send_progress = gtk_progress_bar_new();
@@ -445,16 +402,43 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_widget_show(gtkmedia->priv->mute);
 	}
 
-	if (audiorecvbin || audiosendbin || videorecvbin || videosendbin)
-		gtk_widget_show(gtkmedia->priv->display);
-
 	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-	if (audiorecvbin || audiosendbin)
+
+	if (videorecvbool || videosendbin)
+		gst_bus_set_sync_handler(bus,
+				(GstBusSyncHandler)create_window, gtkmedia);
+
+	if (audiorecvbool || audiosendbin)
 		g_signal_connect(G_OBJECT(bus), "message::element",
 				G_CALLBACK(level_message_cb), gtkmedia);
-	if (videorecvbin || videosendbin)
-		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
+
 	gst_object_unref(bus);
+}
+
+static void
+pidgin_media_wait_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_WAITING);
+}
+
+/* maybe we should have different callbacks for when we received the accept
+    and we accepted ourselves */
+static void
+pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	GstElement *audiosendbin = NULL;
+	GstElement *audiorecvbin = NULL;
+	GstElement *videosendbin = NULL;
+	GstElement *videorecvbin = NULL;
+
+	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
+
+	purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
+				  &videosendbin, &videorecvbin);
+
+	if (audiorecvbin || audiosendbin || videorecvbin || videosendbin)
+		gtk_widget_show(gtkmedia->priv->display);
 }
 
 static void
