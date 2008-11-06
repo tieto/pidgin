@@ -123,6 +123,15 @@ void
 purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media);
 
+/**
+ * Returns a GStreamer source or sink for audio or video.
+ *
+ * @param manager The media manager to use to obtain the source/sink.
+ * @param type The type of source/sink to get.
+ */
+GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
+		PurpleMediaSessionType type);
+
 /*}@*/
 
 #ifdef __cplusplus

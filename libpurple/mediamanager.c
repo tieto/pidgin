@@ -199,4 +199,29 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
 			g_list_delete_link(manager->priv->medias, list);
 }
 
+GstElement *
+purple_media_manager_get_element(PurpleMediaManager *manager,
+		PurpleMediaSessionType type)
+{
+	GstElement *ret = NULL;
+	GstElement *level = NULL;
+
+	/* TODO: If src, retrieve current src */
+	/* TODO: Send a signal here to allow for overriding the source/sink */
+
+	if (type & PURPLE_MEDIA_SEND_AUDIO)
+		purple_media_audio_init_src(&ret, &level);
+	else if (type & PURPLE_MEDIA_RECV_AUDIO)
+		purple_media_audio_init_recv(&ret, &level);
+	else if (type & PURPLE_MEDIA_SEND_VIDEO)
+		purple_media_video_init_src(&ret);
+	else if (type & PURPLE_MEDIA_RECV_VIDEO)
+		purple_media_video_init_recv(&ret);
+
+	if (ret == NULL)
+		purple_debug_error("media", "Error creating source or sink\n");
+
+	return ret;
+}
+
 #endif  /* USE_VV */
