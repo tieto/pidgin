@@ -6951,7 +6951,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Group:"), data->sg, data->group_combo, TRUE, NULL);
 	
 	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account becomes online."));
-	data->persistent = gtk_check_button_new_with_mnemonic(_("_Hide chat when the window is closed."));
+	data->persistent = gtk_check_button_new_with_mnemonic(_("_Remain in chat after window is closed."));
 	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
 
@@ -7177,7 +7177,10 @@ void pidgin_blist_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/y", 0);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/width", 250); /* Golden ratio, baby */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/height", 405); /* Golden ratio, baby */
+#if !GTK_CHECK_VERSION(2,14,0)
+	/* This pref is used in pidgintooltip.c. */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay", 500);
+#endif
 
 	/* Register our signals */
 	purple_signal_register(gtk_blist_handle, "gtkblist-hiding",

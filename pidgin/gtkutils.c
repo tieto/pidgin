@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#define _PIDGIN_GTKUTILS_C_
+
 #include "internal.h"
 #include "pidgin.h"
 
@@ -2878,7 +2880,6 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 }
 #endif /* ! Gtk 2.6.0 */
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
 {
 	PurpleBuddy *buddy;
@@ -2893,7 +2894,6 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 	contact = purple_buddy_get_contact(buddy);
 	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 }
-#endif
 
 char *pidgin_make_pretty_arrows(const char *str)
 {

@@ -138,6 +138,7 @@ libpurple/protocols/qq/buddy_list.c
 libpurple/protocols/qq/buddy_opt.c
 libpurple/protocols/qq/group.c
 libpurple/protocols/qq/group_im.c
+libpurple/protocols/qq/group_info.c
 libpurple/protocols/qq/group_internal.c
 libpurple/protocols/qq/group_join.c
 libpurple/protocols/qq/group_opt.c
@@ -147,7 +148,6 @@ libpurple/protocols/qq/qq_base.c
 libpurple/protocols/qq/qq_network.c
 libpurple/protocols/qq/qq_process.c
 libpurple/protocols/qq/send_file.c
-libpurple/protocols/qq/sys_msg.c
 libpurple/protocols/sametime/sametime.c
 libpurple/protocols/silc/buddy.c
 libpurple/protocols/silc/chat.c

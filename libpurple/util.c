@@ -3979,6 +3979,13 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 					     callback, user_data);
 }
 
+static gboolean
+url_fetch_connect_failed(gpointer data)
+{
+	url_fetch_connect_cb(data, -1, "");
+	return FALSE;
+}
+
 PurpleUtilFetchUrlData *
 purple_util_fetch_url_request_len(const char *url, gboolean full,
 		const char *user_agent, gboolean http11,
@@ -4016,9 +4023,8 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 
 	if (gfud->connect_data == NULL)
 	{
-		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
-				gfud->website.address);
-		return NULL;
+		/* Trigger the connect_cb asynchronously. */
+		purple_timeout_add(10, url_fetch_connect_failed, gfud);
 	}
 
 	return gfud;

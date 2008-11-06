@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [5])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [5])
-m4_define([purple_micro_version], [2])
+m4_define([purple_micro_version], [3])
 m4_define([purple_version_suffix], [vv-devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [5])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [5])
-m4_define([gnt_micro_version], [2])
+m4_define([gnt_micro_version], [3])
 m4_define([gnt_version_suffix], [vv-devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -74,7 +74,7 @@ fi
 
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([dist-bzip2])
+AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -1196,6 +1196,7 @@ AC_CHECK_FUNC(uname)
 
 AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
+DEBUG_CFLAGS="$DEBUG_CFLAGS -DPURPLE_DISABLE_DEPRECATED -DPIDGIN_DISABLE_DEPRECATED -DFINCH_DISABLE_DEPRECATED -DGNT_DISABLE_DEPRECATED"
 if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.
 	dnl If it's set after the warning CFLAGS in the compiler invocation, it counteracts the -Wno... flags.

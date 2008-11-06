@@ -1,5 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Our development blog is available at: http://planet.pidgin.im
+
 2.5.2 (10/19/2008):
 	Ethan: After a bit of a struggle with our services, which put
 	this release off for an unfortunate length of time, we're
@@ -22,6 +24,12 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	it to us.  Overall, the only major effect it had was to delay this
 	release far longer than we expected.  Hopefully the bugfixes make you
 	happy!
+
+	Elliott: This release took a while, but that was due to an unfortunate
+	server snafu. I didn't have much to do with it, but hopefully the new
+	servers will help us out a bit. Anyway, mostly bug-fixes this time.
+	Nothing spectacular, unless you happen to suffer from one of those bugs.
+	Oh, and don't forget, the "Has you" tooltip is back!
 
 2.5.1 (08/30/2008):
 	Kevin: This release is mainly a bug-fix release.  It solves a few

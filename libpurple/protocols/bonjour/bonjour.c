@@ -59,18 +59,18 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 		return;
 
 	/* Go through and remove all buddies that belong to this account */
-	for (cnode = ((PurpleBlistNode *) bonjour_group)->child; cnode; cnode = cnodenext) {
-		cnodenext = cnode->next;
+	for (cnode = purple_blist_node_get_first_child((PurpleBlistNode *) bonjour_group); cnode; cnode = cnodenext) {
+		cnodenext = purple_blist_node_get_sibling_next(cnode);
 		if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 			continue;
-		for (bnode = cnode->child; bnode; bnode = bnodenext) {
-			bnodenext = bnode->next;
+		for (bnode = purple_blist_node_get_first_child(cnode); bnode; bnode = bnodenext) {
+			bnodenext = purple_blist_node_get_sibling_next(bnode);
 			if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 				continue;
 			buddy = (PurpleBuddy *) bnode;
-			if (buddy->account != account)
+			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}

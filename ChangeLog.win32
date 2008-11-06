@@ -1,5 +1,6 @@
 version 2.5.2 (10/19/2008):
-	* No changes
+	* Updated GTK+ to 2.12.12
+	  This will resolve an issue with stuff in QQ appearing as "(NULL)"
 
 version 2.5.1 (08/30/2008):
 	* No changes
