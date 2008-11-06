@@ -45,7 +45,6 @@ sendbutton_la_LDFLAGS       = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
 timestamp_la_LDFLAGS        = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
-vibes_la_LDFLAGS			= -module -avoid-version
 xmppconsole_la_LDFLAGS      = -module -avoid-version
 
 if PLUGINS
@@ -64,7 +63,6 @@ plugin_LTLIBRARIES = \
 	spellchk.la         \
 	timestamp.la        \
 	timestamp_format.la \
-	vibes.la			\
 	xmppconsole.la
 
 noinst_LTLIBRARIES = \
@@ -86,7 +84,6 @@ sendbutton_la_SOURCES       = sendbutton.c
 spellchk_la_SOURCES         = spellchk.c
 timestamp_la_SOURCES        = timestamp.c
 timestamp_format_la_SOURCES = timestamp_format.c
-vibes_la_SOURCES			= vibes.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
 convcolors_la_LIBADD        = $(GTK_LIBS)
@@ -104,7 +101,6 @@ sendbutton_la_LIBADD        = $(GTK_LIBS)
 spellchk_la_LIBADD          = $(GTK_LIBS)
 timestamp_la_LIBADD         = $(GTK_LIBS)
 timestamp_format_la_LIBADD  = $(GTK_LIBS)
-vibes_la_LIBADD				= $(GTK_LIBS)
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
 endif # PLUGINS
