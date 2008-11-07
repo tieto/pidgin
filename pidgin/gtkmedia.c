@@ -169,11 +169,11 @@ static void
 pidgin_media_init (PidginMedia *media)
 {
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
-	media->priv->calling = gtk_label_new_with_mnemonic("Calling...");
-	media->priv->hangup = gtk_button_new_with_label("Hangup");
-	media->priv->accept = gtk_button_new_with_label("Accept");
-	media->priv->reject = gtk_button_new_with_label("Reject");
-	media->priv->mute = gtk_toggle_button_new_with_label("Mute");
+	media->priv->calling = gtk_label_new("Calling...");
+	media->priv->hangup = gtk_button_new_with_mnemonic("_Hangup");
+	media->priv->accept = gtk_button_new_with_mnemonic("_Accept");
+	media->priv->reject = gtk_button_new_with_mnemonic("_Reject");
+	media->priv->mute = gtk_toggle_button_new_with_mnemonic("_Mute");
 
 	g_signal_connect(media->priv->mute, "toggled",
 			G_CALLBACK(pidgin_media_mute_toggled), media);
