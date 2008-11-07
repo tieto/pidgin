@@ -266,7 +266,7 @@ jingle_rawudp_parse_internal(xmlnode *rawudp)
 	JingleTransport *transport = parent_class->parse(rawudp);
 	JingleRawUdpPrivate *priv = JINGLE_RAWUDP_GET_PRIVATE(transport);
 	xmlnode *candidate = xmlnode_get_child(rawudp, "candidate");
-	JingleRawUdpCandidate *rawudp_candidate;
+	JingleRawUdpCandidate *rawudp_candidate = NULL;
 
 	for (; candidate; candidate = xmlnode_get_next_twin(candidate)) {
 		rawudp_candidate = jingle_rawudp_candidate_new(
@@ -278,7 +278,8 @@ jingle_rawudp_parse_internal(xmlnode *rawudp)
 		jingle_rawudp_add_remote_candidate(JINGLE_RAWUDP(transport), rawudp_candidate);
 	}
 
-	if (g_list_length(priv->remote_candidates) == 1) {
+	if (rawudp_candidate != NULL &&
+			g_list_length(priv->remote_candidates) == 1) {
 		/* manufacture rtcp candidate */
 		rawudp_candidate = g_boxed_copy(JINGLE_TYPE_RAWUDP_CANDIDATE, rawudp_candidate);
 		rawudp_candidate->component = 2;
