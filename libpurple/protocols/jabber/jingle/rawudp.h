@@ -29,6 +29,7 @@
 G_BEGIN_DECLS
 
 #define JINGLE_TYPE_RAWUDP            (jingle_rawudp_get_type())
+#define JINGLE_TYPE_RAWUDP_CANDIDATE  (jingle_rawudp_candidate_get_type())
 #define JINGLE_RAWUDP(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), JINGLE_TYPE_RAWUDP, JingleRawUdp))
 #define JINGLE_RAWUDP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), JINGLE_TYPE_RAWUDP, JingleRawUdpClass))
 #define JINGLE_IS_RAWUDP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), JINGLE_TYPE_RAWUDP))
@@ -41,6 +42,8 @@ typedef struct _JingleRawUdp JingleRawUdp;
 typedef struct _JingleRawUdpClass JingleRawUdpClass;
 /** @copydoc _JingleRawUdpPrivate */
 typedef struct _JingleRawUdpPrivate JingleRawUdpPrivate;
+/** @copydoc _JingleRawUdpCandidate */
+typedef struct _JingleRawUdpCandidate JingleRawUdpCandidate;
 
 /** The rawudp class */
 struct _JingleRawUdpClass
@@ -58,9 +61,20 @@ struct _JingleRawUdp
 	JingleRawUdpPrivate *priv;      /**< The private data of this object. */
 };
 
+struct _JingleRawUdpCandidate
+{
+	guint generation;
+	guint component;
+	gchar *id;
+	gchar *ip;
+	guint port;
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+GType jingle_rawudp_candidate_get_type(void);
 
 /**
  * Gets the rawudp class's GType
@@ -69,7 +83,10 @@ extern "C" {
  */
 GType jingle_rawudp_get_type(void);
 
-JingleRawUdp *jingle_rawudp_create(guint generation, const gchar *id, const gchar *ip, guint port);
+JingleRawUdpCandidate *jingle_rawudp_candidate_new(const gchar *id,
+		guint generation, guint component, const gchar *ip, guint port);
+void jingle_rawudp_add_local_candidate(JingleRawUdp *rawudp, JingleRawUdpCandidate *candidate);
+GList *jingle_rawudp_get_remote_candidates(JingleRawUdp *rawudp);
 
 #ifdef __cplusplus
 }
