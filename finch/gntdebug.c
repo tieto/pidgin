@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "util.h"
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -36,7 +38,6 @@
 #include "gntdebug.h"
 #include "finch.h"
 #include "notify.h"
-#include "util.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -346,6 +347,13 @@ void finch_debug_init()
 	REGISTER_G_LOG_HANDLER("GThread");
 #ifdef USE_GSTREAMER
 	REGISTER_G_LOG_HANDLER("GStreamer");
+#endif
+#ifdef USE_VV
+#ifdef USE_FARSIGHT
+	REGISTER_G_LOG_HANDLER("farsight");
+	REGISTER_G_LOG_HANDLER("farsight-transmitter");
+	REGISTER_G_LOG_HANDLER("farsight-rtp");
+#endif
 #endif
 
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
