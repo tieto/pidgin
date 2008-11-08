@@ -50,6 +50,7 @@
 #define PIDGIN_STOCK_INFO            "pidgin-info"
 #define PIDGIN_STOCK_INVITE          "pidgin-invite"
 #define PIDGIN_STOCK_MODIFY          "pidgin-modify"
+#define PIDGIN_STOCK_ADD             "pidgin-add"
 #define PIDGIN_STOCK_OPEN_MAIL       "pidgin-stock-open-mail"
 #define PIDGIN_STOCK_PAUSE           "pidgin-pause"
 #define PIDGIN_STOCK_POUNCE          "pidgin-pounce"

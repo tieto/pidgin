@@ -2055,12 +2055,23 @@ gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
 }
 
 static void
+gtk_imhtml_disconnect_smiley(GtkIMHtml *imhtml, GtkIMHtmlSmiley *smiley)
+{
+	smiley->imhtml = NULL;
+	g_signal_handlers_disconnect_matched(imhtml, G_SIGNAL_MATCH_DATA, 0, 0,
+		NULL, NULL, smiley);
+}
+
+static void
 gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
 {
 	if (smiley->imhtml) {
 		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
 		g_hash_table_foreach(smiley->imhtml->smiley_data, 
 			gtk_imhtml_disassociate_smiley_foreach, smiley);
+		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
+			0, 0, NULL, NULL, smiley);
+		smiley->imhtml = NULL;
 	}
 }
 
@@ -2080,9 +2091,19 @@ gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 		g_hash_table_insert(imhtml->smiley_data, g_strdup(sml), tree);
 	}
 
+	/* need to disconnect old imhtml, if there is one */
+	if (smiley->imhtml) {
+		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
+			0, 0, NULL, NULL, smiley);
+	}
+	
 	smiley->imhtml = imhtml;
 
 	gtk_smiley_tree_insert (tree, smiley);
+	
+	/* connect destroy signal for the imhtml */
+	g_signal_connect(imhtml, "destroy", G_CALLBACK(gtk_imhtml_disconnect_smiley), 
+		smiley);
 }
 
 static gboolean

@@ -2512,12 +2512,13 @@ jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 	}
 
 	for (iter = jbr->caps->features ; iter ; iter = g_list_next(iter)) {
-		purple_debug_info("jabber", "Found cap: %s\n", (char *)iter->data);
 		if (strcmp(iter->data, cap) == 0) {
+			purple_debug_info("jabber", "Found cap: %s\n", (char *)iter->data);
 			return TRUE;
 		}
 	}
 
+	purple_debug_info("jabber", "Cap %s not found\n", cap);
 	return FALSE;
 }
 
