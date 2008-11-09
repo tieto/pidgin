@@ -588,11 +588,11 @@ void purple_log_init(void)
 	void *handle = purple_log_get_handle();
 
 	purple_prefs_add_none("/purple/logging");
-	purple_prefs_add_bool("/purple/logging/log_ims", FALSE);
-	purple_prefs_add_bool("/purple/logging/log_chats", FALSE);
+	purple_prefs_add_bool("/purple/logging/log_ims", TRUE);
+	purple_prefs_add_bool("/purple/logging/log_chats", TRUE);
 	purple_prefs_add_bool("/purple/logging/log_system", FALSE);
 
-	purple_prefs_add_string("/purple/logging/format", "txt");
+	purple_prefs_add_string("/purple/logging/format", "html");
 
 	html_logger = purple_log_logger_new("html", _("HTML"), 11,
 									  NULL,
