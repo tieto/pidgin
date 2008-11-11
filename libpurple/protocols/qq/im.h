@@ -27,20 +27,11 @@
 
 #include <glib.h>
 #include "connection.h"
-#include "group.h"
-
-#define QQ_MSG_IM_MAX               500	/* max length of IM */
-#define QQ_SEND_IM_BEFORE_MSG_LEN   53
-#define QQ_SEND_IM_AFTER_MSG_LEN    13	/* there is one 0x00 at the end */
-
-enum {
-	QQ_IM_TEXT = 0x01,
-	QQ_IM_AUTO_REPLY = 0x02
-};
 
 enum {
 	QQ_MSG_TO_BUDDY = 0x0009,
 	QQ_MSG_TO_UNKNOWN = 0x000a,
+	QQ_MSG_SMS = 0x0014,	/* not sure */
 	QQ_MSG_NEWS = 0x0018,
 	QQ_MSG_UNKNOWN_QUN_IM = 0x0020,
 	QQ_MSG_ADD_TO_QUN = 0x0021,
@@ -57,15 +48,25 @@ enum {
 	QQ_MSG_EXTEND_85 = 0x0085,
 };
 
-void qq_got_attention(PurpleConnection *gc, const gchar *msg);
+typedef struct {
+	gchar *font;		/* Attension: font may NULL. font name is in QQ charset */
+	guint8 font_len;
+	guint8 attr;
+	guint8 rgb[3];
+} qq_im_format;
 
-guint8 *qq_get_send_im_tail(const gchar *font_color,
-		const gchar *font_size,
-		const gchar *font_name,
-		gboolean is_bold, gboolean is_italic, gboolean is_underline, gint len);
+qq_im_format *qq_im_fmt_new_by_purple(const gchar *msg);
+gboolean qq_im_smiley_none(const gchar *msg);
+void qq_im_fmt_free(qq_im_format *fmt);
+GSList *qq_im_get_segments(gchar *msg_stripped, gboolean is_smiley_none);
+gint qq_put_im_tail(guint8 *buf, qq_im_format *fmt);
 
-void qq_request_send_im(PurpleConnection *gc, guint32 uid_to, gchar *msg, gint type);
+void qq_got_message(PurpleConnection *gc, const gchar *msg);
+gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags);
 
 void qq_process_im(PurpleConnection *gc, guint8 *data, gint len);
 void qq_process_extend_im(PurpleConnection *gc, guint8 *data, gint len);
+
+gchar *qq_emoticon_to_purple(gchar *text);
+gchar *qq_format_to_purple(guint8 *data, gint len, gchar *text);
 #endif
