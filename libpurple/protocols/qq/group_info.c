@@ -144,7 +144,7 @@ static void room_info_display(PurpleConnection *gc, qq_room_data *rmd)
 
 	purple_notify_user_info_add_section_break(room_info);
 
-	utf8_value = g_strdup_printf(("%d"), rmd->creator_uid);
+	utf8_value = g_strdup_printf(("%u"), rmd->creator_uid);
 	purple_notify_user_info_add_pair(room_info, _("Creator"), utf8_value);
 	g_free(utf8_value);
 
@@ -160,7 +160,7 @@ static void room_info_display(PurpleConnection *gc, qq_room_data *rmd)
 	purple_notify_user_info_add_pair(room_info, _("Authorize"), utf8_value);
 	g_free(utf8_value);
 
-	utf8_value = g_strdup_printf(("%d"), rmd->ext_id);
+	utf8_value = g_strdup_printf(("%u"), rmd->ext_id);
 	purple_notify_userinfo(gc, utf8_value, room_info, NULL, NULL);
 	g_free(utf8_value);
 
@@ -241,7 +241,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 
 #if 0
 		if(organization != 0 || role != 0) {
-			purple_debug_info("QQ_GRP", "%d, organization=%d, role=%d\n", member_uid, organization, role);
+			purple_debug_info("QQ", "%u, organization=%d, role=%d\n", member_uid, organization, role);
 		}
 #endif
 
@@ -277,7 +277,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 		return;
 	}
 
-	topic_utf8 = g_strdup_printf("%d %s", rmd->ext_id, rmd->notice_utf8);
+	topic_utf8 = g_strdup_printf("%u %s", rmd->ext_id, rmd->notice_utf8);
 	purple_debug_info("QQ", "Set chat topic to %s\n", topic_utf8);
 	purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, topic_utf8);
 	g_free(topic_utf8);
@@ -285,7 +285,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 
 void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *gc)
 {
-	guint32 id, member_uid;
+	guint32 room_id, member_uid;
 	guint8 unknown;
 	gint bytes, num;
 	qq_room_data *rmd;
@@ -299,13 +299,13 @@ void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *g
 	}
 
 	bytes = 0;
-	bytes += qq_get32(&id, data + bytes);
+	bytes += qq_get32(&room_id, data + bytes);
 	bytes += qq_get8(&unknown, data + bytes);	/* 0x3c ?? */
-	g_return_if_fail(id > 0);
+	g_return_if_fail(room_id > 0);
 
-	rmd = qq_room_data_find(gc, id);
+	rmd = qq_room_data_find(gc, room_id);
 	if (rmd == NULL) {
-		purple_debug_error("QQ", "We have no group info for internal id [%d]\n", id);
+		purple_debug_error("QQ", "Can not info of room id [%u]\n", room_id);
 		return;
 	}
 
