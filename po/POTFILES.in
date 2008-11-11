@@ -216,7 +216,6 @@ pidgin/gtkutils.c
 pidgin/gtkwhiteboard.c
 pidgin/pidgin.h
 pidgin/pidgincombobox.c
-pidgin/pidginstock-artwork.c
 pidgin/pidginstock.c
 pidgin/pidgintooltip.c
 pidgin/pixmaps/emotes/default/24/default.theme.in
