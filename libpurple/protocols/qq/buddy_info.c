@@ -228,7 +228,7 @@ void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 	g_return_if_fail(uid != 0);
 
 	qd = (qq_data *) gc->proto_data;
-	g_snprintf(raw_data, sizeof(raw_data), "%d", uid);
+	g_snprintf(raw_data, sizeof(raw_data), "%u", uid);
 	qq_send_cmd_mess(gc, QQ_CMD_GET_BUDDY_INFO, (guint8 *) raw_data, strlen(raw_data),
 			update_class, action);
 }
@@ -457,7 +457,7 @@ void qq_process_change_info(PurpleConnection *gc, guint8 *data, gint data_len)
 	data[data_len] = '\0';
 	if (qd->uid != atoi((gchar *) data)) {	/* return should be my uid */
 		purple_debug_info("QQ", "Failed Updating info\n");
-		qq_got_attention(gc, _("Failed changing buddy information."));
+		qq_got_message(gc, _("Failed changing buddy information."));
 	}
 }
 
@@ -531,10 +531,6 @@ void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 	g_return_if_fail(icon_path != NULL);
 
-	/* Fixme:
-	 *  icon_path is always null
-	 *  purple_imgstore_get_filename is always new file
-	 *  QQ buddy may set custom icon if level is over 16 */
 	purple_debug_info("QQ", "Change my icon to %s\n", icon_path);
 	segments = g_strsplit_set(icon_path, G_DIR_SEPARATOR_S, 0);
 	for (index = 0; segments[index] != NULL; index++) {
@@ -583,7 +579,7 @@ gchar *qq_get_icon_path(gchar *icon_name)
 	return icon_path;
 }
 
-static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint face)
+void qq_update_buddy_icon(PurpleAccount *account, const gchar *who, gint face)
 {
 	PurpleBuddy *buddy;
 	const gchar *icon_name_prev = NULL;
@@ -594,19 +590,21 @@ static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint fac
 
 	g_return_if_fail(account != NULL && who != NULL);
 
-	purple_debug_info("QQ", "Update %s icon to %d\n", who, face);
+	/* purple_debug_info("QQ", "Update %s icon to %d\n", who, face); */
 
 	icon_name = qq_get_icon_name(face);
-	purple_debug_info("QQ", "icon file name is %s\n", icon_name);
+	g_return_if_fail(icon_name != NULL);
+	/* purple_debug_info("QQ", "icon file name is %s\n", icon_name); */
 
 	if ((buddy = purple_find_buddy(account, who))) {
 		icon_name_prev = purple_buddy_icons_get_checksum_for_user(buddy);
-		if (icon_name_prev != NULL) {
-			purple_debug_info("QQ", "Previous icon is %s\n", icon_name_prev);
-		}
+		/*
+		purple_debug_info("QQ", "Previous icon is %s\n",
+				icon_name_prev != NULL ? icon_name_prev : "(NULL)");
+		*/
 	}
 	if (icon_name_prev != NULL && !strcmp(icon_name, icon_name_prev)) {
-		purple_debug_info("QQ", "Icon is not changed\n");
+		/* purple_debug_info("QQ", "Icon is not changed\n"); */
 		g_free(icon_name);
 		return;
 	}
@@ -620,6 +618,8 @@ static void update_buddy_icon(PurpleAccount *account, const gchar *who, gint fac
 	if (!g_file_get_contents(icon_path, &icon_file_content, &icon_file_size, NULL)) {
 		purple_debug_error("QQ", "Failed reading icon file %s\n", icon_path);
 	} else {
+		purple_debug_info("QQ", "Update %s icon to %d (%s)\n",
+				who, face, icon_path);
 		purple_buddy_icons_set_for_user(account, who,
 				icon_file_content, icon_file_size, icon_name);
 	}
@@ -640,7 +640,7 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 
 	qd = (qq_data *) gc->proto_data;
 
-	uid = strtol(segments[QQ_INFO_UID], NULL, 10);
+	uid = strtoul(segments[QQ_INFO_UID], NULL, 10);
 	who = uid_to_purple_name(uid);
 
 	qq_filter_str(segments[QQ_INFO_NICK]);
@@ -678,7 +678,7 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 	purple_blist_server_alias_buddy(buddy, bd->nickname);
 
 	/* convert face num from packet (0-299) to local face (1-100) */
-	update_buddy_icon(gc->account, who, bd->face);
+	qq_update_buddy_icon(gc->account, who, bd->face);
 
 	g_free(who);
 	g_free(alias_utf8);
@@ -821,7 +821,7 @@ static void process_level(PurpleConnection *gc, guint8 *data, gint data_len)
 
 		bd = qq_buddy_data_find(gc, uid);
 		if (bd == NULL) {
-			purple_debug_error("QQ", "Got levels of %d not in my buddy list\n", uid);
+			purple_debug_error("QQ", "Got levels of %u not in my buddy list\n", uid);
 			continue;
 		}
 
@@ -856,7 +856,7 @@ static void process_level_2007(PurpleConnection *gc, guint8 *data, gint data_len
 
 	bd = qq_buddy_data_find(gc, uid);
 	if (bd == NULL) {
-		purple_debug_error("QQ", "Got levels of %d not in my buddy list\n", uid);
+		purple_debug_error("QQ", "Got levels of %u not in my buddy list\n", uid);
 		return;
 	}
 
