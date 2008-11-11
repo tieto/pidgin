@@ -1,3 +1,10 @@
+2008.11.11 - ccpaging <ccpaging(at)gmail.com>
+	* Change QQ number to unsigned long
+	* Change Qun ID and Qun extend ID to unsigned long
+	* Rewrite smiley convert function, use qsort and bsearch
+	* Update smiley map according EVA and pidgin theme file
+	* Support long IM message in private and Qun
+
 2008.10.27 - ccpaging <ccpaging(at)gmail.com>
 	* Fixed a bug in group_join.c
 
