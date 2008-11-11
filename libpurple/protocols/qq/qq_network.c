@@ -324,7 +324,7 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 			room_cmd = qq_trans_get_room_cmd(trans);
 			room_id = qq_trans_get_room_id(trans);
 #if 1
-			purple_debug_info("QQ", "%s (0x%02X) for room %d, len %d\n",
+			purple_debug_info("QQ", "%s (0x%02X) for room %u, len %d\n",
 					qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, buf_len);
 #endif
 			qq_proc_room_cmds(gc, seq, room_cmd, room_id, buf + bytes, bytes_not_read, update_class, ship32);
@@ -638,6 +638,9 @@ static gint tcp_send_out(PurpleConnection *gc, guint8 *data, gint data_len)
 		if (conn->can_write_handler == 0) {
 			conn->can_write_handler = purple_input_add(qd->fd, PURPLE_INPUT_WRITE, tcp_can_write, gc);
 		}
+		if (conn->tcp_txbuf == NULL) {
+			conn->tcp_txbuf = purple_circ_buffer_new(4096);
+		}
 		purple_circ_buffer_append(conn->tcp_txbuf, data + ret, data_len - ret);
 	}
 	return ret;
@@ -710,7 +713,7 @@ static void set_all_keys(PurpleConnection *gc)
 	qd->send_seq = rand() & 0xffff;
 
 	qd->is_login = FALSE;
-	qd->uid = strtol(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
+	qd->uid = strtoul(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
 
 #ifdef DEBUG
 	memset(qd->ld.random_key, 0x01, sizeof(qd->ld.random_key));
