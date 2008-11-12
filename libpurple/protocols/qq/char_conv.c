@@ -48,10 +48,10 @@ static gchar *do_convert(const gchar *str, gssize len, const gchar *to_charset, 
 	ret = g_convert(str, len, to_charset, from_charset, &byte_read, &byte_write, &error);
 
 	if (error == NULL) {
-		return ret;	/* conversion is OK */
+		return ret;	/* convert is OK */
 	}
 
-	/* conversion error */
+	/* convert error */
 	purple_debug_error("QQ_CONVERT", "%s\n", error->message);
 	qq_show_packet("Dump failed text", (guint8 *) str, (len == -1) ? strlen(str) : len);
 
