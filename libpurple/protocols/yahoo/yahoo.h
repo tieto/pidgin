@@ -30,9 +30,6 @@
 
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
-#define YAHOO_PAGER_PORT_P2P 5101
-#define YAHOO_P2P_KEEPALIVE_SECS 300
-#define YAHOO_P2P_SERVER_TIMEOUT 10
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
@@ -48,7 +45,7 @@
 #define YAHOOJP_MAIL_URL "http://mail.yahoo.co.jp/"
 #define YAHOOJP_XFER_HOST "filetransfer.msg.yahoo.co.jp"
 #define YAHOOJP_WEBCAM_HOST "wc.yahoo.co.jp"
-/* not sure, must test: */
+/*not sure, must test:*/
 #define YAHOOJP_XFER_RELAY_HOST "relay.msg.yahoo.co.jp" 
 #define YAHOOJP_XFER_RELAY_PORT 80
 #define YAHOOJP_ROOMLIST_URL "http://insider.msg.yahoo.co.jp/ycontent/"
@@ -57,8 +54,6 @@
 #define YAHOO_AUDIBLE_URL "http://us.dl1.yimg.com/download.yahoo.com/dl/aud"
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
-
-#define YAHOO_SMS_CARRIER_URL "http://lookup.msg.vip.mud.yahoo.com"
 
 #define YAHOO_PICURL_SETTING "picture_url"
 #define YAHOO_PICCKSUM_SETTING "picture_checksum"
@@ -85,18 +80,9 @@
 #define YAHOOJP_CLIENT_VERSION_ID "524223"
 #define YAHOOJP_CLIENT_VERSION "7,0,1,1"
 
+
 /* Index into attention types list. */
 #define YAHOO_BUZZ 0
-
-typedef enum {
-	YAHOO_PKT_TYPE_SERVER = 0,
-	YAHOO_PKT_TYPE_P2P
-} yahoo_pkt_type;
-
-typedef enum {
-	YAHOO_P2P_WE_ARE_CLIENT =0,
-	YAHOO_P2P_WE_ARE_SERVER
-} yahoo_p2p_connection_type;
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,
@@ -125,17 +111,6 @@ struct yahoo_buddy_icon_upload_data {
 	int pos;
 	int fd;
 	guint watcher;
-};
-
-struct yahoo_p2p_data	{
-	PurpleConnection *gc;
-	char *host_ip;
-	char *host_username;
-	int val_13;
-	guint input_event;
-	gint source;
-	int session_id;
-	yahoo_p2p_connection_type connection_type;
 };
 
 struct _YchtConn;
@@ -193,20 +168,16 @@ struct yahoo_data {
 	 * for when we lookup people profile or photo information.
 	 */
 	GSList *url_datas;
-	GHashTable *xfer_peer_idstring_map;/* Hey, i dont know, but putting this HashTable next to friends gives a run time fault... */
-	GSList *cookies;/* contains all cookies, including _y and _t */
+	GHashTable *xfer_peer_idstring_map;/*Hey, i dont know, but putting this HashTable next to friends gives a run time fault...*/
+	GSList *cookies;/*contains all cookies, including _y and _t*/
 	
 	/**
 	 * We may receive a list15 in multiple packets with no prior warning as to how many we'll be getting;
 	 * the server expects us to keep track of the group for which it is sending us contact names.
 	 */
 	char *current_list15_grp;
-	GHashTable *peers;	/* information about p2p data */
-	int yahoo_p2p_timer;
-	int yahoo_local_p2p_server_fd;
-	int yahoo_p2p_server_watcher;
-	GHashTable *sms_carrier;	/* sms carrier data */
-	guint yahoo_p2p_server_timeout_handle;
+	time_t last_ping;
+	time_t last_keepalive;
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
@@ -234,6 +205,9 @@ void yahoo_init_colorht(void);
 void yahoo_dest_colorht(void);
 char *yahoo_codes_to_html(const char *x);
 char *yahoo_html_to_codes(const char *src);
+
+gboolean
+yahoo_account_use_http_proxy(PurpleConnection *conn);
 
 /**
  * Encode some text to send to the yahoo server.
@@ -275,8 +249,5 @@ gchar* yahoo_get_cookies(PurpleConnection *gc);
 
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
 GList *yahoo_attention_types(PurpleAccount *account);
-
-/* send p2p pkt containing our encoded ip, asking peer to connect to us */
-void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13);
 
 #endif /* _YAHOO_H_ */
