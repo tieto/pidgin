@@ -1,6 +1,88 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.0 (??/??/2008):
+version 2.5.3 (??/??/????):
+	libpurple:
+	* Fix an error with MSN offline messages by shipping the *new*
+	  "Microsoft Secure Server Authority" and the
+	  "Microsoft Internet Authority" certificates.  People that use
+	  --with-system-ssl-certs and GnuTLS need to include these in the
+	  system certs directory.
+
+	Pidgin:
+	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
+	  instead of our own (hidden) tooltip_delay pref.  If you had
+	  previously changed that pref, add a line like this to
+	  ~/.purple/gtkrc-2.0 (where 500 is the timeout (in ms) you want):
+	      gtk-tooltip-timeout = 500
+	  To completely disable tooltips (e.g. if you had an old tooltip_delay
+	  of zero), add this to ~/.purple/gtkrc-2.0:
+	      gtk-enable-tooltips = 0
+
+	Finch:
+	* Allow binding meta+arrow keys for actions.
+
+
+version 2.5.2 (10/19/2008):
+	libpurple:
+	* Fixed a crash on removing a custom buddy icon on a buddy.
+	* Fixed a crash caused by certain self-signed SSL certificates.
+	* Enable a number of strong ciphers which were previously disabled
+	  when using NSS.  (Thanks to Marcus Trautwig.)
+
+	Pidgin:
+	* The status selector now saves your message when changing status.
+	* Fix a case where a conversation window could close unexpectedly.
+	* A mute sounds option has been added to the preferences window to
+	  help with discoverability.  CTRL+S is no longer bound to mute.
+	* Added ability to change the color of visited links (using the theme
+	  control plugin, or setting the color in ~/.gtkrc-2.0)
+	* Fix a crash occuring when a custom smiley is deleted and re-added and
+	  used in an open conversation after being re-added.
+
+	Finch:
+	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
+	  hierarchies are defined by the '/' character in the group names.
+	* A bug was fixed where some key-bindings wouldn't work with some TERMs
+	  (e.g. xterm-color, screen-linux etc.)
+
+	MSN:
+	* Operations (such as moving to a new group) on contacts that were added
+	  in the same session should now complete correctly, and not cause
+	  synchronization errors at next login.
+	* Minor fixes to login process during a server transfer.
+	* Restored the "Has You" feature to the MSN protocol tooltips.
+	* ADL 205/214/etc errors should no longer prevent login.
+
+	XMPP:
+	* Sending and receiving custom smileys using the specification in
+	  XEP-0231 (bits of binary) and XHTML-IM
+
+	Yahoo:
+	* Only send a Ping once every hour.  This prevents the account from
+	  being disconnected from the server periodically.
+
+version 2.5.1 (08/30/2008):
+	libpurple:
+	* In the Join/Part plugin, add the ability to apply the rules to
+	  buddies.  By default, joins and parts for buddies are still shown.
+	* Support SOCKS proxies specified in GNOME or Windows proxy settings.
+	* Fix some possible crashes in MSNP15.
+	* Enable a default SSL trust relationship for MSN servers.
+	* Avoid disconnecting from XMPP servers on parse errors that are
+	  non-fatal.
+	* Include some perl files that were mistakenly omitted in 2.5.0.
+
+	Pidgin:
+	* Prevent use of custom smilies without "shortcuts."
+	* Fix a crash that could appear with AIM buddy tooltips.
+
+	Artwork:
+	* General refresh of many icons in the interface.
+	* Many cleanups to artwork source are now included in the distribution.
+	* A new "throbber" animation has been added to indicate when accounts
+	  are connecting.
+
+version 2.5.0 (08/18/2008):
 	libpurple:
 	* Ability to create custom smileys (currently only the MSN protocol
 	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
@@ -9,16 +91,33 @@ version 2.5.0 (??/??/2008):
 	  to specify a system-wide SSL CA certificates directory.  When set,
 	  we don't install our SSL CA certs, so it's important that the
 	  libpurple package depend on the CA certificates.
+	* Add SSL Certificates support to the NSS SSL plugin. (Thanks to Lou
+	  Cipher)
+
+	XMPP:
+	* Fix a bug that caused the UI to not refresh and caused the client
+	  to use 99% CPU when an XMPP account lost its connection to the
+	  server.
+	* Possibly fix a bug where some clients could get into a state
+	  where they moved a buddy back and forth between two groups in
+	  an endless loop.
+
+	IRC:
+	* /ctcp command (Vladislav Guberinić)
+	* Allow for auto-detection of incoming UTF-8 formatted text on
+	  accounts which are configured to use some other encoding.
 
 	MSN:
 	* Update MSN support to protocol 15 (Elliott Sales de Andrade, Jorge
-	  Villaseñor, Mike Ruprecht, Carlos Silva, Ma Yuan, Dimmuxx and others)
+	  Villaseñor, Mike Ruprecht, Carlos Silva, Ma Yuan, Daniel Ljungborg
+	  and others)
 	* Personal messages are now supported. They are treated as status
 	  messages.
 	* Offline IM is now supported.
 	* Aliasing is now supported server-side.
 	* Buddies are now emblemed. Bots and web clients should now be
 	  distinguished.
+	* Update smiley set for non-faces.
 	* Failing to update a buddy icon when the buddy has gone offline no
 	  longer crashes.
 	* Custom smileys received in a chat no longer go to a new window.
@@ -32,6 +131,7 @@ version 2.5.0 (??/??/2008):
 	  side.
 	* Offer to add new buddies into the same contact as existing buddies
 	  in the same group if the alias given is the same.
+	* Minor smiley style update.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy
@@ -64,6 +164,7 @@ version 2.4.3 (07/01/2008):
 	* Various memory leak fixes
 
 version 2.4.2 (05/17/2008):
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.2
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.

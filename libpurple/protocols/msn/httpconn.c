@@ -64,7 +64,6 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	const char *body_start;
 	char *tmp;
 	size_t body_len = 0;
-	gboolean wasted = FALSE;
 
 	g_return_val_if_fail(httpconn != NULL, FALSE);
 	g_return_val_if_fail(buf      != NULL, FALSE);
@@ -158,8 +157,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 	}
 
-	body = g_malloc0(body_len + 1);
+	body = g_malloc(body_len + 1);
 	memcpy(body, body_start, body_len);
+	body[body_len] = '\0';
 
 #ifdef MSN_DEBUG_HTTP
 	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
@@ -217,15 +217,10 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		g_free(tmp);
 
-		if ((session_action != NULL) && (strcmp(session_action, "close") == 0))
-			wasted = TRUE;
-
-		g_free(session_action);
-
 		t = strchr(full_session_id, '.');
 		session_id = g_strndup(full_session_id, t - full_session_id);
 
-		if (!wasted)
+		if (session_action == NULL || strcmp(session_action, "close") != 0)
 		{
 			g_free(httpconn->full_session_id);
 			httpconn->full_session_id = full_session_id;
@@ -254,6 +249,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			g_free(session_id);
 			g_free(gw_ip);
 		}
+
+		g_free(session_action);
 	}
 
 	g_free(header);
@@ -274,7 +271,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnSession *session;
 	char buf[MSN_BUF_LEN];
 	char *cur, *end, *old_rx_buf;
-	int len, cur_len;
+	gssize len;
+	int cur_len;
 	char *result_msg = NULL;
 	size_t result_len = 0;
 	gboolean error = FALSE;
@@ -381,6 +379,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		else
 		{
 			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
+			servconn->payload_len = servconn->cmdproc->last_cmd->payload_len;
 		}
 	} while (servconn->connected && servconn->rx_len > 0);
 
@@ -404,7 +403,8 @@ static void
 httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnHttpConn *httpconn;
-	int ret, writelen;
+	gssize ret;
+	int writelen;
 
 	httpconn = data;
 	writelen = purple_circ_buffer_get_max_read(httpconn->tx_buf);
@@ -726,7 +726,8 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	}
 	else
 	{
-		purple_debug_error("msn", "HTTP: Connection error\n");
+		purple_debug_error("msn", "HTTP: Connection error: %s\n",
+		                   error_message ? error_message : "(null)");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }

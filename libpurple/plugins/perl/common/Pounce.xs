@@ -121,14 +121,8 @@ PPCODE:
 Purple::Handle
 purple_pounces_get_handle()
 
-void
-purple_pounces_init()
-
 gboolean
 purple_pounces_load()
-
-void
-purple_pounces_uninit()
 
 void
 purple_pounces_unregister_handler(ui)

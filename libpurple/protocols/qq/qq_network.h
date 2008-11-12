@@ -22,23 +22,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _QQ_PROXY_H
-#define _QQ_PROXY_H
+#ifndef _QQ_NETWORK_H
+#define _QQ_NETWORK_H
 
 #include <glib.h>
 #include "connection.h"
 
 #include "qq.h"
 
-#define QQ_CONNECT_STEPS    3	/* steps in connection */
+#define QQ_CONNECT_STEPS    4	/* steps in connection */
 
-void qq_connect(PurpleAccount *account);
+gboolean qq_connect_later(gpointer data);
 void qq_disconnect(PurpleConnection *gc);
-void qq_connect_later(PurpleConnection *gc);
 
-gint qq_send_data(qq_data *qd, guint16 cmd, guint8 *data, gint datalen);
-gint qq_send_cmd(qq_data *qd, guint16 cmd, guint8 *data, gint datalen);
-gint qq_send_cmd_detail(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
-	guint8 *data, gint data_len);
+gint qq_send_cmd_encrypted(PurpleConnection *gc, guint16 cmd, guint16 seq,
+		guint8 *encrypted_data, gint encrypted_len, gboolean is_save2trans);
+gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, guint8 *data, gint datalen);
+gint qq_send_cmd_mess(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len,
+		gint update_class, guint32 ship32);
 
+gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq,
+		guint8 *data, gint data_len);
+
+gint qq_send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
+		guint8 *data, gint data_len);
+gint qq_send_room_cmd_mess(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
+		guint8 *data, gint data_len, gint update_class, guint32 ship32);
+gint qq_send_room_cmd_only(PurpleConnection *gc, guint8 room_cmd, guint32 room_id);
+gint qq_send_room_cmd_noid(PurpleConnection *gc, guint8 room_cmd,
+		guint8 *data, gint data_len);
 #endif

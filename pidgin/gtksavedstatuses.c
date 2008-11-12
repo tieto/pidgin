@@ -655,7 +655,7 @@ pidgin_status_window_show(void)
 					 G_CALLBACK(status_window_use_cb), dialog);
 
 	/* Add button */
-	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD,
+	pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_ADD,
 			G_CALLBACK(status_window_add_cb), dialog);
 
 	/* Modify button */

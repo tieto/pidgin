@@ -132,22 +132,6 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 	slpmsg->size = purple_imgstore_get_size(img);
 }
 
-void
-msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
-{
-	struct stat st;
-
-	/* We can only have one data source at a time. */
-	g_return_if_fail(slpmsg->buffer == NULL);
-	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->fp == NULL);
-
-	slpmsg->fp = g_fopen(file_name, "rb");
-
-	if (g_stat(file_name, &st) == 0)
-		slpmsg->size = st.st_size;
-}
-
 #ifdef MSN_DEBUG_SLP
 void
 msn_slpmsg_show(MsnMessage *msg)

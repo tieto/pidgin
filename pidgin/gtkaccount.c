@@ -451,7 +451,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->account != NULL)
 		username = g_strdup(purple_account_get_username(dialog->account));
 
-	if (!username && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
+	if (!username && dialog->prpl_info
+			&& PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
 		GdkColor color = {0, 34952, 35466, 34181};
 		GHashTable *table;
 		const char *label;
@@ -561,7 +562,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		if (purple_account_get_password(dialog->account))
+		if (purple_account_get_password(dialog->account) &&
+		    purple_account_get_remember_password(dialog->account))
 			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
 							   purple_account_get_password(dialog->account));
 
@@ -724,7 +726,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
-	GtkWidget *frame, *vbox, *check, *entry, *combo, *menu, *item;
+	GtkWidget *frame, *vbox, *check, *entry, *combo;
 	GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
@@ -857,13 +859,6 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
 						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 				}
-
-				/* Google Talk default domain hackery! */
-				menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
-				item = gtk_menu_get_active(GTK_MENU(menu));
-				if (str_value == NULL && g_object_get_data(G_OBJECT(item), "fake") &&
-					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
-					str_value = "talk.google.com";
 
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
@@ -1186,7 +1181,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *tmp;
 	gboolean new_acct = FALSE, icon_change = FALSE;
 	PurpleAccount *account;
-	PurplePluginProtocolInfo *prpl_info;
 
 	/* Build the username string. */
 	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
@@ -1254,8 +1248,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		purple_account_set_alias(account, NULL);
 
 	/* Buddy Icon */
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
-	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL)
+	if (dialog->prpl_info != NULL && dialog->prpl_info->icon_spec.format != NULL)
 	{
 		const char *filename;
 
@@ -2156,12 +2149,12 @@ create_accounts_list(AccountsWindow *dialog)
 						 "<span size='larger' weight='bold'>Welcome to %s!</span>\n\n"
 
 						 "You have no IM accounts configured. To start connecting with %s "
-						 "press the <b>Add</b> button below and configure your first "
+						 "press the <b>Add...</b> button below and configure your first "
 						 "account. If you want %s to connect to multiple IM accounts, "
-						 "press <b>Add</b> again to configure them all.\n\n"
+						 "press <b>Add...</b> again to configure them all.\n\n"
 
 						 "You can come back to this window to add, edit, or remove "
-						 "accounts from <b>Accounts->Add/Edit</b> in the Buddy "
+						 "accounts from <b>Accounts->Manage Accounts</b> in the Buddy "
 						 "List window"), PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
 	pretty = pidgin_make_pretty_arrows(tmp);
 	g_free(tmp);
@@ -2292,7 +2285,7 @@ pidgin_accounts_window_show(void)
 	gtk_widget_show(sw);
 
 	/* Add button */
-	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD, G_CALLBACK(add_account_cb), dialog);
+	pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_ADD, G_CALLBACK(add_account_cb), dialog);
 
 	/* Modify button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_MODIFY, G_CALLBACK(modify_account_cb), dialog);

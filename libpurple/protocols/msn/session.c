@@ -60,14 +60,32 @@ msn_session_destroy(MsnSession *session)
 	if (session->connected)
 		msn_session_disconnect(session);
 
-	if (session->notification != NULL)
-		msn_notification_destroy(session->notification);
+	if (session->soap_cleanup_handle)
+		purple_timeout_remove(session->soap_cleanup_handle);
+
+	if (session->soap_table != NULL)
+		g_hash_table_destroy(session->soap_table);
+
+	while (session->slplinks != NULL)
+		msn_slplink_destroy(session->slplinks->data);
 
 	while (session->switches != NULL)
 		msn_switchboard_destroy(session->switches->data);
 
-	while (session->slplinks != NULL)
-		msn_slplink_destroy(session->slplinks->data);
+	if (session->sync != NULL)
+		msn_sync_destroy(session->sync);
+
+	if (session->oim != NULL)
+		msn_oim_destroy(session->oim);
+
+	if (session->nexus != NULL)
+		msn_nexus_destroy(session->nexus);
+
+	if (session->user != NULL)
+		msn_user_destroy(session->user);
+
+	if (session->notification != NULL)
+		msn_notification_destroy(session->notification);
 
 	msn_userlist_destroy(session->userlist);
 
@@ -79,30 +97,7 @@ msn_session_destroy(MsnSession *session)
 	g_free(session->passport_info.sid);
 	g_free(session->passport_info.mspauth);
 	g_free(session->passport_info.client_ip);
-
-	if (session->passport_info.file != NULL)
-	{
-		g_unlink(session->passport_info.file);
-		g_free(session->passport_info.file);
-	}
-
-	if (session->sync != NULL)
-		msn_sync_destroy(session->sync);
-
-	if (session->nexus != NULL)
-		msn_nexus_destroy(session->nexus);
-
-	if (session->oim != NULL)
-		msn_oim_destroy(session->oim);
-
-	if (session->user != NULL)
-		msn_user_destroy(session->user);
-
-	if (session->soap_table != NULL)
-		g_hash_table_destroy(session->soap_table);
-
-	if (session->soap_cleanup_handle)
-		purple_timeout_remove(session->soap_cleanup_handle);
+	g_free(session->passport_info.mail_url);
 
 	g_free(session);
 }
@@ -123,12 +118,7 @@ msn_session_connect(MsnSession *session, const char *host, int port,
 		g_return_val_if_reached(FALSE);
 	}
 
-	if (msn_notification_connect(session->notification, host, port))
-	{
-		return TRUE;
-	}
-
-	return FALSE;
+	return msn_notification_connect(session->notification, host, port);
 }
 
 void
@@ -347,6 +337,9 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 	PurpleConnectionError reason;
 	char *msg;
 
+	if (session->destroying)
+		return;
+
 	gc = purple_account_get_connection(session->account);
 
 	switch (error)
@@ -454,7 +447,6 @@ msn_session_finish_login(MsnSession *session)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleStoredImage *img;
-	const char *passport;
 
 	if (session->logged_in)
 		return;
@@ -463,8 +455,10 @@ msn_session_finish_login(MsnSession *session)
 	gc = purple_account_get_connection(account);
 
 	img = purple_buddy_icons_find_account_icon(session->account);
+	/* TODO: Do we really want to call this if img is NULL? */
 	msn_user_set_buddy_icon(session->user, img);
-	purple_imgstore_unref(img);
+	if (img != NULL)
+		purple_imgstore_unref(img);
 
 	session->logged_in = TRUE;
 
@@ -474,17 +468,5 @@ msn_session_finish_login(MsnSession *session)
 
 	/* Sync users */
 	msn_session_sync_users(session);
-	/* It seems that some accounts that haven't accessed hotmail for a while
-	 * and @msn.com accounts don't automatically get the initial email
-	 * notification so we always request it on login
-	 */
-
-	passport = purple_normalize(account, purple_account_get_username(account));
-
-	if ((strstr(passport, "@hotmail.") != NULL) ||
-		(strstr(passport, "@msn.com") != NULL))
-	{
-		msn_cmdproc_send(session->notification->cmdproc, "URL", "%s", "INBOX");
-	}
 }
 

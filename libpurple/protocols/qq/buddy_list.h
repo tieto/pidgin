@@ -28,18 +28,32 @@
 #include <glib.h>
 #include "connection.h"
 
-#define QQ_FRIENDS_LIST_POSITION_START 		0x0000
-#define QQ_FRIENDS_LIST_POSITION_END 		0xffff
-#define QQ_FRIENDS_ONLINE_POSITION_START 	0x00
-#define QQ_FRIENDS_ONLINE_POSITION_END 		0xff
-#define QQ_FRIENDS_ALL_LIST_POSITION_START  0x00000000
-#define QQ_FRIENDS_ALL_LIST_POSITION_END  0xffffffff
+#include "qq.h"
+typedef struct _qq_buddy_status {
+	guint32 uid;
+	guint8 unknown1;
+	struct in_addr ip;
+	guint16 port;
+	guint8 unknown2;
+	guint8 status;
+	guint16 unknown3;
+	guint8 unknown_key[QQ_KEY_LENGTH];
+} qq_buddy_status;
 
-void qq_send_packet_get_buddies_online(PurpleConnection *gc, guint8 position);
-void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position);
-void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 position);
-void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, gint update_class);
+guint8 qq_process_get_buddies_online(guint8 *data, gint data_len, PurpleConnection *gc);
 
+void qq_request_get_buddies(PurpleConnection *gc, guint16 position, gint update_class);
+guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc);
+
+void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, gint update_class);
+guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConnection *gc);
+
+void qq_request_change_status(PurpleConnection *gc, gint update_class);
+void qq_process_change_status(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnection *gc);
+
+void qq_update_buddyies_status(PurpleConnection *gc);
+void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, guint8 flag);
+void qq_buddy_data_free_all(PurpleConnection *gc);
 #endif

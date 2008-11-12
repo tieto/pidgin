@@ -16,6 +16,7 @@ SMILEYS = 	act-up.png \
     boy.png \
     brb.png \
     bulgy-eyes.png \
+    bunny.png \
     bye.png \
     cake.png \
     call-me.png \
@@ -24,6 +25,7 @@ SMILEYS = 	act-up.png \
     car.png \
     cat.png \
     chicken.png \
+    cigarette.png \
     clap.png \
     clock.png \
     cloudy.png \
@@ -45,7 +47,7 @@ SMILEYS = 	act-up.png \
     dazed.png \
     desire.png \
     devil.png \
-    disapointed.png \
+    disappointed.png \
     disdain.png \
     doctor.png \
     dog.png \
@@ -146,7 +148,6 @@ SMILEYS = 	act-up.png \
     shut-mouth.png \
     sick.png \
     sidefrown.png \
-    sigarette.png \
     silly.png \
     sinister.png \
     skeleton.png \

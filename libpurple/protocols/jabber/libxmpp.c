@@ -43,6 +43,7 @@
 #include "pep.h"
 #include "usertune.h"
 #include "caps.h"
+#include "data.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -136,8 +137,7 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
-			   
-
+	
 	return TRUE;
 }
 
@@ -148,6 +148,8 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
 	
 	purple_signal_unregister(plugin, "jabber-sending-text");
+	
+	jabber_data_uninit();
 	
 	return TRUE;
 }
@@ -194,6 +196,7 @@ init_plugin(PurplePlugin *plugin)
 {
 #ifdef HAVE_CYRUS_SASL
 #ifdef _WIN32
+	UINT old_error_mode;
 	gchar *sasldir;
 #endif
 	int ret;
@@ -236,9 +239,16 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("File transfer proxies"),
 						  "ft_proxies",
 						/* TODO: Is this an acceptable default? */
-						  "proxy.jabber.org:7777");
+						  "proxy.jabber.org");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
+
+	/* this should probably be part of global smiley theme settings later on,
+	  shared with MSN */
+	option = purple_account_option_bool_new(_("Show Custom Smileys"),
+		"custom_smileys", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+		option);
 
 	jabber_init_plugin(plugin);
 
@@ -250,10 +260,16 @@ init_plugin(PurplePlugin *plugin)
 	sasldir = g_build_filename(wpurple_install_dir(), "sasl2", NULL);
 	sasl_set_path(SASL_PATH_TYPE_PLUGIN, sasldir);
 	g_free(sasldir);
+	/* Suppress error popups for failing to load sasl plugins */
+	old_error_mode = SetErrorMode(SEM_FAILCRITICALERRORS);
 #endif
 	if ((ret = sasl_client_init(NULL)) != SASL_OK) {
 		purple_debug_error("xmpp", "Error (%d) initializing SASL.\n", ret);
 	}
+#ifdef _WIN32
+	/* Restore the original error mode */
+	SetErrorMode(old_error_mode);
+#endif
 #endif
 	jabber_register_commands();
 	
@@ -262,11 +278,16 @@ init_plugin(PurplePlugin *plugin)
 	
 	jabber_tune_init();
 	jabber_caps_init();
-
+	
+	jabber_data_init();
+	
 	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
 	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
-	
+	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns",
+					   jabber_buzz_isenabled);
+	jabber_add_feature("bob", XEP_0231_NAMESPACE,
+					   jabber_custom_smileys_isenabled);
+
 	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
 }
 

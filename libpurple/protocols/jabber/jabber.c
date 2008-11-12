@@ -42,6 +42,7 @@
 #include "auth.h"
 #include "buddy.h"
 #include "chat.h"
+#include "data.h"
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
@@ -57,12 +58,14 @@
 #include "pep.h"
 #include "adhoccommands.h"
 
+
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
 GList *jabber_features = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
+static void try_srv_connect(JabberStream *js);
 
 static void jabber_stream_init(JabberStream *js)
 {
@@ -128,6 +131,9 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			}
 			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
 				my_jb->subscription |= JABBER_SUB_BOTH;
+
+			purple_connection_set_display_name(js->gc, full_jid);
+
 			g_free(full_jid);
 		}
 	} else {
@@ -520,14 +526,22 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 	JabberStream *js = gc->proto_data;
 
 	if (source < 0) {
-		gchar *tmp;
-		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
-				error);
-		purple_connection_error_reason (gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
+		if (js->srv_rec != NULL) {
+			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record.\n", error);
+			try_srv_connect(js);
+		} else {
+			gchar *tmp;
+			tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+					      error);
+			purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+			g_free(tmp);
+		}
 		return;
 	}
+
+	g_free(js->srv_rec);
+	js->srv_rec = NULL;
 
 	js->fd = source;
 
@@ -563,37 +577,62 @@ static void tls_init(JabberStream *js)
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 }
 
-static void jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port)
+static gboolean jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port,
+				 gboolean fatal_failure)
 {
 	/* host should be used in preference to domain to
 	 * allow SASL authentication to work with FQDN of the server,
 	 * but we use domain as fallback for when users enter IP address
 	 * in connect server */
+	g_free(js->serverFQDN);
 	if (purple_ip_address_is_valid(host))
 		js->serverFQDN = g_strdup(domain);
 	else
 		js->serverFQDN = g_strdup(host);
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
-			port, jabber_login_callback, js->gc) == NULL)
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to create socket"));
+			port, jabber_login_callback, js->gc) == NULL) {
+		if (fatal_failure) {
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to create socket"));
+		}
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static void try_srv_connect(JabberStream *js)
+{
+	while (js->srv_rec != NULL && js->srv_rec_idx < js->max_srv_rec_idx) {
+		PurpleSrvResponse *tmp_resp = js->srv_rec + (js->srv_rec_idx++);
+		if (jabber_login_connect(js, tmp_resp->hostname, tmp_resp->hostname, tmp_resp->port, FALSE))
+			return;
+	}
+
+	g_free(js->srv_rec);
+	js->srv_rec = NULL;
+
+	/* Fall back to the defaults (I'm not sure if we should actually do this) */
+	jabber_login_connect(js, js->user->domain, js->user->domain,
+		purple_account_get_int(js->gc->account, "port", 5222), TRUE);
 }
 
 static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 {
-	JabberStream *js;
-
-	js = data;
+	JabberStream *js = data;
 	js->srv_query_data = NULL;
 
 	if(results) {
-		jabber_login_connect(js, resp->hostname, resp->hostname, resp->port);
-		g_free(resp);
+		js->srv_rec = resp;
+		js->srv_rec_idx = 0;
+		js->max_srv_rec_idx = results;
+		try_srv_connect(js);
 	} else {
 		jabber_login_connect(js, js->user->domain, js->user->domain,
-			purple_account_get_int(js->gc->account, "port", 5222));
+			purple_account_get_int(js->gc->account, "port", 5222), TRUE);
 	}
 }
 
@@ -606,7 +645,8 @@ jabber_login(PurpleAccount *account)
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	gc->flags |= PURPLE_CONNECTION_HTML |
+		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
@@ -675,7 +715,7 @@ jabber_login(PurpleAccount *account)
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(!js->gsc) {
 		if(connect_server[0]) {
-			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222));
+			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222), TRUE);
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
 					"tcp", js->user->domain, srv_resolved_cb, js);
@@ -1156,7 +1196,7 @@ void jabber_register_account(PurpleAccount *account)
 		if (connect_server[0]) {
 			jabber_login_connect(js, js->user->domain, server,
 			                     purple_account_get_int(account,
-			                                          "port", 5222));
+			                                          "port", 5222), TRUE);
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
 			                                      "tcp",
@@ -1288,6 +1328,11 @@ void jabber_close(PurpleConnection *gc)
 		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
 	}
 
+	while(js->url_datas) {
+		purple_util_fetch_url_cancel(js->url_datas->data);
+		js->url_datas = g_slist_delete_link(js->url_datas, js->url_datas);
+	}
+
 	g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
@@ -1327,7 +1372,10 @@ void jabber_close(PurpleConnection *gc)
 
 	if (js->keepalive_timeout != -1)
 		purple_timeout_remove(js->keepalive_timeout);
-	
+
+	g_free(js->srv_rec);
+	js->srv_rec = NULL;
+
 	g_free(js);
 
 	gc->proto_data = NULL;
@@ -1857,7 +1905,7 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-
+	
 	if(!(jid = jabber_id_new(who)))
 		return;
 

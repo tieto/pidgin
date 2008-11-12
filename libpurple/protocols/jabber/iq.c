@@ -33,6 +33,7 @@
 #include "si.h"
 #include "ping.h"
 #include "adhoccommands.h"
+#include "data.h"
 
 #ifdef _WIN32
 #include "utsname.h"
@@ -104,8 +105,7 @@ jabber_iq_set_callback(JabberIq *iq, JabberIqCallback *callback, gpointer data)
 
 void jabber_iq_set_id(JabberIq *iq, const char *id)
 {
-	if(iq->id)
-		g_free(iq->id);
+	g_free(iq->id);
 
 	if(id) {
 		xmlnode_set_attrib(iq->node, "id", id);
@@ -319,9 +319,42 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	from = xmlnode_get_attrib(packet, "from");
 	id = xmlnode_get_attrib(packet, "id");
 
+	if(type == NULL || !(!strcmp(type, "get") || !strcmp(type, "set")
+			|| !strcmp(type, "result") || !strcmp(type, "error"))) {
+		purple_debug_error("jabber", "IQ with invalid type ('%s') - ignoring.\n",
+						   type ? type : "(null)");
+		return;
+	}
+
+	/* All IQs must have an ID, so send an error for a set/get that doesn't */
+	if(!id || !*id) {
+
+		if(!strcmp(type, "set") || !strcmp(type, "get")) {
+			JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);
+
+			xmlnode_free(iq->node);
+			iq->node = xmlnode_copy(packet);
+			xmlnode_set_attrib(iq->node, "to", from);
+			xmlnode_remove_attrib(iq->node, "from");
+			xmlnode_set_attrib(iq->node, "type", "error");
+			/* This id is clearly not useful, but we must put something there for a valid stanza */
+			iq->id = jabber_get_next_id(js);
+			xmlnode_set_attrib(iq->node, "id", iq->id);
+			error = xmlnode_new_child(iq->node, "error");
+			xmlnode_set_attrib(error, "type", "modify");
+			x = xmlnode_new_child(error, "bad-request");
+			xmlnode_set_namespace(x, "urn:ietf:params:xml:ns:xmpp-stanzas");
+
+			jabber_iq_send(iq);
+		} else
+			purple_debug_error("jabber", "IQ of type '%s' missing id - ignoring.\n", type);
+
+		return;
+	}
+
 	/* First, lets see if a special callback got registered */
 
-	if(type && (!strcmp(type, "result") || !strcmp(type, "error"))) {
+	if(!strcmp(type, "result") || !strcmp(type, "error")) {
 		if(id && *id && (jcd = g_hash_table_lookup(js->iq_callbacks, id))) {
 			jcd->callback(js, packet, jcd->data);
 			jabber_iq_remove_callback_by_id(js, id);
@@ -331,7 +364,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	/* Apparently not, so lets see if we have a pre-defined handler */
 
-	if(type && query && (xmlns = xmlnode_get_namespace(query))) {
+	if(query && (xmlns = xmlnode_get_namespace(query))) {
 		if((jih = g_hash_table_lookup(iq_handlers, xmlns))) {
 			jih(js, packet);
 			return;
@@ -347,7 +380,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		jabber_gmail_poke(js, packet);
 		return;
 	}
-	
+
 	purple_debug_info("jabber", "jabber_iq_parse\n");
 
 	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
@@ -355,8 +388,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
+	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE)) {
+		jabber_data_parse(js, packet);
+		return;
+	}
+
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
-	if(type && (!strcmp(type, "set") || !strcmp(type, "get"))) {
+	if(!strcmp(type, "set") || !strcmp(type, "get")) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);
 
 		xmlnode_free(iq->node);

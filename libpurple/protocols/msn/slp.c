@@ -25,7 +25,6 @@
 #include "slp.h"
 #include "slpcall.h"
 #include "slpmsg.h"
-#include "slpsession.h"
 
 #include "object.h"
 #include "user.h"
@@ -256,7 +255,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		/* Emoticon or UserDisplay */
 		char *content;
 		gsize len;
-		MsnSlpSession *slpsession;
 		MsnSlpLink *slplink;
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
@@ -306,14 +304,10 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			g_return_if_reached();
 		}
 
-		slpsession = msn_slplink_find_slp_session(slplink,
-												  slpcall->session_id);
-
 		/* DATA PREP */
 		slpmsg = msn_slpmsg_new(slplink);
 		slpmsg->slpcall = slpcall;
-		slpmsg->slpsession = slpsession;
-		slpmsg->session_id = slpsession->id;
+		slpmsg->session_id = slpcall->session_id;
 		msn_slpmsg_set_body(slpmsg, NULL, 4);
 #ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA PREP";
@@ -323,7 +317,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		/* DATA */
 		slpmsg = msn_slpmsg_new(slplink);
 		slpmsg->slpcall = slpcall;
-		slpmsg->slpsession = slpsession;
 		slpmsg->flags = 0x20;
 #ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA";
@@ -821,6 +814,9 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if (!purple_account_get_bool(session->account, "custom_smileys", TRUE))
 		return;
 
+	swboard = cmdproc->data;
+	conv = swboard->conv;
+
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
 
@@ -845,10 +841,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
-
-		swboard = cmdproc->data;
 		slplink->swboard = swboard;
-		conv = swboard->conv;
 
 		/* If the conversation doesn't exist then this is a custom smiley
 		 * used in the first message in a MSN conversation: we need to create

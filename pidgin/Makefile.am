@@ -5,6 +5,7 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		pidgin.pc.in \
 		pidgin-uninstalled.pc.in \
+		pidginstock-artwork.c \
 		win32/IdleTracker/Makefile.mingw \
 		win32/IdleTracker/idletrack.c \
 		win32/IdleTracker/idletrack.h \
@@ -187,6 +188,7 @@ pidgin_DEPENDENCIES = @LIBOBJS@
 pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = \
 	@LIBOBJS@ \
+	$(GLIB_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(XSS_LIBS) \

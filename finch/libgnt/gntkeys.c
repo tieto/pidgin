@@ -47,12 +47,12 @@ void gnt_init_keys()
 			term = "";  /* Just in case */
 	}
 
-	if (strcmp(term, "xterm") == 0 || strcmp(term, "rxvt") == 0) {
+	if (strstr(term, "xterm") == term || strcmp(term, "rxvt") == 0) {
 		gnt_key_cup    = "\033" "[1;5A";
 		gnt_key_cdown  = "\033" "[1;5B";
 		gnt_key_cright = "\033" "[1;5C";
 		gnt_key_cleft  = "\033" "[1;5D";
-	} else if (strcmp(term, "screen") == 0 || strcmp(term, "rxvt-unicode") == 0) {
+	} else if (strstr(term, "screen") == term || strcmp(term, "rxvt-unicode") == 0) {
 		gnt_key_cup    = "\033" "Oa";
 		gnt_key_cdown  = "\033" "Ob";
 		gnt_key_cright = "\033" "Oc";
@@ -102,7 +102,12 @@ void gnt_init_keys()
 #define INSERT_COMB(k, code) do { \
 		snprintf(key, sizeof(key), "%s%s%s", controls[c], alts[a], k);  \
 		INSERT_KEY(key, code);  \
-	} while (0);
+	} while (0)
+#define INSERT_COMB_CODE(k, c1, c2) do { \
+		char __[32]; \
+		snprintf(__, sizeof(__), "%s%s", c1, c2); \
+		INSERT_COMB(k, __); \
+	} while (0)
 
 	/* Lower-case alphabets */
 	for (a = 0, c = 0; controls[c]; c++, a = 0) {
@@ -124,6 +129,10 @@ void gnt_init_keys()
 			}
 			if (c == 0) {
 				INSERT_COMB("tab", "\033\t");
+				INSERT_COMB_CODE("up", "\033", GNT_KEY_UP);
+				INSERT_COMB_CODE("down", "\033", GNT_KEY_DOWN);
+				INSERT_COMB_CODE("left", "\033", GNT_KEY_LEFT);
+				INSERT_COMB_CODE("right", "\033", GNT_KEY_RIGHT);
 			}
 		}
 	}
@@ -144,14 +153,16 @@ void gnt_init_keys()
 
 void gnt_keys_refine(char *text)
 {
+	while (*text == 27 && *(text + 1) == 27)
+		text++;
 	if (*text == 27 && *(text + 1) == '[' &&
 			(*(text + 2) >= 'A' && *(text + 2) <= 'D')) {
 		/* Apparently this is necessary for urxvt and screen and xterm */
-		if (strcmp(term, "screen") == 0 || strcmp(term, "rxvt-unicode") == 0 ||
-				strcmp(term, "xterm") == 0)
+		if (strstr(term, "screen") == term || strcmp(term, "rxvt-unicode") == 0 ||
+				strstr(term, "xterm") == term)
 			*(text + 1) = 'O';
 	} else if (*(unsigned char*)text == 195) {
-		if (*(text + 2) == 0 && strcmp(term, "xterm") == 0) {
+		if (*(text + 2) == 0 && strstr(term, "xterm") == term) {
 			*(text) = 27;
 			*(text + 1) -= 64;  /* Say wha? */
 		}

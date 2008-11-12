@@ -306,7 +306,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * to see the Local ID
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
-					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288 msmsgs %s",
+					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1302 BC01 %s",
 					 purple_account_get_username(account));
 }
 
@@ -578,7 +578,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_PASSPORT);
 
 	/*mobile*/
-	//type_str = g_strdup_printf("4");
+	/*type_str = g_strdup_printf("4");*/
 	xmlnode_set_attrib(c_node, "t", fmt_str);
 
 	xmlnode_insert_child(d_node, c_node);
@@ -613,11 +613,14 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_set_attrib(adl_node, "l", "1");
 
 	/*get the userlist*/
-	for (l = session->userlist->users; l != NULL; l = l->next){
+	for (l = session->userlist->users; l != NULL; l = l->next) {
 		user = l->data;
 
 		/* skip RL & PL during initial dump */
 		if (!(user->list_op & MSN_LIST_OP_MASK))
+			continue;
+
+		if (user->passport && !strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
@@ -753,21 +756,93 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
+{
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	/*char *adl = g_strndup(payload, len);*/
+	char *reason = g_strdup_printf(_("Unknown error (%d)"),
+		GPOINTER_TO_INT(cmd->payload_cbdata)/*, adl*/);
+	/*g_free(adl);*/
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+	g_free(reason);
+}
+
+static void
 adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
 	MsnSession *session;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	char *reason = NULL;
+	MsnCommand *cmd = cmdproc->last_cmd;
 
 	session = cmdproc->session;
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
 	purple_debug_error("msn", "ADL error\n");
-	reason = g_strdup_printf(_("Unknown error (%d)"), error);
-	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
-	g_free(reason);
+	if (cmd->param_count > 1) {
+		cmd->payload_cb = adl_error_parse;
+		cmd->payload_len = atoi(cmd->params[1]);
+		cmd->payload_cbdata = GINT_TO_POINTER(error);
+	} else {
+		char *reason = g_strdup_printf(_("Unknown error (%d)"), error);
+		purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+		g_free(reason);
+	}
+}
+
+static void
+adl_241_error_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+	size_t len)
+{
+	/* khc: some googling suggests that error 241 means the buddy is somehow
+	   in the local list, but not the server list, and that we should add
+	   those buddies to the addressbook. For now I will just notify the user
+	   about the raw payload, because I am lazy */
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	xmlnode *adl;
+	xmlnode *domain;
+	GString *emails;
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	adl = xmlnode_from_str(payload, len);
+	emails = g_string_new(NULL);
+
+	domain = xmlnode_get_child(adl, "d");
+	while (domain) {
+		const char *domain_str = xmlnode_get_attrib(domain, "n");
+		xmlnode *contact = xmlnode_get_child(domain, "c");
+		while (contact) {
+			g_string_append_printf(emails, "%s@%s\n",
+				xmlnode_get_attrib(contact, "n"), domain_str);
+			contact = xmlnode_get_next_twin(contact);
+		}
+		domain = xmlnode_get_next_twin(domain);
+	}
+
+	purple_notify_error(gc, NULL,
+		_("The following users are missing from your addressbook"), emails->str);
+	g_string_free(emails, TRUE);
+	xmlnode_free(adl);
+}
+
+static void
+adl_241_error_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	cmdproc->last_cmd->payload_cb = adl_241_error_cmd_post;
+	cmd->payload_len = atoi(cmd->params[1]);
 }
 
 static void
@@ -918,29 +993,7 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	MsnSession *session;
-	static int count = 0;
-	const char *passport;
-	PurpleAccount *account;
-
-	session = cmdproc->session;
-	account = session->account;
-
-	if (session->passport_info.file == NULL)
-		return;
-
-	passport = purple_normalize(account, purple_account_get_username(account));
-
-	if ((strstr(passport, "@hotmail.") == NULL) &&
-		(strstr(passport, "@live.com") == NULL) &&
-		(strstr(passport, "@msn.com") == NULL))
-		return;
-
-	if (count++ < 26)
-		return;
-
-	count = 0;
-	msn_cmdproc_send(cmdproc, "URL", "%s", "INBOX");
+	/* TODO: Call PNG after the timeout specified. */
 }
 
 
@@ -969,10 +1022,11 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	MsnUser *user;
-	MsnObject *msnobj;
+	MsnObject *msnobj = NULL;
 	unsigned long clientid;
-	int networkid;
-	const char *state, *passport, *friendly;
+	int networkid = 0;
+	const char *state, *passport;
+	char *friendly;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -980,23 +1034,47 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
-	/*if a contact is actually on the WLM part or the yahoo part*/
-	networkid = atoi(cmd->params[3]);
-	friendly = purple_url_decode(cmd->params[4]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL)
+		/* Where'd this come from? */
+		return;
 
-	serv_got_alias(gc, passport, friendly);
-
-	msn_user_set_friendly_name(user, friendly);
-
-	if (cmd->param_count == 7)
-	{
+	if (cmd->param_count == 7) {
+		/* MSNP14+ with Display Picture object */
+		networkid = atoi(cmd->params[3]);
+		friendly = g_strdup(purple_url_decode(cmd->params[4]));
+		clientid = strtoul(cmd->params[5], NULL, 10);
 		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[6]));
-		msn_user_set_object(user, msnobj);
+	} else if (cmd->param_count == 6) {
+		/* Yes, this is 5. The friendly name could start with a number,
+		   but the display picture object can't... */
+		if (isdigit(cmd->params[5][0])) {
+			/* MSNP14 without Display Picture object */
+			networkid = atoi(cmd->params[3]);
+			friendly = g_strdup(purple_url_decode(cmd->params[4]));
+			clientid = strtoul(cmd->params[5], NULL, 10);
+		} else {
+			/* MSNP8+ with Display Picture object */
+			friendly = g_strdup(purple_url_decode(cmd->params[3]));
+			clientid = strtoul(cmd->params[4], NULL, 10);
+			msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
+		}
+	} else if (cmd->param_count == 5) {
+		/* MSNP8+ without Display Picture object */
+		friendly = g_strdup(purple_url_decode(cmd->params[3]));
+		clientid = strtoul(cmd->params[4], NULL, 10);
+	} else {
+		purple_debug_warning("msn", "Received ILN with unknown number of parameters.\n");
+		return;
 	}
 
-	clientid = strtoul(cmd->params[5], NULL, 10);
+	serv_got_alias(gc, passport, friendly);
+	msn_user_set_friendly_name(user, friendly);
+	g_free(friendly);
+
+	msn_user_set_object(user, msnobj);
+
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_network(user, networkid);
@@ -1010,8 +1088,10 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
 	PurpleConnection *gc;
 	MsnUserList *userlist;
-	char *who = NULL, *text = NULL;
-	xmlnode *payloadNode, *from, *textNode;
+	const char *who = NULL;
+	char *text = NULL;
+	const char *id = NULL;
+	xmlnode *payloadNode, *from, *msg, *textNode;
 
 	purple_debug_misc("msn", "Incoming Page: {%s}\n", payload);
 
@@ -1036,32 +1116,65 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	   </NOTIFICATION>
 	*/
 
-	if (!(payloadNode = xmlnode_from_str(payload, len)) ||
-		!(from = xmlnode_get_child(payloadNode, "FROM")) ||
-		!(textNode = xmlnode_get_child(payloadNode, "MSG/BODY/TEXT")))
+	/* This is the payload if your message was too long:
+	   <NOTIFICATION id="TrID" siteid="111100400" siteurl="http://mobile.msn.com/">
+	     <TO name="passport@example.com">
+	       <VIA agent="mobile"/>
+	     </TO>
+	     <FROM name="tel:+XXXXXXXXXXX"/>
+	     <MSG pri="1" id="407">
+	       <CAT Id="110110001"/>
+	       <ACTION url="2wayIM.asp"/>
+	       <SUBSCR url="2wayIM.asp"/>
+	       <BODY lcid="1033">
+	         <TEXT></TEXT>
+	       </BODY>
+	     </MSG>
+	   </NOTIFICATION>
+	*/
+
+	payloadNode = xmlnode_from_str(payload, len);
+	if (!payloadNode)
 		return;
 
-	who = g_strdup(xmlnode_get_attrib(from, "name"));
+	if (!(from = xmlnode_get_child(payloadNode, "FROM")) ||
+		!(msg = xmlnode_get_child(payloadNode, "MSG")) ||
+		!(textNode = xmlnode_get_child(msg, "BODY/TEXT"))) {
+		xmlnode_free(payloadNode);
+		return;
+	}
+
+	who = xmlnode_get_attrib(from, "name");
 	if (!who) return;
 
 	text = xmlnode_get_data(textNode);
 
 	/* Match number to user's mobile number, FROM is a phone number if the
 	   other side page you using your phone number */
-	if(!strncmp(who, "tel:+", 5)) {
+	if (!strncmp(who, "tel:+", 5)) {
 		MsnUser *user =
 			msn_userlist_find_user_with_mobile_phone(userlist, who + 4);
 
-		if(user && user->passport) {
-			g_free(who);
-			who = g_strdup(user->passport);
-		}
+		if (user && user->passport)
+			who = user->passport;
 	}
 
-	serv_got_im(gc, who, text, 0, time(NULL));
+	id = xmlnode_get_attrib(msg, "id");
+
+	if (id && !strcmp(id, "407")) {
+		/* TODO: Use this to NAK the transaction, maybe print the text, too.
+		unsigned int trId;
+		id = xmlnode_get_attrib(payloadNode, "id");
+		trId = atol(id);
+		*/
+		purple_conv_present_error(who, gc->account,
+			_("Mobile message was not sent because it was too long."));
+
+	} else {
+		serv_got_im(gc, who, text, 0, time(NULL));
+	}
 
 	g_free(text);
-	g_free(who);
 	xmlnode_free(payloadNode);
 }
 
@@ -1094,6 +1207,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	friendly = purple_url_decode(cmd->params[3]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL) return;
 
 	old_friendly = msn_user_get_friendly_name(user);
 	if (!old_friendly || (old_friendly && (!friendly || strcmp(old_friendly, friendly))))
@@ -1163,7 +1277,7 @@ not_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 static void
 not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
+	cmd->payload_len = atoi(cmd->params[0]);
 	cmdproc->last_cmd->payload_cb = not_cmd_post;
 }
 
@@ -1273,136 +1387,51 @@ static void
 url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
+	PurpleConnection *gc;
 	PurpleAccount *account;
 	const char *rru;
 	const char *url;
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
-	guchar digest[16];
-	FILE *fd;
+	PurpleCipherContext *cipher;
+	gchar creds[33];
 	char *buf;
-	char buf2[3];
-	char sendbuf[64];
-	int i;
+
+	gulong tmp_timestamp;
 
 	session = cmdproc->session;
 	account = session->account;
+	gc = account->gc;
 
 	rru = cmd->params[1];
 	url = cmd->params[2];
 
+	session->passport_info.mail_timestamp = time(NULL);
+	tmp_timestamp = session->passport_info.mail_timestamp - session->passport_info.sl;
+
 	buf = g_strdup_printf("%s%lu%s",
-			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
-			   time(NULL) - session->passport_info.sl,
-			   purple_connection_get_password(account->gc));
+	                      session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
+	                      tmp_timestamp,
+	                      purple_connection_get_password(gc));
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
-
+	cipher = purple_cipher_context_new_by_name("md5", NULL);
+	purple_cipher_context_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_context_digest_to_str(cipher, sizeof(creds), creds, NULL);
+	purple_cipher_context_destroy(cipher);
 	g_free(buf);
 
-	memset(sendbuf, 0, sizeof(sendbuf));
+	g_free(session->passport_info.mail_url);
+	session->passport_info.mail_url =
+		g_strdup_printf("%s&auth=%s&creds=%s&sl=%ld&username=%s&mode=ttl&sid=%s&id=2&rru=%s&svc=mail&js=yes",
+		                url,
+		                session->passport_info.mspauth ? purple_url_encode(session->passport_info.mspauth) : "BOGUS",
+		                creds,
+		                tmp_timestamp,
+		                msn_user_get_passport(session->user),
+		                session->passport_info.sid,
+		                rru);
 
-	for (i = 0; i < 16; i++)
-	{
-		g_snprintf(buf2, sizeof(buf2), "%02x", digest[i]);
-		strcat(sendbuf, buf2);
-	}
-
-	if (session->passport_info.file != NULL)
-	{
-		g_unlink(session->passport_info.file);
-		g_free(session->passport_info.file);
-	}
-
-	if ((fd = purple_mkstemp(&session->passport_info.file, FALSE)) == NULL)
-	{
-		purple_debug_error("msn",
-						 "Error opening temp passport file: %s\n",
-						 g_strerror(errno));
-	}
-	else
-	{
-#ifdef _WIN32
-		fputs("<!-- saved from url=(0013)about:internet -->\n", fd);
-#endif
-		fputs("<html>\n"
-			  "<head>\n"
-			  "<noscript>\n"
-			  "<meta http-equiv=\"Refresh\" content=\"0; "
-			  "url=http://www.hotmail.com\">\n"
-			  "</noscript>\n"
-			  "</head>\n\n",
-			  fd);
-
-		fprintf(fd, "<body onload=\"document.pform.submit(); \">\n");
-		fprintf(fd, "<form name=\"pform\" action=\"%s\" method=\"POST\">\n\n",
-				url);
-		fprintf(fd, "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n");
-		fprintf(fd, "<input type=\"hidden\" name=\"login\" value=\"%s\">\n",
-				purple_account_get_username(account));
-		fprintf(fd, "<input type=\"hidden\" name=\"username\" value=\"%s\">\n",
-				purple_account_get_username(account));
-		if (session->passport_info.sid != NULL)
-			fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n",
-					session->passport_info.sid);
-		if (session->passport_info.kv != NULL)
-			fprintf(fd, "<input type=\"hidden\" name=\"kv\" value=\"%s\">\n",
-					session->passport_info.kv);
-		fprintf(fd, "<input type=\"hidden\" name=\"id\" value=\"2\">\n");
-		fprintf(fd, "<input type=\"hidden\" name=\"sl\" value=\"%ld\">\n",
-				time(NULL) - session->passport_info.sl);
-		fprintf(fd, "<input type=\"hidden\" name=\"rru\" value=\"%s\">\n",
-				rru);
-		if (session->passport_info.mspauth != NULL)
-			fprintf(fd, "<input type=\"hidden\" name=\"auth\" value=\"%s\">\n",
-					session->passport_info.mspauth);
-		fprintf(fd, "<input type=\"hidden\" name=\"creds\" value=\"%s\">\n",
-				sendbuf); /* TODO Digest me (huh? -- ChipX86) */
-		fprintf(fd, "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n");
-		fprintf(fd, "<input type=\"hidden\" name=\"js\" value=\"yes\">\n");
-		fprintf(fd, "</form></body>\n");
-		fprintf(fd, "</html>\n");
-
-		if (fclose(fd))
-		{
-			purple_debug_error("msn",
-							 "Error closing temp passport file: %s\n",
-							 g_strerror(errno));
-
-			g_unlink(session->passport_info.file);
-			g_free(session->passport_info.file);
-			session->passport_info.file = NULL;
-		}
-#ifdef _WIN32
-		else
-		{
-			/*
-			 * Renaming file with .html extension, so that the
-			 * win32 open_url will work.
-			 */
-			char *tmp;
-
-			if ((tmp =
-				g_strdup_printf("%s.html",
-					session->passport_info.file)) != NULL)
-			{
-				if (g_rename(session->passport_info.file,
-							tmp) == 0)
-				{
-					g_free(session->passport_info.file);
-					session->passport_info.file = tmp;
-				}
-				else
-					g_free(tmp);
-			}
-		}
-#endif
-	}
+	/* The user wants to check his or her email */
+	if (cmd->trans && cmd->trans->data)
+		purple_notify_uri(purple_account_get_connection(account), session->passport_info.mail_url);
 }
 /**************************************************************************
  * Switchboards
@@ -1556,6 +1585,13 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL) {
+		char *str = g_strndup(payload, len);
+		purple_debug_info("msn", "unknown user %s, payload is %s",
+			passport, str);
+		g_free(str);
+		return;
+	}
 
 	psm_str = msn_get_psm(cmd->payload,len);
 	msn_user_set_statusline(user, psm_str);
@@ -1648,6 +1684,9 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if ((value = msn_message_get_attr(msg, "LoginTime")) != NULL)
 		session->passport_info.sl = atol(value);
 
+	if ((value = msn_message_get_attr(msg, "EmailEnabled")) != NULL)
+		session->passport_info.email_enabled = (gboolean)atol(value);
+
 	/*starting retrieve the contact list*/
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
 #ifdef MSN_PARTIAL_LISTS
@@ -1678,7 +1717,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	if (session->passport_info.file == NULL)
+	if (session->passport_info.mail_url == NULL)
 	{
 		MsnTransaction *trans;
 		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
@@ -1706,7 +1745,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			const char *url;
 
 			passport = msn_user_get_passport(session->user);
-			url = session->passport_info.file;
+			url = session->passport_info.mail_url;
 
 			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
@@ -1745,7 +1784,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 	}
 
-	if (session->passport_info.file == NULL)
+	if (session->passport_info.mail_url == NULL)
 	{
 		MsnTransaction *trans;
 		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
@@ -1775,7 +1814,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			const char *url;
 
 			passport = msn_user_get_passport(session->user);
-			url = session->passport_info.file;
+			url = session->passport_info.mail_url;
 
 			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
@@ -1807,7 +1846,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	if (session->passport_info.file == NULL)
+	if (session->passport_info.mail_url == NULL)
 	{
 		MsnTransaction *trans;
 		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
@@ -1837,7 +1876,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 					  (subject != NULL ? subject : ""),
 					  (from != NULL ?  from : ""),
 					  msn_user_get_passport(session->user),
-					  session->passport_info.file, NULL, NULL);
+					  session->passport_info.mail_url, NULL, NULL);
 
 	g_free(from);
 	g_free(subject);
@@ -1997,6 +2036,8 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "URL", url_cmd);
 
 	msn_table_add_cmd(cbs_table, "fallback", "XFR", xfr_cmd);
+
+	msn_table_add_cmd(cbs_table, NULL, "241", adl_241_error_cmd);
 
 	msn_table_add_error(cbs_table, "ADD", add_error);
 	msn_table_add_error(cbs_table, "ADL", adl_error);

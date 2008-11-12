@@ -35,6 +35,7 @@
 #define IRC_DEFAULT_SSL_PORT 994
 
 #define IRC_DEFAULT_CHARSET "UTF-8"
+#define IRC_DEFAULT_AUTODETECT FALSE
 #define IRC_DEFAULT_ALIAS "purple"
 
 #define IRC_DEFAULT_QUIT "Leaving."
@@ -108,6 +109,8 @@ char *irc_escape_privmsg(const char *text, gssize length);
 char *irc_mirc2html(const char *string);
 char *irc_mirc2txt(const char *string);
 
+const char *irc_nick_skip_mode(struct irc_conn *irc, const char *string);
+
 gboolean irc_ischannel(const char *string);
 
 void irc_register_commands(void);
@@ -164,6 +167,7 @@ void irc_cmd_table_build(struct irc_conn *irc);
 
 int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
+int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_ctcp_version(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_invite(struct irc_conn *irc, const char *cmd, const char *target, const char **args);

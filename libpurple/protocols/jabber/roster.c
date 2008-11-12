@@ -31,7 +31,6 @@
 
 #include <string.h>
 
-
 void jabber_roster_request(JabberStream *js)
 {
 	JabberIq *iq;
@@ -84,11 +83,13 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		if((l = g_slist_find_custom(g2, g->name, (GCompareFunc)strcmp))) {
 			const char *servernick;
 
+			/* Previously stored serverside / buddy-supplied alias */
 			if((servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick")))
 				serv_got_alias(js->gc, jid, servernick);
 
+			/* Alias from our roster retrieval */
 			if(alias && (!b->alias || strcmp(b->alias, alias)))
-				purple_blist_alias_buddy(b, alias);
+				purple_serv_got_private_alias(js->gc, jid, alias);
 			g_free(l->data);
 			g2 = g_slist_delete_link(g2, l);
 		} else {
@@ -168,6 +169,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 	query = xmlnode_get_child(packet, "query");
 	if(!query)
 		return;
+
+	js->currently_parsing_roster_push = TRUE;
 
 	for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item))
 	{
@@ -251,6 +254,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
+	js->currently_parsing_roster_push = FALSE;
+
 	/* if we're just now parsing the roster for the first time,
 	 * then now would be the time to send our initial presence */
 	if(!js->roster_parsed) {
@@ -268,6 +273,9 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	GSList *groups = NULL, *l;
 	JabberIq *iq;
 	xmlnode *query, *item, *group;
+
+	if (js->currently_parsing_roster_push)
+		return;
 
 	if(!(b = purple_find_buddy(js->gc->account, name)))
 		return;

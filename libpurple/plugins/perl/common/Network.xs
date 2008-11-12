@@ -18,9 +18,6 @@ purple_network_get_port_from_fd(fd)
 const char *
 purple_network_get_public_ip()
 
-void
-purple_network_init()
-
 const unsigned char *
 purple_network_ip_atoi(ip)
 	const char *ip

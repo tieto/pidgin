@@ -239,6 +239,15 @@ struct _MsnNexusUpdateData {
 	gpointer data;
 };
 
+#if !GLIB_CHECK_VERSION(2, 12, 0)
+static gboolean
+nexus_remove_all_cb(gpointer key, gpointer val, gpointer data)
+{
+	return TRUE;
+}
+#endif
+
+
 static gboolean
 nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 {
@@ -267,7 +276,12 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 	if (token_str == NULL)
 		return FALSE;
 
+#if GLIB_CHECK_VERSION(2, 12, 0)
 	g_hash_table_remove_all(nexus->tokens[id].token);
+#else
+	g_hash_table_foreach_remove(nexus->tokens[id].token,
+		nexus_remove_all_cb, NULL);
+#endif
 
 	elems = g_strsplit(token_str, "&", 0);
 
@@ -365,7 +379,8 @@ msn_nexus_connect(MsnNexus *nexus)
 {
 	MsnSession *session = nexus->session;
 	const char *username;
-	char *password;
+	const char *password;
+	char *password_xml;
 	GString *domains;
 	char *request;
 	int i;
@@ -376,7 +391,8 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username = purple_account_get_username(session->account);
-	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
+	password = purple_connection_get_password(session->account->gc);
+	password_xml = g_markup_escape_text(password, MIN(strlen(password), 16));
 
 	purple_debug_info("msn", "Logging on %s, with policy '%s', nonce '%s'\n",
 	                  username, nexus->policy, nexus->nonce);
@@ -391,13 +407,13 @@ msn_nexus_connect(MsnNexus *nexus)
 		                           nexus->policy);
 	}
 
-	request = g_strdup_printf(MSN_SSO_TEMPLATE, username, password, domains->str);
-	g_free(password);
+	request = g_strdup_printf(MSN_SSO_TEMPLATE, username, password_xml, domains->str);
+	g_free(password_xml);
 	g_string_free(domains, TRUE);
 
 	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL,
+	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
 	                      nexus_got_response_cb, nexus);
 }
 
@@ -583,7 +599,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 
 	soap = msn_soap_message_new(NULL, xmlnode_from_str(request, -1));
 	g_free(request);
-	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL,
+	msn_soap_message_send(session, soap, MSN_SSO_SERVER, SSO_POST_URL, TRUE,
 	                      nexus_got_update_cb, ud);
 }
 

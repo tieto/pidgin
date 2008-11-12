@@ -101,9 +101,6 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	session = slplink->session;
 
-	g_free(slplink->local_user);
-	g_free(slplink->remote_user);
-
 #if 0
 	if (slplink->directconn != NULL)
 		msn_directconn_destroy(slplink->directconn);
@@ -116,6 +113,9 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	session->slplinks =
 		g_list_remove(session->slplinks, slplink);
+
+	g_free(slplink->local_user);
+	g_free(slplink->remote_user);
 
 	g_free(slplink);
 }
@@ -152,23 +152,6 @@ msn_session_get_slplink(MsnSession *session, const char *username)
 		slplink = msn_slplink_new(session, username);
 
 	return slplink;
-}
-
-MsnSlpSession *
-msn_slplink_find_slp_session(MsnSlpLink *slplink, long session_id)
-{
-	GList *l;
-	MsnSlpSession *slpsession;
-
-	for (l = slplink->slp_sessions; l != NULL; l = l->next)
-	{
-		slpsession = l->data;
-
-		if (slpsession->id == session_id)
-			return slpsession;
-	}
-
-	return NULL;
 }
 
 void
@@ -394,12 +377,12 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	}
 	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
-		MsnSlpSession *slpsession;
-		slpsession = slpmsg->slpsession;
+		MsnSlpCall *slpcall;
+		slpcall = slpmsg->slpcall;
 
-		g_return_if_fail(slpsession != NULL);
-		msg->msnslp_header.session_id = slpsession->id;
-		msg->msnslp_footer.value = slpsession->app_id;
+		g_return_if_fail(slpcall != NULL);
+		msg->msnslp_header.session_id = slpcall->session_id;
+		msg->msnslp_footer.value = slpcall->app_id;
 		msg->msnslp_header.ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == 0x100)
@@ -476,18 +459,15 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 }
 
 static void
-send_file_cb(MsnSlpSession *slpsession)
+send_file_cb(MsnSlpCall *slpcall)
 {
-	MsnSlpCall *slpcall;
 	MsnSlpMessage *slpmsg;
 	struct stat st;
 	PurpleXfer *xfer;
 
-	slpcall = slpsession->slpcall;
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
-	slpmsg->slpsession = slpsession;
 #ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP FILE";
 #endif
@@ -556,10 +536,17 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 					if (xfer != NULL)
 					{
-						purple_xfer_start(slpmsg->slpcall->xfer,
-							0, NULL, 0);
-						slpmsg->fp = ((PurpleXfer *)slpmsg->slpcall->xfer)->dest_fp;
-						xfer->dest_fp = NULL; /* Disable double fclose() */
+						purple_xfer_ref(xfer);
+						purple_xfer_start(xfer,	0, NULL, 0);
+
+						if (xfer->data == NULL) {
+							purple_xfer_unref(xfer);
+							return;
+						} else {
+							purple_xfer_unref(xfer);
+							slpmsg->fp = xfer->dest_fp;
+							xfer->dest_fp = NULL; /* Disable double fclose() */
+						}
 					}
 				}
 			}

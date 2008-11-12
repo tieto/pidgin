@@ -708,6 +708,11 @@ docklet_menu(void)
 	if (status == PURPLE_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
+	menuitem = pidgin_new_item_from_stock(menu, _("Join Chat..."), PIDGIN_STOCK_CHAT,
+			G_CALLBACK(pidgin_blist_joinchat_show), NULL, 0, 0, NULL);
+	if (status == PURPLE_STATUS_OFFLINE)
+		gtk_widget_set_sensitive(menuitem, FALSE);
+
 	menuitem = docklet_status_submenu();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 

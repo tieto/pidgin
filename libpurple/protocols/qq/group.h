@@ -34,33 +34,33 @@
 #define PURPLE_GROUP_QQ_QUN         "QQ 群"
 
 typedef enum {
-	QQ_GROUP_MEMBER_STATUS_NOT_MEMBER = 0x00,	/* default 0x00 means not member */
-	QQ_GROUP_MEMBER_STATUS_IS_MEMBER,
-	QQ_GROUP_MEMBER_STATUS_APPLYING,
-	QQ_GROUP_MEMBER_STATUS_IS_ADMIN,
-} qq_group_member_status;
+	QQ_ROOM_ROLE_NO = 0x00,	/* default 0x00 means not member */
+	QQ_ROOM_ROLE_YES,
+	QQ_ROOM_ROLE_REQUESTING,
+	QQ_ROOM_ROLE_ADMIN,
+} qq_room_role;
 
-typedef struct _qq_group {
+typedef struct _qq_room_data qq_room_data;
+struct _qq_room_data {
 	/* all these will be saved when we exit Purple */
-	qq_group_member_status my_status;	/* my status for this group */
-	gchar *my_status_desc;			/* my status description */
-	guint32 internal_group_id;
-	guint32 external_group_id;
-	guint8 group_type;			/* permanent or temporory */
+	qq_room_role my_role;	/* my role for this room */
+	guint32 id;
+	guint32 ext_id;
+	guint8 type8;			/* permanent or temporory */
 	guint32 creator_uid;
-	guint32 group_category;
+	guint32 category;
 	guint8 auth_type;
-	gchar *group_name_utf8;
-	gchar *group_desc_utf8;
+	gchar *title_utf8;
+	gchar *desc_utf8;
 	/* all these will be loaded from the network */
 	gchar *notice_utf8;	/* group notice by admin */
-	GList *members;	
-} qq_group;
+
+	gboolean is_got_buddies;
+	GList *members;
+};
 
 GList *qq_chat_info(PurpleConnection *gc);
 GHashTable *qq_chat_info_defaults(PurpleConnection *gc, const gchar *chat_name);
-
-void qq_group_init(PurpleConnection *gc);
 
 PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc);
 

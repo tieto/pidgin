@@ -45,7 +45,7 @@ struct _MsnTransaction
 	char *command;
 	char *params;
 
-	int timer;
+	guint timer;
 
 	void *data; /**< The data to be used on the different callbacks. */
 	GHashTable *callbacks;

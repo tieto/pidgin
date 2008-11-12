@@ -3,16 +3,6 @@
 MODULE = Purple::Privacy  PACKAGE = Purple::Privacy  PREFIX = purple_privacy_
 PROTOTYPES: ENABLE
 
-Purple::Privacy::UiOps
-purple_privacy_get_ui_ops()
-
-void
-purple_privacy_init()
-
-void
-purple_privacy_set_ui_ops(ops)
-	Purple::Privacy::UiOps ops
-
 gboolean
 purple_privacy_permit_add(account, name, local_only)
 	Purple::Account account

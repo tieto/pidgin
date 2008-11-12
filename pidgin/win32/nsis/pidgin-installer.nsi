@@ -72,7 +72,7 @@ SetDateSave on
 !define GTK_MIN_VERSION				"2.6.10"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
-!define PERL_DLL				"perl58.dll"
+!define PERL_DLL				"perl510.dll"
 !define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
 !define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime*.exe"
 
@@ -376,7 +376,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
     StrCmp $R0 "2" +2 ; Upgrade isn't optional
     MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE /S /D=$GTK_FOLDER'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
     IfErrors gtk_install_error done
 
     gtk_install_error:
@@ -505,11 +505,16 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ; If this is under NT4, delete the SILC support stuff
     ; there is a bug that will prevent any account from connecting
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
+    ; Also, remove the GSSAPI SASL plugin and associated files as they aren't
+    ; compatible with NT4.
     ${If} ${IsNT}
     ${AndIf} ${IsWinNT4}
+      ;SILC
       Delete "$INSTDIR\plugins\libsilc.dll"
       Delete "$INSTDIR\libsilcclient-1-1-2.dll"
       Delete "$INSTDIR\libsilc-1-1-2.dll"
+      ;GSSAPI
+      Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -704,11 +709,14 @@ Section Uninstall
     Push "ymsgr"
     Call un.UnregisterURIHandler
 
+    Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"
+    Delete "$INSTDIR\ca-certs\CAcert_Root.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
     Delete "$INSTDIR\ca-certs\StartCom_Free_SSL_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
+    Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
     RMDir "$INSTDIR\ca-certs"
     RMDir /r "$INSTDIR\locale"
@@ -759,6 +767,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\timestamp_format.dll"
     Delete "$INSTDIR\plugins\win2ktrans.dll"
     Delete "$INSTDIR\plugins\winprefs.dll"
+    Delete "$INSTDIR\plugins\xmppconsole.dll"
     RMDir "$INSTDIR\plugins"
     RMDir /r "$INSTDIR\sasl2"
     Delete "$INSTDIR\sounds\purple\alert.wav"
@@ -768,12 +777,8 @@ Section Uninstall
     Delete "$INSTDIR\sounds\purple\send.wav"
     RMDir "$INSTDIR\sounds\purple"
     RMDir "$INSTDIR\sounds"
-    Delete "$INSTDIR\comerr32.dll"
     Delete "$INSTDIR\freebl3.dll"
-    Delete "$INSTDIR\gssapi32.dll"
     Delete "$INSTDIR\idletrack.dll"
-    Delete "$INSTDIR\k5sprt32.dll"
-    Delete "$INSTDIR\krb5_32.dll"
     Delete "$INSTDIR\libgtkspell.dll"
     Delete "$INSTDIR\libjabber.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
@@ -1304,12 +1309,12 @@ Function .onInit
   ;Reset ShellVarContext because we may have changed it
   SetShellVarContext "current"
 
-  StrCpy $ISSILENT "/NOUI"
+  StrCpy $ISSILENT "/S"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
   ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
   IfSilent 0 set_gtk_normal
-      StrCpy $ISSILENT "/S"
+      StrCpy $ISSILENT "/NOUI"
   set_gtk_normal:
 
   ${GetParameters} $R0
@@ -1411,13 +1416,17 @@ Function preWelcomePage
   Push $R1
   Push $R2
 
-  ; Make the GTK+ Section RO if it is required.
   Call DoWeNeedGtk
   Pop $R0
   Pop $R2
-  IntCmp $R0 1 gtk_not_mandatory gtk_not_mandatory
+  IntCmp $R0 1 gtk_selection_done gtk_not_mandatory
+    ; Make the GTK+ Section RO if it is required.
     !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
+    Goto gtk_selection_done
   gtk_not_mandatory:
+    ; Don't select the GTK+ section if we already have this version or newer installed
+    !insertmacro UnselectSection ${SecGtk}
+  gtk_selection_done:
 
   ; If on Win95/98/ME warn them that the GTK+ version wont work
   ${Unless} ${IsNT}

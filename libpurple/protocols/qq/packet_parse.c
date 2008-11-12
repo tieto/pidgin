@@ -27,7 +27,6 @@
 #include "packet_parse.h"
 #include "debug.h"
 
-
 /*------------------------------------------------PUT------------------------------------------------*/
 
 /* note:
@@ -39,7 +38,7 @@
 #define PARSER_DEBUG
 #endif
 
-/* read one byte from buf, 
+/* read one byte from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get8(guint8 *b, guint8 *buf)
 {
@@ -47,14 +46,14 @@ gint qq_get8(guint8 *b, guint8 *buf)
 	memcpy(&b_dest, buf, sizeof(b_dest));
 	*b = b_dest;
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get8] buf %p\n", (void *)buf);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get8] b_dest 0x%2x, *b 0x%02x\n", b_dest, *b);
+	purple_debug_info("QQ", "[DBG][get8] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][get8] b_dest 0x%2x, *b 0x%02x\n", b_dest, *b);
 #endif
 	return sizeof(b_dest);
 }
 
 
-/* read two bytes as "guint16" from buf, 
+/* read two bytes as "guint16" from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get16(guint16 *w, guint8 *buf)
 {
@@ -62,14 +61,13 @@ gint qq_get16(guint16 *w, guint8 *buf)
 	memcpy(&w_dest, buf, sizeof(w_dest));
 	*w = g_ntohs(w_dest);
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get16] buf %p\n", (void *)buf);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get16] w_dest 0x%04x, *w 0x%04x\n", w_dest, *w);
+	purple_debug_info("QQ", "[DBG][get16] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][get16] w_dest 0x%04x, *w 0x%04x\n", w_dest, *w);
 #endif
 	return sizeof(w_dest);
 }
 
-
-/* read four bytes as "guint32" from buf, 
+/* read four bytes as "guint32" from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get32(guint32 *dw, guint8 *buf)
 {
@@ -77,20 +75,25 @@ gint qq_get32(guint32 *dw, guint8 *buf)
 	memcpy(&dw_dest, buf, sizeof(dw_dest));
 	*dw = g_ntohl(dw_dest);
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get32] buf %p\n", (void *)buf);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get32] dw_dest 0x%08x, *dw 0x%08x\n", dw_dest, *dw);
+	purple_debug_info("QQ", "[DBG][get32] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][get32] dw_dest 0x%08x, *dw 0x%08x\n", dw_dest, *dw);
 #endif
 	return sizeof(dw_dest);
 }
 
+gint qq_getIP(struct in_addr *ip, guint8 *buf)
+{
+	memcpy(ip, buf, sizeof(struct in_addr));
+	return sizeof(struct in_addr);
+}
 
-/* read datalen bytes from buf, 
+/* read datalen bytes from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_getdata(guint8 *data, gint datalen, guint8 *buf)
 {
     memcpy(data, buf, datalen);
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getdata] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][getdata] buf %p\n", (void *)buf);
 #endif
     return datalen;
 }
@@ -104,12 +107,12 @@ gint qq_getime(time_t *t, guint8 *buf)
 	guint32 dw_dest;
 	memcpy(&dw_dest, buf, sizeof(dw_dest));
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getime] buf %p\n", (void *)buf);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getime] dw_dest before 0x%08x\n", dw_dest);
+	purple_debug_info("QQ", "[DBG][getime] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][getime] dw_dest before 0x%08x\n", dw_dest);
 #endif
 	dw_dest = g_ntohl(dw_dest);
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getime] dw_dest after 0x%08x\n", dw_dest);
+	purple_debug_info("QQ", "[DBG][getime] dw_dest after 0x%08x\n", dw_dest);
 #endif
 	memcpy(t, &dw_dest, sizeof(dw_dest));
 	return sizeof(dw_dest);
@@ -122,8 +125,8 @@ gint qq_put8(guint8 *buf, guint8 b)
 {
     memcpy(buf, &b, sizeof(b));
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put8] buf %p\n", (void *)buf);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put8] b 0x%02x\n", b);
+	purple_debug_info("QQ", "[DBG][put8] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][put8] b 0x%02x\n", b);
 #endif
     return sizeof(b);
 }
@@ -136,8 +139,8 @@ gint qq_put16(guint8 *buf, guint16 w)
     guint16 w_porter;
     w_porter = g_htons(w);
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put16] buf %p\n", (void *)buf);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put16] w 0x%04x, w_porter 0x%04x\n", w, w_porter);
+	purple_debug_info("QQ", "[DBG][put16] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][put16] w 0x%04x, w_porter 0x%04x\n", w, w_porter);
 #endif
     memcpy(buf, &w_porter, sizeof(w_porter));
     return sizeof(w_porter);
@@ -148,24 +151,42 @@ gint qq_put16(guint8 *buf, guint16 w)
  * return the number of bytes packed, otherwise return -1 */
 gint qq_put32(guint8 *buf, guint32 dw)
 {
-    guint32 dw_porter;
+	guint32 dw_porter;
     dw_porter = g_htonl(dw);
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put32] buf %p\n", (void *)buf);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put32] dw 0x%08x, dw_porter 0x%08x\n", dw, dw_porter);
+	purple_debug_info("QQ", "[DBG][put32] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][put32] dw 0x%08x, dw_porter 0x%08x\n", dw, dw_porter);
 #endif
     memcpy(buf, &dw_porter, sizeof(dw_porter));
     return sizeof(dw_porter);
 }
 
+gint qq_putime(guint8 *buf, time_t *t)
+{
+	guint32 dw, dw_porter;
+	memcpy(&dw, t, sizeof(dw));
+    dw_porter = g_htonl(dw);
+#ifdef PARSER_DEBUG
+	purple_debug_info("QQ", "[DBG][put32] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][put32] dw 0x%08x, dw_porter 0x%08x\n", dw, dw_porter);
+#endif
+    memcpy(buf, &dw_porter, sizeof(dw_porter));
+    return sizeof(dw_porter);
+}
+
+gint qq_putIP(guint8* buf, struct in_addr *ip)
+{
+    memcpy(buf, ip, sizeof(struct in_addr));
+    return sizeof(struct in_addr);
+}
 
 /* pack datalen bytes into buf
  * return the number of bytes packed, otherwise return -1 */
 gint qq_putdata(guint8 *buf, const guint8 *data, const int datalen)
 {
-    memcpy(buf, data, datalen);
+   	memcpy(buf, data, datalen);
 #ifdef PARSER_DEBUG
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][putdata] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][putdata] buf %p\n", (void *)buf);
 #endif
     return datalen;
 }

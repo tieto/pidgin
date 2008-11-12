@@ -27,213 +27,396 @@
 #include "debug.h"
 
 #include "buddy_opt.h"
-#include "group_free.h"
 #include "group_internal.h"
 #include "utils.h"
 
-static gchar *_qq_group_set_my_status_desc(qq_group *group)
+static qq_room_data *room_data_new(guint32 id, guint32 ext_id, gchar *title)
 {
-	const char *status_desc;
-	g_return_val_if_fail(group != NULL, g_strdup(""));
+	qq_room_data *rmd;
 
-	switch (group->my_status) {
-	case QQ_GROUP_MEMBER_STATUS_NOT_MEMBER:
-		status_desc = _("I am not a member");
-		break;
-	case QQ_GROUP_MEMBER_STATUS_IS_MEMBER:
-		status_desc = _("I am a member");
-		break;
-	case QQ_GROUP_MEMBER_STATUS_APPLYING:
-		status_desc = _("I am applying to join");
-		break;
-	case QQ_GROUP_MEMBER_STATUS_IS_ADMIN:
-		status_desc = _("I am the admin");
-		break;
-	default:
-		status_desc = _("Unknown status");
-	}
-
-	return g_strdup(status_desc);
+	purple_debug_info("QQ", "Created room data: %s, ext id %d, id %d\n",
+			title, ext_id, id);
+	rmd = g_new0(qq_room_data, 1);
+	rmd->my_role = QQ_ROOM_ROLE_NO;
+	rmd->id = id;
+	rmd->ext_id = ext_id;
+	rmd->type8 = 0x01;       /* assume permanent Qun */
+	rmd->creator_uid = 10000;     /* assume by QQ admin */
+	rmd->category = 0x01;
+	rmd->auth_type = 0x02;        /* assume need auth */
+	rmd->title_utf8 = g_strdup(title == NULL ? "" : title);
+	rmd->desc_utf8 = g_strdup("");
+	rmd->notice_utf8 = g_strdup("");
+	rmd->members = NULL;
+	rmd->is_got_buddies = FALSE;
+	return rmd;
 }
 
-static void _qq_group_add_to_blist(PurpleConnection *gc, qq_group *group)
+/* create a qq_room_data from hashtable */
+static qq_room_data *room_data_new_by_hashtable(PurpleConnection *gc, GHashTable *data)
+{
+	qq_room_data *rmd;
+	guint32 id, ext_id;
+	gchar *value;
+
+	value = g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID);
+	id = value ? strtol(value, NULL, 10) : 0;
+	value= g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID);
+	ext_id = value ? strtol(value, NULL, 10) : 0;
+	value = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_TITLE_UTF8));
+
+	rmd = room_data_new(id, ext_id, value);
+	rmd->my_role = QQ_ROOM_ROLE_YES;
+	return rmd;
+}
+
+/* gracefully free all members in a room */
+static void room_buddies_free(qq_room_data *rmd)
+{
+	gint i;
+	GList *list;
+	qq_buddy_data *bd;
+
+	g_return_if_fail(rmd != NULL);
+	i = 0;
+	while (NULL != (list = rmd->members)) {
+		bd = (qq_buddy_data *) list->data;
+		i++;
+		rmd->members = g_list_remove(rmd->members, bd);
+		qq_buddy_data_free(bd);
+	}
+
+	rmd->members = NULL;
+}
+
+/* gracefully free the memory for one qq_room_data */
+static void room_data_free(qq_room_data *rmd)
+{
+	g_return_if_fail(rmd != NULL);
+	room_buddies_free(rmd);
+	g_free(rmd->title_utf8);
+	g_free(rmd->desc_utf8);
+	g_free(rmd->notice_utf8);
+	g_free(rmd);
+}
+
+void qq_room_update_chat_info(PurpleChat *chat, qq_room_data *rmd)
+{
+	if (rmd->title_utf8 != NULL && strlen(rmd->title_utf8) > 0) {
+		purple_blist_alias_chat(chat, rmd->title_utf8);
+	}
+	g_hash_table_replace(chat->components,
+		     g_strdup(QQ_ROOM_KEY_INTERNAL_ID),
+		     g_strdup_printf("%d", rmd->id));
+	g_hash_table_replace(chat->components,
+		     g_strdup(QQ_ROOM_KEY_EXTERNAL_ID),
+		     g_strdup_printf("%d", rmd->ext_id));
+	g_hash_table_replace(chat->components,
+		     g_strdup(QQ_ROOM_KEY_TITLE_UTF8), g_strdup(rmd->title_utf8));
+}
+
+static PurpleChat *chat_new(PurpleConnection *gc, qq_room_data *rmd)
 {
 	GHashTable *components;
 	PurpleGroup *g;
 	PurpleChat *chat;
-	components = qq_group_to_hashtable(group);
-	chat = purple_chat_new(purple_connection_get_account(gc), group->group_name_utf8, components);
-	g = qq_get_purple_group(PURPLE_GROUP_QQ_QUN);
-	purple_blist_add_chat(chat, g, NULL);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "You have added group \"%s\" to blist locally\n", group->group_name_utf8);
-}
 
-/* Create a dummy qq_group, which includes only internal_id, external_id,
- * and potentially group_name_utf8, in case we need to call group_conv_show_window
- * right after creation. All other attributes are set to empty.
- * We need to send a get_group_info to the QQ server to update it right away */
-qq_group *qq_group_create_internal_record(PurpleConnection *gc,
-                guint32 internal_id, guint32 external_id, gchar *group_name_utf8)
-{
-        qq_group *group;
-        qq_data *qd;
+	purple_debug_info("QQ", "Add new chat: id %d, ext id %d, title %s\n",
+		rmd->id, rmd->ext_id, rmd->title_utf8);
 
-        g_return_val_if_fail(internal_id > 0, NULL);
-        qd = (qq_data *) gc->proto_data;
-
-        group = g_new0(qq_group, 1);
-        group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
-        group->my_status_desc = _qq_group_set_my_status_desc(group);
-        group->internal_group_id = internal_id;
-        group->external_group_id = external_id;
-        group->group_type = 0x01;       /* assume permanent Qun */
-        group->creator_uid = 10000;     /* assume by QQ admin */
-        group->group_category = 0x01;
-        group->auth_type = 0x02;        /* assume need auth */
-        group->group_name_utf8 = g_strdup(group_name_utf8 == NULL ? "" : group_name_utf8);
-        group->group_desc_utf8 = g_strdup("");
-        group->notice_utf8 = g_strdup("");
-        group->members = NULL;
-
-        qd->groups = g_list_append(qd->groups, group);
-        _qq_group_add_to_blist(gc, group);
-
-        return group;
-}
-
-void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id)
-{
-        qq_group *group;
-        GList *list;
-
-        list = qd->groups;
-        while (list != NULL) {
-                group = (qq_group *) qd->groups->data;
-                if (internal_group_id == group->internal_group_id) {
-                        qd->groups = g_list_remove(qd->groups, group);
-                        qq_group_free(group);
-                        break;
-                } else {
-                        list = list->next;
-                }
-        }
-}
-
-/* convert a qq_group to hash-table, which could be component of PurpleChat */
-GHashTable *qq_group_to_hashtable(qq_group *group)
-{
-	GHashTable *components;
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_MEMBER_STATUS), g_strdup_printf("%d", group->my_status));
-	group->my_status_desc = _qq_group_set_my_status_desc(group);
+	g_hash_table_insert(components,
+			    g_strdup(QQ_ROOM_KEY_INTERNAL_ID), g_strdup_printf("%d", rmd->id));
+	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_EXTERNAL_ID),
+			    g_strdup_printf("%d", rmd->ext_id));
+	g_hash_table_insert(components, g_strdup(QQ_ROOM_KEY_TITLE_UTF8), g_strdup(rmd->title_utf8));
 
-	g_hash_table_insert(components,
-			    g_strdup(QQ_GROUP_KEY_INTERNAL_ID), g_strdup_printf("%d", group->internal_group_id));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_EXTERNAL_ID),
-			    g_strdup_printf("%d", group->external_group_id));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_GROUP_TYPE), g_strdup_printf("%d", group->group_type));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_CREATOR_UID), g_strdup_printf("%d", group->creator_uid));
-	g_hash_table_insert(components,
-			    g_strdup(QQ_GROUP_KEY_GROUP_CATEGORY), g_strdup_printf("%d", group->group_category));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_AUTH_TYPE), g_strdup_printf("%d", group->auth_type));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_MEMBER_STATUS_DESC), g_strdup(group->my_status_desc));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_GROUP_NAME_UTF8), g_strdup(group->group_name_utf8));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_GROUP_DESC_UTF8), g_strdup(group->group_desc_utf8));
-	return components;
+	chat = purple_chat_new(purple_connection_get_account(gc), rmd->title_utf8, components);
+	g = qq_group_find_or_new(PURPLE_GROUP_QQ_QUN);
+	purple_blist_add_chat(chat, g, NULL);
+
+	return chat;
 }
 
-/* create a qq_group from hashtable */
-qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data)
+PurpleChat *qq_room_find_or_new(PurpleConnection *gc, guint32 id, guint32 ext_id)
 {
 	qq_data *qd;
-	qq_group *group;
+	qq_room_data *rmd;
+	PurpleChat *chat;
+	gchar *num_str;
 
-	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail (gc != NULL && gc->proto_data != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	group = g_new0(qq_group, 1);
-	group->my_status =
-	    qq_string_to_dec_value
-	    (NULL ==
-	     g_hash_table_lookup(data,
-				 QQ_GROUP_KEY_MEMBER_STATUS) ?
-	     g_strdup_printf("%d",
-			     QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) :
-	     g_hash_table_lookup(data, QQ_GROUP_KEY_MEMBER_STATUS));
-	group->internal_group_id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_INTERNAL_ID));
-	group->external_group_id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_EXTERNAL_ID));
-	group->group_type = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_GROUP_TYPE));
-	group->creator_uid = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_CREATOR_UID));
-	group->group_category = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_GROUP_CATEGORY));
-	group->auth_type = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_AUTH_TYPE));
-	group->group_name_utf8 = g_strdup(g_hash_table_lookup(data, QQ_GROUP_KEY_GROUP_NAME_UTF8));
-	group->group_desc_utf8 = g_strdup(g_hash_table_lookup(data, QQ_GROUP_KEY_GROUP_DESC_UTF8));
-	group->my_status_desc = _qq_group_set_my_status_desc(group);
+	g_return_val_if_fail(id != 0 && ext_id != 0, NULL);
 
-	qd->groups = g_list_append(qd->groups, group);
+	purple_debug_info("QQ", "Find or add new room: id %d, ext id %d\n", id, ext_id);
 
-	return group;
+	rmd = qq_room_data_find(gc, id);
+	if (rmd == NULL) {
+		rmd = room_data_new(id, ext_id, NULL);
+		g_return_val_if_fail(rmd != NULL, NULL);
+		rmd->my_role = QQ_ROOM_ROLE_YES;
+		qd->groups = g_list_append(qd->groups, rmd);
+	}
+
+	num_str = g_strdup_printf("%d", ext_id);
+	chat = purple_blist_find_chat(purple_connection_get_account(gc), num_str);
+	g_free(num_str);
+	if (chat) {
+		return chat;
+	}
+
+	return chat_new(gc, rmd);
 }
 
-/* refresh group local subscription */
-void qq_group_refresh(PurpleConnection *gc, qq_group *group)
+void qq_room_remove(PurpleConnection *gc, guint32 id)
 {
+	qq_data *qd;
 	PurpleChat *chat;
-	gchar *external_group_id;
-	g_return_if_fail(group != NULL);
+	qq_room_data *rmd;
+	gchar *num_str;
+	guint32 ext_id;
 
-	external_group_id = g_strdup_printf("%d", group->external_group_id);
-	chat = purple_blist_find_chat(purple_connection_get_account(gc), external_group_id);
-	g_free(external_group_id);
-	if (chat == NULL && group->my_status != QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) {
-		_qq_group_add_to_blist(gc, group);
-	} else if (chat != NULL) {	/* we have a local record, update its info */
-		/* if there is group_name_utf8, we update the group name */
-		if (group->group_name_utf8 != NULL && strlen(group->group_name_utf8) > 0)
-			purple_blist_alias_chat(chat, group->group_name_utf8);
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_MEMBER_STATUS), g_strdup_printf("%d", group->my_status));
-		group->my_status_desc = _qq_group_set_my_status_desc(group);
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_MEMBER_STATUS_DESC), g_strdup(group->my_status_desc));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_INTERNAL_ID),
-				     g_strdup_printf("%d", group->internal_group_id));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_EXTERNAL_ID),
-				     g_strdup_printf("%d", group->external_group_id));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_GROUP_TYPE), g_strdup_printf("%d", group->group_type));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_CREATOR_UID), g_strdup_printf("%d", group->creator_uid));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_GROUP_CATEGORY),
-				     g_strdup_printf("%d", group->group_category));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_AUTH_TYPE), g_strdup_printf("%d", group->auth_type));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_GROUP_NAME_UTF8), g_strdup(group->group_name_utf8));
-		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_GROUP_DESC_UTF8), g_strdup(group->group_desc_utf8));
+	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
+	purple_debug_info("QQ", "Find and remove room data, id %d", id);
+	rmd = qq_room_data_find(gc, id);
+	g_return_if_fail (rmd != NULL);
+
+	ext_id = rmd->ext_id;
+	qd->groups = g_list_remove(qd->groups, rmd);
+	room_data_free(rmd);
+
+	purple_debug_info("QQ", "Find and remove chat, ext_id %d", ext_id);
+	num_str = g_strdup_printf("%d", ext_id);
+	chat = purple_blist_find_chat(purple_connection_get_account(gc), num_str);
+	g_free(num_str);
+
+	g_return_if_fail (chat != NULL);
+
+	purple_blist_remove_chat(chat);
+}
+
+/* find a qq_buddy_data by uid, called by im.c */
+qq_buddy_data *qq_room_buddy_find(qq_room_data *rmd, guint32 uid)
+{
+	GList *list;
+	qq_buddy_data *bd;
+	g_return_val_if_fail(rmd != NULL && uid > 0, NULL);
+
+	list = rmd->members;
+	while (list != NULL) {
+		bd = (qq_buddy_data *) list->data;
+		if (bd->uid == uid)
+			return bd;
+		else
+			list = list->next;
+	}
+
+	return NULL;
+}
+
+/* remove a qq_buddy_data by uid, called by qq_group_opt.c */
+void qq_room_buddy_remove(qq_room_data *rmd, guint32 uid)
+{
+	GList *list;
+	qq_buddy_data *bd;
+	g_return_if_fail(rmd != NULL && uid > 0);
+
+	list = rmd->members;
+	while (list != NULL) {
+		bd = (qq_buddy_data *) list->data;
+		if (bd->uid == uid) {
+			rmd->members = g_list_remove(rmd->members, bd);
+			return;
+		} else {
+			list = list->next;
+		}
 	}
 }
 
-/* NOTE: If we knew how to convert between an external and internal group id, as the official 
- * client seems to, the following would be unnecessary. That would be ideal. */
-
-/* Use list to specify if id's alternate id is pending discovery. */
-void qq_set_pending_id(GSList **list, guint32 id, gboolean pending)
+qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd, guint32 member_uid)
 {
-	if (pending) 
-		*list = g_slist_prepend(*list, GINT_TO_POINTER(id));
-	else 
-		*list = g_slist_remove(*list, GINT_TO_POINTER(id));
+	qq_buddy_data *member, *bd;
+	PurpleBuddy *buddy;
+	g_return_val_if_fail(rmd != NULL && member_uid > 0, NULL);
+
+	member = qq_room_buddy_find(rmd, member_uid);
+	if (member == NULL) {	/* first appear during my session */
+		member = g_new0(qq_buddy_data, 1);
+		member->uid = member_uid;
+		buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
+		if (buddy != NULL) {
+			bd = (qq_buddy_data *) buddy->proto_data;
+			if (bd != NULL && bd->nickname != NULL)
+				member->nickname = g_strdup(bd->nickname);
+			else if (buddy->alias != NULL)
+				member->nickname = g_strdup(buddy->alias);
+		}
+		rmd->members = g_list_append(rmd->members, member);
+	}
+
+	return member;
 }
 
-/**
- * @brief Return the location of id in list, or NULL if not found (返回id在链表中的位置,没有找到则返回NULL)
- */
-GSList *qq_get_pending_id(GSList *list, guint32 id)
+qq_room_data *qq_room_data_find(PurpleConnection *gc, guint32 room_id)
 {
-        return g_slist_find(list, GINT_TO_POINTER(id));
+	GList *list;
+	qq_room_data *rmd;
+	qq_data *qd;
+
+	qd = (qq_data *) gc->proto_data;
+
+	if (qd->groups == NULL || room_id <= 0)
+		return 0;
+
+	list = qd->groups;
+	while (list != NULL) {
+		rmd = (qq_room_data *) list->data;
+		if (rmd->id == room_id) {
+			return rmd;
+		}
+		list = list->next;
+	}
+
+	return NULL;
+}
+
+guint32 qq_room_get_next(PurpleConnection *gc, guint32 room_id)
+{
+	GList *list;
+	qq_room_data *rmd;
+	qq_data *qd;
+	gboolean is_find = FALSE;
+
+	qd = (qq_data *) gc->proto_data;
+
+	if (qd->groups == NULL) {
+		return 0;
+	}
+
+	 if (room_id <= 0) {
+	 	rmd = (qq_room_data *) qd->groups->data;
+		return rmd->id;
+	}
+
+	list = qd->groups;
+	while (list != NULL) {
+		rmd = (qq_room_data *) list->data;
+		list = list->next;
+		if (rmd->id == room_id) {
+			is_find = TRUE;
+			break;
+		}
+	}
+
+	g_return_val_if_fail(is_find, 0);
+	if (list == NULL) return 0;	/* be the end */
+ 	rmd = (qq_room_data *) list->data;
+	g_return_val_if_fail(rmd != NULL, 0);
+	return rmd->id;
+}
+
+guint32 qq_room_get_next_conv(PurpleConnection *gc, guint32 room_id)
+{
+	GList *list;
+	qq_room_data *rmd;
+	qq_data *qd;
+	gboolean is_find;
+
+	qd = (qq_data *) gc->proto_data;
+
+ 	list = qd->groups;
+	if (room_id > 0) {
+		/* search next room */
+		is_find = FALSE;
+		while (list != NULL) {
+			rmd = (qq_room_data *) list->data;
+			list = list->next;
+			if (rmd->id == room_id) {
+				is_find = TRUE;
+				break;
+			}
+		}
+		g_return_val_if_fail(is_find, 0);
+	}
+
+	while (list != NULL) {
+		rmd = (qq_room_data *) list->data;
+		g_return_val_if_fail(rmd != NULL, 0);
+
+		if (rmd->my_role == QQ_ROOM_ROLE_YES || rmd->my_role == QQ_ROOM_ROLE_ADMIN) {
+			if (NULL != purple_find_conversation_with_account(
+						PURPLE_CONV_TYPE_CHAT,rmd->title_utf8, purple_connection_get_account(gc))) {
+				/* In convseration*/
+				return rmd->id;
+			}
+		}
+		list = list->next;
+	}
+
+	return 0;
+}
+
+/* this should be called upon signin, even when we did not open group chat window */
+void qq_room_data_initial(PurpleConnection *gc)
+{
+	PurpleAccount *account;
+	PurpleChat *chat;
+	PurpleGroup *purple_group;
+	PurpleBlistNode *node;
+	qq_data *qd;
+	qq_room_data *rmd;
+	gint count;
+
+	account = purple_connection_get_account(gc);
+	qd = (qq_data *) gc->proto_data;
+
+	purple_debug_info("QQ", "Initial QQ Qun configurations\n");
+	purple_group = purple_find_group(PURPLE_GROUP_QQ_QUN);
+	if (purple_group == NULL) {
+		purple_debug_info("QQ", "We have no QQ Qun\n");
+		return;
+	}
+
+	count = 0;
+	for (node = ((PurpleBlistNode *) purple_group)->child; node != NULL; node = node->next) {
+		if ( !PURPLE_BLIST_NODE_IS_CHAT(node)) {
+			continue;
+		}
+		/* got one */
+		chat = (PurpleChat *) node;
+		if (account != chat->account)	/* not qq account*/
+			continue;
+
+		rmd = room_data_new_by_hashtable(gc, chat->components);
+		qd->groups = g_list_append(qd->groups, rmd);
+		count++;
+	}
+
+	purple_debug_info("QQ", "Load %d QQ Qun configurations\n", count);
+}
+
+void qq_room_data_free_all(PurpleConnection *gc)
+{
+	qq_data *qd;
+	qq_room_data *rmd;
+	gint count;
+
+	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
+	count = 0;
+	while (qd->groups != NULL) {
+		rmd = (qq_room_data *) qd->groups->data;
+		qd->groups = g_list_remove(qd->groups, rmd);
+		room_data_free(rmd);
+		count++;
+	}
+
+	if (count > 0) {
+		purple_debug_info("QQ", "%d rooms are freed\n", count);
+	}
 }

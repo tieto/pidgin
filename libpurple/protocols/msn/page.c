@@ -50,12 +50,15 @@ char *
 msn_page_gen_payload(const MsnPage *page, size_t *ret_size)
 {
 	char *str;
+	char *body;
 
 	g_return_val_if_fail(page != NULL, NULL);
 
-	str =
-		g_strdup_printf("<TEXT xml:space=\"preserve\" enc=\"utf-8\">%s</TEXT>",
-						msn_page_get_body(page));
+	body = g_markup_escape_text(msn_page_get_body(page), -1);
+	str = g_strdup_printf(
+			"<TEXT xml:space=\"preserve\" enc=\"utf-8\">%s</TEXT>",
+			body);
+	g_free(body);
 
 	if (ret_size != NULL)
 		*ret_size = strlen(str);

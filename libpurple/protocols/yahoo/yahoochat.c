@@ -369,7 +369,7 @@ void yahoo_process_chat_online(PurpleConnection *gc, struct yahoo_packet *pkt)
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 
 	if (pkt->status == 1) {
-		yd->chat_online = 1;
+		yd->chat_online = TRUE;
 
 		/* We need to goto a user in chat */
 		if (yd->pending_chat_goto) {
@@ -411,7 +411,7 @@ void yahoo_process_chat_logout(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (pkt->status == 1) {
-		yd->chat_online = 0;
+		yd->chat_online = FALSE;
 		g_free(yd->pending_chat_room);
 		yd->pending_chat_room = NULL;
 		g_free(yd->pending_chat_id);
@@ -881,7 +881,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	yahoo_packet_send_and_free(pkt, yd);
 
-	yd->chat_online = 0;
+	yd->chat_online = FALSE;
 	g_free(yd->pending_chat_room);
 	yd->pending_chat_room = NULL;
 	g_free(yd->pending_chat_id);

@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#define _PURPLE_BUDDYICON_C_
+
 #include "internal.h"
 #include "buddyicon.h"
 #include "conversation.h"
@@ -934,8 +936,8 @@ PurpleStoredImage *
 purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
                                                   const gchar *filename)
 {
-	size_t len;
-	guchar *data;
+	size_t len = 0;
+	guchar *data = NULL;
 
 	g_return_val_if_fail(node != NULL, NULL);
 
@@ -945,14 +947,15 @@ purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
 		return NULL;
 	}
 
-	if (!read_icon_file(filename, &data, &len)) {
-		return NULL;
+	if (filename != NULL) {
+		if (!read_icon_file(filename, &data, &len)) {
+			return NULL;
+		}
 	}
 
 	return purple_buddy_icons_node_set_custom_icon(node, data, len);
 }
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 gboolean
 purple_buddy_icons_has_custom_icon(PurpleContact *contact)
 {
@@ -971,7 +974,6 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact, guchar *icon_data,
 {
 	return purple_buddy_icons_node_set_custom_icon((PurpleBlistNode*)contact, icon_data, icon_len);
 }
-#endif
 
 void
 _purple_buddy_icon_set_old_icons_dir(const char *dirname)

@@ -239,15 +239,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean
 	servconn->connect_data = purple_proxy_connect(NULL, session->account,
 			host, port, connect_cb, servconn);
 
-	if (servconn->connect_data != NULL)
-	{
-		servconn->processing = TRUE;
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
+	return (servconn->connect_data != NULL);
 }
 
 void
@@ -301,7 +293,8 @@ static void
 servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn = data;
-	int ret, writelen;
+	gssize ret;
+	int writelen;
 
 	writelen = purple_circ_buffer_get_max_read(servconn->tx_buf);
 
@@ -385,21 +378,23 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnSession *session;
 	char buf[MSN_BUF_LEN];
 	char *cur, *end, *old_rx_buf;
-	int len, cur_len;
+	gssize len;
+	int cur_len;
 
 	servconn = data;
 	session = servconn->session;
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
-	servconn->session->account->gc->last_received = time(NULL);
+	if (servconn->type == MSN_SERVCONN_NS)
+		servconn->session->account->gc->last_received = time(NULL);
 
 	if (len < 0 && errno == EAGAIN) {
 		return;
 
 	} else if (len <= 0) {
-		purple_debug_error("msn", "servconn read error,"
-		                          "len: %d, errno: %d, error: %s\n",
-		                          len, errno, g_strerror(errno));
+		purple_debug_error("msn", "servconn %03d read error,"
+			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
+			servconn->num, len, errno, g_strerror(errno));
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
@@ -554,6 +549,9 @@ create_listener(int port)
 
 	flags = fcntl(fd, F_GETFL);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	return fd;
 }
