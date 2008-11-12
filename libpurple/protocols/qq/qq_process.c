@@ -131,7 +131,7 @@ static void do_got_sms(PurpleConnection *gc, guint8 *data, gint data_len)
 	gchar *msg = NULL;
 	gchar *msg_utf8 = NULL;
 	gchar *msg_formated;
-	
+
 	g_return_if_fail(data != NULL && data_len > 26);
 
 	qq_show_packet("Rcv sms", data, data_len);
@@ -610,7 +610,7 @@ void qq_update_all_rooms(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 		if (room_id > 0) {
 			is_new_turn = TRUE;
 			next_id = qq_room_get_next(gc, 0);
-			purple_debug_info("QQ", "new turn, id %u\n", next_id);
+			purple_debug_info("QQ", "New turn, id %u\n", next_id);
 		} else {
 			purple_debug_info("QQ", "No room. Finished update\n");
 			return;
@@ -976,20 +976,20 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			if (ret_8 != QQ_LOGIN_REPLY_OK) {
 				return ret_8;
 			}
-			if (qd->client_version == 2008) {
+			if (qd->client_version >= 2008) {
 				qq_request_login_2008(gc);
 			} else {
 				qq_request_login_2007(gc);
 			}
 			break;
 		case QQ_CMD_LOGIN:
-			if (qd->client_version == 2008) {
+			if (qd->client_version >= 2008) {
 				ret_8 = qq_process_login_2008(gc, data, data_len);
 				if ( ret_8 == QQ_LOGIN_REPLY_REDIRECT) {
                 		qq_request_get_server(gc);
                 		return QQ_LOGIN_REPLY_OK;
             	}
-			} else if (qd->client_version == 2007) {
+			} else if (qd->client_version >= 2007) {
 				ret_8 = qq_process_login_2007(gc, data, data_len);
 				if ( ret_8 == QQ_LOGIN_REPLY_REDIRECT) {
                 		qq_request_get_server(gc);
