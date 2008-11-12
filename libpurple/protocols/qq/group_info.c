@@ -214,7 +214,7 @@ void qq_process_room_cmd_get_info(guint8 *data, gint data_len, guint32 action, P
 	 * 2(qunNoticeLen), qunNoticeLen(qunNoticeContent, 1(qunDescLen),
 	 * qunDestLen(qunDestcontent)) */
 	bytes += qq_get8(&unknown1, data + bytes);
-	purple_debug_info("QQ", "type=%u creatorid=%u category=%u maxmembers=%u\n",
+	purple_debug_info("QQ", "type: %u creator: %u category: %u maxmembers: %u\n",
 			rmd->type8, rmd->creator_uid, rmd->category, max_members);
 
 	if (qd->client_version >= 2007) {
@@ -384,7 +384,7 @@ void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *g
 		purple_debug_error("QQ",
 				"group_cmd_get_members_info: Dangerous error! maybe protocol changed, notify developers!");
 	}
-	purple_debug_info("QQ", "Group \"%s\" obtained %d member info\n", rmd->title_utf8, num);
+	purple_debug_info("QQ", "Group \"%s\" got %d member info\n", rmd->title_utf8, num);
 
 	rmd->is_got_buddies = TRUE;
 	qq_room_conv_set_onlines(gc, rmd);
