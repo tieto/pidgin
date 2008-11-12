@@ -69,7 +69,7 @@ PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd)
 		} else {
 			topic_utf8 = g_strdup_printf("%u", rmd->ext_id);
 		}
-		purple_debug_info("QQ", "Set chat topic to %s\n", topic_utf8);
+		purple_debug_info("QQ", "Chat topic = %s\n", topic_utf8);
 		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), NULL, topic_utf8);
 		g_free(topic_utf8);
 
