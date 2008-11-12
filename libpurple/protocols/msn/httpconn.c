@@ -157,8 +157,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 	}
 
-	body = g_malloc0(body_len + 1);
+	body = g_malloc(body_len + 1);
 	memcpy(body, body_start, body_len);
+	body[body_len] = '\0';
 
 #ifdef MSN_DEBUG_HTTP
 	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
