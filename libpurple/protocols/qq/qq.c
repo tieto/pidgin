@@ -1071,7 +1071,6 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_list_new(_("Select Server"), "server", server_kv_list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-//#ifdef DEBUG
 	kvp = g_new0(PurpleKeyValuePair, 1);
 	kvp->key = g_strdup(_("QQ2005"));
 	kvp->value = g_strdup("qq2005");
@@ -1089,7 +1088,6 @@ static void init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_list_new(_("Client Version"), "client_version", version_kv_list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-//#endif
 
 	option = purple_account_option_bool_new(_("Connect by TCP"), "use_tcp", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
