@@ -148,10 +148,9 @@ static gint get_buddy_status(qq_buddy_status *bs, guint8 *data)
 	/* 015-030: unknown key */
 	bytes += qq_getdata(&(bs->unknown_key[0]), QQ_KEY_LENGTH, data + bytes);
 
-	purple_debug_info("QQ_STATUS",
-			"uid: %u, U1: %d, ip: %s:%d, U2:%d, status:%d, U3:%04X\n",
-			bs->uid, bs->unknown1, inet_ntoa(bs->ip), bs->port,
-			bs->unknown2, bs->status, bs->unknown3);
+	purple_debug_info("QQ", "Status:%d, uid: %u, ip: %s:%d, U: %d - %d - %04X\n",
+			bs->status, bs->uid, inet_ntoa(bs->ip), bs->port,
+			bs->unknown1, bs->unknown2, bs->unknown3);
 
 	return bytes;
 }
@@ -570,7 +569,7 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 	}
 	bd = (buddy == NULL) ? NULL : (qq_buddy_data *) buddy->proto_data;
 	if (bd == NULL) {
-		purple_debug_warning("QQ", "Get status of unknown buddy %u\n", bs.uid);
+		purple_debug_warning("QQ", "Got status of no-auth buddy %u\n", bs.uid);
 		return;
 	}
 
@@ -630,7 +629,7 @@ void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, gu
 		break;
 	}
 
-	purple_debug_info("QQ", "Update buddy %u status as %s\n", uid, status_id);
+	purple_debug_info("QQ", "buddy %u status = %s\n", uid, status_id);
 	who = uid_to_purple_name(uid);
 	purple_prpl_got_user_status(gc->account, who, status_id, NULL);
 
