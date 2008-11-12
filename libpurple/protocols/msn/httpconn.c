@@ -64,7 +64,6 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	const char *body_start;
 	char *tmp;
 	size_t body_len = 0;
-	gboolean wasted = FALSE;
 
 	g_return_val_if_fail(httpconn != NULL, FALSE);
 	g_return_val_if_fail(buf      != NULL, FALSE);
@@ -217,15 +216,10 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		g_free(tmp);
 
-		if ((session_action != NULL) && (strcmp(session_action, "close") == 0))
-			wasted = TRUE;
-
-		g_free(session_action);
-
 		t = strchr(full_session_id, '.');
 		session_id = g_strndup(full_session_id, t - full_session_id);
 
-		if (!wasted)
+		if (session_action == NULL || strcmp(session_action, "close") != 0)
 		{
 			g_free(httpconn->full_session_id);
 			httpconn->full_session_id = full_session_id;
@@ -254,6 +248,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			g_free(session_id);
 			g_free(gw_ip);
 		}
+
+		g_free(session_action);
 	}
 
 	g_free(header);
