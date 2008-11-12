@@ -816,8 +816,8 @@ static void process_level(PurpleConnection *gc, guint8 *data, gint data_len)
 		bytes += qq_get32(&onlineTime, data + bytes);
 		bytes += qq_get16(&level, data + bytes);
 		bytes += qq_get16(&timeRemainder, data + bytes);
-		purple_debug_info("QQ_LEVEL", "%d, tmOnline: %d, level: %d, tmRemainder: %d\n",
-				uid, onlineTime, level, timeRemainder);
+		purple_debug_info("QQ", "level: %d, uid %d, tmOnline: %d, tmRemainder: %d\n",
+				level, uid, onlineTime, timeRemainder);
 
 		bd = qq_buddy_data_find(gc, uid);
 		if (bd == NULL) {
@@ -851,8 +851,8 @@ static void process_level_2007(PurpleConnection *gc, guint8 *data, gint data_len
 	bytes += qq_get32(&onlineTime, data + bytes);
 	bytes += qq_get16(&level, data + bytes);
 	bytes += qq_get16(&timeRemainder, data + bytes);
-	purple_debug_info("QQ_LEVEL", "%d, tmOnline: %d, level: %d, tmRemainder: %d\n",
-			uid, onlineTime, level, timeRemainder);
+	purple_debug_info("QQ", "level: %d, uid %d, tmOnline: %d, tmRemainder: %d\n",
+			level, uid, onlineTime, timeRemainder);
 
 	bd = qq_buddy_data_find(gc, uid);
 	if (bd == NULL) {
