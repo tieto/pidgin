@@ -118,12 +118,7 @@ msn_session_connect(MsnSession *session, const char *host, int port,
 		g_return_val_if_reached(FALSE);
 	}
 
-	if (msn_notification_connect(session->notification, host, port))
-	{
-		return TRUE;
-	}
-
-	return FALSE;
+	return msn_notification_connect(session->notification, host, port);
 }
 
 void
@@ -460,8 +455,10 @@ msn_session_finish_login(MsnSession *session)
 	gc = purple_account_get_connection(account);
 
 	img = purple_buddy_icons_find_account_icon(session->account);
+	/* TODO: Do we really want to call this if img is NULL? */
 	msn_user_set_buddy_icon(session->user, img);
-	purple_imgstore_unref(img);
+	if (img != NULL)
+		purple_imgstore_unref(img);
 
 	session->logged_in = TRUE;
 
