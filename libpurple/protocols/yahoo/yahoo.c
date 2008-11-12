@@ -2613,8 +2613,10 @@ static gboolean yahoo_cancel_p2p_server_listen_cb(gpointer data)
 	purple_debug_warning("yahoo","yahoo p2p server timeout, peer failed to connect");
 	yahoo_p2p_disconnect_destroy_data(data);
 	purple_input_remove(yd->yahoo_p2p_server_watcher);
+	yd->yahoo_p2p_server_watcher = 0;
 	close(yd->yahoo_local_p2p_server_fd);
 	yd->yahoo_local_p2p_server_fd = -1;
+	yd->yahoo_p2p_server_timeout_handle = 0;
 
 	return FALSE;
 }
@@ -2661,7 +2663,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	account = purple_connection_get_account(gc);
 
 	/* Do not send invitation if already listening for other connection */
-	if(yd->yahoo_local_p2p_server_fd)
+	if(yd->yahoo_local_p2p_server_fd >= 0)
 		return;
 
 	/* One shouldn't try to connect to self */
@@ -3644,6 +3646,8 @@ static void yahoo_close(PurpleConnection *gc) {
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
 	purple_timeout_remove(yd->yahoo_p2p_timer);
+	if(yd->yahoo_p2p_server_timeout_handle != 0)
+		purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
 
 	/* close p2p server if it is waiting for a peer to connect */
 	purple_input_remove(yd->yahoo_p2p_server_watcher);
