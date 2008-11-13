@@ -86,6 +86,5 @@ void msn_slp_call_destroy(MsnSlpCall *slpcall);
 void msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 						 int app_id, const char *context);
 void msn_slp_call_close(MsnSlpCall *slpcall);
-gboolean msn_slp_call_timeout(gpointer data);
 
 #endif /* _MSN_SLPCALL_H_ */

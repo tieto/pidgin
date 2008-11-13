@@ -33,6 +33,28 @@
  * Main
  **************************************************************************/
 
+static gboolean
+msn_slp_call_timeout(gpointer data)
+{
+	MsnSlpCall *slpcall;
+
+	slpcall = data;
+
+#ifdef MSN_DEBUG_SLPCALL
+	purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
+#endif
+
+	if (!slpcall->pending && !slpcall->progress)
+	{
+		msn_slp_call_destroy(slpcall);
+		return FALSE;
+	}
+
+	slpcall->progress = FALSE;
+
+	return TRUE;
+}
+
 MsnSlpCall *
 msn_slp_call_new(MsnSlpLink *slplink)
 {
@@ -174,28 +196,6 @@ msn_slp_call_close(MsnSlpCall *slpcall)
 	send_bye(slpcall, "application/x-msnmsgr-sessionclosebody");
 	msn_slplink_unleash(slpcall->slplink);
 	msn_slp_call_destroy(slpcall);
-}
-
-gboolean
-msn_slp_call_timeout(gpointer data)
-{
-	MsnSlpCall *slpcall;
-
-	slpcall = data;
-
-#ifdef MSN_DEBUG_SLPCALL
-	purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
-#endif
-
-	if (!slpcall->pending && !slpcall->progress)
-	{
-		msn_slp_call_destroy(slpcall);
-		return FALSE;
-	}
-
-	slpcall->progress = FALSE;
-
-	return TRUE;
 }
 
 MsnSlpCall *
