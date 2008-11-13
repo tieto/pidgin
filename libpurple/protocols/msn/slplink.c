@@ -412,12 +412,11 @@ msn_slplink_send_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 }
 
 void
-msn_slplink_unleash(MsnSlpLink *slplink)
+msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink)
 {
 	MsnSlpMessage *slpmsg;
 
-	/* Send the queued msgs in the order they came. */
-
+	/* Send the queued msgs in the order they were created */
 	while ((slpmsg = g_queue_pop_tail(slplink->slp_msg_queue)) != NULL)
 	{
 		msn_slplink_release_slpmsg(slplink, slpmsg);
@@ -635,7 +634,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			/* Release all the messages and send the ACK */
 
 			msn_slplink_send_ack(slplink, msg);
-			msn_slplink_unleash(slplink);
+			msn_slplink_send_queued_slpmsgs(slplink);
 		}
 
 		msn_slpmsg_destroy(slpmsg);

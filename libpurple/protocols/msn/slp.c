@@ -97,7 +97,7 @@ msn_xfer_init(PurpleXfer *xfer)
 			content);
 
 	g_free(content);
-	msn_slplink_unleash(slpcall->slplink);
+	msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 }
 
 void
@@ -126,7 +126,7 @@ msn_xfer_cancel(PurpleXfer *xfer)
 						content);
 
 			g_free(content);
-			msn_slplink_unleash(slpcall->slplink);
+			msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 
 			msn_slpcall_destroy(slpcall);
 		}

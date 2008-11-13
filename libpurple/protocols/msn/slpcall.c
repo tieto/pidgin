@@ -191,7 +191,7 @@ msn_slpcall_close(MsnSlpCall *slpcall)
 	g_return_if_fail(slpcall->slplink != NULL);
 
 	send_bye(slpcall, "application/x-msnmsgr-sessionclosebody");
-	msn_slplink_unleash(slpcall->slplink);
+	msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 	msn_slpcall_destroy(slpcall);
 }
 
