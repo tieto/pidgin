@@ -375,24 +375,14 @@ void purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const 
 PurpleMediaSessionType purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id);
 
 /**
- * Gets the negotiated codecs from a session.
+ * Gets the codecs from a session.
  *
  * @param media The media object to find the session in.
- * @param sess_id The session id of the session to get the negotiated codecs from.
+ * @param sess_id The session id of the session to get the codecs from.
  *
  * @return The retreieved codecs.
  */
-GList *purple_media_get_negotiated_codecs(PurpleMedia *media, const gchar *sess_id);
-
-/**
- * Gets the local codecs from a session.
- *
- * @param media The media object to find the session in.
- * @param sess_id The session id of the session to get the local codecs from.
- *
- * @return The retreieved codecs.
- */
-GList *purple_media_get_local_codecs(PurpleMedia *media, const gchar *sess_id);
+GList *purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id);
 
 /**
  * Adds remote candidates to the stream.

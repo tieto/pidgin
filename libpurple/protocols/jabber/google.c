@@ -102,7 +102,7 @@ static void
 google_session_send_accept(GoogleSession *session)
 {
 	xmlnode *sess, *desc, *payload;
-	GList *codecs = purple_media_get_negotiated_codecs(session->media, "google-voice");
+	GList *codecs = purple_media_get_codecs(session->media, "google-voice");
 	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
 
 	xmlnode_set_attrib(iq->node, "to", session->remote_jid);

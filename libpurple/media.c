@@ -1249,7 +1249,7 @@ purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id)
 }
 /* XXX: Should wait until codecs-ready is TRUE before using this function */
 GList *
-purple_media_get_local_codecs(PurpleMedia *media, const gchar *sess_id)
+purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id)
 {
 	GList *codecs;
 	g_object_get(G_OBJECT(purple_media_get_session(media, sess_id)->session),
@@ -1263,15 +1263,6 @@ purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, cons
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	return fs_candidate_list_copy(
 			purple_media_session_get_local_candidates(session, name));
-}
-/* XXX: Should wait until codecs-ready is TRUE before using this function */
-GList *
-purple_media_get_negotiated_codecs(PurpleMedia *media, const gchar *sess_id)
-{
-	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	GList *codec_intersection;
-	g_object_get(session->session, "codecs", &codec_intersection, NULL);
-	return codec_intersection;
 }
 
 void

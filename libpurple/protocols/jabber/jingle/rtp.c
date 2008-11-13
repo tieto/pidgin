@@ -523,7 +523,7 @@ jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionTyp
 		PurpleMedia *media = jingle_rtp_get_media(session);
 		gchar *media_type = jingle_rtp_get_media_type(rtp);
 		gchar *name = jingle_content_get_name(rtp);
-		GList *codecs = purple_media_get_local_codecs(media, name);
+		GList *codecs = purple_media_get_codecs(media, name);
 
 		xmlnode_set_attrib(description, "media", media_type);
 
