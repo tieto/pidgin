@@ -234,8 +234,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			slplink->swboard = msn_session_get_swboard(slplink->session,
 													   slplink->remote_user, MSN_SB_FLAG_FT);
 
-			if (slplink->swboard == NULL)
-				return;
+			g_return_if_fail(slplink->swboard != NULL);
 
 			/* If swboard is destroyed we will be too */
 			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
