@@ -77,12 +77,10 @@ void msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall);
 MsnSlpCall *msn_slplink_find_slp_call(MsnSlpLink *slplink,
 									  const char *id);
 MsnSlpCall *msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id);
-void msn_slplink_release_slpmsg(MsnSlpLink *slplink,
-								MsnSlpMessage *slpmsg);
 void msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 void msn_slplink_send_slpmsg(MsnSlpLink *slplink,
 							 MsnSlpMessage *slpmsg);
-void msn_slplink_unleash(MsnSlpLink *slplink);
+void msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink);
 void msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg);
 void msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer);
 
