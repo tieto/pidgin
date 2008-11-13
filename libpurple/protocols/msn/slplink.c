@@ -343,7 +343,7 @@ msg_nak(MsnMessage *msg, void *data)
 	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 }
 
-void
+static void
 msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
