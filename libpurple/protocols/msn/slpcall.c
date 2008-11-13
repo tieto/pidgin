@@ -34,7 +34,7 @@
  **************************************************************************/
 
 static gboolean
-msn_slp_call_timeout(gpointer data)
+msn_slpcall_timeout(gpointer data)
 {
 	MsnSlpCall *slpcall;
 
@@ -46,7 +46,7 @@ msn_slp_call_timeout(gpointer data)
 
 	if (!slpcall->pending && !slpcall->progress)
 	{
-		msn_slp_call_destroy(slpcall);
+		msn_slpcall_destroy(slpcall);
 		return FALSE;
 	}
 
@@ -56,7 +56,7 @@ msn_slp_call_timeout(gpointer data)
 }
 
 MsnSlpCall *
-msn_slp_call_new(MsnSlpLink *slplink)
+msn_slpcall_new(MsnSlpLink *slplink)
 {
 	MsnSlpCall *slpcall;
 
@@ -72,13 +72,13 @@ msn_slp_call_new(MsnSlpLink *slplink)
 
 	msn_slplink_add_slpcall(slplink, slpcall);
 
-	slpcall->timer = purple_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
+	slpcall->timer = purple_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slpcall_timeout, slpcall);
 
 	return slpcall;
 }
 
 void
-msn_slp_call_destroy(MsnSlpCall *slpcall)
+msn_slpcall_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
 
@@ -125,7 +125,7 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 }
 
 void
-msn_slp_call_init(MsnSlpCall *slpcall, MsnSlpCallType type)
+msn_slpcall_init(MsnSlpCall *slpcall, MsnSlpCallType type)
 {
 	slpcall->session_id = rand() % 0xFFFFFF00 + 4;
 	slpcall->id = rand_guid();
@@ -133,7 +133,7 @@ msn_slp_call_init(MsnSlpCall *slpcall, MsnSlpCallType type)
 }
 
 void
-msn_slp_call_session_init(MsnSlpCall *slpcall)
+msn_slpcall_session_init(MsnSlpCall *slpcall)
 {
 	if (slpcall->session_init_cb)
 		slpcall->session_init_cb(slpcall);
@@ -142,7 +142,7 @@ msn_slp_call_session_init(MsnSlpCall *slpcall)
 }
 
 void
-msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
+msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
 					int app_id, const char *context)
 {
 	MsnSlpLink *slplink;
@@ -185,14 +185,14 @@ msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 }
 
 void
-msn_slp_call_close(MsnSlpCall *slpcall)
+msn_slpcall_close(MsnSlpCall *slpcall)
 {
 	g_return_if_fail(slpcall != NULL);
 	g_return_if_fail(slpcall->slplink != NULL);
 
 	send_bye(slpcall, "application/x-msnmsgr-sessionclosebody");
 	msn_slplink_unleash(slpcall->slplink);
-	msn_slp_call_destroy(slpcall);
+	msn_slpcall_destroy(slpcall);
 }
 
 MsnSlpCall *
@@ -234,7 +234,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		slpcall = slplink->directconn->initial_call;
 
 		if (slpcall != NULL)
-			msn_slp_call_session_init(slpcall);
+			msn_slpcall_session_init(slpcall);
 	}
 #endif
 

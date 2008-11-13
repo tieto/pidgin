@@ -115,7 +115,7 @@ msn_xfer_cancel(PurpleXfer *xfer)
 	{
 		if (slpcall->started)
 		{
-			msn_slp_call_close(slpcall);
+			msn_slpcall_close(slpcall);
 		}
 		else
 		{
@@ -128,7 +128,7 @@ msn_xfer_cancel(PurpleXfer *xfer)
 			g_free(content);
 			msn_slplink_unleash(slpcall->slplink);
 
-			msn_slp_call_destroy(slpcall);
+			msn_slpcall_destroy(slpcall);
 		}
 	}
 }
@@ -219,7 +219,7 @@ send_ok(MsnSlpCall *slpcall, const char *branch,
 
 	msn_slplink_queue_slpmsg(slplink, slpmsg);
 
-	msn_slp_call_session_init(slpcall);
+	msn_slpcall_session_init(slpcall);
 }
 
 static void
@@ -588,10 +588,10 @@ got_ok(MsnSlpCall *slpcall,
 		}
 		else
 		{
-			msn_slp_call_session_init(slpcall);
+			msn_slpcall_session_init(slpcall);
 		}
 #else
-		msn_slp_call_session_init(slpcall);
+		msn_slpcall_session_init(slpcall);
 #endif
 	}
 	else if (!strcmp(type, "application/x-msnmsgr-transreqbody"))
@@ -646,7 +646,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 		char *content;
 		char *content_type;
 
-		slpcall = msn_slp_call_new(slplink);
+		slpcall = msn_slpcall_new(slplink);
 
 		/* From: <msnmsgr:buddy@hotmail.com> */
 #if 0
@@ -711,7 +711,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 			slpcall->wasted = TRUE;
 
-			/* msn_slp_call_destroy(slpcall); */
+			/* msn_slpcall_destroy(slpcall); */
 			return slpcall;
 		}
 
@@ -735,7 +735,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 		if (slpcall != NULL)
 			slpcall->wasted = TRUE;
 
-		/* msn_slp_call_destroy(slpcall); */
+		/* msn_slpcall_destroy(slpcall); */
 	}
 	else
 		slpcall = NULL;

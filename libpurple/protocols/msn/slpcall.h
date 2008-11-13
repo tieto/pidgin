@@ -43,6 +43,7 @@ typedef enum
 
 struct _MsnSlpCall
 {
+	/* Our parent slplink */
 	MsnSlpLink *slplink;
 
 	MsnSlpCallType type;
@@ -78,12 +79,12 @@ struct _MsnSlpCall
 	guint timer;
 };
 
-MsnSlpCall *msn_slp_call_new(MsnSlpLink *slplink);
-void msn_slp_call_init(MsnSlpCall *slpcall, MsnSlpCallType type);
-void msn_slp_call_session_init(MsnSlpCall *slpcall);
-void msn_slp_call_destroy(MsnSlpCall *slpcall);
-void msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
+MsnSlpCall *msn_slpcall_new(MsnSlpLink *slplink);
+void msn_slpcall_init(MsnSlpCall *slpcall, MsnSlpCallType type);
+void msn_slpcall_session_init(MsnSlpCall *slpcall);
+void msn_slpcall_destroy(MsnSlpCall *slpcall);
+void msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
 						 int app_id, const char *context);
-void msn_slp_call_close(MsnSlpCall *slpcall);
+void msn_slpcall_close(MsnSlpCall *slpcall);
 
 #endif /* _MSN_SLPCALL_H_ */

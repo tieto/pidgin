@@ -104,7 +104,7 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 #endif
 
 	while (slplink->slp_calls != NULL)
-		msn_slp_call_destroy(slplink->slp_calls->data);
+		msn_slpcall_destroy(slplink->slp_calls->data);
 
 	g_queue_free(slplink->slp_msg_queue);
 
@@ -641,7 +641,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		msn_slpmsg_destroy(slpmsg);
 
 		if (slpcall != NULL && slpcall->wasted)
-			msn_slp_call_destroy(slpcall);
+			msn_slpcall_destroy(slpcall);
 	}
 }
 
@@ -730,8 +730,8 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(fp != NULL);
 
-	slpcall = msn_slp_call_new(slplink);
-	msn_slp_call_init(slpcall, MSN_SLPCALL_DC);
+	slpcall = msn_slpcall_new(slplink);
+	msn_slpcall_init(slpcall, MSN_SLPCALL_DC);
 
 	slpcall->session_init_cb = send_file_cb;
 	slpcall->end_cb = msn_xfer_end_cb;
@@ -748,7 +748,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 
 	context = gen_context(fn, fp);
 
-	msn_slp_call_invite(slpcall, MSN_FT_GUID, 2, context);
+	msn_slpcall_invite(slpcall, MSN_FT_GUID, 2, context);
 
 	g_free(context);
 }
@@ -771,14 +771,14 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	msnobj_base64 = purple_base64_encode((const guchar *)msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
 
-	slpcall = msn_slp_call_new(slplink);
-	msn_slp_call_init(slpcall, MSN_SLPCALL_ANY);
+	slpcall = msn_slpcall_new(slplink);
+	msn_slpcall_init(slpcall, MSN_SLPCALL_ANY);
 
 	slpcall->data_info = g_strdup(info);
 	slpcall->cb = cb;
 	slpcall->end_cb = end_cb;
 
-	msn_slp_call_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
+	msn_slpcall_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
 
 	g_free(msnobj_base64);
 }
