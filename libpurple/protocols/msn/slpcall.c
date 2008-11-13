@@ -81,7 +81,6 @@ void
 msn_slp_call_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
-	MsnSession *session;
 
 #ifdef MSN_DEBUG_SLPCALL
 	purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
@@ -108,10 +107,8 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 		}
 	}
 
-	session = slpcall->slplink->session;
-
 	if (slpcall->end_cb != NULL)
-		slpcall->end_cb(slpcall, session);
+		slpcall->end_cb(slpcall, slpcall->slplink->session);
 
 	if (slpcall->xfer != NULL) {
 		slpcall->xfer->data = NULL;
