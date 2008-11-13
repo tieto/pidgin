@@ -844,7 +844,6 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
-		g_assert(slplink->swboard != NULL);
 		slplink->swboard = swboard;
 
 		/* If the conversation doesn't exist then this is a custom smiley
