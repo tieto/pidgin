@@ -41,6 +41,12 @@ create_send_button_pidgin(PidginConversation *gtkconv)
 {
 	GtkWidget *send_button;
 
+	send_button = g_object_get_data(G_OBJECT(gtkconv->lower_hbox),
+	                                "send_button");
+
+	if (send_button != NULL)
+		return;
+
 	send_button = gtk_button_new_with_mnemonic(_("_Send"));
 	g_signal_connect(G_OBJECT(send_button), "clicked",
 	                 G_CALLBACK(send_button_cb), gtkconv);
@@ -61,6 +67,8 @@ remove_send_button_pidgin(PidginConversation *gtkconv)
 	                                "send_button");
 	if (send_button != NULL) {
 		gtk_widget_destroy(send_button);
+		g_object_set_data(G_OBJECT(gtkconv->lower_hbox),
+		                  "send_button", NULL);
 	}
 }
 
