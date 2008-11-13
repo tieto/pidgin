@@ -134,7 +134,7 @@ msn_soap_get_connection(MsnSession *session, const char *host)
 	}
 
 	if (session->soap_cleanup_handle == 0)
-		session->soap_cleanup_handle = purple_timeout_add(SOAP_TIMEOUT * 1000,
+		session->soap_cleanup_handle = purple_timeout_add_seconds(SOAP_TIMEOUT,
 			msn_soap_cleanup_for_session, session);
 
 	if (conn == NULL) {

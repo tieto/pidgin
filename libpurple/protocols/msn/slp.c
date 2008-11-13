@@ -33,7 +33,7 @@
 #include "smiley.h"
 
 /* ms to delay between sending buddy icon requests to the server. */
-#define BUDDY_ICON_DELAY 20000
+#define BUDDY_ICON_DELAY 20
 /*debug SLP*/
 #define MSN_DEBUG_UD
 
@@ -1057,8 +1057,8 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 		purple_timeout_remove(userlist->buddy_icon_request_timer);
 	}
 
-	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
-	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY,
+	/* Wait BUDDY_ICON_DELAY s before freeing our window slot and requesting the next icon. */
+	userlist->buddy_icon_request_timer = purple_timeout_add_seconds(BUDDY_ICON_DELAY,
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 

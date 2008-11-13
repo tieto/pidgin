@@ -211,7 +211,7 @@ msn_transaction_set_timeout_cb(MsnTransaction *trans, MsnTimeoutCb cb)
 		purple_timeout_remove(trans->timer);
 	}
 	trans->timeout_cb = cb;
-	trans->timer = purple_timeout_add(60000, transaction_timeout, trans);
+	trans->timer = purple_timeout_add_seconds(60, transaction_timeout, trans);
 }
 
 void
