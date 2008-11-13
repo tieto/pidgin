@@ -27,8 +27,6 @@
 #include "switchboard.h"
 #include "slp.h"
 
-void msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
-
 #ifdef MSN_DEBUG_SLP_FILES
 static int m_sc = 0;
 static int m_rc = 0;
@@ -244,54 +242,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 }
 
-/* We have received the message ack */
 static void
-msg_ack(MsnMessage *msg, void *data)
-{
-	MsnSlpMessage *slpmsg;
-	long long real_size;
-
-	slpmsg = data;
-
-	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
-
-	slpmsg->offset += msg->msnslp_header.length;
-
-	if (slpmsg->offset < real_size)
-	{
-		msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
-	}
-	else
-	{
-		/* The whole message has been sent */
-		if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
-		{
-			if (slpmsg->slpcall != NULL)
-			{
-				if (slpmsg->slpcall->cb)
-					slpmsg->slpcall->cb(slpmsg->slpcall,
-						NULL, 0);
-			}
-		}
-	}
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
-}
-
-/* We have received the message nak. */
-static void
-msg_nak(MsnMessage *msg, void *data)
-{
-	MsnSlpMessage *slpmsg;
-
-	slpmsg = data;
-
-	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
-}
-
-void
 msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
@@ -351,6 +302,53 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	}
 
 	/* slpmsg->offset += len; */
+}
+
+/* We have received the message ack */
+static void
+msg_ack(MsnMessage *msg, void *data)
+{
+	MsnSlpMessage *slpmsg;
+	long long real_size;
+
+	slpmsg = data;
+
+	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
+
+	slpmsg->offset += msg->msnslp_header.length;
+
+	if (slpmsg->offset < real_size)
+	{
+		msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
+	}
+	else
+	{
+		/* The whole message has been sent */
+		if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
+		{
+			if (slpmsg->slpcall != NULL)
+			{
+				if (slpmsg->slpcall->cb)
+					slpmsg->slpcall->cb(slpmsg->slpcall,
+						NULL, 0);
+			}
+		}
+	}
+
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+}
+
+/* We have received the message nak. */
+static void
+msg_nak(MsnMessage *msg, void *data)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = data;
+
+	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
+
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 }
 
 void
