@@ -7,6 +7,7 @@ version 2.5.3 (??/??/????):
 	  "Microsoft Internet Authority" certificates.  People that use
 	  --with-system-ssl-certs and GnuTLS need to include these in the
 	  system certs directory.
+	* Corrected maximum message lengths for Yahoo!
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
