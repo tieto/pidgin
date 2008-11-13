@@ -224,6 +224,10 @@ buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING && userinfo.flags & AIM_FLAG_AWAY)
 		aim_locate_autofetch_away_message(od, userinfo.sn);
 
+	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING &&
+			userinfo.capabilities & OSCAR_CAPABILITY_XTRAZ && userinfo.customicon > 0)
+		icq_im_xstatus_request(od, userinfo.sn);
+
 	aim_info_free(&userinfo);
 
 	return ret;

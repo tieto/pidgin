@@ -995,7 +995,9 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
-	GList *l;
+	GList *l, *ic = NULL;
+	GdkPixbuf* pixbuf;
+	gboolean icon = purple_request_field_list_get_pixbuf(field);
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1007,7 +1009,10 @@ create_list_field(PurpleRequestField *field)
 	gtk_widget_show(sw);
 
 	/* Create the list store */
-	store = gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING);
+	if (icon)
+		store = gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, GDK_TYPE_PIXBUF);
+	else
+		store = gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING);
 
 	/* Create the tree view */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
@@ -1026,13 +1031,42 @@ create_list_field(PurpleRequestField *field)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text", 1);
 
+	if(icon == TRUE)
+	{
+		renderer = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(column, renderer, TRUE);
+		gtk_tree_view_column_add_attribute(column, renderer, "pixbuf", 2);
+
+		gtk_widget_set_size_request(treeview, 200, 400);
+	}
+
+	if(icon == TRUE)
+		ic = purple_request_field_list_get_icons(field);
+
 	for (l = purple_request_field_list_get_items(field); l != NULL; l = l->next)
 	{
 		const char *text = (const char *)l->data;
 
 		gtk_list_store_append(store, &iter);
 
-		gtk_list_store_set(store, &iter,
+		if(icon == TRUE)
+		{
+			const char *icon_path = (const char *)ic->data;
+			char* filename = g_build_filename(DATADIR, icon_path, NULL);
+
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+
+			g_free(filename);
+
+			gtk_list_store_set(store, &iter,
+						   0, purple_request_field_list_get_data(field, text),
+						   1, text,
+						   2, pixbuf,
+						   -1);
+			ic = ic->next;
+		}
+		else
+			gtk_list_store_set(store, &iter,
 						   0, purple_request_field_list_get_data(field, text),
 						   1, text,
 						   -1);

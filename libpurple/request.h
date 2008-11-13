@@ -147,10 +147,12 @@ typedef struct
 		{
 			GList *items;
 			GHashTable *item_data;
+			GList *icons;
 			GList *selected;
 			GHashTable *selected_table;
 
 			gboolean multiple_selection;
+			gboolean pixbuf;
 
 		} list;
 
@@ -877,6 +879,26 @@ GList *purple_request_field_choice_get_labels(const PurpleRequestField *field);
 PurpleRequestField *purple_request_field_list_new(const char *id, const char *text);
 
 /**
+ * Sets whether or not a list field allows icons.
+ *
+ * @param field        The list field.
+ * @param multi_select TRUE if icons are enabled,
+ *                     or FALSE otherwise.
+ */
+void purple_request_field_list_set_pixbuf(PurpleRequestField *field,
+											  gboolean pixbuf);
+
+/**
+ * Returns whether or not a list field allows icons.
+ *
+ * @param field The list field.
+ *
+ * @return TRUE if icons are enabled, or FALSE otherwise.
+ */
+gboolean purple_request_field_list_get_pixbuf(
+	const PurpleRequestField *field);
+
+/**
  * Sets whether or not a list field allows multiple selection.
  *
  * @param field        The list field.
@@ -916,6 +938,17 @@ void *purple_request_field_list_get_data(const PurpleRequestField *field,
  */
 void purple_request_field_list_add(PurpleRequestField *field,
 								 const char *item, void *data);
+
+/**
+ * Adds an item with icon to a list field.
+ *
+ * @param field The list field.
+ * @param item  The list item.
+ * @param icon_path The path to icon file.
+ * @param data  The associated data.
+ */
+void purple_request_field_list_add_icon(PurpleRequestField *field,
+								 const char *item, const char* icon_path, void* data);
 
 /**
  * Adds a selected item to the list field.
@@ -974,6 +1007,15 @@ GList *purple_request_field_list_get_selected(
  * @constreturn The list of items.
  */
 GList *purple_request_field_list_get_items(const PurpleRequestField *field);
+
+/**
+ * Returns a list of icons in a list field.
+ *
+ * @param field The field.
+ *
+ * @constreturn The list of icons.
+ */
+GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
 
 /*@}*/
 

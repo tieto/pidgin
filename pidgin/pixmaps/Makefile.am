@@ -126,7 +126,42 @@ EMBLEMS_16 = \
 		emblems/16/secure.png \
 		emblems/16/unavailable.png \
 		emblems/16/video.png \
-		emblems/16/voice.png
+		emblems/16/voice.png \
+		emblems/16/xstatus_angry.png \
+		emblems/16/xstatus_bathing.png \
+		emblems/16/xstatus_beer.png \
+		emblems/16/xstatus_busy.png \
+		emblems/16/xstatus_cinema.png \
+		emblems/16/xstatus_coffee.png \
+		emblems/16/xstatus_crap.png \
+		emblems/16/xstatus_crapping.png \
+		emblems/16/xstatus_eating.png \
+		emblems/16/xstatus_engineering.png \
+		emblems/16/xstatus_friends.png \
+		emblems/16/xstatus_fun.png \
+		emblems/16/xstatus_gaming.png \
+		emblems/16/xstatus_google.png \
+		emblems/16/xstatus_heart.png \
+		emblems/16/xstatus_internet.png \
+		emblems/16/xstatus_iron.png \
+		emblems/16/xstatus_mobile.png \
+		emblems/16/xstatus_music.png \
+		emblems/16/xstatus_party.png \
+		emblems/16/xstatus_pda.png \
+		emblems/16/xstatus_phone.png \
+		emblems/16/xstatus_question.png \
+		emblems/16/xstatus_shopping.png \
+		emblems/16/xstatus_sick.png \
+		emblems/16/xstatus_sleeping.png \
+		emblems/16/xstatus_studying.png \
+		emblems/16/xstatus_surfing.png \
+		emblems/16/xstatus_thinking.png \
+		emblems/16/xstatus_tired.png \
+		emblems/16/xstatus_tv.png \
+		emblems/16/xstatus_typing.png \
+		emblems/16/xstatus_writing.png \
+		emblems/16/xstatus_zzz.png
+
 
 EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/airplane.svg \

@@ -790,6 +790,25 @@ purple_request_field_list_new(const char *id, const char *text)
 }
 
 void
+purple_request_field_list_set_pixbuf(PurpleRequestField *field,
+										 gboolean pixbuf)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
+
+	field->u.list.pixbuf = pixbuf;
+}
+
+gboolean
+purple_request_field_list_get_pixbuf(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, FALSE);
+
+	return field->u.list.pixbuf;
+}
+
+void
 purple_request_field_list_set_multi_select(PurpleRequestField *field,
 										 gboolean multi_select)
 {
@@ -829,6 +848,22 @@ purple_request_field_list_add(PurpleRequestField *field, const char *item,
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
 	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
+
+	g_hash_table_insert(field->u.list.item_data, g_strdup(item), data);
+}
+
+void
+purple_request_field_list_add_icon(PurpleRequestField *field, const char *item, const char* icon_path,
+							void *data)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(item  != NULL);
+	g_return_if_fail(data  != NULL);
+	g_return_if_fail(icon_path != NULL);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
+
+	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
+	field->u.list.icons = g_list_append(field->u.list.icons, g_strdup(icon_path));
 
 	g_hash_table_insert(field->u.list.item_data, g_strdup(item), data);
 }
@@ -933,6 +968,16 @@ purple_request_field_list_get_items(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
 
 	return field->u.list.items;
+}
+
+GList *
+purple_request_field_list_get_icons(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
+	g_return_val_if_fail(field->u.list.pixbuf == TRUE, NULL);
+
+	return field->u.list.icons;
 }
 
 PurpleRequestField *

@@ -59,6 +59,11 @@
 #define OSCAR_STATUS_ID_NA          "na"
 #define OSCAR_STATUS_ID_OCCUPIED    "occupied"
 #define OSCAR_STATUS_ID_FREE4CHAT   "free4chat"
+#define OSCAR_STATUS_ID_EVIL        "evil"
+#define OSCAR_STATUS_ID_DEPRESSION	 "depression"
+#define OSCAR_STATUS_ID_ATHOME      "athome"
+#define OSCAR_STATUS_ID_ATWORK      "atwork"
+#define OSCAR_STATUS_ID_LUNCH       "lunch"
 #define OSCAR_STATUS_ID_CUSTOM      "custom"
 #define OSCAR_STATUS_ID_MOBILE	    "mobile"
 
@@ -68,7 +73,7 @@
 
 static OscarCapability purple_caps = (OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM |
 									  OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_UNICODE | OSCAR_CAPABILITY_INTEROPERATE |
-									  OSCAR_CAPABILITY_SHORTCAPS);
+									  OSCAR_CAPABILITY_SHORTCAPS |  OSCAR_CAPABILITY_ICQSERVERRELAY | OSCAR_CAPABILITY_NEWCAPS | OSCAR_CAPABILITY_XTRAZ);
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01, 0x06};
@@ -670,6 +675,9 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 			case OSCAR_CAPABILITY_GAMES:
 			case OSCAR_CAPABILITY_GAMES2:
 				tmp = _("Games");
+			case OSCAR_CAPABILITY_XTRAZ:
+			case OSCAR_CAPABILITY_NEWCAPS:
+				tmp = _("ICQ Xtraz");
 				break;
 			case OSCAR_CAPABILITY_ADDINS:
 				tmp = _("Add-Ins");
@@ -750,9 +758,17 @@ static char *oscar_icqstatus(int state) {
 		return g_strdup_printf(_("Away"));
 	else if (state & AIM_ICQ_STATE_WEBAWARE)
 		return g_strdup_printf(_("Web Aware"));
-	else if (state & AIM_ICQ_STATE_INVISIBLE)
-		return g_strdup_printf(_("Invisible"));
-	else
+	else if (state & AIM_ICQ_STATE_EVIL)
+		return g_strdup_printf(_("Evil"));
+	else if (state & AIM_ICQ_STATE_DEPRESSION)
+		return g_strdup_printf(_("Depression"));
+	else if (state & AIM_ICQ_STATE_ATHOME)
+		return g_strdup_printf(_("At home"));
+	else if (state & AIM_ICQ_STATE_ATWORK)
+		return g_strdup_printf(_("At work"));
+	else if (state & AIM_ICQ_STATE_LUNCH)
+		return g_strdup_printf(_("At lunch"));
+	else 
 		return g_strdup_printf(_("Online"));
 }
 
@@ -1992,6 +2008,16 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			status_id = OSCAR_STATUS_ID_AWAY;
 		else if (type & AIM_ICQ_STATE_INVISIBLE)
 			status_id = OSCAR_STATUS_ID_INVISIBLE;
+		else if (type & AIM_ICQ_STATE_EVIL)
+			status_id = OSCAR_STATUS_ID_EVIL;
+		else if (type & AIM_ICQ_STATE_DEPRESSION)
+			status_id = OSCAR_STATUS_ID_DEPRESSION;
+		else if (type & AIM_ICQ_STATE_ATHOME)
+			status_id = OSCAR_STATUS_ID_ATHOME;
+		else if (type & AIM_ICQ_STATE_ATWORK)
+			status_id = OSCAR_STATUS_ID_ATWORK;
+		else if (type & AIM_ICQ_STATE_LUNCH)
+			status_id = OSCAR_STATUS_ID_LUNCH;
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	} else {
@@ -2308,7 +2334,9 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
+	PurpleMessageFlags flags = 0;
 	char *message = NULL;
+	char *rtfmsg = NULL;
 
 	g_return_val_if_fail(od != NULL, 0);
 	g_return_val_if_fail(od->gc != NULL, 0);
@@ -2338,6 +2366,21 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		}
 	}
 
+
+	if (args->info.rtfmsg.rtfmsg != NULL)
+	{
+		if (args->encoding != NULL)
+		{
+			char *encoding = NULL;
+			encoding = oscar_encoding_extract(args->encoding);
+			rtfmsg = oscar_encoding_to_utf8(account, encoding, args->info.rtfmsg.rtfmsg,
+			                                 strlen(args->info.rtfmsg.rtfmsg));
+			g_free(encoding);
+		} else {
+			if (g_utf8_validate(args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg), NULL))
+				rtfmsg = g_strdup(args->info.rtfmsg.rtfmsg);
+		}
+	}
 	if (args->type & OSCAR_CAPABILITY_CHAT)
 	{
 		char *encoding, *utf8name, *tmp;
@@ -2425,6 +2468,21 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	{
 		purple_debug_error("oscar", "Got an ICQ Server Relay message of "
 				"type %d\n", args->info.rtfmsg.msgtype);
+		purple_debug_error("oscar", "Sending X-Status Reply\n");
+
+		if(args->info.rtfmsg.msgtype == 26)
+		icq_relay_xstatus(od, userinfo->sn, args->cookie);
+		
+		if(args->info.rtfmsg.msgtype == 1)
+		{
+		if(rtfmsg)
+		serv_got_im(gc, userinfo->sn, rtfmsg, flags,
+		time(NULL));
+		else
+		serv_got_im(gc, userinfo->sn, args->info.rtfmsg.rtfmsg, flags,
+		time(NULL));
+		
+		}
 	}
 
 	else
@@ -2828,7 +2886,6 @@ static int purple_parse_incoming_im(OscarData *od, FlapConnection *conn, FlapFra
 			args = va_arg(ap, struct aim_incomingim_ch4_args *);
 			ret = incomingim_chan4(od, conn, userinfo, args, 0);
 		} break;
-
 		default: {
 			purple_debug_warning("oscar",
 					   "ICBM received on unsupported channel (channel "
@@ -2976,6 +3033,28 @@ static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason,
 
 		} break;
 
+		case 0x0006: { /* Reply from an ICQ status message request */
+			char *statusmsg, **splitmsg;
+			PurpleNotifyUserInfo *user_info;
+
+			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			statusmsg = oscar_icqstatus(state);
+			splitmsg = g_strsplit(msg, "\r\n", 0);
+			
+			user_info = purple_notify_user_info_new();
+				
+			purple_notify_user_info_add_pair(user_info, _("UIN"), who);
+			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
+			purple_notify_user_info_add_section_break(user_info);
+			purple_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
+
+			g_free(statusmsg);
+			g_strfreev(splitmsg);
+
+			purple_notify_userinfo(gc, who, user_info, NULL, NULL);
+			purple_notify_user_info_destroy(user_info);
+
+		} break;
 		default: {
 			purple_debug_warning("oscar",
 					   "Received an unknown client auto-response from %s.  "
@@ -4629,10 +4708,22 @@ oscar_set_extendedstatus(PurpleConnection *gc)
 		data |= AIM_ICQ_STATE_CHAT;
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_INVISIBLE))
 		data |= AIM_ICQ_STATE_INVISIBLE;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_EVIL))
+		data |= AIM_ICQ_STATE_EVIL;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_DEPRESSION))
+		data |= AIM_ICQ_STATE_DEPRESSION;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_ATWORK))
+		data |= AIM_ICQ_STATE_ATWORK;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_ATHOME))
+		data |= AIM_ICQ_STATE_ATHOME;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_LUNCH))
+		data |= AIM_ICQ_STATE_LUNCH;
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
+	
 	aim_srv_setextrainfo(od, TRUE, data, FALSE, NULL, NULL);
+	
 }
 
 static void
@@ -5777,6 +5868,7 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 			return "secure";
 		if (userinfo->icqinfo.status & AIM_ICQ_STATE_BIRTHDAY)
 			return "birthday";
+		return aim_get_custom_icon_filename(userinfo->customicon);
 	}
 	return NULL;
 }
@@ -5998,9 +6090,53 @@ oscar_status_types(PurpleAccount *account)
 										   purple_value_new(PURPLE_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
-	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 									 OSCAR_STATUS_ID_FREE4CHAT,
-									 _("Free For Chat"), TRUE, is_icq, FALSE);
+									 _("Free For Chat"), TRUE, is_icq, FALSE,
+									 "message", _("Message"),
+				purple_value_new(PURPLE_TYPE_STRING), NULL);
+
+	status_types = g_list_prepend(status_types, type);
+	
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_EVIL,
+									 _("Evil"), TRUE, is_icq, FALSE,
+				 "message", _("Message"),
+				purple_value_new(PURPLE_TYPE_STRING), NULL);
+	status_types = g_list_prepend(status_types, type);
+
+
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_DEPRESSION,
+									 _("Depression"), TRUE, is_icq, FALSE,
+				 "message", _("Message"),
+				purple_value_new(PURPLE_TYPE_STRING), NULL);
+	status_types = g_list_prepend(status_types, type);
+
+
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_ATHOME,
+									 _("At home"), TRUE, is_icq, FALSE,
+				"message", _("Message"),
+				purple_value_new(PURPLE_TYPE_STRING), NULL);
+	status_types = g_list_prepend(status_types, type);
+
+
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_ATWORK,
+									 _("At work"), TRUE, is_icq, FALSE,
+				"message", _("Message"),
+				purple_value_new(PURPLE_TYPE_STRING), NULL);
+
+	status_types = g_list_prepend(status_types, type);
+
+
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_LUNCH,
+									 _("Lunch"), TRUE, is_icq, FALSE,
+				"message", _("Message"),
+				purple_value_new(PURPLE_TYPE_STRING), NULL);
+
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
@@ -6010,9 +6146,12 @@ oscar_status_types(PurpleAccount *account)
 										   purple_value_new(PURPLE_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
-	type = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_INVISIBLE,
 									 OSCAR_STATUS_ID_INVISIBLE,
-									 NULL, TRUE, TRUE, FALSE);
+									 NULL, TRUE, TRUE, FALSE,
+									 "message", _("Message"),
+									  purple_value_new(PURPLE_TYPE_STRING), NULL);
+
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_full(PURPLE_STATUS_MOBILE, OSCAR_STATUS_ID_MOBILE, NULL, FALSE, FALSE, TRUE);
@@ -6180,6 +6319,23 @@ oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 	aim_locate_getinfoshort(gc->proto_data, purple_buddy_get_name(buddy), 0x00000003);
 }
 
+static void oscar_get_icqxstatusmsg (PurpleBlistNode *node, gpointer ignore)
+{
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
+	PurpleAccount *account;
+	
+	
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy *)node;
+	gc = purple_account_get_connection(buddy->account);
+	account = purple_connection_get_account(gc);
+	purple_debug_info("oscar",   "Manual X-Status Get From %s to %s:\n", purple_buddy_get_name(buddy), account->username);
+
+	icq_im_xstatus_request(gc->proto_data, purple_buddy_get_name(buddy));
+}
+
 static GList *
 oscar_buddy_menu(PurpleBuddy *buddy) {
 
@@ -6207,15 +6363,14 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 	                           NULL, NULL);
 	menu = g_list_prepend(menu, act);
 
-#if 0
 	if (od->icq)
 	{
-		act = purple_menu_action_new(_("Get Status Msg"),
-		                           PURPLE_CALLBACK(oscar_get_icqstatusmsg),
+		act = purple_menu_action_new(_("Get X-Status Msg"),
+		                           PURPLE_CALLBACK(oscar_get_icqxstatusmsg),
 		                           NULL, NULL);
 		menu = g_list_prepend(menu, act);
 	}
-#endif
+	
 
 	if (userinfo &&
 		aim_sncmp(purple_account_get_username(buddy->account), buddy->name) &&
@@ -6599,6 +6754,79 @@ oscar_send_file(PurpleConnection *gc, const char *who, const char *file)
 		purple_xfer_request(xfer);
 }
 
+static void
+oscar_show_icq_custom_icons_cb(PurpleConnection *gc, PurpleRequestFields *fields) {
+	OscarData *od = gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleRequestField *f;
+	GList *l;
+
+	f = purple_request_fields_get_field(fields, "customicon");
+	l = purple_request_field_list_get_selected(f);
+	
+	if (l) {
+		gpointer d = purple_request_field_list_get_data(f, l->data);		
+		purple_account_set_int(account, "customicon", GPOINTER_TO_INT(d));
+	}
+	
+	aim_locate_setcaps(od, purple_caps);
+}
+
+static void
+oscar_show_icq_custom_icons(PurplePluginAction *action)
+{
+	guint32 i;
+	gint32 customicon;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
+	char* na_fn;
+
+	customicon = purple_account_get_int(account, "customicon", 0);
+	
+	fields = purple_request_fields_new();
+
+	g = purple_request_field_group_new(NULL);
+	
+	f = purple_request_field_list_new("customicon", _("XStatus"));
+
+	purple_request_field_list_set_pixbuf(f, TRUE);
+
+	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
+
+	purple_request_field_list_add_icon(f, _("None"), na_fn, GINT_TO_POINTER(-1));
+	if (customicon == 0)
+		purple_request_field_list_add_selected(f, _("None"));
+	
+	g_free(na_fn);
+	
+	for (i = 1; i < aim_get_custom_icons_count(); i++) {
+		char* icon_path = g_strdup_printf("%s.png", aim_get_custom_icon_filename(i));
+		char* filename = g_build_filename("pixmaps", "pidgin", "emblems", "16", icon_path, NULL);
+
+		purple_request_field_list_add_icon(f, _(aim_get_custom_icon_descriptivename(i)), filename, GINT_TO_POINTER(i));
+
+		if (customicon == i)
+			purple_request_field_list_add_selected(f, _(aim_get_custom_icon_descriptivename(i)));
+
+		g_free(filename);
+		g_free(icon_path);
+	}
+	purple_request_field_group_add_field(g, f);
+	
+	purple_request_fields_add_group(fields, g);
+	
+	purple_request_fields(gc, _("Set Custom Icon"), _("Set Custom Icon"),
+						NULL, fields,
+						_("OK"), G_CALLBACK(oscar_show_icq_custom_icons_cb),
+						_("Cancel"), NULL,
+						purple_connection_get_account(gc), NULL, NULL,
+						gc);
+}
+
+
 GList *
 oscar_actions(PurplePlugin *plugin, gpointer context)
 {
@@ -6640,6 +6868,10 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 		/* ICQ actions */
 		act = purple_plugin_action_new(_("Set Privacy Options..."),
 				oscar_show_icq_privacy_opts);
+		menu = g_list_prepend(menu, act);
+		
+		act = purple_plugin_action_new(_("Set Custom Icon..."),
+				oscar_show_icq_custom_icons);
 		menu = g_list_prepend(menu, act);
 	}
 	else
