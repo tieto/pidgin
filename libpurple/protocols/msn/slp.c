@@ -385,6 +385,7 @@ void
 send_bye(MsnSlpCall *slpcall, const char *type)
 {
 	MsnSlpLink *slplink;
+	PurpleAccount *account;
 	MsnSlpMessage *slpmsg;
 	char *header;
 
@@ -392,8 +393,10 @@ send_bye(MsnSlpCall *slpcall, const char *type)
 
 	g_return_if_fail(slplink != NULL);
 
+	account = slplink->session->account;
+
 	header = g_strdup_printf("BYE MSNMSGR:%s MSNSLP/1.0",
-							 slplink->local_user);
+							 purple_account_get_username(account));
 
 	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header,
 								"A0D624A6-6C0C-4283-A9E0-BC97B4B46D32",
@@ -841,6 +844,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
+		g_assert(slplink->swboard != NULL);
 		slplink->swboard = swboard;
 
 		/* If the conversation doesn't exist then this is a custom smiley

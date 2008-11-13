@@ -74,7 +74,6 @@ msn_slplink_new(MsnSession *session, const char *username)
 	slplink->session = session;
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
 
-	slplink->local_user = g_strdup(msn_user_get_passport(session->user));
 	slplink->remote_user = g_strdup(username);
 
 	slplink->slp_msg_queue = g_queue_new();
@@ -114,7 +113,6 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	session->slplinks =
 		g_list_remove(session->slplinks, slplink);
 
-	g_free(slplink->local_user);
 	g_free(slplink->remote_user);
 
 	g_free(slplink);

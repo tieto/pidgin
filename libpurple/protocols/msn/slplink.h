@@ -45,7 +45,6 @@ struct _MsnSlpLink
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 
-	char *local_user;
 	char *remote_user;
 
 	int slp_seq_id;
