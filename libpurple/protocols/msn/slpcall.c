@@ -110,8 +110,6 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 
 	session = slpcall->slplink->session;
 
-	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
-
 	if (slpcall->end_cb != NULL)
 		slpcall->end_cb(slpcall, session);
 
@@ -119,6 +117,8 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 		slpcall->xfer->data = NULL;
 		purple_xfer_unref(slpcall->xfer);
 	}
+
+	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
 
 	g_free(slpcall->id);
 	g_free(slpcall->branch);

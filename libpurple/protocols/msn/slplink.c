@@ -164,19 +164,11 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
 	slplink->slp_calls = g_list_remove(slplink->slp_calls, slpcall);
 
-	/* The slplink has no slpcalls in it. If no one is using it, we might
-	 * destroy the switchboard, but we should be careful not to use the slplink
-	 * again. */
-	if (slplink->slp_calls == NULL)
-	{
-		if (slplink->swboard != NULL)
-		{
-			if (msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT))
-				/* I'm not sure this is the best thing to do, but it's better
-				 * than nothing. */
-				slpcall->slplink = NULL;
-		}
-	}
+	/* The slplink has no slpcalls in it, release it from MSN_SB_FLAG_FT.
+	 * If nothing else is using it then this might cause swboard to be
+	 * destroyed. */
+	if (slplink->slp_calls == NULL && slplink->swboard != NULL)
+		msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT);
 }
 
 MsnSlpCall *

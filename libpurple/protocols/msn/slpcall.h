@@ -43,7 +43,6 @@ typedef enum
 
 struct _MsnSlpCall
 {
-	/* MsnSession *session; */
 	MsnSlpLink *slplink;
 
 	MsnSlpCallType type;
@@ -76,7 +75,7 @@ struct _MsnSlpCall
 	MsnSlpCb cb;
 	void (*end_cb)(MsnSlpCall *slpcall, MsnSession *session);
 
-	int timer;
+	guint timer;
 };
 
 MsnSlpCall *msn_slp_call_new(MsnSlpLink *slplink);
