@@ -208,7 +208,7 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 	return NULL;
 }
 
-void
+static void
 msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
 #if 0
@@ -424,7 +424,7 @@ msn_slplink_unleash(MsnSlpLink *slplink)
 	}
 }
 
-void
+static void
 msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	MsnSlpMessage *slpmsg;
@@ -466,6 +466,22 @@ send_file_cb(MsnSlpCall *slpcall)
 	xfer->dest_fp = NULL; /* Disable double fclose() */
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
+}
+
+static MsnSlpMessage *
+msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
+{
+	GList *e;
+
+	for (e = slplink->slp_msgs; e != NULL; e = e->next)
+	{
+		MsnSlpMessage *slpmsg = e->data;
+
+		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
+			return slpmsg;
+	}
+
+	return NULL;
 }
 
 void
@@ -627,22 +643,6 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		if (slpcall != NULL && slpcall->wasted)
 			msn_slp_call_destroy(slpcall);
 	}
-}
-
-MsnSlpMessage *
-msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
-{
-	GList *e;
-
-	for (e = slplink->slp_msgs; e != NULL; e = e->next)
-	{
-		MsnSlpMessage *slpmsg = e->data;
-
-		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
-			return slpmsg;
-	}
-
-	return NULL;
 }
 
 typedef struct
