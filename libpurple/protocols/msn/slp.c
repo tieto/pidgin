@@ -758,17 +758,20 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (slplink->swboard == NULL)
 	{
-		/* We will need this in order to change its flags. */
-		slplink->swboard = (MsnSwitchBoard *)cmdproc->data;
-		/* If swboard is NULL, something has probably gone wrong earlier on
-		 * I didn't want to do this, but MSN 7 is somehow causing us to crash
-		 * here, I couldn't reproduce it to debug more, and people are
-		 * reporting bugs. Hopefully this doesn't cause more crashes. Stu.
-		 */
-		if (slplink->swboard != NULL)
+		if (cmdproc->data == NULL)
+			g_warning("msn_p2p_msg cmdproc->data was NULL\n");
+		else {
+			/*
+			 * We will swboard in order to change its flags.  If its
+			 * NULL, something has probably gone wrong earlier on.  I
+			 * didn't want to do this, but MSN 7 is somehow causing us
+			 * to crash here, I couldn't reproduce it to debug more,
+			 * and people are reporting bugs. Hopefully this doesn't
+			 * cause more crashes. Stu.
+			 */
+			slplink->swboard = (MsnSwitchBoard *)cmdproc->data;
 			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
-		else
-			purple_debug_error("msn", "msn_p2p_msg, swboard is NULL, ouch!\n");
+		}
 	}
 
 	msn_slplink_process_msg(slplink, msg);
