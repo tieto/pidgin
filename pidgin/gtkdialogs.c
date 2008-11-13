@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#define _PIDGIN_GTKDIALOGS_C_
+
 #include "internal.h"
 #include "pidgin.h"
 
@@ -967,7 +969,7 @@ pidgin_dialogs_log(void)
 static void
 pidgin_dialogs_alias_contact_cb(PurpleContact *contact, const char *new_alias)
 {
-	purple_contact_set_alias(contact, new_alias);
+	purple_blist_alias_contact(contact, new_alias);
 }
 
 void

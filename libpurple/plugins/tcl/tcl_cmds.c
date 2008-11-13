@@ -414,7 +414,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	Tcl_Obj *list, *tclgroup, *tclgrouplist, *tclcontact, *tclcontactlist, *tclbud, **elems, *result;
 	const char *cmds[] = { "alias", "handle", "info", "list", NULL };
 	enum { CMD_BUDDY_ALIAS, CMD_BUDDY_HANDLE, CMD_BUDDY_INFO, CMD_BUDDY_LIST } cmd;
-	PurpleBuddyList *blist;
+	PurpleBlistNodeType type;
 	PurpleBlistNode *node, *gnode, *bnode;
 	PurpleAccount *account;
 	PurpleBuddy *bud;
@@ -438,10 +438,11 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			return error;
 		if ((node = tcl_list_to_buddy(interp, count, elems)) == NULL)
 			return TCL_ERROR;
-		if (node->type == PURPLE_BLIST_CHAT_NODE)
+		type = purple_blist_node_get_type(node);
+		if (type == PURPLE_BLIST_CHAT_NODE)
 			Tcl_SetObjResult(interp,
-					 Tcl_NewStringObj(((PurpleChat *)node)->alias, -1));
-		else if (node->type == PURPLE_BLIST_BUDDY_NODE)
+					 Tcl_NewStringObj(purple_chat_get_name((PurpleChat *)node), -1));
+		else if (type == PURPLE_BLIST_BUDDY_NODE)
 			Tcl_SetObjResult(interp,
                                          Tcl_NewStringObj((char *)purple_buddy_get_alias((PurpleBuddy *)node), -1));
 		return TCL_OK;
@@ -494,15 +495,17 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			}
 		}
 		list = Tcl_NewListObj(0, NULL);
-		blist = purple_get_blist();
-		for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+		for (gnode = purple_blist_get_root(); gnode != NULL; gnode = purple_blist_node_get_sibling_next(gnode)) {
 			tclgroup = Tcl_NewListObj(0, NULL);
 			Tcl_ListObjAppendElement(interp, tclgroup, Tcl_NewStringObj("group", -1));
 			Tcl_ListObjAppendElement(interp, tclgroup,
-						 Tcl_NewStringObj(((PurpleGroup *)gnode)->name, -1));
+						 Tcl_NewStringObj(purple_group_get_name((PurpleGroup *)gnode), -1));
 			tclgrouplist = Tcl_NewListObj(0, NULL);
-			for (node = gnode->child; node != NULL; node = node->next) {
-				switch (node->type) {
+			for (node = purple_blist_node_get_first_child(gnode); node != NULL; node = purple_blist_node_get_sibling_next(node)) {
+				PurpleAccount *account;
+
+				type = purple_blist_node_get_type(node);
+				switch (type) {
 				case PURPLE_BLIST_CONTACT_NODE:
 					tclcontact = Tcl_NewListObj(0, NULL);
 					Tcl_IncrRefCount(tclcontact);
@@ -510,17 +513,18 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					tclcontactlist = Tcl_NewListObj(0, NULL);
 					Tcl_IncrRefCount(tclcontactlist);
 					count = 0;
-					for (bnode = node->child; bnode != NULL; bnode = bnode ->next) {
-						if (bnode->type != PURPLE_BLIST_BUDDY_NODE)
+					for (bnode = purple_blist_node_get_first_child(node); bnode != NULL; bnode = purple_blist_node_get_sibling_next(bnode)) {
+						if (purple_blist_node_get_type(bnode) != PURPLE_BLIST_BUDDY_NODE)
 							continue;
 						bud = (PurpleBuddy *)bnode;
-						if (!all && !purple_account_is_connected(bud->account))
+						account = purple_buddy_get_account(bud);
+						if (!all && !purple_account_is_connected(account))
 							continue;
 						count++;
 						tclbud = Tcl_NewListObj(0, NULL);
 						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj("buddy", -1));
-						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(bud->name, -1));
-						Tcl_ListObjAppendElement(interp, tclbud, purple_tcl_ref_new(PurpleTclRefAccount, bud->account));
+						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(purple_buddy_get_name(bud), -1));
+						Tcl_ListObjAppendElement(interp, tclbud, purple_tcl_ref_new(PurpleTclRefAccount, account));
 						Tcl_ListObjAppendElement(interp, tclcontactlist, tclbud);
 					}
 					if (count) {
@@ -532,16 +536,17 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					break;
 				case PURPLE_BLIST_CHAT_NODE:
 					cnode = (PurpleChat *)node;
-					if (!all && !purple_account_is_connected(cnode->account))
+					account = purple_chat_get_account(cnode);
+					if (!all && !purple_account_is_connected(account))
 						continue;
 					tclbud = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj("chat", -1));
-					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(cnode->alias, -1));
-					Tcl_ListObjAppendElement(interp, tclbud, purple_tcl_ref_new(PurpleTclRefAccount, cnode->account));
+					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(purple_chat_get_name(cnode), -1));
+					Tcl_ListObjAppendElement(interp, tclbud, purple_tcl_ref_new(PurpleTclRefAccount, account));
 					Tcl_ListObjAppendElement(interp, tclgrouplist, tclbud);
 					break;
 				default:
-					purple_debug(PURPLE_DEBUG_WARNING, "tcl", "Unexpected buddy type %d", node->type);
+					purple_debug(PURPLE_DEBUG_WARNING, "tcl", "Unexpected buddy type %d", type);
 					continue;
 				}
 			}

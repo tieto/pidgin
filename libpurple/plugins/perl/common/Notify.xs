@@ -6,7 +6,7 @@ PROTOTYPES: ENABLE
 BOOT:
 {
 	HV *type_stash = gv_stashpv("Purple::Notify::Type", 1);
-	HV *msg_type_stash = gv_stashpv("Purple::Notify:Msg", 1);
+	HV *msg_type_stash = gv_stashpv("Purple::Notify::Msg", 1);
 	HV *user_info_stash = gv_stashpv("Purple::NotifyUserInfo::Type", 1);
 
 	static const constiv *civ, type_const_iv[] = {

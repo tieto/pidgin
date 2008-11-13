@@ -30,6 +30,9 @@
 #include "pidgintooltip.h"
 #include "debug.h"
 
+static gboolean enable_tooltips;
+static int tooltip_delay = -1;
+
 struct
 {
 	GtkWidget *widget;
@@ -54,6 +57,27 @@ typedef struct
 		} widget;
 	} common;
 } PidginTooltipData;
+
+static void
+initialize_tooltip_delay()
+{
+#if GTK_CHECK_VERSION(2,14,0)
+	GtkSettings *settings;
+#endif
+
+	if (tooltip_delay != -1)
+		return;
+
+#if GTK_CHECK_VERSION(2,14,0)
+	settings = gtk_settings_get_default();
+
+	g_object_get(settings, "gtk-enable-tooltips", &enable_tooltips, NULL);
+	g_object_get(settings, "gtk-tooltip-timeout", &tooltip_delay, NULL);
+#else
+	tooltip_delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
+	enable_tooltips = (tooltip_delay != 0);
+#endif
+}
 
 static void
 destroy_tooltip_data(PidginTooltipData *data)
@@ -280,14 +304,12 @@ static gboolean
 row_motion_cb(GtkWidget *tv, GdkEventMotion *event, gpointer userdata)
 {
 	GtkTreePath *path;
-	int delay;
 
 	if (event->window != gtk_tree_view_get_bin_window(GTK_TREE_VIEW(tv)))
 		return FALSE;    /* The cursor is probably on the TreeView's header. */
 
-	/* XXX: probably use something more generic? */
-	delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
-	if (delay == 0)
+	initialize_tooltip_delay();
+	if (!enable_tooltips)
 		return FALSE;
 
 	if (pidgin_tooltip.timeout) {
@@ -307,7 +329,7 @@ row_motion_cb(GtkWidget *tv, GdkEventMotion *event, gpointer userdata)
 	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &pidgin_tooltip.tip_rect);
 	gtk_tree_path_free(path);
 
-	pidgin_tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_tooltip_timeout, userdata);
+	pidgin_tooltip.timeout = g_timeout_add(tooltip_delay, (GSourceFunc)pidgin_tooltip_timeout, userdata);
 
 	return FALSE;
 }
@@ -337,13 +359,13 @@ gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
 static gboolean
 widget_motion_cb(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
-	int delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
+	initialize_tooltip_delay();
 
 	pidgin_tooltip_destroy();
-	if (delay == 0)
+	if (!enable_tooltips)
 		return FALSE;
 
-	pidgin_tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_tooltip_timeout, data);
+	pidgin_tooltip.timeout = g_timeout_add(tooltip_delay, (GSourceFunc)pidgin_tooltip_timeout, data);
 	return FALSE;
 }
 

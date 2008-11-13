@@ -52,19 +52,15 @@ libgg_la_LDFLAGS = -module -avoid-version
 if STATIC_GG
 
 st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
-noinst_LIBRARIES = libgg.a
-pkg_LTLIBRARIES =
-
-libgg_a_SOURCES = $(GGSOURCES)
-libgg_a_CFLAGS  = $(AM_CFLAGS)
-libgg_a_LIBADD  = $(GADU_LIBS)
+noinst_LTLIBRARIES = libgg.la
+libgg_la_SOURCES = $(GGSOURCES)
+libgg_la_CFLAGS  = $(AM_CFLAGS)
+libgg_la_LIBADD  = $(GADU_LIBS)
 
 else
 
 st = $(GADU_CFLAGS)
 pkg_LTLIBRARIES = libgg.la
-noinst_LIBRARIES =
-
 libgg_la_SOURCES = $(GGSOURCES)
 libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
 

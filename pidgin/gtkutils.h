@@ -638,7 +638,7 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
 											 GError **error);
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKUTILS_C_)
 /**
  * Set or unset a custom buddyicon for a user.
  *

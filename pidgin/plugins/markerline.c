@@ -202,15 +202,13 @@ attach_to_all_windows(void)
 }
 
 static void
-conv_created(PurpleConversation *conv, gpointer null)
+conv_created(PidginConversation *gtkconv, gpointer null)
 {
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 	PidginWindow *win;
 
-	if (!gtkconv)
-		return;
-
 	win = pidgin_conv_get_window(gtkconv);
+	if (!win)
+		return;
 
 	detach_from_pidgin_window(win, NULL);
 	attach_to_pidgin_window(win, NULL);
@@ -247,7 +245,7 @@ plugin_load(PurplePlugin *plugin)
 {
 	attach_to_all_windows();
 
-	purple_signal_connect(purple_conversations_get_handle(), "conversation-created",
+	purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 						plugin, PURPLE_CALLBACK(conv_created), NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "conversation-extended-menu",

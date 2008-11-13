@@ -64,6 +64,7 @@ static struct StockIcon
 	{ PIDGIN_STOCK_IGNORE,          NULL,      GTK_STOCK_DIALOG_ERROR     },
 	{ PIDGIN_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
+	{ PIDGIN_STOCK_ADD,             NULL,	   GTK_STOCK_ADD			  },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },
 #else
@@ -90,7 +91,8 @@ static const GtkStockItem stock_items[] =
 	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("I_M"),         0, 0, NULL },
 	{ PIDGIN_STOCK_TOOLBAR_USER_INFO,   N_("_Get Info"),   0, 0, NULL },
 	{ PIDGIN_STOCK_INVITE,              N_("_Invite"),     0, 0, NULL },
-	{ PIDGIN_STOCK_MODIFY,              N_("_Modify"),     0, 0, NULL },
+	{ PIDGIN_STOCK_MODIFY,              N_("_Modify..."),  0, 0, NULL },
+	{ PIDGIN_STOCK_ADD,                 N_("_Add..."),     0, 0, NULL },
 	{ PIDGIN_STOCK_OPEN_MAIL,           N_("_Open Mail"),  0, 0, NULL },
 	{ PIDGIN_STOCK_PAUSE,               N_("_Pause"),      0, 0, NULL },
 	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, NULL }

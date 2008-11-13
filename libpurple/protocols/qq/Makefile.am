@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-		Makefile.mingw
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -53,17 +53,12 @@ AM_CFLAGS = $(st)
 
 libqq_la_LDFLAGS = -module -avoid-version
 
-CURRENT_REVISION=$(shell \
-		 awk 'BEGIN {"grep node .hg_archival.txt" | getline rev; \
-		 rev=substr(rev,7,6); \
-		 print rev}')
-
 if STATIC_QQ
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libqq.a
-libqq_a_SOURCES  = $(QQSOURCES)
-libqq_a_CFLAGS   = $(AM_CFLAGS)
+noinst_LTLIBRARIES = libqq.la
+libqq_la_SOURCES   = $(QQSOURCES)
+libqq_la_CFLAGS    = $(AM_CFLAGS)
 
 else
 
@@ -79,5 +74,4 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/purple/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	-DOPENQ_VERSION=\"$(CURRENT_REVISION)\"
+	$(GLIB_CFLAGS)

@@ -130,7 +130,7 @@ struct _GtkIMHtml {
 		GtkTextTag *link;
 	} edit;
 
-#ifndef PIDGIN_DISABLE_DEPRECATED
+#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKIMHTML_C_)
 	/** @deprecated */
 	char *clipboard_text_string;
 	/** @deprecated */

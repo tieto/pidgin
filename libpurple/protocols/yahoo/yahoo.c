@@ -3619,8 +3619,26 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	PurpleWhiteboard *wb;
 	int ret = 1;
 	YahooFriend *f = NULL;
+	gsize lenb = 0;
+	glong lenc = 0;
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
+	
+	if(msg2) {
+		lenb = strlen(msg2);
+		lenc = g_utf8_strlen(msg2, -1);
+
+		if(lenb > YAHOO_MAX_MESSAGE_LENGTH_BYTES || lenc > YAHOO_MAX_MESSAGE_LENGTH_CHARS) {
+			purple_debug_info("yahoo", "Message too big.  Length is %" G_GSIZE_FORMAT
+					" bytes, %ld characters.  Max is %d bytes, %d chars."
+					"  Message is '%s'.\n", lenb, lenc, YAHOO_MAX_MESSAGE_LENGTH_BYTES,
+					YAHOO_MAX_MESSAGE_LENGTH_CHARS, msg2);
+			yahoo_packet_free(pkt);
+			g_free(msg);
+			g_free(msg2);
+			return -E2BIG;
+		}
+	}
 
 	yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, who);
 	if ((f = yahoo_friend_find(gc, who)) && f->protocol)
