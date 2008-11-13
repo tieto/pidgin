@@ -623,6 +623,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	JingleTransport *transport;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
+	PurpleMedia *media;
 	
 	gchar *jid = NULL, *me = NULL, *sid = NULL;
 
@@ -668,13 +669,17 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_rtp_init_media(content);
 	}
 
-	purple_media_ready(jingle_rtp_get_media(session));
-	purple_media_wait(jingle_rtp_get_media(session));
+	if ((media = jingle_rtp_get_media(session)) == NULL) {
+		return NULL;
+	}
+
+	purple_media_ready(media);
+	purple_media_wait(media);
 
 	g_free(jid);
 	g_free(me);
 
-	return NULL;
+	return media;
 }
 
 void
