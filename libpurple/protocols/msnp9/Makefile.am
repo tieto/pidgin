@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-		Makefile.mingw
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -70,9 +70,9 @@ libmsn_la_LDFLAGS = -module -avoid-version
 if STATIC_MSN
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libmsn.a
-libmsn_a_SOURCES = $(MSNP9SOURCES)
-libmsn_a_CFLAGS  = $(AM_CFLAGS)
+noinst_LTLIBRARIES = libmsn.la
+libmsn_la_SOURCES  = $(MSNP9SOURCES)
+libmsn_la_CFLAGS   = $(AM_CFLAGS)
 
 else
 

@@ -33,7 +33,7 @@
 #include "smiley.h"
 
 /* ms to delay between sending buddy icon requests to the server. */
-#define BUDDY_ICON_DELAY 20000
+#define BUDDY_ICON_DELAY 20
 /*debug SLP*/
 #define MSN_DEBUG_UD
 
@@ -97,7 +97,7 @@ msn_xfer_init(PurpleXfer *xfer)
 			content);
 
 	g_free(content);
-	msn_slplink_unleash(slpcall->slplink);
+	msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 }
 
 void
@@ -115,7 +115,7 @@ msn_xfer_cancel(PurpleXfer *xfer)
 	{
 		if (slpcall->started)
 		{
-			msn_slp_call_close(slpcall);
+			msn_slpcall_close(slpcall);
 		}
 		else
 		{
@@ -126,9 +126,9 @@ msn_xfer_cancel(PurpleXfer *xfer)
 						content);
 
 			g_free(content);
-			msn_slplink_unleash(slpcall->slplink);
+			msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 
-			msn_slp_call_destroy(slpcall);
+			msn_slpcall_destroy(slpcall);
 		}
 	}
 }
@@ -219,7 +219,7 @@ send_ok(MsnSlpCall *slpcall, const char *branch,
 
 	msn_slplink_queue_slpmsg(slplink, slpmsg);
 
-	msn_slp_call_session_init(slpcall);
+	msn_slpcall_session_init(slpcall);
 }
 
 static void
@@ -385,6 +385,7 @@ void
 send_bye(MsnSlpCall *slpcall, const char *type)
 {
 	MsnSlpLink *slplink;
+	PurpleAccount *account;
 	MsnSlpMessage *slpmsg;
 	char *header;
 
@@ -392,8 +393,10 @@ send_bye(MsnSlpCall *slpcall, const char *type)
 
 	g_return_if_fail(slplink != NULL);
 
+	account = slplink->session->account;
+
 	header = g_strdup_printf("BYE MSNMSGR:%s MSNSLP/1.0",
-							 slplink->local_user);
+							 purple_account_get_username(account));
 
 	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header,
 								"A0D624A6-6C0C-4283-A9E0-BC97B4B46D32",
@@ -585,10 +588,10 @@ got_ok(MsnSlpCall *slpcall,
 		}
 		else
 		{
-			msn_slp_call_session_init(slpcall);
+			msn_slpcall_session_init(slpcall);
 		}
 #else
-		msn_slp_call_session_init(slpcall);
+		msn_slpcall_session_init(slpcall);
 #endif
 	}
 	else if (!strcmp(type, "application/x-msnmsgr-transreqbody"))
@@ -643,7 +646,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 		char *content;
 		char *content_type;
 
-		slpcall = msn_slp_call_new(slplink);
+		slpcall = msn_slpcall_new(slplink);
 
 		/* From: <msnmsgr:buddy@hotmail.com> */
 #if 0
@@ -708,7 +711,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 			slpcall->wasted = TRUE;
 
-			/* msn_slp_call_destroy(slpcall); */
+			/* msn_slpcall_destroy(slpcall); */
 			return slpcall;
 		}
 
@@ -732,7 +735,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 		if (slpcall != NULL)
 			slpcall->wasted = TRUE;
 
-		/* msn_slp_call_destroy(slpcall); */
+		/* msn_slpcall_destroy(slpcall); */
 	}
 	else
 		slpcall = NULL;
@@ -1054,8 +1057,8 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 		purple_timeout_remove(userlist->buddy_icon_request_timer);
 	}
 
-	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
-	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY,
+	/* Wait BUDDY_ICON_DELAY s before freeing our window slot and requesting the next icon. */
+	userlist->buddy_icon_request_timer = purple_timeout_add_seconds(BUDDY_ICON_DELAY,
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 

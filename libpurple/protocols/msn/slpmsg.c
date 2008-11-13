@@ -169,6 +169,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 				   const char *content_type, const char *content)
 {
 	MsnSlpLink *slplink;
+	PurpleAccount *account;
 	MsnSlpMessage *slpmsg;
 	char *body;
 	gsize body_len;
@@ -178,6 +179,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	g_return_val_if_fail(header  != NULL, NULL);
 
 	slplink = slpcall->slplink;
+	account = slplink->session->account;
 
 	/* Let's remember that "content" should end with a 0x00 */
 
@@ -196,7 +198,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 		"\r\n",
 		header,
 		slplink->remote_user,
-		slplink->local_user,
+		purple_account_get_username(account),
 		branch,
 		cseq,
 		slpcall->id,

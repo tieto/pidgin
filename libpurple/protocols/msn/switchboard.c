@@ -1315,10 +1315,10 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 	}
 }
 
-gboolean
+void
 msn_switchboard_release(MsnSwitchBoard *swboard, MsnSBFlag flag)
 {
-	g_return_val_if_fail(swboard != NULL, FALSE);
+	g_return_if_fail(swboard != NULL);
 
 	swboard->flag &= ~flag;
 
@@ -1328,12 +1328,8 @@ msn_switchboard_release(MsnSwitchBoard *swboard, MsnSBFlag flag)
 		swboard->conv = NULL;
 
 	if (swboard->flag == 0)
-	{
+		/* Nothing else is using this switchboard, so close it */
 		msn_switchboard_close(swboard);
-		return TRUE;
-	}
-
-	return FALSE;
 }
 
 /**************************************************************************

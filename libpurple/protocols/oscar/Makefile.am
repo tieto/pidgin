@@ -1,7 +1,7 @@
 EXTRA_DIST = \
-		COPYING \
-		AUTHORS \
-		Makefile.mingw
+	COPYING \
+	AUTHORS \
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -52,10 +52,9 @@ libicq_la_LDFLAGS = -module -avoid-version
 if STATIC_OSCAR
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES   = liboscar.a
-
-liboscar_a_SOURCES = $(OSCARSOURCES) libaim.c libicq.c
-liboscar_a_CFLAGS  = $(AM_CFLAGS)
+noinst_LTLIBRARIES  = liboscar.la
+liboscar_la_SOURCES = $(OSCARSOURCES) libaim.c libicq.c
+liboscar_la_CFLAGS  = $(AM_CFLAGS)
 
 else
 
@@ -64,11 +63,11 @@ pkg_LTLIBRARIES     = liboscar.la libaim.la libicq.la
 liboscar_la_SOURCES = $(OSCARSOURCES)
 liboscar_la_LIBADD  = $(GLIB_LIBS)
 
-libaim_la_SOURCES = libaim.c
-libaim_la_LIBADD = liboscar.la
+libaim_la_SOURCES   = libaim.c
+libaim_la_LIBADD    = liboscar.la
 
-libicq_la_SOURCES = libicq.c
-libicq_la_LIBADD = liboscar.la
+libicq_la_SOURCES   = libicq.c
+libicq_la_LIBADD    = liboscar.la
 
 endif
 
