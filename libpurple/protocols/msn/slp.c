@@ -847,7 +847,17 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
-		slplink->swboard = swboard;
+		if (slplink->swboard != swboard) {
+			if (slplink->swboard != NULL)
+				/*
+				 * Apparently we're using a different switchboard now or
+				 * something?  I don't know if this is normal, but it
+				 * definitely happens.  So make sure the old switchboard
+				 * doesn't still have a reference to us.
+				 */
+				slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
+			slplink->swboard = swboard;
+		}
 
 		/* If the conversation doesn't exist then this is a custom smiley
 		 * used in the first message in a MSN conversation: we need to create
