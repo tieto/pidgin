@@ -239,15 +239,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean
 	servconn->connect_data = purple_proxy_connect(NULL, session->account,
 			host, port, connect_cb, servconn);
 
-	if (servconn->connect_data != NULL)
-	{
-		servconn->processing = TRUE;
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
+	return (servconn->connect_data != NULL);
 }
 
 void

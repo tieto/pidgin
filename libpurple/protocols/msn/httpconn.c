@@ -64,7 +64,6 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	const char *body_start;
 	char *tmp;
 	size_t body_len = 0;
-	gboolean wasted = FALSE;
 
 	g_return_val_if_fail(httpconn != NULL, FALSE);
 	g_return_val_if_fail(buf      != NULL, FALSE);
@@ -158,8 +157,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 	}
 
-	body = g_malloc0(body_len + 1);
+	body = g_malloc(body_len + 1);
 	memcpy(body, body_start, body_len);
+	body[body_len] = '\0';
 
 #ifdef MSN_DEBUG_HTTP
 	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
@@ -217,15 +217,10 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		g_free(tmp);
 
-		if ((session_action != NULL) && (strcmp(session_action, "close") == 0))
-			wasted = TRUE;
-
-		g_free(session_action);
-
 		t = strchr(full_session_id, '.');
 		session_id = g_strndup(full_session_id, t - full_session_id);
 
-		if (!wasted)
+		if (session_action == NULL || strcmp(session_action, "close") != 0)
 		{
 			g_free(httpconn->full_session_id);
 			httpconn->full_session_id = full_session_id;
@@ -254,6 +249,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			g_free(session_id);
 			g_free(gw_ip);
 		}
+
+		g_free(session_action);
 	}
 
 	g_free(header);
@@ -723,7 +720,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 		httpconn->inpa = purple_input_add(httpconn->fd, PURPLE_INPUT_READ,
 			read_cb, data);
 
-		httpconn->timer = purple_timeout_add(2000, msn_httpconn_poll, httpconn);
+		httpconn->timer = purple_timeout_add_seconds(2, msn_httpconn_poll, httpconn);
 
 		msn_httpconn_process_queue(httpconn);
 	}
