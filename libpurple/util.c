@@ -3444,7 +3444,7 @@ void purple_got_protocol_handler_uri(const char *uri)
 	GHashTable *params = NULL;
 	int len;
 
-	g_return_if_fail(uri != NULL, NULL);
+	g_return_if_fail(uri != NULL);
 
 	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
 		purple_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
