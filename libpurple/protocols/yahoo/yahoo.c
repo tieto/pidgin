@@ -2779,8 +2779,8 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 	PurpleAccount *account;
 	YahooFriend *f;
 
-	/* if status is YAHOO_STATUS_BUSY, don't do anything, peer wont connect */
-	if(pkt->status == YAHOO_STATUS_BUSY)
+	/* if status is not 1 ie YAHOO_STATUS_BRB, the packet bounced back, so contains our own ip */
+	if(!(pkt->status == YAHOO_STATUS_BRB))
 		return ;
 
 	while (l) {
