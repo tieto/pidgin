@@ -11,8 +11,8 @@ fi
 
 for struct in $* ; do
 	cast=`echo $struct | sed "s|[A-Z]|_\0|g" | tr "a-z" "A-Z" | sed "s|^_||"`
-	for file in `grep -rl "([[:space:]]*$struct[[:space:]]*\*[[:space:]]*)" . --include=*.c` ; do
-		sed -i "s|([[:space:]]*$struct[[:space:]]*\*[[:space:]]*)[[:space:]]*(|$cast(|" $file
-		sed -i "s|([[:space:]]*$struct[[:space:]]*\*[[:space:]]*)[[:space:]]*\([^(][^,);]*\)|$cast(\1)|" $file
+	for file in `grep -rl "([[:space:]]*$struct[[:space:]]*\*[[:space:]]*)" . --include=*.c --exclude=purple-client-bindings.c` ; do
+		sed -i "s|([[:space:]]*$struct[[:space:]]*\*[[:space:]]*)[[:space:]]*(|$cast(|g" $file
+		sed -i "s|([[:space:]]*$struct[[:space:]]*\*[[:space:]]*)[[:space:]]*\([^(][^,);]*\)|$cast(\1)|g" $file
 	done
 done
