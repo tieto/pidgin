@@ -1149,8 +1149,7 @@ static void init_plugin(PurplePlugin *plugin)
 
 	server_list = server_list_build('A');
 
-	purple_prefs_add_string_list("/plugins/prpl/qq/serverlist", server_list);
-	server_list = purple_prefs_get_string_list("/plugins/prpl/qq/serverlist");
+	purple_prefs_remove("/plugins/prpl/qq/serverlist");
 
 	server_kv_list = NULL;
 	kvp = g_new0(PurpleKeyValuePair, 1);
