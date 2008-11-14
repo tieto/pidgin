@@ -2390,6 +2390,7 @@ purple_markup_slice(const char *str, guint x, guint y)
 	gunichar c;
 	char *tag;
 
+	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(x <= y, NULL);
 
 	if (x == y)
