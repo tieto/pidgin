@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-		Makefile.mingw
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -56,9 +56,9 @@ libqq_la_LDFLAGS = -module -avoid-version
 if STATIC_QQ
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libqq.a
-libqq_a_SOURCES  = $(QQSOURCES)
-libqq_a_CFLAGS   = $(AM_CFLAGS)
+noinst_LTLIBRARIES = libqq.la
+libqq_la_SOURCES   = $(QQSOURCES)
+libqq_la_CFLAGS    = $(AM_CFLAGS)
 
 else
 

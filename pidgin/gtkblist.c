@@ -3382,7 +3382,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			}
 		}
 
-		if (prpl_info->chat_info != NULL)
+		if (prpl_info && prpl_info->chat_info != NULL)
 			cur = prpl_info->chat_info(chat->account->gc);
 		else
 			cur = NULL;
