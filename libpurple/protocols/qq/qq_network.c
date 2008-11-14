@@ -461,9 +461,6 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 			conn->tcp_rxqueue = NULL;
 		}
 
-		if (pkt == NULL) {
-			continue;
-		}
 		/* packet_process may call disconnect and destory data like conn
 		 * do not call packet_process before jump,
 		 * break if packet_process return FALSE */
