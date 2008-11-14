@@ -2597,6 +2597,10 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 		return;
 	}
 
+	/* remove timeout */
+	purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
+	yd->yahoo_p2p_server_timeout_handle = 0;
+
 	/* remove watcher and close p2p server */
 	purple_input_remove(yd->yahoo_p2p_server_watcher);
 	close(yd->yahoo_local_p2p_server_fd);
