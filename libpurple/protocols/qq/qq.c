@@ -767,7 +767,7 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "</body></html>");
 
 	title = g_strdup_printf(_("About OpenQ r%s"), OPENQ_VERSION);
-	purple_notify_formatted(gc, NULL, title, NULL, info->str, NULL, NULL);
+	purple_notify_formatted(gc, title, title, NULL, info->str, NULL, NULL);
 
 	g_free(title);
 	g_string_free(info, TRUE);
