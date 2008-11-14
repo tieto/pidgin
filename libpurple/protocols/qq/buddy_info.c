@@ -483,43 +483,22 @@ static void request_set_buddy_icon(PurpleConnection *gc, gint face_num)
 
 void qq_change_icon_cb(PurpleConnection *gc, const char *filepath)
 {
-	gchar **segments;
-	const gchar *filename;
-	gint index;
+	gchar *basename;
+	size_t index;
 	gint face;
 	gchar *error;
 
 	g_return_if_fail(filepath != NULL);
 
 	purple_debug_info("QQ", "Change my icon to %s\n", filepath);
-	segments = g_strsplit_set(filepath, G_DIR_SEPARATOR_S, 0);
 
-#if 0
-	for (index = 0; segments[index] != NULL; index++) {
-		purple_debug_info("QQ", "Split to %s\n", segments[index]);
-	}
-#endif
-
-	index = g_strv_length(segments) - 1;
-	if (index < 0) {
-		g_strfreev(segments);
-		return;
-	}
-
-	filename = segments[index];
-	index = strcspn (filename, "0123456789");
-	if (index < 0 || index >= strlen(filename)) {
-		error = g_strdup_printf(_("Can not get face number from filename '%s'"), filename);
-		purple_notify_error(gc, _("QQ Buddy"), _("Unable to Change Icon"), error);
-		g_free(error);
-		return;
-	}
-	face = strtol(filename+index, NULL, 10);
+	basename = g_path_get_basename(filepath);
+	index = strcspn(basename, "0123456789");
+	face = strtol(basename + index, NULL, 10);
+	g_free(basename);
 	purple_debug_info("QQ", "Set face to %d\n", face);
 
 	request_set_buddy_icon(gc, face);
-
-	g_strfreev(segments);
 }
 
 void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img)
