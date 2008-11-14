@@ -3578,6 +3578,7 @@ static void yahoo_login(PurpleAccount *account) {
 
 	purple_connection_set_display_name(gc, purple_account_get_username(account));
 
+	yd->yahoo_local_p2p_server_fd = -1;
 	yd->fd = -1;
 	yd->txhandler = 0;
 	/* TODO: Is there a good grow size for the buffer? */
