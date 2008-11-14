@@ -984,6 +984,8 @@ purple_markup_get_css_property(const gchar *style,
 	gchar *tmp;
 	gchar *ret;
 
+	g_return_val_if_fail(opt != NULL, NULL);
+
 	if (!css_str)
 		return NULL;
 
