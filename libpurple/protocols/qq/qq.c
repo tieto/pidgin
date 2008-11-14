@@ -56,9 +56,6 @@
 #include "utils.h"
 #include "version.h"
 
-#define OPENQ_AUTHOR            "Puzzlebird"
-#define OPENQ_WEBSITE           "http://openq.sourceforge.net"
-
 #ifndef OPENQ_VERSION
 #define OPENQ_VERSION           DISPLAY_VERSION
 #endif
@@ -1116,8 +1113,8 @@ static PurplePluginInfo info = {
 	N_("QQ Protocol	Plugin"),
 					/**  description	*/
 	N_("QQ Protocol	Plugin"),
-	OPENQ_AUTHOR,			/**< author		*/
-	OPENQ_WEBSITE,			/**< homepage		*/
+	NULL,				/**< author		*/
+	PURPLE_WEBSITE,		/**< homepage	*/
 
 	NULL,				/**< load		*/
 	NULL,				/**< unload		*/

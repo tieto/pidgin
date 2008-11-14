@@ -2549,22 +2549,19 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
 	"prpl-msn",                                       /**< id             */
 	"MSN",                                            /**< name           */
 	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Windows Live Messenger Protocol Plugin"),
-	                                                  /**  description    */
-	N_("Windows Live Messenger Protocol Plugin"),
-	"Christian Hammond <chipx86@gnupdate.org>, "
-	"MaYuan <mayuan2006@gmail.com>",				  /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	N_("Windows Live Messenger Protocol Plugin"),     /**<  summary        */
+	N_("Windows Live Messenger Protocol Plugin"),     /**<  description    */
+	NULL,                                             /**< author         */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	msn_load,                                         /**< load           */
 	msn_unload,                                       /**< unload         */
