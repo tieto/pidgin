@@ -2233,7 +2233,7 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 			break;
 	}
 
-	purple_debug(purple_level, "gg", msg);
+	purple_debug(purple_level, "gg", "%s", msg);
 	g_free(msg);
 }
 /* }}} */
