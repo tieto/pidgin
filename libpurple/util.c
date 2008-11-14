@@ -4151,6 +4151,8 @@ purple_email_is_valid(const char *address)
 	const char *c, *domain;
 	static char *rfc822_specials = "()<>@,;:\\\"[]";
 
+	g_return_val_if_fail(address != NULL, FALSE);
+
 	/* first we validate the name portion (name@domain) (rfc822)*/
 	for (c = address;  *c;  c++) {
 		if (*c == '\"' && (c == address || *(c - 1) == '.' || *(c - 1) == '\"')) {
