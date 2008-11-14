@@ -530,7 +530,7 @@ generate_send_to_menu(FinchConv *ggc)
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 
 	for (; buds; buds = g_slist_delete_link(buds, buds)) {
-		PurpleBlistNode *node = (PurpleBlistNode *)purple_buddy_get_contact((PurpleBuddy *)buds->data);
+		PurpleBlistNode *node = PURPLE_BLIST_NODE(purple_buddy_get_contact(PURPLE_BUDDY(buds->data)));
 		for (node = purple_blist_node_get_first_child(node); node != NULL;
 				node = purple_blist_node_get_sibling_next(node)) {
 			PurpleBuddy *buddy = (PurpleBuddy *)node;

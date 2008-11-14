@@ -95,7 +95,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 	char *dirname;
 
 	account = xfer->account;
-	node = (PurpleBlistNode *)purple_find_buddy(account, xfer->who);
+	node = PURPLE_BLIST_NODE(purple_find_buddy(account, xfer->who));
 
 	if (!node)
 	{

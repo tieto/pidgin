@@ -2532,7 +2532,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 				node = g_value_get_pointer(&val);
 
 				if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-					PurpleBuddy *b = PURPLE_BLIST_NODE_IS_BUDDY(node) ? (PurpleBuddy*)node : purple_contact_get_priority_buddy((PurpleContact*)node);
+					PurpleBuddy *b = PURPLE_BLIST_NODE_IS_BUDDY(node) ? PURPLE_BUDDY(node) : purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
 					pidgin_dnd_file_manage(sd, b->account, b->name);
 					gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 				} else {
@@ -3843,9 +3843,9 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	}
 
 	/* XXX Good luck cleaning up this crap */
-	contact = (PurpleContact*)((PurpleBlistNode*)b)->parent;
+	contact = PURPLE_CONTACT(PURPLE_BLIST_NODE(b)->parent);
 	if(contact)
-		gtkcontactnode = ((PurpleBlistNode*)contact)->ui_data;
+		gtkcontactnode = purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(contact));
 
 	/* Name */
 	if (gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
