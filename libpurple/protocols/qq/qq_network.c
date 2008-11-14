@@ -204,7 +204,7 @@ gboolean qq_connect_later(gpointer data)
 		if ( set_new_server(qd) != TRUE) {
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Failed to connect all servers"));
+					_("Unable to connect."));
 			return FALSE;
 		}
 		qd->connect_retry = QQ_CONNECT_MAX;

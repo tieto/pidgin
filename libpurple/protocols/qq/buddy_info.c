@@ -418,8 +418,8 @@ static void info_modify_dialogue(PurpleConnection *gc, gchar **segments, int icl
 			utf8_title = g_strdup(_("Modify Address"));
 			utf8_prim = g_strdup_printf("%s for %s", _("Modify Address"), segments[0]);
 		case QQ_FIELD_EXT:
-			utf8_title = g_strdup(_("Modify Extend Information"));
-			utf8_prim = g_strdup_printf("%s for %s", _("Modify Extend Information"), segments[0]);
+			utf8_title = g_strdup(_("Modify Extended Information"));
+			utf8_prim = g_strdup_printf("%s for %s", _("Modify Extended Information"), segments[0]);
 			break;
 		case QQ_FIELD_BASE:
 		default:
@@ -457,7 +457,7 @@ void qq_process_change_info(PurpleConnection *gc, guint8 *data, gint data_len)
 	data[data_len] = '\0';
 	if (qd->uid != atoi((gchar *) data)) {	/* return should be my uid */
 		purple_debug_info("QQ", "Failed Updating info\n");
-		qq_got_attention(gc, _("Failed changing buddy information."));
+		qq_got_attention(gc, _("Could not change buddy information."));
 	}
 }
 
@@ -509,8 +509,8 @@ void qq_change_icon_cb(PurpleConnection *gc, const char *filepath)
 	filename = segments[index];
 	index = strcspn (filename, "0123456789");
 	if (index < 0 || index >= strlen(filename)) {
-		error = g_strdup_printf(_("Can not get face number in file name (%s)"), filename);
-		purple_notify_error(gc, _("QQ Buddy"), _("Failed change icon"), error);
+		error = g_strdup_printf(_("Can not get face number from filename '%s'"), filename);
+		purple_notify_error(gc, _("QQ Buddy"), _("Unable to Change Icon"), error);
 		g_free(error);
 		return;
 	}

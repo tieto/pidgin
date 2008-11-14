@@ -863,7 +863,7 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Modify Information"), action_modify_info_base);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Modify Extend Information"), action_modify_info_ext);
+	act = purple_plugin_action_new(_("Modify Extended Information"), action_modify_info_ext);
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Modify Address"), action_modify_info_addr);
@@ -1110,9 +1110,9 @@ static PurplePluginInfo info = {
 	"QQ",				/**< name		*/
 	DISPLAY_VERSION,		/**< version		*/
 					/**  summary		*/
-	N_("QQ Protocol	Plugin"),
+	N_("QQ Protocol Plugin"),
 					/**  description	*/
-	N_("QQ Protocol	Plugin"),
+	N_("QQ Protocol Plugin"),
 	NULL,				/**< author		*/
 	PURPLE_WEBSITE,		/**< homepage	*/
 
@@ -1199,10 +1199,10 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Show server news"), "show_news", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_int_new(_("Keep alive interval(s)"), "keep_alive_interval", 60);
+	option = purple_account_option_int_new(_("Keep alive interval (seconds)"), "keep_alive_interval", 60);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_int_new(_("Update interval(s)"), "update_interval", 300);
+	option = purple_account_option_int_new(_("Update interval (seconds)"), "update_interval", 300);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	purple_prefs_add_none("/plugins/prpl/qq");

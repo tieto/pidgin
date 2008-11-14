@@ -2558,8 +2558,8 @@ static PurplePluginInfo info =
 	"prpl-msn",                                       /**< id             */
 	"MSN",                                            /**< name           */
 	DISPLAY_VERSION,                                  /**< version        */
-	N_("Windows Live Messenger Protocol Plugin"),     /**<  summary        */
-	N_("Windows Live Messenger Protocol Plugin"),     /**<  description    */
+	N_("Windows Live Messenger Protocol Plugin"),     /**< summary        */
+	N_("Windows Live Messenger Protocol Plugin"),     /**< description    */
 	NULL,                                             /**< author         */
 	PURPLE_WEBSITE,                                   /**< homepage       */
 

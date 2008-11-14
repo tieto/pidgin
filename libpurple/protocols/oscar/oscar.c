@@ -4807,7 +4807,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Could not add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!purple_conv_present_error(buddy->name, account, buf))
-			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
 
 		/* Remove from local list */
@@ -4926,7 +4926,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	purple_debug_error("oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
-		purple_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
+		purple_notify_error(gc, NULL, _("Unable to Retrieve Buddy List"),
 						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
@@ -5277,7 +5277,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				gchar *buf;
 				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			}
 
@@ -5292,7 +5292,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."),
 						(retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			} break;
 		}
