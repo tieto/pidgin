@@ -550,21 +550,17 @@ static PurpleXfer*
 msn_new_xfer(PurpleConnection *gc, const char *who)
 {
 	MsnSession *session;
-	MsnSlpLink *slplink;
 	PurpleXfer *xfer;
 
 	session = gc->proto_data;
 
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 
-	if (xfer)
-	{
-		slplink = msn_session_get_slplink(session, who);
+	g_return_val_if_fail(xfer != NULL, NULL);
 
-		xfer->data = slplink;
+	xfer->data = msn_session_get_slplink(session, who);
 
-		purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
-	}
+	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
 
 	return xfer;
 }
