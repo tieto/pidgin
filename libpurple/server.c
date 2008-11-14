@@ -259,7 +259,8 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-		if(conv != NULL && alias != NULL && strcmp(alias, who))
+		if(conv != NULL && alias != NULL &&
+		   who != NULL && strcmp(alias, who))
 		{
 			char *escaped = g_markup_escape_text(who, -1);
 			char *escaped2 = g_markup_escape_text(alias, -1);

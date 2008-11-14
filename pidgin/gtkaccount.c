@@ -472,7 +472,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					 G_CALLBACK(screenname_changed_cb), dialog);
 
 	/* Do the user split thang */
-	if (dialog->plugin == NULL) /* Yeah right. */
+	if (dialog->prpl_info == NULL)
 		user_splits = NULL;
 	else
 		user_splits = dialog->prpl_info->user_splits;
