@@ -121,9 +121,6 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 	session = gc->proto_data;
 	swboard = msn_session_get_swboard(session, username, MSN_SB_FLAG_IM);
 
-	if (swboard == NULL)
-		return FALSE;
-
 	msn_switchboard_send_msg(swboard, msg, TRUE);
 	msn_message_destroy(msg);
 
