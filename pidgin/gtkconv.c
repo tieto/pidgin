@@ -201,11 +201,11 @@ get_conversation_blist_node(PurpleConversation *conv)
 
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
-			node = (PurpleBlistNode*)purple_find_buddy(conv->account, conv->name);
+			node = PURPLE_BLIST_NODE(purple_find_buddy(conv->account, conv->name));
 			node = node ? node->parent : NULL;
 			break;
 		case PURPLE_CONV_TYPE_CHAT:
-			node = (PurpleBlistNode*)purple_blist_find_chat(conv->account, conv->name);
+			node = PURPLE_BLIST_NODE(purple_blist_find_chat(conv->account, conv->name));
 			break;
 		default:
 			break;
@@ -3860,7 +3860,7 @@ generate_send_to_items(PidginWindow *win)
 			{
 				PurpleBlistNode *node;
 
-				node = (PurpleBlistNode *) purple_buddy_get_contact((PurpleBuddy *)l->data);
+				node = PURPLE_BLIST_NODE(purple_buddy_get_contact(PURPLE_BUDDY(l->data)));
 
 				for (node = node->child; node != NULL; node = node->next)
 				{
@@ -5043,9 +5043,9 @@ static const GtkTargetEntry te[] =
 static PidginConversation *
 pidgin_conv_find_gtkconv(PurpleConversation * conv)
 {
-	PurpleBuddy *bud = purple_find_buddy(conv->account, conv->name), *b;
+	PurpleBuddy *bud = purple_find_buddy(conv->account, conv->name);
 	PurpleContact *c;
-	PurpleBlistNode *cn;
+	PurpleBlistNode *cn, *bn;
 
 	if (!bud)
 		return NULL;
@@ -5053,8 +5053,9 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 	if (!(c = purple_buddy_get_contact(bud)))
 		return NULL;
 
-	cn = (PurpleBlistNode *)c;
-	for (b = (PurpleBuddy *)cn->child; b; b = (PurpleBuddy *) ((PurpleBlistNode *)b)->next) {
+	cn = PURPLE_BLIST_NODE(c);
+	for (bn = purple_blist_node_get_first_child(cn); bn; bn = purple_blist_node_get_sibling_next(bn)) {
+		PurpleBuddy *b = PURPLE_BUDDY(bn);
 		PurpleConversation *conv;
 		if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, b->account))) {
 			if (conv->ui_data)

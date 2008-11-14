@@ -25,6 +25,8 @@
 #include "blist.h"
 #include "prefs.h"
 #include "sound.h"
+#include "sound-theme-loader.h"
+#include "theme-manager.h"
 
 static PurpleSoundUiOps *sound_ui_ops = NULL;
 
@@ -134,6 +136,8 @@ purple_sound_init()
 	purple_prefs_add_none("/purple/sound");
 	purple_prefs_add_int("/purple/sound/while_status", STATUS_AVAILABLE);
 	memset(last_played, 0, sizeof(last_played));
+
+	purple_theme_manager_register_type(g_object_new(PURPLE_TYPE_SOUND_THEME_LOADER, "type", "sound", NULL));
 }
 
 void

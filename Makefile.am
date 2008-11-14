@@ -10,6 +10,7 @@ EXTRA_DIST = \
 		README.mingw \
 		config.h.mingw \
 		doxy2devhelp.xsl \
+		fix-casts.sh \
 		gaim.pc.in \
 		gaim-uninstalled.pc.in \
 		intltool-extract.in \

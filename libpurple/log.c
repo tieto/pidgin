@@ -588,11 +588,11 @@ void purple_log_init(void)
 	void *handle = purple_log_get_handle();
 
 	purple_prefs_add_none("/purple/logging");
-	purple_prefs_add_bool("/purple/logging/log_ims", FALSE);
-	purple_prefs_add_bool("/purple/logging/log_chats", FALSE);
+	purple_prefs_add_bool("/purple/logging/log_ims", TRUE);
+	purple_prefs_add_bool("/purple/logging/log_chats", TRUE);
 	purple_prefs_add_bool("/purple/logging/log_system", FALSE);
 
-	purple_prefs_add_string("/purple/logging/format", "txt");
+	purple_prefs_add_string("/purple/logging/format", "html");
 
 	html_logger = purple_log_logger_new("html", _("HTML"), 11,
 									  NULL,
@@ -1952,22 +1952,28 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 		set->name = set->normalized_name = name;
 
 		/* Search the buddy list to find the account and to determine if this is a buddy. */
-		for (gnode = purple_get_blist()->root; !found && gnode != NULL; gnode = gnode->next)
+		for (gnode = purple_blist_get_root();
+		     !found && gnode != NULL;
+			 gnode = purple_blist_node_get_sibling_next(gnode))
 		{
 			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 				continue;
 
-			for (cnode = gnode->child; !found && cnode != NULL; cnode = cnode->next)
+			for (cnode = purple_blist_node_get_first_child(gnode);
+			     !found && cnode != NULL;
+				 cnode = purple_blist_node_get_sibling_next(cnode))
 			{
 				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 					continue;
 
-				for (bnode = cnode->child; !found && bnode != NULL; bnode = bnode->next)
+				for (bnode = purple_blist_node_get_first_child(cnode);
+				     !found && bnode != NULL;
+					 bnode = purple_blist_node_get_sibling_next(bnode))
 				{
 					PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
-					if (!strcmp(buddy->name, name)) {
-						set->account = buddy->account;
+					if (!strcmp(purple_buddy_get_name(buddy), name)) {
+						set->account = purple_buddy_get_account(buddy);
 						set->buddy = TRUE;
 						found = TRUE;
 					}

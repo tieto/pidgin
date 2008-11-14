@@ -285,7 +285,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 	buddies = purple_find_buddies(account, NULL);
 	while (buddies != NULL) {
 		PurpleBuddy *buddy = buddies->data;
-		buddy->proto_data = NULL;
+		purple_buddy_set_protocol_data(buddy, NULL);
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
@@ -427,6 +427,13 @@ purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 	gc->display_name = g_strdup(name);
 }
 
+void
+purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data) {
+	g_return_if_fail(connection != NULL);
+
+	connection->proto_data = proto_data;
+}
+
 PurpleConnectionState
 purple_connection_get_state(const PurpleConnection *gc)
 {
@@ -465,6 +472,13 @@ purple_connection_get_display_name(const PurpleConnection *gc)
 	g_return_val_if_fail(gc != NULL, NULL);
 
 	return gc->display_name;
+}
+
+void *
+purple_connection_get_protocol_data(const PurpleConnection *connection) {
+	g_return_val_if_fail(connection != NULL, NULL);
+
+	return connection->proto_data;
 }
 
 void
