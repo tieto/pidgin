@@ -1142,15 +1142,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 	conn->watcher_incoming = purple_input_add(conn->fd,
 			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
 	if (conn->cookie == NULL)
-	{
-		if (!aim_snvalid_icq(purple_account_get_username(account)))
-			/*
-			 * We don't send this when authenticating an ICQ account
-			 * because for some reason ICQ is still using the
-			 * assy/insecure authentication procedure.
-			 */
 			flap_connection_send_version(od, conn);
-	}
 	else
 	{
 		flap_connection_send_version_with_cookie(od, conn,
