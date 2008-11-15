@@ -379,9 +379,9 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
 			servconn->payload_len = servconn->cmdproc->last_cmd->payload_len;
 		}
-	} while (servconn->connected && servconn->rx_len > 0);
+	} while (servconn->connected && !servconn->wasted && servconn->rx_len > 0);
 
-	if (servconn->connected)
+	if (servconn->connected && !servconn->wasted)
 	{
 		if (servconn->rx_len > 0)
 			servconn->rx_buf = g_memdup(cur, servconn->rx_len);
