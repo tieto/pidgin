@@ -449,6 +449,8 @@ clean_connect(gpointer data)
 static void
 proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
+	int flags;
+
 	purple_debug_info("proxy", "Connecting to %s:%d with no proxy\n",
 			connect_data->host, connect_data->port);
 
@@ -460,7 +462,8 @@ proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 		return;
 	}
 
-	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(connect_data->fd, F_GETFL);
+	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
@@ -687,11 +690,12 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 				gchar *tmp = ntlm;
 				guint8 *nonce;
 				gchar *domain = (gchar*)purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username;
+				gchar *username = NULL;
 				gchar *request;
 				gchar *response;
 
-				username = strchr(domain, '\\');
+				if (domain != NULL)
+					username = strchr(domain, '\\');
 				if (username == NULL)
 				{
 					purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -735,9 +739,11 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
 				gchar request[2048];
 				gchar *domain = (gchar*) purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username;
+				gchar *username = NULL;
 				int request_len;
-				username = strchr(domain, '\\');
+
+				if (domain != NULL)
+					username = strchr(domain, '\\');
 				if (username == NULL)
 				{
 					purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -881,6 +887,8 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 static void
 proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
+	int flags;
+
 	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using HTTP\n",
 			   connect_data->host, connect_data->port,
@@ -895,14 +903,16 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 		return;
 	}
 
-	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(connect_data->fd, F_GETFL);
+	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
-		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+		if ((errno == EINPROGRESS) || (errno == EINTR))
+		{
 			purple_debug_info("proxy", "Connection in progress\n");
 
 			if (connect_data->port != 80)
@@ -1036,6 +1046,8 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 static void
 proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
+	int flags;
+
 	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS4\n",
 			   connect_data->host, connect_data->port,
@@ -1050,7 +1062,8 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 		return;
 	}
 
-	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(connect_data->fd, F_GETFL);
+	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
@@ -1604,6 +1617,8 @@ s5_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 static void
 proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
+	int flags;
+
 	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
 			   connect_data->host, connect_data->port,
@@ -1618,7 +1633,8 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 		return;
 	}
 
-	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(connect_data->fd, F_GETFL);
+	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif

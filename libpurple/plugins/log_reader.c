@@ -28,6 +28,19 @@ enum name_guesses {
 	NAME_GUESS_THEM
 };
 
+/* Some common functions. */
+static int get_month(const char *month)
+{
+	int iter;
+	const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL};
+	for (iter = 0; months[iter]; iter++) {
+		if (strcmp(month, months[iter]) == 0)
+			break;
+	}
+	return iter;
+}
+
 
 /*****************************************************************************
  * Adium Logger                                                              *
@@ -103,9 +116,10 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
 					FILE *handle = g_fopen(filename, "rb");
-					char *contents;
+					char contents[57];   /* XXX: This is really inflexible. */
 					char *contents2;
 					struct adium_logger_data *data;
+					size_t rd;
 					PurpleLog *log;
 
 					if (!handle) {
@@ -113,11 +127,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 						continue;
 					}
 
-					/* XXX: This is really inflexible. */
-					contents = g_malloc(57);
-					fread(contents, 56, 1, handle);
+					rd = fread(contents, 1, 56, handle) == 0;
 					fclose(handle);
-					contents[56] = '\0';
+					contents[rd] = '\0';
 
 					/* XXX: This is fairly inflexible. */
 					contents2 = contents;
@@ -135,11 +147,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 
 						purple_debug_error("Adium log parse",
 						                   "Contents timestamp parsing error\n");
-						g_free(contents);
 						g_free(filename);
 						continue;
 					}
-					g_free(contents);
 
 					data = g_new0(struct adium_logger_data, 1);
 					data->path = filename;
@@ -168,21 +178,20 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
 					FILE *handle = g_fopen(filename, "rb");
-					char *contents;
+					char contents[14];   /* XXX: This is really inflexible. */
 					char *contents2;
 					struct adium_logger_data *data;
 					PurpleLog *log;
+					size_t rd;
 
 					if (!handle) {
 						g_free(filename);
 						continue;
 					}
 
-					/* XXX: This is really inflexible. */
-					contents = g_malloc(14);
-					fread(contents, 13, 1, handle);
+					rd = fread(contents, 1, 13, handle);
 					fclose(handle);
-					contents[13] = '\0';
+					contents[rd] = '\0';
 
 					contents2 = contents;
 					while (*contents2 && *contents2 != '(')
@@ -195,12 +204,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 
 						purple_debug_error("Adium log parse",
 						                   "Contents timestamp parsing error\n");
-						g_free(contents);
 						g_free(filename);
 						continue;
 					}
-
-					g_free(contents);
 
 					tm.tm_year -= 1900;
 					tm.tm_mon  -= 1;
@@ -232,7 +238,6 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	struct adium_logger_data *data;
 	GError *error = NULL;
 	gchar *read = NULL;
-	gsize length;
 
 	/* XXX: TODO: We probably want to set PURPLE_LOG_READ_NO_NEWLINE
 	 * XXX: TODO: for HTML logs. */
@@ -246,8 +251,9 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 
 	purple_debug_info("Adium log read", "Reading %s\n", data->path);
-	if (!g_file_get_contents(data->path, &read, &length, &error)) {
-		purple_debug_error("Adium log read", "Error reading log\n");
+	if (!g_file_get_contents(data->path, &read, NULL, &error)) {
+		purple_debug_error("Adium log read", "Error reading log: %s\n",
+					   (error && error->message) ? error->message : "Unknown error");
 		if (error)
 			g_error_free(error);
 		return g_strdup("");
@@ -1355,36 +1361,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						 * daylight savings time.
 						 */
 						tm.tm_isdst = -1;
-
-						/* Ugly hack, in case current locale
-						 * is not English. This code is taken
-						 * from log.c.
-						 */
-						if (strcmp(month, "Jan") == 0) {
-							tm.tm_mon= 0;
-						} else if (strcmp(month, "Feb") == 0) {
-							tm.tm_mon = 1;
-						} else if (strcmp(month, "Mar") == 0) {
-							tm.tm_mon = 2;
-						} else if (strcmp(month, "Apr") == 0) {
-							tm.tm_mon = 3;
-						} else if (strcmp(month, "May") == 0) {
-							tm.tm_mon = 4;
-						} else if (strcmp(month, "Jun") == 0) {
-							tm.tm_mon = 5;
-						} else if (strcmp(month, "Jul") == 0) {
-							tm.tm_mon = 6;
-						} else if (strcmp(month, "Aug") == 0) {
-							tm.tm_mon = 7;
-						} else if (strcmp(month, "Sep") == 0) {
-							tm.tm_mon = 8;
-						} else if (strcmp(month, "Oct") == 0) {
-							tm.tm_mon = 9;
-						} else if (strcmp(month, "Nov") == 0) {
-							tm.tm_mon = 10;
-						} else if (strcmp(month, "Dec") == 0) {
-							tm.tm_mon = 11;
-						}
+						tm.tm_mon = get_month(month);
 
 						data = g_new0(
 							struct trillian_logger_data, 1);
@@ -1446,7 +1423,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	file = g_fopen(data->path, "rb");
 	fseek(file, data->offset, SEEK_SET);
-	fread(read, data->length, 1, file);
+	data->length = fread(read, 1, data->length, file);
 	fclose(file);
 
 	if (read[data->length-1] == '\n') {
@@ -1808,8 +1785,10 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	error = NULL;
 	if (!g_file_get_contents(path, &contents, NULL, &error)) {
 		purple_debug_error("QIP logger",
-		                   "Couldn't read file %s: %s \n", path, error->message);
-		g_error_free(error);
+				   "Couldn't read file %s: %s \n", path,
+				   (error && error->message) ? error->message : "Unknown error");
+		if (error)
+			g_error_free(error);
 		g_free(path);
 		return list;
 	}
@@ -1937,15 +1916,13 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
-	error = NULL;
-	
-	contents = g_malloc(data->length + 2);
-
 	file = g_fopen(data->path, "rb");
 	g_return_val_if_fail(file != NULL, g_strdup(""));
-	
+
+	contents = g_malloc(data->length + 2);
+
 	fseek(file, data->offset, SEEK_SET);
-	fread(contents, data->length, 1, file);
+	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 
 	contents[data->length] = '\n';
@@ -1955,8 +1932,10 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	error = NULL;
 	if (!(utf8_string = g_convert(contents, -1, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 		purple_debug_error("QIP logger",
-			"Couldn't convert file %s to UTF-8: %s\n", data->path, error->message);
-		g_error_free(error);
+			"Couldn't convert file %s to UTF-8: %s\n", data->path,
+				   (error && error->message) ? error->message : "Unknown error");
+		if (error)
+			g_error_free(error);
 		g_free(contents);
 		return g_strdup("");
 	}
@@ -2022,7 +2001,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 					g_string_append(formatted, "</font> ");
 
 					if (is_in_message) {
-						if (buddy_name != NULL && buddy->alias) {
+						if (buddy_name != NULL && buddy != NULL && buddy->alias) {
 							g_string_append_printf(formatted,
 								"<span style=\"color: #A82F2F;\">"
 								"<b>%s</b></span>: ", buddy->alias);
@@ -2052,7 +2031,9 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 				g_string_append(formatted, line);
 				g_string_append(formatted, "<br>");
 			}
-			line = ++c;
+
+			if (c)
+				line = ++c;
 		}
 	}
 	g_free(contents);
@@ -2094,6 +2075,347 @@ static void qip_logger_finalize(PurpleLog *log)
 	g_free(data);
 }
 
+/*************************************************************************
+ * aMSN Logger                                                           *
+ *************************************************************************/
+
+/* The aMSN logger doesn't write logs, only reads them.  This is to include
+ * aMSN logs in the log viewer transparently.
+ */
+
+static PurpleLogLogger *amsn_logger;
+
+struct amsn_logger_data {
+	char *path;
+	int offset;
+	int length;
+};
+
+#define AMSN_LOG_CONV_START "|\"LRED[Conversation started on "
+#define AMSN_LOG_CONV_END "|\"LRED[You have closed the window on "
+#define AMSN_LOG_CONV_EXTRA "01 Aug 2001 00:00:00]"
+
+static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccount *account)
+{
+	GList *list = NULL;
+	GError *error;
+	char *contents;
+	struct amsn_logger_data *data;
+	PurpleLog *log;
+
+	purple_debug_info("aMSN logger", "Reading %s\n", filename);
+	error = NULL;
+	if (!g_file_get_contents(filename, &contents, NULL, &error)) {
+		purple_debug_error("aMSN logger",
+		                   "Couldn't read file %s: %s \n", filename,
+		                   (error && error->message) ?
+		                    error->message : "Unknown error");
+		if (error)
+			g_error_free(error);
+	} else {
+		char *c = contents;
+		gboolean found_start = FALSE;
+		char *start_log = c;
+		int offset = 0;
+		struct tm tm;
+		while (c && *c) {
+			if (purple_str_has_prefix(c, AMSN_LOG_CONV_START)) {
+				char month[4];
+				if (sscanf(c + strlen(AMSN_LOG_CONV_START),
+				           "%u %3s %u %u:%u:%u",
+				           &tm.tm_mday, (char*)&month, &tm.tm_year,
+				           &tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 6) {
+					found_start = FALSE;
+					purple_debug_error("aMSN logger",
+					                   "Error parsing start date for %s\n",
+					                   filename);
+				} else {
+					tm.tm_year -= 1900;
+
+					/* Let the C library deal with
+					 * daylight savings time.
+					 */
+					tm.tm_isdst = -1;
+					tm.tm_mon = get_month(month);
+
+					found_start = TRUE;
+					offset = c - contents;
+					start_log = c;
+				}
+			} else if (purple_str_has_prefix(c, AMSN_LOG_CONV_END) && found_start) {
+				data = g_new0(struct amsn_logger_data, 1);
+				data->path = g_strdup(filename);
+				data->offset = offset;
+				data->length = c - start_log
+					             + strlen(AMSN_LOG_CONV_END)
+					             + strlen(AMSN_LOG_CONV_EXTRA);
+				log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+				log->logger = amsn_logger;
+				log->logger_data = data;
+				list = g_list_prepend(list, log);
+				found_start = FALSE;
+
+				purple_debug_info("aMSN logger",
+				                  "Found log for %s:"
+				                  " path = (%s),"
+				                  " offset = (%d),"
+				                  " length = (%d)\n",
+				                  sn, data->path, data->offset, data->length);
+			}
+			c = strstr(c, "\n");
+			c++;
+		}
+
+		/* I've seen the file end without the AMSN_LOG_CONV_END bit */
+		if (found_start) {
+			data = g_new0(struct amsn_logger_data, 1);
+			data->path = g_strdup(filename);
+			data->offset = offset;
+			data->length = c - start_log
+				             + strlen(AMSN_LOG_CONV_END)
+				             + strlen(AMSN_LOG_CONV_EXTRA);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+			log->logger = amsn_logger;
+			log->logger_data = data;
+			list = g_list_prepend(list, log);
+			found_start = FALSE;
+
+			purple_debug_info("aMSN logger",
+			                  "Found log for %s:"
+			                  " path = (%s),"
+			                  " offset = (%d),"
+			                  " length = (%d)\n",
+			                  sn, data->path, data->offset, data->length);
+		}
+		g_free(contents);
+	}
+
+	return list;
+}
+
+/* `log_dir`/username@hotmail.com/logs/buddyname@hotmail.com.log */
+/* `log_dir`/username@hotmail.com/logs/Month Year/buddyname@hotmail.com.log */
+static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
+{
+	GList *list = NULL;
+	const char *logdir;
+	char *username;
+	char *log_path;
+	char *buddy_log;
+	char *filename;
+	GDir *dir;
+	const char *name;
+
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/amsn/log_directory");
+
+	/* By clearing the log directory path, this logger can be (effectively) disabled. */
+	if (!logdir || !*logdir)
+		return NULL;
+
+	/* aMSN only works with MSN/WLM */
+	if (strcmp(account->protocol_id, "prpl-msn"))
+		return NULL;
+
+	username = g_strdup(purple_normalize(account, account->username));
+	buddy_log = g_strdup_printf("%s.log", purple_normalize(account, sn));
+	log_path = g_build_filename(logdir, username, "logs", NULL);
+
+	/* First check in the top-level */
+	filename = g_build_filename(log_path, buddy_log, NULL);
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+		list = amsn_logger_parse_file(filename, sn, account);
+	else
+		g_free(filename);
+
+	/* Check in previous months */
+	dir = g_dir_open(log_path, 0, NULL);
+	if (dir) {
+		while ((name = g_dir_read_name(dir)) != NULL) {
+			filename = g_build_filename(log_path, name, buddy_log, NULL);
+			if (g_file_test(filename, G_FILE_TEST_EXISTS))
+				list = g_list_concat(list, amsn_logger_parse_file(filename, sn, account));
+			g_free(filename);
+		}
+		g_dir_close(dir);
+	}
+
+	g_free(log_path);
+
+	/* New versions use 'friendlier' directory names */
+	purple_util_chrreplace(username, '@', '_');
+	purple_util_chrreplace(username, '.', '_');
+
+	log_path = g_build_filename(logdir, username, "logs", NULL);
+
+	/* First check in the top-level */
+	filename = g_build_filename(log_path, buddy_log, NULL);
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+		list = g_list_concat(list, amsn_logger_parse_file(filename, sn, account));
+	g_free(filename);
+
+	/* Check in previous months */
+	dir = g_dir_open(log_path, 0, NULL);
+	if (dir) {
+		while ((name = g_dir_read_name(dir)) != NULL) {
+			filename = g_build_filename(log_path, name, buddy_log, NULL);
+			if (g_file_test(filename, G_FILE_TEST_EXISTS))
+				list = g_list_concat(list, amsn_logger_parse_file(filename, sn, account));
+			g_free(filename);
+		}
+		g_dir_close(dir);
+	}
+
+	g_free(log_path);
+	g_free(username);
+	g_free(buddy_log);
+
+	return list;
+}
+
+/* Really it's |"L, but the string's been escaped */
+#define AMSN_LOG_FORMAT_TAG "|&quot;L"
+
+static char *amsn_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
+{
+	struct amsn_logger_data *data;
+	FILE *file;
+	char *contents;
+	char *escaped;
+	GString *formatted;
+	char *start;
+	gboolean in_span = FALSE;
+
+	if (flags != NULL)
+		*flags = PURPLE_LOG_READ_NO_NEWLINE;
+
+	g_return_val_if_fail(log != NULL, g_strdup(""));
+
+	data = log->logger_data;
+
+	g_return_val_if_fail(data->path != NULL, g_strdup(""));
+	g_return_val_if_fail(data->length > 0, g_strdup(""));
+
+	contents = g_malloc(data->length + 2);
+
+	file = g_fopen(data->path, "rb");
+	g_return_val_if_fail(file != NULL, g_strdup(""));
+	
+	fseek(file, data->offset, SEEK_SET);
+	data->length = fread(contents, 1, data->length, file);
+	fclose(file);
+
+	contents[data->length] = '\n';
+	contents[data->length + 1] = '\0';
+
+	escaped = g_markup_escape_text(contents, -1);
+	g_free(contents);
+	contents = escaped;
+
+	formatted = g_string_sized_new(data->length + 2);
+
+	start = contents;
+	while (start && *start) {
+		char *end;
+		char *old_tag;
+		char *tag;
+		end = strstr(start, "\n");
+		if (!end)
+			break;
+		*end = '\0';
+		if (purple_str_has_prefix(start, AMSN_LOG_FORMAT_TAG) && in_span) {
+			/* New format for this line */
+			g_string_append(formatted, "</span><br>");
+			in_span = FALSE;
+		} else if (start != contents) {
+			/* Continue format from previous line */
+			g_string_append(formatted, "<br>");
+		}
+		old_tag = start;
+		tag = strstr(start, AMSN_LOG_FORMAT_TAG);
+		while (tag) {
+			g_string_append_len(formatted, old_tag, tag - old_tag);
+			tag += strlen(AMSN_LOG_FORMAT_TAG);
+			if (in_span) {
+				g_string_append(formatted, "</span>");
+				in_span = FALSE;
+			}
+			if (*tag == 'C') {
+				/* |"LCxxxxxx is a hex colour */
+				char colour[7];
+				strncpy(colour, tag + 1, 6);
+				colour[6] = '\0';
+				g_string_append_printf(formatted, "<span style=\"color: #%s;\">", colour);
+				/* This doesn't appear to work? */
+				/* g_string_append_printf(formatted, "<span style=\"color: #%6s;\">", tag + 1); */
+				in_span = TRUE;
+				old_tag = tag + 7; /* C + xxxxxx */
+			} else {
+				/* |"Lxxx is a 3-digit colour code */
+				if (purple_str_has_prefix(tag, "RED")) {
+					g_string_append(formatted, "<span style=\"color: red;\">");
+					in_span = TRUE;
+				} else if (purple_str_has_prefix(tag, "GRA")) {
+					g_string_append(formatted, "<span style=\"color: gray;\">");
+					in_span = TRUE;
+				} else if (purple_str_has_prefix(tag, "NOR")) {
+					g_string_append(formatted, "<span style=\"color: black;\">");
+					in_span = TRUE;
+				} else if (purple_str_has_prefix(tag, "ITA")) {
+					g_string_append(formatted, "<span style=\"color: blue;\">");
+					in_span = TRUE;
+				} else if (purple_str_has_prefix(tag, "GRE")) {
+					g_string_append(formatted, "<span style=\"color: darkgreen;\">");
+					in_span = TRUE;
+				} else {
+					purple_debug_info("aMSN logger", "Unknown colour format: %3s\n", tag);
+				}
+				old_tag = tag + 3;
+			}
+			tag = strstr(tag, AMSN_LOG_FORMAT_TAG);
+		}
+		g_string_append(formatted, old_tag);
+		start = end + 1;
+	}
+	if (in_span)
+		g_string_append(formatted, "</span>");
+
+	g_free(contents);
+
+	return g_string_free(formatted, FALSE);
+}
+
+static int amsn_logger_size(PurpleLog *log)
+{
+	struct amsn_logger_data *data;
+	char *text;
+	int size;
+
+	g_return_val_if_fail(log != NULL, 0);
+
+	data = log->logger_data;
+	
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
+		return data ? data->length : 0;
+	}
+
+	text = amsn_logger_read(log, NULL);
+	size = strlen(text);
+	g_free(text);
+
+	return size;
+}
+
+static void amsn_logger_finalize(PurpleLog *log)
+{
+	struct amsn_logger_data *data;
+
+	g_return_if_fail(log != NULL);
+
+	data = log->logger_data;
+	g_free(data->path);
+	g_free(data);
+}
+
 /*****************************************************************************
  * Plugin Code                                                               *
  *****************************************************************************/
@@ -2101,13 +2423,15 @@ static void qip_logger_finalize(PurpleLog *log)
 static void
 init_plugin(PurplePlugin *plugin)
 {
+
+}
+
+static void log_reader_init_prefs() {
 	char *path;
 #ifdef _WIN32
 	char *folder;
 	gboolean found = FALSE;
 #endif
-
-	g_return_if_fail(plugin != NULL);
 
 	purple_prefs_add_none("/plugins/core/log_reader");
 
@@ -2151,18 +2475,18 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Calculate default Messenger Plus! log directory. */
 #ifdef _WIN32
+	path = NULL;
 	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
 		path = g_build_filename(folder, "My Chat Logs", NULL);
 		g_free(folder);
-	} else
-		path = g_strdup("");
+	}
 #else
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Documents and Settings", g_get_user_name(),
 	                        "My Documents", "My Chat Logs", NULL);
 #endif
-	purple_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path ? path : "");
 	g_free(path);
 
 
@@ -2171,18 +2495,18 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Calculate default MSN message history directory. */
 #ifdef _WIN32
+	path = NULL;
 	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
 		path = g_build_filename(folder, "My Received Files", NULL);
 		g_free(folder);
-	} else
-		path = g_strdup("");
+	}
 #else
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Documents and Settings", g_get_user_name(),
 	                        "My Documents", "My Received Files", NULL);
 #endif
-	purple_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path ? path : "");
 	g_free(path);
 
 
@@ -2261,21 +2585,22 @@ init_plugin(PurplePlugin *plugin)
 			g_key_file_free(key_file);
 		}
 #else /* !GLIB_CHECK_VERSION(2,6,0) */
-		gsize length;
 		gchar *contents = NULL;
 
 		purple_debug_info("Trillian talk.ini read",
-					"Reading %s\n", path);
-		if (!g_file_get_contents(path, &contents, &length, &error)) {
+				  "Reading %s\n", path);
+		if (!g_file_get_contents(path, &contents, NULL, &error)) {
 			purple_debug_error("Trillian talk.ini read",
-			                   "Error reading talk.ini\n");
+					   "Error reading talk.ini: %s\n",
+					   (error && error->message) ? error->message : "Unknown error");
 			if (error)
 				g_error_free(error);
 		} else {
-			char *line = contents;
-			while (*contents) {
-				if (*contents == '\n') {
-					*contents = '\0';
+			char *cursor, *line;
+			line = cursor = contents;
+			while (*cursor) {
+				if (*cursor == '\n') {
+					*cursor = '\0';
 
 					/* XXX: This assumes the first Directory key is under [Logging]. */
 					if (purple_str_has_prefix(line, "Directory=")) {
@@ -2287,25 +2612,29 @@ init_plugin(PurplePlugin *plugin)
 						found = TRUE;
 					}
 
-					contents++;
-					line = contents;
+					cursor++;
+					line = cursor;
 				} else
-					contents++;
+					cursor++;
 			}
-			g_free(path);
 			g_free(contents);
 		}
+		g_free(path);
 #endif /* !GTK_CHECK_VERSION(2,6,0) */
 	} /* path */
 
 	if (!found) {
+		path = NULL;
 		folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 		if (folder) {
 			path = g_build_filename(folder, "Trillian", "users",
 			                        "default", "logs", NULL);
 			g_free(folder);
-		} else
-			path = g_strdup("");
+		}
+
+		purple_prefs_add_string(
+			"/plugins/core/log_reader/trillian/log_directory", path ? path : "");
+		g_free(path);
 	}
 #else /* !defined(_WIN32) */
 	/* TODO: At some point, this could attempt to parse talk.ini
@@ -2316,25 +2645,44 @@ init_plugin(PurplePlugin *plugin)
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Program Files", "Trillian", "users",
 	                        "default", "logs", NULL);
+	purple_prefs_add_string(
+		"/plugins/core/log_reader/trillian/log_directory", path);
+	g_free(path);
 #endif
-
 
 	/* Add QIP log directory preference. */
 	purple_prefs_add_none("/plugins/core/log_reader/qip");
 
 	/* Calculate default QIP log directory. */
 #ifdef _WIN32
+	path = NULL;
 	folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 	if (folder) {
 		path = g_build_filename(folder, "QIP", "Users", NULL);
 		g_free(folder);
-	} else
-		path = g_strdup("");
+	}
 #else
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Program Files", "QIP", "Users", NULL);
 #endif
-	purple_prefs_add_string("/plugins/core/log_reader/qip/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/qip/log_directory", path ? path : "");
+	g_free(path);
+
+	/* Add aMSN Messenger log directory preference. */
+	purple_prefs_add_none("/plugins/core/log_reader/amsn");
+
+	/* Calculate default aMSN log directory. */
+#ifdef _WIN32
+	path = NULL;
+	folder = wpurple_get_special_folder(CSIDL_PROFILE); /* Silly aMSN, not using CSIDL_APPDATA */
+	if (folder) {
+		path = g_build_filename(folder, "amsn", NULL);
+		g_free(folder);
+	}
+#else
+	path = g_build_filename(purple_home_dir(), ".amsn", NULL);
+#endif
+	purple_prefs_add_string("/plugins/core/log_reader/amsn/log_directory", path ? path : "");
 	g_free(path);
 }
 
@@ -2342,6 +2690,8 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	log_reader_init_prefs();
 
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
@@ -2418,6 +2768,18 @@ plugin_load(PurplePlugin *plugin)
 										  trillian_logger_size);
 	purple_log_logger_add(trillian_logger);
 
+	/* The names of IM clients are marked for translation at the request of
+	   translators who wanted to transliterate them.  Many translators
+	   choose to leave them alone.  Choose what's best for your language. */
+	amsn_logger = purple_log_logger_new("amsn", _("aMSN"), 6,
+									   NULL,
+									   NULL,
+									   amsn_logger_finalize,
+									   amsn_logger_list,
+									   amsn_logger_read,
+									   amsn_logger_size);
+	purple_log_logger_add(amsn_logger);
+
 	return TRUE;
 }
 
@@ -2434,6 +2796,7 @@ plugin_unload(PurplePlugin *plugin)
 	purple_log_logger_remove(msn_logger);
 	purple_log_logger_remove(trillian_logger);
 	purple_log_logger_remove(qip_logger);
+	purple_log_logger_remove(amsn_logger);
 
 	return TRUE;
 }
@@ -2492,6 +2855,10 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/trillian/log_directory", _("Trillian"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/amsn/log_directory", _("aMSN"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;

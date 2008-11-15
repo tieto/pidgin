@@ -223,6 +223,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	char keys[256];
 	int rd;
 	char *k;
+	char *cvrt = NULL;
 
 	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
 		return FALSE;
@@ -243,15 +244,16 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		raise(SIGABRT);
 	}
 
-	gnt_wm_set_event_stack(wm, TRUE);
 	rd += HOLDING_ESCAPE;
-	keys[rd] = 0;
-	if (mouse_enabled && detect_mouse_action(keys))
-		goto end;
-
 	if (HOLDING_ESCAPE)
 		keys[0] = '\033';
-	k = keys;
+	keys[rd] = 0;
+	gnt_wm_set_event_stack(wm, TRUE);
+
+	cvrt = g_locale_to_utf8(keys, rd, (gsize*)&rd, NULL, NULL);
+	k = cvrt ? cvrt : keys;
+	if (mouse_enabled && detect_mouse_action(k))
+		goto end;
 
 #if 0
 	/* I am not sure what's happening here. If this actually does something,
@@ -290,6 +292,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	}
 end:
 	gnt_wm_set_event_stack(wm, FALSE);
+	g_free(cvrt);
 	return TRUE;
 }
 
@@ -409,7 +412,8 @@ sighandler(int sig)
 	case SIGWINCH:
 		erase();
 		g_idle_add(refresh_screen, NULL);
-		org_winch_handler(sig);
+		if (org_winch_handler)
+			org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);
 		break;
 #endif

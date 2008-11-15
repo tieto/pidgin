@@ -1,5 +1,30 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.2.2 (10/23/2007):
+	Luke: Because the main branch of pidgin development is still not
+	ready for public consumption, I have taken some time to try to
+	pull the many bug fixes that have happened since then into a
+	separate branch.  This release is the result of that effort.
+
+2.2.1 (9/28/2007):
+	Richard: We have some new code in the pipeline, but it's not quite
+	ready for a general release.  Instead, this is basically a bug fix
+	release.
+
+	Luke: Unfortunately the necessity of this bug fix release means
+	some of the tickets that have been closed as part of the 2.2.1
+	milestone are not actually fixed yet.  We have grabbed as many
+	of the changes as we could while avoiding those that are as
+	yet unstable though, and this should still be a marked
+	improvement over 2.2.0.  We have spent a lot of time since the
+	last release looking at the tickets that have been submitted
+	and many of them have been closed.
+
+	Stu: I haven't NEWS'd in a while. I haven't actually done much for
+	too long also, maybe I'll find some time soon. This release is
+	basically what 2.2.0 should have been - it actually compiles this
+	time.
+
 2.2.0 (9/13/2007):
 	Sean: 2.2.0 contains the results of several major Google Summer
 	of Code branches bringing some new, extraordinary features. We

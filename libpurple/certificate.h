@@ -1,6 +1,8 @@
 /**
  * @file certificate.h Public-Key Certificate API
  * @ingroup core
+ * @see @ref certificate-signals
+ * @since 2.2.0
  */
 
 /*
@@ -433,7 +435,7 @@ purple_certificate_destroy_list (GList * crt_list);
  *
  * @return TRUE if 'crt' has a valid signature made by 'issuer',
  *         otherwise FALSE
- * @TODO Find a way to give the reason (bad signature, not the issuer, etc.) 
+ * @todo Find a way to give the reason (bad signature, not the issuer, etc.) 
  */
 gboolean
 purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
@@ -448,7 +450,7 @@ purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
  * @param chain      List of PurpleCertificate instances comprising the chain,
  *                   in the order certificate, issuer, issuer's issuer, etc.
  * @return TRUE if the chain is valid. See description.
- * @TODO Specify which certificate in the chain caused a failure
+ * @todo Specify which certificate in the chain caused a failure
  */
 gboolean
 purple_certificate_check_signature_chain(GList *chain);
@@ -779,7 +781,7 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool);
  * Displays a window showing X.509 certificate information
  *
  * @param crt    Certificate under an "x509" Scheme
- * @TODO Will break on CA certs, as they have no Common Name
+ * @todo Will break on CA certs, as they have no Common Name
  */
 void
 purple_certificate_display_x509(PurpleCertificate *crt);

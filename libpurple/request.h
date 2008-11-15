@@ -266,7 +266,7 @@ void purple_request_fields_add_group(PurpleRequestFields *fields,
  *
  * @param fields The fields list.
  *
- * @return A list of groups.
+ * @constreturn A list of groups.
  */
 GList *purple_request_fields_get_groups(const PurpleRequestFields *fields);
 
@@ -424,7 +424,7 @@ const char *purple_request_field_group_get_title(
  *
  * @param group The group.
  *
- * @return The list of fields in the group.
+ * @constreturn The list of fields in the group.
  */
 GList *purple_request_field_group_get_fields(
 		const PurpleRequestFieldGroup *group);
@@ -836,7 +836,7 @@ int purple_request_field_choice_get_value(const PurpleRequestField *field);
  *
  * @param field The field.
  *
- * @return The list of labels.
+ * @constreturn The list of labels.
  */
 GList *purple_request_field_choice_get_labels(const PurpleRequestField *field);
 

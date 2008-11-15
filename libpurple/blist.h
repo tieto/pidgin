@@ -1,6 +1,7 @@
 /**
  * @file blist.h Buddy List API
  * @ingroup core
+ * @see @ref blist-signals
  */
 
 /* purple
@@ -22,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref blist-signals
  */
 #ifndef _PURPLE_BLIST_H_
 #define _PURPLE_BLIST_H_
@@ -65,11 +64,11 @@ typedef enum
 
 typedef enum
 {
-	PURPLE_BLIST_NODE_FLAG_NO_SAVE = 1 /**< node should not be saved with the buddy list */
+	PURPLE_BLIST_NODE_FLAG_NO_SAVE      = 1 << 0, /**< node should not be saved with the buddy list */
 
 } PurpleBlistNodeFlags;
 
-#define PURPLE_BLIST_NODE_HAS_FLAG(b, f) ((b)->flags & (f))
+#define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (((PurpleBlistNode*)(b))->flags & (f))
 #define PURPLE_BLIST_NODE_SHOULD_SAVE(b) (! PURPLE_BLIST_NODE_HAS_FLAG(b, PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 
 #define PURPLE_BLIST_NODE_NAME(n) ((n)->type == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
@@ -488,6 +487,8 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
  *
  * @param contact  The contact
  * @param alias    The alias to set, or NULL to unset
+ *
+ * @deprecated Use purple_blist_alias_contact() instead.
  */
 void purple_contact_set_alias(PurpleContact *contact, const char *alias);
 

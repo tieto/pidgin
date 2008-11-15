@@ -345,7 +345,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (xfer)
 		{
 			bin = (char *)purple_base64_decode(context, &bin_len);
-			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 2));
+			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 8));
 
 			uni_name = (gunichar2 *)(bin + 20);
 			while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {
@@ -505,6 +505,9 @@ got_invite(MsnSlpCall *slpcall,
 		int port;
 
 		nonce = get_token(content, "Nonce: {", "}\r\n");
+		if (ip_addrs == NULL)
+			return;
+
 		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
 
 		temp = get_token(content, "IPv4Internal-Port: ", "\r\n");
@@ -513,9 +516,6 @@ got_invite(MsnSlpCall *slpcall,
 		else
 			port = -1;
 		g_free(temp);
-
-		if (ip_addrs == NULL)
-			return;
 
 		if (port > 0)
 			got_transresp(slpcall, nonce, ip_addrs, port);
@@ -598,6 +598,9 @@ got_ok(MsnSlpCall *slpcall,
 		int port;
 
 		nonce = get_token(content, "Nonce: {", "}\r\n");
+		if (ip_addrs == NULL)
+			return;
+
 		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
 
 		temp = get_token(content, "IPv4Internal-Port: ", "\r\n");
@@ -606,9 +609,6 @@ got_ok(MsnSlpCall *slpcall,
 		else
 			port = -1;
 		g_free(temp);
-
-		if (ip_addrs == NULL)
-			return;
 
 		if (port > 0)
 			got_transresp(slpcall, nonce, ip_addrs, port);

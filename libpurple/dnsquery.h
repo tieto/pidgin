@@ -59,7 +59,7 @@ typedef struct
 	                         PurpleDnsQueryFailedCallback failed_cb);
 
 	/** Called just before @a query_data is freed; this should cancel any
-	 *  further use of @q query_data the UI would make. Unneeded if
+	 *  further use of @a query_data the UI would make. Unneeded if
 	 *  #resolve_host is not implemented.
 	 */
 	void (*destroy)(PurpleDnsQueryData *query_data);

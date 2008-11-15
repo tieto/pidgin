@@ -27,8 +27,8 @@
 
 #include "config.h"
 
+#include <glib.h>
 #include <ctype.h>
-#include <glib/gprintf.h>
 #include <gmodule.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1717,12 +1717,11 @@ void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget)
 void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 {
 	GntWS *s;
-	GntNode *node;
 	int pos;
 
 	s = gnt_wm_widget_find_workspace(wm, widget);
 
-	if ((node = g_hash_table_lookup(wm->nodes, widget)) == NULL)
+	if (g_hash_table_lookup(wm->nodes, widget) == NULL)
 		return;
 
 	g_signal_emit(wm, signals[SIG_CLOSE_WIN], 0, widget);

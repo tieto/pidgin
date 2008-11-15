@@ -46,8 +46,8 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [2])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [2])
-m4_define([purple_micro_version], [1])
-m4_define([purple_version_suffix], [devel])
+m4_define([purple_micro_version], [3])
+m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
@@ -55,8 +55,8 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [2])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [2])
-m4_define([gnt_micro_version], [1])
-m4_define([gnt_version_suffix], [devel])
+m4_define([gnt_micro_version], [3])
+m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -136,19 +136,27 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@latin sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno
+if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT = x
 then
 	AC_ERROR([
 
 The msgfmt command is required to build libpurple.  If it is installed
 on your system, ensure that it is in your path.  If it is not, install
 GNU gettext to continue.
+
+If you have msgfmt installed, but for some reason this error message
+is still displayed, you have encountered what appears to be a bug in
+third-party configure macros.  Try setting the MSGFMT environment
+variable to the absolute path to your msgfmt binary and trying
+configure again, like this:
+
+MSGFMT=/path/to/msgfmt ./configure ...
 ])
 fi
 
@@ -1460,7 +1468,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None (MSN and Google Talk will not work without SSL!)"
+msg_ssl="None. MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 
 dnl #
 dnl # Check for GnuTLS if it's specified.
@@ -2093,6 +2101,10 @@ AC_ARG_ENABLE(dot,
 	[AC_HELP_STRING([--enable-dot],
 		[enable graphs in doxygen via 'dot'])],
 	enable_dot="$enableval", enable_dot="yes")
+AC_ARG_ENABLE(devhelp,
+	[AC_HELP_STRING([--enable-devhelp],
+		[enable building index for devhelp documentation browser])],
+	enable_devhelp="$enableval", enable_devhelp="yes")
 
 if test "x$enable_doxygen" = xyes; then
 	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
@@ -2112,14 +2124,28 @@ if test "x$enable_doxygen" = xyes; then
 				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
 			fi
 		fi
+
+		if test "x$enable_devhelp" = "xyes"; then
+			AC_CHECK_PROG(XSLTPROC, xsltproc, true, false)
+
+			if test $XSLTPROC = false; then
+				enable_devhelp="no";
+				AC_MSG_WARN([*** xsltproc not found; devhelp index will not be created])
+			else
+				AC_DEFINE_UNQUOTED(HAVE_XSLTPROC, 1, [whether or not we have xsltproc for devhelp index])
+			fi
+		fi
 	fi
 else
 	enable_dot="no"
+	enable_devhelp="no"
 fi
 
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
+AC_SUBST(enable_devhelp)
 AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
+AM_CONDITIONAL(HAVE_XSLTPROC, test "x$enable_devhelp" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
@@ -2247,6 +2273,7 @@ AC_OUTPUT([Makefile
 		   share/Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
+		   finch/finch.pc
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

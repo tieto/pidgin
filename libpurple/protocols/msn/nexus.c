@@ -216,7 +216,5 @@ msn_nexus_connect(MsnNexus *nexus)
 	soap = msn_soap_message_new(NULL, xmlnode_from_str(tail, -1));
 	msn_soap_message_send(nexus->session, soap, MSN_TWN_SERVER, TWN_POST_URL,
 		nexus_got_response_cb, nexus);
-
-	return;
 }
 

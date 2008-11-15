@@ -250,9 +250,6 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	new_plugin = purple_find_prpl(id);
 
-	if (new_plugin == dialog->plugin)
-		return;
-
 	dialog->plugin = new_plugin;
 
 	if (dialog->plugin != NULL)
@@ -269,6 +266,8 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
 	add_protocol_options(dialog, dialog->bottom_vbox);
+
+	gtk_widget_grab_focus(dialog->protocol_menu);
 
 	if (!dialog->prpl_info || !dialog->prpl_info->register_user || 
 	    g_object_get_data(G_OBJECT(item), "fake")) {
@@ -1329,8 +1328,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 					break;
 
 				case PURPLE_PREF_STRING_LIST:
-					gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
-					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
+					value2 = NULL;
+					if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter))
+						gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
 					purple_account_set_string(account, setting, value2);
 					break;
 

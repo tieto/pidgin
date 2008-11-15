@@ -39,6 +39,8 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	char *subject;
 	const char *in_str;
 	char *to_name;
+	char *default_tos[1];
+
 	int i, count = 1, returned_count;
 
 	const char **tos, **froms, **urls;
@@ -55,15 +57,21 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	if (in_str && *in_str)
 		count = atoi(in_str);
 
-	if (count == 0)
-		return;
+	/* If Gmail doesn't tell us who the mail is to, let's use our JID */
+	to = xmlnode_get_attrib(packet, "to");
+	default_tos[0] = jabber_get_bare_jid(to);
 
 	message = xmlnode_get_child(child, "mail-thread-info");
 
+	if (count == 0 || !message) {
+		if (count > 0)
+			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
+		g_free(default_tos[0]);
+		return;
+	}
+
 	/* Loop once to see how many messages were returned so we can allocate arrays
 	 * accordingly */
-	if (!message)
-		return;
 	for (returned_count = 0; message; returned_count++, message=xmlnode_get_next_twin(message));
 
 	froms    = g_new0(const char* , returned_count);
@@ -102,7 +110,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 		tos[i] = (to_name != NULL ?  to_name : "");
 		froms[i] = (from != NULL ?  from : "");
 		subjects[i] = (subject != NULL ? subject : g_strdup(""));
-		urls[i] = (url != NULL ? url : "");
+		urls[i] = url;
 
 		tid = xmlnode_get_attrib(message, "tid");
 		if (tid &&
@@ -115,9 +123,13 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	if (i>0)
 		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
+	else
+		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
+
 
 	g_free(to_name);
 	g_free(tos);
+	g_free(default_tos[0]);
 	g_free(froms);
 	for (; i > 0; i--)
 		g_free(subjects[i - 1]);
@@ -219,7 +231,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	gboolean on_block_list = FALSE;
 
-	char *jid_norm = g_strdup(jabber_normalize(account, jid));
+	char *jid_norm;
 
 	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
 	const char *subscription = xmlnode_get_attrib(item, "subscription");
@@ -231,6 +243,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 		return FALSE;
 	}
 
+ 	jid_norm = g_strdup(jabber_normalize(account, jid));
+
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
 			on_block_list = TRUE;
@@ -241,7 +255,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	if (grt && (*grt == 'H' || *grt == 'h')) {
 		PurpleBuddy *buddy = purple_find_buddy(account, jid_norm);
-		purple_blist_remove_buddy(buddy);
+		if (buddy)
+			purple_blist_remove_buddy(buddy);
 		g_free(jid_norm);
 		return FALSE;
 	}

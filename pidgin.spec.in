@@ -44,9 +44,15 @@ BuildRequires: gtk2-devel
 BuildRequires: gnutls-devel
 %{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
+Requires(pre): gconf2
+Requires(post): gconf2
+Requires(preun): gconf2
 %else
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
+Requires(pre): GConf2
+Requires(post): GConf2
+Requires(preun): GConf2
 %endif
 
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
@@ -72,9 +78,7 @@ BuildRequires: mozilla-nss-devel
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
-Requires(pre): GConf2
-Requires(post): GConf2
-Requires(preun): GConf2
+Requires: libpurple = %{version}
 
 Obsoletes: gaim
 Provides: gaim
@@ -451,12 +455,20 @@ touch --no-create %{_datadir}/icons/hicolor || :
 # libgnt
 %dir %{_includedir}/gnt
 %{_includedir}/gnt/*.h
+%{_libdir}/pkgconfig/finch.pc
 %{_libdir}/pkgconfig/gnt.pc
 %{_libdir}/libgnt.so
 
 %endif
 
 %changelog
+* Tue Oct 23 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add finch.pc to finch-devel
+
+* Mon Sep 17 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add version dependency on libpurple for pidgin
+- Support for OpenSuse lowercase package name for GConf2
+
 * Fri Sep 14 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Fix spec file for moved sounds & new CA certificates
 

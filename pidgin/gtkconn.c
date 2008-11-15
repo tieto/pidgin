@@ -141,6 +141,7 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 {
 	PurpleAccount *account = NULL;
 	PidginAutoRecon *info;
+	GList *list;
 
 	account = purple_connection_get_account(gc);
 	info = g_hash_table_lookup(auto_reconns, account);
@@ -191,6 +192,17 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 		 * on from somewhere else, or when you enter an invalid password.
 		 */
 		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+	}
+
+	/* If we have any open chats, we probably want to rejoin when we get back online. */
+	list = purple_get_chats();
+	while (list) {
+		PurpleConversation *conv = list->data;
+		list = list->next;
+		if (conv->account != account ||
+				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
+			continue;
+		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 	}
 }
 

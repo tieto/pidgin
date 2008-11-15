@@ -68,7 +68,7 @@ struct _PurpleUtilFetchUrlData
 };
 
 static char *custom_user_dir = NULL;
-static char *home_dir = NULL;
+static char *user_dir = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -1515,8 +1515,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							plain = g_string_append(plain, alt->str);
 						if(!src && xhtml)
 							xhtml = g_string_append(xhtml, alt->str);
+						g_string_free(alt, TRUE);
 					}
-					g_string_free(alt, TRUE);
 					g_string_free(src, TRUE);
 					continue;
 				}
@@ -1526,7 +1526,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					while(*p && *p != '>') {
 						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
 							const char *q = p + strlen("href=");
-							g_string_free(url, TRUE);
+							if (url)
+								g_string_free(url, TRUE);
 							url = g_string_new("");
 							cdata = g_string_new("");
 							if(*q == '\'' || *q == '\"')
@@ -1548,7 +1549,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "a";
 					tags = g_list_prepend(tags, pt);
 					if(xhtml)
-						g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
+						g_string_append_printf(xhtml, "<a href='%s'>", url ? g_strstrip(url->str) : "");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -2447,10 +2448,10 @@ purple_user_dir(void)
 {
 	if (custom_user_dir != NULL)
 		return custom_user_dir;
-	else if (!home_dir)
-		home_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
+	else if (!user_dir)
+		user_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
 
-	return home_dir;
+	return user_dir;
 }
 
 void purple_util_set_user_dir(const char *dir)
@@ -2547,15 +2548,14 @@ purple_util_write_data_to_file(const char *filename, const char *data, gssize si
 
 	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", user_dir, filename);
 
-	ret = purple_util_write_data_to_file_absolute(filename_full,
-						      data,size);
+	ret = purple_util_write_data_to_file_absolute(filename_full, data, size);
 
 	g_free(filename_full);
 	return ret;
 }
 
 gboolean
-purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size)
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, gssize size)
 {
 	gchar *filename_temp;
 	FILE *file;
@@ -2564,6 +2564,8 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 
 	purple_debug_info("util", "Writing file %s\n",
 					filename_full);
+
+	g_return_val_if_fail((size >= -1), FALSE);
 
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
@@ -2590,7 +2592,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	}
 
 	/* Write to file */
-	real_size = (size == -1) ? strlen(data) : size;
+	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
 
 	/* Close file */
@@ -3491,7 +3493,7 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 	gboolean full;
 	int len;
 
-	if ((s = g_strstr_len(data, data_len, "Location: ")) == NULL)
+	if ((s = g_strstr_len(data, data_len, "\nLocation: ")) == NULL)
 		/* We're not being redirected */
 		return FALSE;
 
@@ -3853,6 +3855,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 	gfud->full = full;
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
+	gfud->fd = -1;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);

@@ -38,6 +38,7 @@
 #include "gtkprefs.h"
 #include "gtksavedstatuses.h"
 #include "gtksound.h"
+#include "gtkstatusbox.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
 #include "gtkdocklet.h"
@@ -144,15 +145,22 @@ docklet_update_status()
 		if (ui_ops->set_tooltip) {
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
-				if (PIDGIN_IS_PIDGIN_CONVERSATION(l->data)) {
-					PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)l->data);
-					if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1)
-						g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
-					else
-						g_string_append_printf(tooltip_text,
-							ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
-							gtkconv->unseen_count,
-							gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+				PurpleConversation *conv = (PurpleConversation *)l->data;
+				PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+
+				if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1) {
+					g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
+				} else if(gtkconv) {
+					g_string_append_printf(tooltip_text,
+						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
+						gtkconv->unseen_count,
+						purple_conversation_get_title(conv));
+				} else {
+					g_string_append_printf(tooltip_text,
+						ngettext("%d unread message from %s\n", "%d unread messages from %s\n",
+						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"))),
+						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")),
+						purple_conversation_get_title(conv));
 				}
 			}
 
@@ -356,6 +364,10 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 }
 #endif
 
+/* There is a lot of code here for handling the status submenu, much of
+ * which is duplicated from the gtkstatusbox. It'd be nice to add API
+ * somewhere to simplify this (either in the statusbox, or in libpurple).
+ */
 static void
 show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -367,6 +379,70 @@ show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 
 	pidgin_status_editor_show(FALSE,
 		purple_savedstatus_is_transient(saved_status) ? saved_status : NULL);
+}
+
+static PurpleSavedStatus *
+create_transient_status(PurpleStatusPrimitive primitive, PurpleStatusType *status_type)
+{
+	PurpleSavedStatus *saved_status = purple_savedstatus_new(NULL, primitive);
+
+	if(status_type != NULL) {
+		GList *tmp, *active_accts = purple_accounts_get_all_active();
+		for (tmp = active_accts; tmp != NULL; tmp = tmp->next) {
+			purple_savedstatus_set_substatus(saved_status,
+				(PurpleAccount*) tmp->data, status_type, NULL);
+		}
+		g_list_free(active_accts);
+	}
+
+	return saved_status;
+}
+
+static void
+activate_status_account_cb(GtkMenuItem *menuitem, gpointer user_data)
+{
+	PurpleStatusType *status_type;
+	PurpleStatusPrimitive primitive;
+	PurpleSavedStatus *saved_status = NULL;
+	GList *iter = purple_savedstatuses_get_all();
+	GList *tmp, *active_accts = purple_accounts_get_all_active();
+
+	status_type = (PurpleStatusType *)user_data;
+	primitive = purple_status_type_get_primitive(status_type);
+
+	for (; iter != NULL; iter = iter->next) {
+		PurpleSavedStatus *ss = iter->data;
+		if ((purple_savedstatus_get_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
+			purple_savedstatus_has_substatuses(ss))
+		{
+			gboolean found = FALSE;
+			/* The currently enabled accounts must have substatuses for all the active accts */
+			for(tmp = active_accts; tmp != NULL; tmp = tmp->next) {
+				PurpleAccount *acct = tmp->data;
+				PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
+				if (sub) {
+					const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
+					const char *subtype_status_id = purple_status_type_get_id(sub_type);
+					if (subtype_status_id && !strcmp(subtype_status_id,
+							purple_status_type_get_id(status_type)))
+						found = TRUE;
+				}
+			}
+			if (!found)
+				continue;
+			saved_status = ss;
+			break;
+		}
+	}
+
+	g_list_free(active_accts);
+
+	/* Create a new transient saved status if we weren't able to find one */
+	if (saved_status == NULL)
+		saved_status = create_transient_status(primitive, status_type);
+
+	/* Set the status for each account */
+	purple_savedstatus_activate(saved_status);
 }
 
 static void
@@ -382,7 +458,7 @@ activate_status_primitive_cb(GtkMenuItem *menuitem, gpointer user_data)
 
 	/* Create a new transient saved status if we weren't able to find one */
 	if (saved_status == NULL)
-		saved_status = purple_savedstatus_new(NULL, primitive);
+		saved_status = create_transient_status(primitive, NULL);
 
 	/* Set the status for each account */
 	purple_savedstatus_activate(saved_status);
@@ -407,7 +483,7 @@ new_menu_item_with_status_icon(GtkWidget *menu, const char *str, PurpleStatusPri
 	GdkPixbuf *pixbuf;
 	GtkWidget *image;
 
-	menuitem = gtk_image_menu_item_new_with_mnemonic(str);
+	menuitem = gtk_image_menu_item_new_with_label(str);
 
 	if (menu)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -425,31 +501,67 @@ new_menu_item_with_status_icon(GtkWidget *menu, const char *str, PurpleStatusPri
 	return menuitem;
 }
 
+static void
+add_account_statuses(GtkWidget *menu, PurpleAccount *account)
+{
+	GList *l;
+
+	for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
+		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
+		PurpleStatusPrimitive prim;
+
+		if (!purple_status_type_is_user_settable(status_type))
+			continue;
+
+		prim = purple_status_type_get_primitive(status_type);
+
+		new_menu_item_with_status_icon(menu,
+			purple_status_type_get_name(status_type),
+			prim, G_CALLBACK(activate_status_account_cb),
+			status_type, 0, 0, NULL);
+	}
+}
+
 static GtkWidget *
 docklet_status_submenu()
 {
 	GtkWidget *submenu, *menuitem;
 	GList *popular_statuses, *cur;
+	PidginStatusBox *statusbox = NULL;
 
 	submenu = gtk_menu_new();
 	menuitem = gtk_menu_item_new_with_label(_("Change Status"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
-	new_menu_item_with_status_icon(submenu, _("Available"),
-		PURPLE_STATUS_AVAILABLE, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(PURPLE_STATUS_AVAILABLE), 0, 0, NULL);
+	if(pidgin_blist_get_default_gtk_blist() != NULL) {
+		statusbox = PIDGIN_STATUS_BOX(pidgin_blist_get_default_gtk_blist()->statusbox);
+	}
 
-	new_menu_item_with_status_icon(submenu, _("Away"),
-		PURPLE_STATUS_AWAY, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(PURPLE_STATUS_AWAY), 0, 0, NULL);
+	if(statusbox && statusbox->account != NULL) {
+		add_account_statuses(submenu, statusbox->account);
+	} else if(statusbox && statusbox->token_status_account != NULL) {
+		add_account_statuses(submenu, statusbox->token_status_account);
+	} else {
+		new_menu_item_with_status_icon(submenu, _("Available"),
+			PURPLE_STATUS_AVAILABLE, G_CALLBACK(activate_status_primitive_cb),
+			GINT_TO_POINTER(PURPLE_STATUS_AVAILABLE), 0, 0, NULL);
 
-	new_menu_item_with_status_icon(submenu, _("Invisible"),
-		PURPLE_STATUS_INVISIBLE, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(PURPLE_STATUS_INVISIBLE), 0, 0, NULL);
+		new_menu_item_with_status_icon(submenu, _("Away"),
+			PURPLE_STATUS_AWAY, G_CALLBACK(activate_status_primitive_cb),
+			GINT_TO_POINTER(PURPLE_STATUS_AWAY), 0, 0, NULL);
 
-	new_menu_item_with_status_icon(submenu, _("Offline"),
-		PURPLE_STATUS_OFFLINE, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(PURPLE_STATUS_OFFLINE), 0, 0, NULL);
+		new_menu_item_with_status_icon(submenu, _("Do not disturb"),
+			PURPLE_STATUS_UNAVAILABLE, G_CALLBACK(activate_status_primitive_cb),
+			GINT_TO_POINTER(PURPLE_STATUS_UNAVAILABLE), 0, 0, NULL);
+
+		new_menu_item_with_status_icon(submenu, _("Invisible"),
+			PURPLE_STATUS_INVISIBLE, G_CALLBACK(activate_status_primitive_cb),
+			GINT_TO_POINTER(PURPLE_STATUS_INVISIBLE), 0, 0, NULL);
+
+		new_menu_item_with_status_icon(submenu, _("Offline"),
+			PURPLE_STATUS_OFFLINE, G_CALLBACK(activate_status_primitive_cb),
+			GINT_TO_POINTER(PURPLE_STATUS_OFFLINE), 0, 0, NULL);
+	}
 
 	popular_statuses = purple_savedstatuses_get_popular(6);
 	if (popular_statuses != NULL)
@@ -471,6 +583,87 @@ docklet_status_submenu()
 	pidgin_new_item_from_stock(submenu, _("Saved..."), NULL, G_CALLBACK(pidgin_status_window_show), NULL, 0, 0, NULL);
 
 	return menuitem;
+}
+
+
+
+static void
+plugin_act(GtkObject *obj, PurplePluginAction *pam)
+{
+	if (pam && pam->callback)
+		pam->callback(pam);
+}
+
+static void
+build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
+		gpointer context)
+{
+	GtkWidget *menuitem;
+	PurplePluginAction *action = NULL;
+	GList *actions, *l;
+
+	actions = PURPLE_PLUGIN_ACTIONS(plugin, context);
+
+	for (l = actions; l != NULL; l = l->next)
+	{
+		if (l->data)
+		{
+			action = (PurplePluginAction *) l->data;
+			action->plugin = plugin;
+			action->context = context;
+
+			menuitem = gtk_menu_item_new_with_label(action->label);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+					G_CALLBACK(plugin_act), action);
+			g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
+								   action,
+								   (GDestroyNotify)purple_plugin_action_free);
+			gtk_widget_show(menuitem);
+		}
+		else
+			pidgin_separator(menu);
+	}
+
+	g_list_free(actions);
+}
+
+
+static void
+docklet_plugin_actions(GtkWidget *menu)
+{
+	GtkWidget *menuitem, *submenu;
+	PurplePlugin *plugin = NULL;
+	GList *l;
+	int c = 0;
+
+	g_return_if_fail(menu != NULL);
+
+	/* Add a submenu for each plugin with custom actions */
+	for (l = purple_plugins_get_loaded(); l; l = l->next) {
+		plugin = (PurplePlugin *) l->data;
+
+		if (PURPLE_IS_PROTOCOL_PLUGIN(plugin))
+			continue;
+
+		if (!PURPLE_PLUGIN_HAS_ACTIONS(plugin))
+			continue;
+
+		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		gtk_widget_show(menuitem);
+
+		submenu = gtk_menu_new();
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+		gtk_widget_show(submenu);
+
+		build_plugin_actions(submenu, plugin, NULL);
+
+		c++;
+	}
+	if(c>0)
+		pidgin_separator(menu);
 }
 
 static void
@@ -532,12 +725,15 @@ docklet_menu() {
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = gtk_check_menu_item_new_with_label(_("Blink on new message"));
+	menuitem = gtk_check_menu_item_new_with_label(_("Blink on New Message"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	pidgin_separator(menu);
+
+	/* add plugin actions */
+	docklet_plugin_actions(menu);
 
 	pidgin_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(purple_core_quit), NULL, 0, 0, NULL);
 
@@ -569,7 +765,7 @@ pidgin_docklet_clicked(int button_type)
 			if (pending) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
-					purple_conversation_present((PurpleConversation *)l->data);
+					pidgin_conv_present_conversation((PurpleConversation *)l->data);
 					g_list_free(l);
 				}
 			} else {

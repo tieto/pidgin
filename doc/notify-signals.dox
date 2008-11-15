@@ -6,6 +6,8 @@
   @signal displaying-emails-notification
  @endsignals
 
+ @see notify.h
+
  @signaldef displaying-userinfo
   @signalproto
 void (*displaying_userinfo)(PurpleAccount *account, const char *who, PurpleNotifyUserInfo *user_info);
@@ -33,6 +35,7 @@ void (*displaying_email_notification)(const char *subject,
   @param from      Who the email is from.
   @param to        Who the email is to.
   @param url       A url to view the email.
+  @since 2.1.0
  @endsignaldef
 
  @signaldef displaying-emails-notification
@@ -50,7 +53,8 @@ void (*displaying_emails_notification)(const char **subjects,
   @param tos        Who the emails are to.
   @param urls       The urls to view the emails.
   @param count      Number of emails being notified of.
+  @since 2.1.0
  @endsignaldef
 
 */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

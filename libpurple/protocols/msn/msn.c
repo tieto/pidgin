@@ -254,6 +254,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who, payload_len);
 
 	msn_transaction_set_payload(trans, payload, payload_len);
+	g_free(payload);
 
 	msn_page_destroy(page);
 
@@ -552,7 +553,7 @@ msn_status_text(PurpleBuddy *buddy)
 	status = purple_presence_get_active_status(presence);
 
 	msg = purple_status_get_attr_string(status, "message");
-	cmedia = purple_status_get_attr_string(status, "currentmedia");
+	cmedia = purple_status_get_attr_string(status, PURPLE_TUNE_FULL);
 
 	if (cmedia)
 		return g_markup_escape_text(cmedia, -1);
@@ -577,7 +578,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		char *tmp;
 
 		psm = purple_status_get_attr_string(status, "message");
-		currentmedia = purple_status_get_attr_string(status, "currentmedia");
+		currentmedia = purple_status_get_attr_string(status, PURPLE_TUNE_FULL);
 
 		if (!purple_presence_is_available(presence)) {
 			name = purple_status_get_name(status);
@@ -598,9 +599,11 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 
 			g_free(tmp2);
 		} else {
-			tmp = g_markup_escape_text(psm, -1);
-			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
-			g_free(tmp);
+			if (psm != NULL && *psm) {
+				tmp = g_markup_escape_text(psm, -1);
+				purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+				g_free(tmp);
+			}
 		}
 
 		if (currentmedia) {
@@ -630,40 +633,40 @@ msn_status_types(PurpleAccount *account)
 	status = purple_status_type_new_with_attrs(
 				PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
 				"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-				"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+				PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 				NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "brb", _("Be Right Back"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "busy", _("Busy"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "lunch", _("Out to Lunch"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
@@ -941,7 +944,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			imdata->msg = body_str;
 			imdata->flags = flags;
 			imdata->when = time(NULL);
-			g_idle_add(msn_send_me_im, imdata);
+			purple_timeout_add(0, msn_send_me_im, imdata);
 		}
 
 		msn_message_destroy(msg);
@@ -1098,7 +1101,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
-	purple_debug_info("MSN","Add user:%s to group:%s\n", who, group->name);
+	purple_debug_info("MSN","Add user:%s to group:%s\n", who, (group && group->name) ? group->name : "(null)");
 	if (!session->logged_in)
 	{
 #if 0
@@ -1570,8 +1573,7 @@ static char *
 msn_info_strip_search_link(const char *field, size_t len)
 {
 	const char *c;
-	if ((c = strstr(field, " (http://spaces.live.com/default.aspx?page=searchresults")) == NULL &&
-		(c = strstr(field, " (http://spaces.msn.com/default.aspx?page=searchresults")) == NULL)
+	if ((c = strstr(field, " (http://")) == NULL)
 		return g_strndup(field, len);
 	return g_strndup(field, c - field);
 }
@@ -1590,7 +1592,6 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	gboolean sect_info = FALSE;
 	gboolean has_contact_info = FALSE;
 	char *url_buffer;
-	GString *s, *s2;
 	int stripped_len;
 #if PHOTO_SUPPORT
 	char *photo_url_text = NULL;
@@ -1674,11 +1675,6 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	purple_debug_misc("msn", "stripped = %p\n", stripped);
 	purple_debug_misc("msn", "url_buffer = %p\n", url_buffer);
-
-	/* Gonna re-use the memory we've already got for url_buffer */
-	/* No we're not. */
-	s = g_string_sized_new(strlen(url_buffer));
-	s2 = g_string_sized_new(strlen(url_buffer));
 
 	/* General section header */
 	if (has_tooltip_text)
@@ -1981,10 +1977,10 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
 	photo_url_text = msn_get_photo_url(url_text);
-	purple_debug_info("MSNP14","photo url:{%s}\n",photo_url_text);
+	purple_debug_info("MSNP14","photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
 
 	/* Marshall the existing state */
-	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
+	info2_data = g_new0(MsnGetInfoStepTwoData, 1);
 	info2_data->info_data = info_data;
 	info2_data->stripped = stripped;
 	info2_data->url_buffer = url_buffer;
@@ -2026,7 +2022,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
 		g_free(url_buffer);
-		g_free(user_info);
+		purple_notify_user_info_destroy(user_info);
 		g_free(info_data->name);
 		g_free(info_data);
 		g_free(photo_url_text);

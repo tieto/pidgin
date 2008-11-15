@@ -30,10 +30,10 @@ static void msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data, gpointe
 static gchar *
 msim_format_now_playing(gchar *band, gchar *song)
 {
-	if ((band && strlen(band)) || (song && strlen(song))) {
+	if ((band && *band) || (song && *song)) {
 		return g_strdup_printf("%s - %s",
-			(band && strlen(band)) ? band : "Unknown Artist",
-			(song && strlen(song)) ? song : "Unknown Song");
+			(band && *band) ? band : "Unknown Artist",
+			(song && *song) ? song : "Unknown Song");
 	} else {
 		return NULL;
 	}
@@ -99,62 +99,75 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 
 	if (full) {
 		/* TODO: link to username, if available */
-		purple_notify_user_info_add_pair(user_info, _("Profile"),
-				g_strdup_printf("<a href=\"http://myspace.com/%d\">http://myspace.com/%d</a>",
-					uid, uid));
+		if (uid) {
+			char *profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">http://myspace.com/%d</a>",
+											uid, uid);
+			purple_notify_user_info_add_pair(user_info, _("Profile"), profile);
+			g_free(profile);
+		}
 	}
 
 
 	/* a/s/l...the vitals */
 	if (user->age) {
-		purple_notify_user_info_add_pair(user_info, _("Age"),
-				g_strdup_printf("%d", user->age));
+		char age[16];
+		g_snprintf(age, sizeof(age), "%d", user->age);
+		purple_notify_user_info_add_pair(user_info, _("Age"), age);
 	}
 
-	if (user->gender && strlen(user->gender)) {
+	if (user->gender && *user->gender) {
 		purple_notify_user_info_add_pair(user_info, _("Gender"), user->gender);
 	}
 
-	if (user->location && strlen(user->location)) {
+	if (user->location && *user->location) {
 		purple_notify_user_info_add_pair(user_info, _("Location"), user->location);
 	}
 
 	/* Other information */
-	if (user->headline && strlen(user->headline)) {
+	if (user->headline && *user->headline) {
 		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
 	}
 
 	str = msim_format_now_playing(user->band_name, user->song_name);
-	if (str && strlen(str)) {
+	if (str && *str) {
 		purple_notify_user_info_add_pair(user_info, _("Song"), str);
 	}
+	g_free(str);
 
 	/* Note: total friends only available if looked up by uid, not username. */
 	if (user->total_friends) {
-		purple_notify_user_info_add_pair(user_info, _("Total Friends"),
-			g_strdup_printf("%d", user->total_friends));
+		char friends[16];
+		g_snprintf(friends, sizeof(friends), "%d", user->total_friends);
+		purple_notify_user_info_add_pair(user_info, _("Total Friends"), friends);
 	}
 
 	if (full) {
 		/* Client information */
+		char *client = NULL;
 
 		str = user->client_info;
 		cv = user->client_cv;
 
 		if (str && cv != 0) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup_printf("%s (build %d)", str, cv));
+			client = g_strdup_printf("%s (build %d)", str, cv);
 		} else if (str) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup(str));
+			client = g_strdup(str);
 		} else if (cv) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup_printf("Build %d", cv));
+			client = g_strdup_printf("Build %d", cv);
 		}
+		if (client && *client)
+			purple_notify_user_info_add_pair(user_info, _("Client Version"), client);
+		g_free(client);
 	}
 }
 
-/** Store a field of information about a buddy. */
+/** Store a field of information about a buddy. 
+ *
+ * @param key_str Key to store.
+ * @param value_str Value string, either user takes ownership of this string
+ *                  or it is freed if MsimUser doesn't store the string.
+ * @param user User to store data in. Existing data will be replaced.
+ * */
 void 
 msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user)
 {
@@ -168,25 +181,49 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		/* Need to store in MsimUser, too? What if not on blist? */
 	} else if (g_str_equal(key_str, "Age")) {
 		user->age = atol(value_str);
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "Gender")) {
-		user->gender = g_strdup(value_str);
+		g_free(user->gender);
+		user->gender = value_str;
 	} else if (g_str_equal(key_str, "Location")) {
-		user->location = g_strdup(value_str);
+		g_free(user->location);
+		user->location = value_str;
 	} else if (g_str_equal(key_str, "TotalFriends")) {
 		user->total_friends = atol(value_str);
 	} else if (g_str_equal(key_str, "DisplayName")) {
-		user->display_name = g_strdup(value_str);
+		g_free(user->display_name);
+		user->display_name = value_str;
 	} else if (g_str_equal(key_str, "BandName")) {
-		user->band_name = g_strdup(value_str);
+		g_free(user->band_name);
+		user->band_name = value_str;
 	} else if (g_str_equal(key_str, "SongName")) {
-		user->song_name = g_strdup(value_str);
+		g_free(user->song_name);
+		user->song_name = value_str;
 	} else if (g_str_equal(key_str, "UserName") || g_str_equal(key_str, "IMName") || g_str_equal(key_str, "NickName")) {
 		/* Ignore because PurpleBuddy knows this already */
-		;
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "ImageURL") || g_str_equal(key_str, "AvatarURL")) {
+		if (user->temporary_user) {
+			/* This user will be destroyed soon; don't try to look up its image or avatar, 
+			 * since that won't return immediately and we will end up accessing freed data.
+			 */
+			g_free(value_str);
+			return;
+		}
+		
 		const gchar *previous_url;
 
-		user->image_url = g_strdup(value_str);
+		if (user->temporary_user) {
+			/* This user will be destroyed soon; don't try to look up its image or avatar, 
+			 * since that won't return immediately and we will end up accessing freed data.
+			 */
+			g_free(value_str);
+			return;
+		}
+		
+		g_free(user->image_url);
+
+		user->image_url = value_str;
 
 		/* Instead of showing 'no photo' picture, show nothing. */
 		if (g_str_equal(user->image_url, "http://x.myspace.com/images/no_pic.gif"))
@@ -207,14 +244,17 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */
 		user->last_image_updated = atol(value_str);
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "Headline")) {
-		user->headline = g_strdup(value_str);
+		g_free(user->headline);
+		user->headline = value_str;
 	} else {
 		/* TODO: other fields in MsimUser */
 		gchar *msg;
 
 		msg = g_strdup_printf("msim_store_user_info_each: unknown field %s=%s",
 				key_str, value_str);
+		g_free(value_str);
 
 		msim_unrecognized(NULL, NULL, msg);
 
@@ -284,7 +324,6 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 
 		value_str = msim_msg_get_string_from_element(elem);
 		msim_store_user_info_each(key_str, value_str, user);
-		g_free(value_str);
 	}
 
 	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
@@ -301,6 +340,7 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 	}
 
 	msim_msg_free(body);
+	g_free(username);
 
 	return TRUE;
 }

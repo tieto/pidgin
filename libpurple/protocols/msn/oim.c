@@ -115,16 +115,17 @@ msn_oim_free_send_req(MsnOimSendReq *req)
  * OIM send SOAP request
  * **************************************/
 /*encode the message to OIM Message Format*/
-static char *
+static gchar *
 msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
 	
-	purple_debug_info("MSNP14","encode OIM Message...\n");	
+	purple_debug_info("MSN OIM","encode OIM Message...\n");	
 	oim_base64 = purple_base64_encode((const guchar *)body, strlen(body));
-	purple_debug_info("MSNP14","encoded base64 body:{%s}\n",oim_base64);	
+	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);	
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
+	g_free(oim_base64);
 
 	return oim_body;
 }
@@ -418,7 +419,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	end = strstr(passport_str,">");
 	passport = g_strndup(start,end - start);
 	g_free(passport_str);
-	purple_debug_info("MSNP14","oim Date:{%s},passport{%s}\n",date,passport);
+	purple_debug_info("MSN OIM","oim Date:{%s},passport{%s}\n",date,passport);
 
 	stamp = msn_oim_parse_timestamp(date);
 
@@ -434,6 +435,9 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	g_free(decode_msg);
 }
 
+/* Parse the XML data,
+ * prepare to report the OIM to user
+ */
 static void
 msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	gpointer data)

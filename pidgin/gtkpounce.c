@@ -306,6 +306,13 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 	if (*command == '\0') command = NULL;
 	if (*sound   == '\0') sound   = NULL;
 
+	/* If the pounce has already been triggered, let's pretend it is a new one */
+	if (dialog->pounce != NULL
+			&& g_list_find(purple_pounces_get_all(), dialog->pounce) == NULL) {
+		purple_debug_info("gtkpounce", "Saving pounce that no longer exists; creating new pounce.\n");
+		dialog->pounce = NULL;
+	}
+
 	if (dialog->pounce == NULL)
 	{
 		dialog->pounce = purple_pounce_new(PIDGIN_UI, dialog->account,

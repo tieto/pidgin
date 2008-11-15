@@ -1,27 +1,83 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.2.1:
-	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
-	
-	Pidgin:
-	* When aliasing someone to an alias that already exists in the
-	  same group, offer to merge the buddies into the same contact
-	* It's possible to keep a conversation (chat/IM) open even after closing
-	  the conversation window/tab.
-	* A music emblem is displayed in the buddy list for a buddy if we know she
-	  is listening to some soothing music.
-	* 'Move to' menu in buddy list context menu for moving buddies to
-  	   other groups
-	* Move "Smiley" to the top-level of the toolbar
+version 2.2.3:
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.3
+		NOTE: Some bugs marked fixed in 2.2.1 may not have been fixed
+		      until this release (2.2.3).
 
-Version 2.2.0 (09/13/2007):
+	libpurple:
+	* Real usernames are now shown in the system log.
+
+	Pidgin:
+	* If you alias a buddy to an alias that is already present within
+	  a particular group, we now offer to merge the buddies into the
+	  same contact.
+	* A music emblem is now displayed in the buddy list for a buddy if we
+	  know she is listening to some soothing music.
+	* Added a 'Move to' menu in buddy list context menu for moving buddies
+	  to other groups as an alternative to dragging.
+	* Group headings are now marked via an underline instead of a
+	  different color background.
+	* It is now possible to mark a chat on your buddy list as "Persistent"
+	  so you do not leave the chat when the window or tab is closed.
+	* The auto-join option for chats is now listed in the "Add Chat"
+	  dialog along with the new persistence option.
+	* Closing an IM no longer immediately closes your conversation.  It
+	  will now remain active for a short time so that if the conversation
+	  resumes, the history will be retained.  A preference has been added
+	  to toggle this behavior.
+	* The "Smiley" menu has been moved to the top-level of the toolbar.
+	* Pidgin's display is now saved with the command line for session
+	  restoration.  (David Mohr)
+	* ICQ Birthday notifications are shown as buddy list emblems.
+	* Plugin actions are now available from the docklet context menu
+	  in addition to the Tool menu of the buddy list.
+
+version 2.2.2 (10/23/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
+		NOTE: Due to the way this release was made, it is possible that
+			  bugs marked as fixed in 2.2.1 or 2.2.2 will not be fixed
+			  until the next release.
+
+	* Various bug and memory leak fixes
+	* Look for a default prefs.xml in the CSIDL_COMMON_APPDATA directory
+	  (e.g. c:\Documents and Settings\All Users\
+	        Application Data\purple\prefs.xml) on Windows, similarly to
+	  how this is done on other platforms.
+
+version 2.2.1 (09/29/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+		NOTE: Due to the backporting that happened for the actual
+		      release, it is possible bugs marked as fixed in 2.2.1
+		      will not be fixed until 2.2.2.
+
+	libpurple:
+	* A few build issues on Solaris were fixed.
+	* Cancelling the password prompt for an account will no longer leave
+	  it in an ambiguous state.  (It will be disabled.)
+	* Fixed an erroneous size display for MSN file transfers. (galt)
+	* Fixed multiple memory leaks, particularly in XMPP and MySpace
+	  protocols
+	* Fixed remembering proxy preferences and status scores
+	* Gmail notifications are better tracked
+
+	Pidgin:
+	* Fixed keyboard tab reordering to move tabs one step instead of two.
+	* You should no longer lose proxy settings when Pidgin is restarted.
+	* Fixed detection of X11 when compiling
+
+	Finch:
+	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
+	  dialog.
+
+version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
 	Libpurple:
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
 	* XMPP enhancements. See
- 	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
 	  Monitzer, Google Summer of Code for Adium)
 	* Certificate management. Libpurple will validate certificates on
 	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
@@ -2255,6 +2311,6 @@ version 0.8.0  (04/31/1999):
 	* Add/Remove buddy from conversation window
 	* Scroll-Wheel Mice work in Conversation Window
 	* Fixed WindowMaker Appicon
-	* Version Number in About Box
+	* version Number in About Box
 	* Gaim Slogan in about box :)
 	* Created Changelog File :)

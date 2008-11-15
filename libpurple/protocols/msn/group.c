@@ -58,6 +58,7 @@ msn_group_set_id(MsnGroup *group, const char *id)
 	g_return_if_fail(group != NULL);
 	g_return_if_fail(id != NULL);
 
+	g_free(group->id);
 	group->id = g_strdup(id);
 }
 
@@ -67,9 +68,7 @@ msn_group_set_name(MsnGroup *group, const char *name)
 	g_return_if_fail(group != NULL);
 	g_return_if_fail(name  != NULL);
 
-	if (group->name != NULL)
-		g_free(group->name);
-
+	g_free(group->name);
 	group->name = g_strdup(name);
 }
 

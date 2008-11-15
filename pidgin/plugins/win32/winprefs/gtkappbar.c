@@ -352,17 +352,37 @@ static GdkFilterReturn wnd_activate(GtkAppBar *ab, GdkXEvent *xevent) {
 	}
 	return GDK_FILTER_CONTINUE;
 }
+
+static void show_hide(GtkAppBar *ab, gboolean hide) {
+	purple_debug_info("gtkappbar", "show_hide(%d)\n", hide);
+
+	if (hide) {
+		purple_debug_info("gtkappbar", "hidden\n");
+		gtk_appbar_unregister(ab, GDK_WINDOW_HWND(ab->win->window));
+		ab->docked = TRUE;
+		ab->iconized = TRUE;
+	} else {
+		ab->iconized = FALSE;
+		purple_debug_info("gtkappbar", "shown\n");
+		ab->docked = FALSE;
+		gtk_appbar_do_dock(ab, ab->side);
+	}
+
+}
+
 /** Notify the system that the appbar's position has changed */
 static GdkFilterReturn wnd_poschanged(GtkAppBar *ab, GdkXEvent *xevent) {
 	if (ab->registered) {
 		APPBARDATA abd;
 		MSG *msg = (MSG*)xevent;
+
 		purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_poschanged\n");
 
 		abd.hWnd = msg->hwnd;
 		abd.cbSize = sizeof(APPBARDATA);
 
 		SHAppBarMessage(ABM_WINDOWPOSCHANGED, &abd);
+
 	}
 	return GDK_FILTER_CONTINUE;
 }
@@ -382,6 +402,14 @@ static GdkFilterReturn wnd_poschanging(GtkAppBar *ab, GdkXEvent *xevent) {
                         set_toolbar(msg->hwnd, FALSE);
                 /*return GDK_FILTER_REMOVE;*/
         }
+
+	if (ab->docked) {
+		if (ab->iconized && wpos->flags & SWP_SHOWWINDOW)
+			show_hide(ab, FALSE);
+		else if (!ab->iconized && wpos->flags & SWP_HIDEWINDOW)
+			show_hide(ab, TRUE);
+	}
+
         return GDK_FILTER_CONTINUE;
 }
 
@@ -409,23 +437,17 @@ static GdkFilterReturn wnd_exitsizemove(GtkAppBar *ab, GdkXEvent *xevent) {
 }
 
 static GdkFilterReturn wnd_showwindow(GtkAppBar *ab, GdkXEvent *xevent) {
-        MSG *msg = (MSG*)xevent;
+	MSG *msg = (MSG*)xevent;
 
-        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_showwindow\n");
-        if(msg->wParam && ab->docked) {
-		ab->iconized = FALSE;
-                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "shown\n");
-                ab->docked = FALSE;
-                gtk_appbar_do_dock(ab, ab->side);
-        }
-        else if(!msg->wParam && ab->docked) {
-                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "hidden\n");
-                gtk_appbar_unregister(ab, GDK_WINDOW_HWND(ab->win->window));
-                ab->docked = TRUE;
-		ab->iconized = TRUE;
-        }
-        return GDK_FILTER_CONTINUE;
+	purple_debug_info("gtkappbar", "wnd_showwindow\n");
+	if(msg->wParam && ab->docked) {
+		show_hide(ab, FALSE);
+	} else if(!msg->wParam && ab->docked) {
+		show_hide(ab, TRUE);
+	}
+	return GDK_FILTER_CONTINUE;
 }
+
 /** The window's size has changed */
 static GdkFilterReturn wnd_size(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;

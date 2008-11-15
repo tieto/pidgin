@@ -94,9 +94,9 @@ msn_user_update(MsnUser *user)
 	if (user->statusline != NULL && user->currentmedia != NULL) {
 		purple_prpl_got_user_status(account, user->passport, user->status,
 		                          "message", user->statusline,
-		                          "currentmedia", user->currentmedia, NULL);
+		                          PURPLE_TUNE_FULL, user->currentmedia, NULL);
 	} else if (user->currentmedia != NULL) {
-		purple_prpl_got_user_status(account, user->passport, user->status, "currentmedia",
+		purple_prpl_got_user_status(account, user->passport, user->status, PURPLE_TUNE_FULL,
 		                          user->currentmedia, NULL);
 	} else if (user->statusline != NULL) {
 		//char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
@@ -383,7 +383,7 @@ msn_user_remove_group_id(MsnUser *user, const char *id)
 		return;
 
 	g_free(l->data);
-	user->group_ids = g_list_remove_link(user->group_ids, l);
+	user->group_ids = g_list_delete_link(user->group_ids, l);
 }
 
 void
@@ -391,10 +391,8 @@ msn_user_set_home_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.home != NULL)
-		g_free(user->phone.home);
-
-	user->phone.home = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.home);
+	user->phone.home = g_strdup(number);
 }
 
 void
@@ -402,10 +400,8 @@ msn_user_set_work_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.work != NULL)
-		g_free(user->phone.work);
-
-	user->phone.work = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.work);
+	user->phone.work = g_strdup(number);
 }
 
 void
@@ -413,10 +409,8 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.mobile != NULL)
-		g_free(user->phone.mobile);
-
-	user->phone.mobile = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.mobile);
+	user->phone.mobile = g_strdup(number);
 }
 
 void

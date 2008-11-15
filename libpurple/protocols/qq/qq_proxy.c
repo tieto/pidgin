@@ -258,6 +258,7 @@ static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
 static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 {
 	gint fd = -1;
+	int flags;
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Using UDP without proxy\n");
 	fd = socket(PF_INET, SOCK_DGRAM, 0);
@@ -269,7 +270,8 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 	}
 
 	/* we use non-blocking mode to speed up connection */
-	fcntl(fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(fd, F_GETFL);
+	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 
 	/* From Unix-socket-FAQ: http://www.faqs.org/faqs/unix-faq/socket/
 	 *
@@ -301,7 +303,8 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 		}		/* if errno */
 	} else {		/* connect returns 0 */
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Connected.\n");
-		fcntl(fd, F_SETFL, 0);
+		flags = fcntl(fd, F_GETFL);
+		fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
 		phb->func(phb->data, fd, NULL);
 	}
 

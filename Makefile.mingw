@@ -36,6 +36,9 @@ GTK_INSTALL_VERSION = $(shell \
   echo $$gtk_version \
 )
 
+STRIPPED_RELEASE_DIR = $(PIDGIN_TREE_TOP)/pidgin-$(PIDGIN_VERSION)-win32bin
+
+
 # Any *.dll or *.exe files included in win32-install-dir that we don't compile
 # should be included in this list so they don't get stripped
 EXTERNAL_DLLS = \
@@ -62,33 +65,41 @@ EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 all: $(PIDGIN_CONFIG_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE)
+ifndef DISABLE_NLS
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE)
+endif
 
 install: all $(PIDGIN_INSTALL_DIR)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) install
+ifndef DISABLE_NLS
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) install
+endif
 	$(MAKE) -C share -f $(MINGW_MAKEFILE) install
 
 create_release_install_dir: install
-	rm -rf $(PIDGIN_INSTALL_DIR).release
-	cp -R $(PIDGIN_INSTALL_DIR) $(PIDGIN_INSTALL_DIR).release
-	find $(PIDGIN_INSTALL_DIR).release \( -name '*.dll' -o -name '*.exe' \) \
+	rm -rf $(STRIPPED_RELEASE_DIR)
+	cp -R $(PIDGIN_INSTALL_DIR) $(STRIPPED_RELEASE_DIR)
+	find $(STRIPPED_RELEASE_DIR) \( -name '*.dll' -o -name '*.exe' \) \
 	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) -exec $(STRIP) --strip-unneeded {} ';'
 
 installer: create_release_install_dir
-	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DWITH_GTK /DPIDGIN_INSTALL_DIR="$(PIDGIN_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DWITH_GTK /DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
 	mv pidgin/win32/nsis/pidgin*.exe ./
 
 installer_nogtk: create_release_install_dir
-	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DPIDGIN_INSTALL_DIR="$(PIDGIN_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
 	mv pidgin/win32/nsis/pidgin*.exe ./
 
 installer_debug: install
 	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DPIDGIN_INSTALL_DIR="$(PIDGIN_INSTALL_DIR)" /DDEBUG /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
 	mv pidgin/win32/nsis/pidgin*.exe ./
 
-installers: installer installer_nogtk installer_debug
+installer_zip: create_release_install_dir
+	rm -f pidgin-$(PIDGIN_VERSION)-win32-bin.zip
+	zip -9 -r pidgin-$(PIDGIN_VERSION)-win32-bin.zip $(STRIPPED_RELEASE_DIR)
+
+installers: installer installer_nogtk installer_debug installer_zip
 
 Doxyfile.mingw: Doxyfile.in
 	sed -e "s/@PACKAGE@/pidgin/" -e "s/@VERSION@/$(PIDGIN_VERSION)/" -e "s/@top_srcdir@/$(PIDGIN_TREE_TOP)/g" -e "s/@enable_dot@/NO/" Doxyfile.in > Doxyfile.mingw

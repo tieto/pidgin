@@ -11,6 +11,8 @@
   @signal account-status-changed
  @endsignals
 
+ @see account.h
+
  <hr>
 
  @signaldef account-added
@@ -101,4 +103,4 @@ void (*account_alias_changed)(PurpleAccount *account, const char *old);
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

@@ -12,6 +12,8 @@
   @signal conversation-displayed
  @endsignals
 
+ @see gtkconv.h
+
  <hr>
 
  @signaldef conversation-dragging
@@ -125,6 +127,7 @@ void (*conversation_hiding)(PidginConversation *gtkconv);
   @signaldesc
    Emitted immediately before an existing conversation is hidden.
   @param gtkconv  The PidginConversation
+  @since 2.2.0
  @endsignaldef
 
  @signaldef conversation-displayed
@@ -132,9 +135,10 @@ void (*conversation_hiding)(PidginConversation *gtkconv);
 void (*conversation_displayed)(PidginConversation *gtkconv);
   @endsignalproto
   @signaldesc
-   Emitted right after the Pidgin UI is reattached to a conversation.
+   Emitted right after the Pidgin UI is attached to a new or a hidden conversation.
   @param gtkconv  The PidginConversation
+  @since 2.2.0
  @endsignaldef
 
 */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

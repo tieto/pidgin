@@ -150,8 +150,6 @@ purple_notify_emails(void *handle, size_t count, gboolean detailed,
 {
 	PurpleNotifyUiOps *ops;
 
-	g_return_val_if_fail(count != 0, NULL);
-
 	if (count == 1) {
 		return purple_notify_email(handle,
 								 (subjects == NULL ? NULL : *subjects),
@@ -506,7 +504,7 @@ purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry
 	g_return_if_fail(user_info_entry != NULL);
 	
 	g_free(user_info_entry->label);
-	g_free(user_info_entry->value);	
+	g_free(user_info_entry->value);
 	PURPLE_DBUS_UNREGISTER_POINTER(user_info_entry);
 	g_free(user_info_entry);
 }
@@ -568,7 +566,7 @@ purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_info, c
 		if (user_info_entry->label && user_info_entry->value)
 			g_string_append(text, ": ");
 		if (user_info_entry->value)
-			g_string_append(text, user_info_entry->value);			
+			g_string_append(text, user_info_entry->value);
 
 		/* Display a section break as a horizontal line */
 		if (user_info_entry->type == PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK)
@@ -690,8 +688,11 @@ purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info)
 void
 purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo *user_info)
 {
-	user_info->user_info_entries = g_list_remove(user_info->user_info_entries,
-												 g_list_last(user_info->user_info_entries)->data);
+	GList *last = g_list_last(user_info->user_info_entries);
+	if (last) {
+		purple_notify_user_info_entry_destroy(last->data);
+		user_info->user_info_entries = g_list_delete_link(user_info->user_info_entries, last);
+	}
 }
 
 void *

@@ -131,7 +131,7 @@ static struct developer retired_patch_writers[] = {
 /* Order: Code, then Alphabetical by Last Name */
 static struct translator current_translators[] = {
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
-	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
+	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
@@ -182,10 +182,12 @@ static struct translator current_translators[] = {
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
 	{N_("Kurdish"),             "ku", "Rizoyê Xerzî", "rizoxerzi@hotmail.com"},
+	{N_("Lao"),                 "lo", "Anousak Souphavah", "anousak@gmail.com"},
 	{N_("Lithuanian"),          "lt", "Laurynas Biveinis", "laurynas.biveinis@gmail.com"},
 	{N_("Macedonian"),          "mk", "Arangel Angov ", "arangel@linux.net.mk"},
+	{N_("Macedonian"),          "mk", "Ivana Kirkovska", "ivana.kirkovska@gmail.com"},
 	{N_("Macedonian"),          "mk", "Jovan Naumovski", "jovan@lugola.net"},
-	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
+	{N_("Bokmål Norwegian"),    "nb", "Espen Stefansen", "espenas@gmail.com"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
@@ -201,8 +203,8 @@ static struct translator current_translators[] = {
 	{N_("Slovak"),              "sk", "loptosko", "loptosko@gmail.com"},
 	{N_("Slovenian"),           "sl", "Martin Srebotnjak", "miles@filmsi.net"},
 	{N_("Albanian"),            "sq", "Besnik Bleta", "besnik@programeshqip.org"},
-	{N_("Serbian"),             "sr", "Danilo Šegan", "dsegan@gmx.net"},
-	{N_("Serbian"),             "sr", "Aleksandar Urosevic", "urke@users.sourceforge.net"},
+	{N_("Serbian"),             "sr", "Miloš Popović", "gpopac@gmail.com"},
+	{N_("Serbian"),             "sr@Latn", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
@@ -221,6 +223,7 @@ static struct translator current_translators[] = {
 
 static struct translator past_translators[] = {
 	{N_("Amharic"),             "am", "Daniel Yacob", NULL},
+	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
 	{N_("Bulgarian"),           "bg", "Hristo Todorov", NULL},
 	{N_("Catalan"),             "ca", "JM Pérez Cáncer", NULL},
 	{N_("Catalan"),             "ca", "Robert Millan", NULL},
@@ -249,7 +252,8 @@ static struct translator past_translators[] = {
 	{N_("Lithuanian"),          "lt", "Andrius Štikonas", NULL},
 	{N_("Lithuanian"),          "lt", "Gediminas Čičinskas", NULL},
 	{N_("Macedonian"),          "mk", "Tomislav Markovski", NULL},
-	{N_("Bokmål Norwegian"),   "nb", "Petter Johan Olsen", NULL},
+	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
+	{N_("Bokmål Norwegian"),    "nb", "Petter Johan Olsen", NULL},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
 	{N_("Russian"),             "ru", "Alexandre Prokoudine", NULL},
 	{N_("Russian"),             "ru", "Sergey Volozhanin", NULL},
@@ -257,6 +261,8 @@ static struct translator past_translators[] = {
 	{N_("Slovak"),              "sk", "helix84", NULL},
 	{N_("Slovak"),              "sk", "Richard Golier", NULL},
 	{N_("Slovenian"),           "sl", "Matjaz Horvat", NULL},
+	{N_("Serbian"),             "sr", "Danilo Šegan", "dsegan@gmx.net"},
+	{N_("Serbian"),             "sr", "Aleksandar Urosevic", "urke@users.sourceforge.net"},
 	{N_("Swedish"),             "sv", "Tore Lundqvist", NULL},
 	{N_("Swedish"),             "sv", "Christian Rose", NULL},
 	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", NULL},
@@ -286,6 +292,7 @@ static void destroy_about()
 	about = NULL;
 }
 
+#if 0
 /* This function puts the version number onto the pixmap we use in the 'about' 
  * screen in Pidgin. */
 static void
@@ -323,6 +330,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 											 width, height);
 	g_object_unref(G_OBJECT(pixmap));
 }
+#endif
 
 void pidgin_dialogs_about()
 {
@@ -384,6 +392,9 @@ void pidgin_dialogs_about()
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	str = g_string_sized_new(4096);
+
+	g_string_append_printf(str,
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR><BR>", PIDGIN_NAME, VERSION);
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "
@@ -634,11 +645,10 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Network Security Services (NSS):</b> Disabled<br/>");
 #endif
 
-#ifdef HAVE_PERL
+if (purple_plugins_find_with_id("core-perl") != NULL)
 	g_string_append(str, "    <b>Perl:</b> Enabled<br/>");
-#else
+else
 	g_string_append(str, "    <b>Perl:</b> Disabled<br/>");
-#endif
 
 #ifndef _WIN32
 #ifdef HAVE_STARTUP_NOTIFICATION
@@ -648,17 +658,17 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 #endif
 
-#ifdef HAVE_TCL
+if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	g_string_append(str, "    <b>Tcl:</b> Enabled<br/>");
-#else
-	g_string_append(str, "    <b>Tcl:</b> Disabled<br/>");
-#endif
-
 #ifdef HAVE_TK
 	g_string_append(str, "    <b>Tk:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
 #endif
+} else {
+	g_string_append(str, "    <b>Tcl:</b> Disabled<br/>");
+	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
+}
 
 #ifndef _WIN32
 #ifdef USE_SM

@@ -258,8 +258,8 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	}
 
 
-	*begin = gs_begin->str;
-	*end = gs_end->str;
+	*begin = g_string_free(gs_begin, FALSE);
+	*end = g_string_free(gs_end, FALSE);
 }
 
 /** Convert a msim markup color to a color suitable for libpurple.
@@ -400,6 +400,8 @@ static void
 msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
+	g_return_if_fail(root != NULL);
+
 	if (g_str_equal(root->name, "f")) {
 		msim_markup_f_to_html(session, root, begin, end);
 	} else if (g_str_equal(root->name, "a")) {
@@ -415,7 +417,7 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
 				"unknown tag name=%s, ignoring", 
-				(root && root->name) ? root->name : "(NULL)");
+				root->name ? root->name : "(NULL)");
 		*begin = g_strdup("");
 		*end = g_strdup("");
 	}
@@ -426,13 +428,14 @@ static void
 html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
+	if (!purple_utf8_strcasecmp(root->name, "root") ||
+	    !purple_utf8_strcasecmp(root->name, "html")) {
+		*begin = g_strdup("");
+		*end = g_strdup("");
 	/* TODO: Coalesce nested tags into one <f> tag!
 	 * Currently, the 's' value will be overwritten when b/i/u is nested
 	 * within another one, and only the inner-most formatting will be 
 	 * applied to the text. */
-	if (!purple_utf8_strcasecmp(root->name, "root")) {
-		*begin = g_strdup("");
-		*end = g_strdup("");
 	} else if (!purple_utf8_strcasecmp(root->name, "b")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
 		*end = g_strdup("</f>");
@@ -443,7 +446,8 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
 		*end = g_strdup("</f>");
 	} else if (!purple_utf8_strcasecmp(root->name, "a")) {
-		const gchar *href, *link_text;
+		const gchar *href;
+		gchar *link_text;
 
 		href = xmlnode_get_attrib(root, "href");
 
@@ -475,6 +479,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* Sorry, kid. MySpace doesn't support you within <a> tags. */
 		xmlnode_free(root->child);
+		g_free(link_text);
 		root->child = NULL;
 
 		*end = g_strdup("");
@@ -503,8 +508,21 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* TODO: color (bg uses <body>), emoticons */
 	} else {
+		gchar *err;
+
+#ifdef MSIM_MARKUP_SHOW_UNKNOWN_TAGS
 		*begin = g_strdup_printf("[%s]", root->name);
 		*end = g_strdup_printf("[/%s]", root->name);
+#else
+		*begin = g_strdup("");
+		*end = g_strdup("");
+#endif
+
+		err = g_strdup_printf("html_tag_to_msim_markup: unrecognized "
+			"HTML tag %s was sent by the IM client; ignoring", 
+			root->name ? root->name : "(NULL)");
+		msim_unrecognized(NULL, NULL, err);
+		g_free(err);
 	}
 }
 
@@ -554,10 +572,7 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	
 		case XMLNODE_TYPE_DATA:
 			/* Literal text. */
-			inner = g_new0(char, node->data_sz + 1);
-			strncpy(inner, node->data, node->data_sz);
-			inner[node->data_sz] = 0;
-
+			inner = g_strndup(node->data, node->data_sz);
 			purple_debug_info("msim", " ** node data=%s\n", 
 					inner ? inner : "(NULL)");
 			break;
@@ -570,6 +585,8 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 
 		if (inner) {
 			g_string_append(final, inner);
+			g_free(inner);
+			inner = NULL;
 		}
 	}
 
@@ -579,10 +596,13 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	 * Comment out this line below to see. */
 	g_string_append(final, end);
 
+	g_free(begin);
+	g_free(end);
+
 	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
 			(final && final->str) ? final->str : "(NULL)");
 
-	return final->str;
+	return g_string_free(final, FALSE);
 }
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */

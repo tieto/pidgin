@@ -29,8 +29,10 @@
 #define MSN_SOAP_READ_BUFF_SIZE		8192
 
 /* define this to debug the communications with the SOAP server */
-/* #define MSN_SOAP_DEBUG  */
+/* #define MSN_SOAP_DEBUG */
 
+#define MSN_SOAP_READ 1
+#define MSN_SOAP_WRITE 2
 
 typedef enum
 {
@@ -41,13 +43,18 @@ typedef enum
 	MSN_SOAP_CONNECTED_IDLE
 }MsnSoapStep;
 
-/*MSN SoapRequest structure*/
+/* MSN SoapRequest structure*/
 typedef struct _MsnSoapReq MsnSoapReq;
 
-/*MSN Https connection structure*/
+/* MSN Https connection structure*/
 typedef struct _MsnSoapConn MsnSoapConn;
 
 typedef void (*MsnSoapConnectInitFunction)(MsnSoapConn *);
+typedef gboolean (*MsnSoapReadCbFunction)(MsnSoapConn *);
+typedef void (*MsnSoapWrittenCbFunction)(MsnSoapConn *);
+
+typedef gboolean (*MsnSoapSslConnectCbFunction)(MsnSoapConn *, PurpleSslConnection *);
+typedef void (*MsnSoapSslErrorCbFunction)(MsnSoapConn *, PurpleSslConnection *, PurpleSslErrorType);
 
 
 struct _MsnSoapReq{
@@ -61,8 +68,9 @@ struct _MsnSoapReq{
 	char *body;
 	
 	gpointer data_cb;
-	PurpleInputFunction read_cb;
-	PurpleInputFunction written_cb;
+	MsnSoapReadCbFunction read_cb;
+	MsnSoapWrittenCbFunction written_cb;
+	MsnSoapConnectInitFunction connect_init;
 };
 
 struct _MsnSoapConn{
@@ -75,15 +83,15 @@ struct _MsnSoapConn{
 
 	MsnSoapStep step;
 	/*ssl connection?*/
-	guint	ssl_conn;
+	gboolean ssl_conn;
 	/*normal connection*/
-	guint	fd;
+	guint fd;
 	/*SSL connection*/
 	PurpleSslConnection *gsc;
 	/*ssl connection callback*/
-	PurpleSslInputFunction	connect_cb;
+	MsnSoapSslConnectCbFunction connect_cb;
 	/*ssl error callback*/
-	PurpleSslErrorFunction	error_cb;
+	MsnSoapSslErrorCbFunction error_cb;
 
 	/*read handler*/
 	guint input_handler;
@@ -97,13 +105,13 @@ struct _MsnSoapConn{
 	/*write buffer*/
 	char *write_buf;
 	gsize written_len;
-	PurpleInputFunction written_cb;
+	MsnSoapWrittenCbFunction written_cb;
 
 	/*read buffer*/
 	char *read_buf;
 	gsize read_len;
 	gsize need_to_read;
-	PurpleInputFunction read_cb;
+	MsnSoapReadCbFunction read_cb;
 
 	gpointer data_cb;
 
@@ -118,37 +126,41 @@ struct _MsnSoapConn{
 MsnSoapReq *msn_soap_request_new(const char *host, const char *post_url,
 				 const char *soap_action, const char *body,
 				 const gpointer data_cb,
-				 PurpleInputFunction read_cb,
-				 PurpleInputFunction written_cb);
+				 MsnSoapReadCbFunction read_cb,
+				 MsnSoapWrittenCbFunction written_cb,
+				 MsnSoapConnectInitFunction connect_init);
 
 void msn_soap_request_free(MsnSoapReq *request);
 void msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request);
 void msn_soap_post_head_request(MsnSoapConn *soapconn);
 
 /*new a soap conneciton */
-MsnSoapConn *msn_soap_new(MsnSession *session,gpointer data,int sslconn);
+MsnSoapConn *msn_soap_new(MsnSession *session, gpointer data, gboolean ssl);
 
 /*destroy */
 void msn_soap_destroy(MsnSoapConn *soapconn);
 
 /*init a soap conneciton */
-void msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,PurpleSslInputFunction connect_cb,PurpleSslErrorFunction error_cb);
+void msn_soap_init(MsnSoapConn *soapconn, char * host, gboolean ssl,
+		   MsnSoapSslConnectCbFunction connect_cb,
+		   MsnSoapSslErrorCbFunction error_cb);
 void msn_soap_connect(MsnSoapConn *soapconn);
 void msn_soap_close(MsnSoapConn *soapconn);
 
 /*write to soap*/
-void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, PurpleInputFunction written_cb);
-void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,MsnSoapConnectInitFunction msn_soap_init_func);
+void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, MsnSoapWrittenCbFunction written_cb);
+void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request);
 
 void msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
 void msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
 
-/*clean the unhandled request*/
-void msn_soap_clean_unhandled_request(MsnSoapConn *soapconn);
+/*clean the unhandled requests*/
+void msn_soap_clean_unhandled_requests(MsnSoapConn *soapconn);
 
 /*check if the soap connection is connected*/
 int msn_soap_connected(MsnSoapConn *soapconn);
+void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
 
 #endif/*_MSN_SOAP_H_*/
 

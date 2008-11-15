@@ -91,11 +91,13 @@ libpurple/protocols/jabber/si.c
 libpurple/protocols/jabber/usermood.c
 libpurple/protocols/jabber/usernick.c
 libpurple/protocols/jabber/xdata.c
+libpurple/protocols/msn/contact.c
 libpurple/protocols/msn/dialog.c
 libpurple/protocols/msn/error.c
 libpurple/protocols/msn/msn.c
 libpurple/protocols/msn/nexus.c
 libpurple/protocols/msn/notification.c
+libpurple/protocols/msn/oim.c
 libpurple/protocols/msn/servconn.c
 libpurple/protocols/msn/session.c
 libpurple/protocols/msn/state.c

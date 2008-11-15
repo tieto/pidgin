@@ -1,3 +1,14 @@
+version 2.2.2 (10/23/2007):
+	* Updated gtkspell to include a patch to share Aspell dictionaries
+	  among all the input fields to avoid excessive memory usage.
+	* Update libxml2 to 2.6.30
+	* Bonjour protocol now appears even if Bonjour for Windows isn't
+	  present (displays message indicating Bonjour for Windows must be
+	  installed if you try to log in and it isn't installed).
+	* libpurple now looks for a default prefs.xml in the COMMON_APPDATA
+	  directory (e.g. \Documents and Settings\All Users\Application Data\purple\prefs.xml)
+	  similarly to how this is done on other platforms.
+
 version 2.2.0 (09/13/2007):
 	* Updated gtkspell to 2.0.11
 	* Upgrade SILC to use the 1.1.2 toolkit

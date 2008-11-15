@@ -777,6 +777,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	/* show everything */
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
+#ifdef _WIN32
+	winpidgin_ensure_onscreen(dialog);
+#endif
 
 	toolbar->smiley_dialog = dialog;
 
@@ -1299,7 +1302,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_container_add(GTK_CONTAINER(smiley_button), bbox);
 	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-	label = gtk_label_new_with_mnemonic(_("_Smiley"));
+	label = gtk_label_new_with_mnemonic(_("_Smile!"));
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), smiley_button, FALSE, FALSE, 0);
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);

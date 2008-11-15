@@ -1914,7 +1914,7 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 			text = _("Authentication Failure");
 		}
 	} else if(!strcmp(packet->name, "stream:error") ||
-			 (!strcmp(packet->name, "error") &&
+			 (!strcmp(packet->name, "error") && xmlns &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams"))) {
 		if(xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");
@@ -2189,56 +2189,99 @@ static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 	return PURPLE_CMD_RET_OK;
 }
 
+static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char **error) {
+
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+	GList *iter;
+
+	if(!username)
+		return FALSE;
+
+	jb = jabber_buddy_find(js, username, FALSE);
+	if(!jb) {
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+		return FALSE;
+	}
+
+	jbr = jabber_buddy_find_resource(jb, NULL);
+	if(!jbr) {
+		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), username);
+		return FALSE;
+	}
+
+	if(!jbr->caps) {
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+		return FALSE;
+	}
+
+	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
+		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
+			xmlnode *buzz, *msg = xmlnode_new("message");
+			gchar *to;
+
+			to = g_strdup_printf("%s/%s", username, jbr->name);
+			xmlnode_set_attrib(msg, "to", to);
+			g_free(to);
+
+			/* avoid offline storage */
+			xmlnode_set_attrib(msg, "type", "headline");
+
+			buzz = xmlnode_new_child(msg, "attention");
+			xmlnode_set_namespace(buzz, "http://www.xmpp.org/extensions/xep-0224.html#ns");
+
+			jabber_send(js, msg);
+			xmlnode_free(msg);
+
+			return TRUE;
+		}
+	}
+
+	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), username);
+	return FALSE;
+}
+
 static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberStream *js = conv->account->gc->proto_data;
-	xmlnode *msg, *buzz;
-	JabberBuddy *jb;
-	JabberBuddyResource *jbr;
-	char *to;
-	GList *iter;
 
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
-	
-	jb = jabber_buddy_find(js, args[0], FALSE);
-	if(!jb) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), args[0]);
-		return PURPLE_CMD_RET_FAILED;
-	}
-	
-	jbr = jabber_buddy_find_resource(jb, NULL);
-	if(!jbr) {
-		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), args[0]);
-		return PURPLE_CMD_RET_FAILED;
-	}
-	if(!jbr->caps) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), args[0]);
-		return PURPLE_CMD_RET_FAILED;
-	}
-	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
-			msg = xmlnode_new("message");
-			to = g_strdup_printf("%s/%s", args[0], jbr->name);
-			xmlnode_set_attrib(msg,"to",to);
-			g_free(to);
-			
-			/* avoid offline storage */
-			xmlnode_set_attrib(msg,"type","headline");
-			
-			buzz = xmlnode_new_child(msg,"attention");
-			xmlnode_set_namespace(buzz,"http://www.xmpp.org/extensions/xep-0224.html#ns");
-			
-			jabber_send(js,msg);
-			xmlnode_free(msg);
-			
-			return PURPLE_CMD_RET_OK;
-		}
-	}
-	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), args[0]);
-	return PURPLE_CMD_RET_FAILED;
+
+	return _jabber_send_buzz(js, args[0], error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
 }
+
+GList *jabber_attention_types(PurpleAccount *account)
+{
+	static GList *types = NULL;
+	PurpleAttentionType *attn;
+
+	if (!types) {
+		attn = g_new0(PurpleAttentionType, 1);
+		attn->name = _("Buzz");
+		attn->incoming_description = _("%s has buzzed you!");
+		attn->outgoing_description = _("Buzzing %s...");
+		types = g_list_append(types, attn);
+	}
+
+	return types;
+}
+
+gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint code)
+{
+	JabberStream *js = gc->proto_data;
+	gchar *error = NULL;
+
+	if (!_jabber_send_buzz(js, username, &error)) {
+		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
+		g_free(error);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 
 gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {

@@ -140,7 +140,7 @@ Pidgin's configuration file.
 If \fIAuto-Login\fR is chosen, this account will automatically login upon
 starting Pidgin.
 
-Each protocol has it's own specific options that can be found in the
+Each protocol has its own specific options that can be found in the
 modify screen.
 
 .SH PREFERENCES
