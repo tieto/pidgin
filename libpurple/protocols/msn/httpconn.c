@@ -309,8 +309,6 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	httpconn->servconn->processing = FALSE;
-
 	servconn = httpconn->servconn;
 
 	if (error)
