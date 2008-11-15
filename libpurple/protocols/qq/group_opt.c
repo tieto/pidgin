@@ -520,7 +520,7 @@ void qq_process_room_buddy_approved(guint8 *data, gint len, guint32 id, PurpleCo
 		rmd->my_role = QQ_ROOM_ROLE_YES;
 	}
 
-	msg = g_strdup_printf(_("<b>Joinning Qun %d is approved by admin %d for %s</b>"),
+	msg = g_strdup_printf(_("<b>Joining Qun %d is approved by admin %d for %s</b>"),
 			ext_id, admin_uid, reason);
 	now = time(NULL);
 	qq_room_got_chat_in(gc, id, 0, msg, now);
