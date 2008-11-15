@@ -375,15 +375,14 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	servconn = data;
 	session = servconn->session;
 
-	len = read(servconn->fd, buf, sizeof(buf) - 1);
 	if (servconn->type == MSN_SERVCONN_NS)
-		servconn->session->account->gc->last_received = time(NULL);
+		session->account->gc->last_received = time(NULL);
 
-	if (len < 0 && errno == EAGAIN) {
+	len = read(servconn->fd, buf, sizeof(buf) - 1);
+	if (len < 0 && errno == EAGAIN)
 		return;
-
-	} else if (len <= 0) {
-		purple_debug_error("msn", "servconn %03d read error,"
+	if (len <= 0) {
+		purple_debug_error("msn", "servconn %03d read error, "
 			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
 			servconn->num, len, errno, g_strerror(errno));
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);

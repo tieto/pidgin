@@ -119,7 +119,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		/* Need to wait for the full HTTP header to arrive */
 		return FALSE;
 
-	s += 4; /* Skip \r\n */
+	s += 4; /* Skip \r\n\r\n */
 	header = g_strndup(buf, s - buf);
 	body_start = s;
 	body_len = size - (body_start - buf);
@@ -162,7 +162,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	body[body_len] = '\0';
 
 #ifdef MSN_DEBUG_HTTP
-	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
+	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s}\n",
 					header);
 #endif
 
@@ -184,6 +184,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			purple_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}\n",
 							 buf);
 
+			g_free(header);
 			g_free(body);
 			return FALSE;
 		}
@@ -278,17 +279,20 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	gboolean error = FALSE;
 
 	httpconn = data;
-	servconn = NULL;
+	servconn = httpconn->servconn;
 	session = httpconn->session;
 
-	len = read(httpconn->fd, buf, sizeof(buf) - 1);
+	if (servconn->type == MSN_SERVCONN_NS)
+		session->account->gc->last_received = time(NULL);
 
+	len = read(httpconn->fd, buf, sizeof(buf) - 1);
 	if (len < 0 && errno == EAGAIN)
 		return;
-	else if (len <= 0)
-	{
-		purple_debug_error("msn", "HTTP: Read error\n");
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
+	if (len <= 0) {
+		purple_debug_error("msn", "HTTP: servconn %03d read error, "
+			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
+			servconn->num, len, error, g_strerror(errno));
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
 	}
@@ -304,17 +308,15 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	{
 		/* Either we must wait for more input, or something went wrong */
 		if (error)
-			msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
+			msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
 	}
 
-	servconn = httpconn->servconn;
-
 	if (error)
 	{
 		purple_debug_error("msn", "HTTP: Special error\n");
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
 	}
