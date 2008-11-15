@@ -269,21 +269,17 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnHttpConn *httpconn;
 	MsnServConn *servconn;
-	MsnSession *session;
 	char buf[MSN_BUF_LEN];
-	char *cur, *end, *old_rx_buf;
 	gssize len;
-	int cur_len;
 	char *result_msg = NULL;
 	size_t result_len = 0;
 	gboolean error = FALSE;
 
 	httpconn = data;
 	servconn = httpconn->servconn;
-	session = httpconn->session;
 
 	if (servconn->type == MSN_SERVCONN_NS)
-		session->account->gc->last_received = time(NULL);
+		servconn->session->account->gc->last_received = time(NULL);
 
 	len = read(httpconn->fd, buf, sizeof(buf) - 1);
 	if (len < 0 && errno == EAGAIN)
@@ -339,64 +335,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	servconn->rx_buf = result_msg;
 	servconn->rx_len = result_len;
 
-	end = old_rx_buf = servconn->rx_buf;
-
-	servconn->processing = TRUE;
-
-	do
-	{
-		cur = end;
-
-		if (servconn->payload_len)
-		{
-			if (servconn->payload_len > servconn->rx_len)
-				/* The payload is still not complete. */
-				break;
-
-			cur_len = servconn->payload_len;
-			end += cur_len;
-		}
-		else
-		{
-			end = strstr(cur, "\r\n");
-
-			if (end == NULL)
-				/* The command is still not complete. */
-				break;
-
-			*end = '\0';
-			end += 2;
-			cur_len = end - cur;
-		}
-
-		servconn->rx_len -= cur_len;
-
-		if (servconn->payload_len)
-		{
-			msn_cmdproc_process_payload(servconn->cmdproc, cur, cur_len);
-			servconn->payload_len = 0;
-		}
-		else
-		{
-			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
-			servconn->payload_len = servconn->cmdproc->last_cmd->payload_len;
-		}
-	} while (servconn->connected && !servconn->wasted && servconn->rx_len > 0);
-
-	if (servconn->connected && !servconn->wasted)
-	{
-		if (servconn->rx_len > 0)
-			servconn->rx_buf = g_memdup(cur, servconn->rx_len);
-		else
-			servconn->rx_buf = NULL;
-	}
-
-	servconn->processing = FALSE;
-
-	if (servconn->wasted)
-		msn_servconn_destroy(servconn);
-
-	g_free(old_rx_buf);
+	msn_servconn_process_data(servconn);
 }
 
 static void
