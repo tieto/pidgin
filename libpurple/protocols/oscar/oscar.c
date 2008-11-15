@@ -1142,7 +1142,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 	conn->watcher_incoming = purple_input_add(conn->fd,
 			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
 	if (conn->cookie == NULL)
-			flap_connection_send_version(od, conn);
+		flap_connection_send_version(od, conn);
 	else
 	{
 		flap_connection_send_version_with_cookie(od, conn,
