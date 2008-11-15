@@ -174,7 +174,6 @@ connect_cb(gpointer data, gint source, const char *error_message)
 
 	servconn = data;
 	servconn->connect_data = NULL;
-	servconn->processing = FALSE;
 
 	if (servconn->wasted)
 	{
