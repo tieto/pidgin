@@ -1,4 +1,5 @@
-SMILEYS = 	act-up.png \
+SMILEYS = \
+    act-up.png \
     airplane.png \
     alien.png \
     angel.png \
