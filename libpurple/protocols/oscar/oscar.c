@@ -1147,15 +1147,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 	conn->watcher_incoming = purple_input_add(conn->fd,
 			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
 	if (conn->cookie == NULL)
-	{
-		if (!aim_snvalid_icq(purple_account_get_username(account)))
-			/*
-			 * We don't send this when authenticating an ICQ account
-			 * because for some reason ICQ is still using the
-			 * assy/insecure authentication procedure.
-			 */
-			flap_connection_send_version(od, conn);
-	}
+		flap_connection_send_version(od, conn);
 	else
 	{
 		flap_connection_send_version_with_cookie(od, conn,
@@ -4818,7 +4810,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Could not add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), bname);
 		if (!purple_conv_present_error(bname, account, buf))
-			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
 
 		/* Remove from local list */
@@ -4938,7 +4930,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	purple_debug_error("oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
-		purple_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
+		purple_notify_error(gc, NULL, _("Unable to Retrieve Buddy List"),
 						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
@@ -5300,7 +5292,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				gchar *buf;
 				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			}
 
@@ -5315,7 +5307,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."),
 						(retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			} break;
 		}

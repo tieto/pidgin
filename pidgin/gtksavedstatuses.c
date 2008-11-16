@@ -475,7 +475,8 @@ search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *ite
 static void
 savedstatus_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, StatusWindow *dialog)
 {
-	status_window_modify_cb(NULL, dialog);
+	status_window_use_cb(NULL, dialog);
+	status_window_close_cb(NULL, dialog);
 }
 
 static void

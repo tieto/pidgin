@@ -56,9 +56,6 @@
 #include "utils.h"
 #include "version.h"
 
-#define OPENQ_AUTHOR            "Puzzlebird"
-#define OPENQ_WEBSITE           "http://openq.sourceforge.net"
-
 #ifndef OPENQ_VERSION
 #define OPENQ_VERSION           DISPLAY_VERSION
 #endif
@@ -771,7 +768,7 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "</body></html>");
 
 	title = g_strdup_printf(_("About OpenQ r%s"), OPENQ_VERSION);
-	purple_notify_formatted(gc, NULL, title, NULL, info->str, NULL, NULL);
+	purple_notify_formatted(gc, title, title, NULL, info->str, NULL, NULL);
 
 	g_free(title);
 	g_string_free(info, TRUE);
@@ -869,7 +866,7 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Modify Information"), action_modify_info_base);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Modify Extend Information"), action_modify_info_ext);
+	act = purple_plugin_action_new(_("Modify Extended Information"), action_modify_info_ext);
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Modify Address"), action_modify_info_addr);
@@ -1116,11 +1113,11 @@ static PurplePluginInfo info = {
 	"QQ",				/**< name		*/
 	DISPLAY_VERSION,		/**< version		*/
 					/**  summary		*/
-	N_("QQ Protocol	Plugin"),
+	N_("QQ Protocol Plugin"),
 					/**  description	*/
-	N_("QQ Protocol	Plugin"),
-	OPENQ_AUTHOR,			/**< author		*/
-	OPENQ_WEBSITE,			/**< homepage		*/
+	N_("QQ Protocol Plugin"),
+	NULL,				/**< author		*/
+	PURPLE_WEBSITE,		/**< homepage	*/
 
 	NULL,				/**< load		*/
 	NULL,				/**< unload		*/
@@ -1152,8 +1149,7 @@ static void init_plugin(PurplePlugin *plugin)
 
 	server_list = server_list_build('A');
 
-	purple_prefs_add_string_list("/plugins/prpl/qq/serverlist", server_list);
-	server_list = purple_prefs_get_string_list("/plugins/prpl/qq/serverlist");
+	purple_prefs_remove("/plugins/prpl/qq/serverlist");
 
 	server_kv_list = NULL;
 	kvp = g_new0(PurpleKeyValuePair, 1);
@@ -1206,10 +1202,10 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Show server news"), "show_news", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_int_new(_("Keep alive interval(s)"), "keep_alive_interval", 60);
+	option = purple_account_option_int_new(_("Keep alive interval (seconds)"), "keep_alive_interval", 60);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_int_new(_("Update interval(s)"), "update_interval", 300);
+	option = purple_account_option_int_new(_("Update interval (seconds)"), "update_interval", 300);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	purple_prefs_add_none("/plugins/prpl/qq");

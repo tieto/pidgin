@@ -2271,6 +2271,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	struct proto_chat_entry *pce;
 	PurpleBlistNode *node, *group;
 	GList *parts;
+	char *normname;
 
 	g_return_val_if_fail(purplebuddylist != NULL, NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
@@ -2284,6 +2285,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	if (prpl_info->find_blist_chat != NULL)
 		return prpl_info->find_blist_chat(account, name);
 
+	normname = g_strdup(purple_normalize(account, name));
 	for (group = purplebuddylist->root; group != NULL; group = group->next) {
 		for (node = group->child; node != NULL; node = node->next) {
 			if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
@@ -2303,14 +2305,15 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 				g_list_free(parts);
 
 				if (chat->account == account && chat_name != NULL &&
-					name != NULL && !strcmp(chat_name, name)) {
-
+					normname != NULL && !strcmp(purple_normalize(account, chat_name), normname)) {
+					g_free(normname);
 					return chat;
 				}
 			}
 		}
 	}
 
+	g_free(normname);
 	return NULL;
 }
 
