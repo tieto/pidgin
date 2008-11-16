@@ -171,17 +171,17 @@ EMBLEMS_16 = \
 		emblems/16/unavailable.png \
 		emblems/16/video.png \
 		emblems/16/voice.png \
-		emblems/16/xstatus_bathing.png \
-		emblems/16/xstatus_cinema.png \
-		emblems/16/xstatus_internet.png \
-		emblems/16/xstatus_restroom.png \
-		emblems/16/xstatus_shopping.png \
-		emblems/16/xstatus_studying.png \
-		emblems/16/xstatus_suit.png \
-		emblems/16/xstatus_surfing.png \
-		emblems/16/xstatus_typing.png \
-		emblems/16/xstatus_working.png \
-		emblems/16/xstatus_writing.png
+		emblems/16/bathing.png \
+		emblems/16/cinema.png \
+		emblems/16/internet.png \
+		emblems/16/restroom.png \
+		emblems/16/shopping.png \
+		emblems/16/studying.png \
+		emblems/16/suit.png \
+		emblems/16/surfing.png \
+		emblems/16/typing.png \
+		emblems/16/working.png \
+		emblems/16/writing.png
 
 
 EMOTES_DEFAULT_24_SCALABLE = \
