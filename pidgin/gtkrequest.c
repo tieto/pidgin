@@ -997,7 +997,6 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeIter iter;
 	GList *l;
 	GList *icons = NULL;
-	GdkPixbuf* pixbuf;
 
 	icons = purple_request_field_list_get_icons(field);
 
@@ -1051,11 +1050,15 @@ create_list_field(PurpleRequestField *field)
 		if (icons)
 		{
 			const char *icon_path = (const char *)icons->data;
-			char* filename = g_build_filename(DATADIR, icon_path, NULL);
+			char* filename;
+			GdkPixbuf* pixbuf = NULL;
 
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-
-			g_free(filename);
+			if (icon_path)
+			{
+				filename = g_build_filename(DATADIR, icon_path, NULL);
+				pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+				g_free(filename);
+			}
 
 			gtk_list_store_set(store, &iter,
 						   0, purple_request_field_list_get_data(field, text),
