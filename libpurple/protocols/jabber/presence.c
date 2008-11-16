@@ -95,7 +95,8 @@ void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *gstatus)
 }
 
 
-void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
+void jabber_presence_send(PurpleAccount *account, PurpleStatus *status,
+	gboolean update_idle)
 {
 	PurpleConnection *gc = NULL;
 	JabberStream *js = NULL;
@@ -150,7 +151,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 #define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
 					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
 	/* check if there are any differences to the <presence> and send them in that case */
-	if (allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
+	if (update_idle || allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
 		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
 		js->allowBuzz = allowBuzz;
 
@@ -260,6 +261,15 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		g_free(pstr);
 	}
 
+	/* if we are idle and not offline, include idle */
+	if (js->idle && state != JABBER_BUDDY_STATE_UNAVAILABLE) {
+		xmlnode *query = xmlnode_new_child(presence, "query");
+		gchar *seconds = g_strdup_printf("%d", (int) (time(NULL) - js->idle));
+		
+		xmlnode_set_namespace(query, "jabber:iq:last");
+		xmlnode_set_attrib(query, "seconds", seconds);
+	}
+	
 	/* JEP-0115 */
 	c = xmlnode_new_child(presence, "c");
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
@@ -412,6 +422,42 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointe
 	g_free(userdata);
 }
 
+static void
+jabber_presence_update_buddy_idle(PurpleAccount *account, const gchar *who,
+	JabberBuddy *jb)
+{
+	const GList *iter = NULL;
+	gboolean idle = TRUE;
+	time_t last_idle = 0;
+	
+	purple_debug_info("jabber", "updating idle for buddy %s\n", who);
+	
+	if (!jb->resources) {
+		idle = FALSE;
+	}
+		
+	for (iter = jb->resources ; iter ; iter = g_list_next(iter)) {
+		JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
+		
+		purple_debug_info("jabber", "resource %s has an idle set to %d\n",
+			jbr->name, jbr->idle);
+		
+		if (!jbr->idle) {
+			idle = FALSE;
+			break;
+		}
+		if (jbr->idle > last_idle) {
+			last_idle = jbr->idle;
+		}
+	}
+	
+	if (idle) {
+		purple_prpl_got_user_idle(account, who, TRUE, last_idle);
+	} else {
+		purple_prpl_got_user_idle(account, who, FALSE, 0);
+	}
+}
+
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -434,7 +480,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	gboolean muc = FALSE;
 	char *avatar_hash = NULL;
 	xmlnode *caps = NULL;
-
+	int idle = 0;
+	
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
 		return;
 
@@ -569,6 +616,14 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					g_free(avatar_hash);
 					avatar_hash = xmlnode_get_data(photo);
 				}
+			}
+		} else if (!strcmp(y->name, "query") && 
+			!strcmp(xmlnode_get_namespace(y), "jabber:iq:last")) {
+			/* resource has specified idle */
+			const gchar *seconds = xmlnode_get_attrib(y, "seconds");
+			if (seconds) {
+				/* we may need to take "delayed" into account here */
+				idle = atoi(seconds);
 			}
 		}
 	}
@@ -747,6 +802,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else {
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
 					state, status);
+			if (idle) {
+				jbr->idle = time(NULL) - idle;
+			} else {
+				jbr->idle = 0;
+			}
+			
 			if(caps) {
 				const char *node = xmlnode_get_attrib(caps,"node");
 				const char *ver = xmlnode_get_attrib(caps,"ver");
@@ -768,6 +829,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
+		jabber_presence_update_buddy_idle(js->gc->account, buddy_name, jb);
 		g_free(buddy_name);
 	}
 	g_free(status);

@@ -261,7 +261,7 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 	if(!js->roster_parsed) {
 		js->roster_parsed = TRUE;
 
-		jabber_presence_send(js->gc->account, NULL);
+		jabber_presence_send(js->gc->account, NULL, FALSE);
 	}
 }
 
