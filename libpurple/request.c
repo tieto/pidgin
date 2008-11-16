@@ -790,25 +790,6 @@ purple_request_field_list_new(const char *id, const char *text)
 }
 
 void
-purple_request_field_list_set_pixbuf(PurpleRequestField *field,
-										 gboolean pixbuf)
-{
-	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
-
-	field->u.list.pixbuf = pixbuf;
-}
-
-gboolean
-purple_request_field_list_get_pixbuf(const PurpleRequestField *field)
-{
-	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, FALSE);
-
-	return field->u.list.pixbuf;
-}
-
-void
 purple_request_field_list_set_multi_select(PurpleRequestField *field,
 										 gboolean multi_select)
 {
@@ -975,7 +956,6 @@ purple_request_field_list_get_icons(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
-	g_return_val_if_fail(field->u.list.pixbuf == TRUE, NULL);
 
 	return field->u.list.icons;
 }

@@ -6784,8 +6784,6 @@ oscar_show_icq_custom_icons(PurplePluginAction *action)
 	
 	f = purple_request_field_list_new("customicon", _("XStatus"));
 
-	purple_request_field_list_set_pixbuf(f, TRUE);
-
 	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
 
 	purple_request_field_list_add_icon(f, _("None"), na_fn, GINT_TO_POINTER(-1));

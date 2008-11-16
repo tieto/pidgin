@@ -152,7 +152,6 @@ typedef struct
 			GHashTable *selected_table;
 
 			gboolean multiple_selection;
-			gboolean pixbuf;
 
 		} list;
 
@@ -877,26 +876,6 @@ GList *purple_request_field_choice_get_labels(const PurpleRequestField *field);
  * @return The new field.
  */
 PurpleRequestField *purple_request_field_list_new(const char *id, const char *text);
-
-/**
- * Sets whether or not a list field allows icons.
- *
- * @param field        The list field.
- * @param multi_select TRUE if icons are enabled,
- *                     or FALSE otherwise.
- */
-void purple_request_field_list_set_pixbuf(PurpleRequestField *field,
-											  gboolean pixbuf);
-
-/**
- * Returns whether or not a list field allows icons.
- *
- * @param field The list field.
- *
- * @return TRUE if icons are enabled, or FALSE otherwise.
- */
-gboolean purple_request_field_list_get_pixbuf(
-	const PurpleRequestField *field);
 
 /**
  * Sets whether or not a list field allows multiple selection.
