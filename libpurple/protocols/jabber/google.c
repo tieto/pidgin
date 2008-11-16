@@ -157,7 +157,8 @@ google_session_send_reject(GoogleSession *session)
 
 
 static void 
-google_session_candidates_prepared (PurpleMedia *media, GoogleSession *session)
+google_session_candidates_prepared (PurpleMedia *media, gchar *session_id,
+		gchar *participant, GoogleSession *session)
 {
 	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
 	GList *candidates = purple_media_get_local_candidates(session->media, "google-voice",
@@ -208,6 +209,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	xmlnode *desc_element, *codec_element;
 	FsCodec *codec;
 	const char *id, *encoding_name,  *clock_rate;
+	GParameter param;
 		
 	if (session->state != UNINIT) {
 		purple_debug_error("jabber", "Received initiate for active session.\n");
@@ -217,10 +219,14 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	session->media = purple_media_manager_create_media(purple_media_manager_get(), js->gc,
 							   "fsrtpconference", session->remote_jid);
 
-	/* "rawudp" will need to be changed to "nice" when libnice is finished */
-	/* GTalk will require the NICE_COMPATIBILITY_GOOGLE param */
+	/* GTalk requires the NICE_COMPATIBILITY_GOOGLE param */
+	param.name = "compatibility-mode";
+	memset(&param.value, 0, sizeof(GValue));
+	g_value_init(&param.value, G_TYPE_UINT);
+	g_value_set_uint(&param.value, 1); /* NICE_COMPATIBILITY_GOOGLE */
+
 	purple_media_add_stream(session->media, "google-voice", session->remote_jid, 
-				PURPLE_MEDIA_AUDIO, "rawudp", 0, NULL);
+				PURPLE_MEDIA_AUDIO, "nice", 1, &param);
 
 	desc_element = xmlnode_get_child(sess, "description");
 	
