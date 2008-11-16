@@ -823,14 +823,7 @@ void
 purple_request_field_list_add(PurpleRequestField *field, const char *item,
 							void *data)
 {
-	g_return_if_fail(field != NULL);
-	g_return_if_fail(item  != NULL);
-	g_return_if_fail(data  != NULL);
-	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
-
-	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
-
-	g_hash_table_insert(field->u.list.item_data, g_strdup(item), data);
+	purple_request_field_list_add_icon(field, item, NULL, data);
 }
 
 void
@@ -840,12 +833,30 @@ purple_request_field_list_add_icon(PurpleRequestField *field, const char *item, 
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(item  != NULL);
 	g_return_if_fail(data  != NULL);
-	g_return_if_fail(icon_path != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
-	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
-	field->u.list.icons = g_list_append(field->u.list.icons, g_strdup(icon_path));
+	if (icon_path)
+	{
+		if (field->u.list.icons == NULL)
+		{
+			GList *l;
+			for (l = field->u.list.items ; l != NULL ; l = l->next)
+			{
+				/* Order doesn't matter, because we're just
+				 * filing in blank items.  So, we use
+				 * g_list_prepend() because it's faster. */
+				field->u.list.icons = g_list_prepend(field->u.list.icons, NULL);
+			}
+		}
+		field->u.list.icons = g_list_append(field->u.list.icons, g_strdup(icon_path));
+	}
+	else if (field->u.list.icons)
+	{
+		/* Keep this even with the items list. */
+		field->u.list.icons = g_list_append(field->u.list.icons, NULL);
+	}
 
+	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
 	g_hash_table_insert(field->u.list.item_data, g_strdup(item), data);
 }
 
