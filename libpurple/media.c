@@ -54,15 +54,6 @@ struct _PurpleMediaSession
 	FsSession *session;
 
 	PurpleMediaSessionType type;
-	/* GList of FsCandidates table. Mapped by participant's name */
-	GHashTable *local_candidates;
-
-	/*
-	 * These will need to be per stream when sessions with multiple
-	 * streams are supported.
-	 */
-	FsCandidate *local_candidate;
-	FsCandidate *remote_candidate;
 };
 
 struct _PurpleMediaStream
@@ -274,20 +265,6 @@ static void
 purple_media_session_free(PurpleMediaSession *session)
 {
 	g_free(session->id);
-
-	if (session->local_candidates) {
-		GList *candidates = g_hash_table_get_values(session->local_candidates);
-		for (; candidates; candidates =
-				g_list_delete_link(candidates, candidates))
-			fs_candidate_list_destroy(candidates->data);
-		g_hash_table_destroy(session->local_candidates);
-	}
-
-	if (session->local_candidate)
-		fs_candidate_destroy(session->local_candidate);
-	if (session->remote_candidate)
-		fs_candidate_destroy(session->remote_candidate);
-
 	g_free(session);
 }
 
@@ -459,26 +436,19 @@ purple_media_get_participant(PurpleMedia *media, const gchar *name)
 			g_hash_table_lookup(media->priv->participants, name) : NULL;
 }
 
-static FsStream*
-purple_media_session_get_stream(PurpleMediaSession *session, const gchar *name)
+static PurpleMediaStream*
+purple_media_get_stream(PurpleMedia *media, const gchar *session, const gchar *participant)
 {
-	GList *streams = session->media->priv->streams;
+	GList *streams = media->priv->streams;
 
 	for (; streams; streams = g_list_next(streams)) {
 		PurpleMediaStream *stream = streams->data;
-		if (session == stream->session &&
-				!strcmp(stream->participant, name))
-			return stream->stream;
+		if (!strcmp(stream->session->id, session) &&
+				!strcmp(stream->participant, participant))
+			return stream;
 	}
 
 	return NULL;
-}
-
-static GList*
-purple_media_session_get_local_candidates(PurpleMediaSession *session, const gchar *name)
-{
-	return (GList*) (session->local_candidates) ?
-			g_hash_table_lookup(session->local_candidates, name) : NULL;
 }
 
 static void
@@ -543,17 +513,8 @@ static void
 purple_media_insert_local_candidate(PurpleMediaSession *session, const gchar *name,
 				     FsCandidate *candidate)
 {
-	GList *candidates = purple_media_session_get_local_candidates(session, name);
-
-	candidates = g_list_append(candidates, candidate);
-
-	if (!session->local_candidates) {
-		purple_debug_info("media", "Creating hash table for local candidates\n");
-		session->local_candidates = g_hash_table_new_full(g_str_hash,
-				g_str_equal, g_free, NULL);
-	}
-
-	g_hash_table_insert(session->local_candidates, g_strdup(name), candidates);
+	PurpleMediaStream *stream = purple_media_get_stream(session->media, session->id, name);
+	stream->local_candidates = g_list_append(stream->local_candidates, candidate);
 }
 
 GList *
@@ -1058,16 +1019,25 @@ purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *sessio
 /* callback called when a pair of transport candidates (local and remote)
  * has been established */
 static void
-purple_media_candidate_pair_established_cb(FsStream *stream,
+purple_media_candidate_pair_established_cb(FsStream *fsstream,
 					   FsCandidate *native_candidate,
 					   FsCandidate *remote_candidate,
 					   PurpleMediaSession *session)
 {
+	gchar *name;
+	FsParticipant *participant;
 	FsCandidate *local = fs_candidate_copy(native_candidate);
 	FsCandidate *remote = fs_candidate_copy(remote_candidate);
+	PurpleMediaStream *stream;
 
-	session->local_candidate = fs_candidate_copy(native_candidate);
-	session->remote_candidate = fs_candidate_copy(remote_candidate);
+	g_object_get(fsstream, "participant", &participant, NULL);
+	g_object_get(participant, "cname", &name, NULL);
+	g_object_unref(participant);
+
+	stream = purple_media_get_stream(session->media, session->id, name);
+
+	stream->local_candidate = fs_candidate_copy(native_candidate);
+	stream->remote_candidate = fs_candidate_copy(remote_candidate);
 
 	purple_debug_info("media", "candidate pair established\n");
 	g_signal_emit(session->media, purple_media_signals[CANDIDATE_PAIR], 0,
@@ -1123,7 +1093,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	FsParticipant *participant = NULL;
-	FsStream *stream = NULL;
+	PurpleMediaStream *stream = NULL;
 	FsStreamDirection *direction = NULL;
 
 	if (!session) {
@@ -1198,11 +1168,12 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		return FALSE;
 	}
 
-	stream = purple_media_session_get_stream(session, who);
+	stream = purple_media_get_stream(media, sess_id, who);
 
 	if (!stream) {
 		GError *err = NULL;
 		gchar *stun_ip = NULL;
+		FsStream *fsstream = NULL;
 
 		if (!strcmp(transmitter, "rawudp") &&
 				(stun_ip = purple_media_get_stun_pref_ip())) {
@@ -1217,13 +1188,13 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 			g_value_init(&param[num_params+1].value, G_TYPE_UINT);
 			g_value_set_uint(&param[num_params+1].value, 5);
 
-			stream = fs_session_new_stream(session->session,
+			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction,
 					transmitter, num_params+2, param, &err);
 			g_free(param);
 			g_free(stun_ip);
 		} else {
-			stream = fs_session_new_stream(session->session,
+			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction,
 					transmitter, num_params, params, &err);
 		}
@@ -1239,15 +1210,15 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 			return FALSE;
 		}
 
-		purple_media_insert_stream(session, who, stream);
+		purple_media_insert_stream(session, who, fsstream);
 
 		/* callback for source pad added (new stream source ready) */
-		g_signal_connect(G_OBJECT(stream),
+		g_signal_connect(G_OBJECT(fsstream),
 				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added_cb), session);
 
 	} else if (*direction != type_direction) {	
 		/* change direction */
-		g_object_set(stream, "direction", type_direction, NULL);
+		g_object_set(stream->stream, "direction", type_direction, NULL);
 	}
 
 	return TRUE;
@@ -1307,17 +1278,15 @@ purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id)
 GList *
 purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	return fs_candidate_list_copy(
-			purple_media_session_get_local_candidates(session, name));
+	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
+	return fs_candidate_list_copy(stream->local_candidates);
 }
 
 void
 purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 				   const gchar *name, GList *remote_candidates)
 {
-	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	FsStream *stream = purple_media_session_get_stream(session, name);
+	FsStream *stream = purple_media_get_stream(media, sess_id, name)->stream;
 	GError *err = NULL;
 
 	fs_stream_set_remote_candidates(stream, remote_candidates, &err);
@@ -1332,22 +1301,19 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 FsCandidate *
 purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	return session->local_candidate;
+	return purple_media_get_stream(media, sess_id, name)->local_candidate;
 }
 
 FsCandidate *
 purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	return session->remote_candidate;
+	return purple_media_get_stream(media, sess_id, name)->remote_candidate;
 }
 
 gboolean
 purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs)
 {
-	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	FsStream *stream = purple_media_session_get_stream(session, name);
+	FsStream *stream = purple_media_get_stream(media, sess_id, name)->stream;
 	GError *err = NULL;
 
 	fs_stream_set_remote_codecs(stream, codecs, &err);
