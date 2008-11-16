@@ -1569,7 +1569,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 			status = purple_presence_get_active_status(presence);
 			mood = purple_status_get_attr_string(status, "mood");
-			if(mood != NULL) {
+			if(mood && *mood) {
 				const char *moodtext;
 				moodtext = purple_status_get_attr_string(status, "moodtext");
 				if(moodtext && *moodtext) {
