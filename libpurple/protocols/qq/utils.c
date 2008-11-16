@@ -325,7 +325,7 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 	va_end(args);
 
 	if (bytes <= 0) {
-		purple_debug(level, category, arg_s);
+		purple_debug(level, category, "%s", arg_s);
 		return;
 	}
 

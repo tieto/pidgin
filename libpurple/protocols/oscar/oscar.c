@@ -1676,7 +1676,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	for (x = 0; x < 16; x++)
 		g_string_append_printf(msg, "%02hhx ", (unsigned char)m[x]);
 	g_string_append(msg, "\n");
-	purple_debug_misc("oscar", msg->str);
+	purple_debug_misc("oscar", "%s", msg->str);
 	g_string_free(msg, TRUE);
 
 	purple_input_remove(pos->inpa);
@@ -4947,7 +4947,7 @@ static int purple_ssi_parserights(OscarData *od, FlapConnection *conn, FlapFrame
 	for (i=0; i<numtypes; i++)
 		g_string_append_printf(msg, " max type 0x%04x=%hd,", i, maxitems[i]);
 	g_string_append(msg, "\n");
-	purple_debug_misc("oscar", msg->str);
+	purple_debug_misc("oscar", "%s", msg->str);
 	g_string_free(msg, TRUE);
 
 	if (numtypes >= 0)
