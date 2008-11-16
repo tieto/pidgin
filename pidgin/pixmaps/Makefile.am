@@ -106,7 +106,51 @@ EMBLEMS_16_SCALABLE = \
 		emblems/16/scalable/video.svg \
 		emblems/16/scalable/voice.svg
 
+
+# Magic to copy files from emotes/small/16 to emblems/16.
+# This is necessary because UIs expect emblems in one place and
+# smiley themes in another, but we don't want to duplicate these
+# images in the source.
+emblems/16/%.png: emotes/small/16/%.png
+	rm -f $@
+	cp -f $< $@
+
+emblems/16/busy.png: status/16/busy.png
+	rm -f $@
+	cp -f $< $@
+
+# The copied emblems.
+# Ensure these are in .mtn-ignore.
+EMBLEMS_16_COPIED = \
+		emblems/16/angry.png \
+		emblems/16/busy.png \
+		emblems/16/beer.png \
+		emblems/16/camera.png \
+		emblems/16/cigarette.png \
+		emblems/16/coffee.png \
+		emblems/16/console.png \
+		emblems/16/love.png \
+		emblems/16/meeting.png \
+		emblems/16/mobile.png \
+		emblems/16/musical-note.png \
+		emblems/16/party.png \
+		emblems/16/phone.png \
+		emblems/16/plate.png \
+		emblems/16/question.png \
+		emblems/16/search.png \
+		emblems/16/sick.png \
+		emblems/16/sleepy.png \
+		emblems/16/smile-big.png \
+		emblems/16/thinking.png \
+		emblems/16/tv.png \
+		emblems/16/yawn.png
+
+
+# Non-copied emblems.
+# Ensure these filenames don't clash with files in emotes/small/16 or
+# bad things will happen!
 EMBLEMS_16 = \
+		$(EMBLEMS_16_COPIED) \
 		emblems/16/aol-client.png \
 		emblems/16/birthday.png \
 		emblems/16/blocked.png \
@@ -128,40 +172,16 @@ EMBLEMS_16 = \
 		emblems/16/unavailable.png \
 		emblems/16/video.png \
 		emblems/16/voice.png \
-		emblems/16/xstatus_angry.png \
 		emblems/16/xstatus_bathing.png \
-		emblems/16/xstatus_beer.png \
-		emblems/16/xstatus_busy.png \
-		emblems/16/xstatus_cinema.png \
-		emblems/16/xstatus_coffee.png \
-		emblems/16/xstatus_crap.png \
-		emblems/16/xstatus_crapping.png \
-		emblems/16/xstatus_eating.png \
-		emblems/16/xstatus_engineering.png \
-		emblems/16/xstatus_friends.png \
-		emblems/16/xstatus_fun.png \
-		emblems/16/xstatus_gaming.png \
-		emblems/16/xstatus_google.png \
-		emblems/16/xstatus_heart.png \
 		emblems/16/xstatus_internet.png \
-		emblems/16/xstatus_iron.png \
-		emblems/16/xstatus_mobile.png \
-		emblems/16/xstatus_music.png \
-		emblems/16/xstatus_party.png \
-		emblems/16/xstatus_pda.png \
-		emblems/16/xstatus_phone.png \
-		emblems/16/xstatus_question.png \
+		emblems/16/xstatus_restroom.png \
 		emblems/16/xstatus_shopping.png \
-		emblems/16/xstatus_sick.png \
-		emblems/16/xstatus_sleeping.png \
 		emblems/16/xstatus_studying.png \
+		emblems/16/xstatus_suit.png \
 		emblems/16/xstatus_surfing.png \
-		emblems/16/xstatus_thinking.png \
-		emblems/16/xstatus_tired.png \
-		emblems/16/xstatus_tv.png \
 		emblems/16/xstatus_typing.png \
-		emblems/16/xstatus_writing.png \
-		emblems/16/xstatus_zzz.png
+		emblems/16/xstatus_working.png \
+		emblems/16/xstatus_writing.png
 
 
 EMOTES_DEFAULT_24_SCALABLE = \

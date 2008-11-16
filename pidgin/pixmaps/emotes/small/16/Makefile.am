@@ -18,6 +18,7 @@ SMILEYS = \
     kiss.png \
     love.png \
     meeting.png \
+    mobile.png \
     musical-note.png \
     nerdy.png \
     neutral.png \

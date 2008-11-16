@@ -2458,25 +2458,28 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 	else if (args->type & OSCAR_CAPABILITY_ICQSERVERRELAY)
 	{
-		purple_debug_error("oscar", "Got an ICQ Server Relay message of "
+		purple_debug_info("oscar", "Got an ICQ Server Relay message of "
 				"type %d\n", args->info.rtfmsg.msgtype);
-		purple_debug_error("oscar", "Sending X-Status Reply\n");
+		purple_debug_info("oscar", "Sending X-Status Reply\n");
 
 		if(args->info.rtfmsg.msgtype == 26)
 		icq_relay_xstatus(od, userinfo->sn, args->cookie);
 		
 		if(args->info.rtfmsg.msgtype == 1)
 		{
-		if(rtfmsg)
-		serv_got_im(gc, userinfo->sn, rtfmsg, flags,
-		time(NULL));
-		else
-		serv_got_im(gc, userinfo->sn, args->info.rtfmsg.rtfmsg, flags,
-		time(NULL));
-		
+			if(rtfmsg)
+			{
+				serv_got_im(gc, userinfo->sn, rtfmsg, flags,
+				            time(NULL));
+			}
+			else
+			{
+				serv_got_im(gc, userinfo->sn,
+				            args->info.rtfmsg.rtfmsg, flags,
+				            time(NULL));
+			}
 		}
 	}
-
 	else
 	{
 		purple_debug_error("oscar", "Unknown request class %hu\n",
@@ -5850,17 +5853,19 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 	}
 
 	if (userinfo != NULL ) {
+		const char *icon;
 		if (userinfo->flags & AIM_FLAG_ADMINISTRATOR)
 			return "admin";
 		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
 			return "bot";
-		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
-			return "hiptop";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
 			return "secure";
 		if (userinfo->icqinfo.status & AIM_ICQ_STATE_BIRTHDAY)
 			return "birthday";
-		return aim_get_custom_icon_filename(userinfo->customicon);
+		if ((icon = aim_get_custom_icon_filename(userinfo->customicon)))
+			return icon;
+		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
+			return "hiptop";
 	}
 	return NULL;
 }
@@ -6782,33 +6787,44 @@ oscar_show_icq_custom_icons(PurplePluginAction *action)
 
 	g = purple_request_field_group_new(NULL);
 	
-	f = purple_request_field_list_new("customicon", _("XStatus"));
+	f = purple_request_field_list_new("customicon", _("Choose a custom status icon"));
 
 	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
 
 	purple_request_field_list_add_icon(f, _("None"), na_fn, GINT_TO_POINTER(-1));
 	if (customicon == 0)
 		purple_request_field_list_add_selected(f, _("None"));
-	
-	g_free(na_fn);
-	
-	for (i = 1; i < aim_get_custom_icons_count(); i++) {
-		char* icon_path = g_strdup_printf("%s.png", aim_get_custom_icon_filename(i));
-		char* filename = g_build_filename("pixmaps", "pidgin", "emblems", "16", icon_path, NULL);
 
-		purple_request_field_list_add_icon(f, _(aim_get_custom_icon_descriptivename(i)), filename, GINT_TO_POINTER(i));
+	g_free(na_fn);
+
+	/* TODO: rlaager wants this sorted. */
+	for (i = 1; i < aim_get_custom_icons_count(); i++) {
+		const char *icon_filename = aim_get_custom_icon_filename(i);
+		const char *icon_desc = aim_get_custom_icon_descriptivename(i);
+		char *icon_path;
+		char *filename;
+
+		if (icon_filename == NULL || icon_desc == NULL)
+			continue;
+
+		icon_path = g_strdup_printf("%s.png", icon_filename);
+		filename = g_build_filename("pixmaps", "pidgin",
+		                            "emblems", "16",
+		                             icon_path, NULL);
+		g_free(icon_path);
+
+		purple_request_field_list_add_icon(f, _(icon_desc),
+				filename, GINT_TO_POINTER(i));
+		g_free(filename);
 
 		if (customicon == i)
-			purple_request_field_list_add_selected(f, _(aim_get_custom_icon_descriptivename(i)));
-
-		g_free(filename);
-		g_free(icon_path);
+			purple_request_field_list_add_selected(f, _(icon_desc));
 	}
 	purple_request_field_group_add_field(g, f);
 	
 	purple_request_fields_add_group(fields, g);
 	
-	purple_request_fields(gc, _("Set Custom Icon"), _("Set Custom Icon"),
+	purple_request_fields(gc, _("Custom Status Icon"), _("Custom Status Icon"),
 						NULL, fields,
 						_("OK"), G_CALLBACK(oscar_show_icq_custom_icons_cb),
 						_("Cancel"), NULL,
@@ -6860,7 +6876,7 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 				oscar_show_icq_privacy_opts);
 		menu = g_list_prepend(menu, act);
 		
-		act = purple_plugin_action_new(_("Set Custom Icon..."),
+		act = purple_plugin_action_new(_("Set Custom Status Icon..."),
 				oscar_show_icq_custom_icons);
 		menu = g_list_prepend(menu, act);
 	}
