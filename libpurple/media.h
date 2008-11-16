@@ -51,8 +51,6 @@ typedef struct _PurpleMedia PurpleMedia;
 typedef struct _PurpleMediaClass PurpleMediaClass;
 /** @copydoc _PurpleMediaPrivate */
 typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
-/** @copydoc _PurpleMediaSession */
-typedef struct _PurpleMediaSession PurpleMediaSession;
 
 #else
 

@@ -40,6 +40,11 @@
 #include <gst/interfaces/propertyprobe.h>
 #include <gst/farsight/fs-conference-iface.h>
 
+/** @copydoc _PurpleMediaSession */
+typedef struct _PurpleMediaSession PurpleMediaSession;
+/** @copydoc _PurpleMediaStream */
+typedef struct _PurpleMediaStream PurpleMediaStream;
+
 struct _PurpleMediaSession
 {
 	gchar *id;
@@ -47,8 +52,7 @@ struct _PurpleMediaSession
 	GstElement *src;
 	GstElement *sink;
 	FsSession *session;
-	/* FsStream table. Mapped by participant's name */
-	GHashTable *streams;
+
 	PurpleMediaSessionType type;
 	/* GList of FsCandidates table. Mapped by participant's name */
 	GHashTable *local_candidates;
@@ -57,6 +61,20 @@ struct _PurpleMediaSession
 	 * These will need to be per stream when sessions with multiple
 	 * streams are supported.
 	 */
+	FsCandidate *local_candidate;
+	FsCandidate *remote_candidate;
+};
+
+struct _PurpleMediaStream
+{
+	PurpleMediaSession *session;
+	gchar *participant;
+	FsStream *stream;
+
+	GList *local_candidates;
+
+	gboolean candidates_prepared;
+
 	FsCandidate *local_candidate;
 	FsCandidate *remote_candidate;
 };
@@ -71,7 +89,10 @@ struct _PurpleMediaPrivate
 	GHashTable *sessions;	/* PurpleMediaSession table */
 	GHashTable *participants; /* FsParticipant table */
 
+	GList *streams;		/* PurpleMediaStream table */
+
 	GstElement *pipeline;
+	
 };
 
 #define PURPLE_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA, PurpleMediaPrivate))
@@ -233,6 +254,44 @@ purple_media_init (PurpleMedia *media)
 }
 
 static void
+purple_media_stream_free(PurpleMediaStream *stream)
+{
+	g_free(stream->participant);
+	g_object_unref(stream->stream);
+
+	if (stream->local_candidates)
+		fs_candidate_list_destroy(stream->local_candidates);
+
+	if (stream->local_candidate)
+		fs_candidate_destroy(stream->local_candidate);
+	if (stream->remote_candidate)
+		fs_candidate_destroy(stream->remote_candidate);
+
+	g_free(stream);
+}
+
+static void
+purple_media_session_free(PurpleMediaSession *session)
+{
+	g_free(session->id);
+
+	if (session->local_candidates) {
+		GList *candidates = g_hash_table_get_values(session->local_candidates);
+		for (; candidates; candidates =
+				g_list_delete_link(candidates, candidates))
+			fs_candidate_list_destroy(candidates->data);
+		g_hash_table_destroy(session->local_candidates);
+	}
+
+	if (session->local_candidate)
+		fs_candidate_destroy(session->local_candidate);
+	if (session->remote_candidate)
+		fs_candidate_destroy(session->remote_candidate);
+
+	g_free(session);
+}
+
+static void
 purple_media_finalize (GObject *media)
 {
 	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
@@ -246,33 +305,13 @@ purple_media_finalize (GObject *media)
 	if (priv->sessions) {
 		GList *sessions = g_hash_table_get_values(priv->sessions);
 		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-			PurpleMediaSession *session = sessions->data;
-			g_free(session->id);
-
-			if (session->streams) {
-				GList *streams = g_hash_table_get_values(session->streams);
-				for (; streams; streams = g_list_delete_link(streams, streams))
-					g_object_unref(streams->data);
-				g_hash_table_destroy(session->streams);
-			}
-
-			if (session->local_candidates) {
-				GList *candidates = g_hash_table_get_values(session->local_candidates);
-				for (; candidates; candidates =
-						g_list_delete_link(candidates, candidates))
-					fs_candidate_list_destroy(candidates->data);
-				g_hash_table_destroy(session->local_candidates);
-			}
-
-			if (session->local_candidate)
-				fs_candidate_destroy(session->local_candidate);
-			if (session->remote_candidate)
-				fs_candidate_destroy(session->remote_candidate);
-
-			g_free(session);
+			purple_media_session_free(sessions->data);
 		}
 		g_hash_table_destroy(priv->sessions);
 	}
+
+	for (; priv->streams; priv->streams = g_list_delete_link(priv->streams, priv->streams))
+		purple_media_stream_free(priv->streams->data);
 
 	if (priv->participants) {
 		GList *participants = g_hash_table_get_values(priv->participants);
@@ -423,8 +462,16 @@ purple_media_get_participant(PurpleMedia *media, const gchar *name)
 static FsStream*
 purple_media_session_get_stream(PurpleMediaSession *session, const gchar *name)
 {
-	return (FsStream*) (session->streams) ?
-			g_hash_table_lookup(session->streams, name) : NULL;
+	GList *streams = session->media->priv->streams;
+
+	for (; streams; streams = g_list_next(streams)) {
+		PurpleMediaStream *stream = streams->data;
+		if (session == stream->session &&
+				!strcmp(stream->participant, name))
+			return stream->stream;
+	}
+
+	return NULL;
 }
 
 static GList*
@@ -483,13 +530,13 @@ purple_media_add_participant(PurpleMedia *media, const gchar *name)
 static void
 purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStream *stream)
 {
-	if (!session->streams) {
-		purple_debug_info("media", "Creating hash table for streams\n");
-		session->streams = g_hash_table_new_full(g_str_hash,
-				g_str_equal, g_free, NULL);
-	}
+	PurpleMediaStream *media_stream = g_new0(PurpleMediaStream, 1);
+	media_stream->stream = stream;
+	media_stream->participant = g_strdup(name);
+	media_stream->session = session;
 
-	g_hash_table_insert(session->streams, g_strdup(name), stream);
+	session->media->priv->streams =
+			g_list_append(session->media->priv->streams, media_stream);
 }
 
 static void
