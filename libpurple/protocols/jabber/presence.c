@@ -440,7 +440,7 @@ jabber_presence_update_buddy_idle(PurpleAccount *account, const gchar *who,
 	for (iter = jb->resources ; iter ; iter = g_list_next(iter)) {
 		JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
 		
-		purple_debug_info("jabber", "resource %s has an idle set to %d\n",
+		purple_debug_info("jabber", "resource %s has an idle set to %ld\n",
 			jbr->name, jbr->idle);
 		
 		if (!jbr->idle) {
