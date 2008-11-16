@@ -613,7 +613,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 						if (jid) {
 							chat = jabber_chat_find(js, jid->node, jid->domain);
-							conv = chat->conv;
+							if (chat) conv = chat->conv;
 						}
 
 						jabber_id_free(jid);
@@ -645,7 +645,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				/* note: if there were no smileys in the incoming message, or
 				  	if receiving custom smileys is turned off, smiley_refs will
 					be NULL */
-				for (; smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
+				for (; conv && smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
 					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
 					const gchar *cid = ref->cid;
 					const gchar *alt = ref->alt;
