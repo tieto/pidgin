@@ -264,7 +264,8 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	/* if we are idle and not offline, include idle */
 	if (js->idle && state != JABBER_BUDDY_STATE_UNAVAILABLE) {
 		xmlnode *query = xmlnode_new_child(presence, "query");
-		gchar *seconds = g_strdup_printf("%d", (int) (time(NULL) - js->idle));
+		gchar seconds[10];
+		g_sprintf(seconds, "%d", (int) (time(NULL) - js->idle));
 		
 		xmlnode_set_namespace(query, "jabber:iq:last");
 		xmlnode_set_attrib(query, "seconds", seconds);
