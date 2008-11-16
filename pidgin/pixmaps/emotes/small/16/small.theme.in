@@ -1,0 +1,31 @@
+Name=Shrunk
+Description=Smaller versions of the default set
+Icon=wink.png
+Author=Hylke Bons
+
+[default]
+angel.png           O:) O:-)
+angry.png           >:( >:-)
+confused.png        :S  :-S
+cool.png            B)  B-)
+cross.png           :X  :-X
+crying.png          :'( :'-(
+devil.png           (6)
+dont-know.png       :^) :^-)
+grin.png            :D  :-D
+hug-left.png        ({)
+hug-right.png       (})
+kiss.png            (K)
+nerdy.png           8)  8-)
+neutral.png         :|  :-|
+sad.png             :(  :-(
+shame.png           :$  :-$
+shock.png           :O  :-O
+sick.png            +O(
+silent.png          :#  :-#
+smile.png           :)  :-)
+thinking.png        :/  :-/
+tongue.png          :P  :-P
+uhm-yeah.png        ^O)
+wink.png            ;)  ;-)
+yawn.png            |)  |-)
