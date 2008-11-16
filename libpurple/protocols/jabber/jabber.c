@@ -1572,7 +1572,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 			if(mood != NULL) {
 				const char *moodtext;
 				moodtext = purple_status_get_attr_string(status, "moodtext");
-				if(moodtext != NULL) {
+				if(moodtext && *moodtext) {
 					char *moodplustext = g_strdup_printf("%s (%s)", mood, moodtext);
 
 					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
