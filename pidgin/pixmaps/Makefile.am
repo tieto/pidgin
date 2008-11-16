@@ -125,7 +125,6 @@ EMBLEMS_16_COPIED = \
 		emblems/16/angry.png \
 		emblems/16/busy.png \
 		emblems/16/beer.png \
-		emblems/16/camera.png \
 		emblems/16/cigarette.png \
 		emblems/16/coffee.png \
 		emblems/16/console.png \
@@ -173,6 +172,7 @@ EMBLEMS_16 = \
 		emblems/16/video.png \
 		emblems/16/voice.png \
 		emblems/16/xstatus_bathing.png \
+		emblems/16/xstatus_cinema.png \
 		emblems/16/xstatus_internet.png \
 		emblems/16/xstatus_restroom.png \
 		emblems/16/xstatus_shopping.png \
