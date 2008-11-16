@@ -703,7 +703,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	gtk_widget_grab_focus(button);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
-							 G_CALLBACK(gtk_widget_destroy), window);
+							 G_CALLBACK(formatted_close_cb), window);
 	g_signal_connect(G_OBJECT(window), "key_press_event",
 					 G_CALLBACK(formatted_input_cb), NULL);
 
