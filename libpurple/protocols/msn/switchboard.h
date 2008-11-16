@@ -68,9 +68,9 @@ typedef enum
  */
 struct _MsnSwitchBoard
 {
-	MsnSession *session;
-	MsnServConn *servconn;
-	MsnCmdProc *cmdproc;
+	MsnSession *session;   /**< Our parent session. */
+	MsnServConn *servconn; /**< The physical connection for this switchboard. */
+	MsnCmdProc *cmdproc;   /**< Convenience variable for servconn->cmdproc. */
 	char *im_user;
 
 	MsnSBFlag flag;

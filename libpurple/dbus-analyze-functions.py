@@ -372,13 +372,13 @@ class ServerBinding (Binding):
 
     def inputsimple(self, type, name, us):
         if us:
-            self.cdecls.append("\tdbus_int32_t %s;" % name)
-            self.cparams.append(("INT32", name))
-            self.addintype("i", name)
-        else:
             self.cdecls.append("\tdbus_uint32_t %s;" % name)
             self.cparams.append(("UINT32", name))
             self.addintype("u", name)
+        else:
+            self.cdecls.append("\tdbus_int32_t %s;" % name)
+            self.cparams.append(("INT32", name))
+            self.addintype("i", name)
 
     def inputstring(self, type, name, us):
         if us:
