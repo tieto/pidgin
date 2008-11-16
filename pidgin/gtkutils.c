@@ -56,6 +56,9 @@
 #include "signals.h"
 #include "util.h"
 
+#include "gtkaccount.h"
+#include "gtkprefs.h"
+
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
@@ -80,10 +83,11 @@ url_clicked_idle_cb(gpointer data)
 	return FALSE;
 }
 
-static void
-url_clicked_cb(GtkWidget *w, const char *uri)
+static gboolean
+url_clicked_cb(GtkIMHtml *imhtml, const char *uri)
 {
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
+	return TRUE;
 }
 
 static GtkIMHtmlFuncs gtkimhtml_cbs = {
@@ -101,9 +105,6 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	PangoFontDescription *desc = NULL;
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-
-	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
-					 G_CALLBACK(url_clicked_cb), NULL);
 
 	pidgin_themes_smiley_themeize(imhtml);
 
@@ -3478,5 +3479,49 @@ GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
 		g_object_ref(pixbuf);
 	g_object_unref(loader);
 	return pixbuf;
+}
+
+/* XXX: The following two functions are for demonstration purposes only! */
+static gboolean
+open_dialog(GtkIMHtml *imhtml, const char *url)
+{
+	const char *str;
+
+	if (strlen(url) < sizeof("open://"))
+		return FALSE;
+
+	str = url + sizeof("open://") - 1;
+
+	if (strcmp(str, "accounts") == 0)
+		pidgin_accounts_window_show();
+	else if (strcmp(str, "prefs") == 0)
+		pidgin_prefs_show();
+	else
+		return FALSE;
+	return TRUE;
+}
+
+static gboolean
+dummy(GtkIMHtml *imhtml, const char *text, GtkWidget *menu)
+{
+	return TRUE;
+}
+
+void pidgin_utils_init(void)
+{
+	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, NULL);
+	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, NULL);
+	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, NULL);
+
+	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
+}
+
+void pidgin_utils_uninit(void)
+{
+	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("https://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("ftp://", NULL, NULL);
+
+	gtk_imhtml_class_register_protocol("open://", NULL, NULL);
 }
 

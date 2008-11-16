@@ -822,5 +822,17 @@ GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, Gtk
  */
 GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
 
+/**
+ * Initialize some utility functions.
+ * @since 2.6.0
+ */
+void pidgin_utils_init(void);
+
+/**
+ * Uninitialize some utility functions.
+ * @since 2.6.0
+ */
+void pidgin_utils_uninit(void);
+
 #endif /* _PIDGINUTILS_H_ */
 
