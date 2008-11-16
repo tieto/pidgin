@@ -3658,8 +3658,12 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	if (prpl_info && prpl_info->list_emblem)
 		name = prpl_info->list_emblem(buddy);
 
-	if (name == NULL)
-		return NULL;
+	if (name == NULL) {
+		PurpleStatus *status = purple_presence_get_active_status(p);
+		name = purple_status_get_attr_string(status, "mood");
+		if(!(name && *name))
+			return NULL;
+	}
 
 	filename = g_strdup_printf("%s.png", name);
 
