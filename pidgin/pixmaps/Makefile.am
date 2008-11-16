@@ -213,6 +213,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/musical-note.svg \
 		emotes/default/24/scalable/peace.svg \
 		emotes/default/24/scalable/phone.svg \
+		emotes/default/24/scalable/pidgin-emotes.svg \
 		emotes/default/24/scalable/pig.svg \
 		emotes/default/24/scalable/pill.svg \
 		emotes/default/24/scalable/pizza.svg \
