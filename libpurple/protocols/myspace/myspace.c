@@ -680,19 +680,33 @@ static gboolean
 msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
 	gchar *username, *msg_msim_markup, *msg_purple_markup;
+	gchar *userid;
 	time_t time_received;
+	PurpleConversation *conv;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	username = msim_msg_get_string(msg, "_username");
+	/* I know this isn't really a string... but we need it to be one for
+	 * purple_find_conversation_with_account(). */
+	userid = msim_msg_get_string(msg, "f");
 	g_return_val_if_fail(username != NULL, FALSE);
+
+	purple_debug_info("msim_incoming_im", "UserID is %s", userid);
 
 	if (msim_is_userid(username)) {
 		purple_debug_info("msim", "Ignoring message from spambot (%s) on account %s\n",
 				username, purple_account_get_username(session->account));
 		g_free(username);
 		return FALSE;
+	}
+	
+	/* See if a conversation with their UID already exists...*/
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, userid, session->account);
+	if (conv) {
+		/* Since the conversation exists... We need to normalize it */
+		purple_conversation_set_name(conv, username);
 	}
 
 	msg_msim_markup = msim_msg_get_string(msg, "msg");
@@ -703,6 +717,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
 
 	time_received = msim_msg_get_integer(msg, "date");
 	if (!time_received) {
+		purple_debug_info("msim_incoming_im", "date in message not set.\n");
 		time_received = time(NULL);
 	}
 
