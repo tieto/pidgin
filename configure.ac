@@ -2384,6 +2384,7 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
+		   pidgin/pixmaps/emotes/small/16/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile

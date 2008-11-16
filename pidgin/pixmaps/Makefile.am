@@ -1,12 +1,13 @@
 pidginpixmapdir = $(datadir)/pixmaps/pidgin
 pidginiconsdir = $(datadir)
 
-SUBDIRS = emotes/default/24 emotes/none
+SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 
 if INSTALL_PIXMAPS
 MAKEFILE_MINGW = \
 		emotes/default/24/Makefile.mingw \
-		emotes/none/Makefile.mingw
+		emotes/none/Makefile.mingw \
+		emotes/small/16/Makefile.mingw
 
 ANIMATIONS_16 = \
 		animations/16/connect0.png \
@@ -203,6 +204,9 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/umbrella.svg \
 		emotes/default/24/scalable/watermelon.svg \
 		emotes/default/24/scalable/yin-yang.svg
+
+EMOTES_SMALL_16_SCALABLE = \
+		emotes/small/16/scalable/pidgin-emotes.svg
 
 PROTOCOLS_16_SCALABLE = \
 		protocols/16/scalable/aim.svg \
