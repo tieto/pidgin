@@ -128,16 +128,23 @@ EMBLEMS_16_COPIED = \
 		emblems/16/beer.png \
 		emblems/16/cigarette.png \
 		emblems/16/coffee.png \
+		emblems/16/confused.png \
 		emblems/16/console.png \
+		emblems/16/disappointed.png \
+		emblems/16/embarrassed.png \
 		emblems/16/excited.png \
 		emblems/16/in_love.png \
+		emblems/16/mean.png \
 		emblems/16/meeting.png \
 		emblems/16/mobile.png \
 		emblems/16/musical-note.png \
+		emblems/16/neutral.png \
 		emblems/16/party.png \
 		emblems/16/phone.png \
 		emblems/16/plate.png \
 		emblems/16/question.png \
+		emblems/16/sad.png \
+		emblems/16/sarcastic.png \
 		emblems/16/search.png \
 		emblems/16/sick.png \
 		emblems/16/sleeping.png \
