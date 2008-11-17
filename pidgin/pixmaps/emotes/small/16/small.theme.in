@@ -6,26 +6,51 @@ Author=Hylke Bons
 
 # Default smileys
 [default]
-smile.png           :)      :-)
+happy.png           :)      :-)
 excited.png         :-D     :-d     :D      :d
 sad.png             :-(     :(
 wink.png            ;-)     ;)
 tongue.png          :P      :-P     :-p     :p
-shock.png           =-O     =-o
+shocked.png         =-O     =-o
 kiss.png            :-*
 embarrassed.png     :-[
-crying.png          :'(
+crying.png          :'(     :'-(
 thinking.png        :-/     :-\\
 angel.png           O:-)    o:-)
 
 
+[XMPP]
+# Following XEP-0038 + our default set, in default set order
+happy.png           :)      :-)
+excited.png         :-D     :-d     :D      :d
+sad.png             :-(     :(
+wink.png            ;-)     ;)
+tongue.png          :P      :-P     :-p     :p
+shocked.png         =-O     =-o
+kiss.png            :kiss:  :-*
+embarrassed.png     :-[
+crying.png          :'-(    :'(
+thinking.png        :-/     :-\\
+angel.png           O:-)    o:-)
+
+# Following XEP-0038
+angry.png           >:-(    >:(
+phone.png           :telephone:
+in_love.png         :heart: :love:
+musical-note.png    :music:
+beer.png            :beer:
+coffee.png          :coffee:
+
+# Hidden icons from the default set.
+
+
 # Following AIM 6.1
 [AIM]
-smile.png           :-)     :)
+happy.png           :-)     :)
 wink.png            ;-)     ;)
 sad.png             :-(     :(
 tongue.png          :-P     :P      :-p    :p
-shock.png           =-O
+shocked.png         =-O
 kiss.png            :-*
 excited.png         :-D     :D
 embarrassed.png     :-[
@@ -36,10 +61,10 @@ crying.png          :'(
 
 # Following Windows Live Messenger 8.1
 [MSN]
-smile.png           :)      :-)
+happy.png           :)      :-)
 excited.png         :D      :d :-D :-d
 wink.png            ;)      ;-)
-shock.png           :-O     :-o :O :o
+shocked.png         :-O     :-o :O :o
 tongue.png          :P      :p :-P :-p
 angry.png           :@      :-@
 embarrassed.png     :$      :-$
@@ -74,22 +99,25 @@ console.png			(xx)    (XX)
 
 # Following QQ 2006
 [QQ]
-shock.png           /:O      /jy       /surprised
+shocked.png         /:O      /jy       /surprised
 party.png           /8-)     /dy       /revel
 crying.png          /:<      /ll       /cry
 sleeping.png        /:Z      /shui     /sleep
 embarrassed.png     /:-|     /gg       /embarassed
 excited.png         /:D      /cy       /toothy_smile
-smile.png           /:)      /wx       /small_smile
+happy.png           /:)      /wx       /small_smile
 sad.png             /:(      /ng       /sad
 sick.png            /:T      /tu       /vomit
 sleepy.png          /|-)     /kun      /sleepy
+hot.png             /:L      /sweat
 question.png        /?       /yiw      /question
+afraid.png          /shake   /fad      /shake
 amorous.png         /love    /aiq      /love
 search.png          /find    /zhao     /search
 hug-left.png        /hug     /yb       /hug
 musical-note.png    /music   /yy       /music
 coffee.png          /coffee  /kf       /coffee
+hungry.png          /eat     /fan      /eat
 kiss.png            /kiss    /wen      /kiss
 in_love.png         /heart   /xin      /heart
 meeting.png         /meeting /hy       /meeting
@@ -100,10 +128,10 @@ angry.png           /<O>     /oh       /angry
 
 # Following ICQ 6.0
 [ICQ]
-smile.png           :-)     :)
+happy.png           :-)     :)
 neutral.png         :-$
 sad.png             :-(     :(
-shock.png           =-O
+shocked.png         =-O
 wink.png            ;-)     ;)
 tongue.png          :-P     :P      :-p     :p
 sleeping.png        *TIRED*
@@ -121,9 +149,9 @@ amorous.png         *IN\ LOVE*
 
 # Following Yahoo! Messenger 8.1
 [Yahoo]
-smile.png           :)      :-)
+happy.png           :)      :-)
 question.png        :-/     :-\\
-shock.png           :-O     :O      :-o     :o 
+shocked.png         :-O     :O      :-o     :o 
 devil.png           >:)
 angel.png           O:-)    o:-)    0:-)
 sick.png            :-&
@@ -144,7 +172,9 @@ kiss.png            :-*     :*
 confused.png        :-S     :-s
 sarcastic.png       /:)
 hug-left.png        >:D<    >:d<
+hot.png             #:-S    #:-s
 party.png           <:-P    <:-p
+nervous.png         :-SS	:-Ss	:-sS	:-ss
 
 # Hidden Yahoo emotes
 coffee.png          ~o)     ~O)
@@ -168,3 +198,4 @@ tongue.png	    :P      :p
 wink.png	    ;-)     ;)
 sad.png		    :[
 kiss.png            :x
+

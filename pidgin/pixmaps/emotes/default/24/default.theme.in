@@ -15,13 +15,58 @@ shocked.png         =-O     =-o
 kiss.png            :-*
 glasses-cool.png    8-)
 embarrassed.png     :-[
-crying.png          :'(
+crying.png          :'(     :'-(
 thinking.png        :-/     :-\\
 angel.png           O:-)    o:-)
 shut-mouth.png      :-X
 moneymouth.png      :-$
 foot-in-mouth.png   :-!
 shout.png           >:o     >:O
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)  :(|)     8-|)
+! cyclops.png       O-) o-)
+
+
+[XMPP]
+# Following XEP-0038 + our default set, in default set order
+happy.png           :)      :-)
+excited.png         :-D     :-d     :D      :d
+sad.png             :-(     :(
+wink.png            ;-)     ;)
+tongue.png          :P      :-P     :-p     :p
+shocked.png         =-O     =-o
+kiss.png            :kiss:  :-*
+glasses-cool.png    8-)
+embarrassed.png     :-[
+crying.png          :'-(    :'(
+thinking.png        :-/     :-\\
+angel.png           O:-)    o:-)
+shut-mouth.png      :-X
+moneymouth.png      :-$
+foot-in-mouth.png   :-!
+shout.png           >:o     >:O
+
+# Following XEP-0038
+angry.png           >:-(    >:(
+good.png            :yes:
+bad.png             :no:
+stop.png            :wait:
+rose.png            @->--   :rose:
+phone.png           :telephone:
+mail.png            :email:
+lamp.png            :jabber:
+cake.png            :cake:
+in_love.png         :heart: :love:
+love-over.png       :brokenheart:
+musical-note.png    :music:
+beer.png            :beer:
+coffee.png          :coffee:
+coins.png           :money:
+moon.png            :moon:
+sun.png             :sun:
+star.png            :star:
+
+# Hidden icons from the default set.
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)     8-|)
 ! cyclops.png       O-) o-)
@@ -47,6 +92,7 @@ shut-mouth.png      :-X
 glasses-cool.png    8-)
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
+! cyclops.png       O-) o-)
 
 
 # Following Windows Live Messenger 8.1
@@ -129,6 +175,7 @@ sleepy.png          |-)
 bunny.png           ('.')
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
+! cyclops.png       O-) o-)
 
 # Hidden MSN emotes
 cigarette.png      	(ci)    (CI)
@@ -234,6 +281,7 @@ girl.png            /<00>    /nv       /woman
 boy.png             /<11>    /nan      /man
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
+! cyclops.png       O-) o-)
 
 
 # Following ICQ 6.0
@@ -270,6 +318,7 @@ glasses-cool.png    8-)
 amorous.png         *IN\ LOVE*
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
+! cyclops.png       O-) o-)
 
 
 # Following Yahoo! Messenger 8.1
@@ -330,6 +379,7 @@ cowboy.png          <):)
 desire.png          8->
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
+! cyclops.png       O-) o-)
 
 # Hidden Yahoo emotes
 alien.png           =:)     >-)
@@ -392,3 +442,7 @@ pissed-off.png	    B|
 wink.png	    ;-)     ;)
 sad.png		    :[
 kiss.png            :x
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)  :(|)
+! cyclops.png       O-) o-)
+
