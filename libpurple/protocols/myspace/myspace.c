@@ -139,7 +139,7 @@ msim_status_types(PurpleAccount *acct)
 	prim,   /* PurpleStatusPrimitive */                         \
 	NULL,   /* id - use default */                              \
 	NULL,   /* name - use default */                            \
-	TRUE,   /* savable */                                       \
+	TRUE,   /* saveable */                                      \
 	TRUE,   /* user_settable */                                 \
 	FALSE,  /* not independent */                               \
 	                                                            \
@@ -163,7 +163,7 @@ msim_status_types(PurpleAccount *acct)
 			PURPLE_STATUS_TUNE,	/* primitive */
 			"tune",                 /* ID */
 			NULL,                   /* name - use default */
-			TRUE,                   /* savable */
+			FALSE,                  /* saveable */
 			TRUE,                   /* should be user_settable some day */
 			TRUE,                   /* independent */
 
