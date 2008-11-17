@@ -95,8 +95,7 @@ void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *gstatus)
 }
 
 
-void jabber_presence_send(PurpleAccount *account, PurpleStatus *status,
-	gboolean update_idle)
+void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc = NULL;
 	JabberStream *js = NULL;
@@ -151,8 +150,9 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status,
 #define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
 					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
 	/* check if there are any differences to the <presence> and send them in that case */
-	if (update_idle || allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
-		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
+	if (allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
+		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash) ||
+		js->old_idle != js->idle) {
 		js->allowBuzz = allowBuzz;
 
 		presence = jabber_presence_create_js(js, state, stripped, priority);
@@ -179,6 +179,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status,
 		js->old_avatarhash = g_strdup(js->avatar_hash);
 		js->old_state = state;
 		js->old_priority = priority;
+		js->old_idle = js->idle;
 	}
 	g_free(stripped);
 
@@ -265,7 +266,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	if (js->idle && state != JABBER_BUDDY_STATE_UNAVAILABLE) {
 		xmlnode *query = xmlnode_new_child(presence, "query");
 		gchar seconds[10];
-		g_sprintf(seconds, "%d", (int) (time(NULL) - js->idle));
+		g_snprintf(seconds, 10, "%d", (int) (time(NULL) - js->idle));
 		
 		xmlnode_set_namespace(query, "jabber:iq:last");
 		xmlnode_set_attrib(query, "seconds", seconds);

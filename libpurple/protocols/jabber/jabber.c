@@ -1441,7 +1441,7 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	
 	/* send out an updated prescence */
 	purple_debug_info("jabber", "sending updated presence for idle\n");
-	jabber_presence_send(account, status, TRUE);
+	jabber_presence_send(account, status);
 }
 
 void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {

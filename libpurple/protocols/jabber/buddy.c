@@ -627,7 +627,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 	gpresence = purple_account_get_presence(gc->account);
 	status = purple_presence_get_active_status(gpresence);
-	jabber_presence_send(gc->account, status, FALSE);
+	jabber_presence_send(gc->account, status);
 }
 
 /*
