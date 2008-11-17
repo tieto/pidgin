@@ -556,3 +556,12 @@ not :)
 (16:58:10) elb: I just spent literally a couple of HOURS trying to
            debug a problem where I was using g_list_delete_link with a
            list item which wasn't in the list
+
+--
+
+22:35 <user> hi I know this might sound like a stupid question and I am NOT
+             trolling..
+22:36 <user> but when I go to some channels like anime ones people lol at me
+             for using pidgen
+22:36 <user> why do they think this is a bad client? does it have history?
+
