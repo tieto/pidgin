@@ -64,7 +64,7 @@
 #ifdef USE_VV
 #include <gst/farsight/fs-conference-iface.h>
 
-#define GTALK_CAP "http://www.google.com/session/phone"
+#define GTALK_CAP "http://www.google.com/xmpp/protocol/voice/v1"
 
 #endif
 

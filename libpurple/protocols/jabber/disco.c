@@ -154,10 +154,8 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			}
 #ifdef USE_VV
 		} else if (node && !strcmp(node, CAPS0115_NODE "#voice-v1")) {
-			SUPPORT_FEATURE("http://www.google.com/session");
-			SUPPORT_FEATURE("http://www.google.com/transport/p2p");
-			SUPPORT_FEATURE("http://www.google.com/transport/raw-udp");
-			SUPPORT_FEATURE("http://www.google.com/session/phone");
+			SUPPORT_FEATURE("http://www.google.com/xmpp/protocol/session");
+			SUPPORT_FEATURE("http://www.google.com/xmpp/protocol/voice/v1");
 			SUPPORT_FEATURE(JINGLE);
 			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_AUDIO);
 			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_VIDEO);
