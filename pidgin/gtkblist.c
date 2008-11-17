@@ -3606,7 +3606,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	PurplePluginProtocolInfo *prpl_info;
 	const char *name = NULL;
 	char *filename, *path;
-	PurplePresence *p;
+	PurplePresence *presence = NULL;
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
@@ -3616,8 +3616,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
 		gtkbuddynode = node->ui_data;
-		p = purple_buddy_get_presence(buddy);
-		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
+		presence = purple_buddy_get_presence(buddy);
+		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
 			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems",
 						"16", "mobile.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
@@ -3639,13 +3639,17 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
-	p = purple_buddy_get_presence(buddy);
-	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
+	/* If we came through the contact code flow above, we didn't need
+	 * to get the presence until now. */
+	if (presence == NULL)
+		presence = purple_buddy_get_presence(buddy);
+
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "mobile.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
-	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
@@ -3659,9 +3663,15 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		name = prpl_info->list_emblem(buddy);
 
 	if (name == NULL) {
-		PurpleStatus *status = purple_presence_get_active_status(p);
-		name = purple_status_get_attr_string(status, "mood");
-		if(!(name && *name))
+		PurpleStatus *status;
+
+		if (!purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOOD))
+			return NULL;
+
+		status = purple_presence_get_status(presence, "mood");
+		name = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+		
+		if (!(name && *name))
 			return NULL;
 	}
 

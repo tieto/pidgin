@@ -96,8 +96,7 @@ typedef enum
  */
 /*
  * If you add a value to this enum, make sure you update
- * the status_primitive_map array in status.c and the special-cases for idle
- * and offline-messagable just below it.
+ * the status_primitive_map and primitive_scores arrays in status.c.
  */
 typedef enum
 {
@@ -110,6 +109,7 @@ typedef enum
 	PURPLE_STATUS_EXTENDED_AWAY,
 	PURPLE_STATUS_MOBILE,
 	PURPLE_STATUS_TUNE,
+	PURPLE_STATUS_MOOD,
 	PURPLE_STATUS_NUM_PRIMITIVES
 } PurpleStatusPrimitive;
 
@@ -128,6 +128,9 @@ typedef enum
 #define PURPLE_TUNE_YEAR	"tune_year"
 #define PURPLE_TUNE_URL		"tune_url"
 #define PURPLE_TUNE_FULL	"tune_full"
+
+#define PURPLE_MOOD_NAME	"mood"
+#define PURPLE_MOOD_COMMENT	"moodtext"
 
 #ifdef __cplusplus
 extern "C" {

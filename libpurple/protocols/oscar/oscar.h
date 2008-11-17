@@ -1028,7 +1028,6 @@ typedef struct aim_userinfo_s
 	guint32 onlinesince; /* time_t */
 	guint32 sessionlen;  /* in seconds */
 	guint32 capabilities;
-	gint32 customicon;
 	struct {
 		guint32 status;
 		guint32 ipaddr;
@@ -1106,12 +1105,15 @@ guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len);
 guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
 void aim_info_free(aim_userinfo_t *);
 int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *);
+#if 0
 int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
-gint32 aim_get_custom_icon(OscarData *od, ByteStream *bs, int len);
-guint32 aim_get_custom_icons_count(void);
-char* aim_get_custom_icon_filename(gint32 no);
-char* aim_get_custom_icon_descriptivename(gint32 no);
-guint8* aim_get_custom_icon_data(gint32 no);
+#endif
+#if 1
+size_t aim_get_custom_icons_count(void); //rlaager
+char* aim_get_custom_icon_mood(gint32 no);// rlaager
+char* aim_get_custom_icon_descriptivename(gint32 no); // rlaager
+#endif
+guint8* aim_get_custom_icon_data(const char *mood);
 int icq_im_xstatus_request(OscarData *od, const char *sn);
 
 /* 0x0003 - family_buddy.c */
@@ -1442,7 +1444,7 @@ int aim_tlvlist_add_8(GSList **list, const guint16 type, const guint8 value);
 int aim_tlvlist_add_16(GSList **list, const guint16 type, const guint16 value);
 int aim_tlvlist_add_32(GSList **list, const guint16 type, const guint32 value);
 int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value);
-int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, gint32 customicon);
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, const char *mood);
 int aim_tlvlist_add_userinfo(GSList **list, guint16 type, aim_userinfo_t *userinfo);
 int aim_tlvlist_add_chatroom(GSList **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
 int aim_tlvlist_add_frozentlvlist(GSList **list, guint16 type, GSList **tl);

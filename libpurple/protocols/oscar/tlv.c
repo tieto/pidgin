@@ -407,7 +407,7 @@ int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value)
  * @param caps Bitfield of capability flags to send
  * @return The size of the value added.
  */
-int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, const gint32 customicon)
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, const char *mood)
 {
 	guint8 buf[256]; /* TODO: Don't use a fixed length buffer */
 	ByteStream bs;
@@ -421,10 +421,9 @@ int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, 
 	byte_stream_putcaps(&bs, caps);
 	
 	/* adding of custom icon GUID */
-	data = aim_get_custom_icon_data(customicon);	
-	if (data != NULL) {
+	data = aim_get_custom_icon_data(mood);
+	if (data != NULL)
 		byte_stream_putraw(&bs, data, 16);
-	}
 
 	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
 }

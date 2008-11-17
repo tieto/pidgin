@@ -252,13 +252,11 @@ static const struct {
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 };
 
-#define AIM_CUSTOM_ICONS_COUNT 35
-
 static const struct {
-	char *filename;
+	char *mood;
 	char *descriptivename;
 	guint8 data[16];
-} aim_custom_icons[AIM_CUSTOM_ICONS_COUNT] = {
+} aim_custom_icons[] = {
 	/* empty X-Status for the case when customicon == 0 */
 	{NULL, NULL,
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -443,8 +441,6 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 		cur->sessionlen = userinfo->sessionlen;
 	if (userinfo->capabilities != 0)
 		cur->capabilities = userinfo->capabilities;
-	if (userinfo->customicon != 0)
-		cur->customicon = userinfo->customicon;
 
 	cur->present |= userinfo->present;
 
@@ -643,11 +639,11 @@ aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 	return flags;
 }
 
-gint32
-aim_get_custom_icon(OscarData *od, ByteStream *bs, int len)
+static const char *
+aim_receive_custom_icon(OscarData *od, ByteStream *bs, int len)
 {
 	int offset;
-	gint32 result = -1;
+	const char *result = NULL;
 
 	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
 		/* check wheather this capability is a custom user icon */
@@ -656,10 +652,10 @@ aim_get_custom_icon(OscarData *od, ByteStream *bs, int len)
 
 		cap = byte_stream_getraw(bs, 0x10);
 
-		for (i = 1; i < AIM_CUSTOM_ICONS_COUNT; i++) {
+		for (i = 1; i < G_N_ELEMENTS(aim_custom_icons); i++) {
 			if (memcmp(&aim_custom_icons[i].data, cap, 0x10) == 0) {
 				purple_debug_misc("oscar", "Custom status icon: %s\n", aim_custom_icons[i].descriptivename);		
-				result = i;
+				result = aim_custom_icons[i].mood;
 				break; /* should only match once... */
 			}
 		}
@@ -759,36 +755,36 @@ aim_info_free(aim_userinfo_t *info)
 	g_free(info->away_encoding);
 }
 
-#define ICQMOODS_COUNT 23
-
 static const struct {
-	char *mood;
-	gint32 icon_num;
-} icqmoods[ICQMOODS_COUNT] = {
-	{"icqmood0", 3},
-	{"icqmood1", 12},
-	{"icqmood2", 18},
-	{"icqmood3", 24},
-	{"icqmood4", 30},
-	{"icqmood5", 1},
-	{"icqmood6", 7},
-	{"icqmood7", 13},
-	{"icqmood8", 19},
-	{"icqmood9", 25},
-	{"icqmood10", 31},
-	{"icqmood11", 11},
-	{"icqmood12", 8},
-	{"icqmood13", 14},
-	{"icqmood14", 20},
-	{"icqmood15", 26},
-	{"icqmood16", 32},
-	{"icqmood17", 9},
-	{"icqmood18", 15},
-	{"icqmood19", 21},
-	{"icqmood20", 27},
-	{"icqmood21", 33},
-	{"icqmood22", 10},
-	{"icqmood23", 6},
+	char *icqmood;
+	const char *mood;
+} icqmoods[] = {
+	{"icqmood0",  "shopping"},
+	{"icqmood1",  "bathing"},
+	{"icqmood2",  "yawn"},
+	{"icqmood3",  "party"},
+	{"icqmood4",  "beer"},
+	{"icqmood5",  "thinking"},
+	{"icqmood6",  "plate"},
+	{"icqmood7",  "tv"},
+	{"icqmood8",  "meeting"},
+	{"icqmood9",  "coffee"},
+	{"icqmood10", "music"},
+	{"icqmood11", "suit"},
+	{"icqmood12", "cinema"},
+	{"icqmood13", "smile-big"},
+	{"icqmood14", "phone"},
+	{"icqmood15", "console"},
+	{"icqmood16", "studying"},
+	{"icqmood17", "sick"},
+	{"icqmood18", "sleepy"},
+	{"icqmood19", "surfing"},
+	{"icqmood20", "internet"},
+	{"icqmood21", "working"},
+	{"icqmood22", "typing"},
+	{"icqmood23", "angry"},
+	{NULL, 0}
+
 };
 
 /*
@@ -946,13 +942,23 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQDATA;
 
 		} else if (type == 0x000d) {
+			PurpleAccount *account = purple_connection_get_account(od->gc);
+			const char *mood;
+
 			/*
 			 * OSCAR Capability information
 			 */
 			outinfo->capabilities |= aim_locate_getcaps(od, bs, length);
 			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 			byte_stream_setpos(bs, curpos);
-			outinfo->customicon = aim_get_custom_icon(od, bs, length);
+
+			mood = aim_receive_custom_icon(od, bs, length);
+			if (mood)
+				purple_prpl_got_user_status(account, outinfo->sn, "mood",
+						PURPLE_MOOD_NAME, mood,
+						NULL);
+			else
+				purple_prpl_got_user_status_deactive(account, outinfo->sn, "mood");
 
 		} else if (type == 0x000e) {
 			/*
@@ -1083,33 +1089,34 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 					} break;
 
 					case 0x000e: { /* ICQ mood */
-						char *mood;
+						PurpleAccount *account = purple_connection_get_account(od->gc);
+						char *icqmood;
 						gint32 i;
-						gint32 icon_num = -1;
+						const char *mood = NULL;
 
-						mood = byte_stream_getstr(bs, length2);
+						icqmood = byte_stream_getstr(bs, length2);
 
-						/* The official clients allow
-						 * you to set your custom icon
-						 * to the "default" icon, to
-						 * allow setting a status
-						 * message.  We'll ignore it.
-						 */
-						if (!*mood)
-							break;
-
-						for (i = 0; i < ICQMOODS_COUNT; i++)
-							if (!strcmp(mood, icqmoods[i].mood)) {
-								icon_num = icqmoods[i].icon_num;
-								break; /* should only match once... */
+						/* icqmood = "" means X-Status
+						 * with no mood icon. */
+						if (*icqmood) {
+							for (i = 0; icqmoods[i].icqmood; i++) {
+								if (!strcmp(icqmood, icqmoods[i].icqmood)) {
+									mood = icqmoods[i].mood;
+									break; /* should only match once... */
+								}
 							}
 
-						if (icon_num >= 0)
-							outinfo->customicon = icon_num;
-						else
-							purple_debug_warning("oscar", "Unknown icqmood: %s\n", mood);
+							if (!mood)
+								purple_debug_warning("oscar", "Unknown icqmood: %s\n", icqmood);
+						}
+						g_free(icqmood);
 
-						g_free(mood);
+						if (mood)
+							purple_prpl_got_user_status(account, outinfo->sn, "mood",
+									PURPLE_MOOD_NAME, mood,
+									NULL);
+						else
+							purple_prpl_got_user_status_deactive(account, outinfo->sn, "mood");
 					} break;
 				}
 
@@ -1155,6 +1162,10 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	return 0;
 }
 
+/* Apparently, this is never called.
+ * If you activate it, figure out a way to know what mood to pass to
+ * aim_tlvlist_add_caps() below. --rlaager */
+#if 0
 /*
  * Inverse of aim_info_extract()
  */
@@ -1190,8 +1201,9 @@ aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 	}
 #endif
 
-	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
-		aim_tlvlist_add_caps(&tlvlist, 0x000d, info->capabilities, info->customicon);
+	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES) {
+		aim_tlvlist_add_caps(&tlvlist, 0x000d, info->capabilities, NULL);
+	}
 
 	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		aim_tlvlist_add_32(&tlvlist, (guint16)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
@@ -1202,6 +1214,7 @@ aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 
 	return 0;
 }
+#endif
 
 /*
  * Subtype 0x0001
@@ -1391,6 +1404,10 @@ int
 aim_locate_setcaps(OscarData *od, guint32 caps)
 {
 	FlapConnection *conn;
+	PurpleAccount *account = purple_connection_get_account(od->gc);
+	PurplePresence *presence = purple_account_get_presence(account);
+	PurpleStatus *status = purple_presence_get_status(presence, "mood");
+	const char *mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
 	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
@@ -1398,7 +1415,7 @@ aim_locate_setcaps(OscarData *od, guint32 caps)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
-	aim_tlvlist_add_caps(&tlvlist, 0x0005, caps, purple_account_get_int(purple_connection_get_account(od->gc), "customicon", -1));
+	aim_tlvlist_add_caps(&tlvlist, 0x0005, caps, mood);
 
 	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
@@ -1482,11 +1499,21 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	/* Caps will be 5 */
 	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1))) {
 		ByteStream cbs;
+		PurpleAccount *account = purple_connection_get_account(od->gc);
+		const char *mood;
+
 		byte_stream_init(&cbs, tlv->value, tlv->length);
 		userinfo->capabilities = aim_locate_getcaps(od, &cbs, tlv->length);
 		byte_stream_rewind(&cbs);
-		userinfo->customicon = aim_get_custom_icon(od, &cbs, tlv->length);
 		userinfo->present = AIM_USERINFO_PRESENT_CAPABILITIES;
+
+		mood = aim_receive_custom_icon(od, &cbs, tlv->length);
+		if (mood)
+			purple_prpl_got_user_status(account, userinfo->sn, "mood",
+					PURPLE_MOOD_NAME, mood,
+					NULL);
+		else
+			purple_prpl_got_user_status_deactive(account, userinfo->sn, "mood");
 	}
 	aim_tlvlist_free(tlvlist);
 
@@ -1714,32 +1741,43 @@ locate_modfirst(OscarData *od, aim_module_t *mod)
 	return 0;
 }
 
-guint32
-aim_get_custom_icons_count()
+#if 1 //rlaager
+size_t aim_get_custom_icons_count(void)
 {
-	return AIM_CUSTOM_ICONS_COUNT;
+	return G_N_ELEMENTS(aim_custom_icons);
 }
 
-char*
-aim_get_custom_icon_filename(gint32 no)
+char* aim_get_custom_icon_mood(gint32 no)
 {
-	if (no >= AIM_CUSTOM_ICONS_COUNT || no < 1)
+	if (no >= G_N_ELEMENTS(aim_custom_icons) || no < 1)
 		return NULL;
-	return aim_custom_icons[no].filename;
+	return aim_custom_icons[no].mood;
 }
 
-char*
-aim_get_custom_icon_descriptivename(gint32 no)
+char* aim_get_custom_icon_descriptivename(gint32 no)
 {
-	if (no >= AIM_CUSTOM_ICONS_COUNT || no < 1)
+	if (no >= G_N_ELEMENTS(aim_custom_icons) || no < 1)
 		return NULL;
 	return aim_custom_icons[no].descriptivename;
 }
+#endif
 
 guint8*
-aim_get_custom_icon_data(gint32 no)
+aim_get_custom_icon_data(const char *mood)
 {
-	if (no >= AIM_CUSTOM_ICONS_COUNT || no < 1)
+	int i;
+
+	if (!(mood && *mood))
 		return NULL;
-	return (guint8 *)aim_custom_icons[no].data;
+
+	for (i = 1; i < G_N_ELEMENTS(aim_custom_icons); i++) {
+		/* We check that descriptivename is not NULL to exclude
+		 * duplicates, like the typing duplicate. */
+		if (aim_custom_icons[i].descriptivename &&
+		    aim_custom_icons[i].mood &&
+		    !strcmp(mood, aim_custom_icons[i].mood)) {
+			return (guint8 *)aim_custom_icons[i].data;
+		}
+	}
+	return NULL;
 }

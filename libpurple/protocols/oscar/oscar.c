@@ -4865,6 +4865,10 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 	if (!purple_account_is_connected(account))
 		return;
 
+	/* There's no need to do the stuff below for mood updates. */
+	if (purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_MOOD)
+		return;
+
 	/* Set the AIM-style away message for both AIM and ICQ accounts */
 	oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
 
@@ -5853,7 +5857,6 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 	}
 
 	if (userinfo != NULL ) {
-		const char *icon;
 		if (userinfo->flags & AIM_FLAG_ADMINISTRATOR)
 			return "admin";
 		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
@@ -5862,8 +5865,11 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 			return "secure";
 		if (userinfo->icqinfo.status & AIM_ICQ_STATE_BIRTHDAY)
 			return "birthday";
-		if ((icon = aim_get_custom_icon_filename(userinfo->customicon)))
-			return icon;
+
+		/* Make the mood icon override anything below this. */
+		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOOD))
+			return NULL;
+
 		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
 			return "hiptop";
 	}
@@ -6181,9 +6187,14 @@ oscar_status_types(PurpleAccount *account)
 									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_prepend(status_types, type);
 
-	status_types = g_list_reverse(status_types);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_MOOD,
+			"mood", NULL, TRUE, is_icq, TRUE,
+			PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_MOOD_COMMENT, _("Mood Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
+	status_types = g_list_prepend(status_types, type);
 
-	return status_types;
+	return g_list_reverse(status_types);
 }
 
 static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
@@ -6751,87 +6762,98 @@ oscar_send_file(PurpleConnection *gc, const char *who, const char *file)
 		purple_xfer_request(xfer);
 }
 
+/* XXX: rlaager wants UI in the UI. */
+#if 1
 static void
-oscar_show_icq_custom_icons_cb(PurpleConnection *gc, PurpleRequestFields *fields) {
+oscar_show_icq_moods_cb(PurpleConnection *gc, PurpleRequestFields *fields) {
 	OscarData *od = gc->proto_data;
-	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleRequestField *f;
 	GList *l;
 
-	f = purple_request_fields_get_field(fields, "customicon");
+	f = purple_request_fields_get_field(fields, "mood");
 	l = purple_request_field_list_get_selected(f);
 	
 	if (l) {
-		gpointer d = purple_request_field_list_get_data(f, l->data);		
-		purple_account_set_int(account, "customicon", GPOINTER_TO_INT(d));
+		const char *mood = purple_request_field_list_get_data(f, l->data);
+		PurpleAccount *account = purple_connection_get_account(gc);
+
+		if (mood != NULL) {
+			purple_account_set_status(account, "mood", TRUE,
+			                          PURPLE_MOOD_NAME, mood,
+			                          NULL);
+		} else {
+			purple_account_set_status(account, "mood", FALSE, NULL);
+		}
 	}
-	
+
 	aim_locate_setcaps(od, purple_caps);
 }
 
 static void
-oscar_show_icq_custom_icons(PurplePluginAction *action)
+oscar_show_icq_moods(PurplePluginAction *action)
 {
-	guint32 i;
-	gint32 customicon;
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	PurpleAccount *account = purple_connection_get_account(gc);
+	PurplePresence *presence = purple_account_get_presence(account);
+	PurpleStatus *status = purple_presence_get_status(presence, "mood");
+	const char *current_mood;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *g;
 	PurpleRequestField *f;
+	guint32 i;
 	char* na_fn;
 
-	customicon = purple_account_get_int(account, "customicon", 0);
-	
+	current_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+
 	fields = purple_request_fields_new();
 
 	g = purple_request_field_group_new(NULL);
-	
-	f = purple_request_field_list_new("customicon", _("Choose a custom status icon"));
+
+	f = purple_request_field_list_new("mood", _("Please select your mood from the list."));
 
 	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
 
-	purple_request_field_list_add_icon(f, _("None"), na_fn, GINT_TO_POINTER(-1));
-	if (customicon == 0)
+	purple_request_field_list_add_icon(f, _("None"), na_fn, NULL);
+	if (current_mood == NULL)
 		purple_request_field_list_add_selected(f, _("None"));
 
 	g_free(na_fn);
 
 	/* TODO: rlaager wants this sorted. */
 	for (i = 1; i < aim_get_custom_icons_count(); i++) {
-		const char *icon_filename = aim_get_custom_icon_filename(i);
+		const char *mood = aim_get_custom_icon_mood(i);
 		const char *icon_desc = aim_get_custom_icon_descriptivename(i);
 		char *icon_path;
 		char *filename;
 
-		if (icon_filename == NULL || icon_desc == NULL)
+		if (mood == NULL || icon_desc == NULL)
 			continue;
 
-		icon_path = g_strdup_printf("%s.png", icon_filename);
+		icon_path = g_strdup_printf("%s.png", mood);
 		filename = g_build_filename("pixmaps", "pidgin",
 		                            "emblems", "16",
 		                             icon_path, NULL);
 		g_free(icon_path);
 
 		purple_request_field_list_add_icon(f, _(icon_desc),
-				filename, GINT_TO_POINTER(i));
+				filename, (gpointer)mood);
 		g_free(filename);
 
-		if (customicon == i)
+		if (current_mood && !strcmp(current_mood, mood))
 			purple_request_field_list_add_selected(f, _(icon_desc));
 	}
 	purple_request_field_group_add_field(g, f);
 	
 	purple_request_fields_add_group(fields, g);
 	
-	purple_request_fields(gc, _("Custom Status Icon"), _("Custom Status Icon"),
+	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
 						NULL, fields,
-						_("OK"), G_CALLBACK(oscar_show_icq_custom_icons_cb),
+						_("OK"), G_CALLBACK(oscar_show_icq_moods_cb),
 						_("Cancel"), NULL,
 						purple_connection_get_account(gc), NULL, NULL,
 						gc);
 }
-
+#endif
 
 GList *
 oscar_actions(PurplePlugin *plugin, gpointer context)
@@ -6875,10 +6897,13 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 		act = purple_plugin_action_new(_("Set Privacy Options..."),
 				oscar_show_icq_privacy_opts);
 		menu = g_list_prepend(menu, act);
-		
-		act = purple_plugin_action_new(_("Set Custom Status Icon..."),
-				oscar_show_icq_custom_icons);
+
+/* XXX: rlaager wants UI in the UI. */
+#if 1
+		act = purple_plugin_action_new(_("Set Mood..."),
+				oscar_show_icq_moods);
 		menu = g_list_prepend(menu, act);
+#endif
 	}
 	else
 	{

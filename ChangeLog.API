@@ -1,5 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.0 (??/??/????):
+	libpurple:
+		Added:
+		* PURPLE_STATUS_MOOD as a new PurpleStatusPrimitive
+
 version 2.5.0 (08/18/2008):
 	libpurple:
 		Added:
