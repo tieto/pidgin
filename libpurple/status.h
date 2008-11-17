@@ -50,8 +50,8 @@
  * your accounts are saved so that the next time you start Purple,
  * your accounts will be set to their last known statuses.  There
  * is also a list of saved statuses that are written to the
- * status.xml file.  Also, each PurpleStatus has a "savable" boolean.
- * If "savable" is set to FALSE then the status is NEVER saved.
+ * status.xml file.  Also, each PurpleStatus has a "saveable" boolean.
+ * If "saveable" is set to FALSE then the status is NEVER saved.
  * All PurpleStatuses should be inside a PurplePresence.
  *
  *
@@ -203,7 +203,7 @@ PurpleStatusType *purple_status_type_new_full(PurpleStatusPrimitive primitive,
 
 /**
  * Creates a new status type with some default values (not
- * savable and not independent).
+ * saveable and not independent).
  *
  * @param primitive     The primitive status type.
  * @param id            The ID of the status type, or @c NULL to use the id of
