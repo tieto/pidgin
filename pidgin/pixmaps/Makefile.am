@@ -122,13 +122,15 @@ emblems/16/busy.png: status/16/busy.png
 # The copied emblems.
 # Ensure these are in .mtn-ignore.
 EMBLEMS_16_COPIED = \
+		emblems/16/amorous.png \
 		emblems/16/angry.png \
 		emblems/16/busy.png \
 		emblems/16/beer.png \
 		emblems/16/cigarette.png \
 		emblems/16/coffee.png \
 		emblems/16/console.png \
-		emblems/16/love.png \
+		emblems/16/excited.png \
+		emblems/16/in_love.png \
 		emblems/16/meeting.png \
 		emblems/16/mobile.png \
 		emblems/16/musical-note.png \
@@ -138,11 +140,10 @@ EMBLEMS_16_COPIED = \
 		emblems/16/question.png \
 		emblems/16/search.png \
 		emblems/16/sick.png \
+		emblems/16/sleeping.png \
 		emblems/16/sleepy.png \
-		emblems/16/smile-big.png \
 		emblems/16/thinking.png \
-		emblems/16/tv.png \
-		emblems/16/yawn.png
+		emblems/16/tv.png
 
 
 # Non-copied emblems.

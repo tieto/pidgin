@@ -2,6 +2,7 @@ SMILEYS = \
     act-up.png \
     airplane.png \
     alien.png \
+    amorous.png \
     angel.png \
     angry.png \
     arrogant.png \
@@ -58,6 +59,7 @@ SMILEYS = \
     drool.png \
     eat.png \
     embarrassed.png \
+    excited.png \
     excruciating.png \
     eyeroll.png \
     female-fighter.png \
@@ -81,7 +83,7 @@ SMILEYS = \
     hug-left.png \
     hug-right.png \
     hypnotized.png \
-    in-love.png \
+    in_love.png \
     island.png \
     jump.png \
     kissed.png \
@@ -94,7 +96,6 @@ SMILEYS = \
     liquor.png \
     loser.png \
     love-over.png \
-    love.png \
     lying.png \
     mad-tongue.png \
     mail.png \
@@ -153,8 +154,8 @@ SMILEYS = \
     sinister.png \
     skeleton.png \
     skywalker.png \
+    sleeping.png \
     sleepy.png \
-    smile-big.png \
     smile.png \
     smirk.png \
     snail.png \
@@ -188,7 +189,6 @@ SMILEYS = \
     wilt.png \
     wink.png \
     worship.png \
-    yawn.png \
     yin-yang.png
 
 
