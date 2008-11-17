@@ -440,6 +440,12 @@ struct _PurplePluginProtocolInfo
 	 *         destroyed by the caller when it's no longer needed.
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
+
+	/**
+	 * Returns an array of "PurpleMood"s, with the last one having
+	 * "mood" set to @c NULL.
+	 */
+	PurpleMood *(*get_moods)(PurpleAccount *account);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

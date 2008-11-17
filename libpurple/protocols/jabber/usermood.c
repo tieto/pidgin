@@ -150,15 +150,12 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		}
 	}
 	if (newmood != NULL) {
-		const char *status_id;
-		JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
-		if(!resource) { /* huh? */
-			g_free(moodtext);
-			return;
-		}
-		status_id = jabber_buddy_state_get_status_id(resource->state);
-
-		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
+		purple_prpl_got_user_status(js->gc->account, from, "mood",
+				PURPLE_MOOD_NAME, mood,
+				PURPLE_MOOD_COMMENT, moodtext,
+				NULL);
+	} else {
+		purple_prpl_got_user_status_deactive(js->gc->account, from, "mood");
 	}
 	g_free(moodtext);
 }

@@ -421,7 +421,7 @@ int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, 
 	byte_stream_putcaps(&bs, caps);
 	
 	/* adding of custom icon GUID */
-	data = aim_get_custom_icon_data(mood);
+	data = icq_get_custom_icon_data(mood);
 	if (data != NULL)
 		byte_stream_putraw(&bs, data, 16);
 

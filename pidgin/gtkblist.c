@@ -7624,6 +7624,95 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 	purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 }
 
+static void
+edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
+{
+	PurpleRequestField *f;
+	GList *l;
+
+	f = purple_request_fields_get_field(fields, "mood");
+	l = purple_request_field_list_get_selected(f);
+
+	if (l) {
+		const char *mood = purple_request_field_list_get_data(f, l->data);
+		PurpleAccount *account = purple_connection_get_account(gc);
+
+		if (mood != NULL) {
+			purple_account_set_status(account, "mood", TRUE,
+			                          PURPLE_MOOD_NAME, mood,
+			                          NULL);
+		} else {
+			purple_account_set_status(account, "mood", FALSE, NULL);
+		}
+	}
+}
+
+static void
+set_mood_cb(GtkWidget *widget, PurpleAccount *account)
+{
+	PurplePresence *presence = purple_account_get_presence(account);
+	PurpleStatus *status = purple_presence_get_status(presence, "mood");
+	const char *current_mood;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
+	char* na_fn;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleMood *mood;
+
+	g_return_if_fail(gc->prpl != NULL);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	current_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+
+	fields = purple_request_fields_new();
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_list_new("mood", _("Please select your mood from the list"));
+
+	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
+
+	purple_request_field_list_add_icon(f, _("None"), na_fn, NULL);
+	if (current_mood == NULL)
+		purple_request_field_list_add_selected(f, _("None"));
+
+	g_free(na_fn);
+
+	/* TODO: rlaager wants this sorted. */
+	for (mood = prpl_info->get_moods(account);
+	     mood->mood != NULL ; mood++)
+	{
+		char *icon_path;
+		char *filename;
+
+		if (mood->mood == NULL || mood->description == NULL)
+			continue;
+
+		icon_path = g_strdup_printf("%s.png", mood->mood);
+		filename = g_build_filename("pixmaps", "pidgin",
+		                            "emblems", "16",
+		                             icon_path, NULL);
+		g_free(icon_path);
+
+		purple_request_field_list_add_icon(f, _(mood->description),
+				filename, mood->mood);
+		g_free(filename);
+
+		if (current_mood && !strcmp(current_mood, mood->mood))
+			purple_request_field_list_add_selected(f, _(mood->description));
+	}
+	purple_request_field_group_add_field(g, f);
+	
+	purple_request_fields_add_group(fields, g);
+	
+	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
+                              NULL, fields,
+                              _("OK"), G_CALLBACK(edit_mood_cb),
+                              _("Cancel"), NULL,
+                              purple_connection_get_account(gc),
+                              NULL, NULL, gc);
+}
+
 void
 pidgin_blist_update_accounts_menu(void)
 {
@@ -7697,6 +7786,8 @@ pidgin_blist_update_accounts_menu(void)
 		PurpleAccount *account = NULL;
 		GdkPixbuf *pixbuf = NULL;
 		PurplePlugin *plugin = NULL;
+		PurplePluginProtocolInfo *prpl_info;
+		GList *types;
 
 		account = accounts->data;
 		accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
@@ -7735,10 +7826,45 @@ pidgin_blist_update_accounts_menu(void)
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 			gtk_widget_show(menuitem);
 
-			pidgin_separator(submenu);
-
 			gc = purple_account_get_connection(account);
 			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
+
+printf("HERE1\n");
+if (plugin){
+	printf("HERE1.1\n");
+	if (PURPLE_PLUGIN_PROTOCOL_INFO(plugin)) {
+		printf("HERE1.2: %s\n", purple_account_get_username(account));
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods)) {
+			printf("HERE1.3\n");
+		}
+	}
+}
+			if (plugin &&
+			    (prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin)) &&
+			    PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods))
+			{
+printf("HERE2\n");
+				for (types = purple_account_get_status_types(account);
+				     types != NULL ; types = types->next)
+				{
+					PurpleStatusType *type = types->data;
+printf("HERE3\n");
+					if (strcmp(purple_status_type_get_id(type), "mood") != 0)
+						continue;
+printf("HERE4\n");
+					menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
+					g_signal_connect(G_OBJECT(menuitem), "activate",
+						         G_CALLBACK(set_mood_cb), account);
+					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+					gtk_widget_show(menuitem);
+
+					/* Be safe.  It shouldn't match more than once anyway */
+					break;
+				}
+			}
+
+			pidgin_separator(submenu);
+
 			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
 				build_plugin_actions(submenu, plugin, gc);
 			} else {

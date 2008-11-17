@@ -77,6 +77,12 @@ typedef struct _PurpleStatusAttr      PurpleStatusAttr;
 typedef struct _PurplePresence        PurplePresence;
 typedef struct _PurpleStatus          PurpleStatus;
 
+typedef struct _PurpleMood {
+	const char *mood;
+	const char *description;
+	gpointer *padding;
+} PurpleMood;
+
 /**
  * A context for a presence.
  *

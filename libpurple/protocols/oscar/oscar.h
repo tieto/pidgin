@@ -1108,12 +1108,9 @@ int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *);
 #if 0
 int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
 #endif
-#if 1
-size_t aim_get_custom_icons_count(void); //rlaager
-char* aim_get_custom_icon_mood(gint32 no);// rlaager
-char* aim_get_custom_icon_descriptivename(gint32 no); // rlaager
-#endif
-guint8* aim_get_custom_icon_data(const char *mood);
+PurpleMood* icq_get_purple_moods(PurpleAccount *account);
+const char* icq_get_custom_icon_description(const char *mood);
+guint8* icq_get_custom_icon_data(const char *mood);
 int icq_im_xstatus_request(OscarData *od, const char *sn);
 
 /* 0x0003 - family_buddy.c */
