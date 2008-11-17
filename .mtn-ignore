@@ -37,6 +37,7 @@ pidgin-.*.tar.gz
 pidgin-.*.tar.bz2
 pidgin-*.*.*-win32bin$
 pidgin/pidgin$
+pidgin/pixmaps/emblems/16/afraid.png
 pidgin/pixmaps/emblems/16/amorous.png
 pidgin/pixmaps/emblems/16/angry.png
 pidgin/pixmaps/emblems/16/beer.png
@@ -48,11 +49,15 @@ pidgin/pixmaps/emblems/16/console.png
 pidgin/pixmaps/emblems/16/disappointed.png
 pidgin/pixmaps/emblems/16/embarrassed.png
 pidgin/pixmaps/emblems/16/excited.png
+pidgin/pixmaps/emblems/16/happy.png
+pidgin/pixmaps/emblems/16/hot.png
+pidgin/pixmaps/emblems/16/hungry.png
 pidgin/pixmaps/emblems/16/in_love.png
 pidgin/pixmaps/emblems/16/mean.png
 pidgin/pixmaps/emblems/16/meeting.png
 pidgin/pixmaps/emblems/16/mobile.png
 pidgin/pixmaps/emblems/16/musical-note.png
+pidgin/pixmaps/emblems/16/nervous.png
 pidgin/pixmaps/emblems/16/neutral.png
 pidgin/pixmaps/emblems/16/party.png
 pidgin/pixmaps/emblems/16/phone.png
@@ -61,6 +66,7 @@ pidgin/pixmaps/emblems/16/question.png
 pidgin/pixmaps/emblems/16/sad.png
 pidgin/pixmaps/emblems/16/sarcastic.png
 pidgin/pixmaps/emblems/16/search.png
+pidgin/pixmaps/emblems/16/shocked.png
 pidgin/pixmaps/emblems/16/sick.png
 pidgin/pixmaps/emblems/16/sleeping.png
 pidgin/pixmaps/emblems/16/sleepy.png

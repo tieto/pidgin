@@ -6,12 +6,12 @@ Author=Hylke Bons
 
 # Default smileys
 [default]
-smile.png           :)      :-)
+happy.png           :)      :-)
 excited.png         :-D     :-d     :D      :d
 sad.png             :-(     :(
 wink.png            ;-)     ;)
 tongue.png          :P      :-P     :-p     :p
-shock.png           =-O     =-o
+shocked.png         =-O     =-o
 kiss.png            :-*
 glasses-cool.png    8-)
 embarrassed.png     :-[
@@ -29,11 +29,11 @@ shout.png           >:o     >:O
 
 # Following AIM 6.1
 [AIM]
-smile.png           :-)     :)
+happy.png           :-)     :)
 wink.png            ;-)     ;)
 sad.png             :-(     :(
 tongue.png          :-P     :P      :-p    :p
-shock.png           =-O
+shocked.png         =-O
 kiss.png            :-*
 shout.png           >:o
 excited.png         :-D     :D
@@ -51,10 +51,10 @@ glasses-cool.png    8-)
 
 # Following Windows Live Messenger 8.1
 [MSN]
-smile.png           :)      :-)
+happy.png           :)      :-)
 excited.png         :D      :d :-D :-d
 wink.png            ;)      ;-)
-shock.png           :-O     :-o :O :o
+shocked.png         :-O     :-o :O :o
 tongue.png          :P      :p :-P :-p
 glasses-cool.png    (H)     (h)
 angry.png           :@      :-@
@@ -139,7 +139,7 @@ fingers-crossed.png	(yn)    (YN)
 
 # Following QQ 2006
 [QQ]
-shock.png           /:O      /jy       /surprised
+shocked.png         /:O      /jy       /surprised
 curl-lip.png        /:~      /pz       /curl_lip
 desire.png          /:*      /se       /desire
 dazed.png           /:|      /dazed
@@ -153,7 +153,7 @@ embarrassed.png     /:-|     /gg       /embarassed
 pissed-off.png      /:@      /fn       /pissed_off
 act-up.png          /:P      /tp       /act_up
 excited.png         /:D      /cy       /toothy_smile
-smile.png           /:)      /wx       /small_smile
+happy.png           /:)      /wx       /small_smile
 sad.png             /:(      /ng       /sad
 glasses-cool.png    /:+      /kuk      /cool
 doctor.png          /:#      /feid     /SARS
@@ -166,7 +166,7 @@ arrogant.png        /;o      /am       /arrogant
 starving.png        /:g      /jie      /starving
 sleepy.png          /|-)     /kun      /sleepy
 terror.png          /:!      /jk       /terror
-sweat.png           /:L      /sweat
+hot.png             /:L      /sweat
 smirk.png           /:>      /hanx     /smirk
 soldier.png         /:;      /db       /soldier
 struggle.png        /;f      /fendou   /struggle
@@ -180,7 +180,7 @@ skeleton.png        /!!!     /kl       /skeleton
 hammer.png          /xx      /qiao     /hammer
 bye.png             /bye     /zj       /bye
 go-away.png         /go      /shan     /go
-tremble.png         /shake   /fad      /shake
+afraid.png          /shake   /fad      /shake
 amorous.png         /love    /aiq      /love
 jump.png            /jump    /tiao     /jump
 search.png          /find    /zhao     /search
@@ -200,7 +200,7 @@ soccerball.png      /footb   /zq       /soccer
 musical-note.png    /music   /yy       /music
 poop.png            /shit    /bb       /shit
 coffee.png          /coffee  /kf       /coffee
-eat.png             /eat     /fan      /eat
+hungry.png          /eat     /fan      /eat
 pill.png            /pill    /yw       /pill
 rose.png            /rose    /mg       /rose
 wilt.png            /fade    /dx       /wilt
@@ -238,10 +238,10 @@ boy.png             /<11>    /nan      /man
 
 # Following ICQ 6.0
 [ICQ]
-smile.png           :-)     :)
+happy.png           :-)     :)
 neutral.png         :-$
 sad.png             :-(     :(
-shock.png           =-O
+shocked.png         =-O
 wink.png            ;-)     ;)
 tongue.png          :-P     :P      :-p     :p
 music.png           [:-}
@@ -274,9 +274,9 @@ amorous.png         *IN\ LOVE*
 
 # Following Yahoo! Messenger 8.1
 [Yahoo]
-smile.png           :)      :-)
+happy.png           :)      :-)
 question.png        :-/     :-\\
-shock.png           :-O     :O      :-o     :o 
+shocked.png         :-O     :O      :-o     :o 
 devil.png           >:)
 angel.png           O:-)    o:-)    0:-)
 sick.png            :-&
@@ -321,11 +321,11 @@ mad-tongue.png      >:P     >:p
 time-out.png        :-t     :-T
 hug-left.png        >:D<    >:d<
 love-over.png       =((
-sweat.png           #:-S    #:-s
+hot.png             #:-S    #:-s
 rotfl.png           =)) :-j :-J 
 loser.png           L-)     l-)
 party.png           <:-P    <:-p
-nailbiting.png      :-SS	:-Ss	:-sS	:-ss
+nervous.png         :-SS	:-Ss	:-sS	:-ss
 cowboy.png          <):)
 desire.png          8->
 ! skywalker.png     C:-)    c:-)    C:)     c:)
