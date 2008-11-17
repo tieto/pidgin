@@ -475,6 +475,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberBuddyResource *jbr = NULL, *found_jbr = NULL;
 	PurpleConvChatBuddyFlags flags = PURPLE_CBFLAGS_NONE;
 	gboolean delayed = FALSE;
+	const gchar *stamp = NULL; /* from <delayed/> element */
 	PurpleBuddy *b = NULL;
 	char *buddy_name;
 	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
@@ -562,6 +563,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
+			stamp = xmlnode_get_attrib(y, "stamp");
 		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
 			caps = y; /* store for later, when creating buddy resource */
 		} else if(!strcmp(y->name, "x")) {
@@ -569,6 +571,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
+				stamp = xmlnode_get_attrib(y, "stamp");
 			} else if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 				xmlnode *z;
 
@@ -630,6 +633,18 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
+	purple_debug_info("jabber", "got %d seconds idle from presence\n", idle);
+	
+	if (idle && delayed && stamp) {
+		/* if we have a delayed presence, we need to add the delay to the idle
+		 value */
+		time_t offset = time(NULL) - purple_str_to_time(stamp, TRUE, NULL, NULL,
+			NULL);
+		purple_debug_info("jabber", "got delay %s yielding %ld s offset\n",
+			stamp, offset);
+		idle += offset; 
+	}
+	
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 1;
