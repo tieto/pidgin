@@ -7829,29 +7829,18 @@ pidgin_blist_update_accounts_menu(void)
 			gc = purple_account_get_connection(account);
 			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
 
-printf("HERE1\n");
-if (plugin){
-	printf("HERE1.1\n");
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(plugin)) {
-		printf("HERE1.2: %s\n", purple_account_get_username(account));
-		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods)) {
-			printf("HERE1.3\n");
-		}
-	}
-}
 			if (plugin &&
 			    (prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin)) &&
 			    PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods))
 			{
-printf("HERE2\n");
 				for (types = purple_account_get_status_types(account);
 				     types != NULL ; types = types->next)
 				{
 					PurpleStatusType *type = types->data;
-printf("HERE3\n");
+
 					if (strcmp(purple_status_type_get_id(type), "mood") != 0)
 						continue;
-printf("HERE4\n");
+
 					menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
 					g_signal_connect(G_OBJECT(menuitem), "activate",
 						         G_CALLBACK(set_mood_cb), account);
