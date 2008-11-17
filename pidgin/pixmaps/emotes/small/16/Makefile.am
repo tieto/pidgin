@@ -15,6 +15,7 @@ SMILEYS = \
     dont-know.png \
     excited.png \
     grin.png \
+    happy.png \
     hug-left.png \
     hug-right.png \
     in_love.png \
@@ -30,12 +31,11 @@ SMILEYS = \
     question.png \
     sad.png \
     shame.png \
-    shock.png \
+    shocked.png \
     sick.png \
     silent.png \
     sleeping.png \
     sleepy.png \
-    smile.png \
     thinking.png \
     tongue.png \
     tv.png \
