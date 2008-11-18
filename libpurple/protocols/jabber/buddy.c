@@ -111,20 +111,23 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 					case JABBER_BUDDY_STATE_ONLINE:
 					case JABBER_BUDDY_STATE_CHAT:
 						/* This resource is online/chatty. Prefer to one which isn't either. */
-						if ((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
+						if (((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT)) ||
+							(jbr->idle && !tmp->idle) || (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
 							jbr = tmp;
 						break;
 					case JABBER_BUDDY_STATE_AWAY:
 					case JABBER_BUDDY_STATE_DND:
 					case JABBER_BUDDY_STATE_UNAVAILABLE:
 						/* This resource is away/dnd/unavailable. Prefer to one which is extended away or unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_XA) || 
-							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+						if (((jbr->state == JABBER_BUDDY_STATE_XA) || 
+							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR)) ||
+							(jbr->idle && !tmp->idle) || (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
 							jbr = tmp;
 						break;
 					case JABBER_BUDDY_STATE_XA:
 						/* This resource is extended away. That's better than unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+						if (((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR)) ||
+							(jbr->idle && !tmp->idle) || (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
 							jbr = tmp;
 						break;
 					case JABBER_BUDDY_STATE_UNKNOWN:

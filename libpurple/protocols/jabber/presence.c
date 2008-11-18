@@ -424,42 +424,6 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointe
 	g_free(userdata);
 }
 
-static void
-jabber_presence_update_buddy_idle(PurpleAccount *account, const gchar *who,
-	JabberBuddy *jb)
-{
-	const GList *iter = NULL;
-	gboolean idle = TRUE;
-	time_t last_idle = 0;
-	
-	purple_debug_info("jabber", "updating idle for buddy %s\n", who);
-	
-	if (!jb->resources) {
-		idle = FALSE;
-	}
-		
-	for (iter = jb->resources ; iter ; iter = g_list_next(iter)) {
-		JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
-		
-		purple_debug_info("jabber", "resource %s has an idle set to %ld\n",
-			jbr->name, jbr->idle);
-		
-		if (!jbr->idle) {
-			idle = FALSE;
-			break;
-		}
-		if (jbr->idle > last_idle) {
-			last_idle = jbr->idle;
-		}
-	}
-	
-	if (idle) {
-		purple_prpl_got_user_idle(account, who, TRUE, last_idle);
-	} else {
-		purple_prpl_got_user_idle(account, who, FALSE, 0);
-	}
-}
-
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -843,10 +807,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
 			jabber_google_presence_incoming(js, buddy_name, found_jbr);
 			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
+			purple_prpl_got_user_idle(js->gc->account, buddy_name, found_jbr->idle, found_jbr->idle);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
-		jabber_presence_update_buddy_idle(js->gc->account, buddy_name, jb);
 		g_free(buddy_name);
 	}
 	g_free(status);
