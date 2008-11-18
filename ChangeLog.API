@@ -18,6 +18,9 @@ version 2.6.0 (??/??/????):
 		* PURPLE_CONTACT
 		* PURPLE_BUDDY
 		* PURPLE_CHAT
+		* purple_request_field_get_group
+		* purple_request_field_get_ui_data
+		* purple_request_field_set_ui_data
 
 		Deprecated:
 		* purple_buddy_get_local_alias
