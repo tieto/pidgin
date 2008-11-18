@@ -159,7 +159,7 @@ static PurpleCmdRet tcl_cmd_callback(PurpleConversation *conv, const gchar *cmd,
 
 		errorstr = g_strdup_printf("error evaluating callback: %s\n",
 		                           Tcl_GetString(Tcl_GetObjResult(handler->interp)));
-		purple_debug(PURPLE_DEBUG_ERROR, "tcl", errorstr);
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "%s", errorstr);
 		*errors = errorstr;
 		retval = PURPLE_CMD_RET_FAILED;
 	} else {
@@ -170,7 +170,7 @@ static PurpleCmdRet tcl_cmd_callback(PurpleConversation *conv, const gchar *cmd,
 
 			errorstr = g_strdup_printf("Error retreiving procedure result: %s\n",
 			                           Tcl_GetString(Tcl_GetObjResult(handler->interp)));
-			purple_debug(PURPLE_DEBUG_ERROR, "tcl", errorstr);
+			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "%s", errorstr);
 			*errors = errorstr;
 			retval = PURPLE_CMD_RET_FAILED;
 		}
