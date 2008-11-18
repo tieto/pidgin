@@ -149,7 +149,7 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 								 "Domain %i, code %i, level %i: %s",
 					   js,
 					   error->domain, error->code, error->level,
-					   (error->message ? error->message : "(null)"));
+					   (error->message ? error->message : "(null)\n"));
 }
 
 static xmlSAXHandler jabber_parser_libxml = {
