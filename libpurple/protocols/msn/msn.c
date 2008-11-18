@@ -838,7 +838,7 @@ msn_status_types(PurpleAccount *account)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
-			"tune", NULL, TRUE, TRUE, TRUE,
+			"tune", NULL, FALSE, TRUE, TRUE,
 			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),

@@ -1342,7 +1342,7 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
 		if ((buf[0] == 0x05) && (buf[1] < 0x09)) {
-			purple_debug_error("socks5 proxy", socks5errors[buf[1]]);
+			purple_debug_error("socks5 proxy", "%s", socks5errors[buf[1]]);
 			purple_proxy_connect_data_disconnect(connect_data,
 					socks5errors[buf[1]]);
 		} else {

@@ -207,69 +207,64 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TRAY_EMAIL, "tray", "tray-message.png", FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  }
 };
 
+static void
+add_sized_icon_common(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
+	       gboolean rtl, const char *size, const char *file,
+		   gboolean translucent);
+
+static gchar *
+find_file_common(const char *name)
+{
+	gchar *filename;
+#if GLIB_CHECK_VERSION(2,6,0)
+	const gchar *userdir;
+	const gchar * const *sysdirs;
+
+	userdir = g_get_user_data_dir();
+	filename = g_build_filename(userdir, name, NULL);
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+		return filename;
+	g_free(filename);
+
+	sysdirs = g_get_system_data_dirs();
+	for (; *sysdirs; sysdirs++) {
+		filename = g_build_filename(*sysdirs, name, NULL);
+		if (g_file_test(filename, G_FILE_TEST_EXISTS))
+			return filename;
+		g_free(filename);
+	}
+#endif
+	filename = g_build_filename(DATADIR, name, NULL);
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+		return filename;
+	g_free(filename);
+	return NULL;
+}
+
 static gchar *
 find_file(const char *dir, const char *base)
 {
 	char *filename;
+	char *ret;
 
 	if (base == NULL)
 		return NULL;
 
 	if (!strcmp(dir, "pidgin"))
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", base, NULL);
+		filename = g_build_filename("pixmaps", "pidgin", base, NULL);
 	else
-	{
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir,
-									base, NULL);
-	}
+		filename = g_build_filename("pixmaps", "pidgin", dir, base, NULL);
 
-	return filename;
+	ret = find_file_common(filename);
+	g_free(filename);
+	return ret;
 }
 
 static void
-add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir, 
+add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
 	       gboolean rtl, const char *size, const char *file)
 {
-	char *filename;
-	GtkIconSource *source;	
-
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, file, NULL);
-	source = gtk_icon_source_new();
-        gtk_icon_source_set_filename(source, filename);
-	gtk_icon_source_set_direction(source, GTK_TEXT_DIR_LTR);
-        gtk_icon_source_set_direction_wildcarded(source, !rtl);
-	gtk_icon_source_set_size(source, sizeid);
-        gtk_icon_source_set_size_wildcarded(source, FALSE);
-        gtk_icon_source_set_state_wildcarded(source, TRUE);
-        gtk_icon_set_add_source(iconset, source);
-	gtk_icon_source_free(source);
-
-	if (sizeid == gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL)) {
-		source = gtk_icon_source_new();
-	        gtk_icon_source_set_filename(source, filename);
-        	gtk_icon_source_set_direction_wildcarded(source, TRUE);
-	        gtk_icon_source_set_size(source, GTK_ICON_SIZE_MENU);
-	        gtk_icon_source_set_size_wildcarded(source, FALSE);
-        	gtk_icon_source_set_state_wildcarded(source, TRUE);
-	        gtk_icon_set_add_source(iconset, source);
-	        gtk_icon_source_free(source);
-	}
-        g_free(filename);
-
-       if (rtl) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, "rtl", file, NULL);
-                source = gtk_icon_source_new();
-                gtk_icon_source_set_filename(source, filename);
-                gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
-                gtk_icon_source_set_size(source, sizeid);
-                gtk_icon_source_set_size_wildcarded(source, FALSE);
-                gtk_icon_source_set_state_wildcarded(source, TRUE);
-                gtk_icon_set_add_source(iconset, source);
-		g_free(filename);
-		gtk_icon_source_free(source);
-        }
-
-
+	add_sized_icon_common(iconset, sizeid, dir, rtl, size, file, FALSE);
 }
 
 /* Altered from do_colorshift in gnome-panel */
@@ -308,63 +303,76 @@ do_alphashift (GdkPixbuf *dest, GdkPixbuf *src)
         }
 }
 
-/* TODO: This is almost certainly not the best way to do this, but it's late, I'm tired,
- * we're a few hours from getting this thing out, and copy/paste is EASY.
- */
 static void
 add_translucent_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
 	       gboolean rtl, const char *size, const char *file)
 {
-	char *filename;
-	GtkIconSource *source;	
+	add_sized_icon_common(iconset, sizeid, dir, rtl, size, file, TRUE);
+}
+
+static void
+add_sized_icon_common(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
+	       gboolean rtl, const char *size, const char *file,
+		   gboolean translucent)
+{
+	char *filename, *subpath;
+	GtkIconSource *source;
 	GdkPixbuf *pixbuf;
 
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, file, NULL);
+	subpath = g_build_filename("pixmaps", "pidgin", dir, size, file, NULL);
+	filename = find_file_common(subpath);
+	g_free(subpath);
+	if (!filename)
+		return;
+
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	do_alphashift(pixbuf, pixbuf);
+	if (translucent)
+		do_alphashift(pixbuf, pixbuf);
 
 	source = gtk_icon_source_new();
-        gtk_icon_source_set_pixbuf(source, pixbuf);
+	gtk_icon_source_set_pixbuf(source, pixbuf);
 	gtk_icon_source_set_direction(source, GTK_TEXT_DIR_LTR);
-        gtk_icon_source_set_direction_wildcarded(source, !rtl);
+	gtk_icon_source_set_direction_wildcarded(source, !rtl);
 	gtk_icon_source_set_size(source, sizeid);
-        gtk_icon_source_set_size_wildcarded(source, FALSE);
-        gtk_icon_source_set_state_wildcarded(source, TRUE);
-        gtk_icon_set_add_source(iconset, source);
+	gtk_icon_source_set_size_wildcarded(source, FALSE);
+	gtk_icon_source_set_state_wildcarded(source, TRUE);
+	gtk_icon_set_add_source(iconset, source);
 	gtk_icon_source_free(source);
 
 	if (sizeid == gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL)) {
 		source = gtk_icon_source_new();
-	        gtk_icon_source_set_pixbuf(source, pixbuf);
-        	gtk_icon_source_set_direction_wildcarded(source, TRUE);
-	        gtk_icon_source_set_size(source, GTK_ICON_SIZE_MENU);
-	        gtk_icon_source_set_size_wildcarded(source, FALSE);
-        	gtk_icon_source_set_state_wildcarded(source, TRUE);
-	        gtk_icon_set_add_source(iconset, source);
-	        gtk_icon_source_free(source);
+		gtk_icon_source_set_pixbuf(source, pixbuf);
+		gtk_icon_source_set_direction_wildcarded(source, TRUE);
+		gtk_icon_source_set_size(source, GTK_ICON_SIZE_MENU);
+		gtk_icon_source_set_size_wildcarded(source, FALSE);
+		gtk_icon_source_set_state_wildcarded(source, TRUE);
+		gtk_icon_set_add_source(iconset, source);
+		gtk_icon_source_free(source);
 	}
-        g_free(filename);
+	g_free(filename);
 	g_object_unref(pixbuf);
 
-       if (rtl) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, "rtl", file, NULL);
- 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		do_alphashift(pixbuf, pixbuf);
+	if (rtl) {
+		subpath = g_build_filename("pixmaps", "pidgin", dir, size, "rtl", file, NULL);
+		filename = find_file_common(subpath);
+		g_free(subpath);
+		if (!filename)
+			return;
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		if (translucent)
+			do_alphashift(pixbuf, pixbuf);
 		source = gtk_icon_source_new();
-                gtk_icon_source_set_pixbuf(source, pixbuf);
-                gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
-                gtk_icon_source_set_size(source, sizeid);
-                gtk_icon_source_set_size_wildcarded(source, FALSE);
-                gtk_icon_source_set_state_wildcarded(source, TRUE);
-                gtk_icon_set_add_source(iconset, source);
+		gtk_icon_source_set_pixbuf(source, pixbuf);
+		gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
+		gtk_icon_source_set_size(source, sizeid);
+		gtk_icon_source_set_size_wildcarded(source, FALSE);
+		gtk_icon_source_set_state_wildcarded(source, TRUE);
+		gtk_icon_set_add_source(iconset, source);
 		g_free(filename);
 		g_object_unref(pixbuf);
 		gtk_icon_source_free(source);
-        }
-
-
+	}
 }
-
 
 void
 pidgin_stock_init(void)
@@ -413,7 +421,6 @@ pidgin_stock_init(void)
 			gtk_icon_source_set_direction_wildcarded(source, TRUE);
 			gtk_icon_source_set_size_wildcarded(source, TRUE);
 			gtk_icon_source_set_state_wildcarded(source, TRUE);
-
 
 			iconset = gtk_icon_set_new();
 			gtk_icon_set_add_source(iconset, source);
