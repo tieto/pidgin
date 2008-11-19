@@ -215,8 +215,8 @@ const gchar *qq_get_room_cmd_desc(gint room_cmd)
 		return "ROOM_CMD_AUTH";
 	case QQ_ROOM_CMD_QUIT:
 		return "ROOM_CMD_QUIT";
-	case QQ_ROOM_CMD_SEND_MSG:
-		return "ROOM_CMD_SEND_MSG";
+	case QQ_ROOM_CMD_SEND_IM:
+		return "ROOM_CMD_SEND_IM";
 	case QQ_ROOM_CMD_GET_ONLINES:
 		return "ROOM_CMD_GET_ONLINES";
 	case QQ_ROOM_CMD_GET_BUDDIES:
