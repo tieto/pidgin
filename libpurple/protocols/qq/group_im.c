@@ -205,8 +205,7 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 {
 	qq_data *qd;
 	gchar *msg_smiley, *msg_fmt, *msg_utf8;
-	gint skip_len;
-	gint bytes ;
+	gint bytes, tail_len;
 	struct {
 		guint32 ext_id;
 		guint8 type8;
@@ -214,93 +213,87 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 		guint16 unknown;
 		guint16 msg_seq;
 		time_t send_time;
-		guint32 unknown4;
+		guint32 version;
 		guint16 msg_len;
 		gchar *msg;
-		guint8 *font_attr;
-		gint font_attr_len;
 	} im_text;
+	guint32 temp_id;
+	guint16 content_type;
+	guint8 frag_count, frag_index;
+	guint16 msg_id;
+	qq_im_format *fmt = NULL;
 
-	g_return_if_fail(data != NULL && data_len > 0);
-
-	/* FIXME: check length here */
-
+	/* at least include im_text.msg_len */
+	g_return_if_fail(data != NULL && data_len > 23);
 	qd = (qq_data *) gc->proto_data;
 
 	/* qq_show_packet("ROOM_IM", data, data_len); */
-
 	memset(&im_text, 0, sizeof(im_text));
 	bytes = 0;
 	bytes += qq_get32(&(im_text.ext_id), data + bytes);
 	bytes += qq_get8(&(im_text.type8), data + bytes);
 
 	if(QQ_MSG_TEMP_QUN_IM == msg_type) {
-		bytes += qq_get32(&(id), data + bytes);
+		bytes += qq_get32(&temp_id, data + bytes);
 	}
 
 	bytes += qq_get32(&(im_text.member_uid), bytes + data);
 	bytes += qq_get16(&im_text.unknown, data + bytes);	/* 0x0001? */
 	bytes += qq_get16(&(im_text.msg_seq), data + bytes);
 	bytes += qq_getime(&im_text.send_time, data + bytes);
-	bytes += qq_get32(&im_text.unknown4, data + bytes);	/* versionID */
-	/*
-	 * length includes font_attr
-	 * this msg_len includes msg and font_attr
-	 **** the format is ****
-	 * length of all
-	 * 1. unknown 10 bytes
-	 * 2. 0-ended string
-	 * 3. font_attr
-	 */
-
+	bytes += qq_get32(&im_text.version, data + bytes);
 	bytes += qq_get16(&(im_text.msg_len), data + bytes);
-	g_return_if_fail(im_text.msg_len > 0);
-	/*
-	 * 10 bytes from lumaqq
-	 *    contentType = buf.getChar();
-	 *    totalFragments = buf.get() & 255;
-	 *    fragmentSequence = buf.get() & 255;
-	 *    messageId = buf.getChar();
-	 *    buf.getInt();
-	 */
+	purple_debug_info("QQ", "Room IM, ext id %u, seq %u, version 0x%04X, len %u\n",
+		im_text.ext_id, im_text.msg_seq, im_text.version, im_text.msg_len);
 
-	if(msg_type != QQ_MSG_UNKNOWN_QUN_IM)
-		skip_len = 10;
-	else
-		skip_len = 0;
-	bytes += skip_len;
+	if (im_text.msg_len != data_len - bytes) {
+		purple_debug_warning("QQ", "Room IM length %d should be %d\n",
+			im_text.msg_len, data_len - bytes);
+		im_text.msg_len = data_len - bytes;
+	}
+
+	g_return_if_fail(im_text.msg_len > 0 && bytes + im_text.msg_len <= data_len);
+	if(msg_type != QQ_MSG_QUN_IM_UNKNOWN) {
+		g_return_if_fail(im_text.msg_len >= 10);
+
+		bytes += qq_get16(&content_type, data + bytes);
+		bytes += qq_get8(&frag_count, data + bytes);
+		bytes += qq_get8(&frag_index, data + bytes);
+		bytes += qq_get16(&msg_id, data + bytes);
+		bytes += 4;	/* skip 0x(00 00 00 00) */
+		purple_debug_info("QQ", "Room IM, content %d, frag %d-%d, msg id %u\n",
+			content_type, frag_count, frag_index, msg_id);
+		im_text.msg_len -= 10;
+	}
+	g_return_if_fail(im_text.msg_len > 0);
 
 	/* qq_show_packet("Message", data + bytes, data_len - bytes); */
-
-	im_text.msg = g_strdup((gchar *) data + bytes);
-	bytes += strlen(im_text.msg) + 1;
-	/* there might not be any font_attr, check it */
-	im_text.font_attr_len = data_len - bytes;
-	if (im_text.font_attr_len > 0) {
-		im_text.font_attr = g_memdup(data + bytes, im_text.font_attr_len);
-		/* qq_show_packet("font_attr", packet.font_attr, packet.font_attr_len); */
+	if (frag_count <= 1 || frag_count == frag_index + 1) {
+		fmt = qq_im_fmt_new();
+		tail_len = qq_get_im_tail(fmt, data + bytes, data_len - bytes);
+		im_text.msg = g_strndup((gchar *)(data + bytes), data_len - tail_len);
 	} else {
-		im_text.font_attr = NULL;
+		im_text.msg = g_strndup((gchar *)(data + bytes), data_len - bytes);
 	}
 
 	/* group im_group has no flag to indicate whether it has font_attr or not */
 	msg_smiley = qq_emoticon_to_purple(im_text.msg);
-	if (im_text.font_attr != NULL) {
-		msg_fmt = qq_format_to_purple(im_text.font_attr, im_text.font_attr_len,
-				msg_smiley);
+	if (fmt != NULL) {
+		msg_fmt = qq_im_fmt_to_purple(fmt, msg_smiley);
 		msg_utf8 =  qq_to_utf8(msg_fmt, QQ_CHARSET_DEFAULT);
 		g_free(msg_fmt);
+		qq_im_fmt_free(fmt);
 	} else {
 		msg_utf8 =  qq_to_utf8(msg_smiley, QQ_CHARSET_DEFAULT);
 	}
 	g_free(msg_smiley);
 
-
+	purple_debug_info("QQ", "Room (%u) IM from %u: %s\n",
+			im_text.ext_id, im_text.member_uid, msg_utf8);
  	qq_room_got_chat_in(gc, id, im_text.member_uid, msg_utf8, im_text.send_time);
 
 	g_free(msg_utf8);
 	g_free(im_text.msg);
-	if (im_text.font_attr) g_free(im_text.font_attr);
 }
 
 /* send IM to a group */
@@ -314,13 +307,13 @@ static void request_room_send_im(PurpleConnection *gc, guint32 room_id, qq_im_fo
 	bytes = 0;
 	bytes += qq_put16(raw_data + bytes, 0);
 	bytes += qq_putdata(raw_data + bytes, (guint8 *)msg, strlen(msg));
-	bytes += qq_put8(raw_data + bytes, 0);
 	bytes += qq_put_im_tail(raw_data + bytes, fmt);
+	bytes += qq_put32(raw_data + bytes, 0);	/* unknown 4 bytes */
 
 	/* reset first two bytes */
 	qq_put16(raw_data, bytes - 2);
 
-	qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_MSG, room_id, raw_data, bytes);
+	qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_IM, room_id, raw_data, bytes);
 }
 
 /* this is the ACK */
@@ -329,6 +322,43 @@ void qq_process_room_send_im(PurpleConnection *gc, guint8 *data, gint len)
 	/* return should be the internal group id
 	 * but we have nothing to do with it */
 	return;
+}
+
+void qq_process_room_send_im_ex(PurpleConnection *gc, guint8 *data, gint len)
+{
+	/* return should be the internal group id
+	 * but we have nothing to do with it */
+	return;
+}
+
+static void request_room_send_im_ex(PurpleConnection *gc, guint32 room_id,
+	qq_im_format *fmt, gchar *msg, guint16 msg_id, guint8 frag_count, guint8 frag_index)
+{
+	guint8 raw_data[MAX_PACKET_SIZE - 16];
+	gint bytes;
+
+
+	g_return_if_fail(room_id != 0 && msg != NULL);
+
+	bytes = 0;
+	bytes += qq_put16(raw_data + bytes, 0);			/* packet len */
+	/* type 0x0001, text only; 0x0002, with custom emoticon */
+	bytes += qq_put16(raw_data + bytes, 0x0001);
+	bytes += qq_put8(raw_data + bytes, frag_count);
+	bytes += qq_put8(raw_data + bytes, frag_index);
+	bytes += qq_put16(raw_data + bytes, msg_id);
+	bytes += qq_put32(raw_data + bytes, 0);			/* unknow 4 bytes */
+	bytes += qq_putdata(raw_data + bytes, (guint8 *)msg, strlen(msg));
+	if (frag_count == frag_index + 1) {
+		bytes += qq_put8(raw_data + bytes, 0x20);	/* add extra SPACE */
+		bytes += qq_put_im_tail(raw_data + bytes, fmt);
+	}
+
+	/* reset first two bytes as length */
+	qq_put16(raw_data, bytes - 2);
+	
+	/*qq_show_packet("QQ_ROOM_CMD_SEND_IM_EX", raw_data, bytes); */
+	qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_IM_EX, room_id, raw_data, bytes);
 }
 
 /* send a chat msg to a QQ Qun
@@ -342,6 +372,7 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	gint msg_len;
 	const gchar *start_invalid;
 	gboolean is_smiley_none;
+	guint8 frag_count, frag_index;
 
 	g_return_val_if_fail(NULL != gc && NULL != gc->proto_data, -1);
 	g_return_val_if_fail(id != 0 && what != NULL, -1);
@@ -380,11 +411,27 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 		return -1;
 	}
 
+	qd->send_im_id++;
 	fmt = qq_im_fmt_new_by_purple(what);
-	for (it = segments; it; it = it->next) {
-		request_room_send_im(gc, id, fmt, (gchar *)it->data);
-		g_free(it->data);
+	frag_count = g_slist_length(segments);
+	frag_index = 0;
+/*	
+	if (frag_count <= 1) {
+*/
+		for (it = segments; it; it = it->next) {
+			request_room_send_im(gc, id, fmt, (gchar *)it->data);
+			g_free(it->data);
+		}
+/*
+	} else {
+		for (it = segments; it; it = it->next) {
+			request_room_send_im_ex(gc, id, fmt, (gchar *)it->data,
+					qd->send_im_id, frag_count, frag_index);
+			g_free(it->data);
+			frag_index++;
+		}
 	}
+*/
 	qq_im_fmt_free(fmt);
 	g_slist_free(segments);
 	return 1;
