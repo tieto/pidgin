@@ -1,3 +1,12 @@
+2008.11.18 - ccpaging <ccpaging(at)gmail.com>
+	* Divide long IM message into segment and sending
+	* Divide long QUN IM message in to segment and sending
+	* Add some new function in im.c to put format when sending
+	* Add some new function in im.c to get format when receiving
+	* Need improvement:
+	    Merge long IM message when receiving. Need a buffer to store segments of long IM message.
+	    Send segment of long IM message one by one. Need a buffer to store segments of long IM message.
+
 2008.11.11 - ccpaging <ccpaging(at)gmail.com>
 	* Change QQ number to unsigned long
 	* Change Qun ID and Qun extend ID to unsigned long
