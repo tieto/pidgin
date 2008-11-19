@@ -217,8 +217,8 @@ static const gchar *get_im_type_desc(gint type)
 			return "QQ_MSG_TO_BUDDY";
 		case QQ_MSG_TO_UNKNOWN:
 			return "QQ_MSG_TO_UNKNOWN";
-		case QQ_MSG_UNKNOWN_QUN_IM:
-			return "QQ_MSG_UNKNOWN_QUN_IM";
+		case QQ_MSG_QUN_IM_UNKNOWN:
+			return "QQ_MSG_QUN_IM_UNKNOWN";
 		case QQ_MSG_ADD_TO_QUN:
 			return "QQ_MSG_ADD_TO_QUN";
 		case QQ_MSG_DEL_FROM_QUN:
@@ -325,7 +325,7 @@ static void process_private_msg(guint8 *data, gint data_len, guint16 seq, Purple
 			purple_debug_info("QQ", "MSG from buddy [%d]\n", header.uid_from);
 			qq_process_im(gc, data + bytes, data_len - bytes);
 			break;
-		case QQ_MSG_UNKNOWN_QUN_IM:
+		case QQ_MSG_QUN_IM_UNKNOWN:
 		case QQ_MSG_TEMP_QUN_IM:
 		case QQ_MSG_QUN_IM:
 			purple_debug_info("QQ", "MSG from room [%d]\n", header.uid_from);
@@ -840,8 +840,11 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 	case QQ_ROOM_CMD_QUIT:
 		qq_process_group_cmd_exit_group(data + bytes, data_len - bytes, gc);
 		break;
-	case QQ_ROOM_CMD_SEND_MSG:
+	case QQ_ROOM_CMD_SEND_IM:
 		qq_process_room_send_im(gc, data + bytes, data_len - bytes);
+		break;
+	case QQ_ROOM_CMD_SEND_IM_EX:
+		qq_process_room_send_im_ex(gc, data + bytes, data_len - bytes);
 		break;
 	case QQ_ROOM_CMD_GET_ONLINES:
 		qq_process_room_cmd_get_onlines(data + bytes, data_len - bytes, gc);
