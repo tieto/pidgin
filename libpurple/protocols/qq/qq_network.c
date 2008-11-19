@@ -1244,7 +1244,7 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 	buf_len = 0;
 	buf_len += qq_put8(buf + buf_len, room_cmd);
 	if (room_id != 0) {
-		/* id 0 is for QQ Demo Group, now there are not existed*/
+		/* id 0 is for QQ Demo Group, now they are closed*/
 		buf_len += qq_put32(buf + buf_len, room_id);
 	}
 	if (data != NULL && data_len > 0) {
