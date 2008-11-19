@@ -38,6 +38,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 
 int qq_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
 void qq_process_room_send_im(PurpleConnection *gc, guint8 *data, gint len);
+void qq_process_room_send_im_ex(PurpleConnection *gc, guint8 *data, gint len);
 
 void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type);
 
