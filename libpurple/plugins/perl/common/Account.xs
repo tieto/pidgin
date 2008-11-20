@@ -107,10 +107,9 @@ PPCODE:
     t_GL = NULL;
     t_len = av_len((AV *)SvRV(status_types));
 
-    for (i = 0; i < t_len; i++) {
-        STRLEN t_sl;
-        t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(status_types), i, 0), t_sl));
-    }
+    for (i = 0; i < t_len; i++)
+        t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(status_types), i, 0)));
+
     purple_account_set_status_types(account, t_GL);
 
 void
@@ -210,10 +209,9 @@ PPCODE:
     t_GL = NULL;
     t_len = av_len((AV *)SvRV(list));
 
-    for (i = 0; i < t_len; i++) {
-        STRLEN t_sl;
-        t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(list), i, 0), t_sl));
-    }
+    for (i = 0; i < t_len; i++)
+        t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(list), i, 0)));
+
     purple_account_add_buddies(account, t_GL);
     g_list_free(t_GL);
 
@@ -240,18 +238,15 @@ PPCODE:
     t_GL1 = NULL;
     t_len = av_len((AV *)SvRV(A));
 
-    for (i = 0; i < t_len; i++) {
-        STRLEN t_sl;
-        t_GL1 = g_list_append(t_GL1, SvPV(*av_fetch((AV *)SvRV(A), i, 0), t_sl));
-    }
+    for (i = 0; i < t_len; i++)
+        t_GL1 = g_list_append(t_GL1, SvPVutf8_nolen(*av_fetch((AV *)SvRV(A), i, 0)));
 
     t_GL2 = NULL;
     t_len = av_len((AV *)SvRV(B));
 
-    for (i = 0; i < t_len; i++) {
-        STRLEN t_sl;
-        t_GL2 = g_list_append(t_GL2, SvPV(*av_fetch((AV *)SvRV(B), i, 0), t_sl));
-    }
+    for (i = 0; i < t_len; i++)
+        t_GL2 = g_list_append(t_GL2, SvPVutf8_nolen(*av_fetch((AV *)SvRV(B), i, 0)));
+
     purple_account_remove_buddies(account, t_GL1, t_GL2);
     g_list_free(t_GL1);
     g_list_free(t_GL2);
@@ -315,18 +310,5 @@ purple_accounts_find(name, protocol)
     const char * name
     const char * protocol
 
-void
-purple_accounts_set_ui_ops(ops)
-    Purple::Account::UiOps ops
-
-Purple::Account::UiOps
-purple_accounts_get_ui_ops()
-
 Purple::Handle
 purple_accounts_get_handle()
-
-void
-purple_accounts_init()
-
-void
-purple_accounts_uninit()

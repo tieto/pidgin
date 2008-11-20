@@ -447,7 +447,7 @@ pidgin_sound_play_file(const char *filename)
 		if (!sound_cmd || *sound_cmd == '\0') {
 			purple_debug_error("gtksound",
 					 "'Command' sound method has been chosen, "
-					 "but no command has been set.");
+					 "but no command has been set.\n");
 			return;
 		}
 

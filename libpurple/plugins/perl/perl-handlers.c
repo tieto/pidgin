@@ -23,7 +23,6 @@ purple_perl_plugin_action_cb(PurplePluginAction *action)
 	gchar *hvname;
 	PurplePlugin *plugin;
 	PurplePerlScript *gps;
-	STRLEN na;
 	dSP;
 
 	plugin = action->plugin;
@@ -54,7 +53,7 @@ purple_perl_plugin_action_cb(PurplePluginAction *action)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin action function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	PUTBACK;
@@ -68,7 +67,6 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 	GList *l = NULL;
 	PurplePerlScript *gps;
 	int i = 0, count = 0;
-	STRLEN na;
 	dSP;
 
 	gps = plugin->info->extra_info;
@@ -94,7 +92,7 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin actions lookup exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	if (count == 0)
@@ -102,14 +100,10 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 
 	for (i = 0; i < count; i++) {
 		SV *sv;
-		gchar *label;
-		PurplePluginAction *act = NULL;
+		PurplePluginAction *act;
 
 		sv = POPs;
-		label = SvPV_nolen(sv);
-		/* XXX I think this leaks, but doing it without the strdup
-		 * just showed garbage */
-		act = purple_plugin_action_new(g_strdup(label), purple_perl_plugin_action_cb);
+		act = purple_plugin_action_new(SvPVutf8_nolen(sv), purple_perl_plugin_action_cb);
 		l = g_list_prepend(l, act);
 	}
 
@@ -129,7 +123,6 @@ purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 	MAGIC *mg;
 	GtkWidget *ret;
 	PurplePerlScript *gps;
-	STRLEN na;
 	dSP;
 
 	gps = plugin->info->extra_info;
@@ -147,7 +140,7 @@ purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl gtk plugin frame init exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	/* We have a Gtk2::Frame on top of the stack */
@@ -173,7 +166,6 @@ purple_perl_get_plugin_frame(PurplePlugin *plugin)
 	int count;
 	PurplePerlScript *gps;
 	PurplePluginPrefFrame *ret_frame;
-	STRLEN na;
 	dSP;
 
 	gps = (PurplePerlScript *)plugin->info->extra_info;
@@ -192,7 +184,7 @@ purple_perl_get_plugin_frame(PurplePlugin *plugin)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin prefs frame init exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	if (count != 1)
@@ -249,7 +241,6 @@ perl_timeout_cb(gpointer data)
 {
 	PurplePerlTimeoutHandler *handler = data;
 	gboolean ret = FALSE;
-	STRLEN na;
 
 	dSP;
 	ENTER;
@@ -263,7 +254,7 @@ perl_timeout_cb(gpointer data)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl timeout function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	ret = POPi;
@@ -291,7 +282,6 @@ perl_signal_cb(va_list args, void *data)
 	PurpleValue *ret_value, **values;
 	SV **sv_args;
 	DATATYPE **copy_args;
-	STRLEN na;
 
 	dSP;
 	ENTER;
@@ -334,7 +324,7 @@ perl_signal_cb(va_list args, void *data)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	/* See if any parameters changed. */
@@ -373,14 +363,13 @@ perl_signal_cb(va_list args, void *data)
 					if (strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
 						g_free(*((char **)copy_args[i]));
 						*((char **)copy_args[i]) =
-							g_strdup(SvPV(sv_args[i], na));
+							g_strdup(SvPVutf8_nolen(sv_args[i]));
 					}
+					/* Clean up sv_args[i] - we're done with it */
+					sv_2mortal(sv_args[i]);
 					break;
 
 				case PURPLE_TYPE_POINTER:
-					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
-					break;
-
 				case PURPLE_TYPE_BOXED:
 					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
 					break;
@@ -391,6 +380,7 @@ perl_signal_cb(va_list args, void *data)
 				default:
 					break;
 			}
+
 
 #if 0
 			*((void **)copy_args[i]) = purple_perl_data_from_sv(values[i],
@@ -564,7 +554,6 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
             gchar **args, gchar **error, void *data)
 {
 	int i = 0, count, ret_value = PURPLE_CMD_RET_OK;
-	STRLEN na;
 	SV *cmdSV, *tmpSV, *convSV;
 	PurplePerlCmdHandler *handler = data;
 
@@ -604,7 +593,7 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin command function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	SPAGAIN;
@@ -718,7 +707,6 @@ perl_pref_cb(const char *name, PurplePrefType type, gconstpointer value,
 			 gpointer data)
 {
 	PurplePerlPrefsHandler *handler = data;
-	STRLEN na;
 
 	dSP;
 	ENTER;
@@ -767,7 +755,7 @@ perl_pref_cb(const char *name, PurplePrefType type, gconstpointer value,
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl prefs callback function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	PUTBACK;

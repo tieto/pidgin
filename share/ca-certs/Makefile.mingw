@@ -11,13 +11,16 @@ datadir := $(PIDGIN_INSTALL_DIR)
 -include ./Makefile.am.mingw
 cacertsdir := $(PIDGIN_INSTALL_DIR)/ca-certs
 
-.PHONY: install
+.PHONY: install clean
 
 install: ./Makefile.am.mingw
 	if test '$(cacerts_DATA)'; then \
 	  mkdir -p $(cacertsdir); \
 	  cp $(cacerts_DATA) $(cacertsdir); \
 	fi;
+
+clean:
+	rm -f ./Makefile.am.mingw
 
 ./Makefile.am.mingw: ./Makefile.am
 	sed -e 's/^if\ INSTALL_SSL_CERTIFICATES/ifeq (\$$(INSTALL_SSL_CERTIFICATES), 1)/' ./Makefile.am > $@

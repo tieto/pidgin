@@ -36,6 +36,7 @@
 #include <util.h>
 
 #include "gntnotify.h"
+#include "debug.h"
 
 static struct
 {
@@ -83,12 +84,23 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 		GntWidget *msg;
 		if (type == PURPLE_NOTIFY_FORMATTED) {
 			int width = -1, height = -1;
+			char *plain = (char*)secondary;
 			msg = gnt_text_view_new();
-			gnt_text_view_set_flag(GNT_TEXT_VIEW(msg), GNT_TEXT_VIEW_TOP_ALIGN);
-			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(msg), secondary, sf);
+			gnt_text_view_set_flag(GNT_TEXT_VIEW(msg), GNT_TEXT_VIEW_TOP_ALIGN | GNT_TEXT_VIEW_NO_SCROLL);
+			switch (type) {
+				case PURPLE_NOTIFY_FORMATTED:
+					plain = purple_markup_strip_html(secondary);
+					if (gnt_util_parse_xhtml_to_textview(secondary, GNT_TEXT_VIEW(msg)))
+						break;
+					/* Fallthrough */
+				default:
+					gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(msg), plain, sf);
+			}
 			gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(msg), button);
-			gnt_util_get_text_bound(secondary, &width, &height);
+			gnt_util_get_text_bound(plain, &width, &height);
 			gnt_widget_set_size(msg, width + 3, height + 1);
+			if (plain != secondary)
+				g_free(plain);
 		} else {
 			msg = gnt_label_new_with_format(secondary, sf);
 		}
@@ -130,18 +142,18 @@ static void finch_close_notify(PurpleNotifyType type, void *handle)
 static void *finch_notify_formatted(const char *title, const char *primary,
 		const char *secondary, const char *text)
 {
-	/* XXX: For now, simply strip the html and use _notify_message. For future use,
-	 * there should be some way of parsing the makrups from GntTextView */
-	char *unformat = purple_markup_strip_html(text);
-	char *t = g_strdup_printf("%s%s%s",
+	char *xhtml = NULL;
+	char *t = g_strdup_printf("<span>%s%s%s</span>",
 			secondary ? secondary : "",
 			secondary ? "\n" : "",
-			unformat ? unformat : "");
+			text ? text : "");
+	void *ret;
 
-	void *ret = finch_notify_message(PURPLE_NOTIFY_FORMATTED, title, primary, t);
+	purple_markup_html_to_xhtml(t, &xhtml, NULL);
+	ret = finch_notify_message(PURPLE_NOTIFY_FORMATTED, title, primary, xhtml);
 
 	g_free(t);
-	g_free(unformat);
+	g_free(xhtml);
 
 	return ret;
 }
@@ -261,6 +273,46 @@ remove_userinfo(GntWidget *widget, gpointer key)
 	g_hash_table_remove(userinfo, key);
 }
 
+static char *
+purple_notify_user_info_get_xhtml(PurpleNotifyUserInfo *user_info)
+{
+	GList *l;
+	GString *text;
+
+	text = g_string_new("<span>");
+
+	for (l = purple_notify_user_info_get_entries(user_info); l != NULL;
+			l = l->next) {
+		PurpleNotifyUserInfoEntry *user_info_entry = l->data;
+		PurpleNotifyUserInfoEntryType type = purple_notify_user_info_entry_get_type(user_info_entry);
+		const char *label = purple_notify_user_info_entry_get_label(user_info_entry);
+		const char *value = purple_notify_user_info_entry_get_value(user_info_entry);
+
+		/* Handle the label/value pair itself */
+		if (type == PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER)
+			g_string_append(text, "<u>");
+		if (label)
+			g_string_append_printf(text, "<b>%s</b>", label);
+		g_string_append(text, "<span>");
+		if (label && value)
+			g_string_append(text, ": ");
+		if (value) {
+			char *strip = purple_markup_strip_html(value);
+			g_string_append(text, strip);
+			g_free(strip);
+		}
+		g_string_append(text, "</span>");
+		if (type == PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER)
+			g_string_append(text, "</u>");
+		else if (type == PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK)
+			g_string_append(text, "<HR/>");
+		g_string_append(text, "<BR/>");
+	}
+	g_string_append(text, "</span>");
+
+	return g_string_free(text, FALSE);
+}
+
 static void *
 finch_notify_userinfo(PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info)
 {
@@ -269,7 +321,7 @@ finch_notify_userinfo(PurpleConnection *gc, const char *who, PurpleNotifyUserInf
 	void *ui_handle;
 	char *key = userinfo_hash(purple_connection_get_account(gc), who);
 
-	info = purple_notify_user_info_get_text_with_newline(user_info, "<BR>");
+	info = purple_notify_user_info_get_xhtml(user_info);
 
 	ui_handle = g_hash_table_lookup(userinfo, key);
 	if (ui_handle != NULL) {
@@ -283,7 +335,8 @@ finch_notify_userinfo(PurpleConnection *gc, const char *who, PurpleNotifyUserInf
 		gnt_widget_get_size(GNT_WIDGET(msg), &tvw, &tvh);
 
 		gnt_text_view_clear(msg);
-		gnt_text_view_append_text_with_flags(msg, strip, GNT_TEXT_FLAG_NORMAL);
+		if (!gnt_util_parse_xhtml_to_textview(info, msg))
+			gnt_text_view_append_text_with_flags(msg, strip, GNT_TEXT_FLAG_NORMAL);
 		gnt_text_view_scroll(msg, 0);
 		gnt_util_get_text_bound(strip, &ntvw, &ntvh);
 		ntvw += 3;

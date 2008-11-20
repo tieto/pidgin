@@ -610,6 +610,22 @@ msn_userlist_remove_group_id(MsnUserList *userlist, const char * group_id)
 	}
 }
 
+typedef struct {
+	MsnSession *session;
+	char *uid;
+} MsnUserlistABData;
+
+static void
+userlist_ab_delete_cb(void *data, int choice)
+{
+	MsnUserlistABData *ab = (MsnUserlistABData *)data;
+
+	/* msn_delete_contact(ab->session, ab->uid, (gboolean)choice); */
+
+	g_free(ab->uid);
+	g_free(ab);
+}
+
 void
 msn_userlist_rem_buddy(MsnUserList *userlist, const char *who)
 {
@@ -625,7 +641,18 @@ msn_userlist_rem_buddy(MsnUserList *userlist, const char *who)
 
 	/* delete the contact from address book via soap action */
 	if (user != NULL) {
-		msn_delete_contact(userlist->session, user->uid);
+		if (0 /*not ready yet*/ && userlist->session->passport_info.email_enabled) {
+			MsnUserlistABData *ab = g_new0(MsnUserlistABData, 1);
+			ab->session = userlist->session;
+			ab->uid = g_strdup(user->uid); /* Not necessary? */
+			purple_request_yes_no(userlist->session->account,
+				_("Delete Buddy from Address Book?"),
+				_("Do you want to delete this buddy from your address book as well?"),
+				user->passport, 0, userlist->session->account, user->passport,
+				NULL, ab,
+				G_CALLBACK(userlist_ab_delete_cb), G_CALLBACK(userlist_ab_delete_cb));
+		} else
+			msn_delete_contact(userlist->session, user);
 	}
 }
 

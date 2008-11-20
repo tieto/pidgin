@@ -1228,11 +1228,14 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 				if (purple_str_has_prefix(ssparts[i], "terminated"))
 				{
 					purple_debug_info("simple", "Subscription expired!");
-					g_free(b->dialog->ourtag);
-					g_free(b->dialog->theirtag);
-					g_free(b->dialog->callid);
-					g_free(b->dialog);
-					b->dialog = NULL;
+					if (b->dialog)
+					{
+						g_free(b->dialog->ourtag);
+						g_free(b->dialog->theirtag);
+						g_free(b->dialog->callid);
+						g_free(b->dialog);
+						b->dialog = NULL;
+					}
 
 					purple_prpl_got_user_status(sip->account, from, "offline", NULL);
 					break;
@@ -1703,8 +1706,15 @@ static void simple_newconn_cb(gpointer data, gint source, PurpleInputCondition c
 	PurpleConnection *gc = data;
 	struct simple_account_data *sip = gc->proto_data;
 	struct sip_connection *conn;
+	int newfd, flags;
 
-	int newfd = accept(source, NULL, NULL);
+	newfd = accept(source, NULL, NULL);
+
+	flags = fcntl(newfd, F_GETFL);
+	fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(newfd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	conn = connection_create(sip, newfd);
 

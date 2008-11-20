@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +13,7 @@
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45.1"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/2.1.1/pidgin/pixmaps/emotes/default/24/scalable"
    sodipodi:docname="pumpkin.svg"
@@ -46,18 +46,6 @@
          style="stop-color:#eeeeec;stop-opacity:0;"
          offset="1"
          id="stop3313" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3299">
-      <stop
-         style="stop-color:#ce5c00;stop-opacity:1;"
-         offset="0"
-         id="stop3301" />
-      <stop
-         style="stop-color:#ce5c00;stop-opacity:0;"
-         offset="1"
-         id="stop3303" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
@@ -122,17 +110,6 @@
          stdDeviation="1.1189087"
          id="feGaussianBlur3272" />
     </filter>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3299"
-       id="radialGradient3305"
-       cx="12.59375"
-       cy="14.53125"
-       fx="12.59375"
-       fy="14.53125"
-       r="6.5"
-       gradientTransform="matrix(1,0,0,0.6971154,0,4.4012921)"
-       gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3309"

@@ -25,6 +25,7 @@
 #define _MSN_SLPCALL_H_
 
 #include "internal.h"
+#include "ft.h"
 
 typedef struct _MsnSlpCall MsnSlpCall;
 
@@ -71,7 +72,7 @@ struct _MsnSlpCall
 	/* Can be checksum, or smile */
 	char *data_info;
 
-	void *xfer;
+	PurpleXfer *xfer;
 
 	MsnSlpCb cb;
 	void (*end_cb)(MsnSlpCall *slpcall, MsnSession *session);

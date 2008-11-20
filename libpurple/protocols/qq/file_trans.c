@@ -22,19 +22,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifdef _WIN32
-#define random rand
-#endif
-
 #include "internal.h"
 
 #include "debug.h"
 #include "ft.h"
 #include "cipher.h"
 
-#include "crypt.h"
+#include "qq_crypt.h"
 #include "file_trans.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "im.h"
 #include "packet_parse.h"
 #include "proxy.h"
@@ -62,7 +58,7 @@ static guint32 _gen_file_key(void)
 {
 	guint8 seed;
 
-	seed = random();
+	seed = rand() & 0xFF;
 	return _get_file_key(seed);
 }
 
@@ -85,7 +81,7 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 	const gint QQ_MAX_FILE_MD5_LENGTH = 10002432;
 
 	g_return_if_fail(filename != NULL && md5 != NULL);
-	if (filelen > QQ_MAX_FILE_MD5_LENGTH) 
+	if (filelen > QQ_MAX_FILE_MD5_LENGTH)
 		filelen = QQ_MAX_FILE_MD5_LENGTH;
 
 	fp = fopen(filename, "rb");
@@ -165,7 +161,7 @@ static int _qq_xfer_open_file(const gchar *filename, const gchar *method, Purple
 		fd = open(purple_xfer_get_local_filename(xfer), O_RDONLY);
 		info->buffer = mmap(0, purple_xfer_get_size(xfer), PROT_READ, MAP_PRIVATE, fd, 0);
 	}
-	else 
+	else
 	{
 		fd = open(purple_xfer_get_local_filename(xfer), O_RDWR|O_CREAT, 0644);
 		info->buffer = mmap(0, purple_xfer_get_size(xfer), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FILE, fd, 0);
@@ -252,7 +248,7 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 	file_key = _gen_file_key();
 
 	bytes += qq_put8(raw_data + bytes, packet_type);
-	bytes += qq_put16(raw_data + bytes, QQ_CLIENT);
+	bytes += qq_put16(raw_data + bytes, qd->client_tag);
 	bytes += qq_put8(raw_data + bytes, file_key & 0xff);
 	bytes += qq_put32(raw_data + bytes, _encrypt_qq_uid(qd->uid, file_key));
 	bytes += qq_put32(raw_data + bytes, _encrypt_qq_uid(to_uid, file_key));
@@ -261,7 +257,7 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 	if (bytes == len + 12) {
 		_qq_xfer_write(raw_data, bytes, qd->xfer);
 	} else
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "send_file: want %d but got %d\n", len + 12, bytes);
+		purple_debug_info("QQ", "send_file: want %d but got %d\n", len + 12, bytes);
 	return bytes;
 }
 
@@ -270,7 +266,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 {
 	qq_data *qd;
 	gint bytes, bytes_expected, encrypted_len;
-	guint8 *raw_data, *encrypted_data;
+	guint8 *raw_data, *encrypted;
 	time_t now;
 	ft_info *info;
 
@@ -323,13 +319,13 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 			bytes_expected = 61;
 			break;
 		default:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "qq_send_file_ctl_packet: Unknown packet type[%d]\n",
+			purple_debug_info("QQ", "qq_send_file_ctl_packet: Unknown packet type[%d]\n",
 					packet_type);
 			bytes_expected = 0;
 	}
 
 	if (bytes != bytes_expected) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "qq_send_file_ctl_packet: Expected to get %d bytes, but get %d",
+		purple_debug_error("QQ", "qq_send_file_ctl_packet: Expected to get %d bytes, but get %d",
 				bytes_expected, bytes);
 		return;
 	}
@@ -338,38 +334,37 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 		raw_data, bytes,
 		"sending packet[%s]:", qq_get_file_cmd_desc(packet_type));
 
-	encrypted_len = bytes + 16;
-	encrypted_data = g_newa(guint8, encrypted_len);
-	qq_encrypt(raw_data, bytes, info->file_session_key, encrypted_data, &encrypted_len);
+	encrypted = g_newa(guint8, bytes + 16);
+	encrypted_len = qq_encrypt(encrypted, raw_data, bytes, info->file_session_key);
 	/*debug: try to decrypt it */
-	/*
-	   if (QQ_DEBUG) {
-	   guint8 *buf;
-	   int buflen;
-	   hex_dump = hex_dump_to_str(encrypted_data, encrypted_len);
-	   purple_debug(PURPLE_DEBUG_INFO, "QQ", "encrypted packet: \n%s", hex_dump);
-	   g_free(hex_dump);
-	   buf = g_newa(guint8, MAX_PACKET_SIZE);
-	   buflen = encrypted_len;
-	   if (qq_crypt(DECRYPT, encrypted_data, encrypted_len, info->file_session_key, buf, &buflen)) {
-	   purple_debug(PURPLE_DEBUG_INFO, "QQ", "decrypt success\n");
-	   if (buflen == bytes && memcmp(raw_data, buf, buflen) == 0)
-	   purple_debug(PURPLE_DEBUG_INFO, "QQ", "checksum ok\n");
-	   hex_dump = hex_dump_to_str(buf, buflen);
-	   purple_debug(PURPLE_DEBUG_INFO, "QQ", "decrypted packet: \n%s", hex_dump);
-	   g_free(hex_dump);
-	   } else {
-	   purple_debug(PURPLE_DEBUG_INFO, "QQ", "decrypt fail\n");
-	   }
-	   }
-	   */
 
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "<== send %s packet\n", qq_get_file_cmd_desc(packet_type));
-	_qq_send_file(gc, encrypted_data, encrypted_len, QQ_FILE_CONTROL_PACKET_TAG, info->to_uid);
+#if 0
+	guint8 *buf;
+	int buflen;
+	hex_dump = hex_dump_to_str(encrypted, encrypted_len);
+	purple_debug_info("QQ", "encrypted packet: \n%s", hex_dump);
+	g_free(hex_dump);
+	buf = g_newa(guint8, MAX_PACKET_SIZE);
+	buflen = encrypted_len;
+	if (qq_crypt(DECRYPT, encrypted, encrypted_len, info->file_session_key, buf, &buflen)) {
+		purple_debug_info("QQ", "decrypt success\n");
+	   if (buflen == bytes && memcmp(raw_data, buf, buflen) == 0)
+			purple_debug_info("QQ", "checksum ok\n");
+
+		hex_dump = hex_dump_to_str(buf, buflen);
+		purple_debug_info("QQ", "decrypted packet: \n%s", hex_dump);
+		g_free(hex_dump);
+	 } else {
+		purple_debug_info("QQ", "decrypt fail\n");
+	}
+#endif
+
+	purple_debug_info("QQ", "<== send %s packet\n", qq_get_file_cmd_desc(packet_type));
+	_qq_send_file(gc, encrypted, encrypted_len, QQ_FILE_CONTROL_PACKET_TAG, info->to_uid);
 }
 
 /* send a file to udp channel with QQ_FILE_DATA_PACKET_TAG */
-static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type, guint8 sub_type, 
+static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type, guint8 sub_type,
 		guint32 fragment_index, guint16 seq, guint8 *data, gint len)
 {
 	guint8 *raw_data, filename_md5[QQ_KEY_LENGTH], file_md5[QQ_KEY_LENGTH];
@@ -407,11 +402,11 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 					_fill_file_md5(purple_xfer_get_local_filename(qd->xfer),
 							purple_xfer_get_size(qd->xfer),
 							file_md5);
-					
+
 					info->fragment_num = (filesize - 1) / QQ_FILE_FRAGMENT_MAXLEN + 1;
 					info->fragment_len = QQ_FILE_FRAGMENT_MAXLEN;
 
-					purple_debug(PURPLE_DEBUG_INFO, "QQ", 
+					purple_debug_info("QQ",
 							"start transfering data, %d fragments with %d length each\n",
 							info->fragment_num, info->fragment_len);
 					/* Unknown */
@@ -436,7 +431,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 							filename_len);
 					break;
 				case QQ_FILE_DATA_INFO:
-					purple_debug(PURPLE_DEBUG_INFO, "QQ", 
+					purple_debug_info("QQ",
 							"sending %dth fragment with length %d, offset %d\n",
 							fragment_index, len, (fragment_index-1)*fragment_size);
 					/* bytes += qq_put16(raw_data + bytes, ++(qd->send_seq)); */
@@ -449,7 +444,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 					bytes += qq_putdata(raw_data + bytes, data, len);
 					break;
 				case QQ_FILE_EOF:
-					purple_debug(PURPLE_DEBUG_INFO, "QQ", "end of sending data\n");
+					purple_debug_info("QQ", "end of sending data\n");
 					/* bytes += qq_put16(raw_data + bytes, info->fragment_num + 1); */
 					bytes += qq_put16(raw_data + bytes, info->fragment_num);
 					bytes += qq_put8(raw_data + bytes, sub_type);
@@ -475,7 +470,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 					break;
 			}
 	}
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "<== send %s packet\n", qq_get_file_cmd_desc(packet_type));
+	purple_debug_info("QQ", "<== send %s packet\n", qq_get_file_cmd_desc(packet_type));
 	_qq_send_file(gc, raw_data, bytes, QQ_FILE_DATA_PACKET_TAG, info->to_uid);
 }
 
@@ -498,7 +493,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
  */
 
 
-static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data, gint len)
+static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data, gint data_len)
 {
 	gint bytes ;
 	gint decryped_bytes;
@@ -514,11 +509,10 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 	bytes = 0;
 	bytes += _qq_get_file_header(&fh, data + bytes);
 
-	decrypted_data = g_newa(guint8, len);
-	decrypted_len = len;
-
-	if ( !qq_decrypt(data, len, qd->session_md5, decrypted_data, &decrypted_len) ) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt rcv file ctrl packet\n");
+	decrypted_data = g_newa(guint8, data_len);
+	decrypted_len = qq_decrypt(decrypted_data, data, data_len, qd->session_md5);
+	if ( decrypted_len <= 0 ) {
+		purple_debug_error("QQ", "Error decrypt rcv file ctrl packet\n");
 		return;
 	}
 
@@ -528,7 +522,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 	decryped_bytes += qq_get16(&seq, decrypted_data + decryped_bytes);
 	decryped_bytes += 4+1+1+19+1;	/* skip something */
 
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "==> [%d] receive %s packet\n", seq, qq_get_file_cmd_desc(packet_type));
+	purple_debug_info("QQ", "==> [%d] receive %s packet\n", seq, qq_get_file_cmd_desc(packet_type));
 	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
 		decrypted_data, decrypted_len,
 		"decrypted control packet received:");
@@ -538,7 +532,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 			decryped_bytes = 0;
 			qq_get_conn_info(info, decrypted_data + decryped_bytes);
 			/* qq_send_file_ctl_packet(gc, QQ_FILE_CMD_PING, fh->sender_uid, 0); */
-			qq_send_file_ctl_packet(gc, QQ_FILE_CMD_SENDER_SAY_HELLO, fh.sender_uid, 0);	
+			qq_send_file_ctl_packet(gc, QQ_FILE_CMD_SENDER_SAY_HELLO, fh.sender_uid, 0);
 			break;
 		case QQ_FILE_CMD_SENDER_SAY_HELLO:
 			/* I'm receiver, if we receive SAY_HELLO from sender, we send back the ACK */
@@ -568,7 +562,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 			qq_send_file_ctl_packet(gc, QQ_FILE_CMD_SENDER_SAY_HELLO, fh.sender_uid, 0);
 			break;
 		default:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "unprocess file command %d\n", packet_type);
+			purple_debug_info("QQ", "unprocess file command %d\n", packet_type);
 	}
 }
 
@@ -579,19 +573,19 @@ static void _qq_recv_file_progess(PurpleConnection *gc, guint8 *buffer, guint16 
 	ft_info *info = (ft_info *) xfer->data;
 	guint32 mask;
 
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", 
-			"receiving %dth fragment with length %d, slide window status %o, max_fragment_index %d\n", 
+	purple_debug_info("QQ",
+			"receiving %dth fragment with length %d, slide window status %o, max_fragment_index %d\n",
 			index, len, info->window, info->max_fragment_index);
 	if (info->window == 0 && info->max_fragment_index == 0) {
 		if (_qq_xfer_open_file(purple_xfer_get_local_filename(xfer), "wb", xfer) == -1) {
 			purple_xfer_cancel_local(xfer);
 			return;
 		}
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "object file opened for writing\n");
+		purple_debug_info("QQ", "object file opened for writing\n");
 	}
 	mask = 0x1 << (index % sizeof(info->window));
 	if (index < info->max_fragment_index || (info->window & mask)) {
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "duplicate %dth fragment, drop it!\n", index+1);
+		purple_debug_info("QQ", "duplicate %dth fragment, drop it!\n", index+1);
 		return;
 	}
 
@@ -611,7 +605,7 @@ static void _qq_recv_file_progess(PurpleConnection *gc, guint8 *buffer, guint16 
 		if (mask & 0x8000) mask = 0x0001;
 		else mask = mask << 1;
 	}
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "procceed %dth fragment, slide window status %o, max_fragment_index %d\n", 
+	purple_debug_info("QQ", "procceed %dth fragment, slide window status %o, max_fragment_index %d\n",
 			index, info->window, info->max_fragment_index);
 }
 
@@ -656,12 +650,12 @@ static void _qq_update_send_progess(PurpleConnection *gc, guint32 fragment_index
 	PurpleXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
 
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", 
-			"receiving %dth fragment ack, slide window status %o, max_fragment_index %d\n", 
+	purple_debug_info("QQ",
+			"receiving %dth fragment ack, slide window status %o, max_fragment_index %d\n",
 			fragment_index, info->window, info->max_fragment_index);
-	if (fragment_index < info->max_fragment_index || 
+	if (fragment_index < info->max_fragment_index ||
 			fragment_index >= info->max_fragment_index + sizeof(info->window)) {
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "duplicate %dth fragment, drop it!\n", fragment_index+1);
+		purple_debug_info("QQ", "duplicate %dth fragment, drop it!\n", fragment_index+1);
 		return;
 	}
 	mask = 0x1 << (fragment_index % sizeof(info->window));
@@ -687,7 +681,7 @@ static void _qq_update_send_progess(PurpleConnection *gc, guint32 fragment_index
 			info->window &= ~mask;
 
 			buffer = g_newa(guint8, info->fragment_len);
-			readbytes = _qq_xfer_read_file(buffer, info->max_fragment_index + sizeof(info->window), 
+			readbytes = _qq_xfer_read_file(buffer, info->max_fragment_index + sizeof(info->window),
 					info->fragment_len, xfer);
 			if (readbytes > 0)
 				_qq_send_file_data_packet(gc, QQ_FILE_CMD_FILE_OP, QQ_FILE_DATA_INFO,
@@ -698,8 +692,8 @@ static void _qq_update_send_progess(PurpleConnection *gc, guint32 fragment_index
 			else mask = mask << 1;
 		}
 	}
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", 
-			"procceed %dth fragment ack, slide window status %o, max_fragment_index %d\n", 
+	purple_debug_info("QQ",
+			"procceed %dth fragment ack, slide window status %o, max_fragment_index %d\n",
 			fragment_index, info->window, info->max_fragment_index);
 }
 
@@ -733,13 +727,13 @@ static void _qq_process_recv_file_data(PurpleConnection *gc, guint8 *data, gint 
 					bytes += qq_get32(&info->fragment_num, data + bytes);
 					bytes += qq_get32(&info->fragment_len, data + bytes);
 
-					/* FIXME: We must check the md5 here, 
-					 * if md5 doesn't match we will ignore 
+					/* FIXME: We must check the md5 here,
+					 * if md5 doesn't match we will ignore
 					 * the packet or send sth as error number */
 
 					info->max_fragment_index = 0;
 					info->window = 0;
-					purple_debug(PURPLE_DEBUG_INFO, "QQ", 
+					purple_debug_info("QQ",
 							"start receiving data, %d fragments with %d length each\n",
 							info->fragment_num, info->fragment_len);
 					_qq_send_file_data_packet(gc, QQ_FILE_CMD_FILE_OP_ACK, sub_type,
@@ -749,7 +743,7 @@ static void _qq_process_recv_file_data(PurpleConnection *gc, guint8 *data, gint 
 					bytes += qq_get32(&fragment_index, data + bytes);
 					bytes += qq_get32(&fragment_offset, data + bytes);
 					bytes += qq_get16(&fragment_len, data + bytes);
-					purple_debug(PURPLE_DEBUG_INFO, "QQ", 
+					purple_debug_info("QQ",
 							"received %dth fragment with length %d, offset %d\n",
 							fragment_index, fragment_len, fragment_offset);
 
@@ -758,7 +752,7 @@ static void _qq_process_recv_file_data(PurpleConnection *gc, guint8 *data, gint 
 					_qq_recv_file_progess(gc, data + bytes, fragment_len, fragment_index, fragment_offset);
 					break;
 				case QQ_FILE_EOF:
-					purple_debug(PURPLE_DEBUG_INFO, "QQ", "end of receiving\n");
+					purple_debug_info("QQ", "end of receiving\n");
 					_qq_send_file_data_packet(gc, QQ_FILE_CMD_FILE_OP_ACK, sub_type,
 							0, 0, NULL, 0);
 					break;
@@ -797,11 +791,11 @@ static void _qq_process_recv_file_data(PurpleConnection *gc, guint8 *data, gint 
 			purple_xfer_end(qd->xfer);
 			break;
 		case QQ_FILE_BASIC_INFO:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "here\n");
+			purple_debug_info("QQ", "here\n");
 			_qq_send_file_data_packet(gc, QQ_FILE_DATA_INFO, 0, 0, 0, NULL, 0);
 			break;
 		default:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "_qq_process_recv_file_data: unknown packet type [%d]\n",
+			purple_debug_info("QQ", "_qq_process_recv_file_data: unknown packet type [%d]\n",
 					packet_type);
 			break;
 	}
@@ -826,6 +820,6 @@ void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len)
 			_qq_process_recv_file_data(gc, data + bytes, len - bytes);
 			break;
 		default:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "unknown packet tag");
+			purple_debug_info("QQ", "unknown packet tag");
 	}
 }

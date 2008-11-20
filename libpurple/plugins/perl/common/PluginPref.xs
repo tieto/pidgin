@@ -62,7 +62,7 @@ purple_plugin_pref_add_choice(pref, label, choice)
 	const char *label
 # Do the appropriate conversion based on the perl type specified.
 # Currently only Strings and Ints will work.
-	gpointer choice = (SvPOKp($arg) ? SvPV($arg, PL_na) : (SvIOKp($arg) ? GINT_TO_POINTER(SvIV($arg)) : NULL));
+	gpointer choice = (SvPOKp($arg) ? SvPVutf8_nolen($arg) : (SvIOKp($arg) ? GINT_TO_POINTER(SvIV($arg)) : NULL));
 
 void
 purple_plugin_pref_destroy(pref)
@@ -176,5 +176,7 @@ CODE:
 		gpp_type = PURPLE_PLUGIN_PREF_CHOICE;
 	} else if (type == 2) {
 		gpp_type = PURPLE_PLUGIN_PREF_INFO;
+	} else if (type == 3) {
+		gpp_type = PURPLE_PLUGIN_PREF_STRING_FORMAT;
 	}
 	purple_plugin_pref_set_type(pref, gpp_type);

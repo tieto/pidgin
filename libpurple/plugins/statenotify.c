@@ -15,13 +15,18 @@
 static void
 write_status(PurpleBuddy *buddy, const char *message)
 {
+	PurpleAccount *account = NULL;
 	PurpleConversation *conv;
 	const char *who;
 	char buf[256];
 	char *escaped;
+	const gchar *buddy_name = NULL;
+
+	account = purple_buddy_get_account(buddy);
+	buddy_name = purple_buddy_get_name(buddy);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-											   buddy->name, buddy->account);
+												 buddy_name, account);
 
 	if (conv == NULL)
 		return;

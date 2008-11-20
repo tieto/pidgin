@@ -49,6 +49,7 @@ C_SRC =	\
 			bosh.c
 			caps.c \
 			chat.c \
+			data.c \
 			disco.c \
 			google.c \
 			iq.c \

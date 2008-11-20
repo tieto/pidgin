@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#define _PIDGIN_GTKIMHTML_C_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -348,6 +349,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
+		
 		g_free (t);
 	}
 }
@@ -444,6 +446,20 @@ gtk_imhtml_style_set(GtkWidget *widget, GtkStyle *prev_style)
 		}
 	}
 	parent_style_set(widget, prev_style);
+}
+
+static void
+gtk_imhtml_set_link_color(GtkIMHtml *imhtml, GtkTextTag *tag)
+{
+	GdkColor *color = NULL;
+	gboolean visited = !!g_object_get_data(G_OBJECT(tag), "visited");
+	gtk_widget_style_get(GTK_WIDGET(imhtml), visited ? "hyperlink-visited-color" : "hyperlink-color", &color, NULL);
+	if (color) {
+		g_object_set(G_OBJECT(tag), "foreground-gdk", color, NULL);
+		gdk_color_free(color);
+	} else {
+		g_object_set(G_OBJECT(tag), "foreground", visited ? "#800000" : "blue", NULL);
+	}
 }
 
 static gint
@@ -566,7 +582,6 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	int x, y;
 	char *tip = NULL;
 	GSList *tags = NULL, *templist = NULL;
-	GdkColor *norm, *pre;
 	GtkTextTag *tag = NULL, *oldprelit_tag;
 	GtkTextChildAnchor* anchor;
 	gboolean hand = TRUE;
@@ -588,13 +603,15 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 		templist = templist->next;
 	}
 
-	if (tip) {
-		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-prelight-color", &pre, NULL);
+	if (tip && (!tag || !g_object_get_data(G_OBJECT(tag), "visited"))) {
 		GTK_IMHTML(imhtml)->prelit_tag = tag;
 		if (tag != oldprelit_tag) {
-			if (pre)
+			GdkColor *pre = NULL;
+			gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-prelight-color", &pre, NULL);
+			if (pre) {
 				g_object_set(G_OBJECT(tag), "foreground-gdk", pre, NULL);
-			else
+				gdk_color_free(pre);
+			} else
 				g_object_set(G_OBJECT(tag), "foreground", "#70a0ff", NULL);
 		}
 	} else {
@@ -602,11 +619,7 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	}
 
 	if ((oldprelit_tag != NULL) && (GTK_IMHTML(imhtml)->prelit_tag != oldprelit_tag)) {
-		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
-		if (norm)
-			g_object_set(G_OBJECT(oldprelit_tag), "foreground-gdk", norm, NULL);
-		else
-			g_object_set(G_OBJECT(oldprelit_tag), "foreground", "blue", NULL);
+		gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), oldprelit_tag);
 	}
 
 	if (GTK_IMHTML(imhtml)->tip) {
@@ -670,12 +683,7 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 {
 	/* when leaving the widget, clear any current & pending tooltips and restore the cursor */
 	if (GTK_IMHTML(imhtml)->prelit_tag) {
-		GdkColor *norm;
-		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
-		if (norm)
-			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground-gdk", norm, NULL);
-		else
-			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground", "blue", NULL);
+		gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), GTK_IMHTML(imhtml)->prelit_tag);
 		GTK_IMHTML(imhtml)->prelit_tag = NULL;
 	}
 
@@ -1482,6 +1490,10 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-visited-color",
+	                                        _("Hyperlink visited color"),
+	                                        _("Color to draw hyperlinks after it has been visited (or activated)."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
 	                                        _("Hyperlink prelight color"),
 	                                        _("Color to draw hyperlinks when mouse is over them."),
@@ -1679,20 +1691,24 @@ GType gtk_imhtml_get_type()
 struct url_data {
 	GObject *object;
 	gchar *url;
+	GtkTextTag *tag;
 };
 
 static void url_data_destroy(gpointer mydata)
 {
 	struct url_data *data = mydata;
 	g_object_unref(data->object);
+	g_object_unref(data->tag);
 	g_free(data->url);
 	g_free(data);
 }
 
-static void url_open(GtkWidget *w, struct url_data *data) {
+static void url_open(GtkWidget *w, struct url_data *data)
+{
 	if(!data) return;
 	g_signal_emit(data->object, signals[URL_CLICKED], 0, data->url);
-
+	g_object_set_data(G_OBJECT(data->tag), "visited", GINT_TO_POINTER(TRUE));
+	gtk_imhtml_set_link_color(GTK_IMHTML(data->object), data->tag);
 }
 
 static void url_copy(GtkWidget *w, gchar *url) {
@@ -1706,7 +1722,8 @@ static void url_copy(GtkWidget *w, gchar *url) {
 }
 
 /* The callback for an event on a link tag. */
-static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused) {
+static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused)
+{
 	GdkEventButton *event_button = (GdkEventButton *) event;
 	if (GTK_IMHTML(imhtml)->editable)
 		return FALSE;
@@ -1723,12 +1740,15 @@ static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, Gtk
 			g_object_ref(G_OBJECT(tag));
 			g_signal_emit(imhtml, signals[URL_CLICKED], 0, g_object_get_data(G_OBJECT(tag), "link_url"));
 			g_object_unref(G_OBJECT(tag));
+			g_object_set_data(G_OBJECT(tag), "visited", GINT_TO_POINTER(TRUE));
+			gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), tag);
 			return FALSE;
 		} else if(event_button->button == 3) {
 			GtkWidget *img, *item, *menu;
 			struct url_data *tempdata = g_new(struct url_data, 1);
 			tempdata->object = g_object_ref(imhtml);
 			tempdata->url = g_strdup(g_object_get_data(G_OBJECT(tag), "link_url"));
+			tempdata->tag = g_object_ref(tag);
 
 			/* Don't want the tooltip around if user right-clicked on link */
 			if (GTK_IMHTML(imhtml)->tip_window) {
@@ -1940,7 +1960,6 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	}
 }
 
-/* this isn't used yet
 static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 			GtkIMHtmlSmiley   *smiley)
 {
@@ -1956,7 +1975,7 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(int) pos - (int) t->values->str];
+			t = t->children [pos - t->values->str];
 		else
 			return;
 
@@ -1967,8 +1986,6 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 		t->image = NULL;
 	}
 }
-*/
-
 
 static gint
 gtk_smiley_tree_lookup (GtkSmileyTree *tree,
@@ -2028,6 +2045,36 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 	return 0;
 }
 
+static void
+gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	GtkSmileyTree *tree = (GtkSmileyTree *) value;
+	GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) user_data;
+	gtk_smiley_tree_remove(tree, smiley);
+}
+
+static void
+gtk_imhtml_disconnect_smiley(GtkIMHtml *imhtml, GtkIMHtmlSmiley *smiley)
+{
+	smiley->imhtml = NULL;
+	g_signal_handlers_disconnect_matched(imhtml, G_SIGNAL_MATCH_DATA, 0, 0,
+		NULL, NULL, smiley);
+}
+
+static void
+gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
+{
+	if (smiley->imhtml) {
+		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
+		g_hash_table_foreach(smiley->imhtml->smiley_data, 
+			gtk_imhtml_disassociate_smiley_foreach, smiley);
+		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
+			0, 0, NULL, NULL, smiley);
+		smiley->imhtml = NULL;
+	}
+}
+
 void
 gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 			     const gchar     *sml,
@@ -2044,9 +2091,19 @@ gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 		g_hash_table_insert(imhtml->smiley_data, g_strdup(sml), tree);
 	}
 
+	/* need to disconnect old imhtml, if there is one */
+	if (smiley->imhtml) {
+		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
+			0, 0, NULL, NULL, smiley);
+	}
+	
 	smiley->imhtml = imhtml;
 
 	gtk_smiley_tree_insert (tree, smiley);
+	
+	/* connect destroy signal for the imhtml */
+	g_signal_connect(imhtml, "destroy", G_CALLBACK(gtk_imhtml_disconnect_smiley), 
+		smiley);
 }
 
 static gboolean
@@ -2483,6 +2540,78 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 		imhtml->scroll_time = NULL;
 		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
 	}
+}
+
+/* CSS colors are either rgb (x,y,z) or #hex
+ * we need to convert to hex if it is RGB */
+static gchar*
+parse_css_color(gchar *in_color)
+{
+	char *tmp = in_color;
+
+	if (*tmp == 'r' && *(++tmp) == 'g' && *(++tmp) == 'b' && *(++tmp)) {
+		int rgbval[] = {0, 0, 0};
+		int count = 0;
+		const char *v_start;
+
+		while (*tmp && g_ascii_isspace(*tmp))
+			tmp++;
+		if (*tmp != '(') {
+			/* We don't support rgba() */
+			purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
+			return in_color;
+		}
+		tmp++;
+
+		while (count < 3) {
+			/* Skip any leading spaces */
+			while (*tmp && g_ascii_isspace(*tmp))
+				tmp++;
+
+			/* Find the subsequent contiguous digits */
+			v_start = tmp;
+			if (*v_start == '-')
+				tmp++;
+			while (*tmp && g_ascii_isdigit(*tmp))
+				tmp++;
+
+			if (tmp != v_start) {
+				char prev = *tmp;
+				*tmp = '\0';
+				rgbval[count] = atoi(v_start);
+				*tmp = prev;
+
+				/* deal with % */
+				while (*tmp && g_ascii_isspace(*tmp))
+					tmp++;
+				if (*tmp == '%') {
+					rgbval[count] = (rgbval[count] / 100.0) * 255;
+					tmp++;
+				}
+			} else {
+				purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
+				return in_color;
+			}
+
+			if (rgbval[count] > 255) {
+				rgbval[count] = 255;
+			} else if (rgbval[count] < 0) {
+				rgbval[count] = 0;
+			}
+
+			while (*tmp && g_ascii_isspace(*tmp))
+				tmp++;
+			if (*tmp == ',')
+				tmp++;
+
+			count++;
+		}
+		
+		g_free(in_color);
+		return g_strdup_printf("#%02X%02X%02X", rgbval[0], rgbval[1], rgbval[2]);
+	}
+
+	return in_color;
 }
 
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
@@ -2945,7 +3074,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							oldfont = fonts->data;
 
 						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR)) {
-							font->fore = color;
+							font->fore = parse_css_color(color);
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
 						} else {
 							if (oldfont && oldfont->fore)
@@ -2954,7 +3083,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 
 						if (background && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
-							font->back = background;
+							font->back = parse_css_color(background);
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
 						} else {
 							if (oldfont && oldfont->back)
@@ -5599,12 +5728,14 @@ GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut
 	smiley->smile = g_strdup(shortcut);
 	smiley->hidden = hide;
 	smiley->flags = flags;
+	smiley->imhtml = NULL;
 	gtk_imhtml_smiley_reload(smiley);
 	return smiley;
 }
 
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley)
 {
+	gtk_imhtml_disassociate_smiley(smiley);
 	g_free(smiley->smile);
 	g_free(smiley->file);
 	if (smiley->icon)

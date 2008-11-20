@@ -29,6 +29,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Allow the code below to see deprecated functions, so we can continue to
+ * export them via DBus. */
+#undef PURPLE_DISABLE_DEPRECATED
+
 #include "account.h"
 #include "blist.h"
 #include "conversation.h"

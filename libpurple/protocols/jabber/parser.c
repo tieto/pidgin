@@ -137,11 +137,19 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 {
 	JabberStream *js = user_data;
 
+	if (error->level == XML_ERR_WARNING && error->message != NULL
+			&& strcmp(error->message, "xmlns: URI vcard-temp is not absolute\n") == 0)
+		/*
+		 * This message happens when parsing vcards, and is normal, so don't
+		 * bother logging it because people scare easily.
+		 */
+		return;
+
 	purple_debug_error("jabber", "XML parser error for JabberStream %p: "
-								 "Domain %i, code %i, level %i: %s\n",
+								 "Domain %i, code %i, level %i: %s",
 					   js,
 					   error->domain, error->code, error->level,
-					   (error->message ? error->message : "(null)"));
+					   (error->message ? error->message : "(null)\n"));
 }
 
 static xmlSAXHandler jabber_parser_libxml = {
@@ -207,13 +215,11 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
 		xmlParseChunk(js->context, "", 0, 0);
 	} else if ((ret = xmlParseChunk(js->context, buf, len, 0)) != XML_ERR_OK) {
-		purple_debug_error("jabber", "xmlParseChunk returned error %i", ret);
+		xmlError *err = xmlCtxtGetLastError(js->context);
 
-		if ((ret >= XML_ERR_INVALID_HEX_CHARREF) && (ret <= XML_ERR_INVALID_CHAR)) {
-			/* If the error involves an invalid character, just drop this message.
-			 * We'll create a new parser next time it's needed. */
-			jabber_parser_free(js);
-		} else {
+		purple_debug_error("jabber", "xmlParseChunk returned error %i\n", ret);
+
+		if (err->level == XML_ERR_FATAL) {
 			purple_connection_error_reason (js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("XML Parse error"));

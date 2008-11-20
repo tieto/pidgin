@@ -176,9 +176,26 @@ struct yahoo_data {
 	 * the server expects us to keep track of the group for which it is sending us contact names.
 	 */
 	char *current_list15_grp;
+	time_t last_ping;
+	time_t last_keepalive;
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
+
+/*
+ * Current Maximum Length for Instant Messages
+ *
+ * This was found by experiment.
+ *
+ * The YMSG protocol allows a message of up to 948 bytes, but the official client
+ * limits to 800 characters.  According to experiments I conducted, it seems that
+ * the discrepancy is to allow some leeway for messages with mixed single- and
+ * multi-byte characters, as I was able to send messages of 840 and 932 bytes
+ * by using some multibyte characters (some random Chinese or Japanese characters,
+ * to be precise). - rekkanoryo
+ */
+#define YAHOO_MAX_MESSAGE_LENGTH_BYTES 948
+#define YAHOO_MAX_MESSAGE_LENGTH_CHARS 800
 
 /* sometimes i wish prpls could #include things from other prpls. then i could just
  * use the routines from libfaim and not have to admit to knowing how they work. */
@@ -203,6 +220,9 @@ void yahoo_init_colorht(void);
 void yahoo_dest_colorht(void);
 char *yahoo_codes_to_html(const char *x);
 char *yahoo_html_to_codes(const char *src);
+
+gboolean
+yahoo_account_use_http_proxy(PurpleConnection *conn);
 
 /**
  * Encode some text to send to the yahoo server.

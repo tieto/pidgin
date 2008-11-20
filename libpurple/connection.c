@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#define _PURPLE_CONNECTION_C_
+
 #include "internal.h"
 #include "account.h"
 #include "blist.h"
@@ -99,6 +101,12 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 void
 purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
 {
+	_purple_connection_new(account, regist, password);
+}
+
+void
+_purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
+{
 	PurpleConnection *gc;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
@@ -170,9 +178,14 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 		prpl_info->login(account);
 	}
 }
-
 void
 purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
+{
+	_purple_connection_new_unregister(account, password, cb, user_data);
+}
+
+void
+_purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
 {
 	/* Lots of copy/pasted code to avoid API changes. You might want to integrate that into the previous function when posssible. */
 	PurpleConnection *gc;
@@ -229,6 +242,12 @@ purple_connection_new_unregister(PurpleAccount *account, const char *password, P
 
 void
 purple_connection_destroy(PurpleConnection *gc)
+{
+	_purple_connection_destroy(gc);
+}
+
+void
+_purple_connection_destroy(PurpleConnection *gc)
 {
 	PurpleAccount *account;
 	GSList *buddies;

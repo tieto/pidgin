@@ -114,6 +114,7 @@ msn_message_new_plain(const char *message)
 	char *message_cr;
 
 	msg = msn_message_new(MSN_MSG_TEXT);
+	msg->retries = 1;
 	msn_message_set_attr(msg, "User-Agent", PACKAGE_NAME "/" VERSION);
 	msn_message_set_content_type(msg, "text/plain");
 	msn_message_set_charset(msg, "UTF-8");
@@ -191,8 +192,9 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 
 	if (body_len > 0) {
 		msg->body_len = len - (tmp - body);
-		msg->body = g_malloc0(msg->body_len + 1);
+		msg->body = g_malloc(msg->body_len + 1);
 		memcpy(msg->body, tmp, msg->body_len);
+		msg->body[msg->body_len] = '\0';
 		tmp += body_len;
 	}
 }
@@ -208,8 +210,9 @@ msn_message_parse_payload(MsnMessage *msg,
 	char **elems, **cur, **tokens;
 
 	g_return_if_fail(payload != NULL);
-	tmp_base = tmp = g_malloc0(payload_len + 1);
+	tmp_base = tmp = g_malloc(payload_len + 1);
 	memcpy(tmp_base, payload, payload_len);
+	tmp_base[payload_len] = '\0';
 
 	/* Parse the attributes. */
 	end = strstr(tmp, body_dem);
@@ -307,8 +310,9 @@ msn_message_parse_payload(MsnMessage *msg,
 		if (body_len > 0) {
 			msg->body_len = body_len;
 			g_free(msg->body);
-			msg->body = g_malloc0(msg->body_len + 1);
+			msg->body = g_malloc(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
+			msg->body[msg->body_len] = '\0';
 			tmp += body_len;
 		}
 
@@ -324,8 +328,9 @@ msn_message_parse_payload(MsnMessage *msg,
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
 			g_free(msg->body);
-			msg->body = g_malloc0(msg->body_len + 1);
+			msg->body = g_malloc(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
+			msg->body[msg->body_len] = '\0';
 		}
 	}
 
@@ -522,8 +527,9 @@ msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len)
 
 	if (data != NULL && len > 0)
 	{
-		msg->body = g_malloc0(len + 1);
+		msg->body = g_malloc(len + 1);
 		memcpy(msg->body, data, len);
+		msg->body[len] = '\0';
 		msg->body_len = len;
 	}
 	else

@@ -398,6 +398,12 @@ setup_icon_box(PidginStatusBox *status_box)
 	gtk_widget_set_parent(status_box->icon_box, GTK_WIDGET(status_box));
 	gtk_widget_show(status_box->icon_box);
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(status_box->icon_box,
+			status_box->account ? _("Click to change your buddyicon for this account.") :
+				_("Click to change your buddyicon for all accounts."));
+#endif
+
 	if (status_box->account &&
 		!purple_account_get_bool(status_box->account, "use-global-buddyicon", TRUE))
 	{
@@ -1199,24 +1205,22 @@ cache_pixbufs(PidginStatusBox *status_box)
 	}
 
 	status_box->connecting_index = 0;
-	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT0,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[1] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT1,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[2] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT2,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[3] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT3,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[4] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT4,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[5] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT5,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[6] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT6,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[7] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT7,
-								     icon_size, "PidginStatusBox");
-	status_box->connecting_pixbufs[8] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT8,
-								     icon_size, "PidginStatusBox");
+
+#define CACHE_ANIMATION_CONNECT(index) \
+	status_box->connecting_pixbufs[index] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox),\
+			PIDGIN_STOCK_ANIMATION_CONNECT ## index, icon_size, "PidginStatusBox")
+
+	CACHE_ANIMATION_CONNECT(0);
+	CACHE_ANIMATION_CONNECT(1);
+	CACHE_ANIMATION_CONNECT(2);
+	CACHE_ANIMATION_CONNECT(3);
+	CACHE_ANIMATION_CONNECT(4);
+	CACHE_ANIMATION_CONNECT(5);
+	CACHE_ANIMATION_CONNECT(6);
+	CACHE_ANIMATION_CONNECT(7);
+	CACHE_ANIMATION_CONNECT(8);
+
+#undef CACHE_ANIMATION_CONNECT
 
 	for (i = 0; i < G_N_ELEMENTS(status_box->typing_pixbufs); i++) {
 		if (status_box->typing_pixbufs[i] != NULL)
@@ -1224,16 +1228,18 @@ cache_pixbufs(PidginStatusBox *status_box)
 	}
 
 	status_box->typing_index = 0;
-	status_box->typing_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING0,
-								     icon_size, "PidginStatusBox");
-	status_box->typing_pixbufs[1] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING1,
-								     icon_size, "PidginStatusBox");
-	status_box->typing_pixbufs[2] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING2,
-								     icon_size, "PidginStatusBox");
-	status_box->typing_pixbufs[3] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING3,
-								     icon_size, "PidginStatusBox");
-	status_box->typing_pixbufs[4] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING4,
-								     icon_size, "PidginStatusBox");
+
+#define CACHE_ANIMATION_TYPING(index) \
+	status_box->typing_pixbufs[index] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), \
+			PIDGIN_STOCK_ANIMATION_TYPING ## index, icon_size, "PidginStatusBox")
+
+	CACHE_ANIMATION_TYPING(0);
+	CACHE_ANIMATION_TYPING(1);
+	CACHE_ANIMATION_TYPING(2);
+	CACHE_ANIMATION_TYPING(3);
+	CACHE_ANIMATION_TYPING(4);
+
+#undef CACHE_ANIMATION_TYPING
 }
 
 static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box)
@@ -2667,10 +2673,15 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 	{
 		if (status_box->imhtml_visible)
 		{
+			GtkTextIter start, end;
+			GtkTextBuffer *buffer;
 			gtk_widget_show_all(status_box->vbox);
 			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 			gtk_widget_grab_focus(status_box->imhtml);
-			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
+			gtk_text_buffer_get_bounds(buffer, &start, &end);
+			gtk_text_buffer_move_mark(buffer, gtk_text_buffer_get_mark(buffer, "insert"), &end);
+			gtk_text_buffer_move_mark(buffer, gtk_text_buffer_get_mark(buffer, "selection_bound"), &start);
 		}
 		else
 		{

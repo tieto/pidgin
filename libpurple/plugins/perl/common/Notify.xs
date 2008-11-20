@@ -6,7 +6,7 @@ PROTOTYPES: ENABLE
 BOOT:
 {
 	HV *type_stash = gv_stashpv("Purple::Notify::Type", 1);
-	HV *msg_type_stash = gv_stashpv("Purple::Notify:Msg", 1);
+	HV *msg_type_stash = gv_stashpv("Purple::Notify::Msg", 1);
 	HV *user_info_stash = gv_stashpv("Purple::NotifyUserInfo::Type", 1);
 
 	static const constiv *civ, type_const_iv[] = {
@@ -92,13 +92,6 @@ purple_notify_userinfo(gc, who, user_info, cb, user_data)
 	Purple::NotifyUserInfo user_info
 	Purple::NotifyCloseCallback cb
 	gpointer user_data
-
-Purple::NotifyUiOps
-purple_notify_get_ui_ops()
-
-void
-purple_notify_set_ui_ops(ops)
-	Purple::NotifyUiOps ops
 
 void *
 purple_notify_message(handle, type, title, primary, secondary, cb, user_data)

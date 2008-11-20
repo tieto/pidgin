@@ -633,6 +633,9 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 			flags = fcntl(acceptfd, F_GETFL);
 			fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+			fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
+#endif
 
 			purple_input_remove(xfer->watcher);
 			close(source);

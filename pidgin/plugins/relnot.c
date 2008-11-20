@@ -33,6 +33,7 @@
 
 #include "connection.h"
 #include "core.h"
+#include "debug.h"
 #include "notify.h"
 #include "prefs.h"
 #include "util.h"
@@ -45,14 +46,39 @@
 
 static void
 version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *changelog, size_t len, const gchar *error_message)
+		const gchar *response, size_t len, const gchar *error_message)
 {
-	char *cur_ver, *formatted;
-	GString *message;
-	int i=0;
+	gchar *cur_ver, *formatted;
+	const char *tmp, *changelog;
+	char response_code[4];
 
-	if(error_message || !changelog || !len)
+	GString *message;
+	int i = 0;
+
+	if(error_message || !response || !len)
 		return;
+
+	memset(response_code, '\0', sizeof(response_code));
+	/* Parse the status code - the response should be in the form of "HTTP/?.? 200 ..." */
+	if ((tmp = strstr(response, " ")) != NULL) {
+		tmp++;
+		/* Read the 3 digit status code */
+		if (len - (tmp - response) > 3) {
+			memcpy(response_code, tmp, 3);
+		}
+	}
+
+	if (strcmp(response_code, "200") != 0) {
+		purple_debug_error("relnot", "Didn't recieve a HTTP status code of 200.\n");
+		return;
+	}
+
+	/* Go to the start of the data */
+	if((changelog = strstr(response, "\r\n\r\n")) == NULL) {
+		purple_debug_error("relnot", "Unable to find start of HTTP response data.\n");
+		return;
+	}
+	changelog += 4;
 
 	while(changelog[i] && changelog[i] != '\n') i++;
 
@@ -94,16 +120,35 @@ do_check(void)
 {
 	int last_check = purple_prefs_get_int("/plugins/gtk/relnot/last_check");
 	if(!last_check || time(NULL) - last_check > MIN_CHECK_INTERVAL) {
-		char *url = g_strdup_printf("http://pidgin.im/version.php?version=%s&build=%s", purple_core_get_version(),
+		gchar *url, *request;
+		const char *host = "pidgin.im";
+		
+		url = g_strdup_printf("http://%s/version.php?version=%s&build=%s",
+				host,
+				purple_core_get_version(),
 #ifdef _WIN32
 				"purple-win32"
 #else
 				"purple"
 #endif
 		);
-		purple_util_fetch_url(url, TRUE, NULL, FALSE, version_fetch_cb, NULL);
-		purple_prefs_set_int("/plugins/gtk/relnot/last_check", time(NULL));
+
+		request = g_strdup_printf(
+				"GET %s HTTP/1.0\r\n"
+				"Connection: close\r\n"
+				"Accept: */*\r\n"
+				"Host: %s\r\n\r\n",
+				url,
+				host);
+
+		purple_util_fetch_url_request_len(url, TRUE, NULL, FALSE,
+			request, TRUE, -1, version_fetch_cb, NULL);
+
+		g_free(request);
 		g_free(url);
+
+		purple_prefs_set_int("/plugins/gtk/relnot/last_check", time(NULL));
+
 	}
 }
 

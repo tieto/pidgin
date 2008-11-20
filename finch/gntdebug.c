@@ -233,7 +233,7 @@ file_save(GntFileSel *fs, const char *path, const char *file, GntTextView *tv)
 	}
 
 	fprintf(fp, "Finch Debug Log : %s\n", purple_date_format_full(NULL));
-	fprintf(fp, tv->string->str);
+	fprintf(fp, "%s", tv->string->str);
 	fclose(fp);
 	gnt_widget_destroy(GNT_WIDGET(fs));
 }

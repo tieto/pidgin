@@ -1035,7 +1035,7 @@ purple_account_register(PurpleAccount *account)
 	purple_debug_info("account", "Registering account %s\n",
 					purple_account_get_username(account));
 
-	purple_connection_new(account, TRUE, purple_account_get_password(account));
+	_purple_connection_new(account, TRUE, purple_account_get_password(account));
 }
 
 void
@@ -1046,7 +1046,7 @@ purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb 
 	purple_debug_info("account", "Unregistering account %s\n",
 					  purple_account_get_username(account));
 
-	purple_connection_new_unregister(account, purple_account_get_password(account), cb, user_data);
+	_purple_connection_new_unregister(account, purple_account_get_password(account), cb, user_data);
 }
 
 static void
@@ -1069,7 +1069,7 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 
 	purple_account_set_password(account, entry);
 
-	purple_connection_new(account, FALSE, entry);
+	_purple_connection_new(account, FALSE, entry);
 }
 
 static void
@@ -1155,7 +1155,7 @@ purple_account_connect(PurpleAccount *account)
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), G_CALLBACK(request_password_cancel_cb), account);
 	else
-		purple_connection_new(account, FALSE, password);
+		_purple_connection_new(account, FALSE, password);
 }
 
 void
@@ -1171,7 +1171,7 @@ purple_account_disconnect(PurpleAccount *account)
 	account->disconnecting = TRUE;
 
 	gc = purple_account_get_connection(account);
-	purple_connection_destroy(gc);
+	_purple_connection_destroy(gc);
 	if (!purple_account_get_remember_password(account))
 		purple_account_set_password(account, NULL);
 	purple_account_set_connection(account, NULL);
@@ -2614,18 +2614,18 @@ purple_accounts_find(const char *name, const char *protocol_id)
 
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		account = (PurpleAccount *)l->data;
+		if (protocol_id && strcmp(account->protocol_id, protocol_id))
+		  continue;
 
 		who = g_strdup(purple_normalize(account, name));
-		if (!strcmp(purple_normalize(account, purple_account_get_username(account)), who) &&
-			(!protocol_id || !strcmp(account->protocol_id, protocol_id))) {
+		if (!strcmp(purple_normalize(account, purple_account_get_username(account)), who)) {
 			g_free(who);
-			break;
+			return account;
 		}
 		g_free(who);
-		account = NULL;
 	}
 
-	return account;
+	return NULL;
 }
 
 void

@@ -1,7 +1,7 @@
 EXTRA_DIST = \
-		Makefile.mingw \
-		win32/posix.uname.c \
-		win32/utsname.h
+	Makefile.mingw \
+	win32/posix.uname.c \
+	win32/utsname.h
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -13,6 +13,8 @@ JABBERSOURCES = auth.c \
 			  bosh.h \
 			  chat.c \
 			  chat.h \
+			  data.c \
+			  data.h \
 			  disco.c \
 			  disco.h \
 			  google.c \
@@ -59,20 +61,16 @@ libxmpp_la_LDFLAGS = -module -avoid-version
 if STATIC_JABBER
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libjabber.a
-pkg_LTLIBRARIES =
-
-libjabber_a_SOURCES = $(JABBERSOURCES) libxmpp.c
-libjabber_a_CFLAGS  = $(AM_CFLAGS)
+noinst_LTLIBRARIES   = libjabber.la
+libjabber_la_SOURCES = $(JABBERSOURCES) libxmpp.c
+libjabber_la_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
-pkg_LTLIBRARIES = libjabber.la libxmpp.la
-noinst_LIBRARIES =
-
+pkg_LTLIBRARIES      = libjabber.la libxmpp.la
 libjabber_la_SOURCES = $(JABBERSOURCES)
-libjabber_la_LIBADD = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
+libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
 
 libxmpp_la_SOURCES = libxmpp.c
 libxmpp_la_LIBADD = libjabber.la

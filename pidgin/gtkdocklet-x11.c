@@ -82,7 +82,7 @@ docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 static gboolean
 docklet_x11_clicked_cb(GtkWidget *button, GdkEventButton *event, void *data)
 {
-	if (event->type != GDK_BUTTON_RELEASE)
+	if (event->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
 	pidgin_docklet_clicked(event->button);
@@ -263,7 +263,7 @@ docklet_x11_create(gboolean recreate)
 	g_signal_connect(G_OBJECT(docklet), "embedded", G_CALLBACK(docklet_x11_embedded_cb), NULL);
 	g_signal_connect(G_OBJECT(docklet), "destroy", G_CALLBACK(docklet_x11_destroyed_cb), NULL);
 	g_signal_connect(G_OBJECT(docklet), "size-allocate", G_CALLBACK(docklet_x11_resize_icon), NULL);
-	g_signal_connect(G_OBJECT(box), "button-release-event", G_CALLBACK(docklet_x11_clicked_cb), NULL);
+	g_signal_connect(G_OBJECT(box), "button-press-event", G_CALLBACK(docklet_x11_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(box), image);
 	gtk_container_add(GTK_CONTAINER(docklet), box);
 

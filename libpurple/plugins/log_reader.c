@@ -661,8 +661,10 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		username = g_strdup(purple_normalize(account, account->username));
 	}
 
-	if (buddy)
-		savedfilename = purple_blist_node_get_string(&buddy->node, "log_reader_msn_log_filename");
+	if (buddy) {
+		savedfilename = purple_blist_node_get_string((PurpleBlistNode *)buddy,
+		                                             "log_reader_msn_log_filename");
+	}
 
 	if (savedfilename) {
 		/* As a special case, we allow the null string to kill the parsing
@@ -822,7 +824,8 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	 * detected for both buddies.
 	 */
 	if (buddy && logfile) {
-		purple_blist_node_set_string(&buddy->node, "log_reader_msn_log_filename", logfile);
+		PurpleBlistNode *node = (PurpleBlistNode *)buddy;
+		purple_blist_node_set_string(node, "log_reader_msn_log_filename", logfile);
 		g_free(logfile);
 	}
 
@@ -981,8 +984,8 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				gboolean from_name_matches;
 				gboolean to_name_matches;
 
-				if (buddy && buddy->alias)
-					their_name = buddy->alias;
+				if (buddy)
+					their_name = purple_buddy_get_alias(buddy);
 
 				if (log->account->alias)
 				{
@@ -1018,13 +1021,14 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				} else if (to_name_matches) {
 					name_guessed = NAME_GUESS_THEM;
 				} else {
-					if (buddy && buddy->alias) {
-						char *alias = g_strdup(buddy->alias);
+					if (buddy) {
+						const char *server_alias = NULL;
+						char *alias = g_strdup(purple_buddy_get_alias(buddy));
+						char *temp;
 
 						/* "Truncate" the string at the first non-alphanumeric
 						 * character. The idea is to relax the comparison.
 						 */
-						char *temp;
 						for (temp = alias; *temp ; temp++) {
 							if (!isalnum(*temp)) {
 								*temp = '\0';
@@ -1056,9 +1060,9 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 							}
 						} else if (to_name_matches) {
 							name_guessed = NAME_GUESS_ME;
-						} else if (buddy->server_alias) {
+						} else if ((server_alias = purple_buddy_get_server_alias(buddy))) {
 							friendly_name_length =
-								strlen(buddy->server_alias);
+								strlen(server_alias);
 
 							/* Try to guess which user is them.
 							 * The first step is to determine if either of
@@ -1068,13 +1072,13 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 							 */
 							from_name_matches = (purple_str_has_prefix(
 									from_name,
-									buddy->server_alias) &&
+									server_alias) &&
 									!isalnum(*(from_name +
 									friendly_name_length)));
 
 							to_name_matches = to_name && (
 									(purple_str_has_prefix(
-									to_name, buddy->server_alias) &&
+									to_name, server_alias) &&
 									!isalnum(*(to_name +
 									friendly_name_length))));
 
@@ -1565,18 +1569,30 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 					g_string_append(formatted, "</b>");
 					footer = NULL;
 				} else if (strstr(line, " signed off ")) {
-					if (buddy != NULL && buddy->alias)
+					const char *alias = NULL;
+
+					if (buddy != NULL)
+						alias = purple_buddy_get_alias(buddy);
+
+					if (alias != NULL) {
 						g_string_append_printf(formatted,
-							_("%s has signed off."), buddy->alias);
-					else
+							_("%s has signed off."), alias);
+					} else {
 						g_string_append_printf(formatted,
 							_("%s has signed off."), log->name);
+					}
 					line = "";
 				} else if (strstr(line, " signed on ")) {
-					if (buddy != NULL && buddy->alias)
-						g_string_append(formatted, buddy->alias);
+					const char *alias = NULL;
+
+					if (buddy != NULL)
+						alias = purple_buddy_get_alias(buddy);
+					
+					if (alias != NULL)
+						g_string_append(formatted, alias);
 					else
 						g_string_append(formatted, log->name);
+
 					line = " logged in.";
 				} else if (purple_str_has_prefix(line,
 					"One or more messages may have been undeliverable.")) {
@@ -1631,11 +1647,15 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 					footer = "</span></b>";
 				}
 			} else if (purple_str_has_prefix(line, data->their_nickname)) {
-				if (buddy != NULL && buddy->alias) {
-					line += strlen(data->their_nickname) + 2;
-					g_string_append_printf(formatted,
-						"<span style=\"color: #A82F2F;\">"
-						"<b>%s</b></span>: ", buddy->alias);
+				if (buddy != NULL) {
+					const char *alias = purple_buddy_get_alias(buddy);
+
+					if (alias != NULL) {
+						line += strlen(data->their_nickname) + 2;
+						g_string_append_printf(formatted,
+							"<span style=\"color: #A82F2F;\">"
+							"<b>%s</b></span>: ", alias);
+					}
 				}
 			} else {
 				const char *line2 = strstr(line, ":");
@@ -1749,7 +1769,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	gboolean main_cycle = TRUE;
 	char *c;
 	char *start_log;
-	char *new_line;
+	char *new_line = NULL;
 	int offset = 0;
 	GError *error;
 
@@ -1951,7 +1971,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	c = contents;
 	line = contents;
 
-	while (*c) {
+	while (c && *c) {
 		gboolean is_in_message = FALSE;
 
 		if (purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC) ||
@@ -2001,10 +2021,14 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 					g_string_append(formatted, "</font> ");
 
 					if (is_in_message) {
-						if (buddy_name != NULL && buddy != NULL && buddy->alias) {
+						const char *alias = NULL;
+
+						if (buddy_name != NULL && buddy != NULL &&
+						    (alias = purple_buddy_get_alias(buddy)))
+						{
 							g_string_append_printf(formatted,
 								"<span style=\"color: #A82F2F;\">"
-								"<b>%s</b></span>: ", buddy->alias);
+								"<b>%s</b></span>: ", alias);
 						}
 					} else {
 						const char *acct_name;

@@ -421,7 +421,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	 */
 
 	/* Need to disconnect or actually log in. For now, we disconnect. */
-	purple_connection_destroy(gc);
+	purple_account_disconnect(account);
 
 exit_err:
 	if(account->registration_cb)
@@ -446,7 +446,7 @@ static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 	GGPInfo *info = gc->proto_data;
 	GGPToken *token = info->token;
 
-	purple_connection_destroy(gc);
+	purple_account_disconnect(gc->account);
 
 	g_free(token->id);
 	g_free(token->data);
@@ -1834,7 +1834,7 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	int new_status, new_status_descr;
 	const char *new_msg;
 
-	g_return_val_if_fail(msg == NULL, 0);
+	g_return_val_if_fail(msg != NULL, 0);
 
 	purple_debug_info("gg", "ggp_to_gg_status: Requested status = %s\n",
 			status_id);
@@ -2232,7 +2232,7 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 			break;
 	}
 
-	purple_debug(purple_level, "gg", msg);
+	purple_debug(purple_level, "gg", "%s", msg);
 	g_free(msg);
 }
 /* }}} */

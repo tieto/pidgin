@@ -536,12 +536,8 @@ int main(int argc, char *argv[])
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
-			"%swiki/GetABacktrace\n\n"
-			"If you need further assistance, please IM either SeanEgn or \n"
-			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-			"on other protocols is at\n"
-			"%swiki/DeveloperPages\n"),
-			PIDGIN_NAME, DISPLAY_VERSION, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
+			"%swiki/GetABacktrace\n"),
+			PIDGIN_NAME, DISPLAY_VERSION, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
 		);
 
 		/* we have to convert the message (UTF-8 to console

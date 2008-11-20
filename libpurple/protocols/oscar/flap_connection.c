@@ -158,8 +158,8 @@ static gboolean flap_connection_send_queued(gpointer data)
 	gettimeofday(&now, NULL);
 
 	purple_debug_info("oscar", "Attempting to send %u queued SNACs and %u queued low-priority SNACs for %p\n",
-					  (conn->queued_snacs ? g_queue_get_length(conn->queued_snacs) : 0),
-					  (conn->queued_lowpriority_snacs ? g_queue_get_length(conn->queued_lowpriority_snacs) : 0),
+					  (conn->queued_snacs ? conn->queued_snacs->length : 0),
+					  (conn->queued_lowpriority_snacs ? conn->queued_lowpriority_snacs->length : 0),
 					  conn);
 	if (!conn->queued_snacs || flap_connection_send_snac_queue(conn, now, conn->queued_snacs)) {
 		if (!conn->queued_lowpriority_snacs || flap_connection_send_snac_queue(conn, now, conn->queued_lowpriority_snacs)) {
@@ -228,7 +228,13 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 			rateclass->last.tv_usec = now.tv_usec;
 		}
 	} else {
-		purple_debug_warning("oscar", "No rate class found for family %hu subtype %hu\n", family, subtype);
+		/*
+		 * It's normal for SNACs 0x0001/0x0006 and 0x0001/0x0017 to be
+		 * sent before we receive rate info from the server, so don't
+		 * bother warning about them.
+		 */
+		if (family != 0x0001 || (subtype != 0x0006 && subtype != 0x0017))
+			purple_debug_warning("oscar", "No rate class found for family 0x%04hx subtype 0x%04hx\n", family, subtype);
 	}
 
 	if (enqueue)

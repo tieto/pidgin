@@ -1,35 +1,39 @@
 Code Contributors
-=====
-puzzlebird  : original author
-gfhuang     : patches for libpurple 2.0.0beta2, maintainer
-henryouly   : file transfer, udp sock5 proxy and qq_show, maintainer
-hzhr        : maintainer
-joymarquis  : maintainer
-arfankai    : fixed bugs in char_conv.c
-rakescar    : provided filter for HTML tag
-yyw         : improved performance on PPC linux
-lvxiang     : provided ip to location original code
-markhuetsch : OpenQ merge into libpurple, maintainer 2006-2007
-ccpaging    : maintainer since 2007
-icesky      : maintainer since 2007
-csyfek      : faces, maintainer since 2007
+=========
+puzzlebird	: original author
+gfhuang		: patches for libpurple 2.0.0beta2, maintainer
+Yuan Qingyun	: patches for libpurple 1.5.0, maintainer
+henryouly	: file transfer, udp sock5 proxy and qq_show, maintainer
+hzhr		: maintainer
+joymarquis	: maintainer
+arfankai	: fixed bugs in char_conv.c
+rakescar	: provided filter for HTML tag
+yyw		: improved performance on PPC linux
+lvxiang		: provided ip to location original code
+markhuetsch	: OpenQ merge into libpurple, maintainer 2006-2007
+ccpaging	: maintainer since 2007
+icesky		: maintainer since 2007
+csyfek		: faces, maintainer since 2007
 
 Lovely Patch Writers
-=====
-gnap        : message displaying, documentation
-manphiz     : qun processing
-moo         : qun processing
-Coly Li     : qun processing
+=========
+gnap		: message displaying, documentation
+manphiz		: qun processing
+moo		: qun processing
+Coly Li		: qun processing
+Emil Alexiev	: captcha verification on login based on LumaQQ for MAC (2007), 
+		  login, add buddy, remove buddy, message exchange and logout
 
 Acknowledgement
-=====
-Shufeng Tan : http://sf.net/projects/perl-oicq
-Jeff Ye     : http://www.sinomac.com
-Hu Zheng    : http://forlinux.yeah.net
-yunfan      : http://www.myswear.net
+=========
+Shufeng Tan	: http://sf.net/projects/perl-oicq
+Jeff Ye		: http://www.sinomac.com
+Hu Zheng	: http://forlinux.yeah.net
+yunfan		: http://www.myswear.net
+OpenQ Team	: http://openq.linuxsir.org
+LumaQQ Team	: http://lumaqq.linuxsir.org
 khc@pidgin.im
 qulogic@pidgin.im
 rlaager@pidgin.im
-OpenQ Team
-LumaQQ Team
-OpenQ Google Group
+Huang Guan	: http://home.xxsyzx.com
+OpenQ Google Group	: http://groups.google.com/group/openq

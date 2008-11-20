@@ -124,6 +124,7 @@ clean:
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) clean
 	rm -f $(PIDGIN_CONFIG_H) ./VERSION pidgin-$(PIDGIN_VERSION)*.exe pidgin-$(PIDGIN_VERSION)-win32-bin.zip
 	rm -rf doc/html Doxyfile.mingw
 

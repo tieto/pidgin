@@ -288,24 +288,24 @@ probe_perl_plugin(PurplePlugin *plugin)
 	ret = perl_parse(prober, xs_init, argc, argv, NULL);
 
 	if (ret != 0) {
-		STRLEN len;
 		const char * errmsg = "Unknown error";
 		if (SvTRUE(ERRSV))
-			errmsg = SvPV(ERRSV, len);
+			errmsg = SvPVutf8_nolen(ERRSV);
 		purple_debug_error("perl", "Unable to parse plugin %s (%d:%s)\n",
 						   plugin->path, ret, errmsg);
+		status = FALSE;
 		goto cleanup;
 	}
 
 	ret = perl_run(prober);
 
 	if (ret != 0) {
-		STRLEN len;
 		const char * errmsg = "Unknown error";
 		if (SvTRUE(ERRSV))
-			errmsg = SvPV(ERRSV, len);
+			errmsg = SvPVutf8_nolen(ERRSV);
 		purple_debug_error("perl", "Unable to run perl interpreter on plugin %s (%d:%s)\n",
 						   plugin->path, ret, errmsg);
+		status = FALSE;
 		goto cleanup;
 	}
 
@@ -335,7 +335,6 @@ probe_perl_plugin(PurplePlugin *plugin)
 			PurplePluginInfo *info;
 			PurplePerlScript *gps;
 			char *basename;
-			STRLEN len;
 
 			info = g_new0(PurplePluginInfo, 1);
 			gps  = g_new0(PurplePerlScript, 1);
@@ -358,9 +357,9 @@ probe_perl_plugin(PurplePlugin *plugin)
 
 			/* We know this one exists. */
 			key = hv_fetch(plugin_info, "name", strlen("name"), 0);
-			info->name = g_strdup(SvPV(*key, len));
+			info->name = g_strdup(SvPVutf8_nolen(*key));
 			/* Set id here in case we don't find one later. */
-			info->id = g_strdup(SvPV(*key, len));
+			info->id = g_strdup(info->name);
 
 #ifdef PURPLE_GTKPERL
 			if ((key = hv_fetch(plugin_info, "GTK_UI",
@@ -370,40 +369,40 @@ probe_perl_plugin(PurplePlugin *plugin)
 
 			if ((key = hv_fetch(plugin_info, "url",
 			                    strlen("url"), 0)))
-				info->homepage = g_strdup(SvPV(*key, len));
+				info->homepage = g_strdup(SvPVutf8_nolen(*key));
 
 			if ((key = hv_fetch(plugin_info, "author",
 			                    strlen("author"), 0)))
-				info->author = g_strdup(SvPV(*key, len));
+				info->author = g_strdup(SvPVutf8_nolen(*key));
 
 			if ((key = hv_fetch(plugin_info, "summary",
 			                    strlen("summary"), 0)))
-				info->summary = g_strdup(SvPV(*key, len));
+				info->summary = g_strdup(SvPVutf8_nolen(*key));
 
 			if ((key = hv_fetch(plugin_info, "description",
 			                    strlen("description"), 0)))
-				info->description = g_strdup(SvPV(*key, len));
+				info->description = g_strdup(SvPVutf8_nolen(*key));
 
 			if ((key = hv_fetch(plugin_info, "version",
 			                    strlen("version"), 0)))
-				info->version = g_strdup(SvPV(*key, len));
+				info->version = g_strdup(SvPVutf8_nolen(*key));
 
 			/* We know this one exists. */
 			key = hv_fetch(plugin_info, "load", strlen("load"), 0);
 			gps->load_sub = g_strdup_printf("%s::%s", gps->package,
-			                                SvPV(*key, len));
+			                                SvPVutf8_nolen(*key));
 
 			if ((key = hv_fetch(plugin_info, "unload",
 			                    strlen("unload"), 0)))
 				gps->unload_sub = g_strdup_printf("%s::%s",
 				                                  gps->package,
-				                                  SvPV(*key, len));
+				                                  SvPVutf8_nolen(*key));
 
 			if ((key = hv_fetch(plugin_info, "id",
 			                    strlen("id"), 0))) {
 				g_free(info->id);
 				info->id = g_strdup_printf("perl-%s",
-				                           SvPV(*key, len));
+				                           SvPVutf8_nolen(*key));
 			}
 
 		/********************************************************/
@@ -424,7 +423,7 @@ probe_perl_plugin(PurplePlugin *plugin)
 				 * will create a frame for us */
 				gps->prefs_sub = g_strdup_printf("%s::%s",
 				                                 gps->package,
-				                                 SvPV(*key, len));
+				                                 SvPVutf8_nolen(*key));
 				info->prefs_info = &ui_info;
 			}
 
@@ -435,7 +434,7 @@ probe_perl_plugin(PurplePlugin *plugin)
 				 * will create a frame for us */
 				gps->gtk_prefs_sub = g_strdup_printf("%s::%s",
 				                                     gps->package,
-				                                     SvPV(*key, len));
+				                                     SvPVutf8_nolen(*key));
 				info->ui_info = &gtk_ui_info;
 			}
 #endif
@@ -444,7 +443,7 @@ probe_perl_plugin(PurplePlugin *plugin)
 			                    strlen("plugin_action_sub"), 0))) {
 				gps->plugin_action_sub = g_strdup_printf("%s::%s",
 				                                         gps->package,
-				                                         SvPV(*key, len));
+				                                         SvPVutf8_nolen(*key));
 				info->actions = purple_perl_plugin_actions;
 			}
 
@@ -467,6 +466,7 @@ static gboolean
 load_perl_plugin(PurplePlugin *plugin)
 {
 	PurplePerlScript *gps = (PurplePerlScript *)plugin->info->extra_info;
+	gboolean loaded = TRUE;
 	char *atmp[3] = { plugin->path, NULL, NULL };
 
 	if (gps == NULL || gps->load_sub == NULL)
@@ -499,11 +499,10 @@ load_perl_plugin(PurplePlugin *plugin)
 		SPAGAIN;
 
 		if (SvTRUE(ERRSV)) {
-			STRLEN len;
-
 			purple_debug(PURPLE_DEBUG_ERROR, "perl",
 			           "Perl function %s exited abnormally: %s\n",
-			           gps->load_sub, SvPV(ERRSV, len));
+			           gps->load_sub, SvPVutf8_nolen(ERRSV));
+			loaded = FALSE;
 		}
 
 		PUTBACK;
@@ -511,7 +510,7 @@ load_perl_plugin(PurplePlugin *plugin)
 		LEAVE;
 	}
 
-	return TRUE;
+	return loaded;
 }
 
 static void
@@ -525,7 +524,7 @@ destroy_package(const char *package)
 	SAVETMPS;
 
 	PUSHMARK(SP);
-	XPUSHs(sv_2mortal(newSVpv(package, strlen(package))));
+	XPUSHs(sv_2mortal(newSVpv(package, 0)));
 	PUTBACK;
 
 	perl_call_pv("Purple::PerlLoader::destroy_package",
@@ -563,11 +562,9 @@ unload_perl_plugin(PurplePlugin *plugin)
 		SPAGAIN;
 
 		if (SvTRUE(ERRSV)) {
-			STRLEN len;
-
 			purple_debug(PURPLE_DEBUG_ERROR, "perl",
 			           "Perl function %s exited abnormally: %s\n",
-			           gps->load_sub, SvPV(ERRSV, len));
+			           gps->unload_sub, SvPVutf8_nolen(ERRSV));
 		}
 
 		PUTBACK;
@@ -592,21 +589,23 @@ destroy_perl_plugin(PurplePlugin *plugin)
 		PurplePerlScript *gps;
 
 		g_free(plugin->info->name);
-		g_free(plugin->info->version);
+		g_free(plugin->info->id);
+		g_free(plugin->info->homepage);
+		g_free(plugin->info->author);
 		g_free(plugin->info->summary);
 		g_free(plugin->info->description);
-		g_free(plugin->info->author);
-		g_free(plugin->info->homepage);
+		g_free(plugin->info->version);
 
 		gps = (PurplePerlScript *)plugin->info->extra_info;
 		if (gps != NULL) {
+			g_free(gps->package);
 			g_free(gps->load_sub);
 			g_free(gps->unload_sub);
-			g_free(gps->package);
 			g_free(gps->prefs_sub);
 #ifdef PURPLE_GTKPERL
 			g_free(gps->gtk_prefs_sub);
 #endif
+			g_free(gps->plugin_action_sub);
 			g_free(gps);
 			plugin->info->extra_info = NULL;
 		}

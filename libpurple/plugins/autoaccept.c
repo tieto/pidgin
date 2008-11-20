@@ -104,7 +104,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 		return;
 	}
 
-	node = node->parent;
+	node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 
 	pref = purple_prefs_get_string(PREF_PATH);
@@ -117,6 +117,9 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 			{
 				int count = 1;
 				const char *escape;
+				gchar **name_and_ext;
+				const gchar *name;
+				gchar *ext;
 
 				if (purple_prefs_get_bool(PREF_NEWDIR))
 					dirname = g_build_filename(pref, purple_normalize(account, xfer->who), NULL);
@@ -132,9 +135,24 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 				escape = purple_escape_filename(xfer->filename);
 				filename = g_build_filename(dirname, escape, NULL);
 
+				/* Split at the first dot, to avoid uniquifying "foo.tar.gz" to "foo.tar-2.gz" */
+				name_and_ext = g_strsplit(escape, ".", 2);
+				name = name_and_ext[0];
+				g_return_if_fail(name != NULL);
+				if (name_and_ext[1] != NULL) {
+					/* g_strsplit does not include the separator in each chunk. */
+					ext = g_strdup_printf(".%s", name_and_ext[1]);
+				} else {
+					ext = g_strdup("");
+				}
+
 				/* Make sure the file doesn't exist. Do we want some better checking than this? */
+				/* FIXME: There is a race here: if the newly uniquified file name gets created between
+				 *        this g_file_test and the transfer starting, the file created in the meantime
+				 *        will be clobbered. But it's not at all straightforward to fix.
+				 */
 				while (g_file_test(filename, G_FILE_TEST_EXISTS)) {
-					char *file = g_strdup_printf("%s-%d", escape, count++);
+					char *file = g_strdup_printf("%s-%d%s", name, count++, ext);
 					g_free(filename);
 					filename = g_build_filename(dirname, file, NULL);
 					g_free(file);
@@ -142,6 +160,8 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 
 				purple_xfer_request_accepted(xfer, filename);
 
+				g_strfreev(name_and_ext);
+				g_free(ext);
 				g_free(dirname);
 				g_free(filename);
 			}
@@ -159,7 +179,7 @@ static void
 save_cb(PurpleBlistNode *node, int choice)
 {
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-		node = node->parent;
+		node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 	purple_blist_node_set_int(node, "autoaccept", choice);
 }
@@ -170,7 +190,7 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 	char *message;
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-		node = node->parent;
+		node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 
 	message = g_strdup_printf(_("When a file-transfer request arrives from %s"), 

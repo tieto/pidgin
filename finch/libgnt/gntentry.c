@@ -903,6 +903,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-prev-word", del_prev_word,
 				GNT_KEY_CTRL_W, NULL);
+	gnt_bindable_register_binding(bindable, "delete-prev-word", "\033", s, NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-prev-word", move_back_word,
 				"\033" "b", NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-prev", move_back,

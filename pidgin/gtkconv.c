@@ -24,6 +24,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#define _PIDGIN_GTKCONV_C_
+
 #include "internal.h"
 #include "pidgin.h"
 
@@ -161,7 +163,7 @@ static const char *item_factory_translate_func (const char *path, gpointer func_
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
-static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, gboolean create);
+static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag, gboolean create);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
@@ -172,7 +174,8 @@ static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
 static gboolean pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y);
 
-static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
+static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name)
+{
 	static GdkColor col;
 	GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
 	float scale;
@@ -968,7 +971,9 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	}
 
 	name = purple_conversation_get_name(conv);
-	fprintf(fp, "<html>\n<head><title>%s</title></head>\n<body>", name);
+	fprintf(fp, "<html>\n<head>\n");
+	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
+	fprintf(fp, "<title>%s</title>\n</head>\n<body>\n", name);
 	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
 
 	lines = gtk_imhtml_get_markup_lines(
@@ -1910,6 +1915,40 @@ move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 }
 
 static gboolean
+gtkconv_cycle_focus(PidginConversation *gtkconv, GtkDirectionType dir)
+{
+	PurpleConversation *conv = gtkconv->active_conv;
+	gboolean chat = purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT;
+	GtkWidget *next = NULL;
+	struct {
+		GtkWidget *from;
+		GtkWidget *to;
+	} transitions[] = {
+		{gtkconv->entry, gtkconv->imhtml},
+		{gtkconv->imhtml, chat ? gtkconv->u.chat->list : gtkconv->entry},
+		{chat ? gtkconv->u.chat->list : NULL, gtkconv->entry},
+		{NULL, NULL}
+	}, *ptr;
+
+	for (ptr = transitions; !next && ptr->from; ptr++) {
+		GtkWidget *from, *to;
+		if (dir == GTK_DIR_TAB_FORWARD) {
+			from = ptr->from;
+			to = ptr->to;
+		} else {
+			from = ptr->to;
+			to = ptr->from;
+		}
+		if (gtk_widget_is_focus(from))
+			next = to;
+	}
+
+	if (next)
+		gtk_widget_grab_focus(next);
+	return !!next;
+}
+
+static gboolean
 conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 {
 	PidginWindow *win;
@@ -1970,7 +2009,10 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 #endif
 				return TRUE;
 				break;
-
+			case GDK_F6:
+				if (gtkconv_cycle_focus(gtkconv, event->state & GDK_SHIFT_MASK ? GTK_DIR_TAB_BACKWARD : GTK_DIR_TAB_FORWARD))
+					return TRUE;
+				break;
 		} /* End of switch */
 	}
 
@@ -1996,6 +2038,10 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				infopane_entry_activate(gtkconv);
 				return TRUE;
 			}
+			break;
+		case GDK_F6:
+			if (gtkconv_cycle_focus(gtkconv, event->state & GDK_SHIFT_MASK ? GTK_DIR_TAB_BACKWARD : GTK_DIR_TAB_FORWARD))
+				return TRUE;
 			break;
 		}
 	}
@@ -4423,7 +4469,7 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleConversation *conv, gboolean is_buddy)
 
 	blist_node_aliased_cb((PurpleBlistNode *)buddy, NULL, conv);
 
-	texttag = get_buddy_tag(conv, purple_buddy_get_name(buddy), FALSE); /* XXX: do we want the normalized name? */
+	texttag = get_buddy_tag(conv, purple_buddy_get_name(buddy), 0, FALSE); /* XXX: do we want the normalized name? */
 	if (texttag) {
 		g_object_set(texttag, "weight", is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, NULL);
 	}
@@ -4619,6 +4665,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	/* Setup the label telling how many people are in the room. */
 	gtkchat->count = gtk_label_new(_("0 people in room"));
+#if GTK_CHECK_VERSION(2,6,0)
+	gtk_label_set_ellipsize(GTK_LABEL(gtkchat->count), PANGO_ELLIPSIZE_END);
+#endif
 	gtk_box_pack_start(GTK_BOX(lbox), gtkchat->count, FALSE, FALSE, 0);
 	gtk_widget_show(gtkchat->count);
 
@@ -5250,8 +5299,7 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	if (conv && PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 		if (gtkconv->win == hidden_convwin) {
-			pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
-			pidgin_conv_placement_place(gtkconv);
+			pidgin_conv_attach_to_conversation(gtkconv->active_conv);
 		}
 		return;
 	}
@@ -5341,16 +5389,35 @@ pidgin_conv_write_im(PurpleConversation *conv, const char *who,
 	purple_conversation_write(conv, who, message, flags, mtime);
 }
 
+static const char *
+get_text_tag_color(GtkTextTag *tag)
+{
+	GdkColor *color = NULL;
+	gboolean set = FALSE;
+	static char colcode[] = "#XXXXXX";
+	if (tag)
+		g_object_get(G_OBJECT(tag), "foreground-set", &set, "foreground-gdk", &color, NULL);
+	if (set && color)
+		g_snprintf(colcode, sizeof(colcode), "#%02x%02x%02x",
+				color->red >> 8, color->green >> 8, color->blue >> 8);
+	else
+		colcode[0] = '\0';
+	if (color)
+		gdk_color_free(color);
+	return colcode;
+}
+
 /* The callback for an event on a link tag. */
 static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
-		GdkEvent *event, GtkTextIter *arg2, gpointer data) {
+		GdkEvent *event, GtkTextIter *arg2, gpointer data)
+{
 	if (event->type == GDK_BUTTON_PRESS
 			|| event->type == GDK_2BUTTON_PRESS) {
 		GdkEventButton *btn_event = (GdkEventButton*) event;
 		PurpleConversation *conv = data;
 		char *buddyname;
 
-		/* strlen("BUDDY ") == 6 */
+		/* strlen("BUDDY " or "HILIT ") == 6 */
 		g_return_val_if_fail((tag->name != NULL)
 				&& (strlen(tag->name) > 6), FALSE);
 
@@ -5390,24 +5457,33 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 	return FALSE;
 }
 
-static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, gboolean create)
+static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag,
+		gboolean create)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 	GtkTextTag *buddytag;
 	gchar *str;
+	gboolean highlight = (flag & PURPLE_MESSAGE_NICK);
+	GtkTextBuffer *buffer = GTK_IMHTML(gtkconv->imhtml)->text_buffer;
 
-	str = g_strdup_printf("BUDDY %s", who);
+	str = g_strdup_printf(highlight ? "HILIT %s" : "BUDDY %s", who);
 
 	buddytag = gtk_text_tag_table_lookup(
-			gtk_text_buffer_get_tag_table(
-				GTK_IMHTML(gtkconv->imhtml)->text_buffer), str);
+			gtk_text_buffer_get_tag_table(buffer), str);
 
 	if (buddytag == NULL && create) {
-		buddytag = gtk_text_buffer_create_tag(
-				GTK_IMHTML(gtkconv->imhtml)->text_buffer, str,
-				"foreground-gdk", get_nick_color(gtkconv, who),
-				"weight", purple_find_buddy(purple_conversation_get_account(conv), who) ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
-				NULL);
+		if (highlight)
+			buddytag = gtk_text_buffer_create_tag(buffer, str,
+					"foreground", get_text_tag_color(gtk_text_tag_table_lookup(
+							gtk_text_buffer_get_tag_table(buffer), "highlight-name")),
+					"weight", PANGO_WEIGHT_BOLD,
+					NULL);
+		else
+			buddytag = gtk_text_buffer_create_tag(
+					buffer, str,
+					"foreground-gdk", get_nick_color(gtkconv, who),
+					"weight", purple_find_buddy(purple_conversation_get_account(conv), who) ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
+					NULL);
 
 		g_signal_connect(G_OBJECT(buddytag), "event",
 				G_CALLBACK(buddytag_event), conv);
@@ -5764,7 +5840,9 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				}
 
 				if (flags & PURPLE_MESSAGE_NICK) {
-					tagname = "highlight-name";
+					if (type == PURPLE_CONV_TYPE_IM) {
+						tagname = "highlight-name";
+					}
 				} else if (flags & PURPLE_MESSAGE_RECV) {
 					/* The tagname for chats is handled by get_buddy_tag */
 					if (type == PURPLE_CONV_TYPE_IM) {
@@ -5783,7 +5861,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		if (tagname)
 			tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), tagname);
 		else
-			tag = get_buddy_tag(conv, name, TRUE);
+			tag = get_buddy_tag(conv, name, flags, TRUE);
 
 		if (GTK_IMHTML(gtkconv->imhtml)->show_comments) {
 			/* The color for the timestamp has to be set in the font-tags, unfortunately.
@@ -5791,19 +5869,10 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			 * bold. I thought applying the "comment" tag again, which has "weight" set
 			 * to PANGO_WEIGHT_NORMAL, would remove the boldness. But it doesn't. So
 			 * this will have to do. I don't terribly like it.  -- sadrul */
-			GdkColor *color = NULL;
-			gboolean set = FALSE;
-			char colcode[] = "COLOR=\"#XXXXXX\"";
-			g_object_get(G_OBJECT(tag), "foreground-set", &set, "foreground-gdk", &color, NULL);
-			if (set && color)
-				g_snprintf(colcode, sizeof(colcode), "COLOR=\"#%02x%02x%02x\"",
-						color->red >> 8, color->green >> 8, color->blue >> 8);
-			else
-				colcode[0] = '\0';
-			g_snprintf(buf2, BUF_LONG, "<FONT %s SIZE=\"2\"><!--%s --></FONT>", colcode, mdate);
+			const char *color = get_text_tag_color(tag);
+			g_snprintf(buf2, BUF_LONG, "<FONT %s%s%s SIZE=\"2\"><!--%s --></FONT>",
+					color ? "COLOR=\"" : "", color ? color : "", color ? "\"" : "", mdate);
 			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
-			if (color)
-				gdk_color_free(color);
 		}
 
 		gtk_text_buffer_get_end_iter(buffer, &end);
@@ -6604,8 +6673,11 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			update_typing_icon(gtkconv);
 
 		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
-		if (pidgin_conv_window_is_active_conversation(conv))
-			gtk_window_set_title(GTK_WINDOW(win->window), title);
+		if (pidgin_conv_window_is_active_conversation(conv)) {
+			const char* current_title = gtk_window_get_title(GTK_WINDOW(win->window));
+			if (current_title == NULL || strcmp(current_title, title) != 0)
+				gtk_window_set_title(GTK_WINDOW(win->window), title);
+		}
 
 		g_free(title);
 	}
@@ -6898,6 +6970,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	if(pidgin_conv_window_is_active_conversation(conv))
 	{
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy))
+			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		gtk_window_set_icon(GTK_WINDOW(win->window), buf);
 	}
 }
@@ -7175,6 +7249,14 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 			pidgin_conv_update_buddy_icon(conv);
 		}
 	}
+
+	/* Make the tabs show/hide correctly */
+	for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
+		PidginWindow *win = l->data;
+		if (pidgin_conv_window_get_gtkconv_count(win) == 1)
+			gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
+						   GPOINTER_TO_INT(value) == 0);
+	}
 }
 
 static void
@@ -7223,8 +7305,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 		if (!l)
 			break;
 
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+		pidgin_conv_attach_to_conversation(conv);
 
 		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
 		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
@@ -7264,8 +7345,7 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 							purple_conversation_get_account(conv)))))
 			continue;
 
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+		pidgin_conv_attach_to_conversation(conv);
 	}
 }
 
@@ -7364,7 +7444,9 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 	if (gtkconv)
 	{
 		conv = gtkconv->active_conv;
-		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON | PIDGIN_CONV_COLORIZE_TITLE);
+		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON
+		                              | PIDGIN_CONV_COLORIZE_TITLE
+		                              | PIDGIN_CONV_BUDDY_ICON);
 		if ((purple_status_is_online(old) ^ purple_status_is_online(newstatus)) != 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}

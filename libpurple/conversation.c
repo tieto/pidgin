@@ -80,8 +80,6 @@ send_typed_cb(gpointer data)
 		purple_conv_im_set_type_again(PURPLE_CONV_IM(conv), 1);
 
 		serv_send_typing(gc, name, PURPLE_TYPED);
-		purple_signal_emit(purple_conversations_get_handle(),
-						 "buddy-typed", conv->account, conv->name);
 
 		purple_debug(PURPLE_DEBUG_MISC, "conversation", "typed...\n");
 	}

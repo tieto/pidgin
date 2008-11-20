@@ -23,10 +23,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#define _PURPLE_SSLCONN_C_
+
 #include "internal.h"
 
 #include "certificate.h"
 #include "debug.h"
+#include "request.h"
 #include "sslconn.h"
 
 static gboolean _ssl_initialized = FALSE;
@@ -226,6 +229,9 @@ purple_ssl_close(PurpleSslConnection *gsc)
 	PurpleSslOps *ops;
 
 	g_return_if_fail(gsc != NULL);
+
+	purple_request_close_with_handle(gsc);
+	purple_notify_close_with_handle(gsc);
 
 	ops = purple_ssl_get_ops();
 	(ops->close)(gsc);

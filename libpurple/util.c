@@ -65,6 +65,7 @@ struct _PurpleUtilFetchUrlData
 	char *webdata;
 	unsigned long len;
 	unsigned long data_len;
+	gssize max_len;
 };
 
 static char *custom_user_dir = NULL;
@@ -718,6 +719,12 @@ purple_date_format_short(const struct tm *tm)
 const char *
 purple_date_format_long(const struct tm *tm)
 {
+	/*
+	 * This string determines how some dates are displayed.  The default
+	 * string "%x %X" shows the date then the time.  Translators can
+	 * change this to "%X %x" if they want the time to be shown first,
+	 * followed by the date.
+	 */
 	return purple_utf8_strftime(_("%x %X"), tm);
 }
 
@@ -760,6 +767,9 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 
 	time(&retval);
 	localtime_r(&retval, &t);
+
+	if (rest != NULL)
+		*rest = NULL;
 
 	/* 4 digit year */
 	if (sscanf(c, "%04d", &year) && year > 1900)
@@ -973,6 +983,8 @@ purple_markup_get_css_property(const gchar *style,
 	const gchar *css_value_end;
 	gchar *tmp;
 	gchar *ret;
+
+	g_return_val_if_fail(opt != NULL, NULL);
 
 	if (!css_str)
 		return NULL;
@@ -2031,8 +2043,12 @@ purple_markup_linkify(const char *text)
 	gunichar g;
 	gboolean inside_html = FALSE;
 	int inside_paren = 0;
-	GString *ret = g_string_new("");
-	/* Assumes you have a buffer able to carry at least BUF_LEN * 2 bytes */
+	GString *ret;
+
+	if (text == NULL)
+		return NULL;
+
+	ret = g_string_new("");
 
 	c = text;
 	while (*c) {
@@ -2376,6 +2392,7 @@ purple_markup_slice(const char *str, guint x, guint y)
 	gunichar c;
 	char *tag;
 
+	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(x <= y, NULL);
 
 	if (x == y)
@@ -3426,6 +3443,9 @@ void purple_got_protocol_handler_uri(const char *uri)
 	char *cmd;
 	GHashTable *params = NULL;
 	int len;
+
+	g_return_if_fail(uri != NULL);
+
 	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
 		purple_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
 		return;
@@ -3564,7 +3584,10 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 		g_snprintf(port_str, sizeof(port_str), "80");
 	}
 
-	if (f == 1)
+	if (f == 0)
+		*host = '\0';
+
+	if (f <= 1)
 		*path = '\0';
 
 	sscanf(port_str, "%d", &port);
@@ -3575,7 +3598,7 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (ret_user != NULL) *ret_user = g_strdup(user);
 	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
 
-	return TRUE;
+	return ((*host != '\0') ? TRUE : FALSE);
 }
 
 /**
@@ -3744,6 +3767,13 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	gboolean got_eof = FALSE;
 
 	while((len = read(source, buf, sizeof(buf))) > 0) {
+
+		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
+			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),
+						    gfud->website.address, gfud->max_len);
+			return;
+		}
+
 		/* If we've filled up our buffer, make it bigger */
 		if((gfud->len + len) >= gfud->data_len) {
 			while((gfud->len + len) >= gfud->data_len)
@@ -3905,8 +3935,7 @@ url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 
 	gfud->fd = source;
 
-	if (!gfud->request)
-	{
+	if (!gfud->request) {
 		if (gfud->user_agent) {
 			/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
 			 * clients must know how to handle the "chunked" transfer encoding.
@@ -3950,6 +3979,25 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *request, gboolean include_headers,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
+	return purple_util_fetch_url_request_len(url, full,
+					     user_agent, http11,
+					     request, include_headers, -1,
+					     callback, user_data);
+}
+
+static gboolean
+url_fetch_connect_failed(gpointer data)
+{
+	url_fetch_connect_cb(data, -1, "");
+	return FALSE;
+}
+
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request_len(const char *url, gboolean full,
+		const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data)
+{
 	PurpleUtilFetchUrlData *gfud;
 
 	g_return_val_if_fail(url      != NULL, NULL);
@@ -3970,6 +4018,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
 	gfud->fd = -1;
+	gfud->max_len = max_len;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
@@ -3980,9 +4029,8 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 
 	if (gfud->connect_data == NULL)
 	{
-		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
-				gfud->website.address);
-		return NULL;
+		/* Trigger the connect_cb asynchronously. */
+		purple_timeout_add(10, url_fetch_connect_failed, gfud);
 	}
 
 	return gfud;
@@ -4103,6 +4151,8 @@ purple_email_is_valid(const char *address)
 	const char *c, *domain;
 	static char *rfc822_specials = "()<>@,;:\\\"[]";
 
+	g_return_val_if_fail(address != NULL, FALSE);
+
 	/* first we validate the name portion (name@domain) (rfc822)*/
 	for (c = address;  *c;  c++) {
 		if (*c == '\"' && (c == address || *(c - 1) == '.' || *(c - 1) == '\"')) {
@@ -4151,6 +4201,9 @@ purple_ip_address_is_valid(const char *ip)
 {
 	int c, o1, o2, o3, o4;
 	char end;
+
+	g_return_val_if_fail(ip != NULL, FALSE);
+
 	c = sscanf(ip, "%d.%d.%d.%d%c", &o1, &o2, &o3, &o4, &end);
 	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
 		return FALSE;

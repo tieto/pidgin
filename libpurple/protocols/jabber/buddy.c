@@ -37,6 +37,8 @@
 #include "pep.h"
 #include "adhoccommands.h"
 
+#define MAX_HTTP_BUDDYICON_BYTES (200 * 1024)
+
 typedef struct {
 	long idle_seconds;
 } JabberBuddyInfoResource;
@@ -1249,7 +1251,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
-				/* If we havne't found a name yet, use this one as the serverside name */
 				if (!serverside_alias)
 					serverside_alias = g_strdup(text);
 
@@ -1273,11 +1274,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					g_free(text2);
 				}
 			} else if(text && !strcmp(child->name, "NICKNAME")) {				
-				/* Prefer the Nickcname to the Full Name as the serverside alias */
-				g_free(serverside_alias);
-				serverside_alias = g_strdup(text);
-
-				purple_notify_user_info_add_pair(user_info, _("Nickname"), text);
+				/* Prefer the Nickcname to the Full Name as the serverside alias if it's not just part of the jid.
+				 * Ignore it if it's part of the jid. */
+				if (strstr(bare_jid, text) == NULL) {
+					g_free(serverside_alias);
+					serverside_alias = g_strdup(text);
+					
+					purple_notify_user_info_add_pair(user_info, _("Nickname"), text);
+				}
 			} else if(text && !strcmp(child->name, "BDAY")) {
 				purple_notify_user_info_add_pair(user_info, _("Birthday"), text);
 			} else if(!strcmp(child->name, "ADR")) {
@@ -1535,18 +1539,27 @@ void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xml
 			}
 		}
 		if(goodinfo) {
-			const char *url = xmlnode_get_attrib(goodinfo,"url");
+			const char *url = xmlnode_get_attrib(goodinfo, "url");
 			const char *id = xmlnode_get_attrib(goodinfo,"id");
 			
 			/* the avatar might either be stored in a pep node, or on a HTTP/HTTPS URL */
 			if(!url)
 				jabber_pep_request_item(js, from, AVATARNAMESPACEDATA, id, do_buddy_avatar_update_data);
 			else {
+				PurpleUtilFetchUrlData *url_data;
 				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
 				info->js = js;
-				info->from = g_strdup(from);
-				info->id = g_strdup(id);
-				purple_util_fetch_url(url, TRUE, NULL, TRUE, do_buddy_avatar_update_fromurl, info);
+
+				url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE,
+										  MAX_HTTP_BUDDYICON_BYTES,
+										  do_buddy_avatar_update_fromurl, info);
+				if (url_data) {
+					info->from = g_strdup(from);
+					info->id = g_strdup(id);
+					js->url_datas = g_slist_prepend(js->url_datas, url_data);
+				} else
+					g_free(info);
+
 			}
 		}
 	}
@@ -2485,5 +2498,39 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			js);
 }
 
+gboolean
+jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
+{
+	const GList *iter = NULL;
 
+	if (!jbr->caps) {
+		purple_debug_error("jabber",
+			"Unable to find caps: nothing known about buddy\n");
+		return FALSE;
+	}
+
+	for (iter = jbr->caps->features ; iter ; iter = g_list_next(iter)) {
+		if (strcmp(iter->data, cap) == 0) {
+			purple_debug_info("jabber", "Found cap: %s\n", (char *)iter->data);
+			return TRUE;
+		}
+	}
+
+	purple_debug_info("jabber", "Cap %s not found\n", cap);
+	return FALSE;
+}
+
+gboolean
+jabber_buddy_has_capability(const JabberBuddy *jb, const gchar *cap)
+{
+	JabberBuddyResource *jbr = jabber_buddy_find_resource((JabberBuddy*)jb, NULL);
+
+	if (!jbr) {
+		purple_debug_error("jabber",
+			"Unable to find caps: buddy might be offline\n");
+		return FALSE;
+	}
+
+	return jabber_resource_has_capability(jbr, cap);
+}
 

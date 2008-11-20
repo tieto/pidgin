@@ -28,27 +28,23 @@
 #include <glib.h>
 #include "group.h"
 
-#define QQ_GROUP_KEY_MEMBER_STATUS      "my_status_code"
-#define QQ_GROUP_KEY_MEMBER_STATUS_DESC "my_status_desc"
-#define QQ_GROUP_KEY_INTERNAL_ID        "internal_group_id"
-#define QQ_GROUP_KEY_EXTERNAL_ID        "external_group_id"
-#define QQ_GROUP_KEY_GROUP_TYPE         "group_type"
-#define QQ_GROUP_KEY_CREATOR_UID        "creator_uid"
-#define QQ_GROUP_KEY_GROUP_CATEGORY     "group_category"
-#define QQ_GROUP_KEY_AUTH_TYPE          "auth_type"
-#define QQ_GROUP_KEY_GROUP_NAME_UTF8    "group_name_utf8"
-#define QQ_GROUP_KEY_GROUP_DESC_UTF8    "group_desc_utf8"
+#define QQ_ROOM_KEY_INTERNAL_ID					"id"
+#define QQ_ROOM_KEY_EXTERNAL_ID					"ext_id"
+#define QQ_ROOM_KEY_TITLE_UTF8					"title_utf8"
 
-qq_group *qq_group_create_internal_record(PurpleConnection *gc, 
-		guint32 internal_id, guint32 external_id, gchar *group_name_utf8);
-void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id);
+PurpleChat *qq_room_find_or_new(PurpleConnection *gc, guint32 id, guint32 ext_id);
+void qq_room_remove(PurpleConnection *gc, guint32 id);
+void qq_room_update_chat_info(PurpleChat *chat, qq_room_data *rmd);
 
-GHashTable *qq_group_to_hashtable(qq_group *group);
-qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data);
+qq_buddy_data *qq_room_buddy_find(qq_room_data *rmd, guint32 uid);
+void qq_room_buddy_remove(qq_room_data *rmd, guint32 uid);
+qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd, guint32 member_uid);
 
-void qq_group_refresh(PurpleConnection *gc, qq_group *group);
+void qq_room_data_initial(PurpleConnection *gc);
+void qq_room_data_free_all(PurpleConnection *gc);
+qq_room_data *qq_room_data_find(PurpleConnection *gc, guint32 room_id);
 
-void qq_set_pending_id(GSList **list, guint32 id, gboolean pending);
-GSList *qq_get_pending_id(GSList *list, guint32 id);
+guint32 qq_room_get_next(PurpleConnection *gc, guint32 room_id);
+guint32 qq_room_get_next_conv(PurpleConnection *gc, guint32 room_id);
 
 #endif

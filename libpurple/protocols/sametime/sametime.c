@@ -1816,7 +1816,7 @@ static void mw_session_announce(struct mwSession *s,
   who = g_strdup_printf(_("Announcement from %s"), who);
   msg = purple_markup_linkify(text);
 
-  purple_conversation_write(conv, who, msg, PURPLE_MESSAGE_RECV, time(NULL));
+  purple_conversation_write(conv, who, msg ? msg : "", PURPLE_MESSAGE_RECV, time(NULL));
   g_free(who);
   g_free(msg);
 }
@@ -4490,26 +4490,24 @@ static void mw_prpl_add_buddy(PurpleConnection *gc,
 			      PurpleBuddy *buddy,
 			      PurpleGroup *group) {
 
-  struct mwPurplePluginData *pd;
+  struct mwPurplePluginData *pd = gc->proto_data;
   struct mwServiceResolve *srvc;
   GList *query;
   enum mwResolveFlag flags;
   guint32 req;
-
   BuddyAddData *data;
-
-  data = g_new0(BuddyAddData, 1);
-  data->buddy = buddy;
-  data->group = group;
-
-  pd = gc->proto_data;
-  srvc = pd->srvc_resolve;
 
   /* catch external buddies. They won't be in the resolve service */
   if(buddy_is_external(buddy)) {
     buddy_add(pd, buddy);
     return;
   }
+
+  data = g_new0(BuddyAddData, 1);
+  data->buddy = buddy;
+  data->group = group;
+
+  srvc = pd->srvc_resolve;
 
   query = g_list_prepend(NULL, buddy->name);
   flags = mwResolveFlag_FIRST | mwResolveFlag_USERS;

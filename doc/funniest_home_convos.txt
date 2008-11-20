@@ -398,6 +398,8 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 (17:49:25) elb: awesome, thanks
 (17:49:28) elb: Kanon in D
 
+--
+
 edited for brevity, and name changed.
 (13:51:31) l33t_h4x0r: Is there such thing as a gaim ip sniffer for linux?
 (13:51:40) LSchiere: no
@@ -417,12 +419,16 @@ edited for brevity, and name changed.
 (13:58:58) LSchiere: *amused* that's the first time in a while that the requester has *agreed* that there is no legit reason to want the feature
 (13:59:19) Err: he was not the sharpest knife in the drawer
 
+--
+
 14:57 <itchypants> [blah blah blah simple question]
       [other traffic]
 14:57 <itchypants> [retransmit simple question]
 14:59 <seanegan> itchypants: you need to chill the hell out
 14:59 <itchypants> seanegan, ah okay thanks
 15:00 <seanegan> no problem
+
+--
 
 (15:57:11) sadrul: the files (at least a couple) in the tar.bz2 are different
 (15:57:23) datallah: right.. that is the problem - the code in svn is fine
@@ -440,6 +446,8 @@ funniest and the spec.in?
 (15:59:06) SimGuy: seanegan: by experience, I think we've determined you do
 not :)
 
+--
+
 (07:52:07 PM) clueless21: are you one of the gaim makers?
 (07:52:14 PM) Nathan Walp: yes
 (07:52:24 PM) clueless21:  cool
@@ -452,6 +460,8 @@ not :)
 (07:54:25 PM) Nathan Walp: it lets you chat with other people, like we are chatting now
 (07:54:45 PM) clueless21:  oooooooooo... thanks
 
+--
+
 23:58 -!- seanegan is now known as beta7
 23:58 <beta7> Hey, guys, remember me?
 23:59 <beta7> We were all supposed to be working on getting me out.
@@ -460,6 +470,8 @@ not :)
 23:59 -!- beta7 was kicked from #pidgin by elb [getting feisty, are we?]
 23:59 -!- mode/#pidgin [-o elb] by ChanServ
 23:59 <marv> elb: good job getting beta7 out
+
+--
 
 14:07 <elb> rizzo: I actually prefer elb, and used it for a long time -- but 
             switched to Paco-Paco because people kept asking me what an 'elb'
@@ -472,7 +484,11 @@ not :)
 14:08 <elb> I mean, what do you say
 14:08 <Robot101> elb: was their nick "idi"?
 
+--
+
 19:23 <-- elb has quit (K-lined)
+
+--
 
 19:01 <user> whoa
 19:01 <user> okay
@@ -506,12 +522,46 @@ not :)
 17:16 <sadrul> I think blocking in pidgin not working is not your biggest
                problem here.
 
+--
 
 12:58 <staggered_ranks> why hasn't support for napster been removed?
 12:58 <deryni> It has.
 12:59 <staggered_ranks> oh.. ok
 
+--
 
 14:39 <rrobbertt> Does anyone know a way to get text to speech with pidgin?
 14:41 <elb> do you want to be rooted sooner, or later?
 14:42 <seanegan> good question"; rm -rf ~
+
+--
+
+(11:55:03) *** elb cuts seanegn for taunting the masses with adium
+                   message styles and then dropping it
+(11:55:32) *** rekkanoryo cuts seanegn twice for the same reason
+(11:56:04) *** elb waits to see if this is an additive, fibbonaci, or
+                   exponential cutting
+(11:56:16) *** seanegn hopes for additive.
+
+--
+
+/* explaining the behavior of g_list_delete_link */
+(13:15:04) elb: if the item is not part of the list, it will be
+           removed from whatever list it *was* in
+(13:15:20) elb: and if it was the head of that list, and the caller is
+           holding onto the head someplace, Bad Things happen
+(13:15:55) elb: don't do that
+(13:15:57) elb: is my advice on the matter
+/* more than 3 hours later */
+(16:58:10) elb: I just spent literally a couple of HOURS trying to
+           debug a problem where I was using g_list_delete_link with a
+           list item which wasn't in the list
+
+--
+
+22:35 <user> hi I know this might sound like a stupid question and I am NOT
+             trolling..
+22:36 <user> but when I go to some channels like anime ones people lol at me
+             for using pidgen
+22:36 <user> why do they think this is a bad client? does it have history?
+

@@ -614,7 +614,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 {
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx = xfer->data;
-	int acceptfd;
+	int acceptfd, flags;
 
 	purple_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_connected_cb\n");
 
@@ -630,6 +630,12 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 	purple_input_remove(xfer->watcher);
 	close(source);
 	jsx->local_streamhost_fd = -1;
+
+	flags = fcntl(acceptfd, F_GETFL);
+	fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
 					 jabber_si_xfer_bytestreams_send_read_cb, xfer);
@@ -792,7 +798,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		if (!(sh->jid && sh->host && sh->port > 0))
 			continue;
 
-		purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and sh->jid %p",
+		purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and sh->jid %p\n",
 						  jsx, jsx->streamhosts, sh->jid);
 		if(g_list_find_custom(jsx->streamhosts, sh->jid, jabber_si_compare_jid) != NULL)
 			continue;
@@ -967,7 +973,7 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 	g_free(jsx->rxqueue);
 	g_free(jsx);
 	xfer->data = NULL;
-	
+
 	purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p", jsx);
 }
 

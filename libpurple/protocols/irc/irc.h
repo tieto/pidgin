@@ -109,6 +109,8 @@ char *irc_escape_privmsg(const char *text, gssize length);
 char *irc_mirc2html(const char *string);
 char *irc_mirc2txt(const char *string);
 
+const char *irc_nick_skip_mode(struct irc_conn *irc, const char *string);
+
 gboolean irc_ischannel(const char *string);
 
 void irc_register_commands(void);

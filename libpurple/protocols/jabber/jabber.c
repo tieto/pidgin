@@ -43,6 +43,7 @@
 #include "auth.h"
 #include "buddy.h"
 #include "chat.h"
+#include "data.h"
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
@@ -57,6 +58,7 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
+
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
@@ -134,6 +136,9 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			}
 			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
 				my_jb->subscription |= JABBER_SUB_BOTH;
+
+			purple_connection_set_display_name(js->gc, full_jid);
+
 			g_free(full_jid);
 		}
 	} else {
@@ -693,7 +698,8 @@ jabber_login(PurpleAccount *account)
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	gc->flags |= PURPLE_CONNECTION_HTML |
+		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
@@ -1375,6 +1381,11 @@ void jabber_close(PurpleConnection *gc)
 		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
 	}
 
+	while(js->url_datas) {
+		purple_util_fetch_url_cancel(js->url_datas->data);
+		js->url_datas = g_slist_delete_link(js->url_datas, js->url_datas);
+	}
+
 	g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
@@ -1788,7 +1799,7 @@ GList *jabber_status_types(PurpleAccount *account)
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
-			"tune", NULL, TRUE, TRUE, TRUE,
+			"tune", NULL, FALSE, TRUE, TRUE,
 			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
@@ -1964,7 +1975,7 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-
+	
 	if(!(jid = jabber_id_new(who)))
 		return;
 

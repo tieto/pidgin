@@ -55,6 +55,12 @@
 
 /* #define TRY_WEBMESSENGER_LOGIN 0 */
 
+/* One hour */
+#define PING_TIMEOUT 3600
+
+/* One minute */
+#define KEEPALIVE_TIMEOUT 60
+
 static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *, PurpleGroup *);
 #ifdef TRY_WEBMESSENGER_LOGIN
 static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
@@ -871,7 +877,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
 			username = g_markup_escape_text(im->from, -1);
-			serv_got_attention(gc, username, YAHOO_BUZZ);
+			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
 			g_free(im);
@@ -3001,6 +3007,7 @@ static void yahoo_login(PurpleAccount *account) {
 	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	yd->confs = NULL;
 	yd->conf_id = 2;
+	yd->last_keepalive = yd->last_ping = time(NULL);
 
 	yd->current_status = get_yahoo_status_from_purple_status(status);
 
@@ -3059,7 +3066,7 @@ static void yahoo_close(PurpleConnection *gc) {
 	}
 	g_slist_free(yd->cookies);
 
-	yd->chat_online = 0;
+	yd->chat_online = FALSE;
 	if (yd->in_chat)
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
@@ -3531,18 +3538,16 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 
 	PurpleUtilFetchUrlData *url_data;
 	const char* base_url = "http://login.yahoo.com";
-	char *request = g_strdup_printf(
-		"POST /config/cookie_token HTTP/1.0\r\n"
+	/* use whole URL if using HTTP Proxy */
+	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
+	gchar *request = g_strdup_printf(
+		"POST %s/config/cookie_token HTTP/1.0\r\n"
 		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
 		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 		"Host: login.yahoo.com\r\n"
 		"Content-Length: 0\r\n\r\n",
+		use_whole_url ? base_url : "",
 		yd->cookie_t, yd->cookie_y);
-	gboolean use_whole_url = FALSE;
-
-	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
-	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
 			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
@@ -3614,8 +3619,26 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	PurpleWhiteboard *wb;
 	int ret = 1;
 	YahooFriend *f = NULL;
+	gsize lenb = 0;
+	glong lenc = 0;
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
+	
+	if(msg2) {
+		lenb = strlen(msg2);
+		lenc = g_utf8_strlen(msg2, -1);
+
+		if(lenb > YAHOO_MAX_MESSAGE_LENGTH_BYTES || lenc > YAHOO_MAX_MESSAGE_LENGTH_CHARS) {
+			purple_debug_info("yahoo", "Message too big.  Length is %" G_GSIZE_FORMAT
+					" bytes, %ld characters.  Max is %d bytes, %d chars."
+					"  Message is '%s'.\n", lenb, lenc, YAHOO_MAX_MESSAGE_LENGTH_BYTES,
+					YAHOO_MAX_MESSAGE_LENGTH_CHARS, msg2);
+			yahoo_packet_free(pkt);
+			g_free(msg);
+			g_free(msg2);
+			return -E2BIG;
+		}
+	}
 
 	yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, who);
 	if ((f = yahoo_friend_find(gc, who)) && f->protocol)
@@ -3873,21 +3896,36 @@ static GList *yahoo_status_types(PurpleAccount *account)
 
 static void yahoo_keepalive(PurpleConnection *gc)
 {
+	struct yahoo_packet *pkt;
 	struct yahoo_data *yd = gc->proto_data;
-	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_send_and_free(pkt, yd);
+	time_t now = time(NULL);
 
-	if (!yd->chat_online)
-		return;
+	/* We're only allowed to send a ping once an hour or the servers will boot us */
+	if ((now - yd->last_ping) >= PING_TIMEOUT) {
+		yd->last_ping = now;
 
-	if (yd->wm) {
-		ycht_chat_send_keepalive(yd->ycht);
-		return;
+		/* The native client will only send PING or CHATPING */
+		if (yd->chat_online) {
+			if (yd->wm) {
+				ycht_chat_send_keepalive(yd->ycht);
+			} else {
+				pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
+				yahoo_packet_hash_str(pkt, 109, purple_connection_get_display_name(gc));
+				yahoo_packet_send_and_free(pkt, yd);
+			}
+		} else {
+			pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
+			yahoo_packet_send_and_free(pkt, yd);
+		}
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash_str(pkt, 109, purple_connection_get_display_name(gc));
-	yahoo_packet_send_and_free(pkt, yd);
+	if ((now - yd->last_keepalive) >= KEEPALIVE_TIMEOUT) {
+		yd->last_keepalive = now;
+		pkt = yahoo_packet_new(YAHOO_SERVICE_KEEPALIVE, YAHOO_STATUS_AVAILABLE, 0);
+		yahoo_packet_hash_str(pkt, 0, purple_connection_get_display_name(gc));
+		yahoo_packet_send_and_free(pkt, yd);
+	}
+
 }
 
 static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
@@ -4096,7 +4134,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	serv_send_attention(account->gc, c->name, YAHOO_BUZZ);
+	purple_prpl_send_attention(account->gc, c->name, YAHOO_BUZZ);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -4303,6 +4341,15 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
+static GHashTable *
+yahoo_get_account_text_table(PurpleAccount *account)
+{
+	GHashTable *table;
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo ID..."));
+	return table;
+}
+
 static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 {
 	yahoo_doodle_start,
@@ -4391,7 +4438,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_attention_types,
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	yahoo_get_account_text_table,    /* get_account_text_table */
 };
 
 static PurplePluginInfo info =

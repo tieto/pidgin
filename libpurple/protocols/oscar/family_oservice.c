@@ -29,7 +29,7 @@
 
 /* Subtype 0x0002 - Client Online */
 void
-aim_clientready(OscarData *od, FlapConnection *conn)
+aim_srv_clientready(OscarData *od, FlapConnection *conn)
 {
 	ByteStream bs;
 	aim_snacid_t snacid;

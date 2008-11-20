@@ -100,9 +100,6 @@ purple_log_get_total_size(type, name, account)
 	Purple::Account account
 
 void
-purple_log_init()
-
-void
 purple_log_logger_free(logger)
 	Purple::Log::Logger logger
 

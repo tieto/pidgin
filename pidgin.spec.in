@@ -240,7 +240,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_without_tcl:--disable-tcl} \
                                     %{?_without_text:--disable-consoleui}
 
-make %{?_smp_mflags}
+make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
 %install
 rm -rf %{buildroot}
@@ -251,7 +251,7 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      sysconfdir=%{buildroot}%{_sysconfdir} \
      install
 %else
-make DESTDIR=$RPM_BUILD_ROOT install
+make DESTDIR=$RPM_BUILD_ROOT LIBTOOL=/usr/bin/libtool install
 %endif
 
 # Delete files that we don't want to put in any of the RPMs
@@ -263,6 +263,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/liboscar.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libjabber.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
+find $RPM_BUILD_ROOT -type f -name '*.a' -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
@@ -392,8 +393,6 @@ fi
 %{_datadir}/sounds/purple
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
 %attr(755, root, root) %{perl_vendorarch}/auto/Purple
-
-%{_datadir}/pixmaps/purple
 
 %if 0%{?_with_dbus:1}
 %{_bindir}/purple-client-example
