@@ -308,8 +308,6 @@ static void request_room_send_im(PurpleConnection *gc, guint32 room_id, qq_im_fo
 	bytes += qq_put16(raw_data + bytes, 0);
 	bytes += qq_putdata(raw_data + bytes, (guint8 *)msg, strlen(msg));
 	bytes += qq_put_im_tail(raw_data + bytes, fmt);
-	bytes += qq_put32(raw_data + bytes, 0);	/* unknown 4 bytes */
-
 	/* reset first two bytes */
 	qq_put16(raw_data, bytes - 2);
 
@@ -356,7 +354,7 @@ static void request_room_send_im_ex(PurpleConnection *gc, guint32 room_id,
 
 	/* reset first two bytes as length */
 	qq_put16(raw_data, bytes - 2);
-	
+
 	/*qq_show_packet("QQ_ROOM_CMD_SEND_IM_EX", raw_data, bytes); */
 	qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_IM_EX, room_id, raw_data, bytes);
 }
@@ -415,7 +413,7 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	fmt = qq_im_fmt_new_by_purple(what);
 	frag_count = g_slist_length(segments);
 	frag_index = 0;
-/*	
+/*
 	if (frag_count <= 1) {
 */
 		for (it = segments; it; it = it->next) {
