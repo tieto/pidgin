@@ -1240,8 +1240,7 @@ gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace) {
 	return js->allowBuzz;
 }
 
-gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *shortname,
-										 const gchar *namespace)
+gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *namespace)
 {
 	const PurpleConnection *gc = js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);

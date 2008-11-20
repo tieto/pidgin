@@ -2561,7 +2561,7 @@ jabber_ipc_contact_has_feature(gchar *fulljid, gchar *feature)
 	if (!caps_info) return FALSE;
 	capabilities = g_hash_table_lookup(capstable, caps_info);
 	
-	if (g_list_find_custom(capabilities->features, feature, strcmp) == NULL) return FALSE ;
+	if (g_list_find_custom(capabilities->features, feature, (GCompareFunc)strcmp) == NULL) return FALSE ;
 	return TRUE;
 }
 

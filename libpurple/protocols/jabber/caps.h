@@ -79,21 +79,21 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
  *	@return		The base64 encoded SHA-1 hash; needs to be freed if not needed 
  *				any furthermore. 
  */
-gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info, const char *hash);
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash);
 
 /**
- *  Calcualte SHA1 hash for own featureset.
+ *  Calculate SHA1 hash for own featureset.
  */
-void jabber_caps_calculate_own_hash();
+void jabber_caps_calculate_own_hash(JabberStream *js);
 
 /** Get the current caps hash.
  * 	@ret hash
 **/
-const gchar* jabber_caps_get_own_hash();
+const gchar* jabber_caps_get_own_hash(void);
 
 /**
  *  Broadcast a new calculated hash using a <presence> stanza.
  */
-void jabber_caps_broadcast_change();
+void jabber_caps_broadcast_change(void);
 
 #endif /* _PURPLE_JABBER_CAPS_H_ */

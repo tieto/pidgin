@@ -278,6 +278,7 @@ extern GList *jabber_identities;
 
 extern GHashTable *jabber_contact_info; /* char * -> JabberCapsKey */
 
+void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
 void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
 void jabber_send_raw(JabberStream *js, const char *data, int len);
