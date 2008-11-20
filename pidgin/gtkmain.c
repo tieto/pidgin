@@ -350,6 +350,8 @@ static GHashTable *pidgin_ui_get_info(void)
 
 		g_hash_table_insert(ui_info, "name", (char*)PIDGIN_NAME);
 		g_hash_table_insert(ui_info, "version", VERSION);
+		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
+		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
 	}
 
 	return ui_info;

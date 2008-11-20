@@ -25,6 +25,11 @@
 #define _MSN_NOTIFICATION_H_
 
 /*MSN protocol challenge info*/
+
+/*MSNP15 challenge: WLM 8.5.1288.816*/
+#define MSNP15_WLM_PRODUCT_KEY "ILTXC!4IXB5FB*PX"
+#define MSNP15_WLM_PRODUCT_ID "PROD0119GSJUC$18"
+
 /*MSNP13 challenge*/
 #define MSNP13_WLM_PRODUCT_KEY	"O4BG@C7BWLYQX?5G"
 #define MSNP13_WLM_PRODUCT_ID	"PROD01065C%ZFN6F"
@@ -81,6 +86,6 @@ void msn_notification_dump_contact(MsnSession *session);
  */
 void msn_notification_close(MsnNotification *notification);
 
-void msn_got_login_params(MsnSession *session, const char *login_params);
+void msn_got_login_params(MsnSession *session, const char *ticket, const char *response);
 
 #endif /* _MSN_NOTIFICATION_H_ */

@@ -81,12 +81,9 @@ aim_encode_password(const char *password, guint8 *encoded)
 static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
-	PurpleCipher *cipher;
 	PurpleCipherContext *context;
 
-	cipher = purple_ciphers_find_cipher("md5");
-
-	context = purple_cipher_context_new(cipher, NULL);
+	context = purple_cipher_context_new_by_name("md5", NULL);
 	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
 	purple_cipher_context_append(context, (const guchar *)password, password_len);
 	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));

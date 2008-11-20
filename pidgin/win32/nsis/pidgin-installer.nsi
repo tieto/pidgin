@@ -72,7 +72,7 @@ SetDateSave on
 !define GTK_MIN_VERSION				"2.6.10"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
-!define PERL_DLL				"perl58.dll"
+!define PERL_DLL				"perl510.dll"
 !define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
 !define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime*.exe"
 
@@ -376,7 +376,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
     StrCmp $R0 "2" +2 ; Upgrade isn't optional
     MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE /S /D=$GTK_FOLDER'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
     IfErrors gtk_install_error done
 
     gtk_install_error:
@@ -505,11 +505,16 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ; If this is under NT4, delete the SILC support stuff
     ; there is a bug that will prevent any account from connecting
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
+    ; Also, remove the GSSAPI SASL plugin and associated files as they aren't
+    ; compatible with NT4.
     ${If} ${IsNT}
     ${AndIf} ${IsWinNT4}
+      ;SILC
       Delete "$INSTDIR\plugins\libsilc.dll"
       Delete "$INSTDIR\libsilcclient-1-1-2.dll"
       Delete "$INSTDIR\libsilc-1-1-2.dll"
+      ;GSSAPI
+      Delete "$INSTDIR\sasl2\saslGSSAPI.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -704,6 +709,8 @@ Section Uninstall
     Push "ymsgr"
     Call un.UnregisterURIHandler
 
+    Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"
+    Delete "$INSTDIR\ca-certs\CAcert_Root.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
@@ -1304,12 +1311,12 @@ Function .onInit
   ;Reset ShellVarContext because we may have changed it
   SetShellVarContext "current"
 
-  StrCpy $ISSILENT "/NOUI"
+  StrCpy $ISSILENT "/S"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
   ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
   IfSilent 0 set_gtk_normal
-      StrCpy $ISSILENT "/S"
+      StrCpy $ISSILENT "/NOUI"
   set_gtk_normal:
 
   ${GetParameters} $R0
@@ -1386,67 +1393,6 @@ Function un.onInit
   ; Get stored language preference
   !insertmacro MUI_UNGETLANGUAGE
 
-FunctionEnd
-
-; This is a modified StartRadioButtons (from Sections.nsh)
-; The only difference is that it allows for nothing in the group to be selected
-; In that case, the default variable should be set to ""
-!macro StartRadioButtonsUnselectable var
-
-  !define StartRadioButtons_Var "${var}"
-
-  Push $R0
-  Push $R1
-
-   ;If we have no selection, don't try to unselect it
-   StrCmp "${StartRadioButtons_Var}" "" +4
-   SectionGetFlags "${StartRadioButtons_Var}" $R0
-   IntOp $R1 $R0 & ${SF_SELECTED}
-   IntOp $R0 $R0 & ${SECTION_OFF}
-   SectionSetFlags "${StartRadioButtons_Var}" $R0
-
-   ; If the previous value isn't currently selected,
-   ; we don't want to select it at the end
-   IntCmp $R1 ${SF_SELECTED} +2
-   StrCpy "${StartRadioButtons_Var}" ""
-
-   StrCpy $R1 "${StartRadioButtons_Var}"
-
-!macroend
-
-Function .onSelChange
-  Push $0
-  Push $1
-  Push $2
-
-  ; Check that at most one of the non-readonly spelling dictionaries are selected
-  ; We can't use $R0 or $R1 in this block since they're used in the macros
-  !insertmacro StartRadioButtonsUnselectable $SPELLCHECK_SEL
-    ; Start with the first language dictionary
-    IntOp $2 ${SecSpellCheck} + 1
-
-    start_spellcheck_radio:
-    SectionGetFlags $2 $0
-
-    IntOp $1 $0 & ${SF_SECGRPEND}
-    ; If it is the end of the section group, stop
-    IntCmp $1 ${SF_SECGRPEND} end_spellcheck_radio
-
-    IntOp $0 $0 & ${SF_RO}
-    IntCmp $0 ${SF_RO} after_button_insert
-    ; If !readonly, then it is part of the radiobutton group
-    !insertmacro RadioButton $2
-    after_button_insert:
-
-    IntOp $2 $2 + 1 ;Advance to the next section
-    Goto start_spellcheck_radio
-
-    end_spellcheck_radio:
-  !insertmacro EndRadioButtons
-
-  Pop $2
-  Pop $1
-  Pop $0
 FunctionEnd
 
 ; Page enter and exit functions..

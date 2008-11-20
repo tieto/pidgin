@@ -1,0 +1,29 @@
+/** @page cmd-signals Command Signals
+  @signals
+  	@signal cmd-added
+	@signal cmd-removed
+  @endsignals
+
+  @see cmds.h
+
+  @signaldef cmd-added
+  	@signalproto
+void (*cmd_added)(const char *command, PurpleCmdPriority priority,
+                  PurpleCmdFlag flag);
+	@endsignalproto
+	@signaldesc
+	 Emitted when a new command is added.
+	@param command   The new command.
+	@param priority  The priority of the new command.
+	@param flag      The command flags.
+  @endsignaldef
+
+  @signaldef cmd-removed
+  	@signalproto
+void (*cmd_removed)(const char *command);
+	@endsignalproto
+	@signaldesc
+	 Emitted when a command is removed.
+	@param command   The removed command.
+  @endsignaldef
+*/

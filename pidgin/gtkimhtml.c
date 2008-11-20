@@ -768,7 +768,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(widget), &end,
 	                                   buf_x + event->area.width, buf_y + event->area.height);
 
-
+	gtk_text_iter_order(&start, &end);
 
 	cur = start;
 

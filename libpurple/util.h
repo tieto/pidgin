@@ -1271,6 +1271,14 @@ const char *_purple_oscar_convert(const char *act, const char *protocol);
  */
 void purple_restore_default_signal_handlers(void);
 
+/**
+ * Gets the host name of the machine. If it not possible to determine the
+ * host name, "localhost" is returned
+ *
+ * @constreturn The hostname
+ */
+const gchar *purple_get_host_name(void);
+
 #ifdef __cplusplus
 }
 #endif

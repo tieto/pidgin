@@ -154,23 +154,6 @@ msn_session_get_slplink(MsnSession *session, const char *username)
 	return slplink;
 }
 
-MsnSlpSession *
-msn_slplink_find_slp_session(MsnSlpLink *slplink, long session_id)
-{
-	GList *l;
-	MsnSlpSession *slpsession;
-
-	for (l = slplink->slp_sessions; l != NULL; l = l->next)
-	{
-		slpsession = l->data;
-
-		if (slpsession->id == session_id)
-			return slpsession;
-	}
-
-	return NULL;
-}
-
 void
 msn_slplink_add_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
@@ -394,12 +377,12 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	}
 	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
-		MsnSlpSession *slpsession;
-		slpsession = slpmsg->slpsession;
+		MsnSlpCall *slpcall;
+		slpcall = slpmsg->slpcall;
 
-		g_return_if_fail(slpsession != NULL);
-		msg->msnslp_header.session_id = slpsession->id;
-		msg->msnslp_footer.value = slpsession->app_id;
+		g_return_if_fail(slpcall != NULL);
+		msg->msnslp_header.session_id = slpcall->session_id;
+		msg->msnslp_footer.value = slpcall->app_id;
 		msg->msnslp_header.ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == 0x100)
@@ -476,18 +459,15 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 }
 
 static void
-send_file_cb(MsnSlpSession *slpsession)
+send_file_cb(MsnSlpCall *slpcall)
 {
-	MsnSlpCall *slpcall;
 	MsnSlpMessage *slpmsg;
 	struct stat st;
 	PurpleXfer *xfer;
 
-	slpcall = slpsession->slpcall;
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
-	slpmsg->slpsession = slpsession;
 #ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP FILE";
 #endif
@@ -593,7 +573,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 	else if (slpmsg->size)
 	{
-		if ((offset + len) > slpmsg->size)
+		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{
 			purple_debug_error("msn",
 				"Oversized slpmsg - msgsize=%lld offset=%" G_GSIZE_FORMAT " len=%" G_GSIZE_FORMAT "\n",
@@ -774,8 +754,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 
 	context = gen_context(fn, fp);
 
-	msn_slp_call_invite(slpcall, "5D3E02AB-6190-11D3-BBBB-00C04F795683", 2,
-						context);
+	msn_slp_call_invite(slpcall, MSN_FT_GUID, 2, context);
 
 	g_free(context);
 }
@@ -805,8 +784,7 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	slpcall->cb = cb;
 	slpcall->end_cb = end_cb;
 
-	msn_slp_call_invite(slpcall, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6", 1,
-						msnobj_base64);
+	msn_slp_call_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
 
 	g_free(msnobj_base64);
 }

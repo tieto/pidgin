@@ -141,7 +141,7 @@ static void
 entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 {
 	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-	if (*text == '/')
+	if (*text == '/' && *(text + 1) != '/')
 	{
 		PurpleConversation *conv = ggconv->active_conv;
 		PurpleCmdStatus status;
@@ -191,7 +191,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 	}
 	else
 	{
-		char *escape = g_markup_escape_text(text, -1);
+		char *escape = g_markup_escape_text((*text == '/' ? text + 1 : text), -1);
 		char *apos = purple_strreplace(escape, "&apos;", "'");
 		g_free(escape);
 		escape = apos;
@@ -692,8 +692,45 @@ gained_focus_cb(GntWindow *window, FinchConv *fc)
 static void
 completion_cb(GntEntry *entry, const char *start, const char *end)
 {
-	if (start == entry->start)
+	if (start == entry->start && *start != '/')
 		gnt_widget_key_pressed(GNT_WIDGET(entry), ": ");
+}
+
+static void
+gg_setup_commands(FinchConv *fconv, gboolean remove_first)
+{
+	GList *commands;
+	char command[256] = "/";
+
+	if (remove_first) {
+		commands = purple_cmd_list(NULL);
+		for (; commands; commands = g_list_delete_link(commands, commands)) {
+			g_strlcpy(command + 1, commands->data, sizeof(command) - 1);
+			gnt_entry_remove_suggest(GNT_ENTRY(fconv->entry), command);
+		}
+	}
+
+	commands = purple_cmd_list(fconv->active_conv);
+	for (; commands; commands = g_list_delete_link(commands, commands)) {
+		g_strlcpy(command + 1, commands->data, sizeof(command) - 1);
+		gnt_entry_add_suggest(GNT_ENTRY(fconv->entry), command);
+	}
+}
+
+static void
+cmd_added_cb(const char *cmd, PurpleCmdPriority prior, PurpleCmdFlag flags,
+		FinchConv *fconv)
+{
+	gg_setup_commands(fconv, TRUE);
+}
+
+static void
+cmd_removed_cb(const char *cmd, FinchConv *fconv)
+{
+	char command[256] = "/";
+	g_strlcpy(command + 1, cmd, sizeof(command) - 1);
+	gnt_entry_remove_suggest(GNT_ENTRY(fconv->entry), command);
+	gg_setup_commands(fconv, TRUE);
 }
 
 static void
@@ -819,6 +856,12 @@ finch_create_conversation(PurpleConversation *conv)
 		ggc->flags |= FINCH_CONV_NO_SOUND;
 
 	gg_create_menu(ggc);
+	gg_setup_commands(ggc, FALSE);
+
+	purple_signal_connect(purple_cmds_get_handle(), "cmd-added", ggc,
+			G_CALLBACK(cmd_added_cb), ggc);
+	purple_signal_connect(purple_cmds_get_handle(), "cmd-removed", ggc,
+			G_CALLBACK(cmd_removed_cb), ggc);
 
 	g_free(title);
 	gnt_box_give_focus_to_child(GNT_BOX(ggc->window), ggc->entry);
@@ -831,11 +874,14 @@ finch_destroy_conversation(PurpleConversation *conv)
 	/* do stuff here */
 	FinchConv *ggc = FINCH_GET_DATA(conv);
 	ggc->list = g_list_remove(ggc->list, conv);
-	if (ggc->list && conv == ggc->active_conv)
+	if (ggc->list && conv == ggc->active_conv) {
 		ggc->active_conv = ggc->list->data;
-	
+		gg_setup_commands(ggc, TRUE);
+	}
+
 	if (ggc->list == NULL) {
 		g_free(ggc->u.chat);
+		purple_signals_disconnect_by_handle(ggc);
 		if (ggc->window)
 			gnt_widget_destroy(ggc->window);
 		g_free(ggc);
@@ -1013,9 +1059,12 @@ finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arriva
 	if (!new_arrivals)
 	{
 		/* Print the list of users in the room */
-		GString *string = g_string_new(_("List of users:\n"));
+		GString *string = g_string_new(NULL);
 		GList *iter;
+		int count = g_list_length(users);
 
+		g_string_printf(string,
+				ngettext("List of %d user:\n", "List of %d users:\n", count), count);
 		for (iter = users; iter; iter = iter->next)
 		{
 			PurpleConvChatBuddy *cbuddy = iter->data;
@@ -1404,8 +1453,11 @@ void finch_conversation_set_active(PurpleConversation *conv)
 
 	g_return_if_fail(ggconv);
 	g_return_if_fail(g_list_find(ggconv->list, conv));
+	if (ggconv->active_conv == conv)
+		return;
 
 	ggconv->active_conv = conv;
+	gg_setup_commands(ggconv, TRUE);
 	account = purple_conversation_get_account(conv);
 	title = get_conversation_title(conv, account);
 	gnt_screen_rename_widget(ggconv->window, title);

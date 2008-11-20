@@ -252,7 +252,7 @@ signing_off_cb(PurpleConnection *gc, void *data)
 	PurpleAccount *account;
 
 	account = purple_connection_get_account(gc);
-	idled_accts = g_list_remove(idled_accts, account);
+	set_account_unidle(account);
 }
 
 static void

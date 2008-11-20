@@ -203,6 +203,10 @@ struct _JabberStream
 	/* A purple timeout tag for the keepalive */
 	int keepalive_timeout;
 	
+	PurpleSrvResponse *srv_rec;
+	guint srv_rec_idx;
+	guint max_srv_rec_idx;
+
 	/* BOSH stuff*/
     gboolean use_bosh;
     PurpleBOSHConnection bosh;

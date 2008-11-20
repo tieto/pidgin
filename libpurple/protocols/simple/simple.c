@@ -1898,7 +1898,7 @@ static void simple_login(PurpleAccount *account)
 	PurpleConnection *gc;
 	struct simple_account_data *sip;
 	gchar **userserver;
-	gchar *hosttoconnect;
+	const gchar *hosttoconnect;
 
 	const char *username = purple_account_get_username(account);
 	gc = purple_account_get_connection(account);
@@ -1934,14 +1934,13 @@ static void simple_login(PurpleAccount *account)
 	sip->status = g_strdup("available");
 
 	if(!purple_account_get_bool(account, "useproxy", FALSE)) {
-		hosttoconnect = g_strdup(sip->servername);
+		hosttoconnect = sip->servername;
 	} else {
-		hosttoconnect = g_strdup(purple_account_get_string(account, "proxy", sip->servername));
+		hosttoconnect = purple_account_get_string(account, "proxy", sip->servername);
 	}
 
 	sip->srv_query_data = purple_srv_resolve("sip",
 			sip->udp ? "udp" : "tcp", hosttoconnect, srvresolved, sip);
-	g_free(hosttoconnect);
 }
 
 static void simple_close(PurpleConnection *gc)

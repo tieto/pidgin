@@ -26,7 +26,7 @@
 
 #include "debug.h"
 
-#include "buddy_status.h"
+#include "buddy_list.h"
 #include "group_free.h"
 #include "group_network.h"
 
@@ -55,8 +55,10 @@ void qq_group_free(qq_group *group)
 {
 	g_return_if_fail(group != NULL);
 	qq_group_free_member(group);
+	g_free(group->my_status_desc);
 	g_free(group->group_name_utf8);
 	g_free(group->group_desc_utf8);
+	g_free(group->notice_utf8);
 	g_free(group);
 }
 

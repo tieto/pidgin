@@ -138,6 +138,9 @@ qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel)
 	group = NULL;
 	while (list != NULL) {
 		group = (qq_group *) list->data;
+		if (group->group_name_utf8 == NULL) {
+			continue;
+		}
 		if (!g_ascii_strcasecmp(purple_conversation_get_name(conv), group->group_name_utf8))
 			break;
 		list = list->next;

@@ -64,8 +64,8 @@ static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
 /* send packet to join a group without auth */
 void qq_send_cmd_group_join_group(PurpleConnection *gc, qq_group *group)
 {
-	guint8 *raw_data, *cursor;
-	gint bytes, data_len;
+	guint8 raw_data[16] = {0};
+	gint bytes = 0;
 
 	g_return_if_fail(group != NULL);
 
@@ -86,19 +86,11 @@ void qq_send_cmd_group_join_group(PurpleConnection *gc, qq_group *group)
 		break;
 	}
 
-	data_len = 5;
-	raw_data = g_newa(guint8, data_len);
-	cursor = raw_data;
-
 	bytes = 0;
-	bytes += create_packet_b(raw_data, &cursor, QQ_GROUP_CMD_JOIN_GROUP);
-	bytes += create_packet_dw(raw_data, &cursor, group->internal_group_id);
+	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_JOIN_GROUP);
+	bytes += qq_put32(raw_data + bytes, group->internal_group_id);
 
-	if (bytes != data_len)
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_JOIN_GROUP));
-	else
-		qq_send_group_cmd(gc, group, raw_data, data_len);
+	qq_send_group_cmd(gc, group, raw_data, bytes);
 }
 
 static void _qq_group_join_auth_with_gc_and_id(gc_and_uid *g, const gchar *reason_utf8)
@@ -145,7 +137,7 @@ static void _qq_group_join_auth(PurpleConnection *gc, qq_group *group)
 
 void qq_send_cmd_group_auth(PurpleConnection *gc, qq_group *group, guint8 opt, guint32 uid, const gchar *reason_utf8)
 {
-	guint8 *raw_data, *cursor;
+	guint8 *raw_data;
 	gchar *reason_qq;
 	gint bytes, data_len;
 
@@ -164,50 +156,42 @@ void qq_send_cmd_group_auth(PurpleConnection *gc, qq_group *group, guint8 opt, g
 
 	data_len = 10 + strlen(reason_qq) + 1;
 	raw_data = g_newa(guint8, data_len);
-	cursor = raw_data;
 
 	bytes = 0;
-	bytes += create_packet_b(raw_data, &cursor, QQ_GROUP_CMD_JOIN_GROUP_AUTH);
-	bytes += create_packet_dw(raw_data, &cursor, group->internal_group_id);
-	bytes += create_packet_b(raw_data, &cursor, opt);
-	bytes += create_packet_dw(raw_data, &cursor, uid);
-	bytes += create_packet_b(raw_data, &cursor, strlen(reason_qq));
-	bytes += create_packet_data(raw_data, &cursor, (guint8 *) reason_qq, strlen(reason_qq));
+	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_JOIN_GROUP_AUTH);
+	bytes += qq_put32(raw_data + bytes, group->internal_group_id);
+	bytes += qq_put8(raw_data + bytes, opt);
+	bytes += qq_put32(raw_data + bytes, uid);
+	bytes += qq_put8(raw_data + bytes, strlen(reason_qq));
+	bytes += qq_putdata(raw_data + bytes, (guint8 *) reason_qq, strlen(reason_qq));
 
-	if (bytes != data_len)
+	if (bytes != data_len) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_JOIN_GROUP_AUTH));
-	else
-		qq_send_group_cmd(gc, group, raw_data, data_len);
+		return;
+	}
+
+	qq_send_group_cmd(gc, group, raw_data, data_len);
 }
 
 /* send a packet to exit a group */
 void qq_send_cmd_group_exit_group(PurpleConnection *gc, qq_group *group)
 {
-	guint8 *raw_data, *cursor;
-	gint bytes, data_len;
+	guint8 raw_data[16] = {0};
+	gint bytes = 0;
 
 	g_return_if_fail(group != NULL);
 
-	data_len = 5;
-	raw_data = g_newa(guint8, data_len);
-	cursor = raw_data;
+	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_EXIT_GROUP);
+	bytes += qq_put32(raw_data + bytes, group->internal_group_id);
 
-	bytes = 0;
-	bytes += create_packet_b(raw_data, &cursor, QQ_GROUP_CMD_EXIT_GROUP);
-	bytes += create_packet_dw(raw_data, &cursor, group->internal_group_id);
-
-	if (bytes != data_len)
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_EXIT_GROUP));
-	else
-		qq_send_group_cmd(gc, group, raw_data, data_len);
+	qq_send_group_cmd(gc, group, raw_data, bytes);
 }
 
 /* If comes here, cmd is OK already */
-void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *gc)
 {
-	gint bytes, expected_bytes;
+	gint bytes;
 	guint32 internal_group_id;
 	PurpleChat *chat;
 	qq_group *group;
@@ -216,96 +200,94 @@ void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, Pu
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 
-	bytes = 0;
-	expected_bytes = 4;
-	bytes += read_packet_dw(data, cursor, len, &internal_group_id);
-
-	if (bytes == expected_bytes) {
-		group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
-		if (group != NULL) {
-			chat =
-			    purple_blist_find_chat
-			    (purple_connection_get_account(gc), g_strdup_printf("%d", group->external_group_id));
-			if (chat != NULL)
-				purple_blist_remove_chat(chat);
-			qq_group_delete_internal_record(qd, internal_group_id);
-		}
-		purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully left the group"), NULL);
-	} else {
+	if (len < 4) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Invalid exit group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
+			   "Invalid exit group reply, expect %d bytes, read %d bytes\n", 4, len);
+		return;
 	}
+
+	bytes = 0;
+	bytes += qq_get32(&internal_group_id, data + bytes);
+
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
+	if (group != NULL) {
+		chat = purple_blist_find_chat
+			    (purple_connection_get_account(gc), g_strdup_printf("%d", group->external_group_id));
+		if (chat != NULL)
+			purple_blist_remove_chat(chat);
+		qq_group_delete_internal_record(qd, internal_group_id);
+	}
+	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully left the group"), NULL);
 }
 
 /* Process the reply to group_auth subcmd */
-void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnection *gc)
 {
-	gint bytes, expected_bytes;
+	gint bytes;
 	guint32 internal_group_id;
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 
+	if (len < 4) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+			   "Invalid join group reply, expect %d bytes, read %d bytes\n", 4, len);
+		return;
+	}
 	bytes = 0;
-	expected_bytes = 4;
-	bytes += read_packet_dw(data, cursor, len, &internal_group_id);
+	bytes += qq_get32(&internal_group_id, data + bytes);
 	g_return_if_fail(internal_group_id > 0);
 
-	if (bytes == expected_bytes)
-		purple_notify_info
-		    (gc, _("QQ Group Auth"),
+	purple_notify_info(gc, _("QQ Group Auth"),
 		     _("Your authorization request has been accepted by the QQ server"), NULL);
-	else
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Invalid join group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
 }
 
 /* process group cmd reply "join group" */
-void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *gc)
 {
-	gint bytes, expected_bytes;
+	gint bytes;
 	guint32 internal_group_id;
 	guint8 reply;
 	qq_group *group;
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	bytes = 0;
-	expected_bytes = 5;
-	bytes += read_packet_dw(data, cursor, len, &internal_group_id);
-	bytes += read_packet_b(data, cursor, len, &reply);
-
-	if (bytes != expected_bytes) {
+	if (len < 5) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Invalid join group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
+			   "Invalid join group reply, expect %d bytes, read %d bytes\n", 5, len);
 		return;
-	} else {		/* join group OK */
-		group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
-		/* need to check if group is NULL or not. */
-		g_return_if_fail(group != NULL);
-		switch (reply) {
-		case QQ_GROUP_JOIN_OK:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed joining group \"%s\"\n", group->group_name_utf8);
-			group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
-			qq_group_refresh(gc, group);
-			/* this must be shown before getting online members */
-			qq_group_conv_show_window(gc, group);
-			qq_send_cmd_group_get_group_info(gc, group);
-			break;
-		case QQ_GROUP_JOIN_NEED_AUTH:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "Fail joining group [%d] %s, needs authentication\n",
-				   group->external_group_id, group->group_name_utf8);
-			group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
-			qq_group_refresh(gc, group);
-			_qq_group_join_auth(gc, group);
-			break;
-		default:
-			purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				   "Error joining group [%d] %s, unknown reply: 0x%02x\n",
-				   group->external_group_id, group->group_name_utf8, reply);
-		}
+	}
+	
+	bytes = 0;
+	bytes += qq_get32(&internal_group_id, data + bytes);
+	bytes += qq_get8(&reply, data + bytes);
+
+	/* join group OK */
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
+	/* need to check if group is NULL or not. */
+	g_return_if_fail(group != NULL);
+	switch (reply) {
+	case QQ_GROUP_JOIN_OK:
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed joining group \"%s\"\n", group->group_name_utf8);
+		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
+		qq_group_refresh(gc, group);
+		/* this must be shown before getting online members */
+		qq_group_conv_show_window(gc, group);
+		qq_send_cmd_group_get_group_info(gc, group);
+		break;
+	case QQ_GROUP_JOIN_NEED_AUTH:
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
+			   "Fail joining group [%d] %s, needs authentication\n",
+			   group->external_group_id, group->group_name_utf8);
+		group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
+		qq_group_refresh(gc, group);
+		_qq_group_join_auth(gc, group);
+		break;
+	default:
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
+			   "Error joining group [%d] %s, unknown reply: 0x%02x\n",
+			   group->external_group_id, group->group_name_utf8, reply);
 	}
 }
 

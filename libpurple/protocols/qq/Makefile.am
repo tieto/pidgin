@@ -10,8 +10,6 @@ QQSOURCES = \
 	buddy_list.h \
 	buddy_opt.c \
 	buddy_opt.h \
-	buddy_status.c \
-	buddy_status.h \
 	char_conv.c \
 	char_conv.h \
 	crypt.c \
@@ -44,28 +42,22 @@ QQSOURCES = \
 	header_info.h \
 	im.c \
 	im.h \
-	keep_alive.c \
-	keep_alive.h \
-	login_logout.c \
-	login_logout.h \
+	qq_process.c \
+	qq_process.h \
+	qq_base.c \
+	qq_base.h \
 	packet_parse.c \
 	packet_parse.h \
 	qq.c \
 	qq.h \
-	qq_proxy.c \
-	qq_proxy.h \
-	recv_core.c \
-	recv_core.h \
-	send_core.c \
-	send_core.h \
+	qq_network.c \
+	qq_network.h \
 	send_file.c \
 	send_file.h \
-	sendqueue.c \
-	sendqueue.h \
+	qq_trans.c \
+	qq_trans.h \
 	sys_msg.c \
 	sys_msg.h \
-	udp_proxy_s5.c \
-	udp_proxy_s5.h \
 	utils.c \
 	utils.h
 

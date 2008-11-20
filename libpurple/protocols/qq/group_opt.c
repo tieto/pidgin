@@ -57,22 +57,24 @@ static void _sort(guint32 *list)
 
 static void _qq_group_member_opt(PurpleConnection *gc, qq_group *group, gint operation, guint32 *members)
 {
-	guint8 *data, *cursor;
+	guint8 *data;
 	gint i, count, data_len;
+	gint bytes;
 	g_return_if_fail(members != NULL);
 
-	for (i = 0; members[i] != 0xffffffff; i++) {;
+	for (count = 0; members[count] != 0xffffffff; count++) {;
 	}
-	count = i;
 	data_len = 6 + count * 4;
 	data = g_newa(guint8, data_len);
-	cursor = data;
-	create_packet_b(data, &cursor, QQ_GROUP_CMD_MEMBER_OPT);
-	create_packet_dw(data, &cursor, group->internal_group_id);
-	create_packet_b(data, &cursor, operation);
+	
+	bytes = 0;
+	bytes += qq_put8(data + bytes, QQ_GROUP_CMD_MEMBER_OPT);
+	bytes += qq_put32(data + bytes, group->internal_group_id);
+	bytes += qq_put8(data + bytes, operation);
 	for (i = 0; i < count; i++)
-		create_packet_dw(data, &cursor, members[i]);
-	qq_send_group_cmd(gc, group, data, data_len);
+		bytes += qq_put32(data + bytes, members[i]);
+
+	qq_send_group_cmd(gc, group, data, bytes);
 }
 
 static void _qq_group_do_nothing_with_struct(group_member_opt *g)
@@ -97,11 +99,11 @@ void qq_group_search_application_with_struct(group_member_opt *g)
 
 	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we want to see window */
 	purple_request_action(g->gc, NULL, _("Do you want to approve the request?"), "",
-					PURPLE_DEFAULT_ACTION_NONE,
-					purple_connection_get_account(g->gc), NULL, NULL,
-					g, 2,
-					_("Reject"), G_CALLBACK(qq_group_reject_application_with_struct),
-					_("Approve"), G_CALLBACK(qq_group_approve_application_with_struct));
+				PURPLE_DEFAULT_ACTION_NONE,
+				purple_connection_get_account(g->gc), NULL, NULL,
+				g, 2,
+				_("Reject"), G_CALLBACK(qq_group_reject_application_with_struct),
+				_("Approve"), G_CALLBACK(qq_group_approve_application_with_struct));
 }
 
 void qq_group_reject_application_with_struct(group_member_opt *g)
@@ -193,13 +195,15 @@ void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new
 		_qq_group_member_opt(gc, group, QQ_GROUP_MEMBER_ADD, add_members);
 }
 
-void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnection *gc)
 {
+	gint bytes;
 	guint32 internal_group_id;
 	qq_group *group;
 	g_return_if_fail(data != NULL);
 
-	read_packet_dw(data, cursor, len, &internal_group_id);
+	bytes = 0;
+	bytes += qq_get32(&internal_group_id, data + bytes);
 	g_return_if_fail(internal_group_id > 0);
 
 	/* we should have its info locally */
@@ -213,8 +217,9 @@ void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint l
 
 void qq_group_modify_info(PurpleConnection *gc, qq_group *group)
 {
-	gint data_len, data_written;
-	guint8 *data, *cursor;
+	guint8 *data;
+	gint data_len;
+	gint bytes;
 	gchar *group_name, *group_desc, *notice;
 
 	g_return_if_fail(group != NULL);
@@ -228,47 +233,50 @@ void qq_group_modify_info(PurpleConnection *gc, qq_group *group)
 	    + 1 + strlen(notice);
 
 	data = g_newa(guint8, data_len);
-	cursor = data;
-	data_written = 0;
+	bytes = 0;
 	/* 000-000 */
-	data_written += create_packet_b(data, &cursor, QQ_GROUP_CMD_MODIFY_GROUP_INFO);
+	bytes += qq_put8(data + bytes, QQ_GROUP_CMD_MODIFY_GROUP_INFO);
 	/* 001-004 */
-	data_written += create_packet_dw(data, &cursor, group->internal_group_id);
+	bytes += qq_put32(data + bytes, group->internal_group_id);
 	/* 005-005 */
-	data_written += create_packet_b(data, &cursor, 0x01);
+	bytes += qq_put8(data + bytes, 0x01);
 	/* 006-006 */
-	data_written += create_packet_b(data, &cursor, group->auth_type);
+	bytes += qq_put8(data + bytes, group->auth_type);
 	/* 007-008 */
-	data_written += create_packet_w(data, &cursor, 0x0000);
+	bytes += qq_put16(data + bytes, 0x0000);
 	/* 009-010 */
-	data_written += create_packet_w(data, &cursor, group->group_category);
+	bytes += qq_put16(data + bytes, group->group_category);
 
-	data_written += create_packet_b(data, &cursor, strlen(group_name));
-	data_written += create_packet_data(data, &cursor, (guint8 *) group_name, strlen(group_name));
+	bytes += qq_put8(data + bytes, strlen(group_name));
+	bytes += qq_putdata(data + bytes, (guint8 *) group_name, strlen(group_name));
 
-	data_written += create_packet_w(data, &cursor, 0x0000);
+	bytes += qq_put16(data + bytes, 0x0000);
 
-	data_written += create_packet_b(data, &cursor, strlen(notice));
-	data_written += create_packet_data(data, &cursor, (guint8 *) notice, strlen(notice));
+	bytes += qq_put8(data + bytes, strlen(notice));
+	bytes += qq_putdata(data+ bytes, (guint8 *) notice, strlen(notice));
 
-	data_written += create_packet_b(data, &cursor, strlen(group_desc));
-	data_written += create_packet_data(data, &cursor, (guint8 *) group_desc, strlen(group_desc));
+	bytes += qq_put8(data + bytes, strlen(group_desc));
+	bytes += qq_putdata(data + bytes, (guint8 *) group_desc, strlen(group_desc));
 
-	if (data_written != data_len)
+	if (bytes != data_len)	{
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail to create group_modify_info packet, expect %d bytes, wrote %d bytes\n",
-			   data_len, data_written);
-	else
-		qq_send_group_cmd(gc, group, data, data_len);
+			   data_len, bytes);
+		return;
+	}
+
+	qq_send_group_cmd(gc, group, data, bytes);
 }
 
-void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection *gc)
 {
+	gint bytes;
 	guint32 internal_group_id;
 	qq_group *group;
 	g_return_if_fail(data != NULL);
 
-	read_packet_dw(data, cursor, len, &internal_group_id);
+	bytes = 0;
+	bytes += qq_get32(&internal_group_id, data + bytes);
 	g_return_if_fail(internal_group_id > 0);
 
 	/* we should have its info locally */
@@ -284,42 +292,44 @@ void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len,
 /* we create a very simple group first, and then let the user to modify */
 void qq_group_create_with_name(PurpleConnection *gc, const gchar *name)
 {
-	gint data_len, data_written;
-	guint8 *data, *cursor;
+	gint data_len;
+	guint8 *data;
+	gint bytes;
 	qq_data *qd;
 	g_return_if_fail(name != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	data_len = 7 + 1 + strlen(name) + 2 + 1 + 1 + 4;
 	data = g_newa(guint8, data_len);
-	cursor = data;
 
-	data_written = 0;
+	bytes = 0;
 	/* we create the simpleset group, only group name is given */
 	/* 000 */
-	data_written += create_packet_b(data, &cursor, QQ_GROUP_CMD_CREATE_GROUP);
+	bytes += qq_put8(data + bytes, QQ_GROUP_CMD_CREATE_GROUP);
 	/* 001 */
-	data_written += create_packet_b(data, &cursor, QQ_GROUP_TYPE_PERMANENT);
+	bytes += qq_put8(data + bytes, QQ_GROUP_TYPE_PERMANENT);
 	/* 002 */
-	data_written += create_packet_b(data, &cursor, QQ_GROUP_AUTH_TYPE_NEED_AUTH);
+	bytes += qq_put8(data + bytes, QQ_GROUP_AUTH_TYPE_NEED_AUTH);
 	/* 003-004 */
-	data_written += create_packet_w(data, &cursor, 0x0000);
+	bytes += qq_put16(data + bytes, 0x0000);
 	/* 005-006 */
-	data_written += create_packet_w(data, &cursor, 0x0003);
+	bytes += qq_put16(data + bytes, 0x0003);
 	/* 007 */
-	data_written += create_packet_b(data, &cursor, strlen(name));
-	data_written += create_packet_data(data, &cursor, (guint8 *) name, strlen(name));
-	data_written += create_packet_w(data, &cursor, 0x0000);
-	data_written += create_packet_b(data, &cursor, 0x00);	/* no group notice */
-	data_written += create_packet_b(data, &cursor, 0x00);	/* no group desc */
-	data_written += create_packet_dw(data, &cursor, qd->uid);	/* I am member of coz */
+	bytes += qq_put8(data + bytes, strlen(name));
+	bytes += qq_putdata(data + bytes, (guint8 *) name, strlen(name));
+	bytes += qq_put16(data + bytes, 0x0000);
+	bytes += qq_put8(data + bytes, 0x00);	/* no group notice */
+	bytes += qq_put8(data + bytes, 0x00);	/* no group desc */
+	bytes += qq_put32(data + bytes, qd->uid);	/* I am member of coz */
 
-	if (data_written != data_len)
+	if (bytes != data_len) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create create_group packet, expect %d bytes, written %d bytes\n",
-			   data_len, data_written);
-	else
-		qq_send_group_cmd(gc, NULL, data, data_len);
+			   data_len, bytes);
+		return;
+	}
+
+	qq_send_group_cmd(gc, NULL, data, bytes);
 }
 
 static void qq_group_setup_with_gc_and_uid(gc_and_uid *g)
@@ -335,8 +345,9 @@ static void qq_group_setup_with_gc_and_uid(gc_and_uid *g)
 	g_free(g);
 }
 
-void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnection *gc)
 {
+	gint bytes;
 	guint32 internal_group_id, external_group_id;
 	qq_group *group;
 	gc_and_uid *g;
@@ -346,8 +357,9 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	g_return_if_fail(gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	read_packet_dw(data, cursor, len, &internal_group_id);
-	read_packet_dw(data, cursor, len, &external_group_id);
+	bytes = 0;
+	bytes += qq_get32(&internal_group_id, data + bytes);
+	bytes += qq_get32(&external_group_id, data + bytes);
 	g_return_if_fail(internal_group_id > 0 && external_group_id);
 
 	group = qq_group_create_internal_record(gc, internal_group_id, external_group_id, NULL);
@@ -378,36 +390,29 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 /* we have to activate group after creation, otherwise the group can not be searched */
 void qq_group_activate_group(PurpleConnection *gc, guint32 internal_group_id)
 {
-	gint data_len, data_written;
-	guint8 *data, *cursor;
+	guint8 data[16] = {0};
+	gint bytes = 0;
 	g_return_if_fail(internal_group_id > 0);
 
-	data_len = 5;
-	data = g_newa(guint8, data_len);
-	cursor = data;
-
-	data_written = 0;
+	bytes = 0;
 	/* we create the simplest group, only group name is given */
 	/* 000 */
-	data_written += create_packet_b(data, &cursor, QQ_GROUP_CMD_ACTIVATE_GROUP);
+	bytes += qq_put8(data + bytes, QQ_GROUP_CMD_ACTIVATE_GROUP);
 	/* 001-005 */
-	data_written += create_packet_dw(data, &cursor, internal_group_id);
+	bytes += qq_put32(data + bytes, internal_group_id);
 
-	if (data_written != data_len)
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Fail create activate_group packet, expect %d bytes, written %d bytes\n",
-			   data_len, data_written);
-	else
-		qq_send_group_cmd(gc, NULL, data, data_len);
+	qq_send_group_cmd(gc, NULL, data, bytes);
 }
 
-void qq_group_process_activate_group_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+void qq_group_process_activate_group_reply(guint8 *data, gint len, PurpleConnection *gc)
 {
+	gint bytes;
 	guint32 internal_group_id;
 	qq_group *group;
 	g_return_if_fail(data != NULL);
 
-	read_packet_dw(data, cursor, len, &internal_group_id);
+	bytes = 0;
+	bytes += qq_get32(&internal_group_id, data + bytes);
 	g_return_if_fail(internal_group_id > 0);
 
 	/* we should have its info locally */

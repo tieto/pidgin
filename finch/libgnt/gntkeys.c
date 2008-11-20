@@ -80,6 +80,9 @@ void gnt_init_keys()
 	INSERT_KEY("down",   GNT_KEY_DOWN);
 
 	INSERT_KEY("tab",    "\t");
+	INSERT_KEY("escape", "\033");
+	INSERT_KEY("space", " ");
+	INSERT_KEY("return", GNT_KEY_ENTER);
 	INSERT_KEY("menu",   GNT_KEY_POPUP);
 
 	INSERT_KEY("f1",   GNT_KEY_F1);
@@ -118,6 +121,9 @@ void gnt_init_keys()
 					code[ind++] = '\033';
 				code[ind] = (c ? 1 : 'a') + ch;
 				INSERT_COMB(str, code);
+			}
+			if (c == 0) {
+				INSERT_COMB("tab", "\033\t");
 			}
 		}
 	}

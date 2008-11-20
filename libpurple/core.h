@@ -1,4 +1,5 @@
 /**
+ * @file core.h Startup and shutdown of libpurple
  * @defgroup core libpurple
  * @see @ref core-signals
  */
@@ -28,12 +29,36 @@
 
 typedef struct PurpleCore PurpleCore;
 
+/** Callbacks that fire at different points of the initialization and teardown
+ *  of libpurple, along with a hook to return descriptive information about the
+ *  UI.
+ */
 typedef struct
 {
+	/** Called just after the preferences subsystem is initialized; the UI
+	 *  could use this callback to add some preferences it needs to be in
+	 *  place when other subsystems are initialized.
+	 */
 	void (*ui_prefs_init)(void);
-	void (*debug_ui_init)(void); /* Unfortunate necessity. */
+	/** Called just after the debug subsystem is initialized, but before
+	 *  just about every other component's initialization.  The UI should
+	 *  use this hook to call purple_debug_set_ui_ops() so that debugging
+	 *  information for other components can be logged during their
+	 *  initialization.
+	 */
+	void (*debug_ui_init)(void);
+	/** Called after all of libpurple has been initialized.  The UI should
+	 *  use this hook to set all other necessary UiOps structures.
+	 *
+	 *  @see @ref ui-ops
+	 */
 	void (*ui_init)(void);
+	/** Called after most of libpurple has been uninitialized. */
 	void (*quit)(void);
+
+	/** Called by purple_core_get_ui_info(); should return the information
+	 *  documented there.
+	 */
 	GHashTable* (*get_ui_info)(void);
 
 	void (*_purple_reserved1)(void);
@@ -64,17 +89,23 @@ gboolean purple_core_init(const char *ui);
 void purple_core_quit(void);
 
 /**
+ * <p>
  * Calls purple_core_quit().  This can be used as the function 
  * passed to purple_timeout_add() when you want to shutdown Purple 
  * in a specified amount of time.  When shutting down Purple 
  * from a plugin, you must use this instead of purple_core_quit();
  * for an immediate exit, use a timeout value of 0: 
- *   purple_timeout_add(0, purple_core_quitcb, NULL);
+ * </p>
+ *
+ * <code>purple_timeout_add(0, purple_core_quitcb, NULL);</code>
+ *
+ * <p>
  * This is ensures that code from your plugin is not being 
  * executed when purple_core_quit() is called.  If the plugin
  * called purple_core_quit() directly, you would get a core dump
  * after purple_core_quit() executes and control returns to your
  * plugin because purple_core_quit() frees all plugins.
+ * </p>
  */
 gboolean purple_core_quit_cb(gpointer unused);
 
@@ -86,7 +117,8 @@ gboolean purple_core_quit_cb(gpointer unused);
 const char *purple_core_get_version(void);
 
 /**
- * Returns the ID of the UI that is using the core.
+ * Returns the ID of the UI that is using the core, as passed to
+ * purple_core_init().
  *
  * @return The ID of the UI that is currently using the core.
  */
@@ -95,7 +127,7 @@ const char *purple_core_get_ui(void);
 /**
  * Returns a handle to the purple core.
  *
- * This is used for such things as signals.
+ * This is used to connect to @ref core-signals "core signals".
  */
 PurpleCore *purple_get_core(void);
 
@@ -114,10 +146,10 @@ void purple_core_set_ui_ops(PurpleCoreUiOps *ops);
 PurpleCoreUiOps *purple_core_get_ui_ops(void);
 
 /**
- * Migrates from .gaim to .purple.
+ * Migrates from <tt>.gaim</tt> to <tt>.purple</tt>.
  *
- * UIs MUST NOT call this if they have been told to use a custom
- * user directory.
+ * UIs <strong>must not</strong> call this if they have been told to use a
+ * custom user directory.
  *
  * @return A boolean indicating success or migration failure. On failure,
  *         the application must display an error to the user and then exit.
@@ -125,20 +157,39 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
 gboolean purple_core_migrate(void);
 
 /**
- * Ensures that only one instance is running.
+ * Ensures that only one instance is running.  If libpurple is built with D-Bus
+ * support, this checks if another process owns the libpurple bus name and if
+ * so whether that process is using the same configuration directory as this
+ * process.
  *
- * @return A boolean such that @c TRUE indicates that this is the first instance,
- *         whereas @c FALSE indicates that there is another instance running.
+ * @return @c TRUE if this is the first instance of libpurple running;
+ *         @c FALSE if there is another instance running.
  *
  * @since 2.1.0
  */
 gboolean purple_core_ensure_single_instance(void);
 
 /**
- * Returns a hashtable containing various information about the UI
+ * Returns a hash table containing various information about the UI.  The
+ * following well-known entries may be in the table (along with any others the
+ * UI might choose to include):
+ *
+ * <dl>
+ *   <dt><tt>name</tt></dt>
+ *   <dd>the user-readable name for the UI.</dd>
+ *
+ *   <dt><tt>version</tt></dt>
+ *   <dd>a user-readable description of the current version of the UI.</dd>
+ *
+ *   <dt><tt>website</tt></dt>
+ *   <dd>the UI's website, such as http://pidgin.im.</dd>
+ *
+ *   <dt><tt>dev_website</tt></dt>
+ *   <dd>the UI's development/support website, such as http://developer.pidgin.im.</dd>
+ * </dl>
  *
  * @return A GHashTable with strings for keys and values.  This
- * hash table must not be freed.
+ * hash table must not be freed and should not be modified.
  *
  * @since 2.1.0
  *

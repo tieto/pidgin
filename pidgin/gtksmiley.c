@@ -275,7 +275,8 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 			g_free(buffer);
 		}
 		emoticon = purple_smiley_new_from_file(entry, s->filename);
-		pidgin_smiley_add_to_list(emoticon);
+		if (emoticon)
+			pidgin_smiley_add_to_list(emoticon);
 	}
 
 	if (smiley_manager != NULL)

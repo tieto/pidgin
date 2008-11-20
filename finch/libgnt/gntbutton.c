@@ -77,18 +77,6 @@ gnt_button_map(GntWidget *widget)
 }
 
 static gboolean
-gnt_button_key_pressed(GntWidget *widget, const char *key)
-{
-	if (strcmp(key, GNT_KEY_ENTER) == 0 ||
-			strcmp(key, SAFE(cursor_down)) == 0)
-	{
-		gnt_widget_activate(widget);
-		return TRUE;
-	}
-	return FALSE;
-}
-
-static gboolean
 gnt_button_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 {
 	if (event == GNT_LEFT_MOUSE_DOWN) {
@@ -106,23 +94,33 @@ gnt_button_destroy(GntWidget *widget)
 	g_free(button->priv);
 }
 
+static gboolean
+button_activate(GntBindable *bind, GList *null)
+{
+	gnt_widget_activate(GNT_WIDGET(bind));
+	return TRUE;
+}
+
 static void
 gnt_button_class_init(GntWidgetClass *klass)
 {
 	char *style;
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
 
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->draw = gnt_button_draw;
 	parent_class->map = gnt_button_map;
 	parent_class->size_request = gnt_button_size_request;
-	parent_class->key_pressed = gnt_button_key_pressed;
 	parent_class->clicked = gnt_button_clicked;
 	parent_class->destroy = gnt_button_destroy;
 
 	style = gnt_style_get_from_name(NULL, "small-button");
 	small_button = gnt_style_parse_bool(style);
 	g_free(style);
-	GNTDEBUG;
+
+	gnt_bindable_class_register_action(bindable, "activate", button_activate,
+				GNT_KEY_ENTER, NULL);
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 }
 
 static void

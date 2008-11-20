@@ -510,3 +510,8 @@ not :)
 12:58 <staggered_ranks> why hasn't support for napster been removed?
 12:58 <deryni> It has.
 12:59 <staggered_ranks> oh.. ok
+
+
+14:39 <rrobbertt> Does anyone know a way to get text to speech with pidgin?
+14:41 <elb> do you want to be rooted sooner, or later?
+14:42 <seanegan> good question"; rm -rf ~

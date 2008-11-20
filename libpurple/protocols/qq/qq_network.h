@@ -1,5 +1,5 @@
 /**
- * @file slpsession.h SLP Session functions
+ * @file qq_network.h
  *
  * purple
  *
@@ -21,28 +21,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SLPSESSION_H_
-#define _MSN_SLPSESSION_H_
 
-typedef struct _MsnSlpSession MsnSlpSession;
+#ifndef _QQ_NETWORK_H
+#define _QQ_NETWORK_H
 
-#include "slpcall.h"
-#include "slpsession.h"
-#include "slpmsg.h"
+#include <glib.h>
+#include "connection.h"
 
-struct _MsnSlpSession
-{
-	/* MsnSlpLink *slplink; */
-	MsnSlpCall *slpcall;
+#include "qq.h"
 
-	long id;
+#define QQ_CONNECT_STEPS    3	/* steps in connection */
 
-	long app_id;
-	char *call_id;
-};
+void qq_connect(PurpleAccount *account);
+void qq_disconnect(PurpleConnection *gc);
+void qq_connect_later(PurpleConnection *gc);
 
-MsnSlpSession *msn_slp_session_new(MsnSlpCall *slpcall);
-void msn_slp_session_destroy(MsnSlpSession *slpsession);
-void msn_slpsession_send_slpmsg(MsnSlpSession *slpsession,
-								MsnSlpMessage *slpmsg);
-#endif /* _MSN_SLPSESSION_H_ */
+gint qq_send_cmd(qq_data *qd, guint16 cmd, guint8 *data, gint datalen);
+gint qq_send_data(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
+	guint8 *data, gint data_len);
+gint qq_send_cmd_detail(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
+	guint8 *data, gint data_len);
+
+#endif

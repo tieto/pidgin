@@ -55,6 +55,9 @@ typedef enum _PurpleSoundEventID
 
 } PurpleSoundEventID;
 
+/** Operations used by the core to request that particular sound files, or the
+ *  sound associated with a particular event, should be played.
+ */
 typedef struct _PurpleSoundUiOps
 {
 	void (*init)(void);

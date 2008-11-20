@@ -16,6 +16,7 @@ SMILEYS = 	act-up.png \
     boy.png \
     brb.png \
     bulgy-eyes.png \
+    bunny.png \
     bye.png \
     cake.png \
     call-me.png \

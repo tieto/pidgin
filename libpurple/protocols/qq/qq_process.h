@@ -1,5 +1,5 @@
 /**
- * @file udp_proxy_s5.h
+ * @file qq_process.h
  *
  * purple
  *
@@ -22,13 +22,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _QQ_UDP_PROXY_S5_H_
-#define _QQ_UDP_PROXY_S5_H_
+#ifndef _QQ_PROCESS_H
+#define _QQ_PROCESS_H
 
-#include "internal.h"		/* for socket stuff */
+#include <glib.h>
+#include "connection.h"
 
-#include "qq_proxy.h"
+#include "qq.h"
 
-gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen);
-
+void qq_proc_cmd_reply(PurpleConnection *gc,
+		guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+void qq_proc_cmd_server(PurpleConnection *gc,
+	guint16 cmd, guint16 seq, guint8 *data, gint data_len);
 #endif
+

@@ -29,6 +29,6 @@
 #include "connection.h"
 
 void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 external_group_id);
-void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_search_group(guint8 *data, gint len, PurpleConnection *gc);
 
 #endif

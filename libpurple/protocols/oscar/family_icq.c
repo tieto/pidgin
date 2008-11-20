@@ -36,6 +36,8 @@ int aim_icq_reqofflinemsgs(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
+	purple_debug_info("oscar", "Requesting offline messages from %s", od->sn);
+
 	bslen = 2 + 4 + 2 + 2;
 
 	byte_stream_new(&bs, 4 + bslen);
@@ -67,6 +69,8 @@ int aim_icq_ackofflinemsgs(OscarData *od)
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
+
+	purple_debug_info("oscar", "Acknowledged receipt of offline messages from %s", od->sn);
 
 	bslen = 2 + 4 + 2 + 2;
 
@@ -214,7 +218,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x04b2); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -242,6 +246,8 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
+	purple_debug_info("oscar", "Requesting ICQ alias for %s", uin);
+
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
 	byte_stream_new(&bs, 4 + bslen);
@@ -259,7 +265,7 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x04ba); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -303,7 +309,7 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x051f); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -497,7 +503,7 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 	byte_stream_put16(&bs, strlen(uin));
 	byte_stream_putstr(&bs, uin);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -877,7 +883,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 				info->next = od->icq_info;
 				od->icq_info = info;
 
-				flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs, FALSE);
 
 				byte_stream_destroy(&bs);
 			}

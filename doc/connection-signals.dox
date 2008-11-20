@@ -5,6 +5,7 @@
   @signal signed-on
   @signal signing-off
   @signal signed-off
+  @signal connection-error
  @endsignals
 
  @see connection.h

@@ -115,8 +115,10 @@ void msn_servconn_destroy(MsnServConn *servconn);
  * @param servconn The connection.
  * @param host The host.
  * @param port The port.
+ * @param force Force this servconn to connect to a new server.
  */
-gboolean msn_servconn_connect(MsnServConn *servconn, const char *host, int port);
+gboolean msn_servconn_connect(MsnServConn *servconn, const char *host, int port,
+                              gboolean force);
 
 /**
  * Disconnects.

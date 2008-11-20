@@ -59,6 +59,7 @@ static void
 destroy_tooltip_data(PidginTooltipData *data)
 {
 	gtk_tree_path_free(data->common.treeview.path);
+	pidgin_tooltip_destroy();
 	g_free(data);
 }
 

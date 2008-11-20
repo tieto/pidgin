@@ -130,6 +130,7 @@ static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
 static GdkVisibilityState gtk_blist_visibility = GDK_VISIBILITY_UNOBSCURED;
+static gboolean gtk_blist_focused = FALSE;
 static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
@@ -5166,9 +5167,14 @@ headline_style_set (GtkWidget *widget,
 /******************************************/
 
 static int
-blist_focus_cb(GtkWidget *widget, gpointer data, PidginBuddyList *gtkblist)
+blist_focus_cb(GtkWidget *widget, GdkEventFocus *event, PidginBuddyList *gtkblist)
 {
-	pidgin_set_urgent(GTK_WINDOW(gtkblist->window), FALSE);
+	if(event->in) {
+		gtk_blist_focused = TRUE;
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), FALSE);
+	} else {
+		gtk_blist_focused = FALSE;
+	}
 	return 0;
 }
 
@@ -5254,6 +5260,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	gtkblist->window = pidgin_create_window(_("Buddy List"), 0, "buddy_list", TRUE);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-in-event",
+			 G_CALLBACK(blist_focus_cb), gtkblist);
+	g_signal_connect(G_OBJECT(gtkblist->window), "focus-out-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
 
@@ -6988,8 +6996,15 @@ pidgin_blist_toggle_visibility()
 {
 	if (gtkblist && gtkblist->window) {
 		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
+			/* make the buddy list visible if it is iconified or if it is
+			 * obscured and not currently focused (the focus part ensures
+			 * that we do something reasonable if the buddy list is obscured
+			 * by a window set to always be on top), otherwise hide the
+			 * buddy list
+			 */
 			purple_blist_set_visible(PIDGIN_WINDOW_ICONIFIED(gtkblist->window) ||
-					gtk_blist_visibility != GDK_VISIBILITY_UNOBSCURED);
+					((gtk_blist_visibility != GDK_VISIBILITY_UNOBSCURED) &&
+					!gtk_blist_focused));
 		} else {
 			purple_blist_set_visible(TRUE);
 		}

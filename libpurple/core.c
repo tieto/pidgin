@@ -26,6 +26,7 @@
 #include "internal.h"
 #include "cipher.h"
 #include "certificate.h"
+#include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -130,6 +131,7 @@ purple_core_init(const char *ui)
 #endif
 
 	purple_ciphers_init();
+	purple_cmds_init();
 
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
@@ -230,6 +232,7 @@ purple_core_quit(void)
 	purple_dbus_uninit();
 #endif
 
+	purple_cmds_uninit();
 	purple_util_uninit();
 
 	purple_signals_uninit();

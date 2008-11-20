@@ -81,6 +81,8 @@ PurpleCmdId purple_cmd_register(const gchar *cmd, const gchar *args,
 
 	cmds = g_list_insert_sorted(cmds, c, (GCompareFunc)cmds_compare_func);
 
+	purple_signal_emit(purple_cmds_get_handle(), "cmd-added", cmd, p, f);
+
 	return id;
 }
 
@@ -103,6 +105,7 @@ void purple_cmd_unregister(PurpleCmdId id)
 
 		if (c->id == id) {
 			cmds = g_list_remove(cmds, c);
+			purple_signal_emit(purple_cmds_get_handle(), "cmd-removed", c->cmd);
 			purple_cmd_free(c);
 			return;
 		}
@@ -359,5 +362,30 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd)
 	ret = g_list_sort(ret, (GCompareFunc)strcmp);
 
 	return ret;
+}
+
+gpointer purple_cmds_get_handle(void)
+{
+	static int handle;
+	return &handle;
+}
+
+void purple_cmds_init(void)
+{
+	gpointer handle = purple_cmds_get_handle();
+
+	purple_signal_register(handle, "cmd-added",
+			purple_marshal_VOID__POINTER_INT_INT, NULL, 3,
+			purple_value_new(PURPLE_TYPE_STRING),
+			purple_value_new(PURPLE_TYPE_INT),
+			purple_value_new(PURPLE_TYPE_INT));
+	purple_signal_register(handle, "cmd-removed",
+			purple_marshal_VOID__POINTER, NULL, 1,
+			purple_value_new(PURPLE_TYPE_STRING));
+}
+
+void purple_cmds_uninit(void)
+{
+	purple_signals_unregister_by_instance(purple_cmds_get_handle());
 }
 

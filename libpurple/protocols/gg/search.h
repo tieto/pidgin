@@ -130,7 +130,7 @@ ggp_search_destroy(GGPSearches *searches);
  * @param gc   PurpleConnection.
  * @param form Filled in GGPSearchForm.
  *
- * @return Sequence number of a search or 0 if an error occured.
+ * @return Sequence number of a search or 0 if an error occurred.
  */
 guint32
 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form);
