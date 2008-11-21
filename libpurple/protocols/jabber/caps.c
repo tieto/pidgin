@@ -867,16 +867,19 @@ const gchar* jabber_caps_get_own_hash(JabberStream *js)
 	return js->caps_hash;
 }
 
-void jabber_caps_broadcast_change() {
-	GList *active_accounts = purple_accounts_get_all_active();
-	for (active_accounts = purple_accounts_get_all_active(); active_accounts; active_accounts = active_accounts->next) {
-		PurpleAccount *account = active_accounts->data;
-		if (!strcmp(account->protocol_id, "jabber")) {
-			PurpleConnection *conn = account->gc;
-			JabberStream *js = conn->proto_data;
-			xmlnode *presence = jabber_presence_create_js(js, JABBER_BUDDY_STATE_UNKNOWN, 0, 0);
-			jabber_send(js, presence);
+void jabber_caps_broadcast_change()
+{
+	GList *node, *accounts = purple_accounts_get_all_active();
+
+	for (node = accounts; node; node = node->next) {
+		PurpleAccount *account = node->data;
+		const char *prpl_id = purple_account_get_protocol_id(account);
+		if (!strcmp("prpl-jabber", prpl_id)) {
+			PurpleConnection *gc = purple_account_get_connection(account);
+			jabber_presence_send(gc->proto_data, TRUE);
 		}
 	}
+
+	g_list_free(accounts);
 }
 

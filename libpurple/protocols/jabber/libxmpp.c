@@ -69,7 +69,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	jabber_presence_send,			/* set_status */
+	jabber_set_status,				/* set_status */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */

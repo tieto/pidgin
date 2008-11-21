@@ -493,9 +493,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	PurplePresence *gpresence;
-	PurpleStatus *status;
-	
 	if(((JabberStream*)gc->proto_data)->pep) {
 		/* XEP-0084: User Avatars */
 		if(img) {
@@ -625,9 +622,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	/* publish vCard for those poor older clients */
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
 
-	gpresence = purple_account_get_presence(gc->account);
-	status = purple_presence_get_active_status(gpresence);
-	jabber_presence_send(gc->account, status);
+	jabber_presence_send(gc->proto_data, FALSE);
 }
 
 /*
