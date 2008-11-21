@@ -87,7 +87,7 @@ static void jabber_caps_destroy_value(gpointer value) {
 		g_free(valuestruct->forms->data);
 		valuestruct->forms = g_list_delete_link(valuestruct->forms,valuestruct->forms);
 	}
-	//g_hash_table_destroy(valuestruct->ext);
+	/* g_hash_table_destroy(valuestruct->ext); */
 	g_free(valuestruct);
 }
 
@@ -431,7 +431,7 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	/* TODO: Better error checking! */
 	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error"))return;
 	if (query) {
-		// check hash
+		/* check hash */
 		JabberCapsClientInfo *info = jabber_caps_parse_client_info(query);
 		gchar *hash = 0;
 		JabberCapsValue *value;
@@ -443,7 +443,7 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 		} else if (!strcmp(userdata->hash, "md5")) {
 			hash = jabber_caps_calculate_hash(info, "md5");
 		} else {
-			// clean up
+			/* TODO: clean up */
 			return;	
 		}
 
@@ -666,8 +666,8 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
 	xmlnode *child;
 	JabberCapsClientInfo *info;
 
-	if (!query) return 0;
-	if (strcmp(query->xmlns,"http://jabber.org/protocol/disco#info")) return 0;
+	if (!query || strcmp(query->xmlns, "http://jabber.org/protocol/disco#info"))
+		return 0;
 	
 	info = g_new0(JabberCapsClientInfo, 1);
 	
@@ -740,7 +740,8 @@ static gchar *jabber_caps_verification_append(gchar *verification_string, gchar 
 	return verification;
 }
 
-gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash) {
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
+{
 	GList *identities;
 	GList *features;
 	GList *xdata;
@@ -751,32 +752,35 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash) 
 	PurpleCipherContext *context;
 	guint8 checksum[20];
 	gsize checksum_size = 20;
-	
-	if (!info) return 0;
-	
+
+	if (!info)
+		return 0;
+
 	/* sort identities, features and x-data forms */
 	info->identities = g_list_sort(info->identities, jabber_caps_jabber_identity_compare);
 	info->features = g_list_sort(info->features, (GCompareFunc)strcmp);
 	info->forms = g_list_sort(info->forms, jabber_caps_jabber_xdata_compare);
-	
+
 	/* concat identities to the verification string */
 	for(identities = info->identities; identities; identities = identities->next) {
 		JabberIdentity *ident = (JabberIdentity*)identities->data;
 		identity_string = g_strdup_printf("%s/%s//%s<", ident->category, ident->type, ident->name);
 		free_verification = verification;
-		if(verification == 0) verification = g_strdup(identity_string);
-		 	else verification = g_strconcat(verification, identity_string, NULL);
+		if(verification == 0)
+			verification = g_strdup(identity_string);
+	 	else
+	 		verification = g_strconcat(verification, identity_string, NULL);
 		g_free(identity_string);
 		g_free(free_verification);
 	}
-	
+
 	/* concat features to the verification string */
 	for(features = info->features; features; features = features->next) {
 		feature_string = g_strdup_printf("%s", (gchar*)features->data);
 		verification = jabber_caps_verification_append(verification, feature_string);
 		g_free(feature_string);
 	}
-	
+
 	/* concat x-data forms to the verification string */
 	for(xdata = info->forms; xdata; xdata = xdata->next) {
 		gchar *formtype = 0;
@@ -805,25 +809,25 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash) 
 		}
 		g_list_free(fields);
 	}
-	
+
 	/* generate hash */
 	context = purple_cipher_context_new_by_name(hash, NULL);
 	if (context == NULL) {
-		//purple_debug_error("jabber", "Could not find cipher\n");
+		/* purple_debug_error("jabber", "Could not find cipher\n"); */
 		return 0;
 	}
 	purple_cipher_context_append(context, (guchar*)verification, strlen(verification));
-	
+
 	if (!purple_cipher_context_digest(context, strlen(verification), checksum, &checksum_size)) {
-		//purple_debug_error("util", "Failed to get digest.\n");
+		/* purple_debug_error("util", "Failed to get digest.\n"); */
 	}
 	purple_cipher_context_destroy(context);
-	
+
 	/* apply Base64 on hash */
-	
+
 	g_free(verification);
 	verification = purple_base64_encode(checksum, checksum_size);
-	
+
 	return verification;
 }
 
