@@ -54,7 +54,9 @@ static gboolean jabber_caps_compare(gconstpointer v1, gconstpointer v2) {
 	const JabberCapsKey *name1 = v1;
 	const JabberCapsKey *name2 = v2;
 	
-	return strcmp(name1->node,name2->node) == 0 && strcmp(name1->ver,name2->ver) == 0 && strcmp(name1->hash,name2->hash) == 0;
+	return strcmp(name1->node, name2->node) == 0 &&
+	       strcmp(name1->ver, name2->ver) == 0 &&
+	       strcmp(name1->hash, name2->hash) == 0;
 }
 
 void jabber_caps_destroy_key(gpointer key) {
@@ -636,16 +638,6 @@ static gint jabber_caps_jabber_feature_compare(gconstpointer a, gconstpointer b)
 }
 #endif
 
-static gint jabber_caps_string_compare(gconstpointer a, gconstpointer b) {
-	const gchar *ac;
-	const gchar *bc;
-	
-	ac = a;
-	bc = b;
-	
-	return strcmp(ac, bc);
-}
-
 static gchar *jabber_caps_get_formtype(const xmlnode *x) {
 	xmlnode *formtypefield;
 	formtypefield = xmlnode_get_child(x, "field");
@@ -734,7 +726,7 @@ static GList *jabber_caps_xdata_get_fields(const xmlnode *x) {
 			gchar *val = xmlnode_get_data(value);
 			xdatafield->values = g_list_append(xdatafield->values, val);
 		}
-		xdatafield->values = g_list_sort(xdatafield->values, jabber_caps_string_compare);
+		xdatafield->values = g_list_sort(xdatafield->values, (GCompareFunc)strcmp);
 		fields = g_list_append(fields, xdatafield);
 	} 
 	fields = g_list_sort(fields, jabber_caps_xdata_field_compare);
@@ -764,7 +756,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash) 
 	
 	/* sort identities, features and x-data forms */
 	info->identities = g_list_sort(info->identities, jabber_caps_jabber_identity_compare);
-	info->features = g_list_sort(info->features, jabber_caps_string_compare);
+	info->features = g_list_sort(info->features, (GCompareFunc)strcmp);
 	info->forms = g_list_sort(info->forms, jabber_caps_jabber_xdata_compare);
 	
 	/* concat identities to the verification string */
