@@ -21,10 +21,9 @@
 
 #include "internal.h"
 
-#include <glib.h>
+#include "debug.h"
 #include "caps.h"
 #include "cipher.h"
-#include <string.h>
 #include "iq.h"
 #include "presence.h"
 #include "util.h"
@@ -339,7 +338,9 @@ typedef struct _jabber_caps_cbplususerdata {
 	char *node;
 	char *ver;
 	char *hash;
+#if 0
 	unsigned extOutstanding;
+#endif
 } jabber_caps_cbplususerdata;
 
 #if 0
@@ -428,21 +429,28 @@ static void jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer dat
 }
 #endif
 
-static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data) {
-	/* collect data and fetch all exts */
+static void
+jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
+{
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/disco#info");
 	jabber_caps_cbplususerdata *userdata = data;
-	JabberCapsClientInfo *info;
+	JabberCapsClientInfo *info, *value;
 	gchar *hash;
-	JabberCapsValue *value;
-	JabberCapsKey *key;
-	xmlnode *child;
+	const char *type = xmlnode_get_attrib(packet, "type");
+	JabberCapsKey key;
 
-	/* TODO: Better error checking! */
-	if (!query || !strcmp(xmlnode_get_attrib(packet, "type"), "error"))
+	if (!query || !strcmp(type, "error")) {
+		userdata->cb(NULL, userdata->user_data);
+
+		g_free(userdata->who);
+		g_free(userdata->node);
+		g_free(userdata->ver);
+		g_free(userdata->hash);
+		g_free(userdata);
 		return;
-	
+	}
+
 	/* check hash */
 	info = jabber_caps_parse_client_info(query);
 
@@ -451,7 +459,16 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	} else if (!strcmp(userdata->hash, "md5")) {
 		hash = jabber_caps_calculate_hash(info, "md5");
 	} else {
-		/* TODO: clean up */
+		purple_debug_warning("jabber", "unknown caps hash algorithm: %s\n", userdata->hash);
+
+		userdata->cb(NULL, userdata->user_data);
+
+		jabber_caps_destroy_value(info);
+		g_free(userdata->who);
+		g_free(userdata->node);
+		g_free(userdata->ver);
+		g_free(userdata->hash);
+		g_free(userdata);		
 		return;	
 	}
 
@@ -461,61 +478,49 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	printf("\n\thash:            %s", userdata->hash);
 	printf("\n");
 	
-	if (strcmp(hash, userdata->ver)) {
-		g_free(info);
+	if (!hash || strcmp(hash, userdata->ver)) {
+		purple_debug_warning("jabber", "caps hash from %s did not match\n", xmlnode_get_attrib(packet, "from"));
+		userdata->cb(NULL, userdata->user_data);
+
+		jabber_caps_destroy_value(info);
+		g_free(userdata->who);
+		g_free(userdata->node);
+		g_free(userdata->ver);
+		g_free(userdata->hash);
+		g_free(userdata);		
 		g_free(hash);
-		printf("\n! ! ! invalid hash ! ! !");
 		return;
 	}
-	
+
+	key.node = userdata->node;
+	key.ver = userdata->ver;
+	key.hash = userdata->hash;
+
+	/* check whether it's not in the table */
+	if ((value = g_hash_table_lookup(capstable, &key))) {
+		JabberCapsClientInfo *tmp = info;
+		info = value;
+		jabber_caps_destroy_value(tmp);
+	} else {
+		JabberCapsKey *n_key = g_new(JabberCapsKey, 1);
+		n_key->node = userdata->node;
+		n_key->ver = userdata->ver;
+		n_key->hash = userdata->hash;
+		userdata->node = userdata->ver = userdata->hash = NULL;
+
+		g_hash_table_insert(capstable, n_key, info);
+		jabber_caps_store();
+	}
+
+	userdata->cb(info, userdata->user_data);
+
+	/* capstable will free info */
+	g_free(userdata->who);
+	g_free(userdata->node);
+	g_free(userdata->ver);
+	g_free(userdata->hash);	
+	g_free(userdata);
 	g_free(hash);
-	
-	value = g_new0(JabberCapsValue, 1);
-	key = g_new0(JabberCapsKey, 1);
-
-#if 0
-	value->ext = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_caps_ext_destroy_value);
-#endif
-	key->node = g_strdup(userdata->node);
-	key->ver = g_strdup(userdata->ver);
-	key->hash = g_strdup(userdata->hash);
-	
-	/* check whether it's stil not in the table */
-	if (g_hash_table_lookup(capstable, key)) {
-		jabber_caps_destroy_key(key);
-		g_free(value);
-		return;
-	}
-	
-	
-	for(child = query->child; child; child = child->next) {
-		if(child->type != XMLNODE_TYPE_TAG)
-			continue;
-		if(!strcmp(child->name,"feature")) {
-			const char *var = xmlnode_get_attrib(child, "var");
-			if(!var)
-				continue;
-			value->features = g_list_append(value->features, g_strdup(var));
-		} else if(!strcmp(child->name,"identity")) {
-			const char *category = xmlnode_get_attrib(child, "category");
-			const char *type = xmlnode_get_attrib(child, "type");
-			const char *name = xmlnode_get_attrib(child, "name");
-			const char *lang = xmlnode_get_attrib(child, "lang");
-			
-			JabberIdentity *id = g_new0(JabberIdentity, 1);
-			id->category = g_strdup(category);
-			id->type = g_strdup(type);
-			id->name = g_strdup(name);
-			id->lang = g_strdup(lang);
-
-			value->identities = g_list_append(value->identities,id);
-		} else if(!strcmp(child->name, "x")) {
-			value->forms = g_list_append(value->forms, xmlnode_copy(child));	
-		}
-	}
-
-	g_hash_table_replace(capstable, key, value);
-	jabber_caps_store();
 }
 
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
