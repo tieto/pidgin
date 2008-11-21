@@ -2552,27 +2552,26 @@ void jabber_register_commands(void)
  * @return TRUE if supports feature; else FALSE.
  */
 static gboolean
-jabber_ipc_contact_has_feature(gchar *fulljid, gchar *feature)
+jabber_ipc_contact_has_feature(const gchar *fulljid, const gchar *feature)
 {
-	JabberCapsKey *caps_info = NULL;
-	JabberCapsValueExt *capabilities = NULL;
-	
-	caps_info = g_hash_table_lookup(jabber_contact_info, fulljid);
-	
-	if (!caps_info) return FALSE;
-	capabilities = g_hash_table_lookup(capstable, caps_info);
-	
-	if (g_list_find_custom(capabilities->features, feature, (GCompareFunc)strcmp) == NULL) return FALSE ;
-	return TRUE;
+	gpointer caps_hash = g_hash_table_lookup(jabber_contact_info, fulljid);
+	JabberCapsClientInfo *capabilities;
+
+	if (!caps_hash)
+		return FALSE;
+
+	capabilities = g_hash_table_lookup(capstable, caps_hash);
+	return g_list_find_custom(capabilities->features, feature, (GCompareFunc)strcmp) != NULL;
 }
 
 static void
-jabber_ipc_add_feature(gchar *feature) 
+jabber_ipc_add_feature(const gchar *feature)
 {
-	if (feature == 0) return;
+	if (!feature)
+		return;
 	jabber_add_feature(feature, 0);
-	
-	// send presence with new caps info for all connected accounts
+
+	/* send presence with new caps info for all connected accounts */
 	jabber_caps_broadcast_change();
 }
 

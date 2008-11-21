@@ -37,7 +37,9 @@ struct _JabberCapsClientInfo {
 	GList *forms; /* xmlnode * */
 };
 
+#if 0
 typedef struct _JabberCapsClientInfo JabberCapsValueExt;
+#endif
 
 typedef struct _JabberDataFormField {
 	gchar *var;
