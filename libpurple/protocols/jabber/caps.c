@@ -70,7 +70,7 @@ void jabber_caps_destroy_key(gpointer key) {
 static void jabber_caps_destroy_value(gpointer value) {
 	JabberCapsValue *valuestruct = value;
 	while(valuestruct->identities) {
-		JabberCapsIdentity *id = valuestruct->identities->data;
+		JabberIdentity *id = valuestruct->identities->data;
 		g_free(id->category);
 		g_free(id->type);
 		g_free(id->name);
@@ -153,7 +153,7 @@ static void jabber_caps_load(void) {
 					const char *type = xmlnode_get_attrib(child, "type");
 					const char *name = xmlnode_get_attrib(child, "name");
 					
-					JabberCapsIdentity *id = g_new0(JabberCapsIdentity, 1);
+					JabberIdentity *id = g_new0(JabberIdentity, 1);
 					id->category = g_strdup(category);
 					id->type = g_strdup(type);
 					id->name = g_strdup(name);
@@ -207,7 +207,7 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 	xmlnode_set_attrib(client, "ver", clientinfo->ver);
 	xmlnode_set_attrib(client, "hash", clientinfo->hash);
 	for(iter = props->identities; iter; iter = g_list_next(iter)) {
-		JabberCapsIdentity *id = iter->data;
+		JabberIdentity *id = iter->data;
 		xmlnode *identity = xmlnode_new_child(client, "identity");
 		xmlnode_set_attrib(identity, "category", id->category);
 		xmlnode_set_attrib(identity, "type", id->type);
@@ -307,7 +307,7 @@ void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo) {
 	if(!clientinfo)
 		return;
 	while(clientinfo->identities) {
-		JabberCapsIdentity *id = clientinfo->identities->data;
+		JabberIdentity *id = clientinfo->identities->data;
 		g_free(id->category);
 		g_free(id->type);
 		g_free(id->name);
@@ -493,7 +493,7 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 				const char *type = xmlnode_get_attrib(child, "type");
 				const char *name = xmlnode_get_attrib(child, "name");
 				
-				JabberCapsIdentity *id = g_new0(JabberCapsIdentity, 1);
+				JabberIdentity *id = g_new0(JabberIdentity, 1);
 				id->category = g_strdup(category);
 				id->type = g_strdup(type);
 				id->name = g_strdup(name);
@@ -678,7 +678,7 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
 			const char *type = xmlnode_get_attrib(child, "type");
 			const char *name = xmlnode_get_attrib(child, "name");
 
-			JabberCapsIdentity *id = g_new0(JabberCapsIdentity, 1);
+			JabberIdentity *id = g_new0(JabberIdentity, 1);
 			id->category = g_strdup(category);
 			id->type = g_strdup(type);
 			id->name = g_strdup(name);

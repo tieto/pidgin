@@ -29,10 +29,8 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 /* Implementation of XEP-0115 */
 extern GHashTable *capstable;
 
-typedef struct _JabberIdentity JabberCapsIdentity;
-
 struct _JabberCapsClientInfo {
-	GList *identities; /* JabberCapsIdentity */
+	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
 	GList *forms; /* xmlnode * */
 };
