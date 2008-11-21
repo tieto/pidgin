@@ -382,17 +382,14 @@ typedef struct _JabberPresenceCapabilities {
 	char *from;
 } JabberPresenceCapabilities;
 
-static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointer user_data) {
-	JabberPresenceCapabilities *userdata = user_data;
-	JabberID *jid;
+static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, JabberPresenceCapabilities *userdata)
+{
 	JabberBuddyResource *jbr;
-	GList *iter;
+	char *resource = g_utf8_strrchr(userdata->from, -1, '/');
+	resource += 1;
 
-	jid = jabber_id_new(userdata->from);
-	jbr = jabber_buddy_find_resource(userdata->jb, jid->resource);
-	jabber_id_free(jid);
-
-	if(!jbr) {
+	jbr = jabber_buddy_find_resource(userdata->jb, resource);
+	if (!jbr) {
 		g_free(userdata->from);
 		g_free(userdata);
 		return;
@@ -403,17 +400,14 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointe
 	jbr->caps = info;
 
 	if (info) {
-		for(iter = info->features; iter; iter = g_list_next(iter)) {
-			if(!strcmp((const char*)iter->data, "http://jabber.org/protocol/commands")) {
-				JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
-				xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
-				xmlnode_set_attrib(iq->node, "to", userdata->from);
-				xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/commands");
-
-				jabber_iq_set_callback(iq, jabber_adhoc_disco_result_cb, NULL);
-				jabber_iq_send(iq);
-				break;
-			}
+		GList *node = g_list_find_custom(info->features, "http://jabber.org/protocol/commands", (GCompareFunc)strcmp);
+		if (node) {
+			JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+			xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", "http://jabber.org/protocol/disco#items");
+			xmlnode_set_attrib(iq->node, "to", userdata->from);
+			xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/commands");
+			jabber_iq_set_callback(iq, jabber_adhoc_disco_result_cb, NULL);
+			jabber_iq_send(iq);
 		}
 	}
 
@@ -767,7 +761,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					userdata->js = js;
 					userdata->jb = jb;
 					userdata->from = g_strdup(from);
-					jabber_caps_get_info(js, from, node, ver, hash, jabber_presence_set_capabilities, userdata);
+					jabber_caps_get_info(js, from, node, ver, hash,
+					    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
+					    userdata);
 				}
 			}
 		}
