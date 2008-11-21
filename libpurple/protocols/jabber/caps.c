@@ -154,8 +154,12 @@ static void jabber_caps_load(void) {
 					const char *type = xmlnode_get_attrib(child, "type");
 					const char *name = xmlnode_get_attrib(child, "name");
 					const char *lang = xmlnode_get_attrib(child, "lang");
-					
-					JabberIdentity *id = g_new0(JabberIdentity, 1);
+					JabberIdentity *id;
+
+					if (!category || !type)
+						continue;
+
+					id = g_new0(JabberIdentity, 1);
 					id->category = g_strdup(category);
 					id->type = g_strdup(type);
 					id->name = g_strdup(name);
@@ -321,13 +325,9 @@ void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo) {
 		
 		clientinfo->identities = g_list_delete_link(clientinfo->identities,clientinfo->identities);
 	}
-	while(clientinfo->features) {
-		char *feat = clientinfo->features->data;
-		g_free(feat);
-		
-		clientinfo->features = g_list_delete_link(clientinfo->features,clientinfo->features);
-	}
-	
+
+	g_list_foreach(clientinfo->features, (GFunc)g_free, NULL);
+	g_list_free(clientinfo->features);
 	g_free(clientinfo);
 }
 
@@ -694,8 +694,12 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
 			const char *type = xmlnode_get_attrib(child, "type");
 			const char *name = xmlnode_get_attrib(child, "name");
 			const char *lang = xmlnode_get_attrib(child, "lang");
+			JabberIdentity *id;
 
-			JabberIdentity *id = g_new0(JabberIdentity, 1);
+			if (!category || !type)
+				continue;
+
+			id = g_new0(JabberIdentity, 1);
 			id->category = g_strdup(category);
 			id->type = g_strdup(type);
 			id->name = g_strdup(name);
@@ -709,7 +713,7 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
 				continue;
 			info->features = g_list_append(info->features, g_strdup(var));
 		} else if (!strcmp(child->name, "x")) {
-			if (!strcmp(child->xmlns, "jabber:x:data")) {
+			if (child->xmlns && !strcmp(child->xmlns, "jabber:x:data")) {
 				/* x-data form */
 				xmlnode *dataform = xmlnode_copy(child);
 				info->forms = g_list_append(info->forms, dataform);
