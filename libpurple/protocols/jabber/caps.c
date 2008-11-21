@@ -334,10 +334,12 @@ typedef struct _jabber_caps_cbplususerdata {
 	unsigned extOutstanding;
 } jabber_caps_cbplususerdata;
 
+#if 0
 typedef struct jabber_ext_userdata {
 	jabber_caps_cbplususerdata *userdata;
 	char *node;
 } jabber_ext_userdata;
+#endif
 
 #if 0
 static void jabber_caps_get_info_check_completion(jabber_caps_cbplususerdata *userdata) {
@@ -532,7 +534,10 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	}
 }
 
-void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *hash, jabber_caps_get_info_cb cb, gpointer user_data) {
+void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
+		const char *ver, const char *hash, jabber_caps_get_info_cb cb,
+		gpointer user_data)
+{
 	JabberCapsValue *client;
 	JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 	jabber_caps_cbplususerdata *userdata = g_new0(jabber_caps_cbplususerdata, 1);
