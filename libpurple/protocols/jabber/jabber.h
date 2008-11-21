@@ -206,6 +206,9 @@ struct _JabberStream
 	
 	gboolean vcard_fetched;
 
+	/* Entity Capabilities hash */
+	char *caps_hash;
+
 	/* does the local server support PEP? */
 	gboolean pep;
 

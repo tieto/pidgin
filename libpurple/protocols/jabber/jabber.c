@@ -1390,6 +1390,7 @@ void jabber_close(PurpleConnection *gc)
 	if(js->user)
 		jabber_id_free(js->user);
 	g_free(js->avatar_hash);
+	g_free(js->caps_hash);
 
 	purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
@@ -2540,7 +2541,7 @@ void jabber_register_commands(void)
 					  _("buzz: Buzz a user to get their attention"), NULL);
 }
 
-/* IPC fucntions*/
+/* IPC functions*/
 
 /*
  * IPC function for checking wheather a client at a full JID supports a certain feature.

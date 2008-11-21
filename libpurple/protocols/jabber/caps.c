@@ -32,7 +32,6 @@
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
 GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsValue */
-static gchar *caps_hash = NULL;
 
 #if 0
 typedef struct _JabberCapsValue {
@@ -853,14 +852,19 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	info->identities = jabber_identities;
 	info->forms = 0;
 	
-	if (caps_hash) g_free(caps_hash);
-	caps_hash = jabber_caps_calculate_hash(info, "sha1");
+	if (js->caps_hash)
+		g_free(js->caps_hash);
+	js->caps_hash = jabber_caps_calculate_hash(info, "sha1");
 	g_free(info);
 	g_list_free(features);
 }
 
-const gchar* jabber_caps_get_own_hash() {
-	return caps_hash;
+const gchar* jabber_caps_get_own_hash(JabberStream *js)
+{
+	if (!js->caps_hash)
+		jabber_caps_calculate_own_hash(js);
+
+	return js->caps_hash;
 }
 
 void jabber_caps_broadcast_change() {

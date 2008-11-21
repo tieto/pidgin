@@ -89,7 +89,7 @@ void jabber_caps_calculate_own_hash(JabberStream *js);
 /** Get the current caps hash.
  * 	@ret hash
 **/
-const gchar* jabber_caps_get_own_hash(void);
+const gchar* jabber_caps_get_own_hash(JabberStream *js);
 
 /**
  *  Broadcast a new calculated hash using a <presence> stanza.

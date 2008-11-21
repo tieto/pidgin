@@ -268,7 +268,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
 	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
 	xmlnode_set_attrib(c, "hash", "sha-1");
-	xmlnode_set_attrib(c, "ver", jabber_caps_get_own_hash());
+	xmlnode_set_attrib(c, "ver", jabber_caps_get_own_hash(js));
 
 #if 0
 	if(js != NULL) {

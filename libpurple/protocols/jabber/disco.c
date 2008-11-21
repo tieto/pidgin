@@ -100,7 +100,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		char *node_uri = NULL;
 		
 		// create custom caps node URI
-		node_uri = g_strconcat(CAPS0115_NODE, "#", jabber_caps_get_own_hash(), NULL);
+		node_uri = g_strconcat(CAPS0115_NODE, "#", jabber_caps_get_own_hash(js), NULL);
 
 		if((in_query = xmlnode_get_child(packet, "query"))) {
 			node = xmlnode_get_attrib(in_query, "node");
