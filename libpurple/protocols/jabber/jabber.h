@@ -310,7 +310,7 @@ void jabber_remove_feature(const gchar *namespace);
  *  @param language the language localization of the name. Can be NULL.
  *  @param name the name of the identity.
  */
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name); 
+void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name);
 
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
@@ -333,6 +333,8 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy);
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
+
 void jabber_init_plugin(PurplePlugin *plugin);
+void jabber_uninit_plugin(void);
 
 #endif /* _PURPLE_JABBER_H_ */

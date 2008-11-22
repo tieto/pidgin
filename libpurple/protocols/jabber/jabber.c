@@ -1518,6 +1518,16 @@ void jabber_remove_feature(const char *namespace) {
 	}
 }
 
+static void jabber_features_destroy(void)
+{
+	while (jabber_features) {
+		JabberFeature *feature = jabber_features->data;
+		g_free(feature->namespace);
+		g_free(feature);
+		jabber_features = g_list_remove_link(jabber_features, jabber_features);
+	}
+}
+
 void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name) {
 	GList *identity;
 	JabberIdentity *ident;
@@ -1540,6 +1550,19 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	ident->lang = g_strdup(lang);
 	ident->name = g_strdup(name);
 	jabber_identities = g_list_append(jabber_identities, ident);
+}
+
+static void jabber_identities_destroy(void)
+{
+	while (jabber_identities) {
+		JabberIdentity *id = jabber_identities->data;
+		g_free(id->category);
+		g_free(id->type);
+		g_free(id->lang);
+		g_free(id->name);
+		g_free(id);
+		jabber_identities = g_list_remove_link(jabber_identities, jabber_identities);
+	}
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)
@@ -2634,4 +2657,11 @@ jabber_init_plugin(PurplePlugin *plugin)
 							 purple_marshal_VOID__POINTER,
 							 NULL, 1,
 							 purple_value_new(PURPLE_TYPE_STRING));
+}
+
+void
+jabber_uninit_plugin(void)
+{
+	jabber_features_destroy();
+	jabber_identities_destroy();
 }

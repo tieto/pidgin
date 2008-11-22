@@ -148,9 +148,17 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
 	
 	purple_signal_unregister(plugin, "jabber-sending-text");
-	
+
+	/* reverse order of init_plugin */
 	jabber_data_uninit();
-	
+	/* PEP things should be uninit via jabber_pep_uninit, not here */
+	jabber_pep_uninit();
+	jabber_caps_uninit();
+	jabber_iq_uninit();
+
+	/* Stay on target...stay on target... Almost there... */
+	jabber_uninit_plugin();
+
 	return TRUE;
 }
 
@@ -272,11 +280,12 @@ init_plugin(PurplePlugin *plugin)
 #endif
 #endif
 	jabber_register_commands();
-	
+
+	/* reverse order of unload_plugin */
 	jabber_iq_init();
-	jabber_pep_init();
 	jabber_caps_init();
-	jabber_tune_init();
+	/* PEP things should be init via jabber_pep_init, not here */
+	jabber_pep_init();
 	jabber_data_init();
 
 	#warning implement adding and retrieving own features via IPC API

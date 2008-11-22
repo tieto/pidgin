@@ -26,6 +26,7 @@
 #include <string.h>
 #include "usermood.h"
 #include "usernick.h"
+#include "usertune.h"
 
 static GHashTable *pep_handlers = NULL;
 
@@ -35,8 +36,15 @@ void jabber_pep_init(void) {
 		
 		/* register PEP handlers */
 		jabber_mood_init();
+		jabber_tune_init();
 		jabber_nick_init();
 	}
+}
+
+void jabber_pep_uninit(void) {
+	/* any PEP handlers that need to clean things up go here */
+	g_hash_table_destroy(pep_handlers);
+	pep_handlers = NULL;
 }
 
 void jabber_pep_init_actions(GList **m) {
