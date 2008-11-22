@@ -821,31 +821,34 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 }
 
 void jabber_caps_calculate_own_hash(JabberStream *js) {
-	JabberCapsClientInfo *info;
+	JabberCapsClientInfo info;
 	GList *iter = 0;
 	GList *features = 0;
 
-	if (jabber_identities == 0 && jabber_features == 0) return;
+	if (!jabber_identities && !jabber_features) {
+		/* This really shouldn't ever happen */
+		purple_debug_warning("jabber", "No features or identities, cannot calculate own caps hash.\n");
+		g_free(js->caps_hash);
+		js->caps_hash = NULL;
+		return;
+	}
 
-	/* sort features */
+	/* build the currently-supported list of features */
 	if (jabber_features) {
 		for (iter = jabber_features; iter; iter = iter->next) {
 			JabberFeature *feat = iter->data;
-			if(feat->is_enabled == NULL || feat->is_enabled(js, feat->namespace) == TRUE) {
+			if(!feat->is_enabled || feat->is_enabled(js, feat->namespace)) {
 				features = g_list_append(features, feat->namespace);
 			}
 		}
 	}
 
-	info = g_new0(JabberCapsClientInfo, 1);
-	info->features = features;
-	info->identities = jabber_identities;
-	info->forms = 0;
-	
-	if (js->caps_hash)
-		g_free(js->caps_hash);
-	js->caps_hash = jabber_caps_calculate_hash(info, "sha1");
-	g_free(info);
+	info.features = features;
+	info.identities = jabber_identities;
+	info.forms = NULL;
+
+	g_free(js->caps_hash);
+	js->caps_hash = jabber_caps_calculate_hash(&info, "sha1");
 	g_list_free(features);
 }
 

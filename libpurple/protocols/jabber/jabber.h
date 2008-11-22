@@ -308,10 +308,11 @@ void jabber_remove_feature(const gchar *namespace);
 /** Adds an identitiy to this jabber library instance. For list of valid values vistit the 
  *	webiste of the XMPP Registrar ( http://www.xmpp.org/registrar/disco-categories.html#client ).
  *  @param category the category of the identity.
- *	@param type the type of the identity.
- *	@param name the name of the identity.
+ *  @param type the type of the identity.
+ *  @param language the language localization of the name. Can be NULL.
+ *  @param name the name of the identity.
  */
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *name); 
+void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name); 
 
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);

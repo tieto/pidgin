@@ -99,7 +99,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		const char *node = NULL;
 		char *node_uri = NULL;
 		
-		// create custom caps node URI
+		/* create custom caps node URI */
 		node_uri = g_strconcat(CAPS0115_NODE, "#", jabber_caps_get_own_hash(js), NULL);
 
 		if((in_query = xmlnode_get_child(packet, "query"))) {
@@ -126,11 +126,14 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 				identity = xmlnode_new_child(query, "identity");
 				xmlnode_set_attrib(identity, "category", ident->category);
 				xmlnode_set_attrib(identity, "type", ident->type);
-				if (ident->name != 0) xmlnode_set_attrib(identity, "name", ident->name);
+				if (ident->lang)
+					xmlnode_set_attrib(identity, "xml:lang", ident->lang);
+				if (ident->name)
+					xmlnode_set_attrib(identity, "name", ident->name);
 			}
 			for(features = jabber_features; features; features = features->next) {
 				JabberFeature *feat = (JabberFeature*)features->data;
-				if(feat->is_enabled == NULL || feat->is_enabled(js, feat->namespace) == TRUE) {
+				if (!feat->is_enabled || feat->is_enabled(js, feat->namespace)) {
 					feature = xmlnode_new_child(query, "feature");
 					xmlnode_set_attrib(feature, "var", feat->namespace);
 				}	

@@ -1520,7 +1520,7 @@ void jabber_remove_feature(const char *namespace) {
 	}
 }
 
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *name) {
+void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name) {
 	GList *identity;
 	JabberIdentity *ident;
 	/* both required according to XEP-0030 */
@@ -1529,14 +1529,17 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	
 	for(identity = jabber_identities; identity; identity = identity->next) {
 		JabberIdentity *ident = (JabberIdentity*)identity->data;
-		if(!strcmp(ident->category, category)) {
-			if (!strcmp(ident->type, type)) return;
+		if (!strcmp(ident->category, category) &&
+		    !strcmp(ident->type, type) &&
+		    ((!ident->lang && !lang) || (ident->lang && lang && !strcmp(ident->lang, lang)))) {
+			return;
 		}	
 	}
-	
+
 	ident = g_new0(JabberIdentity, 1);
 	ident->category = g_strdup(category);
 	ident->type = g_strdup(type);
+	ident->lang = g_strdup(lang);
 	ident->name = g_strdup(name);
 	jabber_identities = g_list_append(jabber_identities, ident);
 }
@@ -2541,27 +2544,47 @@ void jabber_register_commands(void)
 					  _("buzz: Buzz a user to get their attention"), NULL);
 }
 
-/* IPC functions*/
+/* IPC functions */
 
-/*
- * IPC function for checking wheather a client at a full JID supports a certain feature.
- * 
- * @param fulljid 	The full JID of the client.
- * @param featrure 	The feature's namespace.
- * 
+/**
+ * IPC function for determining if a contact supports a certain feature.
+ *
+ * @param account   The PurpleAccount
+ * @param jid       The full JID of the contact.
+ * @param feature   The feature's namespace.
+ *
  * @return TRUE if supports feature; else FALSE.
  */
 static gboolean
-jabber_ipc_contact_has_feature(const gchar *fulljid, const gchar *feature)
+jabber_ipc_contact_has_feature(PurpleAccount *account, const gchar *jid,
+                               const gchar *feature)
 {
-	gpointer caps_hash = g_hash_table_lookup(jabber_contact_info, fulljid);
-	JabberCapsClientInfo *capabilities;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+	gchar *resource;
 
-	if (!caps_hash)
+	if (!purple_account_is_connected(account))
 		return FALSE;
+	js = gc->proto_data;
 
-	capabilities = g_hash_table_lookup(capstable, caps_hash);
-	return g_list_find_custom(capabilities->features, feature, (GCompareFunc)strcmp) != NULL;
+	resource = jabber_get_resource(jid);
+	if (!(resource = jabber_get_resource(jid)) || 
+	    !(jb = jabber_buddy_find(js, jid, FALSE)) ||
+	    !(jbr = jabber_buddy_find_resource(jb, resource))) {
+		g_free(resource);
+		return FALSE;
+	}
+
+	g_free(resource);
+
+	if (!jbr->caps) {
+		/* TODO: fetch them? */
+		return FALSE;
+	}
+
+	return NULL != g_list_find_custom(jbr->caps->features, feature, (GCompareFunc)strcmp);
 }
 
 static void
@@ -2580,7 +2603,7 @@ jabber_init_plugin(PurplePlugin *plugin)
 {
 	my_protocol = plugin;
 
-	jabber_add_identity("client", "pc", PACKAGE);
+	jabber_add_identity("client", "pc", NULL, PACKAGE);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
@@ -2606,8 +2629,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 	
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
-							 purple_marshal_BOOLEAN__POINTER_POINTER,
-							 purple_value_new(PURPLE_TYPE_BOOLEAN), 2,
+							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+							 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
+							 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT),
 							 purple_value_new(PURPLE_TYPE_STRING),
 							 purple_value_new(PURPLE_TYPE_STRING));
 	purple_plugin_ipc_register(plugin, "add_feature", PURPLE_CALLBACK(jabber_ipc_add_feature),
