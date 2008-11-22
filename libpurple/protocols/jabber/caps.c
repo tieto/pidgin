@@ -30,7 +30,7 @@
 
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
-GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsValue */
+GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsClientInfo */
 
 #if 0
 typedef struct _JabberCapsValue {
@@ -39,7 +39,6 @@ typedef struct _JabberCapsValue {
 	GHashTable *ext; /* char * -> JabberCapsValueExt */
 } JabberCapsValue;
 #endif
-typedef struct _JabberCapsClientInfo JabberCapsValue;
 
 static guint jabber_caps_hash(gconstpointer key) {
 	const JabberCapsKey *name = key;
@@ -66,29 +65,34 @@ void jabber_caps_destroy_key(gpointer key) {
 	g_free(keystruct);
 }
 
-static void jabber_caps_destroy_value(gpointer value) {
-	JabberCapsValue *valuestruct = value;
-	while(valuestruct->identities) {
-		JabberIdentity *id = valuestruct->identities->data;
+static void
+jabber_caps_client_info_destroy(gpointer data) {
+	JabberCapsClientInfo *info = data;
+	while(info->identities) {
+		JabberIdentity *id = info->identities->data;
 		g_free(id->category);
 		g_free(id->type);
 		g_free(id->name);
 		g_free(id->lang);
 		g_free(id);
-		
-		valuestruct->identities = g_list_delete_link(valuestruct->identities,valuestruct->identities);
-	}
-	while(valuestruct->features) {
-		g_free(valuestruct->features->data);
-		valuestruct->features = g_list_delete_link(valuestruct->features,valuestruct->features);
+		info->identities = g_list_delete_link(info->identities, info->identities);
 	}
 
-	while(valuestruct->forms) {
-		g_free(valuestruct->forms->data);
-		valuestruct->forms = g_list_delete_link(valuestruct->forms,valuestruct->forms);
+	while(info->features) {
+		g_free(info->features->data);
+		info->features = g_list_delete_link(info->features, info->features);
 	}
-	/* g_hash_table_destroy(valuestruct->ext); */
-	g_free(valuestruct);
+
+	while(info->forms) {
+		g_free(info->forms->data);
+		info->forms = g_list_delete_link(info->forms, info->forms);
+	}
+
+#if 0
+	g_hash_table_destroy(valuestruct->ext);
+#endif
+
+	g_free(info);
 }
 
 #if 0
@@ -114,7 +118,7 @@ static void jabber_caps_ext_destroy_value(gpointer value) {
 static void jabber_caps_load(void);
 
 void jabber_caps_init(void) {
-	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, jabber_caps_destroy_value);
+	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, jabber_caps_client_info_destroy);
 	jabber_caps_load();
 }
 
@@ -135,7 +139,7 @@ static void jabber_caps_load(void) {
 			continue;
 		if(!strcmp(client->name, "client")) {
 			JabberCapsKey *key = g_new0(JabberCapsKey, 1);
-			JabberCapsValue *value = g_new0(JabberCapsValue, 1);
+			JabberCapsClientInfo *value = g_new0(JabberCapsClientInfo, 1);
 			xmlnode *child;
 			key->node = g_strdup(xmlnode_get_attrib(client,"node"));
 			key->ver  = g_strdup(xmlnode_get_attrib(client,"ver"));
@@ -204,7 +208,7 @@ static void jabber_caps_store_ext(gpointer key, gpointer value, gpointer user_da
 
 static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user_data) {
 	JabberCapsKey *clientinfo = key;
-	JabberCapsValue *props = value;
+	JabberCapsClientInfo *props = value;
 	xmlnode *root = user_data;
 	xmlnode *client = xmlnode_new_child(root, "client");
 	GList *iter;
@@ -463,7 +467,7 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 
 		userdata->cb(NULL, userdata->user_data);
 
-		jabber_caps_destroy_value(info);
+		jabber_caps_client_info_destroy(info);
 		g_free(userdata->who);
 		g_free(userdata->node);
 		g_free(userdata->ver);
@@ -482,7 +486,7 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 		purple_debug_warning("jabber", "caps hash from %s did not match\n", xmlnode_get_attrib(packet, "from"));
 		userdata->cb(NULL, userdata->user_data);
 
-		jabber_caps_destroy_value(info);
+		jabber_caps_client_info_destroy(info);
 		g_free(userdata->who);
 		g_free(userdata->node);
 		g_free(userdata->ver);
@@ -500,7 +504,7 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 	if ((value = g_hash_table_lookup(capstable, &key))) {
 		JabberCapsClientInfo *tmp = info;
 		info = value;
-		jabber_caps_destroy_value(tmp);
+		jabber_caps_client_info_destroy(tmp);
 	} else {
 		JabberCapsKey *n_key = g_new(JabberCapsKey, 1);
 		n_key->node = userdata->node;
@@ -527,7 +531,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 		const char *ver, const char *hash, jabber_caps_get_info_cb cb,
 		gpointer user_data)
 {
-	JabberCapsValue *client;
+	JabberCapsClientInfo *client;
 	JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 	jabber_caps_cbplususerdata *userdata = g_new0(jabber_caps_cbplususerdata, 1);
 	userdata->cb = cb;
