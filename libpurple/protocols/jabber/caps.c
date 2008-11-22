@@ -702,34 +702,36 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
 	return info;
 }
 
-static gint jabber_caps_xdata_field_compare(gconstpointer a, gconstpointer b) {
-	const JabberDataFormField *ac;
-	const JabberDataFormField *bc;
-	
-	ac = a;
-	bc = b;
-	
+static gint jabber_caps_xdata_field_compare(gconstpointer a, gconstpointer b)
+{
+	const JabberDataFormField *ac = a;
+	const JabberDataFormField *bc = b;
+
 	return strcmp(ac->var, bc->var);
 }
 
-static GList *jabber_caps_xdata_get_fields(const xmlnode *x) {
-	GList *fields = 0;
+static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
+{
+	GList *fields = NULL;
 	xmlnode *field;
-	xmlnode *value;
-	JabberDataFormField *xdatafield;
-	
-	if(!x) return 0;
-	
-	for(field = xmlnode_get_child(x, "field"); field != 0; field = xmlnode_get_next_twin(field)) {
-		xdatafield = g_new0(JabberDataFormField, 1);
+
+	if (!x)
+		return NULL;
+
+	for (field = xmlnode_get_child(x, "field"); field; field = xmlnode_get_next_twin(field)) {
+		xmlnode *value;
+		JabberDataFormField *xdatafield = g_new0(JabberDataFormField, 1);
 		xdatafield->var = g_strdup(xmlnode_get_attrib(field, "var"));
-		for(value = xmlnode_get_child(field, "value"); value != 0; value = xmlnode_get_next_twin(value)) {
+
+		for (value = xmlnode_get_child(field, "value"); value; value = xmlnode_get_next_twin(value)) {
 			gchar *val = xmlnode_get_data(value);
 			xdatafield->values = g_list_append(xdatafield->values, val);
 		}
+
 		xdatafield->values = g_list_sort(xdatafield->values, (GCompareFunc)strcmp);
 		fields = g_list_append(fields, xdatafield);
-	} 
+	}
+
 	fields = g_list_sort(fields, jabber_caps_xdata_field_compare);
 	return fields;
 }
@@ -786,7 +788,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 			GList *value;
 			JabberDataFormField *field = (JabberDataFormField*)fields->data; 
 
-			if(strcmp(field->var, "FORM_TYPE")) {
+			if (strcmp(field->var, "FORM_TYPE")) {
 				/* Append the "var" attribute */
 				verification = jabber_caps_verification_append(verification, field->var);
 				/* Append <value/> element's cdata */
