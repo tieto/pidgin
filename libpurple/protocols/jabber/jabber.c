@@ -67,8 +67,6 @@ static PurplePlugin *my_protocol = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 
-GHashTable *jabber_contact_info = NULL;
-
 static void jabber_unregister_account_cb(JabberStream *js);
 static void try_srv_connect(JabberStream *js);
 
@@ -2624,8 +2622,6 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
 	jabber_add_feature("http://jabber.org/protocol/xhtml-im", 0);
 	jabber_add_feature("urn:xmpp:ping", 0);
-	
-	jabber_contact_info = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_caps_destroy_key);
 	
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),

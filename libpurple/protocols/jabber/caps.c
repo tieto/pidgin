@@ -540,8 +540,6 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	key->hash = g_strdup(hash);
 	
 	client = g_hash_table_lookup(capstable, key);
-
-	g_hash_table_replace(jabber_contact_info, g_strdup(who), key);
 	
 	if(!client) {
 		JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#info");

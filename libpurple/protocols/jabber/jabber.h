@@ -279,8 +279,6 @@ typedef struct _JabberBytestreamsStreamhost {
 extern GList *jabber_features;
 extern GList *jabber_identities;
 
-extern GHashTable *jabber_contact_info; /* char * -> JabberCapsKey */
-
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
 void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
