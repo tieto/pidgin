@@ -395,8 +395,7 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, JabberP
 		return;
 	}
 
-	if(jbr->caps)
-		jabber_caps_free_clientinfo(jbr->caps);
+	/* old value in jbr->caps is owned by caps code */
 	jbr->caps = info;
 
 	if (info) {

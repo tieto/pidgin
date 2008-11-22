@@ -30,7 +30,26 @@
 
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
+typedef struct _JabberDataFormField {
+	gchar *var;
+	GList *values;
+} JabberDataFormField;
+
+typedef struct _JabberCapsKey {
+	char *node;
+	char *ver;
+	char *hash;
+} JabberCapsKey;
+
 GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsClientInfo */
+
+/**
+ *	Processes a query-node and returns a JabberCapsClientInfo object with all relevant info.
+ *	
+ *	@param 	query 	A query object.
+ *	@return 		A JabberCapsClientInfo object.
+ */
+static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
 
 #if 0
 typedef struct _JabberCapsValue {
@@ -315,25 +334,6 @@ static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const ch
 }
 #endif
 
-void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo) {
-	if(!clientinfo)
-		return;
-	while(clientinfo->identities) {
-		JabberIdentity *id = clientinfo->identities->data;
-		g_free(id->category);
-		g_free(id->type);
-		g_free(id->name);
-		g_free(id->lang);
-		g_free(id);
-		
-		clientinfo->identities = g_list_delete_link(clientinfo->identities,clientinfo->identities);
-	}
-
-	g_list_foreach(clientinfo->features, (GFunc)g_free, NULL);
-	g_list_free(clientinfo->features);
-	g_free(clientinfo);
-}
-
 typedef struct _jabber_caps_cbplususerdata {
 	jabber_caps_get_info_cb cb;
 	gpointer user_data;
@@ -476,12 +476,6 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 		return;	
 	}
 
-	printf("\n\tfrom:            %s", xmlnode_get_attrib(packet, "from"));
-	printf("\n\tnode:            %s", xmlnode_get_attrib(query, "node"));
-	printf("\n\tcalculated key:  %s", hash);
-	printf("\n\thash:            %s", userdata->hash);
-	printf("\n");
-	
 	if (!hash || strcmp(hash, userdata->ver)) {
 		purple_debug_warning("jabber", "caps hash from %s did not match\n", xmlnode_get_attrib(packet, "from"));
 		userdata->cb(NULL, userdata->user_data);
@@ -661,7 +655,8 @@ static gint jabber_caps_jabber_xdata_compare(gconstpointer a, gconstpointer b) {
 	return result;
 }
 
-JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
+static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
+{
 	xmlnode *child;
 	JabberCapsClientInfo *info;
 
