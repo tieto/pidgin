@@ -41,7 +41,7 @@ typedef struct _JabberCapsKey {
 	char *hash;
 } JabberCapsKey;
 
-GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsClientInfo */
+static GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsClientInfo */
 
 /**
  *	Processes a query-node and returns a JabberCapsClientInfo object with all relevant info.
@@ -136,9 +136,16 @@ static void jabber_caps_ext_destroy_value(gpointer value) {
 
 static void jabber_caps_load(void);
 
-void jabber_caps_init(void) {
+void jabber_caps_init(void)
+{
 	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, jabber_caps_client_info_destroy);
 	jabber_caps_load();
+}
+
+void jabber_caps_uninit(void)
+{
+	g_hash_table_destroy(capstable);
+	capstable = NULL;
 }
 
 static void jabber_caps_load(void) {

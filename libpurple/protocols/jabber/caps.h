@@ -26,8 +26,7 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 #include "jabber.h"
 
-/* Implementation of XEP-0115 */
-extern GHashTable *capstable;
+/* Implementation of XEP-0115 - Entity Capabilities */
 
 struct _JabberCapsClientInfo {
 	GList *identities; /* JabberIdentity */
@@ -42,6 +41,7 @@ typedef struct _JabberCapsClientInfo JabberCapsValueExt;
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
 
 void jabber_caps_init(void);
+void jabber_caps_uninit(void);
 
 void jabber_caps_destroy_key(gpointer value);
 
