@@ -84,8 +84,9 @@ url_clicked_idle_cb(gpointer data)
 }
 
 static gboolean
-url_clicked_cb(GtkIMHtml *imhtml, const char *uri)
+url_clicked_cb(GtkIMHtml *unused, GtkIMHtmlLink *link)
 {
+	const char *uri = gtk_imhtml_link_get_url(link);
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
 	return TRUE;
 }
@@ -3481,13 +3482,73 @@ GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
 	return pixbuf;
 }
 
+static void url_copy(GtkWidget *w, gchar *url)
+{
+	GtkClipboard *clipboard;
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_PRIMARY);
+	gtk_clipboard_set_text(clipboard, url, -1);
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text(clipboard, url, -1);
+}
+
+static gboolean
+link_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *url;
+
+	url = gtk_imhtml_link_get_url(link);
+
+	/* Open Link in Browser */
+	img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Open Link"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	/* Copy Link Location */
+	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Link Location"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), (gpointer)url);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
+static gboolean
+copy_email_address(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *text;
+	char *address;
+#define MAILTOSIZE  (sizeof("mailto:") - 1)
+
+	text = gtk_imhtml_link_get_url(link);
+	g_return_val_if_fail(text && strlen(text) > MAILTOSIZE, FALSE);
+	address = (char*)text + MAILTOSIZE;
+
+	/* Copy Email Address */
+	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Email Address"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), address);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
 /* XXX: The following two functions are for demonstration purposes only! */
 static gboolean
-open_dialog(GtkIMHtml *imhtml, const char *url)
+open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
 {
+	const char *url;
 	const char *str;
 
-	if (strlen(url) < sizeof("open://"))
+	url = gtk_imhtml_link_get_url(link);
+	if (!url || strlen(url) < sizeof("open://"))
 		return FALSE;
 
 	str = url + sizeof("open://") - 1;
@@ -3502,16 +3563,18 @@ open_dialog(GtkIMHtml *imhtml, const char *url)
 }
 
 static gboolean
-dummy(GtkIMHtml *imhtml, const char *text, GtkWidget *menu)
+dummy(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 {
 	return TRUE;
 }
 
 void pidgin_utils_init(void)
 {
-	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, NULL);
-	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, NULL);
-	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, NULL);
+	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
 
 	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
 }
@@ -3521,6 +3584,8 @@ void pidgin_utils_uninit(void)
 	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
 	gtk_imhtml_class_register_protocol("https://", NULL, NULL);
 	gtk_imhtml_class_register_protocol("ftp://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("mailto:", NULL, NULL);
+	gtk_imhtml_class_register_protocol("gopher://", NULL, NULL);
 
 	gtk_imhtml_class_register_protocol("open://", NULL, NULL);
 }
