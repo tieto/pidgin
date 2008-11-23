@@ -9,6 +9,7 @@ version 2.5.3 (??/??/????):
 	  system certs directory.
 	* Corrected maximum message lengths for Yahoo!
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
+	* Enable auto-reply on Zephyr, to emulate 'zaway' (Toby Schaffer)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
