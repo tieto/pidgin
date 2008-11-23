@@ -156,6 +156,7 @@ struct _GtkIMHtmlClass {
 	gboolean (*message_send)(GtkIMHtml *);
 	void (*undo)(GtkIMHtml *);
 	void (*redo)(GtkIMHtml *);
+	GList *protocols; /* List of GtkIMHtmlProtocol's */
 };
 
 struct _GtkIMHtmlFontDetail {
@@ -885,6 +886,23 @@ void gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley);
  * @since 2.5.0
  */
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
+
+/**
+ * Register a protocol with the GtkIMHtml widget. Registering a protocol would allow
+ * certain text to be clickable.
+ *
+ * @param name      The name of the protocol (e.g. http://)
+ * @param activate  The callback to trigger when the protocol text is clicked.
+ *                  Removes any current protocol definition if @c NULL.
+ * @param context_menu  The callback totrigger when the context menu is popped up on
+ *                      the protocol text.
+ *
+ * @return  @c TRUE if the protocol was successfully registered (or unregistered, when #activate is @c NULL)
+ * @since 2.6.0
+ */
+gboolean gtk_imhtml_class_register_protocol(const char *name,
+		gboolean (*activate)(GtkIMHtml *imhtml, const char *text),
+		gboolean (*context_menu)(GtkIMHtml *imhtml, const char *text, GtkWidget *menu));
 /*@}*/
 
 #ifdef __cplusplus
