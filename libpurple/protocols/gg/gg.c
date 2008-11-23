@@ -1347,7 +1347,7 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleStoredImage *image;
-	gint imgid = (gint) g_hash_table_lookup(info->pending_images, &ev->event.image_request.crc32);
+	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, &ev->event.image_request.crc32));
 
 	purple_debug_info("gg", "ggp_send_image_handler: image request received, crc32: %u\n", ev->event.image_request.crc32);
 
@@ -1841,7 +1841,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	GData *attribs;
 	const char *start, *end = NULL, *last;
 
-	if (msg == NULL || *msg == 0) {
+	if (msg == NULL || *msg == '\0') {
 		return 0;
 	}
 
@@ -1872,7 +1872,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 				const char *image_filename = purple_imgstore_get_filename(image);
 				uint32_t crc32 = gg_crc32(0, image_bin, image_size);
 
-				g_hash_table_insert(info->pending_images, &crc32, (gpointer)atoi(id));
+				g_hash_table_insert(info->pending_images, &crc32, GINT_TO_POINTER(atoi(id)));
 				purple_imgstore_ref(image);
 				purple_debug_info("gg", "ggp_send_im_richtext: got crc: %i for imgid: %i\n", crc32, atoi(id));
 
