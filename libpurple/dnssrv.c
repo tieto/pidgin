@@ -586,7 +586,7 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 	else {
 		query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
 		if (query_data->resolver == NULL) {
-			query_data->error_message = g_strdup_printf("SRV thread create failure: %s\n", (err && err->message) ? err->message : "");
+			query_data->error_message = g_strdup_printf("TXT thread create failure: %s\n", (err && err->message) ? err->message : "");
 			g_error_free(err);
 		}
 	}
