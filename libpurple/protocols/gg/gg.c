@@ -61,7 +61,6 @@ static PurplePlugin *my_protocol = NULL;
  *
  * @return Zero if proxy setup is valid, otherwise -1.
  */
-/* static int ggp_setup_proxy(PurpleAccount *account) {{{ */
 static int ggp_setup_proxy(PurpleAccount *account)
 {
 	PurpleProxyInfo *gpi;
@@ -88,11 +87,7 @@ static int ggp_setup_proxy(PurpleAccount *account)
 
 	return 0;
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition cond) {{{ */
 static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
@@ -157,11 +152,7 @@ static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	token->cb = NULL;
 	cb(gc);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb) {{{ */
 static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 {
 	PurpleAccount *account;
@@ -199,7 +190,6 @@ static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
  *
  * @param Current action handler.
  */
-/* static void ggp_action_buddylist_get(PurplePluginAction *action) {{{ */
 static void ggp_action_buddylist_get(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
@@ -209,14 +199,12 @@ static void ggp_action_buddylist_get(PurplePluginAction *action)
 
 	gg_userlist_request(info->session, GG_USERLIST_GET, NULL);
 }
-/* }}} */
 
 /**
  * Upload the buddylist to the server.
  *
  * @param action Current action handler.
  */
-/* static void ggp_action_buddylist_put(PurplePluginAction *action) {{{ */
 static void ggp_action_buddylist_put(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
@@ -232,14 +220,12 @@ static void ggp_action_buddylist_put(PurplePluginAction *action)
 	gg_userlist_request(info->session, GG_USERLIST_PUT, buddylist);
 	g_free(buddylist);
 }
-/* }}} */
 
 /**
  * Delete buddylist from the server.
  *
  * @param action Current action handler.
  */
-/* static void ggp_action_buddylist_delete(PurplePluginAction *action) {{{ */
 static void ggp_action_buddylist_delete(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
@@ -249,11 +235,7 @@ static void ggp_action_buddylist_delete(PurplePluginAction *action)
 
 	gg_userlist_request(info->session, GG_USERLIST_PUT, NULL);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *file) {{{ */
 static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *filename)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -284,11 +266,7 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *fil
 
 	g_free(buddylist);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_buddylist_load_ok(PurpleConnection *gc, gchar *file) {{{ */
 static void ggp_callback_buddylist_load_ok(PurpleConnection *gc, gchar *file)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -334,11 +312,7 @@ static void ggp_action_buddylist_save(PurplePluginAction *action)
 			purple_connection_get_account(gc), NULL, NULL,
 			gc);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_action_buddylist_load(PurplePluginAction *action) {{{ */
 static void ggp_action_buddylist_load(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
@@ -349,11 +323,7 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 			purple_connection_get_account(gc), NULL, NULL,
 			gc);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_register_account_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
 static void ggp_callback_register_account_ok(PurpleConnection *gc,
 					     PurpleRequestFields *fields)
 {
@@ -435,11 +405,7 @@ exit_err:
 	g_free(token->id);
 	g_free(token);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_register_account_cancel(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
 static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 						 PurpleRequestFields *fields)
 {
@@ -453,11 +419,7 @@ static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 	g_free(token);
 
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_register_user_dialog(PurpleConnection *gc) {{{ */
 static void ggp_register_user_dialog(PurpleConnection *gc)
 {
 	PurpleAccount *account;
@@ -510,13 +472,9 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 		purple_connection_get_account(gc), NULL, NULL,
 		gc);
 }
-/* }}} */
 
 /* ----- PUBLIC DIRECTORY SEARCH ---------------------------------------- */
 
-/*
- */
-/* static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data) {{{ */
 static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data)
 {
 	GGPInfo *info = gc->proto_data;
@@ -533,21 +491,13 @@ static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer us
 	ggp_search_add(info->searches, seq, form);
 	purple_debug_info("gg", "ggp_callback_show_next(): Added seq %u", seq);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_add_buddy(PurpleConnection *gc, GList *row, gpointer user_data) {{{ */
 static void ggp_callback_add_buddy(PurpleConnection *gc, GList *row, gpointer user_data)
 {
 	purple_blist_request_add_buddy(purple_connection_get_account(gc),
 				     g_list_nth_data(row, 0), NULL, NULL);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data) {{{ */
 static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data)
 {
 	PurpleAccount *account;
@@ -560,11 +510,7 @@ static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 	purple_conversation_present(conv);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
 static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	GGPInfo *info = gc->proto_data;
@@ -611,11 +557,7 @@ static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields 
 	ggp_search_add(info->searches, seq, form);
 	purple_debug_info("gg", "ggp_callback_find_buddies(): Added seq %u", seq);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_find_buddies(PurplePluginAction *action) {{{ */
 static void ggp_find_buddies(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
@@ -672,13 +614,9 @@ static void ggp_find_buddies(PurplePluginAction *action)
 		purple_connection_get_account(gc), NULL, NULL,
 		gc);
 }
-/* }}} */
 
 /* ----- CHANGE PASSWORD ------------------------------------------------ */
 
-/*
- */
-/* static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
 static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
@@ -750,11 +688,7 @@ exit_err:
 	g_free(info->token->data);
 	g_free(info->token);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_change_passwd_dialog(PurpleConnection *gc) {{{ */
 static void ggp_change_passwd_dialog(PurpleConnection *gc)
 {
 	PurpleRequestFields *fields;
@@ -811,24 +745,16 @@ static void ggp_change_passwd_dialog(PurpleConnection *gc)
 
 	g_free(msg);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_change_passwd(PurplePluginAction *action) {{{ */
 static void ggp_change_passwd(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
 	ggp_token_request(gc, ggp_change_passwd_dialog);
 }
-/* }}} */
 
 /* ----- CONFERENCES ---------------------------------------------------- */
 
-/*
- */
-/* static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
 static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	GGPInfo *info = gc->proto_data;
@@ -842,11 +768,7 @@ static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestField
 	ggp_confer_participants_add_uin(gc, sel->data, info->tmp_buddy);
 	info->tmp_buddy = 0;
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored) {{{ */
 static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
@@ -892,13 +814,9 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 			gc);
 	g_free(msg);
 }
-/* }}} */
 
 /* ----- BLOCK BUDDIES -------------------------------------------------- */
 
-/*
- */
-/* static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored) {{{ */
 static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
 {
 	PurpleConnection *gc;
@@ -924,7 +842,6 @@ static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
 		purple_debug_info("gg", "send: uin=%d; mode=BLOCKED\n", uin);
 	}
 }
-/* }}} */
 
 /* ---------------------------------------------------------------------- */
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
@@ -943,7 +860,6 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg);
  * @param status ID of the status.
  * @param descr  Description.
  */
-/* static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin, int status, const char *descr) {{{ */
 static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 				       int status, const char *descr)
 {
@@ -983,11 +899,7 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 	g_free(from);
 	g_free(msg);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_sr_close_cb(gpointer user_data) {{{ */
 static void ggp_sr_close_cb(gpointer user_data)
 {
 	GGPSearchForm *form = user_data;
@@ -997,7 +909,6 @@ static void ggp_sr_close_cb(gpointer user_data)
 	purple_debug_info("gg", "ggp_sr_close_cb(): Removed seq %u", form->seq);
 	ggp_search_form_destroy(form);
 }
-/* }}} */
 
 /**
  * Translate a status' ID to a more user-friendly name.
@@ -1006,7 +917,6 @@ static void ggp_sr_close_cb(gpointer user_data)
  *
  * @return The user-friendly name of the status.
  */
-/* static const char *ggp_status_by_id(unsigned int id) {{{ */
 static const char *ggp_status_by_id(unsigned int id)
 {
 	const char *st;
@@ -1029,11 +939,7 @@ static const char *ggp_status_by_id(unsigned int id)
 
 	return st;
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
 static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
@@ -1092,11 +998,7 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 	g_free(who);
 	purple_notify_user_info_destroy(user_info);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
 static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
@@ -1196,11 +1098,7 @@ static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 		purple_notify_searchresults_new_rows(gc, results, form->window);
 	}
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req) {{{ */
 static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 {
 	GGPInfo *info = gc->proto_data;
@@ -1239,10 +1137,7 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 			break;
 	}
 }
-/* }}} */
 
-
-/* static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *ev) {{{ */
 static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
 	gint imgid = 0;
@@ -1282,7 +1177,6 @@ static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *
 
 	return;
 }
-/* }}} */
 
 
 /**
@@ -1293,7 +1187,6 @@ static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *
  *
  * Image receiving, some code borrowed from Kadu http://www.kadu.net
  */
-/* static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event *ev) {{{ */
 static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
 	GGPInfo *info = gc->proto_data;
@@ -1313,7 +1206,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	/* We got richtext message */
 	if (ev->event.msg.formats_length)
 	{
-		gboolean got_image = FALSE, bold = FALSE, italic = FALSE, under= FALSE;
+		gboolean got_image = FALSE, bold = FALSE, italic = FALSE, under = FALSE;
 		char *cformats = (char *)ev->event.msg.formats;
 		char *cformats_end = cformats + ev->event.msg.formats_length;
 		gint increased_len = 0;
@@ -1449,11 +1342,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	g_free(msg);
 	g_free(from);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *ev) {{{ */
 static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
 	GGPInfo *info = gc->proto_data;
@@ -1478,11 +1367,7 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 		g_hash_table_remove(info->pending_images, &ev->event.image_request.crc32);
 	}
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond) {{{ */
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
@@ -1610,11 +1495,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 
 	gg_free_event(ev);
 }
-/* }}} */
 
-/*
- */
-/* static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond) {{{ */
 static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
@@ -1703,20 +1584,16 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 
 	gg_free_event(ev);
 }
-/* }}} */
 
 /* ---------------------------------------------------------------------- */
 /* ----- PurplePluginProtocolInfo ----------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-/* static const char *ggp_list_icon(PurpleAccount *account, PurpleBuddy *buddy) {{{ */
 static const char *ggp_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	return "gadu-gadu";
 }
-/* }}} */
 
-/* static char *ggp_status_text(PurpleBuddy *b) {{{ */
 static char *ggp_status_text(PurpleBuddy *b)
 {
 	PurpleStatus *status;
@@ -1742,9 +1619,7 @@ static char *ggp_status_text(PurpleBuddy *b)
 		return text;
 	}
 }
-/* }}} */
 
-/* static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {{{ */
 static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	PurpleStatus *status;
@@ -1775,9 +1650,7 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 		purple_notify_user_info_add_pair(user_info, _("Status"), name);
 	}
 }
-/* }}} */
 
-/* static GList *ggp_status_types(PurpleAccount *account) {{{ */
 static GList *ggp_status_types(PurpleAccount *account)
 {
 	PurpleStatusType *type;
@@ -1821,9 +1694,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 
 	return types;
 }
-/* }}} */
 
-/* static GList *ggp_blist_node_menu(PurpleBlistNode *node) {{{ */
 static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 {
 	PurpleMenuAction *act;
@@ -1853,9 +1724,7 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 
 	return m;
 }
-/* }}} */
 
-/* static GList *ggp_chat_info(PurpleConnection *gc) {{{ */
 static GList *ggp_chat_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
@@ -1869,9 +1738,7 @@ static GList *ggp_chat_info(PurpleConnection *gc)
 
 	return m;
 }
-/* }}} */
 
-/* static void ggp_login(PurpleAccount *account) {{{ */
 static void ggp_login(PurpleAccount *account)
 {
 	PurpleConnection *gc;
@@ -1920,9 +1787,7 @@ static void ggp_login(PurpleAccount *account)
 	gc->inpa = purple_input_add(info->session->fd, PURPLE_INPUT_READ,
 				  ggp_async_login_handler, gc);
 }
-/* }}} */
 
-/* static void ggp_close(PurpleConnection *gc) {{{ */
 static void ggp_close(PurpleConnection *gc)
 {
 
@@ -1963,9 +1828,7 @@ static void ggp_close(PurpleConnection *gc)
 
 	purple_debug_info("gg", "Connection closed.\n");
 }
-/* }}} */
 
-/* static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg, PurpleMessageFlags flags) {{{ */
 static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 		       PurpleMessageFlags flags)
 {
@@ -2082,9 +1945,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	return ret;
 }
-/* }}} */
 
-/* static void ggp_get_info(PurpleConnection *gc, const char *name) { {{{ */
 static void ggp_get_info(PurpleConnection *gc, const char *name)
 {
 	GGPInfo *info = gc->proto_data;
@@ -2102,9 +1963,7 @@ static void ggp_get_info(PurpleConnection *gc, const char *name)
 	ggp_search_add(info->searches, seq, form);
 	purple_debug_info("gg", "ggp_get_info(): Added seq %u", seq);
 }
-/* }}} */
 
-/* static void ggp_set_status(PurpleAccount *account, PurpleStatus *status) {{{ */
 static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 {
 	const char *status_id = purple_status_get_id(status);
@@ -2149,9 +2008,7 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 		return new_status;
 	}
 }
-/* }}} */
 
-/* static void ggp_set_status(PurpleAccount *account, PurpleStatus *status) {{{ */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
@@ -2177,9 +2034,7 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 	ggp_status_fake_to_self(account);
 
 }
-/* }}} */
 
-/* static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {{{ */
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	PurpleAccount *account;
@@ -2192,9 +2047,7 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 		ggp_status_fake_to_self(account);
 	}
 }
-/* }}} */
 
-/* static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {{{ */
 static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 						 PurpleGroup *group)
 {
@@ -2202,9 +2055,7 @@ static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
 	gg_remove_notify(info->session, ggp_str_to_uin(buddy->name));
 }
-/* }}} */
 
-/* static void ggp_join_chat(PurpleConnection *gc, GHashTable *data) {{{ */
 static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 {
 	GGPInfo *info = gc->proto_data;
@@ -2237,15 +2088,11 @@ static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 				purple_account_get_username(account), NULL,
 				PURPLE_CBFLAGS_NONE, TRUE);
 }
-/* }}} */
 
-/* static char *ggp_get_chat_name(GHashTable *data) { {{{ */
 static char *ggp_get_chat_name(GHashTable *data) {
 	return g_strdup(g_hash_table_lookup(data, "name"));
 }
-/* }}} */
 
-/* static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags) {{{ */
 static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
 	PurpleConversation *conv;
@@ -2297,9 +2144,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 
 	return 0;
 }
-/* }}} */
 
-/* static void ggp_keepalive(PurpleConnection *gc) {{{ */
 static void ggp_keepalive(PurpleConnection *gc)
 {
 	GGPInfo *info = gc->proto_data;
@@ -2314,9 +2159,7 @@ static void ggp_keepalive(PurpleConnection *gc)
 			_("Not connected to the server."));
 	}
 }
-/* }}} */
 
-/* static void ggp_register_user(PurpleAccount *account) {{{ */
 static void ggp_register_user(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
@@ -2326,9 +2169,7 @@ static void ggp_register_user(PurpleAccount *account)
 
 	ggp_token_request(gc, ggp_register_user_dialog);
 }
-/* }}} */
 
-/* static GList *ggp_actions(PurplePlugin *plugin, gpointer context) {{{ */
 static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
@@ -2368,16 +2209,12 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 
 	return m;
 }
-/* }}} */
 
-/* static gboolean ggp_offline_message(const PurpleBuddy *buddy) {{{ */
 static gboolean ggp_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
-/* }}} */
 
-/* prpl_info setup {{{ */
 static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_IM_IMAGE,
@@ -2450,36 +2287,34 @@ static PurplePluginProtocolInfo prpl_info =
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
-/* }}} */
 
-/* PurplePluginInfo setup {{{ */
 static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,		/* magic */
-	PURPLE_MAJOR_VERSION,		/* major_version */
-	PURPLE_MINOR_VERSION,		/* minor_version */
-	PURPLE_PLUGIN_PROTOCOL,		/* plugin type */
-	NULL,				/* ui_requirement */
-	0,				/* flags */
-	NULL,				/* dependencies */
+	PURPLE_PLUGIN_MAGIC,			/* magic */
+	PURPLE_MAJOR_VERSION,			/* major_version */
+	PURPLE_MINOR_VERSION,			/* minor_version */
+	PURPLE_PLUGIN_PROTOCOL,			/* plugin type */
+	NULL,					/* ui_requirement */
+	0,					/* flags */
+	NULL,					/* dependencies */
 	PURPLE_PRIORITY_DEFAULT,		/* priority */
 
-	"prpl-gg",			/* id */
-	"Gadu-Gadu",			/* name */
-	DISPLAY_VERSION,		/* version */
+	"prpl-gg",				/* id */
+	"Gadu-Gadu",				/* name */
+	DISPLAY_VERSION,			/* version */
 
 	N_("Gadu-Gadu Protocol Plugin"),	/* summary */
 	N_("Polish popular IM"),		/* description */
-	"boler@sourceforge.net",	/* author */
-	PURPLE_WEBSITE,			/* homepage */
+	"boler@sourceforge.net",		/* author */
+	PURPLE_WEBSITE,				/* homepage */
 
-	NULL,				/* load */
-	NULL,				/* unload */
-	NULL,				/* destroy */
+	NULL,					/* load */
+	NULL,					/* unload */
+	NULL,					/* destroy */
 
-	NULL,				/* ui_info */
-	&prpl_info,			/* extra_info */
-	NULL,				/* prefs_info */
-	ggp_actions,			/* actions */
+	NULL,					/* ui_info */
+	&prpl_info,				/* extra_info */
+	NULL,					/* prefs_info */
+	ggp_actions,				/* actions */
 
 	/* padding */
 	NULL,
@@ -2487,9 +2322,7 @@ static PurplePluginInfo info = {
 	NULL,
 	NULL
 };
-/* }}} */
 
-/* static void purple_gg_debug_handler(int level, const char * format, va_list args) {{{ */
 static void purple_gg_debug_handler(int level, const char * format, va_list args) {
 	PurpleDebugLevel purple_level;
 	char *msg = g_strdup_vprintf(format, args);
@@ -2512,11 +2345,7 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 	purple_debug(purple_level, "gg", "%s", msg);
 	g_free(msg);
 }
-/* }}} */
 
-/*
- */
-/* static void init_plugin(PurplePlugin *plugin) {{{ */
 static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
@@ -2530,7 +2359,6 @@ static void init_plugin(PurplePlugin *plugin)
 
 	gg_debug_handler = purple_gg_debug_handler;
 }
-/* }}} */
 
 PURPLE_INIT_PLUGIN(gg, init_plugin, info);
 
