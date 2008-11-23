@@ -806,7 +806,7 @@ static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("msn", "get UBM...\n");
-	cmd->payload_len = atoi(cmd->params[4]);
+	cmd->payload_len = atoi(cmd->params[3]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
