@@ -874,7 +874,7 @@ void jabber_caps_broadcast_change()
 	for (node = accounts; node; node = node->next) {
 		PurpleAccount *account = node->data;
 		const char *prpl_id = purple_account_get_protocol_id(account);
-		if (!strcmp("prpl-jabber", prpl_id)) {
+		if (!strcmp("prpl-jabber", prpl_id) && purple_account_is_connected(account)) {
 			PurpleConnection *gc = purple_account_get_connection(account);
 			jabber_presence_send(gc->proto_data, TRUE);
 		}
