@@ -36,7 +36,7 @@
 #ifndef T_TXT
 #define T_TXT	16
 #endif
-#else
+#else /* WIN32 */
 #include <windns.h>
 /* Missing from the mingw headers */
 #ifndef DNS_TYPE_SRV
@@ -66,8 +66,11 @@ static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 #endif
 
 struct _PurpleSrvQueryData {
-	PurpleSrvCallback srv_cb;
-	PurpleTxtCallback txt_cb;
+	union {
+		PurpleSrvCallback srv;
+		PurpleTxtCallback txt;
+	} cb;
+
 	gpointer extradata;
 	guint handle;
 	int type;
@@ -122,7 +125,6 @@ resolve(int in, int out)
 	gchar name[256];
 	guint16 type, dlen, pref, weight, port;
 	PurpleSrvInternalQuery query;
-	int n;
 
 #ifdef HAVE_SIGNAL_H
 	purple_restore_default_signal_handlers();
@@ -181,7 +183,7 @@ resolve(int in, int out)
 			ret = g_list_insert_sorted(ret, srvres, responsecompare);
 		} else if (query.type == T_TXT) {
 			txtres = g_new0(PurpleTxtResponse, 1);
-			strncpy(txtres->content, ++cp, dlen-1);
+			strncpy(txtres->content, (gchar*)(++cp), dlen-1);
 			ret = g_list_append(ret, txtres);
 			cp += dlen - 1;
 		} else {
@@ -220,7 +222,7 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 		if (type == T_SRV) {
 			PurpleSrvResponse *res;
 			PurpleSrvResponse *tmp;
-			PurpleSrvCallback cb = query_data->srv_cb;
+			PurpleSrvCallback cb = query_data->cb.srv;
 			if (read(source, &size, sizeof(int)) == sizeof(int)) {
 				ssize_t red;
 				purple_debug_info("dnssrv","found %d SRV entries\n", size);
@@ -244,7 +246,7 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 		} else if (type == T_TXT) {
 			PurpleTxtResponse *res;
 			PurpleTxtResponse *tmp;
-			PurpleTxtCallback cb = query_data->txt_cb;
+			PurpleTxtCallback cb = query_data->cb.txt;
 			if (read(source, &size, sizeof(int)) == sizeof(int)) {
 				ssize_t red;
 				purple_debug_info("dnssrv","found %d TXT entries\n", size);
@@ -260,7 +262,7 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 					}
 				}
 			} else {
-				purple_debug_info("dnssrv","found 0 SRV entries; errno is %i\n", errno);
+				purple_debug_info("dnssrv","found 0 TXT entries; errno is %i\n", errno);
 				size = 0;
 				res = NULL;
 			}
@@ -294,10 +296,10 @@ res_main_thread_cb(gpointer data)
 
 			size = g_slist_length(lst);
 
-			if(query_data->srv_cb && size > 0)
+			if(query_data->cb.srv && size > 0)
 				srvres_tmp = srvres = g_new0(PurpleSrvResponse, size);
 			while (lst) {
-				if(query_data->cb)
+				if(query_data->cb.srv)
 					memcpy(srvres_tmp++, lst->data, sizeof(PurpleSrvResponse));
 				g_free(lst->data);
 				lst = g_slist_remove(lst, lst->data);
@@ -307,17 +309,17 @@ res_main_thread_cb(gpointer data)
 
 			purple_debug_info("dnssrv", "found %d SRV entries\n", size);
 			
-			if(query_data->srv_cb) query_data->srv_cb(srvres, size, query_data->extradata);
+			if(query_data->cb.srv) query_data->cb.srv(srvres, size, query_data->extradata);
 		} else if (query_data->type == T_TXT) {
 			PurpleTxtResponse *txtres_tmp = NULL;
 			GSList *lst = query_data->results;
 
 			size = g_slist_length(lst);
 
-			if(query_data->txt_cb && size > 0)
+			if(query_data->cb.txt && size > 0)
 				txtres_tmp = txtres = g_new0(PurpleTxtResponse, size);
 			while (lst) {
-				if(query_data->txt_cb)
+				if(query_data->cb.txt)
 					memcpy(txtres_tmp++, lst->data, sizeof(PurpleTxtResponse));
 				g_free(lst->data);
 				lst = g_slist_remove(lst, lst->data);
@@ -327,7 +329,7 @@ res_main_thread_cb(gpointer data)
 
 			purple_debug_info("dnssrv", "found %d TXT entries\n", size);
 			
-			if(query_data->txt_cb) query_data->txt_cb(txtres, size, query_data->extradata);
+			if(query_data->cb.txt) query_data->cb.txt(txtres, size, query_data->extradata);
 		} else {
 			purple_debug_error("dnssrv", "unknown query type");
 		}
@@ -352,14 +354,14 @@ res_thread(gpointer data)
 	ds = MyDnsQuery_UTF8(query_data->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
 		gchar *msg = g_win32_error_message(ds);
-		if (type == T_SRV) {
+		if (type == DNS_TYPE_SRV) {
 			query_data->error_message = g_strdup_printf("Couldn't look up SRV record. %s (%lu).\n", msg, ds);
-		} else if (type == T_TXT) {
+		} else if (type == DNS_TYPE_TXT) {
 			query_data->error_message = g_strdup_printf("Couldn't look up TXT record. %s (%lu).\n", msg, ds);
 		}
 		g_free(msg);
 	} else {
-		if (type == T_SRV) {
+		if (type == DNS_TYPE_SRV) {
 			PDNS_RECORD dr_tmp;
 			GSList *lst = NULL;
 			DNS_SRV_DATA *srv_data;
@@ -457,7 +459,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
 	query_data->type = T_SRV;
-	query_data->srv_cb = cb;
+	query_data->cb.srv = cb;
 	query_data->extradata = extradata;
 	query_data->pid = pid;
 	query_data->fd_out = out[0];
@@ -476,7 +478,8 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	}
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->srv_cb = cb;
+	query_data->type = DNS_TYPE_SRV;
+	query_data->cb.srv = cb;
 	query_data->query = query;
 	query_data->extradata = extradata;
 
@@ -554,7 +557,7 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
 	query_data->type = T_TXT;
-	query_data->txt_cb = cb;
+	query_data->cb.txt = cb;
 	query_data->extradata = extradata;
 	query_data->pid = pid;
 	query_data->fd_out = out[0];
@@ -573,7 +576,8 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 	}
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->txt_cb = cb;
+	query_data->type = DNS_TYPE_TXT;
+	query_data->cb.txt = cb;
 	query_data->query = query;
 	query_data->extradata = extradata;
 
@@ -610,7 +614,7 @@ purple_srv_cancel(PurpleSrvQueryData *query_data)
 		 * just set the callback to NULL and let the DNS lookup
 		 * finish.
 		 */
-		query_data->cb = NULL;
+		query_data->cb.srv = NULL;
 		return;
 	}
 	g_free(query_data->query);
