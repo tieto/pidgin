@@ -491,7 +491,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb = msg_cmd_post;
-		cmd->payload_len = atoi(cmd->params[3]);
+		cmd->payload_len = atoi(cmd->params[4]);
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
@@ -1578,7 +1578,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	MsnUser *user;
 	const char *passport;
 	char *psm_str, *str;
-	CurrentMedia media = {CURRENT_MEDIA_UNKNOWN, NULL, NULL, NULL};
+	CurrentMedia media = {NULL, NULL, NULL};
 
 	session = cmdproc->session;
 	account = session->account;
