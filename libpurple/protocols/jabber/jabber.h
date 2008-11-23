@@ -279,8 +279,6 @@ typedef struct _JabberBytestreamsStreamhost {
 extern GList *jabber_features;
 extern GList *jabber_identities;
 
-extern GHashTable *jabber_contact_info; /* char * -> JabberCapsKey */
-
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
 void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
@@ -308,10 +306,11 @@ void jabber_remove_feature(const gchar *namespace);
 /** Adds an identitiy to this jabber library instance. For list of valid values vistit the 
  *	webiste of the XMPP Registrar ( http://www.xmpp.org/registrar/disco-categories.html#client ).
  *  @param category the category of the identity.
- *	@param type the type of the identity.
- *	@param name the name of the identity.
+ *  @param type the type of the identity.
+ *  @param language the language localization of the name. Can be NULL.
+ *  @param name the name of the identity.
  */
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *name); 
+void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name);
 
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
@@ -334,6 +333,8 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy);
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
+
 void jabber_init_plugin(PurplePlugin *plugin);
+void jabber_uninit_plugin(void);
 
 #endif /* _PURPLE_JABBER_H_ */

@@ -26,33 +26,22 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 #include "jabber.h"
 
-/* Implementation of XEP-0115 */
-extern GHashTable *capstable;
-
-typedef struct _JabberIdentity JabberCapsIdentity;
+/* Implementation of XEP-0115 - Entity Capabilities */
 
 struct _JabberCapsClientInfo {
-	GList *identities; /* JabberCapsIdentity */
+	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
 	GList *forms; /* xmlnode * */
 };
 
+#if 0
 typedef struct _JabberCapsClientInfo JabberCapsValueExt;
-
-typedef struct _JabberDataFormField {
-	gchar *var;
-	GList *values;
-} JabberDataFormField;
-
-typedef struct _JabberCapsKey {
-	char *node;
-	char *ver;
-	char *hash;
-} JabberCapsKey;
+#endif
 
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
 
 void jabber_caps_init(void);
+void jabber_caps_uninit(void);
 
 void jabber_caps_destroy_key(gpointer value);
 
@@ -60,15 +49,6 @@ void jabber_caps_destroy_key(gpointer value);
  *	Main entity capabilites function to get the capabilities of a contact.
  */
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *hash, jabber_caps_get_info_cb cb, gpointer user_data);
-void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo);
-
-/**
- *	Processes a query-node and returns a JabberCapsClientInfo object with all relevant info.
- *	
- *	@param 	query 	A query object.
- *	@return 		A JabberCapsClientInfo object.
- */
-JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
 
 /**
  *	Takes a JabberCapsClientInfo pointer and returns the caps hash according to

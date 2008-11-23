@@ -1445,7 +1445,7 @@ static void session_loginRedirect(struct mwSession *session,
 					 MW_PLUGIN_DEFAULT_HOST);
 
   if(purple_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
-     (! strcmp(current_host, host)) ||
+     !host || (! strcmp(current_host, host)) ||
      (purple_proxy_connect(NULL, account, host, port, connect_cb, pd) == NULL)) {
 
     /* if we're configured to force logins, or if we're being

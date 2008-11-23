@@ -27,6 +27,7 @@
 #include "buddy.h"
 
 void jabber_pep_init(void);
+void jabber_pep_uninit(void);
 
 void jabber_pep_init_actions(GList **m);
 

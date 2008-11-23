@@ -67,8 +67,6 @@ static PurplePlugin *my_protocol = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 
-GHashTable *jabber_contact_info = NULL;
-
 static void jabber_unregister_account_cb(JabberStream *js);
 static void try_srv_connect(JabberStream *js);
 
@@ -1520,7 +1518,17 @@ void jabber_remove_feature(const char *namespace) {
 	}
 }
 
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *name) {
+static void jabber_features_destroy(void)
+{
+	while (jabber_features) {
+		JabberFeature *feature = jabber_features->data;
+		g_free(feature->namespace);
+		g_free(feature);
+		jabber_features = g_list_remove_link(jabber_features, jabber_features);
+	}
+}
+
+void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name) {
 	GList *identity;
 	JabberIdentity *ident;
 	/* both required according to XEP-0030 */
@@ -1529,16 +1537,32 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	
 	for(identity = jabber_identities; identity; identity = identity->next) {
 		JabberIdentity *ident = (JabberIdentity*)identity->data;
-		if(!strcmp(ident->category, category)) {
-			if (!strcmp(ident->type, type)) return;
+		if (!strcmp(ident->category, category) &&
+		    !strcmp(ident->type, type) &&
+		    ((!ident->lang && !lang) || (ident->lang && lang && !strcmp(ident->lang, lang)))) {
+			return;
 		}	
 	}
-	
+
 	ident = g_new0(JabberIdentity, 1);
 	ident->category = g_strdup(category);
 	ident->type = g_strdup(type);
+	ident->lang = g_strdup(lang);
 	ident->name = g_strdup(name);
 	jabber_identities = g_list_append(jabber_identities, ident);
+}
+
+static void jabber_identities_destroy(void)
+{
+	while (jabber_identities) {
+		JabberIdentity *id = jabber_identities->data;
+		g_free(id->category);
+		g_free(id->type);
+		g_free(id->lang);
+		g_free(id->name);
+		g_free(id);
+		jabber_identities = g_list_remove_link(jabber_identities, jabber_identities);
+	}
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)
@@ -2541,38 +2565,57 @@ void jabber_register_commands(void)
 					  _("buzz: Buzz a user to get their attention"), NULL);
 }
 
-/* IPC functions*/
+/* IPC functions */
 
-/*
- * IPC function for checking wheather a client at a full JID supports a certain feature.
- * 
- * @param fulljid 	The full JID of the client.
- * @param featrure 	The feature's namespace.
- * 
+/**
+ * IPC function for determining if a contact supports a certain feature.
+ *
+ * @param account   The PurpleAccount
+ * @param jid       The full JID of the contact.
+ * @param feature   The feature's namespace.
+ *
  * @return TRUE if supports feature; else FALSE.
  */
 static gboolean
-jabber_ipc_contact_has_feature(gchar *fulljid, gchar *feature)
+jabber_ipc_contact_has_feature(PurpleAccount *account, const gchar *jid,
+                               const gchar *feature)
 {
-	JabberCapsKey *caps_info = NULL;
-	JabberCapsValueExt *capabilities = NULL;
-	
-	caps_info = g_hash_table_lookup(jabber_contact_info, fulljid);
-	
-	if (!caps_info) return FALSE;
-	capabilities = g_hash_table_lookup(capstable, caps_info);
-	
-	if (g_list_find_custom(capabilities->features, feature, (GCompareFunc)strcmp) == NULL) return FALSE ;
-	return TRUE;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+	gchar *resource;
+
+	if (!purple_account_is_connected(account))
+		return FALSE;
+	js = gc->proto_data;
+
+	resource = jabber_get_resource(jid);
+	if (!(resource = jabber_get_resource(jid)) || 
+	    !(jb = jabber_buddy_find(js, jid, FALSE)) ||
+	    !(jbr = jabber_buddy_find_resource(jb, resource))) {
+		g_free(resource);
+		return FALSE;
+	}
+
+	g_free(resource);
+
+	if (!jbr->caps) {
+		/* TODO: fetch them? */
+		return FALSE;
+	}
+
+	return NULL != g_list_find_custom(jbr->caps->features, feature, (GCompareFunc)strcmp);
 }
 
 static void
-jabber_ipc_add_feature(gchar *feature) 
+jabber_ipc_add_feature(const gchar *feature)
 {
-	if (feature == 0) return;
+	if (!feature)
+		return;
 	jabber_add_feature(feature, 0);
-	
-	// send presence with new caps info for all connected accounts
+
+	/* send presence with new caps info for all connected accounts */
 	jabber_caps_broadcast_change();
 }
 
@@ -2581,7 +2624,7 @@ jabber_init_plugin(PurplePlugin *plugin)
 {
 	my_protocol = plugin;
 
-	jabber_add_identity("client", "pc", PACKAGE);
+	jabber_add_identity("client", "pc", NULL, PACKAGE);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
@@ -2603,16 +2646,22 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://jabber.org/protocol/xhtml-im", 0);
 	jabber_add_feature("urn:xmpp:ping", 0);
 	
-	jabber_contact_info = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_caps_destroy_key);
-	
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
-							 purple_marshal_BOOLEAN__POINTER_POINTER,
-							 purple_value_new(PURPLE_TYPE_BOOLEAN), 2,
+							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+							 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
+							 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT),
 							 purple_value_new(PURPLE_TYPE_STRING),
 							 purple_value_new(PURPLE_TYPE_STRING));
 	purple_plugin_ipc_register(plugin, "add_feature", PURPLE_CALLBACK(jabber_ipc_add_feature),
 							 purple_marshal_VOID__POINTER,
 							 NULL, 1,
 							 purple_value_new(PURPLE_TYPE_STRING));
+}
+
+void
+jabber_uninit_plugin(void)
+{
+	jabber_features_destroy();
+	jabber_identities_destroy();
 }
