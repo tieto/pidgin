@@ -577,6 +577,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	MsnTransaction *trans;
 	char *payload;
 	gsize payload_len;
+	char flag;
 
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
@@ -590,32 +591,35 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
+	flag = msn_message_get_flag(msg);
 	trans = msn_transaction_new(cmdproc, "MSG", "%c %" G_GSIZE_FORMAT,
-								msn_message_get_flag(msg), payload_len);
+								flag, payload_len);
 
 	/* Data for callbacks */
 	msn_transaction_set_data(trans, msg);
 
-	if (msg->type == MSN_MSG_TEXT)
-	{
-		msg->ack_ref = TRUE;
-		msn_message_ref(msg);
-		swboard->ack_list = g_list_append(swboard->ack_list, msg);
-		msn_transaction_set_timeout_cb(trans, msg_timeout);
-	}
-	else if (msg->type == MSN_MSG_SLP)
-	{
-		msg->ack_ref = TRUE;
-		msn_message_ref(msg);
-		swboard->ack_list = g_list_append(swboard->ack_list, msg);
-		msn_transaction_set_timeout_cb(trans, msg_timeout);
-#if 0
-		if (msg->ack_cb != NULL)
+	if (flag != 'U') {
+		if (msg->type == MSN_MSG_TEXT)
 		{
-			msn_transaction_add_cb(trans, "ACK", msg_ack);
-			msn_transaction_add_cb(trans, "NAK", msg_nak);
+			msg->ack_ref = TRUE;
+			msn_message_ref(msg);
+			swboard->ack_list = g_list_append(swboard->ack_list, msg);
+			msn_transaction_set_timeout_cb(trans, msg_timeout);
 		}
+		else if (msg->type == MSN_MSG_SLP)
+		{
+			msg->ack_ref = TRUE;
+			msn_message_ref(msg);
+			swboard->ack_list = g_list_append(swboard->ack_list, msg);
+			msn_transaction_set_timeout_cb(trans, msg_timeout);
+#if 0
+			if (msg->ack_cb != NULL)
+			{
+				msn_transaction_add_cb(trans, "ACK", msg_ack);
+				msn_transaction_add_cb(trans, "NAK", msg_nak);
+			}
 #endif
+		}
 	}
 
 	trans->payload = payload;
