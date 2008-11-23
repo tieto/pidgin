@@ -491,7 +491,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb = msg_cmd_post;
-		cmd->payload_len = cmd->param_count >= 5 ? atoi(cmd->params[4]) : 0;
+		cmd->payload_len = cmd->param_count >= 4 ? atoi(cmd->params[4]) : 0;
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
