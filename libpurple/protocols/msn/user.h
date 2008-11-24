@@ -45,11 +45,20 @@ typedef enum
 /**
  * Current media.
  */
+typedef enum
+{
+	CURRENT_MEDIA_UNKNOWN,
+	CURRENT_MEDIA_MUSIC,
+	CURRENT_MEDIA_GAMES,
+	CURRENT_MEDIA_OFFICE
+} CurrentMediaType;
+
 typedef struct _CurrentMedia
 {
+	CurrentMediaType type;     /**< Type.   */
+	char *title;    /**< Title.  */
 	char *artist;   /**< Artist. */
 	char *album;    /**< Album.  */
-	char *title;    /**< Title.  */
 } CurrentMedia;
 
 /**
