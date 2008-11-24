@@ -25,6 +25,7 @@
 #include "jingle.h"
 #include <string.h>
 #include "session.h"
+#include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
 
@@ -101,9 +102,9 @@ jingle_get_type(const gchar *type)
 #endif
 	else if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP))
 		return JINGLE_TYPE_RAWUDP;
-#if 0
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
 		return JINGLE_TYPE_ICEUDP;
+#if 0
 	else if (!strcmp(type, JINGLE_TRANSPORT_SOCKS))
 		return JINGLE_TYPE_SOCKS;
 	else if (!strcmp(type, JINGLE_TRANSPORT_IBB))

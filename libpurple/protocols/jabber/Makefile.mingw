@@ -55,6 +55,7 @@ C_SRC =	\
 			jabber.c \
 			jingle/jingle.c \
 			jingle/content.c \
+			jingle/iceudp.c \
 			jingle/rawudp.c \
 			jingle/rtp.c \
 			jingle/session.c \

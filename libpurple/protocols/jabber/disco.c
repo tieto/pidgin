@@ -160,6 +160,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_AUDIO);
 			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_VIDEO);
 			SUPPORT_FEATURE(JINGLE_TRANSPORT_RAWUDP);
+			SUPPORT_FEATURE(JINGLE_TRANSPORT_ICEUDP);
 #endif
 		} else {
 			const char *ext = NULL;

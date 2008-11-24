@@ -24,6 +24,7 @@
 #include "jingle.h"
 #include "media.h"
 #include "mediamanager.h"
+#include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
 #include "session.h"
@@ -222,10 +223,22 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 		}
 		g_free(id);
 		return transport;
-#if 0
 	} else if (type == JINGLE_TYPE_ICEUDP) {
-		return NULL;
-#endif
+		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
+		JingleIceUdpCandidate *iceudp_candidate;
+		for (; candidates; candidates = g_list_next(candidates)) {
+			FsCandidate *candidate = candidates->data;
+			iceudp_candidate = jingle_iceudp_candidate_new(candidate->component_id,
+					candidate->foundation, generation, candidate->ip,
+					0, candidate->port, candidate->priority, "udp",
+					candidate->type == FS_CANDIDATE_TYPE_HOST ? "host" :
+					candidate->type == FS_CANDIDATE_TYPE_SRFLX ? "srflx" :
+					candidate->type == FS_CANDIDATE_TYPE_PRFLX ? "prflx" :
+					candidate->type == FS_CANDIDATE_TYPE_RELAY ? "relay" : "",
+					candidate->username, candidate->password);
+			jingle_iceudp_add_local_candidate(JINGLE_ICEUDP(transport), iceudp_candidate);
+		}
+		return transport;
 	} else {
 		return NULL;
 	}
@@ -247,10 +260,25 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 		}
 
 		return ret;
-#if 0
-	} else if (type == JINGLE_TRANSPORT_ICEUDP) {
-		return NULL;
-#endif
+	} else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP)) {
+		GList *candidates = jingle_iceudp_get_remote_candidates(JINGLE_ICEUDP(transport));
+
+		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
+			JingleIceUdpCandidate *candidate = candidates->data;
+			FsCandidate *fscandidate = fs_candidate_new(
+					candidate->foundation, candidate->component,
+					!strcmp(candidate->type, "host") ? FS_CANDIDATE_TYPE_HOST :
+					!strcmp(candidate->type, "srflx") ? FS_CANDIDATE_TYPE_SRFLX :
+					!strcmp(candidate->type, "prflx") ? FS_CANDIDATE_TYPE_PRFLX :
+					!strcmp(candidate->type, "relay") ? FS_CANDIDATE_TYPE_RELAY : 0,
+					FS_NETWORK_PROTOCOL_UDP, candidate->ip, candidate->port);
+			fscandidate->username = g_strdup(candidate->username);
+			fscandidate->password = g_strdup(candidate->password);
+			fscandidate->priority = candidate->priority;
+			ret = g_list_append(ret, fscandidate);
+		}
+
+		return ret;
 	} else {
 		return NULL;
 	}
@@ -287,10 +315,13 @@ static void
 jingle_rtp_candidates_prepared_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *session)
 {
 	JingleContent *content = jingle_session_find_content(session, sid, "initiator");
+	JingleTransport *oldtransport = jingle_content_get_transport(content);
 	GList *candidates = purple_media_get_local_candidates(media, sid, name);
 	JingleTransport *transport =
 			JINGLE_TRANSPORT(jingle_rtp_candidates_to_transport(
-			session, JINGLE_TYPE_RAWUDP, 0, candidates));
+			session, JINGLE_IS_RAWUDP(oldtransport) ?
+				JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
+			0, candidates));
 	g_list_free(candidates);
 
 	JINGLE_RTP_GET_PRIVATE(content)->candidates_ready = TRUE;
@@ -298,8 +329,11 @@ jingle_rtp_candidates_prepared_cb(PurpleMedia *media, gchar *sid, gchar *name, J
 	jingle_content_set_pending_transport(content, transport);
 	jingle_content_accept_transport(content);
 
-	if (jingle_rtp_ready_to_initiate(session, media))
+	if (jingle_rtp_ready_to_initiate(session, media)) {
 		jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_INITIATE));
+		if (JINGLE_IS_ICEUDP(transport))
+			jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
+	}
 }
 
 static void
@@ -320,8 +354,12 @@ jingle_rtp_codecs_ready_cb(PurpleMedia *media, gchar *sid, JingleSession *sessio
 		JINGLE_RTP_GET_PRIVATE(content)->codecs_ready =
 				purple_media_codecs_ready(media, sid);
 
-		if (jingle_rtp_ready_to_initiate(session, media))
+		if (jingle_rtp_ready_to_initiate(session, media)) {
+			JingleTransport *transport = jingle_content_get_transport(content);
 			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_INITIATE));
+			if (JINGLE_IS_ICEUDP(transport))
+				jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
+		}
 	}
 }
 
@@ -399,6 +437,8 @@ jingle_rtp_init_media(JingleContent *content)
 
 	if (JINGLE_IS_RAWUDP(transport))
 		transmitter = "rawudp";
+	else if (JINGLE_IS_ICEUDP(transport))
+		transmitter = "nice";
 	else
 		transmitter = "notransmitter";
 
@@ -577,10 +617,12 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 					jingle_content_get_name(content),
 					jingle_session_get_remote_jid(session), codecs);
 
-			purple_media_add_remote_candidates(jingle_rtp_get_media(session),
-					jingle_content_get_name(content),
-					jingle_session_get_remote_jid(session),
-					candidates);
+			if (JINGLE_IS_RAWUDP(transport)) {
+				purple_media_add_remote_candidates(jingle_rtp_get_media(session),
+						jingle_content_get_name(content),
+						jingle_session_get_remote_jid(session),
+						candidates);
+			}
 
 			/* very hacky */
 			if (xmlnode_get_next_twin(xmlcontent) == NULL)
@@ -653,7 +695,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 
 
 	if (type & PURPLE_MEDIA_AUDIO) {
-		transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
+		transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
 		content = jingle_content_create(JINGLE_APP_RTP, "initiator",
 				"session", "audio-session", "both", transport);
 		jingle_session_add_content(session, content);
@@ -661,7 +703,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_rtp_init_media(content);
 	}
 	if (type & PURPLE_MEDIA_VIDEO) {
-		transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
+		transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
 		content = jingle_content_create(JINGLE_APP_RTP, "initiator",
 				"session", "video-session", "both", transport);
 		jingle_session_add_content(session, content);

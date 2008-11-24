@@ -25,6 +25,8 @@ JABBERSOURCES = auth.c \
 			  jingle/jingle.h \
 			  jingle/content.c \
 			  jingle/content.h \
+			  jingle/iceudp.c \
+			  jingle/iceudp.h \
 			  jingle/rawudp.c \
 			  jingle/rawudp.h \
 			  jingle/rtp.c \
