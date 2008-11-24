@@ -8,6 +8,13 @@ version 2.5.3 (??/??/????):
 	  --with-system-ssl-certs and GnuTLS need to include these in the
 	  system certs directory.
 	* Corrected maximum message lengths for Yahoo!
+	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
+	* Enable auto-reply on Zephyr, to emulate 'zaway' (Toby Schaffer)
+	* The Buddy State Notification plugin no longer prints duplicate
+	  notifications when the same buddy is in multiple groups (Florian Quèze)
+	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
+	  ID's, etc. into links (Florian Quèze)
+	* Fix a crash in SIMPLE when a malformed message is received.
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
@@ -18,6 +25,8 @@ version 2.5.3 (??/??/????):
 	  To completely disable tooltips (e.g. if you had an old tooltip_delay
 	  of zero), add this to ~/.purple/gtkrc-2.0:
 	      gtk-enable-tooltips = 0
+	* Moved the release notification dialog to a mini-dialog in the
+	  buddylist.  (Thanks to Casey Ho)
 
 	Finch:
 	* Allow binding meta+arrow keys for actions.
