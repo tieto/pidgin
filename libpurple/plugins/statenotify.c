@@ -32,13 +32,18 @@ write_status(PurpleBuddy *buddy, const char *message)
 		return;
 	g_return_if_fail(conv->type == PURPLE_CONV_TYPE_IM);
 
+	/* Prevent duplicate notifications for buddies which are multiple times
+	   in the buddy list */
+	if (buddy != purple_find_buddy(buddy->account, buddy->name))
+		return;
+
 	who = purple_buddy_get_alias(buddy);
 	escaped = g_markup_escape_text(who, -1);
 
 	g_snprintf(buf, sizeof(buf), message, escaped);
 	g_free(escaped);
 
-	purple_conv_im_write(conv->u.im, NULL, buf, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ACTIVE_ONLY, time(NULL));
+	purple_conv_im_write(conv->u.im, NULL, buf, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ACTIVE_ONLY | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
 }
 
 static void
