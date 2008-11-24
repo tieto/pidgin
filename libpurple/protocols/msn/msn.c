@@ -705,11 +705,11 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 			PurpleStatus *tune = purple_presence_get_status(presence, "tune");
 			const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
-			const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
-			const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
 			const char *game = purple_status_get_attr_string(tune, "game");
 			const char *office = purple_status_get_attr_string(tune, "office");
 			if (title && *title) {
+				const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
 				mediatype = _("Now Listening");
 				currentmedia = purple_util_format_song_info(title, artist, album, NULL);
 			} else if (game && *game) {

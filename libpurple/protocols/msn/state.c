@@ -209,25 +209,26 @@ msn_get_psm(char *xml_str, gsize len)
 static char *
 create_media_string(PurplePresence *presence)
 {
-	const char *artist, *title, *album, *game, *office;
+	const char *title, *game, *office;
 	char *ret;
 	PurpleStatus *status = purple_presence_get_status(presence, "tune");
 	if (!status || !purple_status_is_active(status))
 		return g_strdup_printf("\\0Music\\00\\0\\0");
 
 	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-	artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
-	album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
 	game = purple_status_get_attr_string(status, "game");
 	office = purple_status_get_attr_string(status, "office");
 
-	if (title && *title)
+	if (title && *title) {
+		const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+		const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
 		ret = g_strdup_printf("WMP\\0Music\\01\\0{0}%s%s\\0%s\\0%s\\0%s\\0",
 		                      artist ? " - {1}" : "",
 		                      album ? " ({2})" : "",
 		                      title,
 		                      artist ? artist : "",
 		                      album ? album : "");
+	}
 	else if (game && *game)
 		ret = g_strdup_printf("\\0Games\\01\\0Playing {0}\\0%s\\0", game);
 	else if (office && *office)
