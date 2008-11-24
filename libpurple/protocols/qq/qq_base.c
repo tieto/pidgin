@@ -71,7 +71,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	if (len < 139) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt get server reply"));
+				_("Can not decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -404,18 +404,18 @@ guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len)
 			return process_login_redirect(gc, data, data_len);
 
 		case 0x0A:		/* extend redirect used in QQ2006 */
-			error = g_strdup( _("Not support Redirect_EX now") );
+			error = g_strdup( _("Redirect_EX is not currently supported") );
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 		case 0x05:		/* invalid password */
 			if (!purple_account_get_remember_password(gc->account)) {
 				purple_account_set_password(gc->account, NULL);
 			}
-			error = g_strdup( _("Error password"));
+			error = g_strdup( _("Incorrect password."));
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 		case 0x06:		/* need activation */
-			error = g_strdup( _("Need active"));
+			error = g_strdup( _("Activation required"));
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 
@@ -789,7 +789,7 @@ static void request_token_ex_code(PurpleConnection *gc,
 	qd->send_seq++;
 	qq_send_cmd_encrypted(gc, QQ_CMD_TOKEN_EX, qd->send_seq, buf, bytes, TRUE);
 
-	purple_connection_update_progress(gc, _("Checking code of  captcha ..."), 3, QQ_CONNECT_STEPS);
+	purple_connection_update_progress(gc, _("Checking code of captcha ..."), 3, QQ_CONNECT_STEPS);
 }
 
 typedef struct {
@@ -873,7 +873,7 @@ void qq_captcha_input_dialog(PurpleConnection *gc,qq_captcha_data *captcha)
 	purple_request_fields(account,
 		_("QQ Captcha Verifing"),
 		_("QQ Captcha Verifing"),
-		_("Please fill code according to image"),
+		_("Enter the text from the image"),
 		fields,
 		_("OK"), G_CALLBACK(captcha_input_ok_cb),
 		_("Cancel"), G_CALLBACK(captcha_input_cancel_cb),
@@ -1094,16 +1094,16 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 			if (!purple_account_get_remember_password(gc->account)) {
 				purple_account_set_password(gc->account, NULL);
 			}
-			error = g_strdup(_("Error password"));
+			error = g_strdup(_("Incorrect password."));
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 		case 0x33:		/* need activation */
 		case 0x51:		/* need activation */
-			error = g_strdup(_("Need active"));
+			error = g_strdup(_("Activation required"));
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 		case 0xBF:		/* uid is not exist */
-			error = g_strdup(_("invalid user name"));
+			error = g_strdup(_("Invalid username."));
 			reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 			break;
 		default:

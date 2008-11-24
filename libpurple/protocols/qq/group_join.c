@@ -219,11 +219,11 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 
 	rmd = qq_room_data_find(gc, id);
 	if (rmd != NULL) {
-		msg = g_strdup_printf(_("Successed join to Qun %s (%d)"), rmd->title_utf8, rmd->ext_id);
+		msg = g_strdup_printf(_("Successfully joined Qun %s (%d)"), rmd->title_utf8, rmd->ext_id);
 		qq_got_attention(gc, msg);
 		g_free(msg);
 	} else {
-		qq_got_attention(gc, _("Successed join to Qun"));
+		qq_got_attention(gc, _("Successfully joined Qun"));
 	}
 }
 

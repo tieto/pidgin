@@ -1228,11 +1228,14 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 				if (purple_str_has_prefix(ssparts[i], "terminated"))
 				{
 					purple_debug_info("simple", "Subscription expired!");
-					g_free(b->dialog->ourtag);
-					g_free(b->dialog->theirtag);
-					g_free(b->dialog->callid);
-					g_free(b->dialog);
-					b->dialog = NULL;
+					if (b->dialog)
+					{
+						g_free(b->dialog->ourtag);
+						g_free(b->dialog->theirtag);
+						g_free(b->dialog->callid);
+						g_free(b->dialog);
+						b->dialog = NULL;
+					}
 
 					purple_prpl_got_user_status(sip->account, from, "offline", NULL);
 					break;
@@ -1627,6 +1630,13 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		cur[0] = '\0';
 		purple_debug_info("simple", "\n\nreceived - %s\n######\n%s\n#######\n\n", ctime(&currtime), conn->inbuf);
 		msg = sipmsg_parse_header(conn->inbuf);
+
+		if(!msg) {
+			/* Should we re-use this error message (from lower in the function)? */
+			purple_debug_misc("simple", "received a incomplete sip msg: %s\n", conn->inbuf);
+			return;
+		}
+
 		cur[0] = '\r';
 		cur += 2;
 		restlen = conn->inbufused - (cur - conn->inbuf);

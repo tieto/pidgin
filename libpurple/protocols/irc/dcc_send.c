@@ -302,7 +302,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 
 	if (sock < 0) {
 		purple_notify_error(gc, NULL, _("File Transfer Failed"),
-		                  _("Could not open a listening port."));
+		                    _("Could not open a listening port."));
 		purple_xfer_cancel_local(xfer);
 		return;
 	}
@@ -313,14 +313,14 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	purple_debug_misc("irc", "port is %hu\n", port);
 	/* Monitor the listening socket */
 	xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
-	                               irc_dccsend_send_connected, xfer);
+	                                 irc_dccsend_send_connected, xfer);
 
 	/* Send the intended recipient the DCC request */
 	arg[0] = xfer->who;
 	inet_aton(purple_network_get_my_ip(irc->fd), &addr);
 	arg[1] = tmp = g_strdup_printf("\001DCC SEND \"%s\" %u %hu %" G_GSIZE_FORMAT "\001",
-	                         xfer->filename, ntohl(addr.s_addr),
-	                         port, xfer->size);
+	                               xfer->filename, ntohl(addr.s_addr),
+	                               port, xfer->size);
 
 	irc_cmd_privmsg(gc->proto_data, "msg", NULL, arg);
 	g_free(tmp);
@@ -343,7 +343,7 @@ static void irc_dccsend_send_init(PurpleXfer *xfer) {
 	if (xd->listen_data == NULL) {
 		purple_xfer_unref(xfer);
 		purple_notify_error(gc, NULL, _("File Transfer Failed"),
-		                  _("Could not open a listening port."));
+		                    _("Could not open a listening port."));
 		purple_xfer_cancel_local(xfer);
 	}
 

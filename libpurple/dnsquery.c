@@ -345,6 +345,12 @@ purple_dnsquery_resolver_destroy(PurpleDnsQueryResolverProcess *resolver)
 {
 	g_return_if_fail(resolver != NULL);
 
+	/* Keep this before the kill() call below. */
+	if (resolver->inpa != 0) {
+		purple_input_remove(resolver->inpa);
+		resolver->inpa = 0;
+	}
+
 	/*
 	 * We might as well attempt to kill our child process.  It really
 	 * doesn't matter if this fails, because children will expire on
@@ -352,9 +358,6 @@ purple_dnsquery_resolver_destroy(PurpleDnsQueryResolverProcess *resolver)
 	 */
 	if (resolver->dns_pid > 0)
 		kill(resolver->dns_pid, SIGKILL);
-
-	if (resolver->inpa != 0)
-		purple_input_remove(resolver->inpa);
 
 	close(resolver->fd_in);
 	close(resolver->fd_out);

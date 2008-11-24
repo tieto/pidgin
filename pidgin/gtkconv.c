@@ -973,7 +973,9 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	}
 
 	name = purple_conversation_get_name(conv);
-	fprintf(fp, "<html>\n<head><title>%s</title></head>\n<body>", name);
+	fprintf(fp, "<html>\n<head>\n");
+	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
+	fprintf(fp, "<title>%s</title>\n</head>\n<body>\n", name);
 	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
 
 	lines = gtk_imhtml_get_markup_lines(
