@@ -1,6 +1,6 @@
 /**
  * @file soap.c
- * 	C file for SOAP connection related process
+ * Functions relating to SOAP connections.
  *
  * purple
  *
@@ -69,22 +69,96 @@ typedef struct _MsnSoapConnection {
 	MsnSoapRequest *current_request;
 } MsnSoapConnection;
 
-static void msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data);
 static gboolean msn_soap_connection_run(gpointer data);
 
-static MsnSoapConnection *msn_soap_connection_new(MsnSession *session,
-	const char *host);
-static void msn_soap_connection_handle_next(MsnSoapConnection *conn);
-static void msn_soap_connection_destroy(MsnSoapConnection *conn);
+static MsnSoapConnection *
+msn_soap_connection_new(MsnSession *session, const char *host)
+{
+	MsnSoapConnection *conn = g_new0(MsnSoapConnection, 1);
+	conn->session = session;
+	conn->host = g_strdup(host);
+	conn->queue = g_queue_new();
+	return conn;
+}
 
-static void msn_soap_message_send_internal(MsnSession *session, MsnSoapMessage *message,
-	const char *host, const char *path, gboolean secure,
-	MsnSoapCallback cb, gpointer cb_data, gboolean first);
+static void
+msn_soap_message_destroy(MsnSoapMessage *message)
+{
+	if (message) {
+		g_slist_foreach(message->headers, (GFunc)g_free, NULL);
+		g_slist_free(message->headers);
+		g_free(message->action);
+		if (message->xml)
+			xmlnode_free(message->xml);
+		g_free(message);
+	}
+}
 
-static void msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message);
-static void msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect);
-static gboolean msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond, gboolean initial);
-static void msn_soap_process(MsnSoapConnection *conn);
+static void
+msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message)
+{
+	g_free(req->path);
+	if (!keep_message)
+		msn_soap_message_destroy(req->message);
+	g_free(req);
+}
+
+static void
+msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect)
+{
+	if (conn->event_handle) {
+		purple_input_remove(conn->event_handle);
+		conn->event_handle = 0;
+	}
+
+	if (conn->message) {
+		msn_soap_message_destroy(conn->message);
+		conn->message = NULL;
+	}
+
+	if (conn->buf) {
+		g_string_free(conn->buf, TRUE);
+		conn->buf = NULL;
+	}
+
+	if (conn->ssl && (disconnect || conn->close_when_done)) {
+		purple_ssl_close(conn->ssl);
+		conn->ssl = NULL;
+	}
+
+	if (conn->current_request) {
+		msn_soap_request_destroy(conn->current_request, FALSE);
+		conn->current_request = NULL;
+	}
+}
+
+static void
+msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data)
+{
+	MsnSoapRequest *req = item;
+
+	if (req->cb)
+		req->cb(req->message, NULL, req->cb_data);
+
+	msn_soap_request_destroy(req, FALSE);
+}
+
+static void
+msn_soap_connection_destroy(MsnSoapConnection *conn)
+{
+	if (conn->current_request) {
+		MsnSoapRequest *req = conn->current_request;
+		conn->current_request = NULL;
+		msn_soap_connection_destroy_foreach_cb(req, conn);
+	}
+
+	msn_soap_connection_sanitize(conn, TRUE);
+	g_queue_foreach(conn->queue, msn_soap_connection_destroy_foreach_cb, conn);
+	g_queue_free(conn->queue);
+
+	g_free(conn->host);
+	g_free(conn);
+}
 
 static gboolean
 msn_soap_cleanup_each(gpointer key, gpointer value, gpointer data)
@@ -147,38 +221,52 @@ msn_soap_get_connection(MsnSession *session, const char *host)
 	return conn;
 }
 
-static MsnSoapConnection *
-msn_soap_connection_new(MsnSession *session, const char *host)
+static void
+msn_soap_connection_handle_next(MsnSoapConnection *conn)
 {
-	MsnSoapConnection *conn = g_new0(MsnSoapConnection, 1);
-	conn->session = session;
-	conn->host = g_strdup(host);
-	conn->queue = g_queue_new();
-	return conn;
+	msn_soap_connection_sanitize(conn, FALSE);
+
+	conn->event_handle = purple_timeout_add(0, msn_soap_connection_run,	conn);
+
+	if (conn->current_request) {
+		MsnSoapRequest *req = conn->current_request;
+		conn->current_request = NULL;
+		msn_soap_connection_destroy_foreach_cb(req, conn);
+	}
 }
 
 static void
-msn_soap_connected_cb(gpointer data, PurpleSslConnection *ssl,
-		PurpleInputCondition cond)
+msn_soap_message_send_internal(MsnSession *session, MsnSoapMessage *message,
+	const char *host, const char *path, gboolean secure,
+	MsnSoapCallback cb, gpointer cb_data, gboolean first)
 {
-	MsnSoapConnection *conn = data;
+	MsnSoapConnection *conn = msn_soap_get_connection(session, host);
+	MsnSoapRequest *req = g_new0(MsnSoapRequest, 1);
 
-	conn->connected = TRUE;
+	req->path = g_strdup(path);
+	req->message = message;
+	req->secure = secure;
+	req->cb = cb;
+	req->cb_data = cb_data;
+
+	if (first) {
+		g_queue_push_head(conn->queue, req);
+	} else {
+		g_queue_push_tail(conn->queue, req);
+	}
 
 	if (conn->event_handle == 0)
-		conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
+		conn->event_handle = purple_timeout_add(0, msn_soap_connection_run,
+			conn);
 }
 
-static void
-msn_soap_error_cb(PurpleSslConnection *ssl, PurpleSslErrorType error,
-		gpointer data)
+void
+msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
+	const char *host, const char *path, gboolean secure,
+	MsnSoapCallback cb, gpointer cb_data)
 {
-	MsnSoapConnection *conn = data;
-
-	/* sslconn already frees the connection in case of error */
-	conn->ssl = NULL;
-
-	g_hash_table_remove(conn->session->soap_table, conn->host);
+	msn_soap_message_send_internal(session, message, host, path, secure,
+		cb, cb_data, FALSE);
 }
 
 static gboolean
@@ -259,65 +347,17 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 }
 
 static void
-msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
+msn_soap_message_add_header(MsnSoapMessage *message,
+		const char *name, const char *value)
 {
-	MsnSoapConnection *conn = data;
-	int count = 0, cnt, perrno;
-	/* This buffer needs to be larger than any packets received from
-		login.live.com or Adium will fail to receive the packet
-		(something weird with the login.live.com server). With NSS it works
-		fine, so I believe it's some bug with OS X */ 
-	char buf[16 * 1024];
-	gsize cursor;
+	char *header = g_strdup_printf("%s: %s\r\n", name, value);
 
-	if (conn->message == NULL) {
-		conn->message = msn_soap_message_new(NULL, NULL);
-	}
-
-	if (conn->buf == NULL) {
-		conn->buf = g_string_new_len(buf, 0);
-	}
-
-	cursor = conn->buf->len;
-	while ((cnt = purple_ssl_read(conn->ssl, buf, sizeof(buf))) > 0) {
-		purple_debug_info("soap", "read %d bytes\n", cnt);
-		count += cnt;
-		g_string_append_len(conn->buf, buf, cnt);
-	}
-
-	perrno = errno;
-	if (cnt < 0 && perrno != EAGAIN)
-		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
-
-#ifndef MSN_UNSAFE_DEBUG
-	if (conn->current_request->secure)
-		purple_debug_misc("soap", "Received secure request.\n");
-	else
-#endif
-	if (count != 0)
-		purple_debug_misc("soap", "current %s\n", conn->buf->str + cursor);
-
-	/* && count is necessary for Adium, on OS X the last read always
-	   return an error, so we want to proceed anyway. See #5212 for
-	   discussion on this and the above buffer size issues */
-	if(cnt < 0 && errno == EAGAIN && count == 0)
-		return;
-
-	/* msn_soap_process could alter errno */
-	msn_soap_process(conn);
-	
-	if (cnt < 0 && perrno != EAGAIN) {
-		/* It's possible msn_soap_process closed the ssl connection */
-		if (conn->ssl) {
-			purple_ssl_close(conn->ssl);
-			conn->ssl = NULL;
-			msn_soap_connection_handle_next(conn);
-		}
-	}
+	message->headers = g_slist_prepend(message->headers, header);
 }
 
 static void
-msn_soap_process(MsnSoapConnection *conn) {
+msn_soap_process(MsnSoapConnection *conn)
+{
 	gboolean handled = FALSE;
 	char *cursor;
 	char *linebreak;
@@ -429,9 +469,61 @@ msn_soap_process(MsnSoapConnection *conn) {
 }
 
 static void
-msn_soap_write_cb(gpointer data, gint fd, PurpleInputCondition cond)
+msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 {
-	msn_soap_write_cb_internal(data, fd, cond, FALSE);
+	MsnSoapConnection *conn = data;
+	int count = 0, cnt, perrno;
+	/* This buffer needs to be larger than any packets received from
+		login.live.com or Adium will fail to receive the packet
+		(something weird with the login.live.com server). With NSS it works
+		fine, so I believe it's some bug with OS X */
+	char buf[16 * 1024];
+	gsize cursor;
+
+	if (conn->message == NULL) {
+		conn->message = msn_soap_message_new(NULL, NULL);
+	}
+
+	if (conn->buf == NULL) {
+		conn->buf = g_string_new_len(buf, 0);
+	}
+
+	cursor = conn->buf->len;
+	while ((cnt = purple_ssl_read(conn->ssl, buf, sizeof(buf))) > 0) {
+		purple_debug_info("soap", "read %d bytes\n", cnt);
+		count += cnt;
+		g_string_append_len(conn->buf, buf, cnt);
+	}
+
+	perrno = errno;
+	if (cnt < 0 && perrno != EAGAIN)
+		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
+
+#ifndef MSN_UNSAFE_DEBUG
+	if (conn->current_request->secure)
+		purple_debug_misc("soap", "Received secure request.\n");
+	else
+#endif
+	if (count != 0)
+		purple_debug_misc("soap", "current %s\n", conn->buf->str + cursor);
+
+	/* && count is necessary for Adium, on OS X the last read always
+	   return an error, so we want to proceed anyway. See #5212 for
+	   discussion on this and the above buffer size issues */
+	if(cnt < 0 && errno == EAGAIN && count == 0)
+		return;
+
+	/* msn_soap_process could alter errno */
+	msn_soap_process(conn);
+
+	if (cnt < 0 && perrno != EAGAIN) {
+		/* It's possible msn_soap_process closed the ssl connection */
+		if (conn->ssl) {
+			purple_ssl_close(conn->ssl);
+			conn->ssl = NULL;
+			msn_soap_connection_handle_next(conn);
+		}
+	}
 }
 
 static gboolean
@@ -473,6 +565,47 @@ msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond,
 	conn->event_handle = purple_input_add(conn->ssl->fd, PURPLE_INPUT_READ,
 		msn_soap_read_cb, conn);
 	return TRUE;
+}
+
+static void
+msn_soap_write_cb(gpointer data, gint fd, PurpleInputCondition cond)
+{
+	msn_soap_write_cb_internal(data, fd, cond, FALSE);
+}
+
+static void
+msn_soap_error_cb(PurpleSslConnection *ssl, PurpleSslErrorType error,
+		gpointer data)
+{
+	MsnSoapConnection *conn = data;
+
+	/* sslconn already frees the connection in case of error */
+	conn->ssl = NULL;
+
+	g_hash_table_remove(conn->session->soap_table, conn->host);
+}
+
+static void
+msn_soap_connected_cb(gpointer data, PurpleSslConnection *ssl,
+		PurpleInputCondition cond)
+{
+	MsnSoapConnection *conn = data;
+
+	conn->connected = TRUE;
+
+	if (conn->event_handle == 0)
+		conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
+}
+
+MsnSoapMessage *
+msn_soap_message_new(const char *action, xmlnode *xml)
+{
+	MsnSoapMessage *message = g_new0(MsnSoapMessage, 1);
+
+	message->action = g_strdup(action);
+	message->xml = xml;
+
+	return message;
 }
 
 static gboolean
@@ -532,11 +665,11 @@ msn_soap_connection_run(gpointer data)
 			if (!msn_soap_write_cb_internal(conn, conn->ssl->fd, PURPLE_INPUT_WRITE, TRUE)) {
 				/* Not connected => reconnect and retry */
 				purple_debug_info("soap", "not connected, reconnecting\n");
-				
+
 				conn->connected = FALSE;
 				conn->current_request = NULL;
 				msn_soap_connection_sanitize(conn, FALSE);
-				
+
 				g_queue_push_head(conn->queue, req);
 				conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
 			}
@@ -547,151 +680,3 @@ msn_soap_connection_run(gpointer data)
 
 	return FALSE;
 }
-
-void
-msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
-	const char *host, const char *path, gboolean secure,
-	MsnSoapCallback cb, gpointer cb_data)
-{
-	msn_soap_message_send_internal(session, message, host, path, secure,
-		cb, cb_data, FALSE);
-}
-
-static void
-msn_soap_message_send_internal(MsnSession *session, MsnSoapMessage *message,
-	const char *host, const char *path, gboolean secure,
-	MsnSoapCallback cb, gpointer cb_data, gboolean first)
-{
-	MsnSoapConnection *conn = msn_soap_get_connection(session, host);
-	MsnSoapRequest *req = g_new0(MsnSoapRequest, 1);
-
-	req->path = g_strdup(path);
-	req->message = message;
-	req->secure = secure;
-	req->cb = cb;
-	req->cb_data = cb_data;
-
-	if (first) {
-		g_queue_push_head(conn->queue, req);
-	} else {
-		g_queue_push_tail(conn->queue, req);
-	}
-
-	if (conn->event_handle == 0)
-		conn->event_handle = purple_timeout_add(0, msn_soap_connection_run,
-			conn);
-}
-
-static void
-msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect)
-{
-	if (conn->event_handle) {
-		purple_input_remove(conn->event_handle);
-		conn->event_handle = 0;
-	}
-
-	if (conn->message) {
-		msn_soap_message_destroy(conn->message);
-		conn->message = NULL;
-	}
-
-	if (conn->buf) {
-		g_string_free(conn->buf, TRUE);
-		conn->buf = NULL;
-	}
-
-	if (conn->ssl && (disconnect || conn->close_when_done)) {
-		purple_ssl_close(conn->ssl);
-		conn->ssl = NULL;
-	}
-
-	if (conn->current_request) {
-		msn_soap_request_destroy(conn->current_request, FALSE);
-		conn->current_request = NULL;
-	}
-}
-
-static void
-msn_soap_connection_handle_next(MsnSoapConnection *conn)
-{
-	msn_soap_connection_sanitize(conn, FALSE);
-
-	conn->event_handle = purple_timeout_add(0, msn_soap_connection_run,	conn);
-
-	if (conn->current_request) {
-		MsnSoapRequest *req = conn->current_request;
-		conn->current_request = NULL;
-		msn_soap_connection_destroy_foreach_cb(req, conn);
-	}
-}
-
-static void
-msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data)
-{
-	MsnSoapRequest *req = item;
-
-	if (req->cb)
-		req->cb(req->message, NULL, req->cb_data);
-
-	msn_soap_request_destroy(req, FALSE);
-}
-
-static void
-msn_soap_connection_destroy(MsnSoapConnection *conn)
-{
-	if (conn->current_request) {
-		MsnSoapRequest *req = conn->current_request;
-		conn->current_request = NULL;
-		msn_soap_connection_destroy_foreach_cb(req, conn);
-	}
-
-	msn_soap_connection_sanitize(conn, TRUE);
-	g_queue_foreach(conn->queue, msn_soap_connection_destroy_foreach_cb, conn);
-	g_queue_free(conn->queue);
-
-	g_free(conn->host);
-	g_free(conn);
-}
-
-MsnSoapMessage *
-msn_soap_message_new(const char *action, xmlnode *xml)
-{
-	MsnSoapMessage *message = g_new0(MsnSoapMessage, 1);
-
-	message->action = g_strdup(action);
-	message->xml = xml;
-
-	return message;
-}
-
-void
-msn_soap_message_destroy(MsnSoapMessage *message)
-{
-	if (message) {
-		g_slist_foreach(message->headers, (GFunc)g_free, NULL);
-		g_slist_free(message->headers);
-		g_free(message->action);
-		if (message->xml)
-			xmlnode_free(message->xml);
-		g_free(message);
-	}
-}
-
-void
-msn_soap_message_add_header(MsnSoapMessage *message,
-		const char *name, const char *value)
-{
-	char *header = g_strdup_printf("%s: %s\r\n", name, value);
-
-	message->headers = g_slist_prepend(message->headers, header);
-}
-
-static void
-msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message)
-{
-	g_free(req->path);
-	if (!keep_message)
-		msn_soap_message_destroy(req->message);
-	g_free(req);
-}
-
