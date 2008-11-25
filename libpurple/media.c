@@ -1175,22 +1175,17 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		gchar *stun_ip = NULL;
 		FsStream *fsstream = NULL;
 
-		if (!strcmp(transmitter, "rawudp") &&
-				(stun_ip = purple_media_get_stun_pref_ip())) {
-			GParameter *param = g_new0(GParameter, num_params+2);
+		if (stun_ip = purple_media_get_stun_pref_ip()) {
+			GParameter *param = g_new0(GParameter, num_params+1);
 			memcpy(param, params, sizeof(GParameter) * num_params);
 
 			param[num_params].name = "stun-ip";
 			g_value_init(&param[num_params].value, G_TYPE_STRING);
 			g_value_take_string(&param[num_params].value, stun_ip);
 
-			param[num_params+1].name = "stun-timeout";
-			g_value_init(&param[num_params+1].value, G_TYPE_UINT);
-			g_value_set_uint(&param[num_params+1].value, 5);
-
 			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction,
-					transmitter, num_params+2, param, &err);
+					transmitter, num_params+1, param, &err);
 			g_free(param);
 			g_free(stun_ip);
 		} else {
