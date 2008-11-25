@@ -190,13 +190,12 @@ msn_soap_cleanup_for_session(gpointer data)
 		g_hash_table_foreach_remove(sess->soap_table, msn_soap_cleanup_each,
 			&t);
 
-		if (g_hash_table_size(sess->soap_table) == 0) {
-			sess->soap_cleanup_handle = 0;
-			return FALSE;
-		}
+		if (g_hash_table_size(sess->soap_table) != 0)
+			return TRUE;
 	}
 
-	return TRUE;
+	sess->soap_cleanup_handle = 0;
+	return FALSE;
 }
 
 static MsnSoapConnection *
