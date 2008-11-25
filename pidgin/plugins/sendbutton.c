@@ -37,9 +37,26 @@ send_button_cb(GtkButton *button, PidginConversation *gtkconv)
 }
 
 static void
+input_buffer_changed(GtkTextBuffer *text_buffer, GtkWidget *send_button)
+{
+	if (gtk_text_buffer_get_char_count(text_buffer) != 0)
+		gtk_widget_set_sensitive(send_button, TRUE);
+	else
+		gtk_widget_set_sensitive(send_button, FALSE);
+}
+
+static void
 create_send_button_pidgin(PidginConversation *gtkconv)
 {
 	GtkWidget *send_button;
+	GtkTextBuffer *buf;
+	guint signal_id;
+
+	send_button = g_object_get_data(G_OBJECT(gtkconv->lower_hbox),
+	                                "send_button");
+
+	if (send_button != NULL)
+		return;
 
 	send_button = gtk_button_new_with_mnemonic(_("_Send"));
 	g_signal_connect(G_OBJECT(send_button), "clicked",
@@ -48,6 +65,16 @@ create_send_button_pidgin(PidginConversation *gtkconv)
 	                 FALSE, 0);
 	gtk_widget_show(send_button);
 
+	buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
+	if (buf) {
+		signal_id = g_signal_connect(G_OBJECT(buf), "changed",
+		                             G_CALLBACK(input_buffer_changed),
+		                             send_button);
+		g_object_set_data(G_OBJECT(send_button), "buffer-signal",
+		                  GINT_TO_POINTER(signal_id));
+		input_buffer_changed(buf, send_button);
+	}
+ 
 	g_object_set_data(G_OBJECT(gtkconv->lower_hbox), "send_button",
 	                  send_button);
 }
@@ -60,7 +87,18 @@ remove_send_button_pidgin(PidginConversation *gtkconv)
 	send_button = g_object_get_data(G_OBJECT(gtkconv->lower_hbox),
 	                                "send_button");
 	if (send_button != NULL) {
+		GtkTextBuffer *buf;
+		guint signal_id;
+
+		buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
+		signal_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(send_button),
+		                                              "buffer-signal"));
+		if (buf && signal_id)
+			g_signal_handler_disconnect(G_OBJECT(buf), signal_id);
+
 		gtk_widget_destroy(send_button);
+		g_object_set_data(G_OBJECT(gtkconv->lower_hbox),
+		                  "send_button", NULL);
 	}
 }
 

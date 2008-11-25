@@ -463,7 +463,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if (buddy) {
 			jb = jabber_buddy_find(js, from, TRUE);
-			if ((jb->subscription & JABBER_SUB_TO))
+			if ((jb->subscription & (JABBER_SUB_TO | JABBER_SUB_PENDING)))
 				onlist = TRUE;
 		}
 

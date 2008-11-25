@@ -121,9 +121,6 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 	session = gc->proto_data;
 	swboard = msn_session_get_swboard(session, username, MSN_SB_FLAG_IM);
 
-	if (swboard == NULL)
-		return FALSE;
-
 	msn_switchboard_send_msg(swboard, msg, TRUE);
 	msn_message_destroy(msg);
 
@@ -550,21 +547,17 @@ static PurpleXfer*
 msn_new_xfer(PurpleConnection *gc, const char *who)
 {
 	MsnSession *session;
-	MsnSlpLink *slplink;
 	PurpleXfer *xfer;
 
 	session = gc->proto_data;
 
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 
-	if (xfer)
-	{
-		slplink = msn_session_get_slplink(session, who);
+	g_return_val_if_fail(xfer != NULL, NULL);
 
-		xfer->data = slplink;
+	xfer->data = msn_session_get_slplink(session, who);
 
-		purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
-	}
+	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
 
 	return xfer;
 }
@@ -843,7 +836,7 @@ msn_status_types(PurpleAccount *account)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
-			"tune", NULL, TRUE, TRUE, TRUE,
+			"tune", NULL, FALSE, TRUE, TRUE,
 			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
@@ -1203,6 +1196,9 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		purple_debug_info("msn", "prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, username))
 		{
+			if (flags & PURPLE_MESSAGE_AUTO_RESP) {
+				msn_message_set_flag(msg, 'U');
+			}
 			if (msn_user_is_yahoo(account, who)) {
 				/*we send the online and offline Message to Yahoo User via UBM*/
 				purple_debug_info("msn", "send to Yahoo User\n");
@@ -2557,22 +2553,19 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
 	"prpl-msn",                                       /**< id             */
 	"MSN",                                            /**< name           */
 	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Windows Live Messenger Protocol Plugin"),
-	                                                  /**  description    */
-	N_("Windows Live Messenger Protocol Plugin"),
-	"Christian Hammond <chipx86@gnupdate.org>, "
-	"MaYuan <mayuan2006@gmail.com>",				  /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	N_("Windows Live Messenger Protocol Plugin"),     /**< summary        */
+	N_("Windows Live Messenger Protocol Plugin"),     /**< description    */
+	NULL,                                             /**< author         */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	msn_load,                                         /**< load           */
 	msn_unload,                                       /**< unload         */

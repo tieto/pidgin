@@ -472,7 +472,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					 G_CALLBACK(screenname_changed_cb), dialog);
 
 	/* Do the user split thang */
-	if (dialog->plugin == NULL) /* Yeah right. */
+	if (dialog->prpl_info == NULL)
 		user_splits = NULL;
 	else
 		user_splits = dialog->prpl_info->user_splits;
@@ -2149,9 +2149,9 @@ create_accounts_list(AccountsWindow *dialog)
 						 "<span size='larger' weight='bold'>Welcome to %s!</span>\n\n"
 
 						 "You have no IM accounts configured. To start connecting with %s "
-						 "press the <b>Add</b> button below and configure your first "
+						 "press the <b>Add...</b> button below and configure your first "
 						 "account. If you want %s to connect to multiple IM accounts, "
-						 "press <b>Add</b> again to configure them all.\n\n"
+						 "press <b>Add...</b> again to configure them all.\n\n"
 
 						 "You can come back to this window to add, edit, or remove "
 						 "accounts from <b>Accounts->Manage Accounts</b> in the Buddy "
@@ -2285,7 +2285,7 @@ pidgin_accounts_window_show(void)
 	gtk_widget_show(sw);
 
 	/* Add button */
-	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD, G_CALLBACK(add_account_cb), dialog);
+	pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_ADD, G_CALLBACK(add_account_cb), dialog);
 
 	/* Modify button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_MODIFY, G_CALLBACK(modify_account_cb), dialog);
