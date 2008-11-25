@@ -84,14 +84,12 @@ msn_soap_connection_new(MsnSession *session, const char *host)
 static void
 msn_soap_message_destroy(MsnSoapMessage *message)
 {
-	if (message) {
-		g_slist_foreach(message->headers, (GFunc)g_free, NULL);
-		g_slist_free(message->headers);
-		g_free(message->action);
-		if (message->xml)
-			xmlnode_free(message->xml);
-		g_free(message);
-	}
+	g_slist_foreach(message->headers, (GFunc)g_free, NULL);
+	g_slist_free(message->headers);
+	g_free(message->action);
+	if (message->xml)
+		xmlnode_free(message->xml);
+	g_free(message);
 }
 
 static void
@@ -265,6 +263,8 @@ msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
 	const char *host, const char *path, gboolean secure,
 	MsnSoapCallback cb, gpointer cb_data)
 {
+	g_return_if_fail(message != NULL);
+
 	msn_soap_message_send_internal(session, message, host, path, secure,
 		cb, cb_data, FALSE);
 }
