@@ -533,7 +533,8 @@ msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond,
 	MsnSoapConnection *conn = data;
 	int written;
 
-	if (cond != PURPLE_INPUT_WRITE) return TRUE;
+	if (cond != PURPLE_INPUT_WRITE)
+		return TRUE;
 
 	written = purple_ssl_write(conn->ssl, conn->buf->str + conn->handled_len,
 		conn->buf->len - conn->handled_len);
@@ -543,7 +544,8 @@ msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond,
 	else if (written <= 0) {
 		purple_ssl_close(conn->ssl);
 		conn->ssl = NULL;
-		if (!initial) msn_soap_connection_handle_next(conn);
+		if (!initial)
+			msn_soap_connection_handle_next(conn);
 		return FALSE;
 	}
 
