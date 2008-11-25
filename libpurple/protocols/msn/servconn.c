@@ -69,8 +69,7 @@ msn_servconn_destroy(MsnServConn *servconn)
 		return;
 	}
 
-	if (servconn->connected)
-		msn_servconn_disconnect(servconn);
+	msn_servconn_disconnect(servconn);
 
 	if (servconn->destroy_cb)
 		servconn->destroy_cb(servconn);

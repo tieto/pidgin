@@ -34,6 +34,7 @@ commit-check:
 	(cd po ; intltool-update -m 2>&1 | grep -v '^mismatched quotes.*\.py$$' | sed "s|current directory|po directory|" | grep . ; if [ $$? = 0 ] ; then exit 1 ; else exit 0 ; fi)
 	LC_ALL=C sort -c -t/ -u po/POTFILES.in
 	LC_ALL=C sort -c -t/ -u po/POTFILES.skip
+	iconv -f utf8 -t utf8 COPYRIGHT | cmp COPYRIGHT -
 
 version-check: commit-check
 # We don't want to release development versions.

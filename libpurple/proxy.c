@@ -944,12 +944,15 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 			} else if((header = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: Basic"))) {
 				gchar *t1, *t2;
+				const char *username, *password;
+
+				username = purple_proxy_info_get_username(connect_data->gpi);
+				password = purple_proxy_info_get_password(connect_data->gpi);
 
 				t1 = g_strdup_printf("%s:%s",
-					purple_proxy_info_get_username(connect_data->gpi),
-					purple_proxy_info_get_password(connect_data->gpi) ?
-					purple_proxy_info_get_password(connect_data->gpi) : "");
-				t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
+									 username ? username : "",
+									 password ? password : "");
+				t2 = purple_base64_encode((guchar *)t1, strlen(t1));
 				g_free(t1);
 
 				request = g_strdup_printf(
