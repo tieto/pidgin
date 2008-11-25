@@ -56,6 +56,7 @@ typedef struct _MsnSoapConnection {
 	gboolean connected;
 
 	guint event_handle;
+	guint run_timer;
 	GString *buf;
 	gsize handled_len;
 	gsize body_len;
@@ -107,6 +108,11 @@ msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect)
 	if (conn->event_handle) {
 		purple_input_remove(conn->event_handle);
 		conn->event_handle = 0;
+	}
+
+	if (conn->run_timer) {
+		purple_timeout_remove(conn->run_timer);
+		conn->run_timer = 0;
 	}
 
 	if (conn->message) {
@@ -224,7 +230,7 @@ msn_soap_connection_handle_next(MsnSoapConnection *conn)
 {
 	msn_soap_connection_sanitize(conn, FALSE);
 
-	conn->event_handle = purple_timeout_add(0, msn_soap_connection_run,	conn);
+	conn->run_timer = purple_timeout_add(0, msn_soap_connection_run, conn);
 
 	if (conn->current_request) {
 		MsnSoapRequest *req = conn->current_request;
@@ -253,8 +259,8 @@ msn_soap_message_send_internal(MsnSession *session, MsnSoapMessage *message,
 		g_queue_push_tail(conn->queue, req);
 	}
 
-	if (conn->event_handle == 0)
-		conn->event_handle = purple_timeout_add(0, msn_soap_connection_run,
+	if (conn->run_timer == 0)
+		conn->run_timer = purple_timeout_add(0, msn_soap_connection_run,
 			conn);
 }
 
@@ -595,8 +601,8 @@ msn_soap_connected_cb(gpointer data, PurpleSslConnection *ssl,
 
 	conn->connected = TRUE;
 
-	if (conn->event_handle == 0)
-		conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
+	if (conn->run_timer == 0)
+		conn->run_timer = purple_timeout_add(0, msn_soap_connection_run, conn);
 }
 
 MsnSoapMessage *
@@ -616,7 +622,7 @@ msn_soap_connection_run(gpointer data)
 	MsnSoapConnection *conn = data;
 	MsnSoapRequest *req = g_queue_peek_head(conn->queue);
 
-	conn->event_handle = 0;
+	conn->run_timer = 0;
 
 	if (req) {
 		if (conn->ssl == NULL) {
@@ -673,7 +679,7 @@ msn_soap_connection_run(gpointer data)
 				msn_soap_connection_sanitize(conn, FALSE);
 
 				g_queue_push_head(conn->queue, req);
-				conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
+				conn->run_timer = purple_timeout_add(0, msn_soap_connection_run, conn);
 			}
 
 			g_free(body);
