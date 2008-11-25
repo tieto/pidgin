@@ -113,8 +113,8 @@ msn_soap_cleanup_for_session(gpointer data)
 			&t);
 
 		if (g_hash_table_size(sess->soap_table) == 0) {
-			purple_timeout_remove(sess->soap_cleanup_handle);
 			sess->soap_cleanup_handle = 0;
+			return FALSE;
 		}
 	}
 
