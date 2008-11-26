@@ -1,4 +1,5 @@
 SMILEYS = \
+    amorous.png \
     angel.png \
     angry.png \
     beer.png \
@@ -12,12 +13,15 @@ SMILEYS = \
     crying.png \
     devil.png \
     dont-know.png \
+    excited.png \
     grin.png \
+    happy.png \
     hug-left.png \
     hug-right.png \
+    in_love.png \
     kiss.png \
-    love.png \
     meeting.png \
+    mobile.png \
     musical-note.png \
     nerdy.png \
     neutral.png \
@@ -27,18 +31,16 @@ SMILEYS = \
     question.png \
     sad.png \
     shame.png \
-    shock.png \
+    shocked.png \
     sick.png \
     silent.png \
+    sleeping.png \
     sleepy.png \
-    smile-big.png \
-    smile.png \
     thinking.png \
     tongue.png \
     tv.png \
     uhm-yeah.png \
-    wink.png \
-    yawn.png
+    wink.png
 
 
 pidginsmileypix_in_files = small.theme.in
