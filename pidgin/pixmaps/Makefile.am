@@ -97,8 +97,6 @@ EMBLEMS_16_SCALABLE = \
 		emblems/16/scalable/free-for-chat.svg \
 		emblems/16/scalable/game.svg \
 		emblems/16/scalable/male.svg \
-		emblems/16/scalable/mobile.svg \
-		emblems/16/scalable/music.svg \
 		emblems/16/scalable/not-authorized.svg \
 		emblems/16/scalable/qq-member.svg \
 		emblems/16/scalable/secure.svg \
@@ -106,58 +104,7 @@ EMBLEMS_16_SCALABLE = \
 		emblems/16/scalable/video.svg \
 		emblems/16/scalable/voice.svg
 
-
-# Magic to copy files from emotes/small/16 to emblems/16.
-# This is necessary because UIs expect emblems in one place and
-# smiley themes in another, but we don't want to duplicate these
-# images in the source.
-emblems/16/%.png: emotes/small/16/%.png
-	rm -f $@
-	cp -f $< $@
-
-emblems/16/busy.png: status/16/busy.png
-	rm -f $@
-	cp -f $< $@
-
-# The copied emblems.
-# Ensure these are in .mtn-ignore.
-EMBLEMS_16_COPIED = \
-		emblems/16/amorous.png \
-		emblems/16/angry.png \
-		emblems/16/busy.png \
-		emblems/16/beer.png \
-		emblems/16/cigarette.png \
-		emblems/16/coffee.png \
-		emblems/16/confused.png \
-		emblems/16/console.png \
-		emblems/16/disappointed.png \
-		emblems/16/embarrassed.png \
-		emblems/16/excited.png \
-		emblems/16/in_love.png \
-		emblems/16/mean.png \
-		emblems/16/meeting.png \
-		emblems/16/mobile.png \
-		emblems/16/musical-note.png \
-		emblems/16/neutral.png \
-		emblems/16/party.png \
-		emblems/16/phone.png \
-		emblems/16/plate.png \
-		emblems/16/question.png \
-		emblems/16/sad.png \
-		emblems/16/sarcastic.png \
-		emblems/16/search.png \
-		emblems/16/sick.png \
-		emblems/16/sleeping.png \
-		emblems/16/sleepy.png \
-		emblems/16/thinking.png \
-		emblems/16/tv.png
-
-
-# Non-copied emblems.
-# Ensure these filenames don't clash with files in emotes/small/16 or
-# bad things will happen!
 EMBLEMS_16 = \
-		$(EMBLEMS_16_COPIED) \
 		emblems/16/aol-client.png \
 		emblems/16/birthday.png \
 		emblems/16/blocked.png \
@@ -170,27 +117,13 @@ EMBLEMS_16 = \
 		emblems/16/half-operator.png \
 		emblems/16/hiptop.png \
 		emblems/16/male.png \
-		emblems/16/mobile.png \
-		emblems/16/music.png \
 		emblems/16/not-authorized.png \
 		emblems/16/operator.png \
 		emblems/16/qq-member.png \
 		emblems/16/secure.png \
 		emblems/16/unavailable.png \
 		emblems/16/video.png \
-		emblems/16/voice.png \
-		emblems/16/bathing.png \
-		emblems/16/cinema.png \
-		emblems/16/internet.png \
-		emblems/16/restroom.png \
-		emblems/16/shopping.png \
-		emblems/16/studying.png \
-		emblems/16/suit.png \
-		emblems/16/surfing.png \
-		emblems/16/typing.png \
-		emblems/16/working.png \
-		emblems/16/writing.png
-
+		emblems/16/voice.png
 
 EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/airplane.svg \
@@ -270,6 +203,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/yin-yang.svg
 
 EMOTES_SMALL_16_SCALABLE = \
+		emotes/small/16/scalable/mobile.svg
 		emotes/small/16/scalable/pidgin-emotes.svg
 
 PROTOCOLS_16_SCALABLE = \

@@ -1,3 +1,19 @@
+# These are mood images that are NOT also used in the smiley theme.
+MOODS = \
+    bathing.png \
+    cinema.png \
+    internet.png \
+    music.png \
+    restroom.png \
+    search.png \
+    shopping.png \
+    studying.png \
+    suit.png \
+    surfing.png \
+    typing.png \
+    working.png \
+    writing.png
+
 SMILEYS = \
     amorous.png \
     angel.png \
@@ -48,6 +64,7 @@ pidginsmileypix_in_files = small.theme.in
 if INSTALL_PIXMAPS
 pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/small
 pidginsmileypix_DATA = \
+        $(MOODS) \
         $(SMILEYS) \
         theme
 
@@ -58,4 +75,4 @@ theme: small.theme.in
 	$< > $@
 endif
 
-EXTRA_DIST = $(SMILEYS) $(pidginsmileypix_in_files) theme
+EXTRA_DIST = $(MOODS) $(SMILEYS) $(pidginsmileypix_in_files) theme

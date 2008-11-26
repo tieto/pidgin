@@ -1050,15 +1050,10 @@ create_list_field(PurpleRequestField *field)
 		if (icons)
 		{
 			const char *icon_path = (const char *)icons->data;
-			char* filename;
 			GdkPixbuf* pixbuf = NULL;
 
 			if (icon_path)
-			{
-				filename = g_build_filename(DATADIR, icon_path, NULL);
-				pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-				g_free(filename);
-			}
+				pixbuf = gdk_pixbuf_new_from_file(icon_path, NULL);
 
 			gtk_list_store_set(store, &iter,
 						   0, purple_request_field_list_get_data(field, text),

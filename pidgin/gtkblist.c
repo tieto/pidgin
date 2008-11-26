@@ -3519,7 +3519,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 
 		/* Offline? */
-		/* FIXME: Why is this status special-cased by the core? -- rlaager */
+		/* FIXME: Why is this status special-cased by the core? --rlaager
+		 * FIXME: Alternatively, why not have the core do all of them? --rlaager */
 		if (!PURPLE_BUDDY_IS_ONLINE(b)) {
 			purple_notify_user_info_add_pair(user_info, _("Status"), _("Offline"));
 		}
@@ -3614,6 +3615,24 @@ static GdkPixbuf * _pidgin_blist_get_cached_emblem(gchar *path) {
 	return pb;
 }
 
+static char *get_mood_icon_path(const char *mood)
+{
+	char *path;
+
+	if (!strcmp(mood, "busy")) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "status", "16", "busy.png", NULL);
+	} else if (!strcmp(mood, "hiptop")) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "emblems", "16", "hiptop.png", NULL);
+	} else {
+		char *filename = g_strdup_printf("%s.png", mood);
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "emotes", "small", filename, NULL);
+		g_free(filename);
+	}
+	return path;
+}
 
 GdkPixbuf *
 pidgin_blist_get_emblem(PurpleBlistNode *node)
@@ -3637,8 +3656,10 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		gtkbuddynode = node->ui_data;
 		presence = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
-			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems",
-						"16", "mobile.png", NULL);
+			/* This emblem comes from the small emoticon set now,
+			 * to reduce duplication. */
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes",
+						"small", "mobile.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
 		}
 
@@ -3664,12 +3685,14 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		presence = purple_buddy_get_presence(buddy);
 
 	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "mobile.png", NULL);
+		/* This emblem comes from the small emoticon set now, to reduce duplication. */
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", "small", "mobile.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
 	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
+		/* This emblem comes from the small emoticon set now, to reduce duplication. */
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", "small", "music.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
@@ -3692,12 +3715,13 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		
 		if (!(name && *name))
 			return NULL;
+
+		path = get_mood_icon_path(name);
+	} else {
+		filename = g_strdup_printf("%s.png", name);
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", filename, NULL);
+		g_free(filename);
 	}
-
-	filename = g_strdup_printf("%s.png", name);
-
-	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", filename, NULL);
-	g_free(filename);
 
 	/* _pidgin_blist_get_cached_emblem() assumes ownership of path */
 	return _pidgin_blist_get_cached_emblem(path);
@@ -7699,23 +7723,16 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 
 	/* TODO: rlaager wants this sorted. */
 	for (mood = prpl_info->get_moods(account);
-	     mood->mood != NULL ; mood++)
-	{
-		char *icon_path;
-		char *filename;
+	     mood->mood != NULL ; mood++) {
+		char *path;
 
 		if (mood->mood == NULL || mood->description == NULL)
 			continue;
 
-		icon_path = g_strdup_printf("%s.png", mood->mood);
-		filename = g_build_filename("pixmaps", "pidgin",
-		                            "emblems", "16",
-		                             icon_path, NULL);
-		g_free(icon_path);
-
+		path = get_mood_icon_path(mood->mood);
 		purple_request_field_list_add_icon(f, _(mood->description),
-				filename, mood->mood);
-		g_free(filename);
+				path, (gpointer)mood->mood);
+		g_free(path);
 
 		if (current_mood && !strcmp(current_mood, mood->mood))
 			purple_request_field_list_add_selected(f, _(mood->description));
