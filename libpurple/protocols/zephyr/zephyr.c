@@ -343,7 +343,7 @@ static zephyr_triple *find_sub_by_id(zephyr_account *zephyr,int id)
    Converts strings to utf-8 if necessary using user specified encoding
 */
 
-static gchar *zephyr_recv_convert(PurpleConnection *gc,gchar *string, int len)
+static gchar *zephyr_recv_convert(PurpleConnection *gc, gchar *string)
 {
 	gchar *utf8;
 	GError *err = NULL;
@@ -351,7 +351,7 @@ static gchar *zephyr_recv_convert(PurpleConnection *gc,gchar *string, int len)
 	if (g_utf8_validate(string, len, NULL)) {
 		return g_strdup(string);
 	} else {
-		utf8 = g_convert(string, len, "UTF-8", zephyr->encoding, NULL, NULL, &err);
+		utf8 = g_convert(string, -1, "UTF-8", zephyr->encoding, NULL, NULL, &err);
 		if (err) {
 			purple_debug_error("zephyr", "recv conversion error: %s\n", err->message);
 			utf8 = g_strdup(_("(There was an error converting this message.	 Check the 'Encoding' option in the Account Editor)"));
@@ -843,7 +843,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			tmpescape = g_markup_escape_text(buf, -1);
 			g_free(buf);
 			buf2 = zephyr_to_html(tmpescape);
-			buf3 = zephyr_recv_convert(gc,buf2, strlen(buf2));
+			buf3 = zephyr_recv_convert(gc, buf2);
 			g_free(buf2);
 			g_free(tmpescape);
 		}
@@ -883,7 +883,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			   Realm from the sender field */
 			sendertmp = zephyr_strip_local_realm(zephyr,notice.z_sender);
 			send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
-			send_inst_utf8 = zephyr_recv_convert(gc,send_inst, strlen(send_inst));
+			send_inst_utf8 = zephyr_recv_convert(gc,send_inst);
 			if (!send_inst_utf8) {
 				purple_debug_error("zephyr","send_inst %s became null\n", send_inst);
 				send_inst_utf8 = "malformed instance";
@@ -2580,7 +2580,7 @@ static void zephyr_chat_set_topic(PurpleConnection * gc, int id, const char *top
 												gc->account);
 	gcc = purple_conversation_get_chat_data(gconv);
 
-	topic_utf8 = zephyr_recv_convert(gc,(gchar *)topic,strlen(topic));
+	topic_utf8 = zephyr_recv_convert(gc,(gchar *)topic);
 	purple_conv_chat_set_topic(gcc,sender,topic_utf8);
 	g_free(topic_utf8);
 	return;
