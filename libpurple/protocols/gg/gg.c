@@ -757,16 +757,16 @@ static void ggp_change_passwd(PurplePluginAction *action)
 
 static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	GGPInfo *info = gc->proto_data;
 	PurpleRequestField *field;
-	/* TODO: sel may be null. */
 	GList *sel;
 
 	field = purple_request_fields_get_field(fields, "name");
 	sel = purple_request_field_list_get_selected(field);
+	if (sel == NULL || sel->data == NULL)
+		return;
 
-	ggp_confer_participants_add_uin(gc, sel->data, info->tmp_buddy);
-	info->tmp_buddy = 0;
+	ggp_confer_participants_add_uin(gc, sel->data,
+		GPOINTER_TO_INT(purple_request_field_list_get_data(field, sel->data)));
 }
 
 static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
@@ -786,9 +786,6 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	info = gc->proto_data;
 
-	/* TODO: It tmp_buddy != 0 then stop! */
-	info->tmp_buddy = ggp_str_to_uin(purple_buddy_get_name(buddy));
-
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
@@ -796,8 +793,8 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 	field = purple_request_field_list_new("name", "Chat name");
 	for (l = info->chats; l != NULL; l = l->next) {
 		GGPChat *chat = l->data;
-		purple_request_field_list_add(field, g_strdup(chat->name),
-					    g_strdup(chat->name));
+		purple_request_field_list_add_icon(field, chat->name, NULL,
+			GINT_TO_POINTER(ggp_str_to_uin(purple_buddy_get_name(buddy))));
 	}
 	purple_request_field_group_add_field(group, field);
 
