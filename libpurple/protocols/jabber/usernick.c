@@ -92,8 +92,8 @@ static void do_nick_set_nick(PurplePluginAction *action) {
 }
 
 void jabber_nick_init(void) {
-	jabber_add_feature("nick", "http://jabber.org/protocol/nick", jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_pep_register_handler("nickn", "http://jabber.org/protocol/nick", jabber_nick_cb);
+	jabber_add_feature("http://jabber.org/protocol/nick", jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_pep_register_handler("http://jabber.org/protocol/nick", jabber_nick_cb);
 }
 
 void jabber_nick_init_action(GList **m) {

@@ -26,24 +26,54 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 #include "jabber.h"
 
-/* Implementation of XEP-0115 */
-
-typedef struct _JabberCapsIdentity {
-	char *category;
-	char *type;
-	char *name;
-} JabberCapsIdentity;
+/* Implementation of XEP-0115 - Entity Capabilities */
 
 struct _JabberCapsClientInfo {
-	GList *identities; /* JabberCapsIdentity */
+	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
+	GList *forms; /* xmlnode * */
 };
+
+#if 0
+typedef struct _JabberCapsClientInfo JabberCapsValueExt;
+#endif
 
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
 
 void jabber_caps_init(void);
+void jabber_caps_uninit(void);
 
-void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *ext, jabber_caps_get_info_cb cb, gpointer user_data);
-void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo);
+void jabber_caps_destroy_key(gpointer value);
+
+/**
+ *	Main entity capabilites function to get the capabilities of a contact.
+ */
+void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *hash, jabber_caps_get_info_cb cb, gpointer user_data);
+
+/**
+ *	Takes a JabberCapsClientInfo pointer and returns the caps hash according to
+ *	XEP-0115 Version 1.5.
+ *
+ *	@param info A JabberCapsClientInfo pointer.
+ *	@param hash Hash cipher to be used. Either sha-1 or md5.
+ *	@return		The base64 encoded SHA-1 hash; needs to be freed if not needed 
+ *				any furthermore. 
+ */
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash);
+
+/**
+ *  Calculate SHA1 hash for own featureset.
+ */
+void jabber_caps_calculate_own_hash(JabberStream *js);
+
+/** Get the current caps hash.
+ * 	@ret hash
+**/
+const gchar* jabber_caps_get_own_hash(JabberStream *js);
+
+/**
+ *  Broadcast a new calculated hash using a <presence> stanza.
+ */
+void jabber_caps_broadcast_change(void);
 
 #endif /* _PURPLE_JABBER_CAPS_H_ */

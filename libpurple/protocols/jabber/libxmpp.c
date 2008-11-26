@@ -69,7 +69,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	jabber_presence_send,			/* set_status */
+	jabber_set_status,				/* set_status */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */
@@ -148,9 +148,17 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
 	
 	purple_signal_unregister(plugin, "jabber-sending-text");
-	
+
+	/* reverse order of init_plugin */
 	jabber_data_uninit();
-	
+	/* PEP things should be uninit via jabber_pep_uninit, not here */
+	jabber_pep_uninit();
+	jabber_caps_uninit();
+	jabber_iq_uninit();
+
+	/* Stay on target...stay on target... Almost there... */
+	jabber_uninit_plugin();
+
 	return TRUE;
 }
 
@@ -272,23 +280,23 @@ init_plugin(PurplePlugin *plugin)
 #endif
 #endif
 	jabber_register_commands();
-	
-	jabber_iq_init();
-	jabber_pep_init();
-	
-	jabber_tune_init();
-	jabber_caps_init();
-	
-	jabber_data_init();
-	
-	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns",
-					   jabber_buzz_isenabled);
-	jabber_add_feature("bob", XEP_0231_NAMESPACE,
-					   jabber_custom_smileys_isenabled);
 
-	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+	/* reverse order of unload_plugin */
+	jabber_iq_init();
+	jabber_caps_init();
+	/* PEP things should be init via jabber_pep_init, not here */
+	jabber_pep_init();
+	jabber_data_init();
+
+	#warning implement adding and retrieving own features via IPC API
+
+	jabber_add_feature(AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature(AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature("http://www.xmpp.org/extensions/xep-0224.html#ns",
+					   jabber_buzz_isenabled);
+	jabber_add_feature(XEP_0231_NAMESPACE, jabber_custom_smileys_isenabled);
+
+	jabber_pep_register_handler(AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
 }
 
 

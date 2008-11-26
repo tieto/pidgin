@@ -28,8 +28,9 @@
 extern "C" {
 #endif
 
-typedef struct _PurpleSrvResponse PurpleSrvResponse;
 typedef struct _PurpleSrvQueryData PurpleSrvQueryData;
+typedef struct _PurpleSrvResponse PurpleSrvResponse;
+typedef struct _PurpleTxtResponse PurpleTxtResponse;
 
 struct _PurpleSrvResponse {
 	char hostname[256];
@@ -38,7 +39,12 @@ struct _PurpleSrvResponse {
 	int pref;
 };
 
+struct _PurpleTxtResponse {
+    char content[256];
+};
+
 typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer data);
+typedef void (*PurpleTxtCallback)(PurpleTxtResponse *resp, int results, gpointer data);
 
 /**
  * Queries an SRV record.
@@ -57,6 +63,23 @@ PurpleSrvQueryData *purple_srv_resolve(const char *protocol, const char *transpo
  * @param query_data The request to cancel.
  */
 void purple_srv_cancel(PurpleSrvQueryData *query_data);
+
+/**
+ * Queries an TXT record.
+ *
+ * @param owner Name of the protocol (e.g. "_xmppconnect")
+ * @param domain Domain name to query (e.g. "blubb.com")
+ * @param cb A callback which will be called with the results
+ * @param extradata Extra data to be passed to the callback
+ */
+PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
+
+/**
+ * Cancel an TXT DNS query.
+ *
+ * @param query_data The request to cancel.
+ */
+void purple_txt_cancel(PurpleSrvQueryData *query_data);
 
 #ifdef __cplusplus
 }
