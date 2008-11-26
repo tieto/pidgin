@@ -39,6 +39,12 @@
 #include "debug.h"
 #include "util.h"
 
+/* XXX: Until gobjectification ... */
+#undef FINCH_GET_DATA
+#undef FINCH_SET_DATA
+#define FINCH_GET_DATA(obj)  purple_request_field_get_ui_data(obj)
+#define FINCH_SET_DATA(obj, data)  purple_request_field_set_ui_data(obj, data)
+
 typedef struct
 {
 	void *user_data;
