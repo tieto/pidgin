@@ -903,7 +903,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 #else
 				memcpy(ipaddr,inet_ntoa(notice.z_sender_addr),sizeof(ipaddr));
 #endif
-				purple_conv_chat_add_user(gcc, sendertmp, ipaddr, PURPLE_CBFLAGS_NONE, TRUE);
+				purple_conv_chat_add_user(gcc, stripped_sender, ipaddr, PURPLE_CBFLAGS_NONE, TRUE);
 			}
 			g_free(sendertmp);
 			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
