@@ -2390,7 +2390,6 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	GList *iter;
 
 	if(!username)
 		return FALSE;
@@ -2407,31 +2406,30 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 		return FALSE;
 	}
 
+	/* Is this message sufficiently useful to not just fold it in with the tail error condition below? */
 	if(!jbr->caps) {
 		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
 		return FALSE;
 	}
 
-	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
-			xmlnode *buzz, *msg = xmlnode_new("message");
-			gchar *to;
+	if (jabber_resource_has_capability(jbr, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
+		xmlnode *buzz, *msg = xmlnode_new("message");
+		gchar *to;
 
-			to = g_strdup_printf("%s/%s", username, jbr->name);
-			xmlnode_set_attrib(msg, "to", to);
-			g_free(to);
+		to = g_strdup_printf("%s/%s", username, jbr->name);
+		xmlnode_set_attrib(msg, "to", to);
+		g_free(to);
 
-			/* avoid offline storage */
-			xmlnode_set_attrib(msg, "type", "headline");
+		/* avoid offline storage */
+		xmlnode_set_attrib(msg, "type", "headline");
 
-			buzz = xmlnode_new_child(msg, "attention");
-			xmlnode_set_namespace(buzz, "http://www.xmpp.org/extensions/xep-0224.html#ns");
+		buzz = xmlnode_new_child(msg, "attention");
+		xmlnode_set_namespace(buzz, "http://www.xmpp.org/extensions/xep-0224.html#ns");
 
-			jabber_send(js, msg);
-			xmlnode_free(msg);
+		jabber_send(js, msg);
+		xmlnode_free(msg);
 
-			return TRUE;
-		}
+		return TRUE;
 	}
 
 	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), username);
@@ -2590,7 +2588,6 @@ jabber_ipc_contact_has_feature(PurpleAccount *account, const gchar *jid,
 		return FALSE;
 	js = gc->proto_data;
 
-	resource = jabber_get_resource(jid);
 	if (!(resource = jabber_get_resource(jid)) || 
 	    !(jb = jabber_buddy_find(js, jid, FALSE)) ||
 	    !(jbr = jabber_buddy_find_resource(jb, resource))) {
@@ -2600,12 +2597,7 @@ jabber_ipc_contact_has_feature(PurpleAccount *account, const gchar *jid,
 
 	g_free(resource);
 
-	if (!jbr->caps) {
-		/* TODO: fetch them? */
-		return FALSE;
-	}
-
-	return NULL != g_list_find_custom(jbr->caps->features, feature, (GCompareFunc)strcmp);
+	return jabber_resource_has_capability(jbr, feature);
 }
 
 static void
