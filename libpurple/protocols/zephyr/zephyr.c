@@ -820,7 +820,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 		PurpleConvChat *gcc;
 		char *ptr = (char *) notice.z_message + (strlen(notice.z_message) + 1);
 		int len; 
-		char *sendertmp = g_strdup_printf("%s", zephyr->username);
+		char *stripped_sender;
 		int signature_length = strlen(notice.z_message);
 		int message_has_no_body = 0;
 		PurpleMessageFlags flags = 0;
@@ -848,19 +848,18 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			g_free(tmpescape);
 		}
 
+		stripped_sender = zephyr_strip_local_realm(zephyr,notice.z_sender);
+
 		if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") && !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL") 
 		    && !g_ascii_strcasecmp(notice.z_recipient,zephyr->username)) {
-			gchar* stripped_sender;
 			if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
 				flags |= PURPLE_MESSAGE_AUTO_RESP;
-			stripped_sender = zephyr_strip_local_realm(zephyr,notice.z_sender);
 			
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
 				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_TYPING);
 			else
 				serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
 
-			g_free(stripped_sender);
 		} else {
 			zephyr_triple *zt1, *zt2;
 			gchar *send_inst_utf8;
@@ -878,15 +877,17 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				serv_got_joined_chat(gc, zt2->id, zt2->name);
 				zephyr_chat_set_topic(gc,zt2->id,notice.z_class_inst);
 			}
-			g_free(sendertmp); /* fix memory leak? */
-			/* If the person is in the default Realm, then strip the 
-			   Realm from the sender field */
-			sendertmp = zephyr_strip_local_realm(zephyr,notice.z_sender);
-			send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
-			send_inst_utf8 = zephyr_recv_convert(gc,send_inst);
-			if (!send_inst_utf8) {
-				purple_debug_error("zephyr","send_inst %s became null\n", send_inst);
-				send_inst_utf8 = "malformed instance";
+
+			if (!g_ascii_strcasecmp(notice.z_class_inst,"PERSONAL"))
+				send_inst_utf8 = g_strdup(stripped_sender);
+			else {
+				send_inst = g_strdup_printf("[%s] %s",notice.z_class_inst,stripped_sender);
+				send_inst_utf8 = zephyr_recv_convert(gc,send_inst);
+				g_free(send_inst);
+				if (!send_inst_utf8) {
+					purple_debug_error("zephyr","Failed to convert instance for sender %s.\n", stripped_sender);
+					send_inst_utf8 = g_strdup(stripped_sender);
+				}
 			}
 
 			gconv1 = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
@@ -906,13 +907,12 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			}
 			g_free(sendertmp);
 			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
-			g_free(send_inst);
 			g_free(send_inst_utf8);
-				
+
 			free_triple(zt1);
 		}
+		g_free(stripped_sender);
 		g_free(buf3);
-		
 	}
 }
 
