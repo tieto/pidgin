@@ -905,7 +905,6 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 #endif
 				purple_conv_chat_add_user(gcc, stripped_sender, ipaddr, PURPLE_CBFLAGS_NONE, TRUE);
 			}
-			g_free(sendertmp);
 			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
 			g_free(send_inst_utf8);
 
