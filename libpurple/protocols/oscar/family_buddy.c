@@ -224,6 +224,18 @@ buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING && userinfo.flags & AIM_FLAG_AWAY)
 		aim_locate_autofetch_away_message(od, userinfo.sn);
 
+	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING &&
+	    userinfo.capabilities & OSCAR_CAPABILITY_XTRAZ) {
+		PurpleAccount *account = purple_connection_get_account(od->gc);
+		PurpleBuddy *buddy = purple_find_buddy(account, userinfo.sn);
+
+		if (buddy) {
+			PurplePresence *presence = purple_buddy_get_presence(buddy);
+
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOOD))
+				icq_im_xstatus_request(od, userinfo.sn);
+		}
+	}
 	aim_info_free(&userinfo);
 
 	return ret;
