@@ -265,6 +265,11 @@ void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *ro
 	g_return_if_fail(room != NULL);
 	g_return_if_fail(list->fields != NULL);
 
+	/* If this is the first call for this room, grab the first field in
+	 * the Roomlist's fields.  Otherwise, grab the field that is one
+	 * more than the number of fields already present for the room.
+         * (This works because g_list_nth_data() is zero-indexed and
+         * g_list_length() is one-indexed.) */
 	if (!room->fields)
 		f = list->fields->data;
 	else
