@@ -201,7 +201,7 @@ update_act_msg(void)
 	GString *text = g_string_new("act: ");
 	if (message)
 		gnt_widget_destroy(message);
-	if (g_list_length(act) == 0)
+	if (!act)
 		return;
 	for (iter = act; iter; iter = iter->next) {
 		GntWS *ws = iter->data;
@@ -927,6 +927,7 @@ list_actions(GntBindable *bindable, GList *null)
 	GntWidget *tree, *win;
 	GList *iter;
 	GntWM *wm = GNT_WM(bindable);
+	int n;
 	if (wm->_list.window || wm->menu)
 		return TRUE;
 
@@ -950,8 +951,9 @@ list_actions(GntBindable *bindable, GList *null)
 				gnt_tree_create_row(GNT_TREE(tree), action->label), NULL);
 	}
 	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(action_list_activate), wm);
-	gnt_widget_set_size(tree, 0, g_list_length(wm->acts));
-	gnt_widget_set_position(win, 0, getmaxy(stdscr) - 3 - g_list_length(wm->acts));
+	n = g_list_length(wm->acts);
+	gnt_widget_set_size(tree, 0, n);
+	gnt_widget_set_position(win, 0, getmaxy(stdscr) - 3 - n);
 
 	gnt_widget_show(win);
 	return TRUE;

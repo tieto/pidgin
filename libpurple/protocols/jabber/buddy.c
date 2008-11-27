@@ -966,7 +966,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		}
 #endif
 	} else {
-		gboolean multiple_resources = jbi->jb->resources && (g_list_length(jbi->jb->resources) > 1);
+		gboolean multiple_resources = jbi->jb->resources && jbi->jb->resources->next;
 
 		for(resources = jbi->jb->resources; resources; resources = resources->next) {
 			char *purdy = NULL;

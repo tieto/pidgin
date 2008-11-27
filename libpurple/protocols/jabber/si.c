@@ -1085,7 +1085,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
 			g_free(msg);
-		} else if(g_list_length(jb->resources) == 1) {
+		} else if(!jb->resources->next) {
 			/* only 1 resource online (probably our most common case)
 			 * so no need to ask who to send to */
 			jbr = jb->resources->data;

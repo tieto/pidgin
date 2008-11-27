@@ -730,16 +730,12 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 	GtkListStore *model = data->model;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
-	guint col_num;
 	GList *row, *column;
 	guint n;
 
 	gtk_list_store_clear(data->model);
 
 	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), 0.5);
-
-	/* +1 is for the automagically created Status column. */
-	col_num = g_list_length(results->columns) + 1;
 
 	for (row = results->rows; row != NULL; row = row->next) {
 
@@ -776,6 +772,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	guint col_num;
 	GList *columniter;
 	guint i;
+	GList *l;
 
 	GtkWidget *vbox;
 	GtkWidget *label;
@@ -869,8 +866,8 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 		i++;
 	}
 
-	for (i = 0; i < g_list_length(results->buttons); i++) {
-		PurpleNotifySearchButton *b = g_list_nth_data(results->buttons, i);
+	for (l = results->buttons; l; l = l->next) {
+		PurpleNotifySearchButton *b = l->data;
 		GtkWidget *button = NULL;
 		switch (b->type) {
 			case PURPLE_NOTIFY_BUTTON_LABELED:
