@@ -321,7 +321,7 @@ find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon s
 {
 	const gchar *file, *dir;
 	gchar *file_full = NULL;
-    gchar *tmp;
+	gchar *tmp;
 
 	if (theme != NULL) {
 		file = pidgin_icon_theme_get_icon(PIDGIN_ICON_THEME(theme), sized_icon.name);
@@ -353,7 +353,6 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginStatusIconTheme *t
 		const char *size, SizedStockIcon sized_icon, gboolean translucent)
 {
 	char *filename;
-	char *subpath;
 	GtkIconSource *source;
 	GdkPixbuf *pixbuf;
 
@@ -394,7 +393,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginStatusIconTheme *t
 			do_alphashift(pixbuf, pixbuf);
 
 		source = gtk_icon_source_new();
-        gtk_icon_source_set_pixbuf(source, pixbuf);
+		gtk_icon_source_set_pixbuf(source, pixbuf);
 		gtk_icon_source_set_filename(source, filename);
 		gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
 		gtk_icon_source_set_size(source, sizeid);
