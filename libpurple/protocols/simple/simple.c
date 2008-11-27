@@ -1639,6 +1639,13 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		cur[0] = '\0';
 		purple_debug_info("simple", "\n\nreceived - %s\n######\n%s\n#######\n\n", ctime(&currtime), conn->inbuf);
 		msg = sipmsg_parse_header(conn->inbuf);
+
+		if(!msg) {
+			/* Should we re-use this error message (from lower in the function)? */
+			purple_debug_misc("simple", "received a incomplete sip msg: %s\n", conn->inbuf);
+			return;
+		}
+
 		cur[0] = '\r';
 		cur += 2;
 		restlen = conn->inbufused - (cur - conn->inbuf);

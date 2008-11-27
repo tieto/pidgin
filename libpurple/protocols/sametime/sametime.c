@@ -1462,7 +1462,7 @@ static void session_loginRedirect(struct mwSession *session,
 					 MW_PLUGIN_DEFAULT_HOST);
 
   if(purple_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
-     (! strcmp(current_host, host)) ||
+     !host || (! strcmp(current_host, host)) ||
      (purple_proxy_connect(NULL, account, host, port, connect_cb, pd) == NULL)) {
 
     /* if we're configured to force logins, or if we're being
@@ -4432,7 +4432,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
     res = results->data;
 
   if(!code && res && res->matches) {
-    if(res->matches->next == NULL) {
+    if(!res->matches->next) {
       struct mwResolveMatch *match = res->matches->data;
       
       /* only one? that might be the right one! */

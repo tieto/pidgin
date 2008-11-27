@@ -1202,6 +1202,9 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		purple_debug_info("msn", "prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, username))
 		{
+			if (flags & PURPLE_MESSAGE_AUTO_RESP) {
+				msn_message_set_flag(msg, 'U');
+			}
 			if (msn_user_is_yahoo(account, who)) {
 				/*we send the online and offline Message to Yahoo User via UBM*/
 				purple_debug_info("msn", "send to Yahoo User\n");

@@ -2207,6 +2207,7 @@ remove_typing_cb(gpointer null)
 {
 	PurpleSavedStatus *current;
 	const char *message, *newmessage;
+	char *escnewmessage;
 	PurpleStatusPrimitive prim, newprim;
 	StatusBoxItem *item;
 
@@ -2216,6 +2217,7 @@ remove_typing_cb(gpointer null)
 
 	newmessage = gnt_entry_get_text(GNT_ENTRY(ggblist->statustext));
 	item = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(ggblist->status));
+	escnewmessage = newmessage ? g_markup_escape_text(newmessage, -1) : NULL;
 
 	switch (item->type) {
 		case STATUS_PRIMITIVE:
@@ -2228,16 +2230,16 @@ remove_typing_cb(gpointer null)
 			goto end;  /* 'New' or 'Saved' is selected, but this should never happen. */
 	}
 
-	if (newprim != prim || ((message && !newmessage) ||
-				(!message && newmessage) ||
-				(message && newmessage && g_utf8_collate(message, newmessage) != 0)))
+	if (newprim != prim || ((message && !escnewmessage) ||
+				(!message && escnewmessage) ||
+				(message && escnewmessage && g_utf8_collate(message, escnewmessage) != 0)))
 	{
-		PurpleSavedStatus *status = purple_savedstatus_find_transient_by_type_and_message(newprim, newmessage);
+		PurpleSavedStatus *status = purple_savedstatus_find_transient_by_type_and_message(newprim, escnewmessage);
 									/* Holy Crap! That's a LAWNG function name */
 		if (status == NULL)
 		{
 			status = purple_savedstatus_new(NULL, newprim);
-			purple_savedstatus_set_message(status, newmessage);
+			purple_savedstatus_set_message(status, escnewmessage);
 		}
 
 		purple_savedstatus_activate(status);
@@ -2245,6 +2247,7 @@ remove_typing_cb(gpointer null)
 
 	gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
 end:
+	g_free(escnewmessage);
 	if (ggblist->typing)
 		g_source_remove(ggblist->typing);
 	ggblist->typing = 0;

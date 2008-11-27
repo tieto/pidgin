@@ -798,7 +798,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		if (!(sh->jid && sh->host && sh->port > 0))
 			continue;
 
-		purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and sh->jid %p",
+		purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and sh->jid %p\n",
 						  jsx, jsx->streamhosts, sh->jid);
 		if(g_list_find_custom(jsx->streamhosts, sh->jid, jabber_si_compare_jid) != NULL)
 			continue;
@@ -1085,7 +1085,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
 			g_free(msg);
-		} else if(g_list_length(jb->resources) == 1) {
+		} else if(!jb->resources->next) {
 			/* only 1 resource online (probably our most common case)
 			 * so no need to ask who to send to */
 			jbr = jb->resources->data;

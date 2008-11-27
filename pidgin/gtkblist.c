@@ -3017,6 +3017,22 @@ void pidgin_blist_tooltip_destroy()
 	pidgin_tooltip_destroy();
 }
 
+static void
+pidgin_blist_align_tooltip(struct tooltip_data *td, GtkWidget *widget) 
+{ 
+	GtkTextDirection dir = gtk_widget_get_direction(widget); 
+
+	if (dir == GTK_TEXT_DIR_RTL) 
+	{
+		char* layout_name = purple_markup_strip_html(pango_layout_get_text(td->name_layout));
+		PangoDirection dir = pango_find_base_dir(layout_name, -1);
+		if (dir == PANGO_DIRECTION_RTL || dir == PANGO_DIRECTION_NEUTRAL)
+			pango_layout_set_alignment(td->name_layout, PANGO_ALIGN_RIGHT); 
+		g_free(layout_name);
+		pango_layout_set_alignment(td->layout, PANGO_ALIGN_RIGHT); 
+	}
+}
+
 static gboolean
 pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, int *h)
 {
@@ -3036,11 +3052,13 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 	if (PURPLE_BLIST_NODE_IS_CHAT(node) ||
 	   PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
+		pidgin_blist_align_tooltip(td, gtkblist->tipwindow);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup*)node;
 		GSList *accounts;
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
+		pidgin_blist_align_tooltip(td, gtkblist->tipwindow);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 
 		/* Accounts with buddies in group */
@@ -3060,6 +3078,7 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 		{
 			if(PURPLE_BLIST_NODE_IS_BUDDY(child) && buddy_is_displayable((PurpleBuddy*)child)) {
 				struct tooltip_data *td = create_tip_for_node(child, (b == (PurpleBuddy*)child));
+				pidgin_blist_align_tooltip(td, gtkblist->tipwindow);
 				if (b == (PurpleBuddy *)child) {
 					gtkblist->tooltipdata = g_list_prepend(gtkblist->tooltipdata, td);
 				} else {
@@ -3339,6 +3358,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 	if (PURPLE_BLIST_NODE_IS_CHAT(node))
 	{
 		PurpleChat *chat;
+		GList *connections;
 		GList *cur;
 		struct proto_chat_entry *pce;
 		char *name, *value;
@@ -3349,7 +3369,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (g_list_length(purple_connections_get_all()) > 1)
+		connections = purple_connections_get_all();
+		if (connections && connections->next)
 		{
 			tmp = g_markup_escape_text(chat->account->username, -1);
 			g_string_append_printf(str, _("<b>Account:</b> %s"), tmp);
@@ -3419,6 +3440,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		PurpleBuddy *b;
 		PurplePresence *presence;
 		PurpleNotifyUserInfo *user_info;
+		GList *connections;
 		char *tmp;
 		time_t idle_secs, signon;
 
@@ -3440,7 +3462,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		user_info = purple_notify_user_info_new();
 
 		/* Account */
-		if (full && g_list_length(purple_connections_get_all()) > 1)
+		connections = purple_connections_get_all();
+		if (full && connections && connections->next)
 		{
 			tmp = g_markup_escape_text(purple_account_get_username(
 									   purple_buddy_get_account(b)), -1);
