@@ -212,7 +212,7 @@ purple_gnome_proxy_get_info(void)
 {
 	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
 	gboolean use_same_proxy = FALSE;
-	gchar *tmp, *err = NULL;
+	gchar *tmp;
 
 	tmp = g_find_program_in_path("gconftool-2");
 	if (tmp == NULL)
@@ -223,10 +223,8 @@ purple_gnome_proxy_get_info(void)
 
 	/* Check whether to use a proxy. */
 	if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode",
-			&tmp, &err, NULL, NULL))
+			&tmp, NULL, NULL, NULL))
 		return purple_global_proxy_get_info();
-	g_free(err);
-	err = NULL;
 
 	if (!strcmp(tmp, "none\n")) {
 		info.type = PURPLE_PROXY_NONE;
@@ -258,10 +256,8 @@ purple_gnome_proxy_get_info(void)
 	}
 
 	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_same_proxy",
-			&tmp, &err, NULL, NULL))
+			&tmp, NULL, NULL, NULL))
 		return purple_global_proxy_get_info();
-	g_free(err);
-	err = NULL;
 
 	if (!strcmp(tmp, "true\n"))
 		use_same_proxy = TRUE;
@@ -270,10 +266,8 @@ purple_gnome_proxy_get_info(void)
 
 	if (!use_same_proxy) {
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_host",
-			&info.host, &err, NULL, NULL))
+			&info.host, NULL, NULL, NULL))
 			return purple_global_proxy_get_info();
-		g_free(err);
-		err = NULL;
 	}
 
 	if(info.host != NULL)
@@ -282,22 +276,19 @@ purple_gnome_proxy_get_info(void)
 	if (!use_same_proxy && (info.host != NULL) && (*info.host != '\0')) {
 		info.type = PURPLE_PROXY_SOCKS5;
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/socks_port",
-				&tmp, &err, NULL, NULL))
+				&tmp, NULL, NULL, NULL))
 		{
 			g_free(info.host);
 			info.host = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
 		info.port = atoi(tmp);
 		g_free(tmp);
 	} else {
 		g_free(info.host);
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host",
-					&info.host, &err, NULL, NULL))
+					&info.host, NULL, NULL, NULL))
 			return purple_global_proxy_get_info();
-		g_free(err);
-		err = NULL;
 
 		/* If we get this far then we know we're using an HTTP proxy */
 		info.type = PURPLE_PROXY_HTTP;
@@ -314,18 +305,16 @@ purple_gnome_proxy_get_info(void)
 		}
 
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user",
-					&info.username, &err, NULL, NULL))
+					&info.username, NULL, NULL, NULL))
 		{
 			g_free(info.host);
 			info.host = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
-		err = NULL;
 		g_strchomp(info.username);
 
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password",
-					&info.password, &err, NULL, NULL))
+					&info.password, NULL, NULL, NULL))
 		{
 			g_free(info.host);
 			info.host = NULL;
@@ -333,12 +322,10 @@ purple_gnome_proxy_get_info(void)
 			info.username = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
-		err = NULL;
 		g_strchomp(info.password);
 
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port",
-					&tmp, &err, NULL, NULL))
+					&tmp, NULL, NULL, NULL))
 		{
 			g_free(info.host);
 			info.host = NULL;
@@ -348,7 +335,6 @@ purple_gnome_proxy_get_info(void)
 			info.password = NULL;
 			return purple_global_proxy_get_info();
 		}
-		g_free(err);
 		info.port = atoi(tmp);
 		g_free(tmp);
 	}
