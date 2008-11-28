@@ -3573,6 +3573,7 @@ gboolean
 register_gnome_url_handlers()
 {
 	char *tmp;
+	char *err;
 	char *c;
 	char *start;
 
@@ -3582,8 +3583,13 @@ register_gnome_url_handlers()
 
 	tmp = NULL;
 	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
-	                               &tmp, NULL, NULL, NULL))
+	                               &tmp, &err, NULL, NULL))
+	{
+		g_free(err);
 		g_return_val_if_reached(FALSE);
+	}
+	g_free(err);
+	err = NULL;
 
 	for (c = start = tmp ; *c ; c++)
 	{
@@ -3595,7 +3601,24 @@ register_gnome_url_handlers()
 			*c = '\0';
 			if (g_str_has_prefix(start, "/desktop/gnome/url-handlers/"))
 			{
+				char *cmd;
+				char *tmp2 = NULL;
 				char *protocol;
+
+				/* If there is an enabled boolean, honor it. */
+				cmd = g_strdup_printf("gconftool-2 -g %s/enabled", start);
+				if (g_spawn_command_line_sync(cmd, &tmp2, &err, NULL, NULL))
+				{
+					g_free(err);
+					if (!strcmp(tmp2, "false\n"))
+					{
+						g_free(tmp2);
+						start = c + 1;
+						continue;
+					}
+					else
+						g_free(tmp2);
+				}
 
 				start += sizeof("/desktop/gnome/url-handlers/") - 1;
 				protocol = g_strdup_printf("%s:", start);
