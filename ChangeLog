@@ -17,6 +17,10 @@ version 2.5.3 (??/??/????):
 	* Fix a crash in SIMPLE when a malformed message is received.
 	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
 	  used in the 'get' requests (Paul Aurich)
+	* XMPP resources can default to the local machine's hostname by using
+	  __HOSTNAME__ as the resource string (Jonathan Sailor)
+	* XMPP resources can now be left blank, causing the server to generate a
+	  resource for us (Jonathan Sailor)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
