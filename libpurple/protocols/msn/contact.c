@@ -603,6 +603,15 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
 			if (!strcmp(name, "AB.NickName"))
 				alias = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+			else if (!strcmp(name, "MSN.IM.HasSharedFolder"))
+				; /* Do nothing yet... */
+			else if (!strcmp(name, "AB.Spouse"))
+				; /* Do nothing yet... */
+			else if (!strcmp(name, "MSN.Mobile.ContactId"))
+				; /* Do nothing yet... */
+			else
+				purple_debug_info("msn",
+				                  "Unknown AB contact annotation: %s\n", name);
 			g_free(name);
 		}
 
