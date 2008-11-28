@@ -445,16 +445,16 @@ msn_parse_addressbook_groups(MsnSession *session, xmlnode *node)
 		if ((groupInfo = xmlnode_get_child(group, "groupInfo")) && (groupname = xmlnode_get_child(groupInfo, "name")))
 			group_name = xmlnode_get_data(groupname);
 
-		msn_group_new(session->userlist, group_id, group_name);
-
-		if (group_id == NULL){
+		if (group_id == NULL) {
 			/* Group of ungroupped buddies */
 			g_free(group_name);
 			continue;
 		}
 
+		msn_group_new(session->userlist, group_id, group_name);
+
 		purple_debug_info("msn", "AB group_id: %s, name: %s\n", group_id, group_name ? group_name : "(null)");
-		if ((purple_find_group(group_name)) == NULL){
+		if ((purple_find_group(group_name)) == NULL) {
 			PurpleGroup *g = purple_group_new(group_name);
 			purple_blist_add_group(g, NULL);
 		}
