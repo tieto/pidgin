@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "FileSel"
+
 #include "gntbutton.h"
 #include "gntentry.h"
 #include "gntfilesel.h"
@@ -254,7 +258,7 @@ local_read_fn(const char *path, GList **files, GError **error)
 		struct stat st;
 
 		if (stat(fp, &st)) {
-			g_printerr("Error stating location %s\n", fp);
+			gnt_warning("Error stating location %s", fp);
 		} else {
 			if (S_ISDIR(st.st_mode)) {
 				file = gnt_file_new_dir(str);
@@ -309,7 +313,7 @@ location_changed(GntFileSel *sel, GError **err)
 		success = local_read_fn(sel->current, &files, err);
 	
 	if (!success || *err) {
-		g_printerr("GntFileSel: error opening location %s (%s)\n",
+		gnt_warning("error opening location %s (%s)",
 			sel->current, *err ? (*err)->message : "reason unknown");
 		return FALSE;
 	}

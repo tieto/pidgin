@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "Utils"
+
 #include "gntbutton.h"
 #include "gntcheckbox.h"
 #include "gntcombobox.h"
@@ -306,7 +310,7 @@ gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[], int max)
 	xmlFree(content);
 
 	if (widget == NULL) {
-		g_printerr("Invalid widget name %s\n", name);
+		gnt_warning("Invalid widget name %s", name);
 		return NULL;
 	}
 

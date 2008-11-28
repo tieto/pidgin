@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "TextView"
+
 #include "gntstyle.h"
 #include "gnttextview.h"
 #include "gntutils.h"
@@ -780,7 +784,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 						/* XXX: Make things work if the tagged text spans over several lines. */
 					} else {
 						/* XXX: handle the rest of the conditions */
-						g_printerr("WTF! This needs to be handled properly!!\n");
+						gnt_warning("WTF! This needs to be handled properly!!%s", "");
 					}
 				}
 			}
