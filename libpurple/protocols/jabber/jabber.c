@@ -702,19 +702,6 @@ jabber_login(PurpleAccount *account)
 		return;
 	}
 	
-	if(!js->user->resource) {
-		char *me;
-		js->user->resource = g_strdup("Home");
-		if(!js->user->node) {
-			js->user->node = js->user->domain;
-			js->user->domain = g_strdup("jabber.org");
-		}
-		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
-				js->user->resource);
-		purple_account_set_username(account, me);
-		g_free(me);
-	}
-
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
@@ -1181,19 +1168,6 @@ void jabber_register_account(PurpleAccount *account)
 	}
 
 	js->write_buffer = purple_circ_buffer_new(512);
-
-	if(!js->user->resource) {
-		char *me;
-		js->user->resource = g_strdup("Home");
-		if(!js->user->node) {
-			js->user->node = js->user->domain;
-			js->user->domain = g_strdup("jabber.org");
-		}
-		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
-				js->user->resource);
-		purple_account_set_username(account, me);
-		g_free(me);
-	}
 
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
