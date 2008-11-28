@@ -3501,7 +3501,7 @@ link_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 
 	url = gtk_imhtml_link_get_url(link);
 
-	/* Open Link in Browser */
+	/* Open Link */
 	img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Open Link"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
