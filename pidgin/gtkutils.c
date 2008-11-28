@@ -74,6 +74,7 @@ typedef struct {
 } AopMenu;
 
 static guint accels_save_timer = 0;
+GList *gnome_url_handlers = NULL;
 
 static gboolean
 url_clicked_idle_cb(gpointer data)
@@ -3568,25 +3569,87 @@ dummy(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	return TRUE;
 }
 
+gboolean
+register_gnome_url_handlers()
+{
+	char *tmp;
+	char *c;
+	char *start;
+
+	tmp = g_find_program_in_path("gconftool-2");
+	if (tmp == NULL)
+		return FALSE;
+
+	tmp = NULL;
+	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
+	                               &tmp, NULL, NULL, NULL))
+		g_return_val_if_reached(FALSE);
+
+	for (c = start = tmp ; *c ; c++)
+	{
+		/* Skip leading spaces. */
+		if (c == start && *c == ' ')
+			start = c + 1;
+		else if (*c == '\n')
+		{
+			*c = '\0';
+			if (g_str_has_prefix(start, "/desktop/gnome/url-handlers/"))
+			{
+				char *protocol;
+
+				start += sizeof("/desktop/gnome/url-handlers/") - 1;
+				protocol = g_strdup_printf("%s:", start);
+				gnome_url_handlers = g_list_prepend(gnome_url_handlers, protocol);
+
+				if (!strcmp(protocol, "mailto:"))
+					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, copy_email_address);
+				else
+					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+			}
+			start = c + 1;
+		}
+	}
+
+	return (gnome_url_handlers != NULL);
+}
+
 void pidgin_utils_init(void)
 {
+	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
+
+	/* If we're under GNOME, try registering the system URL handlers. */
+	if (purple_running_gnome() && register_gnome_url_handlers())
+		return;
+
 	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
-
-	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
 }
 
 void pidgin_utils_uninit(void)
 {
+	gtk_imhtml_class_register_protocol("open://", NULL, NULL);
+
+	/* If we have GNOME handlers registered, unregister them. */
+	if (gnome_url_handlers)
+	{
+		GList *l;
+		for (l = gnome_url_handlers ; l ; l = l->next)
+		{
+			gtk_imhtml_class_register_protocol((char *)l->data, NULL, NULL);
+			g_free(l->data);
+		}
+		g_list_free(gnome_url_handlers);
+		gnome_url_handlers = NULL;
+		return;
+	}
+
 	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
 	gtk_imhtml_class_register_protocol("https://", NULL, NULL);
 	gtk_imhtml_class_register_protocol("ftp://", NULL, NULL);
 	gtk_imhtml_class_register_protocol("mailto:", NULL, NULL);
 	gtk_imhtml_class_register_protocol("gopher://", NULL, NULL);
-
-	gtk_imhtml_class_register_protocol("open://", NULL, NULL);
 }
 
