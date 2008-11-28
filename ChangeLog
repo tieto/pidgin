@@ -15,6 +15,8 @@ version 2.5.3 (??/??/????):
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
 	  ID's, etc. into links (Florian Quèze)
 	* Fix a crash in SIMPLE when a malformed message is received.
+	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
+	  used in the 'get' requests (Paul Aurich)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
