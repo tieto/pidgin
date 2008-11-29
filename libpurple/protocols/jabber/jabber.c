@@ -150,14 +150,21 @@ static char *jabber_prep_resource(char *input) {
 	char hostname[256]; /* current hostname */
 
 	/* Empty resource == don't send any */
-	if (strlen(input) == 0)
+	if (*input == '\0' || strstr(input, "__HOSTNAME__") == NULL)
 		return NULL;
 
 	/* Replace __HOSTNAME__ with hostname */
-	if (gethostname(hostname, sizeof(hostname))) {
-		purple_debug_warning("jabber", "gethostname() failed -- is your hostname set?");
+	if (gethostname(hostname, sizeof(hostname) - 1)) {
+		purple_debug_warning("jabber", "gethostname: %s\n", g_strerror(errno));
+		/* according to glibc doc, the only time an error is returned
+		   is if the hostname is longer than the buffer, in which case
+		   glibc 2.2+ would still fill the buffer with partial
+		   hostname, so maybe we want to detect that and use it
+		   instead
+		*/
 		strcpy(hostname, "localhost");
 	}
+	hostname[sizeof(hostname) - 1] = '\0';
 
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
