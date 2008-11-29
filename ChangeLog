@@ -26,6 +26,9 @@ version 2.5.3 (??/??/????):
 	* Gadu-Gadu now does proper charset translations where needed (Adam
 	  Strzelecki)
 	* Quit trying to get user info for XMPP MUC's (Paul Aurich)
+	* Send "client-accepts-full-bind-result" attribute during SASL login for
+	  XMPP accounts.  Will fix Google Talk login failures if the user
+	  configures the wrong domain for his/her account.
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
