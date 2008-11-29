@@ -25,6 +25,7 @@ version 2.5.3 (??/??/????):
 	* Gadu-Gadu now validates that UID's are valid (Adam Strzelecki)
 	* Gadu-Gadu now does proper charset translations where needed (Adam
 	  Strzelecki)
+	* Quit trying to get user info for XMPP MUC's (Paul Aurich)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
