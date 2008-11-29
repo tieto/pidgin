@@ -153,6 +153,9 @@ static char *jabber_prep_resource(char *input) {
 	if (*input == '\0')
 		return NULL;
 
+	if (strstr(input, "__HOSTNAME__") == NULL)
+		return input;
+
 	/* Replace __HOSTNAME__ with hostname */
 	if (gethostname(hostname, sizeof(hostname) - 1)) {
 		purple_debug_warning("jabber", "gethostname: %s\n", g_strerror(errno));
