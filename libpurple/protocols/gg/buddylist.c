@@ -96,9 +96,10 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 	PurpleGroup *group;
 	gchar **users_tbl;
 	int i;
+	char *utf8buddylist = charset_convert(buddylist, "CP1250", "UTF-8");
 
 	/* Don't limit the number of records in a buddylist. */
-	users_tbl = g_strsplit(buddylist, "\r\n", -1);
+	users_tbl = g_strsplit(utf8buddylist, "\r\n", -1);
 
 	for (i = 0; users_tbl[i] != NULL; i++) {
 		gchar **data_tbl;
@@ -115,23 +116,22 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			continue;
 		}
 
-		show = charset_convert(data_tbl[F_NICKNAME], "CP1250", "UTF-8");
+		show = data_tbl[F_NICKNAME];
 		name = data_tbl[F_UIN];
-		if ('\0' == *name) {
+		if ('\0' == *name || !atol(name)) {
 			purple_debug_warning("gg",
-				"Something is wrong on line %d of the buddylist. Skipping.\n",
+				"Identifier on line %d of the buddylist is not a number. Skipping.\n",
 				i + 1);
 			continue;
 		}
 
 		if ('\0' == *show) {
-			show = g_strdup(name);
+			show = name;
 		}
 
 		purple_debug_info("gg", "got buddy: name=%s; show=%s\n", name, show);
 
 		if (purple_find_buddy(purple_connection_get_account(gc), name)) {
-			g_free(show);
 			g_strfreev(data_tbl);
 			continue;
 		}
@@ -144,7 +144,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			gchar **group_tbl = g_strsplit(data_tbl[F_GROUP], ",", 50);
 			if (ggp_array_size(group_tbl) > 0) {
 				g_free(g);
-				g = charset_convert(group_tbl[0], "CP1250", "UTF-8");
+				g = g_strdup(group_tbl[0]);
 			}
 			g_strfreev(group_tbl);
 		}
@@ -160,10 +160,10 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 		g_free(g);
 
-		g_free(show);
 		g_strfreev(data_tbl);
 	}
 	g_strfreev(users_tbl);
+	g_free(utf8buddylist);
 
 	ggp_buddylist_send(gc);
 }
@@ -234,8 +234,7 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 				continue;
 
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				gchar *newdata, *name, *alias, *gname;
-				gchar *cp_alias, *cp_gname;
+				gchar *name, *alias, *gname;
 
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
@@ -248,25 +247,20 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 				alias = buddy->alias ? buddy->alias : buddy->name;
 				gname = group->name;
 
-				cp_gname = charset_convert(gname, "UTF-8", "CP1250");
-				cp_alias = charset_convert(alias, "UTF-8", "CP1250");
-				newdata = g_strdup_printf(
-						"%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
-						cp_alias, cp_alias, cp_alias, cp_alias,
-						"", cp_gname, name, "", "");
-
 				ptr = buddylist;
-				buddylist = g_strconcat(ptr, newdata, NULL);
+				buddylist = g_strdup_printf(
+						"%s%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
+						ptr, alias, alias, alias, alias,
+						"", gname, name, "", "");
 
-				g_free(newdata);
 				g_free(ptr);
-				g_free(cp_gname);
-				g_free(cp_alias);
 			}
 		}
 	}
 
-	return buddylist;
+	ptr = charset_convert(buddylist, "UTF-8", "CP1250");
+	g_free(buddylist);
+	return ptr;
 }
 /* }}} */
 

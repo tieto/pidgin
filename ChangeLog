@@ -22,6 +22,9 @@ version 2.5.3 (??/??/????):
 	* XMPP resources can now be left blank, causing the server to generate a
 	  resource for us (Jonathan Sailor)
 	* XMPP resources now default to no value
+	* Gadu-Gadu now validates that UID's are valid (Adam Strzelecki)
+	* Gadu-Gadu now does proper charset translations where needed (Adam
+	  Strzelecki)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
