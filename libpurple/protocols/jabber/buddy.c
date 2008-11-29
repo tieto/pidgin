@@ -115,14 +115,18 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 						break;
 					case JABBER_BUDDY_STATE_AWAY:
 					case JABBER_BUDDY_STATE_DND:
-					case JABBER_BUDDY_STATE_UNAVAILABLE:
-						/* This resource is away/dnd/unavailable. Prefer to one which is extended away or unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_XA) || 
+						/* This resource is away/dnd. Prefer to one which is extended away, unavailable, or unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_XA) || (jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) ||
 							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
 							jbr = l->data;
 						break;
 					case JABBER_BUDDY_STATE_XA:
-						/* This resource is extended away. That's better than unknown. */
+						/* This resource is extended away. That's better than unavailable or unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) || (jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_UNAVAILABLE:
+						/* This resource is unavailable. That's better than unknown. */
 						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
 							jbr = l->data;
 						break;
