@@ -6495,8 +6495,12 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 			purple_blist_add_group(g, NULL);
 		}
 
-		b = purple_buddy_new(data->account, who, whoalias);
-		purple_blist_add_buddy(b, NULL, g, NULL);
+		if ((b = purple_find_buddy_in_group(data->account, who, g)) == NULL)
+		{
+			b = purple_buddy_new(data->account, who, whoalias);
+			purple_blist_add_buddy(b, NULL, g, NULL);
+		}
+
 		purple_account_add_buddy(data->account, b);
 
 		/* Offer to merge people with the same alias. */
