@@ -115,14 +115,18 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 						break;
 					case JABBER_BUDDY_STATE_AWAY:
 					case JABBER_BUDDY_STATE_DND:
-					case JABBER_BUDDY_STATE_UNAVAILABLE:
-						/* This resource is away/dnd/unavailable. Prefer to one which is extended away or unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_XA) || 
+						/* This resource is away/dnd. Prefer to one which is extended away, unavailable, or unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_XA) || (jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) ||
 							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
 							jbr = l->data;
 						break;
 					case JABBER_BUDDY_STATE_XA:
-						/* This resource is extended away. That's better than unknown. */
+						/* This resource is extended away. That's better than unavailable or unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) || (jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_UNAVAILABLE:
+						/* This resource is unavailable. That's better than unknown. */
 						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
 							jbr = l->data;
 						break;
@@ -1798,12 +1802,21 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 void jabber_buddy_get_info(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js = purple_connection_get_protocol_data(gc);
-	char *bare_jid = jabber_get_bare_jid(who);
+	JabberID *jid = jabber_id_new(who);
 
-	if(bare_jid) {
+	if (!jid)
+		return;
+
+	if (jabber_chat_find(js, jid->node, jid->domain)) {
+		/* For a conversation, include the resource (indicates the user). */
+		jabber_buddy_get_info_for_jid(js, who);
+	} else {
+		char *bare_jid = jabber_get_bare_jid(who);
 		jabber_buddy_get_info_for_jid(js, bare_jid);
 		g_free(bare_jid);
 	}
+
+	jabber_id_free(jid);
 }
 
 static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,

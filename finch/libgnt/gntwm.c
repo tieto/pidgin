@@ -46,6 +46,10 @@
 #include <string.h>
 #include <time.h>
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "WM"
+
 #include "gntwm.h"
 #include "gntstyle.h"
 #include "gntmarshal.h"
@@ -325,7 +329,7 @@ read_window_positions(GntWM *wm)
 	gsize nk;
 
 	if (!g_key_file_load_from_file(gfile, filename, G_KEY_FILE_NONE, &error)) {
-		g_printerr("GntWM: %s\n", error->message);
+		gnt_warning("%s", error->message);
 		g_error_free(error);
 		g_free(filename);
 		return;
@@ -333,7 +337,7 @@ read_window_positions(GntWM *wm)
 
 	keys = g_key_file_get_keys(gfile, "positions", &nk, &error);
 	if (error) {
-		g_printerr("GntWM: %s\n", error->message);
+		gnt_warning("%s", error->message);
 		g_error_free(error);
 		error = NULL;
 	} else {
@@ -349,7 +353,7 @@ read_window_positions(GntWM *wm)
 				p->y = y;
 				g_hash_table_replace(wm->positions, g_strdup(title + 1), p);
 			} else {
-				g_printerr("GntWM: Invalid number of arguments for positioing a window.\n");
+				gnt_warning("Invalid number of arguments (%d) for positioning a window.", l);
 			}
 			g_strfreev(coords);
 		}
@@ -2095,7 +2099,7 @@ write_already(gpointer data)
 
 	file = fopen(filename, "wb");
 	if (file == NULL) {
-		g_printerr("GntWM: error opening file to save positions\n");
+		gnt_warning("error opening file (%s) to save positions", filename);
 	} else {
 		fprintf(file, "[positions]\n");
 		g_hash_table_foreach(wm->positions, write_gdi, file);
