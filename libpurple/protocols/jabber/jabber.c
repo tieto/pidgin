@@ -146,10 +146,37 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 	jabber_session_init(js);
 }
 
+static char *jabber_prep_resource(char *input) {
+	char hostname[256]; /* current hostname */
+
+	/* Empty resource == don't send any */
+	if (*input == '\0')
+		return NULL;
+
+	if (strstr(input, "__HOSTNAME__") == NULL)
+		return input;
+
+	/* Replace __HOSTNAME__ with hostname */
+	if (gethostname(hostname, sizeof(hostname) - 1)) {
+		purple_debug_warning("jabber", "gethostname: %s\n", g_strerror(errno));
+		/* according to glibc doc, the only time an error is returned
+		   is if the hostname is longer than the buffer, in which case
+		   glibc 2.2+ would still fill the buffer with partial
+		   hostname, so maybe we want to detect that and use it
+		   instead
+		*/
+		strcpy(hostname, "localhost");
+	}
+	hostname[sizeof(hostname) - 1] = '\0';
+
+	return purple_strreplace(input, "__HOSTNAME__", hostname);
+}
+
 static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
 	if(xmlnode_get_child(packet, "starttls")) {
 		if(jabber_process_starttls(js, packet))
+	
 			return;
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
 		purple_connection_error_reason (js->gc,
@@ -164,11 +191,17 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		jabber_auth_start(js, packet);
 	} else if(xmlnode_get_child(packet, "bind")) {
 		xmlnode *bind, *resource;
+		char *requested_resource;
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
 		bind = xmlnode_new_child(iq->node, "bind");
 		xmlnode_set_namespace(bind, "urn:ietf:params:xml:ns:xmpp-bind");
-		resource = xmlnode_new_child(bind, "resource");
-		xmlnode_insert_data(resource, js->user->resource, -1);
+		requested_resource = jabber_prep_resource(js->user->resource);
+
+		if (requested_resource != NULL) {
+			resource = xmlnode_new_child(bind, "resource");
+			xmlnode_insert_data(resource, requested_resource, -1);
+			free(requested_resource);
+		}
 
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
 
@@ -679,19 +712,6 @@ jabber_login(PurpleAccount *account)
 		return;
 	}
 	
-	if(!js->user->resource) {
-		char *me;
-		js->user->resource = g_strdup("Home");
-		if(!js->user->node) {
-			js->user->node = js->user->domain;
-			js->user->domain = g_strdup("jabber.org");
-		}
-		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
-				js->user->resource);
-		purple_account_set_username(account, me);
-		g_free(me);
-	}
-
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
@@ -1158,19 +1178,6 @@ void jabber_register_account(PurpleAccount *account)
 	}
 
 	js->write_buffer = purple_circ_buffer_new(512);
-
-	if(!js->user->resource) {
-		char *me;
-		js->user->resource = g_strdup("Home");
-		if(!js->user->node) {
-			js->user->node = js->user->domain;
-			js->user->domain = g_strdup("jabber.org");
-		}
-		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
-				js->user->resource);
-		purple_account_set_username(account, me);
-		g_free(me);
-	}
 
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;

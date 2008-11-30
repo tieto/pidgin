@@ -81,6 +81,9 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 
 	swboard->destroying = TRUE;
 
+	if (swboard->reconn_timeout_h > 0)
+		purple_timeout_remove(swboard->reconn_timeout_h);
+
 	/* If it linked us is because its looking for trouble */
 	while (swboard->slplinks != NULL)
 		msn_slplink_destroy(swboard->slplinks->data);

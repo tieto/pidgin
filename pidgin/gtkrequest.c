@@ -853,12 +853,11 @@ static GtkWidget *
 create_choice_field(PurpleRequestField *field)
 {
 	GtkWidget *widget;
-	GList *labels;
+	GList *labels = purple_request_field_choice_get_labels(field);
+	int num_labels = g_list_length(labels);
 	GList *l;
 
-	labels = purple_request_field_choice_get_labels(field);
-
-	if (g_list_length(labels) > 5)
+	if (num_labels > 5)
 	{
 		GtkWidget *menu;
 		GtkWidget *item;
@@ -892,7 +891,7 @@ create_choice_field(PurpleRequestField *field)
 		GtkWidget *radio;
 		gint i;
 
-		if (g_list_length(labels) == 2)
+		if (num_labels == 2)
 			box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		else
 			box = gtk_vbox_new(FALSE, 0);

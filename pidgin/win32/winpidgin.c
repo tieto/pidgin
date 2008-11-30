@@ -621,9 +621,22 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	char *tmp;
 	int pidgin_argc = __argc;
 	char **pidgin_argv = __argv;
+	int i;
+	BOOL debug = FALSE, help = FALSE, version = FALSE, multiple = FALSE;
 
 	/* If debug or help or version flag used, create console for output */
-	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h") || strstr(lpszCmdLine, "-v")) {
+	for (i = 1; i < __argc; i++) {
+		if (strstr(__argv[i], "-d") || strstr(__argv[i], "--debug"))
+			debug = TRUE;
+		else if (strstr(__argv[i], "-h") || strstr(__argv[i], "--help"))
+			help = TRUE;
+		else if (strstr(__argv[i], "-v") || strstr(__argv[i], "--version"))
+			version = TRUE;
+		else if (strstr(__argv[i], "-m") || strstr(__argv[i], "--multiple"))
+			multiple = TRUE;
+	}
+
+	if (debug || help || version) {
 		/* If stdout hasn't been redirected to a file, alloc a console
 		 *  (_istty() doesn't work for stuff using the GUI subsystem) */
 		if (_fileno(stdout) == -1 || _fileno(stdout) == -2) {
@@ -710,8 +723,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	winpidgin_add_stuff_to_path();
 
 	/* If help, version or multiple flag used, do not check Mutex */
-	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
-		if (!winpidgin_set_running(getenv("PIDGIN_MULTI_INST") == NULL && strstr(lpszCmdLine, "-m") == NULL))
+	if (!help && !version)
+		if (!winpidgin_set_running(getenv("PIDGIN_MULTI_INST") == NULL && !multiple))
 			return 0;
 
 	/* Now we are ready for Pidgin .. */

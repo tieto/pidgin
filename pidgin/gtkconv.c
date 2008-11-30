@@ -2759,26 +2759,16 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 {
 	PidginConversation *gtkconv = (PidginConversation *)user_data;
 	PurpleConversation *conv = gtkconv->active_conv;
-	FILE *fp;
 	PurpleBuddyIcon *icon;
 	const void *data;
 	size_t len;
 
-	if ((fp = g_fopen(filename, "wb")) == NULL) {
-		purple_notify_error(gtkconv, NULL, _("Unable to open file."), NULL);
-		return;
-	}
-
 	icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
 	data = purple_buddy_icon_get_data(icon, &len);
 
-	if ((len <= 0) || (data == NULL) || (fwrite(data, 1, len, fp) != len)) {
+	if ((len <= 0) || (data == NULL) || !purple_util_write_data_to_file_absolute(filename, data, len)) {
 		purple_notify_error(gtkconv, NULL, _("Unable to save icon file to disk."), NULL);
-		fclose(fp);
-		g_unlink(filename);
-		return;
 	}
-	fclose(fp);
 }
 
 static void
