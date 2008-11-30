@@ -14,6 +14,8 @@ version 2.5.3 (??/??/????):
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
 	  ID's, etc. into links (Florian Quèze)
 	* Fix a crash in SIMPLE when a malformed message is received.
+	* purple-remote now has a "getstatusmessage" command to retrieve the text
+	  of the current status message.
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
