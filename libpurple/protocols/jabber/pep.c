@@ -54,7 +54,7 @@ void jabber_pep_register_handler(const char *shortname, const char *xmlns, Jabbe
 
 static void do_pep_iq_request_item_callback(JabberStream *js, xmlnode *packet, gpointer data) {
 	const char *from = xmlnode_get_attrib(packet,"from");
-	xmlnode *pubsub = xmlnode_get_child_with_namespace(packet,"pubsub","http://jabber.org/protocol/pubsub#event");
+	xmlnode *pubsub = xmlnode_get_child_with_namespace(packet,"pubsub","http://jabber.org/protocol/pubsub");
 	xmlnode *items = NULL;
 	JabberPEPHandler *cb = data;
 	

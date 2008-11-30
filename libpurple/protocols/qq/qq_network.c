@@ -126,8 +126,8 @@ static gboolean set_new_server(qq_data *qd)
 	/* get new server */
 	index  = rand() % count;
 	it = g_list_nth(qd->servers, index);
-    qd->curr_server = it->data;		/* do not free server_name */
-    if (qd->curr_server == NULL || strlen(qd->curr_server) <= 0 ) {
+	qd->curr_server = it->data;		/* do not free server_name */
+	if (qd->curr_server == NULL || strlen(qd->curr_server) <= 0 ) {
 		purple_debug_info("QQ", "Server name at %d is empty\n", index);
 		return FALSE;
 	}

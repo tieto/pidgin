@@ -212,7 +212,7 @@ init_plugin(PurplePlugin *plugin)
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 	
-	split = purple_account_user_split_new(_("Resource"), "Home", '/');
+	split = purple_account_user_split_new(_("Resource"), NULL, '/');
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 	

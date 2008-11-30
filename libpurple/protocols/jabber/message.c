@@ -920,7 +920,7 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 			if (jb) {
 				return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
 			} else {
-				return NULL;
+				return FALSE;
 			}
 			break;
 		default:
