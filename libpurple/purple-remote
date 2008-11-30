@@ -172,6 +172,10 @@ def execute(uri):
         status_id = purple.PurplePrimitiveGetIdFromType(status_type)
         return status_id
 
+    elif command == "getstatusmessage":
+        current = purple.PurpleSavedstatusGetCurrent()
+        return purple.PurpleSavedstatusGetMessage(current)
+
     elif command == "getinfo":
         account = findaccount(accountname, protocol)
         connection = cpurple.PurpleAccountGetConnection(account)
