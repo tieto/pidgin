@@ -725,6 +725,8 @@ jabber_login(PurpleAccount *account)
 			"connect_server", "");
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
+	/* XXX FORCE_BOSH */
+	gboolean force_bosh = purple_account_get_bool(account, "force_bosh", FALSE);
 
 	gc->flags |= PURPLE_CONNECTION_HTML |
 		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
@@ -764,6 +766,12 @@ jabber_login(PurpleAccount *account)
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
+
+	/* XXX FORCE_BOSH: Remove this */
+	if (force_bosh) {
+		purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, gc);
+		return;
+	}
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
 	if(purple_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
