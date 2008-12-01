@@ -903,12 +903,15 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	}
 	else
 	{
-		/* We don't know how to respond to this faultcode, so just log it */
-		/* XXX: Probably should notify the user or undo the change or something? */
-		char *str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
-		                   msn_contact_operation_str(state->action), str);
-		g_free(str);
+		if (state->cb) {
+			((MsnSoapCallback)state->cb)(req, resp, data);
+		} else {
+			/* We don't know how to respond to this faultcode, so log it */
+			char *str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+			purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+			                   msn_contact_operation_str(state->action), str);
+			g_free(str);
+		}
 		msn_callback_state_free(state);
 	}
 
@@ -942,6 +945,17 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnUserList *userlist;
 	MsnUser *user;
 	xmlnode *guid;
+
+	char *fault_str;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
 
 	g_return_if_fail(session != NULL);
 
@@ -1012,8 +1026,16 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 {
 	MsnCallbackState *state = data;
 	MsnUserList *userlist;
+	char *fault_str;
 
-	g_return_if_fail(data != NULL);
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
 
 	userlist = state->session->userlist;
 
@@ -1120,6 +1142,16 @@ msn_delete_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnCallbackState *state = data;
 	MsnUserList *userlist = state->session->userlist;
 	MsnUser *user = msn_userlist_find_user_with_id(userlist, state->uid);
+	char *fault_str;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
 
 	purple_debug_info("msn", "Delete contact successful\n");
 
@@ -1165,6 +1197,16 @@ msn_del_contact_from_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
 	MsnCallbackState *state = data;
+	char *fault_str;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
 
 	if (msn_userlist_rem_buddy_from_group(state->session->userlist,
 			state->who, state->old_group_name)) {
@@ -1235,6 +1277,18 @@ static void
 msn_update_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
+	MsnCallbackState *state = (MsnCallbackState *)data;
+	char *fault_str;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
+
 	purple_debug_info("msn", "Contact updated successfully\n");
 }
 
@@ -1312,6 +1366,16 @@ msn_del_contact_from_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 {
 	MsnCallbackState *state = data;
 	MsnSession *session = state->session;
+	char *fault_str;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
 
 	purple_debug_info("msn", "Contact %s deleted successfully from %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
@@ -1387,8 +1451,17 @@ msn_add_contact_to_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
 	MsnCallbackState *state = data;
+	char *fault_str;
 
-	g_return_if_fail(state != NULL);
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
+
 	g_return_if_fail(state->session != NULL);
 
 	purple_debug_info("msn", "Contact %s added successfully to %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
@@ -1482,6 +1555,16 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	MsnCallbackState *state = data;
 	MsnSession *session;
 	MsnUserList *userlist;
+	char *fault_str;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+	if (fault_str != NULL) {
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
 
 	purple_debug_info("msn", "Group request successful.\n");
 
@@ -1661,3 +1744,4 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 	g_free(escaped_group_name);
 	g_free(body);
 }
+
