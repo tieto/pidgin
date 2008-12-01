@@ -1,4 +1,21 @@
+# These are mood images that are NOT also used in the smiley theme.
+MOODS = \
+    bathing.png \
+    cinema.png \
+    internet.png \
+    music.png \
+    restroom.png \
+    search.png \
+    shopping.png \
+    studying.png \
+    suit.png \
+    surfing.png \
+    typing.png \
+    working.png \
+    writing.png
+
 SMILEYS = \
+    amorous.png \
     angel.png \
     angry.png \
     beer.png \
@@ -12,12 +29,15 @@ SMILEYS = \
     crying.png \
     devil.png \
     dont-know.png \
+    excited.png \
     grin.png \
+    happy.png \
     hug-left.png \
     hug-right.png \
+    in_love.png \
     kiss.png \
-    love.png \
     meeting.png \
+    mobile.png \
     musical-note.png \
     nerdy.png \
     neutral.png \
@@ -27,18 +47,16 @@ SMILEYS = \
     question.png \
     sad.png \
     shame.png \
-    shock.png \
+    shocked.png \
     sick.png \
     silent.png \
+    sleeping.png \
     sleepy.png \
-    smile-big.png \
-    smile.png \
     thinking.png \
     tongue.png \
     tv.png \
     uhm-yeah.png \
-    wink.png \
-    yawn.png
+    wink.png
 
 
 pidginsmileypix_in_files = small.theme.in
@@ -46,6 +64,7 @@ pidginsmileypix_in_files = small.theme.in
 if INSTALL_PIXMAPS
 pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/small
 pidginsmileypix_DATA = \
+        $(MOODS) \
         $(SMILEYS) \
         theme
 
@@ -56,4 +75,4 @@ theme: small.theme.in
 	$< > $@
 endif
 
-EXTRA_DIST = $(SMILEYS) $(pidginsmileypix_in_files) theme
+EXTRA_DIST = $(MOODS) $(SMILEYS) $(pidginsmileypix_in_files) theme
