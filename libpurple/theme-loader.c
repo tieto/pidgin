@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-
+#include "internal.h"
 #include "theme-loader.h"
 
 #define PURPLE_THEME_LOADER_GET_PRIVATE(PurpleThemeLoader) \

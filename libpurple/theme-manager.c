@@ -20,9 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-
+#include <glib.h>
 #include <string.h>
 
+#include "internal.h"
 #include "theme-manager.h"
 #include "util.h"
 
@@ -67,8 +68,8 @@ purple_theme_manager_get_type(void)
 static gchar *
 purple_theme_manager_make_key(const gchar *name, const gchar *type)
 {
-	g_return_val_if_fail(name && strlen(name), NULL);
-	g_return_val_if_fail(type && strlen(type), NULL);		
+	g_return_val_if_fail(name && *name, NULL);
+	g_return_val_if_fail(type && *type, NULL);		
 	return g_strconcat(type, "/", name, NULL);
 }
 
@@ -109,12 +110,13 @@ purple_theme_manager_build_dir(const gchar *root)
 
 	rdir = g_dir_open(root, 0, NULL);
 
-	g_return_if_fail(rdir);
+	if (!rdir)
+		return;
 
 	/* Parses directory by root/name/purple/type */
 	while((name = g_dir_read_name(rdir))) {
 		purple_dir = g_build_filename(root, name, "purple", NULL);
-		tdir =  g_dir_open(purple_dir, 0, NULL);
+		tdir = g_dir_open(purple_dir, 0, NULL);
 	
 		if(!tdir) {
 			g_free(purple_dir);
@@ -150,9 +152,9 @@ void
 purple_theme_manager_init(void)
 {
 	theme_table = g_hash_table_new_full(g_str_hash,
-               	                             g_str_equal,
-               	                             g_free,
-               	                             g_object_unref);
+	       	                             g_str_equal,
+	       	                             g_free,
+	       	                             g_object_unref);
 }
 
 void 

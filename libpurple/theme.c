@@ -20,11 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#include <glib.h>
+#include <string.h>
 
+#include "internal.h"
 #include "theme.h"
 #include "util.h"
-
-#include <string.h>
 
 #define PURPLE_THEME_GET_PRIVATE(PurpleTheme) \
 	((PurpleThemePrivate *) ((PurpleTheme)->priv))

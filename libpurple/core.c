@@ -174,6 +174,8 @@ purple_core_init(const char *ui)
 	purple_xfers_init();
 	purple_idle_init();
 	purple_smileys_init();
+	purple_theme_manager_init();
+	purple_theme_manager_refresh();
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
@@ -182,8 +184,6 @@ purple_core_init(const char *ui)
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
-	
-	purple_theme_manager_refresh();
 
 	return TRUE;
 }
