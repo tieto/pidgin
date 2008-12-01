@@ -393,7 +393,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 	if (js->use_bosh) {
 		xmlnode *xnode = xmlnode_from_str(data, len);
-		if (xnode) jabber_bosh_connection_send(&(js->bosh), xnode);
+		if (xnode) jabber_bosh_connection_send(js->bosh, xnode);
 		else {
 			purple_connection_error_reason(js->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 							_("Someone tried to send non-XML in a Jabber world."));
@@ -572,8 +572,7 @@ jabber_bosh_login_callback(PurpleBOSHConnection *conn)
 static void 
 txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 {
-	PurpleConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = data;
 	int n;
 	
 	js->srv_query_data = NULL;
@@ -581,7 +580,7 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 	if (results == 0) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not find alternative XMPP connection methods after failing to connect directly.\n"));
-		purple_connection_error_reason (gc,
+		purple_connection_error_reason (js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;	
@@ -592,15 +591,14 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 		token = g_strsplit(resp[n].content, "=", 2);
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
-			jabber_bosh_connection_init(&(js->bosh), js->gc->account, js, token[1]);
+			js->bosh = jabber_bosh_connection_init(js, token[1]);
 			g_strfreev(token);
 			break;
 		}
 		g_strfreev(token);
 	}
-	if (js->bosh.host) {
-		js->bosh.userdata = gc;
-		jabber_bosh_connection_connect(&(js->bosh));
+	if (js->bosh) {
+		jabber_bosh_connection_connect(js->bosh);
 	} else {
 		purple_debug_info("jabber","Didn't find an alternative connection method.\n");
 	}
@@ -618,7 +616,7 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 			try_srv_connect(js);
 		} else {
 			purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
-			js->srv_query_data = purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, gc);
+			js->srv_query_data = purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, js);
 		}
 		return;
 	}
@@ -771,7 +769,7 @@ jabber_login(PurpleAccount *account)
 
 	/* XXX FORCE_BOSH: Remove this */
 	if (force_bosh) {
-		js->srv_query_data = purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, gc);
+		js->srv_query_data = purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, js);
 		return;
 	}
 

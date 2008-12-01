@@ -243,7 +243,7 @@ struct _JabberStream
 
 	/* BOSH stuff */
 	gboolean use_bosh;
-	PurpleBOSHConnection bosh;
+	PurpleBOSHConnection *bosh;
 
 	/**
 	 * This linked list contains PurpleUtilFetchUrlData structs
