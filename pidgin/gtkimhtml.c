@@ -5749,16 +5749,13 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 {
 	GtkIMHtmlClass *klass;
 	GtkIMHtmlProtocol *proto;
-	char *protocol;
 
 	g_return_val_if_fail(name, FALSE);
 
 	klass = g_type_class_ref(GTK_TYPE_IMHTML);
 	g_return_val_if_fail(klass, FALSE);
 
-	protocol = g_strdup_printf("%s:", name);
-	if ((proto = imhtml_find_protocol(protocol))) {
-		g_free(protocol);
+	if ((proto = imhtml_find_protocol(name))) {
 		g_return_val_if_fail(!activate, FALSE);
 		g_free(proto->name);
 		g_free(proto);
@@ -5769,8 +5766,8 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 	}
 
 	proto = g_new0(GtkIMHtmlProtocol, 1);
-	proto->name = protocol;
-	proto->length = strlen(protocol);
+	proto->name = g_strdup(name);
+	proto->length = strlen(name);
 	proto->activate = activate;
 	proto->context_menu = context_menu;
 	klass->protocols = g_list_prepend(klass->protocols, proto);
