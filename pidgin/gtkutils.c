@@ -3621,7 +3621,17 @@ register_gnome_url_handlers()
 				}
 
 				start += sizeof("/desktop/gnome/url-handlers/") - 1;
-				protocol = g_strdup_printf("%s:", start);
+
+				/* It would be nice if this was tracked in gconf. */
+				if (!strcmp(start, "ftp") ||
+				    !strcmp(start, "gopher") ||
+				    !strcmp(start, "http") ||
+				    !strcmp(start, "https"))
+					protocol = g_strdup_printf("%s://", start);
+				else
+					protocol = g_strdup_printf("%s:", start);
+
+				/* We need to free this later. */
 				gnome_url_handlers = g_list_prepend(gnome_url_handlers, protocol);
 
 				if (!strcmp(protocol, "mailto:"))
