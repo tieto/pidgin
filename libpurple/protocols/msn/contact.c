@@ -223,9 +223,26 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	char *type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
 	char *member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
 	MsnUser *user = msn_userlist_find_add_user(session->userlist, passport, NULL);
+	xmlnode *annotation;
+	guint nid = MSN_NETWORK_PASSPORT;
 
-	purple_debug_info("msn", "CL: %s name: %s, Type: %s, MembershipID: %s\n",
-		node, passport, type, member_id == NULL ? "(null)" : member_id);
+	for (annotation = xmlnode_get_child(member, "Annotations/Annotation");
+	     annotation;
+	     annotation = xmlnode_get_next_twin(annotation)) {
+		char *name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+		if (name && !strcmp(name, "MSN.IM.BuddyType")) {
+			char *value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+			if (value != NULL)
+				nid = strtoul(value, NULL, 10);
+			g_free(value);
+		}
+		g_free(name);
+	}
+ 
+	purple_debug_info("msn", "CL: %s name: %s, Type: %s, MembershipID: %s, NetworkID: %u\n",
+		node, passport, type, member_id == NULL ? "(null)" : member_id, nid);
+
+	msn_user_set_network(user, nid);
 
 	if (member_id) {
 		user->membership_id[list] = atoi(member_id);
