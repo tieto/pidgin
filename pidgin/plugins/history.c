@@ -71,16 +71,20 @@ static void historize(PurpleConversation *c)
 	        for (cur = buddies; cur != NULL; cur = cur->next)
 	        {
 	                PurpleBlistNode *node = cur->data;
-	                if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
+					PurpleBlistNode *prev = purple_blist_node_get_sibling_prev(node);
+					PurpleBlistNode *next = purple_blist_node_get_sibling_next(node);
+	                if ((node != NULL) && ((prev != NULL) || (next != NULL)))
 	                {
 				PurpleBlistNode *node2;
+				PurpleBlistNode *parent = purple_blist_node_get_parent(node);
+				PurpleBlistNode *child = purple_blist_node_get_first_child(parent);
 
 				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
 
 				/* We've found a buddy that matches this conversation.  It's part of a
 				 * PurpleContact with more than one PurpleBuddy.  Loop through the PurpleBuddies
 				 * in the contact and get all the logs. */
-				for (node2 = node->parent->child ; node2 != NULL ; node2 = node2->next)
+				for (node2 = child ; node2 != NULL ; node2 = purple_blist_node_get_sibling_next(node2))
 				{
 					logs = g_list_concat(
 						purple_log_get_logs(PURPLE_LOG_IM,

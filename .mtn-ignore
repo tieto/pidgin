@@ -10,6 +10,7 @@
 .*\.def$
 .*\.dll$
 .*\.exe$
+.*\.loT$
 intltool-.*
 Doxyfile(\.mingw)?$
 aclocal.m4
