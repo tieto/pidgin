@@ -892,7 +892,7 @@ void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
  * Register a protocol with the GtkIMHtml widget. Registering a protocol would
  * allow certain text to be clickable.
  *
- * @param name      The name of the protocol (e.g. http://)
+ * @param name      The name of the protocol (e.g. http)
  * @param activate  The callback to trigger when the protocol text is clicked.
  *                  Removes any current protocol definition if @c NULL. The
  *                  callback should return @c TRUE if the link was activated

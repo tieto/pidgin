@@ -2641,7 +2641,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	c = text;
 	len = strlen(text);
 	ws = g_malloc(len + 1);
-	ws[0] = 0;
+	ws[0] = '\0';
 
 	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	while (pos < len) {
@@ -3287,8 +3287,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				ws[wpos] = '\n';
 				wpos++;
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-				ws[0] = '\0';
-				wpos = 0;
+				ws[0] = '\0'; wpos = 0;
 				/* NEW_BIT (NEW_TEXT_BIT); */
 			} else if (!br) {  /* Don't insert a space immediately after an HTML break */
 				/* A newline is defined by HTML as whitespace, which means we have to replace it with a word boundary.
@@ -3299,8 +3298,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				ws[wpos] = ' ';
 				wpos++;
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-				ws[0] = '\0';
-				wpos = 0;
+				ws[0] = '\0'; wpos = 0;
 			}
 			c++;
 			pos++;
@@ -3308,15 +3306,14 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			br = FALSE;
 			if (wpos > 0) {
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-				ws[0] = '\0';
-				wpos = 0;
+				ws[0] = '\0'; wpos = 0;
 			}
-			while(len_protocol--){
-				/* Skip the next len_protocol characters, but make sure they're
-				   copied into the ws array.
-				*/
-				 ws [wpos++] = *c++;
-				 pos++;
+			while (len_protocol--) {
+				/* Skip the next len_protocol characters, but
+				 * make sure they're copied into the ws array.
+				 */
+				ws [wpos++] = *c++;
+				pos++;
 			}
 			if (!imhtml->edit.link) {
 				while (*c && *c != ' ') {
@@ -3364,8 +3361,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		ws[wpos]  = '\0';
 		gtk_text_buffer_insert(imhtml->text_buffer, &line_iter, ws, wpos);
 		gtk_text_buffer_get_end_iter(gtk_text_iter_get_buffer(&line_iter), iter);
-		ws[0] = '\0';
-		wpos = 0;
+		ws[0] = '\0'; wpos = 0;
 	}
 
 	while (fonts) {
@@ -5753,13 +5749,16 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 {
 	GtkIMHtmlClass *klass;
 	GtkIMHtmlProtocol *proto;
+	char *protocol;
 
 	g_return_val_if_fail(name, FALSE);
 
 	klass = g_type_class_ref(GTK_TYPE_IMHTML);
 	g_return_val_if_fail(klass, FALSE);
 
-	if ((proto = imhtml_find_protocol(name))) {
+	protocol = g_strdup_printf("%s:", name);
+	if ((proto = imhtml_find_protocol(protocol))) {
+		g_free(protocol);
 		g_return_val_if_fail(!activate, FALSE);
 		g_free(proto->name);
 		g_free(proto);
@@ -5770,8 +5769,8 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 	}
 
 	proto = g_new0(GtkIMHtmlProtocol, 1);
-	proto->name = g_strdup(name);
-	proto->length = strlen(name);
+	proto->name = protocol;
+	proto->length = strlen(protocol);
 	proto->activate = activate;
 	proto->context_menu = context_menu;
 	klass->protocols = g_list_prepend(klass->protocols, proto);
