@@ -1411,16 +1411,17 @@ gtk_imhtml_finalize (GObject *object)
 }
 
 static GtkIMHtmlProtocol *
-imhtml_find_protocol(const char *url)
+imhtml_find_protocol(const char *url, gboolean reverse)
 {
 	GtkIMHtmlClass *klass;
 	GList *iter;
 	GtkIMHtmlProtocol *proto = NULL;
+	int length = reverse ? strlen(url) : -1;
 
 	klass = g_type_class_ref(GTK_TYPE_IMHTML);
 	for (iter = klass->protocols; iter; iter = iter->next) {
 		proto = iter->data;
-		if (g_ascii_strncasecmp(url, proto->name, proto->length) == 0) {
+		if (g_ascii_strncasecmp(url, proto->name, reverse ? MIN(length, proto->length) : proto->length) == 0) {
 			return proto;
 		}
 	}
@@ -1430,7 +1431,7 @@ imhtml_find_protocol(const char *url)
 static void
 imhtml_url_clicked(GtkIMHtml *imhtml, const char *url)
 {
-	GtkIMHtmlProtocol *proto = imhtml_find_protocol(url);
+	GtkIMHtmlProtocol *proto = imhtml_find_protocol(url, FALSE);
 	GtkIMHtmlLink *link;
 	if (!proto)
 		return;
@@ -1790,7 +1791,7 @@ static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, Gtk
 			g_object_set_data_full(G_OBJECT(menu), "x-imhtml-url-data", link,
 					(GDestroyNotify)gtk_imhtml_link_destroy);
 
-			proto = imhtml_find_protocol(link->url);
+			proto = imhtml_find_protocol(link->url, FALSE);
 
 			if (proto && proto->context_menu) {
 				proto->context_menu(GTK_IMHTML(link->imhtml), link, menu);
@@ -2386,7 +2387,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
    the caller knows how long the protocol string is. */
 static int gtk_imhtml_is_protocol(const char *text)
 {
-	GtkIMHtmlProtocol *proto = imhtml_find_protocol(text);
+	GtkIMHtmlProtocol *proto = imhtml_find_protocol(text, FALSE);
 	return proto ? proto->length : 0;
 }
 
@@ -3302,7 +3303,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			}
 			c++;
 			pos++;
-		} else if ((len_protocol = gtk_imhtml_is_protocol(c)) > 0){
+		} else if ((pos == 0 || wpos == 0 || isspace(*(c - 1))) &&
+		           (len_protocol = gtk_imhtml_is_protocol(c)) > 0) {
 			br = FALSE;
 			if (wpos > 0) {
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
@@ -5755,14 +5757,16 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 	klass = g_type_class_ref(GTK_TYPE_IMHTML);
 	g_return_val_if_fail(klass, FALSE);
 
-	if ((proto = imhtml_find_protocol(name))) {
-		g_return_val_if_fail(!activate, FALSE);
+	if ((proto = imhtml_find_protocol(name, TRUE))) {
+		if (activate) {
+			return FALSE;
+		}
 		g_free(proto->name);
 		g_free(proto);
 		klass->protocols = g_list_remove(klass->protocols, proto);
 		return TRUE;
-	} else {
-		g_return_val_if_fail(activate, FALSE);
+	} else if (!activate) {
+		return FALSE;
 	}
 
 	proto = g_new0(GtkIMHtmlProtocol, 1);

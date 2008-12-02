@@ -74,7 +74,7 @@ typedef struct {
 } AopMenu;
 
 static guint accels_save_timer = 0;
-GList *gnome_url_handlers = NULL;
+static GList *gnome_url_handlers = NULL;
 
 static gboolean
 url_clicked_idle_cb(gpointer data)
@@ -3570,7 +3570,7 @@ dummy(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 }
 
 static gboolean
-register_gnome_url_handlers()
+register_gnome_url_handlers(void)
 {
 	char *tmp;
 	char *err;
@@ -3585,6 +3585,7 @@ register_gnome_url_handlers()
 	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
 	                               &tmp, &err, NULL, NULL))
 	{
+		g_free(tmp);
 		g_free(err);
 		g_return_val_if_reached(FALSE);
 	}
@@ -3610,55 +3611,46 @@ register_gnome_url_handlers()
 				if (g_spawn_command_line_sync(cmd, &tmp2, &err, NULL, NULL))
 				{
 					g_free(err);
+					err = NULL;
 					if (!strcmp(tmp2, "false\n"))
 					{
 						g_free(tmp2);
+						g_free(cmd);
 						start = c + 1;
 						continue;
 					}
-					else
-						g_free(tmp2);
 				}
+				g_free(cmd);
+				g_free(tmp2);
 
 				start += sizeof("/desktop/gnome/url-handlers/") - 1;
 
-				/* It would be nice if this was tracked in gconf. */
-				if (!strcmp(start, "ftp") ||
-				    !strcmp(start, "gopher") ||
-				    !strcmp(start, "http") ||
-				    !strcmp(start, "https"))
-					protocol = g_strdup_printf("%s://", start);
-				else
-					protocol = g_strdup_printf("%s:", start);
-
-				/* We need to free this later. */
+				protocol = g_strdup_printf("%s:", start);
 				gnome_url_handlers = g_list_prepend(gnome_url_handlers, protocol);
-
-				if (!strcmp(protocol, "mailto:"))
-					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, copy_email_address);
-				else
-					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+				gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
 			}
 			start = c + 1;
 		}
 	}
+	g_free(tmp);
 
 	return (gnome_url_handlers != NULL);
 }
 
 void pidgin_utils_init(void)
 {
-	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
-
-	/* If we're under GNOME, try registering the system URL handlers. */
-	if (purple_running_gnome() && register_gnome_url_handlers())
-		return;
-
 	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
+
+	/* Example custom URL handler. */
+	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
+
+	/* If we're under GNOME, try registering the system URL handlers. */
+	if (purple_running_gnome())
+		register_gnome_url_handlers();
 }
 
 void pidgin_utils_uninit(void)
