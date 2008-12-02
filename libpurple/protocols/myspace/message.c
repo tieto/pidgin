@@ -613,6 +613,7 @@ msim_msg_pack_using(MsimMessage *msg,
 		const gchar *sep, 
 		const gchar *begin, const gchar *end)
 {
+	int num_items;
 	gchar **strings;
 	gchar **strings_tmp;
 	gchar *joined;
@@ -621,8 +622,10 @@ msim_msg_pack_using(MsimMessage *msg,
 
 	g_return_val_if_fail(msg != NULL, NULL);
 
+	num_items = g_list_length(msg);
+
 	/* Add one for NULL terminator for g_strjoinv(). */
-	strings = (gchar **)g_new0(gchar *, g_list_length(msg) + 1);
+	strings = (gchar **)g_new0(gchar *, num_items + 1);
 
 	strings_tmp = strings;
 	g_list_foreach(msg, gf, &strings_tmp);
@@ -632,7 +635,7 @@ msim_msg_pack_using(MsimMessage *msg,
 	g_free(joined);
 
 	/* Clean up. */
-	for (i = 0; i < g_list_length(msg); ++i) {
+	for (i = 0; i < num_items; ++i) {
 		g_free(strings[i]);
 	}
 

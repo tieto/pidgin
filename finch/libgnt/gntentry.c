@@ -365,7 +365,7 @@ backspace(GntBindable *bind, GList *null)
 		return TRUE;
 
 	len = entry->cursor - g_utf8_find_prev_char(entry->start, entry->cursor);
-	update_kill_ring(entry, ENTRY_DEL_BWD_CHAR, entry->cursor, -len);
+	update_kill_ring(entry, ENTRY_JAIL, entry->cursor, -len);
 	entry->cursor -= len;
 
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor);
@@ -391,7 +391,7 @@ delkey(GntBindable *bind, GList *null)
 		return FALSE;
 
 	len = g_utf8_find_next_char(entry->cursor, NULL) - entry->cursor;
-	update_kill_ring(entry, ENTRY_DEL_FWD_CHAR, entry->cursor, len);
+	update_kill_ring(entry, ENTRY_JAIL, entry->cursor, len);
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
 	entry->end -= len;
 	entry_redraw(GNT_WIDGET(entry));
