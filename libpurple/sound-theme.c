@@ -21,6 +21,7 @@
  *
  */
 
+#include "internal.h"
 #include "sound-theme.h"
 
 #define PURPLE_SOUND_THEME_GET_PRIVATE(Gobject) \
