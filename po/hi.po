@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GAIM\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2005-05-29 20:43+0530\n"
 "Last-Translator: Akash <akash@ncb.ernet.in>\n"
 "Language-Team: Akash <matrubhasha@ncb.ernet.in>\n"
@@ -255,10 +255,6 @@ msgstr ""
 msgid "You must give a name for the group to add."
 msgstr "कृपया उस समूह का नाम भरीये जिसे आप जोड़ना चाहतें हैं।"
 
-#, fuzzy
-msgid "A group with the name already exists."
-msgstr "उसी नाम का एक फोल्डर पहले से मोजूद है"
-
 msgid "Add Group"
 msgstr "समूह जोड़ें"
 
@@ -295,7 +291,6 @@ msgstr "जानकारी लाऐं"
 msgid "Add Buddy Pounce"
 msgstr "बड्डी झपटा जोड़ें(_P)"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "फ़ाइल भेजें"
 
@@ -303,8 +298,8 @@ msgid "Blocked"
 msgstr "रोका हुआ"
 
 #, fuzzy
-msgid "View Log"
-msgstr "लॉग देखें(_L)"
+msgid "Show when offline"
+msgstr "जब आप ऑफलाइन हैं तब आज्ञा नहीं"
 
 #, fuzzy, c-format
 msgid "Please enter the new name for %s"
@@ -350,6 +345,10 @@ msgstr ""
 
 msgid "Toggle Tag"
 msgstr ""
+
+#, fuzzy
+msgid "View Log"
+msgstr "लॉग देखें(_L)"
 
 #. General
 msgid "Nickname"
@@ -1455,7 +1454,7 @@ msgstr ""
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5429,7 +5428,7 @@ msgstr " दोपहर के खाने के लिए गया"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5675,8 +5674,7 @@ msgstr "प्रोफा़इल यू आर एल"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "नोवेल ग्रुपवाइज़ मेसेंजर प्रोटोकॉल प्लग-इन"
@@ -5733,6 +5731,7 @@ msgstr "%s आपको भेजना चाहता है"
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "अज्ञात त्रुटि"
@@ -6923,6 +6922,7 @@ msgstr ""
 "केवल अंक होने चाहीए।"
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "अवैध उपयोगकर्ता-नाम"
@@ -7332,10 +7332,12 @@ msgstr ""
 "बड्डी %s जोड़ नहीं पाया क्योंक् स्क्रीन-नाम अवैध है। स्क्रीन-नाम या सिर्फ अंको का होना "
 "चाहिए नहीं तो अक्षर से शुरु होना चाहिए। उसमें केवल अक्षर, अंक ओर खाली जगह होनी चाहिए।"
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "जोड़ने में असर्मथ"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "बड्डी सूची नहीं ला पाया"
 
 #, fuzzy
@@ -7563,49 +7565,6 @@ msgstr ""
 "इसके लिए दोनो कमप्यूटर्स में सीधा कनेक्शन ज़रुरी है और आई एम चित्रों के लिए आवशयक है। चूंकि "
 "यह आपका आई पी पता दिखाता है इसे आपकी गुप्तता पर खतरा समझा जा सकता है।"
 
-#, fuzzy
-msgid "Primary Information"
-msgstr "प्रोफ़ाइल जानकारी"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "निजी जानकारी"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "देश"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-#, fuzzy
-msgid "College"
-msgstr "सिकुड़िये(_C)"
-
-#, fuzzy
-msgid "Zipcode"
-msgstr "ज़िप कोड"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "टैलीफोन नंबर"
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "टैलीफोन नंबर"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7700,94 +7659,190 @@ msgid "Other"
 msgstr "ओपेरा(Opera)"
 
 #, fuzzy
-msgid "Modify information"
+msgid "Visible"
+msgstr "अद्रश्य"
+
+msgid "Firend Only"
+msgstr ""
+
+#, fuzzy
+msgid "Private"
+msgstr "गुप्पता"
+
+msgid "QQ Number"
+msgstr ""
+
+#, fuzzy
+msgid "Country/Region"
+msgstr "देश"
+
+msgid "Province/State"
+msgstr ""
+
+#, fuzzy
+msgid "Zipcode"
+msgstr "ज़िप कोड"
+
+#, fuzzy
+msgid "Phone Number"
+msgstr "टैलीफोन नंबर"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "अनुमति दें"
+
+#, fuzzy
+msgid "Cellphone Number"
+msgstr "टैलीफोन नंबर"
+
+#, fuzzy
+msgid "Personal Introduction"
+msgstr "निजी जानकारी"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "नगर"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "निजी उपाधि"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "संपर्क का उपनाम..."
+
+#, fuzzy
+msgid "College"
+msgstr "सिकुड़िये(_C)"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "पोर्ट्"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "रोका हुआ"
+
+#, fuzzy
+msgid "True"
+msgstr "टुर्की"
+
+#, fuzzy
+msgid "False"
+msgstr "असफल हुआ"
+
+#  And now for the buttons
+#, fuzzy
+msgid "Modify Contact"
+msgstr "खाते के विकल्प बदलीये"
+
+#, fuzzy
+msgid "Modify Address"
+msgstr "घर का पता"
+
+#, fuzzy
+msgid "Modify Extended Information"
 msgstr "बड्डी की जानकारी"
 
 #, fuzzy
-msgid "Update information"
-msgstr "उपयोगकर्ता की जानकारी"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "बड्डी चुनिये"
+msgid "Modify Information"
+msgstr "बड्डी की जानकारी"
 
 #, fuzzy
-msgid "Successed:"
-msgstr "गति"
+msgid "Update"
+msgstr "पिछली बार कब अपडेट किया गया\" "
 
 #, fuzzy
-msgid "Change buddy information."
+msgid "Could not change buddy information."
 msgstr "कृप्या झपटा मारने के लिए बड्डी का नाम भरें।"
 
 #, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "%d needs Q&A"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "गलत कक्ष नाम"
+msgid "Add buddy Q&A"
+msgstr "बड्डी चुनिये"
 
-#, fuzzy, c-format
-msgid "You rejected %d's request"
-msgstr "अनपेक्षित इच्छा"
-
-#, fuzzy
-msgid "Reject request"
-msgstr "अनपेक्षित इच्छा"
-
-#. title
-msgid "Sorry, you are not my style..."
+msgid "Input answer here"
 msgstr ""
 
-#, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "बड्डी को जोड़ना मना हो गया "
+msgid "Send"
+msgstr "भेजो"
 
 #, fuzzy
-msgid "Failed:"
-msgstr "असफल हुआ"
+msgid "Invalid answer."
+msgstr "अवैध पासवर्ड"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "बड्डी निकालें"
+msgid "Authorization denied message:"
+msgstr "प्रमाणिकरन मनाही संदेश:"
 
-#, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "उपयोगकर्ता को अपनी बड्डी सूची में सें निकाले।"
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "प्रमाणिकरन शुरु कर रहा है"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "उपयोगकर्ता को अपनी बड्डी सूची में जोड़ें।"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 #, fuzzy
 msgid "Would you be my friend?"
 msgstr "क्या आप इसके उपर लिखना चाहेंगे?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "भेजो"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "चैट को अपनी बड्डी सूची में जोड़ें"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "बड्डी चुनिये"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "पढ़ने में त्रुटि"
+msgid "Add buddy"
+msgstr "बड्डी चुनिये"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "गलत कक्ष नाम"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "कृपया मुझे प्रमाणित करें!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "बड्डी के साथ चैट में जुड़ने में असफल"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "उपयोगकर्ता को अपनी बड्डी सूची में सें निकाले।"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "कोई कारण नहीं दिया"
+
+#. only need to get value
+#, fuzzy, c-format
+msgid "You have been added by %s"
+msgstr "आपको %s ने मारा (%s)"
+
+#, fuzzy
+msgid "Would you like to add him?"
+msgstr "क्या आप इसके उपर लिखना चाहेंगे?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "पुनः स्थापित करो"
+
+#, fuzzy, c-format
+msgid "Message: %s"
+msgstr "संदेश(_M)"
 
 msgid "ID: "
 msgstr ""
@@ -7795,18 +7850,6 @@ msgstr ""
 #, fuzzy
 msgid "Group ID"
 msgstr "समूह"
-
-#, fuzzy
-msgid "Creator"
-msgstr "बंद करें"
-
-#, fuzzy
-msgid "Group Description"
-msgstr "विवरण"
-
-#, fuzzy
-msgid "Auth"
-msgstr "अनुमति दें"
 
 msgid "QQ Qun"
 msgstr ""
@@ -7818,19 +7861,108 @@ msgstr "कृपया चुने हुए समूह के लिए न
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
+#, fuzzy
+msgid "Not member"
+msgstr "से सदस्य"
+
+#, fuzzy
+msgid "Member"
+msgstr "से सदस्य"
+
+#, fuzzy
+msgid "Requesting"
+msgstr "अस्पष्ट अनुरोध"
+
+msgid "Admin"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "संदेश(_M)"
+#, fuzzy
+msgid "Notice"
+msgstr "नोट"
+
+#, fuzzy
+msgid "Detail"
+msgstr "विवरण"
+
+#, fuzzy
+msgid "Creator"
+msgstr "बंद करें"
+
+#, fuzzy
+msgid "About me"
+msgstr "गेम के बारे में"
+
+#, fuzzy
+msgid "Category"
+msgstr "पढ़ने में त्रुटि"
+
+#, fuzzy
+msgid "The Qun does not allow others to join"
+msgstr "इस आवर्तन में दस से ज़्यादा उपयोगकर्ता एक साथ लॉग-इन नहीं कर सकते"
+
+#, fuzzy
+msgid "Join QQ Qun"
+msgstr "चैट में शामिल हों"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
+
+#, c-format
+msgid "Qun %d denied to join"
+msgstr ""
 
 #, fuzzy
 msgid "QQ Qun Operation"
 msgstr "धव्नि विकल्प"
 
-msgid "Approve"
+#, fuzzy
+msgid "Failed:"
+msgstr "असफल हुआ"
+
+msgid "Join Qun, Unknow Reply"
+msgstr ""
+
+#, fuzzy
+msgid "Quit Qun"
+msgstr "चैट में शामिल हों"
+
+msgid ""
+"Note, if you are the creator, \n"
+"this operation will eventually remove this Qun."
+msgstr ""
+
+msgid "Sorry, you are not our style ..."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully changed Qun member"
+msgstr "टैलीफोन नंबर"
+
+#, fuzzy
+msgid "Successfully changed Qun information"
+msgstr "चैनल की जानकारी"
+
+msgid "You have successfully created a Qun"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to set detailed information now?"
+msgstr "क्या आप संवाद में शामिल होना चाहेंगे?"
+
+#, fuzzy
+msgid "Setup"
+msgstr "नियत करें (_S)"
+
+#, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr ""
+
+#, c-format
+msgid "%d request to join Qun %d"
 msgstr ""
 
 #, fuzzy, c-format
@@ -7838,122 +7970,16 @@ msgid "Failed to join Qun %d, operated by admin %d"
 msgstr "बड्डी के साथ चैट में जुड़ने में असफल"
 
 #, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
 msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr ""
-
-#, fuzzy
-msgid "Notice:"
-msgstr "नोट"
-
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
-msgstr ""
-
-msgid "I am a member"
-msgstr ""
-
-#, fuzzy
-msgid "I am requesting"
-msgstr "खराब विनय"
-
-msgid "I am the admin"
-msgstr ""
-
-# #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
-# gnome-session/gsm-client-row.c:43
-# #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
-# gnome-session/gsm-client-row.c:43
-#, fuzzy
-msgid "Unknown status"
-msgstr "अज्ञात संदेश"
-
-#, fuzzy
-msgid "The Qun does not allow others to join"
-msgstr "इस आवर्तन में दस से ज़्यादा उपयोगकर्ता एक साथ लॉग-इन नहीं कर सकते"
-
-#  *< api_version
-#  *< type
-#  *< ui_requirement
-#  *< flags
-#  *< dependencies
-#  *< priority
-#  *< id
-#, fuzzy
-msgid "Remove from Qun"
-msgstr "समूह मिटाओ"
-
-#, fuzzy
-msgid "Join to Qun"
-msgstr "चैट में शामिल हों"
-
-#, c-format
-msgid "Qun %d denied to join"
-msgstr ""
-
-msgid "Join Qun, Unknow Reply"
-msgstr ""
-
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
-#, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "क्या आप निश्चिता से %s को मिटाना चाहते है?"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-
-#. we want to see window
-#, fuzzy
-msgid "Do you want to approve the request?"
-msgstr "क्या आप निश्चिता से \"%s\" अनुपस्थित संदेश को मिटाना चाहते है?"
-
-#, fuzzy
-msgid "Change Qun member"
-msgstr "टैलीफोन नंबर"
-
-#, fuzzy
-msgid "Change Qun information"
-msgstr "चैनल की जानकारी"
-
-msgid "You have successfully created a Qun"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to set up the detail information now?"
-msgstr "क्या आप संवाद में शामिल होना चाहेंगे?"
-
-#, fuzzy
-msgid "Setup"
-msgstr "नियत करें (_S)"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s पे %s (%s)"
+msgid "<b>Removed buddy %d.</b>"
+msgstr "बड्डी निकालें"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "आइ सी क्यू सवर्र रीले"
-
-#, fuzzy
-msgid "System Message"
-msgstr "संदेश भेजें"
-
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "वार्तालाप में जुड़ने में असफल"
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
@@ -7966,10 +7992,6 @@ msgstr "अज्ञात"
 #, fuzzy
 msgid "Level"
 msgstr "कभी नहीं"
-
-#, fuzzy
-msgid "Member"
-msgstr "से सदस्य"
 
 msgid " VIP"
 msgstr ""
@@ -8003,12 +8025,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "अवैध उपयोगकर्ता-नाम"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "टेक्स्ट रंग चुनो"
+
 #, fuzzy, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>उपभोक्ता:</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>उपनाम:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>उपभोक्ता:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -8016,11 +8046,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>उपभोक्ता:</b> %s<br>"
 
 #, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>उपभोक्ता:</b> %s<br>"
+
+#, fuzzy, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "%s <b> से बेकार:</b> <br>"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>आइ पी पता:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -8044,26 +8078,44 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>उपनाम:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>उपभोक्ता:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>उपनाम:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr ""
-"\n"
-"<b>%s:</b> %s"
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>उपभोक्ता:</b> %s<br>"
 
 #, fuzzy
 msgid "Login Information"
 msgstr "उपयोगकर्ता की जानकारी"
 
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
 #, fuzzy
-msgid "Set My Information"
-msgstr "सर्वर की जानकारी"
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>उपभोक्ता:</b> %s<br>"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>उपनाम:</b> %s<br>"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "गेम के बारे में"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "अइकॉन संचित करें"
 
 msgid "Change Password"
 msgstr "पासवर्ड बदलें"
@@ -8072,12 +8124,12 @@ msgstr "पासवर्ड बदलें"
 msgid "Account Information"
 msgstr "उपयोगकर्ता की जानकारी"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
 #, fuzzy
-msgid "Block this buddy"
-msgstr "उपयोगकर्ता को रोको"
+msgid "About OpenQ"
+msgstr "गेम के बारे में"
 
 #. *< type
 #. *< ui_requirement
@@ -8090,13 +8142,27 @@ msgstr "उपयोगकर्ता को रोको"
 #. *  summary
 #. *  description
 #, fuzzy
-msgid "QQ Protocol\tPlugin"
+msgid "QQ Protocol Plugin"
 msgstr "\"आईआरसी(IRC) प्रोटोकाल प्लगइन"
 
 #, fuzzy
 msgid "Auto"
 msgstr "अनुमति दें"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "टेक्स्ट रंग चुनो"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "कनेक्ट कर रहा है"
@@ -8110,42 +8176,81 @@ msgid "Show server news"
 msgstr "कुछ विकल्प दिखाओ"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "पढ़ने में त्रुटि"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "पढ़ने में त्रुटि"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "सर्वर की जानकारी नहीं मिली"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "सर्वर की जानकारी नहीं मिली"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "अवैध औथआइडी"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "पासवर्ड बदलते समय त्रुटि"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "रजिस्ट्रेशन आवशयक"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "पढ़ने में त्रुटि"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "सर्वर से कनेक्ट करने में असफल।"
+msgid "Captcha Image"
+msgstr "चित्र संचित करें"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "पासवर्ड बदलें"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "कृपया उस समूह का नाम भरीये जिसे आप जोड़ना चाहतें हैं।"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -8177,8 +8282,11 @@ msgstr "लिखने में त्रुटी"
 msgid "Connection lost"
 msgstr "कनेक्शन बंद हो गया"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "उपयोगकर्ता की जानकारी दृढ़ करें..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "अनुरोध निषेध"
 
@@ -8190,19 +8298,35 @@ msgstr "होस्ट से कनेक्टेड नहीं कर प�
 msgid "Invalid server or port"
 msgstr "अवैध उपयोगकर्ता-नाम या पासवर्ड"
 
-# #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
-# gnome-session/gsm-client-row.c:43
-# #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
-# gnome-session/gsm-client-row.c:43
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"%s सवर्र से कनेक्शन त्रुटी (%s):\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "सर्वर कनेक्ट करें"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "पढ़ने में त्रुटि"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "वार्तालाप में जुड़ने में असफल"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "आइ सी क्यू सवर्र रीले"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "से"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "सर्वर की जानकारी"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -8218,7 +8342,7 @@ msgid "QQ Qun Command"
 msgstr "कमांड"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
@@ -8229,7 +8353,15 @@ msgstr ""
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "अज्ञात कारण"
+
+# #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+# #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "अज्ञात कारण"
 
 #, fuzzy, c-format
@@ -8243,64 +8375,6 @@ msgstr "फ़ाइल भेजना असफल"
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s ने %s के स्थानांतर को रद्द किया"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "क्या आप निश्चिता से \"%s\" अनुपस्थित संदेश को मिटाना चाहते है?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "क्या आप इस बड्डी को बड्डी सूची मे डालना चाहतें हैं?"
-
-#. only need to get value
-#, fuzzy, c-format
-msgid "You have been added by %s"
-msgstr "आपको %s ने मारा (%s)"
-
-#, fuzzy
-msgid "Would you like to add him?"
-msgstr "क्या आप इसके उपर लिखना चाहेंगे?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "उपयोगकर्ता %s को %s अपनी बड्डी सूची में जोड़ना चाहतें हैं।"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "बड्डी चुनिये"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s आपको भेजना चाहता है"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "उपयोगकर्ता को अपनी बड्डी सूची में जोड़ें।"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "क्या आप इसके उपर लिखना चाहेंगे?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "से"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "सवर्र पोर्ट"
 
 #, fuzzy
 msgid "Connection closed (writing)"
@@ -10076,10 +10150,6 @@ msgstr "आपका याहू! संदेश भेजा नहीं ग
 msgid "Yahoo! system message for %s:"
 msgstr "%s के लिए याहू! तंत्र संदेश: "
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "प्रमाणिकरन मनाही संदेश:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -11017,9 +11087,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -11084,10 +11154,6 @@ msgstr "लॉग देखें(_L)"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "जब आप ऑफलाइन हैं तब आज्ञा नहीं"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "जब आप ऑफलाइन हैं तब आज्ञा नहीं"
 
 msgid "_Alias..."
@@ -11513,7 +11579,7 @@ msgstr "उपनाम:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -11554,10 +11620,6 @@ msgstr "/बड्डी/ऑफलाइन बड्डी दिखाये�
 #, fuzzy
 msgid "SSL Servers"
 msgstr "सर्वर"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "कनेक्शन नहीं है"
 
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
@@ -11970,8 +12032,12 @@ msgstr "त्रुटी"
 msgid "Fatal Error"
 msgstr "अन्दरुनी त्रुटि"
 
-msgid "developer"
-msgstr "डेवलपर"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "पता"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11981,10 +12047,7 @@ msgid "support"
 msgstr "समर्थन"
 
 #, fuzzy
-msgid "support/QA"
-msgstr "समर्थन"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr "डेवलपर & वेब मास्टर"
 
 msgid "Senior Contributor/QA"
@@ -12005,8 +12068,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "हेकर तथा ओहदेदार चालक [लेज़ी बम]"
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "डेवलपर"
+msgid "support/QA"
+msgstr "समर्थन"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "मूल लेखक"
@@ -12276,9 +12342,6 @@ msgstr "सेवानिवृत्त डेवलपर्स"
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "क्रेजी पैच लेखकगण"
-
-msgid "Artists"
-msgstr ""
 
 msgid "Current Translators"
 msgstr "वर्तमान अनुवादक - रविशंकर श्रीवास्तव (raviratlami@yahoo.com)"
@@ -12970,11 +13033,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -13931,8 +13989,13 @@ msgstr "जानकारी लाऐं"
 msgid "_Invite"
 msgstr "आमंत्रण दें(_I)"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "बदलें(_M)"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "जोड़ें"
 
 msgid "_Open Mail"
 msgstr "डाक देखें(_O)"
@@ -13957,6 +14020,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "कोइ भी"
+
+#, fuzzy
+msgid "Small"
+msgstr "इमेल"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 #, fuzzy
 msgid "Response Probability:"
@@ -14493,6 +14563,10 @@ msgstr "विंडो शीर्षक में भरें - नए स�
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "विंडो मैनेजर नियत करें \"अत्यावश्यक\" संकेत (_U)"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "गपशप विंडोस (_h)"
+
 #  IM Convo trans options
 #. Raise window method button
 #, fuzzy
@@ -14725,20 +14799,20 @@ msgstr ""
 "अक्षर आधारित प्रोटॅकोल पर अपूर्ण इनपुट भेजने देता है. (जैबर, एमएसएन, आईआरसी, टीओसी). "
 "भेजने हेतु एन्ट्री बाक्स पर एन्टर बटन दबाएँ. डिबग विंडो देखें."
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr "आप गेम का %s अनुवाद उपयोग कर रहें हैं। वर्तमान अनुवाद %s है।<hr>"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"<b>परिवर्तन लॉग:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "नया अनुवाद उपलब्ध है"
+
+#, fuzzy
+msgid "Later"
+msgstr "दिनांक"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "उपयोगकर्ता है %s: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -15077,6 +15151,187 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "A group with the name already exists."
+#~ msgstr "उसी नाम का एक फोल्डर पहले से मोजूद है"
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "प्रोफ़ाइल जानकारी"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "उपयोगकर्ता की जानकारी"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "गति"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "गलत कक्ष नाम"
+
+#, fuzzy
+#~ msgid "You rejected %d's request"
+#~ msgstr "अनपेक्षित इच्छा"
+
+#, fuzzy
+#~ msgid "Reject request"
+#~ msgstr "अनपेक्षित इच्छा"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "बड्डी को जोड़ना मना हो गया "
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "चैट को अपनी बड्डी सूची में जोड़ें"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "पढ़ने में त्रुटि"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "विवरण"
+
+#, fuzzy
+#~ msgid "Auth"
+#~ msgstr "अनुमति दें"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "खराब विनय"
+
+# #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+# #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "अज्ञात संदेश"
+
+#  *< api_version
+#  *< type
+#  *< ui_requirement
+#  *< flags
+#  *< dependencies
+#  *< priority
+#  *< id
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "समूह मिटाओ"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "क्या आप निश्चिता से %s को मिटाना चाहते है?"
+
+#, fuzzy
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "क्या आप निश्चिता से \"%s\" अनुपस्थित संदेश को मिटाना चाहते है?"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s पे %s (%s)"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "संदेश भेजें"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>उपनाम:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>%s:</b> %s"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "सर्वर की जानकारी"
+
+#, fuzzy
+#~ msgid "Block this buddy"
+#~ msgstr "उपयोगकर्ता को रोको"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "पासवर्ड बदलते समय त्रुटि"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "सर्वर से कनेक्ट करने में असफल।"
+
+# #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+# #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "%s सवर्र से कनेक्शन त्रुटी (%s):\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "क्या आप निश्चिता से \"%s\" अनुपस्थित संदेश को मिटाना चाहते है?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "क्या आप इस बड्डी को बड्डी सूची मे डालना चाहतें हैं?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "उपयोगकर्ता %s को %s अपनी बड्डी सूची में जोड़ना चाहतें हैं।"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "बड्डी चुनिये"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s आपको भेजना चाहता है"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "उपयोगकर्ता को अपनी बड्डी सूची में जोड़ें।"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "क्या आप इसके उपर लिखना चाहेंगे?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "सवर्र पोर्ट"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "कनेक्शन नहीं है"
+
+#~ msgid "developer"
+#~ msgstr "डेवलपर"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "डेवलपर"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr "आप गेम का %s अनुवाद उपयोग कर रहें हैं। वर्तमान अनुवाद %s है।<hr>"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>परिवर्तन लॉग:</b>\n"
+#~ "%s<br><br>"
 
 #, fuzzy
 #~ msgid "Screen name:"
@@ -15752,9 +16007,6 @@ msgstr ""
 
 #~ msgid "NAPSTER Protocol Plugin"
 #~ msgstr "नैपस्टर प्रोटॅकोल प्लगइन"
-
-#~ msgid "Invalid password"
-#~ msgstr "अवैध पासवर्ड"
 
 #~ msgid "Error processing event or response (%s)."
 #~ msgstr "घटना कि रीति या उत्तर में त्रुटी (%s)।"
@@ -16444,9 +16696,6 @@ msgstr ""
 
 #~ msgid "Summary"
 #~ msgstr "सारांश"
-
-#~ msgid "Details"
-#~ msgstr "विवरण"
 
 #~ msgid "Message Text"
 #~ msgstr "सन्देश टेक्स्ट्"

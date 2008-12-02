@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-06-30 14:57+0900\n"
 "Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
@@ -246,9 +246,6 @@ msgstr "グループを追加する際にエラー"
 msgid "You must give a name for the group to add."
 msgstr "追加するグループの名前を入力して下さい"
 
-msgid "A group with the name already exists."
-msgstr "その名前のグループは既に存在します"
-
 msgid "Add Group"
 msgstr "グループの追加"
 
@@ -279,15 +276,15 @@ msgstr "情報の取得"
 msgid "Add Buddy Pounce"
 msgstr "つかむ仲間の追加"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "ファイルの送信"
 
 msgid "Blocked"
 msgstr "拒否しているか"
 
-msgid "View Log"
-msgstr "ログの表示"
+#, fuzzy
+msgid "Show when offline"
+msgstr "オフラインの時は許可できません"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -328,6 +325,9 @@ msgstr "Place tagged"
 
 msgid "Toggle Tag"
 msgstr "Toggle Tag"
+
+msgid "View Log"
+msgstr "ログの表示"
 
 #. General
 msgid "Nickname"
@@ -1364,7 +1364,7 @@ msgstr "種類"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5104,7 +5104,7 @@ msgstr "食事に出かけています"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5319,8 +5319,7 @@ msgstr "プロフィールの URL"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Novell GroupWise メッセンジャー・プロトコルのプラグイン"
@@ -5361,6 +5360,7 @@ msgstr "%2$s (%3$s) の %1$s"
 msgid "%s just sent you a Nudge!"
 msgstr "%s さんが合図を送りたがっています！"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "原因不明のエラー"
@@ -6555,6 +6555,7 @@ msgstr ""
 "数字のみにして下さい。"
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "名前が間違っています"
@@ -6969,10 +6970,12 @@ msgstr ""
 "スクリーン名が間違っているため仲間 %s を追加できませんでした。スクリーン名の"
 "先頭は文字にし、文字と数字とスペースのみ、または数字のみにして下さい。"
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "追加できません"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "仲間リストを取得できません"
 
 #, fuzzy
@@ -7197,42 +7200,6 @@ msgstr ""
 "す。IP アドレスが明らかになるので、プライバシーに対するリスクが発生するかもし"
 "れません。"
 
-msgid "Primary Information"
-msgstr "主要な情報"
-
-msgid "Personal Introduction"
-msgstr "個人情報"
-
-msgid "QQ Number"
-msgstr "QQ 番号"
-
-msgid "Country/Region"
-msgstr "国/地方"
-
-msgid "Province/State"
-msgstr "県/州"
-
-msgid "Horoscope Symbol"
-msgstr "星座"
-
-msgid "Zodiac Sign"
-msgstr "十二支"
-
-msgid "Blood Type"
-msgstr "血液型"
-
-msgid "College"
-msgstr "学歴"
-
-msgid "Zipcode"
-msgstr "郵便番号"
-
-msgid "Cellphone Number"
-msgstr "携帯電話の番号"
-
-msgid "Phone Number"
-msgstr "電話番号"
-
 msgid "Aquarius"
 msgstr "水瓶座"
 
@@ -7309,108 +7276,189 @@ msgid "Other"
 msgstr "その他"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "情報の変更"
+msgid "Visible"
+msgstr "隠れています"
 
-#, fuzzy
-msgid "Update information"
-msgstr "情報の更新"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "仲間の追加"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "速度:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "仲間の情報を入力して下さい:"
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
-"顔アイコンの変更は現在サポートしていません。%s から１つ選択して下さい。"
-
-msgid "Invalid QQ Face"
-msgstr "不正な顔アイコンです"
-
-#, c-format
-msgid "You rejected %d's request"
-msgstr "%d個の要求を拒否しました"
-
-msgid "Reject request"
-msgstr "要求の拒否"
-
-#. title
-#, fuzzy
-msgid "Sorry, you are not my style..."
-msgstr "すみませんが、私のタイプではありません..."
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "承認付きで仲間の追加に失敗しました"
+msgid "Private"
+msgstr "個人情報"
+
+msgid "QQ Number"
+msgstr "QQ 番号"
+
+msgid "Country/Region"
+msgstr "国/地方"
+
+msgid "Province/State"
+msgstr "県/州"
+
+msgid "Zipcode"
+msgstr "郵便番号"
+
+msgid "Phone Number"
+msgstr "電話番号"
 
 #, fuzzy
-msgid "Failed:"
+msgid "Authorize adding"
+msgstr "仲間として承認しますか？"
+
+msgid "Cellphone Number"
+msgstr "携帯電話の番号"
+
+msgid "Personal Introduction"
+msgstr "個人情報"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "町"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "携帯 (個人)"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "コンタクトの別名"
+
+msgid "College"
+msgstr "学歴"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "星座"
+
+#, fuzzy
+msgid "Zodiac"
+msgstr "十二支"
+
+#, fuzzy
+msgid "Blood"
+msgstr "拒否しているか"
+
+#, fuzzy
+msgid "True"
+msgstr "牡牛座"
+
+#, fuzzy
+msgid "False"
 msgstr "失敗しました"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "仲間の削除"
+msgid "Modify Contact"
+msgstr "アカウントの編集"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "%s さんはあなたを仲間リストから削除しています"
+msgid "Modify Address"
+msgstr "自宅の住所"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "自分の情報の変更"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "情報の変更"
+
+#, fuzzy
+msgid "Update"
+msgstr "最終更新日"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "仲間の情報を入力して下さい:"
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "仲間の追加"
+
+#, fuzzy
+msgid "Input answer here"
+msgstr "ここにリクエストをどうぞ"
+
+msgid "Send"
+msgstr "送信する"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "名前が間違っています"
+
+msgid "Authorization denied message:"
+msgstr "承認を拒否する旨のメッセージ:"
+
+#, fuzzy
+msgid "Sorry, You are not my style."
+msgstr "すみませんが、私のタイプではありません..."
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "ユーザ %d さんは承認が必要です"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "仲間をリストに追加しますか？"
+
 msgid "Input request here"
 msgstr "ここにリクエストをどうぞ"
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "私の友達になってくれますか？"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "送信する"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "仲間リストを読み込めませんでした。"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "仲間の追加"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "QQ 番号"
+msgid "Add buddy"
+msgstr "仲間の追加"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "不正な顔アイコンです"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "私を承認してください！"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "チャットの仲間に参加できません"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "%s さんはあなたを仲間リストから削除しています"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "理由はわかりません。"
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr "あなたは %s さんによって追加されました"
+
+msgid "Would you like to add him?"
+msgstr "彼を追加しますか？"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "拒否する"
+
+#, c-format
+msgid "Message: %s"
+msgstr "メッセージ: %s"
 
 msgid "ID: "
 msgstr "ID: "
 
 msgid "Group ID"
 msgstr "グループ ID"
-
-msgid "Creator"
-msgstr "作成者"
-
-msgid "Group Description"
-msgstr "グループの説明"
-
-msgid "Auth"
-msgstr "承認"
 
 msgid "QQ Qun"
 msgstr "QQ Qun"
@@ -7423,83 +7471,74 @@ msgstr "%s さんの新しい名前を入力して下さい"
 msgid "You can only search for permanent Qun\n"
 msgstr "半永久的に使用できる QQ グループのみ検索できます\n"
 
-#, fuzzy, c-format
-msgid "%d request to join Qun %d"
-msgstr "ユーザ %d さんがグループ %d に参加しました"
-
-#, c-format
-msgid "Message: %s"
-msgstr "メッセージ: %s"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun の操作"
-
-msgid "Approve"
-msgstr "承認する"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "チャットの仲間に参加できません"
-
-#, fuzzy, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr "グループ %d に参加するあなたの要求が管理者 %d によって拒否されました"
-
-#, fuzzy, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr "あなた [%d] はグループ \"%d\" から退去しました"
-
 #, fuzzy
-msgid "Notice:"
-msgstr "備考"
-
-#, fuzzy, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr "あなた [%d] はグループ \"%d\" に追加されました"
-
-#, fuzzy
-msgid "I am not a member"
+msgid "Not member"
 msgstr "私はメンバではありません"
 
-msgid "I am a member"
-msgstr "私はメンバです"
+#, fuzzy
+msgid "Member"
+msgstr "メンバになった日時"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "おかしな要求です"
+msgid "Requesting"
+msgstr "質問ダイアログの文字"
 
-msgid "I am the admin"
-msgstr "私は管理者です"
+#, fuzzy
+msgid "Admin"
+msgstr "Adium"
 
-msgid "Unknown status"
-msgstr "不明な状態"
+#, fuzzy
+msgid "Notice"
+msgstr "備考"
+
+#, fuzzy
+msgid "Detail"
+msgstr "デフォルト"
+
+msgid "Creator"
+msgstr "作成者"
+
+#, fuzzy
+msgid "About me"
+msgstr "%s について"
+
+#, fuzzy
+msgid "Category"
+msgstr "チャットのエラー"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
 msgstr "このグループでは他の人たちの参加を許可していません"
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "グループの削除"
+msgid "Join QQ Qun"
+msgstr "チャットに参加"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
 
 #, fuzzy
-msgid "Join to Qun"
-msgstr "チャットに参加"
+msgid "Successfully joined Qun"
+msgstr "Qun メンバの変更が完了しました"
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+msgid "QQ Qun Operation"
+msgstr "QQ Qun の操作"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "失敗しました"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
 #, fuzzy
-msgid "You entered a group ID outside the acceptable range"
-msgstr "入力したグループ ID は範囲外です"
-
-#, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "本当に %s を削除してもよろしいですか？"
+msgid "Quit Qun"
+msgstr "QQ Qun"
 
 msgid ""
 "Note, if you are the creator, \n"
@@ -7508,46 +7547,51 @@ msgstr ""
 "注意: あなたが作成者の場合、\n"
 "この操作によって最終的に Qun が完全に削除されます。"
 
-#. we want to see window
 #, fuzzy
-msgid "Do you want to approve the request?"
-msgstr "その要求を承認しますか？"
+msgid "Sorry, you are not our style ..."
+msgstr "すみませんが、私のタイプではありません..."
 
 #, fuzzy
-msgid "Change Qun member"
-msgstr "電話番号"
+msgid "Successfully changed Qun member"
+msgstr "Qun メンバの変更が完了しました"
 
 #, fuzzy
-msgid "Change Qun information"
-msgstr "チャンネル情報"
+msgid "Successfully changed Qun information"
+msgstr "Qun 情報の変更が完了しました"
 
 msgid "You have successfully created a Qun"
 msgstr "Qun の生成が完了しました"
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "今すぐ Qun の詳細な情報を入力しますか？"
 
 msgid "Setup"
 msgstr "入力する"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s (%s)"
+msgid "%d requested to join Qun %d for %s"
+msgstr "ユーザ %d さんがグループ %d に参加しました"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "ICQ サーバ中継"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "ユーザ %d さんがグループ %d に参加しました"
 
-msgid "System Message"
-msgstr "システム・メッセージ"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "チャットの仲間に参加できません"
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "名前の取得に失敗しました: %s"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "仲間の削除"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, c-format
 msgid "Unknown-%d"
@@ -7555,10 +7599,6 @@ msgstr "不明な %d"
 
 msgid "Level"
 msgstr "レベル"
-
-#, fuzzy
-msgid "Member"
-msgstr "メンバになった日時"
 
 msgid " VIP"
 msgstr ""
@@ -7591,24 +7631,36 @@ msgstr ""
 msgid "Invalid name"
 msgstr "名前が間違っています"
 
-#, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+#, fuzzy
+msgid "Select icon..."
+msgstr "フォルダの選択..."
+
+#, fuzzy, c-format
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>ログインした日時</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>現在のオンライン</b>: %d<br>\n"
 
-#, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Last Refresh</b>: %s<br>\n"
 
 #, fuzzy, c-format
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>サーバの IP</b>: %s: %d<br>\n"
 
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>ログインした日時</b>: %s<br>\n"
+
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>接続モード</b>: %s<br>\n"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>接続モード</b>: %s<br>\n"
 
 #, fuzzy, c-format
@@ -7631,24 +7683,44 @@ msgstr "<b>Last Refresh</b>: %s<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>My Public IP</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ログインした日時</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>最後にログインした IP</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>最後にログインした日時</b>: %s\n"
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>サーバの IP</b>: %s: %d<br>\n"
 
 msgid "Login Information"
 msgstr "ログイン情報"
 
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
 #, fuzzy
-msgid "Set My Information"
-msgstr "サーバの情報"
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>Last Refresh</b>: %s<br>\n"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>現在のオンライン</b>: %d<br>\n"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "%s について"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "アイコンの保存"
 
 msgid "Change Password"
 msgstr "パスワードの変更"
@@ -7657,12 +7729,12 @@ msgstr "パスワードの変更"
 msgid "Account Information"
 msgstr "ログイン情報"
 
-#, fuzzy
-msgid "Leave the QQ Qun"
-msgstr "この QQ Qun を終了する"
+msgid "Update all QQ Quns"
+msgstr ""
 
-msgid "Block this buddy"
-msgstr "この仲間を拒否する"
+#, fuzzy
+msgid "About OpenQ"
+msgstr "%s について"
 
 #. *< type
 #. *< ui_requirement
@@ -7674,13 +7746,28 @@ msgstr "この仲間を拒否する"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "QQ プロトコル\tプラグイン"
 
 #, fuzzy
 msgid "Auto"
 msgstr "承認"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "ユーザの選択"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "接続中です"
@@ -7694,42 +7781,81 @@ msgid "Show server news"
 msgstr "サーバのアドレス"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "読み込み時にエラー"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "読み込み時にエラー"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "サーバの情報を取得できません"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "サーバの情報を取得できません"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "不正なタイトルです"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "パスワードを変更する際にエラー"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "登録が必要です"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "読み込み時にエラー"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "サーバへの接続に失敗しました"
+msgid "Captcha Image"
+msgstr "画像の保存"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "パスワードの入力"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "追加するグループの名前を入力して下さい:"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7755,8 +7881,11 @@ msgstr "書き込みエラー"
 msgid "Connection lost"
 msgstr "接続を閉じました"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "ユーザ情報のセット..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "リクエストが拒否されました"
 
@@ -7767,15 +7896,35 @@ msgstr "ホスト名を解決できませんでした"
 msgid "Invalid server or port"
 msgstr "不正なエラー"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"サーバ %s で接続エラー:\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "サーバへ接続"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "QQid のエラー"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "名前の取得に失敗しました: %s"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "ICQ サーバ中継"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "差出人"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "サーバの情報: %s"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7791,14 +7940,18 @@ msgid "QQ Qun Command"
 msgstr "コマンド指定"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "原因は不明です"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "原因は不明です"
 
 #, c-format
@@ -7811,63 +7964,6 @@ msgstr "ファイルの送信"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d さんは %s の転送をキャンセルしました"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "その要求を承認しますか？"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "この相手を追加しますか？"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "あなたは %s さんによって追加されました"
-
-msgid "Would you like to add him?"
-msgstr "彼を追加しますか？"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "%s さんはあなたを仲間リストに追加しています"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "仲間の追加"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s さんがあなた [%s] を友達として追加したがっています"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "%s さんは仲間リストにはありません"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "彼を追加しますか？"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "差出人"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "サーバのポート"
 
 msgid "Connection closed (writing)"
 msgstr "書き込み用の接続を閉じました"
@@ -9565,9 +9661,6 @@ msgstr "Yahoo! メッセージを送ることができませんでした。"
 msgid "Yahoo! system message for %s:"
 msgstr "%s の Yahoo! システム・メッセージ:"
 
-msgid "Authorization denied message:"
-msgstr "承認を拒否する旨のメッセージ:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10472,9 +10565,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10546,10 +10639,6 @@ msgstr "ログの表示(_L)"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "オフラインの時は許可できません"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "オフラインの時は許可できません"
 
 msgid "_Alias..."
@@ -10937,7 +11026,7 @@ msgstr "別名(_L):"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10971,10 +11060,6 @@ msgstr "/仲間/仲間の並び替え"
 #, fuzzy
 msgid "SSL Servers"
 msgstr "サーバ"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "リモート側で接続を切りました"
 
 #, fuzzy
 msgid "Unknown command."
@@ -11317,8 +11402,12 @@ msgstr "エラー"
 msgid "Fatal Error"
 msgstr "致命的なエラー"
 
-msgid "developer"
-msgstr "開発者"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "アーティスト"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11327,10 +11416,8 @@ msgstr ""
 msgid "support"
 msgstr "サポート"
 
-msgid "support/QA"
-msgstr "サポート/QA"
-
-msgid "developer & webmaster"
+#, fuzzy
+msgid "webmaster"
 msgstr "開発者/ウェブマスタ"
 
 msgid "Senior Contributor/QA"
@@ -11349,8 +11436,11 @@ msgstr "libfaim のメンテナ"
 msgid "hacker and designated driver [lazy bum]"
 msgstr "ハッカーと指定したドライバ [lazy bum]"
 
-msgid "XMPP developer"
-msgstr "XMPP の開発者"
+msgid "support/QA"
+msgstr "サポート/QA"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "オリジナルの作者"
@@ -11618,9 +11708,6 @@ msgstr "開発者 (旧バージョン)"
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "Crazy なパッチの作者"
-
-msgid "Artists"
-msgstr "アーティスト"
 
 msgid "Current Translators"
 msgstr "翻訳者 (最新バージョン)"
@@ -12275,11 +12362,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 "セグメンテーション・フォルトが発生したため、%s が\n"
 "core ファイルの出力を試みました。これはソフトウェアの\n"
@@ -13167,8 +13249,13 @@ msgstr "情報の取得(_G)"
 msgid "_Invite"
 msgstr "招待(_I)"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "変更(_M)"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "追加(_A)"
 
 msgid "_Open Mail"
 msgstr "メールを開く(_O)"
@@ -13192,6 +13279,13 @@ msgstr "グラフィカルな顔文字を無効にします"
 
 msgid "none"
 msgstr "なし"
+
+#, fuzzy
+msgid "Small"
+msgstr "E-メール"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr "応答の見込み"
@@ -13652,6 +13746,10 @@ msgstr "新しいメッセージ数をＸのプロパティに挿入する(_X)"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "ウィンドウ・マネージャに \"URGENT (緊急)\" ヒントをセットする(_U)"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "チャット・ウィンドウ(_H)"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "会話ウィンドウを前面に出す(_A)"
@@ -13833,20 +13931,20 @@ msgstr ""
 "す。送信する際は入力ボックスの中で [ENTER] キーを押して下さい。デバッグ・ウィ"
 "ンドウで送信内容を監視して下さい。"
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr ""
-"お使いのバージョンは %s %s です。最新バージョンは %s です; 最新版は次からダウ"
-"ンロードできます: <a href=\""
-
 #, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>変更履歴:</b><br>%s"
+msgid "You can upgrade to %s %s today."
+msgstr ""
 
 msgid "New Version Available"
 msgstr "最新バージョンのお知らせ"
+
+#, fuzzy
+msgid "Later"
+msgstr "日付"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "%s のユーザ数: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -14157,6 +14255,206 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "これは XMPP サービスやクライアントをデバッグする際に便利なプラグインです。"
 
+#~ msgid "A group with the name already exists."
+#~ msgstr "その名前のグループは既に存在します"
+
+#~ msgid "Primary Information"
+#~ msgstr "主要な情報"
+
+#~ msgid "Blood Type"
+#~ msgstr "血液型"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "情報の更新"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "速度:"
+
+#~ msgid ""
+#~ "Setting custom faces is not currently supported. Please choose an image "
+#~ "from %s."
+#~ msgstr ""
+#~ "顔アイコンの変更は現在サポートしていません。%s から１つ選択して下さい。"
+
+#~ msgid "Invalid QQ Face"
+#~ msgstr "不正な顔アイコンです"
+
+#~ msgid "You rejected %d's request"
+#~ msgstr "%d個の要求を拒否しました"
+
+#~ msgid "Reject request"
+#~ msgstr "要求の拒否"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "承認付きで仲間の追加に失敗しました"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "仲間リストを読み込めませんでした。"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "QQ 番号"
+
+#~ msgid "Group Description"
+#~ msgstr "グループの説明"
+
+#~ msgid "Auth"
+#~ msgstr "承認"
+
+#~ msgid "Approve"
+#~ msgstr "承認する"
+
+#, fuzzy
+#~ msgid "Successed to join Qun %d, operated by admin %d"
+#~ msgstr ""
+#~ "グループ %d に参加するあなたの要求が管理者 %d によって拒否されました"
+
+#, fuzzy
+#~ msgid "[%d] removed from Qun \"%d\""
+#~ msgstr "あなた [%d] はグループ \"%d\" から退去しました"
+
+#, fuzzy
+#~ msgid "[%d] added to Qun \"%d\""
+#~ msgstr "あなた [%d] はグループ \"%d\" に追加されました"
+
+#~ msgid "I am a member"
+#~ msgstr "私はメンバです"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "おかしな要求です"
+
+#~ msgid "I am the admin"
+#~ msgstr "私は管理者です"
+
+#~ msgid "Unknown status"
+#~ msgstr "不明な状態"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "グループの削除"
+
+#, fuzzy
+#~ msgid "You entered a group ID outside the acceptable range"
+#~ msgstr "入力したグループ ID は範囲外です"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "本当に %s を削除してもよろしいですか？"
+
+#, fuzzy
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "その要求を承認しますか？"
+
+#, fuzzy
+#~ msgid "Change Qun member"
+#~ msgstr "電話番号"
+
+#, fuzzy
+#~ msgid "Change Qun information"
+#~ msgstr "チャンネル情報"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "システム・メッセージ"
+
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>最後にログインした IP</b>: %s<br>\n"
+
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>最後にログインした日時</b>: %s\n"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "サーバの情報"
+
+#, fuzzy
+#~ msgid "Leave the QQ Qun"
+#~ msgstr "この QQ Qun を終了する"
+
+#~ msgid "Block this buddy"
+#~ msgstr "この仲間を拒否する"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "パスワードを変更する際にエラー"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "サーバへの接続に失敗しました"
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "サーバ %s で接続エラー:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "その要求を承認しますか？"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "この相手を追加しますか？"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s さんはあなたを仲間リストに追加しています"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "仲間の追加"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s さんがあなた [%s] を友達として追加したがっています"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s さんは仲間リストにはありません"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "彼を追加しますか？"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "サーバのポート"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "リモート側で接続を切りました"
+
+#~ msgid "developer"
+#~ msgstr "開発者"
+
+#~ msgid "XMPP developer"
+#~ msgstr "XMPP の開発者"
+
+#~ msgid "Artists"
+#~ msgstr "アーティスト"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "お使いのバージョンは %s %s です。最新バージョンは %s です; 最新版は次から"
+#~ "ダウンロードできます: <a href=\""
+
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>変更履歴:</b><br>%s"
+
 #~ msgid "Screen name:"
 #~ msgstr "スクリーン名:"
 
@@ -14295,14 +14593,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Enter your reason:"
 #~ msgstr "理由を入力して下さい:"
-
-#, fuzzy
-#~ msgid "You have successfully modified Qun member"
-#~ msgstr "Qun メンバの変更が完了しました"
-
-#, fuzzy
-#~ msgid "You have successfully modified Qun information"
-#~ msgstr "Qun 情報の変更が完了しました"
 
 #, fuzzy
 #~ msgid "Error requesting login token"
@@ -14493,9 +14783,6 @@ msgstr ""
 
 #~ msgid "QQ: Offline"
 #~ msgstr "QQ: オフラインです"
-
-#~ msgid "Modify My Information"
-#~ msgstr "自分の情報の変更"
 
 #~ msgid "Login in TCP"
 #~ msgstr "TCP でログインする"
