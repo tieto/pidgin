@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2005-03-23 12:21+0200\n"
 "Last-Translator: Canonical Ltd <translations@canonical.com>\n"
 "Language-Team: Xhosa <xh-translate@ubuntu.com>\n"
@@ -249,10 +249,6 @@ msgstr ""
 msgid "You must give a name for the group to add."
 msgstr "Nceda ufake igama leqela elimele ukongezwa."
 
-#, fuzzy
-msgid "A group with the name already exists."
-msgstr "Ifayili enelo gama sele ikhona"
-
 msgid "Add Group"
 msgstr "Yongeza iQela"
 
@@ -289,7 +285,6 @@ msgstr "Fumana uLwazi"
 msgid "Add Buddy Pounce"
 msgstr "Yongeza umHlobo _omTsibelayo"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "Thumela iFayili"
 
@@ -297,8 +292,8 @@ msgid "Blocked"
 msgstr "Thintelwe"
 
 #, fuzzy
-msgid "View Log"
-msgstr "Jonga _ukuNgena"
+msgid "Show when offline"
+msgstr "Akuvumelekanga xa kungekho unxulumano"
 
 #, fuzzy, c-format
 msgid "Please enter the new name for %s"
@@ -342,6 +337,10 @@ msgstr ""
 
 msgid "Toggle Tag"
 msgstr ""
+
+#, fuzzy
+msgid "View Log"
+msgstr "Jonga _ukuNgena"
 
 #. General
 msgid "Nickname"
@@ -1426,7 +1425,7 @@ msgstr ""
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5271,7 +5270,7 @@ msgstr "Akakho Uye Kutya"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5514,8 +5513,7 @@ msgstr "Ifayili yoBuqu yeURL"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "I-Novell GroupWise Messenger Protocol Plugin"
@@ -5557,6 +5555,7 @@ msgstr "Abasebenzisi be %s: %s"
 msgid "%s just sent you a Nudge!"
 msgstr "U-%s ufuna ukukuthumelela i-%s (%s)"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "Impazamo engaziwayo"
@@ -6774,6 +6773,7 @@ msgstr ""
 "nonobumba kuphela, amanani nezithuba, okanye amanani kuphela."
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "IGama lomSebenzisi elingaSebenziyo"
@@ -7198,10 +7198,12 @@ msgstr ""
 "Amagama eskrini kufuneka aqale ngonobumba okanye aquke oonobumba kuphela, "
 "amanani nezikhewu, okanye aquke amanani kuphela."
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "Akukwazeki okongeza"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "Akukwazeki ukuKhupha uLuhlu lobuhlobo"
 
 #, fuzzy
@@ -7437,49 +7439,6 @@ msgstr ""
 "malunga nemifanekiso ye-IM.  Ngenxa yokuba idilesi yakho ye-IP iza kudizwa, "
 "oku kunokuba ngumngcipheko wemfihlio."
 
-#, fuzzy
-msgid "Primary Information"
-msgstr "Ulwazi ngeNkangeleko"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "Ulwazi ngawe Buqu"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "Ilizwe"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-#, fuzzy
-msgid "College"
-msgstr "_Ukudilika"
-
-#, fuzzy
-msgid "Zipcode"
-msgstr "Ikhowudi yeNdawo"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "Inombolo yeFowuni"
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "Inombolo yeFowuni"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7570,94 +7529,189 @@ msgid "Other"
 msgstr "I-Opera"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "Ulwazi ngomHlobo"
+msgid "Visible"
+msgstr "Engabonakaliyo"
 
-#, fuzzy
-msgid "Update information"
-msgstr "Ulwazi lomSebenzisi"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Yongeza umHlobo"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "Isantya:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "Nceda ufake umhlobo wokutsibela."
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "iGama elingaSebenziyo leGumbi"
+msgid "Private"
+msgstr "Yangasese"
 
-#, fuzzy, c-format
-msgid "You rejected %d's request"
-msgstr "Isicelo esingaLindelekanga"
-
-#, fuzzy
-msgid "Reject request"
-msgstr "Isicelo esingaLindelekanga"
-
-#. title
-msgid "Sorry, you are not my style..."
+msgid "QQ Number"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "Ukongeza umhlobo kukhatyiwe"
+msgid "Country/Region"
+msgstr "Ilizwe"
+
+msgid "Province/State"
+msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Zipcode"
+msgstr "Ikhowudi yeNdawo"
+
+#, fuzzy
+msgid "Phone Number"
+msgstr "Inombolo yeFowuni"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "Gunyazisa"
+
+#, fuzzy
+msgid "Cellphone Number"
+msgstr "Inombolo yeFowuni"
+
+#, fuzzy
+msgid "Personal Introduction"
+msgstr "Ulwazi ngawe Buqu"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "Isixeko"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "Isihloko Sobuqu"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "Dibana noMnye"
+
+#, fuzzy
+msgid "College"
+msgstr "_Ukudilika"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "Iziqhagamshelanisi"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "Thintelwe"
+
+#, fuzzy
+msgid "True"
+msgstr "IsiTurkishi"
+
+#, fuzzy
+msgid "False"
 msgstr "Akuphumelelanga"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "Susa umHlobo"
+msgid "Modify Contact"
+msgstr "Lungisa i-Akhawunti"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "Susa umsebenzisi kuluhlu lwakho lomhlobo"
+msgid "Modify Address"
+msgstr "Idilesi yaseKhaya"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "Ulwazi ngomHlobo"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "Ulwazi ngomHlobo"
+
+#, fuzzy
+msgid "Update"
+msgstr "Igqibele ukuHlaziywa"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "Nceda ufake umhlobo wokutsibela."
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "Yongeza umHlobo"
+
+msgid "Input answer here"
+msgstr ""
+
+msgid "Send"
+msgstr "Thumela"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "I-password ayisebenzi"
+
+#, fuzzy
+msgid "Authorization denied message:"
+msgstr "Umyalezo wokuLandula uGunyaziso:"
+
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "Uqinisekiso lombhalo ocacileyo"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "Yongeza umhlobo kuluhlu lwakho?"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 #, fuzzy
 msgid "Would you be my friend?"
 msgstr "Ingaba unqwenela ukuyibhala kwakhona?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "Thumela"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "Yongeza incoko kuluhlu lwakho lomhlobo"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Yongeza umHlobo"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "Impazamo yokuFunda"
+msgid "Add buddy"
+msgstr "Yongeza umHlobo"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "iGama elingaSebenziyo leGumbi"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "Nceda undigunyazise!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "Akuphumelelanga ukudibana nomhlobo kwincoko"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "Susa umsebenzisi kuluhlu lwakho lomhlobo"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "Akukho sizathu sinikiweyo."
+
+#. only need to get value
+#, fuzzy, c-format
+msgid "You have been added by %s"
+msgstr "Ubulewe yi %s (%s)"
+
+#, fuzzy
+msgid "Would you like to add him?"
+msgstr "Ingaba unqwenela ukuyibhala kwakhona?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "Ukumisela kwakhona"
+
+#, fuzzy, c-format
+msgid "Message: %s"
+msgstr "_Umyalezo:"
 
 msgid "ID: "
 msgstr ""
@@ -7665,18 +7719,6 @@ msgstr ""
 #, fuzzy
 msgid "Group ID"
 msgstr "Iqela:"
-
-#, fuzzy
-msgid "Creator"
-msgstr "Vala"
-
-#, fuzzy
-msgid "Group Description"
-msgstr "Inkcazelo"
-
-#, fuzzy
-msgid "Auth"
-msgstr "Gunyazisa"
 
 msgid "QQ Qun"
 msgstr ""
@@ -7688,57 +7730,40 @@ msgstr "Nceda ufake igama elitsha leqela elikhethiweyo."
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "_Umyalezo:"
+#, fuzzy
+msgid "Not member"
+msgstr "Lilungu ukusukela"
 
 #, fuzzy
-msgid "QQ Qun Operation"
-msgstr "Ezinokukhethwe kwiSandi"
+msgid "Member"
+msgstr "Lilungu ukusukela"
 
-msgid "Approve"
-msgstr ""
+#, fuzzy
+msgid "Requesting"
+msgstr "Isicelo simbaxa"
 
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Akuphumelelanga ukudibana nomhlobo kwincoko"
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
+msgid "Admin"
 msgstr ""
 
 #, fuzzy
-msgid "Notice:"
+msgid "Notice"
 msgstr "Inqaku"
 
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
-msgstr ""
-
-msgid "I am a member"
-msgstr ""
+#, fuzzy
+msgid "Detail"
+msgstr "iinKcukacha"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "Isicelo esiNgalunganga"
-
-msgid "I am the admin"
-msgstr ""
+msgid "Creator"
+msgstr "Vala"
 
 #, fuzzy
-msgid "Unknown status"
-msgstr "UmYalezo ongaziwayo"
+msgid "About me"
+msgstr "Malunga neGaim"
+
+#, fuzzy
+msgid "Category"
+msgstr "ImPazamo efundiweyo"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
@@ -7747,74 +7772,85 @@ msgstr ""
 "ngexesha elinye"
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "Susa iQela"
-
-#, fuzzy
-msgid "Join to Qun"
+msgid "Join QQ Qun"
 msgstr "Ngenela iNcoko"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+#, fuzzy
+msgid "QQ Qun Operation"
+msgstr "Ezinokukhethwe kwiSandi"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "Akuphumelelanga"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
 #, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "Uqinisekile ufuna ukucima %s?"
+msgid "Quit Qun"
+msgstr "Ngenela iNcoko"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-#, fuzzy
-msgid "Do you want to approve the request?"
-msgstr "Uqinisekile ukufuna ukususa umyalezo wokungabikho \"%s\"?"
+msgid "Sorry, you are not our style ..."
+msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
+msgid "Successfully changed Qun member"
 msgstr "Inombolo yeFowuni"
 
 #, fuzzy
-msgid "Change Qun information"
+msgid "Successfully changed Qun information"
 msgstr "IsiQhagamshelanisi soLwazi"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "Ingaba unqwenela ukungenela incoko?"
 
 #, fuzzy
 msgid "Setup"
 msgstr "_Misela"
 
+#, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr ""
+
+#, c-format
+msgid "%d request to join Qun %d"
+msgstr ""
+
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "Abasebenzisi be %s: %s"
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Akuphumelelanga ukudibana nomhlobo kwincoko"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "Ukuthumela kweSeva kwi-ICQ"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
 
-#, fuzzy
-msgid "System Message"
-msgstr "Thumela umYalezo"
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "Susa umHlobo"
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "Akuphumelelanga ukungenela incoko"
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7823,10 +7859,6 @@ msgstr "Engaziwayo"
 #, fuzzy
 msgid "Level"
 msgstr "Nakanye"
-
-#, fuzzy
-msgid "Member"
-msgstr "Lilungu ukusukela"
 
 msgid " VIP"
 msgstr ""
@@ -7860,12 +7892,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "IGama lomSebenzisi elingaSebenziyo"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "Khetha umBala womBhalo"
+
 #, fuzzy, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>UmSebenzisi:</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>Elinye igama:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>UmSebenzisi:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7873,11 +7913,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>UmSebenzisi:</b> %s<br>"
 
 #, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>UmSebenzisi:</b> %s<br>"
+
+#, fuzzy, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Lalelel malunga:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>Idilesi yeIP:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7901,26 +7945,44 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Elinye igama:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>UmSebenzisi:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>Elinye igama:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr ""
-"\n"
-"<b>%s:</b> %s"
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>UmSebenzisi:</b> %s<br>"
 
 #, fuzzy
 msgid "Login Information"
 msgstr "Ulwazi lomSebenzisi"
 
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
 #, fuzzy
-msgid "Set My Information"
-msgstr "Ulwazi ngeSeva"
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>UmSebenzisi:</b> %s<br>"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>Elinye igama:</b> %s<br>"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Malunga neGaim"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "Gcina umFanekiso womQondiso"
 
 msgid "Change Password"
 msgstr "UkuTshintsha i-Password"
@@ -7929,12 +7991,12 @@ msgstr "UkuTshintsha i-Password"
 msgid "Account Information"
 msgstr "Ulwazi lomSebenzisi"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
 #, fuzzy
-msgid "Block this buddy"
-msgstr "Thintela umsebenzisi"
+msgid "About OpenQ"
+msgstr "Malunga neGaim"
 
 #. *< type
 #. *< ui_requirement
@@ -7947,13 +8009,27 @@ msgstr "Thintela umsebenzisi"
 #. *  summary
 #. *  description
 #, fuzzy
-msgid "QQ Protocol\tPlugin"
+msgid "QQ Protocol Plugin"
 msgstr "Imithetho yokuSebenza yokuNgenisa yeIRC"
 
 #, fuzzy
 msgid "Auto"
 msgstr "Gunyazisa"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "Khetha umBala womBhalo"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "Ukunxulumana"
@@ -7967,42 +8043,81 @@ msgid "Show server news"
 msgstr "Bonisa ezimbalwa ezinokukhethwa"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "ImPazamo efundiweyo"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "ImPazamo efundiweyo"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "Akukwazeki ukufumana ulwazi ngeseva"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "Akukwazeki ukufumana ulwazi ngeseva"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "UGunyaziso olungaSebenziyo"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "ImPazamo yokutshintsha i-password"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "Kufuneka uBhaliso"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "ImPazamo efundiweyo"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "Akukwazeki ukunxulumana neseva."
+msgid "Captcha Image"
+msgstr "Gcina umFanekiso"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "UkuTshintsha i-Password"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "Nceda ufake igama leqela elimele ukongezwa."
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -8030,8 +8145,11 @@ msgstr "Impazamo yokuBhala"
 msgid "Connection lost"
 msgstr "Unxibelelwano luvaliwe"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "Ulwazi oluMiselweyo lomSebenzisi..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "Isicelo silandulwe"
 
@@ -8043,13 +8161,35 @@ msgstr "Akukwazekanga ukunxulumana nomququzeleli"
 msgid "Invalid server or port"
 msgstr "Igama lomsebenzisi okanye ipassword zezingasebenziyo"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr "Impazamo engaziwayo kwiseva ngama %s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "UkuNxulumana neSeva"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "Impazamo yokuFunda"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "Akuphumelelanga ukungenela incoko"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "Ukuthumela kweSeva kwi-ICQ"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "Ukusuka"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "Ulwazi ngeSeva"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -8065,14 +8205,18 @@ msgid "QQ Qun Command"
 msgstr "Umyalelo"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "Isizathu esingaziwayo."
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "Isizathu esingaziwayo."
 
 #, fuzzy, c-format
@@ -8086,64 +8230,6 @@ msgstr "AkuPhumelelenga ukuThumela iFayili"
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s icime udluliso lwe %s"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "Uqinisekile ukufuna ukususa umyalezo wokungabikho \"%s\"?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "Ingaba ufuna ukongeza lo mhlobo kuluhlu lwakho lomhlobo?"
-
-#. only need to get value
-#, fuzzy, c-format
-msgid "You have been added by %s"
-msgstr "Ubulewe yi %s (%s)"
-
-#, fuzzy
-msgid "Would you like to add him?"
-msgstr "Ingaba unqwenela ukuyibhala kwakhona?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "Umsebenzisi ufuna ukongeza kuluhlu %s lwakhe %s lobuhlobo."
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "Yongeza umHlobo"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "U-%s ufuna ukukuthumelela i-%s (%s)"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "Yongeza umsebenzisi kuluhlu lwakho lomhlobo"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "Ingaba unqwenela ukuyibhala kwakhona?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "Ukusuka"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "Isiqhagamshelisi seseva"
 
 #, fuzzy
 msgid "Connection closed (writing)"
@@ -9928,10 +10014,6 @@ msgstr "Umyalezo wakho kaYahoo! awuthunyelwanga."
 msgid "Yahoo! system message for %s:"
 msgstr "Inkqubo yomyalezo kaYahoo! %s:"
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "Umyalezo wokuLandula uGunyaziso:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10869,9 +10951,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10936,10 +11018,6 @@ msgstr "Jonga _ukuNgena"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "Akuvumelekanga xa kungekho unxulumano"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "Akuvumelekanga xa kungekho unxulumano"
 
 msgid "_Alias..."
@@ -11350,7 +11428,7 @@ msgstr "Ngokunye:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -11389,10 +11467,6 @@ msgstr "/Abahlobo/Umboniso Abahlobo abangekho kunxibelelwano"
 #, fuzzy
 msgid "SSL Servers"
 msgstr "Iseva"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "Unxibelelwano luqhawukile."
 
 #, fuzzy
 msgid "Unknown command."
@@ -11765,8 +11839,12 @@ msgstr "Impazamo"
 msgid "Fatal Error"
 msgstr "Impazamo engaPhakathi"
 
-msgid "developer"
-msgstr "umphuhlisi"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "iDilesi"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11776,10 +11854,7 @@ msgid "support"
 msgstr "inkxaso"
 
 #, fuzzy
-msgid "support/QA"
-msgstr "inkxaso"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr "umphuhlisi nomyili wesiza se-inthanethi"
 
 msgid "Senior Contributor/QA"
@@ -11800,8 +11875,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "umqhekezi nesiqhubi esalathelweyo [ivila]"
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "umphuhlisi"
+msgid "support/QA"
+msgstr "inkxaso"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "umbhali wentsusa"
@@ -12072,9 +12150,6 @@ msgstr "AbaPhuhlisi abakuMhlalaphantsi"
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "AbaBhali beziZiba abangamaTshantliziyo"
-
-msgid "Artists"
-msgstr ""
 
 msgid "Current Translators"
 msgstr "Abaguquleli baNgoku"
@@ -12714,11 +12789,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -13644,8 +13714,13 @@ msgstr "Fumana uLwazi"
 msgid "_Invite"
 msgstr "_Mema"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "_Lungisa"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "Yongeza"
 
 msgid "_Open Mail"
 msgstr "_Imeyile eVulekileyo"
@@ -13670,6 +13745,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "Nabani na"
+
+#, fuzzy
+msgid "Small"
+msgstr "I-imeyile"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 #, fuzzy
 msgid "Response Probability:"
@@ -14161,6 +14243,10 @@ msgstr "Fakela u_balo lwemiyalezo emitsha kwisihloko sefestile"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Misela umphathi wefestile \"_URGENT\" icebiso"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "Iifestile ze_Ncoko"
+
 #. Raise window method button
 #, fuzzy
 msgid "R_aise conversation window"
@@ -14358,21 +14444,20 @@ msgstr ""
 "kumbhalo (Jabber, MSN, IRC, TOC). Cofa u-'Enter' kwibhokisi lokuqalisa "
 "ukuthumela. Jonga ifestile yokulungisa isiphene."
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"Ngoku usebenza ngenguqulelo ye %s yeGaim.  Inguqulelo yangoku yi %s.<hr>"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr ""
-"<b>uTshintsho lokuNgena:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "Inguqulelo enTsha eFumanekayo"
+
+#, fuzzy
+msgid "Later"
+msgstr "Umhla"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "Abasebenzisi be %s: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -14698,6 +14783,171 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "A group with the name already exists."
+#~ msgstr "Ifayili enelo gama sele ikhona"
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "Ulwazi ngeNkangeleko"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "Ulwazi lomSebenzisi"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "Isantya:"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "iGama elingaSebenziyo leGumbi"
+
+#, fuzzy
+#~ msgid "You rejected %d's request"
+#~ msgstr "Isicelo esingaLindelekanga"
+
+#, fuzzy
+#~ msgid "Reject request"
+#~ msgstr "Isicelo esingaLindelekanga"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "Ukongeza umhlobo kukhatyiwe"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "Yongeza incoko kuluhlu lwakho lomhlobo"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "Impazamo yokuFunda"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "Inkcazelo"
+
+#, fuzzy
+#~ msgid "Auth"
+#~ msgstr "Gunyazisa"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "Isicelo esiNgalunganga"
+
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "UmYalezo ongaziwayo"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "Susa iQela"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "Uqinisekile ufuna ukucima %s?"
+
+#, fuzzy
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "Uqinisekile ukufuna ukususa umyalezo wokungabikho \"%s\"?"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "Abasebenzisi be %s: %s"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "Thumela umYalezo"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>Elinye igama:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>%s:</b> %s"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "Ulwazi ngeSeva"
+
+#, fuzzy
+#~ msgid "Block this buddy"
+#~ msgstr "Thintela umsebenzisi"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "ImPazamo yokutshintsha i-password"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "Akukwazeki ukunxulumana neseva."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "Impazamo engaziwayo kwiseva ngama %s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "Uqinisekile ukufuna ukususa umyalezo wokungabikho \"%s\"?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "Ingaba ufuna ukongeza lo mhlobo kuluhlu lwakho lomhlobo?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "Umsebenzisi ufuna ukongeza kuluhlu %s lwakhe %s lobuhlobo."
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "Yongeza umHlobo"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "U-%s ufuna ukukuthumelela i-%s (%s)"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "Yongeza umsebenzisi kuluhlu lwakho lomhlobo"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "Ingaba unqwenela ukuyibhala kwakhona?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "Isiqhagamshelisi seseva"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "Unxibelelwano luqhawukile."
+
+#~ msgid "developer"
+#~ msgstr "umphuhlisi"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "umphuhlisi"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "Ngoku usebenza ngenguqulelo ye %s yeGaim.  Inguqulelo yangoku yi %s.<hr>"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>uTshintsho lokuNgena:</b>\n"
+#~ "%s<br><br>"
 
 #, fuzzy
 #~ msgid "Screen name:"
@@ -15364,9 +15614,6 @@ msgstr ""
 #~ msgid "NAPSTER Protocol Plugin"
 #~ msgstr "Umthetho wokuSebenza wokuNgenisa iNAPSTER"
 
-#~ msgid "Invalid password"
-#~ msgstr "I-password ayisebenzi"
-
 #~ msgid "Error processing event or response (%s)."
 #~ msgstr "Impazamo yesiganeko senkqubo okanye ukusabela (%s)."
 
@@ -16022,9 +16269,6 @@ msgstr ""
 
 #~ msgid "Summary"
 #~ msgstr "Isishwankathelo"
-
-#~ msgid "Details"
-#~ msgstr "iinKcukacha"
 
 #~ msgid "Message Text"
 #~ msgstr "Umbhalo womYalezo"
