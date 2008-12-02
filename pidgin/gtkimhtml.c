@@ -5758,13 +5758,15 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 	g_return_val_if_fail(klass, FALSE);
 
 	if ((proto = imhtml_find_protocol(name, TRUE))) {
-		g_return_val_if_fail(!activate, FALSE);
+		if (activate) {
+			return FALSE;
+		}
 		g_free(proto->name);
 		g_free(proto);
 		klass->protocols = g_list_remove(klass->protocols, proto);
 		return TRUE;
-	} else {
-		g_return_val_if_fail(activate, FALSE);
+	} else if (!activate) {
+		return FALSE;
 	}
 
 	proto = g_new0(GtkIMHtmlProtocol, 1);
