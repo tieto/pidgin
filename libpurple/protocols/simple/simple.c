@@ -1055,7 +1055,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
-	if(!strncmp(contenttype, "application/im-iscomposing+xml", 30)) {
+	else if(!strncmp(contenttype, "application/im-iscomposing+xml", 30)) {
 		xmlnode *isc = xmlnode_from_str(msg->body, msg->bodylen);
 		xmlnode *state;
 		gchar *statedata;
