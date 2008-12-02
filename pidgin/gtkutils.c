@@ -74,7 +74,7 @@ typedef struct {
 } AopMenu;
 
 static guint accels_save_timer = 0;
-GList *gnome_url_handlers = NULL;
+static GList *gnome_url_handlers = NULL;
 
 static gboolean
 url_clicked_idle_cb(gpointer data)
@@ -3570,7 +3570,7 @@ dummy(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 }
 
 static gboolean
-register_gnome_url_handlers()
+register_gnome_url_handlers(void)
 {
 	char *tmp;
 	char *err;
@@ -3585,6 +3585,7 @@ register_gnome_url_handlers()
 	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
 	                               &tmp, &err, NULL, NULL))
 	{
+		g_free(tmp);
 		g_free(err);
 		g_return_val_if_reached(FALSE);
 	}
@@ -3610,15 +3611,17 @@ register_gnome_url_handlers()
 				if (g_spawn_command_line_sync(cmd, &tmp2, &err, NULL, NULL))
 				{
 					g_free(err);
+					err = NULL;
 					if (!strcmp(tmp2, "false\n"))
 					{
 						g_free(tmp2);
+						g_free(cmd);
 						start = c + 1;
 						continue;
 					}
-					else
-						g_free(tmp2);
 				}
+				g_free(cmd);
+				g_free(tmp2);
 
 				start += sizeof("/desktop/gnome/url-handlers/") - 1;
 
@@ -3642,6 +3645,7 @@ register_gnome_url_handlers()
 			start = c + 1;
 		}
 	}
+	g_free(tmp);
 
 	return (gnome_url_handlers != NULL);
 }
