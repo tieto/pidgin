@@ -196,7 +196,7 @@ static void simple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 {
 	struct simple_account_data *sip = (struct simple_account_data *)gc->proto_data;
 	struct simple_buddy *b;
-	if(strncmp("sip:", buddy->name, 4)) {
+	if(strcmp("sip:", buddy->name)) {
 		gchar *buf = g_strdup_printf("sip:%s", buddy->name);
 		purple_blist_rename_buddy(buddy, buf);
 		g_free(buf);
@@ -881,7 +881,7 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 
 
 	tmp = sipmsg_find_header(msg, "Event");
-	if(tmp && !strncmp(tmp, "vnd-microsoft-roaming-contacts", 30)){
+	if(tmp && !strcmp(tmp, "vnd-microsoft-roaming-contacts")){
 
 		purple_debug_info("simple", "simple_add_lcs_contacts->%s-%d\n", msg->body, len);
 		/*Convert the contact from XML to Purple Buddies*/
@@ -1013,7 +1013,7 @@ static gboolean subscribe_timeout(struct simple_account_data *sip) {
 static void simple_send_message(struct simple_account_data *sip, const char *to, const char *msg, const char *type) {
 	gchar *hdr;
 	gchar *fullto;
-	if(strncmp("sip:", to, 4)) {
+	if(strcmp("sip:", to)) {
 		fullto = g_strdup_printf("sip:%s", to);
 	} else {
 		fullto = g_strdup(to);
@@ -1050,12 +1050,12 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 	purple_debug(PURPLE_DEBUG_MISC, "simple", "got message from %s: %s\n", from, msg->body);
 
 	contenttype = sipmsg_find_header(msg, "Content-Type");
-	if(!contenttype || !strncmp(contenttype, "text/plain", 10) || !strncmp(contenttype, "text/html", 9)) {
+	if(!contenttype || !strcmp(contenttype, "text/plain") || !strcmp(contenttype, "text/html")) {
 		serv_got_im(sip->gc, from, msg->body, 0, time(NULL));
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
-	else if(!strncmp(contenttype, "application/im-iscomposing+xml", 30)) {
+	else if(!strcmp(contenttype, "application/im-iscomposing+xml")) {
 		xmlnode *isc = xmlnode_from_str(msg->body, msg->bodylen);
 		xmlnode *state;
 		gchar *statedata;
@@ -1077,8 +1077,10 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 		statedata = xmlnode_get_data(state);
 		if(statedata) {
-			if(strstr(statedata, "active")) serv_got_typing(sip->gc, from, 0, PURPLE_TYPING);
-			else serv_got_typing_stopped(sip->gc, from);
+			if(strstr(statedata, "active"))
+				serv_got_typing(sip->gc, from, 0, PURPLE_TYPING);
+			else
+				serv_got_typing_stopped(sip->gc, from);
 
 			g_free(statedata);
 		}
