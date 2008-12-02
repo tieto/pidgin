@@ -3302,7 +3302,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			}
 			c++;
 			pos++;
-		} else if ((len_protocol = gtk_imhtml_is_protocol(c)) > 0){
+		} else if ((pos == 0 || wpos == 0 || isspace(*(c - 1))) &&
+		           (len_protocol = gtk_imhtml_is_protocol(c)) > 0) {
 			br = FALSE;
 			if (wpos > 0) {
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
