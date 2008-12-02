@@ -346,8 +346,8 @@ STATUS_11 = \
 		status/11/person.png
 
 STATUS_11_RTL = \
-		status/11/rtl/extended-away.png
-		status/11/rtl/log-in.png
+		status/11/rtl/extended-away.png \
+		status/11/rtl/log-in.png \
 		status/11/rtl/log-out.png
 
 STATUS_16 = \
