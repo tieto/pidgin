@@ -154,7 +154,7 @@ static char *jabber_prep_resource(char *input) {
 		return NULL;
 
 	if (strstr(input, "__HOSTNAME__") == NULL)
-		return input;
+		return g_strdup(input);
 
 	/* Replace __HOSTNAME__ with hostname */
 	if (gethostname(hostname, sizeof(hostname) - 1)) {
