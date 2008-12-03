@@ -2199,14 +2199,17 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 	return gtk_smiley_get_image(smiley);
 }
 
-#define VALID_TAG(x)	if (!g_ascii_strncasecmp (string, x ">", strlen (x ">"))) {	\
-				*tag = g_strndup (string, strlen (x));		\
-				*len = strlen (x) + 1;				\
+#define VALID_TAG(x)	do { \
+			if (!g_ascii_strncasecmp (string, x ">", strlen (x ">"))) {	\
+				if (tag) *tag = g_strndup (string, strlen (x));		\
+				if (len) *len = strlen (x) + 1;				\
 				return TRUE;					\
 			}							\
-			(*type)++
+			if (type) (*type)++; \
+		} while (0)
 
-#define VALID_OPT_TAG(x)	if (!g_ascii_strncasecmp (string, x " ", strlen (x " "))) {	\
+#define VALID_OPT_TAG(x)	do { \
+				if (!g_ascii_strncasecmp (string, x " ", strlen (x " "))) {	\
 					const gchar *c = string + strlen (x " ");	\
 					gchar e = '"';					\
 					gboolean quote = FALSE;				\
@@ -2223,12 +2226,13 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 						c++;					\
 					}						\
 					if (*c) {					\
-						*tag = g_strndup (string, c - string);	\
-						*len = c - string + 1;			\
+						if (tag) *tag = g_strndup (string, c - string);	\
+						if (len) *len = c - string + 1;			\
 						return TRUE;				\
 					}						\
 				}							\
-				(*type)++
+				if (type) (*type)++; \
+			} while (0)
 
 
 static gboolean
@@ -2238,8 +2242,8 @@ gtk_imhtml_is_tag (const gchar *string,
 		   gint        *type)
 {
 	char *close;
-	*type = 1;
-
+	if (type)
+		*type = 1;
 
 	if (!(close = strchr (string, '>')))
 		return FALSE;
@@ -2312,15 +2316,20 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
-			*len = e - string + strlen ("-->");
-			*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+			if (len)
+				*len = e - string + strlen ("-->");
+			if (tag)
+				*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
 			return TRUE;
 		}
 	}
 
-	*type = -1;
-	*len = close - string + 1;
-	*tag = g_strndup(string, *len - 1);
+	if (type)
+		*type = -1;
+	if (len)
+		*len = close - string + 1;
+	if (tag)
+		*tag = g_strndup(string, *len - 1);
 	return TRUE;
 }
 
@@ -3317,10 +3326,18 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				ws [wpos++] = *c++;
 				pos++;
 			}
-			if (!imhtml->edit.link) {
-				while (*c && *c != ' ') {
-					ws [wpos++] = *c++;
-					pos++;
+			if (!imhtml->edit.link && (imhtml->format_functions & GTK_IMHTML_LINK)) {
+				while (*c && !isspace((int)*c) &&
+						(*c != '<' || !gtk_imhtml_is_tag(c + 1, NULL, NULL, NULL))) {
+					if (*c == '&' && (amp = purple_markup_unescape_entity(c, &tlen))) {
+						while (*amp)
+							ws[wpos++] = *amp++;
+						c += tlen;
+						pos += tlen;
+					} else {
+						ws [wpos++] = *c++;
+						pos++;
+					}
 				}
 				ws[wpos] = '\0';
 				gtk_imhtml_toggle_link(imhtml, ws);
