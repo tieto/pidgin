@@ -69,8 +69,7 @@ msn_servconn_destroy(MsnServConn *servconn)
 		return;
 	}
 
-	if (servconn->connected)
-		msn_servconn_disconnect(servconn);
+	msn_servconn_disconnect(servconn);
 
 	if (servconn->destroy_cb)
 		servconn->destroy_cb(servconn);
@@ -174,15 +173,6 @@ connect_cb(gpointer data, gint source, const char *error_message)
 
 	servconn = data;
 	servconn->connect_data = NULL;
-	servconn->processing = FALSE;
-
-	if (servconn->wasted)
-	{
-		if (source >= 0)
-			close(source);
-		msn_servconn_destroy(servconn);
-		return;
-	}
 
 	servconn->fd = source;
 
@@ -239,15 +229,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean
 	servconn->connect_data = purple_proxy_connect(NULL, session->account,
 			host, port, connect_cb, servconn);
 
-	if (servconn->connect_data != NULL)
-	{
-		servconn->processing = TRUE;
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
+	return (servconn->connect_data != NULL);
 }
 
 void
@@ -383,26 +365,21 @@ static void
 read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn;
-	MsnSession *session;
 	char buf[MSN_BUF_LEN];
-	char *cur, *end, *old_rx_buf;
 	gssize len;
-	int cur_len;
 
 	servconn = data;
-	session = servconn->session;
 
-	len = read(servconn->fd, buf, sizeof(buf) - 1);
 	if (servconn->type == MSN_SERVCONN_NS)
 		servconn->session->account->gc->last_received = time(NULL);
 
-	if (len < 0 && errno == EAGAIN) {
+	len = read(servconn->fd, buf, sizeof(buf) - 1);
+	if (len < 0 && errno == EAGAIN)
 		return;
-
-	} else if (len <= 0) {
-		purple_debug_error("msn", "servconn read error,"
-		                          "len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
-		                          len, errno, g_strerror(errno));
+	if (len <= 0) {
+		purple_debug_error("msn", "servconn %03d read error, "
+			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
+			servconn->num, len, errno, g_strerror(errno));
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
@@ -413,6 +390,14 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	servconn->rx_buf = g_realloc(servconn->rx_buf, len + servconn->rx_len + 1);
 	memcpy(servconn->rx_buf + servconn->rx_len, buf, len + 1);
 	servconn->rx_len += len;
+
+	msn_servconn_process_data(servconn);
+}
+
+void msn_servconn_process_data(MsnServConn *servconn)
+{
+	char *cur, *end, *old_rx_buf;
+	int cur_len;
 
 	end = old_rx_buf = servconn->rx_buf;
 

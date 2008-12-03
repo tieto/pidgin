@@ -941,6 +941,7 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	MsnUserList *userlist;
 	MsnUser *user;
+	xmlnode *guid;
 
 	g_return_if_fail(session != NULL);
 
@@ -960,6 +961,15 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	user = msn_userlist_find_add_user(userlist, state->who, state->who);
 	msn_user_add_group_id(user, state->guid);
+
+	guid = xmlnode_get_child(resp->xml,
+		"Body/ABContactAddResponse/ABContactAddResult/guid");
+	if (guid != NULL) {
+		char *uid = xmlnode_get_data(guid);
+		msn_user_set_uid(user, uid);
+		purple_debug_info("msn", "Set %s guid to %s.\n", state->who, uid);
+		g_free(uid);
+	}
 }
 
 /* add a Contact in MSN_INDIVIDUALS_GROUP */
@@ -1016,6 +1026,15 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	if (state->action & MSN_ADD_BUDDY) {
 		MsnUser *user = msn_userlist_find_user(userlist, state->who);
+		xmlnode *guid = xmlnode_get_child(resp->xml,
+			"Body/ABGroupContactAddResponse/ABGroupContactAddResult/guid");
+
+		if (guid != NULL) {
+			char *uid = xmlnode_get_data(guid);
+			msn_user_set_uid(user, uid);
+			purple_debug_info("msn", "Set %s guid to %s.\n", state->who, uid);
+			g_free(uid);
+		}
 
 		if ( !msn_user_is_yahoo(state->session->account, state->who) ) {
 			msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
@@ -1111,20 +1130,24 @@ msn_delete_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 /*delete a Contact*/
 void
-msn_delete_contact(MsnSession *session, const char *contactId)
+msn_delete_contact(MsnSession *session, MsnUser *user)
 {
 	gchar *body = NULL;
 	gchar *contact_id_xml = NULL ;
 	MsnCallbackState *state;
 
-	g_return_if_fail(contactId != NULL);
-	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, contactId);
+	if (user->uid != NULL) {
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
+		purple_debug_info("msn", "Deleting contact with contactId: %s\n", user->uid);
+	} else {
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_XML, user->passport);
+		purple_debug_info("msn", "Deleting contact with passport: %s\n", user->passport);
+	}
 
 	state = msn_callback_state_new(session);
-	msn_callback_state_set_uid(state, contactId);
+	msn_callback_state_set_uid(state, user->uid);
 
 	/* build SOAP request */
-	purple_debug_info("msn", "Deleting contact with contactId: %s\n", contactId);
 	body = g_strdup_printf(MSN_DEL_CONTACT_TEMPLATE, contact_id_xml);
 
 	state->body = xmlnode_from_str(body, -1);
@@ -1191,7 +1214,10 @@ msn_del_contact_from_group(MsnSession *session, const char *passport, const char
 	msn_callback_state_set_guid(state, groupId);
 	msn_callback_state_set_old_group_name(state, group_name);
 
-	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
+	if (user->uid != NULL)
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
+	else
+		contact_id_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
 	body = g_strdup_printf(MSN_CONTACT_DEL_GROUP_TEMPLATE, contact_id_xml, groupId);
 
 	state->body = xmlnode_from_str(body, -1);

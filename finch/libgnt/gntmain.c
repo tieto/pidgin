@@ -32,6 +32,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "Main"
+
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntbutton.h"
@@ -319,7 +323,7 @@ setup_io()
 	                                 But irssi does this, so I am going to assume the
 	                                 crashes were caused by some other stuff. */
 
-	g_printerr("gntmain: setting up IO (%d)\n", channel_read_callback);
+	gnt_warning("setting up IO (%d)", channel_read_callback);
 }
 
 static gboolean

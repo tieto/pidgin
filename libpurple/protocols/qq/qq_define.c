@@ -1,5 +1,5 @@
 /**
- * @file header_info.c
+ * @file qq_define.c
  *
  * purple
  *
@@ -24,7 +24,7 @@
 
 #include "internal.h"
 
-#include "header_info.h"
+#include "qq_define.h"
 
 #define QQ_CLIENT_062E 0x062e	/* GB QQ2000c build 0630 */
 #define QQ_CLIENT_072E 0x072e	/* EN QQ2000c build 0305 */
@@ -51,10 +51,8 @@
 #define QQ_CLIENT_0F4B 0x0F4B	/* QQ2006 Beta 3  */
 
 #define QQ_CLIENT_1105 0x1105	/* QQ2007 beta4*/
-#define QQ_CLIENT_111D 0x111D	/* QQ2007 */
-#define QQ_CLIENT_115B 0x115B	/* QQ2008 */
 #define QQ_CLIENT_1203 0x1203	/* QQ2008 */
-#define QQ_CLIENT_1205 0x1205	/* QQ2008 */
+#define QQ_CLIENT_1205 0x1205	/* QQ2008 Qi Fu */
 #define QQ_CLIENT_120B 0x120B	/* QQ2008 July 8.0.978.400 */
 #define QQ_CLIENT_1412 0x1412	/* QQMac 1.0 preview1 build 670 */
 #define QQ_CLIENT_1441 0x1441	/* QQ2009 preview2 */
@@ -94,6 +92,7 @@ const gchar *qq_get_ver_desc(gint source)
 		return "QQ2005 beta1";
 	case QQ_CLIENT_0D51:
 		return "QQ2005 beta2";
+	case QQ_CLIENT_0D55:
 	case QQ_CLIENT_0D61:
 		return "QQ2005";
 	case QQ_CLIENT_0E1B:
@@ -140,12 +139,12 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_SEARCH_USER";
 	case QQ_CMD_GET_BUDDY_INFO:
 		return "QQ_CMD_GET_BUDDY_INFO";
-	case QQ_CMD_ADD_BUDDY_WO_AUTH:
-		return "QQ_CMD_ADD_BUDDY_WO_AUTH";
-	case QQ_CMD_DEL_BUDDY:
-		return "QQ_CMD_DEL_BUDDY";
-	case QQ_CMD_BUDDY_AUTH:
-		return "QQ_CMD_BUDDY_AUTH";
+	case QQ_CMD_ADD_BUDDY_NO_AUTH:
+		return "QQ_CMD_ADD_BUDDY_NO_AUTH";
+	case QQ_CMD_REMOVE_BUDDY:
+		return "QQ_CMD_REMOVE_BUDDY";
+	case QQ_CMD_ADD_BUDDY_AUTH:
+		return "QQ_CMD_ADD_BUDDY_AUTH";
 	case QQ_CMD_CHANGE_STATUS:
 		return "QQ_CMD_CHANGE_STATUS";
 	case QQ_CMD_ACK_SYS_MSG:
@@ -154,8 +153,8 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_SEND_IM";
 	case QQ_CMD_RECV_IM:
 		return "QQ_CMD_RECV_IM";
-	case QQ_CMD_REMOVE_SELF:
-		return "QQ_CMD_REMOVE_SELF";
+	case QQ_CMD_REMOVE_ME:
+		return "QQ_CMD_REMOVE_ME";
 	case QQ_CMD_LOGIN:
 		return "QQ_CMD_LOGIN";
 	case QQ_CMD_GET_BUDDIES_LIST:
@@ -174,6 +173,22 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "QQ_CMD_RECV_MSG_SYS";
 	case QQ_CMD_BUDDY_CHANGE_STATUS:
 		return "QQ_CMD_BUDDY_CHANGE_STATUS";
+	case QQ_CMD_GET_SERVER:
+		return "QQ_CMD_GET_SERVER";
+	case QQ_CMD_TOKEN_EX:
+		return "QQ_CMD_TOKEN_EX";
+	case QQ_CMD_CHECK_PWD:
+		return "QQ_CMD_CHECK_PWD";
+	case QQ_CMD_AUTH_CODE:
+		return "QQ_CMD_AUTH_CODE";
+	case QQ_CMD_ADD_BUDDY_NO_AUTH_EX:
+		return "QQ_CMD_ADD_BUDDY_NO_AUTH_EX";
+	case QQ_CMD_ADD_BUDDY_AUTH_EX:
+		return "QQ_CMD_BUDDY_ADD_AUTH_EX";
+	case QQ_CMD_BUDDY_CHECK_CODE:
+		return "QQ_CMD_BUDDY_CHECK_CODE";
+	case QQ_CMD_BUDDY_QUESTION:
+		return "QQ_CMD_BUDDY_QUESTION";
 	default:
 		return "Unknown CMD";
 	}
@@ -233,4 +248,19 @@ const gchar *qq_get_room_cmd_desc(gint room_cmd)
 	default:
 		return "Unknown Room Command";
 	}
+}
+
+/* check if status means online or offline */
+gboolean is_online(guint8 status)
+{
+	switch(status) {
+		case QQ_BUDDY_ONLINE_NORMAL:
+		case QQ_BUDDY_ONLINE_AWAY:
+		case QQ_BUDDY_ONLINE_INVISIBLE:
+		case QQ_BUDDY_ONLINE_BUSY:
+			return TRUE;
+		case QQ_BUDDY_CHANGE_TO_OFFLINE:
+			return FALSE;
+	}
+	return FALSE;
 }

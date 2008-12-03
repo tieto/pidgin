@@ -13,6 +13,7 @@
 intltool-.*
 Doxyfile(\.mingw)?$
 aclocal.m4
+autogen.args
 compile
 config.cache
 config.guess
@@ -38,8 +39,10 @@ pidgin-*.*.*-win32bin$
 pidgin/pidgin$
 pidgin/pixmaps/emotes/default/24/theme
 pidgin/pixmaps/emotes/none/theme
+pidgin/pixmaps/emotes/small/16/theme
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL$
+pidgin/plugins/perl/common/Makefile.old
 pidgin/win32/pidgin_dll_rc.rc$
 pidgin/win32/pidgin_exe_rc.rc$
 install-sh
@@ -50,6 +53,7 @@ libpurple/example/nullclient
 libpurple/gconf/purple.schemas$
 libpurple/plugins/dbus-example-bindings.c
 libpurple/plugins/perl/common/Makefile.PL$
+libpurple/plugins/perl/common/Makefile.old
 libpurple/plugins/perl/common/const-c.inc
 libpurple/plugins/perl/common/const-xs.inc
 libpurple/plugins/perl/common/lib

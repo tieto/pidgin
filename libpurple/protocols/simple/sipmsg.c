@@ -56,14 +56,17 @@ struct sipmsg *sipmsg_parse_msg(const gchar *msg) {
 
 struct sipmsg *sipmsg_parse_header(const gchar *header) {
 	struct sipmsg *msg = g_new0(struct sipmsg,1);
-	gchar **lines = g_strsplit(header,"\r\n",0);
-	gchar **parts;
-	gchar *dummy;
-	gchar *dummy2;
-	gchar *tmp;
+	gchar **parts, **lines = g_strsplit(header,"\r\n",0);
+	gchar *dummy, *dummy2, *tmp;
 	const gchar *tmp2;
-	int i=1;
-	if(!lines[0]) return NULL;
+	int i = 1;
+
+	if(!lines[0]) {
+		g_strfreev(lines);
+		g_free(msg);
+		return NULL;
+	}
+
 	parts = g_strsplit(lines[0], " ", 3);
 	if(!parts[0] || !parts[1] || !parts[2]) {
 		g_strfreev(parts);
@@ -71,6 +74,7 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 		g_free(msg);
 		return NULL;
 	}
+
 	if(strstr(parts[0],"SIP")) { /* numeric response */
 		msg->method = g_strdup(parts[2]);
 		msg->response = strtol(parts[1],NULL,10);
@@ -80,6 +84,7 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 		msg->response = 0;
 	}
 	g_strfreev(parts);
+
 	for(i=1; lines[i] && strlen(lines[i])>2; i++) {
 		parts = g_strsplit(lines[i], ":", 2);
 		if(!parts[0] || !parts[1]) {
@@ -104,9 +109,11 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 		g_strfreev(parts);
 	}
 	g_strfreev(lines);
+
 	tmp2 = sipmsg_find_header(msg, "Content-Length");
 	if (tmp2 != NULL)
 		msg->bodylen = strtol(tmp2, NULL, 10);
+
 	if(msg->response) {
 		tmp2 = sipmsg_find_header(msg, "CSeq");
 		if(!tmp2) {
@@ -118,6 +125,7 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 			g_strfreev(parts);
 		}
 	}
+
 	return msg;
 }
 

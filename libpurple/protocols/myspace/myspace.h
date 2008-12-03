@@ -48,6 +48,7 @@
 #include "request.h"    /* For dialogs used in setting the username */
 #include "xmlnode.h"
 #include "core.h"
+#include "conversation.h" /* For late normalization */
 
 /* MySpaceIM includes */
 #include "persist.h"

@@ -37,7 +37,7 @@
 #   INTLTOOLIZE_FLAGS - command line arguments to pass to intltoolize
 #   LIBTOOLIZE_FLAGS - command line arguments to pass to libtoolize
 #
-# Other helpfull notes:
+# Other helpful notes:
 #   If you're using a different c compiler, you can override the environment
 #   variable in 'autogen.args'.  For example, say you're using distcc, just add
 #   the following to 'autogen.args':
@@ -48,6 +48,8 @@
 ###############################################################################
 PACKAGE="Pidgin"
 ARGS_FILE="autogen.args"
+export CFLAGS
+export LDFLAGS
 
 libtoolize="libtoolize"
 case $(uname -s) in
@@ -64,7 +66,7 @@ check () {
 	CMD=$1
 
 	printf "%s" "checking for ${CMD}... "
-	BIN=`which ${CMD} 2> /dev/null`
+	BIN=`which ${CMD} 2>/dev/null`
 
 	if [ x"${BIN}" = x"" ] ; then
 		echo "not found."
@@ -115,7 +117,7 @@ printf "%s" "checking for ${ARGS_FILE}: "
 if [ -f ${ARGS_FILE} ] ; then
 	echo "found."
 	printf "%s" "sourcing ${ARGS_FILE}: "
-	. ${ARGS_FILE}
+	. "`dirname "$0"`"/${ARGS_FILE}
 	echo "done."
 else
 	echo "not found."
@@ -125,8 +127,8 @@ fi
 # Check for our required helpers
 ###############################################################################
 check "$libtoolize";		LIBTOOLIZE=${BIN};
-check "glib-gettextize"; GLIB_GETTEXTIZE=${BIN};
-check "intltoolize";	INTLTOOLIZE=${BIN};
+check "glib-gettextize";	GLIB_GETTEXTIZE=${BIN};
+check "intltoolize";		INTLTOOLIZE=${BIN};
 check "aclocal";		ACLOCAL=${BIN};
 check "autoheader";		AUTOHEADER=${BIN};
 check "automake";		AUTOMAKE=${BIN};

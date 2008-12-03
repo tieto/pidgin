@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-15 08:57-0400\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2008-03-29 21:08+0200\n"
 "Last-Translator: YOUR NAME <E-MAIL@ADDRESS>\n"
 "Language-Team: Belarusian Latin <be-latin.open-tran.eu>\n"
@@ -72,7 +72,8 @@ msgstr "Novyja paštovyja nahadvańni"
 msgid "Remember password"
 msgstr "Zapomni parol"
 
-msgid "There's no protocol plugins installed."
+#, fuzzy
+msgid "There are no protocol plugins installed."
 msgstr "Pluginy dla pratakołaŭ nie zainstalavanyja."
 
 msgid "(You probably forgot to 'make install'.)"
@@ -95,6 +96,11 @@ msgstr "Parol:"
 
 msgid "Alias:"
 msgstr "Alias:"
+
+#. Register checkbox
+#, fuzzy
+msgid "Create this account on the server"
+msgstr "Stvary hety novy kont na servery"
 
 #. Cancel button
 #. Cancel
@@ -235,9 +241,6 @@ msgstr "Pamyłka pry dadańni hrupy"
 msgid "You must give a name for the group to add."
 msgstr "Ty musiš akreślić nazvu dla hrupy, kab dadać jaje."
 
-msgid "A group with the name already exists."
-msgstr "Hrupa z takoj nazvaj užo isnuje."
-
 msgid "Add Group"
 msgstr "Dadaj hrupu"
 
@@ -268,15 +271,14 @@ msgstr "Atrymaj źviestki"
 msgid "Add Buddy Pounce"
 msgstr "Dadaj siabroŭskuju začepku"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "Dašli fajł"
 
 msgid "Blocked"
 msgstr "Zablakavany"
 
-msgid "View Log"
-msgstr "Pakažy log"
+msgid "Show when offline"
+msgstr "Pakazvaj, kali adłučany"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -318,10 +320,14 @@ msgstr "Miesca paznačanaje"
 msgid "Toggle Tag"
 msgstr "Pieraklučy paznaku"
 
+msgid "View Log"
+msgstr "Pakažy log"
+
 #. General
 msgid "Nickname"
 msgstr "Mianuška"
 
+#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Biaździejańnie"
@@ -401,6 +407,10 @@ msgstr "Dałučysia da hutarki..."
 
 msgid "View Log..."
 msgstr "Pakažy log..."
+
+#, fuzzy
+msgid "View All Logs"
+msgstr "Pakažy log"
 
 msgid "Show"
 msgstr "Pakažy"
@@ -601,6 +611,21 @@ msgstr ""
 msgid "Send To"
 msgstr "Dašli da"
 
+#, fuzzy
+msgid "Invite message"
+msgstr "Ustaŭ u paviedamleńnie"
+
+msgid "Invite"
+msgstr "Zaprasi"
+
+#, fuzzy
+msgid ""
+"Please enter the name of the user you wish to invite,\n"
+"along with an optional invite message."
+msgstr ""
+"Akreśl nazvu karystalnika, jakoha ty chočaš zaprasić, razam ź "
+"nieabaviazkovym tekstam zaprašeńnia."
+
 msgid "Conversation"
 msgstr "Razmova"
 
@@ -613,6 +638,10 @@ msgstr "Pakažy časavyja adbitki"
 msgid "Add Buddy Pounce..."
 msgstr "Dadaj siabroŭskuju začepku..."
 
+#, fuzzy
+msgid "Invite..."
+msgstr "Zaprasi"
+
 msgid "Enable Logging"
 msgstr "Uklučy viadzieńnie logaŭ"
 
@@ -622,9 +651,12 @@ msgstr "Uklučy huki"
 msgid "<AUTO-REPLY> "
 msgstr "<AŬTA-ADKAZ> "
 
-#. Print the list of users in the room
-msgid "List of users:\n"
-msgstr "Śpis karystalnikaŭ:\n"
+#, fuzzy, c-format
+msgid "List of %d user:\n"
+msgid_plural "List of %d users:\n"
+msgstr[0] "Śpis karystalnikaŭ:\n"
+msgstr[1] "Śpis karystalnikaŭ:\n"
+msgstr[2] "Śpis karystalnikaŭ:\n"
 
 msgid "Supported debug options are:  version"
 msgstr "Padtrymanyja debugavyja opcyi: version"
@@ -638,6 +670,16 @@ msgid ""
 msgstr ""
 "Užyj \"/help &lt;zahad&gt;\" dziela dapamohi pa akreślenym zahadzie.\n"
 "U hetym kantekście dastupnyja nastupnyja zahady:\n"
+
+#, c-format
+msgid ""
+"%s is not a valid message class. See '/help msgcolor' for valid message "
+"classes."
+msgstr ""
+
+#, c-format
+msgid "%s is not a valid color. See '/help msgcolor' for valid colors."
+msgstr ""
 
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
@@ -685,6 +727,14 @@ msgstr "prefs: Pakazvaje vakno naładaŭ."
 msgid "statuses: Show the savedstatuses window."
 msgstr "statuses: Pakazvaje vakno zachavanych statusaŭ."
 
+msgid ""
+"msgcolor &lt;class&gt; &lt;foreground&gt; &lt;background&gt;: Set the color "
+"for different classes of messages in the conversation window.<br>    &lt;"
+"class&gt;: receive, send, highlight, action, timestamp<br>    &lt;foreground/"
+"background&gt;: black, red, green, blue, white, gray, darkgray, magenta, "
+"cyan, default<br><br>EXAMPLE:<br>    msgcolor send cyan default"
+msgstr ""
+
 msgid "Unable to open file."
 msgstr "Niemahčyma adčynić fajł."
 
@@ -704,9 +754,12 @@ msgstr "Filter:"
 msgid "Pause"
 msgstr "Prypyni"
 
-#, c-format
-msgid "File Transfers - %d%% of %d files"
-msgstr "Pieradačy fajłaŭ - %d%% z %d fajłaŭ"
+#, fuzzy, c-format
+msgid "File Transfers - %d%% of %d file"
+msgid_plural "File Transfers - %d%% of %d files"
+msgstr[0] "Pieradačy fajłaŭ - %d%% z %d fajłaŭ"
+msgstr[1] "Pieradačy fajłaŭ - %d%% z %d fajłaŭ"
+msgstr[2] "Pieradačy fajłaŭ - %d%% z %d fajłaŭ"
 
 #. Create the window.
 msgid "File Transfers"
@@ -821,6 +874,10 @@ msgstr "Razmovy ŭ %s"
 msgid "Conversations with %s"
 msgstr "Razmovy z %s"
 
+#, fuzzy
+msgid "All Conversations"
+msgstr "Razmovy"
+
 msgid "System Log"
 msgstr "Systemny log"
 
@@ -858,9 +915,6 @@ msgstr "Praciahvaj"
 
 msgid "IM"
 msgstr "Razmova"
-
-msgid "Invite"
-msgstr "Zaprasi"
 
 msgid "(none)"
 msgstr "(niama)"
@@ -1065,6 +1119,7 @@ msgstr "%s adyjšoŭ. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s dasłaŭ tabie paviedamleńnie. (%s)"
 
+#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Nieviadomaja padzieja dla začepki. Kali łaska, adrapartuj ab hetym!"
 
@@ -1277,7 +1332,7 @@ msgstr "Typ"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -1432,6 +1487,7 @@ msgstr ""
 "Kali adčyniajecca novaja razmova, hety plugin ustaŭlaje tekst apošniaje "
 "razmovy ŭ dziejnuju."
 
+#, c-format
 msgid "Online"
 msgstr "Spałučany"
 
@@ -1452,6 +1508,12 @@ msgstr "Meebo"
 
 msgid "No Grouping"
 msgstr "Nie hurtuj"
+
+msgid "Nested Subgroup"
+msgstr ""
+
+msgid "Nested Grouping (experimental)"
+msgstr ""
 
 msgid "Provides alternate buddylist grouping options."
 msgstr "Dadaje inšyja mahčymaści hurtavańnia siabroŭ u śpisie."
@@ -1766,8 +1828,9 @@ msgstr ""
 "Pamyłka čytańnia z pracesu vyjaśnieńnia:\n"
 "%s"
 
-msgid "EOF while reading from resolver process"
-msgstr "Sustrety znak EOF u časie čytańnia z pracesu vyjaśnieńnia"
+#, c-format
+msgid "Resolver process exited without answering our request"
+msgstr ""
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -1857,6 +1920,7 @@ msgstr "Pačynajecca pieradača %s dla %s"
 msgid "Transfer of file %s complete"
 msgstr "Pieradača fajłu %s skončanaja"
 
+#, c-format
 msgid "File transfer complete"
 msgstr "Pieradača fajłu skončanaja"
 
@@ -1864,6 +1928,7 @@ msgstr "Pieradača fajłu skončanaja"
 msgid "You canceled the transfer of %s"
 msgstr "Ty anulavaŭ pieradaču %s"
 
+#, c-format
 msgid "File transfer cancelled"
 msgstr "Pieradača fajłu anulavanaja"
 
@@ -2070,6 +2135,7 @@ msgstr "(%s) %s <AŬTA-ADKAZ>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Ty karystajeśsia %s, ale hety plugin vymahaje %s."
 
+#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Hety plugin nie akreśliŭ ID."
 
@@ -2081,7 +2147,9 @@ msgstr "Mahičnaja nieadpaviednaść plugina %d (treba %d)"
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
 msgstr "Nieadpaviednaść versii ABI %d.%d.x (treba %d.%d.x)"
 
-msgid "Plugin does not implement all required functions"
+#, fuzzy
+msgid ""
+"Plugin does not implement all required functions (list_icon, login and close)"
 msgstr "Plugin nie padtrymvaje ŭsich vymahanych funkcyj"
 
 #, c-format
@@ -2162,6 +2230,10 @@ msgstr ""
 "Paviedamlaj u vypłyŭnym aknie ab zakančeńni aŭtamatyčna pryniataj pieradačy "
 "fajłu\n"
 "(tolki kali niama adčynienaje razmovy z adpraŭnikom)"
+
+#, fuzzy
+msgid "Create a new directory for each user"
+msgstr "Abiary kataloh karystalnikaŭ dziela pošuku"
 
 msgid "Notes"
 msgstr "Natatki"
@@ -2323,6 +2395,9 @@ msgstr "Minimalny pamier pakoju"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Termin biaździejnaści karystalnika (chvilin)"
+
+msgid "Apply hiding rules to buddies"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -2743,10 +2818,10 @@ msgstr ""
 "Niemahčyma znajści instalacyju ActiveTCL. Kali chočaš karystacca pluginami "
 "na TCL, zainstaluj ActiveTCL z http://www.activestate.com\n"
 
+#, fuzzy
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://"
-"developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-"
-"LocalMessaging for more information."
+"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
+"pidgin.im/BonjourWindows for more information."
 msgstr ""
 "Toolkit Apple Bonjour dla Windowsa nia znojdzieny, hladzi FAQ na: http://"
 "developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-"
@@ -2804,9 +2879,6 @@ msgstr "Niemahčyma dasłać paviedamleńnie, niemahčyma pačać razmovu."
 msgid "Cannot open socket"
 msgstr "Niemahčyma adčynić sokiet"
 
-msgid "Error setting socket options"
-msgstr "Pamyłka akreśleńnia opcyj sokieta"
-
 msgid "Could not bind socket to port"
 msgstr "Niemahčyma pryviazać sokiet da portu"
 
@@ -2856,6 +2928,9 @@ msgstr "Śpis siabroŭ paśpiachova adčytany!"
 
 msgid "Save buddylist..."
 msgstr "Zachavaj śpis siabroŭ..."
+
+msgid "Load buddylist from file..."
+msgstr "Zahruzi śpis siabroŭ z fajłu..."
 
 msgid "Fill in the registration fields."
 msgstr "Zapoŭni pali rehistracyi."
@@ -2954,6 +3029,7 @@ msgstr "Dastupny"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
+#, c-format
 msgid "Away"
 msgstr "Adyjšoŭ"
 
@@ -3031,9 +3107,6 @@ msgstr "Vydali śpis siabroŭ z servera"
 
 msgid "Save buddylist to file..."
 msgstr "Zachavaj śpis siabroŭ u fajle..."
-
-msgid "Load buddylist from file..."
-msgstr "Zahruzi śpis siabroŭ z fajłu..."
 
 #. magic
 #. major_version
@@ -3150,6 +3223,9 @@ msgstr "Port"
 msgid "Encodings"
 msgstr "Kadavańni"
 
+msgid "Auto-detect incoming UTF-8"
+msgstr ""
+
 msgid "Real name"
 msgstr "Sapraŭdnaje imia"
 
@@ -3163,8 +3239,8 @@ msgstr "Užyj SSL"
 msgid "Bad mode"
 msgstr "Kiepski režym"
 
-#, c-format
-msgid "Ban on %s by %s, set %ld seconds ago"
+#, fuzzy, c-format
+msgid "Ban on %s by %s, set %s ago"
 msgstr "Ban na %s ad %s, nastaŭleny %ld sekundaŭ tamu"
 
 #, c-format
@@ -3334,6 +3410,9 @@ msgid ""
 msgstr ""
 "away [paviedamleńnie]:  Akreśl paviedamleńnie adychodu albo nie akreślaj "
 "paviedamleńnia, kab viarnucca."
+
+msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
+msgstr ""
 
 msgid "chanserv: Send a command to chanserv"
 msgstr "chanserv: Dašli zahad chanserv'u"
@@ -3591,6 +3670,8 @@ msgstr "Paštovy indeks"
 msgid "Country"
 msgstr "Kraina"
 
+#. lots of clients (including purple) do this, but it's
+#. * out of spec
 msgid "Telephone"
 msgstr "Telefon"
 
@@ -3778,11 +3859,11 @@ msgstr "Pravierka Hop"
 msgid "Capabilities"
 msgstr "Mahčymaści"
 
-msgid "Resource"
-msgstr "Resurs"
-
 msgid "Priority"
 msgstr "Pryjarytet"
+
+msgid "Resource"
+msgstr "Resurs"
 
 msgid "Middle Name"
 msgstr "Siaredniaje imia"
@@ -3830,6 +3911,7 @@ msgstr "Chaču pahavaryć"
 msgid "Extended Away"
 msgstr "Pašyrany adychod"
 
+#, c-format
 msgid "Do Not Disturb"
 msgstr "Nie turbuj mianie"
 
@@ -4448,6 +4530,12 @@ msgstr "Spałučysia z serveram"
 msgid "File transfer proxies"
 msgstr "Proxy dla pieradačy fajłaŭ"
 
+#. this should probably be part of global smiley theme settings later on,
+#. shared with MSN
+#, fuzzy
+msgid "Show Custom Smileys"
+msgstr "Pakazvaj asablivyja ŭśmieški"
+
 #, c-format
 msgid "%s has left the conversation."
 msgstr "%s pakidaje razmovu."
@@ -4471,8 +4559,8 @@ msgstr "Pamyłka dastaŭki paviedamleńnia da %s: %s"
 msgid "XMPP Message Error"
 msgstr "Pamyłka paviedamleńnia XMPP"
 
-#, c-format
-msgid " (Code %s)"
+#, fuzzy, c-format
+msgid "(Code %s)"
 msgstr " (Kod %s)"
 
 msgid "XML Parse error"
@@ -4498,12 +4586,12 @@ msgid "_Accept Defaults"
 msgstr "_Pryjmi zmoŭčanyja nałady"
 
 #, c-format
-msgid "Error in chat %s"
-msgstr "Pamyłka ŭ hutarcy %s"
-
-#, c-format
 msgid "Error joining chat %s"
 msgstr "Pamyłka dałučeńnia da hutarki %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "Pamyłka ŭ hutarcy %s"
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -4590,162 +4678,219 @@ msgstr ""
 "%s jość u lakalnym śpisie, ale nia ŭ śpisie na servery. Chočaš dadać hetaha "
 "siabra?"
 
+#, c-format
 msgid "Unable to parse message"
 msgstr "Niemahčyma razabrać paviedamleńnie"
 
+#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaksyčnaja pamyłka (mahčyma, pamyłka klijenta)"
 
+#, c-format
 msgid "Invalid email address"
 msgstr "Niapravilny adras email"
 
+#, c-format
 msgid "User does not exist"
 msgstr "Karystalnik nie isnuje"
 
+#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Nie staje całkam akreślenaje nazvy damenu"
 
+#, c-format
 msgid "Already logged in"
 msgstr "Užo ŭvajšoŭ/uvajšła"
 
+#, c-format
 msgid "Invalid username"
 msgstr "Niapravilnaja nazva"
 
+#, c-format
 msgid "Invalid friendly name"
 msgstr "Niapravilnaja pryjaznaja nazva"
 
+#, c-format
 msgid "List full"
 msgstr "Śpis zapoŭnieny"
 
+#, c-format
 msgid "Already there"
 msgstr "Užo tut"
 
+#, c-format
 msgid "Not on list"
 msgstr "Nia ŭ śpisie"
 
+#, c-format
 msgid "User is offline"
 msgstr "Karystalnik adłučany"
 
+#, c-format
 msgid "Already in the mode"
 msgstr "Užo ŭ hetym režymie"
 
+#, c-format
 msgid "Already in opposite list"
 msgstr "Užo ŭ supraćlehłym śpisie"
 
+#, c-format
 msgid "Too many groups"
 msgstr "Zašmat hrupaŭ"
 
+#, c-format
 msgid "Invalid group"
 msgstr "Niapravilnaja hrupa"
 
+#, c-format
 msgid "User not in group"
 msgstr "Karystalnik nia ŭ hrupie"
 
+#, c-format
 msgid "Group name too long"
 msgstr "Nazva hrupy zadaŭhaja"
 
+#, c-format
 msgid "Cannot remove group zero"
 msgstr "Niemahčyma vydalić nulavuju hrupu"
 
+#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Sproba dadać karystalnika ŭ niaisnuju hrupu"
 
+#, c-format
 msgid "Switchboard failed"
 msgstr "Pamyłka pultu"
 
+#, c-format
 msgid "Notify transfer failed"
 msgstr "Pamyłka infarmavańnia ab pieradačy"
 
+#, c-format
 msgid "Required fields missing"
 msgstr "Nie staje vymahanych paloŭ"
 
+#, c-format
 msgid "Too many hits to a FND"
 msgstr "Zašmat hitoŭ da FND"
 
+#, c-format
 msgid "Not logged in"
 msgstr "Nie ŭvajšoŭ/uvajšła"
 
+#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Servis časova niedastupny"
 
+#, c-format
 msgid "Database server error"
 msgstr "Pamyłka servera bazy źviestak"
 
+#, c-format
 msgid "Command disabled"
 msgstr "Zahad adklučany"
 
+#, c-format
 msgid "File operation error"
 msgstr "Pamyłka fajłavaj aperacyi"
 
+#, c-format
 msgid "Memory allocation error"
 msgstr "Pamyłka raźmierkavańnia pamiaci"
 
+#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "Niapravilnaja vartaść CHL dasłanaja na server"
 
+#, c-format
 msgid "Server busy"
 msgstr "Server zaniaty"
 
+#, c-format
 msgid "Server unavailable"
 msgstr "Server niedastupny"
 
+#, c-format
 msgid "Peer notification server down"
 msgstr "Server infarmavańnia ab roŭniach adklučany"
 
+#, c-format
 msgid "Database connect error"
 msgstr "Pamyłka spałučeńnia z serveram bazy źviestak"
 
+#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Server adklučajecca (pakidaju karabel)"
 
+#, c-format
 msgid "Error creating connection"
 msgstr "Pamyłka stvareńnia spałučeńnia"
 
+#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Parametry CVR albo nieviadomyja, albo niedazvolenyja"
 
+#, c-format
 msgid "Unable to write"
 msgstr "Niemahčyma zapisać"
 
+#, c-format
 msgid "Session overload"
 msgstr "Sesija abciažaranaja"
 
+#, c-format
 msgid "User is too active"
 msgstr "Karystalnik zanadta aktyŭny"
 
+#, c-format
 msgid "Too many sessions"
 msgstr "Nadta šmat sesij"
 
+#, c-format
 msgid "Passport not verified"
 msgstr "Pašpart nie pravierany"
 
+#, c-format
 msgid "Bad friend file"
 msgstr "Kiepski fajł siabroŭ"
 
+#, c-format
 msgid "Not expected"
 msgstr "Niečakany"
 
+#, c-format
 msgid "Friendly name changes too rapidly"
 msgstr "Pryjaznaja nazva mianiajecca nadta chutka"
 
+#, c-format
 msgid "Server too busy"
 msgstr "Server nadta zaniaty"
 
+#, c-format
 msgid "Authentication failed"
 msgstr "Pamyłka aŭtaryzacyi"
 
+#, c-format
 msgid "Not allowed when offline"
 msgstr "Nie dazvolena, kali adłučany"
 
+#, c-format
 msgid "Not accepting new users"
 msgstr "Nie pryjmajucca novyja karystalniki"
 
+#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Dziciačy pašpart biaz baćkoŭskaj zhody"
 
+#, c-format
 msgid "Passport account not yet verified"
 msgstr "Kont pašpartu jašče nie pravierany"
 
+#, fuzzy, c-format
+msgid "Passport account suspended"
+msgstr "Kont pašpartu jašče nie pravierany"
+
+#, c-format
 msgid "Bad ticket"
 msgstr "Kipski kvitok"
 
@@ -4757,6 +4902,14 @@ msgstr "Nieviadomy kod pamyłki %d"
 msgid "MSN Error: %s\n"
 msgstr "Pamyłka MSN: %s\n"
 
+#, fuzzy
+msgid "Other Contacts"
+msgstr "Pieravažny kantakt"
+
+#, fuzzy
+msgid "Non-IM Contacts"
+msgstr "Vydali kantakt"
+
 msgid "Nudge"
 msgstr "Šturchni"
 
@@ -4767,6 +4920,10 @@ msgstr "%s šturchnuŭ ciabie!"
 #, c-format
 msgid "Nudging %s..."
 msgstr "Šturšok pa %s..."
+
+#, fuzzy
+msgid "Email Address..."
+msgstr "Adras email"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Tvaja pryjaznaja nazva MSN zadaŭhaja."
@@ -4802,7 +4959,21 @@ msgstr "Dazvol"
 msgid "Disallow"
 msgstr "Zabarani"
 
-msgid "This Hotmail account may not be active."
+#, fuzzy, c-format
+msgid "Blocked Text for %s"
+msgstr "Kamentar siabra na %s"
+
+#, fuzzy
+msgid "No text is blocked for this account."
+msgstr "Užyj hetuju siabroŭskuju _ikonu dziela hetaha kontu:"
+
+#, c-format
+msgid ""
+"MSN servers are currently blocking the following regular expressions:<br/>%s"
+msgstr ""
+
+#, fuzzy
+msgid "This account does not have email enabled."
 msgstr "Hety kont Hotmail moža być niezadziejničanym."
 
 msgid "Send a mobile message."
@@ -4810,6 +4981,9 @@ msgstr "Dašli mabilnaje paviedamleńnie."
 
 msgid "Page"
 msgstr "Staronka"
+
+msgid "Has you"
+msgstr "Maju ciabie"
 
 msgid "Home Phone Number"
 msgstr "Chatni telefon"
@@ -4835,7 +5009,7 @@ msgstr "Adyjšoŭ pajeści"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 msgid "Artist"
@@ -4861,6 +5035,9 @@ msgstr "Uklučy/adklučy mabilnyja pryłady..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Dazvol/zabarani mabilnyja staronki..."
+
+msgid "View Blocked Text..."
+msgstr ""
 
 msgid "Open Hotmail Inbox"
 msgstr "Adčyni Ŭvachodnyja Hotmail'a"
@@ -5044,8 +5221,7 @@ msgstr "Spasyłka na profil"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Plugin pratakołu Windows Live Messengera"
 
@@ -5064,16 +5240,9 @@ msgstr "nudge: šturchani karystalnika, kab pryciahnuć jahonuju ŭvahu"
 msgid "Windows Live ID authentication:Unable to connect"
 msgstr "Aŭtaryzacyja Windows Live ID: Niemahčyma spałučycca"
 
-#. we must have failed!
-msgid ""
-"Windows Live ID authentication: cannot find authenticate token in server "
-"response"
-msgstr ""
-"Aŭtaryzacyja Windows Live ID: niemahčyma znajści tokena aŭtaryzacyi ŭ "
-"adkazie z servera"
-
-msgid "Windows Live ID authentication Failed"
-msgstr "Niaŭdałaja aŭtaryzacyja Windows Live ID"
+#, fuzzy
+msgid "Windows Live ID authentication:Invalid response"
+msgstr "Aŭtaryzacyja Windows Live ID: Niemahčyma spałučycca"
 
 #, c-format
 msgid "%s is not a valid group."
@@ -5090,12 +5259,17 @@ msgstr "%s na %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s šturchaje ciabie!"
 
+#. char *adl = g_strndup(payload, len);
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Nieviadomaja pamyłka (%d)"
 
 msgid "Unable to add user"
 msgstr "Niemahčyma dadać karystalnika"
+
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "Voś vyniki tvajho pošuku"
 
 #, c-format
 msgid "Unable to add user on %s (%s)"
@@ -5119,6 +5293,10 @@ msgstr "%s nie źjaŭlajecca pravilnym kontam pašpartu."
 
 msgid "Service Temporarily Unavailable."
 msgstr "Servis časova niedastupny."
+
+#, fuzzy
+msgid "Mobile message was not sent because it was too long."
+msgstr "Paviedamleńnie nie dasłanaje, bo ty nie ŭvajšoŭ."
 
 msgid "Unable to rename group"
 msgstr "Niemahčyma źmianić nazvu dla hrupy"
@@ -5159,6 +5337,25 @@ msgstr[2] ""
 "dziejnyja razmovy.\n"
 "\n"
 "Paśla zakančeńnia techničnaha absłuhoŭvańnia, ty zmožaš uvajści."
+
+msgid ""
+"Message was not sent because the system is unavailable. This normally "
+"happens when the user is blocked or does not exist."
+msgstr ""
+
+#, fuzzy
+msgid "Message was not sent because messages are being sent too quickly."
+msgstr "Niemahčyma dasłać paviedamleńnie, bo my dasyłajem nadta chutka:"
+
+#, fuzzy
+msgid "Message was not sent because an unknown encoding error occurred."
+msgstr ""
+"Paviedamleńnie moža być nie dasłanym, bo adbyłasia nieviadomaja pamyłka:"
+
+#, fuzzy
+msgid "Message was not sent because an unknown error occurred."
+msgstr ""
+"Paviedamleńnie moža być nie dasłanym, bo adbyłasia nieviadomaja pamyłka:"
 
 msgid "Unable to connect"
 msgstr "Niemahčyma spałučycca"
@@ -5269,6 +5466,14 @@ msgstr "%s dadaje ciabie ŭ svoj śpis siabroŭ."
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s vydalaje ciabie sa svajho śpisu siabroŭ."
 
+#, fuzzy
+msgid "Delete Buddy from Address Book?"
+msgstr "Dadaj u adrasnuju knihu"
+
+#, fuzzy
+msgid "Do you want to delete this buddy from your address book as well?"
+msgstr "Chočaš dadać hetaha siabra da svajho śpisu siabroŭ?"
+
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -5279,8 +5484,8 @@ msgstr "Niemahčyma dadać \"%s\"."
 msgid "The username specified is invalid."
 msgstr "Akreślenaja nazva karystalnika niapravilnaja."
 
-msgid "Has you"
-msgstr "Maju ciabie"
+msgid "This Hotmail account may not be active."
+msgstr "Hety kont Hotmail moža być niezadziejničanym."
 
 #. *< type
 #. *< ui_requirement
@@ -5317,9 +5522,15 @@ msgstr "Niečakanaja daŭžynia vyklika ad servera"
 msgid "Logging in"
 msgstr "Uvachod"
 
-#, c-format
-msgid "Connection to server lost (no data received within %d seconds)"
-msgstr "Spałučeńnie z serveram stračanaje (niama źviestak ciaham %d sekundaŭ)"
+#, fuzzy, c-format
+msgid "Connection to server lost (no data received within %d second)"
+msgid_plural "Connection to server lost (no data received within %d seconds)"
+msgstr[0] ""
+"Spałučeńnie z serveram stračanaje (niama źviestak ciaham %d sekundaŭ)"
+msgstr[1] ""
+"Spałučeńnie z serveram stračanaje (niama źviestak ciaham %d sekundaŭ)"
+msgstr[2] ""
+"Spałučeńnie z serveram stračanaje (niama źviestak ciaham %d sekundaŭ)"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 msgid "New mail messages"
@@ -5415,11 +5626,20 @@ msgstr "Niemahčyma spałučycca z hostam: %s (%d)"
 msgid "IM Friends"
 msgstr "Siabry"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
-msgstr ""
+msgstr[0] ""
+"%d siabroŭ byli dadadzienyja albo aktualizavanyja z servera (taksama siabry, "
+"jakija ŭžo zachoŭvajucca ŭ śpisie na servery)"
+msgstr[1] ""
+"%d siabroŭ byli dadadzienyja albo aktualizavanyja z servera (taksama siabry, "
+"jakija ŭžo zachoŭvajucca ŭ śpisie na servery)"
+msgstr[2] ""
 "%d siabroŭ byli dadadzienyja albo aktualizavanyja z servera (taksama siabry, "
 "jakija ŭžo zachoŭvajucca ŭ śpisie na servery)"
 
@@ -5896,6 +6116,7 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Pamyłka. Padtrymka SSL nie zainstalavanaja."
 
+#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Hetaja kanferencyja začynienaja. Bolš nielha dasyłać paviedamleńni."
 
@@ -5950,6 +6171,9 @@ msgstr "Pry spałučeńni z serveram atrymanyja niapravilnyja źviestki."
 #. *  description
 msgid "AIM Protocol Plugin"
 msgstr "Plugin pratakołu AIM"
+
+msgid "ICQ UIN..."
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -6047,11 +6271,11 @@ msgstr "Nieadpaviednyja pravy"
 msgid "In local permit/deny"
 msgstr "U lakalny dazvoł/zabarona"
 
-msgid "Too evil (sender)"
-msgstr "Nadta zły (adpraŭnik)"
+msgid "Warning level too high (sender)"
+msgstr ""
 
-msgid "Too evil (receiver)"
-msgstr "Nadta zły (atrymalnik)"
+msgid "Warning level too high (receiver)"
+msgstr ""
 
 msgid "User temporarily unavailable"
 msgstr "Karystalnik časova niedastupny"
@@ -6154,18 +6378,27 @@ msgstr "Žyvoje videa"
 msgid "Camera"
 msgstr "Kamera"
 
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "Nazva karystalnika"
+
+#, c-format
 msgid "Free For Chat"
 msgstr "Volny dla hutarki"
 
+#, c-format
 msgid "Not Available"
 msgstr "Niedastupny"
 
+#, c-format
 msgid "Occupied"
 msgstr "Zaniaty"
 
+#, c-format
 msgid "Web Aware"
 msgstr "Ahladaju sieciva"
 
+#, c-format
 msgid "Invisible"
 msgstr "Niabačny"
 
@@ -6211,11 +6444,12 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 "Niemahčyma ŭvajści: niemahčyma ŭvajści jak %s, bo nazva karystalnika "
-"niapravilnaja. Nazvy karystalnikaŭ musiać być pravilnymi adrasami email "
-"albo pačynacca ź litary i ŭtrymlivać tolki litary, ličby j prabieły, albo "
-"tolki ličby."
+"niapravilnaja. Nazvy karystalnikaŭ musiać być pravilnymi adrasami email albo "
+"pačynacca ź litary i ŭtrymlivać tolki litary, ličby j prabieły, albo tolki "
+"ličby."
 
 #. Unregistered screen name
+#. uid is not exist
 msgid "Invalid username."
 msgstr "Niapravilnaja nazva."
 
@@ -6239,7 +6473,6 @@ msgstr ""
 "Ty spałučaŭsia j adłučaŭsia nadta časta. Pačakaj dziesiać chvilin i paŭtary "
 "znoŭ. Kali ty praciahnieš svaje sproby, tabie pryjdziecca pačakać jašče bolš."
 
-#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Versija tvajho klijenta nadta staraja. Kali łaska, abnavisia na %s"
@@ -6398,16 +6631,19 @@ msgstr[1] ""
 msgstr[2] ""
 "Ty zhubiŭ %hu paviedamleńniaŭ ad %s, bo limit častaty byŭ pieravyšany."
 
-#, c-format
-msgid "You missed %hu message from %s because he/she was too evil."
-msgid_plural "You missed %hu messages from %s because he/she was too evil."
+#, fuzzy, c-format
+msgid ""
+"You missed %hu message from %s because his/her warning level is too high."
+msgid_plural ""
+"You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] "Ty zhubiŭ %hu paviedamleńnie ad %s, bo jon/jana byŭ nadta zły."
 msgstr[1] "Ty zhubiŭ %hu paviedamleńni ad %s, bo jon/jana byŭ nadta zły."
 msgstr[2] "Ty zhubiŭ %hu paviedamleńniaŭ ad %s, bo jon/jana byŭ nadta zły."
 
-#, c-format
-msgid "You missed %hu message from %s because you are too evil."
-msgid_plural "You missed %hu messages from %s because you are too evil."
+#, fuzzy, c-format
+msgid "You missed %hu message from %s because your warning level is too high."
+msgid_plural ""
+"You missed %hu messages from %s because your warning level is too high."
 msgstr[0] "Ty zhubiŭ %hu paviedamleńnie ad %s, bo ty nadta zły."
 msgstr[1] "Ty zhubiŭ %hu paviedamleńni ad %s, bo ty nadta zły."
 msgstr[2] "Ty zhubiŭ %hu paviedamleńniaŭ ad %s, bo ty nadta zły."
@@ -6441,9 +6677,6 @@ msgstr "Spałučany ad"
 msgid "Member Since"
 msgstr "Udzielničaje ad"
 
-msgid "Available Message"
-msgstr "Dastupnaje paviedamleńnie"
-
 msgid "Your AIM connection may be lost."
 msgstr "Tvajo spałučeńnie AIM moža zhubicca."
 
@@ -6472,11 +6705,16 @@ msgstr "Mabilny telefon"
 msgid "Personal Web Page"
 msgstr "Pryvatnaja sieciŭnaja staronka"
 
+#. aim_userinfo_t
+#. strip_html_tags
 msgid "Additional Information"
 msgstr "Dadatkovyja źviestki"
 
 msgid "Zip Code"
 msgstr "Zip kod"
+
+msgid "Work Information"
+msgstr "Pracoŭnyja źviestki"
 
 msgid "Division"
 msgstr "Padzieł"
@@ -6486,9 +6724,6 @@ msgstr "Pasada"
 
 msgid "Web Page"
 msgstr "Sieciŭnaja staronka"
-
-msgid "Work Information"
-msgstr "Pracoŭnyja źviestki"
 
 msgid "Pop-Up Message"
 msgstr "Vypłyŭnoje paviedamleńnie"
@@ -6639,10 +6874,12 @@ msgstr ""
 "nazvy pavinny być albo pravilnym adrasam email, albo pačynacca ź litary i "
 "ŭtrymlivać tolki litary, ličby j prabieły, albo ŭtrymlivać tolki ličby."
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "Niemahčyma dadać"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "Niemahčyma atrymać śpis siabroŭ"
 
 msgid ""
@@ -6711,12 +6948,6 @@ msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
 "Tvaja vyjava IM nie dasłanaja. Ty nia možaš dasyłać vyjavy IM u hutarkach "
 "AIM."
-
-msgid "Away Message"
-msgstr "Paviedamleńnie ab adychodzie"
-
-msgid "<i>(retrieving)</i>"
-msgstr "<i>(atrymańnie)</i>"
 
 msgid "iTunes Music Store Link"
 msgstr "Spasyłka na muzyčnuju kramu iTunes"
@@ -6843,6 +7074,9 @@ msgstr ""
 "dziela pieradačy fajłaŭ i prostych razmovaŭ\n"
 "(marudniej, ale nie vykryvaje tvajho IP-adrasa)"
 
+msgid "Allow multiple simultaneous logins"
+msgstr ""
+
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
 msgstr "Prapanova dla %s spałučycca z nami na %s:%hu dziela Prostaha IM."
@@ -6851,6 +7085,7 @@ msgstr "Prapanova dla %s spałučycca z nami na %s:%hu dziela Prostaha IM."
 msgid "Attempting to connect to %s:%hu."
 msgstr "Sproba spałučycca z %s:%hu."
 
+#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Sproba spałučycca praz proxy-server."
 
@@ -6865,42 +7100,6 @@ msgid ""
 msgstr ""
 "Heta vynahaje prostaha spałučeńnia dvuch kamputaraŭ i patrebnaje dziela "
 "vyjavaŭ IM. Ty ryzykuješ zhubić tajemnaść, bo heta vykryje tvoj IP adras."
-
-msgid "Primary Information"
-msgstr "Pieršasnyja źviestki"
-
-msgid "Personal Introduction"
-msgstr "Persanalnaje pradstaŭleńnie"
-
-msgid "QQ Number"
-msgstr "Numar QQ"
-
-msgid "Country/Region"
-msgstr "Kraina/Rehijon"
-
-msgid "Province/State"
-msgstr "Pravincyja/Štat"
-
-msgid "Horoscope Symbol"
-msgstr "Znak haraskopu"
-
-msgid "Zodiac Sign"
-msgstr "Znak zadyjaku"
-
-msgid "Blood Type"
-msgstr "Typ kryvi"
-
-msgid "College"
-msgstr "Kaledž"
-
-msgid "Zipcode"
-msgstr "Zip-kod"
-
-msgid "Cellphone Number"
-msgstr "Numar mabilnika"
-
-msgid "Phone Number"
-msgstr "Telefonny numar"
 
 msgid "Aquarius"
 msgstr "Vadaliŭ"
@@ -6977,77 +7176,184 @@ msgstr "Śvińnia"
 msgid "Other"
 msgstr "Inšaje"
 
-msgid "Modify my information"
+#, fuzzy
+msgid "Visible"
+msgstr "Niabačny"
+
+msgid "Firend Only"
+msgstr ""
+
+#, fuzzy
+msgid "Private"
+msgstr "Tajemnaść"
+
+msgid "QQ Number"
+msgstr "Numar QQ"
+
+msgid "Country/Region"
+msgstr "Kraina/Rehijon"
+
+msgid "Province/State"
+msgstr "Pravincyja/Štat"
+
+msgid "Zipcode"
+msgstr "Zip-kod"
+
+msgid "Phone Number"
+msgstr "Telefonny numar"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "Aŭtaryzavać siabra?"
+
+msgid "Cellphone Number"
+msgstr "Numar mabilnika"
+
+msgid "Personal Introduction"
+msgstr "Persanalnaje pradstaŭleńnie"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "Horad"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "Persanalny mabilnik"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "Stvary alias dla kantaktu"
+
+msgid "College"
+msgstr "Kaledž"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "Znak haraskopu"
+
+#, fuzzy
+msgid "Zodiac"
+msgstr "Znak zadyjaku"
+
+#, fuzzy
+msgid "Blood"
+msgstr "Zablakavany"
+
+#, fuzzy
+msgid "True"
+msgstr "Ciala"
+
+#, fuzzy
+msgid "False"
+msgstr "Pamyłka"
+
+#, fuzzy
+msgid "Modify Contact"
+msgstr "Madyfikuj kont"
+
+#, fuzzy
+msgid "Modify Address"
+msgstr "Chatni adras"
+
+#, fuzzy
+msgid "Modify Extended Information"
 msgstr "Madyfikuj infarmacuju pra ciabie"
 
-msgid "Update my information"
-msgstr "Aktualizuj infarmacyju pra ciabie"
+#, fuzzy
+msgid "Modify Information"
+msgstr "Madyfikuj infarmacuju pra ciabie"
 
-msgid "Your information has been updated"
-msgstr "Infarmacyja pra ciabie aktualizavanaja"
+#, fuzzy
+msgid "Update"
+msgstr "Apošniaja aktualizacyja"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "Kali łaska, uviadzi źviestki ab siabry."
 
 #, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "%d needs Q&A"
 msgstr ""
-"Akreśleńnie asablivych vyhladaŭ pakul nie padtrymvajecca. Kali łaska, abiary "
-"vyjavu z %s."
 
-msgid "Invalid QQ Face"
-msgstr "Niapravilny vyhlad QQ"
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "Dadaj siabra"
 
-#, c-format
-msgid "You rejected %d's request"
-msgstr "Ty admoviŭ na zapyt ad %d"
+#, fuzzy
+msgid "Input answer here"
+msgstr "Akreśl zapyt tut"
 
-msgid "Input your reason:"
-msgstr "Akreśl pryčynu:"
+msgid "Send"
+msgstr "Dašli"
 
-msgid "Reject request"
-msgstr "Admoŭ na zapyt"
+#, fuzzy
+msgid "Invalid answer."
+msgstr "Niapravilnaja nazva."
 
-#. title
-msgid "Sorry, you are not my type..."
+msgid "Authorization denied message:"
+msgstr "Paviedamleńnie admovy aŭtaryzacyi:"
+
+#, fuzzy
+msgid "Sorry, You are not my style."
 msgstr "Prabač, ale ty nie majho typu..."
 
-msgid "Add buddy with auth request failed"
-msgstr "Pamyłka dadańnia siabra z zapytam aŭtaryzacyi"
-
-#. TODO: We don't really need to notify the user about this, do we?
-msgid "You have successfully removed a buddy"
-msgstr "Ty paśpiachova vydaliŭ siabra"
-
-#. TODO: Does the user really need to be notified about this?
-msgid "You have successfully removed yourself from your friend's buddy list"
-msgstr "Ty paśpiachova vydaliŭ siabie sa śpisu siabra"
-
-#, c-format
-msgid "User %d needs authentication"
+#, fuzzy, c-format
+msgid "%d needs authentication"
 msgstr "Karystalnik %d vymahaje aŭtaryzacyi"
+
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "Dadać siabra ŭ tvoj śpis?"
 
 msgid "Input request here"
 msgstr "Akreśl zapyt tut"
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "Budzieš maim siabram?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "Dašli"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Siabra"
+
+#, fuzzy
+msgid "Add buddy"
+msgstr "Dadaj siabra"
+
+#, fuzzy
+msgid "Invalid QQ Number"
+msgstr "Niapravilny vyhlad QQ"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "Kali łaska, aŭtaryzuj mianie!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "Niaŭdałaje vydaleńnie siabra"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "%s vydalaje ciabie sa svajho śpisu siabroŭ."
+
+#, fuzzy
+msgid "No reason given"
+msgstr "Pryčyna nie akreślenaja."
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr "Ciabie dadaŭ/dadała %s"
+
+msgid "Would you like to add him?"
+msgstr "Chočaš dadać jaho/jaje?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "Admoŭ"
 
 #, c-format
-msgid "You have added %d to buddy list"
-msgstr "Ty dadaŭ %d ŭ śpis siabroŭ"
-
-msgid "QQid Error"
-msgstr "Pamyłka QQid"
-
-msgid "Invalid QQid"
-msgstr "Niapravilny QQid"
+msgid "Message: %s"
+msgstr "Pavedamleńnie: %s"
 
 msgid "ID: "
 msgstr "ID: "
@@ -7055,91 +7361,85 @@ msgstr "ID: "
 msgid "Group ID"
 msgstr "ID hrupy"
 
-msgid "Creator"
-msgstr "Stvaralnik"
-
-msgid "Group Description"
-msgstr "Apisańnie hrupy"
-
-msgid "Auth"
-msgstr "Aŭt"
-
 msgid "QQ Qun"
 msgstr "QQ Qun"
 
-msgid "Please enter external group ID"
-msgstr "Akreśl ID vonkavaj hrupy"
+#, fuzzy
+msgid "Please enter Qun number"
+msgstr "Uviadzi novuju nazvu dla %s"
 
-msgid "You can only search for permanent QQ groups\n"
+#, fuzzy
+msgid "You can only search for permanent Qun\n"
 msgstr "Ty možaš šukać tolki stałyja hrupy QQ\n"
 
-#, c-format
-msgid "User %d requested to join group %d"
-msgstr "Karystalnik %d choča dałučycca da hrupy %d"
+#, fuzzy
+msgid "Not member"
+msgstr "Ja nia ŭdzielnik"
+
+#, fuzzy
+msgid "Member"
+msgstr "Udzielničaje ad"
+
+#, fuzzy
+msgid "Requesting"
+msgstr "Dyjaloh zapytu"
+
+#, fuzzy
+msgid "Admin"
+msgstr "Adium"
+
+#, fuzzy
+msgid "Notice"
+msgstr "Natatki"
+
+#, fuzzy
+msgid "Detail"
+msgstr "Zmoŭčany"
+
+msgid "Creator"
+msgstr "Stvaralnik"
+
+#, fuzzy
+msgid "About me"
+msgstr "Ab %s"
+
+#, fuzzy
+msgid "Category"
+msgstr "Pamyłka hutarki"
+
+#, fuzzy
+msgid "The Qun does not allow others to join"
+msgstr "Hetaja hrupa nie dazvalaje dałučeńnia inšych"
+
+#, fuzzy
+msgid "Join QQ Qun"
+msgstr "Dałučysia da hutarki"
 
 #, c-format
-msgid "Reason: %s"
-msgstr "Pryčyna: %s"
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+#, fuzzy
+msgid "Successfully joined Qun"
+msgstr "Ty paśpiachova madyfikavaŭ udzielnika Quna"
+
+#, c-format
+msgid "Qun %d denied to join"
+msgstr ""
 
 msgid "QQ Qun Operation"
 msgstr "Aperacyja QQ Qun"
 
-msgid "Approve"
-msgstr "Paćvierdź"
+#, fuzzy
+msgid "Failed:"
+msgstr "Pamyłka"
 
-#, c-format
-msgid "Your request to join group %d has been rejected by admin %d"
+msgid "Join Qun, Unknow Reply"
 msgstr ""
-"Tvaja prośba dałučycca da hrupy %d nie była zadavolenaja administrataram %d"
 
-#, c-format
-msgid "Your request to join group %d has been approved by admin %d"
-msgstr ""
-"Tvaja prośba dałučycca da hrupy %d była zadavolenaja administrataram %d"
-
-#, c-format
-msgid "You [%d] have left group \"%d\""
-msgstr "Ty [%d] vyjšaŭ/vyjšła z hrupy \"%d\""
-
-#, c-format
-msgid "You [%d] have been added to group \"%d\""
-msgstr "Ty [%d] dadadzieny/dadadzienaja da hrupy \"%d\""
-
-msgid "This group has been added to your buddy list"
-msgstr "Hetaja hrupa dadadzienaja ŭ tvoj śpis siabroŭ"
-
-msgid "I am not a member"
-msgstr "Ja nia ŭdzielnik"
-
-msgid "I am a member"
-msgstr "Ja ŭdzielnik"
-
-msgid "I am applying to join"
-msgstr "Ja prašu dałučeńnia"
-
-msgid "I am the admin"
-msgstr "Ja administratar"
-
-msgid "Unknown status"
-msgstr "Nieviadomy status"
-
-msgid "This group does not allow others to join"
-msgstr "Hetaja hrupa nie dazvalaje dałučeńnia inšych"
-
-msgid "You have successfully left the group"
-msgstr "Ty paśpiachova vyjšaŭ/vyjšła z hrupy"
-
-msgid "QQ Group Auth"
-msgstr "Hrupavaja aŭtaryzacyja QQ"
-
-msgid "Your authorization request has been accepted by the QQ server"
-msgstr "Tvoj zapyt aŭtaryzacyi pryniaty serveram QQ"
-
-msgid "You entered a group ID outside the acceptable range"
-msgstr "Ty akreśliŭ/akreśliła ID hrupy pa-za pryjmalnymi miežami"
-
-msgid "Are you sure you want to leave this Qun?"
-msgstr "Ty sapraŭdy chočaš pakinuć hety Qun?"
+#, fuzzy
+msgid "Quit Qun"
+msgstr "QQ Qun"
 
 msgid ""
 "Note, if you are the creator, \n"
@@ -7148,122 +7448,194 @@ msgstr ""
 "Uvaha: kali ty stvaralnik, \n"
 "hetaja aperacyja całkam vydalić hety Qun."
 
-#, c-format
-msgid "Code [0x%02X]: %s"
-msgstr "Kod [0x%02X]: %s"
+#, fuzzy
+msgid "Sorry, you are not our style ..."
+msgstr "Prabač, ale ty nie majho typu..."
 
-msgid "Group Operation Error"
-msgstr "Pamyłka hrupavoj aperacyi"
-
-#. we want to see window
-msgid "Do you want to approve the request?"
-msgstr "Chočaš uchvalić zapyt?"
-
-msgid "Enter your reason:"
-msgstr "Akreśl pryčynu:"
-
-msgid "You have successfully modified Qun member"
+#, fuzzy
+msgid "Successfully changed Qun member"
 msgstr "Ty paśpiachova madyfikavaŭ udzielnika Quna"
 
-msgid "You have successfully modified Qun information"
+#, fuzzy
+msgid "Successfully changed Qun information"
 msgstr "Ty paśpiachova madyfikavaŭ źviestki Quna"
 
 msgid "You have successfully created a Qun"
 msgstr "Ty paśpiachova stvaryŭ Qun"
 
-msgid "Would you like to set up the Qun details now?"
+#, fuzzy
+msgid "Would you like to set detailed information now?"
 msgstr "Chočaš zaraz akreślić padrabiaznaści Quna?"
 
 msgid "Setup"
 msgstr "Akreśl"
 
-msgid "System Message"
-msgstr "Systemnaje paviedamleńnie"
+#, fuzzy, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr "Karystalnik %d choča dałučycca da hrupy %d"
 
-msgid "Failed to send IM."
-msgstr "Pamyłka dasyłańnia IM."
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "Karystalnik %d choča dałučycca da hrupy %d"
 
-msgid "Keep alive error"
-msgstr "Pamyłka padtrymki aktyŭnaha stanu"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Pamyłka dałučeńnia siabra da hutarki"
 
-msgid "Error requesting login token"
-msgstr "Pamyłka zapytu znaku ŭvachodu"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
 
-msgid "Unable to login. Check debug log."
-msgstr "Niemahčyma ŭvajści. Pravier debugavy log."
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "Vydali siabra"
 
-msgid "Unable to login"
-msgstr "Niemahčyma ŭvajści"
-
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "Niemahčyma spałučycca."
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, c-format
 msgid "Unknown-%d"
 msgstr "Nieviadomy-%d"
 
-msgid "TCP Address"
-msgstr "TCP adras"
-
-msgid "UDP Address"
-msgstr "UDP adras"
-
 msgid "Level"
 msgstr "Uzrovień"
+
+msgid " VIP"
+msgstr ""
+
+msgid " TCP"
+msgstr ""
+
+#, fuzzy
+msgid " FromMobile"
+msgstr "Mabilnik"
+
+#, fuzzy
+msgid " BindMobile"
+msgstr "Mabilnik"
+
+#, fuzzy
+msgid " Video"
+msgstr "Žyvoje videa"
+
+#, fuzzy
+msgid " Zone"
+msgstr "Niama"
+
+msgid "Flag"
+msgstr ""
+
+msgid "Ver"
+msgstr ""
 
 msgid "Invalid name"
 msgstr "Niapravilnaja nazva"
 
-#, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+#, fuzzy
+msgid "Select icon..."
+msgstr "Abiary kataloh..."
+
+#, fuzzy, c-format
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>Čas uvachodu</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>Dziejna spałučany</b>: %d<br>\n"
 
-#, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Apošniaja aktualizacyja</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Server</b>: %s<br>\n"
+msgstr "<b>IP servera</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>Čas uvachodu</b>: %s<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Režym spałučeńnia</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Server IP</b>: %s: %d<br>\n"
-msgstr "<b>IP servera</b>: %s: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+msgstr "<b>Režym spałučeńnia</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>My Public IP</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Sent</b>: %lu<br>\n"
+msgstr "<b>Dziejna spałučany</b>: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Resend</b>: %lu<br>\n"
+msgstr "<b>Apošniaja aktualizacyja</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Lost</b>: %lu<br>\n"
+msgstr "<b>Apošniaja aktualizacyja</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received</b>: %lu<br>\n"
+msgstr "<b>Apošniaja aktualizacyja</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Moj publičny IP</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Čas uvachodu</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>Apošni IP uvachodu</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>Apošni čas uvachodu</b>: %s\n"
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>IP servera</b>: %s: %d<br>\n"
 
 msgid "Login Information"
 msgstr "Źviestki ab uvachodzie"
 
-msgid "Set My Information"
-msgstr "Akreśl źviestki aba mnie"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>Apošniaja aktualizacyja</b>: %s<br>\n"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>Dziejna spałučany</b>: %d<br>\n"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Ab %s"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "Zapišy ikonu"
 
 msgid "Change Password"
 msgstr "Źmiani parol"
 
-msgid "Show Login Information"
-msgstr "Pakažy źviestki ab uvachodzie"
+#, fuzzy
+msgid "Account Information"
+msgstr "Źviestki ab uvachodzie"
 
-msgid "Leave this QQ Qun"
-msgstr "Vyjdzi z hetaha QQ Quna"
+msgid "Update all QQ Quns"
+msgstr ""
 
-msgid "Block this buddy"
-msgstr "Blakuj hetaha siabra"
+#, fuzzy
+msgid "About OpenQ"
+msgstr "Ab %s"
 
 #. *< type
 #. *< ui_requirement
@@ -7275,17 +7647,212 @@ msgstr "Blakuj hetaha siabra"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "Plugin pratakołu QQ"
 
-msgid "Connect using TCP"
+#, fuzzy
+msgid "Auto"
+msgstr "Aŭtar"
+
+#, fuzzy
+msgid "Select Server"
+msgstr "Abiary karystalnika"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
+#, fuzzy
+msgid "Connect by TCP"
 msgstr "Spałučysia praz TCP"
+
+#, fuzzy
+msgid "Show server notice"
+msgstr "Port servera"
+
+#, fuzzy
+msgid "Show server news"
+msgstr "Adras servera"
+
+#, fuzzy
+msgid "Keep alive interval (seconds)"
+msgstr "Pamyłka padtrymki aktyŭnaha stanu"
+
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "Pamyłka padtrymki aktyŭnaha stanu"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "Niemahčyma atrymać źviestki ab servery"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "Niemahčyma atrymać źviestki ab servery"
+
+#, c-format
+msgid "Failed requesting token, 0x%02X"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Invalid token len, %d"
+msgstr "Niapravilnaja nazva"
+
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
+msgstr ""
+
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "Vymahaje rehistracyi"
+
+#, c-format
+msgid "Unknow reply code when login (0x%02X)"
+msgstr ""
+
+msgid "Keep alive error"
+msgstr "Pamyłka padtrymki aktyŭnaha stanu"
+
+#, fuzzy
+msgid "Requesting captcha ..."
+msgstr "Vymahańnie ŭvahi %s..."
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
+#, fuzzy
+msgid "Captcha Image"
+msgstr "Zapišy vyjavu"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "Uviadzi parol"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "Uviadzi nazvu hrupy"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
+
+#. we didn't successfully connect. tdt->toc_fd is valid here
+msgid "Unable to connect."
+msgstr "Niemahčyma spałučycca."
 
 msgid "Socket error"
 msgstr "Pamyłka sokieta"
 
+#, fuzzy, c-format
+msgid ""
+"Lost connection with server:\n"
+"%d, %s"
+msgstr ""
+"Spałučeńnie z serversm stračanaje:\n"
+"%s"
+
 msgid "Unable to read from socket"
 msgstr "Niemahčyma pračytać z sokieta"
+
+msgid "Write Error"
+msgstr "Pamyłka zapisu"
+
+msgid "Connection lost"
+msgstr "Spałučeńnie zhublenaje"
+
+#, fuzzy
+msgid "Get server ..."
+msgstr "Akreśl źviestki karystalnika..."
+
+#, fuzzy
+msgid "Request token"
+msgstr "Zapyt admoŭleny"
+
+msgid "Couldn't resolve host"
+msgstr "Niemahčyma vyjaśnić host"
+
+#, fuzzy
+msgid "Invalid server or port"
+msgstr "Niapravilnaja pamyłka"
+
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "Spałučysia z serveram"
+
+#, fuzzy
+msgid "QQ Error"
+msgstr "Pamyłka QQid"
+
+msgid "Failed to send IM."
+msgstr "Pamyłka dasyłańnia IM."
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "Retranślacyja servera ICQ"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "Ad"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "Instrukcyi servera: %s"
+
+msgid "Unknow SERVER CMD"
+msgstr ""
+
+#, c-format
+msgid ""
+"Error reply of %s(0x%02X)\n"
+"Room %d, reply 0x%02X"
+msgstr ""
+
+#, fuzzy
+msgid "QQ Qun Command"
+msgstr "Zahad"
+
+#, c-format
+msgid "Not a member of room \"%s\"\n"
+msgstr ""
+
+msgid "Can not decrypt login reply"
+msgstr ""
+
+#, fuzzy
+msgid "Unknow LOGIN CMD"
+msgstr "Nieviadomaja pryčyna"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
+msgstr "Nieviadomaja pryčyna"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7297,48 +7864,6 @@ msgstr "Dasyłańnie fajłu"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d anulavaj pieradaču fajłu %s"
-
-msgid "Connection lost"
-msgstr "Spałučeńnie zhublenaje"
-
-msgid "Login failed, no reply"
-msgstr "Pamyłka ŭvachodu, niama adkazu"
-
-msgid "Do you want to add this buddy?"
-msgstr "Chočaš dadać hetaha siabra?"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "Ciabie dadaŭ/dadała %s"
-
-msgid "Would you like to add him?"
-msgstr "Chočaš dadać jaho/jaje?"
-
-#, c-format
-msgid "%s has added you [%s] to his or her buddy list"
-msgstr "%s dadaje ciabie [%s] u svoj śpis siabroŭ"
-
-#, c-format
-msgid "User %s rejected your request"
-msgstr "Karystalnik %s admoviŭ tabie"
-
-#, c-format
-msgid "User %s approved your request"
-msgstr "Karystalnik %s pryniaŭ tvoj zapyt"
-
-#. TODO: this should go through purple_account_request_authorization()
-#, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s choča zrabić ciabie [%s] siabram"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Pavedamleńnie: %s"
-
-#, c-format
-msgid "%s is not in your buddy list"
-msgstr "%s niama ŭ tvaim śpisie siabroŭ"
 
 msgid "Connection closed (writing)"
 msgstr "Spałučeńnie začynienaje (zapis)"
@@ -7932,6 +8457,7 @@ msgstr "<br><b>HMAC kanału:</b> %s"
 msgid "<br><b>Channel Topic:</b><br>%s"
 msgstr "<br><b>Tema kanału:</b><br>%s"
 
+#, c-format
 msgid "<br><b>Channel Modes:</b> "
 msgstr "<br><b>Režymy kanału:</b> "
 
@@ -7956,6 +8482,7 @@ msgstr "Parolnaja fraza kanału"
 msgid "Channel Public Keys List"
 msgstr "Śpis publičnych klučoŭ kanału"
 
+#, c-format
 msgid ""
 "Channel authentication is used to secure the channel from unauthorized "
 "access. The authentication may be based on passphrase and digital "
@@ -8347,9 +8874,14 @@ msgstr "Niemahčyma inicyjalizavać pratakoł SILC"
 msgid "Error loading SILC key pair"
 msgstr "Pamyłka zahruzki pary klučoŭ SILC"
 
+#, fuzzy, c-format
+msgid "Download %s: %s"
+msgstr "Karystalniki na %s: %s"
+
 msgid "Your Current Mood"
 msgstr "Tvoj ciapierašni nastroj"
 
+#, c-format
 msgid "Normal"
 msgstr "Zvyčajny"
 
@@ -8730,34 +9262,44 @@ msgstr "Doška"
 msgid "No server statistics available"
 msgstr "Niama statystyki servera"
 
+#, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Pamyłka: Nieadpaviednaść versij, aktualizuj svajho klijenta"
 
+#, c-format
 msgid "Failure: Remote does not trust/support your public key"
 msgstr ""
 "Pamyłka: Addaleny host nie daviaraje/nie padtrymvaje tvoj publičny kluč"
 
+#, c-format
 msgid "Failure: Remote does not support proposed KE group"
 msgstr "Pamyłka: Addaleny host nie padtrymvaje prapanavanuju hrupu KE"
 
+#, c-format
 msgid "Failure: Remote does not support proposed cipher"
 msgstr "Pamyłka: Addaleny host nie padtrymvaje prapanavany šyfar"
 
+#, c-format
 msgid "Failure: Remote does not support proposed PKCS"
 msgstr "Pamyłka: Addaleny host nie padtrymvaje prapanavany PKCS"
 
+#, c-format
 msgid "Failure: Remote does not support proposed hash function"
 msgstr "Pamyłka: Addaleny host nie padtrymvaje prapanavanuju hash-funkcyju"
 
+#, c-format
 msgid "Failure: Remote does not support proposed HMAC"
 msgstr "Pamyłka: Addaleny host nie padtrymvaje prapanavany HMAC"
 
+#, c-format
 msgid "Failure: Incorrect signature"
 msgstr "Pamyłka: Niapravilny podpis"
 
+#, c-format
 msgid "Failure: Invalid cookie"
 msgstr "Pamyłka: Niapravilnaje ciestka"
 
+#, c-format
 msgid "Failure: Authentication failed"
 msgstr "Pamyłka: Pamyłka aŭtaryzacyi"
 
@@ -8782,9 +9324,6 @@ msgstr "Nieviadomy adkaz ad servera."
 
 msgid "Could not create listen socket"
 msgstr "Niemahčyma stvaryć sokiet dziela słuchańnia"
-
-msgid "Couldn't resolve host"
-msgstr "Niemahčyma vyjaśnić host"
 
 msgid "Could not resolve hostname"
 msgstr "Niemahčyma vyjaśnić nazvu hostu"
@@ -8858,6 +9397,7 @@ msgstr "%s dziejna nia spałučany/spałučanaja."
 msgid "Warning of %s not allowed."
 msgstr "Aściaroha dla %s nie dazvolenaja."
 
+#, c-format
 msgid "A message has been dropped, you are exceeding the server speed limit."
 msgstr "Paviedamleńnie nie pryniataje, ty pieravysiŭ limit chutkaści servera."
 
@@ -8877,30 +9417,39 @@ msgstr "Ty zhubiŭ paviedamleńnie ad %s, bo jano było nadta daŭhim."
 msgid "You missed an IM from %s because it was sent too fast."
 msgstr "Ty zhubiŭ paviedamleńnie ad %s, bo jano buło dasłanaje nadta chutka."
 
+#, c-format
 msgid "Failure."
 msgstr "Pamyłka."
 
+#, c-format
 msgid "Too many matches."
 msgstr "Nadta šmat adpaviednikaŭ."
 
+#, c-format
 msgid "Need more qualifiers."
 msgstr "Treba bolš udakładnieńniaŭ."
 
+#, c-format
 msgid "Dir service temporarily unavailable."
 msgstr "Servis katalohu časova niedastupny."
 
+#, c-format
 msgid "Email lookup restricted."
 msgstr "Pošuk pavodle e-maiłu abmiežavany."
 
+#, c-format
 msgid "Keyword ignored."
 msgstr "Klučavoje słova ihnaravanaje."
 
+#, c-format
 msgid "No keywords."
 msgstr "Niama klučavych słovaŭ."
 
+#, c-format
 msgid "User has no directory information."
 msgstr "Karystalnik nia maje źviestak z katalohu."
 
+#, c-format
 msgid "Country not supported."
 msgstr "Kraina nie padtrymvajecca."
 
@@ -8908,15 +9457,19 @@ msgstr "Kraina nie padtrymvajecca."
 msgid "Failure unknown: %s."
 msgstr "Nieviadomaja pamyłka: %s."
 
+#, c-format
 msgid "Incorrect username or password."
 msgstr "Niapravilnaja nazva karystalnika albo parol."
 
+#, c-format
 msgid "The service is temporarily unavailable."
 msgstr "Servis časova niedastupny."
 
+#, c-format
 msgid "Your warning level is currently too high to log in."
 msgstr "Tvoj uzrovień aściarohi nadta vysoki, kab uvachodzić."
 
+#, c-format
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
@@ -9008,9 +9561,6 @@ msgstr "Tvajo paviedamleńnie Yahoo! nie dasłanaje."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Systemnaje paviedamleńnie Yahoo! dla %s:"
-
-msgid "Authorization denied message:"
-msgstr "Paviedamleńnie admovy aŭtaryzacyi:"
 
 #, c-format
 msgid ""
@@ -9160,6 +9710,10 @@ msgstr "list: Pakažy śpis pakojaŭ u sietcy Yahoo"
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: Prapanuj karystalniku pačać sesiju Durnoty"
 
+#, fuzzy
+msgid "Yahoo ID..."
+msgstr "Yahoo! ID"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -9221,9 +9775,6 @@ msgstr "Niemahčyma atrymać fajłavy deskryptar."
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s choča vysłać tabie %d fajłaŭ.\n"
-
-msgid "Write Error"
-msgstr "Pamyłka zapisu"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Profil japonskaha Yahoo!"
@@ -9522,6 +10073,14 @@ msgstr "Pamyłka vyjaśnieńnia %s."
 msgid "Could not resolve host name"
 msgstr "Niemahčyma vyjaśnić nazvu hostu"
 
+#, c-format
+msgid "Requesting %s's attention..."
+msgstr "Vymahańnie ŭvahi %s..."
+
+#, c-format
+msgid "%s has requested your attention!"
+msgstr "%s vymahaje tvajoj uvahi!"
+
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 #.
@@ -9551,14 +10110,6 @@ msgid "%s is now known as %s.\n"
 msgstr "%s ciapier nazyvajecca %s.\n"
 
 #, c-format
-msgid "Requesting %s's attention..."
-msgstr "Vymahańnie ŭvahi %s..."
-
-#, c-format
-msgid "%s has requested your attention!"
-msgstr "%s vymahaje tvajoj uvahi!"
-
-#, c-format
 msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
@@ -9572,6 +10123,23 @@ msgstr "%s zaprašaje %s u pakoj dla hutarki %s\n"
 
 msgid "Accept chat invitation?"
 msgstr "Pryjmi zaprašeńnie na hutarku?"
+
+#. Shortcut
+#, fuzzy
+msgid "Shortcut"
+msgstr "Paradkuj"
+
+#, fuzzy
+msgid "The text-shortcut for the smiley"
+msgstr "Matyŭ tekstavych skarotaŭ GTK+"
+
+#. Stored Image
+#, fuzzy
+msgid "Stored Image"
+msgstr "Zapišy vyjavu"
+
+msgid "Stored Image. (that'll have to do for now)"
+msgstr ""
 
 msgid "SSL Connection Failed"
 msgstr "Pamyłka spałučeńnia SSL"
@@ -9628,6 +10196,12 @@ msgstr "+++ %s biaździejničaje"
 msgid "+++ %s became unidle"
 msgstr "+++ %s pierapyniaje biaździejańnie"
 
+#.
+#. * This string determines how some dates are displayed.  The default
+#. * string "%x %X" shows the date then the time.  Translators can
+#. * change this to "%X %x" if they want the time to be shown first,
+#. * followed by the date.
+#.
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
@@ -9700,6 +10274,10 @@ msgstr "Niemahčyma adčynić %s: Nadta šmat pieranakiravańniaŭ"
 msgid "Unable to connect to %s"
 msgstr "Niemahčyma spałučycca z %s"
 
+#, fuzzy, c-format
+msgid "Error reading from %s: response too long (%d bytes limit)"
+msgstr "Pamyłka čytańnia z %s: %s"
+
 #, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
@@ -9729,20 +10307,29 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
+#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Spałučeńnie pierabitaje inšaj prahramaj z tvajho kamputara."
 
 #. 10054
+#, c-format
 msgid "Remote host closed connection."
 msgstr "Addaleny kamputar začyniŭ spałučeńnie."
 
 #. 10060
+#, c-format
 msgid "Connection timed out."
 msgstr "Termin čakańnia spałučeńnia skončyŭsia."
 
 #. 10061
+#, c-format
 msgid "Connection refused."
 msgstr "Admoŭlenaje spałučeńnie."
+
+#. 10048
+#, fuzzy, c-format
+msgid "Address already in use."
+msgstr "Hetaja nazva hutarki ŭžo zaniataja"
 
 msgid "Internet Messenger"
 msgstr "Internet-kamunikatar"
@@ -9851,7 +10438,8 @@ msgstr "Dadaj kont"
 msgid "_Basic"
 msgstr "_Prosty"
 
-msgid "Create this new account on the server"
+#, fuzzy
+msgid "Create _this new account on the server"
 msgstr "Stvary hety novy kont na servery"
 
 msgid "_Advanced"
@@ -9863,17 +10451,17 @@ msgstr "Uklučany"
 msgid "Protocol"
 msgstr "Pratakoł"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Zaprašajem u %s!</span>\n"
 "\n"
@@ -9944,14 +10532,18 @@ msgstr "Pakažy _logi"
 msgid "Hide when offline"
 msgstr "Chavaj, kali adłučany"
 
-msgid "Show when offline"
-msgstr "Pakazvaj, kali adłučany"
-
 msgid "_Alias..."
 msgstr "_Alias..."
 
 msgid "_Remove"
 msgstr "_Vydali"
+
+#, fuzzy
+msgid "Set Custom Icon"
+msgstr "Akreśl asablivuju ikonu..."
+
+msgid "Remove Custom Icon"
+msgstr "Vydali asablivuju ikonu"
 
 msgid "Add _Buddy..."
 msgstr "Dadaj _siabra..."
@@ -10051,7 +10643,8 @@ msgstr "/Siabry/_Vyjdzi"
 msgid "/_Accounts"
 msgstr "/_Konty"
 
-msgid "/Accounts/Manage"
+#, fuzzy
+msgid "/Accounts/Manage Accounts"
 msgstr "/Konty/Kiruj"
 
 #. Tools
@@ -10072,6 +10665,10 @@ msgstr "/Pryładździe/_Nałady"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Pryładździe/_Tajemnaść"
+
+#, fuzzy
+msgid "/Tools/Smile_y"
+msgstr "/Pryładździe/Tajemnaść"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Pryładździe/_Pieradačy fajłaŭ"
@@ -10232,13 +10829,13 @@ msgid "/Accounts"
 msgstr "/Konty"
 
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "<span weight='bold' size='larger'>Welcome to %s!</span>\n"
 "\n"
 "You have no accounts enabled. Enable your IM accounts from the <b>Accounts</"
-"b> window at <b>Accounts->Manage</b>. Once you enable accounts, you'll be "
-"able to sign on, set your status, and talk to your friends."
+"b> window at <b>Accounts->Manage Accounts</b>. Once you enable accounts, "
+"you'll be able to sign on, set your status, and talk to your friends."
 msgstr ""
 "<span weight='bold' size='larger'>Zaprašajem u %s!</span>\n"
 "\n"
@@ -10299,11 +10896,18 @@ msgstr "A_lias:"
 msgid "Auto_join when account becomes online."
 msgstr "Aŭtamatyčna _dałučajsia, kali kont uvachodzić."
 
-msgid "_Hide chat when the window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed."
 msgstr "_Chavaj hutarku, kali začyniajecca vakno."
 
 msgid "Please enter the name of the group to be added."
 msgstr "Akreśl nazvu hrupy, jakuju treba dadać."
+
+msgid "Enable Account"
+msgstr "Uklučy kont"
+
+msgid "<PurpleMain>/Accounts/Enable Account"
+msgstr "<PurpleMain>/Konty/Uklučy kont"
 
 msgid "<PurpleMain>/Accounts/"
 msgstr "<PurpleMain>/Konty/"
@@ -10316,12 +10920,6 @@ msgstr "Dziejańni niedastupnyja"
 
 msgid "_Disable"
 msgstr "_Adklučy"
-
-msgid "Enable Account"
-msgstr "Uklučy kont"
-
-msgid "<PurpleMain>/Accounts/Enable Account"
-msgstr "<PurpleMain>/Konty/Uklučy kont"
 
 msgid "/Tools"
 msgstr "/Pryładździe"
@@ -10407,9 +11005,6 @@ msgstr "Akreśl asablivuju ikonu..."
 
 msgid "Change Size"
 msgstr "Źmiani pamier"
-
-msgid "Remove Custom Icon"
-msgstr "Vydali asablivuju ikonu"
 
 msgid "Show All"
 msgstr "Pakažy ŭsio"
@@ -10679,19 +11274,22 @@ msgstr "Pamyłka"
 msgid "Fatal Error"
 msgstr "Fatalnaja pamyłka"
 
-msgid "lead developer"
-msgstr "hałoŭny raspracoŭščyk"
+msgid "bug master"
+msgstr ""
 
-msgid "developer"
-msgstr "raspracoŭščyk"
+#, fuzzy
+msgid "artist"
+msgstr "Vykanaŭca"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr ""
 
 msgid "support"
 msgstr "padtrymka"
 
-msgid "support/QA"
-msgstr "padtrymka/kantrol za jakaściu"
-
-msgid "developer & webmaster"
+#, fuzzy
+msgid "webmaster"
 msgstr "raspracoŭščyk i webmajstar"
 
 msgid "Senior Contributor/QA"
@@ -10710,11 +11308,17 @@ msgstr "dahladčyk dla libfaim"
 msgid "hacker and designated driver [lazy bum]"
 msgstr "hakier i pieršy chłopiec na vioscy [zuch]"
 
-msgid "XMPP developer"
-msgstr "Raspracoŭščyk dla XMPP"
+msgid "support/QA"
+msgstr "padtrymka/kantrol za jakaściu"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "pieršy aŭtar"
+
+msgid "lead developer"
+msgstr "hałoŭny raspracoŭščyk"
 
 msgid "Afrikaans"
 msgstr "Afrikaans"
@@ -10785,6 +11389,10 @@ msgstr "Finskaja"
 msgid "French"
 msgstr "Francuskaja"
 
+#, fuzzy
+msgid "Irish"
+msgstr "Kurdzkaja"
+
 msgid "Galician"
 msgstr "Halickaja"
 
@@ -10850,6 +11458,9 @@ msgstr "Halandzkaja, flamandzkaja"
 
 msgid "Norwegian Nynorsk"
 msgstr "Narveskaja Nynorsk"
+
+msgid "Occitan"
+msgstr ""
 
 msgid "Punjabi"
 msgstr "Punjabi"
@@ -10949,6 +11560,7 @@ msgstr ""
 "udzielnikaŭ hladzi ŭ fajle \"COPYRIGHT\". My nie dajem harantyj na hetuju "
 "prahramu.<BR><BR>"
 
+#, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin na irc.freenode.net<BR><BR>"
 
@@ -10963,9 +11575,6 @@ msgstr "Byłyja raspracoŭščyki"
 
 msgid "Retired Crazy Patch Writers"
 msgstr "Byłyja dzikija piśmieńniki zapłatak"
-
-msgid "Artists"
-msgstr "Mastaki"
 
 msgid "Current Translators"
 msgstr "Aktyŭnyja pierakładčyki"
@@ -11090,22 +11699,44 @@ msgid "Right-click for more unread messages...\n"
 msgstr ""
 "Dziela ahladu astatnich niepračytanych paviedamleńniaŭ - pravy klik...\n"
 
-msgid "Change Status"
+#, fuzzy
+msgid "_Change Status"
 msgstr "Źmiani status"
 
-msgid "Show Buddy List"
+#, fuzzy
+msgid "Show Buddy _List"
 msgstr "Pakažy śpis siabroŭ"
 
-msgid "New Message..."
+#, fuzzy
+msgid "_Unread Messages"
+msgstr "Niepračytanyja paviedamleńni"
+
+#, fuzzy
+msgid "New _Message..."
 msgstr "Novaje paviedamleńnie..."
 
-msgid "Mute Sounds"
+#, fuzzy
+msgid "_Accounts"
+msgstr "/_Konty"
+
+#, fuzzy
+msgid "Plu_gins"
+msgstr "Pluginy"
+
+#, fuzzy
+msgid "Pr_eferences"
+msgstr "Nałady"
+
+#, fuzzy
+msgid "Mute _Sounds"
 msgstr "Adklučy huki"
 
-msgid "Blink on New Message"
+#, fuzzy
+msgid "_Blink on New Message"
 msgstr "Mirhaj, kali jość novaje paviedamleńnie"
 
-msgid "Quit"
+#, fuzzy
+msgid "_Quit"
 msgstr "Vyjdzi"
 
 msgid "Not started"
@@ -11167,6 +11798,14 @@ msgstr "_Ačyść skončanyja pieradačy"
 msgid "File transfer _details"
 msgstr "_Padrabiaznaści ab pieradačy fajłu"
 
+#. Pause button
+msgid "_Pause"
+msgstr "_Prypyni"
+
+#. Resume button
+msgid "_Resume"
+msgstr "P_raciahvaj"
+
 msgid "Paste as Plain _Text"
 msgstr "Uklej jak zvyčajny _tekst"
 
@@ -11181,6 +11820,14 @@ msgstr "Koler hiperspasyłak"
 
 msgid "Color to draw hyperlinks."
 msgstr "Koler hiperspasyłak."
+
+#, fuzzy
+msgid "Hyperlink visited color"
+msgstr "Koler hiperspasyłak"
+
+#, fuzzy
+msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgstr "Koler padśviatleńnia hiperspasyłak, kali kursor naviedzieny na ich."
 
 msgid "Hyperlink prelight color"
 msgstr "Koler padśviatleńnia hiperspasyłak"
@@ -11212,6 +11859,14 @@ msgstr "Koler dla nazvy dziejnasnaha paviedamleńnia"
 
 msgid "Color to draw the name of an action message."
 msgstr "Koler dla nazvy dziejnasnaha paviedamleńnia."
+
+#, fuzzy
+msgid "Action Message Name Color for Whispered Message"
+msgstr "Koler dla nazvy dziejnasnaha paviedamleńnia"
+
+#, fuzzy
+msgid "Whisper Message Name Color"
+msgstr "Dasłany koler dla nazvy paviedamleńnia"
 
 msgid "Typing notification color"
 msgstr "Koler infarmavańnia pra nabor tekstu"
@@ -11278,8 +11933,13 @@ msgstr ""
 msgid "Save Image"
 msgstr "Zapišy vyjavu"
 
+#, c-format
 msgid "_Save Image..."
 msgstr "_Zapišy vyjavu..."
+
+#, fuzzy, c-format
+msgid "_Add Custom Smiley..."
+msgstr "Pakazvaj asablivyja ŭśmieški"
 
 msgid "Select Font"
 msgstr "Abiary šryft"
@@ -11319,8 +11979,18 @@ msgstr "Pamyłka zachavańnia vyjavy: %s\n"
 msgid "Insert Image"
 msgstr "Ustaŭ vyjavu"
 
+#, c-format
+msgid ""
+"This smiley is disabled because a custom smiley exists for this shortcut:\n"
+" %s"
+msgstr ""
+
 msgid "Smile!"
 msgstr "Uśmichnisia!"
+
+#, fuzzy
+msgid "_Manage custom smileys"
+msgstr "Pakazvaj asablivyja ŭśmieški"
 
 msgid "This theme has no available smileys."
 msgstr "Hetaja tema nia maje smajłaŭ."
@@ -11524,7 +12194,7 @@ msgstr ""
 "                       Bieź jaho budzie ŭklučany tolki pieršy kont).\n"
 "  -v, --version        pakažy dziejnuju versiju i vyjdzi\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s has segfaulted and attempted to dump a core file.\n"
 "This is a bug in the software and has happened through\n"
@@ -11538,11 +12208,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 "%s %s viarnuła pamyłku sehmentacyi i pasprabavała zrabić core-fajł.\n"
 "Heta pamyłka ŭ prahramie, jakaja adbyłasia nie\n"
@@ -11987,21 +12652,27 @@ msgstr "Zapisvaj usie _źmieny statusu ŭ systemny log"
 msgid "Sound Selection"
 msgstr "Vybar huku"
 
+#, c-format
 msgid "Quietest"
 msgstr "Najcišejšaja"
 
+#, c-format
 msgid "Quieter"
 msgstr "Cišejšaja"
 
+#, c-format
 msgid "Quiet"
 msgstr "Cichaja"
 
+#, c-format
 msgid "Loud"
 msgstr "Hučnaja"
 
+#, c-format
 msgid "Louder"
 msgstr "Hučniejšaja"
 
+#, c-format
 msgid "Loudest"
 msgstr "Najhučniejšaja"
 
@@ -12022,17 +12693,31 @@ msgstr ""
 "_Zahad dziela huku:\n"
 "(%s dziela nazvy fajłu)"
 
+#, fuzzy
+msgid "M_ute sounds"
+msgstr "Adklučy huki"
+
 msgid "Sounds when conversation has _focus"
 msgstr "Huki, kali razmova s_fakusavanaja"
 
-msgid "Enable sounds:"
+#, fuzzy
+msgid "_Enable sounds:"
 msgstr "Uklučy huki:"
 
-msgid "Volume:"
+#, fuzzy
+msgid "V_olume:"
 msgstr "Hučnaść:"
 
 msgid "Play"
 msgstr "Hraj"
+
+#, fuzzy
+msgid "_Browse..."
+msgstr "_Ahladaj..."
+
+#, fuzzy
+msgid "_Reset"
+msgstr "Viarni"
 
 msgid "_Report idle time:"
 msgstr "_Infarmuj ab terminie biaździejnaści:"
@@ -12203,6 +12888,62 @@ msgstr "_Zapišy i ŭžyj"
 msgid "Status for %s"
 msgstr "Status dla %s"
 
+#, fuzzy
+msgid "Custom Smiley"
+msgstr "Ustaŭ smajł"
+
+msgid "More Data needed"
+msgstr ""
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr ""
+
+#, fuzzy
+msgid "Duplicate Shortcut"
+msgstr "Padvojnaje vypraŭleńnie."
+
+msgid ""
+"A custom smiley for the selected shortcut already exists. Please specify a "
+"different shortcut."
+msgstr ""
+
+#, fuzzy
+msgid "Please select an image for the smiley."
+msgstr "Abiary sabie nastroj sa śpisu."
+
+#, fuzzy
+msgid "Edit Smiley"
+msgstr "Ustaŭ smajł"
+
+#, fuzzy
+msgid "Add Smiley"
+msgstr "Uśmichnisia!"
+
+#, fuzzy
+msgid "Smiley _Image"
+msgstr "Zapišy vyjavu"
+
+#. Smiley shortcut
+#, fuzzy
+msgid "Smiley S_hortcut"
+msgstr "Klavijaturnyja skaroty"
+
+#, fuzzy
+msgid "Smiley"
+msgstr "Uśmichnisia!"
+
+#, fuzzy
+msgid "Custom Smiley Manager"
+msgstr "Kiraŭnik sertyfikataŭ"
+
+#, fuzzy
+msgid "Click to change your buddyicon for this account."
+msgstr "Užyj hetuju siabroŭskuju _ikonu dziela hetaha kontu:"
+
+#, fuzzy
+msgid "Click to change your buddyicon for all accounts."
+msgstr "Užyj hetuju siabroŭskuju _ikonu dziela hetaha kontu:"
+
 msgid "Waiting for network connection"
 msgstr "Čakańnie sietkavaha spałučeńnia"
 
@@ -12335,14 +13076,20 @@ msgstr "_Atrymaj źviestki"
 msgid "_Invite"
 msgstr "_Zaprasi"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "_Madyfikuj"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "_Dadaj"
 
 msgid "_Open Mail"
 msgstr "_Adčyni poštu"
 
-msgid "_Pause"
-msgstr "_Prypyni"
+#, fuzzy
+msgid "_Edit"
+msgstr "Redahuj"
 
 msgid "Pidgin Tooltip"
 msgstr "Padkazka Pidgin"
@@ -12360,8 +13107,11 @@ msgid "none"
 msgstr "niama"
 
 #, fuzzy
-msgid "Display Statistics"
-msgstr "Statystyka servera"
+msgid "Small"
+msgstr "Email"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr "Mahčymaść adkazu:"
@@ -12827,6 +13577,10 @@ msgstr "Ustaŭ kolkaść novych paviedamleńniaŭ va ŭłaścivaść _X"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Akreśl hint kiraŭnika voknaŭ \"_URGENT\""
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "_Voknach hutarak"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "_Aktyvizuj vakno razmovy"
@@ -12912,6 +13666,10 @@ msgstr "Druhi koler kursora"
 msgid "Hyperlink Color"
 msgstr "Koler hiperspasyłki"
 
+#, fuzzy
+msgid "Visited Hyperlink Color"
+msgstr "Koler hiperspasyłki"
+
 msgid "Highlighted Message Name Color"
 msgstr "Koler dla nazvaŭ padśvietlenych paviedamleńniaŭ"
 
@@ -12930,6 +13688,7 @@ msgstr "Dyjaloh infarmavańnia"
 msgid "Select Color"
 msgstr "Abiary koler"
 
+#, c-format
 msgid "Select Interface Font"
 msgstr "Abiary šryft interfejsu"
 
@@ -13002,19 +13761,19 @@ msgstr ""
 "TOC). Naciśni 'Enter' u poli ŭvodu, kab dasłać. Naziraj za debugavym vaknom."
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"Ty karystajeśsia %s versii %s.  Dziejnaja versija %s. Ty možaš atrymać jaje "
-"na <a href=\"%s\">%s</a><hr>"
-
-#, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>Log źmienaŭ:</b><br>%s"
 
 msgid "New Version Available"
 msgstr "Dastupnaja novaja versija"
+
+#, fuzzy
+msgid "Later"
+msgstr "Data"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "Karystalniki na %s: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -13157,6 +13916,7 @@ msgstr "Pakazvaj adbitki času ŭ styli iChat kožnyja N chvilin."
 msgid "Timestamp Format Options"
 msgstr "Opcyi farmatavańnia adbitkaŭ času"
 
+#, c-format
 msgid "_Force 24-hour time format"
 msgstr "_Prymusova ŭžyvaj 24-hadzinny farmat času"
 
@@ -13328,14 +14088,317 @@ msgstr "Dasyłaj i atrymvaj suvoryja strofy XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Hety plugin užyvajecca dziela debugavańnia serveraŭ i klijentaŭ XMPP."
 
-#~ msgid "_Resume"
-#~ msgstr "P_raciahvaj"
+#~ msgid "A group with the name already exists."
+#~ msgstr "Hrupa z takoj nazvaj užo isnuje."
+
+#~ msgid "Primary Information"
+#~ msgstr "Pieršasnyja źviestki"
+
+#~ msgid "Blood Type"
+#~ msgstr "Typ kryvi"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "Aktualizuj infarmacyju pra ciabie"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "Chutkaść:"
+
+#~ msgid ""
+#~ "Setting custom faces is not currently supported. Please choose an image "
+#~ "from %s."
+#~ msgstr ""
+#~ "Akreśleńnie asablivych vyhladaŭ pakul nie padtrymvajecca. Kali łaska, "
+#~ "abiary vyjavu z %s."
+
+#~ msgid "Invalid QQ Face"
+#~ msgstr "Niapravilny vyhlad QQ"
+
+#~ msgid "You rejected %d's request"
+#~ msgstr "Ty admoviŭ na zapyt ad %d"
+
+#~ msgid "Reject request"
+#~ msgstr "Admoŭ na zapyt"
+
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "Pamyłka dadańnia siabra z zapytam aŭtaryzacyi"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "Niemahčyma pračytać śpis siabroŭ"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "Numar QQ"
+
+#~ msgid "Group Description"
+#~ msgstr "Apisańnie hrupy"
+
+#~ msgid "Auth"
+#~ msgstr "Aŭt"
+
+#~ msgid "Approve"
+#~ msgstr "Paćvierdź"
+
+#, fuzzy
+#~ msgid "Successed to join Qun %d, operated by admin %d"
+#~ msgstr ""
+#~ "Tvaja prośba dałučycca da hrupy %d nie była zadavolenaja administrataram %"
+#~ "d"
+
+#, fuzzy
+#~ msgid "[%d] removed from Qun \"%d\""
+#~ msgstr "Ty [%d] vyjšaŭ/vyjšła z hrupy \"%d\""
+
+#, fuzzy
+#~ msgid "[%d] added to Qun \"%d\""
+#~ msgstr "Ty [%d] dadadzieny/dadadzienaja da hrupy \"%d\""
+
+#~ msgid "I am a member"
+#~ msgstr "Ja ŭdzielnik"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "Kiepski zapyt"
+
+#~ msgid "I am the admin"
+#~ msgstr "Ja administratar"
+
+#~ msgid "Unknown status"
+#~ msgstr "Nieviadomy status"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "Vydali hrupu"
+
+#~ msgid "You entered a group ID outside the acceptable range"
+#~ msgstr "Ty akreśliŭ/akreśliła ID hrupy pa-za pryjmalnymi miežami"
+
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "Ty sapraŭdy chočaš pakinuć hety Qun?"
+
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "Chočaš uchvalić zapyt?"
+
+#, fuzzy
+#~ msgid "Change Qun member"
+#~ msgstr "Telefonny numar"
+
+#, fuzzy
+#~ msgid "Change Qun information"
+#~ msgstr "Źviestki ab kanale"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "Systemnaje paviedamleńnie"
+
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>Apošni IP uvachodu</b>: %s<br>\n"
+
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>Apošni čas uvachodu</b>: %s\n"
+
+#~ msgid "Set My Information"
+#~ msgstr "Akreśl źviestki aba mnie"
+
+#, fuzzy
+#~ msgid "Leave the QQ Qun"
+#~ msgstr "Vyjdzi z hetaha QQ Quna"
+
+#~ msgid "Block this buddy"
+#~ msgstr "Blakuj hetaha siabra"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "Pamyłka źmieny parolu"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "Pamyłka spałučeńnia z serveram."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "Pamyłka spałučeńnia ad serveru %s:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "Chočaš uchvalić zapyt?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "Chočaš dadać hetaha siabra?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s dadaje ciabie [%s] u svoj śpis siabroŭ"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "Siabra"
+
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s choča zrabić ciabie [%s] siabram"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s niama ŭ tvaim śpisie siabroŭ"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "Chočaš dadać jaho/jaje?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "Port servera"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "Addalena adłučany"
+
+#~ msgid "developer"
+#~ msgstr "raspracoŭščyk"
+
+#~ msgid "XMPP developer"
+#~ msgstr "Raspracoŭščyk dla XMPP"
+
+#~ msgid "Artists"
+#~ msgstr "Mastaki"
+
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "Ty karystajeśsia %s versii %s.  Dziejnaja versija %s. Ty možaš atrymać "
+#~ "jaje na <a href=\"%s\">%s</a><hr>"
+
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>Log źmienaŭ:</b><br>%s"
+
+#~ msgid "EOF while reading from resolver process"
+#~ msgstr "Sustrety znak EOF u časie čytańnia z pracesu vyjaśnieńnia"
+
+#~ msgid "Error setting socket options"
+#~ msgstr "Pamyłka akreśleńnia opcyj sokieta"
+
+#~ msgid ""
+#~ "Windows Live ID authentication: cannot find authenticate token in server "
+#~ "response"
+#~ msgstr ""
+#~ "Aŭtaryzacyja Windows Live ID: niemahčyma znajści tokena aŭtaryzacyi ŭ "
+#~ "adkazie z servera"
+
+#~ msgid "Windows Live ID authentication Failed"
+#~ msgstr "Niaŭdałaja aŭtaryzacyja Windows Live ID"
+
+#~ msgid "Too evil (sender)"
+#~ msgstr "Nadta zły (adpraŭnik)"
+
+#~ msgid "Too evil (receiver)"
+#~ msgstr "Nadta zły (atrymalnik)"
+
+#~ msgid "Available Message"
+#~ msgstr "Dastupnaje paviedamleńnie"
+
+#~ msgid "Away Message"
+#~ msgstr "Paviedamleńnie ab adychodzie"
+
+#~ msgid "<i>(retrieving)</i>"
+#~ msgstr "<i>(atrymańnie)</i>"
+
+#~ msgid "Your information has been updated"
+#~ msgstr "Infarmacyja pra ciabie aktualizavanaja"
+
+#~ msgid "Input your reason:"
+#~ msgstr "Akreśl pryčynu:"
+
+#~ msgid "You have successfully removed a buddy"
+#~ msgstr "Ty paśpiachova vydaliŭ siabra"
+
+#~ msgid "You have successfully removed yourself from your friend's buddy list"
+#~ msgstr "Ty paśpiachova vydaliŭ siabie sa śpisu siabra"
+
+#~ msgid "You have added %d to buddy list"
+#~ msgstr "Ty dadaŭ %d ŭ śpis siabroŭ"
+
+#~ msgid "Invalid QQid"
+#~ msgstr "Niapravilny QQid"
+
+#~ msgid "Please enter external group ID"
+#~ msgstr "Akreśl ID vonkavaj hrupy"
+
+#~ msgid "Reason: %s"
+#~ msgstr "Pryčyna: %s"
+
+#~ msgid "Your request to join group %d has been approved by admin %d"
+#~ msgstr ""
+#~ "Tvaja prośba dałučycca da hrupy %d była zadavolenaja administrataram %d"
+
+#~ msgid "This group has been added to your buddy list"
+#~ msgstr "Hetaja hrupa dadadzienaja ŭ tvoj śpis siabroŭ"
+
+#~ msgid "I am applying to join"
+#~ msgstr "Ja prašu dałučeńnia"
+
+#~ msgid "You have successfully left the group"
+#~ msgstr "Ty paśpiachova vyjšaŭ/vyjšła z hrupy"
+
+#~ msgid "QQ Group Auth"
+#~ msgstr "Hrupavaja aŭtaryzacyja QQ"
+
+#~ msgid "Your authorization request has been accepted by the QQ server"
+#~ msgstr "Tvoj zapyt aŭtaryzacyi pryniaty serveram QQ"
+
+#~ msgid "Code [0x%02X]: %s"
+#~ msgstr "Kod [0x%02X]: %s"
+
+#~ msgid "Group Operation Error"
+#~ msgstr "Pamyłka hrupavoj aperacyi"
+
+#~ msgid "Enter your reason:"
+#~ msgstr "Akreśl pryčynu:"
+
+#~ msgid "Error requesting login token"
+#~ msgstr "Pamyłka zapytu znaku ŭvachodu"
+
+#~ msgid "Unable to login. Check debug log."
+#~ msgstr "Niemahčyma ŭvajści. Pravier debugavy log."
+
+#~ msgid "Unable to login"
+#~ msgstr "Niemahčyma ŭvajści"
+
+#~ msgid "TCP Address"
+#~ msgstr "TCP adras"
+
+#~ msgid "UDP Address"
+#~ msgstr "UDP adras"
+
+#~ msgid "Show Login Information"
+#~ msgstr "Pakažy źviestki ab uvachodzie"
+
+#~ msgid "Login failed, no reply"
+#~ msgstr "Pamyłka ŭvachodu, niama adkazu"
+
+#~ msgid "User %s rejected your request"
+#~ msgstr "Karystalnik %s admoviŭ tabie"
+
+#~ msgid "User %s approved your request"
+#~ msgstr "Karystalnik %s pryniaŭ tvoj zapyt"
+
+#, fuzzy
+#~ msgid "Display Statistics"
+#~ msgstr "Statystyka servera"
 
 #~ msgid "Screen name:"
 #~ msgstr "Nazva karystalnika:"
-
-#~ msgid "Screen Name"
-#~ msgstr "Nazva karystalnika"
 
 #~ msgid "Someone says your screen name in chat"
 #~ msgstr "Chtości pramaŭlaje tvaju nazvu ŭ hutarcy"

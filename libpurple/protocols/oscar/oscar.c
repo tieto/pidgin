@@ -508,7 +508,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 		b = purple_find_buddy(account, destsn);
 		if ((b != NULL) && (PURPLE_BUDDY_IS_ONLINE(b)))
 		{
-			*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, NULL);
+			*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, &err);
 			if (*msg != NULL)
 			{
 				*charset = AIM_CHARSET_UNICODE;
@@ -516,6 +516,11 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 				*msglen_int = msglen;
 				return;
 			}
+
+			purple_debug_error("oscar", "Conversion from UTF-8 to UTF-16BE failed: %s.\n",
+							   err->message);
+			g_error_free(err);
+			err = NULL;
 		}
 	}
 
@@ -531,13 +536,18 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 * XXX - We need a way to only attempt to convert if we KNOW "from"
 	 * can be converted to "charsetstr"
 	 */
-	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, NULL);
+	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_CUSTOM;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
 		return;
 	}
+
+	purple_debug_info("oscar", "Conversion from UTF-8 to %s failed (%s), falling back to unicode.\n",
+					  charsetstr, err->message);
+	g_error_free(err);
+	err = NULL;
 
 	/*
 	 * Nothing else worked, so send as UTF-16BE.
@@ -552,6 +562,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 
 	purple_debug_error("oscar", "Error converting a Unicode message: %s\n", err->message);
 	g_error_free(err);
+	err = NULL;
 
 	purple_debug_error("oscar", "This should NEVER happen!  Sending UTF-8 text flagged as ASCII.\n");
 	*msg = g_strdup(from);
@@ -1131,15 +1142,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 	conn->watcher_incoming = purple_input_add(conn->fd,
 			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
 	if (conn->cookie == NULL)
-	{
-		if (!aim_snvalid_icq(purple_account_get_username(account)))
-			/*
-			 * We don't send this when authenticating an ICQ account
-			 * because for some reason ICQ is still using the
-			 * assy/insecure authentication procedure.
-			 */
-			flap_connection_send_version(od, conn);
-	}
+		flap_connection_send_version(od, conn);
 	else
 	{
 		flap_connection_send_version_with_cookie(od, conn,
@@ -1673,7 +1676,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	for (x = 0; x < 16; x++)
 		g_string_append_printf(msg, "%02hhx ", (unsigned char)m[x]);
 	g_string_append(msg, "\n");
-	purple_debug_misc("oscar", msg->str);
+	purple_debug_misc("oscar", "%s", msg->str);
 	g_string_free(msg, TRUE);
 
 	purple_input_remove(pos->inpa);
@@ -4796,7 +4799,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Could not add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!purple_conv_present_error(buddy->name, account, buf))
-			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
 
 		/* Remove from local list */
@@ -4915,7 +4918,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	purple_debug_error("oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
-		purple_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
+		purple_notify_error(gc, NULL, _("Unable to Retrieve Buddy List"),
 						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
@@ -4944,7 +4947,7 @@ static int purple_ssi_parserights(OscarData *od, FlapConnection *conn, FlapFrame
 	for (i=0; i<numtypes; i++)
 		g_string_append_printf(msg, " max type 0x%04x=%hd,", i, maxitems[i]);
 	g_string_append(msg, "\n");
-	purple_debug_misc("oscar", msg->str);
+	purple_debug_misc("oscar", "%s", msg->str);
 	g_string_free(msg, TRUE);
 
 	if (numtypes >= 0)
@@ -5266,7 +5269,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				gchar *buf;
 				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			}
 
@@ -5281,7 +5284,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."),
 						(retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
 			} break;
 		}
@@ -6080,10 +6083,11 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	gc = purple_account_get_connection(buddy->account);
 	od = gc->proto_data;
 
-	data = g_new(struct name_data, 1);
-
 	if (!(g = purple_buddy_get_group(buddy)))
 		return;
+
+	data = g_new(struct name_data, 1);
+
 	comment = aim_ssi_getcomment(od->ssi.local, g->name, buddy->name);
 	comment_utf8 = comment ? oscar_utf8_try_convert(gc->account, comment) : NULL;
 

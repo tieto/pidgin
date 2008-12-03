@@ -142,7 +142,7 @@ static void
 _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 {
 	xmlnode *body_node, *html_node, *events_node;
-	PurpleConnection *gc = pb->account->gc;
+	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(pb));
 	gchar *body = NULL;
 	gboolean composing_event = FALSE;
 
@@ -225,7 +225,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 	}
 
 	/* Send the message to the UI */
-	serv_got_im(gc, pb->name, body, 0, time(NULL));
+	serv_got_im(gc, purple_buddy_get_name(pb), body, 0, time(NULL));
 
 	g_free(body);
 }

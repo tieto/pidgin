@@ -30,7 +30,7 @@
 #include "prefs.h"
 #include "request.h"
 
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_network.h"
 #include "qq_process.h"
 #include "qq_trans.h"
@@ -131,6 +131,7 @@ static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
 	}
 
 	trans->update_class = update_class;
+	trans->ship32 = ship32;
 	return trans;
 }
 

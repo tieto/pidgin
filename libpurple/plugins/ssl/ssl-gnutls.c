@@ -29,8 +29,6 @@
 
 #define SSL_GNUTLS_PLUGIN_ID "ssl-gnutls"
 
-#ifdef HAVE_GNUTLS
-
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
 
@@ -943,12 +941,9 @@ static PurpleSslOps ssl_ops =
 	NULL
 };
 
-#endif /* HAVE_GNUTLS */
-
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-#ifdef HAVE_GNUTLS
 	if(!purple_ssl_get_ops()) {
 		purple_ssl_set_ops(&ssl_ops);
 	}
@@ -960,21 +955,16 @@ plugin_load(PurplePlugin *plugin)
 	purple_certificate_register_scheme( &x509_gnutls );
 
 	return TRUE;
-#else
-	return FALSE;
-#endif
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-#ifdef HAVE_GNUTLS
 	if(purple_ssl_get_ops() == &ssl_ops) {
 		purple_ssl_set_ops(NULL);
 	}
 
 	purple_certificate_unregister_scheme( &x509_gnutls );
-#endif
 
 	return TRUE;
 }

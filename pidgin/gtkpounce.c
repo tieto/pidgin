@@ -1374,7 +1374,7 @@ pidgin_pounces_manager_show(void)
 	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
 
 	/* Add button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD, G_CALLBACK(pounces_manager_add_cb), dialog);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_ADD, G_CALLBACK(pounces_manager_add_cb), dialog);
 	gtk_widget_set_sensitive(button, (purple_accounts_get_all() != NULL));
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",

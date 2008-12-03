@@ -123,10 +123,10 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	char *clean;
-        /* This, too, should be escaped somehow (smarter) */
-        clean = purple_utf8_salvage(args[0]);
+	/* This, too, should be escaped somehow (smarter) */
+	clean = purple_utf8_salvage(args[0]);
 	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", clean);
-        g_free(clean);
+	g_free(clean);
 }
 
 void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -215,8 +215,10 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 			/* This is an extended syntax, not in RFC 1459 */
 			int t1 = atoi(args[4]);
 			time_t t2 = time(NULL);
+			char *time = purple_str_seconds_to_string(t2 - t1);
 			msg = g_strdup_printf(_("Ban on %s by %s, set %s ago"),
-			                      args[2], args[3], purple_str_seconds_to_string(t2 - t1));
+			                      args[2], args[3], time);
+			g_free(time);
 		} else {
 			msg = g_strdup_printf(_("Ban on %s"), args[2]);
 		}
@@ -812,8 +814,8 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		purple_conversation_set_data(convo, IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
 		/* Until purple_conversation_present does something that
-                 * one would expect in Pidgin, this call produces buggy
-                 * behavior both for the /join and auto-join cases. */
+		 * one would expect in Pidgin, this call produces buggy
+		 * behavior both for the /join and auto-join cases. */
 		/* purple_conversation_present(convo); */
 		return;
 	}
@@ -1041,7 +1043,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 
 	/* Undernet likes to :-quote the channel name, for no good reason
-         * that I can see.  This catches that. */
+	 * that I can see.  This catches that. */
 	channel = (args[0][0] == ':') ? &args[0][1] : args[0];
 
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, channel, irc->account);
@@ -1054,8 +1056,8 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
 		char *escaped = g_markup_escape_text(args[1], -1);
 		msg = g_strdup_printf(_("You have parted the channel%s%s"),
-                                      (args[1] && *args[1]) ? ": " : "",
-									  (escaped && *escaped) ? escaped : "");
+		                      (args[1] && *args[1]) ? ": " : "",
+		                      (escaped && *escaped) ? escaped : "");
 		g_free(escaped);
 		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), channel, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
@@ -1166,7 +1168,7 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else
 			purple_debug_error("irc", "Got a %s on %s, which does not exist\n",
-			                 notice ? "NOTICE" : "PRIVMSG", to);
+			                   notice ? "NOTICE" : "PRIVMSG", to);
 	}
 	g_free(msg);
 	g_free(nick);

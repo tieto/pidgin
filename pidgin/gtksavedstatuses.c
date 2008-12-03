@@ -331,7 +331,8 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	}
 	g_list_free(sel_paths);
 
-	if (g_list_length(sel_titles) == 1) {
+	g_return_if_fail(sel_titles != NULL);
+	if (!sel_titles->next) {
 		title = g_strdup_printf(_("Are you sure you want to delete %s?"),
 				(const gchar *)sel_titles->data);
 		handle = purple_savedstatus_find(sel_titles->data);
@@ -475,7 +476,8 @@ search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *ite
 static void
 savedstatus_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, StatusWindow *dialog)
 {
-	status_window_modify_cb(NULL, dialog);
+	status_window_use_cb(NULL, dialog);
+	status_window_close_cb(NULL, dialog);
 }
 
 static void
@@ -655,7 +657,7 @@ pidgin_status_window_show(void)
 					 G_CALLBACK(status_window_use_cb), dialog);
 
 	/* Add button */
-	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD,
+	pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_ADD,
 			G_CALLBACK(status_window_add_cb), dialog);
 
 	/* Modify button */

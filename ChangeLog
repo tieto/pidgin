@@ -1,8 +1,59 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.2 (??/??/????):
+version 2.5.3 (??/??/????):
 	libpurple:
-	* Restored the "Has You" feature to the MSN protocol tooltips.
+	* Fix an error with MSN offline messages by shipping the *new*
+	  "Microsoft Secure Server Authority" and the
+	  "Microsoft Internet Authority" certificates.  People that use
+	  --with-system-ssl-certs and GnuTLS need to include these in the
+	  system certs directory.
+	* Corrected maximum message lengths for Yahoo!
+	* Enable auto-reply on Zephyr, to emulate 'zaway' (Toby Schaffer)
+	* The Buddy State Notification plugin no longer prints duplicate
+	  notifications when the same buddy is in multiple groups (Florian Quèze)
+	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
+	  ID's, etc. into links (Florian Quèze)
+	* Fix a crash in SIMPLE when a malformed message is received.
+	* purple-remote now has a "getstatusmessage" command to retrieve the text
+	  of the current status message.
+
+	Gadu-Gadu:
+	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
+	* Gadu-Gadu now validates that UID's are valid (Adam Strzelecki)
+	* Gadu-Gadu now does proper charset translations where needed (Adam
+	  Strzelecki)
+
+	XMPP:
+	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
+	  used in the 'get' requests (Paul Aurich)
+	* Resources can be set to the local machine's hostname by using
+	  __HOSTNAME__ as the resource string (Jonathan Sailor)
+	* Resources can now be left blank, causing the server to generate a
+	  resource for us where supported (Jonathan Sailor)
+	* Resources now default to no value
+	* Quit trying to get user info for MUC's (Paul Aurich)
+	* Send "client-accepts-full-bind-result" attribute during SASL login.
+	  This will fix Google Talk login failures if the user configures the
+	  wrong domain for his/her account.
+
+	Pidgin:
+	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
+	  instead of our own (hidden) tooltip_delay pref.  If you had
+	  previously changed that pref, add a line like this to
+	  ~/.purple/gtkrc-2.0 (where 500 is the timeout (in ms) you want):
+	      gtk-tooltip-timeout = 500
+	  To completely disable tooltips (e.g. if you had an old tooltip_delay
+	  of zero), add this to ~/.purple/gtkrc-2.0:
+	      gtk-enable-tooltips = 0
+	* Moved the release notification dialog to a mini-dialog in the
+	  buddylist.  (Thanks to Casey Ho)
+
+	Finch:
+	* Allow binding meta+arrow keys for actions.
+
+
+version 2.5.2 (10/19/2008):
+	libpurple:
 	* Fixed a crash on removing a custom buddy icon on a buddy.
 	* Fixed a crash caused by certain self-signed SSL certificates.
 	* Enable a number of strong ciphers which were previously disabled
@@ -16,13 +67,21 @@ version 2.5.2 (??/??/????):
 	* Added ability to change the color of visited links (using the theme
 	  control plugin, or setting the color in ~/.gtkrc-2.0)
 	* Fix a crash occuring when a custom smiley is deleted and re-added and
-	  used in an open conversation after being re-added
+	  used in an open conversation after being re-added.
 
 	Finch:
 	* A new 'Nested Grouping' option in the 'Grouping' plugin. Group
-	  hierarchies are defined by the '/' character in the group names
+	  hierarchies are defined by the '/' character in the group names.
 	* A bug was fixed where some key-bindings wouldn't work with some TERMs
 	  (e.g. xterm-color, screen-linux etc.)
+
+	MSN:
+	* Operations (such as moving to a new group) on contacts that were added
+	  in the same session should now complete correctly, and not cause
+	  synchronization errors at next login.
+	* Minor fixes to login process during a server transfer.
+	* Restored the "Has You" feature to the MSN protocol tooltips.
+	* ADL 205/214/etc errors should no longer prevent login.
 
 	XMPP:
 	* Sending and receiving custom smileys using the specification in

@@ -984,6 +984,8 @@ purple_markup_get_css_property(const gchar *style,
 	gchar *tmp;
 	gchar *ret;
 
+	g_return_val_if_fail(opt != NULL, NULL);
+
 	if (!css_str)
 		return NULL;
 
@@ -2390,6 +2392,7 @@ purple_markup_slice(const char *str, guint x, guint y)
 	gunichar c;
 	char *tag;
 
+	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(x <= y, NULL);
 
 	if (x == y)
@@ -3440,6 +3443,9 @@ void purple_got_protocol_handler_uri(const char *uri)
 	char *cmd;
 	GHashTable *params = NULL;
 	int len;
+
+	g_return_if_fail(uri != NULL);
+
 	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
 		purple_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
 		return;
@@ -3979,6 +3985,13 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 					     callback, user_data);
 }
 
+static gboolean
+url_fetch_connect_failed(gpointer data)
+{
+	url_fetch_connect_cb(data, -1, "");
+	return FALSE;
+}
+
 PurpleUtilFetchUrlData *
 purple_util_fetch_url_request_len(const char *url, gboolean full,
 		const char *user_agent, gboolean http11,
@@ -4016,9 +4029,8 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 
 	if (gfud->connect_data == NULL)
 	{
-		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
-				gfud->website.address);
-		return NULL;
+		/* Trigger the connect_cb asynchronously. */
+		purple_timeout_add(10, url_fetch_connect_failed, gfud);
 	}
 
 	return gfud;
@@ -4139,6 +4151,8 @@ purple_email_is_valid(const char *address)
 	const char *c, *domain;
 	static char *rfc822_specials = "()<>@,;:\\\"[]";
 
+	g_return_val_if_fail(address != NULL, FALSE);
+
 	/* first we validate the name portion (name@domain) (rfc822)*/
 	for (c = address;  *c;  c++) {
 		if (*c == '\"' && (c == address || *(c - 1) == '.' || *(c - 1) == '\"')) {
@@ -4187,6 +4201,9 @@ purple_ip_address_is_valid(const char *ip)
 {
 	int c, o1, o2, o3, o4;
 	char end;
+
+	g_return_val_if_fail(ip != NULL, FALSE);
+
 	c = sscanf(ip, "%d.%d.%d.%d%c", &o1, &o2, &o3, &o4, &end);
 	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
 		return FALSE;

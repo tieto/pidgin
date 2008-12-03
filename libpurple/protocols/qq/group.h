@@ -40,10 +40,10 @@ typedef enum {
 	QQ_ROOM_ROLE_ADMIN,
 } qq_room_role;
 
-typedef struct _qq_group {
+typedef struct _qq_room_data qq_room_data;
+struct _qq_room_data {
 	/* all these will be saved when we exit Purple */
 	qq_room_role my_role;	/* my role for this room */
-	gchar *my_role_desc;			/* my role description */
 	guint32 id;
 	guint32 ext_id;
 	guint8 type8;			/* permanent or temporory */
@@ -54,15 +54,13 @@ typedef struct _qq_group {
 	gchar *desc_utf8;
 	/* all these will be loaded from the network */
 	gchar *notice_utf8;	/* group notice by admin */
-	GList *members;
 
-	gboolean is_got_info;
-} qq_group;
+	gboolean is_got_buddies;
+	GList *members;
+};
 
 GList *qq_chat_info(PurpleConnection *gc);
 GHashTable *qq_chat_info_defaults(PurpleConnection *gc, const gchar *chat_name);
-
-void qq_group_init(PurpleConnection *gc);
 
 PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc);
 

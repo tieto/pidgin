@@ -494,7 +494,20 @@ char *irc_mirc2txt (const char *string)
 		}
 	}
 	result[j] = '\0';
-        return result;
+	return result;
+}
+
+const char *irc_nick_skip_mode(struct irc_conn *irc, const char *nick)
+{
+	static const char *default_modes = "@+%&";
+	const char *mode_chars;
+
+	mode_chars = irc->mode_chars ? irc->mode_chars : default_modes;
+
+	while (strchr(mode_chars, *nick) != NULL)
+		nick++;
+
+	return nick;
 }
 
 gboolean irc_ischannel(const char *string)
@@ -719,9 +732,9 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 static void irc_parse_error_cb(struct irc_conn *irc, char *input)
 {
 	char *clean;
-        /* This really should be escaped somehow that you can tell what
-         * the junk was -- but as it is, it can crash glib. */
-        clean = purple_utf8_salvage(input);
+	/* This really should be escaped somehow that you can tell what
+	 * the junk was -- but as it is, it can crash glib. */
+	clean = purple_utf8_salvage(input);
 	purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unrecognized string: %s\n", clean);
-        g_free(clean);
+	g_free(clean);
 }

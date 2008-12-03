@@ -111,7 +111,7 @@ struct _PidginStatusBox
 
 	GdkPixbuf *error_pixbuf;
 	int connecting_index;
-	GdkPixbuf *connecting_pixbufs[31];
+	GdkPixbuf *connecting_pixbufs[9];
 	int typing_index;
 	GdkPixbuf *typing_pixbufs[6];
 

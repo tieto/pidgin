@@ -54,6 +54,7 @@ gint qq_put8(guint8 *buf, guint8 b);
 gint qq_put16(guint8 *buf, guint16 w);
 gint qq_put32(guint8 *buf, guint32 dw);
 gint qq_putIP(guint8* buf, struct in_addr *ip);
+gint qq_putime(guint8 *buf, time_t *t);
 gint qq_putdata(guint8 *buf, const guint8 *data, const int datalen);
 
 /*

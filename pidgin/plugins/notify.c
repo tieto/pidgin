@@ -557,9 +557,7 @@ handle_count_xprop(PidginWindow *purplewin)
 static void
 handle_urgent(PidginWindow *win, gboolean set)
 {
-#ifndef _WIN32
 	pidgin_set_urgent(GTK_WINDOW(win->window), set);
-#endif
 }
 
 static void
@@ -767,12 +765,14 @@ get_config_frame(PurplePlugin *plugin)
 
 	/* Urgent method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("Set window manager \"_URGENT\" hint"));
+#else
+	toggle = gtk_check_button_new_with_mnemonic(_("_Flash window"));
+#endif
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(method_toggle_cb), "method_urgent");
-#endif
 
 	/* Raise window method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("R_aise conversation window"));

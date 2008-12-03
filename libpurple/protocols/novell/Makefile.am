@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-		Makefile.mingw
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -33,18 +33,14 @@ libnovell_la_LDFLAGS = -module -avoid-version
 if STATIC_NOVELL
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libnovell.a
-pkg_LTLIBRARIES =
-
-libnovell_a_SOURCES = $(NOVELLSOURCES)
-libnovell_a_CFLAGS = $(AM_CFLAGS)
+noinst_LTLIBRARIES   = libnovell.la
+libnovell_la_SOURCES = $(NOVELLSOURCES)
+libnovell_la_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
-pkg_LTLIBRARIES = libnovell.la
-noinst_LIBRARIES =
-
+pkg_LTLIBRARIES      = libnovell.la
 libnovell_la_SOURCES = $(NOVELLSOURCES)
 libnovell_la_LIBADD  = $(GLIB_LIBS)
 

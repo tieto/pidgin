@@ -30,7 +30,7 @@
 
 #include "qq.h"
 
-#define QQ_CONNECT_STEPS    3	/* steps in connection */
+#define QQ_CONNECT_STEPS    4	/* steps in connection */
 
 gboolean qq_connect_later(gpointer data);
 void qq_disconnect(PurpleConnection *gc);

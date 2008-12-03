@@ -899,7 +899,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	g_return_if_fail(ggconv != NULL);
 
-	if (flags & PURPLE_MESSAGE_SYSTEM) {
+	if ((flags & PURPLE_MESSAGE_SYSTEM) && !(flags & PURPLE_MESSAGE_NOTIFY)) {
 		flags &= ~(PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV);
 	}
 

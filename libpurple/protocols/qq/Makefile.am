@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-		Makefile.mingw
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -18,12 +18,6 @@ QQSOURCES = \
 	file_trans.h \
 	group.c \
 	group.h \
-	group_conv.c \
-	group_conv.h \
-	group_find.c \
-	group_find.h \
-	group_free.c \
-	group_free.h \
 	group_internal.c \
 	group_internal.h \
 	group_im.c \
@@ -34,10 +28,8 @@ QQSOURCES = \
 	group_join.h \
 	group_opt.c \
 	group_opt.h \
-	group_search.c \
-	group_search.h \
-	header_info.c \
-	header_info.h \
+	qq_define.c \
+	qq_define.h \
 	im.c \
 	im.h \
 	qq_process.c \
@@ -54,8 +46,6 @@ QQSOURCES = \
 	send_file.h \
 	qq_trans.c \
 	qq_trans.h \
-	sys_msg.c \
-	sys_msg.h \
 	utils.c \
 	utils.h
 
@@ -66,9 +56,9 @@ libqq_la_LDFLAGS = -module -avoid-version
 if STATIC_QQ
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libqq.a
-libqq_a_SOURCES  = $(QQSOURCES)
-libqq_a_CFLAGS   = $(AM_CFLAGS)
+noinst_LTLIBRARIES = libqq.la
+libqq_la_SOURCES   = $(QQSOURCES)
+libqq_la_CFLAGS    = $(AM_CFLAGS)
 
 else
 
