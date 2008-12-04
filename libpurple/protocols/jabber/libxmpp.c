@@ -150,6 +150,7 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	purple_signal_unregister(plugin, "jabber-sending-text");
 
 	/* reverse order of init_plugin */
+	jabber_bosh_uninit();
 	jabber_data_uninit();
 	/* PEP things should be uninit via jabber_pep_uninit, not here */
 	jabber_pep_uninit();
@@ -293,6 +294,7 @@ init_plugin(PurplePlugin *plugin)
 	/* PEP things should be init via jabber_pep_init, not here */
 	jabber_pep_init();
 	jabber_data_init();
+	jabber_bosh_init();
 
 	#warning implement adding and retrieving own features via IPC API
 

@@ -391,16 +391,10 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	if (len == -1)
 		len = strlen(data);
 
-	if (js->use_bosh) {
-		xmlnode *xnode = xmlnode_from_str(data, len);
-		if (xnode) jabber_bosh_connection_send(js->bosh, xnode);
-		else {
-			purple_connection_error_reason(js->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-							_("Someone tried to send non-XML in a Jabber world."));
-		}
-	} else {
+	if (js->use_bosh)
+		jabber_bosh_connection_send_raw(js->bosh, data, len);
+	else
 		do_jabber_send_raw(js, data, len);
-	}
 }
 
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
@@ -421,9 +415,13 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	if(NULL == packet)
 		return;
 
-	txt = xmlnode_to_str(packet, &len);
-	jabber_send_raw(js, txt, len);
-	g_free(txt);
+	if (js->use_bosh)
+		jabber_bosh_connection_send(js->bosh, packet);
+	else {
+		txt = xmlnode_to_str(packet, &len);
+		jabber_send_raw(js, txt, len);
+		g_free(txt);
+	}
 }
 
 static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
@@ -592,6 +590,7 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
 			js->bosh = jabber_bosh_connection_init(js, token[1]);
+			js->use_bosh = TRUE;
 			g_strfreev(token);
 			break;
 		}
@@ -1342,8 +1341,12 @@ void jabber_close(PurpleConnection *gc)
 	 * if we were forcibly disconnected because it will crash
 	 * on some SSL backends.
 	 */
-	if (!gc->disconnect_timeout)
-		jabber_send_raw(js, "</stream:stream>", -1);
+	if (!gc->disconnect_timeout) {
+		if (js->use_bosh)
+			jabber_bosh_connection_close(js->bosh);
+		else
+			jabber_send_raw(js, "</stream:stream>", -1);
+	}
 
 	if (js->srv_query_data)
 		purple_srv_cancel(js->srv_query_data);
@@ -1358,6 +1361,9 @@ void jabber_close(PurpleConnection *gc)
 			purple_input_remove(js->gc->inpa);
 		close(js->fd);
 	}
+
+	if (js->bosh)
+		jabber_bosh_connection_destroy(js->bosh);
 
 	jabber_buddy_remove_all_pending_buddy_info_requests(js);
 

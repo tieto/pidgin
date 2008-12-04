@@ -26,7 +26,14 @@ typedef struct _PurpleBOSHConnection PurpleBOSHConnection;
 
 #include "jabber.h"
 
+void jabber_bosh_init(void);
+void jabber_bosh_uninit(void);
+
 PurpleBOSHConnection* jabber_bosh_connection_init(JabberStream *js, const char *url);
+void jabber_bosh_connection_destroy(PurpleBOSHConnection *conn);
+
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn);
+void jabber_bosh_connection_close(PurpleBOSHConnection *conn);
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node);
+void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn, const char *data, int len);
 #endif /* _PURPLE_JABBER_BOSH_H_ */
