@@ -277,7 +277,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * @return If this protocol requires the PURPLE_TYPING message to
-	 *         be sent repeatedly to signfiy that the user is still
+	 *         be sent repeatedly to signify that the user is still
 	 *         typing, then the PRPL should return the number of
 	 *         seconds to wait before sending a subsequent notification.
 	 *         Otherwise the PRPL should return 0.
