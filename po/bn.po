@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GAIM VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-03-10 01:34+0600\n"
 "Last-Translator: Jamil Ahmed <jamil@bengalinux.org>\n"
 "Language-Team: Bengali <core@bengalinux.org>\n"
@@ -247,9 +247,6 @@ msgstr "গ্রুপকে যোগ করতে ত্রুটি"
 msgid "You must give a name for the group to add."
 msgstr "যে গ্রুপকে যোগ করা হবে তার নামটি আপনাকে অবশ্যই লিখতে হবে।"
 
-msgid "A group with the name already exists."
-msgstr "ইতোমধ্যে এই নামে একটি গ্রুপ বিদ্যমান।"
-
 msgid "Add Group"
 msgstr "গ্রুপ যোগ"
 
@@ -282,15 +279,15 @@ msgstr "খবর নাও"
 msgid "Add Buddy Pounce"
 msgstr "বন্ধু পাউন্স যোগ"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "ফাইল পাঠাও"
 
 msgid "Blocked"
 msgstr "বাধা দেয়া হয়েছে"
 
-msgid "View Log"
-msgstr "লগ প্রদর্শন"
+#, fuzzy
+msgid "Show when offline"
+msgstr "ব্যবহারকারী অফলাইন"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -333,6 +330,9 @@ msgstr "বন্ধ"
 
 msgid "Toggle Tag"
 msgstr ""
+
+msgid "View Log"
+msgstr "লগ প্রদর্শন"
 
 #. General
 msgid "Nickname"
@@ -1390,7 +1390,7 @@ msgstr "টাইপ"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5053,7 +5053,7 @@ msgstr ""
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5266,8 +5266,7 @@ msgstr ""
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Bonjour প্রোটোকল প্লাগইন"
@@ -5306,6 +5305,7 @@ msgstr "%s, %s-তে (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s আপনার দৃষ্টি আকর্ষন করছেন!"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "অজানা ত্রুটি"
@@ -6470,6 +6470,7 @@ msgid ""
 msgstr ""
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "অবৈধ নাম"
@@ -6835,10 +6836,12 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "যোগ করা যায়নি"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "বন্ধু তালিকা খুঁজে আনতে ব্যর্থ "
 
 msgid ""
@@ -7046,42 +7049,6 @@ msgstr ""
 "এক্ষেত্রে দুটি কম্পিউটারের মধ্যে সরাসরি সংযোগ প্রয়োজন এবং আইএম ছবির জন্যও প্রয়োজন। "
 "যেহেতু এটি আপনার আইপি ঠিকানা প্রকাশ করবে, তাই এটি গোপনীয়তার ঝুকি মনে করা হচ্ছে।"
 
-msgid "Primary Information"
-msgstr "প্রাথমিক তথ্য"
-
-msgid "Personal Introduction"
-msgstr "ব্যক্তিগত ভুমিকা"
-
-msgid "QQ Number"
-msgstr ""
-
-msgid "Country/Region"
-msgstr "দেশ/এলাকা"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-msgid "College"
-msgstr "কলেজ"
-
-msgid "Zipcode"
-msgstr ""
-
-msgid "Cellphone Number"
-msgstr "সেলফোন নম্বর"
-
-msgid "Phone Number"
-msgstr "টেলিফোন নম্বর"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7160,106 +7127,186 @@ msgid "Other"
 msgstr "অন্যান্য"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "নিজের তথ্য সম্পাদন"
+msgid "Visible"
+msgstr "অদৃশ্য"
 
-#, fuzzy
-msgid "Update information"
-msgstr "নিজের তথ্য আপডেট"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "বন্ধু যোগ"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "গতি:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "অনুগ্রহ করে বন্ধুর তথ্য লিখুন।"
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
-msgstr ""
-
-msgid "Invalid QQ Face"
-msgstr "অবৈধ QQ Face"
-
-#, c-format
-msgid "You rejected %d's request"
-msgstr "আপনি %d এর অনুরোধ বাতিল করেছেন"
-
-msgid "Reject request"
-msgstr "অনুরোধ বাতিল করো"
-
-#. title
-msgid "Sorry, you are not my style..."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "আপনার তালিকায় বন্ধু যোগ করতে চান?"
+msgid "Private"
+msgstr "একান্ত"
+
+msgid "QQ Number"
+msgstr ""
+
+msgid "Country/Region"
+msgstr "দেশ/এলাকা"
+
+msgid "Province/State"
+msgstr ""
+
+msgid "Zipcode"
+msgstr ""
+
+msgid "Phone Number"
+msgstr "টেলিফোন নম্বর"
 
 #, fuzzy
-msgid "Failed:"
+msgid "Authorize adding"
+msgstr "বন্ধুকে অগ্রাহ্য করা হবে?"
+
+msgid "Cellphone Number"
+msgstr "সেলফোন নম্বর"
+
+msgid "Personal Introduction"
+msgstr "ব্যক্তিগত ভুমিকা"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "শহর"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "ব্যক্তিগত মোবাইল"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "যোগাযোগের ঠিকানা"
+
+msgid "College"
+msgstr "কলেজ"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "ঘোড়া"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "বাধা দেয়া হয়েছে"
+
+msgid "True"
+msgstr ""
+
+#, fuzzy
+msgid "False"
 msgstr "ব্যর্থ"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "বন্ধু অপসারণ করো"
+msgid "Modify Contact"
+msgstr "অ্যাকাউন্ট পরিবর্তন"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "%s আপনাকে তার বন্ধুতালিকা থেকে বাদ দিয়েছেন।"
+msgid "Modify Address"
+msgstr "বাসার ঠিকানা"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "নিজের তথ্য পরিবর্তন"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "নিজের তথ্য সম্পাদন"
+
+#, fuzzy
+msgid "Update"
+msgstr "সর্বশেষ পরিবর্ধন"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "অনুগ্রহ করে বন্ধুর তথ্য লিখুন।"
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "বন্ধু যোগ"
+
+msgid "Input answer here"
+msgstr ""
+
+msgid "Send"
+msgstr "প্রেরন"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "অবৈধ নাম"
+
+#, fuzzy
+msgid "Authorization denied message:"
+msgstr "বার্তাটি পাঠানো সম্ভব হয়নি:"
+
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "ব্যবহারকারী %d এর পরিচয় প্রমাণ প্রক্রিয়া দরকার"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "আপনার তালিকায় বন্ধু যোগ করতে চান?"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "আপনি কি আমার বন্ধু হবেন?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "প্রেরন"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "বন্ধু তালিকা লোড করা যায়নি।"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "বন্ধু যোগ"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "QQid ত্রুটি"
+msgid "Add buddy"
+msgstr "বন্ধু যোগ"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "অবৈধ QQ Face"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "ফাইল পাঠানো ব্যর্থ হয়েছে"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "বন্ধুকে আড্ডায় অংশগ্রহন করাতে ব্যর্থ"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "%s আপনাকে তার বন্ধুতালিকা থেকে বাদ দিয়েছেন।"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "কোনো কারন দর্শানো হয়নি।"
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr "%s আপনাকে যোগ করেছেন"
+
+msgid "Would you like to add him?"
+msgstr "আপনি কি উনাকে যোগ করতে চান?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "বাতিল"
+
+#, c-format
+msgid "Message: %s"
+msgstr "বার্তা: %s"
 
 msgid "ID: "
 msgstr ""
 
 msgid "Group ID"
 msgstr "গ্রুপ আইডি"
-
-msgid "Creator"
-msgstr "তৈরিকারী"
-
-msgid "Group Description"
-msgstr "গ্রুপ বিবরণ"
-
-msgid "Auth"
-msgstr "Auth"
 
 msgid "QQ Qun"
 msgstr ""
@@ -7271,125 +7318,120 @@ msgstr "অনুগ্রহ করে %s এর জন্য নতুন ন�
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "%d request to join Qun %d"
-msgstr "ব্যবহারকারী %d, গ্রুপ %d তে যোগদান করতে চেয়েছেন"
-
-#, c-format
-msgid "Message: %s"
-msgstr "বার্তা: %s"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun অপারেশন"
-
-msgid "Approve"
+msgid "Not member"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "বন্ধুকে আড্ডায় অংশগ্রহন করাতে ব্যর্থ"
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
+msgid "Member"
 msgstr ""
 
 #, fuzzy
-msgid "Notice:"
+msgid "Requesting"
+msgstr "অনুরোধ ডায়ালগ"
+
+#, fuzzy
+msgid "Admin"
+msgstr "অডিয়াম"
+
+#, fuzzy
+msgid "Notice"
 msgstr "নোট"
 
-#, fuzzy, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr "%s আপনাকে যোগ করেছেন"
+#, fuzzy
+msgid "Detail"
+msgstr "GNOME ডিফল্ট"
 
-msgid "I am not a member"
-msgstr ""
+msgid "Creator"
+msgstr "তৈরিকারী"
 
-msgid "I am a member"
-msgstr ""
+#, fuzzy
+msgid "About me"
+msgstr "গেইম সম্বন্ধে"
 
-msgid "I am requesting"
-msgstr ""
-
-msgid "I am the admin"
-msgstr ""
-
-msgid "Unknown status"
-msgstr "অজানা অবস্থা"
+#, fuzzy
+msgid "Category"
+msgstr "আড্ডা ত্রুটি"
 
 msgid "The Qun does not allow others to join"
 msgstr ""
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "গ্রুপ অপসারণ করো"
-
-#, fuzzy
-msgid "Join to Qun"
+msgid "Join QQ Qun"
 msgstr "আড্ডায় যোগ দিন"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+msgid "QQ Qun Operation"
+msgstr "QQ Qun অপারেশন"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "ব্যর্থ"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
 #, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "আপনি কি %s-কে নিশ্চিতভাবে সরাতে চান?"
+msgid "Quit Qun"
+msgstr "আড্ডায় যোগ দিন"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-#, fuzzy
-msgid "Do you want to approve the request?"
-msgstr "আপনি কি %s-কে নিশ্চিতভাবে সরাতে চান?"
+msgid "Sorry, you are not our style ..."
+msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
+msgid "Successfully changed Qun member"
 msgstr "টেলিফোন নম্বর"
 
 #, fuzzy
-msgid "Change Qun information"
+msgid "Successfully changed Qun information"
 msgstr "চ্যানেল সংক্রান্ত তথ্য"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "আপনি কি এখন Qun এর বিস্তারিত সেটআপ করতে চান?"
 
 msgid "Setup"
 msgstr "সেটআপ"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s (%s)"
+msgid "%d requested to join Qun %d for %s"
+msgstr "ব্যবহারকারী %d, গ্রুপ %d তে যোগদান করতে চেয়েছেন"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "সার্ভারের ঠিকানা"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "ব্যবহারকারী %d, গ্রুপ %d তে যোগদান করতে চেয়েছেন"
 
-msgid "System Message"
-msgstr "সিস্টেম বার্তা"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "বন্ধুকে আড্ডায় অংশগ্রহন করাতে ব্যর্থ"
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "নাম পেতে ব্যর্থ: %s"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "বন্ধু অপসারণ করো"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, c-format
 msgid "Unknown-%d"
@@ -7397,9 +7439,6 @@ msgstr "অজানা-%d"
 
 msgid "Level"
 msgstr "স্তর"
-
-msgid "Member"
-msgstr ""
 
 msgid " VIP"
 msgstr ""
@@ -7432,24 +7471,36 @@ msgstr ""
 msgid "Invalid name"
 msgstr "অবৈধ নাম"
 
-#, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+#, fuzzy
+msgid "Select icon..."
+msgstr "ফল্ডার নির্বাচন..."
+
+#, fuzzy, c-format
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>লগইন সময়</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>বর্তমানে অনলাইন</b>: %d<br>\n"
 
-#, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>সর্বশেষ পুনরায় পড়া</b>: %s<br>\n"
 
 #, fuzzy, c-format
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>সার্ভার আইপি</b>: %s: %d<br>\n"
 
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>লগইন সময়</b>: %s<br>\n"
+
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>সংযোগ মোড</b>: %s<br>\n"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>সংযোগ মোড</b>: %s<br>\n"
 
 #, fuzzy, c-format
@@ -7472,24 +7523,44 @@ msgstr "<b>সর্বশেষ পুনরায় পড়া</b>: %s<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>আমার পাবলিক আইপি</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>লগইন সময়</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>সর্বশেষ লগইন আইপি</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>সর্বশেষ লগইন সময়</b>: %s\n"
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>সার্ভার আইপি</b>: %s: %d<br>\n"
 
 msgid "Login Information"
 msgstr "লগইন তথ্যা"
 
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
 #, fuzzy
-msgid "Set My Information"
-msgstr "সার্ভার সংক্রান্ত তথ্য"
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>সর্বশেষ পুনরায় পড়া</b>: %s<br>\n"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>বর্তমানে অনলাইন</b>: %d<br>\n"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "গেইম সম্বন্ধে"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "আইকন সংরক্ষণ"
 
 msgid "Change Password"
 msgstr "পাসওয়ার্ড পরিবর্তন"
@@ -7498,12 +7569,12 @@ msgstr "পাসওয়ার্ড পরিবর্তন"
 msgid "Account Information"
 msgstr "লগইন তথ্যা"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
 #, fuzzy
-msgid "Block this buddy"
-msgstr "এই ট্যাবটি বন্ধ করো"
+msgid "About OpenQ"
+msgstr "গেইম সম্বন্ধে"
 
 #. *< type
 #. *< ui_requirement
@@ -7515,13 +7586,28 @@ msgstr "এই ট্যাবটি বন্ধ করো"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "QQ প্রোটোকল\tপ্লাগইন"
 
 #, fuzzy
 msgid "Auto"
 msgstr "Auth"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "ব্যবহারকারী নির্বাচন"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "সংযোগ করা হচ্ছে"
@@ -7535,42 +7621,81 @@ msgid "Show server news"
 msgstr "সার্ভারের ঠিকানা"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "পড়তে ত্রুটি"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "পড়তে ত্রুটি"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "সার্ভার সংক্রান্ত তথ্য পাওয়া যায়নি"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "সার্ভার সংক্রান্ত তথ্য পাওয়া যায়নি"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "অবৈধ টাইটেল"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "পাসওয়ার্ড পরিবর্তনে ত্রুটি"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "রেজিস্ট্রেশন আবশ্যক"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "পড়তে ত্রুটি"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "সার্ভারে যোগাযোগ করতে ব্যর্থ হয়েছে"
+msgid "Captcha Image"
+msgstr "ছবি সংরক্ষণ"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "পাসওয়ার্ড লিখুন"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "গ্রুপের নামটি লিখুন"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7596,8 +7721,11 @@ msgstr "লেখায় ত্রুটি"
 msgid "Connection lost"
 msgstr "সংযোগ হারিয়ে গেছে"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "ব্যবহারকারী সংক্রান্ত তথ্য সেট করো..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "অনুরোধ প্রত্যাখ্যাত"
 
@@ -7608,13 +7736,35 @@ msgstr "হোস্ট বের করা সম্ভব হয়নি"
 msgid "Invalid server or port"
 msgstr "অবৈধ পোর্ট"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr "সংযোগে রিসেট"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "সার্ভার সংযোগ করো"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "QQid ত্রুটি"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "নাম পেতে ব্যর্থ: %s"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "সার্ভারের ঠিকানা"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "থেকে"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "সার্ভার সংক্রান্ত তথ্য"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7630,14 +7780,18 @@ msgid "QQ Qun Command"
 msgstr "কমান্ড"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "অজ্ঞাত কারন"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "অজ্ঞাত কারন"
 
 #, c-format
@@ -7650,63 +7804,6 @@ msgstr "ফাইল প্রেরণ"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d %s-এর স্থানান্তর বাতিল করেছেন"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "আপনি কি %s-কে নিশ্চিতভাবে সরাতে চান?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "আপনি কি তাকে যোগ করতে চান?"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s আপনাকে যোগ করেছেন"
-
-msgid "Would you like to add him?"
-msgstr "আপনি কি উনাকে যোগ করতে চান?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "%s আপনাকে তার বন্ধুতালিকায় যোগ করেছেন।"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "বন্ধু যোগ"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s আপনাকে [%s] বন্ধু হিসাবে যোগ করতে চান"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "%s আপনার বন্ধু তালিকায় অনুপস্থিত"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "আপনি কি উনাকে যোগ করতে চান?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "থেকে"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "সার্ভারের পোর্ট"
 
 msgid "Connection closed (writing)"
 msgstr "সংযোগে বন্ধ (লেখা)"
@@ -9319,10 +9416,6 @@ msgstr ""
 msgid "Yahoo! system message for %s:"
 msgstr "%s-এর জন্য ইয়াহু! সিস্টেম বার্তা:"
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "বার্তাটি পাঠানো সম্ভব হয়নি:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10183,9 +10276,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10247,10 +10340,6 @@ msgstr "লগ প্রদর্শন (_L)"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "ব্যবহারকারী অফলাইন"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "ব্যবহারকারী অফলাইন"
 
 msgid "_Alias..."
@@ -10637,7 +10726,7 @@ msgstr "ওরফে:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10673,10 +10762,6 @@ msgstr "/বন্ধুরা/বন্ধুদের ক্রমানুস
 #, fuzzy
 msgid "SSL Servers"
 msgstr "সার্ভার"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "%s-এর সংযোগ বিচ্ছিন্ন"
 
 #, fuzzy
 msgid "Unknown command."
@@ -11026,8 +11111,12 @@ msgstr "ত্রুটি"
 msgid "Fatal Error"
 msgstr "মারাত্মক ত্রুটি"
 
-msgid "developer"
-msgstr "ডেভেলপার"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "ঠিকানা"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11037,10 +11126,7 @@ msgid "support"
 msgstr "সাহায্য"
 
 #, fuzzy
-msgid "support/QA"
-msgstr "সাহায্য"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr "ডেভেলপার ও ওয়েবমাস্টার"
 
 msgid "Senior Contributor/QA"
@@ -11060,8 +11146,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "হ্যাকার ও নিয়োজিত ড্রাইভার [কুঁড়ের হদ্দো]"
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "ডেভেলপার"
+msgid "support/QA"
+msgstr "সাহায্য"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "প্রথম লেখক"
@@ -11327,10 +11416,6 @@ msgstr "অবসরপ্রাপ্ত লেখকবৃন্দ"
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "খ্যাপাটে প্যাচ লিখিয়ে"
-
-#, fuzzy
-msgid "Artists"
-msgstr "ঠিকানা"
 
 msgid "Current Translators"
 msgstr "বর্তমান অনুবাদকবৃন্দ"
@@ -11988,11 +12073,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -12856,8 +12936,13 @@ msgstr "তথ্য সংগ্রহ করো (_G)"
 msgid "_Invite"
 msgstr "আমন্ত্রণ (_I)"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "পরিবর্তন (_M)"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "যোগ (_A)"
 
 msgid "_Open Mail"
 msgstr "মেইল খোলো (_O)"
@@ -12882,6 +12967,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "(কেউ নয়)"
+
+#, fuzzy
+msgid "Small"
+msgstr "ইমেইল"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr ""
@@ -13345,6 +13437,10 @@ msgstr "উইন্ডোর শিরোনামে নতুন আসা �
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "উইন্ডো ম্যানেজারের \"জরুরী\" ইঙ্গিত নির্দিষ্ট করো (_U)"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "আড্ডার উইন্ডো (_h)"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "কথাবার্তার উইন্ডোটি উঁচু করো (_a)"
@@ -13529,20 +13625,20 @@ msgstr ""
 "টেক্সট-ভিত্তিক প্রোটকলগুলোতে অরুপান্তরিত ইনপুট পাঠাতে সহায়তা করে (জ্যাবার, MSN, IRC, "
 "TOC)। পাঠাতে হলে এন্ট্রি বক্সে 'Enter' চাপুন। ডিবাগ উইন্ডোটিতে খেয়াল রাখুন।"
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr "আপনি গেইমের %s সংস্করণ ব্যবহার করছেন। বর্তমান সংস্করণটি হল %s ।<hr>"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"<b>ChangeLog:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "নতুন সংস্করণ পাওয়া যাচ্ছে"
+
+#, fuzzy
+msgid "Later"
+msgstr "তারিখ"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "%s এ ব্যবহারকারী: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -13858,6 +13954,161 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#~ msgid "A group with the name already exists."
+#~ msgstr "ইতোমধ্যে এই নামে একটি গ্রুপ বিদ্যমান।"
+
+#~ msgid "Primary Information"
+#~ msgstr "প্রাথমিক তথ্য"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "নিজের তথ্য আপডেট"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "গতি:"
+
+#~ msgid "Invalid QQ Face"
+#~ msgstr "অবৈধ QQ Face"
+
+#~ msgid "You rejected %d's request"
+#~ msgstr "আপনি %d এর অনুরোধ বাতিল করেছেন"
+
+#~ msgid "Reject request"
+#~ msgstr "অনুরোধ বাতিল করো"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "আপনার তালিকায় বন্ধু যোগ করতে চান?"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "বন্ধু তালিকা লোড করা যায়নি।"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "QQid ত্রুটি"
+
+#~ msgid "Group Description"
+#~ msgstr "গ্রুপ বিবরণ"
+
+#~ msgid "Auth"
+#~ msgstr "Auth"
+
+#, fuzzy
+#~ msgid "[%d] added to Qun \"%d\""
+#~ msgstr "%s আপনাকে যোগ করেছেন"
+
+#~ msgid "Unknown status"
+#~ msgstr "অজানা অবস্থা"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "গ্রুপ অপসারণ করো"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "আপনি কি %s-কে নিশ্চিতভাবে সরাতে চান?"
+
+#, fuzzy
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "আপনি কি %s-কে নিশ্চিতভাবে সরাতে চান?"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "সিস্টেম বার্তা"
+
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>সর্বশেষ লগইন আইপি</b>: %s<br>\n"
+
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>সর্বশেষ লগইন সময়</b>: %s\n"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "সার্ভার সংক্রান্ত তথ্য"
+
+#, fuzzy
+#~ msgid "Block this buddy"
+#~ msgstr "এই ট্যাবটি বন্ধ করো"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "পাসওয়ার্ড পরিবর্তনে ত্রুটি"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "সার্ভারে যোগাযোগ করতে ব্যর্থ হয়েছে"
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "সংযোগে রিসেট"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "আপনি কি %s-কে নিশ্চিতভাবে সরাতে চান?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "আপনি কি তাকে যোগ করতে চান?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s আপনাকে তার বন্ধুতালিকায় যোগ করেছেন।"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "বন্ধু যোগ"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s আপনাকে [%s] বন্ধু হিসাবে যোগ করতে চান"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s আপনার বন্ধু তালিকায় অনুপস্থিত"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "আপনি কি উনাকে যোগ করতে চান?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "সার্ভারের পোর্ট"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "%s-এর সংযোগ বিচ্ছিন্ন"
+
+#~ msgid "developer"
+#~ msgstr "ডেভেলপার"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "ডেভেলপার"
+
+#, fuzzy
+#~ msgid "Artists"
+#~ msgstr "ঠিকানা"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr "আপনি গেইমের %s সংস্করণ ব্যবহার করছেন। বর্তমান সংস্করণটি হল %s ।<hr>"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>ChangeLog:</b>\n"
+#~ "%s<br><br>"
 
 #~ msgid "Screen name:"
 #~ msgstr "স্ক্রিন নাম:"
@@ -14277,9 +14528,6 @@ msgstr ""
 
 #~ msgid "QQ: Offline"
 #~ msgstr "QQ: অফলাইন "
-
-#~ msgid "Modify My Information"
-#~ msgstr "নিজের তথ্য পরিবর্তন"
 
 #~ msgid "Login in TCP"
 #~ msgstr "টিসিপি তে লগইন"
