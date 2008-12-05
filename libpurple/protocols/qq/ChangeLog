@@ -1,3 +1,6 @@
+2008.12.05 - flos <lonicerae(at)gmail.com>
+	* Fixed a bug after propagating
+
 2008.11.18 - ccpaging <ccpaging(at)gmail.com>
 	* Fixed: IM format suuport in IM and QUN IM
 	* Divide long IM message into segment and sending

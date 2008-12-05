@@ -457,7 +457,7 @@ void qq_process_change_info(PurpleConnection *gc, guint8 *data, gint data_len)
 	data[data_len] = '\0';
 	if (qd->uid != atoi((gchar *) data)) {	/* return should be my uid */
 		purple_debug_info("QQ", "Failed Updating info\n");
-		qq_got_attention(gc, _("Could not change buddy information."));
+		qq_got_message(gc, _("Could not change buddy information."));
 	}
 }
 
