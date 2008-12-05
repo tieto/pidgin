@@ -102,19 +102,10 @@ static void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xml
 static void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata);
 static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node);
 
-static void jabber_bosh_http_connection_receive_parse_header(PurpleHTTPResponse *response, char **data, int *len);
-static PurpleHTTPConnection* jabber_bosh_http_connection_init(const char *host, int port);
 static void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
 static void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req);
-static void jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn);
 
-static PurpleHTTPRequest* jabber_bosh_http_request_init(const char *method, const char *path, PurpleHTTPRequestCallback cb, void *userdata);
 static void jabber_bosh_http_request_add_to_header(PurpleHTTPRequest *req, const char *field, const char *value);
-static void jabber_bosh_http_request_set_data(PurpleHTTPRequest *req, char *data, int len);
-static void jabber_bosh_http_request_destroy(PurpleHTTPRequest *req);
-
-static PurpleHTTPResponse* jabber_bosh_http_response_init(void);
-static void jabber_bosh_http_response_destroy(PurpleHTTPResponse *res);
 
 void jabber_bosh_init(void)
 {
@@ -136,7 +127,81 @@ void jabber_bosh_uninit(void)
 	bosh_useragent = NULL;
 }
 
-PurpleBOSHConnection* jabber_bosh_connection_init(JabberStream *js, const char *url)
+static PurpleHTTPRequest*
+jabber_bosh_http_request_init(const char *method, const char *path,
+                         PurpleHTTPRequestCallback cb, void *userdata)
+{
+	PurpleHTTPRequest *req = g_new(PurpleHTTPRequest, 1);
+	req->method = g_strdup(method);
+	req->path = g_strdup(path);
+	req->cb = cb;
+	req->userdata = userdata;
+	req->header = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	return req;
+}
+
+static void
+jabber_bosh_http_request_destroy(PurpleHTTPRequest *req)
+{
+	g_hash_table_destroy(req->header);
+	g_free(req->method);
+	g_free(req->path);
+	g_free(req->data);
+	g_free(req);
+}
+
+static PurpleHTTPResponse*
+jabber_bosh_http_response_init(void)
+{
+	PurpleHTTPResponse *res = g_new0(PurpleHTTPResponse, 1);
+	res->header = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	return res;
+}
+
+static void
+jabber_bosh_http_response_destroy(PurpleHTTPResponse *res)
+{
+	g_hash_table_destroy(res->header);
+	g_free(res->data);
+	g_free(res);
+}
+
+static PurpleHTTPConnection*
+jabber_bosh_http_connection_init(const char *host, int port)
+{
+	PurpleHTTPConnection *conn = g_new0(PurpleHTTPConnection, 1);
+	conn->host = g_strdup(host);
+	conn->port = port;
+	conn->fd = -1;
+	conn->requests = g_queue_new();
+
+	return conn;
+}
+
+static void
+jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
+{
+	g_free(conn->current_data);
+	g_free(conn->host);
+
+	if (conn->requests) {
+		g_queue_foreach(conn->requests, (GFunc)jabber_bosh_http_request_destroy, NULL);
+		g_queue_free(conn->requests);
+	}
+
+	if (conn->current_response)
+		jabber_bosh_http_response_destroy(conn->current_response);
+
+	if (conn->ie_handle)
+		purple_input_remove(conn->ie_handle);
+	if (conn->fd > 0)
+		close(conn->fd);
+
+	g_free(conn);
+}
+
+PurpleBOSHConnection*
+jabber_bosh_connection_init(JabberStream *js, const char *url)
 {
 	PurpleBOSHConnection *conn;
 	char *host, *path, *user, *passwd;
@@ -171,7 +236,8 @@ PurpleBOSHConnection* jabber_bosh_connection_init(JabberStream *js, const char *
 	return conn;
 }
 
-void jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
+void
+jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 {
 	g_free(conn->host);
 	g_free(conn->path);
@@ -410,9 +476,9 @@ static void jabber_bosh_connection_connected(PurpleHTTPConnection *conn) {
 	} else jabber_bosh_connection_boot(bosh_conn);
 }
 
-static void jabber_bosh_connection_refresh(PurpleHTTPConnection *conn) {
-	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	jabber_bosh_connection_send(bosh_conn, NULL);
+void jabber_bosh_connection_refresh(PurpleBOSHConnection *conn)
+{
+	jabber_bosh_connection_send(conn, NULL);
 }
 
 static void jabber_bosh_http_connection_disconnected(PurpleHTTPConnection *conn) {
@@ -538,38 +604,6 @@ static void jabber_bosh_http_connection_receive(gpointer data, gint source, Purp
 	}
 }
 
-static PurpleHTTPConnection* jabber_bosh_http_connection_init(const char *host, int port)
-{
-	PurpleHTTPConnection *conn = g_new0(PurpleHTTPConnection, 1);
-	conn->host = g_strdup(host);
-	conn->port = port;
-	conn->fd = -1;
-	conn->requests = g_queue_new();
-
-	return conn;
-}
-
-static void jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
-{
-	g_free(conn->current_data);
-	g_free(conn->host);
-
-	if (conn->requests) {
-		g_queue_foreach(conn->requests, (GFunc)jabber_bosh_http_request_destroy, NULL);
-		g_queue_free(conn->requests);
-	}
-
-	if (conn->current_response)
-		jabber_bosh_http_response_destroy(conn->current_response);
-
-	if (conn->ie_handle)
-			purple_input_remove(conn->ie_handle);
-	if (conn->fd > 0)
-			close(conn->fd);
-
-	g_free(conn);
-}
-
 static void jabber_bosh_http_connection_callback(gpointer data, gint source, const gchar *error)
 {
 	PurpleHTTPConnection *conn = data;
@@ -632,48 +666,9 @@ void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, Purple
 	g_queue_push_tail(conn->requests, req);
 }
 
-static PurpleHTTPRequest* jabber_bosh_http_request_init(const char *method,
-        const char *path, PurpleHTTPRequestCallback cb, void *userdata)
-{
-	PurpleHTTPRequest *req = g_new(PurpleHTTPRequest, 1);
-	req->method = g_strdup(method);
-	req->path = g_strdup(path);
-	req->cb = cb;
-	req->userdata = userdata;
-	req->header = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	return req;
-}
-
 static void jabber_bosh_http_request_add_to_header(PurpleHTTPRequest *req, const char *field, const char *value) {
 	char *f = g_strdup(field);
 	char *v = g_strdup(value);
 	g_hash_table_replace(req->header, f, v);
 }
 
-void jabber_bosh_http_request_set_data(PurpleHTTPRequest *req, char *data, int len) {
-	req->data = data;
-	req->data_len = len;
-}
-
-static void jabber_bosh_http_request_destroy(PurpleHTTPRequest *req)
-{
-	g_hash_table_destroy(req->header);
-	g_free(req->method);
-	g_free(req->path);
-	g_free(req->data);
-	g_free(req);
-}
-
-static PurpleHTTPResponse* jabber_bosh_http_response_init(void)
-{
-	PurpleHTTPResponse *res = g_new0(PurpleHTTPResponse, 1);
-	res->header = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	return res;
-}
-
-static void jabber_bosh_http_response_destroy(PurpleHTTPResponse *res)
-{
-	g_hash_table_destroy(res->header);
-	g_free(res->data);
-	g_free(res);
-}
