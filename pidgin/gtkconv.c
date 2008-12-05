@@ -7282,18 +7282,14 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 	if(purple_status_is_available(oldstatus) || !purple_status_is_available(newstatus))
 		return;
 
-	while ((l = hidden_convwin->gtkconvs) != NULL)
-	{
+	for (l = hidden_convwin->gtkconvs; l; ) {
 		gtkconv = l->data;
+		l = l->next;
 
 		conv = gtkconv->active_conv;
-
-		while(l && !purple_status_is_available(
-					purple_account_get_active_status(
-					purple_conversation_get_account(conv))))
-			l = l->next;
-		if (!l)
-			break;
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT ||
+				account != purple_conversation_get_account(conv))
+			continue;
 
 		pidgin_conv_attach_to_conversation(conv);
 
