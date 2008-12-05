@@ -45,16 +45,17 @@ struct _PurpleBOSHConnection {
     char *host;
     int port;
     char *path; 
-    
-    int rid;
+
+    /* Must be big enough to hold 2^53 - 1 */
+    guint64 rid;
     char *sid;
     int wait;
-        
+
     JabberStream *js;
     gboolean pipelining;
     PurpleHTTPConnection *conn_a;
     PurpleHTTPConnection *conn_b;
-    
+
     gboolean ready;
     PurpleBOSHConnectionConnectFunction connect_cb;
     PurpleBOSHConnectionReceiveFunction receive_cb;
@@ -97,8 +98,6 @@ struct _PurpleHTTPResponse {
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node);
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xmlnode *node);
 static void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata);
 static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node);
 
@@ -253,14 +252,13 @@ jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 {
 	xmlnode *packet = xmlnode_new("body");
-	char *tmp;
-
+	/* XEP-0124: The rid must not exceed 16 characters */
+	char rid[17];
+	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
 	xmlnode_set_attrib(packet, "type", "terminate");
 	xmlnode_set_attrib(packet, "xmlns", "http://jabber.org/protocol/httpbind");
 	xmlnode_set_attrib(packet, "sid", conn->sid);
-	tmp = g_strdup_printf("%d", ++conn->rid);
-	xmlnode_set_attrib(packet, "rid", tmp);
-	g_free(tmp);
+	xmlnode_set_attrib(packet, "rid", rid);
 
 	jabber_bosh_connection_send_native(conn, packet);
 	xmlnode_free(packet);
@@ -268,10 +266,10 @@ void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
 	xmlnode *restart = xmlnode_new("body");
-	char *tmp = NULL;
-	conn->rid++;
-	xmlnode_set_attrib(restart, "rid", tmp = g_strdup_printf("%d", conn->rid));
-	g_free(tmp);
+	/* XEP-0124: The rid must not exceed 16 characters */
+	char rid[17];
+	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
+	xmlnode_set_attrib(restart, "rid", rid);
 	xmlnode_set_attrib(restart, "sid", conn->sid);
 	xmlnode_set_attrib(restart, "to", conn->js->user->domain);
 	xmlnode_set_attrib(restart, "xml:lang", "en");
@@ -285,8 +283,7 @@ static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
 
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
 	const char *type;
-	
-	if (!node) return FALSE;
+
 	type = xmlnode_get_attrib(node, "type");
 	
 	if (type != NULL && !strcmp(type, "terminate")) {
@@ -302,13 +299,13 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode *child;
 	JabberStream *js = conn->js;
-	
-	if (node == NULL) return;
-	
-	if (jabber_bosh_connection_error_check(conn, node) == TRUE) return;
-	
+
+	g_return_if_fail(node == NULL);
+	if (jabber_bosh_connection_error_check(conn, node))
+		return;
+
 	child = node->child;
-	while (child != 0) {
+	while (child != NULL) {
 		if (child->type == XMLNODE_TYPE_TAG) {
 			xmlnode *session = NULL;
 			if (!strcmp(child->name, "iq")) session = xmlnode_get_child(child, "session");
@@ -321,15 +318,19 @@ static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode 
 	}
 }
 
-static void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xmlnode *node) {
-	xmlnode *child = node->child;
-	
-	if (jabber_bosh_connection_error_check(conn, node) == TRUE) return;
-	
+static void auth_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
+	xmlnode *child;
+
+	g_return_if_fail(node == NULL);
+	if (jabber_bosh_connection_error_check(conn, node))
+		return;
+
+	child = node->child;
 	while(child != NULL && child->type != XMLNODE_TYPE_TAG) {
-		child = child->next;	
+		child = child->next;
 	}
-	
+
+	/* We're only expecting one XML node here, so only process the first one */
 	if (child != NULL && child->type == XMLNODE_TYPE_TAG) {
 		JabberStream *js = conn->js;
 		if (!strcmp(child->name, "success")) {
@@ -340,63 +341,75 @@ static void jabber_bosh_connection_auth_response(PurpleBOSHConnection *conn, xml
 			js->state = JABBER_STREAM_AUTHENTICATING;
 			jabber_process_packet(js, &child);
 		}
-	} else printf("\n!! no child!!\n");
+	} else {
+		purple_debug_warning("jabber", "Received unexepcted empty BOSH packet.\n");	
+	}
 }
 
-static void jabber_bosh_connection_boot_response(PurpleBOSHConnection *conn, xmlnode *node) {
-	char *version;
-	
-	if (jabber_bosh_connection_error_check(conn, node) == TRUE) return;
-	
-	if (xmlnode_get_attrib(node, "sid")) {
-		conn->sid = g_strdup(xmlnode_get_attrib(node, "sid"));
+static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
+	const char *sid, *version;
+
+	g_return_if_fail(node != NULL);
+	if (jabber_bosh_connection_error_check(conn, node))
+		return;
+
+	sid = xmlnode_get_attrib(node, "sid");
+	version = xmlnode_get_attrib(node, "ver");
+
+	if (sid) {
+		conn->sid = g_strdup(sid);
 	} else {
-		purple_debug_info("jabber", "Connection manager doesn't behave BOSH-like!\n");
+		purple_connection_error_reason(conn->js->gc,
+		        PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		        _("No session ID given"));
+		return;
 	}
 
-	if ((version = g_strdup(xmlnode_get_attrib(node, "ver")))) {
-		char *dot = strstr(version, ".");
+	if (version) {
+		const char *dot = strstr(version, ".");
 		int major = atoi(version);
 		int minor = atoi(dot + 1);
 
 		purple_debug_info("jabber", "BOSH connection manager version %s\n", version);
 
+		/* TODO: Are major increments incompatible? */
 		if (major > 1 || (major == 1 && minor >= 6)) {
 			xmlnode *packet = xmlnode_get_child(node, "features");
 			conn->js->use_bosh = TRUE;
-			conn->receive_cb = jabber_bosh_connection_auth_response;
+			conn->receive_cb = auth_response_cb;
 			jabber_stream_features_parse(conn->js, packet);		
 		} else {
 			purple_connection_error_reason(conn->js->gc,
-			                  PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			                  _("Unsupported version of BOSH protocol"));
+			        PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			        _("Unsupported version of BOSH protocol"));
 		}
-
-		g_free(version);
 	} else {
 		purple_debug_info("jabber", "Missing version in BOSH initiation\n");
 	}
 }
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
-	char *tmp;
 	xmlnode *init = xmlnode_new("body");
+	/* XEP-0124: The rid must not exceed 16 characters */
+	char rid[17];
+	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
 	xmlnode_set_attrib(init, "content", "text/xml; charset=utf-8");
 	xmlnode_set_attrib(init, "secure", "true");
-	//xmlnode_set_attrib(init, "route", tmp = g_strdup_printf("xmpp:%s:5222", conn->js->user->domain));
-	//g_free(tmp);
+/*
+	xmlnode_set_attrib(init, "route", tmp = g_strdup_printf("xmpp:%s:5222", conn->js->user->domain));
+	g_free(tmp);
+*/
 	xmlnode_set_attrib(init, "to", conn->js->user->domain);
 	xmlnode_set_attrib(init, "xml:lang", "en");
 	xmlnode_set_attrib(init, "xmpp:version", "1.0");
 	xmlnode_set_attrib(init, "ver", "1.6");
 	xmlnode_set_attrib(init, "xmlns:xmpp", "urn:xmpp:xbosh"); 
-	xmlnode_set_attrib(init, "rid", tmp = g_strdup_printf("%d", conn->rid));
-	g_free(tmp);
+	xmlnode_set_attrib(init, "rid", rid);
 	xmlnode_set_attrib(init, "wait", "60"); /* this should be adjusted automatically according to real time network behavior */
 	xmlnode_set_attrib(init, "xmlns", "http://jabber.org/protocol/httpbind");
 	xmlnode_set_attrib(init, "hold", "1");
 	
-	conn->receive_cb = jabber_bosh_connection_boot_response;
+	conn->receive_cb = boot_response_cb;
 	jabber_bosh_connection_send_native(conn, init);
 	xmlnode_free(init);
 }
@@ -419,13 +432,12 @@ static void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, Purp
 
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode *packet = xmlnode_new("body");
-	char *tmp;
-	conn->rid++;
+	/* XEP-0124: The rid must not exceed 16 characters */
+	char rid[17];
+	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
 	xmlnode_set_attrib(packet, "xmlns", "http://jabber.org/protocol/httpbind");
 	xmlnode_set_attrib(packet, "sid", conn->sid);
-	tmp = g_strdup_printf("%d", conn->rid);
-	xmlnode_set_attrib(packet, "rid", tmp);
-	g_free(tmp);
+	xmlnode_set_attrib(packet, "rid", rid);
 	
 	if (node) {
 		xmlnode_insert_child(packet, node);
