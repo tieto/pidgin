@@ -275,9 +275,10 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     /* they're logged in */
     PurplePresence *presence = purple_buddy_get_presence(buddy);
     PurpleStatus *status = purple_presence_get_active_status(presence);
-    const char *msg = nullprpl_status_text(buddy);
+    char *msg = nullprpl_status_text(buddy);
     purple_notify_user_info_add_pair(info, purple_status_get_name(status),
                                      msg);
+    g_free(msg);
 
     if (full) {
       const char *user_info = purple_account_get_user_info(gc->account);
