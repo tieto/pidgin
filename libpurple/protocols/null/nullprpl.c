@@ -160,8 +160,8 @@ static void foreach_gc_in_chat(ChatFunc fn, PurpleConnection *from,
 
 static void discover_status(PurpleConnection *from, PurpleConnection *to,
                             gpointer userdata) {
-  char *from_username = from->account->username;
-  char *to_username = to->account->username;
+  const char *from_username = from->account->username;
+  const char *to_username = to->account->username;
 
   if (purple_find_buddy(from->account, to_username)) {
     PurpleStatus *status = purple_account_get_active_status(to->account);
@@ -262,7 +262,7 @@ static char *nullprpl_status_text(PurpleBuddy *buddy) {
 
   } else {
     purple_debug_info("nullprpl", "...but %s is not logged in\n", buddy->name);
-    return "Not logged in";
+    return g_strdup("Not logged in");
   }
 }
 
@@ -289,7 +289,7 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     /* they're not logged in */
     purple_notify_user_info_add_pair(info, _("User info"), _("not logged in"));
   }
-    
+
   purple_debug_info("nullprpl", "showing %s tooltip for %s\n",
                     (full) ? "full" : "short", buddy->name);
 }
@@ -307,21 +307,21 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
                                 NULL_STATUS_ONLINE, TRUE);
   purple_status_type_add_attr(type, "message", _("Online"),
                               purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
+  types = g_list_prepend(types, type);
 
   type = purple_status_type_new(PURPLE_STATUS_AWAY, NULL_STATUS_AWAY,
                                 NULL_STATUS_AWAY, TRUE);
   purple_status_type_add_attr(type, "message", _("Away"),
                               purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
+  types = g_list_prepend(types, type);
   
   type = purple_status_type_new(PURPLE_STATUS_OFFLINE, NULL_STATUS_OFFLINE,
                                 NULL_STATUS_OFFLINE, TRUE);
   purple_status_type_add_attr(type, "message", _("Offline"),
                               purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
+  types = g_list_prepend(types, type);
 
-  return types;
+  return g_list_reverse(types);
 }
 
 static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
@@ -355,7 +355,7 @@ static GList *nullprpl_chat_info(PurpleConnection *gc) {
   purple_debug_info("nullprpl", "returning chat setting 'room'\n");
 
   pce = g_new0(struct proto_chat_entry, 1);
-  pce->label = _(_("Chat _room"));
+  pce->label = _("Chat _room");
   pce->identifier = "room";
   pce->required = TRUE;
 
@@ -477,7 +477,7 @@ static void nullprpl_set_info(PurpleConnection *gc, const char *info) {
                     gc->account->username, info);
 }
 
-static char *typing_state_to_string(PurpleTypingState typing) {
+static const char *typing_state_to_string(PurpleTypingState typing) {
   switch (typing) {
   case PURPLE_NOT_TYPING:  return "is not typing";
   case PURPLE_TYPING:      return "is typing";
@@ -488,8 +488,8 @@ static char *typing_state_to_string(PurpleTypingState typing) {
 
 static void notify_typing(PurpleConnection *from, PurpleConnection *to,
                           gpointer typing) {
-  char *from_username = from->account->username;
-  char *action = typing_state_to_string((PurpleTypingState)typing);
+  const char *from_username = from->account->username;
+  const char *action = typing_state_to_string((PurpleTypingState)typing);
   purple_debug_info("nullprpl", "notifying %s that %s %s\n",
                     to->account->username, from_username, action);
 
@@ -561,7 +561,7 @@ static void nullprpl_change_passwd(PurpleConnection *gc, const char *old_pass,
 static void nullprpl_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
                                PurpleGroup *group)
 {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConnection *buddy_gc = get_nullprpl_gc(buddy->name);
 
   purple_debug_info("nullprpl", "adding %s to %s's buddy list\n", buddy->name,
@@ -679,8 +679,8 @@ static void joined_chat(PurpleConvChat *from, PurpleConvChat *to,
 }
 
 static void nullprpl_join_chat(PurpleConnection *gc, GHashTable *components) {
-  char *username = gc->account->username;
-  char *room = g_hash_table_lookup(components, "room");
+  const char *username = gc->account->username;
+  const char *room = g_hash_table_lookup(components, "room");
   int chat_id = g_str_hash(room);
   purple_debug_info("nullprpl", "%s is joining chat room %s\n", username, room);
 
@@ -690,20 +690,20 @@ static void nullprpl_join_chat(PurpleConnection *gc, GHashTable *components) {
     /* tell everyone that we joined, and add them if they're already there */
     foreach_gc_in_chat(joined_chat, gc, chat_id, NULL);
   } else {
+    char *tmp = g_strdup_printf(_("%s is already in chat room %s."),
+                                username,
+                                room);
     purple_debug_info("nullprpl", "%s is already in chat room %s\n", username,
                       room);
-    purple_notify_info(gc,
-                       _("Join chat"),
-                       _("Join chat"),
-                       g_strdup_printf("%s is already in chat room %s.",
-                                       username, room));
+    purple_notify_info(gc, _("Join chat"), _("Join chat"), tmp);
+    g_free(tmp);
   }
 }
 
 static void nullprpl_reject_chat(PurpleConnection *gc, GHashTable *components) {
-  char *invited_by = g_hash_table_lookup(components, "invited_by");
-  char *room = g_hash_table_lookup(components, "room");
-  char *username = gc->account->username;
+  const char *invited_by = g_hash_table_lookup(components, "invited_by");
+  const char *room = g_hash_table_lookup(components, "room");
+  const char *username = gc->account->username;
   PurpleConnection *invited_by_gc = get_nullprpl_gc(invited_by);
   char *message = g_strdup_printf(
     "%s %s %s.",
@@ -719,19 +719,20 @@ static void nullprpl_reject_chat(PurpleConnection *gc, GHashTable *components) {
                      _("Chat invitation rejected"),
                      _("Chat invitation rejected"),
                      message);
+  g_free(message);
 }
 
 static char *nullprpl_get_chat_name(GHashTable *components) {
-  char *room = g_hash_table_lookup(components, "room");
+  const char *room = g_hash_table_lookup(components, "room");
   purple_debug_info("nullprpl", "reporting chat room name '%s'\n", room);
-  return room;
+  return g_strdup(room);
 }
 
 static void nullprpl_chat_invite(PurpleConnection *gc, int id,
                                  const char *message, const char *who) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConversation *conv = purple_find_chat(gc, id);
-  char *room = conv->name;
+  const char *room = conv->name;
   PurpleAccount *to_acct = purple_accounts_find(who, NULLPRPL_ID);
 
   purple_debug_info("nullprpl", "%s is inviting %s to join chat room %s\n",
@@ -740,18 +741,16 @@ static void nullprpl_chat_invite(PurpleConnection *gc, int id,
   if (to_acct) {
     PurpleConversation *to_conv = purple_find_chat(to_acct->gc, id);
     if (to_conv) {
+      char *tmp = g_strdup_printf("%s is already in chat room %s.", who, room);
       purple_debug_info("nullprpl",
                         "%s is already in chat room %s; "
                         "ignoring invitation from %s\n",
                         who, room, username);
-      purple_notify_info(gc,
-                         _("Chat invitation"),
-                         _("Chat invitation"),
-                         g_strdup_printf("%s is already in chat room %s.",
-                                         who, room));
+      purple_notify_info(gc, _("Chat invitation"), _("Chat invitation"), tmp);
+      g_free(tmp);
     } else {
       GHashTable *components;
-      components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, free);
+      components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
       g_hash_table_replace(components, "room", g_strdup(room));
       g_hash_table_replace(components, "invited_by", g_strdup(username));
       serv_got_chat_invite(to_acct->gc, room, username, message, components);
@@ -833,7 +832,7 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
 
 static void nullprpl_chat_whisper(PurpleConnection *gc, int id, const char *who,
                                   const char *message) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConversation *conv = purple_find_chat(gc, id);
   purple_debug_info("nullprpl",
                     "%s receives whisper from %s in chat room %s: %s\n",
@@ -858,7 +857,7 @@ static void receive_chat_message(PurpleConvChat *from, PurpleConvChat *to,
 
 static int nullprpl_chat_send(PurpleConnection *gc, int id, const char *message,
                               PurpleMessageFlags flags) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConversation *conv = purple_find_chat(gc, id);
 
   if (conv) {
@@ -981,7 +980,7 @@ static gboolean nullprpl_finish_get_roomlist(gpointer roomlist) {
 }
 
 static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleRoomlist *roomlist = purple_roomlist_new(gc->account);
   GList *fields = NULL;
   PurpleRoomlistField *field;
@@ -1005,14 +1004,17 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
   for (chats  = purple_get_chats(); chats; chats = g_list_next(chats)) {
     PurpleConversation *conv = (PurpleConversation *)chats->data;
     PurpleRoomlistRoom *room;
-    char *name = conv->name;
+    const char *name = conv->name;
     int id = purple_conversation_get_chat_data(conv)->id;
 
     /* have we already added this room? */
     if (g_list_find_custom(seen_ids, name, (GCompareFunc)strcmp))
       continue;                                /* yes! try the next one. */
 
-    seen_ids = g_list_append(seen_ids, name);  /* no, it's new. */
+    /* This cast is OK because this list is only staying around for the life
+     * of this function and none of the conversations are being deleted
+	 * in that timespan. */
+    seen_ids = g_list_prepend(seen_ids, (char *)name); /* no, it's new. */
     purple_debug_info("nullprpl", "%s (%d), ", name, id);
 
     room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, name, NULL);
@@ -1021,6 +1023,7 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
     purple_roomlist_room_add(roomlist, room);
   }
 
+  g_list_free(seen_ids);
   purple_timeout_add(1 /* ms */, nullprpl_finish_get_roomlist, roomlist);
   return roomlist;
 }
