@@ -666,6 +666,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	PurpleMedia *media;
+	const gchar *transport_type;
 	
 	gchar *jid = NULL, *me = NULL, *sid = NULL;
 
@@ -678,6 +679,16 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	jbr = jabber_buddy_find_resource(jb, NULL);
 	if (!jbr) {
 		purple_debug_error("jingle-rtp", "Could not find buddy's resource\n");
+	}
+
+	if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_ICEUDP)) {
+		transport_type = JINGLE_TRANSPORT_ICEUDP;
+	} else if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_RAWUDP)) {
+		transport_type = JINGLE_TRANSPORT_RAWUDP;
+	} else {
+		purple_debug_error("jingle-rtp", "Resource doesn't support "
+				"the same transport types\n");
+		return NULL;
 	}
 
 	if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
@@ -695,7 +706,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 
 
 	if (type & PURPLE_MEDIA_AUDIO) {
-		transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
+		transport = jingle_transport_create(transport_type);
 		content = jingle_content_create(JINGLE_APP_RTP, "initiator",
 				"session", "audio-session", "both", transport);
 		jingle_session_add_content(session, content);
@@ -703,7 +714,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_rtp_init_media(content);
 	}
 	if (type & PURPLE_MEDIA_VIDEO) {
-		transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
+		transport = jingle_transport_create(transport_type);
 		content = jingle_content_create(JINGLE_APP_RTP, "initiator",
 				"session", "video-session", "both", transport);
 		jingle_session_add_content(session, content);
