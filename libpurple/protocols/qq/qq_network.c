@@ -302,8 +302,7 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	update_class = qq_trans_get_class(trans);
 	ship32 = qq_trans_get_ship(trans);
 	if (update_class != 0 || ship32 != 0) {
-		purple_debug_info("QQ", "Process in Update class %d, ship32 %d\n",
-				update_class, ship32);
+		purple_debug_info("QQ", "Update class %d, ship32 %d\n", update_class, ship32);
 	}
 
 	switch (cmd) {
@@ -323,10 +322,6 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 		case QQ_CMD_ROOM:
 			room_cmd = qq_trans_get_room_cmd(trans);
 			room_id = qq_trans_get_room_id(trans);
-#if 1
-			purple_debug_info("QQ", "%s (0x%02X) for room %d, len %d\n",
-					qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, buf_len);
-#endif
 			qq_proc_room_cmds(gc, seq, room_cmd, room_id, buf + bytes, bytes_not_read, update_class, ship32);
 			break;
 		default:
@@ -630,10 +625,12 @@ static gint tcp_send_out(PurpleConnection *gc, guint8 *data, gint data_len)
 	}
 
 	if (ret < data_len) {
-		purple_debug_info("TCP_SEND_OUT",
-			"Add %d bytes to buffer\n", data_len - ret);
+		purple_debug_info("TCP_SEND_OUT", "Add %d bytes to buffer\n", data_len - ret);
 		if (conn->can_write_handler == 0) {
 			conn->can_write_handler = purple_input_add(qd->fd, PURPLE_INPUT_WRITE, tcp_can_write, gc);
+		}
+		if (conn->tcp_txbuf == NULL) {
+			conn->tcp_txbuf = purple_circ_buffer_new(4096);
 		}
 		purple_circ_buffer_append(conn->tcp_txbuf, data + ret, data_len - ret);
 	}
@@ -707,7 +704,7 @@ static void set_all_keys(PurpleConnection *gc)
 	qd->send_seq = rand() & 0xffff;
 
 	qd->is_login = FALSE;
-	qd->uid = strtol(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
+	qd->uid = strtoul(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
 
 #ifdef DEBUG
 	memset(qd->ld.random_key, 0x01, sizeof(qd->ld.random_key));
@@ -1107,7 +1104,7 @@ gint qq_send_cmd_encrypted(PurpleConnection *gc, guint16 cmd, guint16 seq,
 
 #if 1
 		/* qq_show_packet("qq_send_cmd_encrypted", data, data_len); */
-		purple_debug_info("QQ", "<== [%05d], %s(0x%04X), datalen %d\n",
+		purple_debug_info("QQ", "<== [%05d] %s(0x%04X), datalen %d\n",
 				seq, qq_get_cmd_desc(cmd), cmd, encrypted_len);
 #endif
 
@@ -1161,7 +1158,7 @@ gint qq_send_cmd_mess(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data
 
 	seq = ++qd->send_seq;
 #if 1
-		purple_debug_info("QQ", "<== [%05d], %s(0x%04X), datalen %d\n",
+		purple_debug_info("QQ", "<== [%05d] %s(0x%04X), datalen %d\n",
 				seq, qq_get_cmd_desc(cmd), cmd, data_len);
 #endif
 	return send_cmd_detail(gc, cmd, seq, data, data_len, TRUE, update_class, ship32);
@@ -1186,7 +1183,7 @@ gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len)
 		is_save2trans = FALSE;
 	}
 #if 1
-		purple_debug_info("QQ", "<== [%05d], %s(0x%04X), datalen %d\n",
+		purple_debug_info("QQ", "<== [%05d] %s(0x%04X), datalen %d\n",
 				seq, qq_get_cmd_desc(cmd), cmd, data_len);
 #endif
 	return send_cmd_detail(gc, cmd, seq, data, data_len, is_save2trans, 0, 0);
@@ -1205,7 +1202,7 @@ gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
 
 #if 1
-		purple_debug_info("QQ", "<== [SRV-%05d], %s(0x%04X), datalen %d\n",
+		purple_debug_info("QQ", "<== [SRV-%05d] %s(0x%04X), datalen %d\n",
 				seq, qq_get_cmd_desc(cmd), cmd, data_len);
 #endif
 	/* at most 16 bytes more */
@@ -1244,7 +1241,7 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 	buf_len = 0;
 	buf_len += qq_put8(buf + buf_len, room_cmd);
 	if (room_id != 0) {
-		/* id 0 is for QQ Demo Group, now there are not existed*/
+		/* id 0 is for QQ Demo Group, now they are closed*/
 		buf_len += qq_put32(buf + buf_len, room_id);
 	}
 	if (data != NULL && data_len > 0) {
@@ -1268,7 +1265,7 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 #if 1
 		/* qq_show_packet("send_room_cmd", buf, buf_len); */
 		purple_debug_info("QQ",
-				"<== [%05d], %s (0x%02X) to room %d, datalen %d\n",
+				"<== [%05d] %s (0x%02X) to room %d, datalen %d\n",
 				seq, qq_get_room_cmd_desc(room_cmd), room_cmd, room_id, buf_len);
 #endif
 

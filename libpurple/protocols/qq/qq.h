@@ -182,6 +182,8 @@ struct _qq_data {
 
 	gboolean is_show_notice;
 	gboolean is_show_news;
+
+	guint16 send_im_id;		/* send IM sequence number */
 };
 
 #endif
