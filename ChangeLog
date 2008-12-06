@@ -8,7 +8,6 @@ version 2.5.3 (??/??/????):
 	  --with-system-ssl-certs and GnuTLS need to include these in the
 	  system certs directory.
 	* Corrected maximum message lengths for Yahoo!
-	* Enable auto-reply on Zephyr, to emulate 'zaway' (Toby Schaffer)
 	* The Buddy State Notification plugin no longer prints duplicate
 	  notifications when the same buddy is in multiple groups (Florian Quèze)
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
@@ -19,10 +18,12 @@ version 2.5.3 (??/??/????):
 	* Various fixes to the nullprpl (Paul Aurich)
 	* Fix a crash when accessing the roomlist for an account that's not
 	  connected (Paul Aurich)
+	* Fix a crash in purple_accounts_delete that happens when this function is
+	  called before the buddy list is initialized (Florian Quèze)
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
-	* Gadu-Gadu now validates that UID's are valid (Adam Strzelecki)
+	* Gadu-Gadu now checks that UID's are valid (Adam Strzelecki)
 	* Gadu-Gadu now does proper charset translations where needed (Adam
 	  Strzelecki)
 
@@ -38,6 +39,13 @@ version 2.5.3 (??/??/????):
 	* Send "client-accepts-full-bind-result" attribute during SASL login.
 	  This will fix Google Talk login failures if the user configures the
 	  wrong domain for his/her account.
+	
+	Zephyr:
+	* Enable auto-reply, to emulate 'zaway' (Toby Schaffer)
+	* Fix a crash when an account is configured to use tzc but tzc is not
+	  installed or the configured tzc command is invalid (Michael Terry)
+	* Fix a 10 second delay waiting on tzc if it is not installed or the
+	  configured command is invalid (Michael Terry)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
