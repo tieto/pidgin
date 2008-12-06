@@ -8,13 +8,33 @@ version 2.5.3 (??/??/????):
 	  --with-system-ssl-certs and GnuTLS need to include these in the
 	  system certs directory.
 	* Corrected maximum message lengths for Yahoo!
-	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
 	* Enable auto-reply on Zephyr, to emulate 'zaway' (Toby Schaffer)
 	* The Buddy State Notification plugin no longer prints duplicate
 	  notifications when the same buddy is in multiple groups (Florian Quèze)
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
 	  ID's, etc. into links (Florian Quèze)
 	* Fix a crash in SIMPLE when a malformed message is received.
+	* purple-remote now has a "getstatusmessage" command to retrieve the text
+	  of the current status message.
+
+	Gadu-Gadu:
+	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
+	* Gadu-Gadu now validates that UID's are valid (Adam Strzelecki)
+	* Gadu-Gadu now does proper charset translations where needed (Adam
+	  Strzelecki)
+
+	XMPP:
+	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
+	  used in the 'get' requests (Paul Aurich)
+	* Resources can be set to the local machine's hostname by using
+	  __HOSTNAME__ as the resource string (Jonathan Sailor)
+	* Resources can now be left blank, causing the server to generate a
+	  resource for us where supported (Jonathan Sailor)
+	* Resources now default to no value
+	* Quit trying to get user info for MUC's (Paul Aurich)
+	* Send "client-accepts-full-bind-result" attribute during SASL login.
+	  This will fix Google Talk login failures if the user configures the
+	  wrong domain for his/her account.
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting

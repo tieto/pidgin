@@ -3377,6 +3377,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 	if (PURPLE_BLIST_NODE_IS_CHAT(node))
 	{
 		PurpleChat *chat;
+		GList *connections;
 		GList *cur;
 		struct proto_chat_entry *pce;
 		char *name, *value;
@@ -3387,7 +3388,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (g_list_length(purple_connections_get_all()) > 1)
+		connections = purple_connections_get_all();
+		if (connections && connections->next)
 		{
 			tmp = g_markup_escape_text(chat->account->username, -1);
 			g_string_append_printf(str, _("<b>Account:</b> %s"), tmp);
@@ -3457,6 +3459,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		PurpleBuddy *b;
 		PurplePresence *presence;
 		PurpleNotifyUserInfo *user_info;
+		GList *connections;
 		char *tmp;
 		time_t idle_secs, signon;
 
@@ -3478,7 +3481,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		user_info = purple_notify_user_info_new();
 
 		/* Account */
-		if (full && g_list_length(purple_connections_get_all()) > 1)
+		connections = purple_connections_get_all();
+		if (full && connections && connections->next)
 		{
 			tmp = g_markup_escape_text(purple_account_get_username(
 									   purple_buddy_get_account(b)), -1);

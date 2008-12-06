@@ -2773,26 +2773,16 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 {
 	PidginConversation *gtkconv = (PidginConversation *)user_data;
 	PurpleConversation *conv = gtkconv->active_conv;
-	FILE *fp;
 	PurpleBuddyIcon *icon;
 	const void *data;
 	size_t len;
 
-	if ((fp = g_fopen(filename, "wb")) == NULL) {
-		purple_notify_error(gtkconv, NULL, _("Unable to open file."), NULL);
-		return;
-	}
-
 	icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
 	data = purple_buddy_icon_get_data(icon, &len);
 
-	if ((len <= 0) || (data == NULL) || (fwrite(data, 1, len, fp) != len)) {
+	if ((len <= 0) || (data == NULL) || !purple_util_write_data_to_file_absolute(filename, data, len)) {
 		purple_notify_error(gtkconv, NULL, _("Unable to save icon file to disk."), NULL);
-		fclose(fp);
-		g_unlink(filename);
-		return;
 	}
-	fclose(fp);
 }
 
 static void
@@ -7358,18 +7348,14 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 	if(purple_status_is_available(oldstatus) || !purple_status_is_available(newstatus))
 		return;
 
-	while ((l = hidden_convwin->gtkconvs) != NULL)
-	{
+	for (l = hidden_convwin->gtkconvs; l; ) {
 		gtkconv = l->data;
+		l = l->next;
 
 		conv = gtkconv->active_conv;
-
-		while(l && !purple_status_is_available(
-					purple_account_get_active_status(
-					purple_conversation_get_account(conv))))
-			l = l->next;
-		if (!l)
-			break;
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT ||
+				account != purple_conversation_get_account(conv))
+			continue;
 
 		pidgin_conv_attach_to_conversation(conv);
 

@@ -4415,7 +4415,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
     res = results->data;
 
   if(!code && res && res->matches) {
-    if(g_list_length(res->matches) == 1) {
+    if(!res->matches->next) {
       struct mwResolveMatch *match = res->matches->data;
       
       /* only one? that might be the right one! */
