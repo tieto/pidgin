@@ -2499,7 +2499,7 @@ purple_accounts_delete(PurpleAccount *account)
 	purple_accounts_remove(account);
 
 	/* Remove this account's buddies */
-	for (gnode = purple_get_blist()->root; gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next) {
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
