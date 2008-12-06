@@ -2706,6 +2706,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Received unexpected HTTP response from server."));
+		purple_debug_misc("yahoo", "Unexpected HTTP response: %s\n", buf);
 		return;
 	}
 
@@ -2802,7 +2803,7 @@ static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_mes
 
 static void yahoo_login_page_hash_iter(const char *key, const char *val, GString *url)
 {
-	if (!strcmp(key, "passwd"))
+	if (!strcmp(key, "passwd") || !strcmp(key, "login"))
 		return;
 	g_string_append_c(url, '&');
 	g_string_append(url, key);
