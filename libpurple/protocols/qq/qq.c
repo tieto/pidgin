@@ -56,9 +56,7 @@
 #include "utils.h"
 #include "version.h"
 
-#ifndef OPENQ_VERSION
-#define OPENQ_VERSION           DISPLAY_VERSION
-#endif
+#define OPENQ_VERSION 		"0.3.2-p19" 
 
 static GList *server_list_build(gchar select)
 {
@@ -663,7 +661,7 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, _("<i>Feel free to join us!</i> :)"));
 	g_string_append(info, "</body></html>");
 
-	title = g_strdup_printf(_("About OpenQ r%s"), OPENQ_VERSION);
+	title = g_strdup_printf(_("About OpenQ %s"), OPENQ_VERSION);
 	purple_notify_formatted(gc, title, title, NULL, info->str, NULL, NULL);
 
 	g_free(title);

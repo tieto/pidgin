@@ -6,14 +6,6 @@
 
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
-CURRENT_REVISION=$(shell \
-		 if [ -e ./.hg_archival.txt ]; then \
-		   awk 'BEGIN {"grep node .hg_archival.txt" | getline rev; \
-		   rev=substr(rev,7,6); print rev}' > current_revision; \
-		 else \
-		   echo "!hg" > current_revision; \
-		 fi; \
-		 cat ./current_revision)
 
 TARGET = libqq
 TYPE = PLUGIN
@@ -24,7 +16,6 @@ ifeq ($(TYPE),STATIC)
 	DLL_INSTALL_DIR =	$(PURPLE_INSTALL_DIR)
 else
 ifeq ($(TYPE),PLUGIN)
-	DEFINES += -DOPENQ_VERSION=\"$(CURRENT_REVISION)\"
 	DLL_INSTALL_DIR =	$(PURPLE_INSTALL_PLUGINS_DIR)
 endif
 endif
