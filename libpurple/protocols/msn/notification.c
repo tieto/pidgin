@@ -849,10 +849,35 @@ static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	purple_debug_info("msn", "FQY payload:\n%s\n", payload);
-	g_return_if_fail(cmdproc->session != NULL);
-/*	msn_notification_post_adl(cmdproc, payload, len); */
-/*	msn_get_address_book(cmdproc->session, MSN_AB_SAVE_CONTACT, NULL, NULL); */
+	MsnUserList *userlist;
+	xmlnode *ml, *d, *c;
+	const char *domain;
+	const char *local;
+	const char *type;
+	char *passport;
+	MsnNetwork network = MSN_NETWORK_PASSPORT;
+
+	userlist = cmdproc->session->userlist;
+
+	/* FQY response:
+	    <ml><d n="domain.com"><c n="local-node" t="network" /></d></ml> */
+	ml = xmlnode_from_str(payload, len);
+	d = xmlnode_get_child(ml, "d");
+	c = xmlnode_get_child(d, "c");
+	domain = xmlnode_get_attrib(d, "n");
+	local = xmlnode_get_attrib(c, "n");
+	type = xmlnode_get_attrib(c, "t");
+
+	passport = g_strdup_printf("%s@%s", local, domain);
+
+	if (type != NULL)
+		network = (MsnNetwork)strtoul(type, NULL, 10);
+	purple_debug_info("msn", "FQY response says %s is from network %d\n",
+	                  passport, network);
+	msn_userlist_add_pending_buddy(userlist, passport, network);
+
+	g_free(passport);
+	xmlnode_free(ml);
 }
 
 static void

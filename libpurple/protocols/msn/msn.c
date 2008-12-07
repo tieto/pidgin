@@ -1457,7 +1457,15 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
 	 * internal. */
-	msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
+	if (msn_userlist_find_user(userlist, who) != NULL) {
+		/* We already know this buddy. This function takes care of users
+		   already in the list and stuff... */
+		msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
+	} else {
+		/* We need to check the network for this buddy first */
+		msn_userlist_save_pending_buddy(userlist, who, group ? group->name : NULL);
+		msn_notification_send_fqy(session, who);
+	}
 }
 
 static void

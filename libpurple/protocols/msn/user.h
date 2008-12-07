@@ -91,6 +91,7 @@ struct _MsnUser
 	gboolean mobile;        /**< Signed up with MSN Mobile.     */
 
 	GList *group_ids;       /**< The group IDs.                 */
+	char *pending_group;    /**< A pending group to add.        */
 
 	MsnObject *msnobj;      /**< The user's MSN Object.         */
 
@@ -211,6 +212,23 @@ void msn_user_add_group_id(MsnUser *user, const char * id);
  * @param id   The group ID.
  */
 void msn_user_remove_group_id(MsnUser *user, const char * id);
+
+/**
+ * Sets the pending group for a user.
+ *
+ * @param user  The user.
+ * @param group The group name.
+ */
+void msn_user_set_pending_group(MsnUser *user, const char *group);
+
+/**
+ * Removes the pending group from a user.
+ *
+ * @param user The user.
+ *
+ * @return Returns the pending group name.
+ */
+char *msn_user_remove_pending_group(MsnUser *user);
 
 /**
  * Sets the home phone number for a user.

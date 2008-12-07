@@ -340,6 +340,20 @@ msn_user_remove_group_id(MsnUser *user, const char *id)
 }
 
 void
+msn_user_set_pending_group(MsnUser *user, const char *group)
+{
+	user->pending_group = g_strdup(group);
+}
+
+char *
+msn_user_remove_pending_group(MsnUser *user)
+{
+	char *group = user->pending_group;
+	user->pending_group = NULL;
+	return group;
+}
+
+void
 msn_user_set_home_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
