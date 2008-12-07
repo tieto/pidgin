@@ -1673,7 +1673,7 @@ static void zephyr_login(PurpleAccount * account)
 
 			purple_debug_info("zephyr", "about to read from tzc\n");
 
-			if (waitpid(pid, NULL, WNOHANG) == 0) { // Only select if tzc is still running
+			if (waitpid(pid, NULL, WNOHANG) == 0) { /* Only select if tzc is still running */
 				purple_debug_info("zephyr", "about to read from tzc\n");
 				select_status = select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, NULL);
 			}
