@@ -946,15 +946,25 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnUser *user;
 	xmlnode *guid;
 
-	char *fault_str;
+	xmlnode *fault;
 
-	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
-		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
-		                   msn_contact_operation_str(state->action), fault_str);
-		g_free(fault_str);
-		return;
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *errorcode = xmlnode_get_data(xmlnode_get_child(fault, "detail/errorcode"));
+		char *fault_str;
+		if (errorcode && !strcmp(errorcode, "EmailDomainIsFederated")) {
+			/* Do something special! */
+			purple_debug_error("msn", "Contact is from a federated domain, but don't know what to do yet!\n");
+		}
+
+		/* We don't know how to respond to this faultcode, so log it */
+		fault_str = xmlnode_to_str(fault, NULL);
+		if (fault_str != NULL) {
+			purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+			                   msn_contact_operation_str(state->action), fault_str);
+			g_free(fault_str);
+			return;
+		}
 	}
 
 	g_return_if_fail(session != NULL);
