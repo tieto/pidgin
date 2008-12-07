@@ -312,6 +312,7 @@ static void handle_buzz(JabberMessage *jm) {
 	str = g_strdup_printf(_("%s has buzzed you!"), username);
 	
 	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+	purple_conversation_attention(c, username, 0, PURPLE_MESSAGE_RECV, time(NULL));
 	g_free(username);
 	g_free(str);
 }
@@ -704,7 +705,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			jm->type = JABBER_MESSAGE_EVENT;
 			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
-		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns,"http://www.xmpp.org/extensions/xep-0224.html#ns")) {
+		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, XEP_0224_NAMESPACE)) {
 			jm->hasBuzz = TRUE;
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
