@@ -1477,6 +1477,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect(G_OBJECT(toolbar->attention), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), attention_button);
 
+	/* set attention button to be greyed out until we get a conversation */
+	gtk_widget_set_sensitive(toolbar->attention, FALSE);
 	
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
