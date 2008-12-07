@@ -1444,7 +1444,7 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML, passport);
 	}
 
-	body = g_strdup_printf(MSN_CONTACT_DELECT_FROM_LIST_TEMPLATE,
+	body = g_strdup_printf(MSN_CONTACT_DELETE_FROM_LIST_TEMPLATE,
 		MsnSoapPartnerScenarioText[partner_scenario],
 		MsnMemberRole[list], member);
 
