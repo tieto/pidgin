@@ -870,7 +870,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
 	MsnCallbackState *state = data;
-	xmlnode *faultcode;
+	xmlnode *fault;
 	char *faultcode_str;
 
 	if (resp == NULL) {
@@ -880,9 +880,9 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		return;
 	}
 
-	faultcode = xmlnode_get_child(resp->xml, "Body/Fault/faultcode");
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
 
-	if (faultcode == NULL) {
+	if (fault == NULL) {
 		/* No errors */
 		if (state->cb)
 			((MsnSoapCallback)state->cb)(req, resp, data);
@@ -890,7 +890,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		return;
 	}
 
-	faultcode_str = xmlnode_get_data(faultcode);
+	faultcode_str = xmlnode_get_data(xmlnode_get_child(fault, "faultcode"));
 
 	if (faultcode_str && g_str_equal(faultcode_str, "q0:BadContextToken")) {
 		purple_debug_info("msn",
@@ -907,7 +907,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 			((MsnSoapCallback)state->cb)(req, resp, data);
 		} else {
 			/* We don't know how to respond to this faultcode, so log it */
-			char *str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
+			char *str = xmlnode_to_str(fault, NULL);
 			purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 			                   msn_contact_operation_str(state->action), str);
 			g_free(str);
@@ -1034,11 +1034,12 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 {
 	MsnCallbackState *state = data;
 	MsnUserList *userlist;
-	char *fault_str;
+	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 		                   msn_contact_operation_str(state->action), fault_str);
 		g_free(fault_str);
@@ -1149,11 +1150,12 @@ msn_delete_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnCallbackState *state = data;
 	MsnUserList *userlist = state->session->userlist;
 	MsnUser *user = msn_userlist_find_user_with_id(userlist, state->uid);
-	char *fault_str;
+	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 		                   msn_contact_operation_str(state->action), fault_str);
 		g_free(fault_str);
@@ -1204,11 +1206,12 @@ msn_del_contact_from_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
 	MsnCallbackState *state = data;
-	char *fault_str;
+	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 		                   msn_contact_operation_str(state->action), fault_str);
 		g_free(fault_str);
@@ -1285,11 +1288,12 @@ msn_update_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
 	MsnCallbackState *state = (MsnCallbackState *)data;
-	char *fault_str;
+	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 		                   msn_contact_operation_str(state->action), fault_str);
 		g_free(fault_str);
@@ -1373,11 +1377,12 @@ msn_del_contact_from_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 {
 	MsnCallbackState *state = data;
 	MsnSession *session = state->session;
-	char *fault_str;
+	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 		                   msn_contact_operation_str(state->action), fault_str);
 		g_free(fault_str);
@@ -1458,11 +1463,12 @@ msn_add_contact_to_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
 	MsnCallbackState *state = data;
-	char *fault_str;
+	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 		                   msn_contact_operation_str(state->action), fault_str);
 		g_free(fault_str);
@@ -1562,11 +1568,12 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	MsnCallbackState *state = data;
 	MsnSession *session;
 	MsnUserList *userlist;
-	char *fault_str;
+	xmlnode *fault;
 
 	/* We don't know how to respond to this faultcode, so log it */
-	fault_str = xmlnode_to_str(xmlnode_get_child(resp->xml, "Body/Fault"), NULL);
-	if (fault_str != NULL) {
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
 		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
 		                   msn_contact_operation_str(state->action), fault_str);
 		g_free(fault_str);
