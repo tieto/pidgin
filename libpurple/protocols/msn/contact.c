@@ -1179,8 +1179,8 @@ msn_delete_contact(MsnSession *session, MsnUser *user)
 		contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
 		purple_debug_info("msn", "Deleting contact with contactId: %s\n", user->uid);
 	} else {
-		contact_id_xml = g_strdup_printf(MSN_CONTACT_XML, user->passport);
-		purple_debug_info("msn", "Deleting contact with passport: %s\n", user->passport);
+		purple_debug_info("msn", "Unable to delete contact %s without a ContactId\n", user->passport);
+		return;
 	}
 
 	state = msn_callback_state_new(session);
