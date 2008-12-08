@@ -948,28 +948,37 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	xmlnode *fault;
 
+	g_return_if_fail(session != NULL);
+	userlist = session->userlist;
+
 	fault = xmlnode_get_child(resp->xml, "Body/Fault");
 	if (fault != NULL) {
 		char *errorcode = xmlnode_get_data(xmlnode_get_child(fault, "detail/errorcode"));
-		char *fault_str;
 		if (errorcode && !strcmp(errorcode, "EmailDomainIsFederated")) {
 			/* Do something special! */
 			purple_debug_error("msn", "Contact is from a federated domain, but don't know what to do yet!\n");
-		}
 
-		/* We don't know how to respond to this faultcode, so log it */
-		fault_str = xmlnode_to_str(fault, NULL);
-		if (fault_str != NULL) {
-			purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
-			                   msn_contact_operation_str(state->action), fault_str);
-			g_free(fault_str);
-			return;
+		} else if (errorcode && !strcmp(errorcode, "InvalidPassportUser")) {
+			PurpleBuddy *buddy = purple_find_buddy(session->account, state->who);
+			char *str = g_strdup_printf(_("Unable to add \"%s\"."), state->who);
+			purple_notify_error(state->session, _("Buddy Add error"), str,
+			                    _("The username specified does not exist."));
+			g_free(str);
+			msn_userlist_rem_buddy(userlist, state->who);
+			if (buddy != NULL)
+				purple_blist_remove_buddy(buddy);
+
+		} else {
+			/* We don't know how to respond to this faultcode, so log it */
+			char *fault_str = xmlnode_to_str(fault, NULL);
+			if (fault_str != NULL) {
+				purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+				                   msn_contact_operation_str(state->action), fault_str);
+				g_free(fault_str);
+			}
 		}
+		return;
 	}
-
-	g_return_if_fail(session != NULL);
-
-	userlist = session->userlist;
 
 	purple_debug_info("msn", "Contact added successfully\n");
 
@@ -1033,20 +1042,41 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
 	MsnCallbackState *state = data;
+	MsnSession *session = state->session;
 	MsnUserList *userlist;
 	xmlnode *fault;
 
-	/* We don't know how to respond to this faultcode, so log it */
+	g_return_if_fail(session != NULL);
+	userlist = session->userlist;
+
 	fault = xmlnode_get_child(resp->xml, "Body/Fault");
 	if (fault != NULL) {
-		char *fault_str = xmlnode_to_str(fault, NULL);
-		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
-		                   msn_contact_operation_str(state->action), fault_str);
-		g_free(fault_str);
+		char *errorcode = xmlnode_get_data(xmlnode_get_child(fault, "detail/errorcode"));
+		if (errorcode && !strcmp(errorcode, "EmailDomainIsFederated")) {
+			/* Do something special! */
+			purple_debug_error("msn", "Contact is from a federated domain, but don't know what to do yet!\n");
+
+		} else if (errorcode && !strcmp(errorcode, "InvalidPassportUser")) {
+			PurpleBuddy *buddy = purple_find_buddy(session->account, state->who);
+			char *str = g_strdup_printf(_("Unable to add \"%s\"."), state->who);
+			purple_notify_error(session, _("Buddy Add error"), str,
+			                    _("The username specified does not exist."));
+			g_free(str);
+			msn_userlist_rem_buddy(userlist, state->who);
+			if (buddy != NULL)
+				purple_blist_remove_buddy(buddy);
+
+		} else {
+			/* We don't know how to respond to this faultcode, so log it */
+			char *fault_str = xmlnode_to_str(fault, NULL);
+			if (fault_str != NULL) {
+				purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+				                   msn_contact_operation_str(state->action), fault_str);
+				g_free(fault_str);
+			}
+		}
 		return;
 	}
-
-	userlist = state->session->userlist;
 
 	if (msn_userlist_add_buddy_to_group(userlist, state->who,
 			state->new_group_name)) {
