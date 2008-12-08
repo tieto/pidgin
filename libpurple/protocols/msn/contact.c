@@ -176,28 +176,6 @@ msn_get_memberrole(const char *role)
 	return 0;
 }
 
-/* get Network */
-/* QuLogic: These names don't really refer to the MsnNetwork,
- *          but I haven't yet written the code to properly use them.
- */
-static MsnNetwork
-msn_get_network(char *type)
-{
-	g_return_val_if_fail(type != NULL, 0);
-
-	if (!strcmp(type,"Regular")) {
-		return MSN_NETWORK_PASSPORT;
-	}
-	if (!strcmp(type,"Live")) {
-		return MSN_NETWORK_PASSPORT;
-	}
-	if (!strcmp(type,"LivePending")) {
-		return MSN_NETWORK_PASSPORT;
-	}
-
-	return MSN_NETWORK_UNKNOWN;
-}
-
 /* Create the AddressBook in the server, if we don't have one */
 static void
 msn_create_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
@@ -245,9 +223,26 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	char *type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
 	char *member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
 	MsnUser *user = msn_userlist_find_add_user(session->userlist, passport, NULL);
+	xmlnode *annotation;
+	guint nid = MSN_NETWORK_PASSPORT;
 
-	purple_debug_info("msn", "CL: %s name: %s, Type: %s, MembershipID: %s\n",
-		node, passport, type, member_id == NULL ? "(null)" : member_id);
+	for (annotation = xmlnode_get_child(member, "Annotations/Annotation");
+	     annotation;
+	     annotation = xmlnode_get_next_twin(annotation)) {
+		char *name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+		if (name && !strcmp(name, "MSN.IM.BuddyType")) {
+			char *value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+			if (value != NULL)
+				nid = strtoul(value, NULL, 10);
+			g_free(value);
+		}
+		g_free(name);
+	}
+ 
+	purple_debug_info("msn", "CL: %s name: %s, Type: %s, MembershipID: %s, NetworkID: %u\n",
+		node, passport, type, member_id == NULL ? "(null)" : member_id, nid);
+
+	msn_user_set_network(user, nid);
 
 	if (member_id) {
 		user->membership_id[list] = atoi(member_id);
@@ -445,16 +440,16 @@ msn_parse_addressbook_groups(MsnSession *session, xmlnode *node)
 		if ((groupInfo = xmlnode_get_child(group, "groupInfo")) && (groupname = xmlnode_get_child(groupInfo, "name")))
 			group_name = xmlnode_get_data(groupname);
 
-		msn_group_new(session->userlist, group_id, group_name);
-
-		if (group_id == NULL){
+		if (group_id == NULL) {
 			/* Group of ungroupped buddies */
 			g_free(group_name);
 			continue;
 		}
 
+		msn_group_new(session->userlist, group_id, group_name);
+
 		purple_debug_info("msn", "AB group_id: %s, name: %s\n", group_id, group_name ? group_name : "(null)");
-		if ((purple_find_group(group_name)) == NULL){
+		if ((purple_find_group(group_name)) == NULL) {
 			PurpleGroup *g = purple_group_new(group_name);
 			purple_blist_add_group(g, NULL);
 		}
@@ -528,7 +523,6 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds, *messenger_user;
 		xmlnode *annotation;
 		MsnUser *user;
-		MsnNetwork networkId;
 
 		if (!(contactId = xmlnode_get_child(contactNode,"contactId"))
 				|| !(contactInfo = xmlnode_get_child(contactNode, "contactInfo"))
@@ -569,7 +563,6 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			g_free(is_messenger_user);
 		}
 
-		networkId = msn_get_network(type);
 		passportName = xmlnode_get_child(contactInfo, "passportName");
 		if (passportName == NULL) {
 			xmlnode *emailsNode, *contactEmailNode, *emailNode;
@@ -600,7 +593,6 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				if (msnEnabled && !strcmp(msnEnabled, "true")) {
 					/*Messenger enabled, Get the Passport*/
 					purple_debug_info("msn", "AB Yahoo User %s\n", passport ? passport : "(null)");
-					networkId = MSN_NETWORK_YAHOO;
 					g_free(msnEnabled);
 					break;
 				} else {
@@ -628,6 +620,15 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
 			if (!strcmp(name, "AB.NickName"))
 				alias = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+			else if (!strcmp(name, "MSN.IM.HasSharedFolder"))
+				; /* Do nothing yet... */
+			else if (!strcmp(name, "AB.Spouse"))
+				; /* Do nothing yet... */
+			else if (!strcmp(name, "MSN.Mobile.ContactId"))
+				; /* Do nothing yet... */
+			else
+				purple_debug_info("msn",
+				                  "Unknown AB contact annotation: %s\n", name);
 			g_free(name);
 		}
 
@@ -639,7 +640,6 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 
 		user = msn_userlist_find_add_user(session->userlist, passport, Name);
 		msn_user_set_uid(user, uid);
-		msn_user_set_network(user, networkId);
 		msn_user_set_mobile_phone(user, mobile_number);
 
 		groupIds = xmlnode_get_child(contactInfo, "groupIds");
