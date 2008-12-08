@@ -200,7 +200,7 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		if (requested_resource != NULL) {
 			resource = xmlnode_new_child(bind, "resource");
 			xmlnode_insert_data(resource, requested_resource, -1);
-			free(requested_resource);
+			g_free(requested_resource);
 		}
 
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
