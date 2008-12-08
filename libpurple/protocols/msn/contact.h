@@ -211,6 +211,27 @@
 		"</contactInfo>"\
 	"</Contact>"
 
+#define MSN_CONTACT_ID_XML \
+	"<Contact>"\
+		"<contactId>%s</contactId>"\
+	"</Contact>"
+
+#define MSN_CONTACT_EMAIL_XML \
+	"<Contact>"\
+		"<contactInfo>"\
+			"<emails>"\
+				"<ContactEmail>"\
+					"<contactEmailType>%s</contactEmailType>"\
+					"<email>%s</email>"\
+					"<isMessengerEnabled>true</isMessengerEnabled>"\
+					"<Capability>%d</Capability>"\
+					"<MessengerEnabledExternally>false</MessengerEnabledExternally>"\
+					"<propertiesChanged/>"\
+				"</ContactEmail>"\
+			"</emails>"\
+		"</contactInfo>"\
+	"</Contact>"
+
 #define MSN_ADD_CONTACT_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""\
 	" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""\
@@ -275,7 +296,6 @@
 
 /* Delete a contact from the Contact List */
 #define MSN_CONTACT_DEL_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABContactDelete"
-#define MSN_CONTACT_ID_XML		"<Contact><contactId>%s</contactId></Contact>"
 #define MSN_DEL_CONTACT_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope"\
 	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""\

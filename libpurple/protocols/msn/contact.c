@@ -1007,6 +1007,7 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 void
 msn_add_contact(MsnSession *session, MsnCallbackState *state, const char *passport)
 {
+	MsnUser *user;
 	gchar *body = NULL;
 	gchar *contact_xml = NULL;
 
@@ -1024,7 +1025,21 @@ msn_add_contact(MsnSession *session, MsnCallbackState *state, const char *passpo
 
 	purple_debug_info("msn", "Adding contact %s to contact list\n", passport);
 
-	contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
+	user = msn_userlist_find_user(session->userlist, passport);
+	if (user == NULL) {
+		purple_debug_warning("msn", "Unable to retrieve user %s from the userlist!\n", passport);
+		return; /* guess this never happened! */
+	}
+
+	if (user->networkid != MSN_NETWORK_PASSPORT) {
+		contact_xml = g_strdup_printf(MSN_CONTACT_EMAIL_XML,
+		                              user->networkid == MSN_NETWORK_YAHOO ?
+		                                  "Messenger2" :
+		                                  "Messenger3",
+		                              passport, 0);
+	} else {
+		contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
+	}
 	body = g_strdup_printf(MSN_ADD_CONTACT_TEMPLATE, contact_xml);
 
 	state->body = xmlnode_from_str(body, -1);
@@ -1155,8 +1170,14 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 		return; /* guess this never happened! */
 	}
 
-	if (user != NULL && user->uid != NULL) {
+	if (user->uid != NULL) {
 		contact_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
+	} else if (user->networkid != MSN_NETWORK_PASSPORT) {
+		contact_xml = g_strdup_printf(MSN_CONTACT_EMAIL_XML,
+		                              user->networkid == MSN_NETWORK_YAHOO ?
+		                                  "Messenger2" :
+		                                  "Messenger3",
+		                              passport, 0);
 	} else {
 		contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
 	}
