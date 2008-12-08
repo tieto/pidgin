@@ -56,6 +56,9 @@
 #include "signals.h"
 #include "util.h"
 
+#include "gtkaccount.h"
+#include "gtkprefs.h"
+
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
@@ -71,6 +74,7 @@ typedef struct {
 } AopMenu;
 
 static guint accels_save_timer = 0;
+static GList *gnome_url_handlers = NULL;
 
 static gboolean
 url_clicked_idle_cb(gpointer data)
@@ -80,10 +84,12 @@ url_clicked_idle_cb(gpointer data)
 	return FALSE;
 }
 
-static void
-url_clicked_cb(GtkWidget *w, const char *uri)
+static gboolean
+url_clicked_cb(GtkIMHtml *unused, GtkIMHtmlLink *link)
 {
+	const char *uri = gtk_imhtml_link_get_url(link);
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
+	return TRUE;
 }
 
 static GtkIMHtmlFuncs gtkimhtml_cbs = {
@@ -101,9 +107,6 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	PangoFontDescription *desc = NULL;
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-
-	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
-					 G_CALLBACK(url_clicked_cb), NULL);
 
 	pidgin_themes_smiley_themeize(imhtml);
 
@@ -3484,5 +3487,200 @@ GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
 		g_object_ref(pixbuf);
 	g_object_unref(loader);
 	return pixbuf;
+}
+
+static void url_copy(GtkWidget *w, gchar *url)
+{
+	GtkClipboard *clipboard;
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_PRIMARY);
+	gtk_clipboard_set_text(clipboard, url, -1);
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text(clipboard, url, -1);
+}
+
+static gboolean
+link_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *url;
+
+	url = gtk_imhtml_link_get_url(link);
+
+	/* Open Link */
+	img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Open Link"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	/* Copy Link Location */
+	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Link Location"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), (gpointer)url);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
+static gboolean
+copy_email_address(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *text;
+	char *address;
+#define MAILTOSIZE  (sizeof("mailto:") - 1)
+
+	text = gtk_imhtml_link_get_url(link);
+	g_return_val_if_fail(text && strlen(text) > MAILTOSIZE, FALSE);
+	address = (char*)text + MAILTOSIZE;
+
+	/* Copy Email Address */
+	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Email Address"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), address);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
+/* XXX: The following two functions are for demonstration purposes only! */
+static gboolean
+open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
+{
+	const char *url;
+	const char *str;
+
+	url = gtk_imhtml_link_get_url(link);
+	if (!url || strlen(url) < sizeof("open://"))
+		return FALSE;
+
+	str = url + sizeof("open://") - 1;
+
+	if (strcmp(str, "accounts") == 0)
+		pidgin_accounts_window_show();
+	else if (strcmp(str, "prefs") == 0)
+		pidgin_prefs_show();
+	else
+		return FALSE;
+	return TRUE;
+}
+
+static gboolean
+dummy(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	return TRUE;
+}
+
+static gboolean
+register_gnome_url_handlers(void)
+{
+	char *tmp;
+	char *err;
+	char *c;
+	char *start;
+
+	tmp = g_find_program_in_path("gconftool-2");
+	if (tmp == NULL)
+		return FALSE;
+
+	tmp = NULL;
+	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
+	                               &tmp, &err, NULL, NULL))
+	{
+		g_free(tmp);
+		g_free(err);
+		g_return_val_if_reached(FALSE);
+	}
+	g_free(err);
+	err = NULL;
+
+	for (c = start = tmp ; *c ; c++)
+	{
+		/* Skip leading spaces. */
+		if (c == start && *c == ' ')
+			start = c + 1;
+		else if (*c == '\n')
+		{
+			*c = '\0';
+			if (g_str_has_prefix(start, "/desktop/gnome/url-handlers/"))
+			{
+				char *cmd;
+				char *tmp2 = NULL;
+				char *protocol;
+
+				/* If there is an enabled boolean, honor it. */
+				cmd = g_strdup_printf("gconftool-2 -g %s/enabled", start);
+				if (g_spawn_command_line_sync(cmd, &tmp2, &err, NULL, NULL))
+				{
+					g_free(err);
+					err = NULL;
+					if (!strcmp(tmp2, "false\n"))
+					{
+						g_free(tmp2);
+						g_free(cmd);
+						start = c + 1;
+						continue;
+					}
+				}
+				g_free(cmd);
+				g_free(tmp2);
+
+				start += sizeof("/desktop/gnome/url-handlers/") - 1;
+
+				protocol = g_strdup_printf("%s:", start);
+				gnome_url_handlers = g_list_prepend(gnome_url_handlers, protocol);
+				gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+			}
+			start = c + 1;
+		}
+	}
+	g_free(tmp);
+
+	return (gnome_url_handlers != NULL);
+}
+
+void pidgin_utils_init(void)
+{
+	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
+
+	/* Example custom URL handler. */
+	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
+
+	/* If we're under GNOME, try registering the system URL handlers. */
+	if (purple_running_gnome())
+		register_gnome_url_handlers();
+}
+
+void pidgin_utils_uninit(void)
+{
+	gtk_imhtml_class_register_protocol("open://", NULL, NULL);
+
+	/* If we have GNOME handlers registered, unregister them. */
+	if (gnome_url_handlers)
+	{
+		GList *l;
+		for (l = gnome_url_handlers ; l ; l = l->next)
+		{
+			gtk_imhtml_class_register_protocol((char *)l->data, NULL, NULL);
+			g_free(l->data);
+		}
+		g_list_free(gnome_url_handlers);
+		gnome_url_handlers = NULL;
+		return;
+	}
+
+	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("https://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("ftp://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("mailto:", NULL, NULL);
+	gtk_imhtml_class_register_protocol("gopher://", NULL, NULL);
 }
 

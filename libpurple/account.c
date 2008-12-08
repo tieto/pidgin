@@ -2248,8 +2248,8 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 
 		/* Make a list of what group each buddy is in */
 		for (cur = buddies; cur != NULL; cur = cur->next) {
-			PurpleBlistNode *node = cur->data;
-			groups = g_list_append(groups, node->parent->parent);
+			PurpleBuddy *buddy = cur->data;
+			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
 		if (prpl_info->add_buddies != NULL)
@@ -2499,23 +2499,26 @@ purple_accounts_delete(PurpleAccount *account)
 	purple_accounts_remove(account);
 
 	/* Remove this account's buddies */
-	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root();
+	     gnode != NULL;
+		 gnode = purple_blist_node_get_sibling_next(gnode))
+	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
-		cnode = gnode->child;
+		cnode = purple_blist_node_get_first_child(gnode);
 		while (cnode) {
-			PurpleBlistNode *cnode_next = cnode->next;
+			PurpleBlistNode *cnode_next = purple_blist_node_get_sibling_next(cnode);
 
 			if(PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
-				bnode = cnode->child;
+				bnode = purple_blist_node_get_first_child(cnode);
 				while (bnode) {
-					PurpleBlistNode *bnode_next = bnode->next;
+					PurpleBlistNode *bnode_next = purple_blist_node_get_sibling_next(bnode);
 
 					if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
 						PurpleBuddy *b = (PurpleBuddy *)bnode;
 
-						if (b->account == account)
+						if (purple_buddy_get_account(b) == account)
 							purple_blist_remove_buddy(b);
 					}
 					bnode = bnode_next;
@@ -2523,7 +2526,7 @@ purple_accounts_delete(PurpleAccount *account)
 			} else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
 				PurpleChat *c = (PurpleChat *)cnode;
 
-				if (c->account == account)
+				if (purple_chat_get_account(c) == account)
 					purple_blist_remove_chat(c);
 			}
 			cnode = cnode_next;

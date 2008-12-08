@@ -246,7 +246,7 @@ static gchar *qq_status_text(PurpleBuddy *b)
 	qq_buddy_data *bd;
 	GString *status;
 
-	bd = (qq_buddy_data *) b->proto_data;
+	bd = purple_buddy_get_protocol_data(b);
 	if (bd == NULL)
 		return NULL;
 
@@ -289,7 +289,7 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 
 	g_return_if_fail(b != NULL);
 
-	bd = (qq_buddy_data *) b->proto_data;
+	bd = purple_buddy_get_protocol_data(b);
 	if (bd == NULL)
 		return;
 
@@ -380,11 +380,12 @@ static const char *qq_list_emblem(PurpleBuddy *b)
 	qq_data *qd;
 	qq_buddy_data *buddy;
 
-	if (!b || !(account = b->account) ||
-		!(gc = purple_account_get_connection(account)) || !(qd = gc->proto_data))
+	if (!b || !(account = purple_buddy_get_account(b)) ||
+		!(gc = purple_account_get_connection(account)) ||
+		!(qd = purple_connection_get_protocol_data(gc)))
 		return NULL;
 
-	buddy = (qq_buddy_data *)b->proto_data;
+	buddy = purple_buddy_get_protocol_data(b);
 	if (!buddy) {
 		return "not-authorized";
 	}
@@ -693,8 +694,9 @@ static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 static void action_chat_quit(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
-	GHashTable *components = chat -> components;
+	PurpleAccount *account = purple_chat_get_account(chat);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	GHashTable *components = purple_chat_get_components(chat);
 	gchar *num_str;
 	guint32 room_id;
 
@@ -712,8 +714,9 @@ static void action_chat_quit(PurpleBlistNode * node)
 static void action_chat_get_info(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
-	GHashTable *components = chat -> components;
+	PurpleAccount *account = purple_chat_get_account(chat);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	GHashTable *components = purple_chat_get_components(chat);
 	gchar *num_str;
 	guint32 room_id;
 
@@ -800,7 +803,7 @@ static void qq_add_buddy_from_menu_cb(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	qq_add_buddy(gc, buddy, NULL);
 }
@@ -813,7 +816,7 @@ static GList *qq_buddy_menu(PurpleBuddy *buddy)
 	PurpleConnection *gc = purple_account_get_connection(buddy->account);
 	qq_data *qd = gc->proto_data;
 	*/
-	qq_buddy_data *bd = (qq_buddy_data *)buddy->proto_data;
+	qq_buddy_data *bd = purple_buddy_get_protocol_data(buddy);
 
 	if (bd == NULL) {
 		act = purple_menu_action_new(_("Add Buddy"),
