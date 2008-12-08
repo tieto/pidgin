@@ -53,8 +53,6 @@ struct _MsnUserList
 	int buddy_icon_window;
 	guint buddy_icon_request_timer;
 
-	int fl_users_count;
-
 };
 
 gboolean msn_userlist_user_is_in_group(MsnUser *user, const char * group_id);

@@ -184,10 +184,6 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 		{
 			msn_user_add_group_id(user, group_id);
 		}
-		else
-		{
-			/* session->sync->fl_users_count++; */
-		}
 	}
 	else if (list_id == MSN_LIST_AL)
 	{
@@ -252,10 +248,6 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 		{
 			msn_user_remove_group_id(user, group_id);
 			return;
-		}
-		else
-		{
-			/* session->sync->fl_users_count--; */
 		}
 	}
 	else if (list_id == MSN_LIST_AL)

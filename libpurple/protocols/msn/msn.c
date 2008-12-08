@@ -1443,17 +1443,6 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		purple_debug_info("msn", "msn_add_buddy: %s\n", who);
 #endif
 
-#if 0
-	/* Which is the max? */
-	if (session->fl_users_count >= 150)
-	{
-		purple_debug_info("msn", "Too many buddies\n");
-		/* Buddy list full */
-		/* TODO: purple should be notified of this */
-		return;
-	}
-#endif
-
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
 	 * internal. */
