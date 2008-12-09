@@ -13,6 +13,9 @@ version 2.5.3 (??/??/????):
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
 	  ID's, etc. into links (Florian Quèze)
 	* Fix a crash in SIMPLE when a malformed message is received.
+	* On MSN, the Games and Office media can now be set and displayed (in
+	  addition to the previous Music media). The Media status text now shows
+	  the album, if possible. 
 	* purple-remote now has a "getstatusmessage" command to retrieve the text
 	  of the current status message.
 	* Various fixes to the nullprpl (Paul Aurich)
