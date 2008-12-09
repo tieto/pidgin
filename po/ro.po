@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-2.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2008-08-13 23:52+0300\n"
 "Last-Translator: Mişu Moldovan <dumol@gnome.ro>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
@@ -240,9 +240,6 @@ msgstr "Eroare la adăugarea grupului"
 msgid "You must give a name for the group to add."
 msgstr "Trebuie să daţi un nume grupului de adăugat."
 
-msgid "A group with the name already exists."
-msgstr "Există deja un grup cu acest nume."
-
 msgid "Add Group"
 msgstr "Adaugă grup"
 
@@ -273,15 +270,14 @@ msgstr "Detalii"
 msgid "Add Buddy Pounce"
 msgstr "Adăugare întâmpinare"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "Trimitere fişier"
 
 msgid "Blocked"
 msgstr "Blocat"
 
-msgid "View Log"
-msgstr "Arată înregistrările"
+msgid "Show when offline"
+msgstr "Arată la deconectare"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -322,6 +318,9 @@ msgstr "Plasare etichetată"
 
 msgid "Toggle Tag"
 msgstr "Schimbă eticheta"
+
+msgid "View Log"
+msgstr "Arată înregistrările"
 
 #. General
 msgid "Nickname"
@@ -1337,7 +1336,7 @@ msgstr "Tip"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5044,7 +5043,7 @@ msgstr "La masă"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 msgid "Artist"
@@ -5256,8 +5255,7 @@ msgstr "Adresă profil"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Modul de protocol Windows Live Messenger"
 
@@ -5294,6 +5292,7 @@ msgstr "%s în %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s vă sâcâie cu un „nudge”!"
 
+#. char *adl = g_strndup(payload, len);
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Eroare necunoscută (%d)"
@@ -6488,6 +6487,7 @@ msgstr ""
 "spaţii sau să conţină doar numere."
 
 #. Unregistered screen name
+#. uid is not exist
 msgid "Invalid username."
 msgstr "Nume invalid de utilizator"
 
@@ -6926,10 +6926,12 @@ msgstr ""
 "Un nume valid trebuie să fie o adresă de mail validă sau să înceapă cu o "
 "literă şi să conţină doar litere, numere şi spaţii sau doar numere."
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "Adăugare eşuată"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "Nu se poate descărca lista de contacte"
 
 msgid ""
@@ -7152,42 +7154,6 @@ msgstr ""
 "necesară pentru imaginile IM. Pentru că adresa IP vă va fi expusă, luaţi în "
 "considerare riscurile la care vă expuneţi."
 
-msgid "Primary Information"
-msgstr "Informaţii de bază"
-
-msgid "Personal Introduction"
-msgstr "Introducere personală"
-
-msgid "QQ Number"
-msgstr "Număr QQ"
-
-msgid "Country/Region"
-msgstr "Ţară/Regiune"
-
-msgid "Province/State"
-msgstr "Provincie/Stat"
-
-msgid "Horoscope Symbol"
-msgstr "Simbol horoscop"
-
-msgid "Zodiac Sign"
-msgstr "Semn zodiacal"
-
-msgid "Blood Type"
-msgstr "Grupă sanguină"
-
-msgid "College"
-msgstr "Colegiu"
-
-msgid "Zipcode"
-msgstr "Cod poştal"
-
-msgid "Cellphone Number"
-msgstr "Telefon mobil"
-
-msgid "Phone Number"
-msgstr "Telefon"
-
 msgid "Aquarius"
 msgstr "Vărsător"
 
@@ -7264,108 +7230,189 @@ msgid "Other"
 msgstr "Altceva"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "Editare detalii proprii"
+msgid "Visible"
+msgstr "Invizibil"
 
-#, fuzzy
-msgid "Update information"
-msgstr "Actualizare detalii proprii"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Contact"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "Viteză:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "Introduceţi informaţii despre contact."
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
-"Alegerea unui avatar personalizat nu este suportată deocamdată. Alegeţi o "
-"imagine de la %s."
-
-msgid "Invalid QQ Face"
-msgstr "Avatar QQ invalid"
-
-#, c-format
-msgid "You rejected %d's request"
-msgstr "Aţi respins cererea făcută de %d"
-
-msgid "Reject request"
-msgstr "Respinge cererea"
-
-#. title
-#, fuzzy
-msgid "Sorry, you are not my style..."
-msgstr "Scuze, nu eşti genul meu..."
-
-msgid "Add buddy with auth request failed"
-msgstr "Adaugă contactul cu cereri eşuate de autorizare"
 
 #, fuzzy
-msgid "Failed:"
+msgid "Private"
+msgstr "Securitate"
+
+msgid "QQ Number"
+msgstr "Număr QQ"
+
+msgid "Country/Region"
+msgstr "Ţară/Regiune"
+
+msgid "Province/State"
+msgstr "Provincie/Stat"
+
+msgid "Zipcode"
+msgstr "Cod poştal"
+
+msgid "Phone Number"
+msgstr "Telefon"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "Autorizaţi contactul?"
+
+msgid "Cellphone Number"
+msgstr "Telefon mobil"
+
+msgid "Personal Introduction"
+msgstr "Introducere personală"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "Oraş"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "Mobil privat"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "Alias contact"
+
+msgid "College"
+msgstr "Colegiu"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "Simbol horoscop"
+
+#, fuzzy
+msgid "Zodiac"
+msgstr "Semn zodiacal"
+
+#, fuzzy
+msgid "Blood"
+msgstr "Blocat"
+
+#, fuzzy
+msgid "True"
+msgstr "Taur"
+
+#, fuzzy
+msgid "False"
 msgstr "Eşuat"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "Ştergere contact"
+msgid "Modify Contact"
+msgstr "Modificare cont"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "%s v-a şters din lista sa de contacte."
+msgid "Modify Address"
+msgstr "Adresă acasă"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "Editare detalii proprii"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "Editare detalii proprii"
+
+#, fuzzy
+msgid "Update"
+msgstr "Ultima actualizare"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "Introduceţi informaţii despre contact."
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "Adaugă contact"
+
+#, fuzzy
+msgid "Input answer here"
+msgstr "Introduceţi aici cererea"
+
+msgid "Send"
+msgstr "Trimite"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "Nume invalid de utilizator"
+
+msgid "Authorization denied message:"
+msgstr "Mesaj de autorizare refuzată:"
+
+#, fuzzy
+msgid "Sorry, You are not my style."
+msgstr "Scuze, nu eşti genul meu..."
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "Utilizatorul %d are nevoie de autorizare"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "Doriţi adăugarea utilizatorului în lista de contacte?"
+
 msgid "Input request here"
 msgstr "Introduceţi aici cererea"
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "Vrei să fim prieteni?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "Trimite"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "Nu s-a putut încărca lista de contacte"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Contact"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "Număr QQ"
+msgid "Add buddy"
+msgstr "Adaugă contact"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "Avatar QQ invalid"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "Am nevoie de autorizare..."
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "Ştergerea contactului a eşuat"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "%s v-a şters din lista sa de contacte."
+
+#, fuzzy
+msgid "No reason given"
+msgstr "Fără motiv."
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr "Aţi fost adăugat de %s"
+
+msgid "Would you like to add him?"
+msgstr "Doriţi să îl adăugaţi?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "Respingere"
+
+#, c-format
+msgid "Message: %s"
+msgstr "Mesaj: %s"
 
 msgid "ID: "
 msgstr "ID: "
 
 msgid "Group ID"
 msgstr "ID grup:"
-
-msgid "Creator"
-msgstr "Iniţiator"
-
-msgid "Group Description"
-msgstr "Descriere grup"
-
-msgid "Auth"
-msgstr "Autorizare"
 
 msgid "QQ Qun"
 msgstr "QQ Qun"
@@ -7378,80 +7425,73 @@ msgstr "Introduceţi noul nume pentru %s"
 msgid "You can only search for permanent Qun\n"
 msgstr "Puteţi căuta doar grupuri QQ permanente\n"
 
-#, fuzzy, c-format
-msgid "%d request to join Qun %d"
-msgstr "Utilizatorul %d a cerut înscrierea în grupul %d"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Mesaj: %s"
-
-msgid "QQ Qun Operation"
-msgstr "Operaţie QQ Qun"
-
-msgid "Approve"
-msgstr "Aprobă"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Intrarea în chat alături de acest contact a eşuat"
-
-#, fuzzy, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr "Cererea de a vă alătura grupului %d v-a fost respinsă de adminul %d"
-
-#, fuzzy, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr "[%d] a părăsit grupul „%d”"
-
 #, fuzzy
-msgid "Notice:"
-msgstr "Notă"
-
-#, fuzzy, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr "Aţi fost adăugat cu identitatea %d în grupul „%d”"
-
-msgid "I am not a member"
+msgid "Not member"
 msgstr "Nu sunt un membru"
 
-msgid "I am a member"
-msgstr "Sunt un membru"
+msgid "Member"
+msgstr "Membru"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "Cerere invalidă"
+msgid "Requesting"
+msgstr "Dialog cerere"
 
-msgid "I am the admin"
-msgstr "Sunt admin"
+#, fuzzy
+msgid "Admin"
+msgstr "Adium"
 
-msgid "Unknown status"
-msgstr "Status necunoscut"
+#, fuzzy
+msgid "Notice"
+msgstr "Notă"
+
+#, fuzzy
+msgid "Detail"
+msgstr "Implicită"
+
+msgid "Creator"
+msgstr "Iniţiator"
+
+#, fuzzy
+msgid "About me"
+msgstr "Despre %s"
+
+#, fuzzy
+msgid "Category"
+msgstr "Eroare de chat"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
 msgstr "Acest grup nu permite înscrierea altor contacte"
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "Ştergere grup"
+msgid "Join QQ Qun"
+msgstr "Intră într-un chat"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
 
 #, fuzzy
-msgid "Join to Qun"
-msgstr "Intră într-un chat"
+msgid "Successfully joined Qun"
+msgstr "Aţi modificat cu succes membrul Qun"
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+msgid "QQ Qun Operation"
+msgstr "Operaţie QQ Qun"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "Eşuat"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr "Aţi introdus un ID de grup prea mic sau prea mare"
-
-msgid "Are you sure you want to leave this Qun?"
-msgstr "Sigur doriţi să părăsiţi acest Qun?"
+#, fuzzy
+msgid "Quit Qun"
+msgstr "QQ Qun"
 
 msgid ""
 "Note, if you are the creator, \n"
@@ -7460,44 +7500,51 @@ msgstr ""
 "Notaţi că, dacă dumneavoastră sunteţi iniţiatorul, \n"
 "această acţiune va elimina acest Qun."
 
-#. we want to see window
-msgid "Do you want to approve the request?"
-msgstr "Doriţi să aprobaţi cererea?"
+#, fuzzy
+msgid "Sorry, you are not our style ..."
+msgstr "Scuze, nu eşti genul meu..."
 
 #, fuzzy
-msgid "Change Qun member"
-msgstr "Telefon"
+msgid "Successfully changed Qun member"
+msgstr "Aţi modificat cu succes membrul Qun"
 
 #, fuzzy
-msgid "Change Qun information"
-msgstr "Detalii chat"
+msgid "Successfully changed Qun information"
+msgstr "Aţi modificat cu succes detaliile Qun"
 
 msgid "You have successfully created a Qun"
 msgstr "Aţi creat cu succes un Qun"
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "Doriţi să setaţi detaliile Qun acum?"
 
 msgid "Setup"
 msgstr "Opţiuni"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s (%s)"
+msgid "%d requested to join Qun %d for %s"
+msgstr "Utilizatorul %d a cerut înscrierea în grupul %d"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "Schimb de server ICQ"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "Utilizatorul %d a cerut înscrierea în grupul %d"
 
-msgid "System Message"
-msgstr "Mesaj de sistem"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Intrarea în chat alături de acest contact a eşuat"
 
-msgid "Failed to send IM."
-msgstr "Nu s-a putut trimite mesajul."
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "Ştergere contact"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, c-format
 msgid "Unknown-%d"
@@ -7505,9 +7552,6 @@ msgstr "%d-necunoscut"
 
 msgid "Level"
 msgstr "Nivel"
-
-msgid "Member"
-msgstr "Membru"
 
 msgid " VIP"
 msgstr " VIP"
@@ -7540,24 +7584,36 @@ msgstr "Ver"
 msgid "Invalid name"
 msgstr "Nume invalid"
 
-#, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+#, fuzzy
+msgid "Select icon..."
+msgstr "Alegeţi un director..."
+
+#, fuzzy, c-format
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>Autentificat la</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>Conectaţi:</b> %d<br>\n"
 
-#, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Ultima actualizare:</b> %s<br>\n"
 
 #, fuzzy, c-format
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>IP server</b>: %s: %d<br>\n"
 
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>Autentificat la</b>: %s<br>\n"
+
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Mod de conectare</b>: %s<br>\n"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>Mod de conectare</b>: %s<br>\n"
 
 #, fuzzy, c-format
@@ -7580,23 +7636,44 @@ msgstr "<b>IP server</b>: %s: %d<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>IP-ul meu public</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Autentificat la</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>IP-ul ultimei autentificări</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>Ultima autentificare</b>: %s\n"
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>IP server</b>: %s: %d<br>\n"
 
 msgid "Login Information"
 msgstr "Informaţii de autentificare"
 
-msgid "Set My Information"
-msgstr "Introducere detalii proprii"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>Ultima actualizare:</b> %s<br>\n"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>IP server</b>: %s: %d<br>\n"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Despre %s"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "Salvare avatar"
 
 msgid "Change Password"
 msgstr "Schimbare parolă"
@@ -7605,12 +7682,12 @@ msgstr "Schimbare parolă"
 msgid "Account Information"
 msgstr "Informaţii de autentificare"
 
-#, fuzzy
-msgid "Leave the QQ Qun"
-msgstr "Ieşire din acest QQ Qun"
+msgid "Update all QQ Quns"
+msgstr ""
 
-msgid "Block this buddy"
-msgstr "Blochează acest contact"
+#, fuzzy
+msgid "About OpenQ"
+msgstr "Despre %s"
 
 #. *< type
 #. *< ui_requirement
@@ -7622,13 +7699,28 @@ msgstr "Blochează acest contact"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "Modul pentru protocolul QQ"
 
 #, fuzzy
 msgid "Auto"
 msgstr "Autor"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "Selectaţi utilizatorul"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "Conectare folosind TCP"
@@ -7642,41 +7734,81 @@ msgid "Show server news"
 msgstr "Adresă server"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "Eroare „keep alive”"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "Eroare „keep alive”"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "Nu s-au putut obţine detalii despre server"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "Nu s-au putut obţine detalii despre server"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "Titlu invalid"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "Eroare la schimbarea parolei"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "E nevoie de înregistrare"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 msgid "Keep alive error"
 msgstr "Eroare „keep alive”"
 
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "Conectarea la server a eşuat."
+msgid "Requesting captcha ..."
+msgstr "Se cere atenţie din partea contactului %s..."
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
+#, fuzzy
+msgid "Captcha Image"
+msgstr "Salvează imaginea"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "Introduceţi parola"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "Introduceţi numele grupului"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7702,8 +7834,11 @@ msgstr "Eroare la scriere"
 msgid "Connection lost"
 msgstr "Conexiune pierdută"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "Introducere detalii..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "Cerere respinsă"
 
@@ -7714,15 +7849,34 @@ msgstr "Nu s-a putut rezolva numele calculatorului"
 msgid "Invalid server or port"
 msgstr "Eroare invalidă"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"Eroare de conectare de la serverul %s:\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "Server de conectare"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "Eroare QQid"
+
+msgid "Failed to send IM."
+msgstr "Nu s-a putut trimite mesajul."
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "Schimb de server ICQ"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "Expeditor"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "Instrucţiuni server: %s"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7738,14 +7892,18 @@ msgid "QQ Qun Command"
 msgstr "Comandă"
 
 #, fuzzy, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr "Aţi fost adăugat cu identitatea %d în grupul „%d”"
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "Motiv necunoscut"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "Motiv necunoscut"
 
 #, c-format
@@ -7758,63 +7916,6 @@ msgstr "Trimitere fişier"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d a anulat transferul fişierului %s"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "Doriţi să aprobaţi cererea?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "Doriţi să adăugaţi acest contact?"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "Aţi fost adăugat de %s"
-
-msgid "Would you like to add him?"
-msgstr "Doriţi să îl adăugaţi?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "%s v-a adăugat în lista sa de contacte cu identitatea %s"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "Contact"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s doreşte să vă adauge în listă cu identitatea %s"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "%s nu este în lista dumneavoastră de contacte"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "Doriţi să îl adăugaţi?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "Expeditor"
-
-#, c-format
-msgid "%s"
-msgstr "%s"
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "Port server"
 
 msgid "Connection closed (writing)"
 msgstr "Conexiune terminată (la scriere)"
@@ -9524,9 +9625,6 @@ msgstr "Mesajul dumneavoastră Yahoo! nu a fost trimis."
 msgid "Yahoo! system message for %s:"
 msgstr "Mesaj de sistem Yahoo! de la %s:"
 
-msgid "Authorization denied message:"
-msgstr "Mesaj de autorizare refuzată:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10424,9 +10522,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10499,9 +10597,6 @@ msgstr "Arată în_registrările"
 
 msgid "Hide when offline"
 msgstr "Ascunde la deconectare"
-
-msgid "Show when offline"
-msgstr "Arată la deconectare"
 
 msgid "_Alias..."
 msgstr "_Alias..."
@@ -10869,7 +10964,8 @@ msgstr "A_lias:"
 msgid "Auto_join when account becomes online."
 msgstr "Intră a_utomat când contul e online."
 
-msgid "_Hide chat when the window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed."
 msgstr "Ascunde acest c_hat când fereastra e închisă."
 
 msgid "Please enter the name of the group to be added."
@@ -10902,10 +10998,6 @@ msgstr "/Contacte/Sortează contactele"
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Servere SSL"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "Deconectat la distanţă"
 
 msgid "Unknown command."
 msgstr "Comandă necunoscută."
@@ -11249,8 +11341,12 @@ msgstr "Erori "
 msgid "Fatal Error"
 msgstr "Erori fatale"
 
-msgid "developer"
-msgstr "programator"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "Artist"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11259,10 +11355,8 @@ msgstr "Ka-Hing Cheung"
 msgid "support"
 msgstr "suport"
 
-msgid "support/QA"
-msgstr "suport şi asigurare a calităţii"
-
-msgid "developer & webmaster"
+#, fuzzy
+msgid "webmaster"
 msgstr "programator şi editor web"
 
 msgid "Senior Contributor/QA"
@@ -11281,8 +11375,11 @@ msgstr "coordonator libfaim"
 msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker şi şofer de serviciu"
 
-msgid "XMPP developer"
-msgstr "programator XMPP"
+msgid "support/QA"
+msgstr "suport şi asigurare a calităţii"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "autorul iniţial"
@@ -11545,9 +11642,6 @@ msgstr "Programatori inactivi"
 
 msgid "Retired Crazy Patch Writers"
 msgstr "Autori inactivi de patch-uri"
-
-msgid "Artists"
-msgstr "Designeri"
 
 msgid "Current Translators"
 msgstr "Traducători activi"
@@ -12162,7 +12256,7 @@ msgstr ""
 "display=ECRAN     ecran X de utilizat\n"
 "  -v, --version       arată versiunea curentă\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s has segfaulted and attempted to dump a core file.\n"
 "This is a bug in the software and has happened through\n"
@@ -12176,11 +12270,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 "%s %s s-a blocat (segfault) şi a încercat să scrie un fişier\n"
 "core. Aceasta este o problemă de programare şi nu e din vina\n"
@@ -13045,8 +13134,13 @@ msgstr "_Detalii"
 msgid "_Invite"
 msgstr "_Invită"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "_Modifică"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "_Adaugă"
 
 msgid "_Open Mail"
 msgstr "_Arată mailul"
@@ -13069,6 +13163,13 @@ msgstr "Fără iconiţe simbolice grafice."
 
 msgid "none"
 msgstr "nimic"
+
+#, fuzzy
+msgid "Small"
+msgstr "Mail"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr "Probabilitate răspunsuri:"
@@ -13535,6 +13636,10 @@ msgstr "Inserează numărul de noi mesaje în proprietatea _X"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Schimbă starea ferestrei în _URGENT"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "Ferestrele de c_hat"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "R_idică fereastra de discuţii"
@@ -13715,19 +13820,19 @@ msgstr ""
 "fereastra de depanare."
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"Versiunea utilizată este %s versiunea %s. Ultima versiune este %s. O puteţi "
-"obţine de la <a href=\"%s\">%s</a><hr>"
-
-#, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>Noutăţi:</b><br>%s"
 
 msgid "New Version Available"
 msgstr "A apărut o nouă versiune"
+
+#, fuzzy
+msgid "Later"
+msgstr "Dată"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "Descărcare %s: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -14037,6 +14142,202 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Acest modul poate fi utilizat pentru depanarea serverelor şi clienţilor XMPP."
 
+#~ msgid "A group with the name already exists."
+#~ msgstr "Există deja un grup cu acest nume."
+
+#~ msgid "Primary Information"
+#~ msgstr "Informaţii de bază"
+
+#~ msgid "Blood Type"
+#~ msgstr "Grupă sanguină"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "Actualizare detalii proprii"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "Viteză:"
+
+#~ msgid ""
+#~ "Setting custom faces is not currently supported. Please choose an image "
+#~ "from %s."
+#~ msgstr ""
+#~ "Alegerea unui avatar personalizat nu este suportată deocamdată. Alegeţi o "
+#~ "imagine de la %s."
+
+#~ msgid "Invalid QQ Face"
+#~ msgstr "Avatar QQ invalid"
+
+#~ msgid "You rejected %d's request"
+#~ msgstr "Aţi respins cererea făcută de %d"
+
+#~ msgid "Reject request"
+#~ msgstr "Respinge cererea"
+
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "Adaugă contactul cu cereri eşuate de autorizare"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "Nu s-a putut încărca lista de contacte"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "Număr QQ"
+
+#~ msgid "Group Description"
+#~ msgstr "Descriere grup"
+
+#~ msgid "Auth"
+#~ msgstr "Autorizare"
+
+#~ msgid "Approve"
+#~ msgstr "Aprobă"
+
+#, fuzzy
+#~ msgid "Successed to join Qun %d, operated by admin %d"
+#~ msgstr "Cererea de a vă alătura grupului %d v-a fost respinsă de adminul %d"
+
+#, fuzzy
+#~ msgid "[%d] removed from Qun \"%d\""
+#~ msgstr "[%d] a părăsit grupul „%d”"
+
+#, fuzzy
+#~ msgid "[%d] added to Qun \"%d\""
+#~ msgstr "Aţi fost adăugat cu identitatea %d în grupul „%d”"
+
+#~ msgid "I am a member"
+#~ msgstr "Sunt un membru"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "Cerere invalidă"
+
+#~ msgid "I am the admin"
+#~ msgstr "Sunt admin"
+
+#~ msgid "Unknown status"
+#~ msgstr "Status necunoscut"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "Ştergere grup"
+
+#~ msgid "You entered a group ID outside the acceptable range"
+#~ msgstr "Aţi introdus un ID de grup prea mic sau prea mare"
+
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "Sigur doriţi să părăsiţi acest Qun?"
+
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "Doriţi să aprobaţi cererea?"
+
+#, fuzzy
+#~ msgid "Change Qun member"
+#~ msgstr "Telefon"
+
+#, fuzzy
+#~ msgid "Change Qun information"
+#~ msgstr "Detalii chat"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "Mesaj de sistem"
+
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>IP-ul ultimei autentificări</b>: %s<br>\n"
+
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>Ultima autentificare</b>: %s\n"
+
+#~ msgid "Set My Information"
+#~ msgstr "Introducere detalii proprii"
+
+#, fuzzy
+#~ msgid "Leave the QQ Qun"
+#~ msgstr "Ieşire din acest QQ Qun"
+
+#~ msgid "Block this buddy"
+#~ msgstr "Blochează acest contact"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "Eroare la schimbarea parolei"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "Conectarea la server a eşuat."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "Eroare de conectare de la serverul %s:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "Doriţi să aprobaţi cererea?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "Doriţi să adăugaţi acest contact?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s v-a adăugat în lista sa de contacte cu identitatea %s"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "Contact"
+
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s doreşte să vă adauge în listă cu identitatea %s"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s nu este în lista dumneavoastră de contacte"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "Doriţi să îl adăugaţi?"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "Port server"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "Deconectat la distanţă"
+
+#~ msgid "developer"
+#~ msgstr "programator"
+
+#~ msgid "XMPP developer"
+#~ msgstr "programator XMPP"
+
+#~ msgid "Artists"
+#~ msgstr "Designeri"
+
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "Versiunea utilizată este %s versiunea %s. Ultima versiune este %s. O "
+#~ "puteţi obţine de la <a href=\"%s\">%s</a><hr>"
+
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>Noutăţi:</b><br>%s"
+
 #~ msgid "EOF while reading from resolver process"
 #~ msgstr "EOF la citirea de la procesul „resolver”"
 
@@ -14084,12 +14385,6 @@ msgstr ""
 
 #~ msgid "Enter your reason:"
 #~ msgstr "Precizaţi motivul:"
-
-#~ msgid "You have successfully modified Qun member"
-#~ msgstr "Aţi modificat cu succes membrul Qun"
-
-#~ msgid "You have successfully modified Qun information"
-#~ msgstr "Aţi modificat cu succes detaliile Qun"
 
 #, fuzzy
 #~ msgid " Space"

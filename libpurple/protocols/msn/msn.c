@@ -1840,7 +1840,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 		if (b->server_alias)
 		{
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
-			tmp = g_strdup_printf("<font sml=\"msn\">%s</font><br>", nicktext);
+			tmp = g_strdup_printf("<font sml=\"msn\">%s</font>", nicktext);
 			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
 			g_free(tmp);
 			g_free(nicktext);
@@ -1946,9 +1946,8 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0)
 	{
-		tmp = g_strdup_printf("<b>%s</b>", _("Error retrieving profile"));
-		purple_notify_user_info_add_pair(user_info, NULL, tmp);
-		g_free(tmp);
+		purple_notify_user_info_add_pair(user_info,
+				_("Error retrieving profile"), NULL);
 
 		purple_notify_userinfo(info_data->gc, info_data->name, user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
@@ -2289,21 +2288,24 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
 		PurpleBuddy *b = purple_find_buddy
 				(purple_connection_get_account(info_data->gc), info_data->name);
-		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"),
-									   ((p && b) ? _("The user has not created a public profile.") :
-										(p ? _("MSN reported not being able to find the user's profile. "
-											   "This either means that the user does not exist, "
-											   "or that the user exists "
-											   "but has not created a public profile.") :
-										 _("Could not find "	/* This should never happen */
-										   "any information in the user's profile. "
-										   "The user most likely does not exist."))));
+		purple_notify_user_info_add_pair(user_info,
+				_("Error retrieving profile"), NULL);
+		purple_notify_user_info_add_pair(user_info, NULL,
+				((p && b) ? _("The user has not created a public profile.") :
+					(p ? _("MSN reported not being able to find the user's profile. "
+							"This either means that the user does not exist, "
+							"or that the user exists "
+							"but has not created a public profile.") :
+						_("Could not find "	/* This should never happen */
+							"any information in the user's profile. "
+							"The user most likely does not exist."))));
 	}
 
 	/* put a link to the actual profile URL */
-	tmp = g_strdup_printf("<a href=\"%s%s\">%s%s</a>",
-					PROFILE_URL, info_data->name, PROFILE_URL, info_data->name);
-	purple_notify_user_info_add_pair(user_info, _("Profile URL"), tmp);
+	purple_notify_user_info_add_section_break(user_info);
+	tmp = g_strdup_printf("<a href=\"%s%s\">%s</a>",
+			PROFILE_URL, info_data->name, _("View web profile"));
+	purple_notify_user_info_add_pair(user_info, NULL, tmp);
 	g_free(tmp);
 
 #if PHOTO_SUPPORT

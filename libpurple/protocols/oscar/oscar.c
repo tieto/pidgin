@@ -3187,6 +3187,12 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 		}
 	}
 
+	purple_notify_user_info_add_section_break(user_info);
+	tmp = g_strdup_printf("<a href=\"http://profiles.aim.com/%s\">%s</a>",
+			purple_normalize(account, userinfo->sn), _("View web profile"));
+	purple_notify_user_info_add_pair(user_info, NULL, tmp);
+	g_free(tmp);
+
 	purple_notify_userinfo(gc, userinfo->sn, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
 

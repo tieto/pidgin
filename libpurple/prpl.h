@@ -274,7 +274,16 @@ struct _PurplePluginProtocolInfo
 					PurpleMessageFlags flags);
 
 	void (*set_info)(PurpleConnection *, const char *info);
+
+	/**
+	 * @return If this protocol requires the PURPLE_TYPING message to
+	 *         be sent repeatedly to signify that the user is still
+	 *         typing, then the PRPL should return the number of
+	 *         seconds to wait before sending a subsequent notification.
+	 *         Otherwise the PRPL should return 0.
+	 */
 	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleTypingState state);
+
 	/**
 	 * Should arrange for purple_notify_userinfo() to be called with
 	 * @a who's user info.

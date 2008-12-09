@@ -513,7 +513,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
-		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
+		} else if(xmlns && !strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
 			caps = y; /* store for later, when creating buddy resource */
 		} else if(!strcmp(y->name, "x")) {
 			const char *xmlns = xmlnode_get_namespace(y);

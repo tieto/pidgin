@@ -22,6 +22,10 @@
 
 #include <string.h>
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "Bindable"
+
 #include "gntbindable.h"
 #include "gntstyle.h"
 #include "gnt.h"
@@ -360,7 +364,7 @@ register_binding(GntBindableClass *klass, const char *name, const char *trigger,
 
 	action = g_hash_table_lookup(klass->actions, name);
 	if (!action) {
-		g_printerr("GntBindable: Invalid action name %s for %s\n",
+		gnt_warning("Invalid action name %s for %s",
 				name, g_type_name(G_OBJECT_CLASS_TYPE(klass)));
 		if (list)
 			g_list_free(list);

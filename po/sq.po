@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2008-08-10 14:42+0200\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
 "Language-Team: Albanian <translation-team-sq@lists.sourceforge.net>\n"
@@ -245,9 +245,6 @@ msgstr "Gabim në shtim grupi"
 msgid "You must give a name for the group to add."
 msgstr "Lypset t'i jepni një emër grupit që duhet shtuar."
 
-msgid "A group with the name already exists."
-msgstr "Ka tashmë një grup me këtë emër."
-
 msgid "Add Group"
 msgstr "Shto Grup"
 
@@ -278,7 +275,6 @@ msgstr "Ki të Dhëna"
 msgid "Add Buddy Pounce"
 msgstr "Shto Cytje Shoku"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "Dërgo Kartelë"
 
@@ -286,8 +282,8 @@ msgstr "Dërgo Kartelë"
 msgid "Blocked"
 msgstr "Bllokuar"
 
-msgid "View Log"
-msgstr "Shihni Regjistrim"
+msgid "Show when offline"
+msgstr "Shfaqe kur është i palidhur"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -328,6 +324,9 @@ msgstr "Vendi u etiketua"
 
 msgid "Toggle Tag"
 msgstr "Këmbeni Etiketën"
+
+msgid "View Log"
+msgstr "Shihni Regjistrim"
 
 #. General
 msgid "Nickname"
@@ -1359,7 +1358,7 @@ msgstr "Tip"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5276,7 +5275,7 @@ msgstr "Jashtë Për Drekë"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 msgid "Artist"
@@ -5502,8 +5501,7 @@ msgstr "URL Profili"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Shtojcë Protokolli Windows Live Messenger"
 
@@ -5547,6 +5545,7 @@ msgstr "%s në %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s sapo ju dërgoi një Bërryl!"
 
+#. char *adl = g_strndup(payload, len);
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Gabim i panjohur (%d)"
@@ -6771,6 +6770,7 @@ msgstr ""
 "hapësira, ose të përmbajnë vetëm numra."
 
 #. Unregistered screen name
+#. uid is not exist
 msgid "Invalid username."
 msgstr "Emër përdoruesi i pavlefshëm."
 
@@ -7195,10 +7195,12 @@ msgstr ""
 "fillojnë me një gërmë dhe të përmbajnë vetëm gërma, numra dhe hapësira, ose "
 "të përmbajnë vetëm numra."
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "I pazoti të Shtoj"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "I pazoti Të Marr Listë  Shokësh"
 
 msgid ""
@@ -7422,43 +7424,6 @@ msgstr ""
 "nevojshme për pamje MA.  Ngaqë do të nxirret sheshit vendndodhja juaj IP, "
 "kjo mund të merret si rrezik vetësie."
 
-msgid "Primary Information"
-msgstr "Të dhëna Parësore"
-
-msgid "Personal Introduction"
-msgstr "Prezantim Personal"
-
-msgid "QQ Number"
-msgstr "Numër QQ"
-
-#  Country
-msgid "Country/Region"
-msgstr "Vend/Shtet"
-
-msgid "Province/State"
-msgstr "Provincë/Shtet"
-
-msgid "Horoscope Symbol"
-msgstr "Simbol Horoskopi"
-
-msgid "Zodiac Sign"
-msgstr "Shenjë Zodiaku"
-
-msgid "Blood Type"
-msgstr "Lloj Gjaku"
-
-msgid "College"
-msgstr "Universitet"
-
-msgid "Zipcode"
-msgstr "Kod Zip"
-
-msgid "Cellphone Number"
-msgstr "Numër Celulari"
-
-msgid "Phone Number"
-msgstr "Numër Telefoni"
-
 msgid "Aquarius"
 msgstr "Ujori"
 
@@ -7535,110 +7500,195 @@ msgstr "Derri"
 msgid "Other"
 msgstr "Tjetër"
 
-#  res[0] == username
 #, fuzzy
-msgid "Modify information"
-msgstr "Ndrysho të dhënat e mia"
+msgid "Visible"
+msgstr "I padukshëm"
 
-#, fuzzy
-msgid "Update information"
-msgstr "Përditëso të dhënat e mia"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Shok"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "Shpejtësi:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "Ju lutem jepni të dhëna shoku."
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
-"Caktimi i fytyrave vetjake nuk mbulohet ende. Ju lutem zgjidhni një pamje "
-"prej %s."
-
-msgid "Invalid QQ Face"
-msgstr "Fytyrë QQ e pavlefshme"
-
-#, c-format
-msgid "You rejected %d's request"
-msgstr "Hodhët tej kërkesën e %d"
-
-msgid "Reject request"
-msgstr "Hidhe tej kërkesën"
-
-#. title
-#, fuzzy
-msgid "Sorry, you are not my style..."
-msgstr "Më ndjeni, nuk jeni tipi im..."
-
-msgid "Add buddy with auth request failed"
-msgstr "Shto shok me kërkesë mirëfilltësimi të dështuar"
 
 #, fuzzy
-msgid "Failed:"
+msgid "Private"
+msgstr "vetësi"
+
+msgid "QQ Number"
+msgstr "Numër QQ"
+
+#  Country
+msgid "Country/Region"
+msgstr "Vend/Shtet"
+
+msgid "Province/State"
+msgstr "Provincë/Shtet"
+
+msgid "Zipcode"
+msgstr "Kod Zip"
+
+msgid "Phone Number"
+msgstr "Numër Telefoni"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "Të autorizoj shok?"
+
+msgid "Cellphone Number"
+msgstr "Numër Celulari"
+
+msgid "Personal Introduction"
+msgstr "Prezantim Personal"
+
+#  City
+#, fuzzy
+msgid "City/Area"
+msgstr "Qytet"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "Celular Personal"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "Kontak Aliasi"
+
+msgid "College"
+msgstr "Universitet"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "Simbol Horoskopi"
+
+#, fuzzy
+msgid "Zodiac"
+msgstr "Shenjë Zodiaku"
+
+#  Block button
+#, fuzzy
+msgid "Blood"
+msgstr "Bllokuar"
+
+#, fuzzy
+msgid "True"
+msgstr "Demi"
+
+#, fuzzy
+msgid "False"
 msgstr "Dështova"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "Hiq Shok"
+msgid "Modify Contact"
+msgstr "Ndrysho Llogari"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "%s ju ka hequr prej listës së tij (saj) të shokëve."
+msgid "Modify Address"
+msgstr "Vendndodhje Shtëpie"
+
+#  res[0] == username
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "Ndrysho të dhënat e mia"
+
+#  res[0] == username
+#, fuzzy
+msgid "Modify Information"
+msgstr "Ndrysho të dhënat e mia"
+
+#, fuzzy
+msgid "Update"
+msgstr "Përditësimi i Fundit"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "Ju lutem jepni të dhëna shoku."
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "Shto Shok"
+
+#, fuzzy
+msgid "Input answer here"
+msgstr "Futni kërkesën këtu"
+
+msgid "Send"
+msgstr "Dërgo"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "Emër përdoruesi i pavlefshëm."
+
+msgid "Authorization denied message:"
+msgstr "Mesazh mohimi autorizimi:"
+
+#, fuzzy
+msgid "Sorry, You are not my style."
+msgstr "Më ndjeni, nuk jeni tipi im..."
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "Përdoruesi %d lyp mirëfilltësim"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "Të shtoj shok te lista juaj?"
+
 msgid "Input request here"
 msgstr "Futni kërkesën këtu"
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "Do të bëhesh shok i imi?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "Dërgo"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "Nuk ngarkova dot listë shokësh"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Shok"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "Numër QQ"
+msgid "Add buddy"
+msgstr "Shto Shok"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "Fytyrë QQ e pavlefshme"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "Ju lutem autorizomëni!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "Dështoi heqja e shokut"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "%s ju ka hequr prej listës së tij (saj) të shokëve."
+
+#, fuzzy
+msgid "No reason given"
+msgstr "Nuk u dha arsye."
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr "Jeni shtuar nga %s"
+
+msgid "Would you like to add him?"
+msgstr "Do të donit ta shtoni?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "Hidh tej"
+
+#, c-format
+msgid "Message: %s"
+msgstr "Mesazh: %s"
 
 msgid "ID: "
 msgstr "ID: "
 
 msgid "Group ID"
 msgstr "ID Grupi"
-
-msgid "Creator"
-msgstr "Krijues"
-
-msgid "Group Description"
-msgstr "Përshkrim Grupi"
-
-msgid "Auth"
-msgstr "Autor"
 
 msgid "QQ Qun"
 msgstr "QQ Qun"
@@ -7651,82 +7701,73 @@ msgstr "Ju lutem jepni emër të ri për %s"
 msgid "You can only search for permanent Qun\n"
 msgstr "Mund të kërkoni vetëm për grupe të përhershëm QQ\n"
 
-#, fuzzy, c-format
-msgid "%d request to join Qun %d"
-msgstr "Përdoruesi %d kërkoi t'i bashkohet grupit %d"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Mesazh: %s"
-
-msgid "QQ Qun Operation"
-msgstr "Veprim QQ Qun"
-
-msgid "Approve"
-msgstr "Mirato"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Dështova në lidhjen me shokun te fjalosja"
-
-#, fuzzy, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-"Kërkesa juaj për t'iu bashkuar grupit %d është hedhur tej nga administratori "
-"%d"
-
-#, fuzzy, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr "Ju [%d] e latë grupin \"%d\""
-
 #, fuzzy
-msgid "Notice:"
-msgstr "Shënim"
-
-#, fuzzy, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr "Ju [%d] jeni shtuar te grupi \"%d\""
-
-msgid "I am not a member"
+msgid "Not member"
 msgstr "Nuk jam anëtar"
 
-msgid "I am a member"
-msgstr "Jam anëtar"
+msgid "Member"
+msgstr "Anëtar"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "Kërkesë e Gabuar"
+msgid "Requesting"
+msgstr "Dialog Kërkese"
 
-msgid "I am the admin"
-msgstr "Jam admin"
+#, fuzzy
+msgid "Admin"
+msgstr "Adium"
 
-msgid "Unknown status"
-msgstr "Gjendje e panjohur"
+#, fuzzy
+msgid "Notice"
+msgstr "Shënim"
+
+#, fuzzy
+msgid "Detail"
+msgstr "Parazgjedhje"
+
+msgid "Creator"
+msgstr "Krijues"
+
+#, fuzzy
+msgid "About me"
+msgstr "Rreth %s"
+
+#, fuzzy
+msgid "Category"
+msgstr "Gabim fjalosjeje"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
 msgstr "Ky grup nuk i lejon të tjerët t'i bashkohen"
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "Hiq Grup"
+msgid "Join QQ Qun"
+msgstr "Futu në Fjalosje"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
 
 #, fuzzy
-msgid "Join to Qun"
-msgstr "Futu në Fjalosje"
+msgid "Successfully joined Qun"
+msgstr "Ndryshuat me sukses anëtar Qun-i"
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+msgid "QQ Qun Operation"
+msgstr "Veprim QQ Qun"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "Dështova"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr "Dhatë një ID grupi jashtë intervalit të pranueshëm"
-
-msgid "Are you sure you want to leave this Qun?"
-msgstr "Jeni i sigurt se doni të dilni nga ky Qun?"
+#, fuzzy
+msgid "Quit Qun"
+msgstr "QQ Qun"
 
 msgid ""
 "Note, if you are the creator, \n"
@@ -7735,44 +7776,51 @@ msgstr ""
 "Shënim, nëse jeni krijuesi, \n"
 "ky veprim ka shumë të ngjarë ta heqë këtë Qun."
 
-#. we want to see window
-msgid "Do you want to approve the request?"
-msgstr "Doni ta miratoni këtë kërkesë?"
+#, fuzzy
+msgid "Sorry, you are not our style ..."
+msgstr "Më ndjeni, nuk jeni tipi im..."
 
 #, fuzzy
-msgid "Change Qun member"
-msgstr "Numër Telefoni"
+msgid "Successfully changed Qun member"
+msgstr "Ndryshuat me sukses anëtar Qun-i"
 
 #, fuzzy
-msgid "Change Qun information"
-msgstr "Të dhëna Kanali"
+msgid "Successfully changed Qun information"
+msgstr "Ndryshuat me sukses të dhëna Qun-i"
 
 msgid "You have successfully created a Qun"
 msgstr "Krijuat me sukses një Qun"
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "Dëshironi të rregulloni hollësitë për Qun tani?"
 
 msgid "Setup"
 msgstr "Rregullim"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s (%s)"
+msgid "%d requested to join Qun %d for %s"
+msgstr "Përdoruesi %d kërkoi t'i bashkohet grupit %d"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "ICQ Server Relay"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "Përdoruesi %d kërkoi t'i bashkohet grupit %d"
 
-msgid "System Message"
-msgstr "Mesazh Sistemi"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Dështova në lidhjen me shokun te fjalosja"
 
-msgid "Failed to send IM."
-msgstr "Dështova në dërgim MA-je."
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "Hiq Shok"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, c-format
 msgid "Unknown-%d"
@@ -7780,9 +7828,6 @@ msgstr "%d e panjohur"
 
 msgid "Level"
 msgstr "Nivel"
-
-msgid "Member"
-msgstr "Anëtar"
 
 msgid " VIP"
 msgstr " VIP"
@@ -7812,24 +7857,36 @@ msgstr "Ver"
 msgid "Invalid name"
 msgstr "Emër i pavlefshëm"
 
-#, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+#, fuzzy
+msgid "Select icon..."
+msgstr "Përzgjidhni Dosje..."
+
+#, fuzzy, c-format
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>Kohë në Linjë</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>Të lidhur Tani</b>: %d<br>\n"
 
-#, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Freskimi i Fundit</b>: %s<br>\n"
 
 #, fuzzy, c-format
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Shërbyes</b>: %s: %d<br>\n"
 
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>Kohë në Linjë</b>: %s<br>\n"
+
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Mënyrë Lidhjeje</b>: %s<br>\n"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>Mënyrë Lidhjeje</b>: %s<br>\n"
 
 #, fuzzy, c-format
@@ -7852,23 +7909,44 @@ msgstr "<b>Shërbyes</b>: %s: %d<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>IP-ja Ime Publike</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Kohë në Linjë</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>IP-ja e Hyrjes së Fundit</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>Koha e Hyrjes së Fundit</b>: %s\n"
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>Shërbyes</b>: %s: %d<br>\n"
 
 msgid "Login Information"
 msgstr "Të dhëna Hyrjeje"
 
-msgid "Set My Information"
-msgstr "Rregullo Të dhënat mbi Mua"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>Freskimi i Fundit</b>: %s<br>\n"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>Shërbyes</b>: %s: %d<br>\n"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Rreth %s"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "Ruaj Ikonë"
 
 #  if (js->protocol_options & CHANGE_PASSWORD) {
 msgid "Change Password"
@@ -7878,12 +7956,12 @@ msgstr "Ndrysho Fjalëkalim"
 msgid "Account Information"
 msgstr "Të dhëna Hyrjeje"
 
-#, fuzzy
-msgid "Leave the QQ Qun"
-msgstr "Dil prej këtij QQ Qun"
+msgid "Update all QQ Quns"
+msgstr ""
 
-msgid "Block this buddy"
-msgstr "Bllokoje këtë shok"
+#, fuzzy
+msgid "About OpenQ"
+msgstr "Rreth %s"
 
 #  *< api_version
 #  *< type
@@ -7904,14 +7982,29 @@ msgstr "Bllokoje këtë shok"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "Protokol\tPlugin QQ"
 
 #, fuzzy
 msgid "Auto"
 msgstr "Autor"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "Përzgjidhni Përdorues"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
 #  connect to the server
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "Lidhu përmes TCP-je"
@@ -7924,41 +8017,83 @@ msgstr "Portë Shërbyesi"
 msgid "Show server news"
 msgstr "Vendndodhje shërbyesi"
 
-msgid "Keep alive interval(s)"
+#, fuzzy
+msgid "Keep alive interval (seconds)"
 msgstr "Interval(e) mbajtjeje gjallë"
 
-msgid "Update interval(s)"
+#, fuzzy
+msgid "Update interval (seconds)"
 msgstr "Interval(e) përditësimi"
 
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "S'arrij të kem të dhëna shërbyesi"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "S'arrij të kem të dhëna shërbyesi"
+
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
-msgstr "Kod i pavlefshëm token-i përgjigjeje, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
+msgstr ""
 
 #, c-format
 msgid "Invalid token len, %d"
 msgstr "Gjatësi e pavlefshme \"token\"-i, %d"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "Gabim në ndryshim fjalëkalimi "
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "Lipset Regjistrim"
 
-#, c-format
-msgid "Need active: %s"
-msgstr ""
-
 #, fuzzy, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr "Kod i pavlefshëm token-i përgjigjeje, 0x%02X"
 
 msgid "Keep alive error"
 msgstr "Gabim mbajtjeje gjallë"
 
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "Dështoi lidhja me shërbyesin"
+msgid "Requesting captcha ..."
+msgstr "Po tërhiqet vëmendja e %s..."
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
+#, fuzzy
+msgid "Captcha Image"
+msgstr "Ruaj Pamje"
+
+#  if (js->protocol_options & CHANGE_PASSWORD) {
+#, fuzzy
+msgid "Enter code"
+msgstr "Jepni Fjalëkalimin"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "Jepni emrin e grupit"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #  we didn't successfully connect. tdt->toc_fd is valid here
 #. we didn't successfully connect. tdt->toc_fd is valid here
@@ -7985,8 +8120,11 @@ msgstr "Gabim Shkrimi"
 msgid "Connection lost"
 msgstr "Lidhje e humbur"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "Caktoni Të dhëna Përdoruesi."
+
+#, fuzzy
 msgid "Request token"
 msgstr "Kërkesë e hedhur tej"
 
@@ -7997,13 +8135,35 @@ msgstr "S'u shquajt dot streha"
 msgid "Invalid server or port"
 msgstr "Gabim i pavlefshëm"
 
-#, c-format
-msgid "Connecting server %s, retries %d"
-msgstr "Po bëhet lidhja me shërbyesin %s, %d prova"
+#  Account options
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "Lidhu me shërbyes"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "Gabim QQid"
+
+msgid "Failed to send IM."
+msgstr "Dështova në dërgim MA-je."
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "ICQ Server Relay"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "Prej"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "Udhëzime Shërbyesi: %s"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -8019,14 +8179,18 @@ msgid "QQ Qun Command"
 msgstr "Urdhër"
 
 #, fuzzy, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr "Ju [%d] jeni shtuar te grupi \"%d\""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "Arsye e panjohur"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "Arsye e panjohur"
 
 #, c-format
@@ -8039,63 +8203,6 @@ msgstr "Dërgim Kartele"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d anuloi shpërnguljen e %s"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "Doni ta miratoni këtë kërkesë?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "Doni të shtohet ky shok?"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "Jeni shtuar nga %s"
-
-msgid "Would you like to add him?"
-msgstr "Do të donit ta shtoni?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "%s ju ka shtuar juve [%s] te lista e tij, ose e saj, e shokëve"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "Shok"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s don t'ju shtojë juve [%s] si shok"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "%s nuk gjendet te lista juaj e shokëve"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "Do të donit ta shtoni?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "Prej"
-
-#, c-format
-msgid "%s"
-msgstr "%s"
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "Portë Shërbyesi"
 
 msgid "Connection closed (writing)"
 msgstr "Lidhja u ndërpre (shkrim)"
@@ -9844,9 +9951,6 @@ msgstr "Mesazhi juaj Yahoo! nuk u dërgua."
 msgid "Yahoo! system message for %s:"
 msgstr "Mesazh sistemi Yahoo! për %s:"
 
-msgid "Authorization denied message:"
-msgstr "Mesazh mohimi autorizimi:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10768,9 +10872,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10845,9 +10949,6 @@ msgstr "Shih _Regjistrim"
 
 msgid "Hide when offline"
 msgstr "Fshihe kur është i palidhur"
-
-msgid "Show when offline"
-msgstr "Shfaqe kur është i palidhur"
 
 msgid "_Alias..."
 msgstr "_Alias..."
@@ -11215,7 +11316,8 @@ msgstr "_Alias:"
 msgid "Auto_join when account becomes online."
 msgstr "Vetë_futu kur llogaria kalon në linjë."
 
-msgid "_Hide chat when the window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed."
 msgstr "_Fshihe fjalosjen kur mbyllet dritarja."
 
 msgid "Please enter the name of the group to be added."
@@ -11249,10 +11351,6 @@ msgstr "/Shokë/Radhit Shokë"
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Shërbyesa SSL"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "I largëti u shkëput"
 
 msgid "Unknown command."
 msgstr "Urdhër i panjohur."
@@ -11601,8 +11699,12 @@ msgstr "Gabim"
 msgid "Fatal Error"
 msgstr "Gabim Fatal"
 
-msgid "developer"
-msgstr "zhvillues"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "Artist"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11611,10 +11713,8 @@ msgstr "Ka-Hing Cheung"
 msgid "support"
 msgstr "suport"
 
-msgid "support/QA"
-msgstr "asistencë/SC"
-
-msgid "developer & webmaster"
+#, fuzzy
+msgid "webmaster"
 msgstr "zhvillues & webmaster"
 
 msgid "Senior Contributor/QA"
@@ -11634,8 +11734,11 @@ msgstr "mirëmbajtësi i libfaim"
 msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker and designated driver [lazy bum]"
 
-msgid "XMPP developer"
-msgstr "Zhvillues XMPP"
+msgid "support/QA"
+msgstr "asistencë/SC"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "autori fillestra"
@@ -11899,9 +12002,6 @@ msgstr "Zhvilluesa Jo më Veprues"
 
 msgid "Retired Crazy Patch Writers"
 msgstr "Krijues të Lojtur Arnash në Pension"
-
-msgid "Artists"
-msgstr "Artistë"
 
 msgid "Current Translators"
 msgstr "Përkthyesa të Çastit"
@@ -12524,7 +12624,7 @@ msgstr ""
 "                      Pa të, do të aktivizohet vetëm llogaria e parë).\n"
 "  -v, --version       shfaq versionin e çastit dhe dil\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s has segfaulted and attempted to dump a core file.\n"
 "This is a bug in the software and has happened through\n"
@@ -12538,11 +12638,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 "%s %s has segfaulted and attempted to dump a core file.\n"
 "Ky është difekt te programi dhe ndodhi jo për fajin tuaj.\n"
@@ -13415,8 +13510,14 @@ msgstr "_Merr  Të dhëna"
 msgid "_Invite"
 msgstr "_Ftoni"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "_Ndrysho"
+
+#  Add button
+#, fuzzy
+msgid "_Add..."
+msgstr "_Shto"
 
 msgid "_Open Mail"
 msgstr "_Hap Postë"
@@ -13439,6 +13540,13 @@ msgstr "Përzgjedhja e kësaj çaktivizon emotikonet grafikë."
 
 msgid "none"
 msgstr "asnjë"
+
+#, fuzzy
+msgid "Small"
+msgstr "Email"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr "Probabilitet Përgjigjjeje:"
@@ -13975,6 +14083,10 @@ msgstr "Fut numërim mesazhesh të rinj te vetitë e _X-it"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Rregullo ndihmëzën \"_URGENT\" e administruesit të dritareve"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "dritare C_hat"
+
 #  IM Convo trans options
 #. Raise window method button
 msgid "R_aise conversation window"
@@ -14191,19 +14303,19 @@ msgstr ""
 "dërgime, shtypni 'Enter' te kuti futjesh. Kqyrni dritaren \"debug\"."
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"Jeni duke përdorur %s në versionin %s.  Versioni i tanishëm është %s.  Mund "
-"ta merrni prej <a href=\"%s\">%s</a><hr>"
-
-#, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>Shënime Ndryshimi:</b><br>%s"
 
 msgid "New Version Available"
 msgstr "Version i Ri i Mundshëm"
+
+#, fuzzy
+msgid "Later"
+msgstr "Datë"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "Shkarkim i %s: %s"
 
 #  *< api_version
 #  *< type
@@ -14560,6 +14672,204 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Kjo shtojcë është e dobishme për diagnostikim shërbyesish apo klientësh XMPP."
 
+#~ msgid "A group with the name already exists."
+#~ msgstr "Ka tashmë një grup me këtë emër."
+
+#~ msgid "Primary Information"
+#~ msgstr "Të dhëna Parësore"
+
+#~ msgid "Blood Type"
+#~ msgstr "Lloj Gjaku"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "Përditëso të dhënat e mia"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "Shpejtësi:"
+
+#~ msgid ""
+#~ "Setting custom faces is not currently supported. Please choose an image "
+#~ "from %s."
+#~ msgstr ""
+#~ "Caktimi i fytyrave vetjake nuk mbulohet ende. Ju lutem zgjidhni një pamje "
+#~ "prej %s."
+
+#~ msgid "Invalid QQ Face"
+#~ msgstr "Fytyrë QQ e pavlefshme"
+
+#~ msgid "You rejected %d's request"
+#~ msgstr "Hodhët tej kërkesën e %d"
+
+#~ msgid "Reject request"
+#~ msgstr "Hidhe tej kërkesën"
+
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "Shto shok me kërkesë mirëfilltësimi të dështuar"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "Nuk ngarkova dot listë shokësh"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "Numër QQ"
+
+#~ msgid "Group Description"
+#~ msgstr "Përshkrim Grupi"
+
+#~ msgid "Auth"
+#~ msgstr "Autor"
+
+#~ msgid "Approve"
+#~ msgstr "Mirato"
+
+#, fuzzy
+#~ msgid "Successed to join Qun %d, operated by admin %d"
+#~ msgstr ""
+#~ "Kërkesa juaj për t'iu bashkuar grupit %d është hedhur tej nga "
+#~ "administratori %d"
+
+#, fuzzy
+#~ msgid "[%d] removed from Qun \"%d\""
+#~ msgstr "Ju [%d] e latë grupin \"%d\""
+
+#, fuzzy
+#~ msgid "[%d] added to Qun \"%d\""
+#~ msgstr "Ju [%d] jeni shtuar te grupi \"%d\""
+
+#~ msgid "I am a member"
+#~ msgstr "Jam anëtar"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "Kërkesë e Gabuar"
+
+#~ msgid "I am the admin"
+#~ msgstr "Jam admin"
+
+#~ msgid "Unknown status"
+#~ msgstr "Gjendje e panjohur"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "Hiq Grup"
+
+#~ msgid "You entered a group ID outside the acceptable range"
+#~ msgstr "Dhatë një ID grupi jashtë intervalit të pranueshëm"
+
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "Jeni i sigurt se doni të dilni nga ky Qun?"
+
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "Doni ta miratoni këtë kërkesë?"
+
+#, fuzzy
+#~ msgid "Change Qun member"
+#~ msgstr "Numër Telefoni"
+
+#, fuzzy
+#~ msgid "Change Qun information"
+#~ msgstr "Të dhëna Kanali"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "Mesazh Sistemi"
+
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>IP-ja e Hyrjes së Fundit</b>: %s<br>\n"
+
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>Koha e Hyrjes së Fundit</b>: %s\n"
+
+#~ msgid "Set My Information"
+#~ msgstr "Rregullo Të dhënat mbi Mua"
+
+#, fuzzy
+#~ msgid "Leave the QQ Qun"
+#~ msgstr "Dil prej këtij QQ Qun"
+
+#~ msgid "Block this buddy"
+#~ msgstr "Bllokoje këtë shok"
+
+#~ msgid "Invalid token reply code, 0x%02X"
+#~ msgstr "Kod i pavlefshëm token-i përgjigjeje, 0x%02X"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "Gabim në ndryshim fjalëkalimi "
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "Dështoi lidhja me shërbyesin"
+
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "Po bëhet lidhja me shërbyesin %s, %d prova"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "Doni ta miratoni këtë kërkesë?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "Doni të shtohet ky shok?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s ju ka shtuar juve [%s] te lista e tij, ose e saj, e shokëve"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "Shok"
+
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s don t'ju shtojë juve [%s] si shok"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s nuk gjendet te lista juaj e shokëve"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "Do të donit ta shtoni?"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "Portë Shërbyesi"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "I largëti u shkëput"
+
+#~ msgid "developer"
+#~ msgstr "zhvillues"
+
+#~ msgid "XMPP developer"
+#~ msgstr "Zhvillues XMPP"
+
+#~ msgid "Artists"
+#~ msgstr "Artistë"
+
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "Jeni duke përdorur %s në versionin %s.  Versioni i tanishëm është %s.  "
+#~ "Mund ta merrni prej <a href=\"%s\">%s</a><hr>"
+
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>Shënime Ndryshimi:</b><br>%s"
+
 #~ msgid "EOF while reading from resolver process"
 #~ msgstr "EOF ndërkohë që po lexohej prej procesi shquajtjeje"
 
@@ -14606,12 +14916,6 @@ msgstr ""
 
 #~ msgid "Enter your reason:"
 #~ msgstr "Jepni arsyen tuaj:"
-
-#~ msgid "You have successfully modified Qun member"
-#~ msgstr "Ndryshuat me sukses anëtar Qun-i"
-
-#~ msgid "You have successfully modified Qun information"
-#~ msgstr "Ndryshuat me sukses të dhëna Qun-i"
 
 #~ msgid " Space"
 #~ msgstr "Hapësirë"

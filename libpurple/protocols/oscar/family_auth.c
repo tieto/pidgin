@@ -295,10 +295,9 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	/*
 	 * No matter what, we should have a screen name.
 	 */
-	memset(od->sn, 0, sizeof(od->sn));
 	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
 		info->sn = aim_tlv_getstr(tlvlist, 0x0001, 1);
-		strncpy(od->sn, info->sn, sizeof(od->sn));
+		purple_connection_set_display_name(od->gc, info->sn);
 	}
 
 	/*

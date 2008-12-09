@@ -1,13 +1,11 @@
-/**
- * @file char_conv.h
+/*
+ * GNT - The GLib Ncurses Toolkit
  *
- * purple
- *
- * Purple is the legal property of its developers, whose names are too numerous
+ * GNT is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
- * This program is free software; you can redistribute it and/or modify
+ * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
@@ -21,18 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#undef G_LOG_DOMAIN
+#define G_LOG_DOMAIN "Gnt"
 
-#ifndef _QQ_CHAR_CONV_H_
-#define _QQ_CHAR_CONV_H_
-
-#include <glib.h>
-
-#define QQ_CHARSET_DEFAULT      "GB18030"
-
-gint qq_get_vstr(gchar **ret, const gchar *from_charset, guint8 *data);
-gint qq_put_vstr(guint8 *buf, const gchar *str_utf8, const gchar *to_charset);
-
-gchar *utf8_to_qq(const gchar *str, const gchar *to_charset);
-gchar *qq_to_utf8(const gchar *str, const gchar *from_charset);
-
+#ifdef __GNUC__
+# ifndef GNT_LOG_DOMAIN
+#  define GNT_LOG_DOMAIN ""
+# endif
+# define gnt_warning(format, args...)  g_warning("(%s) %s: " format, GNT_LOG_DOMAIN, __PRETTY_FUNCTION__, args)
+#else /* __GNUC__ */
+# define gnt_warning g_warning
 #endif
+

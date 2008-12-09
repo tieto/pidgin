@@ -68,7 +68,8 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	qd = (qq_data *) gc->proto_data;
 	/* qq_show_packet("Login reply", data, len); */
 
-	if (len < 139) {
+	if (len < 148) {
+		qq_show_packet("Login reply OK, but length < 139", data, len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 				_("Can not decrypt server reply"));
@@ -82,7 +83,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	purple_debug_info("QQ", "Got session_key\n");
 	bytes += qq_get32(&uid, data + bytes);
 	if (uid != qd->uid) {
-		purple_debug_warning("QQ", "My uid in login reply is %d, not %d\n", uid, qd->uid);
+		purple_debug_warning("QQ", "My uid in login reply is %u, not %u\n", uid, qd->uid);
 	}
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
 	bytes += qq_get16(&qd->my_port, data + bytes);
@@ -137,8 +138,8 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 			tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
 	/* unknow 9 bytes, 0x(00 0a 00 0a 01 00 00 0e 10) */
 
-	if (len > 139) {
-		purple_debug_warning("QQ", "Login reply more than expected %d bytes, read %d bytes\n", 139, bytes);
+	if (len > 148) {
+		qq_show_packet("Login reply OK, but length > 139", data, len);
 	}
 	return QQ_LOGIN_REPLY_OK;
 }
@@ -330,7 +331,7 @@ guint8 qq_process_token(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	if (bytes + token_len > buf_len) {
 		purple_debug_info("QQ", "Extra token data, %d %d\n", token_len, buf_len - bytes);
 	}
-	qq_show_packet("Got token", buf + bytes, buf_len - bytes);
+	/* qq_show_packet("Got token", buf + bytes, buf_len - bytes); */
 
 	if (qd->ld.token != NULL) {
 		g_free(qd->ld.token);
@@ -1279,7 +1280,7 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 
 	bytes += qq_get32(&uid, data + bytes);
 	if (uid != qd->uid) {
-		purple_debug_warning("QQ", "My uid in login reply is %d, not %d\n", uid, qd->uid);
+		purple_debug_warning("QQ", "My uid in login reply is %u, not %u\n", uid, qd->uid);
 	}
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
 	bytes += qq_get16(&qd->my_port, data + bytes);
@@ -1468,7 +1469,7 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 
 	bytes += qq_get32(&uid, data + bytes);
 	if (uid != qd->uid) {
-		purple_debug_warning("QQ", "My uid in login reply is %d, not %d\n", uid, qd->uid);
+		purple_debug_warning("QQ", "My uid in login reply is %u, not %u\n", uid, qd->uid);
 	}
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
 	bytes += qq_get16(&qd->my_port, data + bytes);

@@ -50,7 +50,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 02:53+0100\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2008-09-29 22:12-0400\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>, Paladin R. Liu "
 "<paladin@ms1.hinet.net>\n"
@@ -324,15 +324,14 @@ msgstr "取得資訊"
 msgid "Add Buddy Pounce"
 msgstr "加入好友狀態捕捉"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "傳送檔案"
 
 msgid "Blocked"
 msgstr "封鎖"
 
-msgid "View Log"
-msgstr "觀看日誌"
+msgid "Show when offline"
+msgstr "離線時顯示"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -377,6 +376,9 @@ msgstr "移動已標記的項目"
 # FIXME - 20061122
 msgid "Toggle Tag"
 msgstr "切換標記"
+
+msgid "View Log"
+msgstr "觀看日誌"
 
 #. General
 msgid "Nickname"
@@ -1384,7 +1386,7 @@ msgstr "格式"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5215,7 +5217,7 @@ msgstr "外出用餐"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 msgid "Artist"
@@ -5426,8 +5428,7 @@ msgstr "個人資料網址"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Windows Live Messenger 協定模組"
 
@@ -5467,6 +5468,7 @@ msgstr "%2$s (%3$s)：%1$s"
 msgid "%s just sent you a Nudge!"
 msgstr "%s 在呼叫您！"
 
+#. char *adl = g_strndup(payload, len);
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "不明錯誤（代碼 %d）"
@@ -6665,6 +6667,7 @@ msgstr ""
 "或者以英文字母起始，並只含英文字母、數字及空白；或者只由數字組成。"
 
 #. Unregistered screen name
+#. uid is not exist
 msgid "Invalid username."
 msgstr "使用者名稱無效。"
 
@@ -7054,10 +7057,12 @@ msgstr ""
 "所以無法新增好友「%s」，因為這個帳號是無效的。帳號必須為有效電郵地址；或者以"
 "英文字母起始，並只含英文字母、數字及空白；或者只由數字組成。"
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "無法加入"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "無法讀取好友清單"
 
 msgid ""
@@ -7283,44 +7288,6 @@ msgstr ""
 "這個要求將會在兩部電腦間建立起直接連線，而這是在傳送即時訊息影像時所必須的。"
 "這樣將會曝露您的 IP 位址，因此可能會有隱私方面的風險。"
 
-msgid "Primary Information"
-msgstr "基本資訊"
-
-msgid "Personal Introduction"
-msgstr "個人簡介"
-
-msgid "QQ Number"
-msgstr "QQ 號碼"
-
-msgid "Country/Region"
-msgstr "國家／地區"
-
-msgid "Province/State"
-msgstr "省／州"
-
-# XXX
-msgid "Horoscope Symbol"
-msgstr "星座"
-
-# XXX
-msgid "Zodiac Sign"
-msgstr "生肖"
-
-msgid "Blood Type"
-msgstr "血型"
-
-msgid "College"
-msgstr "大學／大專"
-
-msgid "Zipcode"
-msgstr "郵遞區號"
-
-msgid "Cellphone Number"
-msgstr "行動電話號碼"
-
-msgid "Phone Number"
-msgstr "電話號碼"
-
 msgid "Aquarius"
 msgstr "水秤座"
 
@@ -7396,102 +7363,196 @@ msgstr "豬"
 msgid "Other"
 msgstr "其他"
 
-msgid "Modify information"
+#, fuzzy
+msgid "Visible"
+msgstr "隱身"
+
+msgid "Firend Only"
+msgstr ""
+
+#, fuzzy
+msgid "Private"
+msgstr "隱私設定"
+
+msgid "QQ Number"
+msgstr "QQ 號碼"
+
+msgid "Country/Region"
+msgstr "國家／地區"
+
+msgid "Province/State"
+msgstr "省／州"
+
+msgid "Zipcode"
+msgstr "郵遞區號"
+
+msgid "Phone Number"
+msgstr "電話號碼"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "給予認證？"
+
+msgid "Cellphone Number"
+msgstr "行動電話號碼"
+
+msgid "Personal Introduction"
+msgstr "個人簡介"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "城市"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "個人行動電話"
+
+# XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
+#, fuzzy
+msgid "Publish Contact"
+msgstr "為這組好友加上別名"
+
+msgid "College"
+msgstr "大學／大專"
+
+# XXX
+#, fuzzy
+msgid "Horoscope"
+msgstr "星座"
+
+# XXX
+#, fuzzy
+msgid "Zodiac"
+msgstr "生肖"
+
+#, fuzzy
+msgid "Blood"
+msgstr "封鎖"
+
+#, fuzzy
+msgid "True"
+msgstr "金牛座"
+
+#, fuzzy
+msgid "False"
+msgstr "失敗"
+
+#, fuzzy
+msgid "Modify Contact"
+msgstr "修改帳號"
+
+#, fuzzy
+msgid "Modify Address"
+msgstr "住家地址"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "修改資訊"
+
+#, fuzzy
+msgid "Modify Information"
 msgstr "修改好友資訊"
 
-msgid "Update information"
-msgstr "更新好友資訊"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-msgid "QQ Buddy"
-msgstr "QQ好友"
-
-msgid "Successed:"
-msgstr "成功："
+msgid "Update"
+msgstr "更新"
 
 # NOTE Grammatical mistake in source text; should be "Changed"
-msgid "Change buddy information."
+#, fuzzy
+msgid "Could not change buddy information."
 msgstr "成功修改好友資訊。"
 
 #, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
-msgstr "自訂的表情圖案暫時未獲支援，請自 %s 選取圖案。"
+msgid "%d needs Q&A"
+msgstr ""
 
-msgid "Invalid QQ Face"
-msgstr "無效的 QQ 表情"
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "新增好友"
 
-#, c-format
-msgid "You rejected %d's request"
-msgstr "您拒絕了 %d 的要求"
+#, fuzzy
+msgid "Input answer here"
+msgstr "請輸入要求"
 
-msgid "Reject request"
-msgstr "拒絕"
+msgid "Send"
+msgstr "送出"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "密碼無效"
+
+msgid "Authorization denied message:"
+msgstr "拒絕認證訊息："
 
 #  NOTE 這個「你」字沒有打錯，主要是法文及德文的譯者都採用「你」
 #  NOTE（法文「tu」、德文「du」）而不是「您」（「vous」、「Sie」），
 #  NOTE 中文採用「你」應該也是恰當的。
-#. title
-msgid "Sorry, you are not my style..."
+#, fuzzy
+msgid "Sorry, You are not my style."
 msgstr "對不起，我和你，合不來的……"
-
-msgid "Add buddy with auth request failed"
-msgstr "連同認證要求的新增好友失敗"
-
-msgid "Failed:"
-msgstr "失敗："
-
-# XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-msgid "Remove buddy"
-msgstr "移除好友"
-
-msgid "Remove from other's buddy list"
-msgstr "從對方的好友清單中移除"
 
 #, c-format
 msgid "%d needs authentication"
 msgstr "使用者 %d 需要認證"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "將使用者加入您的好友清單？"
+
 msgid "Input request here"
 msgstr "請輸入要求"
 
 # XXX - 20061026
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "想同我交個朋友嗎？"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "送出"
+msgid "QQ Buddy"
+msgstr "QQ好友"
 
-#, c-format
-msgid "Add into %d's buddy list"
-msgstr "加入 %d 的好友清單"
-
-msgid "QQ Number Error"
-msgstr "QQ 號碼錯誤"
+#, fuzzy
+msgid "Add buddy"
+msgstr "新增好友"
 
 msgid "Invalid QQ Number"
 msgstr "無效的 QQ 號碼"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "請通過我的認證！"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "無法移除使用者"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "從對方的好友清單中移除"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "沒有給予原因。"
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr "%s 已將您加入到他（她）的好友清單"
+
+# FIXME fix the original string :P
+msgid "Would you like to add him?"
+msgstr "您要將他（她）加入您的好友清單嗎？"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "使用者「%s」拒絕了您的要求"
+
+#, c-format
+msgid "Message: %s"
+msgstr "訊息：%s"
 
 msgid "ID: "
 msgstr "ID："
 
 msgid "Group ID"
 msgstr "群組 ID："
-
-msgid "Creator"
-msgstr "創立者"
-
-msgid "Group Description"
-msgstr "群組描述"
-
-msgid "Auth"
-msgstr "認證"
 
 msgid "QQ Qun"
 msgstr "QQ 群"
@@ -7504,121 +7565,134 @@ msgstr "請輸入群組號碼"
 msgid "You can only search for permanent Qun\n"
 msgstr "您只可搜尋永久群組\n"
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr "使用者 %d 要求加入群組 %d"
-
-#, c-format
-msgid "Message: %s"
-msgstr "訊息：%s"
-
-msgid "QQ Qun Operation"
-msgstr "QQ 群組操作"
-
-msgid "Approve"
-msgstr "允許"
-
-#, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "管理人 %2$d 拒絕了您加入群組 %1$d"
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr "管理人 %2$d 允許了您加入群組 %1$d"
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr "[%d] 退出了群組「%d」"
-
-msgid "Notice:"
-msgstr "通告："
-
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr "[%d] 已經被加入群組 \"%d\""
-
-msgid "I am not a member"
+#, fuzzy
+msgid "Not member"
 msgstr "我不是成員"
 
-msgid "I am a member"
-msgstr "我是成員"
+# XXX 20080810 acli - 不知這是什麼，因為QQ的會員等級制中，「會員」等同「VIP」，所以不知何謂「Member」
+# XXX 20080810 acli - 但原始碼中「Member」字串似乎是一定出現的，所以似乎應該是指「用戶」
+msgid "Member"
+msgstr "用戶"
 
-# NOTE 這是 QQ_ROOM_ROLE_REQUESTING，按上文下理應係指「申請成為成員中」
-msgid "I am requesting"
-msgstr "我正在要求加入"
+#  XXX 這譯文絶對有問題，但想不到怎樣譯較好 - ambrose 20070415
+#, fuzzy
+msgid "Requesting"
+msgstr "對話視窗 (Request Dialog)"
 
-msgid "I am the admin"
-msgstr "我是管理人"
+# #NOTE 根據「plugins/log_reader.c#1971」的訊息來判斷，應該是指一種新式的通訊協定。
+#, fuzzy
+msgid "Admin"
+msgstr "Adium"
 
-msgid "Unknown status"
-msgstr "狀態不明"
+#, fuzzy
+msgid "Notice"
+msgstr "通告："
+
+#, fuzzy
+msgid "Detail"
+msgstr "電子郵件"
+
+msgid "Creator"
+msgstr "創立者"
+
+#, fuzzy
+msgid "About me"
+msgstr "關於 %s"
+
+#, fuzzy
+msgid "Category"
+msgstr "聊天錯誤"
 
 msgid "The Qun does not allow others to join"
 msgstr "這群組不容許外人加入"
 
-msgid "Remove from Qun"
-msgstr "從群組中移除"
-
-msgid "Join to Qun"
+#, fuzzy
+msgid "Join QQ Qun"
 msgstr "加入群組"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+#  NOTE QQ「member」應是「成員」
+#, fuzzy
+msgid "Successfully joined Qun"
+msgstr "成功更改了群的一個成員"
 
 # NOTE 這是 QQ_ROOM_JOIN_DENIED
 #, c-format
 msgid "Qun %d denied to join"
 msgstr "加入群組 %d 的要求被拒絕"
 
+msgid "QQ Qun Operation"
+msgstr "QQ 群組操作"
+
+msgid "Failed:"
+msgstr "失敗："
+
 msgid "Join Qun, Unknow Reply"
 msgstr "加入群組途中收到不明的回應"
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr "指定的群組 ID 在有效範圍之外"
-
-msgid "Are you sure you want to leave this Qun?"
-msgstr "您確定要離開群組？"
+#, fuzzy
+msgid "Quit Qun"
+msgstr "QQ 群"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr "請注意，假如您是創立者，這最終會把這個群 (Qun) 移除。"
 
-#. we want to see window
-msgid "Do you want to approve the request?"
-msgstr "允許這個要求？"
+#  NOTE 這個「你」字沒有打錯，主要是法文及德文的譯者都採用「你」
+#  NOTE（法文「tu」、德文「du」）而不是「您」（「vous」、「Sie」），
+#  NOTE 中文採用「你」應該也是恰當的。
+#, fuzzy
+msgid "Sorry, you are not our style ..."
+msgstr "對不起，我和你，合不來的……"
 
-msgid "Change Qun member"
-msgstr "修改群組號碼"
+#  NOTE QQ「member」應是「成員」
+#, fuzzy
+msgid "Successfully changed Qun member"
+msgstr "成功更改了群的一個成員"
 
-msgid "Change Qun information"
-msgstr "修改群組資訊"
+# FIXME 暫譯 ambrose 20070415
+#, fuzzy
+msgid "Successfully changed Qun information"
+msgstr "成功更改了群的資訊"
 
 msgid "You have successfully created a Qun"
 msgstr "成功建立了一個群 (Qun)"
 
-msgid "Would you like to set up the detail information now?"
+#, fuzzy
+msgid "Would you like to set detailed information now?"
 msgstr "要立刻設定細節嗎？"
 
 msgid "Setup"
 msgstr "設定"
 
+#, fuzzy, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr "使用者 %d 要求加入群組 %d"
+
 #, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
+msgid "%d request to join Qun %d"
+msgstr "使用者 %d 要求加入群組 %d"
+
+#, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "管理人 %2$d 拒絕了您加入群組 %1$d"
+
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
 msgstr ""
-"%s\n"
-"\n"
-"%s"
 
-# XXX 20080929 acli - 毫無頭緒這是什麼，這是半胡猜 =P
-msgid "QQ Server News"
-msgstr "QQ 伺服器是日訊息"
+# XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "移除好友"
 
-msgid "System Message"
-msgstr "系統訊息"
-
-msgid "Failed to send IM."
-msgstr "送出即時訊息失敗。"
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 # XXX 問題：
 # XXX gtk/gtkft.c - 「Unknown」是一指一個未能計算的數值，譯「未知」較好
@@ -7635,11 +7709,6 @@ msgstr "未知（代碼 %d）"
 #  XXX 現在似乎叫「等級」，參閱http://vip.qq.com/freedom/freedom_vipgrade.html
 msgid "Level"
 msgstr "等級"
-
-# XXX 20080810 acli - 不知這是什麼，因為QQ的會員等級制中，「會員」等同「VIP」，所以不知何謂「Member」
-# XXX 20080810 acli - 但原始碼中「Member」字串似乎是一定出現的，所以似乎應該是指「用戶」
-msgid "Member"
-msgstr "用戶"
 
 # NOTE QQ官方網站寫「VIP」（沒有官方中文名稱）
 msgid " VIP"
@@ -7674,25 +7743,37 @@ msgstr "版本"
 msgid "Invalid name"
 msgstr "名稱無效"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "選擇資料匣..."
+
+#, fuzzy, c-format
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>登入時間：</b>%s<br>\n"
+
 #  NOTE 參見 qq.h
-#, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>目前上線好友</b>: %d 人<br>\n"
 
-#, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>最近更新時間：</b>%s<br>\n"
 
 #, c-format
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>伺服器位址</b>：%s<br>\n"
 
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>登入時間：</b>%s<br>\n"
+
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>連線模式</b>：%s<br>\n"
 
-#, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>本地端 IP 位址</b>：%s<br>\n"
 
 # NOTE qq_data->net_stat.sent，送出的數據封包數量（並非位元組數量）的總計
@@ -7716,24 +7797,47 @@ msgstr "<b>收到封包</b>：%lu 個<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>重複封包</b>：%lu 個<br>\n"
 
-#, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>登入時間：</b>%s<br>\n"
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>上次登入位址：</b>%s<br>\n"
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>上次登入時間：</b>%s\n"
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>伺服器位址</b>：%s<br>\n"
 
 # XXX - 20061027
 msgid "Login Information"
 msgstr "登入資訊"
 
-msgid "Set My Information"
-msgstr "設定我的資訊"
+#, fuzzy
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr "<b>外部使用者</b><br>"
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>最近更新時間：</b>%s<br>\n"
+
+# NOTE qq_data->net_stat.sent，送出的數據封包數量（並非位元組數量）的總計
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>送出封包</b>：%lu 個<br>\n"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "關於 %s"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "儲存圖示"
 
 msgid "Change Password"
 msgstr "修改密碼"
@@ -7741,11 +7845,12 @@ msgstr "修改密碼"
 msgid "Account Information"
 msgstr "帳號資訊"
 
-msgid "Leave the QQ Qun"
-msgstr "離開這個 QQ 群 (Qun)"
+msgid "Update all QQ Quns"
+msgstr ""
 
-msgid "Block this buddy"
-msgstr "封鎖這個好友"
+#, fuzzy
+msgid "About OpenQ"
+msgstr "關於 %s"
 
 #. *< type
 #. *< ui_requirement
@@ -7757,12 +7862,27 @@ msgstr "封鎖這個好友"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "QQ 協定模組"
 
 msgid "Auto"
 msgstr "自動"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "選擇使用者"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 msgid "Connect by TCP"
 msgstr "使用 TCP 連線"
 
@@ -7775,43 +7895,84 @@ msgid "Show server news"
 msgstr "顯示伺服器是日訊息"
 
 # XXX 20080810 acli - 譯文有待改進，原文也是
-msgid "Keep alive interval(s)"
+#, fuzzy
+msgid "Keep alive interval (seconds)"
 msgstr "每隔多少秒送出 Keep Alive"
 
 # XXX 20080810 acli - 譯文有待改進，原文也是
-msgid "Update interval(s)"
+#, fuzzy
+msgid "Update interval (seconds)"
 msgstr "每隔多少秒更新"
 
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "登入回應解密失敗"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "登入回應解密失敗"
+
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
-msgstr "符記回應碼「0x%02X」無效"
+msgid "Failed requesting token, 0x%02X"
+msgstr ""
 
 #, c-format
 msgid "Invalid token len, %d"
 msgstr "符記長度「%d」無效"
 
-msgid "Unable login for not support Redirect_EX now"
-msgstr "無法登入，暫時不支援 Redirect_EX 功能"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
+msgstr ""
 
-#, c-format
-msgid "Error password: %s"
-msgstr "密碼錯誤：%s"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "必須註冊"
 
-# FIXME 不知這是什麼，但我想可能是這樣 - acli 20080930
-#, c-format
-msgid "Need active: %s"
-msgstr "需要啟動帳號：%s"
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+#, fuzzy, c-format
+msgid "Unknow reply code when login (0x%02X)"
 msgstr "無法登入，不明回應碼「0x%02X」"
 
 msgid "Keep alive error"
 msgstr "Keep Alive錯誤"
 
-# XXX 看不明原始碼，這是半猜 - 20080930 acli
-msgid "Failed to connect all servers"
-msgstr "無法連線到所有伺服器"
+#, fuzzy
+msgid "Requesting captcha ..."
+msgstr "要求 %s 的注意中..."
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
+#, fuzzy
+msgid "Captcha Image"
+msgstr "儲存影像"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "輸入密碼"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+# TODO 要覆查 - 20061026
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "請給群組輸入名稱。"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7837,9 +7998,11 @@ msgstr "寫入錯誤"
 msgid "Connection lost"
 msgstr "連線中斷"
 
+#, fuzzy
+msgid "Get server ..."
+msgstr "設定使用者資訊..."
+
 # XXX 這是看了原始碼後的結論（但可能會錯）- acli 20080930
-#. Update the login progress status display
-#, c-format
 msgid "Request token"
 msgstr "送出請求符記中"
 
@@ -7849,13 +8012,34 @@ msgstr "無法解析主機"
 msgid "Invalid server or port"
 msgstr "伺服器或通訊埠無效"
 
-#  XXX 20080810 acli - 原文好像有問題
-#, c-format
-msgid "Connecting server %s, retries %d"
-msgstr "連線伺服器 %s 中，將會嘗試 %d 次"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "連結伺服器"
 
 msgid "QQ Error"
 msgstr "QQ 錯誤"
+
+msgid "Failed to send IM."
+msgstr "送出即時訊息失敗。"
+
+# XXX 20080929 acli - 毫無頭緒這是什麼，這是半胡猜 =P
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "QQ 伺服器是日訊息"
+
+#, c-format
+msgid "From %s:"
+msgstr "由 %s 發出："
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "伺服器指令：%s"
 
 msgid "Unknow SERVER CMD"
 msgstr "伺服器送出了一個不明的指令"
@@ -7872,15 +8056,20 @@ msgstr ""
 msgid "QQ Qun Command"
 msgstr "QQ 群組指令"
 
-#, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+#, fuzzy, c-format
+msgid "Not a member of room \"%s\"\n"
 msgstr "您並非群組「%s」的成員\n"
 
 msgid "Can not decrypt login reply"
 msgstr "登入回應解密失敗"
 
-msgid "Unknow reply CMD"
+#, fuzzy
+msgid "Unknow LOGIN CMD"
 msgstr "伺服器送出了不明的回覆指令"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
+msgstr "伺服器送出了一個不明的指令"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7892,60 +8081,6 @@ msgstr "傳送檔案"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d 取消了「%s」的傳送"
-
-msgid "Do you approve the requestion?"
-msgstr "允許這個要求？"
-
-msgid "Do you add the buddy?"
-msgstr "您要加入這個使用者到好友清單中嗎？"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s 已將您加入到他（她）的好友清單"
-
-# FIXME fix the original string :P
-msgid "Would you like to add him?"
-msgstr "您要將他（她）加入您的好友清單嗎？"
-
-#, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "%s 將您 [%s] 加入他（她）的好友清單。"
-
-msgid "QQ Budy"
-msgstr "QQ 好友"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr "使用者「%s」拒絕了您的要求"
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr "使用者「%s」允許了您的要求"
-
-#. TODO: this should go through purple_account_request_authorization()
-#, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s 想要將您 [%s] 加入他（她）的好友清單"
-
-#, c-format
-msgid "%s is not in buddy list"
-msgstr "%s 不在您的好友清單內"
-
-# FIXME fix the original string :P
-msgid "Would you add?"
-msgstr "您要將他（她）加入您的好友清單嗎？"
-
-#, c-format
-msgid "From %s:"
-msgstr "由 %s 發出："
-
-#, c-format
-msgid "%s"
-msgstr "%s"
-
-msgid "QQ Server Notice"
-msgstr "QQ 伺服器通告"
 
 msgid "Connection closed (writing)"
 msgstr "連線關閉（寫入）"
@@ -9654,9 +9789,6 @@ msgstr "無法送出您的 Yahoo! 訊息。"
 msgid "Yahoo! system message for %s:"
 msgstr "%s 的 Yahoo! 系統訊息："
 
-msgid "Authorization denied message:"
-msgstr "拒絕認證訊息："
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10575,14 +10707,14 @@ msgstr "啟動"
 msgid "Protocol"
 msgstr "通訊協定"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10651,9 +10783,6 @@ msgstr "觀看日誌(_L)"
 
 msgid "Hide when offline"
 msgstr "離線時隱藏"
-
-msgid "Show when offline"
-msgstr "離線時顯示"
 
 msgid "_Alias..."
 msgstr "別名(_A)..."
@@ -11018,7 +11147,8 @@ msgstr "別名(_L)："
 msgid "Auto_join when account becomes online."
 msgstr "帳號上線後隨即自動加入(_J)。"
 
-msgid "_Hide chat when the window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed."
 msgstr "關閉視窗時只將聊天隱藏(_H)。"
 
 msgid "Please enter the name of the group to be added."
@@ -11056,10 +11186,6 @@ msgstr "/好友/好友清單排序"
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL 伺服器"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "遠端結束連線"
 
 msgid "Unknown command."
 msgstr "未知的指令"
@@ -11414,8 +11540,12 @@ msgstr "錯誤訊息"
 msgid "Fatal Error"
 msgstr "嚴重錯誤訊息"
 
-msgid "developer"
-msgstr "開發者"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "樂手名稱"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11424,10 +11554,8 @@ msgstr "張家興"
 msgid "support"
 msgstr "支援"
 
-msgid "support/QA"
-msgstr "支援兼品管"
-
-msgid "developer & webmaster"
+#, fuzzy
+msgid "webmaster"
 msgstr "開發者兼網站管理員"
 
 msgid "Senior Contributor/QA"
@@ -11446,8 +11574,11 @@ msgstr "libfaim 維護者"
 msgid "hacker and designated driver [lazy bum]"
 msgstr "程式編寫者兼指定司機 [死懶鬼]"
 
-msgid "XMPP developer"
-msgstr "XMPP 開發者"
+msgid "support/QA"
+msgstr "支援兼品管"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "原作者"
@@ -11755,10 +11886,6 @@ msgstr "前任開發者"
 # NOTE 參見「Crazy Patch Writer」條
 msgid "Retired Crazy Patch Writers"
 msgstr "前任的狂熱模組作者"
-
-#  NOTE 可譯「美工人員」，但那是很保守的譯法；Pidgin 的 Artist 是做設計圖示、重新整理介面等等這些很難做的工作的人，所以很明顯是「設計員」
-msgid "Artists"
-msgstr "平面設計"
 
 msgid "Current Translators"
 msgstr "現任譯者"
@@ -12397,11 +12524,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #  TODO Untranslated - This will need to be translated (NOT transliterated) for Chinese, but that'd be too much work
@@ -13241,8 +13363,13 @@ msgstr "取得資訊(_G)"
 msgid "_Invite"
 msgstr "邀請(_I)"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "修改(_M)"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "加入(_A)"
 
 msgid "_Open Mail"
 msgstr "開啟郵件(_O)"
@@ -13269,6 +13396,13 @@ msgstr "不使用表情圖示，選擇這個主題即可。"
 # NOTE 這個「none」是「none」表情主題（不使用圖示）的主題名稱(?!)
 msgid "none"
 msgstr "無"
+
+#, fuzzy
+msgid "Small"
+msgstr "縮小字體(_S)"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr "「回答」或然率："
@@ -13758,6 +13892,10 @@ msgstr "加入新訊息數目到 X 屬性中(_X)"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "設定視窗的「URGENT」（緊急資訊）提示(_U)"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "聊天視窗(_H)"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "浮現交談視窗(_A)"
@@ -13944,19 +14082,20 @@ msgstr ""
 "作。在輸入欄位輸入指令，按 Enter 後鍵送出；相關資訊會在除錯視窗顯示。"
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"您目前使用的 %s 版本為 %s，最新的版本是 %s。新版本可由以下網址取得：<a href="
-"\"%s\">%s</a><hr>"
-
-#, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>功能說明：</b><br>%s"
 
 msgid "New Version Available"
 msgstr "有新版本"
+
+#, fuzzy
+msgid "Later"
+msgstr "日期"
+
+# NOTE: ui_name, ui_website - 這是「請從ui_website下載ui_name」的廣告訊息（quit message），ui_name通常就是「pidgin」
+#, fuzzy
+msgid "Download Now"
+msgstr "下載 %s，請瀏覽 %s"
 
 #. *< type
 #. *< ui_requirement
@@ -14268,6 +14407,193 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
+#~ msgid "Primary Information"
+#~ msgstr "基本資訊"
+
+#~ msgid "Blood Type"
+#~ msgstr "血型"
+
+#~ msgid "Update information"
+#~ msgstr "更新好友資訊"
+
+#~ msgid "Successed:"
+#~ msgstr "成功："
+
+#~ msgid ""
+#~ "Setting custom faces is not currently supported. Please choose an image "
+#~ "from %s."
+#~ msgstr "自訂的表情圖案暫時未獲支援，請自 %s 選取圖案。"
+
+#~ msgid "Invalid QQ Face"
+#~ msgstr "無效的 QQ 表情"
+
+#~ msgid "You rejected %d's request"
+#~ msgstr "您拒絕了 %d 的要求"
+
+#~ msgid "Reject request"
+#~ msgstr "拒絕"
+
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "連同認證要求的新增好友失敗"
+
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "加入 %d 的好友清單"
+
+#~ msgid "QQ Number Error"
+#~ msgstr "QQ 號碼錯誤"
+
+#~ msgid "Group Description"
+#~ msgstr "群組描述"
+
+#~ msgid "Auth"
+#~ msgstr "認證"
+
+#~ msgid "Approve"
+#~ msgstr "允許"
+
+#~ msgid "Successed to join Qun %d, operated by admin %d"
+#~ msgstr "管理人 %2$d 允許了您加入群組 %1$d"
+
+#~ msgid "[%d] removed from Qun \"%d\""
+#~ msgstr "[%d] 退出了群組「%d」"
+
+#~ msgid "[%d] added to Qun \"%d\""
+#~ msgstr "[%d] 已經被加入群組 \"%d\""
+
+#~ msgid "I am a member"
+#~ msgstr "我是成員"
+
+# NOTE 這是 QQ_ROOM_ROLE_REQUESTING，按上文下理應係指「申請成為成員中」
+#~ msgid "I am requesting"
+#~ msgstr "我正在要求加入"
+
+#~ msgid "I am the admin"
+#~ msgstr "我是管理人"
+
+#~ msgid "Unknown status"
+#~ msgstr "狀態不明"
+
+#~ msgid "Remove from Qun"
+#~ msgstr "從群組中移除"
+
+#~ msgid "You entered a group ID outside the acceptable range"
+#~ msgstr "指定的群組 ID 在有效範圍之外"
+
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "您確定要離開群組？"
+
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "允許這個要求？"
+
+#~ msgid "Change Qun member"
+#~ msgstr "修改群組號碼"
+
+#~ msgid "Change Qun information"
+#~ msgstr "修改群組資訊"
+
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+
+#~ msgid "System Message"
+#~ msgstr "系統訊息"
+
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>上次登入位址：</b>%s<br>\n"
+
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>上次登入時間：</b>%s\n"
+
+#~ msgid "Set My Information"
+#~ msgstr "設定我的資訊"
+
+#~ msgid "Leave the QQ Qun"
+#~ msgstr "離開這個 QQ 群 (Qun)"
+
+#~ msgid "Block this buddy"
+#~ msgstr "封鎖這個好友"
+
+#~ msgid "Invalid token reply code, 0x%02X"
+#~ msgstr "符記回應碼「0x%02X」無效"
+
+#~ msgid "Unable login for not support Redirect_EX now"
+#~ msgstr "無法登入，暫時不支援 Redirect_EX 功能"
+
+#~ msgid "Error password: %s"
+#~ msgstr "密碼錯誤：%s"
+
+# FIXME 不知這是什麼，但我想可能是這樣 - acli 20080930
+#~ msgid "Need active: %s"
+#~ msgstr "需要啟動帳號：%s"
+
+# XXX 看不明原始碼，這是半猜 - 20080930 acli
+#~ msgid "Failed to connect all servers"
+#~ msgstr "無法連線到所有伺服器"
+
+#  XXX 20080810 acli - 原文好像有問題
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "連線伺服器 %s 中，將會嘗試 %d 次"
+
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "允許這個要求？"
+
+#~ msgid "Do you add the buddy?"
+#~ msgstr "您要加入這個使用者到好友清單中嗎？"
+
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s 將您 [%s] 加入他（她）的好友清單。"
+
+#~ msgid "QQ Budy"
+#~ msgstr "QQ 好友"
+
+#~ msgid "Requestion approved by %s"
+#~ msgstr "使用者「%s」允許了您的要求"
+
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s 想要將您 [%s] 加入他（她）的好友清單"
+
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s 不在您的好友清單內"
+
+# FIXME fix the original string :P
+#~ msgid "Would you add?"
+#~ msgstr "您要將他（她）加入您的好友清單嗎？"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#~ msgid "QQ Server Notice"
+#~ msgstr "QQ 伺服器通告"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "遠端結束連線"
+
+#~ msgid "developer"
+#~ msgstr "開發者"
+
+#~ msgid "XMPP developer"
+#~ msgstr "XMPP 開發者"
+
+#  NOTE 可譯「美工人員」，但那是很保守的譯法；Pidgin 的 Artist 是做設計圖示、重新整理介面等等這些很難做的工作的人，所以很明顯是「設計員」
+#~ msgid "Artists"
+#~ msgstr "平面設計"
+
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "您目前使用的 %s 版本為 %s，最新的版本是 %s。新版本可由以下網址取得：<a "
+#~ "href=\"%s\">%s</a><hr>"
+
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>功能說明：</b><br>%s"
+
 #~ msgid "A group with the name already exists."
 #~ msgstr "那個群組已經存在"
 
@@ -14318,14 +14644,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "Enter your reason:"
 #~ msgstr "請輸入原因："
-
-#  NOTE QQ「member」應是「成員」
-#~ msgid "You have successfully modified Qun member"
-#~ msgstr "成功更改了群的一個成員"
-
-# FIXME 暫譯 ambrose 20070415
-#~ msgid "You have successfully modified Qun information"
-#~ msgstr "成功更改了群的資訊"
 
 #~ msgid " Space"
 #~ msgstr " Space"
@@ -14622,9 +14940,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgid "QQ: Offline"
 #~ msgstr "QQ: 離線"
 
-#~ msgid "Modify My Information"
-#~ msgstr "修改資訊"
-
 #~ msgid "Login in TCP"
 #~ msgstr "以 TCP 登入"
 
@@ -14661,9 +14976,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "_Larger"
 #~ msgstr "放大字體(_L)"
-
-#~ msgid "_Smaller"
-#~ msgstr "縮小字體(_S)"
 
 #~ msgid "_Reset font"
 #~ msgstr "清除格式化(_R)"
@@ -15118,9 +15430,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgid "Change Your QQ Face"
 #~ msgstr "更改您的 QQ 好友圖示"
 
-#~ msgid "Update"
-#~ msgstr "更新"
-
 #~ msgid "<i>Information below may not be accurate</i><br>\n"
 #~ msgstr "【下列資訊可能不準確】<br>\n"
 
@@ -15150,9 +15459,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgstr ""
 #~ "\n"
 #~ "<b>外部使用者</b>"
-
-#~ msgid "<b>External User</b><br>"
-#~ msgstr "<b>外部使用者</b><br>"
 
 #~ msgid "<b>User ID:</b> %s<br>"
 #~ msgstr "<b>使用者帳號：</b>%s<br>"
@@ -15200,9 +15506,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "Invalid Username"
 #~ msgstr "使用者名稱無效"
-
-#~ msgid "Invalid password"
-#~ msgstr "密碼無效"
 
 #~ msgid "Wrong password!"
 #~ msgstr "密碼錯誤！"
@@ -15450,9 +15753,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "Error launching <b>%s</b>: %s"
 #~ msgstr "執行「%s」時發生了錯誤：%s"
-
-#~ msgid "e-Mail"
-#~ msgstr "電子郵件"
 
 #~ msgid "Realname"
 #~ msgstr "姓名"

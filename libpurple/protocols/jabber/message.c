@@ -913,19 +913,15 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 		return FALSE;
 	}
 
-	jb = jabber_buddy_find(js, who, FALSE);
-	if (!jb) {
-		purple_debug_error("jabber",
-			"jabber_conv_support_custom smileys: could not find buddy\n");
-		return FALSE;
-	}
-	
-	
-
 	switch (purple_conversation_get_type(conv)) {
 		/* for the time being, we will not support custom smileys in MUCs */
 		case PURPLE_CONV_TYPE_IM:
-			return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+			jb = jabber_buddy_find(js, who, FALSE);
+			if (jb) {
+				return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+			} else {
+				return FALSE;
+			}
 			break;
 		default:
 			return FALSE;
