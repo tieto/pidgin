@@ -982,13 +982,8 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	purple_debug_info("msn", "Contact added successfully\n");
 
-	/* the code this block is replacing didn't send ADL for yahoo contacts,
-	 * but i haven't confirmed this is WLM's behaviour wrt yahoo contacts
-	 */
-	if ( !msn_user_is_yahoo(session->account, state->who) ) {
-		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
-		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
-	}
+	msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
+	msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 
 	user = msn_userlist_find_add_user(userlist, state->who, state->who);
 	msn_user_add_group_id(user, state->guid);
@@ -1112,10 +1107,8 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 			g_free(uid);
 		}
 
-		if ( !msn_user_is_yahoo(state->session->account, state->who) ) {
-			msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
-			msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
-		}
+		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
+		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 
 		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
 			msn_del_contact_from_list(state->session, NULL, state->who, MSN_LIST_PL);
@@ -1466,10 +1459,13 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 			  const gchar *passport, const MsnListId list)
 {
 	gchar *body = NULL, *member = NULL;
+	const char *type = "PassportMember";
+	gchar *federate = NULL;
 	MsnSoapPartnerScenario partner_scenario;
 	MsnUser *user;
 
 	g_return_if_fail(session != NULL);
+	g_return_if_fail(session->userlist != NULL);
 	g_return_if_fail(passport != NULL);
 	g_return_if_fail(list < 5);
 
@@ -1481,18 +1477,24 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_list_id(state, list);
 	msn_callback_state_set_who(state, passport);
 
+	user = msn_userlist_find_user(session->userlist, passport);
+	if (user && user->networkid != MSN_NETWORK_PASSPORT) {
+		type = "EmailMember";
+		federate = g_strdup_printf(MSN_MEMBER_FEDERATED_ANNOTATION_XML,
+		                           user->networkid);
+	}
+	
 	if (list == MSN_LIST_PL) {
-		g_return_if_fail(session->userlist != NULL);
-
-		user = msn_userlist_find_user(session->userlist, passport);
-
 		partner_scenario = MSN_PS_CONTACT_API;
-		member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML, user->membership_id[MSN_LIST_PL]);
+		member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
+		                         type, user->membership_id[MSN_LIST_PL],
+		                         federate ? federate : "");
 	} else {
 		/* list == MSN_LIST_AL || list == MSN_LIST_BL */
 		partner_scenario = MSN_PS_BLOCK_UNBLOCK;
-		
-		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML, passport);
+		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+		                         type, passport,
+		                         federate ? federate : "");
 	}
 
 	body = g_strdup_printf(MSN_CONTACT_DELETE_FROM_LIST_TEMPLATE,
@@ -1505,6 +1507,7 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_del_contact_from_list_read_cb;
 	msn_contact_request(state);
 
+	g_free(federate);
 	g_free(member);
 	g_free(body);
 }
@@ -1552,7 +1555,10 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 			const gchar *passport, const MsnListId list)
 {
 	gchar *body = NULL, *member = NULL;
+	const char *type = "PassportMember";
+	gchar *federate = NULL;
 	MsnSoapPartnerScenario partner_scenario;
+	MsnUser *user;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(passport != NULL);
@@ -1566,9 +1572,16 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_list_id(state, list);
 	msn_callback_state_set_who(state, passport);
 
-	partner_scenario = (list == MSN_LIST_RL) ? MSN_PS_CONTACT_API : MSN_PS_BLOCK_UNBLOCK;
+	user = msn_userlist_find_user(session->userlist, passport);
+	if (user && user->networkid != MSN_NETWORK_PASSPORT) {
+		type = "EmailMember";
+		federate = g_strdup_printf(MSN_MEMBER_FEDERATED_ANNOTATION_XML,
+		                           user->networkid);
+	}
 
-	member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML, state->who);
+	partner_scenario = (list == MSN_LIST_RL) ? MSN_PS_CONTACT_API : MSN_PS_BLOCK_UNBLOCK;
+	member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+	                         type, state->who, federate ? federate : "");
 
 	body = g_strdup_printf(MSN_CONTACT_ADD_TO_LIST_TEMPLATE,
 		MsnSoapPartnerScenarioText[partner_scenario],
@@ -1580,6 +1593,7 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_add_contact_to_list_read_cb;
 	msn_contact_request(state);
 
+	g_free(federate);
 	g_free(member);
 	g_free(body);
 }

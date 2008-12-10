@@ -396,18 +396,28 @@
 #define MSN_DELETE_MEMBER_FROM_LIST_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/DeleteMember"
 
 #define MSN_MEMBER_PASSPORT_XML	\
-	"<Member xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"PassportMember\">"\
+	"<Member xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"%s\">"\
 		"<Type>Passport</Type>"\
 		"<State>Accepted</State>"\
 		"<PassportName>%s</PassportName>"\
+		"%s"\
 	"</Member>"
 
 #define MSN_MEMBER_MEMBERSHIPID_XML	\
-	"<Member xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"PassportMember\">"\
+	"<Member xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"%s\">"\
 		"<Type>Passport</Type>"\
 		"<MembershipId>%u</MembershipId>"\
 		"<State>Accepted</State>"\
+		"%s"\
 	"</Member>"
+
+#define MSN_MEMBER_FEDERATED_ANNOTATION_XML \
+	"<Annotations>"\
+		"<Annotation>"\
+			"<Name>MSN.IM.BuddyType</Name>"\
+			"<Value>%02d:</Value>"\
+		"</Annotation>"\
+	"</Annotations>"
 
 /* first delete contact from allow list */
 
