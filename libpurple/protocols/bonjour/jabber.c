@@ -128,7 +128,7 @@ get_xmlnode_contents(xmlnode *node)
 
 	if (contents) {
 		char *bodystart = strchr(contents, '>');
-		char *bodyend = strrchr(bodystart, '<');
+		char *bodyend = bodystart ? strrchr(bodystart, '<') : NULL;
 		if (bodystart && bodyend && (bodystart + 1) != bodyend) {
 			*bodyend = '\0';
 			memmove(contents, bodystart + 1, (bodyend - bodystart));
