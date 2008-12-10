@@ -77,7 +77,7 @@ enum sent_stream_start_types {
 };
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb);
+xep_iq_parse(xmlnode *packet, PurpleBuddy *pb);
 
 static BonjourJabberConversation *
 bonjour_jabber_conv_new(PurpleBuddy *pb, PurpleAccount *account, const char *ip) {
@@ -364,7 +364,7 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
 	if (!strcmp(packet->name, "message"))
 		_jabber_parse_and_write_message_to_ui(packet, pb);
 	else if(!strcmp(packet->name, "iq"))
-		xep_iq_parse(packet, NULL, pb);
+		xep_iq_parse(packet, pb);
 	else
 		purple_debug_warning("bonjour", "Unknown packet: %s\n", packet->name ? packet->name : "(null)");
 }
@@ -1158,13 +1158,11 @@ static gboolean
 check_if_blocked(PurpleBuddy *pb)
 {
 	gboolean blocked = FALSE;
-	GSList *l = NULL;
-	PurpleAccount *acc = NULL;
+	GSList *l;
+	PurpleAccount *acc = purple_buddy_get_account(pb);
 
-	if(pb == NULL)
+	if(acc == NULL)
 		return FALSE;
-
-	acc = pb->account;
 
 	for(l = acc->deny; l != NULL; l = l->next) {
 		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
@@ -1177,25 +1175,19 @@ check_if_blocked(PurpleBuddy *pb)
 }
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
+xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 {
-	xmlnode *child = NULL;
-
-	if(packet == NULL || pb == NULL)
-		return;
-
-	if(connection == NULL) {
-		if(pb->account != NULL)
-			connection = (pb->account)->gc;
-	}
+	xmlnode *child;
 
 	if(check_if_blocked(pb))
 		return;
 
 	if ((child = xmlnode_get_child(packet, "si")) || (child = xmlnode_get_child(packet, "error")))
-		xep_si_parse(connection, packet, pb);
+		xep_si_parse(purple_account_get_connection(pb->account),
+			packet, pb);
 	else
-		xep_bytestreams_parse(connection, packet, pb);
+		xep_bytestreams_parse(purple_account_get_connection(pb->account),
+			packet, pb);
 }
 
 int
