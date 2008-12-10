@@ -79,8 +79,6 @@ void async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
 void bonjour_jabber_stream_started(BonjourJabberConversation *bconv);
 
-void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv);
-
 void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);

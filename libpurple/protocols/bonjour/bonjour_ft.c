@@ -411,8 +411,10 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	BonjourData *bd;
 	PurpleXfer *xfer;
 
-	if(pc == NULL || packet == NULL || pb == NULL)
-		return;
+	g_return_if_fail(pc != NULL);
+	g_return_if_fail(packet != NULL);
+	g_return_if_fail(pb != NULL);
+
 	bd = (BonjourData*) pc->proto_data;
 	if(bd == NULL)
 		return;
@@ -488,8 +490,9 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	xmlnode *query;
 	BonjourData *bd;
 
-	if(pc == NULL || packet == NULL || pb == NULL)
-		return;
+	g_return_if_fail(pc != NULL);
+	g_return_if_fail(packet != NULL);
+	g_return_if_fail(pb != NULL);
 
 	bd = (BonjourData*) pc->proto_data;
 	if(bd == NULL)
