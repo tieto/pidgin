@@ -369,6 +369,31 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
 		purple_debug_warning("bonjour", "Unknown packet: %s\n", packet->name ? packet->name : "(null)");
 }
 
+static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
+
+	/* Inform the user that the conversation has been closed */
+	BonjourBuddy *bb = NULL;
+
+	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", bconv->pb ? bconv->pb->name : "(unknown)");
+
+	if(bconv->pb != NULL)
+		bb = bconv->pb->proto_data;
+#if 0
+	if(bconv->pb != NULL) {
+		PurpleConversation *conv;
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
+		if (conv != NULL) {
+			char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
+			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
+	}
+#endif
+	/* Close the socket, clear the watcher and free memory */
+	bonjour_jabber_close_conversation(bconv);
+	if(bb)
+		bb->conversation = NULL;
+}
 
 static void
 _client_socket_handler(gpointer data, gint socket, PurpleInputCondition condition)
@@ -413,35 +438,6 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 
 	bonjour_parser_process(bconv, message, message_length);
 }
-
-void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
-
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", bconv->pb ? bconv->pb->name : "(unknown)");
-
-	/* Inform the user that the conversation has been closed */
-	if (bconv != NULL) {
-		BonjourBuddy *bb = NULL;
-
-		if(bconv->pb != NULL)
-			bb = bconv->pb->proto_data;
-#if 0
-		if(bconv->pb != NULL) {
-			PurpleConversation *conv;
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
-			if (conv != NULL) {
-				char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
-				purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
-				g_free(tmp);
-			}
-		}
-#endif
-		/* Close the socket, clear the watcher and free memory */
-		bonjour_jabber_close_conversation(bconv);
-		if(bb)
-			bb->conversation = NULL;
-	}
-}
-
 
 struct _stream_start_data {
 	char *msg;
