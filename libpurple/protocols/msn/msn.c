@@ -647,24 +647,40 @@ msn_status_text(PurpleBuddy *buddy)
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
-	/* I think status message should take precedence over media */
-	msg = purple_status_get_attr_string(status, "message");
-	if (msg && *msg)
-		return g_markup_escape_text(msg, -1);
-
 	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-		const char *title, *artist;
+		const char *title, *game, *office;
 		char *media, *esc;
 		status = purple_presence_get_status(presence, "tune");
 		title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-		artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
 
-		media = g_strdup_printf("%s%s%s", title, artist ? " - " : "",
-				artist ? artist : "");
+		game = purple_status_get_attr_string(status, "game");
+		office = purple_status_get_attr_string(status, "office");
+
+		if (title && *title) {
+			const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+			const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+			media = g_strdup_printf("%s%s%s%s%s%s", title,
+			                        (artist && *artist) ? " - " : "",
+			                        (artist && *artist) ? artist : "",
+			                        (album && *album) ? " (" : "",
+			                        (album && *album) ? album : "",
+			                        (album && *album) ? ")" : "");
+		}
+		else if (game && *game)
+			media = g_strdup_printf("Playing %s", game);
+		else if (office && *office)
+			media = g_strdup_printf("Editing %s", office);
+		else
+			return NULL;
 		esc = g_markup_escape_text(media, -1);
 		g_free(media);
 		return esc;
 	}
+
+	/* Official client says media takes precedence over message */
+	msg = purple_status_get_attr_string(status, "message");
+	if (msg && *msg)
+		return g_markup_escape_text(msg, -1);
 
 	return NULL;
 }
@@ -681,6 +697,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	if (purple_presence_is_online(presence))
 	{
 		const char *psm, *name;
+		const char *mediatype = NULL;
 		char *currentmedia = NULL;
 		char *tmp;
 
@@ -688,10 +705,20 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 			PurpleStatus *tune = purple_presence_get_status(presence, "tune");
 			const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
-			const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
-			const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
-			currentmedia = purple_util_format_song_info(title, artist, album, NULL);
-			/* We could probably just use user->media.title etc. here */
+			const char *game = purple_status_get_attr_string(tune, "game");
+			const char *office = purple_status_get_attr_string(tune, "office");
+			if (title && *title) {
+				const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
+				mediatype = _("Now Listening");
+				currentmedia = purple_util_format_song_info(title, artist, album, NULL);
+			} else if (game && *game) {
+				mediatype = _("Playing a game");
+				currentmedia = g_strdup(game);
+			} else if (office && *office) {
+				mediatype = _("Working");
+				currentmedia = g_strdup(office);
+			}
 		}
 
 		if (!purple_status_is_available(status)) {
@@ -745,7 +772,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		}
 
 		if (currentmedia) {
-			purple_notify_user_info_add_pair(user_info, _("Now Listening"), currentmedia);
+			purple_notify_user_info_add_pair(user_info, mediatype, currentmedia);
 			g_free(currentmedia);
 		}
 	}
@@ -840,6 +867,8 @@ msn_status_types(PurpleAccount *account)
 			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"game", _("Game Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"office", _("Office Title"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
@@ -1414,21 +1443,18 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		purple_debug_info("msn", "msn_add_buddy: %s\n", who);
 #endif
 
-#if 0
-	/* Which is the max? */
-	if (session->fl_users_count >= 150)
-	{
-		purple_debug_info("msn", "Too many buddies\n");
-		/* Buddy list full */
-		/* TODO: purple should be notified of this */
-		return;
-	}
-#endif
-
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
 	 * internal. */
-	msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
+	if (msn_userlist_find_user(userlist, who) != NULL) {
+		/* We already know this buddy. This function takes care of users
+		   already in the list and stuff... */
+		msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
+	} else {
+		/* We need to check the network for this buddy first */
+		msn_userlist_save_pending_buddy(userlist, who, group ? group->name : NULL);
+		msn_notification_send_fqy(session, who);
+	}
 }
 
 static void

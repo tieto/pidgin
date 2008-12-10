@@ -20,6 +20,9 @@ version 2.5.3 (??/??/????):
 	  connected (Paul Aurich)
 	* Fix a crash in purple_accounts_delete that happens when this function is
 	  called before the buddy list is initialized (Florian Quèze)
+	* On MSN, the Games and Office media can now be set and displayed (in
+	  addition to the previous Music media). The Media status text now shows
+	  the album, if possible. 
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
