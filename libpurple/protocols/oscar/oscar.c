@@ -1088,59 +1088,62 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 }
 
 /**
- * This is the callback function anytime purple_proxy_connect()
- * establishes a new TCP connection with an oscar host.  Depending
- * on the type of host, we do a few different things here.
+ * This is called from the callback functions for establishing
+ * a TCP connection with an oscar host if an error occurred.
  */
 static void
-connection_established_cb(gpointer data, gint source, const gchar *error_message)
+connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
+{
+	PurpleConnection *gc;
+	OscarData *od;
+
+	od = conn->od;
+	gc = od->gc;
+
+	purple_debug_error("oscar", "unable to connect to FLAP "
+			"server of type 0x%04hx\n", conn->type);
+	if (conn->type == SNAC_FAMILY_AUTH)
+	{
+		gchar *msg;
+		msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
+				error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
+	}
+	else if (conn->type == SNAC_FAMILY_LOCATE)
+	{
+		gchar *msg;
+		msg = g_strdup_printf(_("Could not connect to BOS server:\n%s"),
+				error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
+	}
+	else
+	{
+		/* Maybe we should call this for BOS connections, too? */
+		flap_connection_schedule_destroy(conn,
+				OSCAR_DISCONNECT_COULD_NOT_CONNECT, error_message);
+	}
+}
+
+/**
+ * This is called from the callback functions for establishing
+ * a TCP connection with an oscar host. Depending on the type
+ * of host, we do a few different things here.
+ */
+static void
+connection_common_established_cb(FlapConnection *conn)
 {
 	PurpleConnection *gc;
 	OscarData *od;
 	PurpleAccount *account;
-	FlapConnection *conn;
 
-	conn = data;
 	od = conn->od;
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
 
-	conn->connect_data = NULL;
-	conn->fd = source;
-
-	if (source < 0)
-	{
-		purple_debug_error("oscar", "unable to connect to FLAP "
-				"server of type 0x%04hx\n", conn->type);
-		if (conn->type == SNAC_FAMILY_AUTH)
-		{
-			gchar *msg;
-			msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
-					error_message);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
-			g_free(msg);
-		}
-		else if (conn->type == SNAC_FAMILY_LOCATE)
-		{
-			gchar *msg;
-			msg = g_strdup_printf(_("Could not connect to BOS server:\n%s"),
-					error_message);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
-			g_free(msg);
-		}
-		else
-		{
-			/* Maybe we should call this for BOS connections, too? */
-			flap_connection_schedule_destroy(conn,
-					OSCAR_DISCONNECT_COULD_NOT_CONNECT, error_message);
-		}
-		return;
-	}
-
 	purple_debug_info("oscar", "connected to FLAP server of type 0x%04hx\n",
 			conn->type);
-	conn->watcher_incoming = purple_input_add(conn->fd,
-			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
 	if (conn->cookie == NULL)
 		flap_connection_send_version(od, conn);
 	else
@@ -1168,6 +1171,59 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 		od->oscar_chats = g_slist_prepend(od->oscar_chats, conn->new_conn_data);
 		conn->new_conn_data = NULL;
 	}
+}
+
+static void
+connection_established_cb(gpointer data, gint source, const gchar *error_message)
+{
+	FlapConnection *conn;
+
+	conn = data;
+
+	conn->connect_data = NULL;
+	conn->fd = source;
+
+	if (source < 0)
+	{
+		connection_common_error_cb(conn, error_message);
+		return;
+	}
+
+	conn->watcher_incoming = purple_input_add(conn->fd,
+			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
+	connection_common_established_cb(conn);
+}
+
+static void
+ssl_connection_established_cb(gpointer data, PurpleSslConnection *gsc,
+		PurpleInputCondition cond)
+{
+	FlapConnection *conn;
+
+	conn = data;
+
+	purple_ssl_input_add(gsc, flap_connection_recv_cb_ssl, conn);
+	connection_common_established_cb(conn);
+}
+
+static void
+ssl_connection_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error,
+		gpointer data)
+{
+	FlapConnection *conn;
+
+	conn = data;
+
+	if (conn->watcher_outgoing)
+	{
+		purple_input_remove(conn->watcher_outgoing);
+		conn->watcher_outgoing = 0;
+	}
+
+	/* sslconn frees the connection on error */
+	conn->gsc = NULL;
+
+	connection_common_error_cb(conn, purple_ssl_strerror(error));
 }
 
 static void
@@ -1430,17 +1486,35 @@ oscar_login(PurpleAccount *account)
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
 
+	od->use_ssl = purple_account_get_bool(account, "use_ssl", FALSE);
+
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
 	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
 	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
-	newconn->connect_data = purple_proxy_connect(NULL, account,
-			purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
-			purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
-			connection_established_cb, newconn);
-	if (newconn->connect_data == NULL)
-	{
+	if (od->use_ssl) {
+		if (purple_ssl_is_supported()) {
+			/* FIXME SSL: This won't really work... Need to match on the server being the default
+			 * non-ssl server and, if so, connect to the default ssl one (and possibly update
+			 * the account setting).
+			 */
+			newconn->gsc = purple_ssl_connect(account,
+					purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER),
+					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
+					ssl_connection_established_cb, ssl_connection_error_cb, newconn);
+		} else {
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+					_("SSL support unavailable"));
+		}
+	} else {
+		newconn->connect_data = purple_proxy_connect(NULL, account,
+				purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
+				purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
+				connection_established_cb, newconn);
+	}
+
+	if (newconn->gsc == NULL && newconn->connect_data == NULL) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Couldn't connect to host"));
 		return;
@@ -1565,10 +1639,21 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	newconn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
 	newconn->cookielen = info->cookielen;
 	newconn->cookie = g_memdup(info->cookie, info->cookielen);
-	newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-			connection_established_cb, newconn);
+
+	if (od->use_ssl)
+	{
+		newconn->gsc = purple_ssl_connect(account, host, port,
+				ssl_connection_established_cb, ssl_connection_error_cb,
+				newconn);
+	}
+	else
+	{
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				connection_established_cb, newconn);
+	}
+
 	g_free(host);
-	if (newconn->connect_data == NULL)
+	if (newconn->gsc == NULL && newconn->connect_data == NULL)
 	{
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
 		return 0;
@@ -1890,9 +1975,19 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		purple_debug_info("oscar", "Connecting to chat room %s exchange %hu\n", cc->name, cc->exchange);
 	}
 
-	newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-			connection_established_cb, newconn);
-	if (newconn->connect_data == NULL)
+	if (od->use_ssl)
+	{
+		newconn->gsc = purple_ssl_connect(account, host, port,
+				ssl_connection_established_cb, ssl_connection_error_cb,
+				newconn);
+	}
+	else
+	{
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				connection_established_cb, newconn);
+	}
+
+	if (newconn->gsc == NULL && newconn->connect_data == NULL)
 	{
 		flap_connection_schedule_destroy(newconn,
 				OSCAR_DISCONNECT_COULD_NOT_CONNECT,
@@ -6854,6 +6949,10 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
+	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Use SSL (buggy)"), "use_ssl",
+			OSCAR_DEFAULT_USE_SSL);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(
