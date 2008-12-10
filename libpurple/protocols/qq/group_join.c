@@ -276,7 +276,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 			   "Failed to join room ext id %u %s, unknown reply: 0x%02x\n",
 			   rmd->ext_id, rmd->title_utf8, reply);
 
-		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), _("Join Qun, Unknow Reply"));
+		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), _("Join Qun, Unknown Reply"));
 	}
 }
 

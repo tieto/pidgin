@@ -538,7 +538,7 @@ void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *
 			qq_process_buddy_change_status(data, data_len, gc);
 			break;
 		default:
-			process_unknow_cmd(gc, _("Unknow SERVER CMD"), data, data_len, cmd, seq);
+			process_unknow_cmd(gc, _("Unknown SERVER CMD"), data, data_len, cmd, seq);
 			break;
 	}
 }
@@ -1019,7 +1019,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			qq_update_all(gc, 0);
 			break;
 		default:
-			process_unknow_cmd(gc, _("Unknow LOGIN CMD"), data, data_len, cmd, seq);
+			process_unknow_cmd(gc, _("Unknown LOGIN CMD"), data, data_len, cmd, seq);
 			return QQ_LOGIN_REPLY_ERR;
 	}
 	return QQ_LOGIN_REPLY_OK;
@@ -1141,7 +1141,7 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			qq_process_buddy_check_code(gc, data, data_len);
 			break;
 		default:
-			process_unknow_cmd(gc, _("Unknow CLIENT CMD"), data, data_len, cmd, seq);
+			process_unknow_cmd(gc, _("Unknown CLIENT CMD"), data, data_len, cmd, seq);
 			is_unknow = TRUE;
 			break;
 	}

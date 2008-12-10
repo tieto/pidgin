@@ -424,7 +424,7 @@ guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len)
 			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", data, data_len,
 					">>> [default] decrypt and dump");
 			error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X)"),
+						_("Unknown reply code when login (0x%02X)"),
 						ret );
 			reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 			break;
@@ -872,8 +872,8 @@ void qq_captcha_input_dialog(PurpleConnection *gc,qq_captcha_data *captcha)
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(account,
-		_("QQ Captcha Verifing"),
-		_("QQ Captcha Verifing"),
+		_("QQ Captcha Verifying"),
+		_("QQ Captcha Verifying"),
 		_("Enter the text from the image"),
 		fields,
 		_("OK"), G_CALLBACK(captcha_input_ok_cb),
@@ -1111,7 +1111,7 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", data, data_len,
 					">>> [default] decrypt and dump");
 			error = g_strdup_printf(
-						_("Unknow reply code when checking password (0x%02X)"),
+						_("Unknown reply code when checking password (0x%02X)"),
 						ret );
 			reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 			break;
@@ -1257,7 +1257,7 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 				/* Missing get server before login*/
 			default:
 				error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X):\n%s"),
+						_("Unknown reply code when login (0x%02X):\n%s"),
 						ret, msg_utf8);
 				break;
 		}
@@ -1446,7 +1446,7 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 				break;
 			default:
 				error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X):\n%s"),
+						_("Unknown reply code when login (0x%02X):\n%s"),
 						ret, msg_utf8);
 				break;
 		}

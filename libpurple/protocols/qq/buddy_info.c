@@ -58,7 +58,7 @@ static const gchar *blood_types[] = {
 
 #define QQ_PUBLISH_SIZE 3
 static const gchar *publish_types[] = {
-	N_("Visible"), N_("Firend Only"), N_("Private")
+	N_("Visible"), N_("Friend Only"), N_("Private")
 };
 
 #define QQ_GENDER_SIZE 3
