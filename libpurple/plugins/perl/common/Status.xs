@@ -83,7 +83,7 @@ PREINIT:
 	int i, t_len;
 PPCODE:
 	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(source_list)) + 1;
+	t_len = av_len((AV *)SvRV(source_list));
 
 	for (i = 0; i < t_len; i++) {
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(source_list), i, 0)));
@@ -379,7 +379,7 @@ PREINIT:
 	int i, t_len;
 CODE:
 	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(status_types)) + 1;
+	t_len = av_len((AV *)SvRV(status_types));
 
 	for (i = 0; i < t_len; i++) {
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(status_types), i, 0)));

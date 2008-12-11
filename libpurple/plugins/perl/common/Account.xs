@@ -105,7 +105,7 @@ PREINIT:
     int i, t_len;
 PPCODE:
     t_GL = NULL;
-    t_len = av_len((AV *)SvRV(status_types)) + 1;
+    t_len = av_len((AV *)SvRV(status_types));
 
     for (i = 0; i < t_len; i++)
         t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(status_types), i, 0)));
@@ -207,7 +207,7 @@ PREINIT:
     int i, t_len;
 PPCODE:
     t_GL = NULL;
-    t_len = av_len((AV *)SvRV(list)) + 1;
+    t_len = av_len((AV *)SvRV(list));
 
     for (i = 0; i < t_len; i++)
         t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(list), i, 0)));
@@ -236,13 +236,13 @@ PREINIT:
     int i, t_len;
 PPCODE:
     t_GL1 = NULL;
-    t_len = av_len((AV *)SvRV(A)) + 1;
+    t_len = av_len((AV *)SvRV(A));
 
     for (i = 0; i < t_len; i++)
         t_GL1 = g_list_append(t_GL1, SvPVutf8_nolen(*av_fetch((AV *)SvRV(A), i, 0)));
 
     t_GL2 = NULL;
-    t_len = av_len((AV *)SvRV(B)) + 1;
+    t_len = av_len((AV *)SvRV(B));
 
     for (i = 0; i < t_len; i++)
         t_GL2 = g_list_append(t_GL2, SvPVutf8_nolen(*av_fetch((AV *)SvRV(B), i, 0)));

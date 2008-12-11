@@ -334,7 +334,7 @@ PREINIT:
 	int i, t_len;
 PPCODE:
 	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(users)) + 1;
+	t_len = av_len((AV *)SvRV(users));
 
 	for (i = 0; i < t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(users), i, 0)));
@@ -372,7 +372,7 @@ PREINIT:
 	int i, t_len;
 PPCODE:
 	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(ignored)) + 1;
+	t_len = av_len((AV *)SvRV(ignored));
 
 	for (i = 0; i < t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(ignored), i, 0)));
@@ -429,19 +429,19 @@ PREINIT:
 	int i, t_len;
 PPCODE:
 	t_GL_users = NULL;
-	t_len = av_len((AV *)SvRV(users)) + 1;
+	t_len = av_len((AV *)SvRV(users));
 
 	for (i = 0; i < t_len; i++)
 		t_GL_users = g_list_append(t_GL_users, SvPVutf8_nolen(*av_fetch((AV *)SvRV(users), i, 0)));
 
 	t_GL_flags = NULL;
-	t_len = av_len((AV *)SvRV(flags)) + 1;
+	t_len = av_len((AV *)SvRV(flags));
 
 	for (i = 0; i < t_len; i++)
 		t_GL_flags = g_list_append(t_GL_flags, SvPVutf8_nolen(*av_fetch((AV *)SvRV(flags), i, 0)));
 
 	t_GL_extra_msgs = NULL;
-	t_len = av_len((AV *)SvRV(extra_msgs)) + 1;
+	t_len = av_len((AV *)SvRV(extra_msgs));
 
 	for (i = 0; i < t_len; i++)
 		t_GL_extra_msgs = g_list_append(t_GL_extra_msgs, SvPVutf8_nolen(*av_fetch((AV *)SvRV(extra_msgs), i, 0)));
