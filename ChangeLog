@@ -26,7 +26,8 @@ version 2.5.3 (??/??/????):
 	* Fix use of av_len in perl bindings to fix some off-by-one bugs (Paul
 	  Aurich)
 	* On ICQ, advertise the ICQ 6 typing capability.  This should fix the
-	  reports of typing notifications not working with third-party clients.
+	  reports of typing notifications not working with third-party clients
+	  (Jaromír Karmazín)
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
