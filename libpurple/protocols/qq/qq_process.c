@@ -796,7 +796,7 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 						seq, room_cmd, qq_get_room_cmd_desc(room_cmd), room_id, rcved_len);
 			} else {
 				purple_debug_warning("QQ",
-					   _("Not a member of room \"%s\"\n"), rmd->title_utf8);
+					   "Not a member of room \"%s\"\n", rmd->title_utf8);
 				rmd->my_role = QQ_ROOM_ROLE_NO;
 			}
 			break;

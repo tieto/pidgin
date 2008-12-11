@@ -219,11 +219,11 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 
 	rmd = qq_room_data_find(gc, id);
 	if (rmd != NULL) {
-		msg = g_strdup_printf(_("Successed join to Qun %s (%u)"), rmd->title_utf8, rmd->ext_id);
+		msg = g_strdup_printf(_("Succeeded joining Qun %s (%u)"), rmd->title_utf8, rmd->ext_id);
 		qq_got_message(gc, msg);
 		g_free(msg);
 	} else {
-		qq_got_message(gc, _("Successed join to Qun"));
+		qq_got_message(gc, _("Succeeded joining Qun"));
 	}
 }
 
@@ -254,7 +254,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 	g_return_if_fail(rmd != NULL);
 	switch (reply) {
 	case QQ_ROOM_JOIN_OK:
-		purple_debug_info("QQ", "Successed in joining group \"%s\"\n", rmd->title_utf8);
+		purple_debug_info("QQ", "Succeeded in joining group \"%s\"\n", rmd->title_utf8);
 		rmd->my_role = QQ_ROOM_ROLE_YES;
 		/* this must be shown before getting online members */
 		qq_room_conv_open(gc, rmd);
@@ -267,7 +267,7 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 		do_room_join_request(gc, rmd);
 		break;
 	case QQ_ROOM_JOIN_DENIED:
-		msg = g_strdup_printf(_("Qun %u denied to join"), rmd->ext_id);
+		msg = g_strdup_printf(_("Qun %u denied from joining"), rmd->ext_id);
 		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), msg);
 		g_free(msg);
 		break;

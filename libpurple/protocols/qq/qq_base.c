@@ -72,7 +72,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 		qq_show_packet("Login reply OK, but length < 139", data, len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt server reply"));
+				_("Cannot decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -160,7 +160,7 @@ static gint8 process_login_redirect(PurpleConnection *gc, guint8 *data, gint len
 	if (len < 11) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt get server reply"));
+				_("Cannot decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 

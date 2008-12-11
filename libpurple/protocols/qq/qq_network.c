@@ -376,7 +376,7 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 			/* No worries */
 			return;
 
-		error_msg = g_strdup_printf(_("Lost connection with server:\n%d, %s"), errno, g_strerror(errno));
+		error_msg = g_strdup_printf(_("Lost connection with server: %d, %s"), errno, g_strerror(errno));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				error_msg);
@@ -935,7 +935,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 		return FALSE;
 	}
 
-	purple_connection_update_progress(gc, _("Connecting server ..."), 1, QQ_CONNECT_STEPS);
+	purple_connection_update_progress(gc, _("Connecting to server ..."), 1, QQ_CONNECT_STEPS);
 
 	purple_debug_info("QQ", "Connect to %s:%d\n", server, port);
 
@@ -951,7 +951,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 		qd->conn_data = purple_proxy_connect_udp(gc, account, server, port, connect_cb, gc);
 	}
 	if ( qd->conn_data == NULL ) {
-		purple_debug_error("QQ", _("Couldn't create socket"));
+		purple_debug_error("QQ", "Couldn't create socket");
 		return FALSE;
 	}
 #else
