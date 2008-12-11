@@ -87,7 +87,7 @@ static void do_im_ack(guint8 *data, gint data_len, PurpleConnection *gc)
 
 	if (data[0] != 0) {
 		purple_debug_warning("QQ", "Failed sent IM\n");
-		purple_notify_error(gc, _("Error"), _("Failed to send IM."), NULL);
+		purple_notify_error(gc, _("Error"), _("Unable to send message."), NULL);
 		return;
 	}
 
@@ -948,7 +948,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		qq_show_packet("Can not decrypted", rcved, rcved_len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt login reply"));
+				_("Could not decrypt login reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 

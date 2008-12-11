@@ -116,7 +116,7 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 	return qd->roomlist;
 }
 
-/* free roomlist space, I have no idea when this one is called ... */
+/* free roomlist space, I have no idea when this one is called... */
 void qq_roomlist_cancel(PurpleRoomlist *list)
 {
 	qq_data *qd;

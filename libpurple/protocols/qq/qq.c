@@ -496,7 +496,7 @@ static void action_change_icon(PurplePluginAction *action)
 	icon_path = qq_get_icon_path(icon_name);
 	g_free(icon_name);
 
-	purple_debug_info("QQ", "Change prev icon %s to ...\n", icon_path);
+	purple_debug_info("QQ", "Change prev icon %s to...\n", icon_path);
 	purple_request_file(action, _("Select icon..."), icon_path,
 			FALSE,
 			G_CALLBACK(qq_change_icon_cb), NULL,

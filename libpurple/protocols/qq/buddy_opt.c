@@ -317,9 +317,9 @@ static void add_buddy_question_input(PurpleConnection *gc, guint32 uid, gchar *q
 	add_req->auth_len = 0;
 
 	who = uid_to_purple_name(uid);
-	msg = g_strdup_printf(_("%u needs Q&A"), uid);
-	purple_request_input(gc, _("Add buddy Q&A"), msg,
-			_("Input answer here"),
+	msg = g_strdup_printf(_("%u requires verification"), uid);
+	purple_request_input(gc, _("Add buddy question"), msg,
+			_("Enter answer here"),
 			NULL,
 			TRUE, FALSE, NULL,
 			_("Send"), G_CALLBACK(add_buddy_question_cb),
@@ -616,7 +616,7 @@ static void buddy_add_deny_cb(gpointer data)
 	qq_buddy_req *add_req = (qq_buddy_req *)data;
 	gchar *who = uid_to_purple_name(add_req->uid);
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
-			NULL, _("Sorry, You are not my style."), TRUE, FALSE, NULL,
+			NULL, _("Sorry, you're not my style."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(buddy_add_deny_reason_cb),
 			_("Cancel"), G_CALLBACK(buddy_add_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), who, NULL,
@@ -661,9 +661,9 @@ void add_buddy_authorize_input(PurpleConnection *gc, guint32 uid,
 	}
 
 	who = uid_to_purple_name(uid);
-	msg = g_strdup_printf(_("%u needs authentication"), uid);
+	msg = g_strdup_printf(_("%u needs authorization"), uid);
 	purple_request_input(gc, _("Add buddy authorize"), msg,
-			_("Input request here"),
+			_("Enter request here"),
 			_("Would you be my friend?"),
 			TRUE, FALSE, NULL,
 			_("Send"), G_CALLBACK(add_buddy_auth_cb),
