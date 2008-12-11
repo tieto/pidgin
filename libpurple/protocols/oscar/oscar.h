@@ -417,6 +417,7 @@ struct _FlapConnection
 	guint16 cookielen;
 	guint8 *cookie;
 	gpointer new_conn_data;
+	gchar *ssl_cert_cn;
 
 	int fd;
 	PurpleSslConnection *gsc;

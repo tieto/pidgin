@@ -476,6 +476,7 @@ flap_connection_destroy_cb(gpointer data)
 
 	g_free(conn->error_message);
 	g_free(conn->cookie);
+	g_free(conn->ssl_cert_cn);
 
 	/*
 	 * Free conn->internal, if necessary
