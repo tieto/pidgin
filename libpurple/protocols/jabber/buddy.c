@@ -1525,9 +1525,12 @@ void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xml
 		purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, NULL, 0, NULL);
 	} else {
 		xmlnode *info, *goodinfo = NULL;
-		
+		gboolean has_children = FALSE;
+
 		/* iterate over all info nodes to get one we can use */
 		for(info = metadata->child; info; info = info->next) {
+			if(info->type == XMLNODE_TYPE_TAG)
+				has_children = TRUE;
 			if(info->type == XMLNODE_TYPE_TAG && !strcmp(info->name,"info")) {
 				const char *type = xmlnode_get_attrib(info,"type");
 				const char *id = xmlnode_get_attrib(info,"id");
@@ -1542,7 +1545,9 @@ void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xml
 					goodinfo = info;
 			}
 		}
-		if(goodinfo) {
+		if(has_children == FALSE) {
+			purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, NULL, 0, NULL);
+		} else if(goodinfo) {
 			const char *url = xmlnode_get_attrib(goodinfo, "url");
 			const char *id = xmlnode_get_attrib(goodinfo,"id");
 			
