@@ -161,7 +161,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 	name = purple_buddy_get_name(buddy);
 
 	/* Create the alias for the buddy using the first and the last name */
-	if (bonjour_buddy->nick)
+	if (bonjour_buddy->nick && *bonjour_buddy->nick)
 		serv_got_alias(purple_account_get_connection(account), name, bonjour_buddy->nick);
 	else {
 		gchar *alias = NULL;
