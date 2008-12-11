@@ -44,7 +44,7 @@
 enum {
 	QQ_ROOM_JOIN_OK = 0x01,
 	QQ_ROOM_JOIN_NEED_AUTH = 0x02,
-	QQ_ROOM_JOIN_DENIED = 0x03,
+	QQ_ROOM_JOIN_DENIED = 0x03
 };
 
 enum {
@@ -219,11 +219,11 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 
 	rmd = qq_room_data_find(gc, id);
 	if (rmd != NULL) {
-		msg = g_strdup_printf(_("Succeeded joining Qun %s (%u)"), rmd->title_utf8, rmd->ext_id);
+		msg = g_strdup_printf(_("Successfully joined Qun %s (%u)"), rmd->title_utf8, rmd->ext_id);
 		qq_got_message(gc, msg);
 		g_free(msg);
 	} else {
-		qq_got_message(gc, _("Succeeded joining Qun"));
+		qq_got_message(gc, _("Successfully joined Qun"));
 	}
 }
 

@@ -87,7 +87,7 @@ enum {
 	QQ_INFO_UNKNOW3, QQ_INFO_UNKNOW4, QQ_INFO_UNKNOW5,
 	QQ_INFO_IS_PUB_MOBILE, QQ_INFO_IS_PUB_CONTACT, QQ_INFO_COLLEGE, QQ_INFO_HOROSCOPE,
 	QQ_INFO_ZODIAC, QQ_INFO_BLOOD, QQ_INFO_SHOW, QQ_INFO_UNKNOW6,
-	QQ_INFO_LAST_2007, QQ_INFO_LAST,
+	QQ_INFO_LAST_2007, QQ_INFO_LAST
 };
 
 enum {
@@ -95,7 +95,7 @@ enum {
 };
 
 enum {
-	QQ_FIELD_LABEL = 0, QQ_FIELD_STRING, QQ_FIELD_MULTI, QQ_FIELD_BOOL, QQ_FIELD_CHOICE,
+	QQ_FIELD_LABEL = 0, QQ_FIELD_STRING, QQ_FIELD_MULTI, QQ_FIELD_BOOL, QQ_FIELD_CHOICE
 };
 
 typedef struct {
@@ -504,8 +504,6 @@ void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	const gchar *icon_path = purple_account_get_buddy_icon_path(account);
-	gchar **segments;
-	gint index;
 
 	g_return_if_fail(icon_path != NULL);
 
@@ -514,12 +512,6 @@ void qq_set_custom_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	 *  purple_imgstore_get_filename is always new file
 	 *  QQ buddy may set custom icon if level is over 16 */
 	purple_debug_info("QQ", "Change my icon to %s\n", icon_path);
-	segments = g_strsplit_set(icon_path, G_DIR_SEPARATOR_S, 0);
-	for (index = 0; segments[index] != NULL; index++) {
-		purple_debug_info("QQ", "Split to %s\n", segments[index]);
-	}
-
-	g_strfreev(segments);
 }
 
 gchar *qq_get_icon_name(gint face)

@@ -1334,28 +1334,21 @@ msim_check_alive(gpointer data)
 {
 	MsimSession *session;
 	time_t delta;
-	gchar *errmsg;
 
 	session = (MsimSession *)data;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 
 	delta = time(NULL) - session->last_comm;
+
 	/* purple_debug_info("msim", "msim_check_alive: delta=%d\n", delta); */
 	if (delta >= MSIM_KEEPALIVE_INTERVAL) {
-	        errmsg = g_strdup_printf(ngettext("Connection to server lost (no data received within %d second)",
-						  "Connection to server lost (no data received within %d seconds)",
-						  (int)delta),
-					 (int)delta);
-
-		purple_debug_info("msim", "msim_check_alive: %s > interval of %d, presumed dead\n",
-				errmsg, MSIM_KEEPALIVE_INTERVAL);
+		purple_debug_info("msim",
+				"msim_check_alive: %zu > interval of %d, presumed dead\n",
+				delta, MSIM_KEEPALIVE_INTERVAL);
 		purple_connection_error_reason(session->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, errmsg);
-
-		purple_notify_error(session->gc, NULL, errmsg, NULL);
-
-		g_free(errmsg);
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Lost connection with server"));
 
 		return FALSE;
 	}

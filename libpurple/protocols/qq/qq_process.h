@@ -35,7 +35,7 @@ enum {
 	QQ_CMD_CLASS_UPDATE_ALL,
 	QQ_CMD_CLASS_UPDATE_ONLINE,
 	QQ_CMD_CLASS_UPDATE_BUDDY,
-	QQ_CMD_CLASS_UPDATE_ROOM,
+	QQ_CMD_CLASS_UPDATE_ROOM
 };
 
 guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
