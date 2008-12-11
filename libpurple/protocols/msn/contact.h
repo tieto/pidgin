@@ -616,7 +616,7 @@ typedef enum
 	MSN_ADD_GROUP       = 0x10,
 	MSN_DEL_GROUP       = 0x20,
 	MSN_RENAME_GROUP    = 0x40,
-	MSN_UPDATE_INFO     = 0x80,
+	MSN_UPDATE_INFO     = 0x80
 } MsnCallbackAction;
 
 typedef struct _MsnCallbackState MsnCallbackState;

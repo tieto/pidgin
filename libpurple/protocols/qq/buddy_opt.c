@@ -46,7 +46,7 @@
 enum {
 	QQ_MY_AUTH_APPROVE = 0x30,	/* ASCII value of "0" */
 	QQ_MY_AUTH_REJECT = 0x31,	/* ASCII value of "1" */
-	QQ_MY_AUTH_REQUEST = 0x32,	/* ASCII value of "2" */
+	QQ_MY_AUTH_REQUEST = 0x32	/* ASCII value of "2" */
 };
 
 typedef struct _qq_buddy_req {

@@ -37,7 +37,7 @@ typedef enum {
 	QQ_ROOM_ROLE_NO = 0x00,	/* default 0x00 means not member */
 	QQ_ROOM_ROLE_YES,
 	QQ_ROOM_ROLE_REQUESTING,
-	QQ_ROOM_ROLE_ADMIN,
+	QQ_ROOM_ROLE_ADMIN
 } qq_room_role;
 
 typedef struct _qq_room_data qq_room_data;
