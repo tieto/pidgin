@@ -122,7 +122,7 @@ static void member_join_deny_cb(gpointer data)
 
 	who = uid_to_purple_name(add_req->member);
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
-			NULL, _("Sorry, you are not our style ..."), TRUE, FALSE, NULL,
+			NULL, _("Sorry, you are not our style"), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(member_join_deny_reason_cb),
 			_("Cancel"), G_CALLBACK(member_join_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), who, NULL,
@@ -204,7 +204,7 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 
 	purple_debug_info("QQ", "Succeed in modify members for room %u\n", rmd->ext_id);
 
-	qq_room_got_chat_in(gc, id, 0, _("Successfully changed Qun member"), now);
+	qq_room_got_chat_in(gc, id, 0, _("Successfully changed Qun members"), now);
 }
 
 void qq_room_change_info(PurpleConnection *gc, qq_room_data *rmd)
@@ -347,7 +347,7 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    _("You have successfully created a Qun"),
-			    _("Would you like to set up the detail information now?"),
+			    _("Would you like to set up detailed information now?"),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
 				add_req, 2,
@@ -519,7 +519,7 @@ void qq_process_room_buddy_approved(guint8 *data, gint len, guint32 id, PurpleCo
 		rmd->my_role = QQ_ROOM_ROLE_YES;
 	}
 
-	msg = g_strdup_printf(_("<b>Joinning Qun %u is approved by admin %u for %s</b>"),
+	msg = g_strdup_printf(_("<b>Joining Qun %u is approved by admin %u for %s</b>"),
 			ext_id, admin_uid, reason);
 	now = time(NULL);
 	qq_room_got_chat_in(gc, id, 0, msg, now);
