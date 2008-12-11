@@ -68,10 +68,11 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	qd = (qq_data *) gc->proto_data;
 	/* qq_show_packet("Login reply", data, len); */
 
-	if (len < 139) {
+	if (len < 148) {
+		qq_show_packet("Login reply OK, but length < 139", data, len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt server reply"));
+				_("Cannot decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -82,7 +83,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	purple_debug_info("QQ", "Got session_key\n");
 	bytes += qq_get32(&uid, data + bytes);
 	if (uid != qd->uid) {
-		purple_debug_warning("QQ", "My uid in login reply is %d, not %d\n", uid, qd->uid);
+		purple_debug_warning("QQ", "My uid in login reply is %u, not %u\n", uid, qd->uid);
 	}
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
 	bytes += qq_get16(&qd->my_port, data + bytes);
@@ -137,8 +138,8 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 			tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
 	/* unknow 9 bytes, 0x(00 0a 00 0a 01 00 00 0e 10) */
 
-	if (len > 139) {
-		purple_debug_warning("QQ", "Login reply more than expected %d bytes, read %d bytes\n", 139, bytes);
+	if (len > 148) {
+		qq_show_packet("Login reply OK, but length > 139", data, len);
 	}
 	return QQ_LOGIN_REPLY_OK;
 }
@@ -159,7 +160,7 @@ static gint8 process_login_redirect(PurpleConnection *gc, guint8 *data, gint len
 	if (len < 11) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt get server reply"));
+				_("Cannot decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -330,7 +331,7 @@ guint8 qq_process_token(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	if (bytes + token_len > buf_len) {
 		purple_debug_info("QQ", "Extra token data, %d %d\n", token_len, buf_len - bytes);
 	}
-	qq_show_packet("Got token", buf + bytes, buf_len - bytes);
+	/* qq_show_packet("Got token", buf + bytes, buf_len - bytes); */
 
 	if (qd->ld.token != NULL) {
 		g_free(qd->ld.token);
@@ -423,7 +424,7 @@ guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len)
 			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", data, data_len,
 					">>> [default] decrypt and dump");
 			error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X)"),
+						_("Unknown reply code when login (0x%02X)"),
 						ret );
 			reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 			break;
@@ -871,8 +872,8 @@ void qq_captcha_input_dialog(PurpleConnection *gc,qq_captcha_data *captcha)
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(account,
-		_("QQ Captcha Verifing"),
-		_("QQ Captcha Verifing"),
+		_("QQ Captcha Verifying"),
+		_("QQ Captcha Verifying"),
 		_("Enter the text from the image"),
 		fields,
 		_("OK"), G_CALLBACK(captcha_input_ok_cb),
@@ -1110,7 +1111,7 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", data, data_len,
 					">>> [default] decrypt and dump");
 			error = g_strdup_printf(
-						_("Unknow reply code when checking password (0x%02X)"),
+						_("Unknown reply code when checking password (0x%02X)"),
 						ret );
 			reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 			break;
@@ -1256,7 +1257,7 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 				/* Missing get server before login*/
 			default:
 				error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X):\n%s"),
+						_("Unknown reply code when login (0x%02X):\n%s"),
 						ret, msg_utf8);
 				break;
 		}
@@ -1279,7 +1280,7 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 
 	bytes += qq_get32(&uid, data + bytes);
 	if (uid != qd->uid) {
-		purple_debug_warning("QQ", "My uid in login reply is %d, not %d\n", uid, qd->uid);
+		purple_debug_warning("QQ", "My uid in login reply is %u, not %u\n", uid, qd->uid);
 	}
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
 	bytes += qq_get16(&qd->my_port, data + bytes);
@@ -1445,7 +1446,7 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 				break;
 			default:
 				error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X):\n%s"),
+						_("Unknown reply code when login (0x%02X):\n%s"),
 						ret, msg_utf8);
 				break;
 		}
@@ -1468,7 +1469,7 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 
 	bytes += qq_get32(&uid, data + bytes);
 	if (uid != qd->uid) {
-		purple_debug_warning("QQ", "My uid in login reply is %d, not %d\n", uid, qd->uid);
+		purple_debug_warning("QQ", "My uid in login reply is %u, not %u\n", uid, qd->uid);
 	}
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
 	bytes += qq_get16(&qd->my_port, data + bytes);

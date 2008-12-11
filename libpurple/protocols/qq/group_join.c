@@ -116,7 +116,7 @@ static void group_join_cb(qq_room_req *add_req, const gchar *reason_utf8)
 
 	rmd = qq_room_data_find(add_req->gc, add_req->id);
 	if (rmd == NULL) {
-		purple_debug_error("QQ", "Can not find room data of %d\n", add_req->id);
+		purple_debug_error("QQ", "Can not find room data of %u\n", add_req->id);
 		g_free(add_req);
 		return;
 	}
@@ -137,9 +137,9 @@ static void do_room_join_request(PurpleConnection *gc, qq_room_data *rmd)
 	qq_room_req *add_req;
 	g_return_if_fail(rmd != NULL);
 
-	purple_debug_info("QQ", "Room (internal id: %d) needs authentication\n", rmd->id);
+	purple_debug_info("QQ", "Room id %u needs authentication\n", rmd->id);
 
-	msg = g_strdup_printf("QQ Qun %d needs authentication\n", rmd->ext_id);
+	msg = g_strdup_printf("QQ Qun %u needs authentication\n", rmd->ext_id);
 	add_req = g_new0(qq_room_req, 1);
 	add_req->gc = gc;
 	add_req->id = rmd->id;
@@ -154,7 +154,7 @@ static void do_room_join_request(PurpleConnection *gc, qq_room_data *rmd)
 	g_free(msg);
 }
 
-void qq_send_cmd_group_auth(PurpleConnection *gc, qq_room_data *rmd, 
+void qq_send_cmd_group_auth(PurpleConnection *gc, qq_room_data *rmd,
 		guint8 opt, guint32 uid, const gchar *reason_utf8)
 {
 	guint8 raw_data[MAX_PACKET_SIZE - 16];
@@ -219,11 +219,11 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 
 	rmd = qq_room_data_find(gc, id);
 	if (rmd != NULL) {
-		msg = g_strdup_printf(_("Successfully joined Qun %s (%d)"), rmd->title_utf8, rmd->ext_id);
-		qq_got_attention(gc, msg);
+		msg = g_strdup_printf(_("Succeeded joining Qun %s (%u)"), rmd->title_utf8, rmd->ext_id);
+		qq_got_message(gc, msg);
 		g_free(msg);
 	} else {
-		qq_got_attention(gc, _("Successfully joined Qun"));
+		qq_got_message(gc, _("Succeeded joining Qun"));
 	}
 }
 
@@ -254,29 +254,29 @@ void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *g
 	g_return_if_fail(rmd != NULL);
 	switch (reply) {
 	case QQ_ROOM_JOIN_OK:
-		purple_debug_info("QQ", "Successed in joining group \"%s\"\n", rmd->title_utf8);
+		purple_debug_info("QQ", "Succeeded in joining group \"%s\"\n", rmd->title_utf8);
 		rmd->my_role = QQ_ROOM_ROLE_YES;
 		/* this must be shown before getting online members */
 		qq_room_conv_open(gc, rmd);
 		break;
 	case QQ_ROOM_JOIN_NEED_AUTH:
 		purple_debug_info("QQ",
-			   "Fail joining group [%d] %s, needs authentication\n",
+			   "Failed to join room ext id %u %s, needs authentication\n",
 			   rmd->ext_id, rmd->title_utf8);
 		rmd->my_role = QQ_ROOM_ROLE_NO;
 		do_room_join_request(gc, rmd);
 		break;
 	case QQ_ROOM_JOIN_DENIED:
-		msg = g_strdup_printf(_("Qun %d denied to join"), rmd->ext_id);
+		msg = g_strdup_printf(_("Qun %u denied from joining"), rmd->ext_id);
 		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), msg);
 		g_free(msg);
 		break;
 	default:
 		purple_debug_info("QQ",
-			   "Failed joining group [%d] %s, unknown reply: 0x%02x\n",
+			   "Failed to join room ext id %u %s, unknown reply: 0x%02x\n",
 			   rmd->ext_id, rmd->title_utf8, reply);
 
-		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), _("Join Qun, Unknow Reply"));
+		purple_notify_info(gc, _("QQ Qun Operation"), _("Failed:"), _("Join Qun, Unknown Reply"));
 	}
 }
 
@@ -298,7 +298,7 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	purple_debug_info("QQ", "Join room %s, extend id %s\n", id_str, ext_id_str);
 
 	if (id_str != NULL) {
-		id = strtol(id_str, NULL, 10);
+		id = strtoul(id_str, NULL, 10);
 		if (id != 0) {
 			rmd = qq_room_data_find(gc, id);
 			if (rmd) {
@@ -312,7 +312,7 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	if (ext_id_str == NULL) {
 		return;
 	}
-	ext_id = strtol(ext_id_str, NULL, 10);
+	ext_id = strtoul(ext_id_str, NULL, 10);
 	if (ext_id == 0) {
 		return;
 	}
@@ -345,7 +345,7 @@ void qq_request_room_search(PurpleConnection *gc, guint32 ext_id, int action)
 	gint bytes = 0;
 	guint8 type;
 
-	purple_debug_info("QQ", "Search QQ Qun %d\n", ext_id);
+	purple_debug_info("QQ", "Search QQ Qun %u\n", ext_id);
 	type = (ext_id == 0x00000000) ? QQ_ROOM_SEARCH_TYPE_DEMO : QQ_ROOM_SEARCH_TYPE_BY_ID;
 
 	bytes = 0;
@@ -361,12 +361,12 @@ static void add_to_roomlist(qq_data *qd, qq_room_data *rmd)
 	gchar field[11];
 
 	room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, rmd->title_utf8, NULL);
-	g_snprintf(field, sizeof(field), "%d", rmd->ext_id);
+	g_snprintf(field, sizeof(field), "%u", rmd->ext_id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
-	g_snprintf(field, sizeof(field), "%d", rmd->creator_uid);
+	g_snprintf(field, sizeof(field), "%u", rmd->creator_uid);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	purple_roomlist_room_add_field(qd->roomlist, room, rmd->desc_utf8);
-	g_snprintf(field, sizeof(field), "%d", rmd->id);
+	g_snprintf(field, sizeof(field), "%u", rmd->id);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", rmd->type8);
 	purple_roomlist_room_add_field(qd->roomlist, room, field);

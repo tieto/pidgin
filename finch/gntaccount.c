@@ -1069,6 +1069,8 @@ finch_request_authorize(PurpleAccount *account,
 			_("Authorize"), auth_cb,
 			_("Deny"), deny_cb);
 	}
+	g_signal_connect(G_OBJECT(uihandle), "destroy",
+		G_CALLBACK(purple_account_request_close), NULL);
 	g_free(buffer);
 	return uihandle;
 }

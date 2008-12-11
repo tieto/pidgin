@@ -488,15 +488,7 @@ struct _OscarData
 		guint maxawaymsglen; /* max size (bytes) of posted away message */
 	} rights;
 
-	/* ---- Client Accessible ------------------------ */
-
-	/* Our screen name. */
-	/* TODO: Get rid of this and use purple_account_get_username() everywhere? */
-	char sn[MAXSNLEN+1];
-
 	PurpleConnection *gc;
-
-	/* ---- Internal Use Only ------------------------ */
 
 	void *modlistv;
 
@@ -1587,6 +1579,7 @@ int byte_stream_putle32(ByteStream *bs, guint32 v);
 int byte_stream_putraw(ByteStream *bs, const guint8 *v, int len);
 int byte_stream_putstr(ByteStream *bs, const char *str);
 int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len);
+int byte_stream_putuid(ByteStream *bs, OscarData *od);
 int byte_stream_putcaps(ByteStream *bs, guint32 caps);
 
 /*

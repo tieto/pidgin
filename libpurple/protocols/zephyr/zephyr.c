@@ -1607,27 +1607,21 @@ static void zephyr_login(PurpleAccount * account)
 			gboolean found_ps = FALSE;
 			gchar ** tzc_cmd_array = g_strsplit(purple_account_get_string(gc->account,"tzc_command","/usr/bin/tzc -e %s")," ",0);
 			if (close(1) == -1) {
-				purple_debug_error("zephyr", "stdout couldn't be closed. dying\n");
 				exit(-1);
 			}
 			if (dup2(zephyr->fromtzc[1], 1) == -1) {
-				purple_debug_error("zephyr", "dup2 of stdout failed \n");
 				exit(-1);
 			}
 			if (close(zephyr->fromtzc[1]) == -1) {
-				purple_debug_error("zephyr", "closing of piped stdout failed\n");
 				exit(-1);
 			}
 			if (close(0) == -1) {
-				purple_debug_error("zephyr", "stdin couldn't be closed. dying\n");
 				exit(-1);
 			}
 			if (dup2(zephyr->totzc[0], 0) == -1) {
-				purple_debug_error("zephyr", "dup2 of stdin failed \n");
 				exit(-1);
 			}
 			if (close(zephyr->totzc[0]) == -1) {
-				purple_debug_error("zephyr", "closing of piped stdin failed\n");
 				exit(-1);
 			}
 			/* tzc_command should really be of the form 
@@ -1651,11 +1645,11 @@ static void zephyr_login(PurpleAccount * account)
 			}
 
 			if (!found_ps) {
-				purple_connection_error(gc,"Tzc command needs %s to set the exposure\n");
-				return;
+				exit(-1);
 			}
 
 			execvp(tzc_cmd_array[0], tzc_cmd_array);
+			exit(-1);
 		}
 		else {
 			fd_set rfds;
@@ -1667,6 +1661,7 @@ static void zephyr_login(PurpleAccount * account)
 			int parenlevel=0;
 			char* tempstr;
 			int tempstridx;
+			int select_status;
 
 			zephyr->tzc_pid = pid;
 			/* wait till we have data to read from ssh */
@@ -1678,11 +1673,19 @@ static void zephyr_login(PurpleAccount * account)
 
 			purple_debug_info("zephyr", "about to read from tzc\n");
 
-			select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, NULL);
+			if (waitpid(pid, NULL, WNOHANG) == 0) { /* Only select if tzc is still running */
+				purple_debug_info("zephyr", "about to read from tzc\n");
+				select_status = select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, NULL);
+			}
+			else {
+				purple_debug_info("zephyr", "tzc exited early\n");
+				select_status = -1;
+			}
 
 			FD_ZERO(&rfds);
 			FD_SET(zephyr->fromtzc[ZEPHYR_FD_READ], &rfds);
-			while (select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, &tv)) {
+			while (select_status > 0 &&
+			       select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, &tv) > 0) {
 				read(zephyr->fromtzc[ZEPHYR_FD_READ], bufcur, 1);
 				bufcur++;
 				if ((bufcur - buf) > (bufsize - 1)) {
