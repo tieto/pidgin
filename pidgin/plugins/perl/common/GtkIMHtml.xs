@@ -171,7 +171,7 @@ PREINIT:
 	int i, t_len;
 PPCODE:
 	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(unused)) + 1;
+	t_len = av_len((AV *)SvRV(unused));
 
 	for (i = 0; i <= t_len; i++) {
 		STRLEN t_sl;
