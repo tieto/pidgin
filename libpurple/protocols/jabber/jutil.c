@@ -20,7 +20,9 @@
  */
 #include "internal.h"
 #include "account.h"
+#include "cipher.h"
 #include "conversation.h"
+#include "debug.h"
 #include "server.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -234,5 +236,31 @@ jabber_find_unnormalized_conv(const char *name, PurpleAccount *account)
 	}
 
 	return NULL;
+}
+
+/* The same as purple_util_get_image_checksum, but guaranteed to remain SHA1 */
+char *
+jabber_calculate_data_sha1sum(gconstpointer data, size_t len)
+{
+	PurpleCipherContext *context;
+	static gchar digest[41];
+
+	context = purple_cipher_context_new_by_name("sha1", NULL);
+	if (context == NULL)
+	{
+		purple_debug_error("jabber", "Could not find sha1 cipher\n");
+		g_return_val_if_reached(NULL);
+	}
+
+	/* Hash the data */
+	purple_cipher_context_append(context, data, len);
+	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
+	{
+		purple_debug_error("jabber", "Failed to get SHA-1 digest.\n");
+		g_return_val_if_reached(NULL);
+	}
+	purple_cipher_context_destroy(context);
+
+	return g_strdup(digest);
 }
 

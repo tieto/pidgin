@@ -46,6 +46,8 @@ version 2.5.3 (??/??/????):
 	  wrong domain for his/her account.
 	* Support new <metadata/> element to indicate no XEP-0084 User Avatar
 	  (Paul Aurich)
+	* Fix SHA1 avatar checksum errors that occur when one of the bytes in a
+	  checksum begins with 0 (Paul Aurich)
 	
 	Zephyr:
 	* Enable auto-reply, to emulate 'zaway' (Toby Schaffer)
