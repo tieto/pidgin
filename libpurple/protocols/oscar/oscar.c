@@ -1956,8 +1956,22 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	else
 		host = g_strdup(redir->ip);
 
-	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx\n",
-					host, port, redir->group);
+	/*
+	 * These FLAP servers advertise SSL (type "0x02"), but SSL connections to these hosts
+	 * die a painful death. iChat and Miranda, when using SSL, still do these in plaintext.
+	 */
+	if (redir->use_ssl && (redir->group == SNAC_FAMILY_ADMIN ||
+	                       redir->group == SNAC_FAMILY_BART))
+	{
+		purple_debug_info("oscar", "Ignoring broken SSL for FLAP type 0x%04hx.\n",
+						redir->group);
+		redir->use_ssl = 0;
+	}
+
+	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx%s\n",
+					host, port, redir->group,
+					od->use_ssl && !redir->use_ssl ? " without SSL, despite main stream encryption" : "");
+
 	newconn = flap_connection_new(od, redir->group);
 	newconn->cookielen = redir->cookielen;
 	newconn->cookie = g_memdup(redir->cookie, redir->cookielen);
@@ -1975,7 +1989,8 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		purple_debug_info("oscar", "Connecting to chat room %s exchange %hu\n", cc->name, cc->exchange);
 	}
 
-	if (od->use_ssl)
+
+	if (redir->use_ssl)
 	{
 		newconn->gsc = purple_ssl_connect(account, host, port,
 				ssl_connection_established_cb, ssl_connection_error_cb,

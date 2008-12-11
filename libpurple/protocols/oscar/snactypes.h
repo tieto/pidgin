@@ -40,14 +40,14 @@
 #define SNAC_FAMILY_USERLOOKUP 0x000a
 #define SNAC_FAMILY_STATS      0x000b
 #define SNAC_FAMILY_TRANSLATE  0x000c
-#define SNAC_FAMILY_CHATNAV    0x000d /* XXX "provides info, searching and creating" */
+#define SNAC_FAMILY_CHATNAV    0x000d
 #define SNAC_FAMILY_CHAT       0x000e
 #define SNAC_FAMILY_ODIR       0x000f
-#define SNAC_FAMILY_BART       0x0010 /* XXX user avatars */
+#define SNAC_FAMILY_BART       0x0010
 #define SNAC_FAMILY_FEEDBAG    0x0013
 #define SNAC_FAMILY_ICQ        0x0015
 #define SNAC_FAMILY_AUTH       0x0017
-#define SNAC_FAMILY_ALERT      0x0018 /* XXX email notification */
+#define SNAC_FAMILY_ALERT      0x0018
 
 #define AIM_CB_FAM_SPECIAL 0xffff /* Internal libfaim use */
 

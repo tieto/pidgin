@@ -595,6 +595,8 @@ struct aim_redirect_data
 	const char *ip;
 	guint16 cookielen;
 	const guint8 *cookie;
+	const char *ssl_cert_cn;
+	guint8 use_ssl;
 	struct { /* group == SNAC_FAMILY_CHAT */
 		guint16 exchange;
 		const char *room;
