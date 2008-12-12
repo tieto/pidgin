@@ -343,8 +343,8 @@ static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const ch
 
 typedef struct _jabber_caps_cbplususerdata {
 	jabber_caps_get_info_cb cb;
-	gpointer user_data;
-	
+	gpointer cb_data;
+
 	char *who;
 	char *node;
 	char *ver;
@@ -364,7 +364,7 @@ typedef struct jabber_ext_userdata {
 #if 0
 static void jabber_caps_get_info_check_completion(jabber_caps_cbplususerdata *userdata) {
 	if(userdata->extOutstanding == 0) {
-		userdata->cb(jabber_caps_collect_info(userdata->node, userdata->ver, userdata->ext), userdata->user_data);
+		userdata->cb(jabber_caps_collect_info(userdata->node, userdata->ver, userdata->ext), userdata->cb_data);
 		g_free(userdata->who);
 		g_free(userdata->node);
 		g_free(userdata->ver);
@@ -446,20 +446,14 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/disco#info");
 	jabber_caps_cbplususerdata *userdata = data;
-	JabberCapsClientInfo *info, *value;
-	gchar *hash;
+	JabberCapsClientInfo *info = NULL, *value;
+	gchar *hash = NULL;
 	const char *type = xmlnode_get_attrib(packet, "type");
 	JabberCapsKey key;
 
 	if (!query || !strcmp(type, "error")) {
-		userdata->cb(NULL, userdata->user_data);
-
-		g_free(userdata->who);
-		g_free(userdata->node);
-		g_free(userdata->ver);
-		g_free(userdata->hash);
-		g_free(userdata);
-		return;
+		userdata->cb(NULL, userdata->cb_data);
+		goto out;
 	}
 
 	/* check hash */
@@ -469,47 +463,30 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 		hash = jabber_caps_calculate_hash(info, "sha1");
 	} else if (!strcmp(userdata->hash, "md5")) {
 		hash = jabber_caps_calculate_hash(info, "md5");
-	} else {
-		purple_debug_warning("jabber", "unknown caps hash algorithm: %s\n", userdata->hash);
-
-		userdata->cb(NULL, userdata->user_data);
-
-		jabber_caps_client_info_destroy(info);
-		g_free(userdata->who);
-		g_free(userdata->node);
-		g_free(userdata->ver);
-		g_free(userdata->hash);
-		g_free(userdata);		
-		return;	
 	}
 
 	if (!hash || strcmp(hash, userdata->ver)) {
-		purple_debug_warning("jabber", "caps hash from %s did not match\n", xmlnode_get_attrib(packet, "from"));
-		userdata->cb(NULL, userdata->user_data);
+		purple_debug_warning("jabber", "Could not validate caps info from %s\n",
+		                     xmlnode_get_attrib(packet, "from"));
 
+		userdata->cb(NULL, userdata->cb_data);
 		jabber_caps_client_info_destroy(info);
-		g_free(userdata->who);
-		g_free(userdata->node);
-		g_free(userdata->ver);
-		g_free(userdata->hash);
-		g_free(userdata);		
-		g_free(hash);
-		return;
+		goto out;
 	}
 
 	key.node = userdata->node;
-	key.ver = userdata->ver;
+	key.ver  = userdata->ver;
 	key.hash = userdata->hash;
 
-	/* check whether it's not in the table */
+	/* Use the copy of this data already in the table if it exists or insert
+	 * a new one if we need to */
 	if ((value = g_hash_table_lookup(capstable, &key))) {
-		JabberCapsClientInfo *tmp = info;
+		jabber_caps_client_info_destroy(info);
 		info = value;
-		jabber_caps_client_info_destroy(tmp);
 	} else {
 		JabberCapsKey *n_key = g_new(JabberCapsKey, 1);
 		n_key->node = userdata->node;
-		n_key->ver = userdata->ver;
+		n_key->ver  = userdata->ver;
 		n_key->hash = userdata->hash;
 		userdata->node = userdata->ver = userdata->hash = NULL;
 
@@ -517,9 +494,10 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 		jabber_caps_store();
 	}
 
-	userdata->cb(info, userdata->user_data);
+	userdata->cb(info, userdata->cb_data);
+	/* capstable owns info */
 
-	/* capstable will free info */
+out:
 	g_free(userdata->who);
 	g_free(userdata->node);
 	g_free(userdata->ver);
@@ -536,7 +514,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 	jabber_caps_cbplususerdata *userdata = g_new0(jabber_caps_cbplususerdata, 1);
 	userdata->cb = cb;
-	userdata->user_data = user_data;
+	userdata->cb_data = user_data;
 	userdata->who = g_strdup(who);
 	userdata->node = g_strdup(node);
 	userdata->ver = g_strdup(ver);
