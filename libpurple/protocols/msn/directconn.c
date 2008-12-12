@@ -323,7 +323,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		MsnMessage *msg;
 
 #ifdef DEBUG_DC
-		str = g_strdup_printf("/home/revo/msntest/r%.4d.bin", directconn->c);
+		str = g_strdup_printf("%s/msntest/r%.4d.bin", g_get_home_dir(), directconn->c);
 
 		FILE *tf = g_fopen(str, "w");
 		fwrite(body, 1, len, tf);
