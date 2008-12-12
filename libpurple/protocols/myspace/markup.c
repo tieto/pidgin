@@ -701,8 +701,7 @@ msim_convert_smileys_to_markup(gchar *before)
 gchar *
 msim_markup_to_html(MsimSession *session, const gchar *raw)
 {
-	return msim_convert_xml(session, raw,
-			(MSIM_XMLNODE_CONVERT)(msim_markup_tag_to_html));
+	return msim_convert_xml(session, raw, msim_markup_tag_to_html);
 }
 
 /** High-level function to convert Purple (HTML) to MySpaceIM markup.
@@ -715,8 +714,7 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
 {
 	gchar *markup;
 
-	markup = msim_convert_xml(session, raw,
-			(MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
+	markup = msim_convert_xml(session, raw, html_tag_to_msim_markup);
 
 	if (purple_account_get_bool(session->account, "emoticons", TRUE)) {
 		/* Frees markup and allocates a new one. */
