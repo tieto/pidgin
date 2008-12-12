@@ -21,20 +21,6 @@
 
 typedef int (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
 
-/* Internal functions */
-
-static guint msim_point_to_purple_size(MsimSession *session, guint point);
-static guint msim_purple_size_to_point(MsimSession *session, guint size);
-static guint msim_height_to_point(MsimSession *session, guint height);
-static guint msim_point_to_height(MsimSession *session, guint point);
-
-static int msim_markup_tag_to_html(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
-static int html_tag_to_msim_markup(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
-static gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f);
-static gchar *msim_convert_smileys_to_markup(gchar *before);
-static double msim_round(double round);
-
-
 /* Globals */
 
 /* The names in in emoticon_names (for <i n=whatever>) map to corresponding 
@@ -118,7 +104,7 @@ static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
 /* round is part of C99, but sometimes is unavailable before then.
  * Based on http://forums.belution.com/en/cpp/000/050/13.shtml
  */
-double msim_round(double value)
+static double msim_round(double value)
 {
 	if (value < 0) {
 		return -(floor(-value + 0.5));
