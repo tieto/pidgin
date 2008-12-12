@@ -379,6 +379,23 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
 		purple_debug_warning("bonjour", "Unknown packet: %s\n", packet->name ? packet->name : "(null)");
 }
 
+static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
+	const gchar *name = NULL;
+	BonjourBuddy *bb = NULL;
+
+	if(bconv->pb != NULL) {
+		name = purple_buddy_get_name(bconv->pb);
+		bb = purple_buddy_get_protocol_data(bconv->pb);
+	}
+
+	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name ? name : "(unknown)");
+
+	/* Close the socket, clear the watcher and free memory */
+	bonjour_jabber_close_conversation(bconv);
+
+	if(bb)
+		bb->conversation = NULL;
+}
 
 static void
 _client_socket_handler(gpointer data, gint socket, PurpleInputCondition condition)
@@ -425,24 +442,6 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 	purple_debug_info("bonjour", "Receive: -%s- %d bytes\n", message, len);
 
 	bonjour_parser_process(bconv, message, message_length);
-}
-
-static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
-	const gchar *name = NULL;
-	BonjourBuddy *bb = NULL;
-
-	if(bconv->pb != NULL) {
-		name = purple_buddy_get_name(bconv->pb);
-		bb = purple_buddy_get_protocol_data(bconv->pb);
-	}
-
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name ? name : "(unknown)");
-
-	/* Close the socket, clear the watcher and free memory */
-	bonjour_jabber_close_conversation(bconv);
-
-	if(bb)
-		bb->conversation = NULL;
 }
 
 struct _stream_start_data {

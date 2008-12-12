@@ -1459,7 +1459,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		msn_userlist_add_buddy(userlist, who, gname);
 	} else {
 		/* We need to check the network for this buddy first */
-		msn_userlist_save_pending_buddy(userlist, who, gname : NULL);
+		msn_userlist_save_pending_buddy(userlist, who, gname);
 		msn_notification_send_fqy(session, who);
 	}
 }
