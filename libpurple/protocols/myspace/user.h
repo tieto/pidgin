@@ -25,6 +25,7 @@
 typedef struct _MsimUser
 {
 	PurpleBuddy *buddy;
+	int id;
 	guint client_cv;
 	gchar *client_info;
 	guint age;

@@ -980,15 +980,8 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	if (!user) {
 		/* User isn't on blist, create a temporary user to store info. */
-		/* TODO: is this legit, or is it somehow responsible for #3444? */
-		PurpleBuddy *buddy;
-
 		user = g_new0(MsimUser, 1);
 		user->temporary_user = TRUE;
-
-		buddy = purple_buddy_new(session->account, username, NULL);
-		user->buddy = buddy;
-		buddy->proto_data = (gpointer)user;
 	}
 
 	/* Update user structure with new information */
@@ -1005,7 +998,6 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 	purple_notify_user_info_destroy(user_info);
 
 	if (user->temporary_user) {
-		purple_blist_remove_buddy(user->buddy);
 		g_free(user->client_info);
 		g_free(user->gender);
 		g_free(user->location);
@@ -1026,7 +1018,6 @@ msim_get_info(PurpleConnection *gc, const gchar *username)
 {
 	MsimSession *session;
 	MsimUser *user;
-	guint uid;
 	gchar *user_to_lookup;
 	MsimMessage *user_msg;
 
@@ -1041,8 +1032,8 @@ msim_get_info(PurpleConnection *gc, const gchar *username)
 	user = msim_find_user(session, username);
 
 	/* If is on buddy list, lookup by uid since it is faster. */
-	if (user && (uid = purple_blist_node_get_int(&user->buddy->node, "UserID"))) {
-		user_to_lookup = g_strdup_printf("%d", uid);
+	if (user && user->id) {
+		user_to_lookup = g_strdup_printf("%d", user->id);
 	} else {
 		/* Looking up buddy not on blist. Lookup by whatever user entered. */
 		user_to_lookup = g_strdup(username);
@@ -1978,10 +1969,11 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
 		user = msim_get_user_from_buddy(buddy);
+		user->id = msim_msg_get_integer(msg, "f");
 
-		/* All buddies on list should have a UserID integer associated with them. */
-		purple_blist_node_set_int(&buddy->node, "UserID", msim_msg_get_integer(msg, "f"));
-		
+		/* Keep track of the user ID across sessions */
+		purple_blist_node_set_int(&buddy->node, "UserID", user->id);
+
 		msim_store_user_info(session, msg, NULL);
 	} else {
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
@@ -2874,7 +2866,8 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	/* 3. Update buddy information */
 	user = msim_get_user_from_buddy(buddy);
 
-	/* All buddies on list should have 'uid' integer associated with them. */
+	user->id = uid;
+	/* Keep track of the user ID across sessions */
 	purple_blist_node_set_int(&buddy->node, "UserID", uid);
 
 	/* Stores a few fields in the MsimUser, relevant to the buddy itself.

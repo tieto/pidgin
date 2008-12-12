@@ -63,6 +63,7 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 		/* TODO: where is this freed? */
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
+		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
 		buddy->proto_data = (gpointer)user;
 	} 
 
@@ -96,7 +97,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 {
 	PurplePresence *presence;
 	gchar *str;
-	guint uid;
 	guint cv;
 
 	/* Useful to identify the account the tooltip refers to. 
@@ -104,8 +104,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	if (user->username) {
 		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
 	}
-
-	uid = purple_blist_node_get_int(&user->buddy->node, "UserID");
 
 	/* a/s/l...the vitals */
 	if (user->age) {
@@ -127,21 +125,23 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
 	}
 
-	presence = purple_buddy_get_presence(user->buddy);
+	if (user->buddy != NULL) {
+		presence = purple_buddy_get_presence(user->buddy);
 
-	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-		PurpleStatus *status;
-		const char *artist, *title;
-		
-		status = purple_presence_get_status(presence, "tune");
-		title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-		artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+			PurpleStatus *status;
+			const char *artist, *title;
 
-		str = msim_format_now_playing(artist, title);
-		if (str && *str) {
-			purple_notify_user_info_add_pair(user_info, _("Song"), str);
+			status = purple_presence_get_status(presence, "tune");
+			title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+			artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+
+			str = msim_format_now_playing(artist, title);
+			if (str && *str) {
+				purple_notify_user_info_add_pair(user_info, _("Song"), str);
+			}
+			g_free(str);
 		}
-		g_free(str);
 	}
 
 	/* Note: total friends only available if looked up by uid, not username. */
@@ -170,12 +170,12 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		g_free(client);
 	}
 
-	if (full && uid) {
+	if (full && user->id) {
 		/* TODO: link to username, if available */
 		char *profile;
 		purple_notify_user_info_add_section_break(user_info);
 		profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">%s</a>",
-				uid, _("View web profile"));
+				user->id, _("View web profile"));
 		purple_notify_user_info_add_pair(user_info, NULL, profile);
 		g_free(profile);
 	}
@@ -199,12 +199,16 @@ static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, con
 	PurplePresence *presence;
 	const char *prev_artist, *prev_title;
 
+	if (user->buddy == NULL)
+		/* User not on buddy list so nothing to do */
+		return;
+
 	prev_artist = NULL;
 	prev_title = NULL;
 
-	if (new_artist && !strlen(new_artist))
+	if (new_artist && !*new_artist)
 		new_artist = NULL;
-	if (new_title && !strlen(new_title))
+	if (new_title && !*new_title)
 		new_title = NULL;
 
 	if (!new_artist && !new_title) {
@@ -246,10 +250,11 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 {
 	if (g_str_equal(key_str, "UserID") || g_str_equal(key_str, "ContactID")) {
 		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
+		user->id = atol(value_str);
 		if (user->buddy)
 		{
 			purple_debug_info("msim", "associating uid %s with username %s\n", key_str, user->buddy->name);
-			purple_blist_node_set_int(&user->buddy->node, "UserID", atol(value_str));
+			purple_blist_node_set_int(&user->buddy->node, "UserID", user->id);
 		}
 		/* Need to store in MsimUser, too? What if not on blist? */
 	} else if (g_str_equal(key_str, "Age")) {
