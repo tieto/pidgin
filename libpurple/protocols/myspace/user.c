@@ -105,8 +105,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
 	}
 
-	uid = purple_blist_node_get_int(&user->buddy->node, "UserID");
-
 	/* a/s/l...the vitals */
 	if (user->age) {
 		char age[16];
@@ -127,21 +125,23 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
 	}
 
-	presence = purple_buddy_get_presence(user->buddy);
+	if (user->buddy != NULL) {
+		presence = purple_buddy_get_presence(user->buddy);
 
-	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-		PurpleStatus *status;
-		const char *artist, *title;
-		
-		status = purple_presence_get_status(presence, "tune");
-		title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-		artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+			PurpleStatus *status;
+			const char *artist, *title;
 
-		str = msim_format_now_playing(artist, title);
-		if (str && *str) {
-			purple_notify_user_info_add_pair(user_info, _("Song"), str);
+			status = purple_presence_get_status(presence, "tune");
+			title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+			artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+
+			str = msim_format_now_playing(artist, title);
+			if (str && *str) {
+				purple_notify_user_info_add_pair(user_info, _("Song"), str);
+			}
+			g_free(str);
 		}
-		g_free(str);
 	}
 
 	/* Note: total friends only available if looked up by uid, not username. */
@@ -170,6 +170,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		g_free(client);
 	}
 
+	uid = user->buddy ? purple_blist_node_get_int(&user->buddy->node, "UserID") : 0;
 	if (full && uid) {
 		/* TODO: link to username, if available */
 		char *profile;
@@ -199,12 +200,16 @@ static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, con
 	PurplePresence *presence;
 	const char *prev_artist, *prev_title;
 
+	if (user->buddy == NULL)
+		/* User not on buddy list so nothing to do */
+		return;
+
 	prev_artist = NULL;
 	prev_title = NULL;
 
-	if (new_artist && !strlen(new_artist))
+	if (new_artist && !*new_artist)
 		new_artist = NULL;
-	if (new_title && !strlen(new_title))
+	if (new_title && !*new_title)
 		new_title = NULL;
 
 	if (!new_artist && !new_title) {
