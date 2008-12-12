@@ -457,23 +457,27 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 	PurpleConnection *gc;
 	MsnSession *session;
 	MsnMobileData *data;
+	PurpleAccount *account;
+	const char *name;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
+	name = purple_buddy_get_name(buddy);
 
 	session = gc->proto_data;
 
 	data = g_new0(MsnMobileData, 1);
 	data->gc = gc;
-	data->passport = buddy->name;
+	data->passport = name;
 
 	purple_request_input(gc, NULL, _("Send a mobile message."), NULL,
 					   NULL, TRUE, FALSE, NULL,
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
-					   purple_connection_get_account(gc), purple_buddy_get_name(buddy), NULL,
+					   account, name, NULL,
 					   data);
 }
 
@@ -505,6 +509,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
+	PurpleAccount *account;
 
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
@@ -514,13 +519,14 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
 
 	session = gc->proto_data;
 
 	swboard = msn_switchboard_new(session);
 	msn_switchboard_request(swboard);
-	msn_switchboard_request_add_user(swboard, buddy->name);
+	msn_switchboard_request_add_user(swboard, purple_buddy_get_name(buddy));
 
 	/* TODO: This might move somewhere else, after USR might be */
 	swboard->chat_id = msn_switchboard_get_chat_id();
@@ -528,9 +534,9 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	swboard->flag = MSN_SB_FLAG_IM;
 
 	/* Local alias > Display name > Username */
-	if ((alias = purple_account_get_alias(buddy->account)) == NULL)
+	if ((alias = purple_account_get_alias(account)) == NULL)
 		if ((alias = purple_connection_get_display_name(gc)) == NULL)
-			alias = purple_account_get_username(buddy->account);
+			alias = purple_account_get_username(account);
 
 	purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 	                          alias, NULL, PURPLE_CBFLAGS_NONE, TRUE);
@@ -613,7 +619,7 @@ msn_list_icon(PurpleAccount *a, PurpleBuddy *b)
 static const char *
 msn_list_emblems(PurpleBuddy *b)
 {
-	MsnUser *user = b->proto_data;
+	MsnUser *user = purple_buddy_get_protocol_data(b);
 
 	if (user != NULL) {
 		if (user->clientid & MSN_CLIENT_CAP_BOT)
@@ -692,7 +698,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	PurplePresence *presence = purple_buddy_get_presence(buddy);
 	PurpleStatus *status = purple_presence_get_active_status(presence);
 
-	user = buddy->proto_data;
+	user = purple_buddy_get_protocol_data(buddy);
 
 	if (purple_presence_is_online(presence))
 	{
@@ -935,7 +941,7 @@ msn_buddy_menu(PurpleBuddy *buddy)
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	user = buddy->proto_data;
+	user = purple_buddy_get_protocol_data(buddy);
 
 	if (user != NULL)
 	{
@@ -948,8 +954,8 @@ msn_buddy_menu(PurpleBuddy *buddy)
 		}
 	}
 
-	if (g_ascii_strcasecmp(buddy->name,
-	                       purple_account_get_username(buddy->account)))
+	if (g_ascii_strcasecmp(purple_buddy_get_name(buddy),
+				purple_account_get_username(purple_buddy_get_account(buddy))))
 	{
 		act = purple_menu_action_new(_("Initiate _Chat"),
 		                           PURPLE_CALLBACK(initiate_chat_cb),
@@ -1417,13 +1423,14 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsnSession *session;
 	MsnUserList *userlist;
-	const char *who;
+	const char *who, *gname;
 
 	session = gc->proto_data;
 	userlist = session->userlist;
-	who = msn_normalize(gc->account, buddy->name);
+	who = msn_normalize(purple_connection_get_account(gc), purple_buddy_get_name(buddy));
 
-	purple_debug_info("msn", "Add user:%s to group:%s\n", who, (group && group->name) ? group->name : "(null)");
+	gname = group ? purple_group_get_name(group) : NULL;
+	purple_debug_info("msn", "Add user:%s to group:%s\n", who, gname ? gname : "(null)");
 	if (!session->logged_in)
 	{
 #if 0
@@ -1449,10 +1456,10 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	if (msn_userlist_find_user(userlist, who) != NULL) {
 		/* We already know this buddy. This function takes care of users
 		   already in the list and stuff... */
-		msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
+		msn_userlist_add_buddy(userlist, who, gname);
 	} else {
 		/* We need to check the network for this buddy first */
-		msn_userlist_save_pending_buddy(userlist, who, group ? group->name : NULL);
+		msn_userlist_save_pending_buddy(userlist, who, gname : NULL);
 		msn_notification_send_fqy(session, who);
 	}
 }
@@ -1470,7 +1477,7 @@ msn_rem_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		return;
 
 	/* XXX - Does buddy->name need to be msn_normalize'd here?  --KingAnt */
-	msn_userlist_rem_buddy(userlist, buddy->name);
+	msn_userlist_rem_buddy(userlist, purple_buddy_get_name(buddy));
 }
 
 static void
@@ -1723,20 +1730,22 @@ msn_rename_group(PurpleConnection *gc, const char *old_name,
 				 PurpleGroup *group, GList *moved_buddies)
 {
 	MsnSession *session;
+	const char *gname;
 
 	session = gc->proto_data;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->userlist != NULL);
 
+	gname = purple_group_get_name(group);
 	if (msn_userlist_find_group_with_name(session->userlist, old_name) != NULL)
 	{
-		msn_contact_rename_group(session, old_name, group->name);
+		msn_contact_rename_group(session, old_name, gname);
 	}
 	else
 	{
 		/* not found */
-		msn_add_group(session, NULL, group->name);
+		msn_add_group(session, NULL, gname);
 	}
 }
 
@@ -1796,20 +1805,22 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
+	const char *gname;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
+	gname = purple_group_get_name(group);
 
-	purple_debug_info("msn", "Remove group %s\n", group->name);
+	purple_debug_info("msn", "Remove group %s\n", gname);
 	/*we can't delete the default group*/
-	if(!strcmp(group->name, MSN_INDIVIDUALS_GROUP_NAME)||
-		!strcmp(group->name, MSN_NON_IM_GROUP_NAME))
+	if(!strcmp(gname, MSN_INDIVIDUALS_GROUP_NAME)||
+		!strcmp(gname, MSN_NON_IM_GROUP_NAME))
 	{
 		purple_debug_info("msn", "This group can't be removed, returning.\n");
 		return ;
 	}
 
-	msn_del_group(session, group->name);
+	msn_del_group(session, gname);
 }
 
 /**
@@ -1826,17 +1837,19 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 	if (b)
 	{
 		char *tmp;
+		const char *alias;
 
-		if (b->alias && b->alias[0])
+		alias = purple_buddy_get_local_buddy_alias(b);
+		if (alias && alias[0])
 		{
-			char *aliastext = g_markup_escape_text(b->alias, -1);
+			char *aliastext = g_markup_escape_text(alias, -1);
 			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
 			g_free(aliastext);
 		}
 
-		if (b->server_alias)
+		if ((alias = purple_buddy_get_server_alias(b)) != NULL)
 		{
-			char *nicktext = g_markup_escape_text(b->server_alias, -1);
+			char *nicktext = g_markup_escape_text(alias, -1);
 			tmp = g_strdup_printf("<font sml=\"msn\">%s</font>", nicktext);
 			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
 			g_free(tmp);

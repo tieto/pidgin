@@ -760,13 +760,19 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		return;
 	}
 
-	for (child = contact->node.child ; child ; child = child->next) {
+	for (child = purple_blist_node_get_first_child((PurpleBlistNode*)contact) ;
+	     child != NULL ;
+	     child = purple_blist_node_get_sibling_next(child)) {
+		const char *buddy_name;
+		PurpleAccount *account;
+
 		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
 			continue;
 
-		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name,
-						((PurpleBuddy *)child)->account), logs);
-		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, ((PurpleBuddy *)child)->account);
+		buddy_name = purple_buddy_get_name((PurpleBuddy *)child);
+		account = purple_buddy_get_account((PurpleBuddy *)child);
+		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, buddy_name, account), logs);
+		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, buddy_name, account);
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 

@@ -612,7 +612,8 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 
 		if (old_status != NULL)
 		{
-			tmp = g_strdup_printf(_("%s (%s) changed status from %s to %s"), buddy_alias, buddy->name,
+			tmp = g_strdup_printf(_("%s (%s) changed status from %s to %s"), buddy_alias,
+			                      purple_buddy_get_name(buddy),
 			                      purple_status_get_name(old_status),
 			                      purple_status_get_name(new_status));
 			logtmp = g_markup_escape_text(tmp, -1);
@@ -623,19 +624,21 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 
 			if (purple_status_is_active(new_status))
 			{
-				tmp = g_strdup_printf(_("%s (%s) is now %s"), buddy_alias, buddy->name,
+				tmp = g_strdup_printf(_("%s (%s) is now %s"), buddy_alias,
+				                      purple_buddy_get_name(buddy),
 				                      purple_status_get_name(new_status));
 				logtmp = g_markup_escape_text(tmp, -1);
 			}
 			else
 			{
-				tmp = g_strdup_printf(_("%s (%s) is no longer %s"), buddy_alias, buddy->name,
+				tmp = g_strdup_printf(_("%s (%s) is no longer %s"), buddy_alias,
+				                      purple_buddy_get_name(buddy),
 				                      purple_status_get_name(new_status));
 				logtmp = g_markup_escape_text(tmp, -1);
 			}
 		}
 
-		log = purple_account_get_log(buddy->account, FALSE);
+		log = purple_account_get_log(purple_buddy_get_account(buddy), FALSE);
 		if (log != NULL)
 		{
 			purple_log_write(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
@@ -1132,13 +1135,13 @@ purple_presence_new_for_buddy(PurpleBuddy *buddy)
 	PurpleAccount *account;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
-	account = buddy->account;
+	account = purple_buddy_get_account(buddy);
 
 	presence = purple_presence_new(PURPLE_PRESENCE_CONTEXT_BUDDY);
 
-	presence->u.buddy.name    = g_strdup(buddy->name);
-	presence->u.buddy.account = buddy->account;
-	presence->statuses = purple_prpl_get_statuses(buddy->account, presence);
+	presence->u.buddy.name    = g_strdup(purple_buddy_get_name(buddy));
+	presence->u.buddy.account = account;
+	presence->statuses = purple_prpl_get_statuses(account, presence);
 
 	presence->u.buddy.buddy = buddy;
 
@@ -1234,12 +1237,13 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleAccount *account = purple_buddy_get_account(buddy);
 
 	if (!old_idle && idle)
 	{
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
 		{
-			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
+			PurpleLog *log = purple_account_get_log(account, FALSE);
 
 			if (log != NULL)
 			{
@@ -1259,7 +1263,7 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 	{
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
 		{
-			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
+			PurpleLog *log = purple_account_get_log(account, FALSE);
 
 			if (log != NULL)
 			{

@@ -808,7 +808,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 			    "Received a FACE ip detect from %d, so he/she must be online :)\n", sender_uid);
 
 		b = purple_find_buddy(gc->account, sender_name);
-		bd = (b == NULL) ? NULL : (qq_buddy_data *) b->proto_data;
+		bd = (b == NULL) ? NULL : purple_buddy_get_protocol_data(b);
 		if (bd) {
 			if(0 != info->remote_real_ip) {
 				g_memmove(&(bd->ip), &info->remote_real_ip, sizeof(bd->ip));
