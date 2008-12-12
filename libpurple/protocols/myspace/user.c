@@ -63,6 +63,7 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 		/* TODO: where is this freed? */
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
+		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
 		buddy->proto_data = (gpointer)user;
 	} 
 
@@ -96,7 +97,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 {
 	PurplePresence *presence;
 	gchar *str;
-	guint uid;
 	guint cv;
 
 	/* Useful to identify the account the tooltip refers to. 
@@ -170,13 +170,12 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		g_free(client);
 	}
 
-	uid = user->buddy ? purple_blist_node_get_int(&user->buddy->node, "UserID") : 0;
-	if (full && uid) {
+	if (full && user->id) {
 		/* TODO: link to username, if available */
 		char *profile;
 		purple_notify_user_info_add_section_break(user_info);
 		profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">%s</a>",
-				uid, _("View web profile"));
+				user->id, _("View web profile"));
 		purple_notify_user_info_add_pair(user_info, NULL, profile);
 		g_free(profile);
 	}
@@ -251,10 +250,11 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 {
 	if (g_str_equal(key_str, "UserID") || g_str_equal(key_str, "ContactID")) {
 		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
+		user->id = atol(value_str);
 		if (user->buddy)
 		{
 			purple_debug_info("msim", "associating uid %s with username %s\n", key_str, user->buddy->name);
-			purple_blist_node_set_int(&user->buddy->node, "UserID", atol(value_str));
+			purple_blist_node_set_int(&user->buddy->node, "UserID", user->id);
 		}
 		/* Need to store in MsimUser, too? What if not on blist? */
 	} else if (g_str_equal(key_str, "Age")) {
