@@ -22,7 +22,7 @@ version 2.5.3 (??/??/????):
 	  called before the buddy list is initialized (Florian Quèze)
 	* On MSN, the Games and Office media can now be set and displayed (in
 	  addition to the previous Music media). The Media status text now shows
-	  the album, if possible. 
+	  the album, if possible.
 	* Fix use of av_len in perl bindings to fix some off-by-one bugs (Paul
 	  Aurich)
 	* On ICQ, advertise the ICQ 6 typing capability.  This should fix the
@@ -72,6 +72,7 @@ version 2.5.3 (??/??/????):
 	  buddylist.  (Thanks to Casey Ho)
 	* Fix a crash when closing an authorization minidialog with the X then
 	  immediately going offline (Paul Aurich)
+	* Fix compatibility with old GTK+ yet again
 
 	Finch:
 	* Allow binding meta+arrow keys for actions.
