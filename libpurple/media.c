@@ -1175,7 +1175,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		gchar *stun_ip = NULL;
 		FsStream *fsstream = NULL;
 
-		if (stun_ip = purple_media_get_stun_pref_ip()) {
+		if ((stun_ip = purple_media_get_stun_pref_ip())) {
 			GParameter *param = g_new0(GParameter, num_params+1);
 			memcpy(param, params, sizeof(GParameter) * num_params);
 
