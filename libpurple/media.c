@@ -50,7 +50,6 @@ struct _PurpleMediaSession
 	gchar *id;
 	PurpleMedia *media;
 	GstElement *src;
-	GstElement *sink;
 	FsSession *session;
 
 	PurpleMediaSessionType type;
@@ -61,6 +60,7 @@ struct _PurpleMediaStream
 	PurpleMediaSession *session;
 	gchar *participant;
 	FsStream *stream;
+	GstElement *sink;
 
 	GList *local_candidates;
 
@@ -516,7 +516,7 @@ purple_media_add_participant(PurpleMedia *media, const gchar *name)
 	return participant;
 }
 
-static void
+static PurpleMediaStream *
 purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStream *stream)
 {
 	PurpleMediaStream *media_stream = g_new0(PurpleMediaStream, 1);
@@ -526,6 +526,8 @@ purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStr
 
 	session->media->priv->streams =
 			g_list_append(session->media->priv->streams, media_stream);
+
+	return media_stream;
 }
 
 static void
@@ -553,12 +555,18 @@ purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement
 
 		if (session->type & PURPLE_MEDIA_SEND_AUDIO && audio_src)
 			*audio_src = session->src;
-		if (session->type & PURPLE_MEDIA_RECV_AUDIO && audio_sink)
-			*audio_sink = session->sink;
 		if (session->type & PURPLE_MEDIA_SEND_VIDEO && video_src)
 			*video_src = session->src;
-		if (session->type & PURPLE_MEDIA_RECV_VIDEO && video_sink)
-			*video_sink = session->sink;
+	}
+
+	values = media->priv->streams;
+	for (; values; values = g_list_next(values)) {
+		PurpleMediaStream *stream = (PurpleMediaStream*)values->data;
+
+		if (stream->session->type & PURPLE_MEDIA_RECV_AUDIO && audio_sink)
+			*audio_sink = stream->sink;
+		if (stream->session->type & PURPLE_MEDIA_RECV_VIDEO && video_sink)
+			*video_sink = stream->sink;
 	}
 }
 
@@ -583,14 +591,17 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 }
 
 void 
-purple_media_set_sink(PurpleMedia *media, const gchar *sess_id, GstElement *sink)
+purple_media_set_sink(PurpleMedia *media, const gchar *sess_id,
+		const gchar *participant, GstElement *sink)
 {
-	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
-	if (session->sink)
-		gst_object_unref(session->sink);
-	session->sink = sink;
+	PurpleMediaStream *stream =
+			purple_media_get_stream(media, sess_id, participant);
+
+	if (stream->sink)
+		gst_object_unref(stream->sink);
+	stream->sink = sink;
 	gst_bin_add(GST_BIN(purple_media_get_pipeline(media)),
-		    session->sink);
+		    stream->sink);
 }
 
 GstElement *
@@ -600,9 +611,9 @@ purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
 }
 
 GstElement *
-purple_media_get_sink(PurpleMedia *media, const gchar *sess_id)
+purple_media_get_sink(PurpleMedia *media, const gchar *sess_id, const gchar *participant)
 {
-	return purple_media_get_session(media, sess_id)->sink;
+	return purple_media_get_stream(media, sess_id, participant)->sink;
 }
 
 static PurpleMediaSession *
@@ -1067,19 +1078,21 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 }
 
 static void
-purple_media_src_pad_added_cb(FsStream *stream, GstPad *srcpad,
-			      FsCodec *codec, PurpleMediaSession *session)
+purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
+			      FsCodec *codec, PurpleMediaStream *stream)
 {
 	PurpleMediaSessionType type = purple_media_from_fs(codec->media_type, FS_DIRECTION_RECV);
 	GstPad *sinkpad = NULL;
-	session->sink = purple_media_manager_get_element(purple_media_manager_get(), type);
 
-	gst_bin_add(GST_BIN(purple_media_get_pipeline(session->media)),
-		    session->sink);
-	sinkpad = gst_element_get_static_pad(session->sink, "ghostsink");
+	stream->sink = purple_media_manager_get_element(
+			purple_media_manager_get(), type);
+
+	gst_bin_add(GST_BIN(purple_media_get_pipeline(stream->session->media)),
+		    stream->sink);
+	sinkpad = gst_element_get_static_pad(stream->sink, "ghostsink");
 	purple_debug_info("media", "connecting new src pad: %s\n", 
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
-	gst_element_set_state(session->sink, GST_STATE_PLAYING);
+	gst_element_set_state(stream->sink, GST_STATE_PLAYING);
 }
 
 static gchar *
@@ -1224,11 +1237,11 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 			return FALSE;
 		}
 
-		purple_media_insert_stream(session, who, fsstream);
+		stream = purple_media_insert_stream(session, who, fsstream);
 
 		/* callback for source pad added (new stream source ready) */
 		g_signal_connect(G_OBJECT(fsstream),
-				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added_cb), session);
+				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added_cb), stream);
 
 	} else if (*direction != type_direction) {	
 		/* change direction */
@@ -1432,7 +1445,7 @@ void purple_media_set_output_volume(PurpleMedia *media,
 
 		if (stream->session->type & PURPLE_MEDIA_RECV_AUDIO) {
 			GstElement *volume = gst_bin_get_by_name(
-					GST_BIN(stream->session->sink),
+					GST_BIN(stream->sink),
 					"purpleaudiooutputvolume");
 			g_object_set(volume, "volume", level, NULL);
 		}

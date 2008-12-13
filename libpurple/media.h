@@ -173,13 +173,15 @@ void purple_media_get_elements(PurpleMedia *media,
 void purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src);
 
 /**
- * Sets the sink on a session.
+ * Sets the sink on a stream.
  *
  * @param media The media object the session is in.
- * @param sess_id The session id of the session to set the sink on.
+ * @param sess_id The session id the stream belongs to.
+ * @param sess_id The participant the stream is associated with.
  * @param sink The source to set the session sink to.
  */
-void purple_media_set_sink(PurpleMedia *media, const gchar *sess_id, GstElement *sink);
+void purple_media_set_sink(PurpleMedia *media, const gchar *sess_id,
+		const gchar *participant, GstElement *sink);
 
 /**
  * Gets the source from a session
@@ -192,14 +194,15 @@ void purple_media_set_sink(PurpleMedia *media, const gchar *sess_id, GstElement 
 GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
 
 /**
- * Gets the sink from a session
+ * Gets the sink from a stream
  *
  * @param media The media object the session is in.
- * @param sess_id The session id of the session to get the source from.
+ * @param sess_id The session id the stream belongs to.
+ * @param participant The participant the stream is associated with.
  *
  * @return The sink retrieved.
  */
-GstElement *purple_media_get_sink(PurpleMedia *media, const gchar *sess_id);
+GstElement *purple_media_get_sink(PurpleMedia *media, const gchar *sess_id, const gchar *participant);
 
 /**
  * Gets the pipeline from the media session.

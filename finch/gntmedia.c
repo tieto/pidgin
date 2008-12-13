@@ -178,21 +178,17 @@ static void
 finch_media_ready_cb(PurpleMedia *media, FinchMedia *gntmedia)
 {
 	GstElement *sendbin, *sendlevel;
-	GstElement *recvbin, *recvlevel;
 
 	GList *sessions = purple_media_get_session_names(media);
 
 	purple_media_audio_init_src(&sendbin, &sendlevel);
-	purple_media_audio_init_recv(&recvbin, &recvlevel);
 
 	for (; sessions; sessions = sessions->next) {
 		purple_media_set_src(media, sessions->data, sendbin);
-		purple_media_set_sink(media, sessions->data, recvbin);
 	}
 	g_list_free(sessions);
 
 	g_object_set(gntmedia, "send-level", sendlevel,
-		     "recv-level", recvlevel,
 		     NULL);
 }
 
