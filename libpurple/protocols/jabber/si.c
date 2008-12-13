@@ -66,6 +66,7 @@ typedef struct _JabberSIXfer {
 	int local_streamhost_fd;
 	
 	JabberIBBSession *ibb_session;
+	guint ibb_timeout_handle;
 	FILE *fp;
 } JabberSIXfer;
 
@@ -185,17 +186,27 @@ connect_timeout_cb(gpointer data)
 	return FALSE;
 }
 
+static void
+jabber_si_bytestreams_ibb_timeout_remove(JabberSIXfer *jsx)
+{
+	if (jsx->ibb_timeout_handle) {
+		purple_timeout_remove(jsx->ibb_timeout_handle);
+		jsx->ibb_timeout_handle = 0;
+	}
+}
+
 static gboolean
 jabber_si_bytestreams_ibb_timeout_cb(gpointer data)
 {
 	PurpleXfer *xfer = (PurpleXfer *) data;
 	JabberSIXfer *jsx = xfer->data;
 	
-	if (!jsx->ibb_session) {
+	if (jsx && !jsx->ibb_session) {
 		purple_debug_info("jabber", 
 			"jabber_si_bytestreams_ibb_timeout called and IBB session not set "
 			" up yet, cancel transfer");
 		purple_xfer_cancel_local(xfer);
+		jabber_si_bytestreams_ibb_timeout_remove(jsx);
 	}
 	
 	return FALSE;
@@ -237,7 +248,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 			} else {
 				/* setup a timeout to cancel waiting for IBB open */
-				purple_timeout_add_seconds(30, 
+				jsx->ibb_timeout_handle = purple_timeout_add_seconds(30, 
 					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
 			/* if we are the receiver, just wait for IBB open, callback is
@@ -715,7 +726,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 					&& !jsx->ibb_session) {
 					jabber_si_xfer_ibb_send_init(js, xfer);
 				} else {
-					purple_timeout_add_seconds(30,
+					jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
 						jabber_si_bytestreams_ibb_timeout_cb, xfer);
 				}
 				/* if we are receiver, just wait for IBB open stanza, callback
@@ -757,7 +768,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 				if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 					jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 				} else {
-					purple_timeout_add_seconds(30,
+					jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
 						jabber_si_bytestreams_ibb_timeout_cb, xfer);
 				}
 				/* if we are the receiver, we are already set up...*/
@@ -901,7 +912,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 				/* if we are the sender, init the IBB session... */
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 			} else {
-				purple_timeout_add_seconds(30,
+				jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
 					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
 			/* if we are the receiver, we should just wait... the IBB open
@@ -1050,6 +1061,8 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 			purple_xfer_end(xfer);
 			return FALSE;
 		}
+		
+		jabber_si_bytestreams_ibb_timeout_remove(jsx);
 	} else {
 		/* we got an IBB <open/> for an unknown file transfer, pass along... */
 		purple_debug_info("jabber", 
@@ -1285,7 +1298,9 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			close(jsx->local_streamhost_fd);
 		if (jsx->connect_timeout > 0)
 			purple_timeout_remove(jsx->connect_timeout);
-	
+		if (jsx->ibb_timeout_handle > 0)
+			purple_timeout_remove(jsx->ibb_timeout_handle);
+		
 		if (jsx->streamhosts) {
 			g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
 			g_list_free(jsx->streamhosts);
