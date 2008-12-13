@@ -105,17 +105,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 
 	uid = purple_blist_node_get_int((PurpleBlistNode *)user->buddy, "UserID");
 
-	if (full) {
-		/* TODO: link to username, if available */
-		if (uid) {
-			char *profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">http://myspace.com/%d</a>",
-											uid, uid);
-			purple_notify_user_info_add_pair(user_info, _("Profile"), profile);
-			g_free(profile);
-		}
-	}
-
-
 	/* a/s/l...the vitals */
 	if (user->age) {
 		char age[16];

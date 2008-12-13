@@ -380,19 +380,27 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
 }
 
 static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
-	const gchar *name = NULL;
+
+	/* Inform the user that the conversation has been closed */
 	BonjourBuddy *bb = NULL;
 
-	if(bconv->pb != NULL) {
-		name = purple_buddy_get_name(bconv->pb);
+	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", bconv->pb ? bconv->pb->name : "(unknown)");
+
+	if(bconv->pb != NULL)
 		bb = purple_buddy_get_protocol_data(bconv->pb);
+#if 0
+	if(bconv->pb != NULL) {
+		PurpleConversation *conv;
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
+		if (conv != NULL) {
+			char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
+			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
 	}
-
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name ? name : "(unknown)");
-
+#endif
 	/* Close the socket, clear the watcher and free memory */
 	bonjour_jabber_close_conversation(bconv);
-
 	if(bb)
 		bb->conversation = NULL;
 }
@@ -1165,10 +1173,10 @@ static gboolean
 check_if_blocked(PurpleBuddy *pb)
 {
 	gboolean blocked = FALSE;
-	GSList *l;
-	PurpleAccount *acc;
+	GSList *l = NULL;
+	PurpleAccount *acc = purple_buddy_get_account(pb);
 
-	if(pb == NULL)
+	if(acc == NULL)
 		return FALSE;
 
 	acc = purple_buddy_get_account(pb);
