@@ -83,9 +83,9 @@ PREINIT:
 	int i, t_len;
 PPCODE:
 	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(source_list));
+	t_len = av_len((AV *)SvRV(source_list)) + 1;
 
-	for (i = 0; i < t_len; i++) {
+	for (i = 0; i <= t_len; i++) {
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(source_list), i, 0)));
 	}
 	purple_presence_add_list(presence, t_GL);
@@ -379,9 +379,9 @@ PREINIT:
 	int i, t_len;
 CODE:
 	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(status_types));
+	t_len = av_len((AV *)SvRV(status_types)) + 1;
 
-	for (i = 0; i < t_len; i++) {
+	for (i = 0; i <= t_len; i++) {
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(status_types), i, 0)));
 	}
 	RETVAL = (PurpleStatusType *)purple_status_type_find_with_id(t_GL, id);

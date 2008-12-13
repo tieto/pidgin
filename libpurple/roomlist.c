@@ -173,6 +173,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(PURPLE_CONNECTION_IS_CONNECTED(gc), NULL);
 
 	prpl = purple_connection_get_prpl(gc);
 

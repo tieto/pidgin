@@ -56,6 +56,8 @@ struct _PurpleUtilFetchUrlData
 	gsize request_written;
 	gboolean include_headers;
 
+	gboolean is_ssl;
+	PurpleSslConnection *ssl_connection;
 	PurpleProxyConnectData *connect_data;
 	int fd;
 	guint inpa;
@@ -3380,9 +3382,6 @@ void purple_got_protocol_handler_uri(const char *uri)
 	char *cmd;
 	GHashTable *params = NULL;
 	int len;
-
-	g_return_if_fail(uri != NULL);
-
 	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
 		purple_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
 		return;
@@ -3455,6 +3454,7 @@ gboolean
 purple_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path, char **ret_user, char **ret_passwd)
 {
+	gboolean is_https = FALSE;
 	char scan_info[255];
 	char port_str[6];
 	int f;
@@ -3478,6 +3478,7 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	}
 	else if ((turl = purple_strcasestr(url, "https://")) != NULL)
 	{
+		is_https = TRUE;
 		turl += 8;
 		url = turl;
 	}
@@ -3518,7 +3519,11 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 				   "%%255[%s]/%%255[%s]",
 				   addr_ctrl, page_ctrl);
 		f = sscanf(url, scan_info, host, path);
-		g_snprintf(port_str, sizeof(port_str), "80");
+		/* Use the default port */
+		if (is_https)
+			g_snprintf(port_str, sizeof(port_str), "443");
+		else
+			g_snprintf(port_str, sizeof(port_str), "80");
 	}
 
 	if (f == 0)
@@ -3557,6 +3562,8 @@ purple_util_fetch_url_error(PurpleUtilFetchUrlData *gfud, const char *format, ..
 }
 
 static void url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message);
+static void ssl_url_fetch_connect_cb(gpointer data, PurpleSslConnection *ssl_connection, PurpleInputCondition cond);
+static void ssl_url_fetch_error_cb(PurpleSslConnection *ssl_connection, PurpleSslErrorType error, gpointer data);
 
 static gboolean
 parse_redirect(const char *data, size_t data_len,
@@ -3623,10 +3630,16 @@ parse_redirect(const char *data, size_t data_len,
 	g_free(gfud->request);
 	gfud->request = NULL;
 
-	purple_input_remove(gfud->inpa);
-	gfud->inpa = 0;
-	close(gfud->fd);
-	gfud->fd = -1;
+	if (gfud->is_ssl) {
+		gfud->is_ssl = FALSE;
+		purple_ssl_close(gfud->ssl_connection);
+		gfud->ssl_connection = NULL;
+	} else {
+		purple_input_remove(gfud->inpa);
+		gfud->inpa = 0;
+		close(gfud->fd);
+		gfud->fd = -1;
+	}
 	gfud->request_written = 0;
 	gfud->len = 0;
 	gfud->data_len = 0;
@@ -3638,11 +3651,18 @@ parse_redirect(const char *data, size_t data_len,
 	purple_url_parse(new_url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
-	gfud->connect_data = purple_proxy_connect(NULL, NULL,
-			gfud->website.address, gfud->website.port,
-			url_fetch_connect_cb, gfud);
+	if (purple_strcasestr(new_url, "https://") != NULL) {
+		gfud->is_ssl = TRUE;
+		gfud->ssl_connection = purple_ssl_connect(NULL,
+				gfud->website.address, gfud->website.port,
+				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
+	} else {
+		gfud->connect_data = purple_proxy_connect(NULL, NULL,
+				gfud->website.address, gfud->website.port,
+				url_fetch_connect_cb, gfud);
+	}
 
-	if (gfud->connect_data == NULL)
+	if (gfud->ssl_connection == NULL && gfud->connect_data == NULL)
 	{
 		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
 				gfud->website.address);
@@ -3703,8 +3723,14 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	char *data_cursor;
 	gboolean got_eof = FALSE;
 
-	while((len = read(source, buf, sizeof(buf))) > 0) {
-
+	/*
+	 * Read data in a loop until we can't read any more!  This is a
+	 * little confusing because we read using a different function
+	 * depending on whether the socket is ssl or cleartext.
+	 */
+	while ((gfud->is_ssl && ((len = purple_ssl_read(gfud->ssl_connection, buf, sizeof(buf))) > 0)) ||
+			(!gfud->is_ssl && (len = read(source, buf, sizeof(buf))) > 0))
+	{
 		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
 			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),
 						    gfud->website.address, gfud->max_len);
@@ -3824,6 +3850,21 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	}
 }
 
+static void ssl_url_fetch_recv_cb(gpointer data, PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
+{
+	url_fetch_recv_cb(data, -1, cond);
+}
+
+/*
+ * This function is called when the socket is available to be written
+ * to.
+ *
+ * @param source The file descriptor that can be written to.  This can
+ *        be an http connection or it can be the SSL connection of an
+ *        https request.  So be careful what you use it for!  If it's
+ *        an https request then use purple_ssl_write() instead of
+ *        writing to it directly.
+ */
 static void
 url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
@@ -3832,53 +3873,14 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	gfud = data;
 
-	total_len = strlen(gfud->request);
-
-	len = write(gfud->fd, gfud->request + gfud->request_written,
-			total_len - gfud->request_written);
-
-	if (len < 0 && errno == EAGAIN)
-		return;
-	else if (len < 0) {
-		purple_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
-				gfud->website.address, g_strerror(errno));
-		return;
-	}
-	gfud->request_written += len;
-
-	if (gfud->request_written < total_len)
-		return;
-
-	/* We're done writing our request, now start reading the response */
-	purple_input_remove(gfud->inpa);
-	gfud->inpa = purple_input_add(gfud->fd, PURPLE_INPUT_READ, url_fetch_recv_cb,
-		gfud);
-}
-
-static void
-url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
-{
-	PurpleUtilFetchUrlData *gfud;
-
-	gfud = url_data;
-	gfud->connect_data = NULL;
-
-	if (source == -1)
+	if (gfud->request == NULL)
 	{
-		purple_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
-				(gfud->website.address ? gfud->website.address : ""), error_message);
-		return;
-	}
-
-	gfud->fd = source;
-
-	if (!gfud->request) {
+		/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
+		 * clients must know how to handle the "chunked" transfer encoding.
+		 * Purple doesn't know how to handle "chunked", so should always send
+		 * the Host header regardless, to get around some observed problems
+		 */
 		if (gfud->user_agent) {
-			/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
-			 * clients must know how to handle the "chunked" transfer encoding.
-			 * Purple doesn't know how to handle "chunked", so should always send
-			 * the Host header regardless, to get around some observed problems
-			 */
 			gfud->request = g_strdup_printf(
 				"GET %s%s HTTP/%s\r\n"
 				"Connection: close\r\n"
@@ -3905,9 +3907,82 @@ url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 
 	purple_debug_misc("util", "Request: '%s'\n", gfud->request);
 
+	total_len = strlen(gfud->request);
+
+	if (gfud->is_ssl)
+		len = purple_ssl_write(gfud->ssl_connection, gfud->request + gfud->request_written,
+				total_len - gfud->request_written);
+	else
+		len = write(gfud->fd, gfud->request + gfud->request_written,
+				total_len - gfud->request_written);
+
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len < 0) {
+		purple_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
+				gfud->website.address, g_strerror(errno));
+		return;
+	}
+	gfud->request_written += len;
+
+	if (gfud->request_written < total_len)
+		return;
+
+	/* We're done writing our request, now start reading the response */
+	if (gfud->is_ssl) {
+		purple_input_remove(gfud->inpa);
+		gfud->inpa = 0;
+		purple_ssl_input_add(gfud->ssl_connection, ssl_url_fetch_recv_cb, gfud);
+	} else {
+		purple_input_remove(gfud->inpa);
+		gfud->inpa = purple_input_add(gfud->fd, PURPLE_INPUT_READ, url_fetch_recv_cb,
+			gfud);
+	}
+}
+
+static void
+url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
+{
+	PurpleUtilFetchUrlData *gfud;
+
+	gfud = url_data;
+	gfud->connect_data = NULL;
+
+	if (source == -1)
+	{
+		purple_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
+				(gfud->website.address ? gfud->website.address : ""), error_message);
+		return;
+	}
+
+	gfud->fd = source;
+
 	gfud->inpa = purple_input_add(source, PURPLE_INPUT_WRITE,
 								url_fetch_send_cb, gfud);
 	url_fetch_send_cb(gfud, source, PURPLE_INPUT_WRITE);
+}
+
+static void ssl_url_fetch_connect_cb(gpointer data, PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
+{
+	PurpleUtilFetchUrlData *gfud;
+
+	gfud = data;
+
+	gfud->inpa = purple_input_add(ssl_connection->fd, PURPLE_INPUT_WRITE,
+			url_fetch_send_cb, gfud);
+	url_fetch_send_cb(gfud, ssl_connection->fd, PURPLE_INPUT_WRITE);
+}
+
+static void ssl_url_fetch_error_cb(PurpleSslConnection *ssl_connection, PurpleSslErrorType error, gpointer data)
+{
+	PurpleUtilFetchUrlData *gfud;
+
+	gfud = data;
+	gfud->ssl_connection = NULL;
+
+	purple_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
+			(gfud->website.address ? gfud->website.address : ""),
+	purple_ssl_strerror(error));
 }
 
 PurpleUtilFetchUrlData *
@@ -3920,13 +3995,6 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 					     user_agent, http11,
 					     request, include_headers, -1,
 					     callback, user_data);
-}
-
-static gboolean
-url_fetch_connect_failed(gpointer data)
-{
-	url_fetch_connect_cb(data, -1, "");
-	return FALSE;
 }
 
 PurpleUtilFetchUrlData *
@@ -3960,14 +4028,22 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
-	gfud->connect_data = purple_proxy_connect(NULL, NULL,
-			gfud->website.address, gfud->website.port,
-			url_fetch_connect_cb, gfud);
+	if (purple_strcasestr(url, "https://") != NULL) {
+		gfud->is_ssl = TRUE;
+		gfud->ssl_connection = purple_ssl_connect(NULL,
+				gfud->website.address, gfud->website.port,
+				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
+	} else {
+		gfud->connect_data = purple_proxy_connect(NULL, NULL,
+				gfud->website.address, gfud->website.port,
+				url_fetch_connect_cb, gfud);
+	}
 
-	if (gfud->connect_data == NULL)
+	if (gfud->ssl_connection == NULL && gfud->connect_data == NULL)
 	{
-		/* Trigger the connect_cb asynchronously. */
-		purple_timeout_add(10, url_fetch_connect_failed, gfud);
+		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
+				gfud->website.address);
+		return NULL;
 	}
 
 	return gfud;
@@ -3976,6 +4052,9 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 void
 purple_util_fetch_url_cancel(PurpleUtilFetchUrlData *gfud)
 {
+	if (gfud->ssl_connection != NULL)
+		purple_ssl_close(gfud->ssl_connection);
+
 	if (gfud->connect_data != NULL)
 		purple_proxy_connect_cancel(gfud->connect_data);
 

@@ -132,65 +132,65 @@ const gchar *qq_get_cmd_desc(gint cmd)
 	case QQ_CMD_LOGOUT:
 		return "QQ_CMD_LOGOUT";
 	case QQ_CMD_KEEP_ALIVE:
-		return "QQ_CMD_KEEP_ALIVE";
+		return "CMD_KEEP_ALIVE";
 	case QQ_CMD_UPDATE_INFO:
-		return "QQ_CMD_UPDATE_INFO";
+		return "CMD_UPDATE_INFO";
 	case QQ_CMD_SEARCH_USER:
-		return "QQ_CMD_SEARCH_USER";
+		return "CMD_SEARCH_USER";
 	case QQ_CMD_GET_BUDDY_INFO:
-		return "QQ_CMD_GET_BUDDY_INFO";
+		return "CMD_GET_BUDDY_INFO";
 	case QQ_CMD_ADD_BUDDY_NO_AUTH:
-		return "QQ_CMD_ADD_BUDDY_NO_AUTH";
+		return "CMD_ADD_BUDDY_NO_AUTH";
 	case QQ_CMD_REMOVE_BUDDY:
-		return "QQ_CMD_REMOVE_BUDDY";
+		return "CMD_REMOVE_BUDDY";
 	case QQ_CMD_ADD_BUDDY_AUTH:
-		return "QQ_CMD_ADD_BUDDY_AUTH";
+		return "CMD_ADD_BUDDY_AUTH";
 	case QQ_CMD_CHANGE_STATUS:
-		return "QQ_CMD_CHANGE_STATUS";
+		return "CMD_CHANGE_STATUS";
 	case QQ_CMD_ACK_SYS_MSG:
-		return "QQ_CMD_ACK_SYS_MSG";
+		return "CMD_ACK_SYS_MSG";
 	case QQ_CMD_SEND_IM:
-		return "QQ_CMD_SEND_IM";
+		return "CMD_SEND_IM";
 	case QQ_CMD_RECV_IM:
-		return "QQ_CMD_RECV_IM";
+		return "CMD_RECV_IM";
 	case QQ_CMD_REMOVE_ME:
-		return "QQ_CMD_REMOVE_ME";
+		return "CMD_REMOVE_ME";
 	case QQ_CMD_LOGIN:
-		return "QQ_CMD_LOGIN";
+		return "CMD_LOGIN";
 	case QQ_CMD_GET_BUDDIES_LIST:
-		return "QQ_CMD_GET_BUDDIES_LIST";
+		return "CMD_GET_BUDDIES_LIST";
 	case QQ_CMD_GET_BUDDIES_ONLINE:
-		return "QQ_CMD_GET_BUDDIES_ONLINE";
+		return "CMD_GET_BUDDIES_ONLINE";
 	case QQ_CMD_ROOM:
-		return "QQ_CMD_ROOM";
+		return "CMD_ROOM";
 	case QQ_CMD_GET_BUDDIES_AND_ROOMS:
-		return "QQ_CMD_GET_BUDDIES_AND_ROOMS";
+		return "CMD_GET_BUDDIES_AND_ROOMS";
 	case QQ_CMD_GET_LEVEL:
-		return "QQ_CMD_GET_LEVEL";
+		return "CMD_GET_LEVEL";
 	case QQ_CMD_TOKEN:
-		return "QQ_CMD_TOKEN";
+		return "CMD_TOKEN";
 	case QQ_CMD_RECV_MSG_SYS:
-		return "QQ_CMD_RECV_MSG_SYS";
+		return "CMD_RECV_MSG_SYS";
 	case QQ_CMD_BUDDY_CHANGE_STATUS:
-		return "QQ_CMD_BUDDY_CHANGE_STATUS";
+		return "CMD_BUDDY_CHANGE_STATUS";
 	case QQ_CMD_GET_SERVER:
-		return "QQ_CMD_GET_SERVER";
+		return "CMD_GET_SERVER";
 	case QQ_CMD_TOKEN_EX:
-		return "QQ_CMD_TOKEN_EX";
+		return "CMD_TOKEN_EX";
 	case QQ_CMD_CHECK_PWD:
-		return "QQ_CMD_CHECK_PWD";
+		return "CMD_CHECK_PWD";
 	case QQ_CMD_AUTH_CODE:
-		return "QQ_CMD_AUTH_CODE";
+		return "CMD_AUTH_CODE";
 	case QQ_CMD_ADD_BUDDY_NO_AUTH_EX:
-		return "QQ_CMD_ADD_BUDDY_NO_AUTH_EX";
+		return "CMD_ADD_BUDDY_NO_AUTH_EX";
 	case QQ_CMD_ADD_BUDDY_AUTH_EX:
-		return "QQ_CMD_BUDDY_ADD_AUTH_EX";
+		return "CMD_BUDDY_ADD_AUTH_EX";
 	case QQ_CMD_BUDDY_CHECK_CODE:
-		return "QQ_CMD_BUDDY_CHECK_CODE";
+		return "CMD_BUDDY_CHECK_CODE";
 	case QQ_CMD_BUDDY_QUESTION:
-		return "QQ_CMD_BUDDY_QUESTION";
+		return "CMD_BUDDY_QUESTION";
 	default:
-		return "Unknown CMD";
+		return "CMD_UNKNOW";
 	}
 }
 
@@ -198,55 +198,55 @@ const gchar *qq_get_room_cmd_desc(gint room_cmd)
 {
 	switch (room_cmd) {
 	case QQ_ROOM_CMD_CREATE:
-		return "QQ_ROOM_CMD_CREATE";
+		return "ROOM_CMD_CREATE";
 	case QQ_ROOM_CMD_MEMBER_OPT:
-		return "QQ_ROOM_CMD_MEMBER_OPT";
+		return "ROOM_CMD_MEMBER_OPT";
 	case QQ_ROOM_CMD_CHANGE_INFO:
-		return "QQ_ROOM_CMD_CHANGE_INFO";
+		return "ROOM_CMD_CHANGE_INFO";
 	case QQ_ROOM_CMD_GET_INFO:
-		return "QQ_ROOM_CMD_GET_INFO";
+		return "ROOM_CMD_GET_INFO";
 	case QQ_ROOM_CMD_ACTIVATE:
-		return "QQ_ROOM_CMD_ACTIVATE";
+		return "ROOM_CMD_ACTIVATE";
 	case QQ_ROOM_CMD_SEARCH:
-		return "QQ_ROOM_CMD_SEARCH";
+		return "ROOM_CMD_SEARCH";
 	case QQ_ROOM_CMD_JOIN:
-		return "QQ_ROOM_CMD_JOIN";
+		return "ROOM_CMD_JOIN";
 	case QQ_ROOM_CMD_AUTH:
-		return "QQ_ROOM_CMD_AUTH";
+		return "ROOM_CMD_AUTH";
 	case QQ_ROOM_CMD_QUIT:
-		return "QQ_ROOM_CMD_QUIT";
-	case QQ_ROOM_CMD_SEND_MSG:
-		return "QQ_ROOM_CMD_SEND_MSG";
+		return "ROOM_CMD_QUIT";
+	case QQ_ROOM_CMD_SEND_IM:
+		return "ROOM_CMD_SEND_IM";
 	case QQ_ROOM_CMD_GET_ONLINES:
-		return "QQ_ROOM_CMD_GET_ONLINES";
+		return "ROOM_CMD_GET_ONLINES";
 	case QQ_ROOM_CMD_GET_BUDDIES:
-		return "QQ_ROOM_CMD_GET_BUDDIES";
+		return "ROOM_CMD_GET_BUDDIES";
 	case QQ_ROOM_CMD_CHANGE_CARD:
-		return "QQ_ROOM_CMD_CHANGE_CARD";
+		return "ROOM_CMD_CHANGE_CARD";
 	case QQ_ROOM_CMD_GET_REALNAMES:
-		return "QQ_ROOM_CMD_GET_REALNAMES";
+		return "ROOM_CMD_GET_REALNAMES";
 	case QQ_ROOM_CMD_GET_CARD:
-		return "QQ_ROOM_CMD_GET_CARD";
+		return "ROOM_CMD_GET_CARD";
 	case QQ_ROOM_CMD_SEND_IM_EX:
-		return "QQ_ROOM_CMD_SEND_IM_EX";
+		return "ROOM_CMD_SEND_IM_EX";
 	case QQ_ROOM_CMD_ADMIN:
-		return "QQ_ROOM_CMD_ADMIN";
+		return "ROOM_CMD_ADMIN";
 	case QQ_ROOM_CMD_TRANSFER:
-		return "QQ_ROOM_CMD_TRANSFER";
+		return "ROOM_CMD_TRANSFER";
 	case QQ_ROOM_CMD_TEMP_CREATE:
-		return "QQ_ROOM_CMD_TEMP_CREATE";
+		return "ROOM_CMD_TEMP_CREATE";
 	case QQ_ROOM_CMD_TEMP_CHANGE_MEMBER:
-		return "QQ_ROOM_CMD_TEMP_CHANGE_MEMBER";
+		return "ROOM_CMD_TEMP_CHANGE_MEMBER";
 	case QQ_ROOM_CMD_TEMP_QUIT:
-		return "QQ_ROOM_CMD_TEMP_QUIT";
+		return "ROOM_CMD_TEMP_QUIT";
 	case QQ_ROOM_CMD_TEMP_GET_INFO:
-		return "QQ_ROOM_CMD_TEMP_GET_INFO";
+		return "ROOM_CMD_TEMP_GET_INFO";
 	case QQ_ROOM_CMD_TEMP_SEND_IM:
-		return "QQ_ROOM_CMD_TEMP_SEND_IM";
+		return "ROOM_CMD_TEMP_SEND_IM";
 	case QQ_ROOM_CMD_TEMP_GET_MEMBERS:
-		return "QQ_ROOM_CMD_TEMP_GET_MEMBERS";
+		return "ROOM_CMD_TEMP_GET_MEMBERS";
 	default:
-		return "Unknown Room Command";
+		return "ROOM_CMD_UNKNOW";
 	}
 }
 

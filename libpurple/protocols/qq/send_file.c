@@ -612,7 +612,8 @@ _qq_xfer_init (PurpleXfer * xfer)
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	guint32 to_uid;
-	gchar *filename, *filename_without_path;
+	const gchar *filename;
+	gchar *base_filename;
 
 	g_return_if_fail (xfer != NULL);
 	account = purple_xfer_get_account(xfer);
@@ -621,13 +622,14 @@ _qq_xfer_init (PurpleXfer * xfer)
 	to_uid = purple_name_to_uid (xfer->who);
 	g_return_if_fail (to_uid != 0);
 
-	filename = (gchar *) purple_xfer_get_local_filename (xfer);
+	filename = purple_xfer_get_local_filename (xfer);
 	g_return_if_fail (filename != NULL);
 
-	filename_without_path = strrchr (filename, '/') + 1;
+	base_filename = g_path_get_basename(filename);
 
-	_qq_send_packet_file_request (gc, to_uid, filename_without_path,
+	_qq_send_packet_file_request (gc, to_uid, base_filename,
 			purple_xfer_get_size(xfer));
+	g_free(base_filename);
 }
 
 /* cancel the transfer of receiving files */
@@ -696,7 +698,7 @@ void qq_process_recv_file_reject (guint8 *data, gint data_len,
 		return;
 	}
 	*/
-	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
+	filename = g_path_get_basename(purple_xfer_get_local_filename(qd->xfer));
 	msg = g_strdup_printf(_("%d has declined the file %s"),
 		 sender_uid, filename);
 
@@ -704,7 +706,8 @@ void qq_process_recv_file_reject (guint8 *data, gint data_len,
 	purple_xfer_request_denied(qd->xfer);
 	qd->xfer = NULL;
 
-	g_free (msg);
+	g_free(filename);
+	g_free(msg);
 }
 
 /* process cancel im for file transfer request */
@@ -725,7 +728,7 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 		return;
 	}
 	*/
-	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
+	filename = g_path_get_basename(purple_xfer_get_local_filename(qd->xfer));
 	msg = g_strdup_printf
 		(_("%d canceled the transfer of %s"),
 		 sender_uid, filename);
@@ -734,7 +737,8 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 	purple_xfer_cancel_remote(qd->xfer);
 	qd->xfer = NULL;
 
-	g_free (msg);
+	g_free(filename);
+	g_free(msg);
 }
 
 /* process accept im for file transfer request */

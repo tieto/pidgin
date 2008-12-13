@@ -51,4 +51,5 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 		const char *format, ...);
 guint8 *hex_str_to_bytes(const gchar *buf, gint *out_len);
 
+void qq_filter_str(gchar *str);
 #endif

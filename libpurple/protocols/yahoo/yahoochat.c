@@ -1180,7 +1180,7 @@ static void yahoo_roomlist_destroy(struct yahoo_roomlist *yrl)
 
 enum yahoo_room_type {
 	yrt_yahoo,
-	yrt_user,
+	yrt_user
 };
 
 struct yahoo_chatxml_state {

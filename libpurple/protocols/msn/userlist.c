@@ -184,10 +184,6 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 		{
 			msn_user_add_group_id(user, group_id);
 		}
-		else
-		{
-			/* session->sync->fl_users_count++; */
-		}
 	}
 	else if (list_id == MSN_LIST_AL)
 	{
@@ -252,10 +248,6 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 		{
 			msn_user_remove_group_id(user, group_id);
 			return;
-		}
-		else
-		{
-			/* session->sync->fl_users_count--; */
 		}
 	}
 	else if (list_id == MSN_LIST_AL)
@@ -754,6 +746,62 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	/* Add contact in the Contact server with a SOAP request and if
 	   successful, send ADL with MSN_LIST_AL and MSN_LIST_FL and a FQY */
 	msn_add_contact_to_group(userlist->session, state, who, group_id);
+}
+
+/*
+ * Save a buddy address/group until we get back response from FQY
+ */
+void
+msn_userlist_save_pending_buddy(MsnUserList *userlist,
+                               const char *who,
+                               const char *group_name)
+{
+	MsnUser *user;
+
+	g_return_if_fail(userlist != NULL);
+
+	user = msn_user_new(userlist, who, NULL);
+	msn_user_set_pending_group(user, group_name);
+	msn_user_set_network(user, MSN_NETWORK_UNKNOWN);
+	userlist->pending = g_list_prepend(userlist->pending, user);
+}
+
+/*
+ * Actually adds a buddy once we have the response from FQY
+ */
+void
+msn_userlist_add_pending_buddy(MsnUserList *userlist,
+                               const char *who,
+                               /*MsnNetwork*/ int network)
+{
+	MsnUser *user = NULL;
+	GList *l;
+	char *group;
+
+	for (l = userlist->pending; l != NULL; l = l->next)
+	{
+		user = (MsnUser *)l->data;
+
+		if (!g_strcasecmp(who, user->passport)) {
+			userlist->pending = g_list_delete_link(userlist->pending, l);
+			break;
+		}
+	}
+
+	if (user == NULL) {
+		purple_debug_error("msn", "Attempting to add a pending user that does not exist.\n");
+		return;
+	}
+
+	/* Bit of a hack, but by adding to userlist now, the rest of the code
+	 * will know what network to use.
+	 */
+	msn_user_set_network(user, network);
+	msn_userlist_add_user(userlist, user);
+
+	group = msn_user_remove_pending_group(user);
+	msn_userlist_add_buddy(userlist, who, group);
+	g_free(group);
 }
 
 void

@@ -39,8 +39,6 @@
 #include "util.h"
 #include "utils.h"
 
-#define QQ_NAME_FORMAT    "%d"
-
 /* These functions are used only in development phase */
 /*
    static void _qq_show_socket(gchar *desc, gint fd) {
@@ -135,7 +133,7 @@ guint32 purple_name_to_uid(const gchar *const name)
 	guint32 ret;
 	g_return_val_if_fail(name != NULL, 0);
 
-	ret = strtol(name, NULL, 10);
+	ret = strtoul(name, NULL, 10);
 	if (errno == ERANGE)
 		return 0;
 	else
@@ -169,7 +167,7 @@ guint8 *str_ip_gen(gchar *str) {
  * the return needs to be freed */
 gchar *uid_to_purple_name(guint32 uid)
 {
-	return g_strdup_printf(QQ_NAME_FORMAT, uid);
+	return g_strdup_printf("%u", uid);
 }
 
 /* try to dump the data as GBK */
@@ -339,3 +337,15 @@ void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", buf, len, desc);
 }
 
+void qq_filter_str(gchar *str) {
+	gchar *temp;
+	if (str == NULL) {
+		return;
+	}
+
+	for (temp = str; *temp != 0; temp++) {
+		/*if (*temp == '\r' || *temp == '\n')  *temp = ' ';*/
+		if (*temp > 0 && *temp < 0x20)  *temp = ' ';
+	}
+	g_strstrip(str);
+}

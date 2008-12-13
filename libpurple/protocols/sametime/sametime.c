@@ -158,7 +158,7 @@ enum blist_choice {
   blist_choice_LOCAL = 1, /**< local only */
   blist_choice_MERGE = 2, /**< merge from server */
   blist_choice_STORE = 3, /**< merge from and save to server */
-  blist_choice_SYNCH = 4, /**< sync with server */
+  blist_choice_SYNCH = 4  /**< sync with server */
 };
 
 

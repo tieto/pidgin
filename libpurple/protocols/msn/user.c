@@ -106,12 +106,25 @@ msn_user_update(MsnUser *user)
 		purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
 	}
 
-	if (!offline && user->media.title) {
-		purple_prpl_got_user_status(account, user->passport, "tune",
-				PURPLE_TUNE_ARTIST, user->media.artist,
-				PURPLE_TUNE_ALBUM, user->media.album,
-				PURPLE_TUNE_TITLE, user->media.title,
-				NULL);
+	if (!offline && user->media.type != CURRENT_MEDIA_UNKNOWN) {
+		if (user->media.type == CURRENT_MEDIA_MUSIC) {
+			purple_prpl_got_user_status(account, user->passport, "tune",
+			                            PURPLE_TUNE_ARTIST, user->media.artist,
+			                            PURPLE_TUNE_ALBUM, user->media.album,
+			                            PURPLE_TUNE_TITLE, user->media.title,
+			                            NULL);
+		} else if (user->media.type == CURRENT_MEDIA_GAMES) {
+			purple_prpl_got_user_status(account, user->passport, "tune",
+			                            "game", user->media.title,
+			                            NULL);
+		} else if (user->media.type == CURRENT_MEDIA_OFFICE) {
+			purple_prpl_got_user_status(account, user->passport, "tune",
+			                            "office", user->media.title,
+			                            NULL);
+		} else {
+			purple_debug_warning("msn", "Got CurrentMedia with unknown type %d.\n",
+			                     user->media.type);
+		}
 	} else {
 		purple_prpl_got_user_status_deactive(account, user->passport, "tune");
 	}
@@ -191,6 +204,7 @@ msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *media)
 	g_free(user->media.album);
 	g_free(user->media.artist);
 
+	user->media.type   = media ? media->type : CURRENT_MEDIA_UNKNOWN;
 	user->media.title  = media ? g_strdup(media->title) : NULL;
 	user->media.artist = media ? g_strdup(media->artist) : NULL;
 	user->media.album  = media ? g_strdup(media->album) : NULL;
@@ -322,6 +336,20 @@ msn_user_remove_group_id(MsnUser *user, const char *id)
 
 	g_free(l->data);
 	user->group_ids = g_list_delete_link(user->group_ids, l);
+}
+
+void
+msn_user_set_pending_group(MsnUser *user, const char *group)
+{
+	user->pending_group = g_strdup(group);
+}
+
+char *
+msn_user_remove_pending_group(MsnUser *user)
+{
+	char *group = user->pending_group;
+	user->pending_group = NULL;
+	return group;
 }
 
 void

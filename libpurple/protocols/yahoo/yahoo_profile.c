@@ -808,7 +808,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	 */
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
 		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"), NULL);
-		purple_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_userinfo(info_data->gc, info_data->name,
 			user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
 		g_free(profile_url_text);
@@ -842,10 +842,10 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 						 _("If you wish to view this profile, "
 						"you will need to visit this link in your web browser:"),
 						 profile_url_text, profile_url_text);
-		purple_notify_user_info_add_pair(user_info, NULL, tmp);		
+		purple_notify_user_info_add_pair(user_info, NULL, tmp);
 		g_free(tmp);
 
-		purple_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_userinfo(info_data->gc, info_data->name,
 				user_info, NULL, NULL);
 
 		g_free(profile_url_text);
@@ -1194,17 +1194,15 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	if(!found)
 	{
-		GString *str = g_string_new("");
+		const gchar *str;
 
-		g_string_append_printf(str, "<br><b>");
-		g_string_append_printf(str, _("User information for %s unavailable"),
-				info_data->name);
-		g_string_append_printf(str, "</b><br>");
+		purple_notify_user_info_add_section_break(user_info);
+		purple_notify_user_info_add_pair(user_info,
+				_("Error retrieving profile"), NULL);
 
 		if (profile_state == PROFILE_STATE_UNKNOWN_LANGUAGE) {
-			g_string_append_printf(str, "%s<br><br>",
-					_("Sorry, this profile seems to be in a language "
-					  "or format that is not supported at this time."));
+			str = _("This profile is in a language "
+					  "or format that is not supported at this time.");
 
 		} else if (profile_state == PROFILE_STATE_NOT_FOUND) {
 			PurpleBuddy *b = purple_find_buddy
@@ -1220,27 +1218,26 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 				f = yahoo_friend_find(purple_account_get_connection(account),
 						purple_buddy_get_name(b));
 			}
-			g_string_append_printf(str, "%s<br><br>",
-				f?  _("Could not retrieve the user's profile. "
+			str = f ? _("Could not retrieve the user's profile. "
 					  "This most likely is a temporary server-side problem. "
-					  "Please try again later."):
+					  "Please try again later.") :
 					_("Could not retrieve the user's profile. "
 					  "This most likely means that the user does not exist; "
 					  "however, Yahoo! sometimes does fail to find a user's "
 					  "profile. If you know that the user exists, "
-					  "please try again later."));
+					  "please try again later.");
 		} else {
-			g_string_append_printf(str, "%s<br><br>",
-					_("The user's profile is empty."));
+			str = _("The user's profile is empty.");
 		}
-		
-		purple_notify_user_info_add_pair(user_info, NULL, str->str);
-		g_string_free(str, TRUE);
+
+		purple_notify_user_info_add_pair(user_info, NULL, str);
 	}
 
 	/* put a link to the actual profile URL */
-	tmp = g_strdup_printf("<a href=\"%s\">%s</a>", profile_url_text, profile_url_text);
-	purple_notify_user_info_add_pair(user_info, _("Profile URL"), tmp);
+	purple_notify_user_info_add_section_break(user_info);
+	tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
+			profile_url_text, _("View web profile"));
+	purple_notify_user_info_add_pair(user_info, NULL, tmp);
 	g_free(tmp);
 
 	g_free(stripped);

@@ -77,7 +77,7 @@ enum sent_stream_start_types {
 };
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb);
+xep_iq_parse(xmlnode *packet, PurpleBuddy *pb);
 
 static BonjourJabberConversation *
 bonjour_jabber_conv_new(PurpleBuddy *pb, PurpleAccount *account, const char *ip) {
@@ -128,7 +128,7 @@ get_xmlnode_contents(xmlnode *node)
 
 	if (contents) {
 		char *bodystart = strchr(contents, '>');
-		char *bodyend = strrchr(bodystart, '<');
+		char *bodyend = bodystart ? strrchr(bodystart, '<') : NULL;
 		if (bodystart && bodyend && (bodystart + 1) != bodyend) {
 			*bodyend = '\0';
 			memmove(contents, bodystart + 1, (bodyend - bodystart));
@@ -374,11 +374,36 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
 	if (!strcmp(packet->name, "message"))
 		_jabber_parse_and_write_message_to_ui(packet, pb);
 	else if(!strcmp(packet->name, "iq"))
-		xep_iq_parse(packet, NULL, pb);
+		xep_iq_parse(packet, pb);
 	else
 		purple_debug_warning("bonjour", "Unknown packet: %s\n", packet->name ? packet->name : "(null)");
 }
 
+static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
+
+	/* Inform the user that the conversation has been closed */
+	BonjourBuddy *bb = NULL;
+
+	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", bconv->pb ? bconv->pb->name : "(unknown)");
+
+	if(bconv->pb != NULL)
+		bb = bconv->pb->proto_data;
+#if 0
+	if(bconv->pb != NULL) {
+		PurpleConversation *conv;
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
+		if (conv != NULL) {
+			char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
+			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
+	}
+#endif
+	/* Close the socket, clear the watcher and free memory */
+	bonjour_jabber_close_conversation(bconv);
+	if(bb)
+		bb->conversation = NULL;
+}
 
 static void
 _client_socket_handler(gpointer data, gint socket, PurpleInputCondition condition)
@@ -426,39 +451,6 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 
 	bonjour_parser_process(bconv, message, message_length);
 }
-
-void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
-	const gchar *name = NULL;
-	
-	if(bconv->pb != NULL)
-		name = purple_buddy_get_name(bconv->pb);
-
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name ? name : "(unknown)");
-
-	/* Inform the user that the conversation has been closed */
-	if (bconv != NULL) {
-		BonjourBuddy *bb = NULL;
-
-		if(bconv->pb != NULL)
-			bb = purple_buddy_get_protocol_data(bconv->pb);
-#if 0
-		if(bconv->pb != NULL) {
-			PurpleConversation *conv;
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
-			if (conv != NULL) {
-				char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
-				purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
-				g_free(tmp);
-			}
-		}
-#endif
-		/* Close the socket, clear the watcher and free memory */
-		bonjour_jabber_close_conversation(bconv);
-		if(bb)
-			bb->conversation = NULL;
-	}
-}
-
 
 struct _stream_start_data {
 	char *msg;
@@ -1182,9 +1174,9 @@ check_if_blocked(PurpleBuddy *pb)
 {
 	gboolean blocked = FALSE;
 	GSList *l = NULL;
-	PurpleAccount *acc = NULL;
+	PurpleAccount *acc = purple_buddy_get_account(pb);
 
-	if(pb == NULL)
+	if(acc == NULL)
 		return FALSE;
 
 	acc = purple_buddy_get_account(pb);
@@ -1203,27 +1195,19 @@ check_if_blocked(PurpleBuddy *pb)
 }
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
+xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 {
-	xmlnode *child = NULL;
-
-	if(packet == NULL || pb == NULL)
-		return;
-
-	if(connection == NULL) {
-		PurpleAccount *account = purple_buddy_get_account(pb);
-
-		if(account != NULL)
-			connection = purple_account_get_connection(account);
-	}
+	xmlnode *child;
 
 	if(check_if_blocked(pb))
 		return;
 
 	if ((child = xmlnode_get_child(packet, "si")) || (child = xmlnode_get_child(packet, "error")))
-		xep_si_parse(connection, packet, pb);
+		xep_si_parse(purple_account_get_connection(pb->account),
+			packet, pb);
 	else
-		xep_bytestreams_parse(connection, packet, pb);
+		xep_bytestreams_parse(purple_account_get_connection(pb->account),
+			packet, pb);
 }
 
 int

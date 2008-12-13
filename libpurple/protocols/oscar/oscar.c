@@ -68,7 +68,7 @@
 
 static OscarCapability purple_caps = (OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM |
 									  OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_UNICODE | OSCAR_CAPABILITY_INTEROPERATE |
-									  OSCAR_CAPABILITY_SHORTCAPS);
+									  OSCAR_CAPABILITY_SHORTCAPS | OSCAR_CAPABILITY_TYPING);
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01, 0x06};
@@ -3194,6 +3194,12 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 			g_free(info_utf8);
 		}
 	}
+
+	purple_notify_user_info_add_section_break(user_info);
+	tmp = g_strdup_printf("<a href=\"http://profiles.aim.com/%s\">%s</a>",
+			purple_normalize(account, userinfo->sn), _("View web profile"));
+	purple_notify_user_info_add_pair(user_info, NULL, tmp);
+	g_free(tmp);
 
 	purple_notify_userinfo(gc, userinfo->sn, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);

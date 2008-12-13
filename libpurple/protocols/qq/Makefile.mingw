@@ -6,6 +6,7 @@
 
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
 TARGET = libqq
 TYPE = PLUGIN
 
