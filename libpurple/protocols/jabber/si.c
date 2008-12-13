@@ -186,6 +186,22 @@ connect_timeout_cb(gpointer data)
 	return FALSE;
 }
 
+static gboolean
+jabber_si_bytestreams_ibb_timeout_cb(gpointer data)
+{
+	PurpleXfer *xfer = (PurpleXfer *) data;
+	JabberSIXfer *jsx = xfer->data;
+	
+	if (!jsx->ibb_session) {
+		purple_debug_info("jabber", 
+			"jabber_si_bytestreams_ibb_timeout called and IBB session not set "
+			" up yet, cancel transfer");
+		purple_xfer_cancel_local(xfer);
+	}
+	
+	return FALSE;
+}
+
 static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
@@ -223,6 +239,10 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 			if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND
 				&& !jsx->ibb_session) {
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
+			} else {
+				/* setup a timeout to cancel waiting for IBB open */
+				purple_timeout_add_seconds(30, 
+					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
 			/* if we are the receiver, just wait for IBB open, callback is
 			  already set up... */
@@ -706,6 +726,9 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 				if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND
 					&& !jsx->ibb_session) {
 					jabber_si_xfer_ibb_send_init(js, xfer);
+				} else {
+					purple_timeout_add_seconds(30,
+						jabber_si_bytestreams_ibb_timeout_cb, xfer);
 				}
 				/* if we are receiver, just wait for IBB open stanza, callback
 				  is already set up */
@@ -745,6 +768,9 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 					"jabber_si_connect_proxy_cb: trying to revert to IBB\n");
 				if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 					jabber_si_xfer_ibb_send_init(jsx->js, xfer);
+				} else {
+					purple_timeout_add_seconds(30,
+						jabber_si_bytestreams_ibb_timeout_cb, xfer);
 				}
 				/* if we are the receiver, we are already set up...*/
 			} else {
@@ -886,6 +912,9 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 			if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 				/* if we are the sender, init the IBB session... */
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
+			} else {
+				purple_timeout_add_seconds(30,
+					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
 			/* if we are the receiver, we should just wait... the IBB open
 			  handler has already been set up... */
@@ -1231,6 +1260,8 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	field = xmlnode_new_child(x, "field");
 	xmlnode_set_attrib(field, "var", "stream-method");
 	xmlnode_set_attrib(field, "type", "list-single");
+	/* maybe we should add an option to always skip bytestreams for people
+		behind troublesome firewalls */
 	option = xmlnode_new_child(field, "option");
 	value = xmlnode_new_child(option, "value");
 	xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
@@ -1479,6 +1510,8 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 		/* we should maybe "remember" if bytestreams has failed before (in the
 			same session) with this JID, and only present IBB as an option to
 			avoid unnessesary timeout */
+		/* maybe we should have an account option to always just try IBB
+			for people who know their firewalls are very restrictive */
 		if (jsx->stream_method & STREAM_METHOD_BYTESTREAMS) {
 			value = xmlnode_new_child(field, "value");
 			xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
