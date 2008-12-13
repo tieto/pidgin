@@ -479,6 +479,26 @@ gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
  */
 void purple_media_mute(PurpleMedia *media, gboolean active);
 
+/**
+ * Sets the input volume of all the selected sessions.
+ *
+ * @param media The media object the sessions are in.
+ * @param session_id The session to select (if any).
+ * @param level The level to set the volume to.
+ */
+void purple_media_set_input_volume(PurpleMedia *media, const gchar *session_id, double level);
+
+/**
+ * Sets the output volume of all the selected streams.
+ *
+ * @param media The media object the streams are in.
+ * @param session_id The session to limit the streams to (if any).
+ * @param participant The participant to limit the streams to (if any).
+ * @param level The level to set the volume to.
+ */
+void purple_media_set_output_volume(PurpleMedia *media, const gchar *session_id,
+		const gchar *participant, double level);
+
 #ifdef __cplusplus
 }
 #endif

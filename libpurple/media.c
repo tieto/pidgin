@@ -451,6 +451,25 @@ purple_media_get_stream(PurpleMedia *media, const gchar *session, const gchar *p
 	return NULL;
 }
 
+static GList *
+purple_media_get_streams(PurpleMedia *media, const gchar *session,
+		const gchar *participant)
+{
+	GList *streams = media->priv->streams;
+	GList *ret = NULL;
+
+	for (; streams; streams = g_list_next(streams)) {
+		PurpleMediaStream *stream = streams->data;
+		if ((session == NULL ||
+				!strcmp(stream->session->id, session)) &&
+				(participant == NULL ||
+				!strcmp(stream->participant, participant)))
+			ret = g_list_append(ret, stream);
+	}
+
+	return ret;
+}
+
 static void
 purple_media_add_session(PurpleMedia *media, PurpleMediaSession *session)
 {
@@ -1175,7 +1194,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		gchar *stun_ip = NULL;
 		FsStream *fsstream = NULL;
 
-		if (stun_ip = purple_media_get_stun_pref_ip()) {
+		if ((stun_ip = purple_media_get_stun_pref_ip())) {
 			GParameter *param = g_new0(GParameter, num_params+1);
 			memcpy(param, params, sizeof(GParameter) * num_params);
 
@@ -1374,6 +1393,48 @@ void purple_media_mute(PurpleMedia *media, gboolean active)
 					GST_BIN(session->src),
 					"purpleaudioinputvolume");
 			g_object_set(volume, "mute", active, NULL);
+		}
+	}
+}
+
+void purple_media_set_input_volume(PurpleMedia *media,
+		const gchar *session_id, double level)
+{
+	GList *sessions;
+
+	if (session_id == NULL)
+		sessions = g_hash_table_get_values(media->priv->sessions);
+	else
+		sessions = g_list_append(NULL,
+				purple_media_get_session(media, session_id));
+
+	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+		PurpleMediaSession *session = sessions->data;
+
+		if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
+			GstElement *volume = gst_bin_get_by_name(
+					GST_BIN(session->src),
+					"purpleaudioinputvolume");
+			g_object_set(volume, "volume", level, NULL);
+		}
+	}
+}
+
+void purple_media_set_output_volume(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant,
+		double level)
+{
+	GList *streams = purple_media_get_streams(media,
+				session_id, participant);
+
+	for (; streams; streams = g_list_delete_link(streams, streams)) {
+		PurpleMediaStream *stream = streams->data;
+
+		if (stream->session->type & PURPLE_MEDIA_RECV_AUDIO) {
+			GstElement *volume = gst_bin_get_by_name(
+					GST_BIN(stream->session->sink),
+					"purpleaudiooutputvolume");
+			g_object_set(volume, "volume", level, NULL);
 		}
 	}
 }

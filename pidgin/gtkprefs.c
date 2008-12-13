@@ -2197,17 +2197,7 @@ prefs_media_input_volume_changed(GtkRange *range)
 	val /= 10.0;
 	for (; medias; medias = g_list_next(medias)) {
 		PurpleMedia *media = PURPLE_MEDIA(medias->data);
-		GList *sessions = purple_media_get_session_names(media);
-		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-			const gchar *session = sessions->data;
-			if (purple_media_get_session_type(media, session)
-					& PURPLE_MEDIA_SEND_AUDIO) {
-				GstElement *volume = gst_bin_get_by_name(
-						GST_BIN(purple_media_get_src(media, session)),
-						"purpleaudioinputvolume");
-				g_object_set(volume, "volume", val, NULL);
-			}
-		}
+		purple_media_set_input_volume(media, NULL, val);
 	}
 }
 
@@ -2221,17 +2211,7 @@ prefs_media_output_volume_changed(GtkRange *range)
 	val /= 10.0;
 	for (; medias; medias = g_list_next(medias)) {
 		PurpleMedia *media = PURPLE_MEDIA(medias->data);
-		GList *sessions = purple_media_get_session_names(media);
-		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-			const gchar *session = sessions->data;
-			if (purple_media_get_session_type(media, session)
-					& PURPLE_MEDIA_RECV_AUDIO) {
-				GstElement *volume = gst_bin_get_by_name(
-						GST_BIN(purple_media_get_sink(media, session)),
-						"purpleaudiooutputvolume");
-				g_object_set(volume, "volume", val, NULL);
-			}
-		}
+		purple_media_set_output_volume(media, NULL, NULL, val);
 	}
 }
 
