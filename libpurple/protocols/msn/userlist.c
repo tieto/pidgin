@@ -668,7 +668,7 @@ msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 
 	msn_user_unset_op(user, list_op);
 
-	msn_notification_rem_buddy_from_list(userlist->session->notification, list_id, who);
+	msn_notification_rem_buddy_from_list(userlist->session->notification, list_id, user);
 }
 
 /*add buddy*/
@@ -829,7 +829,7 @@ msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 
 	msn_user_set_op(user, list_op);
 
-	msn_notification_add_buddy_to_list(userlist->session->notification, list_id, who);
+	msn_notification_add_buddy_to_list(userlist->session->notification, list_id, user);
 }
 
 gboolean

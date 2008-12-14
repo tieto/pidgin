@@ -1958,7 +1958,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 void
 msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list_id,
-							  const char *who)
+							  MsnUser *user)
 {
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
@@ -1971,8 +1971,8 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, adl_node, who, list_op,
-						MSN_NETWORK_PASSPORT);
+	msn_add_contact_xml(notification->session, adl_node, user->passport,
+	                    list_op, user->networkid);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
@@ -1984,7 +1984,7 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 
 void
 msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId list_id,
-						   const char *who)
+						   MsnUser *user)
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
@@ -1998,7 +1998,8 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, rml_node, who, list_op, MSN_NETWORK_PASSPORT);
+	msn_add_contact_xml(notification->session, rml_node, user->passport,
+	                    list_op, user->networkid);
 
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
