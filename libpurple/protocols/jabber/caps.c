@@ -574,7 +574,9 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 #endif
 }
 
-static gint jabber_caps_jabber_identity_compare(gconstpointer a, gconstpointer b) {
+static gint
+jabber_identity_compare(gconstpointer a, gconstpointer b)
+{
 	const JabberIdentity *ac;
 	const JabberIdentity *bc;
 	gint cat_cmp;
@@ -622,7 +624,9 @@ static gchar *jabber_caps_get_formtype(const xmlnode *x) {
 	return xmlnode_get_data(formtypefield);;
 }
 
-static gint jabber_caps_jabber_xdata_compare(gconstpointer a, gconstpointer b) {
+static gint
+jabber_xdata_compare(gconstpointer a, gconstpointer b)
+{
 	const xmlnode *aformtypefield = a;
 	const xmlnode *bformtypefield = b;
 	char *aformtype;
@@ -732,14 +736,15 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	PurpleCipherContext *context;
 	guint8 checksum[20];
 	gsize checksum_size = 20;
+	gboolean success;
 
 	if (!info || !(context = purple_cipher_context_new_by_name(hash, NULL)))
 		return NULL;
 
 	/* sort identities, features and x-data forms */
-	info->identities = g_list_sort(info->identities, jabber_caps_jabber_identity_compare);
+	info->identities = g_list_sort(info->identities, jabber_identity_compare);
 	info->features = g_list_sort(info->features, (GCompareFunc)strcmp);
-	info->forms = g_list_sort(info->forms, jabber_caps_jabber_xdata_compare);
+	info->forms = g_list_sort(info->forms, jabber_xdata_compare);
 
 	verification = g_string_new("");
 
@@ -773,7 +778,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 			if (strcmp(field->var, "FORM_TYPE")) {
 				/* Append the "var" attribute */
 				verification = jabber_caps_verification_append(verification, field->var);
-				/* Append <value/> element's cdata */
+				/* Append <value/> elements' cdata */
 				for(value = field->values; value; value = value->next) {
 					verification = jabber_caps_verification_append(verification, value->data);
 					g_free(value->data);
@@ -790,17 +795,13 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	/* generate hash */
 	purple_cipher_context_append(context, (guchar*)verification->str, verification->len);
 
-	if (!purple_cipher_context_digest(context, verification->len, checksum, &checksum_size)) {
-		/* purple_debug_error("util", "Failed to get digest.\n"); */
-		g_string_free(verification, TRUE);
-		purple_cipher_context_destroy(context);
-		return NULL;
-	}
+	success = purple_cipher_context_digest(context, verification->len,
+	                                       checksum, &checksum_size);
 
 	g_string_free(verification, TRUE);
 	purple_cipher_context_destroy(context);
 
-	return purple_base64_encode(checksum, checksum_size);
+	return (success ? purple_base64_encode(checksum, checksum_size) : NULL);
 }
 
 void jabber_caps_calculate_own_hash(JabberStream *js) {
