@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-12 17:46+0100\n"
-"PO-Revision-Date: 2008-12-12 17:42+0100\n"
+"POT-Creation-Date: 2008-12-14 11:28+0100\n"
+"PO-Revision-Date: 2008-12-14 11:28+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4691,7 +4691,7 @@ msgid "Unable to add \"%s\"."
 msgstr "Kann „%s“ nicht hinzufügen."
 
 msgid "Buddy Add error"
-msgstr ""
+msgstr "Fehler beim Hinzufügen des Buddys"
 
 msgid "The username specified does not exist."
 msgstr "Der angegebene Benutzername existiert nicht."
@@ -4964,11 +4964,10 @@ msgid "Page"
 msgstr "Nachricht"
 
 msgid "Playing a game"
-msgstr ""
+msgstr "Spielt ein Spiel"
 
-#, fuzzy
 msgid "Working"
-msgstr "Geschäftlich"
+msgstr "Arbeitet"
 
 msgid "Has you"
 msgstr "Hat Sie"
@@ -5006,9 +5005,8 @@ msgstr "Interpret"
 msgid "Album"
 msgstr "Album"
 
-#, fuzzy
 msgid "Game Title"
-msgstr "Titel anpassen"
+msgstr "Spieltitel"
 
 #, fuzzy
 msgid "Office Title"
@@ -7184,7 +7182,7 @@ msgid "Visible"
 msgstr "Sichtbar"
 
 msgid "Friend Only"
-msgstr ""
+msgstr "Nur Freund"
 
 msgid "Private"
 msgstr "Privat"
@@ -7204,9 +7202,8 @@ msgstr "PLZ"
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#, fuzzy
 msgid "Authorize adding"
-msgstr "Buddy autorisieren?"
+msgstr "Hinzufügen autorisieren?"
 
 msgid "Cellphone Number"
 msgstr "Handy-Telefonnummer"
@@ -7221,9 +7218,8 @@ msgstr "Stadt/Gegend"
 msgid "Publish Mobile"
 msgstr "Handy (privat)"
 
-#, fuzzy
 msgid "Publish Contact"
-msgstr "Kontakt-Alias"
+msgstr "Kontakt veröffentlichen"
 
 msgid "College"
 msgstr "College"
@@ -7238,13 +7234,11 @@ msgstr "Sternzeichen"
 msgid "Blood"
 msgstr "Blockiert"
 
-#, fuzzy
 msgid "True"
-msgstr "Stier"
+msgstr "Wahr"
 
-#, fuzzy
 msgid "False"
-msgstr "Gescheitert"
+msgstr "Falsch"
 
 msgid "Modify Contact"
 msgstr "Kontakt bearbeiten"
@@ -7268,9 +7262,8 @@ msgstr "Konnte Buddy-Informationen nicht bearbeiten."
 msgid "%u requires verification"
 msgstr "%u erfordert Autorisierung"
 
-#, fuzzy
 msgid "Add buddy question"
-msgstr "Benutzer zu Ihrer Buddy-Liste hinzufügen?"
+msgstr "Buddy-Frage hinzufügen"
 
 msgid "Enter answer here"
 msgstr "Antwort hier eingeben"
@@ -7284,17 +7277,15 @@ msgstr "Ungültige Antwort"
 msgid "Authorization denied message:"
 msgstr "Nachricht für die Ablehnung der Autorisierung:"
 
-#, fuzzy
 msgid "Sorry, you're not my style."
-msgstr "Tut mir Leid, du bist nicht mein Typ..."
+msgstr "Tut mir Leid, du bist nicht mein Typ."
 
 #, c-format
 msgid "%u needs authorization"
 msgstr "%u benötigt Authorisierung"
 
-#, fuzzy
 msgid "Add buddy authorize"
-msgstr "Benutzer zu Ihrer Buddy-Liste hinzufügen?"
+msgstr "Buddy-Autorisierung hinzufügen"
 
 msgid "Enter request here"
 msgstr "Anfrage hier eingeben"
@@ -7311,9 +7302,8 @@ msgstr "Buddy hinzufügen"
 msgid "Invalid QQ Number"
 msgstr "Ungültige QQ-Nummer"
 
-#, fuzzy
 msgid "Failed sending authorize"
-msgstr "Bitte autorisiere mich!"
+msgstr "Senden der Autorisierung fehlgeschlagen"
 
 #, c-format
 msgid "Failed removing buddy %u"
@@ -7360,24 +7350,20 @@ msgstr "Sie können nur nach permanenten Qun suchen\n"
 msgid "(Invalid UTF-8 string)"
 msgstr "(Ungültige UTF8-Zeichenkette)"
 
-#, fuzzy
 msgid "Not member"
-msgstr "Ich bin kein Mitglied"
+msgstr "Kein Mitglied"
 
 msgid "Member"
 msgstr "Mitglied"
 
-#, fuzzy
 msgid "Requesting"
-msgstr "Anfrage-Dialog"
+msgstr "Frage an"
 
-#, fuzzy
 msgid "Admin"
-msgstr "Adium"
+msgstr "Admin"
 
-#, fuzzy
 msgid "Notice"
-msgstr "Bemerkung:"
+msgstr "Bemerkung"
 
 msgid "Detail"
 msgstr "Detail"
@@ -7430,9 +7416,8 @@ msgstr ""
 "Beachten Sie, dass diese Operation den Qun entfernen könnte, \n"
 "wenn Sie der Ersteller sind."
 
-#, fuzzy
 msgid "Sorry, you are not our style"
-msgstr "Tut mir Leid, du bist nicht mein Typ..."
+msgstr "Tut mir Leid, du bist nicht unser Typ"
 
 msgid "Successfully changed Qun members"
 msgstr "Qun-Mitglieder erfolgreich geändert"
