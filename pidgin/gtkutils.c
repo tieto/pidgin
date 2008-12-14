@@ -1502,16 +1502,16 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 		break;
 	}
-	free(data->filename);
-	free(data->who);
-	free(data);
+	g_free(data->filename);
+	g_free(data->who);
+	g_free(data);
 }
 
 static void dnd_image_cancel_callback(_DndData *data, int choice)
 {
-	free(data->filename);
-	free(data->who);
-	free(data);
+	g_free(data->filename);
+	g_free(data->who);
+	g_free(data);
 }
 
 static void dnd_set_icon_ok_cb(_DndData *data)
@@ -1521,9 +1521,9 @@ static void dnd_set_icon_ok_cb(_DndData *data)
 
 static void dnd_set_icon_cancel_cb(_DndData *data)
 {
-	free(data->filename);
-	free(data->who);
-	free(data);
+	g_free(data->filename);
+	g_free(data->who);
+	g_free(data);
 }
 
 void

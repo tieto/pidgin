@@ -378,7 +378,7 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	g_return_val_if_fail(id != 0 && what != NULL, -1);
 
 	qd = (qq_data *) gc->proto_data;
-	purple_debug_info("QQ", "Send chat IM to %u, len %d:\n%s\n", id, strlen(what), what);
+	purple_debug_info("QQ", "Send chat IM to %u, len %" G_GSIZE_FORMAT ":\n%s\n", id, strlen(what), what);
 
 	/* qq_show_packet("chat IM UTF8", (guint8 *)what, strlen(what)); */
 
