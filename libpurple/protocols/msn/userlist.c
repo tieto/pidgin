@@ -775,6 +775,7 @@ msn_userlist_add_pending_buddy(MsnUserList *userlist,
                                /*MsnNetwork*/ int network)
 {
 	MsnUser *user = NULL;
+	MsnUser *user2;
 	GList *l;
 	char *group;
 
@@ -793,13 +794,18 @@ msn_userlist_add_pending_buddy(MsnUserList *userlist,
 		return;
 	}
 
-	/* Bit of a hack, but by adding to userlist now, the rest of the code
-	 * will know what network to use.
-	 */
-	msn_user_set_network(user, network);
-	msn_userlist_add_user(userlist, user);
-
 	group = msn_user_remove_pending_group(user);
+
+	user2 = msn_userlist_find_user(userlist, who);
+	if (user2 != NULL) {
+		/* User already in userlist, so just update it. */
+		msn_user_destroy(user);
+		user = user2;
+	} else {
+		msn_userlist_add_user(userlist, user);
+	}
+
+	msn_user_set_network(user, network);
 	msn_userlist_add_buddy(userlist, who, group);
 	g_free(group);
 }
