@@ -81,7 +81,9 @@ static struct MSIM_EMOTICON
  *                                 1    2  3    4     5      6       7 */
 static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
 
-#define MAX_FONT_SIZE                   7       /* Purple maximum font size */
+/* Purple maximum font size.  Equivalent to sizeof(_font_scale) / sizeof(_font_scale[0]) */
+#define MAX_FONT_SIZE                   7
+
 #define POINTS_PER_INCH                 72      /* How many pt's in an inch */
 
 /* Text formatting bits for <f s=#> */
@@ -116,15 +118,11 @@ static guint
 msim_point_to_purple_size(MsimSession *session, guint point)
 {
 	guint size, this_point, base;
-	gdouble scale;
 
 	base = purple_account_get_int(session->account, "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
 
-	for (size = 0;
-			size < sizeof(_font_scale) / sizeof(_font_scale[0]);
-			++size) {
-		scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
-		this_point = (guint)msim_round(scale * base);
+	for (size = 0; size < MAX_FONT_SIZE; ++size) {
+		this_point = (guint)msim_round(base * _font_scale[size]);
 
 		if (this_point >= point) {
 			purple_debug_info("msim", "msim_point_to_purple_size: %d pt -> size=%d\n",
