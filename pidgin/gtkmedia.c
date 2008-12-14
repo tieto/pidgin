@@ -300,6 +300,12 @@ create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 }
 
 static void
+realize_cb(GtkWidget *widget, GstElement *element)
+{
+	gst_element_set_state(element, GST_STATE_PLAYING);
+}
+
+static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	GstElement *pipeline = purple_media_get_pipeline(media);
@@ -327,7 +333,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 			if (!videosendbin && (type & PURPLE_MEDIA_SEND_VIDEO)) {
 				purple_media_video_init_src(&videosendbin);
 				purple_media_set_src(media, sessions->data, videosendbin);
-				gst_element_set_state(videosendbin, GST_STATE_PLAYING);
 			}
 			if (!videorecvbool && (type & PURPLE_MEDIA_RECV_VIDEO)) {
 				videorecvbool = TRUE;
@@ -373,8 +378,12 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
 
 		local_video = gtk_drawing_area_new();
+		g_signal_connect(G_OBJECT(local_video), "realize",
+				G_CALLBACK(realize_cb), videosendbin);
+
 		gtk_container_add(GTK_CONTAINER(aspect), local_video);
 		gtk_widget_set_size_request (GTK_WIDGET(local_video), 100, -1);
+
 		gtk_widget_show(local_video);
 		gtk_widget_show(aspect);
 
@@ -405,8 +414,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 
 	if (videorecvbool || videosendbin)
-		gst_bus_set_sync_handler(bus,
-				(GstBusSyncHandler)create_window, gtkmedia);
+		g_signal_connect(bus, "sync-message::element",
+				G_CALLBACK(create_window), gtkmedia);
 
 	if (audiorecvbool || audiosendbin)
 		g_signal_connect(G_OBJECT(bus), "message::element",

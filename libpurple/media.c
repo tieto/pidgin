@@ -738,6 +738,7 @@ purple_media_get_pipeline(PurpleMedia *media)
 		gst_bus_add_signal_watch(GST_BUS(bus));
 		g_signal_connect(G_OBJECT(bus), "message",
 				G_CALLBACK(media_bus_call), media);
+		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
 		gst_object_unref(bus);
 
 		gst_bin_add(GST_BIN(media->priv->pipeline), GST_ELEMENT(media->priv->conference));
