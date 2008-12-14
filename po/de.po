@@ -7,14 +7,13 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
-# Jochen Kemnade <jochenkemnade@web.de>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-14 11:28+0100\n"
-"PO-Revision-Date: 2008-12-14 11:28+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2008-12-14 22:58+0100\n"
+"PO-Revision-Date: 2008-12-14 22:58+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4311,7 +4310,7 @@ msgid "Server Overloaded"
 msgstr "Server überlastet"
 
 msgid "Service Unavailable"
-msgstr "Dienst nicht erreichbar"
+msgstr "Dienst nicht verfügbar"
 
 msgid "Subscription Required"
 msgstr "Abonnement erforderlich"
@@ -7272,7 +7271,7 @@ msgid "Send"
 msgstr "Senden"
 
 msgid "Invalid answer."
-msgstr "Ungültige Antwort"
+msgstr "Ungültige Antwort."
 
 msgid "Authorization denied message:"
 msgstr "Nachricht für die Ablehnung der Autorisierung:"
@@ -7492,9 +7491,8 @@ msgstr "Ver"
 msgid "Invalid name"
 msgstr "QQ: Ungültiger Name"
 
-#, fuzzy
 msgid "Select icon..."
-msgstr "Ordner auswählen..."
+msgstr "Icon wählen..."
 
 #, fuzzy, c-format
 msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
@@ -7520,9 +7518,9 @@ msgstr "<b>Anmeldezeit</b>: %s<br>\n"
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Verbindungsmodus</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Meine Internet-Adresse</b>: %s<br>\n"
+msgstr "<b>Meine Internet-IP</b>: %s:%d<br>\n"
 
 #, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
@@ -7544,9 +7542,9 @@ msgstr "<b>Empfangen</b>: %lu<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Duplikat empfangen</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Anmeldezeit</b>: %s<br>\n"
+msgstr "<b>Zeit</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
 #, c-format
 msgid "<b>IP</b>: %s<br>\n"
@@ -7658,49 +7656,45 @@ msgstr ""
 msgid "Activation required"
 msgstr "Aktivierung erforderlich"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Anmeldung nicht möglich, unbekannter Antwort-Code 0x%02X"
+msgstr "Unbekannte Antwort bei der Anmeldung (0x%02X)"
 
 msgid "Could not decrypt server reply"
 msgstr "Konnte die Antwort des Servers nicht entschlüsseln"
 
-#, fuzzy
 msgid "Requesting captcha"
-msgstr "Bitte um %ss Aufmerksamkeit..."
+msgstr "Captcha anfordern"
 
-#, fuzzy
 msgid "Checking captcha"
-msgstr "Bitte um %ss Aufmerksamkeit..."
+msgstr "Captcha überprüfen"
 
-#, fuzzy
 msgid "Failed captcha verification"
-msgstr "Yahoo-Authentifizierung fehlgeschlagen"
+msgstr "Captcha-Überprüfung fehlgeschlagen"
 
-#, fuzzy
 msgid "Captcha Image"
-msgstr "Bild speichern"
+msgstr "Captcha-Bild"
 
-#, fuzzy
 msgid "Enter code"
-msgstr "Geben Sie ein Passwort ein"
+msgstr "Geben Sie den Code ein"
 
-#, fuzzy
 msgid "QQ Captcha Verification"
-msgstr "SSL-Zertifikatsüberprüfung"
+msgstr "QQ-Captcha-Überprüfung"
 
 msgid "Enter the text from the image"
 msgstr "Bitte geben Sie den Text aus dem Bild ein"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Anmeldung nicht möglich, unbekannter Antwort-Code 0x%02X"
+msgstr "Unbekannte Antwort bei Überprüfungen des Passwortes (0x%02X)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unknown reply code when logging in (0x%02X):\n"
 "%s"
-msgstr "Anmeldung nicht möglich, unbekannter Antwort-Code 0x%02X"
+msgstr ""
+"Unbekannte Antwort bei der Anmeldung (0x%02X):\n"
+"%s"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7758,22 +7752,24 @@ msgstr "%s:%s"
 msgid "From %s:"
 msgstr "Von %s:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Server notice From %s: \n"
 "%s"
-msgstr "Anleitung vom Server: %s"
+msgstr ""
+"Servernotiz von %s: \n"
+"%s"
 
 msgid "Unknown SERVER CMD"
 msgstr "Unbekanntes SERVER-CMD"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
 "Room %u, reply 0x%02X"
 msgstr ""
-"Fehlerantwort %s(0x%02X)\n"
-"Raum %d, Antwort 0x%02X"
+"Fehlerantwort von %s(0x%02X)\n"
+"Raum %u, Antwort 0x%02X"
 
 msgid "QQ Qun Command"
 msgstr "QQ-Qun-Kommando"
