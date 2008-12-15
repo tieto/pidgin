@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.3 (??/??/????):
+version 2.5.3 (12/??/2008):
 	libpurple:
 	* Corrected maximum message lengths for Yahoo!
 	* The Buddy State Notification plugin no longer prints duplicate
@@ -20,6 +20,8 @@ version 2.5.3 (??/??/????):
 	* On ICQ, advertise the ICQ 6 typing capability.  This should fix the
 	  reports of typing notifications not working with third-party clients
 	  (Jaromír Karmazín)
+	* Many QQ fixes and improvements, including the ability to connect
+	  using QQ2008 protocol and sending/receiving of long messages.
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
@@ -38,6 +40,7 @@ version 2.5.3 (??/??/????):
 	  album, if possible.
 	* Messages sent from a mobile device while you were offline are now
 	  correctly received.
+	* Many other fixes and code cleanup.
 
 	XMPP:
 	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
