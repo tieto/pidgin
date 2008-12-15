@@ -100,14 +100,15 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 	cmedia_array = g_strsplit(cmedia, "\\0", 0);
 
 	/*
-	 * 0: Media Player
-	 * 1: 'Music'
+	 * 0: Application
+	 * 1: 'Music'/'Games'/'Office'
 	 * 2: '1' if enabled, '0' if not
 	 * 3: Format (eg. {0} by {1})
 	 * 4: Title
-	 * 5: Artist
-	 * 6: Album
-	 * 7: ?
+	 * If 'Music':
+	 *  5: Artist
+	 *  6: Album
+	 *  7: ?
 	 */
 #if GLIB_CHECK_VERSION(2,6,0)
 	strings  = g_strv_length(cmedia_array);
@@ -117,6 +118,15 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 
 	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
 		parsed = TRUE;
+
+		if (!strcmp(cmedia_array[1], "Music"))
+			media->type = CURRENT_MEDIA_MUSIC;
+		else if (!strcmp(cmedia_array[1], "Games"))
+			media->type = CURRENT_MEDIA_GAMES;
+		else if (!strcmp(cmedia_array[1], "Office"))
+			media->type = CURRENT_MEDIA_OFFICE;
+		else
+			media->type = CURRENT_MEDIA_UNKNOWN;
 
 		g_free(media->title);
 		if (strings == 4) {
@@ -199,21 +209,33 @@ msn_get_psm(char *xml_str, gsize len)
 static char *
 create_media_string(PurplePresence *presence)
 {
-	const char *artist, *title, *album;
+	const char *title, *game, *office;
 	char *ret;
 	PurpleStatus *status = purple_presence_get_status(presence, "tune");
 	if (!status || !purple_status_is_active(status))
-		return g_strdup_printf("WMP\\0Music\\00\\0{0} - {1}\\0\\0\\0\\0\\0");
+		return g_strdup_printf("\\0Music\\00\\0\\0");
 
-	artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
 	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-	album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+	game = purple_status_get_attr_string(status, "game");
+	office = purple_status_get_attr_string(status, "office");
 
-	ret = g_strdup_printf("WMP\\0Music\\0%c\\0{0} - {1}\\0%s\\0%s\\0%s\\0\\0",
-			(title && *title) ? '1' : '0',
-			title ? title : "",
-			artist ? artist : "",
-			album ? album : "");
+	if (title && *title) {
+		const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+		const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+		ret = g_strdup_printf("WMP\\0Music\\01\\0{0}%s%s\\0%s\\0%s\\0%s\\0",
+		                      artist ? " - {1}" : "",
+		                      album ? " ({2})" : "",
+		                      title,
+		                      artist ? artist : "",
+		                      album ? album : "");
+	}
+	else if (game && *game)
+		ret = g_strdup_printf("\\0Games\\01\\0Playing {0}\\0%s\\0", game);
+	else if (office && *office)
+		ret = g_strdup_printf("\\0Office\\01\\0Editing {0}\\0%s\\0", office);
+	else
+		ret = g_strdup_printf("\\0Music\\00\\0\\0");
+
 	return ret;
 }
 

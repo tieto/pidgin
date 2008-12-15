@@ -1,27 +1,55 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.3 (??/??/????):
+version 2.5.3 (12/??/2008):
 	libpurple:
-	* Fix an error with MSN offline messages by shipping the *new*
-	  "Microsoft Secure Server Authority" and the
-	  "Microsoft Internet Authority" certificates.  People that use
-	  --with-system-ssl-certs and GnuTLS need to include these in the
-	  system certs directory.
 	* Corrected maximum message lengths for Yahoo!
-	* Enable auto-reply on Zephyr, to emulate 'zaway' (Toby Schaffer)
 	* The Buddy State Notification plugin no longer prints duplicate
 	  notifications when the same buddy is in multiple groups (Florian Quèze)
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
 	  ID's, etc. into links (Florian Quèze)
-	* Fix a crash in SIMPLE when a malformed message is received.
 	* purple-remote now has a "getstatusmessage" command to retrieve the text
 	  of the current status message.
+	* Various fixes to the nullprpl (Paul Aurich)
+	* Fix a crash when accessing the roomlist for an account that's not
+	  connected (Paul Aurich)
+	* Fix a crash in purple_accounts_delete that happens when this function is
+	  called before the buddy list is initialized (Florian Quèze)
+	* Fix use of av_len in perl bindings to fix some off-by-one bugs (Paul
+	  Aurich)
+	* On ICQ, advertise the ICQ 6 typing capability.  This should fix the
+	  reports of typing notifications not working with third-party clients
+	  (Jaromír Karmazín)
+	* Many QQ fixes and improvements, including the ability to connect
+	  using QQ2008 protocol and sending/receiving of long messages.
+	* Fix a crash with DNS SRV lookups (Florian Quèze)
+	* Fix insanely long idle times for Sametime 7.5 buddies by assuming 0 idle
+	  time if the idle timestamp is in the future (Laurent Montaron)
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
-	* Gadu-Gadu now validates that UID's are valid (Adam Strzelecki)
+	* Gadu-Gadu now checks that UID's are valid (Adam Strzelecki)
 	* Gadu-Gadu now does proper charset translations where needed (Adam
 	  Strzelecki)
+
+	MSN:
+	* Fix an error with offline messages by shipping the *new* "Microsoft
+	  Secure Server Authority" and the "Microsoft Internet Authority"
+	  certificates. These are now always installed even when using
+	  --with-system-ssl-certs because most systems don't ship those
+	  intermediate certificates.
+	* The Games and Office media can now be set and displayed (in addition
+	  to the previous Music media). The Media status text now shows the
+	  album, if possible.
+	* Messages sent from a mobile device while you were offline are now
+	  correctly received.
+	* Server transfers after you've been connected for a long time should 
+	  now be handled correctly.
+	* Many other fixes and code cleanup.
+
+	SIMPLE:
+	* Fix a crash when a malformed message is received.
+	* Don't allow connecting accounts if no server name has been specified
+	  (Florian Quèze)
 
 	XMPP:
 	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
@@ -35,6 +63,17 @@ version 2.5.3 (??/??/????):
 	* Send "client-accepts-full-bind-result" attribute during SASL login.
 	  This will fix Google Talk login failures if the user configures the
 	  wrong domain for his/her account.
+	* Support new <metadata/> element to indicate no XEP-0084 User Avatar
+	  (Paul Aurich)
+	* Fix SHA1 avatar checksum errors that occur when one of the bytes in a
+	  checksum begins with 0 (Paul Aurich)
+	
+	Zephyr:
+	* Enable auto-reply, to emulate 'zaway' (Toby Schaffer)
+	* Fix a crash when an account is configured to use tzc but tzc is not
+	  installed or the configured tzc command is invalid (Michael Terry)
+	* Fix a 10 second delay waiting on tzc if it is not installed or the
+	  configured command is invalid (Michael Terry)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
@@ -47,6 +86,8 @@ version 2.5.3 (??/??/????):
 	      gtk-enable-tooltips = 0
 	* Moved the release notification dialog to a mini-dialog in the
 	  buddylist.  (Thanks to Casey Ho)
+	* Fix a crash when closing an authorization minidialog with the X then
+	  immediately going offline (Paul Aurich)
 
 	Finch:
 	* Allow binding meta+arrow keys for actions.

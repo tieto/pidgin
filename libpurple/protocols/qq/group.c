@@ -40,7 +40,7 @@ static void _qq_group_search_callback(PurpleConnection *gc, const gchar *input)
 	guint32 ext_id;
 
 	g_return_if_fail(input != NULL);
-	ext_id = strtol(input, NULL, 10);
+	ext_id = strtoul(input, NULL, 10);
 	/* 0x00000000 means search for demo group */
 	qq_request_room_search(gc, ext_id, QQ_ROOM_SEARCH_ONLY);
 }
@@ -116,7 +116,7 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 	return qd->roomlist;
 }
 
-/* free roomlist space, I have no idea when this one is called ... */
+/* free roomlist space, I have no idea when this one is called... */
 void qq_roomlist_cancel(PurpleRoomlist *list)
 {
 	qq_data *qd;

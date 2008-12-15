@@ -158,7 +158,7 @@ enum blist_choice {
   blist_choice_LOCAL = 1, /**< local only */
   blist_choice_MERGE = 2, /**< merge from server */
   blist_choice_STORE = 3, /**< merge from and save to server */
-  blist_choice_SYNCH = 4, /**< sync with server */
+  blist_choice_SYNCH = 4  /**< sync with server */
 };
 
 
@@ -513,6 +513,11 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
 
     idle_len = time(NULL) - idle;
     ugly_idle_len = ((time(NULL) * 1000) - idle) / 1000;
+
+	if(idle > ugly_idle_len)
+		ugly_idle_len = 0;
+	else
+		ugly_idle_len = (ugly_idle_len - idle) / 1000;
 
     /* 
        what's the deal here? Well, good clients are smart enough to

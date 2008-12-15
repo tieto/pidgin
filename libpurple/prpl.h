@@ -189,7 +189,7 @@ typedef enum
 	 * Used as a hint that unknown commands should not be sent as messages.
 	 * @since 2.1.0
 	 */
-	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
+	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
 
 } PurpleProtocolOptions;
 

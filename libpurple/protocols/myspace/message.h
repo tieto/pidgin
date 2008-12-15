@@ -24,17 +24,20 @@
 
 #include <glib.h>
 
-/* Types */
 #define MsimMessage GList               /* #define instead of typedef to avoid casting */
-typedef struct _MsimMessageElement
+typedef gchar MsimMessageType;
+typedef struct _MsimMessageElement MsimMessageElement;
+
+#include "session.h"
+
+/* Types */
+struct _MsimMessageElement
 {
 	const gchar *name;              /**< Textual name of element. */
 	gboolean dynamic_name;          /**< TRUE if 'name' is a dynamic string to be freed, not static. */
 	guint type;                     /**< MSIM_TYPE_* code. */
 	gpointer data;                  /**< Pointer to data, or GUINT_TO_POINTER for int/bool. */
-} MsimMessageElement;
-
-typedef gchar MsimMessageType;
+};
 
 #define msim_msg_get_next_element_node(msg)    ((MsimMessage *)(msg->next))
 
@@ -58,20 +61,13 @@ void msim_msg_free_element_data(MsimMessageElement *elem);
 void msim_msg_free(MsimMessage *msg);
 MsimMessage *msim_msg_append(MsimMessage *msg, const gchar *name, MsimMessageType type, gpointer data);
 MsimMessage *msim_msg_insert_before(MsimMessage *msg, const gchar *name_before, const gchar *name, MsimMessageType type, gpointer data);
-gchar *msim_msg_dump_to_str(MsimMessage *msg);
 gchar *msim_msg_pack_element_data(MsimMessageElement *elem);
 void msim_msg_dump(const char *fmt_string, MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
-gchar *msim_msg_pack_dict(MsimMessage *msg);
 
-GList *msim_msg_list_copy(GList *old);
 void msim_msg_list_free(GList *l);
-GList *msim_msg_list_parse(const gchar *raw);
 
-/* Defined in myspace.h */
-struct _MsimSession;
-
-/* Based on http://permalink.gmane.org/gmane.comp.parsers.sparse/695 
+/* Based on http://permalink.gmane.org/gmane.comp.parsers.sparse/695
  * Define macros for useful gcc attributes. */
 #ifdef __GNUC__
 #define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
@@ -87,7 +83,7 @@ struct _MsimSession;
 	#define FORMAT_ATTR(pos)
 	#define NORETURN_ATTR
 	#define SENTINEL_ATTR
-#endif 
+#endif
 
 /* Cause gcc to emit "a missing sentinel in function call" if forgot
  * to write NULL as last, terminating parameter. */
@@ -109,10 +105,6 @@ gboolean msim_msg_get_binary(MsimMessage *msg, const gchar *name, gchar **binary
 
 /* Retrieve data by element (MsimMessageElement *), returned from msim_msg_get() */
 gchar *msim_msg_get_string_from_element(MsimMessageElement *elem);
-GList *msim_msg_get_list_from_element(MsimMessageElement *elem);
-MsimMessage *msim_msg_get_dictionary_from_element(MsimMessageElement *elem);
 guint msim_msg_get_integer_from_element(MsimMessageElement *elem);
-gboolean msim_msg_get_binary_from_element(MsimMessageElement *elem, 
-		gchar **binary_data, gsize *binary_length);
 
 #endif /* _MYSPACE_MESSAGE_H */
