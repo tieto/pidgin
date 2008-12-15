@@ -23,6 +23,7 @@
 #include "message.h"
 
 static void msim_msg_free_element(gpointer data, gpointer user_data);
+static MsimMessage *msim_msg_append_dynamic_name(MsimMessage *msg, gchar *name, MsimMessageType type, gpointer data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, const gchar *begin, const gchar *end);
 static GList *msim_msg_get_node(MsimMessage *msg, const gchar *name);
@@ -357,7 +358,10 @@ msim_msg_clone_element(gpointer data, gpointer user_data)
 
 	/* Append cloned data. Note that the 'name' field is a static string, so it
 	 * never needs to be copied nor freed. */
-	*new = msim_msg_append(*new, elem->name, elem->type, new_data);
+	if (elem->dynamic_name)
+		*new = msim_msg_append_dynamic_name(*new, g_strdup(elem->name), elem->type, new_data);
+	else
+		*new = msim_msg_append(*new, elem->name, elem->type, new_data);
 }
 
 /** Clone an existing MsimMessage. 
