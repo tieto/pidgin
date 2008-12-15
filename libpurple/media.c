@@ -1168,14 +1168,14 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 		fs_session_set_codec_preferences(session->session, codec_conf, NULL);
 
-	/*
-	 * Temporary fix to remove a 5-7 second delay before
-	 * receiving the src-pad-added signal.
-	 * Only works for one-to-one sessions.
-	 * Specific to FsRtpSession.
-	 */
-		g_object_set(G_OBJECT(session->session), "no-rtcp-timeout", 0, NULL);
-
+		/*
+		 * Removes a 5-7 second delay before
+		 * receiving the src-pad-added signal.
+		 * Only works for non-multicast FsRtpSessions.
+		 */
+		if (!strcmp(transmitter, "nice") || !strcmp(transmitter, "rawudp"))
+			g_object_set(G_OBJECT(session->session),
+					"no-rtcp-timeout", 0, NULL);
 
 		fs_codec_list_destroy(codec_conf);
 
