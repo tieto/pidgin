@@ -109,7 +109,6 @@ jabber_ibb_session_destroy(JabberIBBSession *sess)
 		jabber_ibb_session_close(sess);
 	}
 	
-	purple_debug_info("jabber", "IBB: last_iq_id: %s\n", sess->last_iq_id);
 	if (sess->last_iq_id) {
 		purple_debug_info("jabber", "IBB: removing callback for <iq/> %s\n",
 			sess->last_iq_id);
