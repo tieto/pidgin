@@ -20,6 +20,8 @@
 #ifndef _MYSPACE_SESSION_H
 #define _MYSPACE_SESSION_H
 
+#include "account.h"
+
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
 
