@@ -7,7 +7,6 @@ version 2.5.3 (12/??/2008):
 	  notifications when the same buddy is in multiple groups (Florian Quèze)
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
 	  ID's, etc. into links (Florian Quèze)
-	* Fix a crash in SIMPLE when a malformed message is received.
 	* purple-remote now has a "getstatusmessage" command to retrieve the text
 	  of the current status message.
 	* Various fixes to the nullprpl (Paul Aurich)
@@ -41,6 +40,11 @@ version 2.5.3 (12/??/2008):
 	* Messages sent from a mobile device while you were offline are now
 	  correctly received.
 	* Many other fixes and code cleanup.
+
+	SIMPLE:
+	* Fix a crash when a malformed message is received.
+	* Don't allow connecting accounts if no server name has been specified
+	  (Florian Quèze)
 
 	XMPP:
 	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
