@@ -28,6 +28,8 @@ version 2.5.3 (??/??/????):
 	* On ICQ, advertise the ICQ 6 typing capability.  This should fix the
 	  reports of typing notifications not working with third-party clients
 	  (Jaromír Karmazín)
+	* On MSN, messages sent from a mobile device while you were offline are
+	  now correctly received.
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
