@@ -1939,6 +1939,13 @@ static void simple_login(PurpleAccount *account)
 		sip->txbuf = purple_circ_buffer_new(0);
 
 	userserver = g_strsplit(username, "@", 2);
+	if (userserver[1] == NULL || userserver[1][0] == '\0') {
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("SIP connect server not specified"));
+		return;
+	}
+
 	purple_connection_set_display_name(gc, userserver[0]);
 	sip->username = g_strdup(userserver[0]);
 	sip->servername = g_strdup(userserver[1]);

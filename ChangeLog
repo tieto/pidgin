@@ -7,7 +7,6 @@ version 2.5.3 (12/??/2008):
 	  notifications when the same buddy is in multiple groups (Florian Quèze)
 	* The Buddy State Notification plugin no longer turns JID's, MSN Passport
 	  ID's, etc. into links (Florian Quèze)
-	* Fix a crash in SIMPLE when a malformed message is received.
 	* purple-remote now has a "getstatusmessage" command to retrieve the text
 	  of the current status message.
 	* Various fixes to the nullprpl (Paul Aurich)
@@ -22,6 +21,9 @@ version 2.5.3 (12/??/2008):
 	  (Jaromír Karmazín)
 	* Many QQ fixes and improvements, including the ability to connect
 	  using QQ2008 protocol and sending/receiving of long messages.
+	* Fix a crash with DNS SRV lookups (Florian Quèze)
+	* Fix insanely long idle times for Sametime 7.5 buddies by assuming 0 idle
+	  time if the idle timestamp is in the future (Laurent Montaron)
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
@@ -43,6 +45,11 @@ version 2.5.3 (12/??/2008):
 	* Server transfers after you've been connected for a long time should 
 	  now be handled correctly.
 	* Many other fixes and code cleanup.
+
+	SIMPLE:
+	* Fix a crash when a malformed message is received.
+	* Don't allow connecting accounts if no server name has been specified
+	  (Florian Quèze)
 
 	XMPP:
 	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
