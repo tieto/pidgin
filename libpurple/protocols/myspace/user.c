@@ -174,8 +174,12 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		/* TODO: link to username, if available */
 		char *profile;
 		purple_notify_user_info_add_section_break(user_info);
-		profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">%s</a>",
-				user->id, _("View web profile"));
+		if (user->buddy != NULL)
+			profile = g_strdup_printf("<a href=\"http://myspace.com/%s\">%s</a>",
+					purple_buddy_get_name(user->buddy), _("View web profile"));
+		else
+			profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">%s</a>",
+					user->id, _("View web profile"));
 		purple_notify_user_info_add_pair(user_info, NULL, profile);
 		g_free(profile);
 	}

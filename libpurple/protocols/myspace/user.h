@@ -25,6 +25,7 @@
 typedef struct _MsimUser
 {
 	PurpleBuddy *buddy;
+	/* Note: id is also &buddy->node (set_blist_node_int), when buddy is non-NULL */
 	int id;
 	guint client_cv;
 	gchar *client_info;
@@ -34,7 +35,6 @@ typedef struct _MsimUser
 	guint total_friends;
 	gchar *headline;
 	gchar *display_name;
-	/* Note: uid is in &buddy->node (set_blist_node_int), since it never changes */
 	gchar *username;
 	gchar *band_name, *song_name;
 	gchar *image_url;
