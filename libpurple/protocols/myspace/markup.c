@@ -192,35 +192,38 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	height_str = xmlnode_get_attrib(root, "h");
 	decor_str = xmlnode_get_attrib(root, "s");
 
-	if (height_str) {
-		height = atol(height_str);
-	} else {
-		height = 12;
-	}
+	/* Validate the font face, to avoid constructing invalid HTML later */
+	if (strchr(face, '\'') != NULL)
+		face = NULL;
 
-	if (decor_str) {
-		decor = atol(decor_str);
-	} else {
-		decor = 0;
-	}
+	height = height_str != NULL ? atol(height_str) : 12;
+	decor = decor_str != NULL ? atol(decor_str) : 0;
 
+	/*
+	 * The HTML we're constructing here is a bit redudant.  Ideally we
+	 * would use only the font-family and font-size CSS span, but Pidgin
+	 * doesn't support it (it's included for other UIs).  For Pidgin we
+	 * wrap the whole thing in an ugly font tag, and Pidgin will happily
+	 * ignore the <span>.
+	 */
 	gs_begin = g_string_new("");
-	/* TODO: get font size working */
 	if (height && !face) {
-		g_string_printf(gs_begin, "<font size='%d'>",
-				msim_point_to_purple_size(session, msim_height_to_point(session, height)));
+		guint point_size = msim_height_to_point(session, height);
+		g_string_printf(gs_begin,
+				"<font size='%d'><span style='font-size: %dpt'>",
+				msim_point_to_purple_size(session, point_size),
+				point_size);
 	} else if (height && face) {
-		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face,
-				msim_point_to_purple_size(session, msim_height_to_point(session, height)));
+		guint point_size = msim_height_to_point(session, height);
+		g_string_printf(gs_begin,
+				"<font face='%s' size='%d'><span style='font-family: %s; font-size: %dpt'>",
+				face, msim_point_to_purple_size(session, point_size),
+				face, point_size);
 	} else {
-		g_string_printf(gs_begin, "<font>");
+		g_string_printf(gs_begin, "<font><span>");
 	}
 
-	/* No support for font-size CSS? */
-	/* g_string_printf(gs_begin, "<span style='font-family: %s; font-size: %dpt'>", face,
-			msim_height_to_point(height)); */
-
-	gs_end = g_string_new("</font>");
+	gs_end = g_string_new("</span></font>");
 
 	if (decor & MSIM_TEXT_BOLD) {
 		g_string_append(gs_begin, "<b>");
@@ -236,7 +239,6 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 		g_string_append(gs_begin, "<u>");
 		g_string_append(gs_end, "</u>");
 	}
-
 
 	*begin = g_string_free(gs_begin, FALSE);
 	*end = g_string_free(gs_end, FALSE);
