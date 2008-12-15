@@ -31,7 +31,8 @@ version 2.5.3 (??/??/????):
 	* Fix an error with offline messages by shipping the *new* "Microsoft
 	  Secure Server Authority" and the "Microsoft Internet Authority"
 	  certificates. These are now always installed even when using
-	  --with-system-ssl-certs because most system certs are not up to date.
+	  --with-system-ssl-certs because most systems don't ship those
+	  intermediate certificates.
 	* The Games and Office media can now be set and displayed (in addition
 	  to the previous Music media). The Media status text now shows the
 	  album, if possible.
