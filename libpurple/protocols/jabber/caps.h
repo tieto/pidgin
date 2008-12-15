@@ -32,7 +32,16 @@ struct _JabberCapsClientInfo {
 	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
 	GList *forms; /* xmlnode * */
+	guint ref;
 };
+
+/**
+ * Adjust the refcount for JabberCapsClientInfo. When the refcount reaches
+ * 0, the data will be destroyed.
+ */
+void jabber_caps_client_info_unref(JabberCapsClientInfo *info);
+void jabber_caps_client_info_ref(JabberCapsClientInfo *info);
+
 
 #if 0
 typedef struct _JabberCapsClientInfo JabberCapsValueExt;
@@ -46,7 +55,10 @@ void jabber_caps_uninit(void);
 void jabber_caps_destroy_key(gpointer value);
 
 /**
- *	Main entity capabilites function to get the capabilities of a contact.
+ * Main entity capabilites function to get the capabilities of a contact.
+ *
+ * The callback will be called synchronously if we already have the capabilities for
+ * the specified (node,ver,hash).
  */
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *hash, jabber_caps_get_info_cb cb, gpointer user_data);
 

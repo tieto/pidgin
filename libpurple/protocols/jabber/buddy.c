@@ -181,7 +181,7 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
 	}
 
-	/* jbr->caps is owned by the caps code */
+	jabber_caps_client_info_unref(jbr->caps);
 	g_free(jbr->name);
 	g_free(jbr->status);
 	g_free(jbr->thread_id);

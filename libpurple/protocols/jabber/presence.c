@@ -395,7 +395,7 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, JabberP
 		return;
 	}
 
-	/* old value in jbr->caps is owned by caps code */
+	jabber_caps_client_info_unref(jbr->caps);
 	jbr->caps = info;
 
 	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
