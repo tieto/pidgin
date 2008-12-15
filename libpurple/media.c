@@ -265,6 +265,7 @@ static void
 purple_media_session_free(PurpleMediaSession *session)
 {
 	g_free(session->id);
+	g_object_unref(session->session);
 	g_free(session);
 }
 
@@ -279,6 +280,9 @@ purple_media_finalize (GObject *media)
 
 	g_free(priv->name);
 
+	for (; priv->streams; priv->streams = g_list_delete_link(priv->streams, priv->streams))
+		purple_media_stream_free(priv->streams->data);
+
 	if (priv->sessions) {
 		GList *sessions = g_hash_table_get_values(priv->sessions);
 		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
@@ -286,9 +290,6 @@ purple_media_finalize (GObject *media)
 		}
 		g_hash_table_destroy(priv->sessions);
 	}
-
-	for (; priv->streams; priv->streams = g_list_delete_link(priv->streams, priv->streams))
-		purple_media_stream_free(priv->streams->data);
 
 	if (priv->participants) {
 		GList *participants = g_hash_table_get_values(priv->participants);
