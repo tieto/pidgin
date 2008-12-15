@@ -1148,15 +1148,6 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 			return FALSE;
 		}
 
-	/*
-	 * The MPV codec didn't work for me.
-	 * MPV may not work yet as of Farsight2 0.0.3
-	 */
-#if 0
-		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_DISABLE,
-				"MPV", FS_MEDIA_TYPE_VIDEO, 90000));
-#endif
-
 	/* XXX: SPEEX has a latency of 5 or 6 seconds for me */
 #if 0
 	/* SPEEX is added through the configuration */
