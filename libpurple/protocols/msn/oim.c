@@ -594,53 +594,45 @@ static void
 msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 {
 	MsnMessage *message;
-	char *date,*from,*decode_msg;
+	const char *date;
+	const char *from;
+	char *decode_msg;
 	gsize body_len;
 	char **tokens;
-	char *start,*end;
-	int has_nick = 0;
-	char *passport_str, *passport;
+	char *start, *end;
+	char *passport;
 	time_t stamp;
 
 	message = msn_message_new(MSN_MSG_UNKNOWN);
 
 	msn_message_parse_payload(message, msg_str, strlen(msg_str),
-							  MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
+	                          MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	purple_debug_info("msn", "oim body:{%s}\n", message->body);
-	decode_msg = (char *)purple_base64_decode(message->body,&body_len);
-	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
-	from =	(char *)g_hash_table_lookup(message->attr_table, "From");
-	if (strstr(from," ")) {
-		has_nick = 1;
-	}
-	if (has_nick) {
-		tokens = g_strsplit(from , " " , 2);
-		passport_str = g_strdup(tokens[1]);
-		purple_debug_info("msn", "oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
-							date, tokens[0], tokens[1], passport_str);
-		g_strfreev(tokens);
-	} else {
-		passport_str = g_strdup(from);
-		purple_debug_info("msn", "oim Date:{%s},passport{%s}\n",
-					date, passport_str);
-	}
-	start = strstr(passport_str,"<");
-	start += 1;
-	end = strstr(passport_str,">");
-	passport = g_strndup(start,end - start);
-	g_free(passport_str);
-	purple_debug_info("msn", "oim Date:{%s},passport{%s}\n", date, passport);
+	decode_msg = (char *)purple_base64_decode(message->body, &body_len);
+	date = msn_message_get_attr(message, "Date");
+	from = msn_message_get_attr(message, "From");
+
+	tokens = g_strsplit(from, " ", 2);
+	if (tokens[1] != NULL)
+		from = (const char *)tokens[1];
+
+	start = strchr(from, '<') + 1;
+	end = strchr(from, '>');
+	passport = g_strndup(start, end - start);
+	purple_debug_info("msn", "oim Date:{%s},passport{%s},tokens[0]:{%s}\n",
+	                  date, passport, tokens[0]);
 
 	stamp = msn_oim_parse_timestamp(date);
 
 	serv_got_im(rdata->oim->session->account->gc, passport, decode_msg, 0,
-		stamp);
+	            stamp);
 
 	/*Now get the oim message ID from the oim_list.
 	 * and append to read list to prepare for deleting the Offline Message when sign out
 	 */
 	msn_oim_post_delete_msg(rdata);
 
+	g_strfreev(tokens);
 	g_free(passport);
 	g_free(decode_msg);
 }
