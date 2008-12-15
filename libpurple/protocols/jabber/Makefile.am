@@ -17,6 +17,8 @@ JABBERSOURCES = auth.c \
 			  disco.h \
 			  google.c \
 			  google.h \
+			  ibb.c \
+			  ibb.h \
 			  iq.c \
 			  iq.h \
 			  jabber.c \
