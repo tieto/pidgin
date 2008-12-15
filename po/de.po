@@ -7,13 +7,14 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
+# Jochen Kemnade <jochenkemnade@web.de>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-14 22:58+0100\n"
-"PO-Revision-Date: 2008-12-14 22:58+0100\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2008-12-15 10:46+0100\n"
+"PO-Revision-Date: 2008-12-15 10:46+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2906,10 +2907,10 @@ msgid ""
 msgstr "Hostname oder Portnummer ihres Proxys sind falsch angegeben."
 
 msgid "Token Error"
-msgstr "Kürzel-Fehler"
+msgstr "Token-Fehler"
 
 msgid "Unable to fetch the token.\n"
-msgstr "Kann das Kürzel nicht abholen.\n"
+msgstr "Kann das Token nicht abholen.\n"
 
 msgid "Save Buddylist..."
 msgstr "Buddy-Liste speichern..."
@@ -2961,10 +2962,10 @@ msgid "Password (retype)"
 msgstr "Passwort (nochmal)"
 
 msgid "Enter current token"
-msgstr "Geben Sie das aktuelle Kürzel ein"
+msgstr "Geben Sie das aktuelle Token ein"
 
 msgid "Current token"
-msgstr "Aktuelles Kürzel"
+msgstr "Aktuelles Token"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Registrierung eines neuen Gadu-Gadu-Kontos"
@@ -5007,9 +5008,8 @@ msgstr "Album"
 msgid "Game Title"
 msgstr "Spieltitel"
 
-#, fuzzy
 msgid "Office Title"
-msgstr "Titel anpassen"
+msgstr "Dienststellenbezeichnung"
 
 msgid "Set Friendly Name..."
 msgstr "Setze Spitzname..."
@@ -7229,9 +7229,8 @@ msgstr "Horoskop"
 msgid "Zodiac"
 msgstr "Sternzeichen"
 
-#, fuzzy
 msgid "Blood"
-msgstr "Blockiert"
+msgstr "Blutgruppe"
 
 msgid "True"
 msgstr "Wahr"
@@ -7453,9 +7452,9 @@ msgstr ""
 msgid "<b>Removed buddy %u.</b>"
 msgstr "<b>Buddy %u entfernt</b>"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>New buddy %u joined.</b>"
-msgstr "Buddy entfernen"
+msgstr "<b>Neuer Buddy %u ist beigetreten.</b>"
 
 #, c-format
 msgid "Unknown-%d"
@@ -7494,17 +7493,17 @@ msgstr "QQ: Ungültiger Name"
 msgid "Select icon..."
 msgstr "Icon wählen..."
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Anmeldezeit</b>: %s<br>\n"
+msgstr "<b>Anmeldezeit</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Aktuell online:</b> %d<br>\n"
+msgstr "<b>Insgesamt online</b>: %d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Letzte Aktualisierung</b>: %s<br>\n"
+msgstr "<b>Letzte Aktualisierung</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
 #, c-format
 msgid "<b>Server</b>: %s<br>\n"
@@ -7557,21 +7556,19 @@ msgid "<p><b>Original Author</b>:<br>\n"
 msgstr "<p><b>Original-Autor</b>:<br>\n"
 
 msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
+msgstr "<p><b>Code-Mitwirkende</b>:<br>\n"
 
-#, fuzzy
 msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>Letzte Aktualisierung</b>: %s<br>\n"
+msgstr "<p><b>Wunderbare Patch-Schreiber</b>:<br>\n"
 
-#, fuzzy
 msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>Gesendet</b>: %lu<br>\n"
+msgstr "<p><b>Bestätigung</b>:<br>\n"
 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr ""
+msgstr "<p><i>Und all die Jungs im Hinterzimmer...</i><br>\n"
 
 msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
+msgstr "<i>Treten Sie uns bei, wenn Sie mögen!</i> :)"
 
 #, c-format
 msgid "About OpenQ %s"
@@ -7640,7 +7637,7 @@ msgstr "Kann die Antwort des Servers nicht entschlüsseln"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
-msgstr ""
+msgstr "Fehler beim Anfordern des Tokens, 0x%02X"
 
 #, c-format
 msgid "Invalid token len, %d"
@@ -7648,7 +7645,7 @@ msgstr "Ungültige Länge des Tokens, %d"
 
 #. extend redirect used in QQ2006
 msgid "Redirect_EX is not currently supported"
-msgstr ""
+msgstr "Redirect_EX wird im Moment nicht unterstützt"
 
 #. need activation
 #. need activation
@@ -7712,13 +7709,11 @@ msgstr "Schreibfehler"
 msgid "Connection lost"
 msgstr "Verbindung verloren"
 
-#, fuzzy
 msgid "Getting server"
-msgstr "Benutzer-Info setzen..."
+msgstr "Hole server"
 
-#, fuzzy
 msgid "Requesting token"
-msgstr "Anfragekürzel"
+msgstr "Fordere Token an"
 
 msgid "Couldn't resolve host"
 msgstr "Kann den Hostnamen nicht auflösen"
@@ -9269,6 +9264,9 @@ msgstr "Konnte den Hostnamen nicht auflösen"
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-Benutzernamen dürfen keine Leerzeichen oder @-Symbole enthalten"
 
+msgid "SIP connect server not specified"
+msgstr "SIP-Verbindungsserver nicht angegeben"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -10374,7 +10372,7 @@ msgstr "Aktiv"
 msgid "Protocol"
 msgstr "Protokoll"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
@@ -10389,9 +10387,9 @@ msgstr ""
 "<span size='larger' weight='bold'>Willkommen bei %s!</span>\n"
 "\n"
 "Sie haben keine IM-Konten konfiguriert. Um sich mit %s zu verbinden, drücken "
-"Sie unten auf den <b>Hinzufügen</b>-Button und konfigurieren Sie Ihr erstes "
-"Konto. Wenn Sie mehrere IM-Konten mit %s benutzen wollen, drücken Sie erneut "
-"auf <b>Hinzufügen</b> um sie einzurichten.\n"
+"Sie unten auf den <b>Hinzufügen...</b>-Button und konfigurieren Sie Ihr "
+"erstes Konto. Wenn Sie mehrere IM-Konten mit %s benutzen wollen, drücken Sie "
+"erneut auf <b>Hinzufügen...</b> um sie einzurichten.\n"
 "\n"
 "Sie können später über <b>Konten->Konten verwalten</b> im Buddy-"
 "Listenfenster zu diesem Dialog zurückkehren und Konten hinzufügen, "
