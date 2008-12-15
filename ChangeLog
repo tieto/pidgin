@@ -2,11 +2,6 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.3 (??/??/????):
 	libpurple:
-	* Fix an error with MSN offline messages by shipping the *new*
-	  "Microsoft Secure Server Authority" and the
-	  "Microsoft Internet Authority" certificates.  People that use
-	  --with-system-ssl-certs and GnuTLS need to include these in the
-	  system certs directory.
 	* Corrected maximum message lengths for Yahoo!
 	* The Buddy State Notification plugin no longer prints duplicate
 	  notifications when the same buddy is in multiple groups (Florian Quèze)
@@ -20,22 +15,28 @@ version 2.5.3 (??/??/????):
 	  connected (Paul Aurich)
 	* Fix a crash in purple_accounts_delete that happens when this function is
 	  called before the buddy list is initialized (Florian Quèze)
-	* On MSN, the Games and Office media can now be set and displayed (in
-	  addition to the previous Music media). The Media status text now shows
-	  the album, if possible.
 	* Fix use of av_len in perl bindings to fix some off-by-one bugs (Paul
 	  Aurich)
 	* On ICQ, advertise the ICQ 6 typing capability.  This should fix the
 	  reports of typing notifications not working with third-party clients
 	  (Jaromír Karmazín)
-	* On MSN, messages sent from a mobile device while you were offline are
-	  now correctly received.
 
 	Gadu-Gadu:
 	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
 	* Gadu-Gadu now checks that UID's are valid (Adam Strzelecki)
 	* Gadu-Gadu now does proper charset translations where needed (Adam
 	  Strzelecki)
+
+	MSN:
+	* Fix an error with offline messages by shipping the *new* "Microsoft
+	  Secure Server Authority" and the "Microsoft Internet Authority"
+	  certificates. These are now always installed even when using
+	  --with-system-ssl-certs because most system certs are not up to date.
+	* The Games and Office media can now be set and displayed (in addition
+	  to the previous Music media). The Media status text now shows the
+	  album, if possible.
+	* Messages sent from a mobile device while you were offline are now
+	  correctly received.
 
 	XMPP:
 	* Fix the namespace URL we look for in PEP reply stanzas to match the URL
