@@ -1133,6 +1133,8 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 /**
  * Get contact list, calling msim_got_contact_list() with
  * what_to_do_after as user_data gpointer.
+ *
+ * @param what_to_do_after should be one of the MSIM_CONTACT_LIST_* #defines.
  */
 static gboolean
 msim_get_contact_list(MsimSession *session, int what_to_do_after)
