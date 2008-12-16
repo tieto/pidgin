@@ -85,6 +85,7 @@ static GtkHBoxClass *parent_class = NULL;
 
 enum {
 	MESSAGE,
+	ERROR,
 	LAST_SIGNAL
 };
 static guint pidgin_media_signals[LAST_SIGNAL] = {0};
@@ -151,6 +152,10 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			G_PARAM_READWRITE));
 
 	pidgin_media_signals[MESSAGE] = g_signal_new("message", G_TYPE_FROM_CLASS(klass),
+					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					g_cclosure_marshal_VOID__STRING,
+					G_TYPE_NONE, 1, G_TYPE_STRING);
+	pidgin_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
 					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					g_cclosure_marshal_VOID__STRING,
 					G_TYPE_NONE, 1, G_TYPE_STRING);
@@ -303,6 +308,12 @@ static void
 realize_cb(GtkWidget *widget, GstElement *element)
 {
 	gst_element_set_state(element, GST_STATE_PLAYING);
+}
+
+static void
+pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmedia)
+{
+	g_signal_emit(gtkmedia, pidgin_media_signals[ERROR], 0, error);
 }
 
 static void
@@ -517,6 +528,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			g_signal_connect_swapped(G_OBJECT(media->priv->hangup), "clicked",
 				 G_CALLBACK(purple_media_hangup), media->priv->media);
 
+			g_signal_connect(G_OBJECT(media->priv->media), "error",
+				G_CALLBACK(pidgin_media_error_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "accepted",
 				G_CALLBACK(pidgin_media_accept_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media) ,"ready",

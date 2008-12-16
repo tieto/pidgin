@@ -7753,6 +7753,12 @@ pidgin_gtkmedia_message_cb(PidginMedia *media, const char *msg, PurpleConversati
 }
 
 static void
+pidgin_gtkmedia_error_cb(PidginMedia *media, const char *msg, PurpleConversation *conv)
+{
+	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_ERROR, time(NULL));
+}
+
+static void
 menu_initiate_audio_call_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = (PidginWindow *)data;
@@ -7833,6 +7839,7 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
 	gtk_widget_show(gtkmedia);
 	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
+	g_signal_connect(G_OBJECT(gtkmedia), "error", G_CALLBACK(pidgin_gtkmedia_error_cb), conv);
 
 	gtkconv->gtkmedia = gtkmedia;
 	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(

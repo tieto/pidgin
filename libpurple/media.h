@@ -232,6 +232,15 @@ PurpleConnection *purple_media_get_connection(PurpleMedia *media);
 char *purple_media_get_screenname(PurpleMedia *media);
 
 /**
+ * Signals an error in the media session.
+ *
+ * @param media The media object to set the state on.
+ * @param error The format of the error message to send in the signal.
+ * @param ... The arguments to plug into the format.
+ */
+void purple_media_error(PurpleMedia *media, const gchar *error, ...);
+
+/**
  * Set the media session to the ready state.
  *
  * @param media The media object to set the state on.

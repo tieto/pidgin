@@ -107,6 +107,7 @@ static GObjectClass *parent_class = NULL;
 
 
 enum {
+	ERROR,
 	READY,
 	WAIT,
 	ACCEPTED,
@@ -183,6 +184,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"The PurpleConnection associated with this session",
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
+	purple_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__STRING,
+					 G_TYPE_NONE, 1, G_TYPE_STRING);
 	purple_media_signals[READY] = g_signal_new("ready", G_TYPE_FROM_CLASS(klass),
 				 	 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
@@ -765,6 +770,22 @@ purple_media_get_screenname(PurpleMedia *media)
 }
 
 void
+purple_media_error(PurpleMedia *media, const gchar *error, ...)
+{
+	va_list args;
+	gchar *message;
+
+	va_start(args, error);
+	message = g_strdup_vprintf(error, args);
+	va_end(args);
+
+	purple_debug_error("media", "%s\n", message);
+	g_signal_emit(media, purple_media_signals[ERROR], 0, message);
+
+	g_free(message);
+}
+
+void
 purple_media_ready(PurpleMedia *media)
 {
 	g_signal_emit(media, purple_media_signals[READY], 0);
@@ -1140,11 +1161,8 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		session->session = fs_conference_new_session(media->priv->conference, type, &err);
 
 		if (err != NULL) {
-			purple_debug_error("media", "Error creating session: %s\n", err->message);
+			purple_media_error(media, "Error creating session: %s\n", err->message);
 			g_error_free(err);
-			purple_conv_present_error(who,
-						  purple_connection_get_account(purple_media_get_connection(media)),
-						  _("Error creating session."));
 			g_free(session);
 			return FALSE;
 		}
