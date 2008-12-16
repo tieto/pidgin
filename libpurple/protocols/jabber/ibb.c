@@ -395,12 +395,11 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 				"Got IBB iq from wrong JID, ignoring\n");
 		} else if (data) {
 			const gchar *seq_attr = xmlnode_get_attrib(data, "seq");
-			guint16 seq = 0;
+			guint16 seq = (seq_attr ? atoi(seq_attr) : 0);
 
 			/* reject the data, and set the session in error if we get an
 			  out-of-order packet */
-			if (seq_attr && (seq = atoi(seq_attr)) &&
-					seq == jabber_ibb_session_get_recv_seq(sess)) {
+			if (seq_attr && seq == jabber_ibb_session_get_recv_seq(sess)) {
 				/* sequence # is the expected... */
 				JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
 				
