@@ -60,7 +60,6 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
 		const gchar *uid_field_name, guint uid)
 {
 	MsimMessageElement *elem;
-	msim_msg_dump("msim_do_postprocessing msg: %s\n", msg);
 
 	/* First, check - if the field already exists, replace <uid> within it */
 	if ((elem = msim_msg_get(msg, uid_field_name)) != NULL) {
@@ -95,8 +94,6 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
 		msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_INTEGER, GUINT_TO_POINTER(uid));
 	}
 
-	msim_msg_dump("msim_postprocess_outgoing_cb: postprocessed msg=%s\n", msg);
-
 	return msg;
 }
 
@@ -121,8 +118,6 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 	MsimMessage *msg, *body;
 
 	msg = (MsimMessage *)data;
-
-	msim_msg_dump("msim_postprocess_outgoing_cb() got msg=%s\n", msg);
 
 	/* Obtain userid from userinfo message. */
 	body = msim_msg_get_dictionary(userinfo, "body");
@@ -194,7 +189,6 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	/* Store information for msim_postprocess_outgoing_cb(). */
-	msim_msg_dump("msim_postprocess_outgoing: msg before=%s\n", msg);
 	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
 	msg = msim_msg_append(msg, "_uid_field_name", MSIM_TYPE_STRING, g_strdup(uid_field_name));
 	msg = msim_msg_append(msg, "_uid_before", MSIM_TYPE_STRING, g_strdup(uid_before));
@@ -215,7 +209,6 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 			/* Don't have uid offhand - need to ask for it, and wait until hear back before sending. */
 			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
 					username ? username : "(NULL)");
-			msim_msg_dump("msim_postprocess_outgoing - scheduling lookup, msg=%s\n", msg);
 			/* TODO: where is cloned message freed? Should be in _cb. */
 			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, msim_msg_clone(msg));
 			return TRUE;       /* not sure of status yet - haven't sent! */
@@ -227,8 +220,6 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 			username ? username : "(NULL)", uid);
 
 	msg = msim_do_postprocessing(msg, uid_before, uid_field_name, uid);
-
-	msim_msg_dump("msim_postprocess_outgoing: msg after (uid immediate)=%s\n", msg);
 
 	rc = msim_msg_send(session, msg);
 
@@ -867,8 +858,6 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
 	g_return_if_fail(reply != NULL);
 
-	msim_msg_dump("msim_check_inbox_cb: reply=%s\n", reply);
-
 	body = msim_msg_get_dictionary(reply, "body");
 
 	if (body == NULL)
@@ -1080,8 +1069,6 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 	MsimMessage *body, *body_node;
 	gchar *msg;
 	guint buddy_count;
-
-	msim_msg_dump("msim_got_contact_list: reply=%s", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
 	if (!body) {
@@ -1310,8 +1297,6 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
-
-	msim_msg_dump("msim_status msg=%s\n", msg);
 
 	/* Helpfully looked up by msim_incoming_resolve() for us. */
 	username = msim_msg_get_string(msg, "_username");
@@ -1750,7 +1735,6 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
 
 	if (cb) {
 		purple_debug_info("msim", "msim_process_reply: calling callback now\n");
-		msim_msg_dump("for msg=%s\n", msg);
 		/* Clone message, so that the callback 'cb' can use it (needs to free it also). */
 		cb(session, msim_msg_clone(msg), data);
 		g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
@@ -1849,10 +1833,6 @@ msim_process(MsimSession *session, MsimMessage *msg)
 {
 	g_return_val_if_fail(session != NULL, FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
-
-#ifdef MSIM_DEBUG_MSG
-	msim_msg_dump("ready to process: %s\n", msg);
-#endif
 
 	if (msim_msg_get_integer(msg, "lc") == 1) {
 		return msim_login_challenge(session, msg);
@@ -2782,6 +2762,10 @@ msim_offline_message(const PurpleBuddy *buddy)
  *
  * @return Bytes successfully sent, or -1 on error.
  */
+/*
+ * TODO: This needs to do non-blocking writes and use a watcher to check
+  *      when the fd is available to be written to.
+ */
 static int
 msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
 {
@@ -2956,7 +2940,6 @@ msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_d
 {
 	MsimMessage *body;
 	gchar *completed;
-	msim_msg_dump("msim_import_friends_cb=%s", reply);
 
 	/* Check if the friends were imported successfully. */
 	body = msim_msg_get_dictionary(reply, "body");
@@ -3444,16 +3427,6 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 
 	return FALSE;
 }
-
-#ifdef MSIM_DEBUG_MSG
-static void
-print_hash_item(gpointer key, gpointer value, gpointer user_data)
-{
-	purple_debug_info("msim", "%s=%s\n",
-			key ? (gchar *)key : "(NULL)",
-			value ? (gchar *)value : "(NULL)");
-}
-#endif
 
 /**
  * Initialize plugin.

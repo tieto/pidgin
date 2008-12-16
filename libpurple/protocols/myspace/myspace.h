@@ -63,7 +63,6 @@
 /*#define MSIM_SEND_CLIENT_VERSION              */
 
 /* Debugging options */
-/*#define MSIM_DEBUG_MSG                */
 /* Low-level and rarely needed */
 /*#define MSIM_DEBUG_PARSE             */
 /*#define MSIM_DEBUG_LOGIN_CHALLENGE*/

@@ -715,10 +715,6 @@ msim_msg_free(MsimMessage *msg)
 		return;
 	}
 
-#ifdef MSIM_MSG_DEBUG_FREE
-	msim_msg_dump("msim_msg_free: freeing %s", msg);
-#endif
-
 	g_list_foreach(msg, msim_msg_free_element, NULL);
 	g_list_free(msg);
 }
@@ -871,8 +867,6 @@ msim_msg_send(MsimSession *session, MsimMessage *msg)
 	g_return_val_if_fail(raw != NULL, FALSE);
 	success = msim_send_raw(session, raw);
 	g_free(raw);
-
-	msim_msg_dump("msim_msg_send()ing %s\n", msg);
 
 	return success;
 }

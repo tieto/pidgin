@@ -532,8 +532,6 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 	purple_debug_info("msim", "msim_lookup_userid: "
 			"asynchronously looking up <%s>\n", user);
 
-	msim_msg_dump("msim_lookup_user: data=%s\n", (MsimMessage *)data);
-
 	/* Setup callback. Response will be associated with request using 'rid'. */
 	rid = msim_new_reply_callback(session, cb, data);
 
@@ -587,7 +585,6 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
-	msim_msg_dump("username_is_set message is: %s\n", userinfo);
 	cmd = msim_msg_get_integer(userinfo, "cmd");
 	dsn = msim_msg_get_integer(userinfo, "dsn");
 	uid = msim_msg_get_integer(userinfo, "uid");
@@ -674,8 +671,6 @@ msim_set_username(MsimSession *session, const gchar *username,
 
 	purple_debug_info("msim", "msim_set_username: "
 			"Setting username %s\n", username);
-
-	msim_msg_dump("msim_set_username: data=%s\n", (MsimMessage *)data);
 
 	/* Setup callback. Response will be associated with request using 'rid'. */
 	rid = msim_new_reply_callback(session, cb, data);
