@@ -42,7 +42,7 @@ typedef struct _MsimUser
 	gboolean temporary_user;
 } MsimUser;
 
-/* Callback function pointer type for when a user's information is received, 
+/* Callback function pointer type for when a user's information is received,
  * initiated from a user lookup. */
 typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo, gpointer data);
 
@@ -51,8 +51,6 @@ MsimUser *msim_find_user(MsimSession *session, const gchar *username);
 void msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full);
 gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user);
 gboolean msim_is_userid(const gchar *user);
-gboolean msim_is_email(const gchar *user);
-gboolean msim_is_valid_username(const gchar *user);
 void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data);
 void msim_set_username_cb(PurpleConnection *gc);
 void msim_do_not_set_username_cb(PurpleConnection *gc);
