@@ -7814,17 +7814,15 @@ pidgin_conv_gtkmedia_destroyed(GtkWidget *widget, PidginConversation *gtkconv)
 }
 
 static gboolean
-pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpointer nul)
+pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media,
+		PurpleConnection *gc, gchar *screenname, gpointer nul)
 {
 	GtkWidget *gtkmedia;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
-	gchar *name = purple_media_get_screenname(media);
 
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-			purple_connection_get_account(
-			purple_media_get_connection(media)), name);
-	g_free(name);
+			purple_connection_get_account(gc), screenname);
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 

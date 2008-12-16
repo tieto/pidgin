@@ -371,14 +371,14 @@ gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *c
 }
 
 static gboolean
-finch_new_media(PurpleMediaManager *manager, PurpleMedia *media, gpointer null)
+finch_new_media(PurpleMediaManager *manager, PurpleMedia *media,
+		PurpleConnection *gc, gchar *name, gpointer null)
 {
 	GntWidget *gntmedia;
 	PurpleConversation *conv;
 
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-			purple_connection_get_account(purple_media_get_connection(media)),
-			purple_media_get_screenname(media));
+			purple_connection_get_account(gc), name);
 
 	gntmedia = finch_media_new(media);
 	g_signal_connect(G_OBJECT(gntmedia), "message", G_CALLBACK(gntmedia_message_cb), conv);

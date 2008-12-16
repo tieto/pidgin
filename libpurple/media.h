@@ -214,15 +214,6 @@ GstElement *purple_media_get_sink(PurpleMedia *media, const gchar *sess_id, cons
 GstElement *purple_media_get_pipeline(PurpleMedia *media);
 
 /**
- * Gets the connection the media session is associated with.
- *
- * @param media The media object to retrieve the connection from.
- *
- * @return The retreived connection.
- */
-PurpleConnection *purple_media_get_connection(PurpleMedia *media);
-
-/**
  * Gets the screenname of the remote user.
  *
  * @param media The media object to retrieve the remote user from.

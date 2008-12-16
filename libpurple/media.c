@@ -75,7 +75,6 @@ struct _PurpleMediaPrivate
 	FsConference *conference;
 
 	char *name;
-	PurpleConnection *connection;
 
 	GHashTable *sessions;	/* PurpleMediaSession table */
 	GHashTable *participants; /* FsParticipant table */
@@ -128,7 +127,6 @@ enum {
 	PROP_0,
 	PROP_FS_CONFERENCE,
 	PROP_NAME,
-	PROP_CONNECTION,
 };
 
 GType
@@ -176,12 +174,6 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Screenname",
 			"The screenname of the remote user",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-
-	g_object_class_install_property(gobject_class, PROP_CONNECTION,
-			g_param_spec_pointer("connection",
-			"Connection",
-			"The PurpleConnection associated with this session",
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	purple_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
@@ -335,9 +327,6 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			g_free(media->priv->name);
 			media->priv->name = g_value_dup_string(value);
 			break;
-		case PROP_CONNECTION:
-			media->priv->connection = g_value_get_pointer(value);
-			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -358,9 +347,6 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			break;
 		case PROP_NAME:
 			g_value_set_string(value, media->priv->name);
-			break;
-		case PROP_CONNECTION:
-			g_value_set_pointer(value, media->priv->connection);
 			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
@@ -751,14 +737,6 @@ purple_media_get_pipeline(PurpleMedia *media)
 	}
 
 	return media->priv->pipeline;
-}
-
-PurpleConnection *
-purple_media_get_connection(PurpleMedia *media)
-{
-	PurpleConnection *gc;
-	g_object_get(G_OBJECT(media), "connection", &gc, NULL);
-	return gc;
 }
 
 char *

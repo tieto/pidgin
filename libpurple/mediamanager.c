@@ -102,8 +102,9 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		G_TYPE_FROM_CLASS (klass),
 		G_SIGNAL_RUN_LAST,
 		0, NULL, NULL,
-		purple_smarshal_BOOLEAN__OBJECT,
-		G_TYPE_BOOLEAN, 1, PURPLE_TYPE_MEDIA);
+		purple_smarshal_BOOLEAN__OBJECT_POINTER_STRING,
+		G_TYPE_BOOLEAN, 3, PURPLE_TYPE_MEDIA,
+		G_TYPE_POINTER, G_TYPE_STRING);
 	g_type_class_add_private(klass, sizeof(PurpleMediaManagerPrivate));
 }
 
@@ -156,7 +157,6 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "screenname", remote_user,
-			     "connection", gc, 
 			     "farsight-conference", conference,
 			     NULL));
 
@@ -172,7 +172,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	}
 
 	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0,
-			media, &signal_ret);
+			media, gc, remote_user, &signal_ret);
 
 	if (signal_ret == FALSE) {
 		g_object_unref(media);
