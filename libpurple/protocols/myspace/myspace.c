@@ -1163,10 +1163,11 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 	msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
 			"dsn", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_DSN,
-			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"lid", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_LID,
 			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
+			"UserID", MSIM_TYPE_INTEGER, session->userid,
 			"body", MSIM_TYPE_DICTIONARY, body,
 			NULL);
 
@@ -1175,8 +1176,8 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 	msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
 			"dsn", MSIM_TYPE_INTEGER, MG_OWN_IM_INFO_DSN,
-			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"lid", MSIM_TYPE_INTEGER, MG_OWN_IM_INFO_LID,
 			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
 			"body", MSIM_TYPE_STRING, g_strdup(""),
