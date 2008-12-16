@@ -1172,7 +1172,6 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 			NULL);
 
 	/* Request MySpace info about ourself. */
-	purple_debug_error("MARK", "Fetching info about ourself\n");
 	msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
