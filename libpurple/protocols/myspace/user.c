@@ -401,6 +401,39 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 		return FALSE;
 	}
 
+	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
+		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
+		/*
+		 * Some of this info will be available on the buddy list if the
+		 * has themselves as their own buddy.
+		 *
+		 * Much of the info is already available in MsimSession,
+		 * stored in msim_we_are_logged_on().
+		 */
+		gchar *tmpstr;
+
+		tmpstr = msim_msg_get_string(body, "ShowOnlyToList");
+		if (tmpstr != NULL) {
+			session->show_only_to_list = g_str_equal(tmpstr, "True");
+			g_free(tmpstr);
+		}
+
+		session->privacy_mode = msim_msg_get_integer(body, "PrivacyMode");
+		session->offline_message_mode = msim_msg_get_integer(body, "OfflineMessageMode");
+
+		msim_send(session,
+				"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
+				"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+				"idlist", MSIM_TYPE_STRING,
+						g_strdup_printf("w%d|c%d",
+								session->show_only_to_list ? 1 : 0,
+								session->privacy_mode),
+				NULL);
+	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
+			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
+		/* TODO: same as above, but for MySpace info. */
+	}
+
 	username = msim_msg_get_string(body, "UserName");
 
 	if (!username) {
@@ -435,19 +468,6 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 
 		value_str = msim_msg_get_string_from_element(elem);
 		msim_store_user_info_each(key_str, value_str, user);
-	}
-
-	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
-		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
-		/* TODO: do something with our own IM info, if we need it for some
-		 * specific purpose. Otherwise it is available on the buddy list,
-		 * if the user has themselves as their own buddy.
-		 *
-		 * However, much of the info is already available in MsimSession,
-		 * stored in msim_we_are_logged_on(). */
-	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
-			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
-		/* TODO: same as above, but for MySpace info. */
 	}
 
 	msim_msg_free(body);
