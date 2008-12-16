@@ -59,7 +59,7 @@ struct _PidginMedia
 
 GType pidgin_media_get_type(void);
 
-GtkWidget *pidgin_media_new(PurpleMedia *media);
+GtkWidget *pidgin_media_new(PurpleMedia *media, const gchar *screenname);
 GtkWidget *pidgin_media_get_display_widget(GtkWidget *gtkmedia);
 
 G_END_DECLS

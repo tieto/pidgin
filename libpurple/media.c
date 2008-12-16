@@ -74,8 +74,6 @@ struct _PurpleMediaPrivate
 {
 	FsConference *conference;
 
-	char *name;
-
 	GHashTable *sessions;	/* PurpleMediaSession table */
 	GHashTable *participants; /* FsParticipant table */
 
@@ -126,7 +124,6 @@ static guint purple_media_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_FS_CONFERENCE,
-	PROP_NAME,
 };
 
 GType
@@ -167,13 +164,6 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Farsight conference",
 			"The FsConference associated with this media.",
 			FS_TYPE_CONFERENCE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-
-	g_object_class_install_property(gobject_class, PROP_NAME,
-			g_param_spec_string("screenname",
-			"Screenname",
-			"The screenname of the remote user",
-			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	purple_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
@@ -275,8 +265,6 @@ purple_media_finalize (GObject *media)
 	purple_media_manager_remove_media(purple_media_manager_get(),
 			PURPLE_MEDIA(media));
 
-	g_free(priv->name);
-
 	for (; priv->streams; priv->streams = g_list_delete_link(priv->streams, priv->streams))
 		purple_media_stream_free(priv->streams->data);
 
@@ -323,10 +311,6 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			media->priv->conference = g_value_get_object(value);
 			g_object_ref(media->priv->conference);
 			break;
-		case PROP_NAME:
-			g_free(media->priv->name);
-			media->priv->name = g_value_dup_string(value);
-			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -344,9 +328,6 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 	switch (prop_id) {
 		case PROP_FS_CONFERENCE:
 			g_value_set_object(value, media->priv->conference);
-			break;
-		case PROP_NAME:
-			g_value_set_string(value, media->priv->name);
 			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
@@ -725,7 +706,7 @@ purple_media_get_pipeline(PurpleMedia *media)
 {
 	if (!media->priv->pipeline) {
 		GstBus *bus;
-		media->priv->pipeline = gst_pipeline_new(media->priv->name);
+		media->priv->pipeline = gst_pipeline_new(NULL);
 		bus = gst_pipeline_get_bus(GST_PIPELINE(media->priv->pipeline));
 		gst_bus_add_signal_watch(GST_BUS(bus));
 		g_signal_connect(G_OBJECT(bus), "message",
@@ -737,14 +718,6 @@ purple_media_get_pipeline(PurpleMedia *media)
 	}
 
 	return media->priv->pipeline;
-}
-
-char *
-purple_media_get_screenname(PurpleMedia *media)
-{
-	char *ret;
-	g_object_get(G_OBJECT(media), "screenname", &ret, NULL);
-	return ret;
 }
 
 void

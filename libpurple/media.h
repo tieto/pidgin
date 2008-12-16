@@ -214,15 +214,6 @@ GstElement *purple_media_get_sink(PurpleMedia *media, const gchar *sess_id, cons
 GstElement *purple_media_get_pipeline(PurpleMedia *media);
 
 /**
- * Gets the screenname of the remote user.
- *
- * @param media The media object to retrieve the remote user from.
- *
- * @return The retrieved screenname.
- */
-char *purple_media_get_screenname(PurpleMedia *media);
-
-/**
  * Signals an error in the media session.
  *
  * @param media The media object to set the state on.

@@ -7831,7 +7831,7 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media,
 		return FALSE;
 	}
 
-	gtkmedia = pidgin_media_new(media);
+	gtkmedia = pidgin_media_new(media, screenname);
 	g_object_unref(media);
 
 	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);

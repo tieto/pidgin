@@ -51,6 +51,7 @@ typedef enum
 struct _PidginMediaPrivate
 {
 	PurpleMedia *media;
+	gchar *screenname;
 	GstElement *send_level;
 	GstElement *recv_level;
 
@@ -93,6 +94,7 @@ static guint pidgin_media_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_MEDIA,
+	PROP_SCREENNAME,
 	PROP_SEND_LEVEL,
 	PROP_RECV_LEVEL
 };
@@ -137,6 +139,12 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			"PurpleMedia",
 			"The PurpleMedia associated with this media.",
 			PURPLE_TYPE_MEDIA,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+	g_object_class_install_property(gobject_class, PROP_SCREENNAME,
+			g_param_spec_string("screenname",
+			"Screenname",
+			"The screenname of the user this session is with.",
+			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, PROP_SEND_LEVEL,
 			g_param_spec_object("send-level",
@@ -473,23 +481,20 @@ pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	PurpleMediaSessionType type = purple_media_get_overall_type(media);
 	gchar *message;
-	gchar *name = purple_media_get_screenname(media);
 
 	if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {
 		message = g_strdup_printf(_("%s wishes to start an audio/video session with you."),
-					  name);
+					  gtkmedia->priv->screenname);
 	} else if (type & PURPLE_MEDIA_AUDIO) {
 		message = g_strdup_printf(_("%s wishes to start an audio session with you."),
-					  name);
+					  gtkmedia->priv->screenname);
 	} else if (type & PURPLE_MEDIA_VIDEO) {
 		message = g_strdup_printf(_("%s wishes to start a video session with you."),
-					  name);
+					  gtkmedia->priv->screenname);
 	} else {
-		g_free(name);
 		return;
 	}
 
-	g_free(name);
 	pidgin_media_emit_message(gtkmedia, message);
 	g_free(message);
 }
@@ -547,6 +552,11 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			g_signal_connect(G_OBJECT(media->priv->media), "got-accept",
 				G_CALLBACK(pidgin_media_accept_cb), media);
 			break;
+		case PROP_SCREENNAME:
+			if (media->priv->screenname)
+				g_free(media->priv->screenname);
+			media->priv->screenname = g_value_dup_string(value);
+			break;
 		case PROP_SEND_LEVEL:
 			if (media->priv->send_level)
 				gst_object_unref(media->priv->send_level);
@@ -577,6 +587,9 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 		case PROP_MEDIA:
 			g_value_set_object(value, media->priv->media);
 			break;
+		case PROP_SCREENNAME:
+			g_value_set_string(value, media->priv->screenname);
+			break;
 		case PROP_SEND_LEVEL:
 			g_value_set_object(value, media->priv->send_level);
 			break;
@@ -590,10 +603,11 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 }
 
 GtkWidget *
-pidgin_media_new(PurpleMedia *media)
+pidgin_media_new(PurpleMedia *media, const gchar *screenname)
 {
 	PidginMedia *gtkmedia = g_object_new(pidgin_media_get_type(),
-					     "media", media, NULL);
+					     "media", media,
+					     "screenname", screenname, NULL);
 	return GTK_WIDGET(gtkmedia);
 }
 

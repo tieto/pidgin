@@ -156,7 +156,6 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	}
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
-			     "screenname", remote_user,
 			     "farsight-conference", conference,
 			     NULL));
 
