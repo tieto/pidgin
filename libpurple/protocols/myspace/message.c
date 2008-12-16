@@ -1005,7 +1005,7 @@ msim_msg_dump(const gchar *fmt_string, MsimMessage *msg)
  * @return MsimMessage *. Caller should msim_msg_free() when done.
  */
 MsimMessage *
-msim_parse(gchar *raw)
+msim_parse(const gchar *raw)
 {
 	MsimMessage *msg;
 	gchar *token;
@@ -1026,7 +1026,6 @@ msim_parse(gchar *raw)
 				"missing initial backslash: <%s>\n", raw);
 		/* XXX: Should we try to recover, and read to first backslash? */
 
-		g_free(raw);
 		return NULL;
 	}
 
@@ -1056,9 +1055,6 @@ msim_parse(gchar *raw)
 		}
 	}
 	g_strfreev(tokens);
-
-	/* Can free now since all data was copied to hash key/values */
-	g_free(raw);
 
 	return msg;
 }
@@ -1214,8 +1210,8 @@ msim_msg_get_list(MsimMessage *msg, const gchar *name)
  *
  * @return A new MsimMessage *. Must msim_msg_free() when done.
  */
-MsimMessage *
-msim_msg_dictionary_parse(gchar *raw)
+static MsimMessage *
+msim_msg_dictionary_parse(const gchar *raw)
 {
 	MsimMessage *dict;
 	gchar *item;
@@ -1275,7 +1271,7 @@ msim_msg_get_dictionary_from_element(MsimMessageElement *elem)
 			return msim_msg_clone((MsimMessage *)elem->data);
 
 		case MSIM_TYPE_RAW:
-			return msim_msg_dictionary_parse((gchar *)elem->data);
+			return msim_msg_dictionary_parse(elem->data);
 
 		default:
 			purple_debug_info("msim_msg_get_dictionary", "type %d unknown, name %s\n",

@@ -2598,7 +2598,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		purple_debug_info("msim", "in loop: buf=<%s>\n", session->rxbuf);
 #endif
 		*end = 0;
-		msg = msim_parse(g_strdup(session->rxbuf));
+		msg = msim_parse(session->rxbuf);
 		if (!msg) {
 			purple_debug_info("msim", "msim_input_cb: couldn't parse rxbuf\n");
 			purple_connection_error_reason (gc,
