@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-15 10:46+0100\n"
-"PO-Revision-Date: 2008-12-15 10:46+0100\n"
+"POT-Creation-Date: 2008-12-16 15:52+0100\n"
+"PO-Revision-Date: 2008-12-16 15:52+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -5494,18 +5494,12 @@ msgstr "URL des Profils"
 msgid "MSN Protocol Plugin"
 msgstr "MSN-Protokoll-Plugin"
 
-msgid "Missing Cipher"
-msgstr "Verschlüsselung fehlt"
+#, c-format
+msgid "No such user: %s"
+msgstr "Kein solcher Benutzer: %s"
 
-msgid "The RC4 cipher could not be found"
-msgstr "Die RC4-Verschlüsselung konnte nicht gefunden werden"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Benutzen sie libpurple mit RC4-Unterstützung (>= 2.0.1). MySpaceIM-Plugin "
-"wird nicht geladen."
+msgid "User lookup"
+msgstr "Benutzersuche"
 
 msgid "Reading challenge"
 msgstr "Lese Challenge"
@@ -5515,6 +5509,16 @@ msgstr "Unerwartete Challenge-Länge vom Server"
 
 msgid "Logging in"
 msgstr "Logge ein"
+
+msgid "MySpaceIM - No Username Set"
+msgstr "MySpaceIM - Kein Benutzername gesetzt"
+
+msgid "You appear to have no MySpace username."
+msgstr "Sie scheinen keinen MySpace-Benutzernamen zu haben."
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr ""
+"Möchten Sie jetzt einen setzen? (Bemerkung: DIES KANN NICHT GEÄNDERT WERDEN!)"
 
 msgid "Lost connection with server"
 msgstr "Verbindung zum Server verloren"
@@ -5538,15 +5542,25 @@ msgstr "Neue Bild-Kommentare"
 msgid "MySpace"
 msgstr "MySpace"
 
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - Kein Benutzername gesetzt"
+msgid "IM Friends"
+msgstr "IM-Freunde"
 
-msgid "You appear to have no MySpace username."
-msgstr "Sie scheinen keinen MySpace-Benutzernamen zu haben."
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
+"%d Buddy wurde vom Server hinzugefügt oder aktualisiert (inklusive der "
+"Buddys, die schon auf der Serverliste sind)"
+msgstr[1] ""
+"%d Buddys wurden vom Server hinzugefügt oder aktualisiert (inklusive der "
+"Buddys, die schon auf der Serverliste sind)"
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
-"Möchten Sie jetzt einen setzen? (Bemerkung: DIES KANN NICHT GEÄNDERT WERDEN!)"
+msgid "Add contacts from server"
+msgstr "Kontakte vom Server hinzufügen"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5573,31 +5587,6 @@ msgstr ""
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM-Fehler"
 
-msgid "Failed to add buddy"
-msgstr "Kontakt konnte nicht hinzugefügt werden"
-
-msgid "'addbuddy' command failed."
-msgstr "'addbuddy'-Kommando gescheitert."
-
-msgid "persist command failed"
-msgstr "'persist'-Kommando gescheitert"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Kein solcher Benutzer: %s"
-
-msgid "User lookup"
-msgstr "Benutzersuche"
-
-msgid "Failed to remove buddy"
-msgstr "Kontakt konnte nicht entfernt werden"
-
-msgid "'delbuddy' command failed"
-msgstr "'delbuddy'-Kommando gescheitert"
-
-msgid "blocklist command failed"
-msgstr "'blocklist'-Kommando gescheitert"
-
 msgid "Invalid input condition"
 msgstr "Ungültige Eingabebedingung"
 
@@ -5611,25 +5600,36 @@ msgstr "Kann die Nachricht nicht parsen"
 msgid "Couldn't connect to host: %s (%d)"
 msgstr "Konnte nicht zum Host verbinden: %s (%d)"
 
-msgid "IM Friends"
-msgstr "IM-Freunde"
+msgid "Failed to add buddy"
+msgstr "Kontakt konnte nicht hinzugefügt werden"
 
-#, c-format
+msgid "'addbuddy' command failed."
+msgstr "'addbuddy'-Kommando gescheitert."
+
+msgid "persist command failed"
+msgstr "'persist'-Kommando gescheitert"
+
+msgid "Failed to remove buddy"
+msgstr "Kontakt konnte nicht entfernt werden"
+
+msgid "'delbuddy' command failed"
+msgstr "'delbuddy'-Kommando gescheitert"
+
+msgid "blocklist command failed"
+msgstr "'blocklist'-Kommando gescheitert"
+
+msgid "Missing Cipher"
+msgstr "Verschlüsselung fehlt"
+
+msgid "The RC4 cipher could not be found"
+msgstr "Die RC4-Verschlüsselung konnte nicht gefunden werden"
+
 msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"%d Buddy wurde vom Server hinzugefügt oder aktualisiert (inklusive der "
-"Buddys, die schon auf der Serverliste sind)"
-msgstr[1] ""
-"%d Buddys wurden vom Server hinzugefügt oder aktualisiert (inklusive der "
-"Buddys, die schon auf der Serverliste sind)"
-
-msgid "Add contacts from server"
-msgstr "Kontakte vom Server hinzufügen"
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
+"Benutzen sie libpurple mit RC4-Unterstützung (>= 2.0.1). MySpaceIM-Plugin "
+"wird nicht geladen."
 
 msgid "Add friends from MySpace.com"
 msgstr "Freunde von MySpace.com hinzufügen"
@@ -5686,17 +5686,6 @@ msgstr "Freunde insgesamt"
 msgid "Client Version"
 msgstr "Client-Version"
 
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Kein Benutzername gesetzt"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - Bitte setzen Sie einen Benutzernamen"
-
-msgid "Please enter a username to check its availability:"
-msgstr ""
-"Bitte geben Sie einen Benutzernamen ein um seine Verfügbarkeit zu überprüfen:"
-
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Benutzername verfügbar"
 
@@ -5706,11 +5695,22 @@ msgstr "Dieser Benutzername ist verfügbar. Möchten Sie ihn setzen?"
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "EINMAL GESETZT, KANN DIES NICHT GEÄNDERT WERDEN!"
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr "MySpaceIM - Bitte setzen Sie einen Benutzernamen"
+
 msgid "This username is unavailable."
 msgstr "Dieser Benutzername ist nicht verfügbar."
 
 msgid "Please try another username:"
 msgstr "Bitte versuchen Sie einen anderen Benutzernamen:"
+
+#. Protocol won't log in now without a username set.. Disconnect
+msgid "No username set"
+msgstr "Kein Benutzername gesetzt"
+
+msgid "Please enter a username to check its availability:"
+msgstr ""
+"Bitte geben Sie einen Benutzernamen ein um seine Verfügbarkeit zu überprüfen:"
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -7213,9 +7213,8 @@ msgstr "Persönliche Vorstellung"
 msgid "City/Area"
 msgstr "Stadt/Gegend"
 
-#, fuzzy
 msgid "Publish Mobile"
-msgstr "Handy (privat)"
+msgstr "Mobil veröffentlichen"
 
 msgid "Publish Contact"
 msgstr "Kontakt veröffentlichen"
@@ -7432,9 +7431,9 @@ msgstr "Möchten Sie jetzt Detail-Informationen einstellen?"
 msgid "Setup"
 msgstr "Setup"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u requested to join Qun %u for %s"
-msgstr "%d möchte dem Qun %d beitreten"
+msgstr "%u möchte dem Qun %u aus folgendem Grund beitreten: %s"
 
 #, c-format
 msgid "%u request to join Qun %u"
@@ -7447,6 +7446,8 @@ msgstr "Dem Qun %u, moderiert von admin %u, konnte nicht beigetreten werden"
 #, c-format
 msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
 msgstr ""
+"<b>Das Beitreten zum Qun %u wurde vom Admin %u aus folgendem Grund erlaubt: %"
+"s</b>"
 
 #, c-format
 msgid "<b>Removed buddy %u.</b>"
@@ -7509,9 +7510,9 @@ msgstr "<b>Letzte Aktualisierung</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Server</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Anmeldezeit</b>: %s<br>\n"
+msgstr "<b>Client-Tag</b>: %s<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
@@ -9264,9 +9265,6 @@ msgstr "Konnte den Hostnamen nicht auflösen"
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-Benutzernamen dürfen keine Leerzeichen oder @-Symbole enthalten"
 
-msgid "SIP connect server not specified"
-msgstr "SIP-Verbindungsserver nicht angegeben"
-
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -9754,12 +9752,11 @@ msgstr "Cooler Link 3"
 msgid "Last Update"
 msgstr "Letzte Aktualisierung"
 
-#, fuzzy
 msgid ""
 "This profile is in a language or format that is not supported at this time."
 msgstr ""
-"Entschuldigung, das Profil enthält eine Sprache, die zur Zeit nicht "
-"unterstützt wird."
+"Die Sprache oder das Format dieses Profils werden im Moment nicht "
+"unterstützt."
 
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
