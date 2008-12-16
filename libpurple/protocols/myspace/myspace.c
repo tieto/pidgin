@@ -1161,7 +1161,7 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 
 	/* Request IM info about ourself. */
 	msim_send(session,
-			"persist", MSIM_TYPE_STRING, g_strdup("persist"),
+			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"dsn", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_DSN,
 			"uid", MSIM_TYPE_INTEGER, session->userid,
@@ -1171,8 +1171,9 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 			NULL);
 
 	/* Request MySpace info about ourself. */
+	purple_debug_error("MARK", "Fetching info about ourself\n");
 	msim_send(session,
-			"persist", MSIM_TYPE_STRING, g_strdup("persist"),
+			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"dsn", MSIM_TYPE_INTEGER, MG_OWN_IM_INFO_DSN,
 			"uid", MSIM_TYPE_INTEGER, session->userid,
