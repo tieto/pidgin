@@ -1157,14 +1157,14 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 
+	/* Set display name to username (otherwise will show email address) */
+	purple_connection_set_display_name(session->gc, session->username);
+
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
 	 * we're ready for it (session key, userid, username all setup). */
 	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
-
-	/* Set display name to username (otherwise will show email address) */
-	purple_connection_set_display_name(session->gc, session->username);
 
 	body = msim_msg_new(
 			"UserID", MSIM_TYPE_INTEGER, session->userid,
