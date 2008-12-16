@@ -14,11 +14,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
  
+#ifndef _PURPLE_JABBER_IBB_H_
+#define _PURPLE_JABBER_IBB_H_
+
 #include "jabber.h"
 #include "iq.h"
-
-#ifndef JABBER_IBB_SESSION
-#define JABBER_IBB_SESSION
 
 #define XEP_0047_NAMESPACE "http://jabber.org/protocol/ibb"
 
@@ -89,7 +89,7 @@ void jabber_ibb_session_set_error_callback(JabberIBBSession *sess,
 void jabber_ibb_session_open(JabberIBBSession *sess);
 void jabber_ibb_session_close(JabberIBBSession *sess);
 void jabber_ibb_session_accept(JabberIBBSession *sess);
-void jabber_ibb_session_send_data(JabberIBBSession *sess, gpointer data,
+void jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
 	gsize size);
 
 const gchar *jabber_ibb_session_get_sid(const JabberIBBSession *sess);
@@ -116,4 +116,4 @@ void jabber_ibb_unregister_open_handler(JabberIBBOpenHandler *cb);
 void jabber_ibb_init(void);
 void jabber_ibb_uninit(void);
 
-#endif /* JABBER_IBB_SESSION */
+#endif /* _PURPLE_JABBER_IBB_H_ */

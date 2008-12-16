@@ -32,9 +32,9 @@
 #include "buddy.h"
 #include "disco.h"
 #include "jabber.h"
+#include "ibb.h"
 #include "iq.h"
 #include "si.h"
-#include "ibb.h"
 
 #define STREAMHOST_CONNECT_TIMEOUT 15
 
@@ -999,7 +999,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 	
 	if (size <= purple_xfer_get_bytes_remaining(xfer)) {
-		purple_debug_info("jabber", "about to write %lu bytes from IBB stream\n",
+		purple_debug_info("jabber", "about to write %" G_GSIZE_FORMAT " bytes from IBB stream\n",
 			size);
 		if(!fwrite(data, size, 1, jsx->fp)) {
 			purple_debug_error("jabber", "error writing to file\n");
@@ -1018,7 +1018,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 		/* trying to write past size of file transfers negotiated size,
 		  reject transfer to protect against malicious behaviour */
 		purple_debug_error("jabber", 
-			"IBB file transfer, trying to write past end of file\n");
+			"IBB file transfer send more data than expected\n");
 		jabber_si_xfer_cancel_recv(xfer);
 		purple_xfer_end(xfer);
 	}
@@ -1036,8 +1036,19 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 		JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 		JabberIBBSession *sess = 
 			jabber_ibb_session_create_from_xmlnode(js, packet, xfer);
-		
+		const char *filename;
+
 		if (sess) {
+			/* open the file to write to */
+			filename = purple_xfer_get_local_filename(xfer);
+			jsx->fp = g_fopen(filename, "wb");
+			if (jsx->fp == NULL) {
+				purple_debug_error("jabber", "failed to open file %s for writing: %s\n",
+					filename, g_strerror(errno));
+				purple_xfer_cancel_remote(xfer);
+				return FALSE;
+			}
+
 			/* setup callbacks here...*/
 			jabber_ibb_session_set_data_received_callback(sess,
 				jabber_si_xfer_ibb_recv_data_cb);
@@ -1045,9 +1056,6 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 				jabber_si_xfer_ibb_closed_cb);
 			jabber_ibb_session_set_error_callback(sess,
 				jabber_si_xfer_ibb_error_cb);
-			
-			/* open the file to write to */
-			jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "wb");
 			
 			jsx->ibb_session = sess;
 			
@@ -1082,7 +1090,7 @@ jabber_si_xfer_ibb_send_data(JabberIBBSession *sess)
 	gpointer data = g_malloc(packet_size);
 	int res;
 	
-	purple_debug_info("jabber", "IBB: about to read %lu bytes from file %p\n",
+	purple_debug_info("jabber", "IBB: about to read %" G_GSIZE_FORMAT " bytes from file %p\n",
 		packet_size, jsx->fp);
 	res = fread(data, packet_size, 1, jsx->fp);
 	
@@ -1121,18 +1129,30 @@ jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 {
 	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
-	
+	JabberStream *js = jabber_ibb_session_get_js(sess);
+	PurpleConnection *gc = js->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+
 	if (jabber_ibb_session_get_state(sess) == JABBER_IBB_SESSION_OPENED) {
-		purple_xfer_start(xfer, 0, NULL, 0);
-		purple_xfer_set_bytes_sent(xfer, 0);
-		purple_xfer_update_progress(xfer);
-		jsx->fp = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
-		jabber_si_xfer_ibb_send_data(sess);
+		const char *filename = purple_xfer_get_local_filename(xfer);
+		jsx->fp = g_fopen(filename, "rb");
+		if (jsx->fp == NULL) {
+			purple_debug_error("jabber", "Failed to open file %s for reading: %s\n",
+				filename, g_strerror(errno));
+			jabber_si_xfer_free(xfer);
+			purple_xfer_error(purple_xfer_get_type(xfer), account,
+				jabber_ibb_session_get_who(sess),
+				_("Failed to open the file"));
+			purple_xfer_end(xfer);
+		} else {
+			/* XXX: Shouldn't this specify a valid file descriptor? */
+			purple_xfer_start(xfer, 0, NULL, 0);
+			purple_xfer_set_bytes_sent(xfer, 0);
+			purple_xfer_update_progress(xfer);
+			jabber_si_xfer_ibb_send_data(sess);
+		}
 	} else {
 		/* error */
-		JabberStream *js = jabber_ibb_session_get_js(sess);
-		PurpleConnection *gc = js->gc;
-		PurpleAccount *account = purple_connection_get_account(gc);
 		jabber_si_xfer_free(xfer);
 		purple_xfer_error(purple_xfer_get_type(xfer), account,
 			jabber_ibb_session_get_who(sess), 
@@ -1167,10 +1187,10 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 		
 	} else {
 		/* failed to create IBB session */
-		purple_xfer_unref(xfer);
 		purple_debug_error("jabber", 
 			"failed to initiate IBB session for file transfer\n");
 		jabber_si_xfer_cancel_send(xfer);
+		purple_xfer_unref(xfer);
 	}
 }
 	

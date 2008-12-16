@@ -14,9 +14,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
  
-#include <glib.h>
-#include <string.h>
-
 #include "internal.h"
 #include "ibb.h"
 #include "debug.h"
@@ -32,17 +29,11 @@ jabber_ibb_session_create(JabberStream *js, const gchar *sid, const gchar *who,
 	gpointer user_data)
 {
 	JabberIBBSession *sess = g_new0(JabberIBBSession, 1);
-	
-	if (!sess) {
-		purple_debug_error("jabber", "Could not allocate IBB session object\n");
-		return NULL;
-	}
-	
 	sess->js = js;
 	if (sid) {
 		sess->sid = g_strdup(sid);
 	} else {
-		sess->sid = g_strdup(jabber_get_next_id(js));
+		sess->sid = jabber_get_next_id(js);
 	}
 	sess->who = g_strdup(who);
 	sess->block_size = JABBER_IBB_SESSION_DEFAULT_BLOCK_SIZE;
@@ -63,38 +54,25 @@ jabber_ibb_session_create_from_xmlnode(JabberStream *js, xmlnode *packet,
 		XEP_0047_NAMESPACE);
 	const gchar *sid = xmlnode_get_attrib(open, "sid");
 	const gchar *block_size = xmlnode_get_attrib(open, "block-size");
-	gsize block_size_int;
 	
 	if (!open) {
 		return NULL;
 	}
-	
-	sess = g_new0(JabberIBBSession, 1);
-	
-	if (!sess) {
-		purple_debug_error("jabber", "Could not allocate IBB session object\n");
-		return NULL;
-	}
-	
+
 	if (!sid || !block_size) {
 		purple_debug_error("jabber", 
 			"IBB session open tag requires sid and block-size attributes\n");
 		g_free(sess);
 		return NULL;
 	}
-	
-	block_size_int = atoi(block_size);
-	sess->js = js;
-	sess->sid = g_strdup(sid);
+
+	sess = jabber_ibb_session_create(js, sid,
+			xmlnode_get_attrib(packet, "from"), user_data);
 	sess->id = g_strdup(xmlnode_get_attrib(packet, "id"));
-	sess->who = g_strdup(xmlnode_get_attrib(packet, "from"));
-	sess->block_size = block_size_int;
+	sess->block_size = atoi(block_size);
 	/* if we create a session from an incoming <open/> request, it means the
 	  session is immediatly open... */
 	sess->state = JABBER_IBB_SESSION_OPENED;
-	sess->user_data = user_data;
-	
-	g_hash_table_insert(jabber_ibb_sessions, sess->sid, sess);
 	
 	return sess;
 }
@@ -119,6 +97,7 @@ jabber_ibb_session_destroy(JabberIBBSession *sess)
 	}
 	
 	g_hash_table_remove(jabber_ibb_sessions, sess->sid);
+	g_free(sess->id);
 	g_free(sess->sid);
 	g_free(sess->who);
 	g_free(sess);
@@ -248,7 +227,7 @@ jabber_ibb_session_open(JabberIBBSession *sess)
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
 		xmlnode_set_namespace(open, XEP_0047_NAMESPACE);
 		xmlnode_set_attrib(open, "sid", jabber_ibb_session_get_sid(sess));
-		g_snprintf(block_size, sizeof(block_size), "%ld", 
+		g_snprintf(block_size, sizeof(block_size), "%" G_GSIZE_FORMAT, 
 			jabber_ibb_session_get_block_size(sess));
 		xmlnode_set_attrib(open, "block-size", block_size);
 		xmlnode_insert_child(set->node, open);
@@ -327,11 +306,12 @@ jabber_ibb_session_send_acknowledge_cb(JabberStream *js, xmlnode *packet, gpoint
 }
 
 void
-jabber_ibb_session_send_data(JabberIBBSession *sess, gpointer data, gsize size)
+jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
+                             gsize size)
 {
 	JabberIBBSessionState state = jabber_ibb_session_get_state(sess);
 	
-	purple_debug_info("jabber", "sending data block of %ld bytes on IBB stream\n",
+	purple_debug_info("jabber", "sending data block of %" G_GSIZE_FORMAT " bytes on IBB stream\n",
 		size);
 	
 	if (state != JABBER_IBB_SESSION_OPENED) {
@@ -346,13 +326,13 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gpointer data, gsize size)
 		xmlnode *data_element = xmlnode_new("data");
 		char *base64 = purple_base64_encode(data, size);
 		char seq[10];
-		g_snprintf(seq, sizeof(seq), "%d", jabber_ibb_session_get_send_seq(sess));
+		g_snprintf(seq, sizeof(seq), "%u", jabber_ibb_session_get_send_seq(sess));
 		
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
 		xmlnode_set_namespace(data_element, XEP_0047_NAMESPACE);
 		xmlnode_set_attrib(data_element, "sid", jabber_ibb_session_get_sid(sess));
 		xmlnode_set_attrib(data_element, "seq", seq);
-		xmlnode_insert_data(data_element, base64, strlen(base64));
+		xmlnode_insert_data(data_element, base64, -1);
 		
 		xmlnode_insert_child(set->node, data_element);
 	
@@ -361,8 +341,8 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gpointer data, gsize size)
 			sess->sid);
 		jabber_iq_set_callback(set, jabber_ibb_session_send_acknowledge_cb, sess);
 		sess->last_iq_id = g_strdup(xmlnode_get_attrib(set->node, "id"));
-		purple_debug_info("jabber", "IBB: set sess->last_iq_id: %s %s\n",
-			sess->last_iq_id, xmlnode_get_attrib(set->node, "id"));
+		purple_debug_info("jabber", "IBB: set sess->last_iq_id: %s\n",
+			sess->last_iq_id);
 		jabber_iq_send(set);
 		
 		g_free(base64);
@@ -414,11 +394,13 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 			purple_debug_error("jabber", 
 				"Got IBB iq from wrong JID, ignoring\n");
 		} else if (data) {
-			guint16 seq = atoi(xmlnode_get_attrib(data, "seq"));
-			
+			const gchar *seq_attr = xmlnode_get_attrib(data, "seq");
+			guint16 seq = 0;
+
 			/* reject the data, and set the session in error if we get an
 			  out-of-order packet */
-			if (seq == jabber_ibb_session_get_recv_seq(sess)) {
+			if (seq_attr && (seq = atoi(seq_attr)) &&
+					seq == jabber_ibb_session_get_recv_seq(sess)) {
 				/* sequence # is the expected... */
 				JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
 				
@@ -435,10 +417,15 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 					
 					if (rawdata) {
 						purple_debug_info("jabber", 
-							"got %ld bytes of data on IBB stream\n", size);
+							"got %" G_GSIZE_FORMAT " bytes of data on IBB stream\n",
+							size);
 						if (size > jabber_ibb_session_get_block_size(sess)) {
 							purple_debug_error("jabber",
 								"IBB: received a too large packet\n");
+							if (sess->error_cb)
+								sess->error_cb(sess);
+							g_free(rawdata);
+							return;
 						} else {
 							purple_debug_info("jabber", 
 								"calling IBB callback for received data\n");
@@ -448,6 +435,10 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 					} else {
 						purple_debug_error("jabber", 
 							"IBB: invalid BASE64 data received\n");
+						if (sess->error_cb)
+							sess->error_cb(sess);
+						return;
+
 					}
 				}
 				
@@ -456,7 +447,7 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 				
 			} else {
 				purple_debug_error("jabber", 
-					"Received an out-of-order IBB packet\n");
+					"Received an out-of-order/invalid IBB packet\n");
 				sess->state = JABBER_IBB_SESSION_ERROR;
 				
 				if (sess->error_cb) {
@@ -483,7 +474,7 @@ jabber_ibb_parse(JabberStream *js, xmlnode *packet)
 		/* run all open handlers registered until one returns true */
 		for (iterator = open_handlers ; iterator ; 
 			 iterator = g_list_next(iterator)) {
-			JabberIBBOpenHandler *handler = (JabberIBBOpenHandler *) iterator->data;
+			JabberIBBOpenHandler *handler = iterator->data;
 
 			if (handler(js, packet)) {
 				result = jabber_iq_new(js, JABBER_IQ_RESULT);
@@ -529,5 +520,3 @@ jabber_ibb_uninit(void)
 	open_handlers = NULL;
 }
 
-
-		
