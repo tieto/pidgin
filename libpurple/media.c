@@ -123,7 +123,7 @@ static guint purple_media_signals[LAST_SIGNAL] = {0};
 
 enum {
 	PROP_0,
-	PROP_FS_CONFERENCE,
+	PROP_CONFERENCE,
 };
 
 GType
@@ -159,8 +159,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 	gobject_class->set_property = purple_media_set_property;
 	gobject_class->get_property = purple_media_get_property;
 
-	g_object_class_install_property(gobject_class, PROP_FS_CONFERENCE,
-			g_param_spec_object("farsight-conference",
+	g_object_class_install_property(gobject_class, PROP_CONFERENCE,
+			g_param_spec_object("conference",
 			"Farsight conference",
 			"The FsConference associated with this media.",
 			FS_TYPE_CONFERENCE,
@@ -305,7 +305,7 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
-		case PROP_FS_CONFERENCE:
+		case PROP_CONFERENCE:
 			if (media->priv->conference)
 				g_object_unref(media->priv->conference);
 			media->priv->conference = g_value_get_object(value);
@@ -326,7 +326,7 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
-		case PROP_FS_CONFERENCE:
+		case PROP_CONFERENCE:
 			g_value_set_object(value, media->priv->conference);
 			break;
 		default:	

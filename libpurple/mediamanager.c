@@ -156,7 +156,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	}
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
-			     "farsight-conference", conference,
+			     "conference", conference,
 			     NULL));
 
 	ret = gst_element_set_state(purple_media_get_pipeline(media), GST_STATE_PLAYING);
