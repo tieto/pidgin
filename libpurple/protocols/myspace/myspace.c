@@ -964,7 +964,7 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
 	MsimUser *user;
-	gchar *username, *group_name;
+	gchar *username, *group_name, *display_name;
 	guint uid, visibility;
 
 	contact_info = (MsimMessage *)data;
@@ -973,10 +973,12 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 
 	if (!user_lookup_info) {
 		username = g_strdup(msim_uid2username_from_blist(session->account, uid));
+		display_name = NULL;
 		g_return_if_fail(username != NULL);
 	} else {
 		user_lookup_info_body = msim_msg_get_dictionary(user_lookup_info, "body");
 		username = msim_msg_get_string(user_lookup_info_body, "UserName");
+		display_name = msim_msg_get_string(user_lookup_info_body, "DisplayName");
 		msim_msg_free(user_lookup_info_body);
 		g_return_if_fail(username != NULL);
 	}
@@ -1006,6 +1008,7 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 		purple_privacy_deny_add(session->account, username, TRUE);
 		msim_msg_free(contact_info);
 		g_free(username);
+		g_free(display_name);
 		return;
 	}
 
@@ -1019,6 +1022,22 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);
+
+	if (strtol(username, NULL, 10) == uid) {
+		/*
+		 * This user has not set their username!  Set their server
+		 * alias to their display name so that we don't see a bunch
+		 * of numbers in the buddy list.
+		 */
+		if (display_name != NULL) {
+			purple_blist_node_set_string(&buddy->node, "DisplayName", display_name);
+			serv_got_alias(session->gc, username, display_name);
+		} else {
+			serv_got_alias(session->gc, username,
+					purple_blist_node_get_string(&buddy->node, "DisplayName"));
+		}
+	}
+	g_free(display_name);
 
 	/* 3. Update buddy information */
 	user = msim_get_user_from_buddy(buddy);
