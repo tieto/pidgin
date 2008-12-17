@@ -294,7 +294,9 @@ msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	*end = g_strdup("</p>");
 }
 
-/** Convert the msim markup <c> tag (text color) into HTML. TODO: Test */
+/**
+ * Convert the msim markup <c> tag (text color) into HTML.
+ */
 static void
 msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -312,15 +314,20 @@ msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	purple_color = msim_color_to_purple(color);
 
+#ifdef USE_CSS_FORMATTING
+	*begin = g_strdup_printf("<span style='color: %s'>", purple_color);
+	*end = g_strdup("</span>");
+#else
 	*begin = g_strdup_printf("<font color='%s'>", purple_color);
+	*end = g_strdup("</font>");
+#endif
 
 	g_free(purple_color);
-
-	/* *begin = g_strdup_printf("<span style='color: %s'>", color); */
-	*end = g_strdup("</font>");
 }
 
-/** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
+/**
+ * Convert the msim markup <b> tag (background color) into HTML.
+ */
 static void
 msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -338,12 +345,15 @@ msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	purple_color = msim_color_to_purple(color);
 
-	/* TODO: find out how to set background color. */
-	*begin = g_strdup_printf("<span style='background-color: %s'>",
-			purple_color);
-	g_free(purple_color);
+#ifdef USE_CSS_FORMATTING
+	*begin = g_strdup_printf("<span style='background-color: %s'>", purple_color);
+	*end = g_strdup("</span>");
+#else
+	*begin = g_strdup_printf("<body bgcolor='%s'>", purple_color);
+	*end = g_strdup("</body>");
+#endif
 
-	*end = g_strdup("</p>");
+	g_free(purple_color);
 }
 
 /** Convert the msim markup <i> tag (emoticon image) into HTML. */
@@ -696,7 +706,8 @@ msim_convert_smileys_to_markup(gchar *before)
 	return new;
 }
 
-/** High-level function to convert MySpaceIM markup to Purple (HTML) markup.
+/**
+ * High-level function to convert MySpaceIM markup to Purple (HTML) markup.
  *
  * @return Purple markup string, must be g_free()'d. */
 gchar *
@@ -705,7 +716,8 @@ msim_markup_to_html(MsimSession *session, const gchar *raw)
 	return msim_convert_xml(session, raw, msim_markup_tag_to_html);
 }
 
-/** High-level function to convert Purple (HTML) to MySpaceIM markup.
+/**
+ * High-level function to convert Purple (HTML) to MySpaceIM markup.
  *
  * TODO: consider using purple_markup_html_to_xhtml() to make valid XML.
  *
