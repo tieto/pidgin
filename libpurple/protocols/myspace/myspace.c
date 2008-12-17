@@ -2549,6 +2549,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsimMessage *msg;
 	MsimMessage *msg_persist;
 	MsimMessage *body;
+	GList *blocklist_updates;
 
 	session = (MsimSession *)gc->proto_data;
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n",
@@ -2601,6 +2602,27 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		return;
 	}
 	msim_msg_free(msg_persist);
+
+	/* Remove the buddy from our block list and add them to our accept list, I think */
+	blocklist_updates = NULL;
+	blocklist_updates = g_list_prepend(blocklist_updates, "a+");
+	blocklist_updates = g_list_prepend(blocklist_updates, "<uid>");
+	blocklist_updates = g_list_prepend(blocklist_updates, "b-");
+	blocklist_updates = g_list_prepend(blocklist_updates, "<uid>");
+	blocklist_updates = g_list_reverse(blocklist_updates);
+
+	msg = msim_msg_new(
+			"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			/* TODO: MsimMessage lists. Currently <uid> isn't replaced in lists. */
+			/* "idlist", MSIM_TYPE_STRING, g_strdup("a-|<uid>|b-|<uid>"), */
+			"idlist", MSIM_TYPE_LIST, blocklist_updates,
+			NULL);
+
+	if (!msim_postprocess_outgoing(session, msg, buddy->name, "idlist", NULL))
+		purple_debug_error("myspace", "blocklist command failed\n");
+
+	msim_msg_free(msg);
 }
 
 /**
@@ -2649,6 +2671,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	}
 	msim_msg_free(persist_msg);
 
+	/* Remove the buddy from our block list(huh?) and our accept list */
 	blocklist_updates = NULL;
 	blocklist_updates = g_list_prepend(blocklist_updates, "a-");
 	blocklist_updates = g_list_prepend(blocklist_updates, "<uid>");
