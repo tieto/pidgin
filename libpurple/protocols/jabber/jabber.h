@@ -153,6 +153,7 @@ struct _JabberStream
 	GList *file_transfers;
 
 	time_t idle;
+	time_t old_idle;
 
 	JabberID *user;
 	PurpleConnection *gc;
