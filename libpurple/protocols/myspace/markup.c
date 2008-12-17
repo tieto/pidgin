@@ -510,7 +510,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		tmpend = g_string_new("</f>");
 
 		if (face != NULL)
-			g_string_append_printf(tmpbegin, "f='%s'>", face);
+			g_string_append_printf(tmpbegin, "f='%s'", face);
 
 		if (size != NULL)
 			g_string_append_printf(tmpbegin, "h='%d'",
