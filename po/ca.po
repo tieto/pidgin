@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-14 17:46+0100\n"
-"PO-Revision-Date: 2008-12-15 00:07+0100\n"
+"POT-Creation-Date: 2008-12-17 21:51+0100\n"
+"PO-Revision-Date: 2008-12-15 02:34+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -470,7 +470,7 @@ msgid "Certificate Import"
 msgstr "Importació de certificats"
 
 msgid "Specify a hostname"
-msgstr "Idiqueu el nom de l'ordiador"
+msgstr "Indiqueu el nom de l'ordiador"
 
 msgid "Type the host name this certificate is for."
 msgstr "Entreu el nom de l'ordinador al qual pertany aquest certificat."
@@ -706,7 +706,7 @@ msgstr ""
 #, c-format
 msgid "%s is not a valid color. See '/help msgcolor' for valid colors."
 msgstr ""
-"%s no és un color vàlid. Vegei '/help msgcolor' per a llistar els colors "
+"%s no és un color vàlid. Vegeu '/help msgcolor' per a llistar els colors "
 "vàlids."
 
 msgid ""
@@ -1780,7 +1780,7 @@ msgid "Unknown error"
 msgstr "Error desconegut"
 
 msgid "Unable to send message: The message is too large."
-msgstr "No s'ha pogut enviar el missatge: El missatge és massa llarg."
+msgstr "No s'ha pogut enviar el missatge: el missatge és massa llarg."
 
 #, c-format
 msgid "Unable to send message to %s."
@@ -2170,7 +2170,7 @@ msgstr "Esteu emprant %s, però aquest connector requereix %s."
 
 #, c-format
 msgid "This plugin has not defined an ID."
-msgstr "Aques connector no ha definit cap ID."
+msgstr "Aquest connector no ha definit cap ID."
 
 #, c-format
 msgid "Plugin magic mismatch %d (need %d)"
@@ -2834,7 +2834,7 @@ msgstr "Notificació de l'estat dels amics"
 msgid ""
 "Notifies in a conversation window when a buddy goes or returns from away or "
 "idle."
-msgstr "Notifica en la finestra de conversa quan un amic canviï d'estat."
+msgstr "Notifica a la finestra de conversa quan un amic canviï d'estat."
 
 msgid "Tcl Plugin Loader"
 msgstr "Carregador de connectors en Tcl"
@@ -2895,7 +2895,7 @@ msgstr "Compte XMPP"
 msgid "Bonjour Protocol Plugin"
 msgstr "Connector per al protocol Bonjour"
 
-# FIXME
+# Nota: en principi no ha de sortir mai
 msgid "Purple Person"
 msgstr "Persona porpra"
 
@@ -3023,7 +3023,6 @@ msgstr "Només en línia"
 msgid "Find buddies"
 msgstr "Cerca amics"
 
-# FIXME: uh, s'ha de millorar... (josep)
 msgid "Please, enter your search criteria below"
 msgstr "Introduïu el criteri de cerca"
 
@@ -3188,7 +3187,7 @@ msgid "No MOTD available"
 msgstr "La frase del dia no està disponible"
 
 msgid "There is no MOTD associated with this connection."
-msgstr "No hi ha cap frase del dia associada amb aquesta connexió."
+msgstr "No hi ha cap frase del dia associada a aquesta connexió."
 
 #, c-format
 msgid "MOTD for %s"
@@ -3294,7 +3293,7 @@ msgstr "Bandejat"
 
 #, c-format
 msgid "Cannot ban %s: banlist is full"
-msgstr "No es pot bandejar %s: la llista de bandejats està plena"
+msgstr "No es pot bandejar %s: la llista de bandejats és plena"
 
 msgid " <i>(ircop)</i>"
 msgstr " <i>(ircop)</i>"
@@ -3754,13 +3753,13 @@ msgstr "Elements del servei de descoberta"
 
 # http://xmpp.org/extensions/xep-0033.html
 msgid "Extended Stanza Addressing"
-msgstr "Bloc d'adressament estès"
+msgstr "Bloc d'adreçament estès"
 
 msgid "Multi-User Chat"
 msgstr "Xat multi-usuari"
 
 msgid "Multi-User Chat Extended Presence Information"
-msgstr "Informació de presència extesa per a xats multi-usuari"
+msgstr "Informació de presència estesa per a xats multi-usuari"
 
 msgid "In-Band Bytestreams"
 msgstr ""
@@ -4079,7 +4078,7 @@ msgid "Enter a Conference Server"
 msgstr "Introduïu un servidor de conferències"
 
 msgid "Select a conference server to query"
-msgstr "Seleccioneu a quin servidor de conferencies consultar"
+msgstr "Seleccioneu a quin servidor de conferències consultar"
 
 msgid "Find Rooms"
 msgstr "Cerca sales"
@@ -4316,10 +4315,10 @@ msgid "Malformed XMPP ID"
 msgstr "l'ID de l'XMPP està malmès"
 
 msgid "Not Acceptable"
-msgstr "No acceptable"
+msgstr "No és acceptable"
 
 msgid "Not Allowed"
-msgstr "No permès"
+msgstr "No és permès"
 
 msgid "Payment Required"
 msgstr "De pagament"
@@ -4328,7 +4327,7 @@ msgid "Recipient Unavailable"
 msgstr "El destinatari no està disponible"
 
 msgid "Registration Required"
-msgstr "Cal registre"
+msgstr "Cal registrar-se"
 
 msgid "Remote Server Not Found"
 msgstr "No s'ha trobat el servidor remot"
@@ -4475,7 +4474,7 @@ msgstr "No s'ha pogut botzinar perquè no es coneix res de l'usuari %s."
 #, c-format
 msgid "Unable to buzz, because user %s might be offline."
 msgstr ""
-"No s'ha pogut botzinar possiblement perquè l'usuari %s estigui desconnectat."
+"No s'ha pogut botzinar possiblement perquè l'usuari %s està desconnectat."
 
 #, c-format
 msgid "Unable to buzz, because the user %s does not support it."
@@ -5035,7 +5034,8 @@ msgstr "No hi ha text blocat per aquest compte."
 #, c-format
 msgid ""
 "MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "Actualment, sevidors MSN bloquen aquestes expressions regulars:<br/>%s"
+msgstr ""
+"Actualment, servidors MSN bloquen aquestes expressions regulars:<br/>%s"
 
 msgid "This account does not have email enabled."
 msgstr "Aquest compte no té el correu habilitat."
@@ -5413,7 +5413,7 @@ msgstr ""
 
 msgid "Message was not sent because messages are being sent too quickly."
 msgstr ""
-"No s'ha pogut enviar el missatge perquè se n'estan enviant massa depressa."
+"No s'ha pogut enviar el missatge perquè se n'estan enviant massa de pressa."
 
 msgid "Message was not sent because an unknown encoding error occurred."
 msgstr ""
@@ -5569,18 +5569,12 @@ msgstr "URL del perfil"
 msgid "MSN Protocol Plugin"
 msgstr "Connector per al protocol MSN"
 
-msgid "Missing Cipher"
-msgstr "Manca el mètode de xifratge"
+#, c-format
+msgid "No such user: %s"
+msgstr "Aquest usuari no existeix: %s"
 
-msgid "The RC4 cipher could not be found"
-msgstr "No s'ha pogut trobar el mètode de xifratge RC4"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Actualitzeu a una versió (>=2.0.1) del libpurple que permeti l'RC4. No es "
-"carregarà el connector del MySpaceIM."
+msgid "User lookup"
+msgstr "Cerca d'usuaris"
 
 # FIXME
 msgid "Reading challenge"
@@ -5591,6 +5585,15 @@ msgstr "El repte del servidor té una mida inesperada"
 
 msgid "Logging in"
 msgstr "S'està entrant"
+
+msgid "MySpaceIM - No Username Set"
+msgstr "MySpaceIM - No s'ha establer cap nom d'usuari"
+
+msgid "You appear to have no MySpace username."
+msgstr "No sembla que tingueu cap nom d'usuari del MySpace."
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr "Voleu establir-ne un ara? (Nota: no es podrà canviar)"
 
 msgid "Lost connection with server"
 msgstr "S'ha perdut la connexió amb el servidor"
@@ -5614,14 +5617,26 @@ msgstr "Comentaris de fotos nous"
 msgid "MySpace"
 msgstr "MySpace"
 
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - No s'ha establer cap nom d'usuari"
+msgid "IM Friends"
+msgstr "Amics de MI"
 
-msgid "You appear to have no MySpace username."
-msgstr "No sembla que tingueu cap nom d'usuari del MySpace."
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
+"S'ha afegit o actualitzat %d amic al servidor (incloent els amics que ja són "
+"a la llista del servidor)"
+msgstr[1] ""
+"S'han afegit o actualitzat %d amics al servidor (incloent els amics que ja "
+"són a la llista del servidor)"
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "Voleu establir-ne un ara? (Nota: no es podrà canviar)"
+# Nota: títol de finestra (josep)
+msgid "Add contacts from server"
+msgstr "Addició de contactes del servidor"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5645,32 +5660,7 @@ msgstr ""
 "com/index.cfm?fuseaction=accountSettings.changePassword i proveu-ho de nou."
 
 msgid "MySpaceIM Error"
-msgstr "S'ha produïtun error en el MySpaceIM"
-
-msgid "Failed to add buddy"
-msgstr "No s'ha pogut afegir l'amic"
-
-msgid "'addbuddy' command failed."
-msgstr "Ha fallat l'ordre «addbuddy»."
-
-msgid "persist command failed"
-msgstr "Ha fallat l'ordre «persist»"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Aquest usuari no existeix: %s"
-
-msgid "User lookup"
-msgstr "Cerca d'usuaris"
-
-msgid "Failed to remove buddy"
-msgstr "No s'ha pogut suprimir l'amic"
-
-msgid "'delbuddy' command failed"
-msgstr "Ha fallat l'ordre «delbuddy»"
-
-msgid "blocklist command failed"
-msgstr "Ha fallat l'ordre «blocklist»"
+msgstr "S'ha produït un error en el MySpaceIM"
 
 msgid "Invalid input condition"
 msgstr "La condició d'entrada no és vàlida"
@@ -5685,29 +5675,39 @@ msgstr "No es pot analitzar el missatge"
 msgid "Couldn't connect to host: %s (%d)"
 msgstr "No s'ha pogut connectar a l'ordinador: %s (%d)"
 
-msgid "IM Friends"
-msgstr "Amics de MI"
+msgid "Failed to add buddy"
+msgstr "No s'ha pogut afegir l'amic"
 
-#, c-format
+msgid "'addbuddy' command failed."
+msgstr "Ha fallat l'ordre «addbuddy»."
+
+msgid "persist command failed"
+msgstr "Ha fallat l'ordre «persist»"
+
+msgid "Failed to remove buddy"
+msgstr "No s'ha pogut suprimir l'amic"
+
+msgid "'delbuddy' command failed"
+msgstr "Ha fallat l'ordre «delbuddy»"
+
+msgid "blocklist command failed"
+msgstr "Ha fallat l'ordre «blocklist»"
+
+msgid "Missing Cipher"
+msgstr "Manca el mètode de xifratge"
+
+msgid "The RC4 cipher could not be found"
+msgstr "No s'ha pogut trobar el mètode de xifratge RC4"
+
 msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"S'ha afegit o actualitzat %d amic al servidor (incloent els amics que ja són "
-"a la llista del servidor)"
-msgstr[1] ""
-"S'han afegit o actualitzat %d amics al servidor (incloent els amics que ja "
-"són a la llista del servidor)"
-
-# Nota: títol de finestra (josep)
-msgid "Add contacts from server"
-msgstr "Addicó de contactes del servidor"
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
+"Actualitzeu a una versió (>=2.0.1) del libpurple que permeti l'RC4. No es "
+"carregarà el connector del MySpaceIM."
 
 msgid "Add friends from MySpace.com"
-msgstr "Afegeox amics de MySpace.com"
+msgstr "Afegeix amics de MySpace.com"
 
 # Heh,tinc amics d'importació
 msgid "Importing friends failed"
@@ -5764,30 +5764,30 @@ msgstr "Nombre d'amics"
 msgid "Client Version"
 msgstr "Versió del client"
 
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "No s'ha establer cap nom d'usuari"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - Establiu un nom d'usuari"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Entreu un nom d'usuari per a comprovar-ne la disponibilitat:"
-
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - El nom d'usuari està disponible"
 
 msgid "This username is available. Would you like to set it?"
-msgstr "Aquest nom d'usuari està disponile. Voleu fer-lo servir?"
+msgstr "Aquest nom d'usuari està disponible. Voleu fer-lo servir?"
 
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "Un cop l'hagueu establert no el podreu canviar!"
+
+msgid "MySpaceIM - Please Set a Username"
+msgstr "MySpaceIM - Establiu un nom d'usuari"
 
 msgid "This username is unavailable."
 msgstr "Aquest nom d'usuari no està disponible."
 
 msgid "Please try another username:"
 msgstr "Proveu un altre nom d'usuari:"
+
+#. Protocol won't log in now without a username set.. Disconnect
+msgid "No username set"
+msgstr "No s'ha establer cap nom d'usuari"
+
+msgid "Please enter a username to check its availability:"
+msgstr "Entreu un nom d'usuari per a comprovar-ne la disponibilitat:"
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -6188,7 +6188,7 @@ msgstr ""
 "us vulgueu connectar."
 
 msgid "Error. SSL support is not installed."
-msgstr "Error. No hi ha instal·lades les bibliotques per a SSL."
+msgstr "Error. No hi ha instal·lades les biblioteques per a SSL."
 
 #, c-format
 msgid "This conference has been closed. No more messages can be sent."
@@ -7367,7 +7367,7 @@ msgid "Invalid QQ Number"
 msgstr "El nombre QQ no és vàlid"
 
 msgid "Failed sending authorize"
-msgstr "No s'ha pogut enviar l'autorizació"
+msgstr "No s'ha pogut enviar l'autorització"
 
 #, c-format
 msgid "Failed removing buddy %u"
@@ -7605,7 +7605,7 @@ msgstr "<b>Perduts</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Rebuta</b>: %lu<br>\n"
+msgstr "<b>Rebuts</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
@@ -11193,7 +11193,7 @@ msgid "New Event"
 msgstr "Esdeveniment nou"
 
 msgid "clear: Clears all conversation scrollbacks."
-msgstr "clear: Neteja la conversa."
+msgstr "clear: neteja la conversa."
 
 msgid "Confirm close"
 msgstr "Confirma en tancar"
@@ -11943,7 +11943,7 @@ msgstr "_Desa la imatge..."
 
 #, c-format
 msgid "_Add Custom Smiley..."
-msgstr "_Afegeix una emoticones personalitzada..."
+msgstr "_Afegeix una emoticona personalitzada..."
 
 msgid "Select Font"
 msgstr "Selecciona el tipus de lletra"
