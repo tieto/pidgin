@@ -1640,10 +1640,21 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 							(text ? text : ""));
 
 			purple_notify_user_info_add_pair(user_info, label, value);
-
 			g_free(label);
 			g_free(value);
 			g_free(text);
+			
+			/* if the resource is idle, show that */
+			if (jbr->idle) {
+				gchar *idle_str = 
+					purple_str_seconds_to_string(time(NULL) - jbr->idle);
+				label = g_strdup_printf("%s%s",
+					_("Idle"), (res ? res : ""));
+				purple_notify_user_info_add_pair(user_info, label, idle_str);
+				g_free(idle_str);
+				g_free(label);
+			}
+			
 			g_free(res);
 		}
 
