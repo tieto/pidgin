@@ -388,7 +388,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
  * is a no-op (and returns FALSE).
  */
 gboolean
-msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
+msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *user)
 {
 	gchar *username;
 	MsimMessage *body, *body_node;
@@ -592,9 +592,10 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 /**
  * Called after username is set.
  */
-static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *userinfo, gpointer data)
 {
-	gchar *username, *errmsg;
+	gchar *username;
+	const gchar *errmsg;
 	MsimMessage *body;
 
 	guint rid;
@@ -610,7 +611,8 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 	uid = msim_msg_get_integer(userinfo, "uid");
 	lid = msim_msg_get_integer(userinfo, "lid");
 	body = msim_msg_get_dictionary(userinfo, "body");
-	errmsg = g_strdup("An error occurred while trying to set the username.\n"
+	/* XXX: Mark for translation */
+	errmsg = ("An error occurred while trying to set the username.\n"
 			"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
 			"fuseaction=profile.username to set your username.");
 
@@ -667,7 +669,6 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 		purple_debug_info("msim","username_is_set Error: Invalid cmd/dsn/lid combination");
 		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
-	g_free(errmsg);
 }
 
 /**
@@ -751,7 +752,7 @@ static void msim_set_username_confirmed_cb(PurpleConnection *gc)
  * Now we have some real data to tell us the state of their requested username
  * \persistr\\cmd\257\dsn\5\uid\204084363\lid\7\rid\367\body\UserName=TheAlbinoRhino1\final\
  */
-static void msim_username_is_available_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+static void msim_username_is_available_cb(MsimSession *session, const MsimMessage *userinfo, gpointer data)
 {
 	MsimMessage *msg;
 	gchar *username;

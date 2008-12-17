@@ -112,7 +112,7 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
  *  _uid_before: string, name of field before field to insert, or NULL for end
  */
 static void
-msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
+msim_postprocess_outgoing_cb(MsimSession *session, const MsimMessage *userinfo,
 		gpointer data)
 {
 	gchar *uid_field_name, *uid_before, *username;
@@ -829,7 +829,7 @@ msim_check_alive(gpointer data)
  * Handle mail reply checks.
  */
 static void
-msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
+msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer data)
 {
 	MsimMessage *body;
 	guint old_inbox_status;
@@ -958,7 +958,7 @@ msim_check_inbox(gpointer data)
  * @param data An MsimMessage * of the contact information. Will be freed.
  */
 static void
-msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_info, gpointer data)
+msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lookup_info, gpointer data)
 {
 	MsimMessage *contact_info, *user_lookup_info_body;
 	PurpleGroup *group;
@@ -1094,7 +1094,7 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
  * Called when contact list is received from server.
  */
 static void
-msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_data)
+msim_got_contact_list(MsimSession *session, const MsimMessage *reply, gpointer user_data)
 {
 	MsimMessage *body, *body_node;
 	gchar *msg;
@@ -1767,7 +1767,7 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
 	if (cb) {
 		purple_debug_info("msim", "msim_process_reply: calling callback now\n");
 		/* Clone message, so that the callback 'cb' can use it (needs to free it also). */
-		cb(session, msim_msg_clone(msg), data);
+		cb(session, msg, data);
 		g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
 		g_hash_table_remove(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
 	} else {
@@ -1898,7 +1898,7 @@ msim_process(MsimSession *session, MsimMessage *msg)
  * @param data MsimMessage *, the message to attach information to.
  */
 static void
-msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
+msim_incoming_resolved(MsimSession *session, const MsimMessage *userinfo,
 		gpointer data)
 {
 	gchar *username;
@@ -2340,7 +2340,7 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
  * Callback for msim_get_info(), for when user info is received.
  */
 static void
-msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
+msim_get_info_cb(MsimSession *session, const MsimMessage *user_info_msg,
 		gpointer data)
 {
 	MsimMessage *msg;
@@ -3087,7 +3087,7 @@ msim_load(PurplePlugin *plugin)
  * Called when friends have been imported to buddy list on server.
  */
 static void
-msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_data)
+msim_import_friends_cb(MsimSession *session, const MsimMessage *reply, gpointer user_data)
 {
 	MsimMessage *body;
 	gchar *completed;

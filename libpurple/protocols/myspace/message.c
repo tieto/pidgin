@@ -401,7 +401,7 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
  *
  */
 static GList *
-msim_msg_get_node(MsimMessage *msg, const gchar *name)
+msim_msg_get_node(const MsimMessage *msg, const gchar *name)
 {
 	GList *node;
 
@@ -410,7 +410,7 @@ msim_msg_get_node(MsimMessage *msg, const gchar *name)
 	}
 
 	/* Linear search for the given name. O(n) but n is small. */
-	for (node = msg; node != NULL; node = g_list_next(node)) {
+	for (node = (GList*)msg; node != NULL; node = g_list_next(node)) {
 		MsimMessageElement *elem;
 
 		elem = (MsimMessageElement *)node->data;
@@ -1066,7 +1066,7 @@ msim_parse(const gchar *raw)
  * another msim_msg_get_* that converts the data to what type you want.
  */
 MsimMessageElement *
-msim_msg_get(MsimMessage *msg, const gchar *name)
+msim_msg_get(const MsimMessage *msg, const gchar *name)
 {
 	GList *node;
 
@@ -1115,7 +1115,7 @@ msim_msg_get_string_from_element(MsimMessageElement *elem)
  * This function unescapes the string for you, if needed.
  */
 gchar *
-msim_msg_get_string(MsimMessage *msg, const gchar *name)
+msim_msg_get_string(const MsimMessage *msg, const gchar *name)
 {
 	MsimMessageElement *elem;
 
@@ -1185,7 +1185,7 @@ msim_msg_get_list_from_element(MsimMessageElement *elem)
  * Return an element as a new list. Caller frees with msim_msg_list_free().
  */
 GList *
-msim_msg_get_list(MsimMessage *msg, const gchar *name)
+msim_msg_get_list(const MsimMessage *msg, const gchar *name)
 {
 	MsimMessageElement *elem;
 
@@ -1279,7 +1279,7 @@ msim_msg_get_dictionary_from_element(MsimMessageElement *elem)
  * Return an element as a new dictionary. Caller frees with msim_msg_free().
  */
 MsimMessage *
-msim_msg_get_dictionary(MsimMessage *msg, const gchar *name)
+msim_msg_get_dictionary(const MsimMessage *msg, const gchar *name)
 {
 	MsimMessageElement *elem;
 
@@ -1321,7 +1321,7 @@ msim_msg_get_integer_from_element(MsimMessageElement *elem)
  * be converted handled correctly, for example.
  */
 guint
-msim_msg_get_integer(MsimMessage *msg, const gchar *name)
+msim_msg_get_integer(const MsimMessage *msg, const gchar *name)
 {
 	MsimMessageElement *elem;
 
@@ -1398,7 +1398,7 @@ msim_msg_get_binary_from_element(MsimMessageElement *elem, gchar **binary_data, 
  * @return TRUE if successful, FALSE if not.
  */
 gboolean
-msim_msg_get_binary(MsimMessage *msg, const gchar *name,
+msim_msg_get_binary(const MsimMessage *msg, const gchar *name,
 		gchar **binary_data, gsize *binary_length)
 {
 	MsimMessageElement *elem;
