@@ -398,7 +398,7 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 		msim_markup_i_to_html(session, root, begin, end);
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
-				"unknown tag name=%s, ignoring",
+				"unknown tag name=%s, ignoring\n",
 				root->name ? root->name : "(NULL)");
 		*begin = g_strdup("");
 		*end = g_strdup("");
