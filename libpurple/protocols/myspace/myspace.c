@@ -2241,6 +2241,10 @@ msim_close(PurpleConnection *gc)
 	if (session->gc->inpa) {
 		purple_input_remove(session->gc->inpa);
 	}
+	if (session->fd >= 0) {
+		close(session->fd);
+		session->fd = -1;
+	}
 
 	msim_session_destroy(session);
 }
