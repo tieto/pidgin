@@ -59,11 +59,11 @@ typedef struct _JabberCapsValue {
 } JabberCapsValue;
 #endif
 
-static guint jabber_caps_hash(gconstpointer key) {
-	const JabberCapsKey *name = key;
-	guint nodehash = g_str_hash(name->node);
-	guint verhash = g_str_hash(name->ver);
-	guint hashhash = g_str_hash(name->hash);
+static guint jabber_caps_hash(gconstpointer data) {
+	const JabberCapsKey *key = data;
+	guint nodehash = g_str_hash(key->node);
+	guint verhash = g_str_hash(key->ver);
+	guint hashhash = g_str_hash(key->hash);
 	return nodehash ^ verhash ^ hashhash;
 }
 
@@ -76,12 +76,12 @@ static gboolean jabber_caps_compare(gconstpointer v1, gconstpointer v2) {
 	       strcmp(name1->hash, name2->hash) == 0;
 }
 
-void jabber_caps_destroy_key(gpointer key) {
-	JabberCapsKey *keystruct = key;
-	g_free(keystruct->node);
-	g_free(keystruct->ver);
-	g_free(keystruct->hash);
-	g_free(keystruct);
+void jabber_caps_destroy_key(gpointer data) {
+	JabberCapsKey *key = data;
+	g_free(key->node);
+	g_free(key->ver);
+	g_free(key->hash);
+	g_free(key);
 }
 
 void
