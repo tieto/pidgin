@@ -1441,8 +1441,14 @@ char *jabber_get_next_id(JabberStream *js)
 void jabber_idle_set(PurpleConnection *gc, int idle)
 {
 	JabberStream *js = gc->proto_data;
-
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleStatus *status = purple_account_get_active_status(account);
+	
 	js->idle = idle ? time(NULL) - idle : idle;
+	
+	/* send out an updated prescence */
+	purple_debug_info("jabber", "sending updated presence for idle\n");
+	jabber_presence_send(account, status);
 }
 
 void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {
@@ -1634,10 +1640,21 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 							(text ? text : ""));
 
 			purple_notify_user_info_add_pair(user_info, label, value);
-
 			g_free(label);
 			g_free(value);
 			g_free(text);
+			
+			/* if the resource is idle, show that */
+			if (jbr->idle) {
+				gchar *idle_str = 
+					purple_str_seconds_to_string(time(NULL) - jbr->idle);
+				label = g_strdup_printf("%s%s",
+					_("Idle"), (res ? res : ""));
+				purple_notify_user_info_add_pair(user_info, label, idle_str);
+				g_free(idle_str);
+				g_free(label);
+			}
+			
 			g_free(res);
 		}
 
