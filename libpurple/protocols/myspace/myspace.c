@@ -1428,10 +1428,10 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 
 	if (status_code == MSIM_STATUS_CODE_IDLE) {
 		purple_debug_info("msim", "msim_status: got idle: %s\n", username);
-		purple_prpl_got_user_idle(session->account, username, TRUE, time(NULL));
+		purple_prpl_got_user_idle(session->account, username, TRUE, 0);
 	} else {
 		/* All other statuses indicate going back to non-idle. */
-		purple_prpl_got_user_idle(session->account, username, FALSE, time(NULL));
+		purple_prpl_got_user_idle(session->account, username, FALSE, 0);
 	}
 
 #ifdef MSIM_SEND_CLIENT_VERSION
