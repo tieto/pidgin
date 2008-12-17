@@ -23,6 +23,7 @@ version 2.5.3 (12/??/2008):
 	  clients (Jaromír Karmazín)
 	* Many QQ fixes and improvements, including the ability to connect
 	  using QQ2008 protocol and sending/receiving of long messages.
+	  The recommended version to use is still QQ2005.
 	* Fix a crash with DNS SRV lookups (Florian Quèze)
 	* Fix insanely long idle times for Sametime 7.5 buddies by assuming
 	  0 idle time if the idle timestamp is in the future (Laurent
@@ -48,6 +49,15 @@ version 2.5.3 (12/??/2008):
 	* Server transfers after you've been connected for a long time
 	  should now be handled correctly.
 	* Many other fixes and code cleanup.
+
+	MySpace:
+	* Respect your privacy settings set using the official MySpace client
+	  (Mark Doliner)
+	* Add support for blocking buddies (Mark Doliner)
+	* Fix a bug where buddies didn't appear in their correct groups the
+	  first time you sign into your account (Mark Doliner)
+	* Support for foreground and background font colors in outgoing IMs
+	* Support for background font colors in incoming IMs
 
 	SIMPLE:
 	* Fix a crash when a malformed message is received.
