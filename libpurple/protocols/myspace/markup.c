@@ -550,7 +550,7 @@ static void
 msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
 {
 	xmlnode *node;
-	gchar *begin, *inner, *end;
+	gchar *begin, *inner, *end, *tmp;
 	int descended = nodes_processed;
 
 	if (!root || !root->name)
@@ -584,7 +584,13 @@ msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XML
 
 			case XMLNODE_TYPE_DATA:
 				/* Literal text. */
-				g_string_append_len(out, node->data, node->data_sz);
+				/*
+				 * TODO: Why is it necessary to escape here?  I thought
+				 *       node->data was already escaped?
+				 */
+				tmp = g_markup_escape_text(node->data, node->data_sz);
+				g_string_append(out, tmp);
+				g_free(tmp);
 				break;
 
 			default:
