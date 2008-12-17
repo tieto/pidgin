@@ -497,29 +497,47 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		*end = g_strdup("");
 	} else if (!purple_utf8_strcasecmp(root->name, "font")) {
+		GString *tmpbegin, *tmpend;
 		const gchar *size;
 		const gchar *face;
+		const gchar *color;
 
 		size = xmlnode_get_attrib(root, "size");
 		face = xmlnode_get_attrib(root, "face");
+		color = xmlnode_get_attrib(root, "color");
 
-		if (face && size) {
-			*begin = g_strdup_printf("<f f='%s' h='%d'>", face,
-					msim_point_to_height(session,
-						msim_purple_size_to_point(session, atoi(size))));
-		} else if (face) {
-			*begin = g_strdup_printf("<f f='%s'>", face);
-		} else if (size) {
-			*begin = g_strdup_printf("<f h='%d'>",
+		tmpbegin = g_string_new("<f");
+		tmpend = g_string_new("</f>");
+
+		if (face != NULL)
+			g_string_append_printf(tmpbegin, "f='%s'>", face);
+
+		if (size != NULL)
+			g_string_append_printf(tmpbegin, "h='%d'",
 					 msim_point_to_height(session,
 						 msim_purple_size_to_point(session, atoi(size))));
-		} else {
-			*begin = g_strdup("<f>");
+
+		/* Close the <f> tag */
+		g_string_append(tmpbegin, ">");
+
+		if (color != NULL) {
+			g_string_append_printf(tmpbegin, "<c v='%s'>", color);
+			g_string_prepend(tmpend, "</c>");
 		}
 
-		*end = g_strdup("</f>");
+		*begin = g_string_free(tmpbegin, FALSE);
+		*end = g_string_free(tmpend, FALSE);
 
-		/* TODO: color (bg uses <body>), emoticons */
+	} else if (!purple_utf8_strcasecmp(root->name, "body")) {
+		const gchar *bgcolor;
+
+		bgcolor = xmlnode_get_attrib(root, "bgcolor");
+
+		if (bgcolor != NULL) {
+			*begin = g_strdup_printf("<b v='%s'>", bgcolor);
+			*end = g_strdup("</b>");
+		}
+
 	} else {
 		gchar *err;
 

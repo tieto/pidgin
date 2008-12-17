@@ -56,6 +56,7 @@ version 2.5.3 (12/??/2008):
 	* Add support for blocking buddies (Mark Doliner)
 	* Fix a bug where buddies didn't appear in their correct groups the
 	  first time you sign into your account (Mark Doliner)
+	* Support for foreground and background font colors in outgoing IMs
 
 	SIMPLE:
 	* Fix a crash when a malformed message is received.
