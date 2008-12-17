@@ -50,6 +50,13 @@ version 2.5.3 (12/??/2008):
 	  should now be handled correctly.
 	* Many other fixes and code cleanup.
 
+	MySpace:
+	* Respect your privacy settings set using the official MySpace client
+	  (Mark Doliner)
+	* Add support for blocking buddies (Mark Doliner)
+	* Fix a bug where buddies didn't appear in their correct groups the
+	  first time you sign into your account (Mark Doliner)
+
 	SIMPLE:
 	* Fix a crash when a malformed message is received.
 	* Don't allow connecting accounts if no server name has been
