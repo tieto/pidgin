@@ -6,6 +6,12 @@ Our development blog is available at: http://planet.pidgin.im
 	Mark: It's been about two months and woo-boy have we been fixing
 	bugs.  Enjoy!
 
+	Kevin: I didn't do much of anything this release, but Mark and
+	John must be commended for their tireless efforts to fix bugs
+	and approve patches, especially in areas of Pidgin that have
+	not usually received much attention.  Lots of changes have
+	been made, so definitely check the ChangeLog to see what's new.
+
 2.5.2 (10/19/2008):
 	Ethan: After a bit of a struggle with our services, which put
 	this release off for an unfortunate length of time, we're
