@@ -1512,7 +1512,7 @@ oscar_login(PurpleAccount *account)
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
 
-	od->use_ssl = purple_account_get_bool(account, "use_ssl", FALSE);
+	od->use_ssl = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
 
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
@@ -1521,12 +1521,20 @@ oscar_login(PurpleAccount *account)
 	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
 	if (od->use_ssl) {
 		if (purple_ssl_is_supported()) {
-			/* FIXME SSL: This won't really work... Need to match on the server being the default
-			 * non-ssl server and, if so, connect to the default ssl one (and possibly update
-			 * the account setting).
+			const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+			/* If the account's server is what the oscar prpl has offered as
+			 * the default login server through the vast eons (all two of
+			 * said default options, AFAIK) and the user wants SSL, we'll
+			 * do what we know is best for them and change the setting out
+			 * from under them to the SSL login server.
 			 */
-			newconn->gsc = purple_ssl_connect(account,
-					purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER),
+			if (!strcmp(server, OSCAR_DEFAULT_LOGIN_SERVER) || !strcmp(server, OSCAR_OLD_LOGIN_SERVER)) {
+				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
+				purple_account_set_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+				server = OSCAR_DEFAULT_SSL_LOGIN_SERVER;
+			}
+
+			newconn->gsc = purple_ssl_connect(account, server,
 					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 					ssl_connection_established_cb, ssl_connection_error_cb, newconn);
 		} else {
@@ -1534,8 +1542,19 @@ oscar_login(PurpleAccount *account)
 					_("SSL support unavailable"));
 		}
 	} else {
-		newconn->connect_data = purple_proxy_connect(NULL, account,
-				purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
+		const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+
+		/* See the comment above. We do the reverse here. If they don't want
+		 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
+		 * set it back to the default.
+		 */
+		if (!strcmp(server, OSCAR_DEFAULT_SSL_LOGIN_SERVER)) {
+			purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
+			purple_account_set_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+			server = OSCAR_DEFAULT_LOGIN_SERVER;
+		}
+
+		newconn->connect_data = purple_proxy_connect(NULL, account, server,
 				purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 				connection_established_cb, newconn);
 	}
