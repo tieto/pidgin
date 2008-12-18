@@ -64,7 +64,7 @@ typedef enum {
 	PURPLE_ZEPHYR_NONE, /* Non-kerberized ZEPH0.2 */
 	PURPLE_ZEPHYR_KRB4, /* ZEPH0.2 w/ KRB4 support */
 	PURPLE_ZEPHYR_TZC,  /* tzc executable proxy */
-	PURPLE_ZEPHYR_INTERGALACTIC_KRB4, /* Kerberized ZEPH0.3 */
+	PURPLE_ZEPHYR_INTERGALACTIC_KRB4 /* Kerberized ZEPH0.3 */
 } zephyr_connection_type;
 
 struct _zephyr_account {

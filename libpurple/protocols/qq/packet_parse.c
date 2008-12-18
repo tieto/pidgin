@@ -32,11 +32,9 @@
 /* note:
  * 1, in these functions, 'b' stands for byte, 'w' stands for word, 'dw' stands for double word.
  * 2, we use '*cursor' and 'buf' as two addresses to calculate the length.
- * 3, change '0' to '1', if want to get more info about the packet parsing. */
+ * 3, change 'undef' to 'define' to get more info about the packet parsing. */
 
-#if 0
-#define PARSER_DEBUG
-#endif
+#undef PARSER_DEBUG
 
 /* read one byte from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */

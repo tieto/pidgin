@@ -189,7 +189,7 @@ typedef enum
 	 * Used as a hint that unknown commands should not be sent as messages.
 	 * @since 2.1.0
 	 */
-	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
+	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
 
 } PurpleProtocolOptions;
 
@@ -637,7 +637,8 @@ void purple_prpl_got_account_status(PurpleAccount *account,
  * @param idle      The user's idle state.
  * @param idle_time The user's idle time.  This is the time at
  *                  which the user became idle, in seconds since
- *                  the epoch.
+ *                  the epoch.  If the PRPL does not know this value
+ *                  then it should pass 0.
  */
 void purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
 							 gboolean idle, time_t idle_time);

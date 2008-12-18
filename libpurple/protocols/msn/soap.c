@@ -505,7 +505,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
 
 #ifndef MSN_UNSAFE_DEBUG
-	if (conn->current_request->secure)
+	if (conn->current_request && conn->current_request->secure)
 		purple_debug_misc("soap", "Received secure request.\n");
 	else
 #endif

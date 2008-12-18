@@ -408,8 +408,10 @@ static void yahoo_buddy_icon_upload_reading(gpointer data, gint source, PurpleIn
 	if (ret < 0 && errno == EAGAIN)
 		return;
 	else if (ret <= 0) {
-		purple_debug_info("yahoo", "Buddy icon upload response (%d) bytes (> ~400 indicates failure):\n%.*s\n",
-			d->str->len, d->str->len, d->str->str);
+		/* There are other problems if d->str->len overflows, so shut up the
+		 * warning on 64-bit. */
+		purple_debug_info("yahoo", "Buddy icon upload response (%" G_GSIZE_FORMAT ") bytes (> ~400 indicates failure):\n%.*s\n",
+			d->str->len, (guint)d->str->len, d->str->str);
 
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
@@ -517,7 +519,8 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	g_string_prepend(d->str, header);
 	g_free(header);
 
-	purple_debug_info("yahoo", "Buddy icon upload data:\n%.*s\n", d->str->len, d->str->str);
+	/* There are other problems if we're uploading over 4GB of data */
+	purple_debug_info("yahoo", "Buddy icon upload data:\n%.*s\n", (guint)d->str->len, d->str->str);
 
 	d->fd = source;
 	d->watcher = purple_input_add(d->fd, PURPLE_INPUT_WRITE, yahoo_buddy_icon_upload_pending, d);
