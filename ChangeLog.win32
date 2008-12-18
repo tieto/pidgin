@@ -1,4 +1,4 @@
-version 2.5.3 (12/??/2008):
+version 2.5.3 (12/18/2008):
 	* Upgrade SILC to use the 1.1.8 toolkit
 	* Updated included Meanwhile library to include patch referenced in #7563
 

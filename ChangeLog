@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.3 (12/??/2008):
+version 2.5.3 (12/18/2008):
 	libpurple:
 	* Corrected maximum message lengths for Yahoo!
 	* The Buddy State Notification plugin no longer prints duplicate
