@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
-"PO-Revision-Date: 2008-09-02 11:40+0100\n"
+"PO-Revision-Date: 2008-12-18 20:21+0100\n"
 "Last-Translator: Peter Hjalmarsson <xake@rymdraket.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -2576,7 +2576,7 @@ msgid ""
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Resten av meddelanden kommer sparas som notifieringar. Du kan ändra/ta bort "
-"notifieringarna från `Kompisnotifieringar' dialogen."
+"notifieringarna från `Kompisnotifieringar'-dialogen."
 
 #, c-format
 msgid ""
@@ -2591,7 +2591,7 @@ msgstr "Frånkopplade meddeladen"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr ""
-"Du kan ändra/ta bort notifieringarna från `Kompisnotifieringar' dialogen"
+"Du kan ändra/ta bort notifieringarna från `Kompisnotifieringar'-dialogen"
 
 msgid "Yes"
 msgstr "Ja"
@@ -4227,7 +4227,7 @@ msgid "Password (again)"
 msgstr "Lösenord (igen)"
 
 msgid "Change XMPP Password"
-msgstr "Byt XMPP lösenord"
+msgstr "Byt XMPP-lösenord"
 
 msgid "Please enter your new password"
 msgstr "Ange ditt nya lösenord"
@@ -4237,7 +4237,7 @@ msgstr "Ändra användarinfo..."
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
 msgid "Change Password..."
-msgstr "Byt lösenor..."
+msgstr "Byt lösenord..."
 
 #. }
 msgid "Search for Users..."
@@ -4564,7 +4564,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Leverans av meddelande till %s misslyckades: %s"
 
 msgid "XMPP Message Error"
-msgstr "XMPP meddelandefel"
+msgstr "XMPP-meddelandefel"
 
 #, c-format
 msgid "(Code %s)"
@@ -10986,7 +10986,7 @@ msgid "/Conversation/_Find..."
 msgstr "/Konversation/_Sök..."
 
 msgid "/Conversation/View _Log"
-msgstr "/Konversation/Visa _Logg"
+msgstr "/Konversation/Visa _logg"
 
 msgid "/Conversation/_Save As..."
 msgstr "/Konversation/_Spara som..."
@@ -10998,7 +10998,7 @@ msgid "/Conversation/Se_nd File..."
 msgstr "/Konversation/S_kicka fil..."
 
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "/Konversation/Lägg till Kom_pisnotifiering..."
+msgstr "/Konversation/Lägg till kom_pisnotifiering..."
 
 msgid "/Conversation/_Get Info"
 msgstr "/Konversation/_Hämta information"
@@ -12600,7 +12600,7 @@ msgstr ""
 "(%s för URL)"
 
 msgid "Log _format:"
-msgstr "Logg _format:"
+msgstr "Logg_format:"
 
 msgid "Log all _instant messages"
 msgstr "_Logga alla snabbmeddelanden"
