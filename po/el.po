@@ -7203,7 +7203,7 @@ msgid "Friend Only"
 msgstr "Μόνο φίλοι"
 
 msgid "Private"
-msgstr "\n"
+msgstr ""
 
 msgid "QQ Number"
 msgstr "Αριθμός QQ"
