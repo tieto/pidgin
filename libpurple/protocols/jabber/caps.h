@@ -35,7 +35,6 @@ struct _JabberCapsClientInfo {
 	GList *features; /* char * */
 	GList *forms; /* xmlnode * */
 	JabberCapsNodeExts *exts;
-	guint ref;
 };
 
 /*
@@ -55,14 +54,6 @@ struct _JabberCapsNodeExts {
 	guint ref;
 	GHashTable *exts; /* char *ext_name -> GList *features */
 };
-
-/**
- * Adjust the refcount for JabberCapsClientInfo. When the refcount reaches
- * 0, the data will be destroyed.
- */
-void jabber_caps_client_info_unref(JabberCapsClientInfo *info);
-JabberCapsClientInfo* jabber_caps_client_info_ref(JabberCapsClientInfo *info);
-
 
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, GList *exts, gpointer user_data);
 

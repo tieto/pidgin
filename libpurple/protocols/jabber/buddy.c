@@ -181,7 +181,6 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
 	}
 
-	jabber_caps_client_info_unref(jbr->caps.info);
 	if (jbr->caps.exts) {
 		g_list_foreach(jbr->caps.exts, (GFunc)g_free, NULL);
 		g_list_free(jbr->caps.exts);

@@ -116,23 +116,10 @@ void jabber_caps_destroy_key(gpointer data) {
 	g_free(key);
 }
 
-JabberCapsClientInfo *
-jabber_caps_client_info_ref(JabberCapsClientInfo *info)
-{
-	g_return_val_if_fail(info != NULL, NULL);
-	++info->ref;
-	return info;
-}
-
-void
-jabber_caps_client_info_unref(JabberCapsClientInfo *info)
+static void
+jabber_caps_client_info_destroy(JabberCapsClientInfo *info)
 {
 	if (info == NULL)
-		return;
-
-	g_return_if_fail(info->ref != 0);
-
-	if (--info->ref != 0)
 		return;
 
 	while(info->identities) {
@@ -269,7 +256,6 @@ jabber_caps_load(void)
 			JabberCapsClientInfo *value = g_new0(JabberCapsClientInfo, 1);
 			xmlnode *child;
 			JabberCapsNodeExts *exts = NULL;
-			jabber_caps_client_info_ref(value);
 			key->node = g_strdup(xmlnode_get_attrib(client,"node"));
 			key->ver  = g_strdup(xmlnode_get_attrib(client,"ver"));
 			key->hash = g_strdup(xmlnode_get_attrib(client,"hash"));
@@ -351,7 +337,7 @@ jabber_caps_load(void)
 void jabber_caps_init(void)
 {
 	nodetable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)jabber_caps_node_exts_unref); 
-	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, (GDestroyNotify)jabber_caps_client_info_unref);
+	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, (GDestroyNotify)jabber_caps_client_info_destroy);
 	jabber_caps_load();
 }
 
@@ -410,8 +396,7 @@ cbplususerdata_unref(jabber_caps_cbplususerdata *data)
 	g_free(data->ver);
 	g_free(data->hash);
 
-	if (data->info)
-		jabber_caps_client_info_unref(data->info);
+	/* If we have info here, it's already in the capstable, so don't free it */
 	if (data->exts)
 		free_string_glist(data->exts);
 	if (data->node_exts)
@@ -465,7 +450,7 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 			                     xmlnode_get_attrib(packet, "from"));
 
 			userdata->cb(NULL, NULL, userdata->cb_data);
-			jabber_caps_client_info_unref(info);
+			jabber_caps_client_info_destroy(info);
 			cbplususerdata_unref(userdata);
 			g_free(hash);
 			return;
@@ -481,8 +466,6 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 		userdata->node_exts = NULL;
 	}
 
-	userdata->info = info;
-
 	key.node = userdata->node;
 	key.ver  = userdata->ver;
 	key.hash = userdata->hash;
@@ -490,8 +473,7 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 	/* Use the copy of this data already in the table if it exists or insert
 	 * a new one if we need to */
 	if ((value = g_hash_table_lookup(capstable, &key))) {
-		jabber_caps_client_info_unref(info);
-		jabber_caps_client_info_ref(value);
+		jabber_caps_client_info_destroy(info);
 		info = value;
 	} else {
 		JabberCapsKey *n_key = g_new(JabberCapsKey, 1);
@@ -501,9 +483,11 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 		userdata->node = userdata->ver = userdata->hash = NULL;
 
 		/* The capstable gets a reference */
-		g_hash_table_insert(capstable, n_key, jabber_caps_client_info_ref(info));
+		g_hash_table_insert(capstable, n_key, info);
 		schedule_caps_save();
 	}
+
+	userdata->info = info;
 
 	if (userdata->extOutstanding == 0)
 		jabber_caps_get_info_complete(userdata);
@@ -579,7 +563,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	info = g_hash_table_lookup(capstable, &key);
 	if (info && hash) {
 		/* v1.5 - We already have all the information we care about */
-		cb(jabber_caps_client_info_ref(info), NULL, user_data);
+		cb(info, NULL, user_data);
 		return;
 	}
 
@@ -595,7 +579,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	userdata->hash = g_strdup(hash);
 
 	if (info) {
-		userdata->info = jabber_caps_client_info_ref(info);
+		userdata->info = info;
 	} else {
 		/* If we don't have the basic information about the client, we need
 		 * to fetch it. */
@@ -735,7 +719,6 @@ static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 		return 0;
 	
 	info = g_new0(JabberCapsClientInfo, 1);
-	jabber_caps_client_info_ref(info);
 
 	for(child = query->child; child; child = child->next) {
 		if (!strcmp(child->name,"identity")) {

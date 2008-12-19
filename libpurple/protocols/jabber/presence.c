@@ -394,7 +394,6 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 	if (!jbr) {
 		g_free(userdata->from);
 		g_free(userdata);
-		jabber_caps_client_info_unref(info);
 		if (exts) {
 			g_list_foreach(exts, (GFunc)g_free, NULL);
 			g_list_free(exts);
@@ -402,7 +401,7 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 		return;
 	}
 
-	jabber_caps_client_info_unref(jbr->caps.info);
+	/* Any old jbr->caps.info is owned by the caps code */
 	if (jbr->caps.exts) {
 		g_list_foreach(jbr->caps.exts, (GFunc)g_free, NULL);
 		g_list_free(jbr->caps.exts);
