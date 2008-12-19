@@ -64,10 +64,6 @@ void jabber_caps_client_info_unref(JabberCapsClientInfo *info);
 JabberCapsClientInfo* jabber_caps_client_info_ref(JabberCapsClientInfo *info);
 
 
-#if 0
-typedef struct _JabberCapsClientInfo JabberCapsValueExt;
-#endif
-
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, GList *exts, gpointer user_data);
 
 void jabber_caps_init(void);
