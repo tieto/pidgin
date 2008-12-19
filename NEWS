@@ -19,8 +19,15 @@ Our development blog is available at: http://planet.pidgin.im
 	admit.  By my count, our ChangeLog has 58 bullet points(!) and we've
 	closed 85 tickets specifically for this release.  Enjoy!
 
-    Ka-Hing: Bring your XMPP server to 2008 some time in 2009 would be
-    nice, DreamHost!
+	Ka-Hing: Bring your XMPP server to 2008 some time in 2009 would be
+	nice, DreamHost!
+
+	Elliott: Well, I can't blame the server for this release taking so long
+	but that's just how it worked out.  A few interesting MSN changes this
+	time.  Hopefully, federated & Yahoo! buddies will work for you, but I'm
+	not yet certain it's ready.  Mark made so many fixes, I'm not even sure
+	I recognize everything anymore, but hopefully that'll make things less
+	crashy for you.
 
 2.5.2 (10/19/2008):
 	Ethan: After a bit of a struggle with our services, which put
