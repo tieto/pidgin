@@ -28,11 +28,32 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 /* Implementation of XEP-0115 - Entity Capabilities */
 
+typedef struct _JabberCapsNodeExts JabberCapsNodeExts;
+
 struct _JabberCapsClientInfo {
 	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
 	GList *forms; /* xmlnode * */
+	JabberCapsNodeExts *exts;
 	guint ref;
+};
+
+/*
+ * This stores a set of exts "known" for a specific node (which indicates
+ * a specific client -- for reference, Pidgin, Finch, Meebo, et al share one
+ * node.) In XEP-0115 v1.3, exts are used for features that may or may not be
+ * present at a given time (PEP things, buzz might be disabled, etc).
+ *
+ * This structure is shared among all JabberCapsClientInfo instances matching
+ * a specific node (if the capstable key->hash == NULL, which indicates that
+ * the ClientInfo is using v1.3 caps as opposed to v1.5 caps).
+ *
+ * It's only exposed so that jabber_resource_has_capability can use it.
+ * Everyone else, STAY AWAY!
+ */
+struct _JabberCapsNodeExts {
+	guint ref;
+	GHashTable *exts; /* char *ext_name -> GList *features */
 };
 
 /**
@@ -40,14 +61,14 @@ struct _JabberCapsClientInfo {
  * 0, the data will be destroyed.
  */
 void jabber_caps_client_info_unref(JabberCapsClientInfo *info);
-void jabber_caps_client_info_ref(JabberCapsClientInfo *info);
+JabberCapsClientInfo* jabber_caps_client_info_ref(JabberCapsClientInfo *info);
 
 
 #if 0
 typedef struct _JabberCapsClientInfo JabberCapsValueExt;
 #endif
 
-typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
+typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, GList *exts, gpointer user_data);
 
 void jabber_caps_init(void);
 void jabber_caps_uninit(void);
@@ -57,10 +78,14 @@ void jabber_caps_destroy_key(gpointer value);
 /**
  * Main entity capabilites function to get the capabilities of a contact.
  *
- * The callback will be called synchronously if we already have the capabilities for
- * the specified (node,ver,hash).
+ * The callback will be called synchronously if we already have the
+ * capabilities for the specified (node,ver,hash) (and, if exts are specified,
+ * if we know what each means)
  */
-void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *hash, jabber_caps_get_info_cb cb, gpointer user_data);
+void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
+                          const char *ver, const char *hash,
+                          const char *ext, jabber_caps_get_info_cb cb,
+                          gpointer user_data);
 
 /**
  *	Takes a JabberCapsClientInfo pointer and returns the caps hash according to
@@ -68,8 +93,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
  *
  *	@param info A JabberCapsClientInfo pointer.
  *	@param hash Hash cipher to be used. Either sha-1 or md5.
- *	@return		The base64 encoded SHA-1 hash; needs to be freed if not needed 
- *				any furthermore. 
+ *	@return		The base64 encoded SHA-1 hash; must be freed by caller
  */
 gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash);
 

@@ -181,7 +181,11 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
 	}
 
-	jabber_caps_client_info_unref(jbr->caps);
+	jabber_caps_client_info_unref(jbr->caps.info);
+	if (jbr->caps.exts) {
+		g_list_foreach(jbr->caps.exts, (GFunc)g_free, NULL);
+		g_list_free(jbr->caps.exts);
+	}
 	g_free(jbr->name);
 	g_free(jbr->status);
 	g_free(jbr->thread_id);
@@ -2509,14 +2513,27 @@ gboolean
 jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 {
 	const GList *node = NULL;
+	const JabberCapsNodeExts *exts;
 
-	if (!jbr->caps) {
+	if (!jbr->caps.info) {
 		purple_debug_error("jabber",
 			"Unable to find caps: nothing known about buddy\n");
 		return FALSE;
 	}
 
-	node = g_list_find_custom(jbr->caps->features, cap, (GCompareFunc)strcmp);
+	node = g_list_find_custom(jbr->caps.info->features, cap, (GCompareFunc)strcmp);
+	if (!node && jbr->caps.exts && jbr->caps.info->exts) {
+		const GList *ext;
+		exts = jbr->caps.info->exts;
+		/* Walk through all the enabled caps, checking each list for the cap.
+		 * Don't check it twice, though. */
+		for (ext = jbr->caps.exts; ext && !node; ext = ext->next) {
+			GList *features = g_hash_table_lookup(exts->exts, ext->data);
+			if (features)
+				node = g_list_find_custom(features, cap, (GCompareFunc)strcmp);
+		}
+	}
+
 	/* TODO: Are these messages actually useful? */
 	if (node)
 		purple_debug_info("jabber", "Found cap: %s\n", cap);

@@ -2425,7 +2425,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 	}
 
 	/* Is this message sufficiently useful to not just fold it in with the tail error condition below? */
-	if(!jbr->caps) {
+	if(!jbr->caps.info) {
 		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
 		return FALSE;
 	}

@@ -42,6 +42,8 @@ typedef struct _JabberCapsKey {
 } JabberCapsKey;
 
 static GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsClientInfo */
+static GHashTable *nodetable = NULL; /* char *node -> JabberCapsNodeExts */
+static guint       save_timer = 0;
 
 /**
  *	Processes a query-node and returns a JabberCapsClientInfo object with all relevant info.
@@ -59,21 +61,59 @@ typedef struct _JabberCapsValue {
 } JabberCapsValue;
 #endif
 
+/* Free a GList of allocated char* */
+static void
+free_string_glist(GList *list)
+{
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+}
+
+static JabberCapsNodeExts*
+jabber_caps_node_exts_ref(JabberCapsNodeExts *exts)
+{
+	g_return_val_if_fail(exts != NULL, NULL);
+
+	++exts->ref;
+	return exts;
+}
+
+static void
+jabber_caps_node_exts_unref(JabberCapsNodeExts *exts)
+{
+	if (exts == NULL)
+		return;
+
+	g_return_if_fail(exts->ref != 0);
+
+	if (--exts->ref != 0)
+		return;
+
+	g_hash_table_destroy(exts->exts);
+	g_free(exts);
+}
+
 static guint jabber_caps_hash(gconstpointer data) {
 	const JabberCapsKey *key = data;
 	guint nodehash = g_str_hash(key->node);
-	guint verhash = g_str_hash(key->ver);
-	guint hashhash = g_str_hash(key->hash);
+	guint verhash  = g_str_hash(key->ver);
+	/* 'hash' was optional in XEP-0115 v1.4 and I think g_str_hash crashes on
+	 * NULL >:O. Okay, maybe I've played too much Zelda, but that looks like
+	 * a Deku Shrub... */
+	guint hashhash = (key->hash ? g_str_hash(key->hash) : 0);
 	return nodehash ^ verhash ^ hashhash;
 }
 
 static gboolean jabber_caps_compare(gconstpointer v1, gconstpointer v2) {
 	const JabberCapsKey *name1 = v1;
 	const JabberCapsKey *name2 = v2;
-	
+	/* Again, hash might be NULL and I *know* strcmp will crash on NULL. */
+	gboolean hasheq = ((!name1->hash && !name2->hash) ||
+	        (name1->hash && name2->hash && !strcmp(name1->hash, name2->hash)));
+
 	return strcmp(name1->node, name2->node) == 0 &&
 	       strcmp(name1->ver, name2->ver) == 0 &&
-	       strcmp(name1->hash, name2->hash) == 0;
+	       hasheq;
 }
 
 void jabber_caps_destroy_key(gpointer data) {
@@ -84,11 +124,12 @@ void jabber_caps_destroy_key(gpointer data) {
 	g_free(key);
 }
 
-void
+JabberCapsClientInfo *
 jabber_caps_client_info_ref(JabberCapsClientInfo *info)
 {
-	g_return_if_fail(info != NULL);
+	g_return_val_if_fail(info != NULL, NULL);
 	++info->ref;
+	return info;
 }
 
 void
@@ -97,9 +138,9 @@ jabber_caps_client_info_unref(JabberCapsClientInfo *info)
 	if (info == NULL)
 		return;
 
-	g_return_if_fail(info->ref > 0);
+	g_return_if_fail(info->ref != 0);
 
-	if (--info->ref > 0)
+	if (--info->ref != 0)
 		return;
 
 	while(info->identities) {
@@ -112,17 +153,32 @@ jabber_caps_client_info_unref(JabberCapsClientInfo *info)
 		info->identities = g_list_delete_link(info->identities, info->identities);
 	}
 
-	g_list_foreach(info->features, (GFunc)g_free, NULL);
-	g_list_free(info->features);
+	free_string_glist(info->features);
+	free_string_glist(info->forms);
 
-	g_list_foreach(info->forms, (GFunc)g_free, NULL);
-	g_list_free(info->forms);
+	jabber_caps_node_exts_unref(info->exts);
 
 #if 0
 	g_hash_table_destroy(valuestruct->ext);
 #endif
 
 	g_free(info);
+}
+
+/* NOTE: Takes a reference to the exts, unref it if you don't really want to
+ * keep it around. */
+static JabberCapsNodeExts*
+jabber_caps_find_exts_by_node(const char *node)
+{
+	JabberCapsNodeExts *exts;
+	if (NULL == (exts = g_hash_table_lookup(nodetable, node))) {
+		exts = g_new0(JabberCapsNodeExts, 1);
+		exts->exts = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+		                                   (GDestroyNotify)free_string_glist);
+		g_hash_table_insert(nodetable, g_strdup(node), jabber_caps_node_exts_ref(exts));
+	}
+
+	return jabber_caps_node_exts_ref(exts);
 }
 
 #if 0
@@ -146,16 +202,24 @@ static void jabber_caps_ext_destroy_value(gpointer value) {
 #endif
 
 static void jabber_caps_load(void);
+static gboolean do_jabber_caps_store(gpointer data);
 
 void jabber_caps_init(void)
 {
+	nodetable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)jabber_caps_node_exts_unref); 
 	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, (GDestroyNotify)jabber_caps_client_info_unref);
 	jabber_caps_load();
 }
 
 void jabber_caps_uninit(void)
 {
+	if (save_timer != 0) {
+		purple_timeout_remove(save_timer);
+		save_timer = 0;
+		do_jabber_caps_store(NULL);
+	}
 	g_hash_table_destroy(capstable);
+	g_hash_table_destroy(nodetable);
 	capstable = NULL;
 }
 
@@ -178,10 +242,16 @@ static void jabber_caps_load(void) {
 			JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 			JabberCapsClientInfo *value = g_new0(JabberCapsClientInfo, 1);
 			xmlnode *child;
+			JabberCapsNodeExts *exts = NULL;
 			jabber_caps_client_info_ref(value);
 			key->node = g_strdup(xmlnode_get_attrib(client,"node"));
 			key->ver  = g_strdup(xmlnode_get_attrib(client,"ver"));
 			key->hash = g_strdup(xmlnode_get_attrib(client,"hash"));
+
+			/* v1.3 capabilities */
+			if (key->hash == NULL)
+				exts = jabber_caps_find_exts_by_node(key->node);
+
 			for(child = client->child; child; child = child->next) {
 				if(child->type != XMLNODE_TYPE_TAG)
 					continue;
@@ -208,10 +278,45 @@ static void jabber_caps_load(void) {
 					
 					value->identities = g_list_append(value->identities,id);
 				} else if(!strcmp(child->name,"x")) {
+					/* FIXME: See #7814 -- this will cause problems if anyone
+					 * ever actually specifies forms. In fact, for this to
+					 * work properly, that bug needs to be fixed in
+					 * xmlnode_from_str, not the output version... */
 					value->forms = g_list_append(value->forms, xmlnode_copy(child));
+				} else if (!strcmp(child->name, "ext") && key->hash != NULL) {
+					purple_debug_warning("jabber", "Ignoring exts when reading new-style caps\n");
+				} else if (!strcmp(child->name, "ext")) {
+					/* TODO: Do we care about reading in the identities listed here? */
+					const char *identifier = xmlnode_get_attrib(child, "identifier");
+					xmlnode *node;
+					GList *features = NULL;
+
+					if (!identifier)
+						continue;
+
+					for (node = child->child; node; node = node->next) {
+						if (node->type != XMLNODE_TYPE_TAG)
+							continue;
+						if (!strcmp(node->name, "feature")) {
+							const char *var = xmlnode_get_attrib(node, "var");
+							if (!var)
+								continue;
+							features = g_list_prepend(features, g_strdup(var));
+						}
+					}
+
+					if (features) {
+						g_hash_table_insert(exts->exts, g_strdup(identifier),
+						                    features);
+					} else
+						purple_debug_warning("jabber", "Caps ext %s had no features.\n",
+						                     identifier);
 				}
 			}
+
+			value->exts = exts;
 			g_hash_table_replace(capstable, key, value);
+
 		}
 	}
 	xmlnode_free(capsdata);
@@ -244,6 +349,22 @@ static void jabber_caps_store_ext(gpointer key, gpointer value, gpointer user_da
 }
 #endif
 
+static void
+exts_to_xmlnode(gconstpointer key, gconstpointer value, gpointer user_data)
+{
+	const char *identifier = key;
+	const GList *features = value, *node;
+	xmlnode *client = user_data, *ext, *feature;
+
+	ext = xmlnode_new_child(client, "ext");
+	xmlnode_set_attrib(ext, "identifier", identifier);
+
+	for (node = features; node; node = node->next) {
+		feature = xmlnode_new_child(ext, "feature");
+		xmlnode_set_attrib(feature, "var", (const gchar *)node->data);
+	}
+}
+
 static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user_data) {
 	JabberCapsKey *clientinfo = key;
 	JabberCapsClientInfo *props = value;
@@ -253,7 +374,8 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 
 	xmlnode_set_attrib(client, "node", clientinfo->node);
 	xmlnode_set_attrib(client, "ver", clientinfo->ver);
-	xmlnode_set_attrib(client, "hash", clientinfo->hash);
+	if (clientinfo->hash)
+		xmlnode_set_attrib(client, "hash", clientinfo->hash);
 	for(iter = props->identities; iter; iter = g_list_next(iter)) {
 		JabberIdentity *id = iter->data;
 		xmlnode *identity = xmlnode_new_child(client, "identity");
@@ -272,12 +394,19 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 	}
 	
 	for(iter = props->forms; iter; iter = g_list_next(iter)) {
+		/* FIXME: See #7814 */
 		xmlnode *xdata = iter->data;
 		xmlnode_insert_child(client, xmlnode_copy(xdata));
 	}
+
+	/* TODO: Ideally, only save this once-per-node... */
+	if (props->exts)
+		g_hash_table_foreach(props->exts->exts, (GHFunc)exts_to_xmlnode, client);
 }
 
-static void jabber_caps_store(void) {
+static gboolean
+do_jabber_caps_store(gpointer data)
+{
 	char *str;
 	int length = 0;
 	xmlnode *root = xmlnode_new("capabilities");
@@ -286,6 +415,16 @@ static void jabber_caps_store(void) {
 	xmlnode_free(root);
 	purple_util_write_data_to_file(JABBER_CAPS_FILENAME, str, length);
 	g_free(str);
+
+	save_timer = 0;
+	return FALSE;
+}
+
+static void
+schedule_caps_save(void)
+{
+	if (save_timer == 0)
+		save_timer = purple_timeout_add_seconds(5, do_jabber_caps_store, NULL);
 }
 
 #if 0
@@ -354,6 +493,8 @@ static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const ch
 #endif
 
 typedef struct _jabber_caps_cbplususerdata {
+	guint ref;
+
 	jabber_caps_get_info_cb cb;
 	gpointer cb_data;
 
@@ -361,10 +502,47 @@ typedef struct _jabber_caps_cbplususerdata {
 	char *node;
 	char *ver;
 	char *hash;
-#if 0
-	unsigned extOutstanding;
-#endif
+
+	JabberCapsClientInfo *info;
+
+	GList *exts;
+	guint extOutstanding;
+	JabberCapsNodeExts *node_exts;
 } jabber_caps_cbplususerdata;
+
+static jabber_caps_cbplususerdata*
+cbplususerdata_ref(jabber_caps_cbplususerdata *data)
+{
+	g_return_val_if_fail(data != NULL, NULL);
+
+	++data->ref;
+	return data;
+}
+
+static void
+cbplususerdata_unref(jabber_caps_cbplususerdata *data)
+{
+	if (data == NULL)
+		return;
+
+	g_return_if_fail(data->ref != 0);
+
+	if (--data->ref > 0)
+		return;
+
+	g_free(data->who);
+	g_free(data->node);
+	g_free(data->ver);
+	g_free(data->hash);
+
+	if (data->info)
+		jabber_caps_client_info_unref(data->info);
+	if (data->exts)
+		free_string_glist(data->exts);
+	if (data->node_exts)
+		jabber_caps_node_exts_unref(data->node_exts);
+	g_free(data);
+}
 
 #if 0
 typedef struct jabber_ext_userdata {
@@ -453,38 +631,68 @@ static void jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer dat
 #endif
 
 static void
+jabber_caps_get_info_complete(jabber_caps_cbplususerdata *userdata)
+{
+	userdata->cb(userdata->info, userdata->exts, userdata->cb_data);
+	userdata->info = NULL;
+	userdata->exts = NULL;
+
+	if (userdata->ref != 1)
+		purple_debug_warning("jabber", "Lost a reference to caps cbdata: %d\n",
+		                     userdata->ref);
+}
+
+static void
 jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/disco#info");
 	jabber_caps_cbplususerdata *userdata = data;
 	JabberCapsClientInfo *info = NULL, *value;
-	gchar *hash = NULL;
 	const char *type = xmlnode_get_attrib(packet, "type");
 	JabberCapsKey key;
 
 	if (!query || !strcmp(type, "error")) {
-		userdata->cb(NULL, userdata->cb_data);
-		goto out;
+		/* Any outstanding exts will be dealt with via ref-counting */
+		userdata->cb(NULL, NULL, userdata->cb_data);
+		cbplususerdata_unref(userdata);
+		return;
 	}
 
 	/* check hash */
 	info = jabber_caps_parse_client_info(query);
 
-	if (!strcmp(userdata->hash, "sha-1")) {
-		hash = jabber_caps_calculate_hash(info, "sha1");
-	} else if (!strcmp(userdata->hash, "md5")) {
-		hash = jabber_caps_calculate_hash(info, "md5");
+	/* Only validate if these are v1.5 capabilities */
+	if (userdata->hash) {
+		gchar *hash = NULL;
+		if (!strcmp(userdata->hash, "sha-1")) {
+			hash = jabber_caps_calculate_hash(info, "sha1");
+		} else if (!strcmp(userdata->hash, "md5")) {
+			hash = jabber_caps_calculate_hash(info, "md5");
+		}
+
+		if (!hash || strcmp(hash, userdata->ver)) {
+			purple_debug_warning("jabber", "Could not validate caps info from %s\n",
+			                     xmlnode_get_attrib(packet, "from"));
+
+			userdata->cb(NULL, NULL, userdata->cb_data);
+			jabber_caps_client_info_unref(info);
+			cbplususerdata_unref(userdata);
+			g_free(hash);
+			return;
+		}
+
+		g_free(hash);
 	}
 
-	if (!hash || strcmp(hash, userdata->ver)) {
-		purple_debug_warning("jabber", "Could not validate caps info from %s\n",
-		                     xmlnode_get_attrib(packet, "from"));
-
-		userdata->cb(NULL, userdata->cb_data);
-		jabber_caps_client_info_unref(info);
-		goto out;
+	if (!userdata->hash && userdata->node_exts) {
+		/* If the ClientInfo doesn't have information about the exts, give them
+		 * ours (along with our ref) */
+		info->exts = userdata->node_exts;
+		userdata->node_exts = NULL;
 	}
+
+	userdata->info = info;
 
 	key.node = userdata->node;
 	key.ver  = userdata->ver;
@@ -503,27 +711,76 @@ jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
 		n_key->hash = userdata->hash;
 		userdata->node = userdata->ver = userdata->hash = NULL;
 
-		g_hash_table_insert(capstable, n_key, info);
-		jabber_caps_store();
+		/* The capstable gets a reference */
+		g_hash_table_insert(capstable, n_key, jabber_caps_client_info_ref(info));
+		schedule_caps_save();
 	}
 
-	userdata->cb(info, userdata->cb_data);
+	if (userdata->extOutstanding == 0)
+		jabber_caps_get_info_complete(userdata);
 
-out:
-	g_free(userdata->who);
-	g_free(userdata->node);
-	g_free(userdata->ver);
-	g_free(userdata->hash);	
+	cbplususerdata_unref(userdata);
+}
+
+typedef struct {
+	const char *name;
+	jabber_caps_cbplususerdata *data;
+} ext_iq_data;
+
+static void
+jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
+		"http://jabber.org/protocol/disco#info");
+	xmlnode *child;
+	ext_iq_data *userdata = data;
+	const char *type = xmlnode_get_attrib(packet, "type");
+	GList *features = NULL;
+	JabberCapsNodeExts *node_exts;
+
+	if (!query || !strcmp(type, "error")) {
+		cbplususerdata_unref(userdata->data);
+		g_free(userdata);
+		return;
+	}
+
+	/* So, we decrement this after checking for an error, which means that
+	 * if there *is* an error, we'll never call the callback passed to
+	 * jabber_caps_get_info. We will still free all of our data, though.
+	 */
+	--userdata->data->extOutstanding;
+
+	for (child = xmlnode_get_child(query, "feature"); child;
+	        child = xmlnode_get_next_twin(child)) {
+		const char *var = xmlnode_get_attrib(child, "var");
+		if (var)
+			features = g_list_prepend(features, g_strdup(var));
+	}
+
+	node_exts = (userdata->data->info ? userdata->data->info->exts :
+	                                    userdata->data->node_exts);
+	g_hash_table_insert(node_exts->exts, g_strdup(userdata->name), features);
+	schedule_caps_save();
+
+	/* Are we done? */
+	if (userdata->data->info && userdata->data->extOutstanding == 0)
+		jabber_caps_get_info_complete(userdata->data);
+
+	cbplususerdata_unref(userdata->data);
 	g_free(userdata);
-	g_free(hash);
 }
 
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
-		const char *ver, const char *hash, jabber_caps_get_info_cb cb,
-		gpointer user_data)
+        const char *ver, const char *hash, const char *ext,
+        jabber_caps_get_info_cb cb, gpointer user_data)
 {
 	JabberCapsClientInfo *info;
 	JabberCapsKey key;
+	jabber_caps_cbplususerdata *userdata;
+
+	if (ext && *ext && hash)
+		purple_debug_warning("jabber", "Ignoring exts in new-style caps from %s\n",
+		                     who);
 
 	/* Using this in a read-only fashion, so the cast is OK */
 	key.node = (char *)node;
@@ -531,22 +788,31 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	key.hash = (char *)hash;
 
 	info = g_hash_table_lookup(capstable, &key);
+	if (info && hash) {
+		/* v1.5 - We already have all the information we care about */
+		cb(jabber_caps_client_info_ref(info), NULL, user_data);
+		return;
+	}
+
+	userdata = g_new0(jabber_caps_cbplususerdata, 1);
+	/* This ref is given to fetching the basic node#ver info if we need it 
+	 * or unrefed at the bottom of this function */
+	cbplususerdata_ref(userdata);
+	userdata->cb = cb;
+	userdata->cb_data = user_data;
+	userdata->who = g_strdup(who);
+	userdata->node = g_strdup(node);
+	userdata->ver = g_strdup(ver);
+	userdata->hash = g_strdup(hash);
+
 	if (info) {
-		jabber_caps_client_info_ref(info);
-		cb(info, user_data);
+		userdata->info = jabber_caps_client_info_ref(info);
 	} else {
-		jabber_caps_cbplususerdata *userdata;
+		/* If we don't have the basic information about the client, we need
+		 * to fetch it. */
 		JabberIq *iq;
 		xmlnode *query;
 		char *nodever;
-
-		userdata = g_new0(jabber_caps_cbplususerdata, 1);
-		userdata->cb = cb;
-		userdata->cb_data = user_data;
-		userdata->who = g_strdup(who);
-		userdata->node = g_strdup(node);
-		userdata->ver = g_strdup(ver);
-		userdata->hash = g_strdup(hash);
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET,
 					"http://jabber.org/protocol/disco#info");
@@ -557,9 +823,65 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 		g_free(nodever);
 		xmlnode_set_attrib(iq->node, "to", who);
 
-		jabber_iq_set_callback(iq,jabber_caps_client_iqcb,userdata);
+		jabber_iq_set_callback(iq, jabber_caps_client_iqcb, userdata);
 		jabber_iq_send(iq);
 	}
+
+	/* Are there any exts that we don't recognize? */
+	if (ext && *ext && !hash) {
+		JabberCapsNodeExts *node_exts;
+		gchar **splat = g_strsplit(ext, " ", 0);
+		int i;
+
+		if (info) {
+			if (info->exts)
+				node_exts = info->exts;
+			else
+				node_exts = info->exts = jabber_caps_find_exts_by_node(node);
+		} else
+			/* We'll put it in later once we have the client info */
+			node_exts = userdata->node_exts = jabber_caps_find_exts_by_node(node);
+
+		for (i = 0; splat[i]; ++i) {
+			userdata->exts = g_list_prepend(userdata->exts, splat[i]);
+			/* Look it up if we don't already know what it means */
+			if (!g_hash_table_lookup(node_exts->exts, splat[i])) {
+				JabberIq *iq;
+				xmlnode *query;
+				char *nodeext;
+				ext_iq_data *cbdata = g_new(ext_iq_data, 1);
+
+				cbdata->name = splat[i];
+				cbdata->data = cbplususerdata_ref(userdata);
+
+				iq = jabber_iq_new_query(js, JABBER_IQ_GET,
+				            "http://jabber.org/protocol/disco#info");
+				query = xmlnode_get_child_with_namespace(iq->node, "query",
+				            "http://jabber.org/protocol/disco#info");
+				nodeext = g_strdup_printf("%s#%s", node, splat[i]);
+				xmlnode_set_attrib(query, "node", nodeext);
+				g_free(nodeext);
+				xmlnode_set_attrib(iq->node, "to", who);
+
+				jabber_iq_set_callback(iq, jabber_caps_ext_iqcb, cbdata);
+				jabber_iq_send(iq);
+
+				++userdata->extOutstanding;	
+			}
+			splat[i] = NULL;
+		}
+		/* All the strings are now part of the GList, so don't need
+		 * g_strfreev. */
+		g_free(splat);
+	}
+
+	if (userdata->info && userdata->extOutstanding == 0) {
+		jabber_caps_get_info_complete(userdata);
+		cbplususerdata_unref(userdata);
+	}
+
+	return;
+
 #if 0
 	/* The above check was originally simply "if (!info)", so this was executed
 	 * on info being non-null */
@@ -700,9 +1022,8 @@ static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 		} else if (!strcmp(child->name, "feature")) {
 			/* parse feature */
 			const char *var = xmlnode_get_attrib(child, "var");
-			if(!var)
-				continue;
-			info->features = g_list_append(info->features, g_strdup(var));
+			if (var)
+				info->features = g_list_prepend(info->features, g_strdup(var));
 		} else if (!strcmp(child->name, "x")) {
 			if (child->xmlns && !strcmp(child->xmlns, "jabber:x:data")) {
 				/* x-data form */

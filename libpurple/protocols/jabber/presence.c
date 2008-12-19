@@ -382,7 +382,9 @@ typedef struct _JabberPresenceCapabilities {
 	char *from;
 } JabberPresenceCapabilities;
 
-static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, JabberPresenceCapabilities *userdata)
+static void
+jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
+                                 JabberPresenceCapabilities *userdata)
 {
 	JabberBuddyResource *jbr;
 	char *resource = g_utf8_strrchr(userdata->from, -1, '/');
@@ -392,11 +394,22 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, JabberP
 	if (!jbr) {
 		g_free(userdata->from);
 		g_free(userdata);
+		jabber_caps_client_info_unref(info);
+		if (exts) {
+			g_list_foreach(exts, (GFunc)g_free, NULL);
+			g_list_free(exts);
+		}
 		return;
 	}
 
-	jabber_caps_client_info_unref(jbr->caps);
-	jbr->caps = info;
+	jabber_caps_client_info_unref(jbr->caps.info);
+	if (jbr->caps.exts) {
+		g_list_foreach(jbr->caps.exts, (GFunc)g_free, NULL);
+		g_list_free(jbr->caps.exts);
+	}
+
+	jbr->caps.info = info;
+	jbr->caps.exts = exts;
 
 	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
 		JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
@@ -751,13 +764,16 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				const char *node = xmlnode_get_attrib(caps,"node");
 				const char *ver = xmlnode_get_attrib(caps,"ver");
 				const char *hash = xmlnode_get_attrib(caps,"hash");
-				
-				if(node && ver && hash) {
+				const char *ext = xmlnode_get_attrib(caps,"ext");
+
+				/* v1.3 uses: node, ver, and optionally ext.
+				 * v1.5 uses: node, ver, and hash. */
+				if (node && ver) {
 					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
 					userdata->js = js;
 					userdata->jb = jb;
 					userdata->from = g_strdup(from);
-					jabber_caps_get_info(js, from, node, ver, hash,
+					jabber_caps_get_info(js, from, node, ver, hash, ext,
 					    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
 					    userdata);
 				}
