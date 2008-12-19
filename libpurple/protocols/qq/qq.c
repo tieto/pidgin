@@ -100,10 +100,13 @@ static void server_list_create(PurpleAccount *account)
 	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
 
 	custom_server = purple_account_get_string(account, "server", NULL);
-	purple_debug_info("QQ", "Select server '%s'\n", custom_server);
-	if ( (custom_server != NULL && strlen(custom_server) > 0) && strcasecmp(custom_server, "auto") != 0) {
-		qd->servers = g_list_append(qd->servers, g_strdup(custom_server));
-		return;
+
+	if (custom_server != NULL) {
+		purple_debug_info("QQ", "Select server '%s'\n", custom_server);
+		if (*custom_server != '\0' && g_ascii_strcasecmp(custom_server, "auto") != 0) {
+			qd->servers = g_list_append(qd->servers, g_strdup(custom_server));
+			return;
+		}
 	}
 
 	if (qd->use_tcp) {
@@ -493,7 +496,7 @@ static void action_change_icon(PurplePluginAction *action)
 	icon_path = qq_get_icon_path(icon_name);
 	g_free(icon_name);
 
-	purple_debug_info("QQ", "Change prev icon %s to ...\n", icon_path);
+	purple_debug_info("QQ", "Change prev icon %s to...\n", icon_path);
 	purple_request_file(action, _("Select icon..."), icon_path,
 			FALSE,
 			G_CALLBACK(qq_change_icon_cb), NULL,

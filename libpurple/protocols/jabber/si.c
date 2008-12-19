@@ -23,7 +23,6 @@
 #include "internal.h"
 
 #include "blist.h"
-#include "cipher.h"
 #include "debug.h"
 #include "ft.h"
 #include "request.h"
@@ -183,9 +182,6 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
 	JabberBytestreamsStreamhost *streamhost;
-	char *dstaddr, *p;
-	int i;
-	unsigned char hashval[20];
 	JabberID *dstjid;
 
 	if(!jsx->streamhosts) {
@@ -221,6 +217,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 	/* TODO: Deal with zeroconf */
 
 	if(dstjid != NULL && streamhost->host && streamhost->port > 0) {
+		char *dstaddr, *hash;
 		jsx->gpi = purple_proxy_info_new();
 		purple_proxy_info_set_type(jsx->gpi, PURPLE_PROXY_SOCKS5);
 		purple_proxy_info_set_host(jsx->gpi, streamhost->host);
@@ -234,17 +231,13 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 			dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", jsx->stream_id, dstjid->node, dstjid->domain, dstjid->resource,
 				jsx->js->user->node, jsx->js->user->domain, jsx->js->user->resource);
 
-		purple_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
-				sizeof(hashval), hashval, NULL);
-		g_free(dstaddr);
-		dstaddr = g_malloc(41);
-		p = dstaddr;
-		for(i=0; i<20; i++, p+=2)
-			snprintf(p, 3, "%02x", hashval[i]);
+		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
+		hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
 
 		jsx->connect_data = purple_proxy_connect_socks5(NULL, jsx->gpi,
-				dstaddr, 0,
+				hash, 0,
 				jabber_si_bytestreams_connect_cb, xfer);
+		g_free(hash);
 		g_free(dstaddr);
 
 		/* When selecting a streamhost, timeout after STREAMHOST_CONNECT_TIMEOUT seconds, otherwise it takes forever */
@@ -361,11 +354,9 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 {
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx = xfer->data;
-	int i;
 	char buffer[256];
 	int len;
-	char *dstaddr, *p;
-	unsigned char hashval[20];
+	char *dstaddr, *hash;
 	const char *host;
 
 	purple_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_read_again_cb\n");
@@ -421,23 +412,20 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 			jsx->js->user->node, jsx->js->user->domain,
 			jsx->js->user->resource, xfer->who);
 
-	purple_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
-				    sizeof(hashval), hashval, NULL);
-	g_free(dstaddr);
-	dstaddr = g_malloc(41);
-	p = dstaddr;
-	for(i=0; i<20; i++, p+=2)
-		snprintf(p, 3, "%02x", hashval[i]);
+	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
+	hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
 
-	if(jsx->rxqueue[4] != 40 || strncmp(dstaddr, jsx->rxqueue+5, 40) ||
+	if(jsx->rxqueue[4] != 40 || strncmp(hash, jsx->rxqueue+5, 40) ||
 			jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00) {
 		purple_debug_error("jabber", "someone connected with the wrong info!\n");
 		close(source);
 		purple_xfer_cancel_remote(xfer);
+		g_free(hash);
 		g_free(dstaddr);
 		return;
 	}
 
+	g_free(hash);
 	g_free(dstaddr);
 
 	g_free(jsx->rxqueue);

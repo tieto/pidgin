@@ -87,7 +87,7 @@ static void do_im_ack(guint8 *data, gint data_len, PurpleConnection *gc)
 
 	if (data[0] != 0) {
 		purple_debug_warning("QQ", "Failed sent IM\n");
-		purple_notify_error(gc, _("Error"), _("Failed to send IM."), NULL);
+		purple_notify_error(gc, _("Error"), _("Unable to send message."), NULL);
 		return;
 	}
 
@@ -538,7 +538,7 @@ void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *
 			qq_process_buddy_change_status(data, data_len, gc);
 			break;
 		default:
-			process_unknow_cmd(gc, _("Unknow SERVER CMD"), data, data_len, cmd, seq);
+			process_unknow_cmd(gc, _("Unknown SERVER CMD"), data, data_len, cmd, seq);
 			break;
 	}
 }
@@ -796,7 +796,7 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 						seq, room_cmd, qq_get_room_cmd_desc(room_cmd), room_id, rcved_len);
 			} else {
 				purple_debug_warning("QQ",
-					   _("Not a member of room \"%s\"\n"), rmd->title_utf8);
+					   "Not a member of room \"%s\"\n", rmd->title_utf8);
 				rmd->my_role = QQ_ROOM_ROLE_NO;
 			}
 			break;
@@ -948,7 +948,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		qq_show_packet("Can not decrypted", rcved, rcved_len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt login reply"));
+				_("Could not decrypt login reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -1019,7 +1019,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 			qq_update_all(gc, 0);
 			break;
 		default:
-			process_unknow_cmd(gc, _("Unknow LOGIN CMD"), data, data_len, cmd, seq);
+			process_unknow_cmd(gc, _("Unknown LOGIN CMD"), data, data_len, cmd, seq);
 			return QQ_LOGIN_REPLY_ERR;
 	}
 	return QQ_LOGIN_REPLY_OK;
@@ -1141,7 +1141,7 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			qq_process_buddy_check_code(gc, data, data_len);
 			break;
 		default:
-			process_unknow_cmd(gc, _("Unknow CLIENT CMD"), data, data_len, cmd, seq);
+			process_unknow_cmd(gc, _("Unknown CLIENT CMD"), data, data_len, cmd, seq);
 			is_unknow = TRUE;
 			break;
 	}

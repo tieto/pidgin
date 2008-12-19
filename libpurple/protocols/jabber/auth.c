@@ -613,9 +613,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
-			unsigned char hashval[20];
-			char *s, h[41], *p;
-			int i;
+			char *s, *hash;
 
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
 			query = xmlnode_get_child(iq->node, "query");
@@ -626,14 +624,9 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
-
-			purple_cipher_digest_region("sha1", (guchar *)s, strlen(s),
-									  sizeof(hashval), hashval, NULL);
-
-			p = h;
-			for(i=0; i<20; i++, p+=2)
-				snprintf(p, 3, "%02x", hashval[i]);
-			xmlnode_insert_data(x, h, -1);
+			hash = jabber_calculate_data_sha1sum(s, strlen(s));
+			xmlnode_insert_data(x, hash, -1);
+			g_free(hash);
 			g_free(s);
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);

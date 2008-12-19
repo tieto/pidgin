@@ -43,7 +43,7 @@
 /** Define a set of _DSN and _LID constants for a persistance request. */
 #define MSIM_PERSIST_DSN_LID(name,dsn,lid)             \
     static const int name##_DSN = dsn;                 \
-    static const int name##_LID = lid;                        
+    static const int name##_LID = lid;
 
 /* Can't do this, errors:
  *     persist.h:51:3: error: '#' is not followed by a macro parameter
@@ -72,6 +72,7 @@ MSIM_PERSIST_DSN_LID(MG_SERVER_INFO,             101, 20)
 
 /** Messages to Change/send information */
 MSIM_PERSIST_DSN_LID(MC_USER_PREFERENCES,          1, 10)
+MSIM_PERSIST_DSN_LID(MC_DELETE_CONTACT_INFO,       0, 8)
 MSIM_PERSIST_DSN_LID(MC_CONTACT_INFO,              0, 9)
 MSIM_PERSIST_DSN_LID(MC_SET_USERNAME,              9, 14)
 MSIM_PERSIST_DSN_LID(MC_IMPORT_ALL_FRIENDS,       14, 21)

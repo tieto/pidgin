@@ -329,6 +329,7 @@ void qq_process_room_send_im_ex(PurpleConnection *gc, guint8 *data, gint len)
 	return;
 }
 
+#if 0
 static void request_room_send_im_ex(PurpleConnection *gc, guint32 room_id,
 	qq_im_format *fmt, gchar *msg, guint16 msg_id, guint8 frag_count, guint8 frag_index)
 {
@@ -358,6 +359,7 @@ static void request_room_send_im_ex(PurpleConnection *gc, guint32 room_id,
 	/*qq_show_packet("QQ_ROOM_CMD_SEND_IM_EX", raw_data, bytes); */
 	qq_send_room_cmd(gc, QQ_ROOM_CMD_SEND_IM_EX, room_id, raw_data, bytes);
 }
+#endif
 
 /* send a chat msg to a QQ Qun
  * called by purple */
@@ -376,7 +378,7 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	g_return_val_if_fail(id != 0 && what != NULL, -1);
 
 	qd = (qq_data *) gc->proto_data;
-	purple_debug_info("QQ", "Send chat IM to %u, len %d:\n%s\n", id, strlen(what), what);
+	purple_debug_info("QQ", "Send chat IM to %u, len %" G_GSIZE_FORMAT ":\n%s\n", id, strlen(what), what);
 
 	/* qq_show_packet("chat IM UTF8", (guint8 *)what, strlen(what)); */
 

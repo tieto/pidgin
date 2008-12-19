@@ -571,12 +571,39 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 	for(child = packet->child; child; child = child->next) {
 		const char *xmlns = xmlnode_get_namespace(child);
-		if(!xmlns)
-			xmlns = "";
 		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
-		if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
+		if(!strcmp(child->name, "error")) {
+			const char *code = xmlnode_get_attrib(child, "code");
+			char *code_txt = NULL;
+			char *text = xmlnode_get_data(child);
+			if (!text) {
+				xmlnode *enclosed_text_node;
+				
+				if ((enclosed_text_node = xmlnode_get_child(child, "text")))
+					text = xmlnode_get_data(enclosed_text_node);
+			}
+
+			if(code)
+				code_txt = g_strdup_printf(_("(Code %s)"), code);
+
+			if(!jm->error)
+				jm->error = g_strdup_printf("%s%s%s",
+						text ? text : "",
+						text && code_txt ? " " : "",
+						code_txt ? code_txt : "");
+
+			g_free(code_txt);
+			g_free(text);
+		} else if (xmlns == NULL) {
+			/* QuLogic: Not certain this is correct, but it would have happened
+			   with the previous code. */
+			if(!strcmp(child->name, "x"))
+				jm->etc = g_list_append(jm->etc, child);
+			/* The following tests expect xmlns != NULL */
+			continue;
+		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->subject)
 				jm->subject = xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
@@ -706,46 +733,24 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				jm->eventitems = g_list_append(jm->eventitems, items);
 		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns,"http://www.xmpp.org/extensions/xep-0224.html#ns")) {
 			jm->hasBuzz = TRUE;
-		} else if(!strcmp(child->name, "error")) {
-			const char *code = xmlnode_get_attrib(child, "code");
-			char *code_txt = NULL;
-			char *text = xmlnode_get_data(child);
-			if (!text) {
-				xmlnode *enclosed_text_node;
-				
-				if ((enclosed_text_node = xmlnode_get_child(child, "text")))
-					text = xmlnode_get_data(enclosed_text_node);
-			}
-
-			if(code)
-				code_txt = g_strdup_printf(_("(Code %s)"), code);
-
-			if(!jm->error)
-				jm->error = g_strdup_printf("%s%s%s",
-						text ? text : "",
-						text && code_txt ? " " : "",
-						code_txt ? code_txt : "");
-
-			g_free(code_txt);
-			g_free(text);
-		} else if(!strcmp(child->name, "delay") && xmlns && !strcmp(xmlns,"urn:xmpp:delay")) {
+		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns,"urn:xmpp:delay")) {
 			const char *timestamp = xmlnode_get_attrib(child, "stamp");
 			jm->delayed = TRUE;
 			if(timestamp)
 				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
-			if(xmlns && !strcmp(xmlns, "jabber:x:event")) {
+			if(!strcmp(xmlns, "jabber:x:event")) {
 				if(xmlnode_get_child(child, "composing")) {
 					if(jm->chat_state == JM_STATE_ACTIVE)
 						jm->chat_state = JM_STATE_COMPOSING;
 					jm->typing_style |= JM_TS_JEP_0022;
 				}
-			} else if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
+			} else if(!strcmp(xmlns, "jabber:x:delay")) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
 					jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
-			} else if(xmlns && !strcmp(xmlns, "jabber:x:conference") &&
+			} else if(!strcmp(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
 					jm->type != JABBER_MESSAGE_ERROR) {
 				const char *jid = xmlnode_get_attrib(child, "jid");
@@ -754,8 +759,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					g_free(jm->to);
 					jm->to = g_strdup(jid);
 				}
-			} else if(xmlns && !strcmp(xmlns,
-						"http://jabber.org/protocol/muc#user") &&
+			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user") &&
 					jm->type != JABBER_MESSAGE_ERROR) {
 				xmlnode *invite = xmlnode_get_child(child, "invite");
 				if(invite) {

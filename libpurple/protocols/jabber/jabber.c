@@ -200,7 +200,7 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		if (requested_resource != NULL) {
 			resource = xmlnode_new_child(bind, "resource");
 			xmlnode_insert_data(resource, requested_resource, -1);
-			free(requested_resource);
+			g_free(requested_resource);
 		}
 
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
@@ -1413,6 +1413,15 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
 				jabber_register_start(js);
 			} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
+				/* with dreamhost's xmpp server at least, you have to
+				   specify a resource or you will get a "406: Not
+				   Acceptable"
+				*/
+				if(!js->user->resource || *js->user->resource == '\0') {
+					g_free(js->user->resource);
+					js->user->resource = g_strdup("Home");
+				}
+
 				jabber_auth_start_old(js);
 			}
 			break;
