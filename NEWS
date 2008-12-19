@@ -12,6 +12,13 @@ Our development blog is available at: http://planet.pidgin.im
 	not usually received much attention.  Lots of changes have
 	been made, so definitely check the ChangeLog to see what's new.
 
+	John: It feels like it's been an age or two since we last released,
+	and I think it's well worth the wait.  Mark has sunk more time into
+	MSN and MySpace IM this release than any sane person should be
+	allowed to, and I've sunk more time into patches than I care to
+	admit.  By my count, our ChangeLog has 58 bullet points(!) and we've
+	closed 85 tickets specifically for this release.  Enjoy!
+
 2.5.2 (10/19/2008):
 	Ethan: After a bit of a struggle with our services, which put
 	this release off for an unfortunate length of time, we're
