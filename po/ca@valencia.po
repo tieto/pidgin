@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-17 21:53+0100\n"
-"PO-Revision-Date: 2008-12-15 02:34+0100\n"
+"POT-Creation-Date: 2008-12-19 17:53+0100\n"
+"PO-Revision-Date: 2008-12-20 17:15+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -100,7 +100,7 @@ msgid "There are no protocol plugins installed."
 msgstr "No hi ha connectors de protocol instal·lats."
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Segurament vos heu oblidat de fer un «make install».)"
+msgstr "(Segurament us heu oblidat de fer un «make install».)"
 
 msgid "Modify Account"
 msgstr "Modifica el compte"
@@ -412,8 +412,8 @@ msgid ""
 "Please enter the username or alias of the person whose log you would like to "
 "view."
 msgstr ""
-"Introduïu el nom d'usuari o l'àlies de la persona de la qual vulgueu vore el "
-"registre."
+"Introduïu el nom d'usuari o l'àlies de la persona de la qual vulgueu veure "
+"el registre."
 
 #. Create the "Options" frame.
 msgid "Options"
@@ -441,7 +441,7 @@ msgid "Empty groups"
 msgstr "Els grups buits"
 
 msgid "Offline buddies"
-msgstr "Els amics desconnectats"
+msgstr "Amics desconnectats"
 
 msgid "Sort"
 msgstr "Ordena"
@@ -992,7 +992,7 @@ msgstr "El fitxer seleccionat no és un connector vàlid."
 msgid ""
 "Please open the debug window and try again to see the exact error message."
 msgstr ""
-"Obriu la finestra de depuració i proveu de nou si podeu vore el missatge "
+"Obriu la finestra de depuració i proveu de nou si podeu veure el missatge "
 "d'error exacte."
 
 msgid "Select plugin to install"
@@ -1112,11 +1112,11 @@ msgstr "Avisos per a amics"
 
 #, c-format
 msgid "%s has started typing to you (%s)"
-msgstr "%s vos ha començat a escriure (%s)"
+msgstr "%s us ha començat a escriure (%s)"
 
 #, c-format
 msgid "%s has paused while typing to you (%s)"
-msgstr "%s s'ha aturat mentre vos escrivia (%s)"
+msgstr "%s s'ha aturat mentre us escrivia (%s)"
 
 #, c-format
 msgid "%s has signed on (%s)"
@@ -1132,7 +1132,7 @@ msgstr "%s ha deixat d'estar absent (%s)"
 
 #, c-format
 msgid "%s has stopped typing to you (%s)"
-msgstr "%s ha deixat d'escriure-vos (%s)"
+msgstr "%s ha deixat d'escriure-us (%s)"
 
 #, c-format
 msgid "%s has signed off (%s)"
@@ -1148,7 +1148,7 @@ msgstr "%s ha passat a absent (%s)"
 
 #, c-format
 msgid "%s has sent you a message. (%s)"
-msgstr "%s vos ha enviat un missatge. (%s)"
+msgstr "%s us ha enviat un missatge. (%s)"
 
 #, c-format
 msgid "Unknown pounce event. Please report this!"
@@ -1450,7 +1450,7 @@ msgstr "%s acaba de desconnectar-se"
 
 #, c-format
 msgid "%s sent you a message"
-msgstr "%s vos ha enviat un missatge"
+msgstr "%s us ha enviat un missatge"
 
 #, c-format
 msgid "%s said your nick in %s"
@@ -1458,7 +1458,7 @@ msgstr "%s ha dit el vostre sobrenom a %s"
 
 #, c-format
 msgid "%s sent a message in %s"
-msgstr "%s vos ha enviat un missatge a %s"
+msgstr "%s us ha enviat un missatge a %s"
 
 msgid "Buddy signs on/off"
 msgstr "Un amic es connecte/desconnecti"
@@ -1528,10 +1528,10 @@ msgid "Offline"
 msgstr "Fora de línia"
 
 msgid "Online Buddies"
-msgstr "Els amics desconnectats"
+msgstr "Amics connectats"
 
 msgid "Offline Buddies"
-msgstr "Els amics desconnectats"
+msgstr "Amics desconnectats"
 
 msgid "Online/Offline"
 msgstr "En línia/fora de línia"
@@ -1736,7 +1736,7 @@ msgid ""
 "could mean that you are not connecting to the service you believe you are."
 msgstr ""
 "El certificat de «%s» sembla indicar que és de «%s». Això podria voler dir que "
-"vos esteu connectant a un servici diferent del que vos penseu."
+"us esteu connectant a un servici diferent del que us penseu."
 
 #. Make messages
 #, c-format
@@ -1806,7 +1806,7 @@ msgstr "%s [<I>%s</I>] ha entrat a la sala."
 
 #, c-format
 msgid "You are now known as %s"
-msgstr "Ara vos feu dir %s"
+msgstr "Ara us feu dir %s"
 
 #, c-format
 msgid "%s is now known as %s"
@@ -1917,11 +1917,11 @@ msgstr "%s no és un fitxer normal, no se sobreescriurà.\n"
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
-msgstr "%s vos vol enviar %s (%s)"
+msgstr "%s us vol enviar %s (%s)"
 
 #, c-format
 msgid "%s wants to send you a file"
-msgstr "%s vos vol enviar un fitxer"
+msgstr "%s us vol enviar un fitxer"
 
 #, c-format
 msgid "Accept file transfer request from %s?"
@@ -1939,7 +1939,7 @@ msgstr ""
 
 #, c-format
 msgid "%s is offering to send file %s"
-msgstr "%s vos oferix enviar el fitxer %s"
+msgstr "%s us oferix enviar el fitxer %s"
 
 #, c-format
 msgid "%s is not a valid filename.\n"
@@ -2345,7 +2345,7 @@ msgstr "Control de fitxers"
 #. *  summary
 #. *  description
 msgid "Allows control by entering commands in a file."
-msgstr "Vos permet controlar introduint ordes en un fitxer."
+msgstr "Us permet controlar introduint ordes en un fitxer."
 
 msgid "Minutes"
 msgstr "Minuts"
@@ -2379,7 +2379,7 @@ msgid "Unset Idle Time for All Idled Accounts"
 msgstr "Desestablix el temps d'inactivitat de tots els comptes inactius"
 
 msgid "Allows you to hand-configure how long you've been idle"
-msgstr "Vos permet configurar a mà durant quant de temps heu estat inactiu"
+msgstr "Us permet configurar a mà durant quant de temps heu estat inactiu"
 
 #. *< type
 #. *< ui_requirement
@@ -2484,7 +2484,7 @@ msgstr "Heu estat desconnectat del servidor."
 msgid ""
 "You are currently disconnected. Messages will not be received unless you are "
 "logged in."
-msgstr "Esteu desconnectat. No rebreu missatges a no ser que vos connecteu."
+msgstr "Esteu desconnectat. No rebreu missatges a no ser que us connecteu."
 
 msgid "Message could not be sent because the maximum length was exceeded."
 msgstr ""
@@ -2681,8 +2681,8 @@ msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
-"Fa que apareguen finestres de conversa així que altres usuaris vos comencen "
-"a enviar missatges. Funciona per a AIM, ICQ, XMPP, Sametime, i Yahoo!"
+"Fa que apareguen finestres de conversa així que altres usuaris us comencen a "
+"enviar missatges. Funciona per a AIM, ICQ, XMPP, Sametime, i Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Sentireu un certa pertorbació en la força..."
@@ -2713,7 +2713,7 @@ msgstr "Comprovació de senyals"
 #. *  summary
 #. *  description
 msgid "Test to see that all signals are working properly."
-msgstr "Prova per vore si tots els senyals funcionen correctament."
+msgstr "Prova per veure si tots els senyals funcionen correctament."
 
 #. *< type
 #. *< ui_requirement
@@ -2729,7 +2729,7 @@ msgstr "Connector simple"
 #. *  summary
 #. *  description
 msgid "Tests to see that most things are working."
-msgstr "Proves per vore si la majoria de coses funcionen."
+msgstr "Proves per veure si la majoria de coses funcionen."
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -3170,7 +3170,7 @@ msgid "current topic is: %s"
 msgstr "el tema actual és: %s"
 
 msgid "No topic is set"
-msgstr "No hi ha cap tema establert"
+msgstr "No hi ha cap tema establit"
 
 msgid "File Transfer Failed"
 msgstr "Ha fallat la transferència del fitxer"
@@ -3273,7 +3273,7 @@ msgstr "Mode dolent"
 
 #, c-format
 msgid "Ban on %s by %s, set %s ago"
-msgstr "Bandejament a %s de %s, establert fa %s"
+msgstr "Bandejament a %s de %s, establit fa %s"
 
 #, c-format
 msgid "Ban on %s"
@@ -3284,7 +3284,7 @@ msgstr "Final de la llista de bandejats"
 
 #, c-format
 msgid "You are banned from %s."
-msgstr "Vos han bandejat de %s"
+msgstr "Us han bandejat de %s"
 
 msgid "Banned"
 msgstr "Bandejat"
@@ -3374,12 +3374,12 @@ msgstr "Només amb invitació"
 
 #, c-format
 msgid "You have been kicked by %s: (%s)"
-msgstr "%s vos ha fet fora: (%s)"
+msgstr "%s us ha fet fora: (%s)"
 
 #. Remove user from channel
 #, c-format
 msgid "Kicked by %s (%s)"
-msgstr "%s vos ha fet fora (%s)"
+msgstr "%s us ha fet fora (%s)"
 
 #, c-format
 msgid "mode (%s %s) by %s"
@@ -3730,7 +3730,7 @@ msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable."
 msgstr ""
-"Les dades següents són opcionals. Introduïu només la informació que vos "
+"Les dades següents són opcionals. Introduïu només la informació que us "
 "sembli."
 
 msgid "Client"
@@ -4018,7 +4018,7 @@ msgid "Search Directory"
 msgstr "Directori de cerca"
 
 msgid "_Room:"
-msgstr "Sa_la:"
+msgstr "_Sala:"
 
 msgid "_Server:"
 msgstr "_Servidor:"
@@ -4484,7 +4484,7 @@ msgstr "Botzina"
 
 #, c-format
 msgid "%s has buzzed you!"
-msgstr "%s vos ha botzinat!"
+msgstr "%s us ha botzinat!"
 
 #, c-format
 msgid "Buzzing %s..."
@@ -4541,7 +4541,7 @@ msgid "ping &lt;jid&gt;:\tPing a user/component/server."
 msgstr "ping &lt;jid&gt;:\tfa ping a un usuari/component/servidor."
 
 msgid "buzz: Buzz a user to get their attention"
-msgstr "buzz: fa sonar una botzina a un usuari per tal de que vos pare atenció"
+msgstr "buzz: fa sonar una botzina a un usuari per tal de que us pare atenció"
 
 #. *< type
 #. *< ui_requirement
@@ -4696,7 +4696,7 @@ msgid ""
 "This information is visible to all contacts on your contact list, so choose "
 "something appropriate."
 msgstr ""
-"Esta informació la poden vore tots els contactes de la vostra llista "
+"Esta informació la poden veure tots els contactes de la vostra llista "
 "d'amics, escolliu quelcom apropiat."
 
 msgid "Set Nickname..."
@@ -4978,7 +4978,7 @@ msgstr "Donar un cop de colze"
 
 #, c-format
 msgid "%s has nudged you!"
-msgstr "%s vos ha donat un cop de colze!"
+msgstr "%s us ha donat un cop de colze!"
 
 #, c-format
 msgid "Nudging %s..."
@@ -4994,7 +4994,7 @@ msgid "Set your friendly name."
 msgstr "Establiu el vostre nom amistós."
 
 msgid "This is the name that other MSN buddies will see you as."
-msgstr "Este és el nom amb el que els amics de l'MSN vos veuran."
+msgstr "Este és el nom amb el que els amics de l'MSN us veuran."
 
 msgid "Set your home phone number."
 msgstr "Establix el número de telèfon de casa."
@@ -5049,7 +5049,7 @@ msgid "Working"
 msgstr "Treballant"
 
 msgid "Has you"
-msgstr "Vos té"
+msgstr "Us té"
 
 msgid "Home Phone Number"
 msgstr "Número de telèfon de casa"
@@ -5306,7 +5306,7 @@ msgid "Show custom smileys"
 msgstr "Mostra emoticones personalitzades"
 
 msgid "nudge: nudge a user to get their attention"
-msgstr "nudge: doneu un cop de colze a un usuari perquè vos pare atenció"
+msgstr "nudge: doneu un cop de colze a un usuari perquè us pare atenció"
 
 msgid "Windows Live ID authentication:Unable to connect"
 msgstr "Autenticació amb el Windows Live ID: no s'ha pogut connectar"
@@ -5327,7 +5327,7 @@ msgstr "%s a %s (%s)"
 
 #, c-format
 msgid "%s just sent you a Nudge!"
-msgstr "%s vos ha donat un cop de colze!"
+msgstr "%s us ha donat un cop de colze!"
 
 #. char *adl = g_strndup(payload, len);
 #, c-format
@@ -5389,16 +5389,16 @@ msgid_plural ""
 "sign in."
 msgstr[0] ""
 "El servidor d'MSN es reiniciarà per raons de manteniment d'ací a %d minut. "
-"Se vos desconnectarà automàticament al cap d'este temps. Finalitzeu "
-"qualsevol conversa en actiu.\n"
+"Se us desconnectarà automàticament al cap d'este temps. Finalitzeu qualsevol "
+"conversa en actiu.\n"
 "\n"
-"Després que el manteniment s'haja completat, vos podreu tornar a connectar."
+"Després que el manteniment s'haja completat, us podreu tornar a connectar."
 msgstr[1] ""
 "El servidor d'MSN es reiniciarà per raons de manteniment d'ací a %d minuts. "
-"Se vos desconnectarà automàticament al cap d'este temps. Finalitzeu "
-"qualsevol conversa en actiu.\n"
+"Se us desconnectarà automàticament al cap d'este temps. Finalitzeu qualsevol "
+"conversa en actiu.\n"
 "\n"
-"Després que el manteniment s'haja completat, vos podreu tornar a connectar."
+"Després que el manteniment s'haja completat, us podreu tornar a connectar."
 
 msgid ""
 "Message was not sent because the system is unavailable. This normally "
@@ -5444,7 +5444,7 @@ msgid "Error parsing HTTP."
 msgstr "S'ha produït un error en analitzar HTTP."
 
 msgid "You have signed on from another location."
-msgstr "Vos heu connectat des d'un altre lloc."
+msgstr "Us heu connectat des d'un altre lloc."
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
@@ -5531,11 +5531,11 @@ msgstr ""
 
 #, c-format
 msgid "%s has added you to his or her buddy list."
-msgstr "%s vos ha afegit a la seua llista d'amics."
+msgstr "%s us ha afegit a la seua llista d'amics."
 
 #, c-format
 msgid "%s has removed you from his or her buddy list."
-msgstr "%s vos ha suprimit de la seua llista d'amics."
+msgstr "%s us ha suprimit de la seua llista d'amics."
 
 msgid "Delete Buddy from Address Book?"
 msgstr "Voleu suprimir l'amic de la llibreta d'adreces?"
@@ -5767,7 +5767,7 @@ msgid "This username is available. Would you like to set it?"
 msgstr "Este nom d'usuari està disponible. Voleu fer-lo servir?"
 
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "Un cop l'hagueu establert no el podreu canviar!"
+msgstr "Un cop l'hagueu establit no el podreu canviar!"
 
 msgid "MySpaceIM - Please Set a Username"
 msgstr "MySpaceIM - Establiu un nom d'usuari"
@@ -5796,7 +5796,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s has zapped you!"
-msgstr "%s vos ha afegit [%s]"
+msgstr "%s us ha afegit [%s]"
 
 #, fuzzy, c-format
 msgid "Zapping %s..."
@@ -5809,7 +5809,7 @@ msgstr "bufetejar"
 
 #, fuzzy, c-format
 msgid "%s has whacked you!"
-msgstr "%s vos ha afegit [%s]"
+msgstr "%s us ha afegit [%s]"
 
 #, fuzzy, c-format
 msgid "Whacking %s..."
@@ -5823,7 +5823,7 @@ msgstr "Cala foc"
 
 #, c-format
 msgid "%s has torched you!"
-msgstr "%s vos ha calat foc!"
+msgstr "%s us ha calat foc!"
 
 #, c-format
 msgid "Torching %s..."
@@ -5836,7 +5836,7 @@ msgstr "Morreja"
 # Sí, sembla que siguem a l'època victoriana... (josep)
 #, c-format
 msgid "%s has smooched you!"
-msgstr "%s vos ha morrejat!"
+msgstr "%s us ha morrejat!"
 
 #, c-format
 msgid "Smooching %s..."
@@ -5848,7 +5848,7 @@ msgstr "Abraça"
 
 #, c-format
 msgid "%s has hugged you!"
-msgstr "%s vos ha abraçat!"
+msgstr "%s us ha abraçat!"
 
 #, c-format
 msgid "Hugging %s..."
@@ -5860,7 +5860,7 @@ msgstr "Bufeteja"
 
 #, c-format
 msgid "%s has slapped you!"
-msgstr "%s vos ha bufetejat!"
+msgstr "%s us ha bufetejat!"
 
 #, c-format
 msgid "Slapping %s..."
@@ -5872,7 +5872,7 @@ msgstr "Pessiga el cul"
 
 #, c-format
 msgid "%s has goosed you!"
-msgstr "%s vos ha pessigat el cul!"
+msgstr "%s us ha pessigat el cul!"
 
 #, c-format
 msgid "Goosing %s..."
@@ -6009,7 +6009,7 @@ msgid "Incompatible protocol version"
 msgstr "La versió del protocol no és compatible"
 
 msgid "The user has blocked you"
-msgstr "L'usuari vos ha blocat"
+msgstr "L'usuari us ha blocat"
 
 msgid ""
 "This evaluation version does not allow more than ten users to log in at one "
@@ -6165,7 +6165,7 @@ msgstr "Voleu afegir-vos a la conversa?"
 
 msgid "You have been logged out because you logged in at another workstation."
 msgstr ""
-"Se vos ha desconnectat perquè heu entrat a través d'una altra estació de "
+"Se us ha desconnectat perquè heu entrat a través d'una altra estació de "
 "treball."
 
 #, c-format
@@ -6180,7 +6180,7 @@ msgid ""
 "to connect to."
 msgstr ""
 "No s'ha pogut connectar al servidor. Introduïu l'adreça del servidor al qual "
-"vos vulgueu connectar."
+"us vulgueu connectar."
 
 msgid "Error. SSL support is not installed."
 msgstr "Error. No hi ha instal·lades les biblioteques per a SSL."
@@ -6277,15 +6277,15 @@ msgid "Could not establish a connection with the remote user."
 msgstr "No s'ha pogut establir una connexió amb l'usuari remot."
 
 msgid "Direct IM established"
-msgstr "S'ha establert una connexió directa de MI"
+msgstr "S'ha establit una connexió directa de MI"
 
 #, c-format
 msgid ""
 "%s tried to send you a %s file, but we only allow files up to %s over Direct "
 "IM.  Try using file transfer instead.\n"
 msgstr ""
-"%s vos ha intentat enviar un fitxer %s, però ara mateix només permetem "
-"enviar fitxers de fins a %s a través de MI directa. Proveu-ho fent servir la "
+"%s us ha intentat enviar un fitxer %s, però ara mateix només permetem enviar "
+"fitxers de fins a %s a través de MI directa. Proveu-ho fent servir la "
 "transferència de fitxers.\n"
 
 # FIXME
@@ -6574,7 +6574,7 @@ msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
 "fixed.  Check %s for updates."
 msgstr ""
-"Se vos pot desconnectar d'ací a poc temps. Si voleu, podeu emprar TOC fins "
+"Se us pot desconnectar d'ací a poc temps. Si voleu, podeu emprar TOC fins "
 "que això es resolgui. Comproveu si hi ha actualitzacions a %s."
 
 # FIXME: hash (josep)
@@ -6584,8 +6584,8 @@ msgstr "No s'ha pogut obtindre un hash d'AIM d'entrada vàlid."
 #, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
 msgstr ""
-"Se vos pot desconnectar d'ací a poc temps. Comproveu si hi ha "
-"actualitzacions a %s."
+"Se us pot desconnectar d'ací a poc temps. Comproveu si hi ha actualitzacions "
+"a %s."
 
 msgid "Unable to get a valid login hash."
 msgstr "No s'ha pogut obtindre un hash d'entrada vàlid."
@@ -6597,7 +6597,7 @@ msgid "Unable to initialize connection"
 msgstr "No s'ha pogut inicialitzar la connexió"
 
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Autoritzeu-me perquè vos puga afegir a la meua llista d'amics."
+msgstr "Autoritzeu-me perquè us puga afegir a la meua llista d'amics."
 
 msgid "Authorization Request Message:"
 msgstr "Missatge de petició d'autorització:"
@@ -6617,7 +6617,7 @@ msgid ""
 "following reason:\n"
 "%s"
 msgstr ""
-"L'usuari %u vos ha denegat la vostra sol·licitud d'afegir-lo a la vostra "
+"L'usuari %u us ha denegat la vostra sol·licitud d'afegir-lo a la vostra "
 "llista d'amics pel següent motiu:\n"
 "%s"
 
@@ -6627,7 +6627,7 @@ msgstr "S'ha denegat l'autorització ICQ."
 #. Someone has granted you authorization
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
-msgstr "L'usuari %u vos ha permés afegir-lo a la vostra llista d'amics."
+msgstr "L'usuari %u us ha permés afegir-lo a la vostra llista d'amics."
 
 #, c-format
 msgid ""
@@ -6667,7 +6667,7 @@ msgstr ""
 
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
-msgstr "L'usuari %u d'ICQ vos ha enviat un amic: %s (%s)"
+msgstr "L'usuari %u d'ICQ us ha enviat un amic: %s (%s)"
 
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Voleu afegir este amic a la vostra llista d'amics?"
@@ -6768,7 +6768,7 @@ msgstr ""
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "Se vos ha desconnectat de la conversa %s."
+msgstr "Se us ha desconnectat de la conversa %s."
 
 msgid "Mobile Phone"
 msgstr "Telèfon mòbil"
@@ -6890,7 +6890,7 @@ msgid ""
 "fully connected."
 msgstr ""
 "Probablement heu demanat establir el vostre perfil abans d'acabar amb el "
-"procés de connexió. El vostre perfil seguix sense estar establert; intenteu "
+"procés de connexió. El vostre perfil seguix sense estar establit; intenteu "
 "establir-lo de nou quan el procés de connexió haja finalitzat."
 
 #, c-format
@@ -6971,7 +6971,7 @@ msgid ""
 "The user %s has given you permission to add him or her to your buddy list.  "
 "Do you want to add this user?"
 msgstr ""
-"L'usuari %s vos ha donat permís perquè l'afegiu a la vostra llista d'amics. "
+"L'usuari %s us ha donat permís perquè l'afegiu a la vostra llista d'amics. "
 "Voleu afegir-lo?"
 
 msgid "Authorization Given"
@@ -6980,7 +6980,7 @@ msgstr "S'ha donat l'autorització"
 #. Granted
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
-msgstr "L'usuari %s vos ha permés afegir-lo a la vostra llista d'amics."
+msgstr "L'usuari %s us ha permés afegir-lo a la vostra llista d'amics."
 
 msgid "Authorization Granted"
 msgstr "S'ha concedit l'autorització"
@@ -6992,7 +6992,7 @@ msgid ""
 "following reason:\n"
 "%s"
 msgstr ""
-"L'usuari %s vos ha denegat la petició d'afegir-lo a la vostra llista d'amics "
+"L'usuari %s us ha denegat la petició d'afegir-lo a la vostra llista d'amics "
 "pels motius següents:\n"
 "%s"
 
@@ -7261,7 +7261,7 @@ msgid "Phone Number"
 msgstr "Número de telèfon"
 
 msgid "Authorize adding"
-msgstr "Autoritzar que vos afegisquen"
+msgstr "Autoritzar que us afegisquen"
 
 msgid "Cellphone Number"
 msgstr "Número de mòbil"
@@ -7369,7 +7369,7 @@ msgstr "No s'ha pogut suprimir l'amic %u"
 
 #, c-format
 msgid "Failed removing me from %d's buddy list"
-msgstr "No vos heu pogut suprimir de la llista d'amics de %d"
+msgstr "No us heu pogut suprimir de la llista d'amics de %d"
 
 msgid "No reason given"
 msgstr "No s'ha indicat cap motiu"
@@ -7377,7 +7377,7 @@ msgstr "No s'ha indicat cap motiu"
 #. only need to get value
 #, c-format
 msgid "You have been added by %s"
-msgstr "%s vos ha afegit"
+msgstr "%s us ha afegit"
 
 msgid "Would you like to add him?"
 msgstr "Voleu afegir-lo?"
@@ -7453,7 +7453,7 @@ msgstr "S'ha entrat al Qun"
 
 #, c-format
 msgid "Qun %u denied from joining"
-msgstr "No se vos ha permés entrar al Qun %u"
+msgstr "No se us ha permés entrar al Qun %u"
 
 msgid "QQ Qun Operation"
 msgstr "Operació Qun QQ"
@@ -7506,8 +7506,7 @@ msgstr "No s'ha pogut entrar al Qun %u, administrat per %u"
 
 #, c-format
 msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
-"<b>L'administrador %2$u vos ha permés unir-vos al Qun %1$u per %3$s</b>"
+msgstr "<b>L'administrador %2$u us ha permés unir-vos al Qun %1$u per %3$s</b>"
 
 #, c-format
 msgid "<b>Removed buddy %u.</b>"
@@ -7633,7 +7632,6 @@ msgstr "<p><b>Reconeixement</b>:<br>\n"
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>I tothom que ho ha fet possible...<i><br>\n"
 
-#, fuzzy
 msgid "<i>Feel free to join us!</i> :)"
 msgstr "<i>No dubteu a col·laborar amb nosaltres!</i> :)"
 
@@ -8488,8 +8486,8 @@ msgid ""
 "able to join."
 msgstr ""
 "L'autenticació del canal es fa servir per evitar-ne l'accés no autoritzat. "
-"L'autenticació es pot basar en frases clau i signatures. Si s'ha establert "
-"una frase clau, serà necessària per a poder-hi entrar. Si s'han establert "
+"L'autenticació es pot basar en frases clau i signatures. Si s'ha establit "
+"una frase clau, serà necessària per a poder-hi entrar. Si s'han establit "
 "claus públiques del canal, només els usuaris que tinguen les seues claus "
 "públiques llistades al canal hi podran entrar."
 
@@ -8641,15 +8639,15 @@ msgstr "<I>%s</I> ha suprimit tots els modes de <I>%s</I>"
 
 #, c-format
 msgid "You have been kicked off <I>%s</I> by <I>%s</I> (%s)"
-msgstr "<I>%2$s</I> vos ha fet fora de <I>%1$s</I> (%3$s)"
+msgstr "<I>%2$s</I> us ha fet fora de <I>%1$s</I> (%3$s)"
 
 #, c-format
 msgid "You have been killed by %s (%s)"
-msgstr "%s vos ha matat (%s)"
+msgstr "%s us ha matat (%s)"
 
 #, c-format
 msgid "Killed by %s (%s)"
-msgstr "%s vos ha matat (%s)"
+msgstr "%s us ha matat (%s)"
 
 msgid "Server signoff"
 msgstr "Desconnexió del servidor"
@@ -8832,7 +8830,7 @@ msgid "Unsupported public key type"
 msgstr "El tipus de la clau pública no està suportat"
 
 msgid "Disconnected by server"
-msgstr "El servidor vos ha desconnectat"
+msgstr "El servidor us ha desconnectat"
 
 msgid "Error during connecting to SILC Server"
 msgstr "S'ha produït un error en connectar al servidor SILC"
@@ -8929,7 +8927,7 @@ msgid ""
 msgstr ""
 "Podeu permetre que altres usuaris vegin informació sobre el vostre estat en "
 "línia, així com informació personal. Empleneu la informació que vulgueu que "
-"altres usuaris puguen vore."
+"altres usuaris puguen veure."
 
 msgid "Message of the Day"
 msgstr "Frase del dia"
@@ -9346,7 +9344,7 @@ msgid "The SIP/SIMPLE Protocol Plugin"
 msgstr "El connector per al protocol SIP/SIMPLE"
 
 msgid "Publish status (note: everyone may watch you)"
-msgstr "Publica l'estat (nota: tothom vos pot estar observant)"
+msgstr "Publica l'estat (nota: tothom us pot estar observant)"
 
 msgid "Use UDP"
 msgstr "Utilitza UDP"
@@ -9410,7 +9408,7 @@ msgstr "Esteu enviant missatges massa de pressa a %s."
 
 #, c-format
 msgid "You missed an IM from %s because it was too big."
-msgstr "Vos heu perdut un missatge instantani de %s perquè era massa gran."
+msgstr "Us heu perdut un missatge instantani de %s perquè era massa gran."
 
 #, c-format
 msgid "You missed an IM from %s because it was sent too fast."
@@ -9475,7 +9473,7 @@ msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
-"Vos heu estat connectant i desconnectant amb massa freqüència. Espereu deu "
+"Us heu estat connectant i desconnectant amb massa freqüència. Espereu deu "
 "minuts i torneu-ho a provar. Si continueu intentant-ho, haureu d'esperar "
 "encara més."
 
@@ -9537,7 +9535,7 @@ msgstr[1] "%s demana a %s que accepti %d fitxers: %s (%.2f %s)%s%s"
 
 #, c-format
 msgid "%s requests you to send them a file"
-msgstr "%s vos demana que li envieu un fitxer"
+msgstr "%s us demana que li envieu un fitxer"
 
 #. *< type
 #. *< ui_requirement
@@ -9555,8 +9553,8 @@ msgstr "Connector per al protocol TOC"
 #, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
-"%s vos ha enviat una invitació a la seua càmera web, però això encara no "
-"està implementat."
+"%s us ha enviat una invitació a la seua càmera web, però això encara no està "
+"implementat."
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "No s'ha pogut enviar el vostre missatge de Yahoo!"
@@ -9570,15 +9568,14 @@ msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
 "following reason: %s."
 msgstr ""
-"%s vos ha denegat (retroactivament) la petició d'afegir-lo a la vostra "
-"llista pel següent motiu:\n"
+"%s us ha denegat (retroactivament) la petició d'afegir-lo a la vostra llista "
+"pel següent motiu:\n"
 "%s"
 
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr ""
-"%s vos ha denegat (retroactivament) la petició d'afegir-lo a la vostra "
-"llista."
+"%s us ha denegat (retroactivament) la petició d'afegir-lo a la vostra llista."
 
 msgid "Add buddy rejected"
 msgstr "S'ha rebutjat afegir l'amic"
@@ -9590,7 +9587,7 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "El servidor Yahoo ha demanat l'ús d'un mètode d'autenticació que no és "
-"reconegut. Probablement no vos podreu connectar al Yahoo. Comproveu si hi ha "
+"reconegut. Probablement no us podreu connectar al Yahoo. Comproveu si hi ha "
 "actualitzacions a %s."
 
 msgid "Failed Yahoo! Authentication"
@@ -9700,7 +9697,7 @@ msgid "Activate which ID?"
 msgstr "Quin ID voleu activar?"
 
 msgid "Join whom in chat?"
-msgstr "A qui vos voleu unir al xat?"
+msgstr "A qui us voleu unir al xat?"
 
 msgid "Activate ID..."
 msgstr "Activa l'ID..."
@@ -9804,7 +9801,7 @@ msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser:"
 msgstr ""
-"Si voleu vore este perfil, haureu de visitar este enllaç amb el navegador:"
+"Si voleu veure este perfil, haureu de visitar este enllaç amb el navegador:"
 
 msgid "Yahoo! ID"
 msgstr "ID de Yahoo!"
@@ -10087,7 +10084,7 @@ msgstr "S'està reclamant l'atenció de %s..."
 
 #, c-format
 msgid "%s has requested your attention!"
-msgstr "%s vos ha demanat l'atenció!"
+msgstr "%s us ha demanat l'atenció!"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
@@ -10411,7 +10408,7 @@ msgstr "Si mireu de ben a prop"
 
 #. This is an easter egg. See the comment on the previous line in the source.
 msgid "you can see the butterflies mating"
-msgstr "podreu vore les papallones aparellant-se"
+msgstr "podreu veure les papallones aparellant-se"
 
 msgid "Proxy Options"
 msgstr "Opcions del servidor intermediari"
@@ -10505,7 +10502,7 @@ msgstr ""
 "Introduïu la informació necessària sobre el xat al qual vulgueu entrar.\n"
 
 msgid "_Account:"
-msgstr "_Compte:"
+msgstr "C_ompte:"
 
 msgid "_Block"
 msgstr "_Bloca"
@@ -10561,7 +10558,7 @@ msgstr "_Canvia el nom"
 
 #. join button
 msgid "_Join"
-msgstr "En_tra"
+msgstr "_Entra"
 
 msgid "Auto-Join"
 msgstr "Entra automàticament"
@@ -10608,7 +10605,7 @@ msgid "/Buddies/View User _Log..."
 msgstr "/Amics/_Visualitza el registre de l'usuari..."
 
 msgid "/Buddies/Sh_ow"
-msgstr "/Amics/M_ostra"
+msgstr "/Amics/Mos_tra"
 
 msgid "/Buddies/Show/_Offline Buddies"
 msgstr "/Amics/Mostra/Amics des_connectats"
@@ -10662,7 +10659,7 @@ msgid "/Tools/Plu_gins"
 msgstr "/Eines/_Connectors"
 
 msgid "/Tools/Pr_eferences"
-msgstr "/Eines/Preferè_ncies"
+msgstr "/Eines/Pre_ferències"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Eines/_Privadesa"
@@ -10671,7 +10668,7 @@ msgid "/Tools/Smile_y"
 msgstr "/Eines/Em_oticona"
 
 msgid "/Tools/_File Transfers"
-msgstr "/Eines/Transferència de _fitxers"
+msgstr "/Eines/_Transferència de fitxers"
 
 msgid "/Tools/R_oom List"
 msgstr "/Eines/_Llista de sales"
@@ -10812,9 +10809,9 @@ msgid "%d account was disabled because you signed on from another location:"
 msgid_plural ""
 "%d accounts were disabled because you signed on from another location:"
 msgstr[0] ""
-"S'ha inhabilitat %d compte perquè vos heu connectat des d'un altre lloc:"
+"S'ha inhabilitat %d compte perquè us heu connectat des d'un altre lloc:"
 msgstr[1] ""
-"S'han inhabilitat %d comptes perquè vos heu connectat des d'un altre lloc:"
+"S'han inhabilitat %d comptes perquè us heu connectat des d'un altre lloc:"
 
 msgid "<b>Username:</b>"
 msgstr "<b>Nom d'usuari:</b>"
@@ -10890,13 +10887,13 @@ msgstr ""
 "la llista d'amics.\n"
 
 msgid "A_lias:"
-msgstr "À_lies:"
+msgstr "Àl_ies:"
 
 msgid "Auto_join when account becomes online."
-msgstr "Entra _automàticament quant el compte estiga connectat."
+msgstr "_Entra automàticament quant el compte estiga connectat."
 
 msgid "_Remain in chat after window is closed."
-msgstr "_Continua al xat quan la finestra es tanque."
+msgstr "Co_ntinua al xat quan la finestra es tanque."
 
 msgid "Please enter the name of the group to be added."
 msgstr "Introduïu el nom del grup que vulgueu afegir."
@@ -11340,7 +11337,7 @@ msgid "Catalan"
 msgstr "Català"
 
 msgid "Valencian-Catalan"
-msgstr "Valencià-català"
+msgstr "Valencià (català meridional)"
 
 msgid "Czech"
 msgstr "Txec"
@@ -11560,7 +11557,7 @@ msgstr ""
 "(versió 2 o posterior). Hi ha una còpia de la GPL dins del fitxer «COPYING» "
 "que es distribuix amb el %s. Els drets d'autor del %s pertanyen als seus "
 "col·laboradors. El fitxer «COPYRIGHT» conté una llista completa de tots els "
-"contribuïdors. No vos proporcionem cap mena de garantia amb este programa."
+"contribuïdors. No us proporcionem cap mena de garantia amb este programa."
 "<BR><BR>"
 
 #, c-format
@@ -11601,7 +11598,7 @@ msgid ""
 "Please enter the username or alias of the person whose info you would like "
 "to view."
 msgstr ""
-"Introduïu el nom d'usuari o àlies de la persona de la qual vulgueu vore la "
+"Introduïu el nom d'usuari o àlies de la persona de la qual vulgueu veure la "
 "informació."
 
 msgid "View User Log"
@@ -11780,7 +11777,7 @@ msgid "Time Remaining:"
 msgstr "Temps restant:"
 
 msgid "Close this window when all transfers _finish"
-msgstr "Tanca esta finestra quan totes les transferències hagen _finalitzat"
+msgstr "Tanca esta _finestra quan totes les transferències hagen finalitzat"
 
 msgid "C_lear finished transfers"
 msgstr "_Neteja les transferències acabades"
@@ -12308,7 +12305,7 @@ msgid "<b>Filename:</b>"
 msgstr "<b>Nom del fitxer:</b>"
 
 msgid "Configure Pl_ugin"
-msgstr "Config_ura el connector"
+msgstr "_Configura el connector"
 
 msgid "<b>Plugin Details</b>"
 msgstr "<b>Detalls del connector</b>"
@@ -12322,46 +12319,46 @@ msgid "Pounce on Whom"
 msgstr "Avisa dels Whom"
 
 msgid "_Buddy name:"
-msgstr "Nom de l'_amic:"
+msgstr "_Nom de l'amic:"
 
 msgid "Si_gns on"
-msgstr "Es _connecte"
+msgstr "Es conn_ecti"
 
 msgid "Signs o_ff"
-msgstr "Es _desconnecte"
+msgstr "Es de_sconnecti"
 
 msgid "Goes a_way"
 msgstr "Passe a _absent"
 
 msgid "Ret_urns from away"
-msgstr "To_rni a estar present"
+msgstr "_Torne a estar present"
 
 msgid "Becomes _idle"
 msgstr "Passe a _inactiu"
 
 msgid "Is no longer i_dle"
-msgstr "Ja no estiga i_nactiu"
+msgstr "_Ja no estiga inactiu"
 
 msgid "Starts _typing"
-msgstr "Comence a _escriure"
+msgstr "Comence a esc_riure"
 
 msgid "P_auses while typing"
-msgstr "S'_ature mentre tecleja"
+msgstr "S'at_uri mentre tecleja"
 
 msgid "Stops t_yping"
-msgstr "Pare d'e_scriure"
+msgstr "_Pare d'escriure"
 
 msgid "Sends a _message"
 msgstr "Envie un _missatge"
 
 msgid "Ope_n an IM window"
-msgstr "Obri u_na finestra de MI"
+msgstr "Obri una _finestra de MI"
 
 msgid "_Pop up a notification"
-msgstr "Mostra una _notificació emergent"
+msgstr "Mostra una notificació emer_gent"
 
 msgid "Send a _message"
-msgstr "Envia un _missatge"
+msgstr "En_via un missatge"
 
 msgid "E_xecute a command"
 msgstr "E_xecuta una orde"
@@ -12369,17 +12366,21 @@ msgstr "E_xecuta una orde"
 msgid "P_lay a sound"
 msgstr "Reproduei_x un so"
 
+# Sense accelerador expressament (josep)
 msgid "Brows_e..."
-msgstr "Nav_ega..."
+msgstr "Navega..."
 
+# Sense accelerador expressament (josep)
 msgid "Br_owse..."
-msgstr "Na_vega..."
+msgstr "Navega..."
 
+# Sense accelerador expressament (josep)
 msgid "Pre_view"
-msgstr "Pre_visualitza"
+msgstr "Previsualitza"
 
+# Sense accelerador expressament (josep)
 msgid "P_ounce only when my status is not Available"
-msgstr "Avisa n_omés quan el meu estat no siga disponible"
+msgstr "Avisa només quan el meu estat no estiga disponible"
 
 msgid "_Recurring"
 msgstr "_Recurrent"
@@ -12413,7 +12414,7 @@ msgid "System Tray Icon"
 msgstr "Icona d'estat"
 
 msgid "_Show system tray icon:"
-msgstr "Mostra la icona d'estat:"
+msgstr "_Mostra la icona d'estat:"
 
 msgid "On unread messages"
 msgstr "Si hi ha missatges sense llegir"
@@ -12433,10 +12434,10 @@ msgid "Tabs"
 msgstr "Pestanyes"
 
 msgid "Show IMs and chats in _tabbed windows"
-msgstr "Mostra MI i xats en finestres amb _pestanyes"
+msgstr "Mostra MI i _xats en finestres amb pestanyes"
 
 msgid "Show close b_utton on tabs"
-msgstr "Mosta el b_otó de tancar a les pestanyes"
+msgstr "Mosta el _botó de tancar a les pestanyes"
 
 msgid "_Placement:"
 msgstr "_Posicionament:"
@@ -12460,10 +12461,10 @@ msgid "Right Vertical"
 msgstr "Vertical dret"
 
 msgid "N_ew conversations:"
-msgstr "Converses noves:"
+msgstr "Converses _noves:"
 
 msgid "Show _formatting on incoming messages"
-msgstr "Mostra el format dels missatges entrants"
+msgstr "Mostra el _format dels missatges entrants"
 
 msgid "Close IMs immediately when the tab is closed"
 msgstr "Tanca la missatgeria quan es tanque la pestanya"
@@ -12478,10 +12479,10 @@ msgid "_Notify buddies that you are typing to them"
 msgstr "_Notifica als amics quan els escriga"
 
 msgid "Highlight _misspelled words"
-msgstr "Ressalta les paraules _mal escrites"
+msgstr "_Ressalta les paraules mal escrites"
 
 msgid "Use smooth-scrolling"
-msgstr "Utilitza el desplaçament suau"
+msgstr "Empra el desplaçament suau"
 
 msgid "F_lash window when IMs are received"
 msgstr "_Fes que la finestra faci un flaix quan hi arriben missatges"
@@ -12496,13 +12497,13 @@ msgid "Font"
 msgstr "Tipus de lletra"
 
 msgid "Use document font from _theme"
-msgstr "Empra el tipus de lletra del document del _tema"
+msgstr "_Empra el tipus de lletra del document del tema"
 
 msgid "Use font from _theme"
 msgstr "Empra el tipus de lletra del _tema"
 
 msgid "Conversation _font:"
-msgstr "_Tipus de lletra de la conversa:"
+msgstr "Tipus de _lletra de la conversa:"
 
 msgid "Default Formatting"
 msgstr "Format per defecte"
@@ -12512,7 +12513,7 @@ msgid ""
 "that support formatting."
 msgstr ""
 "Així és com els missatges de text eixints apareixeran quan feu servir "
-"protocols que implementen el text formatat."
+"protocols que permeten el text formatat."
 
 msgid "Cannot start proxy configuration program."
 msgstr ""
@@ -12531,7 +12532,7 @@ msgid "_Autodetect IP address"
 msgstr "Detecta l'_adreça IP automàticament"
 
 msgid "Public _IP:"
-msgstr "_IP pública:"
+msgstr "IP _pública:"
 
 msgid "Ports"
 msgstr "Ports"
@@ -12540,7 +12541,7 @@ msgid "_Enable automatic router port forwarding"
 msgstr "_Habilita la desviació automàtica de ports de l'encaminador"
 
 msgid "_Manually specify range of ports to listen on"
-msgstr "Especifica _manualment el rang de ports on escoltar"
+msgstr "_Especifica manualment el rang de ports on escoltar"
 
 msgid "_Start port:"
 msgstr "Port _inicial:"
@@ -12647,13 +12648,13 @@ msgid "Log _format:"
 msgstr "_Format del registre:"
 
 msgid "Log all _instant messages"
-msgstr "_Registra tots els missatges instantanis"
+msgstr "Registra tots els _missatges instantanis"
 
 msgid "Log all c_hats"
 msgstr "Registra tots els _xats"
 
 msgid "Log all _status changes to system log"
-msgstr "Regi_stra tots els canvis d'estat al registre del sistema"
+msgstr "Registra tots els _canvis d'estat al registre del sistema"
 
 msgid "Sound Selection"
 msgstr "Selecció de sons"
@@ -12700,10 +12701,10 @@ msgstr ""
 "(%s per al nom de fitxer)"
 
 msgid "M_ute sounds"
-msgstr "In_habilita els sons"
+msgstr "_Inhabilita els sons"
 
 msgid "Sounds when conversation has _focus"
-msgstr "Sons quan la conversa tinga el _focus"
+msgstr "_Sons quan la conversa tinga el focus"
 
 msgid "_Enable sounds:"
 msgstr "_Habilita els sons:"
@@ -12715,13 +12716,13 @@ msgid "Play"
 msgstr "Reproduix"
 
 msgid "_Browse..."
-msgstr "Nav_ega..."
+msgstr "_Navega..."
 
 msgid "_Reset"
 msgstr "_Reinicia"
 
 msgid "_Report idle time:"
-msgstr "Informa del _temps d'inactivitat:"
+msgstr "_Informa del temps d'inactivitat:"
 
 msgid "Based on keyboard or mouse use"
 msgstr "Basat en l'ús del teclat o el ratolí"
@@ -12737,23 +12738,23 @@ msgid "Auto-away"
 msgstr "Auto-absència"
 
 msgid "Change status when _idle"
-msgstr "Canvia l'estat quan estiga _inactiu"
+msgstr "_Canvia l'estat quan estiga inactiu"
 
 msgid "_Minutes before becoming idle:"
 msgstr "_Minuts abans de passar a inactiu:"
 
 msgid "Change _status to:"
-msgstr "Canvia l'e_stat a:"
+msgstr "Canvia l'_estat a:"
 
 #. Signon status stuff
 msgid "Status at Startup"
 msgstr "L'estat en iniciar"
 
 msgid "Use status from last _exit at startup"
-msgstr "_En iniciar, empra el mateix estat que en eixir per darrer cop"
+msgstr "En i_niciar, empra el mateix estat que en eixir per darrer cop"
 
 msgid "Status to a_pply at startup:"
-msgstr "Es_tatus a utilitzar en iniciar:"
+msgstr "Estat a _utilitzar en iniciar:"
 
 msgid "Interface"
 msgstr "Interfície"
@@ -12793,27 +12794,27 @@ msgstr "Establix la privadesa de:"
 
 #. Remove All button
 msgid "Remove Al_l"
-msgstr "Suprimix-ho _tot"
+msgstr "S_uprimix-ho tot"
 
 msgid "Permit User"
 msgstr "Permet l'usuari"
 
 msgid "Type a user you permit to contact you."
-msgstr "Escriviu quin usuari permeteu que vos contacti."
+msgstr "Escriviu quin usuari permeteu que us contacti."
 
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr "Introduïu el nom de l'usuari que vulgueu que vos puga contactar."
+msgstr "Introduïu el nom de l'usuari que vulgueu que us puga contactar."
 
 msgid "_Permit"
 msgstr "_Permet"
 
 #, c-format
 msgid "Allow %s to contact you?"
-msgstr "Voleu permetre que %s vos puga contactar?"
+msgstr "Voleu permetre que %s us puga contactar?"
 
 #, c-format
 msgid "Are you sure you wish to allow %s to contact you?"
-msgstr "Esteu segur que voleu permetre que %s vos puga contactar?"
+msgstr "Esteu segur que voleu permetre que %s us puga contactar?"
 
 msgid "Block User"
 msgstr "Bloca un usuari"
@@ -12852,11 +12853,11 @@ msgstr "Selecciona una carpeta..."
 
 #. list button
 msgid "_Get List"
-msgstr "_Aconseguix la llista"
+msgstr "Aconseguix la _llista"
 
 #. add button
 msgid "_Add Chat"
-msgstr "_Afig el xat"
+msgstr "Afig el _xat"
 
 # He omès "saved", que sembla que no hi cal (josep)
 msgid "Are you sure you want to delete the selected saved statuses?"
@@ -13068,7 +13069,7 @@ msgid "Close _tabs"
 msgstr "Tanca les _pestanyes"
 
 msgid "_Get Info"
-msgstr "_Aconseguix informació"
+msgstr "Aconseguix _informació"
 
 msgid "_Invite"
 msgstr "Conv_ida"
@@ -13196,14 +13197,14 @@ msgstr "Prioritat de contacte"
 msgid ""
 "Allows for controlling the values associated with different buddy states."
 msgstr ""
-"Vos permet canviar els valors associats als diferents estats dels amics."
+"Us permet canviar els valors associats als diferents estats dels amics."
 
 #. *< description
 msgid ""
 "Allows for changing the point values of idle/away/offline states for buddies "
 "in contact priority computations."
 msgstr ""
-"Vos permet canviar els valors dels estats inactiu, absent i desconnectat pel "
+"Us permet canviar els valors dels estats inactiu, absent i desconnectat pel "
 "càlcul de la prioritat dels amics."
 
 msgid "Conversation Colors"
@@ -13219,7 +13220,7 @@ msgid "Highlighted Messages"
 msgstr "Missatges ressaltats"
 
 msgid "System Messages"
-msgstr "Missatge del sistema"
+msgstr "Missatges del sistema"
 
 msgid "Sent Messages"
 msgstr "Missatges enviats"
@@ -13342,10 +13343,9 @@ msgstr "Grup:"
 msgid "New Person"
 msgstr "Nova persona"
 
-# FIXME: seleccioneu un amic?
 #. "Select Buddy" button
 msgid "Select Buddy"
-msgstr "Seleccioneu un amic"
+msgstr "Selecciona"
 
 #. Add the label.
 msgid ""
@@ -13442,7 +13442,7 @@ msgstr "Comprovació de senyals GTK"
 #. *  description
 msgid "Test to see that all ui signals are working properly."
 msgstr ""
-"Prova per vore si tots els senyals de la interfície d'usuari funcionen "
+"Prova per veure si tots els senyals de la interfície d'usuari funcionen "
 "correctament."
 
 #, c-format
@@ -13631,7 +13631,7 @@ msgstr "Notificació de missatges"
 #. *  description
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr ""
-"Vos proporciona diferents maneres de notificar-vos la presència de missatges "
+"Us proporciona diferents maneres de notificar-vos la presència de missatges "
 "sense llegir."
 
 #. *< type
@@ -13657,7 +13657,7 @@ msgid ""
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
 "Este és un connector realment interessant que fa moltes coses:\n"
-"- mostra qui ha escrit el programa quan vos connecteu\n"
+"- mostra qui ha escrit el programa quan us connecteu\n"
 "- escriu a l'inrevés tots els missatges rebuts\n"
 "- envia un missatge a tots els amics immediatament després que es connecten"
 
@@ -13754,19 +13754,19 @@ msgid "Raw"
 msgstr "En brut"
 
 msgid "Lets you send raw input to text-based protocols."
-msgstr "Vos permet enviar dades en brut als protocols en mode text."
+msgstr "Us permet enviar dades en brut als protocols en mode text."
 
 msgid ""
 "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Vos permet enviar dades en brut als protocols en mode text (XMPP, MSN, IRC, "
+"Us permet enviar dades en brut als protocols en mode text (XMPP, MSN, IRC, "
 "TOC). Premeu la tecla de retorn del quadre d'entrada per enviar-les. "
 "Observeu la finestra de depuració."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
-msgstr "Podeu actualitzar-vos a %s %s avui."
+msgstr "Podeu actualitzar-vos a %s %s hui."
 
 msgid "New Version Available"
 msgstr "Nova versió disponible"
@@ -13797,7 +13797,7 @@ msgid ""
 "Checks periodically for new releases and notifies the user with the "
 "ChangeLog."
 msgstr ""
-"Comprova periòdicament si hi ha versions noves i vos ho notifica juntament "
+"Comprova periòdicament si hi ha versions noves i us ho notifica juntament "
 "amb el seu registre de canvis."
 
 #. *< major version
@@ -13874,7 +13874,7 @@ msgstr "Substitució de text"
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "Substituix el text dels missatges que s'envien emprant les regles que hàgeu "
-"establert."
+"establit."
 
 # FIXME (josep)
 #. *< type
