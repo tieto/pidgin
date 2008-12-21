@@ -4,6 +4,8 @@ version 2.5.4 (??/??/????):
 	libpurple:
 	* Fix a connection timeout with empty Gadu-Gady buddy lists. (Martin
 	  Rosinski)
+	* Don't ignore namespace information when parsing XMPP data. (Michal
+	  Witkowski)
 
 version 2.5.3 (12/20/2008):
 	libpurple:
