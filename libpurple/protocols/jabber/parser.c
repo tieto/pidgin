@@ -37,7 +37,7 @@ jabber_parser_element_start_libxml(void *user_data,
 {
 	JabberStream *js = user_data;
 	xmlnode *node;
-	int i;
+	int i, j;
 
 	if(!element_name) {
 		return;
@@ -57,7 +57,7 @@ jabber_parser_element_start_libxml(void *user_data,
 				g_free(js->stream_id);
 				js->stream_id = attrib;
 			} else {
-				g_free(attrib);	
+				g_free(attrib);
 			}
 		}
 		if(js->protocol_version == JABBER_PROTO_0_9)
@@ -72,8 +72,21 @@ jabber_parser_element_start_libxml(void *user_data,
 		else
 			node = xmlnode_new((const char*) element_name);
 		xmlnode_set_namespace(node, (const char*) namespace);
+		xmlnode_set_prefix(node, (const char *)prefix);
 
+		if (nb_namespaces != 0) {
+			node->namespace_map = g_hash_table_new_full(
+				g_str_hash, g_str_equal, g_free, g_free);
+
+			for (i = 0, j = 0; i < nb_namespaces; i++, j += 2) {
+				const char *key = (const char *)namespaces[j];
+				const char *val = (const char *)namespaces[j + 1];
+				g_hash_table_insert(node->namespace_map,
+					g_strdup(key ? key : ""), g_strdup(val ? val : ""));
+			}
+		}
 		for(i=0; i < nb_attributes * 5; i+=5) {
+			const char *prefix = (const char *)attributes[i + 1];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
@@ -90,6 +103,9 @@ jabber_parser_element_start_libxml(void *user_data,
 			attrib = purple_unescape_html(txt);
 			g_free(txt);
 			xmlnode_set_attrib_with_namespace(node, (const char*) attributes[i], attrib_ns, attrib);
+			if (prefix && *prefix) {
+				node->prefix = g_strdup(prefix);
+			}
 			g_free(attrib);
 			g_free(attrib_ns);
 		}

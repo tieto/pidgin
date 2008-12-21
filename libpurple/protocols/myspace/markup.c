@@ -21,23 +21,9 @@
 
 typedef int (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
 
-/* Internal functions */
-
-static guint msim_point_to_purple_size(MsimSession *session, guint point);
-static guint msim_purple_size_to_point(MsimSession *session, guint size);
-static guint msim_height_to_point(MsimSession *session, guint height);
-static guint msim_point_to_height(MsimSession *session, guint point);
-
-static int msim_markup_tag_to_html(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
-static int html_tag_to_msim_markup(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
-static gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f);
-static gchar *msim_convert_smileys_to_markup(gchar *before);
-static double msim_round(double round);
-
-
 /* Globals */
 
-/* The names in in emoticon_names (for <i n=whatever>) map to corresponding 
+/* The names in in emoticon_names (for <i n=whatever>) map to corresponding
  * entries in emoticon_symbols (for the ASCII representation of the emoticon).
  *
  * Multiple emoticon symbols in Pidgin can map to one name. List the
@@ -90,23 +76,23 @@ static struct MSIM_EMOTICON
 	{ NULL, NULL }
 };
 
-
-
 /* Indexes of this array + 1 map HTML font size to scale of normal font size. *
- * Based on _point_sizes from libpurple/gtkimhtml.c 
+ * Based on _point_sizes from libpurple/gtkimhtml.c
  *                                 1    2  3    4     5      6       7 */
 static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
 
-#define MAX_FONT_SIZE                   7       /* Purple maximum font size */
+/* Purple maximum font size.  Equivalent to sizeof(_font_scale) / sizeof(_font_scale[0]) */
+#define MAX_FONT_SIZE                   7
+
 #define POINTS_PER_INCH                 72      /* How many pt's in an inch */
 
 /* Text formatting bits for <f s=#> */
 #define MSIM_TEXT_BOLD                  1
-#define MSIM_TEXT_ITALIC                2   
+#define MSIM_TEXT_ITALIC                2
 #define MSIM_TEXT_UNDERLINE             4
 
-/* Default baseline size of purple's fonts, in points. What is size 3 in points. 
- * _font_scale specifies scaling factor relative to this point size. Note this 
+/* Default baseline size of purple's fonts, in points. What is size 3 in points.
+ * _font_scale specifies scaling factor relative to this point size. Note this
  * is only the default; it is configurable in account options. */
 #define MSIM_BASE_FONT_POINT_SIZE       8
 
@@ -114,11 +100,10 @@ static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
  * in account options. */
 #define MSIM_DEFAULT_DPI                96
 
-
 /* round is part of C99, but sometimes is unavailable before then.
  * Based on http://forums.belution.com/en/cpp/000/050/13.shtml
  */
-double msim_round(double value)
+static double msim_round(double value)
 {
 	if (value < 0) {
 		return -(floor(-value + 0.5));
@@ -127,22 +112,17 @@ double msim_round(double value)
 	}
 }
 
-
-/** Convert typographical font point size to HTML font size. 
+/** Convert typographical font point size to HTML font size.
  * Based on libpurple/gtkimhtml.c */
 static guint
 msim_point_to_purple_size(MsimSession *session, guint point)
 {
 	guint size, this_point, base;
-	gdouble scale;
-	
+
 	base = purple_account_get_int(session->account, "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
-   
-	for (size = 0; 
-			size < sizeof(_font_scale) / sizeof(_font_scale[0]);
-			++size) {
-		scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
-		this_point = (guint)msim_round(scale * base);
+
+	for (size = 0; size < MAX_FONT_SIZE; ++size) {
+		this_point = (guint)msim_round(base * _font_scale[size]);
 
 		if (this_point >= point) {
 			purple_debug_info("msim", "msim_point_to_purple_size: %d pt -> size=%d\n",
@@ -176,7 +156,7 @@ msim_purple_size_to_point(MsimSession *session, guint size)
 }
 
 /** Convert a msim markup font pixel height to the more usual point size, for incoming messages. */
-static guint 
+static guint
 msim_height_to_point(MsimSession *session, guint height)
 {
 	guint dpi;
@@ -201,7 +181,7 @@ msim_point_to_height(MsimSession *session, guint point)
 }
 
 /** Convert the msim markup <f> (font) tag into HTML. */
-static void 
+static void
 msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *face, *height_str, *decor_str;
@@ -212,35 +192,38 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	height_str = xmlnode_get_attrib(root, "h");
 	decor_str = xmlnode_get_attrib(root, "s");
 
-	if (height_str) {
-		height = atol(height_str);
-	} else {
-		height = 12;
-	}
+	/* Validate the font face, to avoid constructing invalid HTML later */
+	if (face != NULL && strchr(face, '\'') != NULL)
+		face = NULL;
 
-	if (decor_str) {
-		decor = atol(decor_str);
-	} else {
-		decor = 0;
-	}
+	height = height_str != NULL ? atol(height_str) : 12;
+	decor = decor_str != NULL ? atol(decor_str) : 0;
 
+	/*
+	 * The HTML we're constructing here is a bit redudant.  Ideally we
+	 * would use only the font-family and font-size CSS span, but Pidgin
+	 * doesn't support it (it's included for other UIs).  For Pidgin we
+	 * wrap the whole thing in an ugly font tag, and Pidgin will happily
+	 * ignore the <span>.
+	 */
 	gs_begin = g_string_new("");
-	/* TODO: get font size working */
 	if (height && !face) {
-		g_string_printf(gs_begin, "<font size='%d'>", 
-				msim_point_to_purple_size(session, msim_height_to_point(session, height)));
+		guint point_size = msim_height_to_point(session, height);
+		g_string_printf(gs_begin,
+				"<font size='%d'><span style='font-size: %dpt'>",
+				msim_point_to_purple_size(session, point_size),
+				point_size);
 	} else if (height && face) {
-		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face,  
-				msim_point_to_purple_size(session, msim_height_to_point(session, height)));
+		guint point_size = msim_height_to_point(session, height);
+		g_string_printf(gs_begin,
+				"<font face='%s' size='%d'><span style='font-family: %s; font-size: %dpt'>",
+				face, msim_point_to_purple_size(session, point_size),
+				face, point_size);
 	} else {
-		g_string_printf(gs_begin, "<font>");
+		g_string_printf(gs_begin, "<font><span>");
 	}
 
-	/* No support for font-size CSS? */
-	/* g_string_printf(gs_begin, "<span style='font-family: %s; font-size: %dpt'>", face, 
-			msim_height_to_point(height)); */
-
-	gs_end = g_string_new("</font>");
+	gs_end = g_string_new("</span></font>");
 
 	if (decor & MSIM_TEXT_BOLD) {
 		g_string_append(gs_begin, "<b>");
@@ -257,17 +240,16 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 		g_string_append(gs_end, "</u>");
 	}
 
-
 	*begin = g_string_free(gs_begin, FALSE);
 	*end = g_string_free(gs_end, FALSE);
 }
 
 /** Convert a msim markup color to a color suitable for libpurple.
-  *
-  * @param msim Either a color name, or an rgb(x,y,z) code.
-  *
-  * @return A new string, either a color name or #rrggbb code. Must g_free(). 
-  */
+ *
+ * @param msim Either a color name, or an rgb(x,y,z) code.
+ *
+ * @return A new string, either a color name or #rrggbb code. Must g_free().
+ */
 static char *
 msim_color_to_purple(const char *msim)
 {
@@ -287,7 +269,7 @@ msim_color_to_purple(const char *msim)
 }
 
 /** Convert the msim markup <a> (anchor) tag into HTML. */
-static void 
+static void
 msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *href;
@@ -302,18 +284,20 @@ msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 }
 
 /** Convert the msim markup <p> (paragraph) tag into HTML. */
-static void 
+static void
 msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
-	/* Just pass through unchanged. 
+	/* Just pass through unchanged.
 	 *
 	 * Note: attributes currently aren't passed, if there are any. */
 	*begin = g_strdup("<p>");
 	*end = g_strdup("</p>");
 }
 
-/** Convert the msim markup <c> tag (text color) into HTML. TODO: Test */
-static void 
+/**
+ * Convert the msim markup <c> tag (text color) into HTML.
+ */
+static void
 msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
@@ -330,16 +314,21 @@ msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	purple_color = msim_color_to_purple(color);
 
-	*begin = g_strdup_printf("<font color='%s'>", purple_color); 
+#ifdef USE_CSS_FORMATTING
+	*begin = g_strdup_printf("<span style='color: %s'>", purple_color);
+	*end = g_strdup("</span>");
+#else
+	*begin = g_strdup_printf("<font color='%s'>", purple_color);
+	*end = g_strdup("</font>");
+#endif
 
 	g_free(purple_color);
-
-	/* *begin = g_strdup_printf("<span style='color: %s'>", color); */
-	*end = g_strdup("</font>");
 }
 
-/** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
-static void 
+/**
+ * Convert the msim markup <b> tag (background color) into HTML.
+ */
+static void
 msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
@@ -356,16 +345,19 @@ msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	purple_color = msim_color_to_purple(color);
 
-	/* TODO: find out how to set background color. */
-	*begin = g_strdup_printf("<span style='background-color: %s'>", 
-			purple_color);
-	g_free(purple_color);
+#ifdef USE_CSS_FORMATTING
+	*begin = g_strdup_printf("<span style='background-color: %s'>", purple_color);
+	*end = g_strdup("</span>");
+#else
+	*begin = g_strdup_printf("<body bgcolor='%s'>", purple_color);
+	*end = g_strdup("</body>");
+#endif
 
-	*end = g_strdup("</p>");
+	g_free(purple_color);
 }
 
 /** Convert the msim markup <i> tag (emoticon image) into HTML. */
-static void 
+static void
 msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *name;
@@ -396,8 +388,8 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 }
 
 /** Convert an individual msim markup tag to HTML. */
-static int 
-msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
+static int
+msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 		gchar **end)
 {
 	g_return_val_if_fail(root != NULL, 0);
@@ -416,7 +408,7 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 		msim_markup_i_to_html(session, root, begin, end);
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
-				"unknown tag name=%s, ignoring", 
+				"unknown tag name=%s, ignoring\n",
 				root->name ? root->name : "(NULL)");
 		*begin = g_strdup("");
 		*end = g_strdup("");
@@ -425,8 +417,8 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 }
 
 /** Convert an individual HTML tag to msim markup. */
-static int 
-html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, 
+static int
+html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		gchar **end)
 {
 	int ret = 0;
@@ -437,7 +429,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		*end = g_strdup("");
 	/* TODO: Coalesce nested tags into one <f> tag!
 	 * Currently, the 's' value will be overwritten when b/i/u is nested
-	 * within another one, and only the inner-most formatting will be 
+	 * within another one, and only the inner-most formatting will be
 	 * applied to the text. */
 	} else if (!purple_utf8_strcasecmp(root->name, "b")) {
 		if (root->child->type == XMLNODE_TYPE_DATA) {
@@ -515,29 +507,47 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		*end = g_strdup("");
 	} else if (!purple_utf8_strcasecmp(root->name, "font")) {
+		GString *tmpbegin, *tmpend;
 		const gchar *size;
 		const gchar *face;
+		const gchar *color;
 
 		size = xmlnode_get_attrib(root, "size");
 		face = xmlnode_get_attrib(root, "face");
+		color = xmlnode_get_attrib(root, "color");
 
-		if (face && size) {
-			*begin = g_strdup_printf("<f f='%s' h='%d'>", face, 
-					msim_point_to_height(session,
-						msim_purple_size_to_point(session, atoi(size))));
-		} else if (face) {
-			*begin = g_strdup_printf("<f f='%s'>", face);
-		} else if (size) {
-			*begin = g_strdup_printf("<f h='%d'>", 
+		tmpbegin = g_string_new("<f");
+		tmpend = g_string_new("</f>");
+
+		if (face != NULL)
+			g_string_append_printf(tmpbegin, "f='%s'", face);
+
+		if (size != NULL)
+			g_string_append_printf(tmpbegin, "h='%d'",
 					 msim_point_to_height(session,
 						 msim_purple_size_to_point(session, atoi(size))));
-		} else {
-			*begin = g_strdup("<f>");
+
+		/* Close the <f> tag */
+		g_string_append(tmpbegin, ">");
+
+		if (color != NULL) {
+			g_string_append_printf(tmpbegin, "<c v='%s'>", color);
+			g_string_prepend(tmpend, "</c>");
 		}
 
-		*end = g_strdup("</f>");
+		*begin = g_string_free(tmpbegin, FALSE);
+		*end = g_string_free(tmpend, FALSE);
 
-		/* TODO: color (bg uses <body>), emoticons */
+	} else if (!purple_utf8_strcasecmp(root->name, "body")) {
+		const gchar *bgcolor;
+
+		bgcolor = xmlnode_get_attrib(root, "bgcolor");
+
+		if (bgcolor != NULL) {
+			*begin = g_strdup_printf("<b v='%s'>", bgcolor);
+			*end = g_strdup("</b>");
+		}
+
 	} else {
 		gchar *err;
 
@@ -550,7 +560,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 #endif
 
 		err = g_strdup_printf("html_tag_to_msim_markup: unrecognized "
-			"HTML tag %s was sent by the IM client; ignoring", 
+			"HTML tag %s was sent by the IM client; ignoring",
 			root->name ? root->name : "(NULL)");
 		msim_unrecognized(NULL, NULL, err);
 		g_free(err);
@@ -564,29 +574,26 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
  *
  * @return An HTML string. Caller frees.
  */
-static gchar *
-msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
+static void
+msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
 {
 	xmlnode *node;
-	gchar *begin, *inner, *end;
-	GString *final;
+	gchar *begin, *inner, *end, *tmp;
 	int descended = nodes_processed;
 
-	if (!root || !root->name) {
-		return g_strdup("");
-	}
+	if (!root || !root->name)
+		return;
 
 	purple_debug_info("msim", "msim_convert_xmlnode: got root=%s\n",
 			root->name);
 
 	begin = inner = end = NULL;
 
-	final = g_string_new("");
-
 	if (descended == 0) /* We've not formatted this yet.. :) */
 		descended = f(session, root, &begin, &end); /* Get the value that our format function has already descended for us */
-	
-	g_string_append(final, begin);
+
+	g_string_append(out, begin);
+	g_free(begin);
 
 	/* Loop over all child nodes. */
 	for (node = root->child; node != NULL; node = node->next) {
@@ -597,29 +604,26 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 
 			case XMLNODE_TYPE_TAG:
 				/* A tag or tag with attributes. Recursively descend. */
-				inner = msim_convert_xmlnode(session, node, f, descended);
-				g_return_val_if_fail(inner != NULL, NULL);
-		
-				purple_debug_info("msim", " ** node name=%s\n", 
-						(node && node->name) ? node->name : "(NULL)");
+				msim_convert_xmlnode(session, out, node, f, descended);
+
+				purple_debug_info("msim", " ** node name=%s\n",
+						node->name ? node->name : "(NULL)");
 				break;
-		
+
 			case XMLNODE_TYPE_DATA:
 				/* Literal text. */
-				inner = g_strndup(node->data, node->data_sz);
-				purple_debug_info("msim", " ** node data=%s\n", 
-						inner ? inner : "(NULL)");
+				/*
+				 * TODO: Why is it necessary to escape here?  I thought
+				 *       node->data was already escaped?
+				 */
+				tmp = g_markup_escape_text(node->data, node->data_sz);
+				g_string_append(out, tmp);
+				g_free(tmp);
 				break;
-		
-			default:
-				purple_debug_info("msim",
-						"msim_convert_xmlnode: strange node\n");
-		}
 
-		if (inner) {
-			g_string_append(final, inner);
-			g_free(inner);
-			inner = NULL;
+			default:
+				purple_debug_warning("msim",
+						"msim_convert_xmlnode: unknown node type\n");
 		}
 	}
 
@@ -627,15 +631,8 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	 * a paragraph and will display each on its own line. You actually have
 	 * to _nest_ <f> tags to intersperse different text in one paragraph!
 	 * Comment out this line below to see. */
-	g_string_append(final, end);
-
-	g_free(begin);
+	g_string_append(out, end);
 	g_free(end);
-
-	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
-			(final && final->str) ? final->str : "(NULL)");
-
-	return g_string_free(final, FALSE);
 }
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
@@ -643,7 +640,7 @@ static gchar *
 msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *root;
-	gchar *str;
+	GString *str;
 	gchar *enclosed_raw;
 
 	g_return_val_if_fail(raw != NULL, NULL);
@@ -654,7 +651,7 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 	root = xmlnode_from_str(enclosed_raw, -1);
 
 	if (!root) {
-		purple_debug_info("msim", "msim_markup_to_html: couldn't parse "
+		purple_debug_warning("msim", "msim_markup_to_html: couldn't parse "
 				"%s as XML, returning raw: %s\n", enclosed_raw, raw);
 		/* TODO: msim_unrecognized */
 		g_free(enclosed_raw);
@@ -663,13 +660,13 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 
 	g_free(enclosed_raw);
 
-	str = msim_convert_xmlnode(session, root, f, 0);
-	g_return_val_if_fail(str != NULL, NULL);
-	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
-
+	str = g_string_new(NULL);
+	msim_convert_xmlnode(session, str, root, f, 0);
 	xmlnode_free(root);
 
-	return str;
+	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str->str);
+
+	return g_string_free(str, FALSE);
 }
 
 /** Convert plaintext smileys to <i> markup tags.
@@ -696,10 +693,10 @@ msim_convert_smileys_to_markup(gchar *before)
 		replacement = g_strdup_printf("<i n=\"%s\"/>", name);
 
 		purple_debug_info("msim", "msim_convert_smileys_to_markup: %s->%s\n",
-				symbol ? symbol : "(NULL)", 
+				symbol ? symbol : "(NULL)",
 				replacement ? replacement : "(NULL)");
 		new = purple_strreplace(old, symbol, replacement);
-		
+
 		g_free(replacement);
 		g_free(old);
 
@@ -708,19 +705,19 @@ msim_convert_smileys_to_markup(gchar *before)
 
 	return new;
 }
-	
 
-/** High-level function to convert MySpaceIM markup to Purple (HTML) markup. 
+/**
+ * High-level function to convert MySpaceIM markup to Purple (HTML) markup.
  *
  * @return Purple markup string, must be g_free()'d. */
 gchar *
 msim_markup_to_html(MsimSession *session, const gchar *raw)
 {
-	return msim_convert_xml(session, raw, 
-			(MSIM_XMLNODE_CONVERT)(msim_markup_tag_to_html));
+	return msim_convert_xml(session, raw, msim_markup_tag_to_html);
 }
 
-/** High-level function to convert Purple (HTML) to MySpaceIM markup.
+/**
+ * High-level function to convert Purple (HTML) to MySpaceIM markup.
  *
  * TODO: consider using purple_markup_html_to_xhtml() to make valid XML.
  *
@@ -730,9 +727,8 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
 {
 	gchar *markup;
 
-	markup = msim_convert_xml(session, raw,
-			(MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
-	
+	markup = msim_convert_xml(session, raw, html_tag_to_msim_markup);
+
 	if (purple_account_get_bool(session->account, "emoticons", TRUE)) {
 		/* Frees markup and allocates a new one. */
 		markup = msim_convert_smileys_to_markup(markup);
@@ -740,5 +736,3 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
 
 	return markup;
 }
-
-

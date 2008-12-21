@@ -184,10 +184,6 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 		{
 			msn_user_add_group_id(user, group_id);
 		}
-		else
-		{
-			/* session->sync->fl_users_count++; */
-		}
 	}
 	else if (list_id == MSN_LIST_AL)
 	{
@@ -252,10 +248,6 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 		{
 			msn_user_remove_group_id(user, group_id);
 			return;
-		}
-		else
-		{
-			/* session->sync->fl_users_count--; */
 		}
 	}
 	else if (list_id == MSN_LIST_AL)
@@ -676,7 +668,7 @@ msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 
 	msn_user_unset_op(user, list_op);
 
-	msn_notification_rem_buddy_from_list(userlist->session->notification, list_id, who);
+	msn_notification_rem_buddy_from_list(userlist->session->notification, list_id, user);
 }
 
 /*add buddy*/
@@ -756,6 +748,68 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	msn_add_contact_to_group(userlist->session, state, who, group_id);
 }
 
+/*
+ * Save a buddy address/group until we get back response from FQY
+ */
+void
+msn_userlist_save_pending_buddy(MsnUserList *userlist,
+                               const char *who,
+                               const char *group_name)
+{
+	MsnUser *user;
+
+	g_return_if_fail(userlist != NULL);
+
+	user = msn_user_new(userlist, who, NULL);
+	msn_user_set_pending_group(user, group_name);
+	msn_user_set_network(user, MSN_NETWORK_UNKNOWN);
+	userlist->pending = g_list_prepend(userlist->pending, user);
+}
+
+/*
+ * Actually adds a buddy once we have the response from FQY
+ */
+void
+msn_userlist_add_pending_buddy(MsnUserList *userlist,
+                               const char *who,
+                               /*MsnNetwork*/ int network)
+{
+	MsnUser *user = NULL;
+	MsnUser *user2;
+	GList *l;
+	char *group;
+
+	for (l = userlist->pending; l != NULL; l = l->next)
+	{
+		user = (MsnUser *)l->data;
+
+		if (!g_strcasecmp(who, user->passport)) {
+			userlist->pending = g_list_delete_link(userlist->pending, l);
+			break;
+		}
+	}
+
+	if (user == NULL) {
+		purple_debug_error("msn", "Attempting to add a pending user that does not exist.\n");
+		return;
+	}
+
+	group = msn_user_remove_pending_group(user);
+
+	user2 = msn_userlist_find_user(userlist, who);
+	if (user2 != NULL) {
+		/* User already in userlist, so just update it. */
+		msn_user_destroy(user);
+		user = user2;
+	} else {
+		msn_userlist_add_user(userlist, user);
+	}
+
+	msn_user_set_network(user, network);
+	msn_userlist_add_buddy(userlist, who, group);
+	g_free(group);
+}
+
 void
 msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 							MsnListId list_id)
@@ -781,7 +835,7 @@ msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 
 	msn_user_set_op(user, list_op);
 
-	msn_notification_add_buddy_to_list(userlist->session->notification, list_id, who);
+	msn_notification_add_buddy_to_list(userlist->session->notification, list_id, user);
 }
 
 gboolean

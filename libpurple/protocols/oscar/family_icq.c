@@ -36,7 +36,7 @@ int aim_icq_reqofflinemsgs(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
-	purple_debug_info("oscar", "Requesting offline messages from %s", od->sn);
+	purple_debug_info("oscar", "Requesting offline messages\n");
 
 	bslen = 2 + 4 + 2 + 2;
 
@@ -49,7 +49,7 @@ int aim_icq_reqofflinemsgs(OscarData *od)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x003c); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 
@@ -70,7 +70,7 @@ int aim_icq_ackofflinemsgs(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
-	purple_debug_info("oscar", "Acknowledged receipt of offline messages from %s", od->sn);
+	purple_debug_info("oscar", "Acknowledged receipt of offline messages\n");
 
 	bslen = 2 + 4 + 2 + 2;
 
@@ -83,7 +83,7 @@ int aim_icq_ackofflinemsgs(OscarData *od)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x003e); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 
@@ -117,7 +117,7 @@ aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x0c3a); /* shrug. */
@@ -172,7 +172,7 @@ int aim_icq_changepasswd(OscarData *od, const char *passwd)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x042e); /* shrug. */
@@ -212,7 +212,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x04b2); /* shrug. */
@@ -259,7 +259,7 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x04ba); /* shrug. */
@@ -303,7 +303,7 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x051f); /* shrug. */
@@ -341,7 +341,7 @@ int aim_icq_sendxmlreq(OscarData *od, const char *xml)
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x0998); /* shrug. */
@@ -377,11 +377,12 @@ int aim_icq_sendxmlreq(OscarData *od, const char *xml)
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias)
 {
 	FlapConnection *conn;
+	PurpleAccount *account;
 	ByteStream bs;
 	aim_snacid_t snacid;
 	int bslen, xmllen;
 	char *xml;
-	const char *timestr;
+	const char *timestr, *username;
 	time_t t;
 	struct tm *tm;
 	gchar *stripped;
@@ -392,6 +393,9 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	if (!name || !msg || !alias)
 		return -EINVAL;
 
+	account = purple_connection_get_account(od->gc);
+	username = purple_account_get_username(account);
+
 	time(&t);
 	tm = gmtime(&t);
 	timestr = purple_utf8_strftime("%a, %d %b %Y %T %Z", tm);
@@ -399,7 +403,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	stripped = purple_markup_strip_html(msg);
 
 	/* The length of xml included the null terminating character */
-	xmllen = 209 + strlen(name) + strlen(stripped) + strlen(od->sn) + strlen(alias) + strlen(timestr) + 1;
+	xmllen = 209 + strlen(name) + strlen(stripped) + strlen(username) + strlen(alias) + strlen(timestr) + 1;
 
 	xml = g_new(char, xmllen);
 	snprintf(xml, xmllen, "<icq_sms_message>"
@@ -411,7 +415,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 		"<delivery_receipt>Yes</delivery_receipt>"
 		"<time>%s</time>"
 		"</icq_sms_message>",
-		name, stripped, od->sn, alias, timestr);
+		name, stripped, username, alias, timestr);
 
 	bslen = 36 + xmllen;
 
@@ -424,7 +428,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 
@@ -481,7 +485,7 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 	byte_stream_put16(&bs, bslen);
 
 	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x0fa0); /* shrug. */

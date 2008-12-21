@@ -46,7 +46,7 @@ void ggp_buddylist_send(PurpleConnection *gc)
 	PurpleBuddy *buddy;
 	uin_t *userlist = NULL;
 	gchar *types = NULL;
-	int size = 0;
+	int size = 0, ret = 0;
 
 	if ((blist = purple_get_blist()) == NULL)
 	    return;
@@ -79,12 +79,12 @@ void ggp_buddylist_send(PurpleConnection *gc)
 		}
 	}
 
+	ret = gg_notify_ex(info->session, userlist, types, size);
+	purple_debug_info("gg", "send: ret=%d; size=%d\n", ret, size);
+	
 	if (userlist) {
-		int ret = gg_notify_ex(info->session, userlist, types, size);
 		g_free(userlist);
 		g_free(types);
-
-		purple_debug_info("gg", "send: ret=%d; size=%d\n", ret, size);
 	}
 }
 /* }}} */

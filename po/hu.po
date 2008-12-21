@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-23 21:15+0100\n"
-"PO-Revision-Date: 2008-11-23 21:16+0100\n"
+"POT-Creation-Date: 2008-12-18 12:34+0100\n"
+"PO-Revision-Date: 2008-12-18 12:29+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
 "MIME-Version: 1.0\n"
@@ -145,7 +145,8 @@ msgstr "Felveszi a partnert a partnerlistájára?"
 
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
-msgstr "%s%s%s%s felhasználó szeretné %s partnert felvenni a partnerlistájára%s%s"
+msgstr ""
+"%s%s%s%s felhasználó szeretné %s partnert felvenni a partnerlistájára%s%s"
 
 msgid "Authorize buddy?"
 msgstr "Engedélyezi a partnert?"
@@ -296,7 +297,8 @@ msgid "Removing this contact will also remove all the buddies in the contact"
 msgstr "A kapcsolat eltávolítása a kapcsolat partnereit is eltávolítja"
 
 msgid "Removing this group will also remove all the buddies in the group"
-msgstr "A csoport eltávolítása a csoportban található partnereket is eltávolítja"
+msgstr ""
+"A csoport eltávolítása a csoportban található partnereket is eltávolítja"
 
 #, c-format
 msgid "Are you sure you want to remove %s?"
@@ -369,7 +371,8 @@ msgid "New Instant Message"
 msgstr "Új azonnali üzenet"
 
 msgid "Please enter the username or alias of the person you would like to IM."
-msgstr "Adja meg azon személy felhasználónevét vagy álnevét, akinek üzenni szeretne."
+msgstr ""
+"Adja meg azon személy felhasználónevét vagy álnevét, akinek üzenni szeretne."
 
 msgid "Channel"
 msgstr "Csatorna"
@@ -595,10 +598,13 @@ msgid "You have left this chat."
 msgstr "Elhagyta ezt a csevegést."
 
 msgid "Logging started. Future messages in this conversation will be logged."
-msgstr "A naplózás elkezdődött. A társalgás jövőbeli üzenetei naplózva lesznek."
+msgstr ""
+"A naplózás elkezdődött. A társalgás jövőbeli üzenetei naplózva lesznek."
 
-msgid "Logging stopped. Future messages in this conversation will not be logged."
-msgstr "A naplózás befejeződött. A társalgás jövőbeli üzenetei nem lesznek naplózva."
+msgid ""
+"Logging stopped. Future messages in this conversation will not be logged."
+msgstr ""
+"A naplózás befejeződött. A társalgás jövőbeli üzenetei nem lesznek naplózva."
 
 msgid "Send To"
 msgstr "Küldés ennek"
@@ -670,7 +676,8 @@ msgstr ""
 
 #, c-format
 msgid "%s is not a valid color. See '/help msgcolor' for valid colors."
-msgstr "%s nem érvényes szín. Az érvényes színekért lásd a „help msgcolor” kimenetét."
+msgstr ""
+"%s nem érvényes szín. Az érvényes színekért lásd a „help msgcolor” kimenetét."
 
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
@@ -843,7 +850,8 @@ msgstr ""
 "Az azonnali üzenetek csak akkor lesznek naplózva, ha az „Összes azonnali "
 "üzenet naplózása” tulajdonság be van állítva."
 
-msgid "Chats will only be logged if the \"Log all chats\" preference is enabled."
+msgid ""
+"Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
 "A csevegések csak akkor lesznek naplózva, ha az „Összes csevegés naplózása” "
 "tulajdonság be van állítva."
@@ -949,7 +957,8 @@ msgstr "Hiba a bővítmény betöltésekor"
 msgid "The selected file is not a valid plugin."
 msgstr "A kiválasztott fájl nem egy érvényes bővítmény."
 
-msgid "Please open the debug window and try again to see the exact error message."
+msgid ""
+"Please open the debug window and try again to see the exact error message."
 msgstr ""
 "Nyissa meg a hibakereső ablakot és próbálkozzon újra a pontos hibaüzenet "
 "megjelenítéséhez."
@@ -1382,7 +1391,8 @@ msgid "Couldn't find window"
 msgstr "Az ablak nem található"
 
 msgid "This plugin cannot be loaded because it was not built with X11 support."
-msgstr "A bővítmény nem tölthető be, mivel X11 támogatás nélkül került lefordításra."
+msgstr ""
+"A bővítmény nem tölthető be, mivel X11 támogatás nélkül került lefordításra."
 
 msgid "GntClipboard"
 msgstr "GntClipboard"
@@ -1663,7 +1673,8 @@ msgstr ""
 "ellenőrizhető."
 
 #. vrq will be completed by user_auth
-msgid "The root certificate this one claims to be issued by is unknown to Pidgin."
+msgid ""
+"The root certificate this one claims to be issued by is unknown to Pidgin."
 msgstr "A tanúsítványt kiadó gyökértanúsítványt a Pidgin nem ismeri."
 
 #, c-format
@@ -2074,7 +2085,8 @@ msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "A megadott parancs kezelje-e az „ymsgr” URL címeket"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
-msgstr "<b><font color=\"red\">A naplózónak nincsen olvasás funkciója</font></b>"
+msgstr ""
+"<b><font color=\"red\">A naplózónak nincsen olvasás funkciója</font></b>"
 
 msgid "HTML"
 msgstr "HTML"
@@ -2134,7 +2146,8 @@ msgstr "A bővítmény típusa nem egyezik: %d (szükséges: %d"
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
 msgstr "Az ABI verziója nem egyezik: %d.%d.x (szükséges: %d.%d.x)"
 
-msgid "Plugin does not implement all required functions (list_icon, login and close)"
+msgid ""
+"Plugin does not implement all required functions (list_icon, login and close)"
 msgstr ""
 "A bővítmény nem valósítja meg az összes kívánt függvényt (list_icon, login "
 "és close)"
@@ -2143,7 +2156,8 @@ msgstr ""
 msgid ""
 "The required plugin %s was not found. Please install this plugin and try "
 "again."
-msgstr "A szükséges %s bővítmény nem található. Kérem telepítse, majd próbálja újra."
+msgstr ""
+"A szükséges %s bővítmény nem található. Kérem telepítse, majd próbálja újra."
 
 msgid "Unable to load the plugin"
 msgstr "A bővítmény nem tölthető be"
@@ -2208,7 +2222,8 @@ msgstr ""
 "(Teljes elérési utat adjon meg)"
 
 msgid "Automatically reject from users not in buddy list"
-msgstr "Automatikus visszautasítás a partnerlistán nem szereplő felhasználóktól"
+msgstr ""
+"Automatikus visszautasítás a partnerlistán nem szereplő felhasználóktól"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2437,7 +2452,8 @@ msgstr "Megszakadt a kapcsolat a kiszolgálóval."
 msgid ""
 "You are currently disconnected. Messages will not be received unless you are "
 "logged in."
-msgstr "Jelenleg nincs csatlakozva. Nem fogadhat üzeneteket, amíg nem jelentkezik be."
+msgstr ""
+"Jelenleg nincs csatlakozva. Nem fogadhat üzeneteket, amíg nem jelentkezik be."
 
 msgid "Message could not be sent because the maximum length was exceeded."
 msgstr "Az üzenet nem küldhető el, mivel a maximális hossz el lett érve."
@@ -2811,8 +2827,10 @@ msgstr ""
 msgid "Unable to listen for incoming IM connections\n"
 msgstr "Nem lehetséges a bejövő azonnali üzenő kapcsolatokat figyelni\n"
 
-msgid "Unable to establish connection with the local mDNS server.  Is it running?"
-msgstr "Nem hozható létre kapcsolat a helyi mDNS kiszolgálóval. Egyáltalán fut?"
+msgid ""
+"Unable to establish connection with the local mDNS server.  Is it running?"
+msgstr ""
+"Nem hozható létre kapcsolat a helyi mDNS kiszolgálóval. Egyáltalán fut?"
 
 #. Creating the options for the protocol
 msgid "First name"
@@ -3479,7 +3497,8 @@ msgid "nickserv: Send a command to nickserv"
 msgstr "nickserv: parancs küldése a nickserv kiszolgálónak"
 
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
-msgstr "notice &lt;cél&lt;:  Értesítés küldése egy felhasználónak vagy csatornának."
+msgstr ""
+"notice &lt;cél&lt;:  Értesítés küldése egy felhasználónak vagy csatornának."
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
@@ -3563,7 +3582,8 @@ msgstr ""
 "tudja."
 
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
-msgstr "whois [kiszolgáló] &lt;becenév&gt;:  Információk lekérése egy felhasználóról."
+msgstr ""
+"whois [kiszolgáló] &lt;becenév&gt;:  Információk lekérése egy felhasználóról."
 
 msgid "whowas &lt;nick&gt;: Get information on a user that has logged off."
 msgstr ""
@@ -3601,7 +3621,8 @@ msgid "You require encryption, but no TLS/SSL support found."
 msgstr "Titkosítást kér, de a TLS/SSL támogatása nem található."
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
-msgstr "A kiszolgáló szöveges hitelesítést követel meg egy nem titkosított csatornán"
+msgstr ""
+"A kiszolgáló szöveges hitelesítést követel meg egy nem titkosított csatornán"
 
 #, c-format
 msgid ""
@@ -3934,7 +3955,8 @@ msgid "Server Instructions: %s"
 msgstr "Kiszolgálóutasítások: %s"
 
 msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "Töltsön ki legalább egy mezőt a megfelelő XMPP felhasználók kereséséhez."
+msgstr ""
+"Töltsön ki legalább egy mezőt a megfelelő XMPP felhasználók kereséséhez."
 
 msgid "Email Address"
 msgstr "E-mail cím"
@@ -4092,7 +4114,8 @@ msgstr "Dátum"
 msgid "Unregister"
 msgstr "Regisztráció megszüntetése"
 
-msgid "Please fill out the information below to change your account registration."
+msgid ""
+"Please fill out the information below to change your account registration."
 msgstr "Adja meg a következő információkat a regisztrált fiók módosításához."
 
 msgid "Please fill out the information below to register your new account."
@@ -4466,7 +4489,8 @@ msgstr "join: &lt;szoba&gt; [jelszó]:  Csatlakozás csevegéshez a kiszolgáló
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;felhasználó&gt; [ok]:  Felhasználó kirúgása a szobából."
 
-msgid "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
+msgid ""
+"msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr ""
 "msg &lt;felhasználó&gt; &lt;üzenet&gt;:  Magánüzenet küldése másik "
 "felhasználónak."
@@ -4643,6 +4667,19 @@ msgstr "Válasszon műveletet"
 
 msgid "Unable to retrieve MSN Address Book"
 msgstr "Az MSN címjegyzék nem kérhető le"
+
+#. only notify the user about problems adding to the friends list
+#. * maybe we should do something else for other lists, but it probably
+#. * won't cause too many problems if we just ignore it
+#, c-format
+msgid "Unable to add \"%s\"."
+msgstr "Nem lehet hozzáadni a következőt: „%s”."
+
+msgid "Buddy Add error"
+msgstr "Partner-hozzáadási hiba"
+
+msgid "The username specified does not exist."
+msgstr "A megadott felhasználónév nem létezik."
 
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
@@ -4950,7 +4987,8 @@ msgid "No text is blocked for this account."
 msgstr "Nincs tiltott szöveg ehhez a fiókhoz."
 
 #, c-format
-msgid "MSN servers are currently blocking the following regular expressions:<br/>%s"
+msgid ""
+"MSN servers are currently blocking the following regular expressions:<br/>%s"
 msgstr ""
 "Az MSN kiszolgálók jelenleg a következő reguláris kifejezéseket tiltják:<br/>"
 "%s"
@@ -4963,6 +5001,12 @@ msgstr "Mobilüzenet küldése."
 
 msgid "Page"
 msgstr "Oldal"
+
+msgid "Playing a game"
+msgstr "Játszik"
+
+msgid "Working"
+msgstr "Dolgozik"
 
 msgid "Has you"
 msgstr "Szerepel-e a listáján"
@@ -4999,6 +5043,13 @@ msgstr "Előadó"
 
 msgid "Album"
 msgstr "Album"
+
+msgid "Game Title"
+msgstr "Játék neve"
+
+# fixme: miez?
+msgid "Office Title"
+msgstr "Irodai beosztás"
 
 msgid "Set Friendly Name..."
 msgstr "Becenév beállítása…"
@@ -5193,8 +5244,8 @@ msgstr ""
 "Nem találhatók információk a felhasználó profiljában. A felhasználó "
 "valószínűleg nem létezik."
 
-msgid "Profile URL"
-msgstr "Profil URL-je"
+msgid "View web profile"
+msgstr "Webes profil megjelenítése"
 
 #. *< type
 #. *< ui_requirement
@@ -5366,7 +5417,8 @@ msgstr "Az MSN kiszolgálók átmenetileg leállnak."
 msgid "Unable to authenticate: %s"
 msgstr "Nem sikerült a hitelesítés: %s"
 
-msgid "Your MSN buddy list is temporarily unavailable. Please wait and try again."
+msgid ""
+"Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 "Az Ön MSN partnerlistája átmenetileg nem érhető el. Kérem várjon és próbálja "
 "újra később."
@@ -5399,7 +5451,8 @@ msgid "Out To Lunch"
 msgstr "Ebédelni mentem"
 
 msgid "Message may have not been sent because a timeout occurred:"
-msgstr "Időtúllépés következett be, emiatt az üzenet lehet, hogy nem lett elküldve:"
+msgstr ""
+"Időtúllépés következett be, emiatt az üzenet lehet, hogy nem lett elküldve:"
 
 msgid "Message could not be sent, not allowed while invisible:"
 msgstr "Az üzenet nem küldhető el, láthatatlan módban nem engedélyezett:"
@@ -5421,7 +5474,8 @@ msgstr ""
 "kiszolgálóval. Ez valószínűleg kiszolgálóhiba, pár perc múlva próbálkozzon "
 "újra:"
 
-msgid "Message could not be sent because an error with the switchboard occurred:"
+msgid ""
+"Message could not be sent because an error with the switchboard occurred:"
 msgstr "Az üzenet nem küldhető el, mivel hiba lépett fel a közvetítés közben:"
 
 msgid "Message may have not been sent because an unknown error occurred:"
@@ -5441,18 +5495,14 @@ msgstr "Törli a partnert a címjegyzékből?"
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr "Törölni kívánja a partnert a címjegyzékéből is?"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "Nem lehet hozzáadni a következőt: „%s”."
-
 msgid "The username specified is invalid."
 msgstr "A megadott felhasználónév érvénytelen."
 
 msgid "This Hotmail account may not be active."
 msgstr "Lehetséges, hogy ez a Hotmail fiók nem aktív."
+
+msgid "Profile URL"
+msgstr "Profil URL-je"
 
 #. *< type
 #. *< ui_requirement
@@ -5467,18 +5517,12 @@ msgstr "Lehetséges, hogy ez a Hotmail fiók nem aktív."
 msgid "MSN Protocol Plugin"
 msgstr "MSN protokollbővítmény"
 
-msgid "Missing Cipher"
-msgstr "Hiányzó titkosító"
+#, c-format
+msgid "No such user: %s"
+msgstr "Nincs ilyen felhasználó: %s"
 
-msgid "The RC4 cipher could not be found"
-msgstr "Az RC4 titkosító nem található"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Frissítsen az RC4 támogatással rendelkező libpurple verzióra (>= 2.0.1). A "
-"MySpaceIM bővítmény nem kerül betöltésre."
+msgid "User lookup"
+msgstr "Felhasználókeresés"
 
 msgid "Reading challenge"
 msgstr "Hívás olvasása"
@@ -5489,15 +5533,17 @@ msgstr "Váratlan híváshossz a kiszolgálótól"
 msgid "Logging in"
 msgstr "Bejelentkezés"
 
-#, c-format
-msgid "Connection to server lost (no data received within %d second)"
-msgid_plural "Connection to server lost (no data received within %d seconds)"
-msgstr[0] ""
-"A kapcsolat elveszett a kiszolgálóhoz (nem érkezett adat %d másodpercen "
-"belül)"
-msgstr[1] ""
-"A kapcsolat elveszett a kiszolgálóhoz (nem érkezett adat %d másodpercen "
-"belül)"
+msgid "MySpaceIM - No Username Set"
+msgstr "MySpaceIM – Nincs beállítva felhasználónév"
+
+msgid "You appear to have no MySpace username."
+msgstr "Úgy tűnik, nincs MySpace felhasználóneve."
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr "Kíván most beállítani egyet? (Megjegyzés: EZ NEM LESZ MÓDOSÍTHATÓ!)"
+
+msgid "Lost connection with server"
+msgstr "A kapcsolat elveszett a kiszolgálóval"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 msgid "New mail messages"
@@ -5518,14 +5564,25 @@ msgstr "Új képhozzászólások"
 msgid "MySpace"
 msgstr "MySpace"
 
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM – Nincs beállítva felhasználónév"
+msgid "IM Friends"
+msgstr "IM barátok"
 
-msgid "You appear to have no MySpace username."
-msgstr "Úgy tűnik, nincs MySpace felhasználóneve."
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
+"%d partner került felvételre vagy frissítésre a kiszolgálóról (beleértve a "
+"kiszolgálóoldali listán már jelen lévő partnereket)"
+msgstr[1] ""
+"%d partner került felvételre vagy frissítésre a kiszolgálóról (beleértve a "
+"kiszolgálóoldali listán már jelen lévő partnereket)"
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "Kíván most beállítani egyet? (Megjegyzés: EZ NEM LESZ MÓDOSÍTHATÓ!)"
+msgid "Add contacts from server"
+msgstr "Kapcsolatok felvétele a kiszolgálóról"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5551,31 +5608,6 @@ msgstr ""
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM hiba"
 
-msgid "Failed to add buddy"
-msgstr "A partner felvétele sikertelen"
-
-msgid "'addbuddy' command failed."
-msgstr "az „addbuddy” parancs sikertelen."
-
-msgid "persist command failed"
-msgstr "A tárolás parancs sikertelen"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Nincs ilyen felhasználó: %s"
-
-msgid "User lookup"
-msgstr "Felhasználókeresés"
-
-msgid "Failed to remove buddy"
-msgstr "A partner eltávolítása sikertelen"
-
-msgid "'delbuddy' command failed"
-msgstr "a „delbuddy” parancs sikertelen"
-
-msgid "blocklist command failed"
-msgstr "a blocklist parancs sikertelen"
-
 msgid "Invalid input condition"
 msgstr "Érvénytelen bemeneti feltétel"
 
@@ -5589,25 +5621,36 @@ msgstr "Értelmezhetetlen üzenet"
 msgid "Couldn't connect to host: %s (%d)"
 msgstr "Nem sikerült kapcsolódni a kiszolgálóhoz: %s (%d)"
 
-msgid "IM Friends"
-msgstr "IM barátok"
+msgid "Failed to add buddy"
+msgstr "A partner felvétele sikertelen"
 
-#, c-format
+msgid "'addbuddy' command failed."
+msgstr "az „addbuddy” parancs sikertelen."
+
+msgid "persist command failed"
+msgstr "A tárolás parancs sikertelen"
+
+msgid "Failed to remove buddy"
+msgstr "A partner eltávolítása sikertelen"
+
+msgid "'delbuddy' command failed"
+msgstr "a „delbuddy” parancs sikertelen"
+
+msgid "blocklist command failed"
+msgstr "a blocklist parancs sikertelen"
+
+msgid "Missing Cipher"
+msgstr "Hiányzó titkosító"
+
+msgid "The RC4 cipher could not be found"
+msgstr "Az RC4 titkosító nem található"
+
 msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"%d partner került felvételre vagy frissítésre a kiszolgálóról (beleértve a "
-"kiszolgálóoldali listán már jelen lévő partnereket)"
-msgstr[1] ""
-"%d partner került felvételre vagy frissítésre a kiszolgálóról (beleértve a "
-"kiszolgálóoldali listán már jelen lévő partnereket)"
-
-msgid "Add contacts from server"
-msgstr "Kapcsolatok felvétele a kiszolgálóról"
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
+"Frissítsen az RC4 támogatással rendelkező libpurple verzióra (>= 2.0.1). A "
+"MySpaceIM bővítmény nem kerül betöltésre."
 
 msgid "Add friends from MySpace.com"
 msgstr "Barátok felvétele a MySpace.com-ról"
@@ -5649,9 +5692,6 @@ msgstr "Alap betűkészletméret (pont)"
 msgid "User"
 msgstr "Felhasználó"
 
-msgid "Profile"
-msgstr "Profil"
-
 # fixme: talán ez...
 msgid "Headline"
 msgstr "Mottó"
@@ -5665,16 +5705,6 @@ msgstr "Barátok összesen"
 msgid "Client Version"
 msgstr "Kliensverzió"
 
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Nincs beállítva felhasználónév"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM – Állítsa be a felhasználónevet"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Adjon meg egy felhasználónevet az elérhetőség ellenőrzéséhez:"
-
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM – A felhasználónév elérhető"
 
@@ -5684,11 +5714,21 @@ msgstr "A felhasználónév elérhető. Be kívánja állítani?"
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "MIUTÁN BEÁLLÍTOTTA, EZ NEM MÓDOSÍTHATÓ!"
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr "MySpaceIM – Állítsa be a felhasználónevet"
+
 msgid "This username is unavailable."
 msgstr "A felhasználónév nem áll rendelkezésre."
 
 msgid "Please try another username:"
 msgstr "Próbálkozzon másik felhasználónévvel:"
+
+#. Protocol won't log in now without a username set.. Disconnect
+msgid "No username set"
+msgstr "Nincs beállítva felhasználónév"
+
+msgid "Please enter a username to check its availability:"
+msgstr "Adjon meg egy felhasználónevet az elérhetőség ellenőrzéséhez:"
 
 # fixme: valami ilyesmi...
 #. TODO: icons for each zap
@@ -5917,7 +5957,8 @@ msgstr "A felhasználó letiltotta Önt"
 msgid ""
 "This evaluation version does not allow more than ten users to log in at one "
 "time"
-msgstr "Ez a próbaverzió nem engedélyezi tíznél több felhasználó egyidejű belépését"
+msgstr ""
+"Ez a próbaverzió nem engedélyezi tíznél több felhasználó egyidejű belépését"
 
 msgid "The user is either offline or you are blocked"
 msgstr "A felhasználó kilépett, vagy Ön le van tiltva"
@@ -5957,7 +5998,8 @@ msgstr ""
 
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr "Az üzenetet nem lehet elküldeni. Nem sikerült létrehozni a konferenciát (%s)."
+msgstr ""
+"Az üzenetet nem lehet elküldeni. Nem sikerült létrehozni a konferenciát (%s)."
 
 #, c-format
 msgid ""
@@ -5997,7 +6039,8 @@ msgstr "Nem lehet %s felhasználót eltávolítani a magánszféra-listáról (%
 
 #, c-format
 msgid "Unable to change server side privacy settings (%s)."
-msgstr "Nem lehet megváltoztatni a kiszolgálóoldali magánszféra-beállításokat (%s)."
+msgstr ""
+"Nem lehet megváltoztatni a kiszolgálóoldali magánszféra-beállításokat (%s)."
 
 #, c-format
 msgid "Unable to create conference (%s)."
@@ -6061,10 +6104,12 @@ msgid "Would you like to join the conversation?"
 msgstr "Szeretne csatlakozni a társalgáshoz?"
 
 msgid "You have been logged out because you logged in at another workstation."
-msgstr "Ki lett jelentkeztetve, mivel bejelentkezett egy másik munkaállomásról."
+msgstr ""
+"Ki lett jelentkeztetve, mivel bejelentkezett egy másik munkaállomásról."
 
 #, c-format
-msgid "%s appears to be offline and did not receive the message that you just sent."
+msgid ""
+"%s appears to be offline and did not receive the message that you just sent."
 msgstr "Úgy tűnik, %s kilépett, és nem kapta meg az utoljára küldött üzenetet."
 
 msgid ""
@@ -6516,7 +6561,8 @@ msgstr "ICQ engedélyezés elutasítva."
 #. Someone has granted you authorization
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
-msgstr "%u felhasználó elfogadta a kérését, így felveheti őt a partnerlistájára."
+msgstr ""
+"%u felhasználó elfogadta a kérését, így felveheti őt a partnerlistájára."
 
 #, c-format
 msgid ""
@@ -6570,21 +6616,27 @@ msgstr "_Elutasítás"
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
-msgstr[0] "Nem kapott meg %hu üzenetet a következőtől: %s, mert az érvénytelen volt."
-msgstr[1] "Nem kapott meg %hu üzenetet a következőtől: %s, mert az érvénytelen volt."
+msgstr[0] ""
+"Nem kapott meg %hu üzenetet a következőtől: %s, mert az érvénytelen volt."
+msgstr[1] ""
+"Nem kapott meg %hu üzenetet a következőtől: %s, mert az érvénytelen volt."
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
-msgstr[0] "Nem kapott meg %hu üzenetet a következőtől: %s, mert az túl nagy volt."
-msgstr[1] "Nem kapott meg %hu üzenetet a következőtől: %s, mert az túl nagy volt."
+msgstr[0] ""
+"Nem kapott meg %hu üzenetet a következőtől: %s, mert az túl nagy volt."
+msgstr[1] ""
+"Nem kapott meg %hu üzenetet a következőtől: %s, mert az túl nagy volt."
 
 # #: ../src/protocols/oscar/oscar.c:1605
 # #, c-format
 # msgid "You missed %d message from %s because the rate limit has been exceeded."
 #, c-format
-msgid "You missed %hu message from %s because the rate limit has been exceeded."
-msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
+msgid ""
+"You missed %hu message from %s because the rate limit has been exceeded."
+msgid_plural ""
+"You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
 "Nem kapott meg %hu üzenetet a következőtől: %s, mert túllépte a küldés "
 "gyakoriságának a korlátját."
@@ -6593,8 +6645,10 @@ msgstr[1] ""
 "gyakoriságának a korlátját."
 
 #, c-format
-msgid "You missed %hu message from %s because his/her warning level is too high."
-msgid_plural "You missed %hu messages from %s because his/her warning level is too high."
+msgid ""
+"You missed %hu message from %s because his/her warning level is too high."
+msgid_plural ""
+"You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
 "Nem kapott meg %hu üzenetet a következőtől: %s, mert a feladó "
 "figyelmeztetési szintje túl magas volt."
@@ -6604,7 +6658,8 @@ msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s because your warning level is too high."
-msgid_plural "You missed %hu messages from %s because your warning level is too high."
+msgid_plural ""
+"You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
 "Nem kapott meg %hu üzenetet a következőtől: %s, mert az Ön figyelmeztetési "
 "szintje túl magas."
@@ -6639,6 +6694,9 @@ msgstr "Kapcsolódva ezóta"
 
 msgid "Member Since"
 msgstr "Tagság kezdete"
+
+msgid "Profile"
+msgstr "Profil"
 
 msgid "Your AIM connection may be lost."
 msgstr "Az AIM kapcsolata megszakadhatott."
@@ -6768,7 +6826,8 @@ msgstr "%s e-mail címe a következő: %s"
 msgid "Account Info"
 msgstr "Fiókinformációk"
 
-msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
+msgid ""
+"Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "Az Ön IM képe nem lett elküldve. IM képek küldéséhez közvetlen kapcsolatban "
 "kell lennie."
@@ -6792,8 +6851,10 @@ msgid ""
 msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
-msgstr[0] "A profil mérete túllépte a maximális %d bájtot. Ez csonkításra került."
-msgstr[1] "A profil mérete túllépte a maximális %d bájtot. Ez csonkításra került."
+msgstr[0] ""
+"A profil mérete túllépte a maximális %d bájtot. Ez csonkításra került."
+msgstr[1] ""
+"A profil mérete túllépte a maximális %d bájtot. Ez csonkításra került."
 
 msgid "Profile too long."
 msgstr "A profil túl hosszú."
@@ -6895,7 +6956,8 @@ msgid "_Exchange:"
 msgstr "_Váltás:"
 
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
-msgstr "Az Ön IM képe nem lett elküldve. Nem küldhet IM képeket AIM csevegésekbe."
+msgstr ""
+"Az Ön IM képe nem lett elküldve. Nem küldhet IM képeket AIM csevegésekbe."
 
 msgid "iTunes Music Store Link"
 msgstr "iTunes zenebolt hivatkozás"
@@ -7027,7 +7089,8 @@ msgstr "Több párhuzamos bejelentkezés engedélyezése"
 
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
-msgstr "%s felkérése, hogy kapcsolódjon hozzánk ezen: %s:%hu közvetlen kapcsolattal."
+msgstr ""
+"%s felkérése, hogy kapcsolódjon hozzánk ezen: %s:%hu közvetlen kapcsolattal."
 
 #, c-format
 msgid "Attempting to connect to %s:%hu."
@@ -7128,7 +7191,7 @@ msgstr "Egyéb"
 msgid "Visible"
 msgstr "Látható"
 
-msgid "Firend Only"
+msgid "Friend Only"
 msgstr "Csak barát"
 
 msgid "Private"
@@ -7204,13 +7267,13 @@ msgid "Could not change buddy information."
 msgstr "A partnerinformációk nem módosíthatók."
 
 #, c-format
-msgid "%d needs Q&A"
-msgstr "%d Q&A-t igényel"
+msgid "%u requires verification"
+msgstr "%u ellenőrzést igényel"
 
-msgid "Add buddy Q&A"
-msgstr "Partner Q&A hozzáadása"
+msgid "Add buddy question"
+msgstr "Partnerkérdés felvétele"
 
-msgid "Input answer here"
+msgid "Enter answer here"
 msgstr "Írja be ide a válaszát"
 
 msgid "Send"
@@ -7222,18 +7285,18 @@ msgstr "Érvénytelen válasz."
 msgid "Authorization denied message:"
 msgstr "Hozzáférés elutasítva üzenet:"
 
-msgid "Sorry, You are not my style."
-msgstr "Bocs, nem vagy az esetem…"
+msgid "Sorry, you're not my style."
+msgstr "Bocs, nem vagy az esetem."
 
 #, c-format
-msgid "%d needs authentication"
-msgstr "A(z) %d felhasználó felhatalmazást kér"
+msgid "%u needs authorization"
+msgstr "%u felhasználó felhatalmazást kér"
 
 msgid "Add buddy authorize"
 msgstr "Partnerengedélyezés felvétele"
 
-msgid "Input request here"
-msgstr "Írja be ide kérését"
+msgid "Enter request here"
+msgstr "Írja be ide kérdését"
 
 msgid "Would you be my friend?"
 msgstr "Leszünk barátok?"
@@ -7251,8 +7314,8 @@ msgid "Failed sending authorize"
 msgstr "Az engedély küldése meghiúsult"
 
 #, c-format
-msgid "Failed removing buddy %d"
-msgstr "A partner (%d) eltávolítása meghiúsult"
+msgid "Failed removing buddy %u"
+msgstr "A partner (%u) eltávolítása meghiúsult"
 
 #, c-format
 msgid "Failed removing me from %d's buddy list"
@@ -7292,6 +7355,9 @@ msgstr "Adja meg a Qun számot"
 msgid "You can only search for permanent Qun\n"
 msgstr "Csak állandó Qun-t kereshet\n"
 
+msgid "(Invalid UTF-8 string)"
+msgstr "(Érvénytelen UTF-8 karakterlánc)"
+
 msgid "Not member"
 msgstr "Nem tag"
 
@@ -7325,16 +7391,19 @@ msgstr "Ez a Qun nem engedélyezi mások csatlakozását"
 msgid "Join QQ Qun"
 msgstr "Csatlakozás QQ Qun-hoz"
 
+msgid "Input request here"
+msgstr "Írja be ide kérését"
+
 #, c-format
-msgid "Successfully joined Qun %s (%d)"
-msgstr "Sikeresen csatlakozott a(z) %s Qun-hoz (%d)"
+msgid "Successfully joined Qun %s (%u)"
+msgstr "Sikeresen csatlakozott a(z) %s Qun-hoz (%u)"
 
 msgid "Successfully joined Qun"
 msgstr "Sikeresen csatlakozott a Qun-hoz"
 
 #, c-format
-msgid "Qun %d denied to join"
-msgstr "A Qun (%d) megtagadta a csatlakozást"
+msgid "Qun %u denied from joining"
+msgstr "A Qun (%u) megtagadta a csatlakozást"
 
 msgid "QQ Qun Operation"
 msgstr "QQ Qun művelet"
@@ -7342,7 +7411,7 @@ msgstr "QQ Qun művelet"
 msgid "Failed:"
 msgstr "Sikertelen:"
 
-msgid "Join Qun, Unknow Reply"
+msgid "Join Qun, Unknown Reply"
 msgstr "Csatlakozás Qun-hoz, ismeretlen válasz"
 
 msgid "Quit Qun"
@@ -7355,11 +7424,11 @@ msgstr ""
 "Ne feledje, ha Ön hozta létre,\n"
 "akkor ez a művelet törli a Qun-t."
 
-msgid "Sorry, you are not our style ..."
-msgstr "Bocs, nem vagy az esetünk…"
+msgid "Sorry, you are not our style"
+msgstr "Bocs, nem vagy az esetünk."
 
-msgid "Successfully changed Qun member"
-msgstr "Sikeresen módosított egy Qun tagot"
+msgid "Successfully changed Qun members"
+msgstr "Sikeresen módosította a Qun tagokat"
 
 msgid "Successfully changed Qun information"
 msgstr "Sikeresen módosította a Qun információkat"
@@ -7367,35 +7436,35 @@ msgstr "Sikeresen módosította a Qun információkat"
 msgid "You have successfully created a Qun"
 msgstr "Sikeresen létrehozott egy Qun-t"
 
-msgid "Would you like to set detailed information now?"
+msgid "Would you like to set up detailed information now?"
 msgstr "Be kívánja állítani most a részletes információkat?"
 
 msgid "Setup"
 msgstr "Beállítás"
 
 #, c-format
-msgid "%d requested to join Qun %d for %s"
-msgstr "A(z) %d felhasználó csatlakozni szeretne a(z) %d Qun-hoz, ok: %s"
+msgid "%u requested to join Qun %u for %s"
+msgstr "A(z) %u felhasználó csatlakozni szeretne a(z) %u Qun-hoz, ok: %s"
 
 #, c-format
-msgid "%d request to join Qun %d"
-msgstr "A(z) %d felhasználó csatlakozni szeretne a(z) %d Qun-hoz"
+msgid "%u request to join Qun %u"
+msgstr "A(z) %u felhasználó csatlakozni szeretne a(z) %u Qun-hoz"
 
 #, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "A csatlakozás sikertelen a(z) %d Qun-hoz, amelyet %d admin működtet"
+msgid "Failed to join Qun %u, operated by admin %u"
+msgstr "A csatlakozás sikertelen a(z) %u Qun-hoz, amelyet %u admin működtet"
 
 #, c-format
-msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
-msgstr "<b>A csatlakozást a Qun-hoz (%d) jóváhagyta %d admin %s számára</b>"
+msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+msgstr "<b>A csatlakozást a Qun-hoz (%u) jóváhagyta %u admin %s számára</b>"
 
 #, c-format
-msgid "<b>Removed buddy %d.</b>"
-msgstr "<b>%d partner eltávolítva.</b>"
+msgid "<b>Removed buddy %u.</b>"
+msgstr "<b>%u partner eltávolítva.</b>"
 
 #, c-format
-msgid "<b>New buddy %d joined.</b>"
-msgstr "<b>Új partner (%d) csatlakozott.</b>"
+msgid "<b>New buddy %u joined.</b>"
+msgstr "<b>Új partner (%u) csatlakozott.</b>"
 
 #, c-format
 msgid "Unknown-%d"
@@ -7512,8 +7581,8 @@ msgid "<i>Feel free to join us!</i> :)"
 msgstr "<i>csatlakozzon bátran</i> :)"
 
 #, c-format
-msgid "About OpenQ r%s"
-msgstr "Az OpenQ r%s névjegye"
+msgid "About OpenQ %s"
+msgstr "Az OpenQ %s névjegye"
 
 msgid "Change Icon"
 msgstr "Ikon módosítása"
@@ -7558,7 +7627,6 @@ msgstr "QQ2007"
 msgid "QQ2008"
 msgstr "QQ2008"
 
-#. #endif
 msgid "Connect by TCP"
 msgstr "Kapcsolódás TCP segítségével"
 
@@ -7574,11 +7642,8 @@ msgstr "Kapcsolat-fenntartási időköz (mp)"
 msgid "Update interval (seconds)"
 msgstr "Frissítési időköz (mp)"
 
-msgid "Can not decrypt server reply"
+msgid "Cannot decrypt server reply"
 msgstr "Nem fejthető vissza a kiszolgáló válasza"
-
-msgid "Can not decrypt get server reply"
-msgstr "Nem fejthető vissza a kiszolgálólekérdezés válasza"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
@@ -7599,19 +7664,19 @@ msgid "Activation required"
 msgstr "Aktiválás szükséges"
 
 #, c-format
-msgid "Unknow reply code when login (0x%02X)"
+msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "Ismeretlen válaszkód bejelentkezéskor (0x%02X)"
 
-msgid "Keep alive error"
-msgstr "Kapcsolat-fenntartási hiba"
+msgid "Could not decrypt server reply"
+msgstr "Nem fejthető vissza a kiszolgáló válasza"
 
-msgid "Requesting captcha ..."
-msgstr "Captcha kérése…"
+msgid "Requesting captcha"
+msgstr "Captcha kérése"
 
-msgid "Checking code of captcha ..."
-msgstr "A captcha kódjának ellenőrzése…"
+msgid "Checking captcha"
+msgstr "Captcha ellenőrzése"
 
-msgid "Failed captcha verify"
+msgid "Failed captcha verification"
 msgstr "A captcha ellenőrzése meghiúsult"
 
 msgid "Captcha Image"
@@ -7620,19 +7685,19 @@ msgstr "Captcha kép"
 msgid "Enter code"
 msgstr "Adja meg a kódot"
 
-msgid "QQ Captcha Verifing"
+msgid "QQ Captcha Verification"
 msgstr "QQ captcha ellenőrzés"
 
 msgid "Enter the text from the image"
 msgstr "Adja meg a szöveget a képről"
 
 #, c-format
-msgid "Unknow reply code when checking password (0x%02X)"
+msgid "Unknown reply when checking password (0x%02X)"
 msgstr "Ismeretlen válaszkód a jelszó ellenőrzésekor (0x%02X)"
 
 #, c-format
 msgid ""
-"Unknow reply code when login (0x%02X):\n"
+"Unknown reply code when logging in (0x%02X):\n"
 "%s"
 msgstr ""
 "Ismeretlen válaszkód bejelentkezéskor (0x%02X):\n"
@@ -7645,14 +7710,6 @@ msgstr "Nem lehet kapcsolódni."
 msgid "Socket error"
 msgstr "Foglalathiba"
 
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%d, %s"
-msgstr ""
-"Elveszett a kapcsolat a kiszolgálóhoz:\n"
-"%d, %s"
-
 msgid "Unable to read from socket"
 msgstr "A foglalatból nem lehet olvasni"
 
@@ -7662,10 +7719,10 @@ msgstr "Írási hiba"
 msgid "Connection lost"
 msgstr "A kapcsolat elveszett"
 
-msgid "Get server ..."
-msgstr "Kiszolgáló lekérdezése…"
+msgid "Getting server"
+msgstr "Kiszolgáló lekérdezése"
 
-msgid "Request token"
+msgid "Requesting token"
 msgstr "Jelsor kérése"
 
 msgid "Couldn't resolve host"
@@ -7674,14 +7731,11 @@ msgstr "Nem sikerült a kiszolgáló feloldása"
 msgid "Invalid server or port"
 msgstr "Érvénytelen kiszolgáló vagy port"
 
-msgid "Connecting server ..."
-msgstr "Kapcsolódás kiszolgálóhoz…"
+msgid "Connecting to server"
+msgstr "Kapcsolódás kiszolgálóhoz"
 
 msgid "QQ Error"
 msgstr "QQ hiba"
-
-msgid "Failed to send IM."
-msgstr "Az azonnali üzenet küldése meghiúsult."
 
 #, c-format
 msgid ""
@@ -7696,6 +7750,10 @@ msgstr ""
 "%s"
 
 #, c-format
+msgid "%s:%s"
+msgstr "%s:%s"
+
+#, c-format
 msgid "From %s:"
 msgstr "Feladó: %s:"
 
@@ -7707,31 +7765,27 @@ msgstr ""
 "Kiszolgálómegjegyzés ettől: %s\n"
 "%s"
 
-msgid "Unknow SERVER CMD"
+msgid "Unknown SERVER CMD"
 msgstr "Ismeretlen kiszolgálóparancs"
 
 #, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
-"Room %d, reply 0x%02X"
+"Room %u, reply 0x%02X"
 msgstr ""
 "Hiba %s(0x%02X) válaszában\n"
-"Szoba: %d, válasz: 0x%02X"
+"Szoba: %u, válasz: 0x%02X"
 
 msgid "QQ Qun Command"
 msgstr "QQ Qun parancs"
 
-#, c-format
-msgid "Not a member of room \"%s\"\n"
-msgstr "Ön nem tagja a következő szobának: „%s”\n"
+msgid "Could not decrypt login reply"
+msgstr "Nem fejthető vissza a bejelentkezési válas"
 
-msgid "Can not decrypt login reply"
-msgstr "Nem fejthető vissza a bejelentkezési válasz"
-
-msgid "Unknow LOGIN CMD"
+msgid "Unknown LOGIN CMD"
 msgstr "Ismeretlen bejelentkezési parancs"
 
-msgid "Unknow CLIENT CMD"
+msgid "Unknown CLIENT CMD"
 msgstr "Ismeretlen kliensparancs"
 
 #, c-format
@@ -7794,7 +7848,8 @@ msgid "Starting Services"
 msgstr "Szolgáltatások indítása"
 
 #, c-format
-msgid "A Sametime administrator has issued the following announcement on server %s"
+msgid ""
+"A Sametime administrator has issued the following announcement on server %s"
 msgstr ""
 "Egy Sametime adminisztrátor a következő bejelentést adta ki a(z) %s "
 "kiszolgálón"
@@ -8445,7 +8500,8 @@ msgid "Set Secret Channel"
 msgstr "Titkos csatorna beállítása"
 
 #, c-format
-msgid "You have to join the %s channel before you are able to join the private group"
+msgid ""
+"You have to join the %s channel before you are able to join the private group"
 msgstr ""
 "Mielőtt csatlakozhatna a magáncsoporthoz, csatlakoznia kell a(z) %s "
 "csatornához"
@@ -8513,7 +8569,8 @@ msgstr "%s megváltoztatta a(z) <I>%s</I> témáját a következőre: %s"
 
 #, c-format
 msgid "<I>%s</I> set channel <I>%s</I> modes to: %s"
-msgstr "<I>%s</I> átállította a(z) <I>%s</I> csatorna üzemmódjait a következőkre: %s"
+msgstr ""
+"<I>%s</I> átállította a(z) <I>%s</I> csatorna üzemmódjait a következőkre: %s"
 
 #, c-format
 msgid "<I>%s</I> removed all channel <I>%s</I> modes"
@@ -8696,7 +8753,8 @@ msgstr ""
 
 #, c-format
 msgid "Received %s's public key. Would you like to accept this public key?"
-msgstr "%s nyilvános kulcsa megérkezett. El kívánja fogadni ezt a nyilvános kulcsot?"
+msgstr ""
+"%s nyilvános kulcsa megérkezett. El kívánja fogadni ezt a nyilvános kulcsot?"
 
 #, c-format
 msgid ""
@@ -8728,7 +8786,8 @@ msgstr "Hiba a SILC kiszolgálóhoz kapcsolódás közben"
 msgid "Key Exchange failed"
 msgstr "Kulcscsere sikertelen"
 
-msgid "Resuming detached session failed. Press Reconnect to create new connection."
+msgid ""
+"Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
 "A leválasztott folyamat folytatása sikertelen. Kattintson az Újrakapcsolódás "
 "gombra egy új kapcsolat létrehozásához."
@@ -8911,7 +8970,8 @@ msgid "whois &lt;nick&gt;:  View nick's information"
 msgstr "whois &lt;becenév&gt;:  A becenévhez tartozó információk megjelenítése"
 
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
-msgstr "msg &lt;becenév&gt; &lt;message&gt;:  Magánüzenet küldése a felhasználónak"
+msgstr ""
+"msg &lt;becenév&gt; &lt;message&gt;:  Magánüzenet küldése a felhasználónak"
 
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr ""
@@ -8980,10 +9040,12 @@ msgstr ""
 "csatornáról"
 
 msgid "info [server]:  View server administrative details"
-msgstr "info [kiszolgáló]:  A kiszolgáló adminisztrációs részleteinek megjelenítése"
+msgstr ""
+"info [kiszolgáló]:  A kiszolgáló adminisztrációs részleteinek megjelenítése"
 
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
-msgstr "ban [&lt;csatorna&gt; +|-&lt;becenév&gt;]:  Kliens kitiltása a csatornáról"
+msgstr ""
+"ban [&lt;csatorna&gt; +|-&lt;becenév&gt;]:  Kliens kitiltása a csatornáról"
 
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
 msgstr ""
@@ -9160,7 +9222,8 @@ msgstr "Hiba: A verziók különböznek, kérem frissítse a kliensét"
 
 #, c-format
 msgid "Failure: Remote does not trust/support your public key"
-msgstr "Hiba: A távoli fél nem bízik meg vagy nem támogatja az Ön nyilvános kulcsát"
+msgstr ""
+"Hiba: A távoli fél nem bízik meg vagy nem támogatja az Ön nyilvános kulcsát"
 
 #, c-format
 msgid "Failure: Remote does not support proposed KE group"
@@ -9291,7 +9354,8 @@ msgstr "%s figyelmeztetése nincs engedélyezve."
 
 #, c-format
 msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Egy üzenet el lett dobva, Ön túllépte a kiszolgáló átviteli sebességhatárát."
+msgstr ""
+"Egy üzenet el lett dobva, Ön túllépte a kiszolgáló átviteli sebességhatárát."
 
 #, c-format
 msgid "Chat in %s is not available."
@@ -9717,16 +9781,9 @@ msgstr "Érdekes link 3"
 msgid "Last Update"
 msgstr "Utolsó frissítés"
 
-#, c-format
-msgid "User information for %s unavailable"
-msgstr "%s felhasználói információi nem érhetőek el"
-
 msgid ""
-"Sorry, this profile seems to be in a language or format that is not "
-"supported at this time."
-msgstr ""
-"Elnézést, ez a profil olyan nyelvűnek vagy formátumúnak tűnik, ami jelenleg "
-"nem támogatott."
+"This profile is in a language or format that is not supported at this time."
+msgstr "Ez a profil olyan nyelvű vagy formátumú, ami jelenleg nem támogatott."
 
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
@@ -9750,7 +9807,8 @@ msgstr "A felhasználó profilja üres."
 
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s visszalépett az Ön meghívásától a(z) „%s” konferenciaszobába, mivel: „%s”."
+msgstr ""
+"%s visszalépett az Ön meghívásától a(z) „%s” konferenciaszobába, mivel: „%s”."
 
 msgid "Invitation Rejected"
 msgstr "Meghívás visszautasítva"
@@ -9867,7 +9925,8 @@ msgstr ""
 "sub &lt;osztály&gt; &lt;példány&gt; &lt;címzett&gt;: Csatlakozás új "
 "csevegéshez"
 
-msgid "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
+msgid ""
+"zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
 msgstr ""
 "zi &lt;példány&gt;: Üzenet küldése a következőnek: &lt;üzenet,<i>példány</i>,"
 "*&gt;"
@@ -10364,7 +10423,8 @@ msgstr ""
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
-msgid_plural "You currently have %d contacts named %s. Would you like to merge them?"
+msgid_plural ""
+"You currently have %d contacts named %s. Would you like to merge them?"
 msgstr[0] "Jelenleg %d %s nevű partnere van. Össze kívánja vonni ezeket?"
 msgstr[1] "Jelenleg %d %s nevű partnere van. Össze kívánja vonni ezeket?"
 
@@ -10466,7 +10526,8 @@ msgstr "_Kibontás"
 msgid "/Tools/Mute Sounds"
 msgstr "/Eszközök/Hangok némítása"
 
-msgid "You are not currently signed on with an account that can add that buddy."
+msgid ""
+"You are not currently signed on with an account that can add that buddy."
 msgstr ""
 "Jelenleg nincs bejelentkezve olyan hálózatra, amelyen felvehetné ezt a "
 "partnert."
@@ -10694,7 +10755,8 @@ msgstr "Üdvözöljük újra!"
 
 #, c-format
 msgid "%d account was disabled because you signed on from another location:"
-msgid_plural "%d accounts were disabled because you signed on from another location:"
+msgid_plural ""
+"%d accounts were disabled because you signed on from another location:"
 msgstr[0] "%d fiók letiltva, mivel bejelentkezett egy másik helyről:"
 msgstr[1] "%d fiók letiltva, mivel bejelentkezett egy másik helyről:"
 
@@ -10819,7 +10881,8 @@ msgstr "Ismeretlen parancs."
 msgid "That buddy is not on the same protocol as this chat."
 msgstr "A partner nem ugyanazt a protokollt használja, mint ez a csevegés."
 
-msgid "You are not currently signed on with an account that can invite that buddy."
+msgid ""
+"You are not currently signed on with an account that can invite that buddy."
 msgstr ""
 "Jelenleg nincs bejelentkezve olyan fiókkal, mellyel meghívhatná ezt a "
 "partnert."
@@ -11439,7 +11502,8 @@ msgstr ""
 
 #, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin az irc.freenode.net hálózaton<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">IRC:</FONT> #pidgin az irc.freenode.net hálózaton<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Jelenlegi fejlesztők"
@@ -11549,7 +11613,8 @@ msgid "_Remove Group"
 msgstr "_Csoport eltávolítása"
 
 #, c-format
-msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
+msgid ""
+"You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "%s eltávolítására készül a partnerlistájáról. Folytatni akarja?"
 
 msgid "Remove Buddy"
@@ -11562,7 +11627,8 @@ msgstr "Partner _törlése"
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
-msgstr "%s csevegés eltávolítására készül a partnerlistájáról. Folytatni akarja?"
+msgstr ""
+"%s csevegés eltávolítására készül a partnerlistájáról. Folytatni akarja?"
 
 msgid "Remove Chat"
 msgstr "Csevegés eltávolítása"
@@ -11694,7 +11760,8 @@ msgid "Hyperlink prelight color"
 msgstr "Hiperhivatkozás előfényszíne"
 
 msgid "Color to draw hyperlinks when mouse is over them."
-msgstr "Hiperhivatkozások rajzolásához használt szín, amikor az egér rájuk mutat."
+msgstr ""
+"Hiperhivatkozások rajzolásához használt szín, amikor az egér rájuk mutat."
 
 msgid "Sent Message Name Color"
 msgstr "Elküldött üzenet névszíne"
@@ -11817,7 +11884,8 @@ msgstr "_Leírás"
 msgid ""
 "Please enter the URL and description of the link that you want to insert. "
 "The description is optional."
-msgstr "Adja meg a beszúrandó hivatkozás URL címét és leírását. A leírás opcionális."
+msgstr ""
+"Adja meg a beszúrandó hivatkozás URL címét és leírását. A leírás opcionális."
 
 msgid "Please enter the URL of the link that you want to insert."
 msgstr "Adja meg a beszúrandó hivatkozás URL címét."
@@ -11969,7 +12037,8 @@ msgstr ""
 msgid ""
 "Are you sure you want to permanently delete the system log which started at %"
 "s?"
-msgstr "Biztos, hogy törölni akarja a(z) %s időpontban kezdődött rendszernaplót?"
+msgstr ""
+"Biztos, hogy törölni akarja a(z) %s időpontban kezdődött rendszernaplót?"
 
 msgid "Delete Log?"
 msgstr "Törli a naplót?"
@@ -11983,7 +12052,8 @@ msgstr "<span size='larger' weight='bold'>Társalgás itt: %s, ekkor: %s</span>"
 
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation with %s on %s</span>"
-msgstr "<span size='larger' weight='bold'>Társalgás ezzel: %s, ekkor: %s</span>"
+msgstr ""
+"<span size='larger' weight='bold'>Társalgás ezzel: %s, ekkor: %s</span>"
 
 #. Steal the "HELP" response and use it to trigger browsing to the logs folder
 msgid "_Browse logs folder"
@@ -12111,7 +12181,8 @@ msgstr "Az URL megnyitása sikertelen"
 msgid "Error launching \"%s\": %s"
 msgstr "Hiba „%s” indításakor: %s"
 
-msgid "The 'Manual' browser command has been chosen, but no command has been set."
+msgid ""
+"The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "A „Kézi” böngészőparancsot választotta, de nem adott meg parancsot."
 
 msgid "The following plugins will be unloaded."
@@ -12876,7 +12947,8 @@ msgstr ""
 
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
-msgstr "A(z) „%s” fájl túl nagy a következőhöz: %s. Próbálkozzon kisebb képpel.\n"
+msgstr ""
+"A(z) „%s” fájl túl nagy a következőhöz: %s. Próbálkozzon kisebb képpel.\n"
 
 msgid "Icon Error"
 msgstr "Ikonhiba"
@@ -12889,7 +12961,8 @@ msgid "Failed to open file '%s': %s"
 msgstr "Nem sikerült megnyitni a(z) „%s” fájlt: %s"
 
 #, c-format
-msgid "Failed to load image '%s': reason not known, probably a corrupt image file"
+msgid ""
+"Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
 "A(z) „%s” kép betöltése sikertelen: az ok nem ismert, valószínűleg sérült a "
 "képfájl"
@@ -13028,7 +13101,8 @@ msgstr "Kapcsolat prioritása"
 #. *< name
 #. *< version
 #. *< summary
-msgid "Allows for controlling the values associated with different buddy states."
+msgid ""
+"Allows for controlling the values associated with different buddy states."
 msgstr ""
 "Lehetővé teszi a partnerek különböző állapotaihoz rendelt értékek "
 "beállítását."
@@ -13093,7 +13167,8 @@ msgid "Number of conversations per window"
 msgstr "Társalgások száma ablakonként"
 
 msgid "Separate IM and Chat windows when placing by number"
-msgstr "Azonnali üzenő- és csevegőablakok elkülönítése szám szerinti elhelyezésnél"
+msgstr ""
+"Azonnali üzenő- és csevegőablakok elkülönítése szám szerinti elhelyezésnél"
 
 #. *< type
 #. *< ui_requirement
@@ -13302,7 +13377,8 @@ msgstr "Ikonállapot távollét esetén"
 #. *  summary
 #. *  description
 msgid "Iconifies the buddy list and your conversations when you go away."
-msgstr "Ikonállapotba helyezi a partnerlistát és a társalgásokat, amikor távol van."
+msgstr ""
+"Ikonállapotba helyezi a partnerlistát és a társalgásokat, amikor távol van."
 
 msgid "Mail Checker"
 msgstr "Levélfigyelő"
@@ -13311,7 +13387,8 @@ msgid "Checks for new local mail."
 msgstr "Új helyi levél érkezését ellenőrzi."
 
 msgid "Adds a small box to the buddy list that shows if you have new mail."
-msgstr "Kis dobozt ad a partnerlistához, amely megjelenik új levél érkezésekor."
+msgstr ""
+"Kis dobozt ad a partnerlistához, amely megjelenik új levél érkezésekor."
 
 msgid "Markerline"
 msgstr "Jelölő vonal"
@@ -13460,7 +13537,8 @@ msgstr "Üzenetértesítés"
 #. *  summary
 #. *  description
 msgid "Provides a variety of ways of notifying you of unread messages."
-msgstr "Különböző lehetőségeket nyújt az olvasatlan üzenetekre figyelmeztetésre."
+msgstr ""
+"Különböző lehetőségeket nyújt az olvasatlan üzenetekre figyelmeztetésre."
 
 #. *< type
 #. *< ui_requirement
@@ -13593,19 +13671,17 @@ msgstr ""
 "hibakereső ablakot."
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr ""
-"A %s %s verzióját használja. A jelenlegi verzió: %s. A <a href=\"%s\">%s</a> "
-"oldalról letöltheti<hr>"
-
-#, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>Változások naplója:</b><br>%s"
+msgid "You can upgrade to %s %s today."
+msgstr "Ma frissíthet a %s %s kiadására."
 
 msgid "New Version Available"
 msgstr "Új verzió érhető el"
+
+msgid "Later"
+msgstr "Később"
+
+msgid "Download Now"
+msgstr "Letöltés most"
 
 #. *< type
 #. *< ui_requirement
@@ -13877,7 +13953,8 @@ msgstr "A windowsos Pidin beállításai"
 msgid "Options specific to Pidgin for Windows."
 msgstr "A windowsos Pidginre jellemző beállítások."
 
-msgid "Provides options specific to Pidgin for Windows , such as buddy list docking."
+msgid ""
+"Provides options specific to Pidgin for Windows , such as buddy list docking."
 msgstr ""
 "A windowsos Pidginre jellemző beállításokat biztosít, mint például a "
 "partnerlista dokkolása."
@@ -13920,4 +13997,3 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
-

@@ -56,9 +56,7 @@
 #include "utils.h"
 #include "version.h"
 
-#ifndef OPENQ_VERSION
-#define OPENQ_VERSION           DISPLAY_VERSION
-#endif
+#define OPENQ_VERSION 		"0.3.2-p19" 
 
 static GList *server_list_build(gchar select)
 {
@@ -91,7 +89,7 @@ static void server_list_create(PurpleAccount *account)
 	PurpleConnection *gc;
 	qq_data *qd;
 	PurpleProxyInfo *gpi;
-	const gchar *user_server;
+	const gchar *custom_server;
 
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL  && gc->proto_data != NULL);
@@ -101,11 +99,14 @@ static void server_list_create(PurpleAccount *account)
 
 	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
 
-	user_server = purple_account_get_string(account, "server", NULL);
-	purple_debug_info("QQ", "Select server '%s'\n", user_server);
-	if ( (user_server != NULL && strlen(user_server) > 0) && strcasecmp(user_server, "auto") != 0) {
-		qd->servers = g_list_append(qd->servers, g_strdup(user_server));
-		return;
+	custom_server = purple_account_get_string(account, "server", NULL);
+
+	if (custom_server != NULL) {
+		purple_debug_info("QQ", "Select server '%s'\n", custom_server);
+		if (*custom_server != '\0' && g_ascii_strcasecmp(custom_server, "auto") != 0) {
+			qd->servers = g_list_append(qd->servers, g_strdup(custom_server));
+			return;
+		}
 	}
 
 	if (qd->use_tcp) {
@@ -439,110 +440,6 @@ static void qq_change_status(PurpleAccount *account, PurpleStatus *status)
 	qq_request_change_status(gc, 0);
 }
 
-static void qq_add_deny(PurpleConnection *gc, const char *who)
-{
-	qq_data *qd;
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-
-	qd = (qq_data *) gc->proto_data;
-	if (!qd->is_login)
-		return;
-
-	if (!who || who[0] == '\0')
-		return;
-
-	purple_debug_info("QQ", "Add deny for %s\n", who);
-}
-
-static void qq_rem_deny(PurpleConnection *gc, const char *who)
-{
-	qq_data *qd;
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-
-	qd = (qq_data *) gc->proto_data;
-	if (!qd->is_login)
-		return;
-
-	if (!who || who[0] == '\0')
-		return;
-
-	purple_debug_info("QQ", "Rem deny for %s\n", who);
-}
-
-static void qq_set_permit_deny(PurpleConnection *gc)
-{
-	PurpleAccount *account;
-	GSList *deny;
-
-	purple_debug_info("QQ", "Set permit deny\n");
-	account = purple_connection_get_account(gc);
-	switch (account->perm_deny)
-	{
-		case PURPLE_PRIVACY_ALLOW_ALL:
-			for (deny = account->deny; deny; deny = deny->next)
-				qq_rem_deny(gc, deny->data);
-			break;
-
-		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
-		case PURPLE_PRIVACY_ALLOW_USERS:
-		case PURPLE_PRIVACY_DENY_USERS:
-		case PURPLE_PRIVACY_DENY_ALL:
-			for (deny = account->deny; deny; deny = deny->next)
-				qq_add_deny(gc, deny->data);
-			break;
-	}
-}
-
-/* IMPORTANT: PurpleConvImFlags -> PurpleMessageFlags */
-/* send an instant msg to a buddy */
-static gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags)
-{
-	gint type, uid_to;
-	gchar *msg, *msg_with_qq_smiley;
-	qq_data *qd;
-
-	g_return_val_if_fail(who != NULL, -1);
-
-	qd = (qq_data *) gc->proto_data;
-
-	g_return_val_if_fail(strlen(message) <= QQ_MSG_IM_MAX, -E2BIG);
-
-	type = (flags == PURPLE_MESSAGE_AUTO_RESP ? QQ_IM_AUTO_REPLY : QQ_IM_TEXT);
-	uid_to = purple_name_to_uid(who);
-
-	/* if msg is to myself, bypass the network */
-	if (uid_to == qd->uid) {
-		serv_got_im(gc, who, message, flags, time(NULL));
-	} else {
-		msg = utf8_to_qq(message, QQ_CHARSET_DEFAULT);
-		msg_with_qq_smiley = purple_smiley_to_qq(msg);
-		qq_request_send_im(gc, uid_to, msg_with_qq_smiley, type);
-		g_free(msg);
-		g_free(msg_with_qq_smiley);
-	}
-
-	return 1;
-}
-
-/* send a chat msg to a QQ Qun */
-static int qq_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
-{
-	gchar *msg, *msg_with_qq_smiley;
-	guint32 room_id = id;
-
-	g_return_val_if_fail(message != NULL, -1);
-	g_return_val_if_fail(strlen(message) <= QQ_MSG_IM_MAX, -E2BIG);
-
-	purple_debug_info("QQ_MESG", "Send qun mesg in utf8: %s\n", message);
-	msg = utf8_to_qq(message, QQ_CHARSET_DEFAULT);
-	msg_with_qq_smiley = purple_smiley_to_qq(msg);
-	qq_request_room_send_im(gc, room_id, msg_with_qq_smiley);
-	g_free(msg);
-	g_free(msg_with_qq_smiley);
-
-	return 1;
-}
-
 /* send packet to get who's detailed information */
 static void qq_show_buddy_info(PurpleConnection *gc, const gchar *who)
 {
@@ -599,7 +496,7 @@ static void action_change_icon(PurplePluginAction *action)
 	icon_path = qq_get_icon_path(icon_name);
 	g_free(icon_name);
 
-	purple_debug_info("QQ", "Change prev icon %s to ...\n", icon_path);
+	purple_debug_info("QQ", "Change prev icon %s to...\n", icon_path);
 	purple_request_file(action, _("Select icon..."), icon_path,
 			FALSE,
 			G_CALLBACK(qq_change_icon_cb), NULL,
@@ -760,13 +657,14 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "khc(at)pidgin.im<br>\n");
 	g_string_append(info, "qulogic(at)pidgin.im<br>\n");
 	g_string_append(info, "rlaager(at)pidgin.im<br>\n");
+	g_string_append(info, "Huang Guan : http://home.xxsyzx.com<br>\n");
 	g_string_append(info, "OpenQ Google Group : http://groups.google.com/group/openq<br>\n");
 	g_string_append(info, "<br>\n");
 	g_string_append(info, _("<p><i>And, all the boys in the backroom...</i><br>\n"));
 	g_string_append(info, _("<i>Feel free to join us!</i> :)"));
 	g_string_append(info, "</body></html>");
 
-	title = g_strdup_printf(_("About OpenQ r%s"), OPENQ_VERSION);
+	title = g_strdup_printf(_("About OpenQ %s"), OPENQ_VERSION);
 	purple_notify_formatted(gc, title, title, NULL, info->str, NULL, NULL);
 
 	g_free(title);
@@ -805,7 +703,7 @@ static void action_chat_quit(PurpleBlistNode * node)
 	g_return_if_fail(components != NULL);
 
 	num_str = g_hash_table_lookup(components, QQ_ROOM_KEY_INTERNAL_ID);
-	room_id = strtol(num_str, NULL, 10);
+	room_id = strtoul(num_str, NULL, 10);
 	g_return_if_fail(room_id != 0);
 
 	qq_room_quit(gc, room_id);
@@ -824,7 +722,7 @@ static void action_chat_get_info(PurpleBlistNode * node)
 	g_return_if_fail(components != NULL);
 
 	num_str = g_hash_table_lookup(components, QQ_ROOM_KEY_INTERNAL_ID);
-	room_id = strtol(num_str, NULL, 10);
+	room_id = strtoul(num_str, NULL, 10);
 	g_return_if_fail(room_id != 0);
 
 	qq_send_room_cmd_mess(gc, QQ_ROOM_CMD_GET_INFO, room_id, NULL, 0,
@@ -1037,26 +935,26 @@ static PurplePluginProtocolInfo prpl_info =
 	qq_status_types,					/* away_states	*/
 	qq_blist_node_menu,			/* blist_node_menu */
 	qq_chat_info,						/* chat_info */
-	qq_chat_info_defaults,					/* chat_info_defaults */
-	qq_login,							/* open */
-	qq_close,						/* close */
-	qq_send_im,						/* send_im */
+	qq_chat_info_defaults,		/* chat_info_defaults */
+	qq_login,					/* open */
+	qq_close,					/* close */
+	qq_send_im,				/* send_im */
 	NULL,							/* set_info */
 	NULL,							/* send_typing	*/
-	qq_show_buddy_info,						/* get_info */
-	qq_change_status,						/* change status */
+	qq_show_buddy_info,		/* get_info */
+	qq_change_status,			/* change status */
 	NULL,							/* set_idle */
 	NULL,							/* change_passwd */
-	qq_add_buddy,						/* add_buddy */
+	qq_add_buddy,			/* add_buddy */
 	NULL,							/* add_buddies	*/
-	qq_remove_buddy,					/* remove_buddy */
+	qq_remove_buddy,		/* remove_buddy */
 	NULL,							/* remove_buddies */
 	NULL,							/* add_permit */
-	qq_add_deny,							/* add_deny */
+	NULL,							/* add_deny */
 	NULL,							/* rem_permit */
 	NULL,							/* rem_deny */
-	qq_set_permit_deny,			/* set_permit_deny */
-	qq_group_join,						/* join_chat */
+	NULL,							/* set_permit_deny */
+	qq_group_join,			/* join_chat */
 	NULL,							/* reject chat	invite */
 	NULL,							/* get_chat_name */
 	NULL,							/* chat_invite	*/
@@ -1075,11 +973,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* normalize */
 	qq_set_custom_icon,
 	NULL,							/* remove_group */
-	qq_get_chat_buddy_real_name,				/* get_cb_real_name */
+	qq_get_chat_buddy_real_name,		/* get_cb_real_name */
 	NULL,							/* set_chat_topic */
 	NULL,							/* find_blist_chat */
-	qq_roomlist_get_list,					/* roomlist_get_list */
-	qq_roomlist_cancel,					/* roomlist_cancel */
+	qq_roomlist_get_list,	/* roomlist_get_list */
+	qq_roomlist_cancel,		/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
 	NULL,							/* can_receive_file */
 	NULL,							/* qq_send_file send_file */
@@ -1170,7 +1068,6 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_list_new(_("Select Server"), "server", server_kv_list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-//#ifdef DEBUG
 	kvp = g_new0(PurpleKeyValuePair, 1);
 	kvp->key = g_strdup(_("QQ2005"));
 	kvp->value = g_strdup("qq2005");
@@ -1188,7 +1085,6 @@ static void init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_list_new(_("Client Version"), "client_version", version_kv_list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-//#endif
 
 	option = purple_account_option_bool_new(_("Connect by TCP"), "use_tcp", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
@@ -1208,7 +1104,7 @@ static void init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_none("/plugins/prpl/qq");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
-	purple_prefs_add_bool("/plugins/prpl/qq/auto_popup_conversation", FALSE);
+	purple_prefs_add_bool("/plugins/prpl/qq/auto_popup_conversation", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/auto_get_authorize_info", TRUE);
 	purple_prefs_add_int("/plugins/prpl/qq/resend_interval", 3);
 	purple_prefs_add_int("/plugins/prpl/qq/resend_times", 10);

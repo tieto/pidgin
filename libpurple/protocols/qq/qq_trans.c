@@ -39,7 +39,7 @@ enum {
 	QQ_TRANS_IS_SERVER = 0x01,			/* Is server command or client command */
 	QQ_TRANS_IS_IMPORT = 0x02,			/* Only notice if not get reply; or resend, disconn if reties get 0*/
 	QQ_TRANS_REMAINED = 0x04,				/* server command before login*/
-	QQ_TRANS_IS_REPLY = 0x08,				/* server command before login*/
+	QQ_TRANS_IS_REPLY = 0x08				/* server command before login*/
 };
 
 struct _qq_transaction {
