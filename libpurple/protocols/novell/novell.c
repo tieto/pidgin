@@ -2554,7 +2554,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 		return;
 
 	/* Don't re-add a buddy that is already on our contact list */
-	if (nm_find_user_record(user, buddy->name) == NULL)
+	if (nm_find_user_record(user, buddy->name) != NULL)
 		return;
 
 	contact = nm_create_contact();
