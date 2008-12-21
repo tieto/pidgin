@@ -34,7 +34,7 @@ version 2.5.3 (12/20/2008):
 	* Fix a crash caused by authorization requests. (Florian Quèze)
 
 	Gadu-Gadu:
-	* Add support for IM images. (Adam Strzelecki)
+	* Add support for IM images. (Tomasz Sałaciński, Adam Strzelecki)
 	* Gadu-Gadu now checks that UID's are valid. (Adam Strzelecki)
 	* Gadu-Gadu now does proper charset translations where needed. (Adam
 	  Strzelecki)
