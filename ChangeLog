@@ -1,38 +1,42 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.3 (12/??/2008):
+version 2.5.4 (??/??/????):
 	libpurple:
-	* Corrected maximum message lengths for Yahoo!
+	* Fix a connection timeout with empty Gadu-Gady buddy lists. (Martin
+	  Rosinski)
+	* Don't ignore namespace information when parsing XMPP data. (Michal
+	  Witkowski)
+
+version 2.5.3 (12/20/2008):
+	libpurple:
 	* The Buddy State Notification plugin no longer prints duplicate
-	  notifications when the same buddy is in multiple groups (Florian
+	  notifications when the same buddy is in multiple groups. (Florian
 	  Quèze)
 	* The Buddy State Notification plugin no longer turns JID's, MSN
-	  Passport ID's, etc. into links (Florian Quèze)
+	  Passport ID's, etc. into links. (Florian Quèze)
 	* purple-remote now has a "getstatusmessage" command to retrieve
 	  the text of the current status message.
-	* Various fixes to the nullprpl (Paul Aurich)
+	* Various fixes to the nullprpl. (Paul Aurich)
 	* Fix a crash when accessing the roomlist for an account that's not
-	  connected (Paul Aurich)
+	  connected. (Paul Aurich)
 	* Fix a crash in purple_accounts_delete that happens when this
-	  function is called before the buddy list is initialized
+	  function is called before the buddy list is initialized.
 	  (Florian Quèze)
 	* Fix use of av_len in perl bindings to fix some off-by-one bugs
 	  (Paul Aurich)
 	* On ICQ, advertise the ICQ 6 typing capability.  This should fix
 	  the reports of typing notifications not working with third-party
-	  clients (Jaromír Karmazín)
+	  clients. (Jaromír Karmazín)
 	* Many QQ fixes and improvements, including the ability to connect
 	  using QQ2008 protocol and sending/receiving of long messages.
 	  The recommended version to use is still QQ2005.
-	* Fix a crash with DNS SRV lookups (Florian Quèze)
-	* Fix insanely long idle times for Sametime 7.5 buddies by assuming
-	  0 idle time if the idle timestamp is in the future (Laurent
-	  Montaron)
+	* Fix a crash with DNS SRV lookups. (Florian Quèze)
+	* Fix a crash caused by authorization requests. (Florian Quèze)
 
 	Gadu-Gadu:
-	* Fix some problems with Gadu-Gadu buddy icons (Adam Strzelecki)
-	* Gadu-Gadu now checks that UID's are valid (Adam Strzelecki)
-	* Gadu-Gadu now does proper charset translations where needed (Adam
+	* Add support for IM images. (Tomasz Sałaciński, Adam Strzelecki)
+	* Gadu-Gadu now checks that UID's are valid. (Adam Strzelecki)
+	* Gadu-Gadu now does proper charset translations where needed. (Adam
 	  Strzelecki)
 
 	MSN:
@@ -48,46 +52,62 @@ version 2.5.3 (12/??/2008):
 	  correctly received.
 	* Server transfers after you've been connected for a long time
 	  should now be handled correctly.
+	* Many improvements to handling of "federated" buddies, such as those
+	  on the Yahoo network.
+	* Several known crashes have been resolved.
 	* Many other fixes and code cleanup.
 
 	MySpace:
-	* Respect your privacy settings set using the official MySpace client
-	  (Mark Doliner)
-	* Add support for blocking buddies (Mark Doliner)
+	* Respect your privacy settings set using the official MySpace client.
+	* Add support for blocking buddies.
 	* Fix a bug where buddies didn't appear in their correct groups the
-	  first time you sign into your account (Mark Doliner)
-	* Support for foreground and background font colors in outgoing IMs
-	* Support for background font colors in incoming IMs
+	  first time you sign into your account.
+	* Properly disconnect and sign out of the service when logging off.
+	* Support for foreground and background font colors in outgoing IMs.
+	* Support for background font colors in incoming IMs.
+	* Many other fixes and code cleanup.
+
+	Sametime:
+	* Fix insanely long idle times for Sametime 7.5 buddies by assuming
+	  0 idle time if the idle timestamp is in the future. (Laurent
+	  Montaron)
+	* Fix a crash that can occur on login. (Raiko Nitzsche)
 
 	SIMPLE:
 	* Fix a crash when a malformed message is received.
 	* Don't allow connecting accounts if no server name has been
-	  specified (Florian Quèze)
+	  specified. (Florian Quèze)
 
 	XMPP:
 	* Fix the namespace URL we look for in PEP reply stanzas to match
 	  the URL used in the 'get' requests (Paul Aurich)
 	* Resources can be set to the local machine's hostname by using
-	  __HOSTNAME__ as the resource string (Jonathan Sailor)
+	  __HOSTNAME__ as the resource string. (Jonathan Sailor)
 	* Resources can now be left blank, causing the server to generate a
-	  resource for us where supported (Jonathan Sailor)
-	* Resources now default to no value
-	* Quit trying to get user info for MUC's (Paul Aurich)
+	  resource for us where supported. (Jonathan Sailor)
+	* Resources now default to no value, but "Home" is used if the
+	  server refuses to provide a resource.
+	* Quit trying to get user info for MUC's. (Paul Aurich)
 	* Send "client-accepts-full-bind-result" attribute during SASL
 	  login. This will fix Google Talk login failures if the user
 	  configures the wrong domain for his/her account.
 	* Support new <metadata/> element to indicate no XEP-0084 User
-	  Avatar (Paul Aurich)
+	  Avatar. (Paul Aurich)
 	* Fix SHA1 avatar checksum errors that occur when one of the bytes
-	  in a checksum begins with 0 (Paul Aurich)
+	  in a checksum begins with 0. (Paul Aurich)
+	* Fix a problem with duplicate buddies. (Paul Aurich)
+
+	Yahoo:
+	* Corrected maximum message lengths for Yahoo!
+	* Fix file transfers with older Yahoo protocol versions.
 
 	Zephyr:
-	* Enable auto-reply, to emulate 'zaway' (Toby Schaffer)
+	* Enable auto-reply, to emulate 'zaway.' (Toby Schaffer)
 	* Fix a crash when an account is configured to use tzc but tzc is
-	  not installed or the configured tzc command is invalid (Michael
+	  not installed or the configured tzc command is invalid. (Michael
 	  Terry)
 	* Fix a 10 second delay waiting on tzc if it is not installed or the
-	  configured command is invalid (Michael Terry)
+	  configured command is invalid. (Michael Terry)
 
 	Pidgin:
 	* On GTK+ 2.14 and higher, we're using the gtk-tooltip-delay setting
@@ -99,18 +119,25 @@ version 2.5.3 (12/??/2008):
 	  tooltip_delay of zero), add this to ~/.purple/gtkrc-2.0:
 	      gtk-enable-tooltips = 0
 	* Moved the release notification dialog to a mini-dialog in the
-	  buddylist.  (Thanks to Casey Ho)
+	  buddylist. (Casey Ho)
 	* Fix a crash when closing an authorization minidialog with the X
-	  then immediately going offline (Paul Aurich)
-	* Fix a crash when closing Pidgin related to custom smileys (disassociate
-	  smileys from GtkIMHtml widgets when they are destroyed).
-	* Fix adding custom a custom smiley using the context menu from a
-	  conversation in the case when no custom smiley had been added before
-	  using the smiley manager.
+	  then immediately going offline. (Paul Aurich)
+	* Fix a crash cleaning up custom smileys when Pidgin is closed.
+	* Fix adding a custom smiley using the context menu in a conversation
+	  if no custom smilies have previously been added using the smiley
+	  manager.
+	* Improved support for some message formatting in conversations.
+	* Allow focusing the coversation history or userlist with F6.
+	* Fixed the Send Button plugin to avoid duplicate buttons in a single
+	  conversation.
+	* Double-clicking a saved status will now activate it and close the
+	  saved status manager, rather than edit the status.
 
 	Finch:
 	* Allow binding meta+arrow keys for actions.
-
+	* Added default meta+erase binding for delete previous word.
+	* Added "Show When Offline" to buddy menus, so a plugin is no longer
+	  needed.
 
 version 2.5.2 (10/19/2008):
 	libpurple:

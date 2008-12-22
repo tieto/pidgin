@@ -1810,6 +1810,8 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	PurpleContact *contact;
 	PurpleGroup *group;
 	struct _purple_hbuddy hb;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
 
 	g_return_if_fail(buddy != NULL);
 
@@ -1864,6 +1866,15 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 
 	/* Signal that the buddy has been removed before freeing the memory for it */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);
+
+	/*
+	 * Tell the owner PRPL that we're about to free the buddy so it
+	 * can free proto_data
+	 */
+	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info && prpl_info->buddy_free)
+		prpl_info->buddy_free(buddy);
 
 	/* Delete the node */
 	purple_buddy_icon_unref(buddy->icon);
