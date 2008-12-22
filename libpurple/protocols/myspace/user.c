@@ -432,7 +432,7 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 				"idlist", MSIM_TYPE_STRING,
 						g_strdup_printf("w%d|c%d",
 								session->show_only_to_list ? 1 : 0,
-								session->privacy_mode),
+								session->privacy_mode & 1),
 				NULL);
 	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
 			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
