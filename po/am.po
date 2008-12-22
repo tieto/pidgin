@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim 0.60 \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2003-04-08 09:23:11+EDT\n"
 "Last-Translator: Ge'ez Frontier Foundation <locales@geez.org>\n"
 "Language-Team: Amharic <locales@geez.org>\n"
@@ -249,9 +249,6 @@ msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 msgid "You must give a name for the group to add."
 msgstr ""
 
-msgid "A group with the name already exists."
-msgstr ""
-
 msgid "Add Group"
 msgstr "መድረክ ጨምር"
 
@@ -286,7 +283,6 @@ msgstr "መረጃ አግኝ"
 msgid "Add Buddy Pounce"
 msgstr ""
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "ፋይልን ላክ"
 
@@ -295,8 +291,8 @@ msgid "Blocked"
 msgstr "ደማቅ"
 
 #, fuzzy
-msgid "View Log"
-msgstr "አዲስ መልእክት..."
+msgid "Show when offline"
+msgstr "ኦንላይን"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -340,6 +336,10 @@ msgstr ""
 
 msgid "Toggle Tag"
 msgstr ""
+
+#, fuzzy
+msgid "View Log"
+msgstr "አዲስ መልእክት..."
 
 #. General
 msgid "Nickname"
@@ -1368,7 +1368,7 @@ msgstr ""
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5074,7 +5074,7 @@ msgstr ""
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5313,8 +5313,7 @@ msgstr ""
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr ""
 
@@ -5357,6 +5356,7 @@ msgstr ""
 msgid "%s just sent you a Nudge!"
 msgstr "[መልዕክት የለም]"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "ያልታወቀ ስህተት"
@@ -6511,6 +6511,7 @@ msgid ""
 msgstr ""
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "እስክሪን ስም"
@@ -6881,11 +6882,13 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
-msgid "Unable To Add"
-msgstr ""
+#, fuzzy
+msgid "Unable to Add"
+msgstr "ተገናኝቷል"
 
-msgid "Unable To Retrieve Buddy List"
-msgstr ""
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
+msgstr "ተገናኝቷል"
 
 msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
@@ -7093,47 +7096,6 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 
-#, fuzzy
-msgid "Primary Information"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "የቢሮ መረጃ፦"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "አገር"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-msgid "College"
-msgstr ""
-
-msgid "Zipcode"
-msgstr ""
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "ስልክ"
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "ስልክ"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7223,92 +7185,184 @@ msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 msgid "Other"
 msgstr "ኦፔራ"
 
+msgid "Visible"
+msgstr ""
+
+msgid "Firend Only"
+msgstr ""
+
 #, fuzzy
-msgid "Modify information"
+msgid "Private"
+msgstr "ቀን"
+
+msgid "QQ Number"
+msgstr ""
+
+#, fuzzy
+msgid "Country/Region"
+msgstr "አገር"
+
+msgid "Province/State"
+msgstr ""
+
+msgid "Zipcode"
+msgstr ""
+
+#, fuzzy
+msgid "Phone Number"
+msgstr "ስልክ"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "ተዉት"
+
+#, fuzzy
+msgid "Cellphone Number"
+msgstr "ስልክ"
+
+#, fuzzy
+msgid "Personal Introduction"
 msgstr "የቢሮ መረጃ፦"
 
 #, fuzzy
-msgid "Update information"
-msgstr "የቢሮ መረጃ፦"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+msgid "City/Area"
+msgstr "ከተማ"
 
 #, fuzzy
-msgid "Successed:"
-msgstr "ፍጥነት፦"
+msgid "Publish Mobile"
+msgstr "ድረ-ገጽ፦"
 
 #, fuzzy
-msgid "Change buddy information."
-msgstr "የቢሮ መረጃ፦"
+msgid "Publish Contact"
+msgstr "የጌም ማውሪያ"
 
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "College"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "የውስጥ ብልሽት"
+msgid "Horoscope"
+msgstr "ፖርት"
 
-#, c-format
-msgid "You rejected %d's request"
-msgstr ""
-
-msgid "Reject request"
-msgstr ""
-
-#. title
-msgid "Sorry, you are not my style..."
-msgstr ""
-
-msgid "Add buddy with auth request failed"
+msgid "Zodiac"
 msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Blood"
+msgstr "ደማቅ"
+
+#, fuzzy
+msgid "True"
+msgstr "መክፈቻዎች"
+
+#, fuzzy
+msgid "False"
 msgstr "ሴት"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "አስወግድ (_R)"
+msgid "Modify Contact"
+msgstr "የጌም ማውሪያ"
 
-msgid "Remove from other's buddy list"
+#, fuzzy
+msgid "Modify Address"
+msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+msgid "Update"
+msgstr "የአባት ስም"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "የቢሮ መረጃ፦"
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+msgid "Input answer here"
+msgstr ""
+
+#, fuzzy
+msgid "Send"
+msgstr "ላክ"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "እስክሪን ስም"
+
+msgid "Authorization denied message:"
+msgstr ""
+
+msgid "Sorry, You are not my style."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "መድረክን አስወግድ"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "የቢሮ መረጃ፦"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr ""
 
-#. multiline
-#. masked
-#. hint
 #, fuzzy
-msgid "Send"
-msgstr "ላክ"
-
-#, c-format
-msgid "Add into %d's buddy list"
-msgstr ""
+msgid "QQ Buddy"
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "የIRC ስህተት"
+msgid "Add buddy"
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "የውስጥ ብልሽት"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "ፋይልን ላክ"
+
+#, c-format
+msgid "Failed removing buddy %d"
+msgstr ""
+
+#, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr ""
+
+msgid "No reason given"
+msgstr ""
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr ""
+
+msgid "Would you like to add him?"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "እንደነበረ አድረግ"
+
+#, fuzzy, c-format
+msgid "Message: %s"
+msgstr "መልእክት፦ (_M)"
 
 msgid "ID: "
 msgstr ""
@@ -7316,17 +7370,6 @@ msgstr ""
 #, fuzzy
 msgid "Group ID"
 msgstr "መድረክ፦ (_G)"
-
-#, fuzzy
-msgid "Creator"
-msgstr "ሰርዝ"
-
-#, fuzzy
-msgid "Group Description"
-msgstr "መግለጫ"
-
-msgid "Auth"
-msgstr ""
 
 msgid "QQ Qun"
 msgstr ""
@@ -7338,19 +7381,103 @@ msgstr "የቢሮ መረጃ፦"
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
+msgid "Not member"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "መልእክት፦ (_M)"
+msgid "Member"
+msgstr ""
+
+msgid "Requesting"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+#, fuzzy
+msgid "Notice"
+msgstr "ምንም"
+
+#, fuzzy
+msgid "Detail"
+msgstr "ዝርዝሮች"
+
+#, fuzzy
+msgid "Creator"
+msgstr "ሰርዝ"
+
+msgid "About me"
+msgstr ""
+
+#, fuzzy
+msgid "Category"
+msgstr "የIRC ስህተት"
+
+msgid "The Qun does not allow others to join"
+msgstr ""
+
+#, fuzzy
+msgid "Join QQ Qun"
+msgstr "ውሪን አገጣጥም"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
+
+#, c-format
+msgid "Qun %d denied to join"
+msgstr ""
 
 #, fuzzy
 msgid "QQ Qun Operation"
 msgstr "የድምፅ ምርጫዎች"
 
-msgid "Approve"
+#, fuzzy
+msgid "Failed:"
+msgstr "ሴት"
+
+msgid "Join Qun, Unknow Reply"
+msgstr ""
+
+#, fuzzy
+msgid "Quit Qun"
+msgstr "ውሪን አገጣጥም"
+
+msgid ""
+"Note, if you are the creator, \n"
+"this operation will eventually remove this Qun."
+msgstr ""
+
+msgid "Sorry, you are not our style ..."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully changed Qun member"
+msgstr "ስልክ"
+
+#, fuzzy
+msgid "Successfully changed Qun information"
+msgstr "የቢሮ መረጃ፦"
+
+msgid "You have successfully created a Qun"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to set detailed information now?"
+msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+msgid "Setup"
+msgstr "አድርግ"
+
+#, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr ""
+
+#, c-format
+msgid "%d request to join Qun %d"
 msgstr ""
 
 #, c-format
@@ -7358,108 +7485,16 @@ msgid "Failed to join Qun %d, operated by admin %d"
 msgstr ""
 
 #, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
 msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr ""
-
-#, fuzzy
-msgid "Notice:"
-msgstr "ምንም"
-
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
-msgstr ""
-
-msgid "I am a member"
-msgstr ""
-
-msgid "I am requesting"
-msgstr ""
-
-msgid "I am the admin"
-msgstr ""
-
-#, fuzzy
-msgid "Unknown status"
-msgstr "ያልታወቀ ስህተት"
-
-msgid "The Qun does not allow others to join"
-msgstr ""
-
-#, fuzzy
-msgid "Remove from Qun"
-msgstr "መድረክን አስወግድ"
-
-#, fuzzy
-msgid "Join to Qun"
-msgstr "ውሪን አገጣጥም"
-
-#, c-format
-msgid "Qun %d denied to join"
-msgstr ""
-
-msgid "Join Qun, Unknow Reply"
-msgstr ""
-
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
-msgid "Are you sure you want to leave this Qun?"
-msgstr ""
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-
-#. we want to see window
-msgid "Do you want to approve the request?"
-msgstr ""
-
-#, fuzzy
-msgid "Change Qun member"
-msgstr "ስልክ"
-
-#, fuzzy
-msgid "Change Qun information"
-msgstr "የቢሮ መረጃ፦"
-
-msgid "You have successfully created a Qun"
-msgstr ""
-
-msgid "Would you like to set up the detail information now?"
-msgstr ""
-
-#, fuzzy
-msgid "Setup"
-msgstr "አድርግ"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
+msgid "<b>Removed buddy %d.</b>"
+msgstr "አስወግድ (_R)"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
 msgstr ""
-"%s\n"
-"%s፦ %s"
-
-#, fuzzy
-msgid "QQ Server News"
-msgstr "የቤት አድራሻ፦"
-
-#, fuzzy
-msgid "System Message"
-msgstr "አዲስ መልእክት"
-
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "ተገናኝቷል"
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7468,9 +7503,6 @@ msgstr "ያልታወቀ"
 #, fuzzy
 msgid "Level"
 msgstr "ሰርቨር፦"
-
-msgid "Member"
-msgstr ""
 
 msgid " VIP"
 msgstr ""
@@ -7504,12 +7536,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "እስክሪን ስም"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "የፊደል ቅርጽ ምረጡ"
+
 #, fuzzy, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
+msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy, c-format
@@ -7517,11 +7557,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy, c-format
@@ -7545,24 +7589,44 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Last Login Time</b>: %s\n"
+msgid "<b>IP</b>: %s<br>\n"
 msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy
 msgid "Login Information"
 msgstr "የቢሮ መረጃ፦"
 
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
 #, fuzzy
-msgid "Set My Information"
-msgstr "የቢሮ መረጃ፦"
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>ሁኔታ፦</b> %s"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, c-format
+msgid "About OpenQ r%s"
+msgstr ""
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Change Password"
 msgstr "ሚስጢራዊ ቃልን ለውጥ"
@@ -7571,10 +7635,10 @@ msgstr "ሚስጢራዊ ቃልን ለውጥ"
 msgid "Account Information"
 msgstr "የቢሮ መረጃ፦"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
-msgid "Block this buddy"
+msgid "About OpenQ"
 msgstr ""
 
 #. *< type
@@ -7587,13 +7651,27 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+msgid "QQ Protocol Plugin"
 msgstr ""
 
 #, fuzzy
 msgid "Auto"
 msgstr "አውቶማቲክ"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "የፊደል ቅርጽ ምረጡ"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "ተገናኝቷል"
@@ -7607,42 +7685,80 @@ msgid "Show server news"
 msgstr "የቤት አድራሻ፦"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "የIRC ስህተት"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "የIRC ስህተት"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "ተገናኝቷል"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "ሰርቨርን የለም"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "ሰርቨር፦"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
-
-#, c-format
-msgid "Need active: %s"
+#. need activation
+#. need activation
+#. need activation
+msgid "Activation required"
 msgstr ""
 
 #, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "የIRC ስህተት"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
+msgid "Captcha Image"
+msgstr "ምስሉን አስቀምጥ... (_S)"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
 msgstr "ተገናኝቷል"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7670,8 +7786,10 @@ msgstr "የIRC ስህተት"
 msgid "Connection lost"
 msgstr "ተገናኝቷል"
 
-#. Update the login progress status display
-#, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "ተገናኝቷል"
+
 msgid "Request token"
 msgstr ""
 
@@ -7683,13 +7801,35 @@ msgstr "መድረክን አስወግድ"
 msgid "Invalid server or port"
 msgstr "ሰርቨር፦"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr "ያልታወቀ የስህተት ኮድ"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "ተገናኝቷል"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "የIRC ስህተት"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "ተገናኝቷል"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "የቤት አድራሻ፦"
+
+#, c-format
+msgid "From %s:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7705,14 +7845,18 @@ msgid "QQ Qun Command"
 msgstr "ትእዛዝ"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "ያልታወቀ ስህተት"
 
 #, fuzzy, c-format
@@ -7726,59 +7870,6 @@ msgstr "ፋይልን ላክ"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr ""
-
-msgid "Do you approve the requestion?"
-msgstr ""
-
-msgid "Do you add the buddy?"
-msgstr ""
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr ""
-
-msgid "Would you like to add him?"
-msgstr ""
-
-#, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr ""
-
-msgid "QQ Budy"
-msgstr ""
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr ""
-
-#, c-format
-msgid "%s is not in buddy list"
-msgstr ""
-
-msgid "Would you add?"
-msgstr ""
-
-#, c-format
-msgid "From %s:"
-msgstr ""
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "ሰርቨር፦"
 
 #, fuzzy
 msgid "Connection closed (writing)"
@@ -9479,9 +9570,6 @@ msgstr ""
 msgid "Yahoo! system message for %s:"
 msgstr ""
 
-msgid "Authorization denied message:"
-msgstr ""
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10367,9 +10455,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10434,10 +10522,6 @@ msgstr ""
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "ኦንላይን"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "ኦንላይን"
 
 msgid "_Alias..."
@@ -10843,7 +10927,7 @@ msgstr "የጌም ማውሪያ"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10884,10 +10968,6 @@ msgstr ""
 #, fuzzy
 msgid "SSL Servers"
 msgstr "ሰርቨር፦"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "ተገናኝቷል"
 
 #, fuzzy
 msgid "Unknown command."
@@ -11253,8 +11333,12 @@ msgstr "የIRC ስህተት"
 msgid "Fatal Error"
 msgstr "የውስጥ ብልሽት"
 
-msgid "developer"
+msgid "bug master"
 msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "አድራሻ፦"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11263,10 +11347,7 @@ msgstr ""
 msgid "support"
 msgstr ""
 
-msgid "support/QA"
-msgstr ""
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr ""
 
 msgid "Senior Contributor/QA"
@@ -11287,9 +11368,11 @@ msgstr "ደቂቃ"
 msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
-#, fuzzy
-msgid "XMPP developer"
-msgstr "የJabber ስህተት %s"
+msgid "support/QA"
+msgstr ""
+
+msgid "XMPP"
+msgstr ""
 
 #, fuzzy
 msgid "original author"
@@ -11558,9 +11641,6 @@ msgid "Retired Developers"
 msgstr ""
 
 msgid "Retired Crazy Patch Writers"
-msgstr ""
-
-msgid "Artists"
 msgstr ""
 
 msgid "Current Translators"
@@ -12181,11 +12261,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -13070,8 +13145,13 @@ msgstr "መረጃ አግኝ"
 msgid "_Invite"
 msgstr ""
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "ለውጡ (_M)"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "ጨምር"
 
 #, fuzzy
 msgid "_Open Mail"
@@ -13097,6 +13177,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "ምንም"
+
+#, fuzzy
+msgid "Small"
+msgstr "ኢሜይል"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr ""
@@ -13565,6 +13652,10 @@ msgstr ""
 msgid "Set window manager \"_URGENT\" hint"
 msgstr ""
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "የውሪ ዝርዝር"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr ""
@@ -13742,16 +13833,17 @@ msgid ""
 msgstr ""
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+msgid "You can upgrade to %s %s today."
 msgstr ""
 
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>ሁኔታ፦</b> %s"
-
 msgid "New Version Available"
+msgstr ""
+
+#, fuzzy
+msgid "Later"
+msgstr "ቀን"
+
+msgid "Download Now"
 msgstr ""
 
 #. *< type
@@ -14061,6 +14153,91 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "ፍጥነት፦"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "የውስጥ ብልሽት"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "መግለጫ"
+
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "%s\n"
+#~ "%s፦ %s"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "አዲስ መልእክት"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "ያልታወቀ የስህተት ኮድ"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "የJabber ስህተት %s"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
 
 #, fuzzy
 #~ msgid "Screen name:"
@@ -14403,9 +14580,6 @@ msgstr ""
 
 #~ msgid "Windows usage"
 #~ msgstr "የWindows አጠቃቀም"
-
-#~ msgid "Details"
-#~ msgstr "ዝርዝሮች"
 
 #, fuzzy
 #~ msgid "<b>_Account:</b>"

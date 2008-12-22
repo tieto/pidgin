@@ -53,7 +53,7 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(value));
 
-	for (i = 0; i < t_len; i++)
+	for (i = 0; i <= t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(value), i, 0)));
 
 	purple_prefs_add_string_list(name, t_GL);
@@ -75,7 +75,7 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(value));
 
-	for (i = 0; i < t_len; i++)
+	for (i = 0; i <= t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(value), i, 0)));
 
 	purple_prefs_add_path_list(name, t_GL);
@@ -204,7 +204,7 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(value));
 
-	for (i = 0; i < t_len; i++)
+	for (i = 0; i <= t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(value), i, 0)));
 
 	purple_prefs_set_string_list(name, t_GL);
@@ -226,7 +226,7 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(value));
 
-	for (i = 0; i < t_len; i++)
+	for (i = 0; i <= t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(value), i, 0)));
 
 	purple_prefs_set_path_list(name, t_GL);

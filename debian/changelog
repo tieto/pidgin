@@ -1,3 +1,11 @@
+pidgin (2.5.3-1) experimental; urgency=low
+
+  * New upstream release
+    - Tries to fix treating special characters as html entities
+      (Closes: #502802)
+
+ -- Ari Pollak <ari@debian.org>  Mon, 22 Dec 2008 00:10:18 -0500
+
 pidgin (2.5.2-1) experimental; urgency=low
 
   * New upstream version

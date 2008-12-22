@@ -1,3 +1,4 @@
+#undef PURPLE_DISABLE_DEPRECATED
 #include "module.h"
 #include "../perl-handlers.h"
 

@@ -114,7 +114,8 @@ jabber_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 		xmlnode *packet = js->current;
 		js->current = NULL;
 		jabber_process_packet(js, &packet);
-		xmlnode_free(packet);
+		if (packet != NULL)
+			xmlnode_free(packet);
 	}
 }
 
@@ -137,11 +138,19 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 {
 	JabberStream *js = user_data;
 
+	if (error->level == XML_ERR_WARNING && error->message != NULL
+			&& strcmp(error->message, "xmlns: URI vcard-temp is not absolute\n") == 0)
+		/*
+		 * This message happens when parsing vcards, and is normal, so don't
+		 * bother logging it because people scare easily.
+		 */
+		return;
+
 	purple_debug_error("jabber", "XML parser error for JabberStream %p: "
-								 "Domain %i, code %i, level %i: %s\n",
+								 "Domain %i, code %i, level %i: %s",
 					   js,
 					   error->domain, error->code, error->level,
-					   (error->message ? error->message : "(null)"));
+					   (error->message ? error->message : "(null)\n"));
 }
 
 static xmlSAXHandler jabber_parser_libxml = {

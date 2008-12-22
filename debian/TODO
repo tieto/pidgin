@@ -1,3 +1,2 @@
-- Add a dh_purple and/or dh_finch for people who want to package plugins for
-those. dh_purple should probably add Depends: finch | pidgin with the
-appropriate versions.
+- Add a dh_finch for people who want to package plugins for
+it.

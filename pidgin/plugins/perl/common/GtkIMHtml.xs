@@ -173,7 +173,7 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(unused));
 
-	for (i = 0; i < t_len; i++) {
+	for (i = 0; i <= t_len; i++) {
 		STRLEN t_sl;
 		t_GL = g_slist_append(t_GL, SvPV(*av_fetch((AV *)SvRV(unused), i, 0), t_sl));
 	}

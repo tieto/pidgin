@@ -25,6 +25,8 @@
 typedef struct _MsimUser
 {
 	PurpleBuddy *buddy;
+	/* Note: id is also &buddy->node (set_blist_node_int), when buddy is non-NULL */
+	int id;
 	guint client_cv;
 	gchar *client_info;
 	guint age;
@@ -33,7 +35,6 @@ typedef struct _MsimUser
 	guint total_friends;
 	gchar *headline;
 	gchar *display_name;
-	/* Note: uid is in &buddy->node (set_blist_node_int), since it never changes */
 	gchar *username;
 	gchar *band_name, *song_name;
 	gchar *image_url;
@@ -41,17 +42,15 @@ typedef struct _MsimUser
 	gboolean temporary_user;
 } MsimUser;
 
-/* Callback function pointer type for when a user's information is received, 
+/* Callback function pointer type for when a user's information is received,
  * initiated from a user lookup. */
-typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo, gpointer data);
+typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, const MsimMessage *userinfo, gpointer data);
 
 MsimUser *msim_get_user_from_buddy(PurpleBuddy *buddy);
 MsimUser *msim_find_user(MsimSession *session, const gchar *username);
 void msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full);
-gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user);
+gboolean msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *user);
 gboolean msim_is_userid(const gchar *user);
-gboolean msim_is_email(const gchar *user);
-gboolean msim_is_valid_username(const gchar *user);
 void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data);
 void msim_set_username_cb(PurpleConnection *gc);
 void msim_do_not_set_username_cb(PurpleConnection *gc);

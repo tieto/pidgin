@@ -30,7 +30,13 @@ dist-hook: pidgin.spec
 distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
-version-check:
+commit-check:
+	(cd po ; intltool-update -m 2>&1 | grep -v '^mismatched quotes.*\.py$$' | sed "s|current directory|po directory|" | grep . ; if [ $$? = 0 ] ; then exit 1 ; else exit 0 ; fi)
+	LC_ALL=C sort -c -t/ -u po/POTFILES.in
+	LC_ALL=C sort -c -t/ -u po/POTFILES.skip
+	iconv -f utf8 -t utf8 COPYRIGHT | cmp COPYRIGHT -
+
+version-check: commit-check
 # We don't want to release development versions.
 	test x`echo $(PACKAGE_VERSION) | grep dev` = x
 
@@ -53,7 +59,7 @@ version-check:
 # Ensure we're working from a tag...
 	test x`mtn automate select t:v$(PACKAGE_VERSION)` = x`mtn automate get_base_revision_id`
 # ... and have no changes in the working copy.
-	test x`mtn diff | grep -v '^#'` = x
+	test "x`mtn diff | grep -v '^#'`" = x
 
 release: version-check distcheck packages
 

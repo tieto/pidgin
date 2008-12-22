@@ -27,8 +27,6 @@
 #include "switchboard.h"
 #include "slp.h"
 
-void msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
-
 #ifdef MSN_DEBUG_SLP_FILES
 static int m_sc = 0;
 static int m_rc = 0;
@@ -74,7 +72,6 @@ msn_slplink_new(MsnSession *session, const char *username)
 	slplink->session = session;
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
 
-	slplink->local_user = g_strdup(msn_user_get_passport(session->user));
 	slplink->remote_user = g_strdup(username);
 
 	slplink->slp_msg_queue = g_queue_new();
@@ -107,14 +104,13 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 #endif
 
 	while (slplink->slp_calls != NULL)
-		msn_slp_call_destroy(slplink->slp_calls->data);
+		msn_slpcall_destroy(slplink->slp_calls->data);
 
 	g_queue_free(slplink->slp_msg_queue);
 
 	session->slplinks =
 		g_list_remove(session->slplinks, slplink);
 
-	g_free(slplink->local_user);
 	g_free(slplink->remote_user);
 
 	g_free(slplink);
@@ -168,19 +164,11 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
 	slplink->slp_calls = g_list_remove(slplink->slp_calls, slpcall);
 
-	/* The slplink has no slpcalls in it. If no one is using it, we might
-	 * destroy the switchboard, but we should be careful not to use the slplink
-	 * again. */
-	if (slplink->slp_calls == NULL)
-	{
-		if (slplink->swboard != NULL)
-		{
-			if (msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT))
-				/* I'm not sure this is the best thing to do, but it's better
-				 * than nothing. */
-				slpcall->slplink = NULL;
-		}
-	}
+	/* The slplink has no slpcalls in it, release it from MSN_SB_FLAG_FT.
+	 * If nothing else is using it then this might cause swboard to be
+	 * destroyed. */
+	if (slplink->slp_calls == NULL && slplink->swboard != NULL)
+		msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT);
 }
 
 MsnSlpCall *
@@ -220,7 +208,7 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 	return NULL;
 }
 
-void
+static void
 msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
 #if 0
@@ -236,8 +224,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			slplink->swboard = msn_session_get_swboard(slplink->session,
 													   slplink->remote_user, MSN_SB_FLAG_FT);
 
-			if (slplink->swboard == NULL)
-				return;
+			g_return_if_fail(slplink->swboard != NULL);
 
 			/* If swboard is destroyed we will be too */
 			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
@@ -247,54 +234,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 }
 
-/* We have received the message ack */
 static void
-msg_ack(MsnMessage *msg, void *data)
-{
-	MsnSlpMessage *slpmsg;
-	long long real_size;
-
-	slpmsg = data;
-
-	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
-
-	slpmsg->offset += msg->msnslp_header.length;
-
-	if (slpmsg->offset < real_size)
-	{
-		msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
-	}
-	else
-	{
-		/* The whole message has been sent */
-		if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
-		{
-			if (slpmsg->slpcall != NULL)
-			{
-				if (slpmsg->slpcall->cb)
-					slpmsg->slpcall->cb(slpmsg->slpcall,
-						NULL, 0);
-			}
-		}
-	}
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
-}
-
-/* We have received the message nak. */
-static void
-msg_nak(MsnMessage *msg, void *data)
-{
-	MsnSlpMessage *slpmsg;
-
-	slpmsg = data;
-
-	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
-}
-
-void
 msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
@@ -356,7 +296,54 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	/* slpmsg->offset += len; */
 }
 
-void
+/* We have received the message ack */
+static void
+msg_ack(MsnMessage *msg, void *data)
+{
+	MsnSlpMessage *slpmsg;
+	long long real_size;
+
+	slpmsg = data;
+
+	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
+
+	slpmsg->offset += msg->msnslp_header.length;
+
+	if (slpmsg->offset < real_size)
+	{
+		msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
+	}
+	else
+	{
+		/* The whole message has been sent */
+		if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
+		{
+			if (slpmsg->slpcall != NULL)
+			{
+				if (slpmsg->slpcall->cb)
+					slpmsg->slpcall->cb(slpmsg->slpcall,
+						NULL, 0);
+			}
+		}
+	}
+
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+}
+
+/* We have received the message nak. */
+static void
+msg_nak(MsnMessage *msg, void *data)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = data;
+
+	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
+
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+}
+
+static void
 msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
@@ -413,7 +400,7 @@ msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	slpmsg->id = slplink->slp_seq_id++;
 
-	g_queue_push_head(slplink->slp_msg_queue, slpmsg);
+	g_queue_push_tail(slplink->slp_msg_queue, slpmsg);
 }
 
 void
@@ -425,19 +412,18 @@ msn_slplink_send_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 }
 
 void
-msn_slplink_unleash(MsnSlpLink *slplink)
+msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink)
 {
 	MsnSlpMessage *slpmsg;
 
-	/* Send the queued msgs in the order they came. */
-
-	while ((slpmsg = g_queue_pop_tail(slplink->slp_msg_queue)) != NULL)
+	/* Send the queued msgs in the order they were created */
+	while ((slpmsg = g_queue_pop_head(slplink->slp_msg_queue)) != NULL)
 	{
 		msn_slplink_release_slpmsg(slplink, slpmsg);
 	}
 }
 
-void
+static void
 msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	MsnSlpMessage *slpmsg;
@@ -479,6 +465,22 @@ send_file_cb(MsnSlpCall *slpcall)
 	xfer->dest_fp = NULL; /* Disable double fclose() */
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
+}
+
+static MsnSlpMessage *
+msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
+{
+	GList *e;
+
+	for (e = slplink->slp_msgs; e != NULL; e = e->next)
+	{
+		MsnSlpMessage *slpmsg = e->data;
+
+		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
+			return slpmsg;
+	}
+
+	return NULL;
 }
 
 void
@@ -632,30 +634,14 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			/* Release all the messages and send the ACK */
 
 			msn_slplink_send_ack(slplink, msg);
-			msn_slplink_unleash(slplink);
+			msn_slplink_send_queued_slpmsgs(slplink);
 		}
 
 		msn_slpmsg_destroy(slpmsg);
 
 		if (slpcall != NULL && slpcall->wasted)
-			msn_slp_call_destroy(slpcall);
+			msn_slpcall_destroy(slpcall);
 	}
-}
-
-MsnSlpMessage *
-msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
-{
-	GList *e;
-
-	for (e = slplink->slp_msgs; e != NULL; e = e->next)
-	{
-		MsnSlpMessage *slpmsg = e->data;
-
-		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
-			return slpmsg;
-	}
-
-	return NULL;
 }
 
 typedef struct
@@ -743,8 +729,8 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(fp != NULL);
 
-	slpcall = msn_slp_call_new(slplink);
-	msn_slp_call_init(slpcall, MSN_SLPCALL_DC);
+	slpcall = msn_slpcall_new(slplink);
+	msn_slpcall_init(slpcall, MSN_SLPCALL_DC);
 
 	slpcall->session_init_cb = send_file_cb;
 	slpcall->end_cb = msn_xfer_end_cb;
@@ -761,7 +747,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 
 	context = gen_context(fn, fp);
 
-	msn_slp_call_invite(slpcall, MSN_FT_GUID, 2, context);
+	msn_slpcall_invite(slpcall, MSN_FT_GUID, 2, context);
 
 	g_free(context);
 }
@@ -784,14 +770,14 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	msnobj_base64 = purple_base64_encode((const guchar *)msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
 
-	slpcall = msn_slp_call_new(slplink);
-	msn_slp_call_init(slpcall, MSN_SLPCALL_ANY);
+	slpcall = msn_slpcall_new(slplink);
+	msn_slpcall_init(slpcall, MSN_SLPCALL_ANY);
 
 	slpcall->data_info = g_strdup(info);
 	slpcall->cb = cb;
 	slpcall->end_cb = end_cb;
 
-	msn_slp_call_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
+	msn_slpcall_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
 
 	g_free(msnobj_base64);
 }

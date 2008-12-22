@@ -127,7 +127,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 {
 	PurpleGroup *group;
 	PurpleAccount *account = bonjour_buddy->account;
-	const char *status_id, *old_hash, *new_hash;
+	const char *status_id, *old_hash, *new_hash, *name;
 
 	/* Translate between the Bonjour status and the Purple status */
 	if (bonjour_buddy->status != NULL && g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)
@@ -158,10 +158,11 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 	}
 
 	buddy->proto_data = bonjour_buddy;
+	name = purple_buddy_get_name(buddy);
 
 	/* Create the alias for the buddy using the first and the last name */
-	if (bonjour_buddy->nick)
-		serv_got_alias(purple_account_get_connection(account), buddy->name, bonjour_buddy->nick);
+	if (bonjour_buddy->nick && *bonjour_buddy->nick)
+		serv_got_alias(purple_account_get_connection(account), name, bonjour_buddy->nick);
 	else {
 		gchar *alias = NULL;
 		const char *first, *last;
@@ -172,18 +173,18 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 						(first && *first ? first : ""),
 						(first && *first && last && *last ? " " : ""),
 						(last && *last ? last : ""));
-		serv_got_alias(purple_account_get_connection(account), buddy->name, alias);
+		serv_got_alias(purple_account_get_connection(account), name, alias);
 		g_free(alias);
 	}
 
 	/* Set the user's status */
 	if (bonjour_buddy->msg != NULL)
-		purple_prpl_got_user_status(account, buddy->name, status_id,
+		purple_prpl_got_user_status(account, name, status_id,
 					    "message", bonjour_buddy->msg, NULL);
 	else
-		purple_prpl_got_user_status(account, buddy->name, status_id, NULL);
+		purple_prpl_got_user_status(account, name, status_id, NULL);
 
-	purple_prpl_got_user_idle(account, buddy->name, FALSE, 0);
+	purple_prpl_got_user_idle(account, name, FALSE, 0);
 
 	/* TODO: Because we don't save Bonjour buddies in blist.xml,
 	 * we will always have to look up the buddy icon at login time.
@@ -198,7 +199,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 		 * as what we looked up. */
 		bonjour_dns_sd_retrieve_buddy_icon(bonjour_buddy);
 	} else if (!new_hash)
-		purple_buddy_icons_set_for_user(account, buddy->name, NULL, 0, NULL);
+		purple_buddy_icons_set_for_user(account, name, NULL, 0, NULL);
 }
 
 /**

@@ -185,7 +185,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 									PurpleSslErrorFunction error_func,
 									void *data);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_SSLCONN_C_)
 /**
  * Makes a SSL connection using an already open file descriptor.
  *

@@ -59,18 +59,18 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 		return;
 
 	/* Go through and remove all buddies that belong to this account */
-	for (cnode = ((PurpleBlistNode *) bonjour_group)->child; cnode; cnode = cnodenext) {
-		cnodenext = cnode->next;
+	for (cnode = purple_blist_node_get_first_child((PurpleBlistNode *) bonjour_group); cnode; cnode = cnodenext) {
+		cnodenext = purple_blist_node_get_sibling_next(cnode);
 		if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 			continue;
-		for (bnode = cnode->child; bnode; bnode = bnodenext) {
-			bnodenext = bnode->next;
+		for (bnode = purple_blist_node_get_first_child(cnode); bnode; bnode = bnodenext) {
+			bnodenext = purple_blist_node_get_sibling_next(bnode);
 			if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 				continue;
 			buddy = (PurpleBuddy *) bnode;
-			if (buddy->account != account)
+			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}
@@ -376,20 +376,20 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	}
 
 	/* Only show first/last name if there is a nickname set (to avoid duplication) */
-	if (bb->nick != NULL) {
-		if (bb->first != NULL)
+	if (bb->nick != NULL && *bb->nick != '\0') {
+		if (bb->first != NULL && *bb->first != '\0')
 			purple_notify_user_info_add_pair(user_info, _("First name"), bb->first);
-		if (bb->first != NULL)
+		if (bb->last != NULL && *bb->last != '\0')
 			purple_notify_user_info_add_pair(user_info, _("Last name"), bb->last);
 	}
 
-	if (bb->email != NULL)
+	if (bb->email != NULL && *bb->email != '\0')
 		purple_notify_user_info_add_pair(user_info, _("Email"), bb->email);
 
-	if (bb->AIM != NULL)
+	if (bb->AIM != NULL && *bb->AIM != '\0')
 		purple_notify_user_info_add_pair(user_info, _("AIM Account"), bb->AIM);
 
-	if (bb->jid!= NULL)
+	if (bb->jid != NULL && *bb->jid != '\0')
 		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
 }
 

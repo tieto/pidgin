@@ -81,6 +81,9 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 
 	swboard->destroying = TRUE;
 
+	if (swboard->reconn_timeout_h > 0)
+		purple_timeout_remove(swboard->reconn_timeout_h);
+
 	/* If it linked us is because its looking for trouble */
 	while (swboard->slplinks != NULL)
 		msn_slplink_destroy(swboard->slplinks->data);
@@ -577,6 +580,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	MsnTransaction *trans;
 	char *payload;
 	gsize payload_len;
+	char flag;
 
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
@@ -590,32 +594,35 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
+	flag = msn_message_get_flag(msg);
 	trans = msn_transaction_new(cmdproc, "MSG", "%c %" G_GSIZE_FORMAT,
-								msn_message_get_flag(msg), payload_len);
+								flag, payload_len);
 
 	/* Data for callbacks */
 	msn_transaction_set_data(trans, msg);
 
-	if (msg->type == MSN_MSG_TEXT)
-	{
-		msg->ack_ref = TRUE;
-		msn_message_ref(msg);
-		swboard->ack_list = g_list_append(swboard->ack_list, msg);
-		msn_transaction_set_timeout_cb(trans, msg_timeout);
-	}
-	else if (msg->type == MSN_MSG_SLP)
-	{
-		msg->ack_ref = TRUE;
-		msn_message_ref(msg);
-		swboard->ack_list = g_list_append(swboard->ack_list, msg);
-		msn_transaction_set_timeout_cb(trans, msg_timeout);
-#if 0
-		if (msg->ack_cb != NULL)
+	if (flag != 'U') {
+		if (msg->type == MSN_MSG_TEXT)
 		{
-			msn_transaction_add_cb(trans, "ACK", msg_ack);
-			msn_transaction_add_cb(trans, "NAK", msg_nak);
+			msg->ack_ref = TRUE;
+			msn_message_ref(msg);
+			swboard->ack_list = g_list_append(swboard->ack_list, msg);
+			msn_transaction_set_timeout_cb(trans, msg_timeout);
 		}
+		else if (msg->type == MSN_MSG_SLP)
+		{
+			msg->ack_ref = TRUE;
+			msn_message_ref(msg);
+			swboard->ack_list = g_list_append(swboard->ack_list, msg);
+			msn_transaction_set_timeout_cb(trans, msg_timeout);
+#if 0
+			if (msg->ack_cb != NULL)
+			{
+				msn_transaction_add_cb(trans, "ACK", msg_ack);
+				msn_transaction_add_cb(trans, "NAK", msg_nak);
+			}
 #endif
+		}
 	}
 
 	trans->payload = payload;
@@ -806,7 +813,7 @@ static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("msn", "get UBM...\n");
-	cmd->payload_len = atoi(cmd->params[4]);
+	cmd->payload_len = atoi(cmd->params[3]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
@@ -1315,10 +1322,10 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 	}
 }
 
-gboolean
+void
 msn_switchboard_release(MsnSwitchBoard *swboard, MsnSBFlag flag)
 {
-	g_return_val_if_fail(swboard != NULL, FALSE);
+	g_return_if_fail(swboard != NULL);
 
 	swboard->flag &= ~flag;
 
@@ -1328,12 +1335,8 @@ msn_switchboard_release(MsnSwitchBoard *swboard, MsnSBFlag flag)
 		swboard->conv = NULL;
 
 	if (swboard->flag == 0)
-	{
+		/* Nothing else is using this switchboard, so close it */
 		msn_switchboard_close(swboard);
-		return TRUE;
-	}
-
-	return FALSE;
 }
 
 /**************************************************************************

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2006-11-28 22:37+0530\n"
 "Last-Translator: drtvasudevan <agnihot3@gmail.com>\n"
 "Language-Team: tamil <Ubuntu-l10n-tam@lists.ubuntu.com>\n"
@@ -261,10 +261,6 @@ msgstr "%s ஐ வாசிப்பதில் பிழை"
 msgid "You must give a name for the group to add."
 msgstr "சேர்க்க வேண்டிய குழுவின் பெயரை உள்ளீடு செய்க."
 
-#, fuzzy
-msgid "A group with the name already exists."
-msgstr "அதே பெயரில் கோப்பு ஏற்கனவே உள்ளது"
-
 msgid "Add Group"
 msgstr "குழுவை சேர்"
 
@@ -301,7 +297,6 @@ msgstr "தகவல் பெறுக"
 msgid "Add Buddy Pounce"
 msgstr "நண்பர் இறஞ்சுதலை சேர்"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "கோப்பை அனுப்பு"
 
@@ -309,8 +304,8 @@ msgid "Blocked"
 msgstr "தடுக்கப்பட்டது"
 
 #, fuzzy
-msgid "View Log"
-msgstr "_பதிவை காண்"
+msgid "Show when offline"
+msgstr "இணைப்பற்றபொழுது அனுமதிக்கப்படாது"
 
 #, fuzzy, c-format
 msgid "Please enter the new name for %s"
@@ -355,6 +350,10 @@ msgstr "வாழ்ந்த இடங்கள்"
 
 msgid "Toggle Tag"
 msgstr ""
+
+#, fuzzy
+msgid "View Log"
+msgstr "_பதிவை காண்"
 
 #. General
 msgid "Nickname"
@@ -1433,7 +1432,7 @@ msgstr "வகை"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5180,7 +5179,7 @@ msgstr "உணவிற்காக வெளியே"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5398,8 +5397,7 @@ msgstr "குறுந்தொகுப்பு யுஆர்எல் "
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "நோவல் க்ரூப்வைஸ் மெஸஞ்சர் நெறிமுறை சொருகுபொருள்"
@@ -5440,6 +5438,7 @@ msgstr "%s - இதன் மீது %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s உங்களுக்கு ஒரு சீண்டல் அனுப்பியுள்ளார்!"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "தெரியாத பிழை"
@@ -6632,6 +6631,7 @@ msgstr ""
 "எழுத்துக்கள், எண்கள் வெற்று இடங்களோ இருக்கலாம்."
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "செல்லுபடியாகாத செல்லப் பெயர்"
@@ -7043,10 +7043,12 @@ msgstr ""
 "பெயர்கள்ஒரு எழுத்தில்தான் ஆரம்பிக்க வேண்டும். அதன் பின் எண்கள் தனியாகவோ அல்லது எழுத்துக்கள் "
 "வெற்று இடங்கள் உடனோ இருக்கலாம்."
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "சேர்க்க இயலவில்லை"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "நண்பர் பட்டியலை பெற இயலவில்லை."
 
 #, fuzzy
@@ -7273,49 +7275,6 @@ msgstr ""
 "தேவை. ஏனென்றால் உங்களது ஐபி முகவரி வெளிப்பட்டது, இது ஒரு பாதுகாப்பு பிரச்னையாக "
 "கருதப்படுகிறது."
 
-#, fuzzy
-msgid "Primary Information"
-msgstr "அந்தரங்க தகவல்"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "அந்தரங்க தகவல்"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "நாடு"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-#, fuzzy
-msgid "College"
-msgstr "_ச சுருக்கு"
-
-#, fuzzy
-msgid "Zipcode"
-msgstr "அஞ்சல் குறியீடு"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "தொலைபேசி எண்"
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "தொலைபேசி எண்"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7406,95 +7365,190 @@ msgid "Other"
 msgstr "ஒபேரா"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "நண்பர் பற்றிய தகவல்"
+msgid "Visible"
+msgstr "காணமுடியாத"
 
-#, fuzzy
-msgid "Update information"
-msgstr "பயனரின் தகவல்"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "நண்பரை சேர்"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "வேகம்:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "நிமித்தச் செயலாக்க தோழரை தயவுசெய்து உள்ளீடு செய்க"
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "செல்லாத அறைப்பெயர்"
+msgid "Private"
+msgstr "தனிமை"
 
-#, fuzzy, c-format
-msgid "You rejected %d's request"
-msgstr "எதிர்பாரா கோரிக்கை"
-
-#, fuzzy
-msgid "Reject request"
-msgstr "எதிர்பாரா கோரிக்கை"
-
-#. title
-msgid "Sorry, you are not my style..."
+msgid "QQ Number"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "நண்பர் இணைப்பு மறுக்கப்பட்டது"
+msgid "Country/Region"
+msgstr "நாடு"
+
+msgid "Province/State"
+msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Zipcode"
+msgstr "அஞ்சல் குறியீடு"
+
+#, fuzzy
+msgid "Phone Number"
+msgstr "தொலைபேசி எண்"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "அனுமதியளி"
+
+#, fuzzy
+msgid "Cellphone Number"
+msgstr "தொலைபேசி எண்"
+
+#, fuzzy
+msgid "Personal Introduction"
+msgstr "அந்தரங்க தகவல்"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "நகரம்"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "அலைபேசி"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "புனைப்பெயர் தொடர்பு"
+
+#, fuzzy
+msgid "College"
+msgstr "_ச சுருக்கு"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "புரவலன் பெயர்"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "தடுக்கப்பட்டது"
+
+#, fuzzy
+msgid "True"
+msgstr "துருக்கி"
+
+#, fuzzy
+msgid "False"
 msgstr "தோல்வியுற்றது"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "தோழரை நீக்குக"
+msgid "Modify Contact"
+msgstr "கணக்கை மாற்று"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "%s அவரது நண்பர் பட்டியலில் இருந்து உங்களை நீக்கியுள்ளார்."
+msgid "Modify Address"
+msgstr "வீட்டு முகவரி"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "நண்பர் பற்றிய தகவல்"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "நண்பர் பற்றிய தகவல்"
+
+#, fuzzy
+msgid "Update"
+msgstr "கடைசியாக புதுப்பித்தது"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "நிமித்தச் செயலாக்க தோழரை தயவுசெய்து உள்ளீடு செய்க"
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "நண்பரை சேர்"
+
+msgid "Input answer here"
+msgstr ""
+
+#, fuzzy
+msgid "Send"
+msgstr "_அனுப்பு"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "செல்லாத கடவுச்சொல்"
+
+#, fuzzy
+msgid "Authorization denied message:"
+msgstr "அனுமதி மறுத்தல் தகவல்:"
+
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "அனுமதித்தல் ஆரம்பம்"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "தோழரை உங்களது பட்டியலில் சேர்க்கவா?"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 #, fuzzy
 msgid "Would you be my friend?"
 msgstr "அதன் மேலெழுத விரும்புகிறீர்களா?"
 
-#. multiline
-#. masked
-#. hint
 #, fuzzy
-msgid "Send"
-msgstr "_அனுப்பு"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "நண்பர் பட்டியலை ஏற்ற முடியவில்லை"
+msgid "QQ Buddy"
+msgstr "நண்பரை சேர்"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "வாசிப்பதில் பிழை"
+msgid "Add buddy"
+msgstr "நண்பரை சேர்"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "செல்லாத அறைப்பெயர்"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "தயவு செய்து எனக்கு அனுமதி தாருங்கள்!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "தோழரை அரட்டையில் சேர்க்க தவறியது"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "%s அவரது நண்பர் பட்டியலில் இருந்து உங்களை நீக்கியுள்ளார்."
+
+#, fuzzy
+msgid "No reason given"
+msgstr "காரணம் கொடுக்கப்படவில்லை."
+
+#. only need to get value
+#, fuzzy, c-format
+msgid "You have been added by %s"
+msgstr "%s (%s) ஆல் நிரந்தரமாக நீக்கப் பட்டீர்கள்."
+
+#, fuzzy
+msgid "Would you like to add him?"
+msgstr "அதன் மேலெழுத விரும்புகிறீர்களா?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "மீண்டும் அமை"
+
+#, fuzzy, c-format
+msgid "Message: %s"
+msgstr "_தகவல்:"
 
 msgid "ID: "
 msgstr ""
@@ -7502,18 +7556,6 @@ msgstr ""
 #, fuzzy
 msgid "Group ID"
 msgstr "குழு:"
-
-#, fuzzy
-msgid "Creator"
-msgstr "உருவாக்குக"
-
-#, fuzzy
-msgid "Group Description"
-msgstr "விரிவுரை"
-
-#, fuzzy
-msgid "Auth"
-msgstr "அனுமதியளி"
 
 msgid "QQ Qun"
 msgstr ""
@@ -7525,57 +7567,40 @@ msgstr "உங்களது புதிய கடவுச்சொல்ல�
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "_தகவல்:"
+#, fuzzy
+msgid "Not member"
+msgstr "இதிலிருந்து அங்கத்தினர்."
 
 #, fuzzy
-msgid "QQ Qun Operation"
-msgstr "ஒலி விருப்பங்கள்"
+msgid "Member"
+msgstr "இதிலிருந்து அங்கத்தினர்."
 
-msgid "Approve"
-msgstr ""
+#, fuzzy
+msgid "Requesting"
+msgstr "உரையாடலை வேண்டுக"
 
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "தோழரை அரட்டையில் சேர்க்க தவறியது"
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
+msgid "Admin"
 msgstr ""
 
 #, fuzzy
-msgid "Notice:"
+msgid "Notice"
 msgstr "குறிப்பு"
 
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
-msgstr ""
-
-msgid "I am a member"
-msgstr ""
+#, fuzzy
+msgid "Detail"
+msgstr "க்னோம் முன்னிருப்பு"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "தவறான கோரிக்கை"
-
-msgid "I am the admin"
-msgstr ""
+msgid "Creator"
+msgstr "உருவாக்குக"
 
 #, fuzzy
-msgid "Unknown status"
-msgstr "தெரியாத தகவல்"
+msgid "About me"
+msgstr "கெய்ம் பற்றி"
+
+#, fuzzy
+msgid "Category"
+msgstr "அரட்டை பிழை"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
@@ -7583,73 +7608,85 @@ msgstr ""
 "இந்த மதிப்பீட்டு வடிவ பதிப்பு பத்துக்கும் அதிக பயனர்களை ஒரே நேரத்தில் உள்ளே அனுமதிப்பதில்லை"
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "குழுவை நீக்குக"
-
-#, fuzzy
-msgid "Join to Qun"
+msgid "Join QQ Qun"
 msgstr "அரட்டையில் சேர்க"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+#, fuzzy
+msgid "QQ Qun Operation"
+msgstr "ஒலி விருப்பங்கள்"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "தோல்வியுற்றது"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
 #, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "உறுதியாக %s யை அழிக்கலாமா?"
+msgid "Quit Qun"
+msgstr "அரட்டையில் சேர்க"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-msgid "Do you want to approve the request?"
+msgid "Sorry, you are not our style ..."
 msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
+msgid "Successfully changed Qun member"
 msgstr "தொலைபேசி எண்"
 
 #, fuzzy
-msgid "Change Qun information"
+msgid "Successfully changed Qun information"
 msgstr "வாய்க்கால் தகவல்"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "நீங்கள் இதை இந்த பயனாளருக்கு நண்பர் குறும்படமாக அமைக்க விரும்புகிறீர்களா?"
 
 #, fuzzy
 msgid "Setup"
 msgstr "_அமை"
 
+#, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr ""
+
+#, c-format
+msgid "%d request to join Qun %d"
+msgstr ""
+
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s - இதன் மீது %s (%s)"
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "தோழரை அரட்டையில் சேர்க்க தவறியது"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "ஐசிக்யூ சேவையக ஒளிபரப்பு"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
 
-#, fuzzy
-msgid "System Message"
-msgstr "கணினி பதிவு"
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "தோழரை நீக்குக"
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "அரட்டையில் சேர தவறியது"
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7658,10 +7695,6 @@ msgstr "தெரியாத"
 #, fuzzy
 msgid "Level"
 msgstr "ஒருபோதுமில்லை"
-
-#, fuzzy
-msgid "Member"
-msgstr "இதிலிருந்து அங்கத்தினர்."
 
 msgid " VIP"
 msgstr ""
@@ -7695,12 +7728,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "செல்லுபடியாகாத செல்லப் பெயர்"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "அடைவை தேர்ந்தெடுக்கவும்..."
+
 #, fuzzy, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>குழுத் தலைப்பு</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
+msgstr "<b>குழுத் தலைப்பு</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>பயனாளர்:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7708,11 +7749,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b> பயனர் அடையாளம்</b> s<br%s<br>"
 
 #, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>குழுத் தலைப்பு</b> %s<br>"
+
+#, fuzzy, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>இவ்வளவு நேரம் ஓய்வாக:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>ஐபி முகவரி:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7736,24 +7781,45 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>புனைப்பெயர்:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>குழுத் தலைப்பு</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
+msgid "<b>IP</b>: %s<br>\n"
 msgstr "<b> பயனர் அடையாளம்</b> s<br%s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>கடைசியாக அறியப்பட்ட வாடிக்கையாளர்:</b> "
 
 #, fuzzy
 msgid "Login Information"
 msgstr "பிழையறிதல் தகவல்"
 
 #, fuzzy
-msgid "Set My Information"
-msgstr "சேவையகம் தகவல்"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr "<b>வெளிப் பயனாளர்</b><br>"
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>பயனாளர்:</b> %s<br>"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>குழுத் தலைப்பு</b> %s<br>"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "கெய்ம் பற்றி"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "குறும்படத்தை சேமி"
 
 msgid "Change Password"
 msgstr "கடவுச்சொல்லை மாற்று"
@@ -7762,12 +7828,12 @@ msgstr "கடவுச்சொல்லை மாற்று"
 msgid "Account Information"
 msgstr "பிழையறிதல் தகவல்"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
 #, fuzzy
-msgid "Block this buddy"
-msgstr "இந்த கீற்றை மூடு"
+msgid "About OpenQ"
+msgstr "கெய்ம் பற்றி"
 
 #. *< type
 #. *< ui_requirement
@@ -7780,13 +7846,27 @@ msgstr "இந்த கீற்றை மூடு"
 #. *  summary
 #. *  description
 #, fuzzy
-msgid "QQ Protocol\tPlugin"
+msgid "QQ Protocol Plugin"
 msgstr "ஐஆர்சி நெறிமுறை சொருகுபொருள்"
 
 #, fuzzy
 msgid "Auto"
 msgstr "அனுமதியளி"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "பயனரை தேர்வு செய்க"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "இணைத்தல்"
@@ -7800,42 +7880,81 @@ msgid "Show server news"
 msgstr "சேவையகம் முகவரி"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "வாசித்தல் பிழை"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "வாசித்தல் பிழை"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "சேவையக தகவலை பெற இயலவில்லை"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "சேவையக தகவலை பெற இயலவில்லை"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "செல்லாத authzid"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "கடவுச்சொல்லை மாற்றுவதில் பிழை."
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "பதிவு தேவைப்படுகிறது"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "வாசித்தல் பிழை"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "சேவையகத்துடன் இணைக்க தவறியது."
+msgid "Captcha Image"
+msgstr "படத்தை சேமி"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "கடவுச்சொல்லை உள்ளிடவும்"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "சேர்க்க வேண்டிய குழுவின் பெயரை உள்ளீடு செய்க."
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7862,8 +7981,11 @@ msgstr "எழுதுவதில் பிழை"
 msgid "Connection lost"
 msgstr "தொடர்பு முடிக்கப்பட்டது"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "பயனாளர் தகவலை அமை..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "கோரிக்கை நிராகரிக்கப்பட்டது"
 
@@ -7874,15 +7996,35 @@ msgstr "புரவலரை நிர்ணயிக்க முடியவ�
 msgid "Invalid server or port"
 msgstr "செல்லாத பயனாளர் பெயர் அல்லது கடவுச்சொல்"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"%s சேவையகத்தில் இருந்து இணைப்பு பிழை:\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "சேவையகத்தை இணை"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "வாசிப்பதில் பிழை"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "அரட்டையில் சேர தவறியது"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "ஐசிக்யூ சேவையக ஒளிபரப்பு"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "அனுப்புநர்"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "சேவையக கட்டளைகள்: %s"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7898,14 +8040,18 @@ msgid "QQ Qun Command"
 msgstr "கட்டளை"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "தெரியாத காரணம்."
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "தெரியாத காரணம்."
 
 #, fuzzy, c-format
@@ -7919,63 +8065,6 @@ msgstr "கோப்பு அனுப்புதல் தவறியது"
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s %s பரிமாற்றத்தை நீக்கினார்"
-
-msgid "Do you approve the requestion?"
-msgstr ""
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "இந்த நண்பரை உங்கள் நண்பர் பட்டியலில் சேர்க்கவா?"
-
-#. only need to get value
-#, fuzzy, c-format
-msgid "You have been added by %s"
-msgstr "%s (%s) ஆல் நிரந்தரமாக நீக்கப் பட்டீர்கள்."
-
-#, fuzzy
-msgid "Would you like to add him?"
-msgstr "அதன் மேலெழுத விரும்புகிறீர்களா?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "நண்பரை சேர்"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s உங்களுக்கு கோப்பை அனுப்ப விரும்புகிறார்"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "அதன் மேலெழுத விரும்புகிறீர்களா?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "அனுப்புநர்"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "சேவையகம் தளம்"
 
 msgid "Connection closed (writing)"
 msgstr "இணைப்பு துண்டிக்கப்பட்டது,(எழுதப்படுகிறது)"
@@ -9680,10 +9769,6 @@ msgstr "உங்களது யாகூ! தகவல் அனுப்ப�
 msgid "Yahoo! system message for %s:"
 msgstr "%s க்கு யாகூ! வின் கணினி செய்தி:"
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "அனுமதி மறுத்தல் தகவல்:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10580,9 +10665,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10646,10 +10731,6 @@ msgstr "_பதிவை காண்"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "இணைப்பற்றபொழுது அனுமதிக்கப்படாது"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "இணைப்பற்றபொழுது அனுமதிக்கப்படாது"
 
 msgid "_Alias..."
@@ -11041,7 +11122,7 @@ msgstr "புனைப்பெயர்:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -11075,10 +11156,6 @@ msgstr "/நண்பர்கள்/நண்பர்களை வரிசை
 #, fuzzy
 msgid "SSL Servers"
 msgstr "சேவையகம்"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "%s துண்டிக்கப்பட்டது"
 
 #, fuzzy
 msgid "Unknown command."
@@ -11433,8 +11510,12 @@ msgstr "பிழை"
 msgid "Fatal Error"
 msgstr "அகப்பிழை"
 
-msgid "developer"
-msgstr "உருவாக்குபவர்"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "முகவரி"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11444,10 +11525,7 @@ msgid "support"
 msgstr "ஆதரவு"
 
 #, fuzzy
-msgid "support/QA"
-msgstr "ஆதரவு"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr "உருவாக்குபவர் & வலைமேலாளர்"
 
 msgid "Senior Contributor/QA"
@@ -11467,8 +11545,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "அத்துமீறர் மற்றும் பணி அமர்வு செய்யப் பட்ட இயக்குநர் [lazy bum]"
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "உருவாக்குபவர்"
+msgid "support/QA"
+msgstr "ஆதரவு"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "இயற் உரிமையாளர்"
@@ -11742,9 +11823,6 @@ msgstr "ஒய்வுபெற்ற உருவாக்காளர்க�
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "பித்துப்பிடித்த பேட்ச் எழுத்தாளர்கள்"
-
-msgid "Artists"
-msgstr ""
 
 msgid "Current Translators"
 msgstr "தற்போதைய மொழிபெயர்ப்பாளர்கள்"
@@ -12395,11 +12473,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 "கெய்ம் செக்-பிழையால் ஒரு உட்கரு கோப்பை விசிற முயர்சித்தது.\n"
 "இந்த பிழை நிரலின் வழுவாகும்\n"
@@ -13295,8 +13368,13 @@ msgstr "_தகவல் பெறுக"
 msgid "_Invite"
 msgstr "_அழை"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "_மாற்று"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "_ச சேர்க்கவும்"
 
 msgid "_Open Mail"
 msgstr "_அஞ்சலை திற"
@@ -13320,6 +13398,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "யாராவது"
+
+#, fuzzy
+msgid "Small"
+msgstr "மின்னஞ்சல்"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 #, fuzzy
 msgid "Response Probability:"
@@ -13800,6 +13885,10 @@ msgstr "சாளரத்தலைப்புடன் புதிய தக�
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "சாளர மேலாளரின் \"அ_வசர\" குறிப்பை அமை"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "_அரட்டை சாளரங்கள்"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "உரையாடல் சாளரத்தை _உயர்த்து"
@@ -13987,20 +14076,20 @@ msgstr ""
 "ஐஆர்சி, டிஓசி). நுழைவு பெட்டியில்  'Enter' ஐ சொடுக்குவதன் மூலம் அனுப்பலாம். "
 "பிழையறிக்கை சாளரத்தை கவனிக்கவும்."
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr "நீங்கள் உபயோகிக்கும் கெய்ம் வெளியீடு %s. தற்போதைய கெய்ம் வெளியீடு %s.<hr>"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"<b>மாற்றல் பதிவேடு:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "புதிய பதிப்பு கிடைக்கிறது"
+
+#, fuzzy
+msgid "Later"
+msgstr "நாள்"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "%s ல் உள்ள பயனாளர்கள்: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -14319,6 +14408,162 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "A group with the name already exists."
+#~ msgstr "அதே பெயரில் கோப்பு ஏற்கனவே உள்ளது"
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "அந்தரங்க தகவல்"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "பயனரின் தகவல்"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "வேகம்:"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "செல்லாத அறைப்பெயர்"
+
+#, fuzzy
+#~ msgid "You rejected %d's request"
+#~ msgstr "எதிர்பாரா கோரிக்கை"
+
+#, fuzzy
+#~ msgid "Reject request"
+#~ msgstr "எதிர்பாரா கோரிக்கை"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "நண்பர் இணைப்பு மறுக்கப்பட்டது"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "நண்பர் பட்டியலை ஏற்ற முடியவில்லை"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "வாசிப்பதில் பிழை"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "விரிவுரை"
+
+#, fuzzy
+#~ msgid "Auth"
+#~ msgstr "அனுமதியளி"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "தவறான கோரிக்கை"
+
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "தெரியாத தகவல்"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "குழுவை நீக்குக"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "உறுதியாக %s யை அழிக்கலாமா?"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s - இதன் மீது %s (%s)"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "கணினி பதிவு"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b> பயனர் அடையாளம்</b> s<br%s<br>"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>கடைசியாக அறியப்பட்ட வாடிக்கையாளர்:</b> "
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "சேவையகம் தகவல்"
+
+#, fuzzy
+#~ msgid "Block this buddy"
+#~ msgstr "இந்த கீற்றை மூடு"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "கடவுச்சொல்லை மாற்றுவதில் பிழை."
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "சேவையகத்துடன் இணைக்க தவறியது."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "%s சேவையகத்தில் இருந்து இணைப்பு பிழை:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "இந்த நண்பரை உங்கள் நண்பர் பட்டியலில் சேர்க்கவா?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "நண்பரை சேர்"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s உங்களுக்கு கோப்பை அனுப்ப விரும்புகிறார்"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "அதன் மேலெழுத விரும்புகிறீர்களா?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "சேவையகம் தளம்"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "%s துண்டிக்கப்பட்டது"
+
+#~ msgid "developer"
+#~ msgstr "உருவாக்குபவர்"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "உருவாக்குபவர்"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr "நீங்கள் உபயோகிக்கும் கெய்ம் வெளியீடு %s. தற்போதைய கெய்ம் வெளியீடு %s.<hr>"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>மாற்றல் பதிவேடு:</b>\n"
+#~ "%s<br><br>"
 
 #~ msgid "Screen name:"
 #~ msgstr "திரைப்பெயர்:"
@@ -14888,9 +15133,6 @@ msgstr ""
 #~ msgid "NAPSTER Protocol Plugin"
 #~ msgstr "நேப்ஸ்டர் நெறிமுறை சொருகுபொருள்"
 
-#~ msgid "Invalid password"
-#~ msgstr "செல்லாத கடவுச்சொல்"
-
 #~ msgid "Direct IM with %s closed"
 #~ msgstr "%s உடனான நேரடி ஐஎம் மூடப்பட்டது"
 
@@ -15010,9 +15252,6 @@ msgstr ""
 #~ msgstr ""
 #~ "\n"
 #~ "<b>இதை ஆதரிக்கிறது:</b> %s"
-
-#~ msgid "<b>External User</b><br>"
-#~ msgstr "<b>வெளிப் பயனாளர்</b><br>"
 
 #~ msgid "<b>Full Name:</b> %s<br>"
 #~ msgstr "<b> பெயர்:</b> %s<br>"

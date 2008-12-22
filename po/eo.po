@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2008-03-02 13:39+0100\n"
 "Last-Translator: Stéphane Fillod <f8cfe@free.fr>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
@@ -240,9 +240,6 @@ msgstr "Eraro aldonante grupo"
 msgid "You must give a name for the group to add."
 msgstr "Vi devas enigi nomon de la grupo aldonenda."
 
-msgid "A group with the name already exists."
-msgstr "Samnomita grupo jam ekzistas."
-
 msgid "Add Group"
 msgstr "Aldonu Grupon"
 
@@ -273,15 +270,14 @@ msgstr "Ricevu Informon"
 msgid "Add Buddy Pounce"
 msgstr "Aldonu Kunulatentigon"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "Sendu Dosieron"
 
 msgid "Blocked"
 msgstr "Blokita"
 
-msgid "View Log"
-msgstr "Montru Protokolon"
+msgid "Show when offline"
+msgstr "Montru kiam senkonekta"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -322,6 +318,9 @@ msgstr "Loko etikedita"
 
 msgid "Toggle Tag"
 msgstr "Inversiga Etikedo"
+
+msgid "View Log"
+msgstr "Montru Protokolon"
 
 #. General
 msgid "Nickname"
@@ -1306,7 +1305,7 @@ msgstr "Tipo"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -4842,7 +4841,7 @@ msgstr "Ekstere Tagmanĝanten"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 msgid "Artist"
@@ -5048,8 +5047,7 @@ msgstr "Profilo URL"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr ""
 
@@ -5086,6 +5084,7 @@ msgstr "%s en %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s ĵus sendis al vi Zumon!"
 
+#. char *adl = g_strndup(payload, len);
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Nekonata eraro (%d)"
@@ -6202,6 +6201,7 @@ msgid ""
 msgstr ""
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "Malvalida Uzantonomo"
@@ -6559,10 +6559,12 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "Ne eblas Aldoni"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "Ne eblas Ricevi Kunulliston"
 
 msgid ""
@@ -6777,42 +6779,6 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 
-msgid "Primary Information"
-msgstr "Ĉefa Informo"
-
-msgid "Personal Introduction"
-msgstr "Persono Enkonduko"
-
-msgid "QQ Number"
-msgstr "QQ Nombro"
-
-msgid "Country/Region"
-msgstr "Lando/Regiono"
-
-msgid "Province/State"
-msgstr "Provinco/Ŝtato"
-
-msgid "Horoscope Symbol"
-msgstr "Horoskopa Simbolo"
-
-msgid "Zodiac Sign"
-msgstr "Zodiaka Signo"
-
-msgid "Blood Type"
-msgstr "Sanga Tipo"
-
-msgid "College"
-msgstr "Kolegio"
-
-msgid "Zipcode"
-msgstr "Poŝtkodo"
-
-msgid "Cellphone Number"
-msgstr "Poŝtelefona Numero"
-
-msgid "Phone Number"
-msgstr "Telefonnumero"
-
 msgid "Aquarius"
 msgstr "Verŝisto"
 
@@ -6889,105 +6855,187 @@ msgid "Other"
 msgstr "Alia"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "Ŝanĝu mian informon"
+msgid "Visible"
+msgstr "Nevidebla"
 
-#, fuzzy
-msgid "Update information"
-msgstr "Aktualigi mian informon"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Kunul"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "Rapideco:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "Bonvolu enigi kunul informon."
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
-msgstr ""
-
-msgid "Invalid QQ Face"
-msgstr "Malvalida QQ Aspekto"
-
-#, c-format
-msgid "You rejected %d's request"
-msgstr ""
-
-msgid "Reject request"
-msgstr ""
-
-#. title
-msgid "Sorry, you are not my style..."
-msgstr ""
-
-msgid "Add buddy with auth request failed"
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Private"
+msgstr "Privataj aferoj"
+
+msgid "QQ Number"
+msgstr "QQ Nombro"
+
+msgid "Country/Region"
+msgstr "Lando/Regiono"
+
+msgid "Province/State"
+msgstr "Provinco/Ŝtato"
+
+msgid "Zipcode"
+msgstr "Poŝtkodo"
+
+msgid "Phone Number"
+msgstr "Telefonnumero"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "Permesi kunulon?"
+
+msgid "Cellphone Number"
+msgstr "Poŝtelefona Numero"
+
+msgid "Personal Introduction"
+msgstr "Persono Enkonduko"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "Urbo"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "Persona Poŝtelefono"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "Alinomo Kontakto"
+
+msgid "College"
+msgstr "Kolegio"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "Horoskopa Simbolo"
+
+#, fuzzy
+msgid "Zodiac"
+msgstr "Zodiaka Signo"
+
+#, fuzzy
+msgid "Blood"
+msgstr "Blokita"
+
+#, fuzzy
+msgid "True"
+msgstr "Bovo"
+
+#, fuzzy
+msgid "False"
 msgstr "Malsukcesita"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "Forigu Kunulon"
+msgid "Modify Contact"
+msgstr "Ŝanĝu Konton"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "%s forigis vin el sia kunul listo."
+msgid "Modify Address"
+msgstr "Hejmo Adreso"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "Ŝanĝu mian informon"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "Ŝanĝu mian informon"
+
+#, fuzzy
+msgid "Update"
+msgstr "Lasta Aktualigo"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "Bonvolu enigi kunul informon."
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "Aldonu Kunulon"
+
+msgid "Input answer here"
+msgstr ""
+
+msgid "Send"
+msgstr "Sendu"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "Malvalida Uzantonomo"
+
+msgid "Authorization denied message:"
+msgstr "Rifuzita permeso mesaĝo:"
+
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "Uzanto %d bezonas aŭtentokontrolon"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "Aldonu kunulon al via listo?"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "Ĉu vi estus mia amiko?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "Sendu"
-
-#, c-format
-msgid "Add into %d's buddy list"
-msgstr ""
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Kunul"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "QQ Nombro"
+msgid "Add buddy"
+msgstr "Aldonu Kunulon"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "Malvalida QQ Aspekto"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "Bonvolu permesu min!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "Malsukcesis forigi kunulon"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "%s forigis vin el sia kunul listo."
+
+#, fuzzy
+msgid "No reason given"
+msgstr "Nenia kialo donita."
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr ""
+
+msgid "Would you like to add him?"
+msgstr "Ĉu vi deziras aldoni ŝlin?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "Malakceptu"
+
+#, c-format
+msgid "Message: %s"
+msgstr "Mesaĝo: %s"
 
 msgid "ID: "
 msgstr "ID: "
 
 msgid "Group ID"
 msgstr "Grupo ID"
-
-msgid "Creator"
-msgstr "Kreanto"
-
-msgid "Group Description"
-msgstr "Grupo Priskribo"
-
-msgid "Auth"
-msgstr "Permesi"
 
 msgid "QQ Qun"
 msgstr "QQ Qun"
@@ -6999,122 +7047,123 @@ msgstr "Bonvolu enigi la novan nomon por %s"
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "%d request to join Qun %d"
-msgstr "Uzanto %d petis aliĝon al grupo %d"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Mesaĝo: %s"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun Operacio"
-
-msgid "Approve"
-msgstr "Aprobi"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Malsukcesis kuniĝi kunulon en babilejo"
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr ""
-
 #, fuzzy
-msgid "Notice:"
-msgstr "Notoj"
-
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
+msgid "Not member"
 msgstr "Mi ne estas membro"
 
-msgid "I am a member"
-msgstr "Mi estas membro"
+#, fuzzy
+msgid "Member"
+msgstr "Membro Ek De"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "Malbona Demando"
+msgid "Requesting"
+msgstr "Peto Dialogujo"
 
-msgid "I am the admin"
-msgstr ""
+#, fuzzy
+msgid "Admin"
+msgstr "Adium"
 
-msgid "Unknown status"
-msgstr "Nekonata stato"
+#, fuzzy
+msgid "Notice"
+msgstr "Notoj"
+
+#, fuzzy
+msgid "Detail"
+msgstr "Apriora"
+
+msgid "Creator"
+msgstr "Kreanto"
+
+#, fuzzy
+msgid "About me"
+msgstr "Pri %s"
+
+#, fuzzy
+msgid "Category"
+msgstr "Babileraro"
 
 msgid "The Qun does not allow others to join"
 msgstr ""
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "Forigu Grupon"
+msgid "Join QQ Qun"
+msgstr "QQ Qun"
 
-msgid "Join to Qun"
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
 msgstr ""
+
+#, fuzzy
+msgid "Successfully joined Qun"
+msgstr "Vi sukcese ŝanĝis Qun numeron"
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+msgid "QQ Qun Operation"
+msgstr "QQ Qun Operacio"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "Malsukcesita"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
-msgid "Are you sure you want to leave this Qun?"
-msgstr "Ĉu vi certas vi volas forigi tiun Qun?"
+#, fuzzy
+msgid "Quit Qun"
+msgstr "QQ Qun"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-msgid "Do you want to approve the request?"
-msgstr "Ĉu vi volas jesi tiun demandon?"
+msgid "Sorry, you are not our style ..."
+msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
-msgstr "Telefonnumero"
+msgid "Successfully changed Qun member"
+msgstr "Vi sukcese ŝanĝis Qun numeron"
 
 #, fuzzy
-msgid "Change Qun information"
-msgstr "Ŝanĝu uzanto-informon de %s"
+msgid "Successfully changed Qun information"
+msgstr "Vi sukcese ŝanĝis Qun informon"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "Ĉu vi deziras meti ĝin kiel la kunul piktogramo por tiu uzanto?"
 
 msgid "Setup"
 msgstr "Agordo"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s (%s)"
+msgid "%d requested to join Qun %d for %s"
+msgstr "Uzanto %d petis aliĝon al grupo %d"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "ICQ Servilo Reludo"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "Uzanto %d petis aliĝon al grupo %d"
 
-msgid "System Message"
-msgstr "Sistema Mesaĝo"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Malsukcesis kuniĝi kunulon en babilejo"
 
-msgid "Failed to send IM."
-msgstr "Malsukcesis sendi tujmesaĝon."
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "Forigu Kunulon"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, c-format
 msgid "Unknown-%d"
@@ -7122,10 +7171,6 @@ msgstr "Nekonata-%d"
 
 msgid "Level"
 msgstr "Nivelo"
-
-#, fuzzy
-msgid "Member"
-msgstr "Membro Ek De"
 
 msgid " VIP"
 msgstr ""
@@ -7158,25 +7203,37 @@ msgstr ""
 msgid "Invalid name"
 msgstr "Malvalida Uzantonomo"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "Elektu Dosierujon..."
+
 #, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr ""
 
 #, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
+msgstr ""
+
+#, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Grupo Titolo:</b> %s<br>"
 
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>Grupo Titolo:</b> %s<br>"
+
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr ""
 
-#, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
-msgstr ""
+#, fuzzy, c-format
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+msgstr "<b>Grupo Titolo:</b> %s<br>"
 
 #, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
@@ -7199,22 +7256,41 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr ""
 
 #, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr ""
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr ""
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>Grupo Titolo:</b> %s<br>"
 
 msgid "Login Information"
 msgstr "Ensaluta Informo"
 
-msgid "Set My Information"
-msgstr "Difinu Mian Informon"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr ""
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Pri %s"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "Konservu Piktogramon"
 
 msgid "Change Password"
 msgstr ""
@@ -7223,11 +7299,12 @@ msgstr ""
 msgid "Account Information"
 msgstr "Ensaluta Informo"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
-msgid "Block this buddy"
-msgstr "Bloku tiun kunulon"
+#, fuzzy
+msgid "About OpenQ"
+msgstr "Pri %s"
 
 #. *< type
 #. *< ui_requirement
@@ -7239,13 +7316,28 @@ msgstr "Bloku tiun kunulon"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "QQ Protokolo\tKromaĵo"
 
 #, fuzzy
 msgid "Auto"
 msgstr "Permesi"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "Konekto servilo"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "Konektu per TCP"
@@ -7258,41 +7350,79 @@ msgstr "Servilo pordo"
 msgid "Show server news"
 msgstr "Servilo adreso"
 
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr ""
 
-msgid "Update interval(s)"
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "Aktualigi mian informon"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "Konekto servilo"
+
+msgid "Can not decrypt get server reply"
 msgstr ""
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "Malvalida titolo"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "Erara ŝanĝante pasvorton"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "Registrado Postulita"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 msgid "Keep alive error"
 msgstr ""
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "Malsukcesis konekti servilon."
+msgid "Captcha Image"
+msgstr "Konservu Bildon"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "Enigu Pasvorton"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "Bonvolu enigi la nomon de la grupo"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7318,8 +7448,11 @@ msgstr "Skriberaro"
 msgid "Connection lost"
 msgstr "Konekto perdita"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "Difinu Uzanto-Informon..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "Peto Dialogujo"
 
@@ -7330,13 +7463,34 @@ msgstr ""
 msgid "Invalid server or port"
 msgstr "Malvalida eraro"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
+#, fuzzy
+msgid "Connecting server ..."
 msgstr "Konekto servilo"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "QQid Eraro"
+
+msgid "Failed to send IM."
+msgstr "Malsukcesis sendi tujmesaĝon."
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "ICQ Servilo Reludo"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "De"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "Servilo instrukcioj: %s"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7352,14 +7506,18 @@ msgid "QQ Qun Command"
 msgstr "Komando"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "Nekonata kialo"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "Nekonata kialo"
 
 #, c-format
@@ -7372,63 +7530,6 @@ msgstr ""
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr ""
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "Ĉu vi volas jesi tiun demandon?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "Ĉu vi volas aldoni tiun kunul?"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr ""
-
-msgid "Would you like to add him?"
-msgstr "Ĉu vi deziras aldoni ŝlin?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "%s aldonis vin [%s] en sia kunul listo"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "Kunul"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "%s aldonis vin en sia kunul listo."
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "Ĉu vi deziras aldoni ŝlin?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "De"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "Servilo pordo"
 
 msgid "Connection closed (writing)"
 msgstr "Koneto fermita (skribante)"
@@ -9023,9 +9124,6 @@ msgstr "Via Yahoo!-a mesaĝo malsendiĝas."
 msgid "Yahoo! system message for %s:"
 msgstr "Yahoo! sistem-mesaĝo pro %s:"
 
-msgid "Authorization denied message:"
-msgstr "Rifuzita permeso mesaĝo:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -9869,9 +9967,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -9932,9 +10030,6 @@ msgstr "Montru Protoko_lon"
 
 msgid "Hide when offline"
 msgstr "Kaŝu kiam senkonekta"
-
-msgid "Show when offline"
-msgstr "Montru kiam senkonekta"
 
 msgid "_Alias..."
 msgstr "_Alinomo..."
@@ -10298,7 +10393,7 @@ msgstr "A_linomo:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10331,10 +10426,6 @@ msgstr "/Kunuloj/Ordigu Kunulojn"
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL Serviloj"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "%s malkontaktita"
 
 msgid "Unknown command."
 msgstr "Nekonata komando."
@@ -10677,8 +10768,12 @@ msgstr "Eraro "
 msgid "Fatal Error"
 msgstr "Fatala Eraro"
 
-msgid "developer"
-msgstr "programisto"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "Artisto"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -10687,10 +10782,8 @@ msgstr ""
 msgid "support"
 msgstr "subteno"
 
-msgid "support/QA"
-msgstr "subteno/Kvalitkontrolo"
-
-msgid "developer & webmaster"
+#, fuzzy
+msgid "webmaster"
 msgstr "programisto kaj retestro"
 
 msgid "Senior Contributor/QA"
@@ -10709,8 +10802,11 @@ msgstr "libfaim vartulo"
 msgid "hacker and designated driver [lazy bum]"
 msgstr "artifikulo kaj speciala pelilo"
 
-msgid "XMPP developer"
-msgstr "XMPP programisto"
+msgid "support/QA"
+msgstr "subteno/Kvalitkontrolo"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "originala aŭtoro"
@@ -10973,9 +11069,6 @@ msgstr "Emeritaj Programistoj"
 
 msgid "Retired Crazy Patch Writers"
 msgstr "Emeritaj Frenezaj Flikistoj"
-
-msgid "Artists"
-msgstr "Artistoj"
 
 msgid "Current Translators"
 msgstr "Aktualaj Tradukantoj"
@@ -11603,11 +11696,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -12451,8 +12539,13 @@ msgstr "_Ricevu Informon"
 msgid "_Invite"
 msgstr "_Ivitu"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "Ŝ_anĝu..."
+
+#, fuzzy
+msgid "_Add..."
+msgstr "_Aldonu"
 
 msgid "_Open Mail"
 msgstr "_Malfermu retmesaĝon"
@@ -12475,6 +12568,13 @@ msgstr ""
 
 msgid "none"
 msgstr "neniu"
+
+#, fuzzy
+msgid "Small"
+msgstr "Retadreso"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr "Respondo Verŝajneco:"
@@ -12925,6 +13025,10 @@ msgstr "Enmetu nombron de novaj mesaĝoj en _X eco"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Dinifu fenestrtraktilan \"_URĜANTA\" indikon"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "B_abilfenestroj"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "Startigu konversacio-fenestron"
@@ -13103,19 +13207,19 @@ msgid ""
 msgstr ""
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"Vi uzas %s version %s.  La aktuala versio estas %s.  Vi povas obteni ĝin el "
-"<a href=\"%s\">%s</a><hr>"
-
-#, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<b>Ŝanĝprotokolo:</b><br>%s"
 
 msgid "New Version Available"
 msgstr "Nova Versio Disponebla"
+
+#, fuzzy
+msgid "Later"
+msgstr "Dato"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "Uzantoj ĉe %s: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -13419,6 +13523,142 @@ msgstr ""
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 
+#~ msgid "A group with the name already exists."
+#~ msgstr "Samnomita grupo jam ekzistas."
+
+#~ msgid "Primary Information"
+#~ msgstr "Ĉefa Informo"
+
+#~ msgid "Blood Type"
+#~ msgstr "Sanga Tipo"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "Rapideco:"
+
+#~ msgid "Invalid QQ Face"
+#~ msgstr "Malvalida QQ Aspekto"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "QQ Nombro"
+
+#~ msgid "Group Description"
+#~ msgstr "Grupo Priskribo"
+
+#~ msgid "Auth"
+#~ msgstr "Permesi"
+
+#~ msgid "Approve"
+#~ msgstr "Aprobi"
+
+#~ msgid "I am a member"
+#~ msgstr "Mi estas membro"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "Malbona Demando"
+
+#~ msgid "Unknown status"
+#~ msgstr "Nekonata stato"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "Forigu Grupon"
+
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "Ĉu vi certas vi volas forigi tiun Qun?"
+
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "Ĉu vi volas jesi tiun demandon?"
+
+#, fuzzy
+#~ msgid "Change Qun member"
+#~ msgstr "Telefonnumero"
+
+#, fuzzy
+#~ msgid "Change Qun information"
+#~ msgstr "Ŝanĝu uzanto-informon de %s"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "Sistema Mesaĝo"
+
+#~ msgid "Set My Information"
+#~ msgstr "Difinu Mian Informon"
+
+#~ msgid "Block this buddy"
+#~ msgstr "Bloku tiun kunulon"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "Erara ŝanĝante pasvorton"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "Malsukcesis konekti servilon."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "Konekto servilo"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "Ĉu vi volas jesi tiun demandon?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "Ĉu vi volas aldoni tiun kunul?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "%s aldonis vin [%s] en sia kunul listo"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "Kunul"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s aldonis vin en sia kunul listo."
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "Ĉu vi deziras aldoni ŝlin?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "Servilo pordo"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "%s malkontaktita"
+
+#~ msgid "developer"
+#~ msgstr "programisto"
+
+#~ msgid "XMPP developer"
+#~ msgstr "XMPP programisto"
+
+#~ msgid "Artists"
+#~ msgstr "Artistoj"
+
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "Vi uzas %s version %s.  La aktuala versio estas %s.  Vi povas obteni ĝin "
+#~ "el <a href=\"%s\">%s</a><hr>"
+
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>Ŝanĝprotokolo:</b><br>%s"
+
 #~ msgid "Screen name:"
 #~ msgstr "Ekrannomo:"
 
@@ -13481,12 +13721,6 @@ msgstr ""
 
 #~ msgid "Enter your reason:"
 #~ msgstr "Enigu vian kialon:"
-
-#~ msgid "You have successfully modified Qun member"
-#~ msgstr "Vi sukcese ŝanĝis Qun numeron"
-
-#~ msgid "You have successfully modified Qun information"
-#~ msgstr "Vi sukcese ŝanĝis Qun informon"
 
 #~ msgid "TCP Address"
 #~ msgstr "TCP adreso"

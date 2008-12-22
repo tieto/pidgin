@@ -30,33 +30,55 @@
 
 #include "qq.h"
 
-typedef struct _gc_and_uid gc_and_uid;
+enum {
+	QQ_AUTH_INFO_BUDDY = 0x01,
+	QQ_AUTH_INFO_ROOM = 0x02,
 
-struct _gc_and_uid {
-	guint32 uid;
-	PurpleConnection *gc;
+	QQ_AUTH_INFO_ADD_BUDDY = 0x0001,
+	QQ_AUTH_INFO_TEMP_SESSION = 0x0003,
+	QQ_AUTH_INFO_CLUSTER = 0x0002,
+	QQ_AUTH_INFO_REMOVE_BUDDY = 0x0006,
+	QQ_AUTH_INFO_UPDATE_BUDDY_INFO = 0x0007
 };
 
-void qq_approve_add_request_with_gc_and_uid(gc_and_uid *g);
-void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g);
+enum {
+	QQ_QUESTION_GET = 0x01,
+	QQ_QUESTION_SET = 0x02,
+	QQ_QUESTION_REQUEST = 0x03,		/* get question only*/
+	QQ_QUESTION_ANSWER = 0x04
+};
 
-void qq_add_buddy_with_gc_and_uid(gc_and_uid *g);
-void qq_block_buddy_with_gc_and_uid(gc_and_uid *g);
-
-void qq_do_nothing_with_gc_and_uid(gc_and_uid *g, const gchar *msg);
-
-void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_process_remove_self_reply(guint8 *data, gint data_len, PurpleConnection *gc);
-void qq_process_add_buddy_reply(guint8 *data, gint data_len, guint16 seq, PurpleConnection *gc);
-void qq_process_add_buddy_auth_reply(guint8 *data, gint data_len, PurpleConnection *gc);
-PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboolean is_known, gboolean create);
 void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
-
-PurpleGroup *qq_get_purple_group(const gchar *group_name);
-
+void qq_change_buddys_group(PurpleConnection *gc, const char *who,
+		const char *old_group, const char *new_group);
+void qq_remove_buddy_and_me(PurpleBlistNode * node);
 void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
-void qq_add_buddy_request_free(qq_data *qd);
 
-void qq_buddies_list_free(PurpleAccount *account, qq_data *qd);
+void qq_process_remove_buddy(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+void qq_process_buddy_remove_me(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+void qq_process_add_buddy_no_auth(PurpleConnection *gc,
+		guint8 *data, gint data_len, guint32 uid);
+void qq_process_add_buddy_no_auth_ex(PurpleConnection *gc,
+		guint8 *data, gint data_len, guint32 uid);
+void qq_process_add_buddy_auth(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_buddy_from_server(PurpleConnection *gc, int funct,
+		gchar *from, gchar *to, guint8 *data, gint data_len);
 
+void qq_process_buddy_check_code(PurpleConnection *gc, guint8 *data, gint data_len);
+
+void qq_request_auth_code(PurpleConnection *gc, guint8 cmd, guint16 sub_cmd, guint32 uid);
+void qq_process_auth_code(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+void qq_request_question(PurpleConnection *gc,
+		guint8 cmd, guint32 uid, const gchar *question_utf8, const gchar *answer_utf8);
+void qq_process_question(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+
+void qq_process_add_buddy_auth_ex(PurpleConnection *gc, guint8 *data, gint data_len, guint32 ship32);
+
+qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, guint32 uid);
+void qq_buddy_data_free(qq_buddy_data *bd);
+
+PurpleBuddy *qq_buddy_new(PurpleConnection *gc, guint32 uid);
+PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid);
+PurpleBuddy *qq_buddy_find(PurpleConnection *gc, guint32 uid);
+PurpleGroup *qq_group_find_or_new(const gchar *group_name);
 #endif

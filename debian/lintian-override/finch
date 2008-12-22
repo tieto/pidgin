@@ -1,3 +1,1 @@
 finch: package-name-doesnt-match-sonames libgnt0
-# installed by pidgin-data
-finch: binary-without-manpage usr/bin/finch

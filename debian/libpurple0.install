@@ -3,4 +3,5 @@ debian/tmp/usr/lib/purple-2
 debian/tmp/usr/lib/perl5/Purple.pm
 debian/tmp/usr/lib/perl5/auto/Purple
 debian/tmp/usr/share/man/*/Purple.*
+debian/tmp/usr/share/purple
 debian/lintian-override/libpurple0 usr/share/lintian/overrides

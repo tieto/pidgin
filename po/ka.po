@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim 2.0 CVS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2006-02-05 23:19+0100\n"
 "Last-Translator: Ubuntu Georgian Translators <>\n"
 "Language-Team: Georgian <ka@li.org>\n"
@@ -241,10 +241,6 @@ msgstr "მომხმარებელი არ არის ჯგუფშ
 msgid "You must give a name for the group to add."
 msgstr "ჩასამატებელი ჯგუფის სახელი"
 
-#, fuzzy
-msgid "A group with the name already exists."
-msgstr "ფალი უკვე არსებობს"
-
 msgid "Add Group"
 msgstr "ჯგუფის დამატება"
 
@@ -281,7 +277,6 @@ msgstr "გამოიძახე ინფორმაცია"
 msgid "Add Buddy Pounce"
 msgstr "დაამატე მეგობარი"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "ფაილის გაგზავნა"
 
@@ -289,8 +284,8 @@ msgid "Blocked"
 msgstr "დაბლოკილია"
 
 #, fuzzy
-msgid "View Log"
-msgstr "დაათვალიერე _ლოგი"
+msgid "Show when offline"
+msgstr "მომხმარებელი გასულია ქსელიდან"
 
 #, fuzzy, c-format
 msgid "Please enter the new name for %s"
@@ -334,6 +329,10 @@ msgstr ""
 
 msgid "Toggle Tag"
 msgstr ""
+
+#, fuzzy
+msgid "View Log"
+msgstr "დაათვალიერე _ლოგი"
 
 #. General
 msgid "Nickname"
@@ -1370,7 +1369,7 @@ msgstr "ტიპი"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5022,7 +5021,7 @@ msgstr "საჭმელად გასული"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5246,8 +5245,7 @@ msgstr "პროფაილის URL"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Bonjour პროტოკოლის პლაგინი"
@@ -5288,6 +5286,7 @@ msgstr ""
 msgid "%s just sent you a Nudge!"
 msgstr "შეტყობინების გაგზავნა"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "უცნობი შეცდომა"
@@ -6424,6 +6423,7 @@ msgid ""
 msgstr ""
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "არასწორი"
@@ -6779,11 +6779,13 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "ჩამატება შეუძლებელია"
 
-msgid "Unable To Retrieve Buddy List"
-msgstr ""
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
+msgstr "ვერ ვქმნი სოკეტს"
 
 msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
@@ -6988,48 +6990,6 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 
-#, fuzzy
-msgid "Primary Information"
-msgstr "პირადი ინფორმაცია"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "პირადი ინფორმაცია"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "ქვეყანა"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-msgid "College"
-msgstr ""
-
-#, fuzzy
-msgid "Zipcode"
-msgstr "საფოსტო ინდექსი"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "ტელეფონის ნომერი"
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "ტელეფონის ნომერი"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7119,92 +7079,188 @@ msgid "Other"
 msgstr "Opera"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "ინფორმაცია მომხმარებელზე"
+msgid "Visible"
+msgstr "უხილავია"
 
-#, fuzzy
-msgid "Update information"
-msgstr "ინფორმაცია მომხმარებელძე"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "დაამატე მეგობარი"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "სიჩქარე"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "გთხოვთ ქვემოთ შეიტანოთ ინფორმაცია პერსონის შესახებ"
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "არასწორი ოთახის სახელი"
+msgid "Private"
+msgstr "პრივატობა"
 
-#, c-format
-msgid "You rejected %d's request"
-msgstr ""
-
-msgid "Reject request"
-msgstr ""
-
-#. title
-msgid "Sorry, you are not my style..."
-msgstr ""
-
-msgid "Add buddy with auth request failed"
+msgid "QQ Number"
 msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Country/Region"
+msgstr "ქვეყანა"
+
+msgid "Province/State"
+msgstr ""
+
+#, fuzzy
+msgid "Zipcode"
+msgstr "საფოსტო ინდექსი"
+
+#, fuzzy
+msgid "Phone Number"
+msgstr "ტელეფონის ნომერი"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "ავტორიზაცია"
+
+#, fuzzy
+msgid "Cellphone Number"
+msgstr "ტელეფონის ნომერი"
+
+#, fuzzy
+msgid "Personal Introduction"
+msgstr "პირადი ინფორმაცია"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "ქალაქი"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "პირადი ვებ-გვერდი"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "კონტაქტის სინონიმი"
+
+msgid "College"
+msgstr ""
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "ჰოსტის სახელი"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "დაბლოკილია"
+
+msgid "True"
+msgstr ""
+
+#, fuzzy
+msgid "False"
 msgstr "ოპერაცია ვერ/არ ჩატარდა"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "ამოშალე მეგობარი"
+msgid "Modify Contact"
+msgstr "ანგარიშის პარამეტრების შეცვლა"
 
-msgid "Remove from other's buddy list"
+#, fuzzy
+msgid "Modify Address"
+msgstr "სახლის მისამართი"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "ინფორმაცია მომხმარებელზე"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "ინფორმაცია მომხმარებელზე"
+
+#, fuzzy
+msgid "Update"
+msgstr "ბოლო განახლება"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "გთხოვთ ქვემოთ შეიტანოთ ინფორმაცია პერსონის შესახებ"
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "დაამატე მეგობარი"
+
+msgid "Input answer here"
+msgstr ""
+
+#, fuzzy
+msgid "Send"
+msgstr "_გაგზავნა"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "არასწორი პაროლი"
+
+#, fuzzy
+msgid "Authorization denied message:"
+msgstr "ავტორიზაციის უარყოფის შეტყობინება"
+
+msgid "Sorry, You are not my style."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "ვიწყებ ავთენტურობის დადგენას"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "დავამატო მეგობარი შენ სიას?"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 #, fuzzy
 msgid "Would you be my friend?"
 msgstr "გადავაწერო მას?"
 
-#. multiline
-#. masked
-#. hint
 #, fuzzy
-msgid "Send"
-msgstr "_გაგზავნა"
-
-#, c-format
-msgid "Add into %d's buddy list"
-msgstr ""
+msgid "QQ Buddy"
+msgstr "დაამატე მეგობარი"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "კითხვის შეცდომა"
+msgid "Add buddy"
+msgstr "დაამატე მეგობარი"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "არასწორი ოთახის სახელი"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "გთხოვთ გამიკეთოთ ავტორიზაცია!"
+
+#, c-format
+msgid "Failed removing buddy %d"
+msgstr ""
+
+#, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "No reason given"
+msgstr "მიზეზი მითითებული არაა"
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr ""
+
+#, fuzzy
+msgid "Would you like to add him?"
+msgstr "გადავაწერო მას?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "განულება"
+
+#, fuzzy, c-format
+msgid "Message: %s"
+msgstr "_შეტყობინება:"
 
 msgid "ID: "
 msgstr ""
@@ -7212,18 +7268,6 @@ msgstr ""
 #, fuzzy
 msgid "Group ID"
 msgstr "ჯგუფი:"
-
-#, fuzzy
-msgid "Creator"
-msgstr "შექმნა"
-
-#, fuzzy
-msgid "Group Description"
-msgstr "აღწერილობა"
-
-#, fuzzy
-msgid "Auth"
-msgstr "ავტორიზაცია"
 
 msgid "QQ Qun"
 msgstr ""
@@ -7235,104 +7279,93 @@ msgstr "გთხოვთ შეიყვანოთ თქვენი ახ
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
+msgid "Not member"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "_შეტყობინება:"
-
-#, fuzzy
-msgid "QQ Qun Operation"
-msgstr "ხმის პარამეტრები"
-
-msgid "Approve"
-msgstr ""
-
-#, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
+msgid "Member"
 msgstr ""
 
 #, fuzzy
-msgid "Notice:"
+msgid "Requesting"
+msgstr "პრივატი"
+
+msgid "Admin"
+msgstr ""
+
+#, fuzzy
+msgid "Notice"
 msgstr "შენიშვნა"
 
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
-msgstr ""
-
-msgid "I am a member"
-msgstr ""
-
-msgid "I am requesting"
-msgstr ""
-
-msgid "I am the admin"
-msgstr ""
+#, fuzzy
+msgid "Detail"
+msgstr "e-Mail"
 
 #, fuzzy
-msgid "Unknown status"
-msgstr "უცნობი შეტყობინება"
+msgid "Creator"
+msgstr "შექმნა"
+
+#, fuzzy
+msgid "About me"
+msgstr "Gaim-ის შესახებ"
+
+#, fuzzy
+msgid "Category"
+msgstr "ჩატის შეცდომა"
 
 msgid "The Qun does not allow others to join"
 msgstr ""
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "ჯგუფის წაშლა"
-
-#, fuzzy
-msgid "Join to Qun"
+msgid "Join QQ Qun"
 msgstr "ჩაერთე საუბარში"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+#, fuzzy
+msgid "QQ Qun Operation"
+msgstr "ხმის პარამეტრები"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "ოპერაცია ვერ/არ ჩატარდა"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
 #, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის წაშლა"
+msgid "Quit Qun"
+msgstr "ჩაერთე საუბარში"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-msgid "Do you want to approve the request?"
+msgid "Sorry, you are not our style ..."
 msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
+msgid "Successfully changed Qun member"
 msgstr "ტელეფონის ნომერი"
 
 #, fuzzy
-msgid "Change Qun information"
+msgid "Successfully changed Qun information"
 msgstr "არხის-ინფორმაცია"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "გადავაწერო მას?"
 
 #, fuzzy
@@ -7340,23 +7373,28 @@ msgid "Setup"
 msgstr "შენახვა"
 
 #, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
+msgid "%d requested to join Qun %d for %s"
 msgstr ""
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "ICQ-ზე სერვერზე დაყრდნობა"
+#, c-format
+msgid "%d request to join Qun %d"
+msgstr ""
 
-#, fuzzy
-msgid "System Message"
-msgstr "სისტემის პროტოკოლი"
+#, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr ""
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "შეუძლებელია შეტყობინების გაგზავნა."
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "ამოშალე მეგობარი"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7365,9 +7403,6 @@ msgstr "უცნობი"
 #, fuzzy
 msgid "Level"
 msgstr "არასოდეს"
-
-msgid "Member"
-msgstr ""
 
 msgid " VIP"
 msgstr ""
@@ -7401,12 +7436,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "არასწორი"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "ამოირჩიე ფერი"
+
 #, fuzzy, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ჯგუფის სათაური:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
+msgstr "<b>ჯგუფის სათაური:</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>მომხმარებელი:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7414,11 +7457,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>მომხმარებლის ID:</b> %s<br>"
 
 #, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>ჯგუფის სათაური:</b> %s<br>"
+
+#, fuzzy, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>IP მისამართი</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>IP მისამართი</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7442,24 +7489,45 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b> სინონიმი</b><br>"
 
 #, fuzzy, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ჯგუფის სათაური:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
+msgid "<b>IP</b>: %s<br>\n"
 msgstr "<b>მომხმარებლის ID:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>არხის სახელი:</b>·%s"
 
 #, fuzzy
 msgid "Login Information"
 msgstr "ინფორმაცია სამსახურის შესახებ"
 
 #, fuzzy
-msgid "Set My Information"
-msgstr "ინფორმაცია სერვერის შესახებ"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr "<b>გარე მომხმარებელი</b><br>"
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>მომხმარებელი:</b> %s<br>"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>ჯგუფის სათაური:</b> %s<br>"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Gaim-ის შესახებ"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "ხატულას შენახვა"
 
 msgid "Change Password"
 msgstr "შეცვალე პაროლი"
@@ -7468,11 +7536,12 @@ msgstr "შეცვალე პაროლი"
 msgid "Account Information"
 msgstr "ინფორმაცია სამსახურის შესახებ"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
-msgid "Block this buddy"
-msgstr ""
+#, fuzzy
+msgid "About OpenQ"
+msgstr "Gaim-ის შესახებ"
 
 #. *< type
 #. *< ui_requirement
@@ -7485,13 +7554,27 @@ msgstr ""
 #. *  summary
 #. *  description
 #, fuzzy
-msgid "QQ Protocol\tPlugin"
+msgid "QQ Protocol Plugin"
 msgstr "IRC პროტოკოლის პლაგინი"
 
 #, fuzzy
 msgid "Auto"
 msgstr "ავტორიზაცია"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "მომხმარებლის ამორჩევა"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "დაკავშირება"
@@ -7505,42 +7588,80 @@ msgid "Show server news"
 msgstr "სერვერის მისამართი"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "კითხვის შეცდომა"
 
-msgid "Update interval(s)"
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "კითხვის შეცდომა"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "კავშირის სერვერი"
+
+msgid "Can not decrypt get server reply"
 msgstr ""
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "არასწორი ID"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "შეცდომა პაროლის შეცვლისას"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "საჭიროა რეგისტრაცია"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "კითხვის შეცდომა"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "შეუძლებელია სერვერთან დაკავშირება"
+msgid "Captcha Image"
+msgstr "სურათის შენახვა"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "შეიყვანე პაროლი"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "ჩასამატებელი ჯგუფის სახელი"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7568,8 +7689,11 @@ msgstr "წერის შეცდომა"
 msgid "Connection lost"
 msgstr "კავშირის შეცდომა"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "მომხმარებლის ინფორმაციის შეტანა..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "პრივატი"
 
@@ -7580,13 +7704,35 @@ msgstr ""
 msgid "Invalid server or port"
 msgstr "არასწორია მომხმარებელი ან პაროლი"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
+#, fuzzy
+msgid "Connecting server ..."
 msgstr "კავშირის სერვერი"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "კითხვის შეცდომა"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "შეუძლებელია შეტყობინების გაგზავნა."
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "ICQ-ზე სერვერზე დაყრდნობა"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "ვისგან"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "ინფორმაცია სერვერის შესახებ"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7602,14 +7748,18 @@ msgid "QQ Qun Command"
 msgstr "ბრძანება"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "უცნობი მიზეზი."
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "უცნობი მიზეზი."
 
 #, fuzzy, c-format
@@ -7623,63 +7773,6 @@ msgstr "ფაილის გაგზავნა ვერ მოხერხ
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s -მა შეწყვიტა %s ფაილის გადატანა"
-
-msgid "Do you approve the requestion?"
-msgstr ""
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "მომხმარებელს %s, სურს დაამატოს %s თავის სიაში."
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to add him?"
-msgstr "გადავაწერო მას?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "მომხმარებელს %s, სურს დაამატოს %s თავის სიაში."
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "დაამატე მეგობარი"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s სურს გამოგიგზავნოთ ფაილი"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "მეგობრების სია"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "გადავაწერო მას?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "ვისგან"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "სერვერი-პორტი"
 
 msgid "Connection closed (writing)"
 msgstr ""
@@ -9298,10 +9391,6 @@ msgstr "თქვენი Yahoo! შეტყობინება ვერ �
 msgid "Yahoo! system message for %s:"
 msgstr ""
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "ავტორიზაციის უარყოფის შეტყობინება"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10162,9 +10251,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10226,10 +10315,6 @@ msgstr "დაათვალიერე _ლოგი"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "მომხმარებელი გასულია ქსელიდან"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "მომხმარებელი გასულია ქსელიდან"
 
 msgid "_Alias..."
@@ -10619,7 +10704,7 @@ msgstr "სინონიმი:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10653,10 +10738,6 @@ msgstr "/მეგობრები/მეგობრების სორტ
 #, fuzzy
 msgid "SSL Servers"
 msgstr "სერვერი"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "სერვერი გაითიშა"
 
 #, fuzzy
 msgid "Unknown command."
@@ -11013,8 +11094,12 @@ msgstr "შეცდომა"
 msgid "Fatal Error"
 msgstr "შიგანის შეცდომა"
 
-msgid "developer"
+msgid "bug master"
 msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "მისამართი"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11023,11 +11108,7 @@ msgstr ""
 msgid "support"
 msgstr "სუპორტი"
 
-#, fuzzy
-msgid "support/QA"
-msgstr "სუპორტი"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr ""
 
 msgid "Senior Contributor/QA"
@@ -11047,8 +11128,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "Jabber"
+msgid "support/QA"
+msgstr "სუპორტი"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "თავდაპირველი ავტორი"
@@ -11317,9 +11401,6 @@ msgid "Retired Developers"
 msgstr "პროგრამის შემქმნელები"
 
 msgid "Retired Crazy Patch Writers"
-msgstr ""
-
-msgid "Artists"
 msgstr ""
 
 msgid "Current Translators"
@@ -11929,11 +12010,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -12792,8 +12868,13 @@ msgstr "_მიიღე ინფორმაცია"
 msgid "_Invite"
 msgstr "მოწვევა"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "შეცვლა"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "_დამატება"
 
 msgid "_Open Mail"
 msgstr "ელ.ფოსტის გახსნა"
@@ -12817,6 +12898,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "არაფერი"
+
+#, fuzzy
+msgid "Small"
+msgstr "Email"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr ""
@@ -13282,6 +13370,10 @@ msgstr ""
 msgid "Set window manager \"_URGENT\" hint"
 msgstr ""
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "C_hat ფანჯრები"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr ""
@@ -13463,20 +13555,19 @@ msgid ""
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr "თქვენ იყენებთ Gaim-ის ვერსიას %s. ახლანდელი ვერსიაა %s.<hr>"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"<b>ცვლილებების ლოგი:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "ხელმიუწვდომელია"
+
+#, fuzzy
+msgid "Later"
+msgstr "თარიღი"
+
+msgid "Download Now"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -13784,6 +13875,126 @@ msgstr ""
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 
+#, fuzzy
+#~ msgid "A group with the name already exists."
+#~ msgstr "ფალი უკვე არსებობს"
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "პირადი ინფორმაცია"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "ინფორმაცია მომხმარებელძე"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "სიჩქარე"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "არასწორი ოთახის სახელი"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "კითხვის შეცდომა"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "აღწერილობა"
+
+#, fuzzy
+#~ msgid "Auth"
+#~ msgstr "ავტორიზაცია"
+
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "უცნობი შეტყობინება"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "ჯგუფის წაშლა"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის წაშლა"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "სისტემის პროტოკოლი"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>მომხმარებლის ID:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>არხის სახელი:</b>·%s"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "ინფორმაცია სერვერის შესახებ"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "შეცდომა პაროლის შეცვლისას"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "კავშირის სერვერი"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "მომხმარებელს %s, სურს დაამატოს %s თავის სიაში."
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "მომხმარებელს %s, სურს დაამატოს %s თავის სიაში."
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "დაამატე მეგობარი"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s სურს გამოგიგზავნოთ ფაილი"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "მეგობრების სია"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "გადავაწერო მას?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "სერვერი-პორტი"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "სერვერი გაითიშა"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "Jabber"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr "თქვენ იყენებთ Gaim-ის ვერსიას %s. ახლანდელი ვერსიაა %s.<hr>"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>ცვლილებების ლოგი:</b>\n"
+#~ "%s<br><br>"
+
 #~ msgid "Screen name:"
 #~ msgstr "მომხმარებელი:"
 
@@ -14084,9 +14295,6 @@ msgstr ""
 #~ msgid "Gaim User"
 #~ msgstr "Gaim-ის მომხმარებელი"
 
-#~ msgid "e-Mail"
-#~ msgstr "e-Mail"
-
 #~ msgid "Invalid Jabber ID"
 #~ msgstr "არასწორი Jabber ID"
 
@@ -14110,9 +14318,6 @@ msgstr ""
 
 #~ msgid "NAPSTER Protocol Plugin"
 #~ msgstr "NAPSTER პროტოკოლის პლაგინი"
-
-#~ msgid "Invalid password"
-#~ msgstr "არასწორი პაროლი"
 
 #~ msgid "_Connect"
 #~ msgstr "_შეერთება"
@@ -14145,9 +14350,6 @@ msgstr ""
 
 #~ msgid "Auth port"
 #~ msgstr "დამადასტ. პორტი"
-
-#~ msgid "<b>External User</b><br>"
-#~ msgstr "<b>გარე მომხმარებელი</b><br>"
 
 #~ msgid "<b>Full Name:</b> %s<br>"
 #~ msgstr "<b>სრული სახელი:</b> %s<br>"

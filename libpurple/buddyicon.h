@@ -337,7 +337,7 @@ PurpleStoredImage *
 purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
                                                   const gchar *filename);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BUDDYICON_C_)
 /**
  * PurpleContact version of purple_buddy_icons_node_has_custom_icon.
  *

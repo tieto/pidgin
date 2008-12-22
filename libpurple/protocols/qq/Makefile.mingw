@@ -46,16 +46,12 @@ C_SRC = \
 	qq_crypt.c \
 	file_trans.c \
 	group.c \
-	group_conv.c \
-	group_find.c \
-	group_free.c \
 	group_internal.c \
 	group_im.c \
 	group_info.c \
 	group_join.c \
 	group_opt.c \
-	group_search.c \
-	header_info.c \
+	qq_define.c \
 	im.c \
 	packet_parse.c \
 	qq.c \
@@ -64,7 +60,6 @@ C_SRC = \
 	qq_process.c \
 	qq_trans.c \
 	send_file.c \
-	sys_msg.c \
 	utils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)

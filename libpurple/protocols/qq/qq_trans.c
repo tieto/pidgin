@@ -30,7 +30,7 @@
 #include "prefs.h"
 #include "request.h"
 
-#include "header_info.h"
+#include "qq_define.h"
 #include "qq_network.h"
 #include "qq_process.h"
 #include "qq_trans.h"
@@ -39,7 +39,7 @@ enum {
 	QQ_TRANS_IS_SERVER = 0x01,			/* Is server command or client command */
 	QQ_TRANS_IS_IMPORT = 0x02,			/* Only notice if not get reply; or resend, disconn if reties get 0*/
 	QQ_TRANS_REMAINED = 0x04,				/* server command before login*/
-	QQ_TRANS_IS_REPLY = 0x08,				/* server command before login*/
+	QQ_TRANS_IS_REPLY = 0x08				/* server command before login*/
 };
 
 struct _qq_transaction {
@@ -131,6 +131,7 @@ static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
 	}
 
 	trans->update_class = update_class;
+	trans->ship32 = ship32;
 	return trans;
 }
 

@@ -61,14 +61,14 @@
 /* Commands */
 typedef enum {
 	SILCPURPLE_WB_DRAW 	= 0x01,
-	SILCPURPLE_WB_CLEAR	= 0x02,
+	SILCPURPLE_WB_CLEAR	= 0x02
 } SilcPurpleWbCommand;
 
 /* Brush size */
 typedef enum {
 	SILCPURPLE_WB_BRUSH_SMALL = 2,
 	SILCPURPLE_WB_BRUSH_MEDIUM = 5,
-	SILCPURPLE_WB_BRUSH_LARGE = 10,
+	SILCPURPLE_WB_BRUSH_LARGE = 10
 } SilcPurpleWbBrushSize;
 
 /* Brush color (XXX Purple should provide default colors) */
@@ -85,7 +85,7 @@ typedef enum {
 	SILCPURPLE_WB_COLOR_TAN		= 12093547,
 	SILCPURPLE_WB_COLOR_BROWN		= 5256485,
 	SILCPURPLE_WB_COLOR_GREY		= 11184810,
-	SILCPURPLE_WB_COLOR_WHITE		= 16777215,
+	SILCPURPLE_WB_COLOR_WHITE		= 16777215
 } SilcPurpleWbColor;
 
 typedef struct {

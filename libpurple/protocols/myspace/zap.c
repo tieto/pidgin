@@ -20,10 +20,6 @@
 #include "myspace.h"
 #include "zap.h"
 
-static gboolean msim_send_zap(MsimSession *session, const gchar *username, guint code);
-static void msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr);
-
-
 /** Get zap types. */
 GList *
 msim_attention_types(PurpleAccount *acct)
@@ -100,6 +96,33 @@ msim_attention_types(PurpleAccount *acct)
 	return types;
 }
 
+/** Send a zap to a user. */
+static gboolean
+msim_send_zap(MsimSession *session, const gchar *username, guint code)
+{
+	gchar *zap_string;
+	gboolean rc;
+
+	g_return_val_if_fail(session != NULL, FALSE);
+	g_return_val_if_fail(username != NULL, FALSE);
+
+	/* Construct and send the actual zap command. */
+	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
+
+	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION)) {
+		purple_debug_info("msim_send_zap",
+				"msim_send_bm failed: zapping %s with %s\n",
+				username, zap_string);
+		rc = FALSE;
+	} else {
+		rc = TRUE;
+	}
+
+	g_free(zap_string);
+
+	return rc;
+}
+
 /** Send a zap */
 gboolean
 msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
@@ -128,33 +151,6 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 	msim_send_zap(session, username, code);
 
 	return TRUE;
-}
-
-/** Send a zap to a user. */
-static gboolean
-msim_send_zap(MsimSession *session, const gchar *username, guint code)
-{
-	gchar *zap_string;
-	gboolean rc;
-
-	g_return_val_if_fail(session != NULL, FALSE);
-	g_return_val_if_fail(username != NULL, FALSE);
-
-	/* Construct and send the actual zap command. */
-	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
-
-	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION)) {
-		purple_debug_info("msim_send_zap_from_menu", "msim_send_bm failed: zapping %s with %s\n",
-				username, zap_string);
-		rc = FALSE;
-	} else {
-		rc = TRUE;
-	}
-	
-	g_free(zap_string);
-
-	return rc;
-
 }
 
 /** Zap someone. Callback from msim_blist_node_menu zap menu. */
@@ -248,5 +244,3 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 
 	return TRUE;
 }
-
-

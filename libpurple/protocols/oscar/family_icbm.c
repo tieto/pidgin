@@ -1214,7 +1214,7 @@ int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *mess
 	/*
 	 * Your UIN
 	 */
-	byte_stream_putle32(&bs, atoi(od->sn));
+	byte_stream_putuid(&bs, od);
 
 	/*
 	 * TLV t(type) l(strlen(message)+1) v(message+NULL)

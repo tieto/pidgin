@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2005-08-21 10:43+0300\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -249,10 +249,6 @@ msgstr ""
 msgid "You must give a name for the group to add."
 msgstr "Введіть назву групи, що додаватиметься."
 
-#, fuzzy
-msgid "A group with the name already exists."
-msgstr "Тека з такою назвою вже існує"
-
 msgid "Add Group"
 msgstr "Додати групу"
 
@@ -289,7 +285,6 @@ msgstr "Отримати інформацію"
 msgid "Add Buddy Pounce"
 msgstr "Додати _правило"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "Надіслати файл"
 
@@ -297,8 +292,8 @@ msgid "Blocked"
 msgstr "Заблоковано"
 
 #, fuzzy
-msgid "View Log"
-msgstr "Переглянути _журнал"
+msgid "Show when offline"
+msgstr "Не допускається не у мережі"
 
 #, fuzzy, c-format
 msgid "Please enter the new name for %s"
@@ -342,6 +337,10 @@ msgstr ""
 
 msgid "Toggle Tag"
 msgstr ""
+
+#, fuzzy
+msgid "View Log"
+msgstr "Переглянути _журнал"
 
 #. General
 msgid "Nickname"
@@ -1422,7 +1421,7 @@ msgstr ""
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5256,7 +5255,7 @@ msgstr "Відійшов на обід"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5497,8 +5496,7 @@ msgstr "URL профілю"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Модуль протоколу Novell GroupWise Messenger"
@@ -5541,6 +5539,7 @@ msgstr "%s на %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s бажає надіслати вам файл"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "Невідома помилка"
@@ -6750,6 +6749,7 @@ msgstr ""
 "містити лише цифри."
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "Неправильне ім'я користувача"
@@ -7181,10 +7181,12 @@ msgstr ""
 "неправильний. Ідентифікатори користувачів повинні містити лише літери, числа "
 "та пробіли, або містити лише цифри."
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "Не вдається додати"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "Не вдається завантажити список контактів"
 
 #, fuzzy
@@ -7419,49 +7421,6 @@ msgstr ""
 "та є необхідним для передавання зображень. Так як ваша ІР адреса буде "
 "розкрита, це може вважатись загрозою безпеці."
 
-#, fuzzy
-msgid "Primary Information"
-msgstr "Інформація про профіль"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "Особиста інформація"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "Країна"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-#, fuzzy
-msgid "College"
-msgstr "_Згорнути"
-
-#, fuzzy
-msgid "Zipcode"
-msgstr "Поштовий індекс"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "Номер телефон"
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "Номер телефон"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7552,94 +7511,189 @@ msgid "Other"
 msgstr "Opera"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "Інформація про користувача"
+msgid "Visible"
+msgstr "Невидимий"
 
-#, fuzzy
-msgid "Update information"
-msgstr "Інформація про користувача"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Додати користувача"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "Швидкість:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "Введіть користувача для стеження."
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "Неправильна назва кімнати"
+msgid "Private"
+msgstr "Конфіденційність"
 
-#, fuzzy, c-format
-msgid "You rejected %d's request"
-msgstr "Непередбачений запит"
-
-#, fuzzy
-msgid "Reject request"
-msgstr "Непередбачений запит"
-
-#. title
-msgid "Sorry, you are not my style..."
+msgid "QQ Number"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "У додаванні користувача відмовлено"
+msgid "Country/Region"
+msgstr "Країна"
+
+msgid "Province/State"
+msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Zipcode"
+msgstr "Поштовий індекс"
+
+#, fuzzy
+msgid "Phone Number"
+msgstr "Номер телефон"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "Авторизувати"
+
+#, fuzzy
+msgid "Cellphone Number"
+msgstr "Номер телефон"
+
+#, fuzzy
+msgid "Personal Introduction"
+msgstr "Особиста інформація"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "Місто"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "Особиста веб-сторінка"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "Псевдонім контакту"
+
+#, fuzzy
+msgid "College"
+msgstr "_Згорнути"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "Порти"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "Заблоковано"
+
+#, fuzzy
+msgid "True"
+msgstr "Турецька"
+
+#, fuzzy
+msgid "False"
 msgstr "Помилка"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "Видалити користувача"
+msgid "Modify Contact"
+msgstr "Зміна облікового запису"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "Видалити користувача зі списку контактів"
+msgid "Modify Address"
+msgstr "Домашня адреса"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "Інформація про користувача"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "Інформація про користувача"
+
+#, fuzzy
+msgid "Update"
+msgstr "Останнє оновлення"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "Введіть користувача для стеження."
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "Додати користувача"
+
+msgid "Input answer here"
+msgstr ""
+
+msgid "Send"
+msgstr "Надіслати"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "Неправильний пароль"
+
+#, fuzzy
+msgid "Authorization denied message:"
+msgstr "Повідомлення відмови у авторизації:"
+
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "Початок ідентифікації"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "Додати користувача у список?"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 #, fuzzy
 msgid "Would you be my friend?"
 msgstr "Бажаєте переписати його?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "Надіслати"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "Додати розмову у список контактів"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Додати користувача"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "Помилка читання"
+msgid "Add buddy"
+msgstr "Додати користувача"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "Неправильна назва кімнати"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "Будь-ласка, авторизуйте мене!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "Не вдається приєднатися до користувача у кімнаті"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "Видалити користувача зі списку контактів"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "Причина не вказана."
+
+#. only need to get value
+#, fuzzy, c-format
+msgid "You have been added by %s"
+msgstr "Ви були знищені оператором %s (%s)"
+
+#, fuzzy
+msgid "Would you like to add him?"
+msgstr "Бажаєте переписати його?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "Скинути"
+
+#, fuzzy, c-format
+msgid "Message: %s"
+msgstr "_Повідомлення:"
 
 msgid "ID: "
 msgstr ""
@@ -7647,18 +7701,6 @@ msgstr ""
 #, fuzzy
 msgid "Group ID"
 msgstr "Група:"
-
-#, fuzzy
-msgid "Creator"
-msgstr "Закрити"
-
-#, fuzzy
-msgid "Group Description"
-msgstr "Опис"
-
-#, fuzzy
-msgid "Auth"
-msgstr "Авторизувати"
 
 msgid "QQ Qun"
 msgstr ""
@@ -7670,57 +7712,40 @@ msgstr "Введіть нову назву для обраної групи."
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "_Повідомлення:"
+#, fuzzy
+msgid "Not member"
+msgstr "Член з"
 
 #, fuzzy
-msgid "QQ Qun Operation"
-msgstr "Параметри звуку"
+msgid "Member"
+msgstr "Член з"
 
-msgid "Approve"
-msgstr ""
+#, fuzzy
+msgid "Requesting"
+msgstr "Неоднозначний запит"
 
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Не вдається приєднатися до користувача у кімнаті"
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
+msgid "Admin"
 msgstr ""
 
 #, fuzzy
-msgid "Notice:"
+msgid "Notice"
 msgstr "Примітки"
 
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
-msgstr ""
-
-msgid "I am a member"
-msgstr ""
+#, fuzzy
+msgid "Detail"
+msgstr "Подробиці"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "Неправильний запит"
-
-msgid "I am the admin"
-msgstr ""
+msgid "Creator"
+msgstr "Закрити"
 
 #, fuzzy
-msgid "Unknown status"
-msgstr "Невідоме повідомлення"
+msgid "About me"
+msgstr "Про Gaim"
+
+#, fuzzy
+msgid "Category"
+msgstr "Помилка читання"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
@@ -7729,74 +7754,85 @@ msgstr ""
 "одночасно"
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "Видалити групу"
-
-#, fuzzy
-msgid "Join to Qun"
+msgid "Join QQ Qun"
 msgstr "Приєднатися до розмови"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+#, fuzzy
+msgid "QQ Qun Operation"
+msgstr "Параметри звуку"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "Помилка"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
 #, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "Ви дійсно бажаєте видалити %s?"
+msgid "Quit Qun"
+msgstr "Приєднатися до розмови"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-#, fuzzy
-msgid "Do you want to approve the request?"
-msgstr "Чи дійсно бажаєте видалити повідомлення про відсутність \"%s\"?"
+msgid "Sorry, you are not our style ..."
+msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
+msgid "Successfully changed Qun member"
 msgstr "Номер телефон"
 
 #, fuzzy
-msgid "Change Qun information"
+msgid "Successfully changed Qun information"
 msgstr "Інформація про канал"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "Бажаєте приєднатися до бесіди?"
 
 #, fuzzy
 msgid "Setup"
 msgstr "_Встановити"
 
+#, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr ""
+
+#, c-format
+msgid "%d request to join Qun %d"
+msgstr ""
+
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s на %s (%s)"
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Не вдається приєднатися до користувача у кімнаті"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "Транзитний сервер ICQ"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
 
-#, fuzzy
-msgid "System Message"
-msgstr "Надсилання повідомлення"
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "Видалити користувача"
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "Не вдається приєднатися до розмови"
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7805,10 +7841,6 @@ msgstr "Невідомо"
 #, fuzzy
 msgid "Level"
 msgstr "ніколи"
-
-#, fuzzy
-msgid "Member"
-msgstr "Член з"
 
 msgid " VIP"
 msgstr ""
@@ -7842,12 +7874,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "Неправильне ім'я користувача"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "Вибрати колір тексту"
+
 #, fuzzy, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>Користувач:</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>Псевдонім:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Користувач:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7855,11 +7895,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Користувач:</b> %s<br>"
 
 #, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>Користувач:</b> %s<br>"
+
+#, fuzzy, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Бездіяльний:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>IP адреса:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7883,26 +7927,44 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Псевдонім:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Користувач:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>Псевдонім:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr ""
-"\n"
-"<b>%s:</b> %s"
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>Користувач:</b> %s<br>"
 
 #, fuzzy
 msgid "Login Information"
 msgstr "Інформація про користувача"
 
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
 #, fuzzy
-msgid "Set My Information"
-msgstr "Інформація про сервер"
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>Користувач:</b> %s<br>"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>Псевдонім:</b> %s<br>"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Про Gaim"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "Збереження значка"
 
 msgid "Change Password"
 msgstr "Зміна паролю"
@@ -7911,12 +7973,12 @@ msgstr "Зміна паролю"
 msgid "Account Information"
 msgstr "Інформація про користувача"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
 #, fuzzy
-msgid "Block this buddy"
-msgstr "Блокувати користувача"
+msgid "About OpenQ"
+msgstr "Про Gaim"
 
 #. *< type
 #. *< ui_requirement
@@ -7929,13 +7991,27 @@ msgstr "Блокувати користувача"
 #. *  summary
 #. *  description
 #, fuzzy
-msgid "QQ Protocol\tPlugin"
+msgid "QQ Protocol Plugin"
 msgstr "Модуль протоколу IRC"
 
 #, fuzzy
 msgid "Auto"
 msgstr "Авторизувати"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "Вибрати колір тексту"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "З'єднання"
@@ -7949,42 +8025,81 @@ msgid "Show server news"
 msgstr "Показати менше параметри"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "Помилка читання"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "Помилка читання"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "Не вдається отримати інформацію про сервер"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "Не вдається отримати інформацію про сервер"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "Неправильний ідентифікатор авторизації"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "Помилка зміни паролю"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "Вимагається реєстрація"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "Помилка читання"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "Не вдається з'єднатися з сервером."
+msgid "Captcha Image"
+msgstr "Збереження зображення"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "Зміна паролю"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "Введіть назву групи, що додаватиметься."
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -8012,8 +8127,11 @@ msgstr "Помилка запису"
 msgid "Connection lost"
 msgstr "З'єднання розірвано"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "Встановити інформацію про користувача..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "Запит заборонено"
 
@@ -8025,15 +8143,35 @@ msgstr "Не вдається з'єднатись з вузлом"
 msgid "Invalid server or port"
 msgstr "Неправильне ім'я користувача чи пароль"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"Невідома помилка від сервера %s (%s):\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "З'єднатися з сервером"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "Помилка читання"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "Не вдається приєднатися до розмови"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "Транзитний сервер ICQ"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "Від"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "Інформація про сервер"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -8049,14 +8187,18 @@ msgid "QQ Qun Command"
 msgstr "команда"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "Помилка невідома."
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "Помилка невідома."
 
 #, fuzzy, c-format
@@ -8070,64 +8212,6 @@ msgstr "Не вдається відправити файл"
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s скасував передавання %s"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "Чи дійсно бажаєте видалити повідомлення про відсутність \"%s\"?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "Бажаєте додати цей контакт у список контактів?"
-
-#. only need to get value
-#, fuzzy, c-format
-msgid "You have been added by %s"
-msgstr "Ви були знищені оператором %s (%s)"
-
-#, fuzzy
-msgid "Would you like to add him?"
-msgstr "Бажаєте переписати його?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "Користувач %s бажає додати %s до власного списку контактів."
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "Додати користувача"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s бажає надіслати вам файл"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "Додати користувача у список контактів"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "Бажаєте переписати його?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "Від"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "Порт сервера"
 
 #, fuzzy
 msgid "Connection closed (writing)"
@@ -9895,10 +9979,6 @@ msgstr "Ваше повідомлення Yahoo! не відправлено."
 msgid "Yahoo! system message for %s:"
 msgstr "Системне повідомлення Yahoo! для %s:"
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "Повідомлення відмови у авторизації:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10841,9 +10921,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10910,10 +10990,6 @@ msgstr "Переглянути _журнал"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "Не допускається не у мережі"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "Не допускається не у мережі"
 
 msgid "_Alias..."
@@ -11326,7 +11402,7 @@ msgstr "Псевдонім:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -11365,10 +11441,6 @@ msgstr "/Контакти/Показувати відсутніх користу
 #, fuzzy
 msgid "SSL Servers"
 msgstr "Сервер"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "З'єднання розірвано."
 
 #, fuzzy
 msgid "Unknown command."
@@ -11742,8 +11814,12 @@ msgstr "Помилка"
 msgid "Fatal Error"
 msgstr "Внутрішня помилка"
 
-msgid "developer"
-msgstr "розробник"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "Адреса"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11753,10 +11829,7 @@ msgid "support"
 msgstr "підтримка"
 
 #, fuzzy
-msgid "support/QA"
-msgstr "підтримка"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr "розробник та вебмайстер"
 
 msgid "Senior Contributor/QA"
@@ -11777,8 +11850,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "хакер та призначений машиніст [lazy bum]"
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "розробник"
+msgid "support/QA"
+msgstr "підтримка"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "початковий автор"
@@ -12047,9 +12123,6 @@ msgstr "Колишні розробники"
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "Одержимі автори латок"
-
-msgid "Artists"
-msgstr ""
 
 msgid "Current Translators"
 msgstr "Поточні перекладачі"
@@ -12699,11 +12772,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -13626,8 +13694,13 @@ msgstr "Отримати інформацію"
 msgid "_Invite"
 msgstr "_Запросити"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "З_мінити"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "Додати"
 
 msgid "_Open Mail"
 msgstr "_Відкрити пошту"
@@ -13652,6 +13725,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "Будь-хто"
+
+#, fuzzy
+msgid "Small"
+msgstr "Ел.пошта"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 #, fuzzy
 msgid "Response Probability:"
@@ -14143,6 +14223,10 @@ msgstr "Вставляти _кількість нових повідомлень
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Встановити підказку \"_ТЕРМІНОВО\" менеджера вікон"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "Вікна _розмов"
+
 #. Raise window method button
 #, fuzzy
 msgid "R_aise conversation window"
@@ -14339,20 +14423,20 @@ msgstr ""
 "тексту (Jabber, MSN, IRC, TOC). Для надсилання натисніть Еnter у області "
 "вводу. Слідкуйте за вікном налагодження."
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr "Ви використовуєте Gaim версії %s.  Остання доступна версія - %s.<hr>"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"<b>Список змін:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "Доступна нова версія"
+
+#, fuzzy
+msgid "Later"
+msgstr "Дата"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "Користувачі %s: %s"
 
 #. *< type
 #. *< ui_requirement
@@ -14678,6 +14762,173 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "A group with the name already exists."
+#~ msgstr "Тека з такою назвою вже існує"
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "Інформація про профіль"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "Інформація про користувача"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "Швидкість:"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "Неправильна назва кімнати"
+
+#, fuzzy
+#~ msgid "You rejected %d's request"
+#~ msgstr "Непередбачений запит"
+
+#, fuzzy
+#~ msgid "Reject request"
+#~ msgstr "Непередбачений запит"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "У додаванні користувача відмовлено"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "Додати розмову у список контактів"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "Помилка читання"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "Опис"
+
+#, fuzzy
+#~ msgid "Auth"
+#~ msgstr "Авторизувати"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "Неправильний запит"
+
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "Невідоме повідомлення"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "Видалити групу"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "Ви дійсно бажаєте видалити %s?"
+
+#, fuzzy
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "Чи дійсно бажаєте видалити повідомлення про відсутність \"%s\"?"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s на %s (%s)"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "Надсилання повідомлення"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>Псевдонім:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>%s:</b> %s"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "Інформація про сервер"
+
+#, fuzzy
+#~ msgid "Block this buddy"
+#~ msgstr "Блокувати користувача"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "Помилка зміни паролю"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "Не вдається з'єднатися з сервером."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "Невідома помилка від сервера %s (%s):\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "Чи дійсно бажаєте видалити повідомлення про відсутність \"%s\"?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "Бажаєте додати цей контакт у список контактів?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "Користувач %s бажає додати %s до власного списку контактів."
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "Додати користувача"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s бажає надіслати вам файл"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "Додати користувача у список контактів"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "Бажаєте переписати його?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "Порт сервера"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "З'єднання розірвано."
+
+#~ msgid "developer"
+#~ msgstr "розробник"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "розробник"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr ""
+#~ "Ви використовуєте Gaim версії %s.  Остання доступна версія - %s.<hr>"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>Список змін:</b>\n"
+#~ "%s<br><br>"
 
 #, fuzzy
 #~ msgid "Screen name:"
@@ -15352,9 +15603,6 @@ msgstr ""
 #~ msgid "NAPSTER Protocol Plugin"
 #~ msgstr "Модуль протоколу NAPSTER"
 
-#~ msgid "Invalid password"
-#~ msgstr "Неправильний пароль"
-
 #~ msgid "Error processing event or response (%s)."
 #~ msgstr "Помилка обробки події чи відповіді (%s)."
 
@@ -16008,9 +16256,6 @@ msgstr ""
 
 #~ msgid "Summary"
 #~ msgstr "Зведення"
-
-#~ msgid "Details"
-#~ msgstr "Подробиці"
 
 #~ msgid "Message Text"
 #~ msgstr "Текст повідомлення"

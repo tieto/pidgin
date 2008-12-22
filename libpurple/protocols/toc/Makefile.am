@@ -1,6 +1,6 @@
 EXTRA_DIST = \
-		PROTOCOL \
-		Makefile.mingw
+	PROTOCOL \
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -13,9 +13,9 @@ libtoc_la_LDFLAGS = -module -avoid-version
 if STATIC_TOC
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libtoc.a
-libtoc_a_SOURCES = $(TOCSOURCES)
-libtoc_a_CFLAGS  = $(AM_CFLAGS)
+noinst_LTLIBRARIES = libtoc.la
+libtoc_la_SOURCES  = $(TOCSOURCES)
+libtoc_la_CFLAGS   = $(AM_CFLAGS)
 
 else
 

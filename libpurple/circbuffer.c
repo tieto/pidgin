@@ -109,13 +109,12 @@ void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize l
 	else
 		len_stored = len;
 
-	memcpy(buf->inptr, src, len_stored);
+	if (len_stored > 0)
+		memcpy(buf->inptr, src, len_stored);
 
 	if (len_stored < len) {
 		memcpy(buf->buffer, (char*)src + len_stored, len - len_stored);
 		buf->inptr = buf->buffer + (len - len_stored);
-	} else if ((buf->buffer - buf->inptr) == len_stored) {
-		buf->inptr = buf->buffer;
 	} else {
 		buf->inptr += len_stored;
 	}

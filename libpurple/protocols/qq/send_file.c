@@ -31,7 +31,7 @@
 
 #include "buddy_list.h"
 #include "file_trans.h"
-#include "header_info.h"
+#include "qq_define.h"
 #include "im.h"
 #include "qq_base.h"
 #include "packet_parse.h"
@@ -54,8 +54,8 @@ enum
 static int _qq_in_same_lan(ft_info *info)
 {
 	if (info->remote_internet_ip == info->local_internet_ip) return 1;
-	purple_debug_info("QQ", 
-			"Not in the same LAN, remote internet ip[%x], local internet ip[%x]\n",  
+	purple_debug_info("QQ",
+			"Not in the same LAN, remote internet ip[%x], local internet ip[%x]\n",
 			info->remote_internet_ip
 			, info->local_internet_ip);
 	return 0;
@@ -87,7 +87,7 @@ static ssize_t _qq_xfer_udp_recv(guint8 *buf, size_t len, PurpleXfer *xfer)
 	info = (ft_info *) xfer->data;
 	sinlen = sizeof(sin);
 	r = recvfrom(info->recv_fd, buf, len, 0, (struct sockaddr *) &sin, &sinlen);
-	purple_debug_info("QQ", 
+	purple_debug_info("QQ",
 			"==> recv %d bytes from File UDP Channel, remote ip[%s], remote port[%d]\n",
 			r, inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
 	return r;
@@ -121,11 +121,8 @@ static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, PurpleXfer *xfer
 		sin.sin_port = g_htons(info->remote_minor_port);
 		sin.sin_addr.s_addr = g_htonl(info->remote_real_ip);
 	}
-	purple_debug_info("QQ", "sending to channel: %d.%d.%d.%d:%d\n",
-			(int)sin.sin_addr.s_addr & 0xff,
-			(int)(sin.sin_addr.s_addr >> 8) & 0xff,
-			(int)(sin.sin_addr.s_addr >> 16) & 0xff,
-			(int)sin.sin_addr.s_addr >> 24,
+	purple_debug_info("QQ", "sending to channel: %s:%d\n",
+			inet_ntoa(sin.sin_addr),
 			(int)g_ntohs(sin.sin_port)
 		  );
 	return sendto(info->sender_fd, buf, len, 0, (struct sockaddr *) &sin, sizeof(sin));
@@ -301,7 +298,7 @@ static gint _qq_create_packet_file_header
 	/* 004-007: sender uid */
 	bytes += qq_put32 (raw_data + bytes, to_uid);
 	/* 008-009: sender client version */
-	bytes += qq_put16 (raw_data + bytes, QQ_CLIENT);
+	bytes += qq_put16 (raw_data + bytes, qd->client_tag);
 	/* 010-013: receiver uid */
 	bytes += qq_put32 (raw_data + bytes, qd->uid);
 	/* 014-017: sender uid */
@@ -380,7 +377,7 @@ in_addr_t get_real_ip()
 
 static void _qq_xfer_init_socket(PurpleXfer *xfer)
 {
-	gint sockfd, listen_port = 0, i; 
+	gint sockfd, listen_port = 0, i;
 	socklen_t sin_len;
 	struct sockaddr_in sin;
 	ft_info *info;
@@ -389,7 +386,7 @@ static void _qq_xfer_init_socket(PurpleXfer *xfer)
 	g_return_if_fail(xfer->data != NULL);
 	info = (ft_info *) xfer->data;
 
-	/* debug 
+	/* debug
 	info->local_real_ip = 0x7f000001;
 	*/
 	info->local_real_ip = g_ntohl(inet_addr(purple_network_get_my_ip(-1)));
@@ -460,7 +457,7 @@ static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, 
 	raw_data = g_newa(guint8, packet_len);
 	bytes = 0;
 
-	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, 
+	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid,
 			QQ_FILE_TRANS_REQ, qd, FALSE);
 	bytes += qq_fill_conn_info(raw_data + bytes, info);
 	/* 079: 0x20 */
@@ -615,7 +612,8 @@ _qq_xfer_init (PurpleXfer * xfer)
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	guint32 to_uid;
-	gchar *filename, *filename_without_path;
+	const gchar *filename;
+	gchar *base_filename;
 
 	g_return_if_fail (xfer != NULL);
 	account = purple_xfer_get_account(xfer);
@@ -624,13 +622,14 @@ _qq_xfer_init (PurpleXfer * xfer)
 	to_uid = purple_name_to_uid (xfer->who);
 	g_return_if_fail (to_uid != 0);
 
-	filename = (gchar *) purple_xfer_get_local_filename (xfer);
+	filename = purple_xfer_get_local_filename (xfer);
 	g_return_if_fail (filename != NULL);
 
-	filename_without_path = strrchr (filename, '/') + 1;
+	base_filename = g_path_get_basename(filename);
 
-	_qq_send_packet_file_request (gc, to_uid, filename_without_path,
+	_qq_send_packet_file_request (gc, to_uid, base_filename,
 			purple_xfer_get_size(xfer));
+	g_free(base_filename);
 }
 
 /* cancel the transfer of receiving files */
@@ -682,7 +681,7 @@ static void _qq_xfer_recv_init(PurpleXfer *xfer)
 }
 
 /* process reject im for file transfer request */
-void qq_process_recv_file_reject (guint8 *data, gint data_len, 
+void qq_process_recv_file_reject (guint8 *data, gint data_len,
 		guint32 sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
@@ -699,7 +698,7 @@ void qq_process_recv_file_reject (guint8 *data, gint data_len,
 		return;
 	}
 	*/
-	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
+	filename = g_path_get_basename(purple_xfer_get_local_filename(qd->xfer));
 	msg = g_strdup_printf(_("%d has declined the file %s"),
 		 sender_uid, filename);
 
@@ -707,11 +706,12 @@ void qq_process_recv_file_reject (guint8 *data, gint data_len,
 	purple_xfer_request_denied(qd->xfer);
 	qd->xfer = NULL;
 
-	g_free (msg);
+	g_free(filename);
+	g_free(msg);
 }
 
 /* process cancel im for file transfer request */
-void qq_process_recv_file_cancel (guint8 *data, gint data_len, 
+void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 		guint32 sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
@@ -728,7 +728,7 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 		return;
 	}
 	*/
-	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
+	filename = g_path_get_basename(purple_xfer_get_local_filename(qd->xfer));
 	msg = g_strdup_printf
 		(_("%d canceled the transfer of %s"),
 		 sender_uid, filename);
@@ -737,7 +737,8 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 	purple_xfer_cancel_remote(qd->xfer);
 	qd->xfer = NULL;
 
-	g_free (msg);
+	g_free(filename);
+	g_free(msg);
 }
 
 /* process accept im for file transfer request */
@@ -774,7 +775,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 	gchar *sender_name, **fileinfo;
 	ft_info *info;
 	PurpleBuddy *b;
-	qq_buddy *q_bud;
+	qq_buddy_data *bd;
 	gint bytes;
 
 	g_return_if_fail (data != NULL && data_len != 0);
@@ -785,7 +786,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 	info->local_internet_port = qd->my_port;
 	info->local_real_ip = 0x00000000;
 	info->to_uid = sender_uid;
-	
+
 	if (data_len <= 2 + 30 + QQ_CONN_INFO_LEN) {
 		purple_debug_warning("QQ", "Received file request message is empty\n");
 		return;
@@ -804,36 +805,37 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 	/* FACE from IP detector, ignored by gfhuang */
 	if(g_ascii_strcasecmp(fileinfo[0], "FACE") == 0) {
 		purple_debug_warning("QQ",
-			    "Received a FACE ip detect from qq-%d, so he/she must be online :)\n", sender_uid);
+			    "Received a FACE ip detect from %d, so he/she must be online :)\n", sender_uid);
 
 		b = purple_find_buddy(gc->account, sender_name);
-		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
-		if (q_bud) {
+		bd = (b == NULL) ? NULL : (qq_buddy_data *) b->proto_data;
+		if (bd) {
 			if(0 != info->remote_real_ip) {
-				g_memmove(&(q_bud->ip), &info->remote_real_ip, sizeof(q_bud->ip));
-				q_bud->port = info->remote_minor_port;
+				g_memmove(&(bd->ip), &info->remote_real_ip, sizeof(bd->ip));
+				bd->port = info->remote_minor_port;
 			}
 			else if (0 != info->remote_internet_ip) {
-				g_memmove(&(q_bud->ip), &info->remote_internet_ip, sizeof(q_bud->ip));
-				q_bud->port = info->remote_major_port;
+				g_memmove(&(bd->ip), &info->remote_internet_ip, sizeof(bd->ip));
+				bd->port = info->remote_major_port;
 			}
 
-			if(!is_online(q_bud->status)) {
-				q_bud->status = QQ_BUDDY_ONLINE_INVISIBLE;
-				qq_update_buddy_contact(gc, q_bud);
+			if(!is_online(bd->status)) {
+				bd->status = QQ_BUDDY_ONLINE_INVISIBLE;
+				bd->last_update = time(NULL);
+				qq_update_buddy_status(gc, bd->uid, bd->status, bd->comm_flag);
 			}
-			else 
+			else
 				purple_debug_info("QQ", "buddy %d is already online\n", sender_uid);
 
 		}
-		else 
+		else
 			purple_debug_warning("QQ", "buddy %d is not in list\n", sender_uid);
 
-		g_free(sender_name);	    
+		g_free(sender_name);
 		g_strfreev(fileinfo);
 		return;
 	}
-	
+
 	xfer = purple_xfer_new(purple_connection_get_account(gc),
 			PURPLE_XFER_RECEIVE,
 			sender_name);
@@ -875,7 +877,7 @@ static void _qq_xfer_send_notify_ip_ack(gpointer data, gint source, PurpleInputC
 	*/
 }
 
-void qq_process_recv_file_notify(guint8 *data, gint data_len, 
+void qq_process_recv_file_notify(guint8 *data, gint data_len,
 		guint32 sender_uid, PurpleConnection *gc)
 {
 	gint bytes;
@@ -892,7 +894,7 @@ void qq_process_recv_file_notify(guint8 *data, gint data_len,
 		purple_debug_warning("QQ", "Received file notify message is empty\n");
 		return;
 	}
-	
+
 	bytes = 0;
 	bytes += qq_get16(&(info->send_seq), data + bytes);
 

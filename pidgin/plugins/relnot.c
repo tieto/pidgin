@@ -34,7 +34,10 @@
 #include "connection.h"
 #include "core.h"
 #include "debug.h"
+#include "gtkblist.h"
+#include "gtkutils.h"
 #include "notify.h"
+#include "pidginstock.h"
 #include "prefs.h"
 #include "util.h"
 #include "version.h"
@@ -45,12 +48,26 @@
 #define MIN_CHECK_INTERVAL 60 * 60 * 24
 
 static void
+release_hide()
+{
+	/* No-op.  We may use this method in the future to avoid showing
+	 * the popup twice */
+}
+
+static void
+release_show()
+{
+	purple_notify_uri(NULL, PURPLE_WEBSITE);
+}
+
+static void
 version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		const gchar *response, size_t len, const gchar *error_message)
 {
-	gchar *cur_ver, *formatted;
+	gchar *cur_ver;
 	const char *tmp, *changelog;
 	char response_code[4];
+	GtkWidget *release_dialog;
 
 	GString *message;
 	int i = 0;
@@ -89,27 +106,21 @@ version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		return;
 
 	cur_ver = g_strndup(changelog, i);
-	changelog += i;
-
-	while(*changelog == '\n') changelog++;
 
 	message = g_string_new("");
-	g_string_append_printf(message, _("You are using %s version %s.  The "
-			"current version is %s.  You can get it from "
-			"<a href=\"%s\">%s</a><hr>"),
-			PIDGIN_NAME, purple_core_get_version(), cur_ver,
-			PURPLE_WEBSITE, PURPLE_WEBSITE);
+	g_string_append_printf(message, _("You can upgrade to %s %s today."),
+			PIDGIN_NAME, cur_ver);
 
-	if(*changelog) {
-		formatted = purple_strdup_withhtml(changelog);
-		g_string_append_printf(message, _("<b>ChangeLog:</b><br>%s"),
-				formatted);
-		g_free(formatted);
-	}
+	release_dialog = pidgin_make_mini_dialog(
+		NULL, PIDGIN_STOCK_DIALOG_INFO,
+		_("New Version Available"),
+		message->str,
+		NULL,
+		_("Later"), PURPLE_CALLBACK(release_hide),
+		_("Download Now"), PURPLE_CALLBACK(release_show),
+		NULL);
 
-	purple_notify_formatted(NULL, _("New Version Available"),
-			_("New Version Available"), NULL, message->str,
-			NULL, NULL);
+	pidgin_blist_add_alert(release_dialog);
 
 	g_string_free(message, TRUE);
 	g_free(cur_ver);

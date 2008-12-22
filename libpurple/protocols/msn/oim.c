@@ -594,47 +594,91 @@ static void
 msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 {
 	MsnMessage *message;
-	char *date,*from,*decode_msg;
+	const char *date;
+	const char *from;
+	char *decode_msg = NULL;
 	gsize body_len;
 	char **tokens;
-	char *start,*end;
-	int has_nick = 0;
-	char *passport_str, *passport;
+	char *passport = NULL;
 	time_t stamp;
 
 	message = msn_message_new(MSN_MSG_UNKNOWN);
 
 	msn_message_parse_payload(message, msg_str, strlen(msg_str),
-							  MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
+	                          MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	purple_debug_info("msn", "oim body:{%s}\n", message->body);
-	decode_msg = (char *)purple_base64_decode(message->body,&body_len);
-	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
-	from =	(char *)g_hash_table_lookup(message->attr_table, "From");
-	if (strstr(from," ")) {
-		has_nick = 1;
-	}
-	if (has_nick) {
-		tokens = g_strsplit(from , " " , 2);
-		passport_str = g_strdup(tokens[1]);
-		purple_debug_info("msn", "oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
-							date, tokens[0], tokens[1], passport_str);
-		g_strfreev(tokens);
-	} else {
-		passport_str = g_strdup(from);
-		purple_debug_info("msn", "oim Date:{%s},passport{%s}\n",
-					date, passport_str);
-	}
-	start = strstr(passport_str,"<");
-	start += 1;
-	end = strstr(passport_str,">");
-	passport = g_strndup(start,end - start);
-	g_free(passport_str);
-	purple_debug_info("msn", "oim Date:{%s},passport{%s}\n", date, passport);
 
+	if (!strcmp(msn_message_get_attr(message, "X-OIMProxy"), "MOSMS")) {
+		char *boundary;
+		char **part;
+
+		from = msn_message_get_attr(message, "X-OIM-originatingSource");
+
+		/* Match number to user's mobile number, FROM is a phone number
+		   if the other side pages you using your phone number */
+		if (!strncmp(from, "tel:+", 5)) {
+			MsnUser *user =	msn_userlist_find_user_with_mobile_phone(
+					rdata->oim->session->userlist, from + 4);
+
+			if (user && user->passport)
+				passport = g_strdup(user->passport);
+		}
+		if (passport == NULL)
+			passport = g_strdup(from);
+
+		boundary = g_strdup_printf("--%s" MSG_OIM_LINE_DEM,
+		                           msn_message_get_attr(message, "boundary"));
+		tokens = g_strsplit(message->body, boundary, 0);
+
+		/* tokens+1 to skip the "This is a multipart message..." text */
+		for (part = tokens+1; *part != NULL; part++) {
+			MsnMessage *multipart;
+			const char *type;
+			multipart = msn_message_new(MSN_MSG_UNKNOWN);
+			msn_message_parse_payload(multipart, *part, strlen(*part),
+			                          MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
+
+			type = msn_message_get_content_type(multipart);
+			if (type && !strcmp(type, "text/plain")) {
+				decode_msg = (char *)purple_base64_decode(multipart->body, &body_len);
+				msn_message_destroy(multipart);
+				break;
+			}
+			msn_message_destroy(multipart);
+		}
+
+		g_strfreev(tokens);
+		g_free(boundary);
+
+		if (decode_msg == NULL) {
+			purple_debug_error("msn", "Couldn't find text/plain OIM message.\n");
+			g_free(passport);
+			return;
+		}
+	} else {
+		char *start, *end;
+
+		from = msn_message_get_attr(message, "From");
+		decode_msg = (char *)purple_base64_decode(message->body, &body_len);
+
+		tokens = g_strsplit(from, " ", 2);
+		if (tokens[1] != NULL)
+			from = (const char *)tokens[1];
+
+		start = strchr(from, '<') + 1;
+		end = strchr(from, '>');
+		passport = g_strndup(start, end - start);
+
+		g_strfreev(tokens);
+	}
+
+	date = msn_message_get_attr(message, "Date");
 	stamp = msn_oim_parse_timestamp(date);
+	purple_debug_info("msn", "oim Date:{%s},passport{%s}\n",
+	                  date, passport);
 
 	serv_got_im(rdata->oim->session->account->gc, passport, decode_msg, 0,
-		stamp);
+	            stamp);
 
 	/*Now get the oim message ID from the oim_list.
 	 * and append to read list to prepare for deleting the Offline Message when sign out

@@ -766,8 +766,7 @@ get_config_frame(PurplePlugin *plugin)
 	/* Urgent method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("Set window manager \"_URGENT\" hint"));
 #else
-	/* TODO: When we're not string frozen, mark for translation */
-	toggle = gtk_check_button_new_with_mnemonic("_Flash window");
+	toggle = gtk_check_button_new_with_mnemonic(_("_Flash window"));
 #endif
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),

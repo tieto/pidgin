@@ -27,7 +27,7 @@ typedef struct _XepXfer XepXfer;
 typedef enum {
 	XEP_BYTESTREAMS = 1,
 	XEP_IBB = 2,
-	XEP_UNKNOWN = 4,
+	XEP_UNKNOWN = 4
 } XepSiMode;
 
 struct _XepXfer

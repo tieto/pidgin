@@ -288,7 +288,7 @@ enum
 {
 	PROP_0,
 	PROP_SHORTCUT,
-	PROP_IMGSTORE,
+	PROP_IMGSTORE
 };
 
 #define PROP_SHORTCUT_S "shortcut"

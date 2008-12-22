@@ -301,7 +301,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 						  "<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
 						  purple_account_get_username(gc->account),
 						  who, converted_alias_jp);
-			free(converted_alias_jp);
+			g_free(converted_alias_jp);
 			g_free(alias_jp);
 		} else {
 			gchar *escaped_alias = g_markup_escape_text(alias, -1);
@@ -321,7 +321,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 						  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
 						  purple_account_get_username(gc->account),
 						  who, cb->id, converted_alias_jp);
-			free(converted_alias_jp);
+			g_free(converted_alias_jp);
 			g_free(alias_jp);
 		} else {
 			gchar *escaped_alias = g_markup_escape_text(alias, -1);

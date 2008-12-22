@@ -40,7 +40,7 @@ typedef enum
 	MSN_SERVCONN_ERROR_NONE,
 	MSN_SERVCONN_ERROR_CONNECT,
 	MSN_SERVCONN_ERROR_WRITE,
-	MSN_SERVCONN_ERROR_READ,
+	MSN_SERVCONN_ERROR_READ
 
 } MsnServConnError;
 
@@ -169,5 +169,13 @@ gssize msn_servconn_write(MsnServConn *servconn, const char *buf,
  * @param error The error that happened.
  */
 void msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error);
+
+/**
+ * Process the data in servconn->rx_buf.  This is called after reading
+ * data from the socket.
+ *
+ * @param servconn The servconn.
+ */
+void msn_servconn_process_data(MsnServConn *servconn);
 
 #endif /* _MSN_SERVCONN_H_ */
