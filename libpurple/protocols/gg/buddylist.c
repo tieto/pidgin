@@ -216,12 +216,13 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
-
-	char *buddylist = g_strdup("");
+	GString *buddylist;
 	char *ptr;
 
 	if ((blist = purple_get_blist()) == NULL)
 		return NULL;
+
+	buddylist = g_string_sized_new(1024);
 
 	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
@@ -247,19 +248,16 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 				alias = buddy->alias ? buddy->alias : buddy->name;
 				gname = group->name;
 
-				ptr = buddylist;
-				buddylist = g_strdup_printf(
-						"%s%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
-						ptr, alias, alias, alias, alias,
+				g_string_append_printf(buddylist,
+						"%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
+						alias, alias, alias, alias,
 						"", gname, name, "", "");
-
-				g_free(ptr);
 			}
 		}
 	}
 
-	ptr = charset_convert(buddylist, "UTF-8", "CP1250");
-	g_free(buddylist);
+	ptr = charset_convert(buddylist->str, "UTF-8", "CP1250");
+	g_string_free(buddylist, TRUE);
 	return ptr;
 }
 /* }}} */
