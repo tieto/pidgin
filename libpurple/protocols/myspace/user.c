@@ -406,10 +406,11 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 	}
 
 	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
-		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
+		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID)
+	{
 		/*
 		 * Some of this info will be available on the buddy list if the
-		 * has themselves as their own buddy.
+		 * user has themselves as their own buddy.
 		 *
 		 * Much of the info is already available in MsimSession,
 		 * stored in msim_we_are_logged_on().
