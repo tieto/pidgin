@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-17 21:51+0100\n"
-"PO-Revision-Date: 2008-12-15 02:34+0100\n"
+"POT-Creation-Date: 2008-12-19 17:53+0100\n"
+"PO-Revision-Date: 2008-12-20 17:15+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -442,7 +442,7 @@ msgid "Empty groups"
 msgstr "Els grups buits"
 
 msgid "Offline buddies"
-msgstr "Els amics desconnectats"
+msgstr "Amics desconnectats"
 
 msgid "Sort"
 msgstr "Ordena"
@@ -1530,10 +1530,10 @@ msgid "Offline"
 msgstr "Fora de línia"
 
 msgid "Online Buddies"
-msgstr "Els amics desconnectats"
+msgstr "Amics connectats"
 
 msgid "Offline Buddies"
-msgstr "Els amics desconnectats"
+msgstr "Amics desconnectats"
 
 msgid "Online/Offline"
 msgstr "En línia/fora de línia"
@@ -4021,7 +4021,7 @@ msgid "Search Directory"
 msgstr "Directori de cerca"
 
 msgid "_Room:"
-msgstr "Sa_la:"
+msgstr "_Sala:"
 
 msgid "_Server:"
 msgstr "_Servidor:"
@@ -10512,7 +10512,7 @@ msgstr ""
 "Introduïu la informació necessària sobre el xat al qual vulgueu entrar.\n"
 
 msgid "_Account:"
-msgstr "_Compte:"
+msgstr "C_ompte:"
 
 msgid "_Block"
 msgstr "_Bloca"
@@ -10568,7 +10568,7 @@ msgstr "_Canvia el nom"
 
 #. join button
 msgid "_Join"
-msgstr "En_tra"
+msgstr "_Entra"
 
 msgid "Auto-Join"
 msgstr "Entra automàticament"
@@ -10615,7 +10615,7 @@ msgid "/Buddies/View User _Log..."
 msgstr "/Amics/_Visualitza el registre de l'usuari..."
 
 msgid "/Buddies/Sh_ow"
-msgstr "/Amics/M_ostra"
+msgstr "/Amics/Mos_tra"
 
 msgid "/Buddies/Show/_Offline Buddies"
 msgstr "/Amics/Mostra/Amics des_connectats"
@@ -10669,7 +10669,7 @@ msgid "/Tools/Plu_gins"
 msgstr "/Eines/_Connectors"
 
 msgid "/Tools/Pr_eferences"
-msgstr "/Eines/Preferè_ncies"
+msgstr "/Eines/Pre_ferències"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Eines/_Privadesa"
@@ -10678,7 +10678,7 @@ msgid "/Tools/Smile_y"
 msgstr "/Eines/Em_oticona"
 
 msgid "/Tools/_File Transfers"
-msgstr "/Eines/Transferència de _fitxers"
+msgstr "/Eines/_Transferència de fitxers"
 
 msgid "/Tools/R_oom List"
 msgstr "/Eines/_Llista de sales"
@@ -10897,13 +10897,13 @@ msgstr ""
 "la llista d'amics.\n"
 
 msgid "A_lias:"
-msgstr "À_lies:"
+msgstr "Àl_ies:"
 
 msgid "Auto_join when account becomes online."
-msgstr "Entra _automàticament quant el compte estigui connectat."
+msgstr "_Entra automàticament quant el compte estigui connectat."
 
 msgid "_Remain in chat after window is closed."
-msgstr "_Continua al xat quan la finestra es tanqui."
+msgstr "Co_ntinua al xat quan la finestra es tanqui."
 
 msgid "Please enter the name of the group to be added."
 msgstr "Introduïu el nom del grup que vulgueu afegir."
@@ -11787,7 +11787,7 @@ msgid "Time Remaining:"
 msgstr "Temps restant:"
 
 msgid "Close this window when all transfers _finish"
-msgstr "Tanca aquesta finestra quan totes les transferències hagin _finalitzat"
+msgstr "Tanca aquesta _finestra quan totes les transferències hagin finalitzat"
 
 msgid "C_lear finished transfers"
 msgstr "_Neteja les transferències acabades"
@@ -12315,7 +12315,7 @@ msgid "<b>Filename:</b>"
 msgstr "<b>Nom del fitxer:</b>"
 
 msgid "Configure Pl_ugin"
-msgstr "Config_ura el connector"
+msgstr "_Configura el connector"
 
 msgid "<b>Plugin Details</b>"
 msgstr "<b>Detalls del connector</b>"
@@ -12329,46 +12329,46 @@ msgid "Pounce on Whom"
 msgstr "Avisa dels Whom"
 
 msgid "_Buddy name:"
-msgstr "Nom de l'_amic:"
+msgstr "_Nom de l'amic:"
 
 msgid "Si_gns on"
-msgstr "Es _connecti"
+msgstr "Es conn_ecti"
 
 msgid "Signs o_ff"
-msgstr "Es _desconnecti"
+msgstr "Es de_sconnecti"
 
 msgid "Goes a_way"
 msgstr "Passi a _absent"
 
 msgid "Ret_urns from away"
-msgstr "To_rni a estar present"
+msgstr "_Torni a estar present"
 
 msgid "Becomes _idle"
 msgstr "Passi a _inactiu"
 
 msgid "Is no longer i_dle"
-msgstr "Ja no estigui i_nactiu"
+msgstr "_Ja no estigui inactiu"
 
 msgid "Starts _typing"
-msgstr "Comenci a _escriure"
+msgstr "Comenci a esc_riure"
 
 msgid "P_auses while typing"
-msgstr "S'_aturi mentre tecleja"
+msgstr "S'at_uri mentre tecleja"
 
 msgid "Stops t_yping"
-msgstr "Pari d'e_scriure"
+msgstr "_Pari d'escriure"
 
 msgid "Sends a _message"
 msgstr "Enviï un _missatge"
 
 msgid "Ope_n an IM window"
-msgstr "Obre u_na finestra de MI"
+msgstr "Obre una _finestra de MI"
 
 msgid "_Pop up a notification"
-msgstr "Mostra una _notificació emergent"
+msgstr "Mostra una notificació emer_gent"
 
 msgid "Send a _message"
-msgstr "Envia un _missatge"
+msgstr "En_via un missatge"
 
 msgid "E_xecute a command"
 msgstr "E_xecuta una ordre"
@@ -12376,17 +12376,21 @@ msgstr "E_xecuta una ordre"
 msgid "P_lay a sound"
 msgstr "Reproduei_x un so"
 
+# Sense accelerador expressament (josep)
 msgid "Brows_e..."
-msgstr "Nav_ega..."
+msgstr "Navega..."
 
+# Sense accelerador expressament (josep)
 msgid "Br_owse..."
-msgstr "Na_vega..."
+msgstr "Navega..."
 
+# Sense accelerador expressament (josep)
 msgid "Pre_view"
-msgstr "Pre_visualitza"
+msgstr "Previsualitza"
 
+# Sense accelerador expressament (josep)
 msgid "P_ounce only when my status is not Available"
-msgstr "Avisa n_omés quan el meu estat no sigui disponible"
+msgstr "Avisa només quan el meu estat no estigui disponible"
 
 msgid "_Recurring"
 msgstr "_Recurrent"
@@ -12420,7 +12424,7 @@ msgid "System Tray Icon"
 msgstr "Icona d'estat"
 
 msgid "_Show system tray icon:"
-msgstr "Mostra la icona d'estat:"
+msgstr "_Mostra la icona d'estat:"
 
 msgid "On unread messages"
 msgstr "Si hi ha missatges sense llegir"
@@ -12440,10 +12444,10 @@ msgid "Tabs"
 msgstr "Pestanyes"
 
 msgid "Show IMs and chats in _tabbed windows"
-msgstr "Mostra MI i xats en finestres amb _pestanyes"
+msgstr "Mostra MI i _xats en finestres amb pestanyes"
 
 msgid "Show close b_utton on tabs"
-msgstr "Mosta el b_otó de tancar a les pestanyes"
+msgstr "Mosta el _botó de tancar a les pestanyes"
 
 msgid "_Placement:"
 msgstr "_Posicionament:"
@@ -12467,10 +12471,10 @@ msgid "Right Vertical"
 msgstr "Vertical dret"
 
 msgid "N_ew conversations:"
-msgstr "Converses noves:"
+msgstr "Converses _noves:"
 
 msgid "Show _formatting on incoming messages"
-msgstr "Mostra el format dels missatges entrants"
+msgstr "Mostra el _format dels missatges entrants"
 
 msgid "Close IMs immediately when the tab is closed"
 msgstr "Tanca la missatgeria quan es tanqui la pestanya"
@@ -12485,10 +12489,10 @@ msgid "_Notify buddies that you are typing to them"
 msgstr "_Notifica als amics quan els escrigui"
 
 msgid "Highlight _misspelled words"
-msgstr "Ressalta les paraules _mal escrites"
+msgstr "_Ressalta les paraules mal escrites"
 
 msgid "Use smooth-scrolling"
-msgstr "Utilitza el desplaçament suau"
+msgstr "Empra el desplaçament suau"
 
 msgid "F_lash window when IMs are received"
 msgstr "_Fes que la finestra faci un flaix quan hi arribin missatges"
@@ -12503,13 +12507,13 @@ msgid "Font"
 msgstr "Tipus de lletra"
 
 msgid "Use document font from _theme"
-msgstr "Empra el tipus de lletra del document del _tema"
+msgstr "_Empra el tipus de lletra del document del tema"
 
 msgid "Use font from _theme"
 msgstr "Empra el tipus de lletra del _tema"
 
 msgid "Conversation _font:"
-msgstr "_Tipus de lletra de la conversa:"
+msgstr "Tipus de _lletra de la conversa:"
 
 msgid "Default Formatting"
 msgstr "Format per defecte"
@@ -12519,7 +12523,7 @@ msgid ""
 "that support formatting."
 msgstr ""
 "Així és com els missatges de text sortints apareixeran quan feu servir "
-"protocols que implementin el text formatat."
+"protocols que permetin el text formatat."
 
 msgid "Cannot start proxy configuration program."
 msgstr ""
@@ -12538,7 +12542,7 @@ msgid "_Autodetect IP address"
 msgstr "Detecta l'_adreça IP automàticament"
 
 msgid "Public _IP:"
-msgstr "_IP pública:"
+msgstr "IP _pública:"
 
 msgid "Ports"
 msgstr "Ports"
@@ -12547,7 +12551,7 @@ msgid "_Enable automatic router port forwarding"
 msgstr "_Habilita la desviació automàtica de ports de l'encaminador"
 
 msgid "_Manually specify range of ports to listen on"
-msgstr "Especifica _manualment el rang de ports on escoltar"
+msgstr "_Especifica manualment el rang de ports on escoltar"
 
 msgid "_Start port:"
 msgstr "Port _inicial:"
@@ -12654,13 +12658,13 @@ msgid "Log _format:"
 msgstr "_Format del registre:"
 
 msgid "Log all _instant messages"
-msgstr "_Registra tots els missatges instantanis"
+msgstr "Registra tots els _missatges instantanis"
 
 msgid "Log all c_hats"
 msgstr "Registra tots els _xats"
 
 msgid "Log all _status changes to system log"
-msgstr "Regi_stra tots els canvis d'estat al registre del sistema"
+msgstr "Registra tots els _canvis d'estat al registre del sistema"
 
 msgid "Sound Selection"
 msgstr "Selecció de sons"
@@ -12707,10 +12711,10 @@ msgstr ""
 "(%s per al nom de fitxer)"
 
 msgid "M_ute sounds"
-msgstr "In_habilita els sons"
+msgstr "_Inhabilita els sons"
 
 msgid "Sounds when conversation has _focus"
-msgstr "Sons quan la conversa tingui el _focus"
+msgstr "_Sons quan la conversa tingui el focus"
 
 msgid "_Enable sounds:"
 msgstr "_Habilita els sons:"
@@ -12722,13 +12726,13 @@ msgid "Play"
 msgstr "Reprodueix"
 
 msgid "_Browse..."
-msgstr "Nav_ega..."
+msgstr "_Navega..."
 
 msgid "_Reset"
 msgstr "_Reinicia"
 
 msgid "_Report idle time:"
-msgstr "Informa del _temps d'inactivitat:"
+msgstr "_Informa del temps d'inactivitat:"
 
 msgid "Based on keyboard or mouse use"
 msgstr "Basat en l'ús del teclat o el ratolí"
@@ -12744,23 +12748,23 @@ msgid "Auto-away"
 msgstr "Auto-absència"
 
 msgid "Change status when _idle"
-msgstr "Canvia l'estat quan estigui _inactiu"
+msgstr "_Canvia l'estat quan estigui inactiu"
 
 msgid "_Minutes before becoming idle:"
 msgstr "_Minuts abans de passar a inactiu:"
 
 msgid "Change _status to:"
-msgstr "Canvia l'e_stat a:"
+msgstr "Canvia l'_estat a:"
 
 #. Signon status stuff
 msgid "Status at Startup"
 msgstr "L'estat en iniciar"
 
 msgid "Use status from last _exit at startup"
-msgstr "_En iniciar, empra el mateix estat que en sortir per darrer cop"
+msgstr "En i_niciar, empra el mateix estat que en sortir per darrer cop"
 
 msgid "Status to a_pply at startup:"
-msgstr "Es_tatus a utilitzar en iniciar:"
+msgstr "Estat a _utilitzar en iniciar:"
 
 msgid "Interface"
 msgstr "Interfície"
@@ -12800,7 +12804,7 @@ msgstr "Estableix la privadesa de:"
 
 #. Remove All button
 msgid "Remove Al_l"
-msgstr "Suprimeix-ho _tot"
+msgstr "S_uprimeix-ho tot"
 
 msgid "Permit User"
 msgstr "Permet l'usuari"
@@ -12859,11 +12863,11 @@ msgstr "Selecciona una carpeta..."
 
 #. list button
 msgid "_Get List"
-msgstr "_Aconsegueix la llista"
+msgstr "Aconsegueix la _llista"
 
 #. add button
 msgid "_Add Chat"
-msgstr "_Afegeix el xat"
+msgstr "Afegeix el _xat"
 
 # He omès "saved", que sembla que no hi cal (josep)
 msgid "Are you sure you want to delete the selected saved statuses?"
@@ -13075,7 +13079,7 @@ msgid "Close _tabs"
 msgstr "Tanca les _pestanyes"
 
 msgid "_Get Info"
-msgstr "_Aconsegueix informació"
+msgstr "Aconsegueix _informació"
 
 msgid "_Invite"
 msgstr "Conv_ida"
@@ -13226,7 +13230,7 @@ msgid "Highlighted Messages"
 msgstr "Missatges ressaltats"
 
 msgid "System Messages"
-msgstr "Missatge del sistema"
+msgstr "Missatges del sistema"
 
 msgid "Sent Messages"
 msgstr "Missatges enviats"
@@ -13349,10 +13353,9 @@ msgstr "Grup:"
 msgid "New Person"
 msgstr "Nova persona"
 
-# FIXME: seleccioneu un amic?
 #. "Select Buddy" button
 msgid "Select Buddy"
-msgstr "Seleccioneu un amic"
+msgstr "Selecciona"
 
 #. Add the label.
 msgid ""

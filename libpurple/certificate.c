@@ -1259,6 +1259,7 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 				   "to cert_changed.\n");
 		/* vrq now becomes the problem of cert_changed */
 		x509_tls_cached_peer_cert_changed(vrq);
+		return;
 	}
 
 	/* Now get SHA1 sums for both and compare them */

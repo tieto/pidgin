@@ -1040,7 +1040,7 @@ msim_parse(const gchar *raw)
 			/* Incoming protocol messages get tagged as MSIM_TYPE_RAW, which
 			 * represents an untyped piece of data. msim_msg_get_* will
 			 * convert to appropriate types for caller, and handle unescaping if needed. */
-			msg = msim_msg_append(msg, g_strdup(key), MSIM_TYPE_RAW, g_strdup(value));
+			msg = msim_msg_append_dynamic_name(msg, g_strdup(key), MSIM_TYPE_RAW, g_strdup(value));
 #ifdef MSIM_DEBUG_PARSE
 			purple_debug_info("msim", "insert string: |%s|=|%s|\n", key, value);
 #endif
