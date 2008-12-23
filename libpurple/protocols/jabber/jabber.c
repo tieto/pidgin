@@ -151,7 +151,7 @@ static char *jabber_prep_resource(char *input) {
 	char hostname[256]; /* current hostname */
 
 	/* Empty resource == don't send any */
-	if (*input == '\0')
+	if (input == NULL || *input == '\0')
 		return NULL;
 
 	if (strstr(input, "__HOSTNAME__") == NULL)
