@@ -567,6 +567,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 	{
 		purple_debug_info("oscar", "Unknown ODC frame type 0x%04hx, "
 				"subtype 0x%04hx.\n", frame->type, frame->subtype);
+		g_free(frame);
 		return;
 	}
 
@@ -607,6 +608,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 			g_free(tmp);
 
 			peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
+			g_free(frame);
 			return;
 		}
 

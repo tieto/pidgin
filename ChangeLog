@@ -7,6 +7,9 @@ version 2.5.4 (??/??/????):
 	* Don't ignore namespace information when parsing XMPP data. (Michal
 	  Witkowski)
 
+	XMPP:
+	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
+
 version 2.5.3 (12/20/2008):
 	libpurple:
 	* The Buddy State Notification plugin no longer prints duplicate

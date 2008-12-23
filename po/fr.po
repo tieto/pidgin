@@ -4964,7 +4964,7 @@ msgid "MSN Error: %s\n"
 msgstr "Erreur MSN : %s\n"
 
 msgid "Other Contacts"
-msgstr "AUtres contacts"
+msgstr "Autres contacts"
 
 msgid "Non-IM Contacts"
 msgstr "Contacts non instantanés"
