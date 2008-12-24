@@ -424,6 +424,11 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointe
 	g_free(userdata);
 }
 
+/* would need to add some detection to determine if a
+ <presence/> packet is part of the "initial" presence the server
+ sends us, this way we could disregard a buddy's idle time in case the server
+ does not set <delayed/> on delayed presence. This would avoid 
+ showing an incorrect idle time */
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
