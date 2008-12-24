@@ -1627,12 +1627,39 @@ static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				if(seconds) {
 					char *end = NULL;
 					long sec = strtol(seconds, &end, 10);
-					if(end != seconds) {
+                    JabberBuddy *jb = NULL;
+                    char *resource = NULL;
+                    char *buddy_name = NULL;
+					JabberBuddyResource *jbr = NULL;
+                    
+                    if(end != seconds) {
 						JabberBuddyInfoResource *jbir = g_hash_table_lookup(jbi->resources, resource_name);
 						if(jbir) {
 							jbir->idle_seconds = sec;
 						}
 					}
+                    /* if this idle time different from the one stored
+                     in the JabberBuddyResource (as obtained via
+                     <presence/>) update it. This is to correct the value
+                     when a server doesn't mark delayed presence */
+                    jb = jabber_buddy_find(js, from, FALSE);
+                    if (jb) {
+                        resource = jabber_get_resource(from);
+                        buddy_name = jabber_get_bare_jid(from);
+                        if (resource && buddy_name) {
+                            jbr = jabber_buddy_find_resource(jb, resource);
+                            jbr->idle = time(NULL) - sec;
+                            
+                            if (jbr == 
+                                jabber_buddy_find_resource(jb, NULL) &&
+                                jbr->idle) {
+                                purple_prpl_got_user_idle(js->gc->account, 
+                                    buddy_name, jbr->idle, jbr->idle);
+                            }
+                        }
+                        g_free(resource);
+                        g_free(buddy_name);
+                    }
 				}
 			}
 		}
