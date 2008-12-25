@@ -38,14 +38,14 @@ enum {
 	QQ_AUTH_INFO_TEMP_SESSION = 0x0003,
 	QQ_AUTH_INFO_CLUSTER = 0x0002,
 	QQ_AUTH_INFO_REMOVE_BUDDY = 0x0006,
-	QQ_AUTH_INFO_UPDATE_BUDDY_INFO = 0x0007,
+	QQ_AUTH_INFO_UPDATE_BUDDY_INFO = 0x0007
 };
 
 enum {
 	QQ_QUESTION_GET = 0x01,
 	QQ_QUESTION_SET = 0x02,
 	QQ_QUESTION_REQUEST = 0x03,		/* get question only*/
-	QQ_QUESTION_ANSWER = 0x04,
+	QQ_QUESTION_ANSWER = 0x04
 };
 
 void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);

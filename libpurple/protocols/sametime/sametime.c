@@ -158,7 +158,7 @@ enum blist_choice {
   blist_choice_LOCAL = 1, /**< local only */
   blist_choice_MERGE = 2, /**< merge from server */
   blist_choice_STORE = 3, /**< merge from and save to server */
-  blist_choice_SYNCH = 4, /**< sync with server */
+  blist_choice_SYNCH = 4  /**< sync with server */
 };
 
 
@@ -513,6 +513,11 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
 
     idle_len = time(NULL) - idle;
     ugly_idle_len = ((time(NULL) * 1000) - idle) / 1000;
+
+	if(idle > ugly_idle_len)
+		ugly_idle_len = 0;
+	else
+		ugly_idle_len = (ugly_idle_len - idle) / 1000;
 
     /* 
        what's the deal here? Well, good clients are smart enough to
@@ -3719,7 +3724,6 @@ static void mw_prpl_login(PurpleAccount *account) {
   gc->flags |= PURPLE_CONNECTION_NO_IMAGES;
 
   user = g_strdup(purple_account_get_username(account));
-  pass = g_strdup(purple_account_get_password(account));
 
   host = strrchr(user, ':');
   if(host) {
@@ -3736,10 +3740,12 @@ static void mw_prpl_login(PurpleAccount *account) {
   if(! host || ! *host) {
     /* somehow, we don't have a host to connect to. Well, we need one
        to actually continue, so let's ask the user directly. */
+    g_free(user);
     prompt_host(gc);
     return;
   }
 
+  pass = g_strdup(purple_account_get_password(account));
   port = purple_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
 
   DEBUG_INFO("user: '%s'\n", user);

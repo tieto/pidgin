@@ -376,20 +376,20 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	}
 
 	/* Only show first/last name if there is a nickname set (to avoid duplication) */
-	if (bb->nick != NULL) {
-		if (bb->first != NULL)
+	if (bb->nick != NULL && *bb->nick != '\0') {
+		if (bb->first != NULL && *bb->first != '\0')
 			purple_notify_user_info_add_pair(user_info, _("First name"), bb->first);
-		if (bb->first != NULL)
+		if (bb->last != NULL && *bb->last != '\0')
 			purple_notify_user_info_add_pair(user_info, _("Last name"), bb->last);
 	}
 
-	if (bb->email != NULL)
+	if (bb->email != NULL && *bb->email != '\0')
 		purple_notify_user_info_add_pair(user_info, _("Email"), bb->email);
 
-	if (bb->AIM != NULL)
+	if (bb->AIM != NULL && *bb->AIM != '\0')
 		purple_notify_user_info_add_pair(user_info, _("AIM Account"), bb->AIM);
 
-	if (bb->jid!= NULL)
+	if (bb->jid != NULL && *bb->jid != '\0')
 		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
 }
 

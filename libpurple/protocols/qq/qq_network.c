@@ -376,7 +376,7 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 			/* No worries */
 			return;
 
-		error_msg = g_strdup_printf(_("Lost connection with server:\n%d, %s"), errno, g_strerror(errno));
+		error_msg = g_strdup_printf(_("Lost connection with server:\n%s"), g_strerror(errno));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				error_msg);
@@ -773,12 +773,12 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message)
 	set_all_keys( gc );
 
 	if (qd->client_version >= 2007) {
-		purple_connection_update_progress(gc, _("Get server ..."), 2, QQ_CONNECT_STEPS);
+		purple_connection_update_progress(gc, _("Getting server"), 2, QQ_CONNECT_STEPS);
 		qq_request_get_server(gc);
 		return;
 	}
 
-	purple_connection_update_progress(gc, _("Request token"), 2, QQ_CONNECT_STEPS);
+	purple_connection_update_progress(gc, _("Requesting token"), 2, QQ_CONNECT_STEPS);
 	qq_request_token(gc);
 }
 
@@ -935,7 +935,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 		return FALSE;
 	}
 
-	purple_connection_update_progress(gc, _("Connecting server ..."), 1, QQ_CONNECT_STEPS);
+	purple_connection_update_progress(gc, _("Connecting to server"), 1, QQ_CONNECT_STEPS);
 
 	purple_debug_info("QQ", "Connect to %s:%d\n", server, port);
 
@@ -951,7 +951,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 		qd->conn_data = purple_proxy_connect_udp(gc, account, server, port, connect_cb, gc);
 	}
 	if ( qd->conn_data == NULL ) {
-		purple_debug_error("QQ", _("Couldn't create socket"));
+		purple_debug_error("QQ", "Couldn't create socket");
 		return FALSE;
 	}
 #else
@@ -986,7 +986,7 @@ void qq_disconnect(PurpleConnection *gc)
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	purple_debug_info("QQ", "Disconnecting ...\n");
+	purple_debug_info("QQ", "Disconnecting...\n");
 
 	if (qd->network_watcher > 0) {
 		purple_debug_info("QQ", "Remove network watcher\n");

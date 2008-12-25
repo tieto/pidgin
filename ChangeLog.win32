@@ -1,3 +1,9 @@
+version 2.5.4 (??/??/????):
+
+version 2.5.3 (12/20/2008):
+	* Upgrade SILC to use the 1.1.8 toolkit
+	* Updated included Meanwhile library to include patch referenced in #7563
+
 version 2.5.2 (10/19/2008):
 	* Updated GTK+ to 2.12.12
 	  This will resolve an issue with stuff in QQ appearing as "(NULL)"
@@ -28,7 +34,7 @@ version 2.4.1 (03/31/2008):
 
 version 2.4.0 (02/29/2008):
 	* Updated GTK+ to 2.12.8
-	* Updated include Meanwhile library to include patches referenced at:
+	* Updated included Meanwhile library to include patches referenced at:
 	  https://sourceforge.net/tracker/?func=detail&atid=656718&aid=1626349&group_id=110565
 	* Build the xmpp protocol with SASL support (and include Cyrus SASL
 	  2.1.22).

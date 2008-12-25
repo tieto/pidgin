@@ -1502,16 +1502,16 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 		break;
 	}
-	free(data->filename);
-	free(data->who);
-	free(data);
+	g_free(data->filename);
+	g_free(data->who);
+	g_free(data);
 }
 
 static void dnd_image_cancel_callback(_DndData *data, int choice)
 {
-	free(data->filename);
-	free(data->who);
-	free(data);
+	g_free(data->filename);
+	g_free(data->who);
+	g_free(data);
 }
 
 static void dnd_set_icon_ok_cb(_DndData *data)
@@ -1521,9 +1521,9 @@ static void dnd_set_icon_ok_cb(_DndData *data)
 
 static void dnd_set_icon_cancel_cb(_DndData *data)
 {
-	free(data->filename);
-	free(data->who);
-	free(data);
+	g_free(data->filename);
+	g_free(data->who);
+	g_free(data);
 }
 
 void
@@ -3276,13 +3276,7 @@ gtk_tree_path_new_from_indices (gint first_index, ...)
 static void
 combo_box_changed_cb(GtkComboBox *combo_box, GtkEntry *entry)
 {
-#if GTK_CHECK_VERSION(2, 6, 0)
 	char *text = gtk_combo_box_get_active_text(combo_box);
-#else
-	GtkWidget *widget = gtk_bin_get_child(GTK_BIN(combo_box));
-	char *text = g_strdup(gtk_entry_get_text(GTK_ENTRY(widget)));
-#endif
-
 	gtk_entry_set_text(entry, text ? text : "");
 	g_free(text);
 }

@@ -72,7 +72,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 		qq_show_packet("Login reply OK, but length < 139", data, len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt server reply"));
+				_("Cannot decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -160,7 +160,7 @@ static gint8 process_login_redirect(PurpleConnection *gc, guint8 *data, gint len
 	if (len < 11) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt get server reply"));
+				_("Cannot decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -424,7 +424,7 @@ guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len)
 			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", data, data_len,
 					">>> [default] decrypt and dump");
 			error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X)"),
+						_("Unknown reply code when logging in (0x%02X)"),
 						ret );
 			reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 			break;
@@ -464,14 +464,16 @@ gboolean qq_process_keep_alive(guint8 *data, gint data_len, PurpleConnection *gc
 	qq_data *qd;
 	gchar **segments;
 
-	g_return_val_if_fail(data != NULL && data_len != 0, FALSE);
+	g_return_val_if_fail(data != NULL, FALSE);
+	g_return_val_if_fail(data_len != 0, FALSE);
 
 	qd = (qq_data *) gc->proto_data;
 
 	/* qq_show_packet("Keep alive reply packet", data, len); */
 
 	/* the last one is 60, don't know what it is */
-	if (NULL == (segments = split_data(data, data_len, "\x1f", 6)))
+	segments = split_data(data, data_len, "\x1f", 6);
+	if (segments == NULL)
 			return TRUE;
 
 	/* segments[0] and segment[1] are all 0x30 ("0") */
@@ -479,7 +481,7 @@ gboolean qq_process_keep_alive(guint8 *data, gint data_len, PurpleConnection *gc
 	if(0 == qd->online_total) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Keep alive error"));
+				_("Lost connection with server"));
 	}
 	qd->my_ip.s_addr = inet_addr(segments[3]);
 	qd->my_port = strtol(segments[4], NULL, 10);
@@ -528,7 +530,7 @@ gboolean qq_process_keep_alive_2007(guint8 *data, gint data_len, PurpleConnectio
 	if(0 == qd->online_total) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Keep alive error"));
+				_("Lost connection with server"));
 	}
 
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
@@ -572,7 +574,7 @@ gboolean qq_process_keep_alive_2008(guint8 *data, gint data_len, PurpleConnectio
 	if(0 == qd->online_total) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Keep alive error"));
+				_("Lost connection with server"));
 	}
 
 	bytes += qq_getIP(&qd->my_ip, data + bytes);
@@ -653,7 +655,7 @@ guint16 qq_process_get_server(PurpleConnection *gc, guint8 *data, gint data_len)
 	if (data_len < 15) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Can not decrypt get server reply"));
+				_("Could not decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -745,7 +747,7 @@ void qq_request_token_ex_next(PurpleConnection *gc)
 	qd->send_seq++;
 	qq_send_cmd_encrypted(gc, QQ_CMD_TOKEN_EX, qd->send_seq, buf, bytes, TRUE);
 
-	purple_connection_update_progress(gc, _("Requesting captcha ..."), 3, QQ_CONNECT_STEPS);
+	purple_connection_update_progress(gc, _("Requesting captcha"), 3, QQ_CONNECT_STEPS);
 }
 
 static void request_token_ex_code(PurpleConnection *gc,
@@ -790,7 +792,7 @@ static void request_token_ex_code(PurpleConnection *gc,
 	qd->send_seq++;
 	qq_send_cmd_encrypted(gc, QQ_CMD_TOKEN_EX, qd->send_seq, buf, bytes, TRUE);
 
-	purple_connection_update_progress(gc, _("Checking code of captcha ..."), 3, QQ_CONNECT_STEPS);
+	purple_connection_update_progress(gc, _("Checking captcha"), 3, QQ_CONNECT_STEPS);
 }
 
 typedef struct {
@@ -813,7 +815,7 @@ static void captcha_input_cancel_cb(qq_captcha_request *captcha_req,
 
 	purple_connection_error_reason(captcha_req->gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-			_("Failed captcha verify"));
+			_("Failed captcha verification"));
 }
 
 static void captcha_input_ok_cb(qq_captcha_request *captcha_req,
@@ -872,8 +874,8 @@ void qq_captcha_input_dialog(PurpleConnection *gc,qq_captcha_data *captcha)
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(account,
-		_("QQ Captcha Verifing"),
-		_("QQ Captcha Verifing"),
+		_("QQ Captcha Verification"),
+		_("QQ Captcha Verification"),
 		_("Enter the text from the image"),
 		fields,
 		_("OK"), G_CALLBACK(captcha_input_ok_cb),
@@ -1111,7 +1113,7 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 			qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", data, data_len,
 					">>> [default] decrypt and dump");
 			error = g_strdup_printf(
-						_("Unknow reply code when checking password (0x%02X)"),
+						_("Unknown reply when checking password (0x%02X)"),
 						ret );
 			reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 			break;
@@ -1257,7 +1259,7 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 				/* Missing get server before login*/
 			default:
 				error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X):\n%s"),
+						_("Unknown reply code when logging in (0x%02X):\n%s"),
 						ret, msg_utf8);
 				break;
 		}
@@ -1446,7 +1448,7 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 				break;
 			default:
 				error = g_strdup_printf(
-						_("Unknow reply code when login (0x%02X):\n%s"),
+						_("Unknown reply code when logging in (0x%02X):\n%s"),
 						ret, msg_utf8);
 				break;
 		}

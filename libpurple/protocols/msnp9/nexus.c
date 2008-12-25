@@ -168,7 +168,7 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (len < 0 && errno == EAGAIN)
 		return;
-	else if (len < 0) {
+	else if (len <= 0) {
 		purple_input_remove(nexus->input_handler);
 		nexus->input_handler = 0;
 		g_free(nexus->read_buf);
@@ -415,7 +415,7 @@ nexus_connect_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (len < 0 && errno == EAGAIN)
 		return;
-	else if (len < 0) {
+	else if (len <= 0) {
 		purple_input_remove(nexus->input_handler);
 		nexus->input_handler = 0;
 		g_free(nexus->read_buf);

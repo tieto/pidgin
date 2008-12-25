@@ -602,7 +602,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 			break;
 		case PURPLE_BLIST_GROUP_NODE:
 			dest = purple_find_group(arg2);
-			if (dest != NULL && strcmp(arg2, ((PurpleGroup*) node)->name)) {
+			if (dest != NULL && purple_utf8_strcasecmp(arg2, ((PurpleGroup*) node)->name)) {
 				pidgin_dialogs_merge_groups((PurpleGroup*) node, arg2);
 			} else
 				purple_blist_rename_group((PurpleGroup*)node, arg2);
@@ -3630,6 +3630,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	const char *name = NULL;
 	char *filename, *path;
 	PurplePresence *p;
+	PurpleStatus *tune;
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
@@ -3668,7 +3669,21 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
-	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
+	tune = purple_presence_get_status(p, "tune");
+	if (tune && purple_status_is_active(tune)) {
+		/* Only in MSN.
+		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		if (purple_status_get_attr_string(tune, "game") != NULL) {
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "game.png", NULL);
+			return _pidgin_blist_get_cached_emblem(path);
+		}
+		/* Only in MSN.
+		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		if (purple_status_get_attr_string(tune, "office") != NULL) {
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "office.png", NULL);
+			return _pidgin_blist_get_cached_emblem(path);
+		}
+		/* Regular old "tune" is the only one in all protocols. */
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}

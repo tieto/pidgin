@@ -804,7 +804,7 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 {
 	PurpleAccount *account;
 	char buf2[BUF_LONG];
-	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
+	struct chat_invite_data *cid;
 	int plugin_return;
 
 	account = purple_connection_get_account(gc);
@@ -816,6 +816,8 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 			return;
 		}
 	}
+
+	cid = g_new0(struct chat_invite_data, 1);
 
 	plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
 					purple_conversations_get_handle(),
