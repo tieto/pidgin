@@ -1646,15 +1646,26 @@ static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
                     if (jb) {
                         resource = jabber_get_resource(from);
                         buddy_name = jabber_get_bare_jid(from);
+                        /* if the resource already has an idle time set, we
+                         must have gotten it originally from a presence. In
+                         this case we update it. Otherwise don't update it, to
+                         avoid setting an idle and not getting informed about
+                         the resource getting unidle */
                         if (resource && buddy_name) {
                             jbr = jabber_buddy_find_resource(jb, resource);
-                            jbr->idle = time(NULL) - sec;
                             
-                            if (jbr == 
-                                jabber_buddy_find_resource(jb, NULL) &&
-                                jbr->idle) {
-                                purple_prpl_got_user_idle(js->gc->account, 
-                                    buddy_name, jbr->idle, jbr->idle);
+                            if (jbr->idle) {
+                                if (sec) {
+                                    jbr->idle = time(NULL) - sec;
+                                } else {
+                                    jbr->idle = 0;
+                                }
+                            
+                                if (jbr == 
+                                    jabber_buddy_find_resource(jb, NULL)) {
+                                    purple_prpl_got_user_idle(js->gc->account, 
+                                        buddy_name, jbr->idle, jbr->idle);
+                                }
                             }
                         }
                         g_free(resource);
