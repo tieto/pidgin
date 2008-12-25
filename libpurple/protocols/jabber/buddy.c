@@ -1638,10 +1638,9 @@ static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
 							jbir->idle_seconds = sec;
 						}
 					}
-                    /* if this idle time different from the one stored
-                     in the JabberBuddyResource (as obtained via
-                     <presence/>) update it. This is to correct the value
-                     when a server doesn't mark delayed presence */
+                    /* Update the idle time of the buddy resource, if we got it. 
+                     This will correct the value when a server doesn't mark 
+                     delayed presence and we got the presence when signing on */
                     jb = jabber_buddy_find(js, from, FALSE);
                     if (jb) {
                         resource = jabber_get_resource(from);
