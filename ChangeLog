@@ -6,6 +6,8 @@ version 2.5.4 (??/??/????):
 	  Rosinski)
 	* Don't ignore namespace information when parsing XMPP data. (Michal
 	  Witkowski)
+	* Fix a crash that occurred when retrieving certain Offline Messages
+	  on MSN.
 
 	XMPP:
 	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
