@@ -219,10 +219,14 @@ gboolean qq_connect_later(gpointer data)
 	if (NULL != segments[1]) {
 		port = atoi(segments[1]);
 		if (port <= 0) {
-			purple_debug_info("QQ", "Port not define in %s\n", qd->curr_server);
+			purple_debug_info("QQ", "Port not define in %s, use default.\n", qd->curr_server);
 			port = QQ_DEFAULT_PORT;
 		}
+	} else {
+		purple_debug_info("QQ", "Error splitting server string: %s, setting port to default.\n", qd->curr_server);
+		port = QQ_DEFAULT_PORT;
 	}
+
 	g_strfreev(segments);
 
 	qd->connect_retry--;
