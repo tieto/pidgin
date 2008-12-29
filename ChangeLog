@@ -12,6 +12,10 @@ version 2.5.4 (??/??/????):
 	XMPP:
 	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
 
+	Pidgin:
+	* Fix a crash in the Add Account dialog when changing protocols under
+	  certain circumstances.
+
 version 2.5.3 (12/20/2008):
 	libpurple:
 	* The Buddy State Notification plugin no longer prints duplicate
