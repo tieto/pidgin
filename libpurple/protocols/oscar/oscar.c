@@ -1653,10 +1653,10 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	}
 	if (in != '\n') {
 		char buf[256];
-		GHashTable *ui_info = purple_core_get_ui_info();		
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."),
-				   ((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+		GHashTable *ui_info = purple_core_get_ui_info();
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
+				"If so, check %s for updates."),
+				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
