@@ -219,6 +219,7 @@ purple_core_quit(void)
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
 	purple_imgstore_uninit();
+	purple_network_uninit();
 
 	purple_debug_info("main", "Unloading all plugins\n");
 	purple_plugins_destroy_all();
