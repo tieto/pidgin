@@ -45,7 +45,7 @@ enum {
 	QQ_MSG_SYS_30 = 0x0030,
 	QQ_MSG_SYS_4C = 0x004C,
 	QQ_MSG_EXTEND = 0x0084,
-	QQ_MSG_EXTEND_85 = 0x0085,
+	QQ_MSG_EXTEND_85 = 0x0085
 };
 
 typedef struct {

@@ -64,7 +64,7 @@ typedef enum {
 	PURPLE_ZEPHYR_NONE, /* Non-kerberized ZEPH0.2 */
 	PURPLE_ZEPHYR_KRB4, /* ZEPH0.2 w/ KRB4 support */
 	PURPLE_ZEPHYR_TZC,  /* tzc executable proxy */
-	PURPLE_ZEPHYR_INTERGALACTIC_KRB4, /* Kerberized ZEPH0.3 */
+	PURPLE_ZEPHYR_INTERGALACTIC_KRB4 /* Kerberized ZEPH0.3 */
 } zephyr_connection_type;
 
 struct _zephyr_account {
@@ -1673,7 +1673,7 @@ static void zephyr_login(PurpleAccount * account)
 
 			purple_debug_info("zephyr", "about to read from tzc\n");
 
-			if (waitpid(pid, NULL, WNOHANG) == 0) { // Only select if tzc is still running
+			if (waitpid(pid, NULL, WNOHANG) == 0) { /* Only select if tzc is still running */
 				purple_debug_info("zephyr", "about to read from tzc\n");
 				select_status = select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, NULL);
 			}

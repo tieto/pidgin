@@ -302,3 +302,12 @@ int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len)
 
 	return len;
 }
+
+int byte_stream_putuid(ByteStream *bs, OscarData *od)
+{
+	PurpleAccount *account;
+
+	account = purple_connection_get_account(od->gc);
+
+	return byte_stream_putle32(bs, atoi(purple_account_get_username(account)));
+}

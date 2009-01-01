@@ -57,7 +57,7 @@ ssl_init(void)
 		return FALSE;
 	}
 
-	return ops->init();
+	return (_ssl_initialized = ops->init());
 }
 
 gboolean

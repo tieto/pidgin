@@ -291,17 +291,17 @@ static void handle_buzz(JabberMessage *jm) {
 	PurpleAccount *account;
 	PurpleConversation *c;
 	char *username, *str;
-	
+
 	/* Delayed buzz MUST NOT be accepted */
 	if(jm->delayed)
 		return;
-	
+
 	/* Reject buzz when it's not enabled */
 	if(!jm->js->allowBuzz)
 		return;
-	
+
 	account = purple_connection_get_account(jm->js->gc);
-	
+
 	if ((buddy = purple_find_buddy(account, jm->from)) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
@@ -312,7 +312,7 @@ static void handle_buzz(JabberMessage *jm) {
 	username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
 	/* xmpp only has 1 attention type, so index is 0 */
 	purple_prpl_got_attention(jm->js->gc, username, 0);
-	purple_conversation_attention(c, username, 0, PURPLE_MESSAGE_RECV, time(NULL));
+
 	g_free(username);
 	g_free(str);
 }
