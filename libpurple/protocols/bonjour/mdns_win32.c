@@ -167,7 +167,11 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 	ResolveCallbackArgs *args = (ResolveCallbackArgs*) data;
 	Win32BuddyImplData *idata = args->bb->mdns_impl_data;
 	gboolean delete_buddy = FALSE;
-	PurpleBuddy *pb;
+	PurpleBuddy *pb = NULL;
+
+	/* Make sure that the BonjourBuddy associated with this request is still around */
+	if (g_slist_find(pending_buddies, args->bb) == NULL)
+		goto cleanup;
 
 	if ((pb = purple_find_buddy(args->account, args->bb->name)))
 		if (pb->proto_data != args->bb)
@@ -208,6 +212,8 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 		}
 
 	}
+
+	cleanup:
 
 	/* free the hosts list*/
 	while (hosts != NULL) {
