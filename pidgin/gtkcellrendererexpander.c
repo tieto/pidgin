@@ -228,7 +228,7 @@ static void pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,
 }
 
 
-static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
+static void pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 					       GdkWindow       *window,
 					       GtkWidget       *widget,
 					       GdkRectangle    *background_area,
@@ -237,7 +237,7 @@ static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
 					       guint            flags)
 {
 	PidginCellRendererExpander *cellexpander = (PidginCellRendererExpander *) cell;
-	
+	gboolean set;
 	gint width, height;
 	GtkStateType state;
 
@@ -270,7 +270,10 @@ static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
 			    cell_area->x + cell->xpad + (width / 2),
 			    cell_area->y + cell->ypad + (height / 2),
 			    cell->is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
-	if (cell->is_expanded)
+
+	/* only draw the line if the color isn't set - this prevents a bug where the hline appears only under the expander */
+	g_object_get(cellexpander, "cell-background-set", &set, NULL);
+	if (cell->is_expanded && !set)
 		gtk_paint_hline (widget->style, window, state, NULL, widget, NULL, 0, 
 				 widget->allocation.width, cell_area->y + cell_area->height);
 }

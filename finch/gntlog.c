@@ -458,12 +458,16 @@ void finch_log_show_contact(PurpleContact *contact)
 
 	for (child = purple_blist_node_get_first_child((PurpleBlistNode*)contact); child;
 			child = purple_blist_node_get_sibling_next(child)) {
+		const char *name;
+		PurpleAccount *account;
 		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
 			continue;
 
-		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name,
-						((PurpleBuddy *)child)->account), logs);
-		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, ((PurpleBuddy *)child)->account);
+		name = purple_buddy_get_name((PurpleBuddy *)child);
+		account = purple_buddy_get_account((PurpleBuddy *)child);
+		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, name,
+						account), logs);
+		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, name, account);
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 

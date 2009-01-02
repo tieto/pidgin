@@ -496,8 +496,9 @@ view_log_cb(GntMenuItem *n, gpointer ggc)
 	buddies = purple_find_buddies(account, name);
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBlistNode *node = cur->data;
-		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL))) {
-			finch_log_show_contact((PurpleContact *)node->parent);
+		if ((node != NULL) &&
+				(purple_blist_node_get_sibling_prev(node) || purple_blist_node_get_sibling_next(node))) {
+			finch_log_show_contact((PurpleContact *)purple_blist_node_get_parent(node));
 			g_slist_free(buddies);
 			return;
 		}
@@ -529,7 +530,7 @@ generate_send_to_menu(FinchConv *ggc)
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 
 	for (; buds; buds = g_slist_delete_link(buds, buds)) {
-		PurpleBlistNode *node = (PurpleBlistNode *)purple_buddy_get_contact((PurpleBuddy *)buds->data);
+		PurpleBlistNode *node = PURPLE_BLIST_NODE(purple_buddy_get_contact(PURPLE_BUDDY(buds->data)));
 		for (node = purple_blist_node_get_first_child(node); node != NULL;
 				node = purple_blist_node_get_sibling_next(node)) {
 			PurpleBuddy *buddy = (PurpleBuddy *)node;

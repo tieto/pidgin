@@ -1058,8 +1058,8 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 	g_return_if_fail(contact != NULL);
 	g_return_if_fail(buddy != NULL);
 
-	if (((PurpleBlistNode*)contact)->child == (PurpleBlistNode*)buddy &&
-			!((PurpleBlistNode*)buddy)->next) {
+	if (PURPLE_BLIST_NODE(contact)->child == PURPLE_BLIST_NODE(buddy) &&
+	    PURPLE_BLIST_NODE(buddy)->next == NULL) {
 		pidgin_dialogs_remove_buddy(buddy);
 	} else {
 		gchar *text;

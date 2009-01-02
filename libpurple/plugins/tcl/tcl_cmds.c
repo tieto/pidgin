@@ -401,9 +401,9 @@ static PurpleBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj
 		return NULL;
 
 	if (!strcmp(type, "buddy")) {
-		node = (PurpleBlistNode *)purple_find_buddy(account, name);
+		node = PURPLE_BLIST_NODE(purple_find_buddy(account, name));
 	} else if (!strcmp(type, "group")) {
-		node = (PurpleBlistNode *)purple_blist_find_chat(account, name);
+		node = PURPLE_BLIST_NODE(purple_blist_find_chat(account, name));
 	}
 
 	return node;

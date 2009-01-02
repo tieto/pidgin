@@ -889,7 +889,9 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
-		for (child = node->child ; child ; child = child->next)
+		for (child = purple_blist_node_get_first_child(node);
+		     child;
+			 child = purple_blist_node_get_sibling_next(child))
 		{
 			PurpleBuddy *buddy;
 			PurpleConversation *conv;
