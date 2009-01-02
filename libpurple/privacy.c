@@ -224,8 +224,10 @@ add_all_buddies_to_permit_list(PurpleAccount *account, gboolean local)
 	while (list != NULL)
 	{
 		PurpleBuddy *buddy = list->data;
-		if (!g_slist_find_custom(account->permit, buddy->name, (GCompareFunc)g_utf8_collate))
-			purple_privacy_permit_add(account, buddy->name, local);
+		const gchar *name = purple_buddy_get_name(buddy);
+
+		if (!g_slist_find_custom(account->permit, name, (GCompareFunc)g_utf8_collate))
+			purple_privacy_permit_add(account, name, local);
 		list = g_slist_delete_link(list, list);
 	}
 }
