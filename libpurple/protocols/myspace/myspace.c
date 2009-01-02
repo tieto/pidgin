@@ -2691,6 +2691,13 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	msim_update_blocklist_for_buddy(session, name, TRUE, FALSE);
 }
 
+static void
+msim_buddy_free(PurpleBuddy *buddy)
+{
+	msim_user_free(purple_buddy_get_protocol_data(buddy));
+	purple_buddy_set_protocol_data(buddy, NULL);
+}
+
 /**
  * Remove a buddy from the user's buddy list.
  */
@@ -2742,7 +2749,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	 * doesn't seem like it would be necessary, but the official client
 	 * does it)
 	 */
-	if (!msim_update_blocklist_for_buddy(session, name, FALSE, FALSE))
+	if (!msim_update_blocklist_for_buddy(session, name, FALSE, FALSE)) {
 		purple_notify_error(NULL, NULL,
 				_("Failed to remove buddy"), _("blocklist command failed"));
 		return;
@@ -2835,13 +2842,6 @@ msim_rem_deny(PurpleConnection *gc, const char *name)
 
 	/* Remove from our approve list and our block list */
 	msim_update_blocklist_for_buddy(session, name, FALSE, FALSE);
-}
-
-static void
-msim_buddy_free(PurpleBuddy *buddy)
-{
-	msim_user_free(purple_buddy_get_protocol_data(buddy));
-	purple_buddy_set_protocol_data(buddy, NULL);
 }
 
 /**
