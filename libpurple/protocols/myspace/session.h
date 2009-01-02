@@ -34,6 +34,9 @@ typedef struct _MsimSession
 	guint sesskey;                      /**< Session key from server */
 	guint userid;                       /**< This user's numeric user ID */
 	gchar *username;                    /**< This user's unique username */
+	gboolean show_only_to_list;
+	int privacy_mode;
+	int offline_message_mode;
 	gint fd;                            /**< File descriptor to/from server */
 
 	/* TODO: Remove. */

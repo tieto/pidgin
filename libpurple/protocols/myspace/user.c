@@ -407,6 +407,39 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 		return FALSE;
 	}
 
+	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
+		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
+		/*
+		 * Some of this info will be available on the buddy list if the
+		 * has themselves as their own buddy.
+		 *
+		 * Much of the info is already available in MsimSession,
+		 * stored in msim_we_are_logged_on().
+		 */
+		gchar *tmpstr;
+
+		tmpstr = msim_msg_get_string(body, "ShowOnlyToList");
+		if (tmpstr != NULL) {
+			session->show_only_to_list = g_str_equal(tmpstr, "True");
+			g_free(tmpstr);
+		}
+
+		session->privacy_mode = msim_msg_get_integer(body, "PrivacyMode");
+		session->offline_message_mode = msim_msg_get_integer(body, "OfflineMessageMode");
+
+		msim_send(session,
+				"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
+				"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+				"idlist", MSIM_TYPE_STRING,
+						g_strdup_printf("w%d|c%d",
+								session->show_only_to_list ? 1 : 0,
+								session->privacy_mode),
+				NULL);
+	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
+			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
+		/* TODO: same as above, but for MySpace info. */
+	}
+
 	username = msim_msg_get_string(body, "UserName");
 
 	if (!username) {
@@ -441,19 +474,6 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 
 		value_str = msim_msg_get_string_from_element(elem);
 		msim_store_user_info_each(key_str, value_str, user);
-	}
-
-	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
-		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
-		/* TODO: do something with our own IM info, if we need it for some
-		 * specific purpose. Otherwise it is available on the buddy list,
-		 * if the user has themselves as their own buddy.
-		 *
-		 * However, much of the info is already available in MsimSession,
-		 * stored in msim_we_are_logged_on(). */
-	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
-			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
-		/* TODO: same as above, but for MySpace info. */
 	}
 
 	msim_msg_free(body);
@@ -538,8 +558,6 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 	purple_debug_info("msim", "msim_lookup_userid: "
 			"asynchronously looking up <%s>\n", user);
 
-	msim_msg_dump("msim_lookup_user: data=%s\n", (MsimMessage *)data);
-
 	/* Setup callback. Response will be associated with request using 'rid'. */
 	rid = msim_new_reply_callback(session, cb, data);
 
@@ -593,7 +611,6 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
-	msim_msg_dump("username_is_set message is: %s\n", userinfo);
 	cmd = msim_msg_get_integer(userinfo, "cmd");
 	dsn = msim_msg_get_integer(userinfo, "dsn");
 	uid = msim_msg_get_integer(userinfo, "uid");
@@ -680,8 +697,6 @@ msim_set_username(MsimSession *session, const gchar *username,
 
 	purple_debug_info("msim", "msim_set_username: "
 			"Setting username %s\n", username);
-
-	msim_msg_dump("msim_set_username: data=%s\n", (MsimMessage *)data);
 
 	/* Setup callback. Response will be associated with request using 'rid'. */
 	rid = msim_new_reply_callback(session, cb, data);

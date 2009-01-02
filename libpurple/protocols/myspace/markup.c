@@ -193,7 +193,7 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	decor_str = xmlnode_get_attrib(root, "s");
 
 	/* Validate the font face, to avoid constructing invalid HTML later */
-	if (strchr(face, '\'') != NULL)
+	if (face != NULL && strchr(face, '\'') != NULL)
 		face = NULL;
 
 	height = height_str != NULL ? atol(height_str) : 12;

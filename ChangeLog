@@ -92,6 +92,11 @@ version 2.5.3 (12/??/2008):
 	  buddylist.  (Thanks to Casey Ho)
 	* Fix a crash when closing an authorization minidialog with the X
 	  then immediately going offline (Paul Aurich)
+	* Fix a crash when closing Pidgin related to custom smileys (disassociate
+	  smileys from GtkIMHtml widgets when they are destroyed).
+	* Fix adding custom a custom smiley using the context menu from a
+	  conversation in the case when no custom smiley had been added before
+	  using the smiley manager.
 
 	Finch:
 	* Allow binding meta+arrow keys for actions.

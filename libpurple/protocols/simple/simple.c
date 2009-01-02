@@ -1951,7 +1951,8 @@ static void simple_login(PurpleAccount *account)
 	if (userserver[1] == NULL || userserver[1][0] == '\0') {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("SIP connect server not specified"));
+			_("Unable to connect to server. Please enter the "
+			  "address of the server you wish to connect to."));
 		return;
 	}
 
