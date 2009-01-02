@@ -55,13 +55,29 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 	if (!(user = purple_buddy_get_protocol_data(buddy))) {
 		/* No MsimUser for this buddy; make one. */
 
-		/* TODO: where is this freed? */
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
 		purple_buddy_set_protocol_data(buddy, user);
 	}
 
 	return user;
+}
+
+void msim_user_free(MsimUser *user)
+{
+	if (!user)
+		return;
+
+	g_free(user->client_info);
+	g_free(user->gender);
+	g_free(user->location);
+	g_free(user->headline);
+	g_free(user->display_name);
+	g_free(user->username);
+	g_free(user->band_name);
+	g_free(user->song_name);
+	g_free(user->image_url);
+	g_free(user);
 }
 
 /**

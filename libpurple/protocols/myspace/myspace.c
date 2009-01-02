@@ -211,7 +211,6 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 			/* Don't have uid offhand - need to ask for it, and wait until hear back before sending. */
 			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
 					username ? username : "(NULL)");
-			/* TODO: where is cloned message freed? Should be in _cb. */
 			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, msim_msg_clone(msg));
 			return TRUE;       /* not sure of status yet - haven't sent! */
 		}
@@ -1930,8 +1929,7 @@ msim_incoming_resolved(MsimSession *session, const MsimMessage *userinfo,
 
 	msim_process(session, msg);
 
-	/* TODO: Free copy cloned from  msim_preprocess_incoming(). */
-	/* msim_msg_free(msg); */
+	msim_msg_free(msg);
 	msim_msg_free(body);
 }
 
@@ -2747,6 +2745,9 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	if (!msim_update_blocklist_for_buddy(session, name, FALSE, FALSE))
 		purple_notify_error(NULL, NULL,
 				_("Failed to remove buddy"), _("blocklist command failed"));
+		return;
+	}
+	msim_buddy_free(buddy);
 }
 
 /**
@@ -2766,7 +2767,6 @@ msim_add_deny(PurpleConnection *gc, const char *name)
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			/* 'delprofileid' with uid will be inserted here. */
 			NULL);
-
 	if (!msim_postprocess_outgoing(session, msg, name, "delprofileid", NULL))
 		purple_debug_error("myspace", "delbuddy command failed\n");
 	msim_msg_free(msg);
@@ -2835,6 +2835,13 @@ msim_rem_deny(PurpleConnection *gc, const char *name)
 
 	/* Remove from our approve list and our block list */
 	msim_update_blocklist_for_buddy(session, name, FALSE, FALSE);
+}
+
+static void
+msim_buddy_free(PurpleBuddy *buddy)
+{
+	msim_user_free(purple_buddy_get_protocol_data(buddy));
+	purple_buddy_set_protocol_data(buddy, NULL);
 }
 
 /**
@@ -3053,7 +3060,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,              /* alias_buddy */
 	NULL,              /* group_buddy */
 	NULL,              /* rename_group */
-	NULL,              /* buddy_free */
+	msim_buddy_free,   /* buddy_free */
 	NULL,              /* convo_closed */
 	msim_normalize,    /* normalize */
 	NULL,              /* set_buddy_icon */
