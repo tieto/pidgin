@@ -519,7 +519,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 		GList *l;
 		GList *flags = NULL;
 		for (l = members; l; l = l->next)
-			flags = g_list_append(flags, GINT_TO_POINTER(PURPLE_CBFLAGS_NONE));
+			flags = g_list_prepend(flags, GINT_TO_POINTER(PURPLE_CBFLAGS_NONE));
 		if (c && purple_conv_chat_has_left(PURPLE_CONV_CHAT(c))) {
 			/* this might be a hack, but oh well, it should nicely */
 			char *tmpmsg;

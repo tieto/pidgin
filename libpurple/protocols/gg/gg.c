@@ -2039,11 +2039,12 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 {
 	PurpleAccount *account;
 	GGPInfo *info = gc->proto_data;
+	const gchar *name = purple_buddy_get_name(buddy);
 
-	gg_add_notify(info->session, ggp_str_to_uin(buddy->name));
+	gg_add_notify(info->session, ggp_str_to_uin(name));
 
 	account = purple_connection_get_account(gc);
-	if (strcmp(purple_account_get_username(account), buddy->name) == 0) {
+	if (strcmp(purple_account_get_username(account), name) == 0) {
 		ggp_status_fake_to_self(account);
 	}
 }
@@ -2053,7 +2054,7 @@ static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 {
 	GGPInfo *info = gc->proto_data;
 
-	gg_remove_notify(info->session, ggp_str_to_uin(buddy->name));
+	gg_remove_notify(info->session, ggp_str_to_uin(purple_buddy_get_name(buddy)));
 }
 
 static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
