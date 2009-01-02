@@ -34,6 +34,9 @@ typedef struct _MsimSession
 	guint sesskey;                      /**< Session key from server */
 	guint userid;                       /**< This user's numeric user ID */
 	gchar *username;                    /**< This user's unique username */
+	gboolean show_only_to_list;
+	int privacy_mode;                   /**< This is a bitmask */
+	int offline_message_mode;
 	gint fd;                            /**< File descriptor to/from server */
 
 	/* TODO: Remove. */
@@ -53,7 +56,6 @@ typedef struct _MsimSession
 
 /* Check if an MsimSession is valid */
 #define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
-
 
 MsimSession *msim_session_new(PurpleAccount *acct);
 void msim_session_destroy(MsimSession *session);

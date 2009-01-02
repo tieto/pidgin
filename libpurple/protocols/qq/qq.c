@@ -626,7 +626,7 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "puzzlebird<br>\n");
 	g_string_append(info, "<br>\n");
 	g_string_append(info, _("<p><b>Code Contributors</b>:<br>\n"));
-	g_string_append(info, "gfhuang : patches for libpurple 2.0.0beta2, maintainer<br>\n");
+	g_string_append(info, "gfhuang(poppyer) : patches for libpurple 2.0.0beta2, maintainer<br>\n");
 	g_string_append(info, "Yuan Qingyun : patches for libpurple 1.5.0, maintainer<br>\n");
 	g_string_append(info, "henryouly : file transfer, udp sock5 proxy and qq_show, maintainer<br>\n");
 	g_string_append(info, "hzhr : maintainer<br>\n");

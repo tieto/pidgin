@@ -1676,20 +1676,18 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							  size = "xx-small";
 							  break;
 							case 2:
-							  size = "x-small";
-							  break;
-							case 3:
 							  size = "small";
 							  break;
-							case 4:
+							case 3:
 							  size = "medium";
 							  break;
-							case 5:
+							case 4:
 							  size = "large";
 							  break;
-							case 6:
+							case 5:
 							  size = "x-large";
 							  break;
+							case 6:
 							case 7:
 							  size = "xx-large";
 							  break;
@@ -4572,18 +4570,35 @@ gboolean
 purple_utf8_has_word(const char *haystack, const char *needle)
 {
 	char *hay, *pin, *p;
+	const char *start, *prev_char;
+	gunichar before, after;
 	int n;
 	gboolean ret = FALSE;
 
-	hay = g_utf8_strdown(haystack, -1);
+	start = hay = g_utf8_strdown(haystack, -1);
 
 	pin = g_utf8_strdown(needle, -1);
 	n = strlen(pin);
 
-	if ((p = strstr(hay, pin)) != NULL) {
-		if ((p == hay || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
-			ret = TRUE;
+	while ((p = strstr(start, pin)) != NULL) {
+		prev_char = g_utf8_find_prev_char(hay, p);
+		before = -2;
+		if (prev_char) {
+			before = g_utf8_get_char(prev_char);
 		}
+		after = g_utf8_get_char_validated(p + n, - 1);
+
+		if ((p == hay ||
+				/* The character before is a reasonable guess for a word boundary
+				   ("!g_unichar_isalnum()" is not a valid way to determine word
+				    boundaries, but it is the only reasonable thing to do here),
+				   and isn't the '&' from a "&amp;" or some such entity*/
+				(before != -2 && !g_unichar_isalnum(before) && *(p - 1) != '&'))
+				&& after != -2 && !g_unichar_isalnum(after)) {
+			ret = TRUE;
+			break;
+		}
+		start = p + 1;
 	}
 
 	g_free(pin);

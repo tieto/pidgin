@@ -416,11 +416,6 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 
 	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
 
-	add_req = g_new0(qq_room_req, 1);
-	add_req->gc = gc;
-	add_req->id = id;
-	add_req->member = member_id;
-
 	purple_debug_info("QQ", "%u requested to join room, ext id %u\n", member_id, ext_id);
 
 	rmd = qq_room_data_find(gc, id);
@@ -441,6 +436,11 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 	}
 	who = uid_to_purple_name(member_id);
 	msg = g_strdup_printf(_("%u request to join Qun %u"), member_id, ext_id);
+
+	add_req = g_new0(qq_room_req, 1);
+	add_req->gc = gc;
+	add_req->id = id;
+	add_req->member = member_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			msg, reason,

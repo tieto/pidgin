@@ -193,7 +193,7 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	decor_str = xmlnode_get_attrib(root, "s");
 
 	/* Validate the font face, to avoid constructing invalid HTML later */
-	if (strchr(face, '\'') != NULL)
+	if (face != NULL && strchr(face, '\'') != NULL)
 		face = NULL;
 
 	height = height_str != NULL ? atol(height_str) : 12;
@@ -294,7 +294,9 @@ msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	*end = g_strdup("</p>");
 }
 
-/** Convert the msim markup <c> tag (text color) into HTML. TODO: Test */
+/**
+ * Convert the msim markup <c> tag (text color) into HTML.
+ */
 static void
 msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -312,15 +314,20 @@ msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	purple_color = msim_color_to_purple(color);
 
+#ifdef USE_CSS_FORMATTING
+	*begin = g_strdup_printf("<span style='color: %s'>", purple_color);
+	*end = g_strdup("</span>");
+#else
 	*begin = g_strdup_printf("<font color='%s'>", purple_color);
+	*end = g_strdup("</font>");
+#endif
 
 	g_free(purple_color);
-
-	/* *begin = g_strdup_printf("<span style='color: %s'>", color); */
-	*end = g_strdup("</font>");
 }
 
-/** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
+/**
+ * Convert the msim markup <b> tag (background color) into HTML.
+ */
 static void
 msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -338,12 +345,15 @@ msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	purple_color = msim_color_to_purple(color);
 
-	/* TODO: find out how to set background color. */
-	*begin = g_strdup_printf("<span style='background-color: %s'>",
-			purple_color);
-	g_free(purple_color);
+#ifdef USE_CSS_FORMATTING
+	*begin = g_strdup_printf("<span style='background-color: %s'>", purple_color);
+	*end = g_strdup("</span>");
+#else
+	*begin = g_strdup_printf("<body bgcolor='%s'>", purple_color);
+	*end = g_strdup("</body>");
+#endif
 
-	*end = g_strdup("</p>");
+	g_free(purple_color);
 }
 
 /** Convert the msim markup <i> tag (emoticon image) into HTML. */
@@ -398,7 +408,7 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 		msim_markup_i_to_html(session, root, begin, end);
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
-				"unknown tag name=%s, ignoring",
+				"unknown tag name=%s, ignoring\n",
 				root->name ? root->name : "(NULL)");
 		*begin = g_strdup("");
 		*end = g_strdup("");
@@ -497,29 +507,47 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		*end = g_strdup("");
 	} else if (!purple_utf8_strcasecmp(root->name, "font")) {
+		GString *tmpbegin, *tmpend;
 		const gchar *size;
 		const gchar *face;
+		const gchar *color;
 
 		size = xmlnode_get_attrib(root, "size");
 		face = xmlnode_get_attrib(root, "face");
+		color = xmlnode_get_attrib(root, "color");
 
-		if (face && size) {
-			*begin = g_strdup_printf("<f f='%s' h='%d'>", face,
-					msim_point_to_height(session,
-						msim_purple_size_to_point(session, atoi(size))));
-		} else if (face) {
-			*begin = g_strdup_printf("<f f='%s'>", face);
-		} else if (size) {
-			*begin = g_strdup_printf("<f h='%d'>",
+		tmpbegin = g_string_new("<f");
+		tmpend = g_string_new("</f>");
+
+		if (face != NULL)
+			g_string_append_printf(tmpbegin, "f='%s'", face);
+
+		if (size != NULL)
+			g_string_append_printf(tmpbegin, "h='%d'",
 					 msim_point_to_height(session,
 						 msim_purple_size_to_point(session, atoi(size))));
-		} else {
-			*begin = g_strdup("<f>");
+
+		/* Close the <f> tag */
+		g_string_append(tmpbegin, ">");
+
+		if (color != NULL) {
+			g_string_append_printf(tmpbegin, "<c v='%s'>", color);
+			g_string_prepend(tmpend, "</c>");
 		}
 
-		*end = g_strdup("</f>");
+		*begin = g_string_free(tmpbegin, FALSE);
+		*end = g_string_free(tmpend, FALSE);
 
-		/* TODO: color (bg uses <body>), emoticons */
+	} else if (!purple_utf8_strcasecmp(root->name, "body")) {
+		const gchar *bgcolor;
+
+		bgcolor = xmlnode_get_attrib(root, "bgcolor");
+
+		if (bgcolor != NULL) {
+			*begin = g_strdup_printf("<b v='%s'>", bgcolor);
+			*end = g_strdup("</b>");
+		}
+
 	} else {
 		gchar *err;
 
@@ -550,7 +578,7 @@ static void
 msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
 {
 	xmlnode *node;
-	gchar *begin, *inner, *end;
+	gchar *begin, *inner, *end, *tmp;
 	int descended = nodes_processed;
 
 	if (!root || !root->name)
@@ -584,7 +612,13 @@ msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XML
 
 			case XMLNODE_TYPE_DATA:
 				/* Literal text. */
-				g_string_append_len(out, node->data, node->data_sz);
+				/*
+				 * TODO: Why is it necessary to escape here?  I thought
+				 *       node->data was already escaped?
+				 */
+				tmp = g_markup_escape_text(node->data, node->data_sz);
+				g_string_append(out, tmp);
+				g_free(tmp);
 				break;
 
 			default:
@@ -672,7 +706,8 @@ msim_convert_smileys_to_markup(gchar *before)
 	return new;
 }
 
-/** High-level function to convert MySpaceIM markup to Purple (HTML) markup.
+/**
+ * High-level function to convert MySpaceIM markup to Purple (HTML) markup.
  *
  * @return Purple markup string, must be g_free()'d. */
 gchar *
@@ -681,7 +716,8 @@ msim_markup_to_html(MsimSession *session, const gchar *raw)
 	return msim_convert_xml(session, raw, msim_markup_tag_to_html);
 }
 
-/** High-level function to convert Purple (HTML) to MySpaceIM markup.
+/**
+ * High-level function to convert Purple (HTML) to MySpaceIM markup.
  *
  * TODO: consider using purple_markup_html_to_xhtml() to make valid XML.
  *

@@ -91,17 +91,16 @@ gboolean msim_send(struct _MsimSession *session, ...) SENTINEL_ATTR;
 
 gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 
-MsimMessage *msim_parse(gchar *raw);
-MsimMessage *msim_msg_dictionary_parse(gchar *raw);
+MsimMessage *msim_parse(const gchar *raw);
 
-MsimMessageElement *msim_msg_get(MsimMessage *msg, const gchar *name);
+MsimMessageElement *msim_msg_get(const MsimMessage *msg, const gchar *name);
 
 /* Retrieve data by name */
-gchar *msim_msg_get_string(MsimMessage *msg, const gchar *name);
-GList *msim_msg_get_list(MsimMessage *msg, const gchar *name);
-MsimMessage *msim_msg_get_dictionary(MsimMessage *msg, const gchar *name);
-guint msim_msg_get_integer(MsimMessage *msg, const gchar *name);
-gboolean msim_msg_get_binary(MsimMessage *msg, const gchar *name, gchar **binary_data, gsize *binary_length);
+gchar *msim_msg_get_string(const MsimMessage *msg, const gchar *name);
+GList *msim_msg_get_list(const MsimMessage *msg, const gchar *name);
+MsimMessage *msim_msg_get_dictionary(const MsimMessage *msg, const gchar *name);
+guint msim_msg_get_integer(const MsimMessage *msg, const gchar *name);
+gboolean msim_msg_get_binary(const MsimMessage *msg, const gchar *name, gchar **binary_data, gsize *binary_length);
 
 /* Retrieve data by element (MsimMessageElement *), returned from msim_msg_get() */
 gchar *msim_msg_get_string_from_element(MsimMessageElement *elem);
