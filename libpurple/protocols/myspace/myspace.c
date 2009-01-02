@@ -549,9 +549,9 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	guchar hash_pw[HASH_SIZE];
 	guchar key[HASH_SIZE];
 	gchar *password_utf16le, *password_utf8_lc;
-	guchar *data;
+	GString *data;
 	guchar *data_out;
-	size_t data_len, data_out_len;
+	size_t data_out_len;
 	gsize conv_bytes_read, conv_bytes_written;
 	GError *conv_error;
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -625,24 +625,24 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	/* rc4 encrypt:
 	 * nonce1+email+IP list */
 
-	data_len = NONCE_SIZE + strlen(email) + MSIM_LOGIN_IP_LIST_LEN;
-	data = g_new0(guchar, data_len);
-	memcpy(data, nonce, NONCE_SIZE);
-	memcpy(data + NONCE_SIZE, email, strlen(email));
-	memcpy(data + NONCE_SIZE + strlen(email), MSIM_LOGIN_IP_LIST, MSIM_LOGIN_IP_LIST_LEN);
+	data = g_string_new(NULL);
+	g_string_append_len(data, nonce, NONCE_SIZE);
+	g_string_append(data, email);
+	g_string_append_len(data, MSIM_LOGIN_IP_LIST, MSIM_LOGIN_IP_LIST_LEN);
 
-	data_out = g_new0(guchar, data_len);
+	data_out = g_new0(guchar, data->len);
 
-	purple_cipher_context_encrypt(rc4, (const guchar *)data,
-			data_len, data_out, &data_out_len);
+	purple_cipher_context_encrypt(rc4, (const guchar *)data->str,
+			data->len, data_out, &data_out_len);
 	purple_cipher_context_destroy(rc4);
-	g_free(data);
 
-	if (data_out_len != data_len) {
+	if (data_out_len != data->len) {
 		purple_debug_info("msim", "msim_compute_login_response: "
 				"data length mismatch: %" G_GSIZE_FORMAT " != %"
-				G_GSIZE_FORMAT "\n", data_out_len, data_len);
+				G_GSIZE_FORMAT "\n", data_out_len, data->len);
 	}
+
+	g_string_free(data, TRUE);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	purple_debug_info("msim", "response=<%s>\n", data_out);
