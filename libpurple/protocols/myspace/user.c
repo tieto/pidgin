@@ -293,6 +293,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 	if (g_str_equal(key_str, "UserID") || g_str_equal(key_str, "ContactID")) {
 		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
 		user->id = atol(value_str);
+		g_free(value_str);
 		if (user->buddy)
 		{
 			purple_debug_info("msim", "associating uid %s with username %s\n", key_str, name);
@@ -310,13 +311,16 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		user->location = value_str;
 	} else if (g_str_equal(key_str, "TotalFriends")) {
 		user->total_friends = atol(value_str);
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "DisplayName")) {
 		g_free(user->display_name);
 		user->display_name = value_str;
 	} else if (g_str_equal(key_str, "BandName")) {
 		msim_set_artist_or_title(user, value_str, NULL);
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "SongName")) {
 		msim_set_artist_or_title(user, NULL, value_str);
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "UserName") || g_str_equal(key_str, "IMName") || g_str_equal(key_str, "NickName")) {
 		/* Ignore because PurpleBuddy knows this already */
 		g_free(value_str);
