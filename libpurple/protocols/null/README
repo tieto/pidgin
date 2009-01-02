@@ -28,11 +28,10 @@ BUILDING AND INSTALLING
 -----------------------
 
 To build, just run ./configure as usual in the root directory of the pidgin
-source distribution. Then cd libpurple/protocols/null and type make. To
-install, copy libnull.la and .libs/libnull.so into your ~/.purple/plugins
-directory. Then run Pidgin.
+source distribution. Then cd libpurple/protocols/null and then make.  To
+install, run make install.  Then run Pidgin.
 
-To build nullprpl on Windows (with Cygwin/MinGW), use Makefile.mingw.
+To build nullprpl on Windows (with Cygwin/MinGW), use: make -f Makefile.mingw
 
 -----
 USAGE

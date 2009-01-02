@@ -177,13 +177,13 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 	buddy = (PurpleBuddy *)node;
 
 	/* Find the session */
-	account = buddy->account;
+	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
 	session = (MsimSession *)gc->proto_data;
 
 	zap = GPOINTER_TO_INT(zap_num_ptr);
 
-	purple_prpl_send_attention(session->gc, buddy->name, zap);
+	purple_prpl_send_attention(session->gc, purple_buddy_get_name(buddy), zap);
 }
 
 /** Return menu, if any, for a buddy list node. */
