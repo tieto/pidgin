@@ -1042,35 +1042,39 @@ free_pounce_handler(gpointer user_data)
 static void
 buddy_state_cb(PurpleBuddy *buddy, PurplePounceEvent event)
 {
-	purple_pounce_execute(buddy->account, buddy->name, event);
+	PurpleAccount *account = purple_buddy_get_account(buddy);
+	const gchar *name = purple_buddy_get_name(buddy);
+
+	purple_pounce_execute(account, name, event);
 }
 
 static void
 buddy_status_changed_cb(PurpleBuddy *buddy, PurpleStatus *old_status,
                         PurpleStatus *status)
 {
+	PurpleAccount *account = purple_buddy_get_account(buddy);
+	const gchar *name = purple_buddy_get_name(buddy);
 	gboolean old_available, available;
 
 	available = purple_status_is_available(status);
 	old_available = purple_status_is_available(old_status);
 
 	if (available && !old_available)
-		purple_pounce_execute(buddy->account, buddy->name,
-		                    PURPLE_POUNCE_AWAY_RETURN);
+		purple_pounce_execute(account, name, PURPLE_POUNCE_AWAY_RETURN);
 	else if (!available && old_available)
-		purple_pounce_execute(buddy->account, buddy->name,
-		                    PURPLE_POUNCE_AWAY);
+		purple_pounce_execute(account, name, PURPLE_POUNCE_AWAY);
 }
 
 static void
 buddy_idle_changed_cb(PurpleBuddy *buddy, gboolean old_idle, gboolean idle)
 {
+	PurpleAccount *account = purple_buddy_get_account(buddy);
+	const gchar *name = purple_buddy_get_name(buddy);
+
 	if (idle && !old_idle)
-		purple_pounce_execute(buddy->account, buddy->name,
-		                    PURPLE_POUNCE_IDLE);
+		purple_pounce_execute(account, name, PURPLE_POUNCE_IDLE);
 	else if (!idle && old_idle)
-		purple_pounce_execute(buddy->account, buddy->name,
-		                    PURPLE_POUNCE_IDLE_RETURN);
+		purple_pounce_execute(account, name, PURPLE_POUNCE_IDLE_RETURN);
 }
 
 static void
