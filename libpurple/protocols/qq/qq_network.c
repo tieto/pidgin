@@ -468,7 +468,7 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 
 static void udp_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
-	PurpleConnection *gc = (PurpleConnection *) data;
+	PurpleConnection *gc = NULL;
 	qq_data *qd;
 	guint8 *buf;
 	gint buf_len;

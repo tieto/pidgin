@@ -6,6 +6,22 @@ version 2.5.4 (??/??/????):
 	  Rosinski)
 	* Don't ignore namespace information when parsing XMPP data. (Michal
 	  Witkowski)
+	* Fix a crash that occurred when retrieving certain Offline Messages
+	  on MSN.
+	* Extended purple-url-handler to handle "gtalk" URI's. (Paul Aurich)
+	* Fix the hang on exit in Network Location Awareness for Windows XP
+	  and Windows Vista. (Paul Aurich)
+
+	XMPP:
+	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
+	* Don't put SASL PLAIN or IQ Auth passwords in debug logs. (Paul Aurich)
+
+	Pidgin:
+	* Fix a crash in the Add Account dialog when changing protocols under
+	  certain circumstances.
+
+	Finch:
+	* Redirect stderr outputs to the debug window.
 
 version 2.5.3 (12/20/2008):
 	libpurple:
@@ -127,7 +143,7 @@ version 2.5.3 (12/20/2008):
 	  if no custom smilies have previously been added using the smiley
 	  manager.
 	* Improved support for some message formatting in conversations.
-	* Allow focusing the coversation history or userlist with F6.
+	* Allow focusing the conversation history or userlist with F6.
 	* Fixed the Send Button plugin to avoid duplicate buttons in a single
 	  conversation.
 	* Double-clicking a saved status will now activate it and close the

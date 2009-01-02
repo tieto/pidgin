@@ -1676,20 +1676,18 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							  size = "xx-small";
 							  break;
 							case 2:
-							  size = "x-small";
-							  break;
-							case 3:
 							  size = "small";
 							  break;
-							case 4:
+							case 3:
 							  size = "medium";
 							  break;
-							case 5:
+							case 4:
 							  size = "large";
 							  break;
-							case 6:
+							case 5:
 							  size = "x-large";
 							  break;
+							case 6:
 							case 7:
 							  size = "xx-large";
 							  break;

@@ -35,7 +35,7 @@ typedef struct _MsimSession
 	guint userid;                       /**< This user's numeric user ID */
 	gchar *username;                    /**< This user's unique username */
 	gboolean show_only_to_list;
-	int privacy_mode;
+	int privacy_mode;                   /**< This is a bitmask */
 	int offline_message_mode;
 	gint fd;                            /**< File descriptor to/from server */
 

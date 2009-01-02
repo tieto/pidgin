@@ -42,7 +42,8 @@ typedef enum {
 
 	JABBER_CAP_PING			  = 1 << 11,
 	JABBER_CAP_ADHOC		  = 1 << 12,
-	
+	JABBER_CAP_BLOCKING       = 1 << 13,
+
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 
@@ -294,6 +295,9 @@ GList *jabber_status_types(PurpleAccount *account);
 void jabber_login(PurpleAccount *account);
 void jabber_close(PurpleConnection *gc);
 void jabber_idle_set(PurpleConnection *gc, int idle);
+void jabber_request_block_list(JabberStream *js);
+void jabber_add_deny(PurpleConnection *gc, const char *who);
+void jabber_rem_deny(PurpleConnection *gc, const char *who);
 void jabber_keepalive(PurpleConnection *gc);
 void jabber_register_gateway(JabberStream *js, const char *gateway);
 void jabber_register_account(PurpleAccount *account);
