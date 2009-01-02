@@ -662,7 +662,7 @@ xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
 	vsnprintf(errmsg, sizeof(errmsg), msg, args);
 	va_end(args);
 
-	purple_debug_error("xmlnode", "Error parsing xml file: %s\n", errmsg);
+	purple_debug_error("xmlnode", "Error parsing xml file: %s", errmsg);
 }
 
 static xmlSAXHandler xmlnode_parser_libxml = {

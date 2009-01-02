@@ -45,7 +45,7 @@ void ggp_buddylist_send(PurpleConnection *gc)
 	PurpleBuddy *buddy;
 	uin_t *userlist = NULL;
 	gchar *types = NULL;
-	int size = 0;
+	int size = 0, ret = 0;
 
 	for (gnode = purple_blist_get_root();
 	     gnode != NULL;
@@ -88,12 +88,12 @@ void ggp_buddylist_send(PurpleConnection *gc)
 		}
 	}
 
+	ret = gg_notify_ex(info->session, userlist, types, size);
+	purple_debug_info("gg", "send: ret=%d; size=%d\n", ret, size);
+	
 	if (userlist) {
-		int ret = gg_notify_ex(info->session, userlist, types, size);
 		g_free(userlist);
 		g_free(types);
-
-		purple_debug_info("gg", "send: ret=%d; size=%d\n", ret, size);
 	}
 }
 /* }}} */
@@ -233,8 +233,7 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
-
-	char *buddylist = g_strdup("");
+	GString *buddylist = g_string_sized_new(1024);
 	char *ptr;
 
 	for (gnode = purple_blist_get_root();
@@ -272,19 +271,16 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 					alias = name;
 				gname = purple_group_get_name(group);
 
-				ptr = buddylist;
-				buddylist = g_strdup_printf(
-						"%s%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
-						ptr, alias, alias, alias, alias,
+				g_string_append_printf(buddylist,
+						"%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
+						alias, alias, alias, alias,
 						"", gname, name, "", "");
-
-				g_free(ptr);
 			}
 		}
 	}
 
-	ptr = charset_convert(buddylist, "UTF-8", "CP1250");
-	g_free(buddylist);
+	ptr = charset_convert(buddylist->str, "UTF-8", "CP1250");
+	g_string_free(buddylist, TRUE);
 	return ptr;
 }
 /* }}} */

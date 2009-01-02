@@ -627,7 +627,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 			break;
 		case PURPLE_BLIST_GROUP_NODE:
 			dest = purple_find_group(arg2);
-			if (dest != NULL && strcmp(arg2, purple_group_get_name(PURPLE_GROUP(node)))) {
+			if (dest != NULL && purple_utf8_strcasecmp(arg2, purple_group_get_name(PURPLE_GROUP(node)))) {
 				pidgin_dialogs_merge_groups(PURPLE_GROUP(node), arg2);
 			} else {
 				purple_blist_rename_group(PURPLE_GROUP(node), arg2);

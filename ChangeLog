@@ -1,6 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.3 (12/18/2008):
+version 2.5.4 (??/??/????):
+	libpurple:
+	* Fix a connection timeout with empty Gadu-Gady buddy lists. (Martin
+	  Rosinski)
+	* Don't ignore namespace information when parsing XMPP data. (Michal
+	  Witkowski)
+
+	XMPP:
+	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
+
+version 2.5.3 (12/20/2008):
 	libpurple:
 	* The Buddy State Notification plugin no longer prints duplicate
 	  notifications when the same buddy is in multiple groups. (Florian
@@ -27,7 +37,7 @@ version 2.5.3 (12/18/2008):
 	* Fix a crash caused by authorization requests. (Florian Quèze)
 
 	Gadu-Gadu:
-	* Add support for IM images. (Adam Strzelecki)
+	* Add support for IM images. (Tomasz Sałaciński, Adam Strzelecki)
 	* Gadu-Gadu now checks that UID's are valid. (Adam Strzelecki)
 	* Gadu-Gadu now does proper charset translations where needed. (Adam
 	  Strzelecki)
@@ -120,7 +130,7 @@ version 2.5.3 (12/18/2008):
 	  if no custom smilies have previously been added using the smiley
 	  manager.
 	* Improved support for some message formatting in conversations.
-	* Allow focusing the coversation history or userlist with F6.
+	* Allow focusing the conversation history or userlist with F6.
 	* Fixed the Send Button plugin to avoid duplicate buttons in a single
 	  conversation.
 	* Double-clicking a saved status will now activate it and close the

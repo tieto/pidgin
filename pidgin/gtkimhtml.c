@@ -3113,15 +3113,15 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							else if (g_ascii_strcasecmp(size, "smaller") == 0
 								  || g_ascii_strcasecmp(size, "x-small") == 0)
 								font->size = 2;
-							else if (g_ascii_strcasecmp(size, "larger") == 0
-								  || g_ascii_strcasecmp(size, "medium") == 0)
+							else if (g_ascii_strcasecmp(size, "medium") == 0)
+								font->size = 3;
+							else if (g_ascii_strcasecmp(size, "large") == 0
+								  || g_ascii_strcasecmp(size, "larger") == 0)
 								font->size = 4;
-							else if (g_ascii_strcasecmp(size, "large") == 0)
-								font->size = 5;
 							else if (g_ascii_strcasecmp(size, "x-large") == 0)
-								font->size = 6;
+								font->size = 5;
 							else if (g_ascii_strcasecmp(size, "xx-large") == 0)
-								font->size = 7;
+								font->size = 6;
 
 							/*
 							 * TODO: Handle other values, like percentages, or

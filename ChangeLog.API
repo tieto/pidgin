@@ -34,7 +34,7 @@ version 2.6.0 (??/??/????):
 		  objects from GtkIMHtml protocol callbacks.
 		* pidgin_utils_init, pidgin_utils_uninit
 
-version 2.5.3 (12/18/2008):
+version 2.5.3 (12/20/2008):
 	libpurple
 		Changed:
 		* purple_util_fetch_url and purple_util_fetch_url_request can
