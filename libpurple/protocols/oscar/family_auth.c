@@ -597,18 +597,18 @@ auth_shutdown(OscarData *od, aim_module_t *mod)
 {
 	if (od->authinfo != NULL)
 	{
-		free(od->authinfo->sn);
-		free(od->authinfo->bosip);
-		free(od->authinfo->errorurl);
-		free(od->authinfo->email);
-		free(od->authinfo->chpassurl);
-		free(od->authinfo->latestrelease.name);
-		free(od->authinfo->latestrelease.url);
-		free(od->authinfo->latestrelease.info);
-		free(od->authinfo->latestbeta.name);
-		free(od->authinfo->latestbeta.url);
-		free(od->authinfo->latestbeta.info);
-		free(od->authinfo);
+		g_free(od->authinfo->sn);
+		g_free(od->authinfo->bosip);
+		g_free(od->authinfo->errorurl);
+		g_free(od->authinfo->email);
+		g_free(od->authinfo->chpassurl);
+		g_free(od->authinfo->latestrelease.name);
+		g_free(od->authinfo->latestrelease.url);
+		g_free(od->authinfo->latestrelease.info);
+		g_free(od->authinfo->latestbeta.name);
+		g_free(od->authinfo->latestbeta.url);
+		g_free(od->authinfo->latestbeta.info);
+		g_free(od->authinfo);
 	}
 }
 

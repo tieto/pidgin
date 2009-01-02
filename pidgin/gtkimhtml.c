@@ -3122,9 +3122,15 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 								font->size = 6;
 							else if (g_ascii_strcasecmp(size, "xx-large") == 0)
 								font->size = 7;
-							else
-								font->size = 3;
-						    gtk_imhtml_font_set_size(imhtml, font->size);
+
+							/*
+							 * TODO: Handle other values, like percentages, or
+							 * lengths specified as em, ex, px, in, cm, mm, pt
+							 * or pc.  Or even better, use an actual HTML
+							 * renderer like webkit.
+							 */
+							if (font->size > 0)
+							    gtk_imhtml_font_set_size(imhtml, font->size);
 						}
 						else if (oldfont)
 						{

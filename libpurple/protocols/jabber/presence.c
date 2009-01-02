@@ -502,17 +502,19 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				priority = atoi(p);
 				g_free(p);
 			}
+		} else if(xmlns == NULL) {
+			/* The rest of the cases used to check xmlns individually. */
+			continue;
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
-		} else if(xmlns && !strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
+		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
 			caps = y; /* store for later, when creating buddy resource */
 		} else if(!strcmp(y->name, "x")) {
-			const char *xmlns = xmlnode_get_namespace(y);
-			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
+			if(!strcmp(xmlns, "jabber:x:delay")) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
-			} else if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
+			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 				xmlnode *z;
 
 				muc = TRUE;
@@ -555,7 +557,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 							flags |= PURPLE_CBFLAGS_VOICE;
 					}
 				}
-			} else if(xmlns && !strcmp(xmlns, "vcard-temp:x:update")) {
+			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
 					g_free(avatar_hash);

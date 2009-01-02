@@ -1424,6 +1424,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsnSession *session;
 	MsnUserList *userlist;
 	const char *who, *gname;
+	MsnUser *user;
 
 	session = gc->proto_data;
 	userlist = session->userlist;
@@ -1453,9 +1454,10 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
 	 * internal. */
-	if (msn_userlist_find_user(userlist, who) != NULL) {
-		/* We already know this buddy. This function takes care of users
-		   already in the list and stuff... */
+	user = msn_userlist_find_user(userlist, who);
+	if ((user != NULL) && (user->networkid != MSN_NETWORK_UNKNOWN)) {
+		/* We already know this buddy and their network. This function knows
+		   what to do with users already in the list and stuff... */
 		msn_userlist_add_buddy(userlist, who, gname);
 	} else {
 		/* We need to check the network for this buddy first */
