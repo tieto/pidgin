@@ -4167,8 +4167,7 @@ yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
 	           "Trying to join %s \n", args[0]);
 
 	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	g_hash_table_replace(comp, g_strdup("room"),
-	g_strdup_printf("%s", g_ascii_strdown(args[0], strlen(args[0]))));
+	g_hash_table_replace(comp, g_strdup("room"), g_ascii_strdown(args[0], -1));
 	g_hash_table_replace(comp, g_strdup("type"), g_strdup("Chat"));
 
 	yahoo_c_join(gc, comp);
