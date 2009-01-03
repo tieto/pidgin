@@ -295,7 +295,7 @@ int main(int argc, char *argv[])
 
 	/* Get the password for the account */
 	password = getpass("Password: ");
-	purple_account_set_password(account, password);
+	purple_account_set_password_async(account, g_strdup(password), g_free, NULL, NULL);
 
 	/* It's necessary to enable the account first. */
 	purple_account_set_enabled(account, UI_ID, TRUE);
