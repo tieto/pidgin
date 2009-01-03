@@ -331,7 +331,7 @@ do_prpl_change_account_status(PurpleAccount *account,
 			purple_account_disconnect(account);
 		/* Clear out the unsaved password if we're already disconnected and we switch to offline status */
 		else if (!purple_account_get_remember_password(account))
-			purple_account_set_password(account, NULL);
+			purple_account_set_password_async(account, NULL, NULL, NULL, NULL);
 		return;
 	}
 

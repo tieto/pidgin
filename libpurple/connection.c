@@ -451,12 +451,22 @@ purple_connection_get_prpl(const PurpleConnection *gc)
 	return gc->prpl;
 }
 
+
+/**
+ * FIXME : all the calling tree needs to be async.
+ */
 const char *
 purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : gc->account->password;
+	if (gc->password) {
+		return gc->password;
+	} else {
+		purple_debug_info("connection",
+			"Password was unknown, getting password from account");
+		return purple_account_get_password(gc->account);
+	}
 }
 
 const char *
@@ -502,10 +512,7 @@ static gboolean
 purple_connection_disconnect_cb(gpointer data)
 {
 	PurpleAccount *account = data;
-	char *password = g_strdup(purple_account_get_password(account));
 	purple_account_disconnect(account);
-	purple_account_set_password(account, password);
-	g_free(password);
 	return FALSE;
 }
 
@@ -523,6 +530,7 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 	                             : PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 	purple_connection_error_reason (gc, reason, text);
 }
+
 
 void
 purple_connection_error_reason (PurpleConnection *gc,

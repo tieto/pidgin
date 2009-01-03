@@ -1,4 +1,4 @@
-DIST_SUBDIRS = mono perl ssl tcl
+DIST_SUBDIRS = mono perl ssl tcl keyrings
 
 if USE_PERL
 PERL_DIR = perl
@@ -20,7 +20,8 @@ SUBDIRS = \
 	$(MONO_DIR) \
 	$(PERL_DIR) \
 	ssl \
-	$(TCL_DIR)
+	$(TCL_DIR) \
+	keyrings
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 

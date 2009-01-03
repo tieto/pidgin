@@ -138,6 +138,7 @@ typedef struct
 
 } AccountPrefsDialog;
 
+
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
 
@@ -148,6 +149,7 @@ static void set_account(GtkListStore *store, GtkTreeIter *iter,
 /**************************************************************************
  * Add/Modify Account dialog
  **************************************************************************/
+static void pidgin_account_dialog_show_continue(PurpleAccount * account, char * password, GError * error, gpointer data);
 static void add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_protocol_options(AccountPrefsDialog *dialog,
@@ -1183,6 +1185,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *tmp;
 	gboolean new_acct = FALSE, icon_change = FALSE;
 	PurpleAccount *account;
+	gboolean remember;
 
 	/* Build the username string. */
 	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
@@ -1288,15 +1291,18 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 
 	/* Remember Password */
-	purple_account_set_remember_password(account,
-			gtk_toggle_button_get_active(
-					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
+	remember = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check));
+	if(!remember)
+		purple_keyring_set_password_async(account, NULL, NULL, NULL, NULL);
+
+	purple_account_set_remember_password(account, remember);
 
 	/* Check Mail */
 	if (dialog->prpl_info && dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
 		purple_account_set_check_mail(account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
+
 
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
@@ -1307,10 +1313,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * the account editor (but has not checked the 'save' box), then we
 	 * don't want to prompt them.
 	 */
-	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0'))
+	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0')) {
 		purple_account_set_password(account, value);
-	else
+	} else {
 		purple_account_set_password(account, NULL);
+	}
 
 	purple_account_set_username(account, username);
 	g_free(username);
@@ -1450,10 +1457,23 @@ static const GtkTargetEntry dnd_targets[] = {
 	{"STRING", 0, 2}
 };
 
+
 void
 pidgin_account_dialog_show(PidginAccountDialogType type,
-							 PurpleAccount *account)
+			   PurpleAccount *account)
 {
+	/* this is to make sure the password will be cached */
+	purple_account_get_password_async(account,
+		pidgin_account_dialog_show_continue, (void*)type);
+}
+
+static void
+pidgin_account_dialog_show_continue(PurpleAccount * account,
+			   char * password,
+			   GError * error,
+			   gpointer data)
+{
+	PidginAccountDialogType type = (PidginAccountDialogType)data;
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
 	GtkWidget *main_vbox;
@@ -1517,6 +1537,7 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 
 	/* Setup the top frames. */
 	add_login_options(dialog, vbox);
+
 	add_user_options(dialog, vbox);
 
 	button = gtk_check_button_new_with_mnemonic(
@@ -2062,7 +2083,7 @@ populate_accounts_list(AccountsWindow *dialog)
 	if (global_buddyicon != NULL)
 		g_object_unref(G_OBJECT(global_buddyicon));
 
-	return ret;
+	return ret; 
 }
 
 #if !GTK_CHECK_VERSION(2,2,0)
