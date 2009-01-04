@@ -4168,9 +4168,6 @@ msgstr "Authentifizierung"
 msgid "Re-initializing Stream"
 msgstr "Initialisiere Stream nochmal"
 
-msgid "Server doesn't support blocking"
-msgstr "Server unterstützt kein Blockieren"
-
 msgid "Not Authorized"
 msgstr "Nicht autorisiert"
 
