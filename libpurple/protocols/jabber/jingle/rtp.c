@@ -264,13 +264,6 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 }
 
 static void
-jingle_rtp_accept_cb(PurpleMedia *media, JingleSession *session)
-{
-	jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
-	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_ACCEPT));
-}
-
-static void
 jingle_rtp_reject_cb(PurpleMedia *media, JingleSession *session)
 {
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
@@ -320,16 +313,22 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 {
 	purple_debug_info("rtp", "ready-new: session: %s name: %s\n", sid, name);
 
-	if (sid == NULL && name == NULL && jingle_session_is_initiator(session) == TRUE) {
-		GList *contents = jingle_session_get_contents(session);
+	if (sid == NULL && name == NULL) {
+		if (jingle_session_is_initiator(session) == TRUE) {
+			GList *contents = jingle_session_get_contents(session);
 
-		jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_INITIATE));
+			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_INITIATE));
 
-		for (; contents; contents = g_list_next(contents)) {
-			JingleContent *content = (JingleContent *)contents->data;
-			JingleTransport *transport = jingle_content_get_transport(content);
-			if (JINGLE_IS_ICEUDP(transport))
-				jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
+			for (; contents; contents = g_list_next(contents)) {
+				JingleContent *content = (JingleContent *)contents->data;
+				JingleTransport *transport = jingle_content_get_transport(content);
+				if (JINGLE_IS_ICEUDP(transport))
+					jabber_iq_send(jingle_session_to_packet(session,
+							JINGLE_TRANSPORT_INFO));
+			}
+		} else {
+			jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
+			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_ACCEPT));
 		}
 	}
 }
@@ -361,8 +360,6 @@ jingle_rtp_create_media(JingleContent *content)
 	g_hash_table_insert(js->medias, sid, media);
 
 	/* connect callbacks */
-	g_signal_connect(G_OBJECT(media), "accepted",
-				 G_CALLBACK(jingle_rtp_accept_cb), session);
 	g_signal_connect(G_OBJECT(media), "reject",
 				 G_CALLBACK(jingle_rtp_reject_cb), session);
 	g_signal_connect(G_OBJECT(media), "hangup",

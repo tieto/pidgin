@@ -757,12 +757,12 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 						gboolean ready;
 						g_object_get(session->session, "codecs-ready", &ready, NULL);
 						if (session->codecs_ready == FALSE && ready == TRUE) {
+							session->codecs_ready = ready;
 							g_signal_emit(session->media,
 									purple_media_signals[CODECS_READY],
 									0, session->id);
 							purple_media_emit_ready(media, session, NULL);
 						}
-						session->codecs_ready = ready;
 
 						g_list_free(sessions);
 						break;
@@ -878,7 +878,6 @@ purple_media_got_accept(PurpleMedia *media)
 	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
 		PurpleMediaSession *session = sessions->data;
 		session->accepted = TRUE;
-		purple_media_emit_ready(media, session, NULL);
 	}
 }
 
