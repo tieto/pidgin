@@ -264,16 +264,12 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 }
 
 static void
-jingle_rtp_reject_cb(PurpleMedia *media, JingleSession *session)
-{
-	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
-	g_object_unref(session);
-}
-
-static void
 jingle_rtp_hangup_cb(PurpleMedia *media, JingleSession *session)
 {
+	gchar *sid = jingle_session_get_sid(session);
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
+	g_hash_table_remove(jingle_session_get_js(session)->medias, sid);
+	g_free(sid);
 	g_object_unref(session);
 }
 
@@ -361,7 +357,7 @@ jingle_rtp_create_media(JingleContent *content)
 
 	/* connect callbacks */
 	g_signal_connect(G_OBJECT(media), "reject",
-				 G_CALLBACK(jingle_rtp_reject_cb), session);
+				 G_CALLBACK(jingle_rtp_hangup_cb), session);
 	g_signal_connect(G_OBJECT(media), "hangup",
 				 G_CALLBACK(jingle_rtp_hangup_cb), session);
 	g_signal_connect(G_OBJECT(media), "new-candidate",
@@ -602,7 +598,16 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 		}
 		case JINGLE_SESSION_TERMINATE: {
 			JingleSession *session = jingle_content_get_session(content);
-			purple_media_got_hangup(jingle_rtp_get_media(session));
+			PurpleMedia *media = jingle_rtp_get_media(session);
+
+			if (media != NULL) {
+				gchar *sid = jingle_session_get_sid(session);
+				purple_media_got_hangup(media);
+				g_hash_table_remove(jingle_session_get_js(
+						session)->medias, sid);
+				g_free(sid);
+			}
+
 			g_object_unref(session);
 			break;
 		}
