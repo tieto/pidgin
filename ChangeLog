@@ -8,9 +8,20 @@ version 2.5.4 (??/??/????):
 	  Witkowski)
 	* Fix a crash that occurred when retrieving certain Offline Messages
 	  on MSN.
+	* Extended purple-url-handler to handle "gtalk" URI's. (Paul Aurich)
+	* Fix the hang on exit in Network Location Awareness for Windows XP
+	  and Windows Vista. (Paul Aurich)
 
 	XMPP:
 	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
+	* Don't put SASL PLAIN or IQ Auth passwords in debug logs. (Paul Aurich)
+
+	Pidgin:
+	* Fix a crash in the Add Account dialog when changing protocols under
+	  certain circumstances.
+
+	Finch:
+	* Redirect stderr outputs to the debug window.
 
 version 2.5.3 (12/20/2008):
 	libpurple:

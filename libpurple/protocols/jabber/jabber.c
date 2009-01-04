@@ -351,9 +351,33 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
 
 	/* because printing a tab to debug every minute gets old */
-	if(strcmp(data, "\t"))
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
-				js->gsc ? " (ssl)" : "", data);
+	if(strcmp(data, "\t")) {
+		char *text = NULL, *last_part = NULL, *tag_start = NULL;
+
+		/* Because debug logs with plaintext passwords make me sad */
+		if(js->state != JABBER_STREAM_CONNECTED &&
+				/* Either <auth> or <query><password>... */
+				(((tag_start = strstr(data, "<auth ")) &&
+					strstr(data, "xmlns='urn:ietf:params:xml:ns:xmpp-sasl'")) ||
+				((tag_start = strstr(data, "<query ")) &&
+					strstr(data, "xmlns='jabber:iq:auth'>") &&
+					(tag_start = strstr(tag_start, "<password>"))))) {
+			char *data_start, *tag_end = strchr(tag_start, '>');
+			text = g_strdup(data);
+
+			data_start = text + (tag_end - data) + 1;
+
+			last_part = strchr(data_start, '<');
+			*data_start = '\0';
+		}
+
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s%s%s\n",
+				js->gsc ? " (ssl)" : "", text ? text : data,
+				last_part ? "password removed" : "",
+				last_part ? last_part : "");
+
+		g_free(text);
+	}
 
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
