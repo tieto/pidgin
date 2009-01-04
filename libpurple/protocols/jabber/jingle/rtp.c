@@ -363,6 +363,11 @@ jingle_rtp_codecs_ready_cb(PurpleMedia *media, gchar *sid, JingleSession *sessio
 	}
 }
 
+static void
+jingle_rtp_ready_new_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *session) {
+	purple_debug_info("rtp", "ready-new: session: %s name: %s\n", sid, name);
+}
+
 static PurpleMedia *
 jingle_rtp_create_media(JingleContent *content)
 {
@@ -404,6 +409,8 @@ jingle_rtp_create_media(JingleContent *content)
 				 G_CALLBACK(jingle_rtp_candidate_pair_established_cb), session);
 	g_signal_connect(G_OBJECT(media), "codecs-ready",
 				 G_CALLBACK(jingle_rtp_codecs_ready_cb), session);
+	g_signal_connect(G_OBJECT(media), "ready-new",
+				 G_CALLBACK(jingle_rtp_ready_new_cb), session);
 
 	g_object_unref(session);
 	return media;
