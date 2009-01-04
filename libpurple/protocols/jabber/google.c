@@ -217,7 +217,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	}
 
 	session->media = purple_media_manager_create_media(purple_media_manager_get(), js->gc,
-							   "fsrtpconference", session->remote_jid);
+							   "fsrtpconference", session->remote_jid, FALSE);
 
 	/* GTalk requires the NICE_COMPATIBILITY_GOOGLE param */
 	param.name = "compatibility-mode";

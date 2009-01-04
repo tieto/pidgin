@@ -372,7 +372,8 @@ jingle_rtp_create_media(JingleContent *content)
 	gchar *sid = jingle_session_get_sid(session);
 
 	PurpleMedia *media = purple_media_manager_create_media(purple_media_manager_get(), 
-						  js->gc, "fsrtpconference", remote_jid);
+						  js->gc, "fsrtpconference", remote_jid,
+						  jingle_session_is_initiator(session));
 	g_free(remote_jid);
 
 	if (!media) {

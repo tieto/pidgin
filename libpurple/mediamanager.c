@@ -140,7 +140,8 @@ PurpleMedia *
 purple_media_manager_create_media(PurpleMediaManager *manager,
 				  PurpleConnection *gc,
 				  const char *conference_type,
-				  const char *remote_user)
+				  const char *remote_user,
+				  gboolean initiator)
 {
 	PurpleMedia *media;
 	FsConference *conference = FS_CONFERENCE(gst_element_factory_make(conference_type, NULL));
@@ -157,6 +158,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "conference", conference,
+			     "initiator", initiator,
 			     NULL));
 
 	ret = gst_element_set_state(purple_media_get_pipeline(media), GST_STATE_PLAYING);

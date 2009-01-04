@@ -102,7 +102,8 @@ PurpleMediaManager *purple_media_manager_get(void);
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 						PurpleConnection *gc,
 						const char *conference_type,
-						const char *remote_user);
+						const char *remote_user,
+						gboolean initiator);
 
 /**
  * Gets all of the media sessions.

@@ -73,6 +73,7 @@ struct _PurpleMediaStream
 struct _PurpleMediaPrivate
 {
 	FsConference *conference;
+	gboolean initiator;
 
 	GHashTable *sessions;	/* PurpleMediaSession table */
 	GHashTable *participants; /* FsParticipant table */
@@ -124,6 +125,7 @@ static guint purple_media_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_CONFERENCE,
+	PROP_INITIATOR,
 };
 
 GType
@@ -164,6 +166,13 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Farsight conference",
 			"The FsConference associated with this media.",
 			FS_TYPE_CONFERENCE,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_INITIATOR,
+			g_param_spec_boolean("initiator",
+			"initiator",
+			"If the local user initiated the conference.",
+			FALSE,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	purple_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
@@ -311,6 +320,9 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			media->priv->conference = g_value_get_object(value);
 			g_object_ref(media->priv->conference);
 			break;
+		case PROP_INITIATOR:
+			media->priv->initiator = g_value_get_boolean(value);
+			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -328,6 +340,9 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 	switch (prop_id) {
 		case PROP_CONFERENCE:
 			g_value_set_object(value, media->priv->conference);
+			break;
+		case PROP_INITIATOR:
+			g_value_set_boolean(value, media->priv->initiator);
 			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
