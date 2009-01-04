@@ -642,7 +642,8 @@ purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const g
 	GList *sessions;
 	gboolean conf_ready = TRUE;
 
-	if ((session != NULL) && ((session->accepted == FALSE) ||
+	if ((session != NULL) && ((media->priv->initiator == FALSE &&
+			session->accepted == FALSE) ||
 			(purple_media_codecs_ready(media, session->id) == FALSE)))
 		return;
 
@@ -652,28 +653,31 @@ purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const g
 		PurpleMediaSession *session_data = sessions->data;
 		GList *streams = purple_media_get_streams(media,
 				session_data->id, NULL);
+		gboolean session_ready = TRUE;
 
-		if ((session_data->accepted == FALSE) ||
+		if ((media->priv->initiator == FALSE &&
+				session_data->accepted == FALSE) ||
 				(purple_media_codecs_ready(
 				media, session_data->id) == FALSE))
 			conf_ready = FALSE;
 
 		for (; streams; streams = g_list_delete_link(streams, streams)) {
 			PurpleMediaStream *stream = streams->data;
-			if (stream->candidates_prepared == TRUE &&
-					session_data == session)
+			if (stream->candidates_prepared == FALSE) {
+				session_ready = FALSE;
+				conf_ready = FALSE;
+			} else if (session_data == session)
 				g_signal_emit(media, purple_media_signals[READY_NEW],
 						0, session_data->id, stream->participant);
 		}
 
-		if (session == session_data || session == NULL)
+		if (session_ready == TRUE &&
+				(session == session_data || session == NULL))
 			g_signal_emit(media, purple_media_signals[READY_NEW],
 					0, session_data->id, NULL);
 	}
 
 	if (conf_ready == TRUE) {
-		g_list_free(sessions);
-	} else {
 		g_signal_emit(media, purple_media_signals[READY_NEW],
 				0, NULL, NULL);
 	}
