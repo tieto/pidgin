@@ -891,9 +891,15 @@ purple_media_got_request(PurpleMedia *media)
 void
 purple_media_got_hangup(PurpleMedia *media)
 {
+/*
+ * There's no way to tell who hung up with the new structure.
+ * I'm commenting this out until this is resolved.
+ */
+#if 0
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_END,
 			NULL, NULL);
+#endif
 	g_signal_emit(media, purple_media_signals[GOT_HANGUP], 0);
 }
 

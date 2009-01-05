@@ -325,8 +325,8 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type
 {
 	purple_debug_info("jingle-rtp", "state-changed: type %d id: %s name: %s\n", type, sid, name);
 
-	if (sid == NULL && name == NULL &&
-			jingle_session_is_initiator(session) == TRUE) {
+	if (type == PURPLE_MEDIA_STATE_CHANGED_END &&
+			sid == NULL && name == NULL) {
 		gchar *sid = jingle_session_get_sid(session);
 		jabber_iq_send(jingle_session_to_packet(session,
 				JINGLE_SESSION_TERMINATE));
