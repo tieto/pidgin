@@ -45,6 +45,8 @@ G_BEGIN_DECLS
 #define PURPLE_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA))
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 
+#define PURPLE_MEDIA_TYPE_STATE_CHANGED	(purple_media_state_changed_get_type())
+
 /** @copydoc _PurpleMedia */
 typedef struct _PurpleMedia PurpleMedia;
 /** @copydoc _PurpleMediaClass */
@@ -68,6 +70,13 @@ typedef enum {
 	PURPLE_MEDIA_AUDIO = PURPLE_MEDIA_RECV_AUDIO | PURPLE_MEDIA_SEND_AUDIO,
 	PURPLE_MEDIA_VIDEO = PURPLE_MEDIA_RECV_VIDEO | PURPLE_MEDIA_SEND_VIDEO
 } PurpleMediaSessionType;
+
+/** Media state-changed types */
+typedef enum {
+	PURPLE_MEDIA_STATE_CHANGED_NEW = 0,
+	PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
+	PURPLE_MEDIA_STATE_CHANGED_END,
+} PurpleMediaStateChangedType;
 
 #ifdef USE_VV
 
@@ -94,6 +103,13 @@ extern "C" {
  * @return The media class's GType.
  */
 GType purple_media_get_type(void);
+
+/**
+ * Gets the type of the state-changed enum
+ *
+ * @return The state-changed enum's GType
+ */
+GType purple_media_state_changed_get_type(void);
 
 /**************************************************************************/
 /** @name Media Utility Functions                                         */

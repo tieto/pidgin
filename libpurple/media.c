@@ -122,6 +122,7 @@ enum {
 	CANDIDATE_PAIR,
 	CODECS_READY,
 	READY_NEW,
+	STATE_CHANGED,
 	LAST_SIGNAL
 };
 static guint purple_media_signals[LAST_SIGNAL] = {0};
@@ -151,6 +152,22 @@ purple_media_get_type()
 			NULL
 		};
 		type = g_type_register_static(G_TYPE_OBJECT, "PurpleMedia", &info, 0);
+	}
+	return type;
+}
+
+GType
+purple_media_state_changed_get_type()
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{ PURPLE_MEDIA_STATE_CHANGED_NEW, "PURPLE_MEDIA_STATE_CHANGED_NEW", "new" },
+			{ PURPLE_MEDIA_STATE_CHANGED_CONNECTED, "PURPLE_MEDIA_STATE_CHANGED_CONNECTED", "connected" },
+			{ PURPLE_MEDIA_STATE_CHANGED_END, "PURPLE_MEDIA_STATE_CHANGED_END", "end" },
+			{ 0, NULL, NULL }
+		};
+		type = g_enum_register_static("PurpleMediaStateChangedType", values);
 	}
 	return type;
 }
@@ -236,6 +253,11 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__STRING_STRING,
 					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+	purple_media_signals[STATE_CHANGED] = g_signal_new("state-changed", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 purple_smarshal_VOID__ENUM_STRING_STRING,
+					 G_TYPE_NONE, 3, PURPLE_MEDIA_TYPE_STATE_CHANGED,
+					 G_TYPE_STRING, G_TYPE_STRING);
 	g_type_class_add_private(klass, sizeof(PurpleMediaPrivate));
 }
 
@@ -845,12 +867,18 @@ purple_media_accept(PurpleMedia *media)
 void
 purple_media_hangup(PurpleMedia *media)
 {
+	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+			0, PURPLE_MEDIA_STATE_CHANGED_END,
+			NULL, NULL);
 	g_signal_emit(media, purple_media_signals[HANGUP], 0);
 }
 
 void
 purple_media_reject(PurpleMedia *media)
 {
+	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+			0, PURPLE_MEDIA_STATE_CHANGED_END,
+			NULL, NULL);
 	g_signal_emit(media, purple_media_signals[REJECT], 0);
 }
 
@@ -863,6 +891,9 @@ purple_media_got_request(PurpleMedia *media)
 void
 purple_media_got_hangup(PurpleMedia *media)
 {
+	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+			0, PURPLE_MEDIA_STATE_CHANGED_END,
+			NULL, NULL);
 	g_signal_emit(media, purple_media_signals[GOT_HANGUP], 0);
 }
 
@@ -1172,6 +1203,10 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	purple_debug_info("media", "connecting new src pad: %s\n", 
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
 	gst_element_set_state(stream->sink, GST_STATE_PLAYING);
+
+	g_signal_emit(stream->session->media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
+				stream->session->id, stream->participant);
 }
 
 static gchar *
@@ -1259,12 +1294,19 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		session->type = purple_media_from_fs(type, type_direction);
 
 		purple_media_add_session(media, session);
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_CHANGED_NEW,
+				session->id, NULL);
 	}
 
 	if (!(participant = purple_media_add_participant(media, who))) {
 		purple_media_remove_session(media, session);
 		g_free(session);
 		return FALSE;
+	} else {
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_CHANGED_NEW,
+				NULL, who);
 	}
 
 	stream = purple_media_get_stream(media, sess_id, who);
@@ -1310,6 +1352,9 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		g_signal_connect(G_OBJECT(fsstream),
 				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added_cb), stream);
 
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_CHANGED_NEW,
+				session->id, who);
 	} else if (*direction != type_direction) {	
 		/* change direction */
 		g_object_set(stream->stream, "direction", type_direction, NULL);
@@ -1350,7 +1395,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 void
 purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who)
 {
-	
+	/* Add state-changed end emits in here when this is implemented */
 }
 
 PurpleMediaSessionType

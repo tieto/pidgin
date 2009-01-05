@@ -329,6 +329,13 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 	}
 }
 
+static void
+jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type,
+		gchar *sid, gchar *name, JingleSession *session)
+{
+	purple_debug_info("jingle-rtp", "state-changed: type %d id: %s name: %s\n", type, sid, name);
+}
+
 static PurpleMedia *
 jingle_rtp_create_media(JingleContent *content)
 {
@@ -368,6 +375,8 @@ jingle_rtp_create_media(JingleContent *content)
 				 G_CALLBACK(jingle_rtp_candidate_pair_established_cb), session);
 	g_signal_connect(G_OBJECT(media), "ready-new",
 				 G_CALLBACK(jingle_rtp_ready_cb), session);
+	g_signal_connect(G_OBJECT(media), "state-changed",
+				 G_CALLBACK(jingle_rtp_state_changed_cb), session);
 
 	g_object_unref(session);
 	return media;
