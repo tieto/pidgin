@@ -270,12 +270,6 @@ jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, FsCandi
 }
 
 static void
-jingle_rtp_candidate_pair_established_cb(PurpleMedia *media, FsCandidate *local_candidate, FsCandidate *remote_candidate, JingleSession *session)
-{
-
-}
-
-static void
 jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *session)
 {
 	purple_debug_info("rtp", "ready-new: session: %s name: %s\n", sid, name);
@@ -361,8 +355,6 @@ jingle_rtp_create_media(JingleContent *content)
 	/* connect callbacks */
 	g_signal_connect(G_OBJECT(media), "new-candidate",
 				 G_CALLBACK(jingle_rtp_new_candidate_cb), session);
-	g_signal_connect(G_OBJECT(media), "candidate-pair",
-				 G_CALLBACK(jingle_rtp_candidate_pair_established_cb), session);
 	g_signal_connect(G_OBJECT(media), "ready-new",
 				 G_CALLBACK(jingle_rtp_ready_cb), session);
 	g_signal_connect(G_OBJECT(media), "state-changed",
