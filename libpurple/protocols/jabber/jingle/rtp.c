@@ -264,16 +264,6 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 }
 
 static void
-jingle_rtp_hangup_cb(PurpleMedia *media, JingleSession *session)
-{
-	gchar *sid = jingle_session_get_sid(session);
-	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
-	g_hash_table_remove(jingle_session_get_js(session)->medias, sid);
-	g_free(sid);
-	g_object_unref(session);
-}
-
-static void
 jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, FsCandidate *candidate, JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "jingle_rtp_new_candidate_cb\n");
@@ -334,6 +324,16 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type
 		gchar *sid, gchar *name, JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "state-changed: type %d id: %s name: %s\n", type, sid, name);
+
+	if (sid == NULL && name == NULL &&
+			jingle_session_is_initiator(session) == TRUE) {
+		gchar *sid = jingle_session_get_sid(session);
+		jabber_iq_send(jingle_session_to_packet(session,
+				JINGLE_SESSION_TERMINATE));
+		g_hash_table_remove(jingle_session_get_js(session)->medias, sid);
+		g_free(sid);
+		g_object_unref(session);
+	}
 }
 
 static PurpleMedia *
@@ -363,10 +363,6 @@ jingle_rtp_create_media(JingleContent *content)
 	g_hash_table_insert(js->medias, sid, media);
 
 	/* connect callbacks */
-	g_signal_connect(G_OBJECT(media), "reject",
-				 G_CALLBACK(jingle_rtp_hangup_cb), session);
-	g_signal_connect(G_OBJECT(media), "hangup",
-				 G_CALLBACK(jingle_rtp_hangup_cb), session);
 	g_signal_connect(G_OBJECT(media), "new-candidate",
 				 G_CALLBACK(jingle_rtp_new_candidate_cb), session);
 	g_signal_connect(G_OBJECT(media), "candidates-prepared",
