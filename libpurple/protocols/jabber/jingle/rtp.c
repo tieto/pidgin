@@ -270,25 +270,6 @@ jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, FsCandi
 }
 
 static void
-jingle_rtp_candidates_prepared_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *session)
-{
-	JingleContent *content = jingle_session_find_content(session, sid, "initiator");
-	JingleTransport *oldtransport = jingle_content_get_transport(content);
-	GList *candidates = purple_media_get_local_candidates(media, sid, name);
-	JingleTransport *transport =
-			JINGLE_TRANSPORT(jingle_rtp_candidates_to_transport(
-			session, JINGLE_IS_RAWUDP(oldtransport) ?
-				JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
-			0, candidates));
-	g_list_free(candidates);
-
-	JINGLE_RTP_GET_PRIVATE(content)->candidates_ready = TRUE;
-
-	jingle_content_set_pending_transport(content, transport);
-	jingle_content_accept_transport(content);
-}
-
-static void
 jingle_rtp_candidate_pair_established_cb(PurpleMedia *media, FsCandidate *local_candidate, FsCandidate *remote_candidate, JingleSession *session)
 {
 
@@ -316,6 +297,21 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 			jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
 			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_ACCEPT));
 		}
+	} else if (sid != NULL && name != NULL) {
+		JingleContent *content = jingle_session_find_content(session, sid, "initiator");
+		JingleTransport *oldtransport = jingle_content_get_transport(content);
+		GList *candidates = purple_media_get_local_candidates(media, sid, name);
+		JingleTransport *transport =
+				JINGLE_TRANSPORT(jingle_rtp_candidates_to_transport(
+				session, JINGLE_IS_RAWUDP(oldtransport) ?
+					JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
+				0, candidates));
+		g_list_free(candidates);
+
+		JINGLE_RTP_GET_PRIVATE(content)->candidates_ready = TRUE;
+
+		jingle_content_set_pending_transport(content, transport);
+		jingle_content_accept_transport(content);
 	}
 }
 
@@ -365,8 +361,6 @@ jingle_rtp_create_media(JingleContent *content)
 	/* connect callbacks */
 	g_signal_connect(G_OBJECT(media), "new-candidate",
 				 G_CALLBACK(jingle_rtp_new_candidate_cb), session);
-	g_signal_connect(G_OBJECT(media), "candidates-prepared",
-				 G_CALLBACK(jingle_rtp_candidates_prepared_cb), session);
 	g_signal_connect(G_OBJECT(media), "candidate-pair",
 				 G_CALLBACK(jingle_rtp_candidate_pair_established_cb), session);
 	g_signal_connect(G_OBJECT(media), "ready-new",
