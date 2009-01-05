@@ -715,7 +715,7 @@ static void set_all_keys(PurpleConnection *gc)
 #endif
 
 	/* now generate md5 processed passwd */
-	passwd = purple_account_get_password(purple_connection_get_account(gc));
+	passwd = purple_connection_get_password(gc);
 
 	/* use twice-md5 of user password as session key since QQ 2003iii */
 	dest = qd->ld.pwd_md5;

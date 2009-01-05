@@ -108,6 +108,7 @@ typedef struct
 	GtkWidget *login_frame;
 	GtkWidget *protocol_menu;
 	GtkWidget *password_box;
+	char *password;
 	GtkWidget *screenname_entry;
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
@@ -566,10 +567,10 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		if (purple_account_get_password(dialog->account) &&
+		if (dialog->password &&
 		    purple_account_get_remember_password(dialog->account))
 			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
-							   purple_account_get_password(dialog->account));
+				dialog->password);
 
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
@@ -1497,6 +1498,7 @@ pidgin_account_dialog_show_continue(PurpleAccount * account,
 	}
 
 	dialog->account = account;
+	dialog->password = g_strdup(password);
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 

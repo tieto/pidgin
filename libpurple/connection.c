@@ -460,13 +460,7 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	if (gc->password) {
-		return gc->password;
-	} else {
-		purple_debug_info("connection",
-			"Password was unknown, getting password from account");
-		return purple_account_get_password(gc->account);
-	}
+	return gc->password;
 }
 
 const char *
@@ -475,6 +469,14 @@ purple_connection_get_display_name(const PurpleConnection *gc)
 	g_return_val_if_fail(gc != NULL, NULL);
 
 	return gc->display_name;
+}
+
+gboolean
+purple_connection_had_error(const PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, FALSE);
+
+	return gc->disconnect_timeout != 0;
 }
 
 void

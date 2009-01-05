@@ -20,6 +20,7 @@
 
 #include "oscar.h"
 
+#include "account.h"
 #include "eventloop.h"
 #include "proxy.h"
 

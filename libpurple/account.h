@@ -322,18 +322,15 @@ void purple_account_request_change_user_info(PurpleAccount *account);
  */
 void purple_account_set_username(PurpleAccount *account, const char *username);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Sets the account's password.
  *
  * @param account  The account.
  * @param password The password.
  *
- * @deprecated You should use either purple_account_set_password_async() instead.
  * This functions is just a wrapper for the async code anyway.
  */
 void purple_account_set_password(PurpleAccount *account, const char *password);
-#endif
 
 /**
  * Set the account's password, and call the callback

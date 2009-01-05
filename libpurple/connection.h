@@ -61,6 +61,10 @@ typedef enum
  */
 typedef enum
 {
+	/** There was no error
+	 *
+	 */
+	PURPLE_CONNECTION_ERROR_NO_ERROR = -1,
 	/** There was an error sending or receiving on the network socket, or
 	 *  there was some protocol error (such as the server sending malformed
 	 *  data).
@@ -258,6 +262,8 @@ struct _PurpleConnection
 	guint disconnect_timeout;    /**< Timer used for nasty stack tricks  */
 	time_t last_received;        /**< When we last received a packet. Set by the
 					  prpl to avoid sending unneeded keepalives */
+
+	PurpleConnectionError disconnect_reason;
 };
 
 #ifdef __cplusplus
@@ -408,6 +414,15 @@ const char *purple_connection_get_password(const PurpleConnection *gc);
  * @return The connection's displayed name.
  */
 const char *purple_connection_get_display_name(const PurpleConnection *gc);
+
+/**
+ * Returns if the connection had an error
+ *
+ * @param gc The connection.
+ *
+ * @return TRUE if the connection had an error, FALSE otherwise
+ */
+gboolean purple_connection_had_error(const PurpleConnection *gc);
 
 /**
  * Updates the connection progress.

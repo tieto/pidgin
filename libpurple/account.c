@@ -1111,7 +1111,7 @@ purple_account_register_got_password_cb(PurpleAccount * account, char * password
 {
 	g_return_if_fail(account != NULL);
 
-	purple_connection_new(account, TRUE, password);
+	_purple_connection_new(account, TRUE, password);
 }
 
 typedef struct
@@ -1148,7 +1148,7 @@ purple_account_unregister_got_password_cb(PurpleAccount * account, char * passwo
 	unregdata = data;
 	g_return_if_fail(unregdata != NULL);
 
-	purple_connection_new_unregister(account, password, unregdata->cb, unregdata->user_data);
+	_purple_connection_new_unregister(account, password, unregdata->cb, unregdata->user_data);
 
 	g_free(unregdata);
 }
@@ -1177,7 +1177,7 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 	password = g_strdup(entry);
 	purple_account_set_password(account, password);
 	g_free(password);
-	purple_connection_new(account, FALSE, entry);
+	_purple_connection_new(account, FALSE, entry);
 
 }
 
@@ -1292,7 +1292,7 @@ purple_account_disconnect(PurpleAccount *account)
 	account->disconnecting = TRUE;
 
 	gc = purple_account_get_connection(account);
-	purple_connection_destroy(gc);
+	_purple_connection_destroy(gc);
 
 	purple_account_set_connection(account, NULL);
 	account->disconnecting = FALSE;
@@ -2057,6 +2057,7 @@ purple_account_get_username(const PurpleAccount *account)
 	return account->username;
 }
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /* XXX will be replaced by the async code in 3.0 */
 const char *
 purple_account_get_password(PurpleAccount *account)
@@ -2080,6 +2081,7 @@ purple_account_get_password(PurpleAccount *account)
 
 	return account->password;
 }
+#endif
 
 void
 purple_account_get_password_async(PurpleAccount * account,
