@@ -35,8 +35,6 @@
 struct _JingleRtpPrivate
 {
 	gchar *media_type;
-	gboolean candidates_ready;
-	gboolean codecs_ready;
 };
 
 #define JINGLE_RTP_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), JINGLE_TYPE_RTP, JingleRtpPrivate))
@@ -301,8 +299,6 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 					JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
 				0, candidates));
 		g_list_free(candidates);
-
-		JINGLE_RTP_GET_PRIVATE(content)->candidates_ready = TRUE;
 
 		jingle_content_set_pending_transport(content, transport);
 		jingle_content_accept_transport(content);
