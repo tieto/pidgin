@@ -61,10 +61,6 @@ typedef enum
  */
 typedef enum
 {
-	/** There was no error
-	 *
-	 */
-	PURPLE_CONNECTION_ERROR_NO_ERROR = -1,
 	/** There was an error sending or receiving on the network socket, or
 	 *  there was some protocol error (such as the server sending malformed
 	 *  data).
@@ -262,8 +258,6 @@ struct _PurpleConnection
 	guint disconnect_timeout;    /**< Timer used for nasty stack tricks  */
 	time_t last_received;        /**< When we last received a packet. Set by the
 					  prpl to avoid sending unneeded keepalives */
-
-	PurpleConnectionError disconnect_reason;
 };
 
 #ifdef __cplusplus
