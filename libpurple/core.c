@@ -139,7 +139,7 @@ purple_core_init(const char *ui)
 	 * subsystem right away too.
 	 */
 	purple_plugins_init();
-	
+
 	/* Initialize all static protocols. */
 	static_proto_init();
 
@@ -219,7 +219,6 @@ purple_core_quit(void)
 	purple_accounts_uninit();
 	purple_savedstatuses_uninit();
 	purple_status_uninit();
-	purple_prefs_uninit();
 	purple_sound_uninit();
 	purple_theme_manager_uninit();
 	purple_xfers_uninit();
@@ -251,6 +250,7 @@ purple_core_quit(void)
 #ifdef _WIN32
 	wpurple_cleanup();
 #endif
+	purple_prefs_uninit();
 
 	_core = NULL;
 }
