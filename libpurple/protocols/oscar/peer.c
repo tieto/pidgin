@@ -859,7 +859,7 @@ peer_connection_trynext(PeerConnection *conn)
 		{
 			gchar *tmp;
 			PurpleConversation *conv;
-			tmp = g_strdup_printf(_("Attempting to connect via proxy server."));
+			tmp = g_strdup(_("Attempting to connect via proxy server."));
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
