@@ -784,10 +784,10 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 
 	if (name && account) {
 		pidgin_log_show(type, name, account);
-		g_free(name);
-
 		pidgin_clear_cursor(gtkblist->window);
 	}
+
+	g_free(name);
 }
 
 static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
@@ -3866,7 +3866,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	PurpleConversation *conv = find_conversation_with_buddy(b);
 	gboolean hidden_conv = FALSE;
 	gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
-	FontColorPair *pair;
+	FontColorPair *pair = NULL;
 	PidginBlistTheme *theme;
 
 	if (conv != NULL) {
@@ -3984,39 +3984,42 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	/* choose the colors of the text */
 	theme = pidgin_blist_get_theme();
 
-	if (theme == NULL) {
-		status_color = name_color = "dim grey";
-		status_font = name_font = "";
-
-	} else  if (purple_presence_is_idle(presence)) {
-		pair = pidgin_blist_theme_get_idle_text_info(theme);
+	if (purple_presence_is_idle(presence)) {
+		if (theme)
+			pair = pidgin_blist_theme_get_idle_text_info(theme);
 		status_color = name_color = (pair != NULL && pair->color != NULL) ? pair->color : "dim grey";
 		status_font = name_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
 	} else if (!purple_presence_is_online(presence)) {
-		pair = pidgin_blist_theme_get_offline_text_info(theme);
+		if (theme)
+			pair = pidgin_blist_theme_get_offline_text_info(theme);
 		name_color = (pair != NULL && pair->color != NULL) ? pair->color : "black";
 		name_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
-		pair = pidgin_blist_theme_get_status_text_info(theme);
-		status_color = (pair != NULL && pair->color != NULL) ? g_strdup(pair->color) : "dim grey";
+		if (theme)
+			pair = pidgin_blist_theme_get_status_text_info(theme);
+		status_color = (pair != NULL && pair->color != NULL) ? pair->color : "dim grey";
 		status_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
 	} else if (purple_presence_is_available(presence)) {
-		pair = pidgin_blist_theme_get_online_text_info(theme);
-		name_color = (pair != NULL && pair->color != NULL) ? g_strdup(pair->color) : "black";
+		if (theme)
+			pair = pidgin_blist_theme_get_online_text_info(theme);
+		name_color = (pair != NULL && pair->color != NULL) ? pair->color : "black";
 		name_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
-		pair = pidgin_blist_theme_get_status_text_info(theme);
+		if (theme)
+			pair = pidgin_blist_theme_get_status_text_info(theme);
 		status_color = (pair != NULL && pair->color != NULL) ? pair->color : "dim grey";
 		status_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
 	} else {
-		pair = pidgin_blist_theme_get_away_text_info(theme);
+		if (theme)
+			pair = pidgin_blist_theme_get_away_text_info(theme);
 		name_color = (pair != NULL && pair->color != NULL) ? pair->color : "black";
 		name_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
-		pair = pidgin_blist_theme_get_status_text_info(theme);
+		if (theme)
+			pair = pidgin_blist_theme_get_status_text_info(theme);
 		status_color = (pair != NULL && pair->color != NULL) ? pair->color : "dim grey";
 		status_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 	}
@@ -6297,26 +6300,30 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 
 		if(gtknode->contact_expanded) {
 			GdkPixbuf *status;
-			gchar *mark;
+			gchar *mark, *tmp;
+			const gchar *fg_color, *font;
 			GdkColor *color = NULL;
 			PidginBlistTheme *theme = pidgin_blist_get_theme();
+			FontColorPair *pair;
 			gboolean selected = (gtkblist->selected_node == cnode);
-			
+
 			mark = g_markup_escape_text(purple_contact_get_alias(contact), -1);
 
-			if (theme != NULL) {
-				FontColorPair *pair = pidgin_blist_theme_get_contact_text_info(theme);
+			theme = pidgin_blist_get_theme();
+			if (theme == NULL)
+				pair = NULL;
+			else {
+				pair = pidgin_blist_theme_get_contact_text_info(theme);
 				color = pidgin_blist_theme_get_contact_color(theme);
-
-				if (pair != NULL) {
-					gchar *temp = g_strdup_printf("<span foreground='%s' font_desc='%s'>%s</span>",
-								     (selected || pair->color == NULL) ? "black" : pair->color,
-								     (pair->font == NULL) ? "" : pair->font, mark);
-				
-					g_free(mark);
-					mark = temp;
-				}
 			}
+
+			font = (pair == NULL || pair->font == NULL) ? "" : pair->font;
+			fg_color = (selected || pair == NULL || pair->color == NULL) ? "black" : pair->color;
+
+			tmp = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>",
+						font, fg_color, mark);
+			g_free(mark);
+			mark = tmp;
 
 			status = pidgin_blist_get_status_icon(cnode,
 					 biglist? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
@@ -6434,8 +6441,8 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 			pair = pidgin_blist_theme_get_unread_message_text_info(theme);
 		else pair = pidgin_blist_theme_get_online_text_info(theme); 
 			
-		font = (pair == NULL || pair->font == NULL) ? "" : g_strdup(pair->font);
-		color = (selected || pair == NULL || pair->color == NULL) ? "black" : g_strdup(pair->color);
+		font = (pair == NULL || pair->font == NULL) ? "" : pair->font;
+		color = (selected || pair == NULL || pair->color == NULL) ? "black" : pair->color;
 
 		tmp = g_strdup_printf("<span font_desc='%s' color='%s' weight='%s'>%s</span>", 
 				      font, color, hidden ? "bold" : "normal", mark);
