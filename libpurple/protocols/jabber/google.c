@@ -225,8 +225,13 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	g_value_init(&param.value, G_TYPE_UINT);
 	g_value_set_uint(&param.value, 1); /* NICE_COMPATIBILITY_GOOGLE */
 
-	purple_media_add_stream(session->media, "google-voice", session->remote_jid, 
-				PURPLE_MEDIA_AUDIO, "nice", 1, &param);
+	if (purple_media_add_stream(session->media, "google-voice", session->remote_jid, 
+				PURPLE_MEDIA_AUDIO, "nice", 1, &param) == FALSE) {
+		purple_media_error(session->media, "Error adding stream.");
+		purple_media_hangup(session->media);
+		google_session_send_terminate(session);
+		return;
+	}
 
 	desc_element = xmlnode_get_child(sess, "description");
 	
