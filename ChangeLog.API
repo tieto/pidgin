@@ -36,6 +36,21 @@ version 2.6.0 (??/??/????):
 		  objects from GtkIMHtml protocol callbacks.
 		* pidgin_utils_init, pidgin_utils_uninit
 
+	perl:
+		Changed:
+		* Made a bunch of functions act more perl-like. Call the new()
+		  functions as Class->new(...) instead of Class::new(...):
+			* Purple::Request::Fields::new
+			* Purple::Request::Field::new
+			* Purple::Request::Field::account_new
+		 	* Purple::Request::Field::bool_new
+		 	* Purple::Request::Field::choice_new
+		 	* Purple::Request::Field::int_new
+		 	* Purple::Request::Field::label_new
+		 	* Purple::Request::Field::list_new
+		 	* Purple::Request::Field::string_new
+		 	* Purple::Request::Field::group_new
+
 version 2.5.3 (12/20/2008):
 	libpurple
 		Changed:
