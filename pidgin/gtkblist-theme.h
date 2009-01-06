@@ -200,6 +200,14 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  FontColorPair *pidgin_blist_theme_get_unread_message_text_info(PidginBlistTheme *theme);
 
 /**
+ * Returns the text font and color to be used for chats with unread messages
+ * that mention your nick.
+ *
+ * @returns 	a font and color pair
+ */
+ FontColorPair *pidgin_blist_theme_get_unread_message_nick_said_text_info(PidginBlistTheme *theme);
+
+/**
  * Returns the text font and color to be used for a buddy's status message 
  *
  * @returns 	a font and color pair
@@ -300,11 +308,19 @@ void pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, FontColor
 void pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, FontColorPair *pair);
 
 /**
- * Sets the text color and font to be used for buddies with an unread message
+ * Sets the text color and font to be used for buddies with unread messages
  *
  * @param pair		the new text font at color pair
  */
 void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+
+/**
+ * Sets the text color and font to be used for a chat with unread messages
+ * that mention your nick
+ *
+ * @param pair		the new text font at color pair
+ */
+void pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for buddy status messages

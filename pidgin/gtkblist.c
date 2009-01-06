@@ -171,7 +171,8 @@ static void pidgin_blist_expand_contact_cb(GtkWidget *w, PurpleBlistNode *node);
 static void set_urgent(void);
 
 typedef enum {
-	PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE    =  1 << 0,  /* Whether there's pending message in a conversation */
+	PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE            =  1 << 0,  /* Whether there's pending message in a conversation */
+	PIDGIN_BLIST_CHAT_HAS_PENDING_MESSAGE_WITH_NICK	 =  1 << 1,  /* Whether there's a pending message in a chat that mentions our nick */
 } PidginBlistNodeFlags;
 
 typedef struct _pidgin_blist_node {
@@ -4364,6 +4365,10 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 			!(flag & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
 		return;
 	ui->conv.flags |= PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT
+			&& (flag & PURPLE_MESSAGE_NICK))
+		ui->conv.flags |= PIDGIN_BLIST_CHAT_HAS_PENDING_MESSAGE_WITH_NICK;
+
 	ui->conv.last_message = time(NULL);    /* XXX: for lack of better data */
 	pidgin_blist_update(purple_get_blist(), node);
 }
@@ -4374,7 +4379,8 @@ displayed_msg_update_ui_cb(PidginConversation *gtkconv, PurpleBlistNode *node)
 	PidginBlistNode *ui = node->ui_data;
 	if (ui->conv.conv != gtkconv->active_conv)
 		return;
-	ui->conv.flags &= ~PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
+	ui->conv.flags &= ~(PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE |
+	                    PIDGIN_BLIST_CHAT_HAS_PENDING_MESSAGE_WITH_NICK);
 	pidgin_blist_update(purple_get_blist(), node);
 }
 
@@ -6402,7 +6408,8 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 	if(purple_account_is_connected(chat->account)) {
 		GtkTreeIter iter;
 		GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
-		gchar *mark, *color, *font, *tmp;
+		const gchar *color, *font;
+		gchar *mark, *tmp;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
@@ -6412,14 +6419,17 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		FontColorPair *pair;
 		PidginBlistTheme *theme;
 		gboolean selected = (gtkblist->selected_node == node);
+		gboolean nick_said = FALSE;
 
 		if (!insert_node(list, node, &iter))
 			return;
 
 		ui = node->ui_data;
 		conv = ui->conv.conv;
-		hidden = (conv && (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE) &&
-				pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)));
+		if (conv && pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv))) {
+			hidden = (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE);
+			nick_said = (ui->conv.flags & PIDGIN_BLIST_CHAT_HAS_PENDING_MESSAGE_WITH_NICK);
+		}
 
 		status = pidgin_blist_get_status_icon(node,
 				 biglist ? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
@@ -6437,12 +6447,19 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 
 		if (theme == NULL) 
 			pair = NULL;
+		else if (nick_said)
+			pair = pidgin_blist_theme_get_unread_message_nick_said_text_info(theme);
 		else if (hidden) 
 			pair = pidgin_blist_theme_get_unread_message_text_info(theme);
 		else pair = pidgin_blist_theme_get_online_text_info(theme); 
-			
+
+
 		font = (pair == NULL || pair->font == NULL) ? "" : pair->font;
-		color = (selected || pair == NULL || pair->color == NULL) ? "black" : pair->color;
+		if (selected || pair == NULL || pair->color == NULL)
+			/* nick_said color is the same as gtkconv:tab-label-attention */
+			color = (nick_said ? "#006aff" : "black");
+		else
+			color = pair->color;
 
 		tmp = g_strdup_printf("<span font_desc='%s' color='%s' weight='%s'>%s</span>", 
 				      font, color, hidden ? "bold" : "normal", mark);
