@@ -912,7 +912,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 				if (purple_account_get_alias(account) != NULL)
 					alias = account->alias;
-				else if (b != NULL && strcmp(purple_buddy_get_name(b), purple_buddy_get_contact_alias(b)))
+				else if (b != NULL && !purple_strequal(purple_buddy_get_name(b), purple_buddy_get_contact_alias(b)))
 					alias = purple_buddy_get_contact_alias(b);
 				else if (purple_connection_get_display_name(gc) != NULL)
 					alias = purple_connection_get_display_name(gc);
@@ -1480,7 +1480,7 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 
 		str = g_strdup(purple_normalize(account, who));
 
-		if (!strcmp(str, purple_normalize(account, chat->nick))) {
+		if (purple_strequal(str, purple_normalize(account, chat->nick))) {
 			flags |= PURPLE_MESSAGE_SEND;
 		} else {
 			flags |= PURPLE_MESSAGE_RECV;
@@ -1601,7 +1601,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
 
 		if(!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-			if (!strcmp(chat->nick, purple_normalize(conv->account, user))) {
+			if (purple_strequal(chat->nick, purple_normalize(conv->account, user))) {
 				const char *alias2 = purple_account_get_alias(conv->account);
 				if (alias2 != NULL)
 					alias = alias2;
@@ -1692,7 +1692,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
 
-	if (!strcmp(chat->nick, purple_normalize(conv->account, old_user))) {
+	if (purple_strequal(chat->nick, purple_normalize(conv->account, old_user))) {
 		const char *alias;
 
 		/* Note this for later. */

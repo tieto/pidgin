@@ -178,9 +178,7 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 	{
 		const char *string_value = purple_value_get_string(attr_value);
 		const char *default_string_value = purple_value_get_string(default_value);
-		if (((string_value == NULL) && (default_string_value == NULL)) ||
-			((string_value != NULL) && (default_string_value != NULL) &&
-			 !strcmp(string_value, default_string_value)))
+		if (purple_strequal(string_value, default_string_value))
 			return NULL;
 		value = g_strdup(purple_value_get_string(attr_value));
 	}
@@ -506,11 +504,11 @@ parse_settings(xmlnode *node, PurpleAccount *account)
 			/* Ignore this setting */
 			continue;
 
-		if (!strcmp(str_type, "string"))
+		if (purple_strequal(str_type, "string"))
 			type = PURPLE_PREF_STRING;
-		else if (!strcmp(str_type, "int"))
+		else if (purple_strequal(str_type, "int"))
 			type = PURPLE_PREF_INT;
-		else if (!strcmp(str_type, "bool"))
+		else if (purple_strequal(str_type, "bool"))
 			type = PURPLE_PREF_BOOLEAN;
 		else
 			/* Ignore this setting */
@@ -655,17 +653,17 @@ parse_proxy_info(xmlnode *node, PurpleAccount *account)
 	child = xmlnode_get_child(node, "type");
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
 	{
-		if (!strcmp(data, "global"))
+		if (purple_strequal(data, "global"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_GLOBAL);
-		else if (!strcmp(data, "none"))
+		else if (purple_strequal(data, "none"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
-		else if (!strcmp(data, "http"))
+		else if (purple_strequal(data, "http"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_HTTP);
-		else if (!strcmp(data, "socks4"))
+		else if (purple_strequal(data, "socks4"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS4);
-		else if (!strcmp(data, "socks5"))
+		else if (purple_strequal(data, "socks5"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS5);
-		else if (!strcmp(data, "envvar"))
+		else if (purple_strequal(data, "envvar"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_ENVVAR);
 		else
 		{
@@ -2022,7 +2020,7 @@ purple_account_get_status_type(const PurpleAccount *account, const char *id)
 	{
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
 
-		if (!strcmp(purple_status_type_get_id(status_type), id))
+		if (purple_strequal(purple_status_type_get_id(status_type), id))
 			return status_type;
 	}
 
@@ -2631,11 +2629,11 @@ purple_accounts_find(const char *name, const char *protocol_id)
 
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		account = (PurpleAccount *)l->data;
-		if (protocol_id && strcmp(account->protocol_id, protocol_id))
+		if (protocol_id && !purple_strequal(account->protocol_id, protocol_id))
 		  continue;
 
 		who = g_strdup(purple_normalize(account, name));
-		if (!strcmp(purple_normalize(account, purple_account_get_username(account)), who)) {
+		if (purple_strequal(purple_normalize(account, purple_account_get_username(account)), who)) {
 			g_free(who);
 			return account;
 		}

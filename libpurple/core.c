@@ -341,15 +341,7 @@ purple_core_ensure_single_instance()
 			const char *user_dir = purple_user_dir();
 			char *dbus_owner_user_dir = purple_dbus_owner_user_dir();
 
-			if (NULL == user_dir && NULL != dbus_owner_user_dir)
-				is_single_instance = TRUE;
-			else if (NULL != user_dir && NULL == dbus_owner_user_dir)
-				is_single_instance = TRUE;
-			else if (NULL == user_dir && NULL == dbus_owner_user_dir)
-				is_single_instance = FALSE;
-			else
-				is_single_instance = strcmp(dbus_owner_user_dir, user_dir);
-
+			is_single_instance = !purple_strequal(dbus_owner_user_dir, user_dir);
 			g_free(dbus_owner_user_dir);
 		}
 	}
@@ -480,7 +472,7 @@ purple_core_migrate(void)
 		if (g_file_test(name, G_FILE_TEST_IS_SYMLINK))
 		{
 			/* We're only going to duplicate a logs symlink. */
-			if (!strcmp(entry, "logs"))
+			if (purple_strequal(entry, "logs"))
 			{
 				char *link;
 #if GLIB_CHECK_VERSION(2,4,0)
@@ -523,7 +515,8 @@ purple_core_migrate(void)
 
 				logs_dir = g_build_filename(user_dir, "logs", NULL);
 
-				if (!strcmp(link, "../.purple/logs") || !strcmp(link, logs_dir))
+				if (purple_strequal(link, "../.purple/logs") ||
+				    purple_strequal(link, logs_dir))
 				{
 					/* If the symlink points to the new directory, we're
 					 * likely just trying again after a failed migration,
@@ -568,7 +561,7 @@ purple_core_migrate(void)
 		/* Deal with directories... */
 		if (g_file_test(name, G_FILE_TEST_IS_DIR))
 		{
-			if (!strcmp(entry, "icons"))
+			if (purple_strequal(entry, "icons"))
 			{
 				/* This is a special case for the Album plugin, which
 				 * stores data in the icons folder.  We're not copying
@@ -637,7 +630,7 @@ purple_core_migrate(void)
 
 				g_dir_close(icons_dir);
 			}
-			else if (!strcmp(entry, "plugins"))
+			else if (purple_strequal(entry, "plugins"))
 			{
 				/* Do nothing, because we broke plugin compatibility.
 				 * This means that the plugins directory gets left behind. */

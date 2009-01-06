@@ -108,30 +108,30 @@ type_from_string (const char *type)
 
 	switch (type [0]) {
 	case 'A':
-		if (!strcmp (type, "Application"))
+		if (purple_strequal (type, "Application"))
 			return PURPLE_DESKTOP_ITEM_TYPE_APPLICATION;
 		break;
 	case 'L':
-		if (!strcmp (type, "Link"))
+		if (purple_strequal (type, "Link"))
 			return PURPLE_DESKTOP_ITEM_TYPE_LINK;
 		break;
 	case 'F':
-		if (!strcmp (type, "FSDevice"))
+		if (purple_strequal (type, "FSDevice"))
 			return PURPLE_DESKTOP_ITEM_TYPE_FSDEVICE;
 		break;
 	case 'M':
-		if (!strcmp (type, "MimeType"))
+		if (purple_strequal (type, "MimeType"))
 			return PURPLE_DESKTOP_ITEM_TYPE_MIME_TYPE;
 		break;
 	case 'D':
-		if (!strcmp (type, "Directory"))
+		if (purple_strequal (type, "Directory"))
 			return PURPLE_DESKTOP_ITEM_TYPE_DIRECTORY;
 		break;
 	case 'S':
-		if (!strcmp (type, "Service"))
+		if (purple_strequal (type, "Service"))
 			return PURPLE_DESKTOP_ITEM_TYPE_SERVICE;
 
-		else if (!strcmp (type, "ServiceType"))
+		else if (purple_strequal (type, "ServiceType"))
 			return PURPLE_DESKTOP_ITEM_TYPE_SERVICE_TYPE;
 		break;
 	default:
@@ -149,12 +149,12 @@ find_section (PurpleDesktopItem *item, const char *section)
 
 	if (section == NULL)
 		return NULL;
-	if (strcmp (section, "Desktop Entry") == 0)
+	if (purple_strequal (section, "Desktop Entry"))
 		return NULL;
 
 	for (li = item->sections; li != NULL; li = li->next) {
 		sec = li->data;
-		if (strcmp (sec->name, section) == 0)
+		if (purple_strequal (sec->name, section))
 			return sec;
 	}
 
@@ -264,7 +264,7 @@ _purple_desktop_item_set_string (PurpleDesktopItem *item,
 
 	set (item, attr, value);
 
-	if (strcmp (attr, PURPLE_DESKTOP_ITEM_TYPE) == 0)
+	if (purple_strequal (attr, PURPLE_DESKTOP_ITEM_TYPE))
 		item->type = type_from_string (value);
 }
 
@@ -354,16 +354,16 @@ get_encoding (FILE *df)
 			p++;
 			if (*p == ' ')
 				p++;
-			if (strcmp (p, "UTF-8") == 0) {
+			if (purple_strequal (p, "UTF-8")) {
 				return ENCODING_UTF8;
-			} else if (strcmp (p, "Legacy-Mixed") == 0) {
+			} else if (purple_strequal (p, "Legacy-Mixed")) {
 				return ENCODING_LEGACY_MIXED;
 			} else {
 				/* According to the spec we're not supposed
 				 * to read a file like this */
 				return ENCODING_UNKNOWN;
 			}
-		} else if (strcmp ("[KDE Desktop Entry]", buf) == 0) {
+		} else if (purple_strequal ("[KDE Desktop Entry]", buf)) {
 			old_kde = TRUE;
 			/* don't break yet, we still want to support
 			 * Encoding even here */
@@ -557,7 +557,7 @@ decode_string (const char *value, Encoding encoding, const char *locale)
 		char *utf8_string;
 		if (char_encoding == NULL)
 			return NULL;
-		if (strcmp (char_encoding, "ASCII") == 0) {
+		if (purple_strequal (char_encoding, "ASCII")) {
 			return decode_string_and_dup (value);
 		}
 		utf8_string = g_convert (value, -1, "UTF-8", char_encoding,
@@ -673,7 +673,7 @@ insert_key (PurpleDesktopItem *item,
 	char *val;
 	/* we always store everything in UTF-8 */
 	if (cur_section == NULL &&
-	    strcmp (key, PURPLE_DESKTOP_ITEM_ENCODING) == 0) {
+	    purple_strequal (key, PURPLE_DESKTOP_ITEM_ENCODING)) {
 		k = g_strdup (key);
 		val = g_strdup ("UTF-8");
 	} else {
@@ -697,7 +697,7 @@ insert_key (PurpleDesktopItem *item,
 		 * on sort order, so convert to semicolons */
 		if (old_kde &&
 		    cur_section == NULL &&
-		    strcmp (key, PURPLE_DESKTOP_ITEM_SORT_ORDER) == 0 &&
+		    purple_strequal (key, PURPLE_DESKTOP_ITEM_SORT_ORDER) &&
 		    strchr (val, ';') == NULL) {
 			int i;
 			for (i = 0; val[i] != '\0'; i++) {
@@ -720,7 +720,7 @@ insert_key (PurpleDesktopItem *item,
 
 		/* Take care of the language part */
 		if (locale != NULL &&
-		    strcmp (locale, "C") == 0) {
+		    purple_strequal (locale, "C")) {
 			char *p;
 			/* Whack C locale */
 			p = strchr (k, '[');
@@ -791,8 +791,7 @@ setup_type (PurpleDesktopItem *item, const char *uri)
 						PURPLE_DESKTOP_ITEM_TYPE);
 	if (type == NULL && uri != NULL) {
 		char *base = g_path_get_basename (uri);
-		if (base != NULL &&
-		    strcmp (base, ".directory") == 0) {
+		if (purple_strequal(base, ".directory")) {
 			/* This gotta be a directory */
 			g_hash_table_replace (item->main_hash,
 					      g_strdup (PURPLE_DESKTOP_ITEM_TYPE), 
@@ -813,7 +812,7 @@ static const char *
 lookup_locale (const PurpleDesktopItem *item, const char *key, const char *locale)
 {
 	if (locale == NULL ||
-	    strcmp (locale, "C") == 0) {
+	    purple_strequal (locale, "C")) {
 		return lookup (item, key);
 	} else {
 		const char *ret;
@@ -857,7 +856,7 @@ sanitize (PurpleDesktopItem *item, const char *uri)
 	type = lookup (item, PURPLE_DESKTOP_ITEM_TYPE);
 
 	/* understand old gnome style url exec thingies */
-	if (type != NULL && strcmp (type, "URL") == 0) {
+	if (purple_strequal(type, "URL")) {
 		const char *exec = lookup (item, PURPLE_DESKTOP_ITEM_EXEC);
 		set (item, PURPLE_DESKTOP_ITEM_TYPE, "Link");
 		if (exec != NULL) {
@@ -968,13 +967,11 @@ ditem_load (FILE *df,
 					cur_section->keys = g_list_reverse
 						(cur_section->keys);
 				}
-				if (strcmp (CharBuffer,
-					    "KDE Desktop Entry") == 0) {
+				if (purple_strequal (CharBuffer, "KDE Desktop Entry")) {
 					/* Main section */
 					cur_section = NULL;
 					old_kde = TRUE;
-				} else if (strcmp (CharBuffer,
-						   "Desktop Entry") == 0) {
+				} else if (purple_strequal(CharBuffer, "Desktop Entry")) {
 					/* Main section */
 					cur_section = NULL;
 				} else {

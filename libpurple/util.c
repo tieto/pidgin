@@ -1409,7 +1409,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						struct purple_parse_tag *pt = tags->data;
 						if(xhtml)
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
-						if(plain && !strcmp(pt->src_tag, "a")) {
+						if(plain && purple_strequal(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */
 							if (cdata && url &&
 									(!g_string_equal(cdata, url) && (g_ascii_strncasecmp(url->str, "mailto:", 7) != 0 ||
@@ -2949,7 +2949,7 @@ purple_running_kde(void)
 	g_free(tmp);
 
 	session = g_getenv("KDE_FULL_SESSION");
-	if (session != NULL && !strcmp(session, "true"))
+	if (purple_strequal(session, "true"))
 		return TRUE;
 
 	/* If you run Purple from Konsole under !KDE, this will provide a
@@ -2990,6 +2990,17 @@ purple_fd_get_ip(int fd)
 /**************************************************************************
  * String Functions
  **************************************************************************/
+gboolean
+purple_strequal(const gchar *left, const gchar *right)
+{
+#if GLIB_CHECK_VERSION(2,16,0)
+	return (g_strcmp0(left, right) == 0);
+#else
+	return ((left == NULL && right == NULL) ||
+	        (left != NULL && right != NULL && strcmp(left, right) == 0));
+#endif
+}
+
 const char *
 purple_normalize(const PurpleAccount *account, const char *str)
 {
@@ -3104,7 +3115,7 @@ purple_str_has_suffix(const char *s, const char *x)
 	g_return_val_if_fail(x != NULL, FALSE);
 
 	off = strlen(s) - strlen(x);
-	return (off >= 0 && !strcmp(s + off, x));
+	return (off >= 0 && purple_strequal(s + off, x));
 #endif
 }
 
@@ -4701,7 +4712,7 @@ purple_escape_filename(const char *str)
 
 const char *_purple_oscar_convert(const char *act, const char *protocol)
 {
-	if (protocol && act && strcmp(protocol, "prpl-oscar") == 0) {
+	if (act && purple_strequal(protocol, "prpl-oscar")) {
 		int i;
 		for (i = 0; act[i] != '\0'; i++)
 			if (!isdigit(act[i]))

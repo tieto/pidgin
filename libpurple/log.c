@@ -200,7 +200,7 @@ static guint _purple_logsize_user_hash(struct _purple_logsize_user *lu)
 static guint _purple_logsize_user_equal(struct _purple_logsize_user *lu1,
 		struct _purple_logsize_user *lu2)
 {
-	return (lu1->account == lu2->account && (!strcmp(lu1->name, lu2->name)));
+	return (lu1->account == lu2->account && purple_strequal(lu1->name, lu2->name));
 }
 
 static void _purple_logsize_user_free_key(struct _purple_logsize_user *lu)
@@ -324,7 +324,7 @@ static void logger_pref_cb(const char *name, PurplePrefType type,
 	GSList *l = loggers;
 	while (l) {
 		logger = l->data;
-		if (!strcmp(logger->id, value)) {
+		if (purple_strequal(logger->id, value)) {
 			purple_log_logger_set(logger);
 			return;
 		}
@@ -406,7 +406,7 @@ void purple_log_logger_add (PurpleLogLogger *logger)
 	if (g_slist_find(loggers, logger))
 		return;
 	loggers = g_slist_append(loggers, logger);
-	if (strcmp(purple_prefs_get_string("/purple/logging/format"), logger->id) == 0) {
+	if (purple_strequal(purple_prefs_get_string("/purple/logging/format"), logger->id)) {
 		purple_prefs_trigger_callback("/purple/logging/format");
 	}
 }
@@ -1019,7 +1019,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 				continue;
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-			if (!strcmp(protocol_unescaped, prpl_info->list_icon((PurpleAccount *)account_iter->data, NULL)))
+			if (purple_strequal(protocol_unescaped, prpl_info->list_icon((PurpleAccount *)account_iter->data, NULL)))
 				accounts = g_list_prepend(accounts, account_iter->data);
 		}
 		g_free(protocol_unescaped);
@@ -1039,7 +1039,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 			/* Find the account for username in the list of accounts for protocol. */
 			username_unescaped = purple_unescape_filename(username);
 			for (account_iter = g_list_first(accounts) ; account_iter != NULL ; account_iter = account_iter->next) {
-				if (!strcmp(((PurpleAccount *)account_iter->data)->username, username_unescaped)) {
+				if (purple_strequal(((PurpleAccount *)account_iter->data)->username, username_unescaped)) {
 					account = account_iter->data;
 					break;
 				}
@@ -1068,14 +1068,14 @@ static void log_get_log_sets_common(GHashTable *sets)
 				/* Chat for .chat or .system at the end of the name to determine the type. */
 				if (len >= 7) {
 					gchar *tmp = &name[len - 7];
-					if (!strcmp(tmp, ".system")) {
+					if (purple_strequal(tmp, ".system")) {
 						set->type = PURPLE_LOG_SYSTEM;
 						*tmp = '\0';
 					}
 				}
 				if (len > 5) {
 					gchar *tmp = &name[len - 5];
-					if (!strcmp(tmp, ".chat")) {
+					if (purple_strequal(tmp, ".chat")) {
 						set->type = PURPLE_LOG_CHAT;
 						*tmp = '\0';
 					}
@@ -1773,29 +1773,29 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			sscanf(convostart, "%*s %s %d %d:%d:%d %d",
 			       month, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &tm.tm_year);
 			/* Ugly hack, in case current locale is not English */
-			if (strcmp(month, "Jan") == 0) {
+			if (purple_strequal(month, "Jan")) {
 				tm.tm_mon= 0;
-			} else if (strcmp(month, "Feb") == 0) {
+			} else if (purple_strequal(month, "Feb")) {
 				tm.tm_mon = 1;
-			} else if (strcmp(month, "Mar") == 0) {
+			} else if (purple_strequal(month, "Mar")) {
 				tm.tm_mon = 2;
-			} else if (strcmp(month, "Apr") == 0) {
+			} else if (purple_strequal(month, "Apr")) {
 				tm.tm_mon = 3;
-			} else if (strcmp(month, "May") == 0) {
+			} else if (purple_strequal(month, "May")) {
 				tm.tm_mon = 4;
-			} else if (strcmp(month, "Jun") == 0) {
+			} else if (purple_strequal(month, "Jun")) {
 				tm.tm_mon = 5;
-			} else if (strcmp(month, "Jul") == 0) {
+			} else if (purple_strequal(month, "Jul")) {
 				tm.tm_mon = 6;
-			} else if (strcmp(month, "Aug") == 0) {
+			} else if (purple_strequal(month, "Aug")) {
 				tm.tm_mon = 7;
-			} else if (strcmp(month, "Sep") == 0) {
+			} else if (purple_strequal(month, "Sep")) {
 				tm.tm_mon = 8;
-			} else if (strcmp(month, "Oct") == 0) {
+			} else if (purple_strequal(month, "Oct")) {
 				tm.tm_mon = 9;
-			} else if (strcmp(month, "Nov") == 0) {
+			} else if (purple_strequal(month, "Nov")) {
 				tm.tm_mon = 10;
-			} else if (strcmp(month, "Dec") == 0) {
+			} else if (purple_strequal(month, "Dec")) {
 				tm.tm_mon = 11;
 			}
 			tm.tm_year -= 1900;
@@ -1930,7 +1930,7 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 
 		/* Make sure we're dealing with a log file. */
 		ext = &name[len - 4];
-		if (strcmp(ext, ".log")) {
+		if (!purple_strequal(ext, ".log")) {
 			g_free(name);
 			continue;
 		}
@@ -1943,7 +1943,7 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 		set->type = PURPLE_LOG_IM;
 		if (len > 9) {
 			char *tmp = &name[len - 9];
-			if (!strcmp(tmp, ".chat")) {
+			if (purple_strequal(tmp, ".chat")) {
 				set->type = PURPLE_LOG_CHAT;
 				*tmp = '\0';
 			}
@@ -1972,7 +1972,7 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 				{
 					PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
-					if (!strcmp(purple_buddy_get_name(buddy), name)) {
+					if (purple_strequal(purple_buddy_get_name(buddy), name)) {
 						set->account = purple_buddy_get_account(buddy);
 						set->buddy = TRUE;
 						found = TRUE;
