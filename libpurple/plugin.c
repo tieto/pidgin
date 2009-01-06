@@ -218,7 +218,7 @@ purple_plugin_probe(const char *filename)
 	g_free(basename);
 	if (plugin != NULL)
 	{
-		if (!strcmp(filename, plugin->path))
+		if (purple_strequal(filename, plugin->path))
 			return plugin;
 		else if (!purple_plugin_is_unloadable(plugin))
 		{
@@ -357,7 +357,7 @@ purple_plugin_probe(const char *filename)
 		return NULL;
 	}
 	else if (plugin->info->ui_requirement &&
-			strcmp(plugin->info->ui_requirement, purple_core_get_ui()))
+			!purple_strequal(plugin->info->ui_requirement, purple_core_get_ui()))
 	{
 		plugin->error = g_strdup_printf(_("You are using %s, but this plugin requires %s."),
 					purple_core_get_ui(), plugin->info->ui_requirement);
@@ -374,7 +374,7 @@ purple_plugin_probe(const char *filename)
 	 */
 	if (plugin->info->id == NULL || *plugin->info->id == '\0')
 	{
-		plugin->error = g_strdup_printf(_("This plugin has not defined an ID."));
+		plugin->error = g_strdup(_("This plugin has not defined an ID."));
 		purple_debug_error("plugins", "%s is not loadable: info->id is not defined.\n", plugin->path);
 		plugin->unloadable = TRUE;
 		return plugin;
@@ -1538,7 +1538,7 @@ purple_plugins_find_with_name(const char *name)
 	for (l = plugins; l != NULL; l = l->next) {
 		plugin = l->data;
 
-		if (!strcmp(plugin->info->name, name))
+		if (purple_strequal(plugin->info->name, name))
 			return plugin;
 	}
 
@@ -1554,7 +1554,7 @@ purple_plugins_find_with_filename(const char *filename)
 	for (l = plugins; l != NULL; l = l->next) {
 		plugin = l->data;
 
-		if (plugin->path != NULL && !strcmp(plugin->path, filename))
+		if (purple_strequal(plugin->path, filename))
 			return plugin;
 	}
 
@@ -1577,7 +1577,7 @@ purple_plugins_find_with_basename(const char *basename)
 
 		if (plugin->path != NULL) {
 			tmp = purple_plugin_get_basename(plugin->path);
-			if (!strcmp(tmp, basename))
+			if (purple_strequal(tmp, basename))
 			{
 				g_free(tmp);
 				return plugin;
@@ -1603,7 +1603,7 @@ purple_plugins_find_with_id(const char *id)
 	{
 		plugin = l->data;
 
-		if (plugin->info->id != NULL && !strcmp(plugin->info->id, id))
+		if (purple_strequal(plugin->info->id, id))
 			return plugin;
 	}
 

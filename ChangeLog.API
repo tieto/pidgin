@@ -23,6 +23,7 @@ version 2.6.0 (??/??/????):
 		* purple_request_field_set_ui_data
 		* purple_network_force_online
 		* purple_global_proxy_set_info
+		* purple_strequal
 
 		Deprecated:
 		* purple_buddy_get_local_alias

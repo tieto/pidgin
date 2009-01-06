@@ -2468,8 +2468,11 @@ void pidgin_prefs_show(void)
 		gtk_window_present(GTK_WINDOW(prefs));
 		return;
 	}
-	
-	/* add everthing in the thmeme manager before the window is loaded */
+
+	/* Refresh the list of themes before showing the preferences window */
+	purple_theme_manager_refresh();
+
+	/* add everything in the theme manager before the window is loaded */
 	if (prefs_themes_unsorted) {
 		purple_theme_manager_for_each_theme(prefs_themes_sort);
 		prefs_themes_unsorted = FALSE;

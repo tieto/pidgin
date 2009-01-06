@@ -238,13 +238,13 @@ purple_gnome_proxy_get_info(void)
 	g_free(err);
 	err = NULL;
 
-	if (!strcmp(tmp, "none\n")) {
+	if (purple_strequal(tmp, "none\n")) {
 		info.type = PURPLE_PROXY_NONE;
 		g_free(tmp);
 		return &info;
 	}
 
-	if (strcmp(tmp, "manual\n")) {
+	if (purple_strequal(tmp, "manual\n")) {
 		/* Unknown setting.  Fallback to using our global proxy settings. */
 		g_free(tmp);
 		return purple_global_proxy_get_info();
@@ -273,7 +273,7 @@ purple_gnome_proxy_get_info(void)
 	g_free(err);
 	err = NULL;
 
-	if (!strcmp(tmp, "true\n"))
+	if (purple_strequal(tmp, "true\n"))
 		use_same_proxy = TRUE;
 	g_free(tmp);
 	tmp = NULL;
@@ -2252,31 +2252,31 @@ proxy_pref_cb(const char *name, PurplePrefType type,
 {
 	PurpleProxyInfo *info = purple_global_proxy_get_info();
 
-	if (!strcmp(name, "/purple/proxy/type")) {
+	if (purple_strequal(name, "/purple/proxy/type")) {
 		int proxytype;
 		const char *type = value;
 
-		if (!strcmp(type, "none"))
+		if (purple_strequal(type, "none"))
 			proxytype = PURPLE_PROXY_NONE;
-		else if (!strcmp(type, "http"))
+		else if (purple_strequal(type, "http"))
 			proxytype = PURPLE_PROXY_HTTP;
-		else if (!strcmp(type, "socks4"))
+		else if (purple_strequal(type, "socks4"))
 			proxytype = PURPLE_PROXY_SOCKS4;
-		else if (!strcmp(type, "socks5"))
+		else if (purple_strequal(type, "socks5"))
 			proxytype = PURPLE_PROXY_SOCKS5;
-		else if (!strcmp(type, "envvar"))
+		else if (purple_strequal(type, "envvar"))
 			proxytype = PURPLE_PROXY_USE_ENVVAR;
 		else
 			proxytype = -1;
 
 		purple_proxy_info_set_type(info, proxytype);
-	} else if (!strcmp(name, "/purple/proxy/host"))
+	} else if (purple_strequal(name, "/purple/proxy/host"))
 		purple_proxy_info_set_host(info, value);
-	else if (!strcmp(name, "/purple/proxy/port"))
+	else if (purple_strequal(name, "/purple/proxy/port"))
 		purple_proxy_info_set_port(info, GPOINTER_TO_INT(value));
-	else if (!strcmp(name, "/purple/proxy/username"))
+	else if (purple_strequal(name, "/purple/proxy/username"))
 		purple_proxy_info_set_username(info, value);
-	else if (!strcmp(name, "/purple/proxy/password"))
+	else if (purple_strequal(name, "/purple/proxy/password"))
 		purple_proxy_info_set_password(info, value);
 }
 

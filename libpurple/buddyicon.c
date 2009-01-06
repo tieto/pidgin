@@ -988,7 +988,7 @@ delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name)
 {
 	purple_blist_node_remove_setting(node, setting_name);
 
-	if (!strcmp(setting_name, "buddy_icon"))
+	if (purple_strequal(setting_name, "buddy_icon"))
 	{
 		purple_blist_node_remove_setting(node, "avatar_hash");
 		purple_blist_node_remove_setting(node, "icon_checksum");
@@ -1085,7 +1085,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 
 		g_free(new_filename);
 
-		if (!strcmp(setting_name, "buddy_icon"))
+		if (purple_strequal(setting_name, "buddy_icon"))
 		{
 			const char *hash;
 
@@ -1100,7 +1100,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 				PurpleAccount *account = purple_buddy_get_account((PurpleBuddy *)node);
 				const char *prpl_id = purple_account_get_protocol_id(account);
 
-				if (!strcmp(prpl_id, "prpl-yahoo"))
+				if (purple_strequal(prpl_id, "prpl-yahoo"))
 				{
 					int checksum = purple_blist_node_get_int(node, "icon_checksum");
 					if (checksum != 0)

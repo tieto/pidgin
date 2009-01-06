@@ -129,7 +129,7 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 	for(attr_node = node->child; attr_node; attr_node = attr_node->next)
 	{
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
-				!strcmp(attr_node->name, attr))
+				purple_strequal(attr_node->name, attr))
 		{
 			if(sibling == NULL) {
 				node->child = attr_node->next;
@@ -146,20 +146,6 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 	}
 }
 
-/* Compare two nullable xmlns strings.
- * They are considered equal if they're both NULL or the strings are equal
- */
-static gboolean _xmlnode_compare_xmlns(const char *xmlns1, const char *xmlns2) {
-	gboolean equal = FALSE;
-
-	if (xmlns1 == NULL && xmlns2 == NULL)
-		equal = TRUE;
-	else if (xmlns1 != NULL && xmlns2 != NULL && !strcmp(xmlns1, xmlns2))
-		equal = TRUE;
-
-	return equal;
-}
-
 void
 xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns)
 {
@@ -171,8 +157,8 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 	for(attr_node = node->child; attr_node; attr_node = attr_node->next)
 	{
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
-		   !strcmp(attr_node->name, attr) &&
-		   _xmlnode_compare_xmlns(xmlns, attr_node->xmlns))
+		   purple_strequal(attr,  attr_node->name) &&
+		   purple_strequal(xmlns, attr_node->xmlns))
 		{
 			if(sibling == NULL) {
 				node->child = attr_node->next;
@@ -252,7 +238,7 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 	g_return_val_if_fail(attr != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
-		if(x->type == XMLNODE_TYPE_ATTRIB && !strcmp(attr, x->name)) {
+		if(x->type == XMLNODE_TYPE_ATTRIB && purple_strequal(attr, x->name)) {
 			return x->data;
 		}
 	}
@@ -270,8 +256,8 @@ xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 
 	for(x = node->child; x; x = x->next) {
 		if(x->type == XMLNODE_TYPE_ATTRIB &&
-		   !strcmp(attr, x->name) &&
-		   _xmlnode_compare_xmlns(xmlns, x->xmlns)) {
+		   purple_strequal(attr,  x->name) &&
+		   purple_strequal(xmlns, x->xmlns)) {
 			return x->data;
 		}
 	}
@@ -382,8 +368,8 @@ xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const 
 		if(ns)
 			xmlns = xmlnode_get_namespace(x);
 
-		if(x->type == XMLNODE_TYPE_TAG && name && !strcmp(parent_name, x->name)
-				&& (!ns || (xmlns && !strcmp(ns, xmlns)))) {
+		if(x->type == XMLNODE_TYPE_TAG && purple_strequal(parent_name, x->name)
+				&& purple_strequal(ns, xmlns)) {
 			ret = x;
 			break;
 		}
@@ -471,7 +457,7 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 		g_hash_table_foreach(node->namespace_map,
 			(GHFunc)xmlnode_to_str_foreach_append_ns, text);
 	} else if (node->xmlns) {
-		if(!node->parent || !node->parent->xmlns || strcmp(node->xmlns, node->parent->xmlns))
+		if(!node->parent || !purple_strequal(node->xmlns, node->parent->xmlns))
 		{
 			char *xmlns = g_markup_escape_text(node->xmlns, -1);
 			g_string_append_printf(text, " xmlns='%s'", xmlns);
@@ -866,8 +852,8 @@ xmlnode_get_next_twin(xmlnode *node)
 		if(ns)
 			xmlns = xmlnode_get_namespace(sibling);
 
-		if(sibling->type == XMLNODE_TYPE_TAG && !strcmp(node->name, sibling->name) &&
-				(!ns || (xmlns && !strcmp(ns, xmlns))))
+		if(sibling->type == XMLNODE_TYPE_TAG && purple_strequal(node->name, sibling->name) &&
+				purple_strequal(ns, xmlns))
 			return sibling;
 	}
 

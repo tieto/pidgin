@@ -739,21 +739,21 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 static char *oscar_icqstatus(int state) {
 	/* Make a cute little string that shows the status of the dude or dudet */
 	if (state & AIM_ICQ_STATE_CHAT)
-		return g_strdup_printf(_("Free For Chat"));
+		return g_strdup(_("Free For Chat"));
 	else if (state & AIM_ICQ_STATE_DND)
-		return g_strdup_printf(_("Do Not Disturb"));
+		return g_strdup(_("Do Not Disturb"));
 	else if (state & AIM_ICQ_STATE_OUT)
-		return g_strdup_printf(_("Not Available"));
+		return g_strdup(_("Not Available"));
 	else if (state & AIM_ICQ_STATE_BUSY)
-		return g_strdup_printf(_("Occupied"));
+		return g_strdup(_("Occupied"));
 	else if (state & AIM_ICQ_STATE_AWAY)
-		return g_strdup_printf(_("Away"));
+		return g_strdup(_("Away"));
 	else if (state & AIM_ICQ_STATE_WEBAWARE)
-		return g_strdup_printf(_("Web Aware"));
+		return g_strdup(_("Web Aware"));
 	else if (state & AIM_ICQ_STATE_INVISIBLE)
-		return g_strdup_printf(_("Invisible"));
+		return g_strdup(_("Invisible"));
 	else
-		return g_strdup_printf(_("Online"));
+		return g_strdup(_("Online"));
 }
 
 static void
@@ -1658,10 +1658,10 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	}
 	if (in != '\n') {
 		char buf[256];
-		GHashTable *ui_info = purple_core_get_ui_info();		
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."),
-				   ((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+		GHashTable *ui_info = purple_core_get_ui_info();
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
+				"If so, check %s for updates."),
+				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);

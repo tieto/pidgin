@@ -82,7 +82,7 @@ static guint _purple_blist_hbuddy_hash(struct _purple_hbuddy *hb)
 
 static guint _purple_blist_hbuddy_equal(struct _purple_hbuddy *hb1, struct _purple_hbuddy *hb2)
 {
-	return ((!strcmp(hb1->name, hb2->name)) && hb1->account == hb2->account && hb1->group == hb2->group);
+	return (purple_strequal(hb1->name, hb2->name) && hb1->account == hb2->account && hb1->group == hb2->group);
 }
 
 static void _purple_blist_hbuddy_free_key(struct _purple_hbuddy *hb)
@@ -382,11 +382,11 @@ parse_setting(PurpleBlistNode *node, xmlnode *setting)
 	if (!value)
 		return;
 
-	if (!type || !strcmp(type, "string"))
+	if (!type || purple_strequal(type, "string"))
 		purple_blist_node_set_string(node, name, value);
-	else if (!strcmp(type, "bool"))
+	else if (purple_strequal(type, "bool"))
 		purple_blist_node_set_bool(node, name, atoi(value));
-	else if (!strcmp(type, "int"))
+	else if (purple_strequal(type, "int"))
 		purple_blist_node_set_int(node, name, atoi(value));
 
 	g_free(value);
@@ -453,9 +453,9 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 	for (x = cnode->child; x; x = x->next) {
 		if (x->type != XMLNODE_TYPE_TAG)
 			continue;
-		if (!strcmp(x->name, "buddy"))
+		if (purple_strequal(x->name, "buddy"))
 			parse_buddy(group, contact, x);
-		else if (!strcmp(x->name, "setting"))
+		else if (purple_strequal(x->name, "setting"))
 			parse_setting((PurpleBlistNode*)contact, x);
 	}
 
@@ -528,12 +528,12 @@ parse_group(xmlnode *groupnode)
 	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
 		if (cnode->type != XMLNODE_TYPE_TAG)
 			continue;
-		if (!strcmp(cnode->name, "setting"))
+		if (purple_strequal(cnode->name, "setting"))
 			parse_setting((PurpleBlistNode*)group, cnode);
-		else if (!strcmp(cnode->name, "contact") ||
-				!strcmp(cnode->name, "person"))
+		else if (purple_strequal(cnode->name, "contact") ||
+				purple_strequal(cnode->name, "person"))
 			parse_contact(group, cnode);
-		else if (!strcmp(cnode->name, "chat"))
+		else if (purple_strequal(cnode->name, "chat"))
 			parse_chat(group, cnode);
 	}
 }
@@ -590,11 +590,11 @@ purple_blist_load()
 				if (x->type != XMLNODE_TYPE_TAG)
 					continue;
 
-				if (!strcmp(x->name, "permit")) {
+				if (purple_strequal(x->name, "permit")) {
 					name = xmlnode_get_data(x);
 					purple_privacy_permit_add(account, name, TRUE);
 					g_free(name);
-				} else if (!strcmp(x->name, "block")) {
+				} else if (purple_strequal(x->name, "block")) {
 					name = xmlnode_get_data(x);
 					purple_privacy_deny_add(account, name, TRUE);
 					g_free(name);
@@ -1061,7 +1061,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 	g_return_if_fail(source != NULL);
 	g_return_if_fail(new_name != NULL);
 
-	if (*new_name == '\0' || !strcmp(new_name, source->name))
+	if (*new_name == '\0' || purple_strequal(new_name, source->name))
 		return;
 
 	dest = purple_find_group(new_name);
@@ -1128,7 +1128,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 
 	/* Notify all PRPLs */
 	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
-	if(old_name && source && strcmp(source->name, old_name)) {
+	if(old_name && purple_strequal(source->name, old_name)) {
 		for (accts = purple_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
 			PurpleAccount *account = accts->data;
 			PurpleConnection *gc = NULL;

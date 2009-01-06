@@ -52,6 +52,7 @@ typedef struct {
 	FontColorPair *offline;
 	FontColorPair *idle;
 	FontColorPair *message;
+	FontColorPair *message_nick_said;
 
 	FontColorPair *status;
 
@@ -82,6 +83,7 @@ enum {
 	PROP_OFFLINE,
 	PROP_IDLE,
 	PROP_MESSAGE,
+	PROP_MESSAGE_NICK_SAID,
 	PROP_STATUS,
 };
 
@@ -161,6 +163,9 @@ pidgin_blist_theme_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_MESSAGE:
 			g_value_set_pointer(value, pidgin_blist_theme_get_unread_message_text_info(theme));
 			break;
+		case PROP_MESSAGE_NICK_SAID:
+			g_value_set_pointer(value, pidgin_blist_theme_get_unread_message_nick_said_text_info(theme));
+			break;
 		case PROP_STATUS:
 			g_value_set_pointer(value, pidgin_blist_theme_get_status_text_info(theme));
 			break;
@@ -219,6 +224,9 @@ pidgin_blist_theme_set_property(GObject *obj, guint param_id, const GValue *valu
 		case PROP_MESSAGE:
 			pidgin_blist_theme_set_unread_message_text_info(theme, g_value_get_pointer(value));
 			break;
+		case PROP_MESSAGE_NICK_SAID:
+			pidgin_blist_theme_set_unread_message_nick_said_text_info(theme, g_value_get_pointer(value));
+			break;
 		case PROP_STATUS:
 			pidgin_blist_theme_set_status_text_info(theme, g_value_get_pointer(value));
 			break;
@@ -247,6 +255,7 @@ pidgin_blist_theme_finalize (GObject *obj)
 	free_font_and_color(priv->away);
 	free_font_and_color(priv->offline);
 	free_font_and_color(priv->message);
+	free_font_and_color(priv->message_nick_said);
 	free_font_and_color(priv->status);
 
 	g_free(priv);
@@ -331,9 +340,14 @@ pidgin_blist_theme_class_init (PidginBlistThemeClass *klass)
 	g_object_class_install_property(obj_class, PROP_IDLE, pspec);
 
 	pspec = g_param_spec_pointer("message", "Message Text",
-                                     "The text information for when a buddy is has an unread message",
+                                     "The text information for when a buddy has an unread message",
                                      G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_MESSAGE, pspec);
+
+	pspec = g_param_spec_pointer("message_nick_said", "Message (Nick Said) Text",
+                                     "The text information for when a chat has an unread message that mentions your nick",
+                                     G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_MESSAGE_NICK_SAID, pspec);
 
 	pspec = g_param_spec_pointer("status", "Status Text",
                                      "The text information for a buddy's status",
@@ -540,6 +554,18 @@ pidgin_blist_theme_get_unread_message_text_info(PidginBlistTheme *theme)
 }
 
 FontColorPair *
+pidgin_blist_theme_get_unread_message_nick_said_text_info(PidginBlistTheme *theme)
+{
+	PidginBlistThemePrivate *priv;
+
+	g_return_val_if_fail(PIDGIN_IS_BLIST_THEME(theme), NULL);
+
+	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
+
+	return priv->message_nick_said;
+}
+
+FontColorPair *
 pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme)
 {
 	PidginBlistThemePrivate *priv;
@@ -727,6 +753,19 @@ pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, FontCol
 
 	free_font_and_color(priv->message); 
 	priv->message = pair;
+}
+
+void
+pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+{
+	PidginBlistThemePrivate *priv;
+
+	g_return_if_fail(PIDGIN_IS_BLIST_THEME(theme));
+
+	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
+
+	free_font_and_color(priv->message_nick_said);
+	priv->message_nick_said = pair;
 }
 
 void
