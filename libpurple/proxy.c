@@ -207,6 +207,16 @@ purple_global_proxy_get_info(void)
 	return global_proxy_info;
 }
 
+void
+purple_global_proxy_set_info(PurpleProxyInfo *info)
+{
+	g_return_if_fail(info != NULL);
+
+	purple_proxy_info_destroy(global_proxy_info);
+
+	global_proxy_info = info;
+}
+
 static PurpleProxyInfo *
 purple_gnome_proxy_get_info(void)
 {
