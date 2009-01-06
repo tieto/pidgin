@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.4 (??/??/????):
+	perl:
+		Changed:
+		* Purple::PluginPref->get_bounds no longer takes two integer
+		  arguments it now returns two integers.
+
 version 2.5.3 (12/20/2008):
 	libpurple
 		Changed:
