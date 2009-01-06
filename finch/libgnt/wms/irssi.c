@@ -71,7 +71,12 @@ get_xywh_for_frame(Irssi *irssi, int hor, int vert, int *x, int *y, int *w, int 
 	width = (getmaxx(stdscr) - irssi->buddylistwidth) / irssi->horiz;
 	height = (getmaxy(stdscr) - 1) / irssi->vert;
 
-	rx = irssi->buddylistwidth;
+	if (width) {
+		rx = irssi->buddylistwidth;
+	} else {
+		rx = 0;
+		width = getmaxx(stdscr) / irssi->horiz;
+	}
 	if (hor)
 		rx += hor * width;
 	if (rx)
@@ -234,7 +239,7 @@ find_window_position(Irssi *irssi, GntWidget *win, int *h, int *v)
 	height = (getmaxy(stdscr) - 1) / irssi->vert;
 
 	if (h)
-		*h = (x - irssi->buddylistwidth) / width;
+		*h = width ? (x - irssi->buddylistwidth) / width : x / (getmaxx(stdscr) / irssi->horiz);
 	if (v)
 		*v = y / height;
 }
@@ -278,6 +283,7 @@ refresh_window(GntWidget *widget, GntNode *node, Irssi *irssi)
 {
 	int vert, hor;
 	int x, y, w, h;
+	const char *name;
 
 	if (!GNT_IS_WINDOW(widget))
 		return;
@@ -286,10 +292,13 @@ refresh_window(GntWidget *widget, GntNode *node, Irssi *irssi)
 		return;
 	}
 
-	find_window_position(irssi, widget, &hor, &vert);
-	get_xywh_for_frame(irssi, hor, vert, &x, &y, &w, &h);
-	gnt_wm_move_window(GNT_WM(irssi), widget, x, y);
-	gnt_wm_resize_window(GNT_WM(irssi), widget, w, h);
+	name = gnt_widget_get_name(widget);
+	if (name && strstr(name, "conversation-window")) {
+		find_window_position(irssi, widget, &hor, &vert);
+		get_xywh_for_frame(irssi, hor, vert, &x, &y, &w, &h);
+		gnt_wm_move_window(GNT_WM(irssi), widget, x, y);
+		gnt_wm_resize_window(GNT_WM(irssi), widget, w, h);
+	}
 }
 
 static void
