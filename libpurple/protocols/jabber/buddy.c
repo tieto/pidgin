@@ -578,32 +578,30 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
 				
 				g_free(hash);
-			} else { /* if(img) */
-				/* remove the metadata */
-				xmlnode *metadata, *item;
-				xmlnode *publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
-				
-				item = xmlnode_new_child(publish, "item");
-				
-				metadata = xmlnode_new_child(item, "metadata");
-				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
-				
-				xmlnode_new_child(metadata, "stop");
-				
-				/* publish the metadata */
-				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+			} else {
+				purple_debug_error("jabber", "jabber_set_buddy_icon received non-png data");
 			}
 		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
-						 "jabber_set_buddy_icon received non-png data");
+			/* remove the metadata */
+			xmlnode *metadata, *item;
+			xmlnode *publish = xmlnode_new("publish");
+			xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
+
+			item = xmlnode_new_child(publish, "item");
+
+			metadata = xmlnode_new_child(item, "metadata");
+			xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
+
+			xmlnode_new_child(metadata, "stop");
+
+			/* publish the metadata */
+			jabber_pep_publish((JabberStream*)gc->proto_data, publish);
 		}
 	}
 
-	/* even when the image is not png, we can still publish the vCard, since this
-	   one doesn't require a specific image type */
-
-	/* publish vCard for those poor older clients */
+	/* vCard avatars do not have an image type requirement so update our
+	 * vCard avatar regardless of image type for those poor older clients
+	 */
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
 
 	gpresence = purple_account_get_presence(gc->account);
