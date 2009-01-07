@@ -822,6 +822,21 @@ purple_media_get_pipeline(PurpleMedia *media)
 	return media->priv->pipeline;
 }
 
+static void
+purple_media_set_remote_candidates(PurpleMediaStream *stream)
+{
+	GError *err = NULL;
+
+	fs_stream_set_remote_candidates(stream->stream,
+			stream->remote_candidates, &err);
+
+	if (err) {
+		purple_debug_error("media", "Error adding remote"
+				" candidates: %s\n", err->message);
+		g_error_free(err);
+	}
+}
+
 void
 purple_media_error(PurpleMedia *media, const gchar *error, ...)
 {
@@ -854,6 +869,7 @@ void
 purple_media_accept(PurpleMedia *media)
 {
 	GList *sessions;
+	GList *streams;
 
 	g_signal_emit(media, purple_media_signals[ACCEPTED], 0);
 
@@ -864,6 +880,12 @@ purple_media_accept(PurpleMedia *media)
 		session->accepted = TRUE;
 
 		purple_media_emit_ready(media, session, NULL);
+	}
+
+	streams = media->priv->streams;
+
+	for (; streams; streams = g_list_next(streams)) {
+		purple_media_set_remote_candidates(streams->data);
 	}
 }
 
@@ -910,6 +932,7 @@ void
 purple_media_got_accept(PurpleMedia *media)
 {
 	GList *sessions;
+	GList *streams;
 
 	g_signal_emit(media, purple_media_signals[GOT_ACCEPT], 0);
 
@@ -918,6 +941,12 @@ purple_media_got_accept(PurpleMedia *media)
 	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
 		PurpleMediaSession *session = sessions->data;
 		session->accepted = TRUE;
+	}
+
+	streams = media->priv->streams;
+
+	for (; streams; streams = g_list_next(streams)) {
+		purple_media_set_remote_candidates(streams->data);
 	}
 }
 
@@ -1435,16 +1464,11 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 				   const gchar *name, GList *remote_candidates)
 {
 	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
-	GError *err = NULL;
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			fs_candidate_list_copy(remote_candidates));
 
-	fs_stream_set_remote_candidates(stream->stream, stream->remote_candidates, &err);
-
-	if (err) {
-		purple_debug_error("media", "Error adding remote candidates: %s\n",
-				   err->message);
-		g_error_free(err);
+	if (stream->session->accepted == TRUE) {
+		purple_media_set_remote_candidates(stream);
 	}
 }
 
