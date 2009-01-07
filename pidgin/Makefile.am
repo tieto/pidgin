@@ -152,7 +152,7 @@ pidgin_headers = \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \
-	gtkmedia.c \
+	gtkmedia.h \
 	gtkmenutray.h \
 	gtknickcolors.h \
 	gtknotify.h \
