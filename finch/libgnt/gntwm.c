@@ -26,7 +26,7 @@
 #include <Python.h>
 #else
 #define _GNU_SOURCE
-#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__)
+#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 #endif

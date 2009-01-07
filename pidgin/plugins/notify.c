@@ -555,9 +555,12 @@ handle_count_xprop(PidginWindow *purplewin)
 }
 
 static void
-handle_urgent(PidginWindow *win, gboolean set)
+handle_urgent(PidginWindow *purplewin, gboolean set)
 {
-	pidgin_set_urgent(GTK_WINDOW(win->window), set);
+	g_return_if_fail(purplewin != NULL);
+	g_return_if_fail(purplewin->window != NULL);
+
+	pidgin_set_urgent(GTK_WINDOW(purplewin->window), set);
 }
 
 static void
