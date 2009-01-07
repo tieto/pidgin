@@ -24,6 +24,7 @@ version 2.5.4 (??/??/????):
 
 	Finch:
 	* Redirect stderr outputs to the debug window.
+	* Fix rebinding actions with the arrow-keys and tab.
 
 version 2.5.3 (12/20/2008):
 	libpurple:
