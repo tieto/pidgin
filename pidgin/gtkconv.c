@@ -7810,7 +7810,7 @@ static void
 pidgin_conv_gtkmedia_destroyed(GtkWidget *widget, PidginConversation *gtkconv)
 {
 	gtk_widget_destroyed(widget, &(gtkconv->gtkmedia));
-	gray_stuff_out(gtkconv);
+	pidgin_conv_update_buttons_by_protocol((PurpleConversation*)gtkconv);
 }
 
 static gboolean
@@ -7846,7 +7846,7 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	gtk_paned_pack2(GTK_PANED(gtkconv->middle_hpaned),
 			pidgin_media_get_display_widget(gtkmedia), FALSE, TRUE);
 
-	gray_stuff_out(gtkconv);
+	pidgin_conv_update_buttons_by_protocol(conv);
 	return TRUE;
 }
 
