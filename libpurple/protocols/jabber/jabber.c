@@ -2552,7 +2552,29 @@ PurpleMedia *
 jabber_initiate_media(PurpleConnection *gc, const char *who, 
 		      PurpleMediaSessionType type)
 {
-	return jingle_rtp_initiate_media(gc->proto_data, who, type);
+	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberBuddy *jb;
+
+	if (!js) {
+		purple_debug_error("jabber",
+				"jabber_initiate_media: NULL stream\n");
+		return NULL;
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	if (!jb) {
+		purple_debug_error("jabber", "Could not find buddy\n");
+		return NULL;
+	}
+
+	if (type & PURPLE_MEDIA_AUDIO &&
+			!jabber_buddy_has_capability(jb,
+			JINGLE_APP_RTP_SUPPORT_AUDIO) &&
+			jabber_buddy_has_capability(jb, GTALK_CAP))
+		return jabber_google_session_initiate(gc->proto_data, who, type);
+	else
+		return jingle_rtp_initiate_media(gc->proto_data, who, type);
 }
 
 gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
@@ -2575,8 +2597,9 @@ gboolean jabber_can_do_media(PurpleConnection *gc, const char *who,
 
 	if (!jabber_buddy_has_capability(jb, JINGLE_TRANSPORT_ICEUDP) &&
 			!jabber_buddy_has_capability(jb,
-			JINGLE_TRANSPORT_RAWUDP)) {
-		purple_debug_error("jingle-rtp", "Buddy doesn't support "
+			JINGLE_TRANSPORT_RAWUDP) &&
+			!jabber_buddy_has_capability(jb, GTALK_CAP)) {
+		purple_debug_info("jingle-rtp", "Buddy doesn't support "
 				"the same transport types\n");
 		return FALSE;
 	}

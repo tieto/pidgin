@@ -25,6 +25,7 @@
  * such that they don't intermingle with code for the XMPP RFCs and XEPs :) */
 
 #include "jabber.h"
+#include "media.h"
 
 void jabber_gmail_init(JabberStream *js);
 void jabber_gmail_poke(JabberStream *js, xmlnode *node);
@@ -45,6 +46,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who);
 
 char *jabber_google_format_to_html(const char *text);
 
+PurpleMedia *jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type);
 void jabber_google_session_parse(JabberStream *js, xmlnode *node);
 
 
