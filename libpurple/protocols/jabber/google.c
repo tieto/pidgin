@@ -83,7 +83,6 @@ google_session_destroy(GoogleSession *session)
 	g_free(session->id.id);
 	g_free(session->id.initiator);
 	g_free(session->remote_jid);
-	g_object_unref(session->media);
 	g_free(session);
 }
 
