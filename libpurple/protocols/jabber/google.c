@@ -218,7 +218,7 @@ google_session_ready(PurpleMedia *media, gchar *id,
 				session->js->user->resource);
 		if (!strcmp(session->id.initiator, me)) {
 			JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-			xmlnode *sess, *desc, *payload, *transport;
+			xmlnode *sess, *desc, *payload;
 			GList *codecs, *iter;
 
 			sess = google_session_create_xmlnode(session, "initiate");
