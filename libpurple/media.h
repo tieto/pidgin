@@ -27,8 +27,6 @@
 #ifndef __MEDIA_H_
 #define __MEDIA_H_
 
-#include "internal.h"
-
 #ifdef USE_VV
 
 #include <gst/gst.h>
