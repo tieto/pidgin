@@ -66,6 +66,7 @@ struct _PurpleMediaStream
 	GstElement *sink;
 
 	GList *local_candidates;
+	GList *remote_candidates;
 
 	gboolean candidates_prepared;
 
@@ -277,6 +278,8 @@ purple_media_stream_free(PurpleMediaStream *stream)
 
 	if (stream->local_candidates)
 		fs_candidate_list_destroy(stream->local_candidates);
+	if (stream->remote_candidates)
+		fs_candidate_list_destroy(stream->remote_candidates);
 
 	if (stream->local_candidate)
 		fs_candidate_destroy(stream->local_candidate);
@@ -1431,10 +1434,12 @@ void
 purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 				   const gchar *name, GList *remote_candidates)
 {
-	FsStream *stream = purple_media_get_stream(media, sess_id, name)->stream;
+	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
 	GError *err = NULL;
+	stream->remote_candidates = g_list_concat(stream->remote_candidates,
+			fs_candidate_list_copy(remote_candidates));
 
-	fs_stream_set_remote_candidates(stream, remote_candidates, &err);
+	fs_stream_set_remote_candidates(stream->stream, stream->remote_candidates, &err);
 
 	if (err) {
 		purple_debug_error("media", "Error adding remote candidates: %s\n",
