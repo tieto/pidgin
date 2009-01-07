@@ -467,7 +467,10 @@ gchar *qq_emoticon_to_purple(gchar *text)
 	/* qq_show_packet("text", (guint8 *)text, strlen(text)); */
 	g_return_val_if_fail(text != NULL && strlen(text) != 0, g_strdup(""));
 
-	segments = g_strsplit_set(text, "\x14\x15", 0);
+	while ((cur = strchr(text, '\x14')) != NULL)
+		*cur = '\x15';
+
+	segments = g_strsplit(text, "\x15", 0);
 	if(segments == NULL) {
 		return g_strdup("");
 	}
