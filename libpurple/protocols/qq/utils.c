@@ -95,8 +95,8 @@ gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount)
 gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields)
 {
 	guint8 *input;
-	gchar **segments;
-	gint count, j;
+	gchar **segments, **seg;
+	gint count = 0, j;
 
 	g_return_val_if_fail(data != NULL && len != 0 && delimit != 0, NULL);
 
@@ -106,11 +106,12 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	g_memmove(input, data, len);
 	input[len] = 0x00;
 
-	segments = g_strsplit_set((gchar *) input, delimit, 0);
+	segments = g_strsplit((gchar *) input, delimit, 0);
 	if (expected_fields <= 0)
 		return segments;
 
-	count = g_strv_length(segments);
+	for (seg = segments; *seg != NULL; seg++)
+		count++;
 	if (count < expected_fields) {	/* not enough fields */
 		purple_debug_error("QQ", "Less fields %d then %d\n", count, expected_fields);
 		return NULL;
