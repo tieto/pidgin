@@ -459,7 +459,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 		avatar_data = purple_imgstore_get_data(img);
 		avatar_len = purple_imgstore_get_size(img);
-		/* have to get rid of the old PHOTO if it exists */
+		/* Get rid of an old PHOTO if one exists.
+		 * TODO: This may want to be modified to remove all old PHOTO
+		 * children, at the moment some people have managed to get
+		 * multiple PHOTO entries in their vCard. */
 		if((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
 			xmlnode_free(photo);
 		}
@@ -473,6 +476,12 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 		xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
+	} else if (vc_node) {
+		xmlnode *photo;
+		/* TODO: Remove all PHOTO children? (see above note) */
+		if ((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
+			xmlnode_free(photo);
+		}
 	}
 
 	if (vc_node != NULL) {
