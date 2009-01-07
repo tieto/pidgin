@@ -187,11 +187,18 @@ google_session_candidates_prepared (PurpleMedia *media, gchar *session_id,
 		xmlnode_set_attrib(candidate, "port", port);
 		xmlnode_set_attrib(candidate, "name", "rtp");
 		xmlnode_set_attrib(candidate, "username", transport->username);
-		xmlnode_set_attrib(candidate, "password", transport->password);
+		/*
+		 * As of this writing, Farsight 2 in Google compatibility
+		 * mode doesn't provide a password. The Gmail client
+		 * requires this to be set.
+		 */
+		xmlnode_set_attrib(candidate, "password",
+				transport->password != NULL ?
+				transport->password : "");
 		xmlnode_set_attrib(candidate, "preference", pref);
 		xmlnode_set_attrib(candidate, "protocol", transport->proto == FS_NETWORK_PROTOCOL_UDP ? "udp" : "tcp");
 		xmlnode_set_attrib(candidate, "type", transport->type == FS_CANDIDATE_TYPE_HOST ? "local" :
-						      transport->type == FS_CANDIDATE_TYPE_PRFLX ? "stun" :
+						      transport->type == FS_CANDIDATE_TYPE_SRFLX ? "stun" :
 					       	      transport->type == FS_CANDIDATE_TYPE_RELAY ? "relay" : NULL);
 		xmlnode_set_attrib(candidate, "generation", "0");
 		xmlnode_set_attrib(candidate, "network", "0");
