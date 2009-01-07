@@ -75,6 +75,7 @@ struct _PidginMediaPrivate
 
 static void pidgin_media_class_init (PidginMediaClass *klass);
 static void pidgin_media_init (PidginMedia *media);
+static void pidgin_media_dispose (GObject *object);
 static void pidgin_media_finalize (GObject *object);
 static void pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
@@ -130,6 +131,7 @@ pidgin_media_class_init (PidginMediaClass *klass)
 /*	GtkContainerClass *container_class = (GtkContainerClass*)klass; */
 	parent_class = g_type_class_peek_parent(klass);
 
+	gobject_class->dispose = pidgin_media_dispose;
 	gobject_class->finalize = pidgin_media_finalize;
 	gobject_class->set_property = pidgin_media_set_property;
 	gobject_class->get_property = pidgin_media_get_property;
@@ -259,20 +261,56 @@ pidgin_media_disconnect_levels(PurpleMedia *media, PidginMedia *gtkmedia)
 }
 
 static void
-pidgin_media_finalize (GObject *media)
+pidgin_media_dispose(GObject *media)
+{
+	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
+	purple_debug_info("gtkmedia", "pidgin_media_dispose\n");
+
+	if (gtkmedia->priv->media) {
+		GstElement *videosendbin = NULL, *videorecvbin = NULL;
+
+		purple_media_get_elements(gtkmedia->priv->media, NULL, NULL,
+					  &videosendbin, &videorecvbin);
+
+		if (videorecvbin) {
+			gst_element_set_locked_state(videorecvbin, TRUE);
+			gst_element_set_state(videorecvbin, GST_STATE_NULL);
+		}
+		if (videosendbin) {
+			gst_element_set_locked_state(videosendbin, TRUE);
+			gst_element_set_state(videosendbin, GST_STATE_NULL);
+		}
+
+		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
+		g_object_unref(gtkmedia->priv->media);
+		gtkmedia->priv->media = NULL;
+	}
+
+	if (gtkmedia->priv->send_level) {
+		gst_object_unref(gtkmedia->priv->send_level);
+		gtkmedia->priv->send_level = NULL;
+	}
+
+	if (gtkmedia->priv->recv_level) {
+		gst_object_unref(gtkmedia->priv->recv_level);
+		gtkmedia->priv->recv_level = NULL;
+	}
+
+	G_OBJECT_CLASS(parent_class)->dispose(media);
+}
+
+static void
+pidgin_media_finalize(GObject *media)
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
 	purple_debug_info("gtkmedia", "pidgin_media_finalize\n");
-	if (gtkmedia->priv->media) {
-		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
-		g_object_unref(gtkmedia->priv->media);
-	}
-	if (gtkmedia->priv->send_level)
-		gst_object_unref(gtkmedia->priv->send_level);
-	if (gtkmedia->priv->recv_level)
-		gst_object_unref(gtkmedia->priv->recv_level);
-	if (gtkmedia->priv->display)
+
+	if (gtkmedia->priv->display) {
 		gtk_widget_destroy(gtkmedia->priv->display);
+		gtkmedia->priv->display = NULL;
+	}
+
+	G_OBJECT_CLASS(parent_class)->finalize(media);
 }
 
 static void

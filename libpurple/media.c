@@ -92,6 +92,7 @@ struct _PurpleMediaPrivate
 
 static void purple_media_class_init (PurpleMediaClass *klass);
 static void purple_media_init (PurpleMedia *media);
+static void purple_media_dispose (GObject *object);
 static void purple_media_finalize (GObject *object);
 static void purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void purple_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
@@ -179,6 +180,7 @@ purple_media_class_init (PurpleMediaClass *klass)
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
 	
+	gobject_class->dispose = purple_media_dispose;
 	gobject_class->finalize = purple_media_finalize;
 	gobject_class->set_property = purple_media_set_property;
 	gobject_class->get_property = purple_media_get_property;
@@ -274,7 +276,6 @@ static void
 purple_media_stream_free(PurpleMediaStream *stream)
 {
 	g_free(stream->participant);
-	g_object_unref(stream->stream);
 
 	if (stream->local_candidates)
 		fs_candidate_list_destroy(stream->local_candidates);
@@ -293,18 +294,62 @@ static void
 purple_media_session_free(PurpleMediaSession *session)
 {
 	g_free(session->id);
-	g_object_unref(session->session);
 	g_free(session);
 }
 
 static void
-purple_media_finalize (GObject *media)
+purple_media_dispose(GObject *media)
 {
 	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
-	purple_debug_info("media","purple_media_finalize\n");
+	GList *iter = NULL;
+
+	purple_debug_info("media","purple_media_dispose\n");
 
 	purple_media_manager_remove_media(purple_media_manager_get(),
 			PURPLE_MEDIA(media));
+
+	if (priv->pipeline) {
+		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(priv->pipeline));
+		gst_bus_remove_signal_watch(bus);
+		gst_object_unref(bus);
+		gst_element_set_state(priv->pipeline, GST_STATE_NULL);
+		gst_object_unref(priv->pipeline);
+		priv->pipeline = NULL;
+	}
+
+	for (iter = priv->streams; iter; iter = g_list_next(iter)) {
+		PurpleMediaStream *stream = iter->data;
+		if (stream->stream) {
+			g_object_unref(stream->stream);
+			stream->stream = NULL;
+		}
+	}
+
+	if (priv->sessions) {
+		GList *sessions = g_hash_table_get_values(priv->sessions);
+		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+			PurpleMediaSession *session = sessions->data;
+			if (session->session) {
+				g_object_unref(session->session);
+				session->session = NULL;
+			}
+		}
+	}
+
+	if (priv->participants) {
+		GList *participants = g_hash_table_get_values(priv->participants);
+		for (; participants; participants = g_list_delete_link(participants, participants))
+			g_object_unref(participants->data);
+	}
+
+	G_OBJECT_CLASS(parent_class)->finalize(media);
+}
+
+static void
+purple_media_finalize(GObject *media)
+{
+	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
+	purple_debug_info("media","purple_media_finalize\n");
 
 	for (; priv->streams; priv->streams = g_list_delete_link(priv->streams, priv->streams))
 		purple_media_stream_free(priv->streams->data);
@@ -317,24 +362,9 @@ purple_media_finalize (GObject *media)
 		g_hash_table_destroy(priv->sessions);
 	}
 
-	if (priv->participants) {
-		GList *participants = g_hash_table_get_values(priv->participants);
-		for (; participants; participants = g_list_delete_link(participants, participants))
-			g_object_unref(participants->data);
-		g_hash_table_destroy(priv->participants);
-	}
-
-	if (priv->pipeline) {
-		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(priv->pipeline));
-		gst_bus_remove_signal_watch(bus);
-		gst_object_unref(bus);
-		gst_element_set_state(priv->pipeline, GST_STATE_NULL);
-		gst_object_unref(priv->pipeline);
-	}
-
 	gst_object_unref(priv->conference);
 
-	parent_class->finalize(media);
+	G_OBJECT_CLASS(parent_class)->finalize(media);
 }
 
 static void
