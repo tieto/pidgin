@@ -246,6 +246,15 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix);
 const char *xmlnode_get_prefix(xmlnode *node);
 
 /**
+ * Gets the parent node.
+ *
+ * @param child The child node.
+ *
+ * @return The parent or NULL.
+ */
+xmlnode *xmlnode_get_parent(const xmlnode *child);
+
+/**
  * Returns the node in a string of xml.
  *
  * @param node The starting node to output.
