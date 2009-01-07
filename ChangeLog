@@ -15,6 +15,8 @@ version 2.5.4 (??/??/????):
 	XMPP:
 	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
 	* Don't put SASL PLAIN or IQ Auth passwords in debug logs. (Paul Aurich)
+	* Fix removal of avatars (both PEP and vCard), we weren't removing
+	  them correctly before. (Paul Aurich)
 
 	Pidgin:
 	* Fix a crash in the Add Account dialog when changing protocols under
@@ -22,6 +24,7 @@ version 2.5.4 (??/??/????):
 
 	Finch:
 	* Redirect stderr outputs to the debug window.
+	* Fix rebinding actions with the arrow-keys and tab.
 
 version 2.5.3 (12/20/2008):
 	libpurple:
