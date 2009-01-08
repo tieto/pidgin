@@ -7810,7 +7810,7 @@ static void
 pidgin_conv_gtkmedia_destroyed(GtkWidget *widget, PidginConversation *gtkconv)
 {
 	gtk_widget_destroyed(widget, &(gtkconv->gtkmedia));
-	pidgin_conv_update_buttons_by_protocol((PurpleConversation*)gtkconv);
+	pidgin_conv_update_buttons_by_protocol(gtkconv->active_conv);
 }
 
 static gboolean
