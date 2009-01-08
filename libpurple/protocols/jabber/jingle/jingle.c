@@ -92,15 +92,7 @@ jingle_get_action_type(const gchar *action)
 GType
 jingle_get_type(const gchar *type)
 {
-	if (!strcmp(type, JINGLE_APP_RTP))
-		return JINGLE_TYPE_RTP;
-#if 0
-	else if (!strcmp(type, JINGLE_APP_FT))
-		return JINGLE_TYPE_FT;
-	else if (!strcmp(type, JINGLE_APP_XML))
-		return JINGLE_TYPE_XML;
-#endif
-	else if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP))
+	if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP))
 		return JINGLE_TYPE_RAWUDP;
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
 		return JINGLE_TYPE_ICEUDP;
@@ -109,6 +101,16 @@ jingle_get_type(const gchar *type)
 		return JINGLE_TYPE_SOCKS;
 	else if (!strcmp(type, JINGLE_TRANSPORT_IBB))
 		return JINGLE_TYPE_IBB;
+#endif
+#ifdef USE_VV
+	else if (!strcmp(type, JINGLE_APP_RTP))
+		return JINGLE_TYPE_RTP;
+#endif
+#if 0
+	else if (!strcmp(type, JINGLE_APP_FT))
+		return JINGLE_TYPE_FT;
+	else if (!strcmp(type, JINGLE_APP_XML))
+		return JINGLE_TYPE_XML;
 #endif
 	else
 		return G_TYPE_NONE;

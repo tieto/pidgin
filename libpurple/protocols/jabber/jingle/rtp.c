@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#ifdef USE_VV
+
 #include "jabber.h"
 #include "jingle.h"
 #include "media.h"
@@ -711,4 +713,6 @@ jingle_rtp_terminate_session(JabberStream *js, const gchar *who)
 		}
 	}
 }
+
+#endif /* USE_VV */
 

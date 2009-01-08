@@ -245,9 +245,9 @@ struct _JabberStream
 	 */
 	GSList *url_datas;
 
-#ifdef USE_VV
 	/* keep a hash table of JingleSessions */
 	GHashTable *sessions;
+#ifdef USE_VV
 	GHashTable *medias;
 #endif
 };
