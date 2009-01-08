@@ -6200,10 +6200,13 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		menu = g_list_prepend(menu, act);
 	}
 
-	act = purple_menu_action_new(_("Edit Buddy Comment"),
-	                           PURPLE_CALLBACK(oscar_buddycb_edit_comment),
-	                           NULL, NULL);
-	menu = g_list_prepend(menu, act);
+	if (aim_ssi_itemlist_exists(od->ssi.local, buddy->name) != NULL)
+	{
+		act = purple_menu_action_new(_("Edit Buddy Comment"),
+		                           PURPLE_CALLBACK(oscar_buddycb_edit_comment),
+		                           NULL, NULL);
+		menu = g_list_prepend(menu, act);
+	}
 
 #if 0
 	if (od->icq)
