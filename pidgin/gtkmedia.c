@@ -75,6 +75,7 @@ struct _PidginMediaPrivate
 
 static void pidgin_media_class_init (PidginMediaClass *klass);
 static void pidgin_media_init (PidginMedia *media);
+static void pidgin_media_dispose (GObject *object);
 static void pidgin_media_finalize (GObject *object);
 static void pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
@@ -130,6 +131,7 @@ pidgin_media_class_init (PidginMediaClass *klass)
 /*	GtkContainerClass *container_class = (GtkContainerClass*)klass; */
 	parent_class = g_type_class_peek_parent(klass);
 
+	gobject_class->dispose = pidgin_media_dispose;
 	gobject_class->finalize = pidgin_media_finalize;
 	gobject_class->set_property = pidgin_media_set_property;
 	gobject_class->get_property = pidgin_media_get_property;
@@ -259,20 +261,56 @@ pidgin_media_disconnect_levels(PurpleMedia *media, PidginMedia *gtkmedia)
 }
 
 static void
-pidgin_media_finalize (GObject *media)
+pidgin_media_dispose(GObject *media)
+{
+	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
+	purple_debug_info("gtkmedia", "pidgin_media_dispose\n");
+
+	if (gtkmedia->priv->media) {
+		GstElement *videosendbin = NULL, *videorecvbin = NULL;
+
+		purple_media_get_elements(gtkmedia->priv->media, NULL, NULL,
+					  &videosendbin, &videorecvbin);
+
+		if (videorecvbin) {
+			gst_element_set_locked_state(videorecvbin, TRUE);
+			gst_element_set_state(videorecvbin, GST_STATE_NULL);
+		}
+		if (videosendbin) {
+			gst_element_set_locked_state(videosendbin, TRUE);
+			gst_element_set_state(videosendbin, GST_STATE_NULL);
+		}
+
+		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
+		g_object_unref(gtkmedia->priv->media);
+		gtkmedia->priv->media = NULL;
+	}
+
+	if (gtkmedia->priv->send_level) {
+		gst_object_unref(gtkmedia->priv->send_level);
+		gtkmedia->priv->send_level = NULL;
+	}
+
+	if (gtkmedia->priv->recv_level) {
+		gst_object_unref(gtkmedia->priv->recv_level);
+		gtkmedia->priv->recv_level = NULL;
+	}
+
+	G_OBJECT_CLASS(parent_class)->dispose(media);
+}
+
+static void
+pidgin_media_finalize(GObject *media)
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
 	purple_debug_info("gtkmedia", "pidgin_media_finalize\n");
-	if (gtkmedia->priv->media) {
-		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
-		g_object_unref(gtkmedia->priv->media);
-	}
-	if (gtkmedia->priv->send_level)
-		gst_object_unref(gtkmedia->priv->send_level);
-	if (gtkmedia->priv->recv_level)
-		gst_object_unref(gtkmedia->priv->recv_level);
-	if (gtkmedia->priv->display)
+
+	if (gtkmedia->priv->display) {
 		gtk_widget_destroy(gtkmedia->priv->display);
+		gtkmedia->priv->display = NULL;
+	}
+
+	G_OBJECT_CLASS(parent_class)->finalize(media);
 }
 
 static void
@@ -322,6 +360,25 @@ static void
 pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmedia)
 {
 	g_signal_emit(gtkmedia, pidgin_media_signals[ERROR], 0, error);
+}
+
+static gboolean
+plug_delete_event_cb(GtkWidget *widget, gpointer data)
+{
+	return TRUE;
+}
+
+static gboolean
+plug_removed_cb(GtkWidget *widget, gpointer data)
+{
+	return TRUE;
+}
+
+static void
+socket_realize_cb(GtkWidget *widget, gpointer data)
+{
+	gtk_socket_add_id(GTK_SOCKET(widget),
+			gtk_plug_get_id(GTK_PLUG(data)));
 }
 
 static void
@@ -375,13 +432,28 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	if (videorecvbool) {
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
+		GtkWidget *plug;
+		GtkWidget *socket;
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(recv_widget), aspect, TRUE, TRUE, 0);
 
+		plug = gtk_plug_new(0);
+		g_signal_connect(G_OBJECT(plug), "delete-event",
+				G_CALLBACK(plug_delete_event_cb), plug);
+		gtk_widget_show(plug);
+
+		socket = gtk_socket_new();
+		g_signal_connect(G_OBJECT(socket), "realize",
+				G_CALLBACK(socket_realize_cb), plug);
+		g_signal_connect(G_OBJECT(socket), "plug-removed",
+				G_CALLBACK(plug_removed_cb), NULL);
+		gtk_container_add(GTK_CONTAINER(aspect), socket);
+		gtk_widget_show(socket);
+
 		remote_video = gtk_drawing_area_new();
-		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
+		gtk_container_add(GTK_CONTAINER(plug), remote_video);
 		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 100, -1);
 		gtk_widget_show(remote_video);
 		gtk_widget_show(aspect);
@@ -391,16 +463,30 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	if (videosendbin) {
 		GtkWidget *aspect;
 		GtkWidget *local_video;
+		GtkWidget *plug;
+		GtkWidget *socket;
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
 
+		plug = gtk_plug_new(0);
+		g_signal_connect(G_OBJECT(plug), "delete-event",
+				G_CALLBACK(plug_delete_event_cb), plug);
+		gtk_widget_show(plug);
+
+		socket = gtk_socket_new();
+		g_signal_connect(G_OBJECT(socket), "realize",
+				G_CALLBACK(socket_realize_cb), plug);
+		g_signal_connect(G_OBJECT(socket), "plug-removed",
+				G_CALLBACK(plug_removed_cb), NULL);
+		gtk_container_add(GTK_CONTAINER(aspect), socket);
+		gtk_widget_show(socket);
+
 		local_video = gtk_drawing_area_new();
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), videosendbin);
-
-		gtk_container_add(GTK_CONTAINER(aspect), local_video);
+		gtk_container_add(GTK_CONTAINER(plug), local_video);
 		gtk_widget_set_size_request (GTK_WIDGET(local_video), 100, -1);
 
 		gtk_widget_show(local_video);
