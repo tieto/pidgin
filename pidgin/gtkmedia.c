@@ -362,6 +362,25 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 	g_signal_emit(gtkmedia, pidgin_media_signals[ERROR], 0, error);
 }
 
+static gboolean
+plug_delete_event_cb(GtkWidget *widget, gpointer data)
+{
+	return TRUE;
+}
+
+static gboolean
+plug_removed_cb(GtkWidget *widget, gpointer data)
+{
+	return TRUE;
+}
+
+static void
+socket_realize_cb(GtkWidget *widget, gpointer data)
+{
+	gtk_socket_add_id(GTK_SOCKET(widget),
+			gtk_plug_get_id(GTK_PLUG(data)));
+}
+
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
@@ -413,13 +432,28 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	if (videorecvbool) {
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
+		GtkWidget *plug;
+		GtkWidget *socket;
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(recv_widget), aspect, TRUE, TRUE, 0);
 
+		plug = gtk_plug_new(0);
+		g_signal_connect(G_OBJECT(plug), "delete-event",
+				G_CALLBACK(plug_delete_event_cb), plug);
+		gtk_widget_show(plug);
+
+		socket = gtk_socket_new();
+		g_signal_connect(G_OBJECT(socket), "realize",
+				G_CALLBACK(socket_realize_cb), plug);
+		g_signal_connect(G_OBJECT(socket), "plug-removed",
+				G_CALLBACK(plug_removed_cb), NULL);
+		gtk_container_add(GTK_CONTAINER(aspect), socket);
+		gtk_widget_show(socket);
+
 		remote_video = gtk_drawing_area_new();
-		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
+		gtk_container_add(GTK_CONTAINER(plug), remote_video);
 		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 100, -1);
 		gtk_widget_show(remote_video);
 		gtk_widget_show(aspect);
@@ -429,16 +463,30 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	if (videosendbin) {
 		GtkWidget *aspect;
 		GtkWidget *local_video;
+		GtkWidget *plug;
+		GtkWidget *socket;
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
 
+		plug = gtk_plug_new(0);
+		g_signal_connect(G_OBJECT(plug), "delete-event",
+				G_CALLBACK(plug_delete_event_cb), plug);
+		gtk_widget_show(plug);
+
+		socket = gtk_socket_new();
+		g_signal_connect(G_OBJECT(socket), "realize",
+				G_CALLBACK(socket_realize_cb), plug);
+		g_signal_connect(G_OBJECT(socket), "plug-removed",
+				G_CALLBACK(plug_removed_cb), NULL);
+		gtk_container_add(GTK_CONTAINER(aspect), socket);
+		gtk_widget_show(socket);
+
 		local_video = gtk_drawing_area_new();
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), videosendbin);
-
-		gtk_container_add(GTK_CONTAINER(aspect), local_video);
+		gtk_container_add(GTK_CONTAINER(plug), local_video);
 		gtk_widget_set_size_request (GTK_WIDGET(local_video), 100, -1);
 
 		gtk_widget_show(local_video);
