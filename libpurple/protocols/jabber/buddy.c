@@ -621,11 +621,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 /*
  * This is the callback from the "ok clicked" for "set vCard"
  *
- * Formats GSList data into XML-encoded string and returns a pointer
- * to said string.
- *
- * g_free()'ing the returned string space is the responsibility of
- * the caller.
+ * Sets the vCard with data from PurpleRequestFields.
  */
 static void
 jabber_format_info(PurpleConnection *gc, PurpleRequestFields *fields)
