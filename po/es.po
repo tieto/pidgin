@@ -13,7 +13,7 @@
 # Nathaniel Case, Santiago Erquicia, Francisco Javier F. Serrador,
 # Rafael Bermudez, Eduardo Pérez
 #
-# This file is distributed under the same license as the Pidgin (Gaim) package.
+# This file is distributed under the same license as the Pidgin package.
 #
 # Nota para los traductores:
 # - Un chat no es una conversación, es un chat. La analogía de "conversación"
@@ -50,10 +50,10 @@
 #        GNOME desde la versión 2.6)
 msgid ""
 msgstr ""
-"Project-Id-Version: Gaim\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-13 04:58-0500\n"
-"PO-Revision-Date: 2008-12-13 22:11+0100\n"
+"POT-Creation-Date: 2009-01-04 09:58-0500\n"
+"PO-Revision-Date: 2009-01-05 00:05+0100\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4219,6 +4219,9 @@ msgstr "Autenticando"
 msgid "Re-initializing Stream"
 msgstr "Reinicializando flujo"
 
+msgid "Server doesn't support blocking"
+msgstr "El servidor no soporta bloqueos"
+
 msgid "Not Authorized"
 msgstr "No autorizado"
 
@@ -5541,18 +5544,12 @@ msgstr "URL del perfil"
 msgid "MSN Protocol Plugin"
 msgstr "Complemento de protocolo MSN"
 
-msgid "Missing Cipher"
-msgstr "Falta un mecanismo de cifrado"
+#, c-format
+msgid "No such user: %s"
+msgstr "No existe el usuario: %s"
 
-msgid "The RC4 cipher could not be found"
-msgstr "No se puede encontrar el mecanismo de cifrado RC4"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Actualice a una versión de libpurple con soporte de RC4 (>= 2.0.1). No se "
-"cargará el complemento de MySpaceIM."
+msgid "User lookup"
+msgstr "Búsqueda de usuario"
 
 msgid "Reading challenge"
 msgstr "Leyendo el desafío"
@@ -5562,6 +5559,15 @@ msgstr "Longitud de desafío inesperada recibida del servidor"
 
 msgid "Logging in"
 msgstr "Accediendo"
+
+msgid "MySpaceIM - No Username Set"
+msgstr "MySpaceIM - No se ha configurado un nombre de usuario"
+
+msgid "You appear to have no MySpace username."
+msgstr "Parece que no tiene un nombre de usuario MySpace."
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr "¿Desería configurar uno ahora? (Aviso: ¡NO PODRÁ CAMBIARLO!)"
 
 msgid "Lost connection with server"
 msgstr "Se ha perdido la conexión con el servidor"
@@ -5585,14 +5591,25 @@ msgstr "Nuevos comentarios de fotos"
 msgid "MySpace"
 msgstr "MySpace"
 
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - No se ha configurado un nombre de usuario"
+msgid "IM Friends"
+msgstr "Amigos MI"
 
-msgid "You appear to have no MySpace username."
-msgstr "Parece que no tiene un nombre de usuario MySpace."
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
+"Se añadió o actualizó %d amigo del servidor (incluyendo a los amigos que ya "
+"estaban en la lista del lado del servidor)"
+msgstr[1] ""
+"Se añadieron o actualizaron %d amigos del servidor (incluyendo a los amigos "
+"que ya estaban en la lista del lado del servidor)"
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "¿Desería configurar uno ahora? (Aviso: ¡NO PODRÁ CAMBIARLO!)"
+msgid "Add contacts from server"
+msgstr "Añadir contactos del servidor"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5619,31 +5636,6 @@ msgstr ""
 msgid "MySpaceIM Error"
 msgstr "Error MySpaceIM"
 
-msgid "Failed to add buddy"
-msgstr "No se pudo añadir al amigo"
-
-msgid "'addbuddy' command failed."
-msgstr "Falló la orden 'addbudy'."
-
-msgid "persist command failed"
-msgstr "Falló la orden 'persist'"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "No existe el usuario: %s"
-
-msgid "User lookup"
-msgstr "Búsqueda de usuario"
-
-msgid "Failed to remove buddy"
-msgstr "No se pudo eliminar al amigo"
-
-msgid "'delbuddy' command failed"
-msgstr "Falló la orden 'delbuddy'"
-
-msgid "blocklist command failed"
-msgstr "Falló la orden 'blocklist'"
-
 msgid "Invalid input condition"
 msgstr "Condición de entrada inválida"
 
@@ -5657,25 +5649,36 @@ msgstr "No se pudo interpretar el mensaje"
 msgid "Couldn't connect to host: %s (%d)"
 msgstr "No se pudo conectar al servidor: %s (%d)"
 
-msgid "IM Friends"
-msgstr "Amigos MI"
+msgid "Failed to add buddy"
+msgstr "No se pudo añadir al amigo"
 
-#, c-format
+msgid "'addbuddy' command failed."
+msgstr "Falló la orden 'addbudy'."
+
+msgid "persist command failed"
+msgstr "Falló la orden 'persist'"
+
+msgid "Failed to remove buddy"
+msgstr "No se pudo eliminar al amigo"
+
+msgid "'delbuddy' command failed"
+msgstr "Falló la orden 'delbuddy'"
+
+msgid "blocklist command failed"
+msgstr "Falló la orden 'blocklist'"
+
+msgid "Missing Cipher"
+msgstr "Falta un mecanismo de cifrado"
+
+msgid "The RC4 cipher could not be found"
+msgstr "No se puede encontrar el mecanismo de cifrado RC4"
+
 msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"Se añadió o actualizó %d amigo del servidor (incluyendo a los amigos que ya "
-"estaban en la lista del lado del servidor)"
-msgstr[1] ""
-"Se añadieron o actualizaron %d amigos del servidor (incluyendo a los amigos "
-"que ya estaban en la lista del lado del servidor)"
-
-msgid "Add contacts from server"
-msgstr "Añadir contactos del servidor"
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
+"Actualice a una versión de libpurple con soporte de RC4 (>= 2.0.1). No se "
+"cargará el complemento de MySpaceIM."
 
 msgid "Add friends from MySpace.com"
 msgstr "Añadir amigos de MySpace.com"
@@ -5731,16 +5734,6 @@ msgstr "Amigos en total"
 msgid "Client Version"
 msgstr "Versión del cliente"
 
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "No se ha configurado un nombre de usuario"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - Introduzca un nombre de usuario"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Defina un nombre de usuario para comprobar si está disponible:"
-
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Nombre de usuario disponible"
 
@@ -5750,11 +5743,21 @@ msgstr "Este nombre de usuario está disponible, ¿quiere utilizarlo?"
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "¡NO PODRÁ MODIFICARLO UNA VEZ FIJADO!"
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr "MySpaceIM - Introduzca un nombre de usuario"
+
 msgid "This username is unavailable."
 msgstr "Este nombre de usuario no está disponible."
 
 msgid "Please try another username:"
 msgstr "Introduzca otro nombre de usuario:"
+
+#. Protocol won't log in now without a username set.. Disconnect
+msgid "No username set"
+msgstr "No se ha configurado un nombre de usuario"
+
+msgid "Please enter a username to check its availability:"
+msgstr "Defina un nombre de usuario para comprobar si está disponible:"
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -7466,7 +7469,8 @@ msgstr "No se pudo unir al Qun %u, administrador por %u"
 
 #, c-format
 msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>La unión a Qun %u ha sido aprobada por el administrador %u parar %s</b>"
+msgstr ""
+"<b>La unión a Qun %u ha sido aprobada por el administrador %u parar %s</b>"
 
 #, c-format
 msgid "<b>Removed buddy %u.</b>"
@@ -7709,7 +7713,8 @@ msgstr "Respuesta desconocida al comprobar la contraseña (0x%02X)"
 msgid ""
 "Unknown reply code when logging in (0x%02X):\n"
 "%s"
-msgstr "Respuesta desconocida al conectarse (0x%02X):\n"
+msgstr ""
+"Respuesta desconocida al conectarse (0x%02X):\n"
 "%s"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
@@ -9276,6 +9281,9 @@ msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 "Los nombres de usuario SIP no pueden tener espacios en blanco ni el símbolo @"
 
+msgid "SIP connect server not specified"
+msgstr "No se ha especifico un servidor SIP al que conectarse"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -10199,7 +10207,8 @@ msgstr "No se pudo conectar a %s"
 
 #, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
-msgstr "Error al leer de %s: la respuesta es demasiado larga (el límite es %d bytes)"
+msgstr ""
+"Error al leer de %s: la respuesta es demasiado larga (el límite es %d bytes)"
 
 #, c-format
 msgid ""
@@ -10382,9 +10391,13 @@ msgid ""
 msgstr ""
 "<span size='larger' weight='bold'>¡Bienvenido a %s!</span>\n"
 "\n"
-"No tiene configurada ninguna cuenta de MI. Para conectarse con %s debe pulsar el botón <b>Añadir...</b> que encontrará más abajo y configurar su primera cuenta. Si quiere que %s se conecte a múltiples cuentas de MI, deberá pulsar <b>Añadir...</b> otra vez hasta que tenga todas configuradas.\n"
+"No tiene configurada ninguna cuenta de MI. Para conectarse con %s debe "
+"pulsar el botón <b>Añadir...</b> que encontrará más abajo y configurar su "
+"primera cuenta. Si quiere que %s se conecte a múltiples cuentas de MI, "
+"deberá pulsar <b>Añadir...</b> otra vez hasta que tenga todas configuradas.\n"
 "\n"
-"Puede volver a esta ventana para añadir, editar o eliminar cuentas desde la ventana de lista de amigos seleccionando <b>Cuentas->Gestionar Cuentas</b>"
+"Puede volver a esta ventana para añadir, editar o eliminar cuentas desde la "
+"ventana de lista de amigos seleccionando <b>Cuentas->Gestionar Cuentas</b>"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -11717,7 +11730,8 @@ msgid "Hyperlink visited color"
 msgstr "Color de hiperenlace visitado"
 
 msgid "Color to draw hyperlinks after it has been visited (or activated)."
-msgstr "Color para dibujar hiperenlaces cuando ya han sido visitados (o activados)."
+msgstr ""
+"Color para dibujar hiperenlaces cuando ya han sido visitados (o activados)."
 
 msgid "Hyperlink prelight color"
 msgstr "Color de hiperenlace pre-iluminado"
@@ -13997,7 +14011,7 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgstr "Añadir amigo Q&A"
 
 #~ msgid "Can not decrypt get server reply"
-#~ msgstr "No se pudo descifrar la respuesta del servidor" 
+#~ msgstr "No se pudo descifrar la respuesta del servidor"
 
 #~ msgid "Keep alive error"
 #~ msgstr "Error de comprobación de conexión"
@@ -14009,9 +14023,8 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ "Se perdió la conexión con el servidor:\n"
 #~ "%d, %s"
 
-#, fuzzy
 #~ msgid "Get server ..."
-#~ msgstr "Establecer su información de usuario..."
+#~ msgstr "Obteniendo servidor..."
 
 #~ msgid "Connecting server ..."
 #~ msgstr "Conectando con el servidor..."
