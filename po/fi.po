@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-16 00:12+0200\n"
-"PO-Revision-Date: 2008-12-16 00:16+0200\n"
+"POT-Creation-Date: 2009-01-07 13:30+0200\n"
+"PO-Revision-Date: 2009-01-07 13:30+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1486,7 +1486,6 @@ msgstr ""
 "Kun uusi keskustelu aloitetaan, tämä liitännäinen näyttää edellisen "
 "keskustelun keskusteluikkunassa."
 
-#, c-format
 msgid "Online"
 msgstr "Linjoilla"
 
@@ -1917,7 +1916,6 @@ msgstr "Aloitetaan tiedoston %s siirto käyttäjältä %s"
 msgid "Transfer of file %s complete"
 msgstr "Tiedoston %s siirto valmis"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Tiedostonsiirto valmis"
 
@@ -1925,7 +1923,6 @@ msgstr "Tiedostonsiirto valmis"
 msgid "You canceled the transfer of %s"
 msgstr "Peruutit tiedoston %s siirron"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Tiedostonsiirto peruutettu"
 
@@ -2132,7 +2129,6 @@ msgstr "(%s) %s <AUTOMAATTIVASTAUS>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Käytät: %s, mutta tämä liitännäinen vaatii: %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Tämä liitännäinen ei ole määritellyt tunnistetta (ID)."
 
@@ -3024,7 +3020,6 @@ msgstr "Tavoitettavissa"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Poissa"
 
@@ -3905,7 +3900,6 @@ msgstr "Juttelutuulella"
 msgid "Extended Away"
 msgstr "Pidennetty poissaolo"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Älä häiritse"
 
@@ -4138,6 +4132,9 @@ msgstr "Todennetaan"
 
 msgid "Re-initializing Stream"
 msgstr "Uudelleenalustetaan datavirtaa"
+
+msgid "Server doesn't support blocking"
+msgstr "Palvelin ei tue estämistä"
 
 msgid "Not Authorized"
 msgstr "Ei valtuuksia"
@@ -4891,7 +4888,6 @@ msgstr "Kids Passport - ilman vanhempien hyväksyntää"
 msgid "Passport account not yet verified"
 msgstr "Passport-tiliä ei ole verifioitu"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "Passport-tili jäädytetty"
 
@@ -6093,7 +6089,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Virhe. SSL-tuki ei ole asennettu."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Tämä konferenssi on suljettu. Uusia viestejä ei voi lähettää."
 
@@ -6359,23 +6354,18 @@ msgstr "Kamera"
 msgid "Screen Sharing"
 msgstr "Näytön jakaminen"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Vapaana keskusteluun"
 
-#, c-format
 msgid "Not Available"
 msgstr "Ei tavoitettavissa"
 
-#, c-format
 msgid "Occupied"
 msgstr "Varattu"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Net-tietoinen"
 
-#, c-format
 msgid "Invisible"
 msgstr "Näkymätön"
 
@@ -6477,19 +6467,16 @@ msgid "_OK"
 msgstr "_OK"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Yhteytesi saatetaan katkaista kohta. Saatat haluta käyttää TOC-"
-"yhteyskäytäntöä kunnes tämä on korjattu. Tarkista päivitykset: %s"
+"Yhteytesi saattaa katketa kohta. Jos niin käy, tarkista päivitykset: %s."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Kelvollista AIM-sisäänkirjautumistiivistettä ei saatu."
 
 #, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "Yhteytesi saatetaan katkaista kohta. Tarkista päivitykset: %s."
+msgstr "Yhteytesi saattaa katketa kohta. Tarkista päivitykset: %s."
 
 msgid "Unable to get a valid login hash."
 msgstr "Kelvollista sisäänkirjautumistiivistettä ei saatu."
@@ -7047,7 +7034,6 @@ msgstr ""
 msgid "Attempting to connect to %s:%hu."
 msgstr "Yritetään yhdistää kohteeseen %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Yritetään yhdistämistä välipalvelimen kautta."
 
@@ -9208,6 +9194,9 @@ msgstr "Isäntänimeä ei voi selvittää"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-käyttäjänimissä ei tule olla välilyöntejä tai @-merkkejä"
+
+msgid "SIP connect server not specified"
+msgstr "SIP-yhteyspalvelinta ei määritelty"
 
 #. *< type
 #. *< ui_requirement
@@ -13896,6 +13885,13 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "Yhteytesi saatetaan katkaista kohta. Saatat haluta käyttää TOC-"
+#~ "yhteyskäytäntöä kunnes tämä on korjattu. Tarkista päivitykset: %s"
 
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""
