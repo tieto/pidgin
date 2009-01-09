@@ -711,8 +711,7 @@ remove_pref(struct purple_pref *pref)
 
 	name = pref_full_name(pref);
 
-	if (prefs_loaded)
-		purple_debug_info("prefs", "removing pref %s\n", name);
+	purple_debug_info("prefs", "removing pref %s\n", name);
 
 	g_hash_table_remove(prefs_hash, name);
 	g_free(name);
@@ -1451,6 +1450,7 @@ purple_prefs_uninit()
 		save_timer = 0;
 		sync_prefs();
 	}
+
 
 	prefs_loaded = FALSE;
 }
