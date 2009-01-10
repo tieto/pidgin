@@ -1286,20 +1286,6 @@ network_page(void)
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
-	/* Relay server (TURN) */
-	vbox = pidgin_make_frame(ret, _("Relay Server"));
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	pidgin_prefs_labeled_entry(vbox, _("_TURN server:"),
-			"/purple/network/turn_server", sg);
-	spin_button = pidgin_prefs_labeled_spin_button(vbox, _("_Port:"),
-			"/purple/network/turn_port", 0, 65535, sg);
-	pidgin_prefs_labeled_entry(vbox, 
-			_("_Username:"),
-			"/purple/network/turn_username", sg);
-	pidgin_prefs_labeled_entry(vbox, 
-			_("_Password:"),
-			"/purple/network/turn_password", sg);
-	
 	if (purple_running_gnome()) {
 		vbox = pidgin_make_frame(ret, _("Proxy Server &amp; Browser"));
 		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
@@ -2609,11 +2595,6 @@ pidgin_prefs_init(void)
 	purple_prefs_add_int("/purple/media/audio/volume/input", 10);
 	purple_prefs_add_int("/purple/media/audio/volume/output", 10);
 #endif /* USE_VV */
-	
-	/* set a default port for TURN server */
-	/* currently there is no default port for TURN, one option is to use the
-	 same port as STUN */
-	purple_prefs_add_int("/purple/network/turn_port", 3478);
 
 	pidgin_prefs_update_old();
 }
