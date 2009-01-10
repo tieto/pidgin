@@ -123,7 +123,7 @@ struct _PurpleMediaCandidate
 	guint16 base_port;
 	PurpleMediaNetworkProtocol proto;
 	guint32 priority;
-	PurpleMediaSessionType type;
+	PurpleMediaCandidateType type;
 	const gchar *username;
 	const gchar *password;
 	guint ttl;
