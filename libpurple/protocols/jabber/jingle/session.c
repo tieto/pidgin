@@ -18,7 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "config.h"
+#include "internal.h"
+
 #include "content.h"
 #include "debug.h"
 #include "session.h"
@@ -362,28 +363,31 @@ jingle_session_find_by_sid(JabberStream *js, const gchar *sid)
 			  g_hash_table_lookup(js->sessions, sid) : NULL;
 }
 
+static gboolean find_by_jid_ghr(gpointer key,
+		gpointer value, gpointer user_data)
+{
+	JingleSession *session = (JingleSession *)value;
+	const gchar *jid = user_data;
+	gboolean use_bare = strchr(jid, '/') == NULL;
+	gchar *remote_jid = jingle_session_get_remote_jid(session);
+	gchar *cmp_jid = use_bare ? jabber_get_bare_jid(remote_jid)
+				  : g_strdup(remote_jid);
+	g_free(remote_jid);
+	if (!strcmp(jid, cmp_jid)) {
+		g_free(cmp_jid);
+		return TRUE;
+	}
+	g_free(cmp_jid);
+
+	return FALSE;
+}
+
 JingleSession *
 jingle_session_find_by_jid(JabberStream *js, const gchar *jid)
 {
-	GList *values = (js->sessions) ? 
-			g_hash_table_get_values(js->sessions) : NULL;
-	gboolean use_bare = strchr(jid, '/') == NULL;
-
-	for (; values; values = g_list_delete_link(values, values)) {
-		JingleSession *session = (JingleSession *)values->data;
-		gchar *remote_jid = jingle_session_get_remote_jid(session);
-		gchar *cmp_jid = use_bare ? jabber_get_bare_jid(remote_jid)
-					  : g_strdup(remote_jid);
-		g_free(remote_jid);
-		if (!strcmp(jid, cmp_jid)) {
-			g_free(cmp_jid);
-			g_list_free(values);
-			return session;
-		}
-		g_free(cmp_jid);
-	}
-
-	return NULL;	
+	return js->sessions != NULL ?
+			g_hash_table_find(js->sessions,
+			find_by_jid_ghr, (gpointer)jid) : NULL; 
 }
 
 static xmlnode *
