@@ -2613,10 +2613,7 @@ pidgin_prefs_init(void)
 	/* set a default port for TURN server */
 	/* currently there is no default port for TURN, one option is to use the
 	 same port as STUN */
-	purple_prefs_add_string("/purple/network/turn_server", "");
 	purple_prefs_add_int("/purple/network/turn_port", 3478);
-	purple_prefs_add_string("/purple/network/turn_username", "");
-	purple_prefs_add_string("/purple/network/turn_password", "");
 
 	pidgin_prefs_update_old();
 }
