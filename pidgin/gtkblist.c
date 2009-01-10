@@ -5385,14 +5385,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, -1, NULL);
-	if (gtkblist->headline_close) {
-		GdkPixbuf *scale = gdk_pixbuf_scale_simple(gtkblist->headline_close,
-				HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE, GDK_INTERP_BILINEAR);
-		gdk_pixbuf_unref(gtkblist->headline_close);
-		gtkblist->headline_close = scale;
-	}
-
+	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, HEADLINE_CLOSE_SIZE, NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
