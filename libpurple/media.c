@@ -1277,25 +1277,34 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 				stream->session->id, stream->participant);
 }
 
+/* this should probably be made IPv6-compatible some time, and made async?
+ maybe this should be a public function in libpurple...*/
+static gchar *
+purple_media_get_ip(const gchar *hostname)
+{
+	struct hostent *host;
+
+	if ((host = gethostbyname(hostname)) && host->h_addr) {
+		gchar *ip = g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
+				host->h_addr[0], host->h_addr[1],
+				host->h_addr[2], host->h_addr[3]);
+		purple_debug_info("media", "IP address for %s found: %s\n",
+				hostname, ip);
+		return ip;
+	} else {
+		purple_debug_info("media", "Unable to resolve %s IP address\n",
+				hostname);
+		return NULL;
+	}
+}
+
 static gchar *
 purple_media_get_stun_pref_ip()
 {
 	const gchar *stun_pref =
 			purple_prefs_get_string("/purple/network/stun_server");
-	struct hostent *host;
-
-	if ((host = gethostbyname(stun_pref)) && host->h_addr) {
-		gchar *stun_ip = g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-				host->h_addr[0], host->h_addr[1],
-				host->h_addr[2], host->h_addr[3]);
-		purple_debug_info("media", "IP address for %s found: %s\n",
-				stun_pref, stun_ip);
-		return stun_ip;
-	} else {
-		purple_debug_info("media", "Unable to resolve %s IP address\n",
-				stun_pref);
-		return NULL;
-	}
+	
+	return purple_media_get_ip(stun_pref);
 }
 
 static gboolean
