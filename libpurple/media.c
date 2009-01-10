@@ -1307,15 +1307,6 @@ purple_media_get_stun_pref_ip()
 	return purple_media_get_ip(stun_pref);
 }
 
-static gchar *
-purple_media_get_turn_pref_ip()
-{
-	const gchar *turn_pref =
-			purple_prefs_get_string("/purple/network/turn_server");
-	
-	return purple_media_get_ip(turn_pref);
-}
-
 static gboolean
 purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				 const gchar *who, FsMediaType type,
@@ -1399,17 +1390,11 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 	if (!stream) {
 		GError *err = NULL;
+		gchar *stun_ip = NULL;
 		FsStream *fsstream = NULL;
 
-		gchar *stun_ip = purple_media_get_stun_pref_ip();
-		gchar *turn_ip = purple_media_get_turn_pref_ip();
-		
-		if (stun_ip || turn_ip) {
-			int new_num_params = 
-				(stun_ip != NULL && turn_ip == NULL) || 
-				(stun_ip == NULL && turn_ip != NULL) ? 
-				num_params + 1 : num_params + 2;
-			GParameter *param = g_new0(GParameter, new_num_params);
+		if ((stun_ip = purple_media_get_stun_pref_ip())) {
+			GParameter *param = g_new0(GParameter, num_params+1);
 			memcpy(param, params, sizeof(GParameter) * num_params);
 
 			param[num_params].name = "stun-ip";
@@ -1418,12 +1403,9 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction,
-					transmitter, new_num_params, param, &err);
+					transmitter, num_params+1, param, &err);
 			g_free(param);
-			if (stun_ip)
-				g_free(stun_ip);
-			if (turn_ip)
-				g_free(turn_ip);
+			g_free(stun_ip);
 		} else {
 			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction,
