@@ -413,7 +413,7 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 
 }
 
-FsMediaType
+static FsMediaType
 purple_media_to_fs_media_type(PurpleMediaSessionType type)
 {
 	if (type & PURPLE_MEDIA_AUDIO)
@@ -424,7 +424,7 @@ purple_media_to_fs_media_type(PurpleMediaSessionType type)
 		return 0;
 }
 
-FsStreamDirection
+static FsStreamDirection
 purple_media_to_fs_stream_direction(PurpleMediaSessionType type)
 {
 	if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_AUDIO ||
@@ -440,7 +440,7 @@ purple_media_to_fs_stream_direction(PurpleMediaSessionType type)
 		return FS_DIRECTION_NONE;
 }
 
-PurpleMediaSessionType
+static PurpleMediaSessionType
 purple_media_from_fs(FsMediaType type, FsStreamDirection direction)
 {
 	PurpleMediaSessionType result = PURPLE_MEDIA_NONE;

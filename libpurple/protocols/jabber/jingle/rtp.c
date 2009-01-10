@@ -372,8 +372,8 @@ jingle_rtp_init_media(JingleContent *content)
 	gchar *senders;
 	gchar *name;
 	const gchar *transmitter;
-	FsMediaType type;
-	FsStreamDirection direction;
+	gboolean is_audio;
+	PurpleMediaSessionType type;
 	JingleTransport *transport;
 
 	/* maybe this create ought to just be in initiate and handle initiate */
@@ -396,23 +396,21 @@ jingle_rtp_init_media(JingleContent *content)
 	else
 		transmitter = "notransmitter";
 
-	if (!strcmp(media_type, "audio"))
-		type = FS_MEDIA_TYPE_AUDIO;
-	else
-		type = FS_MEDIA_TYPE_VIDEO;
+	is_audio = !strcmp(media_type, "audio");
 
 	if (!strcmp(senders, "both"))
-		direction = FS_DIRECTION_BOTH;
+		type = is_audio == TRUE ? PURPLE_MEDIA_AUDIO
+				: PURPLE_MEDIA_VIDEO;
 	else if (!strcmp(senders, "initiator")
 			&& jingle_session_is_initiator(session))
-		direction = FS_DIRECTION_SEND;
+		type = is_audio == TRUE ? PURPLE_MEDIA_SEND_AUDIO
+				: PURPLE_MEDIA_SEND_VIDEO;
 	else
-		direction = FS_DIRECTION_RECV;
+		type = is_audio == TRUE ? PURPLE_MEDIA_RECV_AUDIO
+				: PURPLE_MEDIA_RECV_VIDEO;
 
 	purple_media_add_stream(media, name, remote_jid,
-			purple_media_from_fs(type, direction),
-			transmitter, 0, NULL);
-
+			type, transmitter, 0, NULL);
 
 	g_free(name);
 	g_free(media_type);
