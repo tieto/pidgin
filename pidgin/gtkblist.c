@@ -3648,9 +3648,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		}
 
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded) {
-			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
-				return NULL;
-			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
+			if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
+				return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 		}
 	} else {
 		return NULL;
