@@ -161,7 +161,7 @@ google_session_candidates_prepared (PurpleMedia *media, gchar *session_id,
 	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
 	GList *candidates = purple_media_get_local_candidates(session->media, "google-voice",
 							      session->remote_jid);
-	FsCandidate *transport;
+	PurpleMediaCandidate *transport;
 	xmlnode *sess;
 	xmlnode *candidate;
 	sess = google_session_create_xmlnode(session, "candidates");
@@ -171,7 +171,7 @@ google_session_candidates_prepared (PurpleMedia *media, gchar *session_id,
 	for (;candidates;candidates = candidates->next) {
 		char port[8];
 		char pref[8];
-		transport = (FsCandidate*)(candidates->data);
+		transport = (PurpleMediaCandidate*)(candidates->data);
 
 		if (!strcmp(transport->ip, "127.0.0.1"))
 			continue;
@@ -194,10 +194,14 @@ google_session_candidates_prepared (PurpleMedia *media, gchar *session_id,
 				transport->password != NULL ?
 				transport->password : "");
 		xmlnode_set_attrib(candidate, "preference", pref);
-		xmlnode_set_attrib(candidate, "protocol", transport->proto == FS_NETWORK_PROTOCOL_UDP ? "udp" : "tcp");
-		xmlnode_set_attrib(candidate, "type", transport->type == FS_CANDIDATE_TYPE_HOST ? "local" :
-						      transport->type == FS_CANDIDATE_TYPE_SRFLX ? "stun" :
-					       	      transport->type == FS_CANDIDATE_TYPE_RELAY ? "relay" : NULL);
+		xmlnode_set_attrib(candidate, "protocol", transport->proto ==
+				PURPLE_MEDIA_NETWORK_PROTOCOL_UDP ? "udp" : "tcp");
+		xmlnode_set_attrib(candidate, "type", transport->type ==
+				PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "local" :
+						      transport->type ==
+				PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "stun" :
+					       	      transport->type ==
+				PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" : NULL);
 		xmlnode_set_attrib(candidate, "generation", "0");
 		xmlnode_set_attrib(candidate, "network", "0");
 		xmlnode_insert_child(sess, candidate);
@@ -399,17 +403,21 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 	char n[4];	
 		
 	for (cand = xmlnode_get_child(sess, "candidate"); cand; cand = xmlnode_get_next_twin(cand)) {
-		FsCandidate *info;
+		PurpleMediaCandidate *info;
 		g_snprintf(n, sizeof(n), "S%d", name++);
-		info = fs_candidate_new(n, FS_COMPONENT_RTP, !strcmp(xmlnode_get_attrib(cand, "type"), "local") ?
-					FS_CANDIDATE_TYPE_HOST :
+		info = purple_media_candidate_new(n, PURPLE_MEDIA_COMPONENT_RTP,
+				!strcmp(xmlnode_get_attrib(cand, "type"), "local") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
 			     		!strcmp(xmlnode_get_attrib(cand, "type"), "stun") ?
-						FS_CANDIDATE_TYPE_PRFLX :
+						PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
 			     			!strcmp(xmlnode_get_attrib(cand, "type"), "relay") ?
-							FS_CANDIDATE_TYPE_RELAY : FS_CANDIDATE_TYPE_HOST,
+							PURPLE_MEDIA_CANDIDATE_TYPE_RELAY :
+							PURPLE_MEDIA_CANDIDATE_TYPE_HOST,
 						!strcmp(xmlnode_get_attrib(cand, "protocol"),"udp") ?
-							FS_NETWORK_PROTOCOL_UDP : FS_NETWORK_PROTOCOL_TCP,
-					xmlnode_get_attrib(cand, "address"), atoi(xmlnode_get_attrib(cand, "port")));
+							PURPLE_MEDIA_NETWORK_PROTOCOL_UDP :
+							PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
+					xmlnode_get_attrib(cand, "address"),
+					atoi(xmlnode_get_attrib(cand, "port")));
 
 		info->username = g_strdup(xmlnode_get_attrib(cand, "username"));
 		info->password = g_strdup(xmlnode_get_attrib(cand, "password"));
@@ -418,7 +426,7 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 	}
 
 	purple_media_add_remote_candidates(session->media, "google-voice", session->remote_jid, list);
-	fs_candidate_list_destroy(list);
+	purple_media_candidate_list_free(list);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));

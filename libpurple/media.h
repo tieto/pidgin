@@ -37,6 +37,7 @@
 G_BEGIN_DECLS
 
 #define PURPLE_TYPE_MEDIA            (purple_media_get_type())
+#define PURPLE_TYPE_MEDIA_CANDIDATE  (purple_media_candidate_get_type())
 #define PURPLE_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA, PurpleMedia))
 #define PURPLE_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 #define PURPLE_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA))
@@ -51,6 +52,8 @@ typedef struct _PurpleMedia PurpleMedia;
 typedef struct _PurpleMediaClass PurpleMediaClass;
 /** @copydoc _PurpleMediaPrivate */
 typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
+/** @copydoc _PurpleMediaCandidate */
+typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
 
 #else
 
@@ -76,6 +79,25 @@ typedef enum {
 	PURPLE_MEDIA_STATE_CHANGED_END,
 } PurpleMediaStateChangedType;
 
+typedef enum {
+	PURPLE_MEDIA_CANDIDATE_TYPE_HOST,
+	PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX,
+	PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX,
+	PURPLE_MEDIA_CANDIDATE_TYPE_RELAY,
+	PURPLE_MEDIA_CANDIDATE_TYPE_MULTICAST,
+} PurpleMediaCandidateType;
+
+typedef enum {
+	PURPLE_MEDIA_COMPONENT_NONE = 0,
+	PURPLE_MEDIA_COMPONENT_RTP = 1,
+	PURPLE_MEDIA_COMPONENT_RTCP = 2,
+} PurpleMediaComponentType;
+
+typedef enum {
+	PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
+	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
+} PurpleMediaNetworkProtocol;
+
 #ifdef USE_VV
 
 /** The media class */
@@ -89,6 +111,22 @@ struct _PurpleMedia
 {
 	GObject parent;                /**< The parent of this object. */
 	PurpleMediaPrivate *priv;      /**< The private data of this object. */
+};
+
+struct _PurpleMediaCandidate
+{
+	const gchar *foundation;
+	guint component_id;
+	const gchar *ip;
+	guint16 port;
+	const gchar *base_ip;
+	guint16 base_port;
+	PurpleMediaNetworkProtocol proto;
+	guint32 priority;
+	PurpleMediaSessionType type;
+	const gchar *username;
+	const gchar *password;
+	guint ttl;
 };
 
 #ifdef __cplusplus
@@ -108,6 +146,47 @@ GType purple_media_get_type(void);
  * @return The state-changed enum's GType
  */
 GType purple_media_state_changed_get_type(void);
+
+/**
+ * Gets the type of the media candidate structure.
+ *
+ * @return The media canditate's GType
+ */
+GType purple_media_candidate_get_type(void);
+
+/**
+ * Creates a PurpleMediaCandidate instance.
+ *
+ * @param foundation The foundation of the candidate.
+ * @param component_id The component this candidate is for.
+ * @param type The type of candidate.
+ * @param proto The protocol this component is for.
+ * @param ip The IP address of this component.
+ * @param port The network port.
+ *
+ * @return The newly created PurpleMediaCandidate instance.
+ */
+PurpleMediaCandidate *purple_media_candidate_new(
+		const gchar *foundation, guint component_id,
+		PurpleMediaCandidateType type,
+		PurpleMediaNetworkProtocol proto,
+		const gchar *ip, guint port);
+
+/**
+ * Copies a GList of PurpleMediaCandidate and its contents.
+ *
+ * @param candidates The list of candidates to be copied.
+ *
+ * @return The copy of the GList.
+ */
+GList *purple_media_candidate_list_copy(GList *candidates);
+
+/**
+ * Frees a GList of PurpleMediaCandidate and its contents.
+ *
+ * @param candidates The list of candidates to be freed.
+ */
+void purple_media_candidate_list_free(GList *candidates);
 
 /**
  * Combines all the separate session types into a single PurpleMediaSessionType.
@@ -388,7 +467,8 @@ GList *purple_media_get_local_candidates(PurpleMedia *media,
  *
  * @return The active candidate retrieved.
  */
-FsCandidate *purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name);
+PurpleMediaCandidate *purple_media_get_local_candidate(PurpleMedia *media,
+		const gchar *sess_id, const gchar *name);
 
 /**
  * Gets the active remote candidate for the stream.
@@ -399,7 +479,8 @@ FsCandidate *purple_media_get_local_candidate(PurpleMedia *media, const gchar *s
  *
  * @return The remote candidate retrieved.
  */
-FsCandidate *purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name);
+PurpleMediaCandidate *purple_media_get_remote_candidate(PurpleMedia *media,
+		const gchar *sess_id, const gchar *name);
 
 /**
  * Gets remote candidates from the stream.

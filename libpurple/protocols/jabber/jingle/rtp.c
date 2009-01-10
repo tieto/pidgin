@@ -193,7 +193,7 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
 		JingleRawUdpCandidate *rawudp_candidate;
 		for (; candidates; candidates = g_list_next(candidates)) {
-			FsCandidate *candidate = candidates->data;
+			PurpleMediaCandidate *candidate = candidates->data;
 			id = jabber_get_next_id(jingle_session_get_js(session));
 			rawudp_candidate = jingle_rawudp_candidate_new(id,
 					generation, candidate->component_id,
@@ -206,14 +206,14 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
 		JingleIceUdpCandidate *iceudp_candidate;
 		for (; candidates; candidates = g_list_next(candidates)) {
-			FsCandidate *candidate = candidates->data;
+			PurpleMediaCandidate *candidate = candidates->data;
 			iceudp_candidate = jingle_iceudp_candidate_new(candidate->component_id,
 					candidate->foundation, generation, candidate->ip,
 					0, candidate->port, candidate->priority, "udp",
-					candidate->type == FS_CANDIDATE_TYPE_HOST ? "host" :
-					candidate->type == FS_CANDIDATE_TYPE_SRFLX ? "srflx" :
-					candidate->type == FS_CANDIDATE_TYPE_PRFLX ? "prflx" :
-					candidate->type == FS_CANDIDATE_TYPE_RELAY ? "relay" : "",
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "host" :
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "srflx" :
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX ? "prflx" :
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" : "",
 					candidate->username, candidate->password);
 			jingle_iceudp_add_local_candidate(JINGLE_ICEUDP(transport), iceudp_candidate);
 		}
@@ -233,8 +233,10 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 
 		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
 			JingleRawUdpCandidate *candidate = candidates->data;
-			ret = g_list_append(ret, fs_candidate_new("", candidate->component,
-					FS_CANDIDATE_TYPE_SRFLX, FS_NETWORK_PROTOCOL_UDP,
+			ret = g_list_append(ret, purple_media_candidate_new(
+					"", candidate->component,
+					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX,
+					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					candidate->ip, candidate->port));
 		}
 
@@ -244,17 +246,22 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 
 		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
 			JingleIceUdpCandidate *candidate = candidates->data;
-			FsCandidate *fscandidate = fs_candidate_new(
+			PurpleMediaCandidate *new_candidate = purple_media_candidate_new(
 					candidate->foundation, candidate->component,
-					!strcmp(candidate->type, "host") ? FS_CANDIDATE_TYPE_HOST :
-					!strcmp(candidate->type, "srflx") ? FS_CANDIDATE_TYPE_SRFLX :
-					!strcmp(candidate->type, "prflx") ? FS_CANDIDATE_TYPE_PRFLX :
-					!strcmp(candidate->type, "relay") ? FS_CANDIDATE_TYPE_RELAY : 0,
-					FS_NETWORK_PROTOCOL_UDP, candidate->ip, candidate->port);
-			fscandidate->username = g_strdup(candidate->username);
-			fscandidate->password = g_strdup(candidate->password);
-			fscandidate->priority = candidate->priority;
-			ret = g_list_append(ret, fscandidate);
+					!strcmp(candidate->type, "host") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
+					!strcmp(candidate->type, "srflx") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX :
+					!strcmp(candidate->type, "prflx") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
+					!strcmp(candidate->type, "relay") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
+					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
+					candidate->ip, candidate->port);
+			new_candidate->username = g_strdup(candidate->username);
+			new_candidate->password = g_strdup(candidate->password);
+			new_candidate->priority = candidate->priority;
+			ret = g_list_append(ret, new_candidate);
 		}
 
 		return ret;
@@ -264,7 +271,7 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 }
 
 static void
-jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, FsCandidate *candidate, JingleSession *session)
+jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleMediaCandidate *candidate, JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "jingle_rtp_new_candidate_cb\n");
 }

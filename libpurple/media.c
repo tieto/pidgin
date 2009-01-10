@@ -239,7 +239,7 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__POINTER_POINTER_OBJECT,
 					 G_TYPE_NONE, 3, G_TYPE_POINTER,
-					 G_TYPE_POINTER, FS_TYPE_CANDIDATE);
+					 G_TYPE_POINTER, PURPLE_TYPE_MEDIA_CANDIDATE);
 	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__STRING_STRING,
@@ -247,7 +247,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 	purple_media_signals[CANDIDATE_PAIR] = g_signal_new("candidate-pair", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__BOXED_BOXED,
-					 G_TYPE_NONE, 2, FS_TYPE_CANDIDATE, FS_TYPE_CANDIDATE);
+					 G_TYPE_NONE, 2, PURPLE_TYPE_MEDIA_CANDIDATE,
+					 PURPLE_TYPE_MEDIA_CANDIDATE);
 	purple_media_signals[CODECS_READY] = g_signal_new("codecs-ready", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
@@ -411,6 +412,169 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			break;
 	}
 
+}
+
+PurpleMediaCandidate *
+purple_media_candidate_new(const gchar *foundation, guint component_id,
+		PurpleMediaCandidateType type,
+		PurpleMediaNetworkProtocol proto,
+		const gchar *ip, guint port)
+{
+	PurpleMediaCandidate *candidate = g_new0(PurpleMediaCandidate, 1);
+	candidate->foundation = g_strdup(foundation);
+	candidate->component_id = component_id;
+	candidate->type = type;
+	candidate->proto = proto;
+	candidate->ip = g_strdup(ip);
+	candidate->port = port;
+	return candidate;
+}
+
+static PurpleMediaCandidate *
+purple_media_candidate_copy(PurpleMediaCandidate *candidate)
+{
+	PurpleMediaCandidate *new_candidate;
+
+	if (candidate == NULL)
+		return NULL;
+
+	new_candidate = g_new0(PurpleMediaCandidate, 1);
+	new_candidate->foundation = g_strdup(candidate->foundation);
+	new_candidate->component_id = candidate->component_id;
+	new_candidate->ip = g_strdup(candidate->ip);
+	new_candidate->port = candidate->port;
+	new_candidate->base_ip = g_strdup(candidate->base_ip);
+	new_candidate->base_port = candidate->base_port;
+	new_candidate->proto = candidate->proto;
+	new_candidate->priority = candidate->priority;
+	new_candidate->type = candidate->type;
+	new_candidate->username = g_strdup(candidate->username);
+	new_candidate->password = g_strdup(candidate->password);
+	new_candidate->ttl = candidate->ttl;
+	return new_candidate;
+}
+
+static void
+purple_media_candidate_free(PurpleMediaCandidate *candidate)
+{
+	if (candidate == NULL)
+		return;
+
+	g_free((gchar*)candidate->foundation);
+	g_free((gchar*)candidate->ip);
+	g_free((gchar*)candidate->base_ip);
+	g_free((gchar*)candidate->username);
+	g_free((gchar*)candidate->password);
+	g_free(candidate);
+}
+
+static FsCandidate *
+purple_media_candidate_to_fs(PurpleMediaCandidate *candidate)
+{
+	FsCandidate *fscandidate;
+
+	if (candidate == NULL)
+		return NULL;
+
+	fscandidate = fs_candidate_new(candidate->foundation,
+		candidate->component_id, candidate->type,
+		candidate->proto, candidate->ip, candidate->port);
+
+	fscandidate->base_ip = g_strdup(candidate->base_ip);
+	fscandidate->base_port = candidate->base_port;
+	fscandidate->priority = candidate->priority;
+	fscandidate->username = g_strdup(candidate->username);
+	fscandidate->password = g_strdup(candidate->password);
+	fscandidate->ttl = candidate->ttl;
+	return fscandidate;
+}
+
+static PurpleMediaCandidate *
+purple_media_candidate_from_fs(FsCandidate *fscandidate)
+{
+	PurpleMediaCandidate *candidate;
+
+	if (fscandidate == NULL)
+		return NULL;
+
+	candidate = purple_media_candidate_new(fscandidate->foundation,
+		fscandidate->component_id, fscandidate->type,
+		fscandidate->proto, fscandidate->ip, fscandidate->port);
+	candidate->base_ip = g_strdup(fscandidate->base_ip);
+	candidate->base_port = fscandidate->base_port;
+	candidate->priority = fscandidate->priority;
+	candidate->username = g_strdup(fscandidate->username);
+	candidate->password = g_strdup(fscandidate->password);
+	candidate->ttl = fscandidate->ttl;
+	return candidate;
+}
+
+static GList *
+purple_media_candidate_list_from_fs(GList *candidates)
+{
+	GList *new_list = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		new_list = g_list_prepend(new_list,
+				purple_media_candidate_from_fs(
+				candidates->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+static GList *
+purple_media_candidate_list_to_fs(GList *candidates)
+{
+	GList *new_list = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		new_list = g_list_prepend(new_list,
+				purple_media_candidate_to_fs(
+				candidates->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+GList *
+purple_media_candidate_list_copy(GList *candidates)
+{
+	GList *new_list = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		new_list = g_list_prepend(new_list, g_boxed_copy(
+				PURPLE_TYPE_MEDIA_CANDIDATE,
+				candidates->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+void
+purple_media_candidate_list_free(GList *candidates)
+{
+	for (; candidates; candidates =
+			g_list_delete_link(candidates, candidates)) {
+		g_boxed_free(PURPLE_TYPE_MEDIA_CANDIDATE,
+				candidates->data);
+	}
+}
+
+GType
+purple_media_candidate_get_type()
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleMediaCandidate",
+				(GBoxedCopyFunc)purple_media_candidate_copy,
+				(GBoxedFreeFunc)purple_media_candidate_free);
+	}
+	return type;
 }
 
 static FsMediaType
@@ -1187,7 +1351,7 @@ purple_media_new_local_candidate_cb(FsStream *stream,
 {
 	gchar *name;
 	FsParticipant *participant;
-	FsCandidate *candidate;
+	PurpleMediaCandidate *candidate;
 	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->foundation);
 	g_object_get(stream, "participant", &participant, NULL);
 	g_object_get(participant, "cname", &name, NULL);
@@ -1195,10 +1359,10 @@ purple_media_new_local_candidate_cb(FsStream *stream,
 
 	purple_media_insert_local_candidate(session, name, fs_candidate_copy(local_candidate));
 
-	candidate = fs_candidate_copy(local_candidate);
+	candidate = purple_media_candidate_from_fs(local_candidate);
 	g_signal_emit(session->media, purple_media_signals[NEW_CANDIDATE],
 		      0, session->id, name, candidate);
-	fs_candidate_destroy(candidate);
+	purple_media_candidate_free(candidate);
 
 	g_free(name);
 }
@@ -1234,8 +1398,10 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 {
 	gchar *name;
 	FsParticipant *participant;
-	FsCandidate *local = fs_candidate_copy(native_candidate);
-	FsCandidate *remote = fs_candidate_copy(remote_candidate);
+	PurpleMediaCandidate *local =
+			purple_media_candidate_copy(native_candidate);
+	PurpleMediaCandidate *remote =
+			purple_media_candidate_copy(remote_candidate);
 	PurpleMediaStream *stream;
 
 	g_object_get(fsstream, "participant", &participant, NULL);
@@ -1251,8 +1417,8 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	g_signal_emit(session->media, purple_media_signals[CANDIDATE_PAIR], 0,
 		      local, remote);
 
-	fs_candidate_destroy(local);
-	fs_candidate_destroy(remote);
+	purple_media_candidate_free(local);
+	purple_media_candidate_free(remote);
 }
 
 static void
@@ -1486,7 +1652,7 @@ GList *
 purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
 	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
-	return fs_candidate_list_copy(stream->local_candidates);
+	return purple_media_candidate_list_from_fs(stream->local_candidates);
 }
 
 void
@@ -1495,23 +1661,25 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 {
 	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
-			fs_candidate_list_copy(remote_candidates));
+			purple_media_candidate_list_to_fs(remote_candidates));
 
 	if (stream->session->accepted == TRUE) {
 		purple_media_set_remote_candidates(stream);
 	}
 }
 
-FsCandidate *
+PurpleMediaCandidate *
 purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	return purple_media_get_stream(media, sess_id, name)->local_candidate;
+	return purple_media_candidate_from_fs(purple_media_get_stream(
+			media, sess_id, name)->local_candidate);
 }
 
-FsCandidate *
+PurpleMediaCandidate *
 purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	return purple_media_get_stream(media, sess_id, name)->remote_candidate;
+	return purple_media_candidate_from_fs(purple_media_get_stream(
+			media, sess_id, name)->remote_candidate);
 }
 
 gboolean
