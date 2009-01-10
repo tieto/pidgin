@@ -31,7 +31,6 @@
 #include "iq.h"
 
 #ifdef USE_VV
-#include <gst/farsight/fs-conference-iface.h>
 
 typedef struct {
 	char *id;
@@ -124,7 +123,6 @@ google_session_send_accept(GoogleSession *session)
 
 	fs_codec_list_destroy(codecs);
 	jabber_iq_send(iq);
-	gst_element_set_state(purple_media_get_pipeline(session->media), GST_STATE_PLAYING);
 }
 
 static void
