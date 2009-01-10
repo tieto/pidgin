@@ -109,41 +109,6 @@ GType purple_media_get_type(void);
  */
 GType purple_media_state_changed_get_type(void);
 
-/**************************************************************************/
-/** @name Media Utility Functions                                         */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Converts a PurpleMediaSessionType to an FsMediaType.
- *
- * @param type The type to derive FsMediaType from
- *
- * @return The FsMediaType derived from type
- */
-FsMediaType purple_media_to_fs_media_type(PurpleMediaSessionType type);
-
-/**
- * Converts a PurpleMediaSessionType to an FsStreamDirection.
- *
- * @param type The type to derive FsMediaType from
- *
- * @return The FsMediaDirection derived from type
- */
-FsStreamDirection purple_media_to_fs_stream_direction(PurpleMediaSessionType type);
-
-/**
- * Converts an FsMediaType and FsStreamDirection into a PurpleMediaSessionType.
- *
- * @param type The type used to construct PurpleMediaSessionType
- * @param direction The direction used to construct PurpleMediaSessionType
- *
- * @return The PurpleMediaSessionType constructed
- */
-PurpleMediaSessionType purple_media_from_fs(FsMediaType type, FsStreamDirection direction);
-
-/*@}*/
-
 /**
  * Combines all the separate session types into a single PurpleMediaSessionType.
  *
