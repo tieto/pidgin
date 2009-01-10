@@ -19,7 +19,8 @@
  *
  */
 
-#include "config.h"
+#include "internal.h"
+
 #include "content.h"
 #include "debug.h"
 #include "jingle.h"
@@ -423,15 +424,17 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 	}
 }
 
+static void
+jingle_terminate_sessions_gh(gpointer key, gpointer value, gpointer user_data)
+{
+	g_object_unref(value);
+}
+
 void
 jingle_terminate_sessions(JabberStream *js)
 {
-	GList *values = js->sessions ?
-			g_hash_table_get_values(js->sessions) : NULL;
-
-	for (; values; values = g_list_delete_link(values, values)) {
-		JingleSession *session = (JingleSession *)values->data;
-		g_object_unref(session);
-	}
+	if (js->sessions)
+		g_hash_table_foreach(js->sessions,
+				jingle_terminate_sessions_gh, NULL);
 }
 

@@ -85,6 +85,7 @@ XMPP_OBJECTS = $(XMPP_C_SRC:%.c=%.o)
 ##
 LIBS = \
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lxml2 \
 			-lws2_32 \
 			-lintl \

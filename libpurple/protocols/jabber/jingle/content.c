@@ -18,7 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "config.h"
+#include "internal.h"
+
 #include "debug.h"
 #include "content.h"
 #include "jingle.h"
