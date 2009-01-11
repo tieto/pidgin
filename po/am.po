@@ -14360,10 +14360,6 @@ msgstr ""
 #~ msgstr "ተገናኝቷል"
 
 #, fuzzy
-#~ msgid "Pidgin"
-#~ msgstr "ጨዋታዎች"
-
-#, fuzzy
 #~ msgid "Pidgin - Signed off"
 #~ msgstr "ጌም -  ምልክትን አስቀምጥ"
 
