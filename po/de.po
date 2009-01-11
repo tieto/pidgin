@@ -1,6 +1,6 @@
 # translation of de.po to Deutsch
 # Pidgin German translation
-# Copyright (C) 2001, Daniel Seifert <gaim-translation@dseifert.de>
+# Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
 # Copyright (C) 2002-2008, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>

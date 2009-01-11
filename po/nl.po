@@ -13766,7 +13766,7 @@ msgstr "Download nu"
 #. *< priority
 #. *< id
 msgid "Release Notification"
-msgstr "Melding bij nieuwe versie van gaim"
+msgstr "Melding bij nieuwe versie van Pidgin"
 
 #. *< name
 #. *< version
