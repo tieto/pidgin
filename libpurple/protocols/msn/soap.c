@@ -68,7 +68,6 @@ typedef struct _MsnSoapConnection {
 
 	GQueue *queue;
 	MsnSoapRequest *current_request;
-	gboolean unsafe_debug;
 } MsnSoapConnection;
 
 static gboolean msn_soap_connection_run(gpointer data);
@@ -80,7 +79,6 @@ msn_soap_connection_new(MsnSession *session, const char *host)
 	conn->session = session;
 	conn->host = g_strdup(host);
 	conn->queue = g_queue_new();
-	conn->unsafe_debug = g_getenv("PURPLE_MSN_UNSAFE_DEBUG") != NULL;
 	return conn;
 }
 
@@ -506,10 +504,12 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	if (cnt < 0 && perrno != EAGAIN)
 		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
 
-	if (conn->current_request && conn->current_request->secure &&
-		!conn->unsafe_debug)
+#ifndef MSN_UNSAFE_DEBUG
+	if (conn->current_request && conn->current_request->secure)
 		purple_debug_misc("soap", "Received secure request.\n");
-	else if (count != 0)
+	else
+#endif
+	if (count != 0)
 		purple_debug_misc("soap", "current %s\n", conn->buf->str + cursor);
 
 	/* && count is necessary for Adium, on OS X the last read always
@@ -657,10 +657,12 @@ msn_soap_connection_run(gpointer data)
 			g_string_append(conn->buf, "\r\n");
 			g_string_append(conn->buf, body);
 
-			if (req->secure && !conn->unsafe_debug)
+#ifndef MSN_UNSAFE_DEBUG
+			if (req->secure)
 				purple_debug_misc("soap", "Sending secure request.\n");
 			else
-				purple_debug_misc("soap", "%s\n", conn->buf->str);
+#endif
+			purple_debug_misc("soap", "%s\n", conn->buf->str);
 
 			conn->handled_len = 0;
 			conn->current_request = req;

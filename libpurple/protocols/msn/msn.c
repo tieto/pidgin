@@ -1343,7 +1343,6 @@ msn_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
 	MsnSession *session;
-	GSList *list, *l;
 
 	gc = purple_account_get_connection(account);
 
@@ -1352,17 +1351,6 @@ msn_set_status(PurpleAccount *account, PurpleStatus *status)
 		session = gc->proto_data;
 		msn_change_status(session);
 	}
-
-	/* fake it to ourselves */
-	if((list = purple_find_buddies(account,
-				purple_account_get_username(account))) == NULL)
-		return;
-
-	for(l = list; l != NULL; l = l->next) {
-		purple_blist_update_buddy_status(l->data, status);
-	}
-
-	g_slist_free(list);
 }
 
 static void
