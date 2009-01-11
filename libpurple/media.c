@@ -1399,9 +1399,9 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	gchar *name;
 	FsParticipant *participant;
 	PurpleMediaCandidate *local =
-			purple_media_candidate_copy(native_candidate);
+			purple_media_candidate_from_fs(native_candidate);
 	PurpleMediaCandidate *remote =
-			purple_media_candidate_copy(remote_candidate);
+			purple_media_candidate_from_fs(remote_candidate);
 	PurpleMediaStream *stream;
 
 	g_object_get(fsstream, "participant", &participant, NULL);
