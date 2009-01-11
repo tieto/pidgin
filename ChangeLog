@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.4 (??/??/????):
+version 2.5.4 (01/11/2009):
 	libpurple:
 	* Fix a connection timeout with empty Gadu-Gady buddy lists. (Martin
 	  Rosinski)

@@ -1,4 +1,4 @@
-version 2.5.4 (01/08/2009):
+version 2.5.4 (01/11/2009):
 	* Fix the "Hang on Exit" issue that a number of users encountered.
 	* Updated GTK+ to 2.14.6
 
