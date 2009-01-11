@@ -2336,15 +2336,15 @@ dnl # Check for Doxygen and dot (part of GraphViz)
 dnl #######################################################################
 AC_ARG_ENABLE(doxygen,
 	[AC_HELP_STRING([--disable-doxygen],
-		[enable documentation with doxygen])],
+		[disable documentation with doxygen])],
 	enable_doxygen="$enableval", enable_doxygen="yes")
 AC_ARG_ENABLE(dot,
-	[AC_HELP_STRING([--enable-dot],
-		[enable graphs in doxygen via 'dot'])],
+	[AC_HELP_STRING([--disable-dot],
+		[disable graphs in doxygen via 'dot'])],
 	enable_dot="$enableval", enable_dot="yes")
 AC_ARG_ENABLE(devhelp,
-	[AC_HELP_STRING([--enable-devhelp],
-		[enable building index for devhelp documentation browser])],
+	[AC_HELP_STRING([--disable-devhelp],
+		[disable building index for devhelp documentation browser])],
 	enable_devhelp="$enableval", enable_devhelp="yes")
 
 if test "x$enable_doxygen" = xyes; then
