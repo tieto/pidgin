@@ -14821,9 +14821,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "கணக்கு:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "கெய்ம் இணையதள தூதுவர்"
-
 #~ msgid "DBus"
 #~ msgstr "டிபஸ் (DBus)"
 

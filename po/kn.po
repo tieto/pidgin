@@ -14165,9 +14165,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "ಖಾತೆ:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "ಗೈಮ್ ಇಂಟರ್ನೆಟ್ ಮೆಸ್ಸೆಂಜರ್"
-
 #~ msgid ""
 #~ "\n"
 #~ "Idle: %s"

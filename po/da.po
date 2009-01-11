@@ -14827,9 +14827,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Konto:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Pidgin - internet beskeder"
-
 #~ msgid "Toggle offline buddies"
 #~ msgstr "Afkoblet venner til/fra"
 

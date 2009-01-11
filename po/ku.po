@@ -14598,9 +14598,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Hesab:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Peyamnêra Înternetê ya Pidginê"
-
 #~ msgid "DBus"
 #~ msgstr "DBus"
 
@@ -15010,9 +15007,6 @@ msgstr ""
 #~ "jî Windowsê de) tepsiyeke îkonê a pergalê dide lîstandin, ji bo vebûna zû "
 #~ "destûrê dide peywirên ku bi giştî tên bikaranîn û lîsteya hevalan an jî "
 #~ "paceya têketinê nîşan dide."
-
-#~ msgid "Pidgin"
-#~ msgstr "Pidgin"
 
 #~ msgid "Pidgin - Signed off"
 #~ msgstr "Pidgin - Danişîn hat girtin"

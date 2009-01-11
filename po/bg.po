@@ -14681,9 +14681,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Акаунт:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Бързи съобщения с Pidgin"
-
 #, fuzzy
 #~ msgid ""
 #~ "%s was disconnected due to the following error:\n"

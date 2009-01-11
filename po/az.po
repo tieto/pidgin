@@ -14341,9 +14341,6 @@ msgstr ""
 #~ msgid "Use last matching buddy"
 #~ msgstr "Ən son uyğun gələn əlaqəni işlət"
 
-#~ msgid "Pidgin"
-#~ msgstr "Pidgin"
-
 #~ msgid "Pidgin - Signed off"
 #~ msgstr "Pidgin - Xətdə deyil"
 

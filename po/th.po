@@ -13980,9 +13980,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "บัญชี:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Pidgin โปรแกรมข้อความด่วน"
-
 #~ msgid "TCP port"
 #~ msgstr "พอร์ต TCP"
 

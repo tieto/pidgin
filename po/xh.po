@@ -15239,9 +15239,6 @@ msgstr ""
 #~ "aya kusebenzisa okwakufudula kululandelelwano olwakhelweyo lokusebenza-"
 #~ ">ukulalela->ukungabikho->ukungabikho+nokulalela->konxibelelwano."
 
-#~ msgid "Pidgin"
-#~ msgstr "I-Pidgin"
-
 #~ msgid "Pidgin - Signed off"
 #~ msgstr "I-Pidgin - YokuPhuma"
 

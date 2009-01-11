@@ -14848,9 +14848,6 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgid "Provides options specific to Windows "
 #~ msgstr "Opciones específicas de para Windows "
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Pidgin - cliente de mensajería de Internet"
-
 #~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
 #~ msgstr ""
 #~ "<FONT SIZE=\"4\">IRC:</FONT> canal #winPidgin en irc.freenode.net<BR><BR>"

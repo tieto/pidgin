@@ -14965,9 +14965,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Conta:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Mensageiro Internet Pidgin"
-
 #~ msgid "Crazychat"
 #~ msgstr "Crazychat"
 

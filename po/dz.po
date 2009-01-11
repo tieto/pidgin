@@ -14872,9 +14872,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "རྩིས་ཐོ:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "གེམ་ ཨིན་ཊར་ནེཊི་འཕྲིན་སྐྱེལ་པ།"
-
 #~ msgid "Tag"
 #~ msgstr "ངོ་རྟགས།"
 

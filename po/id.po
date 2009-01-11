@@ -14637,9 +14637,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgid "Log Viewer"
 #~ msgstr "Penglihat Log"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Pengirim Pesan Internet Pidgin"
-
 #~ msgid "Toggle offline buddies"
 #~ msgstr "Tandai teman-teman yang sedang offline"
 

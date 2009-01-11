@@ -13749,9 +13749,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "شمېرل:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "ګېم د انترنت زری"
-
 #~ msgid ""
 #~ "%s was disconnected due to the following error:\n"
 #~ "%s"

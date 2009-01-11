@@ -15132,9 +15132,6 @@ msgstr ""
 #~ "prijavu. Takoder dozvoljava porukama da budu poredane dok se ne pritisne "
 #~ "ikonica, slicno kao ICQ."
 
-#~ msgid "Pidgin"
-#~ msgstr "Pidgin"
-
 #~ msgid "Pidgin - Signed off"
 #~ msgstr "Pidgin - Odjavljen"
 

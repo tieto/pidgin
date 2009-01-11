@@ -14958,9 +14958,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Kontua:"
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Pidgin interneteko mezularitza "
-
 #~ msgid "DBus"
 #~ msgstr "DBus"
 

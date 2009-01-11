@@ -15119,9 +15119,6 @@ msgstr ""
 #~ "will use what used to be the built-in order active->idle->away->away+idle-"
 #~ ">offline."
 
-#~ msgid "Pidgin"
-#~ msgstr "Pidgin"
-
 #~ msgid "Pidgin - Signed off"
 #~ msgstr "Pidgin - Signed off"
 
