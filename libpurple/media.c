@@ -696,7 +696,7 @@ purple_media_codec_copy(PurpleMediaCodec *codec)
 
 	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
 		PurpleMediaCodecParameter *param =
-				(PurpleMediaCodecParameter*)iter;
+				(PurpleMediaCodecParameter*)iter->data;
 		purple_media_codec_add_optional_parameter(new_codec,
 				param->name, param->value);
 	}
@@ -738,7 +738,7 @@ purple_media_codec_to_fs(const PurpleMediaCodec *codec)
 
 	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
 		PurpleMediaCodecParameter *param =
-				(PurpleMediaCodecParameter*)iter;
+				(PurpleMediaCodecParameter*)iter->data;
 		fs_codec_add_optional_parameter(new_codec,
 				param->name, param->value);
 	}
@@ -761,7 +761,7 @@ purple_media_codec_from_fs(const FsCodec *codec)
 	new_codec->channels = codec->channels;
 
 	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
-		FsCodecParameter *param = (FsCodecParameter*)iter;
+		FsCodecParameter *param = (FsCodecParameter*)iter->data;
 		purple_media_codec_add_optional_parameter(new_codec,
 				param->name, param->value);
 	}
