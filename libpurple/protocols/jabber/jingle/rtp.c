@@ -434,10 +434,11 @@ jingle_rtp_parse_codecs(xmlnode *description)
 	GList *codecs = NULL;
 	xmlnode *codec_element = NULL;
 	const char *encoding_name,*id, *clock_rate;
-	FsCodec *codec;
+	PurpleMediaCodec *codec;
 	const gchar *media = xmlnode_get_attrib(description, "media");
-	FsMediaType type = !strcmp(media, "video") ? FS_MEDIA_TYPE_VIDEO :
-			!strcmp(media, "audio") ? FS_MEDIA_TYPE_AUDIO : 0;
+	PurpleMediaSessionType type =
+			!strcmp(media, "video") ? PURPLE_MEDIA_VIDEO :
+			!strcmp(media, "audio") ? PURPLE_MEDIA_AUDIO : 0;
 
 	for (codec_element = xmlnode_get_child(description, "payload-type") ;
 		 codec_element ;
@@ -449,18 +450,18 @@ jingle_rtp_parse_codecs(xmlnode *description)
 		id = xmlnode_get_attrib(codec_element, "id");
 		clock_rate = xmlnode_get_attrib(codec_element, "clockrate");
 
-		codec = fs_codec_new(atoi(id), encoding_name, 
+		codec = purple_media_codec_new(atoi(id), encoding_name, 
 				     type, 
 				     clock_rate ? atoi(clock_rate) : 0);
 
 		for (param = xmlnode_get_child(codec_element, "parameter");
 				param; param = xmlnode_get_next_twin(param)) {
-			fs_codec_add_optional_parameter(codec,
+			purple_media_codec_add_optional_parameter(codec,
 					xmlnode_get_attrib(param, "name"),
 					xmlnode_get_attrib(param, "value"));
 		}
 
-		codec_str = fs_codec_to_string(codec);
+		codec_str = purple_media_codec_to_string(codec);
 		purple_debug_info("jingle-rtp", "received codec: %s\n", codec_str);
 		g_free(codec_str);
 
@@ -484,7 +485,7 @@ static void
 jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 {
 	for (; codecs ; codecs = codecs->next) {
-		FsCodec *codec = (FsCodec*)codecs->data;
+		PurpleMediaCodec *codec = (PurpleMediaCodec*)codecs->data;
 		GList *iter = codec->optional_params;
 		char id[8], clockrate[10], channels[10];
 		gchar *codec_str;
@@ -500,13 +501,13 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 		xmlnode_set_attrib(payload, "channels", channels);
 
 		for (; iter; iter = g_list_next(iter)) {
-			FsCodecParameter *fsparam = iter->data;
+			PurpleMediaCodecParameter *mparam = iter->data;
 			xmlnode *param = xmlnode_new_child(payload, "parameter");
-			xmlnode_set_attrib(param, "name", fsparam->name);
-			xmlnode_set_attrib(param, "value", fsparam->value);
+			xmlnode_set_attrib(param, "name", mparam->name);
+			xmlnode_set_attrib(param, "value", mparam->value);
 		}
 
-		codec_str = fs_codec_to_string(codec);
+		codec_str = purple_media_codec_to_string(codec);
 		purple_debug_info("jingle", "adding codec: %s\n", codec_str);
 		g_free(codec_str);
 	}

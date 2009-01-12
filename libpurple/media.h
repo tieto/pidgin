@@ -30,7 +30,6 @@
 #ifdef USE_VV
 
 #include <gst/gst.h>
-#include <gst/farsight/fs-stream.h>
 #include <glib.h>
 #include <glib-object.h>
 
@@ -38,6 +37,7 @@ G_BEGIN_DECLS
 
 #define PURPLE_TYPE_MEDIA            (purple_media_get_type())
 #define PURPLE_TYPE_MEDIA_CANDIDATE  (purple_media_candidate_get_type())
+#define PURPLE_TYPE_MEDIA_CODEC      (purple_media_codec_get_type())
 #define PURPLE_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA, PurpleMedia))
 #define PURPLE_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 #define PURPLE_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA))
@@ -54,6 +54,10 @@ typedef struct _PurpleMediaClass PurpleMediaClass;
 typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
 /** @copydoc _PurpleMediaCandidate */
 typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
+/** @copydoc _PurpleMediaCodec */
+typedef struct _PurpleMediaCodec PurpleMediaCodec;
+/** @copydoc _PurpleMediaCodecParameter */
+typedef struct _PurpleMediaCodecParameter PurpleMediaCodecParameter;
 
 #else
 
@@ -129,6 +133,22 @@ struct _PurpleMediaCandidate
 	guint ttl;
 };
 
+struct _PurpleMediaCodecParameter
+{
+	gchar *name;
+	gchar *value;
+};
+
+struct _PurpleMediaCodec
+{
+	gint id;
+	char *encoding_name;
+	PurpleMediaSessionType media_type;
+	guint clock_rate;
+	guint channels;
+	GList *optional_params;
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -187,6 +207,83 @@ GList *purple_media_candidate_list_copy(GList *candidates);
  * @param candidates The list of candidates to be freed.
  */
 void purple_media_candidate_list_free(GList *candidates);
+
+/**
+ * Gets the type of the media codec structure.
+ *
+ * @return The media codec's GType
+ */
+GType purple_media_codec_get_type(void);
+
+/**
+ * Creates a new PurpleMediaCodec instance.
+ *
+ * @param id Codec identifier.
+ * @param encoding_name Name of the media type this encodes.
+ * @param media_type PurpleMediaSessionType of this codec.
+ * @param clock_rate The clock rate this codec encodes at, if applicable.
+ *
+ * @return The newly created PurpleMediaCodec.
+ */
+PurpleMediaCodec *purple_media_codec_new(int id, const char *encoding_name,
+		PurpleMediaSessionType media_type, guint clock_rate);
+
+/**
+ * Creates a string representation of the codec.
+ *
+ * @param codec The codec to create the string of.
+ *
+ * @return The new string representation.
+ */
+gchar *purple_media_codec_to_string(const PurpleMediaCodec *codec);
+
+/**
+ * Adds an optional parameter to the codec.
+ *
+ * @param codec The codec to add the parameter to.
+ * @param name The name of the parameter to add.
+ * @param value The value of the parameter to add.
+ */
+void purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
+		const gchar *name, const gchar *value);
+
+/**
+ * Removes an optional parameter from the codec.
+ *
+ * @param codec The codec to remove the parameter from.
+ * @param param A pointer to the parameter to remove.
+ */
+void purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
+		PurpleMediaCodecParameter *param);
+
+/**
+ * Gets an optional parameter based on the values given.
+ *
+ * @param codec The codec to find the parameter in.
+ * @param name The name of the parameter to search for.
+ * @param value The value to search for or NULL.
+ *
+ * @return The value found or NULL.
+ */
+PurpleMediaCodecParameter *purple_media_codec_get_optional_parameter(
+		PurpleMediaCodec *codec, const gchar *name,
+		const gchar *value);
+
+/**
+ * Copies a GList of PurpleMediaCodec and its contents.
+ *
+ * @param codecs The list of codecs to be copied.
+ *
+ * @return The copy of the GList.
+ */
+GList *purple_media_codec_list_copy(GList *codecs);
+
+/**
+ * Frees a GList of PurpleMediaCodec and its contents.
+ *
+ * @param codecs The list of codecs to be freed.
+ */
+void purple_media_codec_list_free(GList *codecs);
 
 /**
  * Combines all the separate session types into a single PurpleMediaSessionType.
@@ -513,7 +610,7 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
  *
  * @return @c TRUE The codec was successfully changed, or @c FALSE otherwise.
  */
-gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *codec);
+gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec);
 
 /**
  * Gets whether a session's codecs are ready to be used.

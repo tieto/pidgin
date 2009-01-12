@@ -111,7 +111,7 @@ google_session_send_accept(GoogleSession *session)
 	xmlnode_set_namespace(desc, "http://www.google.com/session/phone");
 
 	for (;codecs; codecs = codecs->next) {
-		FsCodec *codec = (FsCodec*)codecs->data;
+		PurpleMediaCodec *codec = (PurpleMediaCodec*)codecs->data;
 		char id[8], clockrate[10];
 		payload = xmlnode_new_child(desc, "payload-type");
 		g_snprintf(id, sizeof(id), "%d", codec->id);
@@ -121,7 +121,7 @@ google_session_send_accept(GoogleSession *session)
 		xmlnode_set_attrib(payload, "clockrate", clockrate);
 	}
 
-	fs_codec_list_destroy(codecs);
+	purple_media_codec_list_free(codecs);
 	jabber_iq_send(iq);
 }
 
@@ -234,7 +234,7 @@ google_session_ready(PurpleMedia *media, gchar *id,
 			codecs = purple_media_get_codecs(media, "google-voice");
 	
 			for (iter = codecs; iter; iter = g_list_next(iter)) {
-				FsCodec *codec = (FsCodec*)iter->data;
+				PurpleMediaCodec *codec = (PurpleMediaCodec*)iter->data;
 				gchar *id = g_strdup_printf("%d", codec->id);
 				gchar *clock_rate = g_strdup_printf("%d", codec->clock_rate);
 				payload = xmlnode_new_child(desc, "payload-type");
@@ -244,7 +244,7 @@ google_session_ready(PurpleMedia *media, gchar *id,
 				g_free(clock_rate);
 				g_free(id);
 			}
-			fs_codec_list_destroy(codecs);
+			purple_media_codec_list_free(codecs);
 
 			jabber_iq_send(iq);
 	
@@ -333,7 +333,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	JabberIq *result;
 	GList *codecs = NULL;
 	xmlnode *desc_element, *codec_element;
-	FsCodec *codec;
+	PurpleMediaCodec *codec;
 	const char *id, *encoding_name,  *clock_rate;
 	GParameter param;
 		
@@ -368,7 +368,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		id = xmlnode_get_attrib(codec_element, "id");
 		clock_rate = xmlnode_get_attrib(codec_element, "clockrate");
 
-		codec = fs_codec_new(atoi(id), encoding_name, FS_MEDIA_TYPE_AUDIO,
+		codec = purple_media_codec_new(atoi(id), encoding_name, PURPLE_MEDIA_AUDIO,
 				     clock_rate ? atoi(clock_rate) : 0);
 		codecs = g_list_append(codecs, codec);
 	}
@@ -385,7 +385,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 			 G_CALLBACK(google_session_candidates_prepared), session);
 	purple_media_ready(session->media);
 
-	fs_codec_list_destroy(codecs);
+	purple_media_codec_list_free(codecs);
 	
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
@@ -449,9 +449,9 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 		const gchar *clock_rate =
 				xmlnode_get_attrib(codec_element, "clockrate");
 
-		FsCodec *codec = fs_codec_new(atoi(id), encoding_name,
-				FS_MEDIA_TYPE_AUDIO, clock_rate ?
-				atoi(clock_rate) : 0);
+		PurpleMediaCodec *codec = purple_media_codec_new(atoi(id),
+				encoding_name, PURPLE_MEDIA_AUDIO,
+				clock_rate ? atoi(clock_rate) : 0);
 		codecs = g_list_append(codecs, codec);
 	}
 
