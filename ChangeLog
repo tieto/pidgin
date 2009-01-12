@@ -12,6 +12,10 @@ version 2.5.4 (??/??/????):
 	* Fix the hang on exit in Network Location Awareness for Windows XP
 	  and Windows Vista. (Paul Aurich)
 
+	MSN:
+	* Change Contact Server to temporarily fix connection problems.
+	  (Thanks to Youness Alaoui)
+
 	XMPP:
 	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
 	* Don't put SASL PLAIN or IQ Auth passwords in debug logs. (Paul Aurich)
