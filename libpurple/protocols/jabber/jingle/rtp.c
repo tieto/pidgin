@@ -193,7 +193,7 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
 		JingleRawUdpCandidate *rawudp_candidate;
 		for (; candidates; candidates = g_list_next(candidates)) {
-			FsCandidate *candidate = candidates->data;
+			PurpleMediaCandidate *candidate = candidates->data;
 			id = jabber_get_next_id(jingle_session_get_js(session));
 			rawudp_candidate = jingle_rawudp_candidate_new(id,
 					generation, candidate->component_id,
@@ -206,14 +206,14 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
 		JingleIceUdpCandidate *iceudp_candidate;
 		for (; candidates; candidates = g_list_next(candidates)) {
-			FsCandidate *candidate = candidates->data;
+			PurpleMediaCandidate *candidate = candidates->data;
 			iceudp_candidate = jingle_iceudp_candidate_new(candidate->component_id,
 					candidate->foundation, generation, candidate->ip,
 					0, candidate->port, candidate->priority, "udp",
-					candidate->type == FS_CANDIDATE_TYPE_HOST ? "host" :
-					candidate->type == FS_CANDIDATE_TYPE_SRFLX ? "srflx" :
-					candidate->type == FS_CANDIDATE_TYPE_PRFLX ? "prflx" :
-					candidate->type == FS_CANDIDATE_TYPE_RELAY ? "relay" : "",
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "host" :
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "srflx" :
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX ? "prflx" :
+					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" : "",
 					candidate->username, candidate->password);
 			jingle_iceudp_add_local_candidate(JINGLE_ICEUDP(transport), iceudp_candidate);
 		}
@@ -233,8 +233,10 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 
 		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
 			JingleRawUdpCandidate *candidate = candidates->data;
-			ret = g_list_append(ret, fs_candidate_new("", candidate->component,
-					FS_CANDIDATE_TYPE_SRFLX, FS_NETWORK_PROTOCOL_UDP,
+			ret = g_list_append(ret, purple_media_candidate_new(
+					"", candidate->component,
+					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX,
+					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					candidate->ip, candidate->port));
 		}
 
@@ -244,17 +246,22 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 
 		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
 			JingleIceUdpCandidate *candidate = candidates->data;
-			FsCandidate *fscandidate = fs_candidate_new(
+			PurpleMediaCandidate *new_candidate = purple_media_candidate_new(
 					candidate->foundation, candidate->component,
-					!strcmp(candidate->type, "host") ? FS_CANDIDATE_TYPE_HOST :
-					!strcmp(candidate->type, "srflx") ? FS_CANDIDATE_TYPE_SRFLX :
-					!strcmp(candidate->type, "prflx") ? FS_CANDIDATE_TYPE_PRFLX :
-					!strcmp(candidate->type, "relay") ? FS_CANDIDATE_TYPE_RELAY : 0,
-					FS_NETWORK_PROTOCOL_UDP, candidate->ip, candidate->port);
-			fscandidate->username = g_strdup(candidate->username);
-			fscandidate->password = g_strdup(candidate->password);
-			fscandidate->priority = candidate->priority;
-			ret = g_list_append(ret, fscandidate);
+					!strcmp(candidate->type, "host") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
+					!strcmp(candidate->type, "srflx") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX :
+					!strcmp(candidate->type, "prflx") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
+					!strcmp(candidate->type, "relay") ?
+					PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
+					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
+					candidate->ip, candidate->port);
+			new_candidate->username = g_strdup(candidate->username);
+			new_candidate->password = g_strdup(candidate->password);
+			new_candidate->priority = candidate->priority;
+			ret = g_list_append(ret, new_candidate);
 		}
 
 		return ret;
@@ -264,7 +271,7 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 }
 
 static void
-jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, FsCandidate *candidate, JingleSession *session)
+jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleMediaCandidate *candidate, JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "jingle_rtp_new_candidate_cb\n");
 }
@@ -427,10 +434,11 @@ jingle_rtp_parse_codecs(xmlnode *description)
 	GList *codecs = NULL;
 	xmlnode *codec_element = NULL;
 	const char *encoding_name,*id, *clock_rate;
-	FsCodec *codec;
+	PurpleMediaCodec *codec;
 	const gchar *media = xmlnode_get_attrib(description, "media");
-	FsMediaType type = !strcmp(media, "video") ? FS_MEDIA_TYPE_VIDEO :
-			!strcmp(media, "audio") ? FS_MEDIA_TYPE_AUDIO : 0;
+	PurpleMediaSessionType type =
+			!strcmp(media, "video") ? PURPLE_MEDIA_VIDEO :
+			!strcmp(media, "audio") ? PURPLE_MEDIA_AUDIO : 0;
 
 	for (codec_element = xmlnode_get_child(description, "payload-type") ;
 		 codec_element ;
@@ -442,18 +450,18 @@ jingle_rtp_parse_codecs(xmlnode *description)
 		id = xmlnode_get_attrib(codec_element, "id");
 		clock_rate = xmlnode_get_attrib(codec_element, "clockrate");
 
-		codec = fs_codec_new(atoi(id), encoding_name, 
+		codec = purple_media_codec_new(atoi(id), encoding_name, 
 				     type, 
 				     clock_rate ? atoi(clock_rate) : 0);
 
 		for (param = xmlnode_get_child(codec_element, "parameter");
 				param; param = xmlnode_get_next_twin(param)) {
-			fs_codec_add_optional_parameter(codec,
+			purple_media_codec_add_optional_parameter(codec,
 					xmlnode_get_attrib(param, "name"),
 					xmlnode_get_attrib(param, "value"));
 		}
 
-		codec_str = fs_codec_to_string(codec);
+		codec_str = purple_media_codec_to_string(codec);
 		purple_debug_info("jingle-rtp", "received codec: %s\n", codec_str);
 		g_free(codec_str);
 
@@ -477,7 +485,7 @@ static void
 jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 {
 	for (; codecs ; codecs = codecs->next) {
-		FsCodec *codec = (FsCodec*)codecs->data;
+		PurpleMediaCodec *codec = (PurpleMediaCodec*)codecs->data;
 		GList *iter = codec->optional_params;
 		char id[8], clockrate[10], channels[10];
 		gchar *codec_str;
@@ -493,13 +501,13 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 		xmlnode_set_attrib(payload, "channels", channels);
 
 		for (; iter; iter = g_list_next(iter)) {
-			FsCodecParameter *fsparam = iter->data;
+			PurpleMediaCodecParameter *mparam = iter->data;
 			xmlnode *param = xmlnode_new_child(payload, "parameter");
-			xmlnode_set_attrib(param, "name", fsparam->name);
-			xmlnode_set_attrib(param, "value", fsparam->value);
+			xmlnode_set_attrib(param, "name", mparam->name);
+			xmlnode_set_attrib(param, "value", mparam->value);
 		}
 
-		codec_str = fs_codec_to_string(codec);
+		codec_str = purple_media_codec_to_string(codec);
 		purple_debug_info("jingle", "adding codec: %s\n", codec_str);
 		g_free(codec_str);
 	}

@@ -239,7 +239,7 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__POINTER_POINTER_OBJECT,
 					 G_TYPE_NONE, 3, G_TYPE_POINTER,
-					 G_TYPE_POINTER, FS_TYPE_CANDIDATE);
+					 G_TYPE_POINTER, PURPLE_TYPE_MEDIA_CANDIDATE);
 	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__STRING_STRING,
@@ -247,7 +247,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 	purple_media_signals[CANDIDATE_PAIR] = g_signal_new("candidate-pair", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__BOXED_BOXED,
-					 G_TYPE_NONE, 2, FS_TYPE_CANDIDATE, FS_TYPE_CANDIDATE);
+					 G_TYPE_NONE, 2, PURPLE_TYPE_MEDIA_CANDIDATE,
+					 PURPLE_TYPE_MEDIA_CANDIDATE);
 	purple_media_signals[CODECS_READY] = g_signal_new("codecs-ready", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
@@ -413,6 +414,169 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 
 }
 
+PurpleMediaCandidate *
+purple_media_candidate_new(const gchar *foundation, guint component_id,
+		PurpleMediaCandidateType type,
+		PurpleMediaNetworkProtocol proto,
+		const gchar *ip, guint port)
+{
+	PurpleMediaCandidate *candidate = g_new0(PurpleMediaCandidate, 1);
+	candidate->foundation = g_strdup(foundation);
+	candidate->component_id = component_id;
+	candidate->type = type;
+	candidate->proto = proto;
+	candidate->ip = g_strdup(ip);
+	candidate->port = port;
+	return candidate;
+}
+
+static PurpleMediaCandidate *
+purple_media_candidate_copy(PurpleMediaCandidate *candidate)
+{
+	PurpleMediaCandidate *new_candidate;
+
+	if (candidate == NULL)
+		return NULL;
+
+	new_candidate = g_new0(PurpleMediaCandidate, 1);
+	new_candidate->foundation = g_strdup(candidate->foundation);
+	new_candidate->component_id = candidate->component_id;
+	new_candidate->ip = g_strdup(candidate->ip);
+	new_candidate->port = candidate->port;
+	new_candidate->base_ip = g_strdup(candidate->base_ip);
+	new_candidate->base_port = candidate->base_port;
+	new_candidate->proto = candidate->proto;
+	new_candidate->priority = candidate->priority;
+	new_candidate->type = candidate->type;
+	new_candidate->username = g_strdup(candidate->username);
+	new_candidate->password = g_strdup(candidate->password);
+	new_candidate->ttl = candidate->ttl;
+	return new_candidate;
+}
+
+static void
+purple_media_candidate_free(PurpleMediaCandidate *candidate)
+{
+	if (candidate == NULL)
+		return;
+
+	g_free((gchar*)candidate->foundation);
+	g_free((gchar*)candidate->ip);
+	g_free((gchar*)candidate->base_ip);
+	g_free((gchar*)candidate->username);
+	g_free((gchar*)candidate->password);
+	g_free(candidate);
+}
+
+static FsCandidate *
+purple_media_candidate_to_fs(PurpleMediaCandidate *candidate)
+{
+	FsCandidate *fscandidate;
+
+	if (candidate == NULL)
+		return NULL;
+
+	fscandidate = fs_candidate_new(candidate->foundation,
+		candidate->component_id, candidate->type,
+		candidate->proto, candidate->ip, candidate->port);
+
+	fscandidate->base_ip = g_strdup(candidate->base_ip);
+	fscandidate->base_port = candidate->base_port;
+	fscandidate->priority = candidate->priority;
+	fscandidate->username = g_strdup(candidate->username);
+	fscandidate->password = g_strdup(candidate->password);
+	fscandidate->ttl = candidate->ttl;
+	return fscandidate;
+}
+
+static PurpleMediaCandidate *
+purple_media_candidate_from_fs(FsCandidate *fscandidate)
+{
+	PurpleMediaCandidate *candidate;
+
+	if (fscandidate == NULL)
+		return NULL;
+
+	candidate = purple_media_candidate_new(fscandidate->foundation,
+		fscandidate->component_id, fscandidate->type,
+		fscandidate->proto, fscandidate->ip, fscandidate->port);
+	candidate->base_ip = g_strdup(fscandidate->base_ip);
+	candidate->base_port = fscandidate->base_port;
+	candidate->priority = fscandidate->priority;
+	candidate->username = g_strdup(fscandidate->username);
+	candidate->password = g_strdup(fscandidate->password);
+	candidate->ttl = fscandidate->ttl;
+	return candidate;
+}
+
+static GList *
+purple_media_candidate_list_from_fs(GList *candidates)
+{
+	GList *new_list = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		new_list = g_list_prepend(new_list,
+				purple_media_candidate_from_fs(
+				candidates->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+static GList *
+purple_media_candidate_list_to_fs(GList *candidates)
+{
+	GList *new_list = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		new_list = g_list_prepend(new_list,
+				purple_media_candidate_to_fs(
+				candidates->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+GList *
+purple_media_candidate_list_copy(GList *candidates)
+{
+	GList *new_list = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		new_list = g_list_prepend(new_list, g_boxed_copy(
+				PURPLE_TYPE_MEDIA_CANDIDATE,
+				candidates->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+void
+purple_media_candidate_list_free(GList *candidates)
+{
+	for (; candidates; candidates =
+			g_list_delete_link(candidates, candidates)) {
+		g_boxed_free(PURPLE_TYPE_MEDIA_CANDIDATE,
+				candidates->data);
+	}
+}
+
+GType
+purple_media_candidate_get_type()
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleMediaCandidate",
+				(GBoxedCopyFunc)purple_media_candidate_copy,
+				(GBoxedFreeFunc)purple_media_candidate_free);
+	}
+	return type;
+}
+
 static FsMediaType
 purple_media_to_fs_media_type(PurpleMediaSessionType type)
 {
@@ -457,6 +621,232 @@ purple_media_from_fs(FsMediaType type, FsStreamDirection direction)
 	}
 	return result;
 }
+
+void
+purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
+		const gchar *name, const gchar *value)
+{
+	PurpleMediaCodecParameter *new_param;
+
+	g_return_if_fail(name != NULL && value != NULL);
+
+	new_param = g_new0(PurpleMediaCodecParameter, 1);
+	new_param->name = g_strdup(name);
+	new_param->value = g_strdup(value);
+	codec->optional_params = g_list_append(
+			codec->optional_params, new_param);
+}
+
+void
+purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
+		PurpleMediaCodecParameter *param)
+{
+	g_free(param->name);
+	g_free(param->value);
+	g_free(param);
+	codec->optional_params =
+			g_list_remove(codec->optional_params, param);
+}
+
+PurpleMediaCodecParameter *
+purple_media_codec_get_optional_parameter(PurpleMediaCodec *codec,
+		const gchar *name, const gchar *value)
+{
+	GList *iter;
+
+	g_return_val_if_fail(codec != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
+		PurpleMediaCodecParameter *param = iter->data;
+		if (!g_ascii_strcasecmp(param->name, name) &&
+				(value == NULL ||
+				!g_ascii_strcasecmp(param->value, value)))
+			return param;
+	}
+
+	return NULL;
+}
+
+PurpleMediaCodec *
+purple_media_codec_new(int id, const char *encoding_name,
+		PurpleMediaSessionType media_type, guint clock_rate)
+{
+	PurpleMediaCodec *codec = g_new0(PurpleMediaCodec, 1);
+
+	codec->id = id;
+	codec->encoding_name = g_strdup(encoding_name);
+	codec->media_type = media_type;
+	codec->clock_rate = clock_rate;
+	return codec;
+}
+
+static PurpleMediaCodec *
+purple_media_codec_copy(PurpleMediaCodec *codec)
+{
+	PurpleMediaCodec *new_codec;
+	GList *iter;
+
+	if (codec == NULL)
+		return NULL;
+
+	new_codec = purple_media_codec_new(codec->id, codec->encoding_name,
+			codec->media_type, codec->clock_rate);
+	new_codec->channels = codec->channels;
+
+	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
+		PurpleMediaCodecParameter *param =
+				(PurpleMediaCodecParameter*)iter->data;
+		purple_media_codec_add_optional_parameter(new_codec,
+				param->name, param->value);
+	}
+
+	return new_codec;
+}
+
+static void
+purple_media_codec_free(PurpleMediaCodec *codec)
+{
+	if (codec == NULL)
+		return;
+
+	g_free(codec->encoding_name);
+
+	for (; codec->optional_params; codec->optional_params =
+			g_list_delete_link(codec->optional_params,
+			codec->optional_params)) {
+		purple_media_codec_remove_optional_parameter(codec,
+				codec->optional_params->data);
+	}
+
+	g_free(codec);
+}
+
+static FsCodec *
+purple_media_codec_to_fs(const PurpleMediaCodec *codec)
+{
+	FsCodec *new_codec;
+	GList *iter;
+
+	if (codec == NULL)
+		return NULL;
+
+	new_codec = fs_codec_new(codec->id, codec->encoding_name,
+			purple_media_to_fs_media_type(codec->media_type),
+			codec->clock_rate);
+	new_codec->channels = codec->channels;
+
+	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
+		PurpleMediaCodecParameter *param =
+				(PurpleMediaCodecParameter*)iter->data;
+		fs_codec_add_optional_parameter(new_codec,
+				param->name, param->value);
+	}
+
+	return new_codec;
+}
+
+static PurpleMediaCodec *
+purple_media_codec_from_fs(const FsCodec *codec)
+{
+	PurpleMediaCodec *new_codec;
+	GList *iter;
+
+	if (codec == NULL)
+		return NULL;
+
+	new_codec = purple_media_codec_new(codec->id, codec->encoding_name,
+			purple_media_from_fs(codec->media_type,
+			FS_DIRECTION_BOTH), codec->clock_rate);
+	new_codec->channels = codec->channels;
+
+	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
+		FsCodecParameter *param = (FsCodecParameter*)iter->data;
+		purple_media_codec_add_optional_parameter(new_codec,
+				param->name, param->value);
+	}
+
+	return new_codec;
+}
+
+gchar *
+purple_media_codec_to_string(const PurpleMediaCodec *codec)
+{
+	FsCodec *fscodec = purple_media_codec_to_fs(codec);
+	gchar *str = fs_codec_to_string(fscodec);
+	fs_codec_destroy(fscodec);
+	return str;
+}
+
+static GList *
+purple_media_codec_list_from_fs(GList *codecs)
+{
+	GList *new_list = NULL;
+
+	for (; codecs; codecs = g_list_next(codecs)) {
+		new_list = g_list_prepend(new_list,
+				purple_media_codec_from_fs(
+				codecs->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+static GList *
+purple_media_codec_list_to_fs(GList *codecs)
+{
+	GList *new_list = NULL;
+
+	for (; codecs; codecs = g_list_next(codecs)) {
+		new_list = g_list_prepend(new_list,
+				purple_media_codec_to_fs(
+				codecs->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+GList *
+purple_media_codec_list_copy(GList *codecs)
+{
+	GList *new_list = NULL;
+
+	for (; codecs; codecs = g_list_next(codecs)) {
+		new_list = g_list_prepend(new_list, g_boxed_copy(
+				PURPLE_TYPE_MEDIA_CODEC,
+				codecs->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+void
+purple_media_codec_list_free(GList *codecs)
+{
+	for (; codecs; codecs =
+			g_list_delete_link(codecs, codecs)) {
+		g_boxed_free(PURPLE_TYPE_MEDIA_CODEC,
+				codecs->data);
+	}
+}
+
+GType
+purple_media_codec_get_type()
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleMediaCodec",
+				(GBoxedCopyFunc)purple_media_codec_copy,
+				(GBoxedFreeFunc)purple_media_codec_free);
+	}
+	return type;
+}
+
+
 
 PurpleMediaSessionType
 purple_media_get_overall_type(PurpleMedia *media)
@@ -1069,8 +1459,6 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 	const gchar *audio_device = purple_prefs_get_string("/purple/media/audio/device");
 	double input_volume = purple_prefs_get_int("/purple/media/audio/volume/input")/10.0;
 
-	purple_debug_info("media", "purple_media_audio_init_src\n");
-
 	*sendbin = gst_bin_new("purplesendaudiobin");
 	src = gst_element_factory_make("alsasrc", "asrc");
 	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
@@ -1098,8 +1486,6 @@ purple_media_video_init_src(GstElement **sendbin)
 			"/purple/media/video/plugin");
 	const gchar *video_device = purple_prefs_get_string(
 			"/purple/media/video/device");
-
-	purple_debug_info("media", "purple_media_video_init_src\n");
 
 	*sendbin = gst_bin_new("purplesendvideobin");
 	src = gst_element_factory_make(video_plugin, "purplevideosource");
@@ -1143,8 +1529,6 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 	double output_volume = purple_prefs_get_int(
 			"/purple/media/audio/volume/output")/10.0;
 
-	purple_debug_info("media", "purple_media_audio_init_recv\n");
-
 	*recvbin = gst_bin_new("pidginrecvaudiobin");
 	sink = gst_element_factory_make("alsasink", "asink");
 	g_object_set(G_OBJECT(sink), "sync", FALSE, NULL);
@@ -1158,8 +1542,6 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 	ghost = gst_ghost_pad_new("ghostsink", pad);
 	gst_element_add_pad(*recvbin, ghost);
 	g_object_set(G_OBJECT(*recvlevel), "message", TRUE, NULL);
-
-	purple_debug_info("media", "purple_media_audio_init_recv end\n");
 }
 
 void
@@ -1168,16 +1550,12 @@ purple_media_video_init_recv(GstElement **recvbin)
 	GstElement *sink;
 	GstPad *pad, *ghost;
 
-	purple_debug_info("media", "purple_media_video_init_recv\n");
-
 	*recvbin = gst_bin_new("pidginrecvvideobin");
 	sink = gst_element_factory_make("autovideosink", "purplevideosink");
 	gst_bin_add(GST_BIN(*recvbin), sink);
 	pad = gst_element_get_pad(sink, "sink");
 	ghost = gst_ghost_pad_new("ghostsink", pad);
 	gst_element_add_pad(*recvbin, ghost);
-
-	purple_debug_info("media", "purple_media_video_init_recv end\n");
 }
 
 static void
@@ -1187,7 +1565,7 @@ purple_media_new_local_candidate_cb(FsStream *stream,
 {
 	gchar *name;
 	FsParticipant *participant;
-	FsCandidate *candidate;
+	PurpleMediaCandidate *candidate;
 	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->foundation);
 	g_object_get(stream, "participant", &participant, NULL);
 	g_object_get(participant, "cname", &name, NULL);
@@ -1195,10 +1573,10 @@ purple_media_new_local_candidate_cb(FsStream *stream,
 
 	purple_media_insert_local_candidate(session, name, fs_candidate_copy(local_candidate));
 
-	candidate = fs_candidate_copy(local_candidate);
+	candidate = purple_media_candidate_from_fs(local_candidate);
 	g_signal_emit(session->media, purple_media_signals[NEW_CANDIDATE],
 		      0, session->id, name, candidate);
-	fs_candidate_destroy(candidate);
+	purple_media_candidate_free(candidate);
 
 	g_free(name);
 }
@@ -1234,8 +1612,10 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 {
 	gchar *name;
 	FsParticipant *participant;
-	FsCandidate *local = fs_candidate_copy(native_candidate);
-	FsCandidate *remote = fs_candidate_copy(remote_candidate);
+	PurpleMediaCandidate *local =
+			purple_media_candidate_from_fs(native_candidate);
+	PurpleMediaCandidate *remote =
+			purple_media_candidate_from_fs(remote_candidate);
 	PurpleMediaStream *stream;
 
 	g_object_get(fsstream, "participant", &participant, NULL);
@@ -1251,8 +1631,18 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	g_signal_emit(session->media, purple_media_signals[CANDIDATE_PAIR], 0,
 		      local, remote);
 
-	fs_candidate_destroy(local);
-	fs_candidate_destroy(remote);
+	purple_media_candidate_free(local);
+	purple_media_candidate_free(remote);
+}
+
+static gboolean
+purple_media_connected_cb(PurpleMediaStream *stream)
+{
+	g_signal_emit(stream->session->media,
+			purple_media_signals[STATE_CHANGED],
+			0, PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
+			stream->session->id, stream->participant);
+	return FALSE;
 }
 
 static void
@@ -1268,13 +1658,10 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	gst_bin_add(GST_BIN(purple_media_get_pipeline(stream->session->media)),
 		    stream->sink);
 	sinkpad = gst_element_get_static_pad(stream->sink, "ghostsink");
-	purple_debug_info("media", "connecting new src pad: %s\n", 
-			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
+	gst_pad_link(srcpad, sinkpad);
 	gst_element_set_state(stream->sink, GST_STATE_PLAYING);
 
-	g_signal_emit(stream->session->media, purple_media_signals[STATE_CHANGED],
-				0, PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
-				stream->session->id, stream->participant);
+	g_timeout_add(0, (GSourceFunc)purple_media_connected_cb, stream);
 }
 
 static gchar *
@@ -1476,9 +1863,12 @@ purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id)
 GList *
 purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id)
 {
+	GList *fscodecs;
 	GList *codecs;
 	g_object_get(G_OBJECT(purple_media_get_session(media, sess_id)->session),
-		     "codecs", &codecs, NULL);
+		     "codecs", &fscodecs, NULL);
+	codecs = purple_media_codec_list_from_fs(fscodecs);
+	fs_codec_list_destroy(fscodecs);
 	return codecs;
 }
 
@@ -1486,7 +1876,7 @@ GList *
 purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
 	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
-	return fs_candidate_list_copy(stream->local_candidates);
+	return purple_media_candidate_list_from_fs(stream->local_candidates);
 }
 
 void
@@ -1495,32 +1885,36 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 {
 	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
-			fs_candidate_list_copy(remote_candidates));
+			purple_media_candidate_list_to_fs(remote_candidates));
 
 	if (stream->session->accepted == TRUE) {
 		purple_media_set_remote_candidates(stream);
 	}
 }
 
-FsCandidate *
+PurpleMediaCandidate *
 purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	return purple_media_get_stream(media, sess_id, name)->local_candidate;
+	return purple_media_candidate_from_fs(purple_media_get_stream(
+			media, sess_id, name)->local_candidate);
 }
 
-FsCandidate *
+PurpleMediaCandidate *
 purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	return purple_media_get_stream(media, sess_id, name)->remote_candidate;
+	return purple_media_candidate_from_fs(purple_media_get_stream(
+			media, sess_id, name)->remote_candidate);
 }
 
 gboolean
 purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs)
 {
 	FsStream *stream = purple_media_get_stream(media, sess_id, name)->stream;
+	GList *fscodecs = purple_media_codec_list_to_fs(codecs);
 	GError *err = NULL;
 
-	fs_stream_set_remote_codecs(stream, codecs, &err);
+	fs_stream_set_remote_codecs(stream, fscodecs, &err);
+	fs_codec_list_destroy(fscodecs);
 
 	if (err) {
 		purple_debug_error("media", "Error setting remote codecs: %s\n",
@@ -1547,12 +1941,14 @@ purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
 }
 
 gboolean
-purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, FsCodec *codec)
+purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec)
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	FsCodec *fscodec = purple_media_codec_to_fs(codec);
 	GError *err = NULL;
 
-	fs_session_set_send_codec(session->session, codec, &err);
+	fs_session_set_send_codec(session->session, fscodec, &err);
+	fs_codec_destroy(fscodec);
 
 	if (err) {
 		purple_debug_error("media", "Error setting send codec\n");

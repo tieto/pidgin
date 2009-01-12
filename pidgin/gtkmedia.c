@@ -337,7 +337,6 @@ create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 		return TRUE;
 
 	name = gst_object_get_name(GST_MESSAGE_SRC (message));
-	purple_debug_info("gtkmedia", "prepare-xwindow-id object name: %s\n", name);
 
 	/* The XOverlay's name is the sink's name with a suffix */
 	if (!strncmp(name, "purplevideosink", strlen("purplevideosink")))
@@ -350,10 +349,18 @@ create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 	return TRUE;
 }
 
+static gboolean
+realize_cb_cb(GstElement *element)
+{
+	gst_element_set_locked_state(element, FALSE);
+	gst_element_set_state(element, GST_STATE_PLAYING);
+	return FALSE;
+}
+
 static void
 realize_cb(GtkWidget *widget, GstElement *element)
 {
-	gst_element_set_state(element, GST_STATE_PLAYING);
+	g_timeout_add(0, (GSourceFunc)realize_cb_cb, element);
 }
 
 static void
@@ -408,6 +415,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		} else if (type & PURPLE_MEDIA_VIDEO) {
 			if (!videosendbin && (type & PURPLE_MEDIA_SEND_VIDEO)) {
 				purple_media_video_init_src(&videosendbin);
+				gst_element_set_locked_state(videosendbin, TRUE);
 				purple_media_set_src(media, sessions->data, videosendbin);
 			}
 			if (!videorecvbool && (type & PURPLE_MEDIA_RECV_VIDEO)) {
