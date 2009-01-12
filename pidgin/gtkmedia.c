@@ -337,7 +337,6 @@ create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 		return TRUE;
 
 	name = gst_object_get_name(GST_MESSAGE_SRC (message));
-	purple_debug_info("gtkmedia", "prepare-xwindow-id object name: %s\n", name);
 
 	/* The XOverlay's name is the sink's name with a suffix */
 	if (!strncmp(name, "purplevideosink", strlen("purplevideosink")))

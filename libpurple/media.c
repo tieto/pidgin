@@ -1459,8 +1459,6 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 	const gchar *audio_device = purple_prefs_get_string("/purple/media/audio/device");
 	double input_volume = purple_prefs_get_int("/purple/media/audio/volume/input")/10.0;
 
-	purple_debug_info("media", "purple_media_audio_init_src\n");
-
 	*sendbin = gst_bin_new("purplesendaudiobin");
 	src = gst_element_factory_make("alsasrc", "asrc");
 	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
@@ -1488,8 +1486,6 @@ purple_media_video_init_src(GstElement **sendbin)
 			"/purple/media/video/plugin");
 	const gchar *video_device = purple_prefs_get_string(
 			"/purple/media/video/device");
-
-	purple_debug_info("media", "purple_media_video_init_src\n");
 
 	*sendbin = gst_bin_new("purplesendvideobin");
 	src = gst_element_factory_make(video_plugin, "purplevideosource");
@@ -1533,8 +1529,6 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 	double output_volume = purple_prefs_get_int(
 			"/purple/media/audio/volume/output")/10.0;
 
-	purple_debug_info("media", "purple_media_audio_init_recv\n");
-
 	*recvbin = gst_bin_new("pidginrecvaudiobin");
 	sink = gst_element_factory_make("alsasink", "asink");
 	g_object_set(G_OBJECT(sink), "sync", FALSE, NULL);
@@ -1548,8 +1542,6 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 	ghost = gst_ghost_pad_new("ghostsink", pad);
 	gst_element_add_pad(*recvbin, ghost);
 	g_object_set(G_OBJECT(*recvlevel), "message", TRUE, NULL);
-
-	purple_debug_info("media", "purple_media_audio_init_recv end\n");
 }
 
 void
@@ -1558,16 +1550,12 @@ purple_media_video_init_recv(GstElement **recvbin)
 	GstElement *sink;
 	GstPad *pad, *ghost;
 
-	purple_debug_info("media", "purple_media_video_init_recv\n");
-
 	*recvbin = gst_bin_new("pidginrecvvideobin");
 	sink = gst_element_factory_make("autovideosink", "purplevideosink");
 	gst_bin_add(GST_BIN(*recvbin), sink);
 	pad = gst_element_get_pad(sink, "sink");
 	ghost = gst_ghost_pad_new("ghostsink", pad);
 	gst_element_add_pad(*recvbin, ghost);
-
-	purple_debug_info("media", "purple_media_video_init_recv end\n");
 }
 
 static void
@@ -1647,6 +1635,16 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	purple_media_candidate_free(remote);
 }
 
+static gboolean
+purple_media_connected_cb(PurpleMediaStream *stream)
+{
+	g_signal_emit(stream->session->media,
+			purple_media_signals[STATE_CHANGED],
+			0, PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
+			stream->session->id, stream->participant);
+	return FALSE;
+}
+
 static void
 purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			      FsCodec *codec, PurpleMediaStream *stream)
@@ -1660,13 +1658,10 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	gst_bin_add(GST_BIN(purple_media_get_pipeline(stream->session->media)),
 		    stream->sink);
 	sinkpad = gst_element_get_static_pad(stream->sink, "ghostsink");
-	purple_debug_info("media", "connecting new src pad: %s\n", 
-			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
+	gst_pad_link(srcpad, sinkpad);
 	gst_element_set_state(stream->sink, GST_STATE_PLAYING);
 
-	g_signal_emit(stream->session->media, purple_media_signals[STATE_CHANGED],
-				0, PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
-				stream->session->id, stream->participant);
+	g_timeout_add(0, (GSourceFunc)purple_media_connected_cb, stream);
 }
 
 static gchar *
