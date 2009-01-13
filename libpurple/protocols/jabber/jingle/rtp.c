@@ -553,7 +553,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			/* This needs to be for the entire session, not a single content */
 			/* very hacky */
 			if (xmlnode_get_next_twin(xmlcontent) == NULL)
-				purple_media_got_accept(jingle_rtp_get_media(session));
+				purple_media_accept(jingle_rtp_get_media(session));
 
 			g_object_unref(session);
 			break;
@@ -584,10 +584,6 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 						jingle_session_get_remote_jid(session),
 						candidates);
 			}
-
-			/* very hacky */
-			if (xmlnode_get_next_twin(xmlcontent) == NULL)
-				purple_media_ready(jingle_rtp_get_media(session));
 
 			g_object_unref(session);
 			break;
@@ -695,9 +691,6 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	if ((media = jingle_rtp_get_media(session)) == NULL) {
 		return NULL;
 	}
-
-	purple_media_ready(media);
-	purple_media_wait(media);
 
 	g_free(jid);
 	g_free(me);

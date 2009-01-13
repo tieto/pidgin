@@ -380,20 +380,6 @@ GstElement *purple_media_get_pipeline(PurpleMedia *media);
 void purple_media_error(PurpleMedia *media, const gchar *error, ...);
 
 /**
- * Set the media session to the ready state.
- *
- * @param media The media object to set the state on.
- */
-void purple_media_ready(PurpleMedia *media);
-
-/**
- * Set the media session to the wait state.
- *
- * @param media The media object to set the state on.
- */
-void purple_media_wait(PurpleMedia *media);
-
-/**
  * Set the media session to the accepted state.
  *
  * @param media The media object to set the state on.
@@ -415,25 +401,11 @@ void purple_media_reject(PurpleMedia *media);
 void purple_media_hangup(PurpleMedia *media);
 
 /**
- * Set the media session to the got_request state.
- *
- * @param media The media object to set the state on.
- */
-void purple_media_got_request(PurpleMedia *media);
-
-/**
  * Set the media session to the got_hangup state.
  *
  * @param media The media object to set the state on.
  */
 void purple_media_got_hangup(PurpleMedia *media);
-
-/**
- * Set the media session to the got_accept state.
- *
- * @param media The media object to set the state on.
- */
-void purple_media_got_accept(PurpleMedia *media);
 
 /**
  * Enumerates a list of devices.

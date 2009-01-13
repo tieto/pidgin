@@ -305,7 +305,6 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 			G_CALLBACK(google_session_ready), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
-	purple_media_ready(session->media);
 
 	if (sessions == NULL)
 		sessions = g_hash_table_new(google_session_id_hash,
@@ -367,7 +366,6 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 			G_CALLBACK(google_session_ready), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
-	purple_media_ready(session->media);
 
 	purple_media_codec_list_free(codecs);
 	
@@ -442,7 +440,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	purple_media_set_remote_codecs(session->media, "google-voice",
 			session->remote_jid, codecs);
 
-	purple_media_got_accept(session->media);
+	purple_media_accept(session->media);
 }
 
 static void

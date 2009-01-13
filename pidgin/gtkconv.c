@@ -7765,13 +7765,9 @@ menu_initiate_audio_call_cb(gpointer data, guint action, GtkWidget *widget)
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
-	PurpleMedia *media =
-		purple_prpl_initiate_media(account,
-					   purple_conversation_get_name(conv),
-					   PURPLE_MEDIA_AUDIO);
-
-	if (media)
-		purple_media_wait(media);
+	purple_prpl_initiate_media(account,
+			purple_conversation_get_name(conv),
+			PURPLE_MEDIA_AUDIO);
 }
 
 static void
@@ -7781,13 +7777,9 @@ menu_initiate_video_call_cb(gpointer data, guint action, GtkWidget *widget)
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
-	PurpleMedia *media =
-		purple_prpl_initiate_media(account,
-					   purple_conversation_get_name(conv),
-					   PURPLE_MEDIA_VIDEO);
-
-	if (media)
-		purple_media_wait(media);
+	purple_prpl_initiate_media(account,
+			purple_conversation_get_name(conv),
+			PURPLE_MEDIA_VIDEO);
 }
 
 static void
@@ -7797,13 +7789,9 @@ menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
-	PurpleMedia *media =
-		purple_prpl_initiate_media(account,
-					   purple_conversation_get_name(conv),
-					   PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
-
-	if (media)
-		purple_media_wait(media);
+	purple_prpl_initiate_media(account,
+			purple_conversation_get_name(conv),
+			PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 }
 
 static void

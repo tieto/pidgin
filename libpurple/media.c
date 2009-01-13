@@ -1215,18 +1215,6 @@ purple_media_error(PurpleMedia *media, const gchar *error, ...)
 }
 
 void
-purple_media_ready(PurpleMedia *media)
-{
-
-}
-
-void
-purple_media_wait(PurpleMedia *media)
-{
-
-}
-
-void
 purple_media_accept(PurpleMedia *media)
 {
 	GList *sessions;
@@ -1238,7 +1226,8 @@ purple_media_accept(PurpleMedia *media)
 		PurpleMediaSession *session = sessions->data;
 		session->accepted = TRUE;
 
-		purple_media_emit_ready(media, session, NULL);
+		if (media->priv->initiator == FALSE)
+			purple_media_emit_ready(media, session, NULL);
 	}
 
 	streams = media->priv->streams;
@@ -1271,37 +1260,11 @@ purple_media_reject(PurpleMedia *media)
 }
 
 void
-purple_media_got_request(PurpleMedia *media)
-{
-
-}
-
-void
 purple_media_got_hangup(PurpleMedia *media)
 {
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_END,
 			NULL, NULL);
-}
-
-void
-purple_media_got_accept(PurpleMedia *media)
-{
-	GList *sessions;
-	GList *streams;
-
-	sessions = g_hash_table_get_values(media->priv->sessions);
-
-	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-		PurpleMediaSession *session = sessions->data;
-		session->accepted = TRUE;
-	}
-
-	streams = media->priv->streams;
-
-	for (; streams; streams = g_list_next(streams)) {
-		purple_media_set_remote_candidates(streams->data);
-	}
 }
 
 GList*
@@ -1543,10 +1506,6 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 {
 	gchar *name;
 	FsParticipant *participant;
-	PurpleMediaCandidate *local =
-			purple_media_candidate_from_fs(native_candidate);
-	PurpleMediaCandidate *remote =
-			purple_media_candidate_from_fs(remote_candidate);
 	PurpleMediaStream *stream;
 
 	g_object_get(fsstream, "participant", &participant, NULL);
@@ -1559,9 +1518,6 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	stream->remote_candidate = fs_candidate_copy(remote_candidate);
 
 	purple_debug_info("media", "candidate pair established\n");
-
-	purple_media_candidate_free(local);
-	purple_media_candidate_free(remote);
 }
 
 static gboolean

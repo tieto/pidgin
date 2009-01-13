@@ -340,31 +340,21 @@ static void gtk_blist_menu_im_cb(GtkWidget *w, PurpleBuddy *b)
 #ifdef USE_VV
 static void gtk_blist_menu_audio_call_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	PurpleMedia *media = purple_prpl_initiate_media(purple_buddy_get_account(b),
+	purple_prpl_initiate_media(purple_buddy_get_account(b),
 		purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO);
-	
-	if (media) {
-		purple_media_wait(media);
-	}
 }
 
 static void gtk_blist_menu_video_call_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	PurpleMedia *media = NULL;
-	
 	/* if the buddy supports both audio and video, start a combined call,
 	 otherwise start a pure video session */
 	if (purple_prpl_can_do_media(purple_buddy_get_account(b),
 		purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO)) {
-		media = purple_prpl_initiate_media(purple_buddy_get_account(b),
+		purple_prpl_initiate_media(purple_buddy_get_account(b),
 			purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 	} else {
-		media = purple_prpl_initiate_media(purple_buddy_get_account(b),
+		purple_prpl_initiate_media(purple_buddy_get_account(b),
 			purple_buddy_get_name(b), PURPLE_MEDIA_VIDEO);
-	}
-	
-	if (media) {
-		purple_media_wait(media);
 	}
 }
 

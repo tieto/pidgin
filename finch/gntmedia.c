@@ -359,7 +359,6 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 	if (!media)
 		return PURPLE_CMD_STATUS_FAILED;
 
-	purple_media_wait(media);
 	return PURPLE_CMD_STATUS_OK;
 }
 
