@@ -1318,7 +1318,6 @@ purple_media_hangup(PurpleMedia *media)
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_END,
 			NULL, NULL);
-	g_signal_emit(media, purple_media_signals[HANGUP], 0);
 }
 
 void
@@ -1330,7 +1329,6 @@ purple_media_reject(PurpleMedia *media)
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_END,
 			NULL, NULL);
-	g_signal_emit(media, purple_media_signals[REJECT], 0);
 }
 
 void
@@ -1345,7 +1343,6 @@ purple_media_got_hangup(PurpleMedia *media)
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_END,
 			NULL, NULL);
-	g_signal_emit(media, purple_media_signals[GOT_HANGUP], 0);
 }
 
 void

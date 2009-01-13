@@ -564,13 +564,6 @@ pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 }
 
 static void
-pidgin_media_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	pidgin_media_emit_message(gtkmedia, _("You have ended the call."));
-	gtk_widget_destroy(GTK_WIDGET(gtkmedia));
-}
-
-static void
 pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	PurpleMediaSessionType type = purple_media_get_overall_type(media);
@@ -594,17 +587,23 @@ pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 }
 
 static void
-pidgin_media_got_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+pidgin_media_state_changed_cb(PurpleMedia *media,
+		PurpleMediaStateChangedType type,
+		gchar *sid, gchar *name, PidginMedia *gtkmedia)
 {
-	pidgin_media_emit_message(gtkmedia, _("The call has been terminated."));
-	gtk_widget_destroy(GTK_WIDGET(gtkmedia));
-}
-
-static void
-pidgin_media_reject_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	pidgin_media_emit_message(gtkmedia, _("You have rejected the call."));
-	gtk_widget_destroy(GTK_WIDGET(gtkmedia));
+	purple_debug_info("gtkmedia", "type: %d sid: %s name: %s\n",
+			type, sid, name);
+	if (sid == NULL && name == NULL) {
+		if (type == PURPLE_MEDIA_STATE_CHANGED_END) {
+			pidgin_media_emit_message(gtkmedia,
+					_("The call has been terminated."));
+			gtk_widget_destroy(GTK_WIDGET(gtkmedia));
+			
+		} else if (type == PURPLE_MEDIA_STATE_CHANGED_REJECTED) {
+			pidgin_media_emit_message(gtkmedia,
+					_("You have rejected the call."));
+		}
+	}
 }
 
 static void
@@ -635,16 +634,12 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 				G_CALLBACK(pidgin_media_ready_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media) ,"wait",
 				G_CALLBACK(pidgin_media_wait_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "hangup",
-				G_CALLBACK(pidgin_media_hangup_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "reject",
-				G_CALLBACK(pidgin_media_reject_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "got-request",
 				G_CALLBACK(pidgin_media_got_request_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "got-hangup",
-				G_CALLBACK(pidgin_media_got_hangup_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "got-accept",
 				G_CALLBACK(pidgin_media_accept_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
+				G_CALLBACK(pidgin_media_state_changed_cb), media);
 			break;
 		case PROP_SCREENNAME:
 			if (media->priv->screenname)
