@@ -543,26 +543,6 @@ pidgin_media_wait_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_WAITING);
 }
 
-/* maybe we should have different callbacks for when we received the accept
-    and we accepted ourselves */
-static void
-pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	GstElement *audiosendbin = NULL;
-	GstElement *audiorecvbin = NULL;
-	GstElement *videosendbin = NULL;
-	GstElement *videorecvbin = NULL;
-
-	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
-	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
-
-	purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
-				  &videosendbin, &videorecvbin);
-
-	if (audiorecvbin || audiosendbin || videorecvbin || videosendbin)
-		gtk_widget_show(gtkmedia->priv->display);
-}
-
 static void
 pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
@@ -603,6 +583,18 @@ pidgin_media_state_changed_cb(PurpleMedia *media,
 			pidgin_media_emit_message(gtkmedia,
 					_("You have rejected the call."));
 		}
+	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED) {
+		GstElement *audiosendbin = NULL, *audiorecvbin = NULL;
+		GstElement *videosendbin = NULL, *videorecvbin = NULL;
+
+		pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+		pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
+
+		purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
+					  &videosendbin, &videorecvbin);
+
+		if (audiorecvbin || audiosendbin || videorecvbin || videosendbin)
+			gtk_widget_show(gtkmedia->priv->display);
 	}
 }
 
@@ -615,10 +607,20 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 	media = PIDGIN_MEDIA(object);
 	switch (prop_id) {
 		case PROP_MEDIA:
+		{
+			gboolean initiator;
 			if (media->priv->media)
 				g_object_unref(media->priv->media);
 			media->priv->media = g_value_get_object(value);
 			g_object_ref(media->priv->media);
+
+			g_object_get(G_OBJECT(media->priv->media),
+					"initiator", &initiator, NULL);
+			if (initiator == TRUE)
+				pidgin_media_set_state(media, PIDGIN_MEDIA_WAITING);
+			else
+				pidgin_media_set_state(media, PIDGIN_MEDIA_REQUESTED);
+
 			g_signal_connect_swapped(G_OBJECT(media->priv->accept), "clicked", 
 				 G_CALLBACK(purple_media_accept), media->priv->media);
 			g_signal_connect_swapped(G_OBJECT(media->priv->reject), "clicked",
@@ -628,19 +630,14 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 			g_signal_connect(G_OBJECT(media->priv->media), "error",
 				G_CALLBACK(pidgin_media_error_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "accepted",
-				G_CALLBACK(pidgin_media_accept_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media) ,"ready",
 				G_CALLBACK(pidgin_media_ready_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media) ,"wait",
-				G_CALLBACK(pidgin_media_wait_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "got-request",
 				G_CALLBACK(pidgin_media_got_request_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "got-accept",
-				G_CALLBACK(pidgin_media_accept_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
 				G_CALLBACK(pidgin_media_state_changed_cb), media);
 			break;
+		}
 		case PROP_SCREENNAME:
 			if (media->priv->screenname)
 				g_free(media->priv->screenname);
