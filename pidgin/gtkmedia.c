@@ -400,6 +400,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	gboolean audiorecvbool = FALSE;
 	gboolean videorecvbool = FALSE;
 	GstBus *bus;
+	gboolean is_initiator;
 
 	PurpleMediaSessionType type = purple_media_get_session_type(media, sid);
 	if (type & PURPLE_MEDIA_AUDIO) {
@@ -542,29 +543,24 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtkmedia->priv->send_widget = send_widget;
 	if (recv_widget != NULL)
 		gtkmedia->priv->recv_widget = recv_widget;
-}
 
-static void
-pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	PurpleMediaSessionType type = purple_media_get_overall_type(media);
-	gchar *message;
+	g_object_get(G_OBJECT(media), "initiator", &is_initiator, NULL);
 
-	if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {
-		message = g_strdup_printf(_("%s wishes to start an audio/video session with you."),
-					  gtkmedia->priv->screenname);
-	} else if (type & PURPLE_MEDIA_AUDIO) {
-		message = g_strdup_printf(_("%s wishes to start an audio session with you."),
-					  gtkmedia->priv->screenname);
-	} else if (type & PURPLE_MEDIA_VIDEO) {
-		message = g_strdup_printf(_("%s wishes to start a video session with you."),
-					  gtkmedia->priv->screenname);
-	} else {
-		return;
+	if (is_initiator == FALSE) {
+		gchar *message;
+		if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {
+			message = g_strdup_printf(_("%s wishes to start an audio/video session with you."),
+						  gtkmedia->priv->screenname);
+		} else if (type & PURPLE_MEDIA_AUDIO) {
+			message = g_strdup_printf(_("%s wishes to start an audio session with you."),
+						  gtkmedia->priv->screenname);
+		} else if (type & PURPLE_MEDIA_VIDEO) {
+			message = g_strdup_printf(_("%s wishes to start a video session with you."),
+						  gtkmedia->priv->screenname);
+		}
+		pidgin_media_emit_message(gtkmedia, message);
+		g_free(message);
 	}
-
-	pidgin_media_emit_message(gtkmedia, message);
-	g_free(message);
 }
 
 static void
@@ -634,8 +630,6 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 			g_signal_connect(G_OBJECT(media->priv->media), "error",
 				G_CALLBACK(pidgin_media_error_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "got-request",
-				G_CALLBACK(pidgin_media_got_request_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
 				G_CALLBACK(pidgin_media_state_changed_cb), media);
 			break;
