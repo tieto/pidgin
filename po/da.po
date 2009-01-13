@@ -1,8 +1,8 @@
-# Gaim Danish translation
+# Pidgin Danish translation
 # Copyright (C) 2003-2006, Morten Brix Pedersen <morten@wtf.dk>
 # Copyright (C) 2007, Peter Bach <bach.peter@gmail.com>
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 # Konventioner:
 #   Buddy list = venneliste
@@ -16,7 +16,7 @@
 #   Ban = Udvis
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 2.0.0\n"
+"Project-Id-Version: Pidgin 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-02-28 13:32+0200\n"
@@ -566,7 +566,7 @@ msgid ""
 msgstr ""
 "%s\n"
 " \n"
-"Gaim vil ikke forsøge at genforbinde til kontoen før du retter fejlen og "
+"Pidgin vil ikke forsøge at genforbinde til kontoen før du retter fejlen og "
 "genaktiverer kontoen."
 
 msgid "Re-enable Account"
@@ -989,7 +989,7 @@ msgstr "Ingen konfigurationsmuligheder for dette udvidelsesmodul."
 
 #, fuzzy
 msgid "Error loading plugin"
-msgstr "Gaim kunne ikke indlæse modulet."
+msgstr "Pidgin kunne ikke indlæse modulet."
 
 msgid "The selected file is not a valid plugin."
 msgstr ""
@@ -1007,7 +1007,7 @@ msgstr "Du kan (af)koble udvidelsesmoduler fra følgende liste."
 
 #, fuzzy
 msgid "Install Plugin..."
-msgstr "Lastlog-udvidelsesmodul for gaim-text."
+msgstr "Lastlog-udvidelsesmodul for Pidgin-text."
 
 msgid "Configure Plugin"
 msgstr "Konfigurér udvidelsesmodul"
@@ -1459,7 +1459,7 @@ msgstr "Statusser"
 
 #, fuzzy
 msgid "Error loading the plugin."
-msgstr "Gaim kunne ikke indlæse modulet."
+msgstr "Pidgin kunne ikke indlæse modulet."
 
 #, fuzzy
 msgid "Couldn't find X display"
@@ -1530,7 +1530,7 @@ msgstr "GntGf"
 
 #, fuzzy
 msgid "Toaster plugin"
-msgstr "Toaster-udvidelsesmodul for Gaim-Text."
+msgstr "Toaster-udvidelsesmodul for Pidgin-Text."
 
 #, c-format
 msgid "<b>Conversation with %s on %s:</b><br>"
@@ -1611,7 +1611,7 @@ msgstr "GntLastlog"
 
 #, fuzzy
 msgid "Lastlog plugin."
-msgstr "Lastlog-udvidelsesmodul for gaim-text."
+msgstr "Lastlog-udvidelsesmodul for Pidgin-text."
 
 msgid "accounts"
 msgstr "konti"
@@ -2231,7 +2231,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaim kunne ikke indlæse dit modul."
+msgstr "Pidgin kunne ikke indlæse dit modul."
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2239,7 +2239,7 @@ msgstr "Det krævede modul %s kunne ikke indlæses."
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaim kunne ikke indlæse dit modul."
+msgstr "Pidgin kunne ikke indlæse dit modul."
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2349,7 +2349,7 @@ msgstr "Kode test"
 #. *  description
 #, fuzzy
 msgid "Tests the ciphers that ship with libpurple."
-msgstr "Test koderne der kom med gaim."
+msgstr "Test koderne der kom med Pidgin."
 
 #. *< type
 #. *< ui_requirement
@@ -2375,7 +2375,7 @@ msgstr "DBus modul eksempel"
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Gaim filkontrol"
+msgstr "Pidgin filkontrol"
 
 #. *< name
 #. *< version
@@ -2384,7 +2384,7 @@ msgstr "Gaim filkontrol"
 #, fuzzy
 msgid "Allows control by entering commands in a file."
 msgstr ""
-"Giver mulighed for at kontrollere Gaim ved at skrive kommandoer i en fil."
+"Giver mulighed for at kontrollere Pidgin ved at skrive kommandoer i en fil."
 
 msgid "Minutes"
 msgstr "minutter"
@@ -3215,7 +3215,7 @@ msgstr "Filoverførsel fejlede"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaim kunne ikke åbne en lyttende port."
+msgstr "Pidgin kunne ikke åbne en lyttende port."
 
 msgid "Error displaying MOTD"
 msgstr "Fejl ved visning af MOTD"
@@ -3378,7 +3378,7 @@ msgstr "Ukendt besked"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "Gaim har sendt en besked som IRC-serveren ikke forstod."
+msgstr "Pidgin har sendt en besked som IRC-serveren ikke forstod."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -4829,7 +4829,7 @@ msgstr "Kunne ikke fortolke beskeden."
 
 #, fuzzy, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "Syntaks fejl (sikkert en Gaim fejl)"
+msgstr "Syntaks fejl (sikkert en Pidgin fejl)"
 
 #, c-format
 msgid "Invalid email address"
@@ -5202,7 +5202,7 @@ msgstr "Åbn _chat"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "SSL-understøttelse skal bruges til MSN. Installér et understøttet SSL "
-"bibliotek. Se http://gaim.sf.net/faq-ssl.php for flere oplysninger."
+"bibliotek. Se http://Pidgin.sf.net/faq-ssl.php for flere oplysninger."
 
 msgid "Failed to connect to server."
 msgstr "Kunne ikke forbinde til server."
@@ -5360,7 +5360,7 @@ msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
 msgstr ""
-"Gaim kunne ikke finde nogle oplysninger i brugerens profil. Brugeren "
+"Pidgin kunne ikke finde nogle oplysninger i brugerens profil. Brugeren "
 "eksisterer højst sandsynligt ikke."
 
 msgid "Profile URL"
@@ -6668,7 +6668,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid AIM login hash."
-msgstr "Gaim var ikke i stand til at få gyldig AIM logind-data."
+msgstr "Pidgin var ikke i stand til at få gyldig AIM logind-data."
 
 #, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
@@ -6676,7 +6676,7 @@ msgstr "Du vil måske blive frakoblet snart. Kontrollér %s for opdateringer."
 
 #, fuzzy
 msgid "Unable to get a valid login hash."
-msgstr "Gaim var ikke i stand til at få gyldig logind-data."
+msgstr "Pidgin var ikke i stand til at få gyldig logind-data."
 
 msgid "Password sent"
 msgstr "Adgangskode sendt"
@@ -6984,11 +6984,11 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Profil-længdens maskimal størrelse på %d bogstav er blevet overskredet. Gaim "
+"Profil-længdens maskimal størrelse på %d bogstav er blevet overskredet. Pidgin "
 "har forkortet den."
 msgstr[1] ""
 "Profil-længdens maskimal størrelse på %d bogstaver er blevet overskredet. "
-"Gaim har forkortet den."
+"Pidgin har forkortet den."
 
 msgid "Profile too long."
 msgstr "Profil for lang."
@@ -7001,10 +7001,10 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Fraværsbesked-længden på %d bogstav er blevet overskredet. Gaim har "
+"Fraværsbesked-længden på %d bogstav er blevet overskredet. Pidgin har "
 "forkortet den for dig."
 msgstr[1] ""
-"Fraværsbesked-længden på %d bogstaver er blevet overskredet. Gaim har "
+"Fraværsbesked-længden på %d bogstaver er blevet overskredet. Pidgin har "
 "forkortet den for dig."
 
 msgid "Away message too long."
@@ -7033,7 +7033,7 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"Gaim var midlertidigt ikke i stand til at hente din venneliste fra AIM "
+"Pidgin var midlertidigt ikke i stand til at hente din venneliste fra AIM "
 "serverne. Din venneliste er ikke tabt, og vil sikkert blive tilgængelig "
 "indenfor et par timer."
 
@@ -7551,7 +7551,7 @@ msgstr "Opretter"
 
 #, fuzzy
 msgid "About me"
-msgstr "Om Gaim"
+msgstr "Om Pidgin"
 
 #, fuzzy
 msgid "Category"
@@ -7768,7 +7768,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Om Gaim"
+msgstr "Om Pidgin"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7786,7 +7786,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Om Gaim"
+msgstr "Om Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -9163,7 +9163,7 @@ msgstr "Kunne ikke sætte cmodes for %s"
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Ukendt kommando: %s, (måske er det en Gaim-fejl)"
+msgstr "Ukendt kommando: %s, (måske er det en Pidgin-fejl)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr "part [kanal]: Forlad chatten"
@@ -9738,7 +9738,7 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "Denne Yahoo server har anmodet om brug af en ukendt godkendelsesmetode. "
-"Denne version af Gaim vil højst sandsynligt ikke kunne logge på Yahoo. Tjek %"
+"Denne version af Pidgin vil højst sandsynligt ikke kunne logge på Yahoo. Tjek %"
 "s for opdateringer."
 
 msgid "Failed Yahoo! Authentication"
@@ -10618,11 +10618,11 @@ msgid ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
-"<span size='larger' weight='bold'>Velkommen til Gaim!</span>\n"
+"<span size='larger' weight='bold'>Velkommen til Pidgin!</span>\n"
 "\n"
 "Du har ingen kvik-besked-konti konfigureret. For at komme i gang med at "
-"forbinde med Gaim tryk <b>Tilføj</b>-knappen nedenfor og konfigurer din "
-"første konto. Hvis du vil have Gaim til at forbinde til flere kvik-besked-"
+"forbinde med Pidgin tryk <b>Tilføj</b>-knappen nedenfor og konfigurer din "
+"første konto. Hvis du vil have Pidgin til at forbinde til flere kvik-besked-"
 "konti, tryk <b>Tilføj</b> igen for at konfigurer dem alle.\n"
 "\n"
 "Du kan vende tilbage til dette vindue for at tilføje, redigere eller fjerne "
@@ -11010,7 +11010,7 @@ msgid ""
 "b> window at <b>Accounts->Manage Accounts</b>. Once you enable accounts, "
 "you'll be able to sign on, set your status, and talk to your friends."
 msgstr ""
-"<span weight='bold' size='larger'>Velkommen til Gaim!</span>\n"
+"<span weight='bold' size='larger'>Velkommen til Pidgin!</span>\n"
 "\n"
 "Du har ingen aktive konti. Aktivér dine kvik-besked-konti fra <b>Konti</b>-"
 "vinduet <b>Konti->Tilføj/Redigér</b>. Når du har aktiveret konti, vil du "
@@ -11090,11 +11090,11 @@ msgstr "Slå konto til"
 
 #, fuzzy
 msgid "<PurpleMain>/Accounts/Enable Account"
-msgstr "<GaimMail>/Konti/Aktivér konto"
+msgstr "<PidginMail>/Konti/Aktivér konto"
 
 #, fuzzy
 msgid "<PurpleMain>/Accounts/"
-msgstr "<GaimMain>/Konti/"
+msgstr "<PidginMain>/Konti/"
 
 msgid "_Edit Account"
 msgstr "_Redigér konto"
@@ -11733,7 +11733,7 @@ msgstr "Amharisk"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Om Gaim"
+msgstr "Om Pidgin"
 
 #, fuzzy, c-format
 msgid ""
@@ -11747,18 +11747,18 @@ msgid ""
 "complete list of contributors.  We provide no warranty for this program."
 "<BR><BR>"
 msgstr ""
-"Gaim er en modulær beskeds-klient, der understøtter AIM, MSN, Yahoo!, "
+"Pidgin er en modulær beskeds-klient, der understøtter AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu og QQ på samme tid. Det er skrevet i GTK+."
 "<BR><BR>Du må modificere og redistribuere programmet under de betingelser "
 "givet af GPL (version 2 eller senere). En kopi af GPL er indeholdt i "
-"'COPYING' filen som blev distribueret med Gaim. Gaim er ophavsret af dens "
+"'COPYING' filen som blev distribueret med Pidgin. Pidgin er ophavsret af dens "
 "bidragsydere. Se 'COPYRIGHT' filen for den komplette liste af bidragsydere. "
 "Vi giver ingen garanti for dette program.<BR><BR>"
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim på irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin på irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Nuværende udviklere"
@@ -12366,7 +12366,7 @@ msgid ""
 "  --display=DISPLAY   X display to use\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Brug: %s [TILVALG]...\n"
 "\n"
 "  -c, --config=MAPPE  brug MAPPE for opsætningsfiler\n"
@@ -12393,7 +12393,7 @@ msgid ""
 "                      Without this only the first account will be enabled).\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Brug: %s [TILVALG]...\n"
 "\n"
 "  -c, --config=MAPPE  brug MAPPE for opsætningsfiler\n"
@@ -12420,12 +12420,12 @@ msgid ""
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
 msgstr ""
-"Gaim er gået ned og prøvet at lave en core fil.\n"
+"Pidgin er gået ned og prøvet at lave en core fil.\n"
 "Dette er en fejl i softwaren og er ikke din fejl.\n"
 "\n"
 "\n"
 "Hvis du kan re-producere det du gjorde, da programmet gik ned\n"
-"kan du gøre gaim udviklerne opmærksom på det her:\n"
+"kan du gøre Pidgin udviklerne opmærksom på det her:\n"
 "%sbug.php\n"
 "\n"
 "Sørg for at angive hvad du gjorde på tidspunktet\n"
@@ -13204,7 +13204,7 @@ msgstr "Kan ikke sende mappe %s."
 msgid ""
 "%s cannot transfer a folder. You will need to send the files within "
 "individually."
-msgstr "Gaim kan ikke overføre en mappe. Du skal sende filerne individuelt"
+msgstr "Pidgin kan ikke overføre en mappe. Du skal sende filerne individuelt"
 
 msgid "You have dragged an image"
 msgstr "Du har trukket et billede"
@@ -13873,7 +13873,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Gaim demonstrations-modul"
+msgstr "Pidgin demonstrations-modul"
 
 #. *< name
 #. *< version
@@ -13970,7 +13970,7 @@ msgstr "Skrifttyper"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Gaim filkontrol"
+msgstr "Pidgin filkontrol"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -13981,7 +13981,7 @@ msgstr "Genindlæs gtkrc filer"
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Gaim GTK+ tema kontrol"
+msgstr "Pidgin GTK+ tema kontrol"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr "Giver adgang til fælles brugte gtkrc indstillinger."
@@ -14156,7 +14156,7 @@ msgstr "Formatteringsindstillinger for tidsstempel"
 
 #, fuzzy, c-format
 msgid "_Force 24-hour time format"
-msgstr "_Tving (traditionel Gaim) 24-timers format"
+msgstr "_Tving (traditionel Pidgin) 24-timers format"
 
 msgid "Show dates in..."
 msgstr "Vis datoer i..."
@@ -14261,7 +14261,7 @@ msgstr "Opstart"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_Start Gaim ved Windows opstart"
+msgstr "_Start Pidgin ved Windows opstart"
 
 msgid "_Dockable Buddy List"
 msgstr "_Dockbar venneliste"
@@ -14283,12 +14283,12 @@ msgstr "Logind-indstillinger"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Indstilinger specifikke for Windows Gaim."
+msgstr "Indstilinger specifikke for Windows Pidgin."
 
 #, fuzzy
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
-msgstr "Giver muligheder specifikt til Windows Gaim, såsom venneliste dokning."
+msgstr "Giver muligheder specifikt til Windows Pidgin, såsom venneliste dokning."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Loggede ud.</font>"
@@ -14351,7 +14351,7 @@ msgstr ""
 #~ "Setting custom faces is not currently supported. Please choose an image "
 #~ "from %s."
 #~ msgstr ""
-#~ "Du prøver at opsætte et ansigt. Gaim tillader, på nuværende tidspunkt, "
+#~ "Du prøver at opsætte et ansigt. Pidgin tillader, på nuværende tidspunkt, "
 #~ "kun standard ansigterne. Vælg venligst et billede fra "
 
 #~ msgid "Invalid QQ Face"
@@ -14528,7 +14528,7 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "Du bruger Gaim version %s. Den nyeste version er %s.<hr>"
+#~ msgstr "Du bruger Pidgin version %s. Den nyeste version er %s.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -14564,7 +14564,7 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "There were errors unloading the plugin."
-#~ msgstr "Gaim kunne ikke udlæse modulet."
+#~ msgstr "Pidgin kunne ikke udlæse modulet."
 
 #~ msgid "Error setting socket options"
 #~ msgstr "Fejl ved opsætning af socket indstillinger"
@@ -14772,7 +14772,7 @@ msgstr ""
 #~ msgstr ""
 #~ "%s\n"
 #~ " \n"
-#~ "Gaim vil ikke forsøge at genforbinde til kontoen før du retter fejlen og "
+#~ "Pidgin vil ikke forsøge at genforbinde til kontoen før du retter fejlen og "
 #~ "genaktiverer kontoen."
 
 #~ msgid "User has typed something and stopped"
@@ -14827,9 +14827,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Konto:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "Gaim - internet beskeder"
-
 #~ msgid "Toggle offline buddies"
 #~ msgstr "Afkoblet venner til/fra"
 
@@ -14867,8 +14864,8 @@ msgstr ""
 #~ msgid "Jabber developer"
 #~ msgstr "Jabber udvikler"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim på irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin på irc.freenode.net<BR><BR>"
 
 #~ msgid "Smaller font size"
 #~ msgstr "Mindre skriftstørrelse"
@@ -14879,8 +14876,8 @@ msgstr ""
 #~ msgid "Insert image"
 #~ msgstr "Indsæt billede"
 
-#~ msgid "Gaim %s. Try `%s -h' for more information.\n"
-#~ msgstr "Gaim %s. Prøv `%s -h' for flere oplysninger.\n"
+#~ msgid "Pidgin %s. Try `%s -h' for more information.\n"
+#~ msgstr "Pidgin %s. Prøv `%s -h' for flere oplysninger.\n"
 
 #~ msgid "Show buddy _icons"
 #~ msgstr "Vis venne_ikoner"
@@ -14902,14 +14899,14 @@ msgstr ""
 #~ msgstr "Værktøjer"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "Du kan få version %s fra:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "Du kan få version %s fra:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
-#~ msgid "WinGaim Options"
-#~ msgstr "WinGaim Indstillinger"
+#~ msgid "WinPidgin Options"
+#~ msgstr "WinPidgin Indstillinger"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because it belongs to an account "
@@ -14929,8 +14926,8 @@ msgstr ""
 #~ msgid "Group not removed"
 #~ msgstr "Gruppe ikke fjernet"
 
-#~ msgid "Old Gaim"
-#~ msgstr "Gammel Gaim"
+#~ msgid "Old Pidgin"
+#~ msgstr "Gammel Pidgin"
 
 #~ msgid "Autoreply"
 #~ msgstr "Automatisk svar"
@@ -15014,8 +15011,8 @@ msgstr ""
 #~ "Jeg er ikke til stede. Vær venlig at efterlade en besked, og jeg vil "
 #~ "vende tilbage til dig hurtigst muligt."
 
-#~ msgid "Gaim User"
-#~ msgstr "Gaim bruger"
+#~ msgid "Pidgin User"
+#~ msgstr "Pidgin bruger"
 
 #~ msgid "Jabber Account"
 #~ msgstr "Jabber-konto"
@@ -15133,26 +15130,26 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Dermed ignorerer TOC alle beskeder der sendes, men du kan alligevel "
-#~ "risikere at blive logget af, hvis du forsøger at sende en besked. Gaim "
+#~ "risikere at blive logget af, hvis du forsøger at sende en besked. Pidgin "
 #~ "vil derfor tilbageholde alle beskeder. Dette er kun midlertidigt, så hav "
 #~ "tålmodighed."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Gem som..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Gem som..."
 
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "De normale godkendelsesmetoder har fejlet. Dette betyder enten at din "
 #~ "adgangskode er forkert, eller at Yahoo!'s godkendelsesmetode er blevet "
-#~ "ændret. Gaim vil nu forsøge at logge ind via Web Messenger-"
+#~ "ændret. Pidgin vil nu forsøge at logge ind via Web Messenger-"
 #~ "godkendelsesmetoden, som vil resultere i begrænset funktionalitet."
 
 #~ msgid "Unavailable"
@@ -15164,9 +15161,9 @@ msgstr ""
 #~ msgid "Plugin to establish a Crazychat session."
 #~ msgstr "Plugin til at etablere en skørchat session."
 
-#~ msgid "Uses Gaim to obtain buddy ips to connect for a Crazychat session"
+#~ msgid "Uses Pidgin to obtain buddy ips to connect for a Crazychat session"
 #~ msgstr ""
-#~ "Bruger Gaim til at finde venners ip-adresser til at forbinde til en "
+#~ "Bruger Pidgin til at finde venners ip-adresser til at forbinde til en "
 #~ "skørchat session"
 
 #~ msgid "Network Configuration"
@@ -15193,17 +15190,17 @@ msgstr ""
 #~ msgid "C_hat Messages:"
 #~ msgstr "C_hat beskeder:"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "Viser et Gaim-ikon i statusområdet."
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "Viser et Pidgin-ikon i statusområdet."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE, or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list. Also provides options "
 #~ "to blink for unread messages."
 #~ msgstr ""
 #~ "Viser et ikon i statusområdet (i f.eks. GNOME, KDE eller Windows) til at "
-#~ "vise Gaims nuværende status. Det tillader hurtig adgang til ofte brugte "
+#~ "vise Pidgins nuværende status. Det tillader hurtig adgang til ofte brugte "
 #~ "funktioner, og du kan hurtigt skjule/vise vennelisten. Det giver også "
 #~ "mulighed for at blinke når der er ulæste beskeder."
 

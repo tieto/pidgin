@@ -647,6 +647,13 @@ msn_status_text(PurpleBuddy *buddy)
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
+	/* Official client says media takes precedence over message */
+	/* I say message take precedence over media! Plus prpl-jabber agrees
+	   too */
+	msg = purple_status_get_attr_string(status, "message");
+	if (msg && *msg)
+		return g_markup_escape_text(msg, -1);
+
 	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 		const char *title, *game, *office;
 		char *media, *esc;
@@ -676,11 +683,6 @@ msn_status_text(PurpleBuddy *buddy)
 		g_free(media);
 		return esc;
 	}
-
-	/* Official client says media takes precedence over message */
-	msg = purple_status_get_attr_string(status, "message");
-	if (msg && *msg)
-		return g_markup_escape_text(msg, -1);
 
 	return NULL;
 }

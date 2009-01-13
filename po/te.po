@@ -372,8 +372,8 @@ msgstr ""
 "మీరు సత్వర సందేశం (IM) పంపదలచిన వ్యక్తి స్క్రీన్ పేరును లేదా మారుపేరును దయచేసి  ఎంటర్ చేయండి"
 
 # *
-#  * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
-# * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
+#  * A wrapper for Pidgin_request_action() that uses OK and Cancel buttons.
+# * A wrapper for Pidgin_request_action() that uses OK and Cancel buttons.
 #. Not multiline
 #. Not masked?
 #. No hints?
@@ -1731,7 +1731,7 @@ msgid "SSL Certificate Verification"
 msgstr ""
 
 # *
-# * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
+# * A wrapper for Pidgin_request_action() that uses Accept and Cancel buttons.
 #. Number of actions
 #, fuzzy
 msgid "Accept"
@@ -2734,7 +2734,7 @@ msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr "`Buddy Pounce' డైలాగ్ నుంచి మీరు పౌన్స్ ను ఎడిట్ చేయవచ్చు లేదా తొలగించవచ్చు"
 
 # *
-# * A wrapper for gaim_request_action() that uses Yes and No buttons.
+# * A wrapper for Pidgin_request_action() that uses Yes and No buttons.
 msgid "Yes"
 msgstr "అవును"
 
@@ -5357,9 +5357,9 @@ msgstr "మొబైల్ ఫోన్ నెంబరును సెట్ �
 msgid "Be Right Back"
 msgstr "కొద్ది సమయంలో మరలి వచ్చు "
 
-# type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, "not-available", "Not Available",
+# type = Pidgin_status_type_new_with_attrs(Pidgin_STATUS_UNAVAILABLE, "not-available", "Not Available",
 # TRUE, TRUE, FALSE, "message", _("Message"),
-# gaim_value_new(GAIM_TYPE_STRING), NULL);
+# Pidgin_value_new(Pidgin_TYPE_STRING), NULL);
 # types = g_list_append(types, type);
 msgid "Busy"
 msgstr "ఖాళీ లేదు"
@@ -6508,7 +6508,7 @@ msgid ""
 msgstr "%s ఆఫ్‌లైన్‌లో ఉన్నట్లున్నారు. మీరు పంపిన సందేశం వారు స్వీకరించలేదు. "
 
 # TODO: Would be nice to prompt if not set!
-# *  gaim_request_fields(gc, _("Server Address"),...);
+# *  Pidgin_request_fields(gc, _("Server Address"),...);
 # ...but for now just error out with a nice message.
 msgid ""
 "Unable to connect to server. Please enter the address of the server you wish "
@@ -10548,7 +10548,7 @@ msgstr " నుంచి స్పందనను విశ్లేషించ
 msgid "HTTP proxy connection error %d"
 msgstr "ప్రాక్సీ కనెక్షన్ పొరపాటు %d."
 
-# XXX: why in the hell are we calling gaim_connection_error() here?
+# XXX: why in the hell are we calling Pidgin_connection_error() here?
 # Forbidden
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling."
@@ -10570,7 +10570,7 @@ msgid "%s has requested your attention!"
 msgstr "%s మీ సమాచారాన్ని అడిగినారు."
 
 # *
-# * A wrapper for gaim_request_action() that uses Yes and No buttons.
+# * A wrapper for Pidgin_request_action() that uses Yes and No buttons.
 # * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 # * @since 2.3.0
 # * @deprecated Please use purple_request_yes_no_with_hint instead.
@@ -10584,7 +10584,7 @@ msgid "_No"
 msgstr "_వద్దు/లేదు"
 
 # *
-# * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
+# * A wrapper for Pidgin_request_action() that uses Accept and Cancel buttons.
 # * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 # * @since 2.3.0
 # * @deprecated Please use purple_request_accept_cancel_with_hint instead.
@@ -12166,7 +12166,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim irc.freenode.net पर<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin irc.freenode.net पर<BR><BR>"
 
 msgid "Current Developers"
 msgstr "ప్రస్తుత డెవలపర్లు"
