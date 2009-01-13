@@ -651,7 +651,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 	/* Match number to user's mobile number, FROM is a phone number
 	   if the other side pages you using your phone number */
-	if (!strncmp(from, "tel:+", 5)) {
+	if (from && !strncmp(from, "tel:+", 5)) {
 		MsnUser *user =	msn_userlist_find_user_with_mobile_phone(
 				rdata->oim->session->userlist, from + 4);
 

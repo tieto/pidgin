@@ -8,7 +8,7 @@
 #   Filip Miletic <f.miletic@ewi.tudelft.nl>, 2004.
 #   Nikola Kotur <kotnik@ns-linux.org>, 2006.
 #   Милош Поповић <gpopac@gmail.com>, 2007.
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 msgid ""
 msgstr ""
 "Project-Id-Version: Пиџин\n"
