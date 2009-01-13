@@ -1,7 +1,7 @@
 # Hungarian translation of pidgin.
 # Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 # This file is distributed under the same license as the Pidgin package.
-# The Hungarian translation of Gaim was sponsored by Novell Hungary, many thanks for it!
+# The Hungarian translation of Pidgin was sponsored by Novell Hungary, many thanks for it!
 #
 # Zoltan Sutto <suttozoltan@chello.hu>, 2003.
 # Gabor Kelemen <kelemeng@gnome.hu>, 2005, 2006, 2007, 2008, 2009.

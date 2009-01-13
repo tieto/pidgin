@@ -459,7 +459,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 		avatar_data = purple_imgstore_get_data(img);
 		avatar_len = purple_imgstore_get_size(img);
-		/* have to get rid of the old PHOTO if it exists */
+		/* Get rid of an old PHOTO if one exists.
+		 * TODO: This may want to be modified to remove all old PHOTO
+		 * children, at the moment some people have managed to get
+		 * multiple PHOTO entries in their vCard. */
 		if((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
 			xmlnode_free(photo);
 		}
@@ -473,6 +476,12 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 		xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
+	} else if (vc_node) {
+		xmlnode *photo;
+		/* TODO: Remove all PHOTO children? (see above note) */
+		if ((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
+			xmlnode_free(photo);
+		}
 	}
 
 	if (vc_node != NULL) {
@@ -578,32 +587,30 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
 				
 				g_free(hash);
-			} else { /* if(img) */
-				/* remove the metadata */
-				xmlnode *metadata, *item;
-				xmlnode *publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
-				
-				item = xmlnode_new_child(publish, "item");
-				
-				metadata = xmlnode_new_child(item, "metadata");
-				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
-				
-				xmlnode_new_child(metadata, "stop");
-				
-				/* publish the metadata */
-				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+			} else {
+				purple_debug_error("jabber", "jabber_set_buddy_icon received non-png data");
 			}
 		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
-						 "jabber_set_buddy_icon received non-png data");
+			/* remove the metadata */
+			xmlnode *metadata, *item;
+			xmlnode *publish = xmlnode_new("publish");
+			xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
+
+			item = xmlnode_new_child(publish, "item");
+
+			metadata = xmlnode_new_child(item, "metadata");
+			xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
+
+			xmlnode_new_child(metadata, "stop");
+
+			/* publish the metadata */
+			jabber_pep_publish((JabberStream*)gc->proto_data, publish);
 		}
 	}
 
-	/* even when the image is not png, we can still publish the vCard, since this
-	   one doesn't require a specific image type */
-
-	/* publish vCard for those poor older clients */
+	/* vCard avatars do not have an image type requirement so update our
+	 * vCard avatar regardless of image type for those poor older clients
+	 */
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
 
 	gpresence = purple_account_get_presence(gc->account);
@@ -614,11 +621,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 /*
  * This is the callback from the "ok clicked" for "set vCard"
  *
- * Formats GSList data into XML-encoded string and returns a pointer
- * to said string.
- *
- * g_free()'ing the returned string space is the responsibility of
- * the caller.
+ * Sets the vCard with data from PurpleRequestFields.
  */
 static void
 jabber_format_info(PurpleConnection *gc, PurpleRequestFields *fields)

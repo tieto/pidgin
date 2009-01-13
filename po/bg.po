@@ -1,11 +1,11 @@
-# Bulgarian translation of Gaim.
+# Bulgarian translation of Pidgin.
 # Copyright (C) 2004, 2006, 2007 Free Software Foundation, Inc.
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 # Vladimir "Kaladan" Petkov <kaladan@gmail.com>, 2004, 2006, 2007.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim-1.30\n"
+"Project-Id-Version: Pidgin-1.30\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-02-12 00:46+0200\n"
@@ -24,7 +24,7 @@ msgstr "френски"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Пробвайте „%s -h“ за повече информация.\n"
+msgstr "Pidgin %s. Пробвайте „%s -h“ за повече информация.\n"
 
 #, c-format
 msgid ""
@@ -2209,7 +2209,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaim не можа да зареди вашето приложение."
+msgstr "Pidgin не можа да зареди вашето приложение."
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2217,7 +2217,7 @@ msgstr "Необходимата приставка %s не може да ста
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaim не можа да зареди вашето приложение."
+msgstr "Pidgin не можа да зареди вашето приложение."
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2358,7 +2358,7 @@ msgstr "Пример за приставката DBus"
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Gaim - контрол на файловете"
+msgstr "Pidgin - контрол на файловете"
 
 #. *< name
 #. *< version
@@ -3206,7 +3206,7 @@ msgstr "Преноса на файла е неуспешен"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaim не може да отвори порт за слушане."
+msgstr "Pidgin не може да отвори порт за слушане."
 
 msgid "Error displaying MOTD"
 msgstr "Грешка при извеждането на съобщението за деня"
@@ -3371,7 +3371,7 @@ msgstr "Непознато съобщение"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "Gaim изпрати съобщение, което IRC-сървъра не разбра."
+msgstr "Pidgin изпрати съобщение, което IRC-сървъра не разбра."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -4760,7 +4760,7 @@ msgstr "Съобщението не може да бъде прегледано"
 
 #, fuzzy, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "Синтактична грешка (вероятно бъг в Gaim)"
+msgstr "Синтактична грешка (вероятно бъг в Pidgin)"
 
 #, c-format
 msgid "Invalid email address"
@@ -5131,7 +5131,7 @@ msgstr "Покана за раз_говор"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Поддръжка на SSL е необходима за MNS. Инсталирайте SSL-библиотека. За повече "
-"информация вижте на адрес: http://gaim.sf.net/faq-ssl.php("
+"информация вижте на адрес: http://Pidgin.sf.net/faq-ssl.php("
 
 msgid "Failed to connect to server."
 msgstr "Неуспешно свързване със сървъра."
@@ -6891,13 +6891,13 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Максималната дължина на профила от %d байт беше надвишена. Gaim го съкрати "
+"Максималната дължина на профила от %d байт беше надвишена. Pidgin го съкрати "
 "за ваше удобство.Максималната дължина на профила от %d байта беше надвишена. "
-"Gaim го съкрати за ваше удобство."
+"Pidgin го съкрати за ваше удобство."
 msgstr[1] ""
-"Максималната дължина на профила от %d байт беше надвишена. Gaim го съкрати "
+"Максималната дължина на профила от %d байт беше надвишена. Pidgin го съкрати "
 "за ваше удобство.Максималната дължина на профила от %d байта беше надвишена. "
-"Gaim го съкрати за ваше удобство."
+"Pidgin го съкрати за ваше удобство."
 
 msgid "Profile too long."
 msgstr "Профилът е твърде дълъг."
@@ -6910,13 +6910,13 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Максималната дължина на съобщението от %d байт беше надвишена. Gaim го "
+"Максималната дължина на съобщението от %d байт беше надвишена. Pidgin го "
 "съкрати за ваше удобство.Максималната дължина на съобщението от %d байта "
-"беше надвишена. Gaim го съкрати за ваше удобство."
+"беше надвишена. Pidgin го съкрати за ваше удобство."
 msgstr[1] ""
-"Максималната дължина на съобщението от %d байт беше надвишена. Gaim го "
+"Максималната дължина на съобщението от %d байт беше надвишена. Pidgin го "
 "съкрати за ваше удобство.Максималната дължина на съобщението от %d байта "
-"беше надвишена. Gaim го съкрати за ваше удобство."
+"беше надвишена. Pidgin го съкрати за ваше удобство."
 
 msgid "Away message too long."
 msgstr "Съобщението за състояние е твърде дълго."
@@ -6941,7 +6941,7 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"Gaim не успя да изтегли списъкът с познатите ви от сървъра на AIM. Списъкът "
+"Pidgin не успя да изтегли списъкът с познатите ви от сървъра на AIM. Списъкът "
 "ви обаче не е загубен. Той по всяка вероятност ще бъде достъпен след няколко "
 "часа."
 
@@ -7475,7 +7475,7 @@ msgstr "Създаване"
 
 #, fuzzy
 msgid "About me"
-msgstr "Относно Gaim"
+msgstr "Относно Pidgin"
 
 #, fuzzy
 msgid "Category"
@@ -7691,7 +7691,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Относно Gaim"
+msgstr "Относно Pidgin"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7709,7 +7709,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Относно Gaim"
+msgstr "Относно Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -9076,7 +9076,7 @@ msgstr "Неуспешно съхраняване на изображение: %
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Непозната команда: %s, (може да е грешка в Gaim)"
+msgstr "Непозната команда: %s, (може да е грешка в Pidgin)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr ""
@@ -9649,7 +9649,7 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "Yahoo-сървърът съобщи за непознат идентификационен метод. Тази версия на "
-"Gaim по всяка вероятност няма да успее да се свърже. Проверете %s за нови "
+"Pidgin по всяка вероятност няма да успее да се свърже. Проверете %s за нови "
 "версии."
 
 msgid "Failed Yahoo! Authentication"
@@ -11660,7 +11660,7 @@ msgstr "етиопски"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Относно Gaim"
+msgstr "Относно Pidgin"
 
 #, fuzzy, c-format
 msgid ""
@@ -11674,18 +11674,18 @@ msgid ""
 "complete list of contributors.  We provide no warranty for this program."
 "<BR><BR>"
 msgstr ""
-"Gaim програма за изпращане на съобщения чрез протоколите AIM, MSN, Yahoo!, "
+"Pidgin програма за изпращане на съобщения чрез протоколите AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, и "
 "Gadu-Gadu едновременно. Написан е чрез Gtk+.<BR><BR> Имате право да "
 "променяте и разпространявате  програмата под условията на лиценза GPL "
 "(версия 1 или по-нова) Копие на GPL може да бъде намерен във файла \"COPYING"
-"\", разпространяван с Gaim. Правата за копиране на Gaim са собственост на "
+"\", разпространяван с Pidgin. Правата за копиране на Pidgin са собственост на "
 "хората, които допринасят за неговото развитие. Програмата се разпространява "
 "без никакви гаранции.<BR><BR>"
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim на irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin на irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Текущи разработчици"
@@ -12293,7 +12293,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Пробвайте „%s -h“ за повече информация.\n"
+msgstr "Pidgin %s. Пробвайте „%s -h“ за повече информация.\n"
 
 #, c-format
 msgid ""
@@ -13796,7 +13796,7 @@ msgstr "Възможност за различни начини за извес�
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Приставка за демонстрации на Gaim"
+msgstr "Приставка за демонстрации на Pidgin"
 
 #. *< name
 #. *< version
@@ -13896,7 +13896,7 @@ msgstr "Шрифтове"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Gaim - контрол на файловете"
+msgstr "Pidgin - контрол на файловете"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -13907,7 +13907,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Gaim - контрол на файловете"
+msgstr "Pidgin - контрол на файловете"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr ""
@@ -13933,7 +13933,7 @@ msgid "You can upgrade to %s %s today."
 msgstr ""
 
 msgid "New Version Available"
-msgstr "Има нова версия на GAIM"
+msgstr "Има нова версия на Pidgin"
 
 #, fuzzy
 msgid "Later"
@@ -14196,7 +14196,7 @@ msgstr "Зареждане при стартиране"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_Стартиране на Gaim при зареждане на Windows"
+msgstr "_Стартиране на Pidgin при зареждане на Windows"
 
 msgid "_Dockable Buddy List"
 msgstr ""
@@ -14220,12 +14220,12 @@ msgstr "Настройки за влизане"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Специфични настройки на Windows Gaim."
+msgstr "Специфични настройки на Windows Pidgin."
 
 #, fuzzy
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
-msgstr "Специфични настройки на Windows Gaim."
+msgstr "Специфични настройки на Windows Pidgin."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr ""
@@ -14428,7 +14428,7 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "Използвате версия %s на Gaim. Настоящата версия е%s.<hr>"
+#~ msgstr "Използвате версия %s на Pidgin. Настоящата версия е%s.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -14461,7 +14461,7 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "There were errors unloading the plugin."
-#~ msgstr "Gaim срещна грешки при деактивирането на приставката."
+#~ msgstr "Pidgin срещна грешки при деактивирането на приставката."
 
 #, fuzzy
 #~ msgid "Error setting socket options"
@@ -14681,9 +14681,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Акаунт:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "Бързи съобщения с Gaim"
-
 #, fuzzy
 #~ msgid ""
 #~ "%s was disconnected due to the following error:\n"
@@ -14715,8 +14712,8 @@ msgstr ""
 #~ msgid "Jabber developer"
 #~ msgstr "Разработчик на Jabber"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim на irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin на irc.freenode.net<BR><BR>"
 
 #~ msgid "Smaller font size"
 #~ msgstr "По-малък размер на буквите"
@@ -14727,8 +14724,8 @@ msgstr ""
 #~ msgid "Insert image"
 #~ msgstr "Вмъкване на изображение"
 
-#~ msgid "Gaim %s. Try `%s -h' for more information.\n"
-#~ msgstr "Gaim %s. Пробвайте „%s -h“ за повече информация.\n"
+#~ msgid "Pidgin %s. Try `%s -h' for more information.\n"
+#~ msgstr "Pidgin %s. Пробвайте „%s -h“ за повече информация.\n"
 
 #~ msgid "Show buddy _icons"
 #~ msgstr "Показване на _икони на познатите"
@@ -14745,14 +14742,14 @@ msgstr ""
 #~ msgstr "Инструменти"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "Можете да изтеглите версия %s от <br><a href=\"http://gaim.sourceforge."
-#~ "net/\">http://gaim.sourceforge.net</a>."
+#~ "Можете да изтеглите версия %s от <br><a href=\"http://Pidgin.sourceforge."
+#~ "net/\">http://Pidgin.sourceforge.net</a>."
 
-#~ msgid "WinGaim Options"
-#~ msgstr "Настройки на WinGaim"
+#~ msgid "WinPidgin Options"
+#~ msgstr "Настройки на WinPidgin"
 
 #, fuzzy
 #~ msgid ""
@@ -14777,8 +14774,8 @@ msgstr ""
 #~ msgid "Group not removed"
 #~ msgstr "Групата не е премахната"
 
-#~ msgid "Old Gaim"
-#~ msgstr "Старият Gaim"
+#~ msgid "Old Pidgin"
+#~ msgstr "Старият Pidgin"
 
 #, fuzzy
 #~ msgid "Autoreply"
@@ -14820,8 +14817,8 @@ msgstr ""
 #~ msgid "Status message"
 #~ msgstr "Изпращане на _съобщение"
 
-#~ msgid "Gaim User"
-#~ msgstr "Потребител на Gaim"
+#~ msgid "Pidgin User"
+#~ msgstr "Потребител на Pidgin"
 
 #, fuzzy
 #~ msgid "Jabber Account"
@@ -14921,16 +14918,16 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Когато това се случи, TOC игнорира всички съобщения, изпращани до него. "
-#~ "Ако изпратите съобщение, може да ви изхвърли. Gaim ще възпрепятства "
+#~ "Ако изпратите съобщение, може да ви изхвърли. Pidgin ще възпрепятства "
 #~ "изпращането на всичко. Моля, бъдете търпеливи, тъй като това е временно "
 #~ "състояние."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Запазване като..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Запазване като..."
 
 #~ msgid "Unavailable"
 #~ msgstr "Не е на разположение"

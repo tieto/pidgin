@@ -1,4 +1,4 @@
-# Translation of gaim.
+# Translation of Pidgin.
 # Copyright (C) 2007 Kashif Masood
 # This file is distributed under GNU GPL v2.0.
 # Kashif Masood <masudmails@yahoo.com>, 2007.
@@ -6,7 +6,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 2.0beta6\n"
+"Project-Id-Version: Pidgin 2.0beta6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-03-14 13:08+0500\n"
@@ -13749,9 +13749,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "شمېرل:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "ګېم د انترنت زری"
-
 #~ msgid ""
 #~ "%s was disconnected due to the following error:\n"
 #~ "%s"
@@ -13789,7 +13786,7 @@ msgstr ""
 #~ msgid "Tools"
 #~ msgstr "اسباب"
 
-#~ msgid "Old Gaim"
+#~ msgid "Old Pidgin"
 #~ msgstr "زوړ ګېم"
 
 #~ msgid "When my account is _away"
@@ -13798,7 +13795,7 @@ msgstr ""
 #~ msgid "Status message"
 #~ msgstr "د موقعيت پيغام"
 
-#~ msgid "Gaim User"
+#~ msgid "Pidgin User"
 #~ msgstr "د ګېم کاروونکی"
 
 #~ msgid "Jabber Account"
@@ -13837,7 +13834,7 @@ msgstr ""
 #~ msgid "Login in TCP"
 #~ msgstr "په ټيسیپي ننوتل"
 
-#~ msgid "Gaim - Save As..."
+#~ msgid "Pidgin - Save As..."
 #~ msgstr "ګېم - ساتل لکه..."
 
 #~ msgid "Unavailable"

@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 2.0 CVS\n"
+"Project-Id-Version: Pidgin 2.0 CVS\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2006-02-05 23:19+0100\n"
@@ -2173,7 +2173,7 @@ msgstr "ვერ ვპოულობ %s პლაგინს. გთხო�
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaim-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
+msgstr "Pidgin-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2181,7 +2181,7 @@ msgstr "%s პლაკინის ჩატვირთვა შეუძლ�
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaim-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
+msgstr "Pidgin-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2320,7 +2320,7 @@ msgstr "DBus პლაგინის მაგალითი"
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Gaim - ის ფაილკონტროლი"
+msgstr "Pidgin - ის ფაილკონტროლი"
 
 #. *< name
 #. *< version
@@ -2328,7 +2328,7 @@ msgstr "Gaim - ის ფაილკონტროლი"
 #. *  description
 #, fuzzy
 msgid "Allows control by entering commands in a file."
-msgstr "გაძლევთ Gaim-ის კონტროლის საშუალებას ფაილში ბრძანებების შეტანით"
+msgstr "გაძლევთ Pidgin-ის კონტროლის საშუალებას ფაილში ბრძანებების შეტანით"
 
 msgid "Minutes"
 msgstr "წუთი"
@@ -3146,7 +3146,7 @@ msgstr "ფაილის გადაგზავნა ვერ მოხე
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaim ვერ ხსნის მხმენელ პორტს."
+msgstr "Pidgin ვერ ხსნის მხმენელ პორტს."
 
 msgid "Error displaying MOTD"
 msgstr ""
@@ -7306,7 +7306,7 @@ msgstr "შექმნა"
 
 #, fuzzy
 msgid "About me"
-msgstr "Gaim-ის შესახებ"
+msgstr "Pidgin-ის შესახებ"
 
 #, fuzzy
 msgid "Category"
@@ -7523,7 +7523,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Gaim-ის შესახებ"
+msgstr "Pidgin-ის შესახებ"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7541,7 +7541,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Gaim-ის შესახებ"
+msgstr "Pidgin-ის შესახებ"
 
 #. *< type
 #. *< ui_requirement
@@ -11371,7 +11371,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Gaim-ის შესახებ"
+msgstr "Pidgin-ის შესახებ"
 
 #, c-format
 msgid ""
@@ -11388,7 +11388,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
 msgstr ""
@@ -13431,7 +13431,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Gaim-ის სადემონსტრაციო პლაგინი"
+msgstr "Pidgin-ის სადემონსტრაციო პლაგინი"
 
 #. *< name
 #. *< version
@@ -13529,7 +13529,7 @@ msgstr "ფონტები"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Gaim - ის ფაილკონტროლი"
+msgstr "Pidgin - ის ფაილკონტროლი"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -13809,7 +13809,7 @@ msgstr "ჩართვის დროს"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "ჩართე Gaim Windows-ის ჩატვირთვისას"
+msgstr "ჩართე Pidgin Windows-ის ჩატვირთვისას"
 
 msgid "_Dockable Buddy List"
 msgstr ""
@@ -13831,7 +13831,7 @@ msgstr "შესვლის პარამეტრები"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Windows Gaim-ის სპეციფიკური პარამეტრები."
+msgstr "Windows Pidgin-ის სპეციფიკური პარამეტრები."
 
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
@@ -13987,7 +13987,7 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "თქვენ იყენებთ Gaim-ის ვერსიას %s. ახლანდელი ვერსიაა %s.<hr>"
+#~ msgstr "თქვენ იყენებთ Pidgin-ის ვერსიას %s. ახლანდელი ვერსიაა %s.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -14148,24 +14148,24 @@ msgstr ""
 #~ msgid "DBus"
 #~ msgstr "DBus"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "გამოაჩინე Gaim-ი სისტემის პანელში"
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "გამოაჩინე Pidgin-ი სისტემის პანელში"
 
 #~ msgid "Tools"
 #~ msgstr "ხელსაწყოები"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "გადმოწერეთ ვერსია %s აქედან:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "გადმოწერეთ ვერსია %s აქედან:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "დაყოვნება"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "WinGaim-ის პარამეტრები"
+#~ msgid "WinPidgin Options"
+#~ msgstr "WinPidgin-ის პარამეტრები"
 
 #~ msgid "Group not removed"
 #~ msgstr "ჯგუფი არაა წაშლილი"
@@ -14233,8 +14233,8 @@ msgstr ""
 #~ msgid "Screen Name:"
 #~ msgstr "მომხმარებელი:"
 
-#~ msgid "me is using Gaim v%s."
-#~ msgstr "ვიყენებ Gaim ვერსია %s."
+#~ msgid "me is using Pidgin v%s."
+#~ msgstr "ვიყენებ Pidgin ვერსია %s."
 
 #~ msgid "/Options/Show Buddy _Icon"
 #~ msgstr "/პარამეტრები/აჩვენე მეგობრის ხატულა"
@@ -14249,8 +14249,8 @@ msgstr ""
 #~ msgid "Get the user's information"
 #~ msgstr "მომხმარებლის შესახებ ინფორმაცია"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
 
 #~ msgid "Smaller font size"
 #~ msgstr "უფრო პატარა ფონტი"
@@ -14282,8 +14282,8 @@ msgstr ""
 #~ msgid "_Sounds while away"
 #~ msgstr "ხმები როცა გასულია"
 
-#~ msgid "Old Gaim"
-#~ msgstr "ძველი Gaim"
+#~ msgid "Old Pidgin"
+#~ msgstr "ძველი Pidgin"
 
 #~ msgid ""
 #~ "\n"
@@ -14292,8 +14292,8 @@ msgstr ""
 #~ "\n"
 #~ "<b>სტატუსი:</b> %s"
 
-#~ msgid "Gaim User"
-#~ msgstr "Gaim-ის მომხმარებელი"
+#~ msgid "Pidgin User"
+#~ msgstr "Pidgin-ის მომხმარებელი"
 
 #~ msgid "Invalid Jabber ID"
 #~ msgstr "არასწორი Jabber ID"
@@ -14360,8 +14360,8 @@ msgstr ""
 #~ msgid "EMail"
 #~ msgstr "ელ.ფოსტა"
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - შეინახე როგორც..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - შეინახე როგორც..."
 
 #~ msgid "g003: Error opening connection.\n"
 #~ msgstr "კავშირის შეცდომა.\n"

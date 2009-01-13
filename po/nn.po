@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 01:17-0800\n"
-"PO-Revision-Date: 2008-12-13 08:12+0100\n"
+"POT-Creation-Date: 2009-01-12 03:07+0000\n"
+"PO-Revision-Date: 2009-01-08 16:54+0100\n"
 "Last-Translator: YS Landro <nynorsk@strilen.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1474,7 +1474,6 @@ msgstr ""
 "Når ei ny samtale blir opna, vil dette tillegget setja inn den siste samtala "
 "i den noverande."
 
-#, c-format
 msgid "Online"
 msgstr "Tilkopla"
 
@@ -1907,7 +1906,6 @@ msgstr "Startar overføring av %s frå %s"
 msgid "Transfer of file %s complete"
 msgstr "Overføringa av fila %s er ferdig"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Filoverføringa er ferdig"
 
@@ -1915,7 +1913,6 @@ msgstr "Filoverføringa er ferdig"
 msgid "You canceled the transfer of %s"
 msgstr "Du avbraut overføringa av %s"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Filoverføringa blei avbroten"
 
@@ -2122,7 +2119,6 @@ msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Du nyttar %s, men dette tillegget krev %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Dette tillegget har ikkje definert ein ID."
 
@@ -3005,7 +3001,6 @@ msgstr "Tilgjengeleg"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Vekke"
 
@@ -3888,7 +3883,6 @@ msgstr "Snakkesaleg"
 msgid "Extended Away"
 msgstr "Utvida vekke"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Ikkje forstyrr meg"
 
@@ -4122,6 +4116,9 @@ msgstr "Autentiserer"
 
 msgid "Re-initializing Stream"
 msgstr "Tek opp att datastraumen"
+
+msgid "Server doesn't support blocking"
+msgstr "Tenaren støttar ikkje blokkering"
 
 msgid "Not Authorized"
 msgstr "Ikkje godkjent"
@@ -4873,7 +4870,6 @@ msgstr "Passport for barn utan foreldregodkjennig"
 msgid "Passport account not yet verified"
 msgstr "Passport-kontoen er enno ikkje stadfesta"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "Passport-kontoen er suspendert"
 
@@ -6062,7 +6058,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Feil. SSL-støtte er ikkje installert."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Denne konferanse er blitt lukka. Kan ikkje senda fleire meldingar."
 
@@ -6325,23 +6320,18 @@ msgstr "Kamera"
 msgid "Screen Sharing"
 msgstr "Skjermdeling"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Ledig for prat"
 
-#, c-format
 msgid "Not Available"
 msgstr "Ikkje tilgjengeleg"
 
-#, c-format
 msgid "Occupied"
 msgstr "Oppteken"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Nettmedviten"
 
-#, c-format
 msgid "Invisible"
 msgstr "Usynleg"
 
@@ -6442,12 +6432,9 @@ msgid "_OK"
 msgstr "_OK"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Du kan bli frå kopla snart. Du vil kanskje nytta TOC fram til dette blir "
-"ordna. Sjå på %s etter oppdateringar."
+"Du kan bli fråkopla snart. Dersom du blir det, sjå etter oppdateringar på %s."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Klarer ikkje å henta ein gyldig AIM påloggingsnøkkel."
@@ -6904,6 +6891,7 @@ msgstr "_Koplar til"
 msgid "Get AIM Info"
 msgstr "Hent _AIM-informasjon"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Endra vennemerknad"
 
@@ -7013,7 +7001,6 @@ msgstr "Ber %s om å kopla seg til oss på %s:%hu for direkteprat."
 msgid "Attempting to connect to %s:%hu."
 msgstr "Prøver å kopla til %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Prøver å kopla til via mellomtenar."
 
@@ -9190,6 +9177,9 @@ msgstr "Vertsnamnoppslaget feila"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-brukarnamn kan ikkje innehalda mellomrom eller @-teikn"
+
+msgid "SIP connect server not specified"
+msgstr "Ingen SIP-tilkoplingstenar er ført opp"
 
 #. *< type
 #. *< ui_requirement
@@ -13871,6 +13861,13 @@ msgstr "Senda og ta i mot reine XMPP-blokker."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "Du kan bli frå kopla snart. Du vil kanskje nytta TOC fram til dette blir "
+#~ "ordna. Sjå på %s etter oppdateringar."
 
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""
