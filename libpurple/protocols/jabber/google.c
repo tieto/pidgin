@@ -98,34 +98,6 @@ google_session_create_xmlnode(GoogleSession *session, const char *type)
 }
 
 static void
-google_session_send_accept(GoogleSession *session)
-{
-	xmlnode *sess, *desc, *payload;
-	GList *codecs = purple_media_get_codecs(session->media, "google-voice");
-	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-
-	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
-	sess = google_session_create_xmlnode(session, "accept");
-	xmlnode_insert_child(iq->node, sess);
-	desc = xmlnode_new_child(sess, "description");
-	xmlnode_set_namespace(desc, "http://www.google.com/session/phone");
-
-	for (;codecs; codecs = codecs->next) {
-		PurpleMediaCodec *codec = (PurpleMediaCodec*)codecs->data;
-		char id[8], clockrate[10];
-		payload = xmlnode_new_child(desc, "payload-type");
-		g_snprintf(id, sizeof(id), "%d", codec->id);
-		g_snprintf(clockrate, sizeof(clockrate), "%d", codec->clock_rate);
-		xmlnode_set_attrib(payload, "name", codec->encoding_name);
-		xmlnode_set_attrib(payload, "id", id);
-		xmlnode_set_attrib(payload, "clockrate", clockrate);
-	}
-
-	purple_media_codec_list_free(codecs);
-	jabber_iq_send(iq);
-}
-
-static void
 google_session_send_terminate(GoogleSession *session)
 {
 	xmlnode *sess;
@@ -140,7 +112,7 @@ google_session_send_terminate(GoogleSession *session)
 }
 
 static void 
-google_session_candidates_prepared (PurpleMedia *media, gchar *session_id,
+google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		gchar *participant, GoogleSession *session)
 {
 	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
@@ -204,38 +176,42 @@ google_session_ready(PurpleMedia *media, gchar *id,
 				session->js->user->node,
 				session->js->user->domain,
 				session->js->user->resource);
-		if (!strcmp(session->id.initiator, me)) {
-			JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-			xmlnode *sess, *desc, *payload;
-			GList *codecs, *iter;
+		JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+		xmlnode *sess, *desc, *payload;
+		GList *codecs, *iter;
 
-			sess = google_session_create_xmlnode(session, "initiate");
-			xmlnode_insert_child(iq->node, sess);
+		if (!strcmp(session->id.initiator, me)) {
 			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
 			xmlnode_set_attrib(iq->node, "from", session->id.initiator);
-			desc = xmlnode_new_child(sess, "description");
-			xmlnode_set_namespace(desc, "http://www.google.com/session/phone");
-
-			codecs = purple_media_get_codecs(media, "google-voice");
-	
-			for (iter = codecs; iter; iter = g_list_next(iter)) {
-				PurpleMediaCodec *codec = (PurpleMediaCodec*)iter->data;
-				gchar *id = g_strdup_printf("%d", codec->id);
-				gchar *clock_rate = g_strdup_printf("%d", codec->clock_rate);
-				payload = xmlnode_new_child(desc, "payload-type");
-				xmlnode_set_attrib(payload, "id", id);
-				xmlnode_set_attrib(payload, "name", codec->encoding_name);
-				xmlnode_set_attrib(payload, "clockrate", clock_rate);
-				g_free(clock_rate);
-				g_free(id);
-			}
-			purple_media_codec_list_free(codecs);
-
-			jabber_iq_send(iq);
-	
-			google_session_candidates_prepared(session->media,
-					"google-voice", session->remote_jid, session);
+			sess = google_session_create_xmlnode(session, "initiate");
+		} else {
+			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
+			xmlnode_set_attrib(iq->node, "from", me);
+			sess = google_session_create_xmlnode(session, "accept");
 		}
+		xmlnode_insert_child(iq->node, sess);
+		desc = xmlnode_new_child(sess, "description");
+		xmlnode_set_namespace(desc, "http://www.google.com/session/phone");
+
+		codecs = purple_media_get_codecs(media, "google-voice");
+
+		for (iter = codecs; iter; iter = g_list_next(iter)) {
+			PurpleMediaCodec *codec = (PurpleMediaCodec*)iter->data;
+			gchar *id = g_strdup_printf("%d", codec->id);
+			gchar *clock_rate = g_strdup_printf("%d", codec->clock_rate);
+			payload = xmlnode_new_child(desc, "payload-type");
+			xmlnode_set_attrib(payload, "id", id);
+			xmlnode_set_attrib(payload, "name", codec->encoding_name);
+			xmlnode_set_attrib(payload, "clockrate", clock_rate);
+			g_free(clock_rate);
+			g_free(id);
+		}
+		purple_media_codec_list_free(codecs);
+
+		jabber_iq_send(iq);
+
+		google_session_send_candidates(session->media,
+				"google-voice", session->remote_jid, session);
 	}
 }
 
@@ -327,8 +303,6 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 
 	g_signal_connect(G_OBJECT(session->media), "ready-new",
 			G_CALLBACK(google_session_ready), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "accepted",
-			G_CALLBACK(google_session_send_accept), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
 	purple_media_ready(session->media);
@@ -389,10 +363,8 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	purple_media_set_remote_codecs(session->media, "google-voice", session->remote_jid, codecs);
 
-	g_signal_connect_swapped(G_OBJECT(session->media), "accepted",
-				 G_CALLBACK(google_session_send_accept), session);
-	g_signal_connect(G_OBJECT(session->media), "candidates-prepared", 
-			 G_CALLBACK(google_session_candidates_prepared), session);
+	g_signal_connect(G_OBJECT(session->media), "ready-new",
+			G_CALLBACK(google_session_ready), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
 	purple_media_ready(session->media);
