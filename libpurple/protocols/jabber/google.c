@@ -139,21 +139,6 @@ google_session_send_terminate(GoogleSession *session)
 	google_session_destroy(session);
 }
 
-static void
-google_session_send_reject(GoogleSession *session)
-{
-	xmlnode *sess;
-	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-
-	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
-	sess = google_session_create_xmlnode(session, "reject");
-	xmlnode_insert_child(iq->node, sess);
-	
-	jabber_iq_send(iq);
-	google_session_destroy(session);
-}
-
-
 static void 
 google_session_candidates_prepared (PurpleMedia *media, gchar *session_id,
 		gchar *participant, GoogleSession *session)
@@ -254,6 +239,37 @@ google_session_ready(PurpleMedia *media, gchar *id,
 	}
 }
 
+static void
+google_session_state_changed_cb(PurpleMedia *media,
+		PurpleMediaStateChangedType type,
+		gchar *sid, gchar *name, GoogleSession *session)
+{
+	if (sid == NULL && name == NULL) {
+		if (type == PURPLE_MEDIA_STATE_CHANGED_END) {
+			google_session_destroy(session);
+		} else if (type == PURPLE_MEDIA_STATE_CHANGED_HANGUP) {
+			xmlnode *sess;
+			JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+
+			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
+			sess = google_session_create_xmlnode(session, "terminate");
+			xmlnode_insert_child(iq->node, sess);
+	
+			jabber_iq_send(iq);
+		} else if (type == PURPLE_MEDIA_STATE_CHANGED_REJECTED) {
+			xmlnode *sess;
+			JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+
+			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
+			sess = google_session_create_xmlnode(session, "reject");
+			xmlnode_insert_child(iq->node, sess);
+	
+			jabber_iq_send(iq);
+		}
+		
+	}
+}
+
 PurpleMedia*
 jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type)
 {
@@ -313,10 +329,8 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 			G_CALLBACK(google_session_ready), session);
 	g_signal_connect_swapped(G_OBJECT(session->media), "accepted",
 			G_CALLBACK(google_session_send_accept), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "reject",
-			G_CALLBACK(google_session_send_reject), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "hangup",
-			G_CALLBACK(google_session_send_terminate), session);
+	g_signal_connect(G_OBJECT(session->media), "state-changed",
+			G_CALLBACK(google_session_state_changed_cb), session);
 	purple_media_ready(session->media);
 
 	if (sessions == NULL)
@@ -377,12 +391,10 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	g_signal_connect_swapped(G_OBJECT(session->media), "accepted",
 				 G_CALLBACK(google_session_send_accept), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "reject",
-				 G_CALLBACK(google_session_send_reject), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "hangup",
-				 G_CALLBACK(google_session_send_terminate), session);
 	g_signal_connect(G_OBJECT(session->media), "candidates-prepared", 
 			 G_CALLBACK(google_session_candidates_prepared), session);
+	g_signal_connect(G_OBJECT(session->media), "state-changed",
+			G_CALLBACK(google_session_state_changed_cb), session);
 	purple_media_ready(session->media);
 
 	purple_media_codec_list_free(codecs);
@@ -465,16 +477,12 @@ static void
 google_session_handle_reject(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
 {
 	purple_media_got_hangup(session->media);
-	
-	google_session_destroy(session);
 }
 
 static void
 google_session_handle_terminate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
 {
 	purple_media_got_hangup(session->media);
-
-	google_session_destroy(session);
 }
 
 static void
