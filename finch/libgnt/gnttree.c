@@ -518,6 +518,7 @@ redraw_tree(GntTree *tree)
 
 		if (row == tree->current)
 		{
+			attr |= A_BOLD;
 			if (gnt_widget_has_focus(widget))
 				attr |= gnt_color_pair(GNT_COLOR_HIGHLIGHT);
 			else

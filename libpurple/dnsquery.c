@@ -274,7 +274,6 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 			res = res->ai_next;
 		}
 		freeaddrinfo(tmp);
-		write_to_parent(child_out, &zero, sizeof(zero));
 #else
 		if (!inet_aton(dns_params.hostname, &sin.sin_addr)) {
 			struct hostent *hp;
@@ -292,11 +291,12 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 			sin.sin_family = AF_INET;
 
 		sin.sin_port = htons(dns_params.port);
-		write_to_parent(child_out, &zero, sizeof(zero));
+		rc = 0;
+		write_to_parent(child_out, &rc, sizeof(rc));
 		write_to_parent(child_out, &addrlen, sizeof(addrlen));
 		write_to_parent(child_out, &sin, addrlen);
-		write_to_parent(child_out, &zero, sizeof(zero));
 #endif
+		write_to_parent(child_out, &zero, sizeof(zero));
 		dns_params.hostname[0] = '\0';
 	}
 

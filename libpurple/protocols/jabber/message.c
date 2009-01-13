@@ -290,7 +290,7 @@ static void handle_buzz(JabberMessage *jm) {
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
 	PurpleConversation *c;
-	char *username, *str;
+	char *username;
 
 	/* Delayed buzz MUST NOT be accepted */
 	if(jm->delayed)
@@ -314,7 +314,6 @@ static void handle_buzz(JabberMessage *jm) {
 	purple_prpl_got_attention(jm->js->gc, username, 0);
 
 	g_free(username);
-	g_free(str);
 }
 
 /* used internally by the functions below */

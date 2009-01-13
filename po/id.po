@@ -1,4 +1,4 @@
-# Gaim now Pidgin Indonesian (id) translations
+# Pidgin now Pidgin Indonesian (id) translations
 # Copyright (C) 2007 Rai S. Regawa <raireg@yahoo.com>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -701,7 +701,7 @@ msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
-"katakan &lt;message&gt;:  Kirim pesan secara normal sebagaimana jika tidak "
+"katakan &lt;message&gt;:  Kirim pesan secara normal sebaPidginana jika tidak "
 "menggunakan perintah."
 
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
@@ -12257,7 +12257,7 @@ msgstr ""
 "kesalahan anda sendiri.\n"
 "\n"
 "Apabila anda dapat mengulangi crash, mohon hubungi para\n"
-"pengembang gaim dengan melaporkan bug pada\n"
+"pengembang Pidgin dengan melaporkan bug pada\n"
 "%ssimpleticket/\n"
 "\n"
 "Mohon pastikan anda menjabarkan apa yang anda lakukan pada saat itu\n"
@@ -12556,7 +12556,7 @@ msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting."
 msgstr ""
-"Ini adalah bagaimana teks pesan keluar anda akan tampak saat anda "
+"Ini adalah baPidginana teks pesan keluar anda akan tampak saat anda "
 "menggunakan protokol yang mendukung pemformatan."
 
 msgid "Cannot start proxy configuration program."
@@ -13502,7 +13502,7 @@ msgstr "Tes Signal GTK"
 #. *  summary
 #. *  description
 msgid "Test to see that all ui signals are working properly."
-msgstr "Tes untuk melihat bahwa semua signal UI bekerja sebagaimana mestinya."
+msgstr "Tes untuk melihat bahwa semua signal UI bekerja sebaPidginana mestinya."
 
 #, c-format
 msgid ""
@@ -14637,9 +14637,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgid "Log Viewer"
 #~ msgstr "Penglihat Log"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "Pengirim Pesan Internet Gaim"
-
 #~ msgid "Toggle offline buddies"
 #~ msgstr "Tandai teman-teman yang sedang offline"
 
@@ -14686,8 +14683,8 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgid "Insert image"
 #~ msgstr "Masukkan gambar"
 
-#~ msgid "Gaim %s. Try `%s -h' for more information.\n"
-#~ msgstr "Gaim %s. Mencoba `%s -h' untuk informasi lebih banyak.\n"
+#~ msgid "Pidgin %s. Try `%s -h' for more information.\n"
+#~ msgstr "Pidgin %s. Mencoba `%s -h' untuk informasi lebih banyak.\n"
 
 #~ msgid "Show buddy _icons"
 #~ msgstr "Tampilkan _ikon teman"
@@ -14709,14 +14706,14 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgstr "Piranti"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "Anda bisa mendapatkan versi %s dari <br><a href=\"http://gaim.sourceforge."
-#~ "net/\">http://gaim.sourceforge.net</a>."
+#~ "Anda bisa mendapatkan versi %s dari <br><a href=\"http://Pidgin.sourceforge."
+#~ "net/\">http://Pidgin.sourceforge.net</a>."
 
-#~ msgid "WinGaim Options"
-#~ msgstr "Pilihan WinGaim"
+#~ msgid "WinPidgin Options"
+#~ msgstr "Pilihan WinPidgin"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because it belongs to an account "
@@ -14738,8 +14735,8 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgid "Group not removed"
 #~ msgstr "Kelompok tidak dihilangkan"
 
-#~ msgid "Old Gaim"
-#~ msgstr "Gaim Lama"
+#~ msgid "Old Pidgin"
+#~ msgstr "Pidgin Lama"
 
 #~ msgid "Autoreply"
 #~ msgstr "Jawab otomatis"
@@ -14823,8 +14820,8 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ "Saya sedang tidak bersedia. Mohon tinggalkan pesan anda, dan kami akan "
 #~ "menghubungi anda secepatnya."
 
-#~ msgid "Gaim User"
-#~ msgstr "Pengguna Gaim"
+#~ msgid "Pidgin User"
+#~ msgstr "Pengguna Pidgin"
 
 #~ msgid "Jabber Account"
 #~ msgstr "Akun Jabber"
@@ -14946,24 +14943,24 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Ketika ini terjadi, TOC mengacuhkan pesan apapun yang dikirm kepadanya, "
-#~ "dan dapat menendang anda bila mengirim pesan. Gaim akan mencegah apapun "
+#~ "dan dapat menendang anda bila mengirim pesan. Pidgin akan mencegah apapun "
 #~ "lewat. Ini hanya sementara, harap sabar."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Simpan Sebagai..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Simpan Sebagai..."
 
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "Metode otentikasi normal gagal. Ini berarti kata sandi anda salah, atau "
-#~ "skema otentikasi Yahoo! telah berubah. Gaim sekarang akan mencoba untuk "
+#~ "skema otentikasi Yahoo! telah berubah. Pidgin sekarang akan mencoba untuk "
 #~ "login menggunakan otentikasi Web Messenger, yang akan berakibat dalam "
 #~ "pengurangan fungsi dan fitur."
 

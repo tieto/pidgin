@@ -8,7 +8,7 @@
 #   Filip Miletic <f.miletic@ewi.tudelft.nl>, 2004.
 #   Nikola Kotur <kotnik@ns-linux.org>, 2006.
 #   Miloš Popović <gpopac@gmail.com>, 2007.
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidžin\n"
@@ -1857,7 +1857,7 @@ msgstr "Ne mogu da pošaljem direktorijum."
 
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
-msgstr "%s nije obična datoteka i zato je GAIM neće prepisivati.\n"
+msgstr "%s nije obična datoteka i zato je Pidgin neće prepisivati.\n"
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
