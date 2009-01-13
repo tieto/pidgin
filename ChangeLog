@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.4 (??/??/????):
+version 2.5.4 (01/12/2009):
 	libpurple:
 	* Fix a connection timeout with empty Gadu-Gady buddy lists. (Martin
 	  Rosinski)
@@ -11,6 +11,10 @@ version 2.5.4 (??/??/????):
 	* Extended purple-url-handler to handle "gtalk" URI's. (Paul Aurich)
 	* Fix the hang on exit in Network Location Awareness for Windows XP
 	  and Windows Vista. (Paul Aurich)
+
+	MSN:
+	* Change Contact Server to temporarily fix connection problems.
+	  (Thanks to Youness Alaoui)
 
 	XMPP:
 	* Support for XEP-0191 blocking.  (Vijay Raghunathan)

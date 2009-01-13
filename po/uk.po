@@ -1,11 +1,11 @@
-# Ukrainian translation to gaim.
+# Ukrainian translation to Pidgin.
 # Copyright (C) 2004 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gaim package.
+# This file is distributed under the same license as the Pidgin package.
 # Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004-2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2005-08-21 10:43+0300\n"
@@ -25,7 +25,7 @@ msgstr "Французька"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Наберіть `%s -h' для отримання додаткової інформації.\n"
+msgstr "Pidgin %s. Наберіть `%s -h' для отримання додаткової інформації.\n"
 
 #, c-format
 msgid ""
@@ -2245,7 +2245,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaim не вдається завантажити ваш модуль."
+msgstr "Pidgin не вдається завантажити ваш модуль."
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2253,7 +2253,7 @@ msgstr "Не вдається завантажити необхідний мод
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaim не вдається завантажити ваш модуль."
+msgstr "Pidgin не вдається завантажити ваш модуль."
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2393,7 +2393,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Керування Gaim з файлу"
+msgstr "Керування Pidgin з файлу"
 
 #. *< name
 #. *< version
@@ -2401,7 +2401,7 @@ msgstr "Керування Gaim з файлу"
 #. *  description
 #, fuzzy
 msgid "Allows control by entering commands in a file."
-msgstr "Дозволити керувати Gaim шляхом вводу команд у файл."
+msgstr "Дозволити керувати Pidgin шляхом вводу команд у файл."
 
 msgid "Minutes"
 msgstr "Хвилини"
@@ -3289,7 +3289,7 @@ msgstr "Передавання файлу скасовано"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaim не вдається відрити порт для прослуховування."
+msgstr "Pidgin не вдається відрити порт для прослуховування."
 
 msgid "Error displaying MOTD"
 msgstr "Помилка відображення MOTD"
@@ -3455,7 +3455,7 @@ msgstr "Невідоме повідомлення"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "Gaim надіслав повідомлення, яке сервер IRC не зрозумів."
+msgstr "Pidgin надіслав повідомлення, яке сервер IRC не зрозумів."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -4926,7 +4926,7 @@ msgstr "Не вдається розібрати повідомлення"
 
 #, fuzzy, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "Синтаксична помилка (можливо, помилка у Gaim)"
+msgstr "Синтаксична помилка (можливо, помилка у Pidgin)"
 
 #, c-format
 msgid "Invalid email address"
@@ -5305,7 +5305,7 @@ msgstr "Почати _розмову"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Для MSN необхідна підтримка SSL. Встановіть підтримувану бібліотеку SSL. За "
-"додатковою інформацією звертайтесь на http://gaim.sf.net/faq-ssl.php"
+"додатковою інформацією звертайтесь на http://Pidgin.sf.net/faq-ssl.php"
 
 msgid "Failed to connect to server."
 msgstr "Не вдається з'єднатися з сервером."
@@ -5482,7 +5482,7 @@ msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
 msgstr ""
-"Gaim не вдається знайти інформацію про профіль користувача. Швидше за все "
+"Pidgin не вдається знайти інформацію про профіль користувача. Швидше за все "
 "користувач не існує."
 
 msgid "Profile URL"
@@ -6810,7 +6810,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid AIM login hash."
-msgstr "Gaim не вдається отримати допустимий хеш входу AIM."
+msgstr "Pidgin не вдається отримати допустимий хеш входу AIM."
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
@@ -6820,7 +6820,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid login hash."
-msgstr "Gaim не вдається отримати допустимий хеш входу."
+msgstr "Pidgin не вдається отримати допустимий хеш входу."
 
 msgid "Password sent"
 msgstr "Пароль відправлено"
@@ -7148,9 +7148,9 @@ msgid ""
 msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
-msgstr[0] "Максимальна довжина профілю складає %d байт. Gaim обрізав його."
-msgstr[1] "Максимальна довжина профілю складає %d байти. Gaim обрізав його."
-msgstr[2] "Максимальна довжина профілю складає %d байтів. Gaim обрізав його."
+msgstr[0] "Максимальна довжина профілю складає %d байт. Pidgin обрізав його."
+msgstr[1] "Максимальна довжина профілю складає %d байти. Pidgin обрізав його."
+msgstr[2] "Максимальна довжина профілю складає %d байтів. Pidgin обрізав його."
 
 msgid "Profile too long."
 msgstr "Профіль занадто довгий."
@@ -7162,11 +7162,11 @@ msgid ""
 msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
-msgstr[0] "Максимальна довжина повідмлення складає %d байт. Gaim обрізав його."
+msgstr[0] "Максимальна довжина повідмлення складає %d байт. Pidgin обрізав його."
 msgstr[1] ""
-"Максимальна довжина повідмлення складає %d байти. Gaim обрізав його."
+"Максимальна довжина повідмлення складає %d байти. Pidgin обрізав його."
 msgstr[2] ""
-"Максимальна довжина повідмлення складає %d байтів. Gaim обрізав його."
+"Максимальна довжина повідмлення складає %d байтів. Pidgin обрізав його."
 
 msgid "Away message too long."
 msgstr "Повідомлення про відсутність надто довге."
@@ -7194,7 +7194,7 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"Gaim тимчасово не в змозі отримати ваш список контактів з серверів АІМ. Ваш "
+"Pidgin тимчасово не в змозі отримати ваш список контактів з серверів АІМ. Ваш "
 "список контактів не втрачений, та вірогідно стане доступним через декілька "
 "годин."
 
@@ -7741,7 +7741,7 @@ msgstr "Закрити"
 
 #, fuzzy
 msgid "About me"
-msgstr "Про Gaim"
+msgstr "Про Pidgin"
 
 #, fuzzy
 msgid "Category"
@@ -7960,7 +7960,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Про Gaim"
+msgstr "Про Pidgin"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7978,7 +7978,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Про Gaim"
+msgstr "Про Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -9404,7 +9404,7 @@ msgstr "Не вдається встановити режими каналу д�
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Невідома команда: %s, (можливо, помилка Gaim)"
+msgstr "Невідома команда: %s, (можливо, помилка Pidgin)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr "part [канал]:  Залишити розмову"
@@ -10000,7 +10000,7 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "Сервер Yahoo намагається використовувати невідомий метод ідентифікації. Ця "
-"версія Gaim швидше за все не зможе увійти у систему Yahoo. Спробуйте оновити "
+"версія Pidgin швидше за все не зможе увійти у систему Yahoo. Спробуйте оновити "
 "%s."
 
 msgid "Failed Yahoo! Authentication"
@@ -12091,7 +12091,7 @@ msgstr "Амхарська"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Про Gaim"
+msgstr "Про Pidgin"
 
 #, c-format
 msgid ""
@@ -12108,7 +12108,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"3\">IRC:</FONT> #gaim на irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"3\">IRC:</FONT> #Pidgin на irc.freenode.net<BR><BR>"
 
 #, fuzzy
 msgid "Current Developers"
@@ -12631,7 +12631,7 @@ msgstr ""
 
 #, fuzzy
 msgid "<span size='larger'>_Larger</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim %s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin %s</span>"
 
 #, fuzzy
 msgid "_Normal"
@@ -12723,7 +12723,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Наберіть `%s -h' для отримання додаткової інформації.\n"
+msgstr "Pidgin %s. Наберіть `%s -h' для отримання додаткової інформації.\n"
 
 #, c-format
 msgid ""
@@ -14285,7 +14285,7 @@ msgstr "Забезпечує безліч шляхів сповіщення пр
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Демонстраційний модуль Gaim"
+msgstr "Демонстраційний модуль Pidgin"
 
 #. *< name
 #. *< version
@@ -14390,7 +14390,7 @@ msgstr "Облікові записи"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Керування Gaim з файлу"
+msgstr "Керування Pidgin з файлу"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -14401,7 +14401,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Керування Gaim з файлу"
+msgstr "Керування Pidgin з файлу"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr ""
@@ -14694,7 +14694,7 @@ msgstr "Завантаження"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_Запускати Gaim при завантаженні Windows"
+msgstr "_Запускати Pidgin при завантаженні Windows"
 
 msgid "_Dockable Buddy List"
 msgstr "_Закріплений список контактів"
@@ -14718,7 +14718,7 @@ msgstr "Параметри входу"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Специфічні для Windows параметри Gaim."
+msgstr "Специфічні для Windows параметри Pidgin."
 
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
@@ -14922,7 +14922,7 @@ msgstr ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
 #~ msgstr ""
-#~ "Ви використовуєте Gaim версії %s.  Остання доступна версія - %s.<hr>"
+#~ "Ви використовуєте Pidgin версії %s.  Остання доступна версія - %s.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -15217,26 +15217,23 @@ msgstr ""
 #~ "мають вбудований порядок активний->бездіяльний->відійшов->відійшов"
 #~ "+бездіяльний->не у мережі."
 
-#~ msgid "Gaim"
-#~ msgstr "Gaim"
+#~ msgid "Pidgin - Signed off"
+#~ msgstr "Pidgin - Вимкнений"
 
-#~ msgid "Gaim - Signed off"
-#~ msgstr "Gaim - Вимкнений"
+#~ msgid "Pidgin - Away"
+#~ msgstr "Pidgin - Користувач відійшов"
 
-#~ msgid "Gaim - Away"
-#~ msgstr "Gaim - Користувач відійшов"
-
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "Відображає значок Gaim в системному лотку."
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "Відображає значок Pidgin в системному лотку."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list or login window. Also "
 #~ "allows messages to be queued until the icon is clicked, similar to ICQ."
 #~ msgstr ""
 #~ "Відображає значок системного лотка (наприклад, у GNOME, KDE або Windows) "
-#~ "який показує поточний стан Gaim, що надає швидкий доступ до операцій, які "
+#~ "який показує поточний стан Pidgin, що надає швидкий доступ до операцій, які "
 #~ "використовуються у більшості випадків, та дозволяє вмикати/вимикати "
 #~ "відображення даних списку контактів або вікна входу. Також дозволяє "
 #~ "зберігати повідомлення у черзі, до їх викликання клацанням на зображенні, "
@@ -15247,17 +15244,17 @@ msgstr ""
 #~ msgstr "Розмір розширювача"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "Ви можете отримати версію %s з:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "Ви можете отримати версію %s з:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "Затримка"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "Параметри WinGaim"
+#~ msgid "WinPidgin Options"
+#~ msgstr "Параметри WinPidgin"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because its account was not logged "
@@ -15382,8 +15379,8 @@ msgstr ""
 #~ msgid "/Tools/Account Actions"
 #~ msgstr "/Сервіс/Дії над обліковими записами"
 
-#~ msgid "me is using Gaim v%s."
-#~ msgstr "я використовую Gaim версії %s."
+#~ msgid "me is using Pidgin v%s."
+#~ msgstr "я використовую Pidgin версії %s."
 
 #, fuzzy
 #~ msgid "/Options/Show Buddy _Icon"
@@ -15408,18 +15405,18 @@ msgstr ""
 
 #, fuzzy
 #~ msgid ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using GTK+ and is licensed under the GNU GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
-#~ "GaimGaim - модульний клієнт обміну повідомленнями, що дозволяє "
+#~ "PidginPidgin - модульний клієнт обміну повідомленнями, що дозволяє "
 #~ "використовувати AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell "
 #~ "GroupWise, Napster, Zephyr, та Gadu-Gadu одразу.  Він написаний з "
 #~ "використанням Gtk+ та поширюється на умовах GPL.<BR><BR>"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim на irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin на irc.freenode.net<BR><BR>"
 
 #~ msgid "Active Developers"
 #~ msgstr "Активні розробники"
@@ -15762,15 +15759,15 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Коли це трапляється, TOC ігнорує будь-які надіслані йому повідомлення, та "
-#~ "може відключити вас при спробі надіслати повідомлення. Gaim не дозволить "
+#~ "може відключити вас при спробі надіслати повідомлення. Pidgin не дозволить "
 #~ "цього зробити. Це тимчасові труднощі, будьте терплячими."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Зберегти як..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Зберегти як..."
 
 #~ msgid "TOC host"
 #~ msgstr "Вузол TOC"
@@ -15781,12 +15778,12 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "Звичайний метод ідентифікації завершився аварійно. Це означає що, або ви "
 #~ "вказали некоректний пароль, або змінилась схема автентифікації Yahoo!. "
-#~ "Gaim намагатиметься увійти використовуючи ідентифікацію типу Web "
+#~ "Pidgin намагатиметься увійти використовуючи ідентифікацію типу Web "
 #~ "Messenger, яка призведе до часткової втрати функціональності та "
 #~ "властивостей."
 
@@ -15865,15 +15862,15 @@ msgstr ""
 #~ msgid "Remote Control"
 #~ msgstr "Дистанційне керування"
 
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "Надає можливість дистанційного керування gaim."
+#~ msgid "Provides remote control for Pidgin applications."
+#~ msgstr "Надає можливість дистанційного керування Pidgin."
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 #~ msgstr ""
-#~ "Надає можливість дистанційно керувати Gaim  через незалежні програми "
-#~ "третіх сторін, або використовуючи програму gaim-remote."
+#~ "Надає можливість дистанційно керувати Pidgin  через незалежні програми "
+#~ "третіх сторін, або використовуючи програму Pidgin-remote."
 
 #~ msgid "Docked _Buddy List is always on top"
 #~ msgstr "Закріплений список _контактів завжди згори"
@@ -15922,7 +15919,7 @@ msgstr ""
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
@@ -15934,23 +15931,23 @@ msgstr ""
 #~ "       away                     Вивести діалогове вікно відсутності з "
 #~ "типовим повідомленням\n"
 #~ "       back                     Прибрати діалогове вікно відсутності\n"
-#~ "       quit                     Закрити запущену копію Gaim\n"
+#~ "       quit                     Закрити запущену копію Pidgin\n"
 #~ "\n"
 #~ "    ПАРАМЕТРИ:\n"
 #~ "       -h, --help [command]     Вивести довідку про команди\n"
 
 #~ msgid ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 #~ msgstr ""
-#~ "Gaim не запущено (у сеансі 0)\n"
+#~ "Pidgin не запущено (у сеансі 0)\n"
 #~ "Чи завантажений модуль \"Дистанційне керування\"?\n"
 
 #~ msgid ""
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15960,20 +15957,20 @@ msgstr ""
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 #~ msgstr ""
 #~ "\n"
 #~ "Використання AIM: URI:\n"
 #~ "Надсилає повідомлення за ідентифікатором користувача:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "У цьому випадку, 'Penguin' ідентифікатор користувача, якому надсилається\n"
 #~ "повідомлення, а 'hello world' є повідомленням. Замість пробілів слід\n"
 #~ "використовувати знак '+'.\n"
@@ -15983,22 +15980,22 @@ msgstr ""
 #~ "закінчуватись у цьому місці.\n"
 #~ "Наступне призведе до відкривання вікна бесіди з користувачем без "
 #~ "повідомлення:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Приєднання до розмови:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...призводить до приєднання до кімнати розмов 'PenguinLounge'.\n"
 #~ "\n"
 #~ "Додавання користувача у список користувачів:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...запитує додавання 'Penguin' до вашого списку користувачів.\n"
 
 #~ msgid ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Закрити запущену копію Gaim\n"
+#~ "Закрити запущену копію Pidgin\n"
 
 #~ msgid ""
 #~ "\n"
@@ -16229,8 +16226,8 @@ msgstr ""
 #~ msgid "Idle _time reporting:"
 #~ msgstr "Повідомлення _часу бездіяльності:"
 
-#~ msgid "Gaim usage"
-#~ msgstr "використання Gaim"
+#~ msgid "Pidgin usage"
+#~ msgstr "використання Pidgin"
 
 #~ msgid "X usage"
 #~ msgstr "використання X"
@@ -16279,7 +16276,7 @@ msgstr ""
 #~ msgstr "_Увійти"
 
 #~ msgid ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -16296,7 +16293,7 @@ msgstr ""
 #~ "  -v, --version       display the current version and exit\n"
 #~ "  -h, --help          display this help and exit\n"
 #~ msgstr ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Використання: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          відобразити вікно редактора облікових записів\n"
@@ -16321,11 +16318,11 @@ msgstr ""
 #~ msgstr "Не вдається завантажити параметри"
 
 #~ msgid ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
+#~ "Pidgin was not able to load your preferences because they are stored in an "
 #~ "old format that is no longer used.  Please reconfigure your settings "
 #~ "using the Preferences window."
 #~ msgstr ""
-#~ "Gaim не вдається завантажити параметри, тому що вони збережені у старому "
+#~ "Pidgin не вдається завантажити параметри, тому що вони збережені у старому "
 #~ "форматі, який вже не використовується. Виконайте ще раз налаштовування у "
 #~ "вікні параметрів."
 
@@ -16403,27 +16400,27 @@ msgstr ""
 #~ msgstr "Помилка зв'язку з сервером Gadu-Gadu"
 
 #~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
+#~ "Pidgin was unable to complete your request due to a problem communicating "
 #~ "with the Gadu-Gadu HTTP server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim неспроможний завершити ваш запит внаслідок проблем, пов'язаних з "
+#~ "Pidgin неспроможний завершити ваш запит внаслідок проблем, пов'язаних з "
 #~ "HTTP-сервером Gadu-Gadu. Спробуйте пізніше."
 
 #~ msgid "Unable to import Gadu-Gadu buddy list"
 #~ msgstr "Не вдається імпортувати список контактів Gadu-Gadu"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
+#~ "Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please "
 #~ "try again later."
 #~ msgstr ""
-#~ "Gaim не вдається з'єднатися з сервером списку контактів Gadu-Gadu. "
+#~ "Pidgin не вдається з'єднатися з сервером списку контактів Gadu-Gadu. "
 #~ "Пізніше спробуйте ще раз."
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 #~ msgstr ""
-#~ "Gaim неспроможний з'єднатися з сервером списку контактів. Пізніше "
+#~ "Pidgin неспроможний з'єднатися з сервером списку контактів. Пізніше "
 #~ "спробуйте ще."
 
 #~ msgid "Unable to delete Gadu-Gadu buddy list"
@@ -16433,17 +16430,17 @@ msgstr ""
 #~ msgstr "Не вдається отримати доступ до каталогу"
 
 #~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
+#~ "Pidgin was unable to search the Directory because it was unable to connect "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim не вдається виконати пошук у каталозі, тому що не вдалось з'єднатись "
+#~ "Pidgin не вдається виконати пошук у каталозі, тому що не вдалось з'єднатись "
 #~ "з сервером каталогу. Пізніше спробуйте ще раз."
 
 #~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
+#~ "Pidgin was unable to change your password due to an error connecting to the "
 #~ "Gadu-Gadu server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim не вдається змінити ваш пароль через помилку з'єднання з сервером "
+#~ "Pidgin не вдається змінити ваш пароль через помилку з'єднання з сервером "
 #~ "Gadu-Gadu. Пізніше спробуйте ще раз."
 
 #~ msgid "Directory Search"
@@ -16453,14 +16450,14 @@ msgstr ""
 #~ msgstr "Не вдається отримати доступ до профілю користувача."
 
 #~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
+#~ "Pidgin was unable to access this user's profile due to an error connecting "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim не вдається отримати доступ до профілю цього користувача через "
+#~ "Pidgin не вдається отримати доступ до профілю цього користувача через "
 #~ "помилку з'єднання з сервером каталогу. Спробуйте ще раз пізніше."
 
-#~ msgid "Gaim encountered an error communicating with the ICQ server."
-#~ msgstr "Gaim зіштовхнувся з проблемою з'єднання з сервером ICQ."
+#~ msgid "Pidgin encountered an error communicating with the ICQ server."
+#~ msgstr "Pidgin зіштовхнувся з проблемою з'єднання з сервером ICQ."
 
 #~ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 #~ msgstr "Користувач %s (%s%s%s%s%s) бажає, щоб ви його авторизували."
@@ -16471,8 +16468,8 @@ msgstr ""
 #~ msgid "Nick:"
 #~ msgstr "Прізвисько:"
 
-#~ msgid "Gaim User"
-#~ msgstr "Користувач Gaim"
+#~ msgid "Pidgin User"
+#~ msgstr "Користувач Pidgin"
 
 #~ msgid "File Transfer Aborted"
 #~ msgstr "Передавання файлу припинено"

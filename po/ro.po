@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-2.5.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 01:11+0200\n"
-"PO-Revision-Date: 2008-12-18 00:52+0200\n"
+"POT-Creation-Date: 2009-01-06 09:58-0500\n"
+"PO-Revision-Date: 2009-01-07 00:42+0200\n"
 "Last-Translator: Mișu Moldovan <dumol@gnome.ro>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -1122,7 +1122,6 @@ msgstr "%s a intrat în absență (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s v-a trimis un mesaj. (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Eveniment necunoscut în întâmpinare. Raportați această eroare."
 
@@ -1491,7 +1490,6 @@ msgstr ""
 "La inițierea unei noi discuții acest modul va insera ultima discuție în "
 "fereastra curentă."
 
-#, c-format
 msgid "Online"
 msgstr "Conectat"
 
@@ -1835,7 +1833,6 @@ msgstr ""
 "Eroare la citirea de la procesul „resolver”:\n"
 "%s"
 
-#, c-format
 msgid "Resolver process exited without answering our request"
 msgstr "Rezoluția de nume s-a terminat fără a se răspunde cererii"
 
@@ -1925,7 +1922,6 @@ msgstr "Se inițiază transferul fișierului %s de la %s"
 msgid "Transfer of file %s complete"
 msgstr "Transferul fișierului %s s-a terminat"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Transferul fișierelor s-a terminat"
 
@@ -1933,7 +1929,6 @@ msgstr "Transferul fișierelor s-a terminat"
 msgid "You canceled the transfer of %s"
 msgstr "Ați întrerupt transferul fișierului %s"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Transferul fișierului a fost întrerupt"
 
@@ -2150,7 +2145,6 @@ msgstr "(%s) %s <Răspuns-Automat>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Utilizați %s, dar acest modul necesită %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Acest modul nu are un ID definit."
 
@@ -2544,7 +2538,7 @@ msgstr "Citire înregistrări"
 #. *< version
 #. * summary
 msgid "Includes other IM clients' logs in the log viewer."
-msgstr "Importă înregistrările altor clienți IM în Gaim."
+msgstr "Importă înregistrările altor clienți IM."
 
 #. * description
 msgid ""
@@ -3038,7 +3032,6 @@ msgstr "Disponibil"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Absent"
 
@@ -3938,7 +3931,6 @@ msgstr "Cu chef de vorbă"
 msgid "Extended Away"
 msgstr "Demult absent"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Nu deranjați"
 
@@ -4174,6 +4166,9 @@ msgstr "Autentificare"
 
 msgid "Re-initializing Stream"
 msgstr "Reinițializare flux"
+
+msgid "Server doesn't support blocking"
+msgstr "Serverul nu permite blocarea"
 
 msgid "Not Authorized"
 msgstr "Neautorizat"
@@ -4723,219 +4718,165 @@ msgstr ""
 "%s este în lista contactelor, dar nu și în lista de pe server. Doriți să "
 "adăugați acest contact?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "Nu se poate prelucra mesajul"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Eroare de sintaxă (probabil o eroare de client)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "Adresă de mail invalidă"
 
-#, c-format
 msgid "User does not exist"
 msgstr "Utilizator inexistent"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Lipsește numele complet al domeniului"
 
-#, c-format
 msgid "Already logged in"
 msgstr "Deja autentificat"
 
-#, c-format
 msgid "Invalid username"
 msgstr "Nume invalid de utilizator"
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "Pseudonimul propriu este invalid"
 
-#, c-format
 msgid "List full"
 msgstr "Listă plină"
 
-#, c-format
 msgid "Already there"
 msgstr "Există deja"
 
-#, c-format
 msgid "Not on list"
 msgstr "Nu este în listă"
 
-#, c-format
 msgid "User is offline"
 msgstr "Utilizatorul este deconectat"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "Sunteți deja în respectiva stare"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "Există deja în cealaltă listă"
 
-#, c-format
 msgid "Too many groups"
 msgstr "Prea multe grupuri"
 
-#, c-format
 msgid "Invalid group"
 msgstr "Grup invalid"
 
-#, c-format
 msgid "User not in group"
 msgstr "Utilizatorul nu este în grup"
 
-#, c-format
 msgid "Group name too long"
 msgstr "Nume de grup prea lung"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "Nu se poate șterge grupul zero"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "S-a încercat adăugarea unui contact într-un grup inexistent"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "Comutare eșuată"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "Notificarea transferului a eșuat"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "Lipsesc unele câmpuri cerute"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "Prea multe solicitări către FND"
 
-#, c-format
 msgid "Not logged in"
 msgstr "Neautentificat"
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Serviciu temporar indisponibil"
 
-#, c-format
 msgid "Database server error"
 msgstr "Eroare a serverului bazei de date"
 
-#, c-format
 msgid "Command disabled"
 msgstr "Comandă dezactivată"
 
-#, c-format
 msgid "File operation error"
 msgstr "Eroare la manipularea fișierului"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "Eroare la alocarea memoriei"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "O valoare CHL greșită a fost trimisă către server"
 
-#, c-format
 msgid "Server busy"
 msgstr "Server ocupat"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "Server indisponibil"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "Serverul de notificare a contactelor este indisponibil"
 
-#, c-format
 msgid "Database connect error"
 msgstr "Eroare la conectarea la baza de date"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Serverul va fi în curând indisponibil"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "Eroare la stabilirea conexiunii"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Parametrii CVR sunt necunoscuți sau nu sunt permiși"
 
-#, c-format
 msgid "Unable to write"
 msgstr "Nu se poate scrie"
 
-#, c-format
 msgid "Session overload"
 msgstr "Sesiune supraîncărcată"
 
-#, c-format
 msgid "User is too active"
 msgstr "Utilizatorul este prea activ"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "Prea multe sesiuni"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "Cont „Passport” neverificat"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "Fișier invalid"
 
-#, c-format
 msgid "Not expected"
 msgstr "Neașteptat"
 
-#, c-format
 msgid "Friendly name changes too rapidly"
 msgstr "Pseudonimul a fost schimbat prea rapid"
 
-#, c-format
 msgid "Server too busy"
 msgstr "Server prea încărcat"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "Autentificare eșuată"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "Permis doar la autentificare"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "Nu acceptă utilizatori noi"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Cont „Kids Passport” fără aprobare de la părinți"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "Cont „Passport” neverificat încă"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "Cont „Passport” suspendat"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "Bilet (ticket) greșit"
 
@@ -5637,7 +5578,6 @@ msgstr "Condiție de intrare invalidă"
 msgid "Read buffer full (2)"
 msgstr ""
 
-#, fuzzy
 msgid "Unparseable message"
 msgstr "Nu se poate prelucra mesajul"
 
@@ -5709,21 +5649,19 @@ msgstr ""
 
 #, fuzzy
 msgid "Send emoticons"
-msgstr "Opțiuni sunet"
-
-msgid "Screen resolution (dots per inch)"
 msgstr ""
 
-#, fuzzy
+msgid "Screen resolution (dots per inch)"
+msgstr "Rezoluție ecran (dpi)"
+
 msgid "Base font size (points)"
-msgstr "Font mai mare"
+msgstr "Mărime font de bază (pp)"
 
 msgid "User"
 msgstr "Utilizator"
 
-#, fuzzy
 msgid "Headline"
-msgstr "A_dministrare:"
+msgstr "Titlu"
 
 #, fuzzy
 msgid "Song"
@@ -6158,7 +6096,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Eroare: suportul SSL nu este instalat."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Această conferință a fost închisă. Nu mai pot fi trimise mesaje."
 
@@ -6423,23 +6360,18 @@ msgstr "Cameră"
 msgid "Screen Sharing"
 msgstr "Partajare ecran"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Disponibil"
 
-#, c-format
 msgid "Not Available"
 msgstr "Indisponibil"
 
-#, c-format
 msgid "Occupied"
 msgstr "Ocupat"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Prezent online"
 
-#, c-format
 msgid "Invisible"
 msgstr "Invizibil"
 
@@ -6540,12 +6472,9 @@ msgid "_OK"
 msgstr "_OK"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
-msgstr ""
-"S-ar putea să fiți rapid deconectat(ă). Poate doriți să încercați TOC până "
-"ce se rezolvă această problemă. Vizitați %s pentru actualizări."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "S-ar putea să intervină în scurt timp deconectarea de la server. "
+"Dacă se întâmplă, vizitați %s pentru actualizări."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Nu s-a putut obține un hash valid pentru autentificarea AIM."
@@ -7141,7 +7070,6 @@ msgstr "Cerere către %s pentru a ne conecta la %s:%hu pentru discuție directă
 msgid "Attempting to connect to %s:%hu."
 msgstr "Încercare de conectare la %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Încercare de conectare prin serverul proxy."
 
@@ -7233,16 +7161,14 @@ msgstr "Porc"
 msgid "Other"
 msgstr "Altceva"
 
-#, fuzzy
 msgid "Visible"
-msgstr "Invizibil"
+msgstr "Vizibil"
 
 msgid "Friend Only"
-msgstr ""
+msgstr "Doar prieten"
 
-#, fuzzy
 msgid "Private"
-msgstr "Securitate"
+msgstr "Intim"
 
 msgid "QQ Number"
 msgstr "Număr QQ"
@@ -7259,9 +7185,8 @@ msgstr "Cod poștal"
 msgid "Phone Number"
 msgstr "Telefon"
 
-#, fuzzy
 msgid "Authorize adding"
-msgstr "Autorizați contactul?"
+msgstr "Autorizare adăugare"
 
 msgid "Cellphone Number"
 msgstr "Telefon mobil"
@@ -7269,68 +7194,54 @@ msgstr "Telefon mobil"
 msgid "Personal Introduction"
 msgstr "Introducere personală"
 
-#, fuzzy
 msgid "City/Area"
-msgstr "Oraș"
+msgstr "Oraș/Sector"
 
-#, fuzzy
 msgid "Publish Mobile"
-msgstr "Mobil privat"
+msgstr "Publicare telefon mobil"
 
-#, fuzzy
 msgid "Publish Contact"
-msgstr "Alias contact"
+msgstr "Publicare date de contact"
 
 msgid "College"
 msgstr "Colegiu"
 
-#, fuzzy
 msgid "Horoscope"
 msgstr "Simbol horoscop"
 
-#, fuzzy
 msgid "Zodiac"
 msgstr "Semn zodiacal"
 
-#, fuzzy
 msgid "Blood"
-msgstr "Blocat"
+msgstr "Grupă sanguină"
 
-#, fuzzy
 msgid "True"
-msgstr "Taur"
+msgstr "Adevărat"
 
-#, fuzzy
 msgid "False"
-msgstr "Eșuat"
+msgstr "False"
 
-#, fuzzy
 msgid "Modify Contact"
-msgstr "Modificare cont"
+msgstr "Editare date de contact"
 
-#, fuzzy
 msgid "Modify Address"
-msgstr "Adresă acasă"
+msgstr "Editare adresă"
 
-#, fuzzy
 msgid "Modify Extended Information"
-msgstr "Editare detalii proprii"
+msgstr "Editare detalii extinse"
 
-#, fuzzy
 msgid "Modify Information"
-msgstr "Editare detalii proprii"
+msgstr "Editare detalii"
 
-#, fuzzy
 msgid "Update"
-msgstr "Ultima actualizare"
+msgstr "Actualizare"
 
-#, fuzzy
 msgid "Could not change buddy information."
-msgstr "Introduceți informații despre contact."
+msgstr "Nu s-ar putut schimbat datele contactului."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u requires verification"
-msgstr "Solicit autorizare"
+msgstr "%u solicită autorizare"
 
 #, fuzzy
 msgid "Add buddy question"
@@ -7596,88 +7507,85 @@ msgstr "Ver"
 msgid "Invalid name"
 msgstr "Nume invalid"
 
-#, fuzzy
 msgid "Select icon..."
-msgstr "Alegeți un director..."
+msgstr "Alegeți o iconiță..."
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Autentificat la</b>: %s<br>\n"
+msgstr "<b>Autentificat la</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Conectați:</b> %d<br>\n"
+msgstr "<b>Total contacte conectate:</b> %d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Ultima actualizare:</b> %s<br>\n"
+msgstr "<b>Ultima actualizare</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>IP server</b>: %s: %d<br>\n"
+msgstr "<b>Server</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Autentificat la</b>: %s<br>\n"
+msgstr "<b>Etichetă client</b>: %s<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Mod de conectare</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Mod de conectare</b>: %s<br>\n"
+msgstr "<b>Adresă IP publică</b>: %s:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>IP server</b>: %s: %d<br>\n"
+msgstr "<b>Trimise</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Ultima actualizare:</b> %s<br>\n"
+msgstr "<b>Retrimise:</b> %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Ultima actualizare:</b> %s<br>\n"
+msgstr "<b>Pierdute:</b> %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>IP server</b>: %s: %d<br>\n"
+msgstr "<b>Primite</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>IP-ul meu public</b>: %s<br>\n"
+msgstr "<b>Duplicate primite</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Autentificat la</b>: %s<br>\n"
+msgstr "<b>Timp</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP server</b>: %s: %d<br>\n"
+msgstr "<b>Adresă IP</b>: %s<br>\n"
 
 msgid "Login Information"
 msgstr "Informații de autentificare"
 
 msgid "<p><b>Original Author</b>:<br>\n"
-msgstr ""
+msgstr "<p><b>Prim autor</b>:<br>\n"
 
 msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
+msgstr "<p><b>Contribuții în cod</b>:<br>\n"
 
-#, fuzzy
 msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>Ultima actualizare:</b> %s<br>\n"
+msgstr "<b>Contribuții de tip patch:</b> %s<br>\n"
 
-#, fuzzy
 msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>IP server</b>: %s: %d<br>\n"
+msgstr "<p><b>Mulțumiri</b>:<br>\n"
 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr ""
+msgstr "<p><i>Și pentru toți băieții din ultimele rânduri...</i><br>\n"
 
 msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
+msgstr "<i>Vă invităm să ni vă alăturați!</i> :)"
 
 #, fuzzy, c-format
 msgid "About OpenQ %s"
@@ -7724,13 +7632,13 @@ msgid "Select Server"
 msgstr "Selectați utilizatorul"
 
 msgid "QQ2005"
-msgstr ""
+msgstr "QQ2005"
 
 msgid "QQ2007"
-msgstr ""
+msgstr "QQ2007"
 
 msgid "QQ2008"
-msgstr ""
+msgstr "QQ2008"
 
 #, fuzzy
 msgid "Connect by TCP"
@@ -8512,7 +8420,6 @@ msgstr "<br><b>Chat HMAC:</b> %s"
 msgid "<br><b>Channel Topic:</b><br>%s"
 msgstr "<br><b>Topic chat:</b><br>%s"
 
-#, c-format
 msgid "<br><b>Channel Modes:</b> "
 msgstr "<br><b>Moduri chat:</b> "
 
@@ -8537,7 +8444,6 @@ msgstr "Frază secretă pentru chat"
 msgid "Channel Public Keys List"
 msgstr "Listă chei publice chat"
 
-#, c-format
 msgid ""
 "Channel authentication is used to secure the channel from unauthorized "
 "access. The authentication may be based on passphrase and digital "
@@ -8937,7 +8843,6 @@ msgstr "Descărcare %s: %s"
 msgid "Your Current Mood"
 msgstr "Propria dispoziție"
 
-#, c-format
 msgid "Normal"
 msgstr "Normal"
 
@@ -9322,46 +9227,36 @@ msgstr "„Whiteboard”"
 msgid "No server statistics available"
 msgstr "Nici o statistică nu e disponibilă pentru server"
 
-#, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr ""
 "Eroare: Nepotrivire de versiune, încercați o versiune mai nouă de client"
 
-#, c-format
 msgid "Failure: Remote does not trust/support your public key"
 msgstr ""
 "Eroare: Partenerul nu vă suportă tipul de cheie publică sau nu are încredere "
 "în ea."
 
-#, c-format
 msgid "Failure: Remote does not support proposed KE group"
 msgstr "Eroare: Partenerul nu suportă grupul KE propus"
 
-#, c-format
 msgid "Failure: Remote does not support proposed cipher"
 msgstr "Eroare: Partenerul nu suportă cifrul propus"
 
-#, c-format
 msgid "Failure: Remote does not support proposed PKCS"
 msgstr "Eroare: Partenerul nu suport PKCS-ul propus"
 
-#, c-format
 msgid "Failure: Remote does not support proposed hash function"
 msgstr "Eroare: Partenerul nu suportă funcția hash propusă"
 
-#, c-format
 msgid "Failure: Remote does not support proposed HMAC"
 msgstr "Eroare: Partenerul nu suporta HMAC-ul propus"
 
-#, c-format
 msgid "Failure: Incorrect signature"
 msgstr "Eroare: Semnătură incorectă"
 
-#, c-format
 msgid "Failure: Invalid cookie"
 msgstr "Eroare: Cookie invalid"
 
-#, c-format
 msgid "Failure: Authentication failed"
 msgstr "Eroare: Autentificare eșuată"
 
@@ -9392,6 +9287,9 @@ msgstr "Nu s-a putut rezolva numele calculatorului"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Numele de utilizatori SIP nu pot conține spații sau simbolul @"
+
+msgid "SIP connect server not specified"
+msgstr "Nu s-a specificat un server de conectare SIP"
 
 #. *< type
 #. *< ui_requirement
@@ -9458,7 +9356,6 @@ msgstr "%s nu este autentificat momentan."
 msgid "Warning of %s not allowed."
 msgstr "Atenționarea lui %s nu este permisă."
 
-#, c-format
 msgid "A message has been dropped, you are exceeding the server speed limit."
 msgstr "Un mesaj s-a pierdut, ați depășit limita de viteză fixată de server."
 
@@ -9478,39 +9375,30 @@ msgstr "Ați pierdut un mesaj de la %s pentru că era prea mare."
 msgid "You missed an IM from %s because it was sent too fast."
 msgstr "Ați pierdut un mesaj de la %s pentru că a fost trimis prea repede."
 
-#, c-format
 msgid "Failure."
 msgstr "Eșec."
 
-#, c-format
 msgid "Too many matches."
 msgstr "Prea multe potriviri."
 
-#, c-format
 msgid "Need more qualifiers."
 msgstr "E nevoie de mai multe atribute."
 
-#, c-format
 msgid "Dir service temporarily unavailable."
 msgstr "Serviciul „Dir” este temporar indisponibil."
 
-#, c-format
 msgid "Email lookup restricted."
 msgstr "Căutarea după adresa de mail este restricționată."
 
-#, c-format
 msgid "Keyword ignored."
 msgstr "Cuvântul-cheie a fost ignorat."
 
-#, c-format
 msgid "No keywords."
 msgstr "Fără cuvinte-cheie."
 
-#, c-format
 msgid "User has no directory information."
 msgstr "Nu există informații detaliate în director."
 
-#, c-format
 msgid "Country not supported."
 msgstr "Nu există suport de țară."
 
@@ -9518,21 +9406,17 @@ msgstr "Nu există suport de țară."
 msgid "Failure unknown: %s."
 msgstr "Eșec necunoscut: %s."
 
-#, c-format
 msgid "Incorrect username or password."
 msgstr "Nume de utilizator sau parolă incorecte."
 
-#, c-format
 msgid "The service is temporarily unavailable."
 msgstr "Serviciul este temporar indisponibil."
 
-#, c-format
 msgid "Your warning level is currently too high to log in."
 msgstr ""
 "Nivelul propriu de avertizare este prea ridicat pentru a vă putea "
 "autentifica."
 
-#, c-format
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
@@ -10370,27 +10254,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Conexiunea a fost întreruptă de un alt program pornit."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Conexiunea a fost închisă la distanță."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Conexiunea a expirat."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Conexiune resetată."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Adresa este deja utilizată."
 
@@ -11619,7 +11498,6 @@ msgstr ""
 "„COPYRIGHT” pentru o listă completă a celor ce au contribuit. Nu se oferă "
 "nici un fel de garanție pentru acest program.<BR><BR>"
 
-#, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin pe irc.freenode.net<BR><BR>"
 
@@ -11981,11 +11859,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "Salvează imaginea"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_Salvează imaginea..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "_Adaugă iconiță simbolică..."
 
@@ -12314,7 +12190,7 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "Ați ales să precizați o comandă pentru deschiderea unui navigator, dar nu "
-"ați introdus-o în preferințele Gaim."
+"ați introdus-o în preferințe."
 
 msgid "The following plugins will be unloaded."
 msgstr "Următoarele module vor fi dezactivate."
@@ -12702,27 +12578,21 @@ msgstr "Înregistrează toate schimbările de _status în înregistrările de si
 msgid "Sound Selection"
 msgstr "Selectați un sunet"
 
-#, c-format
 msgid "Quietest"
 msgstr "Foarte încet"
 
-#, c-format
 msgid "Quieter"
 msgstr "Mai încet"
 
-#, c-format
 msgid "Quiet"
 msgstr "Încet"
 
-#, c-format
 msgid "Loud"
 msgstr "Tare"
 
-#, c-format
 msgid "Louder"
 msgstr "Mai tare"
 
-#, c-format
 msgid "Loudest"
 msgstr "Foarte tare"
 
@@ -13720,7 +13590,6 @@ msgstr "Dialog notificare"
 msgid "Select Color"
 msgstr "Alegeți o culoare"
 
-#, c-format
 msgid "Select Interface Font"
 msgstr "Alegeți fontul interfeței"
 
@@ -13819,7 +13688,7 @@ msgstr "Notificări versiuni noi"
 #. *< version
 #. *  summary
 msgid "Checks periodically for new releases."
-msgstr "Verifică dacă există versiuni noi Gaim."
+msgstr "Verifică dacă există versiuni noi."
 
 #. *  description
 msgid ""
@@ -13941,7 +13810,6 @@ msgstr "Adaugă marcaje de timp în stil iChat la fiecare N minute."
 msgid "Timestamp Format Options"
 msgstr "Opțiuni de formatare a marcajelor de timp"
 
-#, c-format
 msgid "_Force 24-hour time format"
 msgstr "_Marcaje de timp tip „24 de ore”"
 
@@ -14113,6 +13981,13 @@ msgstr "Trimitere și primire blocuri XMPP brute"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Acest modul poate fi utilizat pentru depanarea serverelor și clienților XMPP."
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "S-ar putea să fiți rapid deconectat(ă). Poate doriți să încercați TOC "
+#~ "până ce se rezolvă această problemă. Vizitați %s pentru actualizări."
 
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""
