@@ -6200,10 +6200,14 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		menu = g_list_prepend(menu, act);
 	}
 
-	act = purple_menu_action_new(_("Edit Buddy Comment"),
-	                           PURPLE_CALLBACK(oscar_buddycb_edit_comment),
-	                           NULL, NULL);
-	menu = g_list_prepend(menu, act);
+	if (purple_buddy_get_group(buddy) != NULL)
+	{
+		/* We only do this if the user is in our buddy list */
+		act = purple_menu_action_new(_("Edit Buddy Comment"),
+		                           PURPLE_CALLBACK(oscar_buddycb_edit_comment),
+		                           NULL, NULL);
+		menu = g_list_prepend(menu, act);
+	}
 
 #if 0
 	if (od->icq)
@@ -6237,7 +6241,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 #endif
 	}
 
-	if (od->ssi.received_data)
+	if (od->ssi.received_data && purple_buddy_get_group(buddy) != NULL)
 	{
 		char *gname;
 		gname = aim_ssi_itemlist_findparentname(od->ssi.local, buddy->name);

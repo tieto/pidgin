@@ -1,6 +1,6 @@
 # translation of de.po to Deutsch
 # Pidgin German translation
-# Copyright (C) 2001, Daniel Seifert <gaim-translation@dseifert.de>
+# Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
 # Copyright (C) 2002-2008, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
@@ -11,15 +11,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-05 17:34+0100\n"
-"PO-Revision-Date: 2009-01-05 17:34+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
-"Language-Team: German <de@li.org>\n"
+"POT-Creation-Date: 2009-01-09 00:39+0100\n"
+"PO-Revision-Date: 2009-01-09 00:38+0100\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 0.2\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -7201,7 +7201,7 @@ msgid "Phone Number"
 msgstr "Telefonnummer"
 
 msgid "Authorize adding"
-msgstr "Hinzufügen autorisieren?"
+msgstr "Hinzufügen autorisieren"
 
 msgid "Cellphone Number"
 msgstr "Handy-Telefonnummer"
