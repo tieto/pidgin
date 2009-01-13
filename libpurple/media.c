@@ -111,18 +111,7 @@ static GObjectClass *parent_class = NULL;
 
 enum {
 	ERROR,
-	READY,
-	WAIT,
-	ACCEPTED,
-	HANGUP,
-	REJECT,
-	GOT_REQUEST,
-	GOT_HANGUP,
-	GOT_ACCEPT,
 	NEW_CANDIDATE,
-	CANDIDATES_PREPARED,
-	CANDIDATE_PAIR,
-	CODECS_READY,
 	READY_NEW,
 	STATE_CHANGED,
 	LAST_SIGNAL
@@ -203,56 +192,11 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
 					 G_TYPE_NONE, 1, G_TYPE_STRING);
-	purple_media_signals[READY] = g_signal_new("ready", G_TYPE_FROM_CLASS(klass),
-				 	 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
-	purple_media_signals[WAIT] = g_signal_new("wait", G_TYPE_FROM_CLASS(klass),
-				 	 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
-	purple_media_signals[ACCEPTED] = g_signal_new("accepted", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
-	purple_media_signals[HANGUP] = g_signal_new("hangup", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
-	purple_media_signals[REJECT] = g_signal_new("reject", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
-	purple_media_signals[GOT_REQUEST] = g_signal_new("got-request", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
-	purple_media_signals[GOT_HANGUP] = g_signal_new("got-hangup", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
-	purple_media_signals[GOT_ACCEPT] = g_signal_new("got-accept", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
-					 G_TYPE_NONE, 0);
 	purple_media_signals[NEW_CANDIDATE] = g_signal_new("new-candidate", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__POINTER_POINTER_OBJECT,
 					 G_TYPE_NONE, 3, G_TYPE_POINTER,
 					 G_TYPE_POINTER, PURPLE_TYPE_MEDIA_CANDIDATE);
-	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 purple_smarshal_VOID__STRING_STRING,
-					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
-	purple_media_signals[CANDIDATE_PAIR] = g_signal_new("candidate-pair", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 purple_smarshal_VOID__BOXED_BOXED,
-					 G_TYPE_NONE, 2, PURPLE_TYPE_MEDIA_CANDIDATE,
-					 PURPLE_TYPE_MEDIA_CANDIDATE);
-	purple_media_signals[CODECS_READY] = g_signal_new("codecs-ready", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__STRING,
-					 G_TYPE_NONE, 1, G_TYPE_STRING);
 	purple_media_signals[READY_NEW] = g_signal_new("ready-new", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__STRING_STRING,
@@ -1203,9 +1147,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 						g_object_get(session->session, "codecs-ready", &ready, NULL);
 						if (session->codecs_ready == FALSE && ready == TRUE) {
 							session->codecs_ready = ready;
-							g_signal_emit(session->media,
-									purple_media_signals[CODECS_READY],
-									0, session->id);
 							purple_media_emit_ready(media, session, NULL);
 						}
 
@@ -1276,13 +1217,13 @@ purple_media_error(PurpleMedia *media, const gchar *error, ...)
 void
 purple_media_ready(PurpleMedia *media)
 {
-	g_signal_emit(media, purple_media_signals[READY], 0);
+
 }
 
 void
 purple_media_wait(PurpleMedia *media)
 {
-	g_signal_emit(media, purple_media_signals[WAIT], 0);
+
 }
 
 void
@@ -1290,8 +1231,6 @@ purple_media_accept(PurpleMedia *media)
 {
 	GList *sessions;
 	GList *streams;
-
-	g_signal_emit(media, purple_media_signals[ACCEPTED], 0);
 
 	sessions = g_hash_table_get_values(media->priv->sessions);
 
@@ -1334,7 +1273,7 @@ purple_media_reject(PurpleMedia *media)
 void
 purple_media_got_request(PurpleMedia *media)
 {
-	g_signal_emit(media, purple_media_signals[GOT_REQUEST], 0);
+
 }
 
 void
@@ -1350,8 +1289,6 @@ purple_media_got_accept(PurpleMedia *media)
 {
 	GList *sessions;
 	GList *streams;
-
-	g_signal_emit(media, purple_media_signals[GOT_ACCEPT], 0);
 
 	sessions = g_hash_table_get_values(media->priv->sessions);
 
@@ -1592,9 +1529,6 @@ purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *sessio
 	stream_data = purple_media_get_stream(session->media, session->id, name);
 	stream_data->candidates_prepared = TRUE;
 
-	g_signal_emit(session->media, purple_media_signals[CANDIDATES_PREPARED],
-			0, session->id, name);
-
 	purple_media_emit_ready(session->media, session, name);
 	g_free(name);
 }
@@ -1625,8 +1559,6 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	stream->remote_candidate = fs_candidate_copy(remote_candidate);
 
 	purple_debug_info("media", "candidate pair established\n");
-	g_signal_emit(session->media, purple_media_signals[CANDIDATE_PAIR], 0,
-		      local, remote);
 
 	purple_media_candidate_free(local);
 	purple_media_candidate_free(remote);
