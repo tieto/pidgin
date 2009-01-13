@@ -246,33 +246,34 @@ finch_media_wait_cb(PurpleMedia *media, FinchMedia *gntmedia)
 }
 
 static void
-finch_media_hangup_cb(PurpleMedia *media, FinchMedia *gntmedia)
+finch_media_state_changed_cb(PurpleMedia *media,
+		PurpleMediaStateChangedType type,
+		gchar *sid, gchar *name, FinchMedia *gntmedia)
 {
-	finch_media_emit_message(gntmedia, _("You have ended the call."));
-	finch_conversation_set_info_widget(gntmedia->priv->conv, NULL);
-	gnt_widget_destroy(GNT_WIDGET(gntmedia));
-	/* XXX: This shouldn't have to be here to free the FinchMedia widget */
-	g_object_unref(gntmedia);
-}
-
-static void
-finch_media_got_hangup_cb(PurpleMedia *media, FinchMedia *gntmedia)
-{
-	finch_media_emit_message(gntmedia, _("The call has been terminated."));
-	finch_conversation_set_info_widget(gntmedia->priv->conv, NULL);
-	gnt_widget_destroy(GNT_WIDGET(gntmedia));
-	/* XXX: This shouldn't have to be here to free the FinchMedia widget */
-	g_object_unref(gntmedia);
-}
-
-static void
-finch_media_reject_cb(PurpleMedia *media, FinchMedia *gntmedia)
-{
-	finch_media_emit_message(gntmedia, _("You have rejected the call."));
-	finch_conversation_set_info_widget(gntmedia->priv->conv, NULL);
-	gnt_widget_destroy(GNT_WIDGET(gntmedia));
-	/* XXX: This shouldn't have to be here to free the FinchMedia widget */
-	g_object_unref(gntmedia);
+	purple_debug_info("gntmedia", "type: %d sid: %s name: %s\n",
+			type, sid, name);
+	if (sid == NULL && name == NULL) {
+		if (type == PURPLE_MEDIA_STATE_CHANGED_END) {
+			finch_media_emit_message(gntmedia,
+					_("The call has been terminated."));
+			finch_conversation_set_info_widget(
+					gntmedia->priv->conv, NULL);
+			gnt_widget_destroy(GNT_WIDGET(gntmedia));
+			/*
+			 * XXX: This shouldn't have to be here
+			 * to free the FinchMedia widget.
+			 */
+			g_object_unref(gntmedia);
+		} else if (type == PURPLE_MEDIA_STATE_CHANGED_REJECTED) {
+			finch_media_emit_message(gntmedia,
+					_("You have rejected the call."));
+		}
+	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW
+			&& sid != NULL && name != NULL) {
+		finch_media_ready_cb(media, gntmedia);
+	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED) {
+		finch_media_accept_cb(media, gntmedia);
+	}
 }
 
 static void
@@ -284,6 +285,8 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 	media = FINCH_MEDIA(object);
 	switch (prop_id) {
 		case PROP_MEDIA:
+		{
+			gboolean is_initiator;
 			if (media->priv->media)
 				g_object_unref(media->priv->media);
 			media->priv->media = g_value_get_object(value);
@@ -295,21 +298,15 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 			g_signal_connect_swapped(G_OBJECT(media->priv->hangup), "activate",
 				 G_CALLBACK(purple_media_hangup), media->priv->media);
 
-			g_signal_connect(G_OBJECT(media->priv->media), "accepted",
-				G_CALLBACK(finch_media_accept_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media) ,"ready",
-				G_CALLBACK(finch_media_ready_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "wait",
-				G_CALLBACK(finch_media_wait_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "hangup",
-				G_CALLBACK(finch_media_hangup_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "reject",
-				G_CALLBACK(finch_media_reject_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "got-hangup",
-				G_CALLBACK(finch_media_got_hangup_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "got-accept",
-				G_CALLBACK(finch_media_accept_cb), media);
+			g_object_get(G_OBJECT(media->priv->media), "initiator",
+					&is_initiator, NULL);
+			if (is_initiator == TRUE) {
+				finch_media_wait_cb(media->priv->media, media);
+			}
+			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
+				G_CALLBACK(finch_media_state_changed_cb), media);
 			break;
+		}
 		case PROP_SEND_LEVEL:
 			if (media->priv->send_level)
 				gst_object_unref(media->priv->send_level);
