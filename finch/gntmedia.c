@@ -47,8 +47,6 @@
 struct _FinchMediaPrivate
 {
 	PurpleMedia *media;
-	GstElement *send_level;
-	GstElement *recv_level;
 
 	GntWidget *accept;
 	GntWidget *reject;
@@ -77,8 +75,6 @@ static guint finch_media_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_MEDIA,
-	PROP_SEND_LEVEL,
-	PROP_RECV_LEVEL
 };
 
 GType
@@ -121,18 +117,6 @@ finch_media_class_init (FinchMediaClass *klass)
 			"The PurpleMedia associated with this media.",
 			PURPLE_TYPE_MEDIA,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-	g_object_class_install_property(gobject_class, PROP_SEND_LEVEL,
-			g_param_spec_object("send-level",
-			"Send level",
-			"The GstElement of this media's send 'level'",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
-	g_object_class_install_property(gobject_class, PROP_RECV_LEVEL,
-			g_param_spec_object("recv-level",
-			"Receive level",
-			"The GstElement of this media's recv 'level'",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
 
 	finch_media_signals[MESSAGE] = g_signal_new("message", G_TYPE_FROM_CLASS(klass),
 					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
@@ -187,9 +171,6 @@ finch_media_ready_cb(PurpleMedia *media, FinchMedia *gntmedia)
 		purple_media_set_src(media, sessions->data, sendbin);
 	}
 	g_list_free(sessions);
-
-	g_object_set(gntmedia, "send-level", sendlevel,
-		     NULL);
 }
 
 static void
@@ -307,18 +288,6 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 				G_CALLBACK(finch_media_state_changed_cb), media);
 			break;
 		}
-		case PROP_SEND_LEVEL:
-			if (media->priv->send_level)
-				gst_object_unref(media->priv->send_level);
-			media->priv->send_level = g_value_get_object(value);
-			g_object_ref(media->priv->send_level);
-			break;
-		case PROP_RECV_LEVEL:
-			if (media->priv->recv_level)
-				gst_object_unref(media->priv->recv_level);
-			media->priv->recv_level = g_value_get_object(value);
-			g_object_ref(media->priv->recv_level);
-			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -336,12 +305,6 @@ finch_media_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	switch (prop_id) {
 		case PROP_MEDIA:
 			g_value_set_object(value, media->priv->media);
-			break;
-		case PROP_SEND_LEVEL:
-			g_value_set_object(value, media->priv->send_level);
-			break;
-		case PROP_RECV_LEVEL:
-			g_value_set_object(value, media->priv->recv_level);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
