@@ -177,7 +177,7 @@ static void
 finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
 {
 	GntWidget *parent;
-	GstElement *sendbin = NULL, *recvbin = NULL;
+	GstElement *sendbin = NULL;
 
 	finch_media_emit_message(gntmedia, _("Call in progress."));
 
@@ -201,9 +201,8 @@ finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
 	gnt_box_readjust(GNT_BOX(parent));
 	gnt_widget_draw(parent);
 
-	purple_media_get_elements(media, &sendbin, &recvbin, NULL, NULL);
+	purple_media_get_elements(media, &sendbin, NULL, NULL, NULL);
 	gst_element_set_state(GST_ELEMENT(sendbin), GST_STATE_PLAYING);
-	gst_element_set_state(GST_ELEMENT(recvbin), GST_STATE_PLAYING);
 }
 
 static void
