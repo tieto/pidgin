@@ -7019,7 +7019,7 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Use SSL (buggy)"), "use_ssl",
+	option = purple_account_option_bool_new(_("Use SSL"), "use_ssl",
 			OSCAR_DEFAULT_USE_SSL);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
