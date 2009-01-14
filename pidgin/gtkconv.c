@@ -4803,7 +4803,7 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
-	GtkWidget *vbox, *hpaned, *frame, *imhtml_sw, *event_box;
+	GtkWidget *vbox, *frame, *imhtml_sw, *event_box;
 	GtkCellRenderer *rend;
 	GtkTreePath *path;
 	PurpleConversation *conv = gtkconv->active_conv;
@@ -4813,7 +4813,10 @@ setup_common_pane(PidginConversation *gtkconv)
 	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
-	gtkconv->topvbox = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->tophbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_widget_show(gtkconv->tophbox);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(gtkconv->tophbox), vbox, TRUE, TRUE, 0);
 	gtk_widget_show(vbox);
 
 	/* Setup the info pane */
@@ -4883,21 +4886,23 @@ setup_common_pane(PidginConversation *gtkconv)
 	/* Setup the gtkimhtml widget */
 	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
 	gtk_widget_set_size_request(gtkconv->imhtml, -1, 0);
-
-	/* Add the gtkimhtml frame */
-	gtkconv->middle_hpaned = hpaned = gtk_hpaned_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
-	gtk_widget_show(hpaned);
-	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
-
 	if (chat) {
+		GtkWidget *hpaned;
+
 		/* Add the topic */
 		setup_chat_topic(gtkconv, vbox);
 
+		/* Add the gtkimhtml frame */
+		hpaned = gtk_hpaned_new();
+		gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
+		gtk_widget_show(hpaned);
+		gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
+
 		/* Now add the userlist */
 		setup_chat_userlist(gtkconv, hpaned);
+	} else {
+		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	}
-
 	gtk_widget_show(frame);
 
 	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
@@ -4960,7 +4965,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	default_formatize(gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
 	                       G_CALLBACK(clear_formatting_cb), gtkconv);
-	return vbox;
+	return gtkconv->tophbox;
 }
 
 static void
@@ -7822,7 +7827,7 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	gtkmedia = pidgin_media_new(media, screenname);
 	g_object_unref(media);
 
-	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->tophbox), gtkmedia, FALSE, FALSE, 0);
 	gtk_widget_show(gtkmedia);
 	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
 	g_signal_connect(G_OBJECT(gtkmedia), "error", G_CALLBACK(pidgin_gtkmedia_error_cb), conv);
@@ -7831,8 +7836,9 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(
 			pidgin_conv_gtkmedia_destroyed), gtkconv);
 
-	gtk_paned_pack2(GTK_PANED(gtkconv->middle_hpaned),
-			pidgin_media_get_display_widget(gtkmedia), FALSE, TRUE);
+	gtk_box_pack_start(GTK_BOX(gtkmedia),
+			pidgin_media_get_display_widget(gtkmedia),
+			TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 
 	pidgin_conv_update_buttons_by_protocol(conv);
 	return TRUE;

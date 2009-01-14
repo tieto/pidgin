@@ -120,7 +120,7 @@ pidgin_media_get_type(void)
 			(GInstanceInitFunc) pidgin_media_init,
 			NULL
 		};
-		type = g_type_register_static(GTK_TYPE_HBOX, "PidginMedia", &info, 0);
+		type = g_type_register_static(GTK_TYPE_VBOX, "PidginMedia", &info, 0);
 	}
 	return type;
 }
@@ -195,11 +195,11 @@ pidgin_media_init (PidginMedia *media)
 	g_signal_connect(media->priv->mute, "toggled",
 			G_CALLBACK(pidgin_media_mute_toggled), media);
 
-	gtk_box_pack_start(GTK_BOX(media), media->priv->calling, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(media), media->priv->hangup, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(media), media->priv->accept, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(media), media->priv->reject, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(media), media->priv->reject, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(media), media->priv->accept, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(media), media->priv->hangup, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(media), media->priv->mute, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(media), media->priv->calling, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
@@ -306,11 +306,6 @@ pidgin_media_finalize(GObject *media)
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
 	purple_debug_info("gtkmedia", "pidgin_media_finalize\n");
-
-	if (gtkmedia->priv->display) {
-		gtk_widget_destroy(gtkmedia->priv->display);
-		gtkmedia->priv->display = NULL;
-	}
 
 	G_OBJECT_CLASS(parent_class)->finalize(media);
 }
