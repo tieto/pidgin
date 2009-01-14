@@ -394,7 +394,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		}
 	}
 
-	/* Send the message */
+	/* Display the message we received */
 	imflags = 0;
 	if (images != NULL)
 		imflags |= PURPLE_MESSAGE_IMAGES;
