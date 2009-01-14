@@ -205,6 +205,8 @@ pidgin_media_init (PidginMedia *media)
 	gtk_widget_show_all(media->priv->reject);
 
 	media->priv->display = gtk_vbox_new(TRUE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(media), media->priv->display,
+			TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 }
 
 static gboolean
@@ -304,7 +306,7 @@ pidgin_media_dispose(GObject *media)
 static void
 pidgin_media_finalize(GObject *media)
 {
-	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
+	/* PidginMedia *gtkmedia = PIDGIN_MEDIA(media); */
 	purple_debug_info("gtkmedia", "pidgin_media_finalize\n");
 
 	G_OBJECT_CLASS(parent_class)->finalize(media);
@@ -314,12 +316,6 @@ static void
 pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 {
 	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
-}
-
-GtkWidget *
-pidgin_media_get_display_widget(GtkWidget *gtkmedia)
-{
-	return PIDGIN_MEDIA_GET_PRIVATE(gtkmedia)->display;
 }
 
 static gboolean

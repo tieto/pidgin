@@ -7836,10 +7836,6 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(
 			pidgin_conv_gtkmedia_destroyed), gtkconv);
 
-	gtk_box_pack_start(GTK_BOX(gtkmedia),
-			pidgin_media_get_display_widget(gtkmedia),
-			TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
-
 	pidgin_conv_update_buttons_by_protocol(conv);
 	return TRUE;
 }
