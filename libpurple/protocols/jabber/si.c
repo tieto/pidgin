@@ -1029,14 +1029,21 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
 		JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 		JabberIBBSession *sess = 
 			jabber_ibb_session_create_from_xmlnode(js, packet, xfer);
+		const char *filename;
 
 		jabber_si_bytestreams_ibb_timeout_remove(jsx);
 
 		if (sess) {
-			jsx->fp = xfer->dest_fp;
-			xfer->dest_fp = NULL;
-			/* the FD we get from xfer should never be NULL (see ft.c) */
-			
+			/* open the file to write to */
+			filename = purple_xfer_get_local_filename(xfer);
+			jsx->fp = g_fopen(filename, "wb");
+			if (jsx->fp == NULL) {
+				purple_debug_error("jabber", "failed to open file %s for writing: %s\n",
+					filename, g_strerror(errno));
+				purple_xfer_cancel_remote(xfer);
+				return FALSE;
+			}
+
 			/* setup callbacks here...*/
 			jabber_ibb_session_set_data_received_callback(sess,
 				jabber_si_xfer_ibb_recv_data_cb);
@@ -1118,10 +1125,18 @@ jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if (jabber_ibb_session_get_state(sess) == JABBER_IBB_SESSION_OPENED) {
-		jsx->fp = xfer->dest_fp;
-		xfer->dest_fp = NULL; /* disable double fclose */
-		/* the FD we get from xfer should never be NULL (see ft.c) */
-		
+		const char *filename = purple_xfer_get_local_filename(xfer);
+		jsx->fp = g_fopen(filename, "rb");
+		if (jsx->fp == NULL) {
+			purple_debug_error("jabber", "Failed to open file %s for reading: %s\n",
+				filename, g_strerror(errno));
+			purple_xfer_error(purple_xfer_get_type(xfer), account,
+				jabber_ibb_session_get_who(sess),
+				_("Failed to open the file"));
+			purple_xfer_cancel_local(xfer);
+			return;
+		}
+
 		purple_xfer_start(xfer, 0, NULL, 0);
 		purple_xfer_set_bytes_sent(xfer, 0);
 		purple_xfer_update_progress(xfer);
