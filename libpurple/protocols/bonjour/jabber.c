@@ -383,8 +383,9 @@ static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 
 	/* Inform the user that the conversation has been closed */
 	BonjourBuddy *bb = NULL;
+	const gchar *name = bconv->pb ? purple_buddy_get_name(bconv->pb) : "(unknown)";
 
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", bconv->pb ? bconv->pb->name : "(unknown)");
+	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name);
 
 	if(bconv->pb != NULL)
 		bb = purple_buddy_get_protocol_data(bconv->pb);
