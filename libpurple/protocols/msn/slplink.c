@@ -398,6 +398,8 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 void
 msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
+	g_return_if_fail(slpmsg != NULL);
+
 	slpmsg->id = slplink->slp_seq_id++;
 
 	g_queue_push_tail(slplink->slp_msg_queue, slpmsg);
