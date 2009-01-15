@@ -82,7 +82,8 @@ initialize_tooltip_delay()
 static void
 destroy_tooltip_data(PidginTooltipData *data)
 {
-	gtk_tree_path_free(data->common.treeview.path);
+	if (data->common.treeview.path)
+		gtk_tree_path_free(data->common.treeview.path);
 	pidgin_tooltip_destroy();
 	g_free(data);
 }
@@ -380,7 +381,7 @@ gboolean pidgin_tooltip_setup_for_widget(GtkWidget *widget, gpointer userdata,
 
 	g_signal_connect(G_OBJECT(widget), "motion-notify-event", G_CALLBACK(widget_motion_cb), wdata);
 	g_signal_connect(G_OBJECT(widget), "leave-notify-event", G_CALLBACK(widget_leave_cb), NULL);
-	g_signal_connect_swapped(G_OBJECT(widget), "destroy", G_CALLBACK(g_free), wdata);
+	g_signal_connect_swapped(G_OBJECT(widget), "destroy", G_CALLBACK(destroy_tooltip_data), wdata);
 	return TRUE;
 }
 
