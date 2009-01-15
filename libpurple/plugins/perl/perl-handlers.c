@@ -289,14 +289,18 @@ perl_signal_cb(va_list args, void *data)
 	PUSHMARK(sp);
 
 	purple_signal_get_values(handler->instance, handler->signal,
-	                       &ret_value, &value_count, &values);
+	                         &ret_value, &value_count, &values);
 
 	sv_args   = g_new(SV *,    value_count);
 	copy_args = g_new(void **, value_count);
 
 	for (i = 0; i < value_count; i++) {
 		sv_args[i] = purple_perl_sv_from_vargs(values[i],
+#ifdef VA_COPY_AS_ARRAY
+		                                       args,
+#else
 		                                       (va_list*)&args,
+#endif
 		                                       &copy_args[i]);
 
 		XPUSHs(sv_args[i]);

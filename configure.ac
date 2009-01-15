@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [5])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [5])
-m4_define([purple_micro_version], [4])
+m4_define([purple_micro_version], [5])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [5])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [5])
-m4_define([gnt_micro_version], [4])
+m4_define([gnt_micro_version], [5])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -2271,6 +2271,30 @@ if test $ac_cv_struct_tm_gmtoff = yes; then
         AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
 fi
 
+AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
+	AC_TRY_RUN([#include <stdarg.h>
+#include <stdlib.h>
+	void f (int i, ...) {
+	va_list args1, args2;
+	va_start (args1, i);
+	args2 = args1;
+	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
+	  exit (1);
+	va_end (args1); va_end (args2);
+	}
+	int main() {
+	  f (0, 42);
+	  return 0;
+	}],
+	[ac_cv_va_val_copy=yes],
+	[ac_cv_va_val_copy=no],
+	[ac_cv_va_val_copy=yes])
+])
+
+if test "x$ac_cv_va_val_copy" = "xno"; then
+	AC_DEFINE(VA_COPY_AS_ARRAY, 1, ['va_lists' cannot be copied as values])
+fi
+
 dnl #######################################################################
 dnl # Check for check
 dnl #######################################################################
@@ -2298,15 +2322,15 @@ dnl # Check for Doxygen and dot (part of GraphViz)
 dnl #######################################################################
 AC_ARG_ENABLE(doxygen,
 	[AC_HELP_STRING([--disable-doxygen],
-		[enable documentation with doxygen])],
+		[disable documentation with doxygen])],
 	enable_doxygen="$enableval", enable_doxygen="yes")
 AC_ARG_ENABLE(dot,
-	[AC_HELP_STRING([--enable-dot],
-		[enable graphs in doxygen via 'dot'])],
+	[AC_HELP_STRING([--disable-dot],
+		[disable graphs in doxygen via 'dot'])],
 	enable_dot="$enableval", enable_dot="yes")
 AC_ARG_ENABLE(devhelp,
-	[AC_HELP_STRING([--enable-devhelp],
-		[enable building index for devhelp documentation browser])],
+	[AC_HELP_STRING([--disable-devhelp],
+		[disable building index for devhelp documentation browser])],
 	enable_devhelp="$enableval", enable_devhelp="yes")
 
 if test "x$enable_doxygen" = xyes; then

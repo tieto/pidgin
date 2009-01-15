@@ -1,11 +1,11 @@
-# translation of gaim.po to Azerbaijani
-# This file is distributed under the same license as the gaim package.
+# translation of Pidgin.po to Azerbaijani
+# This file is distributed under the same license as the Pidgin package.
 # Copyright (C) 2005 THE Metin Amiroff.
 # Metin Amiroff <metin@karegen.com>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2004-06-28 14:03+0300\n"
@@ -2317,7 +2317,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Gaim Fayl İdarəsi"
+msgstr "Pidgin Fayl İdarəsi"
 
 #. *< name
 #. *< version
@@ -2325,7 +2325,7 @@ msgstr "Gaim Fayl İdarəsi"
 #. *  description
 #, fuzzy
 msgid "Allows control by entering commands in a file."
-msgstr "Gaim-i fayl içinə əmrlər yazaraq idarə etmə imkanı verir."
+msgstr "Pidgin-i fayl içinə əmrlər yazaraq idarə etmə imkanı verir."
 
 msgid "Minutes"
 msgstr "Dəqiqə"
@@ -3166,7 +3166,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Gadu-Gadu User"
-msgstr "Gaim İstifadəçisi"
+msgstr "Pidgin İstifadəçisi"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -11989,7 +11989,7 @@ msgstr ""
 
 #, fuzzy
 msgid "<span size='larger'>_Larger</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #, fuzzy
 msgid "_Normal"
@@ -13601,7 +13601,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Gaim Nümayiş Əlavəsi"
+msgstr "Pidgin Nümayiş Əlavəsi"
 
 #. *< name
 #. *< version
@@ -13697,7 +13697,7 @@ msgstr "Hesablar"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Gaim Fayl İdarəsi"
+msgstr "Pidgin Fayl İdarəsi"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -13708,7 +13708,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Gaim Fayl İdarəsi"
+msgstr "Pidgin Fayl İdarəsi"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr ""
@@ -14160,7 +14160,7 @@ msgstr ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
 #~ msgstr ""
-#~ "Gaim proqramının %s buraxılışını işlədirsiniz. Hazırkı buraxılış isə %s-"
+#~ "Pidgin proqramının %s buraxılışını işlədirsiniz. Hazırkı buraxılış isə %s-"
 #~ "dir.<hr>"
 
 #, fuzzy
@@ -14341,28 +14341,25 @@ msgstr ""
 #~ msgid "Use last matching buddy"
 #~ msgstr "Ən son uyğun gələn əlaqəni işlət"
 
-#~ msgid "Gaim"
-#~ msgstr "Gaim"
+#~ msgid "Pidgin - Signed off"
+#~ msgstr "Pidgin - Xətdə deyil"
 
-#~ msgid "Gaim - Signed off"
-#~ msgstr "Gaim - Xətdə deyil"
+#~ msgid "Pidgin - Away"
+#~ msgstr "Pidgin - Uzaqda"
 
-#~ msgid "Gaim - Away"
-#~ msgstr "Gaim - Uzaqda"
-
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "Bildiriş sahəsində Gaim timsalını göstər"
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "Bildiriş sahəsində Pidgin timsalını göstər"
 
 #, fuzzy
 #~ msgid "GtkTreeView Expander Size"
 #~ msgstr "Genişlədici Böyüklüyü"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
 #~ "%s buraxılışını bu ünvandan aəldə edə bilərsiniz: <br><a href=\"http://"
-#~ "gaim.sourceforge.net/\">http://gaim.sourceforge.net</a>."
+#~ "Pidgin.sourceforge.net/\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "Gecikmə"
@@ -14436,8 +14433,8 @@ msgstr ""
 #~ "\n"
 #~ "<b>İzahat:</b> Bomba kimi"
 
-#~ msgid "me is using Gaim v%s."
-#~ msgstr "mən Gaim v%s işlədirəm."
+#~ msgid "me is using Pidgin v%s."
+#~ msgstr "mən Pidgin v%s işlədirəm."
 
 #, fuzzy
 #~ msgid "/Options/Show Buddy _Icon"
@@ -14519,8 +14516,8 @@ msgstr ""
 #~ msgid "Active"
 #~ msgstr "ID-ni fəallaşdır..."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Fərqli Qeyd Et..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Fərqli Qeyd Et..."
 
 #~ msgid "TOC host"
 #~ msgstr "TOC qovşağı"
@@ -14567,13 +14564,13 @@ msgstr ""
 #~ msgid "Not connected to AIM"
 #~ msgstr "AIM vericisinə bağlı deyil"
 
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "Gaim proqramları üçün uzaqdan idarə imkanı verir."
+#~ msgid "Provides remote control for Pidgin applications."
+#~ msgstr "Pidgin proqramları üçün uzaqdan idarə imkanı verir."
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
-#~ msgstr "Gaim proqramları üçün uzaqdan idarə imkanı verir."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
+#~ msgstr "Pidgin proqramları üçün uzaqdan idarə imkanı verir."
 
 #~ msgid "Away title: "
 #~ msgstr "Uzaqdayam ismarışı:"
@@ -14744,11 +14741,11 @@ msgstr ""
 #~ msgid "_Preferences"
 #~ msgstr "_Seçimlər"
 
-#~ msgid "Moving Gaim Settings.."
-#~ msgstr "Gaim istifadəçi qurğuları daşınır..."
+#~ msgid "Moving Pidgin Settings.."
+#~ msgstr "Pidgin istifadəçi qurğuları daşınır..."
 
-#~ msgid "Moving Gaim user settings to: "
-#~ msgstr "Gaim istifadəçi qurğuları buraya daşınır: "
+#~ msgid "Moving Pidgin user settings to: "
+#~ msgstr "Pidgin istifadəçi qurğuları buraya daşınır: "
 
 #~ msgid "Notification"
 #~ msgstr "Bildiriş"

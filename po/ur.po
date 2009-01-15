@@ -5182,7 +5182,7 @@ msgstr "ابتدائی - گفتگو"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "MSNکےلئےSSLتعاون کی ضرورت ہے۔براہ کرم تعاون دیا گیا SSLکتب خانہ انسٹال "
-"کریں۔مزید معلومات کے لئے دیکھیے http://gaim.sf.net/faq-ssl.php "
+"کریں۔مزید معلومات کے لئے دیکھیے http://Pidgin.sf.net/faq-ssl.php "
 
 msgid "Failed to connect to server."
 msgstr "سرور سے کنیکٹ ہونے میں ناکام۔"
@@ -11070,11 +11070,11 @@ msgstr "اكاؤنٹ مجازكریں"
 
 #, fuzzy
 msgid "<PurpleMain>/Accounts/Enable Account"
-msgstr "<GaimMain>/اكاؤنٹس/اكاؤنٹ ممكن كیا گیا"
+msgstr "<PidginMain>/اكاؤنٹس/اكاؤنٹ ممكن كیا گیا"
 
 #, fuzzy
 msgid "<PurpleMain>/Accounts/"
-msgstr "<GaimMain>/Accounts/"
+msgstr "<PidginMain>/Accounts/"
 
 msgid "_Edit Account"
 msgstr "_اكاؤنٹ مرتب كریں"
@@ -11730,7 +11730,7 @@ msgstr ""
 # msgstr "گائم AIM, MSN, Yahoo!,  كو استعمال كرتے ہوئے ایك ماڈیولر میسیجینگ كلائںٹ  كیبل ہے ۔Jabber, ICQ, IRC, SILC, SIP/SIMPLE, ناول  گروپ وائس، لوٹس مشابہ ٹائم،بونزور، زیفیر،گڈو گڈو، اورQQایك بار میں ۔یہ GTK+.<BR><BR> استعمال كرتے ہوئے لكھا جاتا ہے  آپ ترمیم كرینگے  اور  پروگرام كوGPL شرطوں كے ماتحٹ دوبارہ تقسیم كرینگے (version 2 or later).GPLكی ایك كاپی  'COPYING' فائل میں ركھتی ہے گائم سے تقسیم كی جاتی ہے۔ گائم  اسے شراكت داروں سے   كاپی رائٹیڈ ہے ۔ شراكت داروں كی مكمل فہرست كے لیے   گائم كی 'COPYRIGHT'   فائل دیكھیے۔ ہم اس پروگرام كے لیے كوئي وارنٹی مہیا نہیں كرتے ہیں ۔<BR><BR>"
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
 msgstr "حالیہ تكمیل كار"

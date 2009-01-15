@@ -2893,10 +2893,9 @@ static const char *msim_normalize(const PurpleAccount *account, const char *str)
 	}
 
 	/* Strip spaces. */
-	for (i=0, j=0; normalized[j]; i++, j++) {
-		while (normalized[j] == ' ')
-			j++;
-		normalized[i] = normalized[j];
+	for (i=0, j=0; normalized[j]; j++) {
+		if (normalized[j] != ' ')
+			normalized[i++] = normalized[j];
 	}
 	normalized[i] = '\0';
 

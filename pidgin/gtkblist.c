@@ -3687,9 +3687,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		}
 
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded) {
-			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
-				return NULL;
-			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
+			if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
+				return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 		}
 	} else {
 		return NULL;
@@ -5561,14 +5560,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, -1, NULL);
-	if (gtkblist->headline_close) {
-		GdkPixbuf *scale = gdk_pixbuf_scale_simple(gtkblist->headline_close,
-				HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE, GDK_INTERP_BILINEAR);
-		gdk_pixbuf_unref(gtkblist->headline_close);
-		gtkblist->headline_close = scale;
-	}
-
+	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, HEADLINE_CLOSE_SIZE, NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 

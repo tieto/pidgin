@@ -234,12 +234,22 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 	} else if ((ret = xmlParseChunk(js->context, buf, len, 0)) != XML_ERR_OK) {
 		xmlError *err = xmlCtxtGetLastError(js->context);
 
-		purple_debug_error("jabber", "xmlParseChunk returned error %i\n", ret);
-
-		if (err->level == XML_ERR_FATAL) {
-			purple_connection_error_reason (js->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("XML Parse error"));
+		switch (err->level) {
+			case XML_ERR_NONE:
+				purple_debug_info("jabber", "xmlParseChunk returned info %i\n", ret);
+				break;
+			case XML_ERR_WARNING:
+				purple_debug_warning("jabber", "xmlParseChunk returned warning %i\n", ret);
+				break;
+			case XML_ERR_ERROR:
+				purple_debug_error("jabber", "xmlParseChunk returned error %i\n", ret);
+				break;
+			case XML_ERR_FATAL:
+				purple_debug_error("jabber", "xmlParseChunk returned fatal %i\n", ret);
+				purple_connection_error_reason (js->gc,
+				                                PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				                                _("XML Parse error"));
+				break;
 		}
 	}
 }

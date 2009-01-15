@@ -214,7 +214,7 @@ gboolean qq_connect_later(gpointer data)
 		qd->connect_retry = QQ_CONNECT_MAX;
 	}
 
-	segments = g_strsplit_set(qd->curr_server, ":", 0);
+	segments = g_strsplit(qd->curr_server, ":", 0);
 	tmp_server = g_strdup(segments[0]);
 	if (NULL != segments[1]) {
 		port = atoi(segments[1]);

@@ -1,13 +1,13 @@
-# Thai translation of Gaim.
-# Copyright (C) 2006 THE Gaim'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the Gaim package.
+# Thai translation of Pidgin.
+# Copyright (C) 2006 THE Pidgin'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Pidgin package.
 # Isriya Paireepairit <markpeak@gmail.com>, 2006.
 # , fuzzy
 #
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gaim VERSION\n"
+"Project-Id-Version: Pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2006-04-04 15:35+0700\n"
@@ -5165,7 +5165,7 @@ msgstr ""
 msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
-msgstr "Gaim ไม่สามารถหาข้อมูลของคู่สนทนาได้ ผู้ใช้นี้อาจไม่มีแฟ้มประวัติ"
+msgstr "Pidgin ไม่สามารถหาข้อมูลของคู่สนทนาได้ ผู้ใช้นี้อาจไม่มีแฟ้มประวัติ"
 
 msgid "Profile URL"
 msgstr "URL ของแฟ้มประวัติ"
@@ -7217,7 +7217,7 @@ msgstr "ล้าง"
 
 #, fuzzy
 msgid "About me"
-msgstr "เกี่ยวกับ Gaim"
+msgstr "เกี่ยวกับ Pidgin"
 
 #, fuzzy
 msgid "Category"
@@ -7431,7 +7431,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "เกี่ยวกับ Gaim"
+msgstr "เกี่ยวกับ Pidgin"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7449,7 +7449,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "เกี่ยวกับ Gaim"
+msgstr "เกี่ยวกับ Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -10066,10 +10066,10 @@ msgstr "ตัวเลือกสำหรับ %s "
 
 #, fuzzy
 msgid "Use GNOME Proxy Settings"
-msgstr "ใช้ค่าพร็อกซีของ Gaim"
+msgstr "ใช้ค่าพร็อกซีของ Pidgin"
 
 msgid "Use Global Proxy Settings"
-msgstr "ใช้ค่าพร็อกซีของ Gaim"
+msgstr "ใช้ค่าพร็อกซีของ Pidgin"
 
 msgid "No Proxy"
 msgstr "ไม่ใช้พร็อกซี"
@@ -11241,7 +11241,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "เกี่ยวกับ Gaim"
+msgstr "เกี่ยวกับ Pidgin"
 
 #, c-format
 msgid ""
@@ -12644,7 +12644,7 @@ msgstr "ไม่สามารถส่งโฟลเดอร์ %s"
 msgid ""
 "%s cannot transfer a folder. You will need to send the files within "
 "individually."
-msgstr "Gaim ไม่สามารถส่งทั้งโฟลเดอร์ได้ คุณต้องส่งทีละแฟ้ม"
+msgstr "Pidgin ไม่สามารถส่งทั้งโฟลเดอร์ได้ คุณต้องส่งทีละแฟ้ม"
 
 msgid "You have dragged an image"
 msgstr ""
@@ -13980,9 +13980,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "บัญชี:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "Gaim โปรแกรมข้อความด่วน"
-
 #~ msgid "TCP port"
 #~ msgstr "พอร์ต TCP"
 
@@ -14001,8 +13998,8 @@ msgstr ""
 #~ msgid "When my nick is said"
 #~ msgstr "เมื่อมีคนเรียกชื่อเล่นของฉัน"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "แสดงไอคอน Gaim ในถาดของระบบ"
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "แสดงไอคอน Pidgin ในถาดของระบบ"
 
 #~ msgid "Group not removed"
 #~ msgstr "กลุ่มไม่ถูกลบ"

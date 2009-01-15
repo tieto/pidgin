@@ -1545,7 +1545,10 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CANCEL, G_CALLBACK(cancel_account_prefs_cb), dialog);
 
 	/* Save button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_SAVE, G_CALLBACK(ok_account_prefs_cb), dialog);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win),
+	                                  (type == PIDGIN_ADD_ACCOUNT_DIALOG) ? GTK_STOCK_ADD : GTK_STOCK_SAVE,
+	                                  G_CALLBACK(ok_account_prefs_cb),
+	                                  dialog);
 	if (dialog->account == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
 	dialog->ok_button = button;

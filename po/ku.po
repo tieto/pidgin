@@ -1,14 +1,14 @@
-# translation of gaim.po to Kurdish
+# translation of Pidgin.po to Kurdish
 # translation of ku.po to Kurdish
-# Kurdish translation for Gaim: The GTK modular messaging client.
+# Kurdish translation for Pidgin: The GTK modular messaging client.
 # Copyright (c) (c) 2005 Canonical Ltd, and Rosetta Contributors 2005
-# This file is distributed under the same license as the Gaim: The GTK modular messaging client. package.
+# This file is distributed under the same license as the Pidgin: The GTK modular messaging client. package.
 # Amed Ç. Jiyan <amedcj@hotmail.com>
 # Erdal Ronahi <erdal.ronahi@gmail.com, pckurd@hotmail.com>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-02-26 09:48+0000\n"
@@ -28,7 +28,7 @@ msgstr "Fransî"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Ji bo zêdetir agahî, `%s -h' biceribîne.\n"
+msgstr "Pidgin %s. Ji bo zêdetir agahî, `%s -h' biceribîne.\n"
 
 #, c-format
 msgid ""
@@ -2230,7 +2230,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaimê pêveka te bar nekir"
+msgstr "Pidginê pêveka te bar nekir"
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2238,7 +2238,7 @@ msgstr "Pêveka %s ku pêdivî pê heye, nehat barkirin."
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaimê pêveka te bar nekir"
+msgstr "Pidginê pêveka te bar nekir"
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2379,7 +2379,7 @@ msgstr "Mînaka Pêveka DBus"
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Kontrolkirina pelên GAIM'ê"
+msgstr "Kontrolkirina pelên Pidgin'ê"
 
 #. *< name
 #. *< version
@@ -2387,7 +2387,7 @@ msgstr "Kontrolkirina pelên GAIM'ê"
 #. *  description
 #, fuzzy
 msgid "Allows control by entering commands in a file."
-msgstr "Tu dikarî bi fermanên pelên Gaimê kontrol bikî."
+msgstr "Tu dikarî bi fermanên pelên Pidginê kontrol bikî."
 
 msgid "Minutes"
 msgstr "Xulek"
@@ -3216,7 +3216,7 @@ msgstr "Guheztina Pelgehê Bi Ser Neket"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaimê porteke guhdarkirinê venekir."
+msgstr "Pidginê porteke guhdarkirinê venekir."
 
 msgid "Error displaying MOTD"
 msgstr "Di nîşandana MOTD'ê de xeletî"
@@ -3381,7 +3381,7 @@ msgstr "Peyama nayê zanîn"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "Pêşkêşkara IRC'ê, peyama ku ji hêla Gaimê ve hat şandin, nedît."
+msgstr "Pêşkêşkara IRC'ê, peyama ku ji hêla Pidginê ve hat şandin, nedît."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -5192,7 +5192,7 @@ msgstr "Dest Bi Sohbetê Bike"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Ji bo MSN'ê desteka SSL divê. Ji kerema xwe re pirtûkxaneyeke SSL a "
-"derbasdar bar bike. Ji bo zêdetir agahî here navnîşana http://gaim.sf.net/"
+"derbasdar bar bike. Ji bo zêdetir agahî here navnîşana http://Pidgin.sf.net/"
 "faq-ssl.php ."
 
 msgid "Failed to connect to server."
@@ -5367,7 +5367,7 @@ msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
 msgstr ""
-"Profîla bikarhêner a Gaim venabe, dibe ku bikarhênereke/î wisa tune be."
+"Profîla bikarhêner a Pidgin venabe, dibe ku bikarhênereke/î wisa tune be."
 
 msgid "Profile URL"
 msgstr "URL'a Profîlê"
@@ -7530,7 +7530,7 @@ msgstr "Avakirin"
 
 #, fuzzy
 msgid "About me"
-msgstr "Derbarê Gaimê de"
+msgstr "Derbarê Pidginê de"
 
 #, fuzzy
 msgid "Category"
@@ -7750,7 +7750,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Derbarê Gaimê de"
+msgstr "Derbarê Pidginê de"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7768,7 +7768,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Derbarê Gaimê de"
+msgstr "Derbarê Pidginê de"
 
 #. *< type
 #. *< ui_requirement
@@ -9096,7 +9096,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Fermana nenas: %s, (Dibe ku çewtiya Gaimê be)"
+msgstr "Fermana nenas: %s, (Dibe ku çewtiya Pidginê be)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr ""
@@ -11632,7 +11632,7 @@ msgstr "Amharî"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Derbarê Gaimê de"
+msgstr "Derbarê Pidginê de"
 
 #, c-format
 msgid ""
@@ -11649,7 +11649,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Pêşvebirên heyî"
@@ -12153,7 +12153,7 @@ msgstr ""
 
 #, fuzzy
 msgid "<span size='larger'>_Larger</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #, fuzzy
 msgid "_Normal"
@@ -12239,7 +12239,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Ji bo zêdetir agahî, `%s -h' biceribîne.\n"
+msgstr "Pidgin %s. Ji bo zêdetir agahî, `%s -h' biceribîne.\n"
 
 #, c-format
 msgid ""
@@ -13750,7 +13750,7 @@ msgstr "Derbarê peyamên te yên nexwendî de gelek rêyan pêşkêş dike."
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Pêveka Pêşandana Gaimê"
+msgstr "Pêveka Pêşandana Pidginê"
 
 #. *< name
 #. *< version
@@ -13848,7 +13848,7 @@ msgstr "Curenivîs"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Kontrolkirina pelên GAIM'ê"
+msgstr "Kontrolkirina pelên Pidgin'ê"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -13859,7 +13859,7 @@ msgstr "Pelên gtkrc cardin bixwîne"
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Gaim GTK+ Kontrola mijarê"
+msgstr "Pidgin GTK+ Kontrola mijarê"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr ""
@@ -14138,7 +14138,7 @@ msgstr "Destpêkirin"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "Di destpêkirina Windowsê de Gaimê bide destpêkirin"
+msgstr "Di destpêkirina Windowsê de Pidginê bide destpêkirin"
 
 msgid "_Dockable Buddy List"
 msgstr "Lîsteya Hevalan a ku tê Girêdan"
@@ -14161,7 +14161,7 @@ msgstr "Vebijartokên Têketinê"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Vebijartokên ku ji bo WinGaimê taybet in."
+msgstr "Vebijartokên ku ji bo WinPidginê taybet in."
 
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
@@ -14364,7 +14364,7 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "Guhertoya Gaimê ya ku tu bikartînî %s ye. Ya nûtirîn %s ye.<hr>"
+#~ msgstr "Guhertoya Pidginê ya ku tu bikartînî %s ye. Ya nûtirîn %s ye.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -14598,9 +14598,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Hesab:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "Peyamnêra Înternetê ya Gaimê"
-
 #~ msgid "DBus"
 #~ msgstr "DBus"
 
@@ -14616,8 +14613,8 @@ msgstr ""
 #~ msgid "When my nick is said"
 #~ msgstr "Dema navê min hate bilêvkirin"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "Îkonekê ji bo Gaimê di Tepsiya pergalê de bide lîstandin"
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "Îkonekê ji bo Pidginê di Tepsiya pergalê de bide lîstandin"
 
 #, fuzzy
 #~ msgid "GtkTreeView Expander Size"
@@ -14627,17 +14624,17 @@ msgstr ""
 #~ msgstr "Amûr"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "Tu dikarî guhertoya %s ji:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a> daxî."
+#~ "Tu dikarî guhertoya %s ji:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a> daxî."
 
 #~ msgid "Delay"
 #~ msgstr "Derengmayîn"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "Vebijartokên WinGaim"
+#~ msgid "WinPidgin Options"
+#~ msgstr "Vebijartokên WinPidgin"
 
 #~ msgid "Group not removed"
 #~ msgstr "Grub nehate rakirin"
@@ -14711,8 +14708,8 @@ msgstr ""
 #~ msgid "Jabber developer"
 #~ msgstr "Pêşvebirê Jabber"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 #~ msgid "Smaller font size"
 #~ msgstr "Mezinahiya Fontê ya biçûktirîn"
@@ -14758,8 +14755,8 @@ msgstr ""
 #~ "Nikare deng bixebitîne ji ber ku fermana deng a mîhengkirî nikare were "
 #~ "xebitandin an jî sererastkirin: %s"
 
-#~ msgid "Old Gaim"
-#~ msgstr "Gaim a kevn"
+#~ msgid "Old Pidgin"
+#~ msgstr "Pidgin a kevn"
 
 #~ msgid ""
 #~ "\n"
@@ -14775,8 +14772,8 @@ msgstr ""
 #~ "\n"
 #~ "<b>Peyam:</b> %s"
 
-#~ msgid "Gaim User"
-#~ msgstr "Bikarhênera/ê Gaimê"
+#~ msgid "Pidgin User"
+#~ msgstr "Bikarhênera/ê Pidginê"
 
 #~ msgid "<b>%s:</b> %s"
 #~ msgstr "<b>%s:</b> %s"
@@ -14916,8 +14913,8 @@ msgstr ""
 #~ msgid "TOC has sent a PAUSE command."
 #~ msgstr "TOCê fermaneke PAUSE şand."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Cuda tomar bike..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Cuda tomar bike..."
 
 #~ msgid "TOC port"
 #~ msgstr "Porta TOC"
@@ -15002,23 +14999,20 @@ msgstr ""
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list or login window. Also "
 #~ "allows messages to be queued until the icon is clicked, similar to ICQ."
 #~ msgstr ""
-#~ "Ji bo ku rewşa Gaimê ya rojane nîşan bide (wekî mînak; di GNOME, KDE an "
+#~ "Ji bo ku rewşa Pidginê ya rojane nîşan bide (wekî mînak; di GNOME, KDE an "
 #~ "jî Windowsê de) tepsiyeke îkonê a pergalê dide lîstandin, ji bo vebûna zû "
 #~ "destûrê dide peywirên ku bi giştî tên bikaranîn û lîsteya hevalan an jî "
 #~ "paceya têketinê nîşan dide."
 
-#~ msgid "Gaim"
-#~ msgstr "Gaim"
+#~ msgid "Pidgin - Signed off"
+#~ msgstr "Pidgin - Danişîn hat girtin"
 
-#~ msgid "Gaim - Signed off"
-#~ msgstr "Gaim - Danişîn hat girtin"
-
-#~ msgid "Gaim - Away"
-#~ msgstr "Gaim - Li derve ye"
+#~ msgid "Pidgin - Away"
+#~ msgstr "Pidgin - Li derve ye"
 
 #~ msgid "Not connected to AIM"
 #~ msgstr "Têkilî bi AIM'ê re ne hate girêdan"
@@ -15045,14 +15039,14 @@ msgstr ""
 #~ msgid "Remote Control"
 #~ msgstr "Dûresaz"
 
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "Ji bo sepana gaimê dûresazê peyda dike"
+#~ msgid "Provides remote control for Pidgin applications."
+#~ msgstr "Ji bo sepana Pidginê dûresazê peyda dike"
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 #~ msgstr ""
-#~ "Gaim bi sepanên guhertoya sêyem an jî bi gaim-remoteyê tê kontrolkirin."
+#~ "Pidgin bi sepanên guhertoya sêyem an jî bi Pidgin-remoteyê tê kontrolkirin."
 
 #~ msgid "Hide user details"
 #~ msgstr "Hûragahiyên bikarhêneran veşêre"
@@ -15136,10 +15130,10 @@ msgstr ""
 
 #~ msgid ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Bernameya din a Gaimê ku niha dixebite, bigire\n"
+#~ "Bernameya din a Pidginê ku niha dixebite, bigire\n"
 
 #~ msgid ""
 #~ "\n"
@@ -15306,8 +15300,8 @@ msgstr ""
 #~ msgid "Reconnect _All"
 #~ msgstr "Girêdana _Hemûyan Ji Nû Ve Çêke"
 
-#~ msgid "me is using Gaim v%s."
-#~ msgstr "Gaim  v%s bikar tînim."
+#~ msgid "me is using Pidgin v%s."
+#~ msgstr "Pidgin  v%s bikar tînim."
 
 #~ msgid "That command only works in Chats, not IMs."
 #~ msgstr "Ev ferman tenê ji bo axaftinan derbasdar e, ne ji bo peyaman"
@@ -15385,12 +15379,12 @@ msgstr ""
 #~ msgstr "Çîni"
 
 #~ msgid ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using Gtk+ and is licensed under the GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
-#~ "Gaim; pêşkêşkareke peyaman a modulî ye û di heman demê de dikarî xwe bi "
+#~ "Pidgin; pêşkêşkareke peyaman a modulî ye û di heman demê de dikarî xwe bi "
 #~ "hesabên xwe yên AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell "
 #~ "GroupWise, Napster, Zephyr, û Gadu-Gadu ve girê bidî. Bi GTK+ hatiye "
 #~ "nivîsandin û di bin banê lîsansa GPL de ye.<BR><BR>"
@@ -15618,8 +15612,8 @@ msgstr ""
 #~ msgid "Idle _time reporting:"
 #~ msgstr "Rapora _dema neçalak:"
 
-#~ msgid "Gaim usage"
-#~ msgstr "Cureyê Gaimê"
+#~ msgid "Pidgin usage"
+#~ msgstr "Cureyê Pidginê"
 
 #~ msgid "X usage"
 #~ msgstr "Cureyê X'ê"
@@ -15749,10 +15743,10 @@ msgstr ""
 #~ msgstr "Ragihandina xelet a digel pêşkêşkara Gadu-Gadu"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 #~ msgstr ""
-#~ "Gaimê bi lîsteya te ya hevalan re têkilî daneynî. Ji kerema xwe re dû re "
+#~ "Pidginê bi lîsteya te ya hevalan re têkilî daneynî. Ji kerema xwe re dû re "
 #~ "dîsa biceribîne."
 
 #~ msgid "Unable to access directory"
