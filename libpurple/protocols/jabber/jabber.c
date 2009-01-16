@@ -2470,7 +2470,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 	if (jabber_resource_has_capability(jbr, XEP_0224_NAMESPACE)) {
 		xmlnode *buzz, *msg = xmlnode_new("message");
 		gchar *to;
-
+		
 		to = g_strdup_printf("%s/%s", username, jbr->name);
 		xmlnode_set_attrib(msg, "to", to);
 		g_free(to);
@@ -2484,11 +2484,6 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 		jabber_send(js, msg);
 		xmlnode_free(msg);
 
-		str = g_strdup_printf(_("Buzzing %s..."), username);
-		purple_conversation_write(conv, NULL, str, 
-			PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
-		g_free(str);
-		
 		return TRUE;
 	} else {
 		*error = g_strdup_printf(_("Unable to buzz, because the user %s does "
@@ -2515,7 +2510,27 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		who = args[0];
 	}
 	
-	return _jabber_send_buzz(js, who, error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
+	if (_jabber_send_buzz(js, who, error)) {
+		const gchar *alias;
+		const gchar *str;
+		PurpleBuddy *buddy =
+			purple_find_buddy(purple_connection_get_account(conv->account->gc), 
+				who);
+		
+		if (buddy != NULL)
+			alias = purple_buddy_get_contact_alias(buddy);
+		else
+			alias = who;
+		
+		str = g_strdup_printf(_("Buzzing %s..."), alias);
+		purple_conversation_write(conv, NULL, str, 
+			PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+		g_free(str);
+		
+		return PURPLE_CMD_RET_OK;
+	} else {
+		return PURPLE_CMD_RET_FAILED;
+	}
 }
 
 GList *jabber_attention_types(PurpleAccount *account)
