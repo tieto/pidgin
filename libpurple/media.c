@@ -1184,21 +1184,6 @@ purple_media_get_pipeline(PurpleMedia *media)
 	return media->priv->pipeline;
 }
 
-static void
-purple_media_set_remote_candidates(PurpleMediaStream *stream)
-{
-	GError *err = NULL;
-
-	fs_stream_set_remote_candidates(stream->stream,
-			stream->remote_candidates, &err);
-
-	if (err) {
-		purple_debug_error("media", "Error adding remote"
-				" candidates: %s\n", err->message);
-		g_error_free(err);
-	}
-}
-
 void
 purple_media_error(PurpleMedia *media, const gchar *error, ...)
 {
@@ -1235,7 +1220,6 @@ purple_media_accept(PurpleMedia *media)
 
 	for (; streams; streams = g_list_next(streams)) {
 		PurpleMediaStream *stream = streams->data;
-		purple_media_set_remote_candidates(stream);
 		g_object_set(G_OBJECT(stream->stream), "direction",
 				purple_media_to_fs_stream_direction(
 				stream->session->type), NULL);
@@ -1758,11 +1742,18 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 				   const gchar *name, GList *remote_candidates)
 {
 	PurpleMediaStream *stream = purple_media_get_stream(media, sess_id, name);
+	GError *err = NULL;
+
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			purple_media_candidate_list_to_fs(remote_candidates));
 
-	if (stream->session->accepted == TRUE) {
-		purple_media_set_remote_candidates(stream);
+	fs_stream_set_remote_candidates(stream->stream,
+			stream->remote_candidates, &err);
+
+	if (err) {
+		purple_debug_error("media", "Error adding remote"
+				" candidates: %s\n", err->message);
+		g_error_free(err);
 	}
 }
 
