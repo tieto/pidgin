@@ -1390,7 +1390,12 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 
 void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
-	silcpurple_add_buddy_i(gc, buddy, FALSE);
+	/* Don't add if the buddy is already on the list.
+	 *
+	 * SILC doesn't have groups, so we also don't need to do anything
+	 * for a move. */
+	if (buddy->proto_data == NULL)
+		silcpurple_add_buddy_i(gc, buddy, FALSE);
 }
 
 void silcpurple_send_buddylist(PurpleConnection *gc)

@@ -4813,19 +4813,26 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		return;
 	}
 
-	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))) {
-		purple_debug_info("oscar",
-				   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-		aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
+	if (od->ssi.received_data) {
+		if (!aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY)) {
+			purple_debug_info("oscar",
+					   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
+			aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
 
-		/* Mobile users should always be online */
-		if (buddy->name[0] == '+') {
-			purple_prpl_got_user_status(account,
-					purple_buddy_get_name(buddy),
-					OSCAR_STATUS_ID_AVAILABLE, NULL);
-			purple_prpl_got_user_status(account,
-					purple_buddy_get_name(buddy),
-					OSCAR_STATUS_ID_MOBILE, NULL);
+			/* Mobile users should always be online */
+			if (buddy->name[0] == '+') {
+				purple_prpl_got_user_status(account,
+						purple_buddy_get_name(buddy),
+						OSCAR_STATUS_ID_AVAILABLE, NULL);
+				purple_prpl_got_user_status(account,
+						purple_buddy_get_name(buddy),
+						OSCAR_STATUS_ID_MOBILE, NULL);
+			}
+		} else if (aim_ssi_waitingforauth(od->ssi.local,
+		                                  aim_ssi_itemlist_findparentname(od->ssi.local, purple_buddy_get_name(buddy)),
+		                                  purple_buddy_get_name(buddy))) {
+			/* Not authorized -- Re-request authorization */
+			purple_auth_sendrequest(gc, purple_buddy_get_name(buddy));
 		}
 	}
 
