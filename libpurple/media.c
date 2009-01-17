@@ -1234,7 +1234,11 @@ purple_media_accept(PurpleMedia *media)
 	streams = media->priv->streams;
 
 	for (; streams; streams = g_list_next(streams)) {
-		purple_media_set_remote_candidates(streams->data);
+		PurpleMediaStream *stream = streams->data;
+		purple_media_set_remote_candidates(stream);
+		g_object_set(G_OBJECT(stream->stream), "direction",
+				purple_media_to_fs_stream_direction(
+				stream->session->type), NULL);
 	}
 }
 
@@ -1649,13 +1653,15 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 			g_value_set_string(&param[num_params].value, stun_ip);
 
 			fsstream = fs_session_new_stream(session->session,
-					participant, type_direction,
-					transmitter, num_params+1, param, &err);
+					participant, type_direction &
+					FS_DIRECTION_RECV, transmitter,
+					num_params+1, param, &err);
 			g_free(param);
 		} else {
 			fsstream = fs_session_new_stream(session->session,
-					participant, type_direction,
-					transmitter, num_params, params, &err);
+					participant, type_direction &
+					FS_DIRECTION_RECV, transmitter,
+					num_params, params, &err);
 		}
 
 		if (err) {
