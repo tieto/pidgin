@@ -48,6 +48,7 @@
 #include "prefs.h"
 #include "stun.h"
 #include "upnp.h"
+#include "dnsquery.h"
 
 /*
  * Calling sizeof(struct ifreq) isn't always correct on
@@ -91,6 +92,9 @@ struct _PurpleNetworkListenData {
 #ifdef HAVE_NETWORKMANAGER
 static NMState nm_get_network_state(void);
 #endif
+
+/* Cached IP address for STUN server */
+static gchar *stun_ip = NULL;
 
 const unsigned char *
 purple_network_ip_atoi(const char *ip)
@@ -685,6 +689,12 @@ nm_update_state(NMState state)
 		case NM_STATE_CONNECTED:
 			/* Call res_init in case DNS servers have changed */
 			res_init();
+			/* update STUN IP in case we it changed (theoretically we could
+			   have gone from IPv4 to IPv6, f.ex. or we were previously
+			   offline */
+			purple_network_set_stun_server(
+				purple_prefs_get_string("/purple/network/stun_server"));
+			
 			if (ui_ops != NULL && ui_ops->network_connected != NULL)
 				ui_ops->network_connected();
 			break;
@@ -746,6 +756,61 @@ nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner,
 
 #endif
 
+static void
+purple_network_stun_lookup_cb(GSList *hosts, gpointer data, 
+	const char *error_message)
+{
+	if (error_message) {
+		purple_debug_error("network", "lookup of STUN server IP failed: %s\n",
+			error_message);
+		g_slist_free(hosts);
+		return;
+	}
+	
+	if (hosts && g_slist_next(hosts)) {
+		size_t addr_len = (size_t) hosts->data;
+		struct sockaddr *addr = g_slist_next(hosts)->data; 
+		char dst[INET6_ADDRSTRLEN];
+		
+		if (addr->sa_family == AF_INET6) {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr, 
+				dst, sizeof(dst));
+		} else {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr, 
+				dst, sizeof(dst));
+		}
+			
+		stun_ip = g_strdup(dst);
+		purple_debug_info("network", "set STUN IP: %s\n", stun_ip);
+	}
+	
+	g_slist_free(hosts);
+}
+
+void
+purple_network_set_stun_server(const gchar *stun_server)
+{
+	if (stun_server && stun_server[0] != '\0') {
+		if (purple_network_is_available()) {
+			purple_debug_info("network", "running DNS query for STUN server\n");
+			purple_dnsquery_a(stun_server, 3478, purple_network_stun_lookup_cb,
+				NULL);
+		} else {
+			purple_debug_info("network", 
+				"network is unavailable, don't try to update STUN IP");
+		}
+	} else if (stun_ip) {
+		g_free(stun_ip);
+		stun_ip = NULL;
+	}
+}
+
+const gchar *
+purple_network_get_stun_ip(void)
+{
+	return stun_ip;
+}
+
 void *
 purple_network_get_handle(void)
 {
@@ -777,6 +842,7 @@ purple_network_init(void)
 #endif
 
 	purple_prefs_add_none  ("/purple/network");
+	purple_prefs_add_string("/purple/network/stun_server", "");
 	purple_prefs_add_bool  ("/purple/network/auto_ip", TRUE);
 	purple_prefs_add_string("/purple/network/public_ip", "");
 	purple_prefs_add_bool  ("/purple/network/map_ports", TRUE);
@@ -815,6 +881,9 @@ purple_network_init(void)
 
 	purple_pmp_init();
 	purple_upnp_init();
+	
+	purple_network_set_stun_server(
+		purple_prefs_get_string("/purple/network/stun_server"));
 }
 
 void
@@ -854,4 +923,7 @@ purple_network_uninit(void)
 #endif
 	purple_signal_unregister(purple_network_get_handle(),
 	                         "network-configuration-changed");
+	
+	if (stun_ip)
+		g_free(stun_ip);
 }

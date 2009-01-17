@@ -32,6 +32,7 @@
 #include "media.h"
 #include "marshallers.h"
 #include "mediamanager.h"
+#include "network.h"
 
 #include "debug.h"
 
@@ -1549,27 +1550,6 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	g_timeout_add(0, (GSourceFunc)purple_media_connected_cb, stream);
 }
 
-static gchar *
-purple_media_get_stun_pref_ip()
-{
-	const gchar *stun_pref =
-			purple_prefs_get_string("/purple/network/stun_server");
-	struct hostent *host;
-
-	if ((host = gethostbyname(stun_pref)) && host->h_addr) {
-		gchar *stun_ip = g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-				host->h_addr[0], host->h_addr[1],
-				host->h_addr[2], host->h_addr[3]);
-		purple_debug_info("media", "IP address for %s found: %s\n",
-				stun_pref, stun_ip);
-		return stun_ip;
-	} else {
-		purple_debug_info("media", "Unable to resolve %s IP address\n",
-				stun_pref);
-		return NULL;
-	}
-}
-
 static gboolean
 purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				 const gchar *who, FsMediaType type,
@@ -1653,22 +1633,25 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 	if (!stream) {
 		GError *err = NULL;
-		gchar *stun_ip = NULL;
 		FsStream *fsstream = NULL;
-
-		if ((stun_ip = purple_media_get_stun_pref_ip())) {
+		const gchar *stun_ip = purple_network_get_stun_ip();
+		
+		
+		if (stun_ip) {
 			GParameter *param = g_new0(GParameter, num_params+1);
 			memcpy(param, params, sizeof(GParameter) * num_params);
 
+			purple_debug_info("media", 
+				"setting property stun-ip on new stream: %s\n", stun_ip);
+			
 			param[num_params].name = "stun-ip";
 			g_value_init(&param[num_params].value, G_TYPE_STRING);
-			g_value_take_string(&param[num_params].value, stun_ip);
+			g_value_set_string(&param[num_params].value, stun_ip);
 
 			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction,
 					transmitter, num_params+1, param, &err);
 			g_free(param);
-			g_free(stun_ip);
 		} else {
 			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction,
