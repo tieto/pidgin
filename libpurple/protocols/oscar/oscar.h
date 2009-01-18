@@ -34,6 +34,7 @@
 #include "eventloop.h"
 #include "internal.h"
 #include "proxy.h"
+#include "sslconn.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -417,8 +418,10 @@ struct _FlapConnection
 	guint16 cookielen;
 	guint8 *cookie;
 	gpointer new_conn_data;
+	gchar *ssl_cert_cn;
 
 	int fd;
+	PurpleSslConnection *gsc;
 	guint8 header[6];
 	gssize header_received;
 	FlapFrame buffer_incoming;
@@ -476,6 +479,7 @@ struct _OscarData
 	GHashTable *buddyinfo;
 	GSList *requesticon;
 
+	gboolean use_ssl;
 	gboolean icq;
 	guint getblisttimer;
 
@@ -593,6 +597,8 @@ struct aim_redirect_data
 	const char *ip;
 	guint16 cookielen;
 	const guint8 *cookie;
+	const char *ssl_cert_cn;
+	guint8 use_ssl;
 	struct { /* group == SNAC_FAMILY_CHAT */
 		guint16 exchange;
 		const char *room;
@@ -616,6 +622,8 @@ FlapConnection *flap_connection_findbygroup(OscarData *od, guint16 group);
 FlapConnection *flap_connection_getbytype(OscarData *, int type);
 FlapConnection *flap_connection_getbytype_all(OscarData *, int type);
 void flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond);
+void flap_connection_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
+
 void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
