@@ -34,7 +34,7 @@ typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
 
 typedef void (*PurpleHTTPConnectionConnectFunction)(PurpleHTTPConnection *conn);
 typedef void (*PurpleHTTPConnectionDisconnectFunction)(PurpleHTTPConnection *conn);
-typedef void (*PurpleHTTPRequestCallback)(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata);
+typedef void (*PurpleHTTPRequestCallback)(PurpleHTTPResponse *res, void *userdata);
 typedef void (*PurpleBOSHConnectionConnectFunction)(PurpleBOSHConnection *conn);
 typedef void (*PurpleBOSHConnectionReceiveFunction)(PurpleBOSHConnection *conn, xmlnode *node);
 
@@ -66,7 +66,7 @@ struct _PurpleHTTPConnection {
     char *host;
     int port;
     int ie_handle;
-    GQueue *requests;
+    GQueue *requests; /* Queue of PurpleHTTPRequestCallbacks */
     
     PurpleHTTPResponse *current_response;
     char *current_data;
@@ -80,9 +80,7 @@ struct _PurpleHTTPConnection {
 
 struct _PurpleHTTPRequest {
     PurpleHTTPRequestCallback cb;
-    char *method;
-    char *path;
-    GHashTable *header;
+    const char *path;
     char *data;
     int data_len;
     void *userdata;
@@ -98,13 +96,11 @@ struct _PurpleHTTPResponse {
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node);
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata);
+static void jabber_bosh_connection_http_received_cb(PurpleHTTPResponse *res, void *userdata);
 static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node);
 
 static void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
 static void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req);
-
-static void jabber_bosh_http_request_add_to_header(PurpleHTTPRequest *req, const char *field, const char *value);
 
 void jabber_bosh_init(void)
 {
@@ -126,25 +122,9 @@ void jabber_bosh_uninit(void)
 	bosh_useragent = NULL;
 }
 
-static PurpleHTTPRequest*
-jabber_bosh_http_request_init(const char *method, const char *path,
-                         PurpleHTTPRequestCallback cb, void *userdata)
-{
-	PurpleHTTPRequest *req = g_new(PurpleHTTPRequest, 1);
-	req->method = g_strdup(method);
-	req->path = g_strdup(path);
-	req->cb = cb;
-	req->userdata = userdata;
-	req->header = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	return req;
-}
-
 static void
 jabber_bosh_http_request_destroy(PurpleHTTPRequest *req)
 {
-	g_hash_table_destroy(req->header);
-	g_free(req->method);
-	g_free(req->path);
 	g_free(req->data);
 	g_free(req);
 }
@@ -183,10 +163,8 @@ jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
 	g_free(conn->current_data);
 	g_free(conn->host);
 
-	if (conn->requests) {
-		g_queue_foreach(conn->requests, (GFunc)jabber_bosh_http_request_destroy, NULL);
+	if (conn->requests)
 		g_queue_free(conn->requests);
-	}
 
 	if (conn->current_response)
 		jabber_bosh_http_response_destroy(conn->current_response);
@@ -214,7 +192,8 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	conn = g_new0(PurpleBOSHConnection, 1);
 	conn->host = host;
 	conn->port = port;
-	conn->path = path;
+	conn->path = g_strdup_printf("/%s", path);
+	g_free(path);
 	conn->pipelining = TRUE;
 
 	if ((user && user[0] != '\0') || (passwd && passwd[0] != '\0')) {
@@ -414,7 +393,7 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	xmlnode_free(init);
 }
 
-static void jabber_bosh_connection_http_received_cb(PurpleHTTPRequest *req, PurpleHTTPResponse *res, void *userdata) {
+static void jabber_bosh_connection_http_received_cb(PurpleHTTPResponse *res, void *userdata) {
 	PurpleBOSHConnection *conn = userdata;
 	if (conn->receive_cb) {
 		xmlnode *node = xmlnode_from_str(res->data, res->data_len);
@@ -468,14 +447,13 @@ void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
 static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node) {
 	PurpleHTTPRequest *request;
 	
-	char *txt = xmlnode_to_formatted_str(node, NULL);
-	printf("\njabber_bosh_connection_send\n%s\n", txt);
-	g_free(txt);
-	
-	request = jabber_bosh_http_request_init("POST", g_strdup_printf("/%s", conn->path), jabber_bosh_connection_http_received_cb, conn);
-	jabber_bosh_http_request_add_to_header(request, "Content-Encoding", "text/xml; charset=utf-8");
+	request = g_new0(PurpleHTTPRequest, 1);
+	request->path     = conn->path;
+	request->cb       = jabber_bosh_connection_http_received_cb;
+	request->userdata = conn;
+
 	request->data = xmlnode_to_str(node, &(request->data_len));
-	jabber_bosh_http_request_add_to_header(request, "Content-Length", g_strdup_printf("%d", (int)strlen(request->data)));
+
 	jabber_bosh_http_connection_send_request(conn->conn_a, request);
 }
 
@@ -578,7 +556,7 @@ static void jabber_bosh_http_connection_receive(gpointer data, gint source, Purp
 		
 		if (response) {
 			if (conn->current_len >= response->data_len) {
-				PurpleHTTPRequest *request = g_queue_pop_head(conn->requests);
+				PurpleHTTPRequestCallback cb = g_queue_pop_head(conn->requests);
 				
 #warning For a pure HTTP 1.1 stack, this would need to be handled elsewhere.
 				if (bosh_conn->ready == TRUE && g_queue_is_empty(conn->requests) == TRUE) {
@@ -586,17 +564,14 @@ static void jabber_bosh_http_connection_receive(gpointer data, gint source, Purp
 					printf("\n SEND AN EMPTY REQUEST \n");
 				}
 				
-				if (request) {
+				if (cb) {
 					char *old_data = conn->current_data;
 					response->data = g_memdup(conn->current_data, response->data_len);
 					conn->current_data = g_strdup(&conn->current_data[response->data_len]);
 					conn->current_len -= response->data_len;
 					g_free(old_data);
 					
-					if (request->cb) request->cb(request, response, conn->userdata);
-					else purple_debug_info("jabber", "missing request callback!\n");
-					
-					jabber_bosh_http_request_destroy(request);
+					cb(response, conn->userdata);
 					jabber_bosh_http_response_destroy(response);
 					conn->current_response = NULL;
 				} else {
@@ -653,34 +628,39 @@ static void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn)
 	}
 }
 
-static void jabber_bosh_http_connection_send_request_add_field_to_string(gpointer key, gpointer value, gpointer user_data)
+static void
+jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
+                                         PurpleHTTPRequest *req)
 {
-	char **ppacket = user_data;
-	char *tmp = *ppacket;
-	char *field = key;
-	char *val = value;
-	*ppacket = g_strdup_printf("%s%s: %s\r\n", tmp, field, val);
-	g_free(tmp);
-}
+	PurpleBOSHConnection *bosh_conn = conn->userdata;
+	GString *packet = g_string_new("");
+	int ret;
 
-void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req) {
-	char *packet;
-	char *tmp;
-	jabber_bosh_http_request_add_to_header(req, "Host", conn->host);
-	jabber_bosh_http_request_add_to_header(req, "User-Agent", bosh_useragent);
+	/* TODO: Should we lie about this HTTP/1.1 support? */
+	g_string_append_printf(packet, "POST %s HTTP/1.1\r\n"
+	                       "Host: %s\r\n"
+	                       "User-Agent: %s\r\n"
+	                       "Content-Encoding: text/xml; charset=utf-8\r\n"
+	                       "Content-Length: %d\r\n",
+	                       req->path, conn->host, bosh_useragent, req->data_len);
 
-	packet = tmp = g_strdup_printf("%s %s HTTP/1.1\r\n", req->method, req->path);
-	g_hash_table_foreach(req->header, jabber_bosh_http_connection_send_request_add_field_to_string, &packet);
-	tmp = packet;
-	packet = g_strdup_printf("%s\r\n%s", tmp, req->data);
-	g_free(tmp);
-	if (write(conn->fd, packet, strlen(packet)) == -1) purple_debug_info("jabber", "send error\n");
-	g_queue_push_tail(conn->requests, req);
-}
+	printf("Sending %s\n", packet->str);
+	/* TODO: Better error handling, circbuffer or possible integration with
+	 * low-level code in jabber.c */
+	ret = write(conn->fd, packet->str, packet->len);
 
-static void jabber_bosh_http_request_add_to_header(PurpleHTTPRequest *req, const char *field, const char *value) {
-	char *f = g_strdup(field);
-	char *v = g_strdup(value);
-	g_hash_table_replace(req->header, f, v);
+	g_string_free(packet, TRUE);
+	g_queue_push_tail(conn->requests, req->cb);
+	jabber_bosh_http_request_destroy(req);
+
+	if (ret < 0 && errno == EAGAIN)
+		purple_debug_warning("jabber", "BOSH write would have blocked\n");
+
+	if (ret <= 0) {
+		purple_connection_error_reason(bosh_conn->js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Write error"));
+		return;
+	}
 }
 
