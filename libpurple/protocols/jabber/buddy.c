@@ -179,9 +179,11 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 		g_free(cmd);
 		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
 	}
-	
-	jabber_caps_free_clientinfo(jbr->caps);
 
+	if (jbr->caps.exts) {
+		g_list_foreach(jbr->caps.exts, (GFunc)g_free, NULL);
+		g_list_free(jbr->caps.exts);
+	}
 	g_free(jbr->name);
 	g_free(jbr->status);
 	g_free(jbr->thread_id);
@@ -493,9 +495,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	PurplePresence *gpresence;
-	PurpleStatus *status;
-	
 	if(((JabberStream*)gc->proto_data)->pep) {
 		/* XEP-0084: User Avatars */
 		if(img) {
@@ -613,9 +612,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	 */
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
 
-	gpresence = purple_account_get_presence(gc->account);
-	status = purple_presence_get_active_status(gpresence);
-	jabber_presence_send(gc->account, status);
+	jabber_presence_send(gc->proto_data, FALSE);
 }
 
 /*
@@ -2493,23 +2490,35 @@ void jabber_user_search_begin(PurplePluginAction *action)
 gboolean
 jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 {
-	const GList *iter = NULL;
+	const GList *node = NULL;
+	const JabberCapsNodeExts *exts;
 
-	if (!jbr->caps) {
+	if (!jbr->caps.info) {
 		purple_debug_error("jabber",
 			"Unable to find caps: nothing known about buddy\n");
 		return FALSE;
 	}
 
-	for (iter = jbr->caps->features ; iter ; iter = g_list_next(iter)) {
-		if (strcmp(iter->data, cap) == 0) {
-			purple_debug_info("jabber", "Found cap: %s\n", (char *)iter->data);
-			return TRUE;
+	node = g_list_find_custom(jbr->caps.info->features, cap, (GCompareFunc)strcmp);
+	if (!node && jbr->caps.exts && jbr->caps.info->exts) {
+		const GList *ext;
+		exts = jbr->caps.info->exts;
+		/* Walk through all the enabled caps, checking each list for the cap.
+		 * Don't check it twice, though. */
+		for (ext = jbr->caps.exts; ext && !node; ext = ext->next) {
+			GList *features = g_hash_table_lookup(exts->exts, ext->data);
+			if (features)
+				node = g_list_find_custom(features, cap, (GCompareFunc)strcmp);
 		}
 	}
 
-	purple_debug_info("jabber", "Cap %s not found\n", cap);
-	return FALSE;
+	/* TODO: Are these messages actually useful? */
+	if (node)
+		purple_debug_info("jabber", "Found cap: %s\n", cap);
+	else
+		purple_debug_info("jabber", "Cap %s not found\n", cap); 
+
+	return (node != NULL);
 }
 
 gboolean
