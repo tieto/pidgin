@@ -320,6 +320,7 @@ static void auth_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	const char *sid, *version;
+	xmlnode *packet;
 
 	g_return_if_fail(node != NULL);
 	if (jabber_bosh_connection_error_check(conn, node))
@@ -344,20 +345,21 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 		purple_debug_info("jabber", "BOSH connection manager version %s\n", version);
 
-		/* TODO: Are major increments incompatible? */
-		if (major > 1 || (major == 1 && minor >= 6)) {
-			xmlnode *packet = xmlnode_get_child(node, "features");
-			conn->js->use_bosh = TRUE;
-			conn->receive_cb = auth_response_cb;
-			jabber_stream_features_parse(conn->js, packet);		
-		} else {
+		if (major != 1 || minor < 6) {
 			purple_connection_error_reason(conn->js->gc,
 			        PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			        _("Unsupported version of BOSH protocol"));
+			return;
 		}
 	} else {
 		purple_debug_info("jabber", "Missing version in BOSH initiation\n");
 	}
+
+	/* FIXME: Depending on receiving features might break with some hosts */
+	packet = xmlnode_get_child(node, "features");
+	conn->js->use_bosh = TRUE;
+	conn->receive_cb = auth_response_cb;
+	jabber_stream_features_parse(conn->js, packet);		
 }
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
