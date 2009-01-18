@@ -278,22 +278,25 @@ static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode 
 
 	child = node->child;
 	while (child != NULL) {
+		/* jabber_process_packet might free child */
+		xmlnode *next = child->next;
 		if (child->type == XMLNODE_TYPE_TAG) {
-			xmlnode *session = NULL;
-			if (!strcmp(child->name, "iq")) session = xmlnode_get_child(child, "session");
-			if (session) {
-				conn->ready = TRUE;
+			if (!strcmp(child->name, "iq")) {
+				if (xmlnode_get_child(child, "session"))
+					conn->ready = TRUE;
 			}
+
 			jabber_process_packet(js, &child);
 		}
-		child = child->next;
+
+		child = next;
 	}
 }
 
 static void auth_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode *child;
 
-	g_return_if_fail(node == NULL);
+	g_return_if_fail(node != NULL);
 	if (jabber_bosh_connection_error_check(conn, node))
 		return;
 
@@ -414,8 +417,10 @@ void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode_set_attrib(packet, "rid", rid);
 	
 	if (node) {
-		xmlnode_insert_child(packet, node);
-		if (conn->ready == TRUE) xmlnode_set_attrib(node, "xmlns", "jabber:client");
+		xmlnode *copy = xmlnode_copy(node);
+		xmlnode_insert_child(packet, copy);
+		if (conn->ready == TRUE)
+			xmlnode_set_attrib(copy, "xmlns", "jabber:client");
 	}
 	jabber_bosh_connection_send_native(conn, packet);
 	xmlnode_free(packet);
