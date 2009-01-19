@@ -402,9 +402,11 @@ static void jabber_bosh_connection_http_received_cb(PurpleHTTPResponse *res, voi
 			conn->receive_cb(conn, node);
 			xmlnode_free(node);
 		} else {
-			printf("\njabber_bosh_connection_http_received_cb: XML ERROR: %s\n", res->data); 
+			purple_debug_warning("jabber", "BOSH: Received invalid XML\n");
 		}
-	} else purple_debug_info("jabber", "missing receive_cb of PurpleBOSHConnection.\n");
+	} else {
+		g_return_if_reached();
+	}
 }
 
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -531,12 +533,12 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 #warning For a pure HTTP 1.1 stack, this would need to be handled elsewhere.
 	if (bosh_conn->ready && g_queue_is_empty(conn->requests)) {
 		jabber_bosh_connection_send(bosh_conn, NULL);
-		printf("\n SEND AN EMPTY REQUEST \n");
+		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
 	}
 
 	if (cb) {
 		conn->current_response->data_len = conn->body_len;
-		conn->current_response->data = g_memdup(conn->buf->str + conn->handled_len, conn->body_len);
+		conn->current_response->data = g_memdup(conn->buf->str + conn->handled_len, conn->body_len + 1);
 
 		cb(conn->current_response, conn->userdata);
 	} else {
@@ -650,7 +652,7 @@ jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
 
 	packet = g_string_append(packet, req->data);
 
-	printf("Sending %s\n", packet->str);
+	purple_debug_misc("jabber", "BOSH out: %s\n", packet->str);
 	/* TODO: Better error handling, circbuffer or possible integration with
 	 * low-level code in jabber.c */
 	ret = write(conn->fd, packet->str, packet->len);
