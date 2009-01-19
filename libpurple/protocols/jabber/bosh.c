@@ -272,7 +272,7 @@ static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode 
 	xmlnode *child;
 	JabberStream *js = conn->js;
 
-	g_return_if_fail(node == NULL);
+	g_return_if_fail(node != NULL);
 	if (jabber_bosh_connection_error_check(conn, node))
 		return;
 
