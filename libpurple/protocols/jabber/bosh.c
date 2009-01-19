@@ -547,6 +547,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	conn->buf = NULL;
 	jabber_bosh_http_response_destroy(conn->current_response);
 	conn->current_response = NULL;
+	conn->headers_done = conn->handled_len = conn->body_len = 0;
 }
 
 static void
