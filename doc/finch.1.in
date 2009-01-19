@@ -296,6 +296,15 @@ You can specifiy key-bindings for specific widgets. The following entries in
 \fI~/.gntrc\fR correspond to the default keybindings for the actions:
 
 .br
+[GntBox::binding]
+.br
+tab = focus-next
+.br
+right = focus-next
+.br
+left = focus-prev
+
+.br
 [GntEntry::binding]
 .br
 c-a = cursor-home
