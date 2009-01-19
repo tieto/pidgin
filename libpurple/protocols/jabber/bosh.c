@@ -644,8 +644,10 @@ jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
 	                       "Host: %s\r\n"
 	                       "User-Agent: %s\r\n"
 	                       "Content-Encoding: text/xml; charset=utf-8\r\n"
-	                       "Content-Length: %d\r\n",
+	                       "Content-Length: %d\r\n\r\n",
 	                       req->path, conn->host, bosh_useragent, req->data_len);
+
+	packet = g_string_append(packet, req->data);
 
 	printf("Sending %s\n", packet->str);
 	/* TODO: Better error handling, circbuffer or possible integration with
