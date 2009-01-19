@@ -2445,25 +2445,25 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	PurpleConnection *gc = js->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleConversation *conv = 
-		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, username,
-			account);
-	gchar *str;
+	PurpleBuddy *buddy = 
+		purple_find_buddy(purple_connection_get_account(gc), username);
+	const gchar *alias = 
+		buddy ? purple_buddy_get_contact_alias(buddy) : username;
 	
 	if(!username)
 		return FALSE;
 
 	jb = jabber_buddy_find(js, username, FALSE);
 	if(!jb) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing "
+			"known about %s."), alias);
 		return FALSE;
 	}
 	
 	jbr = jabber_buddy_find_resource(jb, NULL);
 	if (!jbr) {
-		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), 
-			username);
+		*error = g_strdup_printf(_("Unable to buzz, because %s might be offline."), 
+			alias);
 		return FALSE;
 	}
 	
@@ -2486,9 +2486,8 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 
 		return TRUE;
 	} else {
-		*error = g_strdup_printf(_("Unable to buzz, because the user %s does "
-			"not support it or do not wish to receive buzzes now."), 
-			username);
+		*error = g_strdup_printf(_("Unable to buzz, because %s does "
+			"not support it or do not wish to receive buzzes now."), alias);
 		return FALSE;
 	}
 }
@@ -2512,7 +2511,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 	
 	if (_jabber_send_buzz(js, who, error)) {
 		const gchar *alias;
-		const gchar *str;
+		gchar *str;
 		PurpleBuddy *buddy =
 			purple_find_buddy(purple_connection_get_account(conv->account->gc), 
 				who);
