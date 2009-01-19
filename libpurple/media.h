@@ -624,6 +624,10 @@ void purple_media_set_input_volume(PurpleMedia *media, const gchar *session_id, 
 void purple_media_set_output_volume(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant, double level);
 
+gboolean purple_media_set_output_window(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant,
+		gulong window_id);
+
 #ifdef __cplusplus
 }
 #endif

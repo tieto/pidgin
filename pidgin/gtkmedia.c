@@ -318,42 +318,37 @@ pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
 }
 
-static gboolean
-create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
+typedef struct
 {
-	char *name;
-
-	if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_ELEMENT)
-		return TRUE;
-
-	if (!gst_structure_has_name(message->structure, "prepare-xwindow-id"))
-		return TRUE;
-
-	name = gst_object_get_name(GST_MESSAGE_SRC (message));
-
-	/* The XOverlay's name is the sink's name with a suffix */
-	if (!strncmp(name, "purplevideosink", strlen("purplevideosink")))
-		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(GST_MESSAGE_SRC(message)),
-					     GDK_WINDOW_XWINDOW(gtkmedia->priv->remote_video->window));
-	else if (!strncmp(name, "purplelocalvideosink", strlen("purplelocalvideosink")))
-		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(GST_MESSAGE_SRC(message)),
-					     GDK_WINDOW_XWINDOW(gtkmedia->priv->local_video->window));
-	g_free(name);
-	return TRUE;
-}
+	PidginMedia *gtkmedia;
+	gchar *session_id;
+	gchar *participant;
+} PidginMediaRealizeData;
 
 static gboolean
-realize_cb_cb(GstElement *element)
+realize_cb_cb(PidginMediaRealizeData *data)
 {
-	gst_element_set_locked_state(element, FALSE);
-	gst_element_set_state(element, GST_STATE_PLAYING);
+	PidginMediaPrivate *priv = data->gtkmedia->priv;
+	gulong window_id;
+
+	if (data->participant == NULL)
+		window_id = GDK_WINDOW_XWINDOW(priv->local_video->window);
+	else
+		window_id = GDK_WINDOW_XWINDOW(priv->remote_video->window);
+
+	purple_media_set_output_window(priv->media, data->session_id,
+			data->participant, window_id);
+
+	g_free(data->session_id);
+	g_free(data->participant);
+	g_free(data);
 	return FALSE;
 }
 
 static void
-realize_cb(GtkWidget *widget, GstElement *element)
+realize_cb(GtkWidget *widget, PidginMediaRealizeData *data)
 {
-	g_timeout_add(0, (GSourceFunc)realize_cb_cb, element);
+	g_timeout_add(0, (GSourceFunc)realize_cb_cb, data);
 }
 
 static void
@@ -390,7 +385,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	GstElement *videosendbin = NULL;
 	gboolean audiorecvbool = FALSE;
 	gboolean videorecvbool = FALSE;
-	GstBus *bus;
 	gboolean is_initiator;
 
 	PurpleMediaSessionType type = purple_media_get_session_type(media, sid);
@@ -406,8 +400,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	} else if (type & PURPLE_MEDIA_VIDEO) {
 		if (!videosendbin && (type & PURPLE_MEDIA_SEND_VIDEO)) {
 			purple_media_video_init_src(&videosendbin);
-			gst_element_set_locked_state(videosendbin, TRUE);
 			purple_media_set_src(media, sid, videosendbin);
+			gst_element_set_state(videosendbin, GST_STATE_PLAYING);
 		}
 		if (!videorecvbool && (type & PURPLE_MEDIA_RECV_VIDEO)) {
 			videorecvbool = TRUE;
@@ -432,6 +426,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		send_widget = gtkmedia->priv->send_widget;
 
 	if (videorecvbool) {
+		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
 		GtkWidget *plug;
@@ -454,7 +449,14 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_container_add(GTK_CONTAINER(aspect), socket);
 		gtk_widget_show(socket);
 
+		data = g_new0(PidginMediaRealizeData, 1);
+		data->gtkmedia = gtkmedia;
+		data->session_id = g_strdup(sid);
+		data->participant = g_strdup(gtkmedia->priv->screenname);
+
 		remote_video = gtk_drawing_area_new();
+		g_signal_connect(G_OBJECT(remote_video), "realize",
+				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), remote_video);
 		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 100, -1);
 		gtk_widget_show(remote_video);
@@ -463,6 +465,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtkmedia->priv->remote_video = remote_video;
 	}
 	if (videosendbin) {
+		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *local_video;
 		GtkWidget *plug;
@@ -485,9 +488,14 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_container_add(GTK_CONTAINER(aspect), socket);
 		gtk_widget_show(socket);
 
+		data = g_new0(PidginMediaRealizeData, 1);
+		data->gtkmedia = gtkmedia;
+		data->session_id = g_strdup(sid);
+		data->participant = NULL;
+
 		local_video = gtk_drawing_area_new();
 		g_signal_connect(G_OBJECT(local_video), "realize",
-				G_CALLBACK(realize_cb), videosendbin);
+				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), local_video);
 		gtk_widget_set_size_request (GTK_WIDGET(local_video), 100, -1);
 
@@ -518,17 +526,13 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_widget_show(gtkmedia->priv->mute);
 	}
 
-	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 
-	if (videorecvbool || videosendbin)
-		g_signal_connect(bus, "sync-message::element",
-				G_CALLBACK(create_window), gtkmedia);
-
-	if (audiorecvbool || audiosendbin)
+	if (audiorecvbool || audiosendbin) {
+		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 		g_signal_connect(G_OBJECT(bus), "message::element",
 				G_CALLBACK(level_message_cb), gtkmedia);
-
-	gst_object_unref(bus);
+		gst_object_unref(bus);
+	}
 
 	if (send_widget != NULL)
 		gtkmedia->priv->send_widget = send_widget;

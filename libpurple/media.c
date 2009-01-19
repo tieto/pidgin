@@ -39,6 +39,7 @@
 #ifdef USE_VV
 
 #include <gst/interfaces/propertyprobe.h>
+#include <gst/interfaces/xoverlay.h>
 #include <gst/farsight/fs-conference-iface.h>
 
 /** @copydoc _PurpleMediaSession */
@@ -57,6 +58,9 @@ struct _PurpleMediaSession
 
 	gboolean codecs_ready;
 	gboolean accepted;
+
+	GstElement *sink;
+	gulong window_id;
 };
 
 struct _PurpleMediaStream
@@ -73,6 +77,8 @@ struct _PurpleMediaStream
 
 	FsCandidate *local_candidate;
 	FsCandidate *remote_candidate;
+
+	gulong window_id;
 };
 
 struct _PurpleMediaPrivate
@@ -1365,7 +1371,7 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 void
 purple_media_video_init_src(GstElement **sendbin)
 {
-	GstElement *src, *tee, *queue, *local_sink;
+	GstElement *src, *tee, *queue;
 	GstPad *pad;
 	GstPad *ghost;
 	const gchar *video_plugin = purple_prefs_get_string(
@@ -1394,14 +1400,6 @@ purple_media_video_init_src(GstElement **sendbin)
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_object_unref(pad);
 	gst_element_add_pad(*sendbin, ghost);
-
-	queue = gst_element_factory_make("queue", "purplelocalvideoqueue");
-	gst_bin_add(GST_BIN(*sendbin), queue);
-	gst_element_link(tee, queue);
-
-	local_sink = gst_element_factory_make("autovideosink", "purplelocalvideosink");
-	gst_bin_add(GST_BIN(*sendbin), local_sink);
-	gst_element_link(queue, local_sink);
 
 	if (video_device != NULL && strcmp(video_device, ""))
 		g_object_set(G_OBJECT(src), "device", video_device, NULL);
@@ -1436,8 +1434,8 @@ purple_media_video_init_recv(GstElement **recvbin)
 	GstElement *sink;
 	GstPad *pad, *ghost;
 
-	*recvbin = gst_bin_new("pidginrecvvideobin");
-	sink = gst_element_factory_make("autovideosink", "purplevideosink");
+	*recvbin = gst_bin_new("fakebin");
+	sink = gst_element_factory_make("fakesink", NULL);
 	gst_bin_add(GST_BIN(*recvbin), sink);
 	pad = gst_element_get_pad(sink, "sink");
 	ghost = gst_ghost_pad_new("ghostsink", pad);
@@ -1526,7 +1524,8 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	PurpleMediaSessionType type = purple_media_from_fs(codec->media_type, FS_DIRECTION_RECV);
 	GstPad *sinkpad = NULL;
 
-	stream->sink = purple_media_manager_get_element(
+	if (stream->sink == NULL)
+		stream->sink = purple_media_manager_get_element(
 			purple_media_manager_get(), type);
 
 	gst_bin_add(GST_BIN(purple_media_get_pipeline(stream->session->media)),
@@ -1888,6 +1887,239 @@ void purple_media_set_output_volume(PurpleMedia *media,
 			g_object_set(volume, "volume", level, NULL);
 		}
 	}
+}
+
+typedef struct
+{
+	PurpleMedia *media;
+	gchar *session_id;
+	gchar *participant;
+	gulong handler_id;
+} PurpleMediaXOverlayData;
+
+static void
+window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaXOverlayData *data)
+{
+	gchar *name;
+	gchar *cmpname;
+	gulong window_id;
+	gboolean set = FALSE;
+
+	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT ||
+			!gst_structure_has_name(msg->structure,
+			"prepare-xwindow-id"))
+		return;
+
+	name = gst_object_get_name(GST_MESSAGE_SRC(msg));
+
+	if (data->participant == NULL) {
+		cmpname = g_strdup_printf("session-sink_%s",
+				data->session_id);
+		if (!strncmp(name, cmpname, strlen(cmpname))) {
+			PurpleMediaSession *session =
+					purple_media_get_session(
+					data->media, data->session_id);
+			if (session != NULL) {
+				window_id = session->window_id;
+				set = TRUE;
+			}
+		}
+	} else {
+		cmpname = g_strdup_printf("stream-sink_%s_%s",
+				data->session_id, data->participant);
+
+		if (!strncmp(name, cmpname, strlen(cmpname))) {
+			PurpleMediaStream *stream =
+					purple_media_get_stream(
+					data->media, data->session_id,
+					data->participant);
+			if (stream != NULL) {
+				window_id = stream->window_id;
+				set = TRUE;
+			}
+		}
+	}
+	g_free(cmpname);
+	g_free(name);
+
+	if (set == TRUE) {
+		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(
+				purple_media_get_pipeline(data->media)));
+		g_signal_handler_disconnect(bus, data->handler_id);
+		gst_object_unref(bus);
+
+		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(
+				GST_MESSAGE_SRC(msg)), window_id);
+
+		g_free(data->session_id);
+		g_free(data->participant);
+		g_free(data);
+	}
+		
+	return;
+}
+
+gboolean
+purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
+		const gchar *participant, gulong window_id)
+{
+
+	if (session_id != NULL && participant == NULL) {
+
+		PurpleMediaSession *session;
+		session = purple_media_get_session(media, session_id);
+
+		if (session == NULL)
+			return FALSE;
+
+		session->window_id = window_id;
+
+		if (session->sink == NULL) {
+			GstBus *bus;
+			GstElement *tee, *bin, *queue, *sink;
+			GstPad *request_pad, *sinkpad, *ghostpad;
+			gchar *name;
+
+			/* Create callback for prepared-xwindow-id signal */
+			PurpleMediaXOverlayData *data =
+					g_new0(PurpleMediaXOverlayData, 1);
+			data->media = media;
+			data->session_id = g_strdup(session_id);
+			data->participant = g_strdup(participant);
+
+			bus = gst_pipeline_get_bus(GST_PIPELINE(
+					purple_media_get_pipeline(media)));
+			data->handler_id = g_signal_connect(bus,
+					"sync-message::element",
+					G_CALLBACK(window_id_cb), data);
+			gst_object_unref(bus);
+
+			/* Create sink */
+			tee = gst_bin_get_by_name(GST_BIN(session->src),
+					"purplevideosrctee");
+			bin = gst_bin_new(NULL);
+			gst_bin_add(GST_BIN(GST_ELEMENT_PARENT(tee)), bin);
+
+			queue = gst_element_factory_make("queue", NULL);
+			name = g_strdup_printf(
+					"session-sink_%s", session_id);
+			sink = gst_element_factory_make(
+					"autovideosink", name);
+			g_free(name);
+
+			gst_bin_add_many(GST_BIN(bin), queue, sink, NULL);
+			gst_element_link(queue, sink);
+
+			sinkpad = gst_element_get_static_pad(queue, "sink");
+			ghostpad = gst_ghost_pad_new("ghostsink", sinkpad);
+			gst_object_unref(sinkpad);
+			gst_element_add_pad(bin, ghostpad);
+
+			gst_element_set_state(bin, GST_STATE_PLAYING);
+
+			request_pad = gst_element_get_request_pad(
+					tee, "src%d");
+			gst_pad_link(request_pad, ghostpad);
+			gst_object_unref(request_pad);
+
+			session->sink = bin;
+			return TRUE;
+		} else {
+			/* Changing the XOverlay output window */
+			GstElement *xoverlay = gst_bin_get_by_interface(
+					GST_BIN(session->sink),
+					GST_TYPE_X_OVERLAY);
+			if (xoverlay != NULL) {
+				gst_x_overlay_set_xwindow_id(
+					GST_X_OVERLAY(xoverlay),
+					window_id);
+			}
+			return FALSE;
+		}
+	} else if (session_id != NULL && participant != NULL) {
+		PurpleMediaStream *stream = purple_media_get_stream(
+				media, session_id, participant);
+		GstBus *bus;
+		GstElement *bin, *sink;
+		GstPad *pad, *peer = NULL, *ghostpad;
+		PurpleMediaXOverlayData *data;
+		gchar *name;
+
+		if (stream == NULL)
+			return FALSE;
+
+		stream->window_id = window_id;
+
+		if (stream->sink != NULL) {
+			gboolean is_fakebin;
+			name = gst_element_get_name(stream->sink);
+			is_fakebin = !strcmp(name, "fakebin");
+			g_free(name);
+
+			if (is_fakebin) {
+				pad = gst_element_get_static_pad(
+						stream->sink, "ghostsink");
+				peer = gst_pad_get_peer(pad);
+
+				gst_pad_unlink(peer, pad);
+				gst_object_unref(pad);
+				gst_element_set_state(stream->sink,
+						GST_STATE_NULL);
+				gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(
+						stream->sink)), stream->sink);
+			} else {
+				/* Changing the XOverlay output window */
+				GstElement *xoverlay =
+						gst_bin_get_by_interface(
+						GST_BIN(stream->sink),
+						GST_TYPE_X_OVERLAY);
+				if (xoverlay != NULL) {
+					gst_x_overlay_set_xwindow_id(
+						GST_X_OVERLAY(xoverlay),
+						window_id);
+					return TRUE;
+				}
+				return FALSE;
+			}
+		}
+
+		data = g_new0(PurpleMediaXOverlayData, 1);
+		data->media = media;
+		data->session_id = g_strdup(session_id);
+		data->participant = g_strdup(participant);
+
+		bus = gst_pipeline_get_bus(GST_PIPELINE(
+				purple_media_get_pipeline(media)));
+		data->handler_id = g_signal_connect(bus,
+				"sync-message::element",
+				G_CALLBACK(window_id_cb), data);
+		gst_object_unref(bus);
+
+		bin = gst_bin_new(NULL);
+
+		if (stream->sink != NULL)
+			gst_bin_add(GST_BIN(GST_ELEMENT_PARENT(
+					stream->sink)), bin);
+
+		name = g_strdup_printf("stream-sink_%s_%s",
+				session_id, participant);
+		sink = gst_element_factory_make("autovideosink", name);
+		g_free(name);
+
+		gst_bin_add(GST_BIN(bin), sink);
+		pad = gst_element_get_static_pad(sink, "sink");
+		ghostpad = gst_ghost_pad_new("ghostsink", pad);
+		gst_element_add_pad(bin, ghostpad);
+
+		if (stream->sink != NULL) {
+			gst_element_set_state(bin, GST_STATE_PLAYING);
+			gst_pad_link(peer, ghostpad);
+		}
+
+		stream->sink = bin;
+		return TRUE;
+	}
+	return FALSE;
 }
 
 #endif  /* USE_VV */
