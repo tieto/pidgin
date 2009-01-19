@@ -239,6 +239,9 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_slpcall_session_init(slpcall);
 	}
 #endif
+	else
+		purple_debug_warning("msn", "Unprocessed SLP message with flags 0x%08lx\n",
+		                     slpmsg->flags);
 
 	return slpcall;
 }
