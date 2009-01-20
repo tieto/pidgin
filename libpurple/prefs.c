@@ -693,14 +693,11 @@ remove_pref(struct purple_pref *pref)
 	char *name;
 	GSList *l;
 
-	if(!pref)
+	if(!pref || pref == &prefs)
 		return;
 
 	while(pref->first_child)
 		remove_pref(pref->first_child);
-
-	if(pref == &prefs)
-		return;
 
 	if(pref->parent->first_child == pref) {
 		pref->parent->first_child = pref->sibling;
@@ -1455,8 +1452,4 @@ purple_prefs_uninit()
 	}
 
 	purple_prefs_disconnect_by_handle(purple_prefs_get_handle());
-	purple_prefs_destroy();
-	g_hash_table_destroy(prefs_hash);
-	prefs_hash = NULL;
-
 }
