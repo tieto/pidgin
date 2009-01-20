@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.5 (??/??/????):
+	libpurple:
+	* Fix transfer of buddy icons, custom smileys and files from the
+	latest WLM 9 official client. (Thomas Gibson-Robinson)
+
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the
 	  man-page, look for GntBox::binding)
