@@ -4435,7 +4435,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
-	struct yahoo_packet *pkt;
+	struct yahoo_packet *pkt = NULL;
 	char *msg = yahoo_html_to_codes(what);
 	char *msg2;
 	gboolean utf8 = TRUE;
