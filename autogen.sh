@@ -66,7 +66,7 @@ check () {
 	CMD=$1
 
 	printf "%s" "checking for ${CMD}... "
-	BIN=`which ${CMD} 2> /dev/null`
+	BIN=`which ${CMD} 2>/dev/null`
 
 	if [ x"${BIN}" = x"" ] ; then
 		echo "not found."

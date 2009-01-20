@@ -859,7 +859,7 @@ peer_connection_trynext(PeerConnection *conn)
 		{
 			gchar *tmp;
 			PurpleConversation *conv;
-			tmp = g_strdup_printf(_("Attempting to connect via proxy server."));
+			tmp = g_strdup(_("Attempting to connect via proxy server."));
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -1045,7 +1045,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 						  "Images.  Because your IP address will be "
 						  "revealed, this may be considered a privacy "
 						  "risk."),
-						0, /* Default action is "connect" */
+						PURPLE_DEFAULT_ACTION_NONE,
 						account, sn, NULL,
 						conn, 2,
 						_("C_onnect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),

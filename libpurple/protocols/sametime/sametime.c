@@ -158,7 +158,7 @@ enum blist_choice {
   blist_choice_LOCAL = 1, /**< local only */
   blist_choice_MERGE = 2, /**< merge from server */
   blist_choice_STORE = 3, /**< merge from and save to server */
-  blist_choice_SYNCH = 4, /**< sync with server */
+  blist_choice_SYNCH = 4  /**< sync with server */
 };
 
 
@@ -513,6 +513,11 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
 
     idle_len = time(NULL) - idle;
     ugly_idle_len = ((time(NULL) * 1000) - idle) / 1000;
+
+	if(idle > ugly_idle_len)
+		ugly_idle_len = 0;
+	else
+		ugly_idle_len = (ugly_idle_len - idle) / 1000;
 
     /* 
        what's the deal here? Well, good clients are smart enough to
@@ -1445,7 +1450,7 @@ static void session_loginRedirect(struct mwSession *session,
 					 MW_PLUGIN_DEFAULT_HOST);
 
   if(purple_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
-     (! strcmp(current_host, host)) ||
+     !host || (! strcmp(current_host, host)) ||
      (purple_proxy_connect(NULL, account, host, port, connect_cb, pd) == NULL)) {
 
     /* if we're configured to force logins, or if we're being
@@ -3719,7 +3724,6 @@ static void mw_prpl_login(PurpleAccount *account) {
   gc->flags |= PURPLE_CONNECTION_NO_IMAGES;
 
   user = g_strdup(purple_account_get_username(account));
-  pass = g_strdup(purple_account_get_password(account));
 
   host = strrchr(user, ':');
   if(host) {
@@ -3736,10 +3740,12 @@ static void mw_prpl_login(PurpleAccount *account) {
   if(! host || ! *host) {
     /* somehow, we don't have a host to connect to. Well, we need one
        to actually continue, so let's ask the user directly. */
+    g_free(user);
     prompt_host(gc);
     return;
   }
 
+  pass = g_strdup(purple_account_get_password(account));
   port = purple_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
 
   DEBUG_INFO("user: '%s'\n", user);
@@ -4415,7 +4421,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
     res = results->data;
 
   if(!code && res && res->matches) {
-    if(g_list_length(res->matches) == 1) {
+    if(!res->matches->next) {
       struct mwResolveMatch *match = res->matches->data;
       
       /* only one? that might be the right one! */

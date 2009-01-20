@@ -259,7 +259,8 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-		if(conv != NULL && alias != NULL && strcmp(alias, who))
+		if(conv != NULL && alias != NULL &&
+		   who != NULL && strcmp(alias, who))
 		{
 			char *escaped = g_markup_escape_text(who, -1);
 			char *escaped2 = g_markup_escape_text(alias, -1);
@@ -803,7 +804,7 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 {
 	PurpleAccount *account;
 	char buf2[BUF_LONG];
-	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
+	struct chat_invite_data *cid;
 	int plugin_return;
 
 	account = purple_connection_get_account(gc);
@@ -815,6 +816,8 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 			return;
 		}
 	}
+
+	cid = g_new0(struct chat_invite_data, 1);
 
 	plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
 					purple_conversations_get_handle(),

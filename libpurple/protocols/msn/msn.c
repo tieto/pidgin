@@ -121,9 +121,6 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 	session = gc->proto_data;
 	swboard = msn_session_get_swboard(session, username, MSN_SB_FLAG_IM);
 
-	if (swboard == NULL)
-		return FALSE;
-
 	msn_switchboard_send_msg(swboard, msg, TRUE);
 	msn_message_destroy(msg);
 
@@ -550,21 +547,17 @@ static PurpleXfer*
 msn_new_xfer(PurpleConnection *gc, const char *who)
 {
 	MsnSession *session;
-	MsnSlpLink *slplink;
 	PurpleXfer *xfer;
 
 	session = gc->proto_data;
 
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 
-	if (xfer)
-	{
-		slplink = msn_session_get_slplink(session, who);
+	g_return_val_if_fail(xfer != NULL, NULL);
 
-		xfer->data = slplink;
+	xfer->data = msn_session_get_slplink(session, who);
 
-		purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
-	}
+	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
 
 	return xfer;
 }
@@ -654,20 +647,38 @@ msn_status_text(PurpleBuddy *buddy)
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
-	/* I think status message should take precedence over media */
+	/* Official client says media takes precedence over message */
+	/* I say message take precedence over media! Plus prpl-jabber agrees
+	   too */
 	msg = purple_status_get_attr_string(status, "message");
 	if (msg && *msg)
 		return g_markup_escape_text(msg, -1);
 
 	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-		const char *title, *artist;
+		const char *title, *game, *office;
 		char *media, *esc;
 		status = purple_presence_get_status(presence, "tune");
 		title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-		artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
 
-		media = g_strdup_printf("%s%s%s", title, artist ? " - " : "",
-				artist ? artist : "");
+		game = purple_status_get_attr_string(status, "game");
+		office = purple_status_get_attr_string(status, "office");
+
+		if (title && *title) {
+			const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+			const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+			media = g_strdup_printf("%s%s%s%s%s%s", title,
+			                        (artist && *artist) ? " - " : "",
+			                        (artist && *artist) ? artist : "",
+			                        (album && *album) ? " (" : "",
+			                        (album && *album) ? album : "",
+			                        (album && *album) ? ")" : "");
+		}
+		else if (game && *game)
+			media = g_strdup_printf("Playing %s", game);
+		else if (office && *office)
+			media = g_strdup_printf("Editing %s", office);
+		else
+			return NULL;
 		esc = g_markup_escape_text(media, -1);
 		g_free(media);
 		return esc;
@@ -688,6 +699,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	if (purple_presence_is_online(presence))
 	{
 		const char *psm, *name;
+		const char *mediatype = NULL;
 		char *currentmedia = NULL;
 		char *tmp;
 
@@ -695,10 +707,20 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 			PurpleStatus *tune = purple_presence_get_status(presence, "tune");
 			const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
-			const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
-			const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
-			currentmedia = purple_util_format_song_info(title, artist, album, NULL);
-			/* We could probably just use user->media.title etc. here */
+			const char *game = purple_status_get_attr_string(tune, "game");
+			const char *office = purple_status_get_attr_string(tune, "office");
+			if (title && *title) {
+				const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
+				mediatype = _("Now Listening");
+				currentmedia = purple_util_format_song_info(title, artist, album, NULL);
+			} else if (game && *game) {
+				mediatype = _("Playing a game");
+				currentmedia = g_strdup(game);
+			} else if (office && *office) {
+				mediatype = _("Working");
+				currentmedia = g_strdup(office);
+			}
 		}
 
 		if (!purple_status_is_available(status)) {
@@ -752,7 +774,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		}
 
 		if (currentmedia) {
-			purple_notify_user_info_add_pair(user_info, _("Now Listening"), currentmedia);
+			purple_notify_user_info_add_pair(user_info, mediatype, currentmedia);
 			g_free(currentmedia);
 		}
 	}
@@ -843,10 +865,12 @@ msn_status_types(PurpleAccount *account)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
-			"tune", NULL, TRUE, TRUE, TRUE,
+			"tune", NULL, FALSE, TRUE, TRUE,
 			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"game", _("Game Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"office", _("Office Title"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
@@ -1203,6 +1227,9 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		purple_debug_info("msn", "prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, username))
 		{
+			if (flags & PURPLE_MESSAGE_AUTO_RESP) {
+				msn_message_set_flag(msg, 'U');
+			}
 			if (msn_user_is_yahoo(account, who)) {
 				/*we send the online and offline Message to Yahoo User via UBM*/
 				purple_debug_info("msn", "send to Yahoo User\n");
@@ -1393,6 +1420,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsnSession *session;
 	MsnUserList *userlist;
 	const char *who;
+	MsnUser *user;
 
 	session = gc->proto_data;
 	userlist = session->userlist;
@@ -1418,21 +1446,19 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		purple_debug_info("msn", "msn_add_buddy: %s\n", who);
 #endif
 
-#if 0
-	/* Which is the max? */
-	if (session->fl_users_count >= 150)
-	{
-		purple_debug_info("msn", "Too many buddies\n");
-		/* Buddy list full */
-		/* TODO: purple should be notified of this */
-		return;
-	}
-#endif
-
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
 	 * internal. */
-	msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
+	user = msn_userlist_find_user(userlist, who);
+	if ((user != NULL) && (user->networkid != MSN_NETWORK_UNKNOWN)) {
+		/* We already know this buddy and their network. This function knows
+		   what to do with users already in the list and stuff... */
+		msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
+	} else {
+		/* We need to check the network for this buddy first */
+		msn_userlist_save_pending_buddy(userlist, who, group ? group->name : NULL);
+		msn_notification_send_fqy(session, who);
+	}
 }
 
 static void
@@ -1815,7 +1841,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 		if (b->server_alias)
 		{
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
-			tmp = g_strdup_printf("<font sml=\"msn\">%s</font><br>", nicktext);
+			tmp = g_strdup_printf("<font sml=\"msn\">%s</font>", nicktext);
 			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
 			g_free(tmp);
 			g_free(nicktext);
@@ -1921,9 +1947,8 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0)
 	{
-		tmp = g_strdup_printf("<b>%s</b>", _("Error retrieving profile"));
-		purple_notify_user_info_add_pair(user_info, NULL, tmp);
-		g_free(tmp);
+		purple_notify_user_info_add_pair(user_info,
+				_("Error retrieving profile"), NULL);
 
 		purple_notify_userinfo(info_data->gc, info_data->name, user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
@@ -2264,21 +2289,24 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
 		PurpleBuddy *b = purple_find_buddy
 				(purple_connection_get_account(info_data->gc), info_data->name);
-		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"),
-									   ((p && b) ? _("The user has not created a public profile.") :
-										(p ? _("MSN reported not being able to find the user's profile. "
-											   "This either means that the user does not exist, "
-											   "or that the user exists "
-											   "but has not created a public profile.") :
-										 _("Could not find "	/* This should never happen */
-										   "any information in the user's profile. "
-										   "The user most likely does not exist."))));
+		purple_notify_user_info_add_pair(user_info,
+				_("Error retrieving profile"), NULL);
+		purple_notify_user_info_add_pair(user_info, NULL,
+				((p && b) ? _("The user has not created a public profile.") :
+					(p ? _("MSN reported not being able to find the user's profile. "
+							"This either means that the user does not exist, "
+							"or that the user exists "
+							"but has not created a public profile.") :
+						_("Could not find "	/* This should never happen */
+							"any information in the user's profile. "
+							"The user most likely does not exist."))));
 	}
 
 	/* put a link to the actual profile URL */
-	tmp = g_strdup_printf("<a href=\"%s%s\">%s%s</a>",
-					PROFILE_URL, info_data->name, PROFILE_URL, info_data->name);
-	purple_notify_user_info_add_pair(user_info, _("Profile URL"), tmp);
+	purple_notify_user_info_add_section_break(user_info);
+	tmp = g_strdup_printf("<a href=\"%s%s\">%s</a>",
+			PROFILE_URL, info_data->name, _("View web profile"));
+	purple_notify_user_info_add_pair(user_info, NULL, tmp);
 	g_free(tmp);
 
 #if PHOTO_SUPPORT
@@ -2556,22 +2584,19 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
 	"prpl-msn",                                       /**< id             */
 	"MSN",                                            /**< name           */
 	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Windows Live Messenger Protocol Plugin"),
-	                                                  /**  description    */
-	N_("Windows Live Messenger Protocol Plugin"),
-	"Christian Hammond <chipx86@gnupdate.org>, "
-	"MaYuan <mayuan2006@gmail.com>",				  /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	N_("Windows Live Messenger Protocol Plugin"),     /**< summary        */
+	N_("Windows Live Messenger Protocol Plugin"),     /**< description    */
+	NULL,                                             /**< author         */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	msn_load,                                         /**< load           */
 	msn_unload,                                       /**< unload         */

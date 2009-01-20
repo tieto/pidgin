@@ -120,7 +120,7 @@ msn_message_new_plain(const char *message)
 	msn_message_set_charset(msg, "UTF-8");
 	msn_message_set_flag(msg, 'A');
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
-						 "FN=MS%20Sans%20Serif; EF=; CO=0; CS=86;PF=0");
+						 "FN=Segoe%20UI; EF=; CO=0; CS=1;PF=0");
 
 	message_cr = purple_str_add_cr(message);
 	msn_message_set_bin_data(msg, message_cr, strlen(message_cr));
@@ -230,6 +230,25 @@ msn_message_parse_payload(MsnMessage *msg,
 	for (cur = elems; *cur != NULL; cur++)
 	{
 		const char *key, *value;
+
+		/* If this line starts with whitespace, it's been folded from the
+		   previous line and won't have ':'. */
+		if ((**cur == ' ') || (**cur == '\t')) {
+			tokens = g_strsplit(g_strchug(*cur), "=\"", 2);
+			key = tokens[0];
+			value = tokens[1];
+
+			/* The only one I care about is 'boundary' (which is folded from
+			   the key 'Content-Type'), so only process that. */
+			if (!strcmp(key, "boundary")) {
+				char *end = strchr(value, '\"');
+				*end = '\0';
+				msn_message_set_attr(msg, key, value);
+			}
+
+			g_strfreev(tokens);
+			continue;
+		}
 
 		tokens = g_strsplit(*cur, ": ", 2);
 

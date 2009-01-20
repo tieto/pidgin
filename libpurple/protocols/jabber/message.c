@@ -290,30 +290,30 @@ static void handle_buzz(JabberMessage *jm) {
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
 	PurpleConversation *c;
-	char *username, *str;
-	
+	char *username;
+
 	/* Delayed buzz MUST NOT be accepted */
 	if(jm->delayed)
 		return;
-	
+
 	/* Reject buzz when it's not enabled */
 	if(!jm->js->allowBuzz)
 		return;
-	
+
 	account = purple_connection_get_account(jm->js->gc);
-	
-	if ((buddy = purple_find_buddy(account, jm->from)) != NULL)
-		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-	else
+
+	if ((buddy = purple_find_buddy(account, jm->from)) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
-	c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
+	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
+	if (c == NULL)
+		c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
 
-	str = g_strdup_printf(_("%s has buzzed you!"), username);
-	
-	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+	username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
+	/* xmpp only has 1 attention type, so index is 0 */
+	purple_prpl_got_attention(jm->js->gc, username, 0);
+
 	g_free(username);
-	g_free(str);
 }
 
 /* used internally by the functions below */
@@ -571,12 +571,39 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 	for(child = packet->child; child; child = child->next) {
 		const char *xmlns = xmlnode_get_namespace(child);
-		if(!xmlns)
-			xmlns = "";
 		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
-		if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
+		if(!strcmp(child->name, "error")) {
+			const char *code = xmlnode_get_attrib(child, "code");
+			char *code_txt = NULL;
+			char *text = xmlnode_get_data(child);
+			if (!text) {
+				xmlnode *enclosed_text_node;
+				
+				if ((enclosed_text_node = xmlnode_get_child(child, "text")))
+					text = xmlnode_get_data(enclosed_text_node);
+			}
+
+			if(code)
+				code_txt = g_strdup_printf(_("(Code %s)"), code);
+
+			if(!jm->error)
+				jm->error = g_strdup_printf("%s%s%s",
+						text ? text : "",
+						text && code_txt ? " " : "",
+						code_txt ? code_txt : "");
+
+			g_free(code_txt);
+			g_free(text);
+		} else if (xmlns == NULL) {
+			/* QuLogic: Not certain this is correct, but it would have happened
+			   with the previous code. */
+			if(!strcmp(child->name, "x"))
+				jm->etc = g_list_append(jm->etc, child);
+			/* The following tests expect xmlns != NULL */
+			continue;
+		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->subject)
 				jm->subject = xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
@@ -612,7 +639,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 						if (jid) {
 							chat = jabber_chat_find(js, jid->node, jid->domain);
-							conv = chat->conv;
+							if (chat) conv = chat->conv;
 						}
 
 						jabber_id_free(jid);
@@ -644,7 +671,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				/* note: if there were no smileys in the incoming message, or
 				  	if receiving custom smileys is turned off, smiley_refs will
 					be NULL */
-				for (; smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
+				for (; conv && smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
 					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
 					const gchar *cid = ref->cid;
 					const gchar *alt = ref->alt;
@@ -706,46 +733,24 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				jm->eventitems = g_list_append(jm->eventitems, items);
 		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns,"http://www.xmpp.org/extensions/xep-0224.html#ns")) {
 			jm->hasBuzz = TRUE;
-		} else if(!strcmp(child->name, "error")) {
-			const char *code = xmlnode_get_attrib(child, "code");
-			char *code_txt = NULL;
-			char *text = xmlnode_get_data(child);
-			if (!text) {
-				xmlnode *enclosed_text_node;
-				
-				if ((enclosed_text_node = xmlnode_get_child(child, "text")))
-					text = xmlnode_get_data(enclosed_text_node);
-			}
-
-			if(code)
-				code_txt = g_strdup_printf(_("(Code %s)"), code);
-
-			if(!jm->error)
-				jm->error = g_strdup_printf("%s%s%s",
-						text ? text : "",
-						text && code_txt ? " " : "",
-						code_txt ? code_txt : "");
-
-			g_free(code_txt);
-			g_free(text);
-		} else if(!strcmp(child->name, "delay") && xmlns && !strcmp(xmlns,"urn:xmpp:delay")) {
+		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns,"urn:xmpp:delay")) {
 			const char *timestamp = xmlnode_get_attrib(child, "stamp");
 			jm->delayed = TRUE;
 			if(timestamp)
 				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
-			if(xmlns && !strcmp(xmlns, "jabber:x:event")) {
+			if(!strcmp(xmlns, "jabber:x:event")) {
 				if(xmlnode_get_child(child, "composing")) {
 					if(jm->chat_state == JM_STATE_ACTIVE)
 						jm->chat_state = JM_STATE_COMPOSING;
 					jm->typing_style |= JM_TS_JEP_0022;
 				}
-			} else if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
+			} else if(!strcmp(xmlns, "jabber:x:delay")) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
 					jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
-			} else if(xmlns && !strcmp(xmlns, "jabber:x:conference") &&
+			} else if(!strcmp(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
 					jm->type != JABBER_MESSAGE_ERROR) {
 				const char *jid = xmlnode_get_attrib(child, "jid");
@@ -754,8 +759,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					g_free(jm->to);
 					jm->to = g_strdup(jid);
 				}
-			} else if(xmlns && !strcmp(xmlns,
-						"http://jabber.org/protocol/muc#user") &&
+			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user") &&
 					jm->type != JABBER_MESSAGE_ERROR) {
 				xmlnode *invite = xmlnode_get_child(child, "invite");
 				if(invite) {
@@ -913,19 +917,15 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 		return FALSE;
 	}
 
-	jb = jabber_buddy_find(js, who, FALSE);
-	if (!jb) {
-		purple_debug_error("jabber",
-			"jabber_conv_support_custom smileys: could not find buddy\n");
-		return FALSE;
-	}
-	
-	
-
 	switch (purple_conversation_get_type(conv)) {
 		/* for the time being, we will not support custom smileys in MUCs */
 		case PURPLE_CONV_TYPE_IM:
-			return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+			jb = jabber_buddy_find(js, who, FALSE);
+			if (jb) {
+				return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+			} else {
+				return FALSE;
+			}
 			break;
 		default:
 			return FALSE;

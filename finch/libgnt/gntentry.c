@@ -365,7 +365,7 @@ backspace(GntBindable *bind, GList *null)
 		return TRUE;
 
 	len = entry->cursor - g_utf8_find_prev_char(entry->start, entry->cursor);
-	update_kill_ring(entry, ENTRY_DEL_BWD_CHAR, entry->cursor, -len);
+	update_kill_ring(entry, ENTRY_JAIL, entry->cursor, -len);
 	entry->cursor -= len;
 
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor);
@@ -391,7 +391,7 @@ delkey(GntBindable *bind, GList *null)
 		return FALSE;
 
 	len = g_utf8_find_next_char(entry->cursor, NULL) - entry->cursor;
-	update_kill_ring(entry, ENTRY_DEL_FWD_CHAR, entry->cursor, len);
+	update_kill_ring(entry, ENTRY_JAIL, entry->cursor, len);
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
 	entry->end -= len;
 	entry_redraw(GNT_WIDGET(entry));
@@ -856,7 +856,7 @@ static void
 gnt_entry_class_init(GntEntryClass *klass)
 {
 	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
-	char s[2] = {erasechar(), 0};
+	char s[3] = {'\033', erasechar(), 0};
 
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->clicked = gnt_entry_clicked;
@@ -892,7 +892,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_register_binding(bindable, "cursor-end", GNT_KEY_END, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-prev", backspace,
 				GNT_KEY_BACKSPACE, NULL);
-	gnt_bindable_register_binding(bindable, "delete-prev", s, NULL);
+	gnt_bindable_register_binding(bindable, "delete-prev", s + 1, NULL);
 	gnt_bindable_register_binding(bindable, "delete-prev", GNT_KEY_CTRL_H, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-next", delkey,
 				GNT_KEY_DEL, NULL);
@@ -903,6 +903,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-prev-word", del_prev_word,
 				GNT_KEY_CTRL_W, NULL);
+	gnt_bindable_register_binding(bindable, "delete-prev-word", s, NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-prev-word", move_back_word,
 				"\033" "b", NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-prev", move_back,

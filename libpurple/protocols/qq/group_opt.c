@@ -122,7 +122,7 @@ static void member_join_deny_cb(gpointer data)
 
 	who = uid_to_purple_name(add_req->member);
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
-			NULL, _("Sorry, you are not our style ..."), TRUE, FALSE, NULL,
+			NULL, _("Sorry, you are not our style"), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(member_join_deny_reason_cb),
 			_("Cancel"), G_CALLBACK(member_join_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), who, NULL,
@@ -202,9 +202,9 @@ void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnect
 	rmd = qq_room_data_find(gc, id);
 	g_return_if_fail(rmd != NULL);
 
-	purple_debug_info("QQ", "Succeed in modify members for room %d\n", rmd->ext_id);
+	purple_debug_info("QQ", "Succeed in modify members for room %u\n", rmd->ext_id);
 
-	qq_room_got_chat_in(gc, id, 0, _("Successed changing Qun member"), now);
+	qq_room_got_chat_in(gc, id, 0, _("Successfully changed Qun members"), now);
 }
 
 void qq_room_change_info(PurpleConnection *gc, qq_room_data *rmd)
@@ -246,9 +246,9 @@ void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection
 	bytes += qq_get32(&id, data + bytes);
 	g_return_if_fail(id > 0);
 
-	purple_debug_info("QQ", "Succeed modify room info of %d\n", id);
+	purple_debug_info("QQ", "Successfully modified room info of %u\n", id);
 
-	qq_room_got_chat_in(gc, id, 0, _("Successed changing Qun information"), now);
+	qq_room_got_chat_in(gc, id, 0, _("Successfully changed Qun information"), now);
 }
 
 /* we create a very simple room first, and then let the user to modify */
@@ -339,7 +339,7 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 	qq_send_room_cmd_only(gc, QQ_ROOM_CMD_ACTIVATE, id);
 	qq_update_room(gc, 0, rmd->id);
 
-	purple_debug_info("QQ", "Succeed in create Qun, external ID %d\n", rmd->ext_id);
+	purple_debug_info("QQ", "Succeed in create Qun, ext id %u\n", rmd->ext_id);
 
 	add_req = g_new0(qq_room_req, 1);
 	add_req->gc = gc;
@@ -347,7 +347,7 @@ void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnectio
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    _("You have successfully created a Qun"),
-			    _("Would you like to set up the detail information now?"),
+			    _("Would you like to set up detailed information now?"),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
 				add_req, 2,
@@ -370,7 +370,7 @@ void qq_group_process_activate_group_reply(guint8 *data, gint len, PurpleConnect
 	rmd = qq_room_data_find(gc, id);
 	g_return_if_fail(rmd != NULL);
 
-	purple_debug_info("QQ", "Succeed in activate Qun %d\n", rmd->ext_id);
+	purple_debug_info("QQ", "Succeed in activate Qun %u\n", rmd->ext_id);
 }
 
 void qq_group_manage_group(PurpleConnection *gc, GHashTable *data)
@@ -382,7 +382,7 @@ void qq_group_manage_group(PurpleConnection *gc, GHashTable *data)
 	g_return_if_fail(data != NULL);
 
 	id_ptr = g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID);
-	id = strtol(id_ptr, NULL, 10);
+	id = strtoul(id_ptr, NULL, 10);
 	g_return_if_fail(id > 0);
 
 	rmd = qq_room_data_find(gc, id);
@@ -416,18 +416,13 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 
 	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
 
-	add_req = g_new0(qq_room_req, 1);
-	add_req->gc = gc;
-	add_req->id = id;
-	add_req->member = member_id;
-
-	purple_debug_info("QQ", "%d requested to join room, ext id %d\n", member_id, ext_id);
+	purple_debug_info("QQ", "%u requested to join room, ext id %u\n", member_id, ext_id);
 
 	rmd = qq_room_data_find(gc, id);
 	g_return_if_fail(rmd != NULL);
 	if (qq_room_buddy_find(rmd, member_id)) {
 		purple_debug_info("QQ", "Approve join, buddy joined before\n");
-		msg = g_strdup_printf(_("%d requested to join Qun %d for %s"),
+		msg = g_strdup_printf(_("%u requested to join Qun %u for %s"),
 				member_id, ext_id, reason);
 		qq_room_got_chat_in(gc, id, 0, msg, now);
 		qq_send_cmd_group_auth(gc, rmd, QQ_ROOM_AUTH_REQUEST_APPROVE, member_id, "");
@@ -440,7 +435,12 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 		qq_request_buddy_info(gc, member_id, 0, QQ_BUDDY_INFO_DISPLAY);
 	}
 	who = uid_to_purple_name(member_id);
-	msg = g_strdup_printf(_("%d request to join Qun %d"), member_id, ext_id);
+	msg = g_strdup_printf(_("%u request to join Qun %u"), member_id, ext_id);
+
+	add_req = g_new0(qq_room_req, 1);
+	add_req->gc = gc;
+	add_req->id = id;
+	add_req->member = member_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			msg, reason,
@@ -452,7 +452,6 @@ void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, Purp
 
 	g_free(who);
 	g_free(msg);
-	g_free(reason);
 	g_free(reason);
 }
 
@@ -478,7 +477,7 @@ void qq_process_room_buddy_rejected(guint8 *data, gint len, guint32 id, PurpleCo
 	bytes += qq_get_vstr(&reason, QQ_CHARSET_DEFAULT, data + bytes);
 
 	msg = g_strdup_printf
-		(_("Failed to join Qun %d, operated by admin %d"), ext_id, admin_uid);
+		(_("Failed to join Qun %u, operated by admin %u"), ext_id, admin_uid);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
 
@@ -520,7 +519,7 @@ void qq_process_room_buddy_approved(guint8 *data, gint len, guint32 id, PurpleCo
 		rmd->my_role = QQ_ROOM_ROLE_YES;
 	}
 
-	msg = g_strdup_printf(_("<b>Joinning Qun %d is approved by Admin %d for %s</b>"),
+	msg = g_strdup_printf(_("<b>Joining Qun %u is approved by admin %u for %s</b>"),
 			ext_id, admin_uid, reason);
 	now = time(NULL);
 	qq_room_got_chat_in(gc, id, 0, msg, now);
@@ -555,7 +554,7 @@ void qq_process_room_buddy_removed(guint8 *data, gint len, guint32 id, PurpleCon
 		rmd->my_role = QQ_ROOM_ROLE_NO;
 	}
 
-	msg = g_strdup_printf(_("<b>Removed buddy %d.</b>"), uid);
+	msg = g_strdup_printf(_("<b>Removed buddy %u.</b>"), uid);
 	qq_room_got_chat_in(gc, id, 0, msg, now);
 	g_free(msg);
 }
@@ -588,7 +587,7 @@ void qq_process_room_buddy_joined(guint8 *data, gint len, guint32 id, PurpleConn
 
 	qq_update_room(gc, 0, rmd->id);
 
-	msg = g_strdup_printf(_("<b>New buddy %d joined.</b>"), uid);
+	msg = g_strdup_printf(_("<b>New buddy %u joined.</b>"), uid);
 	qq_room_got_chat_in(gc, id, 0, msg, now);
 	g_free(msg);
 }

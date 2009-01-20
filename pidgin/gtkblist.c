@@ -602,7 +602,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 			break;
 		case PURPLE_BLIST_GROUP_NODE:
 			dest = purple_find_group(arg2);
-			if (dest != NULL && strcmp(arg2, ((PurpleGroup*) node)->name)) {
+			if (dest != NULL && purple_utf8_strcasecmp(arg2, ((PurpleGroup*) node)->name)) {
 				pidgin_dialogs_merge_groups((PurpleGroup*) node, arg2);
 			} else
 				purple_blist_rename_group((PurpleGroup*)node, arg2);
@@ -2979,6 +2979,22 @@ void pidgin_blist_tooltip_destroy()
 	pidgin_tooltip_destroy();
 }
 
+static void
+pidgin_blist_align_tooltip(struct tooltip_data *td, GtkWidget *widget) 
+{ 
+	GtkTextDirection dir = gtk_widget_get_direction(widget); 
+
+	if (dir == GTK_TEXT_DIR_RTL) 
+	{
+		char* layout_name = purple_markup_strip_html(pango_layout_get_text(td->name_layout));
+		PangoDirection dir = pango_find_base_dir(layout_name, -1);
+		if (dir == PANGO_DIRECTION_RTL || dir == PANGO_DIRECTION_NEUTRAL)
+			pango_layout_set_alignment(td->name_layout, PANGO_ALIGN_RIGHT); 
+		g_free(layout_name);
+		pango_layout_set_alignment(td->layout, PANGO_ALIGN_RIGHT); 
+	}
+}
+
 static gboolean
 pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, int *h)
 {
@@ -2998,11 +3014,13 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 	if (PURPLE_BLIST_NODE_IS_CHAT(node) ||
 	   PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
+		pidgin_blist_align_tooltip(td, gtkblist->tipwindow);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup*)node;
 		GSList *accounts;
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
+		pidgin_blist_align_tooltip(td, gtkblist->tipwindow);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 
 		/* Accounts with buddies in group */
@@ -3022,6 +3040,7 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 		{
 			if(PURPLE_BLIST_NODE_IS_BUDDY(child) && buddy_is_displayable((PurpleBuddy*)child)) {
 				struct tooltip_data *td = create_tip_for_node(child, (b == (PurpleBuddy*)child));
+				pidgin_blist_align_tooltip(td, gtkblist->tipwindow);
 				if (b == (PurpleBuddy *)child) {
 					gtkblist->tooltipdata = g_list_prepend(gtkblist->tooltipdata, td);
 				} else {
@@ -3301,6 +3320,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 	if (PURPLE_BLIST_NODE_IS_CHAT(node))
 	{
 		PurpleChat *chat;
+		GList *connections;
 		GList *cur;
 		struct proto_chat_entry *pce;
 		char *name, *value;
@@ -3311,7 +3331,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (g_list_length(purple_connections_get_all()) > 1)
+		connections = purple_connections_get_all();
+		if (connections && connections->next)
 		{
 			tmp = g_markup_escape_text(chat->account->username, -1);
 			g_string_append_printf(str, _("<b>Account:</b> %s"), tmp);
@@ -3344,7 +3365,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			}
 		}
 
-		if (prpl_info->chat_info != NULL)
+		if (prpl_info && prpl_info->chat_info != NULL)
 			cur = prpl_info->chat_info(chat->account->gc);
 		else
 			cur = NULL;
@@ -3381,6 +3402,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		PurpleBuddy *b;
 		PurplePresence *presence;
 		PurpleNotifyUserInfo *user_info;
+		GList *connections;
 		char *tmp;
 		time_t idle_secs, signon;
 
@@ -3402,7 +3424,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		user_info = purple_notify_user_info_new();
 
 		/* Account */
-		if (full && g_list_length(purple_connections_get_all()) > 1)
+		connections = purple_connections_get_all();
+		if (full && connections && connections->next)
 		{
 			tmp = g_markup_escape_text(purple_account_get_username(
 									   purple_buddy_get_account(b)), -1);
@@ -3607,6 +3630,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	const char *name = NULL;
 	char *filename, *path;
 	PurplePresence *p;
+	PurpleStatus *tune;
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
@@ -3624,9 +3648,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		}
 
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded) {
-			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
-				return NULL;
-			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
+			if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
+				return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 		}
 	} else {
 		return NULL;
@@ -3645,7 +3668,21 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
-	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
+	tune = purple_presence_get_status(p, "tune");
+	if (tune && purple_status_is_active(tune)) {
+		/* Only in MSN.
+		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		if (purple_status_get_attr_string(tune, "game") != NULL) {
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "game.png", NULL);
+			return _pidgin_blist_get_cached_emblem(path);
+		}
+		/* Only in MSN.
+		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		if (purple_status_get_attr_string(tune, "office") != NULL) {
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "office.png", NULL);
+			return _pidgin_blist_get_cached_emblem(path);
+		}
+		/* Regular old "tune" is the only one in all protocols. */
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
@@ -5348,14 +5385,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, -1, NULL);
-	if (gtkblist->headline_close) {
-		GdkPixbuf *scale = gdk_pixbuf_scale_simple(gtkblist->headline_close,
-				HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE, GDK_INTERP_BILINEAR);
-		gdk_pixbuf_unref(gtkblist->headline_close);
-		gtkblist->headline_close = scale;
-	}
-
+	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, HEADLINE_CLOSE_SIZE, NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
@@ -7617,6 +7647,7 @@ pidgin_blist_update_accounts_menu(void)
 	GtkAccelGroup *accel_group = NULL;
 	GList *l = NULL, *accounts = NULL;
 	gboolean disabled_accounts = FALSE;
+	gboolean enabled_accounts = FALSE;
 
 	if (accountmenu == NULL)
 		return;
@@ -7670,10 +7701,16 @@ pidgin_blist_update_accounts_menu(void)
 				G_CALLBACK(enable_account_cb), account);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 			gtk_widget_show(menuitem);
+		} else {
+			enabled_accounts = TRUE;
 		}
 	}
 
+	if (!enabled_accounts)
+		return;
+
 	pidgin_separator(accountmenu);
+	accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
 	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
 		char *buf = NULL;
@@ -7685,67 +7722,63 @@ pidgin_blist_update_accounts_menu(void)
 		PurplePlugin *plugin = NULL;
 
 		account = accounts->data;
-		accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
-		if(purple_account_get_enabled(account, PIDGIN_UI)) {
-			buf = g_strconcat(purple_account_get_username(account), " (",
-					purple_account_get_protocol_name(account), ")", NULL);
-			menuitem = gtk_image_menu_item_new_with_label(buf);
-			accel_path_buf = g_strconcat(N_("<PurpleMain>/Accounts/"), buf, NULL);
-			g_free(buf);
-			pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-			if (pixbuf != NULL)
-			{
-				if (!purple_account_is_connected(account))
-					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
-							0.0, FALSE);
-				image = gtk_image_new_from_pixbuf(pixbuf);
-				g_object_unref(G_OBJECT(pixbuf));
-				gtk_widget_show(image);
-				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-			}
-			gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-			gtk_widget_show(menuitem);
+		if (!purple_account_get_enabled(account, PIDGIN_UI))
+			continue;
 
-			submenu = gtk_menu_new();
-			gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
-			gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
-			g_free(accel_path_buf);
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-			gtk_widget_show(submenu);
-
-
-			menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
-			g_signal_connect(G_OBJECT(menuitem), "activate",
-					G_CALLBACK(modify_account_cb), account);
-			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_show(menuitem);
-
-			pidgin_separator(submenu);
-
-			gc = purple_account_get_connection(account);
-			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
-			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-				build_plugin_actions(submenu, plugin, gc);
-			} else {
-				menuitem = gtk_menu_item_new_with_label(_("No actions available"));
-				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-				gtk_widget_set_sensitive(menuitem, FALSE);
-				gtk_widget_show(menuitem);
-			}
-
-			pidgin_separator(submenu);
-
-			menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
-			g_signal_connect(G_OBJECT(menuitem), "activate",
-					G_CALLBACK(disable_account_cb), account);
-			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_show(menuitem);
-		} else {
-			disabled_accounts = TRUE;
+		buf = g_strconcat(purple_account_get_username(account), " (",
+				purple_account_get_protocol_name(account), ")", NULL);
+		menuitem = gtk_image_menu_item_new_with_label(buf);
+		accel_path_buf = g_strconcat(N_("<PurpleMain>/Accounts/"), buf, NULL);
+		g_free(buf);
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		if (pixbuf != NULL) {
+			if (!purple_account_is_connected(account))
+				gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
+						0.0, FALSE);
+			image = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
+			gtk_widget_show(image);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		}
-	}
+		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
+		gtk_widget_show(menuitem);
 
+		submenu = gtk_menu_new();
+		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+		gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
+		g_free(accel_path_buf);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+		gtk_widget_show(submenu);
+
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(modify_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+		gtk_widget_show(menuitem);
+
+		pidgin_separator(submenu);
+
+		gc = purple_account_get_connection(account);
+		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
+		if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+			build_plugin_actions(submenu, plugin, gc);
+		} else {
+			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+			gtk_widget_set_sensitive(menuitem, FALSE);
+			gtk_widget_show(menuitem);
+		}
+
+		pidgin_separator(submenu);
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(disable_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+		gtk_widget_show(menuitem);
+	}
 }
 
 static GList *plugin_submenus = NULL;

@@ -2308,7 +2308,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *url = NULL;
 	char *fullmsg;
 	PurpleAccount *account = gc->account;
-	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
+	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2322,6 +2322,10 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	}
 
 	switch (err) {
+	case 0:
+		msg = g_strdup(_("Unknown error."));
+		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
+		break;
 	case 3:
 		msg = g_strdup(_("Invalid username."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
@@ -2346,9 +2350,11 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 			purple_account_set_password(account, NULL);
 
 		msg = g_strdup(_("Incorrect password."));
+		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
 	case 14:
 		msg = g_strdup(_("Your account is locked, please log in to the Yahoo! website."));
+		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
 	default:
 		msg = g_strdup_printf(_("Unknown error number %d. Logging into the Yahoo! website may fix this."), err);
@@ -3382,6 +3388,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Received unexpected HTTP response from server."));
+		purple_debug_misc("yahoo", "Unexpected HTTP response: %s\n", buf);
 		return;
 	}
 
@@ -3478,7 +3485,7 @@ static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_mes
 
 static void yahoo_login_page_hash_iter(const char *key, const char *val, GString *url)
 {
-	if (!strcmp(key, "passwd"))
+	if (!strcmp(key, "passwd") || !strcmp(key, "login"))
 		return;
 	g_string_append_c(url, '&');
 	g_string_append(url, key);
@@ -4440,7 +4447,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	struct yahoo_p2p_data *p2p_data;
 	gboolean wlm = FALSE;
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
-
+	
 	if(msg2) {
 		lenb = strlen(msg2);
 		lenc = g_utf8_strlen(msg2, -1);
@@ -5104,8 +5111,7 @@ yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
 	           "Trying to join %s \n", args[0]);
 
 	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	g_hash_table_replace(comp, g_strdup("room"),
-	g_strdup_printf("%s", g_ascii_strdown(args[0], strlen(args[0]))));
+	g_hash_table_replace(comp, g_strdup("room"), g_ascii_strdown(args[0], -1));
 	g_hash_table_replace(comp, g_strdup("type"), g_strdup("Chat"));
 
 	yahoo_c_join(gc, comp);

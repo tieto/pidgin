@@ -231,8 +231,8 @@ purple_certificate_verify(verifier, subject_name, cert_chain, cb, cb_data)
 		int len = 0, i = 0;
 		struct cb_data *d = NULL;
 	PPCODE:
-		len = av_len(cert_chain) + 1;
-		for(i = 0; i < len; i++) {
+		len = av_len(cert_chain);
+		for(i = 0; i <= len; i++) {
 			SV **sv = av_fetch(cert_chain, i, 0);
 			if(!sv || !purple_perl_is_ref_object(*sv)) {
 				g_list_free(l);

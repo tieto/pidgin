@@ -1029,7 +1029,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 		return;
 
 	dest = purple_find_group(new_name);
-	if (dest != NULL) {
+	if (dest != NULL && purple_utf8_strcasecmp(source->name, dest->name) != 0) {
 		/* We're merging two groups */
 		PurpleBlistNode *prev, *child, *next;
 
@@ -1810,6 +1810,8 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	PurpleContact *contact;
 	PurpleGroup *group;
 	struct _purple_hbuddy hb;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(buddy != NULL);
 
@@ -1864,6 +1866,16 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 
 	/* Signal that the buddy has been removed before freeing the memory for it */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);
+
+	/*
+	 * Tell the owner PRPL that we're about to free the buddy so it
+	 * can free proto_data
+	 */
+	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info && prpl_info->buddy_free)
+		prpl_info->buddy_free(buddy);
 
 	/* Delete the node */
 	purple_buddy_icon_unref(buddy->icon);
@@ -2214,6 +2226,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	struct proto_chat_entry *pce;
 	PurpleBlistNode *node, *group;
 	GList *parts;
+	char *normname;
 
 	g_return_val_if_fail(purplebuddylist != NULL, NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
@@ -2227,6 +2240,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	if (prpl_info->find_blist_chat != NULL)
 		return prpl_info->find_blist_chat(account, name);
 
+	normname = g_strdup(purple_normalize(account, name));
 	for (group = purplebuddylist->root; group != NULL; group = group->next) {
 		for (node = group->child; node != NULL; node = node->next) {
 			if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
@@ -2246,14 +2260,15 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 				g_list_free(parts);
 
 				if (chat->account == account && chat_name != NULL &&
-					name != NULL && !strcmp(chat_name, name)) {
-
+					normname != NULL && !strcmp(purple_normalize(account, chat_name), normname)) {
+					g_free(normname);
 					return chat;
 				}
 			}
 		}
 	}
 
+	g_free(normname);
 	return NULL;
 }
 

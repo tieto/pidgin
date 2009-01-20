@@ -21,7 +21,6 @@
 #include "internal.h"
 
 #include "account.h"
-#include "cipher.h"
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
@@ -349,19 +348,12 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
 				(text = xmlnode_get_data(photo)))) {
-			unsigned char hashval[20];
-			char hash[41], *p;
-			int i;
+			char *hash;
 
 			data = purple_base64_decode(text, &size);
-
-			purple_cipher_digest_region("sha1", data, size,
-					sizeof(hashval), hashval, NULL);
-			p = hash;
-			for(i=0; i<20; i++, p+=2)
-				snprintf(p, 3, "%02x", hashval[i]);
-
+			hash = jabber_calculate_data_sha1sum(data, size);
 			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
+			g_free(hash);
 			g_free(text);
 		}
 	}
@@ -459,7 +451,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if (buddy) {
 			jb = jabber_buddy_find(js, from, TRUE);
-			if ((jb->subscription & JABBER_SUB_TO))
+			if ((jb->subscription & (JABBER_SUB_TO | JABBER_SUB_PENDING)))
 				onlist = TRUE;
 		}
 
@@ -510,17 +502,19 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				priority = atoi(p);
 				g_free(p);
 			}
+		} else if(xmlns == NULL) {
+			/* The rest of the cases used to check xmlns individually. */
+			continue;
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
 		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
 			caps = y; /* store for later, when creating buddy resource */
 		} else if(!strcmp(y->name, "x")) {
-			const char *xmlns = xmlnode_get_namespace(y);
-			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
+			if(!strcmp(xmlns, "jabber:x:delay")) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
-			} else if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
+			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 				xmlnode *z;
 
 				muc = TRUE;
@@ -563,7 +557,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 							flags |= PURPLE_CBFLAGS_VOICE;
 					}
 				}
-			} else if(xmlns && !strcmp(xmlns, "vcard-temp:x:update")) {
+			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
 					g_free(avatar_hash);

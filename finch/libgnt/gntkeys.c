@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "Keys"
+
 #include "gntkeys.h"
 
 #include <glib.h>
@@ -127,7 +131,7 @@ void gnt_init_keys()
 				code[ind] = (c ? 1 : 'a') + ch;
 				INSERT_COMB(str, code);
 			}
-			if (c == 0) {
+			if (c == 0 && a) {
 				INSERT_COMB("tab", "\033\t");
 				INSERT_COMB_CODE("up", "\033", GNT_KEY_UP);
 				INSERT_COMB_CODE("down", "\033", GNT_KEY_DOWN);

@@ -491,7 +491,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb = msg_cmd_post;
-		cmd->payload_len = atoi(cmd->params[4]);
+		cmd->payload_len = atoi(cmd->params[3]);
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
@@ -849,10 +849,35 @@ static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	purple_debug_info("msn", "FQY payload:\n%s\n", payload);
-	g_return_if_fail(cmdproc->session != NULL);
-/*	msn_notification_post_adl(cmdproc, payload, len); */
-/*	msn_get_address_book(cmdproc->session, MSN_AB_SAVE_CONTACT, NULL, NULL); */
+	MsnUserList *userlist;
+	xmlnode *ml, *d, *c;
+	const char *domain;
+	const char *local;
+	const char *type;
+	char *passport;
+	MsnNetwork network = MSN_NETWORK_PASSPORT;
+
+	userlist = cmdproc->session->userlist;
+
+	/* FQY response:
+	    <ml><d n="domain.com"><c n="local-node" t="network" /></d></ml> */
+	ml = xmlnode_from_str(payload, len);
+	d = xmlnode_get_child(ml, "d");
+	c = xmlnode_get_child(d, "c");
+	domain = xmlnode_get_attrib(d, "n");
+	local = xmlnode_get_attrib(c, "n");
+	type = xmlnode_get_attrib(c, "t");
+
+	passport = g_strdup_printf("%s@%s", local, domain);
+
+	if (type != NULL)
+		network = (MsnNetwork)strtoul(type, NULL, 10);
+	purple_debug_info("msn", "FQY response says %s is from network %d\n",
+	                  passport, network);
+	msn_userlist_add_pending_buddy(userlist, passport, network);
+
+	g_free(passport);
+	xmlnode_free(ml);
 }
 
 static void
@@ -1578,7 +1603,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	MsnUser *user;
 	const char *passport;
 	char *psm_str, *str;
-	CurrentMedia media = {NULL, NULL, NULL};
+	CurrentMedia media = {CURRENT_MEDIA_UNKNOWN, NULL, NULL, NULL};
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1933,7 +1958,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 void
 msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list_id,
-							  const char *who)
+							  MsnUser *user)
 {
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
@@ -1946,8 +1971,8 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, adl_node, who, list_op,
-						MSN_NETWORK_PASSPORT);
+	msn_add_contact_xml(notification->session, adl_node, user->passport,
+	                    list_op, user->networkid);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
@@ -1959,7 +1984,7 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 
 void
 msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId list_id,
-						   const char *who)
+						   MsnUser *user)
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
@@ -1973,7 +1998,8 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, rml_node, who, list_op, MSN_NETWORK_PASSPORT);
+	msn_add_contact_xml(notification->session, rml_node, user->passport,
+	                    list_op, user->networkid);
 
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);

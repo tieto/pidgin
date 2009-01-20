@@ -1,12 +1,13 @@
 pidginpixmapdir = $(datadir)/pixmaps/pidgin
 pidginiconsdir = $(datadir)
 
-SUBDIRS = emotes/default/24 emotes/none
+SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 
 if INSTALL_PIXMAPS
 MAKEFILE_MINGW = \
 		emotes/default/24/Makefile.mingw \
-		emotes/none/Makefile.mingw
+		emotes/none/Makefile.mingw \
+		emotes/small/16/Makefile.mingw
 
 ANIMATIONS_16 = \
 		animations/16/connect0.png \
@@ -177,6 +178,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/musical-note.svg \
 		emotes/default/24/scalable/peace.svg \
 		emotes/default/24/scalable/phone.svg \
+		emotes/default/24/scalable/pidgin-emotes.svg \
 		emotes/default/24/scalable/pig.svg \
 		emotes/default/24/scalable/pill.svg \
 		emotes/default/24/scalable/pizza.svg \
@@ -203,6 +205,9 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/umbrella.svg \
 		emotes/default/24/scalable/watermelon.svg \
 		emotes/default/24/scalable/yin-yang.svg
+
+EMOTES_SMALL_16_SCALABLE = \
+		emotes/small/16/scalable/pidgin-emotes.svg
 
 PROTOCOLS_16_SCALABLE = \
 		protocols/16/scalable/aim.svg \
@@ -341,7 +346,9 @@ STATUS_11 = \
 		status/11/person.png
 
 STATUS_11_RTL = \
-		status/11/rtl/extended-away.png
+		status/11/rtl/extended-away.png \
+		status/11/rtl/log-in.png \
+		status/11/rtl/log-out.png
 
 STATUS_16 = \
 		status/16/available.png \
@@ -400,6 +407,7 @@ STATUS_48 = \
 		status/48/busy.png \
 		status/48/chat.png \
 		status/48/extended-away.png \
+		status/48/invisible.png \
 		status/48/log-in.png \
 		status/48/log-out.png \
 		status/48/offline.png \
@@ -407,8 +415,8 @@ STATUS_48 = \
 
 STATUS_48_RTL = \
 		status/48/rtl/extended-away.png \
-		status/48/rtl/login.png \
-		status/48/rtl/logout.png
+		status/48/rtl/log-in.png \
+		status/48/rtl/log-out.png
 
 TOOLBAR_11 = \
 		toolbar/11/message-new.png

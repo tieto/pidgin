@@ -249,6 +249,7 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 	xmlnode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(attr != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
 		if(x->type == XMLNODE_TYPE_ATTRIB && !strcmp(attr, x->name)) {
@@ -265,6 +266,7 @@ xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 	xmlnode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(attr != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
 		if(x->type == XMLNODE_TYPE_ATTRIB &&
@@ -660,7 +662,7 @@ xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
 	vsnprintf(errmsg, sizeof(errmsg), msg, args);
 	va_end(args);
 
-	purple_debug_error("xmlnode", "Error parsing xml file: %s\n", errmsg);
+	purple_debug_error("xmlnode", "Error parsing xml file: %s", errmsg);
 }
 
 static xmlSAXHandler xmlnode_parser_libxml = {

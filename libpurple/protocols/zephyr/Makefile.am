@@ -62,7 +62,6 @@ ZEPHYRSOURCES = \
 	zephyr_err.c \
 	zephyr_err.h \
 	zephyr_internal.h \
-	\
 	zephyr.c
 
 ZEPHYRSOURCESEXT = zephyr.c
@@ -78,10 +77,10 @@ libzephyr_la_LDFLAGS = -module -avoid-version
 if STATIC_ZEPHYR
 
 st = -DPURPLE_STATIC_PRPL -Dlint
-noinst_LIBRARIES = libzephyr.a
-libzephyr_a_SOURCES = $(ZEPHYRSOURCES)
-libzephyr_a_CFLAGS  = $(AM_CFLAGS)
-libzephyr_a_LIBADD  = $(ZEPHYRLIBS)
+noinst_LTLIBRARIES   = libzephyr.la
+libzephyr_la_SOURCES = $(ZEPHYRSOURCES)
+libzephyr_la_CFLAGS  = $(AM_CFLAGS)
+libzephyr_la_LIBADD  = $(ZEPHYRLIBS)
 
 else
 
@@ -90,7 +89,7 @@ pkg_LTLIBRARIES = libzephyr.la
 
 if EXTERNAL_LIBZEPHYR
 libzephyr_la_SOURCES = $(ZEPHYRSOURCESEXT)
-libzephyr_la_LIBADD = $(GLIB_LIBS) $(ZEPHYRLIBSEXT)
+libzephyr_la_LIBADD  = $(GLIB_LIBS) $(ZEPHYRLIBSEXT)
 else
 libzephyr_la_SOURCES = $(ZEPHYRSOURCES)
 libzephyr_la_LIBADD  = $(GLIB_LIBS) $(ZEPHYRLIBS)

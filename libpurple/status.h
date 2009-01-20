@@ -199,8 +199,8 @@ PurpleStatusType *purple_status_type_new_full(PurpleStatusPrimitive primitive,
 										  gboolean independent);
 
 /**
- * Creates a new status type with some default values (not
- * savable and not independent).
+ * Creates a new status type with some default values (
+ * saveable and not independent).
  *
  * @param primitive     The primitive status type.
  * @param id            The ID of the status type, or @c NULL to use the id of
@@ -823,7 +823,8 @@ void purple_presence_switch_status(PurplePresence *presence,
  * @param idle      The idle state.
  * @param idle_time The idle time, if @a idle is TRUE.  This
  *                  is the time at which the user became idle,
- *                  in seconds since the epoch.
+ *                  in seconds since the epoch.  If this value is
+ *                  unknown then 0 should be used.
  */
 void purple_presence_set_idle(PurplePresence *presence, gboolean idle,
 							time_t idle_time);

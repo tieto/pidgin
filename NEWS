@@ -2,6 +2,45 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.5.4 (01/12/2009):
+	John: Well, we fixed a few bugs for you this time around, I applied
+	a few patches, and we've dealt with what feels like a TON of tickets
+	about two very common issues.  Feels like time for a release to me.
+
+	Etan: My first NEWS in quite a while and I don't have much to say. I
+	haven't been too active lately and I'm hoping that won't be the case
+	going forward. I managed to get in a few perl fixes and some UI
+	language tweaks this release. My plan is to work on some of the
+	issues pointed out by mpt (during his expert review of pidgin a little
+	while back) in the near future.
+
+2.5.3 (12/18/2008):
+	Mark: It's been about two months and woo-boy have we been fixing
+	bugs.  Enjoy!
+
+	Kevin: I didn't do much of anything this release, but Mark and
+	John must be commended for their tireless efforts to fix bugs
+	and approve patches, especially in areas of Pidgin that have
+	not usually received much attention.  Lots of changes have
+	been made, so definitely check the ChangeLog to see what's new.
+
+	John: It feels like it's been an age or two since we last released,
+	and I think it's well worth the wait.  Mark has sunk more time into
+	MSN and MySpace IM this release than any sane person should be
+	allowed to, and I've sunk more time into patches than I care to
+	admit.  By my count, our ChangeLog has 58 bullet points(!) and we've
+	closed 85 tickets specifically for this release.  Enjoy!
+
+	Ka-Hing: Bring your XMPP server to 2008 some time in 2009 would be
+	nice, DreamHost!
+
+	Elliott: Well, I can't blame the server for this release taking so long
+	but that's just how it worked out.  A few interesting MSN changes this
+	time.  Hopefully, federated & Yahoo! buddies will work for you, but I'm
+	not yet certain it's ready.  Mark made so many fixes, I'm not even sure
+	I recognize everything anymore, but hopefully that'll make things less
+	crashy for you.
+
 2.5.2 (10/19/2008):
 	Ethan: After a bit of a struggle with our services, which put
 	this release off for an unfortunate length of time, we're

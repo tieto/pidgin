@@ -1,5 +1,5 @@
 Pidgin, Finch, and libpurple
-Copyright (C) 1998-2007 by the following:
+Copyright (C) 1998-2008 by the following:
 
 If you have contributed to this project then you deserve to be on this
 list.  Contact us (see: AUTHORS) and we'll add you.
@@ -63,6 +63,7 @@ Andrea Canciani
 Damien Carbery
 Michael Carlson
 Keegan Carruthers-Smith
+Ludovico Cavedon
 Steve Cavilia
 Julien Cegarra
 Cerulean Studios, LLC
@@ -145,6 +146,7 @@ Andrew Gaul
 Evgueni V. Gavrilov
 Ignacy Gawedzki
 Georgi Georgiev
+Brian Geppert
 Thomas Gibson-Robinson
 Ike Gingerich
 Gustavo Giráldez
@@ -206,9 +208,11 @@ Henry Jen
 Benjamin Kahn
 Anders Kaseorg
 Praveen Karadakal
+Jaromír Karmazín
 John Kelm
 Jochen Kemnade
 Akuke Kok
+Kir Kolyshkin
 Konstantin Korikov
 Cole Kowalski
 Matt Kramer
@@ -219,12 +223,14 @@ Patrik Kullman
 Tuomas Kuosmanen
 Tero Kuusela
 Richard Laager
+Jacky Lam
 Scott Lamb
 Dennis Lambe Jr.
 Joe LaPenna
 Steve Láposi
 Daniel Larsson
 Peter Lawler
+Vadim Lebedev
 Ho-seok Lee
 Jean-Yves Lefort
 Moses Lei
@@ -270,6 +276,7 @@ Arkadiusz Miskiewicz
 David Mohr
 Andrew Molloy
 Michael Monreal
+Laurent Montaron
 Marco Monteiro
 Benjamin Moody
 John Moody
@@ -307,7 +314,7 @@ Havoc Pennington
 Ted Percival
 Eduardo Pérez
 Matt Perry
-Diego Petten�
+Diego Petten
 Nathan Peterson
 Sebastián E. Peyrott
 Celso Pinto
@@ -323,7 +330,7 @@ Nathan Poznick
 Jory A. Pratt
 Brent Priddy
 Justin Pryzby
-Florian Qu�ze
+Florian Quèze
 Ignacio Casal Quinteiro
 Federicco Mena Quintero
 Yosef Radchenko
@@ -337,10 +344,12 @@ Tim Ringenbach
 Dennis Ristuccia
 Lee Roach
 Eion Robb
+Kahlil Robinson
 Rhett Robinson
 Luciano Miguel Ferreira Rocha
 Andrew Rodland
 Miguel Rodríguez (migrax)
+Martin Rosinski
 Bob Rossi
 Jason Roth
 Jean-Francois Roy
@@ -348,6 +357,7 @@ Peter Ruibal
 Michael Ruprecht
 Sam S.
 Thanumalayan S.
+Jonathan Sailor
 Elliott Sales de Andrade
 Tomasz Sałaciński <tsalacinski@gmail.com>
 Pradyumna Sampath
@@ -415,6 +425,7 @@ Peter Tang
 Brian Tarricone
 Peter Teichman
 Philip Tellis
+Michael Terry
 Arun A. Tharuvai
 Cestonaro Thilo
 Will Thompson
@@ -467,6 +478,7 @@ Jason Willis
 Alex Willmer
 Matt Wilson
 Dan Winship
+Michal Witkowski
 Scott Wolchok
 The Written Word, Inc.
 Kevin Wu Won
@@ -477,6 +489,7 @@ Ma Xuan
 Jared Yanovich
 Timmy Yee
 Nickolai Zeldovich
+Tom Zickel
 Marco Ziech
 Piotr Zielinski
 Jeroen Zwartepoorte

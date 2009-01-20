@@ -31,6 +31,7 @@
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "request.h"
@@ -146,10 +147,37 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 	jabber_session_init(js);
 }
 
+static char *jabber_prep_resource(char *input) {
+	char hostname[256]; /* current hostname */
+
+	/* Empty resource == don't send any */
+	if (input == NULL || *input == '\0')
+		return NULL;
+
+	if (strstr(input, "__HOSTNAME__") == NULL)
+		return g_strdup(input);
+
+	/* Replace __HOSTNAME__ with hostname */
+	if (gethostname(hostname, sizeof(hostname) - 1)) {
+		purple_debug_warning("jabber", "gethostname: %s\n", g_strerror(errno));
+		/* according to glibc doc, the only time an error is returned
+		   is if the hostname is longer than the buffer, in which case
+		   glibc 2.2+ would still fill the buffer with partial
+		   hostname, so maybe we want to detect that and use it
+		   instead
+		*/
+		strcpy(hostname, "localhost");
+	}
+	hostname[sizeof(hostname) - 1] = '\0';
+
+	return purple_strreplace(input, "__HOSTNAME__", hostname);
+}
+
 static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
 	if(xmlnode_get_child(packet, "starttls")) {
 		if(jabber_process_starttls(js, packet))
+	
 			return;
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
 		purple_connection_error_reason (js->gc,
@@ -164,11 +192,17 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		jabber_auth_start(js, packet);
 	} else if(xmlnode_get_child(packet, "bind")) {
 		xmlnode *bind, *resource;
+		char *requested_resource;
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
 		bind = xmlnode_new_child(iq->node, "bind");
 		xmlnode_set_namespace(bind, "urn:ietf:params:xml:ns:xmpp-bind");
-		resource = xmlnode_new_child(bind, "resource");
-		xmlnode_insert_data(resource, js->user->resource, -1);
+		requested_resource = jabber_prep_resource(js->user->resource);
+
+		if (requested_resource != NULL) {
+			resource = xmlnode_new_child(bind, "resource");
+			xmlnode_insert_data(resource, requested_resource, -1);
+			g_free(requested_resource);
+		}
 
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
 
@@ -317,9 +351,33 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
 
 	/* because printing a tab to debug every minute gets old */
-	if(strcmp(data, "\t"))
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
-				js->gsc ? " (ssl)" : "", data);
+	if(strcmp(data, "\t")) {
+		char *text = NULL, *last_part = NULL, *tag_start = NULL;
+
+		/* Because debug logs with plaintext passwords make me sad */
+		if(js->state != JABBER_STREAM_CONNECTED &&
+				/* Either <auth> or <query><password>... */
+				(((tag_start = strstr(data, "<auth ")) &&
+					strstr(data, "xmlns='urn:ietf:params:xml:ns:xmpp-sasl'")) ||
+				((tag_start = strstr(data, "<query ")) &&
+					strstr(data, "xmlns='jabber:iq:auth'>") &&
+					(tag_start = strstr(tag_start, "<password>"))))) {
+			char *data_start, *tag_end = strchr(tag_start, '>');
+			text = g_strdup(data);
+
+			data_start = text + (tag_end - data) + 1;
+
+			last_part = strchr(data_start, '<');
+			*data_start = '\0';
+		}
+
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s%s%s\n",
+				js->gsc ? " (ssl)" : "", text ? text : data,
+				last_part ? "password removed" : "",
+				last_part ? last_part : "");
+
+		g_free(text);
+	}
 
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
@@ -679,19 +737,6 @@ jabber_login(PurpleAccount *account)
 		return;
 	}
 	
-	if(!js->user->resource) {
-		char *me;
-		js->user->resource = g_strdup("Home");
-		if(!js->user->node) {
-			js->user->node = js->user->domain;
-			js->user->domain = g_strdup("jabber.org");
-		}
-		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
-				js->user->resource);
-		purple_account_set_username(account, me);
-		g_free(me);
-	}
-
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
@@ -1159,19 +1204,6 @@ void jabber_register_account(PurpleAccount *account)
 
 	js->write_buffer = purple_circ_buffer_new(512);
 
-	if(!js->user->resource) {
-		char *me;
-		js->user->resource = g_strdup("Home");
-		if(!js->user->node) {
-			js->user->node = js->user->domain;
-			js->user->domain = g_strdup("jabber.org");
-		}
-		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
-				js->user->resource);
-		purple_account_set_username(account, me);
-		g_free(me);
-	}
-
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
@@ -1406,6 +1438,15 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
 				jabber_register_start(js);
 			} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
+				/* with dreamhost's xmpp server at least, you have to
+				   specify a resource or you will get a "406: Not
+				   Acceptable"
+				*/
+				if(!js->user->resource || *js->user->resource == '\0') {
+					g_free(js->user->resource);
+					js->user->resource = g_strdup("Home");
+				}
+
 				jabber_auth_start_old(js);
 			}
 			break;
@@ -1436,6 +1477,106 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	JabberStream *js = gc->proto_data;
 
 	js->idle = idle ? time(NULL) - idle : idle;
+}
+
+static void jabber_blocklist_parse(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *blocklist, *item;
+	PurpleAccount *account;
+
+	blocklist = xmlnode_get_child_with_namespace(packet,
+			"blocklist", "urn:xmpp:blocking");
+	account = purple_connection_get_account(js->gc);
+
+	if (blocklist == NULL)
+		return;
+
+	item = xmlnode_get_child(blocklist, "item");
+	while (item != NULL) {
+		const char *jid = xmlnode_get_attrib(item, "jid");
+
+		purple_privacy_deny_add(account, jid, TRUE);
+		item = xmlnode_get_next_twin(item);
+	}
+}
+
+void jabber_request_block_list(JabberStream *js)
+{
+	JabberIq *iq;
+	xmlnode *blocklist;
+
+	iq = jabber_iq_new(js, JABBER_IQ_GET);
+
+	blocklist = xmlnode_new_child(iq->node, "blocklist");
+	xmlnode_set_namespace(blocklist, "urn:xmpp:blocking");
+
+	jabber_iq_set_callback(iq, jabber_blocklist_parse, NULL);
+
+	jabber_iq_send(iq);
+}
+
+void jabber_add_deny(PurpleConnection *gc, const char *who)
+{
+	JabberStream *js;
+	JabberIq *iq;
+	xmlnode *block, *item;
+
+	js = gc->proto_data;
+	if (js == NULL)
+		return;
+
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	{
+		jabber_google_roster_add_deny(gc, who);
+		return;
+	}
+
+	if (!(js->server_caps & JABBER_CAP_BLOCKING))
+	{
+		purple_notify_error(NULL, _("Server doesn't support blocking"),
+							_("Server doesn't support blocking"), NULL);
+		return;
+	}
+
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+
+	block = xmlnode_new_child(iq->node, "block");
+	xmlnode_set_namespace(block, "urn:xmpp:blocking");
+
+	item = xmlnode_new_child(block, "item");
+	xmlnode_set_attrib(item, "jid", who);
+
+	jabber_iq_send(iq);
+}
+
+void jabber_rem_deny(PurpleConnection *gc, const char *who)
+{
+	JabberStream *js;
+	JabberIq *iq;
+	xmlnode *unblock, *item;
+
+	js = gc->proto_data;
+	if (js == NULL)
+		return;
+
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	{
+		jabber_google_roster_rem_deny(gc, who);
+		return;
+	}
+
+	if (!(js->server_caps & JABBER_CAP_BLOCKING))
+		return;
+
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+
+	unblock = xmlnode_new_child(iq->node, "unblock");
+	xmlnode_set_namespace(unblock, "urn:xmpp:blocking");
+
+	item = xmlnode_new_child(unblock, "item");
+	xmlnode_set_attrib(item, "jid", who);
+
+	jabber_iq_send(iq);
 }
 
 void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {
@@ -1729,7 +1870,7 @@ GList *jabber_status_types(PurpleAccount *account)
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
-			"tune", NULL, TRUE, TRUE, TRUE,
+			"tune", NULL, FALSE, TRUE, TRUE,
 			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
 			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),

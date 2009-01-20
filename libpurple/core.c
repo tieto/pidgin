@@ -137,7 +137,7 @@ purple_core_init(const char *ui)
 	 * subsystem right away too.
 	 */
 	purple_plugins_init();
-	
+
 	/* Initialize all static protocols. */
 	static_proto_init();
 
@@ -198,10 +198,22 @@ purple_core_quit(void)
 	/* Transmission ends */
 	purple_connections_disconnect_all();
 
+	/* The SSL plugins must be uninit before they're unloaded */
+	purple_ssl_uninit();
+
+	/* Unload all plugins before the UI because UI plugins might call
+	 * UI-specific functions */
+	purple_debug_info("main", "Unloading all plugins\n");
+	purple_plugins_destroy_all();
+
+	/* Shut down the UI before all the subsystems */
+	ops = purple_core_get_ui_ops();
+	if (ops != NULL && ops->quit != NULL)
+		ops->quit();
+
 	/* Save .xml files, remove signals, etc. */
 	purple_smileys_uninit();
 	purple_idle_uninit();
-	purple_ssl_uninit();
 	purple_pounces_uninit();
 	purple_blist_uninit();
 	purple_ciphers_uninit();
@@ -213,26 +225,22 @@ purple_core_quit(void)
 	purple_accounts_uninit();
 	purple_savedstatuses_uninit();
 	purple_status_uninit();
-	purple_prefs_uninit();
 	purple_sound_uninit();
 	purple_xfers_uninit();
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
 	purple_imgstore_uninit();
+	purple_network_uninit();
 
-	purple_debug_info("main", "Unloading all plugins\n");
-	purple_plugins_destroy_all();
-
-	ops = purple_core_get_ui_ops();
-	if (ops != NULL && ops->quit != NULL)
-		ops->quit();
-
+	/* Everything after this must not try to read any prefs */
+	purple_prefs_uninit();
 	purple_plugins_uninit();
 #ifdef HAVE_DBUS
 	purple_dbus_uninit();
 #endif
 
 	purple_cmds_uninit();
+	/* Everything after this cannot try to write things to the confdir */
 	purple_util_uninit();
 
 	purple_signals_uninit();

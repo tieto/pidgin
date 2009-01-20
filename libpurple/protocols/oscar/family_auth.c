@@ -32,7 +32,7 @@
 
 #include <ctype.h>
 
-#define USE_XOR_FOR_ICQ
+/* #define USE_XOR_FOR_ICQ */
 
 #ifdef USE_XOR_FOR_ICQ
 /**
@@ -295,10 +295,9 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	/*
 	 * No matter what, we should have a screen name.
 	 */
-	memset(od->sn, 0, sizeof(od->sn));
 	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
 		info->sn = aim_tlv_getstr(tlvlist, 0x0001, 1);
-		strncpy(od->sn, info->sn, sizeof(od->sn));
+		purple_connection_set_display_name(od->gc, info->sn);
 	}
 
 	/*
@@ -598,18 +597,18 @@ auth_shutdown(OscarData *od, aim_module_t *mod)
 {
 	if (od->authinfo != NULL)
 	{
-		free(od->authinfo->sn);
-		free(od->authinfo->bosip);
-		free(od->authinfo->errorurl);
-		free(od->authinfo->email);
-		free(od->authinfo->chpassurl);
-		free(od->authinfo->latestrelease.name);
-		free(od->authinfo->latestrelease.url);
-		free(od->authinfo->latestrelease.info);
-		free(od->authinfo->latestbeta.name);
-		free(od->authinfo->latestbeta.url);
-		free(od->authinfo->latestbeta.info);
-		free(od->authinfo);
+		g_free(od->authinfo->sn);
+		g_free(od->authinfo->bosip);
+		g_free(od->authinfo->errorurl);
+		g_free(od->authinfo->email);
+		g_free(od->authinfo->chpassurl);
+		g_free(od->authinfo->latestrelease.name);
+		g_free(od->authinfo->latestrelease.url);
+		g_free(od->authinfo->latestrelease.info);
+		g_free(od->authinfo->latestbeta.name);
+		g_free(od->authinfo->latestbeta.url);
+		g_free(od->authinfo->latestbeta.info);
+		g_free(od->authinfo);
 	}
 }
 

@@ -748,9 +748,9 @@ x509_ca_init(void)
 # ifdef SSL_CERTIFICATES_DIR
 		x509_ca_paths = g_list_append(NULL, g_strdup(SSL_CERTIFICATES_DIR));
 # else
-		x509_ca_paths = g_list_append(NULL, g_build_filename(DATADIR,
-						   "purple", "ca-certs", NULL));
 # endif
+		x509_ca_paths = g_list_append(x509_ca_paths,
+			g_build_filename(DATADIR, "purple", "ca-certs", NULL));
 #endif
 	}
 
@@ -1259,6 +1259,7 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 				   "to cert_changed.\n");
 		/* vrq now becomes the problem of cert_changed */
 		x509_tls_cached_peer_cert_changed(vrq);
+		return;
 	}
 
 	/* Now get SHA1 sums for both and compare them */

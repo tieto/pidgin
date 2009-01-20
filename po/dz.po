@@ -1,14 +1,14 @@
-# Gaim translation to Dzongkha
+# Pidgin translation to Dzongkha
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER, 2006.
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2006-11-09 17:11+0530\n"
 "Last-Translator: wangmo sherpa <rinwanshe@yahoo.com>\n"
 "Language-Team:  <pgeygel@dit.gov.bt>\n"
@@ -248,9 +248,6 @@ msgstr "སྡེ་ཚན་ཁ་སྐོང་བརྐྱབ་པའི་
 msgid "You must give a name for the group to add."
 msgstr "ཁ་སྐོང་རྐྱབ་ནིའི་དོན་ལུ་ཁྱོད་ཀྱིས་ སྡེ་ཚན་གྱི་མིང་གཅིག་བྱིན་དགོཔ་ཨིན།"
 
-msgid "A group with the name already exists."
-msgstr "མིང་དང་བཅས་པའི་སྡེ་ཚན་འདི་ཧེ་མ་ལས་རང་གནས་ཏེ་འདུག"
-
 msgid "Add Group"
 msgstr "སྡེ་ཚན་ཁ་སྐོང་འབད།"
 
@@ -282,15 +279,15 @@ msgstr "བརྡ་དོན་ལེན།"
 msgid "Add Buddy Pounce"
 msgstr "ཆ་རོགས་པ་འུནསི་ཁ་སྐོང་བརྐྱབ།"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "ཡིག་སྣོད་གཏང་།"
 
 msgid "Blocked"
 msgstr "འགགས་ཡོདཔ།"
 
-msgid "View Log"
-msgstr "དྲན་དེབ་སྟོན་བལྟ།"
+#, fuzzy
+msgid "Show when offline"
+msgstr "ཨོཕ་ལ་ཡིན་གྱི་སྐབས་འབད་མི་ཆོགཔ་ཨིན།"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -334,6 +331,9 @@ msgstr "ས་གནས་ངོ་རྟགས་སྦྱར་ཡོདཔ།
 
 msgid "Toggle Tag"
 msgstr ""
+
+msgid "View Log"
+msgstr "དྲན་དེབ་སྟོན་བལྟ།"
 
 #. General
 msgid "Nickname"
@@ -1397,7 +1397,7 @@ msgstr "དབྱེ་བ།"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5164,7 +5164,7 @@ msgstr "དགུང་ལྟོ་བཟའ་བར།"
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5383,8 +5383,7 @@ msgstr "གསལ་སྡུད་ ཡུ་ཨར་ཨེལ།"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "ནོ་བེལ་ སྡེ་ཚན་ལྟར་གྱི་ འཕྲིན་དོན་པའི་གནད་སྤེལ་ལམ་ལུགས པ་ལག་ཨིན།"
@@ -5425,6 +5424,7 @@ msgstr "%s གུ %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s གིས་ ཁྱོད་ལུ་ ནཱཌཇི་བཏང་ཡོདཔ་ཨིན།"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "ངོ་མ་ཤེས་པའི་འཛོལ་བ།"
@@ -6617,6 +6617,7 @@ msgstr ""
 "ཚུ་རྐྱངམ་ཅིག་ཚུད་དགོཔ་དང་  ཡང་ན་ ཨང་གྲངས་ཚུ་རྐྱངམ་ཅིག་ཚུད་དགོཔ་ཨིན།"
 
 #. Unregistered screen name
+#. uid is not exist
 msgid "Invalid username."
 msgstr "ནུས་མེད་ ལག་ལེན་པའི་མིང་།"
 
@@ -7035,10 +7036,12 @@ msgstr ""
 "གཞིའི་མིང་ཚུ་ཡིག་འབྲུ་གིས་འགོ་བཙུགས་དགོཔ་དང་ནང་ན་ ཡིག་འབྲུ་ཚུ་དང་ཨང་གྲངས་ཚུ་དེ་ལས་ བར་སྟོང་ཚུ་རྐྱངམ་"
 "ཅིག་ཡོད་མི་དགོཔ་ཨིན་ ཡང་ན་ ཨང་གྲངས་ཚུ་རྐྱངམ་ཅིག་ཡོད་མི་དགོཔ་ཨིན།"
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "ཁ་སྐོང་རྐྱབ་མ་ཚུགས།"
 
-msgid "Unable To Retrieve Buddy List"
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
 msgstr "ཆ་རོགས་ཐོ་ཡིག་སླར་འདྲེན་འབད་མ་ཚུགས།"
 
 #, fuzzy
@@ -7269,42 +7272,6 @@ msgstr ""
 "འདི་ཉེར་མཁོ་ཡོདཔ་ཨིན་།ག་ཅི་འབད་ཟེར་བ་ཅིན་ ཁྱོད་ཀྱི་ཨའི་པི་ ཁ་བྱང་འདི་ཕྱིར་གསལ་འབད་ཟིན་ནི་ཨིནམ་"
 "དང་  དེ་ཡང་སྒེར་གཙང་གི་ཉེན་ཁ་འབད་ཆ་འཇོག་བསྒྲུབ་འོང་།"
 
-msgid "Primary Information"
-msgstr "གཞི་རིམ་བརྡ་དོན།"
-
-msgid "Personal Introduction"
-msgstr "རང་དོན་འགོ་འཛུགས།"
-
-msgid "QQ Number"
-msgstr "ཀིའུ་ཀིའུ་ཨང་གྲངས།"
-
-msgid "Country/Region"
-msgstr "རྒྱལ་ཁབ་/ལུང་ཕྱོགས།"
-
-msgid "Province/State"
-msgstr "མངའ་རིས་/མངའ་སྡེ།"
-
-msgid "Horoscope Symbol"
-msgstr "སྐྱེས་རྟགས།"
-
-msgid "Zodiac Sign"
-msgstr "ལོ་འཁོར་བཅུ་གཉིས་ཀྱི་རྟགས།"
-
-msgid "Blood Type"
-msgstr "ཁྲག་དབྱེ་བ།"
-
-msgid "College"
-msgstr "མཐོ་རིམ་སློབ་གྲྭ།"
-
-msgid "Zipcode"
-msgstr "གནས་ཨང་།"
-
-msgid "Cellphone Number"
-msgstr "འགྲུལ་འཕྲིན་ཨང་།"
-
-msgid "Phone Number"
-msgstr "བརྒྱུད་འཕྲིན་ ཨང་།"
-
 msgid "Aquarius"
 msgstr "དུས་སྦྱོར་བུམ་པ།"
 
@@ -7381,108 +7348,189 @@ msgid "Other"
 msgstr "གཞན།"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "ངིའི་བརྡ་དོན་ལེགས་བཅོས་འབད།"
+msgid "Visible"
+msgstr "མ་མཐོངམ།"
 
-#, fuzzy
-msgid "Update information"
-msgstr "ངིའི་བརྡ་དོན་དུས་མཐུནམ་བཟོ།"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "ཆ་རོགས་ཁ་སྐོང་རྐྱབས།"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "མགྱོགས་ཚད།:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "བ་ཌི་བརྡ་བཀོད་བཙུགས་གནང་།"
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "ནུས་མེད་ ཀིའུ་ཀིའུ་ཨའི་ཌི།"
+msgid "Private"
+msgstr "སྒེར་གཙང་།"
 
-#, c-format
-msgid "You rejected %d's request"
-msgstr "ཁྱོད་ཀྱིས་ %d གི་ཞུ་བ་ཕྱིར་བཏོན་འབད་ཡི།"
+msgid "QQ Number"
+msgstr "ཀིའུ་ཀིའུ་ཨང་གྲངས།"
 
-msgid "Reject request"
-msgstr "ཞུ་བ་ཕྱིར་བཏོན།"
+msgid "Country/Region"
+msgstr "རྒྱལ་ཁབ་/ལུང་ཕྱོགས།"
 
-#. title
+msgid "Province/State"
+msgstr "མངའ་རིས་/མངའ་སྡེ།"
+
+msgid "Zipcode"
+msgstr "གནས་ཨང་།"
+
+msgid "Phone Number"
+msgstr "བརྒྱུད་འཕྲིན་ ཨང་།"
+
 #, fuzzy
-msgid "Sorry, you are not my style..."
-msgstr "དགོངསམ་མ་འཁྲིལ་ ཁྱོད་ངིའི་གདམ་ཁ་བཟུམ་མེད་པས།..."
+msgid "Authorize adding"
+msgstr "དབང་སྤྲོད།"
+
+msgid "Cellphone Number"
+msgstr "འགྲུལ་འཕྲིན་ཨང་།"
+
+msgid "Personal Introduction"
+msgstr "རང་དོན་འགོ་འཛུགས།"
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "བདེན་ཅན་ཞུ་བ་ཚུ་དང་གཅིག་ཁར་ཆ་རོགས་ཁ་སྐོང་བརྐྱབ།"
+msgid "City/Area"
+msgstr "གྲོང་སྡེ།"
 
 #, fuzzy
-msgid "Failed:"
+msgid "Publish Mobile"
+msgstr "རང་དོན་འགྲུལ་འཕྲིན།"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "འབྲེལ་སའི་མིང་གཞན="
+
+msgid "College"
+msgstr "མཐོ་རིམ་སློབ་གྲྭ།"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "སྐྱེས་རྟགས།"
+
+#, fuzzy
+msgid "Zodiac"
+msgstr "ལོ་འཁོར་བཅུ་གཉིས་ཀྱི་རྟགས།"
+
+#, fuzzy
+msgid "Blood"
+msgstr "འགགས་ཡོདཔ།"
+
+#, fuzzy
+msgid "True"
+msgstr "ཊའུ་རསི།"
+
+#, fuzzy
+msgid "False"
 msgstr "འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "ཆ་རོགས་རྩ་བསྐྲད་གཏང་།"
+msgid "Modify Contact"
+msgstr "རྩིས་ཐོ་ལེགས་བཅོས།"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "ལག་ལེན་པ་འདི་ཁྱོད་རའི་ཆ་རོགས་ཀྱི་ཐོ་ཡིག་ནང་ལས་ རྩ་བསྐྲད་གཏང་།"
+msgid "Modify Address"
+msgstr "ཁྱིམ་ནང་གི་ཁ་བྱང་།"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "ངིའི་བརྡ་དོན་ལེགས་བཅོས་འབད།"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "ངིའི་བརྡ་དོན་ལེགས་བཅོས་འབད།"
+
+msgid "Update"
+msgstr "དུས་མཐུན་བཟོ།"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "བ་ཌི་བརྡ་བཀོད་བཙུགས་གནང་།"
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "ཆ་རོགས་ཁ་སྐོང་རྐྱབས།"
+
+#, fuzzy
+msgid "Input answer here"
+msgstr "ཞུ་བ་འདི་ནཱ་ལུ་ནང་འདེབས་འབད།"
+
+msgid "Send"
+msgstr "གཏང་།"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "ནུས་མེད་ཀྱི་ལམ་ཡིག"
+
+#, fuzzy
+msgid "Authorization denied message:"
+msgstr "དབང་སྤྲོད་ཉན་མ་བཏུབ་པའི་འཕྲིན་དོན:"
+
+#, fuzzy
+msgid "Sorry, You are not my style."
+msgstr "དགོངསམ་མ་འཁྲིལ་ ཁྱོད་ངིའི་གདམ་ཁ་བཟུམ་མེད་པས།..."
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "ལག་ལེན་པ་ %d གིས་ བདེན་བཤད་དགོཔ་ཨིན།"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "ཁྱོད་རའི་ཐོ་ཡིག་ནང་ཆ་རོགས་ཁ་སྐོང་རྐྱབསན?"
+
 msgid "Input request here"
 msgstr "ཞུ་བ་འདི་ནཱ་ལུ་ནང་འདེབས་འབད།"
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr "ཁྱོད་ ངིའི་ཆ་རོགས་འབད་ནི་ན?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "གཏང་།"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "ཆ་རོགས་ཐོ་ཡིག་མངོན་གསལ་འབད་མ་ཚུགས།"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "ཆ་རོགས་ཁ་སྐོང་རྐྱབས།"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "ཀིའུ་ཀིའུ་ཨང་གྲངས།"
+msgid "Add buddy"
+msgstr "ཆ་རོགས་ཁ་སྐོང་རྐྱབས།"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "ནུས་མེད་ ཀིའུ་ཀིའུ་ཨའི་ཌི།"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "ང་ལུ་དབང་སྤྲོད་འབད་གནང་!"
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "ཆ་རོགས་འདི་  ཁ་སླབ་གྲངས་སུ་འཛུལ་ནི་འཐུས་ཤོར་བྱུང་ནུག"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "ལག་ལེན་པ་འདི་ཁྱོད་རའི་ཆ་རོགས་ཀྱི་ཐོ་ཡིག་ནང་ལས་ རྩ་བསྐྲད་གཏང་།"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "རྒྱུ་མཚན་མ་བཀོད་པས།"
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr "%s གིས་ ཁྱོད་ལུ་ཁ་སྐོང་བརྐྱབ་ཡོདཔ་ཨིན།"
+
+msgid "Would you like to add him?"
+msgstr "ཁྱོད་ཀྱིས་ ཁོ་ཁ་སྐོང་བརྐྱབ་དགོ་མནོཝ་མས་ག?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "ཕྱིར་བཏོན།"
+
+#, c-format
+msgid "Message: %s"
+msgstr "འཕྲིན་དོན།: %s"
 
 msgid "ID: "
 msgstr "ཨའི་ཌི།: "
 
 msgid "Group ID"
 msgstr "སྡེ་ཚན་ཨའི་ཌི།"
-
-msgid "Creator"
-msgstr "གསར་བསྐྲུན་པ།"
-
-msgid "Group Description"
-msgstr "སྡེ་ཚན་འགྲེལ་བཤད།"
-
-msgid "Auth"
-msgstr "བདེན་ཅན།"
 
 msgid "QQ Qun"
 msgstr "ཀིའུ་ཀིའུ་ཀིའུན།"
@@ -7495,85 +7543,74 @@ msgstr "%s དོན་ལུ་ མིང་གསརཔ་བཙུགས་�
 msgid "You can only search for permanent Qun\n"
 msgstr "ཁྱོད་ཀྱིས་ རྟག་བརྟན་ཀིའུ་ཀིའུ་སྡེ་ཚན་རྐྱངམ་ཅིག་འཚོལ་ཞིབ་འབད་ཚུགསཔ་ཨིན།\n"
 
-#, fuzzy, c-format
-msgid "%d request to join Qun %d"
-msgstr "ལག་ལེན་ %d གིས་ སྡེ་ཚན་ %d ནང་མཐུད་ནིའི་དོན་ལུ་འཇུག་སྤྱོད་འབད་ཡོདཔ།"
-
-#, c-format
-msgid "Message: %s"
-msgstr "འཕྲིན་དོན།: %s"
-
-msgid "QQ Qun Operation"
-msgstr "ཀིའུ་ཀིའུ་ཀིའུན་ བཀོལ་སྤྱོད།"
-
-msgid "Approve"
-msgstr "ངོས་ལེན་འབད།"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "ཆ་རོགས་འདི་  ཁ་སླབ་གྲངས་སུ་འཛུལ་ནི་འཐུས་ཤོར་བྱུང་ནུག"
-
-#, fuzzy, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-"སྡེ་ཚན་  %d གྲངས་སུ་འཛུལ་ནིའི་དོན་ལུ་ ཁྱོད་ཀྱིས་ཞུ་བ་འབད་ཡོད་མི་འདི་ བདག་སྐྱོང་པ་ %d གིས་ཕྱིར་བཏོན་"
-"ཡོདཔ་ཨིན།"
-
-#, fuzzy, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr "ཁྱོད་ [%d] གིས་ སྡེ་ཚན་ཕྱིར་ཐོན། \"%d\""
-
 #, fuzzy
-msgid "Notice:"
-msgstr "དྲན་ཐོ།"
-
-#, fuzzy, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr "སྡེ་ཚན་ \"%d\" གིས་ ཁྱོད་ [%d] ཁ་སྐོང་རྐྱབས་ཡོདཔ།"
-
-#, fuzzy
-msgid "I am not a member"
+msgid "Not member"
 msgstr "ང་འཐུས་མི་མེན།"
 
-msgid "I am a member"
-msgstr "ང་འཐུས་མི་གཅིག་ཨིན།"
+#, fuzzy
+msgid "Member"
+msgstr "ལས་ཚུར་ འཐུས་མི།"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "ཞུ་བ་བྱང་ཉེས།"
+msgid "Requesting"
+msgstr "ཌའི་ལོག་ཞུ།"
 
-msgid "I am the admin"
-msgstr "ང་བདག་སྐྱོང་པ་ཨིན།"
+#, fuzzy
+msgid "Admin"
+msgstr "ཨེ་ཌིཡམ།"
 
-msgid "Unknown status"
-msgstr "མ་ཤེས་པའི་གནས་ཚད།"
+#, fuzzy
+msgid "Notice"
+msgstr "དྲན་ཐོ།"
+
+#, fuzzy
+msgid "Detail"
+msgstr "རྒྱས་བཤད།"
+
+msgid "Creator"
+msgstr "གསར་བསྐྲུན་པ།"
+
+#, fuzzy
+msgid "About me"
+msgstr "གཱེམ་གྱི་སྐོར་ལས"
+
+#, fuzzy
+msgid "Category"
+msgstr "ཁ་སླབ་འཛོལ་བ།"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
 msgstr "འ་ནི་སྡེ་ཚན་གྱིས་ གཞན་མི་ཚུ་ལུ་མཐུད་མི་བཅུག་པས།"
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "སྡེ་ཚན་རྩ་བསྐྲད་གཏང་།"
+msgid "Join QQ Qun"
+msgstr "ཁ་སླབ་གྲངས་སུ་འཛུལ།"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
 
 #, fuzzy
-msgid "Join to Qun"
-msgstr "ཁ་སླབ་གྲངས་སུ་འཛུལ།"
+msgid "Successfully joined Qun"
+msgstr "ཁྱོད་ཀྱིས་ ཀིའུན་འཐུས་མི་མཐར་འཁྱོལ་སྦེ་ལེགས་བཅོས་འབད་དགོས།"
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+msgid "QQ Qun Operation"
+msgstr "ཀིའུ་ཀིའུ་ཀིའུན་ བཀོལ་སྤྱོད།"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
 #, fuzzy
-msgid "You entered a group ID outside the acceptable range"
-msgstr "ཁྱོད་ཀྱིས་ འོས་པའི་ཁྱབ་ཚད་ཀྱི་ཕྱི་ཁར་སྡེ་ཚན་ཨའི་ཌི་གཅིག་ཨིན་པུཊི་འབད་ཡོདཔ་ཨིན་པས།"
-
-#, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "ཁྱོད་ཀྱིས་བཏོན་གཏང་ནི་ངེས་ཏིག་ཨིན་ན %s?"
+msgid "Quit Qun"
+msgstr "ཀིའུ་ཀིའུ་ཀིའུན།"
 
 msgid ""
 "Note, if you are the creator, \n"
@@ -7582,46 +7619,51 @@ msgstr ""
 "དྲན་དགོཔ་ ཁྱོད་གསར་བསྐྲུན་པ་ཨིན་པ་ཅིན་  \n"
 "འ་ནི་བཀོལ་སྤྱོད་མཇུག་ལུ་ འ་ནི་ཀིའུན་འདི་རྩ་བསྐྲད་གཏངམ་ཨིན།"
 
-#. we want to see window
 #, fuzzy
-msgid "Do you want to approve the request?"
-msgstr "ཁྱོད་ཀྱིས་ ཞུ་བ་འདི་ ངོས་ལེན་འབད་དགོ་མནོཝ་མས་ག?"
+msgid "Sorry, you are not our style ..."
+msgstr "དགོངསམ་མ་འཁྲིལ་ ཁྱོད་ངིའི་གདམ་ཁ་བཟུམ་མེད་པས།..."
 
 #, fuzzy
-msgid "Change Qun member"
-msgstr "བརྒྱུད་འཕྲིན་ ཨང་།"
+msgid "Successfully changed Qun member"
+msgstr "ཁྱོད་ཀྱིས་ ཀིའུན་འཐུས་མི་མཐར་འཁྱོལ་སྦེ་ལེགས་བཅོས་འབད་དགོས།"
 
 #, fuzzy
-msgid "Change Qun information"
-msgstr "རྒྱུ་ལམ་བརྡ་དོན།"
+msgid "Successfully changed Qun information"
+msgstr "ཁྱོད་ཀྱིས་ ཀིའུན་བརྡ་དོན་མཐར་འཁྱོལ་སྦེ་ལེགས་བཅོས་འབད་དགོས།"
 
 msgid "You have successfully created a Qun"
 msgstr "ཁྱོད་ཀྱིས་ ཀིའུན་གཅིག་མཐར་འཁྱོལ་སྦེ་གསར་བསྐྲུན་འབད་ཡོདཔ་ཨིན།"
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "ད་འབདན་ཁྱོད་ཀྱིས་ ཀིའུན་རྒྱས་བཤད་ཚུ་གཞི་སྒྲིག་འབད་ནི་ཨིན་ན?"
 
 msgid "Setup"
 msgstr "གཞི་སྒྲིག"
 
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s (%s)"
+msgid "%d requested to join Qun %d for %s"
+msgstr "ལག་ལེན་ %d གིས་ སྡེ་ཚན་ %d ནང་མཐུད་ནིའི་དོན་ལུ་འཇུག་སྤྱོད་འབད་ཡོདཔ།"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "ཨའི་སི་ཀིའུ་ སར་བར་ བརྒྱུད་སྤྲོད།"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
+msgstr "ལག་ལེན་ %d གིས་ སྡེ་ཚན་ %d ནང་མཐུད་ནིའི་དོན་ལུ་འཇུག་སྤྱོད་འབད་ཡོདཔ།"
 
-msgid "System Message"
-msgstr "འཕྲིན་དོན་རིམ་ལུགས།"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "ཆ་རོགས་འདི་  ཁ་སླབ་གྲངས་སུ་འཛུལ་ནི་འཐུས་ཤོར་བྱུང་ནུག"
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "མིང་: %s ཐོབ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "ཆ་རོགས་རྩ་བསྐྲད་གཏང་།"
+
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7630,10 +7672,6 @@ msgstr "མ་ཤེསཔ།"
 #, fuzzy
 msgid "Level"
 msgstr "གནས་རིམ།"
-
-#, fuzzy
-msgid "Member"
-msgstr "ལས་ཚུར་ འཐུས་མི།"
 
 msgid " VIP"
 msgstr ""
@@ -7666,24 +7704,36 @@ msgstr ""
 msgid "Invalid name"
 msgstr "ནུས་མེད་མིང་།"
 
-#, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+#, fuzzy
+msgid "Select icon..."
+msgstr "སྣོད་འཛིན་སེལ་འཐུ་འབད།..."
+
+#, fuzzy, c-format
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>ནང་བསྐྱོད་འབད་ནི་དུས་ཚོད།</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>ད་ལྟོའི་གློག་ཐོག</b>: %d<br>\n"
 
-#, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ཧེ་མའི་ཡང་སེལ།</b>: %s<br>\n"
 
 #, fuzzy, c-format
 msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>སར་བར་ཨའི་པི།</b>: %s: %d<br>\n"
 
+#, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>ནང་བསྐྱོད་འབད་ནི་དུས་ཚོད།</b>: %s<br>\n"
+
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>མཐུད་ལམ་ཐབས་ལམ།</b>: %s<br>\n"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>ཨའི་པི་ ཁ་བྱང་:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7706,24 +7756,45 @@ msgstr "<b>ཧེ་མའི་ཡང་སེལ།</b>: %s<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>ངིའི་མི་མང་གི་ཨའི་པི།</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>ནང་བསྐྱོད་འབད་ནི་དུས་ཚོད།</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>ཧེ་མའི་ནང་བསྐྱོད་འབད་ནིའི་ཨའི་པི།</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>ཧེ་མའི་ནང་བསྐྱོད་འབད་ནི་དུས་ཚོད།</b>: %s\n"
+#, fuzzy, c-format
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>སར་བར་ཨའི་པི།</b>: %s: %d<br>\n"
 
 msgid "Login Information"
 msgstr "ནང་བསྐྱོད་འབད་ནིའི་བརྡ་དོན།"
 
 #, fuzzy
-msgid "Set My Information"
-msgstr "སར་བར་ བརྡ་དོན།"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr "<b>ཕྱིའི་ལག་ལེན་པ།</b><br>"
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>ཧེ་མའི་ཡང་སེལ།</b>: %s<br>\n"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>ད་ལྟོའི་གློག་ཐོག</b>: %d<br>\n"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "གཱེམ་གྱི་སྐོར་ལས"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "ངོས་དཔར་སྲུང་བཞག་འབད།"
 
 msgid "Change Password"
 msgstr "ཆོག་ཡིག་བསྒྱུར་བཅོས་འབད།"
@@ -7732,13 +7803,12 @@ msgstr "ཆོག་ཡིག་བསྒྱུར་བཅོས་འབད།
 msgid "Account Information"
 msgstr "ནང་བསྐྱོད་འབད་ནིའི་བརྡ་དོན།"
 
-#, fuzzy
-msgid "Leave the QQ Qun"
-msgstr "འ་ནི་ཀིའུ་ཀིའུ་ཀིའུན་འདི་ ཕྱིར་ཐོན།"
+msgid "Update all QQ Quns"
+msgstr ""
 
 #, fuzzy
-msgid "Block this buddy"
-msgstr "ལག་ལེན་པ་འདི་ འགག"
+msgid "About OpenQ"
+msgstr "གཱེམ་གྱི་སྐོར་ལས"
 
 #. *< type
 #. *< ui_requirement
@@ -7750,13 +7820,28 @@ msgstr "ལག་ལེན་པ་འདི་ འགག"
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
+#, fuzzy
+msgid "QQ Protocol Plugin"
 msgstr "ཀིའུ་ཀིའུ་ གནད་སྤེལ་ལམ་ལུགས་/ཊི་ པ་ལག་ཨིན།"
 
 #, fuzzy
 msgid "Auto"
 msgstr "བདེན་ཅན།"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "ལག་ལེན་པ་སེལ་འཐུ་འབད།"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "མཐུད་དོ།"
@@ -7770,42 +7855,81 @@ msgid "Show server news"
 msgstr "གདམ་ཁ་ཉུང་སུ་ཅིག་སྟོན།"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "འཛོལ་བ་ལྷག་དོ།"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "འཛོལ་བ་ལྷག་དོ།"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "སལ་བར་ བརྡ་དོན་ཐོབ་མི་ཚུགས།"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "སལ་བར་ བརྡ་དོན་ཐོབ་མི་ཚུགས།"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "ནུས་མེད་མགོ་མིང་།"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "འཛོལ་བ་བསྒྱུར་བཅེོས་ཀྱི་ཆོག་ཡིག"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "ཐོ་བཀོད་དགོཔ།"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "འཛོལ་བ་ལྷག་དོ།"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "སར་བར་ལུ་མཐུད་ནི་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+msgid "Captcha Image"
+msgstr "གཟུགས་བརྙན་སྲུང་བཞག་འབད།"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "ཆོག་ཡིག་བཙུགས།"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "སྡེ་ཚན་གྱི་མིང་བཙུགས།"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7832,8 +7956,11 @@ msgstr "འཛོལ་བ་འབྲི།"
 msgid "Connection lost"
 msgstr "མཐུད་ལམ་བརླག་སྟོར་ཞུགས་ཡོདཔ།"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "ལག་ལེན་པའི་བརྡ་དོན་གཞི་སྒྲིག་འབད..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "ཞུ་བ་ངོས་ལེན་འབད་མ་བཏུབ་པས།"
 
@@ -7844,15 +7971,35 @@ msgstr "ཧོསཊི་མོས་མཐུན་འབད་མ་ཚུག
 msgid "Invalid server or port"
 msgstr "ནུས་མེག་ ལག་ལེན་པའི་མིང་ ཡང་ན་ ལམ་ཡིག"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"%s སར་བར་ལས་ མཐུད་ལམ་འཛོལ་བ།:\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "སར་བར་ལུ་མཐུད།"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "ཀིའུ་ཀིའུ་ཨའི་ཌི་ འཛོལ་བ།"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "མིང་: %s ཐོབ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "ཨའི་སི་ཀིའུ་ སར་བར་ བརྒྱུད་སྤྲོད།"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "ལས།"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "སར་བར་བསླབ་སྟོན་ཚུ།: %s"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7868,14 +8015,18 @@ msgid "QQ Qun Command"
 msgstr "བརྡ་བཀོད།"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "མ་ཤེས་པའི་རྒྱུ་མཚན།"
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "མ་ཤེས་པའི་རྒྱུ་མཚན།"
 
 #, c-format
@@ -7888,63 +8039,6 @@ msgstr "ཡིག་སྣོད་གཏང་།"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d གིས་ %s གི་ གནས་སོར་འདི་ཆ་མེད་བཏང་ཡོདཔ།"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "ཁྱོད་ཀྱིས་ ཞུ་བ་འདི་ ངོས་ལེན་འབད་དགོ་མནོཝ་མས་ག?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "ཁྱོད་ཀྱིས་ འ་ནི་ཆ་རོགས་འདི་ཁ་སྐོང་བརྐྱབ་དགོ་མནོཝ་མས་ག?"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s གིས་ ཁྱོད་ལུ་ཁ་སྐོང་བརྐྱབ་ཡོདཔ་ཨིན།"
-
-msgid "Would you like to add him?"
-msgstr "ཁྱོད་ཀྱིས་ ཁོ་ཁ་སྐོང་བརྐྱབ་དགོ་མནོཝ་མས་ག?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr " %s གིས་ ཁོ་རའི་ཡང་ན་མོ་རའི་ ཆ་རོགས་ཐོ་ཡིག་ནང་ ཁྱོད་ ཁ་སྐོང་བརྐྱབ་ནུག"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "ཆ་རོགས་ཁ་སྐོང་རྐྱབས།"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s གིས་ ཁྱོད་ [%s] ལུ་ཆ་རོགས་སྦེ་ཁ་སྐོང་བརྐྱབ་དགོ་མནོ་ནུག"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "%s འདི་ ཁྱོད་ཀྱི་ ཆ་རོགས་ཐོ་ཡིག་ནང་མིན་འདུག"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "ཁྱོད་ཀྱིས་ ཁོ་ཁ་སྐོང་བརྐྱབ་དགོ་མནོཝ་མས་ག?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "ལས།"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "སར་བར་ འདྲེན་ལམ།"
 
 msgid "Connection closed (writing)"
 msgstr "མཐུད་ལམ་ཁ་མ་བསྡམ་ཡོདཔ་(རྩོམ་སྒྲིག)།"
@@ -9652,10 +9746,6 @@ msgstr "ཁྱོད་ཀྱི་ ཡ་ཧུ! འཕྲིན་དོན་
 msgid "Yahoo! system message for %s:"
 msgstr "ཡ་ཧུ! %s:གི་དོན་ལུ་ འཕྲིན་དོན་རིམ་ལུགས།"
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "དབང་སྤྲོད་ཉན་མ་བཏུབ་པའི་འཕྲིན་དོན:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10566,9 +10656,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10632,10 +10722,6 @@ msgstr "དྲན་དེབ་སྟོན།(_L)"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "ཨོཕ་ལ་ཡིན་གྱི་སྐབས་འབད་མི་ཆོགཔ་ཨིན།"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "ཨོཕ་ལ་ཡིན་གྱི་སྐབས་འབད་མི་ཆོགཔ་ཨིན།"
 
 msgid "_Alias..."
@@ -11030,7 +11116,7 @@ msgstr "མིང་གཞན:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -11064,10 +11150,6 @@ msgstr "/ཆ་རོགས་ཚུ་/ཆ་རོགས་ཚུ་དབྱ�
 #, fuzzy
 msgid "SSL Servers"
 msgstr "སར་བར།"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "%s མཐུད་ལམ་བཏོག་ཡོདཔ།"
 
 #, fuzzy
 msgid "Unknown command."
@@ -11414,8 +11496,12 @@ msgstr "འཛོལ་ བ།"
 msgid "Fatal Error"
 msgstr "འཛོལ་བ་ཚུབ་ཆེན།"
 
-msgid "developer"
-msgstr "བཟོ་མི།"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "དུས་སྦྱོར་ལུག"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11425,10 +11511,7 @@ msgid "support"
 msgstr "རྒྱབ་སྐྱོར།"
 
 #, fuzzy
-msgid "support/QA"
-msgstr "རྒྱབ་སྐྱོར།"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr "བཟོ་མི་དང་ཝེབ་ཨམ།"
 
 msgid "Senior Contributor/QA"
@@ -11448,8 +11531,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "གསང་དཀྲོགས་མི་དང་འདྲེན་བྱེད་བཀོད་སྒྲིག་འབད་འབདཝ [ལེ་ལོ་ཅན bum]"
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "བཟོ་མི།"
+msgid "support/QA"
+msgstr "རྒྱབ་སྐྱོར།"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "རྩམ་པ་པོ་ངོ་མ།"
@@ -11719,10 +11805,6 @@ msgstr "དགོངས་ཞུ་འབད་མི་བཟོ་མི་ཚ
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "སྦྱར་བཅོས་འབྲི་མི་ཚུ།"
-
-#, fuzzy
-msgid "Artists"
-msgstr "དུས་སྦྱོར་ལུག"
 
 msgid "Current Translators"
 msgstr "ད་ལྟོའི་སྐད་བསྒྱུར་པཚུ།"
@@ -12372,11 +12454,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 "གེམ་ལུ་ ཆ་བགོས་འཛོལ་བ་དང་ ཡིག་སྣོད་སྙིང་དོན་བཀོག་བཞག་ནི་དཔའ་བཅམ་ནུག\n"
 "འ་ནི་འདི་ མཉེན་ཆས་ནང་རྐྱེན་ཨིནམ་དང་ ནི་བཟུམ་འདི་ ཁྱོད་རའི་འཛོལ་བ་ལས་\n"
@@ -13275,8 +13352,13 @@ msgstr "བརྡ་དོན་ལེན།(_G)"
 msgid "_Invite"
 msgstr "མགྲོན་བརྡ་འབད་ནི"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "ལེགས་བཅོས"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "ཁ་སྐོང་བརྐྱབ།(_A)"
 
 msgid "_Open Mail"
 msgstr "ཡིག་འཕྲིན་ཁ་ཕྱེ(_O)"
@@ -13301,6 +13383,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "(ཅི་མེད།)"
+
+#, fuzzy
+msgid "Small"
+msgstr "གློག་འཕྲིན།"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr "ལན་འབྱུང་ངེས།:"
@@ -13778,6 +13867,10 @@ msgstr "ཨེགསི་རྒྱུ་དངོས་ནང་ན་ འཕ�
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "སྒོ་སྒྲིག་འཛིན་སྐྱོང་པ་\"URGENT\"གྱི་བརྡ་མཚོན་གཞི་སྒྲིག་འབད། (_U)"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "ཁ་སླབ་སྒོ་སྒྲིག (_h)"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "གྲོས་གླེང་ཝིན་ཌོ་ ཆེར་བསྐྱེད་འབད།(_a)"
@@ -13962,20 +14055,20 @@ msgstr ""
 "གཞི་བཞག་ཚིག་ཡིག་གནད་སྤེལ་ལམ་ལུགས་ཚུ་ལུ་རགས་པ་ཨིན་པུཊི་གཏང་བཅུགཔ་ཨིན(ཇེབ་བར་ ཨེམ་ཨེསི་ཨེན་ ཨའི་"
 "ཨར་སི་ ཊི་ཨོ་སི)འདི་གཏང་ནིའི་དོན་ལུ་ཐོ་བཀོད་སྒྲོམ་ནང་ལུ་ 'ཨེན་ཊར' འདི་ཨེབ། རྐྱེན་སེལ་སྒོ་སྒྲིག་འདི་བལྟ།"
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr "ཁྱོད་གཱེམ་ཐོན་རིམ%sའདི་ལག་ལེན་འཐབ་ཨིན་པས།ད་ལྟོའི་ཐོན་རིམ་འདི་ %s.<hr>ཨིན།"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"<b>བསྒྱུར་བཅོས་དྲན་དེབ:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "ཐོན་རིམ་གསརཔ་ཐོབ་ཚུགས།"
+
+#, fuzzy
+msgid "Later"
+msgstr "ཚེས་གྲངས།"
+
+#, fuzzy
+msgid "Download Now"
+msgstr " %s: %s གུའི་ལག་ལེན་པ་ཚུ།"
 
 #. *< type
 #. *< ui_requirement
@@ -14294,6 +14387,206 @@ msgstr ""
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 
+#~ msgid "A group with the name already exists."
+#~ msgstr "མིང་དང་བཅས་པའི་སྡེ་ཚན་འདི་ཧེ་མ་ལས་རང་གནས་ཏེ་འདུག"
+
+#~ msgid "Primary Information"
+#~ msgstr "གཞི་རིམ་བརྡ་དོན།"
+
+#~ msgid "Blood Type"
+#~ msgstr "ཁྲག་དབྱེ་བ།"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "ངིའི་བརྡ་དོན་དུས་མཐུནམ་བཟོ།"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "མགྱོགས་ཚད།:"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "ནུས་མེད་ ཀིའུ་ཀིའུ་ཨའི་ཌི།"
+
+#~ msgid "You rejected %d's request"
+#~ msgstr "ཁྱོད་ཀྱིས་ %d གི་ཞུ་བ་ཕྱིར་བཏོན་འབད་ཡི།"
+
+#~ msgid "Reject request"
+#~ msgstr "ཞུ་བ་ཕྱིར་བཏོན།"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "བདེན་ཅན་ཞུ་བ་ཚུ་དང་གཅིག་ཁར་ཆ་རོགས་ཁ་སྐོང་བརྐྱབ།"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "ཆ་རོགས་ཐོ་ཡིག་མངོན་གསལ་འབད་མ་ཚུགས།"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "ཀིའུ་ཀིའུ་ཨང་གྲངས།"
+
+#~ msgid "Group Description"
+#~ msgstr "སྡེ་ཚན་འགྲེལ་བཤད།"
+
+#~ msgid "Auth"
+#~ msgstr "བདེན་ཅན།"
+
+#~ msgid "Approve"
+#~ msgstr "ངོས་ལེན་འབད།"
+
+#, fuzzy
+#~ msgid "Successed to join Qun %d, operated by admin %d"
+#~ msgstr ""
+#~ "སྡེ་ཚན་  %d གྲངས་སུ་འཛུལ་ནིའི་དོན་ལུ་ ཁྱོད་ཀྱིས་ཞུ་བ་འབད་ཡོད་མི་འདི་ བདག་སྐྱོང་པ་ %d གིས་ཕྱིར་"
+#~ "བཏོན་ཡོདཔ་ཨིན།"
+
+#, fuzzy
+#~ msgid "[%d] removed from Qun \"%d\""
+#~ msgstr "ཁྱོད་ [%d] གིས་ སྡེ་ཚན་ཕྱིར་ཐོན། \"%d\""
+
+#, fuzzy
+#~ msgid "[%d] added to Qun \"%d\""
+#~ msgstr "སྡེ་ཚན་ \"%d\" གིས་ ཁྱོད་ [%d] ཁ་སྐོང་རྐྱབས་ཡོདཔ།"
+
+#~ msgid "I am a member"
+#~ msgstr "ང་འཐུས་མི་གཅིག་ཨིན།"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "ཞུ་བ་བྱང་ཉེས།"
+
+#~ msgid "I am the admin"
+#~ msgstr "ང་བདག་སྐྱོང་པ་ཨིན།"
+
+#~ msgid "Unknown status"
+#~ msgstr "མ་ཤེས་པའི་གནས་ཚད།"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "སྡེ་ཚན་རྩ་བསྐྲད་གཏང་།"
+
+#, fuzzy
+#~ msgid "You entered a group ID outside the acceptable range"
+#~ msgstr "ཁྱོད་ཀྱིས་ འོས་པའི་ཁྱབ་ཚད་ཀྱི་ཕྱི་ཁར་སྡེ་ཚན་ཨའི་ཌི་གཅིག་ཨིན་པུཊི་འབད་ཡོདཔ་ཨིན་པས།"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "ཁྱོད་ཀྱིས་བཏོན་གཏང་ནི་ངེས་ཏིག་ཨིན་ན %s?"
+
+#, fuzzy
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "ཁྱོད་ཀྱིས་ ཞུ་བ་འདི་ ངོས་ལེན་འབད་དགོ་མནོཝ་མས་ག?"
+
+#, fuzzy
+#~ msgid "Change Qun member"
+#~ msgstr "བརྒྱུད་འཕྲིན་ ཨང་།"
+
+#, fuzzy
+#~ msgid "Change Qun information"
+#~ msgstr "རྒྱུ་ལམ་བརྡ་དོན།"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "འཕྲིན་དོན་རིམ་ལུགས།"
+
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>ཧེ་མའི་ནང་བསྐྱོད་འབད་ནིའི་ཨའི་པི།</b>: %s<br>\n"
+
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>ཧེ་མའི་ནང་བསྐྱོད་འབད་ནི་དུས་ཚོད།</b>: %s\n"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "སར་བར་ བརྡ་དོན།"
+
+#, fuzzy
+#~ msgid "Leave the QQ Qun"
+#~ msgstr "འ་ནི་ཀིའུ་ཀིའུ་ཀིའུན་འདི་ ཕྱིར་ཐོན།"
+
+#, fuzzy
+#~ msgid "Block this buddy"
+#~ msgstr "ལག་ལེན་པ་འདི་ འགག"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "འཛོལ་བ་བསྒྱུར་བཅེོས་ཀྱི་ཆོག་ཡིག"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "སར་བར་ལུ་མཐུད་ནི་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "%s སར་བར་ལས་ མཐུད་ལམ་འཛོལ་བ།:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "ཁྱོད་ཀྱིས་ ཞུ་བ་འདི་ ངོས་ལེན་འབད་དགོ་མནོཝ་མས་ག?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "ཁྱོད་ཀྱིས་ འ་ནི་ཆ་རོགས་འདི་ཁ་སྐོང་བརྐྱབ་དགོ་མནོཝ་མས་ག?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr " %s གིས་ ཁོ་རའི་ཡང་ན་མོ་རའི་ ཆ་རོགས་ཐོ་ཡིག་ནང་ ཁྱོད་ ཁ་སྐོང་བརྐྱབ་ནུག"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "ཆ་རོགས་ཁ་སྐོང་རྐྱབས།"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s གིས་ ཁྱོད་ [%s] ལུ་ཆ་རོགས་སྦེ་ཁ་སྐོང་བརྐྱབ་དགོ་མནོ་ནུག"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "%s འདི་ ཁྱོད་ཀྱི་ ཆ་རོགས་ཐོ་ཡིག་ནང་མིན་འདུག"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "ཁྱོད་ཀྱིས་ ཁོ་ཁ་སྐོང་བརྐྱབ་དགོ་མནོཝ་མས་ག?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "སར་བར་ འདྲེན་ལམ།"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "%s མཐུད་ལམ་བཏོག་ཡོདཔ།"
+
+#~ msgid "developer"
+#~ msgstr "བཟོ་མི།"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "བཟོ་མི།"
+
+#, fuzzy
+#~ msgid "Artists"
+#~ msgstr "དུས་སྦྱོར་ལུག"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr "ཁྱོད་གཱེམ་ཐོན་རིམ%sའདི་ལག་ལེན་འཐབ་ཨིན་པས།ད་ལྟོའི་ཐོན་རིམ་འདི་ %s.<hr>ཨིན།"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>བསྒྱུར་བཅོས་དྲན་དེབ:</b>\n"
+#~ "%s<br><br>"
+
 #~ msgid "Screen name:"
 #~ msgstr "གསལ་གཞིའི་མིང་།:"
 
@@ -14441,14 +14734,6 @@ msgstr ""
 #~ msgstr "ཁྱོད་ཀྱི་རྒྱུ་མཚན་ནང་འདེབས་འབད།:"
 
 #, fuzzy
-#~ msgid "You have successfully modified Qun member"
-#~ msgstr "ཁྱོད་ཀྱིས་ ཀིའུན་འཐུས་མི་མཐར་འཁྱོལ་སྦེ་ལེགས་བཅོས་འབད་དགོས།"
-
-#, fuzzy
-#~ msgid "You have successfully modified Qun information"
-#~ msgstr "ཁྱོད་ཀྱིས་ ཀིའུན་བརྡ་དོན་མཐར་འཁྱོལ་སྦེ་ལེགས་བཅོས་འབད་དགོས།"
-
-#, fuzzy
 #~ msgid "Error requesting login token"
 #~ msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབདཝ་ད་འཛོལ་བ།"
 
@@ -14587,9 +14872,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "རྩིས་ཐོ:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "གེམ་ ཨིན་ཊར་ནེཊི་འཕྲིན་སྐྱེལ་པ།"
-
 #~ msgid "Tag"
 #~ msgstr "ངོ་རྟགས།"
 
@@ -14696,8 +14978,8 @@ msgstr ""
 #~ msgid "Jabber developer"
 #~ msgstr "ཇེབ་བར་བཟོ་མི།"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
 
 #~ msgid "Smaller font size"
 #~ msgstr "ཡིག་གཟུགས་ཀྱི་ཚད་ཆུང་མི།"
@@ -14708,7 +14990,7 @@ msgstr ""
 #~ msgid "Insert image"
 #~ msgstr "གཟུགས་བརྙན་ནང་ན་བཙུགས།"
 
-#~ msgid "Gaim %s. Try `%s -h' for more information.\n"
+#~ msgid "Pidgin %s. Try `%s -h' for more information.\n"
 #~ msgstr "གཱེམ %s. བརྡ་དོན་ཧེང་བཀལ་གྱི་དོན་ལུ `%s -h' འབད་རྩོལ་བསྐྱེད\n"
 
 #~ msgid ""
@@ -14755,10 +15037,10 @@ msgstr ""
 #~ msgstr "གསལ་བཀོད་འབད་ཡོད་པའི་ཆ་རོགས་འདི་ ཨི་བོ་ལུ་ཤཱན་འབྲེལ་ས་ཚུ་ནང་མ་ཐོབ་པས།"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "ཁྱོད་ཀྱིས<br><a href=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge."
+#~ "ཁྱོད་ཀྱིས<br><a href=\"http://Pidgin.sourceforge.net/\">http://Pidgin.sourceforge."
 #~ "net</a>.ལས་ཐོན་རིམ་%sཐོབ་ཚུགས།"
 
 #~ msgid "Delay"
@@ -14767,7 +15049,7 @@ msgstr ""
 #~ msgid "minutes."
 #~ msgstr "སྐར་མ།"
 
-#~ msgid "WinGaim Options"
+#~ msgid "WinPidgin Options"
 #~ msgstr "ཝིན་གཱེམ་གྱི་གདམ་ཁ་ཚུ།"
 
 #~ msgid ""
@@ -14788,7 +15070,7 @@ msgstr ""
 #~ msgid "Group not removed"
 #~ msgstr "སྡེ་ཚན་རྩ་བསྐྲད་མ་གཏང་པས།"
 
-#~ msgid "Old Gaim"
+#~ msgid "Old Pidgin"
 #~ msgstr "གེམ་ རྙིངམ།"
 
 #~ msgid ""
@@ -14805,7 +15087,7 @@ msgstr ""
 #~ "\n"
 #~ "<b>འཕྲིན་དོན།:</b> %s"
 
-#~ msgid "Gaim User"
+#~ msgid "Pidgin User"
 #~ msgstr "གཱེམ་ལག་ལེན་པ།"
 
 #~ msgid "Jabber Account"
@@ -14881,10 +15163,7 @@ msgstr ""
 #~ " %s (%s)ལག་ལེན་པ་འདི་གིས་  %sའདི་ ཁོ་ཡང་ན་མོ་གི་ཆ་རོགས་ཐོ་ཡིག་ལུ་ ཁ་སྐོང་འབད་ནིའི་རེ་འདོད་"
 #~ "བསྐྱེདཔ་ཨིན་མས།"
 
-#~ msgid "Invalid password"
-#~ msgstr "ནུས་མེད་ཀྱི་ལམ་ཡིག"
-
-#~ msgid "gaim_proxy_connect() failed"
+#~ msgid "Pidgin_proxy_connect() failed"
 #~ msgstr "གེམ་ པོརོ་སི་མཐུད་འཐུས་ཤོར་བྱུང་ཡོདཔ()།(_p)(_c)"
 
 #~ msgid ""
@@ -15000,12 +15279,6 @@ msgstr ""
 #~ msgid "Change Your QQ Face"
 #~ msgstr "ཁྱོད་ཀྱི་ ཀིའུ་ཀིའུ་བཀོད་རྣམ་བསྒྱུར་བཅོས་འབད།"
 
-#~ msgid "Update"
-#~ msgstr "དུས་མཐུན་བཟོ།"
-
-#~ msgid "Modify My Information"
-#~ msgstr "ངིའི་བརྡ་དོན་ལེགས་བཅོས་འབད།"
-
 #~ msgid "Please wait for new version"
 #~ msgstr "ཐོན་རིམ་གསརཔ་ལུ་བསྒུག་གནང་།"
 
@@ -15037,9 +15310,6 @@ msgstr ""
 #~ "\n"
 #~ "<b>རྒྱབ་སྐྱོར་ཚུ།:</b> %s"
 
-#~ msgid "<b>External User</b><br>"
-#~ msgstr "<b>ཕྱིའི་ལག་ལེན་པ།</b><br>"
-
 #~ msgid "<b>User ID:</b> %s<br>"
 #~ msgstr "<b>ལག་ལེན་པའི་ཨའི་ཌི།:</b> %s<br>"
 
@@ -15069,20 +15339,20 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "འདི་བཟུམ་བྱུངམ་ད་ལུ་ ཊི་ཨོ་སི་གིས་ འཕྲིན་དོན་ག་ཅི་རང་བཏང་རུང་ སྣང་མེད་སྦེ་བཞགཔ་ཨིནམ་དང་འཕྲིན་"
 #~ "དོན་གཏང་པ་ཅིན་ ཕྱི་ཁ་ཡང་བཏོན་གཏང་འོང་། གཱེམ་གྱིས་ ག་ཅིའི་ཐད་ལས་འབད་རུང་ འཕྲིན་དོན་གཏང་ནི་"
 #~ "ལས་སྔོན་བཀག་འབད་འོང་།  འདི་གནས་སྐབས་ རྐྱངམ་ཅིག་ཨིན་  བཟོད་པ་བཞེས་གནང་།"
 
-#~ msgid "Gaim - Save As..."
+#~ msgid "Pidgin - Save As..."
 #~ msgstr "གཱེམ-བཟུམ་སྦེ་སྲུང་།"
 
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "སྤྱིར་བཏང་བདེན་བཤད་ཐབས་ལམ་འདི་འཐུས་ཤོར་བྱུང་ནུག འདི་ཡང་ ཡང་ཅིན་ ཁྱོད་རའི་ཆོག་ཡིག་འདི་བདེན་"
@@ -15138,12 +15408,12 @@ msgstr ""
 #~ msgid "_Hide new messages until tray icon is clicked"
 #~ msgstr "འཕྲིན་དོན་གསརཔ་ཚུ་ངོས་དཔར་གྱི་སྣོད་འདི་ཨེབ་མ་གཏང་ཚུན་ཚོད་ སྦ་བཞག(_H)"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
+#~ msgid "Displays an icon for Pidgin in the system tray."
 #~ msgstr "གཱེམ་གྱི་དོན་ལུ་རིམ་ལུགས་ཀྱི་སྣོད་ནང་ ངོས་དཔར་ བཀྲམ་སྟོན་འབདཝ་ཨིན།"
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list or login window. Also "
 #~ "allows messages to be queued until the icon is clicked, similar to ICQ."
 #~ msgstr ""
@@ -15153,10 +15423,10 @@ msgstr ""
 #~ "བཟུམ)དེ་མ་ཚད་ཨའི་སི་ཀིའུ་དང་ཅོག་་འཐདཔ་འབད་ངོས་དཔར་འདི་མ་ཨེབ་ཚུནཚོདའཕྲིན་དོན་ཚུ་གྱལ་རིམ་ནང་"
 #~ "བཙུག་པ།"
 
-#~ msgid "Gaim - Signed off"
+#~ msgid "Pidgin - Signed off"
 #~ msgstr "གཱེམ-ཐོན་འགྱོ་ཡི།"
 
-#~ msgid "Gaim - Away"
+#~ msgid "Pidgin - Away"
 #~ msgstr "གཱེམ-ཕྱི་ཁ།"
 
 #~ msgid "Not connected to AIM"
@@ -15181,12 +15451,12 @@ msgstr ""
 #~ msgid "Remote Control"
 #~ msgstr "ཐག་རིང་ཚད་འཛིན།"
 
-#~ msgid "Provides remote control for gaim applications."
+#~ msgid "Provides remote control for Pidgin applications."
 #~ msgstr "གློག་རིམ་གཱེམ་གྱི་དོན་ལུ་ཐག་རིང་ཚད་འཛིན་བྱིནམ་ཨིན།"
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 #~ msgstr ""
 #~ "གློག་རིམ་སྡེ་ཚན་གསུམ་པ་ ཡང་ན གཱེམ་གྱི་ཐག་རིང་ལག་ཆས་ཀྱི་ཐོག་ལས་ གཱེམ་ལུ་ཐག་རིང་གྱི་ཚད་ འཛིན་ཚུགས་"
 #~ "པའི་ལྕོགས་གྲུབ་བྱིནམ་ཨིན།"
@@ -15247,7 +15517,7 @@ msgstr ""
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
@@ -15265,7 +15535,7 @@ msgstr ""
 #~ "    -h, --help།[བརྡ་བཀོད]                     བརྡ་བཀོད་ཀྱི་དོན་ལུ་གྲོགས་རམ་སྟོན།\n"
 
 #~ msgid ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 #~ msgstr ""
 #~ "གཱེམ་གཡོག་བཀོལ་བའི་བསྒང་མེན་པས ( ལཱ་ཡུན0ལུ)\n"
@@ -15275,7 +15545,7 @@ msgstr ""
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15285,20 +15555,20 @@ msgstr ""
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 #~ msgstr ""
 #~ "\n"
 #~ "ཨེ་ཨའི་ཨེམ་ལག་ལེན་འཐབ་ཞིན་ན: ཡུ་ཨར་ཨའི་ཨེསི\n"
 #~ "གསལ་གཞི་མིང་ལུ་ཨེ་ཨའི་ཨེམ་གཏང་དོ།: \n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "གནད་དོན་འདི་ནང་'པེན་གིན་' འདི་ཨའི་ཨེམ་ལུ་རེ་འདོད་བསྐྱེད་མི་གསལ་གཞི་མིང་ཨིནམ་དང་'ཧེ་ལོ་འཛམ་"
 #~ "གླིང་'\n"
 #~ "འདི་འཕྲིན་དོན་གཏང་ནི་གི་ཨིན་པས།   '+'འདི་བར་སྟོང་གི་གནས་ཚུ་ནང་ལག་ལེན་འཐབ་དགོ\n"
@@ -15306,19 +15576,19 @@ msgstr ""
 #~ "འདི་བྲོས་ཟུར་ཨིན་དགོ་ཡང་ན་བརྡ་བཀོད་འདི་ཡིག་ཚད་དེ་ཁར་བཀག་འོང་\n"
 #~ "དེ་གིས་མ་དོ་བར་འོག་གིས་འདི་གིས་གྲོས་གླེང་སྒོ་སྒྲིག་ལས་གསལ་གཞིའི་མིང་\n"
 #~ "ལུ་ཁ་ཕྱེ་ནི་ཨིན།འཕྲིན་དོན་མེད་པར་:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "ཁ་སླབ་གྲངས་སུ་འཛུལ་དོ:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "... 'པེན་གིནLounge' ཁ་སླབ་ཁང་མིག་གི་གྲགས་སུ་འཛུལཝ་ཨིན།\n"
 #~ "\n"
 #~ "ཁྱོད་ཀྱི་ཆ་རོགས་ཐོ་ཡིག་ལུ་ཆ་རོགས་ཁ་སྐོང་འབད་དོ\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "ཁྱོད་རའི་ཆ་རོགས་ཐོ་ཡིག་ལུ་པེན་གིན་ཁ་སྐོང་རྐྱབ་ཟེར་ཁྱོད་ལུ་ནུས་སྤེལ་འབདཝ་ཨིན།\n"
 
 #~ msgid ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 #~ msgstr ""
 #~ "\n"
 #~ "གཡོག་བཀོལ་བའི་བསྒང་ཡོད་མི་གཱེམ་འདི་ཁ་བསྡམ།\n"
@@ -15425,7 +15695,7 @@ msgstr ""
 #~ msgid "Reconnect _All"
 #~ msgstr "གེ་ར་སླར་མཐུད་འབད(_A)"
 
-#~ msgid "me is using Gaim v%s."
+#~ msgid "me is using Pidgin v%s."
 #~ msgstr "ང་གཱེམ་ལག་ལེན་འཐབ་དོ། v%s"
 
 #~ msgid "Get Away Msg"
@@ -15483,7 +15753,7 @@ msgstr ""
 #~ msgstr "རྒྱ་ནག"
 
 #~ msgid ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using Gtk+ and is licensed under the GPL."
 #~ "<BR><BR>"
@@ -15646,7 +15916,7 @@ msgstr ""
 #~ msgid "Idle _time reporting:"
 #~ msgstr "ལས་མེད་དུས་ཚོད་སྙན་ཞུ་འབདཝ་ཨིན:(_t)"
 
-#~ msgid "Gaim usage"
+#~ msgid "Pidgin usage"
 #~ msgstr "གཱེམ་ལག་ལེན།"
 
 #~ msgid "X usage"
@@ -15673,9 +15943,6 @@ msgstr ""
 
 #~ msgid "Summary"
 #~ msgstr "བཅུད་དོན།"
-
-#~ msgid "Details"
-#~ msgstr "རྒྱས་བཤད།"
 
 #~ msgid "Message Text"
 #~ msgstr "འཕྲིན་དོན་ཚིག་ཡིག"
@@ -15712,7 +15979,7 @@ msgstr ""
 #~ msgstr "ནང་ན་འཛུལ(_S)"
 
 #~ msgid ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -15750,7 +16017,7 @@ msgstr ""
 #~ msgstr "དགའ་གདམ་ཚུ་མངོན་གསལ་འབད་མ་ཚུགས།"
 
 #~ msgid ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
+#~ "Pidgin was not able to load your preferences because they are stored in an "
 #~ "old format that is no longer used.  Please reconfigure your settings "
 #~ "using the Preferences window."
 #~ msgstr ""
@@ -15831,7 +16098,7 @@ msgstr ""
 #~ msgstr "ག་ཌུ་-ག་ཌུ་ སར་བར་དང་བཅས་འཛོལ་བ་རྒྱུད་འབྲེལ་འཐབ།"
 
 #~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
+#~ "Pidgin was unable to complete your request due to a problem communicating "
 #~ "with the Gadu-Gadu HTTP server.  Please try again later."
 #~ msgstr ""
 #~ "གཱེམ་འདི་ ག་ཌུ་-ག་ཌུ་ ཨེཅི་ཊི་ཊི་པི་ སར་བར་དང་འབྲེལ་རྒྱུད་འཐབ་ནིའི་དཀའ་ངལ་བྱུངམ་ལས་བརྟེན་ཏེ་ ཁྱོད་"
@@ -15841,14 +16108,14 @@ msgstr ""
 #~ msgstr "ག་ཌུ་-ག་ཌུ་ ཆ་རོགས་ཐོ་ཡིག་འདི་ནང་འདྲེན་འབད་མ་ཚུགས།"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
+#~ "Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please "
 #~ "try again later."
 #~ msgstr ""
 #~ "གཱེམ་འདི་   ག་ཌུ་-ག་ཌུ་ ཆ་རོགས་ཐོ་ཡིག་སར་བར་ལུ་ མཐུད་མ་ཚུགས་པས།   དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་"
 #~ "བསྐྱེད་གནང་།"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 #~ msgstr ""
 #~ "གཱེམ་འདི་ ཆ་རོགས་ཐོ་ཡིག་ སར་བར་ལུ་མཐུད་མ་ཚུགས་པས།  དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་བསྐྱེད་གནང་།"
@@ -15860,14 +16127,14 @@ msgstr ""
 #~ msgstr "སྣོད་ཐོ་འཛུལ་སྤྱོད་འབད་མི་ཚུགས།"
 
 #~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
+#~ "Pidgin was unable to search the Directory because it was unable to connect "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
 #~ "གཱེམ་གྱིས་སྣོད་ཐོ་འཚོལ་ཞིབ་འབད་མ་ཚུགས་པས་ ག་ཅི་འབད་ཟེར་བ་ཅིན་ སྣོད་ཐོའི་སར་བར་ལུ་མཐུད་མ་ཚུགས་"
 #~ "པས། དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་བསྐྱེད་གནང་།"
 
 #~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
+#~ "Pidgin was unable to change your password due to an error connecting to the "
 #~ "Gadu-Gadu server.  Please try again later."
 #~ msgstr ""
 #~ "ག་ཌུ་ ག་ཌུ་ སར་བར་ལུ་འཛོལ་བ་མཐུད་དེ་ཡོདཔ་ལས་བརྟེན་ཏེ་ གཱེམ་གྱིས་ཁྱོད་ཀྱི་ཆོག་ཡིག་བསྒྱུར་བཅོས་འབད་"
@@ -15880,7 +16147,7 @@ msgstr ""
 #~ msgstr "ལག་ལེན་པའི་གསལ་སྡུད་འཛུལ་སྤྱོད་འབད་མི་ཚུགས།"
 
 #~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
+#~ "Pidgin was unable to access this user's profile due to an error connecting "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
 #~ "སྣོད་ཐོ་སར་བར་ལུ་འཛོལ་བ་མཐུདཔ་ལས་བརྟེན་ཏེ་ གཱེམ་གྱིས་ལག་ལེན་པའི་གསལ་སྡུད་འདི་འཛུལ་སྤྱོད་འབད་མ་"

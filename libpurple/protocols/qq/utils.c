@@ -39,8 +39,6 @@
 #include "util.h"
 #include "utils.h"
 
-#define QQ_NAME_FORMAT    "%d"
-
 /* These functions are used only in development phase */
 /*
    static void _qq_show_socket(gchar *desc, gint fd) {
@@ -97,8 +95,8 @@ gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount)
 gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields)
 {
 	guint8 *input;
-	gchar **segments;
-	gint count, j;
+	gchar **segments, **seg;
+	gint count = 0, j;
 
 	g_return_val_if_fail(data != NULL && len != 0 && delimit != 0, NULL);
 
@@ -108,11 +106,12 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	g_memmove(input, data, len);
 	input[len] = 0x00;
 
-	segments = g_strsplit_set((gchar *) input, delimit, 0);
+	segments = g_strsplit((gchar *) input, delimit, 0);
 	if (expected_fields <= 0)
 		return segments;
 
-	count = g_strv_length(segments);
+	for (seg = segments; *seg != NULL; seg++)
+		count++;
 	if (count < expected_fields) {	/* not enough fields */
 		purple_debug_error("QQ", "Less fields %d then %d\n", count, expected_fields);
 		return NULL;
@@ -135,7 +134,7 @@ guint32 purple_name_to_uid(const gchar *const name)
 	guint32 ret;
 	g_return_val_if_fail(name != NULL, 0);
 
-	ret = strtol(name, NULL, 10);
+	ret = strtoul(name, NULL, 10);
 	if (errno == ERANGE)
 		return 0;
 	else
@@ -169,7 +168,7 @@ guint8 *str_ip_gen(gchar *str) {
  * the return needs to be freed */
 gchar *uid_to_purple_name(guint32 uid)
 {
-	return g_strdup_printf(QQ_NAME_FORMAT, uid);
+	return g_strdup_printf("%u", uid);
 }
 
 /* try to dump the data as GBK */
@@ -325,7 +324,7 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 	va_end(args);
 
 	if (bytes <= 0) {
-		purple_debug(level, category, arg_s);
+		purple_debug(level, category, "%s", arg_s);
 		return;
 	}
 
@@ -339,3 +338,15 @@ void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ", buf, len, desc);
 }
 
+void qq_filter_str(gchar *str) {
+	gchar *temp;
+	if (str == NULL) {
+		return;
+	}
+
+	for (temp = str; *temp != 0; temp++) {
+		/*if (*temp == '\r' || *temp == '\n')  *temp = ' ';*/
+		if (*temp > 0 && *temp < 0x20)  *temp = ' ';
+	}
+	g_strstrip(str);
+}
