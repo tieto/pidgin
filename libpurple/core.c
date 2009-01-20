@@ -251,7 +251,6 @@ purple_core_quit(void)
 #ifdef _WIN32
 	wpurple_cleanup();
 #endif
-	purple_prefs_uninit();
 
 	_core = NULL;
 }

@@ -1454,7 +1454,6 @@ purple_prefs_uninit()
 		save_timer = 0;
 		sync_prefs();
 	}
-	prefs_loaded = FALSE;
 
 	prefs_loaded = FALSE;
 	purple_prefs_destroy();
