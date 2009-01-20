@@ -1,5 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.5 (??/??/2009):
+	libpurple:
+		Changed:
+		* purple_status_type_new now defaults "saveable" to TRUE.
+		  This was necessary in order to maintain the current behavior
+		  while fixing non-saveable statuses not to be saved.
+
 version 2.5.4 (01/12/2009):
 	perl:
 		Changed:
