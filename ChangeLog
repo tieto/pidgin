@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.5 (??/??/????):
+	libpurple:
+	* Fix a crash when removing an account with an unknown protocol id.
+
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the
 	  man-page, look for GntBox::binding)
