@@ -105,13 +105,18 @@ static void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
 void jabber_bosh_init(void)
 {
 	GHashTable *ui_info = purple_core_get_ui_info();
+	const char *ui_name = NULL;
 	const char *ui_version = NULL;
 
-	if (ui_info)
+	if (ui_info) {
+		ui_name = g_hash_table_lookup(ui_info, "name");
 		ui_version = g_hash_table_lookup(ui_info, "version");
+	}
 
-	if (ui_version)
-		bosh_useragent = g_strdup_printf("%s (libpurple " VERSION ")", ui_version);
+	if (ui_name)
+		bosh_useragent = g_strdup_printf("%s%s%s (libpurple " VERSION ")",
+		                                 ui_name, ui_version ? " " : "",
+		                                 ui_version ? ui_version : "");
 	else
 		bosh_useragent = g_strdup("libpurple " VERSION);
 }
