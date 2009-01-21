@@ -206,7 +206,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	body = slpmsg->buffer;
 	body_len = slpmsg->size;
 
-	if (slpmsg->flags == 0x0)
+	if (slpmsg->flags == 0x0 || slpmsg->flags == 0x1000000)
 	{
 		char *body_str;
 
@@ -214,7 +214,9 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		slpcall = msn_slp_sip_recv(slplink, body_str);
 		g_free(body_str);
 	}
-	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
+	else if (slpmsg->flags == 0x20 ||
+	         slpmsg->flags == 0x1000020 ||
+	         slpmsg->flags == 0x1000030)
 	{
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 
@@ -237,6 +239,9 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_slpcall_session_init(slpcall);
 	}
 #endif
+	else
+		purple_debug_warning("msn", "Unprocessed SLP message with flags 0x%08lx\n",
+		                     slpmsg->flags);
 
 	return slpcall;
 }
