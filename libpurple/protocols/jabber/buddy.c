@@ -483,27 +483,24 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	}
 
 	if (vc_node != NULL) {
+		PurpleAccount *account = purple_connection_get_account(js->gc);
+
 		iq = jabber_iq_new(js, JABBER_IQ_SET);
 		xmlnode_insert_child(iq->node, vc_node);
 		jabber_iq_send(iq);
+
+		/* Send presence to update vcard-temp:x:update */
+		jabber_presence_send(account, purple_account_get_active_status(account));
 	}
 }
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	PurplePresence *gpresence;
-	PurpleStatus *status;
-
 	jabber_avatar_set(gc->proto_data, img);
 	/* vCard avatars do not have an image type requirement so update our
 	 * vCard avatar regardless of image type for those poor older clients
 	 */
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
-
-	/* TODO: Call this in jabber_set_info() if avatar changed? */
-	gpresence = purple_account_get_presence(gc->account);
-	status = purple_presence_get_active_status(gpresence);
-	jabber_presence_send(gc->account, status);
 }
 
 /*
