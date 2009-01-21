@@ -29,12 +29,10 @@
 #include "bosh.h"
 
 typedef struct _PurpleHTTPRequest PurpleHTTPRequest;
-typedef struct _PurpleHTTPResponse PurpleHTTPResponse;
 typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
 
 typedef void (*PurpleHTTPConnectionConnectFunction)(PurpleHTTPConnection *conn);
 typedef void (*PurpleHTTPConnectionDisconnectFunction)(PurpleHTTPConnection *conn);
-typedef void (*PurpleHTTPRequestCallback)(PurpleHTTPResponse *res, void *userdata);
 typedef void (*PurpleBOSHConnectionConnectFunction)(PurpleBOSHConnection *conn);
 typedef void (*PurpleBOSHConnectionReceiveFunction)(PurpleBOSHConnection *conn, xmlnode *node);
 
@@ -66,9 +64,8 @@ struct _PurpleHTTPConnection {
     char *host;
     int port;
     int ie_handle;
-    GQueue *requests; /* Queue of PurpleHTTPRequestCallbacks */
-    
-    PurpleHTTPResponse *current_response;
+    int requests; /* number of outstanding HTTP requests */
+
     GString *buf;
     gboolean headers_done;
     gsize handled_len;
@@ -81,22 +78,15 @@ struct _PurpleHTTPConnection {
 };
 
 struct _PurpleHTTPRequest {
-    PurpleHTTPRequestCallback cb;
     const char *path;
     char *data;
     int data_len;
     void *userdata;
 };
 
-struct _PurpleHTTPResponse {
-    char *data;
-    int data_len;
-};
-
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node);
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_http_received_cb(PurpleHTTPResponse *res, void *userdata);
 static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node);
 
 static void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
@@ -134,13 +124,6 @@ jabber_bosh_http_request_destroy(PurpleHTTPRequest *req)
 	g_free(req);
 }
 
-static void
-jabber_bosh_http_response_destroy(PurpleHTTPResponse *res)
-{
-	g_free(res->data);
-	g_free(res);
-}
-
 static PurpleHTTPConnection*
 jabber_bosh_http_connection_init(const char *host, int port)
 {
@@ -148,7 +131,6 @@ jabber_bosh_http_connection_init(const char *host, int port)
 	conn->host = g_strdup(host);
 	conn->port = port;
 	conn->fd = -1;
-	conn->requests = g_queue_new();
 
 	return conn;
 }
@@ -161,15 +143,9 @@ jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
 	if (conn->buf)
 		g_string_free(conn->buf, TRUE);
 
-	if (conn->requests)
-		g_queue_free(conn->requests);
-
-	if (conn->current_response)
-		jabber_bosh_http_response_destroy(conn->current_response);
-
 	if (conn->ie_handle)
 		purple_input_remove(conn->ie_handle);
-	if (conn->fd > 0)
+	if (conn->fd >= 0)
 		close(conn->fd);
 
 	g_free(conn);
@@ -396,13 +372,15 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	xmlnode_free(init);
 }
 
-static void jabber_bosh_connection_http_received_cb(PurpleHTTPResponse *res, void *userdata) {
+static void
+http_received_cb(const char *data, int len, void *userdata)
+{
 	PurpleBOSHConnection *conn = userdata;
 	if (conn->receive_cb) {
-		xmlnode *node = xmlnode_from_str(res->data, res->data_len);
+		xmlnode *node = xmlnode_from_str(data, len);
 		if (node) {
 			char *txt = xmlnode_to_formatted_str(node, NULL);
-			printf("\njabber_bosh_connection_http_received_cb\n%s\n", txt);
+			printf("\nhttp_received_cb\n%s\n", txt);
 			g_free(txt);
 			conn->receive_cb(conn, node);
 			xmlnode_free(node);
@@ -456,7 +434,6 @@ static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlno
 	
 	request = g_new0(PurpleHTTPRequest, 1);
 	request->path     = conn->path;
-	request->cb       = jabber_bosh_connection_http_received_cb;
 	request->userdata = conn;
 
 	request->data = xmlnode_to_str(node, &(request->data_len));
@@ -493,11 +470,7 @@ static void
 jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 {
 	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	PurpleHTTPRequestCallback cb;
 	const char *cursor;
-
-	if (!conn->current_response)
-		conn->current_response = g_new0(PurpleHTTPResponse, 1);
 
 	cursor = conn->buf->str + conn->handled_len;
 
@@ -533,28 +506,21 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	if (conn->buf->len - conn->handled_len < conn->body_len)
 		return;
 
-	cb = g_queue_pop_head(conn->requests);
+	--conn->requests;
 
 #warning For a pure HTTP 1.1 stack, this would need to be handled elsewhere.
-	if (bosh_conn->ready && g_queue_is_empty(conn->requests)) {
+	if (bosh_conn->ready && conn->requests == 0) {
 		jabber_bosh_connection_send(bosh_conn, NULL);
 		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
 	}
 
-	if (cb) {
-		conn->current_response->data_len = conn->body_len;
-		conn->current_response->data = g_memdup(conn->buf->str + conn->handled_len, conn->body_len + 1);
-
-		cb(conn->current_response, conn->userdata);
-	} else {
-		purple_debug_warning("jabber", "Received HTTP response before POST\n");
-	}
+	http_received_cb(conn->buf->str + conn->handled_len, conn->body_len,
+	                 conn->userdata);
 
 	g_string_free(conn->buf, TRUE);
 	conn->buf = NULL;
-	jabber_bosh_http_response_destroy(conn->current_response);
-	conn->current_response = NULL;
-	conn->headers_done = conn->handled_len = conn->body_len = 0;
+	conn->headers_done = FALSE;
+	conn->handled_len = conn->body_len = 0;
 }
 
 static void
@@ -662,8 +628,8 @@ jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
 	 * low-level code in jabber.c */
 	ret = write(conn->fd, packet->str, packet->len);
 
+	++conn->requests;
 	g_string_free(packet, TRUE);
-	g_queue_push_tail(conn->requests, req->cb);
 	jabber_bosh_http_request_destroy(req);
 
 	if (ret < 0 && errno == EAGAIN)
