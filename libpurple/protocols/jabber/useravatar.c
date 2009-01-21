@@ -174,10 +174,12 @@ do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data,
 		purple_debug(PURPLE_DEBUG_ERROR, "jabber",
 		             "do_buddy_avatar_update_fromurl got error \"%s\"",
 		             error_message);
-		return;
+		goto out;
 	}
 	
 	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, (void*)url_text, len, info->id);
+
+out:
 	g_free(info->from);
 	g_free(info->id);
 	g_free(info);
