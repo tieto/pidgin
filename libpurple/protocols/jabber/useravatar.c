@@ -158,6 +158,37 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 	}
 }
 
+static void
+do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
+{
+	xmlnode *item = NULL, *metadata = NULL, *info = NULL;
+	PurpleAccount *account = purple_connection_get_account(js->gc);
+	const char *current_hash = purple_account_get_string(account, "prpl-jabber_icon_checksum", "");
+	const char *server_hash = NULL;
+
+	if ((item = xmlnode_get_child(items, "item")) &&
+	     (metadata = xmlnode_get_child(item, "metadata")) &&
+	     (info = xmlnode_get_child(metadata, "info"))) {
+		server_hash = xmlnode_get_attrib(info, "id");
+	}
+
+	/* Publish ours if it's different than the server's */
+	if ((!server_hash && current_hash[0] != '\0') ||
+		 (server_hash && strcmp(server_hash, current_hash))) {
+		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+		jabber_avatar_set(js, img);
+		purple_imgstore_unref(img);
+	}
+}
+
+void jabber_avatar_fetch_mine(JabberStream *js)
+{
+	char *jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+	jabber_pep_request_item(js, jid, AVATARNAMESPACEMETA, NULL,
+	                        do_got_own_avatar_cb);
+	g_free(jid);
+}
+
 typedef struct _JabberBuddyAvatarUpdateURLInfo {
 	JabberStream *js;
 	char *from;

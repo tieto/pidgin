@@ -28,6 +28,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "dnssrv.h"
+#include "imgstore.h"
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
@@ -701,6 +702,7 @@ jabber_login(PurpleAccount *account)
 	const char *connect_server = purple_account_get_string(account,
 			"connect_server", "");
 	JabberStream *js;
+	PurpleStoredImage *image;
 	JabberBuddy *my_jb = NULL;
 
 	gc->flags |= PURPLE_CONNECTION_HTML |
@@ -736,7 +738,19 @@ jabber_login(PurpleAccount *account)
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
 	}
-	
+
+	/* This account setting is used to determine if we should re-sync our avatar to the
+	 * server at login. */
+	if ((image = purple_buddy_icons_find_account_icon(account))) {
+		char *checksum = jabber_calculate_data_sha1sum(purple_imgstore_get_data(image),
+					purple_imgstore_get_size(image));
+		purple_account_set_string(account, "prpl-jabber_icon_checksum", checksum);
+		g_free(checksum);
+		purple_imgstore_unref(image);
+	} else {
+		purple_account_set_string(account, "prpl-jabber_icon_checksum", "");
+	}
+
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 

@@ -472,7 +472,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		enc = purple_base64_encode(avatar_data, avatar_len);
 
 		js->avatar_hash = jabber_calculate_data_sha1sum(avatar_data, avatar_len);
-
 		xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
 	} else if (vc_node) {
@@ -494,7 +493,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	PurplePresence *gpresence;
 	PurpleStatus *status;
-	
+
 	jabber_avatar_set(gc->proto_data, img);
 	/* vCard avatars do not have an image type requirement so update our
 	 * vCard avatar regardless of image type for those poor older clients
@@ -1046,9 +1045,9 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 
 static void jabber_vcard_save_mine(JabberStream *js, xmlnode *packet, gpointer data)
 {
-	xmlnode *vcard;
-	char *txt;
-	PurpleStoredImage *img;
+	xmlnode *vcard, *photo, *binval;
+	char *txt, *vcard_hash = NULL;
+	const char *current_hash;
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp")))
@@ -1063,10 +1062,33 @@ static void jabber_vcard_save_mine(JabberStream *js, xmlnode *packet, gpointer d
 
 	js->vcard_fetched = TRUE;
 
-	if(NULL != (img = purple_buddy_icons_find_account_icon(js->gc->account))) {
-		jabber_set_buddy_icon(js->gc, img);
-		purple_imgstore_unref(img);
+	if (vcard && (photo = xmlnode_get_child(vcard, "PHOTO")) &&
+	             (binval = xmlnode_get_child(photo, "BINVAL"))) {
+		gsize size;
+		char *bintext = xmlnode_get_data(binval);
+		guchar *data = purple_base64_decode(bintext, &size);
+		g_free(bintext);
+
+		if (data) {
+			vcard_hash = jabber_calculate_data_sha1sum(data, size);
+			g_free(data);
+		}
 	}
+
+	current_hash = purple_account_get_string(js->gc->account,
+	                                         "prpl-jabber_icon_checksum", "");
+
+	/* Republish our vcard if the photo is different than the server's */
+	if ((!vcard_hash && current_hash[0] != '\0') ||
+		 (vcard_hash && strcmp(vcard_hash, current_hash))) {
+		PurpleAccount *account = purple_connection_get_account(js->gc);
+		jabber_set_info(js->gc, purple_account_get_user_info(account));
+	} else if (current_hash != '\0') {
+		/* Our photo is in the vcard, so advertise vcard-temp updates */
+		js->avatar_hash = g_strdup(current_hash);
+	}
+
+	g_free(vcard_hash);
 }
 
 void jabber_vcard_fetch_mine(JabberStream *js)
