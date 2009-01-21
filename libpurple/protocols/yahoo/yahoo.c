@@ -5019,12 +5019,20 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 	struct yahoo_packet *pkt;
 	char *gpn, *gpo;
 	YahooFriend *f = yahoo_friend_find(gc, who);
+	gboolean wlm = FALSE;
+	const char *temp = NULL;
 
 	/* Step 0:  If they aren't on the server list anyway,
 	 *          don't bother letting the server know.
 	 */
 	if (!f)
 		return;
+
+	if(f->protocol == 2)	{
+		wlm = TRUE;
+		temp = who+4;
+	} else
+		temp = who;
 
 	/* If old and new are the same, we would probably
 	 * end up deleting the buddy, which would be bad.
@@ -5041,11 +5049,11 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHGRP_15, YAHOO_STATUS_AVAILABLE, 0);
 	if(f->protocol)
 		yahoo_packet_hash(pkt, "ssssissss", 1, purple_connection_get_display_name(gc),
-	                  302, "240", 300, "240", 7, who, 241, f->protocol, 224, gpo, 264, gpn, 301,
+	                  302, "240", 300, "240", 7, temp, 241, f->protocol, 224, gpo, 264, gpn, 301,
 	                  "240", 303, "240");
 	else
 		yahoo_packet_hash(pkt, "ssssssss", 1, purple_connection_get_display_name(gc),
-	                  302, "240", 300, "240", 7, who, 224, gpo, 264, gpn, 301,
+	                  302, "240", 300, "240", 7, temp, 224, gpo, 264, gpn, 301,
 	                  "240", 303, "240");
 	yahoo_packet_send_and_free(pkt, yd);
 
