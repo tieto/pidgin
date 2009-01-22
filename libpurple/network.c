@@ -93,8 +93,9 @@ struct _PurpleNetworkListenData {
 static NMState nm_get_network_state(void);
 #endif
 
-/* Cached IP address for STUN server */
+/* Cached IP addresses for STUN and TURN servers (set globally in prefs) */
 static gchar *stun_ip = NULL;
+static gchar *turn_ip = NULL;
 
 const unsigned char *
 purple_network_ip_atoi(const char *ip)
@@ -694,6 +695,8 @@ nm_update_state(NMState state)
 			   offline */
 			purple_network_set_stun_server(
 				purple_prefs_get_string("/purple/network/stun_server"));
+			purple_network_set_turn_server(
+				purple_prefs_get_string("/purple/network/turn_server"));
 			
 			if (ui_ops != NULL && ui_ops->network_connected != NULL)
 				ui_ops->network_connected();
@@ -757,11 +760,13 @@ nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner,
 #endif
 
 static void
-purple_network_stun_lookup_cb(GSList *hosts, gpointer data, 
+purple_network_ip_lookup_cb(GSList *hosts, gpointer data, 
 	const char *error_message)
 {
+	const gchar **ip = (const gchar **) data; 
+	
 	if (error_message) {
-		purple_debug_error("network", "lookup of STUN server IP failed: %s\n",
+		purple_debug_error("network", "lookup of IP address failed: %s\n",
 			error_message);
 		g_slist_free(hosts);
 		return;
@@ -780,8 +785,8 @@ purple_network_stun_lookup_cb(GSList *hosts, gpointer data,
 				dst, sizeof(dst));
 		}
 			
-		stun_ip = g_strdup(dst);
-		purple_debug_info("network", "set STUN IP: %s\n", stun_ip);
+		*ip = g_strdup(dst);
+		purple_debug_info("network", "set IP address: %s\n", *ip);
 	}
 	
 	g_slist_free(hosts);
@@ -793,8 +798,8 @@ purple_network_set_stun_server(const gchar *stun_server)
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for STUN server\n");
-			purple_dnsquery_a(stun_server, 3478, purple_network_stun_lookup_cb,
-				NULL);
+			purple_dnsquery_a(stun_server, 3478, purple_network_ip_lookup_cb,
+				&stun_ip);
 		} else {
 			purple_debug_info("network", 
 				"network is unavailable, don't try to update STUN IP");
@@ -805,10 +810,36 @@ purple_network_set_stun_server(const gchar *stun_server)
 	}
 }
 
+void
+purple_network_set_turn_server(const gchar *turn_server)
+{
+	if (turn_server && turn_server[0] != '\0') {
+		if (purple_network_is_available()) {
+			purple_debug_info("network", "running DNS query for TURN server\n");
+			purple_dnsquery_a(turn_server, 
+				purple_prefs_get_int("/purple/network/turn_port"), 
+				purple_network_ip_lookup_cb, &turn_ip);
+		} else {
+			purple_debug_info("network", 
+				"network is unavailable, don't try to update TURN IP");
+		}
+	} else if (turn_ip) {
+		g_free(turn_ip);
+		turn_ip = NULL;
+	}
+}
+
+
 const gchar *
 purple_network_get_stun_ip(void)
 {
 	return stun_ip;
+}
+
+const gchar *
+purple_network_get_turn_ip(void)
+{
+	return turn_ip;
 }
 
 void *
@@ -843,6 +874,10 @@ purple_network_init(void)
 
 	purple_prefs_add_none  ("/purple/network");
 	purple_prefs_add_string("/purple/network/stun_server", "");
+	purple_prefs_add_string("/purple/network/turn_server", "");
+	purple_prefs_add_int   ("/purple/network/turn_port", 3478);
+	purple_prefs_add_string("/purple/network/turn_username", "");
+	purple_prefs_add_string("/purple/network/turn_password", "");
 	purple_prefs_add_bool  ("/purple/network/auto_ip", TRUE);
 	purple_prefs_add_string("/purple/network/public_ip", "");
 	purple_prefs_add_bool  ("/purple/network/map_ports", TRUE);
@@ -884,6 +919,8 @@ purple_network_init(void)
 	
 	purple_network_set_stun_server(
 		purple_prefs_get_string("/purple/network/stun_server"));
+	purple_network_set_turn_server(
+		purple_prefs_get_string("/purple/network/turn_server"));
 }
 
 void

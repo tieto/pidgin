@@ -1622,23 +1622,70 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		GError *err = NULL;
 		FsStream *fsstream = NULL;
 		const gchar *stun_ip = purple_network_get_stun_ip();
+		const gchar *turn_ip = purple_network_get_turn_ip();
 		
-		
-		if (stun_ip) {
-			GParameter *param = g_new0(GParameter, num_params+1);
+		if (stun_ip || turn_ip) {
+			guint new_num_params = 
+				stun_ip && turn_ip ? num_params + 2 : num_params + 1;
+			guint next_param_index = num_params;
+			GParameter *param = g_new0(GParameter, new_num_params);
 			memcpy(param, params, sizeof(GParameter) * num_params);
 
-			purple_debug_info("media", 
-				"setting property stun-ip on new stream: %s\n", stun_ip);
+			if (stun_ip) {
+				purple_debug_info("media", 
+					"setting property stun-ip on new stream: %s\n", stun_ip);
 			
-			param[num_params].name = "stun-ip";
-			g_value_init(&param[num_params].value, G_TYPE_STRING);
-			g_value_set_string(&param[num_params].value, stun_ip);
+				param[next_param_index].name = "stun-ip";
+				g_value_init(&param[next_param_index].value, G_TYPE_STRING);
+				g_value_set_string(&param[next_param_index].value, stun_ip);
+				next_param_index++;
+			}
+			
+			if (turn_ip) {
+				GValueArray *relay_info = g_value_array_new(0);
+				GValue value = {0};
+				gint turn_port = 
+					purple_prefs_get_int("/purple/network/turn_port");
+				const gchar *username =
+					purple_prefs_get_string("/purple/network/turn_username");
+				const gchar *password =
+					purple_prefs_get_string("/purple/network/turn_password");
+				GstStructure *turn_setup = gst_structure_new("relay-info",
+					"ip", G_TYPE_STRING, turn_ip, 
+					"port", G_TYPE_UINT, turn_port,
+					"username", G_TYPE_STRING, username,
+					"password", G_TYPE_STRING, password,
+					NULL);
 
+				if (turn_setup) {
+					g_value_init(&value, GST_TYPE_STRUCTURE);
+					gst_value_set_structure(&value, turn_setup);
+					relay_info = g_value_array_append(relay_info, &value);
+					gst_structure_free(turn_setup);
+					
+					purple_debug_info("media",
+						"setting property relay-info on new stream\n");
+					param[next_param_index].name = "relay-info";
+					g_value_init(&param[next_param_index].value, 
+						G_TYPE_VALUE_ARRAY);
+					g_value_set_boxed(&param[next_param_index].value,
+						relay_info);
+					g_value_array_free(relay_info);
+				} else {
+					purple_debug_error("media", "Error relay info");
+					g_object_unref(participant);
+					g_hash_table_remove(media->priv->participants, who);
+					purple_media_remove_session(media, session);
+					g_free(session);
+					return FALSE;
+				}
+				
+			}
+				
 			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction &
 					FS_DIRECTION_RECV, transmitter,
-					num_params+1, param, &err);
+					new_num_params, param, &err);
 			g_free(param);
 		} else {
 			fsstream = fs_session_new_stream(session->session,

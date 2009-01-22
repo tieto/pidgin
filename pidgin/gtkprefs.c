@@ -137,6 +137,26 @@ pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
 	return pidgin_add_widget_to_vbox(GTK_BOX(page), title, sg, entry, TRUE, NULL);
 }
 
+GtkWidget *
+pidgin_prefs_labeled_password(GtkWidget *page, const gchar *title,
+							 const char *key, GtkSizeGroup *sg)
+{
+	GtkWidget *entry;
+	const gchar *value;
+
+	value = purple_prefs_get_string(key);
+
+	entry = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_entry_set_text(GTK_ENTRY(entry), value);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(entry_set), (char*)key);
+	gtk_widget_show(entry);
+
+	return pidgin_add_widget_to_vbox(GTK_BOX(page), title, sg, entry, TRUE, NULL);
+}
+
+
 static void
 dropdown_set(GObject *w, const char *key)
 {
@@ -1153,6 +1173,17 @@ static gboolean network_stun_server_changed_cb(GtkWidget *widget,
 	return FALSE;
 }
 
+static gboolean network_turn_server_changed_cb(GtkWidget *widget, 
+	GdkEventFocus *event, gpointer data)
+{
+	GtkEntry *entry = GTK_ENTRY(widget);
+	purple_prefs_set_string("/purple/network/turn_server",
+		gtk_entry_get_text(entry));
+	purple_network_set_turn_server(gtk_entry_get_text(entry));
+	
+	return FALSE;
+}
+
 static void
 proxy_changed_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
@@ -1314,6 +1345,43 @@ network_page(void)
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
+	vbox = pidgin_make_frame(ret, _("Relay Server (TURN)"));
+
+	/* TURN server */
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	label = gtk_label_new_with_mnemonic(_("_Server:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+	g_signal_connect(G_OBJECT(entry), "focus-out-event",
+					 G_CALLBACK(network_turn_server_changed_cb), NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry), 
+		purple_prefs_get_string("/purple/network/turn_server"));
+	gtk_misc_set_alignment(GTK_MISC(entry), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	
+	gtk_size_group_add_widget(GTK_SIZE_GROUP(sg), label);
+	gtk_size_group_add_widget(GTK_SIZE_GROUP(sg), entry);
+	
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	spin_button = pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
+		"/purple/network/turn_port", 0, 65535, sg);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	entry = pidgin_prefs_labeled_entry(hbox, "_User name:", 
+		"/purple/network/turn_username", sg);
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	entry = pidgin_prefs_labeled_password(hbox, "_Password:",
+		"/purple/network/turn_password", sg);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	
+	
 	if (purple_running_gnome()) {
 		vbox = pidgin_make_frame(ret, _("Proxy Server &amp; Browser"));
 		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
