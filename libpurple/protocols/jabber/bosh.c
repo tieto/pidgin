@@ -74,14 +74,13 @@ struct _PurpleHTTPConnection {
     int pih; /* what? */
     PurpleHTTPConnectionConnectFunction connect_cb;
     PurpleHTTPConnectionConnectFunction disconnect_cb;
-    void *userdata;
+    PurpleBOSHConnection *bosh;
 };
 
 struct _PurpleHTTPRequest {
     const char *path;
     char *data;
     int data_len;
-    void *userdata;
 };
 
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
@@ -183,7 +182,7 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	conn->rid = rand() % 100000 + 1728679472;
 	conn->ready = FALSE;
 	conn->conn_a = jabber_bosh_http_connection_init(conn->host, conn->port);
-	conn->conn_a->userdata = conn;
+	conn->conn_a->bosh = conn;
 
 	return conn;
 }
@@ -373,9 +372,8 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 }
 
 static void
-http_received_cb(const char *data, int len, void *userdata)
+http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 {
-	PurpleBOSHConnection *conn = userdata;
 	if (conn->receive_cb) {
 		xmlnode *node = xmlnode_from_str(data, len);
 		if (node) {
@@ -433,21 +431,19 @@ static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlno
 	PurpleHTTPRequest *request;
 	
 	request = g_new0(PurpleHTTPRequest, 1);
-	request->path     = conn->path;
-	request->userdata = conn;
-
+	request->path = conn->path;
 	request->data = xmlnode_to_str(node, &(request->data_len));
 
 	jabber_bosh_http_connection_send_request(conn->conn_a, request);
 }
 
 static void jabber_bosh_connection_connected(PurpleHTTPConnection *conn) {
-	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	if (bosh_conn->ready == TRUE && bosh_conn->connect_cb) {
+	if (conn->bosh->ready == TRUE && conn->bosh->connect_cb) {
 		purple_debug_info("jabber", "BOSH session already exists. Trying to reuse it.\n");
-		bosh_conn->receive_cb = jabber_bosh_connection_received;
-		bosh_conn->connect_cb(bosh_conn);
-	} else jabber_bosh_connection_boot(bosh_conn);
+		conn->bosh->receive_cb = jabber_bosh_connection_received;
+		conn->bosh->connect_cb(conn->bosh);
+	} else
+		jabber_bosh_connection_boot(conn->bosh);
 }
 
 void jabber_bosh_connection_refresh(PurpleBOSHConnection *conn)
@@ -456,9 +452,8 @@ void jabber_bosh_connection_refresh(PurpleBOSHConnection *conn)
 }
 
 static void jabber_bosh_http_connection_disconnected(PurpleHTTPConnection *conn) {
-	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	bosh_conn->conn_a->connect_cb = jabber_bosh_connection_connected;
-	jabber_bosh_http_connection_connect(bosh_conn->conn_a);
+	conn->connect_cb = jabber_bosh_connection_connected;
+	jabber_bosh_http_connection_connect(conn);
 }
 
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
@@ -469,7 +464,6 @@ void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
 static void
 jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 {
-	PurpleBOSHConnection *bosh_conn = conn->userdata;
 	const char *cursor;
 
 	cursor = conn->buf->str + conn->handled_len;
@@ -509,13 +503,13 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	--conn->requests;
 
 #warning For a pure HTTP 1.1 stack, this would need to be handled elsewhere.
-	if (bosh_conn->ready && conn->requests == 0) {
-		jabber_bosh_connection_send(bosh_conn, NULL);
+	if (conn->bosh->ready && conn->requests == 0) {
+		jabber_bosh_connection_send(conn->bosh, NULL);
 		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
 	}
 
 	http_received_cb(conn->buf->str + conn->handled_len, conn->body_len,
-	                 conn->userdata);
+	                 conn->bosh);
 
 	g_string_free(conn->buf, TRUE);
 	conn->buf = NULL;
@@ -571,8 +565,7 @@ jabber_bosh_http_connection_read(gpointer data, gint fd,
 static void jabber_bosh_http_connection_callback(gpointer data, gint source, const gchar *error)
 {
 	PurpleHTTPConnection *conn = data;
-	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	PurpleConnection *gc = bosh_conn->js->gc;
+	PurpleConnection *gc = conn->bosh->js->gc;
 
 	if (source < 0) {
 		gchar *tmp;
@@ -594,8 +587,7 @@ static void jabber_bosh_http_connection_callback(gpointer data, gint source, con
 
 static void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn)
 {
-	PurpleBOSHConnection *bosh_conn = conn->userdata;
-	PurpleConnection *gc = bosh_conn->js->gc;
+	PurpleConnection *gc = conn->bosh->js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if ((purple_proxy_connect(conn, account, conn->host, conn->port, jabber_bosh_http_connection_callback, conn)) == NULL) {
@@ -609,7 +601,6 @@ static void
 jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
                                          PurpleHTTPRequest *req)
 {
-	PurpleBOSHConnection *bosh_conn = conn->userdata;
 	GString *packet = g_string_new("");
 	int ret;
 
@@ -636,7 +627,7 @@ jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
 		purple_debug_warning("jabber", "BOSH write would have blocked\n");
 
 	if (ret <= 0) {
-		purple_connection_error_reason(bosh_conn->js->gc,
+		purple_connection_error_reason(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Write error"));
 		return;
