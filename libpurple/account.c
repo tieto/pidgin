@@ -257,15 +257,20 @@ static xmlnode *
 statuses_to_xmlnode(const PurplePresence *presence)
 {
 	xmlnode *node, *child;
-	GList *statuses, *status;
+	GList *statuses;
+	PurpleStatus *status;
 
 	node = xmlnode_new("statuses");
 
 	statuses = purple_presence_get_statuses(presence);
-	for (status = statuses; status != NULL; status = status->next)
+	for (; statuses != NULL; statuses = statuses->next)
 	{
-		child = status_to_xmlnode((PurpleStatus *)status->data);
-		xmlnode_insert_child(node, child);
+		status = statuses->data;
+		if (purple_status_type_is_saveable(purple_status_get_type(status)))
+		{
+			child = status_to_xmlnode(status);
+			xmlnode_insert_child(node, child);
+		}
 	}
 
 	return node;
