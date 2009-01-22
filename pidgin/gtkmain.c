@@ -323,9 +323,6 @@ pidgin_quit(void)
 	pidgin_session_end();
 #endif
 
-	/* Save the plugins we have loaded for next time. */
-	pidgin_plugins_save();
-
 	/* Uninit */
 	pidgin_utils_uninit();
 	pidgin_smileys_uninit();
