@@ -764,14 +764,14 @@ purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
 	const char *error_message)
 {
 	const gchar **ip = (const gchar **) data; 
-	
+
 	if (error_message) {
 		purple_debug_error("network", "lookup of IP address failed: %s\n",
 			error_message);
 		g_slist_free(hosts);
 		return;
 	}
-	
+
 	if (hosts && g_slist_next(hosts)) {
 		size_t addr_len = (size_t) hosts->data;
 		struct sockaddr *addr = g_slist_next(hosts)->data; 
@@ -784,7 +784,7 @@ purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
 			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr, 
 				dst, sizeof(dst));
 		}
-			
+
 		*ip = g_strdup(dst);
 		purple_debug_info("network", "set IP address: %s\n", *ip);
 	}

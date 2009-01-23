@@ -1623,7 +1623,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		FsStream *fsstream = NULL;
 		const gchar *stun_ip = purple_network_get_stun_ip();
 		const gchar *turn_ip = purple_network_get_turn_ip();
-		
+
 		if (stun_ip || turn_ip) {
 			guint new_num_params = 
 				stun_ip && turn_ip ? num_params + 2 : num_params + 1;
@@ -1634,13 +1634,13 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 			if (stun_ip) {
 				purple_debug_info("media", 
 					"setting property stun-ip on new stream: %s\n", stun_ip);
-			
+
 				param[next_param_index].name = "stun-ip";
 				g_value_init(&param[next_param_index].value, G_TYPE_STRING);
 				g_value_set_string(&param[next_param_index].value, stun_ip);
 				next_param_index++;
 			}
-			
+
 			if (turn_ip) {
 				GValueArray *relay_info = g_value_array_new(0);
 				GValue value = {0};
@@ -1662,7 +1662,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 					gst_value_set_structure(&value, turn_setup);
 					relay_info = g_value_array_append(relay_info, &value);
 					gst_structure_free(turn_setup);
-					
+
 					purple_debug_info("media",
 						"setting property relay-info on new stream\n");
 					param[next_param_index].name = "relay-info";
@@ -1679,9 +1679,8 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 					g_free(session);
 					return FALSE;
 				}
-				
 			}
-				
+
 			fsstream = fs_session_new_stream(session->session,
 					participant, type_direction &
 					FS_DIRECTION_RECV, transmitter,
