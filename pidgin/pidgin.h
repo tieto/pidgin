@@ -91,7 +91,7 @@
 #define PIDGIN_HIG_BORDER        12
 #define PIDGIN_HIG_BOX_SPACE      6
 
-#if !GTK_CHECK_VERSION(2,16,0)
+#if !GTK_CHECK_VERSION(2,16,0) || !defined(PIDGIN_DISABLE_DEPRECATED)
 /*
  * Older versions of GNOME defaulted to using an asterisk as the invisible
  * character.  But this is ugly and we want to use something nicer.
