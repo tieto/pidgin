@@ -773,7 +773,6 @@ purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
 	}
 
 	if (hosts && g_slist_next(hosts)) {
-		size_t addr_len = (size_t) hosts->data;
 		struct sockaddr *addr = g_slist_next(hosts)->data; 
 		char dst[INET6_ADDRSTRLEN];
 		

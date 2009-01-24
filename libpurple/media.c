@@ -1643,7 +1643,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 			if (turn_ip) {
 				GValueArray *relay_info = g_value_array_new(0);
-				GValue value = {0};
+				GValue value;
 				gint turn_port = 
 					purple_prefs_get_int("/purple/network/turn_port");
 				const gchar *username =
@@ -1658,6 +1658,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 					NULL);
 
 				if (turn_setup) {
+					memset(&value, 0, sizeof(GValue));
 					g_value_init(&value, GST_TYPE_STRUCTURE);
 					gst_value_set_structure(&value, turn_setup);
 					relay_info = g_value_array_append(relay_info, &value);
