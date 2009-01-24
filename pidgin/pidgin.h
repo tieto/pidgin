@@ -93,10 +93,10 @@
 
 #if !GTK_CHECK_VERSION(2,16,0)
 /*
- * Older version of GNOME defaulted to using an asterisk as the invisible
+ * Older versions of GNOME defaulted to using an asterisk as the invisible
  * character.  But this is ugly and we want to use something nicer.
  *
- * The default invisible character was changed in Gnome revision 21446
+ * The default invisible character was changed in GNOME revision 21446
  * (GTK+ 2.16) from an asterisk to the first available character out of
  * 0x25cf, 0x2022, 0x2731, 0x273a.  See GNOME bugs 83935 and 307304 for
  * discussion leading up to the change.
