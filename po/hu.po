@@ -1,16 +1,16 @@
 # Hungarian translation of pidgin.
-# Copyright (C) 2003, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 # This file is distributed under the same license as the Pidgin package.
-# The Hungarian translation of Gaim was sponsored by Novell Hungary, many thanks for it!
+# The Hungarian translation of Pidgin was sponsored by Novell Hungary, many thanks for it!
 #
 # Zoltan Sutto <suttozoltan@chello.hu>, 2003.
-# Gabor Kelemen <kelemeng@gnome.hu>, 2005, 2006, 2007, 2008.
+# Gabor Kelemen <kelemeng@gnome.hu>, 2005, 2006, 2007, 2008, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 12:34+0100\n"
-"PO-Revision-Date: 2008-12-18 12:29+0100\n"
+"POT-Creation-Date: 2009-01-04 22:44+0100\n"
+"PO-Revision-Date: 2009-01-04 22:42+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
 "MIME-Version: 1.0\n"
@@ -4156,6 +4156,9 @@ msgstr "Hitelesítés"
 msgid "Re-initializing Stream"
 msgstr "A folyam újrainicializálása"
 
+msgid "Server doesn't support blocking"
+msgstr "A kiszolgáló nem támogatja a blokkolást"
+
 msgid "Not Authorized"
 msgstr "Nem engedélyezett"
 
@@ -4909,7 +4912,6 @@ msgstr "Gyermekek Passport-ja (MSN igazolvány) szülői beleegyezés nélkül"
 msgid "Passport account not yet verified"
 msgstr "Passport fiók (MSN igazolvány) még nincs ellenőrizve"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "A Passport fiók felfüggesztve"
 
@@ -6505,12 +6507,10 @@ msgid "_OK"
 msgstr "_OK"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Hamarosan megszakad a kapcsolat. A helyreállításig használja a TOC-ot. "
-"Frissítésekért keresse fel a következő címet: %s."
+"Hamarosan megszakadhat a kapcsolat. Ebbben az esetben keressen frissítéseket "
+"a következő címen: %s."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Nem kérhető le érvényes AIM belépő hash."
@@ -9286,6 +9286,9 @@ msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 "A SIP felhasználónevek nem tartalmazhatnak üreshely-karaktert vagy @ "
 "szimbólumot"
+
+msgid "SIP connect server not specified"
+msgstr "A SIP kapcsolatkiszolgáló nincs megadva"
 
 #. *< type
 #. *< ui_requirement

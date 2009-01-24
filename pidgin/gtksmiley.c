@@ -37,7 +37,7 @@
 #include "gtkutils.h"
 #include "pidginstock.h"
 
-#define PIDGIN_RESPONSE_EDIT 1000
+#define PIDGIN_RESPONSE_MODIFY 1000
 
 struct _PidginSmiley
 {
@@ -590,7 +590,7 @@ static void smile_selected_cb(GtkTreeSelection *sel, SmileyManager *dialog)
 			GTK_RESPONSE_NO, selected > 0);
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog->window),
-			PIDGIN_RESPONSE_EDIT, selected > 0);
+	                                  PIDGIN_RESPONSE_MODIFY, selected > 0);
 }
 
 static void
@@ -682,7 +682,7 @@ static void smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager
 			g_free(smiley_manager);
 			smiley_manager = NULL;
 			break;
-		case PIDGIN_RESPONSE_EDIT:
+		case PIDGIN_RESPONSE_MODIFY:
 			/* Find smiley of selection... */
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 			gtk_tree_selection_selected_foreach(selection, edit_selected_cb, dialog);
@@ -713,7 +713,7 @@ void pidgin_smiley_manager_show(void)
 			NULL,
 			GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_STOCK_ADD, GTK_RESPONSE_YES,
-			PIDGIN_STOCK_EDIT, PIDGIN_RESPONSE_EDIT,
+			PIDGIN_STOCK_MODIFY, PIDGIN_RESPONSE_MODIFY,
 			GTK_STOCK_DELETE, GTK_RESPONSE_NO,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 			NULL);
@@ -722,8 +722,8 @@ void pidgin_smiley_manager_show(void)
 	gtk_window_set_role(GTK_WINDOW(win), "custom_smiley_manager");
 	gtk_container_set_border_width(GTK_CONTAINER(win),PIDGIN_HIG_BORDER);
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(win), GTK_RESPONSE_NO, FALSE);
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(win), PIDGIN_RESPONSE_EDIT,
-									  FALSE);
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(win),
+	                                  PIDGIN_RESPONSE_MODIFY, FALSE);
 
 	g_signal_connect(win, "response", G_CALLBACK(smiley_manager_select_cb),
 			dialog);

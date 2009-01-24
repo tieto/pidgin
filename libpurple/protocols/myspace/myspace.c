@@ -211,7 +211,6 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 			/* Don't have uid offhand - need to ask for it, and wait until hear back before sending. */
 			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
 					username ? username : "(NULL)");
-			/* TODO: where is cloned message freed? Should be in _cb. */
 			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, msim_msg_clone(msg));
 			return TRUE;       /* not sure of status yet - haven't sent! */
 		}
@@ -534,7 +533,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	guchar hash_pw[HASH_SIZE];
 	guchar key[HASH_SIZE];
-	gchar *password_utf16le, *password_utf8_lc;
+	gchar *password_truncated, *password_utf16le, *password_utf8_lc;
 	GString *data;
 	guchar *data_out;
 	size_t data_out_len;
@@ -549,10 +548,19 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	g_return_val_if_fail(password != NULL, NULL);
 	g_return_val_if_fail(response_len != NULL, NULL);
 
+	/*
+	 * Truncate password to 10 characters.  Their "change password"
+	 * web page doesn't let you enter more than 10 characters, but you
+	 * can enter more than 10 when logging in on myspace.com and they
+	 * truncate it.
+	 */
+	password_truncated = g_strndup(password, 10);
+
 	/* Convert password to lowercase (required for passwords containing
 	 * uppercase characters). MySpace passwords are lowercase,
 	 * see ticket #2066. */
-	password_utf8_lc = g_utf8_strdown(password, -1);
+	password_utf8_lc = g_utf8_strdown(password_truncated, -1);
+	g_free(password_truncated);
 
 	/* Convert ASCII password to UTF16 little endian */
 	purple_debug_info("msim", "converting password to UTF-16LE\n");
@@ -560,8 +568,6 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	password_utf16le = g_convert(password_utf8_lc, -1, "UTF-16LE", "UTF-8",
 			&conv_bytes_read, &conv_bytes_written, &conv_error);
 	g_free(password_utf8_lc);
-
-	g_return_val_if_fail(conv_bytes_read == strlen(password), NULL);
 
 	if (conv_error != NULL) {
 		purple_debug_error("msim",
@@ -1923,8 +1929,7 @@ msim_incoming_resolved(MsimSession *session, const MsimMessage *userinfo,
 
 	msim_process(session, msg);
 
-	/* TODO: Free copy cloned from  msim_preprocess_incoming(). */
-	/* msim_msg_free(msg); */
+	msim_msg_free(msg);
 	msim_msg_free(body);
 }
 
@@ -2731,9 +2736,15 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	 * doesn't seem like it would be necessary, but the official client
 	 * does it)
 	 */
-	if (!msim_update_blocklist_for_buddy(session, buddy->name, FALSE, FALSE))
+	if (!msim_update_blocklist_for_buddy(session, buddy->name, FALSE, FALSE)) {
 		purple_notify_error(NULL, NULL,
 				_("Failed to remove buddy"), _("blocklist command failed"));
+		return;
+	}
+	if (buddy->proto_data) {
+		msim_user_free(buddy->proto_data);
+		buddy->proto_data = NULL;
+	}
 }
 
 /**
@@ -2823,6 +2834,13 @@ msim_rem_deny(PurpleConnection *gc, const char *name)
 	msim_update_blocklist_for_buddy(session, name, FALSE, FALSE);
 }
 
+static void
+msim_buddy_free(PurpleBuddy *buddy)
+{
+	msim_user_free(buddy->proto_data);
+	buddy->proto_data = NULL;
+}
+
 /**
  * Returns a string of a username in canonical form. Basically removes all the
  * spaces, lowercases the string, and looks up user IDs to usernames.
@@ -2865,10 +2883,9 @@ static const char *msim_normalize(const PurpleAccount *account, const char *str)
 	}
 
 	/* Strip spaces. */
-	for (i=0, j=0; normalized[j]; i++, j++) {
-		while (normalized[j] == ' ')
-			j++;
-		normalized[i] = normalized[j];
+	for (i=0, j=0; normalized[j]; j++) {
+		if (normalized[j] != ' ')
+			normalized[i++] = normalized[j];
 	}
 	normalized[i] = '\0';
 
@@ -3039,7 +3056,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,              /* alias_buddy */
 	NULL,              /* group_buddy */
 	NULL,              /* rename_group */
-	NULL,              /* buddy_free */
+	msim_buddy_free,   /* buddy_free */
 	NULL,              /* convo_closed */
 	msim_normalize,    /* normalize */
 	NULL,              /* set_buddy_icon */

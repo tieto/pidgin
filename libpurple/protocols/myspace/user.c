@@ -55,16 +55,32 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 	if (!buddy->proto_data) {
 		/* No MsimUser for this buddy; make one. */
 
-		/* TODO: where is this freed? */
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
-		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
+		user->id = purple_blist_node_get_int((PurpleBlistNode*)buddy, "UserID");
 		buddy->proto_data = (gpointer)user;
 	}
 
 	user = (MsimUser *)(buddy->proto_data);
 
 	return user;
+}
+
+void msim_user_free(MsimUser *user)
+{
+	if (!user)
+		return;
+
+	g_free(user->client_info);
+	g_free(user->gender);
+	g_free(user->location);
+	g_free(user->headline);
+	g_free(user->display_name);
+	g_free(user->username);
+	g_free(user->band_name);
+	g_free(user->song_name);
+	g_free(user->image_url);
+	g_free(user);
 }
 
 /**
@@ -406,10 +422,11 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 	}
 
 	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
-		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
+		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID)
+	{
 		/*
 		 * Some of this info will be available on the buddy list if the
-		 * has themselves as their own buddy.
+		 * user has themselves as their own buddy.
 		 *
 		 * Much of the info is already available in MsimSession,
 		 * stored in msim_we_are_logged_on().
@@ -431,7 +448,7 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 				"idlist", MSIM_TYPE_STRING,
 						g_strdup_printf("w%d|c%d",
 								session->show_only_to_list ? 1 : 0,
-								session->privacy_mode),
+								session->privacy_mode & 1),
 				NULL);
 	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
 			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {

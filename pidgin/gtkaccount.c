@@ -286,24 +286,26 @@ static gboolean
 screenname_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
 {
 	GdkColor color = {0, 34952, 35466, 34181};
-	GHashTable *table;
-	const char *label;
+	GHashTable *table = NULL;
+	const char *label = NULL;
 
-	table = dialog->prpl_info->get_account_text_table(NULL);
-	label = g_hash_table_lookup(table, "login_label");
+	if(PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
+		table = dialog->prpl_info->get_account_text_table(NULL);
+		label = g_hash_table_lookup(table, "login_label");
 
-	if (*gtk_entry_get_text(GTK_ENTRY(widget)) == '\0') {
-		/* We have to avoid hitting the screenname_changed_cb function 
-		 * because it enables buttons we don't want enabled yet ;)
-		 */
-		g_signal_handlers_block_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
-		gtk_entry_set_text(GTK_ENTRY(widget), label);
-		/* Make sure we can hit it again */
-		g_signal_handlers_unblock_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
-		gtk_widget_modify_text(widget, GTK_STATE_NORMAL, &color);
+		if (*gtk_entry_get_text(GTK_ENTRY(widget)) == '\0') {
+			/* We have to avoid hitting the screenname_changed_cb function 
+			 * because it enables buttons we don't want enabled yet ;)
+			 */
+			g_signal_handlers_block_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
+			gtk_entry_set_text(GTK_ENTRY(widget), label);
+			/* Make sure we can hit it again */
+			g_signal_handlers_unblock_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
+			gtk_widget_modify_text(widget, GTK_STATE_NORMAL, &color);
+		}
+
+		g_hash_table_destroy(table);
 	}
-
-	g_hash_table_destroy(table);
 
 	return FALSE;
 }
@@ -1543,7 +1545,10 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CANCEL, G_CALLBACK(cancel_account_prefs_cb), dialog);
 
 	/* Save button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_SAVE, G_CALLBACK(ok_account_prefs_cb), dialog);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win),
+	                                  (type == PIDGIN_ADD_ACCOUNT_DIALOG) ? GTK_STOCK_ADD : GTK_STOCK_SAVE,
+	                                  G_CALLBACK(ok_account_prefs_cb),
+	                                  dialog);
 	if (dialog->account == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
 	dialog->ok_button = button;

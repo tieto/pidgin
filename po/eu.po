@@ -25,7 +25,7 @@ msgstr "Frantsesa"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Informazio gehiago nahi baduzu, idatzi `%s -h'.\n"
+msgstr "Pidgin %s. Informazio gehiago nahi baduzu, idatzi `%s -h'.\n"
 
 #, fuzzy, c-format
 msgid ""
@@ -38,7 +38,7 @@ msgid ""
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Erabiltzeko era: %s [Aukerak]...\n"
 "\n"
 "  -c, --config=DIR    erabili DIR konfigurazio fitxategientzat\n"
@@ -577,7 +577,7 @@ msgid ""
 "and re-enable the account."
 msgstr ""
 "%s deskonektatua izan da errorea baten ondorioz: %s\n"
-" Gaim ez da saiatuko kontua berriz konektatzen errorea konpondu  eta kontua "
+" Pidgin ez da saiatuko kontua berriz konektatzen errorea konpondu  eta kontua "
 "ahalbidetu arte."
 
 msgid "Re-enable Account"
@@ -999,7 +999,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Error loading plugin"
-msgstr "Gaim-ek errore bat aurkitu du plugin -a kargatzean"
+msgstr "Pidgin-ek errore bat aurkitu du plugin -a kargatzean"
 
 msgid "The selected file is not a valid plugin."
 msgstr ""
@@ -1496,7 +1496,7 @@ msgstr "Egoera"
 
 #, fuzzy
 msgid "Error loading the plugin."
-msgstr "Gaim-ek errore bat aurkitu du plugin -a kargatzean"
+msgstr "Pidgin-ek errore bat aurkitu du plugin -a kargatzean"
 
 #, fuzzy
 msgid "Couldn't find X display"
@@ -2259,7 +2259,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaim-ek ezin du plugin-a kargatu."
+msgstr "Pidgin-ek ezin du plugin-a kargatu."
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2267,7 +2267,7 @@ msgstr "Behar den %s plugin-a ezin da kargatu."
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaim-ek ezin du plugin-a kargatu."
+msgstr "Pidgin-ek ezin du plugin-a kargatu."
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2408,7 +2408,7 @@ msgstr "DBus Plugin adibidea"
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Gaim fitxategien kontrola"
+msgstr "Pidgin fitxategien kontrola"
 
 #. *< name
 #. *< version
@@ -2417,7 +2417,7 @@ msgstr "Gaim fitxategien kontrola"
 #, fuzzy
 msgid "Allows control by entering commands in a file."
 msgstr ""
-"Aukera ematen dizu Gaim kontrolatzeko fitxategi batean komandoak sartuz."
+"Aukera ematen dizu Pidgin kontrolatzeko fitxategi batean komandoak sartuz."
 
 msgid "Minutes"
 msgstr "Minutu"
@@ -3257,7 +3257,7 @@ msgstr "Fitxategi-transferentzia huts egin du"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaim-ek ezin izan du ireki entzuteko ataka bat."
+msgstr "Pidgin-ek ezin izan du ireki entzuteko ataka bat."
 
 msgid "Error displaying MOTD"
 msgstr "Errorea MOTD bistaratzean"
@@ -3422,7 +3422,7 @@ msgstr "Mezu ezezaguna"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "Gaim-ek IRC zerbitzariak ulertu ez duen mezu bat bidali du."
+msgstr "Pidgin-ek IRC zerbitzariak ulertu ez duen mezu bat bidali du."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -4885,7 +4885,7 @@ msgstr "Ezin da mezua analizatu"
 
 #, fuzzy, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "Sintaxi-errorea (beharbada Gaim errorea dago)"
+msgstr "Sintaxi-errorea (beharbada Pidgin errorea dago)"
 
 #, c-format
 msgid "Invalid email address"
@@ -5256,7 +5256,7 @@ msgstr "Hasi _berriketa"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "SSL euskarria behar da MSNrako. Instalatu SSL liburutegi onartu bat. "
-"Informazio gehiago: http://gaim.sf.net/faq-ssl.php."
+"Informazio gehiago: http://Pidgin.sf.net/faq-ssl.php."
 
 msgid "Failed to connect to server."
 msgstr "Huts egin du zerbitzariarekin konektatzean."
@@ -5419,7 +5419,7 @@ msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
 msgstr ""
-"Gaim-ek ezin izan du erabiltzailearen profilean informaziorik aurkitu. "
+"Pidgin-ek ezin izan du erabiltzailearen profilean informaziorik aurkitu. "
 "Erabiltzailea ez dela existitzen dirudi."
 
 msgid "Profile URL"
@@ -6743,7 +6743,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid AIM login hash."
-msgstr "Gaim-ek ezin du lortu AIM saio-hasierako hash baliozkorik."
+msgstr "Pidgin-ek ezin du lortu AIM saio-hasierako hash baliozkorik."
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
@@ -6753,7 +6753,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid login hash."
-msgstr "Gaim-ek ezin du lortu saio-hasierako hash baliozkorik."
+msgstr "Pidgin-ek ezin du lortu saio-hasierako hash baliozkorik."
 
 msgid "Password sent"
 msgstr "Pasahitza bidali da"
@@ -7077,9 +7077,9 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Profilaren gehienezko luzera (%d byte) gainditu da. Gaim-ek trunkatu egin du."
+"Profilaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek trunkatu egin du."
 msgstr[1] ""
-"Profilaren gehienezko luzera (%d byte) gainditu da. Gaim-ek trunkatu egin du."
+"Profilaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek trunkatu egin du."
 
 msgid "Profile too long."
 msgstr "Profila luzeegia da."
@@ -7092,10 +7092,10 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Gaim-ek "
+"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek "
 "trunkatu egin du."
 msgstr[1] ""
-"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Gaim-ek "
+"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek "
 "trunkatu egin du."
 
 msgid "Away message too long."
@@ -7124,7 +7124,7 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"Gaim-ek ezin izan du eskuratu zure lagunen zerrenda AIM zerbitzarietatik. "
+"Pidgin-ek ezin izan du eskuratu zure lagunen zerrenda AIM zerbitzarietatik. "
 "Zure lagunen zerrenda ez da galdu, eta ordu batzuk barru erabilgarri egongo "
 "da seguru asko."
 
@@ -7670,7 +7670,7 @@ msgstr "Sortu"
 
 #, fuzzy
 msgid "About me"
-msgstr "Gaim-i buruz"
+msgstr "Pidgin-i buruz"
 
 #, fuzzy
 msgid "Category"
@@ -7890,7 +7890,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Gaim-i buruz"
+msgstr "Pidgin-i buruz"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7908,7 +7908,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Gaim-i buruz"
+msgstr "Pidgin-i buruz"
 
 #. *< type
 #. *< ui_requirement
@@ -9308,7 +9308,7 @@ msgstr "Huts egin du %s(r)en moduak ezartzean"
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Komando ezezaguna: %s (Gaim-en akatsa izan daiteke)"
+msgstr "Komando ezezaguna: %s (Pidgin-en akatsa izan daiteke)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr "part [kanala]:  irten berriketatik"
@@ -9905,7 +9905,7 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "Yahoo zerbitzariak autentifikatzeko metodo ezezagun bat erabiltzea eskatu "
-"du. Gaim-en bertsio hau ez da gai izango Yahoo-n ondo sartzeko. Eguneratzeak "
+"du. Pidgin-en bertsio hau ez da gai izango Yahoo-n ondo sartzeko. Eguneratzeak "
 "lortzeko, begiratu %s gunean."
 
 msgid "Failed Yahoo! Authentication"
@@ -11914,7 +11914,7 @@ msgstr "Amharic"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Gaim-i buruz"
+msgstr "Pidgin-i buruz"
 
 #, fuzzy, c-format
 msgid ""
@@ -11928,18 +11928,18 @@ msgid ""
 "complete list of contributors.  We provide no warranty for this program."
 "<BR><BR>"
 msgstr ""
-"Gaim berehalako mezuen bezero modularra da  AIM, MSN, Yahoo!, Jabber, ICQ, "
+"Pidgin berehalako mezuen bezero modularra da  AIM, MSN, Yahoo!, Jabber, ICQ, "
 "IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, eta Gadu-Gadu "
 "momentu berean erabiltzeko gaitasuna duena. GTK+ erabiliz idatzi izan da ."
 "<BR><BR> Programa hau aldatu eta ber-banatu dezakezu  GPL terminopean (2 "
 "bertsioa edo beranduagokoa). GPL -ren kopia COPYING izeneko fitxategi baten "
-"dago gaim distribuzioarekin batera. Gaim \"copyright\"-a du bere "
+"dago Pidgin distribuzioarekin batera. Pidgin \"copyright\"-a du bere "
 "laguntzaileen eskutik. Ikusi ezazy COPYRIGHT fitxategia laguntzaileen "
 "zerrenda osoa ikusteko. Ez dugu programa honen bermea zihurtatzen.<BR><BR>"
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim irc.freenode.net-en<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin irc.freenode.net-en<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Egungo garatzailea"
@@ -12538,7 +12538,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Informazio gehiago nahi baduzu, idatzi `%s -h'.\n"
+msgstr "Pidgin %s. Informazio gehiago nahi baduzu, idatzi `%s -h'.\n"
 
 #, fuzzy, c-format
 msgid ""
@@ -12556,7 +12556,7 @@ msgid ""
 "  --display=DISPLAY   X display to use\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Erabiltzeko era: %s [Aukerak]...\n"
 "\n"
 "  -c, --config=DIR    erabili DIR konfigurazio fitxategientzat\n"
@@ -12583,7 +12583,7 @@ msgid ""
 "                      Without this only the first account will be enabled).\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Erabiltzeko era: %s [Aukerak]...\n"
 "\n"
 "  -c, --config=DIR    erabili DIR konfigurazio fitxategientzat\n"
@@ -13390,7 +13390,7 @@ msgid ""
 "%s cannot transfer a folder. You will need to send the files within "
 "individually."
 msgstr ""
-"Gaim -ek ezin du karpeta bidali. Fitxategiak banan-bana bidali beharko "
+"Pidgin -ek ezin du karpeta bidali. Fitxategiak banan-bana bidali beharko "
 "dituzu."
 
 msgid "You have dragged an image"
@@ -14076,7 +14076,7 @@ msgstr "Hainbat modu eskaintzen ditu mezu berriak daudela jakinarazteko."
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Gaim-eko demostrazioaren plugin-a"
+msgstr "Pidgin-eko demostrazioaren plugin-a"
 
 #. *< name
 #. *< version
@@ -14173,7 +14173,7 @@ msgstr "Letra-tipoak"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Gaim fitxategien kontrola"
+msgstr "Pidgin fitxategien kontrola"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -14184,7 +14184,7 @@ msgstr "Berirakurri  gtkrc files"
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Gaim GTK+ Gaien kontrola"
+msgstr "Pidgin GTK+ Gaien kontrola"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr "gtkrc -ren ohizko ezarpenetara akzesua ahalbidetzen du."
@@ -14366,7 +14366,7 @@ msgstr "Timestamp-en formatu ezarpenak"
 
 #, fuzzy, c-format
 msgid "_Force 24-hour time format"
-msgstr "_Behartu (Ohizko Gaim) 24 orduko denbora formatua"
+msgstr "_Behartu (Ohizko Pidgin) 24 orduko denbora formatua"
 
 msgid "Show dates in..."
 msgstr "Erakutsi datak hemen..."
@@ -14471,7 +14471,7 @@ msgstr "Abioa"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_Abiarazi Gaim Windows abiaraztean"
+msgstr "_Abiarazi Pidgin Windows abiaraztean"
 
 msgid "_Dockable Buddy List"
 msgstr "_Lagunen zerrenda atrakagarria"
@@ -14494,13 +14494,13 @@ msgstr "Saioa hasteko aukerak"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Windows Gaim-i bakarrik dagozkion aukerak."
+msgstr "Windows Pidgin-i bakarrik dagozkion aukerak."
 
 #, fuzzy
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
 msgstr ""
-"Gaim Windows-en ezarpenak zehazteko aukera eskeintzen du, hala nola lagunen-"
+"Pidgin Windows-en ezarpenak zehazteko aukera eskeintzen du, hala nola lagunen-"
 "zerrenda gelditzea eta elkarrizketa kinuak."
 
 msgid "<font color='#777777'>Logged out.</font>"
@@ -14690,7 +14690,7 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "Gaim-en %s bertsioa erabiltzen ari zara. Azken bertsioa %s da.<hr>"
+#~ msgstr "Pidgin-en %s bertsioa erabiltzen ari zara. Azken bertsioa %s da.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -14727,7 +14727,7 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "There were errors unloading the plugin."
-#~ msgstr "Gaim-ek errore bat aurkitu du plugin-a deskargatzerakoan."
+#~ msgstr "Pidgin-ek errore bat aurkitu du plugin-a deskargatzerakoan."
 
 #~ msgid "Error setting socket options"
 #~ msgstr "Errorea socket aukerak ezartzean"
@@ -14907,7 +14907,7 @@ msgstr ""
 #~ "and re-enable the account."
 #~ msgstr ""
 #~ "%s deskonektatua izan da errorea baten ondorioz: %s\n"
-#~ " Gaim ez da saiatuko kontua berriz konektatzen errorea konpondu  eta "
+#~ " Pidgin ez da saiatuko kontua berriz konektatzen errorea konpondu  eta "
 #~ "kontua ahalbidetu arte."
 
 #~ msgid "User has typed something and stopped"
@@ -14958,9 +14958,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "Kontua:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "Gaim interneteko mezularitza "
-
 #~ msgid "DBus"
 #~ msgstr "DBus"
 
@@ -14976,17 +14973,17 @@ msgstr ""
 #~ msgid "When my nick is said"
 #~ msgstr "Nire ezizena esaten denean"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "Gaim-en ikono bat bistaratzen du sistema-erretiluan."
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "Pidgin-en ikono bat bistaratzen du sistema-erretiluan."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE, or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list. Also provides options "
 #~ "to blink for unread messages."
 #~ msgstr ""
 #~ "Sistema-erretiluaren ikonoa bistaratzen du (GNOME, KDE edo Windows-en "
-#~ "adibidez) Gaim-en uneko egoera erakusteko, gehien erabiltzen diren "
+#~ "adibidez) Pidgin-en uneko egoera erakusteko, gehien erabiltzen diren "
 #~ "funtzioetara erraz sartzeko, eta lagunen zerrendaren eta saio-hasierako "
 #~ "leihoaren artean aldatzeko. Era berean, aukera ematen du irakurrigabeko "
 #~ "mezuak parpadeo bidez adierazteko."
@@ -15005,17 +15002,17 @@ msgstr ""
 #~ msgstr "Adierazitako laguna ez da Evolution-en kontaktuetan topatu."
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "%s bertsioa lortzeko:<br><a href=\"http://gaim.sourceforge.net/\">http://"
-#~ "gaim.sourceforge.net</a>."
+#~ "%s bertsioa lortzeko:<br><a href=\"http://Pidgin.sourceforge.net/\">http://"
+#~ "Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "Atzerapena"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "WinGaim aukerak"
+#~ msgid "WinPidgin Options"
+#~ msgstr "WinPidgin aukerak"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because it belongs to an account "
@@ -15112,8 +15109,8 @@ msgstr ""
 #~ msgid "Jabber developer"
 #~ msgstr "Jabber garatzailea"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim irc.freenode.net-en<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin irc.freenode.net-en<BR><BR>"
 
 #~ msgid "Smaller font size"
 #~ msgstr "Letra-tipo txikiagoa"
@@ -15166,8 +15163,8 @@ msgstr ""
 #~ "Irudi hau fitxategi transferentzi bezela bidali dezakezu,  mezuan "
 #~ "txertatu, edo lagunaren ikono bezela erabili erabiltzaile honentzako."
 
-#~ msgid "Old Gaim"
-#~ msgstr "Gaim Zaharra"
+#~ msgid "Old Pidgin"
+#~ msgstr "Pidgin Zaharra"
 
 #~ msgid ""
 #~ "\n"
@@ -15183,8 +15180,8 @@ msgstr ""
 #~ "\n"
 #~ "<b>Mezua:</b> %s"
 
-#~ msgid "Gaim User"
-#~ msgstr "Gaim erabiltzailea"
+#~ msgid "Pidgin User"
+#~ msgstr "Pidgin erabiltzailea"
 
 #~ msgid "Unable to initiate a new search"
 #~ msgstr "Ezin izan da bilaketa berria hasieratu"
@@ -15426,15 +15423,15 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Hori gertatzen denean, TOCek ez ikusi egiten die, bidalitako mezu guztiei "
-#~ "eta beharbada kanporatu egingo zaitu mezurik bidaliz gero. Gaim-ek bidali "
+#~ "eta beharbada kanporatu egingo zaitu mezurik bidaliz gero. Pidgin-ek bidali "
 #~ "edo jasotzea eragotziko du. Aldi baterako bakarrik izango da, itxaron."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Gorde honela..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Gorde honela..."
 
 #~ msgid "TOC host"
 #~ msgstr "TOC ostalaria"
@@ -15445,11 +15442,11 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "Autentifikazio metodo normalak huts egin du. Zure pasahitza okerra izan "
-#~ "daiteke, edo Yahoo-ren autentifikazio eskema aldatu egin da. Gaim-ek Web "
+#~ "daiteke, edo Yahoo-ren autentifikazio eskema aldatu egin da. Pidgin-ek Web "
 #~ "Messenger erabiliz konektatzen saiatuko da, funtzionalitate eta ezaugarri "
 #~ "murrituagoak dituelarik."
 

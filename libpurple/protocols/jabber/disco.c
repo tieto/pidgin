@@ -355,6 +355,11 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 		jabber_adhoc_server_get_list(js);
 	}
 
+	/* If the server supports blocking, request the block list */
+	if (js->server_caps & JABBER_CAP_BLOCKING) {
+		jabber_request_block_list(js);
+	}
+
 	/* If there are manually specified bytestream proxies, query them */
 	ft_proxies = purple_account_get_string(js->gc->account, "ft_proxies", NULL);
 	if (ft_proxies) {
@@ -454,6 +459,8 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 			jabber_google_roster_init(js);
 		} else if (!strcmp("http://jabber.org/protocol/commands", var)) {
 			js->server_caps |= JABBER_CAP_ADHOC;
+		} else if (!strcmp("urn:xmpp:blocking", var)) {
+			js->server_caps |= JABBER_CAP_BLOCKING;
 		}
 	}
 

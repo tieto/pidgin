@@ -484,7 +484,7 @@ reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 
 void
 pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
-							PurplePounce *cur_pounce)
+                          PurplePounce *cur_pounce)
 {
 	PidginPounceDialog *dialog;
 	GtkWidget *window;
@@ -848,10 +848,12 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(cancel_cb), dialog);
 
-	/* Save button */
-	dialog->save_button = button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_SAVE, GTK_RESPONSE_OK);
+	/* Save/Add button */
+	dialog->save_button = button = gtk_dialog_add_button(GTK_DIALOG(window),
+	                                                     (cur_pounce == NULL ? GTK_STOCK_ADD : GTK_STOCK_SAVE),
+	                                                     GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(save_pounce_cb), dialog);
+	                 G_CALLBACK(save_pounce_cb), dialog);
 
 	if (*gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry)) == '\0')
 		gtk_widget_set_sensitive(button, FALSE);
@@ -1273,7 +1275,6 @@ create_pounces_list(PouncesManager *dialog)
 	/* Handle double-clicking */
 	g_signal_connect(G_OBJECT(treeview), "button_press_event",
 					 G_CALLBACK(pounce_double_click_cb), dialog);
-
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);

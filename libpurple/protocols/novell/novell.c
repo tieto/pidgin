@@ -2519,8 +2519,8 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	/* The conference was not found, must be closed */
 	chat = purple_find_chat(gc, id);
 	if (chat) {
-		str = g_strdup_printf(_("This conference has been closed."
-								" No more messages can be sent."));
+		str = g_strdup(_("This conference has been closed."
+						 " No more messages can be sent."));
 		purple_conversation_write(chat, NULL, str, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(str);
 	}

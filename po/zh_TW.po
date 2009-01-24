@@ -17,7 +17,7 @@
 #        screen name 和 user name 在意義上是沒有分別的！
 # 理據如下
 # (01時52分58秒) wing: hmm. does "screen name" mean "user name" now, or has it actually always meant "user name"?
-# (02時09分45秒) KingAnt: wing: They're the same thing.  If you're unhappy with the change please email the gaim-devel mailing list.  (I'm unhappy with the change.)
+# (02時09分45秒) KingAnt: wing: They're the same thing.  If you're unhappy with the change please email the Pidgin-devel mailing list.  (I'm unhappy with the change.)
 # ----------------------------------------------------------
 # SILC問題：似乎臺灣和香港的「密碼學」術語相差甚遠，很頭痛 (^^;)
 # - Key 暫譯「密鑰」，原因：「Key Exchange」既有譯文為「交換密鑰」
@@ -1639,9 +1639,9 @@ msgstr "設定使用者資訊"
 
 # XXX 問題：
 # XXX gtk/gtkft.c - 「Unknown」是一指一個未能計算的數值，譯「未知」較好
-# XXX libgaim/account.c - 「Unknown」指不知道是什麼通訊協定，譯「不明」較好（因為一定「曾經知道」，
+# XXX libPidgin/account.c - 「Unknown」指不知道是什麼通訊協定，譯「不明」較好（因為一定「曾經知道」，
 # XXX                      我在「帳號清單」看見「未知」真的看了很久也看不明白）
-# XXX libgaim/protocols/* - 「Unknown」指不明的好友狀態，可能是指「不明」（通訊系統回報的狀態是「不明」）
+# XXX libPidgin/protocols/* - 「Unknown」指不明的好友狀態，可能是指「不明」（通訊系統回報的狀態是「不明」）
 # XXX                       或者「未知」（出現了 Pidgin 未見過的狀態代號）
 # XXX - Ambrose 20061123
 msgid "Unknown"
@@ -6481,7 +6481,7 @@ msgstr "遺失回應"
 msgid "Request denied"
 msgstr "要求被拒"
 
-# NOTE「Busted」與「SNAC payload」的說名由Luke Schierer在#gaim提供
+# NOTE「Busted」與「SNAC payload」的說名由Luke Schierer在#Pidgin提供
 # NOTE 整句的意思其實係「您一次過傳送太多資訊了」
 msgid "Busted SNAC payload"
 msgstr "SNAC負載過大"
@@ -7141,7 +7141,7 @@ msgstr ""
 msgid "Authorization Denied"
 msgstr "認證被拒"
 
-# NOTE: 這裡的字義係由 #gaim 的 MrHappy 及 deryni 提供的
+# NOTE: 這裡的字義係由 #Pidgin 的 MrHappy 及 deryni 提供的
 # NOTE: KingAnt 提供的字義有些不同，暫時不予理會
 msgid "_Exchange:"
 msgstr "頻道號碼(_E)："
@@ -7693,9 +7693,9 @@ msgstr "<b>新好友 %u 已加入。</b>"
 
 # XXX 問題：
 # XXX gtk/gtkft.c - 「Unknown」是一指一個未能計算的數值，譯「未知」較好
-# XXX libgaim/account.c - 「Unknown」指不知道是什麼通訊協定，譯「不明」較好（因為一定「曾經知道」，
+# XXX libPidgin/account.c - 「Unknown」指不知道是什麼通訊協定，譯「不明」較好（因為一定「曾經知道」，
 # XXX                      我在「帳號清單」看見「未知」真的看了很久也看不明白）
-# XXX libgaim/protocols/* - 「Unknown」指不明的好友狀態，可能是指「不明」（通訊系統回報的狀態是「不明」）
+# XXX libPidgin/protocols/* - 「Unknown」指不明的好友狀態，可能是指「不明」（通訊系統回報的狀態是「不明」）
 # XXX                       或者「未知」（出現了 Pidgin 未見過的狀態代號）
 # XXX - Ambrose 20061123
 #, c-format
@@ -9882,7 +9882,7 @@ msgstr "暫時報稱離線"
 msgid "Don't Appear Permanently Offline"
 msgstr "停止長期報稱離線"
 
-# NOTE #gaim 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
+# NOTE #Pidgin 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
 msgid "Join in Chat"
 msgstr "加入好友目前所在的聊天室"
@@ -9900,7 +9900,7 @@ msgstr "開始 Doodle"
 msgid "Activate which ID?"
 msgstr "啟用哪一個 ID？"
 
-# NOTE #gaim 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
+# NOTE #Pidgin 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
 msgid "Join whom in chat?"
 msgstr "加入誰的聊天室？"
@@ -10240,7 +10240,7 @@ msgstr "TZC 指令"
 # NOTE: 這是Zephyr使用者會自然明白的術語，不用費心解釋
 # NOTE: aatharuv: Most zephyr clients use ".anyone" to store the Zephyr
 # NOTE: buddylist. The export to .anyone option controls whether you want
-# NOTE: gaim to write to .anyone upon logout. Some people use multiple
+# NOTE: Pidgin to write to .anyone upon logout. Some people use multiple
 # NOTE: clients and prefer to have separate buddylists for separate clients.
 # NOTE: Similarly, .zephyr.subs controls the chats that a person subs.
 msgid "Export to .anyone"
@@ -10252,7 +10252,7 @@ msgstr "匯出至 .zephyr.subs 檔"
 # NOTE: 這是Zephyr使用者會自然明白的術語，不用費心解釋
 # NOTE: aatharuv: Most zephyr clients use ".anyone" to store the Zephyr
 # NOTE: buddylist. The export to .anyone option controls whether you want
-# NOTE: gaim to write to .anyone upon logout. Some people use multiple
+# NOTE: Pidgin to write to .anyone upon logout. Some people use multiple
 # NOTE: clients and prefer to have separate buddylists for separate clients.
 # NOTE: Similarly, .zephyr.subs controls the chats that a person subs.
 msgid "Import from .anyone"
@@ -11838,8 +11838,8 @@ msgstr ""
 msgid "Current Developers"
 msgstr "現任開發者"
 
-# NOTE LSchiere2: wing: it means they must be crazy or they wouldn't work on gaim ;-)
-# NOTE Luke Schierer 說:「這些人一個是瘋了，否則不會為 gaim 賣力」
+# NOTE LSchiere2: wing: it means they must be crazy or they wouldn't work on Pidgin ;-)
+# NOTE Luke Schierer 說:「這些人一個是瘋了，否則不會為 Pidgin 賣力」
 # NOTE 所以正確的譯文應是「瘋癲的模組作者」或者「模組的瘋癲作者」之類……
 # NOTE 不過這樣好像有點過份，所以翻成「狂熱的模組作者」會比較好 :P
 msgid "Crazy Patch Writers"
@@ -12164,7 +12164,7 @@ msgstr "在瀏覽器中打開連結(_O)"
 msgid "_Copy Link Location"
 msgstr "複製連結位址(_C)"
 
-# NOTE "Defaulting to PNG" 是指 gaim 在無計可施的情況下盲猜影像是 PNG 格式
+# NOTE "Defaulting to PNG" 是指 Pidgin 在無計可施的情況下盲猜影像是 PNG 格式
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -12174,7 +12174,7 @@ msgstr ""
 "\n"
 "暫且當成 PNG 檔處理。"
 
-# NOTE "Defaulting to PNG" 是指 gaim 在無計可施的情況下盲猜影像是 PNG 格式
+# NOTE "Defaulting to PNG" 是指 Pidgin 在無計可施的情況下盲猜影像是 PNG 格式
 msgid ""
 "Unrecognized file type\n"
 "\n"

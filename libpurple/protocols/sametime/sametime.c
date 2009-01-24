@@ -3724,7 +3724,6 @@ static void mw_prpl_login(PurpleAccount *account) {
   gc->flags |= PURPLE_CONNECTION_NO_IMAGES;
 
   user = g_strdup(purple_account_get_username(account));
-  pass = g_strdup(purple_account_get_password(account));
 
   host = strrchr(user, ':');
   if(host) {
@@ -3741,10 +3740,12 @@ static void mw_prpl_login(PurpleAccount *account) {
   if(! host || ! *host) {
     /* somehow, we don't have a host to connect to. Well, we need one
        to actually continue, so let's ask the user directly. */
+    g_free(user);
     prompt_host(gc);
     return;
   }
 
+  pass = g_strdup(purple_account_get_password(account));
   port = purple_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
 
   DEBUG_INFO("user: '%s'\n", user);

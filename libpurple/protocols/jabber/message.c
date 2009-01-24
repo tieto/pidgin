@@ -290,30 +290,30 @@ static void handle_buzz(JabberMessage *jm) {
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
 	PurpleConversation *c;
-	char *username, *str;
-	
+	char *username;
+
 	/* Delayed buzz MUST NOT be accepted */
 	if(jm->delayed)
 		return;
-	
+
 	/* Reject buzz when it's not enabled */
 	if(!jm->js->allowBuzz)
 		return;
-	
+
 	account = purple_connection_get_account(jm->js->gc);
-	
-	if ((buddy = purple_find_buddy(account, jm->from)) != NULL)
-		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-	else
+
+	if ((buddy = purple_find_buddy(account, jm->from)) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
-	c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
+	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
+	if (c == NULL)
+		c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
 
-	str = g_strdup_printf(_("%s has buzzed you!"), username);
-	
-	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+	username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
+	/* xmpp only has 1 attention type, so index is 0 */
+	purple_prpl_got_attention(jm->js->gc, username, 0);
+
 	g_free(username);
-	g_free(str);
 }
 
 /* used internally by the functions below */

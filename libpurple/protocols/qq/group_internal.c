@@ -30,7 +30,7 @@
 #include "group_internal.h"
 #include "utils.h"
 
-static qq_room_data *room_data_new(guint32 id, guint32 ext_id, gchar *title)
+static qq_room_data *room_data_new(guint32 id, guint32 ext_id, const gchar *title)
 {
 	qq_room_data *rmd;
 
@@ -62,9 +62,9 @@ static qq_room_data *room_data_new_by_hashtable(PurpleConnection *gc, GHashTable
 
 	value = g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID);
 	id = value ? strtoul(value, NULL, 10) : 0;
-	value= g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID);
+	value = g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID);
 	ext_id = value ? strtoul(value, NULL, 10) : 0;
-	value = g_strdup(g_hash_table_lookup(data, QQ_ROOM_KEY_TITLE_UTF8));
+	value = g_hash_table_lookup(data, QQ_ROOM_KEY_TITLE_UTF8);
 
 	rmd = room_data_new(id, ext_id, value);
 	rmd->my_role = QQ_ROOM_ROLE_YES;

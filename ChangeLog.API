@@ -1,5 +1,21 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.4 (01/12/2009):
+	perl:
+		Changed:
+		* Purple::PluginPref->get_bounds no longer takes two integer
+		  arguments it now returns two integers.
+
+		Removed:
+		* Removed a handful of string-related utility functions that
+		  can generally be better handled with perl's built-in string
+		  functions rather than using pidgin's:
+			* Purple::Util::strcasereplace
+			* Purple::Util::strcasestr
+			* Purple::Util::strreplace
+			* Purple::Util::str_strip_char
+			* Purple::Util::chrreplace
+
 version 2.5.3 (12/20/2008):
 	libpurple
 		Changed:

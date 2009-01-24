@@ -71,6 +71,11 @@ static gboolean have_nm_state = FALSE;
 
 #elif defined _WIN32
 static int current_network_count;
+
+/* Mutex for the other global vars */
+static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+static gboolean network_initialized;
+static HANDLE network_change_handle;
 #endif
 
 struct _PurpleNetworkListenData {
@@ -535,8 +540,8 @@ static gboolean wpurple_network_change_thread_cb(gpointer data)
 
 static gpointer wpurple_network_change_thread(gpointer data)
 {
-	HANDLE h;
 	WSAQUERYSET qs;
+	WSAEVENT *nla_event;
 	time_t last_trigger = time(NULL);
 
 	int (WSAAPI *MyWSANSPIoctl) (
@@ -549,23 +554,47 @@ static gpointer wpurple_network_change_thread(gpointer data)
 		return NULL;
 	}
 
+	if ((nla_event = WSACreateEvent()) == WSA_INVALID_EVENT) {
+		int errorid = WSAGetLastError();
+		gchar *msg = g_win32_error_message(errorid);
+		purple_debug_warning("network", "Couldn't create WSA event. "
+			"Message: %s (%d).\n", msg, errorid);
+		g_free(msg);
+		g_thread_exit(NULL);
+		return NULL;
+	}
+
 	while (TRUE) {
 		int retval;
 		DWORD retLen = 0;
+		WSACOMPLETION completion;
+		WSAOVERLAPPED overlapped;
+
+		g_static_mutex_lock(&mutex);
+		if (network_initialized == FALSE) {
+			/* purple_network_uninit has been called */
+			WSACloseEvent(nla_event);
+			g_static_mutex_unlock(&mutex);
+			g_thread_exit(NULL);
+			return NULL;
+		}
 
 		memset(&qs, 0, sizeof(WSAQUERYSET));
 		qs.dwSize = sizeof(WSAQUERYSET);
 		qs.dwNameSpace = NS_NLA;
-		if (WSALookupServiceBegin(&qs, 0, &h) == SOCKET_ERROR) {
+		if (WSALookupServiceBegin(&qs, 0, &network_change_handle) == SOCKET_ERROR) {
 			int errorid = WSAGetLastError();
 			gchar *msg = g_win32_error_message(errorid);
 			purple_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
 				"NLA service is probably not running. Message: %s (%d).\n",
 				msg, errorid);
 			g_free(msg);
+			WSACloseEvent(nla_event);
+			g_static_mutex_unlock(&mutex);
 			g_thread_exit(NULL);
 			return NULL;
 		}
+		g_static_mutex_unlock(&mutex);
 
 		/* Make sure at least 30 seconds have elapsed since the last
 		 * notification so we don't peg the cpu if this keeps changing. */
@@ -574,19 +603,40 @@ static gpointer wpurple_network_change_thread(gpointer data)
 
 		last_trigger = time(NULL);
 
-		/* This will block until there is a network change */
-		if (MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL) == SOCKET_ERROR) {
+		memset(&completion, 0, sizeof(WSACOMPLETION));
+		completion.Type = NSP_NOTIFY_EVENT;
+		overlapped.hEvent = nla_event;
+		completion.Parameters.Event.lpOverlapped = &overlapped;
+
+		if (MyWSANSPIoctl(network_change_handle, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, &completion) == SOCKET_ERROR) {
 			int errorid = WSAGetLastError();
-			gchar *msg = g_win32_error_message(errorid);
-			purple_debug_warning("network", "Unable to wait for changes. Message: %s (%d).\n",
-				msg, errorid);
-			g_free(msg);
+			/* WSA_IO_PENDING indicates successful async notification will happen */
+			if (errorid != WSA_IO_PENDING) {
+				gchar *msg = g_win32_error_message(errorid);
+				purple_debug_warning("network", "Unable to wait for changes. Message: %s (%d).\n",
+					msg, errorid);
+				g_free(msg);
+			}
 		}
 
-		retval = WSALookupServiceEnd(h);
+		/* This will block until NLA notifies us */
+		retval = WaitForSingleObjectEx(nla_event, WSA_INFINITE, TRUE);
+
+		g_static_mutex_lock(&mutex);
+		if (network_initialized == FALSE) {
+			/* Time to die */
+			WSACloseEvent(nla_event);
+			g_static_mutex_unlock(&mutex);
+			g_thread_exit(NULL);
+			return NULL;
+		}
+
+		retval = WSALookupServiceEnd(network_change_handle);
+		network_change_handle = NULL;
+		WSAResetEvent(nla_event);
+		g_static_mutex_unlock(&mutex);
 
 		purple_timeout_add(0, wpurple_network_change_thread_cb, NULL);
-
 	}
 
 	g_thread_exit(NULL);
@@ -714,6 +764,7 @@ purple_network_init(void)
 	GError *err = NULL;
 	gint cnt = wpurple_get_connected_network_count();
 
+	network_initialized = TRUE;
 	if (cnt < 0) /* Assume there is a network */
 		current_network_count = 1;
 	/* Don't listen for network changes if we can't tell anyway */
@@ -782,6 +833,25 @@ purple_network_uninit(void)
 		dbus_g_connection_unref(nm_conn);
 #endif
 
+#ifdef _WIN32
+	g_static_mutex_lock(&mutex);
+	network_initialized = FALSE;
+	if (network_change_handle != NULL) {
+		int retval;
+		/* Trigger the NLA thread to stop waiting for network changes. Not
+		 * doing this can cause hangs on WSACleanup. */
+		purple_debug_warning("network", "Terminating the NLA thread\n");
+		if ((retval = WSALookupServiceEnd(network_change_handle)) == SOCKET_ERROR) {
+			int errorid = WSAGetLastError();
+			gchar *msg = g_win32_error_message(errorid);
+			purple_debug_warning("network", "Unable to kill NLA thread. Message: %s (%d).\n",
+				msg, errorid);
+			g_free(msg);
+		}
+	}
+	g_static_mutex_unlock(&mutex);
+
+#endif
 	purple_signal_unregister(purple_network_get_handle(),
 	                         "network-configuration-changed");
 }

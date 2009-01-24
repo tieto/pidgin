@@ -1,7 +1,7 @@
 Code Contributors
 =========
 puzzlebird	: original author
-gfhuang		: patches for libpurple 2.0.0beta2, maintainer
+gfhuang(poppyer): patches for libpurple 2.0.0beta2, maintainer
 Yuan Qingyun	: patches for libpurple 1.5.0, maintainer
 henryouly	: file transfer, udp sock5 proxy and qq_show, maintainer
 hzhr		: maintainer

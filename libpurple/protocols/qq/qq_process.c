@@ -435,8 +435,8 @@ static void do_server_notice(PurpleConnection *gc, gchar *from, gchar *to,
 static void process_server_msg(PurpleConnection *gc, guint8 *data, gint data_len, guint16 seq)
 {
 	qq_data *qd;
-	guint8 *data_str;
-	gchar **segments;
+	guint8 *data_str, i = 0;
+	gchar **segments, **seg;
 	gchar *funct_str, *from, *to;
 	gint bytes, funct;
 
@@ -448,9 +448,11 @@ static void process_server_msg(PurpleConnection *gc, guint8 *data, gint data_len
 	g_memmove(data_str, data, data_len);
 	data_str[data_len] = 0x00;
 
-	segments = g_strsplit_set((gchar *) data_str, "\x1f", 0);
+	segments = g_strsplit((gchar *) data_str, "\x1f", 0);
 	g_return_if_fail(segments != NULL);
-	if (g_strv_length(segments) < 3) {
+	for (seg = segments; *seg != NULL; seg++)
+		i++;
+	if (i < 3) {
 		purple_debug_warning("QQ", "Server message segments is less than 3\n");
 		g_strfreev(segments);
 		return;

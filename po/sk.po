@@ -1,7 +1,7 @@
 # translation of pidgin.po to Slovak
 # Copyright (C) 2008 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the Pidgin package.
-# loptosko <loptosko@gmail.com>, 2007, 2008.
+# loptosko <loptosko@gmail.com>, 2007, 2008, 2009.
 # Jozef Káčer <quickparser@gmail.com>, 2007.
 # Ivan Masár <helix84@centrum.sk>, 2007.
 # Pavol Klačanský <pavolzetor@gmail.com>, 2008.
@@ -9,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.5.3\n"
+"Project-Id-Version: Pidgin 2.5.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 01:17-0800\n"
-"PO-Revision-Date: 2008-12-13 21:05+0100\n"
+"POT-Creation-Date: 2009-01-08 22:40-0500\n"
+"PO-Revision-Date: 2009-01-05 15:07+0100\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -1477,7 +1477,7 @@ msgid "GntHistory"
 msgstr "GntHistory"
 
 msgid "Shows recently logged conversations in new conversations."
-msgstr "Ukáže nedávno zaznamenaný rozhovor v nových oknách rozhovoru."
+msgstr "V nových oknách rozhovoru sa zobrazuje minule zaznamenaný rozhovor."
 
 msgid ""
 "When a new conversation is opened this plugin will insert the last "
@@ -1486,7 +1486,6 @@ msgstr ""
 "Tento modul vkladá do nových okien rozhovoru obsah predchádzajúceho "
 "rozhovoru."
 
-#, c-format
 msgid "Online"
 msgstr "Pripojený"
 
@@ -1917,7 +1916,6 @@ msgstr "Začína sa prenos %s od používateľa %s"
 msgid "Transfer of file %s complete"
 msgstr "Prenos súboru %s bol dokončený"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Prenos súboru je dokončený"
 
@@ -1925,7 +1923,6 @@ msgstr "Prenos súboru je dokončený"
 msgid "You canceled the transfer of %s"
 msgstr "Zrušili ste prenos %s"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Prenos súboru zrušený"
 
@@ -2124,7 +2121,6 @@ msgstr "(%s) %s <AUTOMATICKÁ ODPOVEĎ>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Používate %s, ale tento modul vyžaduje %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Tento modul nemá definované ID."
 
@@ -2166,8 +2162,7 @@ msgid "Autoaccept"
 msgstr "Automatické potvrdzovanie"
 
 msgid "Auto-accept file transfer requests from selected users."
-msgstr ""
-"Automaticky potvrdiť požiadavky na prenos súborov od vybraných používateľov."
+msgstr "Automatické potvrdenie prenosu súboru od vybraných používateľov."
 
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
@@ -2560,7 +2555,7 @@ msgstr "Nový riadok"
 #. *< name
 #. *< version
 msgid "Prepends a newline to displayed message."
-msgstr "Pridať nový riadok pred zobrazenú správu."
+msgstr "Pred zobrazenú správu vkladá nový riadok."
 
 #. *< summary
 msgid ""
@@ -2574,7 +2569,7 @@ msgid "Offline Message Emulation"
 msgstr "Emulácia offline správ"
 
 msgid "Save messages sent to an offline user as pounce."
-msgstr "Ukladať správy ktoré boli odoslané odhláseným používateľom ako výzvu."
+msgstr "Pridáva správy pre odhlásených používateľov ako sledovanie."
 
 msgid ""
 "The rest of the messages will be saved as pounce. You can edit/delete the "
@@ -3008,7 +3003,6 @@ msgstr "Pripojený"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Neprítomný"
 
@@ -3893,7 +3887,6 @@ msgstr "Zhovorčivý"
 msgid "Extended Away"
 msgstr "Dlhšie neprítomný"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Nerušiť"
 
@@ -4130,6 +4123,9 @@ msgstr "Autentifikácia"
 
 msgid "Re-initializing Stream"
 msgstr "Znovu sa spúšťa dátový prúd"
+
+msgid "Server doesn't support blocking"
+msgstr "Server nepodporuje blokovanie"
 
 msgid "Not Authorized"
 msgstr "Neautorizovaný"
@@ -4882,7 +4878,6 @@ msgstr "Detský pas bez súhlasu rodičov"
 msgid "Passport account not yet verified"
 msgstr "Účet pasu nebol ešte overený"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "Účet pasu bol pozastavený"
 
@@ -6090,7 +6085,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Chyba. SSL podpora nie je nainštalovaná."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
 "Táto konferencia bola uzavretá. Nie je možné do nej odosielať ďalšie správy."
@@ -6354,23 +6348,18 @@ msgstr "Kamera"
 msgid "Screen Sharing"
 msgstr "Zdieľanie obrazovky"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Voľný pre rozhovor"
 
-#, c-format
 msgid "Not Available"
 msgstr "Nedostupný"
 
-#, c-format
 msgid "Occupied"
 msgstr "Zaneprázdnený"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Na webe"
 
-#, c-format
 msgid "Invisible"
 msgstr "Neviditeľný"
 
@@ -6472,13 +6461,9 @@ msgstr "Zadajte 6-ciferné číslo z digitálneho displeja."
 msgid "_OK"
 msgstr "_OK"
 
-#, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
-msgstr ""
-"Zakrátko môžete byť odpojený. Možno budete chcieť použiť TOC kým sa toto "
-"neopraví. Navštívte %s pre aktualizácie."
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "Zakrátko môžete byť odpojený. Skontrolujte aktualizácie na %s."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Nebolo možné získať platný AIM prihlasovací hash."
@@ -7061,7 +7046,6 @@ msgstr "Žiadam %s, aby sa k nám pripojil na %s:%hu pre priamy IM."
 msgid "Attempting to connect to %s:%hu."
 msgstr "Pokúšame sa pripojiť ku %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Pokúšame sa pripojiť cez proxy server."
 
@@ -9226,6 +9210,9 @@ msgstr "Nebolo možné previesť názov hostiteľa na IP"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Používateľské mená SIP nemôžu obsahovať čisté znaky alebo znaky @"
+
+msgid "SIP connect server not specified"
+msgstr "Nebol zadaný pripojovací server SIP"
 
 #. *< type
 #. *< ui_requirement
@@ -13069,7 +13056,7 @@ msgid "Conversation Colors"
 msgstr "Farby rozhovoru"
 
 msgid "Customize colors in the conversation window"
-msgstr "Prispôsobiť farby v okne rozhovoru"
+msgstr "Prispôsobenie farieb v okne rozhovoru"
 
 msgid "Error Messages"
 msgstr "Chybové správy"
@@ -13178,11 +13165,11 @@ msgid ""
 " • Drag up and then to the left to switch to the previous conversation.\n"
 " • Drag up and then to the right to switch to the next conversation."
 msgstr ""
-"Umožňuje ovládanie pomocou pohybov myši v okne rozhovoru.\n"
-"Tieto akcie vykonáte pohybom myši so stlačeným prostredným tlačidlom:\n"
+"Umožní ovládanie pomocou pohybov myši v okne rozhovoru.\n"
+"Pohybom myši so stlačeným prostredným tlačidlom vykonáte tieto akcie:\n"
 "\n"
-" • Ťahajte dole a potom doprava pre zatvorenie rozhovoru.\n"
-" • Ťahajte hore a potom doľava pre prepnutie sa na predchádzajúci rozhovor.\n"
+" • Ťahajte dole a potom doprava na zatvorenie rozhovoru.\n"
+" • Ťahajte hore a potom doľava na prepnutie sa na predchádzajúci rozhovor.\n"
 " • Ťahajte hore a potom doprava na prepnutie sa na nasledujúci rozhovor."
 
 msgid "Instant Messaging"
@@ -13323,14 +13310,13 @@ msgstr "Ikonifikovať pri neprítomnosti"
 #. *  summary
 #. *  description
 msgid "Iconifies the buddy list and your conversations when you go away."
-msgstr ""
-"Ikonifikuje zoznam priateľov a vaše konvezácie, keď sa stanete neprítomným."
+msgstr "Pri neprítomnosti ikonifikuje zoznam priateľov a vaše rozhovory."
 
 msgid "Mail Checker"
 msgstr "Kontrola pošty"
 
 msgid "Checks for new local mail."
-msgstr "Kontroluje novú miestnu poštu."
+msgstr "Kontrola novej miestnej pošty."
 
 msgid "Adds a small box to the buddy list that shows if you have new mail."
 msgstr ""
@@ -13341,7 +13327,7 @@ msgid "Markerline"
 msgstr "Deliaca čiara"
 
 msgid "Draw a line to indicate new messages in a conversation."
-msgstr "Nakresliť čiaru za novými správami v rozhovore"
+msgstr "V rozhovore kreslí čiaru na zvýraznenie nových správ"
 
 msgid "Jump to markerline"
 msgstr "Skočiť na deliacu čiaru"
@@ -13940,6 +13926,13 @@ msgstr "Odosielanie a prijímanie nespracovaných XMPP slôh."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Tento modul je vhodný pre ladenie XMPP serverov alebo klientov."
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "Zakrátko môžete byť odpojený. Možno budete chcieť použiť TOC kým sa toto "
+#~ "neopraví. Navštívte %s pre aktualizácie."
 
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""

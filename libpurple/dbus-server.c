@@ -803,6 +803,9 @@ purple_dbus_get_handle(void)
 void
 purple_dbus_init(void)
 {
+	if (g_thread_supported())
+		dbus_g_thread_init();
+
 	purple_dbus_init_ids();
 
 	g_free(init_error);

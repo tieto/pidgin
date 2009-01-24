@@ -1,12 +1,12 @@
-# Persian translation of gaim.
+# Persian translation of Pidgin.
 # Copyright (C) 2005, 2006 Sharif Farsiweb, Inc,
-# This file is distributed under the same license as the gaim package.
+# This file is distributed under the same license as the Pidgin package.
 # Elnaz Sarbar <elnaz@farsiwevb.info>, 2005, 2006, 2007.
 # Meelad Zakaria <meelad@farsiweb.info>, 2006.
 # Roozbeh Pournader <roozbeh@farsiweb.info>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 1.5.0\n"
+"Project-Id-Version: Pidgin 1.5.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-04-10 20:37+0330\n"
@@ -14860,9 +14860,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "می‌توانید نسخهٔ %s را از اینجا بگیرید:<br><a href=\"http://pidgin.im/"
 #~ "\">http://pidgin.im</a>."
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "پیغام‌رسان اینترنتی گِیم"
-
 #, fuzzy
 #~ msgid "Crazychat"
 #~ msgstr "گپ"
@@ -14870,7 +14867,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Plugin to establish a Crazychat session."
 #~ msgstr "متصل شونده برای ایجاد نشست گپِ خَف."
 
-#~ msgid "Uses Gaim to obtain buddy ips to connect for a Crazychat session"
+#~ msgid "Uses Pidgin to obtain buddy ips to connect for a Crazychat session"
 #~ msgstr ""
 #~ "برای به دست آوردن IP رفقا جهت اتصال برای یک نشست گپِ خَف از گیم استفاده "
 #~ "می‌کند"
@@ -14899,12 +14896,12 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "C_hat Messages:"
 #~ msgstr "پیغام‌های _گپ:"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
+#~ msgid "Displays an icon for Pidgin in the system tray."
 #~ msgstr "شمایلی برای گیم محوطهٔ اعلانات سیستم نمایش می‌دهد."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE, or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list. Also provides options "
 #~ "to blink for unread messages."
 #~ msgstr ""
@@ -14919,7 +14916,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Delay"
 #~ msgstr "تأخیر"
 
-#~ msgid "WinGaim Options"
+#~ msgid "WinPidgin Options"
 #~ msgstr "گزینه‌های گیم ویندوز"
 
 #~ msgid ""
@@ -14998,8 +14995,8 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Get the user's information"
 #~ msgstr "گرفتن اطلاعات کاربر"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim در irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin در irc.freenode.net<BR><BR>"
 
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
@@ -15022,10 +15019,10 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Away / Idle"
 #~ msgstr "رفته / بی‌کار"
 
-#~ msgid "Old Gaim"
+#~ msgid "Old Pidgin"
 #~ msgstr "گِیم قدیمی"
 
-#~ msgid "Gaim encountered errors loading the plugin."
+#~ msgid "Pidgin encountered errors loading the plugin."
 #~ msgstr "گیم هنگام بار کردن متصل شونده با خطایی مواجه شد."
 
 #~ msgid ""
@@ -15042,7 +15039,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "\n"
 #~ "<b>پیغام:</b> %s"
 
-#~ msgid "Gaim User"
+#~ msgid "Pidgin User"
 #~ msgstr "کاربر گیم"
 
 #~ msgid "<b>%s:</b> %s"
@@ -15178,20 +15175,20 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "وقتی این اتفاق می‌افتد TOC همهٔ پیغام‌هایی را که به آن فرستاده می‌شود نادیده "
 #~ "می‌گیرد، و اگر پیغامی ارسال کنید ممکن است شما را بیرون بیندازد. گیم جلوی "
 #~ "رد شدن هر چیزی را خواهد گرفت. این مشکل موقتی است، لطفاً صبر کنید."
 
-#~ msgid "Gaim - Save As..."
+#~ msgid "Pidgin - Save As..."
 #~ msgstr "گیم ـ ذخیره با نام..."
 
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "روش تأیید هویت عادی شکست خورد. دلیل این مسئله یا غلط بودن گذرواژهٔ شما و "
@@ -15242,7 +15239,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Appears as list"
 #~ msgstr "به نظر برون‌خط"
 
-#~ msgid "me is using Gaim v%s."
+#~ msgid "me is using Pidgin v%s."
 #~ msgstr "‏me از گیم نسخهٔ %s استفاده می‌کند."
 
 #~ msgid "Error launching <b>%s</b>: %s"
@@ -15348,10 +15345,10 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "_Hide new messages until tray icon is clicked"
 #~ msgstr "_مخفی کردن پیغام‌های جدید تا زمانی که روی شمایل سینی کلیک شود"
 
-#~ msgid "Gaim - Signed off"
+#~ msgid "Pidgin - Signed off"
 #~ msgstr "گیم ـ از سیستم خارج شد"
 
-#~ msgid "Gaim - Away"
+#~ msgid "Pidgin - Away"
 #~ msgstr "گیم ـ رفته"
 
 #~ msgid "Not connected to AIM"
@@ -15376,15 +15373,15 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Remote Control"
 #~ msgstr "کنترل از راه دور"
 
-#~ msgid "Provides remote control for gaim applications."
+#~ msgid "Provides remote control for Pidgin applications."
 #~ msgstr "برنامه‌های گیم را به کنترل از راه دور مجهز می‌کند."
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 #~ msgstr ""
 #~ "این قابلیت را به گیم می‌دهد که توسط برنامه‌های طرف سوم یا از طریق ابزار "
-#~ "gaim-remote از راه دور کنترل شود."
+#~ "Pidgin-remote از راه دور کنترل شود."
 
 #~ msgid "Docked _Buddy List is always on top"
 #~ msgstr "فهرست رفقای _جدا شده همیشه رو باشد"
@@ -15442,7 +15439,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
@@ -15454,16 +15451,16 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
 
 #~ msgid ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 #~ msgstr ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 
 # "گیم در حال اجرا نیست (در نشست ۰)\n"
@@ -15472,7 +15469,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15482,20 +15479,20 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 #~ msgstr ""
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15505,22 +15502,22 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 
 #~ msgid ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 
 # "بستن نسخهٔ در حال اجرای گیم\n"
 #~ msgid ""
@@ -15663,7 +15660,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgstr "چینی"
 
 #~ msgid ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using Gtk+ and is licensed under the GPL."
 #~ "<BR><BR>"
@@ -15828,7 +15825,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Idle _time reporting:"
 #~ msgstr "گزارش _زمان بی‌کاری:"
 
-#~ msgid "Gaim usage"
+#~ msgid "Pidgin usage"
 #~ msgstr "استفاده از گیم"
 
 #~ msgid "X usage"
@@ -15875,7 +15872,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgstr "_ورود به سیستم"
 
 #~ msgid ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -15892,7 +15889,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ "  -v, --version       display the current version and exit\n"
 #~ "  -h, --help          display this help and exit\n"
 #~ msgstr ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -15914,7 +15911,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgstr "نمی‌توان ترجیحات را بار کرد"
 
 #~ msgid ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
+#~ "Pidgin was not able to load your preferences because they are stored in an "
 #~ "old format that is no longer used.  Please reconfigure your settings "
 #~ "using the Preferences window."
 #~ msgstr ""
@@ -15990,7 +15987,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgstr "خطا هنگام برقراری ارتباط با کارگزار Gadu-Gadu"
 
 #~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
+#~ "Pidgin was unable to complete your request due to a problem communicating "
 #~ "with the Gadu-Gadu HTTP server.  Please try again later."
 #~ msgstr ""
 #~ "به دلیل اشکالی در ارتباط با کارگزار HTTP ‏Gadu-Gadu گیم نتوانست درخواست "
@@ -16000,14 +15997,14 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgstr "وارد کردن فهرست Gadu-Gadu ممکن نیست"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
+#~ "Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please "
 #~ "try again later."
 #~ msgstr ""
 #~ "گیم نتوانست به کارگزار فهرست رفقای Gadu-Gadu متصل شود. لطفاً کمی بعد "
 #~ "دوباره امتحان کنید."
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 #~ msgstr ""
 #~ "گیم نتوانست به کارگزار فهرست رفقا متصل شود. لطفاً کمی بعد دوباره امتحان "
@@ -16020,14 +16017,14 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgstr "دسترسی به شاخه ممکن نیست"
 
 #~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
+#~ "Pidgin was unable to search the Directory because it was unable to connect "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
 #~ "گیم نتوانست در دفترچهٔ راهنمای کاربران جستجو کند چون نمی‌توانست به کارگزار "
 #~ "دفترچهٔ راهنمای کاربران متصل شود. لطفاً کمی بعد دوباره امتحان کنید."
 
 #~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
+#~ "Pidgin was unable to change your password due to an error connecting to the "
 #~ "Gadu-Gadu server.  Please try again later."
 #~ msgstr ""
 #~ "به دلیل اشکال در اتصال به کارگزار Gadu-Gadu گیم نتوانست گذرواژهٔ شما را "
@@ -16040,7 +16037,7 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgstr "دسترسی به مجموعه تنظیمات کاربر ممکن نیست."
 
 #~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
+#~ "Pidgin was unable to access this user's profile due to an error connecting "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
 #~ "به علت وجود خطایی در اتصال به کارگزار دفترچهٔ راهنمای کاربران، گیم نتوانست "
