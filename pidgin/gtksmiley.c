@@ -233,9 +233,12 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 	emoticon = purple_smileys_find_by_shortcut(entry);
 	if (emoticon && emoticon != s->smiley) {
+		gchar *msg;
+		msg = g_strdup_printf(_("A custom smiley for '%s' already exists.  "
+				"Please use a different shortcut."), entry);
 		purple_notify_error(s->parent, _("Custom Smiley"),
-				_("Duplicate Shortcut"),
-				_("A custom smiley for the selected shortcut already exists. Please specify a different shortcut."));
+				_("Duplicate Shortcut"), msg);
+		g_free(msg);
 		return;
 	}
 
