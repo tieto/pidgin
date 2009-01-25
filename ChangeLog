@@ -613,13 +613,13 @@ version 2.2.1 (09/29/2007):
 version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
-	Libpurple:
+	libpurple:
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
 	* XMPP enhancements. See
-	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas
 	  Monitzer, Google Summer of Code for Adium)
-	* Certificate management. Libpurple will validate certificates on
+	* Certificate management. libpurple will validate certificates on
 	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
 	* Some adjustments were made to fix sending messages when using
 	  the MSN HTTP method. (Laszlo Pandy)

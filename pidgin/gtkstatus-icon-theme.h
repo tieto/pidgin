@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PIDGIN_STATUS_ICON_THEME_H_
-#define _PIDGIN_STATUS_ICON_THEME_H_
+#ifndef PIDGIN_STATUS_ICON_THEME_H
+#define PIDGIN_STATUS_ICON_THEME_H
 
 #include <glib-object.h>
 #include "gtkicon-theme.h"
@@ -39,12 +39,12 @@
 typedef struct _PidginStatusIconTheme        PidginStatusIconTheme;
 typedef struct _PidginStatusIconThemeClass   PidginStatusIconThemeClass;
 
-#define PIDGIN_TYPE_STATUS_ICON_THEME		  	(pidgin_status_icon_theme_get_type ())
-#define PIDGIN_STATUS_ICON_THEME(obj)		  	(G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconTheme))
-#define PIDGIN_STATUS_ICON_THEME_CLASS(klass)	  	(G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconThemeClass))
-#define PIDGIN_IS_STATUS_ICON_THEME(obj)	  	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_STATUS_ICON_THEME))
-#define PIDGIN_IS_STATUS_ICON_THEME_CLASS(klass) 	(G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_STATUS_ICON_THEME))
-#define PIDGIN_STATUS_ICON_THEME_GET_CLASS(obj)  	(G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconThemeClass))
+#define PIDGIN_TYPE_STATUS_ICON_THEME            (pidgin_status_icon_theme_get_type ())
+#define PIDGIN_STATUS_ICON_THEME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconTheme))
+#define PIDGIN_STATUS_ICON_THEME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconThemeClass))
+#define PIDGIN_IS_STATUS_ICON_THEME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_STATUS_ICON_THEME))
+#define PIDGIN_IS_STATUS_ICON_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_STATUS_ICON_THEME))
+#define PIDGIN_STATUS_ICON_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconThemeClass))
 
 struct _PidginStatusIconTheme
 {
@@ -68,4 +68,4 @@ G_BEGIN_DECLS
 GType pidgin_status_icon_theme_get_type(void);
 
 G_END_DECLS
-#endif /* _PIDGIN_STATUS_ICON_THEME_H_ */
+#endif /* PIDGIN_STATUS_ICON_THEME_H */

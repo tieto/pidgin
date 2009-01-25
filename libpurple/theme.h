@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PURPLE_THEME_H_
-#define _PURPLE_THEME_H_
+#ifndef PURPLE_THEME_H
+#define PURPLE_THEME_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -39,12 +39,12 @@
 typedef struct _PurpleTheme        PurpleTheme;
 typedef struct _PurpleThemeClass   PurpleThemeClass;
 
-#define PURPLE_TYPE_THEME		  (purple_theme_get_type ())
-#define PURPLE_THEME(obj)		  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_TYPE_THEME, PurpleTheme))
-#define PURPLE_THEME_CLASS(klass)	  (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_TYPE_THEME, PurpleThemeClass))
-#define PURPLE_IS_THEME(obj)	  	  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_TYPE_THEME))
-#define PURPLE_IS_THEME_CLASS(klass) 	  (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_TYPE_THEME))
-#define PURPLE_THEME_GET_CLASS(obj)  	  (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_THEME, PurpleThemeClass))
+#define PURPLE_TYPE_THEME            (purple_theme_get_type ())
+#define PURPLE_THEME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_TYPE_THEME, PurpleTheme))
+#define PURPLE_THEME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_TYPE_THEME, PurpleThemeClass))
+#define PURPLE_IS_THEME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_TYPE_THEME))
+#define PURPLE_IS_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_TYPE_THEME))
+#define PURPLE_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_THEME, PurpleThemeClass))
 
 struct _PurpleTheme
 {
@@ -69,107 +69,107 @@ G_BEGIN_DECLS
 GType purple_theme_get_type(void);
 
 /**
- * Returns the name of the PurpleTheme object
- * 
- * @param theme 	the purple theme
+ * Returns the name of the PurpleTheme object.
  *
- * @return The string representating the name of the theme
+ * @param theme  The purple theme.
+ *
+ * @return The string representating the name of the theme.
  */
 const gchar *purple_theme_get_name(PurpleTheme *theme);
 
 /**
- * Sets the name of the PurpleTheme object
- * 
- * @param theme 	the purple theme
- * @param name 		the name of the PurpleTheme object
+ * Sets the name of the PurpleTheme object.
+ *
+ * @param theme The purple theme.
+ * @param name  The name of the PurpleTheme object.
  */
 void purple_theme_set_name(PurpleTheme *theme, const gchar *name);
 
 /**
- * Returns the description of the PurpleTheme object
- * 
- * @param theme 	the purple theme
+ * Returns the description of the PurpleTheme object.
  *
- * @return A short description of the theme
+ * @param theme  The purple theme.
+ *
+ * @return A short description of the theme.
  */
 const gchar *purple_theme_get_description(PurpleTheme *theme);
 
 /**
- * Sets the description of the PurpleTheme object
- * 
- * @param theme 	the purple theme
- * @param description	the description of the PurpleTheme object
+ * Sets the description of the PurpleTheme object.
+ *
+ * @param theme  The purple theme.
+ * @param description The description of the PurpleTheme object.
  */
 void purple_theme_set_description(PurpleTheme *theme, const gchar *description);
 
 /**
- * Returns the author of the PurpleTheme object
- * 
- * @param theme 	the purple theme
+ * Returns the author of the PurpleTheme object.
  *
- * @return The author of the theme
+ * @param theme  The purple theme.
+ *
+ * @return The author of the theme.
  */
 const gchar *purple_theme_get_author(PurpleTheme *theme);
 
 /**
- * Sets the author of the PurpleTheme object
- * 
- * @param theme 	the purple theme
- * @param author	the author of the PurpleTheme object
+ * Sets the author of the PurpleTheme object.
+ *
+ * @param theme  The purple theme.
+ * @param author The author of the PurpleTheme object.
  */
 void purple_theme_set_author(PurpleTheme *theme, const gchar *author);
 
 /**
- * Returns the type (string) of the PurpleTheme object
- * 
- * @param theme 	the purple theme
+ * Returns the type (string) of the PurpleTheme object.
  *
- * @return The string represtenting the type
+ * @param theme  The purple theme.
+ *
+ * @return The string represtenting the type.
  */
 const gchar *purple_theme_get_type_string(PurpleTheme *theme);
 
 /**
- * Returns the directory of the PurpleTheme object
- * 
- * @param theme 	the purple theme
+ * Returns the directory of the PurpleTheme object.
  *
- * @return The string represtenting the theme directory 
+ * @param theme  The purple theme.
+ *
+ * @return The string represtenting the theme directory.
  */
 const gchar *purple_theme_get_dir(PurpleTheme *theme);
 
 /**
- * Sets the directory of the PurpleTheme object
- * 
- * @param theme 	the purple theme
- * @param dir		the directory of the PurpleTheme object
+ * Sets the directory of the PurpleTheme object.
+ *
+ * @param theme  The purple theme.
+ * @param dir    The directory of the PurpleTheme object.
  */
 void purple_theme_set_dir(PurpleTheme *theme, const gchar *dir);
 
 /**
- * Returns the image preview of the PurpleTheme object
- * 
- * @param theme 	the purple theme
+ * Returns the image preview of the PurpleTheme object.
  *
- * @return The image preview of the PurpleTheme object
+ * @param theme  The purple theme.
+ *
+ * @return The image preview of the PurpleTheme object.
  */
 const gchar *purple_theme_get_image(PurpleTheme *theme);
 
 /**
- * Returns the image preview and directory of the PurpleTheme object
- * 
- * @param theme 	the purple theme
+ * Returns the image preview and directory of the PurpleTheme object.
  *
- * @return The image preview of the PurpleTheme object
+ * @param theme  The purple theme.
+ *
+ * @return The image preview of the PurpleTheme object.
  */
 gchar *purple_theme_get_image_full(PurpleTheme *theme);
 
 /**
- * Sets the directory of the PurpleTheme object
- * 
- * @param theme 	the purple theme
- * @param img		the image preview of the PurpleTheme object
+ * Sets the directory of the PurpleTheme object.
+ *
+ * @param theme	 The purple theme.
+ * @param img    The image preview of the PurpleTheme object.
  */
 void purple_theme_set_image(PurpleTheme *theme, const gchar *img);
 
 G_END_DECLS
-#endif /* _PURPLE_THEME_H_ */
+#endif /* PURPLE_THEME_H */

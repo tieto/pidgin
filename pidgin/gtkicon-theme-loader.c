@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
  */
 
 #include "gtkicon-theme-loader.h"
@@ -27,7 +26,7 @@
 #include "xmlnode.h"
 
 /*****************************************************************************
- * Icon Theme Builder                                                      
+ * Icon Theme Builder
  *****************************************************************************/
 
 static PurpleTheme *
@@ -42,41 +41,41 @@ pidgin_icon_loader_build(const gchar *dir)
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
 	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
-		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-loader");
+		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-theme-loader");
 
 	g_free(filename_full);
 	g_return_val_if_fail(root_node != NULL, NULL);
 
-	/* Parse the tree */	
+	/* Parse the tree */
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
 
 	if (xmlnode_get_attrib(root_node, "name") != NULL) {
 		theme = g_object_new(PIDGIN_TYPE_STATUS_ICON_THEME,
-				    "type", "status-icon",
-				    "name", xmlnode_get_attrib(root_node, "name"),
-				    "author", xmlnode_get_attrib(root_node, "author"),
-				    "image", xmlnode_get_attrib(root_node, "image"),
-				    "directory", dir,
-				    "description", data, NULL);
-	
+				"type", "status-icon",
+				"name", xmlnode_get_attrib(root_node, "name"),
+				"author", xmlnode_get_attrib(root_node, "author"),
+				"image", xmlnode_get_attrib(root_node, "image"),
+				"directory", dir,
+				"description", data, NULL);
+
 		sub_node = xmlnode_get_child(root_node, "icon");
 
-		while (sub_node){
+		while (sub_node) {
 			pidgin_icon_theme_set_icon(theme,
-						   xmlnode_get_attrib(sub_node, "id"),
-						   xmlnode_get_attrib(sub_node, "file"));
+					xmlnode_get_attrib(sub_node, "id"),
+					xmlnode_get_attrib(sub_node, "file"));
 			sub_node = xmlnode_get_next_twin(sub_node);
 		}
 	}
 
-	xmlnode_free(root_node);	
+	xmlnode_free(root_node);
 	g_free(data);
 	return PURPLE_THEME(theme);
 }
 
 /******************************************************************************
- * GObject Stuff                                                              
+ * GObject Stuff
  *****************************************************************************/
 
 static void
@@ -88,28 +87,25 @@ pidgin_icon_theme_loader_class_init (PidginIconThemeLoaderClass *klass)
 }
 
 
-GType 
+GType
 pidgin_icon_theme_loader_get_type (void)
 {
-  static GType type = 0;
-  if (type == 0) {
-    static const GTypeInfo info = {
-      sizeof (PidginIconThemeLoaderClass),
-      NULL,   /* base_init */
-      NULL,   /* base_finalize */
-      (GClassInitFunc)pidgin_icon_theme_loader_class_init,   /* class_init */
-      NULL,   /* class_finalize */
-      NULL,   /* class_data */
-      sizeof (PidginIconThemeLoader),
-      0,      /* n_preallocs */
-      NULL,    /* instance_init */
-      NULL,   /* value table */
-    };
-    type = g_type_register_static (PURPLE_TYPE_THEME_LOADER,
-                                   "PidginIconThemeLoader",
-                                   &info, 0);
-  }
-  return type;
+	static GType type = 0;
+	if (type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PidginIconThemeLoaderClass),
+			NULL, /* base_init */
+			NULL, /* base_finalize */
+			(GClassInitFunc)pidgin_icon_theme_loader_class_init, /* class_init */
+			NULL, /* class_finalize */
+			NULL, /* class_data */
+			sizeof (PidginIconThemeLoader),
+			0, /* n_preallocs */
+			NULL, /* instance_init */
+			NULL, /* value table */
+		};
+		type = g_type_register_static (PURPLE_TYPE_THEME_LOADER,
+				"PidginIconThemeLoader", &info, 0);
+	}
+	return type;
 }
-
-

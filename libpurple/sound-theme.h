@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PURPLE_SOUND_THEME_H_
-#define _PURPLE_SOUND_THEME_H_
+#ifndef PURPLE_SOUND_THEME_H
+#define PURPLE_SOUND_THEME_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -41,12 +41,12 @@
 typedef struct _PurpleSoundTheme        PurpleSoundTheme;
 typedef struct _PurpleSoundThemeClass   PurpleSoundThemeClass;
 
-#define PURPLE_TYPE_SOUND_THEME		  	(purple_sound_theme_get_type ())
-#define PURPLE_SOUND_THEME(obj)		  	(G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_TYPE_SOUND_THEME, PurpleSoundTheme))
-#define PURPLE_SOUND_THEME_CLASS(klass)	  	(G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_TYPE_SOUND_THEME, PurpleSoundThemeClass))
-#define PURPLE_IS_SOUND_THEME(obj)	  	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_TYPE_SOUND_THEME))
-#define PURPLE_IS_SOUND_THEME_CLASS(klass) 	(G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_TYPE_SOUND_THEME))
-#define PURPLE_SOUND_THEME_GET_CLASS(obj)  	(G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_SOUND_THEME, PurpleSoundThemeClass))
+#define PURPLE_TYPE_SOUND_THEME             (purple_sound_theme_get_type())
+#define PURPLE_SOUND_THEME(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SOUND_THEME, PurpleSoundTheme))
+#define PURPLE_SOUND_THEME_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SOUND_THEME, PurpleSoundThemeClass))
+#define PURPLE_IS_SOUND_THEME(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SOUND_THEME))
+#define PURPLE_IS_SOUND_THEME_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_SOUND_THEME))
+#define PURPLE_SOUND_THEME_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SOUND_THEME, PurpleSoundThemeClass))
 
 struct _PurpleSoundTheme
 {
@@ -71,23 +71,26 @@ G_BEGIN_DECLS
 GType purple_sound_theme_get_type(void);
 
 /**
- * Returns a copy of the filename for the sound event
+ * Returns a copy of the filename for the sound event.
  *
- * @param event		the purple sound event to look up
+ * @param event The purple sound event to look up.
  *
- * @returns the filename of the sound event
+ * @returns The filename of the sound event.
  */
 const gchar *purple_sound_theme_get_file(PurpleSoundTheme *theme,
-				   const gchar *event);
+		const gchar *event);
+
 /**
  * Returns a copy of the directory and filename for the sound event
  *
- * @param event		the purple sound event to look up
+ * @param event The purple sound event to look up
  *
- * @returns the directory + '/' + filename of the sound event
+ * @returns The directory + '/' + filename of the sound event.  This is
+ *          a newly allocated string that should be freed with g_free.
  */
 gchar *purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
-					const gchar *event);
+		const gchar *event);
+
 /**
  * Sets the filename for a given sound event
  *
@@ -95,8 +98,8 @@ gchar *purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
  * @param filename		the name of the file to be used for the event
  */
 void purple_sound_theme_set_file(PurpleSoundTheme *theme,
-				const gchar *event, 
-			    	const gchar *filename);
+		const gchar *event,
+		const gchar *filename);
 
 G_END_DECLS
-#endif /* _PURPLE_SOUND_THEME_H_ */
+#endif /* PURPLE_SOUND_THEME_H */

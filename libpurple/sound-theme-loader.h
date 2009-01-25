@@ -1,5 +1,5 @@
 /**
- * @file sound-loader.h  Purple Sound Theme Loader Class API
+ * @file sound-theme-loader.h  Purple Sound Theme Loader Class API
  */
 
 /* purple
@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PURPLE_SOUND_THEME_LOADER_H_
-#define _PURPLE_SOUND_THEME_LOADER_H_
+#ifndef PURPLE_SOUND_THEME_LOADER_H
+#define PURPLE_SOUND_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -39,12 +39,12 @@
 typedef struct _PurpleSoundThemeLoader        PurpleSoundThemeLoader;
 typedef struct _PurpleSoundThemeLoaderClass   PurpleSoundThemeLoaderClass;
 
-#define PURPLE_TYPE_SOUND_THEME_LOADER			  (purple_sound_theme_loader_get_type ())
-#define PURPLE_SOUND_THEME_LOADER(obj)			  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoader))
-#define PURPLE_SOUND_THEME_LOADER_CLASS(klass)		  (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoaderClass))
-#define PURPLE_IS_SOUND_THEME_LOADER(obj)	  	  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_TYPE_SOUND_THEME_LOADER))
-#define PURPLE_IS_SOUND_THEME_LOADER_CLASS(klass) 	  (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_TYPE_SOUND_THEME_LOADER))
-#define PURPLE_SOUND_THEME_LOADER_GET_CLASS(obj)  	  (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoaderClass))
+#define PURPLE_TYPE_SOUND_THEME_LOADER            (purple_sound_theme_loader_get_type())
+#define PURPLE_SOUND_THEME_LOADER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoader))
+#define PURPLE_SOUND_THEME_LOADER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoaderClass))
+#define PURPLE_IS_SOUND_THEME_LOADER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SOUND_THEME_LOADER))
+#define PURPLE_IS_SOUND_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_SOUND_THEME_LOADER))
+#define PURPLE_SOUND_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoaderClass))
 
 struct _PurpleSoundThemeLoader
 {
@@ -68,4 +68,4 @@ G_BEGIN_DECLS
 GType purple_sound_theme_loader_get_type(void);
 
 G_END_DECLS
-#endif /* _PURPLE_SOUND_THEME_LOADER_H_ */
+#endif /* PURPLE_SOUND_THEME_LOADER_H */

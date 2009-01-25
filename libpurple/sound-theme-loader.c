@@ -1,5 +1,5 @@
 /*
- * SoundThemeLoader for LibPurple
+ * SoundThemeLoader for libpurple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
  */
 
 #include "internal.h"
@@ -28,7 +27,7 @@
 #include "xmlnode.h"
 
 /*****************************************************************************
- * Sound Theme Builder                                                      
+ * Sound Theme Builder
  *****************************************************************************/
 
 static PurpleTheme *
@@ -43,41 +42,41 @@ purple_sound_loader_build(const gchar *dir)
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
 	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
-		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-loader");
+		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-theme-loader");
 
 	g_free(filename_full);
 	g_return_val_if_fail(root_node != NULL, NULL);
 
-	/* Parse the tree */	
+	/* Parse the tree */
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
 
 	if (xmlnode_get_attrib(root_node, "name") != NULL) {
 		theme = g_object_new(PURPLE_TYPE_SOUND_THEME,
-				    "type", "sound",
-				    "name", xmlnode_get_attrib(root_node, "name"),
-				    "author", xmlnode_get_attrib(root_node, "author"),
-				    "image", xmlnode_get_attrib(root_node, "image"),
-				    "directory", dir,
-				    "description", data, NULL);
+				"type", "sound",
+				"name", xmlnode_get_attrib(root_node, "name"),
+				"author", xmlnode_get_attrib(root_node, "author"),
+				"image", xmlnode_get_attrib(root_node, "image"),
+				"directory", dir,
+				"description", data, NULL);
 
 		sub_node = xmlnode_get_child(root_node, "event");
 
 		while (sub_node) {
 			purple_sound_theme_set_file(theme,
-						    xmlnode_get_attrib(sub_node, "name"),
-						    xmlnode_get_attrib(sub_node, "file"));
+					xmlnode_get_attrib(sub_node, "name"),
+					xmlnode_get_attrib(sub_node, "file"));
 			sub_node = xmlnode_get_next_twin(sub_node);
 		}
 	}
 
-	xmlnode_free(root_node);	
+	xmlnode_free(root_node);
 	g_free(data);
 	return PURPLE_THEME(theme);
 }
 
 /******************************************************************************
- * GObject Stuff                                                              
+ * GObject Stuff
  *****************************************************************************/
 
 static void
@@ -88,29 +87,25 @@ purple_sound_theme_loader_class_init(PurpleSoundThemeLoaderClass *klass)
 	loader_klass->purple_theme_loader_build = purple_sound_loader_build;
 }
 
-
-GType 
+GType
 purple_sound_theme_loader_get_type(void)
 {
-  static GType type = 0;
-  if (type == 0) {
-    static const GTypeInfo info = {
-      sizeof (PurpleSoundThemeLoaderClass),
-      NULL,   /* base_init */
-      NULL,   /* base_finalize */
-      (GClassInitFunc)purple_sound_theme_loader_class_init,   /* class_init */
-      NULL,   /* class_finalize */
-      NULL,   /* class_data */
-      sizeof (PurpleSoundThemeLoader),
-      0,      /* n_preallocs */
-      NULL,    /* instance_init */
-      NULL,   /* value table */
-    };
-    type = g_type_register_static(PURPLE_TYPE_THEME_LOADER,
-                                   "PurpleSoundThemeLoader",
-                                   &info, 0);
-  }
-  return type;
+	static GType type = 0;
+	if (type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleSoundThemeLoaderClass),
+			NULL, /* base_init */
+			NULL, /* base_finalize */
+			(GClassInitFunc)purple_sound_theme_loader_class_init, /* class_init */
+			NULL, /* class_finalize */
+			NULL, /* class_data */
+			sizeof(PurpleSoundThemeLoader),
+			0, /* n_preallocs */
+			NULL, /* instance_init */
+			NULL, /* value table */
+		};
+		type = g_type_register_static(PURPLE_TYPE_THEME_LOADER,
+				"PurpleSoundThemeLoader", &info, 0);
+	}
+	return type;
 }
-
-

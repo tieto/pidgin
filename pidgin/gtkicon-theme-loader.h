@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PIDGIN_ICON_THEME_LOADER_H_
-#define _PIDGIN_ICON_THEME_LOADER_H_
+#ifndef PIDGIN_ICON_THEME_LOADER_H
+#define PIDGIN_ICON_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -37,14 +37,14 @@
  * PidginIconThemeLoader is a GObject.
  */
 typedef struct _PidginIconThemeLoader       PidginIconThemeLoader;
-typedef struct _PidginIconThemeLoaderClass   PidginIconThemeLoaderClass;
+typedef struct _PidginIconThemeLoaderClass  PidginIconThemeLoaderClass;
 
-#define PIDGIN_TYPE_ICON_THEME_LOADER			  (pidgin_icon_theme_loader_get_type ())
-#define PIDGIN_ICON_THEME_LOADER(obj)			  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_ICON_THEME_LOADER, PidginIconThemeLoader))
-#define PIDGIN_ICON_THEME_LOADER_CLASS(klass)		  (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_ICON_THEME_LOADER, PidginIconThemeLoaderClass))
-#define PIDGIN_IS_ICON_THEME_LOADER(obj)	  	  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_ICON_THEME_LOADER))
-#define PIDGIN_IS_ICON_THEME_LOADER_CLASS(klass) 	  (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_ICON_THEME_LOADER))
-#define PIDGIN_ICON_THEME_LOADER_GET_CLASS(obj)  	  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_ICON_THEME_LOADER, PidginIconThemeLoaderClass))
+#define PIDGIN_TYPE_ICON_THEME_LOADER            (pidgin_icon_theme_loader_get_type ())
+#define PIDGIN_ICON_THEME_LOADER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_ICON_THEME_LOADER, PidginIconThemeLoader))
+#define PIDGIN_ICON_THEME_LOADER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_ICON_THEME_LOADER, PidginIconThemeLoaderClass))
+#define PIDGIN_IS_ICON_THEME_LOADER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_ICON_THEME_LOADER))
+#define PIDGIN_IS_ICON_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_ICON_THEME_LOADER))
+#define PIDGIN_ICON_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_ICON_THEME_LOADER, PidginIconThemeLoaderClass))
 
 struct _PidginIconThemeLoader
 {
@@ -68,4 +68,4 @@ G_BEGIN_DECLS
 GType pidgin_icon_theme_loader_get_type(void);
 
 G_END_DECLS
-#endif /* _PIDGIN_ICON_THEME_LOADER_H_ */
+#endif /* PIDGIN_ICON_THEME_LOADER_H */

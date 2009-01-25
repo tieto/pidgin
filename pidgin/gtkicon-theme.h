@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PIDGIN_ICON_THEME_H_
-#define _PIDGIN_ICON_THEME_H_
+#ifndef PIDGIN_ICON_THEME_H
+#define PIDGIN_ICON_THEME_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -40,12 +40,12 @@
 typedef struct _PidginIconTheme        PidginIconTheme;
 typedef struct _PidginIconThemeClass   PidginIconThemeClass;
 
-#define PIDGIN_TYPE_ICON_THEME		  	(pidgin_icon_theme_get_type ())
-#define PIDGIN_ICON_THEME(obj)		  	(G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_ICON_THEME, PidginIconTheme))
-#define PIDGIN_ICON_THEME_CLASS(klass)	  	(G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_ICON_THEME, PidginIconThemeClass))
-#define PIDGIN_IS_ICON_THEME(obj)	  	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_ICON_THEME))
-#define PIDGIN_IS_ICON_THEME_CLASS(klass) 	(G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_ICON_THEME))
-#define PIDGIN_ICON_THEME_GET_CLASS(obj)  	(G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_ICON_THEME, PidginIconThemeClass))
+#define PIDGIN_TYPE_ICON_THEME            (pidgin_icon_theme_get_type ())
+#define PIDGIN_ICON_THEME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_ICON_THEME, PidginIconTheme))
+#define PIDGIN_ICON_THEME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_ICON_THEME, PidginIconThemeClass))
+#define PIDGIN_IS_ICON_THEME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_ICON_THEME))
+#define PIDGIN_IS_ICON_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_ICON_THEME))
+#define PIDGIN_ICON_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_ICON_THEME, PidginIconThemeClass))
 
 struct _PidginIconTheme
 {
@@ -77,7 +77,8 @@ GType pidgin_icon_theme_get_type(void);
  * @returns the filename of the icon event
  */
 const gchar *pidgin_icon_theme_get_icon(PidginIconTheme *theme,
-				  	const gchar *event);
+		const gchar *event);
+
 /**
  * Sets the filename for a given icon id, setting the icon to NULL will remove the icon from the theme
  *
@@ -85,8 +86,8 @@ const gchar *pidgin_icon_theme_get_icon(PidginIconTheme *theme,
  * @param filename		the name of the file to be used for the given id
  */
 void pidgin_icon_theme_set_icon(PidginIconTheme *theme,
-				const gchar *icon_id, 
-			    	const gchar *filename);
+		const gchar *icon_id,
+		const gchar *filename);
 
 G_END_DECLS
-#endif /* _PIDGIN_ICON_THEME_H_ */
+#endif /* PIDGIN_ICON_THEME_H */

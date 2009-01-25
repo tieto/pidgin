@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
  */
 
 #include <stdlib.h>
@@ -31,9 +30,11 @@
 /******************************************************************************
  * Globals
  *****************************************************************************/
+
 #define DEFAULT_TEXT_COLOR "black"
+
 /*****************************************************************************
- * Buddy List Theme Builder                                                      
+ * Buddy List Theme Builder
  *****************************************************************************/
 
 static PurpleTheme *
@@ -65,7 +66,7 @@ pidgin_blist_loader_build(const gchar *dir)
 	/* init all structs and colors */
 	bgcolor = g_new0(GdkColor, 1);
 	expanded_bgcolor = g_new0(GdkColor, 1);
-	collapsed_bgcolor = g_new0(GdkColor, 1); 
+	collapsed_bgcolor = g_new0(GdkColor, 1);
 
 	layout = g_new0(PidginBlistLayout, 1);
 
@@ -78,7 +79,7 @@ pidgin_blist_loader_build(const gchar *dir)
 	away = g_new0(FontColorPair, 1);
 	offline = g_new0(FontColorPair, 1);
 	idle = g_new0(FontColorPair, 1);
-	message = g_new0(FontColorPair, 1); 
+	message = g_new0(FontColorPair, 1);
 	message_nick_said = g_new0(FontColorPair, 1);
 	status = g_new0(FontColorPair, 1);
 
@@ -94,14 +95,13 @@ pidgin_blist_loader_build(const gchar *dir)
 
 	/* <groups> */
 	if ((success = (success && (sub_node = xmlnode_get_child(root_node, "groups")) != NULL
-		     && (sub_sub_node = xmlnode_get_child(sub_node, "expanded")) != NULL))) {
-
+		     && (sub_sub_node = xmlnode_get_child(sub_node, "expanded")) != NULL)))
+	{
 		expanded->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 
 		if ((temp = xmlnode_get_attrib(sub_sub_node, "text_color")) != NULL && gdk_color_parse(temp, &color))
 			expanded->color = g_strdup(temp);
 		else expanded->color = g_strdup(DEFAULT_TEXT_COLOR);
-	
 
 		if ((temp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(temp, expanded_bgcolor))
 			gdk_colormap_alloc_color(gdk_colormap_get_system(), expanded_bgcolor, FALSE, TRUE);
@@ -111,8 +111,8 @@ pidgin_blist_loader_build(const gchar *dir)
 		}
 	}
 
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL))) {
-
+	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL)))
+	{
 		collapsed->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 
 		if((temp = xmlnode_get_attrib(sub_sub_node, "text_color")) != NULL && gdk_color_parse(temp, &color))
@@ -129,13 +129,13 @@ pidgin_blist_loader_build(const gchar *dir)
 
 	/* <buddys> */
 	if ((success = (success && (sub_node = xmlnode_get_child(root_node, "buddys")) != NULL &&
-		     (sub_sub_node = xmlnode_get_child(sub_node, "placement")) != NULL))) { 
-
+		     (sub_sub_node = xmlnode_get_child(sub_node, "placement")) != NULL)))
+	{
 		layout->status_icon = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) : 0;
 		layout->text = (temp = xmlnode_get_attrib(sub_sub_node, "name")) != NULL ? atoi(temp) : 1;
 		layout->emblem = (temp = xmlnode_get_attrib(sub_sub_node, "emblem")) != NULL ? atoi(temp) : 2;
 		layout->protocol_icon = (temp = xmlnode_get_attrib(sub_sub_node, "protocol_icon")) != NULL ? atoi(temp) : 3;
-		layout->buddy_icon = (temp = xmlnode_get_attrib(sub_sub_node, "buddy_icon")) != NULL ? atoi(temp) : 4;		
+		layout->buddy_icon = (temp = xmlnode_get_attrib(sub_sub_node, "buddy_icon")) != NULL ? atoi(temp) : 4;
 		layout->show_status = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) != 0 : 1;
 	}
 
@@ -147,7 +147,7 @@ pidgin_blist_loader_build(const gchar *dir)
 			contact_color = NULL;
 		}
 	}
-	
+
 	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "contact_text")) != NULL))) {
 		contact->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
@@ -182,7 +182,7 @@ pidgin_blist_loader_build(const gchar *dir)
 			idle->color = g_strdup(temp);
 		else online->color = g_strdup(DEFAULT_TEXT_COLOR);
 	}
-	
+
 	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "message_text")) != NULL))) {
 		message->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
@@ -196,7 +196,7 @@ pidgin_blist_loader_build(const gchar *dir)
 			message_nick_said->color = g_strdup(temp);
 		else message_nick_said->color = g_strdup(DEFAULT_TEXT_COLOR);
 	}
-	
+
 	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "status_text")) != NULL))) {
 		status->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
@@ -209,29 +209,29 @@ pidgin_blist_loader_build(const gchar *dir)
 
 	/* the new theme */
 	theme = g_object_new(PIDGIN_TYPE_BLIST_THEME,
-			    "type", "blist",
-			    "name", xmlnode_get_attrib(root_node, "name"),
-			    "author", xmlnode_get_attrib(root_node, "author"),
-			    "image", xmlnode_get_attrib(root_node, "image"),
-			    "directory", dir,
-			    "description", data,
-			    "background-color", bgcolor,
-			    "layout", layout,
-			    "expanded-color", expanded_bgcolor,
-			    "expanded-text", expanded,
-			    "collapsed-color", collapsed_bgcolor,
-			    "collapsed-text", collapsed,
-			    "contact-color", contact_color,
-			    "contact", contact,
-			    "online", online,
-			    "away", away,
-			    "offline", offline,
-			    "idle", idle,
-			    "message", message,
-			    "message_nick_said", message_nick_said,
-			    "status", status, NULL);
+			"type", "blist",
+			"name", xmlnode_get_attrib(root_node, "name"),
+			"author", xmlnode_get_attrib(root_node, "author"),
+			"image", xmlnode_get_attrib(root_node, "image"),
+			"directory", dir,
+			"description", data,
+			"background-color", bgcolor,
+			"layout", layout,
+			"expanded-color", expanded_bgcolor,
+			"expanded-text", expanded,
+			"collapsed-color", collapsed_bgcolor,
+			"collapsed-text", collapsed,
+			"contact-color", contact_color,
+			"contact", contact,
+			"online", online,
+			"away", away,
+			"offline", offline,
+			"idle", idle,
+			"message", message,
+			"message_nick_said", message_nick_said,
+			"status", status, NULL);
 
-	xmlnode_free(root_node);	
+	xmlnode_free(root_node);
 	g_free(data);
 
 	/* malformed xml file - also frees all partial data*/
@@ -244,7 +244,7 @@ pidgin_blist_loader_build(const gchar *dir)
 }
 
 /******************************************************************************
- * GObject Stuff                                                              
+ * GObject Stuff
  *****************************************************************************/
 
 static void
@@ -255,29 +255,25 @@ pidgin_blist_theme_loader_class_init(PidginBlistThemeLoaderClass *klass)
 	loader_klass->purple_theme_loader_build = pidgin_blist_loader_build;
 }
 
-
-GType 
+GType
 pidgin_blist_theme_loader_get_type(void)
 {
-  static GType type = 0;
-  if (type == 0) {
-    static const GTypeInfo info = {
-      sizeof (PidginBlistThemeLoaderClass),
-      NULL,   /* base_init */
-      NULL,   /* base_finalize */
-      (GClassInitFunc)pidgin_blist_theme_loader_class_init,   /* class_init */
-      NULL,   /* class_finalize */
-      NULL,   /* class_data */
-      sizeof (PidginBlistThemeLoader),
-      0,      /* n_preallocs */
-      NULL,    /* instance_init */
-      NULL,   /* value table */
-    };
-    type = g_type_register_static(PURPLE_TYPE_THEME_LOADER,
-                                   "PidginBlistThemeLoader",
-                                   &info, 0);
-  }
-  return type;
+	static GType type = 0;
+	if (type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PidginBlistThemeLoaderClass),
+			NULL, /* base_init */
+			NULL, /* base_finalize */
+			(GClassInitFunc)pidgin_blist_theme_loader_class_init, /* class_init */
+			NULL, /* class_finalize */
+			NULL, /* class_data */
+			sizeof(PidginBlistThemeLoader),
+			0, /* n_preallocs */
+			NULL, /* instance_init */
+			NULL, /* value table */
+		};
+		type = g_type_register_static(PURPLE_TYPE_THEME_LOADER,
+				"PidginBlistThemeLoader", &info, 0);
+	}
+	return type;
 }
-
-

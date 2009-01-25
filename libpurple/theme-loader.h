@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PURPLE_THEME_LOADER_H_
-#define _PURPLE_THEME_LOADER_H_
+#ifndef PURPLE_THEME_LOADER_H
+#define PURPLE_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -40,12 +40,12 @@
 typedef struct _PurpleThemeLoader        PurpleThemeLoader;
 typedef struct _PurpleThemeLoaderClass   PurpleThemeLoaderClass;
 
-#define PURPLE_TYPE_THEME_LOADER		  (purple_theme_loader_get_type ())
-#define PURPLE_THEME_LOADER(obj)	 	  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoader))
-#define PURPLE_THEME_LOADER_CLASS(klass)	  (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoaderClass))
-#define PURPLE_IS_THEME_LOADER(obj)	  	  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_TYPE_THEME_LOADER))
-#define PURPLE_IS_THEME_LOADER_CLASS(klass) 	  (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_TYPE_THEME_LOADER))
-#define PURPLE_THEME_LOADER_GET_CLASS(obj)  	  (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoaderClass))
+#define PURPLE_TYPE_THEME_LOADER            (purple_theme_loader_get_type())
+#define PURPLE_THEME_LOADER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoader))
+#define PURPLE_THEME_LOADER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoaderClass))
+#define PURPLE_IS_THEME_LOADER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_THEME_LOADER))
+#define PURPLE_IS_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_THEME_LOADER))
+#define PURPLE_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoaderClass))
 
 struct _PurpleThemeLoader
 {
@@ -73,20 +73,20 @@ GType purple_theme_loader_get_type(void);
 /**
  * Returns the string represtenting the type of the theme loader
  *
- * @param self 		the theme loader
+ * @param self The theme loader
  *
- * @returns 		the string represting this type
+ * @returns The string represting this type
  */
 const gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
 
 /**
  * Creates a new PurpleTheme
  *
- * @param dir 		the directory containing the theme
+ * @param dir The directory containing the theme
  *
- * @returns 		PurpleTheme containing the information from the directory
+ * @returns A PurpleTheme containing the information from the directory
  */
 PurpleTheme *purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir);
 
 G_END_DECLS
-#endif /* _PURPLE_THEME_LOADER_H_ */
+#endif /* PURPLE_THEME_LOADER_H */

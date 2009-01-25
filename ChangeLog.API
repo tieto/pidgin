@@ -43,13 +43,13 @@ version 2.6.0 (??/??/????):
 			* Purple::Request::Fields::new
 			* Purple::Request::Field::new
 			* Purple::Request::Field::account_new
-		 	* Purple::Request::Field::bool_new
-		 	* Purple::Request::Field::choice_new
-		 	* Purple::Request::Field::int_new
-		 	* Purple::Request::Field::label_new
-		 	* Purple::Request::Field::list_new
-		 	* Purple::Request::Field::string_new
-		 	* Purple::Request::Field::group_new
+			* Purple::Request::Field::bool_new
+			* Purple::Request::Field::choice_new
+			* Purple::Request::Field::int_new
+			* Purple::Request::Field::label_new
+			* Purple::Request::Field::list_new
+			* Purple::Request::Field::string_new
+			* Purple::Request::Field::group_new
 
 version 2.5.5 (??/??/2009):
 	libpurple:
