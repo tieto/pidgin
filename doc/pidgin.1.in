@@ -34,6 +34,9 @@ Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, and QQ all at once. It has
 many common features found in other clients, as well as many unique features.
 Pidgin is not endorsed by or affiliated with America Online, ICQ, Microsoft, or
 Yahoo.
+.PP
+Pidgin can be extended by plugins written in multiple programming languages and
+controlled through DBus or \fBpurple-remote\fR.
 
 .SH OPTIONS
 The following options are provided by Pidgin using the standard GNU
@@ -570,6 +573,8 @@ have been solved.
 \fIhttp://pidgin.im/\fR
 .br
 \fIhttp://developer.pidgin.im/\fR
+.br
+\fBpurple-remote\fR(1)
 
 .SH LICENSE
 This program is free software; you can redistribute it and/or modify
