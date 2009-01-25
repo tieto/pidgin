@@ -225,6 +225,12 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 	entry = gtk_entry_get_text(GTK_ENTRY(s->smile));
 	if (!entry || !*entry) {
+		/*
+		 * TODO: We should enable/disable the add button based on
+		 *       whether the user has entered all required data.  That
+		 *       would eliminate the need for this check and provide a
+		 *       better user experience.
+		 */
 		purple_notify_error(s->parent, _("Custom Smiley"),
 				_("More Data needed"),
 				_("Please provide a shortcut to associate with the smiley."));
