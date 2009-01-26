@@ -286,22 +286,22 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
                     acct->username,
                     NULL_STATUS_ONLINE, NULL_STATUS_AWAY, NULL_STATUS_OFFLINE);
 
-  type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, NULL_STATUS_ONLINE,
-                                NULL, TRUE);
-  purple_status_type_add_attr(type, "message", _("Message"),
-                              purple_value_new(PURPLE_TYPE_STRING));
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+      NULL_STATUS_ONLINE, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
   types = g_list_prepend(types, type);
 
-  type = purple_status_type_new(PURPLE_STATUS_AWAY, NULL_STATUS_AWAY,
-                                NULL, TRUE);
-  purple_status_type_add_attr(type, "message", _("Message"),
-                              purple_value_new(PURPLE_TYPE_STRING));
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
+      NULL_STATUS_AWAY, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
   types = g_list_prepend(types, type);
-  
-  type = purple_status_type_new(PURPLE_STATUS_OFFLINE, NULL_STATUS_OFFLINE,
-                                NULL, TRUE);
-  purple_status_type_add_attr(type, "message", _("Message"),
-                              purple_value_new(PURPLE_TYPE_STRING));
+
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
+      NULL_STATUS_OFFLINE, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
   types = g_list_prepend(types, type);
 
   return g_list_reverse(types);

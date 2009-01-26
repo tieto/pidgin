@@ -564,6 +564,11 @@ void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const
  *
  * @param user_info        The PurpleNotifyUserInfo
  * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ *
+ * @deprecated Nothing is using this function and it should be removed
+ *             in 3.0.0.  Or, if we decide we want to keep it in 3.0.0
+ *             then we should make purple_notify_user_info_entry_destroy
+ *             public so that entries can be free'd after they're removed.
  */
 void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, PurpleNotifyUserInfoEntry *user_info_entry);
 

@@ -3350,34 +3350,34 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
   }
 }
 
+static GList *mw_prpl_status_types(PurpleAccount *acct)
+{
+	GList *types = NULL;
+	PurpleStatusType *type;
 
-static GList *mw_prpl_status_types(PurpleAccount *acct) {
-  GList *types = NULL;
-  PurpleStatusType *type;
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+			MW_STATE_ACTIVE, NULL, TRUE, TRUE, FALSE,
+			MW_STATE_MESSAGE, _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
+	types = g_list_append(types, type);
 
-  type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, MW_STATE_ACTIVE,
-			      NULL, TRUE);
-  purple_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
-			    purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
+			MW_STATE_AWAY, NULL, TRUE, TRUE, FALSE,
+			MW_STATE_MESSAGE, _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
+	types = g_list_append(types, type);
 
-  type = purple_status_type_new(PURPLE_STATUS_AWAY, MW_STATE_AWAY,
-			      NULL, TRUE);
-  purple_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
-			    purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
-  
-  type = purple_status_type_new(PURPLE_STATUS_UNAVAILABLE, MW_STATE_BUSY,
-			      _("Do Not Disturb"), TRUE);
-  purple_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
-			    purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
-  
-  type = purple_status_type_new(PURPLE_STATUS_OFFLINE, MW_STATE_OFFLINE,
-			      NULL, TRUE);
-  types = g_list_append(types, type);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
+			MW_STATE_BUSY, _("Do Not Disturb"), TRUE, TRUE, FALSE,
+			MW_STATE_MESSAGE, _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
+	types = g_list_append(types, type);
 
-  return types;
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
+			MW_STATE_OFFLINE, NULL, TRUE, TRUE, FALSE);
+	types = g_list_append(types, type);
+
+	return types;
 }
 
 
