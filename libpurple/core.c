@@ -50,8 +50,8 @@
 #include "sslconn.h"
 #include "status.h"
 #include "stun.h"
-#include "util.h"
 #include "theme-manager.h"
+#include "util.h"
 
 #ifdef HAVE_DBUS
 #  ifndef DBUS_API_SUBJECT_TO_CHANGE
@@ -146,6 +146,7 @@ purple_core_init(const char *ui)
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
 	purple_theme_manager_init();
+
 	/* The buddy icon code uses the imgstore, so init it early. */
 	purple_imgstore_init();
 

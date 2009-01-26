@@ -60,8 +60,8 @@
 #include "gtkstatusbox.h"
 #include "gtkscrollbook.h"
 #include "gtksmiley.h"
-#include "gtkblist-theme-loader.h"
 #include "gtkblist-theme.h"
+#include "gtkblist-theme-loader.h"
 #include "gtkutils.h"
 #include "pidgin/minidialog.h"
 #include "pidgin/pidgintooltip.h"
@@ -3971,15 +3971,16 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 				iday = (t - idle_secs) / (24 * 60 * 60);
 				ihrs = ((t - idle_secs) / 60 / 60) % 24;
 				imin = ((t - idle_secs) / 60) % 60;
-	
-               			if (iday)
+
+				if (iday)
 					idletime = g_strdup_printf(_("Idle %dd %dh %02dm"), iday, ihrs, imin);
 				else if (ihrs)
 					idletime = g_strdup_printf(_("Idle %dh %02dm"), ihrs, imin);
 				else
 					idletime = g_strdup_printf(_("Idle %dm"), imin);
 
-			} else idletime = g_strdup(_("Idle"));
+			} else
+				idletime = g_strdup(_("Idle"));
 		}
 	}
 
@@ -4041,13 +4042,12 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 				        (idletime != NULL && statustext != NULL) ? " - " : "",
 				        statustext != NULL ? statustext : ""); 
 
-	} else text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>", name_font, name_color, nametext); 
+	} else
+		text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>", name_font, name_color, nametext); 
 
 	g_free(nametext);
-	if (statustext)
-		g_free(statustext);
-	if (idletime)
-		g_free(idletime);
+	g_free(statustext);
+	g_free(idletime);
 
 	if (hidden_conv) {
 		char *tmp = text;
@@ -6086,7 +6086,8 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 			bgcolor = NULL;
 		else if (purple_blist_node_get_bool(gnode, "collapsed") || count <= 0)
 			bgcolor = pidgin_blist_theme_get_collapsed_background_color(theme);
-		else bgcolor = pidgin_blist_theme_get_expanded_background_color(theme);
+		else
+			bgcolor = pidgin_blist_theme_get_expanded_background_color(theme);
 
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
@@ -6148,9 +6149,10 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	theme = pidgin_blist_get_theme();
 	if (theme == NULL)
 		pair = NULL;
-	else if 
-		(expanded) pair = pidgin_blist_theme_get_expanded_text_info(theme);
-	else pair = pidgin_blist_theme_get_collapsed_text_info(theme);
+	else if (expanded)
+		pair = pidgin_blist_theme_get_expanded_text_info(theme);
+	else
+		pair = pidgin_blist_theme_get_collapsed_text_info(theme);
 
 	
 	text_color = (selected || pair == NULL || pair->color == NULL) ? "black" : pair->color;
@@ -6218,7 +6220,8 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 
 			if (!selected && theme != NULL && (pair = pidgin_blist_theme_get_idle_text_info(theme)) != NULL && pair->color != NULL)
 				textcolor = pair->color;
-			else textcolor = "black";
+			else
+				textcolor = "black";
 
 			idle = g_strdup_printf("<span color='%s' font_desc='%s'>%d:%02d</span>", textcolor, 
 					      (pair == NULL || pair->font == NULL) ? "" : pair->font, ihrs, imin);
@@ -7360,7 +7363,8 @@ pidgin_blist_set_theme(PidginBlistTheme *theme)
 	if (theme != NULL)
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", 
 				purple_theme_get_name(PURPLE_THEME(theme)));
-	else purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
+	else
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
 
 	priv->current_theme = theme;
 

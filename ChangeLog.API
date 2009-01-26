@@ -3,28 +3,29 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.6.0 (??/??/????):
 	libpurple:
 		Added:
+		* PURPLE_BLIST_NODE
+		* PURPLE_GROUP
+		* PURPLE_CONTACT
+		* PURPLE_BUDDY
+		* PURPLE_CHAT
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
-		* purple_connection_get_protocol_data
-		* purple_connection_set_protocol_data
 		* purple_buddy_get_local_buddy_alias
 		* purple_blist_get_buddies
 		* purple_blist_get_ui_data
 		* purple_blist_set_ui_data
 		* purple_blist_node_get_ui_data
 		* purple_blist_node_set_ui_data
-		* PURPLE_BLIST_NODE
-		* PURPLE_GROUP
-		* PURPLE_CONTACT
-		* PURPLE_BUDDY
-		* PURPLE_CHAT
+		* purple_connection_get_protocol_data
+		* purple_connection_set_protocol_data
+		* purple_global_proxy_set_info
+		* purple_log_get_activity_score
+		* purple_network_force_online
 		* purple_request_field_get_group
 		* purple_request_field_get_ui_data
 		* purple_request_field_set_ui_data
-		* purple_network_force_online
-		* purple_global_proxy_set_info
 		* purple_strequal
-		* purple_log_get_activity_score
+		* xmlnode_from_file
 
 		Deprecated:
 		* purple_buddy_get_local_alias
@@ -35,6 +36,9 @@ version 2.6.0 (??/??/????):
 		* gtk_imhtml_link_get_url, gtk_imhtml_link_get_text_tag,
 		  gtk_imhtml_link_activate functions to process GtkIMHtmlLink
 		  objects from GtkIMHtml protocol callbacks.
+		* pidgin_blist_set_theme
+		* pidgin_blist_get_theme
+		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
 
 	perl:

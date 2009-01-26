@@ -575,14 +575,13 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 			sounds[event].pref);
 	file_pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s", sounds[event].pref);
 
-
-
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
 		theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
 		
-		if (theme_name && strlen(theme_name) && (!filename || !strlen(filename))){ /* Use theme */
+		if (theme_name && *theme_name && (!filename || !*filename)) {
+			/* Use theme */
 			g_free(filename);
 
 			theme = PURPLE_SOUND_THEME(purple_theme_manager_find_theme(theme_name, "sound"));
@@ -617,12 +616,12 @@ pidgin_sound_is_customized(void)
 	gint i;	
 	gchar *path, *file;
 
-	for (i=0; i < PURPLE_NUM_SOUNDS; i++){
+	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
 		path = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s", sounds[i].pref);
 		file = g_strdup(purple_prefs_get_path(path));
 		g_free(path);
 
-		if (file && strlen(file)){
+		if (file && file[0] != '\0'){
 			g_free(file);
 			return TRUE;
 		}
