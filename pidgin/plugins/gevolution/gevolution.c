@@ -52,7 +52,7 @@ enum
 {
 	COLUMN_AUTOADD,
 	COLUMN_ICON,
-	COLUMN_SCREENNAME,
+	COLUMN_USERNAME,
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
@@ -463,11 +463,11 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_tree_view_column_add_attribute(column, renderer,
 									   "pixbuf", COLUMN_ICON);
 
-	/* Screenname */
+	/* Username */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-									   "text", COLUMN_SCREENNAME);
+									   "text", COLUMN_USERNAME);
 
 
 	/* Populate */
@@ -489,7 +489,7 @@ get_config_frame(PurplePlugin *plugin)
 						   purple_account_get_bool(account, "gevo-autoadd",
 												 FALSE),
 						   COLUMN_ICON, pixbuf,
-						   COLUMN_SCREENNAME,
+						   COLUMN_USERNAME,
 						   purple_account_get_username(account),
 						   COLUMN_DATA, account,
 						   -1);

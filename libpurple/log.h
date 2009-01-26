@@ -194,7 +194,7 @@ extern "C" {
  * Creates a new log
  *
  * @param type        The type of log this is.
- * @param name        The name of this conversation (screenname, chat name,
+ * @param name        The name of this conversation (buddy name, chat name,
  *                    etc.)
  * @param account     The account the conversation is occurring on
  * @param conv        The conversation being logged

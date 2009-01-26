@@ -136,7 +136,7 @@ struct _PurpleBlistNode {
  */
 struct _PurpleBuddy {
 	PurpleBlistNode node;                     /**< The node that this buddy inherits from */
-	char *name;                             /**< The screenname of the buddy. */
+	char *name;                             /**< The name of the buddy. */
 	char *alias;                            /**< The user-set alias of the buddy */
 	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
@@ -494,11 +494,11 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
  * Creates a new buddy
  *
  * @param account    The account this buddy will get added to
- * @param screenname The screenname of the new buddy
+ * @param name       The name of the new buddy
  * @param alias      The alias of the new buddy (or NULL if unaliased)
  * @return           A newly allocated buddy
  */
-PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *screenname, const char *alias);
+PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias);
 
 /**
  * Sets a buddy's icon.
@@ -798,19 +798,19 @@ const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
 const char *purple_chat_get_name(PurpleChat *chat);
 
 /**
- * Finds the buddy struct given a screenname and an account
+ * Finds the buddy struct given a name and an account
  *
  * @param account The account this buddy belongs to
- * @param name    The buddy's screenname
+ * @param name    The buddy's name
  * @return        The buddy or NULL if the buddy does not exist
  */
 PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name);
 
 /**
- * Finds the buddy struct given a screenname, an account, and a group
+ * Finds the buddy struct given a name, an account, and a group
  *
  * @param account The account this buddy belongs to
- * @param name    The buddy's screenname
+ * @param name    The buddy's name
  * @param group   The group to look in
  * @return        The buddy or NULL if the buddy does not exist in the group
  */
@@ -818,10 +818,10 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
 		PurpleGroup *group);
 
 /**
- * Finds all PurpleBuddy structs given a screenname and an account
+ * Finds all PurpleBuddy structs given a name and an account
  *
  * @param account The account this buddy belongs to
- * @param name    The buddy's screenname (or NULL to return all buddies in the account)
+ * @param name    The buddy's name (or NULL to return all buddies in the account)
  *
  * @return        A GSList of buddies (which must be freed), or NULL if the buddy doesn't exist
  */

@@ -108,7 +108,7 @@ void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
  * aliases are the aliases or display names that buddies set for themselves.
  *
  * @param gc The connection on which the alias was received.
- * @param who The screen name of the buddy whose alias was received.
+ * @param who The name of the buddy whose alias was received.
  * @param alias The alias that was received.
  */
 void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char *alias);

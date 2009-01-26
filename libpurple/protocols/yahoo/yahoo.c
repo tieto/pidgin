@@ -4284,7 +4284,7 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 }
 
 /* This may not be the best way to do this, but we find the first key w/o a value
- * and assume it is the screenname */
+ * and assume it is the buddy name */
 static void yahoo_find_uri_novalue_param(gpointer key, gpointer value, gpointer user_data)
 {
 	char **retval = user_data;

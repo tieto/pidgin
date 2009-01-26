@@ -399,7 +399,7 @@ void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback ca
  *
  * @param buddy The buddy to return markup from
  * @param selected  Whether this buddy is selected. If TRUE, the markup will not change the color.
- * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its screenname and status information
+ * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its username and status information
  * @return The markup for this buddy
  *
  * @since 2.1.0

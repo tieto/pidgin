@@ -94,7 +94,7 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_NAME_IN_USE = 6,
 
 	/** The username/server/other preference for the account isn't valid.
-	 *  For instance, on IRC the screen name cannot contain white space.
+	 *  For instance, on IRC the username cannot contain white space.
 	 *  This reason should not be used for incorrect passwords etc: use
 	 *  #PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED for that.
 	 *

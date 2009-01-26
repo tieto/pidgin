@@ -355,7 +355,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
  *
  * @param entry       The GtkEntry on which to setup autocomplete.
  * @param optmenu     A menu for accounts, returned by gaim_gtk_account_option_menu_new().
- *                    If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
+ *                    If @a optmenu is not @c NULL, it'll be updated when a username is chosen
  *                    from the autocomplete list.
  * @param filter_func A function for checking if an autocomplete entry
  *                    should be shown. This can be @c NULL.
@@ -364,7 +364,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
 void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *optmenu, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data);
 
 /**
- * The default filter function for screenname autocomplete.
+ * The default filter function for username autocomplete.
  *
  * @param completion_entry The completion entry to filter.
  * @param all_accounts  If this is @c FALSE, only the autocompletion entries
@@ -385,9 +385,9 @@ gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompleti
  * @param entry     The GtkEntry on which to setup autocomplete.
  * @param optmenu   A menu for accounts, returned by
  *                  pidgin_account_option_menu_new().  If @a optmenu is not @c
- *                  NULL, it'll be updated when a screenname is chosen from the
+ *                  NULL, it'll be updated when a username is chosen from the
  *                  autocomplete list.
- * @param all       Whether to include screennames from disconnected accounts.
+ * @param all       Whether to include usernames from disconnected accounts.
  */
 void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
 

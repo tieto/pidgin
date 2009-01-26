@@ -1927,7 +1927,7 @@ destroy_completion_data(GtkWidget *w, PidginCompletionData *data)
 #endif /* !NEW_STYLE_COMPLETION */
 
 #ifdef NEW_STYLE_COMPLETION
-static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
+static gboolean buddyname_completion_match_func(GtkEntryCompletion *completion,
 		const gchar *key, GtkTreeIter *iter, gpointer user_data)
 {
 	GtkTreeModel *model;
@@ -1960,7 +1960,7 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 	return FALSE;
 }
 
-static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *completion,
+static gboolean buddyname_completion_match_selected_cb(GtkEntryCompletion *completion,
 		GtkTreeModel *model, GtkTreeIter *iter, PidginCompletionData *data)
 {
 	GValue val;
@@ -1986,22 +1986,22 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 }
 
 static void
-add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, const char *contact_alias,
-								  const PurpleAccount *account, const char *screenname)
+add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, const char *contact_alias,
+								  const PurpleAccount *account, const char *buddyname)
 {
 	GtkTreeIter iter;
 	gboolean completion_added = FALSE;
-	gchar *normalized_screenname;
+	gchar *normalized_buddyname;
 	gchar *tmp;
 
-	tmp = g_utf8_normalize(screenname, -1, G_NORMALIZE_DEFAULT);
-	normalized_screenname = g_utf8_casefold(tmp, -1);
+	tmp = g_utf8_normalize(buddyname, -1, G_NORMALIZE_DEFAULT);
+	normalized_buddyname = g_utf8_casefold(tmp, -1);
 	g_free(tmp);
 
 	/* There's no sense listing things like: 'xxx "xxx"'
-	   when the screenname and buddy alias match. */
-	if (buddy_alias && strcmp(buddy_alias, screenname)) {
-		char *completion_entry = g_strdup_printf("%s \"%s\"", screenname, buddy_alias);
+	   when the name and buddy alias match. */
+	if (buddy_alias && strcmp(buddy_alias, buddyname)) {
+		char *completion_entry = g_strdup_printf("%s \"%s\"", buddyname, buddy_alias);
 		char *tmp2 = g_utf8_normalize(buddy_alias, -1, G_NORMALIZE_DEFAULT);
 
 		tmp = g_utf8_casefold(tmp2, -1);
@@ -2010,8 +2010,8 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
 				0, completion_entry,
-				1, screenname,
-				2, normalized_screenname,
+				1, buddyname,
+				2, normalized_buddyname,
 				3, tmp,
 				4, account,
 				-1);
@@ -2021,12 +2021,12 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 	}
 
 	/* There's no sense listing things like: 'xxx "xxx"'
-	   when the screenname and contact alias match. */
-	if (contact_alias && strcmp(contact_alias, screenname)) {
+	   when the name and contact alias match. */
+	if (contact_alias && strcmp(contact_alias, buddyname)) {
 		/* We don't want duplicates when the contact and buddy alias match. */
 		if (!buddy_alias || strcmp(contact_alias, buddy_alias)) {
 			char *completion_entry = g_strdup_printf("%s \"%s\"",
-							screenname, contact_alias);
+							buddyname, contact_alias);
 			char *tmp2 = g_utf8_normalize(contact_alias, -1, G_NORMALIZE_DEFAULT);
 
 			tmp = g_utf8_casefold(tmp2, -1);
@@ -2035,8 +2035,8 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 			gtk_list_store_append(store, &iter);
 			gtk_list_store_set(store, &iter,
 					0, completion_entry,
-					1, screenname,
-					2, normalized_screenname,
+					1, buddyname,
+					2, normalized_buddyname,
 					3, tmp,
 					4, account,
 					-1);
@@ -2047,18 +2047,18 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 	}
 
 	if (completion_added == FALSE) {
-		/* Add the buddy's screenname. */
+		/* Add the buddy's name. */
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
-				0, screenname,
-				1, screenname,
-				2, normalized_screenname,
+				0, buddyname,
+				1, buddyname,
+				2, normalized_buddyname,
 				3, NULL,
 				4, account,
 				-1);
 	}
 
-	g_free(normalized_screenname);
+	g_free(normalized_buddyname);
 }
 #endif /* NEW_STYLE_COMPLETION */
 
@@ -2067,8 +2067,8 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 	PidginFilterBuddyCompletionEntryFunc filter_func = data->filter_func;
 	gpointer user_data = data->filter_func_user_data;
 
- 	/* 1. Don't show buddies because we will have gotten them already.
- 	 * 2. The boxes that use this autocomplete code handle only IMs. */
+	/* 1. Don't show buddies because we will have gotten them already.
+	 * 2. The boxes that use this autocomplete code handle only IMs. */
 	if (!set->buddy && set->type == PURPLE_LOG_IM) {
 		PidginBuddyCompletionEntry entry;
 		entry.is_buddy = FALSE;
@@ -2076,7 +2076,7 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 
 		if (filter_func(&entry, user_data)) {
 #ifdef NEW_STYLE_COMPLETION
-			add_screenname_autocomplete_entry(data->store,
+			add_buddyname_autocomplete_entry(data->store,
 												NULL, NULL, set->account, set->name);
 #else
 			/* Steal the name for the GCompletion. */
@@ -2122,7 +2122,7 @@ add_completion_list(PidginCompletionData *data)
 
 				if (filter_func(&entry, user_data)) {
 #ifdef NEW_STYLE_COMPLETION
-					add_screenname_autocomplete_entry(data->store,
+					add_buddyname_autocomplete_entry(data->store,
 														((PurpleContact *)cnode)->alias,
 														purple_buddy_get_contact_alias(entry.entry.buddy),
 														entry.entry.buddy->account,
@@ -2153,7 +2153,7 @@ add_completion_list(PidginCompletionData *data)
 }
 
 static void
-screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
+buddyname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
 {
 	g_free(data);
 	purple_signals_disconnect_by_handle(widget);
@@ -2165,15 +2165,17 @@ repopulate_autocomplete(gpointer something, gpointer data)
 	add_completion_list(data);
 }
 
-
 void
 pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
 {
 	PidginCompletionData *data;
 
 #ifdef NEW_STYLE_COMPLETION
-	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
-	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
+	/*
+	 * Store the displayed completion value, the buddy name, the UTF-8
+	 * normalized & casefolded buddy name, the UTF-8 normalized &
+	 * casefolded value for comparison, and the account.
+	 */
 	GtkListStore *store;
 
 	GtkEntryCompletion *completion;
@@ -2194,15 +2196,15 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 
 	add_completion_list(data);
 
-	/* Sort the completion list by screenname. */
+	/* Sort the completion list by buddy name */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
 	                                     1, GTK_SORT_ASCENDING);
 
 	completion = gtk_entry_completion_new();
-	gtk_entry_completion_set_match_func(completion, screenname_completion_match_func, NULL, NULL);
+	gtk_entry_completion_set_match_func(completion, buddyname_completion_match_func, NULL, NULL);
 
 	g_signal_connect(G_OBJECT(completion), "match-selected",
-		G_CALLBACK(screenname_completion_match_selected_cb), data);
+		G_CALLBACK(buddyname_completion_match_selected_cb), data);
 
 	gtk_entry_set_completion(GTK_ENTRY(entry), completion);
 	g_object_unref(completion);
@@ -2249,7 +2251,7 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
 
-	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
+	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(buddyname_autocomplete_destroyed_cb), data);
 }
 
 gboolean

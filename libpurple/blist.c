@@ -1202,17 +1202,17 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 	return chat;
 }
 
-PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *screenname, const char *alias)
+PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(screenname != NULL, FALSE);
+	g_return_val_if_fail(name != NULL, FALSE);
 
 	buddy = g_new0(PurpleBuddy, 1);
 	buddy->account  = account;
-	buddy->name     = g_strdup(screenname);
+	buddy->name     = g_strdup(name);
 	buddy->alias    = g_strdup(alias);
 	buddy->presence = purple_presence_new_for_buddy(buddy);
 	((PurpleBlistNode *)buddy)->type = PURPLE_BLIST_BUDDY_NODE;
