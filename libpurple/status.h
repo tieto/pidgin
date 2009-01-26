@@ -252,6 +252,7 @@ PurpleStatusType *purple_status_type_new_with_attrs(PurpleStatusPrimitive primit
  */
 void purple_status_type_destroy(PurpleStatusType *status_type);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Sets a status type's primary attribute.
  *
@@ -266,7 +267,9 @@ void purple_status_type_destroy(PurpleStatusType *status_type);
  */
 void purple_status_type_set_primary_attr(PurpleStatusType *status_type,
 									   const char *attr_id);
+#endif
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Adds an attribute to a status type.
  *
@@ -281,7 +284,9 @@ void purple_status_type_set_primary_attr(PurpleStatusType *status_type,
  */
 void purple_status_type_add_attr(PurpleStatusType *status_type, const char *id,
 							   const char *name, PurpleValue *value);
+#endif
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Adds multiple attributes to a status type.
  *
@@ -297,7 +302,9 @@ void purple_status_type_add_attr(PurpleStatusType *status_type, const char *id,
  */
 void purple_status_type_add_attrs(PurpleStatusType *status_type, const char *id,
 								const char *name, PurpleValue *value, ...) G_GNUC_NULL_TERMINATED;
+#endif
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Adds multiple attributes to a status type using a va_list.
  *
@@ -310,6 +317,7 @@ void purple_status_type_add_attrs(PurpleStatusType *status_type, const char *id,
  */
 void purple_status_type_add_attrs_vargs(PurpleStatusType *status_type,
 									  va_list args);
+#endif
 
 /**
  * Returns the primitive type of a status type.
@@ -392,6 +400,7 @@ gboolean purple_status_type_is_exclusive(const PurpleStatusType *status_type);
  */
 gboolean purple_status_type_is_available(const PurpleStatusType *status_type);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Returns a status type's primary attribute ID.
  *
@@ -402,6 +411,7 @@ gboolean purple_status_type_is_available(const PurpleStatusType *status_type);
  * @deprecated This function isn't used and should be removed in 3.0.0.
  */
 const char *purple_status_type_get_primary_attr(const PurpleStatusType *type);
+#endif
 
 /**
  * Returns the attribute with the specified ID.
@@ -553,6 +563,7 @@ void purple_status_set_active_with_attrs(PurpleStatus *status, gboolean active,
 void purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 											GList *attrs);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Sets the boolean value of an attribute in a status with the specified ID.
  *
@@ -565,7 +576,9 @@ void purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean act
  */
 void purple_status_set_attr_boolean(PurpleStatus *status, const char *id,
 								  gboolean value);
+#endif
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Sets the integer value of an attribute in a status with the specified ID.
  *
@@ -578,7 +591,9 @@ void purple_status_set_attr_boolean(PurpleStatus *status, const char *id,
  */
 void purple_status_set_attr_int(PurpleStatus *status, const char *id,
 							  int value);
+#endif
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Sets the string value of an attribute in a status with the specified ID.
  *
@@ -591,6 +606,7 @@ void purple_status_set_attr_int(PurpleStatus *status, const char *id,
  */
 void purple_status_set_attr_string(PurpleStatus *status, const char *id,
 								 const char *value);
+#endif
 
 /**
  * Returns the status's type.
@@ -798,6 +814,7 @@ PurplePresence *purple_presence_new_for_buddy(PurpleBuddy *buddy);
  */
 void purple_presence_destroy(PurplePresence *presence);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Adds a status to a presence.
  *
@@ -808,7 +825,9 @@ void purple_presence_destroy(PurplePresence *presence);
  *             and both should be removed in 3.0.0.
  */
 void purple_presence_add_status(PurplePresence *presence, PurpleStatus *status);
+#endif
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Adds a list of statuses to the presence.
  *
@@ -819,6 +838,7 @@ void purple_presence_add_status(PurplePresence *presence, PurpleStatus *status);
  * @deprecated This function isn't used and should be removed in 3.0.0.
  */
 void purple_presence_add_list(PurplePresence *presence, GList *source_list);
+#endif
 
 /**
  * Sets the active state of a status in a presence.

@@ -291,6 +291,7 @@ void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
  */
 void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 									   GList *row);
+
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
 /**
  * Returns a number of the rows in the search results object.
@@ -558,6 +559,7 @@ void purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const cha
  */
 void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
 /**
  * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object
  * without freeing the entry.
@@ -571,6 +573,7 @@ void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const
  *             public so that entries can be free'd after they're removed.
  */
 void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, PurpleNotifyUserInfoEntry *user_info_entry);
+#endif
 
 /**
  * Create a new PurpleNotifyUserInfoEntry
