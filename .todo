@@ -1,7 +1,0 @@
-<todo version="0.1.19">
-    <title>
-        Gaim TODO List
-    </title>
-    <link filename="./libpurple/protocols/oscar/.todo" priority="medium" time="0"/>
-    <link filename="./libpurple/protocols/jabber/.todo" priority="medium" time="1176995038"/>
-</todo>
