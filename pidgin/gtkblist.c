@@ -149,7 +149,7 @@ static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkT
 #if GTK_CHECK_VERSION(2,2,1)
 static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
-static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
+static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 #endif
 static PidginBuddyList *gtkblist = NULL;
 
@@ -4490,7 +4490,7 @@ void pidgin_blist_setup_sort_methods()
 #if GTK_CHECK_VERSION(2,2,1)
 	pidgin_blist_sort_method_reg("alphabetical", _("Alphabetically"), sort_method_alphabetical);
 	pidgin_blist_sort_method_reg("status", _("By status"), sort_method_status);
-	pidgin_blist_sort_method_reg("log_size", _("By log size"), sort_method_log);
+	pidgin_blist_sort_method_reg("log_size", _("By recent log activity"), sort_method_log_activity);
 #endif
 	pidgin_blist_sort_method_set(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type"));
 }
@@ -7683,11 +7683,11 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 	}
 }
 
-static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
+static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
 	GtkTreeIter more_z;
 
-	int log_size = 0, this_log_size = 0;
+	int activity_score = 0, this_log_activity_score = 0;
 	const char *buddy_name, *this_buddy_name;
 
 	if(cur && (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter) == 1)) {
@@ -7697,8 +7697,11 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *n;
-		for (n = node->child; n; n = n->next)
-			log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account);
+		PurpleBuddy *buddy;
+		for (n = node->child; n; n = n->next) {
+			buddy = (PurpleBuddy*)n;
+			activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, buddy->name, buddy->account);
+		}
 		buddy_name = purple_contact_get_alias((PurpleContact*)node);
 	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		/* we don't have a reliable way of getting the log filename
@@ -7725,16 +7728,19 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 		GValue val;
 		PurpleBlistNode *n;
 		PurpleBlistNode *n2;
+		PurpleBuddy *buddy;
 		int cmp;
 
 		val.g_type = 0;
 		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
 		n = g_value_get_pointer(&val);
-		this_log_size = 0;
+		this_log_activity_score = 0;
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
-			for (n2 = n->child; n2; n2 = n2->next)
-				this_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy*)(n2))->name, ((PurpleBuddy*)(n2))->account);
+			for (n2 = n->child; n2; n2 = n2->next) {
+                        	buddy = (PurpleBuddy*)n2;
+				this_log_activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, buddy->name, buddy->account);
+			}
 			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
 		} else {
 			this_buddy_name = NULL;
@@ -7742,8 +7748,8 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 
 		cmp = purple_utf8_strcasecmp(buddy_name, this_buddy_name);
 
-		if (!PURPLE_BLIST_NODE_IS_CONTACT(n) || log_size > this_log_size ||
-				((log_size == this_log_size) &&
+		if (!PURPLE_BLIST_NODE_IS_CONTACT(n) || activity_score > this_log_activity_score ||
+				((activity_score == this_log_activity_score) &&
 				 (cmp < 0 || (cmp == 0 && node < n)))) {
 			if (cur != NULL) {
 				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);

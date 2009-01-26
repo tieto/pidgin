@@ -34,6 +34,7 @@
 #include "util.h"
 #include "stringref.h"
 #include "imgstore.h"
+#include "time.h"
 
 static GSList *loggers = NULL;
 
@@ -46,6 +47,7 @@ struct _purple_logsize_user {
 	PurpleAccount *account;
 };
 static GHashTable *logsize_users = NULL;
+static GHashTable *logsize_users_decayed = NULL;
 
 static void log_get_log_sets_common(GHashTable *sets);
 
@@ -161,14 +163,27 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 	lu->account = log->account;
 
 	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		char *tmp = lu->name;
+
 		total = GPOINTER_TO_INT(ptrsize);
 		total += written;
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
+
+		/* The hash table takes ownership of lu, so create a new one
+		 * for the logsize_users_decayed check below. */
+		lu = g_new(struct _purple_logsize_user, 1);
+		lu->name = g_strdup(tmp);
+		lu->account = log->account;
+	}
+
+	if(g_hash_table_lookup_extended(logsize_users_decayed, lu, NULL, &ptrsize)) {
+		total = GPOINTER_TO_INT(ptrsize);
+		total += written;
+		g_hash_table_replace(logsize_users_decayed, lu, GINT_TO_POINTER(total));
 	} else {
 		g_free(lu->name);
 		g_free(lu);
 	}
-
 }
 
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
@@ -248,6 +263,49 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(size));
 	}
 	return size;
+}
+
+gint purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleAccount *account)
+{
+	gpointer ptrscore;
+	int score;
+	GSList *n;
+	struct _purple_logsize_user *lu;
+	time_t now;
+	time(&now);
+
+	lu = g_new(struct _purple_logsize_user, 1);
+	lu->name = g_strdup(purple_normalize(account, name));
+	lu->account = account;
+
+	if(g_hash_table_lookup_extended(logsize_users_decayed, lu, NULL, &ptrscore)) {
+		score = GPOINTER_TO_INT(ptrscore);
+		g_free(lu->name);
+		g_free(lu);
+	} else {
+		double score_double = 0.0;
+		for (n = loggers; n; n = n->next) {
+			PurpleLogLogger *logger = n->data;
+
+			if(logger->list) {
+				GList *logs = (logger->list)(type, name, account);
+
+				while (logs) {
+					PurpleLog *log = (PurpleLog*)(logs->data);
+					/* Activity score counts bytes in the log, exponentially
+					   decayed with a half-life of 14 days. */
+					score_double += purple_log_get_size(log) *
+						pow(0.5, difftime(now, log->time)/1209600.0);
+					purple_log_free(log);
+					logs = g_list_delete_link(logs, logs);
+				}
+			}
+		}
+
+		score = (gint)score_double;
+		g_hash_table_replace(logsize_users_decayed, lu, GINT_TO_POINTER(score));
+	}
+	return score;
 }
 
 gboolean purple_log_is_deletable(PurpleLog *log)
@@ -661,6 +719,9 @@ void purple_log_init(void)
 	logsize_users = g_hash_table_new_full((GHashFunc)_purple_logsize_user_hash,
 			(GEqualFunc)_purple_logsize_user_equal,
 			(GDestroyNotify)_purple_logsize_user_free_key, NULL);
+	logsize_users_decayed = g_hash_table_new_full((GHashFunc)_purple_logsize_user_hash,
+				(GEqualFunc)_purple_logsize_user_equal,
+				(GDestroyNotify)_purple_logsize_user_free_key, NULL);
 }
 
 void
@@ -679,6 +740,9 @@ purple_log_uninit(void)
 	purple_log_logger_remove(old_logger);
 	purple_log_logger_free(old_logger);
 	old_logger = NULL;
+
+	g_hash_table_destroy(logsize_users);
+	g_hash_table_destroy(logsize_users_decayed);
 }
 
 /****************************************************************************

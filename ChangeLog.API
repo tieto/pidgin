@@ -24,6 +24,7 @@ version 2.6.0 (??/??/????):
 		* purple_network_force_online
 		* purple_global_proxy_set_info
 		* purple_strequal
+		* purple_log_get_activity_score
 
 		Deprecated:
 		* purple_buddy_get_local_alias
