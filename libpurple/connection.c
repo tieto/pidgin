@@ -191,16 +191,16 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 	PurpleConnection *gc;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
-	
+
 	g_return_if_fail(account != NULL);
-		
+
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	
+
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	else {
 		gchar *message;
-		
+
 		message = g_strdup_printf(_("Missing protocol plugin for %s"),
 								  purple_account_get_username(account));
 		purple_notify_error(NULL, _("Unregistration Error"), message, NULL);
@@ -212,7 +212,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 		prpl_info->unregister_user(account, cb, user_data);
 		return;
 	}
-	
+
 	if (((password == NULL) || (*password == '\0')) &&
 		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
@@ -221,10 +221,10 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 						   "a password.\n", purple_account_get_username(account));
 		return;
 	}
-	
+
 	gc = g_new0(PurpleConnection, 1);
 	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
-	
+
 	gc->prpl = prpl;
 	if ((password != NULL) && (*password != '\0'))
 		gc->password = g_strdup(password);
@@ -232,11 +232,11 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 	purple_connection_set_state(gc, PURPLE_CONNECTING);
 	connections = g_list_append(connections, gc);
 	purple_account_set_connection(account, gc);
-	
+
 	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
-	
+
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
-	
+
 	prpl_info->unregister_user(account, cb, user_data);
 }
 

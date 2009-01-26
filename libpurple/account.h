@@ -253,7 +253,7 @@ void purple_account_request_add(PurpleAccount *account, const char *remote_user,
  * Notifies the user that a remote user has wants to add the local user
  * to his or her buddy list and requires authorization to do so.
  *
- * This will present a dialog informing the user of this and ask if the 
+ * This will present a dialog informing the user of this and ask if the
  * user authorizes or denies the remote user from adding him.
  *
  * @param account      The account that was added

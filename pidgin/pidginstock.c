@@ -128,7 +128,7 @@ typedef struct {
 } SizedStockIcon;
 
 const SizedStockIcon sized_stock_icons [] = {
-	
+
 	{ PIDGIN_STOCK_STATUS_IGNORED,	"emblems", "blocked.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_STATUS_FOUNDER,	"emblems", "founder.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_STATUS_OPERATOR,	"emblems", "operator.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
@@ -226,7 +226,7 @@ const SizedStockIcon sized_status_icons [] = {
 };
 
 /*****************************************************************************
- * Private functions                                                      
+ * Private functions
  *****************************************************************************/
 
 static gchar *
@@ -330,7 +330,7 @@ find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon s
 		else
 			file_full = g_build_filename(dir, size, file, NULL);
 
-		if (g_file_test(file_full, G_FILE_TEST_IS_REGULAR))			
+		if (g_file_test(file_full, G_FILE_TEST_IS_REGULAR))
 			return file_full;
 
 		g_free(file_full);
@@ -405,7 +405,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginStatusIconTheme *t
 }
 
 /*****************************************************************************
- * Public API functions                                                      
+ * Public API functions
  *****************************************************************************/
 
 void
@@ -418,16 +418,16 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 	GtkWidget *win;
 
 	if (theme != NULL) {
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/status/icon-theme", 
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/status/icon-theme",
 				        purple_theme_get_name(PURPLE_THEME(theme)));
-		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", 
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir",
 				      purple_theme_get_dir(PURPLE_THEME(theme)));
 	}
 	else {
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
 		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
 	}
-	
+
 	icon_factory = gtk_icon_factory_new();
 
 	gtk_icon_factory_add_default(icon_factory);
@@ -549,7 +549,7 @@ pidgin_stock_init(void)
 		GtkIconSet *iconset = gtk_icon_set_new();
 
 #define ADD_SIZED_ICON(name, size) if (sized_stock_icons[i].name) \
-					add_sized_icon(iconset, name, NULL, size, sized_stock_icons[i], FALSE);		
+					add_sized_icon(iconset, name, NULL, size, sized_stock_icons[i], FALSE);
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
 		ADD_SIZED_ICON(small, "22");
@@ -566,9 +566,9 @@ pidgin_stock_init(void)
 	g_object_unref(G_OBJECT(icon_factory));
 
 	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray, theme is destroyed after*/
-	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") && 
+	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") &&
 	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
-		
+
 		PidginStatusIconTheme *theme = PIDGIN_STATUS_ICON_THEME(purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path));
 		pidgin_stock_load_status_icon_theme(theme);
 		g_object_unref(G_OBJECT(theme));

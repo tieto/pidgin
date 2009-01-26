@@ -214,7 +214,7 @@ check_idleness(void)
 
 
 /*
- * Check idle and set the timer to fire at the next idle-worth event 
+ * Check idle and set the timer to fire at the next idle-worth event
  */
 static gboolean
 check_idleness_timer(void)

@@ -1646,7 +1646,7 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatu
 			pidgin_status_box_popdown (status_box);
 			return TRUE;
 		} else if (ewidget == status_box->toggle_button) {
-			status_box->popup_in_progress = TRUE;		
+			status_box->popup_in_progress = TRUE;
 		}
 
 		/* released outside treeview */
@@ -1698,7 +1698,7 @@ treeview_key_press_event(GtkWidget *widget,
 				gtk_tree_path_free (path);
 				return ret;
 			}
-		} 
+		}
 	}
 	return FALSE;
 }
@@ -1777,9 +1777,9 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
-	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, 
+	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
 					       G_TYPE_STRING, G_TYPE_POINTER, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
-	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
+	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));

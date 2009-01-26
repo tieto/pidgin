@@ -1707,7 +1707,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	pos->fd = source;
 
 	if (source < 0) {
-		GHashTable *ui_info = purple_core_get_ui_info();				
+		GHashTable *ui_info = purple_core_get_ui_info();
 		buf = g_strdup_printf(_("You may be disconnected shortly.  "
 				"Check %s for updates."),
 				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
@@ -2042,7 +2042,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		PurplePresence *presence = purple_buddy_get_presence(b);
 		PurpleStatus *old_status = purple_presence_get_active_status(presence);
 		PurpleStatus *new_status = purple_presence_get_status(presence, status_id);
-		
+
 		/* If our status_id would change with this update, pass it to the core.
 		 * However, if our status_id would not change, do nothing, as we would clear out any existing
 		 * attributes on the status prematurely. purple_got_infoblock() will update the message as needed.
@@ -6915,7 +6915,7 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 											OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
-	
+
 	if (init)
 		return;
 	init = TRUE;

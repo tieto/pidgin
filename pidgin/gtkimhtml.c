@@ -368,7 +368,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
-		
+
 		g_free (t);
 	}
 }
@@ -838,7 +838,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			                                      &tag_area.x,
 			                                      &tag_area.y);
 
-		
+
 			rect.height = tag_area.y + tag_area.height - rect.y
 				+ gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(widget))
 				+ gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
@@ -2068,7 +2068,7 @@ gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
 {
 	if (smiley->imhtml) {
 		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
-		g_hash_table_foreach(smiley->imhtml->smiley_data, 
+		g_hash_table_foreach(smiley->imhtml->smiley_data,
 			gtk_imhtml_disassociate_smiley_foreach, smiley);
 		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
 			0, 0, NULL, NULL, smiley);
@@ -2097,13 +2097,13 @@ gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
 			0, 0, NULL, NULL, smiley);
 	}
-	
+
 	smiley->imhtml = imhtml;
 
 	gtk_smiley_tree_insert (tree, smiley);
-	
+
 	/* connect destroy signal for the imhtml */
-	g_signal_connect(imhtml, "destroy", G_CALLBACK(gtk_imhtml_disconnect_smiley), 
+	g_signal_connect(imhtml, "destroy", G_CALLBACK(gtk_imhtml_disconnect_smiley),
 		smiley);
 }
 
@@ -2602,7 +2602,7 @@ parse_css_color(gchar *in_color)
 
 			count++;
 		}
-		
+
 		g_free(in_color);
 		return g_strdup_printf("#%02X%02X%02X", rgbval[0], rgbval[1], rgbval[2]);
 	}
@@ -3373,7 +3373,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		ws[wpos++]  = 0xE2;
 		ws[wpos++]  = 0x80;
 		ws[wpos++]  = 0x8F;
-    
+
 		if (!rtl_direction)
 		{
 			/* insert LRM character to set direction */

@@ -1547,7 +1547,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	/* Seed the input widgets with the current values */
 
 	/* Only look at the saved status if we can't find it in the parent status dialog's substatuses model */
-	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter, 
+	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
 		STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, &parent_dialog_has_substatus, -1);
 	if (parent_dialog_has_substatus) {
 		gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
@@ -1656,7 +1656,7 @@ enum {
 	 * And whether or not that emblem is visible
 	 */
 	SS_MENU_EMBLEM_VISIBLE_COLUMN,
-	
+
 	SS_MENU_NUM_COLUMNS
 };
 

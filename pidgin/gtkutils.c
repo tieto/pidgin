@@ -570,7 +570,7 @@ aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer
 	gtk_widget_show (label);
 	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	
+
 	gtk_container_add(GTK_CONTAINER(item), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
@@ -3243,7 +3243,7 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
  	style = gtk_widget_get_style(widget);
 	if (!style)
 		return "dim grey";
-	
+
 	snprintf(dim_grey_string, sizeof(dim_grey_string), "#%02x%02x%02x",
 	style->text_aa[GTK_STATE_NORMAL].red >> 8,
 	style->text_aa[GTK_STATE_NORMAL].green >> 8,

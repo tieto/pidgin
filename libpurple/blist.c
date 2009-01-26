@@ -1137,7 +1137,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 			GList *l = NULL, *buddies = NULL;
 
 			gc = purple_account_get_connection(account);
-			
+
 			if(gc)
 				prpl = purple_connection_get_prpl(gc);
 

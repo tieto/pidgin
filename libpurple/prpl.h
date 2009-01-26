@@ -211,7 +211,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
-	 * If buddy is NULL and the account is non-NULL, it will return the 
+	 * If buddy is NULL and the account is non-NULL, it will return the
 	 * name to use for the account's icon. If both are NULL, it will
 	 * return the name to use for the protocol's icon.
 	 *
@@ -413,7 +413,7 @@ struct _PurplePluginProtocolInfo
 	 * reasons.
 	 */
 	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
-	
+
 	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
@@ -680,7 +680,7 @@ void purple_prpl_got_user_status(PurpleAccount *account, const char *name,
  */
 void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *name,
 					const char *status_id);
- 
+
 /**
  * Informs the server that an account's status changed.
  *
@@ -717,7 +717,7 @@ GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence
  */
 void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code);
 
-/** Process an incoming attention message. 
+/** Process an incoming attention message.
  *
  * @param gc The connection that received the attention message.
  * @param who Who requested your attention.
@@ -727,13 +727,13 @@ void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint typ
  */
 void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code);
 
-/** Process an incoming attention message in a chat. 
+/** Process an incoming attention message in a chat.
  *
  * @param gc The connection that received the attention message.
  * @param id The chat id.
  * @param who Who requested your attention.
  * @param type_code An index into the prpl's attention_types list determining the type
- * 	of the attention request command to send. 
+ * 	of the attention request command to send.
  * @since 2.5.0
  */
 void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);

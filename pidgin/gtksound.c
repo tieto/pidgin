@@ -579,7 +579,7 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
 		theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
-		
+
 		if (theme_name && *theme_name && (!filename || !*filename)) {
 			/* Use theme */
 			g_free(filename);
@@ -588,12 +588,12 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 			filename = purple_sound_theme_get_file_full(theme, sounds[event].pref);
 
 			if(!g_file_test(filename, G_FILE_TEST_IS_REGULAR)){ /* Use Default sound in this case */
-				purple_debug_error("sound", "The file: (%s) %s\n from theme: %s, was not found or wasn't readable\n", 
+				purple_debug_error("sound", "The file: (%s) %s\n from theme: %s, was not found or wasn't readable\n",
 							sounds[event].pref, filename, theme_name);
 				g_free(filename);
 			}
 		}
-		
+
 		if (!filename || !strlen(filename)) {			    /* Use Default sounds */
 			g_free(filename);
 
@@ -610,10 +610,10 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 	g_free(file_pref);
 }
 
-gboolean 
+gboolean
 pidgin_sound_is_customized(void)
 {
-	gint i;	
+	gint i;
 	gchar *path, *file;
 
 	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {

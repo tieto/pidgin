@@ -628,7 +628,7 @@ xmlnode_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 
 	if(!xpd->current || xpd->error)
 		return;
-	
+
 	if(!text || !text_len)
 		return;
 

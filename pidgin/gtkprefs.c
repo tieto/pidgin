@@ -78,7 +78,7 @@ static gboolean prefs_themes_unsorted = TRUE;
 static GtkListStore *prefs_sound_themes;
 static GtkListStore *prefs_blist_themes;
 static GtkListStore *prefs_status_icon_themes;
- 
+
 
 /*
  * PROTOTYPES
@@ -560,7 +560,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 /* Rebuild the markup for the sound theme selection for "(Custom)" themes */
 static void
 pref_sound_generate_markup()
-{	
+{
 	gboolean print_custom, customized;
 	const gchar *name, *author, *description, *current_theme;
 	gchar *markup;
@@ -569,24 +569,24 @@ pref_sound_generate_markup()
 
 	customized = pidgin_sound_is_customized();
 	current_theme = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
-	
+
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(prefs_sound_themes), &iter)) {
 		do {
 			gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &iter, 2, &name, -1);
 
 			print_custom = customized && g_str_equal(current_theme, name);
-			
+
 			if (g_str_equal(name, ""))
 				markup = g_strdup_printf("<b>(Default)</b>%s%s - None\n<span foreground='dim grey'>The default Pidgin sound theme</span>",
-							 print_custom ? " " : "", print_custom ? "(Custom)" : ""); 
+							 print_custom ? " " : "", print_custom ? "(Custom)" : "");
 			else {
 				theme = PURPLE_SOUND_THEME(purple_theme_manager_find_theme(name, "sound"));
 				author = purple_theme_get_author(PURPLE_THEME(theme));
 				description = purple_theme_get_description(PURPLE_THEME(theme));
-				
+
 				markup = g_strdup_printf("<b>%s</b>%s%s%s%s\n<span foreground='dim grey'>%s</span>",
-							 name, print_custom ? " " : "", print_custom ? "(Custom)" : "", 
-							 author != NULL ? " - " : "", author != NULL ? author : "", description != NULL ? description : ""); 
+							 name, print_custom ? " " : "", print_custom ? "(Custom)" : "",
+							 author != NULL ? " - " : "", author != NULL ? author : "", description != NULL ? description : "");
 			}
 
 			gtk_list_store_set(prefs_sound_themes, &iter, 1, markup, -1);
@@ -605,14 +605,14 @@ prefs_themes_sort(PurpleTheme *theme)
 	GtkTreeIter iter;
 	gchar *image_full = NULL, *markup;
 	const gchar *name, *author, *description;
-	
+
 	if (PURPLE_IS_SOUND_THEME(theme)){
-		
+
 		image_full = purple_theme_get_image_full(theme);
 		if (image_full != NULL){
 			pixbuf = gdk_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
 			g_free(image_full);
-		} else pixbuf = NULL; 
+		} else pixbuf = NULL;
 
 		gtk_list_store_append(prefs_sound_themes, &iter);
 		gtk_list_store_set(prefs_sound_themes, &iter, 0, pixbuf, 2, purple_theme_get_name(theme), -1);
@@ -623,7 +623,7 @@ prefs_themes_sort(PurpleTheme *theme)
 	} else if (PIDGIN_IS_BLIST_THEME(theme) || PIDGIN_IS_STATUS_ICON_THEME(theme)){
 		GtkListStore *store;
 
-		if (PIDGIN_IS_BLIST_THEME(theme)) 
+		if (PIDGIN_IS_BLIST_THEME(theme))
 			store = prefs_blist_themes;
 		else store = prefs_status_icon_themes;
 
@@ -631,12 +631,12 @@ prefs_themes_sort(PurpleTheme *theme)
 		if (image_full != NULL){
 			pixbuf = gdk_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
 			g_free(image_full);
-		} else pixbuf = NULL; 
+		} else pixbuf = NULL;
 
 		name = purple_theme_get_name(theme);
 		author = purple_theme_get_author(theme);
 		description = purple_theme_get_description(theme);
-		
+
 		markup = g_strdup_printf("<b>%s</b>%s%s\n<span foreground='dim grey'>%s</span>", name, author != NULL ? " - " : "",
 					 author != NULL ? author : "", description != NULL ? description : "");
 
@@ -646,7 +646,7 @@ prefs_themes_sort(PurpleTheme *theme)
 		g_free(markup);
 		if (pixbuf != NULL)
 			gdk_pixbuf_unref(pixbuf);
-	} 
+	}
 
 }
 
@@ -1146,7 +1146,7 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	PidginBlistTheme *theme;
 	GtkTreeIter iter;
 	gchar *name = NULL;
-	
+
 	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &iter));
 	gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
 
@@ -1163,7 +1163,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	PidginStatusIconTheme *theme;
 	GtkTreeIter iter;
 	gchar *name = NULL;
-	
+
 	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &iter));
 	gtk_tree_model_get(GTK_TREE_MODEL(prefs_status_icon_themes), &iter, 2, &name, -1);
 
@@ -1201,7 +1201,7 @@ interface_page(void)
 	gtk_box_pack_start(GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_status_icon_theme_cb, NULL);
 
-	/* System Tray */	
+	/* System Tray */
 	vbox = pidgin_make_frame(ret, _("System Tray Icon"));
 	label = pidgin_prefs_dropdown(vbox, _("_Show system tray icon:"), PURPLE_PREF_STRING,
 					PIDGIN_PREFS_ROOT "/docklet/show",
@@ -2028,7 +2028,7 @@ sound_chosen_cb(void *user_data, const char *filename)
 	if (sound == sound_row_sel)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), filename);
 
-	pref_sound_generate_markup();	
+	pref_sound_generate_markup();
 }
 
 static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)

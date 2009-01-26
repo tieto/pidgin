@@ -153,7 +153,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 {
 	const char *dirname;
 	char *path;
-	
+
 	g_return_if_fail(img != NULL);
 
 	if (!purple_buddy_icons_is_caching())
@@ -175,7 +175,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 	}
 
 	purple_util_write_data_to_file_absolute(path, purple_imgstore_get_data(img),
-											purple_imgstore_get_size(img));	
+											purple_imgstore_get_size(img));
 	g_free(path);
 }
 
@@ -453,7 +453,7 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 
 	if (conv != NULL)
 		purple_conv_im_set_icon(PURPLE_CONV_IM(conv), icon_to_set);
-	
+
 	/* icon's refcount was incremented above */
 	if (icon) purple_buddy_icon_unref(icon);
 }
@@ -757,7 +757,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 		g_hash_table_insert(pointer_icon_cache, account, img);
 	else
 		g_hash_table_remove(pointer_icon_cache, account);
-	
+
 	if (purple_account_is_connected(account))
 	{
 		PurpleConnection *gc;

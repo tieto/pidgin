@@ -349,7 +349,7 @@ static void destroy_about(void)
 }
 
 #if 0
-/* This function puts the version number onto the pixmap we use in the 'about' 
+/* This function puts the version number onto the pixmap we use in the 'about'
  * screen in Pidgin. */
 static void
 pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
@@ -487,7 +487,7 @@ void pidgin_dialogs_about()
 						   _("Retired Crazy Patch Writers"));
 	add_developers(str, retired_patch_writers);
 	g_string_append(str, "<BR/>");
-			
+
 	/* Current Translators */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Current Translators"));
@@ -1116,7 +1116,7 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	ggp = g_new(struct _PidginGroupMergeObject, 1);
 	ggp->parent = source;
 	ggp->new_name = g_strdup(new_name);
-	
+
 	purple_request_action(source, NULL, _("Merge Groups"), text, 0,
 			NULL, NULL, NULL,
 			ggp, 2,

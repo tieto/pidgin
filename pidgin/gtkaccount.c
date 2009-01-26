@@ -301,7 +301,7 @@ screenname_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialo
 		label = g_hash_table_lookup(table, "login_label");
 
 		if (*gtk_entry_get_text(GTK_ENTRY(widget)) == '\0') {
-			/* We have to avoid hitting the screenname_changed_cb function 
+			/* We have to avoid hitting the screenname_changed_cb function
 			 * because it enables buttons we don't want enabled yet ;)
 			 */
 			g_signal_handlers_block_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);

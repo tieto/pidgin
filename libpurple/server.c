@@ -172,7 +172,7 @@ void serv_get_info(PurpleConnection *gc, const char *name)
 
 	if(gc)
 		prpl = purple_connection_get_prpl(gc);
-	
+
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
@@ -188,7 +188,7 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 
 	if(gc)
 		prpl = purple_connection_get_prpl(gc);
-	
+
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 

@@ -1707,7 +1707,7 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		msg_ret = s5_parse_chap_msg(connect_data);
-	
+
 		if (msg_ret < 0)
 			return;
 

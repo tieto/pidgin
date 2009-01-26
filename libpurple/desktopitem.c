@@ -41,12 +41,12 @@
  * modify it under the terms of the GNU Library General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * The Gnome Library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public
  * License along with the Gnome Library; see the file COPYING.LIB.  If not,
  * write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -67,7 +67,7 @@ struct _PurpleDesktopItem {
 	GList *languages;
 
 	PurpleDesktopItemType type;
-	
+
 	/* `modified' means that the ditem has been
 	 * modified since the last save. */
 	gboolean modified;
@@ -235,7 +235,7 @@ set (PurpleDesktopItem *item, const char *key, const char *value)
 				item->keys = g_list_append (item->keys,
 							    g_strdup (key));
 
-			g_hash_table_replace (item->main_hash, 
+			g_hash_table_replace (item->main_hash,
 					      g_strdup (key),
 					      g_strdup (value));
 		} else {
@@ -280,7 +280,7 @@ _purple_desktop_item_new (void)
 	retval->main_hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 						   (GDestroyNotify) g_free,
 						   (GDestroyNotify) g_free);
-	
+
 	/* These are guaranteed to be set */
 	_purple_desktop_item_set_string (retval,
 				       PURPLE_DESKTOP_ITEM_NAME,
@@ -690,7 +690,7 @@ insert_key (PurpleDesktopItem *item,
 			g_free (locale);
 			return;
 		}
-		
+
 		g_strchomp (val);
 
 		/* For old KDE entries, we can also split by a comma
@@ -794,7 +794,7 @@ setup_type (PurpleDesktopItem *item, const char *uri)
 		if (purple_strequal(base, ".directory")) {
 			/* This gotta be a directory */
 			g_hash_table_replace (item->main_hash,
-					      g_strdup (PURPLE_DESKTOP_ITEM_TYPE), 
+					      g_strdup (PURPLE_DESKTOP_ITEM_TYPE),
 					      g_strdup ("Directory"));
 			item->keys = g_list_prepend
 				(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_TYPE));
@@ -876,7 +876,7 @@ sanitize (PurpleDesktopItem *item, const char *uri)
 		if (name == NULL)
 			name = g_strdup (_("No name"));
 		g_hash_table_replace (item->main_hash,
-				      g_strdup (PURPLE_DESKTOP_ITEM_NAME), 
+				      g_strdup (PURPLE_DESKTOP_ITEM_NAME),
 				      name);
 		item->keys = g_list_prepend
 			(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_NAME));
@@ -884,7 +884,7 @@ sanitize (PurpleDesktopItem *item, const char *uri)
 	if (lookup (item, PURPLE_DESKTOP_ITEM_ENCODING) == NULL) {
 		/* We store everything in UTF-8 so write that down */
 		g_hash_table_replace (item->main_hash,
-				      g_strdup (PURPLE_DESKTOP_ITEM_ENCODING), 
+				      g_strdup (PURPLE_DESKTOP_ITEM_ENCODING),
 				      g_strdup ("UTF-8"));
 		item->keys = g_list_prepend
 			(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_ENCODING));
@@ -892,7 +892,7 @@ sanitize (PurpleDesktopItem *item, const char *uri)
 	if (lookup (item, PURPLE_DESKTOP_ITEM_VERSION) == NULL) {
 		/* this is the version that we follow, so write it down */
 		g_hash_table_replace (item->main_hash,
-				      g_strdup (PURPLE_DESKTOP_ITEM_VERSION), 
+				      g_strdup (PURPLE_DESKTOP_ITEM_VERSION),
 				      g_strdup ("1.0"));
 		item->keys = g_list_prepend
 			(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_VERSION));
@@ -953,7 +953,7 @@ ditem_load (FILE *df,
 	while ((c = getc (df)) != EOF) {
 		if (c == '\r')		/* Ignore Carriage Return */
 			continue;
-		
+
 		switch (state) {
 
 		case OnSecHeader:
@@ -1022,16 +1022,16 @@ ditem_load (FILE *df,
 			/* On first pass, don't allow dangling keys */
 			if (state == FirstBrace)
 				break;
-	    
+
 			if ((c == ' ' && state != KeyDefOnKey) || c == '\t')
 				break;
-	    
+
 			if (c == '\n' || PURPLE_DESKTOP_ITEM_OVERFLOW) { /* Abort Definition */
 				next = CharBuffer;
 				state = KeyDef;
 				break;
 			}
-	    
+
 			if (c == '=' || PURPLE_DESKTOP_ITEM_OVERFLOW){
 				*next = '\0';
 
@@ -1064,7 +1064,7 @@ ditem_load (FILE *df,
 			break;
 
 		} /* switch */
-	
+
 	} /* while ((c = getc_unlocked (f)) != EOF) */
 	if (c == EOF && state == KeyValue) {
 		*next = '\0';
@@ -1155,7 +1155,7 @@ purple_desktop_item_new_from_file (const char *filename)
 		printf ("Can't open %s: %s", filename, g_strerror(errno));
 		return NULL;
 	}
-	
+
 	retval = ditem_load(dfile, FALSE, filename);
 
 	return retval;
@@ -1200,7 +1200,7 @@ purple_desktop_item_copy (const PurpleDesktopItem *item)
 	/* Languages */
 	retval->languages = g_list_copy (item->languages);
 	for (li = retval->languages; li != NULL; li = li->next)
-		li->data = g_strdup (li->data);	
+		li->data = g_strdup (li->data);
 
 	/* Keys */
 	retval->keys = g_list_copy (item->keys);

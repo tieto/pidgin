@@ -136,7 +136,7 @@ GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const cha
  * Retrieves the main content box (vbox) from a pidgin dialog window
  *
  * @param dialog       The dialog window
- * @param homogeneous  TRUE if all children are to be given equal space allotments. 
+ * @param homogeneous  TRUE if all children are to be given equal space allotments.
  * @param spacing      the number of pixels to place by default between children
  *
  * @since 2.4.0
@@ -184,8 +184,8 @@ GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog);
 void pidgin_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 
 /**
- * Checks if text has been entered into a GtkTextEntry widget.  If 
- * so, the GTK_RESPONSE_OK on the given dialog is set to TRUE.  
+ * Checks if text has been entered into a GtkTextEntry widget.  If
+ * so, the GTK_RESPONSE_OK on the given dialog is set to TRUE.
  * Otherwise GTK_RESPONSE_OK is set to FALSE.
  *
  * @param entry  The text entry widget.
@@ -473,7 +473,7 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 									 char **ret_alias);
 
 /**
- * Sets an ATK name for a given widget.  Also sets the labelled-by 
+ * Sets an ATK name for a given widget.  Also sets the labelled-by
  * and label-for ATK relationships.
  *
  * @param w The widget that we want to name.
@@ -509,10 +509,10 @@ void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);
 
 /**
- * A valid GtkMenuPositionFunc.  This is used to determine where 
- * to draw context menus when the menu is activated with the 
- * keyboard (shift+F10).  If the menu is activated with the mouse, 
- * then you should just use GTK's built-in position function, 
+ * A valid GtkMenuPositionFunc.  This is used to determine where
+ * to draw context menus when the menu is activated with the
+ * keyboard (shift+F10).  If the menu is activated with the mouse,
+ * then you should just use GTK's built-in position function,
  * because it does a better job of positioning the menu.
  *
  * @param menu The menu we are positioning.
@@ -612,13 +612,13 @@ void pidgin_clear_cursor(GtkWidget *widget);
  * @param parent      The parent window
  * @param callback    The callback to call when the window is closed. If the user chose an icon, the char* argument will point to its path
  * @param data        Data to pass to @a callback
- * @return            The file dialog 
+ * @return            The file dialog
  */
 GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char*,gpointer), gpointer data);
 
 /**
  * Converts a buddy icon to the required size and format
- * 
+ *
  * @param plugin     The prpl to convert the icon
  * @param path       The path of a file to convert
  * @param len        If not @c NULL, the length of the returned data will be set here.
@@ -706,7 +706,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 			const gchar *key, GtkTreeIter *iter, gpointer data);
 
 /**
- * Sets or resets a window to 'urgent,' by setting the URGENT hint in X 
+ * Sets or resets a window to 'urgent,' by setting the URGENT hint in X
  * or blinking in the win32 taskbar
  *
  * @param window  The window to draw attention to

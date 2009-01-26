@@ -761,7 +761,7 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
  * Returns the correct alias for this user, ignoring server aliases.  Used
  * when a user-recognizable name is required.  In order: buddy's alias; buddy's
  * contact alias; buddy's user name.
- * 
+ *
  * @param buddy  The buddy whose alias will be returned.
  * @return       The appropriate name or alias.
  * @deprecated   Try purple_buddy_get_alias(), if server aliases are okay.

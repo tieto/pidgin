@@ -98,7 +98,7 @@ purple_menu_action_free(PurpleMenuAction *act)
 void
 purple_util_init(void)
 {
-	/* This does nothing right now.  It exists for symmetry with 
+	/* This does nothing right now.  It exists for symmetry with
 	 * purple_util_uninit() and forwards compatibility. */
 }
 
@@ -2693,7 +2693,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 #endif
-    
+
 	/* Close file */
 	if (fclose(file) != 0)
 	{

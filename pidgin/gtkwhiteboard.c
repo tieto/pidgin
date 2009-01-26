@@ -857,7 +857,7 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
 	GtkColorSelectionDialog *dialog;
-	
+
 	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new(_("Select color"));
 
 	g_signal_connect(G_OBJECT(dialog->colorsel), "color-changed",

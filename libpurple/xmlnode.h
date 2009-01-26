@@ -312,7 +312,7 @@ void xmlnode_free(xmlnode *node);
  *
  * @since 2.6.0
  */
-xmlnode *xmlnode_from_file(const char *dir, const char *filename, 
+xmlnode *xmlnode_from_file(const char *dir, const char *filename,
 			   const char *description, const char *process);
 
 #ifdef __cplusplus

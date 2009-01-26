@@ -715,7 +715,7 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 
 	g_free(totalSendMessage);
 	g_free(addressOfControl);
-	
+
 	return gfud;
 }
 
@@ -1048,7 +1048,7 @@ static void*
 purple_upnp_get_handle(void)
 {
 	static int handle;
-	
+
 	return &handle;
 }
 
