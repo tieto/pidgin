@@ -277,7 +277,7 @@ do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data,
 		             error_message);
 		goto out;
 	}
-	
+
 	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, (void*)url_text, len, info->id);
 
 out:
@@ -296,7 +296,7 @@ do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items)
 	size_t size;
 	if(!items)
 		return;
-	
+
 	item = xmlnode_get_child(items, "item");
 	if(!item)
 		return;
@@ -314,17 +314,17 @@ do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items)
 	checksum = xmlnode_get_attrib(item,"id");
 	if(!checksum)
 		return;
-	
+
 	b64data = xmlnode_get_data(data);
 	if(!b64data)
 		return;
-	
+
 	img = purple_base64_decode(b64data, &size);
 	if(!img) {
 		g_free(b64data);
 		return;
 	}
-	
+
 	purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, img, size, checksum);
 	g_free(b64data);
 }
@@ -337,7 +337,7 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 	xmlnode *item, *metadata;
 	if(!buddy)
 		return;
-	
+
 	checksum = purple_buddy_icons_get_checksum_for_user(buddy);
 	item = xmlnode_get_child(items,"item");
 	metadata = xmlnode_get_child(item, "metadata");
@@ -364,7 +364,7 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 			if(info->type == XMLNODE_TYPE_TAG && !strcmp(info->name,"info")) {
 				const char *type = xmlnode_get_attrib(info,"type");
 				const char *id = xmlnode_get_attrib(info,"id");
-				
+
 				if(checksum && id && !strcmp(id, checksum)) {
 					/* we already have that avatar, so we don't have to do anything */
 					goodinfo = NULL;
