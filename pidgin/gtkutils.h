@@ -792,7 +792,8 @@ void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
  *
  * @param window    The window to make transient.
  *
- * @return  Whether the window was made transient or not.
+ * @return Whether the window was made transient or not.
+ *
  * @since 2.4.0
  */
 gboolean pidgin_auto_parent_window(GtkWidget *window);
@@ -818,18 +819,21 @@ GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, Gtk
  * @param  image   A PurpleStoredImage.
  *
  * @return   A GdkPixbuf created from the stored image.
+ *
  * @since 2.5.0
  */
-GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
+GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
 
 /**
  * Initialize some utility functions.
+ *
  * @since 2.6.0
  */
 void pidgin_utils_init(void);
 
 /**
  * Uninitialize some utility functions.
+ *
  * @since 2.6.0
  */
 void pidgin_utils_uninit(void);

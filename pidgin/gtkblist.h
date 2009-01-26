@@ -255,13 +255,17 @@ void pidgin_blist_add_alert(GtkWidget *widget);
  * Sets the current theme for Pidgin to use
  *
  * @param theme	the new theme to use
+ *
+ * @since 2.6.0
  */
 void pidgin_blist_set_theme(PidginBlistTheme *theme);
 
 /**
  * Gets Pidgin's current buddy list theme
  *
- * @returns	the current theme 
+ * @returns	the current theme
+ *
+ * @since 2.6.0
  */
 PidginBlistTheme *pidgin_blist_get_theme(void);
 

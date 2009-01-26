@@ -784,6 +784,7 @@ char *purple_fd_get_ip(int fd);
  * @param right A string to compare with left
  *
  * @return @c TRUE if the strings are the same, else @c FALSE.
+ *
  * @since 2.6.0
  */
 gboolean purple_strequal(const gchar *left, const gchar *right);

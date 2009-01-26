@@ -75,6 +75,9 @@ typedef enum
 
 } PurpleBlistNodeFlags;
 
+/**
+ * @since 2.6.0
+ */
 #define PURPLE_BLIST_NODE(obj) ((PurpleBlistNode *)(obj))
 
 #define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (purple_blist_node_get_flags((PurpleBlistNode*)(b)) & (f))
@@ -83,9 +86,24 @@ typedef enum
 #define PURPLE_BLIST_NODE_NAME(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
 				     purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE ? purple_buddy_get_name((PurpleBuddy*)n) : NULL)
 
+/**
+ * @since 2.6.0
+ */
 #define PURPLE_GROUP(obj) ((PurpleGroup *)(obj))
+
+/**
+ * @since 2.6.0
+ */
 #define PURPLE_CONTACT(obj) ((PurpleContact *)(obj))
+
+/**
+ * @since 2.6.0
+ */
 #define PURPLE_BUDDY(obj) ((PurpleBuddy *)(obj))
+
+/**
+ * @since 2.6.0
+ */
 #define PURPLE_CHAT(obj) ((PurpleChat *)(obj))
 
 #include "account.h"
@@ -245,6 +263,7 @@ PurpleBlistNode *purple_blist_get_root(void);
  * Returns the hash table of every buddy in the list.
  *
  * @return The hash table of every buddy in the list.
+ *
  * @since 2.6.0
  */
 GHashTable *purple_blist_get_buddies(void);
@@ -253,6 +272,7 @@ GHashTable *purple_blist_get_buddies(void);
  * Returns the UI data for the list.
  *
  * @return The UI data for the list.
+ *
  * @since 2.6.0
  */
 void *purple_blist_get_ui_data(void);
@@ -261,6 +281,7 @@ void *purple_blist_get_ui_data(void);
  * Sets the UI data for the list.
  *
  * @param ui_data The UI data for the list.
+ *
  * @since 2.6.0
  */
 void purple_blist_set_ui_data(void *ui_data);
@@ -345,6 +366,7 @@ void *purple_blist_node_get_ui_data(const PurpleBlistNode *node);
  *
  * @param node The node.
  * @param ui_data The UI data.
+ *
  * @since 2.6.0
  */
 void purple_blist_node_set_ui_data(PurpleBlistNode *node, void *ui_data);
@@ -379,6 +401,7 @@ void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_stat
  * Updates a node's custom icon.
  *
  * @param node  The PurpleBlistNode whose custom icon has changed.
+ *
  * @since 2.5.0
  */
 void purple_blist_update_node_icon(PurpleBlistNode *node);
@@ -761,6 +784,7 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy);
  *
  * @param buddy  The buddy
  * @return       The local alias for the buddy
+ *
  * @since 2.6.0
  */
 const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
@@ -837,6 +861,7 @@ PurpleGroup *purple_chat_get_group(PurpleChat *chat);
  * @param chat  The chat.
  *
  * @return  The account the chat belongs to.
+ *
  * @since 2.4.0
  */
 PurpleAccount *purple_chat_get_account(PurpleChat *chat);
@@ -847,6 +872,7 @@ PurpleAccount *purple_chat_get_account(PurpleChat *chat);
  * @param chat  The chat.
  *
  * @constreturn  The hashtable.
+ *
  * @since 2.4.0
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
@@ -1065,6 +1091,7 @@ PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
  * @param node The node.
  *
  * @return The type of the node.
+ *
  * @since 2.1.0
  */
 PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode *node);

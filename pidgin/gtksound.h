@@ -66,7 +66,9 @@ void *pidgin_sound_get_handle(void);
 /**
  * Returns true Pidgin is using customized sounds
  *
- * @return TRUE if non default sounds are used 
+ * @return TRUE if non default sounds are used.
+ *
+ * @since 2.6.0
  */
 gboolean pidgin_sound_is_customized(void);
 

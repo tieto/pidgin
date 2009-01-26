@@ -531,6 +531,7 @@ PurpleRequestFieldType purple_request_field_get_type(const PurpleRequestField *f
  * @param field The field.
  *
  * @return The UI data.
+ *
  * @since 2.6.0
  */
 PurpleRequestFieldGroup *purple_request_field_get_group(const PurpleRequestField *field);
@@ -586,6 +587,7 @@ gboolean purple_request_field_is_required(const PurpleRequestField *field);
  * @param field The field.
  *
  * @return The UI data.
+ *
  * @since 2.6.0
  */
 gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
@@ -597,6 +599,7 @@ gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
  * @param ui_data The UI data.
  *
  * @return The UI data.
+ *
  * @since 2.6.0
  */
 void purple_request_field_set_ui_data(PurpleRequestField *field,

@@ -309,6 +309,8 @@ void xmlnode_free(xmlnode *node);
  * @process  The utility that is calling xmlnode_from_file
  *
  * @return The new node.
+ *
+ * @since 2.6.0
  */
 xmlnode *xmlnode_from_file(const char *dir, const char *filename, 
 			   const char *description, const char *process);
