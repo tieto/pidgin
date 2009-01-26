@@ -703,14 +703,14 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme)
 	gtk_cell_renderer_set_fixed_size(cell_rend, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "pixbuf", 0, NULL);
-	
+
 	cell_rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "markup", 1, NULL);
 /*#if GTK_CHECK_VERSION(2,6,0)
 			g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif*/
-	
+
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter)) {
 		do {
 			gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 2, &theme, -1);
@@ -737,12 +737,11 @@ prefs_set_sound_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	gint i;
 	gchar *pref;
 	gchar *new_theme;
-	gboolean sucess;
+	gboolean success;
 	GtkTreeIter new_iter;
-	
 
-	sucess = gtk_combo_box_get_active_iter(combo_box, &new_iter);
-	g_return_if_fail(sucess);
+	success = gtk_combo_box_get_active_iter(combo_box, &new_iter);
+	g_return_if_fail(success);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &new_iter, 2, &new_theme, -1);
 
