@@ -1103,6 +1103,7 @@ for i in $DYNAMIC_PRPLS ; do
 		msnp9)		dynamic_msn=yes ;;
 		myspace)	dynamic_myspace=yes ;;
 		novell)		dynamic_novell=yes ;;
+		null)		dynamic_null=yes ;;
 		oscar)		dynamic_oscar=yes ;;
 		aim)		dynamic_oscar=yes ;;
 		icq)		dynamic_oscar=yes ;;
@@ -1117,21 +1118,6 @@ for i in $DYNAMIC_PRPLS ; do
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
-AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes"  -a [ "x$avahiincludes" = "xyes" -a "x$avahilibs " = "xyes" ] )
-AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
-AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
-AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
-AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
-AM_CONDITIONAL(DYNAMIC_MYSPACE, test "x$dynamic_myspace" = "xyes")
-AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
-AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
-AM_CONDITIONAL(DYNAMIC_QQ, test "x$dynamic_qq" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$have_silc" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
-AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
-AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
-AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(plugins, [AC_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
 AC_ARG_WITH(krb4, [AC_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin with Kerberos 4 support])], kerberos="$withval", kerberos="no")

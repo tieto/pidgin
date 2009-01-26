@@ -224,8 +224,10 @@ add_all_buddies_to_permit_list(PurpleAccount *account, gboolean local)
 	while (list != NULL)
 	{
 		PurpleBuddy *buddy = list->data;
-		if (!g_slist_find_custom(account->permit, buddy->name, (GCompareFunc)g_utf8_collate))
-			purple_privacy_permit_add(account, buddy->name, local);
+		const gchar *name = purple_buddy_get_name(buddy);
+
+		if (!g_slist_find_custom(account->permit, name, (GCompareFunc)g_utf8_collate))
+			purple_privacy_permit_add(account, name, local);
 		list = g_slist_delete_link(list, list);
 	}
 }
@@ -259,7 +261,7 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 				for (list = account->permit; list != NULL;) {
 					char *person = list->data;
 					list = list->next;
-					if (strcmp(norm, person) != 0)
+					if (!purple_strequal(norm, person))
 						purple_privacy_permit_remove(account, person, local);
 				}
 			}
@@ -303,7 +305,7 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 				for (list = account->deny; list != NULL; ) {
 					char *person = list->data;
 					list = list->next;
-					if (strcmp(norm, person) != 0)
+					if (!purple_strequal(norm, person))
 						purple_privacy_deny_remove(account, person, local);
 				}
 			}

@@ -511,7 +511,7 @@ purple_find_prpl(const char *id)
 	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
 		plugin = (PurplePlugin *)l->data;
 
-		if (!strcmp(plugin->info->id, id))
+		if (purple_strequal(plugin->info->id, id))
 			return plugin;
 	}
 

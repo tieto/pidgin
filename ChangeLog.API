@@ -1,5 +1,56 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_buddy_get_protocol_data
+		* purple_buddy_set_protocol_data
+		* purple_connection_get_protocol_data
+		* purple_connection_set_protocol_data
+		* purple_buddy_get_local_buddy_alias
+		* purple_blist_get_buddies
+		* purple_blist_get_ui_data
+		* purple_blist_set_ui_data
+		* purple_blist_node_get_ui_data
+		* purple_blist_node_set_ui_data
+		* PURPLE_BLIST_NODE
+		* PURPLE_GROUP
+		* PURPLE_CONTACT
+		* PURPLE_BUDDY
+		* PURPLE_CHAT
+		* purple_request_field_get_group
+		* purple_request_field_get_ui_data
+		* purple_request_field_set_ui_data
+		* purple_network_force_online
+		* purple_global_proxy_set_info
+		* purple_strequal
+
+		Deprecated:
+		* purple_buddy_get_local_alias
+
+	pidgin:
+		Added:
+		* gtk_imhtml_class_register_protocol
+		* gtk_imhtml_link_get_url, gtk_imhtml_link_get_text_tag,
+		  gtk_imhtml_link_activate functions to process GtkIMHtmlLink
+		  objects from GtkIMHtml protocol callbacks.
+		* pidgin_utils_init, pidgin_utils_uninit
+
+	perl:
+		Changed:
+		* Made a bunch of functions act more perl-like. Call the new()
+		  functions as Class->new(...) instead of Class::new(...):
+			* Purple::Request::Fields::new
+			* Purple::Request::Field::new
+			* Purple::Request::Field::account_new
+			* Purple::Request::Field::bool_new
+			* Purple::Request::Field::choice_new
+			* Purple::Request::Field::int_new
+			* Purple::Request::Field::label_new
+			* Purple::Request::Field::list_new
+			* Purple::Request::Field::string_new
+			* Purple::Request::Field::group_new
+
 version 2.5.5 (??/??/2009):
 	libpurple:
 		Changed:

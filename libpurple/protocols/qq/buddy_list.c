@@ -232,7 +232,7 @@ guint8 qq_process_get_buddies_online(guint8 *data, gint data_len, PurpleConnecti
 			/* create no-auth buddy */
 			buddy = qq_buddy_new(gc, bs.uid);
 		}
-		bd = (buddy == NULL) ? NULL : (qq_buddy_data *)buddy->proto_data;
+		bd = (buddy == NULL) ? NULL : (qq_buddy_data *)purple_buddy_get_protocol_data(buddy);
 		if (bd == NULL) {
 			purple_debug_error("QQ",
 					"Got an online buddy %u, but not in my buddy list\n", bs.uid);
@@ -334,7 +334,7 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 #endif
 
 		buddy = qq_buddy_find_or_new(gc, bd.uid);
-		if (buddy == NULL || buddy->proto_data == NULL) {
+		if (buddy == NULL || purple_buddy_get_protocol_data(buddy) == NULL) {
 			g_free(bd.nickname);
 			continue;
 		}
@@ -342,7 +342,7 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 		bd.last_update = time(NULL);
 		qq_update_buddy_status(gc, bd.uid, bd.status, bd.comm_flag);
 
-		g_memmove(buddy->proto_data, &bd, sizeof(qq_buddy_data));
+		g_memmove(purple_buddy_get_protocol_data(buddy), &bd, sizeof(qq_buddy_data));
 		/* nickname has been copy to buddy_data do not free
 		   g_free(bd.nickname);
 		*/
@@ -567,7 +567,7 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 		/* create no-auth buddy */
 		buddy = qq_buddy_new(gc, bs.uid);
 	}
-	bd = (buddy == NULL) ? NULL : (qq_buddy_data *) buddy->proto_data;
+	bd = (buddy == NULL) ? NULL : (qq_buddy_data *)purple_buddy_get_protocol_data(buddy);
 	if (bd == NULL) {
 		purple_debug_warning("QQ", "Got status of no-auth buddy %u\n", bs.uid);
 		return;
@@ -659,9 +659,10 @@ void qq_update_buddyies_status(PurpleConnection *gc)
 	for (it = buddies; it; it = it->next) {
 		buddy = it->data;
 		if (buddy == NULL) continue;
-		if (buddy->proto_data == NULL) continue;
 
-		bd = (qq_buddy_data *)buddy->proto_data;
+		bd = purple_buddy_get_protocol_data(buddy);
+		if (bd == NULL) continue;
+
 		if (bd->uid == 0) continue;
 		if (bd->uid == qd->uid) continue;	/* my status is always online in my buddy list */
 		if (tm_limit < bd->last_update) continue;
@@ -681,16 +682,20 @@ void qq_buddy_data_free_all(PurpleConnection *gc)
 	GSList *buddies, *it;
 	gint count = 0;
 
-	qd = (qq_data *) (gc->proto_data);
+	qd = (qq_data *)purple_connection_get_protocol_data(gc);
 
 	buddies = purple_find_buddies(purple_connection_get_account(gc), NULL);
 	for (it = buddies; it; it = it->next) {
+		qq_buddy_data *qbd = NULL;
+
 		buddy = it->data;
 		if (buddy == NULL) continue;
-		if (buddy->proto_data == NULL) continue;
 
-		qq_buddy_data_free(buddy->proto_data);
-		buddy->proto_data = NULL;
+		qbd = purple_buddy_get_protocol_data(buddy);
+		if (qbd == NULL) continue;
+
+		qq_buddy_data_free(qbd);
+		purple_buddy_set_protocol_data(buddy, NULL);
 
 		count++;
 	}

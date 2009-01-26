@@ -33,7 +33,7 @@ write_status(PurpleBuddy *buddy, const char *message)
 	g_return_if_fail(conv->type == PURPLE_CONV_TYPE_IM);
 
 	/* Prevent duplicate notifications for buddies in multiple groups */
-	if (buddy != purple_find_buddy(buddy->account, buddy->name))
+	if (buddy != purple_find_buddy(account, buddy_name))
 		return;
 
 	who = purple_buddy_get_alias(buddy);

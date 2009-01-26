@@ -92,6 +92,10 @@ struct _PurpleNetworkListenData {
 static NMState nm_get_network_state(void);
 #endif
 
+#if defined(HAVE_NETWORKMANAGER) || defined(_WIN32)
+static gboolean force_online;
+#endif
+
 const unsigned char *
 purple_network_ip_atoi(const char *ip)
 {
@@ -648,6 +652,9 @@ gboolean
 purple_network_is_available(void)
 {
 #ifdef HAVE_NETWORKMANAGER
+	if (force_online)
+		return TRUE;
+
 	if (!have_nm_state)
 	{
 		have_nm_state = TRUE;
@@ -662,9 +669,17 @@ purple_network_is_available(void)
 	return FALSE;
 
 #elif defined _WIN32
-	return (current_network_count > 0);
+	return (current_network_count > 0 || force_online);
 #else
 	return TRUE;
+#endif
+}
+
+void
+purple_network_force_online()
+{
+#if defined(HAVE_NETWORKMANAGER) || defined(_WIN32)
+	force_online = TRUE;
 #endif
 }
 

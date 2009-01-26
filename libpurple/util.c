@@ -1409,7 +1409,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						struct purple_parse_tag *pt = tags->data;
 						if(xhtml)
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
-						if(plain && !strcmp(pt->src_tag, "a")) {
+						if(plain && purple_strequal(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */
 							if (cdata && url &&
 									(!g_string_equal(cdata, url) && (g_ascii_strncasecmp(url->str, "mailto:", 7) != 0 ||
@@ -2774,70 +2774,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 xmlnode *
 purple_util_read_xml_from_file(const char *filename, const char *description)
 {
-	const char *user_dir = purple_user_dir();
-	gchar *filename_full;
-	GError *error = NULL;
-	gchar *contents = NULL;
-	gsize length;
-	xmlnode *node = NULL;
-
-	g_return_val_if_fail(user_dir != NULL, NULL);
-
-	purple_debug_info("util", "Reading file %s from directory %s\n",
-					filename, user_dir);
-
-	filename_full = g_build_filename(user_dir, filename, NULL);
-
-	if (!g_file_test(filename_full, G_FILE_TEST_EXISTS))
-	{
-		purple_debug_info("util", "File %s does not exist (this is not "
-						"necessarily an error)\n", filename_full);
-		g_free(filename_full);
-		return NULL;
-	}
-
-	if (!g_file_get_contents(filename_full, &contents, &length, &error))
-	{
-		purple_debug_error("util", "Error reading file %s: %s\n",
-						 filename_full, error->message);
-		g_error_free(error);
-	}
-
-	if ((contents != NULL) && (length > 0))
-	{
-		node = xmlnode_from_str(contents, length);
-
-		/* If we were unable to parse the file then save its contents to a backup file */
-		if (node == NULL)
-		{
-			gchar *filename_temp;
-
-			filename_temp = g_strdup_printf("%s~", filename);
-			purple_debug_error("util", "Error parsing file %s.  Renaming old "
-							 "file to %s\n", filename_full, filename_temp);
-			purple_util_write_data_to_file(filename_temp, contents, length);
-			g_free(filename_temp);
-		}
-
-		g_free(contents);
-	}
-
-	/* If we could not parse the file then show the user an error message */
-	if (node == NULL)
-	{
-		gchar *title, *msg;
-		title = g_strdup_printf(_("Error Reading %s"), filename);
-		msg = g_strdup_printf(_("An error was encountered reading your "
-					"%s.  They have not been loaded, and the old file "
-					"has been renamed to %s~."), description, filename_full);
-		purple_notify_error(NULL, NULL, title, msg);
-		g_free(title);
-		g_free(msg);
-	}
-
-	g_free(filename_full);
-
-	return node;
+	return xmlnode_from_file(purple_user_dir(), filename, description, "util");
 }
 
 /*
@@ -3012,7 +2949,7 @@ purple_running_kde(void)
 	g_free(tmp);
 
 	session = g_getenv("KDE_FULL_SESSION");
-	if (session != NULL && !strcmp(session, "true"))
+	if (purple_strequal(session, "true"))
 		return TRUE;
 
 	/* If you run Purple from Konsole under !KDE, this will provide a
@@ -3053,6 +2990,17 @@ purple_fd_get_ip(int fd)
 /**************************************************************************
  * String Functions
  **************************************************************************/
+gboolean
+purple_strequal(const gchar *left, const gchar *right)
+{
+#if GLIB_CHECK_VERSION(2,16,0)
+	return (g_strcmp0(left, right) == 0);
+#else
+	return ((left == NULL && right == NULL) ||
+	        (left != NULL && right != NULL && strcmp(left, right) == 0));
+#endif
+}
+
 const char *
 purple_normalize(const PurpleAccount *account, const char *str)
 {
@@ -3167,7 +3115,7 @@ purple_str_has_suffix(const char *s, const char *x)
 	g_return_val_if_fail(x != NULL, FALSE);
 
 	off = strlen(s) - strlen(x);
-	return (off >= 0 && !strcmp(s + off, x));
+	return (off >= 0 && purple_strequal(s + off, x));
 #endif
 }
 
@@ -4764,7 +4712,7 @@ purple_escape_filename(const char *str)
 
 const char *_purple_oscar_convert(const char *act, const char *protocol)
 {
-	if (protocol && act && strcmp(protocol, "prpl-oscar") == 0) {
+	if (act && purple_strequal(protocol, "prpl-oscar")) {
 		int i;
 		for (i = 0; act[i] != '\0'; i++)
 			if (!isdigit(act[i]))

@@ -659,7 +659,7 @@ hmac_set_opt(PurpleCipherContext *context, const gchar *name, void *value)
 
 	hctx = purple_cipher_context_get_data(context);
 
-	if (!strcmp(name, "hash")) {
+	if (purple_strequal(name, "hash")) {
 		g_free(hctx->name);
 		if (hctx->hash)
 			purple_cipher_context_destroy(hctx->hash);
@@ -676,7 +676,7 @@ hmac_get_opt(PurpleCipherContext *context, const gchar *name)
 
 	hctx = purple_cipher_context_get_data(context);
 
-	if (!strcmp(name, "hash")) {
+	if (purple_strequal(name, "hash")) {
 		return hctx->name;
 	}
 
@@ -1692,11 +1692,11 @@ sha1_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "sizeHi")) {
+	if(purple_strequal(name, "sizeHi")) {
 		ctx->sizeHi = GPOINTER_TO_INT(value);
-	} else if(!strcmp(name, "sizeLo")) {
+	} else if(purple_strequal(name, "sizeLo")) {
 		ctx->sizeLo = GPOINTER_TO_INT(value);
-	} else if(!strcmp(name, "lenW")) {
+	} else if(purple_strequal(name, "lenW")) {
 		ctx->lenW = GPOINTER_TO_INT(value);
 	}
 }
@@ -1707,11 +1707,11 @@ sha1_get_opt(PurpleCipherContext *context, const gchar *name) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "sizeHi")) {
+	if(purple_strequal(name, "sizeHi")) {
 		return GINT_TO_POINTER(ctx->sizeHi);
-	} else if(!strcmp(name, "sizeLo")) {
+	} else if(purple_strequal(name, "sizeLo")) {
 		return GINT_TO_POINTER(ctx->sizeLo);
-	} else if(!strcmp(name, "lenW")) {
+	} else if(purple_strequal(name, "lenW")) {
 		return GINT_TO_POINTER(ctx->lenW);
 	}
 
@@ -1942,7 +1942,7 @@ rc4_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "key_len")) {
+	if(purple_strequal(name, "key_len")) {
 		ctx->key_len = GPOINTER_TO_INT(value);
 	}
 }
@@ -1967,7 +1967,7 @@ rc4_get_opt(PurpleCipherContext *context, const gchar *name) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "key_len")) {
+	if(purple_strequal(name, "key_len")) {
 		return GINT_TO_POINTER(ctx->key_len);
 	}
 

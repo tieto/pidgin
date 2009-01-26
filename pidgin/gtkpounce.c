@@ -535,7 +535,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	/* Create the window. */
 	dialog->window = window = gtk_dialog_new();
-	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
+	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("Add Buddy Pounce") : _("Modify Buddy Pounce")));
 	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
 	gtk_container_set_border_width(GTK_CONTAINER(dialog->window), PIDGIN_HIG_BORDER);
 

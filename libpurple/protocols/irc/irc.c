@@ -564,7 +564,7 @@ static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 {
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
 	struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
-	ib->name = g_strdup(buddy->name);
+	ib->name = g_strdup(purple_buddy_get_name(buddy));
 	g_hash_table_insert(irc->buddies, ib->name, ib);
 
 	/* if the timer isn't set, this is during signon, so we don't want to flood
@@ -577,7 +577,7 @@ static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 static void irc_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
-	g_hash_table_remove(irc->buddies, buddy->name);
+	g_hash_table_remove(irc->buddies, purple_buddy_get_name(buddy));
 }
 
 static void read_input(struct irc_conn *irc, int len)

@@ -157,8 +157,8 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
-	buddy->proto_data = bonjour_buddy;
 	name = purple_buddy_get_name(buddy);
+	purple_buddy_set_protocol_data(buddy, bonjour_buddy);
 
 	/* Create the alias for the buddy using the first and the last name */
 	if (bonjour_buddy->nick && *bonjour_buddy->nick)
@@ -210,8 +210,8 @@ void bonjour_buddy_signed_off(PurpleBuddy *pb) {
 	if (PURPLE_BLIST_NODE_SHOULD_SAVE(pb)) {
 		purple_prpl_got_user_status(purple_buddy_get_account(pb),
 					    purple_buddy_get_name(pb), "offline", NULL);
-		bonjour_buddy_delete(pb->proto_data);
-		pb->proto_data = NULL;
+		bonjour_buddy_delete(purple_buddy_get_protocol_data(pb));
+		purple_buddy_set_protocol_data(pb, NULL);
 	} else {
 		purple_account_remove_buddy(purple_buddy_get_account(pb), pb, NULL);
 		purple_blist_remove_buddy(pb);
