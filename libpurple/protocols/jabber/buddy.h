@@ -36,9 +36,6 @@ typedef enum {
 #include "jabber.h"
 #include "caps.h"
 
-#define AVATARNAMESPACEDATA "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
-#define AVATARNAMESPACEMETA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
-
 typedef struct _JabberBuddy {
 	GList *resources;
 	char *error_msg;
