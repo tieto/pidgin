@@ -496,7 +496,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	jabber_avatar_set(gc->proto_data, img);
+	jabber_avatar_set(gc->proto_data, img, NULL);
 	/* vCard avatars do not have an image type requirement so update our
 	 * vCard avatar regardless of image type for those poor older clients
 	 */

@@ -36,7 +36,11 @@
 #define NS_AVATAR_1_1_METADATA  "urn:xmpp:avatar:metadata"
 
 void jabber_avatar_init(void);
-void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img);
+/**
+ * @param ns The metadata namespace for which to set the avatar or NULL to set the
+ * avatar for both namespaces.
+ */
+void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns);
 
 void jabber_avatar_fetch_mine(JabberStream *js);
 
