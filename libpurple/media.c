@@ -118,6 +118,7 @@ static GObjectClass *parent_class = NULL;
 
 enum {
 	ERROR,
+	ACCEPTED,
 	CODECS_CHANGED,
 	NEW_CANDIDATE,
 	READY_NEW,
@@ -200,6 +201,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
 					 G_TYPE_NONE, 1, G_TYPE_STRING);
+	purple_media_signals[ACCEPTED] = g_signal_new("accepted", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 purple_smarshal_VOID__STRING_STRING,
+					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 	purple_media_signals[CODECS_CHANGED] = g_signal_new("codecs-changed", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
@@ -1232,6 +1237,8 @@ purple_media_accept(PurpleMedia *media)
 			purple_media_emit_ready(media, session, NULL);
 	}
 
+	g_signal_emit(media, purple_media_signals[ACCEPTED],
+			0, NULL, NULL);
 	streams = media->priv->streams;
 
 	for (; streams; streams = g_list_next(streams)) {

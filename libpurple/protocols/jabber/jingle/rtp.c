@@ -271,6 +271,13 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 }
 
 static void
+jingle_rtp_accepted_cb(PurpleMedia *media, gchar *sid, gchar *name,
+		JingleSession *session)
+{
+	purple_debug_info("jingle-rtp", "jingle_rtp_accepted_cb\n");
+}
+
+static void
 jingle_rtp_codecs_changed_cb(PurpleMedia *media, gchar *sid,
 		JingleSession *session)
 {
@@ -367,6 +374,8 @@ jingle_rtp_create_media(JingleContent *content)
 	g_hash_table_insert(js->medias, sid, media);
 
 	/* connect callbacks */
+	g_signal_connect(G_OBJECT(media), "accepted",
+				 G_CALLBACK(jingle_rtp_accepted_cb), session);
 	g_signal_connect(G_OBJECT(media), "codecs-changed",
 				 G_CALLBACK(jingle_rtp_codecs_changed_cb), session);
 	g_signal_connect(G_OBJECT(media), "new-candidate",
