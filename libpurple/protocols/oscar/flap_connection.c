@@ -999,6 +999,13 @@ flap_connection_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc, PurpleInput
 	flap_connection_recv(conn);
 }
 
+/**
+ * @param source When this function is called as a callback source is
+ *        set to the fd that triggered the callback.  But this function
+ *        is also called directly from flap_connection_send_byte_stream(),
+ *        in which case source will be -1.  So don't use source--use
+ *        conn->gsc or conn->fd instead.
+ */
 static void
 send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
@@ -1066,11 +1073,11 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 		if (conn->gsc) {
 			conn->watcher_outgoing = purple_input_add(conn->gsc->fd,
 					PURPLE_INPUT_WRITE, send_cb, conn);
-			send_cb(conn, 0, 0);
+			send_cb(conn, -1, 0);
 		} else if (conn->fd >= 0) {
 			conn->watcher_outgoing = purple_input_add(conn->fd,
 					PURPLE_INPUT_WRITE, send_cb, conn);
-			send_cb(conn, 0, 0);
+			send_cb(conn, -1, 0);
 		}
 	}
 }

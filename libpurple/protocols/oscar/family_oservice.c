@@ -115,10 +115,8 @@ aim_srv_requestnew(OscarData *od, guint16 serviceid)
 
 	byte_stream_put16(&bs, serviceid);
 
-	/*
-	 * Request SSL Connection
-	 */
 	if (od->use_ssl)
+		/* Request SSL Connection */
 		aim_tlvlist_add_noval(&tlvlist, 0x008c);
 
 	aim_tlvlist_write(&bs, &tlvlist);
@@ -163,10 +161,8 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 
 	aim_tlvlist_add_chatroom(&tlvlist, 0x0001, exchange, roomname, instance);
 
-	/*
-	 * Request SSL Connection
-	 */
 	if (od->use_ssl)
+		/* Request SSL Connection */
 		aim_tlvlist_add_noval(&tlvlist, 0x008c);
 
 	aim_tlvlist_write(&bs, &tlvlist);

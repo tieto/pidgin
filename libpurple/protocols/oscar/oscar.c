@@ -1094,14 +1094,15 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 static void
 connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 {
-	PurpleConnection *gc;
 	OscarData *od;
+	PurpleConnection *gc;
 
 	od = conn->od;
 	gc = od->gc;
 
 	purple_debug_error("oscar", "unable to connect to FLAP "
 			"server of type 0x%04hx\n", conn->type);
+
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
 		gchar *msg;
@@ -1134,8 +1135,8 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 static void
 connection_common_established_cb(FlapConnection *conn)
 {
-	PurpleConnection *gc;
 	OscarData *od;
+	PurpleConnection *gc;
 	PurpleAccount *account;
 
 	od = conn->od;
@@ -1144,6 +1145,7 @@ connection_common_established_cb(FlapConnection *conn)
 
 	purple_debug_info("oscar", "connected to FLAP server of type 0x%04hx\n",
 			conn->type);
+
 	if (conn->cookie == NULL)
 		flap_connection_send_version(od, conn);
 	else
@@ -1522,7 +1524,8 @@ oscar_login(PurpleAccount *account)
 	if (od->use_ssl) {
 		if (purple_ssl_is_supported()) {
 			const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
-			/* If the account's server is what the oscar prpl has offered as
+			/*
+			 * If the account's server is what the oscar prpl has offered as
 			 * the default login server through the vast eons (all two of
 			 * said default options, AFAIK) and the user wants SSL, we'll
 			 * do what we know is best for them and change the setting out
@@ -1544,7 +1547,8 @@ oscar_login(PurpleAccount *account)
 	} else {
 		const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
 
-		/* See the comment above. We do the reverse here. If they don't want
+		/*
+		 * See the comment above. We do the reverse here. If they don't want
 		 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
 		 * set it back to the default.
 		 */
@@ -2037,10 +2041,12 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	if (redir->use_ssl)
 	{
-		/* FIXME: It should be possible to specify a certificate common name
+		/*
+		 * TODO: It should be possible to specify a certificate common name
 		 * distinct from the host we're passing to purple_ssl_connect. The
 		 * way to work around that is to use purple_proxy_connect +
-		 * purple_ssl_connect_with_host_fd */
+		 * purple_ssl_connect_with_host_fd
+		 */
 		newconn->ssl_cert_cn = g_strdup(redir->ssl_cert_cn);
 		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
 				ssl_proxy_conn_established_cb, newconn);
