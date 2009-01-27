@@ -118,6 +118,7 @@ static GObjectClass *parent_class = NULL;
 
 enum {
 	ERROR,
+	CODECS_CHANGED,
 	NEW_CANDIDATE,
 	READY_NEW,
 	STATE_CHANGED,
@@ -196,6 +197,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	purple_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__STRING,
+					 G_TYPE_NONE, 1, G_TYPE_STRING);
+	purple_media_signals[CODECS_CHANGED] = g_signal_new("codecs-changed", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
 					 G_TYPE_NONE, 1, G_TYPE_STRING);
@@ -1151,12 +1156,17 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 					PurpleMediaSession *session = sessions->data;
 					if (session->session == fssession) {
 						gboolean ready;
+						gchar *session_id;
+
 						g_object_get(session->session, "codecs-ready", &ready, NULL);
 						if (session->codecs_ready == FALSE && ready == TRUE) {
 							session->codecs_ready = ready;
 							purple_media_emit_ready(media, session, NULL);
 						}
 
+						session_id = g_strdup(session->id);
+						g_signal_emit(media, purple_media_signals[CODECS_CHANGED], 0, session_id);
+						g_free(session_id);
 						g_list_free(sessions);
 						break;
 					}
