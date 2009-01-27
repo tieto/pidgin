@@ -401,11 +401,14 @@ void purple_media_reject(PurpleMedia *media);
 void purple_media_hangup(PurpleMedia *media);
 
 /**
- * Set the media session to the got_hangup state.
+ * Ends all streams that match the given parameters
  *
- * @param media The media object to set the state on.
+ * @param media The media object with which to end streams.
+ * @param session_id The session to end streams on.
+ * @param participant The participant to end streams with.
  */
-void purple_media_got_hangup(PurpleMedia *media);
+void purple_media_end(PurpleMedia *media, const gchar *session_id,
+		const gchar *participant);
 
 /**
  * Enumerates a list of devices.

@@ -1238,9 +1238,7 @@ purple_media_hangup(PurpleMedia *media)
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_HANGUP,
 			NULL, NULL);
-	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-			0, PURPLE_MEDIA_STATE_CHANGED_END,
-			NULL, NULL);
+	purple_media_end(media, NULL, NULL);
 }
 
 void
@@ -1249,17 +1247,17 @@ purple_media_reject(PurpleMedia *media)
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_REJECTED,
 			NULL, NULL);
-	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-			0, PURPLE_MEDIA_STATE_CHANGED_END,
-			NULL, NULL);
+	purple_media_end(media, NULL, NULL);
 }
 
 void
-purple_media_got_hangup(PurpleMedia *media)
+purple_media_end(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
 {
-	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-			0, PURPLE_MEDIA_STATE_CHANGED_END,
-			NULL, NULL);
+	if (session_id == NULL && participant == NULL)
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_CHANGED_END,
+				NULL, NULL);
 }
 
 GList*

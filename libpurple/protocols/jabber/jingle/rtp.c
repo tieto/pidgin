@@ -594,7 +594,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 
 			if (media != NULL) {
 				gchar *sid = jingle_session_get_sid(session);
-				purple_media_got_hangup(media);
+				purple_media_end(media, NULL, NULL);
 				g_hash_table_remove(jingle_session_get_js(
 						session)->medias, sid);
 				g_free(sid);

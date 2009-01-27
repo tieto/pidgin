@@ -446,13 +446,13 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 static void
 google_session_handle_reject(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
 {
-	purple_media_got_hangup(session->media);
+	purple_media_end(session->media, NULL, NULL);
 }
 
 static void
 google_session_handle_terminate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
 {
-	purple_media_got_hangup(session->media);
+	purple_media_end(session->media, NULL, NULL);
 }
 
 static void
