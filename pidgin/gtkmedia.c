@@ -357,6 +357,14 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 	g_signal_emit(gtkmedia, pidgin_media_signals[ERROR], 0, error);
 }
 
+static void
+pidgin_media_accepted_cb(PurpleMedia *media, const gchar *session_id,
+		const gchar *participant, PidginMedia *gtkmedia)
+{
+	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
+	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+}
+
 static gboolean
 plug_delete_event_cb(GtkWidget *widget, gpointer data)
 {
@@ -582,9 +590,6 @@ pidgin_media_state_changed_cb(PurpleMedia *media,
 		GstElement *audiosendbin = NULL, *audiorecvbin = NULL;
 		GstElement *videosendbin = NULL, *videorecvbin = NULL;
 
-		pidgin_media_emit_message(gtkmedia, _("Call in progress."));
-		pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
-
 		purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
 					  &videosendbin, &videorecvbin);
 
@@ -625,6 +630,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 			g_signal_connect(G_OBJECT(media->priv->media), "error",
 				G_CALLBACK(pidgin_media_error_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "accepted",
+				G_CALLBACK(pidgin_media_accepted_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
 				G_CALLBACK(pidgin_media_state_changed_cb), media);
 			break;

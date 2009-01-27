@@ -600,6 +600,18 @@ gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, P
 gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
 
 /**
+ * Gets whether a streams selected have been accepted.
+ *
+ * @param media The media object to find the session in.
+ * @param sess_id The session id of the session to check.
+ * @param participant The participant to check.
+ *
+ * @return @c TRUE The selected streams have been accepted, or @c FALSE otherwise.
+ */
+gboolean purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
+		const gchar *participant);
+
+/**
  * Mutes or unmutes all the audio local audio sources.
  *
  * @param media The media object to mute or unmute

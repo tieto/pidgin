@@ -1893,6 +1893,15 @@ purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 	return ret;
 }
 
+gboolean
+purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
+		const gchar *participant)
+{
+	PurpleMediaSession *session =
+			purple_media_get_session(media, sess_id);
+	return session->accepted;
+}
+
 void purple_media_mute(PurpleMedia *media, gboolean active)
 {
 	GList *sessions = g_hash_table_get_values(media->priv->sessions);
