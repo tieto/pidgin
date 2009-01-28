@@ -5866,6 +5866,13 @@ static gboolean return_add_newline_cb(GtkWidget *widget, gpointer data)
 	return TRUE;
 }
 
+/*
+ * It's kind of a pain that we need this function and the above just
+ * to reinstate the default GtkTextView behavior.  It might be better
+ * if GtkIMHtml didn't intercept the enter key and just required the
+ * application to deal with it--it's really not much more work than it
+ * is to connect to the current "message_send" signal.
+ */
 void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml)
 {
 	g_signal_connect(G_OBJECT(imhtml), "message_send",
