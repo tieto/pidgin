@@ -1218,6 +1218,8 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
 	g_list_free(focus_chain);
 
+	gtk_imhtml_set_return_inserts_newline(dialog->message);
+
 	if ((saved_status != NULL) && (purple_savedstatus_get_message(saved_status) != NULL))
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 							   purple_savedstatus_get_message(saved_status), 0);

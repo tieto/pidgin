@@ -5837,3 +5837,35 @@ const GtkTextTag * gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link)
 	return link->tag;
 }
 
+static gboolean return_add_newline_cb(GtkWidget *widget, gpointer data)
+{
+	GtkTextBuffer *buffer;
+	GtkTextMark *mark;
+	GtkTextIter iter;
+
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+
+	/* Delete any currently selected text */
+	gtk_text_buffer_delete_selection(buffer, TRUE, TRUE);
+
+	/* Insert a newline at the current cursor position */
+	mark = gtk_text_buffer_get_insert(buffer);
+	gtk_text_buffer_get_iter_at_mark(buffer, &iter, mark);
+	gtk_imhtml_insert_html_at_iter(GTK_IMHTML(widget), "\n", 0, &iter);
+
+	/*
+	 * If we just newlined ourselves past the end of the visible area
+	 * then scroll down so the cursor is in view.
+	 */
+	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(widget),
+			gtk_text_buffer_get_insert(buffer),
+			0, FALSE, 0.0, 0.0);
+
+	return TRUE;
+}
+
+void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml)
+{
+	g_signal_connect(G_OBJECT(imhtml), "message_send",
+		G_CALLBACK(return_add_newline_cb), NULL);
+}

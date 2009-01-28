@@ -948,6 +948,17 @@ const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
  */
 gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link);
 
+/**
+ * By default this widget intercepts presses of the "return" key and
+ * emits the "message_send" signal instead.  If you don't want this
+ * behavior, and you want the standard GtkTextView behavior of
+ * inserting a newline into the buffer, then call this function.
+ *
+ * @param imhtml The GtkIMHtml where you want the "return" key to add
+ *        newline and not emit the "message_send" signal.
+ */
+void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml);
+
 /*@}*/
 
 #ifdef __cplusplus

@@ -384,6 +384,8 @@ pidgin_request_input(const char *title, const char *primary,
 			gtk_imhtml_append_text(GTK_IMHTML(entry), default_value, GTK_IMHTML_NO_SCROLL);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_widget_show(frame);
+
+		gtk_imhtml_set_return_inserts_newline(GTK_IMHTML(entry));
 	}
 	else {
 		if (multiline) {

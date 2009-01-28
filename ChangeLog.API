@@ -47,6 +47,7 @@ version 2.6.0 (??/??/????):
 		* gtk_imhtml_link_get_url, gtk_imhtml_link_get_text_tag,
 		  gtk_imhtml_link_activate functions to process GtkIMHtmlLink
 		  objects from GtkIMHtml protocol callbacks.
+		* gtk_imhtml_set_return_inserts_newline
 		* pidgin_blist_set_theme
 		* pidgin_blist_get_theme
 		* pidgin_sound_is_customized
