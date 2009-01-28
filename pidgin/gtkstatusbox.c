@@ -2529,7 +2529,7 @@ static void update_size(PidginStatusBox *status_box)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
-	int wrapped_lines;
+	int display_lines;
 	int lines;
 	GdkRectangle oneline;
 	int height;
@@ -2545,15 +2545,14 @@ static void update_size(PidginStatusBox *status_box)
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 
 	height = 0;
-	wrapped_lines = 1;
+	display_lines = 1;
 	gtk_text_buffer_get_start_iter(buffer, &iter);
 	do {
 		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
 		height += oneline.height;
-		wrapped_lines++;
-		if (wrapped_lines > 4)
-			break;
-	} while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter));
+		display_lines++;
+	} while (display_lines <= 4 &&
+		gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter));
 
 	/*
 	 * This check fixes the case where the last character entered is a
@@ -2563,7 +2562,7 @@ static void update_size(PidginStatusBox *status_box)
 	 * two lines instead of three, for example.  So we check if the
 	 * last character was a newline and add some extra height if so.
 	 */
-	if (wrapped_lines <= 4
+	if (display_lines <= 4
 		&& gtk_text_iter_backward_char(&iter)
 		&& gtk_text_iter_get_char(&iter) == '\n')
 	{
@@ -2575,14 +2574,14 @@ static void update_size(PidginStatusBox *status_box)
 
 	/* Show a maximum of 4 lines */
 	lines = MIN(lines, 4);
-	wrapped_lines = MIN(wrapped_lines, 4);
+	display_lines = MIN(display_lines, 4);
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(status_box->imhtml));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(status_box->imhtml));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(status_box->imhtml));
 
 	height += (pad_top + pad_bottom) * lines;
-	height += (pad_inside) * (wrapped_lines - lines);
+	height += (pad_inside) * (display_lines - lines);
 
 	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }
