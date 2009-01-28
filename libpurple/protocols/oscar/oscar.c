@@ -1706,7 +1706,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	}
 
 	g_free(host);
-	if (newconn->gsc == NULL && newconn->connect_data == NULL)
+	if (newconn->connect_data == NULL)
 	{
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
 		return 0;
