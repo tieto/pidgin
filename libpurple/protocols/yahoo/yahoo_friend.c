@@ -151,7 +151,7 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *who = NULL;
 	int value = 0;
 	int protocol = 0;
-	gboolean wlm = FALSE;
+	gboolean msn = FALSE;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -165,15 +165,15 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 			case 241:
 				protocol = strtol(pair->value, NULL, 10);
-				wlm = TRUE;
+				msn = TRUE;
 				break;
 		}
 
 		l = l->next;
 	}
 
-	if(wlm)
-		who = g_strconcat("wlm/", temp, NULL);
+	if(msn)
+		who = g_strconcat("msn/", temp, NULL);
 	else
 		who = g_strdup(temp);
 
