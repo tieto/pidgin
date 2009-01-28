@@ -807,13 +807,11 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 	PurpleStatus *status = NULL;
 	gchar *message = NULL, *itmsurl = NULL, *tmp;
 	gboolean is_away;
-	const char *bname;
 
 	od = purple_connection_get_protocol_data(gc);
 
-	bname = purple_buddy_get_name(b);
 	if (userinfo == NULL)
-		userinfo = aim_locate_finduserinfo(od, bname);
+		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
 	if ((user_info == NULL) || ((b == NULL) && (userinfo == NULL)))
 		return;
@@ -886,7 +884,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 
 	if (b) {
 		if (purple_presence_is_online(presence)) {
-			if (oscar_util_valid_name_icq(bname) || is_away || !message || !(*message)) {
+			if (oscar_util_valid_name_icq(purple_buddy_get_name(b)) || is_away || !message || !(*message)) {
 				/* Append the status name for online ICQ statuses, away AIM statuses, and for all buddies with no message.
 				 * If the status name and the message are the same, only show one. */
 				const char *status_name = purple_status_get_name(status);
@@ -901,21 +899,20 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 				message = tmp;
 			}
 
+		} else if (aim_ssi_waitingforauth(od->ssi.local,
+			aim_ssi_itemlist_findparentname(od->ssi.local, purple_buddy_get_name(b)),
+			purple_buddy_get_name(b)))
+		{
+			/* Note if an offline buddy is not authorized */
+			tmp = g_strdup_printf("%s%s%s",
+					_("Not Authorized"),
+					(message && *message) ? ": " : "",
+					(message && *message) ? message : "");
+			g_free(message);
+			message = tmp;
 		} else {
-			if (aim_ssi_waitingforauth(od->ssi.local,
-									   aim_ssi_itemlist_findparentname(od->ssi.local, bname),
-									   bname)) {
-				/* Note if an offline buddy is not authorized */
-				tmp = g_strdup_printf("%s%s%s",
-									  _("Not Authorized"),
-									  (message && *message) ? ": " : "",
-									  (message && *message) ? message : "");
-				g_free(message);
-				message = tmp;
-			} else {
-				g_free(message);
-				message = g_strdup(_("Offline"));
-			}
+			g_free(message);
+			message = g_strdup(_("Offline"));
 		}
 
 	}
