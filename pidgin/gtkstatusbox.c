@@ -2568,6 +2568,7 @@ static void update_size(PidginStatusBox *status_box)
 	{
 		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
 		height += oneline.height;
+		display_lines++;
 	}
 
 	lines = gtk_text_buffer_get_line_count(buffer);
