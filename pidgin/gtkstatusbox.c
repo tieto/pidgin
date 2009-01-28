@@ -2555,6 +2555,22 @@ static void update_size(PidginStatusBox *status_box)
 			break;
 	} while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter));
 
+	/*
+	 * This check fixes the case where the last character entered is a
+	 * newline (shift+return).  For some reason the
+	 * gtk_text_view_forward_display_line() function doesn't treat this
+	 * like a new line, and so we think the input box only needs to be
+	 * two lines instead of three, for example.  So we check if the
+	 * last character was a newline and add some extra height if so.
+	 */
+	if (wrapped_lines <= 4
+		&& gtk_text_iter_backward_char(&iter)
+		&& gtk_text_iter_get_char(&iter) == '\n')
+	{
+		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
+		height += oneline.height;
+	}
+
 	lines = gtk_text_buffer_get_line_count(buffer);
 
 	/* Show a maximum of 4 lines */
