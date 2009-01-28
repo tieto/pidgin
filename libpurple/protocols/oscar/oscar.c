@@ -1691,9 +1691,13 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	if (od->use_ssl)
 	{
-		newconn->gsc = purple_ssl_connect(account, host, port,
-				ssl_connection_established_cb, ssl_connection_error_cb,
-				newconn);
+		/*
+		 * This shouldn't be hardcoded except that the server isn't sending
+		 * us a name to use for comparing the certificate common name.
+		 */
+		newconn->ssl_cert_cn = g_strdup("bos.oscar.aol.com");
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				ssl_proxy_conn_established_cb, newconn);
 	}
 	else
 	{
