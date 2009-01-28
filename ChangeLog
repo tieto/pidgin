@@ -9,6 +9,11 @@ version 2.6.0 (??/??/????):
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
 	  and assume it has a valid network connection.
 	* Allow plugins to specify custom link types to the GtkIMHtml widget.
+	* The status message input box at the bottom of the buddy list expands
+	  correctly when starting a new line of text.
+	* Pressing the Enter key in the message entry box of the New Status
+	  dialog and various other dialogs now causes the cursor to move to
+	  the next line.
 
 version 2.5.5 (??/??/????):
 	libpurple:
