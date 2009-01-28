@@ -690,7 +690,10 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 		return;
 	}
 
-	listener_ip = purple_network_get_my_ip(bos_conn->fd);
+	if (bos_conn->gsc)
+		listener_ip = purple_network_get_my_ip(bos_conn->gsc->fd);
+	else
+		listener_ip = purple_network_get_my_ip(bos_conn->fd);
 	listener_port = purple_network_get_port_from_fd(conn->listenerfd);
 	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 	{

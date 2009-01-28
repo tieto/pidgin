@@ -109,6 +109,8 @@ struct _MsnMessage
 	char *charset;
 	char *body;
 	gsize body_len;
+	guint total_chunks;   /**< How many chunks in this multi-part message */
+	guint received_chunks; /**< How many chunks we've received so far */
 
 	MsnSlpHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;

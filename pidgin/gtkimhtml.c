@@ -5395,12 +5395,14 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 						text_tag_data_destroy(tmp);
 				}
 
-				if (tmp == NULL)
-					purple_debug_warning("gtkimhtml", "empty queue, more closing tags than open tags!\n");
-				else {
+				if (tmp != NULL) {
 					g_string_append(str, tmp->end);
 					text_tag_data_destroy(tmp);
 				}
+#if 0 /* This can't be allowed to happen because it causes the iters to be invalidated in the debug window imhtml during text copying */
+				else
+					purple_debug_warning("gtkimhtml", "empty queue, more closing tags than open tags!\n");
+#endif
 
 				while ((tmp = g_queue_pop_head(r))) {
 					g_string_append(str, tmp->start);

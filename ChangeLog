@@ -20,6 +20,7 @@ version 2.5.5 (??/??/????):
 	* Fix transfer of buddy icons, custom smileys and files from the
 	latest WLM 9 official client. (Thomas Gibson-Robinson)
 	* Fix a crash when removing an account with an unknown protocol id.
+	* Large (multi-part) messages on MSN are now correctly re-combined.
 
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the
