@@ -207,7 +207,11 @@ def irc(uri):
 
     def correct_server(account):
         username = cpurple.PurpleAccountGetUsername(account)
-        return (server == (username.split("@"))[1])
+        user_split = (username.split("@"))
+        # Not all accounts have a split, so append an empty string so the
+        # [1] doesn't throw an IndexError.
+        user_split.append("")
+        return (server == user_split[1])
 
     account = findaccount(protocol, matcher=correct_server)
 
