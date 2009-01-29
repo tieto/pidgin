@@ -1360,7 +1360,6 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
 int aim_icq_getalias(OscarData *od, const char *uin);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
-int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, guint16 note_hash_len);
 
 
 /* 0x0017 - family_auth.c */
