@@ -1990,9 +1990,13 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 		if (purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
 			if (global_buddyicon != NULL)
 				buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
-			/* This is for when set_account() is called for a single account */
-			else
-				img = purple_buddy_icons_find_account_icon(account);
+			else {
+				/* This is for when set_account() is called for a single account */
+				const char *path;
+				path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
+				if (path != NULL)
+					img = purple_imgstore_new_from_file(path);
+			}
 		} else {
 			img = purple_buddy_icons_find_account_icon(account);
 		}
