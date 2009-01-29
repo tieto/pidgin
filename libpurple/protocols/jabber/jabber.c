@@ -28,6 +28,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "dnssrv.h"
+#include "idle.h"
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
@@ -702,7 +703,8 @@ jabber_login(PurpleAccount *account)
 			"connect_server", "");
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
-
+	PurpleIdleUiOps *idle_ops = NULL;
+	
 	gc->flags |= PURPLE_CONNECTION_HTML |
 		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 	js = gc->proto_data = g_new0(JabberStream, 1);
@@ -723,6 +725,14 @@ jabber_login(PurpleAccount *account)
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
 
+	/* if we are idle, set idle-ness on the stream (this could happen if we get
+		disconnected and the reconnects while being idle. I don't think it makes
+		sense to do this when registering a new account... */
+	idle_ops = purple_idle_get_ui_ops();
+	if (idle_ops && idle_ops->get_time_idle) {
+		js->idle = (idle_ops->get_time_idle)();
+	}
+		
 	if(!js->user) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
