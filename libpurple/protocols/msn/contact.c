@@ -1362,7 +1362,8 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	xmlnode *changes;
 
 	purple_debug_info("msn", "Update contact information with new %s: %s\n",
-		type==MSN_UPDATE_DISPLAY ? "display name" : "alias", value);
+		type == MSN_UPDATE_DISPLAY ? "display name" : "alias",
+		value ? value : "(null)");
 	purple_debug_info("msn", "passport=%s\n", passport);
 	g_return_if_fail(passport != NULL);
 	contact_info = xmlnode_new("contactInfo");
