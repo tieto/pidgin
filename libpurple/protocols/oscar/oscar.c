@@ -2143,30 +2143,35 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	} else {
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
-	
+
 	if (info->status != NULL && info->status[0] != '\0')
-	/* Grab the available message */
+		/* Grab the available message */
 		message = oscar_encoding_to_utf8(account, info->status_encoding,
 										 info->status, info->status_len);
-	
+
 	tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
-	
+
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
 		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
-		/* Grab the iTunes Music Store URL */
+			/* Grab the iTunes Music Store URL */
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 											 info->itmsurl, info->itmsurl_len);
+
 		if (tmp2 == NULL && itmsurl != NULL)
+			/*
+			 * The message can't be NULL because NULL means it was the
+			 * last attribute, so the itmsurl would get ignored below.
+			 */
 			tmp2 = "";
-		
+
 		purple_prpl_got_user_status(account, info->sn, status_id,
 									"message", tmp2, "itmsurl", itmsurl, NULL);
 	}
 	else
 		purple_prpl_got_user_status(account, info->sn, status_id, "message", tmp2, NULL);
-	
+
 	g_free(tmp);
-	
+
 	g_free(message);
 	g_free(itmsurl);
 
