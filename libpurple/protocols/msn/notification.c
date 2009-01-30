@@ -1094,8 +1094,8 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		return;
 	}
 
-	serv_got_alias(gc, passport, friendly);
-	msn_user_set_friendly_name(user, friendly);
+	if (msn_user_set_friendly_name(user, friendly))
+		serv_got_alias(gc, passport, friendly);
 	g_free(friendly);
 
 	msn_user_set_object(user, msnobj);
@@ -1220,7 +1220,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnObject *msnobj;
 	unsigned long clientid;
 	int networkid;
-	const char *state, *passport, *friendly, *old_friendly;
+	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1234,11 +1234,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) return;
 
-	old_friendly = msn_user_get_friendly_name(user);
-	if (!old_friendly || (old_friendly && (!friendly || strcmp(old_friendly, friendly))))
+	if (msn_user_set_friendly_name(user, friendly))
 	{
 		serv_got_alias(gc, passport, friendly);
-		msn_user_set_friendly_name(user, friendly);
 	}
 
 	if (cmd->param_count == 6)
