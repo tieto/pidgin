@@ -2518,7 +2518,7 @@ jabber_buddy_has_capability(const JabberBuddy *jb, const gchar *cap)
 	JabberBuddyResource *jbr = jabber_buddy_find_resource((JabberBuddy*)jb, NULL);
 
 	if (!jbr) {
-		purple_debug_error("jabber",
+		purple_debug_info("jabber",
 			"Unable to find caps: buddy might be offline\n");
 		return FALSE;
 	}

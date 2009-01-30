@@ -978,8 +978,10 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 			if (pce->secret)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+#if !GTK_CHECK_VERSION(2,16,0)
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
 					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
+#endif /* Less than GTK+ 2.16 */
 			}
 			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
@@ -6873,8 +6875,10 @@ rebuild_addchat_entries(PidginAddChatData *data)
 			if (pce->secret)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+#if !GTK_CHECK_VERSION(2,16,0)
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
 					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
+#endif /* Less than GTK+ 2.16 */
 			}
 			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",

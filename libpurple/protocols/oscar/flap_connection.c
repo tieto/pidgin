@@ -364,6 +364,15 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		conn->fd = -1;
 	}
 
+	if (conn->gsc != NULL)
+	{
+		if (conn->type == SNAC_FAMILY_LOCATE)
+			flap_connection_send_close(od, conn);
+
+		purple_ssl_close(conn->gsc);
+		conn->gsc = NULL;
+	}
+
 	if (conn->watcher_incoming != 0)
 	{
 		purple_input_remove(conn->watcher_incoming);
@@ -467,6 +476,7 @@ flap_connection_destroy_cb(gpointer data)
 
 	g_free(conn->error_message);
 	g_free(conn->cookie);
+	g_free(conn->ssl_cert_cn);
 
 	/*
 	 * Free conn->internal, if necessary
@@ -844,14 +854,16 @@ parse_flap(OscarData *od, FlapConnection *conn, FlapFrame *frame)
  * All complete FLAPs handled immedate after they're received.
  * Incomplete FLAP data is stored locally and appended to the next
  * time this callback is triggered.
+ *
+ * This is called by flap_connection_recv_cb and
+ * flap_connection_recv_cb_ssl for unencrypted/encrypted connections.
  */
-void
-flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
+static void
+flap_connection_recv(FlapConnection *conn)
 {
-	FlapConnection *conn;
+	gpointer buf;
+	gsize buflen;
 	gssize read;
-
-	conn = data;
 
 	/* Read data until we run out of data and break out of the loop */
 	while (TRUE)
@@ -859,9 +871,14 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 		/* Start reading a new FLAP */
 		if (conn->buffer_incoming.data.data == NULL)
 		{
+			buf = conn->header + conn->header_received;
+			buflen = 6 - conn->header_received;
+
 			/* Read the first 6 bytes (the FLAP header) */
-			read = recv(conn->fd, conn->header + conn->header_received,
-					6 - conn->header_received, 0);
+			if (conn->gsc)
+				read = purple_ssl_read(conn->gsc, buf, buflen);
+			else
+				read = recv(conn->fd, buf, buflen, 0);
 
 			/* Check if the FLAP server closed the connection */
 			if (read == 0)
@@ -918,13 +935,15 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 			conn->buffer_incoming.data.offset = 0;
 		}
 
-		if (conn->buffer_incoming.data.len - conn->buffer_incoming.data.offset)
+		buflen = conn->buffer_incoming.data.len - conn->buffer_incoming.data.offset;
+		if (buflen)
 		{
+			buf = &conn->buffer_incoming.data.data[conn->buffer_incoming.data.offset];
 			/* Read data into the temporary FlapFrame until it is complete */
-			read = recv(conn->fd,
-						&conn->buffer_incoming.data.data[conn->buffer_incoming.data.offset],
-						conn->buffer_incoming.data.len - conn->buffer_incoming.data.offset,
-						0);
+			if (conn->gsc)
+				read = purple_ssl_read(conn->gsc, buf, buflen);
+			else
+				read = recv(conn->fd, buf, buflen, 0);
 
 			/* Check if the FLAP server closed the connection */
 			if (read == 0)
@@ -964,6 +983,29 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 }
 
+void
+flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
+{
+	FlapConnection *conn = data;
+
+	flap_connection_recv(conn);
+}
+
+void
+flap_connection_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond)
+{
+	FlapConnection *conn = data;
+
+	flap_connection_recv(conn);
+}
+
+/**
+ * @param source When this function is called as a callback source is
+ *        set to the fd that triggered the callback.  But this function
+ *        is also called directly from flap_connection_send_byte_stream(),
+ *        in which case source will be -1.  So don't use source--use
+ *        conn->gsc or conn->fd instead.
+ */
 static void
 send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
@@ -980,7 +1022,11 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
+	if (conn->gsc)
+		ret = purple_ssl_write(conn->gsc, conn->buffer_outgoing->outptr,
+				writelen);
+	else
+		ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (ret <= 0)
 	{
 		if (ret < 0 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
@@ -990,8 +1036,13 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		/* Error! */
 		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
-		close(conn->fd);
-		conn->fd = -1;
+		if (conn->gsc) {
+			purple_ssl_close(conn->gsc);
+			conn->gsc = NULL;
+		} else {
+			close(conn->fd);
+			conn->fd = -1;
+		}
 		flap_connection_schedule_destroy(conn,
 				OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 		return;
@@ -1017,11 +1068,17 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
 
 	/* If we haven't already started writing stuff, then start the cycle */
-	if ((conn->watcher_outgoing == 0) && (conn->fd >= 0))
+	if (conn->watcher_outgoing == 0)
 	{
-		conn->watcher_outgoing = purple_input_add(conn->fd,
-				PURPLE_INPUT_WRITE, send_cb, conn);
-		send_cb(conn, conn->fd, 0);
+		if (conn->gsc) {
+			conn->watcher_outgoing = purple_input_add(conn->gsc->fd,
+					PURPLE_INPUT_WRITE, send_cb, conn);
+			send_cb(conn, -1, 0);
+		} else if (conn->fd >= 0) {
+			conn->watcher_outgoing = purple_input_add(conn->fd,
+					PURPLE_INPUT_WRITE, send_cb, conn);
+			send_cb(conn, -1, 0);
+		}
 	}
 }
 
