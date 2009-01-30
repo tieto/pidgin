@@ -545,7 +545,7 @@ purple_connection_error_reason (PurpleConnection *gc,
 	}
 
 	if (description == NULL) {
-		purple_debug_error("connection", "purple_connection_error_reason: check `description != NULL' failed\n");
+		purple_debug_error("connection", "purple_connection_error_reason called with NULL description\n");
 		description = _("Unknown error");
 	}
 
