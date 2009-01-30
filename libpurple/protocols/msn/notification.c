@@ -1094,8 +1094,10 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		return;
 	}
 
-	if (msn_user_set_friendly_name(user, friendly))
+	if (msn_user_set_friendly_name(user, friendly)) {
 		serv_got_alias(gc, passport, friendly);
+		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
+	}
 	g_free(friendly);
 
 	msn_user_set_object(user, msnobj);
@@ -1237,6 +1239,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (msn_user_set_friendly_name(user, friendly))
 	{
 		serv_got_alias(gc, passport, friendly);
+		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 
 	if (cmd->param_count == 6)
