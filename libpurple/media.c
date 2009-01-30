@@ -1271,10 +1271,12 @@ void
 purple_media_end(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
-	if (session_id == NULL && participant == NULL)
+	if (session_id == NULL && participant == NULL) {
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_CHANGED_END,
 				NULL, NULL);
+		g_object_unref(media);
+	}
 }
 
 GList*

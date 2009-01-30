@@ -53,6 +53,7 @@
 #include "gtkft.h"
 #include "gtkidle.h"
 #include "gtklog.h"
+#include "gtkmedia.h"
 #include "gtknotify.h"
 #include "gtkplugin.h"
 #include "gtkpounce.h"
@@ -310,6 +311,7 @@ pidgin_ui_init(void)
 	pidgin_log_init();
 	pidgin_docklet_init();
 	pidgin_smileys_init();
+	pidgin_medias_init();
 }
 
 static GHashTable *ui_info = NULL;

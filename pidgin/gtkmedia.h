@@ -48,16 +48,18 @@ typedef struct _PidginMediaPrivate PidginMediaPrivate;
 
 struct _PidginMediaClass
 {
-	GtkHBoxClass parent_class;
+	GtkWindowClass parent_class;
 };
 
 struct _PidginMedia
 {
-	GtkHBox parent;
+	GtkWindow parent;
 	PidginMediaPrivate *priv;
 };
 
 GType pidgin_media_get_type(void);
+
+void pidgin_medias_init(void);
 
 GtkWidget *pidgin_media_new(PurpleMedia *media, const gchar *screenname);
 

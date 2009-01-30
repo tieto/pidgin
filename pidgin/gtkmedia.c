@@ -28,6 +28,7 @@
 #include "internal.h"
 #include "connection.h"
 #include "media.h"
+#include "mediamanager.h"
 #include "pidgin.h"
 
 #include "gtkmedia.h"
@@ -71,6 +72,7 @@ struct _PidginMediaPrivate
 	GtkWidget *recv_widget;
 	GtkWidget *local_video;
 	GtkWidget *remote_video;
+	PurpleConnection *pc;
 };
 
 #define PIDGIN_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_MEDIA, PidginMediaPrivate))
@@ -83,16 +85,15 @@ static void pidgin_media_get_property (GObject *object, guint prop_id, GValue *v
 static void pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state);
 
-static GtkHBoxClass *parent_class = NULL;
+static GtkWindowClass *parent_class = NULL;
 
 
-
+#if 0
 enum {
-	MESSAGE,
-	ERROR,
 	LAST_SIGNAL
 };
 static guint pidgin_media_signals[LAST_SIGNAL] = {0};
+#endif
 
 enum {
 	PROP_0,
@@ -120,7 +121,7 @@ pidgin_media_get_type(void)
 			(GInstanceInitFunc) pidgin_media_init,
 			NULL
 		};
-		type = g_type_register_static(GTK_TYPE_VBOX, "PidginMedia", &info, 0);
+		type = g_type_register_static(GTK_TYPE_WINDOW, "PidginMedia", &info, 0);
 	}
 	return type;
 }
@@ -163,15 +164,6 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			GST_TYPE_ELEMENT,
 			G_PARAM_READWRITE));
 
-	pidgin_media_signals[MESSAGE] = g_signal_new("message", G_TYPE_FROM_CLASS(klass),
-					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					g_cclosure_marshal_VOID__STRING,
-					G_TYPE_NONE, 1, G_TYPE_STRING);
-	pidgin_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
-					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					g_cclosure_marshal_VOID__STRING,
-					G_TYPE_NONE, 1, G_TYPE_STRING);
-
 	g_type_class_add_private(klass, sizeof(PidginMediaPrivate));
 }
 
@@ -182,10 +174,24 @@ pidgin_media_mute_toggled(GtkToggleButton *toggle, PidginMedia *media)
 			gtk_toggle_button_get_active(toggle));
 }
 
+static gboolean
+pidgin_media_delete_event_cb(GtkWidget *widget,
+		GdkEvent *event, PidginMedia *media)
+{
+	if (media->priv->media)
+		purple_media_hangup(media->priv->media);
+	return FALSE;
+}
+
 static void
 pidgin_media_init (PidginMedia *media)
 {
+	GtkWidget *vbox;
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
+
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_container_add(GTK_CONTAINER(media), vbox);
+
 	media->priv->calling = gtk_label_new("Calling...");
 	media->priv->hangup = gtk_button_new_with_mnemonic("_Hangup");
 	media->priv->accept = gtk_button_new_with_mnemonic("_Accept");
@@ -195,18 +201,24 @@ pidgin_media_init (PidginMedia *media)
 	g_signal_connect(media->priv->mute, "toggled",
 			G_CALLBACK(pidgin_media_mute_toggled), media);
 
-	gtk_box_pack_end(GTK_BOX(media), media->priv->reject, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(media), media->priv->accept, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(media), media->priv->hangup, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(media), media->priv->mute, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(media), media->priv->calling, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), media->priv->reject, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), media->priv->accept, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), media->priv->hangup, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), media->priv->mute, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), media->priv->calling, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
 
 	media->priv->display = gtk_vbox_new(TRUE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(media), media->priv->display,
+	gtk_box_pack_start(GTK_BOX(vbox), media->priv->display,
 			TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
+	gtk_widget_show(vbox);
+
+	g_signal_connect(G_OBJECT(media), "delete-event",
+			G_CALLBACK(pidgin_media_delete_event_cb), media);
+
+	gtk_widget_show(GTK_WIDGET(media));
 }
 
 static gboolean
@@ -315,7 +327,12 @@ pidgin_media_finalize(GObject *media)
 static void
 pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 {
-	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
+	PurpleConversation *conv = purple_find_conversation_with_account(
+			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
+			purple_connection_get_account(gtkmedia->priv->pc));
+	if (conv != NULL)
+		purple_conversation_write(conv, NULL, msg,
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 }
 
 typedef struct
@@ -354,7 +371,12 @@ realize_cb(GtkWidget *widget, PidginMediaRealizeData *data)
 static void
 pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmedia)
 {
-	g_signal_emit(gtkmedia, pidgin_media_signals[ERROR], 0, error);
+	PurpleConversation *conv = purple_find_conversation_with_account(
+			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
+			purple_connection_get_account(gtkmedia->priv->pc));
+	if (conv != NULL)
+		purple_conversation_write(conv, NULL, error,
+				PURPLE_MESSAGE_ERROR, time(NULL));
 }
 
 static void
@@ -721,6 +743,24 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 		default:
 			break;
 	}
+}
+
+static gboolean
+pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
+		PurpleConnection *pc, gchar *screenname, gpointer nul)
+{
+	PidginMedia *gtkmedia = PIDGIN_MEDIA(
+			pidgin_media_new(media, screenname));
+	gtkmedia->priv->pc = pc;
+
+	return TRUE;
+}
+
+void
+pidgin_medias_init(void)
+{
+	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
+			 G_CALLBACK(pidgin_media_new_cb), NULL);
 }
 
 #endif  /* USE_VV */

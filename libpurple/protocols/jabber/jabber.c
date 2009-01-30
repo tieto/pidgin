@@ -2067,9 +2067,6 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	if(!(jid = jabber_id_new(who)))
 		return;
 
-#ifdef USE_VV
-	jingle_rtp_terminate_session(js, who);
-#endif
 	if((jb = jabber_buddy_find(js, who, TRUE)) &&
 			(jbr = jabber_buddy_find_resource(jb, jid->resource))) {
 		if(jbr->thread_id) {

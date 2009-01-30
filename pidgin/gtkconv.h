@@ -169,8 +169,6 @@ struct _PidginConversation
 	GtkWidget *infopane;
 	GtkListStore *infopane_model;
 	GtkTreeIter infopane_iter;
-	GtkWidget *tophbox;
-	GtkWidget *gtkmedia;
 
 	/* Used when attaching a PidginConversation to a PurpleConversation
 	 * with message history */

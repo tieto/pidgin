@@ -48,7 +48,6 @@
 #include "idle.h"
 #include "imgstore.h"
 #include "log.h"
-#include "mediamanager.h"
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
@@ -63,7 +62,6 @@
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
-#include "gtkmedia.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"
 #include "gtkprefs.h"
@@ -4818,10 +4816,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
-	gtkconv->tophbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_widget_show(gtkconv->tophbox);
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(gtkconv->tophbox), vbox, TRUE, TRUE, 0);
 	gtk_widget_show(vbox);
 
 	/* Setup the info pane */
@@ -4970,7 +4965,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	default_formatize(gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
 	                       G_CALLBACK(clear_formatting_cb), gtkconv);
-	return gtkconv->tophbox;
+	return vbox;
 }
 
 static void
@@ -6450,8 +6445,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* check if account support voice calls, and if the current buddy
 			supports it */
 		if (account != NULL && purple_conversation_get_type(conv)
-					== PURPLE_CONV_TYPE_IM
-					&& gtkconv->gtkmedia == NULL) {
+					== PURPLE_CONV_TYPE_IM) {
 			gboolean audio = purple_prpl_can_do_media(account,
 					purple_conversation_get_name(conv),
 					PURPLE_MEDIA_AUDIO);
@@ -7753,64 +7747,6 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	return TRUE;
 }
 
-
-#ifdef USE_VV
-
-static void
-pidgin_gtkmedia_message_cb(PidginMedia *media, const char *msg, PurpleConversation *conv)
-{
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
-}
-
-static void
-pidgin_gtkmedia_error_cb(PidginMedia *media, const char *msg, PurpleConversation *conv)
-{
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_ERROR, time(NULL));
-}
-
-static void
-pidgin_conv_gtkmedia_destroyed(GtkWidget *widget, PidginConversation *gtkconv)
-{
-	gtk_widget_destroyed(widget, &(gtkconv->gtkmedia));
-	pidgin_conv_update_buttons_by_protocol(gtkconv->active_conv);
-}
-
-static gboolean
-pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media,
-		PurpleConnection *gc, gchar *screenname, gpointer nul)
-{
-	GtkWidget *gtkmedia;
-	PurpleConversation *conv;
-	PidginConversation *gtkconv;
-
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-			purple_connection_get_account(gc), screenname);
-
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	if (gtkconv->gtkmedia) {
-		purple_debug_info("gtkconv", "Media session exists for this conversation.\n");
-		return FALSE;
-	}
-
-	gtkmedia = pidgin_media_new(media, screenname);
-	g_object_unref(media);
-
-	gtk_box_pack_start(GTK_BOX(gtkconv->tophbox), gtkmedia, FALSE, FALSE, 0);
-	gtk_widget_show(gtkmedia);
-	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
-	g_signal_connect(G_OBJECT(gtkmedia), "error", G_CALLBACK(pidgin_gtkmedia_error_cb), conv);
-
-	gtkconv->gtkmedia = gtkmedia;
-	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(
-			pidgin_conv_gtkmedia_destroyed), gtkconv);
-
-	pidgin_conv_update_buttons_by_protocol(conv);
-	return TRUE;
-}
-
-#endif
-
 void *
 pidgin_conversations_get_handle(void)
 {
@@ -7911,10 +7847,6 @@ pidgin_conversations_init(void)
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
-#ifdef USE_VV
-	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
-			 G_CALLBACK(pidgin_conv_new_media_cb), NULL);
-#endif
 
 
 	/**********************************************************************
