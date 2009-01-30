@@ -30,6 +30,7 @@
 #include "media.h"
 #include "mediamanager.h"
 #include "pidgin.h"
+#include "request.h"
 
 #include "gtkmedia.h"
 
@@ -221,8 +222,6 @@ pidgin_media_init (PidginMedia *media)
 
 	g_signal_connect(G_OBJECT(media), "delete-event",
 			G_CALLBACK(pidgin_media_delete_event_cb), media);
-
-	gtk_widget_show(GTK_WIDGET(media));
 }
 
 static gboolean
@@ -389,6 +388,7 @@ pidgin_media_accepted_cb(PurpleMedia *media, const gchar *session_id,
 {
 	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+	gtk_widget_show(GTK_WIDGET(gtkmedia));
 }
 
 static gboolean
@@ -732,7 +732,20 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(
 			pidgin_media_new(media, screenname));
+	gboolean initiator;
 	gtkmedia->priv->pc = pc;
+
+	g_object_get(G_OBJECT(media), "initiator", &initiator, NULL);
+	if (initiator == FALSE) {
+		gchar *message = g_strdup_printf("%s wishes to start a "
+				"media session with you\n", screenname);
+		purple_request_accept_cancel(media, "Media invitation",
+				message, NULL, 1, (void*)pc, screenname,
+				NULL, media, purple_media_accept,
+				purple_media_reject);
+		g_free(message);
+	} else
+		gtk_widget_show(GTK_WIDGET(gtkmedia));
 
 	return TRUE;
 }
