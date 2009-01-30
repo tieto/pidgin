@@ -641,6 +641,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			if (media->priv->screenname)
 				g_free(media->priv->screenname);
 			media->priv->screenname = g_value_dup_string(value);
+			gtk_window_set_title(GTK_WINDOW(media),
+					media->priv->screenname);
 			break;
 		case PROP_SEND_LEVEL:
 			if (media->priv->send_level)
