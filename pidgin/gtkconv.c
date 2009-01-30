@@ -1202,15 +1202,20 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 #ifdef USE_VV
-/* Forward declare this here, because I want to keep VV-related stuff together
-for now */
 static void 
-menu_initiate_audio_call_cb(gpointer data, guint action, GtkWidget *widget);
-static void 
-menu_initiate_video_call_cb(gpointer data, guint action, GtkWidget *widget);
-static void 
-menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget);
+menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = (PidginWindow *)data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleAccount *account = purple_conversation_get_account(conv);
 
+	purple_prpl_initiate_media(account,
+			purple_conversation_get_name(conv),
+			action == 0 ? PURPLE_MEDIA_AUDIO :
+			action == 1 ? PURPLE_MEDIA_VIDEO :
+			action == 2 ? PURPLE_MEDIA_AUDIO |
+			PURPLE_MEDIA_VIDEO : PURPLE_MEDIA_NONE);
+}
 #endif
 
 static void
@@ -3126,11 +3131,11 @@ static GtkItemFactoryEntry menu_items[] =
 #ifdef USE_VV
 	{ N_("/Conversation/M_edia"), NULL, NULL, 0, "<Branch>", NULL },
 
-	{ N_("/Conversation/Media/_Audio Call"), NULL, menu_initiate_audio_call_cb, 0,
+	{ N_("/Conversation/Media/_Audio Call"), NULL, menu_initiate_media_call_cb, 0,
 		"<StockItem>", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL },
-	{ N_("/Conversation/Media/_Video Call"), NULL, menu_initiate_video_call_cb, 0,
+	{ N_("/Conversation/Media/_Video Call"), NULL, menu_initiate_media_call_cb, 1,
 		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
-	{ N_("/Conversation/Media/Audio\\/Video _Call"), NULL, menu_initiate_audio_video_call_cb, 0,
+	{ N_("/Conversation/Media/Audio\\/Video _Call"), NULL, menu_initiate_media_call_cb, 2,
 		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
 #endif
 
@@ -7761,42 +7766,6 @@ static void
 pidgin_gtkmedia_error_cb(PidginMedia *media, const char *msg, PurpleConversation *conv)
 {
 	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_ERROR, time(NULL));
-}
-
-static void
-menu_initiate_audio_call_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	PidginWindow *win = (PidginWindow *)data;
-	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PurpleAccount *account = purple_conversation_get_account(conv);
-
-	purple_prpl_initiate_media(account,
-			purple_conversation_get_name(conv),
-			PURPLE_MEDIA_AUDIO);
-}
-
-static void
-menu_initiate_video_call_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	PidginWindow *win = (PidginWindow *)data;
-	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PurpleAccount *account = purple_conversation_get_account(conv);
-
-	purple_prpl_initiate_media(account,
-			purple_conversation_get_name(conv),
-			PURPLE_MEDIA_VIDEO);
-}
-
-static void
-menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	PidginWindow *win = (PidginWindow *)data;
-	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PurpleAccount *account = purple_conversation_get_account(conv);
-
-	purple_prpl_initiate_media(account,
-			purple_conversation_get_name(conv),
-			PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 }
 
 static void
