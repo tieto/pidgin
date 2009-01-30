@@ -186,11 +186,15 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 static void
 pidgin_media_init (PidginMedia *media)
 {
-	GtkWidget *vbox;
+	GtkWidget *vbox, *hbox;
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
 
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
+
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(hbox));
 
 	media->priv->calling = gtk_label_new("Calling...");
 	media->priv->hangup = gtk_button_new_with_mnemonic("_Hangup");
@@ -201,11 +205,11 @@ pidgin_media_init (PidginMedia *media)
 	g_signal_connect(media->priv->mute, "toggled",
 			G_CALLBACK(pidgin_media_mute_toggled), media);
 
-	gtk_box_pack_end(GTK_BOX(vbox), media->priv->reject, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbox), media->priv->accept, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbox), media->priv->hangup, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbox), media->priv->mute, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbox), media->priv->calling, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), media->priv->reject, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), media->priv->accept, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), media->priv->hangup, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), media->priv->mute, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), media->priv->calling, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
@@ -418,7 +422,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	if (gtkmedia->priv->recv_widget == NULL
 			&& type & (PURPLE_MEDIA_RECV_VIDEO |
 			PURPLE_MEDIA_RECV_AUDIO)) {
-		recv_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);	
+		recv_widget = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);	
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				recv_widget, TRUE, TRUE, 0);
 		gtk_widget_show(recv_widget);
@@ -427,7 +431,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	if (gtkmedia->priv->send_widget == NULL
 			&& type & (PURPLE_MEDIA_SEND_VIDEO |
 			PURPLE_MEDIA_SEND_AUDIO)) {
-		send_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		send_widget = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				send_widget, TRUE, TRUE, 0);
 		gtk_widget_show(send_widget);
@@ -467,7 +471,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		g_signal_connect(G_OBJECT(remote_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), remote_video);
-		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 100, -1);
+		gtk_widget_set_size_request (GTK_WIDGET(remote_video), -1, 100);
 		gtk_widget_show(remote_video);
 		gtk_widget_show(aspect);
 
@@ -506,7 +510,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), local_video);
-		gtk_widget_set_size_request (GTK_WIDGET(local_video), 100, -1);
+		gtk_widget_set_size_request (GTK_WIDGET(local_video), -1, 100);
 
 		gtk_widget_show(local_video);
 		gtk_widget_show(aspect);
@@ -516,18 +520,14 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 	if (type & PURPLE_MEDIA_RECV_AUDIO) {
 		gtkmedia->priv->recv_progress = gtk_progress_bar_new();
-		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 10, 70);
-		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress),
-						 GTK_PROGRESS_BOTTOM_TO_TOP);
+		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 70, 10);
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				   gtkmedia->priv->recv_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->recv_progress);
 	}
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		gtkmedia->priv->send_progress = gtk_progress_bar_new();
-		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 10, 70);
-		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress),
-						 GTK_PROGRESS_BOTTOM_TO_TOP);
+		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 70, 10);
 		gtk_box_pack_end(GTK_BOX(send_widget),
 				   gtkmedia->priv->send_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->send_progress);
