@@ -411,35 +411,13 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 {
 	GstElement *pipeline = purple_media_get_pipeline(media);
 	GtkWidget *send_widget = NULL, *recv_widget = NULL;
-	GstElement *audiosendbin = NULL, *audiosendlevel = NULL;
-	GstElement *videosendbin = NULL;
-	gboolean audiorecvbool = FALSE;
-	gboolean videorecvbool = FALSE;
 	gboolean is_initiator;
-
-	PurpleMediaSessionType type = purple_media_get_session_type(media, sid);
-	if (type & PURPLE_MEDIA_AUDIO) {
-		if (!audiosendbin && (type & PURPLE_MEDIA_SEND_AUDIO)) {
-			purple_media_audio_init_src(&audiosendbin, &audiosendlevel);
-			purple_media_set_src(media, sid, audiosendbin);
-			gst_element_set_state(audiosendbin, GST_STATE_PLAYING);
-		}
-		if (!audiorecvbool && (type & PURPLE_MEDIA_RECV_AUDIO)) {
-			audiorecvbool = TRUE;
-		}
-	} else if (type & PURPLE_MEDIA_VIDEO) {
-		if (!videosendbin && (type & PURPLE_MEDIA_SEND_VIDEO)) {
-			purple_media_video_init_src(&videosendbin);
-			purple_media_set_src(media, sid, videosendbin);
-			gst_element_set_state(videosendbin, GST_STATE_PLAYING);
-		}
-		if (!videorecvbool && (type & PURPLE_MEDIA_RECV_VIDEO)) {
-			videorecvbool = TRUE;
-		}
-	}
+	PurpleMediaSessionType type =
+			purple_media_get_session_type(media, sid);
 
 	if (gtkmedia->priv->recv_widget == NULL
-			&& (videorecvbool || audiorecvbool)) {
+			&& type & (PURPLE_MEDIA_RECV_VIDEO |
+			PURPLE_MEDIA_RECV_AUDIO)) {
 		recv_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);	
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				recv_widget, TRUE, TRUE, 0);
@@ -447,7 +425,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	} else
 		recv_widget = gtkmedia->priv->recv_widget;
 	if (gtkmedia->priv->send_widget == NULL
-			&& (videosendbin || audiosendbin)) {
+			&& type & (PURPLE_MEDIA_SEND_VIDEO |
+			PURPLE_MEDIA_SEND_AUDIO)) {
 		send_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				send_widget, TRUE, TRUE, 0);
@@ -455,7 +434,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	} else
 		send_widget = gtkmedia->priv->send_widget;
 
-	if (videorecvbool) {
+	if (type & PURPLE_MEDIA_RECV_VIDEO) {
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
@@ -494,7 +473,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 		gtkmedia->priv->remote_video = remote_video;
 	}
-	if (videosendbin) {
+	if (type & PURPLE_MEDIA_SEND_VIDEO) {
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *local_video;
@@ -535,7 +514,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtkmedia->priv->local_video = local_video;
 	}
 
-	if (audiorecvbool) {
+	if (type & PURPLE_MEDIA_RECV_AUDIO) {
 		gtkmedia->priv->recv_progress = gtk_progress_bar_new();
 		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 10, 70);
 		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress),
@@ -544,7 +523,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 				   gtkmedia->priv->recv_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->recv_progress);
 	}
-	if (audiosendbin) {
+	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		gtkmedia->priv->send_progress = gtk_progress_bar_new();
 		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 10, 70);
 		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress),
@@ -557,7 +536,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	}
 
 
-	if (audiorecvbool || audiosendbin) {
+	if (type & PURPLE_MEDIA_AUDIO) {
 		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 		g_signal_connect(G_OBJECT(bus), "message::element",
 				G_CALLBACK(level_message_cb), gtkmedia);

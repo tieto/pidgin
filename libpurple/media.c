@@ -1565,6 +1565,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 	FsParticipant *participant = NULL;
 	PurpleMediaStream *stream = NULL;
 	FsStreamDirection *direction = NULL;
+	PurpleMediaSessionType session_type;
 
 	if (!session) {
 		GError *err = NULL;
@@ -1621,6 +1622,12 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_CHANGED_NEW,
 				session->id, NULL);
+
+		session_type = purple_media_from_fs(type, FS_DIRECTION_SEND);
+		purple_media_set_src(media, session->id,
+				purple_media_manager_get_element(
+				purple_media_manager_get(), session_type));
+		gst_element_set_state(session->src, GST_STATE_PLAYING);
 	}
 
 	if (!(participant = purple_media_add_participant(media, who))) {
