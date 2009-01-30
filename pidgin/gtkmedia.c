@@ -641,8 +641,6 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			if (media->priv->screenname)
 				g_free(media->priv->screenname);
 			media->priv->screenname = g_value_dup_string(value);
-			gtk_window_set_title(GTK_WINDOW(media),
-					media->priv->screenname);
 			break;
 		case PROP_SEND_LEVEL:
 			if (media->priv->send_level)
@@ -733,12 +731,17 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(
 			pidgin_media_new(media, screenname));
 	gboolean initiator;
+	PurpleBuddy *buddy = purple_find_buddy(
+			purple_connection_get_account(pc), screenname);
+	const gchar *alias = buddy ? 
+			purple_buddy_get_contact_alias(buddy) : screenname; 
 	gtkmedia->priv->pc = pc;
+	gtk_window_set_title(GTK_WINDOW(gtkmedia), alias);
 
 	g_object_get(G_OBJECT(media), "initiator", &initiator, NULL);
 	if (initiator == FALSE) {
 		gchar *message = g_strdup_printf("%s wishes to start a "
-				"media session with you\n", screenname);
+				"media session with you\n", alias);
 		purple_request_accept_cancel(media, "Media invitation",
 				message, NULL, 1, (void*)pc, screenname,
 				NULL, media, purple_media_accept,
