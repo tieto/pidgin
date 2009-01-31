@@ -92,7 +92,7 @@ struct _PurpleMediaPrivate
 	GList *streams;		/* PurpleMediaStream table */
 
 	GstElement *pipeline;
-	
+	GstElement *confbin;
 };
 
 #define PURPLE_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA, PurpleMediaPrivate))
@@ -270,13 +270,12 @@ purple_media_dispose(GObject *media)
 	purple_media_manager_remove_media(purple_media_manager_get(),
 			PURPLE_MEDIA(media));
 
-	if (priv->pipeline) {
-		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(priv->pipeline));
-		gst_bus_remove_signal_watch(bus);
-		gst_object_unref(bus);
-		gst_element_set_state(priv->pipeline, GST_STATE_NULL);
-		gst_object_unref(priv->pipeline);
-		priv->pipeline = NULL;
+	if (priv->confbin) {
+		gst_element_set_state(GST_ELEMENT(priv->confbin),
+				GST_STATE_NULL);
+		gst_bin_remove(GST_BIN(priv->pipeline), priv->confbin);
+		priv->confbin = NULL;
+		priv->conference = NULL;
 	}
 
 	for (iter = priv->streams; iter; iter = g_list_next(iter)) {
@@ -324,8 +323,6 @@ purple_media_finalize(GObject *media)
 		g_hash_table_destroy(priv->sessions);
 	}
 
-	gst_object_unref(priv->conference);
-
 	G_OBJECT_CLASS(parent_class)->finalize(media);
 }
 
@@ -338,12 +335,28 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
-		case PROP_CONFERENCE:
+		case PROP_CONFERENCE: {
+			gchar *name;
+
 			if (media->priv->conference)
-				g_object_unref(media->priv->conference);
+				gst_object_unref(media->priv->conference);
 			media->priv->conference = g_value_get_object(value);
-			g_object_ref(media->priv->conference);
+			gst_object_ref(media->priv->conference);
+
+			name = g_strdup_printf("conf_%p",
+					media->priv->conference);
+			media->priv->confbin = gst_bin_new(name);
+			g_free(name);
+			gst_bin_add(GST_BIN(purple_media_get_pipeline(media)),
+					media->priv->confbin);
+			gst_bin_add(GST_BIN(media->priv->confbin),
+					GST_ELEMENT(media->priv->conference));
+
+			gst_element_set_state(GST_ELEMENT(
+					media->priv->confbin),
+					GST_STATE_PLAYING);
 			break;
+		}
 		case PROP_INITIATOR:
 			media->priv->initiator = g_value_get_boolean(value);
 			break;
@@ -981,7 +994,7 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 	if (session->src)
 		gst_object_unref(session->src);
 	session->src = src;
-	gst_bin_add(GST_BIN(purple_media_get_pipeline(media)),
+	gst_bin_add(GST_BIN(session->media->priv->confbin),
 		    session->src);
 
 	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
@@ -1001,7 +1014,7 @@ purple_media_set_sink(PurpleMedia *media, const gchar *sess_id,
 	if (stream->sink)
 		gst_object_unref(stream->sink);
 	stream->sink = sink;
-	gst_bin_add(GST_BIN(purple_media_get_pipeline(media)),
+	gst_bin_add(GST_BIN(stream->session->media->priv->confbin),
 		    stream->sink);
 }
 
@@ -1090,7 +1103,7 @@ purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const g
 }
 
 static gboolean
-media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
+media_bus_call(GstBus *bus, GstMessage *msg, gpointer dummy)
 {
 	switch(GST_MESSAGE_TYPE(msg)) {
 		case GST_MESSAGE_EOS:
@@ -1112,6 +1125,19 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 			break;
 		}
 		case GST_MESSAGE_ELEMENT: {
+			PurpleMedia *media = NULL;
+			if (FS_IS_CONFERENCE(GST_MESSAGE_SRC(msg))) {
+				GList *iter = purple_media_manager_get_media(
+						purple_media_manager_get());
+				for (; iter; iter = g_list_next(iter)) {
+					if (PURPLE_MEDIA(iter->data)->priv->conference
+							== FS_CONFERENCE(GST_MESSAGE_SRC(msg))) {
+						media = iter->data;
+						break;
+					}
+				}
+			}
+
 			if (gst_structure_has_name(msg->structure, "farsight-error")) {
 				FsError error_no;
 				gst_structure_get_enum(msg->structure, "error-no",
@@ -1189,19 +1215,21 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
 GstElement *
 purple_media_get_pipeline(PurpleMedia *media)
 {
-	if (!media->priv->pipeline) {
+	static GstElement *pipeline = NULL;
+
+	if (!pipeline) {
 		GstBus *bus;
-		media->priv->pipeline = gst_pipeline_new(NULL);
+		media->priv->pipeline = pipeline = gst_pipeline_new(NULL);
 		bus = gst_pipeline_get_bus(GST_PIPELINE(media->priv->pipeline));
 		gst_bus_add_signal_watch(GST_BUS(bus));
 		g_signal_connect(G_OBJECT(bus), "message",
-				G_CALLBACK(media_bus_call), media);
+				G_CALLBACK(media_bus_call), NULL);
 		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
 		gst_object_unref(bus);
-
-		gst_bin_add(GST_BIN(media->priv->pipeline), GST_ELEMENT(media->priv->conference));
+		gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	}
 
+	media->priv->pipeline = pipeline;
 	return media->priv->pipeline;
 }
 
@@ -1545,7 +1573,7 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 		stream->sink = purple_media_manager_get_element(
 			purple_media_manager_get(), type);
 
-	gst_bin_add(GST_BIN(purple_media_get_pipeline(stream->session->media)),
+	gst_bin_add(GST_BIN(stream->session->media->priv->confbin),
 		    stream->sink);
 	sinkpad = gst_element_get_static_pad(stream->sink, "ghostsink");
 	gst_pad_link(srcpad, sinkpad);

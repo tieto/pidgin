@@ -161,7 +161,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 			     "initiator", initiator,
 			     NULL));
 
-	ret = gst_element_set_state(purple_media_get_pipeline(media), GST_STATE_PLAYING);
+	ret = gst_element_set_state(GST_ELEMENT(conference), GST_STATE_PLAYING);
 
 	if (ret == GST_STATE_CHANGE_FAILURE) {
 		purple_conv_present_error(remote_user,

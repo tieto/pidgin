@@ -227,25 +227,30 @@ pidgin_media_init (PidginMedia *media)
 static gboolean
 level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 {
-	const GstStructure *s;
-	gchar *name;
-
 	gdouble rms_db;
 	gdouble percent;
 	const GValue *list;
 	const GValue *value;
 
 	GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(message));
+	GtkWidget *progress;
 
 	if (message->type != GST_MESSAGE_ELEMENT)
 		return TRUE;
 
-	s = gst_message_get_structure(message);
-
-	if (strcmp(gst_structure_get_name(s), "level"))
+	if (gst_structure_has_name(
+			gst_message_get_structure(message), "level"))
 		return TRUE;
 
-	list = gst_structure_get_value(s, "rms");
+	if (src == gtkmedia->priv->send_level)
+		progress = gtkmedia->priv->send_progress;
+	else if (src == gtkmedia->priv->recv_level)
+		progress = gtkmedia->priv->recv_progress;
+	else
+		return TRUE;
+
+	list = gst_structure_get_value(
+			gst_message_get_structure(message), "rms");
 
 	/* Only bother with the first channel. */
 	value = gst_value_list_get_value(list, 0);
@@ -256,13 +261,7 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 	if(percent > 1.0)
 		percent = 1.0;
 
-	name = gst_element_get_name(src);
-	if (!strcmp(name, "sendlevel"))	
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress), percent);
-	else
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress), percent);
-
-	g_free(name);
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), percent);
 	return TRUE;
 }
 
