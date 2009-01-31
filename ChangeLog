@@ -2,17 +2,22 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.5 (??/??/????):
 	libpurple:
-	* Fix transfer of buddy icons, custom smileys, and files from the
-	  latest Windows Live Messenger 9 official client. (Thomas
-	  Gibson-Robinson)
 	* Fix a crash when removing an account with an unknown protocol id.
-	* Large (multi-part) messages on MSN are now correctly re-combined.
 	* Beta support for SSL connections for AIM and ICQ accounts.  To
 	  enable, check the "Use SSL" option from the Advanced tab when
 	  editing your AIM or ICQ account. (Paul Aurich)
 	* Fix retrieval of ICQ status messages from users of ICQ 6.x, Miranda,
 	  and other libpurple clients (fixes with libpurple users only on
 	  statuses other than Available). (Daniel Ljungborg)
+
+	MSN:
+	* Fix transfer of buddy icons, custom smileys, and files from the
+	  latest Windows Live Messenger 9 official client. (Thomas
+	  Gibson-Robinson)
+	* Large (multi-part) messages are now correctly re-combined.
+	* Federated/Yahoo! buddies should now stop creating sync issues at
+	  every signin.  You may need to remove duplicates in the Address
+	  Book.  See the FAQ for more information.
 
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the

@@ -243,7 +243,7 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 			g_free(name);
 		}
 	}
- 
+
 	purple_debug_info("msn", "CL: %s name: %s, Type: %s, MembershipID: %s, NetworkID: %u\n",
 		node, passport, type, member_id == NULL ? "(null)" : member_id, nid);
 
@@ -525,7 +525,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 
 	for(contactNode = xmlnode_get_child(node, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)) {
-		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds, *messenger_user;
+		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds;
 		xmlnode *annotation;
 		MsnUser *user;
 
@@ -556,58 +556,52 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			continue; /* Not adding own account as buddy to buddylist */
 		}
 
-		/* ignore non-messenger contacts */
-		if ((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
-			char *is_messenger_user = xmlnode_get_data(messenger_user);
-
-			if(is_messenger_user && !strcmp(is_messenger_user, "false")) {
-				g_free(is_messenger_user);
-				continue;
-			}
-
-			g_free(is_messenger_user);
-		}
-
 		passportName = xmlnode_get_child(contactInfo, "passportName");
 		if (passportName == NULL) {
 			xmlnode *emailsNode, *contactEmailNode, *emailNode;
 			xmlnode *messengerEnabledNode;
 			char *msnEnabled;
 
-			/*TODO: add it to the none-instant Messenger group and recognize as email Membership*/
-			/*Yahoo User?*/
+			/*TODO: add it to the non-instant Messenger group and recognize as email Membership*/
+			/* Yahoo/Federated User? */
 			emailsNode = xmlnode_get_child(contactInfo, "emails");
 			if (emailsNode == NULL) {
 				/*TODO:  need to support the Mobile type*/
 				continue;
 			}
 			for (contactEmailNode = xmlnode_get_child(emailsNode, "ContactEmail"); contactEmailNode;
-					contactEmailNode = xmlnode_get_next_twin(contactEmailNode) ){
-				if (!(messengerEnabledNode = xmlnode_get_child(contactEmailNode, "isMessengerEnabled"))) {
-					/* XXX: Should this be a continue instead of a break? It seems like it'd cause unpredictable results otherwise. */
-					break;
-				}
+					contactEmailNode = xmlnode_get_next_twin(contactEmailNode)) {
+				if (!(messengerEnabledNode = xmlnode_get_child(contactEmailNode, "isMessengerEnabled")))
+					continue;
 
 				msnEnabled = xmlnode_get_data(messengerEnabledNode);
 
-				if ((emailNode = xmlnode_get_child(contactEmailNode, "email"))) {
-					g_free(passport);
-					passport = xmlnode_get_data(emailNode);
-				}
-
 				if (msnEnabled && !strcmp(msnEnabled, "true")) {
+					if ((emailNode = xmlnode_get_child(contactEmailNode, "email")))
+						passport = xmlnode_get_data(emailNode);
+
 					/*Messenger enabled, Get the Passport*/
-					purple_debug_info("msn", "AB Yahoo User %s\n", passport ? passport : "(null)");
+					purple_debug_info("msn", "AB Yahoo/Federated User %s\n", passport ? passport : "(null)");
 					g_free(msnEnabled);
 					break;
-				} else {
-					/*TODO maybe we can just ignore it in Purple?*/
-					purple_debug_info("msn", "AB Other type user\n");
 				}
 
 				g_free(msnEnabled);
 			}
 		} else {
+			xmlnode *messenger_user;
+			/* ignore non-messenger contacts */
+			if ((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
+				char *is_messenger_user = xmlnode_get_data(messenger_user);
+
+				if (is_messenger_user && !strcmp(is_messenger_user, "false")) {
+					g_free(is_messenger_user);
+					continue;
+				}
+
+				g_free(is_messenger_user);
+			}
+
 			passport = xmlnode_get_data(passportName);
 		}
 
