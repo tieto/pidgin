@@ -148,7 +148,7 @@ marshallers.h: marshallers.list
 	@echo "Generating marshallers.h"
 	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
 
-marshallers.c: marshallers.list
+marshallers.c: marshallers.list marshallers.h
 	@echo "Generating marshallers.c"
 	echo "#include \"marshallers.h\"" > marshallers.c
 	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
