@@ -18,6 +18,7 @@ version 2.5.5 (??/??/????):
 	* Federated/Yahoo! buddies should now stop creating sync issues at
 	  every signin.  You may need to remove duplicates in the Address
 	  Book.  See the FAQ for more information.
+	* Messages from Yahoo! buddies are no longer silently dropped.
 
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the

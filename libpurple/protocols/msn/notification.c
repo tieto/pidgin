@@ -2096,6 +2096,13 @@ msn_notification_init(void)
 	msn_table_add_msg_type(cbs_table,
 						   "application/x-msmsgssystemmessage",
 						   system_msg);
+	/* generic message handlers */
+	msn_table_add_msg_type(cbs_table, "text/plain",
+						   msn_plain_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-msmsgscontrol",
+						   msn_control_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
+						   msn_datacast_msg);
 }
 
 void
