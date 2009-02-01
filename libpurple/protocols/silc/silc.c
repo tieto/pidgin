@@ -1357,6 +1357,7 @@ silcpurple_send_im_resolved(SilcClient client,
 	char tmp[256];
 	SilcClientEntry client_entry;
 	SilcDList list;
+	gboolean free_list = FALSE;
 
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->nick,
 						      sg->account);
@@ -1373,6 +1374,8 @@ silcpurple_send_im_resolved(SilcClient client,
 							im->nick, FALSE);
 		if (!clients)
 			goto err;
+
+		free_list = TRUE;
 	}
 
 	silc_dlist_start(clients);
@@ -1413,6 +1416,9 @@ silcpurple_send_im_resolved(SilcClient client,
 	purple_conversation_write(convo, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 
  out:
+	if (free_list) {
+		silc_client_list_free(client, conn, clients);
+	}
 	g_free(im->nick);
 	g_free(im->message);
 	silc_free(im);
