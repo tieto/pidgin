@@ -813,7 +813,6 @@ void
 msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	PurpleConnection *gc;
-	MsnSwitchBoard *swboard;
 	const char *body;
 	char *body_str;
 	char *body_enc;
@@ -823,7 +822,6 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *value;
 
 	gc = cmdproc->session->account->gc;
-	swboard = cmdproc->data;
 
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
@@ -863,35 +861,42 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		body_final = body_enc;
 	}
 
-	swboard->flag |= MSN_SB_FLAG_IM;
+	if (cmdproc->servconn->type == MSN_SERVCONN_SB) {
+		MsnSwitchBoard *swboard = cmdproc->data;
 
-	if (swboard->current_users > 1 ||
-		((swboard->conv != NULL) &&
-		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
-	{
-		/* If current_users is always ok as it should then there is no need to
-		 * check if this is a chat. */
-		if (swboard->current_users <= 1)
-			purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
-							swboard->current_users);
+		swboard->flag |= MSN_SB_FLAG_IM;
 
-		serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
-						 time(NULL));
-		if (swboard->conv == NULL)
+		if (swboard->current_users > 1 ||
+			((swboard->conv != NULL) &&
+			 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 		{
-			swboard->conv = purple_find_chat(gc, swboard->chat_id);
-			swboard->flag |= MSN_SB_FLAG_IM;
+			/* If current_users is always ok as it should then there is no need to
+			 * check if this is a chat. */
+			if (swboard->current_users <= 1)
+				purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
+								swboard->current_users);
+
+			serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
+							 time(NULL));
+			if (swboard->conv == NULL)
+			{
+				swboard->conv = purple_find_chat(gc, swboard->chat_id);
+				swboard->flag |= MSN_SB_FLAG_IM;
+			}
 		}
-	}
-	else
-	{
+		else
+		{
+			serv_got_im(gc, passport, body_final, 0, time(NULL));
+			if (swboard->conv == NULL)
+			{
+				swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+										passport, purple_connection_get_account(gc));
+				swboard->flag |= MSN_SB_FLAG_IM;
+			}
+		}
+
+	} else {
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
-		if (swboard->conv == NULL)
-		{
-			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-									passport, purple_connection_get_account(gc));
-			swboard->flag |= MSN_SB_FLAG_IM;
-		}
 	}
 
 	g_free(body_final);
@@ -901,16 +906,24 @@ void
 msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	PurpleConnection *gc;
-	MsnSwitchBoard *swboard;
 	char *passport;
 
 	gc = cmdproc->session->account->gc;
-	swboard = cmdproc->data;
 	passport = msg->remote_user;
 
-	if (swboard->current_users == 1 &&
-		msn_message_get_attr(msg, "TypingUser") != NULL)
-	{
+	if (msn_message_get_attr(msg, "TypingUser") == NULL)
+		return;
+
+	if (cmdproc->servconn->type == MSN_SERVCONN_SB) {
+		MsnSwitchBoard *swboard = cmdproc->data;
+
+		if (swboard->current_users == 1)
+		{
+			serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
+							PURPLE_TYPING);
+		}
+
+	} else {
 		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
 						PURPLE_TYPING);
 	}
@@ -927,21 +940,25 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (!strcmp(id, "1")) {
 		/* Nudge */
-		MsnSwitchBoard *swboard;
 		PurpleAccount *account;
 		const char *user;
 
-		swboard = cmdproc->data;
 		account = cmdproc->session->account;
 		user = msg->remote_user;
 
-		if (swboard->current_users > 1 ||
-			((swboard->conv != NULL) &&
-			 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
-			purple_prpl_got_attention_in_chat(account->gc, swboard->chat_id, user, MSN_NUDGE);
+		if (cmdproc->servconn->type == MSN_SERVCONN_SB) {
+			MsnSwitchBoard *swboard = cmdproc->data;
+			if (swboard->current_users > 1 ||
+				((swboard->conv != NULL) &&
+				 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+				purple_prpl_got_attention_in_chat(account->gc, swboard->chat_id, user, MSN_NUDGE);
 
-		else
+			else
+				purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
+
+		} else {
 			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
+		}
 
 	} else if (!strcmp(id, "2")) {
 		/* Wink */
