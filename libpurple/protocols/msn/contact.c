@@ -505,7 +505,6 @@ msn_get_contact_list(MsnSession *session,
 {
 	gchar *body = NULL;
 	gchar *update_str = NULL;
-	gchar *token_str;
 	MsnCallbackState *state;
 	const gchar *partner_scenario_str = MsnSoapPartnerScenarioText[partner_scenario];
 
