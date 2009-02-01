@@ -9,6 +9,7 @@ version 2.5.5 (??/??/????):
 	* Fix retrieval of ICQ status messages from users of ICQ 6.x, Miranda,
 	  and other libpurple clients (fixes with libpurple users only on
 	  statuses other than Available). (Daniel Ljungborg)
+	* Fix a memory leak in SILC. (Luke Petre)
 
 	MSN:
 	* Fix transfer of buddy icons, custom smileys, and files from the
