@@ -23,6 +23,7 @@
  */
 #include "msn.h"
 #include "msg.h"
+#include "msnutils.h"
 
 MsnMessage *
 msn_message_new(MsnMsgType type)
@@ -804,3 +805,157 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	g_string_free(str, TRUE);
 }
+
+/**************************************************************************
+ * Message Handlers
+ **************************************************************************/
+void
+msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	PurpleConnection *gc;
+	MsnSwitchBoard *swboard;
+	const char *body;
+	char *body_str;
+	char *body_enc;
+	char *body_final;
+	size_t body_len;
+	const char *passport;
+	const char *value;
+
+	gc = cmdproc->session->account->gc;
+	swboard = cmdproc->data;
+
+	body = msn_message_get_bin_data(msg, &body_len);
+	body_str = g_strndup(body, body_len);
+	body_enc = g_markup_escape_text(body_str, -1);
+	g_free(body_str);
+
+	passport = msg->remote_user;
+
+	if (!strcmp(passport, "messenger@microsoft.com") &&
+		strstr(body, "immediate security update"))
+	{
+		return;
+	}
+
+#if 0
+	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL)
+	{
+		purple_debug_misc("msn", "User-Agent = '%s'\n", value);
+	}
+#endif
+
+	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)
+	{
+		char *pre, *post;
+
+		msn_parse_format(value, &pre, &post);
+
+		body_final = g_strdup_printf("%s%s%s", pre ? pre : "",
+									 body_enc ? body_enc : "", post ? post : "");
+
+		g_free(pre);
+		g_free(post);
+		g_free(body_enc);
+	}
+	else
+	{
+		body_final = body_enc;
+	}
+
+	swboard->flag |= MSN_SB_FLAG_IM;
+
+	if (swboard->current_users > 1 ||
+		((swboard->conv != NULL) &&
+		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+	{
+		/* If current_users is always ok as it should then there is no need to
+		 * check if this is a chat. */
+		if (swboard->current_users <= 1)
+			purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
+							swboard->current_users);
+
+		serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
+						 time(NULL));
+		if (swboard->conv == NULL)
+		{
+			swboard->conv = purple_find_chat(gc, swboard->chat_id);
+			swboard->flag |= MSN_SB_FLAG_IM;
+		}
+	}
+	else
+	{
+		serv_got_im(gc, passport, body_final, 0, time(NULL));
+		if (swboard->conv == NULL)
+		{
+			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+									passport, purple_connection_get_account(gc));
+			swboard->flag |= MSN_SB_FLAG_IM;
+		}
+	}
+
+	g_free(body_final);
+}
+
+void
+msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	PurpleConnection *gc;
+	MsnSwitchBoard *swboard;
+	char *passport;
+
+	gc = cmdproc->session->account->gc;
+	swboard = cmdproc->data;
+	passport = msg->remote_user;
+
+	if (swboard->current_users == 1 &&
+		msn_message_get_attr(msg, "TypingUser") != NULL)
+	{
+		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
+						PURPLE_TYPING);
+	}
+}
+
+void
+msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	GHashTable *body;
+	const char *id;
+	body = msn_message_get_hashtable_from_body(msg);
+
+	id = g_hash_table_lookup(body, "ID");
+
+	if (!strcmp(id, "1")) {
+		/* Nudge */
+		MsnSwitchBoard *swboard;
+		PurpleAccount *account;
+		const char *user;
+
+		swboard = cmdproc->data;
+		account = cmdproc->session->account;
+		user = msg->remote_user;
+
+		if (swboard->current_users > 1 ||
+			((swboard->conv != NULL) &&
+			 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+			purple_prpl_got_attention_in_chat(account->gc, swboard->chat_id, user, MSN_NUDGE);
+
+		else
+			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
+
+	} else if (!strcmp(id, "2")) {
+		/* Wink */
+
+	} else if (!strcmp(id, "3")) {
+		/* Voiceclip */
+
+	} else if (!strcmp(id, "4")) {
+		/* Action */
+
+	} else {
+		purple_debug_warning("msn", "Got unknown datacast with ID %s.\n", id);
+	}
+
+	g_hash_table_destroy(body);
+}
+
