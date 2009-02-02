@@ -240,6 +240,9 @@ purple_media_stream_free(PurpleMediaStream *stream)
 	if (stream == NULL)
 		return;
 
+	/* Remove the connected_cb timeout */
+	g_source_remove_by_user_data(stream);
+
 	g_free(stream->participant);
 
 	if (stream->local_candidates)
@@ -1685,7 +1688,8 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	gst_pad_link(srcpad, sinkpad);
 	gst_element_set_state(stream->sink, GST_STATE_PLAYING);
 
-	g_timeout_add(0, (GSourceFunc)purple_media_connected_cb, stream);
+	g_timeout_add_full(G_PRIORITY_HIGH, 0,
+			(GSourceFunc)purple_media_connected_cb, stream, NULL);
 }
 
 static gboolean
