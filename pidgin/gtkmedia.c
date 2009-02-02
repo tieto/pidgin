@@ -184,11 +184,47 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 	return FALSE;
 }
 
+static int
+pidgin_x_error_handler(Display *display, XErrorEvent *event)
+{
+	const gchar *error_type;
+	switch (event->error_code) {
+#define XERRORCASE(type) case type: error_type = #type; break
+		XERRORCASE(BadAccess);
+		XERRORCASE(BadAlloc);
+		XERRORCASE(BadAtom);
+		XERRORCASE(BadColor);
+		XERRORCASE(BadCursor);
+		XERRORCASE(BadDrawable);
+		XERRORCASE(BadFont);
+		XERRORCASE(BadGC);
+		XERRORCASE(BadIDChoice);
+		XERRORCASE(BadImplementation);
+		XERRORCASE(BadLength);
+		XERRORCASE(BadMatch);
+		XERRORCASE(BadName);
+		XERRORCASE(BadPixmap);
+		XERRORCASE(BadRequest);
+		XERRORCASE(BadValue);
+		XERRORCASE(BadWindow);
+#undef XERRORCASE
+		default:
+			error_type = "unknown";
+			break;
+	}
+	purple_debug_error("media", "A %s Xlib error has occurred. "
+			"The program would normally crash now.\n",
+			error_type);
+	return 0;
+}
+
 static void
 pidgin_media_init (PidginMedia *media)
 {
 	GtkWidget *vbox, *hbox;
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
+
+	XSetErrorHandler(pidgin_x_error_handler);
 
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
