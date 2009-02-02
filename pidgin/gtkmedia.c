@@ -57,6 +57,8 @@ struct _PidginMediaPrivate
 	GstElement *send_level;
 	GstElement *recv_level;
 
+	GtkWidget *statusbar;
+
 	GtkWidget *calling;
 	GtkWidget *accept;
 	GtkWidget *reject;
@@ -228,6 +230,13 @@ pidgin_media_init (PidginMedia *media)
 
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
+
+	media->priv->statusbar = gtk_statusbar_new();
+	gtk_box_pack_end(GTK_BOX(vbox), media->priv->statusbar,
+			FALSE, FALSE, 0);
+	gtk_statusbar_push(GTK_STATUSBAR(media->priv->statusbar),
+			0, _("Connecting..."));
+	gtk_widget_show(media->priv->statusbar);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -402,6 +411,8 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, error,
 				PURPLE_MESSAGE_ERROR, time(NULL));
+	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
+			0, error);
 }
 
 static void
@@ -410,6 +421,8 @@ pidgin_media_accepted_cb(PurpleMedia *media, const gchar *session_id,
 {
 	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
+			0, _("Call in progress."));
 	gtk_widget_show(GTK_WIDGET(gtkmedia));
 }
 
