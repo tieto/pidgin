@@ -2374,4 +2374,87 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 	return FALSE;
 }
 
+static void
+dummy_block_cb(GstPad *pad, gboolean blocked, gpointer user_data)
+{
+}
+
+gboolean
+purple_media_remove_output_window(PurpleMedia *media, const gchar *session_id,
+		const gchar *participant)
+{	
+	GstElement *parent, *fakesink, *sink;
+	GstPad *pad, *peer;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+
+	if (session_id != NULL && participant == NULL) {
+		PurpleMediaSession *session;
+		session = purple_media_get_session(media, session_id);
+
+		if (session == NULL)
+			return FALSE;
+
+		sink = session->sink;
+	} else if (session_id != NULL && participant != NULL) {
+		PurpleMediaStream *stream;
+		stream = purple_media_get_stream(media,
+				session_id, participant);
+
+		if (stream == NULL)
+			return FALSE;
+
+		sink = stream->sink;
+	} else
+		return FALSE;
+
+	if (!GST_IS_ELEMENT(sink))
+		return FALSE;
+
+	/* Remove sink */
+	parent = GST_ELEMENT(gst_element_get_parent(sink));
+	pad = gst_element_get_static_pad(sink, "ghostsink");
+
+	if (pad == NULL) {
+		/* It's already a fakesink */
+		gst_object_unref(parent);
+		return FALSE;
+	}
+
+	peer = gst_pad_get_peer(pad);
+	gst_object_unref(pad);
+	gst_pad_set_blocked_async(peer, TRUE, dummy_block_cb, NULL);
+	gst_element_set_state(sink, GST_STATE_NULL);
+	gst_bin_remove(GST_BIN(parent), sink);
+
+	/* Add fakesink */
+	fakesink = gst_element_factory_make("fakesink", NULL);
+	gst_bin_add(GST_BIN(parent), fakesink);
+	gst_element_sync_state_with_parent(fakesink);
+	gst_object_unref(parent);
+	pad = gst_element_get_static_pad(fakesink, "sink");
+	gst_pad_link(peer, pad);
+	gst_object_unref(pad);
+	gst_pad_set_blocked_async(peer, FALSE, dummy_block_cb, NULL);
+	gst_object_unref(peer);
+	return TRUE;
+}
+
+void
+purple_media_remove_output_windows(PurpleMedia *media)
+{
+	GList *iter = media->priv->streams;
+	for (; iter; iter = g_list_next(iter)) {
+		PurpleMediaStream *stream = iter->data;
+		purple_media_remove_output_window(media,
+				stream->session->id, stream->participant);
+	}
+
+	iter = purple_media_get_session_names(media);
+	for (; iter; iter = g_list_delete_link(iter, iter)) {
+		gchar *session_name = iter->data;
+		purple_media_remove_output_window(media, session_name, NULL);
+	}
+}
+
 #endif  /* USE_VV */

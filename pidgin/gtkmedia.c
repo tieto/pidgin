@@ -285,20 +285,7 @@ pidgin_media_dispose(GObject *media)
 	purple_debug_info("gtkmedia", "pidgin_media_dispose\n");
 
 	if (gtkmedia->priv->media) {
-		GstElement *videosendbin = NULL, *videorecvbin = NULL;
-
-		purple_media_get_elements(gtkmedia->priv->media, NULL, NULL,
-					  &videosendbin, &videorecvbin);
-
-		if (videorecvbin) {
-			gst_element_set_locked_state(videorecvbin, TRUE);
-			gst_element_set_state(videorecvbin, GST_STATE_NULL);
-		}
-		if (videosendbin) {
-			gst_element_set_locked_state(videosendbin, TRUE);
-			gst_element_set_state(videosendbin, GST_STATE_NULL);
-		}
-
+		purple_media_remove_output_windows(gtkmedia->priv->media);
 		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
 		g_object_unref(gtkmedia->priv->media);
 		gtkmedia->priv->media = NULL;

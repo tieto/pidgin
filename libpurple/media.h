@@ -642,6 +642,9 @@ void purple_media_set_output_volume(PurpleMedia *media, const gchar *session_id,
 gboolean purple_media_set_output_window(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant,
 		gulong window_id);
+gboolean purple_media_remove_output_window(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
+void purple_media_remove_output_windows(PurpleMedia *media);
 
 #ifdef __cplusplus
 }
