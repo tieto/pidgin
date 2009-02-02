@@ -2177,9 +2177,8 @@ void purple_media_set_output_volume(PurpleMedia *media,
 
 typedef struct
 {
-	PurpleMedia *media;
-	gchar *session_id;
-	gchar *participant;
+	gchar *name;
+	gulong window_id;
 	gulong handler_id;
 } PurpleMediaXOverlayData;
 
@@ -2187,9 +2186,6 @@ static void
 window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaXOverlayData *data)
 {
 	gchar *name;
-	gchar *cmpname;
-	gulong window_id;
-	gboolean set = FALSE;
 
 	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT ||
 			!gst_structure_has_name(msg->structure,
@@ -2198,49 +2194,17 @@ window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaXOverlayData *data)
 
 	name = gst_object_get_name(GST_MESSAGE_SRC(msg));
 
-	if (data->participant == NULL) {
-		cmpname = g_strdup_printf("session-sink_%s",
-				data->session_id);
-		if (!strncmp(name, cmpname, strlen(cmpname))) {
-			PurpleMediaSession *session =
-					purple_media_get_session(
-					data->media, data->session_id);
-			if (session != NULL) {
-				window_id = session->window_id;
-				set = TRUE;
-			}
-		}
-	} else {
-		cmpname = g_strdup_printf("stream-sink_%s_%s",
-				data->session_id, data->participant);
-
-		if (!strncmp(name, cmpname, strlen(cmpname))) {
-			PurpleMediaStream *stream =
-					purple_media_get_stream(
-					data->media, data->session_id,
-					data->participant);
-			if (stream != NULL) {
-				window_id = stream->window_id;
-				set = TRUE;
-			}
-		}
-	}
-	g_free(cmpname);
-	g_free(name);
-
-	if (set == TRUE) {
-		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(
-				purple_media_get_pipeline(data->media)));
+	if (!strncmp(name, data->name, strlen(data->name))) {
 		g_signal_handler_disconnect(bus, data->handler_id);
-		gst_object_unref(bus);
 
 		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(
-				GST_MESSAGE_SRC(msg)), window_id);
+				GST_MESSAGE_SRC(msg)), data->window_id);
 
-		g_free(data->session_id);
-		g_free(data->participant);
+		g_free(data->name);
 		g_free(data);
 	}
+
+	g_free(name);
 		
 	return;
 }
@@ -2262,24 +2226,11 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 		session->window_id = window_id;
 
 		if (session->sink == NULL) {
+			PurpleMediaXOverlayData *data;
 			GstBus *bus;
 			GstElement *tee, *bin, *queue, *sink;
 			GstPad *request_pad, *sinkpad, *ghostpad;
 			gchar *name;
-
-			/* Create callback for prepared-xwindow-id signal */
-			PurpleMediaXOverlayData *data =
-					g_new0(PurpleMediaXOverlayData, 1);
-			data->media = media;
-			data->session_id = g_strdup(session_id);
-			data->participant = g_strdup(participant);
-
-			bus = gst_pipeline_get_bus(GST_PIPELINE(
-					purple_media_get_pipeline(media)));
-			data->handler_id = g_signal_connect(bus,
-					"sync-message::element",
-					G_CALLBACK(window_id_cb), data);
-			gst_object_unref(bus);
 
 			/* Create sink */
 			tee = gst_bin_get_by_name(GST_BIN(session->src),
@@ -2292,7 +2243,6 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 					"session-sink_%s", session_id);
 			sink = gst_element_factory_make(
 					"autovideosink", name);
-			g_free(name);
 
 			gst_bin_add_many(GST_BIN(bin), queue, sink, NULL);
 			gst_element_link(queue, sink);
@@ -2301,6 +2251,18 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 			ghostpad = gst_ghost_pad_new("ghostsink", sinkpad);
 			gst_object_unref(sinkpad);
 			gst_element_add_pad(bin, ghostpad);
+
+			/* Connect callback for prepared-xwindow-id signal */
+			data = g_new0(PurpleMediaXOverlayData, 1);
+			data->name = name;
+			data->window_id = window_id;
+
+			bus = gst_pipeline_get_bus(GST_PIPELINE(
+					purple_media_get_pipeline(media)));
+			data->handler_id = g_signal_connect(bus,
+					"sync-message::element",
+					G_CALLBACK(window_id_cb), data);
+			gst_object_unref(bus);
 
 			gst_element_set_state(bin, GST_STATE_PLAYING);
 
@@ -2370,18 +2332,6 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 			}
 		}
 
-		data = g_new0(PurpleMediaXOverlayData, 1);
-		data->media = media;
-		data->session_id = g_strdup(session_id);
-		data->participant = g_strdup(participant);
-
-		bus = gst_pipeline_get_bus(GST_PIPELINE(
-				purple_media_get_pipeline(media)));
-		data->handler_id = g_signal_connect(bus,
-				"sync-message::element",
-				G_CALLBACK(window_id_cb), data);
-		gst_object_unref(bus);
-
 		bin = gst_bin_new(NULL);
 
 		if (stream->sink != NULL)
@@ -2391,12 +2341,23 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 		name = g_strdup_printf("stream-sink_%s_%s",
 				session_id, participant);
 		sink = gst_element_factory_make("autovideosink", name);
-		g_free(name);
 
 		gst_bin_add(GST_BIN(bin), sink);
 		pad = gst_element_get_static_pad(sink, "sink");
 		ghostpad = gst_ghost_pad_new("ghostsink", pad);
 		gst_element_add_pad(bin, ghostpad);
+
+		/* Connect callback for prepared-xwindow-id signal */
+		data = g_new0(PurpleMediaXOverlayData, 1);
+		data->name = name;
+		data->window_id = window_id;
+
+		bus = gst_pipeline_get_bus(GST_PIPELINE(
+				purple_media_get_pipeline(media)));
+		data->handler_id = g_signal_connect(bus,
+				"sync-message::element",
+				G_CALLBACK(window_id_cb), data);
+		gst_object_unref(bus);
 
 		if (stream->sink != NULL) {
 			gst_element_set_state(bin, GST_STATE_PLAYING);
