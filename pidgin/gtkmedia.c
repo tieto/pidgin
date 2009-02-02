@@ -251,7 +251,7 @@ pidgin_media_init (PidginMedia *media)
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
 
-	media->priv->display = gtk_vbox_new(TRUE, PIDGIN_HIG_BOX_SPACE);
+	media->priv->display = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), media->priv->display,
 			TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox);
@@ -495,7 +495,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		g_signal_connect(G_OBJECT(remote_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), remote_video);
-		gtk_widget_set_size_request (GTK_WIDGET(remote_video), -1, 100);
+		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 320, 240);
 		gtk_widget_show(remote_video);
 		gtk_widget_show(aspect);
 
@@ -536,7 +536,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), local_video);
-		gtk_widget_set_size_request (GTK_WIDGET(local_video), -1, 100);
+		gtk_widget_set_size_request (GTK_WIDGET(local_video), 160, 120);
 
 		gtk_widget_show(local_video);
 		gtk_widget_show(aspect);
@@ -591,6 +591,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		pidgin_media_emit_message(gtkmedia, message);
 		g_free(message);
 	}
+
+	gtk_widget_show(gtkmedia->priv->display);
 }
 
 static void
@@ -613,15 +615,6 @@ pidgin_media_state_changed_cb(PurpleMedia *media,
 	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW &&
 			sid != NULL && name != NULL) {
 		pidgin_media_ready_cb(media, gtkmedia, sid);
-	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED) {
-		GstElement *audiosendbin = NULL, *audiorecvbin = NULL;
-		GstElement *videosendbin = NULL, *videorecvbin = NULL;
-
-		purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
-					  &videosendbin, &videorecvbin);
-
-		if (audiorecvbin || audiosendbin || videorecvbin || videosendbin)
-			gtk_widget_show(gtkmedia->priv->display);
 	}
 }
 
