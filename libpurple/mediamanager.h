@@ -66,9 +66,31 @@ struct _PurpleMediaManager
 	PurpleMediaManagerPrivate *priv; /**< Private data for the manager. */
 };
 
+typedef enum {
+	PURPLE_MEDIA_ELEMENT_AUDIO = 1,			/** supports audio */
+	PURPLE_MEDIA_ELEMENT_VIDEO = 1 << 1,		/** supports video */
+	PURPLE_MEDIA_ELEMENT_AUDIO_VIDEO = PURPLE_MEDIA_ELEMENT_AUDIO
+			| PURPLE_MEDIA_ELEMENT_VIDEO, 	/** supports audio and video */
+
+	PURPLE_MEDIA_ELEMENT_NO_SRCS = 0,		/** has no src pads */
+	PURPLE_MEDIA_ELEMENT_ONE_SRC = 1 << 2,		/** has one src pad */
+	PURPLE_MEDIA_ELEMENT_MULTI_SRC = 1 << 3, 	/** has multiple src pads */
+	PURPLE_MEDIA_ELEMENT_REQUEST_SRC = 1 << 4, 	/** src pads must be requested */
+
+	PURPLE_MEDIA_ELEMENT_NO_SINKS = 0,		/** has no sink pads */
+	PURPLE_MEDIA_ELEMENT_ONE_SINK = 1 << 5, 	/** has one sink pad */
+	PURPLE_MEDIA_ELEMENT_MULTI_SINK = 1 << 6, 	/** has multiple sink pads */
+	PURPLE_MEDIA_ELEMENT_REQUEST_SINK = 1 << 7, 	/** sink pads must be requested */
+
+	PURPLE_MEDIA_ELEMENT_UNIQUE = 1 << 8,		/** This element is unique and
+							 only one instance of it should
+							 be created at a time */
+} PurpleMediaElementType;
+
 struct _PurpleMediaElementInfo
 {
 	const gchar *id;
+	PurpleMediaElementType type;
 };
 
 #ifdef __cplusplus

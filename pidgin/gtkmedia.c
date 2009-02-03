@@ -788,21 +788,31 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 static PurpleMediaElementInfo default_video_src =
 {
 	"pidgindefaultvideosrc",	/* id */
+	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
+			| PURPLE_MEDIA_ELEMENT_ONE_SRC
+			| PURPLE_MEDIA_ELEMENT_UNIQUE,
 };
 
 static PurpleMediaElementInfo default_video_sink =
 {
 	"pidgindefaultvideosink",	/* id */
+	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
+			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
 };
 
 static PurpleMediaElementInfo default_audio_src =
 {
 	"pidgindefaultaudiosrc",	/* id */
+	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_ONE_SRC
+			| PURPLE_MEDIA_ELEMENT_UNIQUE,
 };
 
 static PurpleMediaElementInfo default_audio_sink =
 {
 	"pidgindefaultaudiosink",	/* id */
+	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
 };
 
 void
