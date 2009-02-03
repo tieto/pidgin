@@ -180,7 +180,7 @@ msn_user_set_passport(MsnUser *user, const char *passport)
 gboolean
 msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
-	g_return_if_fail(user != NULL);
+	g_return_val_if_fail(user != NULL, FALSE);
 
 	if (user->friendly_name && name && !strcmp(user->friendly_name, name))
 		return FALSE;
