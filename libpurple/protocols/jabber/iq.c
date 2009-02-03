@@ -222,27 +222,6 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	}
 }
 
-static void urn_xmpp_ping_parse(JabberStream *js, xmlnode *packet)
-{
-	const char *type, *id, *from;
-	JabberIq *iq;
-
-	type = xmlnode_get_attrib(packet, "type");
-	from = xmlnode_get_attrib(packet, "from");
-	id = xmlnode_get_attrib(packet, "id");
-
-	if(type && !strcmp(type, "get")) {
-		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "urn:xmpp:ping");
-
-		jabber_iq_set_id(iq, id);
-		xmlnode_set_attrib(iq->node, "to", from);
-
-		jabber_iq_send(iq);
-	} else {
-		/* XXX: error */
-	}
-}
-
 static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *iq;
@@ -309,12 +288,23 @@ void jabber_iq_remove_callback_by_id(JabberStream *js, const char *id)
 void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberCallbackData *jcd;
-	xmlnode *query, *error, *x;
+	xmlnode *child, *error, *x;
 	const char *xmlns;
 	const char *type, *id, *from;
 	JabberIqHandler *jih;
 
-	query = xmlnode_get_child(packet, "query");
+	/*
+	 * child will be either the first tag child or NULL if there is no child.
+	 * Historically, we used just the 'query' subchild, but newer XEPs use
+	 * differently named children. Grabbing the first child is (for the time
+	 * being) sufficient.
+	 */
+	for (child = packet->child; child; child = child->next) {
+		if (child->type != XMLNODE_TYPE_TAG)
+			continue;
+		break;
+	}
+
 	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
 	id = xmlnode_get_attrib(packet, "id");
@@ -353,7 +343,6 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	/* First, lets see if a special callback got registered */
-
 	if(!strcmp(type, "result") || !strcmp(type, "error")) {
 		if(id && *id && (jcd = g_hash_table_lookup(js->iq_callbacks, id))) {
 			jcd->callback(js, packet, jcd->data);
@@ -363,35 +352,14 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	/* Apparently not, so lets see if we have a pre-defined handler */
-
-	if(query && (xmlns = xmlnode_get_namespace(query))) {
+	if(child && (xmlns = xmlnode_get_namespace(child))) {
 		if((jih = g_hash_table_lookup(iq_handlers, xmlns))) {
 			jih(js, packet);
 			return;
 		}
 	}
 
-	if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
-		jabber_si_parse(js, packet);
-		return;
-	}
-
-	if(xmlnode_get_child_with_namespace(packet, "new-mail", "google:mail:notify")) {
-		jabber_gmail_poke(js, packet);
-		return;
-	}
-
 	purple_debug_info("jabber", "jabber_iq_parse\n");
-
-	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
-		jabber_ping_parse(js, packet);
-		return;
-	}
-
-	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE)) {
-		jabber_data_parse(js, packet);
-		return;
-	}
 
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 	if(!strcmp(type, "set") || !strcmp(type, "get")) {
@@ -431,7 +399,10 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
 	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
-	jabber_iq_register_handler("urn:xmpp:ping", urn_xmpp_ping_parse);
+	jabber_iq_register_handler("urn:xmpp:ping", jabber_ping_parse);
+	jabber_iq_register_handler("http://jabber.org/protocol/si", jabber_si_parse);
+	jabber_iq_register_handler("google:mail:notify", jabber_gmail_poke);
+	jabber_iq_register_handler(XEP_0231_NAMESPACE, jabber_data_parse);
 }
 
 void jabber_iq_uninit(void)

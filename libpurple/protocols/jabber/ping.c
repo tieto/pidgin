@@ -32,17 +32,29 @@
 void
 jabber_ping_parse(JabberStream *js, xmlnode *packet)
 {
-	JabberIq *iq;
+	const char *type, *id, *from;
 
+	type = xmlnode_get_attrib(packet, "type");
+	from = xmlnode_get_attrib(packet, "from");
+	id   = xmlnode_get_attrib(packet, "id");
+
+	if (!type) {
+		purple_debug_warning("jabber", "jabber_ping with no type\n");
+		return;
+	}
+	
 	purple_debug_info("jabber", "jabber_ping_parse\n");
 
-	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
+	if (!strcmp(type, "get")) {
+		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 
-	xmlnode_set_attrib(iq->node, "to", xmlnode_get_attrib(packet, "from") );
+		xmlnode_set_attrib(iq->node, "to", from);
+		xmlnode_set_attrib(iq->node, "id", id);
 
-	jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
-
-	jabber_iq_send(iq);
+		jabber_iq_send(iq);
+	} else if (!strcmp(type, "set")) {
+		/* XXX: error */
+	}
 }
 
 static void jabber_ping_result_cb(JabberStream *js, xmlnode *packet,
