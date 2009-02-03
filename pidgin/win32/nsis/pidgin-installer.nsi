@@ -1247,6 +1247,9 @@ Function .onInit
   Push $R0
   Push $R1
   Push $R2
+  Push $R3 ; This is only used for the Parameters throughout the function
+
+  ${GetParameters} $R3
 
   IntOp $R1 0 + 0
   retry_runcheck:
@@ -1258,7 +1261,14 @@ Function .onInit
   IntCmp $R0 0 +3 ;This could check for ERROR_ALREADY_EXISTS(183), but lets just assume
     MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
+
+  ; Allow installer to run even if pidgin is running via "/NOPIDGINRUNCHECK=1"
+  ; This is useful for testing
+  ClearErrors
+  ${GetOptions} "$R3" "/NOPIDGINRUNCHECK=" $R1
+  IfErrors 0 +2
   Call RunCheck
+
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
   StrCpy $SPELLCHECK_SEL ""
 
@@ -1312,16 +1322,13 @@ Function .onInit
   SetShellVarContext "current"
 
   StrCpy $ISSILENT "/S"
-
-  ; GTK installer has two silent states.. one with Message boxes, one without
+  ; GTK installer has two silent states - one with Message boxes, one without
   ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
-  IfSilent 0 set_gtk_normal
-      StrCpy $ISSILENT "/NOUI"
-  set_gtk_normal:
+  IfSilent 0 +2
+    StrCpy $ISSILENT "/NOUI"
 
-  ${GetParameters} $R0
   ClearErrors
-  ${GetOptions} "$R0" "/L=" $R1
+  ${GetOptions} "$R3" "/L=" $R1
   IfErrors +3
   StrCpy $LANGUAGE $R1
   Goto skip_lang
@@ -1332,7 +1339,7 @@ Function .onInit
     skip_lang:
 
   ClearErrors
-  ${GetOptions} "$R0" "/DS=" $R1
+  ${GetOptions} "$R3" "/DS=" $R1
   IfErrors +8
   SectionGetFlags ${SecDesktopShortcut} $R2
   StrCmp "1" $R1 0 +2
@@ -1343,7 +1350,7 @@ Function .onInit
   SectionSetFlags ${SecDesktopShortcut} $R2
 
   ClearErrors
-  ${GetOptions} "$R0" "/SMS=" $R1
+  ${GetOptions} "$R3" "/SMS=" $R1
   IfErrors +8
   SectionGetFlags ${SecStartMenuShortcut} $R2
   StrCmp "1" $R1 0 +2
@@ -1380,6 +1387,7 @@ Function .onInit
 
   instdir_done:
 ;LogSet on
+  Pop $R3
   Pop $R2
   Pop $R1
   Pop $R0
@@ -1694,6 +1702,7 @@ Function InstallAspellDictionary
   Push $R1
   Push $R2
   Push $R3
+  Push $R4
 
   check:
   ClearErrors
@@ -1714,7 +1723,12 @@ Function InstallAspellDictionary
   StrCmp $R3 "success" +3
     StrCpy $R0 $R3
     Goto done
+  ; Use a specific temporary $OUTDIR for each dictionary because the installer doesn't clean up after itself
+  StrCpy $R4 "$OUTDIR"
+  SetOutPath "$TEMP\aspell_dict-$R0"
   ExecWait '"$R1"'
+  SetOutPath "$R4"
+  RMDir /r "$TEMP\aspell_dict-$R0"
   Delete $R1
   Goto check ; Check that it is now installed correctly
 
@@ -1723,6 +1737,7 @@ Function InstallAspellDictionary
     StrCpy $R0 ''
 
   done:
+  Pop $R4
   Pop $R3
   Pop $R2
   Pop $R1
