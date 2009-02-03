@@ -393,20 +393,20 @@ void jabber_iq_init(void)
 {
 	iq_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	jabber_iq_register_handler("jabber:iq:roster", jabber_roster_parse);
-	jabber_iq_register_handler("jabber:iq:oob", jabber_oob_parse);
+	jabber_iq_register_handler("google:mail:notify", jabber_gmail_poke);
 	jabber_iq_register_handler("http://jabber.org/protocol/bytestreams", jabber_bytestreams_parse);
-	jabber_iq_register_handler("jabber:iq:last", jabber_iq_last_parse);
-	jabber_iq_register_handler("jabber:iq:time", jabber_iq_time_parse);
-	jabber_iq_register_handler("urn:xmpp:time", jabber_iq_time_parse);
-	jabber_iq_register_handler("jabber:iq:version", jabber_iq_version_parse);
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
-	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
-	jabber_iq_register_handler("urn:xmpp:ping", jabber_ping_parse);
 	jabber_iq_register_handler("http://jabber.org/protocol/si", jabber_si_parse);
-	jabber_iq_register_handler("google:mail:notify", jabber_gmail_poke);
+	jabber_iq_register_handler("jabber:iq:last", jabber_iq_last_parse);
+	jabber_iq_register_handler("jabber:iq:oob", jabber_oob_parse);
+	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
+	jabber_iq_register_handler("jabber:iq:roster", jabber_roster_parse);
+	jabber_iq_register_handler("jabber:iq:time", jabber_iq_time_parse);
+	jabber_iq_register_handler("jabber:iq:version", jabber_iq_version_parse);
 	jabber_iq_register_handler(XEP_0231_NAMESPACE, jabber_data_parse);
+	jabber_iq_register_handler("urn:xmpp:ping", jabber_ping_parse);
+	jabber_iq_register_handler("urn:xmpp:time", jabber_iq_time_parse);
 }
 
 void jabber_iq_uninit(void)
