@@ -1686,7 +1686,7 @@ char *jabber_status_text(PurpleBuddy *b)
 void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	JabberBuddy *jb;
-
+	
 	g_return_if_fail(b != NULL);
 	g_return_if_fail(b->account != NULL);
 	g_return_if_fail(b->account->gc != NULL);
@@ -1701,6 +1701,8 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		const char *sub;
 		GList *l;
 		const char *mood;
+		gboolean multiple_resources = 
+			jb->resources && g_list_next(jb->resources);
 
 		if (full) {
 			PurpleStatus *status;
@@ -1747,8 +1749,8 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					g_free(playing);
 				}
 			}
-		}
-
+		}	
+		
 		for(l=jb->resources; l; l = l->next) {
 			char *text = NULL;
 			char *res = NULL;
@@ -1788,7 +1790,10 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 			g_free(text);
 			
 			/* if the resource is idle, show that */
-			if (jbr->idle) {
+			/* only show it if there is more than one resource available for
+			 the buddy, since the "general" idleness will be shown anyway,
+			 this way we can see see the idleness of lower-priority resources */
+			if (jbr->idle && multiple_resources) {
 				gchar *idle_str = 
 					purple_str_seconds_to_string(time(NULL) - jbr->idle);
 				label = g_strdup_printf("%s%s",
