@@ -303,7 +303,7 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix)
 	node->prefix = g_strdup(prefix);
 }
 
-const char *xmlnode_get_prefix(xmlnode *node)
+const char *xmlnode_get_prefix(const xmlnode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 	return node->prefix;
@@ -443,11 +443,11 @@ xmlnode_to_str_foreach_append_ns(const char *key, const char *value,
 }
 
 static char *
-xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
+xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int depth)
 {
 	GString *text = g_string_new("");
 	const char *prefix;
-	xmlnode *c;
+	const xmlnode *c;
 	char *node_name, *esc, *esc2, *tab = NULL;
 	gboolean need_end = FALSE, pretty = formatting;
 
@@ -537,13 +537,13 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 }
 
 char *
-xmlnode_to_str(xmlnode *node, int *len)
+xmlnode_to_str(const xmlnode *node, int *len)
 {
 	return xmlnode_to_str_helper(node, len, FALSE, 0);
 }
 
 char *
-xmlnode_to_formatted_str(xmlnode *node, int *len)
+xmlnode_to_formatted_str(const xmlnode *node, int *len)
 {
 	char *xml, *xml_with_declaration;
 
