@@ -853,11 +853,11 @@ msn_status_types(PurpleAccount *account)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
-			NULL, NULL, FALSE, TRUE, FALSE);
+			NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
-			NULL, NULL, FALSE, TRUE, FALSE);
+			NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,

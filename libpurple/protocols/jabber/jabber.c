@@ -1864,7 +1864,7 @@ GList *jabber_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
-			NULL, FALSE, TRUE, FALSE,
+			NULL, TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);

@@ -2976,7 +2976,7 @@ novell_status_types(PurpleAccount *account)
 										   NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;
