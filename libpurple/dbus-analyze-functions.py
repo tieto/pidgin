@@ -497,7 +497,7 @@ class ServerBinding (Binding):
         # This is a total hack, but self.call is set up before the parameters
         #  are processed, so we can't tell it to pass a parameter by reference.
         self.call = "%s(%s)" % (self.function.name,
-                                ", ".join(param.name if param.name != "len" else "&len" for param in self.params))
+                                ", ".join([(param.name, "&len")[param.name == "len"] for param in self.params]))
 
         self.cdecls.append("\tgconstpointer %s;" % name)
         self.ccode.append("\t%s = %s;" % (name, self.call))
