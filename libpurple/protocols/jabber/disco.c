@@ -126,7 +126,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("jabber:iq:last")
 			SUPPORT_FEATURE("jabber:iq:oob")
 			SUPPORT_FEATURE("jabber:iq:time")
-			SUPPORT_FEATURE("xmpp:urn:time")
+			SUPPORT_FEATURE("urn:xmpp:time")
 			SUPPORT_FEATURE("jabber:iq:version")
 			SUPPORT_FEATURE("jabber:x:conference")
 			SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
