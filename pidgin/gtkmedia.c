@@ -785,11 +785,38 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	return TRUE;
 }
 
+static PurpleMediaElementInfo default_video_src =
+{
+	"pidgindefaultvideosrc",	/* id */
+};
+
+static PurpleMediaElementInfo default_video_sink =
+{
+	"pidgindefaultvideosink",	/* id */
+};
+
+static PurpleMediaElementInfo default_audio_src =
+{
+	"pidgindefaultaudiosrc",	/* id */
+};
+
+static PurpleMediaElementInfo default_audio_sink =
+{
+	"pidgindefaultaudiosink",	/* id */
+};
+
 void
 pidgin_medias_init(void)
 {
-	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
+	PurpleMediaManager *manager = purple_media_manager_get();
+	g_signal_connect(G_OBJECT(manager), "init-media",
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
+
+	purple_debug_info("gtkmedia", "Registering media element types\n");
+	purple_media_manager_register_element(manager, &default_video_src);
+	purple_media_manager_register_element(manager, &default_video_sink);
+	purple_media_manager_register_element(manager, &default_audio_src);
+	purple_media_manager_register_element(manager, &default_audio_sink);
 }
 
 #endif  /* USE_VV */

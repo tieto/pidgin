@@ -39,6 +39,7 @@
 struct _PurpleMediaManagerPrivate
 {
 	GList *medias;
+	GList *elements;
 };
 
 #define PURPLE_MEDIA_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerPrivate))
@@ -123,6 +124,8 @@ purple_media_manager_finalize (GObject *media)
 			g_list_delete_link(priv->medias, priv->medias)) {
 		g_object_unref(priv->medias->data);
 	}
+	for (; priv->elements; priv->elements =
+			g_list_delete_link(priv->elements, priv->elements));
 	parent_class->finalize(media);
 }
 
@@ -223,6 +226,58 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		purple_debug_error("media", "Error creating source or sink\n");
 
 	return ret;
+}
+
+PurpleMediaElementInfo *
+purple_media_manager_get_element_info(PurpleMediaManager *manager,
+		const gchar *id)
+{
+	GList *iter;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
+
+	iter = manager->priv->elements;
+
+	for (; iter; iter = g_list_next(iter)) {
+		PurpleMediaElementInfo *info = iter->data;
+		if (!strcmp(info->id, id))
+			return info;
+	}
+
+	return NULL;
+}
+
+gboolean
+purple_media_manager_register_element(PurpleMediaManager *manager,
+		PurpleMediaElementInfo *info)
+{
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
+	g_return_val_if_fail(info != NULL, FALSE);
+
+	if (purple_media_manager_get_element_info(manager, info->id) != NULL)
+		return FALSE;
+
+	manager->priv->elements =
+			g_list_prepend(manager->priv->elements, info);
+	return TRUE;
+}
+
+gboolean
+purple_media_manager_unregister_element(PurpleMediaManager *manager,
+		const gchar *id)
+{
+	PurpleMediaElementInfo *info;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
+
+	info = purple_media_manager_get_element_info(manager, id);
+
+	if (info == NULL)
+		return FALSE;
+
+	manager->priv->elements = g_list_remove(
+			manager->priv->elements, info);
+	return TRUE;
 }
 
 #endif  /* USE_VV */

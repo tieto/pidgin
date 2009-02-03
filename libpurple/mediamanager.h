@@ -50,6 +50,8 @@ typedef struct _PurpleMediaManager PurpleMediaManager;
 typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 /** @copydoc _PurpleMediaManagerPrivate */
 typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
+/** @copydoc _PurpleMediaElementInfo */
+typedef struct _PurpleMediaElementInfo PurpleMediaElementInfo;
 
 /** The media manager class. */
 struct _PurpleMediaManagerClass
@@ -62,6 +64,11 @@ struct _PurpleMediaManager
 {
 	GObject parent;                  /**< The parent of this manager. */
 	PurpleMediaManagerPrivate *priv; /**< Private data for the manager. */
+};
+
+struct _PurpleMediaElementInfo
+{
+	const gchar *id;
 };
 
 #ifdef __cplusplus
@@ -131,6 +138,12 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type);
 
+PurpleMediaElementInfo *purple_media_manager_get_element_info(
+		PurpleMediaManager *manager, const gchar *name);
+gboolean purple_media_manager_register_element(PurpleMediaManager *manager,
+		PurpleMediaElementInfo *info);
+gboolean purple_media_manager_unregister_element(PurpleMediaManager *manager,
+		const gchar *name);
 /*}@*/
 
 #ifdef __cplusplus
