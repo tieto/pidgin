@@ -174,7 +174,7 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *type, *from, *id, *xmlns;
 	JabberIq *iq;
-	xmlnode *query;
+	xmlnode *child;
 	time_t now_t;
 	struct tm *now;
 
@@ -185,37 +185,41 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	from = xmlnode_get_attrib(packet, "from");
 	id = xmlnode_get_attrib(packet, "id");
 
-	/* we're gonna throw this away in a moment, but we need it
-	 * to get the xmlns, so we can figure out if this is
-	 * jabber:iq:time or urn:xmpp:time */
-	query = xmlnode_get_child(packet, "query");
-	xmlns = xmlnode_get_namespace(query);
+	if ((child = xmlnode_get_child(packet, "query"))) {
+		xmlns = "jabber:iq:time";
+	} else if ((child = xmlnode_get_child(packet, "time"))) {
+		xmlns = "urn:xmpp:time";
+	} else {
+		purple_debug_warning("jabber", "Malformed IQ time packet\n");
+		return;
+	}
 
 	if(type && !strcmp(type, "get")) {
 		xmlnode *utc;
-		const char *date;
+		const char *date, *tz, *display;
 
-		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, xmlns);
+		iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 		jabber_iq_set_id(iq, id);
 		xmlnode_set_attrib(iq->node, "to", from);
 
-		query = xmlnode_get_child(iq->node, "query");
-
-		date = purple_utf8_strftime("%Y%m%dT%T", now);
-		utc = xmlnode_new_child(query, "utc");
-		xmlnode_insert_data(utc, date, -1);
+		child = xmlnode_new_child(iq->node, child->name);
+		utc = xmlnode_new_child(child, "utc");
 
 		if(!strcmp("urn:xmpp:time", xmlns)) {
-			xmlnode_insert_data(utc, "Z", 1); /* of COURSE the thing that is the same is different */
+			tz = purple_get_tzoff_str(now, TRUE);
+			xmlnode_insert_data(xmlnode_new_child(child, "tzo"), tz, -1);
 
-			date = purple_get_tzoff_str(now, TRUE);
-			xmlnode_insert_data(xmlnode_new_child(query, "tzo"), date, -1);
+			date = purple_utf8_strftime("%FT%TZ", now);
+			xmlnode_insert_data(utc, date, -1);
 		} else { /* jabber:iq:time */
-			date = purple_utf8_strftime("%Z", now);
-			xmlnode_insert_data(xmlnode_new_child(query, "tz"), date, -1);
+			tz = purple_utf8_strftime("%Z", now);
+			xmlnode_insert_data(xmlnode_new_child(child, "tz"), tz, -1);
 
-			date = purple_utf8_strftime("%d %b %Y %T", now);
-			xmlnode_insert_data(xmlnode_new_child(query, "display"), date, -1);
+			date = purple_utf8_strftime("%Y%m%dT%T", now);
+			xmlnode_insert_data(utc, date, -1);
+
+			display = purple_utf8_strftime("%d %b %Y %T", now);
+			xmlnode_insert_data(xmlnode_new_child(child, "display"), display, -1);
 		}
 
 		jabber_iq_send(iq);
