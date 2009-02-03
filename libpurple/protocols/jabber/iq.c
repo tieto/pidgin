@@ -448,6 +448,9 @@ void jabber_iq_init(void)
 #ifdef USE_VV
 	jabber_iq_register_handler(JINGLE, jingle_parse);
 #endif
+	/* handle Google jingleinfo */
+	jabber_iq_register_handler(GOOGLE_JINGLE_INFO_NAMESPACE, 
+		jabber_google_handle_jingle_info);
 }
 
 void jabber_iq_uninit(void)

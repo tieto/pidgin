@@ -58,6 +58,7 @@ typedef struct _JabberStream JabberStream;
 #include "mediamanager.h"
 #include "roomlist.h"
 #include "sslconn.h"
+#include "dnsquery.h"
 
 #include "jutil.h"
 #include "xmlnode.h"
@@ -250,6 +251,12 @@ struct _JabberStream
 #ifdef USE_VV
 	GHashTable *medias;
 #endif
+
+	/* maybe this should only be present when USE_VV? */
+	gchar *stun_ip;
+	int stun_port;
+	PurpleDnsQueryData *stun_query;
+	/* later add stuff to handle TURN relays... */
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);

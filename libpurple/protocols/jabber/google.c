@@ -23,12 +23,16 @@
 #include "mediamanager.h"
 #include "util.h"
 #include "privacy.h"
+#include "dnsquery.h"
+#include "network.h"
 
 #include "buddy.h"
 #include "google.h"
 #include "jabber.h"
 #include "presence.h"
 #include "iq.h"
+
+#include "jingle/jingle.h"
 
 #ifdef USE_VV
 
@@ -124,7 +128,7 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 	sess = google_session_create_xmlnode(session, "candidates");
 	xmlnode_insert_child(iq->node, sess);
 	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
-	
+
 	for (;candidates;candidates = candidates->next) {
 		char port[8];
 		char pref[8];
@@ -132,7 +136,7 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 
 		if (!strcmp(transport->ip, "127.0.0.1"))
 			continue;
-	
+
 		candidate = xmlnode_new("candidate");
 
 		g_snprintf(port, sizeof(port), "%d", transport->port);
@@ -162,7 +166,6 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		xmlnode_set_attrib(candidate, "generation", "0");
 		xmlnode_set_attrib(candidate, "network", "0");
 		xmlnode_insert_child(sess, candidate);
-		
 	}
 	jabber_iq_send(iq);
 }
@@ -246,6 +249,26 @@ google_session_state_changed_cb(PurpleMedia *media,
 	}
 }
 
+static GParameter *
+jabber_google_session_get_params(JabberStream *js, guint *num)
+{
+	guint num_params;
+	GParameter *params = jingle_get_params(js, &num_params);
+	GParameter *new_params = g_new0(GParameter, num_params + 1);
+
+	memcpy(new_params, params, sizeof(GParameter) * num_params);
+
+	purple_debug_info("jabber", "setting Google jingle compatibility param\n");
+	new_params[num_params].name = "compatibility-mode";
+	g_value_init(&new_params[num_params].value, G_TYPE_UINT);
+	g_value_set_uint(&new_params[num_params].value, 1); /* NICE_COMPATIBILITY_GOOGLE */
+
+	g_free(params);
+	*num = num_params + 1;
+	return new_params;
+}
+
+
 PurpleMedia*
 jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type)
 {
@@ -253,7 +276,8 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	gchar *jid;
-	GParameter param;
+	GParameter *params;
+	guint num_params;
 
 	/* construct JID to send to */
 	jb = jabber_buddy_find(js, who, FALSE);
@@ -286,18 +310,15 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 			purple_media_manager_get(), js->gc,
 			"fsrtpconference", session->remote_jid, TRUE);
 
-	/* GTalk requires the NICE_COMPATIBILITY_GOOGLE param */
-	param.name = "compatibility-mode";
-	memset(&param.value, 0, sizeof(GValue));
-	g_value_init(&param.value, G_TYPE_UINT);
-	g_value_set_uint(&param.value, 1); /* NICE_COMPATIBILITY_GOOGLE */
+	params = jabber_google_session_get_params(js, &num_params);
 
 	if (purple_media_add_stream(session->media, "google-voice",
 				session->remote_jid, PURPLE_MEDIA_AUDIO,
-				"nice", 1, &param) == FALSE) {
+				"nice", num_params, params) == FALSE) {
 		purple_media_error(session->media, "Error adding stream.");
 		purple_media_hangup(session->media);
 		google_session_destroy(session);
+		g_free(params);
 		return NULL;
 	}
 
@@ -310,6 +331,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 		sessions = g_hash_table_new(google_session_id_hash,
 				google_session_id_equal);
 	g_hash_table_insert(sessions, &(session->id), session);
+	g_free(params);
 
 	return session->media;
 }
@@ -322,8 +344,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	xmlnode *desc_element, *codec_element;
 	PurpleMediaCodec *codec;
 	const char *id, *encoding_name,  *clock_rate;
-	GParameter param;
-		
+	GParameter *params;
+	guint num_params;	
+
 	if (session->state != UNINIT) {
 		purple_debug_error("jabber", "Received initiate for active session.\n");
 		return;
@@ -332,22 +355,21 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	session->media = purple_media_manager_create_media(purple_media_manager_get(), js->gc,
 							   "fsrtpconference", session->remote_jid, FALSE);
 
-	/* GTalk requires the NICE_COMPATIBILITY_GOOGLE param */
-	param.name = "compatibility-mode";
-	memset(&param.value, 0, sizeof(GValue));
-	g_value_init(&param.value, G_TYPE_UINT);
-	g_value_set_uint(&param.value, 1); /* NICE_COMPATIBILITY_GOOGLE */
+	params = jabber_google_session_get_params(js, &num_params);
 
 	if (purple_media_add_stream(session->media, "google-voice", session->remote_jid, 
-				PURPLE_MEDIA_AUDIO, "nice", 1, &param) == FALSE) {
+				PURPLE_MEDIA_AUDIO, "nice", num_params, params) == FALSE) {
 		purple_media_error(session->media, "Error adding stream.");
 		purple_media_hangup(session->media);
 		google_session_send_terminate(session);
+		g_free(params);
 		return;
 	}
 
+	g_free(params);
+
 	desc_element = xmlnode_get_child(sess, "description");
-	
+
 	for (codec_element = xmlnode_get_child(desc_element, "payload-type"); 
 	     codec_element; 
 	     codec_element = xmlnode_get_next_twin(codec_element)) {
@@ -368,7 +390,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 			G_CALLBACK(google_session_state_changed_cb), session);
 
 	purple_media_codec_list_free(codecs);
-	
+
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
@@ -1024,4 +1046,106 @@ char *jabber_google_presence_outgoing(PurpleStatus *tune)
 {
 	const char *attr = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
 	return attr ? g_strdup_printf("♫ %s", attr) : g_strdup("");
+}
+
+static void
+jabber_google_stun_lookup_cb(GSList *hosts, gpointer data, 
+	const char *error_message)
+{
+	JabberStream *js = (JabberStream *) data;
+
+	if (error_message) {
+		purple_debug_error("jabber", "Google STUN lookup failed: %s\n",
+			error_message);
+		g_slist_free(hosts);
+		return;
+	}
+
+	if (hosts && g_slist_next(hosts)) {
+		struct sockaddr *addr = g_slist_next(hosts)->data; 
+		char dst[INET6_ADDRSTRLEN];
+		int port;
+
+		if (addr->sa_family == AF_INET6) {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr, 
+				dst, sizeof(dst));
+			port = ntohs(((struct sockaddr_in6 *) addr)->sin6_port);
+		} else {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr, 
+				dst, sizeof(dst));
+			port = ntohs(((struct sockaddr_in *) addr)->sin_port);
+		}
+
+		if (js) {
+			if (js->stun_ip) {
+				g_free(js->stun_ip);
+			}
+			js->stun_ip = g_strdup(dst);
+			purple_debug_info("jabber", "set Google STUN IP address: %s\n", dst);
+			js->stun_port = port;
+			purple_debug_info("jabber", "set Google STUN port: %d\n", port);
+			purple_debug_info("jabber", "set Google STUN port: %d\n", port);
+			/* unmark ongoing query */
+			js->stun_query = NULL;
+		}
+	}
+
+	g_slist_free(hosts);
+}
+
+static void
+jabber_google_jingle_info_cb(JabberStream *js, xmlnode *result,
+	gpointer nullus)
+{	
+	if (result) {
+		const xmlnode *query = 
+			xmlnode_get_child_with_namespace(result, "query", 
+				GOOGLE_JINGLE_INFO_NAMESPACE);
+
+		if (query) {
+			const xmlnode *stun = xmlnode_get_child(query, "stun");
+
+			purple_debug_info("jabber", "got google:jingleinfo\n");
+
+			if (stun) {
+				xmlnode *server = xmlnode_get_child(stun, "server");
+
+				if (server) {
+					const gchar *host = xmlnode_get_attrib(server, "host");
+					const gchar *udp = xmlnode_get_attrib(server, "udp");
+
+					if (host && udp) {
+						int port = atoi(udp);
+						/* if there, would already be an ongoing query, 
+						 cancel it */
+						if (js->stun_query)
+							purple_dnsquery_destroy(js->stun_query);
+
+						js->stun_query = purple_dnsquery_a(host, port, 
+							jabber_google_stun_lookup_cb, js);
+					}
+				}
+			}
+			/* should perhaps handle relays later on, or maybe wait until
+			 Google supports a common standard... */
+		}
+	}
+}
+
+void
+jabber_google_handle_jingle_info(JabberStream *js, xmlnode *packet)
+{
+	jabber_google_jingle_info_cb(js, packet, NULL);
+}
+
+void
+jabber_google_send_jingle_info(JabberStream *js)
+{
+	JabberIq *jingle_info = 
+		jabber_iq_new_query(js, JABBER_IQ_GET, GOOGLE_JINGLE_INFO_NAMESPACE);
+
+	jabber_iq_set_callback(jingle_info, jabber_google_jingle_info_cb,
+		NULL);
+	purple_debug_info("jabber", "sending google:jingleinfo query\n");
+	jabber_iq_send(jingle_info);
 }

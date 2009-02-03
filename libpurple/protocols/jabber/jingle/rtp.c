@@ -402,6 +402,8 @@ jingle_rtp_init_media(JingleContent *content)
 	gboolean is_audio;
 	PurpleMediaSessionType type;
 	JingleTransport *transport;
+	GParameter *params = NULL;
+	guint num_params;
 
 	/* maybe this create ought to just be in initiate and handle initiate */
 	if (media == NULL)
@@ -436,13 +438,16 @@ jingle_rtp_init_media(JingleContent *content)
 		type = is_audio == TRUE ? PURPLE_MEDIA_RECV_AUDIO
 				: PURPLE_MEDIA_RECV_VIDEO;
 
+	params = 
+		jingle_get_params(jingle_session_get_js(session), &num_params);
 	purple_media_add_stream(media, name, remote_jid,
-			type, transmitter, 0, NULL);
+			type, transmitter, num_params, params);
 
 	g_free(name);
 	g_free(media_type);
 	g_free(remote_jid);
 	g_free(senders);
+	g_free(params);
 	g_object_unref(session);
 
 	return TRUE;
