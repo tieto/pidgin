@@ -6,10 +6,15 @@ version 2.5.5 (??/??/????):
 	* Beta support for SSL connections for AIM and ICQ accounts.  To
 	  enable, check the "Use SSL" option from the Advanced tab when
 	  editing your AIM or ICQ account. (Paul Aurich)
-	* Fix retrieval of ICQ status messages from users of ICQ 6.x, Miranda,
-	  and other libpurple clients (fixes with libpurple users only on
-	  statuses other than Available). (Daniel Ljungborg)
 	* Fix a memory leak in SILC. (Luke Petre)
+
+	ICQ:
+	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
+	  other libpurple clients. (Daniel Ljungborg)
+	* Change client ID to match ICQ Basic 14.34.3096.  This fixes publishing
+	  of buddy icons and available messages.
+	* Properly publish status messages for statuses other than Available.
+	  ICQ 6.x users can now see these status messages. (Daniel Ljungborg)
 
 	MSN:
 	* Fix transfer of buddy icons, custom smileys, and files from the
