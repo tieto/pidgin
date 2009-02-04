@@ -597,8 +597,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	purple_debug_info("jabber", "got %d seconds idle from presence\n", idle);
-	
 	if (idle && delayed && stamp) {
 		/* if we have a delayed presence, we need to add the delay to the idle
 		 value */
@@ -608,7 +606,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			stamp, offset);
 		idle += offset; 
 	}
-	
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 1;
