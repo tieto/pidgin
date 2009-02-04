@@ -4782,7 +4782,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		if (status_html != NULL)
 		{
 			status_text = purple_markup_strip_html(status_html);
-			/* If the status_text is longer than 60 character then truncate it */
+			/* If the status_text is longer than 251 characters then truncate it */
 			if (strlen(status_text) > MAXAVAILMSGLEN)
 			{
 				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
@@ -4799,9 +4799,28 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	}
 	else
 	{
+		char *status_text = NULL;
+		
 		htmlaway = purple_status_get_attr_string(status, "message");
 		if ((htmlaway == NULL) || (*htmlaway == '\0'))
 			htmlaway = purple_status_type_get_name(status_type);
+		
+		/* ICQ 6.x seems to use an available message for all statuses so set one */
+		if (od->icq) 
+		{
+			status_text = purple_markup_strip_html(htmlaway);
+			/* If the status_text is longer than 251 characters then truncate it */
+			if (strlen(status_text) > MAXAVAILMSGLEN)
+			{
+				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
+				strcpy(tmp, "...");
+			}
+			aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, NULL);
+		}
+		g_free(status_text);
+
+		/* Set a proper away message for icq too so that they work for old third party clients */
+		
 		away = purple_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
 
 		if (awaylen > od->rights.maxawaymsglen)
