@@ -785,34 +785,74 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	return TRUE;
 }
 
+static GstElement *
+create_default_video_src(void)
+{
+	GstElement *ret = NULL;
+	purple_media_video_init_src(&ret);
+	return ret;
+}
+
+static GstElement *
+create_default_video_sink(void)
+{
+	GstElement *ret = NULL;
+	purple_media_video_init_recv(&ret);
+	return ret;
+}
+
+static GstElement *
+create_default_audio_src(void)
+{
+	GstElement *ret = NULL, *level = NULL;
+	purple_media_audio_init_src(&ret, &level);
+	return ret;
+}
+
+static GstElement *
+create_default_audio_sink(void)
+{
+	GstElement *ret = NULL, *level = NULL;
+	purple_media_audio_init_recv(&ret, &level);
+	return ret;
+}
+
 static PurpleMediaElementInfo default_video_src =
 {
 	"pidgindefaultvideosrc",	/* id */
 	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SRC
 			| PURPLE_MEDIA_ELEMENT_ONE_SRC
 			| PURPLE_MEDIA_ELEMENT_UNIQUE,
+	create_default_video_src,	/* create */
 };
 
 static PurpleMediaElementInfo default_video_sink =
 {
 	"pidgindefaultvideosink",	/* id */
 	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SINK
 			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+	create_default_video_sink,	/* create */
 };
 
 static PurpleMediaElementInfo default_audio_src =
 {
 	"pidgindefaultaudiosrc",	/* id */
 	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SRC
 			| PURPLE_MEDIA_ELEMENT_ONE_SRC
 			| PURPLE_MEDIA_ELEMENT_UNIQUE,
+	create_default_audio_src,	/* create */
 };
 
 static PurpleMediaElementInfo default_audio_sink =
 {
 	"pidgindefaultaudiosink",	/* id */
 	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SINK
 			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+	create_default_audio_sink,	/* create */
 };
 
 void
@@ -823,10 +863,10 @@ pidgin_medias_init(void)
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
 
 	purple_debug_info("gtkmedia", "Registering media element types\n");
-	purple_media_manager_register_element(manager, &default_video_src);
-	purple_media_manager_register_element(manager, &default_video_sink);
-	purple_media_manager_register_element(manager, &default_audio_src);
-	purple_media_manager_register_element(manager, &default_audio_sink);
+	purple_media_manager_set_active_element(manager, &default_video_src);
+	purple_media_manager_set_active_element(manager, &default_video_sink);
+	purple_media_manager_set_active_element(manager, &default_audio_src);
+	purple_media_manager_set_active_element(manager, &default_audio_sink);
 }
 
 #endif  /* USE_VV */

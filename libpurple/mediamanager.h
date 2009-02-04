@@ -85,12 +85,16 @@ typedef enum {
 	PURPLE_MEDIA_ELEMENT_UNIQUE = 1 << 8,		/** This element is unique and
 							 only one instance of it should
 							 be created at a time */
+
+	PURPLE_MEDIA_ELEMENT_SRC = 1 << 9,		/** can be set as an active src */
+	PURPLE_MEDIA_ELEMENT_SINK = 1 << 10,		/** can be set as an active sink */
 } PurpleMediaElementType;
 
 struct _PurpleMediaElementInfo
 {
 	const gchar *id;
 	PurpleMediaElementType type;
+	GstElement *(*create)(void);
 };
 
 #ifdef __cplusplus
@@ -166,6 +170,10 @@ gboolean purple_media_manager_register_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info);
 gboolean purple_media_manager_unregister_element(PurpleMediaManager *manager,
 		const gchar *name);
+gboolean purple_media_manager_set_active_element(PurpleMediaManager *manager,
+		PurpleMediaElementInfo *info);
+PurpleMediaElementInfo *purple_media_manager_get_active_element(
+		PurpleMediaManager *manager, PurpleMediaElementType type);
 /*}@*/
 
 #ifdef __cplusplus
