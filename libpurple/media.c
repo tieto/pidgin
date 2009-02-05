@@ -1739,7 +1739,14 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		g_free(filename);
 
 		if (err != NULL) {
-			purple_debug_error("media", "Error reading codec configuration file: %s\n", err->message);
+			if (err->code == 4)
+				purple_debug_info("media", "Couldn't read "
+						"fs-codec.conf: %s\n",
+						err->message);
+			else
+				purple_debug_error("media", "Error reading "
+						"fs-codec.conf: %s\n",
+						err->message);
 			g_error_free(err);
 		}
 
