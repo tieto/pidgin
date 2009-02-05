@@ -1253,10 +1253,39 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer dummy)
 				
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-component-state-changed")) {
-				
+				FsStreamState fsstate = g_value_get_enum(gst_structure_get_value(msg->structure, "state"));
+				guint component = g_value_get_uint(gst_structure_get_value(msg->structure, "component"));
+				const gchar *state;
+				switch (fsstate) {
+					case FS_STREAM_STATE_FAILED:
+						state = "FAILED";
+						break;
+					case FS_STREAM_STATE_DISCONNECTED:
+						state = "DISCONNECTED";
+						break;
+					case FS_STREAM_STATE_GATHERING:
+						state = "GATHERING";
+						break;
+					case FS_STREAM_STATE_CONNECTING:
+						state = "CONNECTING";
+						break;
+					case FS_STREAM_STATE_CONNECTED:
+						state = "CONNECTED";
+						break;
+					case FS_STREAM_STATE_READY:
+						state = "READY";
+						break;
+					default:
+						state = "UNKNOWN";
+						break;
+				}
+				purple_debug_info("media", "farsight-component-state-changed: component: %u state: %s\n", component, state);
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-send-codec-changed")) {
-				
+				FsCodec *codec = g_value_get_boxed(gst_structure_get_value(msg->structure, "codec"));
+				gchar *codec_str = fs_codec_to_string(codec);
+				purple_debug_info("media", "farsight-send-codec-changed: codec: %s\n", codec_str);
+				g_free(codec_str);
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-codecs-changed")) {
 				GList *sessions = g_hash_table_get_values(PURPLE_MEDIA(media)->priv->sessions);
