@@ -2418,10 +2418,6 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 
 		bin = gst_bin_new(NULL);
 
-		if (stream->sink != NULL)
-			gst_bin_add(GST_BIN(GST_ELEMENT_PARENT(
-					stream->sink)), bin);
-
 		name = g_strdup_printf("stream-sink_%s_%s",
 				session_id, participant);
 		sink = gst_element_factory_make("autovideosink", name);
@@ -2489,6 +2485,7 @@ purple_media_remove_output_window(PurpleMedia *media, const gchar *session_id,
 		gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
 		gst_object_unref(peer);
 
+		gst_element_set_locked_state(sink, TRUE);
 		gst_element_set_state(sink, GST_STATE_NULL);
 
 		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(sink)), sink);
@@ -2529,6 +2526,7 @@ purple_media_remove_output_window(PurpleMedia *media, const gchar *session_id,
 	peer = gst_pad_get_peer(pad);
 	gst_object_unref(pad);
 	gst_pad_set_blocked_async(peer, TRUE, dummy_block_cb, NULL);
+	gst_element_set_locked_state(sink, TRUE);
 	gst_element_set_state(sink, GST_STATE_NULL);
 	gst_bin_remove(GST_BIN(parent), sink);
 
