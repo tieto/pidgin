@@ -452,7 +452,12 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		if (!strcmp(name, "Google Talk")) {
 			purple_debug_info("jabber", "Google Talk!\n");
 			js->googletalk = TRUE;
-		}
+
+			/* autodiscover stun and relays */
+			jabber_google_send_jingle_info(js);
+		} else {
+			/* TODO: add external service discovery here... */
+		} 
 	}
 
 	for (child = xmlnode_get_child(query, "feature"); child;

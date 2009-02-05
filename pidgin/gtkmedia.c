@@ -57,6 +57,8 @@ struct _PidginMediaPrivate
 	GstElement *send_level;
 	GstElement *recv_level;
 
+	GtkWidget *statusbar;
+
 	GtkWidget *calling;
 	GtkWidget *accept;
 	GtkWidget *reject;
@@ -184,14 +186,57 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 	return FALSE;
 }
 
+static int
+pidgin_x_error_handler(Display *display, XErrorEvent *event)
+{
+	const gchar *error_type;
+	switch (event->error_code) {
+#define XERRORCASE(type) case type: error_type = #type; break
+		XERRORCASE(BadAccess);
+		XERRORCASE(BadAlloc);
+		XERRORCASE(BadAtom);
+		XERRORCASE(BadColor);
+		XERRORCASE(BadCursor);
+		XERRORCASE(BadDrawable);
+		XERRORCASE(BadFont);
+		XERRORCASE(BadGC);
+		XERRORCASE(BadIDChoice);
+		XERRORCASE(BadImplementation);
+		XERRORCASE(BadLength);
+		XERRORCASE(BadMatch);
+		XERRORCASE(BadName);
+		XERRORCASE(BadPixmap);
+		XERRORCASE(BadRequest);
+		XERRORCASE(BadValue);
+		XERRORCASE(BadWindow);
+#undef XERRORCASE
+		default:
+			error_type = "unknown";
+			break;
+	}
+	purple_debug_error("media", "A %s Xlib error has occurred. "
+			"The program would normally crash now.\n",
+			error_type);
+	return 0;
+}
+
 static void
 pidgin_media_init (PidginMedia *media)
 {
 	GtkWidget *vbox, *hbox;
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
 
+	XSetErrorHandler(pidgin_x_error_handler);
+
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
+
+	media->priv->statusbar = gtk_statusbar_new();
+	gtk_box_pack_end(GTK_BOX(vbox), media->priv->statusbar,
+			FALSE, FALSE, 0);
+	gtk_statusbar_push(GTK_STATUSBAR(media->priv->statusbar),
+			0, _("Connecting..."));
+	gtk_widget_show(media->priv->statusbar);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -215,7 +260,7 @@ pidgin_media_init (PidginMedia *media)
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
 
-	media->priv->display = gtk_vbox_new(TRUE, PIDGIN_HIG_BOX_SPACE);
+	media->priv->display = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), media->priv->display,
 			TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox);
@@ -366,6 +411,8 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, error,
 				PURPLE_MESSAGE_ERROR, time(NULL));
+	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
+			0, error);
 }
 
 static void
@@ -374,6 +421,8 @@ pidgin_media_accepted_cb(PurpleMedia *media, const gchar *session_id,
 {
 	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
+			0, _("Call in progress."));
 	gtk_widget_show(GTK_WIDGET(gtkmedia));
 }
 
@@ -430,6 +479,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		GtkWidget *remote_video;
 		GtkWidget *plug;
 		GtkWidget *socket;
+		GdkColor color = {0, 0, 0, 0};
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
@@ -454,10 +504,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		data->participant = g_strdup(gtkmedia->priv->screenname);
 
 		remote_video = gtk_drawing_area_new();
+		gtk_widget_modify_bg(remote_video, GTK_STATE_NORMAL, &color);
 		g_signal_connect(G_OBJECT(remote_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), remote_video);
-		gtk_widget_set_size_request (GTK_WIDGET(remote_video), -1, 100);
+		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 320, 240);
 		gtk_widget_show(remote_video);
 		gtk_widget_show(aspect);
 
@@ -469,6 +520,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		GtkWidget *local_video;
 		GtkWidget *plug;
 		GtkWidget *socket;
+		GdkColor color = {0, 0, 0, 0};
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
@@ -493,10 +545,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		data->participant = NULL;
 
 		local_video = gtk_drawing_area_new();
+		gtk_widget_modify_bg(local_video, GTK_STATE_NORMAL, &color);
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(plug), local_video);
-		gtk_widget_set_size_request (GTK_WIDGET(local_video), -1, 100);
+		gtk_widget_set_size_request (GTK_WIDGET(local_video), 160, 120);
 
 		gtk_widget_show(local_video);
 		gtk_widget_show(aspect);
@@ -551,6 +604,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		pidgin_media_emit_message(gtkmedia, message);
 		g_free(message);
 	}
+
+	gtk_widget_show(gtkmedia->priv->display);
 }
 
 static void
@@ -573,15 +628,6 @@ pidgin_media_state_changed_cb(PurpleMedia *media,
 	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW &&
 			sid != NULL && name != NULL) {
 		pidgin_media_ready_cb(media, gtkmedia, sid);
-	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED) {
-		GstElement *audiosendbin = NULL, *audiorecvbin = NULL;
-		GstElement *videosendbin = NULL, *videorecvbin = NULL;
-
-		purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
-					  &videosendbin, &videorecvbin);
-
-		if (audiorecvbin || audiosendbin || videorecvbin || videosendbin)
-			gtk_widget_show(gtkmedia->priv->display);
 	}
 }
 
@@ -739,11 +785,88 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	return TRUE;
 }
 
+static GstElement *
+create_default_video_src(void)
+{
+	GstElement *ret = NULL;
+	purple_media_video_init_src(&ret);
+	return ret;
+}
+
+static GstElement *
+create_default_video_sink(void)
+{
+	GstElement *ret = NULL;
+	purple_media_video_init_recv(&ret);
+	return ret;
+}
+
+static GstElement *
+create_default_audio_src(void)
+{
+	GstElement *ret = NULL, *level = NULL;
+	purple_media_audio_init_src(&ret, &level);
+	return ret;
+}
+
+static GstElement *
+create_default_audio_sink(void)
+{
+	GstElement *ret = NULL, *level = NULL;
+	purple_media_audio_init_recv(&ret, &level);
+	return ret;
+}
+
+static PurpleMediaElementInfo default_video_src =
+{
+	"pidgindefaultvideosrc",	/* id */
+	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SRC
+			| PURPLE_MEDIA_ELEMENT_ONE_SRC
+			| PURPLE_MEDIA_ELEMENT_UNIQUE,
+	create_default_video_src,	/* create */
+};
+
+static PurpleMediaElementInfo default_video_sink =
+{
+	"pidgindefaultvideosink",	/* id */
+	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SINK
+			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+	create_default_video_sink,	/* create */
+};
+
+static PurpleMediaElementInfo default_audio_src =
+{
+	"pidgindefaultaudiosrc",	/* id */
+	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SRC
+			| PURPLE_MEDIA_ELEMENT_ONE_SRC
+			| PURPLE_MEDIA_ELEMENT_UNIQUE,
+	create_default_audio_src,	/* create */
+};
+
+static PurpleMediaElementInfo default_audio_sink =
+{
+	"pidgindefaultaudiosink",	/* id */
+	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SINK
+			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+	create_default_audio_sink,	/* create */
+};
+
 void
 pidgin_medias_init(void)
 {
-	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
+	PurpleMediaManager *manager = purple_media_manager_get();
+	g_signal_connect(G_OBJECT(manager), "init-media",
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
+
+	purple_debug_info("gtkmedia", "Registering media element types\n");
+	purple_media_manager_set_active_element(manager, &default_video_src);
+	purple_media_manager_set_active_element(manager, &default_video_sink);
+	purple_media_manager_set_active_element(manager, &default_audio_src);
+	purple_media_manager_set_active_element(manager, &default_audio_sink);
 }
 
 #endif  /* USE_VV */

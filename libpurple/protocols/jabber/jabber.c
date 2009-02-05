@@ -735,20 +735,24 @@ jabber_login(PurpleAccount *account)
 	js->sessions = NULL;
 #endif
 
+	js->stun_ip = NULL;
+	js->stun_port = 0;
+	js->stun_query = NULL;
+
 	if(!js->user) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		return;
 	}
-	
+
 	if (!js->user->domain || *(js->user->domain) == '\0') {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
 	}
-	
+
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
@@ -1222,6 +1226,10 @@ void jabber_register_account(PurpleAccount *account)
 	server = connect_server[0] ? connect_server : js->user->domain;
 	js->certificate_CN = g_strdup(server);
 
+	js->stun_ip = NULL;
+	js->stun_port = 0;
+	js->stun_query = NULL;
+
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
 	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
@@ -1425,6 +1433,15 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
 
+	g_free(js->stun_ip);
+	js->stun_ip = NULL;
+
+	/* cancel DNS query for STUN, if one is ongoing */
+	if (js->stun_query) {
+		purple_dnsquery_destroy(js->stun_query);
+		js->stun_query = NULL;
+	}
+		
 	g_free(js);
 
 	gc->proto_data = NULL;
