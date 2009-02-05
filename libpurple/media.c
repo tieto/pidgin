@@ -1214,6 +1214,9 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer dummy)
 						break;
 					}
 				}
+
+				if (!PURPLE_IS_MEDIA(media))
+					break;
 			}
 
 			if (gst_structure_has_name(msg->structure, "farsight-error")) {
