@@ -80,7 +80,7 @@ msn_message_ref(MsnMessage *msg)
 	msg->ref_count++;
 
 #ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message ref (%p)[%d]\n", msg, msg->ref_count);
+	purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 #endif
 
 	return msg;
@@ -95,7 +95,7 @@ msn_message_unref(MsnMessage *msg)
 	msg->ref_count--;
 
 #ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
+	purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 #endif
 
 	if (msg->ref_count == 0)
