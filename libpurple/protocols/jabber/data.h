@@ -65,7 +65,8 @@ void jabber_data_associate_local(JabberData *data, const gchar *alt);
 void jabber_data_associate_remote(JabberData *data);
 
 /* handles iq requests */
-void jabber_data_parse(JabberStream *js, xmlnode *packet);
+void jabber_data_parse(JabberStream *js, xmlnode *data_node,
+                       const char *who, const char *id);
 
 void jabber_data_init(void);
 void jabber_data_uninit(void);

@@ -30,7 +30,7 @@
 #include "iq.h"
 
 void
-jabber_ping_parse(JabberStream *js, xmlnode *packet)
+jabber_ping_parse(JabberStream *js, const char *from, const char *id)
 {
 	JabberIq *iq;
 
@@ -38,9 +38,9 @@ jabber_ping_parse(JabberStream *js, xmlnode *packet)
 
 	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 
-	xmlnode_set_attrib(iq->node, "to", xmlnode_get_attrib(packet, "from") );
+	xmlnode_set_attrib(iq->node, "to", from);
 
-	jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
+	jabber_iq_set_id(iq, id);
 
 	jabber_iq_send(iq);
 }
