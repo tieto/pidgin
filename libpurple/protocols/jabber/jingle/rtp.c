@@ -306,6 +306,7 @@ jingle_rtp_initiate_ack_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		g_hash_table_remove(jingle_session_get_js(
 				session)->medias, sid);
 		g_free(sid);
+		g_object_unref(session);
 		return;
 	}
 
