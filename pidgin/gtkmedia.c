@@ -33,6 +33,7 @@
 #include "request.h"
 
 #include "gtkmedia.h"
+#include "gtkutils.h"
 
 #ifdef USE_VV
 
@@ -57,6 +58,7 @@ struct _PidginMediaPrivate
 	GstElement *send_level;
 	GstElement *recv_level;
 
+	GtkWidget *menubar;
 	GtkWidget *statusbar;
 
 	GtkWidget *calling;
@@ -221,6 +223,55 @@ pidgin_x_error_handler(Display *display, XErrorEvent *event)
 }
 
 static void
+menu_hangup(gpointer data, guint action, GtkWidget *item)
+{
+	PidginMedia *gtkmedia = PIDGIN_MEDIA(data);
+	purple_media_hangup(gtkmedia->priv->media);
+}
+
+static GtkItemFactoryEntry menu_items[] = {
+	{ N_("/_Media"), NULL, NULL, 0, "<Branch>", NULL },
+	{ N_("/Media/_Hangup"), NULL, menu_hangup, 0, "<Item>", NULL },
+};
+
+static gint menu_item_count = sizeof(menu_items) / sizeof(menu_items[0]);
+
+static const char *
+item_factory_translate_func (const char *path, gpointer func_data)
+{
+	return _(path);
+}
+
+static GtkWidget *
+setup_menubar(PidginMedia *window)
+{
+	GtkItemFactory *item_factory;
+	GtkAccelGroup *accel_group;
+	GtkWidget *menu;
+
+	accel_group = gtk_accel_group_new ();
+	gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
+	g_object_unref(accel_group);
+
+	item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
+			"<main>", accel_group);
+
+	gtk_item_factory_set_translate_func(item_factory,
+			(GtkTranslateFunc)item_factory_translate_func,
+			NULL, NULL);
+
+	gtk_item_factory_create_items(item_factory, menu_item_count,
+			menu_items, window);
+	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
+			G_CALLBACK(pidgin_save_accels_cb), NULL);
+
+	menu = gtk_item_factory_get_widget(item_factory, "<main>");
+
+	gtk_widget_show(menu);
+	return menu;
+}
+
+static void
 pidgin_media_init (PidginMedia *media)
 {
 	GtkWidget *vbox, *hbox;
@@ -237,6 +288,10 @@ pidgin_media_init (PidginMedia *media)
 	gtk_statusbar_push(GTK_STATUSBAR(media->priv->statusbar),
 			0, _("Connecting..."));
 	gtk_widget_show(media->priv->statusbar);
+
+	media->priv->menubar = setup_menubar(media);
+	gtk_box_pack_start(GTK_BOX(vbox), media->priv->menubar,
+			FALSE, TRUE, 0);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
