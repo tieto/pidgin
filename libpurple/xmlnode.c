@@ -309,6 +309,12 @@ const char *xmlnode_get_prefix(const xmlnode *node)
 	return node->prefix;
 }
 
+xmlnode *xmlnode_get_parent(const xmlnode *child)
+{
+	g_return_val_if_fail(child != NULL, NULL);
+	return child->parent;
+}
+
 void
 xmlnode_free(xmlnode *node)
 {

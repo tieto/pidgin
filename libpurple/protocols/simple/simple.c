@@ -2088,13 +2088,13 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* whiteboard_prpl_ops */
 	simple_send_raw,		/* send_raw */
 	NULL,					/* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
+	NULL,					/* unregister_user */
+	NULL,					/* send_attention */
+	NULL,					/* get_attention_types */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,					/* get_account_text_table */
+	NULL,					/* initiate_media */
+	NULL					/* can_do_media */
 };
 
 
@@ -2160,3 +2160,4 @@ static void _init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(simple, _init_plugin, info);
+

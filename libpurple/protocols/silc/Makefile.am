@@ -34,7 +34,7 @@ else
 st = $(SILC_CFLAGS)
 pkg_LTLIBRARIES          = libsilcpurple.la
 libsilcpurple_la_SOURCES = $(SILCSOURCES)
-libsilcpurple_la_LIBADD  = $(GLIB_LIBS) $(SILC_LIBS)
+libsilcpurple_la_LIBADD  = $(GLIB_LIBS) $(SILC_LIBS) $(FARSIGHT_LIBS)
 
 endif
 
@@ -43,4 +43,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(SILC_CFLAGS)
+	$(SILC_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(LIBXML_CFLAGS)

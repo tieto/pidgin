@@ -59,6 +59,15 @@
 #include "pep.h"
 #include "adhoccommands.h"
 
+#include "jingle/jingle.h"
+#include "jingle/rtp.h"
+
+#ifdef USE_VV
+#include <gst/farsight/fs-conference-iface.h>
+
+#define GTALK_CAP "http://www.google.com/xmpp/protocol/voice/v1"
+
+#endif
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
@@ -722,6 +731,13 @@ jabber_login(PurpleAccount *account)
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
+#ifdef USE_VV
+	js->sessions = NULL;
+#endif
+
+	js->stun_ip = NULL;
+	js->stun_port = 0;
+	js->stun_query = NULL;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -729,14 +745,14 @@ jabber_login(PurpleAccount *account)
 			_("Invalid XMPP ID"));
 		return;
 	}
-	
+
 	if (!js->user->domain || *(js->user->domain) == '\0') {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
 	}
-	
+
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
@@ -1210,6 +1226,10 @@ void jabber_register_account(PurpleAccount *account)
 	server = connect_server[0] ? connect_server : js->user->domain;
 	js->certificate_CN = g_strdup(server);
 
+	js->stun_ip = NULL;
+	js->stun_port = 0;
+	js->stun_query = NULL;
+
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
 	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
@@ -1306,6 +1326,11 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
+
+#ifdef USE_VV
+	/* Close all of the open Jingle sessions on this stream */
+	jingle_terminate_sessions(js);
+#endif
 
 	/* Don't perform any actions on the ssl connection
 	 * if we were forcibly disconnected because it will crash
@@ -1408,6 +1433,15 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
 
+	g_free(js->stun_ip);
+	js->stun_ip = NULL;
+
+	/* cancel DNS query for STUN, if one is ongoing */
+	if (js->stun_query) {
+		purple_dnsquery_destroy(js->stun_query);
+		js->stun_query = NULL;
+	}
+		
 	g_free(js);
 
 	gc->proto_data = NULL;
@@ -2046,7 +2080,7 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	
+
 	if(!(jid = jabber_id_new(who)))
 		return;
 
@@ -2526,6 +2560,86 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
+#ifdef USE_VV
+
+PurpleMedia *
+jabber_initiate_media(PurpleConnection *gc, const char *who, 
+		      PurpleMediaSessionType type)
+{
+	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberBuddy *jb;
+
+	if (!js) {
+		purple_debug_error("jabber",
+				"jabber_initiate_media: NULL stream\n");
+		return NULL;
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	if (!jb) {
+		purple_debug_error("jabber", "Could not find buddy\n");
+		return NULL;
+	}
+
+	if (type & PURPLE_MEDIA_AUDIO &&
+			!jabber_buddy_has_capability(jb,
+			JINGLE_APP_RTP_SUPPORT_AUDIO) &&
+			jabber_buddy_has_capability(jb, GTALK_CAP))
+		return jabber_google_session_initiate(gc->proto_data, who, type);
+	else
+		return jingle_rtp_initiate_media(gc->proto_data, who, type);
+}
+
+gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
+                             PurpleMediaSessionType type)
+{
+	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberBuddy *jb;
+
+	if (!js) {
+		purple_debug_error("jabber", "jabber_can_do_media: NULL stream\n");
+		return FALSE;
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	if (!jb) {
+		purple_debug_error("jabber", "Could not find buddy\n");
+		return FALSE;
+	}
+
+	if (!jabber_buddy_has_capability(jb, JINGLE_TRANSPORT_ICEUDP) &&
+			!jabber_buddy_has_capability(jb,
+			JINGLE_TRANSPORT_RAWUDP) &&
+			!jabber_buddy_has_capability(jb, GTALK_CAP)) {
+		purple_debug_info("jingle-rtp", "Buddy doesn't support "
+				"the same transport types\n");
+		return FALSE;
+	}
+
+	/* XMPP will only support two-way media, AFAIK... */
+	if (type == (PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO)) {
+		purple_debug_info("jabber", 
+				  "Checking audio/video XEP support for %s\n", who);
+		return (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_AUDIO) ||
+				jabber_buddy_has_capability(jb, GTALK_CAP)) && 
+				jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_VIDEO);
+	} else if (type == (PURPLE_MEDIA_AUDIO)) {
+		purple_debug_info("jabber", 
+				  "Checking audio XEP support for %s\n", who);
+		return jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_AUDIO) ||
+				jabber_buddy_has_capability(jb, GTALK_CAP);
+	} else if (type == (PURPLE_MEDIA_VIDEO)) {
+		purple_debug_info("jabber", 
+				  "Checking video XEP support for %s\n", who);
+		return jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_VIDEO);
+	}
+
+	return FALSE;
+}
+
+#endif
 
 void jabber_register_commands(void)
 {

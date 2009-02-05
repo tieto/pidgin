@@ -65,13 +65,13 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "conversation.h"
 #include "ft.h"
 #include "imgstore.h"
+#include "media.h"
 #include "notify.h"
 #include "proxy.h"
 #include "plugin.h"
 #include "roomlist.h"
 #include "status.h"
 #include "whiteboard.h"
-
 
 /** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
@@ -413,7 +413,7 @@ struct _PurplePluginProtocolInfo
 	 * reasons.
 	 */
 	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
-	
+
 	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
@@ -449,6 +449,28 @@ struct _PurplePluginProtocolInfo
 	 *         destroyed by the caller when it's no longer needed.
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
+
+	/**
+	 * Initiate a media session with the given contact.
+	 *
+	 * @param conn The connection to initiate the media session on.
+	 * @param who The remote user to initiate the session with.
+	 * @param type The type of media session to initiate.
+	 * @return The newly created media object.
+	 */
+	PurpleMedia  *(*initiate_media)(PurpleConnection *gc, const char *who,
+					PurpleMediaSessionType type);
+
+	/**
+	 * Checks to see if the given contact supports the given type of media session.
+	 *
+	 * @param conn The connection the contact is on.
+	 * @param who The remote user to check for media capability with.
+	 * @param type The type of media session to check for.
+	 * @return @c TRUE The contact supports the given media type, or @c FALSE otherwise.
+	 */
+	gboolean (*can_do_media)(PurpleConnection *gc, const char *who,
+				 PurpleMediaSessionType type);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
@@ -737,6 +759,32 @@ void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type
  * @since 2.5.0
  */
 void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
+
+/**
+ * Determines if the contact supports the given media session type.
+ *
+ * @param account The account the user is on.
+ * @param who The name of the contact to check capabilities for.
+ * @param type The type of media session to check for.
+ *
+ * @return @c TRUE if the contact supports the session type, else @c FALSE.
+ */
+gboolean purple_prpl_can_do_media(PurpleAccount *account,
+				  const char *who, 
+				  PurpleMediaSessionType type);
+
+/**
+ * Initiates a media session with the given contact.
+ *
+ * @param account The account the user is on.
+ * @param who The name of the contact to start a session with.
+ * @param type The type of media session to start.
+ *
+ * @return The newly created session object.
+ */
+PurpleMedia *purple_prpl_initiate_media(PurpleAccount *account,
+					const char *who,
+					PurpleMediaSessionType type);
 
 /*@}*/
 

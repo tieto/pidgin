@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version ?.?.? (??/??/????):
+	libpurple:
+		Added:
+		* PurpleMedia API
+		* xmlnode_get_parent
+
 version 2.5.5 (??/??/2009):
 	libpurple:
 		Changed:

@@ -24,4 +24,5 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
 	$(GTK_CFLAGS)

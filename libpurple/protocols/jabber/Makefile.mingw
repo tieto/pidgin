@@ -53,6 +53,13 @@ C_SRC =	\
 			google.c \
 			iq.c \
 			jabber.c \
+			jingle/jingle.c \
+			jingle/content.c \
+			jingle/iceudp.c \
+			jingle/rawudp.c \
+			jingle/rtp.c \
+			jingle/session.c \
+			jingle/transport.c \
 			jutil.c \
 			message.c \
 			oob.c \
@@ -78,6 +85,7 @@ XMPP_OBJECTS = $(XMPP_C_SRC:%.c=%.o)
 ##
 LIBS = \
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lxml2 \
 			-lws2_32 \
 			-lintl \

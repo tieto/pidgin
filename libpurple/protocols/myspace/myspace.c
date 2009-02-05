@@ -3077,9 +3077,10 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-
-	sizeof(PurplePluginProtocolInfo),  /* struct_size */
+	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	msim_get_account_text_table,              /* get_account_text_table */
+	NULL,                   /* initiate_media */
+	NULL                    /* can_do_media */
 };
 
 /**

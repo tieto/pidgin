@@ -28,6 +28,7 @@
 #include "iq.h"
 #include "disco.h"
 #include "jabber.h"
+#include "jingle/jingle.h"
 #include "presence.h"
 #include "roster.h"
 #include "pep.h"
@@ -88,7 +89,7 @@ jabber_disco_bytestream_server_cb(JabberStream *js, xmlnode *packet, gpointer da
 void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
-
+	
 	if(!from || !type)
 		return;
 
@@ -114,7 +115,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 
 		if(node)
 			xmlnode_set_attrib(query, "node", node);
-
+		
 		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
 			identity = xmlnode_new_child(query, "identity");
 			xmlnode_set_attrib(identity, "category", "client");
@@ -151,6 +152,16 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 						SUPPORT_FEATURE(feat->namespace);
 				}
 			}
+#ifdef USE_VV
+		} else if (node && !strcmp(node, CAPS0115_NODE "#voice-v1")) {
+			SUPPORT_FEATURE("http://www.google.com/xmpp/protocol/session");
+			SUPPORT_FEATURE("http://www.google.com/xmpp/protocol/voice/v1");
+			SUPPORT_FEATURE(JINGLE);
+			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_AUDIO);
+			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_VIDEO);
+			SUPPORT_FEATURE(JINGLE_TRANSPORT_RAWUDP);
+			SUPPORT_FEATURE(JINGLE_TRANSPORT_ICEUDP);
+#endif
 		} else {
 			const char *ext = NULL;
 			unsigned pos;
@@ -441,7 +452,12 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		if (!strcmp(name, "Google Talk")) {
 			purple_debug_info("jabber", "Google Talk!\n");
 			js->googletalk = TRUE;
-		}
+
+			/* autodiscover stun and relays */
+			jabber_google_send_jingle_info(js);
+		} else {
+			/* TODO: add external service discovery here... */
+		} 
 	}
 
 	for (child = xmlnode_get_child(query, "feature"); child;
