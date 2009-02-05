@@ -61,10 +61,6 @@ struct _PidginMediaPrivate
 	GtkWidget *menubar;
 	GtkWidget *statusbar;
 
-	GtkWidget *calling;
-	GtkWidget *accept;
-	GtkWidget *reject;
-	GtkWidget *hangup;
 	GtkWidget *mute;
 
 	GtkWidget *send_progress;
@@ -286,7 +282,7 @@ pidgin_media_init (PidginMedia *media)
 	gtk_box_pack_end(GTK_BOX(vbox), media->priv->statusbar,
 			FALSE, FALSE, 0);
 	gtk_statusbar_push(GTK_STATUSBAR(media->priv->statusbar),
-			0, _("Connecting..."));
+			0, _("Calling..."));
 	gtk_widget_show(media->priv->statusbar);
 
 	media->priv->menubar = setup_menubar(media);
@@ -297,23 +293,12 @@ pidgin_media_init (PidginMedia *media)
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(GTK_WIDGET(hbox));
 
-	media->priv->calling = gtk_label_new("Calling...");
-	media->priv->hangup = gtk_button_new_with_mnemonic("_Hangup");
-	media->priv->accept = gtk_button_new_with_mnemonic("_Accept");
-	media->priv->reject = gtk_button_new_with_mnemonic("_Reject");
 	media->priv->mute = gtk_toggle_button_new_with_mnemonic("_Mute");
 
 	g_signal_connect(media->priv->mute, "toggled",
 			G_CALLBACK(pidgin_media_mute_toggled), media);
 
-	gtk_box_pack_end(GTK_BOX(hbox), media->priv->reject, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), media->priv->accept, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), media->priv->hangup, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox), media->priv->mute, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), media->priv->calling, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(media->priv->accept);
-	gtk_widget_show_all(media->priv->reject);
 
 	media->priv->display = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), media->priv->display,
@@ -709,13 +694,6 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			else
 				pidgin_media_set_state(media, PIDGIN_MEDIA_REQUESTED);
 
-			g_signal_connect_swapped(G_OBJECT(media->priv->accept), "clicked", 
-				 G_CALLBACK(purple_media_accept), media->priv->media);
-			g_signal_connect_swapped(G_OBJECT(media->priv->reject), "clicked",
-				 G_CALLBACK(purple_media_reject), media->priv->media);
-			g_signal_connect_swapped(G_OBJECT(media->priv->hangup), "clicked",
-				 G_CALLBACK(purple_media_hangup), media->priv->media);
-
 			g_signal_connect(G_OBJECT(media->priv->media), "error",
 				G_CALLBACK(pidgin_media_error_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "accepted",
@@ -787,28 +765,6 @@ static void
 pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 {
 	gtkmedia->priv->state = state;
-	switch (state) {
-		case PIDGIN_MEDIA_WAITING:
-			gtk_widget_show(gtkmedia->priv->calling);
-			gtk_widget_hide(gtkmedia->priv->accept);
-			gtk_widget_hide(gtkmedia->priv->reject);
-			gtk_widget_show(gtkmedia->priv->hangup);
-			break;
-		case PIDGIN_MEDIA_REQUESTED:
-			gtk_widget_hide(gtkmedia->priv->calling);
-			gtk_widget_show(gtkmedia->priv->accept);
-			gtk_widget_show(gtkmedia->priv->reject);
-			gtk_widget_hide(gtkmedia->priv->hangup);
-			break;
-		case PIDGIN_MEDIA_ACCEPTED:
-			gtk_widget_show(gtkmedia->priv->hangup);
-			gtk_widget_hide(gtkmedia->priv->calling);
-			gtk_widget_hide(gtkmedia->priv->accept);
-			gtk_widget_hide(gtkmedia->priv->reject);
-			break;
-		default:
-			break;
-	}
 }
 
 static gboolean
