@@ -189,18 +189,18 @@ static JingleTransport *
 jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint generation, GList *candidates)
 {
 	if (type == JINGLE_TYPE_RAWUDP) {
-		gchar *id = jabber_get_next_id(jingle_session_get_js(session));
 		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_RAWUDP);
 		JingleRawUdpCandidate *rawudp_candidate;
 		for (; candidates; candidates = g_list_next(candidates)) {
 			PurpleMediaCandidate *candidate = candidates->data;
-			id = jabber_get_next_id(jingle_session_get_js(session));
+			gchar *id = jabber_get_next_id(
+					jingle_session_get_js(session));
 			rawudp_candidate = jingle_rawudp_candidate_new(id,
 					generation, candidate->component_id,
 					candidate->ip, candidate->port);
 			jingle_rawudp_add_local_candidate(JINGLE_RAWUDP(transport), rawudp_candidate);
+			g_free(id);
 		}
-		g_free(id);
 		return transport;
 	} else if (type == JINGLE_TYPE_ICEUDP) {
 		JingleTransport *transport = jingle_transport_create(JINGLE_TRANSPORT_ICEUDP);
