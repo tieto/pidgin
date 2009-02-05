@@ -309,7 +309,7 @@ void jabber_iq_remove_callback_by_id(JabberStream *js, const char *id)
 void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberCallbackData *jcd;
-	xmlnode *query, *error, *x;
+	xmlnode *child, *query, *error, *x;
 	const char *xmlns;
 	const char *type, *id, *from;
 	JabberIqHandler *jih;
@@ -371,25 +371,25 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
-		jabber_si_parse(js, packet);
+	if ((child = xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si"))) {
+		jabber_si_parse(js, child, from, id);
 		return;
 	}
 
-	if(xmlnode_get_child_with_namespace(packet, "new-mail", "google:mail:notify")) {
-		jabber_gmail_poke(js, packet);
+	if (xmlnode_get_child_with_namespace(packet, "new-mail", "google:mail:notify")) {
+		jabber_gmail_poke(js, type);
 		return;
 	}
 
 	purple_debug_info("jabber", "jabber_iq_parse\n");
 
-	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
-		jabber_ping_parse(js, packet);
+	if (xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
+		jabber_ping_parse(js, from, id);
 		return;
 	}
 
-	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE)) {
-		jabber_data_parse(js, packet);
+	if ((child = xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE))) {
+		jabber_data_parse(js, child, from, id);
 		return;
 	}
 

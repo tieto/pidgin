@@ -26,7 +26,8 @@
 #include "conversation.h"
 
 void jabber_ping_parse(JabberStream *js,
-						xmlnode *packet);
+                       const char *from,
+                       const char *id);
 
 
 gboolean jabber_ping_jid(PurpleConversation *conv, const char *jid);
