@@ -304,9 +304,8 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	 * being) sufficient.
 	 */
 	for (child = packet->child; child; child = child->next) {
-		if (child->type != XMLNODE_TYPE_TAG)
-			continue;
-		break;
+		if (child->type == XMLNODE_TYPE_TAG)
+			break;
 	}
 
 	type = xmlnode_get_attrib(packet, "type");
