@@ -24,6 +24,7 @@
 #include "pep.h"
 #include "iq.h"
 #include <string.h>
+#include "useravatar.h"
 #include "usermood.h"
 #include "usernick.h"
 
@@ -34,6 +35,7 @@ void jabber_pep_init(void) {
 		pep_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 		
 		/* register PEP handlers */
+		jabber_avatar_init();
 		jabber_mood_init();
 		jabber_nick_init();
 	}
