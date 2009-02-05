@@ -533,27 +533,27 @@ GList *purple_media_get_local_candidates(PurpleMedia *media,
 					 const gchar *name);
 
 /**
- * Gets the active local candidate for the stream.
+ * Gets the active local candidates for the stream.
  *
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session to find the stream in.
  * @param name The name of the remote user to get the active candidate from.
  *
- * @return The active candidate retrieved.
+ * @return The active candidates retrieved.
  */
-PurpleMediaCandidate *purple_media_get_local_candidate(PurpleMedia *media,
+GList *purple_media_get_active_local_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *name);
 
 /**
- * Gets the active remote candidate for the stream.
+ * Gets the active remote candidates for the stream.
  *
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session to find the stream in.
  * @param name The name of the remote user to get the remote candidate from.
  *
- * @return The remote candidate retrieved.
+ * @return The remote candidates retrieved.
  */
-PurpleMediaCandidate *purple_media_get_remote_candidate(PurpleMedia *media,
+GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *name);
 
 /**

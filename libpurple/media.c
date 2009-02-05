@@ -75,8 +75,8 @@ struct _PurpleMediaStream
 
 	gboolean candidates_prepared;
 
-	FsCandidate *local_candidate;
-	FsCandidate *remote_candidate;
+	GList *active_local_candidates;
+	GList *active_remote_candidates;
 
 	gulong window_id;
 };
@@ -250,10 +250,10 @@ purple_media_stream_free(PurpleMediaStream *stream)
 	if (stream->remote_candidates)
 		fs_candidate_list_destroy(stream->remote_candidates);
 
-	if (stream->local_candidate)
-		fs_candidate_destroy(stream->local_candidate);
-	if (stream->remote_candidate)
-		fs_candidate_destroy(stream->remote_candidate);
+	if (stream->active_local_candidates)
+		fs_candidate_list_destroy(stream->active_local_candidates);
+	if (stream->active_remote_candidates)
+		fs_candidate_list_destroy(stream->active_remote_candidates);
 
 	g_free(stream);
 }
@@ -1670,6 +1670,7 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	gchar *name;
 	FsParticipant *participant;
 	PurpleMediaStream *stream;
+	GList *iter;
 
 	g_return_if_fail(FS_IS_STREAM(fsstream));
 	g_return_if_fail(session != NULL);
@@ -1680,8 +1681,41 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 
 	stream = purple_media_get_stream(session->media, session->id, name);
 
-	stream->local_candidate = fs_candidate_copy(native_candidate);
-	stream->remote_candidate = fs_candidate_copy(remote_candidate);
+	iter = stream->active_local_candidates;
+	for(; iter; iter = g_list_next(iter)) {
+		FsCandidate *c = iter->data;
+		if (native_candidate->component_id == c->component_id) {
+			fs_candidate_destroy(c);
+			stream->active_local_candidates =
+					g_list_delete_link(iter, iter);
+			stream->active_local_candidates = g_list_prepend(
+					stream->active_local_candidates,
+					fs_candidate_copy(native_candidate));
+			break;
+		}
+	}
+	if (iter == NULL)
+		stream->active_local_candidates = g_list_prepend(
+				stream->active_local_candidates,
+				fs_candidate_copy(native_candidate));
+
+	iter = stream->active_remote_candidates;
+	for(; iter; iter = g_list_next(iter)) {
+		FsCandidate *c = iter->data;
+		if (native_candidate->component_id == c->component_id) {
+			fs_candidate_destroy(c);
+			stream->active_remote_candidates =
+					g_list_delete_link(iter, iter);
+			stream->active_remote_candidates = g_list_prepend(
+					stream->active_remote_candidates,
+					fs_candidate_copy(remote_candidate));
+			break;
+		}
+	}
+	if (iter == NULL)
+		stream->active_remote_candidates = g_list_prepend(
+				stream->active_remote_candidates,
+				fs_candidate_copy(remote_candidate));
 
 	purple_debug_info("media", "candidate pair established\n");
 }
@@ -2023,22 +2057,26 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	}
 }
 
-PurpleMediaCandidate *
-purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
+GList *
+purple_media_get_active_local_candidates(PurpleMedia *media,
+		const gchar *sess_id, const gchar *name)
 {
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 	stream = purple_media_get_stream(media, sess_id, name);
-	return purple_media_candidate_from_fs(stream->local_candidate);
+	return purple_media_candidate_list_from_fs(
+			stream->active_local_candidates);
 }
 
-PurpleMediaCandidate *
-purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
+GList *
+purple_media_get_active_remote_candidates(PurpleMedia *media,
+		const gchar *sess_id, const gchar *name)
 {
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 	stream = purple_media_get_stream(media, sess_id, name);
-	return purple_media_candidate_from_fs(stream->remote_candidate);
+	return purple_media_candidate_list_from_fs(
+			stream->active_remote_candidates);
 }
 
 gboolean
@@ -2080,8 +2118,14 @@ purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
 
 	for (; sessions; sessions = sessions->next) {
 		const gchar *session = sessions->data;
-		if (!purple_media_get_local_candidate(media, session, name) ||
-				!purple_media_get_remote_candidate(media, session, name))
+		GList *local = purple_media_get_active_local_candidates(
+				media, session, name);
+		GList *remote = purple_media_get_active_remote_candidates(
+				media, session, name);
+		gboolean result = (local == NULL || remote == NULL);
+		purple_media_candidate_list_free(local);
+		purple_media_candidate_list_free(remote);
+		if (!result)
 			return FALSE;
 	}
 
