@@ -600,14 +600,14 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 	if (type & PURPLE_MEDIA_RECV_AUDIO) {
 		gtkmedia->priv->recv_progress = gtk_progress_bar_new();
-		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 70, 10);
+		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 320, 10);
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				   gtkmedia->priv->recv_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->recv_progress);
 	}
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		gtkmedia->priv->send_progress = gtk_progress_bar_new();
-		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 70, 10);
+		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 320, 10);
 		gtk_box_pack_end(GTK_BOX(send_widget),
 				   gtkmedia->priv->send_progress, FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->send_progress);
