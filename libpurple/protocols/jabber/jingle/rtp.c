@@ -207,8 +207,10 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 		JingleIceUdpCandidate *iceudp_candidate;
 		for (; candidates; candidates = g_list_next(candidates)) {
 			PurpleMediaCandidate *candidate = candidates->data;
+			gchar *id = jabber_get_next_id(
+					jingle_session_get_js(session));
 			iceudp_candidate = jingle_iceudp_candidate_new(candidate->component_id,
-					candidate->foundation, generation, candidate->ip,
+					candidate->foundation, generation, id, candidate->ip,
 					0, candidate->port, candidate->priority, "udp",
 					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "host" :
 					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "srflx" :
@@ -216,6 +218,7 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" : "",
 					candidate->username, candidate->password);
 			jingle_iceudp_add_local_candidate(JINGLE_ICEUDP(transport), iceudp_candidate);
+			g_free(id);
 		}
 		return transport;
 	} else {
