@@ -41,8 +41,12 @@ jingle_get_action_name(JingleActionType action)
 			return "content-add";
 		case JINGLE_CONTENT_MODIFY:
 			return "content-modify";
+		case JINGLE_CONTENT_REJECT:
+			return "content-reject";
 		case JINGLE_CONTENT_REMOVE:
 			return "content-remove";
+		case JINGLE_DESCRIPTION_INFO:
+			return "description-info";
 		case JINGLE_SESSION_ACCEPT:
 			return "session-accept";
 		case JINGLE_SESSION_INFO:
@@ -55,6 +59,8 @@ jingle_get_action_name(JingleActionType action)
 			return "transport-accept";
 		case JINGLE_TRANSPORT_INFO:
 			return "transport-info";
+		case JINGLE_TRANSPORT_REJECT:
+			return "transport-reject";
 		case JINGLE_TRANSPORT_REPLACE:
 			return "transport-replace";
 		default:
@@ -71,8 +77,12 @@ jingle_get_action_type(const gchar *action)
 		return JINGLE_CONTENT_ADD;
 	else if (!strcmp(action, "content-modify"))
 		return JINGLE_CONTENT_MODIFY;
+	else if (!strcmp(action, "content-reject"))
+		return JINGLE_CONTENT_REJECT;
 	else if (!strcmp(action, "content-remove"))
 		return JINGLE_CONTENT_REMOVE;
+	else if (!strcmp(action, "description-info"))
+		return JINGLE_DESCRIPTION_INFO;
 	else if (!strcmp(action, "session-accept"))
 		return JINGLE_SESSION_ACCEPT;
 	else if (!strcmp(action, "session-info"))
@@ -85,6 +95,8 @@ jingle_get_action_type(const gchar *action)
 		return JINGLE_TRANSPORT_ACCEPT;
 	else if (!strcmp(action, "transport-info"))
 		return JINGLE_TRANSPORT_INFO;
+	else if (!strcmp(action, "transport-reject"))
+		return JINGLE_TRANSPORT_REJECT;
 	else if (!strcmp(action, "transport-replace"))
 		return JINGLE_TRANSPORT_REPLACE;
 	else
@@ -203,6 +215,30 @@ jingle_handle_content_remove(JingleSession *session, xmlnode *jingle)
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
 		jingle_session_remove_content(session, name, creator);
+	}
+}
+
+static void
+jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
+{
+	xmlnode *content = xmlnode_get_child(jingle, "content");
+
+	jabber_iq_send(jingle_session_create_ack(session, jingle));
+
+	jingle_session_accept_session(session);
+	
+	for (; content; content = xmlnode_get_next_twin(content)) {
+		const gchar *name = xmlnode_get_attrib(content, "name");
+		const gchar *creator = xmlnode_get_attrib(content, "creator");
+		JingleContent *parsed_content =
+				jingle_session_find_content(session, name, creator);
+		if (parsed_content == NULL) {
+			purple_debug_error("jingle", "Error parsing content\n");
+			/* XXX: send error */
+		} else {
+			jingle_content_handle_action(parsed_content, content,
+					JINGLE_DESCRIPTION_INFO);
+		}
 	}
 }
 
@@ -408,6 +444,8 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 		jingle_handle_content_reject(session, jingle);
 	} else if (!strcmp(action, "content-remove")) {
 		jingle_handle_content_remove(session, jingle);
+	} else if (!strcmp(action, "description-info")) {
+		jingle_handle_description_info(session, jingle);
 	} else if (!strcmp(action, "session-accept")) {
 		jingle_handle_session_accept(session, jingle);
 	} else if (!strcmp(action, "session-info")) {
