@@ -439,17 +439,11 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
-{
-	purple_timeout_remove(js->keepalive_timeout);
-	js->keepalive_timeout = -1;
-}
-
-static gboolean jabber_pong_timeout(PurpleConnection *gc)
+static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Ping timeout"));
+	                               _("Ping timeout"));
 	js->keepalive_timeout = -1;
 	return FALSE;
 }
@@ -459,14 +453,9 @@ void jabber_keepalive(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 
 	if (js->keepalive_timeout == -1) {
-		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
-		
-		xmlnode *ping = xmlnode_new_child(iq->node, "ping");
-		xmlnode_set_namespace(ping, "urn:xmpp:ping");
-		
-		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
-		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
-		jabber_iq_send(iq);
+		jabber_ping_jid(js, NULL);
+		js->keepalive_timeout = purple_timeout_add_seconds(120,
+				(GSourceFunc)(jabber_keepalive_timeout), gc);
 	}
 }
 
@@ -2421,10 +2410,16 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
+	PurpleAccount *account;
+	PurpleConnection *pc;
+
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if(!jabber_ping_jid(conv, args[0])) {
+	account = purple_conversation_get_account(conv);
+	pc = purple_account_get_connection(account);
+
+	if(!jabber_ping_jid(pc->proto_data, args[0])) {
 		*error = g_strdup_printf(_("Unable to ping user %s"), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
