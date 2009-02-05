@@ -2390,12 +2390,30 @@ purple_media_remove_output_window(PurpleMedia *media, const gchar *session_id,
 
 	if (session_id != NULL && participant == NULL) {
 		PurpleMediaSession *session;
+		GstPad *pad, *peer;
+
 		session = purple_media_get_session(media, session_id);
 
 		if (session == NULL)
 			return FALSE;
 
 		sink = session->sink;
+
+		if (!GST_IS_ELEMENT(sink))
+			return FALSE;
+
+		pad = gst_element_get_static_pad(sink, "ghostsink");
+		peer = gst_pad_get_peer(pad);
+		gst_object_unref(pad);
+
+		gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
+		gst_object_unref(peer);
+
+		gst_element_set_state(sink, GST_STATE_NULL);
+
+		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(sink)), sink);
+		session->sink = NULL;
+		return TRUE;	
 	} else if (session_id != NULL && participant != NULL) {
 		PurpleMediaStream *stream;
 		stream = purple_media_get_stream(media,
@@ -2413,6 +2431,13 @@ purple_media_remove_output_window(PurpleMedia *media, const gchar *session_id,
 
 	/* Remove sink */
 	parent = GST_ELEMENT(gst_element_get_parent(sink));
+
+	if (parent == NULL) {
+		/* It's not added and therefore not linked */
+		gst_object_unref(sink);
+		return FALSE;
+	}
+
 	pad = gst_element_get_static_pad(sink, "ghostsink");
 
 	if (pad == NULL) {
