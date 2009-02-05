@@ -370,6 +370,7 @@ pidgin_media_dispose(GObject *media)
 	purple_debug_info("gtkmedia", "pidgin_media_dispose\n");
 
 	if (gtkmedia->priv->media) {
+		purple_request_close_with_handle(gtkmedia);
 		purple_media_remove_output_windows(gtkmedia->priv->media);
 		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
 		g_object_unref(gtkmedia->priv->media);
@@ -785,7 +786,7 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	if (initiator == FALSE) {
 		gchar *message = g_strdup_printf("%s wishes to start a "
 				"media session with you\n", alias);
-		purple_request_accept_cancel(media, "Media invitation",
+		purple_request_accept_cancel(gtkmedia, "Media invitation",
 				message, NULL, 1, (void*)pc, screenname,
 				NULL, media, purple_media_accept,
 				purple_media_reject);
