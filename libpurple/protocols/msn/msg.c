@@ -956,6 +956,8 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			else
 				purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
 
+			purple_conversation_attention(swboard->conv, user, MSN_NUDGE,
+				PURPLE_MESSAGE_SEND, time(NULL));
 		} else {
 			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
 		}
