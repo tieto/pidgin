@@ -1683,6 +1683,56 @@ char *jabber_status_text(PurpleBuddy *b)
 	return ret;
 }
 
+static void
+jabber_tooltip_add_resource_text(JabberBuddyResource *jbr, 
+	PurpleNotifyUserInfo *user_info, gboolean multiple_resources)
+{
+	char *text = NULL;
+	char *res = NULL;
+	char *label, *value;
+	const char *state;
+
+	if(jbr->status) {
+		char *tmp;
+		text = purple_strreplace(jbr->status, "\n", "<br />\n");
+		tmp = purple_markup_strip_html(text);
+		g_free(text);
+		text = g_markup_escape_text(tmp, -1);
+		g_free(tmp);
+	}
+
+	if(jbr->name)
+		res = g_strdup_printf(" (%s)", jbr->name);
+
+	state = jabber_buddy_state_get_name(jbr->state);
+	if (text != NULL && !purple_utf8_strcasecmp(state, text)) {
+		g_free(text);
+		text = NULL;
+	}
+
+	label = g_strdup_printf("%s%s", _("Status"), (res ? res : ""));
+	value = g_strdup_printf("%s%s%s", state, (text ? ": " : ""), (text ? text : ""));
+
+	purple_notify_user_info_add_pair(user_info, label, value);
+	g_free(label);
+	g_free(value);
+	g_free(text);
+	
+	/* if the resource is idle, show that */
+	/* only show it if there is more than one resource available for
+	the buddy, since the "general" idleness will be shown anyway,
+	this way we can see see the idleness of lower-priority resources */
+	if (jbr->idle && multiple_resources) {
+		gchar *idle_str = 
+			purple_str_seconds_to_string(time(NULL) - jbr->idle);
+		label = g_strdup_printf("%s%s", _("Idle"), (res ? res : ""));
+		purple_notify_user_info_add_pair(user_info, label, idle_str);
+		g_free(idle_str);
+		g_free(label);
+	}
+	g_free(res);
+}
+
 void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	JabberBuddy *jb;
@@ -1703,60 +1753,22 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		const char *mood;
 		gboolean multiple_resources = 
 			jb->resources && g_list_next(jb->resources);
-
+		JabberBuddyResource *top_jbr = jabber_buddy_find_resource(jb, NULL);
+		
+		/* resource-specific info for the top resource */
+		jabber_tooltip_add_resource_text(top_jbr, user_info, 
+			multiple_resources);
+		
 		for(l=jb->resources; l; l = l->next) {
-			char *text = NULL;
 			char *res = NULL;
-			char *label, *value;
-			const char *state;
+			char *label;
 
 			jbr = l->data;
-
-			if(jbr->status) {
-				char *tmp;
-				text = purple_strreplace(jbr->status, "\n", "<br />\n");
-				tmp = purple_markup_strip_html(text);
-				g_free(text);
-				text = g_markup_escape_text(tmp, -1);
-				g_free(tmp);
+			/* the remaining resources */
+			if (jbr != top_jbr) {
+				jabber_tooltip_add_resource_text(jbr, user_info,
+					multiple_resources);
 			}
-
-			if(jbr->name)
-				res = g_strdup_printf(" (%s)", jbr->name);
-
-			state = jabber_buddy_state_get_name(jbr->state);
-			if (text != NULL && !purple_utf8_strcasecmp(state, text)) {
-				g_free(text);
-				text = NULL;
-			}
-
-			label = g_strdup_printf("%s%s",
-							_("Status"), (res ? res : ""));
-			value = g_strdup_printf("%s%s%s",
-							state,
-							(text ? ": " : ""),
-							(text ? text : ""));
-
-			purple_notify_user_info_add_pair(user_info, label, value);
-			g_free(label);
-			g_free(value);
-			g_free(text);
-			
-			/* if the resource is idle, show that */
-			/* only show it if there is more than one resource available for
-			 the buddy, since the "general" idleness will be shown anyway,
-			 this way we can see see the idleness of lower-priority resources */
-			if (jbr->idle && multiple_resources) {
-				gchar *idle_str = 
-					purple_str_seconds_to_string(time(NULL) - jbr->idle);
-				label = g_strdup_printf("%s%s",
-					_("Idle"), (res ? res : ""));
-				purple_notify_user_info_add_pair(user_info, label, idle_str);
-				g_free(idle_str);
-				g_free(label);
-			}
-			
-			g_free(res);
 		}
 		
 		if (full) {
