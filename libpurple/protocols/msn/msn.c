@@ -162,7 +162,9 @@ msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **
 	username = purple_conversation_get_name(conv);
 
 	purple_prpl_send_attention(gc, username, MSN_NUDGE);
-
+	purple_conversation_attention(conv, username, 0, PURPLE_MESSAGE_SEND,
+		time(NULL));
+	
 	return PURPLE_CMD_RET_OK;
 }
 
