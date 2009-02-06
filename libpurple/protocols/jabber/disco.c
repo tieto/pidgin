@@ -132,9 +132,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
 			SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
 			SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
-#if 0
-				SUPPORT_FEATURE("http://jabber.org/protocol/ibb")
-#endif
+			SUPPORT_FEATURE("http://jabber.org/protocol/ibb");
 			SUPPORT_FEATURE("http://jabber.org/protocol/muc")
 			SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
 			SUPPORT_FEATURE("http://jabber.org/protocol/si")
@@ -272,6 +270,10 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					capabilities |= JABBER_CAP_PING;
 				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
 					capabilities |= JABBER_CAP_ADHOC;
+				}
+				else if(!strcmp(var, "http://jabber.org/protocol/ibb")) {
+					purple_debug_info("jabber", "remote supports IBB\n");
+					capabilities |= JABBER_CAP_IBB;
 				}
 			}
 		}
