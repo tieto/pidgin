@@ -1704,53 +1704,6 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		gboolean multiple_resources = 
 			jb->resources && g_list_next(jb->resources);
 
-		if (full) {
-			PurpleStatus *status;
-
-			if(jb->subscription & JABBER_SUB_FROM) {
-				if(jb->subscription & JABBER_SUB_TO)
-					sub = _("Both");
-				else if(jb->subscription & JABBER_SUB_PENDING)
-					sub = _("From (To pending)");
-				else
-					sub = _("From");
-			} else {
-				if(jb->subscription & JABBER_SUB_TO)
-					sub = _("To");
-				else if(jb->subscription & JABBER_SUB_PENDING)
-					sub = _("None (To pending)");
-				else
-					sub = _("None");
-			}
-
-			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
-
-			status = purple_presence_get_active_status(presence);
-			mood = purple_status_get_attr_string(status, "mood");
-			if(mood != NULL) {
-				const char *moodtext;
-				moodtext = purple_status_get_attr_string(status, "moodtext");
-				if(moodtext != NULL) {
-					char *moodplustext = g_strdup_printf("%s (%s)", mood, moodtext);
-
-					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
-					g_free(moodplustext);
-				} else
-					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
-			}
-			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-				PurpleStatus *tune = purple_presence_get_status(presence, "tune");
-				const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
-				const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
-				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
-				char *playing = purple_util_format_song_info(title, artist, album, NULL);
-				if (playing) {
-					purple_notify_user_info_add_pair(user_info, _("Now Listening"), playing);
-					g_free(playing);
-				}
-			}
-		}	
-		
 		for(l=jb->resources; l; l = l->next) {
 			char *text = NULL;
 			char *res = NULL;
@@ -1805,7 +1758,56 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 			
 			g_free(res);
 		}
+		
+		if (full) {
+			PurpleStatus *status;
 
+
+			status = purple_presence_get_active_status(presence);
+			mood = purple_status_get_attr_string(status, "mood");
+			if(mood != NULL) {
+				const char *moodtext;
+				moodtext = purple_status_get_attr_string(status, "moodtext");
+				if(moodtext != NULL) {
+					char *moodplustext = g_strdup_printf("%s (%s)", mood, moodtext);
+
+					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
+					g_free(moodplustext);
+				} else
+					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
+			}
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+				PurpleStatus *tune = purple_presence_get_status(presence, "tune");
+				const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
+				const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
+				char *playing = purple_util_format_song_info(title, artist, album, NULL);
+				if (playing) {
+					purple_notify_user_info_add_pair(user_info, _("Now Listening"), playing);
+					g_free(playing);
+				}
+			}
+
+			if(jb->subscription & JABBER_SUB_FROM) {
+				if(jb->subscription & JABBER_SUB_TO)
+					sub = _("Both");
+				else if(jb->subscription & JABBER_SUB_PENDING)
+					sub = _("From (To pending)");
+				else
+					sub = _("From");
+			} else {
+				if(jb->subscription & JABBER_SUB_TO)
+					sub = _("To");
+				else if(jb->subscription & JABBER_SUB_PENDING)
+					sub = _("None (To pending)");
+				else
+					sub = _("None");
+			}
+
+			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
+
+		}	
+		
 		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 			purple_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
 		}
