@@ -1754,15 +1754,12 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		gboolean multiple_resources = 
 			jb->resources && g_list_next(jb->resources);
 		JabberBuddyResource *top_jbr = jabber_buddy_find_resource(jb, NULL);
-		
+
 		/* resource-specific info for the top resource */
 		jabber_tooltip_add_resource_text(top_jbr, user_info, 
 			multiple_resources);
-		
-		for(l=jb->resources; l; l = l->next) {
-			char *res = NULL;
-			char *label;
 
+		for(l=jb->resources; l; l = l->next) {
 			jbr = l->data;
 			/* the remaining resources */
 			if (jbr != top_jbr) {
@@ -1773,7 +1770,6 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		
 		if (full) {
 			PurpleStatus *status;
-
 
 			status = purple_presence_get_active_status(presence);
 			mood = purple_status_get_attr_string(status, "mood");
