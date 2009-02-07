@@ -1756,8 +1756,10 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		JabberBuddyResource *top_jbr = jabber_buddy_find_resource(jb, NULL);
 
 		/* resource-specific info for the top resource */
-		jabber_tooltip_add_resource_text(top_jbr, user_info, 
-			multiple_resources);
+		if (top_jbr) {
+			jabber_tooltip_add_resource_text(top_jbr, user_info, 
+				multiple_resources);
+		}
 
 		for(l=jb->resources; l; l = l->next) {
 			jbr = l->data;
