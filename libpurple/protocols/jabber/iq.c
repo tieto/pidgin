@@ -173,10 +173,15 @@ static void jabber_iq_time_parse(JabberStream *js, const char *from,
 	const char *xmlns;
 	JabberIq *iq;
 	time_t now_t;
+	struct tm now_local;
+	struct tm now_utc;
 	struct tm *now;
 
 	time(&now_t);
 	now = localtime(&now_t);
+	memcpy(&now_local, now, sizeof(struct tm));
+	now = gmtime(&now_t);
+	memcpy(&now_utc, now, sizeof(struct tm));
 
 	xmlns = xmlnode_get_namespace(child);
 
@@ -194,19 +199,19 @@ static void jabber_iq_time_parse(JabberStream *js, const char *from,
 		utc = xmlnode_new_child(child, "utc");
 
 		if(!strcmp("urn:xmpp:time", xmlns)) {
-			tz = purple_get_tzoff_str(now, TRUE);
+			tz = purple_get_tzoff_str(&now_local, TRUE);
 			xmlnode_insert_data(xmlnode_new_child(child, "tzo"), tz, -1);
 
-			date = purple_utf8_strftime("%FT%TZ", now);
+			date = purple_utf8_strftime("%FT%TZ", &now_utc);
 			xmlnode_insert_data(utc, date, -1);
 		} else { /* jabber:iq:time */
-			tz = purple_utf8_strftime("%Z", now);
+			tz = purple_utf8_strftime("%Z", &now_local);
 			xmlnode_insert_data(xmlnode_new_child(child, "tz"), tz, -1);
 
-			date = purple_utf8_strftime("%Y%m%dT%T", now);
+			date = purple_utf8_strftime("%Y%m%dT%T", &now_utc);
 			xmlnode_insert_data(utc, date, -1);
 
-			display = purple_utf8_strftime("%d %b %Y %T", now);
+			display = purple_utf8_strftime("%d %b %Y %T", &now_local);
 			xmlnode_insert_data(xmlnode_new_child(child, "display"), display, -1);
 		}
 
