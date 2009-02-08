@@ -200,9 +200,11 @@ jabber_data_associate_remote(JabberData *data)
 }
 
 void
-jabber_data_parse(JabberStream *js, xmlnode *data_node, const char *who, const char *id)
+jabber_data_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *result = NULL;
+	const char *who = xmlnode_get_attrib(packet, "from");
+	xmlnode *data_node = xmlnode_get_child(packet, "data");
 	const JabberData *data =
 		jabber_data_find_local_by_cid(xmlnode_get_attrib(data_node, "cid"));
 
@@ -211,12 +213,12 @@ jabber_data_parse(JabberStream *js, xmlnode *data_node, const char *who, const c
 
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
 		xmlnode_set_attrib(result->node, "to", who);
-		xmlnode_set_attrib(result->node, "id", id);
+		xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
 		xmlnode_insert_child(result->node, item_not_found);
 	} else {
 		result = jabber_iq_new(js, JABBER_IQ_RESULT);
 		xmlnode_set_attrib(result->node, "to", who);
-		xmlnode_set_attrib(result->node, "id", id);
+		xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
 		xmlnode_insert_child(result->node,
 							 jabber_data_get_xml_definition(data));
 	}
