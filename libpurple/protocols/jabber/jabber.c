@@ -1021,11 +1021,11 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 	
-	if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:data"))) {
+	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
 		jabber_x_data_request(js, x, jabber_register_x_data_cb, g_strdup(from));
 		return;
 
-	} else if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:oob"))) {
+	} else if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:oob"))) {
 		xmlnode *url;
 
 		if((url = xmlnode_get_child(x, "url"))) {
