@@ -22,6 +22,9 @@
 #ifndef _PURPLE_JABBER_OOB_H_
 #define _PURPLE_JABBER_OOB_H_
 
-void jabber_oob_parse(JabberStream *js, xmlnode *packet);
+#include "jabber.h"
+
+void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
+                      const char *id, xmlnode *querynode);
 
 #endif /* _PURPLE_JABBER_OOB_H_ */

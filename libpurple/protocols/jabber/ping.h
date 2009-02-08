@@ -23,9 +23,11 @@
 #define _PURPLE_JABBER_PING_H_
 
 #include "jabber.h"
+#include "iq.h"
 #include "xmlnode.h"
 
-void jabber_ping_parse(JabberStream *js, xmlnode *packet);
+void jabber_ping_parse(JabberStream *js, const char *from,
+                       JabberIqType, const char *id, xmlnode *child);
 gboolean jabber_ping_jid(JabberStream *js, const char *jid);
 
 #endif /* _PURPLE_JABBER_PING_H_ */

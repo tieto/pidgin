@@ -969,23 +969,21 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 	jabber_iq_send(iq);
 }
 
-void jabber_register_parse(JabberStream *js, xmlnode *packet)
+void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type,
+                           const char *id, xmlnode *query)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type;
-	const char *from;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	xmlnode *query, *x, *y;
+	xmlnode *x, *y;
 	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
+	if (type != JABBER_IQ_RESULT)
 		return;
 
-	from = xmlnode_get_attrib(packet, "from");
 	if (!from)
 		from = js->serverFQDN;
 	g_return_if_fail(from != NULL);
@@ -994,8 +992,6 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 	}
-
-	query = xmlnode_get_child(packet, "query");
 
 	if(xmlnode_get_child(query, "registered")) {
 		registered = TRUE;

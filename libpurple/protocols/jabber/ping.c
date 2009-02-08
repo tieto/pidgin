@@ -35,29 +35,19 @@ static void jabber_keepalive_pong_cb(JabberStream *js)
 }
 
 void
-jabber_ping_parse(JabberStream *js, xmlnode *packet)
+jabber_ping_parse(JabberStream *js, const char *from,
+                  JabberIqType type, const char *id, xmlnode *ping)
 {
-	const char *type, *id, *from;
-
-	type = xmlnode_get_attrib(packet, "type");
-	from = xmlnode_get_attrib(packet, "from");
-	id   = xmlnode_get_attrib(packet, "id");
-
-	if (!type) {
-		purple_debug_warning("jabber", "jabber_ping with no type\n");
-		return;
-	}
-	
 	purple_debug_info("jabber", "jabber_ping_parse\n");
 
-	if (!strcmp(type, "get")) {
+	if (type == JABBER_IQ_GET) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 
 		xmlnode_set_attrib(iq->node, "to", from);
 		xmlnode_set_attrib(iq->node, "id", id);
 
 		jabber_iq_send(iq);
-	} else if (!strcmp(type, "set")) {
+	} else if (type == JABBER_IQ_SET) {
 		/* XXX: error */
 	}
 }
