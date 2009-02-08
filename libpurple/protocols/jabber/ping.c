@@ -38,8 +38,6 @@ void
 jabber_ping_parse(JabberStream *js, const char *from,
                   JabberIqType type, const char *id, xmlnode *ping)
 {
-	purple_debug_info("jabber", "jabber_ping_parse\n");
-
 	if (type == JABBER_IQ_GET) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 
@@ -58,14 +56,15 @@ static void jabber_ping_result_cb(JabberStream *js, xmlnode *packet,
 {
 	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *from = xmlnode_get_attrib(packet, "from");
+	char *own_bare_jid = g_strdup_printf("%s@%s", js->user->node,
+	                                     js->user->domain);
 
-	purple_debug_info("jabber", "jabber_ping_result_cb\n");
-
-	if (!from || !strcmp(from, js->user->domain)) {
-		/* If the pong is from our server, treat it as a return from the
+	if (!from || !strcmp(from, own_bare_jid)) {
+		/* If the pong is from our bare JID, treat it as a return from the
 		 * keepalive functions */
 		jabber_keepalive_pong_cb(js);
 	}
+	g_free(own_bare_jid);
 
 	if(type && !strcmp(type, "result")) {
 		purple_debug_info("jabber", "PONG!\n");
@@ -78,8 +77,6 @@ gboolean jabber_ping_jid(JabberStream *js, const char *jid)
 {
 	JabberIq *iq;
 	xmlnode *ping;
-
-	purple_debug_info("jabber", "jabber_ping_jid\n");
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
 	if (jid)
