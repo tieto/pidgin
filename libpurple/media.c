@@ -83,6 +83,7 @@ struct _PurpleMediaStream
 
 struct _PurpleMediaPrivate
 {
+	PurpleMediaManager *manager;
 	FsConference *conference;
 	gboolean initiator;
 
@@ -129,6 +130,7 @@ static guint purple_media_signals[LAST_SIGNAL] = {0};
 
 enum {
 	PROP_0,
+	PROP_MANAGER,
 	PROP_CONFERENCE,
 	PROP_INITIATOR,
 };
@@ -182,6 +184,13 @@ purple_media_class_init (PurpleMediaClass *klass)
 	gobject_class->finalize = purple_media_finalize;
 	gobject_class->set_property = purple_media_set_property;
 	gobject_class->get_property = purple_media_get_property;
+
+	g_object_class_install_property(gobject_class, PROP_MANAGER,
+			g_param_spec_object("manager",
+			"Purple Media Manager",
+			"The media manager that contains this media session.",
+			PURPLE_TYPE_MEDIA_MANAGER,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_CONFERENCE,
 			g_param_spec_object("conference",
@@ -276,8 +285,7 @@ purple_media_dispose(GObject *media)
 
 	purple_debug_info("media","purple_media_dispose\n");
 
-	purple_media_manager_remove_media(purple_media_manager_get(),
-			PURPLE_MEDIA(media));
+	purple_media_manager_remove_media(priv->manager, PURPLE_MEDIA(media));
 
 	if (priv->confbin) {
 		gst_element_set_state(GST_ELEMENT(priv->confbin),
@@ -312,6 +320,11 @@ purple_media_dispose(GObject *media)
 			g_object_unref(participants->data);
 	}
 
+	if (priv->manager) {
+		g_object_unref(priv->manager);
+		priv->manager = NULL;
+	}
+
 	G_OBJECT_CLASS(parent_class)->finalize(media);
 }
 
@@ -344,6 +357,10 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
+		case PROP_MANAGER:
+			media->priv->manager = g_value_get_object(value);
+			g_object_ref(media->priv->manager);
+			break;
 		case PROP_CONFERENCE: {
 			gchar *name;
 
@@ -384,6 +401,9 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
+		case PROP_MANAGER:
+			g_value_set_object(value, media->priv->manager);
+			break;
 		case PROP_CONFERENCE:
 			g_value_set_object(value, media->priv->conference);
 			break;
@@ -1181,7 +1201,7 @@ purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const g
 }
 
 static gboolean
-media_bus_call(GstBus *bus, GstMessage *msg, gpointer dummy)
+media_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
 {
 	switch(GST_MESSAGE_TYPE(msg)) {
 		case GST_MESSAGE_EOS:
@@ -1206,7 +1226,7 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer dummy)
 			PurpleMedia *media = NULL;
 			if (FS_IS_CONFERENCE(GST_MESSAGE_SRC(msg))) {
 				GList *iter = purple_media_manager_get_media(
-						purple_media_manager_get());
+						manager);
 				for (; iter; iter = g_list_next(iter)) {
 					if (PURPLE_MEDIA(iter->data)->priv->conference
 							== FS_CONFERENCE(GST_MESSAGE_SRC(msg))) {
@@ -1335,7 +1355,8 @@ purple_media_get_pipeline(PurpleMedia *media)
 		bus = gst_pipeline_get_bus(GST_PIPELINE(media->priv->pipeline));
 		gst_bus_add_signal_watch(GST_BUS(bus));
 		g_signal_connect(G_OBJECT(bus), "message",
-				G_CALLBACK(media_bus_call), NULL);
+				G_CALLBACK(media_bus_call),
+				media->priv->manager);
 		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
 		gst_object_unref(bus);
 		gst_element_set_state(pipeline, GST_STATE_PLAYING);
@@ -1746,7 +1767,7 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 
 	if (stream->sink == NULL)
 		stream->sink = purple_media_manager_get_element(
-			purple_media_manager_get(), type);
+			stream->session->media->priv->manager, type);
 
 	gst_bin_add(GST_BIN(stream->session->media->priv->confbin),
 		    stream->sink);
@@ -1841,7 +1862,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		session_type = purple_media_from_fs(type, FS_DIRECTION_SEND);
 		purple_media_set_src(media, session->id,
 				purple_media_manager_get_element(
-				purple_media_manager_get(), session_type));
+				media->priv->manager, session_type));
 		gst_element_set_state(session->src, GST_STATE_PLAYING);
 	}
 

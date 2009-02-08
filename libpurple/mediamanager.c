@@ -165,6 +165,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	}
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
+			     "manager", manager,
 			     "conference", conference,
 			     "initiator", initiator,
 			     NULL));
