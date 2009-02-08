@@ -1830,7 +1830,8 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 		}
 
 		if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
-				jabber_resource_has_capability(jbr, "urn:xmpp:time")) {
+				(!jbr->caps ||
+				 	jabber_resource_has_capability(jbr, "urn:xmpp:time"))) {
 			xmlnode *child;
 			iq = jabber_iq_new(js, JABBER_IQ_GET);
 			xmlnode_set_attrib(iq->node, "to", full_jid);
