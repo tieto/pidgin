@@ -183,7 +183,8 @@ static void jabber_iq_last_parse(JabberStream *js, const char *from,
 	if(type == JABBER_IQ_GET) {
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:last");
 		jabber_iq_set_id(iq, id);
-		xmlnode_set_attrib(iq->node, "to", from);
+		if (from)
+			xmlnode_set_attrib(iq->node, "to", from);
 
 		query = xmlnode_get_child(iq->node, "query");
 
@@ -215,7 +216,8 @@ static void jabber_iq_time_parse(JabberStream *js, const char *from,
 
 		iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 		jabber_iq_set_id(iq, id);
-		xmlnode_set_attrib(iq->node, "to", from);
+		if (from)
+			xmlnode_set_attrib(iq->node, "to", from);
 
 		child = xmlnode_new_child(iq->node, child->name);
 		xmlnode_set_namespace(child, xmlns);
@@ -264,7 +266,8 @@ static void jabber_iq_version_parse(JabberStream *js, const char *from,
 #endif
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:version");
-		xmlnode_set_attrib(iq->node, "to", from);
+		if (from)
+			xmlnode_set_attrib(iq->node, "to", from);
 		jabber_iq_set_id(iq, id);
 
 		query = xmlnode_get_child(iq->node, "query");
@@ -351,8 +354,11 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 			xmlnode_free(iq->node);
 			iq->node = xmlnode_copy(packet);
-			xmlnode_set_attrib(iq->node, "to", from);
-			xmlnode_remove_attrib(iq->node, "from");
+			if (from) {
+				xmlnode_set_attrib(iq->node, "to", from);
+				xmlnode_remove_attrib(iq->node, "from");
+			}
+
 			xmlnode_set_attrib(iq->node, "type", "error");
 			/* This id is clearly not useful, but we must put something there for a valid stanza */
 			iq->id = jabber_get_next_id(js);
@@ -399,8 +405,11 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 		xmlnode_free(iq->node);
 		iq->node = xmlnode_copy(packet);
-		xmlnode_set_attrib(iq->node, "to", from);
-		xmlnode_remove_attrib(iq->node, "from");
+		if (from) {
+			xmlnode_set_attrib(iq->node, "to", from);
+			xmlnode_remove_attrib(iq->node, "from");
+		}
+
 		xmlnode_set_attrib(iq->node, "type", "error");
 		error = xmlnode_new_child(iq->node, "error");
 		xmlnode_set_attrib(error, "type", "cancel");

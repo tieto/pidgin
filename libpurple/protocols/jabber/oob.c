@@ -198,7 +198,7 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	if(type != JABBER_IQ_SET)
 		return;
 
-	if(!querynode)
+	if(!from)
 		return;
 
 	if(!(urlnode = xmlnode_get_child(querynode, "url")))

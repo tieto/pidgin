@@ -43,7 +43,8 @@ jabber_ping_parse(JabberStream *js, const char *from,
 	if (type == JABBER_IQ_GET) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 
-		xmlnode_set_attrib(iq->node, "to", from);
+		if (from)
+			xmlnode_set_attrib(iq->node, "to", from);
 		xmlnode_set_attrib(iq->node, "id", id);
 
 		jabber_iq_send(iq);
