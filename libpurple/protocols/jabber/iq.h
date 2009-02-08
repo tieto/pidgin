@@ -67,7 +67,6 @@ void jabber_iq_free(JabberIq *iq);
 void jabber_iq_init(void);
 void jabber_iq_uninit(void);
 
-void jabber_iq_register_handler(const char *node, const char *xmlns,
-                                JabberIqHandler *func);
+void jabber_iq_register_handler(const char *xmlns, JabberIqHandler *func);
 
 #endif /* _PURPLE_JABBER_IQ_H_ */
