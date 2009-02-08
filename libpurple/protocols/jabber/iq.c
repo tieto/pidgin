@@ -39,38 +39,8 @@
 #include "utsname.h"
 #endif
 
-struct _JabberIqHandlerKey
-{
-	char *node;
-	char *xmlns;
-};
-
-typedef struct _JabberIqHandlerKey JabberIqHandlerKey;
-
 GHashTable *iq_handlers = NULL;
 
-static guint iqhandler_hash(gconstpointer data)
-{
-	const JabberIqHandlerKey *key = data;
-	return g_str_hash(key->node) ^ g_str_hash(key->xmlns);
-}
-
-static gboolean iqhandler_equal(gconstpointer a, gconstpointer b)
-{
-	const JabberIqHandlerKey *key_a = a;
-	const JabberIqHandlerKey *key_b = b;
-
-	return (g_str_equal(key_a->node, key_b->node) &&
-	        g_str_equal(key_a->xmlns, key_b->xmlns));
-}
-
-static void iqhandler_destroy(gpointer data)
-{
-	JabberIqHandlerKey *key = data;
-	g_free(key->node);
-	g_free(key->xmlns);
-	g_free(key);
-}
 
 JabberIq *jabber_iq_new(JabberStream *js, JabberIqType type)
 {
@@ -386,11 +356,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	/* Apparently not, so lets see if we have a pre-defined handler */
 	if(child && (xmlns = xmlnode_get_namespace(child))) {
-		JabberIqHandlerKey key;
-		key.node  = child->name;
-		/* xmlns isn't being modified, I promise */
-		key.xmlns = (char *)xmlns;
-		if((jih = g_hash_table_lookup(iq_handlers, &key))) {
+		if((jih = g_hash_table_lookup(iq_handlers, xmlns))) {
 			jih(js, packet);
 			return;
 		}
@@ -417,35 +383,29 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	}
 }
 
-void jabber_iq_register_handler(const char *node, const char *xmlns,
-                                JabberIqHandler *handlerfunc)
+void jabber_iq_register_handler(const char *xmlns, JabberIqHandler *handlerfunc)
 {
-	JabberIqHandlerKey *key = g_new(JabberIqHandlerKey, 1);
-	key->node  = g_strdup(node);
-	key->xmlns = g_strdup(xmlns);
-	g_hash_table_replace(iq_handlers, key, handlerfunc);
+	g_hash_table_replace(iq_handlers, g_strdup(xmlns), handlerfunc);
 }
 
 void jabber_iq_init(void)
 {
-	iq_handlers = g_hash_table_new_full(iqhandler_hash, iqhandler_equal,
-	                                    iqhandler_destroy, NULL);
+	iq_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	jabber_iq_register_handler("mailbox", "google:mail:notify", jabber_gmail_poke);
-	jabber_iq_register_handler("new-mail", "google:mail:notify", jabber_gmail_poke);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/bytestreams", jabber_bytestreams_parse);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
-	jabber_iq_register_handler("si", "http://jabber.org/protocol/si", jabber_si_parse);
-	jabber_iq_register_handler("query", "jabber:iq:last", jabber_iq_last_parse);
-	jabber_iq_register_handler("query", "jabber:iq:oob", jabber_oob_parse);
-	jabber_iq_register_handler("query", "jabber:iq:register", jabber_register_parse);
-	jabber_iq_register_handler("query", "jabber:iq:roster", jabber_roster_parse);
-	jabber_iq_register_handler("query", "jabber:iq:time", jabber_iq_time_parse);
-	jabber_iq_register_handler("query", "jabber:iq:version", jabber_iq_version_parse);
-	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);
-	jabber_iq_register_handler("ping", "urn:xmpp:ping", jabber_ping_parse);
-	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
+	jabber_iq_register_handler("google:mail:notify", jabber_gmail_poke);
+	jabber_iq_register_handler("http://jabber.org/protocol/bytestreams", jabber_bytestreams_parse);
+	jabber_iq_register_handler("http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
+	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
+	jabber_iq_register_handler("http://jabber.org/protocol/si", jabber_si_parse);
+	jabber_iq_register_handler("jabber:iq:last", jabber_iq_last_parse);
+	jabber_iq_register_handler("jabber:iq:oob", jabber_oob_parse);
+	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
+	jabber_iq_register_handler("jabber:iq:roster", jabber_roster_parse);
+	jabber_iq_register_handler("jabber:iq:time", jabber_iq_time_parse);
+	jabber_iq_register_handler("jabber:iq:version", jabber_iq_version_parse);
+	jabber_iq_register_handler(XEP_0231_NAMESPACE, jabber_data_parse);
+	jabber_iq_register_handler("urn:xmpp:ping", jabber_ping_parse);
+	jabber_iq_register_handler("urn:xmpp:time", jabber_iq_time_parse);
 }
 
 void jabber_iq_uninit(void)
