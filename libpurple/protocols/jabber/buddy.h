@@ -81,6 +81,8 @@ typedef struct _JabberBuddyResource {
 		char *name;
 		char *os;
 	} client;
+	/* tz_off == PURPLE_NO_TZ_OFF when unset */
+	long tz_off;
 	JabberCapsClientInfo *caps;
 	GList *commands;
 } JabberBuddyResource;

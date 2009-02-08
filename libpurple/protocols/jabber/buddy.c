@@ -155,6 +155,7 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 		jbr->jb = jb;
 		jbr->name = g_strdup(resource);
 		jbr->capabilities = JABBER_CAP_XHTML;
+		jbr->tz_off = PURPLE_NO_TZ_OFF;
 		jb->resources = g_list_append(jb->resources, jbr);
 	}
 	jbr->priority = priority;
@@ -800,7 +801,16 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			if(jbr->client.os) {
 				purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
 			}
-		}		
+		}
+		if (jbr && jbr->tz_off != PURPLE_NO_TZ_OFF) {
+			time_t now_t;
+			struct tm *now;
+			time(&now_t);
+			now_t += jbr->tz_off;
+			now = gmtime(&now_t);
+
+			purple_notify_user_info_add_pair(user_info, _("Local Time"), purple_time_format(now));
+		}
 		if(jbir) {
 			if(jbir->idle_seconds > 0) {
 				char *idle = purple_str_seconds_to_string(jbir->idle_seconds);
@@ -969,6 +979,16 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				if(jbr->client.os) {
 					purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
 				}
+			}
+
+			if (jbr->tz_off != PURPLE_NO_TZ_OFF) {
+				time_t now_t;
+				struct tm *now;
+				time(&now_t);
+				now_t += jbr->tz_off;
+				now = gmtime(&now_t);
+
+				purple_notify_user_info_add_pair(user_info, _("Local Time"), purple_time_format(now));
 			}
 
 			if(jbr->name && (jbir = g_hash_table_lookup(jbi->resources, jbr->name))) {
@@ -1640,6 +1660,44 @@ static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
+static void jabber_time_parse(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	JabberBuddyInfo *jbi = data;
+	JabberBuddyResource *jbr;
+	char *resource_name;
+	const char *type, *id, *from;
+
+	g_return_if_fail(jbi != NULL);
+
+	id = xmlnode_get_attrib(packet, "id");
+	type = xmlnode_get_attrib(packet, "type");
+	from = xmlnode_get_attrib(packet, "from");
+
+	jabber_buddy_info_remove_id(jbi, id);
+
+	if (!from)
+		return;
+
+	resource_name = jabber_get_resource(from);
+	jbr = resource_name ? jabber_buddy_find_resource(jbi->jb, resource_name) : NULL;
+	if (resource_name && jbr) {
+		if (type && !strcmp(type, "result")) {
+			xmlnode *time = xmlnode_get_child(packet, "time");
+			xmlnode *tzo = time ? xmlnode_get_child(packet, "tzo") : NULL;
+			xmlnode *utc = time ? xmlnode_get_child(packet, "utc") : NULL;
+			if (tzo && utc) {
+				char *timestamp = g_strdup_printf("%s %s",
+				        xmlnode_get_data(utc), xmlnode_get_data(tzo));
+				purple_str_to_time(timestamp, FALSE, NULL, &(jbr->tz_off), NULL);
+				g_free(timestamp);
+			}
+		}
+		g_free(resource_name);
+	}
+
+	jabber_buddy_info_show_if_ready(jbi);
+}
+
 void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js)
 {
 	if (js->pending_buddy_info_requests)
@@ -1767,6 +1825,18 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
 			xmlnode_set_attrib(iq->node, "to", full_jid);
 			jabber_iq_set_callback(iq, jabber_last_parse, jbi);
+			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+			jabber_iq_send(iq);
+		}
+
+		if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
+				jabber_resource_has_capability(jbr, "urn:xmpp:time")) {
+			xmlnode *child;
+			iq = jabber_iq_new(js, JABBER_IQ_GET);
+			xmlnode_set_attrib(iq->node, "to", full_jid);
+			child = xmlnode_new_child(iq->node, "time");
+			xmlnode_set_namespace(child, "urn:xmpp:time");
+			jabber_iq_set_callback(iq, jabber_time_parse, jbi);
 			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
 			jabber_iq_send(iq);
 		}
