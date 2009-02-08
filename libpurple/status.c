@@ -250,7 +250,7 @@ purple_status_type_new(PurpleStatusPrimitive primitive, const char *id,
 {
 	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, NULL);
 
-	return purple_status_type_new_full(primitive, id, name, FALSE,
+	return purple_status_type_new_full(primitive, id, name, TRUE,
 			user_settable, FALSE);
 }
 
@@ -816,28 +816,42 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	/* Reset any unspecified attributes to their default value */
 	status_type = purple_status_get_type(status);
 	l = purple_status_type_get_attrs(status_type);
-	while (l != NULL)
-	{
+	while (l != NULL) {
 		PurpleStatusAttr *attr;
 
 		attr = l->data;
-		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp))
-		{
+		l = l->next;
+
+		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp)) {
 			PurpleValue *default_value;
 			default_value = purple_status_attr_get_value(attr);
-			if (default_value->type == PURPLE_TYPE_STRING)
-				purple_status_set_attr_string(status, attr->id,
-						purple_value_get_string(default_value));
-			else if (default_value->type == PURPLE_TYPE_INT)
-				purple_status_set_attr_int(status, attr->id,
-						purple_value_get_int(default_value));
-			else if (default_value->type == PURPLE_TYPE_BOOLEAN)
-				purple_status_set_attr_boolean(status, attr->id,
-						purple_value_get_boolean(default_value));
+			if (default_value->type == PURPLE_TYPE_STRING) {
+				const char *cur = purple_status_get_attr_string(status, attr->id);
+				const char *def = purple_value_get_string(default_value);
+				if ((cur == NULL && def == NULL)
+				    || (cur != NULL && def != NULL
+					&& !strcmp(cur, def))) {
+					continue;
+				}
+
+				purple_status_set_attr_string(status, attr->id, def);
+			} else if (default_value->type == PURPLE_TYPE_INT) {
+				int cur = purple_status_get_attr_int(status, attr->id);
+				int def = purple_value_get_int(default_value);
+				if (cur == def)
+					continue;
+
+				purple_status_set_attr_int(status, attr->id, def);
+			} else if (default_value->type == PURPLE_TYPE_BOOLEAN) {
+				gboolean cur = purple_status_get_attr_boolean(status, attr->id);
+				gboolean def = purple_value_get_boolean(default_value);
+				if (cur == def)
+					continue;
+
+				purple_status_set_attr_boolean(status, attr->id, def);
+			}
 			changed = TRUE;
 		}
-
-		l = l->next;
 	}
 	g_list_free(specified_attr_ids);
 

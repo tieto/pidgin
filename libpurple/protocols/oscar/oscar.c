@@ -739,21 +739,21 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 static char *oscar_icqstatus(int state) {
 	/* Make a cute little string that shows the status of the dude or dudet */
 	if (state & AIM_ICQ_STATE_CHAT)
-		return g_strdup_printf(_("Free For Chat"));
+		return g_strdup(_("Free For Chat"));
 	else if (state & AIM_ICQ_STATE_DND)
-		return g_strdup_printf(_("Do Not Disturb"));
+		return g_strdup(_("Do Not Disturb"));
 	else if (state & AIM_ICQ_STATE_OUT)
-		return g_strdup_printf(_("Not Available"));
+		return g_strdup(_("Not Available"));
 	else if (state & AIM_ICQ_STATE_BUSY)
-		return g_strdup_printf(_("Occupied"));
+		return g_strdup(_("Occupied"));
 	else if (state & AIM_ICQ_STATE_AWAY)
-		return g_strdup_printf(_("Away"));
+		return g_strdup(_("Away"));
 	else if (state & AIM_ICQ_STATE_WEBAWARE)
-		return g_strdup_printf(_("Web Aware"));
+		return g_strdup(_("Web Aware"));
 	else if (state & AIM_ICQ_STATE_INVISIBLE)
-		return g_strdup_printf(_("Invisible"));
+		return g_strdup(_("Invisible"));
 	else
-		return g_strdup_printf(_("Online"));
+		return g_strdup(_("Online"));
 }
 
 static void
@@ -1088,59 +1088,64 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 }
 
 /**
- * This is the callback function anytime purple_proxy_connect()
- * establishes a new TCP connection with an oscar host.  Depending
- * on the type of host, we do a few different things here.
+ * This is called from the callback functions for establishing
+ * a TCP connection with an oscar host if an error occurred.
  */
 static void
-connection_established_cb(gpointer data, gint source, const gchar *error_message)
+connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 {
-	PurpleConnection *gc;
 	OscarData *od;
-	PurpleAccount *account;
-	FlapConnection *conn;
+	PurpleConnection *gc;
 
-	conn = data;
+	od = conn->od;
+	gc = od->gc;
+
+	purple_debug_error("oscar", "unable to connect to FLAP "
+			"server of type 0x%04hx\n", conn->type);
+
+	if (conn->type == SNAC_FAMILY_AUTH)
+	{
+		gchar *msg;
+		msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
+				error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
+	}
+	else if (conn->type == SNAC_FAMILY_LOCATE)
+	{
+		gchar *msg;
+		msg = g_strdup_printf(_("Could not connect to BOS server:\n%s"),
+				error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
+	}
+	else
+	{
+		/* Maybe we should call this for BOS connections, too? */
+		flap_connection_schedule_destroy(conn,
+				OSCAR_DISCONNECT_COULD_NOT_CONNECT, error_message);
+	}
+}
+
+/**
+ * This is called from the callback functions for establishing
+ * a TCP connection with an oscar host. Depending on the type
+ * of host, we do a few different things here.
+ */
+static void
+connection_common_established_cb(FlapConnection *conn)
+{
+	OscarData *od;
+	PurpleConnection *gc;
+	PurpleAccount *account;
+
 	od = conn->od;
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
 
-	conn->connect_data = NULL;
-	conn->fd = source;
-
-	if (source < 0)
-	{
-		purple_debug_error("oscar", "unable to connect to FLAP "
-				"server of type 0x%04hx\n", conn->type);
-		if (conn->type == SNAC_FAMILY_AUTH)
-		{
-			gchar *msg;
-			msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
-					error_message);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
-			g_free(msg);
-		}
-		else if (conn->type == SNAC_FAMILY_LOCATE)
-		{
-			gchar *msg;
-			msg = g_strdup_printf(_("Could not connect to BOS server:\n%s"),
-					error_message);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
-			g_free(msg);
-		}
-		else
-		{
-			/* Maybe we should call this for BOS connections, too? */
-			flap_connection_schedule_destroy(conn,
-					OSCAR_DISCONNECT_COULD_NOT_CONNECT, error_message);
-		}
-		return;
-	}
-
 	purple_debug_info("oscar", "connected to FLAP server of type 0x%04hx\n",
 			conn->type);
-	conn->watcher_incoming = purple_input_add(conn->fd,
-			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
+
 	if (conn->cookie == NULL)
 		flap_connection_send_version(od, conn);
 	else
@@ -1168,6 +1173,85 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 		od->oscar_chats = g_slist_prepend(od->oscar_chats, conn->new_conn_data);
 		conn->new_conn_data = NULL;
 	}
+}
+
+static void
+connection_established_cb(gpointer data, gint source, const gchar *error_message)
+{
+	FlapConnection *conn;
+
+	conn = data;
+
+	conn->connect_data = NULL;
+	conn->fd = source;
+
+	if (source < 0)
+	{
+		connection_common_error_cb(conn, error_message);
+		return;
+	}
+
+	conn->watcher_incoming = purple_input_add(conn->fd,
+			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
+	connection_common_established_cb(conn);
+}
+
+static void
+ssl_connection_established_cb(gpointer data, PurpleSslConnection *gsc,
+		PurpleInputCondition cond)
+{
+	FlapConnection *conn;
+
+	conn = data;
+
+	purple_ssl_input_add(gsc, flap_connection_recv_cb_ssl, conn);
+	connection_common_established_cb(conn);
+}
+
+static void
+ssl_connection_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error,
+		gpointer data)
+{
+	FlapConnection *conn;
+
+	conn = data;
+
+	if (conn->watcher_outgoing)
+	{
+		purple_input_remove(conn->watcher_outgoing);
+		conn->watcher_outgoing = 0;
+	}
+
+	/* sslconn frees the connection on error */
+	conn->gsc = NULL;
+
+	connection_common_error_cb(conn, purple_ssl_strerror(error));
+}
+
+static void
+ssl_proxy_conn_established_cb(gpointer data, gint source, const gchar *error_message)
+{
+	OscarData *od;
+	PurpleConnection *gc;
+	PurpleAccount *account;
+	FlapConnection *conn;
+
+	conn = data;
+	od = conn->od;
+	gc = od->gc;
+	account = purple_connection_get_account(gc);
+
+	conn->connect_data = NULL;
+
+	if (source < 0)
+	{
+		connection_common_error_cb(conn, error_message);
+		return;
+	}
+
+	conn->gsc = purple_ssl_connect_with_host_fd(account, source,
+			ssl_connection_established_cb, ssl_connection_error_cb,
+			conn->ssl_cert_cn, conn);
 }
 
 static void
@@ -1430,17 +1514,56 @@ oscar_login(PurpleAccount *account)
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
 
+	od->use_ssl = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
+
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
 	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
 	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
-	newconn->connect_data = purple_proxy_connect(NULL, account,
-			purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
-			purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
-			connection_established_cb, newconn);
-	if (newconn->connect_data == NULL)
-	{
+	if (od->use_ssl) {
+		if (purple_ssl_is_supported()) {
+			const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+			/*
+			 * If the account's server is what the oscar prpl has offered as
+			 * the default login server through the vast eons (all two of
+			 * said default options, AFAIK) and the user wants SSL, we'll
+			 * do what we know is best for them and change the setting out
+			 * from under them to the SSL login server.
+			 */
+			if (!strcmp(server, OSCAR_DEFAULT_LOGIN_SERVER) || !strcmp(server, OSCAR_OLD_LOGIN_SERVER)) {
+				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
+				purple_account_set_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+				server = OSCAR_DEFAULT_SSL_LOGIN_SERVER;
+			}
+
+			newconn->gsc = purple_ssl_connect(account, server,
+					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
+					ssl_connection_established_cb, ssl_connection_error_cb, newconn);
+		} else {
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+					_("SSL support unavailable"));
+		}
+	} else {
+		const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+
+		/*
+		 * See the comment above. We do the reverse here. If they don't want
+		 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
+		 * set it back to the default.
+		 */
+		if (!strcmp(server, OSCAR_DEFAULT_SSL_LOGIN_SERVER)) {
+			purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
+			purple_account_set_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+			server = OSCAR_DEFAULT_LOGIN_SERVER;
+		}
+
+		newconn->connect_data = purple_proxy_connect(NULL, account, server,
+				purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
+				connection_established_cb, newconn);
+	}
+
+	if (newconn->gsc == NULL && newconn->connect_data == NULL) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Couldn't connect to host"));
 		return;
@@ -1565,8 +1688,23 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	newconn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
 	newconn->cookielen = info->cookielen;
 	newconn->cookie = g_memdup(info->cookie, info->cookielen);
-	newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-			connection_established_cb, newconn);
+
+	if (od->use_ssl)
+	{
+		/*
+		 * This shouldn't be hardcoded except that the server isn't sending
+		 * us a name to use for comparing the certificate common name.
+		 */
+		newconn->ssl_cert_cn = g_strdup("bos.oscar.aol.com");
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				ssl_proxy_conn_established_cb, newconn);
+	}
+	else
+	{
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				connection_established_cb, newconn);
+	}
+
 	g_free(host);
 	if (newconn->connect_data == NULL)
 	{
@@ -1653,10 +1791,10 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	}
 	if (in != '\n') {
 		char buf[256];
-		GHashTable *ui_info = purple_core_get_ui_info();		
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."),
-				   ((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+		GHashTable *ui_info = purple_core_get_ui_info();
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
+				"If so, check %s for updates."),
+				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
@@ -1871,8 +2009,22 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	else
 		host = g_strdup(redir->ip);
 
-	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx\n",
-					host, port, redir->group);
+	/*
+	 * These FLAP servers advertise SSL (type "0x02"), but SSL connections to these hosts
+	 * die a painful death. iChat and Miranda, when using SSL, still do these in plaintext.
+	 */
+	if (redir->use_ssl && (redir->group == SNAC_FAMILY_ADMIN ||
+	                       redir->group == SNAC_FAMILY_BART))
+	{
+		purple_debug_info("oscar", "Ignoring broken SSL for FLAP type 0x%04hx.\n",
+						redir->group);
+		redir->use_ssl = 0;
+	}
+
+	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx%s\n",
+					host, port, redir->group,
+					od->use_ssl && !redir->use_ssl ? " without SSL, despite main stream encryption" : "");
+
 	newconn = flap_connection_new(od, redir->group);
 	newconn->cookielen = redir->cookielen;
 	newconn->cookie = g_memdup(redir->cookie, redir->cookielen);
@@ -1890,9 +2042,26 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		purple_debug_info("oscar", "Connecting to chat room %s exchange %hu\n", cc->name, cc->exchange);
 	}
 
-	newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-			connection_established_cb, newconn);
-	if (newconn->connect_data == NULL)
+
+	if (redir->use_ssl)
+	{
+		/*
+		 * TODO: It should be possible to specify a certificate common name
+		 * distinct from the host we're passing to purple_ssl_connect. The
+		 * way to work around that is to use purple_proxy_connect +
+		 * purple_ssl_connect_with_host_fd
+		 */
+		newconn->ssl_cert_cn = g_strdup(redir->ssl_cert_cn);
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				ssl_proxy_conn_established_cb, newconn);
+	}
+	else
+	{
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				connection_established_cb, newconn);
+	}
+
+	if (newconn->gsc == NULL && newconn->connect_data == NULL)
 	{
 		flap_connection_schedule_destroy(newconn,
 				OSCAR_DISCONNECT_COULD_NOT_CONNECT,
@@ -1903,37 +2072,6 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	g_free(host);
 
 	return 1;
-}
-
-static gboolean purple_requesticqstatusnote(gpointer data)
-{
-	PurpleConnection *gc = data;
-	OscarData *od = gc->proto_data;
-
-	while (od->statusnotes_queue != NULL)
-	{
-		char *sn;
-		struct aim_ssi_item *ssi_item;
-		aim_tlv_t *note_hash;
-
-		sn = od->statusnotes_queue->data;
-
-		ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
-											 NULL, sn, AIM_SSI_TYPE_BUDDY);
-		if (ssi_item != NULL)
-		{
-			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-			if (note_hash != NULL) {
-				aim_icq_getstatusnote(od, sn, note_hash->value, note_hash->length);
-			}
-		}
-
-		od->statusnotes_queue = g_slist_remove(od->statusnotes_queue, sn);
-		g_free(sn);
-	}
-
-	od->statusnotes_queue_timer = 0;
-	return FALSE;
 }
 
 
@@ -1948,6 +2086,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	const char *status_id;
 	va_list ap;
 	aim_userinfo_t *info;
+	char *message = NULL;
+	char *itmsurl = NULL;
+	char *tmp;
+	const char *tmp2;
 
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
@@ -2002,49 +2144,36 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0)
-	{
-		char *message = NULL;
-		char *itmsurl = NULL;
-		char *tmp;
-		const char *tmp2;
+	if (info->status != NULL && info->status[0] != '\0')
+		/* Grab the available message */
+		message = oscar_encoding_to_utf8(account, info->status_encoding,
+										 info->status, info->status_len);
 
-		if (info->status != NULL && info->status[0] != '\0')
-			/* Grab the available message */
-			message = oscar_encoding_to_utf8(account, info->status_encoding,
-					info->status, info->status_len);
+	tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
 
+	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
 		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
 			/* Grab the iTunes Music Store URL */
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
-					info->itmsurl, info->itmsurl_len);
-
-		tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+											 info->itmsurl, info->itmsurl_len);
 
 		if (tmp2 == NULL && itmsurl != NULL)
+			/*
+			 * The message can't be NULL because NULL means it was the
+			 * last attribute, so the itmsurl would get ignored below.
+			 */
 			tmp2 = "";
 
 		purple_prpl_got_user_status(account, info->sn, status_id,
-				"message", tmp2, "itmsurl", itmsurl, NULL);
-		g_free(tmp);
-
-		g_free(message);
-		g_free(itmsurl);
+									"message", tmp2, "itmsurl", itmsurl, NULL);
 	}
 	else
-	{
-		PurpleBuddy *b = purple_find_buddy(account, info->sn);
-		PurplePresence *presence = purple_buddy_get_presence(b);
-		PurpleStatus *old_status = purple_presence_get_active_status(presence);
-		PurpleStatus *new_status = purple_presence_get_status(presence, status_id);
-		
-		/* If our status_id would change with this update, pass it to the core.
-		 * However, if our status_id would not change, do nothing, as we would clear out any existing
-		 * attributes on the status prematurely. purple_got_infoblock() will update the message as needed.
-		 */
-		if (old_status != new_status)
-			purple_prpl_got_user_status(account, info->sn, status_id, NULL);
-	}
+		purple_prpl_got_user_status(account, info->sn, status_id, "message", tmp2, NULL);
+
+	g_free(tmp);
+
+	g_free(message);
+	g_free(itmsurl);
 
 	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
@@ -2097,51 +2226,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			}
 		}
 		g_free(b16);
-	}
-
-	/*
-	 * If we didn't receive a status message with the status change,
-	 * or if the message is empty, and we have a note hash, then
-	 * query the ICQ6 status note.
-	 *
-	 * TODO: We should probably always query the status note regardless
-	 *       of whether they have a status message set, and we should
-	 *       figure out a way to display both the status note and the
-	 *       status message at the same time.
-	 */
-	if (info->status == NULL || info->status[0] == '\0')
-	{
-		struct aim_ssi_item *ssi_item;
-		aim_tlv_t *note_hash;
-
-		ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
-				NULL, info->sn, AIM_SSI_TYPE_BUDDY);
-		if (ssi_item != NULL)
-		{
-			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-			if (note_hash != NULL) {
-				/* We do automatic rate limiting at the FLAP level, so
-				 * a flood of requests won't disconnect us.  However,
-				 * it WOULD mean that we would have to wait a
-				 * potentially long time to be able to message in real
-				 * time again.  Also, since we're requesting with every
-				 * purple_parse_oncoming() call, which often come in
-				 * groups, we should coalesce to do only one lookup per
-				 * buddy.
-				 */
-				if (od->statusnotes_queue == NULL ||
-					g_slist_find_custom(od->statusnotes_queue, info->sn, (GCompareFunc)strcmp) == NULL)
-				{
-					od->statusnotes_queue = g_slist_prepend(od->statusnotes_queue,
-							g_strdup(info->sn));
-
-					if (od->statusnotes_queue_timer > 0)
-						purple_timeout_remove(od->statusnotes_queue_timer);
-					od->statusnotes_queue_timer = purple_timeout_add_seconds(3,
-							purple_requesticqstatusnote, gc);
-				}
-			}
-		}
 	}
 
 	return 1;
@@ -4337,8 +4421,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	}
 	g_string_free(data, TRUE);
 
-	peer_odc_send_im(conn, msg->str, msg->len, charset,
-			imflags & PURPLE_MESSAGE_AUTO_RESP);
+	peer_odc_send_im(conn, msg->str, msg->len, charset, imflags);
 	g_string_free(msg, TRUE);
 }
 
@@ -4699,7 +4782,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		if (status_html != NULL)
 		{
 			status_text = purple_markup_strip_html(status_html);
-			/* If the status_text is longer than 60 character then truncate it */
+			/* If the status_text is longer than 251 characters then truncate it */
 			if (strlen(status_text) > MAXAVAILMSGLEN)
 			{
 				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
@@ -4716,9 +4799,28 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	}
 	else
 	{
+		char *status_text = NULL;
+		
 		htmlaway = purple_status_get_attr_string(status, "message");
 		if ((htmlaway == NULL) || (*htmlaway == '\0'))
 			htmlaway = purple_status_type_get_name(status_type);
+		
+		/* ICQ 6.x seems to use an available message for all statuses so set one */
+		if (od->icq) 
+		{
+			status_text = purple_markup_strip_html(htmlaway);
+			/* If the status_text is longer than 251 characters then truncate it */
+			if (strlen(status_text) > MAXAVAILMSGLEN)
+			{
+				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
+				strcpy(tmp, "...");
+			}
+			aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, NULL);
+		}
+		g_free(status_text);
+
+		/* Set a proper away message for icq too so that they work for old third party clients */
+		
 		away = purple_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
 
 		if (awaylen > od->rights.maxawaymsglen)
@@ -5310,7 +5412,6 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	struct aim_ssi_item *ssi_item;
-	aim_tlv_t *note_hash;
 	va_list ap;
 	guint16 snac_subtype, type;
 	const char *name;
@@ -5380,13 +5481,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
 			gname, name, AIM_SSI_TYPE_BUDDY);
-	if (ssi_item != NULL)
-	{
-		note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-		if (note_hash != NULL)
-			aim_icq_getstatusnote(od, name, note_hash->value, note_hash->length);
-	}
-	else
+	if (ssi_item == NULL)
 	{
 		purple_debug_error("oscar", "purple_ssi_parseaddmod: "
 				"Could not find ssi item for oncoming buddy %s, "
@@ -5824,19 +5919,8 @@ char *oscar_status_text(PurpleBuddy *b)
 		else
 			ret = g_strdup(_("Offline"));
 	}
-	else if (purple_status_is_available(status) && !strcmp(id, OSCAR_STATUS_ID_AVAILABLE))
+	else
 	{
-		/* Available */
-		message = purple_status_get_attr_string(status, "message");
-		if (message != NULL)
-		{
-			ret = g_strdup(message);
-			purple_util_chrreplace(ret, '\n', ' ');
-		}
-	}
-	else if (!purple_status_is_available(status) && !strcmp(id, OSCAR_STATUS_ID_AWAY))
-	{
-		/* Away */
 		message = purple_status_get_attr_string(status, "message");
 		if (message != NULL)
 		{
@@ -5848,13 +5932,15 @@ char *oscar_status_text(PurpleBuddy *b)
 			g_free(tmp1);
 			g_free(tmp2);
 		}
+		else if (purple_status_is_available(status))
+		{
+			/* Don't show "Available" as status message in case buddy doesn't have a status message */
+		}
 		else
 		{
-			ret = g_strdup(_("Away"));
+			ret = g_strdup(purple_status_get_name(status));
 		}
 	}
-	else
-		ret = g_strdup(purple_status_get_name(status));
 
 	return ret;
 }
@@ -6200,10 +6286,14 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		menu = g_list_prepend(menu, act);
 	}
 
-	act = purple_menu_action_new(_("Edit Buddy Comment"),
-	                           PURPLE_CALLBACK(oscar_buddycb_edit_comment),
-	                           NULL, NULL);
-	menu = g_list_prepend(menu, act);
+	if (purple_buddy_get_group(buddy) != NULL)
+	{
+		/* We only do this if the user is in our buddy list */
+		act = purple_menu_action_new(_("Edit Buddy Comment"),
+		                           PURPLE_CALLBACK(oscar_buddycb_edit_comment),
+		                           NULL, NULL);
+		menu = g_list_prepend(menu, act);
+	}
 
 #if 0
 	if (od->icq)
@@ -6237,7 +6327,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 #endif
 	}
 
-	if (od->ssi.received_data)
+	if (od->ssi.received_data && purple_buddy_get_group(buddy) != NULL)
 	{
 		char *gname;
 		gname = aim_ssi_itemlist_findparentname(od->ssi.local, buddy->name);
@@ -6854,6 +6944,10 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
+	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Use SSL"), "use_ssl",
+			OSCAR_DEFAULT_USE_SSL);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(

@@ -210,7 +210,7 @@ show_usage(const char *name, gboolean terse)
 		text = g_strdup_printf(_("%s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
-		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -d, --debug         print debugging messages to stderr\n"
 		       "  -h, --help          display this help and exit\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -v, --version       display the current version and exit\n"), DISPLAY_VERSION, name);
@@ -229,7 +229,6 @@ init_libpurple(int argc, char **argv)
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
 	char *opt_config_dir_arg = NULL;
-	char *opt_session_arg = NULL;
 	gboolean debug_enabled = FALSE;
 
 	struct option long_options[] = {
@@ -237,7 +236,6 @@ init_libpurple(int argc, char **argv)
 		{"debug",    no_argument,       NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
 		{"nologin",  no_argument,       NULL, 'n'},
-		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
 		{0, 0, 0, 0}
 	};
@@ -256,7 +254,7 @@ init_libpurple(int argc, char **argv)
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dhn::s:v",
+				  "c:dhn::v",
 #else
 				  "c:dhn::v",
 #endif
@@ -274,10 +272,6 @@ init_libpurple(int argc, char **argv)
 			break;
 		case 'n':	/* no autologin */
 			opt_nologin = TRUE;
-			break;
-		case 's':	/* use existing session ID */
-			g_free(opt_session_arg);
-			opt_session_arg = g_strdup(optarg);
 			break;
 		case 'v':	/* version */
 			opt_version = TRUE;

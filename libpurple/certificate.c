@@ -1546,31 +1546,11 @@ purple_certificate_init(void)
 void
 purple_certificate_uninit(void)
 {
-	GList *full_list, *l;
-
-	/* Unregister all Schemes */
-	full_list = g_list_copy(cert_schemes); /* Make a working copy */
-	for (l = full_list; l; l = l->next) {
-		purple_certificate_unregister_scheme(
-			(PurpleCertificateScheme *) l->data );
-	}
-	g_list_free(full_list);
-
 	/* Unregister all Verifiers */
-	full_list = g_list_copy(cert_verifiers); /* Make a working copy */
-	for (l = full_list; l; l = l->next) {
-		purple_certificate_unregister_verifier(
-			(PurpleCertificateVerifier *) l->data );
-	}
-	g_list_free(full_list);
+	g_list_foreach(cert_verifiers, (GFunc)purple_certificate_unregister_verifier, NULL);
 
 	/* Unregister all Pools */
-	full_list = g_list_copy(cert_pools); /* Make a working copy */
-	for (l = full_list; l; l = l->next) {
-		purple_certificate_unregister_pool(
-			(PurpleCertificatePool *) l->data );
-	}
-	g_list_free(full_list);
+	g_list_foreach(cert_pools, (GFunc)purple_certificate_unregister_pool, NULL);
 }
 
 gpointer

@@ -99,25 +99,8 @@ purple_program_is_valid(program)
 	const char *program
 
 gchar_own *
-purple_strcasereplace(string, delimiter, replacement)
-	const char *string
-	const char *delimiter
-	const char *replacement
-
-const char *
-purple_strcasestr(haystack, needle)
-	const char *haystack
-	const char *needle
-
-gchar_own *
 purple_strdup_withhtml(src)
 	const gchar *src
-
-gchar_own *
-purple_strreplace(string, delimiter, replacement)
-	const char *string
-	const char *delimiter
-	const char *replacement
 
 gchar_own *
 purple_text_strip_mnemonic(in)
@@ -356,10 +339,6 @@ gchar_own *
 purple_str_size_to_units(size)
 	size_t size
 
-void
-purple_str_strip_char(IN_OUT char str, thechar)
-	char thechar
-
 time_t
 purple_str_to_time(timestamp, utc = FALSE, tm = NULL, OUTLIST long tz_off, OUTLIST const char *rest)
 	const char *timestamp
@@ -511,11 +490,6 @@ purple_util_set_current_song(title, artist, album)
 	const char *title
 	const char *artist
 	const char *album
-
-void
-purple_util_chrreplace(IN_OUT char string, delimiter, replacement)
-	char delimiter
-	char replacement
 
 gchar_own*
 purple_util_format_song_info(title, artist, album, unused)

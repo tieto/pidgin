@@ -10,7 +10,8 @@ CERTIFICATES = \
 
 EXTRA_CERTS = \
 		Microsoft_Internet_Authority.pem \
-		Microsoft_Secure_Server_Authority.pem
+		Microsoft_Secure_Server_Authority.pem \
+		VeriSign_International_Server_Class_3_CA.pem
 
 
 cacertsdir =	$(datadir)/purple/ca-certs

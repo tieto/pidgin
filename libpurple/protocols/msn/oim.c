@@ -596,6 +596,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	MsnMessage *message;
 	const char *date;
 	const char *from;
+	const char *boundary;
 	char *decode_msg = NULL;
 	gsize body_len;
 	char **tokens;
@@ -608,27 +609,14 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	                          MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	purple_debug_info("msn", "oim body:{%s}\n", message->body);
 
-	if (!strcmp(msn_message_get_attr(message, "X-OIMProxy"), "MOSMS")) {
-		char *boundary;
+	boundary = msn_message_get_attr(message, "boundary");
+
+	if (boundary != NULL) {
+		char *bounds;
 		char **part;
 
-		from = msn_message_get_attr(message, "X-OIM-originatingSource");
-
-		/* Match number to user's mobile number, FROM is a phone number
-		   if the other side pages you using your phone number */
-		if (!strncmp(from, "tel:+", 5)) {
-			MsnUser *user =	msn_userlist_find_user_with_mobile_phone(
-					rdata->oim->session->userlist, from + 4);
-
-			if (user && user->passport)
-				passport = g_strdup(user->passport);
-		}
-		if (passport == NULL)
-			passport = g_strdup(from);
-
-		boundary = g_strdup_printf("--%s" MSG_OIM_LINE_DEM,
-		                           msn_message_get_attr(message, "boundary"));
-		tokens = g_strsplit(message->body, boundary, 0);
+		bounds = g_strdup_printf("--%s" MSG_OIM_LINE_DEM, boundary);
+		tokens = g_strsplit(message->body, bounds, 0);
 
 		/* tokens+1 to skip the "This is a multipart message..." text */
 		for (part = tokens+1; *part != NULL; part++) {
@@ -648,18 +636,33 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		}
 
 		g_strfreev(tokens);
-		g_free(boundary);
+		g_free(bounds);
 
 		if (decode_msg == NULL) {
 			purple_debug_error("msn", "Couldn't find text/plain OIM message.\n");
-			g_free(passport);
+			msn_message_destroy(message);
 			return;
 		}
 	} else {
+		decode_msg = (char *)purple_base64_decode(message->body, &body_len);
+	}
+
+	from = msn_message_get_attr(message, "X-OIM-originatingSource");
+
+	/* Match number to user's mobile number, FROM is a phone number
+	   if the other side pages you using your phone number */
+	if (from && !strncmp(from, "tel:+", 5)) {
+		MsnUser *user =	msn_userlist_find_user_with_mobile_phone(
+				rdata->oim->session->userlist, from + 4);
+
+		if (user && user->passport)
+			passport = g_strdup(user->passport);
+	}
+
+	if (passport == NULL) {
 		char *start, *end;
 
 		from = msn_message_get_attr(message, "From");
-		decode_msg = (char *)purple_base64_decode(message->body, &body_len);
 
 		tokens = g_strsplit(from, " ", 2);
 		if (tokens[1] != NULL)
@@ -687,6 +690,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 	g_free(passport);
 	g_free(decode_msg);
+	msn_message_destroy(message);
 }
 
 /* Parse the XML data,

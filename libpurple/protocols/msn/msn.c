@@ -647,6 +647,13 @@ msn_status_text(PurpleBuddy *buddy)
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
+	/* Official client says media takes precedence over message */
+	/* I say message take precedence over media! Plus prpl-jabber agrees
+	   too */
+	msg = purple_status_get_attr_string(status, "message");
+	if (msg && *msg)
+		return g_markup_escape_text(msg, -1);
+
 	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 		const char *title, *game, *office;
 		char *media, *esc;
@@ -676,11 +683,6 @@ msn_status_text(PurpleBuddy *buddy)
 		g_free(media);
 		return esc;
 	}
-
-	/* Official client says media takes precedence over message */
-	msg = purple_status_get_attr_string(status, "message");
-	if (msg && *msg)
-		return g_markup_escape_text(msg, -1);
 
 	return NULL;
 }
@@ -851,11 +853,11 @@ msn_status_types(PurpleAccount *account)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
-			NULL, NULL, FALSE, TRUE, FALSE);
+			NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
-			NULL, NULL, FALSE, TRUE, FALSE);
+			NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,
@@ -1174,6 +1176,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
+	size_t msglen;
 	const char *username;
 
 	purple_debug_info("msn", "send IM {%s} to %s\n", message, who);
@@ -1201,13 +1204,23 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
+	msglen = strlen(msgtext);
+	if (msglen == 0) {
+		/* Stuff like <hr> will be ignored. Don't send an empty message
+		   if that's all there is. */
+		g_free(msgtext);
+		g_free(msgformat);
+
+		return 0;
+	}
+
 	if (msn_user_is_online(account, who) ||
 		msn_user_is_yahoo(account, who) ||
 		swboard != NULL) {
 		/*User online or have a swboard open because it's invisible
 		 * and sent us a message,then send Online Instant Message*/
  
-		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+		if (msglen + strlen(msgformat) + strlen(VERSION) > 1564)
 		{
 			g_free(msgformat);
 			g_free(msgtext);

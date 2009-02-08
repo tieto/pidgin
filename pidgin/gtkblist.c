@@ -955,8 +955,10 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 			if (pce->secret)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+#if !GTK_CHECK_VERSION(2,16,0)
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
 					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
+#endif /* Less than GTK+ 2.16 */
 			}
 			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
@@ -3648,9 +3650,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		}
 
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded) {
-			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
-				return NULL;
-			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
+			if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
+				return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 		}
 	} else {
 		return NULL;
@@ -5386,14 +5387,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, -1, NULL);
-	if (gtkblist->headline_close) {
-		GdkPixbuf *scale = gdk_pixbuf_scale_simple(gtkblist->headline_close,
-				HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE, GDK_INTERP_BILINEAR);
-		gdk_pixbuf_unref(gtkblist->headline_close);
-		gtkblist->headline_close = scale;
-	}
-
+	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, HEADLINE_CLOSE_SIZE, NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
@@ -6834,8 +6828,10 @@ rebuild_addchat_entries(PidginAddChatData *data)
 			if (pce->secret)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+#if !GTK_CHECK_VERSION(2,16,0)
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
 					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
+#endif /* Less than GTK+ 2.16 */
 			}
 			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
@@ -7655,6 +7651,7 @@ pidgin_blist_update_accounts_menu(void)
 	GtkAccelGroup *accel_group = NULL;
 	GList *l = NULL, *accounts = NULL;
 	gboolean disabled_accounts = FALSE;
+	gboolean enabled_accounts = FALSE;
 
 	if (accountmenu == NULL)
 		return;
@@ -7708,10 +7705,16 @@ pidgin_blist_update_accounts_menu(void)
 				G_CALLBACK(enable_account_cb), account);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 			gtk_widget_show(menuitem);
+		} else {
+			enabled_accounts = TRUE;
 		}
 	}
 
+	if (!enabled_accounts)
+		return;
+
 	pidgin_separator(accountmenu);
+	accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
 	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
 		char *buf = NULL;
@@ -7723,67 +7726,63 @@ pidgin_blist_update_accounts_menu(void)
 		PurplePlugin *plugin = NULL;
 
 		account = accounts->data;
-		accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
-		if(purple_account_get_enabled(account, PIDGIN_UI)) {
-			buf = g_strconcat(purple_account_get_username(account), " (",
-					purple_account_get_protocol_name(account), ")", NULL);
-			menuitem = gtk_image_menu_item_new_with_label(buf);
-			accel_path_buf = g_strconcat(N_("<PurpleMain>/Accounts/"), buf, NULL);
-			g_free(buf);
-			pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-			if (pixbuf != NULL)
-			{
-				if (!purple_account_is_connected(account))
-					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
-							0.0, FALSE);
-				image = gtk_image_new_from_pixbuf(pixbuf);
-				g_object_unref(G_OBJECT(pixbuf));
-				gtk_widget_show(image);
-				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-			}
-			gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-			gtk_widget_show(menuitem);
+		if (!purple_account_get_enabled(account, PIDGIN_UI))
+			continue;
 
-			submenu = gtk_menu_new();
-			gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
-			gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
-			g_free(accel_path_buf);
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-			gtk_widget_show(submenu);
-
-
-			menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
-			g_signal_connect(G_OBJECT(menuitem), "activate",
-					G_CALLBACK(modify_account_cb), account);
-			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_show(menuitem);
-
-			pidgin_separator(submenu);
-
-			gc = purple_account_get_connection(account);
-			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
-			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-				build_plugin_actions(submenu, plugin, gc);
-			} else {
-				menuitem = gtk_menu_item_new_with_label(_("No actions available"));
-				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-				gtk_widget_set_sensitive(menuitem, FALSE);
-				gtk_widget_show(menuitem);
-			}
-
-			pidgin_separator(submenu);
-
-			menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
-			g_signal_connect(G_OBJECT(menuitem), "activate",
-					G_CALLBACK(disable_account_cb), account);
-			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_show(menuitem);
-		} else {
-			disabled_accounts = TRUE;
+		buf = g_strconcat(purple_account_get_username(account), " (",
+				purple_account_get_protocol_name(account), ")", NULL);
+		menuitem = gtk_image_menu_item_new_with_label(buf);
+		accel_path_buf = g_strconcat(N_("<PurpleMain>/Accounts/"), buf, NULL);
+		g_free(buf);
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		if (pixbuf != NULL) {
+			if (!purple_account_is_connected(account))
+				gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
+						0.0, FALSE);
+			image = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
+			gtk_widget_show(image);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		}
-	}
+		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
+		gtk_widget_show(menuitem);
 
+		submenu = gtk_menu_new();
+		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+		gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
+		g_free(accel_path_buf);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+		gtk_widget_show(submenu);
+
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(modify_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+		gtk_widget_show(menuitem);
+
+		pidgin_separator(submenu);
+
+		gc = purple_account_get_connection(account);
+		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
+		if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+			build_plugin_actions(submenu, plugin, gc);
+		} else {
+			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+			gtk_widget_set_sensitive(menuitem, FALSE);
+			gtk_widget_show(menuitem);
+		}
+
+		pidgin_separator(submenu);
+
+		menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+				G_CALLBACK(disable_account_cb), account);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+		gtk_widget_show(menuitem);
+	}
 }
 
 static GList *plugin_submenus = NULL;

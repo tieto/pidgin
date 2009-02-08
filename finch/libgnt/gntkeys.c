@@ -131,7 +131,7 @@ void gnt_init_keys()
 				code[ind] = (c ? 1 : 'a') + ch;
 				INSERT_COMB(str, code);
 			}
-			if (c == 0) {
+			if (c == 0 && a) {
 				INSERT_COMB("tab", "\033\t");
 				INSERT_COMB_CODE("up", "\033", GNT_KEY_UP);
 				INSERT_COMB_CODE("down", "\033", GNT_KEY_DOWN);
@@ -163,7 +163,8 @@ void gnt_keys_refine(char *text)
 			(*(text + 2) >= 'A' && *(text + 2) <= 'D')) {
 		/* Apparently this is necessary for urxvt and screen and xterm */
 		if (strstr(term, "screen") == term || strcmp(term, "rxvt-unicode") == 0 ||
-				strstr(term, "xterm") == term)
+				strstr(term, "xterm") == term ||
+				strstr(term, "vt100") == term)
 			*(text + 1) = 'O';
 	} else if (*(unsigned char*)text == 195) {
 		if (*(text + 2) == 0 && strstr(term, "xterm") == term) {

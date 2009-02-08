@@ -2519,8 +2519,8 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	/* The conference was not found, must be closed */
 	chat = purple_find_chat(gc, id);
 	if (chat) {
-		str = g_strdup_printf(_("This conference has been closed."
-								" No more messages can be sent."));
+		str = g_strdup(_("This conference has been closed."
+						 " No more messages can be sent."));
 		purple_conversation_write(chat, NULL, str, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(str);
 	}
@@ -2976,7 +2976,7 @@ novell_status_types(PurpleAccount *account)
 										   NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;

@@ -407,15 +407,15 @@ static GList *qq_status_types(PurpleAccount *ga)
 	GList *types = NULL;
 
 	status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE,
-			"available", _("Available"), FALSE, TRUE, FALSE);
+			"available", _("Available"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_AWAY,
-			"away", _("Away"), FALSE, TRUE, FALSE);
+			"away", _("Away"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
-			"invisible", _("Invisible"), FALSE, TRUE, FALSE);
+			"invisible", _("Invisible"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE,
@@ -423,7 +423,7 @@ static GList *qq_status_types(PurpleAccount *ga)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
-			"offline", _("Offline"), FALSE, TRUE, FALSE);
+			"offline", _("Offline"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,

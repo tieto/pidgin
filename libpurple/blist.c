@@ -1811,7 +1811,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	PurpleGroup *group;
 	struct _purple_hbuddy hb;
 	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(buddy != NULL);
 
@@ -1872,7 +1872,8 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	 * can free proto_data
 	 */
 	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info && prpl_info->buddy_free)
 		prpl_info->buddy_free(buddy);
 

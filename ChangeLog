@@ -1,14 +1,64 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.4 (??/??/????):
+version 2.5.5 (??/??/????):
+	libpurple:
+	* Fix a crash when removing an account with an unknown protocol id.
+	* Beta support for SSL connections for AIM and ICQ accounts.  To
+	  enable, check the "Use SSL" option from the Advanced tab when
+	  editing your AIM or ICQ account. (Paul Aurich)
+	* Fix a memory leak in SILC. (Luke Petre)
+
+	ICQ:
+	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
+	  other libpurple clients. (Daniel Ljungborg)
+	* Change client ID to match ICQ Basic 14.34.3096.  This fixes publishing
+	  of buddy icons and available messages.
+	* Properly publish status messages for statuses other than Available.
+	  ICQ 6.x users can now see these status messages. (Daniel Ljungborg)
+
+	MSN:
+	* Fix transfer of buddy icons, custom smileys, and files from the
+	  latest Windows Live Messenger 9 official client. (Thomas
+	  Gibson-Robinson)
+	* Large (multi-part) messages are now correctly re-combined.
+	* Federated/Yahoo! buddies should now stop creating sync issues at
+	  every signin.  You may need to remove duplicates in the Address
+	  Book.  See the FAQ for more information.
+	* Messages from Yahoo! buddies are no longer silently dropped.
+
+	Finch:
+	* Allow rebinding keys to change the focused widget (details in the
+	  man-page, look for GntBox::binding)
+
+version 2.5.4 (01/12/2009):
 	libpurple:
 	* Fix a connection timeout with empty Gadu-Gady buddy lists. (Martin
 	  Rosinski)
 	* Don't ignore namespace information when parsing XMPP data. (Michal
 	  Witkowski)
+	* Fix a crash that occurred when retrieving certain Offline Messages
+	  on MSN.
+	* Extended purple-url-handler to handle "gtalk" URI's. (Paul Aurich)
+	* Fix the hang on exit in Network Location Awareness for Windows XP
+	  and Windows Vista. (Paul Aurich)
+
+	MSN:
+	* Change Contact Server to temporarily fix connection problems.
+	  (Thanks to Youness Alaoui)
 
 	XMPP:
 	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
+	* Don't put SASL PLAIN or IQ Auth passwords in debug logs. (Paul Aurich)
+	* Fix removal of avatars (both PEP and vCard), we weren't removing
+	  them correctly before. (Paul Aurich)
+
+	Pidgin:
+	* Fix a crash in the Add Account dialog when changing protocols under
+	  certain circumstances.
+
+	Finch:
+	* Redirect stderr outputs to the debug window.
+	* Fix rebinding actions with the arrow-keys and tab.
 
 version 2.5.3 (12/20/2008):
 	libpurple:
@@ -130,7 +180,7 @@ version 2.5.3 (12/20/2008):
 	  if no custom smilies have previously been added using the smiley
 	  manager.
 	* Improved support for some message formatting in conversations.
-	* Allow focusing the coversation history or userlist with F6.
+	* Allow focusing the conversation history or userlist with F6.
 	* Fixed the Send Button plugin to avoid duplicate buttons in a single
 	  conversation.
 	* Double-clicking a saved status will now activate it and close the
