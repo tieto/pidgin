@@ -809,7 +809,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			now_t += jbr->tz_off;
 			now = gmtime(&now_t);
 
-			purple_notify_user_info_add_pair(user_info, _("Local Time"), purple_time_format(now));
+			purple_notify_user_info_prepend_pair(user_info, _("Local Time"), purple_time_format(now));
 		}
 		if(jbir) {
 			if(jbir->idle_seconds > 0) {
@@ -988,7 +988,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				now_t += jbr->tz_off;
 				now = gmtime(&now_t);
 
-				purple_notify_user_info_add_pair(user_info, _("Local Time"), purple_time_format(now));
+				purple_notify_user_info_prepend_pair(user_info, _("Local Time"), purple_time_format(now));
 			}
 
 			if(jbr->name && (jbir = g_hash_table_lookup(jbi->resources, jbr->name))) {
@@ -1683,8 +1683,8 @@ static void jabber_time_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	if (resource_name && jbr) {
 		if (type && !strcmp(type, "result")) {
 			xmlnode *time = xmlnode_get_child(packet, "time");
-			xmlnode *tzo = time ? xmlnode_get_child(packet, "tzo") : NULL;
-			xmlnode *utc = time ? xmlnode_get_child(packet, "utc") : NULL;
+			xmlnode *tzo = time ? xmlnode_get_child(time, "tzo") : NULL;
+			xmlnode *utc = time ? xmlnode_get_child(time, "utc") : NULL;
 			if (tzo && utc) {
 				char *timestamp = g_strdup_printf("%s %s",
 				        xmlnode_get_data(utc), xmlnode_get_data(tzo));
