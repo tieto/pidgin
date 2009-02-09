@@ -1620,7 +1620,7 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 {
 	JabberStream *js;
 	JabberBuddy *jb = NULL;
-
+	
 	if(!b->account->gc)
 		return NULL;
 
@@ -1633,6 +1633,28 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 					!(jb->subscription & JABBER_SUB_TO)))
 			return "not-authorized";
 	}
+	
+	if (jb) {
+		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
+		if (jbr) {
+			const gchar *client_type = 
+				jabber_resource_get_identity_category_type(jbr, "client");
+		
+			if (client_type) {
+				if (strcmp(client_type, "phone") == 0) {
+					return "mobile";
+				} else if (strcmp(client_type, "web") == 0) {
+					return "external";
+				} else if (strcmp(client_type, "handheld") == 0) {
+					return "hiptop";
+				} else if (strcmp(client_type, "bot") == 0) {
+					return "bot";
+				}
+				/* the default value "pc" falls through and has no emblem */
+			}
+		}
+	}
+		
 	return NULL;
 }
 
