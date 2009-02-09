@@ -36,6 +36,7 @@
 #include "util.h"
 
 #include "buddy_info.h"
+#include "buddy_memo.h"
 #include "buddy_opt.h"
 #include "buddy_list.h"
 #include "char_conv.h"
@@ -826,6 +827,11 @@ static GList *qq_buddy_menu(PurpleBuddy *buddy)
 
 	}
 
+
+	act = purple_menu_action_new(_("Buddy memo"), PURPLE_CALLBACK(qq_on_show_memo), NULL, NULL); /* add NULL by gfhuang */
+	m = g_list_append(m, act);
+
+	
 /* TODO : not working, temp commented out by gfhuang */
 #if 0
 	if (bd && is_online(bd->status)) {

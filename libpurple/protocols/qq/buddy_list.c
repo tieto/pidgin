@@ -31,6 +31,7 @@
 #include "utils.h"
 #include "packet_parse.h"
 #include "buddy_info.h"
+#include "buddy_memo.h"
 #include "buddy_list.h"
 #include "buddy_opt.h"
 #include "char_conv.h"
@@ -346,6 +347,7 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 		/* nickname has been copy to buddy_data do not free
 		   g_free(bd.nickname);
 		*/
+		qq_request_buddy_memo_download( gc,((qq_buddy_data*)buddy->proto_data)->uid );
 	}
 
 	if(bytes > data_len) {

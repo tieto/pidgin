@@ -23,6 +23,8 @@ moo		: qun processing
 Coly Li		: qun processing
 Emil Alexiev	: captcha verification on login based on LumaQQ for MAC (2007), 
 		  login, add buddy, remove buddy, message exchange and logout
+Chengming Wang 	: buddy memo
+lonicerae 	: chat room window bugfix, server list bugfix
 
 Acknowledgement
 =========
