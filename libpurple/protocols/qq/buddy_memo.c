@@ -21,7 +21,8 @@
 #include<stdlib.h>
 #include<stdio.h>
 
-
+#include <stdlib.h>
+#include <stdio.h>
 static const gchar* buddy_memo_txt[] = {
 	"Name",
 	"Mobile",
@@ -127,7 +128,7 @@ void qq_request_buddy_memo_upload( PurpleBuddy * buddy )
 	PurpleConnection* gc;
 	qq_buddy_data* buddy_data;
 	guint8* rawData;
-	guint8* pos;
+	gint bytes;
 	int rawDataSize;
 	int index;
 	int memoItemSize[QQ_BUDDY_MEMO_SIZE];
@@ -143,16 +144,14 @@ void qq_request_buddy_memo_upload( PurpleBuddy * buddy )
 		rawDataSize += memoItemSize[index]+1;
 	}
 	rawData = g_new0( guint8,rawDataSize );
-	pos = rawData;
-	(*pos) = QQ_BUDDY_MEMO_UPLOAD;
-	pos += 2;
-	(*(guint32*)pos) = htonl( buddy_data->uid );
-	pos += 5;
+	bytes = 0;
+	bytes += qq_put8( rawData+bytes,QQ_BUDDY_MEMO_UPLOAD );
+	bytes += qq_put8( rawData+bytes,0 );
+	bytes += qq_put32( rawData+bytes, buddy_data->uid );
+	bytes += qq_put8( rawData+bytes,0 );
 	for( index=0; index<QQ_BUDDY_MEMO_SIZE; index++ ){
-		(*pos) = 0xff&memoItemSize[index];
-		pos++;
-		memcpy( pos, qqCharSetTxt[index], memoItemSize[index] );
-		pos += memoItemSize[index];
+		bytes += qq_put8( rawData+bytes,0xff&memoItemSize[index] );  //TODO: 0xff?
+		bytes += qq_putdata( rawData+bytes, (const guint8 *)qqCharSetTxt[index], memoItemSize[index] );
 	}
 
 	qq_send_cmd( gc, QQ_CMD_BUDDY_MEMO, rawData, rawDataSize );
@@ -165,37 +164,40 @@ void qq_request_buddy_memo_upload( PurpleBuddy * buddy )
 
 void qq_request_buddy_memo_download(PurpleConnection *gc, guint32 uid)
 {
-	gchar raw_data[16] = {0};
-	unsigned int tmp;
+	guint8 raw_data[16] = {0};
+	//unsigned int tmp;
+	gint bytes;
+
 	purple_debug_info("QQ", "Call qq_request_buddy_memo_download! qq number =%u\n", uid);
 	g_return_if_fail(uid != 0);
-	raw_data[0] = QQ_BUDDY_MEMO_GET;
-
-	tmp = htonl((unsigned int)uid);
-	memcpy(raw_data+1, &tmp, 4);
+	bytes = 0;
+	bytes += qq_put8( raw_data+bytes, QQ_BUDDY_MEMO_GET );
+	bytes += qq_put32( raw_data+bytes, uid );
 	
-	qq_send_cmd(gc, QQ_CMD_BUDDY_MEMO, (guint8*)raw_data, 5);
+	qq_send_cmd(gc, QQ_CMD_BUDDY_MEMO, (guint8*)raw_data, bytes);
 }
 
 
 void qq_process_get_buddy_memo( PurpleConnection *gc, guint8* data, gint len )
 {
 	qq_data *qd;
-	//_buddy_memo memo;
 	PurpleBuddy *buddy;
 	gchar *who;
 	qq_buddy_data* bd;
-	guint8* pos;
-	gint lenth;
+	gint bytes;
+	guint8 lenth;
 	guint32 qq_number;
+	guint8 receive_cmd;
+	guint8 receive_data;
 	int k;
 
-	pos = data;
-	switch( *pos ){
+	bytes = 0;
+	bytes += qq_get8( &receive_cmd, data+bytes );
+	switch( receive_cmd ){
 	    case QQ_BUDDY_MEMO_UPLOAD :
     	case QQ_BUDDY_MEMO_REMOVE :
-			if( data[1] == QQ_BUDDY_MEMO_REQUEST_SUCCESS ){//显示服务器接受请求对话框
-				//TODO:
+			bytes += qq_get8( &receive_data, data+bytes );
+			if( receive_data == QQ_BUDDY_MEMO_REQUEST_SUCCESS ){//显示服务器接受请求对话框
 				purple_debug_info( "QQ","服务器接受了请求\n" );
 				purple_notify_message( gc,
 									   PURPLE_NOTIFY_MSG_INFO,
@@ -205,12 +207,21 @@ void qq_process_get_buddy_memo( PurpleConnection *gc, guint8* data, gint len )
 									   NULL,
 									   NULL);
 			}
+			else{
+				purple_debug_info( "QQ","服务器拒绝了请求\n" );
+				purple_notify_message( gc,
+									   PURPLE_NOTIFY_MSG_INFO,
+									   _( "Your request was rejected" ),
+									   _( "Your request was rejected" ),
+									   _( "Your request was rejected" ),
+									   NULL,
+									   NULL);
+			}
 			break;
 	    case QQ_BUDDY_MEMO_GET:
 			qd = (qq_data *) gc->proto_data;
-			pos++;
-			qq_number = ntohl( *(uint32_t*)pos ); 
-			pos += 5;//qq号后面有一个字节不知道什么作用
+			bytes += qq_get32( &qq_number, data+bytes );
+			bytes ++;//qq号后面有一个字节不知道什么作用
 			who = uid_to_purple_name( qq_number );
 			buddy = purple_find_buddy( gc->account, who );
 			if (buddy == NULL || buddy->proto_data == NULL) {
@@ -224,19 +235,18 @@ void qq_process_get_buddy_memo( PurpleConnection *gc, guint8* data, gint len )
 				bd->memo = g_new0( gchar*,QQ_BUDDY_MEMO_SIZE );
 			}
 			for( k=0; k<QQ_BUDDY_MEMO_SIZE; k++ ){
-				lenth = pos[0];
-				pos++;
+				bytes += qq_get8( &lenth, data+bytes );
 				if( bd->memo[k] != NULL )
 					g_free( bd->memo[k] );
-				bd->memo[k] = qq_to_utf8_len( (gchar*)pos, lenth, QQ_CHARSET_DEFAULT );
-				pos += lenth;
+				bd->memo[k] = qq_to_utf8_len( (gchar*)(data+bytes), lenth, QQ_CHARSET_DEFAULT );
+				bytes += lenth;
 			}
 			buddy_memo_debug( bd->memo );
 			purple_blist_alias_buddy( buddy,
 									  (const char*)bd->memo[QQ_BUDDY_MEMO_NAME] );//改名
 			break;
 	default:
-			purple_debug_info( "QQ","error: unknown memo cmd\n" );
+			purple_debug_info( "QQ","error: unknown memo cmd \n" );
 	        break;
 	}
 	
@@ -305,7 +315,7 @@ void qq_on_show_memo(PurpleBlistNode *node, gpointer data)
 }
 
 
-static gchar** buddy_memo_init_data(  )
+gchar** buddy_memo_init_data(  )
 {
 	gchar** pmemo;
 	int index;
