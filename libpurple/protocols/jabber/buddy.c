@@ -806,21 +806,16 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			time_t now_t;
 			struct tm *now;
 			char *timestamp;
-			char *timezone;
 			time(&now_t);
 			now_t += jbr->tz_off;
 			now = gmtime(&now_t);
 
-			if (jbr->tz_off)
-				timezone = g_strdup_printf("%02d:%02d", (int)(jbr->tz_off / (60*60)),
-				                           abs((jbr->tz_off % (60*60)) / 60));
-			else
-				timezone = NULL;
-			timestamp = g_strdup_printf("%s GMT%s", purple_time_format(now),
-			                            timezone ? timezone : "");
+			timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
+			                            jbr->tz_off < 0 ? '-' : '+',
+			                            abs(jbr->tz_off / (60*60)),
+			                            abs((jbr->tz_off % (60*60)) / 60));
 			purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
 			g_free(timestamp);
-			g_free(timezone);
 		}
 		if(jbir) {
 			if(jbir->idle_seconds > 0) {
@@ -996,21 +991,16 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				time_t now_t;
 				struct tm *now;
 				char *timestamp;
-				char *timezone;
 				time(&now_t);
 				now_t += jbr->tz_off;
 				now = gmtime(&now_t);
 
-				if (jbr->tz_off)
-					timezone = g_strdup_printf("%02d:%02d", (int)(jbr->tz_off / (60*60)),
-					                           abs((jbr->tz_off % (60*60)) / 60));
-				else
-					timezone = NULL;
-				timestamp = g_strdup_printf("%s GMT%s", purple_time_format(now),
-				                            timezone ? timezone : "");
+				timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
+				                            jbr->tz_off < 0 ? '-' : '+',
+				                            abs(jbr->tz_off / (60*60)),
+				                            abs((jbr->tz_off % (60*60)) / 60));
 				purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
 				g_free(timestamp);
-				g_free(timezone);
 			}
 
 			if(jbr->name && (jbir = g_hash_table_lookup(jbi->resources, jbr->name))) {
