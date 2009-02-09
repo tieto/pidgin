@@ -805,11 +805,22 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		if (jbr && jbr->tz_off != PURPLE_NO_TZ_OFF) {
 			time_t now_t;
 			struct tm *now;
+			char *timestamp;
+			char *timezone;
 			time(&now_t);
 			now_t += jbr->tz_off;
 			now = gmtime(&now_t);
 
-			purple_notify_user_info_prepend_pair(user_info, _("Local Time"), purple_time_format(now));
+			if (jbr->tz_off)
+				timezone = g_strdup_printf("%02d:%02d", (int)(jbr->tz_off / (60*60)),
+				                           abs((jbr->tz_off % (60*60)) / 60));
+			else
+				timezone = NULL;
+			timestamp = g_strdup_printf("%s GMT%s", purple_time_format(now),
+			                            timezone ? timezone : "");
+			purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
+			g_free(timestamp);
+			g_free(timezone);
 		}
 		if(jbir) {
 			if(jbir->idle_seconds > 0) {
@@ -984,11 +995,22 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			if (jbr->tz_off != PURPLE_NO_TZ_OFF) {
 				time_t now_t;
 				struct tm *now;
+				char *timestamp;
+				char *timezone;
 				time(&now_t);
 				now_t += jbr->tz_off;
 				now = gmtime(&now_t);
 
-				purple_notify_user_info_prepend_pair(user_info, _("Local Time"), purple_time_format(now));
+				if (jbr->tz_off)
+					timezone = g_strdup_printf("%02d:%02d", (int)(jbr->tz_off / (60*60)),
+					                           abs((jbr->tz_off % (60*60)) / 60));
+				else
+					timezone = NULL;
+				timestamp = g_strdup_printf("%s GMT%s", purple_time_format(now),
+				                            timezone ? timezone : "");
+				purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
+				g_free(timestamp);
+				g_free(timezone);
 			}
 
 			if(jbr->name && (jbir = g_hash_table_lookup(jbi->resources, jbr->name))) {
@@ -1029,7 +1051,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 					
 					if(!strcmp(feature, "jabber:iq:last"))
 						feature = _("Last Activity");
-					else if(!strcmp(feature, "http://jabber.org/protocol/disco#info"))
+					else if(!strcm
+				p(feature, "http://jabber.org/protocol/disco#info"))
 						feature = _("Service Discovery Info");
 					else if(!strcmp(feature, "http://jabber.org/protocol/disco#items"))
 						feature = _("Service Discovery Items");
@@ -1680,19 +1703,34 @@ static void jabber_time_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 	resource_name = jabber_get_resource(from);
 	jbr = resource_name ? jabber_buddy_find_resource(jbi->jb, resource_name) : NULL;
-	if (resource_name && jbr) {
+	g_free(resource_name);
+	if (jbr) {
 		if (type && !strcmp(type, "result")) {
 			xmlnode *time = xmlnode_get_child(packet, "time");
 			xmlnode *tzo = time ? xmlnode_get_child(time, "tzo") : NULL;
-			xmlnode *utc = time ? xmlnode_get_child(time, "utc") : NULL;
-			if (tzo && utc) {
-				char *timestamp = g_strdup_printf("%s %s",
-				        xmlnode_get_data(utc), xmlnode_get_data(tzo));
-				purple_str_to_time(timestamp, FALSE, NULL, &(jbr->tz_off), NULL);
-				g_free(timestamp);
+			char *tzo_data = tzo ? xmlnode_get_data(tzo) : NULL;
+			if (tzo_data) {
+				char *c = tzo_data;
+				int hours, minutes;
+				if (tzo_data[0] == 'Z' && tzo_data[1] == '\0') {
+					jbr->tz_off = 0;
+				} else {
+					gboolean offset_positive = (tzo_data[0] == '+');
+					/* [+-]HH:MM */
+					if (((*c == '+' || *c == '-') && (c = c + 1)) &&
+							sscanf(c, "%02d:%02d", &hours, &minutes) == 2) {
+						jbr->tz_off = 60*60*hours + 60*minutes;
+						if (!offset_positive)
+							jbr->tz_off *= -1;
+					} else {
+						purple_debug_info("jabber", "Ignoring malformed timezone %s",
+						                  tzo_data);
+					}
+				}
+
+				g_free(tzo_data);
 			}
 		}
-		g_free(resource_name);
 	}
 
 	jabber_buddy_info_show_if_ready(jbi);
