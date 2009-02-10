@@ -65,7 +65,7 @@ static GHashTable *finch_ui_get_info(void)
 		g_hash_table_insert(ui_info, "version", VERSION);
 		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
 		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
-		g_hash_table_insert(ui_info, "type", "console");
+		g_hash_table_insert(ui_info, "client_type", "console");
 	}
 
 	return ui_info;

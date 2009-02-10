@@ -118,7 +118,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 
 		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
 			GHashTable *ui_info = purple_core_get_ui_info();
-			const gchar *ui_type = g_hash_table_lookup(ui_info, "type");
+			const gchar *ui_type = g_hash_table_lookup(ui_info, "client_type");
 			const gchar *type = "pc"; /* default client type, if unknown or
 										unspecified */
 
