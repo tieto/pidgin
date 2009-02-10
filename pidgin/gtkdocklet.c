@@ -88,12 +88,15 @@ docklet_blink_icon(gpointer data)
 static GList *
 get_pending_list(guint max)
 {
-	GList *l_im = NULL;
-	GList *l_chat = NULL;
+	GList *l_im, *l_chat;
 
 	l_im = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
 						       PIDGIN_UNSEEN_TEXT,
 						       FALSE, max);
+
+	/* Short circuit if we have our information already */
+	if (max == 1 && l_im != NULL)
+		return l_im;
 
 	l_chat = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
 		 					 PIDGIN_UNSEEN_NICK,
