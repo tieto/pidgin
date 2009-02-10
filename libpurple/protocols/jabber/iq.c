@@ -352,7 +352,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	/* First, lets see if a special callback got registered */
 	if(type == JABBER_IQ_RESULT || type == JABBER_IQ_ERROR) {
-		if(id && *id && (jcd = g_hash_table_lookup(js->iq_callbacks, id))) {
+		if(jcd = g_hash_table_lookup(js->iq_callbacks, id)) {
 			jcd->callback(js, packet, jcd->data);
 			jabber_iq_remove_callback_by_id(js, id);
 			return;
