@@ -344,7 +344,9 @@ static gboolean
 docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 {
 	static guint hide_docklet_timer = 0;
-	if (event->type == GDK_LEAVE_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
+
+	if (event->type == GDK_LEAVE_NOTIFY && (event->detail == GDK_NOTIFY_ANCESTOR ||
+			event->detail == GDK_NOTIFY_UNKNOWN)) {
 		purple_debug(PURPLE_DEBUG_INFO, "docklet", "menu leave-notify-event\n");
 		/* Add some slop so that the menu doesn't annoyingly disappear when mousing around */
 		if (hide_docklet_timer == 0) {
@@ -652,11 +654,9 @@ docklet_plugin_actions(GtkWidget *menu)
 
 		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-		gtk_widget_show(menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-		gtk_widget_show(submenu);
 
 		build_plugin_actions(submenu, plugin, NULL);
 

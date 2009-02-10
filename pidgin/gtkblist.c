@@ -7676,13 +7676,11 @@ pidgin_blist_update_accounts_menu(void)
 			if (!disabled_accounts) {
 				menuitem = gtk_menu_item_new_with_label(_("Enable Account"));
 				gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-				gtk_widget_show(menuitem);
 
 				submenu = gtk_menu_new();
 				gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
 				gtk_menu_set_accel_path(GTK_MENU(submenu), N_("<PurpleMain>/Accounts/Enable Account"));
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-				gtk_widget_show(submenu);
 
 				disabled_accounts = TRUE;
 			}
@@ -7704,7 +7702,6 @@ pidgin_blist_update_accounts_menu(void)
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(enable_account_cb), account);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_show(menuitem);
 		} else {
 			enabled_accounts = TRUE;
 		}
@@ -7746,21 +7743,18 @@ pidgin_blist_update_accounts_menu(void)
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		}
 		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-		gtk_widget_show(menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
 		gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
 		g_free(accel_path_buf);
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-		gtk_widget_show(submenu);
 
 
 		menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
 		g_signal_connect(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(modify_account_cb), account);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-		gtk_widget_show(menuitem);
 
 		pidgin_separator(submenu);
 
@@ -7772,7 +7766,6 @@ pidgin_blist_update_accounts_menu(void)
 			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 			gtk_widget_set_sensitive(menuitem, FALSE);
-			gtk_widget_show(menuitem);
 		}
 
 		pidgin_separator(submenu);
@@ -7781,8 +7774,8 @@ pidgin_blist_update_accounts_menu(void)
 		g_signal_connect(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(disable_account_cb), account);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-		gtk_widget_show(menuitem);
 	}
+	gtk_widget_show_all(accountmenu);
 }
 
 static GList *plugin_submenus = NULL;
@@ -7821,13 +7814,11 @@ pidgin_blist_update_plugin_actions(void)
 
 		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
 		gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
-		gtk_widget_show(menuitem);
 
 		plugin_submenus = g_list_append(plugin_submenus, menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-		gtk_widget_show(submenu);
 
 		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
 		path = g_strdup_printf("%s/Tools/%s", gtkblist->ift->path, plugin->info->name);
@@ -7836,6 +7827,7 @@ pidgin_blist_update_plugin_actions(void)
 
 		build_plugin_actions(submenu, plugin, NULL);
 	}
+	gtk_widget_show_all(pluginmenu);
 }
 
 static void
