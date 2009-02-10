@@ -300,9 +300,6 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 		jabber_roster_request(js);
 	}
 
-	/* Send initial presence; this will trigger receipt of presence for contacts on the roster */
-	jabber_presence_send(js, TRUE);
-
 	if (js->server_caps & JABBER_CAP_ADHOC) {
 		/* The server supports ad-hoc commands, so let's request the list */
 		jabber_adhoc_server_get_list(js);
