@@ -257,10 +257,11 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 	js->currently_parsing_roster_push = FALSE;
 
 	/* if we're just now parsing the roster for the first time,
-	 * then now would be the time to send our initial presence */
+	 * then now would be the time to declare ourselves connected and
+	 * send our initial presence */
 	if(!js->roster_parsed) {
 		js->roster_parsed = TRUE;
-
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 		jabber_presence_send(js, TRUE);
 	}
 }

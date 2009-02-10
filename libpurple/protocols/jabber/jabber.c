@@ -92,7 +92,7 @@ jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	const char *type = xmlnode_get_attrib(packet, "type");
 	if(type && !strcmp(type, "result")) {
-		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		jabber_disco_items_server(js);
 		if(js->unregistration)
 			jabber_unregister_account_cb(js);
 	} else {
@@ -1527,7 +1527,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_CONNECTED:
 			/* now we can alert the core that we're ready to send status */
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
-			jabber_disco_items_server(js);
 			break;
 	}
 }
