@@ -2777,10 +2777,12 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("jabber:iq:last", 0);
 	jabber_add_feature("jabber:iq:oob", 0);
 	jabber_add_feature("jabber:iq:time", 0);
-	jabber_add_feature("xmpp:urn:time", 0);
+	jabber_add_feature("urn:xmpp:time", 0);
 	jabber_add_feature("jabber:iq:version", 0);
 	jabber_add_feature("jabber:x:conference", 0);
 	jabber_add_feature("http://jabber.org/protocol/bytestreams", 0);
+	jabber_add_feature("http://jabber.org/protocol/caps", 0);
+	jabber_add_feature("http://jabber.org/protocol/chatstates", 0);
 	jabber_add_feature("http://jabber.org/protocol/disco#info", 0);
 	jabber_add_feature("http://jabber.org/protocol/disco#items", 0);
 #if 0
