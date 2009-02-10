@@ -357,7 +357,7 @@ purple_privacy_check(PurpleAccount *account, const char *who)
 		case PURPLE_PRIVACY_ALLOW_USERS:
 			who = purple_normalize(account, who);
 			for (list=account->permit; list!=NULL; list=list->next) {
-				if (!purple_utf8_strcasecmp(who, (char *)list->data))
+				if (g_str_equal(who, list->data))
 					return TRUE;
 			}
 			return FALSE;
@@ -365,7 +365,7 @@ purple_privacy_check(PurpleAccount *account, const char *who)
 		case PURPLE_PRIVACY_DENY_USERS:
 			who = purple_normalize(account, who);
 			for (list=account->deny; list!=NULL; list=list->next) {
-				if (!purple_utf8_strcasecmp(who, (char *)list->data ))
+				if (g_str_equal(who, list->data))
 					return FALSE;
 			}
 			return TRUE;
