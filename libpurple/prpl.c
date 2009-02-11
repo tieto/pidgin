@@ -524,10 +524,8 @@ purple_prpl_initiate_media(PurpleAccount *account,
 #endif
 }
 
-gboolean
-purple_prpl_can_do_media(PurpleAccount *account,
-			 const char *who, 
-			 PurpleMediaSessionType type)
+PurpleMediaCaps
+purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 {
 #ifdef USE_VV
 	PurpleConnection *gc = NULL;
@@ -541,14 +539,12 @@ purple_prpl_can_do_media(PurpleAccount *account,
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, can_do_media)) {
-		return prpl_info->can_do_media(gc, who, type);
-	} else {
-		return FALSE;
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info,
+			get_media_caps)) {
+		return prpl_info->get_media_caps(gc, who);
 	}
-#else
-	return FALSE;
 #endif
+	return PURPLE_MEDIA_CAPS_NONE;
 }
 
 /**************************************************************************

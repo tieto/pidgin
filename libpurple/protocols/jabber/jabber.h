@@ -329,7 +329,7 @@ void jabber_init_plugin(PurplePlugin *plugin);
 
 #ifdef USE_VV
 PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaSessionType type);
-gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, PurpleMediaSessionType type);
+PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who);
 #endif
 
 #endif /* _PURPLE_JABBER_H_ */

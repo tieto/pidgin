@@ -65,6 +65,18 @@ typedef void PurpleMedia;
 
 #endif /* USE_VV */
 
+/** Media caps */
+typedef enum {
+	PURPLE_MEDIA_CAPS_NONE = 0,
+	PURPLE_MEDIA_CAPS_AUDIO = 1,
+	PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION = 1 << 1,
+	PURPLE_MEDIA_CAPS_VIDEO = 1 << 2,
+	PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION = 1 << 3,
+	PURPLE_MEDIA_CAPS_AUDIO_VIDEO = 1 << 4,
+	PURPLE_MEDIA_CAPS_MODIFY_SESSION = 1 << 5,
+	PURPLE_MEDIA_CAPS_CHANGE_DIRECTION = 1 << 6,
+} PurpleMediaCaps;
+
 /** Media session types */
 typedef enum {
 	PURPLE_MEDIA_NONE	= 0,

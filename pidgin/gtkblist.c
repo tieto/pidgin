@@ -348,8 +348,9 @@ static void gtk_blist_menu_video_call_cb(GtkWidget *w, PurpleBuddy *b)
 {
 	/* if the buddy supports both audio and video, start a combined call,
 	 otherwise start a pure video session */
-	if (purple_prpl_can_do_media(purple_buddy_get_account(b),
-		purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO)) {
+	if (purple_prpl_get_media_caps(purple_buddy_get_account(b),
+			purple_buddy_get_name(b)) &
+			PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
 		purple_prpl_initiate_media(purple_buddy_get_account(b),
 			purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 	} else {
@@ -1463,20 +1464,20 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
 	
 #ifdef USE_VV
-	if (prpl_info && prpl_info->can_do_media) {
-		PurpleConnection *gc = 
-			purple_account_get_connection(purple_buddy_get_account(buddy));
+	if (prpl_info && prpl_info->get_media_caps) {
+		PurpleAccount *account = purple_buddy_get_account(buddy);
 		const gchar *who = purple_buddy_get_name(buddy);
-		if (prpl_info->can_do_media(gc, who, PURPLE_MEDIA_AUDIO)) {
+		PurpleMediaCaps caps = purple_prpl_get_media_caps(account, who);
+		if (caps & PURPLE_MEDIA_CAPS_AUDIO) {
 			pidgin_new_item_from_stock(menu, _("_Audio Call"),
 				PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
 				G_CALLBACK(gtk_blist_menu_audio_call_cb), buddy, 0, 0, NULL);
 		}
-		if (prpl_info->can_do_media(gc, who, PURPLE_MEDIA_VIDEO | PURPLE_MEDIA_AUDIO)) {
+		if (caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
 			pidgin_new_item_from_stock(menu, _("Audio/_Video Call"),
 				PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
 				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);
-		} else if (prpl_info->can_do_media(gc, who, PURPLE_MEDIA_VIDEO)) {
+		} else if (caps & PURPLE_MEDIA_CAPS_VIDEO) {
 			pidgin_new_item_from_stock(menu, _("_Video Call"),
 				PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
 				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);

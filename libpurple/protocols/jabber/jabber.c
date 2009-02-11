@@ -2591,11 +2591,11 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 		return jingle_rtp_initiate_media(gc->proto_data, who, type);
 }
 
-gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
-                             PurpleMediaSessionType type)
+PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
+	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
 
 	if (!js) {
 		purple_debug_error("jabber", "jabber_can_do_media: NULL stream\n");
@@ -2609,34 +2609,30 @@ gboolean jabber_can_do_media(PurpleConnection *gc, const char *who,
 		return FALSE;
 	}
 
-	if (!jabber_buddy_has_capability(jb, JINGLE_TRANSPORT_ICEUDP) &&
-			!jabber_buddy_has_capability(jb,
-			JINGLE_TRANSPORT_RAWUDP) &&
-			!jabber_buddy_has_capability(jb, GTALK_CAP)) {
-		purple_debug_info("jingle-rtp", "Buddy doesn't support "
-				"the same transport types\n");
-		return FALSE;
+	if (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_AUDIO))
+		caps |= PURPLE_MEDIA_CAPS_AUDIO |
+				PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION;
+	if (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_VIDEO))
+		caps |= PURPLE_MEDIA_CAPS_VIDEO |
+				PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION;
+	if (caps & PURPLE_MEDIA_CAPS_AUDIO && caps & PURPLE_MEDIA_CAPS_VIDEO)
+		caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
+	if (caps != PURPLE_MEDIA_CAPS_NONE) {
+		if (!jabber_buddy_has_capability(jb,
+				JINGLE_TRANSPORT_ICEUDP) &&
+				!jabber_buddy_has_capability(jb,
+				JINGLE_TRANSPORT_RAWUDP)) {
+			purple_debug_info("jingle-rtp", "Buddy doesn't "
+					"support the same transport types\n");
+			caps = PURPLE_MEDIA_CAPS_NONE;
+		} else
+			caps |= PURPLE_MEDIA_CAPS_MODIFY_SESSION |
+					PURPLE_MEDIA_CAPS_CHANGE_DIRECTION;
 	}
+	if (jabber_buddy_has_capability(jb, GTALK_CAP))
+		caps |= PURPLE_MEDIA_CAPS_AUDIO;
 
-	/* XMPP will only support two-way media, AFAIK... */
-	if (type == (PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO)) {
-		purple_debug_info("jabber", 
-				  "Checking audio/video XEP support for %s\n", who);
-		return (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_AUDIO) ||
-				jabber_buddy_has_capability(jb, GTALK_CAP)) && 
-				jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_VIDEO);
-	} else if (type == (PURPLE_MEDIA_AUDIO)) {
-		purple_debug_info("jabber", 
-				  "Checking audio XEP support for %s\n", who);
-		return jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_AUDIO) ||
-				jabber_buddy_has_capability(jb, GTALK_CAP);
-	} else if (type == (PURPLE_MEDIA_VIDEO)) {
-		purple_debug_info("jabber", 
-				  "Checking video XEP support for %s\n", who);
-		return jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_VIDEO);
-	}
-
-	return FALSE;
+	return caps;
 }
 
 #endif
