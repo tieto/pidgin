@@ -295,6 +295,26 @@ jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleM
 }
 
 static void
+jingle_rtp_initiate_ack_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	JingleSession *session = data;
+
+	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error") ||
+			xmlnode_get_child(packet, "error")) {
+		gchar *sid = jingle_session_get_sid(session);
+		purple_media_end(jingle_rtp_get_media(session), NULL, NULL);
+		g_hash_table_remove(jingle_session_get_js(
+				session)->medias, sid);
+		g_free(sid);
+		g_object_unref(session);
+		return;
+	}
+
+	jabber_iq_send(jingle_session_to_packet(session,
+			JINGLE_TRANSPORT_INFO));
+}
+
+static void
 jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *session)
 {
 	purple_debug_info("rtp", "ready-new: session: %s name: %s\n", sid, name);
@@ -302,16 +322,18 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 	if (sid == NULL && name == NULL) {
 		if (jingle_session_is_initiator(session) == TRUE) {
 			GList *contents = jingle_session_get_contents(session);
+			JabberIq *iq = jingle_session_to_packet(
+					session, JINGLE_SESSION_INITIATE);
 
-			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_INITIATE));
-
-			for (; contents; contents = g_list_next(contents)) {
-				JingleContent *content = (JingleContent *)contents->data;
-				JingleTransport *transport = jingle_content_get_transport(content);
+			if (contents->data) {
+				JingleTransport *transport =
+						jingle_content_get_transport(contents->data);
 				if (JINGLE_IS_ICEUDP(transport))
-					jabber_iq_send(jingle_session_to_packet(session,
-							JINGLE_TRANSPORT_INFO));
+					jabber_iq_set_callback(iq,
+							jingle_rtp_initiate_ack_cb, session);
 			}
+
+			jabber_iq_send(iq);
 		} else {
 			jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
 			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_ACCEPT));

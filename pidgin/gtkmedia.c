@@ -787,9 +787,9 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 		gchar *message = g_strdup_printf("%s wishes to start a "
 				"media session with you\n", alias);
 		purple_request_accept_cancel(gtkmedia, "Media invitation",
-				message, NULL, 1, (void*)pc, screenname,
-				NULL, media, purple_media_accept,
-				purple_media_reject);
+				message, NULL, PURPLE_DEFAULT_ACTION_NONE,
+				(void*)pc, screenname, NULL, media,
+				purple_media_accept, purple_media_reject);
 		g_free(message);
 	} else
 		gtk_widget_show(GTK_WIDGET(gtkmedia));
