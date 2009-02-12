@@ -26,6 +26,8 @@
 #include "jabber.h"
 #include "xmlnode.h"
 
+#define XEP_0224_NAMESPACE "urn:xmpp:attention:0"
+
 typedef struct _JabberMessage {
 	JabberStream *js;
 	enum {
