@@ -236,6 +236,9 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 		server_hash = xmlnode_get_attrib(info, "id");
 	}
 
+	if (!metadata)
+		return;
+
 	ns = xmlnode_get_namespace(metadata);
 	if (!ns)
 		return;
@@ -338,8 +341,13 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 	if(!buddy)
 		return;
 
-	checksum = purple_buddy_icons_get_checksum_for_user(buddy);
+	if (!items)
+		return;
+
 	item = xmlnode_get_child(items,"item");
+	if (!item)
+		return;
+
 	metadata = xmlnode_get_child(item, "metadata");
 	if(!metadata)
 		return;
@@ -349,6 +357,8 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 	if (!ns || (strcmp(ns, NS_AVATAR_0_12_METADATA) &&
 	            strcmp(ns, NS_AVATAR_1_1_METADATA)))
 		return;
+
+	checksum = purple_buddy_icons_get_checksum_for_user(buddy);
 
 	/* check if we have received a stop */
 	if(xmlnode_get_child(metadata, "stop")) {
