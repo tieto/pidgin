@@ -155,11 +155,19 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 
 		presence = jabber_presence_create_js(js, state, stripped, priority);
 
-		if(js->avatar_hash) {
-			x = xmlnode_new_child(presence, "x");
-			xmlnode_set_namespace(x, "vcard-temp:x:update");
+		/* Per XEP-0153 4.1, we must always send the <x> */
+		x = xmlnode_new_child(presence, "x");
+		xmlnode_set_namespace(x, "vcard-temp:x:update");
+		/*
+		 * FIXME: Per XEP-0153 4.3.2 bullet 2, we must not publish our
+		 * image hash if another resource has logged in and updated the
+		 * vcard avatar. Requires changes in jabber_presence_parse.
+		 */
+		if (js->vcard_fetched) {
+			/* Always publish a <photo>; it's empty if we have no image. */
 			photo = xmlnode_new_child(x, "photo");
-			xmlnode_insert_data(photo, js->avatar_hash, -1);
+			if (js->avatar_hash)
+				xmlnode_insert_data(photo, js->avatar_hash, -1);
 		}
 
 		jabber_send(js, presence);

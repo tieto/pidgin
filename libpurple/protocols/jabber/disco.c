@@ -340,7 +340,13 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 {
 	const char *ft_proxies;
 
+	/*
+	 * This *should* happen only if the server supports vcard-temp, but there
+	 * are apparently some servers that don't advertise it even though they
+	 * support it.
+	 */
 	jabber_vcard_fetch_mine(js);
+
 	if (js->pep)
 		jabber_avatar_fetch_mine(js);
 
