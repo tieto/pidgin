@@ -496,11 +496,17 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
+	PurpleAccount *account = purple_connection_get_account(gc);
 	jabber_avatar_set(gc->proto_data, img, NULL);
 	/* vCard avatars do not have an image type requirement so update our
 	 * vCard avatar regardless of image type for those poor older clients
 	 */
-	jabber_set_info(gc, purple_account_get_user_info(gc->account));
+	jabber_set_info(gc, purple_account_get_user_info(account));
+
+	/* TODO: Fake image to ourselves, since a number of servers do not echo
+	 * back our presence to us. To do this without uselessly copying the data
+	 * of the image, we need purple_buddy_icons_set_for_user_image (i.e. takes
+	 * an existing icon/stored image). */
 }
 
 /*
@@ -1044,7 +1050,6 @@ static void jabber_vcard_save_mine(JabberStream *js, xmlnode *packet, gpointer d
 {
 	xmlnode *vcard, *photo, *binval;
 	char *txt, *vcard_hash = NULL;
-	const char *current_hash;
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp")))
@@ -1072,17 +1077,14 @@ static void jabber_vcard_save_mine(JabberStream *js, xmlnode *packet, gpointer d
 		}
 	}
 
-	current_hash = purple_account_get_string(js->gc->account,
-	                                         "prpl-jabber_icon_checksum", "");
-
 	/* Republish our vcard if the photo is different than the server's */
-	if ((!vcard_hash && current_hash[0] != '\0') ||
-		 (vcard_hash && strcmp(vcard_hash, current_hash))) {
+	if ((!vcard_hash && js->initial_avatar_hash) ||
+		 (vcard_hash && (!js->initial_avatar_hash || strcmp(vcard_hash, js->initial_avatar_hash)))) {
 		PurpleAccount *account = purple_connection_get_account(js->gc);
 		jabber_set_info(js->gc, purple_account_get_user_info(account));
-	} else if (current_hash != '\0') {
+	} else if (js->initial_avatar_hash) {
 		/* Our photo is in the vcard, so advertise vcard-temp updates */
-		js->avatar_hash = g_strdup(current_hash);
+		js->avatar_hash = g_strdup(js->initial_avatar_hash);
 	}
 
 	g_free(vcard_hash);

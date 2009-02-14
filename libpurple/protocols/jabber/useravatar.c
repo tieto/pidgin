@@ -226,7 +226,6 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 {
 	xmlnode *item = NULL, *metadata = NULL, *info = NULL;
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *current_hash = purple_account_get_string(account, "prpl-jabber_icon_checksum", "");
 	const char *server_hash = NULL;
 	const char *ns;
 
@@ -244,8 +243,8 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 		return;
 
 	/* Publish ours if it's different than the server's */
-	if ((!server_hash && current_hash[0] != '\0') ||
-		 (server_hash && strcmp(server_hash, current_hash))) {
+	if ((!server_hash && js->initial_avatar_hash) ||
+		 (server_hash && (!js->initial_avatar_hash || strcmp(server_hash, js->initial_avatar_hash)))) {
 		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 		jabber_avatar_set(js, img, ns);
 		purple_imgstore_unref(img);
