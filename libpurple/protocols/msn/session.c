@@ -90,7 +90,7 @@ msn_session_destroy(MsnSession *session)
 	msn_userlist_destroy(session->userlist);
 
 	g_free(session->psm);
-
+	g_free(session->abch_cachekey);
 #if 0
 	g_free(session->blocked_text);
 #endif

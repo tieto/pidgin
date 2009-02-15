@@ -198,6 +198,8 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnCallbackState *state = data;
 	xmlnode *fault;
 	char *faultcode_str;
+	xmlnode *cachekey;
+	char *changed;
 
 	if (resp == NULL) {
 		purple_debug_error("msn",
@@ -205,6 +207,21 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		                   msn_contact_operation_str(state->action));
 		return;
 	}
+
+ 	/* Update CacheKey if necessary */
+ 	cachekey = xmlnode_get_child(resp->xml, "Header/ServiceHeader/CacheKeyChanged");
+ 	if (cachekey != NULL) {
+ 		changed = xmlnode_get_data(cachekey);
+ 		if (changed && !strcmp(changed, "true")) {
+ 			cachekey = xmlnode_get_child(resp->xml, "Header/ServiceHeader/CacheKey");
+ 			g_free(state->session->abch_cachekey);
+ 			state->session->abch_cachekey = xmlnode_get_data(cachekey);
+ 			purple_debug_info("msn", "Updated CacheKey for %s to '%s'.\n",
+ 			                  purple_account_get_username(state->session->account),
+ 			                  state->session->abch_cachekey);
+ 		}
+ 		g_free(changed);
+ 	}
 
 	fault = xmlnode_get_child(resp->xml, "Body/Fault");
 
@@ -247,6 +264,14 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 static gboolean
 msn_contact_request(MsnCallbackState *state)
 {
+	xmlnode *cachekey = xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/CacheKey");
+	if (cachekey != NULL)
+		xmlnode_free(cachekey);
+	if (state->session->abch_cachekey != NULL) {
+		cachekey = xmlnode_new_child(xmlnode_get_child(state->body, "Header/ABApplicationHeader"), "CacheKey");
+		xmlnode_insert_data(cachekey, state->session->abch_cachekey, -1);
+	}
 	if (state->token == NULL)
 		state->token = xmlnode_get_child(state->body,
 			"Header/ABAuthHeader/TicketToken");

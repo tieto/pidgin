@@ -98,6 +98,7 @@ struct _MsnSession
 	MsnOim          *oim;
 	MsnSync         *sync;
 	MsnUserList     *userlist;
+	char            *abch_cachekey;
 
 	int servconns_count; /**< The count of server connections. */
 	GList *switches; /**< The list of all the switchboards. */
