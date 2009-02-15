@@ -74,6 +74,7 @@ msn_nexus_destroy(MsnNexus *nexus)
 	for (i = 0; i < nexus->token_len; i++) {
 		g_hash_table_destroy(nexus->tokens[i].token);
 		g_free(nexus->tokens[i].secret);
+		g_slist_free(nexus->tokens[i].updates);
 	}
 
 	g_free(nexus->tokens);
