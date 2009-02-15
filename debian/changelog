@@ -1,3 +1,9 @@
+pidgin (2.5.4-2) unstable; urgency=low
+
+  * Upload to unstable
+
+ -- Ari Pollak <ari@debian.org>  Sun, 15 Feb 2009 05:16:09 -0500
+
 pidgin (2.5.4-1) experimental; urgency=low
 
   * New upstream version
@@ -33,6 +39,14 @@ pidgin (2.5.0-1) experimental; urgency=low
     build-depend on ca-certificates
 
  -- Ari Pollak <ari@debian.org>  Sun, 24 Aug 2008 16:59:00 -0400
+
+pidgin (2.4.3-4) unstable; urgency=low
+
+  * debian/patches/28_upnp_dos.patch:
+    - Backport patch from upstream to fix a possible DoS in the UPnP code
+      (CVE-2008-2957, doesn't competely fix #488632)
+
+ -- Ari Pollak <ari@debian.org>  Mon, 24 Nov 2008 19:33:51 -0500
 
 pidgin (2.4.3-3) unstable; urgency=low
 
