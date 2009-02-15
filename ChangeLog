@@ -10,6 +10,8 @@ version 2.5.5 (??/??/????):
 	* XMPP resources using __HOSTNAME__ substitution will now grab only the
 	  short hostname instead of the FQDN on systems which put the FQDN in
 	  the hostname (Matěj Cepl)
+	* Fix some string handling in the SIMPLE prpl, which fixes some buddy name
+	  handling and other issues. (Paul Aurich, Marcus Sundberg)
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
