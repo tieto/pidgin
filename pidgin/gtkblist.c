@@ -4554,6 +4554,9 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList 
 	if (!gtkblist)
 		return FALSE;
 
+	/* clear any tooltips */
+	pidgin_blist_tooltip_destroy();
+
 	widget = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
 
 	if (GTK_IS_IMHTML(widget) || GTK_IS_ENTRY(widget)) {
