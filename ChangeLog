@@ -7,6 +7,9 @@ version 2.5.5 (??/??/????):
 	  enable, check the "Use SSL" option from the Advanced tab when
 	  editing your AIM or ICQ account. (Paul Aurich)
 	* Fix a memory leak in SILC. (Luke Petre)
+	* XMPP resources using __HOSTNAME__ substitution will now grab only the
+	  short hostname instead of the FQDN on systems which put the FQDN in
+	  the hostname (Matěj Cepl)
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and

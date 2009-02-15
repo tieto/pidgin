@@ -148,7 +148,8 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 }
 
 static char *jabber_prep_resource(char *input) {
-	char hostname[256]; /* current hostname */
+	char hostname[256], /* current hostname */
+		 *dot = NULL;
 
 	/* Empty resource == don't send any */
 	if (input == NULL || *input == '\0')
@@ -169,6 +170,12 @@ static char *jabber_prep_resource(char *input) {
 		strcpy(hostname, "localhost");
 	}
 	hostname[sizeof(hostname) - 1] = '\0';
+
+	/* We want only the short hostname, not the FQDN - this will prevent the
+	 * resource string from being unreasonably long on systems which stuff the
+	 * whole FQDN in the hostname */
+	if((dot = strchr(hostname, '.')))
+			dot = '\0';
 
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
