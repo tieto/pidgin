@@ -7,14 +7,8 @@ version 2.5.5 (??/??/????):
 	  enable, check the "Use SSL" option from the Advanced tab when
 	  editing your AIM or ICQ account. (Paul Aurich)
 	* Fix a memory leak in SILC. (Luke Petre)
-	* XMPP resources using __HOSTNAME__ substitution will now grab only the
-	  short hostname instead of the FQDN on systems which put the FQDN in
-	  the hostname (Matěj Cepl)
 	* Fix some string handling in the SIMPLE prpl, which fixes some buddy name
 	  handling and other issues. (Paul Aurich, Marcus Sundberg)
-	* No longer send a 'to' attribute on an outgoing XMPP stanza when we
-	  haven't received one.  This fixes a registration bug as described in
-	  ticket #6635.
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
@@ -35,6 +29,14 @@ version 2.5.5 (??/??/????):
 	  Book.  See the FAQ for more information.  Thanks to Jason Lingohr
 	  for lots of debugging and testing.
 	* Messages from Yahoo! buddies are no longer silently dropped.
+
+	XMPP:
+	* Resources using __HOSTNAME__ substitution will now grab only the short
+	  hostname instead of the FQDN on systems which put the FQDN in the
+	  hostname. (Matěj Cepl)
+	* No longer send a 'to' attribute on an outgoing stanza when we haven't
+	  received one.  This fixes a registration bug as described in ticket
+	  #6635.
 
 	Pidgin:
 	* Tooltip windows now appear below the mouse cursor. (Kosta Arvanitis)
