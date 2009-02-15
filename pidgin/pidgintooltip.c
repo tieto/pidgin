@@ -359,6 +359,7 @@ gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
 
 	g_signal_connect(G_OBJECT(tree), "motion-notify-event", G_CALLBACK(row_motion_cb), tdata);
 	g_signal_connect(G_OBJECT(tree), "leave-notify-event", G_CALLBACK(widget_leave_cb), NULL);
+	g_signal_connect(G_OBJECT(tree), "scroll-event", G_CALLBACK(widget_leave_cb), NULL);
 	g_signal_connect_swapped(G_OBJECT(tree), "destroy", G_CALLBACK(destroy_tooltip_data), tdata);
 	return TRUE;
 }
@@ -387,6 +388,7 @@ gboolean pidgin_tooltip_setup_for_widget(GtkWidget *widget, gpointer userdata,
 
 	g_signal_connect(G_OBJECT(widget), "motion-notify-event", G_CALLBACK(widget_motion_cb), wdata);
 	g_signal_connect(G_OBJECT(widget), "leave-notify-event", G_CALLBACK(widget_leave_cb), NULL);
+	g_signal_connect(G_OBJECT(widget), "scroll-event", G_CALLBACK(widget_leave_cb), NULL);
 	g_signal_connect_swapped(G_OBJECT(widget), "destroy", G_CALLBACK(destroy_tooltip_data), wdata);
 	return TRUE;
 }
