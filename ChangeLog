@@ -12,6 +12,9 @@ version 2.5.5 (??/??/????):
 	  the hostname (Matěj Cepl)
 	* Fix some string handling in the SIMPLE prpl, which fixes some buddy name
 	  handling and other issues. (Paul Aurich, Marcus Sundberg)
+	* No longer send a 'to' attribute on an outgoing XMPP stanza when we
+	  haven't received one.  This fixes a registration bug as described in
+	  ticket #6635.
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
