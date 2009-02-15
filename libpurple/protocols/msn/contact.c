@@ -211,7 +211,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	if (fault == NULL) {
 		/* No errors */
 		if (state->cb)
-			((MsnSoapCallback)state->cb)(req, resp, data);
+			state->cb(req, resp, data);
 		msn_callback_state_free(state);
 		return;
 	}
@@ -230,7 +230,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	else
 	{
 		if (state->cb) {
-			((MsnSoapCallback)state->cb)(req, resp, data);
+			state->cb(req, resp, data);
 		} else {
 			/* We don't know how to respond to this faultcode, so log it */
 			char *str = xmlnode_to_str(fault, NULL);
