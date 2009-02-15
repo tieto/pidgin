@@ -23,7 +23,8 @@ version 2.5.5 (??/??/????):
 	* Large (multi-part) messages are now correctly re-combined.
 	* Federated/Yahoo! buddies should now stop creating sync issues at
 	  every signin.  You may need to remove duplicates in the Address
-	  Book.  See the FAQ for more information.
+	  Book.  See the FAQ for more information.  Thanks to Jason Lingohr
+	  for lots of debugging and testing.
 	* Messages from Yahoo! buddies are no longer silently dropped.
 
 	Finch:
