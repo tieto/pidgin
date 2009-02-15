@@ -353,7 +353,8 @@ read_window_positions(GntWM *wm)
 				p->y = y;
 				g_hash_table_replace(wm->positions, g_strdup(title + 1), p);
 			} else {
-				gnt_warning("Invalid number of arguments (%d) for positioning a window.", l);
+				gnt_warning("Invalid number of arguments (%" G_GSIZE_FORMAT
+						") for positioning a window.", l);
 			}
 			g_strfreev(coords);
 		}
