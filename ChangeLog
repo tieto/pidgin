@@ -36,6 +36,12 @@ version 2.5.5 (??/??/????):
 	  for lots of debugging and testing.
 	* Messages from Yahoo! buddies are no longer silently dropped.
 
+	Pidgin:
+	* Tooltip windows now appear below the mouse cursor. (Kosta Arvanitis)
+	* Tooltip windows now disappear on keypress events. (Kosta Arvanitis)
+	* Tooltip windows no longer linger when scrolling the buddy list. (Kosta
+	  Arvanitis)
+
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the
 	  man-page, look for GntBox::binding)
