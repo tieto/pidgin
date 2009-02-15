@@ -91,7 +91,9 @@ msn_session_destroy(MsnSession *session)
 
 	g_free(session->psm);
 
+#if 0
 	g_free(session->blocked_text);
+#endif
 
 	g_free(session->passport_info.kv);
 	g_free(session->passport_info.sid);
