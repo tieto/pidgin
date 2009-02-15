@@ -66,7 +66,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#define HEADLINE_CLOSE_SIZE 12
+#define HEADLINE_CLOSE_SIZE 11
 
 typedef struct
 {
@@ -5387,7 +5387,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, HEADLINE_CLOSE_SIZE, NULL);
+	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC), NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
