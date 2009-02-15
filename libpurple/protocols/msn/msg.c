@@ -352,6 +352,14 @@ msn_message_parse_payload(MsnMessage *msg,
 			memcpy(msg->body, tmp, msg->body_len);
 			msg->body[msg->body_len] = '\0';
 		}
+		
+		if (msg->charset == NULL) {
+			char *body = g_convert(msg->body, msg->body_len, "UTF-8",
+			                       "ISO-8859-1", NULL, &msg->body_len, NULL);
+			g_free(msg->body);
+			msg->body = body;
+			msg->charset = g_strdup("UTF-8");
+		}
 	}
 
 	g_free(tmp_base);
