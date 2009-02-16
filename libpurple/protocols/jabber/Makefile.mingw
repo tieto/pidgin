@@ -51,6 +51,7 @@ C_SRC =	\
 			data.c \
 			disco.c \
 			google.c \
+			ibb.c \
 			iq.c \
 			jabber.c \
 			jutil.c \
