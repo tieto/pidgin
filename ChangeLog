@@ -29,6 +29,24 @@ version 2.5.5 (??/??/????):
 	  Book.  See the FAQ for more information.  Thanks to Jason Lingohr
 	  for lots of debugging and testing.
 	* Messages from Yahoo! buddies are no longer silently dropped.
+	* We now save and use the CacheKey for ABCH SOAP requests.
+	* Don't try to parse Personal Status Messages or Current Media if they
+	  don't exist.
+	* Convert from ISO-8859-1 encoding to UTF-8 when no charset is specified
+	  on incoming messages.  This should fix some issues with messages from
+	  older clients.
+	* Force sending the font "Segoe UI" if outgoing formatting doesn't specify
+	  a font already.
+	* Queue callbacks when token updates are in progress to prevent two token
+	  update attempts from trampling each other.
+	* Fixed a crash on Windows when removing a buddy's alias.
+	* Update the Address Book when buddies' friendly names change.  This
+	  prevents seeing an outdated alias or not seeing an alias at all for
+	  buddies who are offline when you sign in.
+	* Update tokens for FindMembership and ABFindAll SOAP requests.
+	* We no longer try to send empty messages.  This could happen when a
+	  message contained only formatting and that formatting was not supported
+	  on MSN.
 
 	XMPP:
 	* Resources using __HOSTNAME__ substitution will now grab only the short
