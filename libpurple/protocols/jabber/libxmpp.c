@@ -236,12 +236,6 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
 
-	/* XXX FORCE_BOSH: Remove this before re-merging branch */
-	option = purple_account_option_bool_new(_("Force BOSH (debugging)"),
-						"force_bosh", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-							option);
-
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);

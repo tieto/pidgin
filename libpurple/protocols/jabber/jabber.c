@@ -759,8 +759,6 @@ jabber_login(PurpleAccount *account)
 			"connect_server", "");
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
-	/* XXX FORCE_BOSH */
-	gboolean force_bosh = purple_account_get_bool(account, "force_bosh", FALSE);
 
 	gc->flags |= PURPLE_CONNECTION_HTML |
 		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
@@ -780,7 +778,6 @@ jabber_login(PurpleAccount *account)
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
-	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -801,10 +798,20 @@ jabber_login(PurpleAccount *account)
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
-	/* XXX FORCE_BOSH: Remove this */
-	if (force_bosh) {
-		js->srv_query_data = purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, js);
+	/* TODO: Just use purple_url_parse? */
+	if (!g_ascii_strncasecmp(connect_server, "http://", 7) || !g_ascii_strncasecmp(connect_server, "https://", 8)) {
+		js->use_bosh = TRUE;
+		js->bosh = jabber_bosh_connection_init(js, connect_server);
+		if (!js->bosh) {
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+				_("Malformed BOSH Connect Server"));
+			return;
+		}
+		jabber_bosh_connection_connect(js->bosh);
 		return;
+	} else {
+		js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 	}
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
