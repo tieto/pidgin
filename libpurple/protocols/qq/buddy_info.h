@@ -31,7 +31,7 @@
 #include "buddy_opt.h"
 #include "qq.h"
 
-/* use is openq2005
+/* use in qq2005
  * ext_flag: (0-7)
  *        bit1 => qq space
  * comm_flag: (0-7)

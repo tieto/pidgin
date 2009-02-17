@@ -1783,7 +1783,7 @@ void jabber_buddy_get_info(PurpleConnection *gc, const char *who)
 	if (!jid)
 		return;
 
-	if (jabber_chat_find(js, jid->node, jid->domain)) {
+	if (jid->node && jabber_chat_find(js, jid->node, jid->domain)) {
 		/* For a conversation, include the resource (indicates the user). */
 		jabber_buddy_get_info_for_jid(js, who);
 	} else {

@@ -7,6 +7,8 @@ version 2.5.5 (??/??/????):
 	  enable, check the "Use SSL" option from the Advanced tab when
 	  editing your AIM or ICQ account. (Paul Aurich)
 	* Fix a memory leak in SILC. (Luke Petre)
+	* Fix some string handling in the SIMPLE prpl, which fixes some buddy name
+	  handling and other issues. (Paul Aurich, Marcus Sundberg)
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
@@ -15,6 +17,7 @@ version 2.5.5 (??/??/????):
 	  of buddy icons and available messages.
 	* Properly publish status messages for statuses other than Available.
 	  ICQ 6.x users can now see these status messages. (Daniel Ljungborg)
+	* Fix recipt of messages from the mobile client Slick. (David Jedelsky)
 
 	MSN:
 	* Fix transfer of buddy icons, custom smileys, and files from the
@@ -23,8 +26,23 @@ version 2.5.5 (??/??/????):
 	* Large (multi-part) messages are now correctly re-combined.
 	* Federated/Yahoo! buddies should now stop creating sync issues at
 	  every signin.  You may need to remove duplicates in the Address
-	  Book.  See the FAQ for more information.
+	  Book.  See the FAQ for more information.  Thanks to Jason Lingohr
+	  for lots of debugging and testing.
 	* Messages from Yahoo! buddies are no longer silently dropped.
+
+	XMPP:
+	* Resources using __HOSTNAME__ substitution will now grab only the short
+	  hostname instead of the FQDN on systems which put the FQDN in the
+	  hostname. (Matěj Cepl)
+	* No longer send a 'to' attribute on an outgoing stanza when we haven't
+	  received one.  This fixes a registration bug as described in ticket
+	  #6635.
+
+	Pidgin:
+	* Tooltip windows now appear below the mouse cursor. (Kosta Arvanitis)
+	* Tooltip windows now disappear on keypress events. (Kosta Arvanitis)
+	* Tooltip windows no longer linger when scrolling the buddy list. (Kosta
+	  Arvanitis)
 
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the

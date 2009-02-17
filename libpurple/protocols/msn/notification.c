@@ -1619,19 +1619,25 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 
-	psm_str = msn_get_psm(cmd->payload,len);
-	msn_user_set_statusline(user, psm_str);
-	g_free(psm_str);
+	if (len != 0) {
+		psm_str = msn_get_psm(cmd->payload,len);
+		msn_user_set_statusline(user, psm_str);
+		g_free(psm_str);
 
-	str = msn_get_currentmedia(cmd->payload, len);
-	if (msn_parse_currentmedia(str, &media))
-		msn_user_set_currentmedia(user, &media);
-	else
+		str = msn_get_currentmedia(cmd->payload, len);
+		if (msn_parse_currentmedia(str, &media))
+			msn_user_set_currentmedia(user, &media);
+		else
+			msn_user_set_currentmedia(user, NULL);
+		g_free(media.title);
+		g_free(media.album);
+		g_free(media.artist);
+		g_free(str);
+
+	} else {
+		msn_user_set_statusline(user, NULL);
 		msn_user_set_currentmedia(user, NULL);
-	g_free(media.title);
-	g_free(media.album);
-	g_free(media.artist);
-	g_free(str);
+	}
 
 	msn_user_update(user);
 }
