@@ -1177,25 +1177,74 @@ s4_canread(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 static void
+s4_host_resolved(GSList *hosts, gpointer data, const char *error_message)
+{
+	PurpleProxyConnectData *connect_data = data;
+	unsigned char packet[9];
+	struct sockaddr *addr;
+
+	connect_data->query_data = NULL;
+
+	if (error_message != NULL) {
+		purple_proxy_connect_data_disconnect(connect_data, error_message);
+		return;
+	}
+
+	if (hosts == NULL) {
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Error resolving %s"), connect_data->host);
+		return;
+	}
+
+	/* Discard the length... */
+	hosts = g_slist_delete_link(hosts, hosts);
+	addr = hosts->data;
+	hosts = g_slist_delete_link(hosts, hosts);
+
+	packet[0] = 4;
+	packet[1] = 1;
+	packet[2] = connect_data->port >> 8;
+	packet[3] = connect_data->port & 0xff;
+	memcpy(packet + 4, &((struct sockaddr_in *)addr)->sin_addr.s_addr, 4);
+	packet[8] = 0;
+
+	g_free(addr);
+
+	/* We could try the other hosts, but hopefully that shouldn't be necessary */
+	while (hosts != NULL) {
+		/* Discard the length... */
+		hosts = g_slist_delete_link(hosts, hosts);
+		/* Free the address... */
+		g_free(hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
+	}
+
+	connect_data->write_buffer = g_memdup(packet, sizeof(packet));
+	connect_data->write_buf_len = sizeof(packet);
+	connect_data->written_len = 0;
+	connect_data->read_cb = s4_canread;
+
+	connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+
+	proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+}
+
+static void
 s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 {
-	unsigned char packet[9];
-	struct hostent *hp;
 	PurpleProxyConnectData *connect_data = data;
 	int error = ETIMEDOUT;
 	int ret;
 
 	purple_debug_info("socks4 proxy", "Connected.\n");
 
-	if (connect_data->inpa > 0)
-	{
+	if (connect_data->inpa > 0) {
 		purple_input_remove(connect_data->inpa);
 		connect_data->inpa = 0;
 	}
 
 	ret = purple_input_get_error(connect_data->fd, &error);
-	if ((ret != 0) || (error != 0))
-	{
+	if ((ret != 0) || (error != 0)) {
 		if (ret != 0)
 			error = errno;
 		purple_proxy_connect_data_disconnect(connect_data, g_strerror(error));
@@ -1210,32 +1259,13 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 	 * with an option, or some detection mechanism - in the
 	 * meantime, stick with plain old SOCKS4.
 	 */
-	/* TODO: Use purple_dnsquery_a() */
-	hp = gethostbyname(connect_data->host);
-	if (hp == NULL) {
-		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Error resolving %s"), connect_data->host);
-		return;
+	connect_data->query_data = purple_dnsquery_a(connect_data->host,
+			connect_data->port, s4_host_resolved, connect_data);
+
+	if (connect_data->query_data == NULL) {
+		purple_debug_error("proxy", "dns query failed unexpectedly.\n");
+		purple_proxy_connect_data_destroy(connect_data);
 	}
-
-	packet[0] = 4;
-	packet[1] = 1;
-	packet[2] = connect_data->port >> 8;
-	packet[3] = connect_data->port & 0xff;
-	packet[4] = (unsigned char)(hp->h_addr_list[0])[0];
-	packet[5] = (unsigned char)(hp->h_addr_list[0])[1];
-	packet[6] = (unsigned char)(hp->h_addr_list[0])[2];
-	packet[7] = (unsigned char)(hp->h_addr_list[0])[3];
-	packet[8] = 0;
-
-	connect_data->write_buffer = g_memdup(packet, sizeof(packet));
-	connect_data->write_buf_len = sizeof(packet);
-	connect_data->written_len = 0;
-	connect_data->read_cb = s4_canread;
-
-	connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
-
-	proxy_do_write(connect_data, connect_data->fd, cond);
 }
 
 static void
