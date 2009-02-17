@@ -47,6 +47,10 @@ version 2.5.5 (??/??/????):
 	* We no longer try to send empty messages.  This could happen when a
 	  message contained only formatting and that formatting was not supported
 	  on MSN.
+	* Buddies on both the Allow and Block list are now automatically
+	  removed from the Allow list.  Users with this problem will now no
+	  longer receive an ADL 241 error.  The problematic buddy should now
+	  appear on the buddy list and can be removed or unblocked as desired.
 
 	XMPP:
 	* Resources using __HOSTNAME__ substitution will now grab only the short
