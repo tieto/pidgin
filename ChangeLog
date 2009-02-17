@@ -9,6 +9,7 @@ version 2.5.5 (??/??/????):
 	* Fix a memory leak in SILC. (Luke Petre)
 	* Fix some string handling in the SIMPLE prpl, which fixes some buddy name
 	  handling and other issues. (Paul Aurich, Marcus Sundberg)
+	* Implement support for resolving DNS via the SOCKS4 proxy (SOCKS4a).
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and

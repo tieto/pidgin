@@ -1201,12 +1201,12 @@ s4_host_resolved(GSList *hosts, gpointer data, const char *error_message)
 	addr = hosts->data;
 	hosts = g_slist_delete_link(hosts, hosts);
 
-	packet[0] = 4;
-	packet[1] = 1;
+	packet[0] = 0x04;
+	packet[1] = 0x01;
 	packet[2] = connect_data->port >> 8;
 	packet[3] = connect_data->port & 0xff;
 	memcpy(packet + 4, &((struct sockaddr_in *)addr)->sin_addr.s_addr, 4);
-	packet[8] = 0;
+	packet[8] = 0x00;
 
 	g_free(addr);
 
@@ -1252,19 +1252,47 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 	}
 
 	/*
-	 * The socks4 spec doesn't include support for doing host name
-	 * lookups by the proxy.  Some socks4 servers do this via
-	 * extensions to the protocol.  Since we don't know if a
-	 * server supports this, it would need to be implemented
-	 * with an option, or some detection mechanism - in the
-	 * meantime, stick with plain old SOCKS4.
+	 * The socks4 spec doesn't include support for doing host name lookups by
+	 * the proxy.  Many socks4 servers do this via the "socks4a" extension to
+	 * the protocol.  There doesn't appear to be a way to detect if a server
+	 * supports this, so we require that the user set a global option.
 	 */
-	connect_data->query_data = purple_dnsquery_a(connect_data->host,
-			connect_data->port, s4_host_resolved, connect_data);
+	if (purple_prefs_get_bool("/purple/proxy/socks4_remotedns")) {
+		unsigned char packet[9];
+		int len;
 
-	if (connect_data->query_data == NULL) {
-		purple_debug_error("proxy", "dns query failed unexpectedly.\n");
-		purple_proxy_connect_data_destroy(connect_data);
+		purple_debug_info("socks4 proxy", "Attempting to use remote DNS.\n");
+
+		packet[0] = 0x04;
+		packet[1] = 0x01;
+		packet[2] = connect_data->port >> 8;
+		packet[3] = connect_data->port & 0xff;
+		packet[4] = 0x00;
+		packet[5] = 0x00;
+		packet[6] = 0x00;
+		packet[7] = 0x01;
+		packet[8] = 0x00;
+
+		len = sizeof(packet) + strlen(connect_data->host) + 1;
+
+		connect_data->write_buffer = g_malloc0(len);
+		memcpy(connect_data->write_buffer, packet, sizeof(packet));
+		memcpy(connect_data->write_buffer + sizeof(packet), connect_data->host, strlen(connect_data->host));
+		connect_data->write_buf_len = len;
+		connect_data->written_len = 0;
+		connect_data->read_cb = s4_canread;
+
+		connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+
+		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+	} else {
+		connect_data->query_data = purple_dnsquery_a(connect_data->host,
+				connect_data->port, s4_host_resolved, connect_data);
+
+		if (connect_data->query_data == NULL) {
+			purple_debug_error("proxy", "dns query failed unexpectedly.\n");
+			purple_proxy_connect_data_destroy(connect_data);
+		}
 	}
 }
 
@@ -2323,6 +2351,7 @@ purple_proxy_init(void)
 	purple_prefs_add_int("/purple/proxy/port", 0);
 	purple_prefs_add_string("/purple/proxy/username", "");
 	purple_prefs_add_string("/purple/proxy/password", "");
+	purple_prefs_add_bool("/purple/proxy/socks4_remotedns", FALSE);
 
 	/* Setup callbacks for the preferences. */
 	handle = purple_proxy_get_handle();
