@@ -821,22 +821,27 @@ jabber_login(PurpleAccount *account)
 					js->certificate_CN,
 					purple_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
 					jabber_ssl_connect_failure, js->gc);
+			if (!js->gsc) {
+				purple_connection_error_reason (js->gc,
+					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+					_("Unable to establish SSL connection"));
+			}
 		} else {
 			purple_connection_error_reason (js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
+
+		return;
 	}
 
 	/* no old-ssl, so if they've specified a connect server, we'll use that, otherwise we'll
 	 * invoke the magic of SRV lookups, to figure out host and port */
-	if(!js->gsc) {
-		if(connect_server[0]) { 
-			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222), TRUE);
-		} else {
-			js->srv_query_data = purple_srv_resolve("xmpp-client",
-					"tcp", js->user->domain, srv_resolved_cb, js);
-		}
+	if(connect_server[0]) { 
+		jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222), TRUE);
+	} else {
+		js->srv_query_data = purple_srv_resolve("xmpp-client",
+				"tcp", js->user->domain, srv_resolved_cb, js);
 	}
 }
 
