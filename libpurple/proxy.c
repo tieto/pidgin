@@ -1426,7 +1426,7 @@ static void
 s5_sendconnect(gpointer data, int source)
 {
 	PurpleProxyConnectData *connect_data = data;
-	int hlen = strlen(connect_data->host);
+	size_t hlen = strlen(connect_data->host);
 	connect_data->write_buf_len = 5 + hlen + 2;
 	connect_data->write_buffer = g_malloc(connect_data->write_buf_len);
 	connect_data->written_len = 0;
@@ -1509,7 +1509,7 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 	int i;
 	unsigned char Kxoripad[65];
 	unsigned char Kxoropad[65];
-	int pwlen;
+	size_t pwlen;
 
 	cipher = purple_ciphers_find_cipher("md5");
 	ctx = purple_cipher_context_new(cipher, NULL);
@@ -1727,7 +1727,7 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		msg_ret = s5_parse_chap_msg(connect_data);
-	
+
 		if (msg_ret < 0)
 			return;
 
@@ -1807,7 +1807,7 @@ s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 	}
 
 	if (connect_data->read_buffer[1] == 0x02) {
-		gsize i, j;
+		size_t i, j;
 		const char *u, *p;
 
 		u = purple_proxy_info_get_username(connect_data->gpi);
@@ -1840,7 +1840,7 @@ s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 		return;
 	} else if (connect_data->read_buffer[1] == 0x03) {
-		gsize userlen;
+		size_t userlen;
 		userlen = strlen(purple_proxy_info_get_username(connect_data->gpi));
 
 		connect_data->write_buf_len = 7 + userlen;
@@ -1987,7 +1987,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 
 static void try_connect(PurpleProxyConnectData *connect_data)
 {
-	size_t addrlen;
+	socklen_t addrlen;
 	struct sockaddr *addr;
 	char ipaddr[INET6_ADDRSTRLEN];
 
@@ -1999,7 +1999,7 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
 			ipaddr, sizeof(ipaddr));
 #else
-	memcpy(ipaddr,inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
+	memcpy(ipaddr, inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
 			sizeof(ipaddr));
 #endif
 	purple_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
