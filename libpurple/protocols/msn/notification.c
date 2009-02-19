@@ -623,6 +623,18 @@ msn_notification_dump_contact(MsnSession *session)
 		if (user->passport && !strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
+		if ((user->list_op & MSN_LIST_OP_MASK) == (MSN_LIST_AL_OP | MSN_LIST_BL_OP)) {
+			/* The server will complain if we send it a user on both the
+			   Allow and Block lists. So assume they're on the Block list
+			   and remove them from the Allow list in the membership lists to
+			   stop this from happening again. */
+			purple_debug_warning("msn",
+			                     "User %s is on both Allow and Block list,"
+			                     "removing from Allow list.\n",
+			                     user->passport);
+			msn_userlist_rem_buddy_from_list(session->userlist, user->passport, MSN_LIST_AL);
+		}
+
 		msn_add_contact_xml(session, adl_node, user->passport,
 			user->list_op & MSN_LIST_OP_MASK, user->networkid);
 
@@ -1619,19 +1631,25 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 
-	psm_str = msn_get_psm(cmd->payload,len);
-	msn_user_set_statusline(user, psm_str);
-	g_free(psm_str);
+	if (len != 0) {
+		psm_str = msn_get_psm(cmd->payload,len);
+		msn_user_set_statusline(user, psm_str);
+		g_free(psm_str);
 
-	str = msn_get_currentmedia(cmd->payload, len);
-	if (msn_parse_currentmedia(str, &media))
-		msn_user_set_currentmedia(user, &media);
-	else
+		str = msn_get_currentmedia(cmd->payload, len);
+		if (msn_parse_currentmedia(str, &media))
+			msn_user_set_currentmedia(user, &media);
+		else
+			msn_user_set_currentmedia(user, NULL);
+		g_free(media.title);
+		g_free(media.album);
+		g_free(media.artist);
+		g_free(str);
+
+	} else {
+		msn_user_set_statusline(user, NULL);
 		msn_user_set_currentmedia(user, NULL);
-	g_free(media.title);
-	g_free(media.album);
-	g_free(media.artist);
-	g_free(str);
+	}
 
 	msn_user_update(user);
 }

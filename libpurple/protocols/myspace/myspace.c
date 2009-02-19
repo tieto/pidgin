@@ -1146,7 +1146,11 @@ msim_got_contact_list(MsimSession *session, const MsimMessage *reply, gpointer u
 			break;
 
 		case MSIM_CONTACT_LIST_INITIAL_FRIENDS:
-			/* Nothing */
+			/* The session is now set up, ready to be connected. This emits the
+			 * signedOn signal, so clients can now do anything with msimprpl, and
+			 * we're ready for it (session key, userid, username all setup). */
+			purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
+			purple_connection_set_state(session->gc, PURPLE_CONNECTED);
 			break;
 	}
 
@@ -1184,12 +1188,6 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 
 	/* Set display name to username (otherwise will show email address) */
 	purple_connection_set_display_name(session->gc, session->username);
-
-	/* The session is now set up, ready to be connected. This emits the
-	 * signedOn signal, so clients can now do anything with msimprpl, and
-	 * we're ready for it (session key, userid, username all setup). */
-	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
-	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
 
 	body = msim_msg_new(
 			"UserID", MSIM_TYPE_INTEGER, session->userid,

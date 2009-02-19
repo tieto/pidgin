@@ -1957,4 +1957,4 @@ init_plugin(PurplePlugin *plugin)
 #endif
 }
 
-PURPLE_INIT_PLUGIN(silc, init_plugin, info);
+PURPLE_INIT_PLUGIN(silc10, init_plugin, info);

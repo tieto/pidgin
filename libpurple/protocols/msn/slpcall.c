@@ -47,6 +47,7 @@ msn_slpcall_timeout(gpointer data)
 	if (!slpcall->pending && !slpcall->progress)
 	{
 		msn_slpcall_destroy(slpcall);
+		slpcall->timer = 0;
 		return FALSE;
 	}
 
@@ -222,8 +223,10 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 		if (slpcall != NULL)
 		{
-			if (slpcall->timer)
+			if (slpcall->timer) {
 				purple_timeout_remove(slpcall->timer);
+				slpcall->timer = 0;
+			}
 
 			slpcall->cb(slpcall, body, body_len);
 

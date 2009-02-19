@@ -80,7 +80,7 @@ msn_message_ref(MsnMessage *msg)
 	msg->ref_count++;
 
 #ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message ref (%p)[%d]\n", msg, msg->ref_count);
+	purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 #endif
 
 	return msg;
@@ -95,7 +95,7 @@ msn_message_unref(MsnMessage *msg)
 	msg->ref_count--;
 
 #ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
+	purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 #endif
 
 	if (msg->ref_count == 0)
@@ -351,6 +351,14 @@ msn_message_parse_payload(MsnMessage *msg,
 			msg->body = g_malloc(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
 			msg->body[msg->body_len] = '\0';
+		}
+		
+		if (msg->charset == NULL) {
+			char *body = g_convert(msg->body, msg->body_len, "UTF-8",
+			                       "ISO-8859-1", NULL, &msg->body_len, NULL);
+			g_free(msg->body);
+			msg->body = body;
+			msg->charset = g_strdup("UTF-8");
 		}
 	}
 

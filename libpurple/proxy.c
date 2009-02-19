@@ -1177,56 +1177,47 @@ s4_canread(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 static void
-s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
+s4_host_resolved(GSList *hosts, gpointer data, const char *error_message)
 {
-	unsigned char packet[9];
-	struct hostent *hp;
 	PurpleProxyConnectData *connect_data = data;
-	int error = ETIMEDOUT;
-	int ret;
+	unsigned char packet[9];
+	struct sockaddr *addr;
 
-	purple_debug_info("socks4 proxy", "Connected.\n");
+	connect_data->query_data = NULL;
 
-	if (connect_data->inpa > 0)
-	{
-		purple_input_remove(connect_data->inpa);
-		connect_data->inpa = 0;
-	}
-
-	ret = purple_input_get_error(connect_data->fd, &error);
-	if ((ret != 0) || (error != 0))
-	{
-		if (ret != 0)
-			error = errno;
-		purple_proxy_connect_data_disconnect(connect_data, g_strerror(error));
+	if (error_message != NULL) {
+		purple_proxy_connect_data_disconnect(connect_data, error_message);
 		return;
 	}
 
-	/*
-	 * The socks4 spec doesn't include support for doing host name
-	 * lookups by the proxy.  Some socks4 servers do this via
-	 * extensions to the protocol.  Since we don't know if a
-	 * server supports this, it would need to be implemented
-	 * with an option, or some detection mechanism - in the
-	 * meantime, stick with plain old SOCKS4.
-	 */
-	/* TODO: Use purple_dnsquery_a() */
-	hp = gethostbyname(connect_data->host);
-	if (hp == NULL) {
+	if (hosts == NULL) {
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Error resolving %s"), connect_data->host);
 		return;
 	}
 
-	packet[0] = 4;
-	packet[1] = 1;
+	/* Discard the length... */
+	hosts = g_slist_delete_link(hosts, hosts);
+	addr = hosts->data;
+	hosts = g_slist_delete_link(hosts, hosts);
+
+	packet[0] = 0x04;
+	packet[1] = 0x01;
 	packet[2] = connect_data->port >> 8;
 	packet[3] = connect_data->port & 0xff;
-	packet[4] = (unsigned char)(hp->h_addr_list[0])[0];
-	packet[5] = (unsigned char)(hp->h_addr_list[0])[1];
-	packet[6] = (unsigned char)(hp->h_addr_list[0])[2];
-	packet[7] = (unsigned char)(hp->h_addr_list[0])[3];
-	packet[8] = 0;
+	memcpy(packet + 4, &((struct sockaddr_in *)addr)->sin_addr.s_addr, 4);
+	packet[8] = 0x00;
+
+	g_free(addr);
+
+	/* We could try the other hosts, but hopefully that shouldn't be necessary */
+	while (hosts != NULL) {
+		/* Discard the length... */
+		hosts = g_slist_delete_link(hosts, hosts);
+		/* Free the address... */
+		g_free(hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
+	}
 
 	connect_data->write_buffer = g_memdup(packet, sizeof(packet));
 	connect_data->write_buf_len = sizeof(packet);
@@ -1235,7 +1226,74 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 	connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
 
-	proxy_do_write(connect_data, connect_data->fd, cond);
+	proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+}
+
+static void
+s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
+{
+	PurpleProxyConnectData *connect_data = data;
+	int error = ETIMEDOUT;
+	int ret;
+
+	purple_debug_info("socks4 proxy", "Connected.\n");
+
+	if (connect_data->inpa > 0) {
+		purple_input_remove(connect_data->inpa);
+		connect_data->inpa = 0;
+	}
+
+	ret = purple_input_get_error(connect_data->fd, &error);
+	if ((ret != 0) || (error != 0)) {
+		if (ret != 0)
+			error = errno;
+		purple_proxy_connect_data_disconnect(connect_data, g_strerror(error));
+		return;
+	}
+
+	/*
+	 * The socks4 spec doesn't include support for doing host name lookups by
+	 * the proxy.  Many socks4 servers do this via the "socks4a" extension to
+	 * the protocol.  There doesn't appear to be a way to detect if a server
+	 * supports this, so we require that the user set a global option.
+	 */
+	if (purple_prefs_get_bool("/purple/proxy/socks4_remotedns")) {
+		unsigned char packet[9];
+		int len;
+
+		purple_debug_info("socks4 proxy", "Attempting to use remote DNS.\n");
+
+		packet[0] = 0x04;
+		packet[1] = 0x01;
+		packet[2] = connect_data->port >> 8;
+		packet[3] = connect_data->port & 0xff;
+		packet[4] = 0x00;
+		packet[5] = 0x00;
+		packet[6] = 0x00;
+		packet[7] = 0x01;
+		packet[8] = 0x00;
+
+		len = sizeof(packet) + strlen(connect_data->host) + 1;
+
+		connect_data->write_buffer = g_malloc0(len);
+		memcpy(connect_data->write_buffer, packet, sizeof(packet));
+		memcpy(connect_data->write_buffer + sizeof(packet), connect_data->host, strlen(connect_data->host));
+		connect_data->write_buf_len = len;
+		connect_data->written_len = 0;
+		connect_data->read_cb = s4_canread;
+
+		connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+
+		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+	} else {
+		connect_data->query_data = purple_dnsquery_a(connect_data->host,
+				connect_data->port, s4_host_resolved, connect_data);
+
+		if (connect_data->query_data == NULL) {
+			purple_debug_error("proxy", "dns query failed unexpectedly.\n");
+			purple_proxy_connect_data_destroy(connect_data);
+		}
+	}
 }
 
 static void
@@ -1396,7 +1454,7 @@ static void
 s5_sendconnect(gpointer data, int source)
 {
 	PurpleProxyConnectData *connect_data = data;
-	int hlen = strlen(connect_data->host);
+	size_t hlen = strlen(connect_data->host);
 	connect_data->write_buf_len = 5 + hlen + 2;
 	connect_data->write_buffer = g_malloc(connect_data->write_buf_len);
 	connect_data->written_len = 0;
@@ -1479,7 +1537,7 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 	int i;
 	unsigned char Kxoripad[65];
 	unsigned char Kxoropad[65];
-	int pwlen;
+	size_t pwlen;
 
 	cipher = purple_ciphers_find_cipher("md5");
 	ctx = purple_cipher_context_new(cipher, NULL);
@@ -1697,7 +1755,7 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		msg_ret = s5_parse_chap_msg(connect_data);
-	
+
 		if (msg_ret < 0)
 			return;
 
@@ -1777,7 +1835,7 @@ s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 	}
 
 	if (connect_data->read_buffer[1] == 0x02) {
-		gsize i, j;
+		size_t i, j;
 		const char *u, *p;
 
 		u = purple_proxy_info_get_username(connect_data->gpi);
@@ -1810,7 +1868,7 @@ s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 		return;
 	} else if (connect_data->read_buffer[1] == 0x03) {
-		gsize userlen;
+		size_t userlen;
 		userlen = strlen(purple_proxy_info_get_username(connect_data->gpi));
 
 		connect_data->write_buf_len = 7 + userlen;
@@ -1957,7 +2015,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 
 static void try_connect(PurpleProxyConnectData *connect_data)
 {
-	size_t addrlen;
+	socklen_t addrlen;
 	struct sockaddr *addr;
 	char ipaddr[INET6_ADDRSTRLEN];
 
@@ -1969,7 +2027,7 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
 			ipaddr, sizeof(ipaddr));
 #else
-	memcpy(ipaddr,inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
+	memcpy(ipaddr, inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
 			sizeof(ipaddr));
 #endif
 	purple_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
@@ -2293,6 +2351,7 @@ purple_proxy_init(void)
 	purple_prefs_add_int("/purple/proxy/port", 0);
 	purple_prefs_add_string("/purple/proxy/username", "");
 	purple_prefs_add_string("/purple/proxy/password", "");
+	purple_prefs_add_bool("/purple/proxy/socks4_remotedns", FALSE);
 
 	/* Setup callbacks for the preferences. */
 	handle = purple_proxy_get_handle();
