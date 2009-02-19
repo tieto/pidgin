@@ -69,6 +69,8 @@ struct _PurpleMediaStream
 	gchar *participant;
 	FsStream *stream;
 	GstElement *sink;
+	GstElement *src;
+	GstElement *tee;
 
 	GList *local_candidates;
 	GList *remote_candidates;
@@ -1597,7 +1599,7 @@ purple_media_video_init_src(GstElement **sendbin)
 void
 purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 {
-	GstElement *sink, *volume;
+	GstElement *sink, *volume, *queue;
 	GstPad *pad, *ghost;
 	double output_volume = purple_prefs_get_int(
 			"/purple/media/audio/volume/output")/10.0;
@@ -1610,10 +1612,13 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
 	g_object_set(volume, "volume", output_volume, NULL);
 	*recvlevel = gst_element_factory_make("level", "recvlevel");
-	gst_bin_add_many(GST_BIN(*recvbin), sink, volume, *recvlevel, NULL);
+	queue = gst_element_factory_make("queue", NULL);
+	gst_bin_add_many(GST_BIN(*recvbin), sink, volume,
+			*recvlevel, queue, NULL);
 	gst_element_link(*recvlevel, sink);
 	gst_element_link(volume, *recvlevel);
-	pad = gst_element_get_pad(volume, "sink");
+	gst_element_link(queue, volume);
+	pad = gst_element_get_pad(queue, "sink");
 	ghost = gst_ghost_pad_new("ghostsink", pad);
 	gst_element_add_pad(*recvbin, ghost);
 	g_object_set(G_OBJECT(*recvlevel), "message", TRUE, NULL);
@@ -1759,21 +1764,53 @@ static void
 purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			      FsCodec *codec, PurpleMediaStream *stream)
 {
-	PurpleMediaSessionType type = purple_media_from_fs(codec->media_type, FS_DIRECTION_RECV);
-	GstPad *sinkpad = NULL;
+	PurpleMediaPrivate *priv;
+	GstPad *sinkpad;
 
 	g_return_if_fail(FS_IS_STREAM(fsstream));
 	g_return_if_fail(stream != NULL);
 
-	if (stream->sink == NULL)
-		stream->sink = purple_media_manager_get_element(
-			stream->session->media->priv->manager, type);
+	priv = stream->session->media->priv;
 
-	gst_bin_add(GST_BIN(stream->session->media->priv->confbin),
-		    stream->sink);
-	sinkpad = gst_element_get_static_pad(stream->sink, "ghostsink");
+	if (stream->src == NULL) {
+		GstElement *sink;
+
+		if (codec->media_type == FS_MEDIA_TYPE_AUDIO) {
+			/*
+			 * Should this instead be:
+			 *  audioconvert ! audioresample ! liveadder !
+			 *   audioresample ! audioconvert ! realsink
+			 */
+			stream->src = gst_element_factory_make(
+					"liveadder", NULL);
+			sink = purple_media_manager_get_element(priv->manager,
+					PURPLE_MEDIA_RECV_AUDIO);
+		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
+			stream->src = gst_element_factory_make(
+					"fsfunnel", NULL);
+			sink = gst_element_factory_make(
+					"fakesink", NULL);
+			g_object_set(G_OBJECT(sink), "async", FALSE, NULL);
+		}
+		stream->tee = gst_element_factory_make("tee", NULL);
+		gst_bin_add_many(GST_BIN(priv->confbin),
+				stream->src, stream->tee, sink, NULL);
+		gst_element_sync_state_with_parent(sink);
+		gst_element_sync_state_with_parent(stream->tee);
+		gst_element_sync_state_with_parent(stream->src);
+		gst_element_link_many(stream->src, stream->tee, sink, NULL);
+	}
+
+	sinkpad = gst_element_get_request_pad(stream->src, "sink%d");
 	gst_pad_link(srcpad, sinkpad);
-	gst_element_set_state(stream->sink, GST_STATE_PLAYING);
+	gst_object_unref(sinkpad);
+
+	if (codec->media_type == FS_MEDIA_TYPE_VIDEO &&
+			stream->sink != NULL) {
+		gst_bin_add(GST_BIN(priv->confbin), stream->sink);
+		gst_element_set_state(stream->sink, GST_STATE_PLAYING);
+		gst_element_link(stream->tee, stream->sink);
+	}
 
 	g_timeout_add_full(G_PRIORITY_HIGH, 0,
 			(GSourceFunc)purple_media_connected_cb, stream, NULL);
@@ -2397,7 +2434,7 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 		PurpleMediaStream *stream = purple_media_get_stream(
 				media, session_id, participant);
 		GstBus *bus;
-		GstElement *bin, *sink;
+		GstElement *bin, *queue, *sink;
 		GstPad *pad, *peer = NULL, *ghostpad;
 		PurpleMediaXOverlayData *data;
 		gchar *name;
@@ -2444,10 +2481,12 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 
 		name = g_strdup_printf("stream-sink_%s_%s",
 				session_id, participant);
+		queue = gst_element_factory_make("queue", NULL);
 		sink = gst_element_factory_make("autovideosink", name);
 
-		gst_bin_add(GST_BIN(bin), sink);
-		pad = gst_element_get_static_pad(sink, "sink");
+		gst_bin_add_many(GST_BIN(bin), queue, sink, NULL);
+		gst_element_link(queue, sink);
+		pad = gst_element_get_static_pad(queue, "sink");
 		ghostpad = gst_ghost_pad_new("ghostsink", pad);
 		gst_element_add_pad(bin, ghostpad);
 
@@ -2463,9 +2502,11 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 				G_CALLBACK(window_id_cb), data);
 		gst_object_unref(bus);
 
-		if (stream->sink != NULL) {
+		if (stream->tee != NULL) {
+			gst_bin_add(GST_BIN(GST_ELEMENT_PARENT(
+					stream->tee)), bin);
 			gst_element_set_state(bin, GST_STATE_PLAYING);
-			gst_pad_link(peer, ghostpad);
+			gst_element_link(stream->tee, bin);
 		}
 
 		stream->sink = bin;
