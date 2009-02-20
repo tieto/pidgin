@@ -94,7 +94,6 @@ struct _PurpleMediaPrivate
 
 	GList *streams;		/* PurpleMediaStream table */
 
-	GstElement *pipeline;
 	GstElement *confbin;
 };
 
@@ -114,6 +113,8 @@ static void purple_media_candidates_prepared_cb(FsStream *stream,
 static void purple_media_candidate_pair_established_cb(FsStream *stream,
 		FsCandidate *native_candidate, FsCandidate *remote_candidate,
 		PurpleMediaSession *session);
+static gboolean media_bus_call(GstBus *bus,
+		GstMessage *msg, PurpleMedia *media);
 
 static GObjectClass *parent_class = NULL;
 
@@ -292,7 +293,8 @@ purple_media_dispose(GObject *media)
 	if (priv->confbin) {
 		gst_element_set_state(GST_ELEMENT(priv->confbin),
 				GST_STATE_NULL);
-		gst_bin_remove(GST_BIN(priv->pipeline), priv->confbin);
+		gst_bin_remove(GST_BIN(purple_media_manager_get_pipeline(
+				priv->manager)), priv->confbin);
 		priv->confbin = NULL;
 		priv->conference = NULL;
 	}
@@ -323,6 +325,14 @@ purple_media_dispose(GObject *media)
 	}
 
 	if (priv->manager) {
+		GstElement *pipeline = purple_media_manager_get_pipeline(
+				priv->manager);
+		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+		g_signal_handlers_disconnect_matched(G_OBJECT(bus),
+				G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
+				0, 0, 0, media_bus_call, media);
+		gst_object_unref(bus);
+
 		g_object_unref(priv->manager);
 		priv->manager = NULL;
 	}
@@ -351,6 +361,36 @@ purple_media_finalize(GObject *media)
 }
 
 static void
+purple_media_setup_pipeline(PurpleMedia *media)
+{
+	GstBus *bus;
+	gchar *name;
+	GstElement *pipeline;
+
+	if (media->priv->conference == NULL || media->priv->manager == NULL)
+		return;
+
+	pipeline = purple_media_manager_get_pipeline(media->priv->manager);
+
+	name = g_strdup_printf("conf_%p",
+			media->priv->conference);
+	media->priv->confbin = gst_bin_new(name);
+	g_free(name);
+
+	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+	g_signal_connect(G_OBJECT(bus), "message",
+			G_CALLBACK(media_bus_call), media);
+	gst_object_unref(bus);
+
+	gst_bin_add(GST_BIN(pipeline),
+			media->priv->confbin);
+	gst_bin_add(GST_BIN(media->priv->confbin),
+			GST_ELEMENT(media->priv->conference));
+	gst_element_set_state(GST_ELEMENT(media->priv->confbin),
+			GST_STATE_PLAYING);
+}
+
+static void
 purple_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	PurpleMedia *media;
@@ -362,27 +402,16 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_MANAGER:
 			media->priv->manager = g_value_get_object(value);
 			g_object_ref(media->priv->manager);
+
+			purple_media_setup_pipeline(media);
 			break;
 		case PROP_CONFERENCE: {
-			gchar *name;
-
 			if (media->priv->conference)
 				gst_object_unref(media->priv->conference);
 			media->priv->conference = g_value_get_object(value);
 			gst_object_ref(media->priv->conference);
 
-			name = g_strdup_printf("conf_%p",
-					media->priv->conference);
-			media->priv->confbin = gst_bin_new(name);
-			g_free(name);
-			gst_bin_add(GST_BIN(purple_media_get_pipeline(media)),
-					media->priv->confbin);
-			gst_bin_add(GST_BIN(media->priv->confbin),
-					GST_ELEMENT(media->priv->conference));
-
-			gst_element_set_state(GST_ELEMENT(
-					media->priv->confbin),
-					GST_STATE_PLAYING);
+			purple_media_setup_pipeline(media);
 			break;
 		}
 		case PROP_INITIATOR:
@@ -1203,43 +1232,15 @@ purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const g
 }
 
 static gboolean
-media_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
+media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 {
 	switch(GST_MESSAGE_TYPE(msg)) {
-		case GST_MESSAGE_EOS:
-			purple_debug_info("media", "End of Stream\n");
-			break;
-		case GST_MESSAGE_ERROR: {
-			gchar *debug = NULL;
-			GError *err = NULL;
-
-			gst_message_parse_error(msg, &err, &debug);
-
-			purple_debug_error("media", "gst pipeline error: %s\n", err->message);
-			g_error_free(err);
-
-			if (debug) {
-				purple_debug_error("media", "Debug details: %s\n", debug);
-				g_free (debug);
-			}
-			break;
-		}
 		case GST_MESSAGE_ELEMENT: {
-			PurpleMedia *media = NULL;
-			if (FS_IS_CONFERENCE(GST_MESSAGE_SRC(msg))) {
-				GList *iter = purple_media_manager_get_media(
-						manager);
-				for (; iter; iter = g_list_next(iter)) {
-					if (PURPLE_MEDIA(iter->data)->priv->conference
-							== FS_CONFERENCE(GST_MESSAGE_SRC(msg))) {
-						media = iter->data;
-						break;
-					}
-				}
-
-				if (!PURPLE_IS_MEDIA(media))
-					break;
-			}
+			if (!FS_IS_CONFERENCE(GST_MESSAGE_SRC(msg)) ||
+					!PURPLE_IS_MEDIA(media) ||
+					media->priv->conference !=
+					FS_CONFERENCE(GST_MESSAGE_SRC(msg)))
+				break;
 
 			if (gst_structure_has_name(msg->structure, "farsight-error")) {
 				FsError error_no;
@@ -1347,25 +1348,9 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
 GstElement *
 purple_media_get_pipeline(PurpleMedia *media)
 {
-	static GstElement *pipeline = NULL;
-
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 
-	if (!pipeline) {
-		GstBus *bus;
-		media->priv->pipeline = pipeline = gst_pipeline_new(NULL);
-		bus = gst_pipeline_get_bus(GST_PIPELINE(media->priv->pipeline));
-		gst_bus_add_signal_watch(GST_BUS(bus));
-		g_signal_connect(G_OBJECT(bus), "message",
-				G_CALLBACK(media_bus_call),
-				media->priv->manager);
-		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
-		gst_object_unref(bus);
-		gst_element_set_state(pipeline, GST_STATE_PLAYING);
-	}
-
-	media->priv->pipeline = pipeline;
-	return media->priv->pipeline;
+	return purple_media_manager_get_pipeline(media->priv->manager);
 }
 
 void
@@ -2403,7 +2388,8 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 			data->window_id = window_id;
 
 			bus = gst_pipeline_get_bus(GST_PIPELINE(
-					purple_media_get_pipeline(media)));
+					purple_media_manager_get_pipeline(
+					media->priv->manager)));
 			data->handler_id = g_signal_connect(bus,
 					"sync-message::element",
 					G_CALLBACK(window_id_cb), data);
@@ -2496,7 +2482,8 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 		data->window_id = window_id;
 
 		bus = gst_pipeline_get_bus(GST_PIPELINE(
-				purple_media_get_pipeline(media)));
+				purple_media_manager_get_pipeline(
+				media->priv->manager)));
 		data->handler_id = g_signal_connect(bus,
 				"sync-message::element",
 				G_CALLBACK(window_id_cb), data);
