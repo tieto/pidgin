@@ -134,15 +134,6 @@ enum {
 };
 
 
-enum //好友备注相关         
-{   
-	QQ_BUDDY_MEMO_UPLOAD = 0x01,   // 上传好友备注
-	QQ_BUDDY_MEMO_REMOVE,          // 清除好友备注
-	QQ_BUDDY_MEMO_GET              // 获取好友备注
-};
-
-#define QQ_BUDDY_MEMO_REQUEST_SUCCESS 0x00
-
 gboolean is_online(guint8 status);
 
 #endif

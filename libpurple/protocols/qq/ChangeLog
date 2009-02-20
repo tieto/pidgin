@@ -1,3 +1,8 @@
+2009.02.21 - flos <lonicerae(at)gmail.com>
+	* Rewrite whole buddy memo part
+	* Remove 'qq_to_utf8_len' and 'utf8_to_qq_len' functions in char_conv.c
+	* Update ChangeLog, AUTHORS
+
 2009.02.09 - Chengming Wang <tiger2007532246(at)gmail.com>
 	* Rewrite buddy_memo using qq_put/qq_get series functions
 

@@ -35,7 +35,4 @@ gint qq_put_vstr(guint8 *buf, const gchar *str_utf8, const gchar *to_charset);
 gchar *utf8_to_qq(const gchar *str, const gchar *to_charset);
 gchar *qq_to_utf8(const gchar *str, const gchar *from_charset);
 
-gchar *utf8_to_qq_len(const gchar *str, const gint len, const gchar *to_charset);
-gchar *qq_to_utf8_len(const gchar *str, const gint len, const gchar *from_charset);
-
 #endif

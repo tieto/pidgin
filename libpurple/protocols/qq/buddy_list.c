@@ -347,7 +347,7 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 		/* nickname has been copy to buddy_data do not free
 		   g_free(bd.nickname);
 		*/
-		qq_request_buddy_memo_download( gc,((qq_buddy_data*)buddy->proto_data)->uid );
+		qq_request_buddy_memo(gc, ((qq_buddy_data*)buddy->proto_data)->uid, 0, QQ_BUDDY_MEMO_GET);
 	}
 
 	if(bytes > data_len) {
