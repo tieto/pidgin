@@ -1976,6 +1976,9 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 	win      = gtkconv->win;
 	curconv = gtk_notebook_get_current_page(GTK_NOTEBOOK(win->notebook));
 
+	/* clear any tooltips */
+	pidgin_tooltip_destroy();
+
 	/* If CTRL was held down... */
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
@@ -6446,19 +6449,19 @@ gray_stuff_out(PidginConversation *gtkconv)
 			supports it */
 		if (account != NULL && purple_conversation_get_type(conv)
 					== PURPLE_CONV_TYPE_IM) {
-			gboolean audio = purple_prpl_can_do_media(account,
-					purple_conversation_get_name(conv),
-					PURPLE_MEDIA_AUDIO);
-			gboolean video = purple_prpl_can_do_media(account,
-					purple_conversation_get_name(conv),
-					PURPLE_MEDIA_VIDEO);
-			gboolean av = purple_prpl_can_do_media(account,
-					purple_conversation_get_name(conv),
-					PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
+			PurpleMediaCaps caps =
+					purple_prpl_get_media_caps(account,
+					purple_conversation_get_name(conv));
 
-			gtk_widget_set_sensitive(win->menu.audio_call, audio ? TRUE : FALSE);
-			gtk_widget_set_sensitive(win->menu.video_call, video ? TRUE : FALSE);
-			gtk_widget_set_sensitive(win->menu.audio_video_call, av ? TRUE : FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_call,
+					caps & PURPLE_MEDIA_CAPS_AUDIO
+					? TRUE : FALSE);
+			gtk_widget_set_sensitive(win->menu.video_call,
+					caps & PURPLE_MEDIA_CAPS_VIDEO
+					? TRUE : FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_video_call, 
+					caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
+					? TRUE : FALSE);
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			/* for now, don't care about chats... */
 			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);

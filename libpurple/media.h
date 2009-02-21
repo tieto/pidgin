@@ -65,6 +65,18 @@ typedef void PurpleMedia;
 
 #endif /* USE_VV */
 
+/** Media caps */
+typedef enum {
+	PURPLE_MEDIA_CAPS_NONE = 0,
+	PURPLE_MEDIA_CAPS_AUDIO = 1,
+	PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION = 1 << 1,
+	PURPLE_MEDIA_CAPS_VIDEO = 1 << 2,
+	PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION = 1 << 3,
+	PURPLE_MEDIA_CAPS_AUDIO_VIDEO = 1 << 4,
+	PURPLE_MEDIA_CAPS_MODIFY_SESSION = 1 << 5,
+	PURPLE_MEDIA_CAPS_CHANGE_DIRECTION = 1 << 6,
+} PurpleMediaCaps;
+
 /** Media session types */
 typedef enum {
 	PURPLE_MEDIA_NONE	= 0,
@@ -533,27 +545,27 @@ GList *purple_media_get_local_candidates(PurpleMedia *media,
 					 const gchar *name);
 
 /**
- * Gets the active local candidate for the stream.
+ * Gets the active local candidates for the stream.
  *
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session to find the stream in.
  * @param name The name of the remote user to get the active candidate from.
  *
- * @return The active candidate retrieved.
+ * @return The active candidates retrieved.
  */
-PurpleMediaCandidate *purple_media_get_local_candidate(PurpleMedia *media,
+GList *purple_media_get_active_local_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *name);
 
 /**
- * Gets the active remote candidate for the stream.
+ * Gets the active remote candidates for the stream.
  *
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session to find the stream in.
  * @param name The name of the remote user to get the remote candidate from.
  *
- * @return The remote candidate retrieved.
+ * @return The remote candidates retrieved.
  */
-PurpleMediaCandidate *purple_media_get_remote_candidate(PurpleMedia *media,
+GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *name);
 
 /**

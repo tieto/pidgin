@@ -66,7 +66,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#define HEADLINE_CLOSE_SIZE 12
+#define HEADLINE_CLOSE_SIZE 11
 
 typedef struct
 {
@@ -348,8 +348,9 @@ static void gtk_blist_menu_video_call_cb(GtkWidget *w, PurpleBuddy *b)
 {
 	/* if the buddy supports both audio and video, start a combined call,
 	 otherwise start a pure video session */
-	if (purple_prpl_can_do_media(purple_buddy_get_account(b),
-		purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO)) {
+	if (purple_prpl_get_media_caps(purple_buddy_get_account(b),
+			purple_buddy_get_name(b)) &
+			PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
 		purple_prpl_initiate_media(purple_buddy_get_account(b),
 			purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 	} else {
@@ -1463,20 +1464,20 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
 	
 #ifdef USE_VV
-	if (prpl_info && prpl_info->can_do_media) {
-		PurpleConnection *gc = 
-			purple_account_get_connection(purple_buddy_get_account(buddy));
+	if (prpl_info && prpl_info->get_media_caps) {
+		PurpleAccount *account = purple_buddy_get_account(buddy);
 		const gchar *who = purple_buddy_get_name(buddy);
-		if (prpl_info->can_do_media(gc, who, PURPLE_MEDIA_AUDIO)) {
+		PurpleMediaCaps caps = purple_prpl_get_media_caps(account, who);
+		if (caps & PURPLE_MEDIA_CAPS_AUDIO) {
 			pidgin_new_item_from_stock(menu, _("_Audio Call"),
 				PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
 				G_CALLBACK(gtk_blist_menu_audio_call_cb), buddy, 0, 0, NULL);
 		}
-		if (prpl_info->can_do_media(gc, who, PURPLE_MEDIA_VIDEO | PURPLE_MEDIA_AUDIO)) {
+		if (caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
 			pidgin_new_item_from_stock(menu, _("Audio/_Video Call"),
 				PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
 				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);
-		} else if (prpl_info->can_do_media(gc, who, PURPLE_MEDIA_VIDEO)) {
+		} else if (caps & PURPLE_MEDIA_CAPS_VIDEO) {
 			pidgin_new_item_from_stock(menu, _("_Video Call"),
 				PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
 				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);
@@ -4601,6 +4602,9 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList 
 	if (!gtkblist)
 		return FALSE;
 
+	/* clear any tooltips */
+	pidgin_blist_tooltip_destroy();
+
 	widget = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
 
 	if (GTK_IS_IMHTML(widget) || GTK_IS_ENTRY(widget)) {
@@ -5434,7 +5438,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
-	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE, HEADLINE_CLOSE_SIZE, NULL);
+	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC), NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
@@ -7723,13 +7728,11 @@ pidgin_blist_update_accounts_menu(void)
 			if (!disabled_accounts) {
 				menuitem = gtk_menu_item_new_with_label(_("Enable Account"));
 				gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-				gtk_widget_show(menuitem);
 
 				submenu = gtk_menu_new();
 				gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
 				gtk_menu_set_accel_path(GTK_MENU(submenu), N_("<PurpleMain>/Accounts/Enable Account"));
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-				gtk_widget_show(submenu);
 
 				disabled_accounts = TRUE;
 			}
@@ -7751,7 +7754,6 @@ pidgin_blist_update_accounts_menu(void)
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(enable_account_cb), account);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_show(menuitem);
 		} else {
 			enabled_accounts = TRUE;
 		}
@@ -7793,21 +7795,18 @@ pidgin_blist_update_accounts_menu(void)
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		}
 		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-		gtk_widget_show(menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
 		gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
 		g_free(accel_path_buf);
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-		gtk_widget_show(submenu);
 
 
 		menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
 		g_signal_connect(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(modify_account_cb), account);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-		gtk_widget_show(menuitem);
 
 		pidgin_separator(submenu);
 
@@ -7819,7 +7818,6 @@ pidgin_blist_update_accounts_menu(void)
 			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 			gtk_widget_set_sensitive(menuitem, FALSE);
-			gtk_widget_show(menuitem);
 		}
 
 		pidgin_separator(submenu);
@@ -7828,8 +7826,8 @@ pidgin_blist_update_accounts_menu(void)
 		g_signal_connect(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(disable_account_cb), account);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-		gtk_widget_show(menuitem);
 	}
+	gtk_widget_show_all(accountmenu);
 }
 
 static GList *plugin_submenus = NULL;
@@ -7868,13 +7866,11 @@ pidgin_blist_update_plugin_actions(void)
 
 		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
 		gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
-		gtk_widget_show(menuitem);
 
 		plugin_submenus = g_list_append(plugin_submenus, menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-		gtk_widget_show(submenu);
 
 		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
 		path = g_strdup_printf("%s/Tools/%s", gtkblist->ift->path, plugin->info->name);
@@ -7883,6 +7879,7 @@ pidgin_blist_update_plugin_actions(void)
 
 		build_plugin_actions(submenu, plugin, NULL);
 	}
+	gtk_widget_show_all(pluginmenu);
 }
 
 static void

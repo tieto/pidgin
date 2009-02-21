@@ -57,6 +57,7 @@ jingle_iceudp_candidate_copy(JingleIceUdpCandidate *candidate)
 	new_candidate->component = candidate->component;
 	new_candidate->foundation = g_strdup(candidate->foundation);
 	new_candidate->generation = candidate->generation;
+	new_candidate->id = g_strdup(candidate->id);
 	new_candidate->ip = g_strdup(candidate->ip);
 	new_candidate->network = candidate->network;
 	new_candidate->port = candidate->port;
@@ -74,6 +75,7 @@ static void
 jingle_iceudp_candidate_free(JingleIceUdpCandidate *candidate)
 {
 	g_free(candidate->foundation);
+	g_free(candidate->id);
 	g_free(candidate->ip);
 	g_free(candidate->protocol);
 	g_free(candidate->type);
@@ -97,14 +99,16 @@ jingle_iceudp_candidate_get_type()
 
 JingleIceUdpCandidate *
 jingle_iceudp_candidate_new(guint component, const gchar *foundation,
-		guint generation, const gchar *ip, guint network,
-		guint port, guint priority, const gchar *protocol,
-		const gchar *type, const gchar *username, const gchar *password)
+		guint generation, const gchar *id, const gchar *ip,
+		guint network, guint port, guint priority,
+		const gchar *protocol, const gchar *type,
+		const gchar *username, const gchar *password)
 {
 	JingleIceUdpCandidate *candidate = g_new0(JingleIceUdpCandidate, 1);
 	candidate->component = component;
 	candidate->foundation = g_strdup(foundation);
 	candidate->generation = generation;
+	candidate->id = g_strdup(id);
 	candidate->ip = g_strdup(ip);
 	candidate->network = network;
 	candidate->port = port;
@@ -233,8 +237,7 @@ jingle_iceudp_add_local_candidate(JingleIceUdp *iceudp, JingleIceUdpCandidate *c
 
 	for (; iter; iter = g_list_next(iter)) {
 		JingleIceUdpCandidate *c = iter->data;
-		if ((c->component == candidate->component) &&
-				!strcmp(c->foundation, candidate->foundation)) {
+		if (!strcmp(c->id, candidate->id)) {
 			guint generation = c->generation + 1;
 
 			g_boxed_free(JINGLE_TYPE_ICEUDP_CANDIDATE, c);
@@ -261,13 +264,12 @@ jingle_iceudp_get_remote_candidates(JingleIceUdp *iceudp)
 
 static JingleIceUdpCandidate *
 jingle_iceudp_get_remote_candidate_by_id(JingleIceUdp *iceudp,
-		guint component, const gchar *foundation)
+		const gchar *id)
 {
 	GList *iter = iceudp->priv->remote_candidates;
 	for (; iter; iter = g_list_next(iter)) {
 		JingleIceUdpCandidate *candidate = iter->data;
-		if ((candidate->component == component) &&
-				!strcmp(candidate->foundation, foundation)) {
+		if (!strcmp(candidate->id, id)) {
 			return candidate;
 		}
 	}
@@ -280,7 +282,7 @@ jingle_iceudp_add_remote_candidate(JingleIceUdp *iceudp, JingleIceUdpCandidate *
 	JingleIceUdpPrivate *priv = JINGLE_ICEUDP_GET_PRIVATE(iceudp);
 	JingleIceUdpCandidate *iceudp_candidate =
 			jingle_iceudp_get_remote_candidate_by_id(iceudp,
-					candidate->component, candidate->foundation);
+					candidate->id);
 	if (iceudp_candidate != NULL) {
 		priv->remote_candidates = g_list_remove(
 				priv->remote_candidates, iceudp_candidate);
@@ -304,6 +306,7 @@ jingle_iceudp_parse_internal(xmlnode *iceudp)
 				atoi(xmlnode_get_attrib(candidate, "component")),
 				xmlnode_get_attrib(candidate, "foundation"),
 				atoi(xmlnode_get_attrib(candidate, "generation")),
+				xmlnode_get_attrib(candidate, "id"),
 				xmlnode_get_attrib(candidate, "ip"),
 				atoi(xmlnode_get_attrib(candidate, "network")),
 				atoi(xmlnode_get_attrib(candidate, "port")),
@@ -347,6 +350,7 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 			xmlnode_set_attrib(xmltransport, "component", component);
 			xmlnode_set_attrib(xmltransport, "foundation", candidate->foundation);
 			xmlnode_set_attrib(xmltransport, "generation", generation);
+			xmlnode_set_attrib(xmltransport, "id", candidate->id);
 			xmlnode_set_attrib(xmltransport, "ip", candidate->ip);
 			xmlnode_set_attrib(xmltransport, "network", network);
 			xmlnode_set_attrib(xmltransport, "port", port);

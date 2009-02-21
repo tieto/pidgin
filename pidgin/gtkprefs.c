@@ -1439,6 +1439,10 @@ network_page(void)
 		purple_prefs_connect_callback(prefs, "/purple/proxy/type",
 					    proxy_changed_cb, prefs_proxy_frame);
 
+		/* This is a global option that affects SOCKS4 usage even with account-specific proxy settings */
+		pidgin_prefs_checkbox(_("Use remote DNS with SOCKS4 proxies"),
+							  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
+
 		table = gtk_table_new(4, 2, FALSE);
 		gtk_container_set_border_width(GTK_CONTAINER(table), 0);
 		gtk_table_set_col_spacings(GTK_TABLE(table), 5);

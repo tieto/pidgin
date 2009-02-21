@@ -210,7 +210,7 @@ show_usage(const char *name, gboolean terse)
 		text = g_strdup_printf(_("%s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
-		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -d, --debug         print debugging messages to stderr\n"
 		       "  -h, --help          display this help and exit\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -v, --version       display the current version and exit\n"), DISPLAY_VERSION, name);

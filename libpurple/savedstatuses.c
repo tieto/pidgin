@@ -148,11 +148,11 @@ set_creation_time(PurpleSavedStatus *status, time_t creation_time)
 	/* Avoid using 0 because it's an invalid hash key */
 	status->creation_time = creation_time != 0 ? creation_time : 1;
 
-	while (g_hash_table_lookup(creation_times, &status->creation_time) != NULL)
+	while (g_hash_table_lookup(creation_times, (gconstpointer)status->creation_time) != NULL)
 		status->creation_time++;
 
 	g_hash_table_insert(creation_times,
-						&status->creation_time,
+						(gpointer)status->creation_time,
 						status);
 }
 
@@ -217,7 +217,7 @@ remove_old_transient_statuses(void)
 				{
 					saved_statuses = g_list_remove(saved_statuses, saved_status);
 					creation_time = purple_savedstatus_get_creation_time(saved_status);
-					g_hash_table_remove(creation_times, &creation_time);
+					g_hash_table_remove(creation_times, (gconstpointer)creation_time);
 					free_saved_status(saved_status);
 				}
 			}
@@ -713,7 +713,7 @@ purple_savedstatus_delete_by_status(PurpleSavedStatus *status)
 
 	saved_statuses = g_list_remove(saved_statuses, status);
 	creation_time = purple_savedstatus_get_creation_time(status);
-	g_hash_table_remove(creation_times, &creation_time);
+	g_hash_table_remove(creation_times, (gconstpointer)creation_time);
 	free_saved_status(status);
 
 	schedule_save();
@@ -801,13 +801,13 @@ purple_savedstatus_get_current(void)
 PurpleSavedStatus *
 purple_savedstatus_get_default()
 {
-	int creation_time;
+	time_t creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
 	creation_time = purple_prefs_get_int("/purple/savedstatus/default");
 
 	if (creation_time != 0)
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+		saved_status = g_hash_table_lookup(creation_times, (gconstpointer)creation_time);
 
 	if (saved_status == NULL)
 	{
@@ -828,13 +828,13 @@ purple_savedstatus_get_default()
 PurpleSavedStatus *
 purple_savedstatus_get_idleaway()
 {
-	int creation_time;
+	time_t creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
 	creation_time = purple_prefs_get_int("/purple/savedstatus/idleaway");
 
 	if (creation_time != 0)
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+		saved_status = g_hash_table_lookup(creation_times, (gconstpointer)creation_time);
 
 	if (saved_status == NULL)
 	{
@@ -907,13 +907,13 @@ purple_savedstatus_set_idleaway(gboolean idleaway)
 PurpleSavedStatus *
 purple_savedstatus_get_startup()
 {
-	int creation_time;
+	time_t creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
 	creation_time = purple_prefs_get_int("/purple/savedstatus/startup");
 
 	if (creation_time != 0)
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+		saved_status = g_hash_table_lookup(creation_times, (gconstpointer)creation_time);
 
 	if (saved_status == NULL)
 	{
@@ -1187,7 +1187,7 @@ purple_savedstatuses_init(void)
 {
 	void *handle = purple_savedstatuses_get_handle();
 
-	creation_times = g_hash_table_new(g_int_hash, g_int_equal);
+	creation_times = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 	/*
 	 * Using 0 as the creation_time is a special case.

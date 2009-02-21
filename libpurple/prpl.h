@@ -466,11 +466,10 @@ struct _PurplePluginProtocolInfo
 	 *
 	 * @param conn The connection the contact is on.
 	 * @param who The remote user to check for media capability with.
-	 * @param type The type of media session to check for.
-	 * @return @c TRUE The contact supports the given media type, or @c FALSE otherwise.
+	 * @return The media caps the contact supports.
 	 */
-	gboolean (*can_do_media)(PurpleConnection *gc, const char *who,
-				 PurpleMediaSessionType type);
+	PurpleMediaCaps (*get_media_caps)(PurpleConnection *gc,
+					  const char *who);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
@@ -765,13 +764,11 @@ void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char 
  *
  * @param account The account the user is on.
  * @param who The name of the contact to check capabilities for.
- * @param type The type of media session to check for.
  *
- * @return @c TRUE if the contact supports the session type, else @c FALSE.
+ * @return The media caps the contact supports.
  */
-gboolean purple_prpl_can_do_media(PurpleAccount *account,
-				  const char *who, 
-				  PurpleMediaSessionType type);
+PurpleMediaCaps purple_prpl_get_media_caps(PurpleAccount *account,
+				  const char *who);
 
 /**
  * Initiates a media session with the given contact.

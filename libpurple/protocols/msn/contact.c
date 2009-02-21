@@ -198,20 +198,38 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnCallbackState *state = data;
 	xmlnode *fault;
 	char *faultcode_str;
+	xmlnode *cachekey;
+	char *changed;
 
 	if (resp == NULL) {
 		purple_debug_error("msn",
 		                   "Operation {%s} failed. No response received from server.\n",
 		                   msn_contact_operation_str(state->action));
+		msn_session_set_error(state->session, MSN_ERROR_BAD_BLIST, NULL);
 		return;
 	}
+
+ 	/* Update CacheKey if necessary */
+ 	cachekey = xmlnode_get_child(resp->xml, "Header/ServiceHeader/CacheKeyChanged");
+ 	if (cachekey != NULL) {
+ 		changed = xmlnode_get_data(cachekey);
+ 		if (changed && !strcmp(changed, "true")) {
+ 			cachekey = xmlnode_get_child(resp->xml, "Header/ServiceHeader/CacheKey");
+ 			g_free(state->session->abch_cachekey);
+ 			state->session->abch_cachekey = xmlnode_get_data(cachekey);
+ 			purple_debug_info("msn", "Updated CacheKey for %s to '%s'.\n",
+ 			                  purple_account_get_username(state->session->account),
+ 			                  state->session->abch_cachekey);
+ 		}
+ 		g_free(changed);
+ 	}
 
 	fault = xmlnode_get_child(resp->xml, "Body/Fault");
 
 	if (fault == NULL) {
 		/* No errors */
 		if (state->cb)
-			((MsnSoapCallback)state->cb)(req, resp, data);
+			state->cb(req, resp, data);
 		msn_callback_state_free(state);
 		return;
 	}
@@ -230,7 +248,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	else
 	{
 		if (state->cb) {
-			((MsnSoapCallback)state->cb)(req, resp, data);
+			state->cb(req, resp, data);
 		} else {
 			/* We don't know how to respond to this faultcode, so log it */
 			char *str = xmlnode_to_str(fault, NULL);
@@ -247,6 +265,14 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 static gboolean
 msn_contact_request(MsnCallbackState *state)
 {
+	xmlnode *cachekey = xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/CacheKey");
+	if (cachekey != NULL)
+		xmlnode_free(cachekey);
+	if (state->session->abch_cachekey != NULL) {
+		cachekey = xmlnode_new_child(xmlnode_get_child(state->body, "Header/ABApplicationHeader"), "CacheKey");
+		xmlnode_insert_data(cachekey, state->session->abch_cachekey, -1);
+	}
 	if (state->token == NULL)
 		state->token = xmlnode_get_child(state->body,
 			"Header/ABAuthHeader/TicketToken");
@@ -891,8 +917,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		/*
 		msn_get_address_book(session, NULL, NULL);
 		*/
-		msn_session_disconnect(session);
-		purple_connection_error_reason(session->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to retrieve MSN Address Book"));
+		msn_session_set_error(session, MSN_ERROR_BAD_BLIST, NULL);
 	}
 }
 

@@ -163,7 +163,8 @@ void gnt_keys_refine(char *text)
 			(*(text + 2) >= 'A' && *(text + 2) <= 'D')) {
 		/* Apparently this is necessary for urxvt and screen and xterm */
 		if (strstr(term, "screen") == term || strcmp(term, "rxvt-unicode") == 0 ||
-				strstr(term, "xterm") == term)
+				strstr(term, "xterm") == term ||
+				strstr(term, "vt100") == term)
 			*(text + 1) = 'O';
 	} else if (*(unsigned char*)text == 195) {
 		if (*(text + 2) == 0 && strstr(term, "xterm") == term) {

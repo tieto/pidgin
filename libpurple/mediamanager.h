@@ -121,6 +121,16 @@ GType purple_media_manager_get_type(void);
 PurpleMediaManager *purple_media_manager_get(void);
 
 /**
+ * Gets the pipeline from the media manager.
+ *
+ * @param manager The media manager to get the pipeline from.
+ *
+ * @return The pipeline.
+ */
+GstElement *
+purple_media_manager_get_pipeline(PurpleMediaManager *manager);
+
+/**
  * Creates a media session.
  *
  * @param manager The media manager to create the session under.

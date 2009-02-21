@@ -38,6 +38,7 @@
 
 struct _PurpleMediaManagerPrivate
 {
+	GstElement *pipeline;
 	GList *medias;
 	GList *elements;
 
@@ -144,6 +145,62 @@ purple_media_manager_get()
 	return manager;
 }
 
+static gboolean
+pipeline_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
+{
+	switch(GST_MESSAGE_TYPE(msg)) {
+		case GST_MESSAGE_EOS:
+			purple_debug_info("mediamanager", "End of Stream\n");
+			break;
+		case GST_MESSAGE_ERROR: {
+			gchar *debug = NULL;
+			GError *err = NULL;
+
+			gst_message_parse_error(msg, &err, &debug);
+
+			purple_debug_error("mediamanager",
+					"gst pipeline error: %s\n",
+					err->message);
+			g_error_free(err);
+
+			if (debug) {
+				purple_debug_error("mediamanager",
+						"Debug details: %s\n", debug);
+				g_free (debug);
+			}
+			break;
+		}
+		default:
+			break;
+	}
+	return TRUE;
+}
+
+GstElement *
+purple_media_manager_get_pipeline(PurpleMediaManager *manager)
+{
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
+
+	if (manager->priv->pipeline == NULL) {
+		GstBus *bus;
+		manager->priv->pipeline = gst_pipeline_new(NULL);
+
+		bus = gst_pipeline_get_bus(
+				GST_PIPELINE(manager->priv->pipeline));
+		gst_bus_add_signal_watch(GST_BUS(bus));
+		g_signal_connect(G_OBJECT(bus), "message",
+				G_CALLBACK(pipeline_bus_call), manager);
+		gst_bus_set_sync_handler(bus,
+				gst_bus_sync_signal_handler, NULL);
+		gst_object_unref(bus);
+
+		gst_element_set_state(manager->priv->pipeline,
+				GST_STATE_PLAYING);
+	}
+
+	return manager->priv->pipeline;
+}
+
 PurpleMedia *
 purple_media_manager_create_media(PurpleMediaManager *manager,
 				  PurpleConnection *gc,
@@ -165,6 +222,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	}
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
+			     "manager", manager,
 			     "conference", conference,
 			     "initiator", initiator,
 			     NULL));
