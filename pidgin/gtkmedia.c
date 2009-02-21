@@ -58,6 +58,7 @@ struct _PidginMediaPrivate
 	GstElement *send_level;
 	GstElement *recv_level;
 
+	GtkItemFactory *item_factory;
 	GtkWidget *menubar;
 	GtkWidget *statusbar;
 
@@ -245,7 +246,6 @@ item_factory_translate_func (const char *path, gpointer func_data)
 static GtkWidget *
 setup_menubar(PidginMedia *window)
 {
-	GtkItemFactory *item_factory;
 	GtkAccelGroup *accel_group;
 	GtkWidget *menu;
 
@@ -253,19 +253,20 @@ setup_menubar(PidginMedia *window)
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
 	g_object_unref(accel_group);
 
-	item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
+	window->priv->item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
 			"<main>", accel_group);
 
-	gtk_item_factory_set_translate_func(item_factory,
+	gtk_item_factory_set_translate_func(window->priv->item_factory,
 			(GtkTranslateFunc)item_factory_translate_func,
 			NULL, NULL);
 
-	gtk_item_factory_create_items(item_factory, menu_item_count,
-			menu_items, window);
+	gtk_item_factory_create_items(window->priv->item_factory,
+			menu_item_count, menu_items, window);
 	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
 			G_CALLBACK(pidgin_save_accels_cb), NULL);
 
-	menu = gtk_item_factory_get_widget(item_factory, "<main>");
+	menu = gtk_item_factory_get_widget(
+			window->priv->item_factory, "<main>");
 
 	gtk_widget_show(menu);
 	return menu;
@@ -389,6 +390,11 @@ pidgin_media_dispose(GObject *media)
 		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
 		g_object_unref(gtkmedia->priv->media);
 		gtkmedia->priv->media = NULL;
+	}
+
+	if (gtkmedia->priv->item_factory) {
+		g_object_unref(gtkmedia->priv->item_factory);
+		gtkmedia->priv->item_factory = NULL;
 	}
 
 	if (gtkmedia->priv->send_level) {
