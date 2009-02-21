@@ -52,6 +52,7 @@ struct _PurpleMediaSession
 	gchar *id;
 	PurpleMedia *media;
 	GstElement *src;
+	GstElement *tee;
 	FsSession *session;
 
 	PurpleMediaSessionType type;
@@ -1106,8 +1107,13 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 	gst_bin_add(GST_BIN(session->media->priv->confbin),
 		    session->src);
 
+	session->tee = gst_element_factory_make("tee", NULL);
+	gst_bin_add(GST_BIN(session->media->priv->confbin), session->tee);
+	gst_element_link(session->src, session->tee);
+	gst_element_set_state(session->tee, GST_STATE_PLAYING);
+
 	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
-	srcpad = gst_element_get_static_pad(src, "ghostsrc");
+	srcpad = gst_element_get_request_pad(session->tee, "src%d");
 	purple_debug_info("media", "connecting pad: %s\n", 
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK
 			  ? "success" : "failure");
@@ -1545,7 +1551,7 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 void
 purple_media_video_init_src(GstElement **sendbin)
 {
-	GstElement *src, *tee, *queue;
+	GstElement *src;
 	GstPad *pad;
 	GstPad *ghost;
 	const gchar *video_plugin = purple_prefs_get_string(
@@ -1559,20 +1565,12 @@ purple_media_video_init_src(GstElement **sendbin)
 	src = gst_element_factory_make(video_plugin, "purplevideosource");
 	gst_bin_add(GST_BIN(*sendbin), src);
 
-	tee = gst_element_factory_make("tee", "purplevideosrctee");
-	gst_bin_add(GST_BIN(*sendbin), tee);
-	gst_element_link(src, tee);
-
-	queue = gst_element_factory_make("queue", NULL);
-	gst_bin_add(GST_BIN(*sendbin), queue);
-	gst_element_link(tee, queue);
-
 	if (!strcmp(video_plugin, "videotestsrc")) {
 		/* unless is-live is set to true it doesn't throttle videotestsrc */
 		g_object_set (G_OBJECT(src), "is-live", TRUE, NULL);
 	}
 
-	pad = gst_element_get_static_pad(queue, "src");
+	pad = gst_element_get_static_pad(src, "src");
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_object_unref(pad);
 	gst_element_add_pad(*sendbin, ghost);
@@ -2358,15 +2356,14 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 		if (session->sink == NULL) {
 			PurpleMediaXOverlayData *data;
 			GstBus *bus;
-			GstElement *tee, *bin, *queue, *sink;
+			GstElement *bin, *queue, *sink;
 			GstPad *request_pad, *sinkpad, *ghostpad;
 			gchar *name;
 
 			/* Create sink */
-			tee = gst_bin_get_by_name(GST_BIN(session->src),
-					"purplevideosrctee");
 			bin = gst_bin_new(NULL);
-			gst_bin_add(GST_BIN(GST_ELEMENT_PARENT(tee)), bin);
+			gst_bin_add(GST_BIN(GST_ELEMENT_PARENT(
+					session->tee)), bin);
 
 			queue = gst_element_factory_make("queue", NULL);
 			name = g_strdup_printf(
@@ -2398,7 +2395,7 @@ purple_media_set_output_window(PurpleMedia *media, const gchar *session_id,
 			gst_element_set_state(bin, GST_STATE_PLAYING);
 
 			request_pad = gst_element_get_request_pad(
-					tee, "src%d");
+					session->tee, "src%d");
 			gst_pad_link(request_pad, ghostpad);
 			gst_object_unref(request_pad);
 
