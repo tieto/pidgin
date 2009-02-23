@@ -1855,7 +1855,7 @@ msgstr "Ne mogu da pošaljem direktorijum."
 
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
-msgstr "%s nije obična datoteka i zato je GAIM neće prepisivati.\n"
+msgstr "%s nije obična datoteka i zato je Pidgin neće prepisivati.\n"
 
 #, c-format
 msgid "%s wants to send you %s (%s)"

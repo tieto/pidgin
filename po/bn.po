@@ -1,5 +1,5 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the GAIM package.
+# This file is distributed under the same license as the Pidgin package.
 # INDRANIL DAS GUPTA (ইন্দ্রনীল দাশগুপ্ত) <indradg@l2c2.org>, 2005.
 # Samia Nimatullah <mailsamia2001@yahoo.com>, 2005.
 # Tisa Nafisa <tisa_nafisa@yahoo.com>, 2007.
@@ -8,7 +8,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GAIM 2.5.3\n"
+"Project-Id-Version: Pidgin 2.5.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-01-13 09:58-0500\n"
 "PO-Revision-Date: 2008-11-13 17:07+0600\n"
