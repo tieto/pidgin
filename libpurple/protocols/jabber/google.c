@@ -144,8 +144,9 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 }
 
 void
-jabber_gmail_poke(JabberStream *js, const char *type)
+jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 {
+	const char *type;
 	xmlnode *query;
 	JabberIq *iq;
 
@@ -153,8 +154,11 @@ jabber_gmail_poke(JabberStream *js, const char *type)
 	if (!purple_account_get_check_mail(js->gc->account))
 		return;
 
+	type = xmlnode_get_attrib(packet, "type");
+
+
 	/* Is this an initial incoming mail notification? If so, send a request for more info */
-	if (strcmp(type, "set"))
+	if (strcmp(type, "set") || !xmlnode_get_child(packet, "new-mail"))
 		return;
 
 	purple_debug(PURPLE_DEBUG_MISC, "jabber",

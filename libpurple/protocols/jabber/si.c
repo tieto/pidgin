@@ -1182,13 +1182,16 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 		purple_xfer_request(xfer);
 }
 
-void jabber_si_parse(JabberStream *js, xmlnode *si, const char *from, const char *id)
+void jabber_si_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *filename, *filesize_c, *profile;
+	xmlnode *si, *file, *feature, *x, *field, *option, *value;
+	const char *stream_id, *filename, *filesize_c, *profile, *from;
 	size_t filesize = 0;
+
+	if(!(si = xmlnode_get_child(packet, "si")))
+		return;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
 			strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer"))
@@ -1212,7 +1215,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *si, const char *from, const char
 	if(!(x = xmlnode_get_child_with_namespace(feature, "x", "jabber:x:data")))
 		return;
 
-	if(!from)
+	if(!(from = xmlnode_get_attrib(packet, "from")))
 		return;
 
 	/* if they've already sent us this file transfer with the same damn id
@@ -1253,7 +1256,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *si, const char *from, const char
 
 	jsx->js = js;
 	jsx->stream_id = g_strdup(stream_id);
-	jsx->iq_id = g_strdup(id);
+	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
 	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
 	if (xfer)

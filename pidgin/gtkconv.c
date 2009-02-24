@@ -1973,6 +1973,9 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 	win      = gtkconv->win;
 	curconv = gtk_notebook_get_current_page(GTK_NOTEBOOK(win->notebook));
 
+	/* clear any tooltips */
+	pidgin_tooltip_destroy();
+
 	/* If CTRL was held down... */
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {

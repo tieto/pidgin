@@ -890,4 +890,4 @@ init_plugin(PurplePlugin *plugin)
 {
 }
 
-PURPLE_INIT_PLUGIN(interval, init_plugin, info)
+PURPLE_INIT_PLUGIN(xmppconsole, init_plugin, info)

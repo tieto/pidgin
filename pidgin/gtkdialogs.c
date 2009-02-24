@@ -457,12 +457,17 @@ void pidgin_dialogs_about()
 		  "warranty for this program.<BR><BR>"), PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
-					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
-	g_string_append(str, "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
-			"http://developer.pidgin.im/wiki/FAQ\">"
-			"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>");
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#pidgin on irc.freenode.net<BR><BR>"));
+				PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
+	g_string_append_printf(str, _("<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
+				"http://developer.pidgin.im/wiki/FAQ\">"
+				"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"));
+	g_string_append_printf(str, _("<FONT SIZE=\"4\">Help via e-mail:</FONT>"
+				" <A HREF=\"mailto:support@pidgin.im\">support@pidgin.im</A>"
+				"<BR/><BR/>"));
+	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC Channel:</FONT> "
+				"#pidgin on irc.freenode.net<BR><BR>"));
+	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "
+				"devel@conference.pidgin.im<BR><BR>"));
 
 	/* Current Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",

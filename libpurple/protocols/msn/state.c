@@ -189,12 +189,12 @@ msn_get_psm(char *xml_str, gsize len)
 
 	purple_debug_info("msn", "msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode){
+	if (!payloadNode) {
 		purple_debug_error("msn", "PSM XML parse Error!\n");
 		return NULL;
 	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
-	if (psmNode == NULL){
+	if (psmNode == NULL) {
 		purple_debug_info("msn", "No PSM status Node");
 		xmlnode_free(payloadNode);
 		return NULL;
@@ -213,7 +213,7 @@ create_media_string(PurplePresence *presence)
 	char *ret;
 	PurpleStatus *status = purple_presence_get_status(presence, "tune");
 	if (!status || !purple_status_is_active(status))
-		return g_strdup_printf("\\0Music\\00\\0\\0");
+		return NULL;
 
 	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
 	game = purple_status_get_attr_string(status, "game");
@@ -234,7 +234,7 @@ create_media_string(PurplePresence *presence)
 	else if (office && *office)
 		ret = g_strdup_printf("\\0Office\\01\\0Editing {0}\\0%s\\0", office);
 	else
-		ret = g_strdup_printf("\\0Music\\00\\0\\0");
+		ret = NULL;
 
 	return ret;
 }
