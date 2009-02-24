@@ -78,6 +78,7 @@ jingle_iceudp_candidate_free(JingleIceUdpCandidate *candidate)
 	g_free(candidate->id);
 	g_free(candidate->ip);
 	g_free(candidate->protocol);
+	g_free(candidate->reladdr);
 	g_free(candidate->type);
 
 	g_free(candidate->username);
@@ -302,6 +303,8 @@ jingle_iceudp_parse_internal(xmlnode *iceudp)
 	const gchar *password = xmlnode_get_attrib(iceudp, "pwd");
 
 	for (; candidate; candidate = xmlnode_get_next_twin(candidate)) {
+		const gchar *relport =
+				xmlnode_get_attrib(candidate, "rel-port");
 		iceudp_candidate = jingle_iceudp_candidate_new(
 				atoi(xmlnode_get_attrib(candidate, "component")),
 				xmlnode_get_attrib(candidate, "foundation"),
@@ -314,6 +317,10 @@ jingle_iceudp_parse_internal(xmlnode *iceudp)
 				xmlnode_get_attrib(candidate, "protocol"),
 				xmlnode_get_attrib(candidate, "type"),
 				username, password);
+		iceudp_candidate->reladdr = g_strdup(
+				xmlnode_get_attrib(candidate, "rel-addr"));
+		iceudp_candidate->relport =
+				relport != NULL ? atoi(relport) : 0;
 		jingle_iceudp_add_remote_candidate(JINGLE_ICEUDP(transport), iceudp_candidate);
 	}
 
@@ -357,10 +364,20 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 			xmlnode_set_attrib(xmltransport, "priority", priority);
 			xmlnode_set_attrib(xmltransport, "protocol", candidate->protocol);
 
+			if (candidate->reladdr != NULL &&
+					(strcmp(candidate->ip, candidate->reladdr) ||
+					(candidate->port != candidate->relport))) {
+				gchar *relport = g_strdup_printf("%d",
+						candidate->relport);
+				xmlnode_set_attrib(xmltransport, "rel-addr",
+						candidate->reladdr);
+				xmlnode_set_attrib(xmltransport, "rel-port",
+						relport);
+				g_free(relport);
+			}
+
 			if (action == JINGLE_SESSION_ACCEPT) {
 			/* XXX: fix this, it's dummy data */
-				xmlnode_set_attrib(xmltransport, "rel-addr", "10.0.1.1");
-				xmlnode_set_attrib(xmltransport, "rel-port", "8998");
 				xmlnode_set_attrib(xmltransport, "rem-addr", "192.0.2.1");
 				xmlnode_set_attrib(xmltransport, "rem-port", "3478");
 			}

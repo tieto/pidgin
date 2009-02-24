@@ -217,6 +217,8 @@ jingle_rtp_candidates_to_transport(JingleSession *session, GType type, guint gen
 					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX ? "prflx" :
 					candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" : "",
 					candidate->username, candidate->password);
+			iceudp_candidate->reladdr = g_strdup(candidate->base_ip);
+			iceudp_candidate->relport = candidate->base_port;
 			jingle_iceudp_add_local_candidate(JINGLE_ICEUDP(transport), iceudp_candidate);
 			g_free(id);
 		}
@@ -261,6 +263,8 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 					PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
 					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					candidate->ip, candidate->port);
+			new_candidate->base_ip = g_strdup(candidate->reladdr);
+			new_candidate->base_port = candidate->relport;
 			new_candidate->username = g_strdup(candidate->username);
 			new_candidate->password = g_strdup(candidate->password);
 			new_candidate->priority = candidate->priority;

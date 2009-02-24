@@ -72,6 +72,8 @@ struct _JingleIceUdpCandidate
 	guint port;
 	guint priority;
 	gchar *protocol;
+	gchar *reladdr;
+	guint relport;
 	gchar *type;
 
 	gchar *username;
