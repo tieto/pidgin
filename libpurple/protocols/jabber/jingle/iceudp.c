@@ -376,12 +376,6 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 				g_free(relport);
 			}
 
-			if (action == JINGLE_SESSION_ACCEPT) {
-			/* XXX: fix this, it's dummy data */
-				xmlnode_set_attrib(xmltransport, "rem-addr", "192.0.2.1");
-				xmlnode_set_attrib(xmltransport, "rem-port", "3478");
-			}
-
 			xmlnode_set_attrib(xmltransport, "type", candidate->type);
 
 			g_free(component);
