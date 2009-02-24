@@ -2526,3 +2526,22 @@ jabber_buddy_has_capability(const JabberBuddy *jb, const gchar *cap)
 	return jabber_resource_has_capability(jbr, cap);
 }
 
+const gchar *
+jabber_resource_get_identity_category_type(const JabberBuddyResource *jbr,
+	const gchar *category)
+{
+	const GList *iter = NULL;
+	
+	if (jbr->caps) {
+		for (iter = jbr->caps->identities ; iter ; iter = g_list_next(iter)) {
+			const JabberCapsIdentity *identity = 
+				(JabberCapsIdentity *) iter->data;
+		
+			if (strcmp(identity->category, category) == 0) {
+				return identity->type;
+			}
+		}
+	}
+		
+	return NULL;
+}
