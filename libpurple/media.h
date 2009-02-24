@@ -651,12 +651,14 @@ void purple_media_set_input_volume(PurpleMedia *media, const gchar *session_id, 
 void purple_media_set_output_volume(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant, double level);
 
-gboolean purple_media_set_output_window(PurpleMedia *media,
+gulong purple_media_set_output_window(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant,
 		gulong window_id);
-gboolean purple_media_remove_output_window(PurpleMedia *media,
-		const gchar *session_id, const gchar *participant);
+
 void purple_media_remove_output_windows(PurpleMedia *media);
+
+GstElement *purple_media_get_tee(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
 
 #ifdef __cplusplus
 }

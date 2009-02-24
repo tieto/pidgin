@@ -35,12 +35,27 @@
 #ifdef USE_VV
 
 #include <gst/farsight/fs-conference-iface.h>
+#include <gst/interfaces/xoverlay.h>
+
+typedef struct _PurpleMediaOutputWindow PurpleMediaOutputWindow;
+
+struct _PurpleMediaOutputWindow
+{
+	gulong id;
+	PurpleMedia *media;
+	gchar *session_id;
+	gchar *participant;
+	gulong window_id;
+	GstElement *sink;
+};
 
 struct _PurpleMediaManagerPrivate
 {
 	GstElement *pipeline;
 	GList *medias;
 	GList *elements;
+	GList *output_windows;
+	gulong next_output_window_id;
 
 	PurpleMediaElementInfo *video_src;
 	PurpleMediaElementInfo *video_sink;
@@ -120,6 +135,7 @@ purple_media_manager_init (PurpleMediaManager *media)
 {
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
 	media->priv->medias = NULL;
+	media->priv->next_output_window_id = 1;
 }
 
 static void
@@ -410,6 +426,182 @@ purple_media_manager_get_active_element(PurpleMediaManager *manager,
 	}
 
 	return NULL;
+}
+
+static void
+window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
+{
+	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT ||
+			!gst_structure_has_name(msg->structure,
+			"prepare-xwindow-id"))
+		return;
+
+	if (GST_ELEMENT_PARENT(GST_MESSAGE_SRC(msg)) == ow->sink) {
+		g_signal_handlers_disconnect_matched(bus, G_SIGNAL_MATCH_FUNC
+				| G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+				window_id_cb, ow);
+
+		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(
+				GST_MESSAGE_SRC(msg)), ow->window_id);
+	}
+}
+
+gboolean
+purple_media_manager_create_output_window(PurpleMediaManager *manager,
+		PurpleMedia *media, const gchar *session_id,
+		const gchar *participant)
+{
+	GList *iter;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+
+	iter = manager->priv->output_windows;
+	for(; iter; iter = g_list_next(iter)) {
+		PurpleMediaOutputWindow *ow = iter->data;
+
+		if (ow->sink == NULL && ow->media == media &&
+				((participant != NULL &&
+				ow->participant != NULL &&
+				!strcmp(participant, ow->participant)) ||
+				(participant == ow->participant)) &&
+				!strcmp(session_id, ow->session_id)) {
+			GstBus *bus;
+			GstElement *queue;
+			GstElement *tee = purple_media_get_tee(media,
+					session_id, participant);
+
+			if (tee == NULL)
+				continue;
+
+			queue = gst_element_factory_make(
+					"queue", NULL);
+			ow->sink = purple_media_manager_get_element(
+					manager, PURPLE_MEDIA_RECV_VIDEO);
+
+			if (participant == NULL)
+				/* aka this is a preview sink */
+				g_object_set(G_OBJECT(ow->sink), "sync", FALSE,
+						"async", "FALSE", NULL);
+
+			gst_bin_add_many(GST_BIN(GST_ELEMENT_PARENT(tee)),
+					queue, ow->sink, NULL);
+
+			bus = gst_pipeline_get_bus(GST_PIPELINE(
+					manager->priv->pipeline));
+			g_signal_connect(bus, "sync-message::element",
+					G_CALLBACK(window_id_cb), ow);
+			gst_object_unref(bus);
+
+			gst_element_sync_state_with_parent(ow->sink);
+			gst_element_link(queue, ow->sink);
+			gst_element_sync_state_with_parent(queue);
+			gst_element_link(tee, queue);
+		}
+	}
+	return TRUE;
+}
+
+gulong
+purple_media_manager_set_output_window(PurpleMediaManager *manager,
+		PurpleMedia *media, const gchar *session_id,
+		const gchar *participant, gulong window_id)
+{
+	PurpleMediaOutputWindow *output_window;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+
+	output_window = g_new0(PurpleMediaOutputWindow, 1);
+	output_window->id = manager->priv->next_output_window_id++;
+	output_window->media = media;
+	output_window->session_id = g_strdup(session_id);
+	output_window->participant = g_strdup(participant);
+	output_window->window_id = window_id;
+
+	manager->priv->output_windows = g_list_prepend(
+			manager->priv->output_windows, output_window);
+
+	if (purple_media_get_tee(media, session_id, participant) != NULL)
+		purple_media_manager_create_output_window(manager,
+				media, session_id, participant);
+
+	return output_window->id;
+}
+
+gboolean
+purple_media_manager_remove_output_window(PurpleMediaManager *manager,
+		gulong output_window_id)
+{
+	PurpleMediaOutputWindow *output_window = NULL;
+	GList *iter;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
+
+	iter = manager->priv->output_windows;
+	for (; iter; iter = g_list_next(iter)) {
+		PurpleMediaOutputWindow *ow = iter->data;
+		if (ow->id == output_window_id) {
+			manager->priv->output_windows = g_list_delete_link(
+					manager->priv->output_windows, iter);
+			output_window = ow;
+			break;
+		}
+	}
+
+	if (output_window == NULL)
+		return FALSE;
+
+	if (output_window->sink != NULL) {
+		GstPad *pad = gst_element_get_static_pad(
+				output_window->sink, "sink");
+		GstPad *peer = gst_pad_get_peer(pad);
+		GstElement *queue = GST_ELEMENT_PARENT(peer);
+		gst_object_unref(pad);
+		pad = gst_element_get_static_pad(queue, "sink");
+		peer = gst_pad_get_peer(pad);
+		gst_object_unref(pad);
+		gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
+		gst_element_set_locked_state(queue, TRUE);
+		gst_element_set_state(queue, GST_STATE_NULL);
+		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(queue)), queue);
+		gst_element_set_locked_state(output_window->sink, TRUE);
+		gst_element_set_state(output_window->sink, GST_STATE_NULL);
+		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(output_window->sink)),
+				output_window->sink);
+	}
+
+	g_free(output_window->session_id);
+	g_free(output_window->participant);
+	g_free(output_window);
+
+	return TRUE;
+}
+
+void
+purple_media_manager_remove_output_windows(PurpleMediaManager *manager,
+		PurpleMedia *media, const gchar *session_id,
+		const gchar *participant)
+{
+	GList *iter;
+
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
+
+	iter = manager->priv->output_windows;
+
+	for (; iter;) {
+		PurpleMediaOutputWindow *ow = iter->data;
+		iter = g_list_next(iter);
+
+	if (media == ow->media &&
+			((session_id != NULL && ow->session_id != NULL &&
+			!strcmp(session_id, ow->session_id)) ||
+			(session_id == ow->session_id)) &&
+			((participant != NULL && ow->participant != NULL &&
+			!strcmp(participant, ow->participant)) ||
+			(participant == ow->participant)))
+		purple_media_manager_remove_output_window(
+				manager, ow->id);
+	}
 }
 
 #endif  /* USE_VV */

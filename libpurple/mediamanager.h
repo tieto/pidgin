@@ -184,6 +184,20 @@ gboolean purple_media_manager_set_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info);
 PurpleMediaElementInfo *purple_media_manager_get_active_element(
 		PurpleMediaManager *manager, PurpleMediaElementType type);
+/**
+ * This shouldn't be called outside of mediamanager.c and media.c
+ */
+gboolean purple_media_manager_create_output_window(
+		PurpleMediaManager *manager, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
+gulong purple_media_manager_set_output_window(PurpleMediaManager *manager,
+		PurpleMedia *media, const gchar *session_id,
+		const gchar *participant, gulong window_id);
+gboolean purple_media_manager_remove_output_window(
+		PurpleMediaManager *manager, gulong output_window_id);
+void purple_media_manager_remove_output_windows(
+		PurpleMediaManager *manager, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
 /*}@*/
 
 #ifdef __cplusplus
