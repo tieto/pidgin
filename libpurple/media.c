@@ -81,6 +81,7 @@ struct _PurpleMediaStream
 	GList *active_remote_candidates;
 
 	gulong window_id;
+	guint connected_cb_id;
 };
 
 struct _PurpleMediaPrivate
@@ -253,7 +254,8 @@ purple_media_stream_free(PurpleMediaStream *stream)
 		return;
 
 	/* Remove the connected_cb timeout */
-	g_source_remove_by_user_data(stream);
+	if (stream->connected_cb_id != 0)
+		purple_timeout_remove(stream->connected_cb_id);
 
 	g_free(stream->participant);
 
@@ -1728,6 +1730,8 @@ purple_media_connected_cb(PurpleMediaStream *stream)
 {
 	g_return_val_if_fail(stream != NULL, FALSE);
 
+	stream->connected_cb_id = 0;
+
 	purple_media_manager_create_output_window(
 			stream->session->media->priv->manager,
 			stream->session->media,
@@ -1792,8 +1796,8 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 		gst_element_link(stream->tee, stream->sink);
 	}
 
-	g_timeout_add_full(G_PRIORITY_HIGH, 0,
-			(GSourceFunc)purple_media_connected_cb, stream, NULL);
+	stream->connected_cb_id = purple_timeout_add(0,
+			(GSourceFunc)purple_media_connected_cb, stream);
 }
 
 static gboolean
