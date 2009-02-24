@@ -9,6 +9,7 @@ version 2.5.5 (??/??/????):
 	* Fix a memory leak in SILC. (Luke Petre)
 	* Fix some string handling in the SIMPLE prpl, which fixes some buddy name
 	  handling and other issues. (Paul Aurich, Marcus Sundberg)
+	* Implement support for resolving DNS via the SOCKS4 proxy (SOCKS4a).
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
@@ -17,7 +18,7 @@ version 2.5.5 (??/??/????):
 	  of buddy icons and available messages.
 	* Properly publish status messages for statuses other than Available.
 	  ICQ 6.x users can now see these status messages. (Daniel Ljungborg)
-	* Fix recipt of messages from the mobile client Slick. (David Jedelsky)
+	* Fix receipt of messages from the mobile client Slick. (David Jedelsky)
 
 	MSN:
 	* Fix transfer of buddy icons, custom smileys, and files from the
@@ -47,6 +48,10 @@ version 2.5.5 (??/??/????):
 	* We no longer try to send empty messages.  This could happen when a
 	  message contained only formatting and that formatting was not supported
 	  on MSN.
+	* Buddies on both the Allow and Block list are now automatically
+	  removed from the Allow list.  Users with this problem will now no
+	  longer receive an ADL 241 error.  The problematic buddy should now
+	  appear on the buddy list and can be removed or unblocked as desired.
 
 	XMPP:
 	* Resources using __HOSTNAME__ substitution will now grab only the short

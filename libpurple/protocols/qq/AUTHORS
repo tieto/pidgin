@@ -23,6 +23,8 @@ moo		: qun processing
 Coly Li		: qun processing
 Emil Alexiev	: captcha verification on login based on LumaQQ for MAC (2007), 
 		  login, add buddy, remove buddy, message exchange and logout
+Chengming Wang 	: buddy memo
+lonicerae 	: chat room window bugfix, server list bugfix, buddy memo
 
 Acknowledgement
 =========
@@ -32,8 +34,16 @@ Hu Zheng	: http://forlinux.yeah.net
 yunfan		: http://www.myswear.net
 OpenQ Team	: http://openq.linuxsir.org
 LumaQQ Team	: http://lumaqq.linuxsir.org
-khc@pidgin.im
-qulogic@pidgin.im
-rlaager@pidgin.im
+Pidgin Team	: http://www.pidgin.im
 Huang Guan	: http://home.xxsyzx.com
 OpenQ Google Group	: http://groups.google.com/group/openq
+
+Scrupulous Testers
+=========
+yegle
+cnzhangbx
+casparant
+wd
+x6719620
+netelk
+and more, please let me know... thank you!
