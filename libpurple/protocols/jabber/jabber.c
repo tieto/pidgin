@@ -36,6 +36,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
+#include "status.h"
 #include "util.h"
 #include "version.h"
 #include "xmlnode.h"
@@ -708,6 +709,7 @@ jabber_login(PurpleAccount *account)
 	const char *connect_server = purple_account_get_string(account,
 			"connect_server", "");
 	JabberStream *js;
+	PurplePresence *presence;
 	JabberBuddy *my_jb = NULL;
 
 	gc->flags |= PURPLE_CONNECTION_HTML |
@@ -729,6 +731,13 @@ jabber_login(PurpleAccount *account)
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
+
+	/* if we are idle, set idle-ness on the stream (this could happen if we get
+		disconnected and the reconnects while being idle. I don't think it makes
+		sense to do this when registering a new account... */
+	presence = purple_account_get_presence(account);
+	if (purple_presence_is_idle(presence))
+		js->idle = purple_presence_get_idle_time(presence);
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1488,8 +1497,14 @@ char *jabber_get_next_id(JabberStream *js)
 void jabber_idle_set(PurpleConnection *gc, int idle)
 {
 	JabberStream *js = gc->proto_data;
-
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleStatus *status = purple_account_get_active_status(account);
+	
 	js->idle = idle ? time(NULL) - idle : idle;
+	
+	/* send out an updated prescence */
+	purple_debug_info("jabber", "sending updated presence for idle\n");
+	jabber_presence_send(account, status);
 }
 
 static void jabber_blocklist_parse(JabberStream *js, xmlnode *packet, gpointer data)
@@ -1681,10 +1696,60 @@ char *jabber_status_text(PurpleBuddy *b)
 	return ret;
 }
 
+static void
+jabber_tooltip_add_resource_text(JabberBuddyResource *jbr, 
+	PurpleNotifyUserInfo *user_info, gboolean multiple_resources)
+{
+	char *text = NULL;
+	char *res = NULL;
+	char *label, *value;
+	const char *state;
+
+	if(jbr->status) {
+		char *tmp;
+		text = purple_strreplace(jbr->status, "\n", "<br />\n");
+		tmp = purple_markup_strip_html(text);
+		g_free(text);
+		text = g_markup_escape_text(tmp, -1);
+		g_free(tmp);
+	}
+
+	if(jbr->name)
+		res = g_strdup_printf(" (%s)", jbr->name);
+
+	state = jabber_buddy_state_get_name(jbr->state);
+	if (text != NULL && !purple_utf8_strcasecmp(state, text)) {
+		g_free(text);
+		text = NULL;
+	}
+
+	label = g_strdup_printf("%s%s", _("Status"), (res ? res : ""));
+	value = g_strdup_printf("%s%s%s", state, (text ? ": " : ""), (text ? text : ""));
+
+	purple_notify_user_info_add_pair(user_info, label, value);
+	g_free(label);
+	g_free(value);
+	g_free(text);
+	
+	/* if the resource is idle, show that */
+	/* only show it if there is more than one resource available for
+	the buddy, since the "general" idleness will be shown anyway,
+	this way we can see see the idleness of lower-priority resources */
+	if (jbr->idle && multiple_resources) {
+		gchar *idle_str = 
+			purple_str_seconds_to_string(time(NULL) - jbr->idle);
+		label = g_strdup_printf("%s%s", _("Idle"), (res ? res : ""));
+		purple_notify_user_info_add_pair(user_info, label, idle_str);
+		g_free(idle_str);
+		g_free(label);
+	}
+	g_free(res);
+}
+
 void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	JabberBuddy *jb;
-
+	
 	g_return_if_fail(b != NULL);
 	g_return_if_fail(b->account != NULL);
 	g_return_if_fail(b->account->gc != NULL);
@@ -1699,27 +1764,27 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		const char *sub;
 		GList *l;
 		const char *mood;
+		gboolean multiple_resources = 
+			jb->resources && g_list_next(jb->resources);
+		JabberBuddyResource *top_jbr = jabber_buddy_find_resource(jb, NULL);
 
+		/* resource-specific info for the top resource */
+		if (top_jbr) {
+			jabber_tooltip_add_resource_text(top_jbr, user_info, 
+				multiple_resources);
+		}
+
+		for(l=jb->resources; l; l = l->next) {
+			jbr = l->data;
+			/* the remaining resources */
+			if (jbr != top_jbr) {
+				jabber_tooltip_add_resource_text(jbr, user_info,
+					multiple_resources);
+			}
+		}
+		
 		if (full) {
 			PurpleStatus *status;
-
-			if(jb->subscription & JABBER_SUB_FROM) {
-				if(jb->subscription & JABBER_SUB_TO)
-					sub = _("Both");
-				else if(jb->subscription & JABBER_SUB_PENDING)
-					sub = _("From (To pending)");
-				else
-					sub = _("From");
-			} else {
-				if(jb->subscription & JABBER_SUB_TO)
-					sub = _("To");
-				else if(jb->subscription & JABBER_SUB_PENDING)
-					sub = _("None (To pending)");
-				else
-					sub = _("None");
-			}
-
-			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 
 			status = purple_presence_get_active_status(presence);
 			mood = purple_status_get_attr_string(status, "mood");
@@ -1745,49 +1810,27 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					g_free(playing);
 				}
 			}
-		}
 
-		for(l=jb->resources; l; l = l->next) {
-			char *text = NULL;
-			char *res = NULL;
-			char *label, *value;
-			const char *state;
-
-			jbr = l->data;
-
-			if(jbr->status) {
-				char *tmp;
-				text = purple_strreplace(jbr->status, "\n", "<br />\n");
-				tmp = purple_markup_strip_html(text);
-				g_free(text);
-				text = g_markup_escape_text(tmp, -1);
-				g_free(tmp);
+			if(jb->subscription & JABBER_SUB_FROM) {
+				if(jb->subscription & JABBER_SUB_TO)
+					sub = _("Both");
+				else if(jb->subscription & JABBER_SUB_PENDING)
+					sub = _("From (To pending)");
+				else
+					sub = _("From");
+			} else {
+				if(jb->subscription & JABBER_SUB_TO)
+					sub = _("To");
+				else if(jb->subscription & JABBER_SUB_PENDING)
+					sub = _("None (To pending)");
+				else
+					sub = _("None");
 			}
 
-			if(jbr->name)
-				res = g_strdup_printf(" (%s)", jbr->name);
+			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 
-			state = jabber_buddy_state_get_name(jbr->state);
-			if (text != NULL && !purple_utf8_strcasecmp(state, text)) {
-				g_free(text);
-				text = NULL;
-			}
-
-			label = g_strdup_printf("%s%s",
-							_("Status"), (res ? res : ""));
-			value = g_strdup_printf("%s%s%s",
-							state,
-							(text ? ": " : ""),
-							(text ? text : ""));
-
-			purple_notify_user_info_add_pair(user_info, label, value);
-
-			g_free(label);
-			g_free(value);
-			g_free(text);
-			g_free(res);
-		}
-
+		}	
+		
 		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 			purple_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
 		}
