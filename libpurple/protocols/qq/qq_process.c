@@ -1145,7 +1145,9 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			break;
 		case QQ_CMD_BUDDY_MEMO:
 			purple_debug_info("QQ", "Receive memo from server!\n");
-			qq_process_get_buddy_memo(gc, data, data_len, ship32);
+			qq_process_get_buddy_memo(gc, data, data_len, update_class, ship32);
+			return;
+			purple_debug_info("QQ", "Should NOT be here...\n");
 			break;
 		default:
 			process_unknow_cmd(gc, _("Unknown CLIENT CMD"), data, data_len, cmd, seq);

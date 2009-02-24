@@ -57,7 +57,7 @@
 #include "utils.h"
 #include "version.h"
 
-#define OPENQ_VERSION 		"0.3.2-p19" 
+#define OPENQ_VERSION 		"0.3.2-p20" 
 
 static GList *server_list_build(gchar select)
 {
@@ -826,8 +826,6 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	qq_buddy_data *bd;
 	PurpleConnection *gc;
 	guint32 bd_uid;
-	const gchar *alias;
-	const gchar *server_alias;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
@@ -841,19 +839,10 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	g_return_if_fail(NULL != bd);
 	bd_uid = bd->uid;
 
-	/* gc, uid, update_class, action */
-	qq_request_buddy_memo(gc, bd_uid, 0, QQ_BUDDY_MEMO_MODIFY);
-
-	/* if buddy does NOT have a memo, open the memo dialogue directly */
-	alias = purple_buddy_get_alias_only(buddy);
-	server_alias = purple_buddy_get_server_alias(buddy);
-
-	purple_debug_info("QQ", "alias=%s\n", alias);
-	purple_debug_info("QQ", "server_alias=%s\n", server_alias);
-
-	if (!qq_strcmp(alias, server_alias)) {
-		qq_create_buddy_memo(gc, bd_uid, QQ_BUDDY_MEMO_MODIFY);
-	}
+	/* param: gc, uid, update_class, action
+	 * here, update_class is set to bd_uid. because some memo packages returned
+	 * without uid, which will make us confused */
+	qq_request_buddy_memo(gc, bd_uid, bd_uid, QQ_BUDDY_MEMO_MODIFY);
 }
 
 static GList *qq_buddy_menu(PurpleBuddy *buddy)

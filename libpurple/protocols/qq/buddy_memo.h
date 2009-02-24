@@ -16,11 +16,9 @@ enum
 };
 
 
-void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len, guint32 action);
+void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len, guint32 update_class, guint32 action);
 
-void qq_request_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 update_class, int action);
-
-void qq_create_buddy_memo(PurpleConnection *gc, guint32 bd_uid, int action);
+void qq_request_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 update_class, guint32 action);
 
 #endif
 

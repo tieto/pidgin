@@ -1,3 +1,7 @@
+2009.02.24 - flos <lonicerae(at)gmail.com>
+	* Changed update_class type from gint to guint32
+	* Fixed a bug of displaying of memo when memo is nothing
+
 2009.02.21 - flos <lonicerae(at)gmail.com>
 	* Added 'qq_strlen' and 'qq_strcmp' funtions in qq.h
 	* Fixed compiling problems with lower version of GTK+
