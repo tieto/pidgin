@@ -851,7 +851,7 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	purple_debug_info("QQ", "alias=%s\n", alias);
 	purple_debug_info("QQ", "server_alias=%s\n", server_alias);
 
-	if (!g_strcmp0(alias, server_alias)) {
+	if (!qq_strcmp(alias, server_alias)) {
 		qq_create_buddy_memo(gc, bd_uid, QQ_BUDDY_MEMO_MODIFY);
 	}
 }

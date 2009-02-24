@@ -171,7 +171,7 @@ static void memo_modify_ok_cb(modify_memo_request *memo_request, PurpleRequestFi
 		else {
 			value = utf8_to_qq(utf8_str, QQ_CHARSET_DEFAULT);
 			/* Warnning: value will be string "(NULL)" instead of NULL */
-			if (!g_strcmp0("(NULL)", value)) {
+			if (!qq_strcmp("(NULL)", value)) {
 				value = g_strdup("");
 			}
 		}
@@ -321,7 +321,7 @@ void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len
 }
 
 /* request buddy memo */
-void qq_request_buddy_memo(PurpleConnection *gc, guint32 bd_uid, gint update_class, int action)
+void qq_request_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 update_class, int action)
 {
 	guint8 raw_data[16] = {0};
 	gint bytes;

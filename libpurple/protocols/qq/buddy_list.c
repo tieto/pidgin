@@ -56,7 +56,7 @@ typedef struct _qq_buddy_online {
 } qq_buddy_online;
 
 /* get a list of online_buddies */
-void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, gint update_class)
+void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, guint32 update_class)
 {
 	qq_data *qd;
 	guint8 *raw_data;
@@ -82,7 +82,7 @@ void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, gint u
 
 /* position starts with 0x0000,
  * server may return a position tag if list is too long for one packet */
-void qq_request_get_buddies(PurpleConnection *gc, guint16 position, gint update_class)
+void qq_request_get_buddies(PurpleConnection *gc, guint16 position, guint32 update_class)
 {
 	qq_data *qd;
 	guint8 raw_data[16] = {0};
@@ -106,7 +106,7 @@ void qq_request_get_buddies(PurpleConnection *gc, guint16 position, gint update_
 }
 
 /* get all list, buddies & Quns with groupsid support */
-void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, gint update_class)
+void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, guint32 update_class)
 {
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
@@ -462,7 +462,7 @@ static guint8  get_status_from_purple(PurpleConnection *gc)
 }
 
 /* send a packet to change my online status */
-void qq_request_change_status(PurpleConnection *gc, gint update_class)
+void qq_request_change_status(PurpleConnection *gc, guint32 update_class)
 {
 	qq_data *qd;
 	guint8 raw_data[16] = {0};
