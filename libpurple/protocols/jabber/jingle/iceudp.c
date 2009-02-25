@@ -334,10 +334,14 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 
 	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO ||
 			action == JINGLE_CONTENT_ADD || action == JINGLE_TRANSPORT_REPLACE) {
-		JingleIceUdpCandidate *candidate = JINGLE_ICEUDP_GET_PRIVATE(
-				transport)->local_candidates->data;
-		xmlnode_set_attrib(node, "pwd", candidate->password);
-		xmlnode_set_attrib(node, "ufrag", candidate->username);
+		JingleIceUdpPrivate *icetransport =
+				JINGLE_ICEUDP_GET_PRIVATE(transport);
+		if (icetransport && icetransport->local_candidates) {
+			JingleIceUdpCandidate *candidate =
+					icetransport->local_candidates->data;
+			xmlnode_set_attrib(node, "pwd", candidate->password);
+			xmlnode_set_attrib(node, "ufrag", candidate->username);
+		}
 	}
 
 	if (action == JINGLE_TRANSPORT_INFO || action == JINGLE_SESSION_ACCEPT) {
