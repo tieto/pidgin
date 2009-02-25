@@ -156,6 +156,17 @@ PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 GList *purple_media_manager_get_media(PurpleMediaManager *manager);
 
 /**
+ * Gets all of the media sessions for a given connection.
+ *
+ * @param manager The media manager to get the sessions from.
+ * @param pc The connection the sessions are on.
+ *
+ * @return A list of the media sessions on the given connection.
+ */
+GList *purple_media_manager_get_media_by_connection(
+		PurpleMediaManager *manager, PurpleConnection *pc);
+
+/**
  * Removes a media session from the media manager.
  *
  * @param manager The media manager to remove the media session from.

@@ -273,6 +273,25 @@ purple_media_manager_get_media(PurpleMediaManager *manager)
 	return manager->priv->medias;
 }
 
+GList *
+purple_media_manager_get_media_by_connection(PurpleMediaManager *manager,
+		PurpleConnection *pc)
+{
+	GList *media = NULL;
+	GList *iter;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
+
+	iter = manager->priv->medias;
+	for (; iter; iter = g_list_next(iter)) {
+		if (purple_media_get_connection(iter->data) == pc) {
+			media = g_list_prepend(media, iter->data);
+		}
+	}
+
+	return media;
+}
+
 void
 purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media)
