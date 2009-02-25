@@ -383,6 +383,15 @@ GstElement *purple_media_get_sink(PurpleMedia *media, const gchar *sess_id, cons
 GstElement *purple_media_get_pipeline(PurpleMedia *media);
 
 /**
+ * Gets the PurpleConnection this media session is on.
+ *
+ * @param media The media session to retrieve the connection from.
+ *
+ * @return The connection retrieved.
+ */
+PurpleConnection *purple_media_get_connection(PurpleMedia *media);
+
+/**
  * Signals an error in the media session.
  *
  * @param media The media object to set the state on.

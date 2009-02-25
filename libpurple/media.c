@@ -87,6 +87,7 @@ struct _PurpleMediaStream
 struct _PurpleMediaPrivate
 {
 	PurpleMediaManager *manager;
+	PurpleConnection *pc;
 	FsConference *conference;
 	gboolean initiator;
 
@@ -135,6 +136,7 @@ static guint purple_media_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_MANAGER,
+	PROP_CONNECTION,
 	PROP_CONFERENCE,
 	PROP_INITIATOR,
 };
@@ -194,6 +196,12 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Purple Media Manager",
 			"The media manager that contains this media session.",
 			PURPLE_TYPE_MEDIA_MANAGER,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_CONNECTION,
+			g_param_spec_pointer("connection",
+			"PurpleConnection",
+			"The connection this media session is on.",
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_CONFERENCE,
@@ -407,6 +415,9 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 			purple_media_setup_pipeline(media);
 			break;
+		case PROP_CONNECTION:
+			media->priv->pc = g_value_get_pointer(value);
+			break;
 		case PROP_CONFERENCE: {
 			if (media->priv->conference)
 				gst_object_unref(media->priv->conference);
@@ -436,6 +447,9 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 	switch (prop_id) {
 		case PROP_MANAGER:
 			g_value_set_object(value, media->priv->manager);
+			break;
+		case PROP_CONNECTION:
+			g_value_set_pointer(value, media->priv->pc);
 			break;
 		case PROP_CONFERENCE:
 			g_value_set_object(value, media->priv->conference);
@@ -1358,6 +1372,15 @@ purple_media_get_pipeline(PurpleMedia *media)
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 
 	return purple_media_manager_get_pipeline(media->priv->manager);
+}
+
+PurpleConnection *
+purple_media_get_connection(PurpleMedia *media)
+{
+	PurpleConnection *pc;
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
+	g_object_get(G_OBJECT(media), "connection", &pc, NULL);
+	return pc;
 }
 
 void
