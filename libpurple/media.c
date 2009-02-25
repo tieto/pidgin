@@ -90,6 +90,7 @@ struct _PurpleMediaPrivate
 	PurpleConnection *pc;
 	FsConference *conference;
 	gboolean initiator;
+	gpointer prpl_data;
 
 	GHashTable *sessions;	/* PurpleMediaSession table */
 	GHashTable *participants; /* FsParticipant table */
@@ -139,6 +140,7 @@ enum {
 	PROP_CONNECTION,
 	PROP_CONFERENCE,
 	PROP_INITIATOR,
+	PROP_PRPL_DATA,
 };
 
 GType
@@ -217,6 +219,12 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"If the local user initiated the conference.",
 			FALSE,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_PRPL_DATA,
+			g_param_spec_pointer("prpl-data",
+			"gpointer",
+			"Data the prpl plugin set on the media session.",
+			G_PARAM_READWRITE));
 
 	purple_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
@@ -430,6 +438,9 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_INITIATOR:
 			media->priv->initiator = g_value_get_boolean(value);
 			break;
+		case PROP_PRPL_DATA:
+			media->priv->prpl_data = g_value_get_pointer(value);
+			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -456,6 +467,9 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			break;
 		case PROP_INITIATOR:
 			g_value_set_boolean(value, media->priv->initiator);
+			break;
+		case PROP_PRPL_DATA:
+			g_value_set_pointer(value, media->priv->prpl_data);
 			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
@@ -1381,6 +1395,22 @@ purple_media_get_connection(PurpleMedia *media)
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 	g_object_get(G_OBJECT(media), "connection", &pc, NULL);
 	return pc;
+}
+
+gpointer
+purple_media_get_prpl_data(PurpleMedia *media)
+{
+	gpointer prpl_data;
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
+	g_object_get(G_OBJECT(media), "prpl-data", &prpl_data, NULL);
+	return prpl_data;
+}
+
+void
+purple_media_set_prpl_data(PurpleMedia *media, gpointer prpl_data)
+{
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
+	g_object_set(G_OBJECT(media), "prpl-data", prpl_data, NULL);
 }
 
 void

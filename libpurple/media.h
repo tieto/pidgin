@@ -392,6 +392,23 @@ GstElement *purple_media_get_pipeline(PurpleMedia *media);
 PurpleConnection *purple_media_get_connection(PurpleMedia *media);
 
 /**
+ * Gets the prpl data from the media session.
+ *
+ * @param media The media session to retrieve the prpl data from.
+ *
+ * @return The prpl data retrieved.
+ */
+gpointer purple_media_get_prpl_data(PurpleMedia *media);
+
+/**
+ * Sets the prpl data on the media session.
+ *
+ * @param media The media session to set the prpl data on.
+ * @param prpl_data The data to set on the media session.
+ */
+void purple_media_set_prpl_data(PurpleMedia *media, gpointer prpl_data);
+
+/**
  * Signals an error in the media session.
  *
  * @param media The media object to set the state on.
