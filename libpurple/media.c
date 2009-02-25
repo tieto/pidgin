@@ -1080,7 +1080,8 @@ GList *
 purple_media_get_session_names(PurpleMedia *media)
 {
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	return g_hash_table_get_keys(media->priv->sessions);
+	return media->priv->sessions != NULL ?
+			g_hash_table_get_keys(media->priv->sessions) : NULL;
 }
 
 void 
