@@ -637,19 +637,19 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->signoff,      0, 1, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away,         0, 1, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->away,         1, 2, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  0, 1, 4, 5,
+	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  1, 2, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  1, 2, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  2, 3, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typing,       1, 2, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->typing,       2, 3, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typed,        1, 2, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->typed,        2, 3, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  1, 2, 4, 5,
+	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  3, 4, 0, 1,
 					 GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->signon);
