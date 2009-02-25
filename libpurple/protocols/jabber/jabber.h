@@ -248,9 +248,6 @@ struct _JabberStream
 
 	/* keep a hash table of JingleSessions */
 	GHashTable *sessions;
-#ifdef USE_VV
-	GHashTable *medias;
-#endif
 
 	/* maybe this should only be present when USE_VV? */
 	gchar *stun_ip;

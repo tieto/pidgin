@@ -176,11 +176,20 @@ static PurpleMedia *
 jingle_rtp_get_media(JingleSession *session)
 {
 	JabberStream *js = jingle_session_get_js(session);
-	gchar *sid = jingle_session_get_sid(session);
+	PurpleMedia *media = NULL;
+	GList *iter = purple_media_manager_get_media_by_connection(
+			purple_media_manager_get(), js->gc);
 
-	PurpleMedia *media = (PurpleMedia *) (js->medias) ?
-			  g_hash_table_lookup(js->medias, sid) : NULL;
-	g_free(sid);
+	for (; iter; iter = g_list_delete_link(iter, iter)) {
+		JingleSession *media_session =
+				purple_media_get_prpl_data(iter->data);
+		if (media_session == session) {
+			media = iter->data;
+			break;
+		}
+	}
+	if (iter != NULL)
+		g_list_free(iter);
 
 	return media;
 }
@@ -305,11 +314,7 @@ jingle_rtp_initiate_ack_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error") ||
 			xmlnode_get_child(packet, "error")) {
-		gchar *sid = jingle_session_get_sid(session);
 		purple_media_end(jingle_rtp_get_media(session), NULL, NULL);
-		g_hash_table_remove(jingle_session_get_js(
-				session)->medias, sid);
-		g_free(sid);
 		g_object_unref(session);
 		return;
 	}
@@ -367,11 +372,8 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type
 	if ((type == PURPLE_MEDIA_STATE_CHANGED_REJECTED ||
 			type == PURPLE_MEDIA_STATE_CHANGED_HANGUP) &&
 			sid == NULL && name == NULL) {
-		gchar *sid = jingle_session_get_sid(session);
 		jabber_iq_send(jingle_session_to_packet(session,
 				JINGLE_SESSION_TERMINATE));
-		g_hash_table_remove(jingle_session_get_js(session)->medias, sid);
-		g_free(sid);
 		g_object_unref(session);
 	}
 }
@@ -382,7 +384,6 @@ jingle_rtp_create_media(JingleContent *content)
 	JingleSession *session = jingle_content_get_session(content);
 	JabberStream *js = jingle_session_get_js(session);
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
-	gchar *sid = jingle_session_get_sid(session);
 
 	PurpleMedia *media = purple_media_manager_create_media(purple_media_manager_get(), 
 						  js->gc, "fsrtpconference", remote_jid,
@@ -394,13 +395,7 @@ jingle_rtp_create_media(JingleContent *content)
 		return NULL;
 	}
 
-	/* insert it into the hash table */
-	if (!js->medias) {
-		purple_debug_info("jingle-rtp", "Creating hash table for media\n");
-		js->medias = g_hash_table_new(g_str_hash, g_str_equal);
-	}
-	purple_debug_info("jingle-rtp", "inserting media with sid: %s into table\n", sid);
-	g_hash_table_insert(js->medias, sid, media);
+	purple_media_set_prpl_data(media, session);
 
 	/* connect callbacks */
 	g_signal_connect(G_OBJECT(media), "accepted",
@@ -646,11 +641,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			PurpleMedia *media = jingle_rtp_get_media(session);
 
 			if (media != NULL) {
-				gchar *sid = jingle_session_get_sid(session);
 				purple_media_end(media, NULL, NULL);
-				g_hash_table_remove(jingle_session_get_js(
-						session)->medias, sid);
-				g_free(sid);
 			}
 
 			g_object_unref(session);
