@@ -2265,17 +2265,30 @@ purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMedi
 gboolean
 purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 {
-	PurpleMediaSession *session;
 	gboolean ret;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
-	session = purple_media_get_session(media, sess_id);
+	if (sess_id != NULL) {
+		PurpleMediaSession *session;
+		session = purple_media_get_session(media, sess_id);
 
-	if (session == NULL)
-		return FALSE;
+		if (session == NULL)
+			return FALSE;
 
-	g_object_get(session->session, "codecs-ready", &ret, NULL);
+		g_object_get(session->session, "codecs-ready", &ret, NULL);
+	} else {
+		GList *values = g_hash_table_get_values(media->priv->sessions);
+		for (; values; values = g_list_delete_link(values, values)) {
+			PurpleMediaSession *session = values->data;
+			g_object_get(session->session,
+					"codecs-ready", &ret, NULL);
+			if (ret == FALSE)
+				break;
+		}
+		if (values != NULL)
+			g_list_free(values);
+	}
 	return ret;
 }
 
