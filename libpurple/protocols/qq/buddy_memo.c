@@ -77,7 +77,7 @@ static const gchar *memo_txt[] = {
 	N_("Telephone"),
 	N_("Address"),
 	N_("Email"),
-	N_("ZipCode"),
+	N_("Postal Code"),
 	N_("Note")
 };
 
