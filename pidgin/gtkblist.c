@@ -6502,14 +6502,27 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 			whoalias = NULL;
 
 		g = NULL;
-		if ((grp != NULL) && (*grp != '\0') && ((g = purple_find_group(grp)) == NULL))
+		if ((grp != NULL) && (*grp != '\0'))
 		{
-			g = purple_group_new(grp);
-			purple_blist_add_group(g, NULL);
+			if ((g = purple_find_group(grp)) == NULL)
+			{
+				g = purple_group_new(grp);
+				purple_blist_add_group(g, NULL);
+			}
+
+			b = purple_find_buddy_in_group(data->account, who, g);
+		}
+		else if ((b = purple_find_buddy(data->account, who)) != NULL)
+		{
+				g = purple_buddy_get_group(b);
 		}
 
-		b = purple_buddy_new(data->account, who, whoalias);
-		purple_blist_add_buddy(b, NULL, g, NULL);
+		if (b == NULL)
+		{
+			b = purple_buddy_new(data->account, who, whoalias);
+			purple_blist_add_buddy(b, NULL, g, NULL);
+		}
+
 		purple_account_add_buddy(data->account, b);
 
 		/* Offer to merge people with the same alias. */
