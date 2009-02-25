@@ -205,6 +205,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		purple_debug_error("msn",
 		                   "Operation {%s} failed. No response received from server.\n",
 		                   msn_contact_operation_str(state->action));
+		msn_session_set_error(state->session, MSN_ERROR_BAD_BLIST, NULL);
 		return;
 	}
 
@@ -916,8 +917,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		/*
 		msn_get_address_book(session, NULL, NULL);
 		*/
-		msn_session_disconnect(session);
-		purple_connection_error_reason(session->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to retrieve MSN Address Book"));
+		msn_session_set_error(session, MSN_ERROR_BAD_BLIST, NULL);
 	}
 }
 

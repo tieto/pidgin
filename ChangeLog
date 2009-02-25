@@ -18,7 +18,7 @@ version 2.5.5 (??/??/????):
 	  of buddy icons and available messages.
 	* Properly publish status messages for statuses other than Available.
 	  ICQ 6.x users can now see these status messages. (Daniel Ljungborg)
-	* Fix recipt of messages from the mobile client Slick. (David Jedelsky)
+	* Fix receipt of messages from the mobile client Slick. (David Jedelsky)
 
 	MSN:
 	* Fix transfer of buddy icons, custom smileys, and files from the
