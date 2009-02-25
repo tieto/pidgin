@@ -57,19 +57,6 @@ typedef struct {
 	char *remote_jid;
 } GoogleSession;
 
-GHashTable *sessions = NULL;
-
-static guint 
-google_session_id_hash(gconstpointer key) 
-{
-	GoogleSessionId *id = (GoogleSessionId*)key;
-	
-	guint id_hash = g_str_hash(id->id);
-	guint init_hash = g_str_hash(id->initiator);
-
-	return 23 * id_hash + init_hash;
-}
-
 static gboolean 
 google_session_id_equal(gconstpointer a, gconstpointer b)
 {
@@ -82,8 +69,6 @@ google_session_id_equal(gconstpointer a, gconstpointer b)
 static void
 google_session_destroy(GoogleSession *session)
 {
-	if (sessions != NULL)
-		g_hash_table_remove(sessions, &(session->id));
 	g_free(session->id.id);
 	g_free(session->id.initiator);
 	g_free(session->remote_jid);
@@ -310,6 +295,8 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 			purple_media_manager_get(), js->gc,
 			"fsrtpconference", session->remote_jid, TRUE);
 
+	purple_media_set_prpl_data(session->media, session);
+
 	params = jabber_google_session_get_params(js, &num_params);
 
 	if (purple_media_add_stream(session->media, "google-voice",
@@ -327,10 +314,6 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
 
-	if (sessions == NULL)
-		sessions = g_hash_table_new(google_session_id_hash,
-				google_session_id_equal);
-	g_hash_table_insert(sessions, &(session->id), session);
 	g_free(params);
 
 	return session->media;
@@ -354,6 +337,8 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	session->media = purple_media_manager_create_media(purple_media_manager_get(), js->gc,
 							   "fsrtpconference", session->remote_jid, FALSE);
+
+	purple_media_set_prpl_data(session->media, session);
 
 	params = jabber_google_session_get_params(js, &num_params);
 
@@ -501,11 +486,13 @@ void
 jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 {
 #ifdef USE_VV
-	GoogleSession *session;
+	GoogleSession *session = NULL;
 	GoogleSessionId id;
 
 	xmlnode *session_node;
 	xmlnode *desc_node;
+
+	GList *iter = NULL;
 
 	if (strcmp(xmlnode_get_attrib(packet, "type"), "set"))
 		return;
@@ -522,9 +509,19 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	if (!id.initiator)
 		return;
 
-	if (sessions == NULL)
-		sessions = g_hash_table_new(google_session_id_hash, google_session_id_equal);
-	session = (GoogleSession*)g_hash_table_lookup(sessions, &id);
+	iter = purple_media_manager_get_media_by_connection(
+			purple_media_manager_get(), js->gc);
+	for (; iter; iter = g_list_delete_link(iter, iter)) {
+		GoogleSession *gsession =
+				purple_media_get_prpl_data(iter->data);
+		if (google_session_id_equal(&(gsession->id), &id)) {
+			session = gsession;
+			break;
+		}
+	}
+	if (iter != NULL) {
+		g_list_free(iter);
+	}
 
 	if (session) {
 		google_session_parse_iq(js, session, packet);
@@ -543,7 +540,6 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	session->state = UNINIT;
 	session->js = js;
 	session->remote_jid = g_strdup(session->id.initiator);
-	g_hash_table_insert(sessions, &(session->id), session);
 
 	google_session_parse_iq(js, session, packet);
 #else
