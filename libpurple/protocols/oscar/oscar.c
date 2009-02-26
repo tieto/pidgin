@@ -6818,11 +6818,13 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 	g_return_val_if_fail(str != NULL, NULL);
 
 	/* copy str to buf and skip all blanks */
-	for (i=0, j=0; str[j] && i < BUF_LEN - 1; i++, j++)
-	{
-		while (str[j] == ' ')
-			j++;
-		buf[i] = str[j];
+	i = 0;
+	for (j = 0; str[j]; j++) {
+		if (str[j] != ' ') {
+			buf[i++] = str[j];
+			if (i >= BUF_LEN - 1)
+				break;
+		}
 	}
 	buf[i] = '\0';
 
