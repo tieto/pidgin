@@ -47,8 +47,7 @@ msn_slpcall_timeout(gpointer data)
 	if (!slpcall->pending && !slpcall->progress)
 	{
 		msn_slpcall_destroy(slpcall);
-		slpcall->timer = 0;
-		return FALSE;
+		return TRUE;
 	}
 
 	slpcall->progress = FALSE;
