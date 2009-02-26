@@ -1248,27 +1248,18 @@ network_page(void)
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	vbox = pidgin_make_frame (ret, _("IP Address"));
-	
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
-	gtk_container_add(GTK_CONTAINER(vbox), table);
-
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	label = gtk_label_new_with_mnemonic(_("ST_UN server:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_size_group_add_widget(sg, label);
 
 	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(
+			"/purple/network/stun_server"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
-					 G_CALLBACK(network_stun_server_changed_cb), NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry), 
-		purple_prefs_get_string("/purple/network/stun_server"));
-			
+			G_CALLBACK(network_stun_server_changed_cb), NULL);
+	gtk_widget_show(entry);
+
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), "ST_UN server:",
+			sg, entry, TRUE, NULL);
+
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
@@ -1345,43 +1336,29 @@ network_page(void)
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
-	vbox = pidgin_make_frame(ret, _("Relay Server (TURN)"));
+	g_object_unref(sg);
 
 	/* TURN server */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox = pidgin_make_frame(ret, _("Relay Server (TURN)"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	label = gtk_label_new_with_mnemonic(_("_Server:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	
-	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	g_signal_connect(G_OBJECT(entry), "focus-out-event",
-					 G_CALLBACK(network_turn_server_changed_cb), NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry), 
-		purple_prefs_get_string("/purple/network/turn_server"));
-	gtk_misc_set_alignment(GTK_MISC(entry), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	
-	gtk_size_group_add_widget(GTK_SIZE_GROUP(sg), label);
-	gtk_size_group_add_widget(GTK_SIZE_GROUP(sg), entry);
-	
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	spin_button = pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
-		"/purple/network/turn_port", 0, 65535, sg);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	entry = pidgin_prefs_labeled_entry(hbox, "_User name:", 
-		"/purple/network/turn_username", sg);
 
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	entry = pidgin_prefs_labeled_password(hbox, "_Password:",
-		"/purple/network/turn_password", sg);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	
-	
+	entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(
+			"/purple/network/turn_server"));
+	g_signal_connect(G_OBJECT(entry), "focus-out-event",
+			G_CALLBACK(network_turn_server_changed_cb), NULL);
+	gtk_widget_show(entry);
+
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), "_TURN server:",
+			sg, entry, TRUE, NULL);
+
+	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
+		"/purple/network/turn_port", 0, 65535, NULL);
+	hbox = pidgin_prefs_labeled_entry(vbox, "_Username:", 
+		"/purple/network/turn_username", sg);
+	pidgin_prefs_labeled_password(hbox, "_Password:",
+		"/purple/network/turn_password", NULL);
+
 	if (purple_running_gnome()) {
 		vbox = pidgin_make_frame(ret, _("Proxy Server &amp; Browser"));
 		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
