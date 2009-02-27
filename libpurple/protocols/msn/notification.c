@@ -544,17 +544,16 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 	}
 
 	/*find a domain Node*/
-	for(d_node = xmlnode_get_child(mlNode,"d"); d_node; d_node = xmlnode_get_next_twin(d_node))
-	{
+	for (d_node = xmlnode_get_child(mlNode, "d"); d_node;
+	     d_node = xmlnode_get_next_twin(d_node)) {
 		const char *attr = xmlnode_get_attrib(d_node,"n");
 		if (attr == NULL)
 			continue;
-		if (!strcmp(attr,domain))
+		if (!strcmp(attr, domain))
 			break;
 	}
 
-	if(d_node == NULL)
-	{
+	if (d_node == NULL) {
 		/*domain not found, create a new domain Node*/
 		purple_debug_info("msn", "Didn't find existing domain node, adding one.\n");
 		d_node = xmlnode_new("d");
@@ -566,20 +565,18 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 	c_node = xmlnode_new("c");
 	xmlnode_set_attrib(c_node, "n", email);
 
-	purple_debug_info("msn", "list_op: %d\n", list_op);
-	g_snprintf(fmt_str, sizeof(fmt_str), "%d", list_op);
-	xmlnode_set_attrib(c_node, "l", fmt_str);
+	if (list_op != 0) {
+		purple_debug_info("msn", "list_op: %d\n", list_op);
+		g_snprintf(fmt_str, sizeof(fmt_str), "%d", list_op);
+		xmlnode_set_attrib(c_node, "l", fmt_str);
+	}
 
-	if (networkId != MSN_NETWORK_UNKNOWN)
+	if (networkId != MSN_NETWORK_UNKNOWN) {
 		g_snprintf(fmt_str, sizeof(fmt_str), "%d", networkId);
-	else if (msn_user_is_yahoo(session->account, passport))
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_YAHOO);
-	else
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_PASSPORT);
-
-	/*mobile*/
-	/*type_str = g_strdup_printf("4");*/
-	xmlnode_set_attrib(c_node, "t", fmt_str);
+		/*mobile*/
+		/*type_str = g_strdup_printf("4");*/
+		xmlnode_set_attrib(c_node, "t", fmt_str);
+	}
 
 	xmlnode_insert_child(d_node, c_node);
 
@@ -596,6 +593,48 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
+void
+msn_notification_send_fqy(MsnSession *session,
+                          const char *payload, int payload_len,
+                          MsnFqyCb cb)
+{
+	MsnTransaction *trans;
+	MsnCmdProc *cmdproc;
+
+	cmdproc = session->notification->cmdproc;
+
+	trans = msn_transaction_new(cmdproc, "FQY", "%d", payload_len);
+	msn_transaction_set_payload(trans, payload, payload_len);
+	msn_transaction_set_data(trans, cb);
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+static void
+update_contact_network(MsnSession *session, const char *passport, MsnNetwork network)
+{
+	MsnUser *user = msn_userlist_find_user(session->userlist, passport);
+	/* TODO: Also figure out how to update membership lists */
+	if (user) {
+		xmlnode *adl_node;
+		char *payload;
+		int payload_len;
+
+		msn_user_set_network(user, network);
+
+		adl_node = xmlnode_new("ml");
+		xmlnode_set_attrib(adl_node, "l", "1");
+		msn_add_contact_xml(session, adl_node, passport,
+				user->list_op & MSN_LIST_OP_MASK, network);
+		payload = xmlnode_to_str(adl_node, &payload_len);
+		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
+
+	} else {
+		purple_debug_error("msn",
+		                   "Got FQY update for unkwown user %s on network %d.\n",
+		                   passport, network);
+	}
+}
+
 /*dump contact info to NS*/
 void
 msn_notification_dump_contact(MsnSession *session)
@@ -603,14 +642,17 @@ msn_notification_dump_contact(MsnSession *session)
 	MsnUser *user;
 	GList *l;
 	xmlnode *adl_node;
+	xmlnode *fqy_node;
 	char *payload;
 	int payload_len;
 	int adl_count = 0;
+	int fqy_count = 0;
 	const char *display_name;
 
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 	xmlnode_set_attrib(adl_node, "l", "1");
+	fqy_node = xmlnode_new("ml");
 
 	/*get the userlist*/
 	for (l = session->userlist->users; l != NULL; l = l->next) {
@@ -635,35 +677,62 @@ msn_notification_dump_contact(MsnSession *session)
 			msn_userlist_rem_buddy_from_list(session->userlist, user->passport, MSN_LIST_AL);
 		}
 
-		msn_add_contact_xml(session, adl_node, user->passport,
-			user->list_op & MSN_LIST_OP_MASK, user->networkid);
+		if (user->networkid != MSN_NETWORK_UNKNOWN) {
+			msn_add_contact_xml(session, adl_node, user->passport,
+				user->list_op & MSN_LIST_OP_MASK, user->networkid);
 
-		/* each ADL command may contain up to 150 contacts */
-		if (++adl_count % 150 == 0 || l->next == NULL) {
-			payload = xmlnode_to_str(adl_node,&payload_len);
+			/* each ADL command may contain up to 150 contacts */
+			if (++adl_count % 150 == 0) {
+				payload = xmlnode_to_str(adl_node, &payload_len);
 
-			msn_notification_post_adl(session->notification->cmdproc,
-				payload, payload_len);
+				msn_notification_post_adl(session->notification->cmdproc,
+					payload, payload_len);
 
-			g_free(payload);
-			xmlnode_free(adl_node);
+				g_free(payload);
+				xmlnode_free(adl_node);
 
-			if (l->next) {
 				adl_node = xmlnode_new("ml");
 				adl_node->child = NULL;
 				xmlnode_set_attrib(adl_node, "l", "1");
 			}
+		} else {
+			msn_add_contact_xml(session, fqy_node, user->passport,
+				0, user->networkid);
+
+			/* each FQY command may contain up to 150 contacts, probably */
+			if (++fqy_count % 150 == 0) {
+				payload = xmlnode_to_str(fqy_node, &payload_len);
+
+				msn_notification_send_fqy(session, payload, payload_len,
+				                          update_contact_network);
+
+				g_free(payload);
+				xmlnode_free(fqy_node);
+				fqy_node = xmlnode_new("ml");
+			}
 		}
 	}
 
-	if (adl_count == 0) {
-		payload = xmlnode_to_str(adl_node,&payload_len);
+	/* Send the rest, or just an empty one to let the server set us online */
+	if (adl_count == 0 || adl_count % 150 != 0) {
+		payload = xmlnode_to_str(adl_node, &payload_len);
 
 		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
 
 		g_free(payload);
-		xmlnode_free(adl_node);
 	}
+
+	if (fqy_count % 150 != 0) {
+		payload = xmlnode_to_str(fqy_node, &payload_len);
+
+		msn_notification_send_fqy(session, payload, payload_len,
+		                          update_contact_network);
+
+		g_free(payload);
+	}
+
+	xmlnode_free(adl_node);
+	xmlnode_free(fqy_node);
 
 	display_name = purple_connection_get_display_name(session->account->gc);
 	if (display_name
@@ -672,30 +741,6 @@ msn_notification_dump_contact(MsnSession *session)
 		msn_act_id(session->account->gc, display_name);
 	}
 
-}
-
-/*Post FQY to NS,Inform add a Yahoo User*/
-void
-msn_notification_send_fqy(MsnSession *session, const char *passport)
-{
-	MsnTransaction *trans;
-	MsnCmdProc *cmdproc;
-	char* email,*domain,*payload;
-	char **tokens;
-
-	cmdproc = session->notification->cmdproc;
-
-	tokens = g_strsplit(passport, "@", 2);
-	email = tokens[0];
-	domain = tokens[1];
-
-	payload = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>", domain, email);
-	trans = msn_transaction_new(cmdproc, "FQY","%" G_GSIZE_FORMAT, strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
-	msn_cmdproc_send_trans(cmdproc, trans);
-
-	g_free(payload);
-	g_strfreev(tokens);
 }
 
 static void
@@ -861,7 +906,7 @@ static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	MsnUserList *userlist;
+	MsnSession *session;
 	xmlnode *ml, *d, *c;
 	const char *domain;
 	const char *local;
@@ -869,26 +914,37 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	char *passport;
 	MsnNetwork network = MSN_NETWORK_PASSPORT;
 
-	userlist = cmdproc->session->userlist;
+	session = cmdproc->session;
 
 	/* FQY response:
 	    <ml><d n="domain.com"><c n="local-node" t="network" /></d></ml> */
 	ml = xmlnode_from_str(payload, len);
-	d = xmlnode_get_child(ml, "d");
-	c = xmlnode_get_child(d, "c");
-	domain = xmlnode_get_attrib(d, "n");
-	local = xmlnode_get_attrib(c, "n");
-	type = xmlnode_get_attrib(c, "t");
+	for (d = xmlnode_get_child(ml, "d");
+	     d != NULL;
+	     d = xmlnode_get_next_twin(d)) {
+		domain = xmlnode_get_attrib(d, "n");
+		for (c = xmlnode_get_child(d, "c");
+		     c != NULL;
+		     c = xmlnode_get_next_twin(c)) {
+			local = xmlnode_get_attrib(c, "n");
+			type = xmlnode_get_attrib(c, "t");
 
-	passport = g_strdup_printf("%s@%s", local, domain);
+			passport = g_strdup_printf("%s@%s", local, domain);
 
-	if (type != NULL)
-		network = (MsnNetwork)strtoul(type, NULL, 10);
-	purple_debug_info("msn", "FQY response says %s is from network %d\n",
-	                  passport, network);
-	msn_userlist_add_pending_buddy(userlist, passport, network);
+			if (type != NULL)
+				network = (MsnNetwork)strtoul(type, NULL, 10);
+			else
+				network = MSN_NETWORK_PASSPORT;
 
-	g_free(passport);
+			purple_debug_info("msn", "FQY response says %s is from network %d\n",
+			                  passport, network);
+			if (cmd->trans->data)
+				((MsnFqyCb)cmd->trans->data)(session, passport, network);
+
+			g_free(passport);
+		}
+	}
+
 	xmlnode_free(ml);
 }
 
