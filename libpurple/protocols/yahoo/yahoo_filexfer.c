@@ -609,6 +609,26 @@ static void yahoo_xfer_cancel_recv(PurpleXfer *xfer)
 	xfer->data = NULL;
 }
 
+/* Send HTTP OK after receiving file */
+static void yahoo_p2p_ft_server_send_OK(PurpleXfer *xfer)
+{
+	char *tx = NULL;
+	int written;
+
+	tx = g_strdup_printf("HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-Type: application/octet-stream\r\nConnection: close\r\n\r\n");
+	written = write(xfer->fd, tx, strlen(tx));
+
+	if (written < 0 && errno == EAGAIN)
+		written = 0;
+	else if (written <= 0)
+		purple_debug_info("yahoo", "p2p filetransfer: Unable to write HTTP OK");
+
+	/* close connection */	
+	close(xfer->fd);
+	xfer->fd = -1;
+	g_free(tx);
+}
+
 static void yahoo_xfer_end(PurpleXfer *xfer_old)
 {
 	struct yahoo_xfer_data *xfer_data;
@@ -620,6 +640,10 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 	if(xfer_data && xfer_data->version == 15
 	   && purple_xfer_get_type(xfer_old) == PURPLE_XFER_RECEIVE
 	   && xfer_data->filename_list) {
+
+		/* Send HTTP OK in case of p2p transfer, when we act as server */
+		if((xfer_data->xfer_url != NULL) && (xfer_old->fd >=0) && (purple_xfer_get_status(xfer_old) == PURPLE_XFER_STATUS_DONE))
+			yahoo_p2p_ft_server_send_OK(xfer_old);
 		
 		/* removing top of filename & size list completely */
 		g_free( xfer_data->filename_list->data );
