@@ -3112,8 +3112,8 @@ msim_import_friends_cb(MsimSession *session, const MsimMessage *reply, gpointer 
 	body = msim_msg_get_dictionary(reply, "body");
 	g_return_if_fail(body != NULL);
 	completed = msim_msg_get_string(body, "Completed");
-	g_return_if_fail(body != NULL);
 	msim_msg_free(body);
+	g_return_if_fail(completed != NULL);
 	if (!g_str_equal(completed, "True"))
 	{
 		purple_debug_info("msim_import_friends_cb",

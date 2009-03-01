@@ -27,7 +27,6 @@
 #ifndef _PURPLE_ACCOUNT_H_
 #define _PURPLE_ACCOUNT_H_
 
-#include <glib-object.h>
 #include <glib.h>
 #include <glib-object.h>
 

@@ -1466,9 +1466,18 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		   what to do with users already in the list and stuff... */
 		msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
 	} else {
+		char **tokens;
+		char *fqy;
 		/* We need to check the network for this buddy first */
 		msn_userlist_save_pending_buddy(userlist, who, group ? group->name : NULL);
-		msn_notification_send_fqy(session, who);
+		tokens = g_strsplit(who, "@", 2);
+		fqy = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",
+		                      tokens[1],
+		                      tokens[0]);
+		msn_notification_send_fqy(session, fqy, strlen(fqy),
+		                          (MsnFqyCb)msn_userlist_add_pending_buddy);
+		g_free(fqy);
+		g_strfreev(tokens);
 	}
 }
 
