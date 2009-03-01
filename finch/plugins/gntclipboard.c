@@ -22,7 +22,7 @@
 #include "internal.h"
 #include <glib.h>
 
-#define PLUGIN_STATIC_NAME	"GntClipboard"
+#define PLUGIN_STATIC_NAME	GntClipboard
 
 #ifdef HAVE_X11
 #include <X11/Xlib.h>

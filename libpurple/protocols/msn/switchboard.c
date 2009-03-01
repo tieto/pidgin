@@ -383,7 +383,7 @@ msg_resend_cb(gpointer data)
 {
 	MsnSwitchBoard *swboard = data;
 
-	purple_debug_info("msn", "unqueuing unsent message to %s", swboard->im_user);
+	purple_debug_info("msn", "unqueuing unsent message to %s\n", swboard->im_user);
 
 	msn_switchboard_request(swboard);
 	msn_switchboard_request_add_user(swboard, swboard->im_user);
@@ -448,7 +448,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 				body_enc = g_markup_escape_text(body_str, -1);
 				g_free(body_str);
 
-				purple_debug_info("msn", "queuing unsent message to %s: %s",
+				purple_debug_info("msn", "queuing unsent message to %s: %s\n",
 					swboard->im_user, body_enc);
 				g_free(body_enc);
 				msn_send_im_message(session, msg);
@@ -799,7 +799,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	msn_cmdproc_process_msg(cmdproc, msg);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void
@@ -887,113 +887,6 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  * Message Handlers
  **************************************************************************/
 static void
-plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
-{
-	PurpleConnection *gc;
-	MsnSwitchBoard *swboard;
-	const char *body;
-	char *body_str;
-	char *body_enc;
-	char *body_final;
-	size_t body_len;
-	const char *passport;
-	const char *value;
-
-	gc = cmdproc->session->account->gc;
-	swboard = cmdproc->data;
-
-	body = msn_message_get_bin_data(msg, &body_len);
-	body_str = g_strndup(body, body_len);
-	body_enc = g_markup_escape_text(body_str, -1);
-	g_free(body_str);
-
-	passport = msg->remote_user;
-
-	if (!strcmp(passport, "messenger@microsoft.com") &&
-		strstr(body, "immediate security update"))
-	{
-		return;
-	}
-
-#if 0
-	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL)
-	{
-		purple_debug_misc("msn", "User-Agent = '%s'\n", value);
-	}
-#endif
-
-	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)
-	{
-		char *pre, *post;
-
-		msn_parse_format(value, &pre, &post);
-
-		body_final = g_strdup_printf("%s%s%s", pre ? pre : "",
-									 body_enc ? body_enc : "", post ? post : "");
-
-		g_free(pre);
-		g_free(post);
-		g_free(body_enc);
-	}
-	else
-	{
-		body_final = body_enc;
-	}
-
-	swboard->flag |= MSN_SB_FLAG_IM;
-
-	if (swboard->current_users > 1 ||
-		((swboard->conv != NULL) &&
-		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
-	{
-		/* If current_users is always ok as it should then there is no need to
-		 * check if this is a chat. */
-		if (swboard->current_users <= 1)
-			purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
-							swboard->current_users);
-
-		serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
-						 time(NULL));
-		if (swboard->conv == NULL)
-		{
-			swboard->conv = purple_find_chat(gc, swboard->chat_id);
-			swboard->flag |= MSN_SB_FLAG_IM;
-		}
-	}
-	else
-	{
-		serv_got_im(gc, passport, body_final, 0, time(NULL));
-		if (swboard->conv == NULL)
-		{
-			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-									passport, purple_connection_get_account(gc));
-			swboard->flag |= MSN_SB_FLAG_IM;
-		}
-	}
-
-	g_free(body_final);
-}
-
-static void
-control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
-{
-	PurpleConnection *gc;
-	MsnSwitchBoard *swboard;
-	char *passport;
-
-	gc = cmdproc->session->account->gc;
-	swboard = cmdproc->data;
-	passport = msg->remote_user;
-
-	if (swboard->current_users == 1 &&
-		msn_message_get_attr(msg, "TypingUser") != NULL)
-	{
-		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
-						PURPLE_TYPING);
-	}
-}
-
-static void
 clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 #if 0
@@ -1010,49 +903,6 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	clientcaps = msn_message_get_hashtable_from_body(msg);
 #endif
-}
-
-static void
-datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
-{
-	GHashTable *body;
-	const char *id;
-	body = msn_message_get_hashtable_from_body(msg);
-
-	id = g_hash_table_lookup(body, "ID");
-
-	if (!strcmp(id, "1")) {
-		/* Nudge */
-		MsnSwitchBoard *swboard;
-		PurpleAccount *account;
-		const char *user;
-
-		swboard = cmdproc->data;
-		account = cmdproc->session->account;
-		user = msg->remote_user;
-
-		if (swboard->current_users > 1 ||
-			((swboard->conv != NULL) &&
-			 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
-			purple_prpl_got_attention_in_chat(account->gc, swboard->chat_id, user, MSN_NUDGE);
-
-		else
-			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
-
-	} else if (!strcmp(id, "2")) {
-		/* Wink */
-
-	} else if (!strcmp(id, "3")) {
-		/* Voiceclip */
-
-	} else if (!strcmp(id, "4")) {
-		/* Action */
-
-	} else {
-		purple_debug_warning("msn", "Got unknown datacast with ID %s.\n", id);
-	}
-
-	g_hash_table_destroy(body);
 }
 
 /**************************************************************************
@@ -1372,9 +1222,9 @@ msn_switchboard_init(void)
 
 	/* Register the message type callbacks. */
 	msn_table_add_msg_type(cbs_table, "text/plain",
-						   plain_msg);
+						   msn_plain_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msmsgscontrol",
-						   control_msg);
+						   msn_control_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-clientcaps",
 						   clientcaps_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-clientinfo",
@@ -1384,9 +1234,9 @@ msn_switchboard_init(void)
 	msn_table_add_msg_type(cbs_table, "text/x-mms-emoticon",
 						   msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
-	                                           msn_emoticon_msg);
+	                       msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
-						   datacast_msg);
+						   msn_datacast_msg);
 #if 0
 	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
 						   msn_invite_msg);

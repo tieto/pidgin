@@ -117,7 +117,7 @@ class Binding:
             self.params.append(Parameter.fromtokens(paramtexts[i].split(), i))
 
         self.call = "%s(%s)" % (self.function.name,
-                                ", ".join([param.name for param in self.params]))
+                                ", ".join(param.name for param in self.params))
         
     
     def process(self):
@@ -160,6 +160,10 @@ class Binding:
             elif type[0].startswith("Purple") or type[0] == "xmlnode":
                 return self.inputpurplestructure(type, name)
 
+            # special case for *_get_data functions, be careful here...
+            elif (type[0] == "size_t") and (name == "len"):
+                return self.inputgetdata(type, name)
+            
             # unknown pointers are always replaced with NULL
             else:
                 return self.inputpointer(type, name)
@@ -195,6 +199,10 @@ class Binding:
 
             if type[0] in ["GList", "GSList"]:
                 return self.outputlist(type, name)
+
+        # Special case for *_get_data functions
+        if type[0] == "gconstpointer":
+            return self.outputgetdata(type, name)
 
         raise myexception
     
@@ -309,7 +317,13 @@ class ClientBinding (Binding):
         self.returncode.append("return garray_int_to_%s(%s);" %
                                (type[0].lower(), name));
 
- 
+    # Special case for *_get_data functions, don't need client bindings,
+    #  but do need the name so it doesn't crash
+    def inputgetdata(self, type, name):
+        raise myexception
+    def outputgetdata(self, type, name):
+        raise myexception
+
 class ServerBinding (Binding):
     def __init__(self, functiontext, paramtexts):
         Binding.__init__(self, functiontext, paramtexts)
@@ -475,6 +489,21 @@ class ServerBinding (Binding):
                               % (name, name))
             self.addouttype("ai", name)
 
+    # Special case for *_get_data functions
+    def inputgetdata(self, type, name):
+        self.cdecls.append("\tsize_t %s = 0;" % name)
+        return True
+    def outputgetdata(self, type, name):
+        # This is a total hack, but self.call is set up before the parameters
+        #  are processed, so we can't tell it to pass a parameter by reference.
+        self.call = "%s(%s)" % (self.function.name,
+                                ", ".join([(param.name, "&len")[param.name == "len"] for param in self.params]))
+
+        self.cdecls.append("\tgconstpointer %s;" % name)
+        self.ccode.append("\t%s = %s;" % (name, self.call))
+        self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_BYTE, &%s, %s" \
+                               % (name, "len"))
+        self.addouttype("ay", name)
 
 class BindingSet:
     regexp = r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$";

@@ -256,7 +256,9 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	gsc->private_data = gnutls_data;
 
 	gnutls_init(&gnutls_data->session, GNUTLS_CLIENT);
-	gnutls_set_default_priority(gnutls_data->session);
+	if (gnutls_priority_set_direct(gnutls_data->session,
+		                             "NORMAL:%SSL3_RECORD_VERSION", NULL))
+		gnutls_priority_set_direct(gnutls_data->session, "NORMAL", NULL);
 
 	gnutls_certificate_type_set_priority(gnutls_data->session,
 		cert_type_priority);

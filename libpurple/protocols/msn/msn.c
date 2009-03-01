@@ -853,11 +853,11 @@ msn_status_types(PurpleAccount *account)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
-			NULL, NULL, FALSE, TRUE, FALSE);
+			NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
-			NULL, NULL, FALSE, TRUE, FALSE);
+			NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,
@@ -1176,6 +1176,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
+	size_t msglen;
 	const char *username;
 
 	purple_debug_info("msn", "send IM {%s} to %s\n", message, who);
@@ -1203,13 +1204,23 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
+	msglen = strlen(msgtext);
+	if (msglen == 0) {
+		/* Stuff like <hr> will be ignored. Don't send an empty message
+		   if that's all there is. */
+		g_free(msgtext);
+		g_free(msgformat);
+
+		return 0;
+	}
+
 	if (msn_user_is_online(account, who) ||
 		msn_user_is_yahoo(account, who) ||
 		swboard != NULL) {
 		/*User online or have a swboard open because it's invisible
 		 * and sent us a message,then send Online Instant Message*/
  
-		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+		if (msglen + strlen(msgformat) + strlen(VERSION) > 1564)
 		{
 			g_free(msgformat);
 			g_free(msgtext);
@@ -1455,9 +1466,18 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		   what to do with users already in the list and stuff... */
 		msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
 	} else {
+		char **tokens;
+		char *fqy;
 		/* We need to check the network for this buddy first */
 		msn_userlist_save_pending_buddy(userlist, who, group ? group->name : NULL);
-		msn_notification_send_fqy(session, who);
+		tokens = g_strsplit(who, "@", 2);
+		fqy = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",
+		                      tokens[1],
+		                      tokens[0]);
+		msn_notification_send_fqy(session, fqy, strlen(fqy),
+		                          (MsnFqyCb)msn_userlist_add_pending_buddy);
+		g_free(fqy);
+		g_strfreev(tokens);
 	}
 }
 

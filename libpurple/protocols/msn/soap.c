@@ -342,12 +342,14 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 	}
 
 	if (fault || body) {
-		MsnSoapRequest *request = conn->current_request;
-		conn->current_request = NULL;
-		request->cb(request->message, response,
-			request->cb_data);
+		if (conn->current_request) {
+			MsnSoapRequest *request = conn->current_request;
+			conn->current_request = NULL;
+			request->cb(request->message, response,
+				request->cb_data);
+			msn_soap_request_destroy(request, FALSE);
+		}
 		msn_soap_message_destroy(response);
-		msn_soap_request_destroy(request, FALSE);
 	}
 
 	return TRUE;
