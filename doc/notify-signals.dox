@@ -30,7 +30,7 @@ void (*displaying_email_notification)(const char *subject,
                                       const char *url);
   @endsignalproto
   @signaldesc
-   Emitted before email notification is handed to the UI to display.
+   Emitted before notification of a single email is handed to the UI to display.
   @param subject   Subject of email being notified of.
   @param from      Who the email is from.
   @param to        Who the email is to.
