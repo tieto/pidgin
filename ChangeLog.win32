@@ -1,3 +1,5 @@
+version 2.5.6 (??/??/2009):
+
 version 2.5.5 (03/01/2009):
 	* Remove the "Flash window when chat messages are received" pref from
 	  the Windows Pidgin Options plugin - the Message Notification plugin
