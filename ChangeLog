@@ -5,6 +5,10 @@ version 2.6.0 (??/??/2009):
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
 
+	XMPP:
+	* Add support for in-band bytestreams (XEP-0047).
+	* Add support for attention (XEP-0224).
+
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
 	  and assume it has a valid network connection.
