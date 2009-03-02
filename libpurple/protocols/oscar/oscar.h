@@ -286,6 +286,15 @@ struct _ClientInfo
 	"us", "en", \
 }
 
+#define CLIENTINFO_ICQBASIC_14_34_3096 { \
+	"ICQBasic", \
+	0x010a, \
+	0x0014, 0x0034, \
+	0x0000, 0x0c18, \
+	0x0000043d, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_NETSCAPE_7_0_1 { \
 	"Netscape 2000 an approved user of AOL Instant Messenger (SM)", \
 	0x1d0d, \
@@ -312,14 +321,14 @@ struct _ClientInfo
 #define CLIENTINFO_PURPLE_ICQ { \
 	"Purple/" VERSION, \
 	0x010a, \
-	0x0006, 0x0000, \
-	0x0000, 0x17ab, \
-	0x00007535, \
+	0x0014, 0x0034, \
+	0x0000, 0x0c18, \
+	0x0000043d, \
 	"us", "en", \
 }
 
 #define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
-#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQBASIC_14_34_3000
+#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQBASIC_14_34_3096
 
 typedef enum
 {
@@ -541,10 +550,6 @@ struct _OscarData
 
 	/** A linked list containing PeerConnections. */
 	GSList *peer_connections;
-
-	/** Queue of ICQ Status Notes to request. */
-	GSList *statusnotes_queue;
-	guint statusnotes_queue_timer;
 };
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
@@ -1360,7 +1365,6 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
 int aim_icq_getalias(OscarData *od, const char *uin);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
-int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, guint16 note_hash_len);
 
 
 /* 0x0017 - family_auth.c */

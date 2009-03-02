@@ -165,6 +165,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 		guint32 room_id, guint32 uid_from, const gchar *msg, time_t in_time)
 {
 	PurpleConversation *conv;
+	qq_data *qd;
 	qq_buddy_data *bd;
 	qq_room_data *rmd;
 	gchar *from;
@@ -172,15 +173,17 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	g_return_if_fail(gc != NULL && room_id != 0);
 	g_return_if_fail(msg != NULL);
 
+	qd = (qq_data *)gc->proto_data;
 	conv = purple_find_chat(gc, room_id);
 	rmd = qq_room_data_find(gc, room_id);
 	g_return_if_fail(rmd != NULL);
 
-	if (conv == NULL && purple_prefs_get_bool("/plugins/prpl/qq/auto_popup_conversation")) {
+	purple_debug_info("QQ", "is_show_chat:%d\n", qd->is_show_chat);
+	if (NULL == conv && qd->is_show_chat) {
 		conv = qq_room_conv_open(gc, rmd);
 	}
 
-	if (conv == NULL) {
+	if (NULL == conv) {
 		purple_debug_info("QQ", "Conversion of %u is not open, missing from %d:/n%s/v",
 				room_id, uid_from, msg);
 		return;

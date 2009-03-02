@@ -189,6 +189,8 @@ const gchar *qq_get_cmd_desc(gint cmd)
 		return "CMD_BUDDY_CHECK_CODE";
 	case QQ_CMD_BUDDY_QUESTION:
 		return "CMD_BUDDY_QUESTION";
+	case QQ_CMD_BUDDY_MEMO:
+		return "CMD_BUDDY_MEMO";
 	default:
 		return "CMD_UNKNOW";
 	}

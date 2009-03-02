@@ -2077,37 +2077,6 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	return 1;
 }
 
-static gboolean purple_requesticqstatusnote(gpointer data)
-{
-	PurpleConnection *gc = data;
-	OscarData *od = purple_connection_get_protocol_data(gc);
-
-	while (od->statusnotes_queue != NULL)
-	{
-		char *bn;
-		struct aim_ssi_item *ssi_item;
-		aim_tlv_t *note_hash;
-
-		bn = od->statusnotes_queue->data;
-
-		ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
-											 NULL, bn, AIM_SSI_TYPE_BUDDY);
-		if (ssi_item != NULL)
-		{
-			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-			if (note_hash != NULL) {
-				aim_icq_getstatusnote(od, bn, note_hash->value, note_hash->length);
-			}
-		}
-
-		od->statusnotes_queue = g_slist_remove(od->statusnotes_queue, bn);
-		g_free(bn);
-	}
-
-	od->statusnotes_queue_timer = 0;
-	return FALSE;
-}
-
 
 static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
@@ -2120,6 +2089,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	const char *status_id;
 	va_list ap;
 	aim_userinfo_t *info;
+	char *message = NULL;
+	char *itmsurl = NULL;
+	char *tmp;
+	const char *tmp2;
 
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
@@ -2174,49 +2147,36 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0)
-	{
-		char *message = NULL;
-		char *itmsurl = NULL;
-		char *tmp;
-		const char *tmp2;
+	if (info->status != NULL && info->status[0] != '\0')
+		/* Grab the available message */
+		message = oscar_encoding_to_utf8(account, info->status_encoding,
+										 info->status, info->status_len);
 
-		if (info->status != NULL && info->status[0] != '\0')
-			/* Grab the available message */
-			message = oscar_encoding_to_utf8(account, info->status_encoding,
-					info->status, info->status_len);
+	tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
 
+	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
 		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
 			/* Grab the iTunes Music Store URL */
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
-					info->itmsurl, info->itmsurl_len);
-
-		tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+											 info->itmsurl, info->itmsurl_len);
 
 		if (tmp2 == NULL && itmsurl != NULL)
+			/*
+			 * The message can't be NULL because NULL means it was the
+			 * last attribute, so the itmsurl would get ignored below.
+			 */
 			tmp2 = "";
 
 		purple_prpl_got_user_status(account, info->bn, status_id,
-				"message", tmp2, "itmsurl", itmsurl, NULL);
-		g_free(tmp);
-
-		g_free(message);
-		g_free(itmsurl);
+									"message", tmp2, "itmsurl", itmsurl, NULL);
 	}
 	else
-	{
-		PurpleBuddy *b = purple_find_buddy(account, info->bn);
-		PurplePresence *presence = purple_buddy_get_presence(b);
-		PurpleStatus *old_status = purple_presence_get_active_status(presence);
-		PurpleStatus *new_status = purple_presence_get_status(presence, status_id);
+		purple_prpl_got_user_status(account, info->bn, status_id, "message", tmp2, NULL);
 
-		/* If our status_id would change with this update, pass it to the core.
-		 * However, if our status_id would not change, do nothing, as we would clear out any existing
-		 * attributes on the status prematurely. purple_got_infoblock() will update the message as needed.
-		 */
-		if (old_status != new_status)
-			purple_prpl_got_user_status(account, info->bn, status_id, NULL);
-	}
+	g_free(tmp);
+
+	g_free(message);
+	g_free(itmsurl);
 
 	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
@@ -2269,51 +2229,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			}
 		}
 		g_free(b16);
-	}
-
-	/*
-	 * If we didn't receive a status message with the status change,
-	 * or if the message is empty, and we have a note hash, then
-	 * query the ICQ6 status note.
-	 *
-	 * TODO: We should probably always query the status note regardless
-	 *       of whether they have a status message set, and we should
-	 *       figure out a way to display both the status note and the
-	 *       status message at the same time.
-	 */
-	if (info->status == NULL || info->status[0] == '\0')
-	{
-		struct aim_ssi_item *ssi_item;
-		aim_tlv_t *note_hash;
-
-		ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
-				NULL, info->bn, AIM_SSI_TYPE_BUDDY);
-		if (ssi_item != NULL)
-		{
-			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-			if (note_hash != NULL) {
-				/* We do automatic rate limiting at the FLAP level, so
-				 * a flood of requests won't disconnect us.  However,
-				 * it WOULD mean that we would have to wait a
-				 * potentially long time to be able to message in real
-				 * time again.  Also, since we're requesting with every
-				 * purple_parse_oncoming() call, which often come in
-				 * groups, we should coalesce to do only one lookup per
-				 * buddy.
-				 */
-				if (od->statusnotes_queue == NULL ||
-					g_slist_find_custom(od->statusnotes_queue, info->bn, (GCompareFunc)strcmp) == NULL)
-				{
-					od->statusnotes_queue = g_slist_prepend(od->statusnotes_queue,
-							g_strdup(info->bn));
-
-					if (od->statusnotes_queue_timer > 0)
-						purple_timeout_remove(od->statusnotes_queue_timer);
-					od->statusnotes_queue_timer = purple_timeout_add_seconds(3,
-							purple_requesticqstatusnote, gc);
-				}
-			}
-		}
 	}
 
 	return 1;
@@ -4518,7 +4433,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	}
 	g_string_free(data, TRUE);
 
-	peer_odc_send_im(conn, msg->str, msg->len, charset, imflags);
+	peer_odc_send_im(conn, msg->str, msg->len, charset, (imflags & PURPLE_MESSAGE_AUTO_RESP));
 	g_string_free(msg, TRUE);
 }
 
@@ -4558,6 +4473,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	if ((conn != NULL) && (conn->ready))
 	{
 		/* If we're directly connected, send a direct IM */
+		purple_debug_info("oscar", "Sending direct IM with flags %i", imflags);
 		purple_odc_send_im(conn, tmp1, imflags);
 	} else {
 		struct buddyinfo *bi;
@@ -4879,7 +4795,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		if (status_html != NULL)
 		{
 			status_text = purple_markup_strip_html(status_html);
-			/* If the status_text is longer than 60 character then truncate it */
+			/* If the status_text is longer than 251 characters then truncate it */
 			if (strlen(status_text) > MAXAVAILMSGLEN)
 			{
 				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
@@ -4896,9 +4812,28 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	}
 	else
 	{
+		char *status_text = NULL;
+		
 		htmlaway = purple_status_get_attr_string(status, "message");
 		if ((htmlaway == NULL) || (*htmlaway == '\0'))
 			htmlaway = purple_status_type_get_name(status_type);
+		
+		/* ICQ 6.x seems to use an available message for all statuses so set one */
+		if (od->icq) 
+		{
+			status_text = purple_markup_strip_html(htmlaway);
+			/* If the status_text is longer than 251 characters then truncate it */
+			if (strlen(status_text) > MAXAVAILMSGLEN)
+			{
+				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
+				strcpy(tmp, "...");
+			}
+			aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, NULL);
+		}
+		g_free(status_text);
+
+		/* Set a proper away message for icq too so that they work for old third party clients */
+		
 		away = purple_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
 
 		if (awaylen > od->rights.maxawaymsglen)
@@ -5507,7 +5442,6 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	struct aim_ssi_item *ssi_item;
-	aim_tlv_t *note_hash;
 	va_list ap;
 	guint16 snac_subtype, type;
 	const char *name;
@@ -5575,13 +5509,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
 			gname, name, AIM_SSI_TYPE_BUDDY);
-	if (ssi_item != NULL)
-	{
-		note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
-		if (note_hash != NULL)
-			aim_icq_getstatusnote(od, name, note_hash->value, note_hash->length);
-	}
-	else
+	if (ssi_item == NULL)
 	{
 		purple_debug_error("oscar", "purple_ssi_parseaddmod: "
 				"Could not find ssi item for oncoming buddy %s, "
@@ -6030,19 +5958,8 @@ char *oscar_status_text(PurpleBuddy *b)
 		else
 			ret = g_strdup(_("Offline"));
 	}
-	else if (purple_status_is_available(status) && !strcmp(id, OSCAR_STATUS_ID_AVAILABLE))
+	else
 	{
-		/* Available */
-		message = purple_status_get_attr_string(status, "message");
-		if (message != NULL)
-		{
-			ret = g_strdup(message);
-			purple_util_chrreplace(ret, '\n', ' ');
-		}
-	}
-	else if (!purple_status_is_available(status) && !strcmp(id, OSCAR_STATUS_ID_AWAY))
-	{
-		/* Away */
 		message = purple_status_get_attr_string(status, "message");
 		if (message != NULL)
 		{
@@ -6054,13 +5971,15 @@ char *oscar_status_text(PurpleBuddy *b)
 			g_free(tmp1);
 			g_free(tmp2);
 		}
+		else if (purple_status_is_available(status))
+		{
+			/* Don't show "Available" as status message in case buddy doesn't have a status message */
+		}
 		else
 		{
-			ret = g_strdup(_("Away"));
+			ret = g_strdup(purple_status_get_name(status));
 		}
 	}
-	else
-		ret = g_strdup(purple_status_get_name(status));
 
 	return ret;
 }
@@ -6967,11 +6886,13 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 	g_return_val_if_fail(str != NULL, NULL);
 
 	/* copy str to buf and skip all blanks */
-	for (i=0, j=0; str[j] && i < BUF_LEN - 1; i++, j++)
-	{
-		while (str[j] == ' ')
-			j++;
-		buf[i] = str[j];
+	i = 0;
+	for (j = 0; str[j]; j++) {
+		if (str[j] != ' ') {
+			buf[i++] = str[j];
+			if (i >= BUF_LEN - 1)
+				break;
+		}
 	}
 	buf[i] = '\0';
 

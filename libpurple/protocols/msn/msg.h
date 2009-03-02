@@ -339,4 +339,10 @@ char *msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size);
 
 char *msn_message_to_string(MsnMessage *msg);
 
+void msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+void msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+void msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
 #endif /* _MSN_MSG_H_ */

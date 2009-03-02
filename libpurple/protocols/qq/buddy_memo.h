@@ -1,5 +1,5 @@
 /**
- * @file group_info.h
+ * @file buddy_memo.h
  *
  * purple
  *
@@ -22,21 +22,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _QQ_GROUP_INFO_H_
-#define _QQ_GROUP_INFO_H_
+#ifndef _QQ_BUDDY_MEMO_H_
+#define _QQ_BUDDY_MEMO_H_
 
 #include <glib.h>
 #include "connection.h"
-#include "group.h"
+#include "blist.h"
 
-enum {
-	QQ_ROOM_INFO_UPDATE_ONLY = 0,
-	QQ_ROOM_INFO_DISPLAY
+#define QQ_BUDDY_MEMO_REQUEST_SUCCESS 0x00
+
+/* clan command for memo */
+enum
+{ 
+	QQ_BUDDY_MEMO_MODIFY = 0x01,	/* upload memo */
+	QQ_BUDDY_MEMO_REMOVE,		/* remove memo */
+	QQ_BUDDY_MEMO_GET		/* get memo */
 };
 
-gint qq_request_room_get_buddies(PurpleConnection *gc, guint32 room_id, guint32 update_class);
 
-void qq_process_room_cmd_get_info(guint8 *data, gint len, guint32 action, PurpleConnection *gc);
-void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *gc);
-void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *gc);
+void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len, guint32 update_class, guint32 action);
+
+void qq_request_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 update_class, guint32 action);
+
 #endif
+

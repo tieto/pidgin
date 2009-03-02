@@ -718,7 +718,7 @@ void qq_got_message(PurpleConnection *gc, const gchar *msg)
 	qq_buddy_find_or_new(gc, qd->uid);
 
 	from = uid_to_purple_name(qd->uid);
-	serv_got_im(gc, from, msg, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY, now);
+	serv_got_im(gc, from, msg, PURPLE_MESSAGE_SYSTEM, now);
 	g_free(from);
 }
 

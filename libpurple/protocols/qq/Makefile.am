@@ -6,6 +6,8 @@ pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 QQSOURCES = \
 	buddy_info.c \
 	buddy_info.h \
+	buddy_memo.c \
+	buddy_memo.h \
 	buddy_list.c \
 	buddy_list.h \
 	buddy_opt.c \

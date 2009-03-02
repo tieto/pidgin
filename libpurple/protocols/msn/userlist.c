@@ -770,10 +770,11 @@ msn_userlist_save_pending_buddy(MsnUserList *userlist,
  * Actually adds a buddy once we have the response from FQY
  */
 void
-msn_userlist_add_pending_buddy(MsnUserList *userlist,
+msn_userlist_add_pending_buddy(MsnSession *session,
                                const char *who,
                                /*MsnNetwork*/ int network)
 {
+	MsnUserList *userlist = session->userlist;
 	MsnUser *user = NULL;
 	MsnUser *user2;
 	GList *l;

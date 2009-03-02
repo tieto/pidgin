@@ -100,7 +100,7 @@ else
 	@echo "Not generating devhelp index: xsltproc was not found by configure"
 endif
 else
-	@echo "doxygen was not found during configure.  Aborting."
+	@echo "doxygen was not found during configure.  Unable to build documentation."
 	@echo;
 endif
 
