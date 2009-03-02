@@ -289,8 +289,6 @@ static void handle_error(JabberMessage *jm)
 static void handle_buzz(JabberMessage *jm) {
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
-	PurpleConversation *c;
-	char *username;
 
 	/* Delayed buzz MUST NOT be accepted */
 	if(jm->delayed)
@@ -305,15 +303,8 @@ static void handle_buzz(JabberMessage *jm) {
 	if ((buddy = purple_find_buddy(account, jm->from)) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
-	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
-	if (c == NULL)
-		c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
-
-	username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
 	/* xmpp only has 1 attention type, so index is 0 */
-	purple_prpl_got_attention(jm->js->gc, username, 0);
-
-	g_free(username);
+	purple_prpl_got_attention(jm->js->gc, jm->from, 0);
 }
 
 /* used internally by the functions below */
@@ -731,7 +722,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			jm->type = JABBER_MESSAGE_EVENT;
 			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
-		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns,"http://www.xmpp.org/extensions/xep-0224.html#ns")) {
+		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, XEP_0224_NAMESPACE)) {
 			jm->hasBuzz = TRUE;
 		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns,"urn:xmpp:delay")) {
 			const char *timestamp = xmlnode_get_attrib(child, "stamp");
