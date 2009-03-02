@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.0 (??/??/????):
+version 2.6.0 (??/??/2009):
 	libpurple:
 		Added:
 		* PURPLE_BLIST_NODE
@@ -67,8 +67,6 @@ version 2.6.0 (??/??/????):
 			* Purple::Request::Field::list_new
 			* Purple::Request::Field::string_new
 			* Purple::Request::Field::group_new
-
-version 2.5.6 (??/??/2009):
 
 version 2.5.5 (03/01/2009):
 	libpurple:

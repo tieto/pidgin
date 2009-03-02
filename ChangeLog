@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.0 (??/??/????):
+version 2.6.0 (??/??/2009):
 	General:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
@@ -14,8 +14,6 @@ version 2.6.0 (??/??/????):
 	* Pressing the Enter key in the message entry box of the New Status
 	  dialog and various other dialogs now causes the cursor to move to
 	  the next line.
-
-version 2.5.6 (??/??/2009):
 
 version 2.5.5 (03/01/2009):
 	libpurple:
