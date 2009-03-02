@@ -118,7 +118,7 @@ static void handle_chat(JabberMessage *jm)
 				}
 			}
 			serv_got_typing_stopped(jm->js->gc, from);
-			
+
 		} else {
 			serv_got_typing_stopped(jm->js->gc, from);
 		}
@@ -138,7 +138,7 @@ static void handle_chat(JabberMessage *jm)
 				g_free(jbr->thread_id);
 			jbr->thread_id = g_strdup(jbr->thread_id);
 		}
-		
+
 		if (jm->js->googletalk && jm->xhtml == NULL) {
 			char *tmp = jm->body;
 			jm->body = jabber_google_format_to_html(jm->body);
