@@ -119,7 +119,7 @@ struct signon {
 
 #define TOC_CONNECT_STEPS 3
 
-static void toc_login_callback(gpointer, gint, PurpleInputCondition);
+static void toc_login_callback(gpointer, gint, const gchar *);
 static void toc_callback(gpointer, gint, PurpleInputCondition);
 
 /* ok. this function used to take username/password, and return 0 on success.
@@ -152,7 +152,7 @@ static void toc_login(PurpleAccount *account)
 	}
 }
 
-static void toc_login_callback(gpointer data, gint source, PurpleInputCondition cond)
+static void toc_login_callback(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleConnection *gc = data;
 	struct toc_data *tdt;
@@ -260,7 +260,8 @@ static void toc_build_config(PurpleAccount *account, char *s, int len, gboolean 
 	}
 }
 
-char *escape_message(const char *msg)
+static char *
+escape_message(const char *msg)
 {
 	char *ret;
 	int i, j;
@@ -305,7 +306,8 @@ char *escape_message(const char *msg)
  * Duplicates the input string, replacing each \n with a <BR>, and 
  * escaping a few other characters.
  */
-char *escape_text(const char *msg)
+static char *
+escape_text(const char *msg)
 {
 	char *ret;
 	int i, j;
@@ -435,7 +437,7 @@ static int wait_reply(PurpleConnection *gc, char *buffer, size_t buflen)
 	if (buflen < ntohs(hdr->len)) {
 		/* fake like there's a read error */
 		purple_debug(PURPLE_DEBUG_ERROR, "toc",
-				   "buffer too small (have %d, need %d)\n",
+				   "buffer too small (have %" G_GSIZE_FORMAT ", need %d)\n",
 				   buflen, ntohs(hdr->len));
 		return -1;
 	}

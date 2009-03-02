@@ -1625,7 +1625,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 			if (magic1 != 0x501)
 			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 				break;
 			}
 
@@ -1654,7 +1654,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 			magic1 = byte_stream_get16(bs); /* 01 01 */
 			if (magic1 != 0x101) /* Bad, message comes before attributes */
 			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 				break;
 			}
 			msglen = byte_stream_get16(bs);
