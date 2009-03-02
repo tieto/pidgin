@@ -8,7 +8,7 @@
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <gtk/gtkstock.h>
+#include "gtkstatus-icon-theme.h"
 
 #ifndef _PIDGIN_STOCK_H_
 #define _PIDGIN_STOCK_H_
@@ -178,6 +179,14 @@
 #define PIDGIN_ICON_SIZE_TANGO_MEDIUM         "pidgin-icon-size-tango-medium"
 #define PIDGIN_ICON_SIZE_TANGO_LARGE          "pidgin-icon-size-tango-large"
 #define PIDGIN_ICON_SIZE_TANGO_HUGE           "pidgin-icon-size-tango-huge"
+
+/**
+ * Loades all of the icons from the status icon theme into Pidgin stock
+ *
+ * @param theme		the theme to load, or null to load all the default icons
+ */
+void pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme);
+
 /**
  * Sets up the purple stock repository.
  */

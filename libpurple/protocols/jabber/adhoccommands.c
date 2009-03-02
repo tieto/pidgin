@@ -47,26 +47,26 @@ void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 	JabberID *jabberid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
-	
+
 	if(strcmp(type, "result"))
 		return;
-	
+
 	query = xmlnode_get_child_with_namespace(packet,"query","http://jabber.org/protocol/disco#items");
 	if(!query)
 		return;
 	node = xmlnode_get_attrib(query,"node");
 	if(!node || strcmp(node, "http://jabber.org/protocol/commands"))
 		return;
-	
+
 	if((jabberid = jabber_id_new(from))) {
 		if(jabberid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
 			jbr = jabber_buddy_find_resource(jb, jabberid->resource);
 		jabber_id_free(jabberid);
 	}
-	
+
 	if(!jbr)
 		return;
-	
+
 	if(jbr->commands) {
 		/* since the list we just received is complete, wipe the old one */
 		while(jbr->commands) {
@@ -78,7 +78,7 @@ void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 			jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
 		}
 	}
-	
+
 	for(item = query->child; item; item = item->next) {
 		JabberAdHocCommands *cmd;
 		if(item->type != XMLNODE_TYPE_TAG)
@@ -86,11 +86,11 @@ void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 		if(strcmp(item->name, "item"))
 			continue;
 		cmd = g_new0(JabberAdHocCommands, 1);
-		
+
 		cmd->jid = g_strdup(xmlnode_get_attrib(item,"jid"));
 		cmd->node = g_strdup(xmlnode_get_attrib(item,"node"));
 		cmd->name = g_strdup(xmlnode_get_attrib(item,"name"));
-		
+
 		jbr->commands = g_list_append(jbr->commands,cmd);
 	}
 }
@@ -103,13 +103,13 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 	JabberAdHocActionInfo *actionInfo = user_data;
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
 	jabber_iq_set_callback(iq, jabber_adhoc_parse, NULL);
-	
+
 	xmlnode_set_attrib(iq->node, "to", actionInfo->who);
 	command = xmlnode_new_child(iq->node,"command");
 	xmlnode_set_namespace(command,"http://jabber.org/protocol/commands");
 	xmlnode_set_attrib(command,"sessionid",actionInfo->sessionid);
 	xmlnode_set_attrib(command,"node",actionInfo->node);
-	
+
 	/* cancel is handled differently on ad-hoc commands than regular forms */
 	if(!strcmp(xmlnode_get_namespace(result),"jabber:x:data") && !strcmp(xmlnode_get_attrib(result, "type"),"cancel")) {
 		xmlnode_set_attrib(command,"action","cancel");
@@ -118,7 +118,7 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 			xmlnode_set_attrib(command,"action",actionhandle);
 		xmlnode_insert_child(command,result);
 	}
-	
+
 	for(action = actionInfo->actionslist; action; action = g_list_next(action)) {
 		char *handle = action->data;
 		g_free(handle);
@@ -127,7 +127,7 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 	g_free(actionInfo->sessionid);
 	g_free(actionInfo->who);
 	g_free(actionInfo->node);
-	
+
 	jabber_iq_send(iq);
 }
 
@@ -136,12 +136,12 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *status = xmlnode_get_attrib(command,"status");
 	xmlnode *xdata = xmlnode_get_child_with_namespace(command,"x","jabber:x:data");
 	const char *type = xmlnode_get_attrib(packet,"type");
-	
+
 	if(type && !strcmp(type,"error")) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
-		
+
 		purple_notify_error(NULL, _("Ad-Hoc Command Failed"),
 							_("Ad-Hoc Command Failed"), msg);
 		g_free(msg);
@@ -149,20 +149,20 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 	if(!type || strcmp(type,"result"))
 		return;
-	
+
 	if(!status)
 		return;
-	
+
 	if(!strcmp(status,"completed")) {
 		/* display result */
 		xmlnode *note = xmlnode_get_child(command,"note");
-		
+
 		if(note) {
 			char *data = xmlnode_get_data(note);
 			purple_notify_info(NULL, xmlnode_get_attrib(packet, "from"), data, NULL);
 			g_free(data);
 		}
-		
+
 		if(xdata)
 			jabber_x_data_request(js, xdata, (jabber_x_data_cb)do_adhoc_ignoreme, NULL);
 		return;
@@ -175,7 +175,7 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 		JabberAdHocActionInfo *actionInfo;
 		if(!xdata)
 			return; /* shouldn't happen */
-		
+
 		actions = xmlnode_get_child(command,"actions");
 		if(!actions) {
 			JabberXDataAction *defaultaction = g_new0(JabberXDataAction, 1);
@@ -196,13 +196,13 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				}
 			}
 		}
-		
+
 		actionInfo = g_new0(JabberAdHocActionInfo, 1);
 		actionInfo->sessionid = g_strdup(xmlnode_get_attrib(command,"sessionid"));
 		actionInfo->who = g_strdup(xmlnode_get_attrib(packet,"from"));
 		actionInfo->node = g_strdup(xmlnode_get_attrib(command,"node"));
 		actionInfo->actionslist = actionslist;
-		
+
 		jabber_x_data_request_with_actions(js,xdata,actionslist,actionindex,do_adhoc_action_cb,actionInfo);
 	}
 }
@@ -211,8 +211,9 @@ void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		JabberAdHocCommands *cmd = data;
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
-		JabberStream *js = purple_account_get_connection(buddy->account)->proto_data;
-		
+		PurpleAccount *account = purple_buddy_get_account(buddy);
+		JabberStream *js = purple_account_get_connection(account)->proto_data;
+
 		jabber_adhoc_execute(js, cmd);
 	}
 }
@@ -220,7 +221,7 @@ void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
 static void jabber_adhoc_server_got_list_cb(JabberStream *js, xmlnode *packet, gpointer data) {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
 	xmlnode *item;
-	
+
 	if(!query)
 		return;
 
@@ -233,7 +234,7 @@ static void jabber_adhoc_server_got_list_cb(JabberStream *js, xmlnode *packet, g
 		g_free(cmd);
 		js->commands = g_list_delete_link(js->commands, js->commands);
 	}
-	
+
 	/* re-fill list */
 	for(item = query->child; item; item = item->next) {
 		JabberAdHocCommands *cmd;
@@ -245,7 +246,7 @@ static void jabber_adhoc_server_got_list_cb(JabberStream *js, xmlnode *packet, g
 		cmd->jid = g_strdup(xmlnode_get_attrib(item,"jid"));
 		cmd->node = g_strdup(xmlnode_get_attrib(item,"node"));
 		cmd->name = g_strdup(xmlnode_get_attrib(item,"name"));
-		
+
 		js->commands = g_list_append(js->commands,cmd);
 	}
 }
@@ -253,10 +254,10 @@ static void jabber_adhoc_server_got_list_cb(JabberStream *js, xmlnode *packet, g
 void jabber_adhoc_server_get_list(JabberStream *js) {
 	JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#items");
 	xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
-	
+
 	xmlnode_set_attrib(iq->node,"to",js->user->domain);
 	xmlnode_set_attrib(query,"node","http://jabber.org/protocol/commands");
-	
+
 	jabber_iq_set_callback(iq,jabber_adhoc_server_got_list_cb,NULL);
 	jabber_iq_send(iq);
 }
@@ -268,9 +269,9 @@ void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd) {
 	xmlnode_set_namespace(command,"http://jabber.org/protocol/commands");
 	xmlnode_set_attrib(command,"node",cmd->node);
 	xmlnode_set_attrib(command,"action","execute");
-	
+
 	jabber_iq_set_callback(iq,jabber_adhoc_parse,NULL);
-	
+
 	jabber_iq_send(iq);
 }
 
@@ -279,7 +280,7 @@ static void jabber_adhoc_server_execute(PurplePluginAction *action) {
 	if(cmd) {
 		PurpleConnection *gc = (PurpleConnection *) action->context;
 		JabberStream *js = gc->proto_data;
-		
+
 		jabber_adhoc_execute(js, cmd);
 	}
 }
@@ -287,7 +288,7 @@ static void jabber_adhoc_server_execute(PurplePluginAction *action) {
 void jabber_adhoc_init_server_commands(JabberStream *js, GList **m) {
 	GList *cmdlst;
 	JabberBuddy *jb;
-	
+
 	/* also add commands for other clients connected to the same account on another resource */
 	char *accountname = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	if((jb = jabber_buddy_find(js, accountname, TRUE))) {
@@ -306,7 +307,7 @@ void jabber_adhoc_init_server_commands(JabberStream *js, GList **m) {
 		}
 	}
 	g_free(accountname);
-	
+
 	/* now add server commands */
 	for(cmdlst = js->commands; cmdlst; cmdlst = g_list_next(cmdlst)) {
 		JabberAdHocCommands *cmd = cmdlst->data;

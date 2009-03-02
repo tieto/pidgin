@@ -18,14 +18,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
-/* This is taken largely from GtkCellRenderer[Text|Pixbuf|Toggle] by 
+/* This is taken largely from GtkCellRenderer[Text|Pixbuf|Toggle] by
  * Jonathon Blandford <jrb@redhat.com> for RedHat, Inc.
  */
 
@@ -76,14 +76,14 @@ enum {
 	PROP_TEXT,
 	PROP_SHOW_TEXT
 };
-     
+
 static gpointer parent_class;
 /* static guint progress_cell_renderer_signals [LAST_SIGNAL]; */
 
 GType  pidgin_cell_renderer_progress_get_type (void)
 {
 	static GType cell_progress_type = 0;
-	
+
 	if (!cell_progress_type)
 		{
 			static const GTypeInfo cell_progress_info =
@@ -99,13 +99,13 @@ GType  pidgin_cell_renderer_progress_get_type (void)
 					(GInstanceInitFunc) pidgin_cell_renderer_progress_init,
 					NULL		/* value_table */
 				};
-			
+
 			cell_progress_type =
 				g_type_register_static (GTK_TYPE_CELL_RENDERER,
 										"PidginCellRendererProgress",
 										&cell_progress_info, 0);
 		}
-	
+
 	return cell_progress_type;
 }
 
@@ -120,16 +120,16 @@ static void pidgin_cell_renderer_progress_class_init (PidginCellRendererProgress
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(class);
 	GtkCellRendererClass *cell_class = GTK_CELL_RENDERER_CLASS(class);
-	
+
 	parent_class = g_type_class_peek_parent (class);
 	object_class->finalize = pidgin_cell_renderer_progress_finalize;
 
 	object_class->get_property = pidgin_cell_renderer_progress_get_property;
 	object_class->set_property = pidgin_cell_renderer_progress_set_property;
-	
+
 	cell_class->get_size = pidgin_cell_renderer_progress_get_size;
 	cell_class->render   = pidgin_cell_renderer_progress_render;
-	
+
 	g_object_class_install_property (object_class,
 					 PROP_PERCENTAGE,
 					 g_param_spec_double ("percentage",
@@ -228,16 +228,16 @@ static void pidgin_cell_renderer_progress_get_size (GtkCellRenderer *cell,
 {
 	gint calc_width;
 	gint calc_height;
-	
+
 	calc_width = (gint) cell->xpad * 2 + 50;
 	calc_height = (gint) cell->ypad * 2 + 12;
-	
+
 	if (width)
 		*width = calc_width;
-	
+
 	if (height)
 		*height = calc_height;
-	
+
 	if (cell_area)
 		{
 			if (x_offset)
@@ -263,13 +263,13 @@ static void pidgin_cell_renderer_progress_render (GtkCellRenderer *cell,
 					       guint            flags)
 {
 	PidginCellRendererProgress *cellprogress = (PidginCellRendererProgress *) cell;
-	
+
 	gint width, height;
 	GtkStateType state;
 
 	width = cell_area->width;
 	height = cell_area->height;
-	
+
 	if (GTK_WIDGET_HAS_FOCUS (widget))
 		state = GTK_STATE_ACTIVE;
 	else
@@ -280,7 +280,7 @@ static void pidgin_cell_renderer_progress_render (GtkCellRenderer *cell,
 
 	gtk_paint_box (widget->style,
 		       window,
-		       GTK_STATE_NORMAL, GTK_SHADOW_IN, 
+		       GTK_STATE_NORMAL, GTK_SHADOW_IN,
 		       NULL, widget, "trough",
 		       cell_area->x + cell->xpad,
 		       cell_area->y + cell->ypad,

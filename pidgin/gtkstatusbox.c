@@ -1646,7 +1646,7 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatu
 			pidgin_status_box_popdown (status_box);
 			return TRUE;
 		} else if (ewidget == status_box->toggle_button) {
-			status_box->popup_in_progress = TRUE;		
+			status_box->popup_in_progress = TRUE;
 		}
 
 		/* released outside treeview */
@@ -1698,7 +1698,7 @@ treeview_key_press_event(GtkWidget *widget,
 				gtk_tree_path_free (path);
 				return ret;
 			}
-		} 
+		}
 	}
 	return FALSE;
 }
@@ -1777,9 +1777,9 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
-	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, 
+	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
 					       G_TYPE_STRING, G_TYPE_POINTER, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
-	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
+	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
@@ -2529,7 +2529,7 @@ static void update_size(PidginStatusBox *status_box)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
-	int wrapped_lines;
+	int display_lines;
 	int lines;
 	GdkRectangle oneline;
 	int height;
@@ -2545,28 +2545,44 @@ static void update_size(PidginStatusBox *status_box)
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 
 	height = 0;
-	wrapped_lines = 1;
+	display_lines = 1;
 	gtk_text_buffer_get_start_iter(buffer, &iter);
 	do {
 		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
 		height += oneline.height;
-		wrapped_lines++;
-		if (wrapped_lines > 4)
-			break;
-	} while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter));
+		display_lines++;
+	} while (display_lines <= 4 &&
+		gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter));
+
+	/*
+	 * This check fixes the case where the last character entered is a
+	 * newline (shift+return).  For some reason the
+	 * gtk_text_view_forward_display_line() function doesn't treat this
+	 * like a new line, and so we think the input box only needs to be
+	 * two lines instead of three, for example.  So we check if the
+	 * last character was a newline and add some extra height if so.
+	 */
+	if (display_lines <= 4
+		&& gtk_text_iter_backward_char(&iter)
+		&& gtk_text_iter_get_char(&iter) == '\n')
+	{
+		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
+		height += oneline.height;
+		display_lines++;
+	}
 
 	lines = gtk_text_buffer_get_line_count(buffer);
 
 	/* Show a maximum of 4 lines */
 	lines = MIN(lines, 4);
-	wrapped_lines = MIN(wrapped_lines, 4);
+	display_lines = MIN(display_lines, 4);
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(status_box->imhtml));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(status_box->imhtml));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(status_box->imhtml));
 
 	height += (pad_top + pad_bottom) * lines;
-	height += (pad_inside) * (wrapped_lines - lines);
+	height += (pad_inside) * (display_lines - lines);
 
 	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }

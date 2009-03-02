@@ -51,7 +51,7 @@ static guint jabber_caps_hash(gconstpointer key) {
 	const JabberCapsKey *name = key;
 	guint nodehash = g_str_hash(name->node);
 	guint verhash = g_str_hash(name->ver);
-	
+
 	return nodehash ^ verhash;
 }
 
@@ -77,7 +77,7 @@ static void jabber_caps_destroy_value(gpointer value) {
 		g_free(id->type);
 		g_free(id->name);
 		g_free(id);
-		
+
 		valuestruct->identities = g_list_delete_link(valuestruct->identities,valuestruct->identities);
 	}
 	while(valuestruct->features) {
@@ -96,7 +96,7 @@ static void jabber_caps_ext_destroy_value(gpointer value) {
 		g_free(id->type);
 		g_free(id->name);
 		g_free(id);
-		
+
 		valuestruct->identities = g_list_delete_link(valuestruct->identities,valuestruct->identities);
 	}
 	while(valuestruct->features) {
@@ -124,7 +124,7 @@ static void jabber_caps_load(void) {
 		xmlnode_free(capsdata);
 		return;
 	}
-	
+
 	for(client = capsdata->child; client; client = client->next) {
 		if(client->type != XMLNODE_TYPE_TAG)
 			continue;
@@ -147,20 +147,20 @@ static void jabber_caps_load(void) {
 					const char *category = xmlnode_get_attrib(child, "category");
 					const char *type = xmlnode_get_attrib(child, "type");
 					const char *name = xmlnode_get_attrib(child, "name");
-					
+
 					JabberCapsIdentity *id = g_new0(JabberCapsIdentity, 1);
 					id->category = g_strdup(category);
 					id->type = g_strdup(type);
 					id->name = g_strdup(name);
-					
+
 					value->identities = g_list_append(value->identities,id);
 				} else if(!strcmp(child->name,"ext")) {
 					const char *identifier = xmlnode_get_attrib(child, "identifier");
 					if(identifier) {
 						xmlnode *extchild;
-						
+
 						JabberCapsValueExt *extvalue = g_new0(JabberCapsValueExt, 1);
-						
+
 						for(extchild = child->child; extchild; extchild = extchild->next) {
 							if(extchild->type != XMLNODE_TYPE_TAG)
 								continue;
@@ -173,12 +173,12 @@ static void jabber_caps_load(void) {
 								const char *category = xmlnode_get_attrib(extchild, "category");
 								const char *type = xmlnode_get_attrib(extchild, "type");
 								const char *name = xmlnode_get_attrib(extchild, "name");
-								
+
 								JabberCapsIdentity *id = g_new0(JabberCapsIdentity, 1);
 								id->category = g_strdup(category);
 								id->type = g_strdup(type);
 								id->name = g_strdup(name);
-								
+
 								extvalue->identities = g_list_append(extvalue->identities,id);
 							}
 						}
@@ -226,7 +226,7 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 
 	xmlnode_set_attrib(client,"node",clientinfo->node);
 	xmlnode_set_attrib(client,"ver",clientinfo->ver);
-	
+
 	for(iter = props->identities; iter; iter = g_list_next(iter)) {
 		JabberCapsIdentity *id = iter->data;
 		xmlnode *identity = xmlnode_new_child(client, "identity");
@@ -241,7 +241,7 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 		xmlnode *feature = xmlnode_new_child(client, "feature");
 		xmlnode_set_attrib(feature, "var", feat);
 	}
-	
+
 	g_hash_table_foreach(props->ext,jabber_caps_store_ext,client);
 }
 
@@ -281,20 +281,20 @@ static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const ch
 		newid->category = g_strdup(id->category);
 		newid->type = g_strdup(id->type);
 		newid->name = g_strdup(id->name);
-		
+
 		result->identities = g_list_append(result->identities,newid);
 	}
 	for(iter = caps->features; iter; iter = g_list_next(iter)) {
 		const char *feat = iter->data;
 		char *newfeat = g_strdup(feat);
-		
+
 		result->features = g_list_append(result->features,newfeat);
 	}
-	
+
 	for(iter = ext; iter; iter = g_list_next(iter)) {
 		const char *extname = iter->data;
 		JabberCapsValueExt *extinfo = g_hash_table_lookup(caps->ext,extname);
-		
+
 		if(extinfo) {
 			GList *iter2;
 			for(iter2 = extinfo->identities; iter2; iter2 = g_list_next(iter2)) {
@@ -303,13 +303,13 @@ static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const ch
 				newid->category = g_strdup(id->category);
 				newid->type = g_strdup(id->type);
 				newid->name = g_strdup(id->name);
-				
+
 				result->identities = g_list_append(result->identities,newid);
 			}
 			for(iter2 = extinfo->features; iter2; iter2 = g_list_next(iter2)) {
 				const char *feat = iter2->data;
 				char *newfeat = g_strdup(feat);
-				
+
 				result->features = g_list_append(result->features,newfeat);
 			}
 		}
@@ -326,23 +326,23 @@ void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo) {
 		g_free(id->type);
 		g_free(id->name);
 		g_free(id);
-		
+
 		clientinfo->identities = g_list_delete_link(clientinfo->identities,clientinfo->identities);
 	}
 	while(clientinfo->features) {
 		char *feat = clientinfo->features->data;
 		g_free(feat);
-		
+
 		clientinfo->features = g_list_delete_link(clientinfo->features,clientinfo->features);
 	}
-	
+
 	g_free(clientinfo);
 }
 
 typedef struct _jabber_caps_cbplususerdata {
 	jabber_caps_get_info_cb cb;
 	gpointer user_data;
-	
+
 	char *who;
 	char *node;
 	char *ver;

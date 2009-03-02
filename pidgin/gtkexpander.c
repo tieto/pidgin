@@ -63,7 +63,7 @@ struct _GtkExpanderPrivate
 
   guint             expanded : 1;
   guint             use_underline : 1;
-  guint             use_markup : 1; 
+  guint             use_markup : 1;
   guint             button_down : 1;
   guint             prelight : 1;
 };
@@ -129,7 +129,7 @@ GType
 gtk_expander_get_type (void)
 {
   static GType expander_type = 0;
-  
+
   if (!expander_type)
     {
       static const GTypeInfo expander_info =
@@ -144,12 +144,12 @@ gtk_expander_get_type (void)
 	0,		/* n_preallocs */
 	(GInstanceInitFunc) gtk_expander_init,
       };
-      
+
       expander_type = g_type_register_static (GTK_TYPE_BIN,
 					      "GtkExpander",
 					      &expander_info, 0);
     }
-  
+
   return expander_type;
 }
 
@@ -314,7 +314,7 @@ gtk_expander_set_property (GObject      *object,
 			   GParamSpec   *pspec)
 {
   GtkExpander *expander = GTK_EXPANDER (object);
-                                                                                                             
+
   switch (prop_id)
     {
     case PROP_EXPANDED:
@@ -382,7 +382,7 @@ static void
 gtk_expander_destroy (GtkObject *object)
 {
   GtkExpanderPrivate *priv = GTK_EXPANDER (object)->priv;
-  
+
   if (priv->animation_timeout)
     {
       g_source_remove (priv->animation_timeout);
@@ -407,7 +407,7 @@ gtk_expander_realize (GtkWidget *widget)
   border_width = GTK_CONTAINER (widget)->border_width;
 
   get_expander_bounds (GTK_EXPANDER (widget), &expander_rect);
-  
+
   attributes.window_type = GDK_WINDOW_CHILD;
   attributes.x = widget->allocation.x + border_width;
   attributes.y = expander_rect.y;
@@ -831,7 +831,7 @@ gtk_expander_paint_focus (GtkExpander  *expander,
 			NULL);
 
   ltr = gtk_widget_get_direction (widget) != GTK_TEXT_DIR_RTL;
-  
+
   x = widget->allocation.x + border_width;
   y = widget->allocation.y + border_width;
 
@@ -853,7 +853,7 @@ gtk_expander_paint_focus (GtkExpander  *expander,
       width += expander_size + 2 * expander_spacing;
       height = MAX (height, expander_size + 2 * expander_spacing);
     }
-      
+
   width  += 2 * focus_pad + 2 * focus_width;
   height += 2 * focus_pad + 2 * focus_width;
 
@@ -1115,16 +1115,16 @@ gtk_expander_focus (GtkWidget        *widget,
 		    GtkDirectionType  direction)
 {
   GtkExpander *expander = GTK_EXPANDER (widget);
-  
+
   if (!focus_current_site (expander, direction))
     {
       GtkWidget *old_focus_child;
       gboolean widget_is_focus;
       FocusSite site = FOCUS_NONE;
-      
+
       widget_is_focus = gtk_widget_is_focus (widget);
       old_focus_child = GTK_CONTAINER (widget)->focus_child;
-      
+
       if (old_focus_child && old_focus_child == expander->priv->label_widget)
 	site = FOCUS_LABEL;
       else if (old_focus_child)
@@ -1192,9 +1192,9 @@ gtk_expander_activate (GtkExpander *expander)
 /**
  * gtk_expander_new:
  * @label: the text of the label
- * 
+ *
  * Creates a new expander using @label as the text of the label.
- * 
+ *
  * Return value: a new #GtkExpander widget.
  *
  * Since: 2.4
@@ -1209,14 +1209,14 @@ gtk_expander_new (const gchar *label)
  * gtk_expander_new_with_mnemonic:
  * @label: the text of the label with an underscore in front of the
  *         mnemonic character
- * 
+ *
  * Creates a new expander using @label as the text of the label.
  * If characters in @label are preceded by an underscore, they are underlined.
- * If you need a literal underscore character in a label, use '__' (two 
- * underscores). The first underlined character represents a keyboard 
+ * If you need a literal underscore character in a label, use '__' (two
+ * underscores). The first underlined character represents a keyboard
  * accelerator called a mnemonic.
  * Pressing Alt and that key activates the button.
- * 
+ *
  * Return value: a new #GtkExpander widget.
  *
  * Since: 2.4
@@ -1328,7 +1328,7 @@ gtk_expander_set_expanded (GtkExpander *expander,
 	{
 	  gtk_expander_start_animation (expander);
 	}
-      else 
+      else
 	{
 	  priv->expander_style = expanded ? GTK_EXPANDER_EXPANDED :
 					    GTK_EXPANDER_COLLAPSED;
@@ -1643,7 +1643,7 @@ gtk_expander_set_label_widget (GtkExpander *expander,
  * gtk_expander_set_label_widget().
  *
  * Return value: the label widget, or %NULL if there is none.
- * 
+ *
  * Since: 2.4
  **/
 GtkWidget *

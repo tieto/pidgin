@@ -65,7 +65,7 @@ typedef struct
 	GntWidget *window;
 
 	GntWidget *protocol;
-	GntWidget *screenname;
+	GntWidget *username;
 	GntWidget *password;
 	GntWidget *alias;
 
@@ -118,8 +118,8 @@ save_account_cb(AccountEditDialog *dialog)
 	plugin = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->protocol));
 	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
-	/* Screenname && user-splits */
-	value = gnt_entry_get_text(GNT_ENTRY(dialog->screenname));
+	/* Username && user-splits */
+	value = gnt_entry_get_text(GNT_ENTRY(dialog->username));
 
 	if (value == NULL || *value == '\0')
 	{
@@ -326,7 +326,7 @@ update_user_splits(AccountEditDialog *dialog)
 	}
 
 	if (username != NULL)
-		gnt_entry_set_text(GNT_ENTRY(dialog->screenname), username);
+		gnt_entry_set_text(GNT_ENTRY(dialog->username), username);
 
 	g_free(username);
 }
@@ -546,7 +546,7 @@ edit_account(PurpleAccount *account)
 	gnt_box_set_pad(GNT_BOX(hbox), 0);
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
-	dialog->screenname = entry = gnt_entry_new(NULL);
+	dialog->username = entry = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Username:")));
 	gnt_box_add_widget(GNT_BOX(hbox), entry);
 

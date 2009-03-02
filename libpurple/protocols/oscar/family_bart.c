@@ -90,26 +90,26 @@ uploadack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
  * Subtype 0x0004 - Request someone's icon.
  *
  * @param od The oscar session.
- * @param sn The screen name of the person who's icon you are requesting.
+ * @param bn The name of the buddy whose icon you are requesting.
  * @param iconcsum The MD5 checksum of the icon you are requesting.
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
 int
-aim_bart_request(OscarData *od, const char *sn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
+aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BART)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BART)) || !bn || !strlen(bn) || !iconcsum || !iconcsumlen)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 1+strlen(sn) + 4 + 1+iconcsumlen);
+	byte_stream_new(&bs, 1+strlen(bn) + 4 + 1+iconcsumlen);
 
-	/* Screen name */
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	/* Buddy name */
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	/* Some numbers.  You like numbers, right? */
 	byte_stream_put8(&bs, 0x01);
@@ -138,11 +138,11 @@ parseicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	char *sn;
+	char *bn;
 	guint16 flags, iconlen;
 	guint8 iconcsumtype, iconcsumlen, *iconcsum, *icon;
 
-	sn = byte_stream_getstr(bs, byte_stream_get8(bs));
+	bn = byte_stream_getstr(bs, byte_stream_get8(bs));
 	flags = byte_stream_get16(bs);
 	iconcsumtype = byte_stream_get8(bs);
 	iconcsumlen = byte_stream_get8(bs);
@@ -151,9 +151,9 @@ parseicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	icon = byte_stream_getraw(bs, iconlen);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, sn, iconcsumtype, iconcsum, iconcsumlen, icon, iconlen);
+		ret = userfunc(od, conn, frame, bn, iconcsumtype, iconcsum, iconcsumlen, icon, iconlen);
 
-	g_free(sn);
+	g_free(bn);
 	g_free(iconcsum);
 	g_free(icon);
 

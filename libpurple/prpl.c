@@ -75,7 +75,7 @@ void
 purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *name)
 {
 	g_return_if_fail(type != NULL);
-	
+
 	type->icon_name = name;
 }
 
@@ -400,7 +400,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	PurpleConversation *conv;
 	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
 	PurpleBuddy *buddy;
-	const char *alias;	
+	const char *alias;
 	gchar *description;
 	time_t mtime;
 
@@ -425,7 +425,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	} else {
 		description = g_strdup_printf(_("Requesting %s's attention..."), alias);
 	}
-	
+
 	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
 
 	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
@@ -511,7 +511,7 @@ purple_find_prpl(const char *id)
 	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
 		plugin = (PurplePlugin *)l->data;
 
-		if (!strcmp(plugin->info->id, id))
+		if (purple_strequal(plugin->info->id, id))
 			return plugin;
 	}
 

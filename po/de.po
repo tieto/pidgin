@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-23 20:26+0100\n"
-"PO-Revision-Date: 2009-02-23 19:55+0100\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2009-02-25 17:28+0100\n"
+"PO-Revision-Date: 2009-02-25 17:28+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -7563,6 +7563,9 @@ msgstr "<p><b>Wunderbare Patch-Schreiber</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Bestätigung</b>:<br>\n"
 
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Gewissenhafte Tester</b>:<br>\n"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>Und all die Jungs im Hinterzimmer...</i><br>\n"
 
@@ -7587,6 +7590,9 @@ msgstr "Alle QQ-Quns aktualisieren"
 
 msgid "About OpenQ"
 msgstr "Über OpenQ"
+
+msgid "Modify Buddy Memo"
+msgstr "Buddy-Notiz bearbeiten"
 
 #. *< type
 #. *< ui_requirement

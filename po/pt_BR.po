@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-04 09:58-0500\n"
-"PO-Revision-Date: 2009-01-05 12:42-0300\n"
+"POT-Creation-Date: 2009-02-27 10:14-0800\n"
+"PO-Revision-Date: 2009-02-24 22:11-0300\n"
 "Last-Translator: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "Language-Team: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "MIME-Version: 1.0\n"
@@ -32,7 +32,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -40,8 +40,8 @@ msgstr ""
 "%s\n"
 "Uso: %s [OPÇÃO]...\n"
 "\n"
-"  -c, --config=DIR    use o diretório DIR para os arquivos de configuração\n"
-"  -d, --debug         imprima mensagens de depuração para a saída padrão\n"
+"  -c, --config=DIR    utilize o DIR para os arquivos de configuração\n"
+"  -d, --debug         imprima mensagens de depuração para a saída de erro\n"
 "  -h, --help          exiba esta ajuda e saia\n"
 "  -n, --nologin       não conecte automaticamente\n"
 "  -v, --version       exiba a versão atual e saia\n"
@@ -1118,6 +1118,7 @@ msgstr "%s se tornou ausente. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s te enviou uma mensagem. (%s)"
 
+#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Evento de ação desconhecido. Por favor reporte isso!"
 
@@ -1163,7 +1164,6 @@ msgstr "Minutos antes de alterar o status"
 msgid "Change status to"
 msgstr "Mudar status para"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Conversas"
 
@@ -1829,6 +1829,7 @@ msgstr ""
 "Erro ao ler do processo de resolução:\n"
 "%s"
 
+#, c-format
 msgid "Resolver process exited without answering our request"
 msgstr "Processo que resolve fechou sem responder nossa requisição"
 
@@ -2842,7 +2843,6 @@ msgstr ""
 "Não foi possível estabelecer conexão com o servidor mDNS local. Ele está "
 "rodando?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Nome"
 
@@ -2873,6 +2873,10 @@ msgstr "Plug-in do protocolo Bonjour"
 
 msgid "Purple Person"
 msgstr "Pessoa púrpura"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Porta local"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -4680,9 +4684,6 @@ msgstr "Ações"
 msgid "Select an action"
 msgstr "Selecione uma ação"
 
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Falha ao obter catálogo de endereços do MSN"
-
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -4716,165 +4717,218 @@ msgstr ""
 "%s está na lista local, mas não está na lista do servidor. Você deseja "
 "adicionar este amigo?"
 
+#, c-format
 msgid "Unable to parse message"
 msgstr "Não foi possível processar mensagem"
 
+#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Erro de sintaxe (provavelmente um bug do cliente)"
 
+#, c-format
 msgid "Invalid email address"
 msgstr "Endereço de email inválido"
 
+#, c-format
 msgid "User does not exist"
 msgstr "Usuário inexistente"
 
+#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Faltando nome de domínio totalmente qualificado"
 
+#, c-format
 msgid "Already logged in"
 msgstr "Você já está conectado"
 
+#, c-format
 msgid "Invalid username"
 msgstr "Nome de usuário inválido"
 
+#, c-format
 msgid "Invalid friendly name"
 msgstr "Apelido inválido"
 
+#, c-format
 msgid "List full"
 msgstr "Lista cheia"
 
+#, c-format
 msgid "Already there"
 msgstr "Já está lá"
 
+#, c-format
 msgid "Not on list"
 msgstr "Não está na lista"
 
+#, c-format
 msgid "User is offline"
 msgstr "Usuário está desconectado"
 
+#, c-format
 msgid "Already in the mode"
 msgstr "Você já está nesse modo"
 
+#, c-format
 msgid "Already in opposite list"
 msgstr "Usuário já está na lista oposta"
 
+#, c-format
 msgid "Too many groups"
 msgstr "Excesso de grupos"
 
+#, c-format
 msgid "Invalid group"
 msgstr "Grupo inválido"
 
+#, c-format
 msgid "User not in group"
 msgstr "O usuário não está no grupo"
 
+#, c-format
 msgid "Group name too long"
 msgstr "Nome do grupo muito extenso."
 
+#, c-format
 msgid "Cannot remove group zero"
 msgstr "Não foi possível remover o grupo zero"
 
+#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Você tentou adicionar um usuário a um grupo que não existe"
 
+#, c-format
 msgid "Switchboard failed"
 msgstr "O quadro de comunicações falhou"
 
+#, c-format
 msgid "Notify transfer failed"
 msgstr "A notificação de transferência falhou"
 
+#, c-format
 msgid "Required fields missing"
 msgstr "Campos requeridos não foram preenchidos"
 
+#, c-format
 msgid "Too many hits to a FND"
 msgstr "Acessos demais a um FND"
 
+#, c-format
 msgid "Not logged in"
 msgstr "Desconectado"
 
+#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Serviço temporariamente indisponível"
 
+#, c-format
 msgid "Database server error"
 msgstr "Erro do servidor de banco de dados"
 
+#, c-format
 msgid "Command disabled"
 msgstr "Comando desativado"
 
+#, c-format
 msgid "File operation error"
 msgstr "Erro ao executar operação de arquivo"
 
+#, c-format
 msgid "Memory allocation error"
 msgstr "Erro de alocação de memória"
 
+#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "Valor CHL incorreto enviado para o servidor"
 
+#, c-format
 msgid "Server busy"
 msgstr "Servidor ocupado"
 
+#, c-format
 msgid "Server unavailable"
 msgstr "Servidor indisponível"
 
+#, c-format
 msgid "Peer notification server down"
 msgstr "O servidor de notificação de pares está fora do ar"
 
+#, c-format
 msgid "Database connect error"
 msgstr "Erro ao conectar ao banco de dados"
 
+#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "O servidor vai sair do ar (abandonar navio)"
 
+#, c-format
 msgid "Error creating connection"
 msgstr "Erro ao criar a conexão"
 
+#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Parâmetros CVR desconhecidos ou não permitidos"
 
+#, c-format
 msgid "Unable to write"
 msgstr "Não foi possível enviar"
 
+#, c-format
 msgid "Session overload"
 msgstr "Sessão sobrecarregada"
 
+#, c-format
 msgid "User is too active"
 msgstr "O usuário está muito ativo"
 
+#, c-format
 msgid "Too many sessions"
 msgstr "Excesso de sessões"
 
+#, c-format
 msgid "Passport not verified"
 msgstr "Conta do Passport não verificada"
 
+#, c-format
 msgid "Bad friend file"
 msgstr "Arquivo de amigos mal formado"
 
+#, c-format
 msgid "Not expected"
 msgstr "Inesperado"
 
+#, c-format
 msgid "Friendly name changes too rapidly"
 msgstr "O apelido foi mudado rapidamente demais"
 
+#, c-format
 msgid "Server too busy"
 msgstr "Servidor ocupado demais"
 
+#, c-format
 msgid "Authentication failed"
 msgstr "Autenticação mal sucedida"
 
+#, c-format
 msgid "Not allowed when offline"
 msgstr "Não permitido enquanto desconectado"
 
+#, c-format
 msgid "Not accepting new users"
 msgstr "Usuários novos não estão sendo aceitos"
 
+#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Passport para crianças sem consentimento dos pais"
 
+#, c-format
 msgid "Passport account not yet verified"
 msgstr "Conta do Passport ainda não foi verificada"
 
 msgid "Passport account suspended"
 msgstr "Conta do Passport suspensa"
 
+#, c-format
 msgid "Bad ticket"
 msgstr "Bilhete inválido"
 
@@ -6464,12 +6518,10 @@ msgid "_OK"
 msgstr "_OK"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Você pode ser desconectado num curto período de tempo. Você pode querer usar "
-"o TOC até que isso esteja corrigido. Verifique por atualizações em %s."
+"Você pode ser desconectado em brevo. Se isso acontecer, verifique "
+"atualizações em %s."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Não foi possível conseguir um hash de conexão AIM válido."
@@ -6937,6 +6989,7 @@ msgstr "C_onectar"
 msgid "Get AIM Info"
 msgstr "Ver informações do AIM"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Editar comentário do amigo"
 
@@ -7523,6 +7576,9 @@ msgstr "<p><b>Contribuidores amáveis de patch</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Agradecimento</b>:<br>\n"
 
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Testadores Escrupulosos</b>:<br>\n"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>E, todos os garotos nos bastidores...</i><br>\n"
 
@@ -7547,6 +7603,9 @@ msgstr "Atualizar todos os Quns do QQ"
 
 msgid "About OpenQ"
 msgstr "Sobre o OpenQ"
+
+msgid "Modify Buddy Memo"
+msgstr "Modificar Lembrete do Amigo"
 
 #. *< type
 #. *< ui_requirement
@@ -7584,6 +7643,9 @@ msgstr "Mostrar avisos do servidor"
 
 msgid "Show server news"
 msgstr "Mostrar novidades do servidor"
+
+msgid "Show chat room when msg comes"
+msgstr "Mostrar sala de chat quando enviarem uma mensagem"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Intervalo de keep-alive (segundos)"
@@ -8343,6 +8405,7 @@ msgstr "<br><b>HMAC do canal:</b> %s"
 msgid "<br><b>Channel Topic:</b><br>%s"
 msgstr "<br><b>Tópico do canal:</b><br>%s"
 
+#, c-format
 msgid "<br><b>Channel Modes:</b> "
 msgstr "<br><b>Modos do canal:</b> "
 
@@ -8367,6 +8430,7 @@ msgstr "Frase-senha do canal"
 msgid "Channel Public Keys List"
 msgstr "Lista de chaves públicas do canal"
 
+#, c-format
 msgid ""
 "Channel authentication is used to secure the channel from unauthorized "
 "access. The authentication may be based on passphrase and digital "
@@ -8765,6 +8829,7 @@ msgstr "Download %s: %s"
 msgid "Your Current Mood"
 msgstr "Seu humor atual"
 
+#, c-format
 msgid "Normal"
 msgstr "Normal"
 
@@ -9148,33 +9213,43 @@ msgstr "Quadro de atividades"
 msgid "No server statistics available"
 msgstr "Estatísticas do servidor indisponíveis"
 
+#, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Falha: Versões incompatíveis, atualize seu cliente"
 
+#, c-format
 msgid "Failure: Remote does not trust/support your public key"
 msgstr "Falha: O usuário remoto não confia/suporta sua chave pública."
 
+#, c-format
 msgid "Failure: Remote does not support proposed KE group"
 msgstr "Falha: O usuário remoto não suporta o grupo KE proposto."
 
+#, c-format
 msgid "Failure: Remote does not support proposed cipher"
 msgstr "Falha: O usuário remoto não suporta a cifra proposta"
 
+#, c-format
 msgid "Failure: Remote does not support proposed PKCS"
 msgstr "Falha: O usuário remoto não suporta o PKCS proposto"
 
+#, c-format
 msgid "Failure: Remote does not support proposed hash function"
 msgstr "Falha: O usuário remoto não suporta a função de hash proposta"
 
+#, c-format
 msgid "Failure: Remote does not support proposed HMAC"
 msgstr "Falha: O usuário remoto não suporta o HMAC proposto"
 
+#, c-format
 msgid "Failure: Incorrect signature"
 msgstr "Falha: Assinatura incorreta"
 
+#, c-format
 msgid "Failure: Invalid cookie"
 msgstr "Falha: Cookie inválido"
 
+#, c-format
 msgid "Failure: Authentication failed"
 msgstr "Falha: Autenticação mal sucedida"
 
@@ -9274,6 +9349,7 @@ msgstr "%s não está conectado no momento."
 msgid "Warning of %s not allowed."
 msgstr "Alertar %s não é permitido."
 
+#, c-format
 msgid "A message has been dropped, you are exceeding the server speed limit."
 msgstr ""
 "Uma mensagem foi descartada, você está excedendo o limite de velocidade do "
@@ -9298,30 +9374,39 @@ msgstr ""
 "Você perdeu uma mensagem de mensagem instantânea de %s porque ela foi "
 "enviada muito rapidamente."
 
+#, c-format
 msgid "Failure."
 msgstr "Falha."
 
+#, c-format
 msgid "Too many matches."
 msgstr "Excesso de resultados."
 
+#, c-format
 msgid "Need more qualifiers."
 msgstr "Necessários mais qualificadores."
 
+#, c-format
 msgid "Dir service temporarily unavailable."
 msgstr "Serviço de diretório temporariamente indisponível."
 
+#, c-format
 msgid "Email lookup restricted."
 msgstr "Pesquisa por email restrita."
 
+#, c-format
 msgid "Keyword ignored."
 msgstr "Palavra-chave ignorada."
 
+#, c-format
 msgid "No keywords."
 msgstr "Nenhuma palavra-chave."
 
+#, c-format
 msgid "User has no directory information."
 msgstr "Usuário não tem informação de diretório."
 
+#, c-format
 msgid "Country not supported."
 msgstr "País não suportado."
 
@@ -9329,16 +9414,20 @@ msgstr "País não suportado."
 msgid "Failure unknown: %s."
 msgstr "Falha desconhecida: %s."
 
+#, c-format
 msgid "Incorrect username or password."
 msgstr "Nome de usuário ou senha incorreto(a)."
 
+#, c-format
 msgid "The service is temporarily unavailable."
 msgstr "O serviço está temporariamente indisponível."
 
+#, c-format
 msgid "Your warning level is currently too high to log in."
 msgstr ""
 "Seu nível de alerta é alto demais para que você possa se conectar no momento."
 
+#, c-format
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
@@ -10168,22 +10257,27 @@ msgid " (%s)"
 msgstr "(%s)"
 
 #. 10053
+#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Conexão interrompida por outro software no seu computador."
 
 #. 10054
+#, c-format
 msgid "Remote host closed connection."
 msgstr "O usuário remoto encerrou a conexão."
 
 #. 10060
+#, c-format
 msgid "Connection timed out."
 msgstr "Tempo limite de conexão esgotado."
 
 #. 10061
+#, c-format
 msgid "Connection refused."
 msgstr "Conexão rejeitada."
 
 #. 10048
+#, c-format
 msgid "Address already in use."
 msgstr "O endereço já está em uso"
 
@@ -11295,6 +11389,9 @@ msgstr "Lituano"
 msgid "Macedonian"
 msgstr "Macedônio"
 
+msgid "Mongolian"
+msgstr "Mongol"
+
 msgid "Bokmål Norwegian"
 msgstr "Dano-Norueguês"
 
@@ -11407,8 +11504,33 @@ msgstr ""
 "contribuidoes. Veja o arquivo 'COPYRIGHT' para uma lista completa destes "
 "contribuidores. Não oferecemos nenhuma garantia para este programa.<BR><BR>"
 
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin no irc.freenode.net<BR><BR>"
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Ajuda por e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">Canal do IRC:</FONT> #pidgin no irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">MUC(Multi User Chat) do XMPP:</FONT> devel@conference."
+"pidgin.im <BR><BR>"
 
 msgid "Current Developers"
 msgstr "Desenvolvedores atuais"
@@ -11768,9 +11890,11 @@ msgstr ""
 msgid "Save Image"
 msgstr "Salvar imagem"
 
+#, c-format
 msgid "_Save Image..."
 msgstr "_Salvar imagem..."
 
+#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "Exibir emoticons personalizados"
 
@@ -12063,6 +12187,10 @@ msgstr ""
 #. It is not to be translated.
 msgid "Pidgin"
 msgstr "Pidgin"
+
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Saindo porque outro cliente libpurple já está sendo executado.\n"
 
 msgid "Open All Messages"
 msgstr "Abrir todas as mensagens"
@@ -12404,6 +12532,10 @@ msgstr "Servidor proxy"
 msgid "No proxy"
 msgstr "Nenhum proxy"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Usar DNS remoto com proxies SOCKS4"
+
 msgid "_User:"
 msgstr "_Usuário:"
 
@@ -12484,21 +12616,27 @@ msgstr "Gravar todos as mudanças de _status no histórico do sistema"
 msgid "Sound Selection"
 msgstr "Seleção de som"
 
+#, c-format
 msgid "Quietest"
 msgstr "Muito silencioso"
 
+#, c-format
 msgid "Quieter"
 msgstr "Mais silencioso"
 
+#, c-format
 msgid "Quiet"
 msgstr "Silencioso"
 
+#, c-format
 msgid "Loud"
 msgstr "Alto"
 
+#, c-format
 msgid "Louder"
 msgstr "Mais alto"
 
+#, c-format
 msgid "Loudest"
 msgstr "Muito alto"
 
@@ -13511,6 +13649,7 @@ msgstr "Diálogo de notificação"
 msgid "Select Color"
 msgstr "Selecionar cor"
 
+#, c-format
 msgid "Select Interface Font"
 msgstr "Selecionar fonte da interface"
 
@@ -13738,6 +13877,7 @@ msgstr ""
 msgid "Timestamp Format Options"
 msgstr "Opções de formatação da marcação de tempo"
 
+#, c-format
 msgid "_Force 24-hour time format"
 msgstr "_Forçar formato de data 24-horas"
 
@@ -13857,9 +13997,6 @@ msgstr "_Manter a janela da lista de amigos no topo:"
 msgid "Only when docked"
 msgstr "Apenas quando ancorado"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Piscar a janela quando mensagens de bate-papo forem recebidas"
-
 msgid "Windows Pidgin Options"
 msgstr "Opções do Pidgin para Windows"
 
@@ -13908,6 +14045,20 @@ msgstr "Envia e recebe comandos (stanzas) do XMPP puros."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Este plug-in é útil para depurar servidores ou clientes XMPP."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Falha ao obter catálogo de endereços do MSN"
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "Você pode ser desconectado num curto período de tempo. Você pode querer "
+#~ "usar o TOC até que isso esteja corrigido. Verifique por atualizações em %"
+#~ "s."
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Piscar a janela quando mensagens de bate-papo forem recebidas"
 
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""

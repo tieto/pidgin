@@ -26,6 +26,8 @@
 #ifndef _PURPLE_XMLNODE_H_
 #define _PURPLE_XMLNODE_H_
 
+#include <glib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -296,6 +298,22 @@ xmlnode *xmlnode_copy(const xmlnode *src);
  * @param node The node to free.
  */
 void xmlnode_free(xmlnode *node);
+
+/**
+ * Creates a node from a XML File.  Calling this on the
+ * root node of an XML document will parse the entire document
+ * into a tree of nodes, and return the xmlnode of the root.
+ *
+ * @param str  The string of xml.
+ * @param description  The description of the file being parsed
+ * @process  The utility that is calling xmlnode_from_file
+ *
+ * @return The new node.
+ *
+ * @since 2.6.0
+ */
+xmlnode *xmlnode_from_file(const char *dir, const char *filename,
+			   const char *description, const char *process);
 
 #ifdef __cplusplus
 }

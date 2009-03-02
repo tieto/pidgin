@@ -39,6 +39,12 @@
 #include "debug.h"
 #include "util.h"
 
+/* XXX: Until gobjectification ... */
+#undef FINCH_GET_DATA
+#undef FINCH_SET_DATA
+#define FINCH_GET_DATA(obj)  purple_request_field_get_ui_data(obj)
+#define FINCH_SET_DATA(obj, data)  purple_request_field_set_ui_data(obj, data)
+
 typedef struct
 {
 	void *user_data;
@@ -393,11 +399,11 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 }
 
 static void
-update_selected_account(GntEntry *screenname, const char *start, const char *end,
+update_selected_account(GntEntry *username, const char *start, const char *end,
 		GntComboBox *accountlist)
 {
 	GList *accounts = gnt_tree_get_rows(GNT_TREE(accountlist->dropdown));
-	const char *name = gnt_entry_get_text(screenname);
+	const char *name = gnt_entry_get_text(username);
 	while (accounts) {
 		if (purple_find_buddy(accounts->data, name)) {
 			gnt_combo_box_set_selected(accountlist, accounts->data);
@@ -419,7 +425,7 @@ create_boolean_field(PurpleRequestField *field)
 }
 
 static GntWidget*
-create_string_field(PurpleRequestField *field, GntWidget **screenname)
+create_string_field(PurpleRequestField *field, GntWidget **username)
 {
 	const char *hint = purple_request_field_get_type_hint(field);
 	GntWidget *entry = gnt_entry_new(
@@ -435,8 +441,8 @@ create_string_field(PurpleRequestField *field, GntWidget **screenname)
 			gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
 		}
 		gnt_entry_set_always_suggest(GNT_ENTRY(entry), TRUE);
-		if (screenname)
-			*screenname = entry;
+		if (username)
+			*username = entry;
 	} else if (hint && !strcmp(hint, "group")) {
 		PurpleBlistNode *node;
 		for (node = purple_blist_get_root(); node;
@@ -569,7 +575,7 @@ finch_request_fields(const char *title, const char *primary,
 {
 	GntWidget *window, *box;
 	GList *grlist;
-	GntWidget *screenname = NULL, *accountlist = NULL;
+	GntWidget *username = NULL, *accountlist = NULL;
 
 	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_FIELDS);
 
@@ -617,7 +623,7 @@ finch_request_fields(const char *title, const char *primary,
 			}
 			else if (type == PURPLE_REQUEST_FIELD_STRING)
 			{
-				FINCH_SET_DATA(field, create_string_field(field, &screenname));
+				FINCH_SET_DATA(field, create_string_field(field, &username));
 			}
 			else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 			{
@@ -633,7 +639,8 @@ finch_request_fields(const char *title, const char *primary,
 			}
 			else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 			{
-				accountlist = FINCH_SET_DATA(field, create_account_field(field));
+				accountlist = create_account_field(field);
+				FINCH_SET_DATA(field, accountlist);
 			}
 			else
 			{
@@ -655,8 +662,8 @@ finch_request_fields(const char *title, const char *primary,
 	setup_default_callback(window, cancel_cb, userdata);
 	gnt_widget_show(window);
 
-	if (screenname && accountlist) {
-		g_signal_connect(screenname, "completion", G_CALLBACK(update_selected_account), accountlist);
+	if (username && accountlist) {
+		g_signal_connect(username, "completion", G_CALLBACK(update_selected_account), accountlist);
 	}
 
 	g_object_set_data(G_OBJECT(window), "fields", allfields);

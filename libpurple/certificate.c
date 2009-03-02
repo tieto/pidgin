@@ -51,7 +51,7 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 {
 	PurpleCertificateVerificationRequest *vrq;
 	PurpleCertificateScheme *scheme;
-	
+
 	g_return_if_fail(subject_name != NULL);
 	/* If you don't have a cert to check, why are you requesting that it
 	   be verified? */
@@ -97,10 +97,10 @@ purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 				  "Failed to verify certificate for %s\n",
 				  vrq->subject_name);
 	}
-		
-		
-		
-	
+
+
+
+
 	/* Pass the results on to the request's callback */
 	(vrq->cb)(st, vrq->cb_data);
 
@@ -154,7 +154,7 @@ void
 purple_certificate_destroy (PurpleCertificate *crt)
 {
 	PurpleCertificateScheme *scheme;
-	
+
 	if (NULL == crt) return;
 
 	scheme = crt->scheme;
@@ -206,7 +206,7 @@ purple_certificate_check_signature_chain(GList *chain)
 			  "Checking signature chain for uid=%s\n",
 			  uid);
 	g_free(uid);
-	
+
 	/* If this is a single-certificate chain, say that it is valid */
 	if (chain->next == NULL) {
 		purple_debug_info("certificate",
@@ -218,9 +218,9 @@ purple_certificate_check_signature_chain(GList *chain)
 	crt = (PurpleCertificate *)(chain->data);
 	/* And start with the second certificate in the chain */
 	for ( cur = chain->next; cur; cur = cur->next ) {
-		
+
 		issuer = (PurpleCertificate *)(cur->data);
-		
+
 		/* Check the signature for this link */
 		if (! purple_certificate_signed_by(crt, issuer) ) {
 			uid = purple_certificate_get_unique_id(issuer);
@@ -228,7 +228,7 @@ purple_certificate_check_signature_chain(GList *chain)
 					  "...Bad or missing signature by %s\nChain is INVALID\n",
 					  uid);
 			g_free(uid);
-		
+
 			return FALSE;
 		}
 
@@ -237,7 +237,7 @@ purple_certificate_check_signature_chain(GList *chain)
 				  "...Good signature by %s\n",
 				  uid);
 		g_free(uid);
-		
+
 		/* The issuer is now the next crt whose signature is to be
 		   checked */
 		crt = issuer;
@@ -283,7 +283,7 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 	g_return_val_if_fail(crt->scheme, NULL);
 
 	scheme = crt->scheme;
-	
+
 	g_return_val_if_fail(scheme->get_fingerprint_sha1, NULL);
 
 	fpr = (scheme->get_fingerprint_sha1)(crt);
@@ -354,7 +354,7 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
 	g_return_val_if_fail(crt, FALSE);
 
 	scheme = crt->scheme;
-	
+
 	g_return_val_if_fail(scheme, FALSE);
 
 	/* If both provided references are NULL, what are you doing calling
@@ -371,7 +371,7 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
 	gchar *path;
 	gchar *esc_scheme_name, *esc_name, *esc_id;
-	
+
 	g_return_val_if_fail(pool, NULL);
 	g_return_val_if_fail(pool->scheme_name, NULL);
 	g_return_val_if_fail(pool->name, NULL);
@@ -380,7 +380,7 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 	esc_scheme_name = pool ? g_strdup(purple_escape_filename(pool->scheme_name)) : NULL;
 	esc_name = pool ? g_strdup(purple_escape_filename(pool->name)) : NULL;
 	esc_id = id ? g_strdup(purple_escape_filename(id)) : NULL;
-	
+
 	path = g_build_filename(purple_user_dir(),
 				"certificates", /* TODO: constantize this? */
 				esc_scheme_name,
@@ -404,7 +404,7 @@ purple_certificate_pool_usable(PurpleCertificatePool *pool)
 	if (purple_certificate_find_scheme(pool->scheme_name) == NULL) {
 		return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -441,7 +441,7 @@ gboolean
 purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt)
 {
 	gboolean ret = FALSE;
-	
+
 	g_return_val_if_fail(pool, FALSE);
 	g_return_val_if_fail(id, FALSE);
 	g_return_val_if_fail(pool->put_cert, FALSE);
@@ -461,13 +461,13 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 	}
 
 	return ret;
-}	
+}
 
 gboolean
 purple_certificate_pool_delete(PurpleCertificatePool *pool, const gchar *id)
 {
 	gboolean ret = FALSE;
-	
+
 	g_return_val_if_fail(pool, FALSE);
 	g_return_val_if_fail(id, FALSE);
 	g_return_val_if_fail(pool->delete_cert, FALSE);
@@ -496,7 +496,7 @@ void
 purple_certificate_pool_destroy_idlist(GList *idlist)
 {
 	GList *l;
-	
+
 	/* Iterate through and free them strings */
 	for ( l = idlist; l; l = l->next ) {
 		g_free(l->data);
@@ -520,7 +520,7 @@ x509_singleuse_verify_cb (PurpleCertificateVerificationRequest *vrq, gint id)
 			  vrq->subject_name, id);
 
 	/* Signal what happened back to the caller */
-	if (1 == id) {		
+	if (1 == id) {
 		/* Accepted! */
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_VALID);
@@ -557,11 +557,11 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
 	}
-	
+
 	/* Make messages */
 	primary = g_strdup_printf(_("%s has presented the following certificate for just-this-once use:"), vrq->subject_name);
 	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
-	
+
 	/* Make a semi-pretty display */
 	purple_request_accept_cancel(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
@@ -575,7 +575,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		vrq,
 		x509_singleuse_verify_cb,
 		x509_singleuse_verify_cb );
-	
+
 	/* Cleanup */
 	g_free(primary);
 	g_free(secondary);
@@ -644,13 +644,13 @@ x509_ca_quiet_put_cert(PurpleCertificate *crt)
 
 	/* lazy_init calls this function, so calling lazy_init here is a
 	   Bad Thing */
-	
+
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(crt->scheme, FALSE);
 	/* Make sure that this is some kind of X.509 certificate */
 	/* TODO: Perhaps just check crt->scheme->name instead? */
 	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_ca.scheme_name), FALSE);
-	
+
 	el = g_new0(x509_ca_element, 1);
 	el->dn = purple_certificate_get_unique_id(crt);
 	el->crt = purple_certificate_copy(crt);
@@ -675,7 +675,7 @@ x509_ca_lazy_init(void)
 	const gchar *entry;
 	GPatternSpec *pempat;
 	GList *iter = NULL;
-	
+
 	if (x509_ca_initialized) return TRUE;
 
 	/* Check that X.509 is registered */
@@ -791,7 +791,7 @@ x509_ca_locate_cert(GList *lst, const gchar *dn)
 
 	for (cur = lst; cur; cur = cur->next) {
 		x509_ca_element *el = cur->data;
-		if (el->dn && !strcmp(dn, el->dn)) {
+		if (purple_strequal(dn, el->dn)) {
 			return el;
 		}
 	}
@@ -832,7 +832,7 @@ x509_ca_get_cert(const gchar *id)
 	} else {
 		crt = NULL;
 	}
-	
+
 	return crt;
 }
 
@@ -840,7 +840,7 @@ static gboolean
 x509_ca_put_cert(const gchar *id, PurpleCertificate *crt)
 {
 	gboolean ret = FALSE;
-	
+
 	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 
 	/* TODO: This is a quick way of doing this. At some point the change
@@ -854,7 +854,7 @@ static gboolean
 x509_ca_delete_cert(const gchar *id)
 {
 	x509_ca_element *el;
-	
+
 	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(id, FALSE);
 
@@ -870,7 +870,7 @@ x509_ca_delete_cert(const gchar *id)
 	/* Unlink it from the memory cache and destroy it */
 	x509_ca_certs = g_list_remove(x509_ca_certs, el);
 	x509_ca_element_free(el);
-	
+
 	return TRUE;
 }
 
@@ -878,7 +878,7 @@ static GList *
 x509_ca_get_idlist(void)
 {
 	GList *l, *idlist;
-	
+
 	g_return_val_if_fail(x509_ca_lazy_init(), NULL);
 
 	idlist = NULL;
@@ -886,7 +886,7 @@ x509_ca_get_idlist(void)
 		x509_ca_element *el = l->data;
 		idlist = g_list_prepend(idlist, g_strdup(el->dn));
 	}
-	
+
 	return idlist;
 }
 
@@ -921,7 +921,7 @@ x509_tls_peers_init(void)
 {
 	gchar *poolpath;
 	int ret;
-	
+
 	/* Set up key cache here if it isn't already done */
 	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
 	ret = purple_build_dir(poolpath, 0700); /* Make it this user only */
@@ -937,13 +937,13 @@ x509_tls_peers_cert_in_pool(const gchar *id)
 {
 	gchar *keypath;
 	gboolean ret = FALSE;
-	
+
 	g_return_val_if_fail(id, FALSE);
 
 	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
 
 	ret = g_file_test(keypath, G_FILE_TEST_IS_REGULAR);
-	
+
 	g_free(keypath);
 	return ret;
 }
@@ -954,14 +954,14 @@ x509_tls_peers_get_cert(const gchar *id)
 	PurpleCertificateScheme *x509;
 	PurpleCertificate *crt;
 	gchar *keypath;
-	
+
 	g_return_val_if_fail(id, NULL);
 
 	/* Is it in the pool? */
 	if ( !x509_tls_peers_cert_in_pool(id) ) {
 		return NULL;
 	}
-	
+
 	/* Look up the X.509 scheme */
 	x509 = purple_certificate_find_scheme("x509");
 	g_return_val_if_fail(x509, NULL);
@@ -990,7 +990,7 @@ x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 	/* Work out the filename and export */
 	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
 	ret = purple_certificate_export(keypath, crt);
-	
+
 	g_free(keypath);
 	return ret;
 }
@@ -1012,7 +1012,7 @@ x509_tls_peers_delete_cert(const gchar *id)
 	}
 
 	/* OK, so work out the keypath and delete the thing */
-	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);	
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
 	if ( unlink(keypath) != 0 ) {
 		purple_debug_error("certificate/tls_peers",
 				   "Unlink of %s failed!\n",
@@ -1047,7 +1047,7 @@ x509_tls_peers_get_idlist(void)
 	while ( (entry = g_dir_read_name(dir)) != NULL ) {
 		/* Unescape the filename */
 		const char *unescaped = purple_unescape_filename(entry);
-		
+
 		/* Copy the entry name into our list (GLib owns the original
 		   string) */
 		idlist = g_list_prepend(idlist, g_strdup(unescaped));
@@ -1055,7 +1055,7 @@ x509_tls_peers_get_idlist(void)
 
 	/* Release the directory */
 	g_dir_close(dir);
-	
+
 	return idlist;
 }
 
@@ -1143,7 +1143,7 @@ x509_tls_cached_user_auth_cb (x509_tls_cached_ua_ctx *c, gint id)
 
 	g_return_if_fail(c);
 	g_return_if_fail(c->vrq);
-	
+
 	vrq = c->vrq;
 
 	x509_tls_cached_ua_ctx_free(c);
@@ -1155,7 +1155,7 @@ x509_tls_cached_user_auth_cb (x509_tls_cached_ua_ctx *c, gint id)
 		purple_debug_info("certificate/x509/tls_cached",
 				  "User ACCEPTED cert\nCaching first in chain for future use as %s...\n",
 				  cache_id);
-		
+
 		purple_certificate_pool_store(tls_peers, cache_id,
 					      vrq->cert_chain->data);
 
@@ -1195,7 +1195,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 	/* Make messages */
 	primary = g_strdup_printf(_("Accept certificate for %s?"),
 				  vrq->subject_name);
-		
+
 	/* Make a semi-pretty display */
 	purple_request_action(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
@@ -1211,7 +1211,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 		_("Accept"), x509_tls_cached_user_auth_accept_cb,
 		_("Reject"),  x509_tls_cached_user_auth_reject_cb,
 		_("_View Certificate..."), x509_tls_cached_show_cert);
-	
+
 	/* Cleanup */
 	g_free(primary);
 }
@@ -1225,7 +1225,7 @@ x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
 			  "Certificate for %s does not match cached. "
 			  "Auto-rejecting!\n",
 			  vrq->subject_name);
-	
+
 	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
 	return;
 }
@@ -1245,7 +1245,7 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	/* The peer's certificate should be the first in the list */
 	PurpleCertificate *peer_crt =
 		(PurpleCertificate *) vrq->cert_chain->data;
-	
+
 	PurpleCertificate *cached_crt;
 	GByteArray *peer_fpr, *cached_fpr;
 
@@ -1278,7 +1278,7 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 		/* vrq now becomes the problem of the user */
 		x509_tls_cached_unknown_peer(vrq);
 	}
-	
+
 	purple_certificate_destroy(cached_crt);
 	g_byte_array_free(peer_fpr, TRUE);
 	g_byte_array_free(cached_fpr, TRUE);
@@ -1305,7 +1305,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	   "not self-signed" */
 	if ( purple_certificate_signed_by(peer_crt, peer_crt) ) {
 		gchar *msg;
-		
+
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Certificate for %s is self-signed.\n",
 				  vrq->subject_name);
@@ -1316,13 +1316,13 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 					"is self-signed. It cannot be "
 					"automatically checked."),
 				      vrq->subject_name);
-				      
+
 		x509_tls_cached_user_auth(vrq,msg);
 
 		g_free(msg);
 		return;
 	} /* if (self signed) */
-	
+
 	/* Next, check that the certificate chain is valid */
 	if ( ! purple_certificate_check_signature_chain(chain) ) {
 		/* TODO: Tell the user where the chain broke? */
@@ -1390,7 +1390,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	}
 
 	g_free(ca_id);
-	
+
 	/* Check the signature */
 	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
 		/* TODO: If signed_by ever returns a reason, maybe mention
@@ -1406,7 +1406,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 					  "Authority from which it claims to "
 					  "have a signature."),
 					vrq->subject_name);
-		
+
 		purple_notify_error(NULL, /* TODO: Probably wrong */
 				    _("SSL Certificate Error"),
 				    _("Invalid certificate authority"
@@ -1425,7 +1425,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 						     vrq->subject_name) ) {
 		gchar *sn = purple_certificate_get_subject_name(peer_crt);
 		gchar *msg;
-		
+
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Name mismatch: Certificate given for %s "
 				  "has a name of %s\n",
@@ -1441,7 +1441,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 					"connecting to the service you "
 					"believe you are."),
 				      vrq->subject_name, sn);
-				      
+
 		x509_tls_cached_user_auth(vrq,msg);
 
 		g_free(sn);
@@ -1465,7 +1465,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 				   "Unable to locate tls_peers certificate "
 				   "cache.\n");
 	}
-	
+
 	/* Whew! Done! */
 	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_VALID);
 }
@@ -1481,7 +1481,7 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Starting verify for %s\n",
 			  vrq->subject_name);
-	
+
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);
 
 	if (!tls_peers) {
@@ -1494,7 +1494,7 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 		x509_tls_cached_unknown_peer(vrq);
 		return;
 	}
-	
+
 	/* Check if the peer has a certificate cached already */
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Checking for cached cert...\n");
@@ -1583,7 +1583,7 @@ purple_certificate_find_scheme(const gchar *name)
 			     name);
 
 	/* TODO: Signalling and such? */
-	
+
 	return NULL;
 }
 
@@ -1611,7 +1611,7 @@ purple_certificate_register_scheme(PurpleCertificateScheme *scheme)
 	purple_debug_info("certificate",
 			  "CertificateScheme %s registered\n",
 			  scheme->name);
-	
+
 	return TRUE;
 }
 
@@ -1664,7 +1664,7 @@ purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name
 			     scheme_name, ver_name);
 
 	/* TODO: Signalling and such? */
-	
+
 	return NULL;
 }
 
@@ -1742,7 +1742,7 @@ purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name)
 			     scheme_name, pool_name);
 
 	/* TODO: Signalling and such? */
-	
+
 	return NULL;
 
 }
@@ -1830,11 +1830,11 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 	}
 
 	cert_pools = g_list_remove(cert_pools, pool);
-	
+
 	/* TODO: Signalling? */
 	purple_signal_unregister(pool, "certificate-stored");
 	purple_signal_unregister(pool, "certificate-deleted");
-		
+
 	purple_debug_info("certificate",
 			  "CertificatePool %s unregistered\n",
 			  pool->name);

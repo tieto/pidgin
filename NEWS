@@ -2,6 +2,17 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.5.5 (03/01/2009):
+	John: Well, yet another release with bug fixing and patches.  Hopefully
+	one of the fixed bugs is one that irritated you.  Also, thank Dimmuxx
+	for spending far too much time working on ICQ this release.
+
+	Elliott: Lots and lots of MSN bugfixes again (I hope they're fixed, at
+	least).  I think we finally have OCS/Yahoo!/federated buddies working
+	now.  And there should be some workarounds for some server things that
+	may or may not have been our fault (like buddies on Allow+Block) which
+	should make general usage a bit smoother.
+
 2.5.4 (01/12/2009):
 	John: Well, we fixed a few bugs for you this time around, I applied
 	a few patches, and we've dealt with what feels like a TON of tickets

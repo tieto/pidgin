@@ -34,6 +34,7 @@
 #include "ping.h"
 #include "adhoccommands.h"
 #include "data.h"
+#include "ibb.h"
 
 #ifdef _WIN32
 #include "utsname.h"
@@ -390,6 +391,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0231_NAMESPACE)) {
 		jabber_data_parse(js, packet);
+		return;
+	}
+
+	if (xmlnode_get_child_with_namespace(packet, "data", XEP_0047_NAMESPACE)
+		|| xmlnode_get_child_with_namespace(packet, "close", XEP_0047_NAMESPACE)
+		|| xmlnode_get_child_with_namespace(packet, "open", XEP_0047_NAMESPACE)) {
+		jabber_ibb_parse(js, packet);
 		return;
 	}
 

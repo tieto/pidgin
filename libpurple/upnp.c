@@ -1049,7 +1049,7 @@ static void*
 purple_upnp_get_handle(void)
 {
 	static int handle;
-	
+
 	return &handle;
 }
 

@@ -489,6 +489,7 @@ TRAY_32 = \
 		tray/32/tray-connecting.png \
 		tray/32/tray-extended-away.png \
 		tray/32/tray-invisible.png \
+		tray/32/tray-message.png \
 		tray/32/tray-new-im.png \
 		tray/32/tray-offline.png \
 		tray/32/tray-online.png
@@ -499,6 +500,7 @@ TRAY_48 = \
 		tray/48/tray-connecting.png \
 		tray/48/tray-extended-away.png \
 		tray/48/tray-invisible.png \
+		tray/48/tray-message.png \
 		tray/48/tray-new-im.png \
 		tray/48/tray-offline.png \
 		tray/48/tray-online.png
@@ -526,7 +528,6 @@ EXTRA_DIST = \
 		$(PROTOCOLS_16_SCALABLE)	\
 		$(PROTOCOLS_22_SCALABLE)	\
 		$(PROTOCOLS_48_SCALABLE)	\
-		$(TOOLBAR_11)		\
 		$(TOOLBAR_16_SCALABLE)	\
 		$(TOOLBAR_22_SCALABLE)
 
@@ -554,6 +555,7 @@ nobase_dist_pidginpixmap_DATA = \
 		$(STATUS_32_RTL) \
 		$(STATUS_48) \
 		$(STATUS_48_RTL) \
+		$(TOOLBAR_11) \
 		$(TOOLBAR_16) \
 		$(TOOLBAR_22) \
 		$(TRAY_16) \
