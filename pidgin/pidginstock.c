@@ -113,7 +113,7 @@ static const GtkStockItem stock_items[] =
 	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, NULL }
 };
 
-static struct SizedStockIcon {
+typedef struct {
   const char *name;
   const char *dir;
   const char *filename;
@@ -125,19 +125,10 @@ static struct SizedStockIcon {
   gboolean huge;
   gboolean rtl;
   const char *translucent_name;
-} const sized_stock_icons [] = {
-	{ PIDGIN_STOCK_STATUS_AVAILABLE,   "status", "available.png", 	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_AVAILABLE_I },
-	{ PIDGIN_STOCK_STATUS_AWAY, 	   "status", "away.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_AWAY_I },
-	{ PIDGIN_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_BUSY_I },
-	{ PIDGIN_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_STATUS_INVISIBLE,"status", "invisible.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, PIDGIN_STOCK_STATUS_XA_I },
-	{ PIDGIN_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, NULL },
-	{ PIDGIN_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, NULL },
-	{ PIDGIN_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, PIDGIN_STOCK_STATUS_OFFLINE_I  },
-	{ PIDGIN_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_STATUS_MESSAGE, 	"toolbar", "message-new.png",   TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	
+} SizedStockIcon;
+
+const SizedStockIcon sized_stock_icons [] = {
+
 	{ PIDGIN_STOCK_STATUS_IGNORED,	"emblems", "blocked.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_STATUS_FOUNDER,	"emblems", "founder.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_STATUS_OPERATOR,	"emblems", "operator.png",	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
@@ -206,7 +197,12 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TOOLBAR_UNBLOCK,		"toolbar", "unblock.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR,	"toolbar", "select-avatar.png",	 FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE,	"toolbar", "send-file.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_TRANSFER,	"toolbar", "transfer.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  }
+	{ PIDGIN_STOCK_TOOLBAR_TRANSFER,	"toolbar", "transfer.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+#ifdef USE_VV
+	{ PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, "toolbar", "audio-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, "toolbar", "video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL, "toolbar", "audio-video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+#endif
 };
 
 const SizedStockIcon sized_status_icons [] = {
@@ -284,13 +280,6 @@ find_file(const char *dir, const char *base)
 	ret = find_file_common(filename);
 	g_free(filename);
 	return ret;
-}
-
-static void
-add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
-	       gboolean rtl, const char *size, const char *file)
-{
-	add_sized_icon_common(iconset, sizeid, dir, rtl, size, file, FALSE);
 }
 
 /* Altered from do_colorshift in gnome-panel */
@@ -575,27 +564,6 @@ pidgin_stock_init(void)
 
 		gtk_icon_factory_add(icon_factory, sized_stock_icons[i].name, iconset);
 		gtk_icon_set_unref(iconset);
-
-		if (sized_stock_icons[i].translucent_name) {
-			iconset = gtk_icon_set_new();
-
-#define ADD_TRANS_ICON(name, size) do { \
-			if (sized_stock_icons[i].name) \
-				add_translucent_sized_icon(iconset, name, \
-						sized_stock_icons[i].dir, sized_stock_icons[i].rtl, \
-						size, sized_stock_icons[i].filename); \
-			} while (0)
-			ADD_TRANS_ICON(microscopic, "11");
-			ADD_TRANS_ICON(extra_small, "16");
-			ADD_TRANS_ICON(small, "22");
-			ADD_TRANS_ICON(medium, "32");
-			ADD_TRANS_ICON(large, "48");
-			ADD_TRANS_ICON(huge, "64");
-#undef ADD_TRANS_ICON
-
-			gtk_icon_factory_add(icon_factory, sized_stock_icons[i].translucent_name, iconset);
-			gtk_icon_set_unref(iconset);
-		}
 	}
 
 	gtk_widget_destroy(win);

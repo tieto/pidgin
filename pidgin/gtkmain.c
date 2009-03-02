@@ -499,6 +499,7 @@ int main(int argc, char *argv[])
 		{"login",        optional_argument, NULL, 'l'},
 		{"multiple",     no_argument,       NULL, 'm'},
 		{"nologin",      no_argument,       NULL, 'n'},
+		{"nocrash",		 no_argument,	    NULL, 'x'},
 		{"session",      required_argument, NULL, 's'},
 		{"version",      no_argument,       NULL, 'v'},
 		{"display",      required_argument, NULL, 'D'},
