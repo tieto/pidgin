@@ -118,7 +118,7 @@ static void handle_chat(JabberMessage *jm)
 				}
 			}
 			serv_got_typing_stopped(jm->js->gc, from);
-
+			
 		} else {
 			serv_got_typing_stopped(jm->js->gc, from);
 		}
@@ -138,7 +138,7 @@ static void handle_chat(JabberMessage *jm)
 				g_free(jbr->thread_id);
 			jbr->thread_id = g_strdup(jbr->thread_id);
 		}
-
+		
 		if (jm->js->googletalk && jm->xhtml == NULL) {
 			char *tmp = jm->body;
 			jm->body = jabber_google_format_to_html(jm->body);
@@ -289,6 +289,8 @@ static void handle_error(JabberMessage *jm)
 static void handle_buzz(JabberMessage *jm) {
 	PurpleBuddy *buddy;
 	PurpleAccount *account;
+	PurpleConversation *c;
+	char *username;
 
 	/* Delayed buzz MUST NOT be accepted */
 	if(jm->delayed)
@@ -303,8 +305,16 @@ static void handle_buzz(JabberMessage *jm) {
 	if ((buddy = purple_find_buddy(account, jm->from)) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
+	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
+	if (c == NULL)
+		c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
+
+	username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
 	/* xmpp only has 1 attention type, so index is 0 */
 	purple_prpl_got_attention(jm->js->gc, jm->from, 0);
+	purple_conversation_attention(c, jm->from, 0, PURPLE_MESSAGE_RECV, time(NULL));
+
+	g_free(username);
 }
 
 /* used internally by the functions below */
