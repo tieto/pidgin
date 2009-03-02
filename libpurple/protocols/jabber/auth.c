@@ -384,7 +384,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					}
 					/* Remove space which separated this mech from the next */
 					if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
-						g_string_erase(js->sasl_mechs, 0, 1);	
+						g_string_erase(js->sasl_mechs, 0, 1);
 					}
 					again = TRUE;
 				}
@@ -397,7 +397,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
-		
+
 		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
 		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
 
@@ -1057,13 +1057,13 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 			}
 			/* Remove space which separated this mech from the next */
 			if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
-				g_string_erase(js->sasl_mechs, 0, 1);	
-			}			
+				g_string_erase(js->sasl_mechs, 0, 1);
+			}
 		}
 		if (strlen(js->sasl_mechs->str)) {
 			/* If we have remaining mechs to try, do so */
 			sasl_dispose(&js->sasl);
-			
+
 			jabber_auth_start_cyrus(js);
 			return;
 		}

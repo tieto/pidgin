@@ -400,7 +400,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		jabber_ibb_parse(js, packet);
 		return;
 	}
-	
+
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 	if(!strcmp(type, "set") || !strcmp(type, "get")) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);

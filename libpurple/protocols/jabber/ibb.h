@@ -3,17 +3,17 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
- 
+
 #ifndef _PURPLE_JABBER_IBB_H_
 #define _PURPLE_JABBER_IBB_H_
 
@@ -24,7 +24,7 @@
 
 typedef struct _JabberIBBSession JabberIBBSession;
 
-typedef void 
+typedef void
 (JabberIBBDataCallback)(JabberIBBSession *, const gpointer data, gsize size);
 
 typedef void (JabberIBBOpenedCallback)(JabberIBBSession *);
@@ -49,13 +49,13 @@ struct _JabberIBBSession {
 	guint16 send_seq;
 	guint16 recv_seq;
 	gsize block_size;
-	
+
 	/* session state */
 	JabberIBBSessionState state;
-	
+
 	/* user data (f.ex. a handle to a PurpleXfer) */
 	gpointer user_data;
-	
+
 	/* callbacks */
 	JabberIBBOpenedCallback *opened_cb;
 	JabberIBBSentCallback *data_sent_cb;
@@ -63,7 +63,7 @@ struct _JabberIBBSession {
 	/* callback for receiving data */
 	JabberIBBDataCallback *data_received_cb;
 	JabberIBBErrorCallback *error_cb;
-	
+
 	/* store the last sent IQ (to permit cancel of callback) */
 	gchar *last_iq_id;
 };

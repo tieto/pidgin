@@ -105,7 +105,7 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		if (pool) {
 			b = pool->data;
 			pool = g_list_delete_link(pool, pool);
-		} else {			
+		} else {
 			b = purple_buddy_new(js->gc->account, jid, alias);
 		}
 
@@ -315,7 +315,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	if(!grps)
 		g_slist_free(groups);
-	
+
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
 		jabber_google_roster_outgoing(js, query, item);
 		xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
