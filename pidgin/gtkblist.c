@@ -3996,7 +3996,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	} else if (!purple_presence_is_online(presence)) {
 		if (theme)
 			pair = pidgin_blist_theme_get_offline_text_info(theme);
-		name_color = (pair != NULL && pair->color != NULL) ? pair->color : "black";
+		name_color = (pair != NULL && pair->color != NULL) ? pair->color : NULL;
 		name_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
 		if (theme)
@@ -4007,7 +4007,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	} else if (purple_presence_is_available(presence)) {
 		if (theme)
 			pair = pidgin_blist_theme_get_online_text_info(theme);
-		name_color = (pair != NULL && pair->color != NULL) ? pair->color : "black";
+		name_color = (pair != NULL && pair->color != NULL) ? pair->color : NULL;
 		name_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
 		if (theme)
@@ -4018,7 +4018,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	} else {
 		if (theme)
 			pair = pidgin_blist_theme_get_away_text_info(theme);
-		name_color = (pair != NULL && pair->color != NULL) ? pair->color : "black";
+		name_color = (pair != NULL && pair->color != NULL) ? pair->color : NULL;
 		name_font = (pair != NULL && pair->font != NULL) ? pair->font : "";
 
 		if (theme)
@@ -4028,23 +4028,49 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	}
 
 	if (aliased && selected) {
-		name_color = "black";
-		status_color = "black";
+		if (theme) {
+			name_color = "black";
+			status_color = "black";
+		} else {
+			name_color = NULL;
+			status_color = NULL;
+		}
 	}
 
 	/* Put it all together */
 	if (aliased && biglist && (statustext || idletime)) {
 		/* using <span size='smaller'> breaks the status, so it must be seperated into <small><span>*/
-		text = g_strdup_printf("<span font_desc='%s' foreground='%s'>%s</span>\n"
-				 	"<small><span font_desc='%s' foreground='%s'>%s%s%s</span></small>",
-					name_font, name_color, nametext, status_font, status_color,
-					idletime != NULL ? idletime : "",
-				        (idletime != NULL && statustext != NULL) ? " - " : "",
-				        statustext != NULL ? statustext : "");
-
-	} else
-		text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>", name_font, name_color, nametext);
-
+		if (name_color) {
+			text = g_strdup_printf("<span font_desc='%s' foreground='%s'>%s</span>\n"
+				 		"<small><span font_desc='%s' foreground='%s'>%s%s%s</span></small>",
+						name_font, name_color, nametext, status_font, status_color,
+						idletime != NULL ? idletime : "",
+				    		(idletime != NULL && statustext != NULL) ? " - " : "",
+				    		statustext != NULL ? statustext : "");
+		} else if (status_color) {
+			text = g_strdup_printf("<span font_desc='%s'>%s</span>\n"
+				 		"<small><span font_desc='%s' foreground='%s'>%s%s%s</span></small>",
+						name_font, nametext, status_font, status_color,
+						idletime != NULL ? idletime : "",
+				    		(idletime != NULL && statustext != NULL) ? " - " : "",
+				    		statustext != NULL ? statustext : "");
+		} else {
+			text = g_strdup_printf("<span font_desc='%s'>%s</span>\n"
+				 		"<small><span font_desc='%s'>%s%s%s</span></small>",
+						name_font, nametext, status_font,
+						idletime != NULL ? idletime : "",
+				    		(idletime != NULL && statustext != NULL) ? " - " : "",
+				    		statustext != NULL ? statustext : "");
+		}
+	} else {
+		if (name_color) {
+			text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>", 
+				name_font, name_color, nametext);
+		} else {
+			text = g_strdup_printf("<span font_desc='%s'>%s</span>", name_font,
+				nametext);
+		}
+	}
 	g_free(nametext);
 	g_free(statustext);
 	g_free(idletime);
@@ -6159,12 +6185,17 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 		pair = pidgin_blist_theme_get_collapsed_text_info(theme);
 
 
-	text_color = (selected || pair == NULL || pair->color == NULL) ? "black" : pair->color;
+	text_color = (selected || pair == NULL || pair->color == NULL) ? NULL : pair->color;
 	text_font = (pair == NULL || pair->font == NULL) ? "" : pair->font;
 
 	esc = g_markup_escape_text(group->name, -1);
-	mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s</span>",
+	if (text_color) {
+		mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s</span>",
 							text_color, text_font, esc ? esc : "", group_count);
+	} else {
+		mark = g_strdup_printf("<span font_desc='%s'><b>%s</b>%s</span>",
+							text_font, esc ? esc : "", group_count);
+	}
 
 	g_free(esc);
 	return mark;
@@ -6225,10 +6256,17 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 			if (!selected && theme != NULL && (pair = pidgin_blist_theme_get_idle_text_info(theme)) != NULL && pair->color != NULL)
 				textcolor = pair->color;
 			else
-				textcolor = "black";
+				textcolor = NULL;
 
-			idle = g_strdup_printf("<span color='%s' font_desc='%s'>%d:%02d</span>", textcolor,
-					      (pair == NULL || pair->font == NULL) ? "" : pair->font, ihrs, imin);
+			if (textcolor) {
+				idle = g_strdup_printf("<span color='%s' font_desc='%s'>%d:%02d</span>",
+					textcolor, (pair == NULL || pair->font == NULL) ? "" : pair->font, 
+					ihrs, imin);
+			} else {
+				idle = g_strdup_printf("<span font_desc='%s'>%d:%02d</span>",
+					(pair == NULL || pair->font == NULL) ? "" : pair->font, 
+					ihrs, imin);
+			}
 		}
 	}
 
@@ -6325,10 +6363,15 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 			}
 
 			font = (pair == NULL || pair->font == NULL) ? "" : pair->font;
-			fg_color = (selected || pair == NULL || pair->color == NULL) ? "black" : pair->color;
+			fg_color = (selected || pair == NULL || pair->color == NULL) ? NULL : pair->color;
 
-			tmp = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>",
+			if (fg_color) {
+				tmp = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>",
 						font, fg_color, mark);
+			} else {
+				tmp = g_strdup_printf("<span font_desc='%s'>%s</span>", font, 
+					mark);
+			}
 			g_free(mark);
 			mark = tmp;
 
@@ -6458,13 +6501,17 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		font = (pair == NULL || pair->font == NULL) ? "" : pair->font;
 		if (selected || pair == NULL || pair->color == NULL)
 			/* nick_said color is the same as gtkconv:tab-label-attention */
-			color = (nick_said ? "#006aff" : "black");
+			color = (nick_said ? "#006aff" : NULL);
 		else
 			color = pair->color;
 
-		tmp = g_strdup_printf("<span font_desc='%s' color='%s' weight='%s'>%s</span>",
-				      font, color, hidden ? "bold" : "normal", mark);
-
+		if (color) {
+			tmp = g_strdup_printf("<span font_desc='%s' color='%s' weight='%s'>%s</span>",
+				  	  font, color, hidden ? "bold" : "normal", mark);
+		} else {
+			tmp = g_strdup_printf("<span font_desc='%s' weight='%s'>%s</span>",
+				  	  font, hidden ? "bold" : "normal", mark);
+		}
 		g_free(mark);
 		mark = tmp;
 
