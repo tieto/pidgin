@@ -163,6 +163,11 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 			g_hash_table_remove(auto_reconns, account);
 
 		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+
+		/* clear the saved password if this is an authentication failure */
+		if(reason == PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)
+			purple_account_set_password(account, NULL);
+			
 	}
 
 	/* If we have any open chats, we probably want to rejoin when we get back online. */
