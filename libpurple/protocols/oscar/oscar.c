@@ -4812,6 +4812,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	}
 	else
 	{
+		gchar *linkified;
 
 		htmlaway = purple_status_get_attr_string(status, "message");
 		if ((htmlaway == NULL) || (*htmlaway == '\0'))
@@ -4835,8 +4836,9 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		}
 
 		/* Set a proper away message for icq too so that they work for old third party clients */
-
-		away = purple_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
+		linkified = purple_markup_linkify(htmlaway);
+		away = purple_prpl_oscar_convert_to_infotext(linkified, &awaylen, &away_encoding);
+		g_free(linkified);
 
 		if (awaylen > od->rights.maxawaymsglen)
 		{
