@@ -188,7 +188,7 @@ struct _PurplePluginAction {
 	/** NULL for plugin actions menu, set to the PurpleConnection for
 	    account actions menu */
 	gpointer context;
-	
+
 	gpointer user_data;
 };
 
@@ -363,7 +363,7 @@ const gchar *purple_plugin_get_id(const PurplePlugin *plugin);
  * Returns a plugin's name.
  *
  * @param plugin The plugin.
- * 
+ *
  * @return THe name of the plugin, or @c NULL.
  */
 const gchar *purple_plugin_get_name(const PurplePlugin *plugin);

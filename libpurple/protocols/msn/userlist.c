@@ -770,10 +770,11 @@ msn_userlist_save_pending_buddy(MsnUserList *userlist,
  * Actually adds a buddy once we have the response from FQY
  */
 void
-msn_userlist_add_pending_buddy(MsnUserList *userlist,
+msn_userlist_add_pending_buddy(MsnSession *session,
                                const char *who,
                                /*MsnNetwork*/ int network)
 {
+	MsnUserList *userlist = session->userlist;
 	MsnUser *user = NULL;
 	MsnUser *user2;
 	GList *l;
@@ -930,31 +931,37 @@ void
 msn_userlist_load(MsnSession *session)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleConnection *gc = purple_account_get_connection(session->account);
+	PurpleAccount *account = session->account;
+	PurpleConnection *gc = purple_account_get_connection(account);
 	GSList *l;
 	MsnUser * user;
 
 	g_return_if_fail(gc != NULL);
 
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next)
+	for (gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode))
 	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next)
+		for (cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode))
 		{
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next)
+			for (bnode = purple_blist_node_get_first_child(cnode);
+					bnode;
+					bnode = purple_blist_node_get_sibling_next(bnode))
 			{
 				PurpleBuddy *b;
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *)bnode;
-				if (b->account == gc->account)
+				if (purple_buddy_get_account(b) == account)
 				{
 					user = msn_userlist_find_add_user(session->userlist,
-						b->name,NULL);
-					b->proto_data = user;
+						purple_buddy_get_name(b), NULL);
+					purple_buddy_set_protocol_data(b, user);
 					msn_user_set_op(user, MSN_LIST_FL_OP);
 				}
 			}

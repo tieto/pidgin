@@ -383,7 +383,7 @@ msg_resend_cb(gpointer data)
 {
 	MsnSwitchBoard *swboard = data;
 
-	purple_debug_info("msn", "unqueuing unsent message to %s", swboard->im_user);
+	purple_debug_info("msn", "unqueuing unsent message to %s\n", swboard->im_user);
 
 	msn_switchboard_request(swboard);
 	msn_switchboard_request_add_user(swboard, swboard->im_user);
@@ -448,7 +448,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 				body_enc = g_markup_escape_text(body_str, -1);
 				g_free(body_str);
 
-				purple_debug_info("msn", "queuing unsent message to %s: %s",
+				purple_debug_info("msn", "queuing unsent message to %s: %s\n",
 					swboard->im_user, body_enc);
 				g_free(body_enc);
 				msn_send_im_message(session, msg);

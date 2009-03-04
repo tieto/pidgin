@@ -178,7 +178,7 @@ static enum
 {
   REQUIRE_ORDER, PERMUTE, RETURN_IN_ORDER
 } ordering;
-
+
 #ifdef	__GNU_LIBRARY__
 /* We want to avoid inclusion of string.h with non-GNU libraries
    because there are many ways it can cause trouble.
@@ -219,7 +219,7 @@ my_bcopy (from, to, size)
     to[i] = from[i];
 }
 #endif				/* GNU C library.  */
-
+
 /* Handle permutation of arguments.  */
 
 /* Describe the part of ARGV that contains non-options that have
@@ -259,7 +259,7 @@ exchange (argv)
   first_nonopt += (optind - last_nonopt);
   last_nonopt = optind;
 }
-
+
 /* Scan elements of ARGV (whose length is ARGC) for option characters
    given in OPTSTRING.
 
@@ -663,7 +663,7 @@ getopt (argc, argv, optstring)
 }
 
 #endif	/* _LIBC or not __GNU_LIBRARY__.  */
-
+
 #ifdef TEST
 
 /* Compile with -DTEST to make an executable for use in testing

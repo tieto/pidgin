@@ -709,6 +709,8 @@ Section Uninstall
     Push "ymsgr"
     Call un.UnregisterURIHandler
 
+    Delete "$INSTDIR\ca-certs\America_Online_Root_Certification_Authority_1.pem"
+    Delete "$INSTDIR\ca-certs\AOL_Member_CA.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Root.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"

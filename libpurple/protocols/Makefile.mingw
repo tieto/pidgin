@@ -2,7 +2,7 @@
 #
 # Author: hermanator12002@yahoo.com
 # Date 9/11/02
-# Description: Protocols Makefile for win32 (mingw) port of LibPurple
+# Description: Protocols Makefile for win32 (mingw) port of libpurple
 #
 
 PIDGIN_TREE_TOP := ../..

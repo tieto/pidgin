@@ -31,7 +31,7 @@
 /**
  * Subtype 0x0002 - Submit a User Search Request
  *
- * Search for an AIM screen name based on their email address.
+ * Search for an AIM buddy based on their email address.
  *
  * @param od The oscar session.
  * @param region Should be "us-ascii" unless you know what you're doing.
@@ -70,7 +70,7 @@ int aim_odir_email(OscarData *od, const char *region, const char *email)
 /**
  * Subtype 0x0002 - Submit a User Search Request
  *
- * Search for an AIM screen name based on various info
+ * Search for an AIM buddy based on various info
  * about the person.
  *
  * @param od The oscar session.
@@ -202,7 +202,7 @@ static int parseresults(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 		new->country = aim_tlv_getstr(tlvlist, 0x0006, 1);
 		new->state = aim_tlv_getstr(tlvlist, 0x0007, 1);
 		new->city = aim_tlv_getstr(tlvlist, 0x0008, 1);
-		new->sn = aim_tlv_getstr(tlvlist, 0x0009, 1);
+		new->bn = aim_tlv_getstr(tlvlist, 0x0009, 1);
 		new->interest = aim_tlv_getstr(tlvlist, 0x000b, 1);
 		new->nick = aim_tlv_getstr(tlvlist, 0x000c, 1);
 		new->zip = aim_tlv_getstr(tlvlist, 0x000d, 1);
@@ -228,7 +228,7 @@ static int parseresults(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 		g_free(del->country);
 		g_free(del->state);
 		g_free(del->city);
-		g_free(del->sn);
+		g_free(del->bn);
 		g_free(del->interest);
 		g_free(del->nick);
 		g_free(del->zip);

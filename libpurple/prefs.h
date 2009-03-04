@@ -67,8 +67,8 @@ extern "C" {
 #endif
 
 /**************************************************************************/
-/** @name Prefs API                                                       
-    Preferences are named according to a directory-like structure.        
+/** @name Prefs API
+    Preferences are named according to a directory-like structure.
     Example: "/plugins/core/potato/is_from_idaho" (probably a boolean)    */
 /**************************************************************************/
 /*@{*/

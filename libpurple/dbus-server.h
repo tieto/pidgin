@@ -173,7 +173,7 @@ void *purple_dbus_get_handle(void);
 
 /**
  * Determines whether this instance owns the DBus service name
- * 
+ *
  * @since 2.1.0
  */
 gboolean purple_dbus_is_owner(void);

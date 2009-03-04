@@ -201,24 +201,6 @@ msn_directconn_write(MsnDirectConn *directconn,
 
 	g_free(buffer);
 
-#if 0
-	/* Let's write the length of the data. */
-	ret = write(directconn->fd, &len, sizeof(len));
-
-	/* Let's write the data. */
-	ret = write(directconn->fd, data, len);
-
-	char *str;
-	str = g_strdup_printf("/home/revo/msntest/w%.4d.bin", directconn->c);
-
-	FILE *tf = g_fopen(str, "w");
-	fwrite(&len, 1, sizeof(len), tf);
-	fwrite(data, 1, len, tf);
-	fclose(tf);
-
-	g_free(str);
-#endif
-
 	directconn->c++;
 
 	return ret;
@@ -341,7 +323,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		MsnMessage *msg;
 
 #ifdef DEBUG_DC
-		str = g_strdup_printf("/home/revo/msntest/r%.4d.bin", directconn->c);
+		str = g_strdup_printf("%s/msntest/r%.4d.bin", g_get_home_dir(), directconn->c);
 
 		FILE *tf = g_fopen(str, "w");
 		fwrite(body, 1, len, tf);

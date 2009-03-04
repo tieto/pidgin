@@ -376,7 +376,7 @@ static GdkFilterReturn wnd_poschanged(GtkAppBar *ab, GdkXEvent *xevent) {
 		APPBARDATA abd;
 		MSG *msg = (MSG*)xevent;
 
-		purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_poschanged\n");
+		purple_debug(PURPLE_DEBUG_MISC, "gtkappbar", "wnd_poschanged\n");
 
 		abd.hWnd = msg->hwnd;
 		abd.cbSize = sizeof(APPBARDATA);
@@ -391,7 +391,7 @@ static GdkFilterReturn wnd_poschanging(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
         WINDOWPOS *wpos = (WINDOWPOS*)msg->lParam;
 
-        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_poschanging\n");
+        purple_debug(PURPLE_DEBUG_MISC, "gtkappbar", "wnd_poschanging\n");
 
         if(ab->docked || ab->docking) {
                 wpos->x = ab->docked_rect.left;
@@ -526,7 +526,7 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 	        break;
 
         case ABN_FULLSCREENAPP:
-                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_FULLSCREENAPP: %d\n", (BOOL)msg->lParam);
+                purple_debug(PURPLE_DEBUG_MISC, "gtkappbar", "gtk_appbar_callback: ABN_FULLSCREENAPP: %d\n", (BOOL)msg->lParam);
 		if (!ab->iconized && ab->docked) {
 		if ((BOOL)msg->lParam) {
 			SetWindowPos(msg->hwnd, HWND_BOTTOM, 0, 0, 0, 0,

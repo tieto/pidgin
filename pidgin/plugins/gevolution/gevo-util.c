@@ -27,13 +27,13 @@
 
 void
 gevo_add_buddy(PurpleAccount *account, const char *group_name,
-			   const char *screenname, const char *alias)
+			   const char *buddy_name, const char *alias)
 {
 	PurpleConversation *conv = NULL;
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, screenname, account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy_name, account);
 
 	if ((group = purple_find_group(group_name)) == NULL)
 	{
@@ -41,7 +41,7 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 		purple_blist_add_group(group, NULL);
 	}
 
-	buddy = purple_buddy_new(account, screenname, alias);
+	buddy = purple_buddy_new(account, buddy_name, alias);
 	purple_blist_add_buddy(buddy, NULL, group, NULL);
 	purple_account_add_buddy(account, buddy);
 

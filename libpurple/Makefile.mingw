@@ -1,7 +1,7 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of LibPurple
+# Description: Makefile for win32 (mingw) version of libpurple
 #
 
 PIDGIN_TREE_TOP := ..
@@ -67,10 +67,15 @@ C_SRC =	\
 			signals.c \
 			smiley.c \
 			sound.c \
+			sound-theme.c \
+			sound-theme-loader.c \
 			sslconn.c \
 			status.c \
 			stringref.c \
 			stun.c \
+			theme.c \
+			theme-loader.c \
+			theme-manager.c \
 			upnp.c \
 			util.c \
 			value.c \

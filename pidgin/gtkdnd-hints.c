@@ -46,7 +46,7 @@ typedef struct
 /**
  * Info about each hint widget. See DndHintWindowId enum.
  */
-static HintWindowInfo hint_windows[] = { 
+static HintWindowInfo hint_windows[] = {
 	{ NULL, "arrow-up.xpm",   -13/2,     0 },
 	{ NULL, "arrow-down.xpm", -13/2,   -16 },
 	{ NULL, "arrow-left.xpm",     0, -13/2 },
@@ -139,7 +139,7 @@ dnd_hints_hide_all(void)
 		dnd_hints_hide(i);
 }
 
-void 
+void
 dnd_hints_hide(DndHintWindowId i)
 {
 	GtkWidget *w = hint_windows[i].widget;
@@ -148,7 +148,7 @@ dnd_hints_hide(DndHintWindowId i)
 		gtk_widget_hide(w);
 }
 
-void 
+void
 dnd_hints_show(DndHintWindowId id, gint x, gint y)
 {
 	GtkWidget *w;
@@ -165,7 +165,7 @@ dnd_hints_show(DndHintWindowId id, gint x, gint y)
 	}
 }
 
-void 
+void
 dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 						DndHintPosition horiz, DndHintPosition vert)
 {

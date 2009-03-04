@@ -94,8 +94,7 @@ aim_bos_setgroupperm(OscarData *od, FlapConnection *conn, guint32 mask)
  *  AIM_VISIBILITYCHANGE_DENYADD: Hides you from provided list of names
  *  AIM_VISIBILITYCHANGE_DENYREMOVE: Lets list see you again
  *
- * list should be a list of
- * screen names in the form "Screen Name One&ScreenNameTwo&" etc.
+ * list should be a list of "Buddy Name One&BuddyNameTwo&" etc.
  *
  * Equivelents to options in WinAIM:
  *   - Allow all users to contact me: Send an AIM_VISIBILITYCHANGE_DENYADD

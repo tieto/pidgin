@@ -51,7 +51,7 @@ struct _PidginScrollBook
 	GtkWidget *left_arrow;
 	GtkWidget *right_arrow;
 	GList *children;
-	
+
 	/* Padding for future expansion */
 	void (*_gtk_reserved1) (void);
 	void (*_gtk_reserved2) (void);

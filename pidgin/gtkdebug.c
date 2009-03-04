@@ -769,7 +769,7 @@ debug_window_new(void)
 		win->filter =
 			gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 									   GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-									   NULL, _("Filter"), _("Filter"), 
+									   NULL, _("Filter"), _("Filter"),
 									   NULL, NULL,
 									   G_CALLBACK(regex_filter_toggled_cb),
 									   win);
@@ -821,7 +821,7 @@ debug_window_new(void)
 		                           GTK_TOOLBAR_CHILD_WIDGET, gtk_label_new(_("Level ")),
 		                           NULL, _("Select the debug filter level."),
 		                           NULL, NULL, NULL, NULL);
-		
+
 		win->filterlevel = gtk_combo_box_new_text();
 		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                           GTK_TOOLBAR_CHILD_WIDGET, win->filterlevel,

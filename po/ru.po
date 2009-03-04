@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-22 16:18-0500\n"
+"POT-Creation-Date: 2009-03-01 19:00-0500\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -23,7 +23,7 @@ msgstr ""
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr "Finch"
+msgstr "Зяблик"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
@@ -740,6 +740,12 @@ msgid ""
 "background&gt;: black, red, green, blue, white, gray, darkgray, magenta, "
 "cyan, default<br><br>EXAMPLE:<br>    msgcolor send cyan default"
 msgstr ""
+"цвет сообщения &lt;класс&gt; &lt;передний план&gt; &lt;фон&gt;: Установите "
+"цвет для различных классов сообщений в окне общения.<br>    &lt;класс&gt;: "
+"получить, отправить, подсветить, действие, фиксация времени<br>    &lt; "
+"передний план/фон&gt;: чёрный, красный, зелёный, синий, белый, серый, тёмно-"
+"серый, пурпурный, голубой, по умолчанию<br><br>ПРИМЕР:<br>    цвет сообщения "
+"отправки по умолчанию голубой"
 
 msgid "Unable to open file."
 msgstr "Не удаётся открыть файл."
@@ -1197,7 +1203,7 @@ msgid "Choose Location..."
 msgstr "Выбрать местоположение..."
 
 msgid "Hit 'Enter' to find more rooms of this category."
-msgstr ""
+msgstr "Щёлкните 'Enter', чтобы найти больше комнат этой категории."
 
 msgid "Get"
 msgstr "Получить"
@@ -1509,7 +1515,7 @@ msgid "Online/Offline"
 msgstr "В сети/Не в сети"
 
 msgid "Meebo"
-msgstr ""
+msgstr "Мибо"
 
 msgid "No Grouping"
 msgstr "Нет объединения"
@@ -2145,7 +2151,7 @@ msgstr "Этот модуль не имеет ID."
 
 #, c-format
 msgid "Plugin magic mismatch %d (need %d)"
-msgstr ""
+msgstr "Магическое несоответствие модуля %d (нужно %d)"
 
 #, c-format
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
@@ -2155,7 +2161,7 @@ msgstr "Несоответствие версии ABI %d.%d.x (необходи�
 msgid ""
 "Plugin does not implement all required functions (list_icon, login and close)"
 msgstr ""
-"Модуль не реализует всех требуемых функций (list_icon, login and close)"
+"Модуль не реализует всех требуемых функций (список _иконок, вход и закрытие)"
 
 #, c-format
 msgid ""
@@ -2428,6 +2434,8 @@ msgid ""
 "This plugin hides join/part messages in large rooms, except for those users "
 "actively taking part in a conversation."
 msgstr ""
+"Этот модуль прячет сообщения подсоединения/обособления в больших комнатах, "
+"кроме тех пользователей, которые активно принимают участие в общении."
 
 #. This is used in the place of a timezone abbreviation if the
 #. * offset is way off.  The user should never really see it, but
@@ -3406,7 +3414,7 @@ msgstr "Псевдоним или канал временно недоступе
 
 #, c-format
 msgid "Wallops from %s"
-msgstr ""
+msgstr "Грохот от %s"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;действие для выполнения&gt;:  Выполнить действие."
@@ -7330,6 +7338,38 @@ msgstr "Обновить"
 msgid "Could not change buddy information."
 msgstr "Не могу изменить информацию о собеседнике."
 
+msgid "Mobile"
+msgstr "Мобильный"
+
+msgid "Note"
+msgstr "Заметки"
+
+#. callback
+#, fuzzy
+msgid "Buddy Memo"
+msgstr "Значок собеседника"
+
+msgid "Change his/her memo as you like"
+msgstr ""
+
+#, fuzzy
+msgid "_Modify"
+msgstr "Изменить"
+
+#, fuzzy
+msgid "Memo Modify"
+msgstr "Изменить"
+
+#, fuzzy
+msgid "Server says:"
+msgstr "Сервер занят"
+
+msgid "Your request was accepted."
+msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
+
 #, fuzzy, c-format
 msgid "%u requires verification"
 msgstr "%u требует подтверждения"
@@ -7671,6 +7711,10 @@ msgstr "<p><b>Влюблённые писатели патчей</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Подтверждение</b>:<br>\n"
 
+#, fuzzy
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Исходный автор</b>:<br>\n"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>И все мальчики в задней комнате...</i><br>\n"
 
@@ -7698,6 +7742,10 @@ msgstr "Обновить все QQ Quns"
 #, fuzzy
 msgid "About OpenQ"
 msgstr "Об OpenQ"
+
+#, fuzzy
+msgid "Modify Buddy Memo"
+msgstr "Изменить адрес"
 
 #. *< type
 #. *< ui_requirement
@@ -8736,9 +8784,6 @@ msgstr "Организация"
 
 msgid "Unit"
 msgstr "Отдел"
-
-msgid "Note"
-msgstr "Заметки"
 
 msgid "Join Chat"
 msgstr "Присоединиться к чату"
@@ -10234,9 +10279,6 @@ msgstr "Не беспокоить"
 msgid "Extended away"
 msgstr "Расширенный \"Отошёл\""
 
-msgid "Mobile"
-msgstr "Мобильный"
-
 msgid "Listening to music"
 msgstr "Слушает музыку"
 
@@ -10502,7 +10544,7 @@ msgid "Unable to save new account"
 msgstr "Не удаётся сохранить новую учётную запись"
 
 msgid "An account already exists with the specified criteria."
-msgstr ""
+msgstr "Учётная запись с указанными критериями уже существует."
 
 msgid "Add Account"
 msgstr "Добавить учётную запись"
@@ -11082,7 +11124,7 @@ msgid "Change Size"
 msgstr "Изменить размер"
 
 msgid "Show All"
-msgstr ""
+msgstr "Показать всё"
 
 #. Conversation menu
 msgid "/_Conversation"
@@ -13889,7 +13931,7 @@ msgstr ""
 
 #, c-format
 msgid "You can upgrade to %s %s today."
-msgstr ""
+msgstr "You can upgrade to %s %s today."
 
 msgid "New Version Available"
 msgstr "Доступна новая версия"
