@@ -312,7 +312,9 @@ pidgin_ui_init(void)
 	pidgin_docklet_init();
 	pidgin_smileys_init();
 	pidgin_utils_init();
+#ifdef USE_VV
 	pidgin_medias_init();
+#endif
 }
 
 static GHashTable *ui_info = NULL;
