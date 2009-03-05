@@ -311,3 +311,37 @@ int byte_stream_putuid(ByteStream *bs, OscarData *od)
 
 	return byte_stream_putle32(bs, atoi(purple_account_get_username(account)));
 }
+
+void byte_stream_put_bart_asset(ByteStream *bs, guint16 type, ByteStream *data)
+{
+	byte_stream_put16(bs, type);
+
+	if (data != NULL && data->len > 0) {
+		/* Flags. 0x04 means "this asset has data attached to it" */
+		byte_stream_put8(bs, 0x04); /* Flags */
+		byte_stream_put8(bs, data->len); /* Length */
+		byte_stream_rewind(data);
+		byte_stream_putbs(bs, data, data->len); /* Data */
+	} else {
+		byte_stream_put8(bs, 0x00); /* No flags */
+		byte_stream_put8(bs, 0x00); /* Length */
+		/* No data */
+	}
+}
+
+void byte_stream_put_bart_asset_str(ByteStream *bs, guint16 type, const char *datastr)
+{
+	ByteStream data;
+	size_t len = datastr != NULL ? strlen(datastr) : 0;
+
+	if (len > 0) {
+		byte_stream_new(&data, 2 + len + 2);
+		byte_stream_put16(&data, len); /* Length */
+		byte_stream_putstr(&data, datastr); /* String */
+		byte_stream_put16(&data, 0x0000); /* Unknown */
+		byte_stream_put_bart_asset(bs, type, &data);
+		byte_stream_destroy(&data);
+	} else {
+		byte_stream_put_bart_asset(bs, type, NULL);
+	}
+}

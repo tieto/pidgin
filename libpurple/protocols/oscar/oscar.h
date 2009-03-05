@@ -1594,6 +1594,18 @@ int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len);
 int byte_stream_putuid(ByteStream *bs, OscarData *od);
 int byte_stream_putcaps(ByteStream *bs, guint32 caps);
 
+/**
+ * Inserts a BART asset block into the given byte stream.  The flags
+ * and length are set appropriately based on the value of data.
+ */
+void byte_stream_put_bart_asset(ByteStream *bs, guint16 type, ByteStream *data);
+
+/**
+ * A helper function that calls byte_stream_put_bart_asset with the
+ * appropriate data ByteStream given the datastr.
+ */
+void byte_stream_put_bart_asset_str(ByteStream *bs, guint16 type, const char *datastr);
+
 /*
  * Generic SNAC structure.  Rarely if ever used.
  */

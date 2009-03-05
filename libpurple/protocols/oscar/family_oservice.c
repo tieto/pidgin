@@ -853,28 +853,15 @@ aim_srv_setextrainfo(OscarData *od,
 
 	if (setavailmsg)
 	{
-		int availmsglen, itmsurllen;
+		size_t availmsglen, itmsurllen;
 		ByteStream tmpbs;
 
 		availmsglen = (availmsg != NULL) ? strlen(availmsg) : 0;
 		itmsurllen = (itmsurl != NULL) ? strlen(itmsurl) : 0;
 
 		byte_stream_new(&tmpbs, availmsglen + 8 + itmsurllen + 8);
-		byte_stream_put16(&tmpbs, 0x0002);
-		byte_stream_put8(&tmpbs, 0x04); /* Flags */
-		byte_stream_put8(&tmpbs, availmsglen + 4);
-		byte_stream_put16(&tmpbs, availmsglen);
-		if (availmsglen > 0)
-			byte_stream_putstr(&tmpbs, availmsg);
-		byte_stream_put16(&tmpbs, 0x0000);
-
-		byte_stream_put16(&tmpbs, 0x0009);
-		byte_stream_put8(&tmpbs, 0x04); /* Flags */
-		byte_stream_put8(&tmpbs, itmsurllen + 4);
-		byte_stream_put16(&tmpbs, itmsurllen);
-		if (itmsurllen > 0)
-			byte_stream_putstr(&tmpbs, itmsurl);
-		byte_stream_put16(&tmpbs, 0x0000);
+		byte_stream_put_bart_asset_str(&tmpbs, 0x0002, availmsg);
+		byte_stream_put_bart_asset_str(&tmpbs, 0x0009, itmsurl);
 
 		aim_tlvlist_add_raw(&tlvlist, 0x001d,
 				byte_stream_curpos(&tmpbs), tmpbs.data);
