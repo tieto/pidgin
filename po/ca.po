@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-22 10:28+0100\n"
-"PO-Revision-Date: 2009-02-22 15:18+0100\n"
+"POT-Creation-Date: 2009-03-05 22:22+0100\n"
+"PO-Revision-Date: 2009-03-05 22:37+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -4468,17 +4468,24 @@ msgid "Unable to ping user %s"
 msgstr "No s'ha pogut fer ping a l'usuari %s"
 
 #, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr "No s'ha pogut botzinar perquè no es coneix res de l'usuari %s."
 
 #, c-format
-msgid "Unable to buzz, because user %s might be offline."
+msgid "Unable to buzz, because %s might be offline."
 msgstr ""
 "No s'ha pogut botzinar possiblement perquè l'usuari %s està desconnectat."
 
 #, c-format
-msgid "Unable to buzz, because the user %s does not support it."
-msgstr "No s'ha pogut botzinar perquè l'usuari %s no ho permet."
+msgid ""
+"Unable to buzz, because %s does not support it or do not wish to receive "
+"buzzes now."
+msgstr ""
+"No s'ha pogut botzinar perquè no és pot, o bé l'usuari %s no ho permet."
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "S'està botzinant a %s..."
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
@@ -4488,10 +4495,6 @@ msgstr "Botzina"
 #, c-format
 msgid "%s has buzzed you!"
 msgstr "%s us ha botzinat!"
-
-#, c-format
-msgid "Buzzing %s..."
-msgstr "S'està botzinant a %s..."
 
 msgid "config:  Configure a chat room."
 msgstr "config:  configura la sala de xat."
@@ -4645,6 +4648,19 @@ msgstr "S'ha produït un error en entrar al xat %s"
 #, c-format
 msgid "Error in chat %s"
 msgstr "S'ha produït un error en el xat %s"
+
+#, fuzzy
+msgid "An error occured on the in-band bytestream transfer\n"
+msgstr "S'ha produït un error en obrir el fitxer."
+
+msgid "Transfer was closed."
+msgstr "La transferència s'ha tancat."
+
+msgid "Failed to open the file"
+msgstr "No s'ha pogut obrir el fitxer"
+
+msgid "Failed to open in-band bytestream"
+msgstr ""
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -5794,26 +5810,25 @@ msgstr "Entreu un nom d'usuari per a comprovar-ne la disponibilitat:"
 msgid "Zap"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s has zapped you!"
-msgstr "%s us ha afegit [%s]"
+msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "Zapping %s..."
-msgstr "S'està trucant a %s"
+msgstr ""
 
 #. Whack means "to hit or strike someone with a sharp blow"
-#, fuzzy
 msgid "Whack"
 msgstr "bufetejar"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s has whacked you!"
-msgstr "%s us ha afegit [%s]"
+msgstr "%s us ha bufetejat [%s]"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Whacking %s..."
-msgstr "Bufetejant"
+msgstr "S'està bufetejant %s..."
 
 #. Torch means "to set on fire."  Don't worry, this doesn't
 #. * make a whole lot of sense in English, either.  Feel free
@@ -5897,15 +5912,15 @@ msgstr "S'està xocant-ne cinc amb %s..."
 #. * someone to perform a mischievous trick or practical joke.
 #, fuzzy
 msgid "Punk"
-msgstr "Ping"
+msgstr "Enredar"
 
 #, fuzzy, c-format
 msgid "%s has punk'd you!"
-msgstr "%s s'ha connectat."
+msgstr "%s us ha enredat!"
 
 #, fuzzy, c-format
 msgid "Punking %s..."
-msgstr "Ping"
+msgstr "S'està enredant %s..."
 
 #. Raspberry is a slang term for the vibrating sound made
 #. * when you stick your tongue out of your mouth with your
@@ -6513,7 +6528,7 @@ msgstr ""
 "començar amb una lletra i contenir només lletres, nombres o espais, o només "
 "nombres."
 
-#. Unregistered screen name
+#. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "El nom d'usuari no és vàlid"
@@ -6530,7 +6545,7 @@ msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 "El servei de missatges instantanis d'AOL no està disponible temporalment."
 
-#. screen name connecting too frequently
+#. username connecting too frequently
 #. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6717,7 +6732,7 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Heu perdut %hu missatge de %s per motius desconeguts."
 msgstr[1] "Heu perdut %hu missatges de %s per motius desconeguts."
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "No s'ha pogut enviar el missatge: %s"
@@ -7308,6 +7323,35 @@ msgstr "Actualitza"
 msgid "Could not change buddy information."
 msgstr "No s'ha pogut canviar la informació l'amic."
 
+msgid "Mobile"
+msgstr "Mòbil"
+
+msgid "Note"
+msgstr "Nota"
+
+# FIXME: "memo", el qq té una terminologia molt peculiar
+#. callback
+msgid "Buddy Memo"
+msgstr "Memo de l'amic"
+
+msgid "Change his/her memo as you like"
+msgstr "Canvieu-ne el memo"
+
+msgid "_Modify"
+msgstr "_Modifica"
+
+msgid "Memo Modify"
+msgstr "Modifica el memo"
+
+msgid "Server says:"
+msgstr "El servidor diu:"
+
+msgid "Your request was accepted."
+msgstr "S'ha acceptat la vostra sol·licitud."
+
+msgid "Your request was rejected."
+msgstr "S'ha rebutjat la vostra sol·licitud."
+
 #, c-format
 msgid "%u requires verification"
 msgstr "Cal verificació per a %u"
@@ -7620,6 +7664,9 @@ msgstr "<p><b>Encantadors apedaçadors (de codi)</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Reconeixement</b>:<br>\n"
 
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Comprovadors del codi</b>:<br>\n"
+
 # FIXME: ush... traducció lliure... 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>I tothom que ho ha fet possible...<i><br>\n"
@@ -7645,6 +7692,9 @@ msgstr "Actualitza tots els Quns QQ"
 
 msgid "About OpenQ"
 msgstr "Quant a l'OpenQ"
+
+msgid "Modify Buddy Memo"
+msgstr "Modifica el memo de l'amic"
 
 #. *< type
 #. *< ui_requirement
@@ -8661,9 +8711,6 @@ msgstr "Organització"
 
 msgid "Unit"
 msgstr "Unitat"
-
-msgid "Note"
-msgstr "Nota"
 
 msgid "Join Chat"
 msgstr "Entra a un xat"
@@ -10166,9 +10213,6 @@ msgstr "No molesteu"
 msgid "Extended away"
 msgstr "Absent durant una bona estona"
 
-msgid "Mobile"
-msgstr "Mòbil"
-
 # És un estat, com "fora de línia", etc. (josep)
 msgid "Listening to music"
 msgstr "Escoltant música"
@@ -10210,18 +10254,6 @@ msgstr "+++ %s ja no està inactiu"
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "S'ha produït un error en llegir %s"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
-"S'ha produït un error en llegir el vostre %s. No s'han carregat, i s'ha "
-"canviat el nom del fitxer per %s~."
 
 msgid "Calculating..."
 msgstr "S'està calculant..."
@@ -10331,6 +10363,18 @@ msgstr "S'ha refusat la connexió."
 #, c-format
 msgid "Address already in use."
 msgstr "Aquesta adreça ja s'està fent servir"
+
+#, c-format
+msgid "Error Reading %s"
+msgstr "S'ha produït un error en llegir %s"
+
+#, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+"S'ha produït un error en llegir el vostre %s. No s'ha carregat el fitxer, i "
+"s'ha canviat el nom per %s~."
 
 msgid "Internet Messenger"
 msgstr "Missatger d'Internet"
@@ -10657,6 +10701,9 @@ msgstr "/Eines/_Avís per a amics"
 msgid "/Tools/_Certificates"
 msgstr "/Eines/C_ertificats"
 
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Eines/Em_oticones personalitzades"
+
 msgid "/Tools/Plu_gins"
 msgstr "/Eines/_Connectors"
 
@@ -10665,9 +10712,6 @@ msgstr "/Eines/Pre_ferències"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Eines/_Privadesa"
-
-msgid "/Tools/Smile_y"
-msgstr "/Eines/Em_oticona"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Eines/_Transferència de fitxers"
@@ -10786,8 +10830,8 @@ msgstr "Manualment"
 msgid "By status"
 msgstr "Per estat"
 
-msgid "By log size"
-msgstr "Per la mida del registre"
+msgid "By recent log activity"
+msgstr "Per activitat recent en el registre"
 
 #, c-format
 msgid "%s disconnected"
@@ -11902,15 +11946,6 @@ msgstr ""
 msgid "Enable typing notification"
 msgstr "Habilita les notificacions de que s'està escrivint"
 
-msgid "_Copy Email Address"
-msgstr "_Copia l'adreça de correu"
-
-msgid "_Open Link in Browser"
-msgstr "_Obre l'enllaç en el navegador"
-
-msgid "_Copy Link Location"
-msgstr "_Copia la ubicació de l'enllaç"
-
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -12169,6 +12204,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12183,8 +12219,11 @@ msgstr ""
 "\n"
 "  -c, --config=DIR    utilitza DIR per als fitxers de configuració\n"
 "  -d, --debug         mostra missatges de depuració a la sortida estàndard\n"
+"  -f, --force-online  força que s'estigui en línia, independent de l'estat "
+"de\n"
+"                      la xarxa\n"
 "  -h, --help          mostra aquesta ajuda i surt\n"
-"  -m, --multiple      permet que hi hagi més d'una instància\n"
+"  -m, --multiple      no controla que només hi hagi una instància\n"
 "  -n, --nologin       no entra automàticament\n"
 "  -l, --login[=NOM]   habilita el compte especificat (l'argument opcional "
 "NOM\n"
@@ -12201,6 +12240,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12214,8 +12254,11 @@ msgstr ""
 "\n"
 "  -c, --config=DIR    utilitza DIR per als fitxers de configuració\n"
 "  -d, --debug         mostra missatges de depuració a la sortida estàndard\n"
+"  -f, --force-online  força que s'estigui en línia, independent de l'estat "
+"de\n"
+"                      la xarxa\n"
 "  -h, --help          mostra aquesta ajuda i surt\n"
-"  -m, --multiple      permet que hi hagi més d'una instància\n"
+"  -m, --multiple      no controla que només hi hagi una instància\n"
 "  -n, --nologin       no entra automàticament\n"
 "  -l, --login[=NOM]   habilita el compte especificat (l'argument opcional "
 "NOM\n"
@@ -12346,6 +12389,9 @@ msgstr "<b>Detalls del connector</b>"
 msgid "Select a file"
 msgstr "Seleccioneu un fitxer"
 
+msgid "Modify Buddy Pounce"
+msgstr "Modifica l'avís per a l'amic"
+
 # FIXME
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -12443,6 +12489,11 @@ msgstr "Dreceres de teclat"
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Tanca les converses amb la tecla d'_escapament"
 
+#. Buddy List Themes
+msgid "Buddy List Theme"
+msgstr "Tema de la llista d'amics"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "Icona d'estat"
 
@@ -12928,6 +12979,12 @@ msgstr "Desa i _fes servir"
 msgid "Status for %s"
 msgstr "Estat per a %s"
 
+#.
+#. * TODO: We should enable/disable the add button based on
+#. *       whether the user has entered all required data.  That
+#. *       would eliminate the need for this check and provide a
+#. *       better user experience.
+#.
 msgid "Custom Smiley"
 msgstr "Emoticona personalitzada"
 
@@ -12937,15 +12994,14 @@ msgstr "Calen més dades"
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr "Especifiqueu una drecera associada a l'emoticona."
 
+#, c-format
+msgid ""
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
+msgstr ""
+"Ja hi ha una emoticona personalitzada per a «%s». Indiqueu-ne una de diferent."
+
 msgid "Duplicate Shortcut"
 msgstr "Drecera duplicada"
-
-msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
-msgstr ""
-"Hi ha una emoticona personalitzada per la drecera que heu seleccionat. "
-"Indiqueu-ne una de diferent."
 
 msgid "Please select an image for the smiley."
 msgstr "Seleccioneu una imatge per a l'emoticona."
@@ -12956,15 +13012,18 @@ msgstr "Edita l'emoticona"
 msgid "Add Smiley"
 msgstr "Afegeix una emoticona"
 
-msgid "Smiley _Image"
-msgstr "_Imatge de l'emoticona"
+msgid "_Image:"
+msgstr "_Imatge:"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr "_Dreceres de l'emoticona"
+#. Shortcut text
+msgid "S_hortcut text:"
+msgstr "_Drecera:"
 
 msgid "Smiley"
 msgstr "Emoticona"
+
+msgid "Shortcut Text"
+msgstr "Drecera"
 
 msgid "Custom Smiley Manager"
 msgstr "Gestor d'emoticones personalitzades"
@@ -13092,6 +13151,15 @@ msgid ""
 msgstr ""
 "No s'ha pogut carregar la imatge «%s»: no se'n coneix el motiu, possiblement "
 "la imatge estigui corrompuda"
+
+msgid "_Open Link"
+msgstr "_Obre l'enllaç"
+
+msgid "_Copy Link Location"
+msgstr "_Copia l'enllaç"
+
+msgid "_Copy Email Address"
+msgstr "_Copia l'adreça de correu"
 
 msgid "Save File"
 msgstr "Desa un fitxer"
@@ -14125,6 +14193,18 @@ msgstr "Envia i rep blocs XMPP en brut."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
+
+#~ msgid "By log size"
+#~ msgstr "Per la mida del registre"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "_Obre l'enllaç en el navegador"
+
+#~ msgid "Smiley _Image"
+#~ msgstr "_Imatge de l'emoticona"
+
+#~ msgid "Smiley S_hortcut"
+#~ msgstr "_Dreceres de l'emoticona"
 
 #~ msgid "Unable to retrieve MSN Address Book"
 #~ msgstr "No s'ha pogut obtenir la llibreta d'adreces MSN"
