@@ -190,7 +190,7 @@ purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
-	g_return_if_fail(purple_account_is_connected(account));
+	g_return_if_fail(purple_account_is_connected(account) || purple_account_is_connecting(account));
 
 	if ((list = purple_find_buddies(account, name)) == NULL)
 		return;

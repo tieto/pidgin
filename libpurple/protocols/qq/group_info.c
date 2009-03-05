@@ -65,7 +65,7 @@ static void set_all_offline(qq_room_data *rmd)
 }
 
 /* send packet to get info for each group member */
-gint qq_request_room_get_buddies(PurpleConnection *gc, guint32 room_id, gint update_class)
+gint qq_request_room_get_buddies(PurpleConnection *gc, guint32 room_id, guint32 update_class)
 {
 	guint8 *raw_data;
 	gint bytes, num;

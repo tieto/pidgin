@@ -383,6 +383,6 @@ init_plugin(PurplePlugin *plugin)
 {
 }
 
-PURPLE_INIT_PLUGIN(ignore, init_plugin, info)
+PURPLE_INIT_PLUGIN(grouping, init_plugin, info)
 
 

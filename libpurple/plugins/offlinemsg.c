@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"core-plugin_pack-offlinemsg"
 #define PLUGIN_NAME			N_("Offline Message Emulation")
-#define PLUGIN_STATIC_NAME	"offlinemsg"
+#define PLUGIN_STATIC_NAME	offlinemsg
 #define PLUGIN_SUMMARY		N_("Save messages sent to an offline user as pounce.")
 #define PLUGIN_DESCRIPTION	N_("Save messages sent to an offline user as pounce.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"

@@ -1,3 +1,11 @@
+pidgin (2.5.5-1) unstable; urgency=low
+
+  * New upstream version
+    - Re-initialize preferences correctly in libpurple when called from
+      third-party app (Closes: #508857)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 05 Mar 2009 08:49:31 -0500
+
 pidgin (2.5.4-2) unstable; urgency=low
 
   * Upload to unstable

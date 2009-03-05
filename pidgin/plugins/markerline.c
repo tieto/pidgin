@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"gtk-plugin_pack-markerline"
 #define PLUGIN_NAME			N_("Markerline")
-#define PLUGIN_STATIC_NAME	"Markerline"
+#define PLUGIN_STATIC_NAME	Markerline
 #define PLUGIN_SUMMARY		N_("Draw a line to indicate new messages in a conversation.")
 #define PLUGIN_DESCRIPTION	N_("Draw a line to indicate new messages in a conversation.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"

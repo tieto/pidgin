@@ -6,7 +6,7 @@
 #include "conversation.h"
 #include "version.h"
 
-/* include UI for pidgindialogs_about() */
+/* include UI for pidgin_dialogs_about() */
 #include "gtkplugin.h"
 #include "gtkdialogs.h"
 
@@ -16,7 +16,7 @@ static void
 echo_hi(PurpleConnection *gc)
 {
 	/* this doesn't do much, just lets you know who we are :) */
-	pidgindialogs_about();
+	pidgin_dialogs_about();
 }
 
 static gboolean
@@ -108,7 +108,12 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	NULL                                              /**< actions        */
+	NULL,                                             /**< actions        */
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

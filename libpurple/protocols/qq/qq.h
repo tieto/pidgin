@@ -36,6 +36,10 @@
 
 #define QQ_KEY_LENGTH       16
 
+/* steal from kazehakase :) */
+#define qq_strlen(s) ((s)!=NULL?strlen(s):0)
+#define qq_strcmp(s1,s2) ((s1)!=NULL && (s2)!=NULL?strcmp(s1,s2):0)
+
 typedef struct _qq_data qq_data;
 typedef struct _qq_buddy_data qq_buddy_data;
 typedef struct _qq_interval qq_interval;
@@ -98,6 +102,7 @@ struct _qq_buddy_data {
 	time_t signon;
 	time_t idle;
 	time_t last_update;
+	gchar** memo;
 
 	gint8  role;		/* role in group, used only in group->members list */
 };
@@ -182,6 +187,7 @@ struct _qq_data {
 
 	gboolean is_show_notice;
 	gboolean is_show_news;
+	gboolean is_show_chat;
 
 	guint16 send_im_id;		/* send IM sequence number */
 };

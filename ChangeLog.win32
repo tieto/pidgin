@@ -1,3 +1,8 @@
+version 2.5.5 (03/01/2009):
+	* Remove the "Flash window when chat messages are received" pref from
+	  the Windows Pidgin Options plugin - the Message Notification plugin
+	  does this (and much more).
+
 version 2.5.4 (01/12/2009):
 	* Fix the "Hang on Exit" issue that a number of users encountered.
 	* Updated GTK+ to 2.14.6

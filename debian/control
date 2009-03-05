@@ -40,7 +40,7 @@ Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:U
 Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.4.0-1)
 Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.4.0-1)
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
-Suggests: gnome-panel (>= 2.1) | kicker (>= 3.1) | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
+Suggests: gnome-panel (>= 2.1) | kdebase-workspace-bin | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
 Description: graphical multi-protocol instant messaging client for X
  Pidgin is a graphical, modular Instant Messaging client capable of using
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
@@ -52,7 +52,7 @@ Description: graphical multi-protocol instant messaging client for X
     - Sound support.
  .
  More extra packages are suggested to use increased functionality:
-  * gnome-panel | kicker | docker:
+  * gnome-panel | kdebase-workspace-bin | docker:
     - To use the system tray icon functionality (minimizing to an icon, having
       the icon blink when there are new messages, etc.)
   * evolution-data-server:

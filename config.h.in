@@ -103,6 +103,9 @@
 /* Define to 1 if you have the <gnutls/gnutls.h> header file. */
 #undef HAVE_GNUTLS_GNUTLS_H
 
+/* Define if your gnutls has gnutls_priority_set_direct and friends */
+#undef HAVE_GNUTLS_PRIORITY_FUNCS
+
 /* Define to 1 if you have the `inet_ntop' function. */
 #undef HAVE_INET_NTOP
 
@@ -368,10 +371,6 @@
 
 /* Define if external libzephyr should be used. */
 #undef LIBZEPHYR_EXT
-
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
-#undef LT_OBJDIR
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O

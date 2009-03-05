@@ -79,13 +79,15 @@ aim_chat_getconn(OscarData *od, const char *name)
 
 		if (conn->type != SNAC_FAMILY_CHAT)
 			continue;
-		if (!conn->internal) {
-			purple_debug_misc("oscar", "faim: chat: chat connection with no name! (fd = %d)\n", conn->fd);
+		if (!conn->internal)
+		{
+			purple_debug_misc("oscar", "%sfaim: chat: chat connection with no name! (fd = %d)\n",
+					conn->gsc ? "(ssl) " : "", conn->gsc ? conn->gsc->fd : conn->fd);
 			continue;
 		}
 
 		if (strcmp(ccp->name, name) == 0)
-			return conn;;
+			return conn;
 	}
 
 	return NULL;

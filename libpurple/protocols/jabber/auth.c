@@ -749,8 +749,8 @@ static GHashTable* parse_challenge(const char *challenge)
 
 				val_end = cur;
 				while (val_end != val_start && (*val_end == ' ' || *val_end == ',' || *val_end == '\t'
-						|| *val_end == '\r' || *val_start == '\n'
-						|| *val_end == '"'))
+						|| *val_end == '\r' || *val_end == '\n'
+						|| *val_end == '"'  || *val_end == '\0'))
 					val_end--;
 
 				if (val_start != val_end)

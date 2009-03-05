@@ -55,9 +55,8 @@ static const char *PREF_DBLIST_DOCKED = "/plugins/gtk/win32/winprefs/dblist_dock
 static const char *PREF_DBLIST_HEIGHT = "/plugins/gtk/win32/winprefs/dblist_height";
 static const char *PREF_DBLIST_SIDE = "/plugins/gtk/win32/winprefs/dblist_side";
 static const char *PREF_BLIST_ON_TOP = "/plugins/gtk/win32/winprefs/blist_on_top";
-static const char *PREF_CHAT_BLINK = "/plugins/gtk/win32/winprefs/chat_blink";
-
 /* Deprecated */
+static const char *PREF_CHAT_BLINK = "/plugins/gtk/win32/winprefs/chat_blink";
 static const char *PREF_DBLIST_ON_TOP = "/plugins/gtk/win32/winprefs/dblist_on_top";
 
 static PurplePlugin *handle = NULL;
@@ -229,17 +228,6 @@ winprefs_set_blist_ontop(const char *pref, PurplePrefType type,
 		blist_set_ontop(FALSE);
 }
 
-static gboolean
-winpidgin_conv_chat_blink(PurpleAccount *account, const char *who, char **message,
-		PurpleConversation *conv, PurpleMessageFlags flags, void *data)
-{
-	if(purple_prefs_get_bool(PREF_CHAT_BLINK))
-		winpidgin_conv_blink(conv, flags);
-
-	return FALSE;
-}
-
-
 /*
  *  EXPORTED FUNCTIONS
  */
@@ -257,10 +245,6 @@ static gboolean plugin_load(PurplePlugin *plugin) {
 	   reason, the blist is recreated, we need to set it up again. */
 	purple_signal_connect(pidgin_blist_get_handle(), "gtkblist-created",
 		plugin, PURPLE_CALLBACK(blist_create_cb), NULL);
-
-	purple_signal_connect(pidgin_conversations_get_handle(),
-		"displaying-chat-msg", plugin, PURPLE_CALLBACK(winpidgin_conv_chat_blink),
-		NULL);
 
 	purple_signal_connect((void*)purple_get_core(), "quitting", plugin,
 		PURPLE_CALLBACK(purple_quit_cb), NULL);
@@ -336,11 +320,6 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 		_("Only when docked"), BLIST_TOP_DOCKED,
 		NULL);
 
-	/* Conversations */
-	vbox = pidgin_make_frame(ret, _("Conversations"));
-	pidgin_prefs_checkbox(_("_Flash window when chat messages are received"),
-							PREF_CHAT_BLINK, vbox);
-
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -399,7 +378,6 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_bool(PREF_DBLIST_DOCKED, FALSE);
 	purple_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
 	purple_prefs_add_int(PREF_DBLIST_SIDE, 0);
-	purple_prefs_add_bool(PREF_CHAT_BLINK, FALSE);
 
 	/* Convert old preferences */
 	if(purple_prefs_exists(PREF_DBLIST_ON_TOP)) {
@@ -413,6 +391,7 @@ init_plugin(PurplePlugin *plugin)
 		purple_prefs_add_int(PREF_BLIST_ON_TOP, blist_top);
 	} else
 		purple_prefs_add_int(PREF_BLIST_ON_TOP, BLIST_TOP_NEVER);
+	purple_prefs_remove(PREF_CHAT_BLINK);
 }
 
 PURPLE_INIT_PLUGIN(winprefs, init_plugin, info)

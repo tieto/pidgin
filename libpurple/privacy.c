@@ -42,12 +42,14 @@ purple_privacy_permit_add(PurpleAccount *account, const char *who,
 	name = g_strdup(purple_normalize(account, who));
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (!purple_utf8_strcasecmp(name, (char *)l->data))
+		if (g_str_equal(name, l->data))
+			/* This buddy already exists */
 			break;
 	}
 
 	if (l != NULL)
 	{
+		/* This buddy already exists, so bail out */
 		g_free(name);
 		return FALSE;
 	}
@@ -86,11 +88,13 @@ purple_privacy_permit_remove(PurpleAccount *account, const char *who,
 	name = purple_normalize(account, who);
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (!purple_utf8_strcasecmp(name, (char *)l->data))
+		if (g_str_equal(name, l->data))
+			/* We found the buddy we were looking for */
 			break;
 	}
 
 	if (l == NULL)
+		/* We didn't find the buddy we were looking for, so bail out */
 		return FALSE;
 
 	/* We should not free l->data just yet. There can be occasions where
@@ -130,12 +134,14 @@ purple_privacy_deny_add(PurpleAccount *account, const char *who,
 	name = g_strdup(purple_normalize(account, who));
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (!purple_utf8_strcasecmp(name, purple_normalize(account, (char *)l->data)))
+		if (g_str_equal(name, l->data))
+			/* This buddy already exists */
 			break;
 	}
 
 	if (l != NULL)
 	{
+		/* This buddy already exists, so bail out */
 		g_free(name);
 		return FALSE;
 	}
@@ -173,14 +179,16 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 	normalized = purple_normalize(account, who);
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (!purple_utf8_strcasecmp(normalized, (char *)l->data))
+		if (g_str_equal(normalized, l->data))
+			/* We found the buddy we were looking for */
 			break;
 	}
 
-	buddy = purple_find_buddy(account, normalized);
-
 	if (l == NULL)
+		/* We didn't find the buddy we were looking for, so bail out */
 		return FALSE;
+
+	buddy = purple_find_buddy(account, normalized);
 
 	name = l->data;
 	account->deny = g_slist_delete_link(account->deny, l);
@@ -349,7 +357,7 @@ purple_privacy_check(PurpleAccount *account, const char *who)
 		case PURPLE_PRIVACY_ALLOW_USERS:
 			who = purple_normalize(account, who);
 			for (list=account->permit; list!=NULL; list=list->next) {
-				if (!purple_utf8_strcasecmp(who, (char *)list->data))
+				if (g_str_equal(who, list->data))
 					return TRUE;
 			}
 			return FALSE;
@@ -357,7 +365,7 @@ purple_privacy_check(PurpleAccount *account, const char *who)
 		case PURPLE_PRIVACY_DENY_USERS:
 			who = purple_normalize(account, who);
 			for (list=account->deny; list!=NULL; list=list->next) {
-				if (!purple_utf8_strcasecmp(who, (char *)list->data ))
+				if (g_str_equal(who, list->data))
 					return FALSE;
 			}
 			return TRUE;

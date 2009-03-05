@@ -1,5 +1,14 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.5 (03/01/2009):
+	libpurple:
+		Changed:
+		* purple_status_type_new now defaults "saveable" to TRUE.
+		  This was necessary in order to maintain the current behavior
+		  while fixing non-saveable statuses not to be saved.
+		* xmlnode_get_prefix, xmlnode_to_str and xmlnode_to_formatted_str
+		  now all take a const xmlnode* instead of an xmlnode*
+
 version 2.5.4 (01/12/2009):
 	perl:
 		Changed:

@@ -27,6 +27,7 @@
 #ifndef _PIDGINBLIST_H_
 #define _PIDGINBLIST_H_
 
+/** @copydoc _PidginBuddyList */
 typedef struct _PidginBuddyList PidginBuddyList;
 
 enum {

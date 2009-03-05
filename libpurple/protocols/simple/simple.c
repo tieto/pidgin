@@ -196,7 +196,7 @@ static void simple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 {
 	struct simple_account_data *sip = (struct simple_account_data *)gc->proto_data;
 	struct simple_buddy *b;
-	if(strcmp("sip:", buddy->name)) {
+	if(strncmp(buddy->name, "sip:", 4)) {
 		gchar *buf = g_strdup_printf("sip:%s", buddy->name);
 		purple_blist_rename_buddy(buddy, buf);
 		g_free(buf);
@@ -834,10 +834,10 @@ static void simple_subscribe_exp(struct simple_account_data *sip, struct simple_
 		"Event: presence\r\n",
 		expiration);
 
-	if(strstr(buddy->name, "sip:"))
-		to = g_strdup(buddy->name);
-	else
+	if(strncmp(buddy->name, "sip:", 4))
 		to = g_strdup_printf("sip:%s", buddy->name);
+	else
+		to = g_strdup(buddy->name);
 
 	tmp = get_contact(sip);
 	contact = g_strdup_printf("%sContact: %s\r\n", tmp2, tmp);
@@ -881,7 +881,7 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 
 
 	tmp = sipmsg_find_header(msg, "Event");
-	if(tmp && !strcmp(tmp, "vnd-microsoft-roaming-contacts")){
+	if(tmp && !strncmp(tmp, "vnd-microsoft-roaming-contacts", 30)){
 
 		purple_debug_info("simple", "simple_add_lcs_contacts->%s-%d\n", msg->body, len);
 		/*Convert the contact from XML to Purple Buddies*/
@@ -1013,11 +1013,11 @@ static gboolean subscribe_timeout(struct simple_account_data *sip) {
 static void simple_send_message(struct simple_account_data *sip, const char *to, const char *msg, const char *type) {
 	gchar *hdr;
 	gchar *fullto;
-	if(strcmp("sip:", to)) {
+	if(strncmp(to, "sip:", 4))
 		fullto = g_strdup_printf("sip:%s", to);
-	} else {
+	else
 		fullto = g_strdup(to);
-	}
+
 	if(type) {
 		hdr = g_strdup_printf("Content-Type: %s\r\n", type);
 	} else {
@@ -1050,12 +1050,12 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 	purple_debug(PURPLE_DEBUG_MISC, "simple", "got message from %s: %s\n", from, msg->body);
 
 	contenttype = sipmsg_find_header(msg, "Content-Type");
-	if(!contenttype || !strcmp(contenttype, "text/plain") || !strcmp(contenttype, "text/html")) {
+	if(!contenttype || !strncmp(contenttype, "text/plain", 10) || !strncmp(contenttype, "text/html", 9)) {
 		serv_got_im(sip->gc, from, msg->body, 0, time(NULL));
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
-	else if(!strcmp(contenttype, "application/im-iscomposing+xml")) {
+	else if(!strncmp(contenttype, "application/im-iscomposing+xml", 30)) {
 		xmlnode *isc = xmlnode_from_str(msg->body, msg->bodylen);
 		xmlnode *state;
 		gchar *statedata;

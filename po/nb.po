@@ -9,19 +9,20 @@
 #  Kyrre Ness Sjøbæk  <kyrre@solution-forge.net>, 2005. (Updates for 1.x)
 #  Hallvard Glad <hallvard.glad@gmail.com>, 2007.  (Updates for 2.x)
 #  Hans Fredrik Nordhaug <hans@nordhaug.priv.no>, 2009. (Updates for 2.5)
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-08 22:17-0500\n"
-"PO-Revision-Date: 2009-01-08 13:33+0100\n"
+"POT-Creation-Date: 2009-02-24 09:57-0500\n"
+"PO-Revision-Date: 2009-02-24 18:47+0100\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
-"Language-Team: Norsk <nb@li.org>\n"
+"Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.ui.no>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: KBabel 1.11.4\n"
+"X-Generator: MagicPO 0.4-3042svn\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -38,7 +39,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -47,7 +48,7 @@ msgstr ""
 "Bruk: %s [Valg]...\n"
 "\n"
 "  -c, --config=DIR    bruk DIR for konfigurasjonsfiler\n"
-"  -d, --debug         skriv debugging beskjeder til stdout\n"
+"  -d, --debug         skriv feilsøkingsbeskjeder til stderr\n"
 "  -h, --help          vis denne hjelpen og avslutt\n"
 "  -n, --nologin       ikke logg automatisk inn\n"
 "  -v, --version       vis den nåværende versjon og avslutt\n"
@@ -373,12 +374,12 @@ msgid "OK"
 msgstr "OK"
 
 msgid "New Instant Message"
-msgstr "Ny direktemelding"
+msgstr "Ny lynmelding"
 
 msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
 "Skriv inn brukernavnet eller aliaset på den personen du vil sende "
-"direktemelding til."
+"lynmelding til."
 
 msgid "Channel"
 msgstr "Kanal"
@@ -403,7 +404,7 @@ msgid "Options"
 msgstr "Brukervalg"
 
 msgid "Send IM..."
-msgstr "Send direktemelding..."
+msgstr "Send lynmelding..."
 
 msgid "Block/Unblock..."
 msgstr "Blokker/ikke blokker ..."
@@ -557,6 +558,8 @@ msgid ""
 "The account has disconnected and you are no longer in this chat. You will be "
 "automatically rejoined in the chat when the account reconnects."
 msgstr ""
+"Denne kontoen er koblet av og du er ikke lenger med i denne samtalen. Du "
+"blir automatisk med i samtalen når kontoen kobler til igjen."
 
 msgid "No such command."
 msgstr "Ingen slik kommando."
@@ -568,10 +571,10 @@ msgid "Your command failed for an unknown reason."
 msgstr "Din kommando feilet av ukjent årsak."
 
 msgid "That command only works in chats, not IMs."
-msgstr "Den kommandoen virker bare i samtalegrupper, ikke i direktemeldinger."
+msgstr "Den kommandoen virker bare i samtalegrupper, ikke i lynmeldinger."
 
 msgid "That command only works in IMs, not chats."
-msgstr "Den kommandoen virker bare i direktemeldinger, ikke samtalegrupper."
+msgstr "Den kommandoen virker bare i lynmeldinger, ikke samtalegrupper."
 
 msgid "That command doesn't work on this protocol."
 msgstr "Denne kommandoen virker ikke på denne protokollen."
@@ -671,10 +674,12 @@ msgid ""
 "%s is not a valid message class. See '/help msgcolor' for valid message "
 "classes."
 msgstr ""
+"%s er ingen gyldig beskjedklasse. Se «/help msgcolor» for gyldige "
+"beskjedklasser."
 
 #, c-format
 msgid "%s is not a valid color. See '/help msgcolor' for valid colors."
-msgstr ""
+msgstr "%s er ingen gyldig farge. Se «/help msgcolor» for gyldige farger."
 
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
@@ -728,6 +733,11 @@ msgid ""
 "background&gt;: black, red, green, blue, white, gray, darkgray, magenta, "
 "cyan, default<br><br>EXAMPLE:<br>    msgcolor send cyan default"
 msgstr ""
+"msgcolor &lt;klasse&gt; &lt;forgrunn&gt; &lt;bakgrunn&gt;: Velg fargene for "
+"de forskjellige beskjedklassene i samtalevinduet.<br>    &lt;klasse&gt;:  "
+"receive, send, highlight, action, timestamp<br>    &lt;forgrunn/"
+"bakgrunn&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, "
+"default<br><br>EKSEMPEL:<br>    msgcolor send cyan default"
 
 msgid "Unable to open file."
 msgstr "Klarte ikke åpne fil."
@@ -840,7 +850,7 @@ msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
 "preference is enabled."
 msgstr ""
-"Direktemeldinger vil bare bli logget om \"Logg alle direktemeldinger\" har "
+"Lynmeldinger vil bare bli logget om \"Logg alle lynmeldinger\" har "
 "blitt slått på."
 
 msgid ""
@@ -904,7 +914,7 @@ msgid "Continue"
 msgstr "Fortsett"
 
 msgid "IM"
-msgstr "Direktemelding"
+msgstr "Lynmelding"
 
 msgid "(none)"
 msgstr "(uten navn)"
@@ -1032,7 +1042,7 @@ msgid "Action"
 msgstr "Handling"
 
 msgid "Open an IM window"
-msgstr "Åpne vindu for direktemelding"
+msgstr "Åpne vindu for lynmelding"
 
 msgid "Pop up a notification"
 msgstr "Varslingsvindu spretter opp"
@@ -1154,7 +1164,6 @@ msgstr "Antall minutter før fraværsmarkert"
 msgid "Change status to"
 msgstr "Endre status til"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Samtaler"
 
@@ -1180,7 +1189,7 @@ msgid "Choose Location..."
 msgstr "Velg sted ..."
 
 msgid "Hit 'Enter' to find more rooms of this category."
-msgstr ""
+msgstr "Trykk «Enter» for å finne flere rom i denne kategorien."
 
 msgid "Get"
 msgstr "Hent"
@@ -1498,10 +1507,10 @@ msgid "No Grouping"
 msgstr "Ingen gruppering"
 
 msgid "Nested Subgroup"
-msgstr ""
+msgstr "Nøstet undergruppe"
 
 msgid "Nested Grouping (experimental)"
-msgstr ""
+msgstr "Nøstet gruppering (eksperimentelt)"
 
 msgid "Provides alternate buddylist grouping options."
 msgstr "Tilbyr alternative grupperingsvalg for kontaktliste."
@@ -1792,13 +1801,11 @@ msgstr "Purple's D-BUS server går ikke pga det som er nevnt nedenfor"
 msgid "No name"
 msgstr "Ingen navn"
 
-#, fuzzy
 msgid "Unable to create new resolver process\n"
-msgstr "Klarte ikke opprette socket\n"
+msgstr "Klarte ikke opprette ny oppslagsprosess\n"
 
-#, fuzzy
 msgid "Unable to send request to resolver process\n"
-msgstr "Klarte ikke sende beskjed til %s\n"
+msgstr "Klarte ikke sende forespørsel til oppslagsprosessen\n"
 
 #, c-format
 msgid ""
@@ -1817,12 +1824,12 @@ msgid ""
 "Error reading from resolver process:\n"
 "%s"
 msgstr ""
-"Feil under lesing fra socket:\n"
+"Feil under lesing fra oppslagsprosessen:\n"
 "%s"
 
 #, c-format
 msgid "Resolver process exited without answering our request"
-msgstr ""
+msgstr "Oppslagsprosess avsluttet uten å svare på vår forespørsel"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2377,9 +2384,8 @@ msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr ""
 "Test IPC-støtte for tillegg (som tjener). Dette registrerer IPC-kommandoene."
 
-#, fuzzy
 msgid "Join/Part Hiding Configuration"
-msgstr "Innstillinger for Evolution-integrasjon"
+msgstr "Innstilling for å skjule bli med-/forlat-tilstander"
 
 msgid "Minimum Room Size"
 msgstr "Minimums Rom Størrelse"
@@ -2388,7 +2394,7 @@ msgid "User Inactivity Timeout (in minutes)"
 msgstr "Brukers Inaktivitets Timeout (i minutter)"
 
 msgid "Apply hiding rules to buddies"
-msgstr ""
+msgstr "Bruker regler for å skjule kontakter"
 
 #. *< type
 #. *< ui_requirement
@@ -2492,9 +2498,8 @@ msgid "aMSN"
 msgstr "aMSN"
 
 #. Add general preferences.
-#, fuzzy
 msgid "General Log Reading Configuration"
-msgstr "Innstillinger for trayikon"
+msgstr "Generelle innstillinger for logglesing"
 
 msgid "Fast size calculations"
 msgstr "Kjapp størrelse kalkulasjon"
@@ -2545,7 +2550,7 @@ msgid "Loads .NET plugins with Mono."
 msgstr "Laster .NET tillegg med Mono."
 
 msgid "Add new line in IMs"
-msgstr ""
+msgstr "Legg til linjeskift i lynmeldinger."
 
 msgid "Add new line in Chats"
 msgstr "Legg til linjeskift i samtaler"
@@ -2564,18 +2569,16 @@ msgstr "Ny linje"
 
 #. *< name
 #. *< version
-#, fuzzy
 msgid "Prepends a newline to displayed message."
-msgstr "Klarte ikke sende beskjed."
+msgstr "Setter inn en ny linje foran viste beskjeder."
 
 #. *< summary
-#, fuzzy
 msgid ""
 "Prepends a newline to messages so that the rest of the message appears below "
 "the username in the conversation window."
 msgstr ""
 "Setter inn en ny linje foran beskjeder sånn at resten av teksten kommer frem "
-"under skjermnavnet i samtalevinduet."
+"under brukernavnet i samtalevinduet."
 
 msgid "Offline Message Emulation"
 msgstr "Emulering av avlogget-beskjed"
@@ -2647,9 +2650,8 @@ msgstr ""
 msgid "You feel a disturbance in the force..."
 msgstr "You feel a disturbance in the force..."
 
-#, fuzzy
 msgid "Only enable for users on the buddy list"
-msgstr "Tillat bare brukere fra kontaktlisten min"
+msgstr "Aktiver kun for brukere på kontaktlisten"
 
 msgid "Disable when away"
 msgstr "Slå av når borte"
@@ -2816,6 +2818,8 @@ msgid ""
 "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
 "pidgin.im/BonjourWindows for more information."
 msgstr ""
+"Fant ikke verktøysamlingen til Apple Bonjour for Windows. Du finner flere "
+"opplysninger på adressa http://d.pidgin.im/BonjourWindows."
 
 msgid "Unable to listen for incoming IM connections\n"
 msgstr "Klarte ikke lage ny tilkobling\n"
@@ -2825,7 +2829,6 @@ msgid ""
 msgstr ""
 "Klarte ikke etablere kontakt med den lokale mDNS serveren. Er den igang?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Fornavn"
 
@@ -2858,6 +2861,10 @@ msgstr "Bonjour-protokolltillegg"
 msgid "Purple Person"
 msgstr "Purple-person"
 
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Lokal port"
+
 msgid "Bonjour"
 msgstr "Bonjour"
 
@@ -2869,13 +2876,13 @@ msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Klarte ikke sende beskjeden, samtalen kunne ikke startes."
 
 msgid "Cannot open socket"
-msgstr "Klarte ikke åpne socket"
+msgstr "Klarte ikke åpne endepunkt"
 
 msgid "Could not bind socket to port"
-msgstr "Klarte ikke binde socket til port"
+msgstr "Klarte ikke binde endepunkt til port"
 
 msgid "Could not listen on socket"
-msgstr "Klarte ikke lytte på socket"
+msgstr "Klarte ikke lytte på endepunkt"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "Feil i kommunikasjonen med lokal mDNSResponder."
@@ -3048,7 +3055,7 @@ msgid "There are no users matching your search criteria."
 msgstr "Skriv inn ditt nye passord."
 
 msgid "Unable to read socket"
-msgstr "Klarte ikke lese socket"
+msgstr "Klarte ikke lese endepunkt"
 
 msgid "Buddy list downloaded"
 msgstr "Kontaktliste nedlastet"
@@ -3173,7 +3180,7 @@ msgid "SSL support unavailable"
 msgstr "SSL-støtte utilgjengelig"
 
 msgid "Couldn't create socket"
-msgstr "Klarte ikke opprette socket"
+msgstr "Klarte ikke opprette endepunkt"
 
 msgid "Couldn't connect to host"
 msgstr "Klarte ikke koble til"
@@ -3231,15 +3238,14 @@ msgstr "Ugyldig mode"
 
 #, c-format
 msgid "Ban on %s by %s, set %s ago"
-msgstr ""
+msgstr "%s er utestengt av %s, utført for %s siden"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Ban on %s"
-msgstr "Grunn: %s"
+msgstr "Utestengt fra %s"
 
-#, fuzzy
 msgid "End of ban list"
-msgstr "Ikke på listen"
+msgstr "Slutt på utestengingslista"
 
 #, c-format
 msgid "You are banned from %s."
@@ -3302,10 +3308,8 @@ msgstr "Pidgin har sendt en beskjed som IRC-tjeneren ikke forstod."
 msgid "Users on %s: %s"
 msgstr "Brukere på %s: %s"
 
-#
-#, fuzzy
 msgid "Time Response"
-msgstr "Tid"
+msgstr "Tidsrespons"
 
 msgid "The IRC server's local time is:"
 msgstr "IRC-tjenerens lokaltid er:"
@@ -3405,7 +3409,7 @@ msgstr ""
 "ikke sett noen for å returnere."
 
 msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
-msgstr ""
+msgstr "ctcp <kallenavn> <beskjed>: sender ctcp beskjed til kallenavn."
 
 msgid "chanserv: Send a command to chanserv"
 msgstr "chanserv:  Send en kommando til chanserv"
@@ -3609,13 +3613,13 @@ msgstr ""
 "Tjeneren forlanger identitetsbekreftelse i ren tekst over en ukryptert "
 "forbindelse"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
 "this and continue authentication?"
 msgstr ""
-"Denne tjeneren forlanger autentifikasjon i ren tekst over en ukryptert "
-"forbindelse. Tillat dette og fortsett identitetsbekreftelse?"
+"%s krever autentisering i klartekst over eit ukryptert samband. Vil du "
+"tillate dette og fortsett med autentiseringen?"
 
 msgid "Plaintext Authentication"
 msgstr "Identitetsbekreftelse i ren tekst"
@@ -3701,16 +3705,14 @@ msgstr "Operativsystem"
 msgid "Last Activity"
 msgstr "Siste aktivitet"
 
-#, fuzzy
 msgid "Service Discovery Info"
-msgstr "Lagre kataloginfo"
+msgstr "Tjenesteoppdagingsinfo"
 
 msgid "Service Discovery Items"
 msgstr "Service Discovery Items"
 
-#, fuzzy
 msgid "Extended Stanza Addressing"
-msgstr "Ekstra adresse"
+msgstr "Utvida Stanza-adressering"
 
 msgid "Multi-User Chat"
 msgstr "Flerbrukersamtale"
@@ -3736,10 +3738,9 @@ msgstr "Out of Band Data"
 msgid "XHTML-IM"
 msgstr "XHTML-IM"
 
-#
-#, fuzzy
+# må setjast om seinare
 msgid "In-Band Registration"
-msgstr "Registreringsfeil"
+msgstr "Samtidsegistrering"
 
 msgid "User Location"
 msgstr "Brukerens sted"
@@ -3747,16 +3748,14 @@ msgstr "Brukerens sted"
 msgid "User Avatar"
 msgstr "Bruker Avatar"
 
-#, fuzzy
 msgid "Chat State Notifications"
-msgstr "Varsle når kontakt endrer tilstand"
+msgstr "Samtaletilstandsvarsling"
 
 msgid "Software Version"
 msgstr "Programvareversjon"
 
-#, fuzzy
 msgid "Stream Initiation"
-msgstr "Organisasjon"
+msgstr "Strømoppstart"
 
 msgid "File Transfer"
 msgstr "Filoverføring"
@@ -3767,9 +3766,8 @@ msgstr "Brukerens tilstander"
 msgid "User Activity"
 msgstr "Brukerens aktivitet"
 
-#, fuzzy
 msgid "Entity Capabilities"
-msgstr "Evner"
+msgstr "Entitetsegenskaper"
 
 msgid "Encrypted Session Negotiations"
 msgstr "Krypterte formidlinger av økt"
@@ -3777,13 +3775,12 @@ msgstr "Krypterte formidlinger av økt"
 msgid "User Tune"
 msgstr "Brukerens melodi"
 
-#, fuzzy
 msgid "Roster Item Exchange"
-msgstr "Snakk via direktemelding med nøkkelsentral"
+msgstr "Listeelement-utveksling"
 
-#, fuzzy
+# Gjer betre
 msgid "Reachability Address"
-msgstr "E-postadresse"
+msgstr "Adresse en kan nåes på"
 
 msgid "User Profile"
 msgstr "Brukers profil"
@@ -4044,9 +4041,8 @@ msgstr ""
 msgid "Write error"
 msgstr "Feil ved skriving"
 
-#, fuzzy
 msgid "Ping timeout"
-msgstr "Ren tekst"
+msgstr "Tidsavbrudd for ping"
 
 msgid "Read Error"
 msgstr "Lesefeil"
@@ -4060,7 +4056,7 @@ msgstr ""
 "%s"
 
 msgid "Unable to create socket"
-msgstr "Klarte ikke opprette socket"
+msgstr "Klarte ikke opprette endepunkt"
 
 msgid "Invalid XMPP ID"
 msgstr "Ugyldig XMPP ID"
@@ -4187,12 +4183,11 @@ msgstr "Sinnsstemning"
 msgid "Now Listening"
 msgstr "Lytter nå"
 
-#, fuzzy
 msgid "Mood Text"
-msgstr "Sinnsstemning"
+msgstr "Sinnsstemningstekst"
 
 msgid "Allow Buzz"
-msgstr "Tillat buzz"
+msgstr "Tillat alarmering"
 
 msgid "Tune Artist"
 msgstr "Melodiens artist"
@@ -4429,28 +4424,28 @@ msgstr "Klarte ikke pinge brukeren %s"
 
 #, c-format
 msgid "Unable to buzz, because there is nothing known about user %s."
-msgstr "Klarte ikke vekke, fordi det er ingenting kjent med bruker %s."
+msgstr "Klarte ikke alarmere, fordi det er ingenting kjent med bruker %s."
 
 #, c-format
 msgid "Unable to buzz, because user %s might be offline."
-msgstr "Klarte ikke vekke, fordi bruker %s kan være avlogget."
+msgstr "Klarte ikke alarmere, fordi bruker %s kan være avlogget."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to buzz, because the user %s does not support it."
-msgstr "Klarte ikke spille av lyd fordi lydfilen (%s) ikke eksisterer."
+msgstr "Klarer ikke alarmere fordi brukeren %s ikke støtter dette."
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
-msgstr "Buzz"
+msgstr "Alarm"
 
 #, c-format
 msgid "%s has buzzed you!"
-msgstr "%s har buzzet deg!"
+msgstr "%s har alarmert deg!"
 
 #, c-format
 msgid "Buzzing %s..."
-msgstr "Vekker %s..."
+msgstr "Alarmerer %s ..."
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Endre innstillingene for et samtalerom."
@@ -4621,13 +4616,13 @@ msgstr "Klarte ikke sende fil til %s, ugyldig JID"
 msgid "Unable to send file to %s, user is not online"
 msgstr "Klarte ikke sende fil til %s - brukeren er ikke pålogget"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send file to %s, not subscribed to user presence"
-msgstr "Klarte ikke sende fil til %s - brukeren støtter ikke filoverføringer"
+msgstr "Klarte ikke sende fila til %s. Abonnerer ikke på brukernærvær"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
-msgstr "Vennligst velg hvilken ressurs av %s du vil sende en fil til"
+msgstr "Velg hvilken ressurs av %s du ønskjer å senda fila til"
 
 msgid "Select a Resource"
 msgstr "Velg en ressurs"
@@ -4665,9 +4660,6 @@ msgstr "Handlinger"
 
 msgid "Select an action"
 msgstr "Velg en handling"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Klarte ikke hente MSN-adressebok"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -4933,15 +4925,15 @@ msgid "Non-IM Contacts"
 msgstr "Ikke-lynmeldingskontakter"
 
 msgid "Nudge"
-msgstr "Nudge"
+msgstr "Dytt"
 
 #, c-format
 msgid "%s has nudged you!"
-msgstr "%s har nudga deg!"
+msgstr "%s har dyttet deg!"
 
 #, c-format
 msgid "Nudging %s..."
-msgstr "Nudging %s..."
+msgstr "Dytter %s..."
 
 msgid "Email Address..."
 msgstr "E-postadresse ..."
@@ -4989,7 +4981,7 @@ msgstr "Ingen tekst blokkert for denne kontoen."
 #, c-format
 msgid ""
 "MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr ""
+msgstr "MSN-tjenere blokkerer for øyeblikket følgende regulære uttrykk:<br/>%s"
 
 msgid "This account does not have email enabled."
 msgstr "Denne kontoen har ikke aktivert e-post."
@@ -5195,19 +5187,19 @@ msgid "Work Address"
 msgstr "Arbeidsadresse"
 
 msgid "Work Mobile"
-msgstr "Mobil Jobb"
+msgstr "Mobil arbeid"
 
 msgid "Work Pager"
-msgstr "Telefonsøker Jobb"
+msgstr "Telefonsøker arbeid"
 
 msgid "Work Fax"
-msgstr "Fax Jobb"
+msgstr "Fax arbeid"
 
 msgid "Work Email"
-msgstr "E-post Arbeid"
+msgstr "E-post arbeid"
 
 msgid "Work IM"
-msgstr "Lynmelding Arbeid"
+msgstr "Lynmelding arbeid"
 
 msgid "Start Date"
 msgstr "Startdato"
@@ -5265,10 +5257,10 @@ msgid "Show custom smileys"
 msgstr "Vis custom smileys"
 
 msgid "nudge: nudge a user to get their attention"
-msgstr "nudge: nudge en bruker for å få deres oppmerksomhet"
+msgstr "nudge: dytt en bruker for å få deres oppmerksomhet"
 
 msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Windows Live ID autentisering: Klarte ikke tilkoble"
+msgstr "Windows Live ID autentisering: Klarte ikke koble til"
 
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows Live ID autentisering: Ugyldig svar"
@@ -5286,7 +5278,7 @@ msgstr "%s på %s (%s)"
 
 #, c-format
 msgid "%s just sent you a Nudge!"
-msgstr "%s har sendt deg en Nudge!"
+msgstr "%s har nettopp gitt deg en dytt!"
 
 #. char *adl = g_strndup(payload, len);
 #, c-format
@@ -5296,9 +5288,8 @@ msgstr "Ukjent feil (%d)"
 msgid "Unable to add user"
 msgstr "Klarte ikke legge til bruker"
 
-#, fuzzy
 msgid "The following users are missing from your addressbook"
-msgstr "Følgende resultat fra ditt søk"
+msgstr "Følgende brukere mangler i din adressebok"
 
 #, c-format
 msgid "Unable to add user on %s (%s)"
@@ -5324,9 +5315,8 @@ msgstr "%s er ikke en gyldig passport-konto."
 msgid "Service Temporarily Unavailable."
 msgstr "Tjenesten Midlertidig Utilgjengelig."
 
-#, fuzzy
 msgid "Mobile message was not sent because it was too long."
-msgstr "Meldingen kunne ikke bli sendt, fordi du ikke er koblet til."
+msgstr "Mobilbeskjeden ble ikke bli sendt fordi den var for lang."
 
 msgid "Unable to rename group"
 msgstr "Klarte ikke endre navn på gruppe"
@@ -5364,6 +5354,8 @@ msgid ""
 "Message was not sent because the system is unavailable. This normally "
 "happens when the user is blocked or does not exist."
 msgstr ""
+"Beskjeden ble ikke sendt fordi system er utilgjengelig. Dette skjer normalt "
+"når brukeren er blokkert eller ikke eksisterer."
 
 msgid "Message was not sent because messages are being sent too quickly."
 msgstr "Meldingen ble ikke sendt fordi meldinger blir sendt for raskt."
@@ -5388,7 +5380,7 @@ msgid ""
 "Connection error from %s server:\n"
 "%s"
 msgstr ""
-"Tilkoplingsfeil fra %s tjener:\n"
+"Tilkoblingsfeil fra %s tjener:\n"
 "%s"
 
 msgid "Our protocol is not supported by the server."
@@ -5535,7 +5527,7 @@ msgid "You appear to have no MySpace username."
 msgstr "Du ser ikke ut til å noe MySpace-brukernavn."
 
 msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
+msgstr "Vil du sette et nå? (Merk: Dette kan ikke endres!)"
 
 msgid "Lost connection with server"
 msgstr "Mistet forbindelsen med tjener"
@@ -5596,6 +5588,9 @@ msgid ""
 "myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
 "again."
 msgstr ""
+"%s Passordet ditt er på %d tegn. MySpaceIM godtar bare %d tegn. Gjør "
+"passordet ditt kortere på nettsiden http://profileedit.myspace.com/index.cfm?"
+"fuseaction=accountSettings.changePassword og prøv på nytt."
 
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM-feil"
@@ -5703,7 +5698,7 @@ msgid "This username is available. Would you like to set it?"
 msgstr "Dette brukernavnet er tilgjengelig. Vil du sette det?"
 
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr ""
+msgstr "Dette kan ikke endres når det er satt!"
 
 msgid "MySpaceIM - Please Set a Username"
 msgstr "MySpaceIM - angi et brukernavn"
@@ -5719,7 +5714,7 @@ msgid "No username set"
 msgstr "Skjermnavn ikke oppgitt"
 
 msgid "Please enter a username to check its availability:"
-msgstr ""
+msgstr "Skriv inn et brukernavn for å sjekke om det er tilgjengelig:"
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -6147,9 +6142,8 @@ msgstr ""
 "Mistet forbindelse med server:\n"
 "%s"
 
-#, fuzzy
 msgid "Received invalid data on connection with server."
-msgstr "Klarte ikke opprette SSL-forbindelse med tjeneren."
+msgstr "Mottok ugyldige data over forbindelsen med tjeneren."
 
 #. *< type
 #. *< ui_requirement
@@ -6207,6 +6201,8 @@ msgid ""
 "%s tried to send you a %s file, but we only allow files up to %s over Direct "
 "IM.  Try using file transfer instead.\n"
 msgstr ""
+"%s prøvde å sende deg en %s fil, men vi tillater kun filer opp til %s over "
+"Direct IM. Prøv å bruke filoverføring istedenfor.\n"
 
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
@@ -6261,10 +6257,10 @@ msgid "In local permit/deny"
 msgstr "I lokal tillat/nekt"
 
 msgid "Warning level too high (sender)"
-msgstr ""
+msgstr "Advarselsnivå for høyt (sender)"
 
 msgid "Warning level too high (receiver)"
-msgstr ""
+msgstr "Advarselsnivå for høyt (mottaker)"
 
 msgid "User temporarily unavailable"
 msgstr "Brukeren er midlertidig utilgjengelig"
@@ -6295,14 +6291,13 @@ msgstr ""
 "koding han bruker, kan du spesifisere dette i avanserte kontoinstillinger "
 "for din AIM/ICQ konto.)"
 
-# Lusete klient :P
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
-"(Det oppsto en feil under mottak av denne meldingen. Kontakten du snakker "
-"til har sannsynligvis en lusete klient.)"
+"(Det oppstod en feil under mottaket av denne beskjeden. Enten har du og %s "
+"valgt ulike tegnkoding, eller så bruker %s en klient med feil i.)"
 
 #. Label
 msgid "Buddy Icon"
@@ -6421,15 +6416,16 @@ msgstr "Tilkoblet, informasjonskapsel sendt"
 msgid "Finalizing connection"
 msgstr "Fullfører tilkobling"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to login: Could not sign on as %s because the username is invalid.  "
 "Usernames must be a valid email address, or start with a letter and contain "
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
-"Klarte ikke logge på: Klarte ikke logge på som %s fordi skjermnavnet er "
-"ugyldig. Skjermnavn må enten starte med en bokstav og kun inneholde tall, "
-"bokstaver, og mellomrom, eller bare inneholde tall."
+"Får ikke til å logge inn: Klarte ikke logge på som %s fordi brukernavnet er "
+"ugyldig. Brukernavn må være en gyldig e-postadresse, eller begynna med en "
+"bokstav og bare inneholde bokstaver, tall og mellomrom, eller bare inneholde "
+"tall."
 
 #. Unregistered screen name
 #. uid is not exist
@@ -6793,8 +6789,8 @@ msgstr "Kontoinformasjon"
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
-"Ditt direktemeldingsbilde ble ikke sendt. Du må være direkte tilkoplet for å "
-"sende direktemeldingsbilder."
+"Ditt lynmeldingsbilde ble ikke sendt. Du må være direkte tilkoblet for å "
+"sende lynmeldingsbilder."
 
 msgid "Unable to set AIM profile."
 msgstr "Klarte ikke sette AIM-profil."
@@ -6923,8 +6919,8 @@ msgstr "_Utveksling:"
 
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
-"Ditt direktemeldingsbilde ble ikke sendt. Du kan ikke sende "
-"direktemeldingsbilder i AIM-samtalegrupper."
+"Ditt lynmeldingsbilde ble ikke sendt. Du kan ikke sende "
+"lynmeldingsbilder i AIM-samtalegrupper."
 
 msgid "iTunes Music Store Link"
 msgstr "iTunes Music Store Link"
@@ -6938,7 +6934,7 @@ msgstr "Kontaktkommentar:"
 
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
-msgstr "Du har valgt å åpne en direktemelding til %s."
+msgstr "Du har valgt å åpne en lynmelding til %s."
 
 msgid ""
 "Because this reveals your IP address, it may be considered a security risk.  "
@@ -6953,6 +6949,7 @@ msgstr "K_oble til"
 msgid "Get AIM Info"
 msgstr "Hent AIM Informasjon"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Endre kontaktkommentar"
 
@@ -6971,9 +6968,8 @@ msgstr "Krever godkjenning"
 msgid "Web aware (enabling this will cause you to receive SPAM!)"
 msgstr "Web aware (slår du på denne vil du motta SPAM!)"
 
-#, fuzzy
 msgid "ICQ Privacy Options"
-msgstr "Proxyinnstillinger"
+msgstr "ICQ personvernvalg"
 
 msgid "The new formatting is invalid."
 msgstr "Den nye formateringen er ugyldig."
@@ -7021,15 +7017,14 @@ msgstr "Sette opp beskjedvideresending (nett)"
 
 #. ICQ actions
 msgid "Set Privacy Options..."
-msgstr "Sett Privatliv Instillinger..."
+msgstr "Sett personvernvalg"
 
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Bekrefte konto"
 
-#, fuzzy
 msgid "Display Currently Registered Email Address"
-msgstr "Vis nåværende registrert adresse"
+msgstr "Vis nåværende registrerte e-postadresse"
 
 msgid "Change Currently Registered Email Address..."
 msgstr "Endre Nåværende Registrert e-post Adresse..."
@@ -7048,9 +7043,12 @@ msgid ""
 "file transfers and direct IM (slower,\n"
 "but does not reveal your IP address)"
 msgstr ""
+"Bruk alltid AIM-/ICQ-mellomtjener ved\n"
+"filoverføringer og direktelynmeldinger\n"
+"(er tregere, men viser ikke IP-adressen din)"
 
 msgid "Allow multiple simultaneous logins"
-msgstr ""
+msgstr "Tillat flere samstidige innlogginger"
 
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
@@ -7060,9 +7058,8 @@ msgstr "Spør %s om å kople til oss på %s:%hu for direktesamtale."
 msgid "Attempting to connect to %s:%hu."
 msgstr "Forsøker å kople til %s:%hu."
 
-#, fuzzy
 msgid "Attempting to connect via proxy server."
-msgstr "Forsøker å kople til %s på %s:%hu for direktesamtale."
+msgstr "Prøver å kopla til via mellomtjener."
 
 #, c-format
 msgid "%s has just asked to directly connect to %s"
@@ -7189,13 +7186,11 @@ msgstr "Personlig introduksjon"
 msgid "City/Area"
 msgstr "By/område"
 
-#, fuzzy
 msgid "Publish Mobile"
-msgstr "Mobil"
+msgstr "Publiser mobil"
 
-#, fuzzy
 msgid "Publish Contact"
-msgstr "Kontaktalias"
+msgstr "Publiser kontakt"
 
 msgid "College"
 msgstr "Universitet"
@@ -7319,9 +7314,8 @@ msgstr "QQ Qun"
 msgid "Please enter Qun number"
 msgstr "Skriv inn Qun-nummer"
 
-#, fuzzy
 msgid "You can only search for permanent Qun\n"
-msgstr "Du kan kun søke etter permanente QQ grupper\n"
+msgstr "Du kan bare søke etter permanente Qun\n"
 
 msgid "(Invalid UTF-8 string)"
 msgstr "(Ugyldig UTF-8 streng)"
@@ -7353,10 +7347,8 @@ msgstr "Om meg"
 msgid "Category"
 msgstr "Kategori"
 
-#, fuzzy
 msgid "The Qun does not allow others to join"
-msgstr ""
-"Denne testversjonen tillater ikke mer enn ti samtidige innloggede brukere"
+msgstr "Denne Qun tillater ikke at andre blir med"
 
 msgid "Join QQ Qun"
 msgstr "Bli med i QQ Qun"
@@ -7364,27 +7356,25 @@ msgstr "Bli med i QQ Qun"
 msgid "Input request here"
 msgstr "Sett inn forspørsel her"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully joined Qun %s (%u)"
-msgstr "Modifisering av Qun medlem vellykket"
+msgstr "Ble med i Qun %s (%u)"
 
-#, fuzzy
 msgid "Successfully joined Qun"
-msgstr "Modifisering av Qun medlem vellykket"
+msgstr "Ble med i Qun"
 
 #, c-format
 msgid "Qun %u denied from joining"
-msgstr ""
+msgstr "Qun %u ble nektet å bli med"
 
-#, fuzzy
 msgid "QQ Qun Operation"
-msgstr "Lydinnstillinger"
+msgstr "QQ Qun-operasjon"
 
 msgid "Failed:"
 msgstr "Feilet:"
 
 msgid "Join Qun, Unknown Reply"
-msgstr ""
+msgstr "Bli med i Qun, ukjent svar"
 
 msgid "Quit Qun"
 msgstr "Avslutt Qun"
@@ -7399,39 +7389,36 @@ msgstr ""
 msgid "Sorry, you are not our style"
 msgstr "Beklager, du er ikke vår type"
 
-#, fuzzy
 msgid "Successfully changed Qun members"
-msgstr "Modifisering av Qun medlem vellykket"
+msgstr "Endret Qun-medlemmer"
 
-#, fuzzy
 msgid "Successfully changed Qun information"
-msgstr "Modifisering av Qun informasjon vellykket"
+msgstr "Endret Qun-opplysninger"
 
 msgid "You have successfully created a Qun"
 msgstr "Laging av Qun vellykket"
 
-#, fuzzy
 msgid "Would you like to set up detailed information now?"
-msgstr "Ønsker du å bli med i samtalen?"
+msgstr "Vil du skrive detaljopplysningene nå?"
 
 msgid "Setup"
 msgstr "Sett opp"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u requested to join Qun %u for %s"
-msgstr "Bruker %d spør om du vil være med i gruppen %d"
+msgstr "%u spurte om å få bli med i Qun %u til %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u request to join Qun %u"
-msgstr "Bruker %d spør om du vil være med i gruppen %d"
+msgstr "%u spør om å bli med i Qun %u"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Klarte ikke bli med kontakt i samtale"
+msgstr "Klarte ikke å bli med i Qun %u, styrt av admin %u"
 
 #, c-format
 msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
+msgstr "<b>Medlemskap i Qun %u blir godkjent av admin %u for %s</b>"
 
 #, c-format
 msgid "<b>Removed buddy %u.</b>"
@@ -7454,13 +7441,11 @@ msgstr "VIP"
 msgid " TCP"
 msgstr " TCP"
 
-#, fuzzy
 msgid " FromMobile"
-msgstr "Mobil"
+msgstr "FraMobil"
 
-#, fuzzy
 msgid " BindMobile"
-msgstr "Mobil"
+msgstr "BindMobil"
 
 msgid " Video"
 msgstr "Video"
@@ -7551,6 +7536,9 @@ msgstr "<p><b>Herlige Patch-skribenter</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Takk til</b>:<br>\n"
 
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Nøyaktige testere</b>:<br>\n"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>Og, alle guttene på bakrommet ...</i><br>\n"
 
@@ -7571,10 +7559,13 @@ msgid "Account Information"
 msgstr "Kontoinformasjon"
 
 msgid "Update all QQ Quns"
-msgstr ""
+msgstr "Oppdater alle QQ Qun"
 
 msgid "About OpenQ"
 msgstr "Om OpenQ"
+
+msgid "Modify Buddy Memo"
+msgstr "Endre kontaktmemo"
 
 #. *< type
 #. *< ui_requirement
@@ -7596,40 +7587,39 @@ msgid "Select Server"
 msgstr "Velg tjener"
 
 msgid "QQ2005"
-msgstr ""
+msgstr "QQ2005"
 
 msgid "QQ2007"
-msgstr ""
+msgstr "QQ2007"
 
 msgid "QQ2008"
-msgstr ""
+msgstr "QQ2008"
 
 msgid "Connect by TCP"
 msgstr "Koble til med TCP"
 
-#, fuzzy
+# -merknad?
 msgid "Show server notice"
-msgstr "Tjenerport"
+msgstr "Vis tjenervarsel"
 
-#, fuzzy
 msgid "Show server news"
-msgstr "Tjeneradresse"
+msgstr "Vis tjenernytt"
 
-#, fuzzy
+msgid "Show chat room when msg comes"
+msgstr "Vis praterommet når meldinga kommer"
+
 msgid "Keep alive interval (seconds)"
-msgstr "Hold i livet feil"
+msgstr "Intervall vedlikeholdstilkobling (sekund)"
 
-#, fuzzy
 msgid "Update interval (seconds)"
-msgstr "Hold i livet feil"
+msgstr "Oppdateringsintervall (sekund)"
 
-#, fuzzy
 msgid "Cannot decrypt server reply"
-msgstr "Kan ikke hente tjenerinformasjon"
+msgstr "Klarte ikke dekryptere tjenersvaret"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
-msgstr ""
+msgstr "Feil i symbolforespørselen, 0x%02X"
 
 #, c-format
 msgid "Invalid token len, %d"
@@ -7637,7 +7627,7 @@ msgstr "Ugyldig symbollengde, %d"
 
 #. extend redirect used in QQ2006
 msgid "Redirect_EX is not currently supported"
-msgstr ""
+msgstr "Foreløpig støtter en ikke Redirect_EX"
 
 #. need activation
 #. need activation
@@ -7647,23 +7637,19 @@ msgstr "Aktivering kreves"
 
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
-msgstr ""
+msgstr "Ukjent svarkode under innlogging (0x%02X)"
 
-#, fuzzy
 msgid "Could not decrypt server reply"
-msgstr "Kan ikke hente tjenerinformasjon"
+msgstr "Klarte ikke dekryptere tjenersvaret"
 
-#, fuzzy
 msgid "Requesting captcha"
-msgstr "Forespør %s's oppmerksomhet..."
+msgstr "Spør etter tastetest («captcha»)"
 
-#, fuzzy
 msgid "Checking captcha"
-msgstr "Forespør %s's oppmerksomhet..."
+msgstr "Undersøker tastetesten («captcha»)"
 
-#, fuzzy
 msgid "Failed captcha verification"
-msgstr "Yahoo!-autentisering feilet"
+msgstr "Tastetesten («captcha») feilet"
 
 msgid "Captcha Image"
 msgstr "Captcha-bilde"
@@ -7671,32 +7657,33 @@ msgstr "Captcha-bilde"
 msgid "Enter code"
 msgstr "Skriv inn kode"
 
-#, fuzzy
 msgid "QQ Captcha Verification"
-msgstr "SSL Sertifikat Verifisering"
+msgstr "QQ-tastetest"
 
 msgid "Enter the text from the image"
 msgstr "Skriv inn teksten fra bildet"
 
 #, c-format
 msgid "Unknown reply when checking password (0x%02X)"
-msgstr ""
+msgstr "Ukjent svarkode under passordkontroll (0x%02X)"
 
 #, c-format
 msgid ""
 "Unknown reply code when logging in (0x%02X):\n"
 "%s"
 msgstr ""
+"Ukjent feilkode under innlogging (0x%02X):\n"
+"%s"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
 msgstr "Klarte ikke koble til."
 
 msgid "Socket error"
-msgstr "Socket-feil"
+msgstr "Endepunktfeil"
 
 msgid "Unable to read from socket"
-msgstr "Klarte ikke lese fra socket"
+msgstr "Klarte ikke lese fra endepunkt"
 
 msgid "Write Error"
 msgstr "Feil ved skriving"
@@ -7704,16 +7691,14 @@ msgstr "Feil ved skriving"
 msgid "Connection lost"
 msgstr "Tilkobling mistet"
 
-#, fuzzy
 msgid "Getting server"
-msgstr "Sett brukerinfo..."
+msgstr "Henter tjener"
 
 msgid "Requesting token"
 msgstr "Spør etter symbol"
 
-#, fuzzy
 msgid "Couldn't resolve host"
-msgstr "Klarte ikke koble til"
+msgstr "Vertsoppslaget feilet"
 
 msgid "Invalid server or port"
 msgstr "Ugyldig tjener eller port"
@@ -7724,13 +7709,19 @@ msgstr "Kobler til tjener"
 msgid "QQ Error"
 msgstr "QQ-feil"
 
-#, fuzzy, c-format
+# diskusjonsgrupper?
+# nyhende/nytt?
+#, c-format
 msgid ""
 "Server News:\n"
 "%s\n"
 "%s\n"
 "%s"
-msgstr "ICQ tjenervideresending"
+msgstr ""
+"Tjenernyheter:\n"
+"%s\n"
+"%s\n"
+"%s"
 
 #, c-format
 msgid "%s:%s"
@@ -7741,11 +7732,13 @@ msgstr "%s:%s"
 msgid "From %s:"
 msgstr "Fra %s:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Server notice From %s: \n"
 "%s"
-msgstr "Tjenerinstruksjoner: %s"
+msgstr ""
+"Tjenermelding fra %s: \n"
+"%s"
 
 msgid "Unknown SERVER CMD"
 msgstr "Ukjent SERVER CMD"
@@ -7755,14 +7748,14 @@ msgid ""
 "Error reply of %s(0x%02X)\n"
 "Room %u, reply 0x%02X"
 msgstr ""
+"Feil i svar til %s(0x%02X)\n"
+"Rom %u, svar 0x%02X"
 
-#, fuzzy
 msgid "QQ Qun Command"
-msgstr "Kommando"
+msgstr "QQ Qun-kommando"
 
-#, fuzzy
 msgid "Could not decrypt login reply"
-msgstr "Kan ikke hente tjenerinformasjon"
+msgstr "Klarte ikke dekryptere innloggingssvaret"
 
 msgid "Unknown LOGIN CMD"
 msgstr "Ukjent LOGIN CMD"
@@ -7770,9 +7763,9 @@ msgstr "Ukjent LOGIN CMD"
 msgid "Unknown CLIENT CMD"
 msgstr "Ukjent CLIENT CMD"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d has declined the file %s"
-msgstr "%s har endret kanaltema til: %s"
+msgstr "%d har avvist fila %s"
 
 msgid "File Send"
 msgstr "Filsending"
@@ -7788,24 +7781,22 @@ msgstr "Tilkoblingen lukket (skriver)"
 msgid "<b>Group Title:</b> %s<br>"
 msgstr "<b>Gruppetittel:</b> %s<br>"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Notes Group ID:</b> %s<br>"
-msgstr "<b>Bruker:</b> %s<br>"
+msgstr "<b>Notes gruppe-ID:</b> %s<br>"
 
 #, c-format
 msgid "Info for Group %s"
 msgstr "Info for gruppe %s"
 
-#, fuzzy
 msgid "Notes Address Book Information"
-msgstr "Arbeid ekstra info"
+msgstr "Notes adressebokinformasjon"
 
 msgid "Invite Group to Conference..."
 msgstr "Innviter Gruppe til Konferanse..."
 
-#, fuzzy
 msgid "Get Notes Address Book Info"
-msgstr "Legg til i adresseboka"
+msgstr "Hent Notes adressebokinfo"
 
 msgid "Sending Handshake"
 msgstr "Sender håndtrykk"
@@ -7819,36 +7810,32 @@ msgstr "Håndtrykk bekreftet - sender innlogging"
 msgid "Waiting for Login Acknowledgement"
 msgstr "Venter på innlogginsbekreftelse"
 
-#, fuzzy
 msgid "Login Redirected"
-msgstr "Påloggingstjener"
+msgstr "Innloggingen omdirigert"
 
-#, fuzzy
 msgid "Forcing Login"
-msgstr "Logger på"
+msgstr "Tvinger innlogging"
 
-#, fuzzy
 msgid "Login Acknowledged"
 msgstr "Innlogging bekreftet"
 
-#, fuzzy
 msgid "Starting Services"
-msgstr "Tjenester på nett"
+msgstr "Starter tjenester"
 
 #, c-format
 msgid ""
 "A Sametime administrator has issued the following announcement on server %s"
-msgstr "En Sametime admin har satt følgende kunngjøring på serveren %s"
+msgstr "En Sametime administrator har satt følgende kunngjøring på tjeneren %s"
 
 msgid "Sametime Administrator Announcement"
-msgstr "Sametime Administrator Kunngjøring"
+msgstr "Sametime administratorkunngjøring"
 
 msgid "Connection reset"
 msgstr "Tilkobling nullstilt"
 
 #, c-format
 msgid "Error reading from socket: %s"
-msgstr "Feil ved lesing fra socket: %s"
+msgstr "Feil ved lesing fra endepunkt: %s"
 
 #. this is a regular connect, error out
 msgid "Unable to connect to host"
@@ -7864,9 +7851,8 @@ msgstr "Konferanse lukket"
 msgid "Unable to send message: "
 msgstr "Klarte ikke sende beskjed:"
 
-#, fuzzy
 msgid "Place Closed"
-msgstr "Avbrutt"
+msgstr "Stedet er lukket"
 
 msgid "Microphone"
 msgstr "Mikrofon"
@@ -7932,9 +7918,8 @@ msgstr "Send TEST Kunngjøring"
 msgid "Topic:"
 msgstr "Tema:"
 
-#, fuzzy
 msgid "No Sametime Community Server specified"
-msgstr "Kobler til SILC-tjener"
+msgstr "Ingen Sametime fellesskapstjener oppgitt "
 
 #, c-format
 msgid ""
@@ -7944,13 +7929,11 @@ msgstr ""
 "Ingen vert eller IP adresse har blitt konfigurert for Meanwhile kontoen %s. "
 "Skriv inn en under for å fortsette innloggingen."
 
-#, fuzzy
 msgid "Meanwhile Connection Setup"
-msgstr "Klarte ikke koble til"
+msgstr "Meanwhile tilkoblingsinnstillinger"
 
-#, fuzzy
 msgid "No Sametime Community Server Specified"
-msgstr "Kobler til SILC-tjener"
+msgstr "Ingen Sametime fellesskapstjener oppgitt "
 
 msgid "Connect"
 msgstr "Koble til"
@@ -8001,9 +7984,8 @@ msgstr ""
 "Klarte ikke lese fil %s:\n"
 "%s\n"
 
-#, fuzzy
 msgid "Remotely Stored Buddy List"
-msgstr "Sende kontaktliste"
+msgstr "Fjernlagret kontaktliste"
 
 msgid "Buddy List Storage Mode"
 msgstr "Lagrings metode for Kontaktliste"
@@ -8011,24 +7993,22 @@ msgstr "Lagrings metode for Kontaktliste"
 msgid "Local Buddy List Only"
 msgstr "Kun Lokal Kontaktliste"
 
-#, fuzzy
 msgid "Merge List from Server"
-msgstr "Slett kontaktliste fra tjener"
+msgstr "Slå sammen med liste fra tjener"
 
-#, fuzzy
 msgid "Merge and Save List to Server"
-msgstr "Feil CHL-verdi sendt til tjener"
+msgstr "Slå sammen og lagre liste på tjener"
 
 msgid "Synchronize List with Server"
 msgstr "Synkroniser Liste med Server"
 
 #, c-format
 msgid "Import Sametime List for Account %s"
-msgstr "Importer Samtime Liste for Konto %s"
+msgstr "Importer Samtime liste for konto %s"
 
 #, c-format
 msgid "Export Sametime List for Account %s"
-msgstr "Eksporter Samtime Liste for Konto %s"
+msgstr "Eksporter Samtime liste for konto %s"
 
 msgid "Unable to add group: group exists"
 msgstr "Klarte ikke legge til gruppe: gruppen eksisterer"
@@ -8056,13 +8036,11 @@ msgstr ""
 "Vennligst velg den rette gruppen fra listen under for å legge den til i "
 "kontaktlisten din."
 
-#, fuzzy
 msgid "Select Notes Address Book"
-msgstr "Legg til i adresseboka"
+msgstr "Velg Notes adressebok"
 
-#, fuzzy
 msgid "Unable to add group: group not found"
-msgstr "Klarte ikke lese fra nettverket"
+msgstr "Klarte ikke legge til gruppe: gruppa finnes ikke"
 
 #, c-format
 msgid ""
@@ -8071,9 +8049,8 @@ msgid ""
 msgstr ""
 "'%s' matchet inne noen Notat Adressebok gruppe i ditt Sametime nettverk."
 
-#, fuzzy
 msgid "Notes Address Book Group"
-msgstr "Legg til i adresseboka"
+msgstr "Notes adressebokgruppe"
 
 msgid ""
 "Enter the name of a Notes Address Book group in the field below to add the "
@@ -8124,10 +8101,10 @@ msgid "User Search"
 msgstr "Bruker Søk"
 
 msgid "Import Sametime List..."
-msgstr "Importer Sametime Liste..."
+msgstr "Importer Sametime liste..."
 
 msgid "Export Sametime List..."
-msgstr "Eksporter Sametime Liste..."
+msgstr "Eksporter Sametime liste..."
 
 msgid "Add Notes Address Book Group..."
 msgstr "Legg til i adresseboka..."
@@ -8194,13 +8171,13 @@ msgid "Key Agreement Request"
 msgstr "Nøkkelavtaleforespørsel"
 
 msgid "IM With Password"
-msgstr "Direktemelding med passord"
+msgstr "Lynmelding med passord"
 
 msgid "Cannot set IM key"
-msgstr "Klarer ikke sette direktemeldingsnøkkel"
+msgstr "Klarer ikke sette lynmeldingsnøkkel"
 
 msgid "Set IM Password"
-msgstr "Sett direktemeldingspassord"
+msgstr "Sett lynmeldingspassord"
 
 msgid "Get Public Key"
 msgstr "Hent offentlig nøkkel"
@@ -8336,13 +8313,13 @@ msgid "Geolocation"
 msgstr "Sted"
 
 msgid "Reset IM Key"
-msgstr "Nullstill direktemeldingsnøkkel"
+msgstr "Nullstill lynmeldingsnøkkel"
 
 msgid "IM with Key Exchange"
-msgstr "Direktemelding med nøkkelsentral"
+msgstr "Lynmelding med nøkkelsentral"
 
 msgid "IM with Password"
-msgstr "Direktemelding med passord"
+msgstr "Lynmelding med passord"
 
 msgid "Get Public Key..."
 msgstr "Hent offentlig nøkkel ..."
@@ -8379,8 +8356,7 @@ msgstr "<br><b>Brukerantall:</b> %d"
 msgid "<br><b>Channel Founder:</b> %s"
 msgstr "<br><b>Kanalstifter:</b> %s"
 
-# Kan også bety "kanalnøkkel" ->fuzzy
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>Channel Cipher:</b> %s"
 msgstr "<br><b>Kanalkryptering:</b> %s"
 
@@ -8393,19 +8369,17 @@ msgstr "<br><b>Kanal HMAC:</b> %s"
 msgid "<br><b>Channel Topic:</b><br>%s"
 msgstr "<br><b>Kanaltema:</b><br> %s"
 
-# Urk... moduser?
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>Channel Modes:</b> "
-msgstr "<br><b>Kanalmoduser:</b> "
+msgstr "<br><b>Kanaltilstander:</b> "
 
 #, c-format
 msgid "<br><b>Founder Key Fingerprint:</b><br>%s"
 msgstr "<br><b>Stifters nøkkelavtrykk:</b><br>%s"
 
-# må jeg forklare hvorfor fuzzy?
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>Founder Key Babbleprint:</b><br>%s"
-msgstr "<br><b>Stifters nøkkelbabbleavtrykk:</b><br>%s"
+msgstr "<br><b>Stifters nøkkelskribleriavtrykk:</b><br>%s"
 
 msgid "Add Channel Public Key"
 msgstr "Legg til kanalens offentlige nøkkel"
@@ -8417,10 +8391,8 @@ msgstr "Åpne offentlig nøkkel..."
 msgid "Channel Passphrase"
 msgstr "Kanalens nøkkelsetning"
 
-# Laaaaaangt!
-#, fuzzy
 msgid "Channel Public Keys List"
-msgstr "Liste over offentlige nøkler tilknyttet kanalen"
+msgstr "Liste over kanalen sine offentlige nøkler"
 
 #, c-format
 msgid ""
@@ -8452,7 +8424,6 @@ msgstr "Nøkkelsetning"
 msgid "Please enter the %s channel private group name and passphrase."
 msgstr "Tast inn %s-kanalens private gruppenavn og nøkkelsetning."
 
-#, fuzzy
 msgid "Add Channel Private Group"
 msgstr "Legg til privat kanalgruppe"
 
@@ -8510,13 +8481,11 @@ msgstr "Bli med i privat gruppe"
 msgid "Cannot join private group"
 msgstr "Kan ikke bli med i privat gruppe"
 
-#, fuzzy
 msgid "Call Command"
-msgstr "Kommando"
+msgstr "Utfør kommando"
 
-#, fuzzy
 msgid "Cannot call command"
-msgstr "Kan ikke kalle kommandoen"
+msgstr "Klarte ikke utføre kommandoen"
 
 msgid "Unknown command"
 msgstr "Ukjent kommando"
@@ -8567,21 +8536,21 @@ msgstr "Det oppsto en feil"
 msgid "%s has changed the topic of <I>%s</I> to: %s"
 msgstr "%s har endrer temaet i <I>%s</I> til: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<I>%s</I> set channel <I>%s</I> modes to: %s"
-msgstr "<I>%s</I> valgte kanalen <I>%s's</I> modus til: %s"
+msgstr "<I>%s</I> sette kanalen <I>%s</I> sin tilstand til: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<I>%s</I> removed all channel <I>%s</I> modes"
-msgstr "<I>%s</I> fjernet alle kanalen <I>%s's</I> modus"
+msgstr "<I>%s</I> fjernet alle tilstandane til kanalen <I>%s</I>"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<I>%s</I> set <I>%s's</I> modes to: %s"
-msgstr "<I>%s</I> satt <I>%s's</I> modus til: %s"
+msgstr "<I>%s</I> sette <I>%s</I> sine tilstander til: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<I>%s</I> removed all <I>%s's</I> modes"
-msgstr "<I>%s</I> fjernet alle <I>%s's</I> modus"
+msgstr "<I>%s</I> fjernet alle tilstandene til <I>%s</I>"
 
 #, c-format
 msgid "You have been kicked off <I>%s</I> by <I>%s</I> (%s)"
@@ -8780,7 +8749,7 @@ msgid "Disconnected by server"
 msgstr "Frakoplet av tjener"
 
 msgid "Error during connecting to SILC Server"
-msgstr "Feil under tilkopling til SILC-tjener"
+msgstr "Feil under tilkobling til SILC-tjener"
 
 msgid "Key Exchange failed"
 msgstr "Nøkkelutveksling feilet"
@@ -8793,7 +8762,7 @@ msgstr ""
 "ny forbindelse."
 
 msgid "Connection failed"
-msgstr "Tilkopling feilet"
+msgstr "Tilkobling feilet"
 
 msgid "Performing key exchange"
 msgstr "Gjennomfører nøkkelutveksling"
@@ -8801,9 +8770,8 @@ msgstr "Gjennomfører nøkkelutveksling"
 msgid "Unable to create connection"
 msgstr "Klarte ikke lage ny tilkobling"
 
-#, fuzzy
 msgid "Could not load SILC key pair"
-msgstr "Klarte ikke laste den offentlige nøkkelen"
+msgstr "Klarte ikke laste SILC nøkkelpar"
 
 #. Progress
 msgid "Connecting to SILC Server"
@@ -8812,9 +8780,8 @@ msgstr "Kobler til SILC-tjener"
 msgid "Out of memory"
 msgstr "Tom for minne"
 
-#, fuzzy
 msgid "Cannot initialize SILC protocol"
-msgstr "Kan ikke klargjøre SILC klientforbindelse"
+msgstr "Klarte ikke kjøre SILC-protokollen"
 
 msgid "Error loading SILC key pair"
 msgstr "Genererer SILC-nøkkelpar"
@@ -8870,9 +8837,8 @@ msgstr "Din VCard-fil"
 msgid "Timezone (UTC)"
 msgstr "Tidssone (UTC)"
 
-#, fuzzy
 msgid "User Online Status Attributes"
-msgstr "Brukers påloggingskjennetegn"
+msgstr "Brukeren sine tilkoblingsstatusattributt"
 
 msgid ""
 "You can let other users see your online status information and your personal "
@@ -8892,9 +8858,8 @@ msgstr "Ingen dagens melding er tilgjengelig"
 msgid "There is no Message of the Day associated with this connection"
 msgstr "Det er ingen Dagens Melding assosiert med denne tilkoblingen"
 
-#, fuzzy
 msgid "Create New SILC Key Pair"
-msgstr "Standard SILC-nøkkelpar"
+msgstr "Lag nytt SILC nøkkelpar"
 
 msgid "Passphrases do not match"
 msgstr "De nye passordene stemmer ikke overens"
@@ -8923,9 +8888,8 @@ msgstr "Påloggingsstatus"
 msgid "View Message of the Day"
 msgstr "Vis dagens melding"
 
-#, fuzzy
 msgid "Create SILC Key Pair..."
-msgstr "Genererer SILC-nøkkelpar..."
+msgstr "Lag SILC nøkkelpar …"
 
 #, c-format
 msgid "User <I>%s</I> is not present in the network"
@@ -8949,7 +8913,7 @@ msgstr "Kanalmodus for %s: %s"
 msgid "no channel modes are set on %s"
 msgstr "Ingen kanalmodus er valgt på %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to set cmodes for %s"
 msgstr "Klarte ikke velge cmodes for %s"
 
@@ -9099,7 +9063,7 @@ msgid "Public key authentication"
 msgstr "Offentlig nøkkel autentisering"
 
 msgid "Block IMs without Key Exchange"
-msgstr "Blokker direktemeldinger uten nøkkelutveksling"
+msgstr "Blokker lynmeldinger uten nøkkelutveksling"
 
 msgid "Block messages to whiteboard"
 msgstr "Blokker beskjeder til tavle"
@@ -9254,9 +9218,9 @@ msgstr "Kan ikke klargjøre SILC klientforbindelse"
 msgid "John Noname"
 msgstr "Ola Normann"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not load SILC key pair: %s"
-msgstr "Klarte ikke laste den offentlige nøkkelen"
+msgstr "Klarte ikke laste inn SILC nøkkelparet: %s"
 
 msgid "Could not write"
 msgstr "Klarte ikke skrive"
@@ -9268,7 +9232,7 @@ msgid "Unknown server response."
 msgstr "Ukjent tjenersvar"
 
 msgid "Could not create listen socket"
-msgstr "Klarte ikke opprette lyttesocket"
+msgstr "Klarte ikke opprette lytteendepunkt"
 
 msgid "Could not resolve hostname"
 msgstr "Kan ikke finne datamaskinnavnet"
@@ -9276,9 +9240,8 @@ msgstr "Kan ikke finne datamaskinnavnet"
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-brukernavn kan ikke inneholde mellomrom eller alfakrøll"
 
-#, fuzzy
 msgid "SIP connect server not specified"
-msgstr "Tjenerport"
+msgstr "Ingen SIP-tilkoblingstjener er oppgitt"
 
 #. *< type
 #. *< ui_requirement
@@ -9289,15 +9252,14 @@ msgstr "Tjenerport"
 #. *< name
 #. *< version
 msgid "SIP/SIMPLE Protocol Plugin"
-msgstr "SILC/SIMPLE-Protokolltillegg"
+msgstr "SIP/SIMPLE-protokolltillegg"
 
 #. *  summary
 msgid "The SIP/SIMPLE Protocol Plugin"
-msgstr "SIP/SIMPLE-Protokolltillegget"
+msgstr "SIP/SIMPLE-protokolltillegget"
 
-#, fuzzy
 msgid "Publish status (note: everyone may watch you)"
-msgstr "Publiser status (NB: alle kan se deg)"
+msgstr "Offentliggjør tilstand (merk: hvem som helst kan se deg)"
 
 msgid "Use UDP"
 msgstr "Bruk UDP"
@@ -9308,13 +9270,11 @@ msgstr "Bruk proxy"
 msgid "Proxy"
 msgstr "Proxy"
 
-#, fuzzy
 msgid "Auth User"
-msgstr "AP-bruker"
+msgstr "Autentiser bruker"
 
-#, fuzzy
 msgid "Auth Domain"
-msgstr "Automatisk"
+msgstr "Autentiseringsdomene"
 
 #, c-format
 msgid "Looking up %s"
@@ -9571,9 +9531,8 @@ msgstr "Klarte ikke legge kontakt til tjenerens kontaktliste"
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ Hørbar %s/%s/%s.swf ] %s"
 
-#, fuzzy
 msgid "Received unexpected HTTP response from server."
-msgstr "Ugyldig svar fra tjener."
+msgstr "Mottok uventet HTTP-svar fra tjener."
 
 msgid "Connection problem"
 msgstr "Problem ved tilkobling"
@@ -9618,9 +9577,8 @@ msgstr "Fremstå som pålogget"
 msgid "Appear Permanently Offline"
 msgstr "Fremstå som permanent avlogget"
 
-#, fuzzy
 msgid "Presence"
-msgstr "Innstillinger"
+msgstr "Nærvær"
 
 msgid "Appear Offline"
 msgstr "Fremstå som avlogget"
@@ -9634,9 +9592,8 @@ msgstr "Bli med i samtalegruppe"
 msgid "Initiate Conference"
 msgstr "Start konferanse"
 
-#, fuzzy
 msgid "Presence Settings"
-msgstr "Skjulte Innstillinger"
+msgstr "Nærværsinnstillinger"
 
 msgid "Start Doodling"
 msgstr "Start kruseduller"
@@ -9684,9 +9641,8 @@ msgstr "Yahoo-protokolltillegg"
 msgid "Yahoo Japan"
 msgstr "Yahoo Japan"
 
-#, fuzzy
 msgid "Pager server"
-msgstr "Proxytjener"
+msgstr "Søketjenestetjener"
 
 msgid "Japan Pager server"
 msgstr "Japansk Personsøker server"
@@ -9864,17 +9820,16 @@ msgstr ""
 "Du har blitt koblet fra tjeneren\n"
 "%s"
 
-#, fuzzy
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
 msgstr ""
-"(Det oppstod en feil under konverteringen av denne beskjeden.\t Sjekk "
-"'encoding'-innstillingen i kontooppsettet)"
+"(En feil oppstod under konverteringen av denne beskjeden.\t Kontroller "
+"«Tegnkoding»-valget i kontohåndteren)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send to chat %s,%s,%s"
-msgstr "Klarte ikke sende til samtalegruppe %s,%s,%s"
+msgstr "Klarte ikke sende til samtalerom %s,%s,%s"
 
 msgid "Hidden or not logged-in"
 msgstr "Gjemt eller ikke logget inn"
@@ -9986,26 +9941,27 @@ msgstr "Importer fra .anyone"
 msgid "Import from .zephyr.subs"
 msgstr "Importer fra .zephyr.subs"
 
-#, fuzzy
 msgid "Realm"
-msgstr "Virkelig navn"
+msgstr "Domene"
 
 msgid "Exposure"
 msgstr "Eksponering"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to create socket:\n"
 "%s"
-msgstr "Klarte ikke opprette socket"
+msgstr ""
+"Klarte ikke lage endepunkt:\n"
+"%s"
 
 #, c-format
 msgid "Unable to parse response from HTTP proxy: %s\n"
 msgstr "Klarte ikke analysere syntaktisk respons fra HTTP proxy: %s\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "HTTP proxy connection error %d"
-msgstr "Tilkoplingsfeil til mellomtjener %d"
+msgstr "Feil %d i forbindelsen mot HTTP-mellomtjeneren"
 
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling."
@@ -10081,7 +10037,7 @@ msgid "Stored Image"
 msgstr "Lagret bilde"
 
 msgid "Stored Image. (that'll have to do for now)"
-msgstr ""
+msgstr "Lagret bilde. (Det får holde for nå.)"
 
 msgid "SSL Connection Failed"
 msgstr "SSL-tilkoblingen feilet"
@@ -10089,9 +10045,8 @@ msgstr "SSL-tilkoblingen feilet"
 msgid "SSL Handshake Failed"
 msgstr "SSL-utveksling feilet"
 
-#, fuzzy
 msgid "SSL peer presented an invalid certificate"
-msgstr "Du har tastet inn et ugyldig brukernavn"
+msgstr "SSL-tjeneren sendte et ugyldig sertifikat"
 
 msgid "Unknown SSL error"
 msgstr "Ukjent SSL-feil"
@@ -10211,9 +10166,9 @@ msgstr "Klarte ikke åpne %s: Omdirigert for mange ganger"
 msgid "Unable to connect to %s"
 msgstr "Kan ikke koble til %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
-msgstr "Feil ved lesing fra %s: %s"
+msgstr "Klarte ikke lese fra %s: for langt svar (%d bytes-grense)"
 
 #, c-format
 msgid ""
@@ -10237,7 +10192,7 @@ msgstr "Kan ikke koble til %s: %s"
 
 #, c-format
 msgid " - %s"
-msgstr ""
+msgstr " - %s"
 
 #, c-format
 msgid " (%s)"
@@ -10375,9 +10330,8 @@ msgstr "Legg til konto"
 msgid "_Basic"
 msgstr "_Generell"
 
-#, fuzzy
 msgid "Create _this new account on the server"
-msgstr "Opprett denne nye kontoen på tjeneren"
+msgstr "Opprett denne _nye kontoen på tjeneren"
 
 msgid "_Advanced"
 msgstr "_Avansert"
@@ -10528,7 +10482,7 @@ msgid "/_Buddies"
 msgstr "/_Kontakter"
 
 msgid "/Buddies/New Instant _Message..."
-msgstr "/Kontakter/_Ny direktemelding..."
+msgstr "/Kontakter/_Ny lynmelding..."
 
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Kontakter/_Bli med i samtalegruppe..."
@@ -10683,7 +10637,7 @@ msgid "Idle %dm"
 msgstr "Inaktiv %dm"
 
 msgid "/Buddies/New Instant Message..."
-msgstr "/Kontakter/Ny direktemelding..."
+msgstr "/Kontakter/Ny lynmelding..."
 
 msgid "/Buddies/Join a Chat..."
 msgstr "/Kontakter/Bli med i samtalegruppe..."
@@ -10701,7 +10655,7 @@ msgid "/Buddies/Add Group..."
 msgstr "/Kontakter/Legg til gruppe..."
 
 msgid "/Tools/Privacy"
-msgstr "/Verktøy/Blokkeringer"
+msgstr "/Verktøy/Personvern"
 
 msgid "/Tools/Room List"
 msgstr "/Verktøy/Romliste"
@@ -10820,7 +10774,7 @@ msgid "A_lias:"
 msgstr "A_lias:"
 
 msgid "Auto_join when account becomes online."
-msgstr ""
+msgstr "Bli med automatisk når kontoen er pålogget."
 
 msgid "_Remain in chat after window is closed."
 msgstr "_Forbli i samtale etter at vinduet er lukket."
@@ -11142,7 +11096,7 @@ msgid "Last created window"
 msgstr "Sist opprettede vindu"
 
 msgid "Separate IM and Chat windows"
-msgstr "Skill direktemeldings- og gruppesamtalevinduer"
+msgstr "Skill lynmeldings- og gruppesamtalevinduer"
 
 msgid "New window"
 msgstr "Nytt vindu"
@@ -11199,14 +11153,14 @@ msgid "Fatal Error"
 msgstr "Alvorlig feil"
 
 msgid "bug master"
-msgstr ""
+msgstr "feilrettingsansvarlig"
 
 msgid "artist"
 msgstr "artist"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
-msgstr ""
+msgstr "Ka-Hing Cheung"
 
 #
 msgid "support"
@@ -11345,15 +11299,14 @@ msgstr "Japansk"
 msgid "Georgian"
 msgstr "Georgisk"
 
-#, fuzzy
 msgid "Ubuntu Georgian Translators"
-msgstr "Aktive oversettere"
+msgstr "Ubuntu georgisk-oversettere"
 
 msgid "Kannada"
 msgstr "Kannada"
 
 msgid "Kannada Translation team"
-msgstr "Kannada Translation team"
+msgstr "Kannada oversettelseslag"
 
 msgid "Korean"
 msgstr "Koreansk"
@@ -11368,7 +11321,10 @@ msgid "Lithuanian"
 msgstr "Litauisk"
 
 msgid "Macedonian"
-msgstr "Makedons"
+msgstr "Makedonsk"
+
+msgid "Mongolian"
+msgstr "Mongolsk"
 
 msgid "Bokmål Norwegian"
 msgstr "Norsk Bokmål"
@@ -11383,10 +11339,10 @@ msgid "Norwegian Nynorsk"
 msgstr "Norsk Nynorsk"
 
 msgid "Occitan"
-msgstr ""
+msgstr "Oksitansk"
 
 msgid "Punjabi"
-msgstr ""
+msgstr "Panjabi"
 
 msgid "Polish"
 msgstr "Polsk"
@@ -11418,9 +11374,8 @@ msgstr "Albansk"
 msgid "Serbian"
 msgstr "Serbisk"
 
-#, fuzzy
 msgid "Sinhala"
-msgstr "Sosial"
+msgstr "Singalesisk"
 
 msgid "Swedish"
 msgstr "Svensk"
@@ -11485,8 +11440,29 @@ msgstr ""
 "dette programmet.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin på irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">OSS:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Hjelp per e-post:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC-kanal:</FONT> #pidgin på irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Tidligere utviklere"
@@ -11547,7 +11523,7 @@ msgstr "Samtalealias"
 msgid "Enter an alias for this chat."
 msgstr "Skriv inn aliasnavn for denne samtalegruppa."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddy from "
 "your buddy list.  Do you want to continue?"
@@ -11555,11 +11531,11 @@ msgid_plural ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 msgstr[0] ""
-"Er du sikker på at du vil fjerne kontakten som inneholder %s og %d andre "
-"kontakter fra kontaktlisten din?"
+"Du er i ferd med å fjerne kontakten som inneholder %s og %d annen kontakt "
+"fra kontaktlista di. Ønsker du å fortsette?"
 msgstr[1] ""
-"Er du sikker på at du vil fjerne kontakten som inneholder %s og %d andre "
-"kontakter fra kontaktlisten din?"
+"Du er i ferd med å fjerne kontakten som inneholder %s og %d andre kontakter "
+"fra kontaktlista di. Ønsker du å fortsette?"
 
 msgid "Remove Contact"
 msgstr "Fjern kontakt"
@@ -11567,13 +11543,13 @@ msgstr "Fjern kontakt"
 msgid "_Remove Contact"
 msgstr "_Fjern kontakt"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to merge the group called %s into the group called %s. Do you "
 "want to continue?"
 msgstr ""
-"Er du sikker på at du vil fjerne gruppen %s med alle medlemmer fra "
-"kontaktlisten din?"
+"Du er i ferd med å slå gruppa med navnet %s sammen med gruppa %s. Øsnker du "
+"å fortsette?"
 
 msgid "Merge Groups"
 msgstr "Slå sammen grupper"
@@ -11646,13 +11622,11 @@ msgstr "_Innstillinger"
 msgid "Mute _Sounds"
 msgstr "_Skru av lyder"
 
-#, fuzzy
 msgid "_Blink on New Message"
-msgstr "Blink ved nye beskjeder"
+msgstr "_Blink ved nye beskjeder"
 
-#, fuzzy
 msgid "_Quit"
-msgstr "Avslutt"
+msgstr "_Avslutt"
 
 msgid "Not started"
 msgstr "Ikke startet"
@@ -11738,63 +11712,57 @@ msgstr "Fargen som lenker skal ha."
 msgid "Hyperlink visited color"
 msgstr "Farge på besøkte lenker"
 
-#, fuzzy
 msgid "Color to draw hyperlinks after it has been visited (or activated)."
-msgstr "Farge på lenker."
+msgstr "Lenkefarge etter at lenka er besøkt (eller tatt i bruk)."
 
-#, fuzzy
 msgid "Hyperlink prelight color"
-msgstr "Farge på lenke"
+msgstr "Lenkefarge (før bruk)"
 
 msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "Farge på lenker."
 
-#, fuzzy
 msgid "Sent Message Name Color"
-msgstr "Sendte beskjeder"
+msgstr "Farge for navn på sendt beskjed"
 
 msgid "Color to draw the name of a message you sent."
-msgstr ""
+msgstr "Farge for å tegne navnet på en melding du har sendt."
 
-#, fuzzy
 msgid "Received Message Name Color"
-msgstr "Mottatte beskjeder"
+msgstr "Farge for navn på mottatt melding"
 
 msgid "Color to draw the name of a message you received."
-msgstr ""
+msgstr "Farge for å tegne navnet på en beskjed du har mottatt."
 
 msgid "\"Attention\" Name Color"
-msgstr ""
+msgstr "Farge for navn på «oppmerksomhet» "
 
 msgid "Color to draw the name of a message you received containing your name."
 msgstr ""
+"Farge for å tegne navnet på en beskjed du mottok som innholdt navnet ditt."
 
 msgid "Action Message Name Color"
-msgstr ""
+msgstr "Farge for navn på handlingsbeskjed"
 
 msgid "Color to draw the name of an action message."
-msgstr ""
+msgstr "Farge for å tegne navnet på en handlingsbeskjed."
 
 msgid "Action Message Name Color for Whispered Message"
-msgstr ""
+msgstr "Farge for navn på handlingsmelding for hviska beskjeder"
 
-#, fuzzy
 msgid "Whisper Message Name Color"
-msgstr "Sendte beskjeder"
+msgstr "Farge på navn på hviskebeskjed"
 
-#, fuzzy
 msgid "Typing notification color"
-msgstr "Fjern varsling"
+msgstr "Skrivevarslingsfarge"
 
 msgid "The color to use for the typing notification font"
-msgstr ""
+msgstr "Skrifttypefargen som skal brukes ved skrivevarsling"
 
-#, fuzzy
 msgid "Typing notification font"
-msgstr "Varslingsvindu spretter opp"
+msgstr "Skrifttype for skrivevarsling"
 
 msgid "The font to use for the typing notification"
-msgstr ""
+msgstr "Skrifttypen som skal brukes ved skrivevarsling"
 
 msgid "Enable typing notification"
 msgstr "Aktiver varsling om skriving"
@@ -11902,6 +11870,9 @@ msgid ""
 "This smiley is disabled because a custom smiley exists for this shortcut:\n"
 " %s"
 msgstr ""
+"Smilefjeset er deaktivert fordi et tilpasset smilefjes eksisterer for denne "
+"snarveien:\n"
+"%s"
 
 msgid "Smile!"
 msgstr "Smil!"
@@ -11915,9 +11886,8 @@ msgstr "Dette temaet har ingen tilgjengelige smileys."
 msgid "_Font"
 msgstr "_Font"
 
-#, fuzzy
 msgid "Group Items"
-msgstr "Gruppenavn"
+msgstr "Grupper element"
 
 msgid "Ungroup Items"
 msgstr "Av-grupper Posteringer"
@@ -11953,7 +11923,7 @@ msgid "Reset Formatting"
 msgstr "Nullstill formatering"
 
 msgid "Insert IM Image"
-msgstr "Sett inn direktemeldingsbilde"
+msgstr "Sett inn lynmeldingsbilde"
 
 msgid "Insert Smiley"
 msgstr "Sett inn smilefjes"
@@ -12025,11 +11995,12 @@ msgstr ""
 "Er du sikker på at du vil fjerne loggen permanent fra samtalen med %s som "
 "startet på %s?"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure you want to permanently delete the system log which started at %"
 "s?"
-msgstr "Er du sikker på at du vil slette \"%s\"?"
+msgstr ""
+"Er du sikker på at du for alltid vil slette systemloggen som starte på %s?"
 
 msgid "Delete Log?"
 msgstr "Slette logg?"
@@ -12146,6 +12117,10 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Avslutter fordi en annen libpurple-klient allerede kjører.\n"
+
 msgid "Open All Messages"
 msgstr "Åpne alle beskjeder"
 
@@ -12196,7 +12171,7 @@ msgstr "Klarte ikke fjerne tillegget"
 msgid ""
 "The plugin could not be unloaded now, but will be disabled at the next "
 "startup."
-msgstr ""
+msgstr "Tillegget kan ikke fjernes nå, men blir deaktivert ved neste oppstart."
 
 #, c-format
 msgid ""
@@ -12265,7 +12240,7 @@ msgid "Sends a _message"
 msgstr "Sender en _beskjed"
 
 msgid "Ope_n an IM window"
-msgstr "Åpn_e vindu for direktemelding"
+msgstr "Åpn_e vindu for lynmelding"
 
 msgid "_Pop up a notification"
 msgstr "_Varslingsvindu spretter opp"
@@ -12332,7 +12307,7 @@ msgid "Conversation Window Hiding"
 msgstr "Skjuling av samtalevindu"
 
 msgid "_Hide new IM conversations:"
-msgstr "_Gjem nye direktemeldingssamtaler:"
+msgstr "_Gjem nye lynmeldingssamtaler:"
 
 msgid "When away"
 msgstr "Når fraværende"
@@ -12342,7 +12317,7 @@ msgid "Tabs"
 msgstr "Faner"
 
 msgid "Show IMs and chats in _tabbed windows"
-msgstr "Vis direktemeldinger og samtalegrupper i _faner"
+msgstr "Vis lynmeldinger og samtalegrupper i _faner"
 
 msgid "Show close b_utton on tabs"
 msgstr "Vis _lukkeknapp på faner"
@@ -12375,7 +12350,7 @@ msgid "Show _formatting on incoming messages"
 msgstr "Vis _formateringsverktøy på innkommende beskjeder"
 
 msgid "Close IMs immediately when the tab is closed"
-msgstr "Lukk direktemeldinger straks når fanen er lukket"
+msgstr "Lukk lynmeldinger straks når fanen er lukket"
 
 msgid "Show _detailed information"
 msgstr "Vis _detaljert informasjon"
@@ -12393,7 +12368,7 @@ msgid "Use smooth-scrolling"
 msgstr "Bruk behagelig scrolling"
 
 msgid "F_lash window when IMs are received"
-msgstr "B_link vinduet når nye direktemeldinger mottas"
+msgstr "B_link vinduet når nye lynmeldinger mottas"
 
 msgid "Minimi_ze new conversation windows"
 msgstr "Mini_mer nye samtalevinduer"
@@ -12424,7 +12399,7 @@ msgstr ""
 "formatering."
 
 msgid "Cannot start proxy configuration program."
-msgstr ""
+msgstr "Klarte ikke starte innstillingsprogrammet for mellomlageret."
 
 msgid "Cannot start browser configuration program."
 msgstr "Klarte ikke starte oppsettsprogram for nettleser."
@@ -12445,7 +12420,7 @@ msgid "Ports"
 msgstr "Porter"
 
 msgid "_Enable automatic router port forwarding"
-msgstr ""
+msgstr "Slå på automatisk port_videresending"
 
 msgid "_Manually specify range of ports to listen on"
 msgstr "_Manuellt spesifiser et intervall av porter å lytte på"
@@ -12460,15 +12435,17 @@ msgid "Proxy Server &amp; Browser"
 msgstr "Proxytjener &amp; nettleser"
 
 msgid "<b>Proxy configuration program was not found.</b>"
-msgstr ""
+msgstr "<b>Fant ikke innstillingsprogrammet for mellomlageret.</b>"
 
 msgid "<b>Browser configuration program was not found.</b>"
-msgstr ""
+msgstr "<b>Fant ikke innstillingsprogrammet for nettleseren.</b>"
 
 msgid ""
 "Proxy & Browser preferences are configured\n"
 "in GNOME Preferences"
 msgstr ""
+"Mellomlager- og nettleserinnstillinger endrer\n"
+"en i GNOME-innstillingene"
 
 msgid "Configure _Proxy"
 msgstr "Sett opp _proxy"
@@ -12481,6 +12458,10 @@ msgstr "Proxytjener"
 
 msgid "No proxy"
 msgstr "Ingen proxy"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Bruk fjern DNS med SOCKS4-mellomtenarar"
 
 msgid "_User:"
 msgstr "_Bruker:"
@@ -12686,14 +12667,14 @@ msgstr "Blokker alle brukere"
 msgid "Block only the users below"
 msgstr "Blokker kun brukerne vist nedenfor"
 
-msgid "Privacy"
+msgid "Personvern"
 msgstr "Sikkerhet"
 
 msgid "Changes to privacy settings take effect immediately."
 msgstr "Endringer i sikkerhetsinnstillingene skjer umiddelbart."
 
 msgid "Set privacy for:"
-msgstr "Sett sikkerhet for:"
+msgstr "Sett personvern for:"
 
 #. Remove All button
 msgid "Remove Al_l"
@@ -12762,9 +12743,8 @@ msgstr "Hent Liste"
 msgid "_Add Chat"
 msgstr "_Legg til samtale"
 
-#, fuzzy
 msgid "Are you sure you want to delete the selected saved statuses?"
-msgstr "Er du sikker på at du vil slette %s?"
+msgstr "Vil du virkelig slette de valgte lagrede tilstandene?"
 
 #. Use button
 msgid "_Use"
@@ -12798,7 +12778,7 @@ msgid "Custom Smiley"
 msgstr "Tilpassede smilefjes"
 
 msgid "More Data needed"
-msgstr ""
+msgstr "Mer data trengs"
 
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr "Oppgi en snarvei som skal forbindes med smilefjeset."
@@ -12832,21 +12812,17 @@ msgstr "Snar_vei for smilefjes"
 msgid "Smiley"
 msgstr "Smilefjes"
 
-#, fuzzy
 msgid "Custom Smiley Manager"
-msgstr "Sertifikatshåndterer"
+msgstr "Tilpassede smilefjes"
 
-#, fuzzy
 msgid "Click to change your buddyicon for this account."
-msgstr "Bruk dette kontakt _ikon for denne kontoen:"
+msgstr "Klikk for å endre kontaktikonet for denne kontoen."
 
-#, fuzzy
 msgid "Click to change your buddyicon for all accounts."
-msgstr "Bruk dette kontakt _ikon for denne kontoen:"
+msgstr "Klikk for å endre kontaktikonet for alle kontoene."
 
-#, fuzzy
 msgid "Waiting for network connection"
-msgstr "Venter på at overføringen skal starte"
+msgstr "Venter på nettverksforbindelse"
 
 msgid "New status..."
 msgstr "Ny status ..."
@@ -12854,9 +12830,8 @@ msgstr "Ny status ..."
 msgid "Saved statuses..."
 msgstr "Lagrede statuser ..."
 
-#, fuzzy
 msgid "Status Selector"
-msgstr "Statustekst"
+msgstr "Tilstandsvelger"
 
 msgid "Google Talk"
 msgstr "Google Talk"
@@ -12878,9 +12853,8 @@ msgid ""
 "individually."
 msgstr "%s kan ikke overføre en mappe. Du må sende filene inni hver for seg."
 
-#, fuzzy
 msgid "You have dragged an image"
-msgstr "Du har tastet inn et ugyldig brukernavn"
+msgstr "Du har dratt et bilde"
 
 msgid ""
 "You can send this image as a file transfer, embed it into this message, or "
@@ -12920,9 +12894,8 @@ msgstr ""
 #. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
 #. * Probably not.  I'll just give an error and return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
-#, fuzzy
 msgid "Cannot send launcher"
-msgstr "Kan ikke sende fil"
+msgstr "Klarte ikke sende lasteren"
 
 msgid ""
 "You dragged a desktop launcher. Most likely you wanted to send whatever this "
@@ -13010,14 +12983,13 @@ msgid "Small"
 msgstr "Liten"
 
 msgid "Smaller versions of the default smilies"
-msgstr ""
+msgstr "Mindre utgaver av standard smilefjes"
 
 msgid "Response Probability:"
 msgstr "Svaret gikk tapt:"
 
-#, fuzzy
 msgid "Statistics Configuration"
-msgstr "Innstillinger for trayikon"
+msgstr "Statistikkinnstillinger"
 
 #. msg_difference spinner
 msgid "Maximum response timeout:"
@@ -13050,7 +13022,7 @@ msgstr "Forutsigelse av Kontaktens Tilgjengelighet tillegg."
 
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
-msgstr ""
+msgstr "Vis statistikk om dine kontakters tilgjengelighet"
 
 msgid "Buddy is idle"
 msgstr "Kontakt er inaktiv"
@@ -13081,9 +13053,8 @@ msgstr ""
 msgid "Use last buddy when scores are equal"
 msgstr "Bruk den siste kontakten når resultatene er lik"
 
-#, fuzzy
 msgid "Point values to use for account..."
-msgstr "Verdier til bruk for konto..."
+msgstr "Poengverdier som kontoen kan bruke …"
 
 #. *< type
 #. *< ui_requirement
@@ -13110,20 +13081,17 @@ msgstr ""
 "Lar deg endre vektingen for inaktiv/borte/avlogget for kontakter i "
 "kontaktprioritetsutregninger."
 
-#, fuzzy
 msgid "Conversation Colors"
-msgstr "/Samtale/L_ukk"
+msgstr "Samtalefarger"
 
-#, fuzzy
 msgid "Customize colors in the conversation window"
-msgstr "Samtalevinduer for direktemeldinger"
+msgstr "Tilpass farger i samtalevinduet"
 
 msgid "Error Messages"
 msgstr "Feilmeldinger"
 
-#, fuzzy
 msgid "Highlighted Messages"
-msgstr "Fremhev Treff"
+msgstr "Fremhevede beskjeder"
 
 msgid "System Messages"
 msgstr "Systemmeldinger"
@@ -13138,15 +13106,14 @@ msgstr "Mottatte beskjeder"
 msgid "Select Color for %s"
 msgstr "Velg farge for %s"
 
-#, fuzzy
 msgid "Ignore incoming format"
-msgstr "Ignorer farger"
+msgstr "Ign_orer innkommende format"
 
 msgid "Apply in Chats"
 msgstr "Legg til i Samtaler"
 
 msgid "Apply in IMs"
-msgstr "Legg til i Direktemeldinger"
+msgstr "Legg til i Lynmeldinger"
 
 msgid "By conversation count"
 msgstr "Etter samtaleantall"
@@ -13167,7 +13134,7 @@ msgstr "Antall samtaler per vindu"
 
 msgid "Separate IM and Chat windows when placing by number"
 msgstr ""
-"Separere direktemeldings- og chattevinduer når programet plasserer etter "
+"Separere lynmeldings- og chattevinduer når programet plasserer etter "
 "nummer"
 
 #. *< type
@@ -13191,7 +13158,7 @@ msgid ""
 "and Chats"
 msgstr ""
 "Begrens det maksimale antallet samtaler per vindu, og eventuelt separering "
-"av direktemeldinger og chat"
+"av lynmeldinger og chat"
 
 #. Configuration frame
 msgid "Mouse Gestures Configuration"
@@ -13223,7 +13190,6 @@ msgid "Provides support for mouse gestures"
 msgstr "Lar deg bruke musbevegelser"
 
 #. *  description
-#, fuzzy
 msgid ""
 "Allows support for mouse gestures in conversation windows. Drag the middle "
 "mouse button to perform certain actions:\n"
@@ -13231,16 +13197,14 @@ msgid ""
 " • Drag up and then to the left to switch to the previous conversation.\n"
 " • Drag up and then to the right to switch to the next conversation."
 msgstr ""
-"Slår på støtte for musbevegelser i samtalevinduer.\n"
-"Hold den midterste musknappen for å gjøre følgende handlinger:\n"
-"\n"
-"Dra ned og deretter til høyre for å lukke samtalevinduet.\n"
-"Dra opp og deretter til venstre for å bytte til det forrige samtalevinduet.\n"
-"Dra opp og deretter til høyre for å bytte til det neste samtalevinduet."
+"Gir støtte til musebevegelser i samtalevinduer. Dra midtknappen på musa for "
+"å utføre enkelte handlinger:\n"
+" • dra ned og til høyre: lar deg lukke en samtale.\n"
+" • dra opp og til venstre: bytter til forrige samtale.\n"
+" • dra opp og til høyre: bytter til neste samtale."
 
-#, fuzzy
 msgid "Instant Messaging"
-msgstr "Direktemelding"
+msgstr "Lynmeldinger"
 
 #. Add the label.
 msgid "Select a person from your address book below, or add a new person."
@@ -13288,16 +13252,15 @@ msgid "Add to Address Book"
 msgstr "Legg til i adresseboka"
 
 msgid "Send Email"
-msgstr "Send E-post"
+msgstr "Send e-post"
 
 #. Configuration frame
 msgid "Evolution Integration Configuration"
 msgstr "Innstillinger for Evolution-integrasjon"
 
 #. Label
-#, fuzzy
 msgid "Select all accounts that buddies should be auto-added to."
-msgstr "Velg alle kontoer som kontakter skal legges til automatisk i."
+msgstr "Velg alle kontoene du vil at kontaktene automatisk skal legges til i."
 
 #. *< type
 #. *< ui_requirement
@@ -13318,11 +13281,8 @@ msgstr "Tilbyr integrasjon med Evolution."
 msgid "Please enter the person's information below."
 msgstr "Vennligst tast inn personens informasjon under."
 
-#, fuzzy
 msgid "Please enter the buddy's username and account type below."
-msgstr ""
-"Venligst tast inn kontaktens brukernavn og hvilken protokoll kontakten "
-"finnes på under."
+msgstr "Skriv inn kontakten sitt brukernavn og kontotype nedenfor."
 
 msgid "Account type:"
 msgstr "Kontotype:"
@@ -13357,13 +13317,13 @@ msgstr "GTK-signaltest"
 msgid "Test to see that all ui signals are working properly."
 msgstr "Test for å se om alle brukergrensesnitts-signaler fungerer korrekt."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Buddy Note</b>: %s"
 msgstr ""
 "\n"
-"<b>Inaktiv:</b>"
+"<b>Kontaktmerknad</b>: %s"
 
 msgid "History"
 msgstr "Historikk"
@@ -13394,22 +13354,20 @@ msgid "Adds a small box to the buddy list that shows if you have new mail."
 msgstr ""
 "Legger til en liten boks i kontaktlista som viser om du har fått e-post."
 
-#, fuzzy
 msgid "Markerline"
-msgstr "Understrek"
+msgstr "Markeringslinje"
 
 msgid "Draw a line to indicate new messages in a conversation."
 msgstr "Tegn en linje for å indikere nye beskjeder for denne samtalen."
 
-#, fuzzy
 msgid "Jump to markerline"
-msgstr "Understrek"
+msgstr "Gå til markeringslinja"
 
 msgid "Draw Markerline in "
 msgstr "Tegn Understrek i "
 
 msgid "_IM windows"
-msgstr "Vinduer for direktemeldinger"
+msgstr "Vinduer for lynmeldinger"
 
 #
 msgid "C_hat windows"
@@ -13425,24 +13383,21 @@ msgstr ""
 msgid "Music messaging session confirmed."
 msgstr "Musikk samtale økt bekreftet."
 
-#, fuzzy
 msgid "Music Messaging"
-msgstr "Direktemelding"
+msgstr "Musikkmeldinger"
 
 msgid "There was a conflict in running the command:"
 msgstr "Det oppsto en konflikt ved kjøring av kommando:"
 
-#, fuzzy
 msgid "Error Running Editor"
-msgstr "Klarte ikke bli med i gruppesamtale %s"
+msgstr "Klarte ikke starte skriveprogrammet"
 
 msgid "The following error has occurred:"
 msgstr "Følgende feil har oppstått:"
 
 #. Configuration frame
-#, fuzzy
 msgid "Music Messaging Configuration"
-msgstr "Innstillinger for musbevegelser"
+msgstr "Musikkmeldingsinnstillinger"
 
 msgid "Score Editor Path"
 msgstr "Resultat Redigerings Bane"
@@ -13492,29 +13447,24 @@ msgid "Insert c_ount of new messages into window title"
 msgstr "Sett inn antall nye beskjeder i vindustittelen"
 
 #. Count xprop method button
-#, fuzzy
 msgid "Insert count of new message into _X property"
-msgstr "Sett inn antall nye beskjeder i vindustittelen"
+msgstr "Legg til tallet på nye meldinger i _X-egenskapen"
 
 #
 #. Urgent method button
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Sett \"URGENT\"-hintet for vindusbehandleren"
 
-#
-#, fuzzy
 msgid "_Flash window"
-msgstr "_Samtalevinduer"
+msgstr "_Blink vindu"
 
 #. Raise window method button
-#, fuzzy
 msgid "R_aise conversation window"
-msgstr "Samtalevinduer for direktemeldinger"
+msgstr "_Løft samtalevindu"
 
 #. Present conversation method button
-#, fuzzy
 msgid "_Present conversation window"
-msgstr "Samtalevinduer for direktemeldinger"
+msgstr "_Presenter samtalevindu"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -13597,23 +13547,20 @@ msgstr "Farge på lenker"
 msgid "Visited Hyperlink Color"
 msgstr "Farge på besøkte lenker"
 
-#, fuzzy
 msgid "Highlighted Message Name Color"
-msgstr "Fremhev Treff"
+msgstr "Farge for fremhevede beskjednavn"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView Horizontal Separation"
 
-#, fuzzy
 msgid "Conversation Entry"
-msgstr "Samtaler"
+msgstr "Samtale"
 
 msgid "Request Dialog"
 msgstr "Forespørselsdialog"
 
-#, fuzzy
 msgid "Notify Dialog"
-msgstr "Bruk varsling for"
+msgstr "Varslingsdialog"
 
 msgid "Select Color"
 msgstr "Velg farge"
@@ -13738,15 +13685,16 @@ msgstr "Send-knapp"
 
 #. *< name
 #. *< version
-#, fuzzy
 msgid "Conversation Window Send Button."
-msgstr "Samtalevinduer Vindu Skjuling"
+msgstr "Send-knapp i samtalevindu"
 
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
 "for when no physical keyboard is present."
 msgstr ""
+"Legg til en Send-knapp i samtalevinduet. Tenkt brukt når intet fysisk "
+"tastatur er tilgjengelig."
 
 msgid "Duplicate Correction"
 msgstr "Dupliserings Korrigering"
@@ -13785,9 +13733,8 @@ msgstr "_Eksakt case match (huk av for automatisk case handling)"
 msgid "Only replace _whole words"
 msgstr "Erstatt kun _hele ord"
 
-#, fuzzy
 msgid "General Text Replacement Options"
-msgstr "Teksterstatninger"
+msgstr "Generelle innstillinger for teksterstatning"
 
 msgid "Enable replacement of last word on send"
 msgstr "Slå på utskiftning av siste ord på send"
@@ -13830,12 +13777,11 @@ msgstr "Tidsstempel"
 #. *< version
 #. *  summary
 msgid "Display iChat-style timestamps"
-msgstr "Vis tidsstempel i iChat stil"
+msgstr "Vis tidsstempel i iChat-stil"
 
 #. *  description
-#, fuzzy
 msgid "Display iChat-style timestamps every N minutes."
-msgstr "Legger til tidsstempel i samtalevinduer a la iChat hvert Nte minutt."
+msgstr "Vis tidsstempel i iChat-stil hvert Nte minutt."
 
 msgid "Timestamp Format Options"
 msgstr "Innstillinger for Tidsstempel Format"
@@ -13850,9 +13796,9 @@ msgstr "Vis datoer i..."
 msgid "Co_nversations:"
 msgstr "Sa_mtaler:"
 
-#, fuzzy
+# var: For forseinka meldingar
 msgid "For delayed messages"
-msgstr "Ny fraværsbeskjed"
+msgstr "For forsinkede beskjeder"
 
 msgid "For delayed messages and in chats"
 msgstr "For forsinkede beskjeder og i samtaler"
@@ -13888,17 +13834,16 @@ msgstr "Ugjennomsiktighet:"
 
 #. IM Convo trans options
 msgid "IM Conversation Windows"
-msgstr "Samtalevinduer for direktemeldinger"
+msgstr "Samtalevinduer for lynmeldinger"
 
 msgid "_IM window transparency"
-msgstr "Gjennomsiktige vinduer for direktemeldinger"
+msgstr "Gjennomsiktige vinduer for lynmeldinger"
 
 msgid "_Show slider bar in IM window"
-msgstr "Vis glideknapp i direktemeldingsvindu"
+msgstr "Vis _glideknapp i lynmeldingsvindu"
 
-#, fuzzy
 msgid "Remove IM window transparency on focus"
-msgstr "Gjennomsiktige vinduer for direktemeldinger"
+msgstr "Ta vekk transparens i lynmeldingsvindu ved fokus"
 
 #
 msgid "Always on top"
@@ -13911,9 +13856,8 @@ msgstr "Kontaktlistevindu"
 msgid "_Buddy List window transparency"
 msgstr "Gjennomsiktighet for kontaktlistevindu"
 
-#, fuzzy
 msgid "Remove Buddy List window transparency on focus"
-msgstr "Fjern gjennomsiktighet for kontaktlistevindu i fokus"
+msgstr "Ta vekk transparens i kontaktlistevindu ved fokus"
 
 #. *< type
 #. *< ui_requirement
@@ -13931,20 +13875,19 @@ msgid "Variable Transparency for the buddy list and conversations."
 msgstr "Variabel gjennomsiktighet for kontaktlisten og samtaler."
 
 #. *  description
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list.\n"
 "\n"
 "* Note: This plugin requires Win2000 or greater."
 msgstr ""
-"Dette tillegget gjør at samtalevinduene og kontaktlisten blir delvis "
-"gjennomsiktige.\n"
+"Dette programtillegget gir variabel alfa-transparens i samtalevindu og "
+"kontaktlisten.\n"
 "\n"
-"* Merk: du må ha Windows 2000 eller Windows XP for at denne skal virke."
+"*Merk: Tillegget krever Windows 2000 eller senere utgaver."
 
 msgid "GTK+ Runtime Version"
-msgstr "GTK+ kjøremiljø versjon"
+msgstr "Versjon av GTK+ kjøremiljø "
 
 #. Autostart
 msgid "Startup"
@@ -13955,7 +13898,7 @@ msgid "_Start %s on Windows startup"
 msgstr "_Start %s når Windows starter"
 
 msgid "_Dockable Buddy List"
-msgstr "Dockable kontaktliste"
+msgstr "_Skjuling av kontaktliste i systemstatusfeltet"
 
 #. Blist On Top
 msgid "_Keep Buddy List window on top:"
@@ -13963,24 +13906,19 @@ msgstr "_Hold kontaktlistevinduet øverst:"
 
 #. XXX: Did this ever work?
 msgid "Only when docked"
-msgstr ""
+msgstr "Kun når skjult i systemstatusfeltet"
 
-#, fuzzy
-msgid "_Flash window when chat messages are received"
-msgstr "_Blink vinduet når nye beskjeder mottas"
-
-#, fuzzy
 msgid "Windows Pidgin Options"
-msgstr "Innloggingsvalg"
+msgstr "Valg for Windows Pidgin"
 
 msgid "Options specific to Pidgin for Windows."
-msgstr "Innstillinger som er spesifikke for Windows Pidgin."
+msgstr "Innstillinger som er spesifikke for Pidgin på Windows."
 
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
 msgstr ""
-"Gir spesifikke innstillinger for Windows Pidgin, slik som kontaktliste "
-"docking og samtale blinking."
+"Gir spesifikke innstillinger for Pidgin på Windows, slik som skjuling av "
+"kontaktliste i systemstatusfeltet."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Logget ut.</font>"
@@ -14019,6 +13957,12 @@ msgstr "Send og motta direkte XMPP vers."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dette tillegget er kjekt å ha for debugging av XMPP servere og klienter."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Klarte ikke hente MSN-adressebok"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "La vinduet _blinke når det kommer nye beskjeder"
 
 #, fuzzy
 #~ msgid "Connection to server lost (no data received within %d second)"
@@ -14060,7 +14004,7 @@ msgstr ""
 #~ msgstr "Koble til tjener"
 
 #~ msgid "Failed to send IM."
-#~ msgstr "Feilet i å sende direktemelding."
+#~ msgstr "Feilet i å sende lynmelding."
 
 #~ msgid "User information for %s unavailable"
 #~ msgstr "Brukerinformasjon for %s er ikke tilgjengelig"

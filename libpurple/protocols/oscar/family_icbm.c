@@ -1566,9 +1566,10 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 
 static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, ByteStream *bs, guint8 *cookie)
 {
-	guint16 type, length;
+	guint16 type, length, magic1, msglen;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
+	int rev = 0;
 	struct aim_incomingim_ch1_args args;
 	unsigned int endpos;
 
@@ -1603,10 +1604,30 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 			 *   - 0101 -- Unknown
 			 *   - Message
 			 *
+			 * Slick and possible others reverse 'Features' and 'Messages' section.
+			 * Thus, the TLV could have following layout:
+			 *   - 0101 -- Unknown (possibly magic for message section)
+			 *   - Message
+			 *   - 0501 -- Unknown (possibly magic for features section)
+			 *   - Features: Don't know how to interpret these
 			 */
 
-			byte_stream_get8(bs); /* 05 */
-			byte_stream_get8(bs); /* 01 */
+			magic1 = byte_stream_get16(bs); /* 0501 or 0101 */
+			if (magic1 == 0x101) /* Bad, message comes before attributes */
+			{
+				/* Jump to the features section */
+				msglen = byte_stream_get16(bs);
+				bs->offset += msglen;
+				rev = 1;
+
+				magic1 = byte_stream_get16(bs); /* 0501 */
+			}
+
+			if (magic1 != 0x501)
+			{
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				break;
+			}
 
 			args.featureslen = byte_stream_get16(bs);
 			if (args.featureslen > byte_stream_empty(bs))
@@ -1624,11 +1645,25 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				args.icbmflags |= AIM_IMFLAGS_CUSTOMFEATURES;
 			}
 
+			if (rev)
+			{
+				/* Fix buffer back to message */
+				bs->offset -= args.featureslen + 2 + 2 + msglen + 2 + 2;
+			}
+
+			magic1 = byte_stream_get16(bs); /* 01 01 */
+			if (magic1 != 0x101) /* Bad, message comes before attributes */
+			{
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				break;
+			}
+			msglen = byte_stream_get16(bs);
+
 			/*
 			 * The rest of the TLV contains one or more message
 			 * blocks...
 			 */
-			incomingim_ch1_parsemsgs(od, userinfo, bs->data + bs->offset /* XXX evil!!! */, length - 2 - 2 - args.featureslen, &args);
+			incomingim_ch1_parsemsgs(od, userinfo, bs->data + bs->offset - 2 - 2 /* XXX evil!!! */, msglen + 2 + 2, &args);
 
 		} else if (type == 0x0003) { /* Server Ack Requested */
 

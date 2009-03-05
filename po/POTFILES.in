@@ -133,6 +133,7 @@ libpurple/protocols/oscar/oscar.c
 libpurple/protocols/oscar/peer.c
 libpurple/protocols/qq/buddy_info.c
 libpurple/protocols/qq/buddy_list.c
+libpurple/protocols/qq/buddy_memo.c
 libpurple/protocols/qq/buddy_opt.c
 libpurple/protocols/qq/group.c
 libpurple/protocols/qq/group_im.c

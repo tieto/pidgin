@@ -208,7 +208,7 @@ void gnt_colors_parse(GKeyFile *kfile)
 				key = g_ascii_strdown(key, -1);
 				color = gnt_colors_get_color(key);
 				g_free(key);
-				if (color == -1)
+				if (color == -EINVAL)
 					continue;
 
 				init_color(color, r, g, b);
@@ -251,7 +251,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 			int bg = gnt_colors_get_color(bgc);
 			g_free(fgc);
 			g_free(bgc);
-			if (fg == -1 || bg == -1)
+			if (fg == -EINVAL || bg == -EINVAL)
 				continue;
 
 			key = g_ascii_strdown(key, -1);
