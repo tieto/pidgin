@@ -2443,10 +2443,16 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
+	PurpleAccount *account;
+	PurpleConnection *pc;
+
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if(!jabber_ping_jid(conv, args[0])) {
+	account = purple_conversation_get_account(conv);
+	pc = purple_account_get_connection(account);
+
+	if(!jabber_ping_jid(purple_connection_get_protocol_data(pc), args[0])) {
 		*error = g_strdup_printf(_("Unable to ping user %s"), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
