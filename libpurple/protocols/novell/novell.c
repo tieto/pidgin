@@ -2557,6 +2557,10 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	if (!user->clist_synched)
 		return;
 
+	/* Don't re-add a buddy that is already on our contact list */
+	if (nm_find_user_record(user, buddy->name) != NULL)
+		return;
+
 	contact = nm_create_contact();
 	nm_contact_set_dn(contact, purple_buddy_get_name(buddy));
 
