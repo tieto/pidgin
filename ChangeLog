@@ -1,12 +1,34 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.5 (??/??/????):
+version 2.6.0 (??/??/2009):
+	General:
+	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
+	  project.  With some minor additions and clean ups from Paul Aurich.
+
+	XMPP:
+	* Add support for in-band bytestreams (XEP-0047).
+	* Add support for attention (XEP-0224).
+
+	Pidgin:
+	* Added -f command line option to tell Pidgin to ignore NetworkManager
+	  and assume it has a valid network connection.
+	* Allow plugins to specify custom link types to the GtkIMHtml widget.
+	* The status message input box at the bottom of the buddy list expands
+	  correctly when starting a new line of text.
+	* Pressing the Enter key in the message entry box of the New Status
+	  dialog and various other dialogs now causes the cursor to move to
+	  the next line.
+
+version 2.5.5 (03/01/2009):
 	libpurple:
 	* Fix a crash when removing an account with an unknown protocol id.
 	* Beta support for SSL connections for AIM and ICQ accounts.  To
 	  enable, check the "Use SSL" option from the Advanced tab when
 	  editing your AIM or ICQ account. (Paul Aurich)
 	* Fix a memory leak in SILC. (Luke Petre)
+	* Fix some string handling in the SIMPLE prpl, which fixes some buddy name
+	  handling and other issues. (Paul Aurich, Marcus Sundberg)
+	* Implement support for resolving DNS via the SOCKS4 proxy (SOCKS4a).
 
 	ICQ:
 	* Fix retrieval of status messages from users of ICQ 6.x, Miranda, and
@@ -15,6 +37,7 @@ version 2.5.5 (??/??/????):
 	  of buddy icons and available messages.
 	* Properly publish status messages for statuses other than Available.
 	  ICQ 6.x users can now see these status messages. (Daniel Ljungborg)
+	* Fix receipt of messages from the mobile client Slick. (David Jedelsky)
 
 	MSN:
 	* Fix transfer of buddy icons, custom smileys, and files from the
@@ -23,8 +46,45 @@ version 2.5.5 (??/??/????):
 	* Large (multi-part) messages are now correctly re-combined.
 	* Federated/Yahoo! buddies should now stop creating sync issues at
 	  every signin.  You may need to remove duplicates in the Address
-	  Book.  See the FAQ for more information.
+	  Book.  See the FAQ for more information.  Thanks to Jason Lingohr
+	  for lots of debugging and testing.
 	* Messages from Yahoo! buddies are no longer silently dropped.
+	* We now save and use the CacheKey for ABCH SOAP requests.
+	* Don't try to parse Personal Status Messages or Current Media if they
+	  don't exist.
+	* Convert from ISO-8859-1 encoding to UTF-8 when no charset is specified
+	  on incoming messages.  This should fix some issues with messages from
+	  older clients.
+	* Force sending the font "Segoe UI" if outgoing formatting doesn't specify
+	  a font already.
+	* Queue callbacks when token updates are in progress to prevent two token
+	  update attempts from trampling each other.
+	* Fixed a crash on Windows when removing a buddy's alias.
+	* Update the Address Book when buddies' friendly names change.  This
+	  prevents seeing an outdated alias or not seeing an alias at all for
+	  buddies who are offline when you sign in.
+	* Update tokens for FindMembership and ABFindAll SOAP requests.
+	* We no longer try to send empty messages.  This could happen when a
+	  message contained only formatting and that formatting was not supported
+	  on MSN.
+	* Buddies on both the Allow and Block list are now automatically
+	  removed from the Allow list.  Users with this problem will now no
+	  longer receive an ADL 241 error.  The problematic buddy should now
+	  appear on the buddy list and can be removed or unblocked as desired.
+
+	XMPP:
+	* Resources using __HOSTNAME__ substitution will now grab only the short
+	  hostname instead of the FQDN on systems which put the FQDN in the
+	  hostname. (Matěj Cepl)
+	* No longer send a 'to' attribute on an outgoing stanza when we haven't
+	  received one.  This fixes a registration bug as described in ticket
+	  #6635.
+
+	Pidgin:
+	* Tooltip windows now appear below the mouse cursor. (Kosta Arvanitis)
+	* Tooltip windows now disappear on keypress events. (Kosta Arvanitis)
+	* Tooltip windows no longer linger when scrolling the buddy list. (Kosta
+	  Arvanitis)
 
 	Finch:
 	* Allow rebinding keys to change the focused widget (details in the
@@ -628,13 +688,13 @@ version 2.2.1 (09/29/2007):
 version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
-	Libpurple:
+	libpurple:
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
 	* XMPP enhancements. See
-	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas
 	  Monitzer, Google Summer of Code for Adium)
-	* Certificate management. Libpurple will validate certificates on
+	* Certificate management. libpurple will validate certificates on
 	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
 	* Some adjustments were made to fix sending messages when using
 	  the MSN HTTP method. (Laszlo Pandy)

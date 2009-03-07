@@ -87,7 +87,7 @@ static gpointer on_offline_find_parent(PurpleBlistNode *node)
 
 	switch (purple_blist_node_get_type(node)) {
 		case PURPLE_BLIST_CONTACT_NODE:
-			node = (PurpleBlistNode*)purple_contact_get_priority_buddy((PurpleContact*)node);
+			node = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(node)));
 			ret = PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node) ? &online : &offline;
 			break;
 		case PURPLE_BLIST_BUDDY_NODE:
@@ -383,6 +383,6 @@ init_plugin(PurplePlugin *plugin)
 {
 }
 
-PURPLE_INIT_PLUGIN(ignore, init_plugin, info)
+PURPLE_INIT_PLUGIN(grouping, init_plugin, info)
 
 

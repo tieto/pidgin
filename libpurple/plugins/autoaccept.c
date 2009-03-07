@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"core-plugin_pack-autoaccept"
 #define PLUGIN_NAME			N_("Autoaccept")
-#define PLUGIN_STATIC_NAME	"Autoaccept"
+#define PLUGIN_STATIC_NAME	Autoaccept
 #define PLUGIN_SUMMARY		N_("Auto-accept file transfer requests from selected users.")
 #define PLUGIN_DESCRIPTION	N_("Auto-accept file transfer requests from selected users.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
@@ -95,7 +95,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 	char *dirname;
 
 	account = xfer->account;
-	node = (PurpleBlistNode *)purple_find_buddy(account, xfer->who);
+	node = PURPLE_BLIST_NODE(purple_find_buddy(account, xfer->who));
 
 	if (!node)
 	{

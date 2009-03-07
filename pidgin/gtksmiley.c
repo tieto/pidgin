@@ -225,6 +225,12 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 	entry = gtk_entry_get_text(GTK_ENTRY(s->smile));
 	if (!entry || !*entry) {
+		/*
+		 * TODO: We should enable/disable the add button based on
+		 *       whether the user has entered all required data.  That
+		 *       would eliminate the need for this check and provide a
+		 *       better user experience.
+		 */
 		purple_notify_error(s->parent, _("Custom Smiley"),
 				_("More Data needed"),
 				_("Please provide a shortcut to associate with the smiley."));
@@ -233,9 +239,12 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 	emoticon = purple_smileys_find_by_shortcut(entry);
 	if (emoticon && emoticon != s->smiley) {
+		gchar *msg;
+		msg = g_strdup_printf(_("A custom smiley for '%s' already exists.  "
+				"Please use a different shortcut."), entry);
 		purple_notify_error(s->parent, _("Custom Smiley"),
-				_("Duplicate Shortcut"),
-				_("A custom smiley for the selected shortcut already exists. Please specify a different shortcut."));
+				_("Duplicate Shortcut"), msg);
+		g_free(msg);
 		return;
 	}
 
@@ -273,7 +282,7 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 			gsize size = 0;
 			gchar *filename;
 			const gchar *dirname = purple_smileys_get_storing_dir();
-			
+
 			/* since this may be called before purple_smiley_new_* has ever been
 			 called, we create the storing dir, if it doesn't exist yet, to be
 			 able to save the pixbuf before adding the smiley */
@@ -286,7 +295,7 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 			                   dirname, g_strerror(errno));
 				}
 			}
-			
+
 			gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
 				"png", NULL, "compression", "9", NULL, NULL);
 			filename = purple_util_get_image_filename(buffer, size);
@@ -385,7 +394,7 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)), hbox);
 
-	label = gtk_label_new_with_mnemonic(_("Smiley _Image"));
+	label = gtk_label_new_with_mnemonic(_("_Image:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -415,8 +424,8 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)),hbox);
 
-	/* Smiley shortcut */
-	label = gtk_label_new_with_mnemonic(_("Smiley S_hortcut"));
+	/* Shortcut text */
+	label = gtk_label_new_with_mnemonic(_("S_hortcut text:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -520,9 +529,9 @@ static void add_columns(GtkWidget *treeview, SmileyManager *dialog)
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_add_attribute(column, rend, "pixbuf", ICON);
 
-	/* Shortcut */
+	/* Shortcut Text */
 	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Shortcut"));
+	gtk_tree_view_column_set_title(column, _("Shortcut Text"));
 	gtk_tree_view_column_set_resizable(column, TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
@@ -712,7 +721,7 @@ void pidgin_smiley_manager_show(void)
 			_("Custom Smiley Manager"),
 			NULL,
 			GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_STOCK_ADD, GTK_RESPONSE_YES,
+			PIDGIN_STOCK_ADD, GTK_RESPONSE_YES,
 			PIDGIN_STOCK_MODIFY, PIDGIN_RESPONSE_MODIFY,
 			GTK_STOCK_DELETE, GTK_RESPONSE_NO,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
@@ -740,4 +749,3 @@ void pidgin_smiley_manager_show(void)
 
 	gtk_widget_show(win);
 }
-

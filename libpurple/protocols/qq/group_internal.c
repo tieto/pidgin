@@ -103,16 +103,21 @@ static void room_data_free(qq_room_data *rmd)
 
 void qq_room_update_chat_info(PurpleChat *chat, qq_room_data *rmd)
 {
+	GHashTable *components;
+
 	if (rmd->title_utf8 != NULL && strlen(rmd->title_utf8) > 0) {
 		purple_blist_alias_chat(chat, rmd->title_utf8);
 	}
-	g_hash_table_replace(chat->components,
+
+	components = purple_chat_get_components(chat);
+
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_INTERNAL_ID),
 		     g_strdup_printf("%u", rmd->id));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_EXTERNAL_ID),
 		     g_strdup_printf("%u", rmd->ext_id));
-	g_hash_table_replace(chat->components,
+	g_hash_table_replace(components,
 		     g_strdup(QQ_ROOM_KEY_TITLE_UTF8), g_strdup(rmd->title_utf8));
 }
 
@@ -251,11 +256,13 @@ qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd
 		member->uid = member_uid;
 		buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
 		if (buddy != NULL) {
-			bd = (qq_buddy_data *) buddy->proto_data;
+			const gchar *alias = NULL;
+
+			bd = purple_buddy_get_protocol_data(buddy);
 			if (bd != NULL && bd->nickname != NULL)
 				member->nickname = g_strdup(bd->nickname);
-			else if (buddy->alias != NULL)
-				member->nickname = g_strdup(buddy->alias);
+			else if ((alias = purple_buddy_get_alias(buddy)) != NULL)
+				member->nickname = g_strdup(alias);
 		}
 		rmd->members = g_list_append(rmd->members, member);
 	}
@@ -384,16 +391,19 @@ void qq_room_data_initial(PurpleConnection *gc)
 	}
 
 	count = 0;
-	for (node = ((PurpleBlistNode *) purple_group)->child; node != NULL; node = node->next) {
+	for (node = purple_blist_node_get_first_child((PurpleBlistNode *)purple_group);
+	     node != NULL;
+		 node = purple_blist_node_get_sibling_next(node))
+	{
 		if ( !PURPLE_BLIST_NODE_IS_CHAT(node)) {
 			continue;
 		}
 		/* got one */
 		chat = (PurpleChat *) node;
-		if (account != chat->account)	/* not qq account*/
+		if (account != purple_chat_get_account(chat))	/* not qq account*/
 			continue;
 
-		rmd = room_data_new_by_hashtable(gc, chat->components);
+		rmd = room_data_new_by_hashtable(gc, purple_chat_get_components(chat));
 		qd->groups = g_list_append(qd->groups, rmd);
 		count++;
 	}

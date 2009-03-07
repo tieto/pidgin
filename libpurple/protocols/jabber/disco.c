@@ -132,9 +132,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
 			SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
 			SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
-#if 0
-				SUPPORT_FEATURE("http://jabber.org/protocol/ibb")
-#endif
+			SUPPORT_FEATURE("http://jabber.org/protocol/ibb");
 			SUPPORT_FEATURE("http://jabber.org/protocol/muc")
 			SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
 			SUPPORT_FEATURE("http://jabber.org/protocol/si")
@@ -142,7 +140,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
 			SUPPORT_FEATURE("urn:xmpp:ping")
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
-			
+
 			if(!node) { /* non-caps disco#info, add all enabled extensions */
 				GList *features;
 				for(features = jabber_features; features; features = features->next) {
@@ -168,7 +166,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					} else if(node[pos] != CAPS0115_NODE[pos])
 					break;
 				}
-				
+
 				if(ext != NULL) {
 					/* look for that ext */
 					GList *features;
@@ -183,14 +181,14 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 						ext = NULL;
 				}
 			}
-			
+
 			if(ext == NULL) {
 				xmlnode *error, *inf;
-				
+
 				/* XXX: gross hack, implement jabber_iq_set_type or something */
 				xmlnode_set_attrib(iq->node, "type", "error");
 				iq->type = JABBER_IQ_ERROR;
-				
+
 				error = xmlnode_new_child(query, "error");
 				xmlnode_set_attrib(error, "code", "404");
 				xmlnode_set_attrib(error, "type", "cancel");
@@ -273,6 +271,10 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
 					capabilities |= JABBER_CAP_ADHOC;
 				}
+				else if(!strcmp(var, "http://jabber.org/protocol/ibb")) {
+					purple_debug_info("jabber", "remote supports IBB\n");
+					capabilities |= JABBER_CAP_IBB;
+				}
 			}
 		}
 
@@ -316,7 +318,7 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 	if(type && !strcmp(type, "get")) {
 		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
 				"http://jabber.org/protocol/disco#items");
-		
+
 		/* preserve node */
 		xmlnode *iq_query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
 		if(iq_query) {

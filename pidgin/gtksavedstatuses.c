@@ -76,7 +76,7 @@ enum
 	STATUS_EDITOR_COLUMN_WINDOW,
 	STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS,
 	STATUS_EDITOR_COLUMN_ICON,
-	STATUS_EDITOR_COLUMN_SCREENNAME,
+	STATUS_EDITOR_COLUMN_USERNAME,
 	/** A hidden column containing the ID of this PurpleStatusType. */
 	STATUS_EDITOR_COLUMN_STATUS_ID,
 	STATUS_EDITOR_COLUMN_STATUS_NAME,
@@ -1007,7 +1007,7 @@ status_editor_add_columns(StatusEditor *dialog)
 	g_signal_connect(G_OBJECT(renderer), "toggled",
 			 G_CALLBACK(status_editor_substatus_cb), dialog);
 
-	/* Screen Name column */
+	/* Username column */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
 	gtk_tree_view_column_set_title(column, _("Username"));
@@ -1020,11 +1020,11 @@ status_editor_add_columns(StatusEditor *dialog)
 	gtk_tree_view_column_add_attribute(column, renderer, "pixbuf",
 									   STATUS_EDITOR_COLUMN_ICON);
 
-	/* Screen Name */
+	/* Username */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
-									   STATUS_EDITOR_COLUMN_SCREENNAME);
+									   STATUS_EDITOR_COLUMN_USERNAME);
 
 	/* Status column */
 	column = gtk_tree_view_column_new();
@@ -1086,7 +1086,7 @@ status_editor_set_account(GtkListStore *store, PurpleAccount *account,
 			STATUS_EDITOR_COLUMN_ACCOUNT, account,
 			STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, (substatus != NULL),
 			STATUS_EDITOR_COLUMN_ICON, pixbuf,
-			STATUS_EDITOR_COLUMN_SCREENNAME, purple_account_get_username(account),
+			STATUS_EDITOR_COLUMN_USERNAME, purple_account_get_username(account),
 			STATUS_EDITOR_COLUMN_STATUS_ID, id,
 			STATUS_EDITOR_COLUMN_STATUS_NAME, name,
 			STATUS_EDITOR_COLUMN_STATUS_MESSAGE, message,
@@ -1217,6 +1217,8 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	focus_chain = g_list_prepend(focus_chain, dialog->message);
 	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
 	g_list_free(focus_chain);
+
+	gtk_imhtml_set_return_inserts_newline(dialog->message);
 
 	if ((saved_status != NULL) && (purple_savedstatus_get_message(saved_status) != NULL))
 		gtk_imhtml_append_text(GTK_IMHTML(text),
@@ -1547,7 +1549,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	/* Seed the input widgets with the current values */
 
 	/* Only look at the saved status if we can't find it in the parent status dialog's substatuses model */
-	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter, 
+	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
 		STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, &parent_dialog_has_substatus, -1);
 	if (parent_dialog_has_substatus) {
 		gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
@@ -1656,7 +1658,7 @@ enum {
 	 * And whether or not that emblem is visible
 	 */
 	SS_MENU_EMBLEM_VISIBLE_COLUMN,
-	
+
 	SS_MENU_NUM_COLUMNS
 };
 

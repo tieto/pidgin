@@ -243,7 +243,7 @@ static int aim_ssi_itemlist_cmp(struct aim_ssi_item *cur1, struct aim_ssi_item *
 	if (!cur1->name && cur2->name)
 		return 6;
 
-	if (cur1->name && cur2->name && aim_sncmp(cur1->name, cur2->name))
+	if (cur1->name && cur2->name && oscar_util_name_compare(cur1->name, cur2->name))
 		return 7;
 
 	if (cur1->gid != cur2->gid)
@@ -285,8 +285,8 @@ struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gi
 }
 
 /**
- * Locally find an item given a group name, screen name, and type.  If group name
- * and screen name are null, then just return the first item of the given type.
+ * Locally find an item given a group name, buddy name, and type.  If group name
+ * and buddy name are null, then just return the first item of the given type.
  *
  * @param list A pointer to the current list of items.
  * @param gn The group name of the desired item.
@@ -294,31 +294,31 @@ struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gi
  * @param type The type of the desired item.
  * @return Return a pointer to the item if found, else return NULL.
  */
-struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *sn, guint16 type)
+struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *bn, guint16 type)
 {
 	struct aim_ssi_item *cur;
 	if (!list)
 		return NULL;
 
-	if (gn && sn) { /* For finding buddies in groups */
+	if (gn && bn) { /* For finding buddies in groups */
 		for (cur=list; cur; cur=cur->next)
-			if ((cur->type == type) && (cur->name) && !(aim_sncmp(cur->name, sn))) {
+			if ((cur->type == type) && (cur->name) && !(oscar_util_name_compare(cur->name, bn))) {
 				struct aim_ssi_item *curg;
 				for (curg=list; curg; curg=curg->next)
-					if ((curg->type == AIM_SSI_TYPE_GROUP) && (curg->gid == cur->gid) && (curg->name) && !(aim_sncmp(curg->name, gn)))
+					if ((curg->type == AIM_SSI_TYPE_GROUP) && (curg->gid == cur->gid) && (curg->name) && !(oscar_util_name_compare(curg->name, gn)))
 						return cur;
 			}
 
 	} else if (gn) { /* For finding groups */
 		for (cur=list; cur; cur=cur->next) {
-			if ((cur->type == type) && (cur->bid == 0x0000) && (cur->name) && !(aim_sncmp(cur->name, gn))) {
+			if ((cur->type == type) && (cur->bid == 0x0000) && (cur->name) && !(oscar_util_name_compare(cur->name, gn))) {
 				return cur;
 			}
 		}
 
-	} else if (sn) { /* For finding permits, denies, and ignores */
+	} else if (bn) { /* For finding permits, denies, and ignores */
 		for (cur=list; cur; cur=cur->next) {
-			if ((cur->type == type) && (cur->name) && !(aim_sncmp(cur->name, sn))) {
+			if ((cur->type == type) && (cur->name) && !(oscar_util_name_compare(cur->name, bn))) {
 				return cur;
 			}
 		}
@@ -336,14 +336,14 @@ struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const 
  * Check if the given buddy exists in any group in the buddy list.
  *
  * @param list A pointer to the current list of items.
- * @param sn The group name of the desired item.
+ * @param bn The group name of the desired item.
  * @return Return a pointer to the name of the item if found, else return NULL;
  */
-struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *list, const char *sn)
+struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *list, const char *bn)
 {
-	if (!sn)
+	if (!bn)
 		return NULL;
-	return aim_ssi_itemlist_finditem(list, NULL, sn, AIM_SSI_TYPE_BUDDY);
+	return aim_ssi_itemlist_finditem(list, NULL, bn, AIM_SSI_TYPE_BUDDY);
 }
 
 /**
@@ -353,12 +353,12 @@ struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *list, const ch
  * @param bn The buddy name of the desired item.
  * @return Return a pointer to the name of the item if found, else return NULL;
  */
-char *aim_ssi_itemlist_findparentname(struct aim_ssi_item *list, const char *sn)
+char *aim_ssi_itemlist_findparentname(struct aim_ssi_item *list, const char *bn)
 {
 	struct aim_ssi_item *cur, *curg;
-	if (!list || !sn)
+	if (!list || !bn)
 		return NULL;
-	if (!(cur = aim_ssi_itemlist_exists(list, sn)))
+	if (!(cur = aim_ssi_itemlist_exists(list, bn)))
 		return NULL;
 	if (!(curg = aim_ssi_itemlist_find(list, cur->gid, 0x0000)))
 		return NULL;
@@ -406,14 +406,14 @@ guint32 aim_ssi_getpresence(struct aim_ssi_item *list)
  *
  * @param list A pointer to the current list of items.
  * @param gn The group of the buddy.
- * @param sn The name of the buddy.
+ * @param bn The name of the buddy.
  * @return A pointer to a NULL terminated string that is the buddy's
  *         alias, or NULL if the buddy has no alias.  You should free
  *         this returned value!
  */
-char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn)
+char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *bn)
 {
-	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
+	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, bn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x0131, 1);
 		if (tlv && tlv->length)
@@ -427,14 +427,14 @@ char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn
  *
  * @param list A pointer to the current list of items.
  * @param gn The group of the buddy.
- * @param sn The name of the buddy.
+ * @param bn The name of the buddy.
  * @return A pointer to a NULL terminated string that is the buddy's
  *         comment, or NULL if the buddy has no comment.  You should free
  *         this returned value!
  */
-char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *sn)
+char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *bn)
 {
-	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
+	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, bn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x013c, 1);
 		if (tlv && tlv->length) {
@@ -449,12 +449,12 @@ char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *
  *
  * @param list A pointer to the current list of items.
  * @param gn The group of the buddy.
- * @param sn The name of the buddy.
+ * @param bn The name of the buddy.
  * @return 1 if you are waiting for authorization; 0 if you are not
  */
-gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn)
+gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *bn)
 {
-	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
+	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, bn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
 		if (aim_tlv_gettlv(cur->data, 0x0066, 1))
 			return TRUE;
@@ -678,7 +678,7 @@ int aim_ssi_cleanlist(OscarData *od)
 			cur2 = cur->next;
 			while (cur2) {
 				next2 = cur2->next;
-				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!aim_sncmp(cur->name, cur2->name))) {
+				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!oscar_util_name_compare(cur->name, cur2->name))) {
 					aim_ssi_itemlist_del(&od->ssi.local, cur2);
 				}
 				cur2 = next2;
@@ -916,16 +916,16 @@ int aim_ssi_deldeny(OscarData *od, const char *name)
  * @param od The oscar odion.
  * @param oldgn The group that the buddy is currently in.
  * @param newgn The group that the buddy should be moved in to.
- * @param sn The name of the buddy to be moved.
+ * @param bn The name of the buddy to be moved.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *sn)
+int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *bn)
 {
 	struct aim_ssi_item *buddy;
 	GSList *data;
 
 	/* Find the buddy */
-	buddy = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, sn, AIM_SSI_TYPE_BUDDY);
+	buddy = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, bn, AIM_SSI_TYPE_BUDDY);
 	if (buddy == NULL)
 		return -EINVAL;
 
@@ -933,10 +933,10 @@ int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const
 	data = aim_tlvlist_copy(buddy->data);
 
 	/* Delete the old item */
-	aim_ssi_delbuddy(od, sn, oldgn);
+	aim_ssi_delbuddy(od, bn, oldgn);
 
 	/* Add the new item using the EXACT SAME TLV list */
-	aim_ssi_addbuddy(od, sn, newgn, data, NULL, NULL, NULL, FALSE);
+	aim_ssi_addbuddy(od, bn, newgn, data, NULL, NULL, NULL, FALSE);
 
 	return 0;
 }
@@ -946,19 +946,19 @@ int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const
  *
  * @param od The oscar odion.
  * @param gn The group that the buddy is currently in.
- * @param sn The screen name of the buddy.
+ * @param bn The name of the buddy.
  * @param alias The new alias for the buddy, or NULL if you want to remove
  *        a buddy's comment.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *sn, const char *alias)
+int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *bn, const char *alias)
 {
 	struct aim_ssi_item *tmp;
 
-	if (!od || !gn || !sn)
+	if (!od || !gn || !bn)
 		return -EINVAL;
 
-	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, gn, sn, AIM_SSI_TYPE_BUDDY)))
+	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, gn, bn, AIM_SSI_TYPE_BUDDY)))
 		return -EINVAL;
 
 	/* Either add or remove the 0x0131 TLV from the TLV chain */
@@ -976,19 +976,19 @@ int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *sn, const char
  *
  * @param od The oscar odion.
  * @param gn The group that the buddy is currently in.
- * @param sn The screen name of the buddy.
+ * @param bn The name of the buddy.
  * @param alias The new comment for the buddy, or NULL if you want to remove
  *        a buddy's comment.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_editcomment(OscarData *od, const char *gn, const char *sn, const char *comment)
+int aim_ssi_editcomment(OscarData *od, const char *gn, const char *bn, const char *comment)
 {
 	struct aim_ssi_item *tmp;
 
-	if (!od || !gn || !sn)
+	if (!od || !gn || !bn)
 		return -EINVAL;
 
-	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, gn, sn, AIM_SSI_TYPE_BUDDY)))
+	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, gn, bn, AIM_SSI_TYPE_BUDDY)))
 		return -EINVAL;
 
 	/* Either add or remove the 0x0131 TLV from the TLV chain */
@@ -1681,20 +1681,20 @@ int aim_ssi_modend(OscarData *od)
  * Authorizes a contact so they can add you to their contact list.
  *
  */
-int aim_ssi_sendauth(OscarData *od, char *sn, char *msg)
+int aim_ssi_sendauth(OscarData *od, char *bn, char *msg)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
+	byte_stream_new(&bs, 1+strlen(bn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
 
-	/* Screen name */
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	/* Username */
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	/* Message (null terminated) */
 	byte_stream_put16(&bs, msg ? strlen(msg) : 0);
@@ -1722,13 +1722,13 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 tmp;
-	char *sn, *msg;
+	char *bn, *msg;
 
-	/* Read screen name */
+	/* Read buddy name */
 	if ((tmp = byte_stream_get8(bs)))
-		sn = byte_stream_getstr(bs, tmp);
+		bn = byte_stream_getstr(bs, tmp);
 	else
-		sn = NULL;
+		bn = NULL;
 
 	/* Read message (null terminated) */
 	if ((tmp = byte_stream_get16(bs)))
@@ -1740,9 +1740,9 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
 	tmp = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, sn, msg);
+		ret = userfunc(od, conn, frame, bn, msg);
 
-	g_free(sn);
+	g_free(bn);
 	g_free(msg);
 
 	return ret;
@@ -1755,20 +1755,20 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
  * granted, denied, or dropped.
  *
  */
-int aim_ssi_sendauthrequest(OscarData *od, char *sn, const char *msg)
+int aim_ssi_sendauthrequest(OscarData *od, char *bn, const char *msg)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
+	byte_stream_new(&bs, 1+strlen(bn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
 
-	/* Screen name */
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	/* Username */
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	/* Message (null terminated) */
 	byte_stream_put16(&bs, msg ? strlen(msg) : 0);
@@ -1796,13 +1796,13 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 tmp;
-	char *sn, *msg;
+	char *bn, *msg;
 
-	/* Read screen name */
+	/* Read buddy name */
 	if ((tmp = byte_stream_get8(bs)))
-		sn = byte_stream_getstr(bs, tmp);
+		bn = byte_stream_getstr(bs, tmp);
 	else
-		sn = NULL;
+		bn = NULL;
 
 	/* Read message (null terminated) */
 	if ((tmp = byte_stream_get16(bs)))
@@ -1814,9 +1814,9 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
 	tmp = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, sn, msg);
+		ret = userfunc(od, conn, frame, bn, msg);
 
-	g_free(sn);
+	g_free(bn);
 	g_free(msg);
 
 	return ret;
@@ -1832,20 +1832,20 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
  * if reply=0x01 then grant
  *
  */
-int aim_ssi_sendauthreply(OscarData *od, char *sn, guint8 reply, const char *msg)
+int aim_ssi_sendauthreply(OscarData *od, char *bn, guint8 reply, const char *msg)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 1+strlen(sn) + 1 + 2+(msg ? (strlen(msg)+1) : 0) + 2);
+	byte_stream_new(&bs, 1+strlen(bn) + 1 + 2+(msg ? (strlen(msg)+1) : 0) + 2);
 
-	/* Screen name */
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	/* Username */
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	/* Grant or deny */
 	byte_stream_put8(&bs, reply);
@@ -1880,13 +1880,13 @@ static int receiveauthreply(OscarData *od, FlapConnection *conn, aim_module_t *m
 	aim_rxcallback_t userfunc;
 	guint16 tmp;
 	guint8 reply;
-	char *sn, *msg;
+	char *bn, *msg;
 
-	/* Read screen name */
+	/* Read buddy name */
 	if ((tmp = byte_stream_get8(bs)))
-		sn = byte_stream_getstr(bs, tmp);
+		bn = byte_stream_getstr(bs, tmp);
 	else
-		sn = NULL;
+		bn = NULL;
 
 	/* Read reply */
 	reply = byte_stream_get8(bs);
@@ -1901,9 +1901,9 @@ static int receiveauthreply(OscarData *od, FlapConnection *conn, aim_module_t *m
 	tmp = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, sn, reply, msg);
+		ret = userfunc(od, conn, frame, bn, reply, msg);
 
-	g_free(sn);
+	g_free(bn);
 	g_free(msg);
 
 	return ret;
@@ -1917,18 +1917,18 @@ static int receiveadded(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 tmp;
-	char *sn;
+	char *bn;
 
-	/* Read screen name */
+	/* Read buddy name */
 	if ((tmp = byte_stream_get8(bs)))
-		sn = byte_stream_getstr(bs, tmp);
+		bn = byte_stream_getstr(bs, tmp);
 	else
-		sn = NULL;
+		bn = NULL;
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, sn);
+		ret = userfunc(od, conn, frame, bn);
 
-	g_free(sn);
+	g_free(bn);
 
 	return ret;
 }

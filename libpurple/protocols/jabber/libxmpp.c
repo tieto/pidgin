@@ -44,6 +44,7 @@
 #include "usertune.h"
 #include "caps.h"
 #include "data.h"
+#include "ibb.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -137,7 +138,7 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
-	
+
 	return TRUE;
 }
 
@@ -146,11 +147,13 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	purple_signal_unregister(plugin, "jabber-receiving-xmlnode");
 
 	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
-	
+
 	purple_signal_unregister(plugin, "jabber-sending-text");
-	
+
 	jabber_data_uninit();
-	
+	jabber_si_uninit();
+	jabber_ibb_uninit();
+
 	return TRUE;
 }
 
@@ -203,30 +206,30 @@ init_plugin(PurplePlugin *plugin)
 #endif
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
-	
+
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), NULL, '@');
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-	
+
 	split = purple_account_user_split_new(_("Resource"), NULL, '/');
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-	
+
 	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-	
+
 	option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-	
+
 	option = purple_account_option_bool_new(
 						_("Allow plaintext auth over unencrypted streams"),
 						"auth_plain_in_clear", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
-	
+
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
@@ -272,19 +275,24 @@ init_plugin(PurplePlugin *plugin)
 #endif
 #endif
 	jabber_register_commands();
-	
+
 	jabber_iq_init();
 	jabber_pep_init();
-	
+
 	jabber_tune_init();
 	jabber_caps_init();
-	
+
 	jabber_data_init();
-	
-	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns",
+
+
+	jabber_ibb_init();
+	jabber_si_init();
+
+	jabber_add_feature("buzz", XEP_0224_NAMESPACE,
 					   jabber_buzz_isenabled);
 	jabber_add_feature("bob", XEP_0231_NAMESPACE,
 					   jabber_custom_smileys_isenabled);
+	jabber_add_feature("ibb", XEP_0047_NAMESPACE, NULL);
 }
 
 

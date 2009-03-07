@@ -446,7 +446,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 	}
 
 	if (fontface == NULL)
-		fontface = g_strdup("MS Sans Serif");
+		fontface = g_strdup("Segoe UI");
 
 	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0; RL=%c",
 								  encode_spaces(fontface),

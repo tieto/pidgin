@@ -122,29 +122,28 @@ serv_got_typing_stopped(gc, name)
 	Purple::Connection gc
 	const char *name
 
-void 
-serv_join_chat(con, components)
-	Purple::Connection con 
-	SV * components
-INIT:
-	HV * t_HV;
-	HE * t_HE;
-	SV * t_SV;
-	GHashTable * t_GHash;
+void
+serv_join_chat(conn, components)
+	Purple::Connection conn
+	HV * components
+PREINIT:
+	HE *t_HE;
+	SV *t_SV;
 	I32 len;
+	GHashTable *t_GHash;
 	char *t_key, *t_value;
 CODE:
-	t_HV =  (HV *)SvRV(components);
 	t_GHash = g_hash_table_new(g_str_hash, g_str_equal);
 
-	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
+	for (t_HE = hv_iternext(components); t_HE != NULL;
+	     t_HE = hv_iternext(components)) {
 		t_key = hv_iterkey(t_HE, &len);
-		t_SV = *hv_fetch(t_HV, t_key, len, 0);
- 		t_value = SvPVutf8_nolen(t_SV);
+		t_SV = *hv_fetch(components, t_key, len, 0);
+		t_value = SvPVutf8_nolen(t_SV);
 
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
-	serv_join_chat(con, t_GHash);
+	serv_join_chat(conn, t_GHash);
 
 void 
 serv_move_buddy(buddy, group1, group2)

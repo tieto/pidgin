@@ -33,7 +33,7 @@ static GHashTable *pep_handlers = NULL;
 void jabber_pep_init(void) {
 	if(!pep_handlers) {
 		pep_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-		
+
 		/* register PEP handlers */
 		jabber_avatar_init();
 		jabber_mood_init();
@@ -59,31 +59,31 @@ static void do_pep_iq_request_item_callback(JabberStream *js, xmlnode *packet, g
 	xmlnode *pubsub = xmlnode_get_child_with_namespace(packet,"pubsub","http://jabber.org/protocol/pubsub");
 	xmlnode *items = NULL;
 	JabberPEPHandler *cb = data;
-	
+
 	if(pubsub)
 		items = xmlnode_get_child(pubsub, "items");
-	
+
 	cb(js, from, items);
 }
 
 void jabber_pep_request_item(JabberStream *js, const char *to, const char *node, const char *id, JabberPEPHandler cb) {
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
 	xmlnode *pubsub, *items, *item;
-	
+
 	xmlnode_set_attrib(iq->node,"to",to);
 	pubsub = xmlnode_new_child(iq->node,"pubsub");
-	
+
 	xmlnode_set_namespace(pubsub,"http://jabber.org/protocol/pubsub");
-	
+
 	items = xmlnode_new_child(pubsub, "items");
 	xmlnode_set_attrib(items,"node",node);
-	
+
 	item = xmlnode_new_child(items, "item");
 	if(id)
 		xmlnode_set_attrib(item, "id", id);
-	
+
 	jabber_iq_set_callback(iq,do_pep_iq_request_item_callback,(gpointer)cb);
-	
+
 	jabber_iq_send(iq);
 }
 
@@ -96,15 +96,15 @@ void jabber_handle_event(JabberMessage *jm) {
 	JabberPEPHandler *jph;
 	GList *itemslist;
 	char *jid = jabber_get_bare_jid(jm->from);
-	
+
 	for(itemslist = jm->eventitems; itemslist; itemslist = itemslist->next) {
 		xmlnode *items = (xmlnode*)itemslist->data;
 		const char *nodename = xmlnode_get_attrib(items,"node");
-		
+
 		if(nodename && (jph = g_hash_table_lookup(pep_handlers, nodename)))
 			jph(jm->js, jid, items);
 	}
-	
+
 	/* discard items we don't have a handler for */
 	g_free(jid);
 }

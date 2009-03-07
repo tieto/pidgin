@@ -388,9 +388,7 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 		/** Deal with the server name having changed since we did the
 		    lookup */
 		if (servername && strlen(servername) > 1
-				&& ((nattype.servername
-					&& strcmp(servername, nattype.servername))
-				|| !nattype.servername)) {
+				&& !purple_strequal(servername, nattype.servername)) {
 			use_cached_result = FALSE;
 		}
 

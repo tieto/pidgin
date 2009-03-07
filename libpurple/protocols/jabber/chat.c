@@ -353,7 +353,7 @@ char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
 	jcm = g_hash_table_lookup(chat->members, who);
 	if (jcm != NULL && jcm->jid)
 		return g_strdup(jcm->jid);
-	
+
 
 	return g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
 }
@@ -685,7 +685,7 @@ void jabber_chat_part(JabberChat *chat, const char *msg)
 		xmlnode_insert_data(status, msg, -1);
 	}
 	jabber_send(chat->js, presence);
-	
+
 	xmlnode_free(presence);
 	g_free(room_jid);
 }
@@ -811,7 +811,7 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 			FALSE, FALSE, NULL,
 			_("Find Rooms"), PURPLE_CALLBACK(roomlist_ok_cb),
 			_("Cancel"), PURPLE_CALLBACK(roomlist_cancel_cb),
-			purple_connection_get_account(gc), NULL, NULL,			 
+			purple_connection_get_account(gc), NULL, NULL,
 			js);
 
 	return js->roomlist;
@@ -1033,7 +1033,7 @@ void jabber_chat_disco_traffic(JabberChat *chat)
 	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
 			"http://jabber.org/protocol/disco#info");
 
-	xmlnode_set_attrib(iq->node, "to", room_jid); 
+	xmlnode_set_attrib(iq->node, "to", room_jid);
 
 	query = xmlnode_get_child(iq->node, "query");
 

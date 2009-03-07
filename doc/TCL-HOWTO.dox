@@ -332,7 +332,7 @@ be made in their own namespace, and arguments to those signal
 callbacks will live in the namespace @c event underneath that
 namespace.  To briefly illustrate, the signal @c receiving-im-msg is
 provided with three arguments; the account on which the IM was
-received, the screen name of the user sending the IM, and the text of
+received, the name of the buddy sending the IM, and the text of
 the IM.  These arguments live in the variables @c event::account,
 @c event::sender, and @c event::buffer, respectively.  Therefore a callback
 which notifies the user of an incoming IM containing the word 'shizzle'

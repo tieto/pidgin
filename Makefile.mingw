@@ -2,7 +2,7 @@
 #
 # Author: hermanator12002@yahoo.com
 # Date 9/11/02
-# Description: Top Makefile for win32 (mingw) port of Pidgin and LibPurple
+# Description: Top Makefile for win32 (mingw) port of Pidgin and libpurple
 #
 
 PIDGIN_TREE_TOP := .

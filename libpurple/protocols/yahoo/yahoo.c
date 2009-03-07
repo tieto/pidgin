@@ -385,7 +385,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	for (i = list; i; i = i->next) {
 		b = i->data;
 		g = purple_buddy_get_group(b);
-		if (!purple_utf8_strcasecmp(group, g->name)) {
+		if (!purple_utf8_strcasecmp(group, purple_group_get_name(g))) {
 			purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 				"Oh good, %s is in the right group (%s).\n", name, group);
 			list = g_slist_delete_link(list, i);
@@ -423,7 +423,8 @@ static void yahoo_do_group_cleanup(gpointer key, gpointer value, gpointer user_d
 	for (i = list; i; i = i->next) {
 		b = i->data;
 		g = purple_buddy_get_group(b);
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo", "Deleting Buddy %s from group %s.\n", name, g->name);
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo", "Deleting Buddy %s from group %s.\n", name,
+				purple_group_get_name(g));
 		purple_blist_remove_buddy(b);
 	}
 }
@@ -2027,21 +2028,23 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 		return;
 
 	group = purple_buddy_get_group(buddy);
-	name = g_strdup(buddy->name);
-	account = buddy->account;
+	name = g_strdup(purple_buddy_get_name(buddy));
+	account = purple_buddy_get_account(buddy);
 
 	purple_debug(PURPLE_DEBUG_INFO, "blist",
-		"Removing '%s' from buddy list.\n", buddy->name);
+		"Removing '%s' from buddy list.\n", name);
 	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
-	serv_add_deny(account->gc, name);
+	serv_add_deny(purple_account_get_connection(account), name);
 
 	g_free(name);
 }
 
-static void keep_buddy(PurpleBuddy *b) {
-	purple_privacy_deny_remove(b->account, b->name, 1);
+static void keep_buddy(PurpleBuddy *b)
+{
+	purple_privacy_deny_remove(purple_buddy_get_account(b),
+			purple_buddy_get_name(b), 1);
 }
 
 static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt) {
@@ -3128,11 +3131,12 @@ static const char *yahoo_list_emblem(PurpleBuddy *b)
 	YahooFriend *f;
 	PurplePresence *presence;
 
-	if (!b || !(account = b->account) || !(gc = purple_account_get_connection(account)) ||
-					     !(yd = gc->proto_data))
+	if (!b || !(account = purple_buddy_get_account(b)) ||
+			!(gc = purple_account_get_connection(account)) ||
+			!(yd = gc->proto_data))
 		return NULL;
 
-	f = yahoo_friend_find(gc, b->name);
+	f = yahoo_friend_find(gc, purple_buddy_get_name(b));
 	if (!f) {
 		return "not-authorized";
 	}
@@ -3192,7 +3196,7 @@ static void yahoo_initiate_conference(PurpleBlistNode *node, gpointer data) {
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	yd = gc->proto_data;
 	id = yd->conf_id;
 
@@ -3204,7 +3208,7 @@ static void yahoo_initiate_conference(PurpleBlistNode *node, gpointer data) {
 	yahoo_c_join(gc, components);
 	g_hash_table_destroy(components);
 
-	yahoo_c_invite(gc, id, "Join my conference...", buddy->name);
+	yahoo_c_invite(gc, id, "Join my conference...", purple_buddy_get_name(buddy));
 }
 
 static void yahoo_presence_settings(PurpleBlistNode *node, gpointer data) {
@@ -3213,9 +3217,9 @@ static void yahoo_presence_settings(PurpleBlistNode *node, gpointer data) {
 	int presence_val = GPOINTER_TO_INT(data);
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	yahoo_friend_update_presence(gc, buddy->name, presence_val);
+	yahoo_friend_update_presence(gc, purple_buddy_get_name(buddy), presence_val);
 }
 
 static void yahoo_game(PurpleBlistNode *node, gpointer data) {
@@ -3233,10 +3237,10 @@ static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	yd = (struct yahoo_data *) gc->proto_data;
 
-	f = yahoo_friend_find(gc, buddy->name);
+	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
 	if (!f)
 		return;
 
@@ -3258,8 +3262,10 @@ static char *yahoo_status_text(PurpleBuddy *b)
 	YahooFriend *f = NULL;
 	const char *msg;
 	char *msg2;
+	PurpleAccount *account;
 
-	f = yahoo_friend_find(b->account->gc, b->name);
+	account = purple_buddy_get_account(b);
+	f = yahoo_friend_find(purple_account_get_connection(account), purple_buddy_get_name(b));
 	if (!f)
 		return g_strdup(_("Not on server list"));
 
@@ -3288,8 +3294,10 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	char *escaped;
 	char *status = NULL;
 	const char *presence = NULL;
+	PurpleAccount *account;
 
-	f = yahoo_friend_find(b->account->gc, b->name);
+	account = purple_buddy_get_account(b);
+	f = yahoo_friend_find(purple_account_get_connection(account), purple_buddy_get_name(b));
 	if (!f)
 		status = g_strdup_printf("\n%s", _("Not on server list"));
 	else {
@@ -3340,7 +3348,7 @@ static void yahoo_addbuddyfrommenu_cb(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	yahoo_add_buddy(gc, buddy, NULL);
 }
@@ -3354,9 +3362,9 @@ static void yahoo_chat_goto_menu(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	yahoo_chat_goto(gc, buddy->name);
+	yahoo_chat_goto(gc, purple_buddy_get_name(buddy));
 }
 
 static GList *build_presence_submenu(YahooFriend *f, PurpleConnection *gc) {
@@ -3400,9 +3408,10 @@ static GList *build_presence_submenu(YahooFriend *f, PurpleConnection *gc) {
 static void yahoo_doodle_blist_node(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *b = (PurpleBuddy *)node;
-	PurpleConnection *gc = b->account->gc;
+	PurpleAccount *account = purple_buddy_get_account(b);
+	PurpleConnection *gc = purple_account_get_connection(account);
 
-	yahoo_doodle_initiate(gc, b->name);
+	yahoo_doodle_initiate(gc, purple_buddy_get_name(b));
 }
 
 static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
@@ -3410,12 +3419,12 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 	GList *m = NULL;
 	PurpleMenuAction *act;
 
-	PurpleConnection *gc = purple_account_get_connection(buddy->account);
+	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	struct yahoo_data *yd = gc->proto_data;
 	static char buf2[1024];
 	YahooFriend *f;
 
-	f = yahoo_friend_find(gc, buddy->name);
+	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
 
 	if (!f && !yd->wm) {
 		act = purple_menu_action_new(_("Add Buddy"),
@@ -3942,19 +3951,20 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	const char *group = NULL;
 	char *group2;
 	YahooFriend *f;
+	const char *bname;
 
 	if (!yd->logged_in)
 		return;
 
-	if (!purple_privacy_check(purple_connection_get_account(gc),
-			purple_buddy_get_name(buddy)))
+	bname = purple_buddy_get_name(buddy);
+	if (!purple_privacy_check(purple_connection_get_account(gc), bname))
 		return;
 
-	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
+	f = yahoo_friend_find(gc, bname);
 
 	g = purple_buddy_get_group(buddy);
 	if (g)
-		group = g->name;
+		group = purple_group_get_name(g);
 	else
 		group = "Buddies";
 
@@ -3967,7 +3977,7 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	                  1, purple_connection_get_display_name(gc),
 	                  302, "319",
 	                  300, "319",
-	                  7, buddy->name,
+	                  7, bname,
 	                  334, "0",
 	                  301, "319",
 	                  303, "319"
@@ -3981,19 +3991,22 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-        struct yahoo_packet *pkt;
+	struct yahoo_packet *pkt;
 	GSList *buddies, *l;
 	PurpleGroup *g;
 	gboolean remove = TRUE;
 	char *cg;
+	const char *bname, *gname;
 
-	if (!(yahoo_friend_find(gc, buddy->name)))
+	bname = purple_buddy_get_name(buddy);
+	if (!(yahoo_friend_find(gc, bname)))
 		return;
 
-	buddies = purple_find_buddies(purple_connection_get_account(gc), buddy->name);
+	gname = purple_group_get_name(group);
+	buddies = purple_find_buddies(purple_connection_get_account(gc), bname);
 	for (l = buddies; l; l = l->next) {
 		g = purple_buddy_get_group(l->data);
-		if (purple_utf8_strcasecmp(group->name, g->name)) {
+		if (purple_utf8_strcasecmp(gname, purple_group_get_name(g))) {
 			remove = FALSE;
 			break;
 		}
@@ -4002,12 +4015,12 @@ static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleG
 	g_slist_free(buddies);
 
 	if (remove)
-		g_hash_table_remove(yd->friends, buddy->name);
+		g_hash_table_remove(yd->friends, bname);
 
-	cg = yahoo_string_encode(gc, group->name, NULL);
+	cg = yahoo_string_encode(gc, gname, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
-	                  7, buddy->name, 65, cg);
+	                  7, bname, 65, cg);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(cg);
 }
@@ -4116,7 +4129,7 @@ static void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 	struct yahoo_packet *pkt;
 	char *gpn, *gpo;
 
-	gpn = yahoo_string_encode(gc, group->name, NULL);
+	gpn = yahoo_string_encode(gc, purple_group_get_name(group), NULL);
 	gpo = yahoo_string_encode(gc, old_name, NULL);
 	if (!strcmp(gpn, gpo)) {
 		g_free(gpn);
@@ -4271,7 +4284,7 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 }
 
 /* This may not be the best way to do this, but we find the first key w/o a value
- * and assume it is the screenname */
+ * and assume it is the buddy name */
 static void yahoo_find_uri_novalue_param(gpointer key, gpointer value, gpointer user_data)
 {
 	char **retval = user_data;

@@ -74,6 +74,7 @@ msn_nexus_destroy(MsnNexus *nexus)
 	for (i = 0; i < nexus->token_len; i++) {
 		g_hash_table_destroy(nexus->tokens[i].token);
 		g_free(nexus->tokens[i].secret);
+		g_slist_free(nexus->tokens[i].updates);
 	}
 
 	g_free(nexus->tokens);
@@ -235,6 +236,10 @@ typedef struct _MsnNexusUpdateData MsnNexusUpdateData;
 struct _MsnNexusUpdateData {
 	MsnNexus *nexus;
 	int id;
+};
+
+typedef struct _MsnNexusUpdateCallback MsnNexusUpdateCallback;
+struct _MsnNexusUpdateCallback {
 	GSourceFunc cb;
 	gpointer data;
 };
@@ -428,6 +433,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	char *nonce;
 	gsize len;
 	char *key;
+	GSList *updates;
 
 #if 0
 	char *decrypted_pp;
@@ -489,8 +495,15 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		g_free(decrypted_data);
 	}
 
-	if (ud->cb)
-		purple_timeout_add(0, ud->cb, ud->data);
+	updates = nexus->tokens[ud->id].updates;
+	nexus->tokens[ud->id].updates = NULL;
+	while (updates != NULL) {
+		MsnNexusUpdateCallback *update = updates->data;
+		if (update->cb)
+			purple_timeout_add(0, update->cb, update->data);
+		g_free(update);
+		updates = g_slist_delete_link(updates, updates);
+	}
 
 	g_free(ud);
 }
@@ -500,6 +513,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 {
 	MsnSession *session = nexus->session;
 	MsnNexusUpdateData *ud;
+	MsnNexusUpdateCallback *update;
 	PurpleCipherContext *sha1;
 	PurpleCipherContext *hmac;
 
@@ -526,16 +540,31 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	char *request;
 	MsnSoapMessage *soap;
 
-	purple_debug_info("msn",
-	                  "Updating ticket for user '%s' on domain '%s'\n",
-	                  purple_account_get_username(session->account),
-	                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN]);
+	update = g_new0(MsnNexusUpdateCallback, 1);
+	update->cb = cb;
+	update->data = data;
+
+	if (nexus->tokens[id].updates != NULL) {
+		/* Update already in progress. Just add to list and return. */
+		purple_debug_info("msn",
+		                  "Ticket update for user '%s' on domain '%s' in progress. Adding request to queue.\n",
+		                  purple_account_get_username(session->account),
+		                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN]);
+		nexus->tokens[id].updates = g_slist_prepend(nexus->tokens[id].updates,
+		                                            update);
+		return;
+	} else {
+		purple_debug_info("msn",
+		                  "Updating ticket for user '%s' on domain '%s'\n",
+		                  purple_account_get_username(session->account),
+		                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN]);
+		nexus->tokens[id].updates = g_slist_prepend(nexus->tokens[id].updates,
+		                                            update);
+	}
 
 	ud = g_new0(MsnNexusUpdateData, 1);
 	ud->nexus = nexus;
 	ud->id = id;
-	ud->cb = cb;
-	ud->data = data;
 
 	sha1 = purple_cipher_context_new_by_name("sha1", NULL);
 

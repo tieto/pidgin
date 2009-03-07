@@ -204,7 +204,7 @@ struct _JabberStream
 	gboolean unregistration;
 	PurpleAccountUnregistrationCb unregistration_cb;
 	void *unregistration_user_data;
-	
+
 	gboolean vcard_fetched;
 
 	/* does the local server support PEP? */
@@ -212,16 +212,16 @@ struct _JabberStream
 
 	/* Is Buzz enabled? */
 	gboolean allowBuzz;
-	
+
 	/* A list of JabberAdHocCommands supported by the server */
 	GList *commands;
-	
+
 	/* last presence update to check for differences */
 	JabberBuddyState old_state;
 	char *old_msg;
 	int old_priority;
 	char *old_avatarhash;
-	
+
 	/* same for user tune */
 	char *old_artist;
 	char *old_title;
@@ -229,9 +229,9 @@ struct _JabberStream
 	char *old_uri;
 	int old_length;
 	char *old_track;
-	
+
 	char *certificate_CN;
-	
+
 	/* A purple timeout tag for the keepalive */
 	int keepalive_timeout;
 
