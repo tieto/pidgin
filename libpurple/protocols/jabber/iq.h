@@ -22,10 +22,6 @@
 #ifndef _PURPLE_JABBER_IQ_H_
 #define _PURPLE_JABBER_IQ_H_
 
-#include "jabber.h"
-
-typedef struct _JabberIq JabberIq;
-
 typedef enum {
 	JABBER_IQ_SET,
 	JABBER_IQ_GET,
@@ -34,7 +30,13 @@ typedef enum {
 	JABBER_IQ_NONE
 } JabberIqType;
 
-typedef void (JabberIqHandler)(JabberStream *js, xmlnode *packet);
+#include "jabber.h"
+
+typedef struct _JabberIq JabberIq;
+
+typedef void (JabberIqHandler)(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *child);
 
 typedef void (JabberIqCallback)(JabberStream *js, xmlnode *packet, gpointer data);
 
@@ -65,6 +67,7 @@ void jabber_iq_free(JabberIq *iq);
 void jabber_iq_init(void);
 void jabber_iq_uninit(void);
 
-void jabber_iq_register_handler(const char *xmlns, JabberIqHandler *func);
+void jabber_iq_register_handler(const char *node, const char *xmlns,
+                                JabberIqHandler *func);
 
 #endif /* _PURPLE_JABBER_IQ_H_ */

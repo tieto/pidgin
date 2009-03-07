@@ -155,6 +155,7 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 		jbr->jb = jb;
 		jbr->name = g_strdup(resource);
 		jbr->capabilities = JABBER_CAP_XHTML;
+		jbr->tz_off = PURPLE_NO_TZ_OFF;
 		jb->resources = g_list_append(jb->resources, jbr);
 	}
 	jbr->priority = priority;
@@ -801,6 +802,21 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
 			}
 		}
+		if (jbr && jbr->tz_off != PURPLE_NO_TZ_OFF) {
+			time_t now_t;
+			struct tm *now;
+			char *timestamp;
+			time(&now_t);
+			now_t += jbr->tz_off;
+			now = gmtime(&now_t);
+
+			timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
+			                            jbr->tz_off < 0 ? '-' : '+',
+			                            abs(jbr->tz_off / (60*60)),
+			                            abs((jbr->tz_off % (60*60)) / 60));
+			purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
+			g_free(timestamp);
+		}
 		if(jbir) {
 			if(jbir->idle_seconds > 0) {
 				char *idle = purple_str_seconds_to_string(jbir->idle_seconds);
@@ -969,6 +985,22 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				if(jbr->client.os) {
 					purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
 				}
+			}
+
+			if (jbr->tz_off != PURPLE_NO_TZ_OFF) {
+				time_t now_t;
+				struct tm *now;
+				char *timestamp;
+				time(&now_t);
+				now_t += jbr->tz_off;
+				now = gmtime(&now_t);
+
+				timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
+				                            jbr->tz_off < 0 ? '-' : '+',
+				                            abs(jbr->tz_off / (60*60)),
+				                            abs((jbr->tz_off % (60*60)) / 60));
+				purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
+				g_free(timestamp);
 			}
 
 			if(jbr->name && (jbir = g_hash_table_lookup(jbi->resources, jbr->name))) {
@@ -1640,6 +1672,59 @@ static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
+static void jabber_time_parse(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	JabberBuddyInfo *jbi = data;
+	JabberBuddyResource *jbr;
+	char *resource_name;
+	const char *type, *id, *from;
+
+	g_return_if_fail(jbi != NULL);
+
+	id = xmlnode_get_attrib(packet, "id");
+	type = xmlnode_get_attrib(packet, "type");
+	from = xmlnode_get_attrib(packet, "from");
+
+	jabber_buddy_info_remove_id(jbi, id);
+
+	if (!from)
+		return;
+
+	resource_name = jabber_get_resource(from);
+	jbr = resource_name ? jabber_buddy_find_resource(jbi->jb, resource_name) : NULL;
+	g_free(resource_name);
+	if (jbr) {
+		if (type && !strcmp(type, "result")) {
+			xmlnode *time = xmlnode_get_child(packet, "time");
+			xmlnode *tzo = time ? xmlnode_get_child(time, "tzo") : NULL;
+			char *tzo_data = tzo ? xmlnode_get_data(tzo) : NULL;
+			if (tzo_data) {
+				char *c = tzo_data;
+				int hours, minutes;
+				if (tzo_data[0] == 'Z' && tzo_data[1] == '\0') {
+					jbr->tz_off = 0;
+				} else {
+					gboolean offset_positive = (tzo_data[0] == '+');
+					/* [+-]HH:MM */
+					if (((*c == '+' || *c == '-') && (c = c + 1)) &&
+							sscanf(c, "%02d:%02d", &hours, &minutes) == 2) {
+						jbr->tz_off = 60*60*hours + 60*minutes;
+						if (!offset_positive)
+							jbr->tz_off *= -1;
+					} else {
+						purple_debug_info("jabber", "Ignoring malformed timezone %s",
+						                  tzo_data);
+					}
+				}
+
+				g_free(tzo_data);
+			}
+		}
+	}
+
+	jabber_buddy_info_show_if_ready(jbi);
+}
+
 void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js)
 {
 	if (js->pending_buddy_info_requests)
@@ -1767,6 +1852,19 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
 			xmlnode_set_attrib(iq->node, "to", full_jid);
 			jabber_iq_set_callback(iq, jabber_last_parse, jbi);
+			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+			jabber_iq_send(iq);
+		}
+
+		if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
+				(!jbr->caps ||
+				 	jabber_resource_has_capability(jbr, "urn:xmpp:time"))) {
+			xmlnode *child;
+			iq = jabber_iq_new(js, JABBER_IQ_GET);
+			xmlnode_set_attrib(iq->node, "to", full_jid);
+			child = xmlnode_new_child(iq->node, "time");
+			xmlnode_set_namespace(child, "urn:xmpp:time");
+			jabber_iq_set_callback(iq, jabber_time_parse, jbi);
 			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
 			jabber_iq_send(iq);
 		}
