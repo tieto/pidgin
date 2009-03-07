@@ -126,6 +126,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 														 * handheld, pc, phone,
 														 * web */
 			xmlnode_set_attrib(identity, "name", PACKAGE);
+		}
 
 		if(!node || !strcmp(node, node_uri)) {
 			GList *features, *identities;

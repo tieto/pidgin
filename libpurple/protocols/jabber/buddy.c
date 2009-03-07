@@ -495,9 +495,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	PurplePresence *gpresence;
-	PurpleStatus *status;
-
 	if(((JabberStream*)purple_connection_get_protocol_data(gc))->pep) {
 		/* XEP-0084: User Avatars */
 		if(img) {
