@@ -141,8 +141,8 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 }
 
 void jabber_mood_init(void) {
-	jabber_add_feature("mood", "http://jabber.org/protocol/mood", jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_pep_register_handler("moodn", "http://jabber.org/protocol/mood", jabber_mood_cb);
+	jabber_add_feature("http://jabber.org/protocol/mood", jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_pep_register_handler("http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
 static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *fields) {
