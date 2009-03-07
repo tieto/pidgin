@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.5 (??/??/2009):
+version 2.5.5 (03/01/2009):
 	libpurple:
 		Changed:
 		* purple_status_type_new now defaults "saveable" to TRUE.

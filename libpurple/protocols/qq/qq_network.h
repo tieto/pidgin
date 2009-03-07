@@ -39,7 +39,7 @@ gint qq_send_cmd_encrypted(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		guint8 *encrypted_data, gint encrypted_len, gboolean is_save2trans);
 gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, guint8 *data, gint datalen);
 gint qq_send_cmd_mess(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len,
-		gint update_class, guint32 ship32);
+		guint32 update_class, guint32 ship32);
 
 gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		guint8 *data, gint data_len);
@@ -47,7 +47,7 @@ gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq,
 gint qq_send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
 		guint8 *data, gint data_len);
 gint qq_send_room_cmd_mess(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
-		guint8 *data, gint data_len, gint update_class, guint32 ship32);
+		guint8 *data, gint data_len, guint32 update_class, guint32 ship32);
 gint qq_send_room_cmd_only(PurpleConnection *gc, guint8 room_cmd, guint32 room_id);
 gint qq_send_room_cmd_noid(PurpleConnection *gc, guint8 room_cmd,
 		guint8 *data, gint data_len);

@@ -3,7 +3,7 @@
 # Copyright (C) unknown, Robert Millan <zeratul2@wanadoo.es>
 # Copyright (C) December 2003 (from 2003-12-12 until 2003-12-18),
 #               January (2004-01-07,12), Xan <dxpublica@telefonica.net>
-# Copyright (c) 2004, 2005, 2006, 2007, 2008
+# Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009
 #               Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-05 01:42+0100\n"
-"PO-Revision-Date: 2009-01-05 20:36+0100\n"
+"POT-Creation-Date: 2009-02-22 10:28+0100\n"
+"PO-Revision-Date: 2009-02-22 15:18+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -66,7 +66,8 @@ msgstr ""
 "Forma d'ús: %s [OPCIÓ]...\n"
 "\n"
 "  -c, --config=DIR    utilitza DIR per als fitxers de configuració\n"
-"  -d, --debug         mostra missatges de depuració a la sortida estàndard\n"
+"  -d, --debug         mostra missatges de depuració a la sortida d'error\n"
+"                      estàndard \n"
 "  -h, --help          mostra aquesta ajuda i surt\n"
 "  -n, --nologin       no entra automàticament\n"
 "  -v, --version       mostra la versió actual i surt\n"
@@ -1198,7 +1199,6 @@ msgstr "Minuts abans de canviar l'estat"
 msgid "Change status to"
 msgstr "Canvia l'estat a"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Converses"
 
@@ -1522,7 +1522,6 @@ msgstr ""
 "Quan s'obri una nova conversa aquest connector inserirà la darrera conversa "
 "en la conversa actual."
 
-#, c-format
 msgid "Online"
 msgstr "En línia"
 
@@ -1959,7 +1958,6 @@ msgstr "S'està iniciant la transferència de %s de %s?"
 msgid "Transfer of file %s complete"
 msgstr "S'ha completat la transferència del fitxer %s"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "S'ha completat la transferència del fitxer"
 
@@ -1967,7 +1965,6 @@ msgstr "S'ha completat la transferència del fitxer"
 msgid "You canceled the transfer of %s"
 msgstr "Heu cancel·lat la transferència de %s"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "S'ha cancel·lat la transferència del fitxer"
 
@@ -2168,7 +2165,6 @@ msgstr "(%s) %s <RESPOSTA-AUTOMÀTICA>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Esteu emprant %s, però aquest connector requereix %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Aquest connector no ha definit cap ID."
 
@@ -2866,7 +2862,6 @@ msgstr ""
 "No s'ha pogut establir cap connexió amb el servidor local de mDNS. S'està "
 "executant?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Nom"
 
@@ -2898,6 +2893,10 @@ msgstr "Connector per al protocol Bonjour"
 # Nota: en principi no ha de sortir mai
 msgid "Purple Person"
 msgstr "Persona porpra"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Port local"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3063,7 +3062,6 @@ msgstr "Disponible"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Absent"
 
@@ -3961,7 +3959,6 @@ msgstr "Xerraire"
 msgid "Extended Away"
 msgstr "Absent des de fa una bona estona"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "No molesteu"
 
@@ -4713,9 +4710,6 @@ msgstr "Accions"
 
 msgid "Select an action"
 msgstr "Seleccioneu una acció"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "No s'ha pogut obtenir la llibreta d'adreces MSN"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -6192,7 +6186,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Error. No hi ha instal·lades les biblioteques per a SSL."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "S'ha tancat aquesta conferència. No s'hi poden enviar més missatges."
 
@@ -6459,23 +6452,18 @@ msgstr "Càmera"
 msgid "Screen Sharing"
 msgstr "Compartició de pantalla"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Lliure per parlar"
 
-#, c-format
 msgid "Not Available"
 msgstr "No disponible"
 
-#, c-format
 msgid "Occupied"
 msgstr "Ocupat"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Conscient de la web"
 
-#, c-format
 msgid "Invisible"
 msgstr "Invisible"
 
@@ -7039,6 +7027,7 @@ msgstr "C_onnecta"
 msgid "Get AIM Info"
 msgstr "Obtén informació de AIM"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Edita el comentari sobre l'amic"
 
@@ -7150,7 +7139,6 @@ msgstr ""
 msgid "Attempting to connect to %s:%hu."
 msgstr "S'està intentant connectar amb %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "S'està intentant connectar a través d'un servidor intermediari."
 
@@ -7694,6 +7682,9 @@ msgstr "Mostra els avisos del servidor"
 
 msgid "Show server news"
 msgstr "Mostra les notícies del servidor"
+
+msgid "Show chat room when msg comes"
+msgstr "Mostra la sala de xat quan hi arribin missatges"
 
 # FIXME: keep alive -> permanència
 msgid "Keep alive interval (seconds)"
@@ -11454,6 +11445,9 @@ msgstr "Lituà"
 msgid "Macedonian"
 msgstr "Macedoni"
 
+msgid "Mongolian"
+msgstr "Mongol"
+
 msgid "Bokmål Norwegian"
 msgstr "Noruec bokmål"
 
@@ -11572,8 +11566,30 @@ msgstr ""
 "<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin a irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">PMF:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Ajuda per correu electrònic:</FONT> <A HREF=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">Canal d'IRC:</FONT> #pidgin a irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Desenvolupadors actuals"
@@ -12242,6 +12258,12 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr ""
+"Ara se sortirà atès que ja hi ha un altre client del libpurple executant-"
+"se.\n"
+
 msgid "Open All Messages"
 msgstr "Obre tots els missatges"
 
@@ -12589,6 +12611,10 @@ msgstr "Servidor intermediari"
 
 msgid "No proxy"
 msgstr "Sense servidor intermediari"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Empra DNS remot amb servidors intermediàris SOCKS4"
 
 msgid "_User:"
 msgstr "_Usuari:"
@@ -14050,9 +14076,6 @@ msgstr "_Conserva la finestra d'amics per sobre:"
 msgid "Only when docked"
 msgstr "Només si està acoblada"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Fes que la finestra parpellegi quan arribin missatges de xat"
-
 msgid "Windows Pidgin Options"
 msgstr "Opcions del Pidgin per al Windows"
 
@@ -14102,6 +14125,12 @@ msgstr "Envia i rep blocs XMPP en brut."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "No s'ha pogut obtenir la llibreta d'adreces MSN"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Fes que la finestra parpellegi quan arribin missatges de xat"
 
 #~ msgid ""
 #~ "You may be disconnected shortly.  You may want to use TOC until this is "
