@@ -2861,9 +2861,7 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://jabber.org/protocol/chatstates", 0);
 	jabber_add_feature("http://jabber.org/protocol/disco#info", 0);
 	jabber_add_feature("http://jabber.org/protocol/disco#items", 0);
-#if 0
 	jabber_add_feature("http://jabber.org/protocol/ibb", 0);
-#endif
 	jabber_add_feature("http://jabber.org/protocol/muc", 0);
 	jabber_add_feature("http://jabber.org/protocol/muc#user", 0);
 	jabber_add_feature("http://jabber.org/protocol/si", 0);
