@@ -184,6 +184,7 @@ libpurple/sslconn.c
 libpurple/status.c
 libpurple/util.c
 libpurple/win32/libc_interface.c
+libpurple/xmlnode.c
 pidgin.desktop.in
 pidgin/eggtrayicon.c
 pidgin/gtkaccount.c

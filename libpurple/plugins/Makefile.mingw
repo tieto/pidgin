@@ -1,7 +1,7 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of LibPurple Plugins 
+# Description: Makefile for win32 (mingw) version of libpurple Plugins
 #
 
 PIDGIN_TREE_TOP := ../..

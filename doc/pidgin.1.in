@@ -128,11 +128,11 @@ buddy or chat.
 .TP
 .B Alias
 Create an alias for this buddy.  This will show an editable text field where
-the buddy's screen name was displayed.  In this field one can give this
+the buddy's name was displayed.  In this field one can give this
 buddy an alternate, more friendly name to appear on the buddy list and in
 conversations.
 
-For example, if a buddy's name screen name was jsmith1281xx and his real
+For example, if a buddy's name was jsmith1281xx and his real
 name was 'John Q. Smith,' one could create an alias as to identify the
 buddy by his common name.
 .LP
@@ -150,7 +150,7 @@ them.  It can be accessed by selecting \fBManage\fR from the Accounts menu.
 Clicking \fIDelete\fR will delete the currently selected account.
 Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR
 window.  Here, the user  can add or alter account information.  When creating
-a new account, the user will submit a screen name and password.  The user will
+a new account, the user will submit a username and password.  The user will
 also choose the protocol for the account.
 
 If \fIRemember Password\fR is chosen, the password will be saved in
@@ -545,7 +545,7 @@ about this interaction exists.
 .br
   \fI~/.purple/status.xml\fR: stores the user's away messages.
 .br
-  \fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
+  \fI~/.purple/logs/PROTOCOL/ACCOUNT/BUDDYNAME/DATE.{html,txt}\fR: conversation logs.
 
 .SH DIRECTORIES
   \fI@prefix@/lib/pidgin/\fR: Pidgin's plugins directory.

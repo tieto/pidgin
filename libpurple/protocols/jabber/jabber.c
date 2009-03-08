@@ -184,7 +184,7 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
 	if(xmlnode_get_child(packet, "starttls")) {
 		if(jabber_process_starttls(js, packet))
-	
+
 			return;
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
 		purple_connection_error_reason (js->gc,
@@ -467,10 +467,10 @@ void jabber_keepalive(PurpleConnection *gc)
 
 	if (js->keepalive_timeout == -1) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
-		
+
 		xmlnode *ping = xmlnode_new_child(iq->node, "ping");
 		xmlnode_set_namespace(ping, "urn:xmpp:ping");
-		
+
 		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
 		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
 		jabber_iq_send(iq);
@@ -578,7 +578,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
 	purple_ssl_input_add(gsc, jabber_recv_cb_ssl, gc);
-	
+
 	/* Tell the app that we're doing encryption */
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 }
@@ -736,14 +736,14 @@ jabber_login(PurpleAccount *account)
 			_("Invalid XMPP ID"));
 		return;
 	}
-	
+
 	if (!js->user->domain || *(js->user->domain) == '\0') {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
 	}
-	
+
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
@@ -853,10 +853,10 @@ jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data
 		g_free(buf);
 	} else {
 		char *msg = jabber_parse_error(js, packet, NULL);
-		
+
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
-		
+
 		purple_notify_error(NULL, _("Unregistration Failed"),
 							_("Unregistration Failed"), msg);
 		g_free(msg);
@@ -899,9 +899,9 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					if (cbdata->who)
 						xmlnode_set_attrib(iq->node,"to",cbdata->who);
 					xmlnode_new_child(query, "remove");
-					
+
 					jabber_iq_set_callback(iq, jabber_unregistration_result_cb, cbdata->who);
-					
+
 					jabber_iq_send(iq);
 					g_free(cbdata);
 					return;
@@ -1031,7 +1031,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 	}
-	
+
 	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
 		jabber_x_data_request(js, x, jabber_register_x_data_cb, g_strdup(from));
 		return;
@@ -1182,7 +1182,7 @@ void jabber_register_start(JabberStream *js)
 
 void jabber_register_gateway(JabberStream *js, const char *gateway) {
 	JabberIq *iq;
-	
+
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:register");
 	xmlnode_set_attrib(iq->node, "to", gateway);
 	jabber_iq_send(iq);
@@ -1257,7 +1257,7 @@ static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, g
 	const char *type = xmlnode_get_attrib(packet,"type");
 	if(!strcmp(type,"error")) {
 		char *msg = jabber_parse_error(js, packet, NULL);
-		
+
 		purple_notify_error(js->gc, _("Error unregistering account"),
 							_("Error unregistering account"), msg);
 		g_free(msg);
@@ -1291,7 +1291,7 @@ static void jabber_unregister_account_cb(JabberStream *js) {
 void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data) {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
-	
+
 	if(gc->state != PURPLE_CONNECTED) {
 		if(gc->state != PURPLE_CONNECTING)
 			jabber_login(account);
@@ -1301,7 +1301,7 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 		js->unregistration_user_data = user_data;
 		return;
 	}
-	
+
 	js = gc->proto_data;
 
 	if (js->unregistration) {
@@ -1602,10 +1602,10 @@ void jabber_add_feature(const char *shortname, const char *namespace, JabberFeat
 	feat->shortname = g_strdup(shortname);
 	feat->namespace = g_strdup(namespace);
 	feat->is_enabled = cb;
-	
+
 	/* try to remove just in case it already exists in the list */
 	jabber_remove_feature(shortname);
-	
+
 	jabber_features = g_list_append(jabber_features, feat);
 }
 
@@ -1616,7 +1616,7 @@ void jabber_remove_feature(const char *shortname) {
 		if(!strcmp(feat->shortname, shortname)) {
 			g_free(feat->shortname);
 			g_free(feat->namespace);
-			
+
 			g_free(feature->data);
 			jabber_features = g_list_delete_link(jabber_features, feature);
 			break;
@@ -1633,13 +1633,14 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 {
 	JabberStream *js;
 	JabberBuddy *jb = NULL;
+	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(b));
 
-	if(!b->account->gc)
+	if(!gc)
 		return NULL;
 
-	js = b->account->gc->proto_data;
+	js = gc->proto_data;
 	if(js)
-		jb = jabber_buddy_find(js, b->name, FALSE);
+		jb = jabber_buddy_find(js, purple_buddy_get_name(b), FALSE);
 
 	if(!PURPLE_BUDDY_IS_ONLINE(b)) {
 		if(jb && (jb->subscription & JABBER_SUB_PENDING ||
@@ -1653,9 +1654,11 @@ char *jabber_status_text(PurpleBuddy *b)
 {
 	char *ret = NULL;
 	JabberBuddy *jb = NULL;
-	
-	if (b->account->gc && b->account->gc->proto_data)
-		jb = jabber_buddy_find(b->account->gc->proto_data, b->name, FALSE);
+	PurpleAccount *account = purple_buddy_get_account(b);
+	PurpleConnection *gc = purple_account_get_connection(account);
+
+	if (gc && gc->proto_data)
+		jb = jabber_buddy_find(gc->proto_data, purple_buddy_get_name(b), FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
@@ -1684,14 +1687,19 @@ char *jabber_status_text(PurpleBuddy *b)
 void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	JabberBuddy *jb;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
 	g_return_if_fail(b != NULL);
-	g_return_if_fail(b->account != NULL);
-	g_return_if_fail(b->account->gc != NULL);
-	g_return_if_fail(b->account->gc->proto_data != NULL);
 
-	jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
-			FALSE);
+	account = purple_buddy_get_account(b);
+	g_return_if_fail(account != NULL);
+
+	gc = purple_account_get_connection(account);
+	g_return_if_fail(gc != NULL);
+	g_return_if_fail(gc->proto_data != NULL);
+
+	jb = jabber_buddy_find(gc->proto_data, purple_buddy_get_name(b), FALSE);
 
 	if(jb) {
 		JabberBuddyResource *jbr = NULL;
@@ -1799,9 +1807,12 @@ GList *jabber_status_types(PurpleAccount *account)
 	PurpleStatusType *type;
 	GList *types = NULL;
 	PurpleValue *priority_value;
+	PurpleValue *buzz_enabled;
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 1);
+	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
+	purple_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_ONLINE),
 			NULL, TRUE, TRUE, FALSE,
@@ -1810,12 +1821,14 @@ GList *jabber_status_types(PurpleAccount *account)
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 1);
+	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
+	purple_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_CHAT),
 			_("Chatty"), TRUE, TRUE, FALSE,
@@ -1824,12 +1837,14 @@ GList *jabber_status_types(PurpleAccount *account)
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 0);
+	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
+	purple_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_AWAY),
 			NULL, TRUE, TRUE, FALSE,
@@ -1838,12 +1853,14 @@ GList *jabber_status_types(PurpleAccount *account)
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 0);
+	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
+	purple_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_EXTENDED_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_XA),
 			NULL, TRUE, TRUE, FALSE,
@@ -1852,7 +1869,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1866,7 +1883,6 @@ GList *jabber_status_types(PurpleAccount *account)
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -2012,7 +2028,7 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 
 	if(js->pep)
 		jabber_pep_init_actions(&m);
-	
+
 	if(js->commands)
 		jabber_adhoc_init_server_commands(js, &m);
 
@@ -2027,19 +2043,24 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 	if(!(jid = jabber_id_new(name)))
 		return NULL;
 
-	for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+	for(gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
+		for(cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			PurpleChat *chat = (PurpleChat*)cnode;
 			const char *room, *server;
+			GHashTable *components;
 			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
 				continue;
 
-			if(chat->account != account)
+			if (purple_chat_get_account(chat) != account)
 				continue;
 
-			if(!(room = g_hash_table_lookup(chat->components, "room")))
+			components = purple_chat_get_components(chat);
+			if(!(room = g_hash_table_lookup(components, "room")))
 				continue;
-			if(!(server = g_hash_table_lookup(chat->components, "server")))
+			if(!(server = g_hash_table_lookup(components, "server")))
 				continue;
 
 			if(jid->node && jid->domain &&
@@ -2059,7 +2080,7 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	
+
 	if(!(jid = jabber_id_new(who)))
 		return;
 
@@ -2320,7 +2341,7 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 	if (!chat || !args || !args[0] || !args[1])
 		return PURPLE_CMD_RET_FAILED;
 
-	if (strcmp(args[1], "owner") != 0 && 
+	if (strcmp(args[1], "owner") != 0 &&
 	    strcmp(args[1], "admin") != 0 &&
 	    strcmp(args[1], "member") != 0 &&
 	    strcmp(args[1], "outcast") != 0 &&
@@ -2449,63 +2470,92 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	GList *iter;
+	PurpleConnection *gc = js->gc;
+	PurpleBuddy *buddy =
+		purple_find_buddy(purple_connection_get_account(gc), username);
+	const gchar *alias =
+		buddy ? purple_buddy_get_contact_alias(buddy) : username;
 
 	if(!username)
 		return FALSE;
 
 	jb = jabber_buddy_find(js, username, FALSE);
 	if(!jb) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing "
+			"known about %s."), alias);
 		return FALSE;
 	}
 
 	jbr = jabber_buddy_find_resource(jb, NULL);
-	if(!jbr) {
-		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), username);
+	if (!jbr) {
+		*error = g_strdup_printf(_("Unable to buzz, because %s might be offline."),
+			alias);
 		return FALSE;
 	}
 
-	if(!jbr->caps) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+	if (jabber_resource_has_capability(jbr, XEP_0224_NAMESPACE)) {
+		xmlnode *buzz, *msg = xmlnode_new("message");
+		gchar *to;
+
+		to = g_strdup_printf("%s/%s", username, jbr->name);
+		xmlnode_set_attrib(msg, "to", to);
+		g_free(to);
+
+		/* avoid offline storage */
+		xmlnode_set_attrib(msg, "type", "headline");
+
+		buzz = xmlnode_new_child(msg, "attention");
+		xmlnode_set_namespace(buzz, XEP_0224_NAMESPACE);
+
+		jabber_send(js, msg);
+		xmlnode_free(msg);
+
+		return TRUE;
+	} else {
+		*error = g_strdup_printf(_("Unable to buzz, because %s does "
+			"not support it or does not wish to receive buzzes now."), alias);
 		return FALSE;
 	}
-
-	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
-			xmlnode *buzz, *msg = xmlnode_new("message");
-			gchar *to;
-
-			to = g_strdup_printf("%s/%s", username, jbr->name);
-			xmlnode_set_attrib(msg, "to", to);
-			g_free(to);
-
-			/* avoid offline storage */
-			xmlnode_set_attrib(msg, "type", "headline");
-
-			buzz = xmlnode_new_child(msg, "attention");
-			xmlnode_set_namespace(buzz, "http://www.xmpp.org/extensions/xep-0224.html#ns");
-
-			jabber_send(js, msg);
-			xmlnode_free(msg);
-
-			return TRUE;
-		}
-	}
-
-	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), username);
-	return FALSE;
 }
 
 static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberStream *js = conv->account->gc->proto_data;
+	const gchar *who;
 
-	if(!args || !args[0])
+	if (!args || !args[0]) {
+		/* use the buddy from conversation, if it's a one-to-one conversation */
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+			who = purple_conversation_get_name(conv);
+		} else {
+			return PURPLE_CMD_RET_FAILED;
+		}
+	} else {
+		who = args[0];
+	}
+
+	if (_jabber_send_buzz(js, who, error)) {
+		const gchar *alias;
+		gchar *str;
+		PurpleBuddy *buddy =
+			purple_find_buddy(purple_connection_get_account(conv->account->gc),
+				who);
+
+		if (buddy != NULL)
+			alias = purple_buddy_get_contact_alias(buddy);
+		else
+			alias = who;
+
+		str = g_strdup_printf(_("Buzzing %s..."), alias);
+		purple_conversation_write(conv, NULL, str,
+			PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+		g_free(str);
+
+		return PURPLE_CMD_RET_OK;
+	} else {
 		return PURPLE_CMD_RET_FAILED;
-
-	return _jabber_send_buzz(js, args[0], error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
+	}
 }
 
 GList *jabber_attention_types(PurpleAccount *account)
@@ -2618,8 +2668,9 @@ void jabber_register_commands(void)
 					  "prpl-jabber", jabber_cmd_ping,
 					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
 					  NULL);
-	purple_cmd_register("buzz", "s", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("buzz", "w", PURPLE_CMD_P_PRPL,
+					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
 }

@@ -83,7 +83,7 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 {
 	char *theme_dir = NULL, *last_slash = NULL;
 	g_return_if_fail(NULL != file);
-	
+
 	if (!g_file_test(file, G_FILE_TEST_EXISTS)) return;
 	if ((theme_dir = g_strdup(file)) == NULL) return ;
 
@@ -169,12 +169,12 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 	for (wer = theme->list; wer != NULL; wer = theme->list) {
 		while (wer->smileys) {
 			GtkIMHtmlSmiley *uio = wer->smileys->data;
-			
+
 			if (uio->imhtml) {
 				g_signal_handlers_disconnect_matched(uio->imhtml, G_SIGNAL_MATCH_DATA,
 					0, 0, NULL, NULL, uio);
 			}
-				
+
 			if (uio->icon)
 				g_object_unref(uio->icon);
 			if (g_hash_table_lookup(already_freed, uio->file) == NULL) {

@@ -43,19 +43,19 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [5])
+m4_define([purple_lt_current], [6])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [5])
-m4_define([purple_micro_version], [5])
+m4_define([purple_minor_version], [6])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [5])
+m4_define([gnt_lt_current], [6])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [5])
-m4_define([gnt_micro_version], [5])
+m4_define([gnt_minor_version], [6])
+m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -1103,6 +1103,7 @@ for i in $DYNAMIC_PRPLS ; do
 		msnp9)		dynamic_msn=yes ;;
 		myspace)	dynamic_myspace=yes ;;
 		novell)		dynamic_novell=yes ;;
+		null)		dynamic_null=yes ;;
 		oscar)		dynamic_oscar=yes ;;
 		aim)		dynamic_oscar=yes ;;
 		icq)		dynamic_oscar=yes ;;
@@ -1117,21 +1118,6 @@ for i in $DYNAMIC_PRPLS ; do
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
-AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes"  -a [ "x$avahiincludes" = "xyes" -a "x$avahilibs " = "xyes" ] )
-AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
-AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
-AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
-AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
-AM_CONDITIONAL(DYNAMIC_MYSPACE, test "x$dynamic_myspace" = "xyes")
-AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
-AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
-AM_CONDITIONAL(DYNAMIC_QQ, test "x$dynamic_qq" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$have_silc" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
-AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
-AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
-AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(plugins, [AC_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
 AC_ARG_WITH(krb4, [AC_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin with Kerberos 4 support])], kerberos="$withval", kerberos="no")
@@ -1701,6 +1687,22 @@ fi
 
 AC_SUBST(GNUTLS_CFLAGS)
 AC_SUBST(GNUTLS_LIBS)
+
+if test "x$enable_gnutls" = "xyes"; then
+	AC_MSG_CHECKING(for gnutls_priority_set_direct)
+	LIBS_save="$LIBS"
+	LIBS="$LIBS $GNUTLS_LIBS"
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <gnutls/gnutls.h>],
+                                        [gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);])],
+	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
+                                  [Define if your gnutls has gnutls_priority_set_direct and friends])
+	                AC_MSG_RESULT(yes)],
+	               [AC_MSG_RESULT(no)])
+	CPPFLAGS="$CPPFLAGS_save"
+        LIBS="$LIBS_save"
+fi
 
 AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 

@@ -2258,7 +2258,7 @@ msgstr "Šifritest"
 #. *  summary
 #. *  description
 msgid "Tests the ciphers that ship with libpurple."
-msgstr "Libpurple'ga kaasasolevate šifrite testimine."
+msgstr "libpurple'ga kaasasolevate šifrite testimine."
 
 #. *< type
 #. *< ui_requirement

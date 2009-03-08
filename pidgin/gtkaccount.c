@@ -51,7 +51,7 @@ enum
 {
 	COLUMN_ICON,
 	COLUMN_BUDDYICON,
-	COLUMN_SCREENNAME,
+	COLUMN_USERNAME,
 	COLUMN_ENABLED,
 	COLUMN_PROTOCOL,
 	COLUMN_DATA,
@@ -78,7 +78,7 @@ typedef struct
 	GtkListStore *model;
 	GtkTreeIter drag_iter;
 
-	GtkTreeViewColumn *screenname_col;
+	GtkTreeViewColumn *username_col;
 
 } AccountsWindow;
 
@@ -115,7 +115,7 @@ typedef struct
 	GtkWidget *login_frame;
 	GtkWidget *protocol_menu;
 	GtkWidget *password_box;
-	GtkWidget *screenname_entry;
+	GtkWidget *username_entry;
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
 	GtkWidget *remember_pass_check;
@@ -256,7 +256,7 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 }
 
 static gboolean
-screenname_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
+username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
 {
 	GHashTable *table;
 	const char *label;
@@ -275,7 +275,7 @@ screenname_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 }
 
 static void
-screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
+username_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
 	if (dialog->ok_button)
 		gtk_widget_set_sensitive(dialog->ok_button,
@@ -290,7 +290,7 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 }
 
 static gboolean
-screenname_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
+username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
 {
 	GdkColor color = {0, 34952, 35466, 34181};
 	GHashTable *table = NULL;
@@ -301,13 +301,13 @@ screenname_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialo
 		label = g_hash_table_lookup(table, "login_label");
 
 		if (*gtk_entry_get_text(GTK_ENTRY(widget)) == '\0') {
-			/* We have to avoid hitting the screenname_changed_cb function 
+			/* We have to avoid hitting the username_changed_cb function
 			 * because it enables buttons we don't want enabled yet ;)
 			 */
-			g_signal_handlers_block_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
+			g_signal_handlers_block_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
 			gtk_entry_set_text(GTK_ENTRY(widget), label);
 			/* Make sure we can hit it again */
-			g_signal_handlers_unblock_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
+			g_signal_handlers_unblock_by_func(widget, G_CALLBACK(username_changed_cb), dialog);
 			gtk_widget_modify_text(widget, GTK_STATE_NORMAL, &color);
 		}
 
@@ -393,7 +393,7 @@ update_editable(PurpleConnection *gc, AccountPrefsDialog *dialog)
 
 	set = !(purple_account_is_connected(dialog->account) || purple_account_is_connecting(dialog->account));
 	gtk_widget_set_sensitive(dialog->protocol_menu, set);
-	gtk_widget_set_sensitive(dialog->screenname_entry, set);
+	gtk_widget_set_sensitive(dialog->username_entry, set);
 
 	for (l = dialog->user_split_entries ; l != NULL ; l = l->next)
 		gtk_widget_set_sensitive((GtkWidget *)l->data, set);
@@ -449,13 +449,13 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	gtk_widget_unref(dialog->protocol_menu);
 
-	/* Screen name */
-	dialog->screenname_entry = gtk_entry_new();
+	/* Username */
+	dialog->username_entry = gtk_entry_new();
 #if GTK_CHECK_VERSION(2,10,0)
-	g_object_set(G_OBJECT(dialog->screenname_entry), "truncate-multiline", TRUE, NULL);
+	g_object_set(G_OBJECT(dialog->username_entry), "truncate-multiline", TRUE, NULL);
 #endif
 
-	add_pref_box(dialog, vbox, _("_Username:"), dialog->screenname_entry);
+	add_pref_box(dialog, vbox, _("_Username:"), dialog->username_entry);
 
 	if (dialog->account != NULL)
 		username = g_strdup(purple_account_get_username(dialog->account));
@@ -468,17 +468,17 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		table = dialog->prpl_info->get_account_text_table(NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
-		gtk_entry_set_text(GTK_ENTRY(dialog->screenname_entry), label);
-		g_signal_connect(G_OBJECT(dialog->screenname_entry), "focus-in-event",
-				G_CALLBACK(screenname_focus_cb), dialog);
-		g_signal_connect(G_OBJECT(dialog->screenname_entry), "focus-out-event",
-				G_CALLBACK(screenname_nofocus_cb), dialog);
-		gtk_widget_modify_text(dialog->screenname_entry, GTK_STATE_NORMAL, &color);
+		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), label);
+		g_signal_connect(G_OBJECT(dialog->username_entry), "focus-in-event",
+				G_CALLBACK(username_focus_cb), dialog);
+		g_signal_connect(G_OBJECT(dialog->username_entry), "focus-out-event",
+				G_CALLBACK(username_nofocus_cb), dialog);
+		gtk_widget_modify_text(dialog->username_entry, GTK_STATE_NORMAL, &color);
 		g_hash_table_destroy(table);
 	}
 
-	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
-					 G_CALLBACK(screenname_changed_cb), dialog);
+	g_signal_connect(G_OBJECT(dialog->username_entry), "changed",
+					 G_CALLBACK(username_changed_cb), dialog);
 
 	/* Do the user split thang */
 	if (dialog->prpl_info == NULL)
@@ -547,7 +547,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 
 	if (username != NULL)
-		gtk_entry_set_text(GTK_ENTRY(dialog->screenname_entry), username);
+		gtk_entry_set_text(GTK_ENTRY(dialog->username_entry), username);
 
 	g_free(username);
 
@@ -590,7 +590,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_hide(dialog->remember_pass_check);
 	}
 
-	/* Do not let the user change the protocol/screenname while connected. */
+	/* Do not let the user change the protocol/username while connected. */
 	update_editable(NULL, dialog);
 	purple_signal_connect(purple_connections_get_handle(), "signing-on", dialog,
 					G_CALLBACK(update_editable), dialog);
@@ -1193,7 +1193,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	PurpleAccount *account;
 
 	/* Build the username string. */
-	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
+	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->username_entry)));
 
 	if (dialog->prpl_info != NULL)
 	{
@@ -1933,7 +1933,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	gtk_tree_view_column_set_resizable(column, FALSE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
-	/* Screen Name column */
+	/* Username column */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Username"));
 	gtk_tree_view_column_set_resizable(column, TRUE);
@@ -1945,12 +1945,12 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	gtk_tree_view_column_add_attribute(column, renderer,
 					   "pixbuf", COLUMN_BUDDYICON);
 
-	/* Screen Name */
+	/* Username */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-					   "text", COLUMN_SCREENNAME);
-	dialog->screenname_col = column;
+					   "text", COLUMN_USERNAME);
+	dialog->username_col = column;
 
 
 	/* Protocol name */
@@ -2016,7 +2016,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 	gtk_list_store_set(store, iter,
 			COLUMN_ICON, pixbuf,
 			COLUMN_BUDDYICON, buddyicon,
-			COLUMN_SCREENNAME, purple_account_get_username(account),
+			COLUMN_USERNAME, purple_account_get_username(account),
 			COLUMN_ENABLED, purple_account_get_enabled(account, PIDGIN_UI),
 			COLUMN_PROTOCOL, purple_account_get_protocol_name(account),
 			COLUMN_DATA, account,
@@ -2190,7 +2190,7 @@ create_accounts_list(AccountsWindow *dialog)
 	dialog->model = gtk_list_store_new(NUM_COLUMNS,
 					GDK_TYPE_PIXBUF,   /* COLUMN_ICON */
 					GDK_TYPE_PIXBUF,   /* COLUMN_BUDDYICON */
-					G_TYPE_STRING,     /* COLUMN_SCREENNAME */
+					G_TYPE_STRING,     /* COLUMN_USERNAME */
 					G_TYPE_BOOLEAN,    /* COLUMN_ENABLED */
 					G_TYPE_STRING,     /* COLUMN_PROTOCOL */
 					G_TYPE_POINTER     /* COLUMN_DATA */

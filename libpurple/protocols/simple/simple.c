@@ -196,33 +196,41 @@ static void simple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 {
 	struct simple_account_data *sip = (struct simple_account_data *)gc->proto_data;
 	struct simple_buddy *b;
-	if(strncmp(buddy->name, "sip:", 4)) {
-		gchar *buf = g_strdup_printf("sip:%s", buddy->name);
+	const char *name = purple_buddy_get_name(buddy);
+	if(strncmp(name, "sip:", 4)) {
+		gchar *buf = g_strdup_printf("sip:%s", name);
 		purple_blist_rename_buddy(buddy, buf);
 		g_free(buf);
 	}
-	if(!g_hash_table_lookup(sip->buddies, buddy->name)) {
+	if(!g_hash_table_lookup(sip->buddies, name)) {
 		b = g_new0(struct simple_buddy, 1);
-		purple_debug_info("simple", "simple_add_buddy %s\n", buddy->name);
-		b->name = g_strdup(buddy->name);
+		purple_debug_info("simple", "simple_add_buddy %s\n", name);
+		b->name = g_strdup(name);
 		g_hash_table_insert(sip->buddies, b->name, b);
 	} else {
-		purple_debug_info("simple", "buddy %s already in internal list\n", buddy->name);
+		purple_debug_info("simple", "buddy %s already in internal list\n", name);
 	}
 }
 
 static void simple_get_buddies(PurpleConnection *gc) {
 	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleAccount *account;
 
 	purple_debug_info("simple", "simple_get_buddies\n");
 
-	for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+	account = purple_connection_get_account(gc);
+	for(gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode)) continue;
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+		for(cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode)) continue;
-			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+			for(bnode = purple_blist_node_get_first_child(cnode);
+					bnode;
+					bnode = purple_blist_node_get_sibling_next(bnode)) {
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode)) continue;
-				if(((PurpleBuddy*)bnode)->account == gc->account)
+				if(purple_buddy_get_account((PurpleBuddy*)bnode) == account)
 					simple_add_buddy(gc, (PurpleBuddy*)bnode, (PurpleGroup *)gnode);
 			}
 		}
@@ -231,9 +239,10 @@ static void simple_get_buddies(PurpleConnection *gc) {
 
 static void simple_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
+	const char *name = purple_buddy_get_name(buddy);
 	struct simple_account_data *sip = (struct simple_account_data *)gc->proto_data;
-	struct simple_buddy *b = g_hash_table_lookup(sip->buddies, buddy->name);
-	g_hash_table_remove(sip->buddies, buddy->name);
+	struct simple_buddy *b = g_hash_table_lookup(sip->buddies, name);
+	g_hash_table_remove(sip->buddies, name);
 	g_free(b->name);
 	g_free(b);
 }
@@ -922,7 +931,7 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 			purple_blist_add_buddy(b, NULL, g, NULL);
 			purple_blist_alias_buddy(b, uri);
 			bs = g_new0(struct simple_buddy, 1);
-			bs->name = g_strdup(b->name);
+			bs->name = g_strdup(purple_buddy_get_name(b));
 			g_hash_table_insert(sip->buddies, bs->name, bs);
 		}
 		xmlnode_free(isc);
