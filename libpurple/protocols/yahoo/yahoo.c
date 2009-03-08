@@ -1230,7 +1230,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 		}
 
 		if(protocol == 0)
-			who = temp;
+			who = g_strdup(temp);
 		else if(protocol == 2)
 			who = g_strconcat("msn/", temp, NULL);
 
