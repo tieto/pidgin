@@ -4850,22 +4850,22 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	const char *group = NULL;
 	char *group2;
 	YahooFriend *f;
+	const char *bname;
 	gboolean msn = FALSE;
 
 	if (!yd->logged_in)
 		return;
 
-	msn = g_str_has_prefix(buddy->name, "msn/") || g_str_has_prefix(buddy->name, "MSN/");
-
-	if (!purple_privacy_check(purple_connection_get_account(gc),
-			purple_buddy_get_name(buddy)))
+	bname = purple_buddy_get_name(buddy);
+	if (!purple_privacy_check(purple_connection_get_account(gc), bname))
 		return;
 
-	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
+	f = yahoo_friend_find(gc, bname);
+	msn = g_str_has_prefix(bname, "msn/") || g_str_has_prefix(bname, "MSN/");
 
 	g = purple_buddy_get_group(buddy);
 	if (g)
-		group = g->name;
+		group = purple_group_get_name(g);
 	else
 		group = "Buddies";
 
@@ -4879,7 +4879,7 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 			1, purple_connection_get_display_name(gc),
 			302, "319",
 			300, "319",
-			7, buddy->name + 4,
+			7, bname + 4,
 			241, "2",
 			334, "0",
 			301, "319",
@@ -4894,12 +4894,14 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 			1, purple_connection_get_display_name(gc),
 			302, "319",
 			300, "319",
-			7, buddy->name,
+			7, bname,
 			334, "0",
 			301, "319",
 			303, "319"
 		);
 	}
+	if (f && f->protocol && !msn)
+		yahoo_packet_hash_int(pkt, 241, f->protocol);
 
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(group2);
@@ -4913,16 +4915,22 @@ static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleG
 	PurpleGroup *g;
 	gboolean remove = TRUE;
 	char *cg;
-	YahooFriend *f = yahoo_friend_find(gc, buddy->name);
+	const char *bname, *gname;
+	YahooFriend *f = NULL;
 	gboolean msn = FALSE;
 
+	bname = purple_buddy_get_name(buddy);
+	f = yahoo_friend_find(gc, bname);
 	if (!f)
 		return;
 
-	buddies = purple_find_buddies(purple_connection_get_account(gc), buddy->name);
+	gname = purple_group_get_name(group);
+	buddies = purple_find_buddies(purple_connection_get_account(gc), bname);
+	if(f->protocol == 2)
+		msn = TRUE;
 	for (l = buddies; l; l = l->next) {
 		g = purple_buddy_get_group(l->data);
-		if (purple_utf8_strcasecmp(group->name, g->name)) {
+		if (purple_utf8_strcasecmp(gname, purple_group_get_name(g))) {
 			remove = FALSE;
 			break;
 		}
@@ -4931,19 +4939,17 @@ static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleG
 	g_slist_free(buddies);
 
 	if (remove)
-		g_hash_table_remove(yd->friends, buddy->name);
+		g_hash_table_remove(yd->friends, bname);
 
-	cg = yahoo_string_encode(gc, group->name, NULL);
+	cg = yahoo_string_encode(gc, gname, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 
-	if(f->protocol == 2)
-		msn = TRUE;
 	if(msn)
 		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
-	                  7, buddy->name+4, 65, cg);
+	                  7, bname+4, 65, cg);
 	else
 		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
-	                  7, buddy->name, 65, cg);
+	                  7, bname, 65, cg);
 	if(f->protocol)
 		yahoo_packet_hash_int(pkt, 241, f->protocol);
 	yahoo_packet_send_and_free(pkt, yd);
