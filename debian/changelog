@@ -1,3 +1,10 @@
+pidgin (2.5.5-1.1~bpo50+1) lenny-backports; urgency=low
+
+  * Non-maintainer upload for Lenny backports to fix #518988
+    where the ICQ support seized to work.
+
+ -- Christoph Haas <haas@debian.org>  Mon, 09 Mar 2009 22:06:54 +0000
+
 pidgin (2.5.5-1) unstable; urgency=low
 
   * New upstream version
