@@ -1,10 +1,3 @@
-pidgin (2.4.3-4lenny1~volatile0) lenny-volatile; urgency=low
-
-  * Push the ICQ connection fix prepared by the maintainer and proposed
-    for inclusion into the new point release through volatile.
-
- -- Philipp Kern <pkern@debian.org>  Thu, 12 Mar 2009 23:01:13 +0100
-
 pidgin (2.4.3-4lenny1) stable; urgency=low
 
   * debian/patches/29_icq-version.patch:  
