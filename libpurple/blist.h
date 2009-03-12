@@ -118,8 +118,8 @@ typedef enum
 
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
- * This is a base class for struct buddy and struct group and for anything
- * else that wants to put itself in the buddy list. */
+ * This is a base class for PurpleBuddy, PurpleContact, PurpleGroup, and for
+ * anything else that wants to put itself in the buddy list. */
 struct _PurpleBlistNode {
 	PurpleBlistNodeType type;             /**< The type of node this is       */
 	PurpleBlistNode *prev;                /**< The sibling before this buddy. */
@@ -207,7 +207,7 @@ struct _PurpleBlistUiOps
 		       PurpleBlistNode *node);       /**< This will update a node in the buddy list. */
 	void (*remove)(PurpleBuddyList *list,
 		       PurpleBlistNode *node);       /**< This removes a node from the list */
-	void (*destroy)(PurpleBuddyList *list);  /**< When the list gets destroyed, this gets called to destroy the UI. */
+	void (*destroy)(PurpleBuddyList *list);  /**< When the list is destroyed, this is called to destroy the UI. */
 	void (*set_visible)(PurpleBuddyList *list,
 			    gboolean show);            /**< Hides or unhides the buddy list */
 	void (*request_add_buddy)(PurpleAccount *account, const char *username,
@@ -261,6 +261,11 @@ PurpleBlistNode *purple_blist_get_root(void);
 
 /**
  * Returns the hash table of every buddy in the list.
+ * You MUST treat this data structure as immutable. The only use should
+ * be for iterating over the values (PurpleBuddy*) in performance-critical
+ * code.
+ *
+ * @see purple_find_buddy for the recommended alternative.
  *
  * @return The hash table of every buddy in the list.
  *
