@@ -1,10 +1,9 @@
-pidgin (2.4.3-4lenny1~bpo40+1) etch-backports; urgency=low
+pidgin (2.4.3-4lenny1~volatile0) lenny-volatile; urgency=low
 
-  * Rebuild for etch-backports.
-  * Make pidgin.menu etch-style (use Apps/Net)
-  * Do not require a specific version for libnss3-dev (the one in etch works)
+  * Push the ICQ connection fix prepared by the maintainer and proposed
+    for inclusion into the new point release through volatile.
 
- -- Gerfried Fuchs <rhonda@debian.at>  Fri, 20 Mar 2009 10:49:50 +0100
+ -- Philipp Kern <pkern@debian.org>  Thu, 12 Mar 2009 23:01:13 +0100
 
 pidgin (2.4.3-4lenny1) stable; urgency=low
 
