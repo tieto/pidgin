@@ -27,7 +27,8 @@
 #include "jabber.h"
 
 void jabber_gmail_init(JabberStream *js);
-void jabber_gmail_poke(JabberStream *js, xmlnode *node);
+void jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
+                       const char *id, xmlnode *new_mail);
 
 void jabber_google_roster_init(JabberStream *js);
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item);

@@ -446,13 +446,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
-{
-	purple_timeout_remove(js->keepalive_timeout);
-	js->keepalive_timeout = -1;
-}
-
-static gboolean jabber_pong_timeout(PurpleConnection *gc)
+static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -466,14 +460,9 @@ void jabber_keepalive(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 
 	if (js->keepalive_timeout == -1) {
-		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
-
-		xmlnode *ping = xmlnode_new_child(iq->node, "ping");
-		xmlnode_set_namespace(ping, "urn:xmpp:ping");
-
-		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
-		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
-		jabber_iq_send(iq);
+		jabber_ping_jid(js, NULL);
+		js->keepalive_timeout = purple_timeout_add_seconds(120,
+				(GSourceFunc)(jabber_keepalive_timeout), gc);
 	}
 }
 
@@ -994,30 +983,29 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 	jabber_iq_send(iq);
 }
 
-void jabber_register_parse(JabberStream *js, xmlnode *packet)
+void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type,
+                           const char *id, xmlnode *query)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type;
-	const char *from;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	xmlnode *query, *x, *y;
+	xmlnode *x, *y;
 	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
+	if (type != JABBER_IQ_RESULT)
 		return;
 
-	from = xmlnode_get_attrib(packet, "from");
+	if (!from)
+		from = js->serverFQDN;
+	g_return_if_fail(from != NULL);
 
 	if(js->registration) {
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 	}
-
-	query = xmlnode_get_child(packet, "query");
 
 	if(xmlnode_get_child(query, "registered")) {
 		registered = TRUE;
@@ -2455,10 +2443,16 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
+	PurpleAccount *account;
+	PurpleConnection *pc;
+
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if(!jabber_ping_jid(conv, args[0])) {
+	account = purple_conversation_get_account(conv);
+	pc = purple_account_get_connection(account);
+
+	if(!jabber_ping_jid(purple_connection_get_protocol_data(pc), args[0])) {
 		*error = g_strdup_printf(_("Unable to ping user %s"), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
