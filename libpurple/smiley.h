@@ -67,7 +67,7 @@ extern "C" {
 GType purple_smiley_get_type(void);
 
 /**
- * Create a new custom smiley from a PurpleStoredImage.
+ * Creates a new custom smiley from a PurpleStoredImage.
  *
  * If a custom smiley with the given shortcut already exists, it
  * will be automaticaly returned.
@@ -81,7 +81,7 @@ PurpleSmiley *
 purple_smiley_new(PurpleStoredImage *img, const char *shortcut);
 
 /**
- * Create a new custom smiley, reading the image data from a file.
+ * Creates a new custom smiley, reading the image data from a file.
  *
  * If a custom smiley with the given shortcut already exists, it
  * will be automaticaly returned.
@@ -95,7 +95,7 @@ PurpleSmiley *
 purple_smiley_new_from_file(const char *shortcut, const char *filepath);
 
 /**
- * Destroy the custom smiley and release the associated resources.
+ * Destroys the custom smiley and release the associated resources.
  *
  * @param smiley    The custom smiley.
  */
