@@ -38,7 +38,9 @@ typedef void (JabberIqHandler)(JabberStream *js, const char *from,
                                JabberIqType type, const char *id,
                                xmlnode *child);
 
-typedef void (JabberIqCallback)(JabberStream *js, xmlnode *packet, gpointer data);
+typedef void (JabberIqCallback)(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data);
 
 struct _JabberIq {
 	JabberIqType type;

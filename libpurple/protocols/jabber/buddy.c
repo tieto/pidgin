@@ -1187,11 +1187,18 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 	}
 }
 
-static void jabber_vcard_save_mine(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_vcard_save_mine(JabberStream *js, const char *from,
+                                   JabberIqType type, const char *id,
+                                   xmlnode *packet, gpointer data)
 {
 	xmlnode *vcard;
 	char *txt;
 	PurpleStoredImage *img;
+
+	if (type == JABBER_IQ_ERROR) {
+		purple_debug_warning("jabber", "Server returned error while retrieving vCard");
+		return;
+	}
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp")))
@@ -1223,9 +1230,10 @@ void jabber_vcard_fetch_mine(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
-static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_vcard_parse(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data)
 {
-	const char *id, *from;
 	char *bare_jid;
 	char *text;
 	char *serverside_alias = NULL;
@@ -1233,9 +1241,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	PurpleBuddy *b;
 	JabberBuddyInfo *jbi = data;
 	PurpleNotifyUserInfo *user_info;
-
-	from = xmlnode_get_attrib(packet, "from");
-	id = xmlnode_get_attrib(packet, "id");
 
 	if(!jbi)
 		return;
@@ -1586,18 +1591,15 @@ static void jabber_buddy_info_resource_free(gpointer data)
 	g_free(jbri);
 }
 
-static void jabber_version_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_version_parse(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *packet, gpointer data)
 {
 	JabberBuddyInfo *jbi = data;
-	const char *type, *id, *from;
 	xmlnode *query;
 	char *resource_name;
 
 	g_return_if_fail(jbi != NULL);
-
-	type = xmlnode_get_attrib(packet, "type");
-	id = xmlnode_get_attrib(packet, "id");
-	from = xmlnode_get_attrib(packet, "from");
 
 	jabber_buddy_info_remove_id(jbi, id);
 
@@ -1607,7 +1609,7 @@ static void jabber_version_parse(JabberStream *js, xmlnode *packet, gpointer dat
 	resource_name = jabber_get_resource(from);
 
 	if(resource_name) {
-		if(type && !strcmp(type, "result")) {
+		if (type == JABBER_IQ_RESULT) {
 			if((query = xmlnode_get_child(packet, "query"))) {
 				JabberBuddyResource *jbr = jabber_buddy_find_resource(jbi->jb, resource_name);
 				if(jbr) {
@@ -1630,18 +1632,16 @@ static void jabber_version_parse(JabberStream *js, xmlnode *packet, gpointer dat
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
-static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_last_parse(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
 	JabberBuddyInfo *jbi = data;
 	xmlnode *query;
 	char *resource_name;
-	const char *type, *id, *from, *seconds;
+	const char *seconds;
 
 	g_return_if_fail(jbi != NULL);
-
-	type = xmlnode_get_attrib(packet, "type");
-	id = xmlnode_get_attrib(packet, "id");
-	from = xmlnode_get_attrib(packet, "from");
 
 	jabber_buddy_info_remove_id(jbi, id);
 
@@ -1651,7 +1651,7 @@ static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	resource_name = jabber_get_resource(from);
 
 	if(resource_name) {
-		if(type && !strcmp(type, "result")) {
+		if (type == JABBER_IQ_RESULT) {
 			if((query = xmlnode_get_child(packet, "query"))) {
 				seconds = xmlnode_get_attrib(query, "seconds");
 				if(seconds) {
@@ -1672,18 +1672,15 @@ static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
-static void jabber_time_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_time_parse(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
 	JabberBuddyInfo *jbi = data;
 	JabberBuddyResource *jbr;
 	char *resource_name;
-	const char *type, *id, *from;
 
 	g_return_if_fail(jbi != NULL);
-
-	id = xmlnode_get_attrib(packet, "id");
-	type = xmlnode_get_attrib(packet, "type");
-	from = xmlnode_get_attrib(packet, "from");
 
 	jabber_buddy_info_remove_id(jbi, id);
 
@@ -1694,7 +1691,7 @@ static void jabber_time_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jbr = resource_name ? jabber_buddy_find_resource(jbi->jb, resource_name) : NULL;
 	g_free(resource_name);
 	if (jbr) {
-		if (type && !strcmp(type, "result")) {
+		if (type == JABBER_IQ_RESULT) {
 			xmlnode *time = xmlnode_get_child(packet, "time");
 			xmlnode *tzo = time ? xmlnode_get_child(time, "tzo") : NULL;
 			char *tzo_data = tzo ? xmlnode_get_data(tzo) : NULL;
@@ -2265,7 +2262,9 @@ static void user_search_result_add_buddy_cb(PurpleConnection *gc, GList *row, vo
 			g_list_nth_data(row, 0), NULL, NULL);
 }
 
-static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void user_search_result_cb(JabberStream *js, const char *from,
+                                  JabberIqType type, const char *id,
+                                  xmlnode *packet, gpointer data)
 {
 	PurpleNotifySearchResults *results;
 	PurpleNotifySearchColumn *column;
@@ -2461,15 +2460,16 @@ static const char * jabber_user_dir_comments [] = {
 };
 #endif
 
-static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void user_search_fields_result_cb(JabberStream *js, const char *from,
+                                         JabberIqType type, const char *id,
+                                         xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *x;
-	const char *from, *type;
 
-	if(!(from = xmlnode_get_attrib(packet, "from")))
+	if (!from)
 		return;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || !strcmp(type, "error")) {
+	if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		if(!msg)

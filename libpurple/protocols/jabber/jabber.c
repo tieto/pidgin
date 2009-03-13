@@ -85,10 +85,11 @@ static void jabber_stream_init(JabberStream *js)
 }
 
 static void
-jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_session_initialized_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 		if(js->unregistration)
 			jabber_unregister_account_cb(js);
@@ -112,13 +113,13 @@ static void jabber_session_init(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
-static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+static void jabber_bind_result_cb(JabberStream *js, const char *from,
+                                  JabberIqType type, const char *id,
+                                  xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	xmlnode *bind;
 
-	if(type && !strcmp(type, "result") &&
+	if (type == JABBER_IQ_RESULT &&
 			(bind = xmlnode_get_child_with_namespace(packet, "bind", "urn:ietf:params:xml:ns:xmpp-bind"))) {
 		xmlnode *jid;
 		char *full_jid;
@@ -785,14 +786,15 @@ jabber_connection_schedule_close(JabberStream *js)
 }
 
 static void
-jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_registration_result_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		if(js->registration) {
 		buf = g_strdup_printf(_("Registration of %s@%s successful"),
 				js->user->node, js->user->domain);
@@ -820,13 +822,14 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 	g_free(to);
 	if(js->registration)
-	jabber_connection_schedule_close(js);
+		jabber_connection_schedule_close(js);
 }
 
 static void
-jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_unregistration_result_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
@@ -834,7 +837,7 @@ jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data
 	 * the server, so there should always be a 'to' address. */
 	g_return_if_fail(to != NULL);
 
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		buf = g_strdup_printf(_("Registration from %s successfully removed"),
 							  to);
 		purple_notify_info(NULL, _("Unregistration Successful"),
@@ -1240,10 +1243,14 @@ void jabber_register_account(PurpleAccount *account)
 	}
 }
 
-static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, gpointer data) {
+static void
+jabber_unregister_account_iq_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
+{
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type = xmlnode_get_attrib(packet,"type");
-	if(!strcmp(type,"error")) {
+
+	if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Error unregistering account"),
@@ -1251,7 +1258,7 @@ static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, g
 		g_free(msg);
 		if(js->unregistration_cb)
 			js->unregistration_cb(account, FALSE, js->unregistration_user_data);
-	} else if(!strcmp(type,"result")) {
+	} else {
 		purple_notify_info(js->gc, _("Account successfully unregistered"),
 						   _("Account successfully unregistered"), NULL);
 		if(js->unregistration_cb)
@@ -1480,7 +1487,9 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	js->idle = idle ? time(NULL) - idle : idle;
 }
 
-static void jabber_blocklist_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_blocklist_parse(JabberStream *js, const char *from,
+                                   JabberIqType type, const char *id,
+                                   xmlnode *packet, gpointer data)
 {
 	xmlnode *blocklist, *item;
 	PurpleAccount *account;
@@ -1904,14 +1913,11 @@ GList *jabber_status_types(PurpleAccount *account)
 }
 
 static void
-jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+jabber_password_change_result_cb(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *packet, gpointer data)
 {
-	const char *type;
-
-	type = xmlnode_get_attrib(packet, "type");
-
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 

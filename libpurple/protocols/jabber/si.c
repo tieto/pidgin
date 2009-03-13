@@ -683,13 +683,14 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 }
 
 static void
-jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
+                           JabberIqType type, const char *id,
+                           xmlnode *packet, gpointer data)
 {
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx;
 	xmlnode *query, *streamhost_used;
-	const char *from, *type, *jid;
+	const char *jid;
 	GList *matched;
 
 	/* TODO: This need to send errors if we don't see what we're looking for */
@@ -706,37 +707,34 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 
 	jsx = xfer->data;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
-	  purple_debug_info("jabber",
-			    "jabber_si_xfer_connect_proxy_cb: type = %s\n",
-			    type);
-		if (type && !strcmp(type, "error")) {
-			/* if IBB is available, open IBB session */
-			purple_debug_info("jabber",
-				"jabber_si_xfer_connect_proxy_cb: got error, method: %d\n",
-				jsx->stream_method);
-			if (jsx->stream_method & STREAM_METHOD_IBB) {
-				purple_debug_info("jabber", "IBB is possible, try it\n");
-				/* if we are the sender and haven't already opened an IBB
-				  session, do so now (we might already have failed to open
-				  the bytestream proxy ourselves when receiving this <iq/> */
-				if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND
-					&& !jsx->ibb_session) {
-					jabber_si_xfer_ibb_send_init(js, xfer);
-				} else {
-					jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
-						jabber_si_bytestreams_ibb_timeout_cb, xfer);
-				}
-				/* if we are receiver, just wait for IBB open stanza, callback
-				  is already set up */
+	if(type != JABBER_IQ_RESULT) {
+		purple_debug_info("jabber",
+			    "jabber_si_xfer_connect_proxy_cb: type = error\n");
+		/* if IBB is available, open IBB session */
+		purple_debug_info("jabber",
+			"jabber_si_xfer_connect_proxy_cb: got error, method: %d\n",
+			jsx->stream_method);
+		if (jsx->stream_method & STREAM_METHOD_IBB) {
+			purple_debug_info("jabber", "IBB is possible, try it\n");
+			/* if we are the sender and haven't already opened an IBB
+			  session, do so now (we might already have failed to open
+			  the bytestream proxy ourselves when receiving this <iq/> */
+			if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND
+				&& !jsx->ibb_session) {
+				jabber_si_xfer_ibb_send_init(js, xfer);
 			} else {
-				purple_xfer_cancel_remote(xfer);
+				jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
+					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
+			/* if we are receiver, just wait for IBB open stanza, callback
+			  is already set up */
+		} else {
+			purple_xfer_cancel_remote(xfer);
 		}
 		return;
 	}
 
-	if(!(from = xmlnode_get_attrib(packet, "from")))
+	if (!from)
 		return;
 
 	if(!(query = xmlnode_get_child(packet, "query")))
@@ -1180,8 +1178,9 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 	}
 }
 
-static void jabber_si_xfer_send_method_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+static void jabber_si_xfer_send_method_cb(JabberStream *js, const char *from,
+                                          JabberIqType type, const char *id,
+                                          xmlnode *packet, gpointer data)
 {
 	PurpleXfer *xfer = data;
 	xmlnode *si, *feature, *x, *field, *value;

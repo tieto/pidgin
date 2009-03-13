@@ -51,11 +51,10 @@ jabber_ping_parse(JabberStream *js, const char *from,
 	}
 }
 
-static void jabber_ping_result_cb(JabberStream *js, xmlnode *packet,
-                                  gpointer data)
+static void jabber_ping_result_cb(JabberStream *js, const char *from,
+                                  JabberIqType type, const char *id,
+                                  xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-	const char *from = xmlnode_get_attrib(packet, "from");
 	char *own_bare_jid = g_strdup_printf("%s@%s", js->user->node,
 	                                     js->user->domain);
 
@@ -66,7 +65,7 @@ static void jabber_ping_result_cb(JabberStream *js, xmlnode *packet,
 	}
 	g_free(own_bare_jid);
 
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		purple_debug_info("jabber", "PONG!\n");
 	} else {
 		purple_debug_info("jabber", "(not supported)\n");

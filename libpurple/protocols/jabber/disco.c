@@ -45,9 +45,11 @@ struct _jabber_disco_info_cb_data {
 }
 
 static void
-jabber_disco_bytestream_server_cb(JabberStream *js, xmlnode *packet, gpointer data) {
+jabber_disco_bytestream_server_cb(JabberStream *js, const char *from,
+                                  JabberIqType type, const char *id,
+                                  xmlnode *packet, gpointer data)
+{
 	JabberBytestreamsStreamhost *sh = data;
-	const char *from = xmlnode_get_attrib(packet, "from");
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/bytestreams");
 
@@ -384,19 +386,18 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 }
 
 static void
-jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
+                                   JabberIqType type, const char *id,
+                                   xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *child;
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
 
-	if((!from || !type) ||
-	   (strcmp(from, js->user->domain))) {
+	if (!from || strcmp(from, js->user->domain)) {
 		jabber_disco_finish_server_info_result_cb(js);
 		return;
 	}
 
-	if(strcmp(type, "result")) {
+	if (type == JABBER_IQ_ERROR) {
 		/* A common way to get here is for the server not to support xmlns http://jabber.org/protocol/disco#info */
 		jabber_disco_finish_server_info_result_cb(js);
 		return;
@@ -457,19 +458,16 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 }
 
 static void
-jabber_disco_server_items_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
+                                    JabberIqType type, const char *id,
+                                    xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *child;
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
 
-	if(!from || !type)
+	if (!from || strcmp(from, js->user->domain) != 0)
 		return;
 
-	if(strcmp(from, js->user->domain))
-		return;
-
-	if(strcmp(type, "result"))
+	if (type == JABBER_IQ_ERROR)
 		return;
 
 	while(js->chat_servers) {
