@@ -134,7 +134,6 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
 			SUPPORT_FEATURE("urn:xmpp:ping")
-			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
 
 			if(!node) { /* non-caps disco#info, add all enabled extensions */
 				GList *features;
@@ -260,7 +259,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 					capabilities |= JABBER_CAP_IQ_SEARCH;
 				else if(!strcmp(var, "jabber:iq:register"))
 					capabilities |= JABBER_CAP_IQ_REGISTER;
-				else if(!strcmp(var, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
+				else if(!strcmp(var, "urn:xmpp:ping"))
 					capabilities |= JABBER_CAP_PING;
 				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
 					capabilities |= JABBER_CAP_ADHOC;

@@ -935,7 +935,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 					feature = _("User Gaming");
 				else if(!strcmp(feature, "http://jabber.org/protocol/viewing"))
 					feature = _("User Viewing");
-				else if(!strcmp(feature, "urn:xmpp:ping") || !strcmp(feature, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
+				else if(!strcmp(feature, "urn:xmpp:ping"))
 					feature = _("Ping");
 				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0200.html#ns"))
 					feature = _("Stanza Encryption");
@@ -1121,7 +1121,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 						feature = _("User Gaming");
 					else if(!strcmp(feature, "http://jabber.org/protocol/viewing"))
 						feature = _("User Viewing");
-					else if(!strcmp(feature, "urn:xmpp:ping") || !strcmp(feature, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
+					else if(!strcmp(feature, "urn:xmpp:ping"))
 						feature = _("Ping");
 					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0200.html#ns"))
 						feature = _("Stanza Encryption");
