@@ -42,6 +42,7 @@ typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean s
 
 #include "connection.h"
 #include "log.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
@@ -141,7 +142,7 @@ struct _PurpleAccount
 	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
-	int perm_deny;              /**< The permit/deny setting.               */
+	PurplePrivacyType perm_deny;  /**< The permit/deny setting.               */
 
 	GList *status_types;        /**< Status types.                          */
 

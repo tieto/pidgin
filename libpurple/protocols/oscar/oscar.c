@@ -4738,15 +4738,16 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	PurpleStatusType *status_type;
 	PurpleStatusPrimitive primitive;
 
-	char *htmlinfo;
 	char *info_encoding = NULL;
 	char *info = NULL;
 	gsize infolen = 0;
 
-	const char *htmlaway;
 	char *away_encoding = NULL;
 	char *away = NULL;
 	gsize awaylen = 0;
+
+	char *status_text = NULL;
+	const char *itmsurl = NULL;
 
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
@@ -4765,7 +4766,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	}
 	else if (rawinfo != NULL)
 	{
-		htmlinfo = purple_strdup_withhtml(rawinfo);
+		char *htmlinfo = purple_strdup_withhtml(rawinfo);
 		info = purple_prpl_oscar_convert_to_infotext(htmlinfo, &infolen, &info_encoding);
 		g_free(htmlinfo);
 
@@ -4782,16 +4783,54 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		}
 	}
 
-	if (!setstatus)
+	if (setstatus)
 	{
-		/* Do nothing! */
-	}
-	else if (primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
-	{
-		const char *status_html, *itmsurl;
-		char *status_text = NULL;
+		const char *status_html;
 
 		status_html = purple_status_get_attr_string(status, "message");
+
+		if (status_html == NULL || primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
+		{
+			/* This is needed for us to un-set any previous away message. */
+			away = g_strdup("");
+		}
+		else
+		{
+			gchar *linkified;
+
+			/* We do this for icq too so that they work for old third party clients */
+			linkified = purple_markup_linkify(status_html);
+			away = purple_prpl_oscar_convert_to_infotext(linkified, &awaylen, &away_encoding);
+			g_free(linkified);
+
+			if (awaylen > od->rights.maxawaymsglen)
+			{
+				gchar *errstr;
+
+				errstr = g_strdup_printf(dngettext(PACKAGE, "The maximum away message length of %d byte "
+										 "has been exceeded.  It has been truncated for you.",
+										 "The maximum away message length of %d bytes "
+										 "has been exceeded.  It has been truncated for you.",
+										 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
+				purple_notify_warning(gc, NULL, _("Away message too long."), errstr);
+				g_free(errstr);
+			}
+		}
+	}
+
+	aim_locate_setprofile(od,
+			info_encoding, info, MIN(infolen, od->rights.maxsiglen),
+			away_encoding, away, MIN(awaylen, od->rights.maxawaymsglen));
+	g_free(info);
+	g_free(away);
+
+	if (setstatus)
+	{
+		const char *status_html;
+
+		status_html = purple_status_get_attr_string(status, "message");
+		if (od->icq && (status_html == NULL || status_html[0] == '\0'))
+			status_html = purple_status_type_get_name(status_type);
 		if (status_html != NULL)
 		{
 			status_text = purple_markup_strip_html(status_html);
@@ -4802,65 +4841,13 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 				strcpy(tmp, "...");
 			}
 		}
+
 		itmsurl = purple_status_get_attr_string(status, "itmsurl");
 
+		/* TODO: Combine these two calls! */
 		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, itmsurl);
-		g_free(status_text);
-
-		/* This is needed for us to un-set any previous away message. */
-		away = g_strdup("");
-	}
-	else
-	{
-		gchar *linkified;
-
-		htmlaway = purple_status_get_attr_string(status, "message");
-		if ((htmlaway == NULL) || (*htmlaway == '\0'))
-			htmlaway = purple_status_type_get_name(status_type);
-
-		/* ICQ 6.x seems to use an available message for all statuses so set one */
-		if (od->icq)
-		{
-			char *status_text;
-
-			status_text = purple_markup_strip_html(htmlaway);
-
-			/* If the status_text is longer than 251 characters then truncate it */
-			if (strlen(status_text) > MAXAVAILMSGLEN)
-			{
-				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
-				strcpy(tmp, "...");
-			}
-			aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, NULL);
-			g_free(status_text);
-		}
-
-		/* Set a proper away message for icq too so that they work for old third party clients */
-		linkified = purple_markup_linkify(htmlaway);
-		away = purple_prpl_oscar_convert_to_infotext(linkified, &awaylen, &away_encoding);
-		g_free(linkified);
-
-		if (awaylen > od->rights.maxawaymsglen)
-		{
-			gchar *errstr;
-
-			errstr = g_strdup_printf(dngettext(PACKAGE, "The maximum away message length of %d byte "
-									 "has been exceeded.  It has been truncated for you.",
-									 "The maximum away message length of %d bytes "
-									 "has been exceeded.  It has been truncated for you.",
-									 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
-			purple_notify_warning(gc, NULL, _("Away message too long."), errstr);
-			g_free(errstr);
-		}
-	}
-
-	if (setstatus)
 		oscar_set_extendedstatus(gc);
-
-	aim_locate_setprofile(od, info_encoding, info, MIN(infolen, od->rights.maxsiglen),
-									away_encoding, away, MIN(awaylen, od->rights.maxawaymsglen));
-	g_free(info);
-	g_free(away);
+	}
 }
 
 static void
@@ -5043,10 +5030,15 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	purple_debug_error("oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
-		purple_notify_error(gc, NULL, _("Unable to Retrieve Buddy List"),
-						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
+		else
+			/* We only show this error the first time it happens */
+			purple_notify_error(gc, NULL,
+					_("Unable to Retrieve Buddy List"),
+					_("The AIM servers were temporarily unable to send "
+					"your buddy list.  Your buddy list is not lost, and "
+					"will probably become available in a few minutes."));
 		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
 		return 1;
 	}

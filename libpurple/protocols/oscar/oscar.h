@@ -665,7 +665,7 @@ void oscar_data_destroy(OscarData *);
 /* 0x0014 */ void aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32);
 /* 0x0016 */ void aim_srv_nop(OscarData *od, FlapConnection *conn);
 /* 0x0017 */ void aim_srv_setversions(OscarData *od, FlapConnection *conn);
-/* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setavailmsg, const char *availmsg, const char *itmsurl);
+/* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setstatusmsg, const char *statusmsg, const char *itmsurl);
 
 
 void aim_bos_reqrights(OscarData *od, FlapConnection *conn);
@@ -1593,6 +1593,18 @@ int byte_stream_putstr(ByteStream *bs, const char *str);
 int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len);
 int byte_stream_putuid(ByteStream *bs, OscarData *od);
 int byte_stream_putcaps(ByteStream *bs, guint32 caps);
+
+/**
+ * Inserts a BART asset block into the given byte stream.  The flags
+ * and length are set appropriately based on the value of data.
+ */
+void byte_stream_put_bart_asset(ByteStream *bs, guint16 type, ByteStream *data);
+
+/**
+ * A helper function that calls byte_stream_put_bart_asset with the
+ * appropriate data ByteStream given the datastr.
+ */
+void byte_stream_put_bart_asset_str(ByteStream *bs, guint16 type, const char *datastr);
 
 /*
  * Generic SNAC structure.  Rarely if ever used.
