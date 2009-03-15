@@ -137,6 +137,8 @@ jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
 	if (conn->fd >= 0)
 		close(conn->fd);
 
+	purple_proxy_connect_cancel_with_handle(conn);
+
 	g_free(conn);
 }
 
@@ -525,6 +527,7 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 	 * with AIM!
 	 */
 	conn->ready = FALSE;
+	conn->fd = -1;
 
 	if (conn->bosh->pipelining)
 		/* Hmmmm, fall back to multiple connections */
