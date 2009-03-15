@@ -28,7 +28,8 @@
 
 #include "bosh.h"
 
-typedef struct _PurpleHTTPRequest PurpleHTTPRequest;
+#define MAX_HTTP_CONNECTIONS      2
+
 typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
 
 typedef void (*PurpleHTTPConnectionConnectFunction)(PurpleHTTPConnection *conn);
@@ -37,6 +38,12 @@ typedef void (*PurpleBOSHConnectionConnectFunction)(PurpleBOSHConnection *conn);
 typedef void (*PurpleBOSHConnectionReceiveFunction)(PurpleBOSHConnection *conn, xmlnode *node);
 
 static char *bosh_useragent = NULL;
+
+typedef enum {
+	PACKET_TERMINATE,
+	PACKET_STREAM_RESTART,
+	PACKET_NORMAL,
+} PurpleBOSHPacketType;
 
 struct _PurpleBOSHConnection {
     /* decoded URL */
@@ -51,8 +58,12 @@ struct _PurpleBOSHConnection {
 
     JabberStream *js;
     gboolean pipelining;
-    PurpleHTTPConnection *conn_a;
-    PurpleHTTPConnection *conn_b;
+	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
+
+	int max_inactivity;
+	int max_requests;
+	int requests;
+	GString *pending;
 
     gboolean ready;
     PurpleBOSHConnectionConnectFunction connect_cb;
@@ -61,10 +72,11 @@ struct _PurpleBOSHConnection {
 
 struct _PurpleHTTPConnection {
     int fd;
+	gboolean ready;
     char *host;
     int port;
     int ie_handle;
-    int requests; /* number of outstanding HTTP requests */
+	int requests; /* number of outstanding HTTP requests */
 
     GString *buf;
     gboolean headers_done;
@@ -77,19 +89,15 @@ struct _PurpleHTTPConnection {
     PurpleBOSHConnection *bosh;
 };
 
-struct _PurpleHTTPRequest {
-    const char *path;
-    char *data;
-    int data_len;
-};
-
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node);
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node);
+static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketType, xmlnode *node);
 
 static void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn);
-static void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, PurpleHTTPRequest *req);
+static void jabber_bosh_connection_connected(PurpleHTTPConnection *conn);
+static void jabber_bosh_http_connection_disconnected(PurpleHTTPConnection *conn);
+static void jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn, const GString *req);
 
 void jabber_bosh_init(void)
 {
@@ -116,20 +124,15 @@ void jabber_bosh_uninit(void)
 	bosh_useragent = NULL;
 }
 
-static void
-jabber_bosh_http_request_destroy(PurpleHTTPRequest *req)
-{
-	g_free(req->data);
-	g_free(req);
-}
-
 static PurpleHTTPConnection*
-jabber_bosh_http_connection_init(const char *host, int port)
+jabber_bosh_http_connection_init(PurpleBOSHConnection *bosh)
 {
 	PurpleHTTPConnection *conn = g_new0(PurpleHTTPConnection, 1);
-	conn->host = g_strdup(host);
-	conn->port = port;
+	conn->bosh = bosh;
+	conn->host = g_strdup(bosh->host);
+	conn->port = bosh->port;
 	conn->fd = -1;
+	conn->ready = FALSE;
 
 	return conn;
 }
@@ -180,9 +183,12 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	conn->js = js;
 	/* FIXME: This doesn't seem very random */
 	conn->rid = rand() % 100000 + 1728679472;
+
+	conn->pending = g_string_new("");
+
 	conn->ready = FALSE;
-	conn->conn_a = jabber_bosh_http_connection_init(conn->host, conn->port);
-	conn->conn_a->bosh = conn;
+
+	conn->connections[0] = jabber_bosh_http_connection_init(conn);
 
 	return conn;
 }
@@ -190,47 +196,29 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 void
 jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 {
+	int i;
+
 	g_free(conn->host);
 	g_free(conn->path);
 
-	if (conn->conn_a)
-		jabber_bosh_http_connection_destroy(conn->conn_a);
-	if (conn->conn_b)
-		jabber_bosh_http_connection_destroy(conn->conn_b);
+	if (conn->pending)
+		g_string_free(conn->pending, TRUE);
+
+	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+		if (conn->connections[i])
+			jabber_bosh_http_connection_destroy(conn->connections[i]);
+	}
 
 	g_free(conn);
 }
 
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 {
-	xmlnode *packet = xmlnode_new("body");
-	/* XEP-0124: The rid must not exceed 16 characters */
-	char rid[17];
-	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
-	xmlnode_set_attrib(packet, "type", "terminate");
-	xmlnode_set_attrib(packet, "xmlns", "http://jabber.org/protocol/httpbind");
-	xmlnode_set_attrib(packet, "sid", conn->sid);
-	xmlnode_set_attrib(packet, "rid", rid);
-
-	jabber_bosh_connection_send_native(conn, packet);
-	xmlnode_free(packet);
+	jabber_bosh_connection_send_native(conn, PACKET_TERMINATE, NULL);
 }
 
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
-	xmlnode *restart = xmlnode_new("body");
-	/* XEP-0124: The rid must not exceed 16 characters */
-	char rid[17];
-	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
-	xmlnode_set_attrib(restart, "rid", rid);
-	xmlnode_set_attrib(restart, "sid", conn->sid);
-	xmlnode_set_attrib(restart, "to", conn->js->user->domain);
-	xmlnode_set_attrib(restart, "xml:lang", "en");
-	xmlnode_set_attrib(restart, "xmpp:restart", "true");
-	xmlnode_set_attrib(restart, "xmlns", "http://jabber.org/protocol/httpbind");
-	xmlnode_set_attrib(restart, "xmlns:xmpp", "urn:xmpp:xbosh"); 
-	
-	jabber_bosh_connection_send_native(conn, restart);
-	xmlnode_free(restart);
+	jabber_bosh_connection_send_native(conn, PACKET_STREAM_RESTART, NULL);
 }
 
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -242,7 +230,7 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 		conn->ready = FALSE;
 		purple_connection_error_reason (conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-			_("The BOSH conncetion manager suggested to terminate your session."));
+			_("The BOSH connection manager terminated your session."));
 		return TRUE;
 	}
 	return FALSE;
@@ -303,6 +291,7 @@ static void auth_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	const char *sid, *version;
+	const char *inactivity, *requests;
 	xmlnode *packet;
 
 	g_return_if_fail(node != NULL);
@@ -311,6 +300,9 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 	sid = xmlnode_get_attrib(node, "sid");
 	version = xmlnode_get_attrib(node, "ver");
+
+	inactivity = xmlnode_get_attrib(node, "inactivity");
+	requests = xmlnode_get_attrib(node, "requests");
 
 	if (sid) {
 		conn->sid = g_strdup(sid);
@@ -338,6 +330,12 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 		purple_debug_info("jabber", "Missing version in BOSH initiation\n");
 	}
 
+	if (inactivity)
+		conn->max_inactivity = atoi(inactivity);
+
+	if (requests)
+		conn->max_requests = atoi(requests);
+
 	/* FIXME: Depending on receiving features might break with some hosts */
 	packet = xmlnode_get_child(node, "features");
 	conn->js->use_bosh = TRUE;
@@ -345,30 +343,61 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	jabber_stream_features_parse(conn->js, packet);		
 }
 
+static PurpleHTTPConnection *
+find_available_http_connection(PurpleBOSHConnection *conn)
+{
+	int i;
+
+	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
+	 * one TCP connection! */
+	if (conn->pipelining)
+		return conn->connections[0];
+
+	/* First loop, look for a connection that's ready */
+	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+		if (conn->connections[i] && conn->connections[i]->ready &&
+		                            conn->connections[i]->requests == 0)
+			return conn->connections[i];
+	}
+
+	/* Second loop, look for one that's NULL and create a new connection */
+	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+		if (!conn->connections[i]) {
+			conn->connections[i] = jabber_bosh_http_connection_init(conn);
+
+			conn->connections[i]->connect_cb = jabber_bosh_connection_connected;
+			conn->connections[i]->disconnect_cb = jabber_bosh_http_connection_disconnected;
+			jabber_bosh_http_connection_connect(conn->connections[i]);
+			return NULL;
+		}
+	}
+
+	/* None available. */
+	return NULL;
+}
+
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
-	xmlnode *init = xmlnode_new("body");
-	/* XEP-0124: The rid must not exceed 16 characters */
-	char rid[17];
-	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
-	xmlnode_set_attrib(init, "content", "text/xml; charset=utf-8");
-	xmlnode_set_attrib(init, "secure", "true");
-/*
-	xmlnode_set_attrib(init, "route", tmp = g_strdup_printf("xmpp:%s:5222", conn->js->user->domain));
-	g_free(tmp);
-*/
-	xmlnode_set_attrib(init, "to", conn->js->user->domain);
-	xmlnode_set_attrib(init, "xml:lang", "en");
-	xmlnode_set_attrib(init, "xmpp:version", "1.0");
-	xmlnode_set_attrib(init, "ver", "1.6");
-	xmlnode_set_attrib(init, "xmlns:xmpp", "urn:xmpp:xbosh"); 
-	xmlnode_set_attrib(init, "rid", rid);
-	xmlnode_set_attrib(init, "wait", "60"); /* this should be adjusted automatically according to real time network behavior */
-	xmlnode_set_attrib(init, "xmlns", "http://jabber.org/protocol/httpbind");
-	xmlnode_set_attrib(init, "hold", "1");
-	
+	GString *buf = g_string_new("");
+
+	g_string_printf(buf, "<body content='text/xml; charset=utf-8' "
+	                "secure='true' "
+	                "to='%s' "
+	                "xml:lang='en' "
+	                "xmpp:version='1.0' "
+	                "ver='1.6' "
+	                "xmlns:xmpp='urn:xmpp:bosh' "
+	                "rid='%" G_GUINT64_FORMAT "' "
+/* TODO: This should be adjusted/adjustable automatically according to
+ * realtime network behavior */
+	                "wait='60' "
+	                "hold='1' "
+	                "xmlns='http://jabber.org/protocol/httpbind'/>",
+	                conn->js->user->domain,
+	                ++conn->rid);
+
 	conn->receive_cb = boot_response_cb;
-	jabber_bosh_connection_send_native(conn, init);
-	xmlnode_free(init);
+	jabber_bosh_http_connection_send_request(conn->connections[0], buf);
+	g_string_free(buf, TRUE);
 }
 
 static void
@@ -391,22 +420,7 @@ http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 }
 
 void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
-	xmlnode *packet = xmlnode_new("body");
-	/* XEP-0124: The rid must not exceed 16 characters */
-	char rid[17];
-	g_snprintf(rid, sizeof(rid), "%" G_GUINT64_FORMAT, ++conn->rid);
-	xmlnode_set_attrib(packet, "xmlns", "http://jabber.org/protocol/httpbind");
-	xmlnode_set_attrib(packet, "sid", conn->sid);
-	xmlnode_set_attrib(packet, "rid", rid);
-	
-	if (node) {
-		xmlnode *copy = xmlnode_copy(node);
-		xmlnode_insert_child(packet, copy);
-		if (conn->ready == TRUE)
-			xmlnode_set_attrib(copy, "xmlns", "jabber:client");
-	}
-	jabber_bosh_connection_send_native(conn, packet);
-	xmlnode_free(packet);
+	jabber_bosh_connection_send_native(conn, PACKET_NORMAL, node);
 }
 
 void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
@@ -414,7 +428,7 @@ void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
 {
 	xmlnode *node = xmlnode_from_str(data, len);
 	if (node) {
-		jabber_bosh_connection_send(conn, node);
+		jabber_bosh_connection_send_native(conn, PACKET_NORMAL, node);
 		xmlnode_free(node);
 	} else {
 		/*
@@ -427,21 +441,88 @@ void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
 	}
 }
 
-static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, xmlnode *node) {
-	PurpleHTTPRequest *request;
-	
-	request = g_new0(PurpleHTTPRequest, 1);
-	request->path = conn->path;
-	request->data = xmlnode_to_str(node, &(request->data_len));
+static void
+jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
+                                   xmlnode *node)
+{
+	PurpleHTTPConnection *chosen;
+	GString *packet = NULL;
+	char *buf = NULL;
 
-	jabber_bosh_http_connection_send_request(conn->conn_a, request);
+	chosen = find_available_http_connection(conn);
+
+	if (type != PACKET_NORMAL && !chosen) {
+		/*
+		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the first
+		 * connection.
+		 */
+		chosen = conn->connections[0];
+	
+		if (!chosen->ready)
+			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
+					"things may happen.\n");
+	}
+
+	if (node)
+		buf = xmlnode_to_str(node, NULL);
+
+	if (type == PACKET_NORMAL && (!chosen ||
+	        (conn->max_requests > 0 && conn->requests == conn->max_requests))) {
+		/*
+		 * For normal data, send up to max_requests requests at a time or there is no
+		 * connection ready (likely, we're currently opening a second connection and
+		 * will send these packets when connected).
+		 */
+		if (buf) {
+			conn->pending = g_string_append(conn->pending, buf);
+			g_free(buf);
+		}
+		return;
+	}
+
+	packet = g_string_new("");
+
+	g_string_printf(packet, "<body "
+	                "rid='%" G_GUINT64_FORMAT "' "
+	                "sid='%s' "
+	                "to='%s' "
+	                "xml:lang='en' "
+	                "xmlns='http://jabber.org/protocol/httpbind' "
+	                "xmlns:xmpp='urn:xmpp:xbosh'",
+	                ++conn->rid,
+	                conn->sid,
+	                conn->js->user->domain);
+
+	if (type == PACKET_STREAM_RESTART)
+		packet = g_string_append(packet, " xmpp:restart='true'/>");
+	else {
+		if (type == PACKET_TERMINATE)
+			packet = g_string_append(packet, " type='terminate'");
+
+		g_string_append_printf(packet, ">%s%s</body>", conn->pending->str,
+		                       buf ? buf : "");
+		g_string_truncate(conn->pending, 0);
+	}
+
+	g_free(buf);
+
+	jabber_bosh_http_connection_send_request(chosen, packet);
 }
 
 static void jabber_bosh_connection_connected(PurpleHTTPConnection *conn) {
-	if (conn->bosh->ready == TRUE && conn->bosh->connect_cb) {
+	conn->ready = TRUE;
+
+	if (conn->bosh->ready) {
 		purple_debug_info("jabber", "BOSH session already exists. Trying to reuse it.\n");
+		if (conn->bosh->pending && conn->bosh->pending->len > 0) {
+			/* Send the pending data */
+			jabber_bosh_connection_send_native(conn->bosh, PACKET_NORMAL, NULL);
+		}
+#if 0
 		conn->bosh->receive_cb = jabber_bosh_connection_received;
-		conn->bosh->connect_cb(conn->bosh);
+		if (conn->bosh->connect_cb)
+			conn->bosh->connect_cb(conn->bosh);
+#endif
 	} else
 		jabber_bosh_connection_boot(conn->bosh);
 }
@@ -452,13 +533,26 @@ void jabber_bosh_connection_refresh(PurpleBOSHConnection *conn)
 }
 
 static void jabber_bosh_http_connection_disconnected(PurpleHTTPConnection *conn) {
+	/*
+	 * Well, then. Fine! I never liked you anyway, server! I was cheating on you
+	 * with AIM!
+	 */
+	conn->ready = FALSE;
+
+	if (conn->bosh->pipelining)
+		/* Hmmmm, fall back to multiple connections */
+		conn->bosh->pipelining = FALSE;
+
+	/* No! Please! Take me back. It was me, not you! I was weak! */
 	conn->connect_cb = jabber_bosh_connection_connected;
 	jabber_bosh_http_connection_connect(conn);
 }
 
-void jabber_bosh_connection_connect(PurpleBOSHConnection *conn) {
-	conn->conn_a->connect_cb = jabber_bosh_connection_connected;
-	jabber_bosh_http_connection_connect(conn->conn_a);
+void jabber_bosh_connection_connect(PurpleBOSHConnection *bosh) {
+	PurpleHTTPConnection *conn = bosh->connections[0];
+	conn->connect_cb = jabber_bosh_connection_connected;
+	conn->disconnect_cb = jabber_bosh_http_connection_disconnected;
+	jabber_bosh_http_connection_connect(conn);
 }
 
 static void
@@ -501,9 +595,10 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 		return;
 
 	--conn->requests;
+	--conn->bosh->requests;
 
 #warning For a pure HTTP 1.1 stack, this would need to be handled elsewhere.
-	if (conn->bosh->ready && conn->requests == 0) {
+	if (conn->bosh->ready && conn->bosh->requests == 0) {
 		jabber_bosh_connection_send(conn->bosh, NULL);
 		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
 	}
@@ -528,7 +623,7 @@ jabber_bosh_http_connection_read(gpointer data, gint fd,
 
 	purple_debug_info("jabber", "jabber_bosh_http_connection_read\n");
 
-	if (conn->buf == NULL)
+	if (!conn->buf)
 		conn->buf = g_string_new("");
 
 	while ((cnt = read(fd, buffer, sizeof(buffer))) > 0) {
@@ -599,20 +694,20 @@ static void jabber_bosh_http_connection_connect(PurpleHTTPConnection *conn)
 
 static void
 jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
-                                         PurpleHTTPRequest *req)
+                                         const GString *req)
 {
 	GString *packet = g_string_new("");
 	int ret;
 
-	/* TODO: Should we lie about this HTTP/1.1 support? */
-	g_string_append_printf(packet, "POST %s HTTP/1.1\r\n"
+	g_string_printf(packet, "POST %s HTTP/1.1\r\n"
 	                       "Host: %s\r\n"
 	                       "User-Agent: %s\r\n"
 	                       "Content-Encoding: text/xml; charset=utf-8\r\n"
-	                       "Content-Length: %d\r\n\r\n",
-	                       req->path, conn->host, bosh_useragent, req->data_len);
+	                       "Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n",
+	                       conn->bosh->path, conn->host, bosh_useragent,
+	                       req->len);
 
-	packet = g_string_append(packet, req->data);
+	packet = g_string_append(packet, req->str);
 
 	purple_debug_misc("jabber", "BOSH out: %s\n", packet->str);
 	/* TODO: Better error handling, circbuffer or possible integration with
@@ -620,8 +715,8 @@ jabber_bosh_http_connection_send_request(PurpleHTTPConnection *conn,
 	ret = write(conn->fd, packet->str, packet->len);
 
 	++conn->requests;
+	++conn->bosh->requests;
 	g_string_free(packet, TRUE);
-	jabber_bosh_http_request_destroy(req);
 
 	if (ret < 0 && errno == EAGAIN)
 		purple_debug_warning("jabber", "BOSH write would have blocked\n");
