@@ -58,6 +58,8 @@ struct _PurpleBOSHConnection {
     gboolean pipelining;
 	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
 
+	unsigned int inactivity_timer;
+
 	int max_inactivity;
 	int max_requests;
 	int requests;
@@ -190,6 +192,9 @@ jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 	g_free(conn->host);
 	g_free(conn->path);
 
+	if (conn->inactivity_timer)
+		purple_timeout_remove(conn->inactivity_timer);
+
 	if (conn->pending)
 		g_string_free(conn->pending, TRUE);
 
@@ -223,6 +228,15 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 		return TRUE;
 	}
 	return FALSE;
+}
+
+static gboolean
+bosh_inactivity_cb(gpointer data)
+{
+	PurpleBOSHConnection *bosh = data;
+
+	jabber_bosh_connection_send(bosh, NULL);
+	return TRUE;
 }
 
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -319,8 +333,19 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 		purple_debug_info("jabber", "Missing version in BOSH initiation\n");
 	}
 
-	if (inactivity)
+	if (inactivity) {
 		conn->max_inactivity = atoi(inactivity);
+		if (conn->max_inactivity <= 2) {
+			purple_debug_warning("jabber", "Ignoring bogusly small inactivity: %s\n",
+			                     inactivity);
+			conn->max_inactivity = 0;
+		} else {
+			/* TODO: Integrate this with jabber.c keepalive checks... */
+			conn->inactivity_timer = purple_timeout_add_seconds(
+					conn->max_inactivity - 2 /* rounding */, bosh_inactivity_cb,
+					conn);
+		}
+	}
 
 	if (requests)
 		conn->max_requests = atoi(requests);
@@ -594,14 +619,14 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	--conn->requests;
 	--conn->bosh->requests;
 
-#warning For a pure HTTP 1.1 stack, this would need to be handled elsewhere.
-	if (conn->bosh->ready && conn->bosh->requests == 0) {
+	http_received_cb(conn->buf->str + conn->handled_len, conn->body_len,
+	                 conn->bosh);
+
+	if (conn->bosh->ready &&
+			(conn->bosh->requests == 0 || conn->bosh->pending->len)) {
 		jabber_bosh_connection_send(conn->bosh, NULL);
 		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
 	}
-
-	http_received_cb(conn->buf->str + conn->handled_len, conn->body_len,
-	                 conn->bosh);
 
 	g_string_free(conn->buf, TRUE);
 	conn->buf = NULL;
@@ -682,26 +707,25 @@ static void http_connection_connect(PurpleHTTPConnection *conn)
 static void
 http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 {
-	GString *packet = g_string_new("");
+	char *packet;
 	int ret;
 
-	g_string_printf(packet, "POST %s HTTP/1.1\r\n"
+	packet = g_strdup_printf("POST %s HTTP/1.1\r\n"
 	                       "Host: %s\r\n"
 	                       "User-Agent: %s\r\n"
 	                       "Content-Encoding: text/xml; charset=utf-8\r\n"
-	                       "Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n",
+	                       "Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n"
+	                       "%s",
 	                       conn->bosh->path, conn->bosh->host, bosh_useragent,
-	                       req->len);
-
-	packet = g_string_append(packet, req->str);
+	                       req->len, req->str);
 
 	/* TODO: Better error handling, circbuffer or possible integration with
 	 * low-level code in jabber.c */
-	ret = write(conn->fd, packet->str, packet->len);
+	ret = write(conn->fd, packet, strlen(packet));
 
 	++conn->requests;
 	++conn->bosh->requests;
-	g_string_free(packet, TRUE);
+	g_free(packet);
 
 	if (ret < 0 && errno == EAGAIN)
 		purple_debug_error("jabber", "BOSH write would have blocked\n");
