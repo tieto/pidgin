@@ -23,6 +23,20 @@ JABBERSOURCES = auth.c \
 			  iq.h \
 			  jabber.c \
 			  jabber.h \
+			  jingle/jingle.c \
+			  jingle/jingle.h \
+			  jingle/content.c \
+			  jingle/content.h \
+			  jingle/iceudp.c \
+			  jingle/iceudp.h \
+			  jingle/rawudp.c \
+			  jingle/rawudp.h \
+			  jingle/rtp.c \
+			  jingle/rtp.h \
+			  jingle/session.c \
+			  jingle/session.h \
+			  jingle/transport.c \
+			  jingle/transport.h \
 			  jutil.c \
 			  jutil.h \
 			  message.c \
@@ -82,4 +96,6 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
 	$(LIBXML_CFLAGS)

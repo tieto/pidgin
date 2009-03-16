@@ -197,7 +197,12 @@ const SizedStockIcon sized_stock_icons [] = {
 	{ PIDGIN_STOCK_TOOLBAR_UNBLOCK,		"toolbar", "unblock.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR,	"toolbar", "select-avatar.png",	 FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE,	"toolbar", "send-file.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_TRANSFER,	"toolbar", "transfer.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  }
+	{ PIDGIN_STOCK_TOOLBAR_TRANSFER,	"toolbar", "transfer.png",	 FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+#ifdef USE_VV
+	{ PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, "toolbar", "audio-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, "toolbar", "video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL, "toolbar", "audio-video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+#endif
 };
 
 const SizedStockIcon sized_status_icons [] = {
@@ -276,7 +281,6 @@ find_file(const char *dir, const char *base)
 	g_free(filename);
 	return ret;
 }
-
 
 /* Altered from do_colorshift in gnome-panel */
 static void

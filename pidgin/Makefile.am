@@ -103,6 +103,7 @@ pidgin_SOURCES = \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
 	gtkmain.c \
+	gtkmedia.c \
 	gtkmenutray.c \
 	gtknotify.c \
 	gtkplugin.c \
@@ -160,6 +161,7 @@ pidgin_headers = \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \
+	gtkmedia.h \
 	gtkmenutray.h \
 	gtknickcolors.h \
 	gtknotify.h \
@@ -207,6 +209,8 @@ pidgin_LDADD = \
 	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
+	$(FARSIGHT_LIBS) \
+	$(GSTPROPS_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
 if USE_INTERNAL_LIBGADU
@@ -231,5 +235,7 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(INTGG_CFLAGS)
+	$(INTGG_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
+	$(GSTPROPS_CFLAGS)
 endif  # ENABLE_GTK
