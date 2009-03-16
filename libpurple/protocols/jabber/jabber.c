@@ -777,6 +777,8 @@ jabber_login(PurpleAccount *account)
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
+	/* Set the default protocol version to 1.0. Overridden in parser.c. */
+	js->protocol_version = JABBER_PROTO_1_0;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
