@@ -44,44 +44,46 @@ typedef enum {
 } PurpleBOSHPacketType;
 
 struct _PurpleBOSHConnection {
-    /* decoded URL */
-    char *host;
-    int port;
-    char *path; 
-
-    /* Must be big enough to hold 2^53 - 1 */
-    guint64 rid;
-    char *sid;
-    int wait;
-
-    JabberStream *js;
-    gboolean pipelining;
+	JabberStream *js;
+	gboolean pipelining;
 	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
 
-	unsigned int inactivity_timer;
+	gboolean ready;
 
+	/* decoded URL */
+	char *host;
+	int port;
+	char *path; 
+
+	/* Must be big enough to hold 2^53 - 1 */
+	guint64 rid;
+	char *sid;
+
+	unsigned int inactivity_timer;
 	int max_inactivity;
+	int wait;
+
+	GString *pending;
 	int max_requests;
 	int requests;
-	GString *pending;
 
-    gboolean ready;
-    PurpleBOSHConnectionConnectFunction connect_cb;
-    PurpleBOSHConnectionReceiveFunction receive_cb;
+	PurpleBOSHConnectionConnectFunction connect_cb;
+	PurpleBOSHConnectionReceiveFunction receive_cb;
 };
 
 struct _PurpleHTTPConnection {
-    int fd;
+	PurpleBOSHConnection *bosh;
+	int fd;
+	int ie_handle;
+
 	gboolean ready;
-    int ie_handle;
 	int requests; /* number of outstanding HTTP requests */
 
-    GString *buf;
-    gboolean headers_done;
-    gsize handled_len;
-    gsize body_len;
+	GString *buf;
+	gboolean headers_done;
+	gsize handled_len;
+	gsize body_len;
 
-    PurpleBOSHConnection *bosh;
 };
 
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
