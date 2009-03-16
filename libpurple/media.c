@@ -1821,7 +1821,7 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	priv = stream->session->media->priv;
 
 	if (stream->src == NULL) {
-		GstElement *sink;
+		GstElement *sink = NULL;
 
 		if (codec->media_type == FS_MEDIA_TYPE_AUDIO) {
 			/*
