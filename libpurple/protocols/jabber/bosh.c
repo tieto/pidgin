@@ -498,7 +498,15 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 
 static void http_connection_connected(PurpleHTTPConnection *conn)
 {
+	/* Indicate we're ready and reset some variables */
 	conn->ready = TRUE;
+	conn->requests = 0;
+	if (conn->buf) {
+		g_string_free(conn->buf, TRUE);
+		conn->buf = NULL;
+	}
+	conn->headers_done = FALSE;
+	conn->handled_len = conn->body_len = 0;
 
 	if (conn->bosh->ready) {
 		purple_debug_info("jabber", "BOSH session already exists. Trying to reuse it.\n");
@@ -528,6 +536,8 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 	 */
 	conn->ready = FALSE;
 	conn->fd = -1;
+	purple_input_remove(conn->ie_handle);
+	conn->ie_handle = 0;
 
 	if (conn->bosh->pipelining)
 		/* Hmmmm, fall back to multiple connections */
@@ -605,38 +615,29 @@ jabber_bosh_http_connection_read(gpointer data, gint fd,
 {
 	PurpleHTTPConnection *conn = data;
 	char buffer[1025];
-	int perrno;
 	int cnt, count = 0;
-
-	purple_debug_info("jabber", "jabber_bosh_http_connection_read\n");
 
 	if (!conn->buf)
 		conn->buf = g_string_new("");
 
 	while ((cnt = read(fd, buffer, sizeof(buffer))) > 0) {
-		purple_debug_info("jabber", "bosh read %d bytes\n", cnt);
 		count += cnt;
 		g_string_append_len(conn->buf, buffer, cnt);
 	}
 
-	perrno = errno;
-	if (cnt == 0 && count) {
-		/* TODO: process should know this response ended with a closed socket
-		 * and throw an error if it's not a complete response. */
-		jabber_bosh_http_connection_process(conn);
-	}
-
-	if (cnt == 0 || (cnt < 0 && perrno != EAGAIN)) {
+	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
 		if (cnt < 0)
-			purple_debug_info("jabber", "bosh read: %d\n", cnt);
+			purple_debug_info("jabber", "bosh read=%d, errno=%d\n", cnt, errno);
 		else
-			purple_debug_info("jabber", "bosh socket closed\n");
-	
-		purple_input_remove(conn->ie_handle);
-		conn->ie_handle = 0;
+			purple_debug_info("jabber", "bosh server closed connection\n");
 
+		/*
+		 * If the socket is closed, the processing really needs to know about
+		 * it. Handle that now (it will be handled again post-processing).
+		 */
 		http_connection_disconnected(conn);
-		return;
+
+		/* Process what we do have */
 	}
 
 	jabber_bosh_http_connection_process(conn);
@@ -694,7 +695,6 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 
 	packet = g_string_append(packet, req->str);
 
-	purple_debug_misc("jabber", "BOSH out: %s\n", packet->str);
 	/* TODO: Better error handling, circbuffer or possible integration with
 	 * low-level code in jabber.c */
 	ret = write(conn->fd, packet->str, packet->len);
@@ -704,7 +704,7 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 	g_string_free(packet, TRUE);
 
 	if (ret < 0 && errno == EAGAIN)
-		purple_debug_warning("jabber", "BOSH write would have blocked\n");
+		purple_debug_error("jabber", "BOSH write would have blocked\n");
 
 	if (ret <= 0) {
 		purple_connection_error_reason(conn->bosh->js->gc,
