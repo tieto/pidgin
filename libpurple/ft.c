@@ -857,8 +857,12 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 	else
 		s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 
-	if (xfer->ops.read != NULL)
+	if (xfer->ops.read != NULL)	{
 		r = (xfer->ops.read)(buffer, xfer);
+		if ((purple_xfer_get_size(xfer) > 0) &&
+			((purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer)))
+			purple_xfer_set_completed(xfer, TRUE);
+	}
 	else {
 		*buffer = g_malloc0(s);
 

@@ -157,6 +157,7 @@ char *xmlnode_get_data_unescaped(xmlnode *node);
  */
 void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_XMLNODE_C_)
 /**
  * Sets a prefixed attribute for a node
  *
@@ -164,6 +165,8 @@ void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
  * @param attr   The name of the attribute to set
  * @param prefix The prefix of the attribute to ste
  * @param value  The value of the attribute
+ *
+ * @deprecated Use xmlnode_set_attrib_full instead.
  */
 void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value);
 
@@ -174,8 +177,25 @@ void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char 
  * @param attr  The name of the attribute to set
  * @param xmlns The namespace of the attribute to ste
  * @param value The value of the attribute
+ *
+ * @deprecated Use xmlnode_set_attrib_full instead.
  */
 void xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value);
+#endif /* PURPLE_DISABLE_DEPRECATED */
+
+/**
+ * Sets a namespaced attribute for a node
+ *
+ * @param node   The node to set an attribute for.
+ * @param attr   The name of the attribute to set
+ * @param xmlns  The namespace of the attribute to ste
+ * @param prefix The prefix of the attribute to ste
+ * @param value  The value of the attribute
+ *
+ * @since 2.6.0
+ */
+void xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns,
+	const char *prefix, const char *value);
 
 /**
  * Gets an attribute from a node.

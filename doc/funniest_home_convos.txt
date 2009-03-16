@@ -565,3 +565,10 @@ not :)
              for using pidgen
 22:36 <user> why do they think this is a bad client? does it have history?
 
+--
+
+15:45 <deryni> We've had a Grand Plugin Database Plan for approximately forever.
+15:45 <SimGuy> ah, the GPDP
+15:46 <khc> well, there was a Grand Smiley Theme Database
+15:47 <SimGuy> the GSTD sounds like a bad acronym
+15:47 <khc> I realized after typing that

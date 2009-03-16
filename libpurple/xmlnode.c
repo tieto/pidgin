@@ -27,6 +27,7 @@
  * libxode uses memory pools that we simply have no need for, I decided to
  * write my own stuff.  Also, re-writing this lets me be as lightweight
  * as I want to be.  Thank you libxode for giving me a good starting point */
+#define _PURPLE_XMLNODE_C_
 
 #include "debug.h"
 #include "internal.h"
@@ -126,21 +127,28 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(attr != NULL);
 
-	for(attr_node = node->child; attr_node; attr_node = attr_node->next)
-	{
+	attr_node = node->child;
+	while (attr_node) {
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
 				purple_strequal(attr_node->name, attr))
 		{
-			if(sibling == NULL) {
-				node->child = attr_node->next;
-			} else {
-				sibling->next = attr_node->next;
-			}
 			if (node->lastchild == attr_node) {
 				node->lastchild = sibling;
 			}
-			xmlnode_free(attr_node);
-			return;
+			if (sibling == NULL) {
+				node->child = attr_node->next;
+				xmlnode_free(attr_node);
+				attr_node = node->child;
+			} else {
+				sibling->next = attr_node->next;
+				sibling = attr_node->next;
+				xmlnode_free(attr_node);
+				attr_node = sibling;
+			}
+		}
+		else
+		{
+			attr_node = attr_node->next;
 		}
 		sibling = attr_node;
 	}
@@ -178,23 +186,24 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 void
 xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 {
-	xmlnode *attrib_node;
-
-	g_return_if_fail(node != NULL);
-	g_return_if_fail(attr != NULL);
-	g_return_if_fail(value != NULL);
-
 	xmlnode_remove_attrib(node, attr);
-
-	attrib_node = new_node(attr, XMLNODE_TYPE_ATTRIB);
-
-	attrib_node->data = g_strdup(value);
-
-	xmlnode_insert_child(node, attrib_node);
+	xmlnode_set_attrib_full(node, attr, NULL, NULL, value);
 }
 
 void
 xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value)
+{
+	xmlnode_set_attrib_full(node, attr, xmlns, NULL, value);
+}
+
+void
+xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value)
+{
+	xmlnode_set_attrib_full(node, attr, NULL, prefix, value);
+}
+
+void
+xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns, const char *prefix, const char *value)
 {
 	xmlnode *attrib_node;
 
@@ -207,22 +216,6 @@ xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 
 	attrib_node->data = g_strdup(value);
 	attrib_node->xmlns = g_strdup(xmlns);
-
-	xmlnode_insert_child(node, attrib_node);
-}
-
-void
-xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value)
-{
-	xmlnode *attrib_node;
-
-	g_return_if_fail(node != NULL);
-	g_return_if_fail(attr != NULL);
-	g_return_if_fail(value != NULL);
-
-	attrib_node = new_node(attr, XMLNODE_TYPE_ATTRIB);
-
-	attrib_node->data = g_strdup(value);
 	attrib_node->prefix = g_strdup(prefix);
 
 	xmlnode_insert_child(node, attrib_node);
@@ -591,7 +584,8 @@ xmlnode_parser_element_start_libxml(void *user_data,
 		}
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
-			const char *prefix = (const char *)attributes[i + 1];
+			const char *name = (const char *)attributes[i];
+			const char *prefix = (const char *)attributes[i+1];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
@@ -600,11 +594,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = purple_unescape_html(txt);
 			g_free(txt);
-			if (prefix && *prefix) {
-				xmlnode_set_attrib_with_prefix(node, (const char*) attributes[i], prefix, attrib);
-			} else {
-				xmlnode_set_attrib(node, (const char*) attributes[i], attrib);
-			}
+			xmlnode_set_attrib_full(node, name, NULL, prefix, attrib);
 			g_free(attrib);
 		}
 

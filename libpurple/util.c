@@ -2850,6 +2850,12 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 	return "icon";
 }
 
+/*
+ * TODO: Consider using something faster than SHA-1, such as MD5, MD4
+ *       or CRC32.  Are there security implications to that?  Would
+ *       probably be a good idea to benchmark some algorithms with
+ *       3KB-10KB chunks of data (typical buddy icon sizes).
+ */
 char *
 purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
 {

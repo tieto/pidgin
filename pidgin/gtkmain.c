@@ -678,7 +678,8 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
+		printf("%s %s (libpurple %s)\n", PIDGIN_NAME, DISPLAY_VERSION,
+		                                 purple_core_get_version());
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
