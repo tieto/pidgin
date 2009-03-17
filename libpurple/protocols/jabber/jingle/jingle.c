@@ -177,6 +177,12 @@ jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
 }
 
 static void
+jingle_handle_security_info(JingleSession *session, xmlnode *jingle)
+{
+	jabber_iq_send(jingle_session_create_ack(session, jingle));
+}
+
+static void
 jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
 {
 	xmlnode *content = xmlnode_get_child(jingle, "content");
@@ -321,6 +327,7 @@ static const JingleAction jingle_actions[] = {
 	{"content-reject",	jingle_handle_content_reject},
 	{"content-remove",	jingle_handle_content_remove},
 	{"description-info",	jingle_handle_description_info},
+	{"security-info",	jingle_handle_security_info},
 	{"session-accept",	jingle_handle_session_accept},
 	{"session-info",	jingle_handle_session_info},
 	{"session-initiate",	jingle_handle_session_initiate},

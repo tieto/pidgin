@@ -30,7 +30,7 @@ G_BEGIN_DECLS
 extern "C" {
 #endif
 
-#define JINGLE "urn:xmpp:jingle:0"
+#define JINGLE "urn:xmpp:jingle:1"
 #define JINGLE_ERROR "urn:xmpp:jingle:errors:0"
 #define JINGLE_APP_FT "urn:xmpp:jingle:apps:file-transfer:1"
 #define JINGLE_APP_RTP "urn:xmpp:jingle:apps:rtp:1"
@@ -53,6 +53,7 @@ typedef enum {
 	JINGLE_CONTENT_REJECT,
 	JINGLE_CONTENT_REMOVE,
 	JINGLE_DESCRIPTION_INFO,
+	JINGLE_SECURITY_INFO,
 	JINGLE_SESSION_ACCEPT,
 	JINGLE_SESSION_INFO,
 	JINGLE_SESSION_INITIATE,
