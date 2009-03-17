@@ -297,7 +297,9 @@ jingle_rawudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 {
 	xmlnode *node = parent_class->to_xml(transport, content, action);
 
-	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO) {
+	if (action == JINGLE_SESSION_INITIATE ||
+			action == JINGLE_TRANSPORT_INFO ||
+			action == JINGLE_SESSION_ACCEPT) {
 		JingleRawUdpPrivate *priv = JINGLE_RAWUDP_GET_PRIVATE(transport);
 		GList *iter = priv->local_candidates;
 
