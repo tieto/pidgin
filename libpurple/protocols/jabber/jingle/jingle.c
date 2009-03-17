@@ -31,78 +31,6 @@
 #include "rawudp.h"
 #include "rtp.h"
 
-const gchar *
-jingle_get_action_name(JingleActionType action)
-{
-	switch (action) {
-		case JINGLE_CONTENT_ACCEPT:
-			return "content-accept";
-		case JINGLE_CONTENT_ADD:
-			return "content-add";
-		case JINGLE_CONTENT_MODIFY:
-			return "content-modify";
-		case JINGLE_CONTENT_REJECT:
-			return "content-reject";
-		case JINGLE_CONTENT_REMOVE:
-			return "content-remove";
-		case JINGLE_DESCRIPTION_INFO:
-			return "description-info";
-		case JINGLE_SESSION_ACCEPT:
-			return "session-accept";
-		case JINGLE_SESSION_INFO:
-			return "session-info";
-		case JINGLE_SESSION_INITIATE:
-			return "session-initiate";
-		case JINGLE_SESSION_TERMINATE:
-			return "session-terminate";
-		case JINGLE_TRANSPORT_ACCEPT:
-			return "transport-accept";
-		case JINGLE_TRANSPORT_INFO:
-			return "transport-info";
-		case JINGLE_TRANSPORT_REJECT:
-			return "transport-reject";
-		case JINGLE_TRANSPORT_REPLACE:
-			return "transport-replace";
-		default:
-			return "unknown-type";
-	}
-}
-
-JingleActionType
-jingle_get_action_type(const gchar *action)
-{
-	if (!strcmp(action, "content-accept"))
-		return JINGLE_CONTENT_ACCEPT;
-	else if (!strcmp(action, "content-add"))
-		return JINGLE_CONTENT_ADD;
-	else if (!strcmp(action, "content-modify"))
-		return JINGLE_CONTENT_MODIFY;
-	else if (!strcmp(action, "content-reject"))
-		return JINGLE_CONTENT_REJECT;
-	else if (!strcmp(action, "content-remove"))
-		return JINGLE_CONTENT_REMOVE;
-	else if (!strcmp(action, "description-info"))
-		return JINGLE_DESCRIPTION_INFO;
-	else if (!strcmp(action, "session-accept"))
-		return JINGLE_SESSION_ACCEPT;
-	else if (!strcmp(action, "session-info"))
-		return JINGLE_SESSION_INFO;
-	else if (!strcmp(action, "session-initiate"))
-		return JINGLE_SESSION_INITIATE;
-	else if (!strcmp(action, "session-terminate"))
-		return JINGLE_SESSION_TERMINATE;
-	else if (!strcmp(action, "transport-accept"))
-		return JINGLE_TRANSPORT_ACCEPT;
-	else if (!strcmp(action, "transport-info"))
-		return JINGLE_TRANSPORT_INFO;
-	else if (!strcmp(action, "transport-reject"))
-		return JINGLE_TRANSPORT_REJECT;
-	else if (!strcmp(action, "transport-replace"))
-		return JINGLE_TRANSPORT_REPLACE;
-	else
-		return JINGLE_UNKNOWN_TYPE;
-}
-
 GType
 jingle_get_type(const gchar *type)
 {
@@ -128,6 +56,12 @@ jingle_get_type(const gchar *type)
 #endif
 	else
 		return G_TYPE_NONE;
+}
+
+static void
+jingle_handle_unknown_type(JingleSession *session, xmlnode *jingle)
+{
+	/* Send error */
 }
 
 static void
@@ -374,6 +308,48 @@ jingle_handle_transport_replace(JingleSession *session, xmlnode *jingle)
 	}
 }
 
+typedef struct {
+	const char *name;
+	void (*handler)(JingleSession*, xmlnode*);
+} JingleAction;
+
+static const JingleAction jingle_actions[] = {
+	{"unknown-type",	jingle_handle_unknown_type},
+	{"content-accept",	jingle_handle_content_accept},
+	{"content-add",		jingle_handle_content_add},
+	{"content-modify",	jingle_handle_content_modify},
+	{"content-reject",	jingle_handle_content_reject},
+	{"content-remove",	jingle_handle_content_remove},
+	{"description-info",	jingle_handle_description_info},
+	{"session-accept",	jingle_handle_session_accept},
+	{"session-info",	jingle_handle_session_info},
+	{"session-initiate",	jingle_handle_session_initiate},
+	{"session-terminate",	jingle_handle_session_terminate},
+	{"transport-accept",	jingle_handle_transport_accept},
+	{"transport-info",	jingle_handle_transport_info},
+	{"transport-reject",	jingle_handle_transport_reject},
+	{"transport-replace",	jingle_handle_transport_replace},
+};
+
+const gchar *
+jingle_get_action_name(JingleActionType action)
+{
+	return jingle_actions[action].name;
+}
+
+JingleActionType
+jingle_get_action_type(const gchar *action)
+{
+	static const int num_actions =
+			sizeof(jingle_actions)/sizeof(JingleAction);
+	/* Start at 1 to skip the unknown-action type */
+	int i = 1;
+	for (; i < num_actions; ++i) {
+		if (!strcmp(action, jingle_actions[i].name))
+			return i;
+	}
+	return JINGLE_UNKNOWN_TYPE;
+}
 
 void
 jingle_parse(JabberStream *js, xmlnode *packet)
@@ -382,6 +358,7 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *jingle;
 	const gchar *action;
 	const gchar *sid;
+	JingleActionType action_type;
 	JingleSession *session;
 
 	if (!type || strcmp(type, "set")) {
@@ -400,6 +377,8 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
+	action_type = jingle_get_action_type(action);
+
 	purple_debug_info("jabber", "got Jingle package action = %s\n",
 			  action);
 
@@ -415,12 +394,13 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
-	if (!strcmp(action, "session-initiate")) {
+	if (action_type == JINGLE_SESSION_INITIATE) {
 		if (session) {
 			/* This should only happen if you start a session with yourself */
 			purple_debug_error("jingle", "Jingle session with "
 					"id={%s} already exists\n", sid);
 			/* send iq error */
+			return;
 		} else if ((session = jingle_session_find_by_jid(js,
 				xmlnode_get_attrib(packet, "from")))) {
 			purple_debug_fatal("jingle", "Jingle session with "
@@ -432,35 +412,10 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 			session = jingle_session_create(js, sid,
 					xmlnode_get_attrib(packet, "to"),
 					xmlnode_get_attrib(packet, "from"), FALSE);
-			jingle_handle_session_initiate(session, jingle);
 		}
-	} else if (!strcmp(action, "content-accept")) {
-		jingle_handle_content_accept(session, jingle);
-	} else if (!strcmp(action, "content-add")) {
-		jingle_handle_content_add(session, jingle);
-	} else if (!strcmp(action, "content-modify")) {
-		jingle_handle_content_modify(session, jingle);
-	} else if (!strcmp(action, "content-reject")) {
-		jingle_handle_content_reject(session, jingle);
-	} else if (!strcmp(action, "content-remove")) {
-		jingle_handle_content_remove(session, jingle);
-	} else if (!strcmp(action, "description-info")) {
-		jingle_handle_description_info(session, jingle);
-	} else if (!strcmp(action, "session-accept")) {
-		jingle_handle_session_accept(session, jingle);
-	} else if (!strcmp(action, "session-info")) {
-		jingle_handle_session_info(session, jingle);
-	} else if (!strcmp(action, "session-terminate")) {
-		jingle_handle_session_terminate(session, jingle);
-	} else if (!strcmp(action, "transport-accept")) {
-		jingle_handle_transport_accept(session, jingle);
-	} else if (!strcmp(action, "transport-info")) {
-		jingle_handle_transport_info(session, jingle);
-	} else if (!strcmp(action, "transport-reject")) {
-		jingle_handle_transport_reject(session, jingle);
-	} else if (!strcmp(action, "transport-replace")) {
-		jingle_handle_transport_replace(session, jingle);
 	}
+
+	jingle_actions[action_type].handler(session, jingle);
 }
 
 static void
