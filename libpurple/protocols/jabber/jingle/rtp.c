@@ -37,6 +37,7 @@
 struct _JingleRtpPrivate
 {
 	gchar *media_type;
+	gchar *ssrc;
 };
 
 #define JINGLE_RTP_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), JINGLE_TYPE_RTP, JingleRtpPrivate))
@@ -63,6 +64,7 @@ static guint jingle_rtp_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_MEDIA_TYPE,
+	PROP_SSRC,
 };
 
 GType
@@ -108,6 +110,13 @@ jingle_rtp_class_init (JingleRtpClass *klass)
 			"The media type (\"audio\" or \"video\") for this rtp session.",
 			NULL,
 			G_PARAM_READWRITE));
+	g_object_class_install_property(gobject_class, PROP_SSRC,
+			g_param_spec_string("ssrc",
+			"ssrc",
+			"The ssrc for this rtp session.",
+			NULL,
+			G_PARAM_READWRITE));
+
 	g_type_class_add_private(klass, sizeof(JingleRtpPrivate));
 }
 
@@ -115,7 +124,7 @@ static void
 jingle_rtp_init (JingleRtp *rtp)
 {
 	rtp->priv = JINGLE_RTP_GET_PRIVATE(rtp);
-	memset(rtp->priv, 0, sizeof(rtp->priv));
+	memset(rtp->priv, 0, sizeof(*rtp->priv));
 }
 
 static void
@@ -125,6 +134,7 @@ jingle_rtp_finalize (GObject *rtp)
 	purple_debug_info("jingle-rtp","jingle_rtp_finalize\n");
 
 	g_free(priv->media_type);
+	g_free(priv->ssrc);
 }
 
 static void
@@ -139,6 +149,10 @@ jingle_rtp_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		case PROP_MEDIA_TYPE:
 			g_free(rtp->priv->media_type);
 			rtp->priv->media_type = g_value_dup_string(value);
+			break;
+		case PROP_SSRC:
+			g_free(rtp->priv->ssrc);
+			rtp->priv->ssrc = g_value_dup_string(value);
 			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -158,6 +172,9 @@ jingle_rtp_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 		case PROP_MEDIA_TYPE:
 			g_value_set_string(value, rtp->priv->media_type);
 			break;
+		case PROP_SSRC:
+			g_value_set_string(value, rtp->priv->ssrc);
+			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
 			break;
@@ -170,6 +187,14 @@ jingle_rtp_get_media_type(JingleContent *content)
 	gchar *media_type;
 	g_object_get(content, "media-type", &media_type, NULL);
 	return media_type;
+}
+
+gchar *
+jingle_rtp_get_ssrc(JingleContent *content)
+{
+	gchar *ssrc;
+	g_object_get(content, "ssrc", &ssrc, NULL);
+	return ssrc;
 }
 
 static PurpleMedia *
@@ -525,8 +550,11 @@ jingle_rtp_parse_internal(xmlnode *rtp)
 	JingleContent *content = parent_class->parse(rtp);
 	xmlnode *description = xmlnode_get_child(rtp, "description");
 	const gchar *media_type = xmlnode_get_attrib(description, "media");
+	const gchar *ssrc = xmlnode_get_attrib(description, "ssrc");
 	purple_debug_info("jingle-rtp", "rtp parse\n");
 	g_object_set(content, "media-type", media_type, NULL);
+	if (ssrc != NULL)
+		g_object_set(content, "ssrc", ssrc, NULL);
 	return content;
 }
 
@@ -571,10 +599,14 @@ jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionTyp
 		JingleSession *session = jingle_content_get_session(rtp);
 		PurpleMedia *media = jingle_rtp_get_media(session);
 		gchar *media_type = jingle_rtp_get_media_type(rtp);
+		gchar *ssrc = jingle_rtp_get_ssrc(rtp);
 		gchar *name = jingle_content_get_name(rtp);
 		GList *codecs = purple_media_get_codecs(media, name);
 
 		xmlnode_set_attrib(description, "media", media_type);
+
+		if (ssrc != NULL)
+			xmlnode_set_attrib(description, "ssrc", ssrc);
 
 		g_free(media_type);
 		g_free(name);

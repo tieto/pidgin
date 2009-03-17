@@ -73,6 +73,7 @@ extern "C" {
 GType jingle_rtp_get_type(void);
 
 gchar *jingle_rtp_get_media_type(JingleContent *content);
+gchar *jingle_rtp_get_ssrc(JingleContent *content);
 
 PurpleMedia *jingle_rtp_initiate_media(JabberStream *js,
 				   const gchar *who,
