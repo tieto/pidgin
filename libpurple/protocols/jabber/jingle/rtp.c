@@ -372,8 +372,8 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type
 	if ((type == PURPLE_MEDIA_STATE_CHANGED_REJECTED ||
 			type == PURPLE_MEDIA_STATE_CHANGED_HANGUP) &&
 			sid == NULL && name == NULL) {
-		jabber_iq_send(jingle_session_to_packet(session,
-				JINGLE_SESSION_TERMINATE));
+		jabber_iq_send(jingle_session_terminate_packet(
+				session, "success"));
 		g_object_unref(session);
 	}
 }
@@ -616,8 +616,8 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 
 			if (jingle_rtp_init_media(content) == FALSE) {
 				/* XXX: send error */
-				jabber_iq_send(jingle_session_to_packet(session,
-						 JINGLE_SESSION_TERMINATE));
+				jabber_iq_send(jingle_session_terminate_packet(
+						session, "general-error"));
 				g_object_unref(session);
 				break;
 			}

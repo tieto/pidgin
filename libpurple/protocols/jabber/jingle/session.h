@@ -102,6 +102,8 @@ void jingle_session_add_pending_content(JingleSession *session, struct _JingleCo
 void jingle_session_remove_pending_content(JingleSession *session, const gchar *name, const gchar *creator);
 void jingle_session_accept_content(JingleSession *session, const gchar *name, const gchar *creator);
 void jingle_session_accept_session(JingleSession *session);
+JabberIq *jingle_session_terminate_packet(JingleSession *session, const gchar *reason);
+JabberIq *jingle_session_redirect_packet(JingleSession *session, const gchar *sid);
 
 #ifdef __cplusplus
 }

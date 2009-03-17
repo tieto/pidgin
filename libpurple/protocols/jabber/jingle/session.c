@@ -590,3 +590,38 @@ jingle_session_accept_session(JingleSession *session)
 	session->priv->state = TRUE;
 }
 
+JabberIq *
+jingle_session_terminate_packet(JingleSession *session, const gchar *reason)
+{
+	JabberIq *iq = jingle_session_to_packet(session,
+			JINGLE_SESSION_TERMINATE);
+	xmlnode *jingle = xmlnode_get_child(iq->node, "jingle");
+
+	if (reason != NULL) {
+		JabberIq *reason_node;
+		reason_node = xmlnode_new_child(jingle, "reason");
+		xmlnode_new_child(reason_node, reason);
+	}
+	return iq;
+}
+
+JabberIq *
+jingle_session_redirect_packet(JingleSession *session, const gchar *sid)
+{
+	JabberIq *iq = jingle_session_terminate_packet(session,
+			"alternative-session");
+	xmlnode *alt_session;
+
+	if (sid == NULL)
+		return iq;
+
+	alt_session = xmlnode_get_child(iq->node,
+			"jingle/reason/alternative-session");
+
+	if (alt_session != NULL) {
+		xmlnode *sid_node = xmlnode_new_child(alt_session, "sid");
+		xmlnode_insert_data(sid_node, sid, -1);
+	}
+	return iq;
+}
+
