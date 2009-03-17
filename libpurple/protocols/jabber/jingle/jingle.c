@@ -401,13 +401,6 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 					"id={%s} already exists\n", sid);
 			/* send iq error */
 			return;
-		} else if ((session = jingle_session_find_by_jid(js,
-				xmlnode_get_attrib(packet, "from")))) {
-			purple_debug_fatal("jingle", "Jingle session with "
-					"jid={%s} already exists\n",
-					xmlnode_get_attrib(packet, "from"));
-			/* send jingle redirect packet */
-			return;
 		} else {
 			session = jingle_session_create(js, sid,
 					xmlnode_get_attrib(packet, "to"),
