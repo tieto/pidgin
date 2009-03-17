@@ -332,21 +332,19 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 {
 	xmlnode *node = parent_class->to_xml(transport, content, action);
 
-	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO ||
-			action == JINGLE_CONTENT_ADD || action == JINGLE_TRANSPORT_REPLACE) {
-		JingleIceUdpPrivate *icetransport =
-				JINGLE_ICEUDP_GET_PRIVATE(transport);
-		if (icetransport && icetransport->local_candidates) {
-			JingleIceUdpCandidate *candidate =
-					icetransport->local_candidates->data;
+	if (action == JINGLE_SESSION_INITIATE ||
+			action == JINGLE_SESSION_ACCEPT ||
+			action == JINGLE_TRANSPORT_INFO ||
+			action == JINGLE_CONTENT_ADD ||
+			action == JINGLE_TRANSPORT_REPLACE) {
+		JingleIceUdpPrivate *priv = JINGLE_ICEUDP_GET_PRIVATE(transport);
+		GList *iter = priv->local_candidates;
+
+		if (iter && iter->data) {
+			JingleIceUdpCandidate *candidate = iter->data;
 			xmlnode_set_attrib(node, "pwd", candidate->password);
 			xmlnode_set_attrib(node, "ufrag", candidate->username);
 		}
-	}
-
-	if (action == JINGLE_TRANSPORT_INFO || action == JINGLE_SESSION_ACCEPT) {
-		JingleIceUdpPrivate *priv = JINGLE_ICEUDP_GET_PRIVATE(transport);
-		GList *iter = priv->local_candidates;
 
 		for (; iter; iter = g_list_next(iter)) {
 			JingleIceUdpCandidate *candidate = iter->data;

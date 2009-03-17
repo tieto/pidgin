@@ -343,9 +343,6 @@ jingle_rtp_initiate_ack_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		g_object_unref(session);
 		return;
 	}
-
-	jabber_iq_send(jingle_session_to_packet(session,
-			JINGLE_TRANSPORT_INFO));
 }
 
 static void
@@ -355,21 +352,12 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 
 	if (sid == NULL && name == NULL) {
 		if (jingle_session_is_initiator(session) == TRUE) {
-			GList *contents = jingle_session_get_contents(session);
 			JabberIq *iq = jingle_session_to_packet(
 					session, JINGLE_SESSION_INITIATE);
-
-			if (contents->data) {
-				JingleTransport *transport =
-						jingle_content_get_transport(contents->data);
-				if (JINGLE_IS_ICEUDP(transport))
-					jabber_iq_set_callback(iq,
-							jingle_rtp_initiate_ack_cb, session);
-			}
-
+			jabber_iq_set_callback(iq,
+					jingle_rtp_initiate_ack_cb, session);
 			jabber_iq_send(iq);
 		} else {
-			jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO));
 			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_ACCEPT));
 		}
 	} else if (sid != NULL && name != NULL) {
@@ -621,23 +609,7 @@ static void
 jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
 {
 	switch (action) {
-		case JINGLE_SESSION_ACCEPT: {
-			JingleSession *session = jingle_content_get_session(content);
-			xmlnode *description = xmlnode_get_child(xmlcontent, "description");
-			GList *codecs = jingle_rtp_parse_codecs(description);
-
-			purple_media_set_remote_codecs(jingle_rtp_get_media(session),
-					jingle_content_get_name(content),
-					jingle_session_get_remote_jid(session), codecs);
-
-			/* This needs to be for the entire session, not a single content */
-			/* very hacky */
-			if (xmlnode_get_next_twin(xmlcontent) == NULL)
-				purple_media_accept(jingle_rtp_get_media(session));
-
-			g_object_unref(session);
-			break;
-		}
+		case JINGLE_SESSION_ACCEPT:
 		case JINGLE_SESSION_INITIATE: {
 			JingleSession *session = jingle_content_get_session(content);
 			JingleTransport *transport = jingle_transport_parse(
@@ -645,8 +617,13 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			xmlnode *description = xmlnode_get_child(xmlcontent, "description");
 			GList *candidates = jingle_rtp_transport_to_candidates(transport);
 			GList *codecs = jingle_rtp_parse_codecs(description);
+			gchar *name = jingle_content_get_name(content);
+			gchar *remote_jid =
+					jingle_session_get_remote_jid(session);
+			PurpleMedia *media;
 
-			if (jingle_rtp_init_media(content) == FALSE) {
+			if (action == JINGLE_SESSION_INITIATE &&
+					jingle_rtp_init_media(content) == FALSE) {
 				/* XXX: send error */
 				jabber_iq_send(jingle_session_terminate_packet(
 						session, "general-error"));
@@ -654,17 +631,20 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 				break;
 			}
 
-			purple_media_set_remote_codecs(jingle_rtp_get_media(session),
-					jingle_content_get_name(content),
-					jingle_session_get_remote_jid(session), codecs);
+			media = jingle_rtp_get_media(session);
+			purple_media_set_remote_codecs(media,
+					name, remote_jid, codecs);
+			purple_media_add_remote_candidates(media,
+					name, remote_jid, candidates);
 
-			if (JINGLE_IS_RAWUDP(transport)) {
-				purple_media_add_remote_candidates(jingle_rtp_get_media(session),
-						jingle_content_get_name(content),
-						jingle_session_get_remote_jid(session),
-						candidates);
-			}
+			/* This needs to be for the entire session, not a single content */
+			/* very hacky */
+			if (action == JINGLE_SESSION_ACCEPT &&
+					xmlnode_get_next_twin(xmlcontent) == NULL)
+				purple_media_accept(media);
 
+			g_free(remote_jid);
+			g_free(name);
 			g_object_unref(session);
 			break;
 		}
@@ -684,11 +664,16 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			JingleTransport *transport = jingle_transport_parse(
 					xmlnode_get_child(xmlcontent, "transport"));
 			GList *candidates = jingle_rtp_transport_to_candidates(transport);
+			gchar *name = jingle_content_get_name(content);
+			gchar *remote_jid =
+					jingle_session_get_remote_jid(session);
 
-			purple_media_add_remote_candidates(jingle_rtp_get_media(session),
-					jingle_content_get_name(content),
-					jingle_session_get_remote_jid(session),
-					candidates);
+			purple_media_add_remote_candidates(
+					jingle_rtp_get_media(session),
+					name, remote_jid, candidates);
+
+			g_free(remote_jid);
+			g_free(name);
 			g_object_unref(session);
 			break;
 		}

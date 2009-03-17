@@ -42,7 +42,7 @@ extern "C" {
 #define JINGLE_DTMF "urn:xmpp:jingle:dtmf:0"
 #define JINGLE_TRANSPORT_S5B "urn:xmpp:jingle:transports:s5b:0"
 #define JINGLE_TRANSPORT_IBB "urn:xmpp:jingle:transports:ibb:0"
-#define JINGLE_TRANSPORT_ICEUDP "urn:xmpp:jingle:transports:ice-udp:0"
+#define JINGLE_TRANSPORT_ICEUDP "urn:xmpp:jingle:transports:ice-udp:1"
 #define JINGLE_TRANSPORT_RAWUDP "urn:xmpp:jingle:transports:raw-udp:1"
 
 typedef enum {
