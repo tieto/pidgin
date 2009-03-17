@@ -260,7 +260,7 @@ static void
 purple_media_init (PurpleMedia *media)
 {
 	media->priv = PURPLE_MEDIA_GET_PRIVATE(media);
-	memset(media->priv, 0, sizeof(media->priv));
+	memset(media->priv, 0, sizeof(*media->priv));
 }
 
 static void
