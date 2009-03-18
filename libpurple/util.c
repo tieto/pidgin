@@ -4044,6 +4044,13 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
 	if (purple_strcasestr(url, "https://") != NULL) {
+		if (!purple_ssl_is_supported()) {
+			purple_util_fetch_url_error(gfud,
+					_("Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was found."),
+					gfud->website.address);
+			return NULL;
+		}
+
 		gfud->is_ssl = TRUE;
 		gfud->ssl_connection = purple_ssl_connect(NULL,
 				gfud->website.address, gfud->website.port,

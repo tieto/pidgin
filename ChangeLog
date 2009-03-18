@@ -19,6 +19,9 @@ version 2.6.0 (??/??/2009):
 	* Pressing the Enter key in the message entry box of the New Status
 	  dialog and various other dialogs now causes the cursor to move to
 	  the next line.
+	* Created a unified Buddy Pounce notification window for all pounces
+	  where "Pop up a notification" is selected, which avoids having a
+	  new dialog box every time a pounce is triggered. (Jorge Villaseñor) 
 
 version 2.5.5 (03/01/2009):
 	libpurple:
