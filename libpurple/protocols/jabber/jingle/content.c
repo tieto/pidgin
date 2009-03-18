@@ -205,13 +205,11 @@ jingle_content_set_property (GObject *object, guint prop_id, const GValue *value
 			if (content->priv->transport)
 				g_object_unref(content->priv->transport);
 			content->priv->transport = g_value_get_object(value);
-			g_object_ref(content->priv->transport);
 			break;
 		case PROP_PENDING_TRANSPORT:
 			if (content->priv->pending_transport)
 				g_object_unref(content->priv->pending_transport);
 			content->priv->pending_transport = g_value_get_object(value);
-			g_object_ref(content->priv->pending_transport);
 			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
