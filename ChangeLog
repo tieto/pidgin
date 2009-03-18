@@ -6,8 +6,9 @@ version 2.6.0 (??/??/2009):
 	  project.  With some minor additions and clean ups from Paul Aurich.
 
 	XMPP:
-	* Add support for in-band bytestreams (XEP-0047).
-	* Add support for attention (XEP-0224).
+	* Add support for in-band bytestreams for file transfers (XEP-0047).
+	* Add support for sending attentions (equivalent to "buzz" and "nudge")
+	  using the command /buzz (XEP-0224).
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
