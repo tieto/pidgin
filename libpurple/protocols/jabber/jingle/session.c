@@ -154,7 +154,7 @@ static void
 jingle_session_init (JingleSession *session)
 {
 	session->priv = JINGLE_SESSION_GET_PRIVATE(session);
-	memset(session->priv, 0, sizeof(session->priv));
+	memset(session->priv, 0, sizeof(*session->priv));
 }
 
 static void

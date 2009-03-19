@@ -152,7 +152,7 @@ static void
 jingle_content_init (JingleContent *content)
 {
 	content->priv = JINGLE_CONTENT_GET_PRIVATE(content);
-	memset(content->priv, 0, sizeof(content->priv));
+	memset(content->priv, 0, sizeof(*content->priv));
 }
 
 static void

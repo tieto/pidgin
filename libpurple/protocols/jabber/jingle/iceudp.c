@@ -177,7 +177,8 @@ static void
 jingle_iceudp_init (JingleIceUdp *iceudp)
 {
 	iceudp->priv = JINGLE_ICEUDP_GET_PRIVATE(iceudp);
-	memset(iceudp->priv, 0, sizeof(iceudp->priv));
+	iceudp->priv->local_candidates = NULL;
+	iceudp->priv->remote_candidates = NULL;
 }
 
 static void

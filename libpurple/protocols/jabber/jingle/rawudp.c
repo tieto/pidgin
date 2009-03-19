@@ -149,7 +149,8 @@ static void
 jingle_rawudp_init (JingleRawUdp *rawudp)
 {
 	rawudp->priv = JINGLE_RAWUDP_GET_PRIVATE(rawudp);
-	memset(rawudp->priv, 0, sizeof(rawudp->priv));
+	rawudp->priv->local_candidates = NULL;
+	rawudp->priv->remote_candidates = NULL;
 }
 
 static void
