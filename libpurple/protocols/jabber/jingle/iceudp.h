@@ -78,6 +78,9 @@ struct _JingleIceUdpCandidate
 
 	gchar *username;
 	gchar *password;
+
+	gboolean rem_known;	/* TRUE if the remote side knows
+				 * about this candidate */
 };
 
 #ifdef __cplusplus
