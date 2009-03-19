@@ -355,7 +355,7 @@ purple_media_dispose(GObject *media)
 		priv->manager = NULL;
 	}
 
-	G_OBJECT_CLASS(parent_class)->finalize(media);
+	G_OBJECT_CLASS(parent_class)->dispose(media);
 }
 
 static void
