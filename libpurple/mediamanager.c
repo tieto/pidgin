@@ -498,10 +498,19 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			ow->sink = purple_media_manager_get_element(
 					manager, PURPLE_MEDIA_RECV_VIDEO);
 
-			if (participant == NULL)
+			if (participant == NULL) {
 				/* aka this is a preview sink */
-				g_object_set(G_OBJECT(ow->sink), "sync", FALSE,
-						"async", "FALSE", NULL);
+				GObjectClass *klass =
+						G_OBJECT_GET_CLASS(ow->sink);
+				if (g_object_class_find_property(klass,
+						"sync"))
+					g_object_set(G_OBJECT(ow->sink),
+							"sync", "FALSE", NULL);
+				if (g_object_class_find_property(klass,
+						"async"))
+					g_object_set(G_OBJECT(ow->sink),
+							"async", FALSE, NULL);
+			}
 
 			gst_bin_add_many(GST_BIN(GST_ELEMENT_PARENT(tee)),
 					queue, ow->sink, NULL);
