@@ -59,6 +59,8 @@ jingle_rawudp_candidate_copy(JingleRawUdpCandidate *candidate)
 	new_candidate->id = g_strdup(candidate->id);
 	new_candidate->ip = g_strdup(candidate->ip);
 	new_candidate->port = candidate->port;
+
+	new_candidate->rem_known = candidate->rem_known;
 	return new_candidate;
 }
 
@@ -91,6 +93,8 @@ jingle_rawudp_candidate_new(const gchar *id, guint generation, guint component, 
 	candidate->id = g_strdup(id);
 	candidate->ip = g_strdup(ip);
 	candidate->port = port;
+
+	candidate->rem_known = FALSE;
 	return candidate;
 }
 
@@ -280,6 +284,7 @@ jingle_rawudp_parse_internal(xmlnode *rawudp)
 				atoi(xmlnode_get_attrib(candidate, "component")),
 				xmlnode_get_attrib(candidate, "ip"),
 				atoi(xmlnode_get_attrib(candidate, "port")));
+		rawudp_candidate->rem_known = TRUE;
 		jingle_rawudp_add_remote_candidate(JINGLE_RAWUDP(transport), rawudp_candidate);
 	}
 
@@ -289,6 +294,7 @@ jingle_rawudp_parse_internal(xmlnode *rawudp)
 		rawudp_candidate = g_boxed_copy(JINGLE_TYPE_RAWUDP_CANDIDATE, rawudp_candidate);
 		rawudp_candidate->component = 2;
 		rawudp_candidate->port = rawudp_candidate->port + 1;
+		rawudp_candidate->rem_known = TRUE;
 		jingle_rawudp_add_remote_candidate(JINGLE_RAWUDP(transport), rawudp_candidate);
 	}
 
@@ -308,11 +314,17 @@ jingle_rawudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 
 		for (; iter; iter = g_list_next(iter)) {
 			JingleRawUdpCandidate *candidate = iter->data;
+			xmlnode *xmltransport;
+			gchar *generation, *component, *port;
 
-			xmlnode *xmltransport = xmlnode_new_child(node, "candidate");
-			gchar *generation = g_strdup_printf("%d", candidate->generation);
-			gchar *component = g_strdup_printf("%d", candidate->component);
-			gchar *port = g_strdup_printf("%d", candidate->port);
+			if (candidate->rem_known == TRUE)
+				continue;
+			candidate->rem_known = TRUE;
+
+			xmltransport = xmlnode_new_child(node, "candidate");
+			generation = g_strdup_printf("%d", candidate->generation);
+			component = g_strdup_printf("%d", candidate->component);
+			port = g_strdup_printf("%d", candidate->port);
 
 			xmlnode_set_attrib(xmltransport, "generation", generation);
 			xmlnode_set_attrib(xmltransport, "component", component);
