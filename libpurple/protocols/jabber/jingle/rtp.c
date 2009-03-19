@@ -343,9 +343,38 @@ jingle_rtp_accepted_cb(PurpleMedia *media, gchar *sid, gchar *name,
 }
 
 static void
-jingle_rtp_candidates_prepared_cb(PurpleMedia *media, gchar *sid, gchar *name)
+jingle_rtp_candidates_prepared_cb(PurpleMedia *media,
+		gchar *sid, gchar *name, JingleSession *session)
 {
+	JingleContent *content = jingle_session_find_content(
+			session, sid, "initiator");
+	JingleTransport *oldtransport, *transport;
+	GList *candidates;
+
 	purple_debug_info("jingle-rtp", "jingle_rtp_candidates_prepared_cb\n");
+
+	if (content == NULL)
+		jingle_session_find_content(session, sid, "responder");
+
+	if (content == NULL) {
+		purple_debug_error("jingle-rtp",
+				"jingle_rtp_candidates_prepared_cb: "
+				"Can't find session %s\n", sid);
+		return;
+	}
+
+	oldtransport = jingle_content_get_transport(content);
+	candidates = purple_media_get_local_candidates(media, sid, name);
+	transport = JINGLE_TRANSPORT(jingle_rtp_candidates_to_transport(
+			session, JINGLE_IS_RAWUDP(oldtransport) ?
+				JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
+			0, candidates));
+
+	g_list_free(candidates);
+	g_object_unref(oldtransport);
+
+	jingle_content_set_pending_transport(content, transport);
+	jingle_content_accept_transport(content);
 }
 
 static void
@@ -425,20 +454,6 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 			g_signal_connect(G_OBJECT(media), "new-candidate",
 					 G_CALLBACK(jingle_rtp_new_candidate_cb), session);
 		}
-	} else if (sid != NULL && name != NULL) {
-		JingleContent *content = jingle_session_find_content(session, sid, "initiator");
-		JingleTransport *oldtransport = jingle_content_get_transport(content);
-		GList *candidates = purple_media_get_local_candidates(media, sid, name);
-		JingleTransport *transport =
-				JINGLE_TRANSPORT(jingle_rtp_candidates_to_transport(
-				session, JINGLE_IS_RAWUDP(oldtransport) ?
-					JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
-				0, candidates));
-		g_list_free(candidates);
-		g_object_unref(oldtransport);
-
-		jingle_content_set_pending_transport(content, transport);
-		jingle_content_accept_transport(content);
 	}
 }
 
