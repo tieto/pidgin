@@ -1886,6 +1886,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 	PurpleMediaStream *stream = NULL;
 	FsStreamDirection *direction = NULL;
 	PurpleMediaSessionType session_type;
+	gboolean is_nice = !strcmp(transmitter, "nice");
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
@@ -1939,7 +1940,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		 * receiving the src-pad-added signal.
 		 * Only works for non-multicast FsRtpSessions.
 		 */
-		if (!strcmp(transmitter, "nice") || !strcmp(transmitter, "rawudp"))
+		if (is_nice || !strcmp(transmitter, "rawudp"))
 			g_object_set(G_OBJECT(session->session),
 					"no-rtcp-timeout", 0, NULL);
 
@@ -1986,7 +1987,8 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 		if (stun_ip || turn_ip) {
 			guint new_num_params = 
-				stun_ip && turn_ip ? num_params + 2 : num_params + 1;
+					(stun_ip && is_nice) && turn_ip ?
+					num_params + 2 : num_params + 1;
 			guint next_param_index = num_params;
 			GParameter *param = g_new0(GParameter, new_num_params);
 			memcpy(param, params, sizeof(GParameter) * num_params);
@@ -2001,7 +2003,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				next_param_index++;
 			}
 
-			if (turn_ip) {
+			if (turn_ip && is_nice) {
 				GValueArray *relay_info = g_value_array_new(0);
 				GValue value;
 				gint turn_port = 
