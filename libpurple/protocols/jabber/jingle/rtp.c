@@ -335,6 +335,8 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 	}
 }
 
+static void jingle_rtp_send_initiate(JingleSession *session);
+
 static void
 jingle_rtp_accepted_cb(PurpleMedia *media, gchar *sid, gchar *name,
 		JingleSession *session)
@@ -372,6 +374,8 @@ jingle_rtp_candidates_prepared_cb(PurpleMedia *media,
 
 	jingle_content_set_pending_transport(content, transport);
 	jingle_content_accept_transport(content);
+
+	jingle_rtp_send_initiate(session);
 }
 
 static void
@@ -380,6 +384,7 @@ jingle_rtp_codecs_changed_cb(PurpleMedia *media, gchar *sid,
 {
 	purple_debug_info("jingle-rtp", "jingle_rtp_codecs_changed_cb: "
 			"session_id: %s jingle_session: %p\n", sid, session);
+	jingle_rtp_send_initiate(session);
 }
 
 static void
@@ -434,15 +439,7 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 	purple_debug_info("rtp", "ready-new: session: %s name: %s\n", sid, name);
 
 	if (sid == NULL && name == NULL) {
-		if (jingle_session_is_initiator(session) == TRUE) {
-			JabberIq *iq = jingle_session_to_packet(
-					session, JINGLE_SESSION_INITIATE);
-			jabber_iq_set_callback(iq,
-					jingle_rtp_initiate_ack_cb, session);
-			jabber_iq_send(iq);
-			g_signal_connect(G_OBJECT(media), "new-candidate",
-					 G_CALLBACK(jingle_rtp_new_candidate_cb), session);
-		} else {
+		if (jingle_session_is_initiator(session) == FALSE) {
 			jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_ACCEPT));
 			g_signal_connect(G_OBJECT(media), "new-candidate",
 					 G_CALLBACK(jingle_rtp_new_candidate_cb), session);
@@ -462,6 +459,25 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type
 		jabber_iq_send(jingle_session_terminate_packet(
 				session, "success"));
 		g_object_unref(session);
+	}
+}
+
+static void
+jingle_rtp_send_initiate(JingleSession *session)
+{
+	PurpleMedia *media = jingle_rtp_get_media(session);
+
+	if (jingle_session_is_initiator(session) == TRUE &&
+			purple_media_codecs_ready(media, NULL) &&
+			purple_media_candidates_prepared(media, NULL, NULL)) {
+		JabberIq *iq = jingle_session_to_packet(
+				session, JINGLE_SESSION_INITIATE);
+		jabber_iq_set_callback(iq,
+				jingle_rtp_initiate_ack_cb, session);
+		jabber_iq_send(iq);
+		g_signal_connect(G_OBJECT(media), "new-candidate",
+				G_CALLBACK(jingle_rtp_new_candidate_cb),
+				session);
 	}
 }
 
