@@ -126,6 +126,7 @@ static GObjectClass *parent_class = NULL;
 enum {
 	ERROR,
 	ACCEPTED,
+	CANDIDATES_PREPARED,
 	CODECS_CHANGED,
 	NEW_CANDIDATE,
 	READY_NEW,
@@ -234,6 +235,11 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__STRING_STRING,
 					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 purple_smarshal_VOID__STRING_STRING,
+					 G_TYPE_NONE, 2, G_TYPE_STRING,
+					 G_TYPE_STRING);
 	purple_media_signals[CODECS_CHANGED] = g_signal_new("codecs-changed", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
@@ -1723,6 +1729,10 @@ purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *sessio
 
 	stream_data = purple_media_get_stream(session->media, session->id, name);
 	stream_data->candidates_prepared = TRUE;
+
+	g_signal_emit(session->media,
+			purple_media_signals[CANDIDATES_PREPARED],
+			0, session->id, name);
 
 	purple_media_emit_ready(session->media, session, name);
 	g_free(name);
