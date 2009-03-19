@@ -433,6 +433,7 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 			transport = jingle_content_get_transport(content);
 
 		jingle_transport_to_xml(transport, node, action);
+		g_object_unref(transport);
 	}
 
 	return node;

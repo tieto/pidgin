@@ -157,6 +157,8 @@ jingle_rawudp_finalize (GObject *rawudp)
 {
 /*	JingleRawUdpPrivate *priv = JINGLE_RAWUDP_GET_PRIVATE(rawudp); */
 	purple_debug_info("jingle","jingle_rawudp_finalize\n");
+
+	G_OBJECT_CLASS(parent_class)->finalize(rawudp);
 }
 
 static void

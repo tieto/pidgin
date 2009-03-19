@@ -135,6 +135,8 @@ jingle_rtp_finalize (GObject *rtp)
 
 	g_free(priv->media_type);
 	g_free(priv->ssrc);
+
+	G_OBJECT_CLASS(parent_class)->finalize(rtp);
 }
 
 static void
@@ -370,6 +372,7 @@ jingle_rtp_ready_cb(PurpleMedia *media, gchar *sid, gchar *name, JingleSession *
 					JINGLE_TYPE_RAWUDP : JINGLE_TYPE_ICEUDP,
 				0, candidates));
 		g_list_free(candidates);
+		g_object_unref(oldtransport);
 
 		jingle_content_set_pending_transport(content, transport);
 		jingle_content_accept_transport(content);
@@ -461,6 +464,7 @@ jingle_rtp_init_media(JingleContent *content)
 		transmitter = "nice";
 	else
 		transmitter = "notransmitter";
+	g_object_unref(transport);
 
 	is_audio = !strcmp(media_type, "audio");
 

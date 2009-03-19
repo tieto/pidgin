@@ -185,6 +185,8 @@ jingle_iceudp_finalize (GObject *iceudp)
 {
 /*	JingleIceUdpPrivate *priv = JINGLE_ICEUDP_GET_PRIVATE(iceudp); */
 	purple_debug_info("jingle","jingle_iceudp_finalize\n");
+
+	G_OBJECT_CLASS(parent_class)->finalize(iceudp);
 }
 
 static void
