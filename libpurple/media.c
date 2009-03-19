@@ -1450,8 +1450,6 @@ purple_media_accept(PurpleMedia *media)
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 
-	g_signal_emit(media, purple_media_signals[ACCEPTED],
-			0, NULL, NULL);
 	streams = media->priv->streams;
 
 	for (; streams; streams = g_list_next(streams)) {
@@ -1461,6 +1459,9 @@ purple_media_accept(PurpleMedia *media)
 				stream->session->type), NULL);
 		stream->accepted = TRUE;
 	}
+
+	g_signal_emit(media, purple_media_signals[ACCEPTED],
+			0, NULL, NULL);
 
 	sessions = g_hash_table_get_values(media->priv->sessions);
 
