@@ -373,11 +373,11 @@ jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleM
 	transport = jingle_content_get_transport(content);
 
 	if (JINGLE_IS_ICEUDP(transport))
-		jingle_iceudp_add_local_candidate(transport,
+		jingle_iceudp_add_local_candidate(JINGLE_ICEUDP(transport),
 				jingle_rtp_candidate_to_iceudp(
 				session, 1, candidate));
 	else if (JINGLE_IS_RAWUDP(transport))
-		jingle_rawudp_add_local_candidate(transport,
+		jingle_rawudp_add_local_candidate(JINGLE_RAWUDP(transport),
 				jingle_rtp_candidate_to_rawudp(
 				session, 1, candidate));
 
