@@ -315,6 +315,7 @@ purple_media_dispose(GObject *media)
 	purple_media_manager_remove_media(priv->manager, PURPLE_MEDIA(media));
 
 	if (priv->confbin) {
+		gst_element_set_locked_state(priv->confbin, TRUE);
 		gst_element_set_state(GST_ELEMENT(priv->confbin),
 				GST_STATE_NULL);
 		gst_bin_remove(GST_BIN(purple_media_manager_get_pipeline(
@@ -1140,6 +1141,7 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 	if (session->src)
 		gst_object_unref(session->src);
 	session->src = src;
+	gst_element_set_locked_state(session->src, TRUE);
 	gst_bin_add(GST_BIN(session->media->priv->confbin),
 		    session->src);
 
@@ -1153,6 +1155,7 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 	purple_debug_info("media", "connecting pad: %s\n", 
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK
 			  ? "success" : "failure");
+	gst_element_set_locked_state(session->src, FALSE);
 }
 
 void 
