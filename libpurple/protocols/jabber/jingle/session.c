@@ -500,11 +500,14 @@ jingle_session_find_content(JingleSession *session, const gchar *name, const gch
 	for (; iter; iter = g_list_next(iter)) {
 		JingleContent *content = iter->data;
 		gchar *cname = jingle_content_get_name(content);
-		gchar *ccreator = jingle_content_get_creator(content);
-		gboolean result = (!strcmp(name, cname) && !strcmp(creator, ccreator));
-
+		gboolean result = !strcmp(name, cname);
 		g_free(cname);
-		g_free(ccreator);
+
+		if (creator != NULL) {
+			gchar *ccreator = jingle_content_get_creator(content);
+			result = (result && !strcmp(creator, ccreator));
+			g_free(ccreator);
+		}
 
 		if (result == TRUE)
 			return content;
@@ -519,11 +522,14 @@ jingle_session_find_pending_content(JingleSession *session, const gchar *name, c
 	for (; iter; iter = g_list_next(iter)) {
 		JingleContent *content = iter->data;
 		gchar *cname = jingle_content_get_name(content);
-		gchar *ccreator = jingle_content_get_creator(content);
-		gboolean result = (!strcmp(name, cname) && !strcmp(creator, ccreator));
-
+		gboolean result = !strcmp(name, cname);
 		g_free(cname);
-		g_free(ccreator);
+
+		if (creator != NULL) {
+			gchar *ccreator = jingle_content_get_creator(content);
+			result = (result && !strcmp(creator, ccreator));
+			g_free(ccreator);
+		}
 
 		if (result == TRUE)
 			return content;
