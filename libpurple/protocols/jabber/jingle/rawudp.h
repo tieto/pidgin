@@ -68,6 +68,9 @@ struct _JingleRawUdpCandidate
 	gchar *id;
 	gchar *ip;
 	guint port;
+
+	gboolean rem_known;	/* TRUE if the remote side knows
+				 * about this candidate */
 };
 
 #ifdef __cplusplus

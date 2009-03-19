@@ -68,6 +68,8 @@ jingle_iceudp_candidate_copy(JingleIceUdpCandidate *candidate)
 	new_candidate->username = g_strdup(candidate->username);
 	new_candidate->password = g_strdup(candidate->password);
 
+	new_candidate->rem_known = candidate->rem_known;
+
 	return new_candidate;
 }
 
