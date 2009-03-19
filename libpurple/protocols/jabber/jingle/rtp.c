@@ -347,14 +347,11 @@ jingle_rtp_candidates_prepared_cb(PurpleMedia *media,
 		gchar *sid, gchar *name, JingleSession *session)
 {
 	JingleContent *content = jingle_session_find_content(
-			session, sid, "initiator");
+			session, sid, NULL);
 	JingleTransport *oldtransport, *transport;
 	GList *candidates;
 
 	purple_debug_info("jingle-rtp", "jingle_rtp_candidates_prepared_cb\n");
-
-	if (content == NULL)
-		jingle_session_find_content(session, sid, "responder");
 
 	if (content == NULL) {
 		purple_debug_error("jingle-rtp",
@@ -389,14 +386,10 @@ static void
 jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleMediaCandidate *candidate, JingleSession *session)
 {
 	JingleContent *content = jingle_session_find_content(
-			session, sid, "initiator");
+			session, sid, NULL);
 	JingleTransport *transport;
 
 	purple_debug_info("jingle-rtp", "jingle_rtp_new_candidate_cb\n");
-
-	if (content == NULL)
-		content = jingle_session_find_content(
-			session, sid, "responder");
 
 	if (content == NULL) {
 		purple_debug_error("jingle-rtp",
