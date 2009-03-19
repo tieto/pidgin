@@ -676,6 +676,7 @@ jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionTyp
 		g_object_unref(session);
 
 		jingle_rtp_add_payloads(description, codecs);
+		purple_media_codec_list_free(codecs);
 	}
 	return node;
 }
