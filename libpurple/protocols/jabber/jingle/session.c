@@ -598,7 +598,7 @@ jingle_session_terminate_packet(JingleSession *session, const gchar *reason)
 	xmlnode *jingle = xmlnode_get_child(iq->node, "jingle");
 
 	if (reason != NULL) {
-		JabberIq *reason_node;
+		xmlnode *reason_node;
 		reason_node = xmlnode_new_child(jingle, "reason");
 		xmlnode_new_child(reason_node, reason);
 	}
