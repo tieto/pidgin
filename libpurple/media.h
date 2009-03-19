@@ -607,14 +607,16 @@ gboolean purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id
 					const gchar *name, GList *codecs);
 
 /**
- * Returns whether or not the candidates for a remote user are prepared
+ * Returns whether or not the candidates for set of streams are prepared
  *
  * @param media The media object to find the remote user in.
- * @param name The remote user to check for.
+ * @param session_id The session id of the session to check.
+ * @param participant The remote user to check for.
  *
- * @return @c TRUE All streams for the remote user have candidates prepared, @c FALSE otherwise.
+ * @return @c TRUE All streams for the given session_id/participant combination have candidates prepared, @c FALSE otherwise.
  */
-gboolean purple_media_candidates_prepared(PurpleMedia *media, const gchar *name);
+gboolean purple_media_candidates_prepared(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
 
 /**
  * Sets the send codec for the a session.

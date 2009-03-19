@@ -2239,28 +2239,26 @@ purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const g
 }
 
 gboolean
-purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
+purple_media_candidates_prepared(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
 {
-	GList *sessions;
+	GList *streams;
+	gboolean prepared = TRUE;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
-	sessions = purple_media_get_session_names(media);
+	streams = purple_media_get_streams(media, session_id, participant);
 
-	for (; sessions; sessions = sessions->next) {
-		const gchar *session = sessions->data;
-		GList *local = purple_media_get_active_local_candidates(
-				media, session, name);
-		GList *remote = purple_media_get_active_remote_candidates(
-				media, session, name);
-		gboolean result = (local == NULL || remote == NULL);
-		purple_media_candidate_list_free(local);
-		purple_media_candidate_list_free(remote);
-		if (!result)
-			return FALSE;
+	for (; streams; streams = g_list_delete_link(streams, streams)) {
+		PurpleMediaStream *stream = streams->data;
+		if (stream->candidates_prepared == FALSE) {
+			g_list_free(streams);
+			prepared = FALSE;
+			break;
+		}
 	}
 
-	return TRUE;
+	return prepared;
 }
 
 gboolean
