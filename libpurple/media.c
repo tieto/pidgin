@@ -57,7 +57,6 @@ struct _PurpleMediaSession
 	PurpleMediaSessionType type;
 
 	gboolean codecs_ready;
-	gboolean accepted;
 
 	GstElement *sink;
 	gulong window_id;
@@ -75,6 +74,7 @@ struct _PurpleMediaStream
 	GList *local_candidates;
 	GList *remote_candidates;
 
+	gboolean accepted;
 	gboolean candidates_prepared;
 
 	GList *active_local_candidates;
@@ -1236,7 +1236,7 @@ purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const g
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 
 	if ((session != NULL) && ((media->priv->initiator == FALSE &&
-			session->accepted == FALSE) ||
+			purple_media_accepted(media, session->id, NULL) == FALSE) ||
 			(purple_media_codecs_ready(media, session->id) == FALSE)))
 		return;
 
@@ -1249,7 +1249,8 @@ purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const g
 		gboolean session_ready = TRUE;
 
 		if ((media->priv->initiator == FALSE &&
-				session_data->accepted == FALSE) ||
+				purple_media_accepted(media,
+				session->id, NULL) == FALSE) ||
 				(purple_media_codecs_ready(
 				media, session_data->id) == FALSE))
 			conf_ready = FALSE;
@@ -1449,16 +1450,6 @@ purple_media_accept(PurpleMedia *media)
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 
-	sessions = g_hash_table_get_values(media->priv->sessions);
-
-	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-		PurpleMediaSession *session = sessions->data;
-		session->accepted = TRUE;
-
-		if (media->priv->initiator == FALSE)
-			purple_media_emit_ready(media, session, NULL);
-	}
-
 	g_signal_emit(media, purple_media_signals[ACCEPTED],
 			0, NULL, NULL);
 	streams = media->priv->streams;
@@ -1468,7 +1459,18 @@ purple_media_accept(PurpleMedia *media)
 		g_object_set(G_OBJECT(stream->stream), "direction",
 				purple_media_to_fs_stream_direction(
 				stream->session->type), NULL);
+		stream->accepted = TRUE;
 	}
+
+	sessions = g_hash_table_get_values(media->priv->sessions);
+
+	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+		PurpleMediaSession *session = sessions->data;
+
+		if (media->priv->initiator == FALSE)
+			purple_media_emit_ready(media, session, NULL);
+	}
+
 }
 
 void
@@ -2321,16 +2323,40 @@ gboolean
 purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
 		const gchar *participant)
 {
-	PurpleMediaSession *session;
+	gboolean accepted = TRUE;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
-	session = purple_media_get_session(media, sess_id);
+	if (sess_id == NULL && participant == NULL) {
+		GList *streams = media->priv->streams;
 
-	if (session == NULL)
-		return FALSE;
+		for (; streams; streams = g_list_next(streams)) {
+			PurpleMediaStream *stream = streams->data;
+			if (stream->accepted == FALSE) {
+				accepted = FALSE;
+				break;
+			}
+		}
+	} else if (sess_id != NULL && participant == NULL) {
+		GList *streams = purple_media_get_streams(
+				media, sess_id, NULL);
+		for (; streams; streams =
+				g_list_delete_link(streams, streams)) {
+			PurpleMediaStream *stream = streams->data;
+			if (stream->accepted == FALSE) {
+				g_list_free(streams);
+				accepted = FALSE;
+				break;
+			}
+		}
+	} else if (sess_id != NULL && participant != NULL) {
+		PurpleMediaStream *stream = purple_media_get_stream(
+				media, sess_id, participant);
+		if (stream == NULL || stream->accepted == FALSE)
+			accepted = FALSE;
+	}
 
-	return session->accepted;
+	return accepted;
 }
 
 void purple_media_mute(PurpleMedia *media, gboolean active)
