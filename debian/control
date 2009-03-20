@@ -2,9 +2,10 @@ Source: pidgin
 Section: net
 Priority: optional
 Maintainer: Ari Pollak <ari@debian.org>
+Uploaders: Gerfried Fuchs <rhonda@debian.at>
 Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0),
  libgtk2.0-dev, libxss-dev, libmeanwhile-dev, libgadu-dev (>= 1:1.6+20060215-1),
- libnss3-dev (>= 3.11.7-1), tcl8.4-dev, tk8.4-dev, libgstreamer0.10-dev,
+ libnss3-dev, tcl8.4-dev, tk8.4-dev, libgstreamer0.10-dev,
  libgtkspell-dev, libltdl3-dev, libperl-dev,
  libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
  libebook1.2-dev, libedata-book1.2-dev, libcamel1.2-dev,

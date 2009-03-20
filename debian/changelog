@@ -1,10 +1,27 @@
+pidgin (2.4.3-4lenny1~bpo40+1) etch-backports; urgency=low
+
+  * Rebuild for etch-backports.
+  * Make pidgin.menu etch-style (use Apps/Net)
+  * Do not require a specific version for libnss3-dev (the one in etch works)
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Fri, 20 Mar 2009 10:49:50 +0100
+
+pidgin (2.4.3-4lenny1) stable; urgency=low
+
+  * debian/patches/29_icq-version.patch:  
+   - Apply stripped-down patch to change client version in ICQ; this 
+     should fix ICQ servers rejecting this purple version for now.
+     (Closes: #518988)
+
+ -- Ari Pollak <ari@debian.org>  Tue, 10 Mar 2009 20:19:38 -0400
+
 pidgin (2.4.3-4) unstable; urgency=low
 
   * debian/patches/28_upnp_dos.patch:
     - Backport patch from upstream to fix a possible DoS in the UPnP code
       (CVE-2008-2957, doesn't competely fix #488632)
 
- -- Ari Pollak <ari@debian.org>  Thu, 09 Oct 2008 19:35:43 -0400
+ -- Ari Pollak <ari@debian.org>  Mon, 24 Nov 2008 19:33:51 -0500
 
 pidgin (2.4.3-3) unstable; urgency=low
 
