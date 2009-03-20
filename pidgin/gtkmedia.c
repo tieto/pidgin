@@ -324,7 +324,7 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 	if (message->type != GST_MESSAGE_ELEMENT)
 		return TRUE;
 
-	if (gst_structure_has_name(
+	if (!gst_structure_has_name(
 			gst_message_get_structure(message), "level"))
 		return TRUE;
 
@@ -612,6 +612,10 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_widget_show(gtkmedia->priv->recv_progress);
 	}
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
+		GstElement *media_src = purple_media_get_src(media, sid);
+		gtkmedia->priv->send_level = gst_bin_get_by_name(
+				GST_BIN(media_src), "sendlevel");
+
 		gtkmedia->priv->send_progress = gtk_progress_bar_new();
 		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 320, 10);
 		gtk_box_pack_end(GTK_BOX(send_widget),
@@ -675,6 +679,13 @@ pidgin_media_state_changed_cb(PurpleMedia *media,
 	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW &&
 			sid != NULL && name != NULL) {
 		pidgin_media_ready_cb(media, gtkmedia, sid);
+	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED &&
+			purple_media_get_session_type(media, sid) &
+			PURPLE_MEDIA_RECV_AUDIO) {
+		GstElement *media_sink = purple_media_get_sink(media,
+				sid, name);
+		gtkmedia->priv->recv_level = gst_bin_get_by_name(
+				GST_BIN(media_sink), "recvlevel");
 	}
 }
 

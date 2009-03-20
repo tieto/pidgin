@@ -1770,6 +1770,7 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 					"liveadder", NULL);
 			sink = purple_media_manager_get_element(priv->manager,
 					PURPLE_MEDIA_RECV_AUDIO);
+			stream->sink = sink;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
 			stream->src = gst_element_factory_make(
 					"fsfunnel", NULL);
