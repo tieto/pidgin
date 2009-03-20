@@ -4789,7 +4789,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 
 		status_html = purple_status_get_attr_string(status, "message");
 
-		if (primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
+		if (status_html == NULL || primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
 		{
 			/* This is needed for us to un-set any previous away message. */
 			away = g_strdup("");
