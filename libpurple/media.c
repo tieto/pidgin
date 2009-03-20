@@ -56,8 +56,6 @@ struct _PurpleMediaSession
 
 	PurpleMediaSessionType type;
 
-	gboolean codecs_ready;
-
 	GstElement *sink;
 	gulong window_id;
 };
@@ -129,7 +127,6 @@ enum {
 	CANDIDATES_PREPARED,
 	CODECS_CHANGED,
 	NEW_CANDIDATE,
-	READY_NEW,
 	STATE_CHANGED,
 	LAST_SIGNAL
 };
@@ -249,10 +246,6 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 purple_smarshal_VOID__POINTER_POINTER_OBJECT,
 					 G_TYPE_NONE, 3, G_TYPE_POINTER,
 					 G_TYPE_POINTER, PURPLE_TYPE_MEDIA_CANDIDATE);
-	purple_media_signals[READY_NEW] = g_signal_new("ready-new", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 purple_smarshal_VOID__STRING_STRING,
-					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 	purple_media_signals[STATE_CHANGED] = g_signal_new("state-changed", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__ENUM_STRING_STRING,
@@ -1226,57 +1219,6 @@ purple_media_session_from_fs_stream(PurpleMedia *media, FsStream *stream)
 	return NULL;
 }
 
-/* This could also emit when participants are ready */
-static void
-purple_media_emit_ready(PurpleMedia *media, PurpleMediaSession *session, const gchar *participant)
-{
-	GList *sessions;
-	gboolean conf_ready = TRUE;
-
-	g_return_if_fail(PURPLE_IS_MEDIA(media));
-
-	if ((session != NULL) && ((media->priv->initiator == FALSE &&
-			purple_media_accepted(media, session->id, NULL) == FALSE) ||
-			(purple_media_codecs_ready(media, session->id) == FALSE)))
-		return;
-
-	sessions = g_hash_table_get_values(media->priv->sessions);
-
-	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-		PurpleMediaSession *session_data = sessions->data;
-		GList *streams = purple_media_get_streams(media,
-				session_data->id, NULL);
-		gboolean session_ready = TRUE;
-
-		if ((media->priv->initiator == FALSE &&
-				purple_media_accepted(media,
-				session->id, NULL) == FALSE) ||
-				(purple_media_codecs_ready(
-				media, session_data->id) == FALSE))
-			conf_ready = FALSE;
-
-		for (; streams; streams = g_list_delete_link(streams, streams)) {
-			PurpleMediaStream *stream = streams->data;
-			if (stream->candidates_prepared == FALSE) {
-				session_ready = FALSE;
-				conf_ready = FALSE;
-			} else if (session_data == session)
-				g_signal_emit(media, purple_media_signals[READY_NEW],
-						0, session_data->id, stream->participant);
-		}
-
-		if (session_ready == TRUE &&
-				(session == session_data || session == NULL))
-			g_signal_emit(media, purple_media_signals[READY_NEW],
-					0, session_data->id, NULL);
-	}
-
-	if (conf_ready == TRUE) {
-		g_signal_emit(media, purple_media_signals[READY_NEW],
-				0, NULL, NULL);
-	}
-}
-
 static gboolean
 media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 {
@@ -1365,16 +1307,7 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
 					PurpleMediaSession *session = sessions->data;
 					if (session->session == fssession) {
-						gboolean ready;
-						gchar *session_id;
-
-						g_object_get(session->session, "codecs-ready", &ready, NULL);
-						if (session->codecs_ready == FALSE && ready == TRUE) {
-							session->codecs_ready = ready;
-							purple_media_emit_ready(media, session, NULL);
-						}
-
-						session_id = g_strdup(session->id);
+						gchar *session_id = g_strdup(session->id);
 						g_signal_emit(media, purple_media_signals[CODECS_CHANGED], 0, session_id);
 						g_free(session_id);
 						g_list_free(sessions);
@@ -1445,7 +1378,6 @@ purple_media_error(PurpleMedia *media, const gchar *error, ...)
 void
 purple_media_accept(PurpleMedia *media)
 {
-	GList *sessions;
 	GList *streams;
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
@@ -1462,16 +1394,6 @@ purple_media_accept(PurpleMedia *media)
 
 	g_signal_emit(media, purple_media_signals[ACCEPTED],
 			0, NULL, NULL);
-
-	sessions = g_hash_table_get_values(media->priv->sessions);
-
-	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-		PurpleMediaSession *session = sessions->data;
-
-		if (media->priv->initiator == FALSE)
-			purple_media_emit_ready(media, session, NULL);
-	}
-
 }
 
 void
@@ -1740,7 +1662,6 @@ purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *sessio
 			purple_media_signals[CANDIDATES_PREPARED],
 			0, session->id, name);
 
-	purple_media_emit_ready(session->media, session, name);
 	g_free(name);
 }
 
