@@ -210,6 +210,9 @@ google_session_ready(GoogleSession *session)
 
 		google_session_send_candidates(session->media,
 				"google-voice", session->remote_jid, session);
+
+		g_signal_handlers_disconnect_by_func(G_OBJECT(session->media),
+				G_CALLBACK(google_session_ready), session);
 	}
 }
 
