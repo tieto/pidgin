@@ -335,15 +335,14 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 	}
 }
 
-static void jingle_rtp_send_initiate(JingleSession *session);
-static void jingle_rtp_send_accept(JingleSession *session);
+static void jingle_rtp_ready(JingleSession *session);
 
 static void
 jingle_rtp_accepted_cb(PurpleMedia *media, gchar *sid, gchar *name,
 		JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "jingle_rtp_accepted_cb\n");
-	jingle_rtp_send_accept(session);
+	jingle_rtp_ready(session);
 }
 
 static void
@@ -377,8 +376,7 @@ jingle_rtp_candidates_prepared_cb(PurpleMedia *media,
 	jingle_content_set_pending_transport(content, transport);
 	jingle_content_accept_transport(content);
 
-	jingle_rtp_send_initiate(session);
-	jingle_rtp_send_accept(session);
+	jingle_rtp_ready(session);
 }
 
 static void
@@ -387,8 +385,7 @@ jingle_rtp_codecs_changed_cb(PurpleMedia *media, gchar *sid,
 {
 	purple_debug_info("jingle-rtp", "jingle_rtp_codecs_changed_cb: "
 			"session_id: %s jingle_session: %p\n", sid, session);
-	jingle_rtp_send_initiate(session);
-	jingle_rtp_send_accept(session);
+	jingle_rtp_ready(session);
 }
 
 static void
@@ -453,35 +450,33 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type
 }
 
 static void
-jingle_rtp_send_initiate(JingleSession *session)
+jingle_rtp_ready(JingleSession *session)
 {
 	PurpleMedia *media = jingle_rtp_get_media(session);
 
-	if (jingle_session_is_initiator(session) == TRUE &&
+	if (purple_media_candidates_prepared(media, NULL, NULL) &&
 			purple_media_codecs_ready(media, NULL) &&
-			purple_media_candidates_prepared(media, NULL, NULL)) {
-		JabberIq *iq = jingle_session_to_packet(
-				session, JINGLE_SESSION_INITIATE);
-		jabber_iq_set_callback(iq,
-				jingle_rtp_initiate_ack_cb, session);
-		jabber_iq_send(iq);
-		g_signal_connect(G_OBJECT(media), "new-candidate",
-				G_CALLBACK(jingle_rtp_new_candidate_cb),
+			(jingle_session_is_initiator(session) == TRUE ||
+			purple_media_accepted(media, NULL, NULL))) {
+		if (jingle_session_is_initiator(session)) {
+			JabberIq *iq = jingle_session_to_packet(
+					session, JINGLE_SESSION_INITIATE);
+			jabber_iq_set_callback(iq,
+					jingle_rtp_initiate_ack_cb, session);
+			jabber_iq_send(iq);
+		} else {
+			jabber_iq_send(jingle_session_to_packet(session,
+					JINGLE_SESSION_ACCEPT));
+		}
+
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_accepted_cb), session);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_candidates_prepared_cb),
 				session);
-	}
-}
-
-static void
-jingle_rtp_send_accept(JingleSession *session)
-{
-	PurpleMedia *media = jingle_rtp_get_media(session);
-
-	if (jingle_session_is_initiator(session) == FALSE &&
-			purple_media_codecs_ready(media, NULL) &&
-			purple_media_accepted(media, NULL, NULL) &&
-			purple_media_candidates_prepared(media, NULL, NULL)) {
-		jabber_iq_send(jingle_session_to_packet(session,
-				JINGLE_SESSION_ACCEPT));
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_codecs_changed_cb),
+				session);
 		g_signal_connect(G_OBJECT(media), "new-candidate",
 				G_CALLBACK(jingle_rtp_new_candidate_cb),
 				session);
@@ -508,8 +503,9 @@ jingle_rtp_create_media(JingleContent *content)
 	purple_media_set_prpl_data(media, session);
 
 	/* connect callbacks */
-	g_signal_connect(G_OBJECT(media), "accepted",
-				 G_CALLBACK(jingle_rtp_accepted_cb), session);
+	if (jingle_session_is_initiator(session) == FALSE)
+		g_signal_connect(G_OBJECT(media), "accepted",
+				G_CALLBACK(jingle_rtp_accepted_cb), session);
 	g_signal_connect(G_OBJECT(media), "candidates-prepared",
 				 G_CALLBACK(jingle_rtp_candidates_prepared_cb), session);
 	g_signal_connect(G_OBJECT(media), "codecs-changed",
