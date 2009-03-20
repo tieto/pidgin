@@ -156,19 +156,29 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 }
 
 static void
-google_session_ready(PurpleMedia *media, gchar *id,
-		gchar *participant, GoogleSession *session)
+google_session_ready(GoogleSession *session)
 {
-	if (id == NULL && participant == NULL) {
+	PurpleMedia *media = session->media;
+	if (purple_media_codecs_ready(media, NULL) &&
+			purple_media_candidates_prepared(media, NULL, NULL)) {
 		gchar *me = g_strdup_printf("%s@%s/%s",
 				session->js->user->node,
 				session->js->user->domain,
 				session->js->user->resource);
-		JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+		JabberIq *iq;
 		xmlnode *sess, *desc, *payload;
 		GList *codecs, *iter;
+		gboolean is_initiator = !strcmp(session->id.initiator, me);
 
-		if (!strcmp(session->id.initiator, me)) {
+		if (!is_initiator &&
+				!purple_media_accepted(media, NULL, NULL)) {
+			g_free(me);
+			return;
+		}
+
+		iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+
+		if (is_initiator) {
 			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
 			xmlnode_set_attrib(iq->node, "from", session->id.initiator);
 			sess = google_session_create_xmlnode(session, "initiate");
@@ -309,7 +319,10 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 		return NULL;
 	}
 
-	g_signal_connect(G_OBJECT(session->media), "ready-new",
+	g_signal_connect_swapped(G_OBJECT(session->media),
+			"candidates-prepared",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
 			G_CALLBACK(google_session_ready), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
@@ -369,7 +382,12 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	purple_media_set_remote_codecs(session->media, "google-voice", session->remote_jid, codecs);
 
-	g_signal_connect(G_OBJECT(session->media), "ready-new",
+	g_signal_connect_swapped(G_OBJECT(session->media), "accepted",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session->media),
+			"candidates-prepared",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
 			G_CALLBACK(google_session_ready), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);

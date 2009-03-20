@@ -501,7 +501,7 @@ purple_media_candidate_new(const gchar *foundation, guint component_id,
 	return candidate;
 }
 
-static PurpleMediaCandidate *
+PurpleMediaCandidate *
 purple_media_candidate_copy(PurpleMediaCandidate *candidate)
 {
 	PurpleMediaCandidate *new_candidate;
@@ -756,7 +756,7 @@ purple_media_codec_new(int id, const char *encoding_name,
 	return codec;
 }
 
-static PurpleMediaCodec *
+PurpleMediaCodec *
 purple_media_codec_copy(PurpleMediaCodec *codec)
 {
 	PurpleMediaCodec *new_codec;

@@ -207,6 +207,16 @@ PurpleMediaCandidate *purple_media_candidate_new(
 		const gchar *ip, guint port);
 
 /**
+ * Copies a PurpleMediaCandidate instance.
+ *
+ * @param candidate The candidate to copy
+ *
+ * @return The newly created PurpleMediaCandidate copy.
+ */
+PurpleMediaCandidate *purple_media_candidate_copy(
+		PurpleMediaCandidate *candidate);
+
+/**
  * Copies a GList of PurpleMediaCandidate and its contents.
  *
  * @param candidates The list of candidates to be copied.
@@ -241,6 +251,15 @@ GType purple_media_codec_get_type(void);
  */
 PurpleMediaCodec *purple_media_codec_new(int id, const char *encoding_name,
 		PurpleMediaSessionType media_type, guint clock_rate);
+
+/**
+ * Copies a PurpleMediaCodec instance.
+ *
+ * @param codec The codec to copy
+ *
+ * @return The newly created PurpleMediaCodec copy.
+ */
+PurpleMediaCodec *purple_media_codec_copy(PurpleMediaCodec *codec);
 
 /**
  * Creates a string representation of the codec.
