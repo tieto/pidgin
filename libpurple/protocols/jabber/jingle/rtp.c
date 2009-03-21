@@ -439,12 +439,21 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type
 		gchar *sid, gchar *name, JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "state-changed: type %d id: %s name: %s\n", type, sid, name);
+}
 
-	if ((type == PURPLE_MEDIA_STATE_CHANGED_REJECTED ||
-			type == PURPLE_MEDIA_STATE_CHANGED_HANGUP) &&
-			sid == NULL && name == NULL) {
+static void
+jingle_rtp_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
+		gchar *sid, gchar *name, JingleSession *session)
+{
+	purple_debug_info("jingle-rtp", "stream-info: type %d "
+			"id: %s name: %s\n", type, sid, name);
+	if (type == PURPLE_MEDIA_INFO_HANGUP) {
 		jabber_iq_send(jingle_session_terminate_packet(
 				session, "success"));
+		g_object_unref(session);
+	} else if (type == PURPLE_MEDIA_INFO_REJECT) {
+		jabber_iq_send(jingle_session_terminate_packet(
+				session, "decline"));
 		g_object_unref(session);
 	}
 }
@@ -512,6 +521,8 @@ jingle_rtp_create_media(JingleContent *content)
 				 G_CALLBACK(jingle_rtp_codecs_changed_cb), session);
 	g_signal_connect(G_OBJECT(media), "state-changed",
 				 G_CALLBACK(jingle_rtp_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(media), "stream-info",
+			G_CALLBACK(jingle_rtp_stream_info_cb), session);
 
 	g_object_unref(session);
 	return media;
