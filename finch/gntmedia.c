@@ -244,15 +244,22 @@ finch_media_state_changed_cb(PurpleMedia *media,
 			 * to free the FinchMedia widget.
 			 */
 			g_object_unref(gntmedia);
-		} else if (type == PURPLE_MEDIA_STATE_CHANGED_REJECTED) {
-			finch_media_emit_message(gntmedia,
-					_("You have rejected the call."));
 		}
 	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW
 			&& sid != NULL && name != NULL) {
 		finch_media_ready_cb(media, gntmedia);
 	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED) {
 		finch_media_accept_cb(media, gntmedia);
+	}
+}
+
+static void
+finch_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
+		gchar *sid, gchar *name, FinchMedia *gntmedia)
+{
+	if (type == PURPLE_MEDIA_INFO_REJECT) {
+		finch_media_emit_message(gntmedia,
+				_("You have rejected the call."));
 	}
 }
 
@@ -285,6 +292,8 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 			}
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
 				G_CALLBACK(finch_media_state_changed_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "stream-info",
+				G_CALLBACK(finch_media_stream_info_cb), media);
 			break;
 		}
 		default:
