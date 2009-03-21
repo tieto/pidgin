@@ -677,12 +677,36 @@ void purple_media_set_input_volume(PurpleMedia *media, const gchar *session_id, 
 void purple_media_set_output_volume(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant, double level);
 
+/**
+ * Sets a video output window for the given session/stream.
+ *
+ * @param media The media instance to set the output window on.
+ * @param session_id The session to set the output window on.
+ * @param participant Optionally, the participant to set the output window on.
+ * @param window_id The window id use for embedding the video in.
+ *
+ * @return An id to reference the output window.
+ */
 gulong purple_media_set_output_window(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant,
 		gulong window_id);
 
+/**
+ * Removes all output windows from a given media session.
+ *
+ * @param media The instance to remove all output windows from.
+ */
 void purple_media_remove_output_windows(PurpleMedia *media);
 
+/**
+ * Gets the tee from a given session/stream.
+ *
+ * @param media The instance to get the tee from.
+ * @param session_id The id of the session to get the tee from.
+ * @param participant Optionally, the participant of the stream to get the tee from.
+ *
+ * @return The GstTee element from the chosen session/stream.
+ */
 GstElement *purple_media_get_tee(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
 
