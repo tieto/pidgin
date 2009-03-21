@@ -224,26 +224,33 @@ google_session_state_changed_cb(PurpleMedia *media,
 	if (sid == NULL && name == NULL) {
 		if (type == PURPLE_MEDIA_STATE_CHANGED_END) {
 			google_session_destroy(session);
-		} else if (type == PURPLE_MEDIA_STATE_CHANGED_HANGUP) {
-			xmlnode *sess;
-			JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-
-			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
-			sess = google_session_create_xmlnode(session, "terminate");
-			xmlnode_insert_child(iq->node, sess);
-	
-			jabber_iq_send(iq);
-		} else if (type == PURPLE_MEDIA_STATE_CHANGED_REJECTED) {
-			xmlnode *sess;
-			JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-
-			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
-			sess = google_session_create_xmlnode(session, "reject");
-			xmlnode_insert_child(iq->node, sess);
-	
-			jabber_iq_send(iq);
 		}
-		
+	}
+}
+
+static void
+google_session_stream_info_cb(PurpleMedia *media,
+		PurpleMediaStateChangedType type,
+		gchar *sid, gchar *name, GoogleSession *session)
+{
+	if (type == PURPLE_MEDIA_INFO_HANGUP) {
+		xmlnode *sess;
+		JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+
+		xmlnode_set_attrib(iq->node, "to", session->remote_jid);
+		sess = google_session_create_xmlnode(session, "terminate");
+		xmlnode_insert_child(iq->node, sess);
+
+		jabber_iq_send(iq);
+	} else if (type == PURPLE_MEDIA_INFO_REJECT) {
+		xmlnode *sess;
+		JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+
+		xmlnode_set_attrib(iq->node, "to", session->remote_jid);
+		sess = google_session_create_xmlnode(session, "reject");
+		xmlnode_insert_child(iq->node, sess);
+
+		jabber_iq_send(iq);
 	}
 }
 
@@ -329,6 +336,8 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 			G_CALLBACK(google_session_ready), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(session->media), "stream-info",
+			G_CALLBACK(google_session_stream_info_cb), session);
 
 	g_free(params);
 
@@ -394,6 +403,8 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 			G_CALLBACK(google_session_ready), session);
 	g_signal_connect(G_OBJECT(session->media), "state-changed",
 			G_CALLBACK(google_session_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(session->media), "stream-info",
+			G_CALLBACK(google_session_stream_info_cb), session);
 
 	purple_media_codec_list_free(codecs);
 
