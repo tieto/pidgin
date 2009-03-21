@@ -1115,36 +1115,6 @@ purple_media_get_session_names(PurpleMedia *media)
 }
 
 void 
-purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
-                                                  GstElement **video_src, GstElement **video_sink)
-{
-	GList *values;
-
-	g_return_if_fail(PURPLE_IS_MEDIA(media));
-
-	values = g_hash_table_get_values(media->priv->sessions);
-
-	for (; values; values = g_list_delete_link(values, values)) {
-		PurpleMediaSession *session = (PurpleMediaSession*)values->data;
-
-		if (session->type & PURPLE_MEDIA_SEND_AUDIO && audio_src)
-			*audio_src = session->src;
-		if (session->type & PURPLE_MEDIA_SEND_VIDEO && video_src)
-			*video_src = session->src;
-	}
-
-	values = media->priv->streams;
-	for (; values; values = g_list_next(values)) {
-		PurpleMediaStream *stream = (PurpleMediaStream*)values->data;
-
-		if (stream->session->type & PURPLE_MEDIA_RECV_AUDIO && audio_sink)
-			*audio_sink = stream->sink;
-		if (stream->session->type & PURPLE_MEDIA_RECV_VIDEO && video_sink)
-			*video_sink = stream->sink;
-	}
-}
-
-void 
 purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 {
 	PurpleMediaSession *session;

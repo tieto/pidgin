@@ -351,21 +351,6 @@ PurpleMediaSessionType purple_media_get_overall_type(PurpleMedia *media);
 GList *purple_media_get_session_names(PurpleMedia *media);
 
 /**
- * Gets an audio and video source and sink from the media session.
- *
- * Retrieves the first of each element in the media session.
- *
- * @param media The media session to retreive the sources and sinks from.
- * @param audio_src Set to the audio source.
- * @param audio_sink Set to the audio sink.
- * @param video_src Set to the video source.
- * @param video_sink Set to the video sink.
- */
-void purple_media_get_elements(PurpleMedia *media,
-			       GstElement **audio_src, GstElement **audio_sink,
-			       GstElement **video_src, GstElement **video_sink);
-
-/**
  * Sets the source on a session.
  *
  * @param media The media object the session is in.
