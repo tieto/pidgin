@@ -26,6 +26,14 @@ version 2.6.0 (??/??/2009):
 		* purple_request_field_set_ui_data
 		* purple_strequal
 		* xmlnode_from_file
+		* xmlnode_set_attrib_full
+
+		Changed:
+		* xmlnode_remove_attrib now removes all attributes with the
+		same name.  Previously, it would remove the first one found,
+		which was completely non-deterministic.  If you want to remove
+		the attribute with no namespace, then use NULL with
+		xmlnode_remove_with_namespace.
 
 		Deprecated:
 		* purple_buddy_get_local_alias
@@ -40,6 +48,8 @@ version 2.6.0 (??/??/2009):
 		* purple_status_set_attr_string
 		* purple_presence_add_status
 		* purple_presence_add_list
+		* xmlnode_set_attrib_with_namespace
+		* xmlnode_set_attrib_with_prefix
 
 	pidgin:
 		Added:
@@ -52,6 +62,7 @@ version 2.6.0 (??/??/2009):
 		* pidgin_blist_get_theme
 		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
+		* pidgin_notify_pounce_add
 
 	perl:
 		Changed:
