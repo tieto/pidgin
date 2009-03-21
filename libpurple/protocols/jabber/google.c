@@ -229,8 +229,7 @@ google_session_state_changed_cb(PurpleMedia *media,
 }
 
 static void
-google_session_stream_info_cb(PurpleMedia *media,
-		PurpleMediaStateChangedType type,
+google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		gchar *sid, gchar *name, GoogleSession *session)
 {
 	if (type == PURPLE_MEDIA_INFO_HANGUP) {
