@@ -45,6 +45,7 @@ G_BEGIN_DECLS
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 
 #define PURPLE_MEDIA_TYPE_STATE_CHANGED	(purple_media_state_changed_get_type())
+#define PURPLE_MEDIA_TYPE_INFO_TYPE	(purple_media_info_type_get_type())
 
 /** @copydoc _PurpleMedia */
 typedef struct _PurpleMedia PurpleMedia;
