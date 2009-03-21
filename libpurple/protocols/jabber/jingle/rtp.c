@@ -435,10 +435,11 @@ jingle_rtp_initiate_ack_cb(JabberStream *js, xmlnode *packet, gpointer data)
 }
 
 static void
-jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaStateChangedType type,
+jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, JingleSession *session)
 {
-	purple_debug_info("jingle-rtp", "state-changed: type %d id: %s name: %s\n", type, sid, name);
+	purple_debug_info("jingle-rtp", "state-changed: state %d "
+			"id: %s name: %s\n", state, sid, name);
 }
 
 static void

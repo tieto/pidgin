@@ -660,22 +660,21 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 }
 
 static void
-pidgin_media_state_changed_cb(PurpleMedia *media,
-		PurpleMediaStateChangedType type,
+pidgin_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, PidginMedia *gtkmedia)
 {
-	purple_debug_info("gtkmedia", "type: %d sid: %s name: %s\n",
-			type, sid, name);
+	purple_debug_info("gtkmedia", "state: %d sid: %s name: %s\n",
+			state, sid, name);
 	if (sid == NULL && name == NULL) {
-		if (type == PURPLE_MEDIA_STATE_CHANGED_END) {
+		if (state == PURPLE_MEDIA_STATE_END) {
 			pidgin_media_emit_message(gtkmedia,
 					_("The call has been terminated."));
 			gtk_widget_destroy(GTK_WIDGET(gtkmedia));
 		}
-	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW &&
+	} else if (state == PURPLE_MEDIA_STATE_NEW &&
 			sid != NULL && name != NULL) {
 		pidgin_media_ready_cb(media, gtkmedia, sid);
-	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED &&
+	} else if (state == PURPLE_MEDIA_STATE_CONNECTED &&
 			purple_media_get_session_type(media, sid) &
 			PURPLE_MEDIA_RECV_AUDIO) {
 		GstElement *media_sink = purple_media_get_sink(media,

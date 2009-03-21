@@ -171,12 +171,15 @@ purple_media_state_changed_get_type()
 	static GType type = 0;
 	if (type == 0) {
 		static const GEnumValue values[] = {
-			{ PURPLE_MEDIA_STATE_CHANGED_NEW, "PURPLE_MEDIA_STATE_CHANGED_NEW", "new" },
-			{ PURPLE_MEDIA_STATE_CHANGED_CONNECTED, "PURPLE_MEDIA_STATE_CHANGED_CONNECTED", "connected" },
-			{ PURPLE_MEDIA_STATE_CHANGED_END, "PURPLE_MEDIA_STATE_CHANGED_END", "end" },
+			{ PURPLE_MEDIA_STATE_NEW,
+				"PURPLE_MEDIA_STATE_NEW", "new" },
+			{ PURPLE_MEDIA_STATE_CONNECTED,
+				"PURPLE_MEDIA_STATE_CONNECTED", "connected" },
+			{ PURPLE_MEDIA_STATE_END,
+				"PURPLE_MEDIA_STATE_END", "end" },
 			{ 0, NULL, NULL }
 		};
-		type = g_enum_register_static("PurpleMediaStateChangedType", values);
+		type = g_enum_register_static("PurpleMediaState", values);
 	}
 	return type;
 }
@@ -271,7 +274,7 @@ purple_media_class_init (PurpleMediaClass *klass)
 	purple_media_signals[STATE_CHANGED] = g_signal_new("state-changed", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__ENUM_STRING_STRING,
-					 G_TYPE_NONE, 3, PURPLE_MEDIA_TYPE_STATE_CHANGED,
+					 G_TYPE_NONE, 3, PURPLE_MEDIA_TYPE_STATE,
 					 G_TYPE_STRING, G_TYPE_STRING);
 	purple_media_signals[STREAM_INFO] = g_signal_new("stream-info", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
@@ -1450,7 +1453,7 @@ purple_media_end(PurpleMedia *media,
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 	if (session_id == NULL && participant == NULL) {
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-				0, PURPLE_MEDIA_STATE_CHANGED_END,
+				0, PURPLE_MEDIA_STATE_END,
 				NULL, NULL);
 		g_object_unref(media);
 	}
@@ -1767,7 +1770,7 @@ purple_media_connected_cb(PurpleMediaStream *stream)
 
 	g_signal_emit(stream->session->media,
 			purple_media_signals[STATE_CHANGED],
-			0, PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
+			0, PURPLE_MEDIA_STATE_CONNECTED,
 			stream->session->id, stream->participant);
 	return FALSE;
 }
@@ -1907,7 +1910,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 		purple_media_add_session(media, session);
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-				0, PURPLE_MEDIA_STATE_CHANGED_NEW,
+				0, PURPLE_MEDIA_STATE_NEW,
 				session->id, NULL);
 
 		session_type = purple_media_from_fs(type, FS_DIRECTION_SEND);
@@ -1928,7 +1931,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		return FALSE;
 	} else {
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-				0, PURPLE_MEDIA_STATE_CHANGED_NEW,
+				0, PURPLE_MEDIA_STATE_NEW,
 				NULL, who);
 	}
 
@@ -2029,7 +2032,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added_cb), stream);
 
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-				0, PURPLE_MEDIA_STATE_CHANGED_NEW,
+				0, PURPLE_MEDIA_STATE_NEW,
 				session->id, who);
 	} else if (*direction != type_direction) {	
 		/* change direction */

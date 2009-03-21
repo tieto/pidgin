@@ -44,7 +44,7 @@ G_BEGIN_DECLS
 #define PURPLE_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA))
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 
-#define PURPLE_MEDIA_TYPE_STATE_CHANGED	(purple_media_state_changed_get_type())
+#define PURPLE_MEDIA_TYPE_STATE      (purple_media_state_changed_get_type())
 #define PURPLE_MEDIA_TYPE_INFO_TYPE	(purple_media_info_type_get_type())
 
 /** @copydoc _PurpleMedia */
@@ -91,10 +91,10 @@ typedef enum {
 
 /** Media state-changed types */
 typedef enum {
-	PURPLE_MEDIA_STATE_CHANGED_NEW = 0,
-	PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
-	PURPLE_MEDIA_STATE_CHANGED_END,
-} PurpleMediaStateChangedType;
+	PURPLE_MEDIA_STATE_NEW = 0,
+	PURPLE_MEDIA_STATE_CONNECTED,
+	PURPLE_MEDIA_STATE_END,
+} PurpleMediaState;
 
 /** Media info types */
 typedef enum {

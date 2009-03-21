@@ -217,12 +217,11 @@ google_session_ready(GoogleSession *session)
 }
 
 static void
-google_session_state_changed_cb(PurpleMedia *media,
-		PurpleMediaStateChangedType type,
+google_session_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, GoogleSession *session)
 {
 	if (sid == NULL && name == NULL) {
-		if (type == PURPLE_MEDIA_STATE_CHANGED_END) {
+		if (state == PURPLE_MEDIA_STATE_END) {
 			google_session_destroy(session);
 		}
 	}

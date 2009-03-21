@@ -226,14 +226,13 @@ finch_media_wait_cb(PurpleMedia *media, FinchMedia *gntmedia)
 }
 
 static void
-finch_media_state_changed_cb(PurpleMedia *media,
-		PurpleMediaStateChangedType type,
+finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, FinchMedia *gntmedia)
 {
-	purple_debug_info("gntmedia", "type: %d sid: %s name: %s\n",
-			type, sid, name);
+	purple_debug_info("gntmedia", "state: %d sid: %s name: %s\n",
+			state, sid, name);
 	if (sid == NULL && name == NULL) {
-		if (type == PURPLE_MEDIA_STATE_CHANGED_END) {
+		if (state == PURPLE_MEDIA_STATE_END) {
 			finch_media_emit_message(gntmedia,
 					_("The call has been terminated."));
 			finch_conversation_set_info_widget(
@@ -245,10 +244,10 @@ finch_media_state_changed_cb(PurpleMedia *media,
 			 */
 			g_object_unref(gntmedia);
 		}
-	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW
+	} else if (state == PURPLE_MEDIA_STATE_NEW
 			&& sid != NULL && name != NULL) {
 		finch_media_ready_cb(media, gntmedia);
-	} else if (type == PURPLE_MEDIA_STATE_CHANGED_CONNECTED) {
+	} else if (state == PURPLE_MEDIA_STATE_CONNECTED) {
 		finch_media_accept_cb(media, gntmedia);
 	}
 }
