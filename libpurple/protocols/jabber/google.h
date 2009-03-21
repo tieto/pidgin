@@ -27,6 +27,7 @@
 #include "jabber.h"
 #include "media.h"
 
+#define GOOGLE_VOICE_CAP "http://www.google.com/xmpp/protocol/voice/v1"
 #define GOOGLE_JINGLE_INFO_NAMESPACE "google:jingleinfo"
 
 void jabber_gmail_init(JabberStream *js);

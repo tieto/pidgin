@@ -62,13 +62,6 @@
 #include "jingle/jingle.h"
 #include "jingle/rtp.h"
 
-#ifdef USE_VV
-#include <gst/farsight/fs-conference-iface.h>
-
-#define GTALK_CAP "http://www.google.com/xmpp/protocol/voice/v1"
-
-#endif
-
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
@@ -2643,7 +2636,7 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 	if (type & PURPLE_MEDIA_AUDIO &&
 			!jabber_buddy_has_capability(jb,
 			JINGLE_APP_RTP_SUPPORT_AUDIO) &&
-			jabber_buddy_has_capability(jb, GTALK_CAP))
+			jabber_buddy_has_capability(jb, GOOGLE_VOICE_CAP))
 		return jabber_google_session_initiate(gc->proto_data, who, type);
 	else
 		return jingle_rtp_initiate_media(gc->proto_data, who, type);
@@ -2691,7 +2684,7 @@ PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
 			caps |= PURPLE_MEDIA_CAPS_MODIFY_SESSION |
 					PURPLE_MEDIA_CAPS_CHANGE_DIRECTION;
 	}
-	if (jabber_buddy_has_capability(jb, GTALK_CAP))
+	if (jabber_buddy_has_capability(jb, GOOGLE_VOICE_CAP))
 		caps |= PURPLE_MEDIA_CAPS_AUDIO;
 
 	return caps;
