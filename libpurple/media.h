@@ -351,26 +351,6 @@ PurpleMediaSessionType purple_media_get_overall_type(PurpleMedia *media);
 GList *purple_media_get_session_names(PurpleMedia *media);
 
 /**
- * Sets the source on a session.
- *
- * @param media The media object the session is in.
- * @param sess_id The session id of the session to set the source on.
- * @param src The source to set the session source to.
- */
-void purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src);
-
-/**
- * Sets the sink on a stream.
- *
- * @param media The media object the session is in.
- * @param sess_id The session id the stream belongs to.
- * @param sess_id The participant the stream is associated with.
- * @param sink The source to set the session sink to.
- */
-void purple_media_set_sink(PurpleMedia *media, const gchar *sess_id,
-		const gchar *participant, GstElement *sink);
-
-/**
  * Gets the source from a session
  *
  * @param media The media object the session is in.

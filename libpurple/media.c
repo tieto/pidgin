@@ -1114,7 +1114,7 @@ purple_media_get_session_names(PurpleMedia *media)
 			g_hash_table_get_keys(media->priv->sessions) : NULL;
 }
 
-void 
+static void 
 purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 {
 	PurpleMediaSession *session;
@@ -1151,7 +1151,8 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 	gst_element_set_locked_state(session->src, FALSE);
 }
 
-void 
+#if 0
+static void 
 purple_media_set_sink(PurpleMedia *media, const gchar *sess_id,
 		const gchar *participant, GstElement *sink)
 {
@@ -1173,6 +1174,7 @@ purple_media_set_sink(PurpleMedia *media, const gchar *sess_id,
 	gst_bin_add(GST_BIN(stream->session->media->priv->confbin),
 		    stream->sink);
 }
+#endif
 
 GstElement *
 purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
