@@ -1406,9 +1406,6 @@ void
 purple_media_hangup(PurpleMedia *media)
 {
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-			0, PURPLE_MEDIA_STATE_CHANGED_HANGUP,
-			NULL, NULL);
 	g_signal_emit(media, purple_media_signals[STREAM_INFO],
 			0, PURPLE_MEDIA_INFO_HANGUP,
 			NULL, NULL);
@@ -1419,9 +1416,6 @@ void
 purple_media_reject(PurpleMedia *media)
 {
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-			0, PURPLE_MEDIA_STATE_CHANGED_REJECTED,
-			NULL, NULL);
 	g_signal_emit(media, purple_media_signals[STREAM_INFO],
 			0, PURPLE_MEDIA_INFO_REJECT,
 			NULL, NULL);

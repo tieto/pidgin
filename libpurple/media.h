@@ -92,8 +92,6 @@ typedef enum {
 typedef enum {
 	PURPLE_MEDIA_STATE_CHANGED_NEW = 0,
 	PURPLE_MEDIA_STATE_CHANGED_CONNECTED,
-	PURPLE_MEDIA_STATE_CHANGED_REJECTED,	/** Local user rejected the stream. */
-	PURPLE_MEDIA_STATE_CHANGED_HANGUP,	/** Local user hung up the stream */
 	PURPLE_MEDIA_STATE_CHANGED_END,
 } PurpleMediaStateChangedType;
 
