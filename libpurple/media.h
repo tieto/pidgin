@@ -189,6 +189,13 @@ GType purple_media_get_type(void);
 GType purple_media_state_changed_get_type(void);
 
 /**
+ * Gets the type of the info type enum
+ *
+ * @return The info type enum's GType
+ */
+GType purple_media_info_type_get_type(void);
+
+/**
  * Gets the type of the media candidate structure.
  *
  * @return The media canditate's GType
