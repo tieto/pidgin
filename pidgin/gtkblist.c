@@ -4838,8 +4838,9 @@ generic_error_destroy_cb(GtkObject *dialog,
 #define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
 
 static void
-ssl_faq_clicked_cb(GtkButton *button,
-                   PurpleAccount *account)
+ssl_faq_clicked_cb(PidginMiniDialog *mini_dialog,
+                   GtkButton *button,
+                   gpointer ignored)
 {
 	purple_notify_uri(NULL, SSL_FAQ_URI);
 }
@@ -4872,25 +4873,9 @@ add_generic_error_dialog(PurpleAccount *account,
 	g_object_set_data(G_OBJECT(mini_dialog), OBJECT_DATA_KEY_ACCOUNT,
 		account);
 
-	if(err->type == PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT) {
-		GtkWidget *faq_button = gtk_button_new();
-		GtkWidget *faq_label = gtk_label_new(NULL);
-		gtk_label_set_markup(GTK_LABEL(faq_label),
-			"<span underline=\"single\" foreground=\"blue\""
-			" size=\"smaller\">" SSL_FAQ_URI "</span>");
-#if GTK_CHECK_VERSION(2,6,0)
-		g_object_set(G_OBJECT(faq_label), "ellipsize",
-			PANGO_ELLIPSIZE_MIDDLE, NULL);
-#endif
-		gtk_container_add(GTK_CONTAINER(faq_button), faq_label);
-		gtk_button_set_relief(GTK_BUTTON(faq_button), GTK_RELIEF_NONE);
-
-		g_signal_connect(faq_button, "clicked",
-			(GCallback)ssl_faq_clicked_cb, account);
-
-		gtk_box_pack_start(PIDGIN_MINI_DIALOG(mini_dialog)->contents,
-			faq_button, FALSE, FALSE, 0);
-	}
+	 if(err->type == PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT)
+		pidgin_mini_dialog_add_button(PIDGIN_MINI_DIALOG(mini_dialog),
+				_("SSL FAQs"), ssl_faq_clicked_cb, NULL);
 
 	g_signal_connect_after(mini_dialog, "destroy",
 		(GCallback)generic_error_destroy_cb,

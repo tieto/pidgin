@@ -4789,7 +4789,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 
 		status_html = purple_status_get_attr_string(status, "message");
 
-		if (primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
+		if (status_html == NULL || primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
 		{
 			/* This is needed for us to un-set any previous away message. */
 			away = g_strdup("");
@@ -5030,10 +5030,15 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	purple_debug_error("oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
-		purple_notify_error(gc, NULL, _("Unable to Retrieve Buddy List"),
-						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
+		else
+			/* We only show this error the first time it happens */
+			purple_notify_error(gc, NULL,
+					_("Unable to Retrieve Buddy List"),
+					_("The AIM servers were temporarily unable to send "
+					"your buddy list.  Your buddy list is not lost, and "
+					"will probably become available in a few minutes."));
 		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
 		return 1;
 	}
