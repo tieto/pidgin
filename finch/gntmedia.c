@@ -159,25 +159,9 @@ finch_media_emit_message(FinchMedia *gntmedia, const char *msg)
 }
 
 static void
-finch_media_ready_cb(PurpleMedia *media, FinchMedia *gntmedia)
-{
-	GstElement *sendbin, *sendlevel;
-
-	GList *sessions = purple_media_get_session_names(media);
-
-	purple_media_audio_init_src(&sendbin, &sendlevel);
-
-	for (; sessions; sessions = sessions->next) {
-		purple_media_set_src(media, sessions->data, sendbin);
-	}
-	g_list_free(sessions);
-}
-
-static void
 finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
 {
 	GntWidget *parent;
-	GstElement *sendbin = NULL;
 
 	finch_media_emit_message(gntmedia, _("Call in progress."));
 
@@ -200,9 +184,6 @@ finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
 		parent = parent->parent;
 	gnt_box_readjust(GNT_BOX(parent));
 	gnt_widget_draw(parent);
-
-	purple_media_get_elements(media, &sendbin, NULL, NULL, NULL);
-	gst_element_set_state(GST_ELEMENT(sendbin), GST_STATE_PLAYING);
 }
 
 static void
@@ -244,9 +225,6 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 			 */
 			g_object_unref(gntmedia);
 		}
-	} else if (state == PURPLE_MEDIA_STATE_NEW
-			&& sid != NULL && name != NULL) {
-		finch_media_ready_cb(media, gntmedia);
 	} else if (state == PURPLE_MEDIA_STATE_CONNECTED) {
 		finch_media_accept_cb(media, gntmedia);
 	}
@@ -370,6 +348,41 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 	return PURPLE_CMD_STATUS_OK;
 }
 
+static GstElement *
+create_default_audio_src(void)
+{
+	GstElement *ret = NULL, *level = NULL;
+	purple_media_audio_init_src(&ret, &level);
+	return ret;
+}
+
+static GstElement *
+create_default_audio_sink(void)
+{
+	GstElement *ret = NULL, *level = NULL;
+	purple_media_audio_init_recv(&ret, &level);
+	return ret;
+}
+
+static PurpleMediaElementInfo default_audio_src =
+{
+	"finchdefaultaudiosrc",		/* id */
+	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SRC
+			| PURPLE_MEDIA_ELEMENT_ONE_SRC
+			| PURPLE_MEDIA_ELEMENT_UNIQUE,
+	create_default_audio_src,	/* create */
+};
+
+static PurpleMediaElementInfo default_audio_sink =
+{
+	"finchdefaultaudiosink",	/* id */
+	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
+			| PURPLE_MEDIA_ELEMENT_SINK
+			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+	create_default_audio_sink,	/* create */
+};
+
 void finch_media_manager_init(void)
 {
 	PurpleMediaManager *manager = purple_media_manager_get();
@@ -377,6 +390,10 @@ void finch_media_manager_init(void)
 	purple_cmd_register("call", "", PURPLE_CMD_P_DEFAULT,
 			PURPLE_CMD_FLAG_IM, NULL,
 			call_cmd_cb, _("call: Make an audio call."), NULL);
+
+	purple_debug_info("gntmedia", "Registering media element types\n");
+	purple_media_manager_set_active_element(manager, &default_audio_src);
+	purple_media_manager_set_active_element(manager, &default_audio_sink);
 }
 
 void finch_media_manager_uninit(void)
