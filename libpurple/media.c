@@ -128,6 +128,7 @@ enum {
 	CODECS_CHANGED,
 	NEW_CANDIDATE,
 	STATE_CHANGED,
+	STREAM_INFO,
 	LAST_SIGNAL
 };
 static guint purple_media_signals[LAST_SIGNAL] = {0};
@@ -247,6 +248,11 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_TYPE_NONE, 3, G_TYPE_POINTER,
 					 G_TYPE_POINTER, PURPLE_TYPE_MEDIA_CANDIDATE);
 	purple_media_signals[STATE_CHANGED] = g_signal_new("state-changed", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 purple_smarshal_VOID__ENUM_STRING_STRING,
+					 G_TYPE_NONE, 3, PURPLE_MEDIA_TYPE_STATE_CHANGED,
+					 G_TYPE_STRING, G_TYPE_STRING);
+	purple_media_signals[STREAM_INFO] = g_signal_new("stream-info", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__ENUM_STRING_STRING,
 					 G_TYPE_NONE, 3, PURPLE_MEDIA_TYPE_STATE_CHANGED,
@@ -1403,6 +1409,9 @@ purple_media_hangup(PurpleMedia *media)
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_HANGUP,
 			NULL, NULL);
+	g_signal_emit(media, purple_media_signals[STREAM_INFO],
+			0, PURPLE_MEDIA_INFO_HANGUP,
+			NULL, NULL);
 	purple_media_end(media, NULL, NULL);
 }
 
@@ -1412,6 +1421,9 @@ purple_media_reject(PurpleMedia *media)
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 	g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 			0, PURPLE_MEDIA_STATE_CHANGED_REJECTED,
+			NULL, NULL);
+	g_signal_emit(media, purple_media_signals[STREAM_INFO],
+			0, PURPLE_MEDIA_INFO_REJECT,
 			NULL, NULL);
 	purple_media_end(media, NULL, NULL);
 }

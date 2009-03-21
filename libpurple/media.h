@@ -97,6 +97,14 @@ typedef enum {
 	PURPLE_MEDIA_STATE_CHANGED_END,
 } PurpleMediaStateChangedType;
 
+/** Media info types */
+typedef enum {
+	PURPLE_MEDIA_INFO_HANGUP = 0,
+	PURPLE_MEDIA_INFO_REJECT,
+	PURPLE_MEDIA_INFO_MUTE,
+	PURPLE_MEDIA_INFO_HOLD,
+} PurpleMediaInfoType;
+
 typedef enum {
 	PURPLE_MEDIA_CANDIDATE_TYPE_HOST,
 	PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX,
