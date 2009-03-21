@@ -19,6 +19,7 @@
  *
  */
 #include "internal.h"
+#include "circbuffer.h"
 #include "core.h"
 #include "cipher.h"
 #include "debug.h"
@@ -63,7 +64,7 @@ struct _PurpleBOSHConnection {
 	int max_inactivity;
 	int wait;
 
-	GString *pending;
+	PurpleCircBuffer *pending;
 	int max_requests;
 	int requests;
 
@@ -177,7 +178,7 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	/* FIXME: This doesn't seem very random */
 	conn->rid = rand() % 100000 + 1728679472;
 
-	conn->pending = g_string_new("");
+	conn->pending = purple_circ_buffer_new(0 /* default grow size */);
 
 	conn->ready = FALSE;
 
@@ -197,8 +198,7 @@ jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 	if (conn->inactivity_timer)
 		purple_timeout_remove(conn->inactivity_timer);
 
-	if (conn->pending)
-		g_string_free(conn->pending, TRUE);
+	purple_circ_buffer_destroy(conn->pending);
 
 	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
 		if (conn->connections[i])
@@ -462,6 +462,7 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 	PurpleHTTPConnection *chosen;
 	GString *packet = NULL;
 	char *buf = NULL;
+	int len;
 
 	chosen = find_available_http_connection(conn);
 
@@ -478,7 +479,7 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 	}
 
 	if (node)
-		buf = xmlnode_to_str(node, NULL);
+		buf = xmlnode_to_str(node, &len);
 
 	if (type == PACKET_NORMAL && (!chosen ||
 	        (conn->max_requests > 0 && conn->requests == conn->max_requests))) {
@@ -488,7 +489,7 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 		 * will send these packets when connected).
 		 */
 		if (buf) {
-			conn->pending = g_string_append(conn->pending, buf);
+			purple_circ_buffer_append(conn->pending, buf, len); 
 			g_free(buf);
 		}
 		return;
@@ -510,12 +511,20 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 	if (type == PACKET_STREAM_RESTART)
 		packet = g_string_append(packet, " xmpp:restart='true'/>");
 	else {
+		gsize read_amt;
 		if (type == PACKET_TERMINATE)
 			packet = g_string_append(packet, " type='terminate'");
 
-		g_string_append_printf(packet, ">%s%s</body>", conn->pending->str,
-		                       buf ? buf : "");
-		g_string_truncate(conn->pending, 0);
+		packet = g_string_append_c(packet, '>');
+
+		while ((read_amt = purple_circ_buffer_get_max_read(conn->pending)) > 0) {
+			packet = g_string_append_len(packet, conn->pending->outptr, read_amt);
+			purple_circ_buffer_mark_read(conn->pending, read_amt);
+		}
+
+		if (buf)
+			packet = g_string_append_len(packet, buf, len);
+		packet = g_string_append(packet, "</body>");
 	}
 
 	g_free(buf);
@@ -537,7 +546,7 @@ static void http_connection_connected(PurpleHTTPConnection *conn)
 
 	if (conn->bosh->ready) {
 		purple_debug_info("jabber", "BOSH session already exists. Trying to reuse it.\n");
-		if (conn->bosh->pending && conn->bosh->pending->len > 0) {
+		if (conn->bosh->pending->bufused > 0) {
 			/* Send the pending data */
 			jabber_bosh_connection_send_native(conn->bosh, PACKET_NORMAL, NULL);
 		}
@@ -625,7 +634,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	                 conn->bosh);
 
 	if (conn->bosh->ready &&
-			(conn->bosh->requests == 0 || conn->bosh->pending->len)) {
+			(conn->bosh->requests == 0 || conn->bosh->pending->bufused > 0)) {
 		jabber_bosh_connection_send(conn->bosh, NULL);
 		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
 	}
