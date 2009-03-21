@@ -738,10 +738,7 @@ jabber_login(PurpleAccount *account)
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
-#ifdef USE_VV
 	js->sessions = NULL;
-#endif
-
 	js->stun_ip = NULL;
 	js->stun_port = 0;
 	js->stun_query = NULL;
@@ -1340,10 +1337,8 @@ void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-#ifdef USE_VV
 	/* Close all of the open Jingle sessions on this stream */
 	jingle_terminate_sessions(js);
-#endif
 
 	/* Don't perform any actions on the ssl connection
 	 * if we were forcibly disconnected because it will crash
@@ -2623,12 +2618,12 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
-#ifdef USE_VV
 
 PurpleMedia *
 jabber_initiate_media(PurpleConnection *gc, const char *who, 
 		      PurpleMediaSessionType type)
 {
+#ifdef USE_VV
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
 
@@ -2652,10 +2647,14 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 		return jabber_google_session_initiate(gc->proto_data, who, type);
 	else
 		return jingle_rtp_initiate_media(gc->proto_data, who, type);
+#else
+	return NULL;
+#endif
 }
 
 PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
 {
+#ifdef USE_VV
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
 	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
@@ -2696,9 +2695,10 @@ PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
 		caps |= PURPLE_MEDIA_CAPS_AUDIO;
 
 	return caps;
-}
-
+#else
+	return PURPLE_MEDIA_CAPS_NONE;
 #endif
+}
 
 void jabber_register_commands(void)
 {

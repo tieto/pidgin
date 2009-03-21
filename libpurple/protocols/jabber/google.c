@@ -510,12 +510,10 @@ google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *packe
 		google_session_handle_candidates(js, session, packet, sess);
 	}
 }
-#endif /* USE_VV */
 
 void
 jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 {
-#ifdef USE_VV
 	GoogleSession *session = NULL;
 	GoogleSessionId id;
 
@@ -572,10 +570,8 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	session->remote_jid = g_strdup(session->id.initiator);
 
 	google_session_parse_iq(js, session, packet);
-#else
-	/* TODO: send proper error response */
-#endif /* USE_VV */
 }
+#endif /* USE_VV */
 
 static void
 jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)

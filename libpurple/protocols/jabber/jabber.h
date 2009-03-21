@@ -321,12 +321,9 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
+PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who,
+		PurpleMediaSessionType type);
+PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
-
-#ifdef USE_VV
-PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaSessionType type);
-PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who);
-#endif
-
 #endif /* _PURPLE_JABBER_H_ */
