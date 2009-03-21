@@ -671,10 +671,6 @@ pidgin_media_state_changed_cb(PurpleMedia *media,
 			pidgin_media_emit_message(gtkmedia,
 					_("The call has been terminated."));
 			gtk_widget_destroy(GTK_WIDGET(gtkmedia));
-			
-		} else if (type == PURPLE_MEDIA_STATE_CHANGED_REJECTED) {
-			pidgin_media_emit_message(gtkmedia,
-					_("You have rejected the call."));
 		}
 	} else if (type == PURPLE_MEDIA_STATE_CHANGED_NEW &&
 			sid != NULL && name != NULL) {
@@ -686,6 +682,16 @@ pidgin_media_state_changed_cb(PurpleMedia *media,
 				sid, name);
 		gtkmedia->priv->recv_level = gst_bin_get_by_name(
 				GST_BIN(media_sink), "recvlevel");
+	}
+}
+
+static void
+pidgin_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
+		gchar *sid, gchar *name, PidginMedia *gtkmedia)
+{
+	if (type == PURPLE_MEDIA_INFO_REJECT) {
+		pidgin_media_emit_message(gtkmedia,
+				_("You have rejected the call."));
 	}
 }
 
@@ -718,6 +724,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 				G_CALLBACK(pidgin_media_accepted_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
 				G_CALLBACK(pidgin_media_state_changed_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "stream-info",
+				G_CALLBACK(pidgin_media_stream_info_cb), media);
 			break;
 		}
 		case PROP_SCREENNAME:
