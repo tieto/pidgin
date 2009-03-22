@@ -352,17 +352,6 @@ GList *purple_media_get_session_names(PurpleMedia *media);
 GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
 
 /**
- * Gets the sink from a stream
- *
- * @param media The media object the session is in.
- * @param sess_id The session id the stream belongs to.
- * @param participant The participant the stream is associated with.
- *
- * @return The sink retrieved.
- */
-GstElement *purple_media_get_sink(PurpleMedia *media, const gchar *sess_id, const gchar *participant);
-
-/**
  * Gets the pipeline from the media session.
  *
  * @param media The media session to retrieve the pipeline from.

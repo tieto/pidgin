@@ -56,7 +56,6 @@ struct _PurpleMediaSession
 
 	PurpleMediaSessionType type;
 
-	GstElement *sink;
 	gulong window_id;
 };
 
@@ -65,7 +64,6 @@ struct _PurpleMediaStream
 	PurpleMediaSession *session;
 	gchar *participant;
 	FsStream *stream;
-	GstElement *sink;
 	GstElement *src;
 	GstElement *tee;
 
@@ -1165,15 +1163,6 @@ purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
 	return (session != NULL) ? session->src : NULL;
 }
 
-GstElement *
-purple_media_get_sink(PurpleMedia *media, const gchar *sess_id, const gchar *participant)
-{
-	PurpleMediaStream *stream;
-	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, participant);
-	return (stream != NULL) ? stream->sink : NULL;
-}
-
 static PurpleMediaSession *
 purple_media_session_from_fs_stream(PurpleMedia *media, FsStream *stream)
 {
@@ -1752,7 +1741,6 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 					"liveadder", NULL);
 			sink = purple_media_manager_get_element(priv->manager,
 					PURPLE_MEDIA_RECV_AUDIO);
-			stream->sink = sink;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
 			stream->src = gst_element_factory_make(
 					"fsfunnel", NULL);
@@ -1772,13 +1760,6 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	sinkpad = gst_element_get_request_pad(stream->src, "sink%d");
 	gst_pad_link(srcpad, sinkpad);
 	gst_object_unref(sinkpad);
-
-	if (codec->media_type == FS_MEDIA_TYPE_VIDEO &&
-			stream->sink != NULL) {
-		gst_bin_add(GST_BIN(priv->confbin), stream->sink);
-		gst_element_set_state(stream->sink, GST_STATE_PLAYING);
-		gst_element_link(stream->tee, stream->sink);
-	}
 
 	stream->connected_cb_id = purple_timeout_add(0,
 			(GSourceFunc)purple_media_connected_cb, stream);
