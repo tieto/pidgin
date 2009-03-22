@@ -436,26 +436,12 @@ void purple_media_audio_init_src(GstElement **sendbin,
                                  GstElement **sendlevel);
 
 /**
- * Creates a default video source.
- *
- * @param sendbin Set to the newly created video source.
- */
-void purple_media_video_init_src(GstElement **sendbin);
-
-/**
  * Creates a default audio sink.
  *
  * @param recvbin Set to the newly created audio sink.
  * @param recvlevel Set to the newly created level within the audio sink.
  */
 void purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel);
-
-/**
- * Creates a default video sink.
- *
- * @param sendbin Set to the newly created video sink.
- */
-void purple_media_video_init_recv(GstElement **sendbin);
 
 /**
  * Adds a stream to a session.

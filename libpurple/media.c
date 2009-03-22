@@ -1429,47 +1429,6 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 }
 
 void
-purple_media_video_init_src(GstElement **sendbin)
-{
-	GstElement *src, *videoscale, *capsfilter;
-	GstPad *pad;
-	GstPad *ghost;
-	GstCaps *caps;
-	const gchar *video_plugin = purple_prefs_get_string(
-			"/purple/media/video/plugin");
-	const gchar *video_device = purple_prefs_get_string(
-			"/purple/media/video/device");
-
-	g_return_if_fail(sendbin != NULL);
-
-	*sendbin = gst_bin_new("purplesendvideobin");
-	src = gst_element_factory_make(video_plugin, "purplevideosource");
-	videoscale = gst_element_factory_make("videoscale", NULL);
-	capsfilter = gst_element_factory_make("capsfilter", NULL);
-
-	/* It was recommended to set the size < 352x288 and framerate < 20 */
-	caps = gst_caps_from_string("video/x-raw-yuv , width=[250,350] , "
-			"height=[200,275] , framerate=[10/1,20/1]");
-	g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
-
-	gst_bin_add_many(GST_BIN(*sendbin), src, videoscale, capsfilter, NULL);
-	gst_element_link_many(src, videoscale, capsfilter, NULL);
-
-	if (!strcmp(video_plugin, "videotestsrc")) {
-		/* unless is-live is set to true it doesn't throttle videotestsrc */
-		g_object_set (G_OBJECT(src), "is-live", TRUE, NULL);
-	}
-
-	pad = gst_element_get_static_pad(capsfilter, "src");
-	ghost = gst_ghost_pad_new("ghostsrc", pad);
-	gst_object_unref(pad);
-	gst_element_add_pad(*sendbin, ghost);
-
-	if (video_device != NULL && strcmp(video_device, ""))
-		g_object_set(G_OBJECT(src), "device", video_device, NULL);
-}
-
-void
 purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 {
 	GstElement *sink, *volume, *queue;
@@ -1495,14 +1454,6 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 	ghost = gst_ghost_pad_new("ghostsink", pad);
 	gst_element_add_pad(*recvbin, ghost);
 	g_object_set(G_OBJECT(*recvlevel), "message", TRUE, NULL);
-}
-
-void
-purple_media_video_init_recv(GstElement **recvbin)
-{
-	g_return_if_fail(recvbin != NULL);
-
-	*recvbin = gst_element_factory_make("autovideosink", NULL);
 }
 
 static void

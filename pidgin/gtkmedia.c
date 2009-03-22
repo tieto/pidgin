@@ -836,17 +836,49 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 static GstElement *
 create_default_video_src(void)
 {
-	GstElement *ret = NULL;
-	purple_media_video_init_src(&ret);
-	return ret;
+	GstElement *sendbin, *src, *videoscale, *capsfilter;
+	GstPad *pad;
+	GstPad *ghost;
+	GstCaps *caps;
+	const gchar *video_plugin = purple_prefs_get_string(
+			"/purple/media/video/plugin");
+	const gchar *video_device = purple_prefs_get_string(
+			"/purple/media/video/device");
+
+	sendbin = gst_bin_new("purplesendvideobin");
+	src = gst_element_factory_make(video_plugin, "purplevideosource");
+	videoscale = gst_element_factory_make("videoscale", NULL);
+	capsfilter = gst_element_factory_make("capsfilter", NULL);
+
+	/* It was recommended to set the size < 352x288 and framerate < 20 */
+	caps = gst_caps_from_string("video/x-raw-yuv , width=[250,350] , "
+			"height=[200,275] , framerate=[10/1,20/1]");
+	g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
+
+	gst_bin_add_many(GST_BIN(sendbin), src,
+			videoscale, capsfilter, NULL);
+	gst_element_link_many(src, videoscale, capsfilter, NULL);
+
+	if (!strcmp(video_plugin, "videotestsrc")) {
+		/* Set is-live to true to throttle videotestsrc */
+		g_object_set (G_OBJECT(src), "is-live", TRUE, NULL);
+	}
+
+	pad = gst_element_get_static_pad(capsfilter, "src");
+	ghost = gst_ghost_pad_new("ghostsrc", pad);
+	gst_object_unref(pad);
+	gst_element_add_pad(sendbin, ghost);
+
+	if (video_device != NULL && strcmp(video_device, ""))
+		g_object_set(G_OBJECT(src), "device", video_device, NULL);
+
+	return sendbin;
 }
 
 static GstElement *
 create_default_video_sink(void)
 {
-	GstElement *ret = NULL;
-	purple_media_video_init_recv(&ret);
-	return ret;
+	return gst_element_factory_make("autovideosink", NULL);
 }
 
 static GstElement *
