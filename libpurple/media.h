@@ -427,15 +427,6 @@ void purple_media_end(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant);
 
 /**
- * Enumerates a list of devices.
- *
- * @param plugin The name of the GStreamer plugin from which to enumerate devices.
- *
- * @return The list of enumerated devices.
- */
-GList *purple_media_get_devices(const gchar *plugin);
-
-/**
  * Creates a default audio source.
  *
  * @param sendbin Set to the newly created audio source.

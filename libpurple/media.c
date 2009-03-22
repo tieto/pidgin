@@ -38,7 +38,6 @@
 
 #ifdef USE_VV
 
-#include <gst/interfaces/propertyprobe.h>
 #include <gst/farsight/fs-conference-iface.h>
 
 /** @copydoc _PurpleMediaSession */
@@ -1398,77 +1397,6 @@ purple_media_end(PurpleMedia *media,
 				NULL, NULL);
 		g_object_unref(media);
 	}
-}
-
-GList*
-purple_media_get_devices(const gchar *plugin)
-{
-	GObjectClass *klass;
-	GstPropertyProbe *probe;
-	const GParamSpec *pspec;
-	GstElement *element = gst_element_factory_make(plugin, NULL);
-	GstElementFactory *factory;
-	const gchar *longname = NULL;
-	GList *ret = NULL;
-
-	if (element == NULL)
-		return NULL;
-
-	factory = gst_element_get_factory(element);
-
-	longname = gst_element_factory_get_longname(factory);
-	klass = G_OBJECT_GET_CLASS(element);
-
-	if (!g_object_class_find_property (klass, "device") ||
-			!GST_IS_PROPERTY_PROBE (element) ||
-			!(probe = GST_PROPERTY_PROBE (element)) ||
-			!(pspec = gst_property_probe_get_property (probe, "device"))) {
-		purple_debug_info("media", "Found source '%s' (%s) - no device\n",
-				longname, GST_PLUGIN_FEATURE (factory)->name);
-	} else {
-		gint n;
-		gchar *name;
-		GValueArray *array;
-
-		purple_debug_info("media", "Found devices\n");
-
-		/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
-		if (g_object_class_find_property (klass, "autoprobe")) {
-			g_object_set (G_OBJECT (element), "autoprobe", FALSE, NULL);
-			if (g_object_class_find_property (klass, "autoprobe-fps")) {
-				g_object_set (G_OBJECT (element), "autoprobe-fps", FALSE, NULL);
-			}
-		}
-
-		array = gst_property_probe_probe_and_get_values (probe, pspec);
-		if (array != NULL) {
-			for (n = 0 ; n < array->n_values ; n++) {
-				GValue *device = g_value_array_get_nth (array, n);
-				
-				ret = g_list_append(ret, g_value_dup_string(device));
-
-				g_object_set(G_OBJECT(element), "device",
-						g_value_get_string(device), NULL);
-				g_object_get(G_OBJECT(element), "device-name", &name, NULL);
-				purple_debug_info("media", "Found source '%s' (%s) - device '%s' (%s)\n",
-						  longname, GST_PLUGIN_FEATURE (factory)->name,
-						  name, g_value_get_string(device));
-				g_free(name);
-			}
-			g_value_array_free(array);
-		}
-
-		/* Restore autoprobe[-fps] to TRUE. */
-		if (g_object_class_find_property (klass, "autoprobe")) {
-			g_object_set (G_OBJECT (element), "autoprobe", TRUE, NULL);
-			if (g_object_class_find_property (klass, "autoprobe-fps")) {
-				g_object_set (G_OBJECT (element), "autoprobe-fps", TRUE, NULL);
-			}
-		}
-	}
-
-	gst_object_unref(element);
-	return ret;
 }
 
 void
