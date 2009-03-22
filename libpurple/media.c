@@ -1399,63 +1399,6 @@ purple_media_end(PurpleMedia *media,
 	}
 }
 
-void
-purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
-{
-	GstElement *src;
-	GstElement *volume;
-	GstPad *pad;
-	GstPad *ghost;
-	const gchar *audio_device = purple_prefs_get_string("/purple/media/audio/device");
-	double input_volume = purple_prefs_get_int("/purple/media/audio/volume/input")/10.0;
-
-	g_return_if_fail(sendbin != NULL && sendlevel != NULL);
-
-	*sendbin = gst_bin_new("purplesendaudiobin");
-	src = gst_element_factory_make("alsasrc", "asrc");
-	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
-	g_object_set(volume, "volume", input_volume, NULL);
-	*sendlevel = gst_element_factory_make("level", "sendlevel");
-	gst_bin_add_many(GST_BIN(*sendbin), src, volume, *sendlevel, NULL);
-	gst_element_link(src, volume);
-	gst_element_link(volume, *sendlevel);
-	pad = gst_element_get_pad(*sendlevel, "src");
-	ghost = gst_ghost_pad_new("ghostsrc", pad);
-	gst_element_add_pad(*sendbin, ghost);
-	g_object_set(G_OBJECT(*sendlevel), "message", TRUE, NULL);
-
-	if (audio_device != NULL && strcmp(audio_device, ""))
-		g_object_set(G_OBJECT(src), "device", audio_device, NULL);
-}
-
-void
-purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
-{
-	GstElement *sink, *volume, *queue;
-	GstPad *pad, *ghost;
-	double output_volume = purple_prefs_get_int(
-			"/purple/media/audio/volume/output")/10.0;
-
-	g_return_if_fail(recvbin != NULL && recvlevel != NULL);
-
-	*recvbin = gst_bin_new("pidginrecvaudiobin");
-	sink = gst_element_factory_make("alsasink", "asink");
-	g_object_set(G_OBJECT(sink), "async", FALSE, "sync", FALSE, NULL);
-	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
-	g_object_set(volume, "volume", output_volume, NULL);
-	*recvlevel = gst_element_factory_make("level", "recvlevel");
-	queue = gst_element_factory_make("queue", NULL);
-	gst_bin_add_many(GST_BIN(*recvbin), sink, volume,
-			*recvlevel, queue, NULL);
-	gst_element_link(*recvlevel, sink);
-	gst_element_link(volume, *recvlevel);
-	gst_element_link(queue, volume);
-	pad = gst_element_get_pad(queue, "sink");
-	ghost = gst_ghost_pad_new("ghostsink", pad);
-	gst_element_add_pad(*recvbin, ghost);
-	g_object_set(G_OBJECT(*recvlevel), "message", TRUE, NULL);
-}
-
 static void
 purple_media_new_local_candidate_cb(FsStream *stream,
 				    FsCandidate *local_candidate,

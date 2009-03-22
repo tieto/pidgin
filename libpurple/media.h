@@ -427,23 +427,6 @@ void purple_media_end(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant);
 
 /**
- * Creates a default audio source.
- *
- * @param sendbin Set to the newly created audio source.
- * @param sendlevel Set to the newly created level within the audio source.
- */
-void purple_media_audio_init_src(GstElement **sendbin,
-                                 GstElement **sendlevel);
-
-/**
- * Creates a default audio sink.
- *
- * @param recvbin Set to the newly created audio sink.
- * @param recvlevel Set to the newly created level within the audio sink.
- */
-void purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel);
-
-/**
  * Adds a stream to a session.
  *
  * It only adds a stream to one audio session or video session as
