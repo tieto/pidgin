@@ -944,26 +944,6 @@ purple_media_codec_get_type()
 	return type;
 }
 
-
-
-PurpleMediaSessionType
-purple_media_get_overall_type(PurpleMedia *media)
-{
-	GList *values;
-	PurpleMediaSessionType type = PURPLE_MEDIA_NONE;
-
-	g_return_val_if_fail(PURPLE_IS_MEDIA(media), type);
-
-	values = g_hash_table_get_values(media->priv->sessions);
-
-	for (; values; values = g_list_delete_link(values, values)) {
-		PurpleMediaSession *session = values->data;
-		type |= session->type;
-	}
-
-	return type;
-}
-
 static PurpleMediaSession*
 purple_media_get_session(PurpleMedia *media, const gchar *sess_id)
 {

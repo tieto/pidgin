@@ -333,15 +333,6 @@ GList *purple_media_codec_list_copy(GList *codecs);
 void purple_media_codec_list_free(GList *codecs);
 
 /**
- * Combines all the separate session types into a single PurpleMediaSessionType.
- *
- * @param media The media session to retrieve session types from.
- *
- * @return Combined type.
- */
-PurpleMediaSessionType purple_media_get_overall_type(PurpleMedia *media);
-
-/**
  * Gets a list of session names.
  *
  * @param media The media session to retrieve session names from.
