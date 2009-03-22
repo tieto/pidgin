@@ -2322,10 +2322,27 @@ void purple_media_set_output_volume(PurpleMedia *media,
 		PurpleMediaStream *stream = streams->data;
 
 		if (stream->session->type & PURPLE_MEDIA_RECV_AUDIO) {
-			GstElement *volume = gst_bin_get_by_name(
-					GST_BIN(stream->sink),
-					"purpleaudiooutputvolume");
-			g_object_set(volume, "volume", level, NULL);
+			GstElement *tee = stream->tee;
+			GstIterator *iter = gst_element_iterate_src_pads(tee);
+			GstPad *sinkpad;
+			while (gst_iterator_next(iter, (gpointer)&sinkpad)
+					 == GST_ITERATOR_OK) {
+				GstPad *peer = gst_pad_get_peer(sinkpad);
+				GstElement *volume;
+
+				if (peer == NULL) {
+					gst_object_unref(sinkpad);
+					continue;
+				}
+					
+				volume = gst_bin_get_by_name(GST_BIN(
+						GST_OBJECT_PARENT(peer)),
+						"purpleaudiooutputvolume");
+				g_object_set(volume, "volume", level, NULL);
+				gst_object_unref(peer);
+				gst_object_unref(sinkpad);
+			}
+			gst_iterator_free(iter);
 		}
 	}
 }
