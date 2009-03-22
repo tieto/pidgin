@@ -351,17 +351,51 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 static GstElement *
 create_default_audio_src(void)
 {
-	GstElement *ret = NULL, *level = NULL;
-	purple_media_audio_init_src(&ret, &level);
-	return ret;
+	GstElement *bin, *src, *volume;
+	GstPad *pad, *ghost;
+	const gchar *audio_device = purple_prefs_get_string(
+			"/purple/media/audio/device");
+	double input_volume = purple_prefs_get_int(
+			"/purple/media/audio/volume/input")/10.0;
+
+	bin = gst_bin_new("purplesendaudiobin");
+	src = gst_element_factory_make("alsasrc", "asrc");
+	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
+	g_object_set(volume, "volume", input_volume, NULL);
+	gst_bin_add_many(GST_BIN(bin), src, volume, NULL);
+	gst_element_link(src, volume);
+	pad = gst_element_get_pad(volume, "src");
+	ghost = gst_ghost_pad_new("ghostsrc", pad);
+	gst_element_add_pad(bin, ghost);
+
+	if (audio_device != NULL && strcmp(audio_device, ""))
+		g_object_set(G_OBJECT(src), "device", audio_device, NULL);
+
+	return bin;
 }
 
 static GstElement *
 create_default_audio_sink(void)
 {
-	GstElement *ret = NULL, *level = NULL;
-	purple_media_audio_init_recv(&ret, &level);
-	return ret;
+	GstElement *bin, *sink, *volume, *queue;
+	GstPad *pad, *ghost;
+	double output_volume = purple_prefs_get_int(
+			"/purple/media/audio/volume/output")/10.0;
+
+	bin = gst_bin_new("pidginrecvaudiobin");
+	sink = gst_element_factory_make("alsasink", "asink");
+	g_object_set(G_OBJECT(sink), "async", FALSE, "sync", FALSE, NULL);
+	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
+	g_object_set(volume, "volume", output_volume, NULL);
+	queue = gst_element_factory_make("queue", NULL);
+	gst_bin_add_many(GST_BIN(bin), sink, volume, queue, NULL);
+	gst_element_link(volume, sink);
+	gst_element_link(queue, volume);
+	pad = gst_element_get_pad(queue, "sink");
+	ghost = gst_ghost_pad_new("ghostsink", pad);
+	gst_element_add_pad(bin, ghost);
+
+	return bin;
 }
 
 static PurpleMediaElementInfo default_audio_src =
