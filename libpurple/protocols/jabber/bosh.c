@@ -50,6 +50,7 @@ struct _PurpleBOSHConnection {
 	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
 
 	gboolean ready;
+	gboolean ssl;
 
 	/* decoded URL */
 	char *host;
@@ -74,6 +75,7 @@ struct _PurpleBOSHConnection {
 
 struct _PurpleHTTPConnection {
 	PurpleBOSHConnection *bosh;
+	PurpleSslConnection *psc;
 	int fd;
 	int ie_handle;
 
@@ -139,6 +141,8 @@ jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
 
 	if (conn->ie_handle)
 		purple_input_remove(conn->ie_handle);
+	if (conn->psc)
+		purple_ssl_close(conn->psc);
 	if (conn->fd >= 0)
 		close(conn->fd);
 
@@ -181,6 +185,10 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	conn->pending = purple_circ_buffer_new(0 /* default grow size */);
 
 	conn->ready = FALSE;
+	if (purple_strcasestr(url, "https://") != NULL)
+		conn->ssl = TRUE;
+	else
+		conn->ssl = FALSE;
 
 	conn->connections[0] = jabber_bosh_http_connection_init(conn);
 
@@ -532,7 +540,8 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 	http_connection_send_request(chosen, packet);
 }
 
-static void http_connection_connected(PurpleHTTPConnection *conn)
+static void
+connection_common_established_cb(PurpleHTTPConnection *conn)
 {
 	/* Indicate we're ready and reset some variables */
 	conn->ready = TRUE;
@@ -645,20 +654,32 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	conn->handled_len = conn->body_len = 0;
 }
 
+/*
+ * Common code for reading, called from http_connection_read_cb_ssl and
+ * http_connection_read_cb.
+ */
 static void
-jabber_bosh_http_connection_read(gpointer data, gint fd,
-                                 PurpleInputCondition condition)
+http_connection_read(PurpleHTTPConnection *conn)
 {
-	PurpleHTTPConnection *conn = data;
 	char buffer[1025];
 	int cnt, count = 0;
 
 	if (!conn->buf)
 		conn->buf = g_string_new("");
 
-	while ((cnt = read(fd, buffer, sizeof(buffer))) > 0) {
+	/* Read once to prime cnt before the loop */
+	if (conn->psc)
+		cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
+	else
+		cnt = read(conn->fd, buffer, sizeof(buffer));
+	while (cnt > 0) {
 		count += cnt;
 		g_string_append_len(conn->buf, buffer, cnt);
+
+		if (conn->psc)
+			cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
+		else
+			cnt = read(conn->fd, buffer, sizeof(buffer));
 	}
 
 	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
@@ -679,7 +700,47 @@ jabber_bosh_http_connection_read(gpointer data, gint fd,
 	jabber_bosh_http_connection_process(conn);
 }
 
-static void http_connection_cb(gpointer data, gint source, const gchar *error)
+static void
+http_connection_read_cb(gpointer data, gint fd, PurpleInputCondition condition)
+{
+	PurpleHTTPConnection *conn = data;
+
+	http_connection_read(conn);
+}
+
+static void
+http_connection_read_cb_ssl(gpointer data, PurpleSslConnection *psc,
+                            PurpleInputCondition cond)
+{
+	PurpleHTTPConnection *conn = data;
+
+	http_connection_read(conn);
+}
+
+static void
+ssl_connection_established_cb(gpointer data, PurpleSslConnection *psc,
+                              PurpleInputCondition cond)
+{
+	PurpleHTTPConnection *conn = data;
+
+	purple_ssl_input_add(psc, http_connection_read_cb_ssl, conn);
+	connection_common_established_cb(conn);
+}
+
+static void
+ssl_connection_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error,
+                        gpointer data)
+{
+	PurpleHTTPConnection *conn = data;
+
+	/* sslconn frees the connection on error */
+	conn->psc = NULL;
+
+	purple_connection_ssl_error(conn->bosh->js->gc, error);
+}
+
+static void
+connection_established_cb(gpointer data, gint source, const gchar *error)
 {
 	PurpleHTTPConnection *conn = data;
 	PurpleConnection *gc = conn->bosh->js->gc;
@@ -694,11 +755,9 @@ static void http_connection_cb(gpointer data, gint source, const gchar *error)
 	}
 
 	conn->fd = source;
-
-	http_connection_connected(conn);
-
 	conn->ie_handle = purple_input_add(conn->fd, PURPLE_INPUT_READ,
-	        jabber_bosh_http_connection_read, conn);
+	        http_connection_read_cb, conn);
+	connection_common_established_cb(conn);
 }
 
 static void http_connection_connect(PurpleHTTPConnection *conn)
@@ -707,8 +766,24 @@ static void http_connection_connect(PurpleHTTPConnection *conn)
 	PurpleConnection *gc = bosh->js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
-	if ((purple_proxy_connect(conn, account, bosh->host, bosh->port,
-	                          http_connection_cb, conn)) == NULL) {
+	if (bosh->ssl) {
+		if (purple_ssl_is_supported()) {
+			conn->psc = purple_ssl_connect(account, bosh->host, bosh->port,
+			                               ssl_connection_established_cb,
+			                               ssl_connection_error_cb,
+			                               conn);
+			if (!conn->psc) {
+				purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+					_("Unable to establish SSL connection"));
+			}
+		} else {
+			purple_connection_error_reason(gc,
+			    PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+			    _("SSL support unavailable"));
+		}
+	} else if (purple_proxy_connect(conn, account, bosh->host, bosh->port,
+	                                 connection_established_cb, conn) == NULL) {
 		purple_connection_error_reason(gc,
 		    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		    _("Unable to create socket"));
@@ -732,7 +807,10 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 
 	/* TODO: Better error handling, circbuffer or possible integration with
 	 * low-level code in jabber.c */
-	ret = write(conn->fd, packet, strlen(packet));
+	if (conn->psc)
+		ret = purple_ssl_write(conn->psc, packet, strlen(packet));
+	else
+		ret = write(conn->fd, packet, strlen(packet));
 
 	++conn->requests;
 	++conn->bosh->requests;
