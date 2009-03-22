@@ -677,10 +677,22 @@ pidgin_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 	} else if (state == PURPLE_MEDIA_STATE_CONNECTED &&
 			purple_media_get_session_type(media, sid) &
 			PURPLE_MEDIA_RECV_AUDIO) {
-		GstElement *media_sink = purple_media_get_sink(media,
-				sid, name);
-		gtkmedia->priv->recv_level = gst_bin_get_by_name(
-				GST_BIN(media_sink), "recvlevel");
+		GstElement *tee = purple_media_get_tee(media, sid, name);
+		GstIterator *iter = gst_element_iterate_src_pads(tee);
+		GstPad *sinkpad;
+		if (gst_iterator_next(iter, (gpointer)&sinkpad)
+				 == GST_ITERATOR_OK) {
+			GstPad *peer = gst_pad_get_peer(sinkpad);
+			if (peer != NULL) {
+				gtkmedia->priv->recv_level =
+						gst_bin_get_by_name(
+						GST_BIN(GST_OBJECT_PARENT(
+						peer)), "recvlevel");
+				gst_object_unref(peer);
+			}
+			gst_object_unref(sinkpad);
+		}
+		gst_iterator_free(iter);
 	}
 }
 
