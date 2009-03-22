@@ -2607,9 +2607,10 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* unregister_user */
 	msn_send_attention,                     /* send_attention */
 	msn_attention_types,                    /* attention_types */
-
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	msn_get_account_text_table,             /* get_account_text_table */
+	NULL,                                   /* initiate_media */
+	NULL                                    /* can_do_media */
 };
 
 static PurplePluginInfo info =
@@ -2688,3 +2689,4 @@ init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(msn, init_plugin, info);
+

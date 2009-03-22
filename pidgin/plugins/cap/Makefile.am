@@ -15,7 +15,7 @@ cap_la_SOURCES = \
 
 endif
 
-cap_la_LIBADD = $(GTK_LIBS) $(SQLITE3_LIBS)
+cap_la_LIBADD = $(GTK_LIBS) $(SQLITE3_LIBS) $(FARSIGHT_LIBS) $(GSTPROPS_LIBS)
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
@@ -24,6 +24,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
+	$(GSTPROPS_CFLAGS) \
 	$(SQLITE3_CFLAGS)
 
 EXTRA_DIST = Makefile.mingw

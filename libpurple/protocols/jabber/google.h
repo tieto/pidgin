@@ -25,6 +25,10 @@
  * such that they don't intermingle with code for the XMPP RFCs and XEPs :) */
 
 #include "jabber.h"
+#include "media.h"
+
+#define GOOGLE_VOICE_CAP "http://www.google.com/xmpp/protocol/voice/v1"
+#define GOOGLE_JINGLE_INFO_NAMESPACE "google:jingleinfo"
 
 void jabber_gmail_init(JabberStream *js);
 void jabber_gmail_poke(JabberStream *js, xmlnode *node);
@@ -45,6 +49,10 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who);
 
 char *jabber_google_format_to_html(const char *text);
 
+PurpleMedia *jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type);
+void jabber_google_session_parse(JabberStream *js, xmlnode *node);
 
+void jabber_google_handle_jingle_info(JabberStream *js, xmlnode *packet);
+void jabber_google_send_jingle_info(JabberStream *js);
 
 #endif   /* _PURPLE_GOOGLE_H_ */

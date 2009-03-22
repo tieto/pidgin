@@ -26,6 +26,7 @@ finch_SOURCES = \
 	finch.c \
 	gntidle.c \
 	gntlog.c \
+	gntmedia.c \
 	gntnotify.c \
 	gntplugin.c \
 	gntpounce.c \
@@ -47,6 +48,7 @@ finch_headers = \
 	finch.h \
 	gntidle.h \
 	gntlog.h \
+	gntmedia.h \
 	gntnotify.h \
 	gntplugin.h \
 	gntpounce.h \
@@ -69,6 +71,7 @@ finch_LDADD = \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
+	$(FARSIGHT_LIBS) \
 	$(GNT_LIBS) \
 	$(GSTREAMER_LIBS) \
 	./libgnt/libgnt.la \
@@ -88,5 +91,6 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GNT_CFLAGS)

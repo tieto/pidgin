@@ -1201,6 +1201,23 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	gtk_widget_grab_focus(s->entry);
 }
 
+#ifdef USE_VV
+static void 
+menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = (PidginWindow *)data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleAccount *account = purple_conversation_get_account(conv);
+
+	purple_prpl_initiate_media(account,
+			purple_conversation_get_name(conv),
+			action == 0 ? PURPLE_MEDIA_AUDIO :
+			action == 1 ? PURPLE_MEDIA_VIDEO :
+			action == 2 ? PURPLE_MEDIA_AUDIO |
+			PURPLE_MEDIA_VIDEO : PURPLE_MEDIA_NONE);
+}
+#endif
+
 static void
 menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -3114,6 +3131,17 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
+#ifdef USE_VV
+	{ N_("/Conversation/M_edia"), NULL, NULL, 0, "<Branch>", NULL },
+
+	{ N_("/Conversation/Media/_Audio Call"), NULL, menu_initiate_media_call_cb, 0,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL },
+	{ N_("/Conversation/Media/_Video Call"), NULL, menu_initiate_media_call_cb, 1,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
+	{ N_("/Conversation/Media/Audio\\/Video _Call"), NULL, menu_initiate_media_call_cb, 2,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
+#endif
+
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_FILE },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 			0, "<Item>", NULL },
@@ -3424,6 +3452,18 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/View Log"));
 
+#ifdef USE_VV
+	win->menu.audio_call =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+					    N_("/Conversation/Media/Audio Call"));
+	win->menu.video_call =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+					    N_("/Conversation/Media/Video Call"));
+	win->menu.audio_video_call =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+					    N_("/Conversation/Media/Audio\\/Video Call"));
+#endif
+	
 	/* --- */
 
 	win->menu.send_file =
@@ -6407,6 +6447,36 @@ gray_stuff_out(PidginConversation *gtkconv)
 		else
 			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
 
+#ifdef USE_VV
+		/* check if account support voice calls, and if the current buddy
+			supports it */
+		if (account != NULL && purple_conversation_get_type(conv)
+					== PURPLE_CONV_TYPE_IM) {
+			PurpleMediaCaps caps =
+					purple_prpl_get_media_caps(account,
+					purple_conversation_get_name(conv));
+
+			gtk_widget_set_sensitive(win->menu.audio_call,
+					caps & PURPLE_MEDIA_CAPS_AUDIO
+					? TRUE : FALSE);
+			gtk_widget_set_sensitive(win->menu.video_call,
+					caps & PURPLE_MEDIA_CAPS_VIDEO
+					? TRUE : FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_video_call, 
+					caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
+					? TRUE : FALSE);
+		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+			/* for now, don't care about chats... */
+			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);
+		} else {
+			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);
+		}							
+#endif
+		
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		if (account != NULL)
 			gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), purple_account_get_protocol_id(account));
@@ -6944,7 +7014,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
 #endif
 	gtk_widget_add_events(event,
-                              GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
+			GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
 
@@ -7783,7 +7853,6 @@ pidgin_conversations_init(void)
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
-
 
 
 	/**********************************************************************

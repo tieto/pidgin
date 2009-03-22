@@ -59,6 +59,8 @@
 #include "pep.h"
 #include "adhoccommands.h"
 
+#include "jingle/jingle.h"
+#include "jingle/rtp.h"
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
@@ -729,6 +731,10 @@ jabber_login(PurpleAccount *account)
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
+	js->sessions = NULL;
+	js->stun_ip = NULL;
+	js->stun_port = 0;
+	js->stun_query = NULL;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1223,6 +1229,10 @@ void jabber_register_account(PurpleAccount *account)
 	server = connect_server[0] ? connect_server : js->user->domain;
 	js->certificate_CN = g_strdup(server);
 
+	js->stun_ip = NULL;
+	js->stun_port = 0;
+	js->stun_query = NULL;
+
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
 	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
@@ -1319,6 +1329,9 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
+
+	/* Close all of the open Jingle sessions on this stream */
+	jingle_terminate_sessions(js);
 
 	/* Don't perform any actions on the ssl connection
 	 * if we were forcibly disconnected because it will crash
@@ -1421,6 +1434,15 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
 
+	g_free(js->stun_ip);
+	js->stun_ip = NULL;
+
+	/* cancel DNS query for STUN, if one is ongoing */
+	if (js->stun_query) {
+		purple_dnsquery_destroy(js->stun_query);
+		js->stun_query = NULL;
+	}
+		
 	g_free(js);
 
 	gc->proto_data = NULL;
@@ -2588,6 +2610,87 @@ gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint
 gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
+}
+
+PurpleMedia *
+jabber_initiate_media(PurpleConnection *gc, const char *who, 
+		      PurpleMediaSessionType type)
+{
+#ifdef USE_VV
+	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberBuddy *jb;
+
+	if (!js) {
+		purple_debug_error("jabber",
+				"jabber_initiate_media: NULL stream\n");
+		return NULL;
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	if (!jb) {
+		purple_debug_error("jabber", "Could not find buddy\n");
+		return NULL;
+	}
+
+	if (type & PURPLE_MEDIA_AUDIO &&
+			!jabber_buddy_has_capability(jb,
+			JINGLE_APP_RTP_SUPPORT_AUDIO) &&
+			jabber_buddy_has_capability(jb, GOOGLE_VOICE_CAP))
+		return jabber_google_session_initiate(gc->proto_data, who, type);
+	else
+		return jingle_rtp_initiate_media(gc->proto_data, who, type);
+#else
+	return NULL;
+#endif
+}
+
+PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
+{
+#ifdef USE_VV
+	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberBuddy *jb;
+	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
+
+	if (!js) {
+		purple_debug_error("jabber", "jabber_can_do_media: NULL stream\n");
+		return FALSE;
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	if (!jb) {
+		purple_debug_error("jabber", "Could not find buddy\n");
+		return FALSE;
+	}
+
+	if (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_AUDIO))
+		caps |= PURPLE_MEDIA_CAPS_AUDIO |
+				PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION;
+	if (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_VIDEO))
+		caps |= PURPLE_MEDIA_CAPS_VIDEO |
+				PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION;
+	if (caps & PURPLE_MEDIA_CAPS_AUDIO && caps & PURPLE_MEDIA_CAPS_VIDEO)
+		caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
+	if (caps != PURPLE_MEDIA_CAPS_NONE) {
+		if (!jabber_buddy_has_capability(jb,
+				JINGLE_TRANSPORT_ICEUDP) &&
+				!jabber_buddy_has_capability(jb,
+				JINGLE_TRANSPORT_RAWUDP)) {
+			purple_debug_info("jingle-rtp", "Buddy doesn't "
+					"support the same transport types\n");
+			caps = PURPLE_MEDIA_CAPS_NONE;
+		} else
+			caps |= PURPLE_MEDIA_CAPS_MODIFY_SESSION |
+					PURPLE_MEDIA_CAPS_CHANGE_DIRECTION;
+	}
+	if (jabber_buddy_has_capability(jb, GOOGLE_VOICE_CAP))
+		caps |= PURPLE_MEDIA_CAPS_AUDIO;
+
+	return caps;
+#else
+	return PURPLE_MEDIA_CAPS_NONE;
+#endif
 }
 
 void jabber_register_commands(void)

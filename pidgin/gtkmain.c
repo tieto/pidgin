@@ -53,6 +53,7 @@
 #include "gtkft.h"
 #include "gtkidle.h"
 #include "gtklog.h"
+#include "gtkmedia.h"
 #include "gtknotify.h"
 #include "gtkplugin.h"
 #include "gtkpounce.h"
@@ -311,6 +312,9 @@ pidgin_ui_init(void)
 	pidgin_docklet_init();
 	pidgin_smileys_init();
 	pidgin_utils_init();
+#ifdef USE_VV
+	pidgin_medias_init();
+#endif
 }
 
 static GHashTable *ui_info = NULL;
@@ -465,6 +469,7 @@ int main(int argc, char *argv[])
 	gboolean opt_help = FALSE;
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
+	gboolean opt_nocrash = FALSE;
 	gboolean opt_version = FALSE;
 	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
@@ -496,6 +501,7 @@ int main(int argc, char *argv[])
 		{"login",        optional_argument, NULL, 'l'},
 		{"multiple",     no_argument,       NULL, 'm'},
 		{"nologin",      no_argument,       NULL, 'n'},
+		{"nocrash",		 no_argument,	    NULL, 'x'},
 		{"session",      required_argument, NULL, 's'},
 		{"version",      no_argument,       NULL, 'v'},
 		{"display",      required_argument, NULL, 'D'},
@@ -643,6 +649,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':   /* do not ensure single instance. */
 			opt_si = FALSE;
+			break;
+		case 'x':   /* --nocrash */
+			opt_nocrash = TRUE;
 			break;
 		case 'D':   /* --display */
 		case 'S':   /* --sync */
