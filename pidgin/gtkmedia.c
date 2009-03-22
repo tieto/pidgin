@@ -884,17 +884,57 @@ create_default_video_sink(void)
 static GstElement *
 create_default_audio_src(void)
 {
-	GstElement *ret = NULL, *level = NULL;
-	purple_media_audio_init_src(&ret, &level);
-	return ret;
+	GstElement *bin, *src, *volume, *level;
+	GstPad *pad, *ghost;
+	const gchar *audio_device = purple_prefs_get_string(
+			"/purple/media/audio/device");
+	double input_volume = purple_prefs_get_int(
+			"/purple/media/audio/volume/input")/10.0;
+
+	bin = gst_bin_new("purplesendaudiobin");
+	src = gst_element_factory_make("alsasrc", "asrc");
+	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
+	g_object_set(volume, "volume", input_volume, NULL);
+	level = gst_element_factory_make("level", "sendlevel");
+	gst_bin_add_many(GST_BIN(bin), src, volume, level, NULL);
+	gst_element_link(src, volume);
+	gst_element_link(volume, level);
+	pad = gst_element_get_pad(level, "src");
+	ghost = gst_ghost_pad_new("ghostsrc", pad);
+	gst_element_add_pad(bin, ghost);
+	g_object_set(G_OBJECT(level), "message", TRUE, NULL);
+
+	if (audio_device != NULL && strcmp(audio_device, ""))
+		g_object_set(G_OBJECT(src), "device", audio_device, NULL);
+
+	return bin;
 }
 
 static GstElement *
 create_default_audio_sink(void)
 {
-	GstElement *ret = NULL, *level = NULL;
-	purple_media_audio_init_recv(&ret, &level);
-	return ret;
+	GstElement *bin, *sink, *volume, *level, *queue;
+	GstPad *pad, *ghost;
+	double output_volume = purple_prefs_get_int(
+			"/purple/media/audio/volume/output")/10.0;
+
+	bin = gst_bin_new("pidginrecvaudiobin");
+	sink = gst_element_factory_make("alsasink", "asink");
+	g_object_set(G_OBJECT(sink), "async", FALSE, "sync", FALSE, NULL);
+	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
+	g_object_set(volume, "volume", output_volume, NULL);
+	level = gst_element_factory_make("level", "recvlevel");
+	queue = gst_element_factory_make("queue", NULL);
+	gst_bin_add_many(GST_BIN(bin), sink, volume, level, queue, NULL);
+	gst_element_link(level, sink);
+	gst_element_link(volume, level);
+	gst_element_link(queue, volume);
+	pad = gst_element_get_pad(queue, "sink");
+	ghost = gst_ghost_pad_new("ghostsink", pad);
+	gst_element_add_pad(bin, ghost);
+	g_object_set(G_OBJECT(level), "message", TRUE, NULL);
+
+	return bin;
 }
 
 static PurpleMediaElementInfo default_video_src =
