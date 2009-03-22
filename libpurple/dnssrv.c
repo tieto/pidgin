@@ -193,10 +193,12 @@ resolve(int in, int out)
 
 end:
 	size = g_list_length(ret);
+	/* TODO: Check return value */
 	write(out, &(query.type), sizeof(query.type));
 	write(out, &size, sizeof(size));
 	while (ret != NULL)
 	{
+		/* TODO: Check return value */
 		if (query.type == T_SRV) write(out, ret->data, sizeof(PurpleSrvResponse));
 		if (query.type == T_TXT) write(out, ret->data, sizeof(PurpleTxtResponse));
 		g_free(ret->data);

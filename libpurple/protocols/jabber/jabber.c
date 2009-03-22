@@ -2634,7 +2634,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 		return TRUE;
 	} else {
 		*error = g_strdup_printf(_("Unable to buzz, because %s does "
-			"not support it or do not wish to receive buzzes now."), alias);
+			"not support it or does not wish to receive buzzes now."), alias);
 		return FALSE;
 	}
 }
