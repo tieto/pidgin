@@ -1471,14 +1471,6 @@ purple_media_get_devices(const gchar *plugin)
 	return ret;
 }
 
-gchar *
-purple_media_element_get_device(GstElement *element)
-{
-	gchar *device;
-	g_object_get(G_OBJECT(element), "device", &device, NULL);
-	return device;
-}
-
 void
 purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 {

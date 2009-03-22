@@ -436,15 +436,6 @@ void purple_media_end(PurpleMedia *media, const gchar *session_id,
 GList *purple_media_get_devices(const gchar *plugin);
 
 /**
- * Gets the device the plugin is currently set to.
- *
- * @param element The plugin to retrieve the device from.
- *
- * @return The device retrieved.
- */
-gchar *purple_media_element_get_device(GstElement *element);
-
-/**
  * Creates a default audio source.
  *
  * @param sendbin Set to the newly created audio source.
