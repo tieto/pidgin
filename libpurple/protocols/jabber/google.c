@@ -104,28 +104,31 @@ static void
 google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		gchar *participant, GoogleSession *session)
 {
-	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
 	GList *candidates = purple_media_get_local_candidates(session->media, "google-voice",
 							      session->remote_jid);
 	PurpleMediaCandidate *transport;
-	xmlnode *sess;
-	xmlnode *candidate;
-	sess = google_session_create_xmlnode(session, "candidates");
-	xmlnode_insert_child(iq->node, sess);
-	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
 
 	for (;candidates;candidates = candidates->next) {
+		JabberIq *iq;
 		char port[8];
 		char pref[8];
+		xmlnode *sess;
+		xmlnode *candidate;
 		transport = (PurpleMediaCandidate*)(candidates->data);
 
-		if (!strcmp(transport->ip, "127.0.0.1"))
+		if (transport->component_id != PURPLE_MEDIA_COMPONENT_RTP)
 			continue;
+
+		iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+		sess = google_session_create_xmlnode(session, "candidates");
+		xmlnode_insert_child(iq->node, sess);
+		xmlnode_set_attrib(iq->node, "to", session->remote_jid);
 
 		candidate = xmlnode_new("candidate");
 
 		g_snprintf(port, sizeof(port), "%d", transport->port);
-		g_snprintf(pref, sizeof(pref), "%d", transport->priority);
+		g_snprintf(pref, sizeof(pref), "%f",
+				transport->priority/1000.0);
 
 		xmlnode_set_attrib(candidate, "address", transport->ip);
 		xmlnode_set_attrib(candidate, "port", port);
@@ -151,8 +154,9 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		xmlnode_set_attrib(candidate, "generation", "0");
 		xmlnode_set_attrib(candidate, "network", "0");
 		xmlnode_insert_child(sess, candidate);
+
+		jabber_iq_send(iq);
 	}
-	jabber_iq_send(iq);
 }
 
 static void
@@ -183,6 +187,9 @@ google_session_ready(GoogleSession *session)
 			xmlnode_set_attrib(iq->node, "from", session->id.initiator);
 			sess = google_session_create_xmlnode(session, "initiate");
 		} else {
+			google_session_send_candidates(session->media,
+					"google-voice", session->remote_jid,
+					session);
 			xmlnode_set_attrib(iq->node, "to", session->remote_jid);
 			xmlnode_set_attrib(iq->node, "from", me);
 			sess = google_session_create_xmlnode(session, "accept");
@@ -208,8 +215,10 @@ google_session_ready(GoogleSession *session)
 
 		jabber_iq_send(iq);
 
-		google_session_send_candidates(session->media,
-				"google-voice", session->remote_jid, session);
+		if (is_initiator)
+			google_session_send_candidates(session->media,
+					"google-voice", session->remote_jid,
+					session);
 
 		g_signal_handlers_disconnect_by_func(G_OBJECT(session->media),
 				G_CALLBACK(google_session_ready), session);
