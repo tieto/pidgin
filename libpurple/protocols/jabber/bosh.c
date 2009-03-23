@@ -30,6 +30,7 @@
 #include "bosh.h"
 
 #define MAX_HTTP_CONNECTIONS      2
+#define MAX_FAILED_CONNECTIONS    3
 
 typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
 
@@ -48,6 +49,7 @@ struct _PurpleBOSHConnection {
 	JabberStream *js;
 	gboolean pipelining;
 	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
+	unsigned short failed_connections;
 
 	gboolean ready;
 	gboolean ssl;
@@ -430,6 +432,10 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 static void
 http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 {
+	if (conn->failed_connections)
+		/* We've got some data, so reset the number of failed connections */
+		conn->failed_connections = 0;
+
 	if (conn->receive_cb) {
 		xmlnode *node = xmlnode_from_str(data, len);
 		if (node) {
@@ -602,8 +608,14 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		/* Hmmmm, fall back to multiple connections */
 		conn->bosh->pipelining = FALSE;
 
-	/* No! Please! Take me back. It was me, not you! I was weak! */
-	http_connection_connect(conn);
+	if (++conn->bosh->failed_connections == MAX_FAILED_CONNECTIONS) {
+		purple_connection_error_reason(conn->bosh->js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to establish a connection with the server"));
+	} else {
+		/* No! Please! Take me back. It was me, not you! I was weak! */
+		http_connection_connect(conn);
+	}
 }
 
 void jabber_bosh_connection_connect(PurpleBOSHConnection *bosh) {
@@ -710,6 +722,7 @@ http_connection_read(PurpleHTTPConnection *conn)
 
 		/* Process what we do have */
 	}
+
 
 	jabber_bosh_http_connection_process(conn);
 }
