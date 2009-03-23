@@ -24,16 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#include "internal.h"
-#include "account.h"
-#include "conversation.h"
-#include "debug.h"
-#include "notify.h"
-#include "prpl.h"
-#include "request.h"
-#include "server.h"
-#include "util.h"
-
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -46,6 +36,15 @@
 #include <gntutils.h>
 
 #include "finch.h"
+
+#include "account.h"
+#include "conversation.h"
+#include "debug.h"
+#include "notify.h"
+#include "prpl.h"
+#include "request.h"
+#include "server.h"
+#include "util.h"
 
 #include "gntpounce.h"
 

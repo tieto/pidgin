@@ -2,7 +2,6 @@
 #include <sys/types.h>
 
 #include "internal.h"
-#include "blist.h"
 
 #include "gnt.h"
 #include "gntbox.h"
@@ -12,6 +11,7 @@
 #include "gntwindow.h"
 #include "gntlabel.h"
 
+#include "blist.h"
 
 #define TYPE_S				(s_get_gtype())
 
