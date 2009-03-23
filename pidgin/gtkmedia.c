@@ -277,7 +277,7 @@ pidgin_media_init (PidginMedia *media)
 
 	XSetErrorHandler(pidgin_x_error_handler);
 
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
 
 	media->priv->statusbar = gtk_statusbar_new();
@@ -301,8 +301,12 @@ pidgin_media_init (PidginMedia *media)
 			G_CALLBACK(pidgin_media_mute_toggled), media);
 
 	gtk_box_pack_end(GTK_BOX(hbox), media->priv->mute, FALSE, FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(media->priv->mute),
+			PIDGIN_HIG_BOX_SPACE);
 
 	media->priv->display = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(media->priv->display),
+			PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), media->priv->display,
 			TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox);
