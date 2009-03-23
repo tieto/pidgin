@@ -25,7 +25,6 @@
  */
 
 #include "finch.h"
-#include "mediamanager.h"
 
 #include "gntconv.h"
 #include "gntmedia.h"
@@ -38,6 +37,8 @@
 #include "cmds.h"
 #include "conversation.h"
 #include "debug.h"
+#include "media-gst.h"
+#include "mediamanager.h"
 
 /* An incredibly large part of the following is from gtkmedia.c */
 #ifdef USE_VV

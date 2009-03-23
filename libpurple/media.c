@@ -29,8 +29,9 @@
 #include "internal.h"
 
 #include "connection.h"
-#include "media.h"
 #include "marshallers.h"
+#include "media.h"
+#include "media-gst.h"
 #include "mediamanager.h"
 #include "network.h"
 

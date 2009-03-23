@@ -115,6 +115,7 @@ purple_coreheaders = \
 	log.h \
 	marshallers.h \
 	media.h \
+	media-gst.h \
 	mediamanager.h \
 	mime.h \
 	nat-pmp.h \

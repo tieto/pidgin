@@ -29,7 +29,6 @@
 
 #ifdef USE_VV
 
-#include <gst/gst.h>
 #include <glib.h>
 #include <glib-object.h>
 
@@ -323,25 +322,6 @@ void purple_media_codec_list_free(GList *codecs);
 GList *purple_media_get_session_names(PurpleMedia *media);
 
 /**
- * Gets the source from a session
- *
- * @param media The media object the session is in.
- * @param sess_id The session id of the session to get the source from.
- *
- * @return The source retrieved.
- */
-GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
-
-/**
- * Gets the pipeline from the media session.
- *
- * @param media The media session to retrieve the pipeline from.
- *
- * @return The pipeline retrieved.
- */
-GstElement *purple_media_get_pipeline(PurpleMedia *media);
-
-/**
  * Gets the PurpleConnection this media session is on.
  *
  * @param media The media session to retrieve the connection from.
@@ -609,18 +589,6 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  * @param media The instance to remove all output windows from.
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
-
-/**
- * Gets the tee from a given session/stream.
- *
- * @param media The instance to get the tee from.
- * @param session_id The id of the session to get the tee from.
- * @param participant Optionally, the participant of the stream to get the tee from.
- *
- * @return The GstTee element from the chosen session/stream.
- */
-GstElement *purple_media_get_tee(PurpleMedia *media,
-		const gchar *session_id, const gchar *participant);
 
 #ifdef __cplusplus
 }

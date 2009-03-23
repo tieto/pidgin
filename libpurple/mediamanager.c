@@ -29,8 +29,9 @@
 #include "connection.h"
 #include "debug.h"
 #include "marshallers.h"
-#include "mediamanager.h"
 #include "media.h"
+#include "media-gst.h"
+#include "mediamanager.h"
 
 #ifdef USE_VV
 
