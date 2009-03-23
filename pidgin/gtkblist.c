@@ -6713,7 +6713,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		}
 		else if ((b = purple_find_buddy(data->account, who)) != NULL)
 		{
-				g = purple_buddy_get_group(b);
+			g = purple_buddy_get_group(b);
 		}
 
 		if (b == NULL)
