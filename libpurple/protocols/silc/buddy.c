@@ -1401,7 +1401,7 @@ void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 	 *
 	 * SILC doesn't have groups, so we also don't need to do anything
 	 * for a move. */
-	if (buddy->proto_data == NULL)
+	if (purple_buddy_get_protocol_data(buddy) == NULL)
 		silcpurple_add_buddy_i(gc, buddy, FALSE);
 }
 
