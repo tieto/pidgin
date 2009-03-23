@@ -216,6 +216,11 @@ jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 	g_free(conn);
 }
 
+gboolean jabber_bosh_connection_is_ssl(PurpleBOSHConnection *conn)
+{
+	return conn->ssl;
+}
+
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 {
 	jabber_bosh_connection_send_native(conn, PACKET_TERMINATE, NULL);
@@ -580,9 +585,18 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 	 * with AIM!
 	 */
 	conn->ready = FALSE;
-	conn->fd = -1;
-	purple_input_remove(conn->ie_handle);
-	conn->ie_handle = 0;
+	if (conn->psc) {
+		purple_ssl_close(conn->psc);
+		conn->psc = NULL;
+	} else if (conn->fd >= 0) {
+		close(conn->fd);
+		conn->fd = -1;
+	}
+
+	if (conn->ie_handle) {
+		purple_input_remove(conn->ie_handle);
+		conn->ie_handle = 0;
+	}
 
 	if (conn->bosh->pipelining)
 		/* Hmmmm, fall back to multiple connections */
@@ -686,7 +700,7 @@ http_connection_read(PurpleHTTPConnection *conn)
 		if (cnt < 0)
 			purple_debug_info("jabber", "bosh read=%d, errno=%d\n", cnt, errno);
 		else
-			purple_debug_info("jabber", "bosh server closed connection\n");
+			purple_debug_info("jabber", "bosh server closed the connection\n");
 
 		/*
 		 * If the socket is closed, the processing really needs to know about

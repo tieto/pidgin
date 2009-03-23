@@ -188,7 +188,7 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		if(jabber_process_starttls(js, packet))
 
 			return;
-	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
+	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !jabber_stream_is_ssl(js)) {
 		purple_connection_error_reason (js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -1743,6 +1743,12 @@ static void jabber_identities_destroy(void)
 		g_free(id);
 		jabber_identities = g_list_remove_link(jabber_identities, jabber_identities);
 	}
+}
+
+gboolean jabber_stream_is_ssl(JabberStream *js)
+{
+	return (js->bosh && jabber_bosh_connection_is_ssl(js->bosh)) ||
+	       (!js->bosh && js->gsc);
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)

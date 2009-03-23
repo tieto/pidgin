@@ -313,6 +313,13 @@ void jabber_remove_feature(const gchar *namespace);
  */
 void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name);
 
+/**
+ * Returns true if this connection is over a secure (SSL) stream. Use this
+ * instead of checking js->gsc because BOSH stores its PurpleSslConnection
+ * members in its own data structure.
+ */
+gboolean jabber_stream_is_ssl(JabberStream *js);
+
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
 const char* jabber_list_emblem(PurpleBuddy *b);
