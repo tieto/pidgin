@@ -2547,7 +2547,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -2558,7 +2558,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 		return;
 
 	/* Don't re-add a buddy that is already on our contact list */
-	if (nm_find_user_record(user, buddy->name) != NULL)
+	if (nm_find_user_record(user, purple_buddy_get_name(buddy)) != NULL)
 		return;
 
 	contact = nm_create_contact();
