@@ -459,6 +459,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	xmlnode *desc_element = xmlnode_get_child(sess, "description");
 	xmlnode *codec_element = xmlnode_get_child(desc_element, "payload-type");
 	GList *codecs = NULL;
+	JabberIq *result = NULL;
 
 	for (; codec_element; codec_element =
 			xmlnode_get_next_twin(codec_element)) {
@@ -478,6 +479,11 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 			session->remote_jid, codecs);
 
 	purple_media_accept(session->media);
+
+	result = jabber_iq_new(js, JABBER_IQ_RESULT);
+	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	xmlnode_set_attrib(result->node, "to", session->remote_jid);
+	jabber_iq_send(result);
 }
 
 static void
