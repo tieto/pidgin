@@ -27,8 +27,6 @@
 #ifndef __MEDIA_GST_H_
 #define __MEDIA_GST_H_
 
-#ifdef USE_VV
-
 #include "media.h"
 #include "mediamanager.h"
 
@@ -140,7 +138,5 @@ PurpleMediaElementInfo *purple_media_manager_get_active_element(
 #endif
 
 G_END_DECLS
-
-#endif  /* USE_VV */
 
 #endif  /* __MEDIA_GST_H_ */

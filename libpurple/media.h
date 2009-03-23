@@ -27,8 +27,6 @@
 #ifndef __MEDIA_H_
 #define __MEDIA_H_
 
-#ifdef USE_VV
-
 #include <glib.h>
 #include <glib-object.h>
 
@@ -58,12 +56,6 @@ typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
 typedef struct _PurpleMediaCodec PurpleMediaCodec;
 /** @copydoc _PurpleMediaCodecParameter */
 typedef struct _PurpleMediaCodecParameter PurpleMediaCodecParameter;
-
-#else
-
-typedef void PurpleMedia;
-
-#endif /* USE_VV */
 
 /** Media caps */
 typedef enum {
@@ -121,8 +113,6 @@ typedef enum {
 	PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
 } PurpleMediaNetworkProtocol;
-
-#ifdef USE_VV
 
 /** The media class */
 struct _PurpleMediaClass
@@ -595,8 +585,5 @@ void purple_media_remove_output_windows(PurpleMedia *media);
 #endif
 
 G_END_DECLS
-
-#endif  /* USE_VV */
-
 
 #endif  /* __MEDIA_H_ */

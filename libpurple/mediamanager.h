@@ -27,8 +27,6 @@
 #ifndef __MEDIA_MANAGER_H_
 #define __MEDIA_MANAGER_H_
 
-#ifdef USE_VV
-
 #include <glib.h>
 #include <glib-object.h>
 
@@ -154,8 +152,5 @@ void purple_media_manager_remove_output_windows(
 #endif
 
 G_END_DECLS
-
-#endif  /* USE_VV */
-
 
 #endif  /* __MEDIA_MANAGER_H_ */

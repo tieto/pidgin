@@ -49,6 +49,7 @@ struct _PurpleMediaOutputWindow
 	gulong window_id;
 	GstElement *sink;
 };
+#endif
 
 struct _PurpleMediaManagerPrivate
 {
@@ -155,13 +156,18 @@ purple_media_manager_finalize (GObject *media)
 PurpleMediaManager *
 purple_media_manager_get()
 {
+#ifdef USE_VV
 	static PurpleMediaManager *manager = NULL;
 
 	if (manager == NULL)
 		manager = PURPLE_MEDIA_MANAGER(g_object_new(purple_media_manager_get_type(), NULL));
 	return manager;
+#else
+	return NULL;
+#endif
 }
 
+#ifdef USE_VV
 static gboolean
 pipeline_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
 {
@@ -192,10 +198,12 @@ pipeline_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
 	}
 	return TRUE;
 }
+#endif
 
 GstElement *
 purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 {
+#ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
 	if (manager->priv->pipeline == NULL) {
@@ -216,6 +224,9 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 	}
 
 	return manager->priv->pipeline;
+#else
+	return NULL;
+#endif
 }
 
 PurpleMedia *
@@ -225,6 +236,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 				  const char *remote_user,
 				  gboolean initiator)
 {
+#ifdef USE_VV
 	PurpleMedia *media;
 	FsConference *conference = FS_CONFERENCE(gst_element_factory_make(conference_type, NULL));
 	GstStateChangeReturn ret;
@@ -266,18 +278,26 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
 	return media;
+#else
+	return NULL;
+#endif
 }
 
 GList *
 purple_media_manager_get_media(PurpleMediaManager *manager)
 {
+#ifdef USE_VV
 	return manager->priv->medias;
+#else
+	return NULL;
+#endif
 }
 
 GList *
 purple_media_manager_get_media_by_connection(PurpleMediaManager *manager,
 		PurpleConnection *pc)
 {
+#ifdef USE_VV
 	GList *media = NULL;
 	GList *iter;
 
@@ -291,22 +311,28 @@ purple_media_manager_get_media_by_connection(PurpleMediaManager *manager,
 	}
 
 	return media;
+#else
+	return NULL;
+#endif
 }
 
 void
 purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media)
 {
+#ifdef USE_VV
 	GList *list = g_list_find(manager->priv->medias, media);
 	if (list)
 		manager->priv->medias =
 			g_list_delete_link(manager->priv->medias, list);
+#endif
 }
 
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type)
 {
+#ifdef USE_VV
 	GstElement *ret = NULL;
 
 	/* TODO: If src, retrieve current src */
@@ -329,12 +355,16 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		purple_debug_error("media", "Error creating source or sink\n");
 
 	return ret;
+#else
+	return NULL;
+#endif
 }
 
 PurpleMediaElementInfo *
 purple_media_manager_get_element_info(PurpleMediaManager *manager,
 		const gchar *id)
 {
+#ifdef USE_VV
 	GList *iter;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
@@ -346,6 +376,7 @@ purple_media_manager_get_element_info(PurpleMediaManager *manager,
 		if (!strcmp(info->id, id))
 			return info;
 	}
+#endif
 
 	return NULL;
 }
@@ -354,6 +385,7 @@ gboolean
 purple_media_manager_register_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info)
 {
+#ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
 	g_return_val_if_fail(info != NULL, FALSE);
 
@@ -363,12 +395,16 @@ purple_media_manager_register_element(PurpleMediaManager *manager,
 	manager->priv->elements =
 			g_list_prepend(manager->priv->elements, info);
 	return TRUE;
+#else
+	return FALSE;
+#endif
 }
 
 gboolean
 purple_media_manager_unregister_element(PurpleMediaManager *manager,
 		const gchar *id)
 {
+#ifdef USE_VV
 	PurpleMediaElementInfo *info;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
@@ -390,12 +426,16 @@ purple_media_manager_unregister_element(PurpleMediaManager *manager,
 	manager->priv->elements = g_list_remove(
 			manager->priv->elements, info);
 	return TRUE;
+#else
+	return FALSE;
+#endif
 }
 
 gboolean
 purple_media_manager_set_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info)
 {
+#ifdef USE_VV
 	gboolean ret = FALSE;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
@@ -426,12 +466,16 @@ purple_media_manager_set_active_element(PurpleMediaManager *manager,
 	}
 
 	return ret;
+#else
+	return FALSE;
+#endif
 }
 
 PurpleMediaElementInfo *
 purple_media_manager_get_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementType type)
 {
+#ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
 	if (type & PURPLE_MEDIA_ELEMENT_SRC) {
@@ -445,10 +489,12 @@ purple_media_manager_get_active_element(PurpleMediaManager *manager,
 		else if (type & PURPLE_MEDIA_ELEMENT_VIDEO)
 			return manager->priv->video_sink;
 	}
+#endif
 
 	return NULL;
 }
 
+#ifdef USE_VV
 static void
 window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 {
@@ -466,12 +512,14 @@ window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 				GST_MESSAGE_SRC(msg)), ow->window_id);
 	}
 }
+#endif
 
 gboolean
 purple_media_manager_create_output_window(PurpleMediaManager *manager,
 		PurpleMedia *media, const gchar *session_id,
 		const gchar *participant)
 {
+#ifdef USE_VV
 	GList *iter;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
@@ -529,6 +577,9 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 		}
 	}
 	return TRUE;
+#else
+	return FALSE;
+#endif
 }
 
 gulong
@@ -536,6 +587,7 @@ purple_media_manager_set_output_window(PurpleMediaManager *manager,
 		PurpleMedia *media, const gchar *session_id,
 		const gchar *participant, gulong window_id)
 {
+#ifdef USE_VV
 	PurpleMediaOutputWindow *output_window;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
@@ -556,12 +608,16 @@ purple_media_manager_set_output_window(PurpleMediaManager *manager,
 				media, session_id, participant);
 
 	return output_window->id;
+#else
+	return 0;
+#endif
 }
 
 gboolean
 purple_media_manager_remove_output_window(PurpleMediaManager *manager,
 		gulong output_window_id)
 {
+#ifdef USE_VV
 	PurpleMediaOutputWindow *output_window = NULL;
 	GList *iter;
 
@@ -605,6 +661,9 @@ purple_media_manager_remove_output_window(PurpleMediaManager *manager,
 	g_free(output_window);
 
 	return TRUE;
+#else
+	return FALSE;
+#endif
 }
 
 void
@@ -612,6 +671,7 @@ purple_media_manager_remove_output_windows(PurpleMediaManager *manager,
 		PurpleMedia *media, const gchar *session_id,
 		const gchar *participant)
 {
+#ifdef USE_VV
 	GList *iter;
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
@@ -632,6 +692,6 @@ purple_media_manager_remove_output_windows(PurpleMediaManager *manager,
 		purple_media_manager_remove_output_window(
 				manager, ow->id);
 	}
+#endif
 }
 
-#endif  /* USE_VV */
