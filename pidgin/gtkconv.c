@@ -7014,7 +7014,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
 #endif
 	gtk_widget_add_events(event,
-			GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
+                              GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
 
@@ -7853,6 +7853,7 @@ pidgin_conversations_init(void)
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
+
 
 
 	/**********************************************************************

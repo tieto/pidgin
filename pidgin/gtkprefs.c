@@ -183,10 +183,12 @@ dropdown_set(GObject *w, const char *key)
 
 	if (type == PURPLE_PREF_INT) {
 		int_value = GPOINTER_TO_INT(g_object_get_data(w, "value"));
+
 		purple_prefs_set_int(key, int_value);
 	}
 	else if (type == PURPLE_PREF_STRING) {
 		str_value = (const char *)g_object_get_data(w, "value");
+
 		purple_prefs_set_string(key, str_value);
 	}
 	else if (type == PURPLE_PREF_BOOLEAN) {
@@ -1235,7 +1237,7 @@ interface_page(void)
 					_("Never"), "never",
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 	vbox = pidgin_make_frame(ret, _("Conversation Window Hiding"));
 	label = pidgin_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
@@ -1245,7 +1247,7 @@ interface_page(void)
 					_("Always"), "always",
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 
 	/* All the tab options! */
@@ -1280,7 +1282,7 @@ interface_page(void)
 #endif
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 	names = pidgin_conv_placement_get_options();
 	label = pidgin_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),

@@ -89,7 +89,7 @@ jabber_disco_bytestream_server_cb(JabberStream *js, xmlnode *packet, gpointer da
 void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
-	
+
 	if(!from || !type)
 		return;
 
@@ -115,7 +115,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 
 		if(node)
 			xmlnode_set_attrib(query, "node", node);
-		
+
 		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
 			identity = xmlnode_new_child(query, "identity");
 			xmlnode_set_attrib(identity, "category", "client");
@@ -459,7 +459,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 			jabber_google_send_jingle_info(js);
 		} else {
 			/* TODO: add external service discovery here... */
-		} 
+		}
 	}
 
 	for (child = xmlnode_get_child(query, "feature"); child;

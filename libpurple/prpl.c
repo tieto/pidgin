@@ -568,4 +568,3 @@ purple_find_prpl(const char *id)
 
 	return NULL;
 }
-

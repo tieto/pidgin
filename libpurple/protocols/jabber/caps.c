@@ -27,7 +27,6 @@
 #include "util.h"
 #include "iq.h"
 
-
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
 static GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsValue */

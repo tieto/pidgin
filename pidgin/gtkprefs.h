@@ -29,7 +29,6 @@
 
 #include "prefs.h"
 
-
 /**
  * Initializes all UI-specific preferences.
  */

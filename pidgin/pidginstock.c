@@ -282,6 +282,7 @@ find_file(const char *dir, const char *base)
 	return ret;
 }
 
+
 /* Altered from do_colorshift in gnome-panel */
 static void
 do_alphashift(GdkPixbuf *dest, GdkPixbuf *src)

@@ -985,13 +985,6 @@ pidgin_debug_init(void)
 #ifdef USE_GSTREAMER
 	REGISTER_G_LOG_HANDLER("GStreamer");
 #endif
-#ifdef USE_VV
-#ifdef USE_FARSIGHT
-	REGISTER_G_LOG_HANDLER("farsight");
-	REGISTER_G_LOG_HANDLER("farsight-transmitter");
-	REGISTER_G_LOG_HANDLER("farsight-rtp");
-#endif
-#endif
 
 #ifdef _WIN32
 	if (!purple_debug_is_enabled())

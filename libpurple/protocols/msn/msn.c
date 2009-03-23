@@ -2689,4 +2689,3 @@ init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(msn, init_plugin, info);
-

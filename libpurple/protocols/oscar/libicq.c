@@ -26,6 +26,7 @@
 
 
 #include "oscarcommon.h"
+
 static GHashTable *
 icq_get_account_text_table(PurpleAccount *account)
 {

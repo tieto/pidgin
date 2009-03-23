@@ -2360,4 +2360,3 @@ init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(msnp9, init_plugin, info);
-

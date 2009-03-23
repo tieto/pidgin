@@ -326,4 +326,5 @@ PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
+
 #endif /* _PURPLE_JABBER_H_ */

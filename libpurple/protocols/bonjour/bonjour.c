@@ -727,4 +727,3 @@ init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(bonjour, init_plugin, info);
-

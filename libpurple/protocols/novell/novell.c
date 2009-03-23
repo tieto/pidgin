@@ -3581,4 +3581,3 @@ init_plugin(PurplePlugin * plugin)
 }
 
 PURPLE_INIT_PLUGIN(novell, init_plugin, info);
-

@@ -73,6 +73,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "status.h"
 #include "whiteboard.h"
 
+
 /** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
 	/** This is a comma-delimited list of image formats or @c NULL if icons

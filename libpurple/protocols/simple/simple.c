@@ -2169,4 +2169,3 @@ static void _init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(simple, _init_plugin, info);
-

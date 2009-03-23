@@ -2377,4 +2377,3 @@ static void init_plugin(PurplePlugin *plugin)
 PURPLE_INIT_PLUGIN(gg, init_plugin, info);
 
 /* vim: set ts=8 sts=0 sw=8 noet: */
-

@@ -2249,4 +2249,3 @@ silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
 }
 
 PURPLE_INIT_PLUGIN(silc, init_plugin, info);
-
