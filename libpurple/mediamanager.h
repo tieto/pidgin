@@ -132,16 +132,55 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media);
 
 /**
+ * Signals that output windows should be created for the chosen stream.
+ *
  * This shouldn't be called outside of mediamanager.c and media.c
+ *
+ * @param manager Manager the output windows are registered with.
+ * @param media Media session the output windows are registered for.
+ * @param session_id The session the output windows are registered with.
+ * @param participant The participant the output windows are registered with.
+ *
+ * @return TRUE if it succeeded, FALSE if it failed.
  */
 gboolean purple_media_manager_create_output_window(
 		PurpleMediaManager *manager, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
+
+/**
+ * Registers a video output window to be created for a given stream.
+ *
+ * @param manager The manager to register the output window with.
+ * @param media The media instance to find the stream in.
+ * @param session_id The session the stream is associated with.
+ * @param participant The participant the stream is associated with.
+ * @param window_id The window ID to embed the video in.
+ *
+ * @return A unique ID to the registered output window, 0 if it failed.
+ */
 gulong purple_media_manager_set_output_window(PurpleMediaManager *manager,
 		PurpleMedia *media, const gchar *session_id,
 		const gchar *participant, gulong window_id);
+
+/**
+ * Remove a previously registerd output window.
+ *
+ * @param manager The manager the output window was registered with.
+ * @param output_window_id The ID of the output window.
+ *
+ * @return TRUE if it found the output window and was successful, else FALSE.
+ */
 gboolean purple_media_manager_remove_output_window(
 		PurpleMediaManager *manager, gulong output_window_id);
+
+/**
+ * Remove all output windows for a given conference/session/participant/stream.
+ *
+ * @param manager The manager the output windows were registered with.
+ * @param media The media instance the output windows were registered for.
+ * @param session_id The session the output windows were registered for.
+ * @param participant The participant the output windows were registered for.
+ */
 void purple_media_manager_remove_output_windows(
 		PurpleMediaManager *manager, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
