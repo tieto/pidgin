@@ -385,7 +385,6 @@ create_default_audio_sink(void)
 
 	bin = gst_bin_new("pidginrecvaudiobin");
 	sink = gst_element_factory_make("alsasink", "asink");
-	g_object_set(G_OBJECT(sink), "async", FALSE, "sync", FALSE, NULL);
 	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
 	g_object_set(volume, "volume", output_volume, NULL);
 	queue = gst_element_factory_make("queue", NULL);
