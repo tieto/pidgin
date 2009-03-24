@@ -794,7 +794,7 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 	}
 }
 
-GtkWidget *
+static GtkWidget *
 pidgin_media_new(PurpleMedia *media, const gchar *screenname)
 {
 	PidginMedia *gtkmedia = g_object_new(pidgin_media_get_type(),

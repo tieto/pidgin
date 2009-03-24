@@ -61,8 +61,6 @@ GType pidgin_media_get_type(void);
 
 void pidgin_medias_init(void);
 
-GtkWidget *pidgin_media_new(PurpleMedia *media, const gchar *screenname);
-
 G_END_DECLS
 
 #endif  /* USE_VV */
