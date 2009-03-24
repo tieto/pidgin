@@ -855,9 +855,9 @@ create_default_video_src(void)
 	videoscale = gst_element_factory_make("videoscale", NULL);
 	capsfilter = gst_element_factory_make("capsfilter", NULL);
 
-	/* It was recommended to set the size < 352x288 and framerate < 20 */
-	caps = gst_caps_from_string("video/x-raw-yuv , width=[250,350] , "
-			"height=[200,275] , framerate=[10/1,20/1]");
+	/* It was recommended to set the size <= 352x288 and framerate <= 20 */
+	caps = gst_caps_from_string("video/x-raw-yuv , width=[250,352] , "
+			"height=[200,288] , framerate=[10/1,20/1]");
 	g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
 
 	gst_bin_add_many(GST_BIN(sendbin), src,
