@@ -1162,31 +1162,6 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 }
 #endif
 
-#if 0
-static void 
-purple_media_set_sink(PurpleMedia *media, const gchar *sess_id,
-		const gchar *participant, GstElement *sink)
-{
-	PurpleMediaStream *stream;
-
-	g_return_if_fail(PURPLE_IS_MEDIA(media));
-
-	stream = purple_media_get_stream(media, sess_id, participant);
-
-	if (stream == NULL) {
-		purple_debug_warning("media", "purple_media_set_sink: trying"
-				" to set sink on non-existent stream\n");
-		return;
-	}
-
-	if (stream->sink)
-		gst_object_unref(stream->sink);
-	stream->sink = sink;
-	gst_bin_add(GST_BIN(stream->session->media->priv->confbin),
-		    stream->sink);
-}
-#endif
-
 GstElement *
 purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
 {
