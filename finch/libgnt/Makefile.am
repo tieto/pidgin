@@ -91,7 +91,6 @@ libgnt_la_LIBADD = \
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
-	$(FARSIGHT_CFLAGS) \
 	$(GNT_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(LIBXML_CFLAGS) \

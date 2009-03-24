@@ -26,5 +26,4 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(EVOLUTION_ADDRESSBOOK_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	$(GTK_CFLAGS) \
-	$(FARSIGHT_CFLAGS)
+	$(GTK_CFLAGS)
