@@ -30,10 +30,10 @@ version 2.6.0 (??/??/2009):
 
 		Changed:
 		* xmlnode_remove_attrib now removes all attributes with the
-		same name.  Previously, it would remove the first one found,
-		which was completely non-deterministic.  If you want to remove
-		the attribute with no namespace, then use NULL with
-		xmlnode_remove_with_namespace.
+		  same name.  Previously, it would remove the first one found,
+		  which was completely non-deterministic.  If you want to remove
+		  the attribute with no namespace, then use NULL with
+		  xmlnode_remove_with_namespace.
 
 		Deprecated:
 		* purple_buddy_get_local_alias
