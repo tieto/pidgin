@@ -204,6 +204,7 @@ pidgin/gtkimhtml.c
 pidgin/gtkimhtmltoolbar.c
 pidgin/gtklog.c
 pidgin/gtkmain.c
+pidgin/gtkmedia.c
 pidgin/gtknotify.c
 pidgin/gtkplugin.c
 pidgin/gtkpounce.c
