@@ -4,6 +4,8 @@ version 2.6.0 (??/??/2009):
 	General:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
+	* It should no longer be possible to end up with duplicates of buddies
+	  in a group on the buddy list.
 
 	XMPP:
 	* Add support for in-band bytestreams for file transfers (XEP-0047).

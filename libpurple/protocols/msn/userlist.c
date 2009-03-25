@@ -858,7 +858,7 @@ msn_userlist_add_buddy_to_group(MsnUserList *userlist, const char *who,
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("msn", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!\n", who);
 		return FALSE;
 	}
 
@@ -887,7 +887,7 @@ msn_userlist_rem_buddy_from_group(MsnUserList *userlist, const char *who,
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("msn", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!\n", who);
 		return FALSE;
 	}
 

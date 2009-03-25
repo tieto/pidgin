@@ -1609,7 +1609,7 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	if ( (root = xmlnode_from_str(cmd->payload, cmd->payload_len)) == NULL)
 	{
-		purple_debug_error("msn", "Unable to parse GCF payload into a XML tree");
+		purple_debug_error("msn", "Unable to parse GCF payload into a XML tree\n");
 		return;
 	}
 
@@ -1682,7 +1682,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) {
 		char *str = g_strndup(payload, len);
-		purple_debug_info("msn", "unknown user %s, payload is %s",
+		purple_debug_info("msn", "unknown user %s, payload is %s\n",
 			passport, str);
 		g_free(str);
 		return;

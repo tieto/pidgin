@@ -296,6 +296,14 @@ struct _PurplePluginProtocolInfo
 	void (*set_idle)(PurpleConnection *, int idletime);
 	void (*change_passwd)(PurpleConnection *, const char *old_pass,
 						  const char *new_pass);
+	/**
+	 * Add a buddy to a group on the server.
+	 *
+	 * This PRPL function may be called in situations in which the buddy is
+	 * already in the specified group. If the protocol supports
+	 * authorization and the user is not already authorized to see the
+	 * status of \a buddy, \a add_buddy should request authorization.
+	 */
 	void (*add_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
 	void (*add_buddies)(PurpleConnection *, GList *buddies, GList *groups);
 	void (*remove_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
