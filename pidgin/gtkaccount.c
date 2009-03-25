@@ -106,8 +106,8 @@ typedef struct
 	GtkSizeGroup *sg;
 	GtkWidget *window;
 
+	GtkWidget *notebook;
 	GtkWidget *top_vbox;
-	GtkWidget *bottom_vbox;
 	GtkWidget *ok_button;
 	GtkWidget *register_button;
 
@@ -157,8 +157,7 @@ static void set_account(GtkListStore *store, GtkTreeIter *iter,
  **************************************************************************/
 static void add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent);
-static void add_protocol_options(AccountPrefsDialog *dialog,
-								 GtkWidget *parent);
+static void add_protocol_options(AccountPrefsDialog *dialog);
 static void add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 
 static GtkWidget *
@@ -237,7 +236,7 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
-	add_protocol_options(dialog, dialog->bottom_vbox);
+	add_protocol_options(dialog);
 
 	gtk_widget_grab_focus(dialog->protocol_menu);
 
@@ -733,11 +732,11 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
-add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
+add_protocol_options(AccountPrefsDialog *dialog)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
-	GtkWidget *frame, *vbox, *check, *entry, *combo;
+	GtkWidget *vbox, *check, *entry, *combo;
 	GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
@@ -752,7 +751,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	ProtocolOptEntry *opt_entry;
 
 	if (dialog->protocol_frame != NULL) {
-		gtk_widget_destroy(dialog->protocol_frame);
+		gtk_notebook_remove_page (GTK_NOTEBOOK(dialog->notebook), 1);
 		dialog->protocol_frame = NULL;
 	}
 
@@ -769,19 +768,11 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	account = dialog->account;
 
-	/* Build the protocol options frame. */
-	g_snprintf(buf, sizeof(buf), _("%s Options"), dialog->plugin->info->name);
-
-	frame = pidgin_make_frame(parent, buf);
-	dialog->protocol_frame =
-		gtk_widget_get_parent(gtk_widget_get_parent(frame));
-
-	gtk_box_reorder_child(GTK_BOX(parent), dialog->protocol_frame, 0);
-	gtk_widget_show(dialog->protocol_frame);
-
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	dialog->protocol_frame = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BORDER);
+	gtk_notebook_insert_page(GTK_NOTEBOOK(dialog->notebook), vbox,
+			gtk_label_new_with_mnemonic(_("_Advanced")), 1);
 	gtk_widget_show(vbox);
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
@@ -1046,22 +1037,15 @@ static void
 add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	PurpleProxyInfo *proxy_info;
-	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 
 	if (dialog->proxy_frame != NULL)
 		gtk_widget_destroy(dialog->proxy_frame);
 
-	frame = pidgin_make_frame(parent, _("Proxy Options"));
-	dialog->proxy_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
-
-	gtk_box_reorder_child(GTK_BOX(parent), dialog->proxy_frame, 1);
-	gtk_widget_show(dialog->proxy_frame);
-
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	dialog->proxy_frame = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_container_add(GTK_CONTAINER(parent), vbox);
 	gtk_widget_show(vbox);
 
 	/* Proxy Type drop-down. */
@@ -1496,15 +1480,15 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
 	dialog->window = win = pidgin_create_dialog((type == PIDGIN_ADD_ACCOUNT_DIALOG) ? _("Add Account") : _("Modify Account"),
-		PIDGIN_HIG_BORDER, "account", FALSE);
+		PIDGIN_HIG_BOX_SPACE, "account", FALSE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(account_win_destroy_cb), dialog);
 
 	/* Setup the vbox */
-	main_vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
+	main_vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BOX_SPACE);
 
-	notebook = gtk_notebook_new();
+	dialog->notebook = notebook = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(main_vbox), notebook, FALSE, FALSE, 0);
 	gtk_widget_show(GTK_WIDGET(notebook));
 
@@ -1530,15 +1514,15 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	if (!dialog->prpl_info || !dialog->prpl_info->register_user)
 		gtk_widget_hide(button);
 
-	/* Setup the page with 'Advanced'. */
-	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	/* Setup the page with 'Advanced' (protocol options). */
+	add_protocol_options(dialog);
+
+	/* Setup the page with 'Proxy'. */
+	dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
-			gtk_label_new_with_mnemonic(_("_Advanced")));
+			gtk_label_new_with_mnemonic(_("_Proxy")));
 	gtk_widget_show(dbox);
-
-	/** Setup the bottom frames. */
-	add_protocol_options(dialog, dbox);
 	add_proxy_options(dialog, dbox);
 
 	/* Cancel button */
