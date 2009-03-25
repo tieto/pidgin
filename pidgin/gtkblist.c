@@ -6443,7 +6443,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
-		gboolean hidden;
+		gboolean hidden = FALSE;
 		GdkColor *bgcolor = NULL;
 		FontColorPair *pair;
 		PidginBlistTheme *theme;
