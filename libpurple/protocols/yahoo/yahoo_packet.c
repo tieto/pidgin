@@ -201,6 +201,8 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 		}
 		pos += 2;
 
+		if (pos + 1 > len) break;
+
 		/* Skip over garbage we've noticed in the mail notifications */
 		if (data[0] == '9' && data[pos] == 0x01)
 			pos++;
