@@ -44,11 +44,11 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	purple_debug(PURPLE_DEBUG_INFO, "mono", "Probing plugin\n");
 
 	if (ml_is_api_dll(mono_assembly_get_image(assm))) {
-		purple_debug(PURPLE_DEBUG_INFO, "mono", "Found our PurpleAPI.dll\n");
+		purple_debug_info("mono", "Found our PurpleAPI.dll\n");
+		mono_assembly_close(assm);
 		return FALSE;
 	}
 
-	info = g_new0(PurplePluginInfo, 1);
 	mplug = g_new0(PurpleMonoPlugin, 1);
 
 	mplug->signal_data = NULL;
@@ -58,12 +58,16 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	mplug->klass = ml_find_plugin_class(mono_assembly_get_image(mplug->assm));
 	if (!mplug->klass) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "no plugin class in \'%s\'\n", file);
+		mono_assembly_close(assm);
+		g_free(mplug);
 		return FALSE;
 	}
 
 	mplug->obj = mono_object_new(ml_get_domain(), mplug->klass);
 	if (!mplug->obj) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "obj not valid\n");
+		mono_assembly_close(assm);
+		g_free(mplug);
 		return FALSE;
 	}
 
@@ -85,6 +89,8 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 
 	if (!(found_load && found_unload && found_destroy)) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "did not find the required methods\n");
+		mono_assembly_close(assm);
+		g_free(mplug);
 		return FALSE;
 	}
 
@@ -93,6 +99,7 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	/* now that the methods are filled out we can populate
 	   the info struct with all the needed info */
 
+	info = g_new0(PurplePluginInfo, 1);
 	info->id = ml_get_prop_string(plugin_info, "Id");
 	info->name = ml_get_prop_string(plugin_info, "Name");
 	info->version = ml_get_prop_string(plugin_info, "Version");
