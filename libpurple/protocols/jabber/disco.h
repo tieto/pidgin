@@ -27,8 +27,10 @@
 typedef void (JabberDiscoInfoCallback)(JabberStream *js, const char *who,
 		JabberCapabilities capabilities, gpointer data);
 
-void jabber_disco_info_parse(JabberStream *js, xmlnode *packet);
-void jabber_disco_items_parse(JabberStream *js, xmlnode *packet);
+void jabber_disco_info_parse(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id, xmlnode *in_query);
+void jabber_disco_items_parse(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id, xmlnode *query);
 
 void jabber_disco_items_server(JabberStream *js);
 

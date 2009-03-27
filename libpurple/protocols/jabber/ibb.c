@@ -198,11 +198,13 @@ jabber_ibb_session_set_error_callback(JabberIBBSession *sess,
 }
 
 static void
-jabber_ibb_session_opened_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_ibb_session_opened_cb(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id,
+                             xmlnode *packet, gpointer data)
 {
 	JabberIBBSession *sess = (JabberIBBSession *) data;
 
-	if (strcmp(xmlnode_get_attrib(packet, "type"), "error") == 0) {
+	if (type == JABBER_IQ_ERROR) {
 		sess->state = JABBER_IBB_SESSION_ERROR;
 	} else {
 		sess->state = JABBER_IBB_SESSION_OPENED;
@@ -274,10 +276,11 @@ jabber_ibb_session_accept(JabberIBBSession *sess)
 }
 
 static void
-jabber_ibb_session_send_acknowledge_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_ibb_session_send_acknowledge_cb(JabberStream *js, const char *from,
+                                       JabberIqType type, const char *id,
+                                       xmlnode *packet, gpointer data)
 {
 	JabberIBBSession *sess = (JabberIBBSession *) data;
-	xmlnode *error = xmlnode_get_child(packet, "error");
 
 	if (sess) {
 		/* reset callback */
@@ -286,7 +289,7 @@ jabber_ibb_session_send_acknowledge_cb(JabberStream *js, xmlnode *packet, gpoint
 			sess->last_iq_id = NULL;
 		}
 
-		if (error) {
+		if (type == JABBER_IQ_ERROR) {
 			jabber_ibb_session_close(sess);
 			sess->state = JABBER_IBB_SESSION_ERROR;
 

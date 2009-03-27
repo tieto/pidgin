@@ -30,13 +30,13 @@
 #include "iq.h"
 
 static void
-jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
+jabber_gmail_parse(JabberStream *js, const char *from,
+                   JabberIqType type, const char *id,
+                   xmlnode *packet, gpointer nul)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	xmlnode *child;
-	xmlnode *message, *sender_node, *subject_node;
-	const char *from, *to, *url, *tid;
-	char *subject;
+	xmlnode *message;
+	const char *to, *url;
 	const char *in_str;
 	char *to_name;
 	char *default_tos[1];
@@ -46,7 +46,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	const char **tos, **froms, **urls;
 	char **subjects;
 
-	if (strcmp(type, "result"))
+	if (type == JABBER_IQ_ERROR)
 		return;
 
 	child = xmlnode_get_child(packet, "mailbox");
@@ -87,6 +87,10 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 
 	message= xmlnode_get_child(child, "mail-thread-info");
 	for (i=0; message; message = xmlnode_get_next_twin(message), i++) {
+		xmlnode *sender_node, *subject_node;
+		const char *from, *tid;
+		char *subject;
+
 		subject_node = xmlnode_get_child(message, "subject");
 		sender_node  = xmlnode_get_child(message, "senders");
 		sender_node  = xmlnode_get_child(sender_node, "sender");
@@ -144,9 +148,9 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 }
 
 void
-jabber_gmail_poke(JabberStream *js, xmlnode *packet)
+jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
+                  const char *id, xmlnode *new_mail)
 {
-	const char *type;
 	xmlnode *query;
 	JabberIq *iq;
 
@@ -154,11 +158,8 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 	if (!purple_account_get_check_mail(js->gc->account))
 		return;
 
-	type = xmlnode_get_attrib(packet, "type");
-
-
 	/* Is this an initial incoming mail notification? If so, send a request for more info */
-	if (strcmp(type, "set") || !xmlnode_get_child(packet, "new-mail"))
+	if (type != JABBER_IQ_SET)
 		return;
 
 	purple_debug(PURPLE_DEBUG_MISC, "jabber",

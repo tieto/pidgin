@@ -369,7 +369,10 @@ static void jabber_caps_get_info_check_completion(jabber_caps_cbplususerdata *us
 	}
 }
 
-static void jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer data) {
+static void jabber_caps_ext_iqcb(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *packet, gpointer data)
+{
 	/* collect data and fetch all exts */
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#info");
 	jabber_ext_userdata *extuserdata = data;
@@ -433,7 +436,10 @@ static void jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer dat
 	jabber_caps_get_info_check_completion(userdata);
 }
 
-static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data) {
+static void jabber_caps_client_iqcb(JabberStream *js, const char *from,
+                                    JabberIqType type, const char *id,
+                                    xmlnode *packet, gpointer data)
+{
 	/* collect data and fetch all exts */
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/disco#info");
