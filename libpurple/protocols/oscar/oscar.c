@@ -4789,7 +4789,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 
 		status_html = purple_status_get_attr_string(status, "message");
 
-		if (primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
+		if (status_html == NULL || primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
 		{
 			/* This is needed for us to un-set any previous away message. */
 			away = g_strdup("");
@@ -4917,17 +4917,24 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		return;
 	}
 
-	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY))) {
-		purple_debug_info("oscar",
-				   "ssi: adding buddy %s to group %s\n", bname, gname);
-		aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
+	if (od->ssi.received_data) {
+		if (!aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY)) {
+			purple_debug_info("oscar",
+					   "ssi: adding buddy %s to group %s\n", bname, gname);
+			aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
 
-		/* Mobile users should always be online */
-		if (bname[0] == '+') {
-			purple_prpl_got_user_status(account,
-					bname, OSCAR_STATUS_ID_AVAILABLE, NULL);
-			purple_prpl_got_user_status(account,
-					bname, OSCAR_STATUS_ID_MOBILE, NULL);
+			/* Mobile users should always be online */
+			if (bname[0] == '+') {
+				purple_prpl_got_user_status(account, bname,
+						OSCAR_STATUS_ID_AVAILABLE, NULL);
+				purple_prpl_got_user_status(account, bname,
+						OSCAR_STATUS_ID_MOBILE, NULL);
+			}
+		} else if (aim_ssi_waitingforauth(od->ssi.local,
+		                                  aim_ssi_itemlist_findparentname(od->ssi.local, bname),
+		                                  bname)) {
+			/* Not authorized -- Re-request authorization */
+			purple_auth_sendrequest(gc, bname);
 		}
 	}
 

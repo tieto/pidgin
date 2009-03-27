@@ -388,7 +388,7 @@ msim_status_text(PurpleBuddy *buddy)
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	user = msim_get_user_from_buddy(buddy);
+	user = msim_get_user_from_buddy(buddy, TRUE);
 
 	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
@@ -436,7 +436,7 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 	g_return_if_fail(buddy != NULL);
 	g_return_if_fail(user_info != NULL);
 
-	user = msim_get_user_from_buddy(buddy);
+	user = msim_get_user_from_buddy(buddy, TRUE);
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 		MsimSession *session;
@@ -1053,7 +1053,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 	g_free(display_name);
 
 	/* 3. Update buddy information */
-	user = msim_get_user_from_buddy(buddy);
+	user = msim_get_user_from_buddy(buddy, TRUE);
 
 	user->id = uid;
 	/* Keep track of the user ID across sessions */
@@ -1377,7 +1377,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		buddy = purple_buddy_new(session->account, username, NULL);
 		purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
-		user = msim_get_user_from_buddy(buddy);
+		user = msim_get_user_from_buddy(buddy, TRUE);
 		user->id = msim_msg_get_integer(msg, "f");
 
 		/* Keep track of the user ID across sessions */
@@ -2640,6 +2640,9 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	session = (MsimSession *)gc->proto_data;
 	name = purple_buddy_get_name(buddy);
 	gname = group ? purple_group_get_name(group) : NULL;
+
+	if (msim_get_user_from_buddy(buddy, FALSE) != NULL)
+		return;
 
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n",
 			name, gname ? gname : "(no group)");

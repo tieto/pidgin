@@ -1096,6 +1096,7 @@ jabber_si_xfer_ibb_send_data(JabberIBBSession *sess)
 			"jabber_si_xfer_ibb_send_data: error reading from file\n");
 		purple_xfer_cancel_local(xfer);
 	}
+	g_free(data);
 }
 
 static void
