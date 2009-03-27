@@ -39,7 +39,7 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 
 	if (!assm) {
 		return FALSE;
-	} 
+	}
 
 	purple_debug(PURPLE_DEBUG_INFO, "mono", "Probing plugin\n");
 
@@ -50,7 +50,7 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 
 	info = g_new0(PurplePluginInfo, 1);
 	mplug = g_new0(PurpleMonoPlugin, 1);
-	
+
 	mplug->signal_data = NULL;
 
 	mplug->assm = assm;
@@ -87,7 +87,7 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "did not find the required methods\n");
 		return FALSE;
 	}
-	
+
 	plugin_info = ml_get_info_prop(mplug->obj);
 
 	/* now that the methods are filled out we can populate
@@ -109,7 +109,7 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	/* this plugin depends on us; duh */
 	info->dependencies = g_list_append(info->dependencies, MONO_PLUGIN_ID);
 	mplug->plugin = plugin;
-				
+
 	plugin->info = info;
 	info->extra_info = mplug;
 
@@ -238,7 +238,7 @@ static PurplePluginInfo info =
 static void init_plugin(PurplePlugin *plugin)
 {
 	ml_init();
-	
+
 	loader_info.exts = g_list_append(loader_info.exts, "dll");
 }
 
