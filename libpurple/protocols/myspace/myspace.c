@@ -2540,7 +2540,6 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 		stripped = g_strdup("");
 
 	msim_set_status_code(session, status_code, stripped);
-	g_free(stripped);
 
 	/* If we should be idle, set that status. Time is irrelevant here. */
 	if (purple_presence_is_idle(pres) && status_code != MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN)
