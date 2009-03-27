@@ -81,7 +81,10 @@ typedef struct _JabberBuddyResource {
 		char *name;
 		char *os;
 	} client;
-	JabberCapsClientInfo *caps;
+	struct {
+		JabberCapsClientInfo *info;
+		GList *exts;
+	} caps;
 	GList *commands;
 } JabberBuddyResource;
 
