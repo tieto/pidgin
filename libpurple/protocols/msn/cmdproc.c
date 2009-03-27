@@ -117,8 +117,10 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 
 	servconn = cmdproc->servconn;
 
-	if (!servconn->connected)
+	if (!servconn->connected) {
+		/* TODO: Need to free trans */
 		return;
+	}
 
 	msn_history_add(cmdproc->history, trans);
 
