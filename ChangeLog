@@ -6,6 +6,7 @@ version 2.6.0 (??/??/2009):
 	  project.  With some minor additions and clean ups from Paul Aurich.
 	* It should no longer be possible to end up with duplicates of buddies
 	  in a group on the buddy list.
+	* Removed the unmaintained and unneeded toc protocol plugin.
 
 	XMPP:
 	* Add support for in-band bytestreams for file transfers (XEP-0047).
