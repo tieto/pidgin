@@ -870,11 +870,11 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 		if (itmsurl) {
 			tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
 								  itmsurl, message);
-			g_free(itmsurl);
 			g_free(message);
 			message = tmp;
 		}
 	}
+	g_free(itmsurl);
 
 	if (is_away && message) {
 		tmp = purple_str_sub_away_formatters(message, purple_account_get_username(account));
@@ -4917,17 +4917,24 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		return;
 	}
 
-	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY))) {
-		purple_debug_info("oscar",
-				   "ssi: adding buddy %s to group %s\n", bname, gname);
-		aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
+	if (od->ssi.received_data) {
+		if (!aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY)) {
+			purple_debug_info("oscar",
+					   "ssi: adding buddy %s to group %s\n", bname, gname);
+			aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
 
-		/* Mobile users should always be online */
-		if (bname[0] == '+') {
-			purple_prpl_got_user_status(account,
-					bname, OSCAR_STATUS_ID_AVAILABLE, NULL);
-			purple_prpl_got_user_status(account,
-					bname, OSCAR_STATUS_ID_MOBILE, NULL);
+			/* Mobile users should always be online */
+			if (bname[0] == '+') {
+				purple_prpl_got_user_status(account, bname,
+						OSCAR_STATUS_ID_AVAILABLE, NULL);
+				purple_prpl_got_user_status(account, bname,
+						OSCAR_STATUS_ID_MOBILE, NULL);
+			}
+		} else if (aim_ssi_waitingforauth(od->ssi.local,
+		                                  aim_ssi_itemlist_findparentname(od->ssi.local, bname),
+		                                  bname)) {
+			/* Not authorized -- Re-request authorization */
+			purple_auth_sendrequest(gc, bname);
 		}
 	}
 

@@ -1482,8 +1482,6 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 			  const gchar *passport, const MsnListId list)
 {
 	gchar *body = NULL, *member = NULL;
-	const char *type = "PassportMember";
-	gchar *federate = NULL;
 	MsnSoapPartnerScenario partner_scenario;
 	MsnUser *user;
 
@@ -1501,23 +1499,28 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_who(state, passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);
-	if (user && user->networkid != MSN_NETWORK_PASSPORT) {
-		type = "EmailMember";
-		federate = g_strdup_printf(MSN_MEMBER_FEDERATED_ANNOTATION_XML,
-		                           user->networkid);
-	}
 	
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
-		member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
-		                         type, user->membership_id[MSN_LIST_PL],
-		                         federate ? federate : "");
+		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
+			                         "EmailMember", "Email",
+			                         user->membership_id[MSN_LIST_PL]);
+		else
+			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
+			                         "PassportMember", "Passport",
+			                         user->membership_id[MSN_LIST_PL]);
 	} else {
 		/* list == MSN_LIST_AL || list == MSN_LIST_BL */
 		partner_scenario = MSN_PS_BLOCK_UNBLOCK;
-		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
-		                         type, passport,
-		                         federate ? federate : "");
+		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+			member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+			                         "EmailMember", "Email",
+			                         "Email", passport, "Email");
+		else
+			member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+			                         "PassportMember", "Passport",
+			                         "PassportName", passport, "PassportName");
 	}
 
 	body = g_strdup_printf(MSN_CONTACT_DELETE_FROM_LIST_TEMPLATE,
@@ -1530,7 +1533,6 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_del_contact_from_list_read_cb;
 	msn_contact_request(state);
 
-	g_free(federate);
 	g_free(member);
 	g_free(body);
 }
@@ -1578,8 +1580,6 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 			const gchar *passport, const MsnListId list)
 {
 	gchar *body = NULL, *member = NULL;
-	const char *type = "PassportMember";
-	gchar *federate = NULL;
 	MsnSoapPartnerScenario partner_scenario;
 	MsnUser *user;
 
@@ -1596,15 +1596,16 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_who(state, passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);
-	if (user && user->networkid != MSN_NETWORK_PASSPORT) {
-		type = "EmailMember";
-		federate = g_strdup_printf(MSN_MEMBER_FEDERATED_ANNOTATION_XML,
-		                           user->networkid);
-	}
 
 	partner_scenario = (list == MSN_LIST_RL) ? MSN_PS_CONTACT_API : MSN_PS_BLOCK_UNBLOCK;
-	member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
-	                         type, state->who, federate ? federate : "");
+	if (user && user->networkid != MSN_NETWORK_PASSPORT)
+		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+		                         "EmailMember", "Email",
+		                         "Email", state->who, "Email");
+	else
+		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+		                         "PassportMember", "Passport",
+		                         "PassportName", state->who, "PassportName");
 
 	body = g_strdup_printf(MSN_CONTACT_ADD_TO_LIST_TEMPLATE,
 		MsnSoapPartnerScenarioText[partner_scenario],
@@ -1616,7 +1617,6 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_add_contact_to_list_read_cb;
 	msn_contact_request(state);
 
-	g_free(federate);
 	g_free(member);
 	g_free(body);
 }

@@ -175,9 +175,11 @@ resolve(int in, int out)
 
 end:
 	size = g_list_length(ret);
+	/* TODO: Check return value */
 	write(out, &size, sizeof(int));
 	while (ret != NULL)
 	{
+		/* TODO: Check return value */
 		write(out, ret->data, sizeof(PurpleSrvResponse));
 		g_free(ret->data);
 		ret = g_list_remove(ret, ret->data);

@@ -109,7 +109,7 @@ void (*account_alias_changed)(PurpleAccount *account, const char *old);
 
  @signaldef account-authorization-requested
   @signalproto
-void (*account_authorization_requested)(PurpleAccount *account, const char *user);
+int (*account_authorization_requested)(PurpleAccount *account, const char *user);
   @endsignalproto
   @signaldesc
    Emitted when a user requests authorization.

@@ -5,7 +5,7 @@
 
 START_TEST(test_util_base16_encode)
 {
-	assert_string_equal_free("68656c6c6f2c20776f726c642100", purple_base16_encode("hello, world!", 14));
+	assert_string_equal_free("68656c6c6f2c20776f726c642100", purple_base16_encode((const unsigned char *)"hello, world!", 14));
 }
 END_TEST
 
@@ -14,14 +14,14 @@ START_TEST(test_util_base16_decode)
 	gsize sz = 0;
 	guchar *out = purple_base16_decode("21646c726f77202c6f6c6c656800", &sz);
 	fail_unless(sz == 14, NULL);
-	fail_unless(strcmp("!dlrow ,olleh", out) == 0, NULL);
+	fail_unless(strcmp("!dlrow ,olleh", (const char *)out) == 0, NULL);
 	g_free(out);
 }
 END_TEST
 
 START_TEST(test_util_base64_encode)
 {
-	assert_string_equal_free("Zm9ydHktdHdvAA==", purple_base64_encode("forty-two", 10));
+	assert_string_equal_free("Zm9ydHktdHdvAA==", purple_base64_encode((const unsigned char *)"forty-two", 10));
 }
 END_TEST
 
@@ -30,7 +30,7 @@ START_TEST(test_util_base64_decode)
 	gsize sz;
 	guchar *out = purple_base64_decode("b3d0LXl0cm9mAA==", &sz);
 	fail_unless(sz == 10, NULL);
-	fail_unless(strcmp("owt-ytrof", out) == 0, NULL);
+	fail_unless(strcmp("owt-ytrof", (const char *)out) == 0, NULL);
 	g_free(out);
 }
 END_TEST
