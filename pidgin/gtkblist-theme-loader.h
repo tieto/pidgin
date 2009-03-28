@@ -1,5 +1,5 @@
 /**
- * @file gtkblist-loader.h  Pidgin Buddy List Theme Loader Class API
+ * @file gtkblist-theme-loader.h  Pidgin Buddy List Theme Loader Class API
  */
 
 /* pidgin
