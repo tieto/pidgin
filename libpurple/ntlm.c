@@ -59,9 +59,14 @@ struct type2_message {
 	guint8  protocol[8];     /* 'N', 'T', 'L', 'M', 'S', 'S', 'P', '\0'*/
 	guint32 type;            /* 0x00000002 */
 
+	short   msg_len1;        /* target name length */
+	short   msg_len2;        /* target name length */
+	guint32 msg_off;         /* target name offset (always 0x00000048) */
+
 	guint32 flags;           /* 0x00008201 */
 
 	guint8  nonce[8];        /* nonce */
+	guint8 context[8];
 };
 
 struct type3_message {
