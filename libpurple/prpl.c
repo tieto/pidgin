@@ -496,7 +496,7 @@ purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who,
 	got_attention(gc, id, who, type_code);
 }
 
-PurpleMedia *
+gboolean
 purple_prpl_initiate_media(PurpleAccount *account,
 			   const char *who,
 			   PurpleMediaSessionType type)
@@ -516,12 +516,9 @@ purple_prpl_initiate_media(PurpleAccount *account,
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, initiate_media)) {
 		/* should check that the protocol supports this media type here? */
 		return prpl_info->initiate_media(gc, who, type);
-	} else {
-		return NULL;
-	}
-#else
-	return NULL;
+	} else
 #endif
+	return FALSE;
 }
 
 PurpleMediaCaps

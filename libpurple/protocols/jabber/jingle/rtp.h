@@ -75,7 +75,7 @@ GType jingle_rtp_get_type(void);
 gchar *jingle_rtp_get_media_type(JingleContent *content);
 gchar *jingle_rtp_get_ssrc(JingleContent *content);
 
-PurpleMedia *jingle_rtp_initiate_media(JabberStream *js,
+gboolean jingle_rtp_initiate_media(JabberStream *js,
 				   const gchar *who,
 				   PurpleMediaSessionType type);
 void jingle_rtp_terminate_session(JabberStream *js, const gchar *who);

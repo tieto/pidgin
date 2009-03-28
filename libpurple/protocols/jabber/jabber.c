@@ -2612,7 +2612,7 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
-PurpleMedia *
+gboolean
 jabber_initiate_media(PurpleConnection *gc, const char *who, 
 		      PurpleMediaSessionType type)
 {
@@ -2623,14 +2623,14 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 	if (!js) {
 		purple_debug_error("jabber",
 				"jabber_initiate_media: NULL stream\n");
-		return NULL;
+		return FALSE;
 	}
 
 	jb = jabber_buddy_find(js, who, FALSE);
 
 	if (!jb) {
 		purple_debug_error("jabber", "Could not find buddy\n");
-		return NULL;
+		return FALSE;
 	}
 
 	if (type & PURPLE_MEDIA_AUDIO &&
@@ -2641,7 +2641,7 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 	else
 		return jingle_rtp_initiate_media(gc->proto_data, who, type);
 #else
-	return NULL;
+	return FALSE;
 #endif
 }
 

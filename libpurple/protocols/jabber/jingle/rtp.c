@@ -787,7 +787,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 	}
 }
 
-PurpleMedia *
+gboolean
 jingle_rtp_initiate_media(JabberStream *js, const gchar *who, 
 		      PurpleMediaSessionType type)
 {
@@ -797,7 +797,6 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	JingleTransport *transport;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	PurpleMedia *media;
 	const gchar *transport_type;
 	
 	gchar *jid = NULL, *me = NULL, *sid = NULL;
@@ -806,7 +805,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	jb = jabber_buddy_find(js, who, FALSE);
 	if (!jb) {
 		purple_debug_error("jingle-rtp", "Could not find Jabber buddy\n");
-		return NULL;
+		return FALSE;
 	}
 	jbr = jabber_buddy_find_resource(jb, NULL);
 	if (!jbr) {
@@ -820,7 +819,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	} else {
 		purple_debug_error("jingle-rtp", "Resource doesn't support "
 				"the same transport types\n");
-		return NULL;
+		return FALSE;
 	}
 
 	if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
@@ -854,14 +853,14 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_rtp_init_media(content);
 	}
 
-	if ((media = jingle_rtp_get_media(session)) == NULL) {
-		return NULL;
-	}
-
 	g_free(jid);
 	g_free(me);
 
-	return media;
+	if (jingle_rtp_get_media(session) == NULL) {
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 void

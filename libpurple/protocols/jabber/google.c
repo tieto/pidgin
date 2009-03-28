@@ -281,7 +281,7 @@ jabber_google_session_get_params(JabberStream *js, guint *num)
 }
 
 
-PurpleMedia*
+gboolean
 jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type)
 {
 	GoogleSession *session;
@@ -296,7 +296,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	if (!jb) {
 		purple_debug_error("jingle-rtp",
 				"Could not find Jabber buddy\n");
-		return NULL;
+		return FALSE;
 	}
 	jbr = jabber_buddy_find_resource(jb, NULL);
 	if (!jbr) {
@@ -333,7 +333,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 		purple_media_hangup(session->media);
 		google_session_destroy(session);
 		g_free(params);
-		return NULL;
+		return FALSE;
 	}
 
 	g_signal_connect_swapped(G_OBJECT(session->media),
@@ -348,7 +348,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 
 	g_free(params);
 
-	return session->media;
+	return (session->media != NULL) ? TRUE : FALSE;
 }
 
 static void
