@@ -301,36 +301,32 @@ const char *jabber_buddy_get_status_msg(JabberBuddy *jb)
 
 struct vcard_template {
 	char *label;			/* label text pointer */
-	char *text;			/* entry text pointer */
-	int  visible;			/* should entry field be "visible?" */
-	int  editable;			/* should entry field be editable? */
 	char *tag;			/* tag text */
 	char *ptag;			/* parent tag "path" text */
-	char *url;			/* vCard display format if URL */
 } const vcard_template_data[] = {
-	{N_("Full Name"),          NULL, TRUE, TRUE, "FN",        NULL,  NULL},
-	{N_("Family Name"),        NULL, TRUE, TRUE, "FAMILY",    "N",   NULL},
-	{N_("Given Name"),         NULL, TRUE, TRUE, "GIVEN",     "N",   NULL},
-	{N_("Nickname"),           NULL, TRUE, TRUE, "NICKNAME",  NULL,  NULL},
-	{N_("URL"),                NULL, TRUE, TRUE, "URL",       NULL,  "<A HREF=\"%s\">%s</A>"},
-	{N_("Street Address"),     NULL, TRUE, TRUE, "STREET",    "ADR", NULL},
-	{N_("Extended Address"),   NULL, TRUE, TRUE, "EXTADD",    "ADR", NULL},
-	{N_("Locality"),           NULL, TRUE, TRUE, "LOCALITY",  "ADR", NULL},
-	{N_("Region"),             NULL, TRUE, TRUE, "REGION",    "ADR", NULL},
-	{N_("Postal Code"),        NULL, TRUE, TRUE, "PCODE",     "ADR", NULL},
-	{N_("Country"),            NULL, TRUE, TRUE, "CTRY",      "ADR", NULL},
-	{N_("Telephone"),          NULL, TRUE, TRUE, "NUMBER",    "TEL",  NULL},
-	{N_("Email"),             NULL, TRUE, TRUE, "USERID",    "EMAIL",  "<A HREF=\"mailto:%s\">%s</A>"},
-	{N_("Organization Name"),  NULL, TRUE, TRUE, "ORGNAME",   "ORG", NULL},
-	{N_("Organization Unit"),  NULL, TRUE, TRUE, "ORGUNIT",   "ORG", NULL},
-	{N_("Title"),              NULL, TRUE, TRUE, "TITLE",     NULL,  NULL},
-	{N_("Role"),               NULL, TRUE, TRUE, "ROLE",      NULL,  NULL},
-	{N_("Birthday"),           NULL, TRUE, TRUE, "BDAY",      NULL,  NULL},
-	{N_("Description"),        NULL, TRUE, TRUE, "DESC",      NULL,  NULL},
-	{"", NULL, TRUE, TRUE, "N",     NULL, NULL},
-	{"", NULL, TRUE, TRUE, "ADR",   NULL, NULL},
-	{"", NULL, TRUE, TRUE, "ORG",   NULL, NULL},
-	{NULL, NULL, 0, 0, NULL, NULL, NULL}
+	{N_("Full Name"),          "FN",        NULL},
+	{N_("Family Name"),        "FAMILY",    "N"},
+	{N_("Given Name"),         "GIVEN",     "N"},
+	{N_("Nickname"),           "NICKNAME",  NULL},
+	{N_("URL"),                "URL",       NULL},
+	{N_("Street Address"),     "STREET",    "ADR"},
+	{N_("Extended Address"),   "EXTADD",    "ADR"},
+	{N_("Locality"),           "LOCALITY",  "ADR"},
+	{N_("Region"),             "REGION",    "ADR"},
+	{N_("Postal Code"),        "PCODE",     "ADR"},
+	{N_("Country"),            "CTRY",      "ADR"},
+	{N_("Telephone"),          "NUMBER",    "TEL"},
+	{N_("Email"),              "USERID",    "EMAIL"},
+	{N_("Organization Name"),  "ORGNAME",   "ORG"},
+	{N_("Organization Unit"),  "ORGUNIT",   "ORG"},
+	{N_("Title"),              "TITLE",     NULL},
+	{N_("Role"),               "ROLE",      NULL},
+	{N_("Birthday"),           "BDAY",      NULL},
+	{N_("Description"),        "DESC",      NULL},
+	{"",                       "N",         NULL},
+	{"",                       "ADR",       NULL},
+	{"",                       "ORG",       NULL},
+	{NULL,                     NULL,        NULL}
 };
 
 /*

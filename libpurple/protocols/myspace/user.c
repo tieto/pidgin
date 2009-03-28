@@ -41,10 +41,10 @@ msim_format_now_playing(const gchar *band, const gchar *song)
 }
 
 /**
- * Get the MsimUser from a PurpleBuddy, creating it if needed.
+ * Get the MsimUser from a PurpleBuddy, optionally creating it if needed.
  */
 MsimUser *
-msim_get_user_from_buddy(PurpleBuddy *buddy)
+msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 {
 	MsimUser *user;
 
@@ -52,7 +52,8 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 		return NULL;
 	}
 
-	if (!(user = purple_buddy_get_protocol_data(buddy))) {
+	user = purple_buddy_get_protocol_data(buddy);
+	if (create && !user) {
 		/* No MsimUser for this buddy; make one. */
 
 		user = g_new0(MsimUser, 1);
@@ -94,7 +95,7 @@ msim_find_user(MsimSession *session, const gchar *username)
 		return NULL;
 	}
 
-	user = msim_get_user_from_buddy(buddy);
+	user = msim_get_user_from_buddy(buddy, TRUE);
 
 	return user;
 }

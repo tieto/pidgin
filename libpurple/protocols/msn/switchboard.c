@@ -590,7 +590,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	payload = msn_message_gen_payload(msg, &payload_len);
 
 #ifdef MSN_DEBUG_SB
-	purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}", payload_len);
+	purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}\n", payload_len);
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 

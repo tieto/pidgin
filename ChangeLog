@@ -4,10 +4,15 @@ version 2.6.0 (??/??/2009):
 	General:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
+	* It should no longer be possible to end up with duplicates of buddies
+	  in a group on the buddy list.
+	* Removed the unmaintained and unneeded toc protocol plugin.
+	* Fixed NTLM authentication on big-endian systems.
 
 	XMPP:
-	* Add support for in-band bytestreams (XEP-0047).
-	* Add support for attention (XEP-0224).
+	* Add support for in-band bytestreams for file transfers (XEP-0047).
+	* Add support for sending attentions (equivalent to "buzz" and "nudge")
+	  using the command /buzz (XEP-0224).
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -21,6 +26,8 @@ version 2.6.0 (??/??/2009):
 	* Created a unified Buddy Pounce notification window for all pounces
 	  where "Pop up a notification" is selected, which avoids having a
 	  new dialog box every time a pounce is triggered. (Jorge Villaseñor) 
+	* The New Account dialog is now broken into three tabs.  Proxy
+	  configuration has been moved from the Advanced tab to the new tab.
 
 version 2.5.5 (03/01/2009):
 	libpurple:
