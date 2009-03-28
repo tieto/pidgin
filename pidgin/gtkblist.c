@@ -3898,7 +3898,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	presence = purple_buddy_get_presence(b);
 
 	/* Name is all that is needed */
-	if (aliased && biglist) {
+	if (!aliased || biglist) {
 
 		/* Status Info */
 		prpl = purple_find_prpl(purple_account_get_protocol_id(b->account));
@@ -4038,7 +4038,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	}
 
 	/* Put it all together */
-	if (aliased && biglist && (statustext || idletime)) {
+	if ((!aliased || biglist) && (statustext || idletime)) {
 		/* using <span size='smaller'> breaks the status, so it must be seperated into <small><span>*/
 		if (name_color) {
 			text = g_strdup_printf("<span font_desc='%s' foreground='%s'>%s</span>\n"
@@ -6443,7 +6443,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
-		gboolean hidden;
+		gboolean hidden = FALSE;
 		GdkColor *bgcolor = NULL;
 		FontColorPair *pair;
 		PidginBlistTheme *theme;

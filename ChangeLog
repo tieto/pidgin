@@ -6,6 +6,7 @@ version 2.6.0 (??/??/2009):
 	  project.  With some minor additions and clean ups from Paul Aurich.
 	* It should no longer be possible to end up with duplicates of buddies
 	  in a group on the buddy list.
+	* Removed the unmaintained and unneeded toc protocol plugin.
 
 	XMPP:
 	* Add support for in-band bytestreams for file transfers (XEP-0047).
@@ -24,6 +25,8 @@ version 2.6.0 (??/??/2009):
 	* Created a unified Buddy Pounce notification window for all pounces
 	  where "Pop up a notification" is selected, which avoids having a
 	  new dialog box every time a pounce is triggered. (Jorge Villaseñor) 
+	* The New Account dialog is now broken into three tabs.  Proxy
+	  configuration has been moved from the Advanced tab to the new tab.
 
 version 2.5.5 (03/01/2009):
 	libpurple:
