@@ -41,12 +41,12 @@ struct type1_message {
 	guint32 type;            /* 0x00000001 */
 	guint32 flags;           /* 0x0000b203 */
 
-	short   dom_len1;        /* domain string length */
-	short   dom_len2;        /* domain string length */
+	guint16 dom_len1;        /* domain string length */
+	guint16 dom_len2;        /* domain string length */
 	guint32 dom_off;         /* domain string offset */
 
-	short   host_len1;       /* host string length */
-	short   host_len2;       /* host string length */
+	guint16 host_len1;       /* host string length */
+	guint16 host_len2;       /* host string length */
 	guint32 host_off;        /* host string offset (always 0x00000020) */
 
 #if 0
@@ -59,47 +59,47 @@ struct type2_message {
 	guint8  protocol[8];     /* 'N', 'T', 'L', 'M', 'S', 'S', 'P', '\0'*/
 	guint32 type;            /* 0x00000002 */
 
-	short   msg_len1;        /* target name length */
-	short   msg_len2;        /* target name length */
-	guint32 msg_off;         /* target name offset (always 0x00000048) */
+	guint32 zero;
+	guint16 msg_len1;        /* target name length */
+	guint16 msg_len2;        /* target name length */
 
 	guint32 flags;           /* 0x00008201 */
 
 	guint8  nonce[8];        /* nonce */
-	guint8 context[8];
+	guint8  context[8];
 };
 
 struct type3_message {
 	guint8  protocol[8];     /* 'N', 'T', 'L', 'M', 'S', 'S', 'P', '\0'*/
 	guint32 type;            /* 0x00000003 */
 
-	short   lm_resp_len1;    /* LanManager response length (always 0x18)*/
-	short   lm_resp_len2;    /* LanManager response length (always 0x18)*/
+	guint16 lm_resp_len1;    /* LanManager response length (always 0x18)*/
+	guint16 lm_resp_len2;    /* LanManager response length (always 0x18)*/
 	guint32 lm_resp_off;     /* LanManager response offset */
 
-	short   nt_resp_len1;    /* NT response length (always 0x18) */
-	short   nt_resp_len2;    /* NT response length (always 0x18) */
+	guint16 nt_resp_len1;    /* NT response length (always 0x18) */
+	guint16 nt_resp_len2;    /* NT response length (always 0x18) */
 	guint32 nt_resp_off;     /* NT response offset */
 
-	short   dom_len1;        /* domain string length */
-	short   dom_len2;        /* domain string length */
+	guint16 dom_len1;        /* domain string length */
+	guint16 dom_len2;        /* domain string length */
 	guint32 dom_off;         /* domain string offset (always 0x00000040) */
 
-	short   user_len1;       /* username string length */
-	short   user_len2;       /* username string length */
+	guint16 user_len1;       /* username string length */
+	guint16 user_len2;       /* username string length */
 	guint32 user_off;        /* username string offset */
 
-	short   host_len1;       /* host string length */
-	short   host_len2;       /* host string length */
+	guint16 host_len1;       /* host string length */
+	guint16 host_len2;       /* host string length */
 	guint32 host_off;        /* host string offset */
 
-	short   sess_len1;
-	short	sess_len2;
+	guint16 sess_len1;
+	guint16 sess_len2;
 	guint32 sess_off;         /* message length */
 
 	guint32 flags;            /* 0x00008201 */
 	/* guint32 flags2; */     /* unknown, used in windows messenger */
-	/* guint32  flags3; */
+	/* guint32 flags3; */
 
 #if 0
 	guint8  dom[*];          /* domain string (unicode UTF-16LE) */
