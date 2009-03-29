@@ -478,7 +478,12 @@ static PurpleDiscoUiOps ops = {
 	pidgin_disco_create,
 	pidgin_disco_destroy,
 	pidgin_disco_add_service,
-	pidgin_disco_in_progress
+	pidgin_disco_in_progress,
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 void pidgin_disco_init() {
