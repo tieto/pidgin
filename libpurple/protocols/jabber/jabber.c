@@ -1062,22 +1062,24 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	if(js->registration)
-		field = purple_request_field_string_new("username", _("Username"), js->user->node, FALSE);
-	else
-		field = purple_request_field_string_new("username", _("Username"), NULL, FALSE);
+	if(xmlnode_get_child(query, "username")) {
+		if(js->registration)
+			field = purple_request_field_string_new("username", _("Username"), js->user->node, FALSE);
+		else
+			field = purple_request_field_string_new("username", _("Username"), NULL, FALSE);
 
-	purple_request_field_group_add_field(group, field);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "password")) {
+		if(js->registration)
+			field = purple_request_field_string_new("password", _("Password"),
+										purple_connection_get_password(js->gc), FALSE);
+		else
+			field = purple_request_field_string_new("password", _("Password"), NULL, FALSE);
 
-	if(js->registration)
-		field = purple_request_field_string_new("password", _("Password"),
-									purple_connection_get_password(js->gc), FALSE);
-	else
-		field = purple_request_field_string_new("password", _("Password"), NULL, FALSE);
-
-	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
+		purple_request_field_string_set_masked(field, TRUE);
+		purple_request_field_group_add_field(group, field);
+	}
 	if(xmlnode_get_child(query, "name")) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
@@ -1414,6 +1416,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_uri);
 	g_free(js->old_track);
 	g_free(js->expected_rspauth);
+	g_free(js->last_disco_server);
 
 	if (js->keepalive_timeout != -1)
 		purple_timeout_remove(js->keepalive_timeout);

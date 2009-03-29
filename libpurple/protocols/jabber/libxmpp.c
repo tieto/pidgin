@@ -34,6 +34,7 @@
 #include "iq.h"
 #include "jabber.h"
 #include "chat.h"
+#include "disco.h"
 #include "message.h"
 #include "roster.h"
 #include "si.h"
@@ -119,7 +120,11 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_attention_types,			/* attention_types */
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,
+	jabber_disco_get_list,			/* disco_get_list */
+	jabber_disco_cancel,			/* disco_cancel */
+	jabber_disco_service_register	/* disco_service_register */
+
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

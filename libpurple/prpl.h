@@ -69,6 +69,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "proxy.h"
 #include "plugin.h"
 #include "roomlist.h"
+#include "disco.h"
 #include "status.h"
 #include "whiteboard.h"
 
@@ -459,6 +460,21 @@ struct _PurplePluginProtocolInfo
 	 *         destroyed by the caller when it's no longer needed.
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
+
+	/**
+	 * Service discovery prpl callbacks
+	 */
+	void (*disco_get_list)(PurpleConnection *gc, PurpleDiscoList *list);
+
+	/**
+	 * Cancel fetching service list
+	 */
+	void (*disco_cancel)(PurpleDiscoList *list);
+
+	/**
+	 * Register service
+	 */
+	int (*disco_service_register)(PurpleConnection *gc, PurpleDiscoService *service);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

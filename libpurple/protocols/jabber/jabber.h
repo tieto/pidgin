@@ -44,6 +44,8 @@ typedef enum {
 	JABBER_CAP_ADHOC		  = 1 << 12,
 	JABBER_CAP_BLOCKING       = 1 << 13,
 
+	JABBER_CAP_ITEMS          = 1 << 14,
+
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 
@@ -242,6 +244,12 @@ struct _JabberStream
 	 * for when we lookup buddy icons from a url
 	 */
 	GSList *url_datas;
+
+	/**
+	 * The last server the user disco'd (or NULL) via the server discovery
+	 * API.
+	 */
+	char *last_disco_server;
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
