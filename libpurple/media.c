@@ -201,12 +201,18 @@ purple_media_info_type_get_type()
 		static const GEnumValue values[] = {
 			{ PURPLE_MEDIA_INFO_HANGUP,
 					"PURPLE_MEDIA_INFO_HANGUP", "hangup" },
+			{ PURPLE_MEDIA_INFO_ACCEPT,
+					"PURPLE_MEDIA_INFO_ACCEPT", "accept" },
 			{ PURPLE_MEDIA_INFO_REJECT,
 					"PURPLE_MEDIA_INFO_REJECT", "reject" },
 			{ PURPLE_MEDIA_INFO_MUTE,
 					"PURPLE_MEDIA_INFO_MUTE", "mute" },
+			{ PURPLE_MEDIA_INFO_UNMUTE,
+					"PURPLE_MEDIA_INFO_UNMUTE", "unmute" },
 			{ PURPLE_MEDIA_INFO_HOLD,
 					"PURPLE_MEDIA_INFO_HOLD", "hold" },
+			{ PURPLE_MEDIA_INFO_UNHOLD,
+					"PURPLE_MEDIA_INFO_HOLD", "unhold" },
 			{ 0, NULL, NULL }
 		};
 		type = g_enum_register_static("PurpleMediaInfoType", values);

@@ -90,9 +90,12 @@ typedef enum {
 /** Media info types */
 typedef enum {
 	PURPLE_MEDIA_INFO_HANGUP = 0,
+	PURPLE_MEDIA_INFO_ACCEPT,
 	PURPLE_MEDIA_INFO_REJECT,
 	PURPLE_MEDIA_INFO_MUTE,
+	PURPLE_MEDIA_INFO_UNMUTE,
 	PURPLE_MEDIA_INFO_HOLD,
+	PURPLE_MEDIA_INFO_UNHOLD,
 } PurpleMediaInfoType;
 
 typedef enum {
