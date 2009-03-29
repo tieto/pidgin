@@ -238,7 +238,8 @@ google_session_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 
 static void
 google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
-		gchar *sid, gchar *name, GoogleSession *session)
+		gchar *sid, gchar *name, gboolean local,
+		GoogleSession *session)
 {
 	if (type == PURPLE_MEDIA_INFO_HANGUP) {
 		xmlnode *sess;

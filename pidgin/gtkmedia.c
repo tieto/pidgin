@@ -703,7 +703,8 @@ pidgin_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 
 static void
 pidgin_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
-		gchar *sid, gchar *name, PidginMedia *gtkmedia)
+		gchar *sid, gchar *name, gboolean local,
+		PidginMedia *gtkmedia)
 {
 	if (type == PURPLE_MEDIA_INFO_REJECT) {
 		pidgin_media_emit_message(gtkmedia,

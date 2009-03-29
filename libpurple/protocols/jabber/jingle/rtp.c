@@ -444,7 +444,8 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 
 static void
 jingle_rtp_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
-		gchar *sid, gchar *name, JingleSession *session)
+		gchar *sid, gchar *name, gboolean local,
+		JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "stream-info: type %d "
 			"id: %s name: %s\n", type, sid, name);

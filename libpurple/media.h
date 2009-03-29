@@ -378,6 +378,19 @@ void purple_media_end(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant);
 
 /**
+ * Signals different information about the given stream.
+ *
+ * @param media The media instance to containing the stream to signal.
+ * @param type The type of info being signaled.
+ * @param session_id The id of the session of the stream being signaled.
+ * @param participant The participant of the stream being signaled.
+ * @param local TRUE if the info originated locally, FALSE if on the remote end.
+ */
+void purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
+		const gchar *session_id, const gchar *participant,
+		gboolean local);
+
+/**
  * Adds a stream to a session.
  *
  * It only adds a stream to one audio session or video session as

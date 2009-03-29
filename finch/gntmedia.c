@@ -233,7 +233,7 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 
 static void
 finch_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
-		gchar *sid, gchar *name, FinchMedia *gntmedia)
+		gchar *sid, gchar *name, gboolean local, FinchMedia *gntmedia)
 {
 	if (type == PURPLE_MEDIA_INFO_REJECT) {
 		finch_media_emit_message(gntmedia,

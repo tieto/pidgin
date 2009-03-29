@@ -288,9 +288,9 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_TYPE_STRING, G_TYPE_STRING);
 	purple_media_signals[STREAM_INFO] = g_signal_new("stream-info", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 purple_smarshal_VOID__ENUM_STRING_STRING,
-					 G_TYPE_NONE, 3, PURPLE_MEDIA_TYPE_INFO_TYPE,
-					 G_TYPE_STRING, G_TYPE_STRING);
+					 purple_smarshal_VOID__ENUM_STRING_STRING_BOOLEAN,
+					 G_TYPE_NONE, 4, PURPLE_MEDIA_TYPE_INFO_TYPE,
+					 G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	g_type_class_add_private(klass, sizeof(PurpleMediaPrivate));
 }
 
@@ -1406,7 +1406,7 @@ purple_media_hangup(PurpleMedia *media)
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 	g_signal_emit(media, purple_media_signals[STREAM_INFO],
 			0, PURPLE_MEDIA_INFO_HANGUP,
-			NULL, NULL);
+			NULL, NULL, TRUE);
 	purple_media_end(media, NULL, NULL);
 #endif
 }
@@ -1418,7 +1418,7 @@ purple_media_reject(PurpleMedia *media)
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 	g_signal_emit(media, purple_media_signals[STREAM_INFO],
 			0, PURPLE_MEDIA_INFO_REJECT,
-			NULL, NULL);
+			NULL, NULL, TRUE);
 	purple_media_end(media, NULL, NULL);
 #endif
 }
@@ -1434,6 +1434,28 @@ purple_media_end(PurpleMedia *media,
 				0, PURPLE_MEDIA_STATE_END,
 				NULL, NULL);
 		g_object_unref(media);
+	}
+#endif
+}
+
+void
+purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
+		const gchar *session_id, const gchar *participant,
+		gboolean local)
+{
+#ifdef USE_VV
+	GList *streams;
+
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
+
+	streams = purple_media_get_streams(media, session_id, participant);
+
+	for (; streams; streams = g_list_delete_link(streams, streams)) {
+		PurpleMediaStream *stream = streams->data;
+
+		g_signal_emit(media, purple_media_signals[STREAM_INFO],
+				0, type, stream->session->id,
+				stream->participant, local);
 	}
 #endif
 }
