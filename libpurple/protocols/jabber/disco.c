@@ -590,7 +590,7 @@ jabber_disco_type_from_string(const gchar *str)
 		return PURPLE_DISCO_SERVICE_TYPE_XMPP;
 	else if (!strcasecmp(str, "icq"))
 		return PURPLE_DISCO_SERVICE_TYPE_ICQ;
-	else if (!strcasecmp(str, "mrim"))
+	else if (!strcasecmp(str, "smtp"))
 		return PURPLE_DISCO_SERVICE_TYPE_MAIL;
 	else if (!strcasecmp(str, "user"))
 		return PURPLE_DISCO_SERVICE_TYPE_USER;
