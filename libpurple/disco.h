@@ -71,11 +71,11 @@ typedef enum
 	PURPLE_DISCO_SERVICE_TYPE_ICQ,
 	PURPLE_DISCO_SERVICE_TYPE_IRC,
 	PURPLE_DISCO_SERVICE_TYPE_MAIL,
-	PURPLE_DISCO_SERVICE_TYPE_MSN
+	PURPLE_DISCO_SERVICE_TYPE_MSN,
 	PURPLE_DISCO_SERVICE_TYPE_USER,
 	PURPLE_DISCO_SERVICE_TYPE_QQ,
 	PURPLE_DISCO_SERVICE_TYPE_XMPP,
-	PURPLE_DISCO_SERVICE_TYPE_YAHOO,
+	PURPLE_DISCO_SERVICE_TYPE_YAHOO
 } PurpleDiscoServiceType;
 
 /**
@@ -99,11 +99,19 @@ struct _PurpleDiscoService {
 };
 
 struct _PurpleDiscoUiOps {
-	void (*dialog_show_with_account)(PurpleAccount* account); /**< Force the ui to pop up a dialog */
-	void (*create)(PurpleDiscoList *list); /**< Init ui resources */
-	void (*destroy)(PurpleDiscoList *list); /**< Free ui resources */
+	/** Ask the UI to display a dialog for the specified account.
+	 */
+	void (*dialog_show_with_account)(PurpleAccount* account);
+	void (*create)(PurpleDiscoList *list); /**< Sets UI-specific data on a disco list */
+	void (*destroy)(PurpleDiscoList *list); /**< Free UI-specific data on the disco list */
 	void (*add_service)(PurpleDiscoList *list, PurpleDiscoService *service, PurpleDiscoService *parent); /**< Add service to dialog */
 	void (*in_progress)(PurpleDiscoList *list, gboolean in_progress); /**< Set progress to dialog */
+
+	/* Padding */
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #ifdef __cplusplus
@@ -195,6 +203,13 @@ gboolean purple_disco_get_in_progress(PurpleDiscoList *list);
  * @param ops The UI operations structure.
  */
 void purple_disco_set_ui_ops(PurpleDiscoUiOps *ui_ops);
+
+/**
+ * Returns the service discovery UI operations structure.
+ *
+ * @return A filled-out PurpleDiscoUiOps structure.
+ */
+PurpleDiscoUiOps *purple_disco_get_ui_ops(void);
 
 /**
  * Register service

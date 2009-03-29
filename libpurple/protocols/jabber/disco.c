@@ -580,7 +580,7 @@ jabber_disco_category_from_string(const gchar *str)
 	else if (!strcasecmp(str, "conference"))
 		return PURPLE_DISCO_SERVICE_CAT_MUC;
 
-	return PURPLE_DISCO_SERVICE_CAT_NONE;
+	return PURPLE_DISCO_SERVICE_CAT_OTHER;
 }
 
 static PurpleDiscoServiceType

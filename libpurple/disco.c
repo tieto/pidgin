@@ -255,3 +255,8 @@ void purple_disco_set_ui_ops(PurpleDiscoUiOps *ui_ops)
 {
 	ops = ui_ops;
 }
+
+PurpleDiscoUiOps *purple_disco_get_ui_ops(void)
+{
+	return ops;
+}
