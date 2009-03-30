@@ -74,9 +74,13 @@ static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 static void register_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
-	PurpleConnection *gc = purple_account_get_connection(info->list->account);
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
-	purple_disco_service_register(gc, info->service);
+	account = purple_disco_list_get_account(info->list);
+	gc = purple_account_get_connection(account);
+
+	purple_disco_service_register(info->service);
 }
 
 static void list_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
@@ -92,25 +96,31 @@ static void list_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	
 	dialog->discolist = purple_disco_list_new(dialog->account, (void*) dialog);
 
-	purple_disco_get_list(gc, dialog->discolist);
+	purple_disco_get_list(dialog->discolist);
 }
 
 static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
+	PurpleAccount *account;
+	const char *name;
 
-	if (info) {
-		if (info->service->category == PURPLE_DISCO_SERVICE_CAT_MUC)
-			purple_blist_request_add_chat(info->list->account, NULL, NULL, info->service->name);
-		else
-			purple_blist_request_add_buddy(info->list->account, info->service->name, NULL, NULL);
-	}
+	g_return_if_fail(info != NULL);
+
+	account = purple_disco_list_get_account(info->list);
+	name = purple_disco_service_get_name(info->service);
+
+	if (purple_disco_service_get_category(info->service) == PURPLE_DISCO_SERVICE_CAT_MUC)
+		purple_blist_request_add_chat(account, NULL, NULL, name);
+	else
+		purple_blist_request_add_buddy(account, name, NULL, NULL);
 }
 
 static void
 selection_changed_cb(GtkTreeSelection *selection, PidginDiscoDialog *dialog) 
 {
 	PurpleDiscoService *service;
+	PurpleDiscoServiceFlags flags;
 	GtkTreeIter iter;
 	GValue val;
 	static struct _menu_cb_info *info;
@@ -132,8 +142,10 @@ selection_changed_cb(GtkTreeSelection *selection, PidginDiscoDialog *dialog)
 		g_object_set_data(G_OBJECT(dialog->add_button), "disco-info", info);
 		g_object_set_data(G_OBJECT(dialog->register_button), "disco-info", info);
 
-		gtk_widget_set_sensitive(dialog->add_button, service->flags & PURPLE_DISCO_FLAG_ADD);
-		gtk_widget_set_sensitive(dialog->register_button, service->flags & PURPLE_DISCO_FLAG_REGISTER);
+		flags = purple_disco_service_get_flags(service);
+
+		gtk_widget_set_sensitive(dialog->add_button, flags & PURPLE_DISCO_ADD);
+		gtk_widget_set_sensitive(dialog->register_button, flags & PURPLE_DISCO_REGISTER);
 	} else {
 		gtk_widget_set_sensitive(dialog->add_button, FALSE);
 		gtk_widget_set_sensitive(dialog->register_button, FALSE);
@@ -367,7 +379,9 @@ pidgin_disco_dialog_show_with_account(PurpleAccount* account)
 static void
 pidgin_disco_create(PurpleDiscoList *list)
 {
-	PidginDiscoDialog *dialog = (PidginDiscoDialog *) list->ui_data;
+	PidginDiscoDialog *dialog;
+
+	dialog = purple_disco_list_get_ui_data(list);
 
 	dialog->cats = g_hash_table_new_full(NULL, NULL, NULL, (GDestroyNotify)gtk_tree_row_reference_free);
 }
@@ -376,14 +390,18 @@ pidgin_disco_create(PurpleDiscoList *list)
 static void
 pidgin_disco_destroy(PurpleDiscoList *list)
 {
-	PidginDiscoDialog *dialog = (PidginDiscoDialog *) list->ui_data;
+	PidginDiscoDialog *dialog;
+	
+	dialog = purple_disco_list_get_ui_data(list);
 
 	g_hash_table_destroy(dialog->cats);
 }
 
 static void pidgin_disco_in_progress(PurpleDiscoList *list, gboolean in_progress)
 {
-	PidginDiscoDialog *dialog = (PidginDiscoDialog *) list->ui_data;
+	PidginDiscoDialog *dialog;
+	
+	dialog = purple_disco_list_get_ui_data(list);
 
 	if (!dialog)
 		return;
@@ -405,14 +423,18 @@ static void pidgin_disco_in_progress(PurpleDiscoList *list, gboolean in_progress
 
 static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *service, PurpleDiscoService *parent)
 {
-	PidginDiscoDialog *dialog = (PidginDiscoDialog *) list->ui_data;
+	PidginDiscoDialog *dialog;
+	PurpleDiscoServiceCategory category;
+	PurpleDiscoServiceType type;
 	GtkTreeIter iter, parent_iter;
 	GtkTreeRowReference *rr;
 	GtkTreePath *path;
 	char *filename = NULL;
 	GdkPixbuf *pixbuf = NULL;
 
-	purple_debug_info("disco", "Add_service \"%s\"\n", service->name);
+	dialog = purple_disco_list_get_ui_data(list);
+
+	purple_debug_info("disco", "Add_service \"%s\"\n", purple_disco_service_get_name(service));
 
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(dialog->progress));
 
@@ -426,28 +448,31 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 	}
 
 	gtk_tree_store_append(dialog->model, &iter, (parent ? &parent_iter : NULL));
-	
-	if (service->type == PURPLE_DISCO_SERVICE_TYPE_XMPP)
+
+	category = purple_disco_service_get_category(service);
+	type = purple_disco_service_get_type(service);
+
+	if (type == PURPLE_DISCO_SERVICE_TYPE_XMPP)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "jabber.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_ICQ)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_ICQ)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "icq.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_YAHOO)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_YAHOO)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "yahoo.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_GTALK)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_GTALK)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "google-talk.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_IRC)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_IRC)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "irc.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_GG)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_GG)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "gadu-gadu.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_AIM)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_AIM)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "aim.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_QQ)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_QQ)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "qq.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_MSN)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_MSN)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "msn.png", NULL);
-	else if (service->type == PURPLE_DISCO_SERVICE_TYPE_USER)
+	else if (type == PURPLE_DISCO_SERVICE_TYPE_USER)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "person.png", NULL);
-	else if (service->category == PURPLE_DISCO_SERVICE_CAT_MUC)
+	else if (category == PURPLE_DISCO_SERVICE_CAT_MUC)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "chat.png", NULL);
 
 	if (filename) {
@@ -457,8 +482,8 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 
 	gtk_tree_store_set(dialog->model, &iter,
 			PIXBUF_COLUMN, pixbuf,
-			NAME_COLUMN, service->name,
-			DESCRIPTION_COLUMN, service->description,
+			NAME_COLUMN, purple_disco_service_get_name(service),
+			DESCRIPTION_COLUMN, purple_disco_service_get_description(service),
 			SERVICE_COLUMN, service,
 			-1);
 

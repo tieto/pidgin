@@ -35,19 +35,6 @@ typedef struct _PurpleDiscoUiOps PurpleDiscoUiOps;
 #include "account.h"
 
 /**
- * Represents a list of services for a given connection on a given protocol.
- */
-struct _PurpleDiscoList {
-	PurpleAccount *account; /**< The account this list belongs to. */
-	GList *services; /**< The list of services. */
-	gpointer *ui_data; /**< UI private data. */
-	gboolean in_progress;
-	gint fetch_count; /**< Uses in fetch processes */
-	gpointer proto_data; /** Prpl private data. */
-	guint ref; /**< The reference count. */
-};
-
-/**
  * The categories of services.
  */
 typedef enum
@@ -81,22 +68,13 @@ typedef enum
 /**
  * The flags of services.
  */
-#define PURPLE_DISCO_FLAG_NONE			0
-#define PURPLE_DISCO_FLAG_ADD			1 << 0
-#define PURPLE_DISCO_FLAG_BROWSE		1 << 1
-#define PURPLE_DISCO_FLAG_REGISTER		1 << 2
-
-/**
- * Represents a list of services for a given connection on a given protocol.
- */
-struct _PurpleDiscoService {
-	PurpleDiscoList *list;
-	PurpleDiscoServiceCategory category; /**< The category of service. */
-	gchar *name; /**< The name of the service. */
-	PurpleDiscoServiceType type; /**< The type of service. */
-	guint flags;
-	gchar *description; /**< The name of the service. */
-};
+typedef enum
+{
+	PURPLE_DISCO_NONE          = 0x0000,
+	PURPLE_DISCO_ADD           = 0x0001, /**< Supports an 'add' operation */
+	PURPLE_DISCO_BROWSE        = 0x0002, /**< Supports browsing */
+	PURPLE_DISCO_REGISTER      = 0x0004  /**< Supports a 'register' operation */
+} PurpleDiscoServiceFlags;
 
 struct _PurpleDiscoUiOps {
 	/** Ask the UI to display a dialog for the specified account.
@@ -131,9 +109,9 @@ PurpleDiscoList *purple_disco_list_new(PurpleAccount *account, void *ui_data);
 /**
  * Increases the reference count on the service discovery list.
  *
- * @param list The object to ref.
+ * @param list The disco list to ref.
  */
-void purple_disco_list_ref(PurpleDiscoList *list);
+PurpleDiscoList *purple_disco_list_ref(PurpleDiscoList *list);
 
 /**
  * Decreases the reference count on the service discovery list.
@@ -148,10 +126,8 @@ void purple_disco_list_unref(PurpleDiscoList *list);
 /**
  * Instructs the prpl to start fetching the list.
  *
- * @param gc The PurpleConnection to have get a list.
- *
  */
-void purple_disco_get_list(PurpleConnection *gc, PurpleDiscoList *list);
+void purple_disco_get_list(PurpleDiscoList *list);
 
 /**
  * Tells the prpl to stop fetching the list.
@@ -167,12 +143,109 @@ void purple_disco_cancel_get_list(PurpleDiscoList *list);
  * Create new service object
  */
 PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceCategory category, const gchar *name,
-		PurpleDiscoServiceType type, const gchar *description, int flags);
+		PurpleDiscoServiceType type, const gchar *description, PurpleDiscoServiceFlags flags);
 
 /**
  * Add service to list
  */
 void purple_disco_list_service_add(PurpleDiscoList *list, PurpleDiscoService *service, PurpleDiscoService *parent);
+
+/**
+ * Register service
+ * @param service The service that will be registered
+ */
+void purple_disco_service_register(PurpleDiscoService *service);
+
+/**
+ * Returns a service's name.
+ *
+ * @param service The service.
+ * @return The name.
+ *
+ * @since TODO
+ */
+const gchar *purple_disco_service_get_name(PurpleDiscoService *service);
+
+/**
+ * Return a service's description.
+ *
+ * @param service The service.
+ * @return The description.
+ *
+ * @since TODO
+ */
+const gchar* purple_disco_service_get_description(PurpleDiscoService *service);
+
+/**
+ * Return a service's category.
+ *
+ * @param service The service.
+ * @return The category.
+ *
+ * @since TODO
+ */
+PurpleDiscoServiceCategory purple_disco_service_get_category(PurpleDiscoService *service);
+
+/**
+ * Return a service's type.
+ *
+ * @param service The service.
+ * @return The type.
+ *
+ * @since TODO
+ */
+PurpleDiscoServiceType purple_disco_service_get_type(PurpleDiscoService *service);
+
+/**
+ * Return a service's flags.
+ *
+ * @param service The service.
+ * @return The flags.
+ *
+ * @since TODO
+ */
+PurpleDiscoServiceFlags purple_disco_service_get_flags(PurpleDiscoService *service);
+/**
+ * Get the account associated with a service list.
+ *
+ * @param list  The service list.
+ * @return      The account
+ *
+ * @since TODO
+ */
+PurpleAccount* purple_disco_list_get_account(PurpleDiscoList *list);
+
+/**
+ * Get a list of the services associated with this service list.
+ *
+ * @param dl The serivce list.
+ * @returns    A list of PurpleDiscoService items.
+ *
+ * @since TODO
+ */
+GList* purple_disco_list_get_services(PurpleDiscoList *dl);
+
+/**
+ * Set the service list's UI data.
+ *
+ * @param list  The service list.
+ * @param data  The data.
+ *
+ * @see purple_disco_list_get_ui_data()
+ * @since TODO
+ */
+void purple_disco_list_set_ui_data(PurpleDiscoList *list, gpointer data);
+
+/**
+ * Get the service list's UI data.
+ *
+ * @param list  The service list.
+ * @return      The data.
+ *
+ * @see purple_disco_list_set_ui_data()
+ * @since TODO
+ */
+gpointer purple_disco_list_get_ui_data(PurpleDiscoList *list);
 
 /**
  * Set the "in progress" state of the Service Discovery.
@@ -182,8 +255,11 @@ void purple_disco_list_service_add(PurpleDiscoList *list, PurpleDiscoService *se
  *
  * @param list The service list.
  * @param in_progress We're downloading it, or we're not.
+ *
+ * @see purple_disco_list_get_in_progress()
+ * @since TODO
  */
-void purple_disco_set_in_progress(PurpleDiscoList *list, gboolean in_progress);
+void purple_disco_list_set_in_progress(PurpleDiscoList *list, gboolean in_progress);
 
 /**
  * Gets the "in progress" state of the Service Discovery.
@@ -193,14 +269,44 @@ void purple_disco_set_in_progress(PurpleDiscoList *list, gboolean in_progress);
  *
  * @param list The service list.
  * @return True if we're downloading it, or false if we're not.
+ *
+ * @see purple_disco_list_set_in_progress()
+ * @since TODO
  */
-gboolean purple_disco_get_in_progress(PurpleDiscoList *list);
+gboolean purple_disco_list_get_in_progress(PurpleDiscoList *list);
 
+/**
+ * Sets the disco list's protocol-specific data.
+ *
+ * This should only be called from the associated prpl.
+ *
+ * @param list The disco list.
+ * @param data The protocol data.
+ *
+ * @see purple_disco_list_get_protocol_data()
+ * @since TODO
+ */
+void purple_disco_list_set_protocol_data(PurpleDiscoList *list, gpointer data);
+
+/**
+ * Returns the disco list's protocol-specific data.
+ *
+ * This should only be called from the associated prpl.
+ *
+ * @param list The disco list.
+ * @return     The protocol data.
+ *
+ * @see purple_disco_list_set_protocol_data()
+ * @since TODO
+ */
+gpointer purple_disco_list_get_protocol_data(PurpleDiscoList *list);
 
 /**
  * Sets the UI operations structure to be used in all purple service discovery.
  *
  * @param ops The UI operations structure.
+ *
+ * @since TODO
  */
 void purple_disco_set_ui_ops(PurpleDiscoUiOps *ui_ops);
 
@@ -208,38 +314,10 @@ void purple_disco_set_ui_ops(PurpleDiscoUiOps *ui_ops);
  * Returns the service discovery UI operations structure.
  *
  * @return A filled-out PurpleDiscoUiOps structure.
+ *
+ * @since TODO
  */
 PurpleDiscoUiOps *purple_disco_get_ui_ops(void);
-
-/**
- * Register service
- * @param gc Connection
- * @param service The service that will be registered
- */
-int purple_disco_service_register(PurpleConnection *gc, PurpleDiscoService *service);
-
-/**< Set/Get the account this list belongs to. */
-void purple_disco_list_set_account(PurpleDiscoList *list, PurpleAccount *account);
-PurpleAccount* purple_disco_list_get_account(PurpleDiscoList *list);
-
-/**< The list of services. */
-GList* spurple_disco_list_get_services(PurpleDiscoList *dl);
-
-/**< Set/Get UI private data. */
-void purple_disco_list_set_ui_data(PurpleDiscoList *list, gpointer ui_data);
-gpointer purple_disco_list_get_ui_data(PurpleDiscoList *list);
-
-/** Set/Get in progress flag */ 
-void purple_disco_list_set_in_progress(PurpleDiscoList *list, gboolean in_progress);
-gboolean purple_disco_list_get_in_progress(PurpleDiscoList *list);
-
-/** Set/Get fetch counter */
-void purple_disco_list_set_fetch_count(PurpleDiscoList *list, gint fetch_count);
-gint purple_disco_list_get_fetch_count(PurpleDiscoList *list);
-
-/** Set/Get prpl private data. */
-void purple_disco_list_set_proto_data(PurpleDiscoList *list, gpointer proto_data);
-gpointer purple_disco_list_get_proto_data(PurpleDiscoList *list);
 
 #ifdef __cplusplus
 }
