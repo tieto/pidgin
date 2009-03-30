@@ -350,13 +350,6 @@ void purple_media_set_prpl_data(PurpleMedia *media, gpointer prpl_data);
 void purple_media_error(PurpleMedia *media, const gchar *error, ...);
 
 /**
- * Set the media session to the accepted state.
- *
- * @param media The media object to set the state on.
- */
-void purple_media_accept(PurpleMedia *media);
-
-/**
  * Ends all streams that match the given parameters
  *
  * @param media The media object with which to end streams.

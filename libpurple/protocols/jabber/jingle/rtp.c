@@ -743,11 +743,10 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			purple_media_add_remote_candidates(media,
 					name, remote_jid, candidates);
 
-			/* This needs to be for the entire session, not a single content */
-			/* very hacky */
-			if (action == JINGLE_SESSION_ACCEPT &&
-					xmlnode_get_next_twin(xmlcontent) == NULL)
-				purple_media_accept(media);
+			if (action == JINGLE_SESSION_ACCEPT)
+				purple_media_stream_info(media,
+						PURPLE_MEDIA_INFO_ACCEPT,
+						name, remote_jid, FALSE);
 
 			g_free(remote_jid);
 			g_free(name);

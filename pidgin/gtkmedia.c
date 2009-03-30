@@ -813,6 +813,13 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 }
 
 static void
+pidgin_media_accept_cb(PurpleMedia *media, int index)
+{
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_ACCEPT,
+			NULL, NULL, TRUE);
+}
+
+static void
 pidgin_media_reject_cb(PurpleMedia *media, int index)
 {
 	purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
@@ -840,7 +847,8 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 		purple_request_accept_cancel(gtkmedia, "Media invitation",
 				message, NULL, PURPLE_DEFAULT_ACTION_NONE,
 				(void*)pc, screenname, NULL, media,
-				purple_media_accept, pidgin_media_reject_cb);
+				pidgin_media_accept_cb,
+				pidgin_media_reject_cb);
 		g_free(message);
 	} else
 		gtk_widget_show(GTK_WIDGET(gtkmedia));

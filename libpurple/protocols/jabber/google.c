@@ -490,7 +490,8 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	purple_media_set_remote_codecs(session->media, "google-voice",
 			session->remote_jid, codecs);
 
-	purple_media_accept(session->media);
+	purple_media_stream_info(session->media, PURPLE_MEDIA_INFO_ACCEPT,
+			NULL, NULL, FALSE);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));

@@ -160,7 +160,7 @@ finch_media_emit_message(FinchMedia *gntmedia, const char *msg)
 }
 
 static void
-finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
+finch_media_connected_cb(PurpleMedia *media, FinchMedia *gntmedia)
 {
 	GntWidget *parent;
 
@@ -227,7 +227,7 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 			g_object_unref(gntmedia);
 		}
 	} else if (state == PURPLE_MEDIA_STATE_CONNECTED) {
-		finch_media_accept_cb(media, gntmedia);
+		finch_media_connected_cb(media, gntmedia);
 	}
 }
 
@@ -239,6 +239,13 @@ finch_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		finch_media_emit_message(gntmedia,
 				_("You have rejected the call."));
 	}
+}
+
+static void
+finch_media_accept_cb(PurpleMedia *media, GntWidget *widget)
+{
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_ACCEPT,
+			NULL, NULL, TRUE);
 }
 
 static void
@@ -271,7 +278,7 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 			media->priv->media = g_value_get_object(value);
 			g_object_ref(media->priv->media);
 			g_signal_connect_swapped(G_OBJECT(media->priv->accept), "activate",
-				 G_CALLBACK(purple_media_accept), media->priv->media);
+				 G_CALLBACK(finch_media_accept_cb), media->priv->media);
 			g_signal_connect_swapped(G_OBJECT(media->priv->reject), "activate",
 				 G_CALLBACK(finch_media_reject_cb), media->priv->media);
 			g_signal_connect_swapped(G_OBJECT(media->priv->hangup), "activate",
