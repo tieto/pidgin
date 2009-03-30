@@ -401,7 +401,7 @@ create_default_audio_src(void)
 	double input_volume = purple_prefs_get_int(
 			"/purple/media/audio/volume/input")/10.0;
 
-	bin = gst_bin_new("purplesendaudiobin");
+	bin = gst_bin_new("finchdefaultaudiosrc");
 	src = gst_element_factory_make("alsasrc", "asrc");
 	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
 	g_object_set(volume, "volume", input_volume, NULL);
