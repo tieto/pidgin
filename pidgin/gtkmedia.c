@@ -1020,10 +1020,12 @@ static PurpleMediaElementInfo default_audio_sink =
 			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
 	create_default_audio_sink,	/* create */
 };
+#endif  /* USE_VV */
 
 void
 pidgin_medias_init(void)
 {
+#ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
 	g_signal_connect(G_OBJECT(manager), "init-media",
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
@@ -1033,6 +1035,6 @@ pidgin_medias_init(void)
 	purple_media_manager_set_active_element(manager, &default_video_sink);
 	purple_media_manager_set_active_element(manager, &default_audio_src);
 	purple_media_manager_set_active_element(manager, &default_audio_sink);
+#endif
 }
 
-#endif  /* USE_VV */
