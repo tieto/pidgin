@@ -173,8 +173,10 @@ pidgin_media_class_init (PidginMediaClass *klass)
 static void
 pidgin_media_mute_toggled(GtkToggleButton *toggle, PidginMedia *media)
 {
-	purple_media_mute(media->priv->media,
-			gtk_toggle_button_get_active(toggle));
+	purple_media_stream_info(media->priv->media,
+			gtk_toggle_button_get_active(toggle) ?
+			PURPLE_MEDIA_INFO_MUTE : PURPLE_MEDIA_INFO_UNMUTE,
+			NULL, NULL, TRUE);
 }
 
 static gboolean

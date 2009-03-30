@@ -527,14 +527,6 @@ gboolean purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
 		const gchar *participant);
 
 /**
- * Mutes or unmutes all the audio local audio sources.
- *
- * @param media The media object to mute or unmute
- * @param active @c TRUE to mutes all of the local audio sources, or @c FALSE to unmute.
- */
-void purple_media_mute(PurpleMedia *media, gboolean active);
-
-/**
  * Sets the input volume of all the selected sessions.
  *
  * @param media The media object the sessions are in.

@@ -2170,14 +2170,6 @@ purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
 #endif
 }
 
-void purple_media_mute(PurpleMedia *media, gboolean active)
-{
-#ifdef USE_VV
-	purple_media_stream_info(media, active ? PURPLE_MEDIA_INFO_MUTE :
-			PURPLE_MEDIA_INFO_UNMUTE, NULL, NULL, TRUE);
-#endif
-}
-
 void purple_media_set_input_volume(PurpleMedia *media,
 		const gchar *session_id, double level)
 {
