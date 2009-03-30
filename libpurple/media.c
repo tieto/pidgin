@@ -1386,22 +1386,8 @@ void
 purple_media_accept(PurpleMedia *media)
 {
 #ifdef USE_VV
-	GList *streams;
-
-	g_return_if_fail(PURPLE_IS_MEDIA(media));
-
-	streams = media->priv->streams;
-
-	for (; streams; streams = g_list_next(streams)) {
-		PurpleMediaStream *stream = streams->data;
-		g_object_set(G_OBJECT(stream->stream), "direction",
-				purple_media_to_fs_stream_direction(
-				stream->session->type), NULL);
-		stream->accepted = TRUE;
-	}
-
-	g_signal_emit(media, purple_media_signals[ACCEPTED],
-			0, NULL, NULL);
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_ACCEPT,
+			NULL, NULL, TRUE);
 #endif
 }
 
@@ -1409,11 +1395,8 @@ void
 purple_media_hangup(PurpleMedia *media)
 {
 #ifdef USE_VV
-	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	g_signal_emit(media, purple_media_signals[STREAM_INFO],
-			0, PURPLE_MEDIA_INFO_HANGUP,
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_HANGUP,
 			NULL, NULL, TRUE);
-	purple_media_end(media, NULL, NULL);
 #endif
 }
 
@@ -1421,11 +1404,8 @@ void
 purple_media_reject(PurpleMedia *media)
 {
 #ifdef USE_VV
-	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	g_signal_emit(media, purple_media_signals[STREAM_INFO],
-			0, PURPLE_MEDIA_INFO_REJECT,
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
 			NULL, NULL, TRUE);
-	purple_media_end(media, NULL, NULL);
 #endif
 }
 
@@ -1450,18 +1430,63 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 		gboolean local)
 {
 #ifdef USE_VV
-	GList *streams;
-
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 
-	streams = purple_media_get_streams(media, session_id, participant);
+	if (type == PURPLE_MEDIA_INFO_ACCEPT) {
+		GList *streams;
 
-	for (; streams; streams = g_list_delete_link(streams, streams)) {
-		PurpleMediaStream *stream = streams->data;
+		g_return_if_fail(PURPLE_IS_MEDIA(media));
 
-		g_signal_emit(media, purple_media_signals[STREAM_INFO],
-				0, type, stream->session->id,
-				stream->participant, local);
+		streams = purple_media_get_streams(media,
+				session_id, participant);
+
+		for (; streams; streams =
+				g_list_delete_link(streams, streams)) {
+			PurpleMediaStream *stream = streams->data;
+			g_object_set(G_OBJECT(stream->stream), "direction",
+					purple_media_to_fs_stream_direction(
+					stream->session->type), NULL);
+			stream->accepted = TRUE;
+		}
+
+		g_signal_emit(media, purple_media_signals[ACCEPTED],
+				0, NULL, NULL);
+	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
+			type == PURPLE_MEDIA_INFO_UNMUTE)) {
+		GList *sessions;
+		gboolean active = (type == PURPLE_MEDIA_INFO_MUTE);
+
+		g_return_if_fail(PURPLE_IS_MEDIA(media));
+
+		if (session_id == NULL)
+			sessions = g_hash_table_get_values(
+					media->priv->sessions);
+		else
+			sessions = g_list_prepend(NULL,
+					purple_media_get_session(
+					media, session_id));
+
+		purple_debug_info("media", "Turning mute %s\n",
+				active ? "on" : "off");
+
+		for (; sessions; sessions = g_list_delete_link(
+				sessions, sessions)) {
+			PurpleMediaSession *session = sessions->data;
+			if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
+				GstElement *volume = gst_bin_get_by_name(
+						GST_BIN(session->src),
+						"purpleaudioinputvolume");
+				g_object_set(volume, "mute", active, NULL);
+			}
+		}
+	}
+
+	g_signal_emit(media, purple_media_signals[STREAM_INFO],
+			0, type, session_id, participant, local);
+
+	if (type == PURPLE_MEDIA_INFO_HANGUP ||
+			type == PURPLE_MEDIA_INFO_REJECT) {
+		purple_media_end(media, session_id, participant);
 	}
 #endif
 }
@@ -2175,22 +2200,8 @@ purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
 void purple_media_mute(PurpleMedia *media, gboolean active)
 {
 #ifdef USE_VV
-	GList *sessions;
-
-	g_return_if_fail(PURPLE_IS_MEDIA(media));
-
-	sessions = g_hash_table_get_values(media->priv->sessions);
-	purple_debug_info("media", "Turning mute %s\n", active ? "on" : "off");
-
-	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-		PurpleMediaSession *session = sessions->data;
-		if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
-			GstElement *volume = gst_bin_get_by_name(
-					GST_BIN(session->src),
-					"purpleaudioinputvolume");
-			g_object_set(volume, "mute", active, NULL);
-		}
-	}
+	purple_media_stream_info(media, active ? PURPLE_MEDIA_INFO_MUTE :
+			PURPLE_MEDIA_INFO_UNMUTE, NULL, NULL, TRUE);
 #endif
 }
 
