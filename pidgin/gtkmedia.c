@@ -98,6 +98,9 @@ struct _PidginMediaPrivate
 	GtkWidget *local_video;
 	GtkWidget *remote_video;
 	PurpleConnection *pc;
+
+	guint timeout_id;
+	PurpleMediaSessionType request_type;
 };
 
 #define PIDGIN_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_MEDIA, PidginMediaPrivate))
@@ -524,6 +527,61 @@ socket_realize_cb(GtkWidget *widget, gpointer data)
 }
 
 static void
+pidgin_media_accept_cb(PurpleMedia *media, int index)
+{
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_ACCEPT,
+			NULL, NULL, TRUE);
+}
+
+static void
+pidgin_media_reject_cb(PurpleMedia *media, int index)
+{
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
+			NULL, NULL, TRUE);
+}
+
+static gboolean
+pidgin_request_timeout_cb(PidginMedia *gtkmedia)
+{
+	PurpleConnection *pc;
+	PurpleBuddy *buddy;
+	const gchar *alias;
+	PurpleMediaSessionType type;
+	gchar *message = NULL;
+
+	pc = purple_media_get_connection(gtkmedia->priv->media);
+	buddy = purple_find_buddy(purple_connection_get_account(pc),
+			gtkmedia->priv->screenname);
+	alias = buddy ? purple_buddy_get_contact_alias(buddy) :
+			gtkmedia->priv->screenname;
+	type = gtkmedia->priv->request_type;
+	gtkmedia->priv->timeout_id = 0;
+
+	if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {
+		message = g_strdup_printf(_("%s wishes to start an audio/video session with you."),
+				alias);
+	} else if (type & PURPLE_MEDIA_AUDIO) {
+		message = g_strdup_printf(_("%s wishes to start an audio session with you."),
+				alias);
+	} else if (type & PURPLE_MEDIA_VIDEO) {
+		message = g_strdup_printf(_("%s wishes to start a video session with you."),
+				alias);
+	}
+
+	gtkmedia->priv->request_type = PURPLE_MEDIA_NONE;
+
+	purple_request_accept_cancel(gtkmedia, "Media invitation",
+			message, NULL, PURPLE_DEFAULT_ACTION_NONE,
+			(void*)pc, gtkmedia->priv->screenname, NULL,
+			gtkmedia->priv->media,
+			pidgin_media_accept_cb,
+			pidgin_media_reject_cb);
+	pidgin_media_emit_message(gtkmedia, message);
+	g_free(message);
+	return FALSE;
+}
+
+static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *sid)
 {
 	GstElement *pipeline = purple_media_get_pipeline(media);
@@ -672,19 +730,12 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	g_object_get(G_OBJECT(media), "initiator", &is_initiator, NULL);
 
 	if (is_initiator == FALSE) {
-		gchar *message;
-		if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {
-			message = g_strdup_printf(_("%s wishes to start an audio/video session with you."),
-						  gtkmedia->priv->screenname);
-		} else if (type & PURPLE_MEDIA_AUDIO) {
-			message = g_strdup_printf(_("%s wishes to start an audio session with you."),
-						  gtkmedia->priv->screenname);
-		} else if (type & PURPLE_MEDIA_VIDEO) {
-			message = g_strdup_printf(_("%s wishes to start a video session with you."),
-						  gtkmedia->priv->screenname);
-		}
-		pidgin_media_emit_message(gtkmedia, message);
-		g_free(message);
+		if (gtkmedia->priv->timeout_id != 0)
+			g_source_remove(gtkmedia->priv->timeout_id);
+		gtkmedia->priv->request_type |= type;
+		gtkmedia->priv->timeout_id = g_timeout_add(500,
+				(GSourceFunc)pidgin_request_timeout_cb,
+				gtkmedia);
 	}
 
 	gtk_widget_show(gtkmedia->priv->display);
@@ -836,20 +887,6 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 	gtkmedia->priv->state = state;
 }
 
-static void
-pidgin_media_accept_cb(PurpleMedia *media, int index)
-{
-	purple_media_stream_info(media, PURPLE_MEDIA_INFO_ACCEPT,
-			NULL, NULL, TRUE);
-}
-
-static void
-pidgin_media_reject_cb(PurpleMedia *media, int index)
-{
-	purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
-			NULL, NULL, TRUE);
-}
-
 static gboolean
 pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 		PurpleConnection *pc, gchar *screenname, gpointer nul)
@@ -865,16 +902,7 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	gtk_window_set_title(GTK_WINDOW(gtkmedia), alias);
 
 	g_object_get(G_OBJECT(media), "initiator", &initiator, NULL);
-	if (initiator == FALSE) {
-		gchar *message = g_strdup_printf("%s wishes to start a "
-				"media session with you\n", alias);
-		purple_request_accept_cancel(gtkmedia, "Media invitation",
-				message, NULL, PURPLE_DEFAULT_ACTION_NONE,
-				(void*)pc, screenname, NULL, media,
-				pidgin_media_accept_cb,
-				pidgin_media_reject_cb);
-		g_free(message);
-	} else
+	if (initiator == TRUE)
 		gtk_widget_show(GTK_WIDGET(gtkmedia));
 
 	return TRUE;
