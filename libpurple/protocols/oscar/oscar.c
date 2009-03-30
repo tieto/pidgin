@@ -4847,6 +4847,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		/* TODO: Combine these two calls! */
 		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, itmsurl);
 		oscar_set_extendedstatus(gc);
+		g_free(status_text);
 	}
 }
 

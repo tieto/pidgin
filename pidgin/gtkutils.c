@@ -3578,7 +3578,9 @@ register_gnome_url_handlers(void)
 	if (tmp == NULL)
 		return FALSE;
 
+	g_free(tmp);
 	tmp = NULL;
+
 	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
 	                               &tmp, &err, NULL, NULL))
 	{
