@@ -357,13 +357,6 @@ void purple_media_error(PurpleMedia *media, const gchar *error, ...);
 void purple_media_accept(PurpleMedia *media);
 
 /**
- * Set the media session to the rejected state.
- *
- * @param media The media object to set the state on.
- */
-void purple_media_reject(PurpleMedia *media);
-
-/**
  * Ends all streams that match the given parameters
  *
  * @param media The media object with which to end streams.

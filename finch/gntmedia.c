@@ -249,6 +249,13 @@ finch_media_hangup_cb(PurpleMedia *media, GntWidget *widget)
 }
 
 static void
+finch_media_reject_cb(PurpleMedia *media, GntWidget *widget)
+{
+	purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
+			NULL, NULL, TRUE);
+}
+
+static void
 finch_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	FinchMedia *media;
@@ -266,7 +273,7 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 			g_signal_connect_swapped(G_OBJECT(media->priv->accept), "activate",
 				 G_CALLBACK(purple_media_accept), media->priv->media);
 			g_signal_connect_swapped(G_OBJECT(media->priv->reject), "activate",
-				 G_CALLBACK(purple_media_reject), media->priv->media);
+				 G_CALLBACK(finch_media_reject_cb), media->priv->media);
 			g_signal_connect_swapped(G_OBJECT(media->priv->hangup), "activate",
 				 G_CALLBACK(finch_media_hangup_cb), media->priv->media);
 
