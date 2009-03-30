@@ -182,7 +182,8 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 		GdkEvent *event, PidginMedia *media)
 {
 	if (media->priv->media)
-		purple_media_hangup(media->priv->media);
+		purple_media_stream_info(media->priv->media,
+				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
 	return FALSE;
 }
 
@@ -224,7 +225,8 @@ static void
 menu_hangup(gpointer data, guint action, GtkWidget *item)
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(data);
-	purple_media_hangup(gtkmedia->priv->media);
+	purple_media_stream_info(gtkmedia->priv->media,
+			PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
 }
 
 static GtkItemFactoryEntry menu_items[] = {

@@ -1392,15 +1392,6 @@ purple_media_accept(PurpleMedia *media)
 }
 
 void
-purple_media_hangup(PurpleMedia *media)
-{
-#ifdef USE_VV
-	purple_media_stream_info(media, PURPLE_MEDIA_INFO_HANGUP,
-			NULL, NULL, TRUE);
-#endif
-}
-
-void
 purple_media_reject(PurpleMedia *media)
 {
 #ifdef USE_VV

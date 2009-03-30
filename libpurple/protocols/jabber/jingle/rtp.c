@@ -875,7 +875,9 @@ jingle_rtp_terminate_session(JabberStream *js, const gchar *who)
 		PurpleMedia *media = jingle_rtp_get_media(session);
 		if (media) {
 			purple_debug_info("jingle-rtp", "hanging up media\n");
-			purple_media_hangup(media);
+			purple_media_stream_info(media,
+					PURPLE_MEDIA_INFO_HANGUP,
+					NULL, NULL, TRUE);
 		}
 	}
 }

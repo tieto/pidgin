@@ -364,13 +364,6 @@ void purple_media_accept(PurpleMedia *media);
 void purple_media_reject(PurpleMedia *media);
 
 /**
- * Set the media session to the hangup state.
- *
- * @param media The media object to set the state on.
- */
-void purple_media_hangup(PurpleMedia *media);
-
-/**
  * Ends all streams that match the given parameters
  *
  * @param media The media object with which to end streams.
