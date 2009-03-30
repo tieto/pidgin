@@ -328,28 +328,94 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
 #endif
 }
 
+#ifdef USE_VV
+static void
+request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
+{
+	GstElement *parent = GST_ELEMENT_PARENT(pad);
+	GstIterator *iter;
+	GstPad *remaining_pad;
+
+	gst_element_release_request_pad(GST_ELEMENT_PARENT(pad), pad);
+	iter = gst_element_iterate_pads(parent);
+
+	if (gst_iterator_next(iter, (gpointer)&remaining_pad)
+			== GST_ITERATOR_DONE) {
+		gst_element_set_locked_state(parent, TRUE);
+		gst_element_set_state(parent, GST_STATE_NULL);
+		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(parent)), parent);
+	}
+
+	gst_iterator_free(iter);
+}
+#endif
+
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type)
 {
 #ifdef USE_VV
 	GstElement *ret = NULL;
+	PurpleMediaElementInfo *info = NULL;
 
-	/* TODO: If src, retrieve current src */
-	/* TODO: Send a signal here to allow for overriding the source/sink */
+	if (type & PURPLE_MEDIA_SEND_AUDIO)
+		info = manager->priv->audio_src;
+	else if (type & PURPLE_MEDIA_RECV_AUDIO)
+		info = manager->priv->audio_sink;
+	else if (type & PURPLE_MEDIA_SEND_VIDEO)
+		info = manager->priv->video_src;
+	else if (type & PURPLE_MEDIA_RECV_VIDEO)
+		info = manager->priv->video_sink;
 
-	if (type & PURPLE_MEDIA_SEND_AUDIO
-			&& manager->priv->audio_src != NULL)
-		ret = manager->priv->audio_src->create();
-	else if (type & PURPLE_MEDIA_RECV_AUDIO
-			&& manager->priv->audio_sink != NULL)
-		ret = manager->priv->audio_sink->create();
-	else if (type & PURPLE_MEDIA_SEND_VIDEO
-			&& manager->priv->video_src != NULL)
-		ret = manager->priv->video_src->create();
-	else if (type & PURPLE_MEDIA_RECV_VIDEO
-			&& manager->priv->video_sink != NULL)
-		ret = manager->priv->video_sink->create();
+	if (info == NULL)
+		return NULL;
+
+	if (info->type & PURPLE_MEDIA_ELEMENT_UNIQUE &&
+			info->type & PURPLE_MEDIA_ELEMENT_SRC) {
+		GstElement *tee;
+		GstPad *pad;
+		GstPad *ghost;
+
+		ret = gst_bin_get_by_name(GST_BIN(
+				purple_media_manager_get_pipeline(
+				manager)), info->id);
+
+		if (ret == NULL) {
+			GstElement *bin, *fakesink;
+			ret = info->create();
+			bin = gst_bin_new(info->id);
+			tee = gst_element_factory_make("tee", "tee");
+			gst_bin_add_many(GST_BIN(bin), ret, tee, NULL);
+			gst_element_link(ret, tee);
+
+			/*
+			 * This shouldn't be necessary, but it stops it from
+			 * giving a not-linked error upon destruction
+			 */
+			fakesink = gst_element_factory_make("fakesink", NULL);
+			g_object_set(fakesink, "sync", FALSE, NULL);
+			gst_bin_add(GST_BIN(bin), fakesink);
+			gst_element_link(tee, fakesink);
+
+			ret = bin;
+			gst_element_set_locked_state(ret, TRUE);
+			gst_object_ref(ret);
+			gst_bin_add(GST_BIN(purple_media_manager_get_pipeline(
+					manager)), ret);
+		}
+
+		tee = gst_bin_get_by_name(GST_BIN(ret), "tee");
+		pad = gst_element_get_request_pad(tee, "src%d");
+		gst_object_unref(tee);
+		ghost = gst_ghost_pad_new(NULL, pad);
+		gst_object_unref(pad);
+		g_signal_connect(GST_PAD(ghost), "unlinked",
+				G_CALLBACK(request_pad_unlinked_cb), NULL);
+		gst_pad_set_active(ghost, TRUE);
+		gst_element_add_pad(ret, ghost);
+	} else {
+		ret = info->create();
+	}
 
 	if (ret == NULL)
 		purple_debug_error("media", "Error creating source or sink\n");

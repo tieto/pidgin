@@ -1151,12 +1151,21 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 		gst_object_unref(session->src);
 	session->src = src;
 	gst_element_set_locked_state(session->src, TRUE);
-	gst_bin_add(GST_BIN(session->media->priv->confbin),
-		    session->src);
 
 	session->tee = gst_element_factory_make("tee", NULL);
 	gst_bin_add(GST_BIN(session->media->priv->confbin), session->tee);
-	gst_element_link(session->src, session->tee);
+
+	/* This supposedly isn't necessary, but it silences some warnings */
+	if (GST_ELEMENT_PARENT(session->media->priv->confbin)
+			== GST_ELEMENT_PARENT(session->src)) {
+		GstPad *pad = gst_element_get_static_pad(session->tee, "sink");
+		GstPad *ghost = gst_ghost_pad_new(NULL, pad);
+		gst_object_unref(pad);
+		gst_pad_set_active(ghost, TRUE);
+		gst_element_add_pad(session->media->priv->confbin, ghost);
+	}
+
+	gst_element_link(session->src, session->media->priv->confbin);
 	gst_element_set_state(session->tee, GST_STATE_PLAYING);
 
 	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
@@ -1165,6 +1174,7 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK
 			  ? "success" : "failure");
 	gst_element_set_locked_state(session->src, FALSE);
+	gst_object_unref(session->src);
 }
 #endif
 
