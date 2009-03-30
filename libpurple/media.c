@@ -1901,12 +1901,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 #endif
 }
 
-void
-purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who)
-{
-	/* Add state-changed end emits in here when this is implemented */
-}
-
 PurpleMediaSessionType
 purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id)
 {

@@ -393,15 +393,6 @@ gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const
 		guint num_params, GParameter *params);
 
 /**
- * Removes a stream from a session.
- *
- * @param media The media object to find the session in.
- * @param sess_id The session id of the session to remove the stream from.
- * @param who The name of the remote user to remove the stream from.
- */
-void purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who);
-
-/**
  * Gets the session type from a session
  *
  * @param media The media object to find the session in.
