@@ -45,6 +45,29 @@
 
 #undef hangup
 
+#define FINCH_TYPE_MEDIA            (finch_media_get_type())
+#define FINCH_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), FINCH_TYPE_MEDIA, FinchMedia))
+#define FINCH_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), FINCH_TYPE_MEDIA, FinchMediaClass))
+#define FINCH_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), FINCH_TYPE_MEDIA))
+#define FINCH_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), FINCH_TYPE_MEDIA))
+#define FINCH_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), FINCH_TYPE_MEDIA, FinchMediaClass))
+
+typedef struct _FinchMedia FinchMedia;
+typedef struct _FinchMediaClass FinchMediaClass;
+typedef struct _FinchMediaPrivate FinchMediaPrivate;
+typedef enum _FinchMediaState FinchMediaState;
+
+struct _FinchMediaClass
+{
+	GntBoxClass parent_class;
+};
+
+struct _FinchMedia
+{
+	GntBox parent;
+	FinchMediaPrivate *priv;
+};
+
 struct _FinchMediaPrivate
 {
 	PurpleMedia *media;
@@ -435,9 +458,11 @@ static PurpleMediaElementInfo default_audio_sink =
 			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
 	create_default_audio_sink,	/* create */
 };
+#endif  /* USE_VV */
 
 void finch_media_manager_init(void)
 {
+#ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
 	g_signal_connect(G_OBJECT(manager), "init-media", G_CALLBACK(finch_new_media), NULL);
 	purple_cmd_register("call", "", PURPLE_CMD_P_DEFAULT,
@@ -447,14 +472,16 @@ void finch_media_manager_init(void)
 	purple_debug_info("gntmedia", "Registering media element types\n");
 	purple_media_manager_set_active_element(manager, &default_audio_src);
 	purple_media_manager_set_active_element(manager, &default_audio_sink);
+#endif
 }
 
 void finch_media_manager_uninit(void)
 {
+#ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
 	g_signal_handlers_disconnect_by_func(G_OBJECT(manager),
 			G_CALLBACK(finch_new_media), NULL);
+#endif
 }
 
-#endif  /* USE_VV */
 
