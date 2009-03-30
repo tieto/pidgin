@@ -101,7 +101,7 @@ enum {
 	PROP_MEDIA,
 };
 
-GType
+static GType
 finch_media_get_type(void)
 {
 	static GType type = 0;
@@ -342,7 +342,7 @@ finch_media_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	}
 }
 
-GntWidget *
+static GntWidget *
 finch_media_new(PurpleMedia *media)
 {
 	return GNT_WIDGET(g_object_new(finch_media_get_type(),
