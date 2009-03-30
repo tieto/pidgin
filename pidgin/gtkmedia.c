@@ -892,7 +892,7 @@ create_default_video_src(void)
 	const gchar *video_device = purple_prefs_get_string(
 			"/purple/media/video/device");
 
-	sendbin = gst_bin_new("purplesendvideobin");
+	sendbin = gst_bin_new("pidgindefaultvideosrc");
 	src = gst_element_factory_make(video_plugin, "purplevideosource");
 	videoscale = gst_element_factory_make("videoscale", NULL);
 	capsfilter = gst_element_factory_make("capsfilter", NULL);
@@ -938,7 +938,7 @@ create_default_audio_src(void)
 	double input_volume = purple_prefs_get_int(
 			"/purple/media/audio/volume/input")/10.0;
 
-	bin = gst_bin_new("purplesendaudiobin");
+	bin = gst_bin_new("pidgindefaultaudiosrc");
 	src = gst_element_factory_make("alsasrc", "asrc");
 	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
 	g_object_set(volume, "volume", input_volume, NULL);
@@ -1020,10 +1020,12 @@ static PurpleMediaElementInfo default_audio_sink =
 			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
 	create_default_audio_sink,	/* create */
 };
+#endif  /* USE_VV */
 
 void
 pidgin_medias_init(void)
 {
+#ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
 	g_signal_connect(G_OBJECT(manager), "init-media",
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
@@ -1033,6 +1035,6 @@ pidgin_medias_init(void)
 	purple_media_manager_set_active_element(manager, &default_video_sink);
 	purple_media_manager_set_active_element(manager, &default_audio_src);
 	purple_media_manager_set_active_element(manager, &default_audio_sink);
+#endif
 }
 
-#endif  /* USE_VV */
