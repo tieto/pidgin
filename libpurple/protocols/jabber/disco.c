@@ -924,42 +924,26 @@ jabber_disco_server_cb(PurpleDiscoList *list, PurpleRequestFields *fields)
 void
 jabber_disco_get_list(PurpleConnection *gc, PurpleDiscoList *list)
 {
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *g;
-	PurpleRequestField *f;
+	PurpleAccount *account;
 	JabberStream *js;
 	struct jabber_disco_list_data *disco_list_data;
-	const char *last_server;
 
-	purple_debug_misc("disco.c", "get_list\n");
-
+	account = purple_connection_get_account(gc);
 	js = purple_connection_get_protocol_data(gc);
 
 	disco_list_data = g_new0(struct jabber_disco_list_data, 1);
 	purple_disco_list_set_protocol_data(list, disco_list_data);
 
-	last_server = js->last_disco_server;
-	if (last_server == NULL)
-		last_server = js->user->domain;
-
-	fields = purple_request_fields_new();
-	g = purple_request_field_group_new(NULL);
-	f = purple_request_field_string_new("server", _("Server"), 
-		last_server ? last_server : js->user->domain, FALSE);
-
-	purple_request_field_group_add_field(g, f);
-	purple_request_fields_add_group(fields, g);
-	
 	purple_disco_list_ref(list);
-	
-	purple_request_fields(gc,
-		_("Server name request"),
-		_("Enter server name"),
-		NULL,
-		fields,
-		_("OK"), G_CALLBACK(jabber_disco_server_cb),
-		_("Cancel"), G_CALLBACK(jabber_disco_cancel),
-		purple_connection_get_account(gc), NULL, NULL, list);
+
+	purple_request_input(gc, _("Server name request"), _("Enter an XMPP Server"),
+			_("Select an XMPP server to query"),
+			js->last_disco_server ? js->last_disco_server : js->user->domain,
+			FALSE, FALSE, NULL,
+			_("Find Services"), PURPLE_CALLBACK(jabber_disco_server_cb),
+			_("Cancel"), PURPLE_CALLBACK(jabber_disco_cancel),
+			account, NULL, NULL, disco_list_data);
+
 }
 
 void
