@@ -40,6 +40,17 @@
 
 #include <gst/interfaces/xoverlay.h>
 
+#define PIDGIN_TYPE_MEDIA            (pidgin_media_get_type())
+#define PIDGIN_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_MEDIA, PidginMedia))
+#define PIDGIN_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_MEDIA, PidginMediaClass))
+#define PIDGIN_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PIDGIN_TYPE_MEDIA))
+#define PIDGIN_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_MEDIA))
+#define PIDGIN_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_MEDIA, PidginMediaClass))
+
+typedef struct _PidginMedia PidginMedia;
+typedef struct _PidginMediaClass PidginMediaClass;
+typedef struct _PidginMediaPrivate PidginMediaPrivate;
+
 typedef enum
 {
 	/* Waiting for response */
@@ -51,6 +62,17 @@ typedef enum
 	/* Rejected call */
 	PIDGIN_MEDIA_REJECTED,
 } PidginMediaState;
+
+struct _PidginMediaClass
+{
+	GtkWindowClass parent_class;
+};
+
+struct _PidginMedia
+{
+	GtkWindow parent;
+	PidginMediaPrivate *priv;
+};
 
 struct _PidginMediaPrivate
 {

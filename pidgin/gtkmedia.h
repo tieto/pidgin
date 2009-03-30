@@ -26,44 +26,10 @@
 #ifndef __GTKMEDIA_H_
 #define __GTKMEDIA_H_
 
-#ifdef USE_VV
-
-#include <gtk/gtk.h>
-#include <glib-object.h>
-
-#include "connection.h"
-
 G_BEGIN_DECLS
-
-#define PIDGIN_TYPE_MEDIA            (pidgin_media_get_type())
-#define PIDGIN_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_MEDIA, PidginMedia))
-#define PIDGIN_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_MEDIA, PidginMediaClass))
-#define PIDGIN_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PIDGIN_TYPE_MEDIA))
-#define PIDGIN_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_MEDIA))
-#define PIDGIN_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_MEDIA, PidginMediaClass))
-
-typedef struct _PidginMedia PidginMedia;
-typedef struct _PidginMediaClass PidginMediaClass;
-typedef struct _PidginMediaPrivate PidginMediaPrivate;
-
-struct _PidginMediaClass
-{
-	GtkWindowClass parent_class;
-};
-
-struct _PidginMedia
-{
-	GtkWindow parent;
-	PidginMediaPrivate *priv;
-};
-
-GType pidgin_media_get_type(void);
 
 void pidgin_medias_init(void);
 
 G_END_DECLS
-
-#endif  /* USE_VV */
-
 
 #endif  /* __GTKMEDIA_H_ */
