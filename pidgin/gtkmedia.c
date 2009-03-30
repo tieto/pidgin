@@ -128,7 +128,7 @@ enum {
 	PROP_RECV_LEVEL
 };
 
-GType
+static GType
 pidgin_media_get_type(void)
 {
 	static GType type = 0;
