@@ -586,7 +586,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 {
 	GstElement *pipeline = purple_media_get_pipeline(media);
 	GtkWidget *send_widget = NULL, *recv_widget = NULL;
-	gboolean is_initiator;
 	PurpleMediaSessionType type =
 			purple_media_get_session_type(media, sid);
 
@@ -727,9 +726,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	if (recv_widget != NULL)
 		gtkmedia->priv->recv_widget = recv_widget;
 
-	g_object_get(G_OBJECT(media), "initiator", &is_initiator, NULL);
-
-	if (is_initiator == FALSE) {
+	if (purple_media_is_initiator(media, sid, NULL) == FALSE) {
 		if (gtkmedia->priv->timeout_id != 0)
 			g_source_remove(gtkmedia->priv->timeout_id);
 		gtkmedia->priv->request_type |= type;
@@ -799,15 +796,13 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 	switch (prop_id) {
 		case PROP_MEDIA:
 		{
-			gboolean initiator;
 			if (media->priv->media)
 				g_object_unref(media->priv->media);
 			media->priv->media = g_value_get_object(value);
 			g_object_ref(media->priv->media);
 
-			g_object_get(G_OBJECT(media->priv->media),
-					"initiator", &initiator, NULL);
-			if (initiator == TRUE)
+			if (purple_media_is_initiator(media->priv->media,
+					 NULL, NULL) == TRUE)
 				pidgin_media_set_state(media, PIDGIN_MEDIA_WAITING);
 			else
 				pidgin_media_set_state(media, PIDGIN_MEDIA_REQUESTED);
@@ -893,7 +888,6 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(
 			pidgin_media_new(media, screenname));
-	gboolean initiator;
 	PurpleBuddy *buddy = purple_find_buddy(
 			purple_connection_get_account(pc), screenname);
 	const gchar *alias = buddy ? 
@@ -901,8 +895,7 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	gtkmedia->priv->pc = pc;
 	gtk_window_set_title(GTK_WINDOW(gtkmedia), alias);
 
-	g_object_get(G_OBJECT(media), "initiator", &initiator, NULL);
-	if (initiator == TRUE)
+	if (purple_media_is_initiator(media, NULL, NULL) == TRUE)
 		gtk_widget_show(GTK_WIDGET(gtkmedia));
 
 	return TRUE;

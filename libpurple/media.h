@@ -382,14 +382,16 @@ void purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
  * @param sess_id The session id of the session to add the stream to.
  * @param who The name of the remote user to add the stream for.
  * @param type The type of stream to create.
+ * @param initiator Whether or not the local user initiated the stream.
  * @param transmitter The transmitter to use for the stream.
  * @param num_params The number of parameters to pass to Farsight.
  * @param params The parameters to pass to Farsight.
  *
  * @return @c TRUE The stream was added successfully, @c FALSE otherwise.
  */
-gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
-		PurpleMediaSessionType type, const gchar *transmitter,
+gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
+		const gchar *who, PurpleMediaSessionType type,
+		gboolean initiator, const gchar *transmitter,
 		guint num_params, GParameter *params);
 
 /**
@@ -504,6 +506,18 @@ gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, P
  * @return @c TRUE The codecs are ready, or @c FALSE otherwise.
  */
 gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
+
+/**
+ * Gets whether the local user is the conference/session/stream's initiator.
+ *
+ * @param media The media instance to find the session in.
+ * @param sess_id The session id of the session to check.
+ * @param participant The participant of the stream to check.
+ *
+ * @return TRUE if the local user is the stream's initator, else FALSE.
+ */
+gboolean purple_media_is_initiator(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant);
 
 /**
  * Gets whether a streams selected have been accepted.

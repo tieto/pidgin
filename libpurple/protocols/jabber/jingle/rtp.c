@@ -535,12 +535,14 @@ jingle_rtp_init_media(JingleContent *content)
 {
 	JingleSession *session = jingle_content_get_session(content);
 	PurpleMedia *media = jingle_rtp_get_media(session);
+	gchar *creator;
 	gchar *media_type;
 	gchar *remote_jid;
 	gchar *senders;
 	gchar *name;
 	const gchar *transmitter;
 	gboolean is_audio;
+	gboolean is_creator;
 	PurpleMediaSessionType type;
 	JingleTransport *transport;
 	GParameter *params = NULL;
@@ -582,8 +584,16 @@ jingle_rtp_init_media(JingleContent *content)
 
 	params = 
 		jingle_get_params(jingle_session_get_js(session), &num_params);
+
+	creator = jingle_content_get_creator(content);
+	if (!strcmp(creator, "initiator"))
+		is_creator = jingle_session_is_initiator(session);
+	else
+		is_creator = !jingle_session_is_initiator(session);
+	g_free(creator);
+
 	purple_media_add_stream(media, name, remote_jid,
-			type, transmitter, num_params, params);
+			type, is_creator, transmitter, num_params, params);
 
 	g_free(name);
 	g_free(media_type);

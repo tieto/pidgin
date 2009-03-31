@@ -295,7 +295,6 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 	switch (prop_id) {
 		case PROP_MEDIA:
 		{
-			gboolean is_initiator;
 			if (media->priv->media)
 				g_object_unref(media->priv->media);
 			media->priv->media = g_value_get_object(value);
@@ -307,9 +306,8 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 			g_signal_connect_swapped(G_OBJECT(media->priv->hangup), "activate",
 				 G_CALLBACK(finch_media_hangup_cb), media->priv->media);
 
-			g_object_get(G_OBJECT(media->priv->media), "initiator",
-					&is_initiator, NULL);
-			if (is_initiator == TRUE) {
+			if (purple_media_is_initiator(media->priv->media,
+					NULL, NULL) == TRUE) {
 				finch_media_wait_cb(media->priv->media, media);
 			}
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",

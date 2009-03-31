@@ -329,7 +329,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 
 	if (purple_media_add_stream(session->media, "google-voice",
 				session->remote_jid, PURPLE_MEDIA_AUDIO,
-				"nice", num_params, params) == FALSE) {
+				TRUE, "nice", num_params, params) == FALSE) {
 		purple_media_error(session->media, "Error adding stream.");
 		purple_media_stream_info(session->media,
 				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
@@ -376,8 +376,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	params = jabber_google_session_get_params(js, &num_params);
 
-	if (purple_media_add_stream(session->media, "google-voice", session->remote_jid, 
-				PURPLE_MEDIA_AUDIO, "nice", num_params, params) == FALSE) {
+	if (purple_media_add_stream(session->media, "google-voice",
+			session->remote_jid, PURPLE_MEDIA_AUDIO, FALSE,
+			"nice", num_params, params) == FALSE) {
 		purple_media_error(session->media, "Error adding stream.");
 		purple_media_stream_info(session->media,
 				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);

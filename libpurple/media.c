@@ -55,6 +55,7 @@ struct _PurpleMediaSession
 	FsSession *session;
 
 	PurpleMediaSessionType type;
+	gboolean initiator;
 
 	gulong window_id;
 };
@@ -70,6 +71,7 @@ struct _PurpleMediaStream
 	GList *local_candidates;
 	GList *remote_candidates;
 
+	gboolean initiator;
 	gboolean accepted;
 	gboolean candidates_prepared;
 
@@ -1659,7 +1661,7 @@ static gboolean
 purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				 const gchar *who, FsMediaType type,
 				 FsStreamDirection type_direction,
-				 const gchar *transmitter,
+				 gboolean initiator, const gchar *transmitter,
 				 guint num_params, GParameter *params)
 {
 	PurpleMediaSession *session;
@@ -1730,6 +1732,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		session->id = g_strdup(sess_id);
 		session->media = media;
 		session->type = purple_media_from_fs(type, type_direction);
+		session->initiator = initiator;
 
 		purple_media_add_session(media, session);
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
@@ -1849,6 +1852,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		}
 
 		stream = purple_media_insert_stream(session, who, fsstream);
+		stream->initiator = initiator;
 
 		/* callback for source pad added (new stream source ready) */
 		g_signal_connect(G_OBJECT(fsstream),
@@ -1868,7 +1872,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 gboolean
 purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
-			PurpleMediaSessionType type,
+			PurpleMediaSessionType type, gboolean initiator,
 			const gchar *transmitter,
 			guint num_params, GParameter *params)
 {
@@ -1881,7 +1885,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 		type_direction = purple_media_to_fs_stream_direction(type & PURPLE_MEDIA_AUDIO);
 
 		if (!purple_media_add_stream_internal(media, sess_id, who,
-						      FS_MEDIA_TYPE_AUDIO, type_direction,
+						      FS_MEDIA_TYPE_AUDIO, type_direction, initiator,
 						      transmitter, num_params, params)) {
 			return FALSE;
 		}
@@ -1890,7 +1894,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 		type_direction = purple_media_to_fs_stream_direction(type & PURPLE_MEDIA_VIDEO);
 
 		if (!purple_media_add_stream_internal(media, sess_id, who,
-						      FS_MEDIA_TYPE_VIDEO, type_direction,
+						      FS_MEDIA_TYPE_VIDEO, type_direction, initiator,
 						      transmitter, num_params, params)) {
 			return FALSE;
 		}
@@ -2128,6 +2132,28 @@ purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 #else
 	return FALSE;
 #endif
+}
+
+gboolean
+purple_media_is_initiator(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant)
+{
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+
+	if (sess_id == NULL && participant == NULL)
+		return media->priv->initiator;
+	else if (sess_id != NULL && participant == NULL) {
+		PurpleMediaSession *session =
+				purple_media_get_session(media, sess_id);
+		return session != NULL ? session->initiator : FALSE;
+	} else if (sess_id != NULL && participant != NULL) {
+		PurpleMediaStream *stream = purple_media_get_stream(
+				media, sess_id, participant);
+		return stream != NULL ? stream->initiator : FALSE;
+	}
+#endif
+	return FALSE;
 }
 
 gboolean
