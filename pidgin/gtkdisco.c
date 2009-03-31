@@ -38,9 +38,6 @@ typedef struct _PidginDiscoDialog {
 	
 	GtkWidget *sw;
 	GtkWidget *progress;
-	GtkTreeStore *model;
-	GtkWidget *tree;
-	GHashTable *cats; /** Meow. */
 
 	GtkWidget *stop_button;
 	GtkWidget *list_button;
@@ -51,6 +48,13 @@ typedef struct _PidginDiscoDialog {
 	PurpleAccount *account;
 	PurpleDiscoList *discolist;
 } PidginDiscoDialog;
+
+typedef struct _PidginDiscoList {
+	PidginDiscoDialog *dialog;
+	GtkTreeStore *model;
+	GtkWidget *tree;
+	GHashTable *cats; /** Meow. */
+} PidginDiscoList;
 
 struct _menu_cb_info {
 	PurpleDiscoList *list;
@@ -64,6 +68,8 @@ enum {
 	SERVICE_COLUMN,
 	NUM_OF_COLUMNS
 };
+
+static void pidgin_disco_create_tree(PidginDiscoList *pdl);
 
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 				     PidginDiscoDialog *dialog)
@@ -86,17 +92,31 @@ static void register_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 static void list_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	PurpleConnection *gc;
+	PidginDiscoList *pdl;
 
 	gc = purple_account_get_connection(dialog->account);
 	if (!gc)
 		return;
 
-	if (dialog->discolist != NULL)
+	if (dialog->discolist != NULL) {
+		pdl = purple_disco_list_get_ui_data(dialog->discolist);
+		gtk_widget_destroy(pdl->tree);
 		purple_disco_list_unref(dialog->discolist);
-	
-	dialog->discolist = purple_disco_list_new(dialog->account, (void*) dialog);
+	}
 
-	purple_disco_get_list(dialog->discolist);
+	dialog->discolist = purple_disco_get_list(gc);
+	if (!dialog->discolist)
+		return;
+	/* We keep a copy... */
+	purple_disco_list_ref(dialog->discolist);
+
+	pdl = purple_disco_list_get_ui_data(dialog->discolist);
+	pdl->dialog = dialog;
+
+	pidgin_disco_create_tree(pdl);
+
+	if (dialog->account_widget)
+		gtk_widget_set_sensitive(dialog->account_widget, FALSE);
 }
 
 static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
@@ -117,17 +137,18 @@ static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 }
 
 static void
-selection_changed_cb(GtkTreeSelection *selection, PidginDiscoDialog *dialog) 
+selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 {
 	PurpleDiscoService *service;
 	PurpleDiscoServiceFlags flags;
 	GtkTreeIter iter;
 	GValue val;
 	static struct _menu_cb_info *info;
+	PidginDiscoDialog *dialog = pdl->dialog;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		val.g_type = 0;
-		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog-> model), &iter, SERVICE_COLUMN, &val);
+		gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN, &val);
 		service = g_value_get_pointer(&val);
 		if (!service) {
 			gtk_widget_set_sensitive(dialog->add_button, FALSE);
@@ -157,8 +178,16 @@ delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
 	PidginDiscoDialog *dialog = d;
 
-	if (dialog->discolist)
+	if (dialog->discolist && purple_disco_list_get_in_progress(dialog->discolist))
+		purple_disco_cancel_get_list(dialog->discolist);
+
+	if (dialog->discolist) {
+		PidginDiscoList *pdl = purple_disco_list_get_ui_data(dialog->discolist);
+
+		if (pdl)
+			pdl->dialog = NULL;
 		purple_disco_list_unref(dialog->discolist);
+	}
 
 	g_free(dialog);
 
@@ -212,30 +241,30 @@ pidgin_disco_is_showable()
 	return FALSE;
 }
 
-static void pidgin_disco_create_tree(PidginDiscoDialog *dialog)
+static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 {
 	GtkCellRenderer *text_renderer, *pixbuf_renderer;
 	GtkTreeViewColumn *column;
 	GtkTreeSelection *selection;
 
-	dialog->model = gtk_tree_store_new(NUM_OF_COLUMNS,
+	pdl->model = gtk_tree_store_new(NUM_OF_COLUMNS,
 			GDK_TYPE_PIXBUF,	/* PIXBUF_COLUMN */
 			G_TYPE_STRING,		/* NAME_COLUMN */
 			G_TYPE_STRING,		/* DESCRIPTION_COLUMN */
 			G_TYPE_POINTER		/* SERVICE_COLUMN */
 	);
 
-	dialog->tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->tree), TRUE);
+	pdl->tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(pdl->model));
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(pdl->tree), TRUE);
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->tree));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pdl->tree));
 	g_signal_connect(G_OBJECT(selection), "changed",
-					 G_CALLBACK(selection_changed_cb), dialog);
+					 G_CALLBACK(selection_changed_cb), pdl);
 
-	g_object_unref(dialog->model);
+	g_object_unref(pdl->model);
 
-	gtk_container_add(GTK_CONTAINER(dialog->sw), dialog->tree);
-	gtk_widget_show(dialog->tree);
+	gtk_container_add(GTK_CONTAINER(pdl->dialog->sw), pdl->tree);
+	gtk_widget_show(pdl->tree);
 
 	text_renderer = gtk_cell_renderer_text_new();
 	pixbuf_renderer = gtk_cell_renderer_pixbuf_new();
@@ -256,7 +285,7 @@ static void pidgin_disco_create_tree(PidginDiscoDialog *dialog)
 	gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 	gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(column), NAME_COLUMN);
 	gtk_tree_view_column_set_reorderable(GTK_TREE_VIEW_COLUMN(column), TRUE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(dialog->tree), column);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(pdl->tree), column);
 
 	column = gtk_tree_view_column_new_with_attributes(_("Description"), text_renderer,
 				"text", DESCRIPTION_COLUMN, NULL);
@@ -265,7 +294,7 @@ static void pidgin_disco_create_tree(PidginDiscoDialog *dialog)
 	gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 	gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(column), DESCRIPTION_COLUMN);
 	gtk_tree_view_column_set_reorderable(GTK_TREE_VIEW_COLUMN(column), TRUE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(dialog->tree), column);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(pdl->tree), column);
 }
 
 static PidginDiscoDialog*
@@ -351,8 +380,6 @@ pidgin_disco_dialog_new_with_account(PurpleAccount *account)
 	dialog->close_button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE,
 					 G_CALLBACK(close_button_cb), dialog);
 
-	pidgin_disco_create_tree(dialog);
-
 	/* show the dialog window and return the dialog */
 	gtk_widget_show(dialog->window);
 
@@ -379,35 +406,42 @@ pidgin_disco_dialog_show_with_account(PurpleAccount* account)
 static void
 pidgin_disco_create(PurpleDiscoList *list)
 {
-	PidginDiscoDialog *dialog;
+	PidginDiscoList *pdl = g_new0(PidginDiscoList, 1);
 
-	dialog = purple_disco_list_get_ui_data(list);
+	purple_disco_list_set_ui_data(list, pdl);
 
-	dialog->cats = g_hash_table_new_full(NULL, NULL, NULL, (GDestroyNotify)gtk_tree_row_reference_free);
+	pdl->cats = g_hash_table_new_full(NULL, NULL, NULL, (GDestroyNotify)gtk_tree_row_reference_free);
 }
 
 
 static void
 pidgin_disco_destroy(PurpleDiscoList *list)
 {
-	PidginDiscoDialog *dialog;
-	
-	dialog = purple_disco_list_get_ui_data(list);
+	PidginDiscoList *pdl;
 
-	g_hash_table_destroy(dialog->cats);
+	pdl = purple_disco_list_get_ui_data(list);
+
+	g_hash_table_destroy(pdl->cats);
+	g_free(pdl);
+
+	purple_disco_list_set_ui_data(list, NULL);
 }
 
 static void pidgin_disco_in_progress(PurpleDiscoList *list, gboolean in_progress)
 {
+	PidginDiscoList *pdl;
 	PidginDiscoDialog *dialog;
 	
-	dialog = purple_disco_list_get_ui_data(list);
+	pdl = purple_disco_list_get_ui_data(list);
+	if (!pdl)
+		return;
 
+	dialog = pdl->dialog;
 	if (!dialog)
 		return;
 
 	if (in_progress) {
-		gtk_tree_store_clear(dialog->model);
+		gtk_tree_store_clear(pdl->model);
 		if (dialog->account_widget)
 			gtk_widget_set_sensitive(dialog->account_widget, FALSE);
 		gtk_widget_set_sensitive(dialog->stop_button, TRUE);
@@ -423,6 +457,7 @@ static void pidgin_disco_in_progress(PurpleDiscoList *list, gboolean in_progress
 
 static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *service, PurpleDiscoService *parent)
 {
+	PidginDiscoList *pdl;
 	PidginDiscoDialog *dialog;
 	PurpleDiscoServiceCategory category;
 	PurpleDiscoServiceType type;
@@ -432,22 +467,23 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 	char *filename = NULL;
 	GdkPixbuf *pixbuf = NULL;
 
-	dialog = purple_disco_list_get_ui_data(list);
+	pdl = purple_disco_list_get_ui_data(list);
+	dialog = pdl->dialog;
 
 	purple_debug_info("disco", "Add_service \"%s\"\n", purple_disco_service_get_name(service));
 
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(dialog->progress));
 
 	if (parent) {
-		rr = g_hash_table_lookup(dialog->cats, parent);
+		rr = g_hash_table_lookup(pdl->cats, parent);
 		path = gtk_tree_row_reference_get_path(rr);
 		if (path) {
-			gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &parent_iter, path);
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(pdl->model), &parent_iter, path);
 			gtk_tree_path_free(path);
 		}
 	}
 
-	gtk_tree_store_append(dialog->model, &iter, (parent ? &parent_iter : NULL));
+	gtk_tree_store_append(pdl->model, &iter, (parent ? &parent_iter : NULL));
 
 	category = purple_disco_service_get_category(service);
 	type = purple_disco_service_get_type(service);
@@ -480,17 +516,17 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 		g_free(filename);
 	}
 
-	gtk_tree_store_set(dialog->model, &iter,
+	gtk_tree_store_set(pdl->model, &iter,
 			PIXBUF_COLUMN, pixbuf,
 			NAME_COLUMN, purple_disco_service_get_name(service),
 			DESCRIPTION_COLUMN, purple_disco_service_get_description(service),
 			SERVICE_COLUMN, service,
 			-1);
 
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(dialog->model), &iter);
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(pdl->model), &iter);
 
-	rr = gtk_tree_row_reference_new(GTK_TREE_MODEL(dialog->model), path);
-	g_hash_table_insert(dialog->cats, service, rr);
+	rr = gtk_tree_row_reference_new(GTK_TREE_MODEL(pdl->model), path);
+	g_hash_table_insert(pdl->cats, service, rr);
 
 	gtk_tree_path_free(path);
 

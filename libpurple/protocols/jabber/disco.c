@@ -48,6 +48,8 @@ struct _jabber_disco_info_cb_data {
 }
 
 struct jabber_disco_list_data {
+	JabberStream *js;
+	PurpleDiscoList *list;
 	char *server;
 	int fetch_count;
 };
@@ -408,7 +410,7 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 }
 
 struct _disco_data {
-	PurpleDiscoList *list;
+	struct jabber_disco_list_data *list_data;
 	PurpleDiscoService *parent;
 	char *node;
 };
@@ -578,10 +580,17 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 static void
 jabber_disco_list_data_destroy(struct jabber_disco_list_data *data)
 {
-	g_return_if_fail(data != NULL);
-
 	g_free(data->server);
 	g_free(data);
+}
+
+static void
+disco_proto_data_destroy_cb(PurpleDiscoList *list)
+{
+	struct jabber_disco_list_data *data;
+	
+	data = purple_disco_list_get_protocol_data(list);
+	jabber_disco_list_data_destroy(data);
 }
 
 static PurpleDiscoServiceCategory
@@ -632,7 +641,7 @@ jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	struct _disco_data *disco_data = data;
 	struct jabber_disco_list_data *list_data;
-	PurpleDiscoList *list = disco_data->list;
+	PurpleDiscoList *list;	
 	PurpleDiscoService *parent = disco_data->parent;
 	const char *parent_node = disco_data->node;
 	xmlnode *query = xmlnode_get_child(packet, "query");
@@ -641,16 +650,14 @@ jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	xmlnode *child;
 	gboolean has_items = FALSE;
 
-	list_data = purple_disco_list_get_protocol_data(list);
+	list_data = disco_data->list_data;
+	list = list_data->list;
+
 	--list_data->fetch_count;
 
 	if (!from || !result || !query || strcmp(result, "result") != 0) {
-		if (list_data->fetch_count == 0) {
-			jabber_disco_list_data_destroy(list_data);
-			purple_disco_list_set_protocol_data(list, NULL);
-
+		if (list_data->fetch_count == 0)
 			purple_disco_list_set_in_progress(list, FALSE);
-		}
 
 		purple_disco_list_unref(list);
 		return;
@@ -685,7 +692,7 @@ jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		}
 
 		disco_data = g_new0(struct _disco_data, 1);
-		disco_data->list = list;
+		disco_data->list_data = list_data;
 		disco_data->parent = parent;
 		disco_data->node = full_node;
 
@@ -701,12 +708,8 @@ jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		jabber_iq_send(iq);
 	}
 
-	if (list_data->fetch_count == 0) {
-		jabber_disco_list_data_destroy(list_data);
-		purple_disco_list_set_protocol_data(list, NULL);
-
+	if (list_data->fetch_count == 0)
 		purple_disco_list_set_in_progress(list, FALSE);
-	}
 
 	purple_disco_list_unref(list);
 
@@ -719,7 +722,7 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	struct _disco_data *disco_data = data;
 	struct jabber_disco_list_data *list_data;
-	PurpleDiscoList *list = disco_data->list;
+	PurpleDiscoList *list;
 	PurpleDiscoService *parent = disco_data->parent;
 	char *node = g_strdup(disco_data->node);
 	xmlnode *query, *ident, *child;
@@ -732,21 +735,19 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	PurpleDiscoServiceType type;
 	PurpleDiscoServiceFlags flags = PURPLE_DISCO_ADD;
 
+	list_data = disco_data->list_data;
+	list = list_data->list;
+
 	g_free(disco_data->node);
 	g_free(disco_data);
 
-	list_data = purple_disco_list_get_protocol_data(list);
 	--list_data->fetch_count;
 
 	if (!from || !result || strcmp(result, "result") != 0
 			|| (!(query = xmlnode_get_child(packet, "query")))
 			|| (!(ident = xmlnode_get_child(query, "identity")))) {
-		if (list_data->fetch_count == 0) {
-			jabber_disco_list_data_destroy(list_data);
-			purple_disco_list_set_protocol_data(list, NULL);
-
+		if (list_data->fetch_count == 0)
 			purple_disco_list_set_in_progress(list, FALSE);
-		}
 
 		purple_disco_list_unref(list);
 		return;
@@ -802,7 +803,7 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		++list_data->fetch_count;
 		purple_disco_list_ref(list);
 		disco_data = g_new0(struct _disco_data, 1);
-		disco_data->list = list;
+		disco_data->list_data = list_data;
 		disco_data->parent = s;
 
 		xmlnode_set_attrib(iq->node, "to", from);
@@ -812,12 +813,8 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		jabber_iq_send(iq);
 	}
 
-	if (list_data->fetch_count == 0) {
-		jabber_disco_list_data_destroy(list_data);
-		purple_disco_list_set_protocol_data(list, NULL);
-
+	if (list_data->fetch_count == 0)
 		purple_disco_list_set_in_progress(list, FALSE);
-	}
 
 	purple_disco_list_unref(list);
 
@@ -828,7 +825,6 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 static void
 jabber_disco_server_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
-	PurpleDiscoList *list = data;
 	struct jabber_disco_list_data *list_data;
 	xmlnode *query, *child;
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -841,7 +837,15 @@ jabber_disco_server_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	if (strcmp(type, "result"))
 		return;
 
-	list_data = purple_disco_list_get_protocol_data(list);
+	list_data = data;
+	--list_data->fetch_count;
+
+	if (list_data->list == NULL) {
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
 
 	query = xmlnode_get_child(packet, "query");
 
@@ -851,15 +855,15 @@ jabber_disco_server_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		const char *jid;
 		struct _disco_data *disco_data;
 
-		if(!(jid = xmlnode_get_attrib(child, "jid")) || !purple_disco_list_get_protocol_data(list))
+		if(!(jid = xmlnode_get_attrib(child, "jid")))
 			continue;
 
 		disco_data = g_new0(struct _disco_data, 1);
-		disco_data->list = list;
+		disco_data->list_data = list_data;
 
 		has_items = TRUE;
 		++list_data->fetch_count;
-		purple_disco_list_ref(list);
+		purple_disco_list_ref(list_data->list);
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
 		xmlnode_set_attrib(iq->node, "to", jid);
 		jabber_iq_set_callback(iq, jabber_disco_service_info_cb, disco_data);
@@ -868,89 +872,120 @@ jabber_disco_server_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 
 	if (!has_items)
-		purple_disco_list_set_in_progress(list, FALSE);
+		purple_disco_list_set_in_progress(list_data->list, FALSE);
 
-	purple_disco_list_unref(list);
+	purple_disco_list_unref(list_data->list);
 }
 
 static void
 jabber_disco_server_info_cb(JabberStream *js, const char *who, JabberCapabilities caps, gpointer data)
 {
-	PurpleDiscoList *list = data;
-	JabberIq *iq;
+	struct jabber_disco_list_data *list_data;
+
+	list_data = data;
+	--list_data->fetch_count;
+
+	if (!list_data->list) {
+		purple_disco_list_unref(list_data->list);
+
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
 
 	if (caps & JABBER_CAP_ITEMS) {
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
 		xmlnode_set_attrib(iq->node, "to", who);
-		jabber_iq_set_callback(iq, jabber_disco_server_items_cb, list);
-	
-		if (purple_disco_list_get_protocol_data(list))
-			jabber_iq_send(iq);
-		else
-			purple_disco_list_unref(list);
-	
+		jabber_iq_set_callback(iq, jabber_disco_server_items_cb, list_data);
+
+		++list_data->fetch_count;
+		purple_disco_list_ref(list_data->list);
+
+		jabber_iq_send(iq);
 	} else {
 		purple_notify_error(NULL, _("Error"), _("Server doesn't support service discovery"), NULL); 
-		purple_disco_list_set_in_progress(list, FALSE);
-		purple_disco_list_unref(list);
+		purple_disco_list_set_in_progress(list_data->list, FALSE);
 	}
+
+	purple_disco_list_unref(list_data->list);
 }
 
-static void
-jabber_disco_server_cb(PurpleDiscoList *list, PurpleRequestFields *fields)
+static void discolist_cancel_cb(struct jabber_disco_list_data *list_data, const char *server)
 {
-	PurpleAccount *account;
-	PurpleConnection *gc;
+	purple_disco_list_set_in_progress(list_data->list, FALSE);
+	purple_disco_list_unref(list_data->list);
+}
+
+static void discolist_ok_cb(struct jabber_disco_list_data *list_data, const char *server)
+{
 	JabberStream *js;
-	const char *server_name;
 
-	server_name = purple_request_fields_get_string(fields, "server");
+	js = list_data->js;
 
-	account = purple_disco_list_get_account(list);
-	gc = purple_account_get_connection(account);
-	if (!gc)
+	if (!server || !*server) {
+		purple_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
+
+		purple_disco_list_set_in_progress(list_data->list, FALSE);
+		purple_disco_list_unref(list_data->list);
 		return;
-	js = purple_connection_get_protocol_data(gc);
+	}
 
-	purple_disco_list_set_in_progress(list, TRUE);
-	purple_debug_misc("jabber", "Service discovery for %s\n", server_name);
+	list_data->server = g_strdup(server);
 	if (js->last_disco_server)
 		g_free(js->last_disco_server);
-	js->last_disco_server = g_strdup(server_name);
+	js->last_disco_server = g_strdup(server);
 
-	jabber_disco_info_do(js, server_name, jabber_disco_server_info_cb, list);
+	purple_disco_list_set_in_progress(list_data->list, TRUE);
+
+	++list_data->fetch_count;
+	jabber_disco_info_do(js, list_data->server, jabber_disco_server_info_cb, list_data);
 }
 
-void
-jabber_disco_get_list(PurpleConnection *gc, PurpleDiscoList *list)
+PurpleDiscoList *
+jabber_disco_get_list(PurpleConnection *gc)
 {
 	PurpleAccount *account;
+	PurpleDiscoList *list;
 	JabberStream *js;
 	struct jabber_disco_list_data *disco_list_data;
 
 	account = purple_connection_get_account(gc);
 	js = purple_connection_get_protocol_data(gc);
 
-	disco_list_data = g_new0(struct jabber_disco_list_data, 1);
-	purple_disco_list_set_protocol_data(list, disco_list_data);
+	/* We start with a ref */
+	list = purple_disco_list_new(account);
 
-	purple_disco_list_ref(list);
+	disco_list_data = g_new0(struct jabber_disco_list_data, 1);
+	disco_list_data->list = list;
+	disco_list_data->js = js;
+	purple_disco_list_set_protocol_data(list, disco_list_data, disco_proto_data_destroy_cb);
 
 	purple_request_input(gc, _("Server name request"), _("Enter an XMPP Server"),
 			_("Select an XMPP server to query"),
 			js->last_disco_server ? js->last_disco_server : js->user->domain,
 			FALSE, FALSE, NULL,
-			_("Find Services"), PURPLE_CALLBACK(jabber_disco_server_cb),
-			_("Cancel"), PURPLE_CALLBACK(jabber_disco_cancel),
+			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
+			_("Cancel"), PURPLE_CALLBACK(discolist_cancel_cb),
 			account, NULL, NULL, disco_list_data);
 
+	return list;
 }
 
 void
 jabber_disco_cancel(PurpleDiscoList *list)
 {
-	jabber_disco_list_data_destroy(purple_disco_list_get_protocol_data(list));
-	purple_disco_list_set_protocol_data(list, NULL);
+	struct jabber_disco_list_data *list_data = purple_disco_list_get_protocol_data(list);
+	purple_disco_list_set_protocol_data(list, NULL, NULL);
+
+	if (list_data->fetch_count == 0) {
+		/* Nothing outstanding, just free it now... */
+		jabber_disco_list_data_destroy(list_data);
+	} else {
+		/* We'll free it when the count is 0 */
+		list_data->list = NULL;
+	}
+
 	purple_disco_list_set_in_progress(list, FALSE);	
 }
 

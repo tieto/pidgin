@@ -35,6 +35,11 @@ typedef struct _PurpleDiscoUiOps PurpleDiscoUiOps;
 #include "account.h"
 
 /**
+ *
+ */
+typedef void  (*PurpleDiscoCloseCallback) (PurpleDiscoList *list);
+
+/**
  * The categories of services.
  */
 typedef enum
@@ -104,7 +109,7 @@ extern "C" {
  * @param account The account that's listing rooms.
  * @return The new service discovery list handle.
  */
-PurpleDiscoList *purple_disco_list_new(PurpleAccount *account, void *ui_data);
+PurpleDiscoList *purple_disco_list_new(PurpleAccount *account);
 
 /**
  * Increases the reference count on the service discovery list.
@@ -127,7 +132,7 @@ void purple_disco_list_unref(PurpleDiscoList *list);
  * Instructs the prpl to start fetching the list.
  *
  */
-void purple_disco_get_list(PurpleDiscoList *list);
+PurpleDiscoList *purple_disco_get_list(PurpleConnection *gc);
 
 /**
  * Tells the prpl to stop fetching the list.
@@ -280,13 +285,17 @@ gboolean purple_disco_list_get_in_progress(PurpleDiscoList *list);
  *
  * This should only be called from the associated prpl.
  *
- * @param list The disco list.
- * @param data The protocol data.
+ * @param list     The disco list.
+ * @param data     The protocol data.
+ * @param close_cb The function to be called when destroying the disco list to
+ *                 free the protocol data. May be NULL if the data does not need
+ *                 to be freed.
  *
  * @see purple_disco_list_get_protocol_data()
  * @since TODO
  */
-void purple_disco_list_set_protocol_data(PurpleDiscoList *list, gpointer data);
+void purple_disco_list_set_protocol_data(PurpleDiscoList *list, gpointer data,
+                                         PurpleDiscoCloseCallback cb);
 
 /**
  * Returns the disco list's protocol-specific data.

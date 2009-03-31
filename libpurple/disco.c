@@ -43,7 +43,8 @@ struct _PurpleDiscoList {
 	gboolean in_progress;
 
 	gpointer ui_data; /**< UI private data. */
-	gpointer proto_data; /** Prpl private data. */
+	gpointer proto_data; /**< Prpl private data. */
+	PurpleDiscoCloseCallback close_cb; /**< Callback to free the prpl data */
 	guint ref; /**< The reference count. */
 };
 
@@ -62,7 +63,7 @@ struct _PurpleDiscoService {
 
 static PurpleDiscoUiOps *ops = NULL;
 
-PurpleDiscoList *purple_disco_list_new(PurpleAccount *account, void *ui_data)
+PurpleDiscoList *purple_disco_list_new(PurpleAccount *account)
 {
 	PurpleDiscoList *list;
 
@@ -71,7 +72,6 @@ PurpleDiscoList *purple_disco_list_new(PurpleAccount *account, void *ui_data)
 	list = g_new0(PurpleDiscoList, 1);
 	list->account = account;
 	list->ref = 1;
-	list->ui_data = ui_data;
 
 	if (ops && ops->create)
 		ops->create(list);
@@ -104,6 +104,9 @@ static void purple_disco_list_destroy(PurpleDiscoList *list)
 
 	if (ops && ops->destroy)
 		ops->destroy(list);
+
+	if (list->close_cb)
+		list->close_cb(list);
 
 	for (l = list->services; l; l = l->next) {
 		PurpleDiscoService *s = l->data;
@@ -156,25 +159,21 @@ PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceCategory cat
 	return s;
 }
 
-void purple_disco_get_list(PurpleDiscoList *list)
+PurpleDiscoList *purple_disco_get_list(PurpleConnection *pc)
 {
-	PurpleConnection *pc = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	g_return_if_fail(list != NULL);
-
-	pc = purple_account_get_connection(list->account);
-
-	g_return_if_fail(pc != NULL);
+	g_return_val_if_fail(pc != NULL, NULL);
 
 	prpl = purple_connection_get_prpl(pc);
-
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, disco_get_list))
-		prpl_info->disco_get_list(pc, list);
+		return prpl_info->disco_get_list(pc);
+
+	return NULL;
 }
 
 void purple_disco_cancel_get_list(PurpleDiscoList *list)
@@ -305,11 +304,13 @@ gboolean purple_disco_list_get_in_progress(PurpleDiscoList *list)
 }
 
 void purple_disco_list_set_protocol_data(PurpleDiscoList *list,
-                                         gpointer proto_data)
+                                         gpointer proto_data,
+                                         PurpleDiscoCloseCallback cb)
 {
 	g_return_if_fail(list != NULL);
 
 	list->proto_data = proto_data;
+	list->close_cb   = cb;
 }
 
 gpointer purple_disco_list_get_protocol_data(PurpleDiscoList *list)

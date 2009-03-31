@@ -464,7 +464,7 @@ struct _PurplePluginProtocolInfo
 	/**
 	 * Service discovery prpl callbacks
 	 */
-	void (*disco_get_list)(PurpleConnection *gc, PurpleDiscoList *list);
+	PurpleDiscoList *(*disco_get_list)(PurpleConnection *gc);
 
 	/**
 	 * Cancel fetching service list
