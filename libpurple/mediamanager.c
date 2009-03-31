@@ -353,7 +353,8 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
-		PurpleMediaSessionType type)
+		PurpleMediaSessionType type, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
 {
 #ifdef USE_VV
 	GstElement *ret = NULL;
@@ -383,7 +384,7 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 
 		if (ret == NULL) {
 			GstElement *bin, *fakesink;
-			ret = info->create();
+			ret = info->create(media, session_id, participant);
 			bin = gst_bin_new(info->id);
 			tee = gst_element_factory_make("tee", "tee");
 			gst_bin_add_many(GST_BIN(bin), ret, tee, NULL);
@@ -415,7 +416,7 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		gst_pad_set_active(ghost, TRUE);
 		gst_element_add_pad(ret, ghost);
 	} else {
-		ret = info->create();
+		ret = info->create(media, session_id, participant);
 	}
 
 	if (ret == NULL)
@@ -612,7 +613,9 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			queue = gst_element_factory_make(
 					"queue", NULL);
 			ow->sink = purple_media_manager_get_element(
-					manager, PURPLE_MEDIA_RECV_VIDEO);
+					manager, PURPLE_MEDIA_RECV_VIDEO,
+					ow->media, ow->session_id,
+					ow->participant);
 
 			if (participant == NULL) {
 				/* aka this is a preview sink */

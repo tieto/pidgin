@@ -65,7 +65,8 @@ struct _PurpleMediaElementInfo
 {
 	const gchar *id;
 	PurpleMediaElementType type;
-	GstElement *(*create)(void);
+	GstElement *(*create)(PurpleMedia *media,
+			const gchar *session_id, const gchar *participant);
 };
 
 #ifdef __cplusplus
@@ -120,7 +121,8 @@ GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
  * @param type The type of source/sink to get.
  */
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
-		PurpleMediaSessionType type);
+		PurpleMediaSessionType type, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
 
 PurpleMediaElementInfo *purple_media_manager_get_element_info(
 		PurpleMediaManager *manager, const gchar *name);

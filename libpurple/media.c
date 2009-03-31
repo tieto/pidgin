@@ -1630,7 +1630,10 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			stream->src = gst_element_factory_make(
 					"liveadder", NULL);
 			sink = purple_media_manager_get_element(priv->manager,
-					PURPLE_MEDIA_RECV_AUDIO);
+					PURPLE_MEDIA_RECV_AUDIO,
+					stream->session->media,
+					stream->session->id,
+					stream->participant);
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
 			stream->src = gst_element_factory_make(
 					"fsfunnel", NULL);
@@ -1745,7 +1748,8 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		session_type = purple_media_from_fs(media_type,
 				FS_DIRECTION_SEND);
 		src = purple_media_manager_get_element(
-				media->priv->manager, session_type);
+				media->priv->manager, session_type,
+				media, session->id, who);
 		if (!GST_IS_ELEMENT(src)) {
 			purple_debug_error("media",
 					"Error creating src for session %s\n",

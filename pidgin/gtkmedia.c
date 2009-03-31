@@ -902,7 +902,8 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 }
 
 static GstElement *
-create_default_video_src(void)
+create_default_video_src(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
 {
 	GstElement *sendbin, *src, *videoscale, *capsfilter;
 	GstPad *pad;
@@ -944,13 +945,15 @@ create_default_video_src(void)
 }
 
 static GstElement *
-create_default_video_sink(void)
+create_default_video_sink(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
 {
 	return gst_element_factory_make("autovideosink", NULL);
 }
 
 static GstElement *
-create_default_audio_src(void)
+create_default_audio_src(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
 {
 	GstElement *bin, *src, *volume, *level;
 	GstPad *pad, *ghost;
@@ -979,7 +982,8 @@ create_default_audio_src(void)
 }
 
 static GstElement *
-create_default_audio_sink(void)
+create_default_audio_sink(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
 {
 	GstElement *bin, *sink, *volume, *level, *queue;
 	GstPad *pad, *ghost;
