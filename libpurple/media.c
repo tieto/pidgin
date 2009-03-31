@@ -56,8 +56,6 @@ struct _PurpleMediaSession
 
 	PurpleMediaSessionType type;
 	gboolean initiator;
-
-	gulong window_id;
 };
 
 struct _PurpleMediaStream
@@ -78,7 +76,6 @@ struct _PurpleMediaStream
 	GList *active_local_candidates;
 	GList *active_remote_candidates;
 
-	gulong window_id;
 	guint connected_cb_id;
 };
 #endif
