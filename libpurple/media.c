@@ -1137,6 +1137,7 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 	GstPad *srcpad;
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
+	g_return_if_fail(GST_IS_ELEMENT(src));
 
 	session = purple_media_get_session(media, sess_id);
 
@@ -1679,6 +1680,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		GList *codec_conf = NULL;
 		gchar *filename = NULL;
 		PurpleMediaSessionType session_type;
+		GstElement *src = NULL;
 
 		session = g_new0(PurpleMediaSession, 1);
 
@@ -1742,9 +1744,17 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 
 		session_type = purple_media_from_fs(media_type,
 				FS_DIRECTION_SEND);
-		purple_media_set_src(media, session->id,
-				purple_media_manager_get_element(
-				media->priv->manager, session_type));
+		src = purple_media_manager_get_element(
+				media->priv->manager, session_type);
+		if (!GST_IS_ELEMENT(src)) {
+			purple_debug_error("media",
+					"Error creating src for session %s\n",
+					session->id);
+			purple_media_end(media, session->id, NULL);
+			return FALSE;
+		}
+
+		purple_media_set_src(media, session->id, src);
 		gst_element_set_state(session->src, GST_STATE_PLAYING);
 
 		purple_media_manager_create_output_window(
@@ -1939,6 +1949,14 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 	stream = purple_media_get_stream(media, sess_id, name);
+
+	if (stream == NULL) {
+		purple_debug_error("media",
+				"purple_media_add_remote_candidates: "
+				"couldn't find stream %s %s.\n",
+				sess_id, name);
+		return;
+	}
 
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			purple_media_candidate_list_to_fs(remote_candidates));
