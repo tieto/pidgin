@@ -1656,19 +1656,21 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	stream->connected_cb_id = purple_timeout_add(0,
 			(GSourceFunc)purple_media_connected_cb, stream);
 }
+#endif  /* USE_VV */
 
-static gboolean
-purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
-				 const gchar *who, FsMediaType type,
-				 FsStreamDirection type_direction,
-				 gboolean initiator, const gchar *transmitter,
-				 guint num_params, GParameter *params)
+gboolean
+purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
+		const gchar *who, PurpleMediaSessionType type,
+		gboolean initiator, const gchar *transmitter,
+		guint num_params, GParameter *params)
 {
+#ifdef USE_VV
 	PurpleMediaSession *session;
 	FsParticipant *participant = NULL;
 	PurpleMediaStream *stream = NULL;
-	FsStreamDirection *direction = NULL;
-	PurpleMediaSessionType session_type;
+	FsMediaType media_type = purple_media_to_fs_media_type(type);
+	FsStreamDirection type_direction =
+			purple_media_to_fs_stream_direction(type);
 	gboolean is_nice = !strcmp(transmitter, "nice");
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
@@ -1679,10 +1681,12 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		GError *err = NULL;
 		GList *codec_conf = NULL;
 		gchar *filename = NULL;
+		PurpleMediaSessionType session_type;
 
 		session = g_new0(PurpleMediaSession, 1);
 
-		session->session = fs_conference_new_session(media->priv->conference, type, &err);
+		session->session = fs_conference_new_session(
+				media->priv->conference, media_type, &err);
 
 		if (err != NULL) {
 			purple_media_error(media, "Error creating session: %s\n", err->message);
@@ -1731,7 +1735,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 		session->id = g_strdup(sess_id);
 		session->media = media;
-		session->type = purple_media_from_fs(type, type_direction);
+		session->type = type;
 		session->initiator = initiator;
 
 		purple_media_add_session(media, session);
@@ -1739,7 +1743,8 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 				0, PURPLE_MEDIA_STATE_NEW,
 				session->id, NULL);
 
-		session_type = purple_media_from_fs(type, FS_DIRECTION_SEND);
+		session_type = purple_media_from_fs(media_type,
+				FS_DIRECTION_SEND);
 		purple_media_set_src(media, session->id,
 				purple_media_manager_get_element(
 				media->priv->manager, session_type));
@@ -1861,48 +1866,19 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_NEW,
 				session->id, who);
-	} else if (*direction != type_direction) {	
-		/* change direction */
-		g_object_set(stream->stream, "direction", type_direction, NULL);
-	}
-
-	return TRUE;
-}
-#endif
-
-gboolean
-purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
-			PurpleMediaSessionType type, gboolean initiator,
-			const gchar *transmitter,
-			guint num_params, GParameter *params)
-{
-#ifdef USE_VV
-	FsStreamDirection type_direction;
-
-	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
-
-	if (type & PURPLE_MEDIA_AUDIO) {
-		type_direction = purple_media_to_fs_stream_direction(type & PURPLE_MEDIA_AUDIO);
-
-		if (!purple_media_add_stream_internal(media, sess_id, who,
-						      FS_MEDIA_TYPE_AUDIO, type_direction, initiator,
-						      transmitter, num_params, params)) {
-			return FALSE;
+	} else {
+		if (purple_media_to_fs_stream_direction(stream->session->type)
+				!= type_direction) {
+			/* change direction */
+			g_object_set(stream->stream, "direction",
+					type_direction, NULL);
 		}
 	}
-	else if (type & PURPLE_MEDIA_VIDEO) {
-		type_direction = purple_media_to_fs_stream_direction(type & PURPLE_MEDIA_VIDEO);
 
-		if (!purple_media_add_stream_internal(media, sess_id, who,
-						      FS_MEDIA_TYPE_VIDEO, type_direction, initiator,
-						      transmitter, num_params, params)) {
-			return FALSE;
-		}
-	}
 	return TRUE;
 #else
 	return FALSE;
-#endif
+#endif  /* USE_VV */
 }
 
 PurpleMediaSessionType
