@@ -981,12 +981,9 @@ jabber_disco_cancel(PurpleDiscoList *list)
 	if (list_data->fetch_count == 0) {
 		/* Nothing outstanding, just free it now... */
 		jabber_disco_list_data_destroy(list_data);
-	} else {
+	} else
 		/* We'll free it when the count is 0 */
 		list_data->list = NULL;
-	}
-
-	purple_disco_list_set_in_progress(list, FALSE);	
 }
 
 int

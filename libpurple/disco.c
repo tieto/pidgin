@@ -196,6 +196,8 @@ void purple_disco_cancel_get_list(PurpleDiscoList *list)
 
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, disco_cancel))
 		prpl_info->disco_cancel(list);
+
+	purple_disco_list_set_in_progress(list, FALSE);
 }
 
 void purple_disco_service_register(PurpleDiscoService *service)
