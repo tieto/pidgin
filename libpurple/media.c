@@ -249,7 +249,7 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Farsight conference",
 			"The FsConference associated with this media.",
 			FS_TYPE_CONFERENCE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
 
 	g_object_class_install_property(gobject_class, PROP_INITIATOR,
 			g_param_spec_boolean("initiator",
