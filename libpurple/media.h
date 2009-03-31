@@ -438,6 +438,12 @@ GList *purple_media_get_local_candidates(PurpleMedia *media,
 					 const gchar *sess_id,
 					 const gchar *name);
 
+#if 0
+/*
+ * These two functions aren't being used and I'd rather not lock in the API
+ * until they are needed. If they ever are.
+ */
+
 /**
  * Gets the active local candidates for the stream.
  *
@@ -461,6 +467,7 @@ GList *purple_media_get_active_local_candidates(PurpleMedia *media,
  */
 GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *name);
+#endif
 
 /**
  * Gets remote candidates from the stream.
