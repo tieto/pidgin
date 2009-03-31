@@ -42,6 +42,11 @@ struct _jabber_disco_info_cb_data {
 	JabberDiscoInfoCallback *callback;
 };
 
+struct _jabber_disco_items_cb_data {
+	gpointer data;
+	JabberDiscoItemsCallback *callback;
+};
+
 #define SUPPORT_FEATURE(x) { \
 	feature = xmlnode_new_child(query, "feature"); \
 	xmlnode_set_attrib(feature, "var", x); \
@@ -553,7 +558,7 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
 	struct _jabber_disco_info_cb_data *jdicd;
-	const char *id;
+	char *id;
 	JabberIq *iq;
 
 	if((jid = jabber_id_new(who))) {
@@ -1021,3 +1026,65 @@ jabber_disco_service_register(PurpleConnection *gc, PurpleDiscoService *service)
 	return 0;
 }
 
+static void
+jabber_disco_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	struct _jabber_disco_items_cb_data *jdicd;
+	xmlnode *query, *child;
+	const char *from;
+	const char *type;
+	GSList *items = NULL;
+
+	jdicd = data;
+
+	from = xmlnode_get_attrib(packet, "from");
+	type = xmlnode_get_attrib(packet, "type");
+	query = xmlnode_get_child(packet, "query");
+
+	if (!from || !strcmp(type, "error") || !query) {
+		jdicd->callback(js, NULL, jdicd->data);
+		g_free(jdicd);
+		return;
+	}
+
+	for (child = xmlnode_get_child(query, "item"); child;
+			child = xmlnode_get_next_twin(child)) {
+		JabberDiscoItem *item;
+
+		item = g_new0(JabberDiscoItem, 1);
+		item->jid  = g_strdup(xmlnode_get_attrib(child, "jid"));
+		item->node = g_strdup(xmlnode_get_attrib(child, "node"));
+		item->name = g_strdup(xmlnode_get_attrib(child, "name"));
+
+		items = g_slist_prepend(items, item);
+	}
+
+	items = g_slist_reverse(items);
+	jdicd->callback(js, items, jdicd->data);
+	g_free(jdicd);
+}
+
+void jabber_disco_items_do(JabberStream *js, const char *who,
+		JabberDiscoItemsCallback *callback, gpointer data)
+{
+	struct _jabber_disco_items_cb_data *jdicd;
+	JabberIq *iq;
+
+	jdicd = g_new0(struct _jabber_disco_items_cb_data, 1);
+	jdicd->data = data;
+	jdicd->callback = callback;
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+	xmlnode_set_attrib(iq->node, "to", who);
+
+	jabber_iq_set_callback(iq, jabber_disco_items_cb, jdicd);
+	jabber_iq_send(iq);
+}
+
+void jabber_disco_item_free(JabberDiscoItem *item)
+{
+	g_free((char *)item->jid);
+	g_free((char *)item->node);
+	g_free((char *)item->name);
+	g_free(item);
+}

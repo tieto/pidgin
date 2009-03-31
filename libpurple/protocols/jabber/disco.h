@@ -24,8 +24,17 @@
 
 #include "jabber.h"
 
+typedef struct _JabberDiscoItem {
+	const char *jid;  /* MUST */
+	const char *node; /* SHOULD */
+	const char *name; /* MAY */
+} JabberDiscoItem;
+
 typedef void (JabberDiscoInfoCallback)(JabberStream *js, const char *who,
 		JabberCapabilities capabilities, gpointer data);
+
+typedef void (JabberDiscoItemsCallback)(JabberStream *js,
+		GSList *items, gpointer data);
 
 void jabber_disco_info_parse(JabberStream *js, xmlnode *packet);
 void jabber_disco_items_parse(JabberStream *js, xmlnode *packet);
@@ -39,5 +48,10 @@ PurpleDiscoList *jabber_disco_get_list(PurpleConnection *gc);
 void jabber_disco_cancel(PurpleDiscoList *list);
 
 int jabber_disco_service_register(PurpleConnection *gc, PurpleDiscoService *service);
+
+
+void jabber_disco_items_do(JabberStream *js, const char *jid,
+		JabberDiscoItemsCallback *callback, gpointer data);
+void jabber_disco_item_free(JabberDiscoItem *);
 
 #endif /* _PURPLE_JABBER_DISCO_H_ */
