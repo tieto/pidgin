@@ -184,6 +184,25 @@ gboolean purple_media_manager_remove_output_window(
 void purple_media_manager_remove_output_windows(
 		PurpleMediaManager *manager, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
+
+/**
+ * Sets which media caps the UI supports.
+ *
+ * @param manager The manager to set the caps on.
+ * @param caps The caps to set.
+ */
+void purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
+		PurpleMediaCaps caps);
+
+/**
+ * Gets which media caps the UI supports.
+ *
+ * @param manager The manager to get caps from.
+ *
+ * @return caps The caps retrieved.
+ */
+PurpleMediaCaps purple_media_manager_get_ui_caps(PurpleMediaManager *manager);
+
 /*}@*/
 
 #ifdef __cplusplus

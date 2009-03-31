@@ -54,6 +54,7 @@ struct _PurpleMediaOutputWindow
 struct _PurpleMediaManagerPrivate
 {
 	GstElement *pipeline;
+	PurpleMediaCaps ui_caps;
 	GList *medias;
 	GList *elements;
 	GList *output_windows;
@@ -758,6 +759,28 @@ purple_media_manager_remove_output_windows(PurpleMediaManager *manager,
 		purple_media_manager_remove_output_window(
 				manager, ow->id);
 	}
+#endif
+}
+
+void
+purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
+		PurpleMediaCaps caps)
+{
+#ifdef USE_VV
+	g_return_if_fail(PURPLE_IS_MEDIA_MANAGER(manager));
+	manager->priv->ui_caps = caps;
+#endif
+}
+
+PurpleMediaCaps
+purple_media_manager_get_ui_caps(PurpleMediaManager *manager)
+{
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager),
+			PURPLE_MEDIA_CAPS_NONE);
+	return manager->priv->ui_caps;
+#else
+	return PURPLE_CAPS_NONE;
 #endif
 }
 
