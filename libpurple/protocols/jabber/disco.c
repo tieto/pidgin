@@ -98,6 +98,7 @@ jabber_disco_bytestream_server_cb(JabberStream *js, xmlnode *packet, gpointer da
 void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *id   = xmlnode_get_attrib(packet, "id");
 
 	if(!from || !type)
 		return;
@@ -117,7 +118,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
 				"http://jabber.org/protocol/disco#info");
 
-		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
+		jabber_iq_set_id(iq, id);
 
 		xmlnode_set_attrib(iq->node, "to", from);
 		query = xmlnode_get_child(iq->node, "query");
@@ -295,9 +296,9 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		if(jbr)
 			jbr->capabilities = capabilities;
 
-		if((jdicd = g_hash_table_lookup(js->disco_callbacks, from))) {
+		if((jdicd = g_hash_table_lookup(js->disco_callbacks, id))) {
 			jdicd->callback(js, from, capabilities, jdicd->data);
-			g_hash_table_remove(js->disco_callbacks, from);
+			g_hash_table_remove(js->disco_callbacks, id);
 		}
 	} else if(!strcmp(type, "error")) {
 		JabberID *jid;
@@ -306,7 +307,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		JabberCapabilities capabilities = JABBER_CAP_NONE;
 		struct _jabber_disco_info_cb_data *jdicd;
 
-		if(!(jdicd = g_hash_table_lookup(js->disco_callbacks, from)))
+		if(!(jdicd = g_hash_table_lookup(js->disco_callbacks, id)))
 			return;
 
 		if((jid = jabber_id_new(from))) {
@@ -319,7 +320,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			capabilities = jbr->capabilities;
 
 		jdicd->callback(js, from, capabilities, jdicd->data);
-		g_hash_table_remove(js->disco_callbacks, from);
+		g_hash_table_remove(js->disco_callbacks, id);
 	}
 }
 
@@ -552,6 +553,7 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
 	struct _jabber_disco_info_cb_data *jdicd;
+	const char *id;
 	JabberIq *iq;
 
 	if((jid = jabber_id_new(who))) {
@@ -569,10 +571,12 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	jdicd->data = data;
 	jdicd->callback = callback;
 
-	g_hash_table_insert(js->disco_callbacks, g_strdup(who), jdicd);
-
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
 	xmlnode_set_attrib(iq->node, "to", who);
+
+	id = jabber_get_next_id(js);
+	jabber_iq_set_id(iq, id);
+	g_hash_table_insert(js->disco_callbacks, id, jdicd);
 
 	jabber_iq_send(iq);
 }
