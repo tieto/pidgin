@@ -646,19 +646,18 @@ static void
 jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data);
 
 static void
-jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_service_items_cb(JabberStream *js, const char *who, const char *node,
+                              GSList *items, gpointer data)
 {
-	struct _disco_data *disco_data = data;
+	GSList *l;
+	struct _disco_data *disco_data;
 	struct jabber_disco_list_data *list_data;
 	PurpleDiscoList *list;	
-	PurpleDiscoService *parent = disco_data->parent;
-	const char *parent_node = disco_data->node;
-	xmlnode *query = xmlnode_get_child(packet, "query");
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *result = xmlnode_get_attrib(packet, "type");
-	xmlnode *child;
+	PurpleDiscoService *parent;
+	const char *parent_node;
 	gboolean has_items = FALSE;
 
+	disco_data = data;
 	list_data = disco_data->list_data;
 	list = list_data->list;
 
@@ -671,7 +670,7 @@ jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		return;
 	}
 
-	if (!from || !result || !query || strcmp(result, "result") != 0) {
+	if (items == NULL) {
 		if (list_data->fetch_count == 0)
 			purple_disco_list_set_in_progress(list, FALSE);
 
@@ -679,50 +678,47 @@ jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		return;
 	}
 
-	query = xmlnode_get_child(packet, "query");
+	parent = disco_data->parent;
+	parent_node = disco_data->node;
 
-	for(child = xmlnode_get_child(query, "item"); child;
-			child = xmlnode_get_next_twin(child)) {
+	for (l = items; l; l = l->next) {
+		JabberDiscoItem *item = l->data;
 		JabberIq *iq;
-		xmlnode *q;
-		const char *jid, *node;
-		struct _disco_data *disco_data;
+		struct _disco_data *req_data;
 		char *full_node;
 
-		if(!(jid = xmlnode_get_attrib(child, "jid")) || !purple_disco_list_get_protocol_data(list))
-			continue;
-
-		node = xmlnode_get_attrib(child, "node");
-
 		if (parent_node) {
-			if (node) {
-				full_node = g_new0(char, strlen(parent_node) + 1 + strlen(node) + 1);
-				strcat(full_node, parent_node);
-				strcat(full_node, "/");
-				strcat(full_node, node);
+			if (item->node) {
+				full_node = g_strdup_printf("%s/%s", parent_node, item->node);
 			} else {
 				continue;
 			}
 		} else {
-			full_node = g_strdup(node);
+			full_node = g_strdup(item->node);
 		}
 
-		disco_data = g_new0(struct _disco_data, 1);
-		disco_data->list_data = list_data;
-		disco_data->parent = parent;
-		disco_data->node = full_node;
+		req_data = g_new0(struct _disco_data, 1);
+		req_data->list_data = list_data;
+		req_data->parent = parent;
+		req_data->node = full_node;
 
 		has_items = TRUE;
+
 		++list_data->fetch_count;
 		purple_disco_list_ref(list);
+
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
-		xmlnode_set_attrib(iq->node, "to", jid);
-		if (full_node && (q = xmlnode_get_child(iq->node, "query")))
-			xmlnode_set_attrib(q, "node", full_node);
-		jabber_iq_set_callback(iq, jabber_disco_service_info_cb, disco_data);
+		xmlnode_set_attrib(iq->node, "to", item->jid);
+		if (full_node)
+			xmlnode_set_attrib(xmlnode_get_child(iq->node, "query"),
+			                   "node", full_node);
+		jabber_iq_set_callback(iq, jabber_disco_service_info_cb, req_data);
 
 		jabber_iq_send(iq);
 	}
+
+	g_slist_foreach(items, (GFunc)jabber_disco_item_free, NULL);
+	g_slist_free(items);
 
 	if (list_data->fetch_count == 0)
 		purple_disco_list_set_in_progress(list, FALSE);
@@ -739,8 +735,8 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	struct _disco_data *disco_data = data;
 	struct jabber_disco_list_data *list_data;
 	PurpleDiscoList *list;
-	PurpleDiscoService *parent = disco_data->parent;
-	char *node = g_strdup(disco_data->node);
+	PurpleDiscoService *parent;
+	char *node;
 	xmlnode *query, *ident, *child;
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *result = xmlnode_get_attrib(packet, "type");
@@ -753,8 +749,10 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 	list_data = disco_data->list_data;
 	list = list_data->list;
+	parent = disco_data->parent;
 
-	g_free(disco_data->node);
+	node = disco_data->node;
+	disco_data->node = NULL;
 	g_free(disco_data);
 
 	--list_data->fetch_count;
@@ -820,20 +818,14 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 	/* if (flags & PURPLE_DISCO_FLAG_BROWSE) - not all browsable services has this future */
 	{
-		xmlnode *q;
-		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
-
 		++list_data->fetch_count;
 		purple_disco_list_ref(list);
 		disco_data = g_new0(struct _disco_data, 1);
 		disco_data->list_data = list_data;
 		disco_data->parent = s;
 
-		xmlnode_set_attrib(iq->node, "to", from);
-		jabber_iq_set_callback(iq, jabber_disco_service_items_cb, disco_data);
-		if (anode && (q = xmlnode_get_child(iq->node, "query")))
-			xmlnode_set_attrib(q, "node", node);
-		jabber_iq_send(iq);
+		jabber_disco_items_do(js, from, node, jabber_disco_service_items_cb,
+		                      disco_data);
 	}
 
 	if (list_data->fetch_count == 0)
@@ -1032,6 +1024,7 @@ jabber_disco_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	struct _jabber_disco_items_cb_data *jdicd;
 	xmlnode *query, *child;
 	const char *from;
+	const char *node = NULL;
 	const char *type;
 	GSList *items = NULL;
 
@@ -1041,8 +1034,11 @@ jabber_disco_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	type = xmlnode_get_attrib(packet, "type");
 	query = xmlnode_get_child(packet, "query");
 
+	if (query)
+		node = xmlnode_get_attrib(query, "node");
+
 	if (!from || !strcmp(type, "error") || !query) {
-		jdicd->callback(js, NULL, jdicd->data);
+		jdicd->callback(js, from, node, NULL, jdicd->data);
 		g_free(jdicd);
 		return;
 	}
@@ -1060,11 +1056,11 @@ jabber_disco_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 
 	items = g_slist_reverse(items);
-	jdicd->callback(js, items, jdicd->data);
+	jdicd->callback(js, from, node, items, jdicd->data);
 	g_free(jdicd);
 }
 
-void jabber_disco_items_do(JabberStream *js, const char *who,
+void jabber_disco_items_do(JabberStream *js, const char *who, const char *node,
 		JabberDiscoItemsCallback *callback, gpointer data)
 {
 	struct _jabber_disco_items_cb_data *jdicd;
@@ -1075,6 +1071,9 @@ void jabber_disco_items_do(JabberStream *js, const char *who,
 	jdicd->callback = callback;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+	if (node)
+		xmlnode_set_attrib(xmlnode_get_child(iq->node, "query"), "node", node);
+
 	xmlnode_set_attrib(iq->node, "to", who);
 
 	jabber_iq_set_callback(iq, jabber_disco_items_cb, jdicd);

@@ -33,8 +33,8 @@ typedef struct _JabberDiscoItem {
 typedef void (JabberDiscoInfoCallback)(JabberStream *js, const char *who,
 		JabberCapabilities capabilities, gpointer data);
 
-typedef void (JabberDiscoItemsCallback)(JabberStream *js,
-		GSList *items, gpointer data);
+typedef void (JabberDiscoItemsCallback)(JabberStream *js, const char *jid,
+		const char *node, GSList *items, gpointer data);
 
 void jabber_disco_info_parse(JabberStream *js, xmlnode *packet);
 void jabber_disco_items_parse(JabberStream *js, xmlnode *packet);
@@ -50,7 +50,7 @@ void jabber_disco_cancel(PurpleDiscoList *list);
 int jabber_disco_service_register(PurpleConnection *gc, PurpleDiscoService *service);
 
 
-void jabber_disco_items_do(JabberStream *js, const char *jid,
+void jabber_disco_items_do(JabberStream *js, const char *jid, const char *node,
 		JabberDiscoItemsCallback *callback, gpointer data);
 void jabber_disco_item_free(JabberDiscoItem *);
 
