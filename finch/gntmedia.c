@@ -467,6 +467,10 @@ void finch_media_manager_init(void)
 			PURPLE_CMD_FLAG_IM, NULL,
 			call_cmd_cb, _("call: Make an audio call."), NULL);
 
+	purple_media_manager_set_ui_caps(manager, 
+			PURPLE_MEDIA_CAPS_AUDIO |
+			PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION);
+
 	purple_debug_info("gntmedia", "Registering media element types\n");
 	purple_media_manager_set_active_element(manager, &default_audio_src);
 	purple_media_manager_set_active_element(manager, &default_audio_sink);

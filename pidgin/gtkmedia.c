@@ -1051,6 +1051,13 @@ pidgin_medias_init(void)
 	g_signal_connect(G_OBJECT(manager), "init-media",
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
 
+	purple_media_manager_set_ui_caps(manager, 
+			PURPLE_MEDIA_CAPS_AUDIO |
+			PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION |
+			PURPLE_MEDIA_CAPS_VIDEO |
+			PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION |
+			PURPLE_MEDIA_CAPS_AUDIO_VIDEO);
+
 	purple_debug_info("gtkmedia", "Registering media element types\n");
 	purple_media_manager_set_active_element(manager, &default_video_src);
 	purple_media_manager_set_active_element(manager, &default_video_sink);
