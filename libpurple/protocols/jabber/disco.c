@@ -655,6 +655,13 @@ jabber_disco_service_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 	--list_data->fetch_count;
 
+	if (list_data->list == NULL) {
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
+
 	if (!from || !result || !query || strcmp(result, "result") != 0) {
 		if (list_data->fetch_count == 0)
 			purple_disco_list_set_in_progress(list, FALSE);
@@ -742,6 +749,13 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	g_free(disco_data);
 
 	--list_data->fetch_count;
+
+	if (list_data->list == NULL) {
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
 
 	if (!from || !result || strcmp(result, "result") != 0
 			|| (!(query = xmlnode_get_child(packet, "query")))
@@ -981,9 +995,16 @@ jabber_disco_cancel(PurpleDiscoList *list)
 	if (list_data->fetch_count == 0) {
 		/* Nothing outstanding, just free it now... */
 		jabber_disco_list_data_destroy(list_data);
-	} else
-		/* We'll free it when the count is 0 */
+	} else {
+		int i;
+		/* Lose all our references to the PurpleDiscoList */
+		for (i = 0; i < list_data->fetch_count; ++i) {
+			purple_disco_list_unref(list);
+		}
+
+		/* We'll free list_data when fetch_count is down to 0 */
 		list_data->list = NULL;
+	}
 }
 
 int
