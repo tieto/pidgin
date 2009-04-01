@@ -251,6 +251,32 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		}
 	} else if (state == PURPLE_MEDIA_STATE_CONNECTED) {
 		finch_media_connected_cb(media, gntmedia);
+	} else if (state == PURPLE_MEDIA_STATE_NEW &&
+			sid != NULL && name != NULL && 
+			purple_media_is_initiator(media, sid, name) == FALSE) {
+		PurpleConnection *pc;
+		PurpleBuddy *buddy;
+		const gchar *alias;
+		PurpleMediaSessionType type =
+				purple_media_get_session_type(media, sid);
+		gchar *message = NULL;
+
+		pc = purple_media_get_connection(gntmedia->priv->media);
+		buddy = purple_find_buddy(
+				purple_connection_get_account(pc), name);
+		alias = buddy ? purple_buddy_get_contact_alias(buddy) :	name;
+
+		if (type & PURPLE_MEDIA_AUDIO) {
+			message = g_strdup_printf(
+					_("%s wishes to start an audio session with you."),
+					alias);
+		} else {
+			message = g_strdup_printf(
+					_("%s is trying to start an unsuppoted media session type with you."),
+					alias);
+		}
+		finch_media_emit_message(gntmedia, message);
+		g_free(message);
 	}
 }
 
