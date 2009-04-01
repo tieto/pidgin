@@ -1325,18 +1325,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 }
 #endif
 
-GstElement *
-purple_media_get_pipeline(PurpleMedia *media)
-{
-#ifdef USE_VV
-	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-
-	return purple_media_manager_get_pipeline(media->priv->manager);
-#else
-	return NULL;
-#endif
-}
-
 PurpleConnection *
 purple_media_get_connection(PurpleMedia *media)
 {
@@ -1890,6 +1878,15 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 #else
 	return FALSE;
 #endif  /* USE_VV */
+}
+
+PurpleMediaManager *
+purple_media_get_manager(PurpleMedia *media)
+{
+	PurpleMediaManager *ret;
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
+	g_object_get(media, "manager", &ret, NULL);
+	return ret;
 }
 
 PurpleMediaSessionType

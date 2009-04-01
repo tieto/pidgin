@@ -389,7 +389,8 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 static void
 pidgin_media_disconnect_levels(PurpleMedia *media, PidginMedia *gtkmedia)
 {
-	GstElement *element = purple_media_get_pipeline(media);
+	PurpleMediaManager *manager = purple_media_get_manager(media);
+	GstElement *element = purple_media_manager_get_pipeline(manager);
 	gulong handler_id = g_signal_handler_find(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
 						  G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA, 0, 0, 
 						  NULL, G_CALLBACK(level_message_cb), gtkmedia);
@@ -584,7 +585,8 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *sid)
 {
-	GstElement *pipeline = purple_media_get_pipeline(media);
+	PurpleMediaManager *manager = purple_media_get_manager(media);
+	GstElement *pipeline = purple_media_manager_get_pipeline(manager);
 	GtkWidget *send_widget = NULL, *recv_widget = NULL;
 	PurpleMediaSessionType type =
 			purple_media_get_session_type(media, sid);

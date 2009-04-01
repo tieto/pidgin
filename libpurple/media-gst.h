@@ -84,15 +84,6 @@ extern "C" {
 GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
 
 /**
- * Gets the pipeline from the media session.
- *
- * @param media The media session to retrieve the pipeline from.
- *
- * @return The pipeline retrieved.
- */
-GstElement *purple_media_get_pipeline(PurpleMedia *media);
-
-/**
  * Gets the tee from a given session/stream.
  *
  * @param media The instance to get the tee from.

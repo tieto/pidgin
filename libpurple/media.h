@@ -405,6 +405,15 @@ gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 PurpleMediaSessionType purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id);
 
 /**
+ * Gets the PurpleMediaManager this media session is a part of.
+ *
+ * @param media The media object to get the manager instance from.
+ *
+ * @return The PurpleMediaManager instance retrieved.
+ */
+struct _PurpleMediaManager *purple_media_get_manager(PurpleMedia *media);
+
+/**
  * Gets the codecs from a session.
  *
  * @param media The media object to find the session in.
