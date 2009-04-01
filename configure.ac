@@ -1101,7 +1101,6 @@ for i in $STATIC_PRPLS ; do
 		silc)		static_silc=yes ;;
 		silc10)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
-		toc)		static_toc=yes ;;
 		yahoo)		static_yahoo=yes ;;
 		zephyr)		static_zephyr=yes ;;
 		*)			echo "Invalid static protocol $i!!" ; exit ;;
@@ -1119,7 +1118,6 @@ AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
-AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
 AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
@@ -1165,7 +1163,6 @@ for i in $DYNAMIC_PRPLS ; do
 		silc)		dynamic_silc=yes ;;
 		silc10)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
-		toc)		dynamic_toc=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
 		zephyr)		dynamic_zephyr=yes ;;
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
@@ -2503,7 +2500,6 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/silc/Makefile
 		   libpurple/protocols/silc10/Makefile
 		   libpurple/protocols/simple/Makefile
-		   libpurple/protocols/toc/Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile

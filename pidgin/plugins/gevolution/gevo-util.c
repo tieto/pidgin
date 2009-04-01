@@ -41,8 +41,12 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 		purple_blist_add_group(group, NULL);
 	}
 
-	buddy = purple_buddy_new(account, buddy_name, alias);
-	purple_blist_add_buddy(buddy, NULL, group, NULL);
+	if ((buddy = purple_find_buddy_in_group(account, buddy_name, group)))
+	{	
+		buddy = purple_buddy_new(account, buddy_name, alias);
+		purple_blist_add_buddy(buddy, NULL, group, NULL);
+	}
+
 	purple_account_add_buddy(account, buddy);
 
 	if (conv != NULL)

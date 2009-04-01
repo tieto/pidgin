@@ -63,6 +63,7 @@ libpurple/plugins/log_reader.c
 libpurple/plugins/mono/loader/mono.c
 libpurple/plugins/newline.c
 libpurple/plugins/offlinemsg.c
+libpurple/plugins/one_time_password.c
 libpurple/plugins/perl/perl.c
 libpurple/plugins/psychic.c
 libpurple/plugins/signals-test.c
@@ -167,7 +168,6 @@ libpurple/protocols/silc10/silc.c
 libpurple/protocols/silc10/util.c
 libpurple/protocols/silc10/wb.c
 libpurple/protocols/simple/simple.c
-libpurple/protocols/toc/toc.c
 libpurple/protocols/yahoo/yahoo.c
 libpurple/protocols/yahoo/yahoo_doodle.c
 libpurple/protocols/yahoo/yahoo_filexfer.c

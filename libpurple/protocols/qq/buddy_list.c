@@ -47,7 +47,6 @@
 #define QQ_GET_ONLINE_BUDDY_03          0x03	/* unknown function */
 
 typedef struct _qq_buddy_online {
-	qq_buddy_status bs;
 	guint16 unknown1;
 	guint8 ext_flag;
 	guint8 comm_flag;
