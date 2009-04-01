@@ -39,18 +39,18 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 
 	if (!assm) {
 		return FALSE;
-	} 
+	}
 
 	purple_debug(PURPLE_DEBUG_INFO, "mono", "Probing plugin\n");
 
 	if (ml_is_api_dll(mono_assembly_get_image(assm))) {
-		purple_debug(PURPLE_DEBUG_INFO, "mono", "Found our PurpleAPI.dll\n");
+		purple_debug_info("mono", "Found our PurpleAPI.dll\n");
+		mono_assembly_close(assm);
 		return FALSE;
 	}
 
-	info = g_new0(PurplePluginInfo, 1);
 	mplug = g_new0(PurpleMonoPlugin, 1);
-	
+
 	mplug->signal_data = NULL;
 
 	mplug->assm = assm;
@@ -58,12 +58,16 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	mplug->klass = ml_find_plugin_class(mono_assembly_get_image(mplug->assm));
 	if (!mplug->klass) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "no plugin class in \'%s\'\n", file);
+		mono_assembly_close(assm);
+		g_free(mplug);
 		return FALSE;
 	}
 
 	mplug->obj = mono_object_new(ml_get_domain(), mplug->klass);
 	if (!mplug->obj) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "obj not valid\n");
+		mono_assembly_close(assm);
+		g_free(mplug);
 		return FALSE;
 	}
 
@@ -85,14 +89,17 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 
 	if (!(found_load && found_unload && found_destroy)) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "did not find the required methods\n");
+		mono_assembly_close(assm);
+		g_free(mplug);
 		return FALSE;
 	}
-	
+
 	plugin_info = ml_get_info_prop(mplug->obj);
 
 	/* now that the methods are filled out we can populate
 	   the info struct with all the needed info */
 
+	info = g_new0(PurplePluginInfo, 1);
 	info->id = ml_get_prop_string(plugin_info, "Id");
 	info->name = ml_get_prop_string(plugin_info, "Name");
 	info->version = ml_get_prop_string(plugin_info, "Version");
@@ -109,7 +116,7 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	/* this plugin depends on us; duh */
 	info->dependencies = g_list_append(info->dependencies, MONO_PLUGIN_ID);
 	mplug->plugin = plugin;
-				
+
 	plugin->info = info;
 	info->extra_info = mplug;
 
@@ -238,7 +245,7 @@ static PurplePluginInfo info =
 static void init_plugin(PurplePlugin *plugin)
 {
 	ml_init();
-	
+
 	loader_info.exts = g_list_append(loader_info.exts, "dll");
 }
 
