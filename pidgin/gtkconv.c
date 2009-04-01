@@ -3453,13 +3453,13 @@ setup_menubar(PidginWindow *win)
 		                            N_("/Conversation/View Log"));
 
 #ifdef USE_VV
-	win->menu.audio_call =
+	win->audio_call =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 					    N_("/Conversation/Media/Audio Call"));
-	win->menu.video_call =
+	win->video_call =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 					    N_("/Conversation/Media/Video Call"));
-	win->menu.audio_video_call =
+	win->audio_video_call =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 					    N_("/Conversation/Media/Audio\\/Video Call"));
 #endif
@@ -6456,24 +6456,24 @@ gray_stuff_out(PidginConversation *gtkconv)
 					purple_prpl_get_media_caps(account,
 					purple_conversation_get_name(conv));
 
-			gtk_widget_set_sensitive(win->menu.audio_call,
+			gtk_widget_set_sensitive(win->audio_call,
 					caps & PURPLE_MEDIA_CAPS_AUDIO
 					? TRUE : FALSE);
-			gtk_widget_set_sensitive(win->menu.video_call,
+			gtk_widget_set_sensitive(win->video_call,
 					caps & PURPLE_MEDIA_CAPS_VIDEO
 					? TRUE : FALSE);
-			gtk_widget_set_sensitive(win->menu.audio_video_call, 
+			gtk_widget_set_sensitive(win->audio_video_call, 
 					caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
 					? TRUE : FALSE);
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			/* for now, don't care about chats... */
-			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
-			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
-			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);
+			gtk_widget_set_sensitive(win->audio_call, FALSE);
+			gtk_widget_set_sensitive(win->video_call, FALSE);
+			gtk_widget_set_sensitive(win->audio_video_call, FALSE);
 		} else {
-			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
-			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
-			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);
+			gtk_widget_set_sensitive(win->audio_call, FALSE);
+			gtk_widget_set_sensitive(win->video_call, FALSE);
+			gtk_widget_set_sensitive(win->audio_video_call, FALSE);
 		}							
 #endif
 		
