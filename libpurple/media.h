@@ -117,19 +117,6 @@ typedef enum {
 	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
 } PurpleMediaNetworkProtocol;
 
-/** The media class */
-struct _PurpleMediaClass
-{
-	GObjectClass parent_class;     /**< The parent class. */
-};
-
-/** The media class's private data */
-struct _PurpleMedia
-{
-	GObject parent;                /**< The parent of this object. */
-	PurpleMediaPrivate *priv;      /**< The private data of this object. */
-};
-
 struct _PurpleMediaCandidate
 {
 	const gchar *foundation;
