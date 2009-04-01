@@ -643,10 +643,14 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 		purple_blist_add_group(grp, NULL);
 	}
 
-	/* XXX: Ask if there's already the same buddy in the same group (#4553) */
+	/* XXX: Ask to merge if there's already a buddy with the same alias in the same group (#4553) */
 
-	buddy = purple_buddy_new(account, username, alias);
-	purple_blist_add_buddy(buddy, NULL, grp, NULL);
+	if ((buddy = purple_find_buddy_in_group(account, username, grp)) == NULL)
+	{
+		buddy = purple_buddy_new(account, username, alias);
+		purple_blist_add_buddy(buddy, NULL, grp, NULL);
+	}
+
 	purple_account_add_buddy(account, buddy);
 }
 

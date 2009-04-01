@@ -565,7 +565,7 @@ static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
 	struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
 	ib->name = g_strdup(purple_buddy_get_name(buddy));
-	g_hash_table_insert(irc->buddies, ib->name, ib);
+	g_hash_table_replace(irc->buddies, ib->name, ib);
 
 	/* if the timer isn't set, this is during signon, so we don't want to flood
 	 * ourself off with ISON's, so we don't, but after that we want to know when

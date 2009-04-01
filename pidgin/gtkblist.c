@@ -3946,7 +3946,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	presence = purple_buddy_get_presence(b);
 
 	/* Name is all that is needed */
-	if (aliased && biglist) {
+	if (!aliased || biglist) {
 
 		/* Status Info */
 		prpl = purple_find_prpl(purple_account_get_protocol_id(b->account));
@@ -4086,7 +4086,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	}
 
 	/* Put it all together */
-	if (aliased && biglist && (statustext || idletime)) {
+	if ((!aliased || biglist) && (statustext || idletime)) {
 		/* using <span size='smaller'> breaks the status, so it must be seperated into <small><span>*/
 		if (name_color) {
 			text = g_strdup_printf("<span font_desc='%s' foreground='%s'>%s</span>\n"
@@ -6491,7 +6491,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
-		gboolean hidden;
+		gboolean hidden = FALSE;
 		GdkColor *bgcolor = NULL;
 		FontColorPair *pair;
 		PidginBlistTheme *theme;
@@ -6749,14 +6749,27 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 			whoalias = NULL;
 
 		g = NULL;
-		if ((grp != NULL) && (*grp != '\0') && ((g = purple_find_group(grp)) == NULL))
+		if ((grp != NULL) && (*grp != '\0'))
 		{
-			g = purple_group_new(grp);
-			purple_blist_add_group(g, NULL);
+			if ((g = purple_find_group(grp)) == NULL)
+			{
+				g = purple_group_new(grp);
+				purple_blist_add_group(g, NULL);
+			}
+
+			b = purple_find_buddy_in_group(data->account, who, g);
+		}
+		else if ((b = purple_find_buddy(data->account, who)) != NULL)
+		{
+			g = purple_buddy_get_group(b);
 		}
 
-		b = purple_buddy_new(data->account, who, whoalias);
-		purple_blist_add_buddy(b, NULL, g, NULL);
+		if (b == NULL)
+		{
+			b = purple_buddy_new(data->account, who, whoalias);
+			purple_blist_add_buddy(b, NULL, g, NULL);
+		}
+
 		purple_account_add_buddy(data->account, b);
 
 		/* Offer to merge people with the same alias. */

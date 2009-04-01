@@ -2836,14 +2836,12 @@ away_page(void)
 	/* Auto-away stuff */
 	vbox = pidgin_make_frame(ret, _("Auto-away"));
 
-	button = pidgin_prefs_checkbox(_("Change status when _idle"),
-						   "/purple/away/away_when_idle", vbox);
-
 	select = pidgin_prefs_labeled_spin_button(vbox,
 			_("_Minutes before becoming idle:"), "/purple/away/mins_before_away",
 			1, 24 * 60, sg);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(pidgin_toggle_sensitive), select);
+
+	button = pidgin_prefs_checkbox(_("Change status when _idle"),
+						   "/purple/away/away_when_idle", vbox);
 
 	/* TODO: Show something useful if we don't have any saved statuses. */
 	menu = pidgin_status_menu(purple_savedstatus_get_idleaway(), G_CALLBACK(set_idle_away));
@@ -2855,7 +2853,6 @@ away_page(void)
 
 	if (!purple_prefs_get_bool("/purple/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
-		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
 
