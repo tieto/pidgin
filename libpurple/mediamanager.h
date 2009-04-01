@@ -46,21 +46,6 @@ G_BEGIN_DECLS
 typedef struct _PurpleMediaManager PurpleMediaManager;
 /** @copydoc _PurpleMediaManagerClass */
 typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
-/** @copydoc _PurpleMediaManagerPrivate */
-typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
-
-/** The media manager class. */
-struct _PurpleMediaManagerClass
-{
-	GObjectClass parent_class;       /**< The parent class. */
-};
-
-/** The media manager's data. */
-struct _PurpleMediaManager
-{
-	GObject parent;                  /**< The parent of this manager. */
-	PurpleMediaManagerPrivate *priv; /**< Private data for the manager. */
-};
 
 #ifdef __cplusplus
 extern "C" {

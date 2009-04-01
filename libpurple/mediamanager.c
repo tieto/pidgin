@@ -38,7 +38,23 @@
 #include <gst/farsight/fs-conference-iface.h>
 #include <gst/interfaces/xoverlay.h>
 
+/** @copydoc _PurpleMediaManagerPrivate */
+typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
+/** @copydoc _PurpleMediaOutputWindow */
 typedef struct _PurpleMediaOutputWindow PurpleMediaOutputWindow;
+
+/** The media manager class. */
+struct _PurpleMediaManagerClass
+{
+	GObjectClass parent_class;       /**< The parent class. */
+};
+
+/** The media manager's data. */
+struct _PurpleMediaManager
+{
+	GObject parent;                  /**< The parent of this manager. */
+	PurpleMediaManagerPrivate *priv; /**< Private data for the manager. */
+};
 
 struct _PurpleMediaOutputWindow
 {
