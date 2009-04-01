@@ -130,7 +130,7 @@ static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	account = purple_disco_list_get_account(info->list);
 	name = purple_disco_service_get_name(info->service);
 
-	if (purple_disco_service_get_category(info->service) == PURPLE_DISCO_SERVICE_CAT_MUC)
+	if (purple_disco_service_get_type(info->service) == PURPLE_DISCO_SERVICE_TYPE_CHAT)
 		purple_blist_request_add_chat(account, NULL, NULL, name);
 	else
 		purple_blist_request_add_buddy(account, name, NULL, NULL);
@@ -459,8 +459,8 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 {
 	PidginDiscoList *pdl;
 	PidginDiscoDialog *dialog;
-	PurpleDiscoServiceCategory category;
 	PurpleDiscoServiceType type;
+	const char *gateway_type;
 	GtkTreeIter iter, parent_iter;
 	GtkTreeRowReference *rr;
 	GtkTreePath *path;
@@ -485,30 +485,18 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 
 	gtk_tree_store_append(pdl->model, &iter, (parent ? &parent_iter : NULL));
 
-	category = purple_disco_service_get_category(service);
 	type = purple_disco_service_get_type(service);
+	gateway_type = purple_disco_service_get_gateway_type(service);
 
-	if (type == PURPLE_DISCO_SERVICE_TYPE_XMPP)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "jabber.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_ICQ)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "icq.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_YAHOO)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "yahoo.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_GTALK)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "google-talk.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_IRC)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "irc.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_GG)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "gadu-gadu.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_AIM)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "aim.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_QQ)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "qq.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_MSN)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", "msn.png", NULL);
-	else if (type == PURPLE_DISCO_SERVICE_TYPE_USER)
+	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY && gateway_type) {
+		char *tmp = g_strconcat(gateway_type, ".png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", tmp, NULL);
+		g_free(tmp);
+#if 0
+	} else if (type == PURPLE_DISCO_SERVICE_TYPE_USER) {
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "person.png", NULL);
-	else if (category == PURPLE_DISCO_SERVICE_CAT_MUC)
+#endif
+	} else if (type == PURPLE_DISCO_SERVICE_TYPE_CHAT)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "chat.png", NULL);
 
 	if (filename) {

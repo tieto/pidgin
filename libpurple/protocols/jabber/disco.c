@@ -602,44 +602,43 @@ disco_proto_data_destroy_cb(PurpleDiscoList *list)
 	jabber_disco_list_data_destroy(data);
 }
 
-static PurpleDiscoServiceCategory
+static PurpleDiscoServiceType
 jabber_disco_category_from_string(const gchar *str)
 {
-	if (!strcasecmp(str, "gateway"))
-		return PURPLE_DISCO_SERVICE_CAT_GATEWAY;
-	else if (!strcasecmp(str, "directory"))
-		return PURPLE_DISCO_SERVICE_CAT_DIRECTORY;
-	else if (!strcasecmp(str, "conference"))
-		return PURPLE_DISCO_SERVICE_CAT_MUC;
+	if (!g_ascii_strcasecmp(str, "gateway"))
+		return PURPLE_DISCO_SERVICE_TYPE_GATEWAY;
+	else if (!g_ascii_strcasecmp(str, "directory"))
+		return PURPLE_DISCO_SERVICE_TYPE_DIRECTORY;
+	else if (!g_ascii_strcasecmp(str, "conference"))
+		return PURPLE_DISCO_SERVICE_TYPE_CHAT;
 
-	return PURPLE_DISCO_SERVICE_CAT_OTHER;
+	return PURPLE_DISCO_SERVICE_TYPE_OTHER;
 }
 
-static PurpleDiscoServiceType
+static const gchar *
 jabber_disco_type_from_string(const gchar *str)
 {
 	if (!strcasecmp(str, "xmpp"))
-		return PURPLE_DISCO_SERVICE_TYPE_XMPP;
+		return "jabber";
 	else if (!strcasecmp(str, "icq"))
-		return PURPLE_DISCO_SERVICE_TYPE_ICQ;
+		return "icq";
 	else if (!strcasecmp(str, "smtp"))
-		return PURPLE_DISCO_SERVICE_TYPE_MAIL;
-	else if (!strcasecmp(str, "user"))
-		return PURPLE_DISCO_SERVICE_TYPE_USER;
+		return "smtp";
 	else if (!strcasecmp(str, "yahoo"))
-		return PURPLE_DISCO_SERVICE_TYPE_YAHOO;
+		return "yahoo";
 	else if (!strcasecmp(str, "irc"))
-		return PURPLE_DISCO_SERVICE_TYPE_IRC;
+		return "irc";
 	else if (!strcasecmp(str, "gadu-gadu"))
-		return PURPLE_DISCO_SERVICE_TYPE_GG;
+		return "gg";
 	else if (!strcasecmp(str, "aim"))
-		return PURPLE_DISCO_SERVICE_TYPE_AIM;
+		return "aim";
 	else if (!strcasecmp(str, "qq"))
-		return PURPLE_DISCO_SERVICE_TYPE_QQ;
+		return "qq";
 	else if (!strcasecmp(str, "msn"))
-		return PURPLE_DISCO_SERVICE_TYPE_MSN;
+		return "msn";
 
-	return PURPLE_DISCO_SERVICE_TYPE_NONE;
+	/* fallback to the string itself */
+	return str;
 }
 
 static void
@@ -743,8 +742,8 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *acat, *atype, *adesc, *anode;
 	char *aname;
 	PurpleDiscoService *s;
-	PurpleDiscoServiceCategory cat;
 	PurpleDiscoServiceType type;
+	const char *gateway_type = NULL;
 	PurpleDiscoServiceFlags flags = PURPLE_DISCO_ADD;
 
 	list_data = disco_data->list_data;
@@ -787,8 +786,9 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		aname = g_strdup(from);
 	}
 
-	cat = jabber_disco_category_from_string(acat);
-	type = jabber_disco_type_from_string(atype);
+	type = jabber_disco_category_from_string(acat);
+	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
+		gateway_type = jabber_disco_type_from_string(atype);
 
 	for (child = xmlnode_get_child(query, "feature"); child;
 			child = xmlnode_get_next_twin(child)) {
@@ -804,16 +804,19 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			flags |= PURPLE_DISCO_BROWSE;
 
 		if (!strcmp(var, "http://jabber.org/protocol/muc"))
-			cat = PURPLE_DISCO_SERVICE_CAT_MUC;
+			type = PURPLE_DISCO_SERVICE_TYPE_CHAT;
 	}
 
-	purple_debug_info("disco", "service %s, category %s (%d), type %s (%d), description %s, flags %04x\n",
+	purple_debug_info("disco", "service %s, category %s (%d), type %s (%s), description %s, flags %04x\n",
 			aname,
-			acat, cat,
-			atype, type,
+			acat, type,
+			atype, gateway_type ? gateway_type : "(null)",
 			adesc, flags);
 
-	s = purple_disco_list_service_new(cat, aname, type, adesc, flags);
+	s = purple_disco_list_service_new(type, aname, adesc, flags);
+	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
+		purple_disco_service_set_gateway_type(s, gateway_type);
+
 	purple_disco_list_service_add(list, s, parent);
 
 	/* if (flags & PURPLE_DISCO_FLAG_BROWSE) - not all browsable services has this future */

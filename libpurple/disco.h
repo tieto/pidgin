@@ -40,34 +40,31 @@ typedef struct _PurpleDiscoUiOps PurpleDiscoUiOps;
 typedef void  (*PurpleDiscoCloseCallback) (PurpleDiscoList *list);
 
 /**
- * The categories of services.
- */
-typedef enum
-{
-	PURPLE_DISCO_SERVICE_CAT_UNSET,
-	PURPLE_DISCO_SERVICE_CAT_GATEWAY,
-	PURPLE_DISCO_SERVICE_CAT_DIRECTORY,
-	PURPLE_DISCO_SERVICE_CAT_MUC,
-	PURPLE_DISCO_SERVICE_CAT_OTHER
-} PurpleDiscoServiceCategory;
-
-/**
  * The types of services.
  */
 typedef enum
 {
-	PURPLE_DISCO_SERVICE_TYPE_NONE,
-	PURPLE_DISCO_SERVICE_TYPE_AIM,
-	PURPLE_DISCO_SERVICE_TYPE_GG,
-	PURPLE_DISCO_SERVICE_TYPE_GTALK,
-	PURPLE_DISCO_SERVICE_TYPE_ICQ,
-	PURPLE_DISCO_SERVICE_TYPE_IRC,
-	PURPLE_DISCO_SERVICE_TYPE_MAIL,
-	PURPLE_DISCO_SERVICE_TYPE_MSN,
-	PURPLE_DISCO_SERVICE_TYPE_USER,
-	PURPLE_DISCO_SERVICE_TYPE_QQ,
-	PURPLE_DISCO_SERVICE_TYPE_XMPP,
-	PURPLE_DISCO_SERVICE_TYPE_YAHOO
+	PURPLE_DISCO_SERVICE_TYPE_UNSET,
+	/**
+	 * A registerable gateway to another protocol. An example would be
+	 * XMPP legacy transports.
+	 */
+	PURPLE_DISCO_SERVICE_TYPE_GATEWAY,
+
+	/**
+	 * A directory (e.g. allows the user to search for other users).
+	 */
+	PURPLE_DISCO_SERVICE_TYPE_DIRECTORY,
+
+	/**
+	 * A chat (multi-user conversation).
+	 */
+	PURPLE_DISCO_SERVICE_TYPE_CHAT,
+
+	/**
+	 * Something else. Do we need more categories?
+	 */
+	PURPLE_DISCO_SERVICE_TYPE_OTHER
 } PurpleDiscoServiceType;
 
 /**
@@ -147,8 +144,10 @@ void purple_disco_cancel_get_list(PurpleDiscoList *list);
 /**
  * Create new service object
  */
-PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceCategory category, const gchar *name,
-		PurpleDiscoServiceType type, const gchar *description, PurpleDiscoServiceFlags flags);
+PurpleDiscoService *
+purple_disco_list_service_new(PurpleDiscoServiceType type, const gchar *name,
+                              const gchar *description,
+                              PurpleDiscoServiceFlags flags);
 
 /**
  * Add service to list
@@ -182,16 +181,6 @@ const gchar *purple_disco_service_get_name(PurpleDiscoService *service);
 const gchar* purple_disco_service_get_description(PurpleDiscoService *service);
 
 /**
- * Return a service's category.
- *
- * @param service The service.
- * @return The category.
- *
- * @since TODO
- */
-PurpleDiscoServiceCategory purple_disco_service_get_category(PurpleDiscoService *service);
-
-/**
  * Return a service's type.
  *
  * @param service The service.
@@ -210,6 +199,32 @@ PurpleDiscoServiceType purple_disco_service_get_type(PurpleDiscoService *service
  * @since TODO
  */
 PurpleDiscoServiceFlags purple_disco_service_get_flags(PurpleDiscoService *service);
+
+/**
+ * Set the gateway type for a gateway service. The gateway type is a string
+ * that represents a canonical name of the protocol to which this service is
+ * a gateway. For example, for an XMPP legacy transport to AIM, this would
+ * be "aim".
+ *
+ * These strings should conform to the names of the libpurple prpls where
+ * possible (so a UI can easily map types to icons) and, as a backup, the
+ * XMPP registry list of gateways at
+ * http://xmpp.org/registrar/disco-categories.html#gateway. 
+ */
+void purple_disco_service_set_gateway_type(PurpleDiscoService *service,
+                                           const gchar *type);
+
+/**
+ * Get the gateway type for a gateway service.
+ *
+ * @param service The service.
+ * @returns       The gateway type or NULL if none was set or service is not
+ *                a gateway.
+ *
+ * @see purple_disco_service_set_gateway_type().
+ */
+const gchar *purple_disco_service_get_gateway_type(PurpleDiscoService *service);
+
 /**
  * Get the account associated with a service list.
  *

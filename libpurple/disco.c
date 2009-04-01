@@ -56,8 +56,8 @@ struct _PurpleDiscoService {
 	gchar *name; /**< The name of the service. */
 	gchar *description; /**< The name of the service. */
 
-	PurpleDiscoServiceCategory category; /**< The category of service. */
 	PurpleDiscoServiceType type; /**< The type of service. */
+	gchar *gateway_type; /**< The type of the gateway service. */
 	PurpleDiscoServiceFlags flags;
 };
 
@@ -93,6 +93,7 @@ static void purple_disco_list_service_destroy(PurpleDiscoList *list, PurpleDisco
 {
 	g_free(r->name);
 	g_free(r->description);
+	g_free(r->gateway_type);
 	g_free(r);
 }
 
@@ -141,16 +142,15 @@ void purple_disco_list_service_add(PurpleDiscoList *list, PurpleDiscoService *se
 		ops->add_service(list, service, parent);
 }
 
-PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceCategory category, const gchar *name,
-		PurpleDiscoServiceType type, const gchar *description, PurpleDiscoServiceFlags flags)
+PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceType type, const gchar *name,
+		const gchar *description, PurpleDiscoServiceFlags flags)
 {
 	PurpleDiscoService *s;
 
 	g_return_val_if_fail(name != NULL, NULL);
-	g_return_val_if_fail(category != PURPLE_DISCO_SERVICE_CAT_UNSET, NULL);
+	g_return_val_if_fail(type != PURPLE_DISCO_SERVICE_TYPE_UNSET, NULL);
 
 	s = g_new0(PurpleDiscoService, 1);
-	s->category = category;
 	s->name = g_strdup(name);
 	s->type = type;
 	s->description = g_strdup(description);
@@ -235,18 +235,10 @@ const gchar *purple_disco_service_get_description(PurpleDiscoService *service)
 	return service->description;
 }
 
-PurpleDiscoServiceCategory
-purple_disco_service_get_category(PurpleDiscoService *service)
-{
-	g_return_val_if_fail(service != NULL, PURPLE_DISCO_SERVICE_CAT_UNSET);
-
-	return service->category;
-}
-
 PurpleDiscoServiceType
 purple_disco_service_get_type(PurpleDiscoService *service)
 {
-	g_return_val_if_fail(service != NULL, PURPLE_DISCO_SERVICE_TYPE_NONE);
+	g_return_val_if_fail(service != NULL, PURPLE_DISCO_SERVICE_TYPE_UNSET);
 
 	return service->type;
 }
@@ -257,6 +249,21 @@ purple_disco_service_get_flags(PurpleDiscoService *service)
 	g_return_val_if_fail(service != NULL, PURPLE_DISCO_NONE);
 
 	return service->flags;
+}
+
+void purple_disco_service_set_gateway_type(PurpleDiscoService *service, const gchar *type)
+{
+	g_return_if_fail(service != NULL);
+
+	g_free(service->gateway_type);
+	service->gateway_type = g_strdup(type);
+}
+
+const gchar *purple_disco_service_get_gateway_type(PurpleDiscoService *service)
+{
+	g_return_val_if_fail(service != NULL, NULL);
+
+	return service->gateway_type;
 }
 
 PurpleAccount* purple_disco_list_get_account(PurpleDiscoList *list)
