@@ -1009,44 +1009,6 @@ create_default_audio_sink(PurpleMedia *media,
 
 	return bin;
 }
-
-static PurpleMediaElementInfo default_video_src =
-{
-	"pidgindefaultvideosrc",	/* id */
-	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
-			| PURPLE_MEDIA_ELEMENT_SRC
-			| PURPLE_MEDIA_ELEMENT_ONE_SRC
-			| PURPLE_MEDIA_ELEMENT_UNIQUE,
-	create_default_video_src,	/* create */
-};
-
-static PurpleMediaElementInfo default_video_sink =
-{
-	"pidgindefaultvideosink",	/* id */
-	PURPLE_MEDIA_ELEMENT_VIDEO	/* type */
-			| PURPLE_MEDIA_ELEMENT_SINK
-			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
-	create_default_video_sink,	/* create */
-};
-
-static PurpleMediaElementInfo default_audio_src =
-{
-	"pidgindefaultaudiosrc",	/* id */
-	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
-			| PURPLE_MEDIA_ELEMENT_SRC
-			| PURPLE_MEDIA_ELEMENT_ONE_SRC
-			| PURPLE_MEDIA_ELEMENT_UNIQUE,
-	create_default_audio_src,	/* create */
-};
-
-static PurpleMediaElementInfo default_audio_sink =
-{
-	"pidgindefaultaudiosink",	/* id */
-	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
-			| PURPLE_MEDIA_ELEMENT_SINK
-			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
-	create_default_audio_sink,	/* create */
-};
 #endif  /* USE_VV */
 
 void
@@ -1054,6 +1016,41 @@ pidgin_medias_init(void)
 {
 #ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
+	PurpleMediaElementInfo *default_video_src =
+			g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidgindefaultvideosrc",
+			"name", "Pidgin Default Video Source",
+			"type", PURPLE_MEDIA_ELEMENT_VIDEO
+					| PURPLE_MEDIA_ELEMENT_SRC
+					| PURPLE_MEDIA_ELEMENT_ONE_SRC
+					| PURPLE_MEDIA_ELEMENT_UNIQUE,
+			"create-cb", create_default_video_src, NULL);
+	PurpleMediaElementInfo *default_video_sink =
+			g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidgindefaultvideosink",
+			"name", "Pidgin Default Video Sink",
+			"type", PURPLE_MEDIA_ELEMENT_VIDEO
+					| PURPLE_MEDIA_ELEMENT_SINK
+					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", create_default_video_sink, NULL);
+	PurpleMediaElementInfo *default_audio_src =
+			g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidgindefaultaudiosrc",
+			"name", "Pidgin Default Audio Source",
+			"type", PURPLE_MEDIA_ELEMENT_AUDIO
+					| PURPLE_MEDIA_ELEMENT_SRC
+					| PURPLE_MEDIA_ELEMENT_ONE_SRC
+					| PURPLE_MEDIA_ELEMENT_UNIQUE,
+			"create-cb", create_default_audio_src, NULL);
+	PurpleMediaElementInfo *default_audio_sink =
+			g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidgindefaultaudiosink",
+			"name", "Pidgin Default Audio Sink",
+			"type", PURPLE_MEDIA_ELEMENT_AUDIO
+					| PURPLE_MEDIA_ELEMENT_SINK
+					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", create_default_audio_sink, NULL);
+
 	g_signal_connect(G_OBJECT(manager), "init-media",
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
 
@@ -1065,10 +1062,10 @@ pidgin_medias_init(void)
 			PURPLE_MEDIA_CAPS_AUDIO_VIDEO);
 
 	purple_debug_info("gtkmedia", "Registering media element types\n");
-	purple_media_manager_set_active_element(manager, &default_video_src);
-	purple_media_manager_set_active_element(manager, &default_video_sink);
-	purple_media_manager_set_active_element(manager, &default_audio_src);
-	purple_media_manager_set_active_element(manager, &default_audio_sink);
+	purple_media_manager_set_active_element(manager, default_video_src);
+	purple_media_manager_set_active_element(manager, default_video_sink);
+	purple_media_manager_set_active_element(manager, default_audio_src);
+	purple_media_manager_set_active_element(manager, default_audio_sink);
 #endif
 }
 

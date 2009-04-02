@@ -34,10 +34,22 @@
 
 G_BEGIN_DECLS
 
+#define PURPLE_TYPE_MEDIA_ELEMENT_TYPE           (purple_media_element_type_get_type())
+#define PURPLE_TYPE_MEDIA_ELEMENT_INFO           (purple_media_element_info_get_type())
+#define PURPLE_MEDIA_ELEMENT_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfo))
+#define PURPLE_MEDIA_ELEMENT_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfo))
+#define PURPLE_IS_MEDIA_ELEMENT_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO))
+#define PURPLE_IS_MEDIA_ELEMENT_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_ELEMENT_INFO))
+#define PURPLE_MEDIA_ELEMENT_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfo))
+
 /** @copydoc _PurpleMediaElementInfo */
 typedef struct _PurpleMediaElementInfo PurpleMediaElementInfo;
+typedef struct _PurpleMediaElementInfoClass PurpleMediaElementInfoClass;
+typedef GstElement *(*PurpleMediaElementCreateCallback)(PurpleMedia *media,
+			const gchar *session_id, const gchar *participant);
 
 typedef enum {
+	PURPLE_MEDIA_ELEMENT_NONE = 0,			/** empty element */
 	PURPLE_MEDIA_ELEMENT_AUDIO = 1,			/** supports audio */
 	PURPLE_MEDIA_ELEMENT_VIDEO = 1 << 1,		/** supports video */
 	PURPLE_MEDIA_ELEMENT_AUDIO_VIDEO = PURPLE_MEDIA_ELEMENT_AUDIO
@@ -61,17 +73,23 @@ typedef enum {
 	PURPLE_MEDIA_ELEMENT_SINK = 1 << 10,		/** can be set as an active sink */
 } PurpleMediaElementType;
 
-struct _PurpleMediaElementInfo
-{
-	const gchar *id;
-	PurpleMediaElementType type;
-	GstElement *(*create)(PurpleMedia *media,
-			const gchar *session_id, const gchar *participant);
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * Gets the element type's GType.
+ *
+ * @return The element type's GType.
+ */
+GType purple_media_element_type_get_type(void);
+
+/**
+ * Gets the element info's GType.
+ *
+ * @return The element info's GType.
+ */
+GType purple_media_element_info_get_type(void);
 
 /**
  * Gets the source from a session
@@ -125,6 +143,14 @@ gboolean purple_media_manager_set_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info);
 PurpleMediaElementInfo *purple_media_manager_get_active_element(
 		PurpleMediaManager *manager, PurpleMediaElementType type);
+
+gchar *purple_media_element_info_get_id(PurpleMediaElementInfo *info);
+gchar *purple_media_element_info_get_name(PurpleMediaElementInfo *info);
+PurpleMediaElementType purple_media_element_info_get_element_type(
+		PurpleMediaElementInfo *info);
+GstElement *purple_media_element_info_call_create(
+		PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
 
 #ifdef __cplusplus
 }

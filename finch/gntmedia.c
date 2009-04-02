@@ -465,31 +465,30 @@ create_default_audio_sink(PurpleMedia *media,
 
 	return bin;
 }
-
-static PurpleMediaElementInfo default_audio_src =
-{
-	"finchdefaultaudiosrc",		/* id */
-	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
-			| PURPLE_MEDIA_ELEMENT_SRC
-			| PURPLE_MEDIA_ELEMENT_ONE_SRC
-			| PURPLE_MEDIA_ELEMENT_UNIQUE,
-	create_default_audio_src,	/* create */
-};
-
-static PurpleMediaElementInfo default_audio_sink =
-{
-	"finchdefaultaudiosink",	/* id */
-	PURPLE_MEDIA_ELEMENT_AUDIO	/* type */
-			| PURPLE_MEDIA_ELEMENT_SINK
-			| PURPLE_MEDIA_ELEMENT_ONE_SINK,
-	create_default_audio_sink,	/* create */
-};
 #endif  /* USE_VV */
 
 void finch_media_manager_init(void)
 {
 #ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
+	PurpleMediaElementInfo *default_audio_src =
+			g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "finchdefaultaudiosrc",
+			"name", "Finch Default Audio Source",
+			"type", PURPLE_MEDIA_ELEMENT_AUDIO
+					| PURPLE_MEDIA_ELEMENT_SRC
+					| PURPLE_MEDIA_ELEMENT_ONE_SRC
+					| PURPLE_MEDIA_ELEMENT_UNIQUE,
+			"create-cb", create_default_audio_src, NULL);
+	PurpleMediaElementInfo *default_audio_sink =
+			g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "finchdefaultaudiosink",
+			"name", "Finch Default Audio Sink",
+			"type", PURPLE_MEDIA_ELEMENT_AUDIO
+					| PURPLE_MEDIA_ELEMENT_SINK
+					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", create_default_audio_sink, NULL);
+
 	g_signal_connect(G_OBJECT(manager), "init-media", G_CALLBACK(finch_new_media), NULL);
 	purple_cmd_register("call", "", PURPLE_CMD_P_DEFAULT,
 			PURPLE_CMD_FLAG_IM, NULL,
@@ -500,8 +499,8 @@ void finch_media_manager_init(void)
 			PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION);
 
 	purple_debug_info("gntmedia", "Registering media element types\n");
-	purple_media_manager_set_active_element(manager, &default_audio_src);
-	purple_media_manager_set_active_element(manager, &default_audio_sink);
+	purple_media_manager_set_active_element(manager, default_audio_src);
+	purple_media_manager_set_active_element(manager, default_audio_sink);
 #endif
 }
 

@@ -42,6 +42,8 @@
 typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
 /** @copydoc _PurpleMediaOutputWindow */
 typedef struct _PurpleMediaOutputWindow PurpleMediaOutputWindow;
+/** @copydoc _PurpleMediaManagerPrivate */
+typedef struct _PurpleMediaElementInfoPrivate PurpleMediaElementInfoPrivate;
 
 /** The media manager class. */
 struct _PurpleMediaManagerClass
@@ -83,6 +85,7 @@ struct _PurpleMediaManagerPrivate
 };
 
 #define PURPLE_MEDIA_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerPrivate))
+#define PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfoPrivate))
 
 static void purple_media_manager_class_init (PurpleMediaManagerClass *klass);
 static void purple_media_manager_init (PurpleMediaManager *media);
@@ -97,15 +100,6 @@ enum {
 	LAST_SIGNAL
 };
 static guint purple_media_manager_signals[LAST_SIGNAL] = {0};
-
-enum {
-	PROP_0,
-	PROP_FARSIGHT_SESSION,
-	PROP_NAME,
-	PROP_CONNECTION,
-	PROP_MIC_ELEMENT,
-	PROP_SPEAKER_ELEMENT,
-};
 
 GType
 purple_media_manager_get_type()
@@ -166,7 +160,9 @@ purple_media_manager_finalize (GObject *media)
 		g_object_unref(priv->medias->data);
 	}
 	for (; priv->elements; priv->elements =
-			g_list_delete_link(priv->elements, priv->elements));
+			g_list_delete_link(priv->elements, priv->elements)) {
+		g_object_unref(priv->elements->data);
+	}
 	parent_class->finalize(media);
 }
 
@@ -375,6 +371,7 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 #ifdef USE_VV
 	GstElement *ret = NULL;
 	PurpleMediaElementInfo *info = NULL;
+	PurpleMediaElementType element_type;
 
 	if (type & PURPLE_MEDIA_SEND_AUDIO)
 		info = manager->priv->audio_src;
@@ -388,20 +385,24 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 	if (info == NULL)
 		return NULL;
 
-	if (info->type & PURPLE_MEDIA_ELEMENT_UNIQUE &&
-			info->type & PURPLE_MEDIA_ELEMENT_SRC) {
+	element_type = purple_media_element_info_get_element_type(info);
+
+	if (element_type & PURPLE_MEDIA_ELEMENT_UNIQUE &&
+			element_type & PURPLE_MEDIA_ELEMENT_SRC) {
 		GstElement *tee;
 		GstPad *pad;
 		GstPad *ghost;
+		gchar *id = purple_media_element_info_get_id(info);
 
 		ret = gst_bin_get_by_name(GST_BIN(
 				purple_media_manager_get_pipeline(
-				manager)), info->id);
+				manager)), id);
 
 		if (ret == NULL) {
 			GstElement *bin, *fakesink;
-			ret = info->create(media, session_id, participant);
-			bin = gst_bin_new(info->id);
+			ret = purple_media_element_info_call_create(info,
+					media, session_id, participant);
+			bin = gst_bin_new(id);
 			tee = gst_element_factory_make("tee", "tee");
 			gst_bin_add_many(GST_BIN(bin), ret, tee, NULL);
 			gst_element_link(ret, tee);
@@ -421,6 +422,7 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			gst_bin_add(GST_BIN(purple_media_manager_get_pipeline(
 					manager)), ret);
 		}
+		g_free(id);
 
 		tee = gst_bin_get_by_name(GST_BIN(ret), "tee");
 		pad = gst_element_get_request_pad(tee, "src%d");
@@ -432,7 +434,8 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		gst_pad_set_active(ghost, TRUE);
 		gst_element_add_pad(ret, ghost);
 	} else {
-		ret = info->create(media, session_id, participant);
+		ret = purple_media_element_info_call_create(info,
+				media, session_id, participant);
 	}
 
 	if (ret == NULL)
@@ -456,9 +459,14 @@ purple_media_manager_get_element_info(PurpleMediaManager *manager,
 	iter = manager->priv->elements;
 
 	for (; iter; iter = g_list_next(iter)) {
-		PurpleMediaElementInfo *info = iter->data;
-		if (!strcmp(info->id, id))
-			return info;
+		gchar *element_id =
+				purple_media_element_info_get_id(iter->data);
+		if (!strcmp(element_id, id)) {
+			g_free(element_id);
+			g_object_ref(iter->data);
+			return iter->data;
+		}
+		g_free(element_id);
 	}
 #endif
 
@@ -470,11 +478,21 @@ purple_media_manager_register_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info)
 {
 #ifdef USE_VV
+	PurpleMediaElementInfo *info2;
+	gchar *id;
+
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
 	g_return_val_if_fail(info != NULL, FALSE);
 
-	if (purple_media_manager_get_element_info(manager, info->id) != NULL)
+	id = purple_media_element_info_get_id(info);
+	info2 = purple_media_manager_get_element_info(manager, id);
+	g_free(id);
+
+	if (info2 != NULL) {
+		g_object_unref(info2);
 		return FALSE;
+	}
+	g_object_unref(info2);
 
 	manager->priv->elements =
 			g_list_prepend(manager->priv->elements, info);
@@ -495,8 +513,10 @@ purple_media_manager_unregister_element(PurpleMediaManager *manager,
 
 	info = purple_media_manager_get_element_info(manager, id);
 
-	if (info == NULL)
+	if (info == NULL) {
+		g_object_unref(info);
 		return FALSE;
+	}
 
 	if (manager->priv->audio_src == info)
 		manager->priv->audio_src = NULL;
@@ -509,6 +529,7 @@ purple_media_manager_unregister_element(PurpleMediaManager *manager,
 
 	manager->priv->elements = g_list_remove(
 			manager->priv->elements, info);
+	g_object_unref(info);
 	return TRUE;
 #else
 	return FALSE;
@@ -520,30 +541,40 @@ purple_media_manager_set_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info)
 {
 #ifdef USE_VV
+	PurpleMediaElementInfo *info2;
+	PurpleMediaElementType type;
 	gboolean ret = FALSE;
+	gchar *id;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
 	g_return_val_if_fail(info != NULL, FALSE);
 
-	if (purple_media_manager_get_element_info(manager, info->id) == NULL)
-		purple_media_manager_register_element(manager, info);
+	id = purple_media_element_info_get_id(info);
+	info2 = purple_media_manager_get_element_info(manager, id);
+	g_free(id);
 
-	if (info->type & PURPLE_MEDIA_ELEMENT_SRC) {
-		if (info->type & PURPLE_MEDIA_ELEMENT_AUDIO) {
+	if (info2 == NULL)
+		purple_media_manager_register_element(manager, info);
+	g_object_unref(info2);
+
+	type = purple_media_element_info_get_element_type(info);
+
+	if (type & PURPLE_MEDIA_ELEMENT_SRC) {
+		if (type & PURPLE_MEDIA_ELEMENT_AUDIO) {
 			manager->priv->audio_src = info;
 			ret = TRUE;
 		}
-		if (info->type & PURPLE_MEDIA_ELEMENT_VIDEO) {
+		if (type & PURPLE_MEDIA_ELEMENT_VIDEO) {
 			manager->priv->video_src = info;
 			ret = TRUE;
 		}
 	}
-	if (info->type & PURPLE_MEDIA_ELEMENT_SINK) {
-		if (info->type & PURPLE_MEDIA_ELEMENT_AUDIO) {
+	if (type & PURPLE_MEDIA_ELEMENT_SINK) {
+		if (type & PURPLE_MEDIA_ELEMENT_AUDIO) {
 			manager->priv->audio_sink = info;
 			ret = TRUE;
 		}
-		if (info->type & PURPLE_MEDIA_ELEMENT_VIDEO) {
+		if (type & PURPLE_MEDIA_ELEMENT_VIDEO) {
 			manager->priv->video_sink = info;
 			ret = TRUE;
 		}
@@ -801,5 +832,268 @@ purple_media_manager_get_ui_caps(PurpleMediaManager *manager)
 #else
 	return PURPLE_CAPS_NONE;
 #endif
+}
+
+
+/*
+ * PurpleMediaElementType
+ */
+
+GType
+purple_media_element_type_get_type()
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GFlagsValue values[] = {
+			{ PURPLE_MEDIA_ELEMENT_NONE,
+				"PURPLE_MEDIA_ELEMENT_NONE", "none" },
+			{ PURPLE_MEDIA_ELEMENT_AUDIO,
+				"PURPLE_MEDIA_ELEMENT_AUDIO", "audio" },
+			{ PURPLE_MEDIA_ELEMENT_VIDEO,
+				"PURPLE_MEDIA_ELEMENT_VIDEO", "video" },
+			{ PURPLE_MEDIA_ELEMENT_AUDIO_VIDEO,
+				"PURPLE_MEDIA_ELEMENT_AUDIO_VIDEO",
+				"audio-video" },
+			{ PURPLE_MEDIA_ELEMENT_NO_SRCS,
+				"PURPLE_MEDIA_ELEMENT_NO_SRCS", "no-srcs" },
+			{ PURPLE_MEDIA_ELEMENT_ONE_SRC,
+				"PURPLE_MEDIA_ELEMENT_ONE_SRC", "one-src" },
+			{ PURPLE_MEDIA_ELEMENT_MULTI_SRC,
+				"PURPLE_MEDIA_ELEMENT_MULTI_SRC",
+				"multi-src" },
+			{ PURPLE_MEDIA_ELEMENT_REQUEST_SRC,
+				"PURPLE_MEDIA_ELEMENT_REQUEST_SRC",
+				"request-src" },
+			{ PURPLE_MEDIA_ELEMENT_NO_SINKS,
+				"PURPLE_MEDIA_ELEMENT_NO_SINKS", "no-sinks" },
+			{ PURPLE_MEDIA_ELEMENT_ONE_SINK,
+				"PURPLE_MEDIA_ELEMENT_ONE_SINK", "one-sink" },
+			{ PURPLE_MEDIA_ELEMENT_MULTI_SINK,
+				"PURPLE_MEDIA_ELEMENT_MULTI_SINK",
+				"multi-sink" },
+			{ PURPLE_MEDIA_ELEMENT_REQUEST_SINK,
+				"PURPLE_MEDIA_ELEMENT_REQUEST_SINK",
+				"request-sink" },
+			{ PURPLE_MEDIA_ELEMENT_UNIQUE,
+				"PURPLE_MEDIA_ELEMENT_UNIQUE", "unique" },
+			{ PURPLE_MEDIA_ELEMENT_SRC,
+				"PURPLE_MEDIA_ELEMENT_SRC", "src" },
+			{ PURPLE_MEDIA_ELEMENT_SINK,
+				"PURPLE_MEDIA_ELEMENT_SINK", "sink" },
+			{ 0, NULL, NULL }
+		};
+		type = g_flags_register_static(
+				"PurpleMediaElementType", values);
+	}
+	return type;
+}
+
+/*
+ * PurpleMediaElementInfo
+ */
+
+struct _PurpleMediaElementInfoClass
+{
+	GObjectClass parent_class;
+};
+
+struct _PurpleMediaElementInfo
+{
+	GObject parent;
+};
+
+struct _PurpleMediaElementInfoPrivate
+{
+	gchar *id;
+	gchar *name;
+	PurpleMediaElementType type;
+	PurpleMediaElementCreateCallback create;
+};
+
+enum {
+	PROP_0,
+	PROP_ID,
+	PROP_NAME,
+	PROP_TYPE,
+	PROP_CREATE_CB,
+};
+
+static void
+purple_media_element_info_init(PurpleMediaElementInfo *info)
+{
+	PurpleMediaElementInfoPrivate *priv =
+			PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(info);
+	priv->id = NULL;
+	priv->name = NULL;
+	priv->type = PURPLE_MEDIA_ELEMENT_NONE;
+	priv->create = NULL;
+}
+
+static void
+purple_media_element_info_finalize(GObject *info)
+{
+	PurpleMediaElementInfoPrivate *priv =
+			PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(info);
+	g_free(priv->id);
+	g_free(priv->name);
+}
+
+static void
+purple_media_element_info_set_property (GObject *object, guint prop_id,
+		const GValue *value, GParamSpec *pspec)
+{
+	PurpleMediaElementInfoPrivate *priv;
+	g_return_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(object));
+
+	priv = PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(object);
+
+	switch (prop_id) {
+		case PROP_ID:
+			g_free(priv->id);
+			priv->id = g_value_dup_string(value);
+			break;
+		case PROP_NAME:
+			g_free(priv->name);
+			priv->name = g_value_dup_string(value);
+			break;
+		case PROP_TYPE: {
+			priv->type = g_value_get_flags(value);
+			break;
+		}
+		case PROP_CREATE_CB:
+			priv->create = g_value_get_pointer(value);
+			break;
+		default:	
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(
+					object, prop_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_media_element_info_get_property (GObject *object, guint prop_id,
+		GValue *value, GParamSpec *pspec)
+{
+	PurpleMediaElementInfoPrivate *priv;
+	g_return_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(object));
+	
+	priv = PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(object);
+
+	switch (prop_id) {
+		case PROP_ID:
+			g_value_set_string(value, priv->id);
+			break;
+		case PROP_NAME:
+			g_value_set_string(value, priv->name);
+			break;
+		case PROP_TYPE:
+			g_value_set_flags(value, priv->type);
+			break;
+		case PROP_CREATE_CB:
+			g_value_set_pointer(value, priv->create);
+			break;
+		default:	
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(
+					object, prop_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
+{
+	GObjectClass *gobject_class = (GObjectClass*)klass;
+	
+	gobject_class->finalize = purple_media_element_info_finalize;
+	gobject_class->set_property = purple_media_element_info_set_property;
+	gobject_class->get_property = purple_media_element_info_get_property;
+
+	g_object_class_install_property(gobject_class, PROP_ID,
+			g_param_spec_string("id",
+			"ID",
+			"The unique identifier of the element.",
+			NULL,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_NAME,
+			g_param_spec_string("name",
+			"Name",
+			"The friendly/display name of this element.",
+			NULL,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_TYPE,
+			g_param_spec_flags("type",
+			"Element Type",
+			"The type of element this is.",
+			PURPLE_TYPE_MEDIA_ELEMENT_TYPE,
+			PURPLE_MEDIA_ELEMENT_NONE,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_CREATE_CB,
+			g_param_spec_pointer("create-cb",
+			"Create Callback",
+			"The function called to create this element.",
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_type_class_add_private(klass, sizeof(PurpleMediaElementInfoPrivate));
+}
+
+G_DEFINE_TYPE(PurpleMediaElementInfo,
+		purple_media_element_info, G_TYPE_OBJECT);
+
+gchar *
+purple_media_element_info_get_id(PurpleMediaElementInfo *info)
+{
+#ifdef USE_VV
+	gchar *id;
+	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
+	g_object_get(info, "id", &id, NULL);
+	return id;
+#else
+	return NULL;
+#endif
+}
+
+gchar *
+purple_media_element_info_get_name(PurpleMediaElementInfo *info)
+{
+#ifdef USE_VV
+	gchar *name;
+	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
+	g_object_get(info, "name", &name, NULL);
+	return name;
+#else
+	return NULL;
+#endif
+}
+
+PurpleMediaElementType
+purple_media_element_info_get_element_type(PurpleMediaElementInfo *info)
+{
+#ifdef USE_VV
+	PurpleMediaElementType type;
+	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info),
+			PURPLE_MEDIA_ELEMENT_NONE);
+	g_object_get(info, "type", &type, NULL);
+	return type;
+#else
+	return PURPLE_MEDIA_ELEMENT_NONE;
+#endif
+}
+
+GstElement *
+purple_media_element_info_call_create(PurpleMediaElementInfo *info,
+		PurpleMedia *media, const gchar *session_id,
+		const gchar *participant)
+{
+#ifdef USE_VV
+	PurpleMediaElementCreateCallback create;
+	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
+	g_object_get(info, "create-cb", &create, NULL);
+	if (create)
+		return create(media, session_id, participant);
+#endif
+	return NULL;
 }
 
