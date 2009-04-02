@@ -681,9 +681,9 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 		xmlnode_set_attrib(payload, "channels", channels);
 
 		for (; iter; iter = g_list_next(iter)) {
-			PurpleMediaCodecParameter *mparam = iter->data;
+			PurpleKeyValuePair *mparam = iter->data;
 			xmlnode *param = xmlnode_new_child(payload, "parameter");
-			xmlnode_set_attrib(param, "name", mparam->name);
+			xmlnode_set_attrib(param, "name", mparam->key);
 			xmlnode_set_attrib(param, "value", mparam->value);
 		}
 

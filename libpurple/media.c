@@ -753,13 +753,13 @@ void
 purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
 		const gchar *name, const gchar *value)
 {
-	PurpleMediaCodecParameter *new_param;
+	PurpleKeyValuePair *new_param;
 
 	g_return_if_fail(codec != NULL);
 	g_return_if_fail(name != NULL && value != NULL);
 
-	new_param = g_new0(PurpleMediaCodecParameter, 1);
-	new_param->name = g_strdup(name);
+	new_param = g_new0(PurpleKeyValuePair, 1);
+	new_param->key = g_strdup(name);
 	new_param->value = g_strdup(value);
 	codec->optional_params = g_list_append(
 			codec->optional_params, new_param);
@@ -767,11 +767,11 @@ purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
 
 void
 purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
-		PurpleMediaCodecParameter *param)
+		PurpleKeyValuePair *param)
 {
 	g_return_if_fail(codec != NULL && param != NULL);
 
-	g_free(param->name);
+	g_free(param->key);
 	g_free(param->value);
 	g_free(param);
 
@@ -779,7 +779,7 @@ purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
 			g_list_remove(codec->optional_params, param);
 }
 
-PurpleMediaCodecParameter *
+PurpleKeyValuePair *
 purple_media_codec_get_optional_parameter(PurpleMediaCodec *codec,
 		const gchar *name, const gchar *value)
 {
@@ -789,8 +789,8 @@ purple_media_codec_get_optional_parameter(PurpleMediaCodec *codec,
 	g_return_val_if_fail(name != NULL, NULL);
 
 	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
-		PurpleMediaCodecParameter *param = iter->data;
-		if (!g_ascii_strcasecmp(param->name, name) &&
+		PurpleKeyValuePair *param = iter->data;
+		if (!g_ascii_strcasecmp(param->key, name) &&
 				(value == NULL ||
 				!g_ascii_strcasecmp(param->value, value)))
 			return param;
@@ -826,10 +826,10 @@ purple_media_codec_copy(PurpleMediaCodec *codec)
 	new_codec->channels = codec->channels;
 
 	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
-		PurpleMediaCodecParameter *param =
-				(PurpleMediaCodecParameter*)iter->data;
+		PurpleKeyValuePair *param =
+				(PurpleKeyValuePair*)iter->data;
 		purple_media_codec_add_optional_parameter(new_codec,
-				param->name, param->value);
+				param->key, param->value);
 	}
 
 	return new_codec;
@@ -869,10 +869,9 @@ purple_media_codec_to_fs(const PurpleMediaCodec *codec)
 	new_codec->channels = codec->channels;
 
 	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
-		PurpleMediaCodecParameter *param =
-				(PurpleMediaCodecParameter*)iter->data;
+		PurpleKeyValuePair *param = (PurpleKeyValuePair*)iter->data;
 		fs_codec_add_optional_parameter(new_codec,
-				param->name, param->value);
+				param->key, param->value);
 	}
 
 	return new_codec;

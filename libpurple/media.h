@@ -27,6 +27,9 @@
 #ifndef __MEDIA_H_
 #define __MEDIA_H_
 
+#include "signals.h"
+#include "util.h"
+
 #include <glib.h>
 #include <glib-object.h>
 
@@ -54,8 +57,6 @@ typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
 typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
 /** @copydoc _PurpleMediaCodec */
 typedef struct _PurpleMediaCodec PurpleMediaCodec;
-/** @copydoc _PurpleMediaCodecParameter */
-typedef struct _PurpleMediaCodecParameter PurpleMediaCodecParameter;
 
 /** Media caps */
 typedef enum {
@@ -131,12 +132,6 @@ struct _PurpleMediaCandidate
 	const gchar *username;
 	const gchar *password;
 	guint ttl;
-};
-
-struct _PurpleMediaCodecParameter
-{
-	gchar *name;
-	gchar *value;
 };
 
 struct _PurpleMediaCodec
@@ -261,7 +256,7 @@ void purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
  * @param param A pointer to the parameter to remove.
  */
 void purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
-		PurpleMediaCodecParameter *param);
+		PurpleKeyValuePair *param);
 
 /**
  * Gets an optional parameter based on the values given.
@@ -272,7 +267,7 @@ void purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
  *
  * @return The value found or NULL.
  */
-PurpleMediaCodecParameter *purple_media_codec_get_optional_parameter(
+PurpleKeyValuePair *purple_media_codec_get_optional_parameter(
 		PurpleMediaCodec *codec, const gchar *name,
 		const gchar *value);
 
