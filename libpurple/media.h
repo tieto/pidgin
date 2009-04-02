@@ -35,9 +35,16 @@
 
 G_BEGIN_DECLS
 
+#define PURPLE_TYPE_MEDIA_CODEC           (purple_media_codec_get_type())
+#define PURPLE_MEDIA_CODEC(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
+#define PURPLE_MEDIA_CODEC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
+#define PURPLE_IS_MEDIA_CODEC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA_CODEC))
+#define PURPLE_IS_MEDIA_CODEC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_CODEC))
+#define PURPLE_MEDIA_CODEC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
+
+#define PURPLE_TYPE_MEDIA_SESSION_TYPE (purple_media_session_type_get_type())
 #define PURPLE_TYPE_MEDIA            (purple_media_get_type())
 #define PURPLE_TYPE_MEDIA_CANDIDATE  (purple_media_candidate_get_type())
-#define PURPLE_TYPE_MEDIA_CODEC      (purple_media_codec_get_type())
 #define PURPLE_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA, PurpleMedia))
 #define PURPLE_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 #define PURPLE_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA))
@@ -134,19 +141,16 @@ struct _PurpleMediaCandidate
 	guint ttl;
 };
 
-struct _PurpleMediaCodec
-{
-	gint id;
-	char *encoding_name;
-	PurpleMediaSessionType media_type;
-	guint clock_rate;
-	guint channels;
-	GList *optional_params;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * Gets the media session type's GType
+ *
+ * @return The media session type's GType.
+ */
+GType purple_media_session_type_get_type(void);
 
 /**
  * Gets the media class's GType
@@ -229,6 +233,12 @@ GType purple_media_codec_get_type(void);
  */
 PurpleMediaCodec *purple_media_codec_new(int id, const char *encoding_name,
 		PurpleMediaSessionType media_type, guint clock_rate);
+
+guint purple_media_codec_get_id(PurpleMediaCodec *codec);
+gchar *purple_media_codec_get_encoding_name(PurpleMediaCodec *codec);
+guint purple_media_codec_get_clock_rate(PurpleMediaCodec *codec);
+guint purple_media_codec_get_channels(PurpleMediaCodec *codec);
+GList *purple_media_codec_get_optional_parameters(PurpleMediaCodec *codec);
 
 /**
  * Creates a string representation of the codec.

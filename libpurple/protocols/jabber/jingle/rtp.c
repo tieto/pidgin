@@ -666,19 +666,28 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 {
 	for (; codecs ; codecs = codecs->next) {
 		PurpleMediaCodec *codec = (PurpleMediaCodec*)codecs->data;
-		GList *iter = codec->optional_params;
-		char id[8], clockrate[10], channels[10];
+		GList *iter = purple_media_codec_get_optional_parameters(codec);
+		gchar *id, *name, *clockrate, *channels;
 		gchar *codec_str;
 		xmlnode *payload = xmlnode_new_child(description, "payload-type");
 		
-		g_snprintf(id, sizeof(id), "%d", codec->id);
-		g_snprintf(clockrate, sizeof(clockrate), "%d", codec->clock_rate);
-		g_snprintf(channels, sizeof(channels), "%d", codec->channels);
-		
-		xmlnode_set_attrib(payload, "name", codec->encoding_name);
+		id = g_strdup_printf("%d",
+				purple_media_codec_get_id(codec));
+		name = purple_media_codec_get_encoding_name(codec);
+		clockrate = g_strdup_printf("%d",
+				purple_media_codec_get_clock_rate(codec));
+		channels = g_strdup_printf("%d",
+				purple_media_codec_get_channels(codec));
+
+		xmlnode_set_attrib(payload, "name", name);
 		xmlnode_set_attrib(payload, "id", id);
 		xmlnode_set_attrib(payload, "clockrate", clockrate);
 		xmlnode_set_attrib(payload, "channels", channels);
+
+		g_free(channels);
+		g_free(clockrate);
+		g_free(name);
+		g_free(id);
 
 		for (; iter; iter = g_list_next(iter)) {
 			PurpleKeyValuePair *mparam = iter->data;

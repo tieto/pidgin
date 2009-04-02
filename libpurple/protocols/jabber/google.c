@@ -202,13 +202,18 @@ google_session_ready(GoogleSession *session)
 
 		for (iter = codecs; iter; iter = g_list_next(iter)) {
 			PurpleMediaCodec *codec = (PurpleMediaCodec*)iter->data;
-			gchar *id = g_strdup_printf("%d", codec->id);
-			gchar *clock_rate = g_strdup_printf("%d", codec->clock_rate);
+			gchar *id = g_strdup_printf("%d",
+					purple_media_codec_get_id(codec));
+			gchar *encoding_name =
+					purple_media_codec_get_encoding_name(codec);
+			gchar *clock_rate = g_strdup_printf("%d",
+					purple_media_codec_get_clock_rate(codec));
 			payload = xmlnode_new_child(desc, "payload-type");
 			xmlnode_set_attrib(payload, "id", id);
-			xmlnode_set_attrib(payload, "name", codec->encoding_name);
+			xmlnode_set_attrib(payload, "name", encoding_name);
 			xmlnode_set_attrib(payload, "clockrate", clock_rate);
 			g_free(clock_rate);
+			g_free(encoding_name);
 			g_free(id);
 		}
 		purple_media_codec_list_free(codecs);
