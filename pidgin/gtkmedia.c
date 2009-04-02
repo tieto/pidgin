@@ -923,7 +923,7 @@ create_default_video_src(PurpleMedia *media,
 
 	/* It was recommended to set the size <= 352x288 and framerate <= 20 */
 	caps = gst_caps_from_string("video/x-raw-yuv , width=[250,352] , "
-			"height=[200,288] , framerate=[10/1,20/1]");
+			"height=[200,288] , framerate=[1/1,20/1]");
 	g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
 
 	gst_bin_add_many(GST_BIN(sendbin), src,
