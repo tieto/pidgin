@@ -64,10 +64,6 @@ G_BEGIN_DECLS
 
 /** @copydoc _PurpleMedia */
 typedef struct _PurpleMedia PurpleMedia;
-/** @copydoc _PurpleMediaClass */
-typedef struct _PurpleMediaClass PurpleMediaClass;
-/** @copydoc _PurpleMediaPrivate */
-typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
 /** @copydoc _PurpleMediaCandidate */
 typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
 /** @copydoc _PurpleMediaCodec */
