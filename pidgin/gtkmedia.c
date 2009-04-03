@@ -301,7 +301,7 @@ setup_menubar(PidginMedia *window)
 static void
 pidgin_media_init (PidginMedia *media)
 {
-	GtkWidget *vbox, *hbox;
+	GtkWidget *vbox;
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
 
 	XSetErrorHandler(pidgin_x_error_handler);
@@ -319,19 +319,6 @@ pidgin_media_init (PidginMedia *media)
 	media->priv->menubar = setup_menubar(media);
 	gtk_box_pack_start(GTK_BOX(vbox), media->priv->menubar,
 			FALSE, TRUE, 0);
-
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(GTK_WIDGET(hbox));
-
-	media->priv->mute = gtk_toggle_button_new_with_mnemonic("_Mute");
-
-	g_signal_connect(media->priv->mute, "toggled",
-			G_CALLBACK(pidgin_media_mute_toggled), media);
-
-	gtk_box_pack_end(GTK_BOX(hbox), media->priv->mute, FALSE, FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(media->priv->mute),
-			PIDGIN_HIG_BOX_SPACE);
 
 	media->priv->display = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(media->priv->display),
@@ -734,7 +721,21 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	}
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		GstElement *media_src;
-		GtkWidget *volume = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
+		GtkWidget *hbox, *volume;
+
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_box_pack_end(GTK_BOX(send_widget), hbox, FALSE, FALSE, 0);
+		gtkmedia->priv->mute =
+				gtk_toggle_button_new_with_mnemonic("_Mute");
+		g_signal_connect(gtkmedia->priv->mute, "toggled",
+				G_CALLBACK(pidgin_media_mute_toggled),
+				gtkmedia);
+		gtk_box_pack_end(GTK_BOX(hbox), gtkmedia->priv->mute,
+				FALSE, FALSE, 0);
+		gtk_widget_show(gtkmedia->priv->mute);
+		gtk_widget_show(GTK_WIDGET(hbox));
+
+		volume = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
 		gtk_range_set_increments(GTK_RANGE(volume), 5.0, 25.0);
 		gtk_range_set_value(GTK_RANGE(volume),
 				purple_prefs_get_int(
