@@ -573,7 +573,7 @@ static void
 pidgin_media_input_volume_changed(GtkRange *range, PurpleMedia *media)
 {
 	double val = (double)gtk_range_get_value(GTK_RANGE(range));
-	purple_prefs_set_int("/purple/media/audio/volume/input", val);
+	purple_prefs_set_int("/pidgin/media/audio/volume/input", val);
 	val /= 10.0;
 	purple_media_set_input_volume(media, NULL, val);
 }
@@ -582,7 +582,7 @@ static void
 pidgin_media_output_volume_changed(GtkRange *range, PurpleMedia *media)
 {
 	double val = (double)gtk_range_get_value(GTK_RANGE(range));
-	purple_prefs_set_int("/purple/media/audio/volume/output", val);
+	purple_prefs_set_int("/pidgin/media/audio/volume/output", val);
 	val /= 10.0;
 	purple_media_set_output_volume(media, NULL, NULL, val);
 }
@@ -704,7 +704,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_range_set_increments(GTK_RANGE(volume), 5.0, 25.0);
 		gtk_range_set_value(GTK_RANGE(volume),
 				purple_prefs_get_int(
-				"/purple/media/audio/volume/output"));
+				"/pidgin/media/audio/volume/output"));
 		gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
 		g_signal_connect (G_OBJECT(volume), "value-changed",
 				G_CALLBACK(pidgin_media_output_volume_changed),
@@ -739,7 +739,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_range_set_increments(GTK_RANGE(volume), 5.0, 25.0);
 		gtk_range_set_value(GTK_RANGE(volume),
 				purple_prefs_get_int(
-				"/purple/media/audio/volume/input"));
+				"/pidgin/media/audio/volume/input"));
 		gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
 		g_signal_connect (G_OBJECT(volume), "value-changed",
 				G_CALLBACK (pidgin_media_input_volume_changed),
@@ -1016,7 +1016,7 @@ create_default_audio_src(PurpleMedia *media,
 	GstElement *bin, *src, *volume, *level;
 	GstPad *pad, *ghost;
 	double input_volume = purple_prefs_get_int(
-			"/purple/media/audio/volume/input")/10.0;
+			"/pidgin/media/audio/volume/input")/10.0;
 
 	src = gst_element_factory_make("gconfaudiosrc", NULL);
 	if (src == NULL)
@@ -1055,7 +1055,7 @@ create_default_audio_sink(PurpleMedia *media,
 	GstElement *bin, *sink, *volume, *level, *queue;
 	GstPad *pad, *ghost;
 	double output_volume = purple_prefs_get_int(
-			"/purple/media/audio/volume/output")/10.0;
+			"/pidgin/media/audio/volume/output")/10.0;
 
 	sink = gst_element_factory_make("gconfaudiosink", NULL);
 	if (sink == NULL)
@@ -1139,6 +1139,12 @@ pidgin_medias_init(void)
 	purple_media_manager_set_active_element(manager, default_video_sink);
 	purple_media_manager_set_active_element(manager, default_audio_src);
 	purple_media_manager_set_active_element(manager, default_audio_sink);
+
+	purple_prefs_add_none("/pidgin/media");
+	purple_prefs_add_none("/pidgin/media/audio");
+	purple_prefs_add_none("/pidgin/media/audio/volume");
+	purple_prefs_add_int("/pidgin/media/audio/volume/input", 10);
+	purple_prefs_add_int("/pidgin/media/audio/volume/output", 10);
 #endif
 }
 
