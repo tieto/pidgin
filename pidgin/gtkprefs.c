@@ -2634,34 +2634,6 @@ media_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	gtk_widget_show_all(hbox);
 }
 
-static void
-prefs_media_input_volume_changed(GtkRange *range)
-{
-	double val = (double)gtk_range_get_value(GTK_RANGE(range));
-	GList *medias = purple_media_manager_get_media(purple_media_manager_get());
-	purple_prefs_set_int("/purple/media/audio/volume/input", val);
-
-	val /= 10.0;
-	for (; medias; medias = g_list_next(medias)) {
-		PurpleMedia *media = PURPLE_MEDIA(medias->data);
-		purple_media_set_input_volume(media, NULL, val);
-	}
-}
-
-static void
-prefs_media_output_volume_changed(GtkRange *range)
-{
-	double val = (double)gtk_range_get_value(GTK_RANGE(range));
-	GList *medias = purple_media_manager_get_media(purple_media_manager_get());
-	purple_prefs_set_int("/purple/media/audio/volume/output", val);
-
-	val /= 10.0;
-	for (; medias; medias = g_list_next(medias)) {
-		PurpleMedia *media = PURPLE_MEDIA(medias->data);
-		purple_media_set_output_volume(media, NULL, NULL, val);
-	}
-}
-
 static GtkWidget *
 media_page()
 {
@@ -2738,38 +2710,6 @@ media_page()
 
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
-
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	/* Input Volume */
-	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
-	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
-	gtk_range_set_value(GTK_RANGE(sw),
-			purple_prefs_get_int("/purple/media/audio/volume/input"));
-	g_signal_connect (G_OBJECT (sw), "format-value",
-			  G_CALLBACK (prefs_sound_volume_format),
-			  NULL);
-	g_signal_connect (G_OBJECT (sw), "value-changed",
-			  G_CALLBACK (prefs_media_input_volume_changed),
-			  NULL);
-	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Volume:"), sg, sw, TRUE, NULL);
-
-	vbox = pidgin_make_frame (ret, _("Audio Output"));
-	gtk_size_group_add_widget(sg2, vbox);
-
-	/* Output Volume */
-	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
-	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
-	gtk_range_set_value(GTK_RANGE(sw),
-			purple_prefs_get_int("/purple/media/audio/volume/output"));
-	g_signal_connect (G_OBJECT (sw), "format-value",
-			  G_CALLBACK (prefs_sound_volume_format),
-			  NULL);
-	g_signal_connect (G_OBJECT (sw), "value-changed",
-			  G_CALLBACK (prefs_media_output_volume_changed),
-			  NULL);
-	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Volume:"), sg, sw, TRUE, NULL);
 
 	gtk_widget_show_all(ret);
 
