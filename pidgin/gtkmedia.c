@@ -739,7 +739,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_range_set_value(GTK_RANGE(volume),
 				purple_prefs_get_int(
 				"/purple/media/audio/volume/input"));
-				gtk_scale_set_draw_value(volume, FALSE);
 		gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
 		g_signal_connect (G_OBJECT(volume), "value-changed",
 				G_CALLBACK (pidgin_media_input_volume_changed),
