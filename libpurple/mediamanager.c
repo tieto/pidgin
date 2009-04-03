@@ -613,19 +613,26 @@ purple_media_manager_get_active_element(PurpleMediaManager *manager,
 static void
 window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 {
+	GstElement *sink;
+
 	if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_ELEMENT ||
 			!gst_structure_has_name(msg->structure,
 			"prepare-xwindow-id"))
 		return;
 
-	if (GST_ELEMENT_PARENT(GST_MESSAGE_SRC(msg)) == ow->sink) {
-		g_signal_handlers_disconnect_matched(bus, G_SIGNAL_MATCH_FUNC
-				| G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-				window_id_cb, ow);
-
-		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(
-				GST_MESSAGE_SRC(msg)), ow->window_id);
+	sink = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+	while (sink != ow->sink) {
+		if (sink == NULL)
+			return;
+		sink = GST_ELEMENT_PARENT(sink);
 	}
+
+	g_signal_handlers_disconnect_matched(bus, G_SIGNAL_MATCH_FUNC
+			| G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+			window_id_cb, ow);
+
+	gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(
+			GST_MESSAGE_SRC(msg)), ow->window_id);
 }
 #endif
 
