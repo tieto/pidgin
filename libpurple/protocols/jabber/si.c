@@ -1657,23 +1657,22 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	jsx->iq_id = g_strdup(id);
 
 	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
-	if (xfer)
-	{
-		xfer->data = jsx;
+	g_return_if_fail(xfer != NULL);
 
-		purple_xfer_set_filename(xfer, filename);
-		if(filesize > 0)
-			purple_xfer_set_size(xfer, filesize);
+	xfer->data = jsx;
 
-		purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
-		purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
-		purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
-		purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
+	purple_xfer_set_filename(xfer, filename);
+	if(filesize > 0)
+		purple_xfer_set_size(xfer, filesize);
 
-		js->file_transfers = g_list_append(js->file_transfers, xfer);
+	purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
+	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
+	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
+	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
-		purple_xfer_request(xfer);
-	}
+	js->file_transfers = g_list_append(js->file_transfers, xfer);
+
+	purple_xfer_request(xfer);
 }
 
 void

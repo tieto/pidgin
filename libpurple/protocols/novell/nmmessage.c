@@ -24,7 +24,6 @@ struct _NMMessage
 {
 	NMConference *conference;
 	char *text;
-	gpointer data;
 	guint32 ref_count;
 };
 

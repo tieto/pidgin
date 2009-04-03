@@ -64,7 +64,6 @@ typedef struct _PidginRoomlist {
 	gint num_rooms, total_rooms;
 	GtkWidget *tipwindow;
 	GdkRectangle tip_rect;
-	guint timeout;
 	PangoLayout *tip_layout;
 	PangoLayout *tip_name_layout;
 	int tip_height;

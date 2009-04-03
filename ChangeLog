@@ -6,11 +6,17 @@ version 2.6.0 (??/??/2009):
 	  project.  With some minor additions and clean ups from Paul Aurich.
 	* It should no longer be possible to end up with duplicates of buddies
 	  in a group on the buddy list.
+	* Removed the unmaintained and unneeded toc protocol plugin.
+	* Fixed NTLM authentication on big-endian systems.
 
 	XMPP:
 	* Add support for in-band bytestreams for file transfers (XEP-0047).
 	* Add support for sending attentions (equivalent to "buzz" and "nudge")
 	  using the command /buzz (XEP-0224).
+
+	IRC:
+	* Correctly handle WHOIS for users who are joined to a large number of
+	  channels.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager

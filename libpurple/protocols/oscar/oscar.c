@@ -870,11 +870,11 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 		if (itmsurl) {
 			tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
 								  itmsurl, message);
-			g_free(itmsurl);
 			g_free(message);
 			message = tmp;
 		}
 	}
+	g_free(itmsurl);
 
 	if (is_away && message) {
 		tmp = purple_str_sub_away_formatters(message, purple_account_get_username(account));
@@ -4847,6 +4847,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		/* TODO: Combine these two calls! */
 		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, itmsurl);
 		oscar_set_extendedstatus(gc);
+		g_free(status_text);
 	}
 }
 
