@@ -28,6 +28,7 @@
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
+#include "jingle/jingle.h"
 #include "oob.h"
 #include "roster.h"
 #include "si.h"
@@ -426,6 +427,10 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);
 	jabber_iq_register_handler("ping", "urn:xmpp:ping", jabber_ping_parse);
 	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
+
+	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
+	jabber_iq_register_handler("query", GOOGLE_JINGLE_INFO_NAMESPACE,
+		jabber_google_handle_jingle_info);
 }
 
 void jabber_iq_uninit(void)

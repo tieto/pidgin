@@ -324,6 +324,9 @@ I can find them.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
+AC_SUBST(GLIB_GENMARSHAL)
+
 AC_ARG_WITH([extraversion],
 			AC_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
@@ -742,6 +745,56 @@ GStreamer development headers not found.
 Use --disable-gstreamer if you do not need GStreamer (sound) support.
 ])
 		fi])
+fi
+
+dnl #######################################################################
+dnl # Check for Farsight
+dnl #######################################################################
+AC_ARG_ENABLE(farsight,
+	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
+	enable_farsight="$enableval", enable_farsight="yes")
+if test "x$enable_farsight" != "xno"; then
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.8 gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
+		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
+		AC_SUBST(FARSIGHT_CFLAGS)
+		AC_SUBST(FARSIGHT_LIBS)
+	], [
+		enable_farsight="no"
+	])
+fi
+
+dnl #######################################################################
+dnl # Check for GStreamer-properties
+dnl #######################################################################
+AC_ARG_ENABLE(gstprops,
+	[AC_HELP_STRING([--disable-gstprops], [compile without gstreamer props])],
+	enable_gstprops="$enableval", enable_gstprops="yes")
+if test "x$enable_gstprops" != "xno";
+then
+  dnl gstreamer-libs-$GST_MAJORMINOR
+  dnl gstreamer-gconf-$GST_MAJORMINOR
+  PKG_CHECK_MODULES(GSTPROPS, [gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
+  		GSTPROPS_LIBS="$GSTPROPS_LIBS -lgstinterfaces-0.10"	   
+  		AC_DEFINE(USE_GSTPROPS, 1, [Use GStreamer property probe for finding devices])
+  		AC_SUBST(GSTPROPS_LIBS)
+  		AC_SUBST(GSTPROPS_CFLAGS)
+  ], [
+		enable_gstprops="no"
+  ])
+fi
+
+dnl #######################################################################
+dnl # Check for Voice and Video support
+dnl #######################################################################
+AC_ARG_ENABLE(vv,
+	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
+	enable_vv="$enableval", enable_vv="yes")
+if test "x$enable_vv" != "xno"; then
+	if test "x$enable_farsight" != "xno" -a "x$enable_gstprops" != "xno"; then
+		AC_DEFINE(USE_VV, 1, [Use voice and video])
+	else
+		enable_vv="no"
+	fi
 fi
 
 dnl #######################################################################
@@ -2478,6 +2531,7 @@ echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
 echo Build with D-Bus support...... : $enable_dbus
+echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi

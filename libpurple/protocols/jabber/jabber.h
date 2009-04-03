@@ -54,8 +54,11 @@ typedef struct _JabberStream JabberStream;
 #include "circbuffer.h"
 #include "connection.h"
 #include "dnssrv.h"
+#include "media.h"
+#include "mediamanager.h"
 #include "roomlist.h"
 #include "sslconn.h"
+#include "dnsquery.h"
 
 #include "iq.h"
 #include "jutil.h"
@@ -243,6 +246,15 @@ struct _JabberStream
 	 * for when we lookup buddy icons from a url
 	 */
 	GSList *url_datas;
+
+	/* keep a hash table of JingleSessions */
+	GHashTable *sessions;
+
+	/* maybe this should only be present when USE_VV? */
+	gchar *stun_ip;
+	int stun_port;
+	PurpleDnsQueryData *stun_query;
+	/* later add stuff to handle TURN relays... */
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
@@ -311,6 +323,9 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
+gboolean jabber_initiate_media(PurpleConnection *gc, const char *who,
+		PurpleMediaSessionType type);
+PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
 
