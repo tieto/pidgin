@@ -957,13 +957,25 @@ create_default_video_src(PurpleMedia *media,
 	GstPad *pad;
 	GstPad *ghost;
 	GstCaps *caps;
-	const gchar *video_plugin = purple_prefs_get_string(
-			"/purple/media/video/plugin");
-	const gchar *video_device = purple_prefs_get_string(
-			"/purple/media/video/device");
+
+	src = gst_element_factory_make("gconfvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("autovideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("v4l2src", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("v4lsrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("ksvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("dshowvideosrc", NULL);
+	if (src == NULL) {
+		purple_debug_error("gtkmedia", "Unable to find a suitable "
+				"element for the default video source.\n");
+		return NULL;
+	}
 
 	sendbin = gst_bin_new("pidgindefaultvideosrc");
-	src = gst_element_factory_make(video_plugin, "purplevideosource");
 	videoscale = gst_element_factory_make("videoscale", NULL);
 	capsfilter = gst_element_factory_make("capsfilter", NULL);
 
@@ -976,18 +988,10 @@ create_default_video_src(PurpleMedia *media,
 			videoscale, capsfilter, NULL);
 	gst_element_link_many(src, videoscale, capsfilter, NULL);
 
-	if (!strcmp(video_plugin, "videotestsrc")) {
-		/* Set is-live to true to throttle videotestsrc */
-		g_object_set (G_OBJECT(src), "is-live", TRUE, NULL);
-	}
-
 	pad = gst_element_get_static_pad(capsfilter, "src");
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_object_unref(pad);
 	gst_element_add_pad(sendbin, ghost);
-
-	if (video_device != NULL && strcmp(video_device, ""))
-		g_object_set(G_OBJECT(src), "device", video_device, NULL);
 
 	return sendbin;
 }
@@ -996,7 +1000,13 @@ static GstElement *
 create_default_video_sink(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
-	return gst_element_factory_make("autovideosink", NULL);
+	GstElement *sink = gst_element_factory_make("gconfvideosink", NULL);
+	if (sink == NULL)
+		sink = gst_element_factory_make("autovideosink", NULL);
+	if (sink == NULL)
+		purple_debug_error("gtkmedia", "Unable to find a suitable "
+				"element for the default video sink.\n");
+	return sink;
 }
 
 static GstElement *
@@ -1005,13 +1015,25 @@ create_default_audio_src(PurpleMedia *media,
 {
 	GstElement *bin, *src, *volume, *level;
 	GstPad *pad, *ghost;
-	const gchar *audio_device = purple_prefs_get_string(
-			"/purple/media/audio/device");
 	double input_volume = purple_prefs_get_int(
 			"/purple/media/audio/volume/input")/10.0;
 
+	src = gst_element_factory_make("gconfaudiosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("autoaudiosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("alsasrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("osssrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("dshowaudiosrc", NULL);
+	if (src == NULL) {
+		purple_debug_error("gtkmedia", "Unable to find a suitable "
+				"element for the default audio source.\n");
+		return NULL;
+	}
+
 	bin = gst_bin_new("pidgindefaultaudiosrc");
-	src = gst_element_factory_make("alsasrc", "asrc");
 	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
 	g_object_set(volume, "volume", input_volume, NULL);
 	level = gst_element_factory_make("level", "sendlevel");
@@ -1022,9 +1044,6 @@ create_default_audio_src(PurpleMedia *media,
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_element_add_pad(bin, ghost);
 	g_object_set(G_OBJECT(level), "message", TRUE, NULL);
-
-	if (audio_device != NULL && strcmp(audio_device, ""))
-		g_object_set(G_OBJECT(src), "device", audio_device, NULL);
 
 	return bin;
 }
@@ -1038,8 +1057,16 @@ create_default_audio_sink(PurpleMedia *media,
 	double output_volume = purple_prefs_get_int(
 			"/purple/media/audio/volume/output")/10.0;
 
+	sink = gst_element_factory_make("gconfaudiosink", NULL);
+	if (sink == NULL)
+		sink = gst_element_factory_make("autoaudiosink",NULL);
+	if (sink == NULL) {
+		purple_debug_error("gtkmedia", "Unable to find a suitable "
+				"element for the default audio sink.\n");
+		return NULL;
+	}
+
 	bin = gst_bin_new("pidginrecvaudiobin");
-	sink = gst_element_factory_make("alsasink", "asink");
 	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
 	g_object_set(volume, "volume", output_volume, NULL);
 	level = gst_element_factory_make("level", "recvlevel");
