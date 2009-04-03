@@ -110,13 +110,14 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 
 	for (;candidates;candidates = candidates->next) {
 		JabberIq *iq;
-		char port[8];
-		char pref[8];
+		gchar *ip, *port, *pref, *username, *password;
+		PurpleMediaCandidateType type;
 		xmlnode *sess;
 		xmlnode *candidate;
 		transport = (PurpleMediaCandidate*)(candidates->data);
 
-		if (transport->component_id != PURPLE_MEDIA_COMPONENT_RTP)
+		if (purple_media_candidate_get_component_id(transport)
+				!= PURPLE_MEDIA_COMPONENT_RTP)
 			continue;
 
 		iq = jabber_iq_new(session->js, JABBER_IQ_SET);
@@ -126,34 +127,48 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 
 		candidate = xmlnode_new("candidate");
 
-		g_snprintf(port, sizeof(port), "%d", transport->port);
-		g_snprintf(pref, sizeof(pref), "%f",
-				transport->priority/1000.0);
+		ip = purple_media_candidate_get_ip(transport);
+		port = g_strdup_printf("%d",
+				purple_media_candidate_get_port(transport));
+		pref = g_strdup_printf("%f",
+				purple_media_candidate_get_priority(transport)
+				/1000.0);
+		username = purple_media_candidate_get_username(transport);
+		password = purple_media_candidate_get_password(transport);
+		type = purple_media_candidate_get_candidate_type(transport);
 
-		xmlnode_set_attrib(candidate, "address", transport->ip);
+		xmlnode_set_attrib(candidate, "address", ip);
 		xmlnode_set_attrib(candidate, "port", port);
 		xmlnode_set_attrib(candidate, "name", "rtp");
-		xmlnode_set_attrib(candidate, "username", transport->username);
+		xmlnode_set_attrib(candidate, "username", username);
 		/*
 		 * As of this writing, Farsight 2 in Google compatibility
 		 * mode doesn't provide a password. The Gmail client
 		 * requires this to be set.
 		 */
 		xmlnode_set_attrib(candidate, "password",
-				transport->password != NULL ?
-				transport->password : "");
+				password != NULL ? password : "");
 		xmlnode_set_attrib(candidate, "preference", pref);
-		xmlnode_set_attrib(candidate, "protocol", transport->proto ==
-				PURPLE_MEDIA_NETWORK_PROTOCOL_UDP ? "udp" : "tcp");
-		xmlnode_set_attrib(candidate, "type", transport->type ==
+		xmlnode_set_attrib(candidate, "protocol",
+				purple_media_candidate_get_protocol(transport)
+				== PURPLE_MEDIA_NETWORK_PROTOCOL_UDP ?
+				"udp" : "tcp");
+		xmlnode_set_attrib(candidate, "type", type ==
 				PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "local" :
-						      transport->type ==
+						      type ==
 				PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "stun" :
-					       	      transport->type ==
-				PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" : NULL);
+					       	      type ==
+				PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" :
+				NULL);
 		xmlnode_set_attrib(candidate, "generation", "0");
 		xmlnode_set_attrib(candidate, "network", "0");
 		xmlnode_insert_child(sess, candidate);
+
+		g_free(ip);
+		g_free(port);
+		g_free(pref);
+		g_free(username);
+		g_free(password);
 
 		jabber_iq_send(iq);
 	}
@@ -455,9 +470,8 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 							PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
 					xmlnode_get_attrib(cand, "address"),
 					atoi(xmlnode_get_attrib(cand, "port")));
-
-		info->username = g_strdup(xmlnode_get_attrib(cand, "username"));
-		info->password = g_strdup(xmlnode_get_attrib(cand, "password"));
+		g_object_set(info, "username", xmlnode_get_attrib(cand, "username"),
+				"password", xmlnode_get_attrib(cand, "password"), NULL);
 
 		list = g_list_append(list, info);
 	}

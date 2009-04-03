@@ -35,6 +35,13 @@
 
 G_BEGIN_DECLS
 
+#define PURPLE_TYPE_MEDIA_CANDIDATE           (purple_media_candidate_get_type())
+#define PURPLE_MEDIA_CANDIDATE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_CANDIDATE, PurpleMediaCandidate))
+#define PURPLE_MEDIA_CANDIDATE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_CANDIDATE, PurpleMediaCandidate))
+#define PURPLE_IS_MEDIA_CANDIDATE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA_CANDIDATE))
+#define PURPLE_IS_MEDIA_CANDIDATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_CANDIDATE))
+#define PURPLE_MEDIA_CANDIDATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_CANDIDATE, PurpleMediaCandidate))
+
 #define PURPLE_TYPE_MEDIA_CODEC           (purple_media_codec_get_type())
 #define PURPLE_MEDIA_CODEC(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
 #define PURPLE_MEDIA_CODEC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
@@ -44,13 +51,14 @@ G_BEGIN_DECLS
 
 #define PURPLE_TYPE_MEDIA_SESSION_TYPE (purple_media_session_type_get_type())
 #define PURPLE_TYPE_MEDIA            (purple_media_get_type())
-#define PURPLE_TYPE_MEDIA_CANDIDATE  (purple_media_candidate_get_type())
 #define PURPLE_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA, PurpleMedia))
 #define PURPLE_MEDIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 #define PURPLE_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA))
 #define PURPLE_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA))
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 
+#define PURPLE_TYPE_MEDIA_CANDIDATE_TYPE (purple_media_candidate_type_get_type())
+#define PURPLE_TYPE_MEDIA_NETWORK_PROTOCOL (purple_media_network_protocol_get_type())
 #define PURPLE_MEDIA_TYPE_STATE      (purple_media_state_changed_get_type())
 #define PURPLE_MEDIA_TYPE_INFO_TYPE	(purple_media_info_type_get_type())
 
@@ -125,22 +133,6 @@ typedef enum {
 	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
 } PurpleMediaNetworkProtocol;
 
-struct _PurpleMediaCandidate
-{
-	const gchar *foundation;
-	guint component_id;
-	const gchar *ip;
-	guint16 port;
-	const gchar *base_ip;
-	guint16 base_port;
-	PurpleMediaNetworkProtocol proto;
-	guint32 priority;
-	PurpleMediaCandidateType type;
-	const gchar *username;
-	const gchar *password;
-	guint ttl;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -151,6 +143,20 @@ extern "C" {
  * @return The media session type's GType.
  */
 GType purple_media_session_type_get_type(void);
+
+/**
+ * Gets the media candidate type's GType
+ *
+ * @return The media candidate type's GType.
+ */
+GType purple_media_candidate_type_get_type(void);
+
+/**
+ * Gets the media network protocol's GType
+ *
+ * @return The media network protocol's GType.
+ */
+GType purple_media_network_protocol_get_type(void);
 
 /**
  * Gets the media class's GType
@@ -213,6 +219,21 @@ GList *purple_media_candidate_list_copy(GList *candidates);
  * @param candidates The list of candidates to be freed.
  */
 void purple_media_candidate_list_free(GList *candidates);
+
+gchar *purple_media_candidate_get_foundation(PurpleMediaCandidate *candidate);
+guint purple_media_candidate_get_component_id(PurpleMediaCandidate *candidate);
+gchar *purple_media_candidate_get_ip(PurpleMediaCandidate *candidate);
+guint16 purple_media_candidate_get_port(PurpleMediaCandidate *candidate);
+gchar *purple_media_candidate_get_base_ip(PurpleMediaCandidate *candidate);
+guint16 purple_media_candidate_get_base_port(PurpleMediaCandidate *candidate);
+PurpleMediaNetworkProtocol purple_media_candidate_get_protocol(
+		PurpleMediaCandidate *candidate);
+guint32 purple_media_candidate_get_priority(PurpleMediaCandidate *candidate);
+PurpleMediaCandidateType purple_media_candidate_get_candidate_type(
+		PurpleMediaCandidate *candidate);
+gchar *purple_media_candidate_get_username(PurpleMediaCandidate *candidate);
+gchar *purple_media_candidate_get_password(PurpleMediaCandidate *candidate);
+guint purple_media_candidate_get_ttl(PurpleMediaCandidate *candidate);
 
 /**
  * Gets the type of the media codec structure.

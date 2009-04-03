@@ -226,10 +226,12 @@ jingle_rtp_candidate_to_rawudp(JingleSession *session, guint generation,
 		PurpleMediaCandidate *candidate)
 {
 	gchar *id = jabber_get_next_id(jingle_session_get_js(session));
+	gchar *ip = purple_media_candidate_get_ip(candidate);
 	JingleRawUdpCandidate *rawudp_candidate =
-			jingle_rawudp_candidate_new(id,
-			generation, candidate->component_id,
-			candidate->ip, candidate->port);
+			jingle_rawudp_candidate_new(id, generation,
+			purple_media_candidate_get_component_id(candidate),
+			ip, purple_media_candidate_get_port(candidate));
+	g_free(ip);
 	g_free(id);
 	return rawudp_candidate;
 }
@@ -239,17 +241,30 @@ jingle_rtp_candidate_to_iceudp(JingleSession *session, guint generation,
 		PurpleMediaCandidate *candidate)
 {
 	gchar *id = jabber_get_next_id(jingle_session_get_js(session));
+	gchar *ip = purple_media_candidate_get_ip(candidate);
+	gchar *username = purple_media_candidate_get_username(candidate);
+	gchar *password = purple_media_candidate_get_password(candidate);
+	PurpleMediaCandidateType type =
+			purple_media_candidate_get_candidate_type(candidate);
+	
 	JingleIceUdpCandidate *iceudp_candidate = jingle_iceudp_candidate_new(
-			candidate->component_id, candidate->foundation,
-			generation, id, candidate->ip, 0,
-			candidate->port, candidate->priority, "udp",
-			candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "host" :
-			candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "srflx" :
-			candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX ? "prflx" :
-			candidate->type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" : "",
-			candidate->username, candidate->password);
-	iceudp_candidate->reladdr = g_strdup(candidate->base_ip);
-	iceudp_candidate->relport = candidate->base_port;
+			purple_media_candidate_get_component_id(candidate),
+			purple_media_candidate_get_foundation(candidate),
+			generation, id, ip, 0,
+			purple_media_candidate_get_port(candidate),
+			purple_media_candidate_get_priority(candidate), "udp",
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_HOST ? "host" :
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX ? "srflx" :
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX ? "prflx" :
+			type == PURPLE_MEDIA_CANDIDATE_TYPE_RELAY ? "relay" :
+			"", username, password);
+	iceudp_candidate->reladdr =
+			purple_media_candidate_get_base_ip(candidate);
+	iceudp_candidate->relport =
+			purple_media_candidate_get_base_port(candidate);
+	g_free(password);
+	g_free(username);
+	g_free(ip);
 	g_free(id);
 	return iceudp_candidate;
 }
@@ -321,11 +336,12 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 					PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
 					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					candidate->ip, candidate->port);
-			new_candidate->base_ip = g_strdup(candidate->reladdr);
-			new_candidate->base_port = candidate->relport;
-			new_candidate->username = g_strdup(candidate->username);
-			new_candidate->password = g_strdup(candidate->password);
-			new_candidate->priority = candidate->priority;
+			g_object_set(new_candidate,
+					"base-ip", candidate->reladdr,
+					"base-port", candidate->relport,
+					"username", candidate->username,
+					"password", candidate->password,
+					"priority", candidate->priority, NULL);
 			ret = g_list_append(ret, new_candidate);
 		}
 
