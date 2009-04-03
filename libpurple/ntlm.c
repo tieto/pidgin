@@ -41,12 +41,12 @@ struct type1_message {
 	guint32 type;            /* 0x00000001 */
 	guint32 flags;           /* 0x0000b203 */
 
-	short   dom_len1;        /* domain string length */
-	short   dom_len2;        /* domain string length */
+	guint16 dom_len1;        /* domain string length */
+	guint16 dom_len2;        /* domain string length */
 	guint32 dom_off;         /* domain string offset */
 
-	short   host_len1;       /* host string length */
-	short   host_len2;       /* host string length */
+	guint16 host_len1;       /* host string length */
+	guint16 host_len2;       /* host string length */
 	guint32 host_off;        /* host string offset (always 0x00000020) */
 
 #if 0
@@ -59,47 +59,47 @@ struct type2_message {
 	guint8  protocol[8];     /* 'N', 'T', 'L', 'M', 'S', 'S', 'P', '\0'*/
 	guint32 type;            /* 0x00000002 */
 
-	short   msg_len1;        /* target name length */
-	short   msg_len2;        /* target name length */
-	guint32 msg_off;         /* target name offset (always 0x00000048) */
+	guint32 zero;
+	guint16 msg_len1;        /* target name length */
+	guint16 msg_len2;        /* target name length */
 
 	guint32 flags;           /* 0x00008201 */
 
 	guint8  nonce[8];        /* nonce */
-	guint8 context[8];
+	guint8  context[8];
 };
 
 struct type3_message {
 	guint8  protocol[8];     /* 'N', 'T', 'L', 'M', 'S', 'S', 'P', '\0'*/
 	guint32 type;            /* 0x00000003 */
 
-	short   lm_resp_len1;    /* LanManager response length (always 0x18)*/
-	short   lm_resp_len2;    /* LanManager response length (always 0x18)*/
+	guint16 lm_resp_len1;    /* LanManager response length (always 0x18)*/
+	guint16 lm_resp_len2;    /* LanManager response length (always 0x18)*/
 	guint32 lm_resp_off;     /* LanManager response offset */
 
-	short   nt_resp_len1;    /* NT response length (always 0x18) */
-	short   nt_resp_len2;    /* NT response length (always 0x18) */
+	guint16 nt_resp_len1;    /* NT response length (always 0x18) */
+	guint16 nt_resp_len2;    /* NT response length (always 0x18) */
 	guint32 nt_resp_off;     /* NT response offset */
 
-	short   dom_len1;        /* domain string length */
-	short   dom_len2;        /* domain string length */
+	guint16 dom_len1;        /* domain string length */
+	guint16 dom_len2;        /* domain string length */
 	guint32 dom_off;         /* domain string offset (always 0x00000040) */
 
-	short   user_len1;       /* username string length */
-	short   user_len2;       /* username string length */
+	guint16 user_len1;       /* username string length */
+	guint16 user_len2;       /* username string length */
 	guint32 user_off;        /* username string offset */
 
-	short   host_len1;       /* host string length */
-	short   host_len2;       /* host string length */
+	guint16 host_len1;       /* host string length */
+	guint16 host_len2;       /* host string length */
 	guint32 host_off;        /* host string offset */
 
-	short   sess_len1;
-	short	sess_len2;
+	guint16 sess_len1;
+	guint16 sess_len2;
 	guint32 sess_off;         /* message length */
 
 	guint32 flags;            /* 0x00008201 */
 	/* guint32 flags2; */     /* unknown, used in windows messenger */
-	/* guint32  flags3; */
+	/* guint32 flags3; */
 
 #if 0
 	guint8  dom[*];          /* domain string (unicode UTF-16LE) */
@@ -110,7 +110,6 @@ struct type3_message {
 #endif
 };
 
-/* TODO: Will this work on both little-endian and big-endian machines? */
 gchar *
 purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 {
@@ -132,12 +131,12 @@ purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	tmsg->protocol[5] = 'S';
 	tmsg->protocol[6] = 'P';
 	tmsg->protocol[7] = '\0';
-	tmsg->type      = 0x00000001;
-	tmsg->flags     = 0x0000b203;
-	tmsg->dom_len1  = tmsg->dom_len2 = domainlen;
-	tmsg->dom_off   = sizeof(struct type1_message) + hostnamelen;
-	tmsg->host_len1 = tmsg->host_len2 = hostnamelen;
-	tmsg->host_off  = sizeof(struct type1_message);
+	tmsg->type      = GUINT32_TO_LE(0x00000001);
+	tmsg->flags     = GUINT32_TO_LE(0x0000b203);
+	tmsg->dom_len1  = tmsg->dom_len2 = GUINT16_TO_LE(domainlen);
+	tmsg->dom_off   = GUINT32_TO_LE(sizeof(struct type1_message) + hostnamelen);
+	tmsg->host_len1 = tmsg->host_len2 = GUINT16_TO_LE(hostnamelen);
+	tmsg->host_off  = GUINT32_TO_LE(sizeof(struct type1_message));
 	memcpy(msg + tmsg->host_off, hostname, hostnamelen);
 	memcpy(msg + tmsg->dom_off, domain, domainlen);
 
@@ -157,7 +156,7 @@ purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 	tmsg = (struct type2_message*)purple_base64_decode(type2, &retlen);
 	memcpy(nonce, tmsg->nonce, 8);
 	if (flags != NULL)
-		*flags = tmsg->flags;
+		*flags = GUINT16_FROM_LE(tmsg->flags);
 	g_free(tmsg);
 
 	return nonce;
@@ -268,27 +267,27 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	tmsg->protocol[4] = 'S';
 	tmsg->protocol[5] = 'S';
 	tmsg->protocol[6] = 'P';
-	tmsg->type = 0x00000003;
-	tmsg->lm_resp_len1 = tmsg->lm_resp_len2 = 0x18;
-	tmsg->lm_resp_off = sizeof(struct type3_message) + domainlen + usernamelen + hostnamelen;
-	tmsg->nt_resp_len1 = tmsg->nt_resp_len2 = 0x18;
-	tmsg->nt_resp_off = sizeof(struct type3_message) + domainlen + usernamelen + hostnamelen + 0x18;
+	tmsg->type = GUINT32_TO_LE(0x00000003);
+	tmsg->lm_resp_len1 = tmsg->lm_resp_len2 = GUINT16_TO_LE(0x18);
+	tmsg->lm_resp_off = GUINT32_TO_LE(sizeof(struct type3_message) + domainlen + usernamelen + hostnamelen);
+	tmsg->nt_resp_len1 = tmsg->nt_resp_len2 = GUINT16_TO_LE(0x18);
+	tmsg->nt_resp_off = GUINT32_TO_LE(sizeof(struct type3_message) + domainlen + usernamelen + hostnamelen + 0x18);
 
-	tmsg->dom_len1 = tmsg->dom_len2 = domainlen;
-	tmsg->dom_off = sizeof(struct type3_message);
+	tmsg->dom_len1 = tmsg->dom_len2 = GUINT16_TO_LE(domainlen);
+	tmsg->dom_off = GUINT32_TO_LE(sizeof(struct type3_message));
 
-	tmsg->user_len1 = tmsg->user_len2 = usernamelen;
-	tmsg->user_off = sizeof(struct type3_message) + domainlen;
+	tmsg->user_len1 = tmsg->user_len2 = GUINT16_TO_LE(usernamelen);
+	tmsg->user_off = GUINT32_TO_LE(sizeof(struct type3_message) + domainlen);
 
-	tmsg->host_len1 = tmsg->host_len2 = hostnamelen;
-	tmsg->host_off = sizeof(struct type3_message) + domainlen + usernamelen;
+	tmsg->host_len1 = tmsg->host_len2 = GUINT16_TO_LE(hostnamelen);
+	tmsg->host_off = GUINT32_TO_LE(sizeof(struct type3_message) + domainlen + usernamelen);
 
 	if(flags) {
-		tmsg->sess_off = sizeof(struct type3_message) + domainlen + usernamelen + hostnamelen + 0x18 + 0x18;
-		tmsg->sess_len1 = tmsg->sess_len2 = 0x0010;
+		tmsg->sess_off = GUINT32_TO_LE(sizeof(struct type3_message) + domainlen + usernamelen + hostnamelen + 0x18 + 0x18);
+		tmsg->sess_len1 = tmsg->sess_len2 = GUINT16_TO_LE(0x0010);
 	}
 
-	tmsg->flags = 0x00008201;
+	tmsg->flags = GUINT32_TO_LE(0x00008201);
 
 	tmp = (char *)tmsg + sizeof(struct type3_message);
 
@@ -361,7 +360,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 
 	/* LCS Stuff */
 	if (flags) {
-		tmsg->flags = 0x409082d4;
+		tmsg->flags = GUINT32_TO_LE(0x409082d4);
 		gensesskey(sesskey, NULL);
 		memcpy(tmp, sesskey, 0x10);
 	}
