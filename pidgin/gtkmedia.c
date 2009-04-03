@@ -28,7 +28,6 @@
 #include "internal.h"
 #include "connection.h"
 #include "media.h"
-#include "media-gst.h"
 #include "mediamanager.h"
 #include "pidgin.h"
 #include "request.h"
@@ -37,6 +36,7 @@
 #include "gtkutils.h"
 
 #ifdef USE_VV
+#include "media-gst.h"
 
 #include <gst/interfaces/xoverlay.h>
 
