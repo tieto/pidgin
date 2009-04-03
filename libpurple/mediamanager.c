@@ -67,7 +67,6 @@ struct _PurpleMediaOutputWindow
 	gulong window_id;
 	GstElement *sink;
 };
-#endif
 
 struct _PurpleMediaManagerPrivate
 {
@@ -100,10 +99,12 @@ enum {
 	LAST_SIGNAL
 };
 static guint purple_media_manager_signals[LAST_SIGNAL] = {0};
+#endif
 
 GType
 purple_media_manager_get_type()
 {
+#ifdef USE_VV
 	static GType type = 0;
 
 	if (type == 0) {
@@ -122,9 +123,12 @@ purple_media_manager_get_type()
 		type = g_type_register_static(G_TYPE_OBJECT, "PurpleMediaManager", &info, 0);
 	}
 	return type;
+#else
+	return G_TYPE_NONE;
+#endif
 }
 
-
+#ifdef USE_VV
 static void
 purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 {
@@ -165,6 +169,7 @@ purple_media_manager_finalize (GObject *media)
 	}
 	parent_class->finalize(media);
 }
+#endif
 
 PurpleMediaManager *
 purple_media_manager_get()
@@ -837,7 +842,7 @@ purple_media_manager_get_ui_caps(PurpleMediaManager *manager)
 			PURPLE_MEDIA_CAPS_NONE);
 	return manager->priv->ui_caps;
 #else
-	return PURPLE_CAPS_NONE;
+	return PURPLE_MEDIA_CAPS_NONE;
 #endif
 }
 
@@ -909,6 +914,7 @@ struct _PurpleMediaElementInfo
 	GObject parent;
 };
 
+#ifdef USE_VV
 struct _PurpleMediaElementInfoPrivate
 {
 	gchar *id;
@@ -1048,6 +1054,13 @@ purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
 
 G_DEFINE_TYPE(PurpleMediaElementInfo,
 		purple_media_element_info, G_TYPE_OBJECT);
+#else
+GType
+purple_media_element_info_get_type()
+{
+	return G_TYPE_NONE;
+}
+#endif
 
 gchar *
 purple_media_element_info_get_id(PurpleMediaElementInfo *info)

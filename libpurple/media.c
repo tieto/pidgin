@@ -655,6 +655,7 @@ struct _PurpleMediaCandidate
 	GObject parent;
 };
 
+#ifdef USE_VV
 struct _PurpleMediaCandidatePrivate
 {
 	gchar *foundation;
@@ -929,6 +930,13 @@ purple_media_candidate_class_init(PurpleMediaCandidateClass *klass)
 
 G_DEFINE_TYPE(PurpleMediaCandidate,
 		purple_media_candidate, G_TYPE_OBJECT);
+#else
+GType
+purple_media_candidate_get_type()
+{
+	return G_TYPE_NONE;
+}
+#endif
 
 PurpleMediaCandidate *
 purple_media_candidate_new(const gchar *foundation, guint component_id,
@@ -948,6 +956,7 @@ purple_media_candidate_new(const gchar *foundation, guint component_id,
 static PurpleMediaCandidate *
 purple_media_candidate_copy(PurpleMediaCandidate *candidate)
 {
+#ifdef USE_VV
 	PurpleMediaCandidatePrivate *priv;
 	PurpleMediaCandidate *new_candidate;
 
@@ -967,6 +976,9 @@ purple_media_candidate_copy(PurpleMediaCandidate *candidate)
 			"password", priv->password,
 			"ttl", priv->ttl, NULL);
 	return new_candidate;
+#else
+	return NULL;
+#endif
 }
 
 #ifdef USE_VV
@@ -1240,6 +1252,7 @@ struct _PurpleMediaCodec
 	GObject parent;
 };
 
+#ifdef USE_VV
 struct _PurpleMediaCodecPrivate
 {
 	gint id;
@@ -1408,6 +1421,13 @@ purple_media_codec_class_init(PurpleMediaCodecClass *klass)
 
 G_DEFINE_TYPE(PurpleMediaCodec,
 		purple_media_codec, G_TYPE_OBJECT);
+#else
+GType
+purple_media_codec_get_type()
+{
+	return G_TYPE_NONE;
+}
+#endif
 
 guint
 purple_media_codec_get_id(PurpleMediaCodec *codec)
@@ -1458,6 +1478,7 @@ void
 purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
 		const gchar *name, const gchar *value)
 {
+#ifdef USE_VV
 	PurpleMediaCodecPrivate *priv;
 	PurpleKeyValuePair *new_param;
 
@@ -1471,12 +1492,14 @@ purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
 	new_param->value = g_strdup(value);
 	priv->optional_params = g_list_append(
 			priv->optional_params, new_param);
+#endif
 }
 
 void
 purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
 		PurpleKeyValuePair *param)
 {
+#ifdef USE_VV
 	PurpleMediaCodecPrivate *priv;
 
 	g_return_if_fail(codec != NULL && param != NULL);
@@ -1489,12 +1512,14 @@ purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
 
 	priv->optional_params =
 			g_list_remove(priv->optional_params, param);
+#endif
 }
 
 PurpleKeyValuePair *
 purple_media_codec_get_optional_parameter(PurpleMediaCodec *codec,
 		const gchar *name, const gchar *value)
 {
+#ifdef USE_VV
 	PurpleMediaCodecPrivate *priv;
 	GList *iter;
 
@@ -1510,6 +1535,7 @@ purple_media_codec_get_optional_parameter(PurpleMediaCodec *codec,
 				!g_ascii_strcasecmp(param->value, value)))
 			return param;
 	}
+#endif
 
 	return NULL;
 }
@@ -1530,6 +1556,7 @@ purple_media_codec_new(int id, const char *encoding_name,
 static PurpleMediaCodec *
 purple_media_codec_copy(PurpleMediaCodec *codec)
 {
+#ifdef USE_VV
 	PurpleMediaCodecPrivate *priv;
 	PurpleMediaCodec *new_codec;
 	GList *iter;
@@ -1551,6 +1578,9 @@ purple_media_codec_copy(PurpleMediaCodec *codec)
 	}
 
 	return new_codec;
+#else
+	return NULL;
+#endif
 }
 
 #ifdef USE_VV
