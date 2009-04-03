@@ -488,7 +488,7 @@ GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
 #endif
 
 /**
- * Gets remote candidates from the stream.
+ * Sets remote candidates from the stream.
  *
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session find the stream in.
