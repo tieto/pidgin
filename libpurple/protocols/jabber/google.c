@@ -1160,48 +1160,77 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 }
 
 static void
-jabber_google_jingle_info_cb(JabberStream *js, xmlnode *result,
-	gpointer nullus)
-{	
-	if (result) {
-		const xmlnode *query = 
-			xmlnode_get_child_with_namespace(result, "query", 
-				GOOGLE_JINGLE_INFO_NAMESPACE);
+jabber_google_jingle_info_common(JabberStream *js, const char *from,
+                                 JabberIqType type, xmlnode *query)
+{
+	const xmlnode *stun = xmlnode_get_child(query, "stun");
+	gchar *my_bare_jid;
 
-		if (query) {
-			const xmlnode *stun = xmlnode_get_child(query, "stun");
+	/*
+	 * Make sure that random people aren't sending us STUN servers. Per
+	 * http://code.google.com/apis/talk/jep_extensions/jingleinfo.html, these
+	 * stanzas are stamped from our bare JID.
+	 */
+	if (from) {
+		my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+		if (!purple_strequal(from, my_bare_jid)) {
+			purple_debug_warning("jabber", "got google:jingleinfo with invalid from (%s)\n",
+			                  from);
+			g_free(my_bare_jid);
+			return;
+		}
 
-			purple_debug_info("jabber", "got google:jingleinfo\n");
+		g_free(my_bare_jid);
+	}
 
-			if (stun) {
-				xmlnode *server = xmlnode_get_child(stun, "server");
+	if (type == JABBER_IQ_ERROR || type == JABBER_IQ_GET)
+		return;
 
-				if (server) {
-					const gchar *host = xmlnode_get_attrib(server, "host");
-					const gchar *udp = xmlnode_get_attrib(server, "udp");
+	purple_debug_info("jabber", "got google:jingleinfo\n");
 
-					if (host && udp) {
-						int port = atoi(udp);
-						/* if there, would already be an ongoing query, 
-						 cancel it */
-						if (js->stun_query)
-							purple_dnsquery_destroy(js->stun_query);
+	if (stun) {
+		xmlnode *server = xmlnode_get_child(stun, "server");
 
-						js->stun_query = purple_dnsquery_a(host, port, 
-							jabber_google_stun_lookup_cb, js);
-					}
-				}
+		if (server) {
+			const gchar *host = xmlnode_get_attrib(server, "host");
+			const gchar *udp = xmlnode_get_attrib(server, "udp");
+
+			if (host && udp) {
+				int port = atoi(udp);
+				/* if there, would already be an ongoing query, 
+				 cancel it */
+				if (js->stun_query)
+					purple_dnsquery_destroy(js->stun_query);
+
+				js->stun_query = purple_dnsquery_a(host, port, 
+					jabber_google_stun_lookup_cb, js);
 			}
-			/* should perhaps handle relays later on, or maybe wait until
-			 Google supports a common standard... */
 		}
 	}
+	/* should perhaps handle relays later on, or maybe wait until
+	 Google supports a common standard... */
+}
+
+static void
+jabber_google_jingle_info_cb(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id,
+                             xmlnode *packet, gpointer data)
+{
+	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
+			GOOGLE_JINGLE_INFO_NAMESPACE);
+
+	if (query)
+		jabber_google_jingle_info_common(js, from, type, query);
+	else
+		purple_debug_warning("jabber", "Got invalid google:jingleinfo\n");
 }
 
 void
-jabber_google_handle_jingle_info(JabberStream *js, xmlnode *packet)
+jabber_google_handle_jingle_info(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *child)
 {
-	jabber_google_jingle_info_cb(js, packet, NULL);
+	jabber_google_jingle_info_common(js, from, type, child);
 }
 
 void

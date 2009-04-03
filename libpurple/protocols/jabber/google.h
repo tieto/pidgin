@@ -53,7 +53,9 @@ char *jabber_google_format_to_html(const char *text);
 gboolean jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type);
 void jabber_google_session_parse(JabberStream *js, xmlnode *node);
 
-void jabber_google_handle_jingle_info(JabberStream *js, xmlnode *packet);
+void jabber_google_handle_jingle_info(JabberStream *js, const char *from,
+                                      JabberIqType type, const char *id,
+                                      xmlnode *child);
 void jabber_google_send_jingle_info(JabberStream *js);
 
 #endif   /* _PURPLE_GOOGLE_H_ */
