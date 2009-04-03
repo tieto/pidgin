@@ -2653,7 +2653,8 @@ PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
 	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
 
 	if (!js) {
-		purple_debug_error("jabber", "jabber_can_do_media: NULL stream\n");
+		purple_debug_info("jabber",
+				"jabber_can_do_media: NULL stream\n");
 		return FALSE;
 	}
 
