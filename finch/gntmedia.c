@@ -424,7 +424,7 @@ create_default_audio_src(PurpleMedia *media,
 	const gchar *audio_device = purple_prefs_get_string(
 			"/purple/media/audio/device");
 	double input_volume = purple_prefs_get_int(
-			"/purple/media/audio/volume/input")/10.0;
+			"/finch/media/audio/volume/input")/10.0;
 
 	bin = gst_bin_new("finchdefaultaudiosrc");
 	src = gst_element_factory_make("alsasrc", "asrc");
@@ -449,7 +449,7 @@ create_default_audio_sink(PurpleMedia *media,
 	GstElement *bin, *sink, *volume, *queue;
 	GstPad *pad, *ghost;
 	double output_volume = purple_prefs_get_int(
-			"/purple/media/audio/volume/output")/10.0;
+			"/finch/media/audio/volume/output")/10.0;
 
 	bin = gst_bin_new("pidginrecvaudiobin");
 	sink = gst_element_factory_make("alsasink", "asink");
@@ -501,6 +501,12 @@ void finch_media_manager_init(void)
 	purple_debug_info("gntmedia", "Registering media element types\n");
 	purple_media_manager_set_active_element(manager, default_audio_src);
 	purple_media_manager_set_active_element(manager, default_audio_sink);
+
+	purple_prefs_add_none("/finch/media");
+	purple_prefs_add_none("/finch/media/audio");
+	purple_prefs_add_none("/finch/media/audio/volume");
+	purple_prefs_add_int("/finch/media/audio/volume/input", 10);
+	purple_prefs_add_int("/finch/media/audio/volume/output", 10);
 #endif
 }
 
