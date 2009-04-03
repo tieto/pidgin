@@ -421,13 +421,25 @@ create_default_audio_src(PurpleMedia *media,
 {
 	GstElement *bin, *src, *volume;
 	GstPad *pad, *ghost;
-	const gchar *audio_device = purple_prefs_get_string(
-			"/purple/media/audio/device");
 	double input_volume = purple_prefs_get_int(
 			"/finch/media/audio/volume/input")/10.0;
 
+	src = gst_element_factory_make("gconfaudiosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("autoaudiosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("alsasrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("osssrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("dshowaudiosrc", NULL);
+	if (src == NULL) {
+		purple_debug_error("gntmedia", "Unable to find a suitable "
+				"element for the default audio source.\n");
+		return NULL;
+	}
+
 	bin = gst_bin_new("finchdefaultaudiosrc");
-	src = gst_element_factory_make("alsasrc", "asrc");
 	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
 	g_object_set(volume, "volume", input_volume, NULL);
 	gst_bin_add_many(GST_BIN(bin), src, volume, NULL);
@@ -435,9 +447,6 @@ create_default_audio_src(PurpleMedia *media,
 	pad = gst_element_get_pad(volume, "src");
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_element_add_pad(bin, ghost);
-
-	if (audio_device != NULL && strcmp(audio_device, ""))
-		g_object_set(G_OBJECT(src), "device", audio_device, NULL);
 
 	return bin;
 }
@@ -451,8 +460,16 @@ create_default_audio_sink(PurpleMedia *media,
 	double output_volume = purple_prefs_get_int(
 			"/finch/media/audio/volume/output")/10.0;
 
-	bin = gst_bin_new("pidginrecvaudiobin");
-	sink = gst_element_factory_make("alsasink", "asink");
+	sink = gst_element_factory_make("gconfaudiosink", NULL);
+	if (sink == NULL)
+		sink = gst_element_factory_make("autoaudiosink",NULL);
+	if (sink == NULL) {
+		purple_debug_error("gntmedia", "Unable to find a suitable "
+				"element for the default audio sink.\n");
+		return NULL;
+	}
+
+	bin = gst_bin_new("finchdefaultaudiosink");
 	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
 	g_object_set(volume, "volume", output_volume, NULL);
 	queue = gst_element_factory_make("queue", NULL);
