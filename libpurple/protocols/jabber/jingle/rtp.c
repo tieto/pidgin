@@ -438,12 +438,13 @@ jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleM
 }
 
 static void
-jingle_rtp_initiate_ack_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jingle_rtp_initiate_ack_cb(JabberStream *js, const char *from,
+                           JabberIqType type, const char *id,
+                           xmlnode *packet, gpointer data)
 {
 	JingleSession *session = data;
 
-	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error") ||
-			xmlnode_get_child(packet, "error")) {
+	if (type == JABBER_IQ_ERROR || xmlnode_get_child(packet, "error")) {
 		purple_media_end(jingle_rtp_get_media(session), NULL, NULL);
 		g_object_unref(session);
 		return;
