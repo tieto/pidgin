@@ -2730,6 +2730,24 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 }
 
 #ifdef USE_VV
+static gboolean
+feature_audio_enabled(JabberStream *js, const char *namespace)
+{
+	PurpleMediaManager *manager = purple_media_manager_get();
+	PurpleMediaCaps caps = purple_media_manager_get_ui_caps(manager);
+
+	return (caps & (PURPLE_MEDIA_CAPS_AUDIO | PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION));
+}
+
+static gboolean
+feature_video_enabled(JabberStream *js, const char *namespace)
+{
+	PurpleMediaManager *manager = purple_media_manager_get();
+	PurpleMediaCaps caps = purple_media_manager_get_ui_caps(manager);
+
+	return (caps & (PURPLE_MEDIA_CAPS_VIDEO | PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION));
+}
+
 typedef struct {
 	PurpleConnection *pc;
 	gchar *who;
@@ -3161,13 +3179,15 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("urn:xmpp:ping", 0);
 
 	/* Jingle features! */
-	jabber_add_feature("http://www.google.com/xmpp/protocol/session", 0);
-	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", 0);
 	jabber_add_feature(JINGLE, 0);
-	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, 0);
-	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, 0);
 	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, 0);
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
+#ifdef USE_VV
+	jabber_add_feature("http://www.google.com/xmpp/protocol/session", feature_audio_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", feature_audio_enabled);
+	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, feature_audio_enabled);
+	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, feature_video_enabled);
+#endif
 
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
