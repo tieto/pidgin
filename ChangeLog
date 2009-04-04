@@ -10,9 +10,15 @@ version 2.6.0 (??/??/2009):
 	* Fixed NTLM authentication on big-endian systems.
 
 	XMPP:
+	* Add voice & video support with Jingle (XEP-0166, 0167, 0176, & 0177),
+	  and voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
 	* Add support for in-band bytestreams for file transfers (XEP-0047).
 	* Add support for sending attentions (equivalent to "buzz" and "nudge")
 	  using the command /buzz (XEP-0224).
+
+	IRC:
+	* Correctly handle WHOIS for users who are joined to a large number of
+	  channels.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
