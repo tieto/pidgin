@@ -2748,6 +2748,12 @@ feature_video_enabled(JabberStream *js, const char *namespace)
 	return (caps & (PURPLE_MEDIA_CAPS_VIDEO | PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION));
 }
 
+static gboolean
+feature_ice_transmitter_present(JabberStream *js, const char *namespace)
+{
+	return purple_media_transmitter_exists("nice");
+}
+
 typedef struct {
 	PurpleConnection *pc;
 	gchar *who;
@@ -3181,12 +3187,13 @@ jabber_init_plugin(PurplePlugin *plugin)
 	/* Jingle features! */
 	jabber_add_feature(JINGLE, 0);
 	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, 0);
-	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
+
 #ifdef USE_VV
 	jabber_add_feature("http://www.google.com/xmpp/protocol/session", feature_audio_enabled);
 	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", feature_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, feature_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, feature_video_enabled);
+	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, feature_ice_transmitter_present);
 #endif
 
 	/* IPC functions */
