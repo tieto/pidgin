@@ -2730,8 +2730,8 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 }
 
 #ifdef USE_VV
-static gboolean
-feature_audio_enabled(JabberStream *js, const char *namespace)
+gboolean
+jabber_audio_enabled(JabberStream *js, const char *namespace)
 {
 	PurpleMediaManager *manager = purple_media_manager_get();
 	PurpleMediaCaps caps = purple_media_manager_get_ui_caps(manager);
@@ -2740,7 +2740,7 @@ feature_audio_enabled(JabberStream *js, const char *namespace)
 }
 
 static gboolean
-feature_video_enabled(JabberStream *js, const char *namespace)
+jabber_video_enabled(JabberStream *js, const char *namespace)
 {
 	PurpleMediaManager *manager = purple_media_manager_get();
 	PurpleMediaCaps caps = purple_media_manager_get_ui_caps(manager);
@@ -2749,7 +2749,7 @@ feature_video_enabled(JabberStream *js, const char *namespace)
 }
 
 static gboolean
-feature_ice_transmitter_present(JabberStream *js, const char *namespace)
+jabber_ice_transmitter_present(JabberStream *js, const char *namespace)
 {
 	return purple_media_transmitter_exists("nice");
 }
@@ -3189,11 +3189,11 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, 0);
 
 #ifdef USE_VV
-	jabber_add_feature("http://www.google.com/xmpp/protocol/session", feature_audio_enabled);
-	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", feature_audio_enabled);
-	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, feature_audio_enabled);
-	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, feature_video_enabled);
-	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, feature_ice_transmitter_present);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/session", jabber_audio_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", jabber_audio_enabled);
+	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, jabber_audio_enabled);
+	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
+	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, jabber_ice_transmitter_present);
 #endif
 
 	/* IPC functions */

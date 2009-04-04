@@ -552,7 +552,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	jabber_caps_cbplususerdata *userdata;
 
 	if (ext && *ext && hash)
-		purple_debug_warning("jabber", "Ignoring exts in new-style caps from %s\n",
+		purple_debug_info("jabber", "Ignoring exts in new-style caps from %s\n",
 		                     who);
 
 	/* Using this in a read-only fashion, so the cast is OK */

@@ -148,6 +148,20 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					xmlnode_set_attrib(feature, "var", feat->namespace);
 				}	
 			}
+#ifdef USE_VV
+		} else if (g_str_equal(node, CAPS0115_NODE "#" "voice-v1")) {
+			/*
+			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
+			 * where we add <c/> to the <presence/>) for the Google Talk
+			 * clients that don't actually check disco#info features.
+			 *
+			 * This specific feature is redundant but is what
+			 * node='http://mail.google.com/xmpp/client/caps', ver='1.1'
+			 * advertises as 'voice-v1'.
+			 */
+			xmlnode *feature = xmlnode_new_child(query, "feature");
+			xmlnode_set_attrib(feature, "var", "http://www.google.com/xmpp/protocol/voice/v1");
+#endif
 		} else {
 			xmlnode *error, *inf;
 				

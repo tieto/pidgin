@@ -273,6 +273,20 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	xmlnode_set_attrib(c, "hash", "sha-1");
 	xmlnode_set_attrib(c, "ver", jabber_caps_get_own_hash(js));
 
+#ifdef USE_VV
+	/*
+	 * MASSIVE HUGE DISGUSTING HACK
+	 * This is a huge hack. As far as I can tell, Google Talk's gmail client
+	 * doesn't bother to check the actual features we advertise; they
+	 * just assume that if we advertise a 'voice-v1' ext (ignoring that
+	 * these are to be assigned no semantic value). We need to advertise
+	 * this for the gmail web interface chat client to allow the mail user
+	 * to start a voice chat with us. Boo.
+	 */
+	if (jabber_audio_enabled(js, NULL /* unused */))
+		xmlnode_set_attrib(c, "ext", "voice-v1");
+#endif
+
 	return presence;
 }
 
