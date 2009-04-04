@@ -9,6 +9,8 @@ JABBERSOURCES = auth.c \
 			  auth.h \
 			  buddy.c \
 			  buddy.h \
+			  bosh.c \
+			  bosh.h \
 			  chat.c \
 			  chat.h \
 			  data.c \
