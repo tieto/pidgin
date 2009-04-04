@@ -3169,7 +3169,16 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
 	jabber_add_feature("http://jabber.org/protocol/xhtml-im", 0);
 	jabber_add_feature("urn:xmpp:ping", 0);
-	
+
+	/* Jingle features! */
+	jabber_add_feature("http://www.google.com/xmpp/protocol/session", 0);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", 0);
+	jabber_add_feature(JINGLE, 0);
+	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, 0);
+	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, 0);
+	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, 0);
+	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
+
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
 							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,

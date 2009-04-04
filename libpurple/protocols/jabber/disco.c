@@ -148,16 +148,6 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					xmlnode_set_attrib(feature, "var", feat->namespace);
 				}	
 			}
-#ifdef USE_VV
-		} else if (node && !strcmp(node, CAPS0115_NODE "#voice-v1")) {
-			SUPPORT_FEATURE("http://www.google.com/xmpp/protocol/session");
-			SUPPORT_FEATURE("http://www.google.com/xmpp/protocol/voice/v1");
-			SUPPORT_FEATURE(JINGLE);
-			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_AUDIO);
-			SUPPORT_FEATURE(JINGLE_APP_RTP_SUPPORT_VIDEO);
-			SUPPORT_FEATURE(JINGLE_TRANSPORT_RAWUDP);
-			SUPPORT_FEATURE(JINGLE_TRANSPORT_ICEUDP);
-#endif
 		} else {
 			xmlnode *error, *inf;
 				
