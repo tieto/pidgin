@@ -2691,11 +2691,11 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 		char *msg;
 
 		if(!jb) {
-			msg = g_strdup_printf(_("Unable to initiate media with %s, invalid JID"), who);
+			msg = g_strdup_printf(_("Unable to initiate media with %s: invalid JID"), who);
 		} else if(jb->subscription & JABBER_SUB_TO) {
-			msg = g_strdup_printf(_("Unable to initiate media with %s, user is not online"), who);
+			msg = g_strdup_printf(_("Unable to initiate media with %s: user is not online"), who);
 		} else {
-			msg = g_strdup_printf(_("Unable to initiate media with %s, not subscribed to user presence"), who);
+			msg = g_strdup_printf(_("Unable to initiate media with %s: not subscribed to user presence"), who);
 		}
 
 		purple_notify_error(js->gc, _("Media Initiation Failed"),
@@ -2769,7 +2769,7 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 			return result;
 		}
 
-		msg = g_strdup_printf(_("Please select the resource of %s to which you would like to start a media session with."), who);
+		msg = g_strdup_printf(_("Please select the resource of %s with which you would like to start a media session."), who);
 		fields = purple_request_fields_new();
 		group =	purple_request_field_group_new(NULL);
 		request = g_new0(JabberMediaRequest, 1);
