@@ -1015,16 +1015,15 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 }
 
 static gboolean
-jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
+jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
+                           xmlnode *open)
 {
-	const gchar *who = xmlnode_get_attrib(packet, "from");
-	xmlnode *open = xmlnode_get_child(packet, "open");
 	const gchar *sid = xmlnode_get_attrib(open, "sid");
 	PurpleXfer *xfer = jabber_si_xfer_find(js, sid, who);
 	if (xfer) {
 		JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 		JabberIBBSession *sess =
-			jabber_ibb_session_create_from_xmlnode(js, packet, xfer);
+			jabber_ibb_session_create_from_xmlnode(js, who, id, open, xfer);
 		const char *filename;
 
 		jabber_si_bytestreams_ibb_timeout_remove(jsx);

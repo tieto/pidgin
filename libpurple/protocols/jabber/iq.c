@@ -428,6 +428,10 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("ping", "urn:xmpp:ping", jabber_ping_parse);
 	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
 
+	jabber_iq_register_handler("data", XEP_0047_NAMESPACE, jabber_ibb_parse);
+	jabber_iq_register_handler("close", XEP_0047_NAMESPACE, jabber_ibb_parse);
+	jabber_iq_register_handler("open", XEP_0047_NAMESPACE, jabber_ibb_parse);
+
 	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
 	jabber_iq_register_handler("query", GOOGLE_JINGLE_INFO_NAMESPACE,
 		jabber_google_handle_jingle_info);
