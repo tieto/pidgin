@@ -79,7 +79,10 @@ struct _PurpleHTTPConnection {
 	PurpleBOSHConnection *bosh;
 	PurpleSslConnection *psc;
 	int fd;
-	int ie_handle;
+	guint readh;
+	guint writeh;
+
+	PurpleCircBuffer *write_buffer;
 
 	gboolean ready;
 	int requests; /* number of outstanding HTTP requests */
@@ -92,7 +95,8 @@ struct _PurpleHTTPConnection {
 };
 
 static void http_connection_connect(PurpleHTTPConnection *conn);
-static void http_connection_send_request(PurpleHTTPConnection *conn, const GString *req);
+static void http_connection_send_request(PurpleHTTPConnection *conn,
+                                         const GString *req);
 
 void jabber_bosh_init(void)
 {
@@ -127,6 +131,8 @@ jabber_bosh_http_connection_init(PurpleBOSHConnection *bosh)
 	conn->fd = -1;
 	conn->ready = FALSE;
 
+	conn->write_buffer = purple_circ_buffer_new(0 /* default grow size */);
+
 	return conn;
 }
 
@@ -136,8 +142,12 @@ jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
 	if (conn->buf)
 		g_string_free(conn->buf, TRUE);
 
-	if (conn->ie_handle)
-		purple_input_remove(conn->ie_handle);
+	if (conn->write_buffer)
+		purple_circ_buffer_destroy(conn->write_buffer);
+	if (conn->readh)
+		purple_input_remove(conn->readh);
+	if (conn->writeh)
+		purple_input_remove(conn->writeh);
 	if (conn->psc)
 		purple_ssl_close(conn->psc);
 	if (conn->fd >= 0)
@@ -579,9 +589,14 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		conn->fd = -1;
 	}
 
-	if (conn->ie_handle) {
-		purple_input_remove(conn->ie_handle);
-		conn->ie_handle = 0;
+	if (conn->readh) {
+		purple_input_remove(conn->readh);
+		conn->readh = 0;
+	}
+
+	if (conn->writeh) {
+		purple_input_remove(conn->writeh);
+		conn->writeh = 0;
 	}
 
 	if (conn->bosh->pipelining)
@@ -696,7 +711,7 @@ http_connection_read(PurpleHTTPConnection *conn)
 
 		/*
 		 * If the socket is closed, the processing really needs to know about
-		 * it. Handle that now (it will be handled again post-processing).
+		 * it. Handle that now.
 		 */
 		http_connection_disconnected(conn);
 
@@ -762,7 +777,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error)
 	}
 
 	conn->fd = source;
-	conn->ie_handle = purple_input_add(conn->fd, PURPLE_INPUT_READ,
+	conn->readh = purple_input_add(conn->fd, PURPLE_INPUT_READ,
 	        http_connection_read_cb, conn);
 	connection_common_established_cb(conn);
 }
@@ -797,13 +812,59 @@ static void http_connection_connect(PurpleHTTPConnection *conn)
 	}
 }
 
+static int
+http_connection_do_send(PurpleHTTPConnection *conn, const char *data, int len)
+{
+	int ret;
+
+	if (conn->psc)
+		ret = purple_ssl_write(conn->psc, data, len);
+	else
+		ret = write(conn->fd, data, len);
+
+	return ret;
+}
+
+static void
+http_connection_send_cb(gpointer data, gint source, PurpleInputCondition cond)
+{
+	PurpleHTTPConnection *conn = data;
+	int ret;
+	int writelen = purple_circ_buffer_get_max_read(conn->write_buffer);
+
+	if (writelen == 0) {
+		purple_input_remove(conn->writeh);
+		conn->writeh = 0;
+		return;
+	}
+
+	ret = http_connection_do_send(conn, conn->write_buffer->outptr, writelen);
+
+	if (ret < 0 && errno == EAGAIN)
+		return;
+	else if (ret <= 0) {
+		/*
+		 * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+		 * buffer that stores what is "being sent" until the
+		 * PurpleHTTPConnection reports it is fully sent.
+		 */
+		purple_connection_error_reason(conn->bosh->js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Write error"));
+		return;
+	}
+
+	purple_circ_buffer_mark_read(conn->write_buffer, ret);
+}
+
 static void
 http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 {
-	char *packet;
+	char *data;
 	int ret;
+	size_t len;
 
-	packet = g_strdup_printf("POST %s HTTP/1.1\r\n"
+	data = g_strdup_printf("POST %s HTTP/1.1\r\n"
 	                       "Host: %s\r\n"
 	                       "User-Agent: %s\r\n"
 	                       "Content-Encoding: text/xml; charset=utf-8\r\n"
@@ -812,25 +873,35 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 	                       conn->bosh->path, conn->bosh->host, bosh_useragent,
 	                       req->len, req->str);
 
-	/* TODO: Better error handling, circbuffer or possible integration with
-	 * low-level code in jabber.c */
-	if (conn->psc)
-		ret = purple_ssl_write(conn->psc, packet, strlen(packet));
-	else
-		ret = write(conn->fd, packet, strlen(packet));
+	len = strlen(data);
 
 	++conn->requests;
 	++conn->bosh->requests;
-	g_free(packet);
 
-	if (ret < 0 && errno == EAGAIN)
-		purple_debug_error("jabber", "BOSH write would have blocked\n");
+	if (conn->writeh == 0)
+		ret = http_connection_do_send(conn, data, len);
+	else {
+		ret = -1;
+		errno = EAGAIN;
+	}
 
-	if (ret <= 0) {
+	if (ret < 0 && errno != EAGAIN) {
+		/*
+		 * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+		 * buffer that stores what is "being sent" until the
+		 * PurpleHTTPConnection reports it is fully sent.
+		 */
 		purple_connection_error_reason(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Write error"));
 		return;
+	} else if (ret < len) {
+		if (ret < 0)
+			ret = 0;
+		if (conn->writeh == 0)
+			conn->writeh = purple_input_add(conn->psc ? conn->psc->fd : conn->fd,
+					PURPLE_INPUT_WRITE, http_connection_send_cb, conn);
+		purple_circ_buffer_append(conn->write_buffer, data + ret, len - ret);
 	}
 }
 
