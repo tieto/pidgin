@@ -94,7 +94,7 @@ struct _PurpleHTTPConnection {
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node);
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketType, xmlnode *node);
+static void jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type, const char *data);
 
 static void http_connection_connect(PurpleHTTPConnection *conn);
 static void http_connection_send_request(PurpleHTTPConnection *conn, const GString *req);
@@ -225,11 +225,11 @@ gboolean jabber_bosh_connection_is_ssl(PurpleBOSHConnection *conn)
 
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 {
-	jabber_bosh_connection_send_native(conn, PACKET_TERMINATE, NULL);
+	jabber_bosh_connection_send(conn, PACKET_TERMINATE, NULL);
 }
 
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
-	jabber_bosh_connection_send_native(conn, PACKET_STREAM_RESTART, NULL);
+	jabber_bosh_connection_send(conn, PACKET_STREAM_RESTART, NULL);
 }
 
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -252,7 +252,7 @@ bosh_inactivity_cb(gpointer data)
 {
 	PurpleBOSHConnection *bosh = data;
 
-	jabber_bosh_connection_send(bosh, NULL);
+	jabber_bosh_connection_send(bosh, PACKET_NORMAL, NULL);
 	return TRUE;
 }
 
@@ -452,36 +452,18 @@ http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 	}
 }
 
-void jabber_bosh_connection_send(PurpleBOSHConnection *conn, xmlnode *node) {
-	jabber_bosh_connection_send_native(conn, PACKET_NORMAL, node);
-}
-
 void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
-        const char *data, int len)
+                                     const char *data)
 {
-	xmlnode *node = xmlnode_from_str(data, len);
-	if (node) {
-		jabber_bosh_connection_send_native(conn, PACKET_NORMAL, node);
-		xmlnode_free(node);
-	} else {
-		/*
-		 * This best emulates what a normal XMPP server would do
-		 * if you send bad XML.
-		 */
-		purple_connection_error_reason(conn->js->gc,
-		        PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		        _("Cannot send malformed XML"));
-	}
+	jabber_bosh_connection_send(conn, PACKET_NORMAL, data);
 }
 
 static void
-jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
-                                   xmlnode *node)
+jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
+                            const char *data)
 {
 	PurpleHTTPConnection *chosen;
 	GString *packet = NULL;
-	char *buf = NULL;
-	int len;
 
 	chosen = find_available_http_connection(conn);
 
@@ -497,9 +479,6 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 					"things may happen.\n");
 	}
 
-	if (node)
-		buf = xmlnode_to_str(node, &len);
-
 	if (type == PACKET_NORMAL && (!chosen ||
 	        (conn->max_requests > 0 && conn->requests == conn->max_requests))) {
 		/*
@@ -507,9 +486,9 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 		 * connection ready (likely, we're currently opening a second connection and
 		 * will send these packets when connected).
 		 */
-		if (buf) {
-			purple_circ_buffer_append(conn->pending, buf, len); 
-			g_free(buf);
+		if (data) {
+			int len = data ? strlen(data) : 0;
+			purple_circ_buffer_append(conn->pending, data, len); 
 		}
 		return;
 	}
@@ -541,12 +520,10 @@ jabber_bosh_connection_send_native(PurpleBOSHConnection *conn, PurpleBOSHPacketT
 			purple_circ_buffer_mark_read(conn->pending, read_amt);
 		}
 
-		if (buf)
-			packet = g_string_append_len(packet, buf, len);
+		if (data)
+			packet = g_string_append(packet, data);
 		packet = g_string_append(packet, "</body>");
 	}
-
-	g_free(buf);
 
 	http_connection_send_request(chosen, packet);
 }
@@ -568,7 +545,7 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 		purple_debug_info("jabber", "BOSH session already exists. Trying to reuse it.\n");
 		if (conn->bosh->pending->bufused > 0) {
 			/* Send the pending data */
-			jabber_bosh_connection_send_native(conn->bosh, PACKET_NORMAL, NULL);
+			jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
 		}
 #if 0
 		conn->bosh->receive_cb = jabber_bosh_connection_received;
@@ -581,7 +558,7 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 
 void jabber_bosh_connection_refresh(PurpleBOSHConnection *conn)
 {
-	jabber_bosh_connection_send(conn, NULL);
+	jabber_bosh_connection_send(conn, PACKET_NORMAL, NULL);
 }
 
 static void http_connection_disconnected(PurpleHTTPConnection *conn)
@@ -670,7 +647,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	if (conn->bosh->ready &&
 			(conn->bosh->requests == 0 || conn->bosh->pending->bufused > 0)) {
-		jabber_bosh_connection_send(conn->bosh, NULL);
+		jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
 		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
 	}
 

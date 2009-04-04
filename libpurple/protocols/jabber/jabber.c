@@ -428,7 +428,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		len = strlen(data);
 
 	if (js->use_bosh)
-		jabber_bosh_connection_send_raw(js->bosh, data, len);
+		jabber_bosh_connection_send_raw(js->bosh, data);
 	else
 		do_jabber_send_raw(js, data, len);
 }
@@ -451,13 +451,9 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	if(NULL == packet)
 		return;
 
-	if (js->use_bosh)
-		jabber_bosh_connection_send(js->bosh, packet);
-	else {
-		txt = xmlnode_to_str(packet, &len);
-		jabber_send_raw(js, txt, len);
-		g_free(txt);
-	}
+	txt = xmlnode_to_str(packet, &len);
+	jabber_send_raw(js, txt, len);
+	g_free(txt);
 }
 
 static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
