@@ -302,10 +302,6 @@ init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(XEP_0047_NAMESPACE, NULL);
 
 	jabber_pep_register_handler(AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
-
-#ifdef USE_VV
-	jabber_add_feature("http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
-#endif
 }
 
 
