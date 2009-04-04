@@ -31,7 +31,8 @@
 #define GOOGLE_JINGLE_INFO_NAMESPACE "google:jingleinfo"
 
 void jabber_gmail_init(JabberStream *js);
-void jabber_gmail_poke(JabberStream *js, xmlnode *node);
+void jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
+                       const char *id, xmlnode *new_mail);
 
 void jabber_google_roster_init(JabberStream *js);
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item);
@@ -50,9 +51,11 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who);
 char *jabber_google_format_to_html(const char *text);
 
 gboolean jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type);
-void jabber_google_session_parse(JabberStream *js, xmlnode *node);
+void jabber_google_session_parse(JabberStream *js, const char *from, JabberIqType type, const char *iq, xmlnode *session);
 
-void jabber_google_handle_jingle_info(JabberStream *js, xmlnode *packet);
+void jabber_google_handle_jingle_info(JabberStream *js, const char *from,
+                                      JabberIqType type, const char *id,
+                                      xmlnode *child);
 void jabber_google_send_jingle_info(JabberStream *js);
 
 #endif   /* _PURPLE_GOOGLE_H_ */

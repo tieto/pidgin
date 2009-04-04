@@ -26,7 +26,8 @@
 
 void jabber_roster_request(JabberStream *js);
 
-void jabber_roster_parse(JabberStream *js, xmlnode *packet);
+void jabber_roster_parse(JabberStream *js, const char *from,
+                         JabberIqType type, const char *id, xmlnode *query);
 
 void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group);

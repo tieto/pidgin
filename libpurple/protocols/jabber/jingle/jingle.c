@@ -359,28 +359,21 @@ jingle_get_action_type(const gchar *action)
 }
 
 void
-jingle_parse(JabberStream *js, xmlnode *packet)
+jingle_parse(JabberStream *js, const char *from, JabberIqType type,
+             const char *id, xmlnode *jingle)
 {
-	const gchar *type = xmlnode_get_attrib(packet, "type");
-	xmlnode *jingle;
 	const gchar *action;
 	const gchar *sid;
 	JingleActionType action_type;
 	JingleSession *session;
 
-	if (!type || strcmp(type, "set")) {
-		/* send iq error here */
-		return;
-	}
-
-	/* is this a Jingle package? */
-	if (!(jingle = xmlnode_get_child(packet, "jingle"))) {
-		/* send iq error here */
+	if (type != JABBER_IQ_SET) {
+		/* TODO: send iq error here */
 		return;
 	}
 
 	if (!(action = xmlnode_get_attrib(jingle, "action"))) {
-		/* send iq error here */
+		/* TODO: send iq error here */
 		return;
 	}
 
@@ -409,9 +402,10 @@ jingle_parse(JabberStream *js, xmlnode *packet)
 			/* send iq error */
 			return;
 		} else {
-			session = jingle_session_create(js, sid,
-					xmlnode_get_attrib(packet, "to"),
-					xmlnode_get_attrib(packet, "from"), FALSE);
+			char *own_jid = g_strdup_printf("%s@%s/%s", js->user->node,
+					js->user->domain, js->user->resource);
+			session = jingle_session_create(js, sid, own_jid, from, FALSE);
+			g_free(own_jid);
 		}
 	}
 
