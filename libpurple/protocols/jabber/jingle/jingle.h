@@ -69,7 +69,8 @@ JingleActionType jingle_get_action_type(const gchar *action);
 
 GType jingle_get_type(const gchar *type);
 
-void jingle_parse(JabberStream *js, xmlnode *packet);
+void jingle_parse(JabberStream *js, const char *from, JabberIqType type,
+                  const char *id, xmlnode *child);
 
 void jingle_terminate_sessions(JabberStream *js);
 

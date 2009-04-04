@@ -26,7 +26,9 @@
 
 /* Implementation of XEP-0050 */
 
-void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data);
+void jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
+                                  JabberIqType type, const char *id,
+                                  xmlnode *packet, gpointer data);
 
 void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd);
 
