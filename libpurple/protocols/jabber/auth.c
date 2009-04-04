@@ -571,7 +571,7 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *type = xmlnode_get_attrib(packet, "type");
 
 	if(type && !strcmp(type, "result")) {
-		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		jabber_disco_items_server(js);
 	} else {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
