@@ -383,7 +383,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		}
 
 		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s%s%s\n",
-				js->gsc ? " (ssl)" : "", text ? text : data,
+				jabber_stream_is_ssl(js) ? " (ssl)" : "", text ? text : data,
 				last_part ? "password removed" : "",
 				last_part ? last_part : "");
 
