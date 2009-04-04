@@ -244,4 +244,5 @@ jabber_data_uninit(void)
 	g_hash_table_destroy(local_data_by_alt);
 	g_hash_table_destroy(local_data_by_cid);
 	g_hash_table_destroy(remote_data_by_cid);
+	local_data_by_alt = local_data_by_cid = remote_data_by_cid = NULL;
 }

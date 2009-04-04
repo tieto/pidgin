@@ -70,7 +70,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	jabber_presence_send,			/* set_status */
+	jabber_set_status,				/* set_status */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */
@@ -151,9 +151,18 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 
 	purple_signal_unregister(plugin, "jabber-sending-text");
 
+	/* reverse order of init_plugin */
+	jabber_bosh_uninit();
 	jabber_data_uninit();
 	jabber_si_uninit();
 	jabber_ibb_uninit();
+	/* PEP things should be uninit via jabber_pep_uninit, not here */
+	jabber_pep_uninit();
+	jabber_caps_uninit();
+	jabber_iq_uninit();
+
+	/* Stay on target...stay on target... Almost there... */
+	jabber_uninit_plugin();
 
 	return TRUE;
 }
@@ -207,24 +216,19 @@ init_plugin(PurplePlugin *plugin)
 #endif
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
-
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), NULL, '@');
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-
 	split = purple_account_user_split_new(_("Resource"), NULL, '/');
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-
 	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-
 	option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-
 	option = purple_account_option_bool_new(
 						_("Allow plaintext auth over unencrypted streams"),
 						"auth_plain_in_clear", FALSE);
@@ -277,29 +281,30 @@ init_plugin(PurplePlugin *plugin)
 #endif
 	jabber_register_commands();
 
+	/* reverse order of unload_plugin */
 	jabber_iq_init();
-	jabber_pep_init();
-
-	jabber_tune_init();
 	jabber_caps_init();
-
+	/* PEP things should be init via jabber_pep_init, not here */
+	jabber_pep_init();
 	jabber_data_init();
+	jabber_bosh_init();
 
+	#warning implement adding and retrieving own features via IPC API
 
 	jabber_ibb_init();
 	jabber_si_init();
 
-	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("buzz", XEP_0224_NAMESPACE,
+	jabber_add_feature(AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature(AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature("http://www.xmpp.org/extensions/xep-0224.html#ns",
 					   jabber_buzz_isenabled);
-	jabber_add_feature("bob", XEP_0231_NAMESPACE,
-					   jabber_custom_smileys_isenabled);
-	jabber_add_feature("ibb", XEP_0047_NAMESPACE, NULL);
+	jabber_add_feature(XEP_0231_NAMESPACE, jabber_custom_smileys_isenabled);
+	jabber_add_feature(XEP_0047_NAMESPACE, NULL);
 
-	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+	jabber_pep_register_handler(AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+
 #ifdef USE_VV
-	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
+	jabber_add_feature("http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
 #endif
 }
 
