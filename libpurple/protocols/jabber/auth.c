@@ -30,9 +30,10 @@
 #include "util.h"
 #include "xmlnode.h"
 
-#include "jutil.h"
 #include "auth.h"
+#include "disco.h"
 #include "jabber.h"
+#include "jutil.h"
 #include "iq.h"
 #include "notify.h"
 
