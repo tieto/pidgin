@@ -834,7 +834,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 	JabberBuddyResource *jbr;
 	const gchar *transport_type;
 	
-	gchar *jid = NULL, *me = NULL, *sid = NULL;
+	gchar *resource = NULL, *me = NULL, *sid = NULL;
 
 	/* construct JID to send to */
 	jb = jabber_buddy_find(js, who, FALSE);
@@ -842,7 +842,11 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		purple_debug_error("jingle-rtp", "Could not find Jabber buddy\n");
 		return FALSE;
 	}
-	jbr = jabber_buddy_find_resource(jb, NULL);
+
+	resource = jabber_get_resource(who);
+	jbr = jabber_buddy_find_resource(jb, resource);
+	g_free(resource);
+
 	if (!jbr) {
 		purple_debug_error("jingle-rtp", "Could not find buddy's resource\n");
 	}
@@ -857,17 +861,11 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		return FALSE;
 	}
 
-	if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
-		jid = g_strdup_printf("%s/%s", who, jbr->name);
-	} else {
-		jid = g_strdup(who);
-	}
-	
 	/* set ourselves as initiator */
 	me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, js->user->resource);
 
 	sid = jabber_get_next_id(js);
-	session = jingle_session_create(js, sid, me, jid, TRUE);
+	session = jingle_session_create(js, sid, me, who, TRUE);
 	g_free(sid);
 
 
@@ -888,7 +886,6 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_rtp_init_media(content);
 	}
 
-	g_free(jid);
 	g_free(me);
 
 	if (jingle_rtp_get_media(session) == NULL) {
