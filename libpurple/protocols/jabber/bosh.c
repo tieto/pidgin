@@ -91,11 +91,6 @@ struct _PurpleHTTPConnection {
 
 };
 
-static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn);
-static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node);
-static void jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type, const char *data);
-
 static void http_connection_connect(PurpleHTTPConnection *conn);
 static void http_connection_send_request(PurpleHTTPConnection *conn, const GString *req);
 
@@ -221,6 +216,107 @@ jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 gboolean jabber_bosh_connection_is_ssl(PurpleBOSHConnection *conn)
 {
 	return conn->ssl;
+}
+
+static PurpleHTTPConnection *
+find_available_http_connection(PurpleBOSHConnection *conn)
+{
+	int i;
+
+	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
+	 * one TCP connection! */
+	if (conn->pipelining)
+		return conn->connections[0];
+
+	/* First loop, look for a connection that's ready */
+	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+		if (conn->connections[i] && conn->connections[i]->ready &&
+		                            conn->connections[i]->requests == 0)
+			return conn->connections[i];
+	}
+
+	/* Second loop, look for one that's NULL and create a new connection */
+	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+		if (!conn->connections[i]) {
+			conn->connections[i] = jabber_bosh_http_connection_init(conn);
+
+			http_connection_connect(conn->connections[i]);
+			return NULL;
+		}
+	}
+
+	/* None available. */
+	return NULL;
+}
+
+static void
+jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
+                            const char *data)
+{
+	PurpleHTTPConnection *chosen;
+	GString *packet = NULL;
+
+	chosen = find_available_http_connection(conn);
+
+	if (type != PACKET_NORMAL && !chosen) {
+		/*
+		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the first
+		 * connection.
+		 */
+		chosen = conn->connections[0];
+	
+		if (!chosen->ready)
+			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
+					"things may happen.\n");
+	}
+
+	if (type == PACKET_NORMAL && (!chosen ||
+	        (conn->max_requests > 0 && conn->requests == conn->max_requests))) {
+		/*
+		 * For normal data, send up to max_requests requests at a time or there is no
+		 * connection ready (likely, we're currently opening a second connection and
+		 * will send these packets when connected).
+		 */
+		if (data) {
+			int len = data ? strlen(data) : 0;
+			purple_circ_buffer_append(conn->pending, data, len); 
+		}
+		return;
+	}
+
+	packet = g_string_new("");
+
+	g_string_printf(packet, "<body "
+	                "rid='%" G_GUINT64_FORMAT "' "
+	                "sid='%s' "
+	                "to='%s' "
+	                "xml:lang='en' "
+	                "xmlns='http://jabber.org/protocol/httpbind' "
+	                "xmlns:xmpp='urn:xmpp:xbosh'",
+	                ++conn->rid,
+	                conn->sid,
+	                conn->js->user->domain);
+
+	if (type == PACKET_STREAM_RESTART)
+		packet = g_string_append(packet, " xmpp:restart='true'/>");
+	else {
+		gsize read_amt;
+		if (type == PACKET_TERMINATE)
+			packet = g_string_append(packet, " type='terminate'");
+
+		packet = g_string_append_c(packet, '>');
+
+		while ((read_amt = purple_circ_buffer_get_max_read(conn->pending)) > 0) {
+			packet = g_string_append_len(packet, conn->pending->outptr, read_amt);
+			purple_circ_buffer_mark_read(conn->pending, read_amt);
+		}
+
+		if (data)
+			packet = g_string_append(packet, data);
+		packet = g_string_append(packet, "</body>");
+	}
+
+	http_connection_send_request(chosen, packet);
 }
 
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
@@ -374,37 +470,6 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	jabber_stream_features_parse(conn->js, packet);		
 }
 
-static PurpleHTTPConnection *
-find_available_http_connection(PurpleBOSHConnection *conn)
-{
-	int i;
-
-	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
-	 * one TCP connection! */
-	if (conn->pipelining)
-		return conn->connections[0];
-
-	/* First loop, look for a connection that's ready */
-	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
-		if (conn->connections[i] && conn->connections[i]->ready &&
-		                            conn->connections[i]->requests == 0)
-			return conn->connections[i];
-	}
-
-	/* Second loop, look for one that's NULL and create a new connection */
-	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
-		if (!conn->connections[i]) {
-			conn->connections[i] = jabber_bosh_http_connection_init(conn);
-
-			http_connection_connect(conn->connections[i]);
-			return NULL;
-		}
-	}
-
-	/* None available. */
-	return NULL;
-}
-
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	GString *buf = g_string_new("");
 
@@ -457,76 +522,6 @@ void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
                                      const char *data)
 {
 	jabber_bosh_connection_send(conn, PACKET_NORMAL, data);
-}
-
-static void
-jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
-                            const char *data)
-{
-	PurpleHTTPConnection *chosen;
-	GString *packet = NULL;
-
-	chosen = find_available_http_connection(conn);
-
-	if (type != PACKET_NORMAL && !chosen) {
-		/*
-		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the first
-		 * connection.
-		 */
-		chosen = conn->connections[0];
-	
-		if (!chosen->ready)
-			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
-					"things may happen.\n");
-	}
-
-	if (type == PACKET_NORMAL && (!chosen ||
-	        (conn->max_requests > 0 && conn->requests == conn->max_requests))) {
-		/*
-		 * For normal data, send up to max_requests requests at a time or there is no
-		 * connection ready (likely, we're currently opening a second connection and
-		 * will send these packets when connected).
-		 */
-		if (data) {
-			int len = data ? strlen(data) : 0;
-			purple_circ_buffer_append(conn->pending, data, len); 
-		}
-		return;
-	}
-
-	packet = g_string_new("");
-
-	g_string_printf(packet, "<body "
-	                "rid='%" G_GUINT64_FORMAT "' "
-	                "sid='%s' "
-	                "to='%s' "
-	                "xml:lang='en' "
-	                "xmlns='http://jabber.org/protocol/httpbind' "
-	                "xmlns:xmpp='urn:xmpp:xbosh'",
-	                ++conn->rid,
-	                conn->sid,
-	                conn->js->user->domain);
-
-	if (type == PACKET_STREAM_RESTART)
-		packet = g_string_append(packet, " xmpp:restart='true'/>");
-	else {
-		gsize read_amt;
-		if (type == PACKET_TERMINATE)
-			packet = g_string_append(packet, " type='terminate'");
-
-		packet = g_string_append_c(packet, '>');
-
-		while ((read_amt = purple_circ_buffer_get_max_read(conn->pending)) > 0) {
-			packet = g_string_append_len(packet, conn->pending->outptr, read_amt);
-			purple_circ_buffer_mark_read(conn->pending, read_amt);
-		}
-
-		if (data)
-			packet = g_string_append(packet, data);
-		packet = g_string_append(packet, "</body>");
-	}
-
-	http_connection_send_request(chosen, packet);
 }
 
 static void
