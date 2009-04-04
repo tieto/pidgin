@@ -1039,6 +1039,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				username = g_markup_escape_text(im->from, -1);
 			
 			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
+			purple_conversation_attention(c, username, 0, PURPLE_MESSAGE_RECV,
+				time(NULL));
 			g_free(username);
 			g_free(m);
 			g_free(im);
@@ -5109,6 +5111,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 		return PURPLE_CMD_RET_FAILED;
 
 	purple_prpl_send_attention(account->gc, c->name, YAHOO_BUZZ);
+	purple_conversation_attention(c, c->name, 0, PURPLE_MESSAGE_SEND, time(NULL));
 
 	return PURPLE_CMD_RET_OK;
 }

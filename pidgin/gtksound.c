@@ -72,7 +72,9 @@ static const struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, "pounce_default", "alert.wav"},
-	{N_("Someone says your username in chat"), "nick_said", "alert.wav"}
+	{N_("Someone says your username in chat"), "nick_said", "alert.wav"},
+	{N_("Attention received"), "got_attention", "alert.wav"},
+	{N_("Attention sent"), "sent_attention", "alert.wav"}
 };
 
 static gboolean
@@ -217,6 +219,20 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 		play_conv_event(conv, event);
 }
 
+static void
+sent_attention_cb(PurpleAccount *account, const char *who, 
+	PurpleConversation *conv, guint type, PurpleSoundEventID event)
+{
+	play_conv_event(conv, event);
+}
+
+static void
+got_attention_cb(PurpleAccount *account, const char *who, 
+	PurpleConversation *conv, guint type, PurpleSoundEventID event)
+{
+	play_conv_event(conv, event);
+}
+
 /*
  * We mute sounds for the 10 seconds after you log in so that
  * you don't get flooded with sounds when the blist shows all
@@ -297,6 +313,10 @@ pidgin_sound_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/pounce_default", TRUE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/pounce_default", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/sound/theme", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/sent_attention", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/sent_attention", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/got_attention", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/got_attention", "");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/command", "");
@@ -343,6 +363,12 @@ pidgin_sound_init(void)
 	purple_signal_connect(conv_handle, "received-chat-msg",
 						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_received_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_SAY));
+	purple_signal_connect(conv_handle, "sent-attention", gtk_sound_handle,
+						PURPLE_CALLBACK(sent_attention_cb),
+						  GINT_TO_POINTER(PURPLE_SOUND_SEND_ATTENTION));
+	purple_signal_connect(conv_handle, "got-attention", gtk_sound_handle,
+						PURPLE_CALLBACK(got_attention_cb),
+						  GINT_TO_POINTER(PURPLE_SOUND_GOT_ATTENTION));
 }
 
 static void
