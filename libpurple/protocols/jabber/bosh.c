@@ -176,8 +176,15 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	g_free(passwd);
 
 	conn->js = js;
-	/* FIXME: This doesn't seem very random */
-	conn->rid = rand() % 100000 + 1728679472;
+
+	/*
+	 * Random 64-bit integer masked off by 2^52 - 1.
+	 *
+	 * This should produce a random integer in the range [0, 2^52). It's
+	 * unlikely we'll send enough packets in one session to overflow the rid.
+	 */
+	conn->rid = ((guint64)g_random_int() << 32) | g_random_int();
+	conn->rid &= 0xFFFFFFFFFFFFF;
 
 	conn->pending = purple_circ_buffer_new(0 /* default grow size */);
 
