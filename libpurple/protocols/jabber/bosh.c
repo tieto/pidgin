@@ -438,10 +438,11 @@ http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 
 	if (conn->receive_cb) {
 		xmlnode *node = xmlnode_from_str(data, len);
+
+		purple_debug_info("jabber", "RecvBOSH %s(%d): %s\n",
+		                  conn->ssl ? "(ssl)" : "", len, data);
+
 		if (node) {
-			char *txt = xmlnode_to_formatted_str(node, NULL);
-			printf("\nhttp_received_cb\n%s\n", txt);
-			g_free(txt);
 			conn->receive_cb(conn, node);
 			xmlnode_free(node);
 		} else {
