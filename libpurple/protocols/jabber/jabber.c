@@ -593,12 +593,6 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 }
 
-static void
-jabber_bosh_login_callback(PurpleBOSHConnection *conn) 
-{
-	purple_debug_info("jabber","YAY...BOSH connection established.\n");
-}
-
 static void 
 txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 {
