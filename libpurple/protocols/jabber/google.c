@@ -374,7 +374,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 }
 
 static void
-google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	JabberIq *result;
 	GList *codecs = NULL;
@@ -440,13 +440,13 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	purple_media_codec_list_free(codecs);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	jabber_iq_set_id(result, iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
 }
 
 static void 
-google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	JabberIq *result;
 	GList *list = NULL;
@@ -480,13 +480,13 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 	purple_media_candidate_list_free(list);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	jabber_iq_set_id(result, iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
 }
 
 static void
-google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	xmlnode *desc_element = xmlnode_get_child(sess, "description");
 	xmlnode *codec_element = xmlnode_get_child(desc_element, "payload-type");
@@ -514,58 +514,54 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 			NULL, NULL, FALSE);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	jabber_iq_set_id(result, iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
 }
 
 static void
-google_session_handle_reject(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_reject(JabberStream *js, GoogleSession *session, xmlnode *sess)
 {
 	purple_media_end(session->media, NULL, NULL);
 }
 
 static void
-google_session_handle_terminate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_terminate(JabberStream *js, GoogleSession *session, xmlnode *sess)
 {
 	purple_media_end(session->media, NULL, NULL);
 }
 
 static void
-google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *packet)
+google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
-	xmlnode *sess = xmlnode_get_child(packet, "session");	
 	const char *type = xmlnode_get_attrib(sess, "type");
 
 	if (!strcmp(type, "initiate")) {
-		google_session_handle_initiate(js, session, packet, sess);
+		google_session_handle_initiate(js, session, sess, iq_id);
 	} else if (!strcmp(type, "accept")) {
-		google_session_handle_accept(js, session, packet, sess);
+		google_session_handle_accept(js, session, sess, iq_id);
 	} else if (!strcmp(type, "reject")) {
-		google_session_handle_reject(js, session, packet, sess);
+		google_session_handle_reject(js, session, sess);
 	} else if (!strcmp(type, "terminate")) {
-		google_session_handle_terminate(js, session, packet, sess);
+		google_session_handle_terminate(js, session, sess);
 	} else if (!strcmp(type, "candidates")) {
-		google_session_handle_candidates(js, session, packet, sess);
+		google_session_handle_candidates(js, session, sess, iq_id);
 	}
 }
 
 void
-jabber_google_session_parse(JabberStream *js, xmlnode *packet)
+jabber_google_session_parse(JabberStream *js, const char *from,
+                            JabberIqType type, const char *iq_id,
+                            xmlnode *session_node)
 {
 	GoogleSession *session = NULL;
 	GoogleSessionId id;
 
-	xmlnode *session_node;
 	xmlnode *desc_node;
 
 	GList *iter = NULL;
 
-	if (strcmp(xmlnode_get_attrib(packet, "type"), "set"))
-		return;
-
-	session_node = xmlnode_get_child(packet, "session");
-	if (!session_node)
+	if (type != JABBER_IQ_SET)
 		return;
 
 	id.id = (gchar*)xmlnode_get_attrib(session_node, "id");
@@ -591,7 +587,7 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	if (session) {
-		google_session_parse_iq(js, session, packet);
+		google_session_parse_iq(js, session, session_node, iq_id);
 		return;
 	}
 
@@ -608,7 +604,7 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	session->js = js;
 	session->remote_jid = g_strdup(session->id.initiator);
 
-	google_session_parse_iq(js, session, packet);
+	google_session_parse_iq(js, session, session_node, iq_id);
 }
 #endif /* USE_VV */
 
