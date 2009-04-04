@@ -435,6 +435,10 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
 	jabber_iq_register_handler("query", GOOGLE_JINGLE_INFO_NAMESPACE,
 		jabber_google_handle_jingle_info);
+#ifdef USE_VV
+	jabber_iq_register_handler("session", "http://www.google.com/session",
+		jabber_google_session_parse);
+#endif
 }
 
 void jabber_iq_uninit(void)
