@@ -1081,7 +1081,6 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 {
 	xmlnode *vcard, *photo, *binval;
 	char *txt, *vcard_hash = NULL;
-	PurpleStoredImage *img;
 
 	if (type == JABBER_IQ_ERROR) {
 		purple_debug_warning("jabber", "Server returned error while retrieving vCard");
