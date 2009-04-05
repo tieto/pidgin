@@ -13,8 +13,8 @@ version 2.6.0 (??/??/2009):
 	* Add voice & video support with Jingle (XEP-0166, 0167, 0176, & 0177),
 	  and voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
 	* Add support for in-band bytestreams for file transfers (XEP-0047).
-	* Add support for sending attentions (equivalent to "buzz" and "nudge")
-	  using the command /buzz (XEP-0224).
+	* Add support for sending and receiving attentions (equivalent to "buzz" 
+	  and "nudge") using the command /buzz (XEP-0224).
 	* A buddy's local time is displayed in the Get Info dialog if the remote
 	  client supports it.
 
