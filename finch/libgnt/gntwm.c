@@ -135,6 +135,17 @@ gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 	src = widget->window;
 	dst = node->window;
 	copywin(src, dst, node->scroll, 0, 0, 0, getmaxy(dst) - 1, getmaxx(dst) - 1, 0);
+
+	/* Update the hardware cursor */
+	if (GNT_IS_WINDOW(widget) || GNT_IS_BOX(widget)) {
+		GntWidget *active = GNT_BOX(widget)->active;
+		if (active) {
+			int curx = active->priv.x + getcurx(active->window);
+			int cury = active->priv.y + getcury(active->window);
+			if (wmove(node->window, cury - widget->priv.y, curx - widget->priv.x) != OK)
+				wmove(node->window, 0, 0);
+		}
+	}
 }
 
 /**
@@ -1101,8 +1112,8 @@ refresh_screen(GntBindable *bindable, GList *null)
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, GINT_TO_POINTER(TRUE));
 	g_signal_emit(wm, signals[SIG_TERMINAL_REFRESH], 0);
-	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
+	update_screen(wm);
 	curs_set(0);   /* endwin resets the cursor to normal */
 
 	return TRUE;
@@ -1872,8 +1883,8 @@ void gnt_wm_new_window(GntWM *wm, GntWidget *widget)
 		}
 	}
 
-	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	update_screen(wm);
 }
 
 void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget)
@@ -1910,8 +1921,8 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 		}
 	}
 
-	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	update_screen(wm);
 }
 
 time_t gnt_wm_get_idle_time()
@@ -2181,8 +2192,8 @@ gnt_wm_give_focus(GntWM *wm, GntWidget *widget)
 		GntNode *nd = g_hash_table_lookup(wm->nodes, wm->_list.window);
 		top_panel(nd->panel);
 	}
-	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	update_screen(wm);
 }
 
 void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
@@ -2207,8 +2218,8 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 
 	if (ws == wm->cws || GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
 		gnt_wm_copy_win(widget, node);
-		update_screen(wm);
 		gnt_ws_draw_taskbar(wm->cws, FALSE);
+		update_screen(wm);
 	} else if (ws && ws != wm->cws && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_URGENT)) {
 		if (!act || (act && !g_list_find(act, ws)))
 			act = g_list_prepend(act, ws);

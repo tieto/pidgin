@@ -420,6 +420,7 @@ redraw_tree(GntTree *tree)
 	GntTreeRow *row;
 	int pos, up, down = 0;
 	int rows, scrcol;
+	int current = 0;
 
 	if (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
 		return;
@@ -518,6 +519,7 @@ redraw_tree(GntTree *tree)
 
 		if (row == tree->current)
 		{
+			current = i;
 			attr |= A_BOLD;
 			if (gnt_widget_has_focus(widget))
 				attr |= gnt_color_pair(GNT_COLOR_HIGHLIGHT);
@@ -606,6 +608,7 @@ redraw_tree(GntTree *tree)
 		mvwaddnstr(widget->window, widget->priv.height - pos - 1, pos,
 				tree->priv->search->str, str - tree->priv->search->str);
 	}
+	wmove(widget->window, current, pos);
 
 	gnt_widget_queue_update(widget);
 }

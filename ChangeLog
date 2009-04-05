@@ -35,6 +35,10 @@ version 2.6.0 (??/??/2009):
 	* The New Account dialog is now broken into three tabs.  Proxy
 	  configuration has been moved from the Advanced tab to the new tab.
 
+	Finch:
+	* The hardware cursor is updated correctly. This will be useful
+	  especially for users of braille terminals, screen readers etc.
+
 version 2.5.5 (03/01/2009):
 	libpurple:
 	* Fix a crash when removing an account with an unknown protocol id.
