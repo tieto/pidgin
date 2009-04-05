@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
  
-#ifndef JINGLE_H
-#define JINGLE_H
+#ifndef PURPLE_JABBER_JINGLE_H
+#define PURPLE_JABBER_JINGLE_H
 
 #include "jabber.h"
 
@@ -84,4 +84,4 @@ GParameter *jingle_get_params(JabberStream *js, guint *num_params);
 
 G_END_DECLS
 
-#endif /* JINGLE_H */
+#endif /* PURPLE_JABBER_JINGLE_H */
