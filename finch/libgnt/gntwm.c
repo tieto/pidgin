@@ -1896,6 +1896,7 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 {
 	GntWS *s;
 	int pos;
+	gboolean transient = !!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT);
 
 	s = gnt_wm_widget_find_workspace(wm, widget);
 
@@ -1919,6 +1920,8 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 			if (s->ordered && wm->cws == s)
 				gnt_wm_raise_window(wm, s->ordered->data);
 		}
+	} else if (transient && wm->cws && wm->cws->ordered) {
+		gnt_wm_update_window(wm, wm->cws->ordered->data);
 	}
 
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
