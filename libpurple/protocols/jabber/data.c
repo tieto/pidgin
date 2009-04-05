@@ -236,6 +236,8 @@ jabber_data_init(void)
 		g_free, jabber_data_delete);
 	remote_data_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, jabber_data_delete);
+
+	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);	
 }
 
 void

@@ -412,28 +412,35 @@ void jabber_iq_init(void)
 {
 	iq_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	jabber_iq_register_handler("mailbox", "google:mail:notify", jabber_gmail_poke);
-	jabber_iq_register_handler("new-mail", "google:mail:notify", jabber_gmail_poke);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/bytestreams", jabber_bytestreams_parse);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
+	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
+	jabber_iq_register_handler("mailbox", "google:mail:notify",
+			jabber_gmail_poke);
+	jabber_iq_register_handler("new-mail", "google:mail:notify",
+			jabber_gmail_poke);
+	jabber_iq_register_handler("ping", "urn:xmpp:ping", jabber_ping_parse);
+	jabber_iq_register_handler("query", GOOGLE_JINGLE_INFO_NAMESPACE,
+			jabber_google_handle_jingle_info);
+	jabber_iq_register_handler("query", "http://jabber.org/protocol/bytestreams",
+			jabber_bytestreams_parse);
+	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#info",
+			jabber_disco_info_parse);
+	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#items",
+			jabber_disco_items_parse);
 	jabber_iq_register_handler("query", "jabber:iq:last", jabber_iq_last_parse);
 	jabber_iq_register_handler("query", "jabber:iq:oob", jabber_oob_parse);
-	jabber_iq_register_handler("query", "jabber:iq:register", jabber_register_parse);
-	jabber_iq_register_handler("query", "jabber:iq:roster", jabber_roster_parse);
+	jabber_iq_register_handler("query", "jabber:iq:register",
+			jabber_register_parse);
+	jabber_iq_register_handler("query", "jabber:iq:roster",
+			jabber_roster_parse);
 	jabber_iq_register_handler("query", "jabber:iq:time", jabber_iq_time_parse);
-	jabber_iq_register_handler("query", "jabber:iq:version", jabber_iq_version_parse);
-	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);
-	jabber_iq_register_handler("ping", "urn:xmpp:ping", jabber_ping_parse);
-	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
-
-	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
-	jabber_iq_register_handler("query", GOOGLE_JINGLE_INFO_NAMESPACE,
-		jabber_google_handle_jingle_info);
+	jabber_iq_register_handler("query", "jabber:iq:version",
+			jabber_iq_version_parse);
 #ifdef USE_VV
 	jabber_iq_register_handler("session", "http://www.google.com/session",
 		jabber_google_session_parse);
 #endif
+	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
+
 }
 
 void jabber_iq_uninit(void)
