@@ -417,16 +417,16 @@ jabber_caps_get_info_complete(jabber_caps_cbplususerdata *userdata)
 }
 
 static void
-jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
+                        const char *id, xmlnode *packet, gpointer data)
 {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/disco#info");
 	jabber_caps_cbplususerdata *userdata = data;
 	JabberCapsClientInfo *info = NULL, *value;
-	const char *type = xmlnode_get_attrib(packet, "type");
 	JabberCapsKey key;
 
-	if (!query || !strcmp(type, "error")) {
+	if (!query || type == JABBER_IQ_ERROR) {
 		/* Any outstanding exts will be dealt with via ref-counting */
 		userdata->cb(NULL, NULL, userdata->cb_data);
 		cbplususerdata_unref(userdata);
@@ -501,17 +501,17 @@ typedef struct {
 } ext_iq_data;
 
 static void
-jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_caps_ext_iqcb(JabberStream *js, const char *from, JabberIqType type,
+                     const char *id, xmlnode *packet, gpointer data)
 {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		"http://jabber.org/protocol/disco#info");
 	xmlnode *child;
 	ext_iq_data *userdata = data;
-	const char *type = xmlnode_get_attrib(packet, "type");
 	GList *features = NULL;
 	JabberCapsNodeExts *node_exts;
 
-	if (!query || !strcmp(type, "error")) {
+	if (!query || type == JABBER_IQ_ERROR) {
 		cbplususerdata_unref(userdata->data);
 		g_free(userdata);
 		return;

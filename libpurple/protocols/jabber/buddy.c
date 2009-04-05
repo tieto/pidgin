@@ -1847,7 +1847,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 		}
 
 		if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
-				(!jbr->caps ||
+				(!jbr->caps.info ||
 				 	jabber_resource_has_capability(jbr, "urn:xmpp:time"))) {
 			xmlnode *child;
 			iq = jabber_iq_new(js, JABBER_IQ_GET);
