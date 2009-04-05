@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PURPLE_JABBER_GOOGLE_H_
-#define _PURPLE_JABBER_GOOGLE_H_
+#ifndef PURPLE_JABBER_GOOGLE_H_
+#define PURPLE_JABBER_GOOGLE_H_
 
 /* This is a place for Google Talk-specific XMPP extensions to live
  * such that they don't intermingle with code for the XMPP RFCs and XEPs :) */
@@ -58,4 +58,4 @@ void jabber_google_handle_jingle_info(JabberStream *js, const char *from,
                                       xmlnode *child);
 void jabber_google_send_jingle_info(JabberStream *js);
 
-#endif   /* _PURPLE_JABBER_GOOGLE_H_ */
+#endif   /* PURPLE_JABBER_GOOGLE_H_ */

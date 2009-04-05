@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_IQ_H_
-#define _PURPLE_JABBER_IQ_H_
+#ifndef PURPLE_JABBER_IQ_H_
+#define PURPLE_JABBER_IQ_H_
 
 typedef enum {
 	JABBER_IQ_SET,
@@ -106,4 +106,4 @@ void jabber_iq_uninit(void);
 void jabber_iq_register_handler(const char *node, const char *xmlns,
                                 JabberIqHandler *func);
 
-#endif /* _PURPLE_JABBER_IQ_H_ */
+#endif /* PURPLE_JABBER_IQ_H_ */

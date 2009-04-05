@@ -14,8 +14,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
 
-#ifndef _PURPLE_JABBER_IBB_H_
-#define _PURPLE_JABBER_IBB_H_
+#ifndef PURPLE_JABBER_IBB_H_
+#define PURPLE_JABBER_IBB_H_
 
 #include "jabber.h"
 #include "iq.h"
@@ -118,4 +118,4 @@ void jabber_ibb_unregister_open_handler(JabberIBBOpenHandler *cb);
 void jabber_ibb_init(void);
 void jabber_ibb_uninit(void);
 
-#endif /* _PURPLE_JABBER_IBB_H_ */
+#endif /* PURPLE_JABBER_IBB_H_ */

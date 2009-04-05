@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _PURPLE_JABBER_ADHOCCOMMANDS_H_
-#define _PURPLE_JABBER_ADHOCCOMMANDS_H_
+#ifndef PURPLE_JABBER_ADHOCCOMMANDS_H_
+#define PURPLE_JABBER_ADHOCCOMMANDS_H_
 
 #include "jabber.h"
 
@@ -38,4 +38,4 @@ void jabber_adhoc_server_get_list(JabberStream *js);
 
 void jabber_adhoc_init_server_commands(JabberStream *js, GList **m);
 
-#endif /* _PURPLE_JABBER_ADHOCCOMMANDS_H_ */
+#endif /* PURPLE_JABBER_ADHOCCOMMANDS_H_ */

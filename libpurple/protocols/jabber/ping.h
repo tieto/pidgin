@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _PURPLE_JABBER_PING_H_
-#define _PURPLE_JABBER_PING_H_
+#ifndef PURPLE_JABBER_PING_H_
+#define PURPLE_JABBER_PING_H_
 
 #include "jabber.h"
 #include "iq.h"
@@ -30,4 +30,4 @@ void jabber_ping_parse(JabberStream *js, const char *from,
                        JabberIqType, const char *id, xmlnode *child);
 gboolean jabber_ping_jid(JabberStream *js, const char *jid);
 
-#endif /* _PURPLE_JABBER_PING_H_ */
+#endif /* PURPLE_JABBER_PING_H_ */

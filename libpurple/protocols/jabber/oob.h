@@ -19,12 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_OOB_H_
-#define _PURPLE_JABBER_OOB_H_
+#ifndef PURPLE_JABBER_OOB_H_
+#define PURPLE_JABBER_OOB_H_
 
 #include "jabber.h"
 
 void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
                       const char *id, xmlnode *querynode);
 
-#endif /* _PURPLE_JABBER_OOB_H_ */
+#endif /* PURPLE_JABBER_OOB_H_ */

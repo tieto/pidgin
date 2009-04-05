@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _PURPLE_JABBER_USERNICK_H_
-#define _PURPLE_JABBER_USERNICK_H_
+#ifndef PURPLE_JABBER_USERNICK_H_
+#define PURPLE_JABBER_USERNICK_H_
 
 #include "jabber.h"
 
@@ -29,4 +29,4 @@
 void jabber_nick_init(void);
 void jabber_nick_init_action(GList **m);
 
-#endif /* _PURPLE_JABBER_USERNICK_H_ */
+#endif /* PURPLE_JABBER_USERNICK_H_ */

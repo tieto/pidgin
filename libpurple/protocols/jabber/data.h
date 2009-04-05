@@ -14,8 +14,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
 
-#ifndef JABBER_DATA_H
-#define JABBER_DATA_H
+#ifndef PURPLE_JABBER_DATA_H
+#define PURPLE_JABBER_DATA_H
 
 #include "xmlnode.h"
 #include "jabber.h"
@@ -71,4 +71,4 @@ void jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
 void jabber_data_init(void);
 void jabber_data_uninit(void);
 
-#endif /* JABBER_DATA_H */
+#endif /* PURPLE_JABBER_DATA_H */

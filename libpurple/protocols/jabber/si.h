@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_SI_H_
-#define _PURPLE_JABBER_SI_H_
+#ifndef PURPLE_JABBER_SI_H_
+#define PURPLE_JABBER_SI_H_
 
 #include "ft.h"
 
@@ -35,4 +35,4 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 void jabber_si_init(void);
 void jabber_si_uninit(void);
 
-#endif /* _PURPLE_JABBER_SI_H_ */
+#endif /* PURPLE_JABBER_SI_H_ */

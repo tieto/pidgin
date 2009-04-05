@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_H_
-#define _PURPLE_JABBER_H_
+#ifndef PURPLE_JABBER_H_
+#define PURPLE_JABBER_H_
 
 typedef enum {
 	JABBER_CAP_NONE           = 0,
@@ -329,4 +329,4 @@ PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
 
-#endif /* _PURPLE_JABBER_H_ */
+#endif /* PURPLE_JABBER_H_ */
