@@ -417,7 +417,6 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("query", "http://jabber.org/protocol/bytestreams", jabber_bytestreams_parse);
 	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
 	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
-	jabber_iq_register_handler("si", "http://jabber.org/protocol/si", jabber_si_parse);
 	jabber_iq_register_handler("query", "jabber:iq:last", jabber_iq_last_parse);
 	jabber_iq_register_handler("query", "jabber:iq:oob", jabber_oob_parse);
 	jabber_iq_register_handler("query", "jabber:iq:register", jabber_register_parse);
@@ -427,10 +426,6 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);
 	jabber_iq_register_handler("ping", "urn:xmpp:ping", jabber_ping_parse);
 	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
-
-	jabber_iq_register_handler("data", XEP_0047_NAMESPACE, jabber_ibb_parse);
-	jabber_iq_register_handler("close", XEP_0047_NAMESPACE, jabber_ibb_parse);
-	jabber_iq_register_handler("open", XEP_0047_NAMESPACE, jabber_ibb_parse);
 
 	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
 	jabber_iq_register_handler("query", GOOGLE_JINGLE_INFO_NAMESPACE,
