@@ -408,7 +408,7 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 	wm->positions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	if (gnt_style_get_bool(GNT_STYLE_REMPOS, TRUE))
 		read_window_positions(wm);
-	g_timeout_add(IDLE_CHECK_INTERVAL * 1000, check_idle, NULL);
+	g_timeout_add_seconds(IDLE_CHECK_INTERVAL, check_idle, NULL);
 	time(&last_active_time);
 	gnt_wm_switch_workspace(wm, 0);
 }
@@ -2130,7 +2130,7 @@ write_positions_to_file(GntWM *wm)
 	if (write_timeout) {
 		g_source_remove(write_timeout);
 	}
-	write_timeout = g_timeout_add(10000, write_already, wm);
+	write_timeout = g_timeout_add_seconds(10, write_already, wm);
 }
 
 void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y)

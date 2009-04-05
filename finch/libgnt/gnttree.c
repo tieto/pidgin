@@ -28,7 +28,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define SEARCH_TIMEOUT 4000   /* 4 secs */
+#define SEARCH_TIMEOUT_S 4   /* 4 secs */
 #define SEARCHING(tree)  (tree->priv->search && tree->priv->search->len > 0)
 
 #define COLUMN_INVISIBLE(tree, index)  (tree->columns[index].flags & GNT_TREE_COLUMN_INVISIBLE)
@@ -821,7 +821,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			gnt_bindable_perform_action_key(GNT_BINDABLE(tree), text);
 		}
 		g_source_remove(tree->priv->search_timeout);
-		tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
+		tree->priv->search_timeout = g_timeout_add_seconds(SEARCH_TIMEOUT_S, search_timeout, tree);
 		return TRUE;
 	} else if (text[0] == ' ' && text[1] == 0) {
 		/* Space pressed */
@@ -933,7 +933,7 @@ start_search(GntBindable *bindable, GList *list)
 		return FALSE;
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(tree), GNT_WIDGET_DISABLE_ACTIONS);
 	tree->priv->search = g_string_new(NULL);
-	tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
+	tree->priv->search_timeout = g_timeout_add_seconds(SEARCH_TIMEOUT_S, search_timeout, tree);
 	return TRUE;
 }
 
