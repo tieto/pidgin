@@ -496,6 +496,54 @@ purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who,
 	got_attention(gc, id, who, type_code);
 }
 
+gboolean
+purple_prpl_initiate_media(PurpleAccount *account,
+			   const char *who,
+			   PurpleMediaSessionType type)
+{
+#ifdef USE_VV
+	PurpleConnection *gc = NULL;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	if (account)
+		gc = purple_account_get_connection(account);
+	if (gc)
+		prpl = purple_connection_get_prpl(gc);
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, initiate_media)) {
+		/* should check that the protocol supports this media type here? */
+		return prpl_info->initiate_media(gc, who, type);
+	} else
+#endif
+	return FALSE;
+}
+
+PurpleMediaCaps
+purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
+{
+#ifdef USE_VV
+	PurpleConnection *gc = NULL;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	
+	if (account)
+		gc = purple_account_get_connection(account);
+	if (gc)
+		prpl = purple_connection_get_prpl(gc);
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info,
+			get_media_caps)) {
+		return prpl_info->get_media_caps(gc, who);
+	}
+#endif
+	return PURPLE_MEDIA_CAPS_NONE;
+}
+
 /**************************************************************************
  * Protocol Plugin Subsystem API
  **************************************************************************/

@@ -119,7 +119,9 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_attention_types,			/* attention_types */
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL, /* get_account_text_table */
+	jabber_initiate_media,          /* initiate_media */
+	jabber_get_media_caps,                  /* get_media_caps */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
@@ -293,6 +295,10 @@ init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("bob", XEP_0231_NAMESPACE,
 					   jabber_custom_smileys_isenabled);
 	jabber_add_feature("ibb", XEP_0047_NAMESPACE, NULL);
+
+#ifdef USE_VV
+	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
+#endif
 }
 
 

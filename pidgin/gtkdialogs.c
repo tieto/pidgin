@@ -644,6 +644,12 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
 }
 
+#ifdef USE_VV
+	g_string_append(str, "    <b>Voice and Video:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Voice and Video:</b> Disabled<br/>");
+#endif
+
 #ifndef _WIN32
 #ifdef USE_SM
 	g_string_append(str, "    <b>X Session Management:</b> Enabled<br/>");
