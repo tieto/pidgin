@@ -477,7 +477,9 @@ typedef struct {
 } JabberDataRef;
 
 static void
-jabber_message_get_data_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_message_get_data_cb(JabberStream *js, const char *from,
+                           JabberIqType type, const char *id,
+                           xmlnode *packet, gpointer data)
 {
 	JabberDataRef *ref = (JabberDataRef *) data;
 	PurpleConversation *conv = ref->conv;

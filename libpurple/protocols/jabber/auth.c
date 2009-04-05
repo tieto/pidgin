@@ -37,8 +37,9 @@
 #include "iq.h"
 #include "notify.h"
 
-static void auth_old_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data);
+static void auth_old_result_cb(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data);
 
 gboolean
 jabber_process_starttls(JabberStream *js, xmlnode *packet)
@@ -567,11 +568,11 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 #endif
 }
 
-static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void auth_old_result_cb(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		jabber_disco_items_server(js);
 	} else {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
@@ -594,24 +595,20 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 }
 
-static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void auth_old_cb(JabberStream *js, const char *from,
+                        JabberIqType type, const char *id,
+                        xmlnode *packet, gpointer data)
 {
 	JabberIq *iq;
 	xmlnode *query, *x;
-	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *pw = purple_connection_get_password(js->gc);
 
-	if(!type) {
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Invalid response from server."));
-		return;
-	} else if(!strcmp(type, "error")) {
+	if (type == JABBER_IQ_ERROR) {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
 		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
-	} else if(!strcmp(type, "result")) {
+	} else if (type == JABBER_IQ_RESULT) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
 			char *s, *hash;

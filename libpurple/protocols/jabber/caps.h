@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _PURPLE_JABBER_CAPS_H_
-#define _PURPLE_JABBER_CAPS_H_
+#ifndef PURPLE_JABBER_CAPS_H_
+#define PURPLE_JABBER_CAPS_H_
 
 typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
@@ -99,4 +99,4 @@ const gchar* jabber_caps_get_own_hash(JabberStream *js);
  */
 void jabber_caps_broadcast_change(void);
 
-#endif /* _PURPLE_JABBER_CAPS_H_ */
+#endif /* PURPLE_JABBER_CAPS_H_ */

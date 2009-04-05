@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_H_
-#define _PURPLE_JABBER_H_
+#ifndef PURPLE_JABBER_H_
+#define PURPLE_JABBER_H_
 
 typedef enum {
 	JABBER_CAP_NONE           = 0,
@@ -60,6 +60,7 @@ typedef struct _JabberStream JabberStream;
 #include "sslconn.h"
 #include "dnsquery.h"
 
+#include "iq.h"
 #include "jutil.h"
 #include "xmlnode.h"
 #include "buddy.h"
@@ -299,7 +300,8 @@ void jabber_send_raw(JabberStream *js, const char *data, int len);
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state);
 
-void jabber_register_parse(JabberStream *js, xmlnode *packet);
+void jabber_register_parse(JabberStream *js, const char *from,
+                           JabberIqType type, const char *id, xmlnode *query);
 void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
@@ -366,4 +368,4 @@ void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
 void jabber_uninit_plugin(void);
 
-#endif /* _PURPLE_JABBER_H_ */
+#endif /* PURPLE_JABBER_H_ */

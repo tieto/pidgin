@@ -60,8 +60,11 @@ void jabber_pep_register_handler(const char *xmlns, JabberPEPHandler handlerfunc
 	g_hash_table_replace(pep_handlers, g_strdup(xmlns), handlerfunc);
 }
 
-static void do_pep_iq_request_item_callback(JabberStream *js, xmlnode *packet, gpointer data) {
-	const char *from = xmlnode_get_attrib(packet,"from");
+static void
+do_pep_iq_request_item_callback(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
+{
 	xmlnode *pubsub = xmlnode_get_child_with_namespace(packet,"pubsub","http://jabber.org/protocol/pubsub");
 	xmlnode *items = NULL;
 	JabberPEPHandler *cb = data;

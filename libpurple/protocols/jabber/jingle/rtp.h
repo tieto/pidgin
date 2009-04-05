@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef JINGLE_RTP_H
-#define JINGLE_RTP_H
+#ifndef PURPLE_JABBER_JINGLE_RTP_H
+#define PURPLE_JABBER_JINGLE_RTP_H
 
 #include "config.h"
 
@@ -88,5 +88,5 @@ G_END_DECLS
 
 #endif /* USE_VV */
 
-#endif /* JINGLE_RTP_H */
+#endif /* PURPLE_JABBER_JINGLE_RTP_H */
 

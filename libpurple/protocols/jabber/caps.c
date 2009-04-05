@@ -247,7 +247,7 @@ jabber_caps_load(void)
 		xmlnode_free(capsdata);
 		return;
 	}
-	
+
 	for(client = capsdata->child; client; client = client->next) {
 		if(client->type != XMLNODE_TYPE_TAG)
 			continue;

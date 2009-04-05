@@ -315,14 +315,16 @@ static void deny_add_cb(gpointer data)
 	g_free(jap);
 }
 
-static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointer blah)
+static void
+jabber_vcard_parse_avatar(JabberStream *js, const char *from,
+                          JabberIqType type, const char *id,
+                          xmlnode *packet, gpointer blah)
 {
 	JabberBuddy *jb = NULL;
 	xmlnode *vcard, *photo, *binval;
 	char *text;
 	guchar *data;
 	gsize size;
-	const char *from = xmlnode_get_attrib(packet, "from");
 
 	if(!from)
 		return;

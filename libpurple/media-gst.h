@@ -24,8 +24,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __MEDIA_GST_H_
-#define __MEDIA_GST_H_
+#ifndef _PURPLE_MEDIA_GST_H_
+#define _PURPLE_MEDIA_GST_H_
 
 #include "media.h"
 #include "mediamanager.h"
@@ -170,4 +170,4 @@ GstElement *purple_media_element_info_call_create(
 
 G_END_DECLS
 
-#endif  /* __MEDIA_GST_H_ */
+#endif  /* _PURPLE_MEDIA_GST_H_ */

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _PURPLE_JABBER_PEP_H_
-#define _PURPLE_JABBER_PEP_H_
+#ifndef PURPLE_JABBER_PEP_H_
+#define PURPLE_JABBER_PEP_H_
 
 #include "jabber.h"
 #include "message.h"
@@ -81,4 +81,4 @@ void jabber_handle_event(JabberMessage *jm);
  */
 void jabber_pep_publish(JabberStream *js, xmlnode *publish);
 
-#endif /* _PURPLE_JABBER_PEP_H_ */
+#endif /* PURPLE_JABBER_PEP_H_ */

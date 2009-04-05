@@ -15,6 +15,8 @@ version 2.6.0 (??/??/2009):
 	* Add support for in-band bytestreams for file transfers (XEP-0047).
 	* Add support for sending attentions (equivalent to "buzz" and "nudge")
 	  using the command /buzz (XEP-0224).
+	* A buddy's local time is displayed in the Get Info dialog if the remote
+	  client supports it.
 
 	IRC:
 	* Correctly handle WHOIS for users who are joined to a large number of
@@ -34,6 +36,10 @@ version 2.6.0 (??/??/2009):
 	  new dialog box every time a pounce is triggered. (Jorge Villaseñor) 
 	* The New Account dialog is now broken into three tabs.  Proxy
 	  configuration has been moved from the Advanced tab to the new tab.
+
+	Finch:
+	* The hardware cursor is updated correctly. This will be useful
+	  especially for users of braille terminals, screen readers etc.
 
 version 2.5.5 (03/01/2009):
 	libpurple:
