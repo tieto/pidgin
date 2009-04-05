@@ -24,11 +24,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __MEDIA_H_
-#define __MEDIA_H_
-
-#include "signals.h"
-#include "util.h"
+#ifndef _PURPLE_MEDIA_H_
+#define _PURPLE_MEDIA_H_
 
 #include <glib.h>
 #include <glib-object.h>
@@ -128,6 +125,9 @@ typedef enum {
 	PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
 } PurpleMediaNetworkProtocol;
+
+#include "signals.h"
+#include "util.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -685,4 +685,4 @@ void purple_media_remove_output_windows(PurpleMedia *media);
 
 G_END_DECLS
 
-#endif  /* __MEDIA_H_ */
+#endif  /* _PURPLE_MEDIA_H_ */

@@ -24,11 +24,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __MEDIA_MANAGER_H_
-#define __MEDIA_MANAGER_H_
+#ifndef _PURPLE_MEDIA_MANAGER_H_
+#define _PURPLE_MEDIA_MANAGER_H_
 
 #include <glib.h>
 #include <glib-object.h>
+
+/** @copydoc _PurpleMediaManager */
+typedef struct _PurpleMediaManager PurpleMediaManager;
+/** @copydoc _PurpleMediaManagerClass */
+typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 
 #include "connection.h"
 #include "media.h"
@@ -41,11 +46,6 @@ G_BEGIN_DECLS
 #define PURPLE_IS_MEDIA_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA_MANAGER))
 #define PURPLE_IS_MEDIA_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_MANAGER))
 #define PURPLE_MEDIA_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerClass))
-
-/** @copydoc _PurpleMediaManager */
-typedef struct _PurpleMediaManager PurpleMediaManager;
-/** @copydoc _PurpleMediaManagerClass */
-typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 
 #ifdef __cplusplus
 extern "C" {
@@ -220,4 +220,4 @@ PurpleMediaCaps purple_media_manager_get_ui_caps(PurpleMediaManager *manager);
 
 G_END_DECLS
 
-#endif  /* __MEDIA_MANAGER_H_ */
+#endif  /* _PURPLE_MEDIA_MANAGER_H_ */
