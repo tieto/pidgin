@@ -85,6 +85,7 @@ libpurple/protocols/irc/msgs.c
 libpurple/protocols/irc/parse.c
 libpurple/protocols/jabber/adhoccommands.c
 libpurple/protocols/jabber/auth.c
+libpurple/protocols/jabber/bosh.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
 libpurple/protocols/jabber/jabber.c
