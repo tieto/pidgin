@@ -495,25 +495,6 @@ pidgin_media_accepted_cb(PurpleMedia *media, const gchar *session_id,
 	gtk_widget_show(GTK_WIDGET(gtkmedia));
 }
 
-static gboolean
-plug_delete_event_cb(GtkWidget *widget, gpointer data)
-{
-	return TRUE;
-}
-
-static gboolean
-plug_removed_cb(GtkWidget *widget, gpointer data)
-{
-	return TRUE;
-}
-
-static void
-socket_realize_cb(GtkWidget *widget, gpointer data)
-{
-	gtk_socket_add_id(GTK_SOCKET(widget),
-			gtk_plug_get_id(GTK_PLUG(data)));
-}
-
 static void
 pidgin_media_accept_cb(PurpleMedia *media, int index)
 {
@@ -619,26 +600,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
-		GtkWidget *plug;
-		GtkWidget *socket;
 		GdkColor color = {0, 0, 0, 0};
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(recv_widget), aspect, TRUE, TRUE, 0);
-
-		plug = gtk_plug_new(0);
-		g_signal_connect(G_OBJECT(plug), "delete-event",
-				G_CALLBACK(plug_delete_event_cb), plug);
-		gtk_widget_show(plug);
-
-		socket = gtk_socket_new();
-		g_signal_connect(G_OBJECT(socket), "realize",
-				G_CALLBACK(socket_realize_cb), plug);
-		g_signal_connect(G_OBJECT(socket), "plug-removed",
-				G_CALLBACK(plug_removed_cb), NULL);
-		gtk_container_add(GTK_CONTAINER(aspect), socket);
-		gtk_widget_show(socket);
 
 		data = g_new0(PidginMediaRealizeData, 1);
 		data->gtkmedia = gtkmedia;
@@ -649,7 +615,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_widget_modify_bg(remote_video, GTK_STATE_NORMAL, &color);
 		g_signal_connect(G_OBJECT(remote_video), "realize",
 				G_CALLBACK(realize_cb), data);
-		gtk_container_add(GTK_CONTAINER(plug), remote_video);
+		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
 		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 320, 240);
 		gtk_widget_show(remote_video);
 		gtk_widget_show(aspect);
@@ -660,26 +626,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *local_video;
-		GtkWidget *plug;
-		GtkWidget *socket;
 		GdkColor color = {0, 0, 0, 0};
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
-
-		plug = gtk_plug_new(0);
-		g_signal_connect(G_OBJECT(plug), "delete-event",
-				G_CALLBACK(plug_delete_event_cb), plug);
-		gtk_widget_show(plug);
-
-		socket = gtk_socket_new();
-		g_signal_connect(G_OBJECT(socket), "realize",
-				G_CALLBACK(socket_realize_cb), plug);
-		g_signal_connect(G_OBJECT(socket), "plug-removed",
-				G_CALLBACK(plug_removed_cb), NULL);
-		gtk_container_add(GTK_CONTAINER(aspect), socket);
-		gtk_widget_show(socket);
 
 		data = g_new0(PidginMediaRealizeData, 1);
 		data->gtkmedia = gtkmedia;
@@ -690,7 +641,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_widget_modify_bg(local_video, GTK_STATE_NORMAL, &color);
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), data);
-		gtk_container_add(GTK_CONTAINER(plug), local_video);
+		gtk_container_add(GTK_CONTAINER(aspect), local_video);
 		gtk_widget_set_size_request (GTK_WIDGET(local_video), 160, 120);
 
 		gtk_widget_show(local_video);
