@@ -587,6 +587,11 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	account  = purple_connection_get_account(gc);
 
+	/*
+	 * XXX: Should we be setting this here, or relying on prpls to set it?
+	 */
+	flags |= PURPLE_MESSAGE_RECV;
+
 	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
 		if (!purple_privacy_check(account, who)) {
@@ -629,11 +634,6 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	/* search for conversation again in case it was created by received-im-msg handler */
 	if (conv == NULL)
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
-
-	/*
-	 * XXX: Should we be setting this here, or relying on prpls to set it?
-	 */
-	flags |= PURPLE_MESSAGE_RECV;
 
 	if (conv == NULL)
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
@@ -924,6 +924,12 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
+
+	/*
+	 * XXX: Should we be setting this here, or relying on prpls to set it?
+	 */
+	if (g_strcmp0(purple_account_get_username(g->account), who))
+		flags |= PURPLE_MESSAGE_RECV;
 
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (PurpleConversation *)bcs->data;
