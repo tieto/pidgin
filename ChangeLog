@@ -40,6 +40,7 @@ version 2.6.0 (??/??/2009):
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
 	  especially for users of braille terminals, screen readers etc.
+	* Added a TinyURL plugin, which aids copying longer URLs.
 
 version 2.5.5 (03/01/2009):
 	libpurple:
