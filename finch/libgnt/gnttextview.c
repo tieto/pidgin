@@ -799,6 +799,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 				break;
 		}
 	}
+	gnt_widget_draw(GNT_WIDGET(view));
 	return count;
 }
 
