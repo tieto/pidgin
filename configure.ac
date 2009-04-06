@@ -748,13 +748,33 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 fi
 
 dnl #######################################################################
+dnl # Check for GStreamer Interfaces
+dnl #######################################################################
+if test "x$enable_gst" != "xno"; then
+	AC_ARG_ENABLE(gstreamer-interfaces,
+		[AC_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer interface support])],
+			enable_gstinterfaces="$enableval", enable_gstinterfaces="yes")
+	if test "x$enable_gstinterfaces" != "xno"; then
+		PKG_CHECK_MODULES(GSTINTERFACES, [gstreamer-interfaces-0.10], [
+			AC_DEFINE(USE_GSTINTERFACES, 1, [Use GStreamer interfaces for X overlay support])
+			AC_SUBST(GSTINTERFACES_CFLAGS)
+			AC_SUBST(GSTINTERFACES_LIBS)
+		], [
+			enable_gstinterfaces="no"
+		])
+	fi
+else
+	enable_gstinterfaces="no"
+fi
+
+dnl #######################################################################
 dnl # Check for Farsight
 dnl #######################################################################
 AC_ARG_ENABLE(farsight,
 	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.8 gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.8], [
 		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
 		AC_SUBST(FARSIGHT_CFLAGS)
 		AC_SUBST(FARSIGHT_LIBS)
@@ -764,41 +784,21 @@ if test "x$enable_farsight" != "xno"; then
 fi
 
 dnl #######################################################################
-dnl # Check for GStreamer-properties
-dnl #######################################################################
-AC_ARG_ENABLE(gstprops,
-	[AC_HELP_STRING([--disable-gstprops], [compile without gstreamer props])],
-	enable_gstprops="$enableval", enable_gstprops="yes")
-if test "x$enable_gstprops" != "xno";
-then
-  dnl gstreamer-libs-$GST_MAJORMINOR
-  dnl gstreamer-gconf-$GST_MAJORMINOR
-  PKG_CHECK_MODULES(GSTPROPS, [gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
-  		GSTPROPS_LIBS="$GSTPROPS_LIBS -lgstinterfaces-0.10"	   
-  		AC_DEFINE(USE_GSTPROPS, 1, [Use GStreamer property probe for finding devices])
-  		AC_SUBST(GSTPROPS_LIBS)
-  		AC_SUBST(GSTPROPS_CFLAGS)
-  ], [
-		enable_gstprops="no"
-  ])
-fi
-
-dnl #######################################################################
 dnl # Check for Voice and Video support
 dnl #######################################################################
 AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
-	[enable_vv="$enableval" force_vv=$enableval], [enable_vv="yes" enable_vv=no])
+	[enable_vv="$enableval" force_vv=$enableval], [enable_vv="yes" force_vv=no])
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_farsight" != "xno" -a "x$enable_gstprops" != "xno"; then
+	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
 		if test "x$force_vv" = "xyes"; then
 			AC_MSG_ERROR([
-
-Dependencies for voice/video were not met. Install the necessary gstreamer and farsight packages first.
-
+Dependencies for voice/video were not met.
+Install the necessary gstreamer and farsight packages first.
+Or use --disable-vv if you do not need voice/video support.
 			])
 		fi
 	fi
