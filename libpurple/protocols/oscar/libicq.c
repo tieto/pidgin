@@ -109,6 +109,7 @@ static PurplePluginProtocolInfo prpl_info =
 	icq_get_account_text_table, /* get_account_text_table */
 	NULL,					/* initiate_media */
 	NULL					/* can_do_media */
+	oscar_get_purple_moods, /* get_moods */
 };
 
 static PurplePluginInfo info =

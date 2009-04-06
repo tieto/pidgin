@@ -3527,10 +3527,10 @@ static void blist_menu_conf_list(PurpleBuddy *buddy,
   purple_request_field_list_set_multi_select(f, FALSE);
   for(; confs; confs = confs->next) {
     struct mwConference *c = confs->data;
-    purple_request_field_list_add(f, mwConference_getTitle(c), c);
+    purple_request_field_list_add_icon(f, mwConference_getTitle(c), NULL, c);
   }
-  purple_request_field_list_add(f, _("Create New Conference..."),
-			      GINT_TO_POINTER(0x01));
+  purple_request_field_list_add_icon(f, _("Create New Conference..."),
+			      NULL, GINT_TO_POINTER(0x01));
   purple_request_field_group_add_field(g, f);
   
   f = purple_request_field_string_new(CHAT_KEY_INVITE, "Message", NULL, FALSE);
@@ -5458,7 +5458,7 @@ static void remote_group_multi(struct mwResolveResult *result,
     res->id = g_strdup(match->id);
     res->name = g_strdup(match->name);
 
-    purple_request_field_list_add(f, res->name, res);
+    purple_request_field_list_add_icon(f, res->name, NULL, res);
   }
 
   purple_request_field_group_add_field(g, f);

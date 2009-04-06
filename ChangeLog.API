@@ -35,6 +35,7 @@ version 2.6.0 (??/??/2009):
 		* xmlnode_from_file
 		* xmlnode_get_parent
 		* xmlnode_set_attrib_full
+		* PURPLE_STATUS_MOOD as a new PurpleStatusPrimitive
 
 		Changed:
 		* xmlnode_remove_attrib now removes all attributes with the
