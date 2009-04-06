@@ -177,7 +177,7 @@ gnt_text_view_draw(GntWidget *widget)
 					gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 	}
 
-	GNTDEBUG;
+	wmove(widget->window, 0, 0);
 }
 
 static void

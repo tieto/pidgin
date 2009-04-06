@@ -87,10 +87,11 @@ static void jabber_stream_init(JabberStream *js)
 }
 
 static void
-jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_session_initialized_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 		if(js->unregistration)
 			jabber_unregister_account_cb(js);
@@ -114,13 +115,13 @@ static void jabber_session_init(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
-static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+static void jabber_bind_result_cb(JabberStream *js, const char *from,
+                                  JabberIqType type, const char *id,
+                                  xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	xmlnode *bind;
 
-	if(type && !strcmp(type, "result") &&
+	if (type == JABBER_IQ_RESULT &&
 			(bind = xmlnode_get_child_with_namespace(packet, "bind", "urn:ietf:params:xml:ns:xmpp-bind"))) {
 		xmlnode *jid;
 		char *full_jid;
@@ -448,13 +449,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
-{
-	purple_timeout_remove(js->keepalive_timeout);
-	js->keepalive_timeout = -1;
-}
-
-static gboolean jabber_pong_timeout(PurpleConnection *gc)
+static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -468,14 +463,9 @@ void jabber_keepalive(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 
 	if (js->keepalive_timeout == -1) {
-		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
-
-		xmlnode *ping = xmlnode_new_child(iq->node, "ping");
-		xmlnode_set_namespace(ping, "urn:xmpp:ping");
-
-		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
-		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
-		jabber_iq_send(iq);
+		jabber_ping_jid(js, NULL);
+		js->keepalive_timeout = purple_timeout_add_seconds(120,
+				(GSourceFunc)(jabber_keepalive_timeout), gc);
 	}
 }
 
@@ -802,14 +792,15 @@ jabber_connection_schedule_close(JabberStream *js)
 }
 
 static void
-jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_registration_result_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		if(js->registration) {
 		buf = g_strdup_printf(_("Registration of %s@%s successful"),
 				js->user->node, js->user->domain);
@@ -837,13 +828,14 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 	g_free(to);
 	if(js->registration)
-	jabber_connection_schedule_close(js);
+		jabber_connection_schedule_close(js);
 }
 
 static void
-jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_unregistration_result_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
@@ -851,7 +843,7 @@ jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data
 	 * the server, so there should always be a 'to' address. */
 	g_return_if_fail(to != NULL);
 
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		buf = g_strdup_printf(_("Registration from %s successfully removed"),
 							  to);
 		purple_notify_info(NULL, _("Unregistration Successful"),
@@ -1000,30 +992,29 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 	jabber_iq_send(iq);
 }
 
-void jabber_register_parse(JabberStream *js, xmlnode *packet)
+void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type,
+                           const char *id, xmlnode *query)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type;
-	const char *from;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	xmlnode *query, *x, *y;
+	xmlnode *x, *y;
 	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
+	if (type != JABBER_IQ_RESULT)
 		return;
 
-	from = xmlnode_get_attrib(packet, "from");
+	if (!from)
+		from = js->serverFQDN;
+	g_return_if_fail(from != NULL);
 
 	if(js->registration) {
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 	}
-
-	query = xmlnode_get_child(packet, "query");
 
 	if(xmlnode_get_child(query, "registered")) {
 		registered = TRUE;
@@ -1262,10 +1253,14 @@ void jabber_register_account(PurpleAccount *account)
 	}
 }
 
-static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, gpointer data) {
+static void
+jabber_unregister_account_iq_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
+{
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type = xmlnode_get_attrib(packet,"type");
-	if(!strcmp(type,"error")) {
+
+	if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Error unregistering account"),
@@ -1273,7 +1268,7 @@ static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, g
 		g_free(msg);
 		if(js->unregistration_cb)
 			js->unregistration_cb(account, FALSE, js->unregistration_user_data);
-	} else if(!strcmp(type,"result")) {
+	} else {
 		purple_notify_info(js->gc, _("Account successfully unregistered"),
 						   _("Account successfully unregistered"), NULL);
 		if(js->unregistration_cb)
@@ -1514,7 +1509,9 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	js->idle = idle ? time(NULL) - idle : idle;
 }
 
-static void jabber_blocklist_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_blocklist_parse(JabberStream *js, const char *from,
+                                   JabberIqType type, const char *id,
+                                   xmlnode *packet, gpointer data)
 {
 	xmlnode *blocklist, *item;
 	PurpleAccount *account;
@@ -1938,14 +1935,11 @@ GList *jabber_status_types(PurpleAccount *account)
 }
 
 static void
-jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+jabber_password_change_result_cb(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *packet, gpointer data)
 {
-	const char *type;
-
-	type = xmlnode_get_attrib(packet, "type");
-
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 
@@ -2477,10 +2471,16 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
+	PurpleAccount *account;
+	PurpleConnection *pc;
+
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if(!jabber_ping_jid(conv, args[0])) {
+	account = purple_conversation_get_account(conv);
+	pc = purple_account_get_connection(account);
+
+	if(!jabber_ping_jid(purple_connection_get_protocol_data(pc), args[0])) {
 		*error = g_strdup_printf(_("Unable to ping user %s"), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -2691,11 +2691,11 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 		char *msg;
 
 		if(!jb) {
-			msg = g_strdup_printf(_("Unable to initiate media with %s, invalid JID"), who);
+			msg = g_strdup_printf(_("Unable to initiate media with %s: invalid JID"), who);
 		} else if(jb->subscription & JABBER_SUB_TO) {
-			msg = g_strdup_printf(_("Unable to initiate media with %s, user is not online"), who);
+			msg = g_strdup_printf(_("Unable to initiate media with %s: user is not online"), who);
 		} else {
-			msg = g_strdup_printf(_("Unable to initiate media with %s, not subscribed to user presence"), who);
+			msg = g_strdup_printf(_("Unable to initiate media with %s: not subscribed to user presence"), who);
 		}
 
 		purple_notify_error(js->gc, _("Media Initiation Failed"),
@@ -2769,7 +2769,7 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 			return result;
 		}
 
-		msg = g_strdup_printf(_("Please select the resource of %s to which you would like to start a media session with."), who);
+		msg = g_strdup_printf(_("Please select the resource of %s with which you would like to start a media session."), who);
 		fields = purple_request_fields_new();
 		group =	purple_request_field_group_new(NULL);
 		request = g_new0(JabberMediaRequest, 1);

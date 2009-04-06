@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef JINGLE_TRANSPORT_H
-#define JINGLE_TRANSPORT_H
+#ifndef PURPLE_JABBER_JINGLE_TRANSPORT_H
+#define PURPLE_JABBER_JINGLE_TRANSPORT_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -84,5 +84,5 @@ xmlnode *jingle_transport_to_xml(JingleTransport *transport, xmlnode *content, J
 
 G_END_DECLS
 
-#endif /* JINGLE_TRANSPORT_H */
+#endif /* PURPLE_JABBER_JINGLE_TRANSPORT_H */
 

@@ -24,8 +24,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __MEDIA_GST_H_
-#define __MEDIA_GST_H_
+#ifndef _PURPLE_MEDIA_GST_H_
+#define _PURPLE_MEDIA_GST_H_
 
 #include "media.h"
 #include "mediamanager.h"
@@ -81,6 +81,8 @@ extern "C" {
  * Gets the element type's GType.
  *
  * @return The element type's GType.
+ *
+ * @since 2.6.0
  */
 GType purple_media_element_type_get_type(void);
 
@@ -88,6 +90,8 @@ GType purple_media_element_type_get_type(void);
  * Gets the element info's GType.
  *
  * @return The element info's GType.
+ *
+ * @since 2.6.0
  */
 GType purple_media_element_info_get_type(void);
 
@@ -98,6 +102,8 @@ GType purple_media_element_info_get_type(void);
  * @param sess_id The session id of the session to get the source from.
  *
  * @return The source retrieved.
+ *
+ * @since 2.6.0
  */
 GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
 
@@ -109,6 +115,8 @@ GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
  * @param participant Optionally, the participant of the stream to get the tee from.
  *
  * @return The GstTee element from the chosen session/stream.
+ *
+ * @since 2.6.0
  */
 GstElement *purple_media_get_tee(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
@@ -120,6 +128,8 @@ GstElement *purple_media_get_tee(PurpleMedia *media,
  * @param manager The media manager to get the pipeline from.
  *
  * @return The pipeline.
+ *
+ * @since 2.6.0
  */
 GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
 
@@ -128,6 +138,8 @@ GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
  *
  * @param manager The media manager to use to obtain the source/sink.
  * @param type The type of source/sink to get.
+ *
+ * @since 2.6.0
  */
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -158,4 +170,4 @@ GstElement *purple_media_element_info_call_create(
 
 G_END_DECLS
 
-#endif  /* __MEDIA_GST_H_ */
+#endif  /* _PURPLE_MEDIA_GST_H_ */

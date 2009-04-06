@@ -48,6 +48,10 @@
 	#define G_PARAM_STATIC_BLURB  G_PARAM_PRIVATE
 #endif
 
+#if !GLIB_CHECK_VERSION(2,14,0)
+	#define g_timeout_add_seconds(time, callback, data)  g_timeout_add(time * 1000, callback, data)
+#endif
+
 /**
  * Initialize GNT.
  */

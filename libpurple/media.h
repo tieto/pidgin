@@ -24,11 +24,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __MEDIA_H_
-#define __MEDIA_H_
-
-#include "signals.h"
-#include "util.h"
+#ifndef _PURPLE_MEDIA_H_
+#define _PURPLE_MEDIA_H_
 
 #include <glib.h>
 #include <glib-object.h>
@@ -129,6 +126,9 @@ typedef enum {
 	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
 } PurpleMediaNetworkProtocol;
 
+#include "signals.h"
+#include "util.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -137,6 +137,8 @@ extern "C" {
  * Gets the media session type's GType
  *
  * @return The media session type's GType.
+ *
+ * @since 2.6.0
  */
 GType purple_media_session_type_get_type(void);
 
@@ -144,6 +146,8 @@ GType purple_media_session_type_get_type(void);
  * Gets the media candidate type's GType
  *
  * @return The media candidate type's GType.
+ *
+ * @since 2.6.0
  */
 GType purple_media_candidate_type_get_type(void);
 
@@ -151,6 +155,8 @@ GType purple_media_candidate_type_get_type(void);
  * Gets the media network protocol's GType
  *
  * @return The media network protocol's GType.
+ *
+ * @since 2.6.0
  */
 GType purple_media_network_protocol_get_type(void);
 
@@ -158,6 +164,8 @@ GType purple_media_network_protocol_get_type(void);
  * Gets the media class's GType
  *
  * @return The media class's GType.
+ *
+ * @since 2.6.0
  */
 GType purple_media_get_type(void);
 
@@ -165,6 +173,8 @@ GType purple_media_get_type(void);
  * Gets the type of the state-changed enum
  *
  * @return The state-changed enum's GType
+ *
+ * @since 2.6.0
  */
 GType purple_media_state_changed_get_type(void);
 
@@ -172,6 +182,8 @@ GType purple_media_state_changed_get_type(void);
  * Gets the type of the info type enum
  *
  * @return The info type enum's GType
+ *
+ * @since 2.6.0
  */
 GType purple_media_info_type_get_type(void);
 
@@ -179,6 +191,8 @@ GType purple_media_info_type_get_type(void);
  * Gets the type of the media candidate structure.
  *
  * @return The media canditate's GType
+ *
+ * @since 2.6.0
  */
 GType purple_media_candidate_get_type(void);
 
@@ -193,6 +207,8 @@ GType purple_media_candidate_get_type(void);
  * @param port The network port.
  *
  * @return The newly created PurpleMediaCandidate instance.
+ *
+ * @since 2.6.0
  */
 PurpleMediaCandidate *purple_media_candidate_new(
 		const gchar *foundation, guint component_id,
@@ -206,6 +222,8 @@ PurpleMediaCandidate *purple_media_candidate_new(
  * @param candidates The list of candidates to be copied.
  *
  * @return The copy of the GList.
+ *
+ * @since 2.6.0
  */
 GList *purple_media_candidate_list_copy(GList *candidates);
 
@@ -213,6 +231,8 @@ GList *purple_media_candidate_list_copy(GList *candidates);
  * Frees a GList of PurpleMediaCandidate and its contents.
  *
  * @param candidates The list of candidates to be freed.
+ *
+ * @since 2.6.0
  */
 void purple_media_candidate_list_free(GList *candidates);
 
@@ -235,6 +255,8 @@ guint purple_media_candidate_get_ttl(PurpleMediaCandidate *candidate);
  * Gets the type of the media codec structure.
  *
  * @return The media codec's GType
+ *
+ * @since 2.6.0
  */
 GType purple_media_codec_get_type(void);
 
@@ -247,6 +269,8 @@ GType purple_media_codec_get_type(void);
  * @param clock_rate The clock rate this codec encodes at, if applicable.
  *
  * @return The newly created PurpleMediaCodec.
+ *
+ * @since 2.6.0
  */
 PurpleMediaCodec *purple_media_codec_new(int id, const char *encoding_name,
 		PurpleMediaSessionType media_type, guint clock_rate);
@@ -263,6 +287,8 @@ GList *purple_media_codec_get_optional_parameters(PurpleMediaCodec *codec);
  * @param codec The codec to create the string of.
  *
  * @return The new string representation.
+ *
+ * @since 2.6.0
  */
 gchar *purple_media_codec_to_string(const PurpleMediaCodec *codec);
 
@@ -272,6 +298,8 @@ gchar *purple_media_codec_to_string(const PurpleMediaCodec *codec);
  * @param codec The codec to add the parameter to.
  * @param name The name of the parameter to add.
  * @param value The value of the parameter to add.
+ *
+ * @since 2.6.0
  */
 void purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
 		const gchar *name, const gchar *value);
@@ -281,6 +309,8 @@ void purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
  *
  * @param codec The codec to remove the parameter from.
  * @param param A pointer to the parameter to remove.
+ *
+ * @since 2.6.0
  */
 void purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
 		PurpleKeyValuePair *param);
@@ -293,6 +323,8 @@ void purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
  * @param value The value to search for or NULL.
  *
  * @return The value found or NULL.
+ *
+ * @since 2.6.0
  */
 PurpleKeyValuePair *purple_media_codec_get_optional_parameter(
 		PurpleMediaCodec *codec, const gchar *name,
@@ -304,6 +336,8 @@ PurpleKeyValuePair *purple_media_codec_get_optional_parameter(
  * @param codecs The list of codecs to be copied.
  *
  * @return The copy of the GList.
+ *
+ * @since 2.6.0
  */
 GList *purple_media_codec_list_copy(GList *codecs);
 
@@ -311,6 +345,8 @@ GList *purple_media_codec_list_copy(GList *codecs);
  * Frees a GList of PurpleMediaCodec and its contents.
  *
  * @param codecs The list of codecs to be freed.
+ *
+ * @since 2.6.0
  */
 void purple_media_codec_list_free(GList *codecs);
 
@@ -320,6 +356,8 @@ void purple_media_codec_list_free(GList *codecs);
  * @param media The media session to retrieve session names from.
  *
  * @return GList of session names.
+ *
+ * @since 2.6.0
  */
 GList *purple_media_get_session_names(PurpleMedia *media);
 
@@ -329,6 +367,8 @@ GList *purple_media_get_session_names(PurpleMedia *media);
  * @param media The media session to retrieve the connection from.
  *
  * @return The connection retrieved.
+ *
+ * @since 2.6.0
  */
 PurpleConnection *purple_media_get_connection(PurpleMedia *media);
 
@@ -338,6 +378,8 @@ PurpleConnection *purple_media_get_connection(PurpleMedia *media);
  * @param media The media session to retrieve the prpl data from.
  *
  * @return The prpl data retrieved.
+ *
+ * @since 2.6.0
  */
 gpointer purple_media_get_prpl_data(PurpleMedia *media);
 
@@ -346,6 +388,8 @@ gpointer purple_media_get_prpl_data(PurpleMedia *media);
  *
  * @param media The media session to set the prpl data on.
  * @param prpl_data The data to set on the media session.
+ *
+ * @since 2.6.0
  */
 void purple_media_set_prpl_data(PurpleMedia *media, gpointer prpl_data);
 
@@ -355,6 +399,8 @@ void purple_media_set_prpl_data(PurpleMedia *media, gpointer prpl_data);
  * @param media The media object to set the state on.
  * @param error The format of the error message to send in the signal.
  * @param ... The arguments to plug into the format.
+ *
+ * @since 2.6.0
  */
 void purple_media_error(PurpleMedia *media, const gchar *error, ...);
 
@@ -364,6 +410,8 @@ void purple_media_error(PurpleMedia *media, const gchar *error, ...);
  * @param media The media object with which to end streams.
  * @param session_id The session to end streams on.
  * @param participant The participant to end streams with.
+ *
+ * @since 2.6.0
  */
 void purple_media_end(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant);
@@ -376,6 +424,8 @@ void purple_media_end(PurpleMedia *media, const gchar *session_id,
  * @param session_id The id of the session of the stream being signaled.
  * @param participant The participant of the stream being signaled.
  * @param local TRUE if the info originated locally, FALSE if on the remote end.
+ *
+ * @since 2.6.0
  */
 void purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 		const gchar *session_id, const gchar *participant,
@@ -397,6 +447,8 @@ void purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
  * @param params The parameters to pass to Farsight.
  *
  * @return @c TRUE The stream was added successfully, @c FALSE otherwise.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		const gchar *who, PurpleMediaSessionType type,
@@ -410,6 +462,8 @@ gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
  * @param sess_id The session id of the session to get the type from.
  *
  * @return The retreived session type.
+ *
+ * @since 2.6.0
  */
 PurpleMediaSessionType purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id);
 
@@ -419,6 +473,8 @@ PurpleMediaSessionType purple_media_get_session_type(PurpleMedia *media, const g
  * @param media The media object to get the manager instance from.
  *
  * @return The PurpleMediaManager instance retrieved.
+ *
+ * @since 2.6.0
  */
 struct _PurpleMediaManager *purple_media_get_manager(PurpleMedia *media);
 
@@ -429,6 +485,8 @@ struct _PurpleMediaManager *purple_media_get_manager(PurpleMedia *media);
  * @param sess_id The session id of the session to get the codecs from.
  *
  * @return The retreieved codecs.
+ *
+ * @since 2.6.0
  */
 GList *purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id);
 
@@ -439,6 +497,8 @@ GList *purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id);
  * @param sess_id The session id of the session find the stream in.
  * @param name The name of the remote user to add the candidates for.
  * @param remote_candidates The remote candidates to add.
+ *
+ * @since 2.6.0
  */
 void purple_media_add_remote_candidates(PurpleMedia *media,
 					const gchar *sess_id,
@@ -451,6 +511,8 @@ void purple_media_add_remote_candidates(PurpleMedia *media,
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session to find the stream in.
  * @param name The name of the remote user to get the candidates from.
+ *
+ * @since 2.6.0
  */
 GList *purple_media_get_local_candidates(PurpleMedia *media,
 					 const gchar *sess_id,
@@ -495,6 +557,8 @@ GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
  * @param name The name of the remote user to get the candidates from.
  *
  * @return @c TRUE The codecs were set successfully, or @c FALSE otherwise.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,
 					const gchar *name, GList *codecs);
@@ -507,6 +571,8 @@ gboolean purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id
  * @param participant The remote user to check for.
  *
  * @return @c TRUE All streams for the given session_id/participant combination have candidates prepared, @c FALSE otherwise.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_candidates_prepared(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
@@ -519,6 +585,8 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media,
  * @param codec The codec to set the session to stream.
  *
  * @return @c TRUE The codec was successfully changed, or @c FALSE otherwise.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec);
 
@@ -529,6 +597,8 @@ gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, P
  * @param sess_id The session id of the session to check.
  *
  * @return @c TRUE The codecs are ready, or @c FALSE otherwise.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
 
@@ -540,6 +610,8 @@ gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
  * @param participant The participant of the stream to check.
  *
  * @return TRUE if the local user is the stream's initator, else FALSE.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_is_initiator(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant);
@@ -552,6 +624,8 @@ gboolean purple_media_is_initiator(PurpleMedia *media,
  * @param participant The participant to check.
  *
  * @return @c TRUE The selected streams have been accepted, or @c FALSE otherwise.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
 		const gchar *participant);
@@ -562,6 +636,8 @@ gboolean purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
  * @param media The media object the sessions are in.
  * @param session_id The session to select (if any).
  * @param level The level to set the volume to.
+ *
+ * @since 2.6.0
  */
 void purple_media_set_input_volume(PurpleMedia *media, const gchar *session_id, double level);
 
@@ -572,6 +648,8 @@ void purple_media_set_input_volume(PurpleMedia *media, const gchar *session_id, 
  * @param session_id The session to limit the streams to (if any).
  * @param participant The participant to limit the streams to (if any).
  * @param level The level to set the volume to.
+ *
+ * @since 2.6.0
  */
 void purple_media_set_output_volume(PurpleMedia *media, const gchar *session_id,
 		const gchar *participant, double level);
@@ -585,6 +663,8 @@ void purple_media_set_output_volume(PurpleMedia *media, const gchar *session_id,
  * @param window_id The window id use for embedding the video in.
  *
  * @return An id to reference the output window.
+ *
+ * @since 2.6.0
  */
 gulong purple_media_set_output_window(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant,
@@ -594,6 +674,8 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  * Removes all output windows from a given media session.
  *
  * @param media The instance to remove all output windows from.
+ *
+ * @since 2.6.0
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
 
@@ -603,4 +685,4 @@ void purple_media_remove_output_windows(PurpleMedia *media);
 
 G_END_DECLS
 
-#endif  /* __MEDIA_H_ */
+#endif  /* _PURPLE_MEDIA_H_ */
