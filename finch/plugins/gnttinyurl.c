@@ -140,7 +140,7 @@ static GList *extract_urls(char *text) {
 					}
 
 					url_buf = g_strndup(c, t - c);
-					if (!g_list_find_custom(ret, url_buf, (GCompareFunc)g_strcmp0)) {
+					if (!g_list_find_custom(ret, url_buf, (GCompareFunc)strcmp)) {
 						purple_debug_info("TinyURL", "Added URL %s\n", url_buf);
 						ret = g_list_append(ret, g_strdup(url_buf));
 					}
@@ -170,7 +170,7 @@ static GList *extract_urls(char *text) {
 							t--;
 						}
 						url_buf = g_strndup(c, t - c);
-						if (!g_list_find_custom(ret, url_buf, (GCompareFunc)g_strcmp0)) {
+						if (!g_list_find_custom(ret, url_buf, (GCompareFunc)strcmp)) {
 							purple_debug_info("TinyURL", "Added URL %s\n", url_buf);
 							ret = g_list_append(ret, url_buf);
 						}
