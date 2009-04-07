@@ -28,8 +28,6 @@
 
 /* glib includes */
 #include <glib.h>
-#include <glib/ghash.h>
-#include <glib/glist.h>
 
 /* purple includes */
 #include "internal.h"

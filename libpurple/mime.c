@@ -25,9 +25,6 @@
 #include <string.h>
 
 #include <glib.h>
-#include <glib/ghash.h>
-#include <glib/glist.h>
-#include <glib/gstring.h>
 
 #include "internal.h"
 

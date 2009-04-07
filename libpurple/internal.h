@@ -222,7 +222,6 @@
 #	endif
 #endif
 
-#include <glib.h>
 #include <glib-object.h>
 
 #ifndef G_DEFINE_TYPE

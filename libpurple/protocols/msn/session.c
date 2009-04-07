@@ -303,7 +303,7 @@ msn_session_sync_users(MsnSession *session)
 						for (l = remote_user->group_ids; l != NULL; l = l->next)
 						{
 							const char *name = msn_userlist_find_group_name(remote_user->userlist, l->data);
-							if (name && !g_strcasecmp(group_name, name))
+							if (name && !g_ascii_strcasecmp(group_name, name))
 							{
 								found = TRUE;
 								break;
