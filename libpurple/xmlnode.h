@@ -273,6 +273,8 @@ const char *xmlnode_get_prefix(const xmlnode *node);
  * @param child The child node.
  *
  * @return The parent or NULL.
+ *
+ * @since 2.6.0
  */
 xmlnode *xmlnode_get_parent(const xmlnode *child);
 

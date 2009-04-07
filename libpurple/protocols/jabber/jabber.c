@@ -88,10 +88,11 @@ static void jabber_stream_init(JabberStream *js)
 }
 
 static void
-jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_session_initialized_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 		if(js->unregistration)
 			jabber_unregister_account_cb(js);
@@ -115,13 +116,13 @@ static void jabber_session_init(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
-static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+static void jabber_bind_result_cb(JabberStream *js, const char *from,
+                                  JabberIqType type, const char *id,
+                                  xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	xmlnode *bind;
 
-	if(type && !strcmp(type, "result") &&
+	if (type == JABBER_IQ_RESULT &&
 			(bind = xmlnode_get_child_with_namespace(packet, "bind", "urn:ietf:params:xml:ns:xmpp-bind"))) {
 		xmlnode *jid;
 		char *full_jid;
@@ -449,13 +450,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
-{
-	purple_timeout_remove(js->keepalive_timeout);
-	js->keepalive_timeout = -1;
-}
-
-static gboolean jabber_pong_timeout(PurpleConnection *gc)
+static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -469,14 +464,9 @@ void jabber_keepalive(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 
 	if (js->keepalive_timeout == -1) {
-		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
-
-		xmlnode *ping = xmlnode_new_child(iq->node, "ping");
-		xmlnode_set_namespace(ping, "urn:xmpp:ping");
-
-		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
-		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
-		jabber_iq_send(iq);
+		jabber_ping_jid(js, NULL);
+		js->keepalive_timeout = purple_timeout_add_seconds(120,
+				(GSourceFunc)(jabber_keepalive_timeout), gc);
 	}
 }
 
@@ -812,14 +802,15 @@ jabber_connection_schedule_close(JabberStream *js)
 }
 
 static void
-jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_registration_result_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		if(js->registration) {
 		buf = g_strdup_printf(_("Registration of %s@%s successful"),
 				js->user->node, js->user->domain);
@@ -847,13 +838,14 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 	g_free(to);
 	if(js->registration)
-	jabber_connection_schedule_close(js);
+		jabber_connection_schedule_close(js);
 }
 
 static void
-jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_unregistration_result_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
@@ -861,7 +853,7 @@ jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data
 	 * the server, so there should always be a 'to' address. */
 	g_return_if_fail(to != NULL);
 
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		buf = g_strdup_printf(_("Registration from %s successfully removed"),
 							  to);
 		purple_notify_info(NULL, _("Unregistration Successful"),
@@ -1010,30 +1002,29 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 	jabber_iq_send(iq);
 }
 
-void jabber_register_parse(JabberStream *js, xmlnode *packet)
+void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type,
+                           const char *id, xmlnode *query)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type;
-	const char *from;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	xmlnode *query, *x, *y;
+	xmlnode *x, *y;
 	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
+	if (type != JABBER_IQ_RESULT)
 		return;
 
-	from = xmlnode_get_attrib(packet, "from");
+	if (!from)
+		from = js->serverFQDN;
+	g_return_if_fail(from != NULL);
 
 	if(js->registration) {
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 	}
-
-	query = xmlnode_get_child(packet, "query");
 
 	if(xmlnode_get_child(query, "registered")) {
 		registered = TRUE;
@@ -1272,10 +1263,14 @@ void jabber_register_account(PurpleAccount *account)
 	}
 }
 
-static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, gpointer data) {
+static void
+jabber_unregister_account_iq_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
+{
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *type = xmlnode_get_attrib(packet,"type");
-	if(!strcmp(type,"error")) {
+
+	if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Error unregistering account"),
@@ -1283,7 +1278,7 @@ static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, g
 		g_free(msg);
 		if(js->unregistration_cb)
 			js->unregistration_cb(account, FALSE, js->unregistration_user_data);
-	} else if(!strcmp(type,"result")) {
+	} else {
 		purple_notify_info(js->gc, _("Account successfully unregistered"),
 						   _("Account successfully unregistered"), NULL);
 		if(js->unregistration_cb)
@@ -1530,7 +1525,9 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	jabber_presence_send(account, status);
 }
 
-static void jabber_blocklist_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_blocklist_parse(JabberStream *js, const char *from,
+                                   JabberIqType type, const char *id,
+                                   xmlnode *packet, gpointer data)
 {
 	xmlnode *blocklist, *item;
 	PurpleAccount *account;
@@ -1982,14 +1979,11 @@ GList *jabber_status_types(PurpleAccount *account)
 }
 
 static void
-jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+jabber_password_change_result_cb(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *packet, gpointer data)
 {
-	const char *type;
-
-	type = xmlnode_get_attrib(packet, "type");
-
-	if(type && !strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 
@@ -2521,10 +2515,16 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
+	PurpleAccount *account;
+	PurpleConnection *pc;
+
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if(!jabber_ping_jid(conv, args[0])) {
+	account = purple_conversation_get_account(conv);
+	pc = purple_account_get_connection(account);
+
+	if(!jabber_ping_jid(purple_connection_get_protocol_data(pc), args[0])) {
 		*error = g_strdup_printf(_("Unable to ping user %s"), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -2656,6 +2656,39 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
+#ifdef USE_VV
+typedef struct {
+	PurpleConnection *pc;
+	gchar *who;
+	PurpleMediaSessionType type;
+	
+} JabberMediaRequest;
+
+static void
+jabber_media_cancel_cb(JabberMediaRequest *request,
+		PurpleRequestFields *fields)
+{
+	g_free(request->who);
+	g_free(request);
+}
+
+static void
+jabber_media_ok_cb(JabberMediaRequest *request, PurpleRequestFields *fields)
+{
+	PurpleRequestField *field =
+			purple_request_fields_get_field(fields, "resource");
+	int selected_id = purple_request_field_choice_get_value(field);
+	GList *labels = purple_request_field_choice_get_labels(field);
+	gchar *who = g_strdup_printf("%s/%s", request->who,
+			(gchar*)g_list_nth_data(labels, selected_id));
+	jabber_initiate_media(request->pc, who, request->type);
+
+	g_free(who);
+	g_free(request->who);
+	g_free(request);
+}
+#endif
+
 gboolean
 jabber_initiate_media(PurpleConnection *gc, const char *who, 
 		      PurpleMediaSessionType type)
@@ -2663,6 +2696,8 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 #ifdef USE_VV
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
+	JabberBuddyResource *jbr = NULL;
+	char *resource;
 
 	if (!js) {
 		purple_debug_error("jabber",
@@ -2670,23 +2705,135 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 		return FALSE;
 	}
 
-	jb = jabber_buddy_find(js, who, FALSE);
 
-	if (!jb) {
-		purple_debug_error("jabber", "Could not find buddy\n");
-		return FALSE;
+	if((resource = jabber_get_resource(who)) != NULL) {
+		/* they've specified a resource, no need to ask or
+		 * default or anything, just do it */
+
+		jb = jabber_buddy_find(js, who, FALSE);
+		jbr = jabber_buddy_find_resource(jb, resource);
+		g_free(resource);
+
+		if (type & PURPLE_MEDIA_AUDIO &&
+				!jabber_resource_has_capability(jbr,
+				JINGLE_APP_RTP_SUPPORT_AUDIO) &&
+				jabber_resource_has_capability(jbr,
+				GOOGLE_VOICE_CAP))
+			return jabber_google_session_initiate(
+					gc->proto_data, who, type);
+		else
+			return jingle_rtp_initiate_media(
+					gc->proto_data, who, type);
 	}
 
-	if (type & PURPLE_MEDIA_AUDIO &&
-			!jabber_buddy_has_capability(jb,
-			JINGLE_APP_RTP_SUPPORT_AUDIO) &&
-			jabber_buddy_has_capability(jb, GOOGLE_VOICE_CAP))
-		return jabber_google_session_initiate(gc->proto_data, who, type);
-	else
-		return jingle_rtp_initiate_media(gc->proto_data, who, type);
-#else
-	return FALSE;
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	if(!jb || !jb->resources) {
+		/* no resources online, we're trying to initiate with someone
+		 * whose presence we're not subscribed to, or
+		 * someone who is offline.  Let's inform the user */
+		char *msg;
+
+		if(!jb) {
+			msg = g_strdup_printf(_("Unable to initiate media with %s: invalid JID"), who);
+		} else if(jb->subscription & JABBER_SUB_TO) {
+			msg = g_strdup_printf(_("Unable to initiate media with %s: user is not online"), who);
+		} else {
+			msg = g_strdup_printf(_("Unable to initiate media with %s: not subscribed to user presence"), who);
+		}
+
+		purple_notify_error(js->gc, _("Media Initiation Failed"),
+				_("Media Initiation Failed"), msg);
+		g_free(msg);
+		return FALSE;
+	} else if(!jb->resources->next) {
+		/* only 1 resource online (probably our most common case)
+		 * so no need to ask who to initiate with */
+		gchar *name;
+		gboolean result;
+		jbr = jb->resources->data;
+		name = g_strdup_printf("%s/%s", who, jbr->name);
+		result = jabber_initiate_media(gc, name, type);
+		g_free(name);
+		return result;
+	} else {
+		/* we've got multiple resources,
+		 * we need to pick one to initiate with */
+		GList *l;
+		char *msg;
+		PurpleRequestFields *fields;
+		PurpleRequestField *field = purple_request_field_choice_new(
+				"resource", _("Resource"), 0);
+		PurpleRequestFieldGroup *group;
+		JabberMediaRequest *request;
+
+		for(l = jb->resources; l; l = l->next)
+		{
+			JabberBuddyResource *ljbr = l->data;
+			PurpleMediaCaps caps;
+			gchar *name;
+			name = g_strdup_printf("%s/%s", who, ljbr->name);
+			caps = jabber_get_media_caps(gc, name);
+			g_free(name);
+
+			if ((type & PURPLE_MEDIA_AUDIO) &&
+					(type & PURPLE_MEDIA_VIDEO)) {
+				if (caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
+					jbr = ljbr;
+					purple_request_field_choice_add(
+							field, jbr->name);
+				}
+			} else if (type & (PURPLE_MEDIA_AUDIO) &&
+					(caps & PURPLE_MEDIA_CAPS_AUDIO)) {
+				jbr = ljbr;
+				purple_request_field_choice_add(
+						field, jbr->name);
+			}else if (type & (PURPLE_MEDIA_VIDEO) &&
+					(caps & PURPLE_MEDIA_CAPS_VIDEO)) {
+				jbr = ljbr;
+				purple_request_field_choice_add(
+						field, jbr->name);
+			}
+		}
+
+		if (jbr == NULL) {
+			purple_debug_error("jabber",
+					"No resources available\n");
+			return FALSE;
+		}
+
+		if (g_list_length(purple_request_field_choice_get_labels(
+				field)) <= 1) {
+			gchar *name;
+			gboolean result;
+			purple_request_field_destroy(field);
+			name = g_strdup_printf("%s/%s", who, jbr->name);
+			result = jabber_initiate_media(gc, name, type);
+			g_free(name);
+			return result;
+		}
+
+		msg = g_strdup_printf(_("Please select the resource of %s with which you would like to start a media session."), who);
+		fields = purple_request_fields_new();
+		group =	purple_request_field_group_new(NULL);
+		request = g_new0(JabberMediaRequest, 1);
+		request->pc = gc;
+		request->who = g_strdup(who);
+		request->type = type;
+
+		purple_request_field_group_add_field(group, field);
+		purple_request_fields_add_group(fields, group);
+		purple_request_fields(gc, _("Select a Resource"), msg, NULL,
+				fields,	_("Initiate Media"),
+				G_CALLBACK(jabber_media_ok_cb), _("Cancel"),
+				G_CALLBACK(jabber_media_cancel_cb),
+				gc->account, who, NULL, request);
+
+		g_free(msg);
+		return TRUE;
+	}
 #endif
+	return FALSE;
 }
 
 PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
@@ -2694,7 +2841,9 @@ PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
 #ifdef USE_VV
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
 	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
+	gchar *resource;
 
 	if (!js) {
 		purple_debug_info("jabber",
@@ -2702,35 +2851,75 @@ PurpleMediaCaps jabber_get_media_caps(PurpleConnection *gc, const char *who)
 		return FALSE;
 	}
 
+	if ((resource = jabber_get_resource(who)) != NULL) {
+		/* they've specified a resource, no need to ask or
+		 * default or anything, just do it */
+
+		jb = jabber_buddy_find(js, who, FALSE);
+		jbr = jabber_buddy_find_resource(jb, resource);
+		g_free(resource);
+
+		if (!jbr) {
+			purple_debug_error("jabber", "jabber_get_media_caps:"
+					" Can't find resource %s\n", who);
+			return caps;
+		}
+
+		if (jabber_resource_has_capability(jbr,
+				JINGLE_APP_RTP_SUPPORT_AUDIO))
+			caps |= PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION |
+					PURPLE_MEDIA_CAPS_AUDIO;
+		if (jabber_resource_has_capability(jbr,
+				JINGLE_APP_RTP_SUPPORT_VIDEO))
+			caps |= PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION |
+					PURPLE_MEDIA_CAPS_VIDEO;
+		if (caps & PURPLE_MEDIA_CAPS_AUDIO && caps &
+				PURPLE_MEDIA_CAPS_VIDEO)
+			caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
+		if (caps != PURPLE_MEDIA_CAPS_NONE) {
+			if (!jabber_resource_has_capability(jbr,
+					JINGLE_TRANSPORT_ICEUDP) &&
+					!jabber_resource_has_capability(jbr,
+					JINGLE_TRANSPORT_RAWUDP)) {
+				purple_debug_info("jingle-rtp", "Buddy doesn't "
+						"support the same transport types\n");
+				caps = PURPLE_MEDIA_CAPS_NONE;
+			} else
+				caps |= PURPLE_MEDIA_CAPS_MODIFY_SESSION |
+						PURPLE_MEDIA_CAPS_CHANGE_DIRECTION;
+		}
+		if (jabber_resource_has_capability(jbr, GOOGLE_VOICE_CAP))
+			caps |= PURPLE_MEDIA_CAPS_AUDIO;
+		return caps;
+	}
+
 	jb = jabber_buddy_find(js, who, FALSE);
 
-	if (!jb) {
-		purple_debug_error("jabber", "Could not find buddy\n");
-		return FALSE;
-	}
+	if(!jb || !jb->resources) {
+		/* no resources online, we're trying to get caps for someone
+		 * whose presence we're not subscribed to, or
+		 * someone who is offline. */
+		return caps;
+	} else if(!jb->resources->next) {
+		/* only 1 resource online (probably our most common case) */
+		gchar *name;
+		jbr = jb->resources->data;
+		name = g_strdup_printf("%s/%s", who, jbr->name);
+		caps = jabber_get_media_caps(gc, name);
+		g_free(name);
+	} else {
+		/* we've got multiple resources, combine their caps */
+		GList *l;
 
-	if (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_AUDIO))
-		caps |= PURPLE_MEDIA_CAPS_AUDIO |
-				PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION;
-	if (jabber_buddy_has_capability(jb, JINGLE_APP_RTP_SUPPORT_VIDEO))
-		caps |= PURPLE_MEDIA_CAPS_VIDEO |
-				PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION;
-	if (caps & PURPLE_MEDIA_CAPS_AUDIO && caps & PURPLE_MEDIA_CAPS_VIDEO)
-		caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
-	if (caps != PURPLE_MEDIA_CAPS_NONE) {
-		if (!jabber_buddy_has_capability(jb,
-				JINGLE_TRANSPORT_ICEUDP) &&
-				!jabber_buddy_has_capability(jb,
-				JINGLE_TRANSPORT_RAWUDP)) {
-			purple_debug_info("jingle-rtp", "Buddy doesn't "
-					"support the same transport types\n");
-			caps = PURPLE_MEDIA_CAPS_NONE;
-		} else
-			caps |= PURPLE_MEDIA_CAPS_MODIFY_SESSION |
-					PURPLE_MEDIA_CAPS_CHANGE_DIRECTION;
+		for(l = jb->resources; l; l = l->next)
+		{
+			gchar *name;
+			jbr = l->data;
+			name = g_strdup_printf("%s/%s", who, jbr->name);
+			caps |= jabber_get_media_caps(gc, name);
+			g_free(name);
+		}
 	}
-	if (jabber_buddy_has_capability(jb, GOOGLE_VOICE_CAP))
-		caps |= PURPLE_MEDIA_CAPS_AUDIO;
 
 	return caps;
 #else

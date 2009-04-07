@@ -272,7 +272,7 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 					alias);
 		} else {
 			message = g_strdup_printf(
-					_("%s is trying to start an unsuppoted media session type with you."),
+					_("%s is trying to start an unsupported media session type with you."),
 					alias);
 		}
 		finch_media_emit_message(gntmedia, message);

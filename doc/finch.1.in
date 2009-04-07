@@ -59,7 +59,7 @@ Offline.
 Display the version information window.
 
 .SH GNT Shortcuts
-You can use the following shortcuts:
+You can use the following shortcuts (see the "\*QWidget Actions\*U" section for a more complete list):
 .TP
 .B Alt \+ a
 Bring up a list of available actions. You can use this list to access the
@@ -378,6 +378,8 @@ menu = context-menu
 [GntWidget::binding]
 .br
 f11 = context-menu
+.br
+c-x = context-menu
 
 [GntWindow::binding]
 .br

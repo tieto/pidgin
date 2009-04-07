@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef JINGLE_SESSION_H
-#define JINGLE_SESSION_H
+#ifndef PURPLE_JABBER_JINGLE_SESSION_H
+#define PURPLE_JABBER_JINGLE_SESSION_H
 
 #include "iq.h"
 #include "jabber.h"
@@ -111,5 +111,5 @@ JabberIq *jingle_session_redirect_packet(JingleSession *session, const gchar *si
 
 G_END_DECLS
 
-#endif /* JINGLE_SESSION_H */
+#endif /* PURPLE_JABBER_JINGLE_SESSION_H */
 

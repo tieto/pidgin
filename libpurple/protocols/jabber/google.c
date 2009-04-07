@@ -374,7 +374,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 }
 
 static void
-google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	JabberIq *result;
 	GList *codecs = NULL;
@@ -440,13 +440,13 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	purple_media_codec_list_free(codecs);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	jabber_iq_set_id(result, iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
 }
 
 static void 
-google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	JabberIq *result;
 	GList *list = NULL;
@@ -480,13 +480,13 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 	purple_media_candidate_list_free(list);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	jabber_iq_set_id(result, iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
 }
 
 static void
-google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	xmlnode *desc_element = xmlnode_get_child(sess, "description");
 	xmlnode *codec_element = xmlnode_get_child(desc_element, "payload-type");
@@ -514,58 +514,54 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 			NULL, NULL, FALSE);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	jabber_iq_set_id(result, iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
 }
 
 static void
-google_session_handle_reject(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_reject(JabberStream *js, GoogleSession *session, xmlnode *sess)
 {
 	purple_media_end(session->media, NULL, NULL);
 }
 
 static void
-google_session_handle_terminate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+google_session_handle_terminate(JabberStream *js, GoogleSession *session, xmlnode *sess)
 {
 	purple_media_end(session->media, NULL, NULL);
 }
 
 static void
-google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *packet)
+google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
-	xmlnode *sess = xmlnode_get_child(packet, "session");	
 	const char *type = xmlnode_get_attrib(sess, "type");
 
 	if (!strcmp(type, "initiate")) {
-		google_session_handle_initiate(js, session, packet, sess);
+		google_session_handle_initiate(js, session, sess, iq_id);
 	} else if (!strcmp(type, "accept")) {
-		google_session_handle_accept(js, session, packet, sess);
+		google_session_handle_accept(js, session, sess, iq_id);
 	} else if (!strcmp(type, "reject")) {
-		google_session_handle_reject(js, session, packet, sess);
+		google_session_handle_reject(js, session, sess);
 	} else if (!strcmp(type, "terminate")) {
-		google_session_handle_terminate(js, session, packet, sess);
+		google_session_handle_terminate(js, session, sess);
 	} else if (!strcmp(type, "candidates")) {
-		google_session_handle_candidates(js, session, packet, sess);
+		google_session_handle_candidates(js, session, sess, iq_id);
 	}
 }
 
 void
-jabber_google_session_parse(JabberStream *js, xmlnode *packet)
+jabber_google_session_parse(JabberStream *js, const char *from,
+                            JabberIqType type, const char *iq_id,
+                            xmlnode *session_node)
 {
 	GoogleSession *session = NULL;
 	GoogleSessionId id;
 
-	xmlnode *session_node;
 	xmlnode *desc_node;
 
 	GList *iter = NULL;
 
-	if (strcmp(xmlnode_get_attrib(packet, "type"), "set"))
-		return;
-
-	session_node = xmlnode_get_child(packet, "session");
-	if (!session_node)
+	if (type != JABBER_IQ_SET)
 		return;
 
 	id.id = (gchar*)xmlnode_get_attrib(session_node, "id");
@@ -591,7 +587,7 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	if (session) {
-		google_session_parse_iq(js, session, packet);
+		google_session_parse_iq(js, session, session_node, iq_id);
 		return;
 	}
 
@@ -608,18 +604,18 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	session->js = js;
 	session->remote_jid = g_strdup(session->id.initiator);
 
-	google_session_parse_iq(js, session, packet);
+	google_session_parse_iq(js, session, session_node, iq_id);
 }
 #endif /* USE_VV */
 
 static void
-jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
+jabber_gmail_parse(JabberStream *js, const char *from,
+                   JabberIqType type, const char *id,
+                   xmlnode *packet, gpointer nul)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
 	xmlnode *child;
-	xmlnode *message, *sender_node, *subject_node;
-	const char *from, *to, *url, *tid;
-	char *subject;
+	xmlnode *message;
+	const char *to, *url;
 	const char *in_str;
 	char *to_name;
 	char *default_tos[1];
@@ -629,7 +625,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	const char **tos, **froms, **urls;
 	char **subjects;
 
-	if (strcmp(type, "result"))
+	if (type == JABBER_IQ_ERROR)
 		return;
 
 	child = xmlnode_get_child(packet, "mailbox");
@@ -670,6 +666,10 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 
 	message= xmlnode_get_child(child, "mail-thread-info");
 	for (i=0; message; message = xmlnode_get_next_twin(message), i++) {
+		xmlnode *sender_node, *subject_node;
+		const char *from, *tid;
+		char *subject;
+
 		subject_node = xmlnode_get_child(message, "subject");
 		sender_node  = xmlnode_get_child(message, "senders");
 		sender_node  = xmlnode_get_child(sender_node, "sender");
@@ -727,9 +727,9 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 }
 
 void
-jabber_gmail_poke(JabberStream *js, xmlnode *packet)
+jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
+                  const char *id, xmlnode *new_mail)
 {
-	const char *type;
 	xmlnode *query;
 	JabberIq *iq;
 
@@ -737,11 +737,8 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 	if (!purple_account_get_check_mail(js->gc->account))
 		return;
 
-	type = xmlnode_get_attrib(packet, "type");
-
-
 	/* Is this an initial incoming mail notification? If so, send a request for more info */
-	if (strcmp(type, "set") || !xmlnode_get_child(packet, "new-mail"))
+	if (type != JABBER_IQ_SET)
 		return;
 
 	purple_debug(PURPLE_DEBUG_MISC, "jabber",
@@ -1159,48 +1156,77 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 }
 
 static void
-jabber_google_jingle_info_cb(JabberStream *js, xmlnode *result,
-	gpointer nullus)
-{	
-	if (result) {
-		const xmlnode *query = 
-			xmlnode_get_child_with_namespace(result, "query", 
-				GOOGLE_JINGLE_INFO_NAMESPACE);
+jabber_google_jingle_info_common(JabberStream *js, const char *from,
+                                 JabberIqType type, xmlnode *query)
+{
+	const xmlnode *stun = xmlnode_get_child(query, "stun");
+	gchar *my_bare_jid;
 
-		if (query) {
-			const xmlnode *stun = xmlnode_get_child(query, "stun");
+	/*
+	 * Make sure that random people aren't sending us STUN servers. Per
+	 * http://code.google.com/apis/talk/jep_extensions/jingleinfo.html, these
+	 * stanzas are stamped from our bare JID.
+	 */
+	if (from) {
+		my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+		if (!purple_strequal(from, my_bare_jid)) {
+			purple_debug_warning("jabber", "got google:jingleinfo with invalid from (%s)\n",
+			                  from);
+			g_free(my_bare_jid);
+			return;
+		}
 
-			purple_debug_info("jabber", "got google:jingleinfo\n");
+		g_free(my_bare_jid);
+	}
 
-			if (stun) {
-				xmlnode *server = xmlnode_get_child(stun, "server");
+	if (type == JABBER_IQ_ERROR || type == JABBER_IQ_GET)
+		return;
 
-				if (server) {
-					const gchar *host = xmlnode_get_attrib(server, "host");
-					const gchar *udp = xmlnode_get_attrib(server, "udp");
+	purple_debug_info("jabber", "got google:jingleinfo\n");
 
-					if (host && udp) {
-						int port = atoi(udp);
-						/* if there, would already be an ongoing query, 
-						 cancel it */
-						if (js->stun_query)
-							purple_dnsquery_destroy(js->stun_query);
+	if (stun) {
+		xmlnode *server = xmlnode_get_child(stun, "server");
 
-						js->stun_query = purple_dnsquery_a(host, port, 
-							jabber_google_stun_lookup_cb, js);
-					}
-				}
+		if (server) {
+			const gchar *host = xmlnode_get_attrib(server, "host");
+			const gchar *udp = xmlnode_get_attrib(server, "udp");
+
+			if (host && udp) {
+				int port = atoi(udp);
+				/* if there, would already be an ongoing query, 
+				 cancel it */
+				if (js->stun_query)
+					purple_dnsquery_destroy(js->stun_query);
+
+				js->stun_query = purple_dnsquery_a(host, port, 
+					jabber_google_stun_lookup_cb, js);
 			}
-			/* should perhaps handle relays later on, or maybe wait until
-			 Google supports a common standard... */
 		}
 	}
+	/* should perhaps handle relays later on, or maybe wait until
+	 Google supports a common standard... */
+}
+
+static void
+jabber_google_jingle_info_cb(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id,
+                             xmlnode *packet, gpointer data)
+{
+	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
+			GOOGLE_JINGLE_INFO_NAMESPACE);
+
+	if (query)
+		jabber_google_jingle_info_common(js, from, type, query);
+	else
+		purple_debug_warning("jabber", "Got invalid google:jingleinfo\n");
 }
 
 void
-jabber_google_handle_jingle_info(JabberStream *js, xmlnode *packet)
+jabber_google_handle_jingle_info(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *child)
 {
-	jabber_google_jingle_info_cb(js, packet, NULL);
+	jabber_google_jingle_info_common(js, from, type, child);
 }
 
 void
