@@ -203,6 +203,7 @@ const SizedStockIcon sized_stock_icons [] = {
 	{ PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, "toolbar", "video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL, "toolbar", "audio-video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 #endif
+	{ PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, "toolbar", "get-attention.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  }
 };
 
 const SizedStockIcon sized_status_icons [] = {
