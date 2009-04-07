@@ -353,6 +353,7 @@ static GHashTable *pidgin_ui_get_info(void)
 		g_hash_table_insert(ui_info, "version", VERSION);
 		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
 		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
+		g_hash_table_insert(ui_info, "client_type", "pc");
 	}
 
 	return ui_info;
