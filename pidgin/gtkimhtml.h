@@ -26,9 +26,7 @@
 #define _PIDGINIMHTML_H_
 
 #include <gdk/gdk.h>
-#include <gtk/gtktextview.h>
-#include <gtk/gtktooltips.h>
-#include <gtk/gtkimage.h>
+#include <gtk/gtk.h>
 #include "gtksourceundomanager.h"
 
 #include "connection.h"

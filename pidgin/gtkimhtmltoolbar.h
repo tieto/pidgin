@@ -23,7 +23,7 @@
 #ifndef _PIDGINIMHTMLTOOLBAR_H_
 #define _PIDGINIMHTMLTOOLBAR_H_
 
-#include <gtk/gtkvbox.h>
+#include <gtk/gtk.h>
 #include "gtkimhtml.h"
 
 #ifdef __cplusplus

@@ -24,9 +24,7 @@
 #ifndef PIDGIN_MENU_TRAY_H
 #define PIDGIN_MENU_TRAY_H
 
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtktooltips.h>
+#include <gtk/gtk.h>
 
 #define PIDGIN_TYPE_MENU_TRAY				(pidgin_menu_tray_get_gtype())
 #define PIDGIN_MENU_TRAY(obj)				(GTK_CHECK_CAST((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTray))

@@ -26,7 +26,7 @@
 #ifndef __GTK_SOURCE_UNDO_MANAGER_H__
 #define __GTK_SOURCE_UNDO_MANAGER_H__
 
-#include <gtk/gtktextbuffer.h>
+#include <gtk/gtk.h>
 
 #define GTK_SOURCE_TYPE_UNDO_MANAGER             	(gtk_source_undo_manager_get_type ())
 #define GTK_SOURCE_UNDO_MANAGER(obj)			(GTK_CHECK_CAST ((obj), GTK_SOURCE_TYPE_UNDO_MANAGER, GtkSourceUndoManager))

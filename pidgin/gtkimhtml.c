@@ -45,7 +45,7 @@
 #include "gtksourceundomanager.h"
 #include "gtksourceview-marshal.h"
 #include <gtk/gtk.h>
-#include <glib/gerror.h>
+#include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 #include <ctype.h>
