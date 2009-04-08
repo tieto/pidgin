@@ -5195,7 +5195,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->send_history = g_list_append(NULL, NULL);
 
 	/* Setup some initial variables. */
+#if !GTK_CHECK_VERSION(2,12,0)
 	gtkconv->tooltips = gtk_tooltips_new();
+#endif
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
 
@@ -5388,7 +5390,9 @@ pidgin_conv_destroy(PurpleConversation *conv)
 		g_free(gtkconv->u.chat);
 	}
 
+#if !GTK_CHECK_VERSION(2,12,0)
 	gtk_object_sink(GTK_OBJECT(gtkconv->tooltips));
+#endif
 
 	gtkconv->send_history = g_list_first(gtkconv->send_history);
 	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);
@@ -6603,8 +6607,13 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			topic = purple_conv_chat_get_topic(chat);
 
 			gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), topic ? topic : "");
+#if GTK_CHECK_VERSION(2,12,0)
+			gtk_widget_set_tooltip_text(gtkchat->topic_text,
+			                            topic ? topic : "");
+#else
 			gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
 			                     topic ? topic : "", NULL);
+#endif
 		}
 	}
 
@@ -9372,8 +9381,12 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(gtkconv->close), "leave-notify-event", G_CALLBACK(close_button_left_cb), close_image);
 	gtk_widget_show(close_image);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(gtkconv->close, _("Close conversation"));
+#else
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 	                     _("Close conversation"), NULL);
+#endif
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "button-press-event",
 			 G_CALLBACK(close_conv_cb), gtkconv);

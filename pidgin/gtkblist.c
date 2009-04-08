@@ -5269,6 +5269,9 @@ static void
 headline_style_set (GtkWidget *widget,
 		    GtkStyle  *prev_style)
 {
+#if GTK_CHECK_VERSION(2,12,0)
+	/* TODO: Need to figure out how to do this in 2.12+ */
+#else
 	GtkTooltips *tooltips;
 	GtkStyle *style;
 
@@ -5295,6 +5298,7 @@ headline_style_set (GtkWidget *widget,
 	gtkblist->changing_style = FALSE;
 
 	g_object_unref (tooltips);
+#endif
 }
 
 /******************************************/
