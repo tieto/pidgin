@@ -2829,6 +2829,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	p2p_data->host_username = g_strdup(who);
 	p2p_data->val_13 = val_13;
 	p2p_data->connection_type = YAHOO_P2P_WE_ARE_SERVER;
+	p2p_data->source = -1;
 
 	purple_network_listen(YAHOO_PAGER_PORT_P2P, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
 
