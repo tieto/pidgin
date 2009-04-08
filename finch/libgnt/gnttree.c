@@ -432,7 +432,7 @@ redraw_tree(GntTree *tree)
 
 	if (tree->top == NULL)
 		tree->top = tree->root;
-	if (tree->current == NULL) {
+	if (tree->current == NULL && tree->root != NULL) {
 		tree->current = tree->root;
 		tree_selection_changed(tree, NULL, tree->current);
 	}
@@ -491,6 +491,13 @@ redraw_tree(GntTree *tree)
 		tree->top = get_next(tree->top);
 	row = tree->top;
 	scrcol = widget->priv.width - 1 - 2 * pos;  /* exclude the borders and the scrollbar */
+
+	if (tree->current && !row_matches_search(tree->current)) {
+		GntTreeRow *old = tree->current;
+		tree->current = tree->top;
+		tree_selection_changed(tree, old, tree->current);
+	}
+
 	for (i = start + pos; row && i < widget->priv.height - pos;
 				i++, row = get_next(row))
 	{
