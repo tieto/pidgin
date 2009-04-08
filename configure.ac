@@ -774,7 +774,7 @@ AC_ARG_ENABLE(farsight,
 	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.8], [
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.9], [
 		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
 		AC_SUBST(FARSIGHT_CFLAGS)
 		AC_SUBST(FARSIGHT_LIBS)
