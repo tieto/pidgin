@@ -2933,10 +2933,9 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	if (base64) {
 		guint32 ip;
-		char *tmp2;
 		YahooFriend *f;
 		char *host_ip;
-		struct yahoo_p2p_data *p2p_data = g_new0(struct yahoo_p2p_data, 1);
+		struct yahoo_p2p_data *p2p_data;
 
 		decoded = purple_base64_decode(base64, &len);
 		if (len) {
@@ -2945,9 +2944,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 			g_free(tmp);
 		}
 
-		tmp2 = g_strndup((const gchar *)decoded, len); /* so its \0 terminated...*/
-		ip = strtol(tmp2, NULL, 10);
-		g_free(tmp2);
+		ip = strtol((gchar *)decoded, NULL, 10);
 		g_free(decoded);
 		host_ip = g_strdup_printf("%u.%u.%u.%u", ip & 0xff, (ip >> 8) & 0xff, (ip >> 16) & 0xff,
 		                       (ip >> 24) & 0xff);
@@ -2965,12 +2962,14 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 				val_11 = f->session_id;
 		}
 
-		p2p_data->host_username = g_strdup(who);	
+		p2p_data = g_new0(struct yahoo_p2p_data, 1);
+		p2p_data->host_username = g_strdup(who);
 		p2p_data->val_13 = val_13;
 		p2p_data->session_id = val_11;
 		p2p_data->host_ip = host_ip;
 		p2p_data->gc = gc;
 		p2p_data->connection_type = YAHOO_P2P_WE_ARE_CLIENT;
+		p2p_data->source = -1;
 
 		/* connect to host */
 		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL)	{
