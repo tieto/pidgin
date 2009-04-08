@@ -551,21 +551,97 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,12,0)
+pidgin_media_input_volume_changed(GtkScaleButton *range, double value,
+		PurpleMedia *media)
+{
+	double val = (double)value * 100.0;
+#else
 pidgin_media_input_volume_changed(GtkRange *range, PurpleMedia *media)
 {
 	double val = (double)gtk_range_get_value(GTK_RANGE(range));
+#endif
 	purple_prefs_set_int("/pidgin/media/audio/volume/input", val);
-	val /= 10.0;
-	purple_media_set_input_volume(media, NULL, val);
+	purple_media_set_input_volume(media, NULL, val / 10.0);
 }
 
 static void
+#if GTK_CHECK_VERSION(2,12,0)
+pidgin_media_output_volume_changed(GtkScaleButton *range, double value,
+		PurpleMedia *media)
+{
+	double val = (double)value * 100.0;
+#else
 pidgin_media_output_volume_changed(GtkRange *range, PurpleMedia *media)
 {
 	double val = (double)gtk_range_get_value(GTK_RANGE(range));
+#endif
 	purple_prefs_set_int("/pidgin/media/audio/volume/output", val);
-	val /= 10.0;
-	purple_media_set_output_volume(media, NULL, NULL, val);
+	purple_media_set_output_volume(media, NULL, NULL, val / 10.0);
+}
+
+static GtkWidget *
+pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
+		PurpleMediaSessionType type)
+{
+	GtkWidget *volume_widget, *progress_parent, *volume, *progress;
+	double value;
+
+	if (type & PURPLE_MEDIA_SEND_AUDIO) {
+		value = purple_prefs_get_int(
+			"/pidgin/media/audio/volume/input");
+	} else if (type & PURPLE_MEDIA_RECV_AUDIO) {
+		value = purple_prefs_get_int(
+			"/pidgin/media/audio/volume/output");
+	} else
+		g_return_val_if_reached(NULL);
+
+#if GTK_CHECK_VERSION(2,12,0)
+	/* Setup widget structure */
+	volume_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	progress_parent = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(volume_widget),
+			progress_parent, TRUE, TRUE, 0);
+
+	/* Volume button */
+	volume = gtk_volume_button_new();
+	gtk_scale_button_set_value(GTK_SCALE_BUTTON(volume), value/100.0);
+	gtk_box_pack_end(GTK_BOX(volume_widget),
+			volume, FALSE, FALSE, 0);
+#else
+	/* Setup widget structure */
+	volume_widget = gtk_vbox_new(FALSE, 0);
+	progress_parent = volume_widget;
+
+	/* Volume slider */
+	volume = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
+	gtk_range_set_increments(GTK_RANGE(volume), 5.0, 25.0);
+	gtk_range_set_value(GTK_RANGE(volume), value);
+	gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
+	gtk_box_pack_end(GTK_BOX(volume_widget),
+			volume, TRUE, FALSE, 0);
+#endif
+
+	/* Volume level indicator */
+	progress = gtk_progress_bar_new();
+	gtk_widget_set_size_request(progress, 250, 10);
+	gtk_box_pack_end(GTK_BOX(progress_parent), progress, TRUE, FALSE, 0);
+
+	if (type & PURPLE_MEDIA_SEND_AUDIO) {
+		g_signal_connect (G_OBJECT(volume), "value-changed",
+				G_CALLBACK(pidgin_media_input_volume_changed),
+				gtkmedia->priv->media);
+		gtkmedia->priv->send_progress = progress;
+	} else if (type & PURPLE_MEDIA_RECV_AUDIO) {
+		g_signal_connect (G_OBJECT(volume), "value-changed",
+				G_CALLBACK(pidgin_media_output_volume_changed),
+				gtkmedia->priv->media);
+		gtkmedia->priv->recv_progress = progress;
+	}
+
+	gtk_widget_show_all(volume_widget);
+
+	return volume_widget;
 }
 
 static void
@@ -651,28 +727,13 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	}
 
 	if (type & PURPLE_MEDIA_RECV_AUDIO) {
-		GtkWidget *volume = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
-		gtk_range_set_increments(GTK_RANGE(volume), 5.0, 25.0);
-		gtk_range_set_value(GTK_RANGE(volume),
-				purple_prefs_get_int(
-				"/pidgin/media/audio/volume/output"));
-		gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
-		g_signal_connect (G_OBJECT(volume), "value-changed",
-				G_CALLBACK(pidgin_media_output_volume_changed),
-				media);
 		gtk_box_pack_end(GTK_BOX(recv_widget),
-				volume, FALSE, FALSE, 0);
-		gtk_widget_show(volume);
-
-		gtkmedia->priv->recv_progress = gtk_progress_bar_new();
-		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 320, 10);
-		gtk_box_pack_end(GTK_BOX(recv_widget),
-				   gtkmedia->priv->recv_progress, FALSE, FALSE, 0);
-		gtk_widget_show(gtkmedia->priv->recv_progress);
+				pidgin_media_add_audio_widget(gtkmedia,
+				PURPLE_MEDIA_RECV_AUDIO), FALSE, FALSE, 0);
 	}
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		GstElement *media_src;
-		GtkWidget *hbox, *volume;
+		GtkWidget *hbox;
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_end(GTK_BOX(send_widget), hbox, FALSE, FALSE, 0);
@@ -686,28 +747,13 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_widget_show(gtkmedia->priv->mute);
 		gtk_widget_show(GTK_WIDGET(hbox));
 
-		volume = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
-		gtk_range_set_increments(GTK_RANGE(volume), 5.0, 25.0);
-		gtk_range_set_value(GTK_RANGE(volume),
-				purple_prefs_get_int(
-				"/pidgin/media/audio/volume/input"));
-		gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
-		g_signal_connect (G_OBJECT(volume), "value-changed",
-				G_CALLBACK (pidgin_media_input_volume_changed),
-				media);
-		gtk_box_pack_end(GTK_BOX(send_widget),
-				volume, FALSE, FALSE, 0);
-		gtk_widget_show(volume);
-
 		media_src = purple_media_get_src(media, sid);
 		gtkmedia->priv->send_level = gst_bin_get_by_name(
 				GST_BIN(media_src), "sendlevel");
 
-		gtkmedia->priv->send_progress = gtk_progress_bar_new();
-		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 320, 10);
 		gtk_box_pack_end(GTK_BOX(send_widget),
-				   gtkmedia->priv->send_progress, FALSE, FALSE, 0);
-		gtk_widget_show(gtkmedia->priv->send_progress);
+				pidgin_media_add_audio_widget(gtkmedia,
+				PURPLE_MEDIA_SEND_AUDIO), FALSE, FALSE, 0);
 
 		gtk_widget_show(gtkmedia->priv->mute);
 	}
