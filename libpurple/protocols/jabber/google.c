@@ -340,7 +340,8 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	session->remote_jid = jid;
 
 	session->media = purple_media_manager_create_media(
-			purple_media_manager_get(), js->gc,
+			purple_media_manager_get(),
+			purple_connection_get_account(js->gc),
 			"fsrtpconference", session->remote_jid, TRUE);
 
 	purple_media_set_prpl_data(session->media, session);
@@ -389,8 +390,10 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		return;
 	}
 
-	session->media = purple_media_manager_create_media(purple_media_manager_get(), js->gc,
-							   "fsrtpconference", session->remote_jid, FALSE);
+	session->media = purple_media_manager_create_media(
+			purple_media_manager_get(),
+			purple_connection_get_account(js->gc),
+			"fsrtpconference", session->remote_jid, FALSE);
 
 	purple_media_set_prpl_data(session->media, session);
 
@@ -572,8 +575,9 @@ jabber_google_session_parse(JabberStream *js, const char *from,
 	if (!id.initiator)
 		return;
 
-	iter = purple_media_manager_get_media_by_connection(
-			purple_media_manager_get(), js->gc);
+	iter = purple_media_manager_get_media_by_account(
+			purple_media_manager_get(),
+			purple_connection_get_account(js->gc));
 	for (; iter; iter = g_list_delete_link(iter, iter)) {
 		GoogleSession *gsession =
 				purple_media_get_prpl_data(iter->data);

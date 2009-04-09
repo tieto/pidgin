@@ -254,16 +254,15 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 	} else if (state == PURPLE_MEDIA_STATE_NEW &&
 			sid != NULL && name != NULL && 
 			purple_media_is_initiator(media, sid, name) == FALSE) {
-		PurpleConnection *pc;
+		PurpleAccount *account;
 		PurpleBuddy *buddy;
 		const gchar *alias;
 		PurpleMediaSessionType type =
 				purple_media_get_session_type(media, sid);
 		gchar *message = NULL;
 
-		pc = purple_media_get_connection(gntmedia->priv->media);
-		buddy = purple_find_buddy(
-				purple_connection_get_account(pc), name);
+		account = purple_media_get_account(gntmedia->priv->media);
+		buddy = purple_find_buddy(account, name);
 		alias = buddy ? purple_buddy_get_contact_alias(buddy) :	name;
 
 		if (type & PURPLE_MEDIA_AUDIO) {
@@ -386,13 +385,12 @@ gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *c
 
 static gboolean
 finch_new_media(PurpleMediaManager *manager, PurpleMedia *media,
-		PurpleConnection *gc, gchar *name, gpointer null)
+		PurpleAccount *account, gchar *name, gpointer null)
 {
 	GntWidget *gntmedia;
 	PurpleConversation *conv;
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-			purple_connection_get_account(gc), name);
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 
 	gntmedia = finch_media_new(media);
 	g_signal_connect(G_OBJECT(gntmedia), "message", G_CALLBACK(gntmedia_message_cb), conv);

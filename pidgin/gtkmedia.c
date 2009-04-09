@@ -97,7 +97,6 @@ struct _PidginMediaPrivate
 	GtkWidget *recv_widget;
 	GtkWidget *local_video;
 	GtkWidget *remote_video;
-	PurpleConnection *pc;
 
 	guint timeout_id;
 	PurpleMediaSessionType request_type;
@@ -432,7 +431,7 @@ pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 {
 	PurpleConversation *conv = purple_find_conversation_with_account(
 			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
-			purple_connection_get_account(gtkmedia->priv->pc));
+			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, msg,
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -476,7 +475,7 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 {
 	PurpleConversation *conv = purple_find_conversation_with_account(
 			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
-			purple_connection_get_account(gtkmedia->priv->pc));
+			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, error,
 				PURPLE_MESSAGE_ERROR, time(NULL));
@@ -512,15 +511,14 @@ pidgin_media_reject_cb(PurpleMedia *media, int index)
 static gboolean
 pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 {
-	PurpleConnection *pc;
+	PurpleAccount *account;
 	PurpleBuddy *buddy;
 	const gchar *alias;
 	PurpleMediaSessionType type;
 	gchar *message = NULL;
 
-	pc = purple_media_get_connection(gtkmedia->priv->media);
-	buddy = purple_find_buddy(purple_connection_get_account(pc),
-			gtkmedia->priv->screenname);
+	account = purple_media_get_account(gtkmedia->priv->media);
+	buddy = purple_find_buddy(account, gtkmedia->priv->screenname);
 	alias = buddy ? purple_buddy_get_contact_alias(buddy) :
 			gtkmedia->priv->screenname;
 	type = gtkmedia->priv->request_type;
@@ -541,7 +539,7 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 
 	purple_request_accept_cancel(gtkmedia, "Media invitation",
 			message, NULL, PURPLE_DEFAULT_ACTION_NONE,
-			(void*)pc, gtkmedia->priv->screenname, NULL,
+			(void*)account, gtkmedia->priv->screenname, NULL,
 			gtkmedia->priv->media,
 			pidgin_media_accept_cb,
 			pidgin_media_reject_cb);
@@ -929,15 +927,13 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 
 static gboolean
 pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
-		PurpleConnection *pc, gchar *screenname, gpointer nul)
+		PurpleAccount *account, gchar *screenname, gpointer nul)
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(
 			pidgin_media_new(media, screenname));
-	PurpleBuddy *buddy = purple_find_buddy(
-			purple_connection_get_account(pc), screenname);
+	PurpleBuddy *buddy = purple_find_buddy(account, screenname);
 	const gchar *alias = buddy ? 
 			purple_buddy_get_contact_alias(buddy) : screenname; 
-	gtkmedia->priv->pc = pc;
 	gtk_window_set_title(GTK_WINDOW(gtkmedia), alias);
 
 	if (purple_media_is_initiator(media, NULL, NULL) == TRUE)
