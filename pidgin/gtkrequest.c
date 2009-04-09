@@ -202,12 +202,21 @@ field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 			gtk_toggle_button_get_active(button));
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+static void
+field_choice_menu_cb(GtkComboBox *menu, PurpleRequestField *field)
+{
+	purple_request_field_choice_set_value(field,
+			gtk_combo_box_get_active(menu));
+}
+#else
 static void
 field_choice_menu_cb(GtkOptionMenu *menu, PurpleRequestField *field)
 {
 	purple_request_field_choice_set_value(field,
 			gtk_option_menu_get_history(menu));
 }
+#endif
 
 static void
 field_choice_option_cb(GtkRadioButton *button, PurpleRequestField *field)
@@ -870,6 +879,21 @@ create_choice_field(PurpleRequestField *field)
 
 	if (num_labels > 5)
 	{
+#if GTK_CHECK_VERSION(2,4,0)
+		widget = gtk_combo_box_new_text();
+
+		for (l = labels; l != NULL; l = l->next)
+		{
+			const char *text = l->data;
+			gtk_combo_box_append_text(GTK_COMBO_BOX(widget), text);
+		}
+
+		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
+						purple_request_field_choice_get_default_value(field));
+
+		g_signal_connect(G_OBJECT(widget), "changed",
+						 G_CALLBACK(field_choice_menu_cb), field);
+#else
 		GtkWidget *menu;
 		GtkWidget *item;
 
@@ -894,6 +918,7 @@ create_choice_field(PurpleRequestField *field)
 
 		g_signal_connect(G_OBJECT(widget), "changed",
 						 G_CALLBACK(field_choice_menu_cb), field);
+#endif
 	}
 	else
 	{
