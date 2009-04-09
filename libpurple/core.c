@@ -257,6 +257,7 @@ purple_core_quit(void)
 	purple_cmds_uninit();
 	/* Everything after this cannot try to write things to the confdir */
 	purple_util_uninit();
+	purple_log_uninit();
 
 	purple_signals_uninit();
 
