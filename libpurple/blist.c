@@ -1202,6 +1202,16 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 	return chat;
 }
 
+void
+purple_chat_destroy(PurpleChat *chat)
+{
+	g_hash_table_destroy(chat->components);
+	g_hash_table_destroy(chat->node.settings);
+	g_free(chat->alias);
+	PURPLE_DBUS_UNREGISTER_POINTER(chat);
+	g_free(chat);
+}
+
 PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
@@ -1226,6 +1236,40 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 
 	PURPLE_DBUS_REGISTER_POINTER(buddy, PurpleBuddy);
 	return buddy;
+}
+
+void
+purple_buddy_destroy(PurpleBuddy *buddy)
+{
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+
+	/*
+	 * Tell the owner PRPL that we're about to free the buddy so it
+	 * can free proto_data
+	 */
+	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info && prpl_info->buddy_free)
+		prpl_info->buddy_free(buddy);
+
+	/* Delete the node */
+	purple_buddy_icon_unref(buddy->icon);
+	g_hash_table_destroy(buddy->node.settings);
+	purple_presence_destroy(buddy->presence);
+	g_free(buddy->name);
+	g_free(buddy->alias);
+	g_free(buddy->server_alias);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
+	g_free(buddy);
+
+	/* FIXME: Once PurpleBuddy is a GObject, timeout callbacks can
+	 * g_object_ref() it when connecting the callback and
+	 * g_object_unref() it in the handler.  That way, it won't
+	 * get freed while the timeout is pending and this line can
+	 * be removed. */
+	while (g_source_remove_by_user_data((gpointer *)buddy));
 }
 
 void
@@ -1519,6 +1563,14 @@ PurpleContact *purple_contact_new()
 	return contact;
 }
 
+void
+purple_contact_destroy(PurpleContact *contact)
+{
+	g_hash_table_destroy(contact->node.settings);
+	PURPLE_DBUS_UNREGISTER_POINTER(contact);
+	g_free(contact);
+}
+
 void purple_contact_set_alias(PurpleContact *contact, const char *alias)
 {
 	purple_blist_alias_contact(contact,alias);
@@ -1586,6 +1638,15 @@ PurpleGroup *purple_group_new(const char *name)
 
 	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
 	return group;
+}
+
+void
+purple_group_destroy(PurpleGroup *group)
+{
+	g_hash_table_destroy(group->node.settings);
+	g_free(group->name);
+	PURPLE_DBUS_UNREGISTER_POINTER(group);
+	g_free(group);
 }
 
 void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node)
@@ -1848,9 +1909,7 @@ void purple_blist_remove_contact(PurpleContact *contact)
 			ops->remove(purplebuddylist, node);
 
 		/* Delete the node */
-		g_hash_table_destroy(contact->node.settings);
-		PURPLE_DBUS_UNREGISTER_POINTER(contact);
-		g_free(contact);
+		purple_contact_destroy(contact);
 	}
 }
 
@@ -1861,8 +1920,6 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	PurpleContact *contact;
 	PurpleGroup *group;
 	struct _purple_hbuddy hb;
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(buddy != NULL);
 
@@ -1918,33 +1975,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	/* Signal that the buddy has been removed before freeing the memory for it */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);
 
-	/*
-	 * Tell the owner PRPL that we're about to free the buddy so it
-	 * can free proto_data
-	 */
-	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
-	if (prpl)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info && prpl_info->buddy_free)
-		prpl_info->buddy_free(buddy);
-
-	/* Delete the node */
-	purple_buddy_icon_unref(buddy->icon);
-	g_hash_table_destroy(buddy->node.settings);
-	purple_presence_destroy(buddy->presence);
-	g_free(buddy->name);
-	g_free(buddy->alias);
-	g_free(buddy->server_alias);
-
-	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
-	g_free(buddy);
-
-	/* FIXME: Once PurpleBuddy is a GObject, timeout callbacks can
-	 * g_object_ref() it when connecting the callback and
-	 * g_object_unref() it in the handler.  That way, it won't
-	 * get freed while the timeout is pending and this line can
-	 * be removed. */
-	while (g_source_remove_by_user_data((gpointer *)buddy));
+	purple_buddy_destroy(buddy);
 
 	/* If the contact is empty then remove it */
 	if ((contact != NULL) && !cnode->child)
@@ -1988,11 +2019,7 @@ void purple_blist_remove_chat(PurpleChat *chat)
 		ops->remove(purplebuddylist, node);
 
 	/* Delete the node */
-	g_hash_table_destroy(chat->components);
-	g_hash_table_destroy(chat->node.settings);
-	g_free(chat->alias);
-	PURPLE_DBUS_UNREGISTER_POINTER(chat);
-	g_free(chat);
+	purple_chat_destroy(chat);
 }
 
 void purple_blist_remove_group(PurpleGroup *group)
@@ -2033,10 +2060,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	}
 
 	/* Delete the node */
-	g_hash_table_destroy(group->node.settings);
-	g_free(group->name);
-	PURPLE_DBUS_UNREGISTER_POINTER(group);
-	g_free(group);
+	purple_group_destroy(group);
 }
 
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
@@ -2587,6 +2611,28 @@ purple_blist_request_add_group(void)
 }
 
 static void
+purple_blist_node_destroy(PurpleBlistNode *node)
+{
+	PurpleBlistNode *child, *next_child;
+  
+	child = node->child;
+	while (child) {
+		next_child = child->next;
+		purple_blist_node_destroy(child);
+		child = next_child;
+	}
+
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		purple_buddy_destroy((PurpleBuddy*)node);
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		purple_chat_destroy((PurpleChat*)node);
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		purple_contact_destroy((PurpleContact*)node);
+	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+		purple_group_destroy((PurpleGroup*)node);
+}
+
+static void
 purple_blist_node_setting_free(gpointer data)
 {
 	PurpleValue *value;
@@ -2874,11 +2920,19 @@ purple_blist_init(void)
 void
 purple_blist_uninit(void)
 {
-	if (save_timer != 0)
-	{
+	PurpleBlistNode *node, *next_node;
+
+	if (save_timer != 0) {
 		purple_timeout_remove(save_timer);
 		save_timer = 0;
 		purple_blist_sync();
+	}
+
+	node = purple_blist_get_root();
+	while (node) {
+		next_node = node->next;
+		purple_blist_node_destroy(node);
+		node = next_node;
 	}
 
 	purple_signals_unregister_by_instance(purple_blist_get_handle());

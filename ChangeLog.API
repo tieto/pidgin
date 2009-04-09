@@ -9,6 +9,7 @@ version 2.6.0 (??/??/2009):
 		* PURPLE_CONTACT
 		* PURPLE_BUDDY
 		* PURPLE_CHAT
+		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
 		* purple_buddy_get_local_buddy_alias
@@ -17,9 +18,12 @@ version 2.6.0 (??/??/2009):
 		* purple_blist_set_ui_data
 		* purple_blist_node_get_ui_data
 		* purple_blist_node_set_ui_data
+		* purple_chat_destroy
 		* purple_connection_get_protocol_data
 		* purple_connection_set_protocol_data
+		* purple_contact_destroy
 		* purple_global_proxy_set_info
+		* purple_group_destroy
 		* purple_log_get_activity_score
 		* purple_network_force_online
 		* purple_network_set_stun_server
