@@ -1,8 +1,9 @@
 /**
- * @file media.h Account API
- * @ingroup core
- *
- * Pidgin 
+ * @file gtkmedia.h Pidgin Media API
+ * @ingroup pidgin
+ */
+
+/* Pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
