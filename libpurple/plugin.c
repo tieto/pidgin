@@ -1201,6 +1201,11 @@ purple_plugins_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
+
+	while (search_paths) {
+		g_free(search_paths->data);
+		search_paths = g_list_delete_link(search_paths, search_paths);
+	}
 }
 
 /**************************************************************************
