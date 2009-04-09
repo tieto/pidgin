@@ -1,5 +1,5 @@
 /*
- * purple - Jabber Protocol Plugin
+ * purple - Jabber Service Discovery
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -22,6 +22,9 @@
 #include "internal.h"
 #include "prefs.h"
 #include "debug.h"
+#include "request.h"
+#include "notify.h"
+#include "libpurple/disco.h"
 
 #include "buddy.h"
 #include "google.h"
@@ -33,17 +36,29 @@
 #include "roster.h"
 #include "pep.h"
 #include "adhoccommands.h"
-
+#include "xdata.h"
 
 struct _jabber_disco_info_cb_data {
 	gpointer data;
 	JabberDiscoInfoCallback *callback;
 };
 
+struct _jabber_disco_items_cb_data {
+	gpointer data;
+	JabberDiscoItemsCallback *callback;
+};
+
 #define SUPPORT_FEATURE(x) { \
 	feature = xmlnode_new_child(query, "feature"); \
 	xmlnode_set_attrib(feature, "var", x); \
 }
+
+struct jabber_disco_list_data {
+	JabberStream *js;
+	PurpleDiscoList *list;
+	char *server;
+	int fetch_count;
+};
 
 static void
 jabber_disco_bytestream_server_cb(JabberStream *js, const char *from,
@@ -272,6 +287,8 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 					capabilities |= JABBER_CAP_IQ_REGISTER;
 				else if(!strcmp(var, "urn:xmpp:ping"))
 					capabilities |= JABBER_CAP_PING;
+				else if(!strcmp(var, "http://jabber.org/protocol/disco#items"))
+					capabilities |= JABBER_CAP_ITEMS;
 				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
 					capabilities |= JABBER_CAP_ADHOC;
 				}
@@ -287,9 +304,9 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(jbr)
 			jbr->capabilities = capabilities;
 
-		if((jdicd = g_hash_table_lookup(js->disco_callbacks, from))) {
+		if((jdicd = g_hash_table_lookup(js->disco_callbacks, id))) {
 			jdicd->callback(js, from, capabilities, jdicd->data);
-			g_hash_table_remove(js->disco_callbacks, from);
+			g_hash_table_remove(js->disco_callbacks, id);
 		}
 	} else if(type == JABBER_IQ_ERROR) {
 		JabberID *jid;
@@ -298,7 +315,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		JabberCapabilities capabilities = JABBER_CAP_NONE;
 		struct _jabber_disco_info_cb_data *jdicd;
 
-		if(!(jdicd = g_hash_table_lookup(js->disco_callbacks, from)))
+		if(!(jdicd = g_hash_table_lookup(js->disco_callbacks, id)))
 			return;
 
 		if((jid = jabber_id_new(from))) {
@@ -311,7 +328,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			capabilities = jbr->capabilities;
 
 		jdicd->callback(js, from, capabilities, jdicd->data);
-		g_hash_table_remove(js->disco_callbacks, from);
+		g_hash_table_remove(js->disco_callbacks, id);
 	}
 }
 
@@ -394,6 +411,12 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	}
 
 }
+
+struct _disco_data {
+	struct jabber_disco_list_data *list_data;
+	PurpleDiscoService *parent;
+	char *node;
+};
 
 static void
 jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
@@ -533,6 +556,7 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
 	struct _jabber_disco_info_cb_data *jdicd;
+	char *id;
 	JabberIq *iq;
 
 	if((jid = jabber_id_new(who))) {
@@ -550,12 +574,517 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	jdicd->data = data;
 	jdicd->callback = callback;
 
-	g_hash_table_insert(js->disco_callbacks, g_strdup(who), jdicd);
-
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
 	xmlnode_set_attrib(iq->node, "to", who);
+
+	id = jabber_get_next_id(js);
+	jabber_iq_set_id(iq, id);
+	g_hash_table_insert(js->disco_callbacks, id, jdicd);
 
 	jabber_iq_send(iq);
 }
 
+static void
+jabber_disco_list_data_destroy(struct jabber_disco_list_data *data)
+{
+	g_free(data->server);
+	g_free(data);
+}
 
+static void
+disco_proto_data_destroy_cb(PurpleDiscoList *list)
+{
+	struct jabber_disco_list_data *data;
+	
+	data = purple_disco_list_get_protocol_data(list);
+	jabber_disco_list_data_destroy(data);
+}
+
+static PurpleDiscoServiceType
+jabber_disco_category_from_string(const gchar *str)
+{
+	if (!g_ascii_strcasecmp(str, "gateway"))
+		return PURPLE_DISCO_SERVICE_TYPE_GATEWAY;
+	else if (!g_ascii_strcasecmp(str, "directory"))
+		return PURPLE_DISCO_SERVICE_TYPE_DIRECTORY;
+	else if (!g_ascii_strcasecmp(str, "conference"))
+		return PURPLE_DISCO_SERVICE_TYPE_CHAT;
+
+	return PURPLE_DISCO_SERVICE_TYPE_OTHER;
+}
+
+static const gchar *
+jabber_disco_type_from_string(const gchar *str)
+{
+	if (!strcasecmp(str, "xmpp"))
+		return "jabber";
+	else if (!strcasecmp(str, "icq"))
+		return "icq";
+	else if (!strcasecmp(str, "smtp"))
+		return "smtp";
+	else if (!strcasecmp(str, "yahoo"))
+		return "yahoo";
+	else if (!strcasecmp(str, "irc"))
+		return "irc";
+	else if (!strcasecmp(str, "gadu-gadu"))
+		return "gg";
+	else if (!strcasecmp(str, "aim"))
+		return "aim";
+	else if (!strcasecmp(str, "qq"))
+		return "qq";
+	else if (!strcasecmp(str, "msn"))
+		return "msn";
+
+	/* fallback to the string itself */
+	return str;
+}
+
+static void
+jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data);
+
+static void
+jabber_disco_service_items_cb(JabberStream *js, const char *who, const char *node,
+                              GSList *items, gpointer data)
+{
+	GSList *l;
+	struct _disco_data *disco_data;
+	struct jabber_disco_list_data *list_data;
+	PurpleDiscoList *list;	
+	PurpleDiscoService *parent;
+	const char *parent_node;
+	gboolean has_items = FALSE;
+
+	disco_data = data;
+	list_data = disco_data->list_data;
+	list = list_data->list;
+
+	--list_data->fetch_count;
+
+	if (list_data->list == NULL) {
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
+
+	if (items == NULL) {
+		if (list_data->fetch_count == 0)
+			purple_disco_list_set_in_progress(list, FALSE);
+
+		purple_disco_list_unref(list);
+		return;
+	}
+
+	parent = disco_data->parent;
+	parent_node = disco_data->node;
+
+	for (l = items; l; l = l->next) {
+		JabberDiscoItem *item = l->data;
+		JabberIq *iq;
+		struct _disco_data *req_data;
+		char *full_node;
+
+		if (parent_node) {
+			if (item->node) {
+				full_node = g_strdup_printf("%s/%s", parent_node, item->node);
+			} else {
+				continue;
+			}
+		} else {
+			full_node = g_strdup(item->node);
+		}
+
+		req_data = g_new0(struct _disco_data, 1);
+		req_data->list_data = list_data;
+		req_data->parent = parent;
+		req_data->node = full_node;
+
+		has_items = TRUE;
+
+		++list_data->fetch_count;
+		purple_disco_list_ref(list);
+
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
+		xmlnode_set_attrib(iq->node, "to", item->jid);
+		if (full_node)
+			xmlnode_set_attrib(xmlnode_get_child(iq->node, "query"),
+			                   "node", full_node);
+		jabber_iq_set_callback(iq, jabber_disco_service_info_cb, req_data);
+
+		jabber_iq_send(iq);
+	}
+
+	g_slist_foreach(items, (GFunc)jabber_disco_item_free, NULL);
+	g_slist_free(items);
+
+	if (list_data->fetch_count == 0)
+		purple_disco_list_set_in_progress(list, FALSE);
+
+	purple_disco_list_unref(list);
+
+	g_free(disco_data->node);
+	g_free(disco_data);
+}
+
+static void
+jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	struct _disco_data *disco_data = data;
+	struct jabber_disco_list_data *list_data;
+	PurpleDiscoList *list;
+	PurpleDiscoService *parent;
+	char *node;
+	xmlnode *query, *ident, *child;
+	const char *from = xmlnode_get_attrib(packet, "from");
+	const char *result = xmlnode_get_attrib(packet, "type");
+	const char *acat, *atype, *adesc, *anode;
+	char *aname;
+	PurpleDiscoService *s;
+	PurpleDiscoServiceType type;
+	const char *gateway_type = NULL;
+	PurpleDiscoServiceFlags flags = PURPLE_DISCO_ADD;
+
+	list_data = disco_data->list_data;
+	list = list_data->list;
+	parent = disco_data->parent;
+
+	node = disco_data->node;
+	disco_data->node = NULL;
+	g_free(disco_data);
+
+	--list_data->fetch_count;
+
+	if (list_data->list == NULL) {
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
+
+	if (!from || !result || strcmp(result, "result") != 0
+			|| (!(query = xmlnode_get_child(packet, "query")))
+			|| (!(ident = xmlnode_get_child(query, "identity")))) {
+		if (list_data->fetch_count == 0)
+			purple_disco_list_set_in_progress(list, FALSE);
+
+		purple_disco_list_unref(list);
+		return;
+	}
+
+	acat = xmlnode_get_attrib(ident, "category");
+	atype = xmlnode_get_attrib(ident, "type");
+	adesc = xmlnode_get_attrib(ident, "name");
+	anode = xmlnode_get_attrib(query, "node");
+
+	if (anode) {
+		aname = g_new0(char, strlen(from) + strlen(anode) + 1);
+		strcat(aname, from);
+		strcat(aname, anode);
+	} else {
+		aname = g_strdup(from);
+	}
+
+	type = jabber_disco_category_from_string(acat);
+	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
+		gateway_type = jabber_disco_type_from_string(atype);
+
+	for (child = xmlnode_get_child(query, "feature"); child;
+			child = xmlnode_get_next_twin(child)) {
+		const char *var;
+
+		if (!(var = xmlnode_get_attrib(child, "var")))
+			continue;
+		
+		if (!strcmp(var, "jabber:iq:register"))
+			flags |= PURPLE_DISCO_REGISTER;
+		
+		if (!strcmp(var, "http://jabber.org/protocol/disco#items"))
+			flags |= PURPLE_DISCO_BROWSE;
+
+		if (!strcmp(var, "http://jabber.org/protocol/muc"))
+			type = PURPLE_DISCO_SERVICE_TYPE_CHAT;
+	}
+
+	purple_debug_info("disco", "service %s, category %s (%d), type %s (%s), description %s, flags %04x\n",
+			aname,
+			acat, type,
+			atype, gateway_type ? gateway_type : "(null)",
+			adesc, flags);
+
+	s = purple_disco_list_service_new(type, aname, adesc, flags);
+	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
+		purple_disco_service_set_gateway_type(s, gateway_type);
+
+	purple_disco_list_service_add(list, s, parent);
+
+	/* if (flags & PURPLE_DISCO_FLAG_BROWSE) - not all browsable services has this future */
+	{
+		++list_data->fetch_count;
+		purple_disco_list_ref(list);
+		disco_data = g_new0(struct _disco_data, 1);
+		disco_data->list_data = list_data;
+		disco_data->parent = s;
+
+		jabber_disco_items_do(js, from, node, jabber_disco_service_items_cb,
+		                      disco_data);
+	}
+
+	if (list_data->fetch_count == 0)
+		purple_disco_list_set_in_progress(list, FALSE);
+
+	purple_disco_list_unref(list);
+
+	g_free(aname);
+	g_free(node);
+}
+
+static void
+jabber_disco_server_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	struct jabber_disco_list_data *list_data;
+	xmlnode *query, *child;
+	const char *from = xmlnode_get_attrib(packet, "from");
+	const char *type = xmlnode_get_attrib(packet, "type");
+	gboolean has_items = FALSE;
+
+	if (!from || !type)
+		return;
+
+	if (strcmp(type, "result"))
+		return;
+
+	list_data = data;
+	--list_data->fetch_count;
+
+	if (list_data->list == NULL) {
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
+
+	query = xmlnode_get_child(packet, "query");
+
+	for(child = xmlnode_get_child(query, "item"); child;
+			child = xmlnode_get_next_twin(child)) {
+		JabberIq *iq;
+		const char *jid;
+		struct _disco_data *disco_data;
+
+		if(!(jid = xmlnode_get_attrib(child, "jid")))
+			continue;
+
+		disco_data = g_new0(struct _disco_data, 1);
+		disco_data->list_data = list_data;
+
+		has_items = TRUE;
+		++list_data->fetch_count;
+		purple_disco_list_ref(list_data->list);
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
+		xmlnode_set_attrib(iq->node, "to", jid);
+		jabber_iq_set_callback(iq, jabber_disco_service_info_cb, disco_data);
+
+		jabber_iq_send(iq);
+	}
+
+	if (!has_items)
+		purple_disco_list_set_in_progress(list_data->list, FALSE);
+
+	purple_disco_list_unref(list_data->list);
+}
+
+static void
+jabber_disco_server_info_cb(JabberStream *js, const char *who, JabberCapabilities caps, gpointer data)
+{
+	struct jabber_disco_list_data *list_data;
+
+	list_data = data;
+	--list_data->fetch_count;
+
+	if (!list_data->list) {
+		purple_disco_list_unref(list_data->list);
+
+		if (list_data->fetch_count == 0)
+			jabber_disco_list_data_destroy(list_data);
+
+		return;
+	}
+
+	if (caps & JABBER_CAP_ITEMS) {
+		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+		xmlnode_set_attrib(iq->node, "to", who);
+		jabber_iq_set_callback(iq, jabber_disco_server_items_cb, list_data);
+
+		++list_data->fetch_count;
+		purple_disco_list_ref(list_data->list);
+
+		jabber_iq_send(iq);
+	} else {
+		purple_notify_error(NULL, _("Error"), _("Server doesn't support service discovery"), NULL); 
+		purple_disco_list_set_in_progress(list_data->list, FALSE);
+	}
+
+	purple_disco_list_unref(list_data->list);
+}
+
+static void discolist_cancel_cb(struct jabber_disco_list_data *list_data, const char *server)
+{
+	purple_disco_list_set_in_progress(list_data->list, FALSE);
+	purple_disco_list_unref(list_data->list);
+}
+
+static void discolist_ok_cb(struct jabber_disco_list_data *list_data, const char *server)
+{
+	JabberStream *js;
+
+	js = list_data->js;
+
+	if (!server || !*server) {
+		purple_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
+
+		purple_disco_list_set_in_progress(list_data->list, FALSE);
+		purple_disco_list_unref(list_data->list);
+		return;
+	}
+
+	list_data->server = g_strdup(server);
+	if (js->last_disco_server)
+		g_free(js->last_disco_server);
+	js->last_disco_server = g_strdup(server);
+
+	purple_disco_list_set_in_progress(list_data->list, TRUE);
+
+	++list_data->fetch_count;
+	jabber_disco_info_do(js, list_data->server, jabber_disco_server_info_cb, list_data);
+}
+
+PurpleDiscoList *
+jabber_disco_get_list(PurpleConnection *gc)
+{
+	PurpleAccount *account;
+	PurpleDiscoList *list;
+	JabberStream *js;
+	struct jabber_disco_list_data *disco_list_data;
+
+	account = purple_connection_get_account(gc);
+	js = purple_connection_get_protocol_data(gc);
+
+	/* We start with a ref */
+	list = purple_disco_list_new(account);
+
+	disco_list_data = g_new0(struct jabber_disco_list_data, 1);
+	disco_list_data->list = list;
+	disco_list_data->js = js;
+	purple_disco_list_set_protocol_data(list, disco_list_data, disco_proto_data_destroy_cb);
+
+	purple_request_input(gc, _("Server name request"), _("Enter an XMPP Server"),
+			_("Select an XMPP server to query"),
+			js->last_disco_server ? js->last_disco_server : js->user->domain,
+			FALSE, FALSE, NULL,
+			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
+			_("Cancel"), PURPLE_CALLBACK(discolist_cancel_cb),
+			account, NULL, NULL, disco_list_data);
+
+	return list;
+}
+
+void
+jabber_disco_cancel(PurpleDiscoList *list)
+{
+	struct jabber_disco_list_data *list_data = purple_disco_list_get_protocol_data(list);
+	purple_disco_list_set_protocol_data(list, NULL, NULL);
+
+	if (list_data->fetch_count == 0) {
+		/* Nothing outstanding, just free it now... */
+		jabber_disco_list_data_destroy(list_data);
+	} else {
+		int i;
+		/* Lose all our references to the PurpleDiscoList */
+		for (i = 0; i < list_data->fetch_count; ++i) {
+			purple_disco_list_unref(list);
+		}
+
+		/* We'll free list_data when fetch_count is down to 0 */
+		list_data->list = NULL;
+	}
+}
+
+int
+jabber_disco_service_register(PurpleConnection *gc, PurpleDiscoService *service)
+{
+	JabberStream *js = purple_connection_get_protocol_data(gc);
+
+	jabber_register_gateway(js, purple_disco_service_get_name(service));
+
+	return 0;
+}
+
+static void
+jabber_disco_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	struct _jabber_disco_items_cb_data *jdicd;
+	xmlnode *query, *child;
+	const char *from;
+	const char *node = NULL;
+	const char *type;
+	GSList *items = NULL;
+
+	jdicd = data;
+
+	from = xmlnode_get_attrib(packet, "from");
+	type = xmlnode_get_attrib(packet, "type");
+	query = xmlnode_get_child(packet, "query");
+
+	if (query)
+		node = xmlnode_get_attrib(query, "node");
+
+	if (!from || !strcmp(type, "error") || !query) {
+		jdicd->callback(js, from, node, NULL, jdicd->data);
+		g_free(jdicd);
+		return;
+	}
+
+	for (child = xmlnode_get_child(query, "item"); child;
+			child = xmlnode_get_next_twin(child)) {
+		JabberDiscoItem *item;
+
+		item = g_new0(JabberDiscoItem, 1);
+		item->jid  = g_strdup(xmlnode_get_attrib(child, "jid"));
+		item->node = g_strdup(xmlnode_get_attrib(child, "node"));
+		item->name = g_strdup(xmlnode_get_attrib(child, "name"));
+
+		items = g_slist_prepend(items, item);
+	}
+
+	items = g_slist_reverse(items);
+	jdicd->callback(js, from, node, items, jdicd->data);
+	g_free(jdicd);
+}
+
+void jabber_disco_items_do(JabberStream *js, const char *who, const char *node,
+		JabberDiscoItemsCallback *callback, gpointer data)
+{
+	struct _jabber_disco_items_cb_data *jdicd;
+	JabberIq *iq;
+
+	jdicd = g_new0(struct _jabber_disco_items_cb_data, 1);
+	jdicd->data = data;
+	jdicd->callback = callback;
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+	if (node)
+		xmlnode_set_attrib(xmlnode_get_child(iq->node, "query"), "node", node);
+
+	xmlnode_set_attrib(iq->node, "to", who);
+
+	jabber_iq_set_callback(iq, jabber_disco_items_cb, jdicd);
+	jabber_iq_send(iq);
+}
+
+void jabber_disco_item_free(JabberDiscoItem *item)
+{
+	g_free((char *)item->jid);
+	g_free((char *)item->node);
+	g_free((char *)item->name);
+	g_free(item);
+}

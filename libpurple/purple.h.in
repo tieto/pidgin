@@ -79,6 +79,7 @@
 #include <prpl.h>
 #include <request.h>
 #include <roomlist.h>
+#include <disco.h>
 #include <savedstatuses.h>
 #include <server.h>
 #include <signals.h>
