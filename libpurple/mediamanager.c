@@ -495,7 +495,6 @@ purple_media_manager_register_element(PurpleMediaManager *manager,
 		g_object_unref(info2);
 		return FALSE;
 	}
-	g_object_unref(info2);
 
 	manager->priv->elements =
 			g_list_prepend(manager->priv->elements, info);
@@ -558,7 +557,8 @@ purple_media_manager_set_active_element(PurpleMediaManager *manager,
 
 	if (info2 == NULL)
 		purple_media_manager_register_element(manager, info);
-	g_object_unref(info2);
+	else
+		g_object_unref(info2);
 
 	type = purple_media_element_info_get_element_type(info);
 
