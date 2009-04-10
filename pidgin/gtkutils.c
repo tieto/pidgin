@@ -950,7 +950,7 @@ pidgin_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
 	           "accel changed, scheduling save.\n");
 
 	if (!accels_save_timer)
-		accels_save_timer = g_timeout_add(5000, pidgin_save_accels,
+		accels_save_timer = purple_timeout_add_seconds(5, pidgin_save_accels,
 		                                  NULL);
 }
 

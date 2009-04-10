@@ -5795,7 +5795,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 
 	/* start the refresh timer */
-	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)pidgin_blist_refresh_timer, list);
+	gtkblist->refresh_timer = purple_timeout_add_seconds(30, (GSourceFunc)pidgin_blist_refresh_timer, list);
 
 	handle = pidgin_blist_get_handle();
 
@@ -5916,7 +5916,7 @@ pidgin_blist_update_refresh_timeout()
 	blist = purple_get_blist();
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 
-	gtkblist->refresh_timer = g_timeout_add(30000,(GSourceFunc)pidgin_blist_refresh_timer, blist);
+	gtkblist->refresh_timer = purple_timeout_add_seconds(30,(GSourceFunc)pidgin_blist_refresh_timer, blist);
 }
 
 static gboolean get_iter_from_node(PurpleBlistNode *node, GtkTreeIter *iter) {
@@ -6637,7 +6637,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	pidgin_blist_tooltip_destroy();
 
 	if (gtkblist->refresh_timer)
-		g_source_remove(gtkblist->refresh_timer);
+		purple_timeout_remove(gtkblist->refresh_timer);
 	if (gtkblist->timeout)
 		g_source_remove(gtkblist->timeout);
 	if (gtkblist->drag_timeout)
@@ -7452,7 +7452,7 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 
 	if(gtknode->recent_signonoff_timer > 0)
 		purple_timeout_remove(gtknode->recent_signonoff_timer);
-	gtknode->recent_signonoff_timer = purple_timeout_add(10000,
+	gtknode->recent_signonoff_timer = purple_timeout_add_seconds(10,
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }
 
