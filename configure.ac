@@ -986,7 +986,7 @@ if test "x$gadu_manual_check" = "xno"; then
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
-		AC_MSG_RESULT(no)
+		gadu_includes="no"
 	])
 else
 	if test "$ac_gadu_includes" != "no"; then
