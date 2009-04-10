@@ -5505,6 +5505,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GtkWidget *sep;
 	GtkWidget *label;
 	char *pretty, *tmp;
+	const char *theme_name;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -5523,7 +5524,11 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist = PIDGIN_BLIST(list);
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
-	priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"), "blist"));
+	theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme");
+	if (theme_name && *theme_name)
+		priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(theme_name, "blist"));
+	else
+		priv->current_theme = NULL;
 
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
