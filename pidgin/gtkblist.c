@@ -5505,6 +5505,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GtkWidget *sep;
 	GtkWidget *label;
 	char *pretty, *tmp;
+	const char *theme_name;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -5523,7 +5524,11 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist = PIDGIN_BLIST(list);
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
-	priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"), "blist"));
+	theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme");
+	if (theme_name && *theme_name)
+		priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(theme_name, "blist"));
+	else
+		priv->current_theme = NULL;
 
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
@@ -5790,7 +5795,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 
 	/* start the refresh timer */
-	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)pidgin_blist_refresh_timer, list);
+	gtkblist->refresh_timer = purple_timeout_add_seconds(30, (GSourceFunc)pidgin_blist_refresh_timer, list);
 
 	handle = pidgin_blist_get_handle();
 
@@ -5911,7 +5916,7 @@ pidgin_blist_update_refresh_timeout()
 	blist = purple_get_blist();
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 
-	gtkblist->refresh_timer = g_timeout_add(30000,(GSourceFunc)pidgin_blist_refresh_timer, blist);
+	gtkblist->refresh_timer = purple_timeout_add_seconds(30,(GSourceFunc)pidgin_blist_refresh_timer, blist);
 }
 
 static gboolean get_iter_from_node(PurpleBlistNode *node, GtkTreeIter *iter) {
@@ -6632,7 +6637,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	pidgin_blist_tooltip_destroy();
 
 	if (gtkblist->refresh_timer)
-		g_source_remove(gtkblist->refresh_timer);
+		purple_timeout_remove(gtkblist->refresh_timer);
 	if (gtkblist->timeout)
 		g_source_remove(gtkblist->timeout);
 	if (gtkblist->drag_timeout)
@@ -7447,7 +7452,7 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 
 	if(gtknode->recent_signonoff_timer > 0)
 		purple_timeout_remove(gtknode->recent_signonoff_timer);
-	gtknode->recent_signonoff_timer = purple_timeout_add(10000,
+	gtknode->recent_signonoff_timer = purple_timeout_add_seconds(10,
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }
 

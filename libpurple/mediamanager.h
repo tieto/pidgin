@@ -35,7 +35,7 @@ typedef struct _PurpleMediaManager PurpleMediaManager;
 /** @copydoc _PurpleMediaManagerClass */
 typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 
-#include "connection.h"
+#include "account.h"
 #include "media.h"
 
 G_BEGIN_DECLS
@@ -78,7 +78,7 @@ PurpleMediaManager *purple_media_manager_get(void);
  * Creates a media session.
  *
  * @param manager The media manager to create the session under.
- * @param gc The connection to create the session on.
+ * @param account The account to create the session on.
  * @param conference_type The conference type to feed into Farsight2.
  * @param remote_user The remote user to initiate the session with.
  *
@@ -87,7 +87,7 @@ PurpleMediaManager *purple_media_manager_get(void);
  * @since 2.6.0
  */
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
-						PurpleConnection *gc,
+						PurpleAccount *account,
 						const char *conference_type,
 						const char *remote_user,
 						gboolean initiator);
@@ -104,17 +104,17 @@ PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 GList *purple_media_manager_get_media(PurpleMediaManager *manager);
 
 /**
- * Gets all of the media sessions for a given connection.
+ * Gets all of the media sessions for a given account.
  *
  * @param manager The media manager to get the sessions from.
- * @param pc The connection the sessions are on.
+ * @param account The account the sessions are on.
  *
- * @return A list of the media sessions on the given connection.
+ * @return A list of the media sessions on the given account.
  *
  * @since 2.6.0
  */
-GList *purple_media_manager_get_media_by_connection(
-		PurpleMediaManager *manager, PurpleConnection *pc);
+GList *purple_media_manager_get_media_by_account(
+		PurpleMediaManager *manager, PurpleAccount *account);
 
 /**
  * Removes a media session from the media manager.

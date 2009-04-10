@@ -67,7 +67,8 @@
 #  endif
 #endif
 
-#define TYPING_TIMEOUT 4000
+/* Timeout for typing notifications in seconds */
+#define TYPING_TIMEOUT 4
 
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *data);
@@ -1155,7 +1156,7 @@ static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStat
 	/* Reset the status if Escape was pressed */
 	if (event->keyval == GDK_Escape)
 	{
-		g_source_remove(status_box->typing);
+		purple_timeout_remove(status_box->typing);
 		status_box->typing = 0;
 		if (status_box->account != NULL)
 			update_to_reflect_account_status(status_box, status_box->account,
@@ -1168,8 +1169,8 @@ static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStat
 	}
 
 	pidgin_status_box_pulse_typing(status_box);
-	g_source_remove(status_box->typing);
-	status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+	purple_timeout_remove(status_box->typing);
+	status_box->typing = purple_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 
 	return FALSE;
 }
@@ -2596,7 +2597,7 @@ static void remove_typing_cb(PidginStatusBox *status_box)
 		return;
 	}
 
-	g_source_remove(status_box->typing);
+	purple_timeout_remove(status_box->typing);
 	status_box->typing = 0;
 
 	activate_currently_selected_status(status_box);
@@ -2624,7 +2625,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			   DATA_COLUMN, &data,
 			   -1);
 	if (status_box->typing != 0)
-		g_source_remove(status_box->typing);
+		purple_timeout_remove(status_box->typing);
 	status_box->typing = 0;
 
 	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
@@ -2692,7 +2693,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			GtkTextIter start, end;
 			GtkTextBuffer *buffer;
 			gtk_widget_show_all(status_box->vbox);
-			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+			status_box->typing = purple_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 			gtk_widget_grab_focus(status_box->imhtml);
 			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 			gtk_text_buffer_get_bounds(buffer, &start, &end);
@@ -2741,9 +2742,9 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 	{
 		if (status_box->typing != 0) {
 			pidgin_status_box_pulse_typing(status_box);
-			g_source_remove(status_box->typing);
+			purple_timeout_remove(status_box->typing);
 		}
-		status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+		status_box->typing = purple_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 	}
 	pidgin_status_box_refresh(status_box);
 }

@@ -7514,7 +7514,7 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 	}
 
 	/* In case a conversation is started after the buddy has signed-on/off */
-	g_timeout_add(11000, (GSourceFunc)update_buddy_status_timeout, buddy);
+	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, buddy);
 }
 
 static void

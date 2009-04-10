@@ -515,7 +515,7 @@ purple_prpl_initiate_media(PurpleAccount *account,
 
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, initiate_media)) {
 		/* should check that the protocol supports this media type here? */
-		return prpl_info->initiate_media(gc, who, type);
+		return prpl_info->initiate_media(account, who, type);
 	} else
 #endif
 	return FALSE;
@@ -538,7 +538,7 @@ purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 	
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info,
 			get_media_caps)) {
-		return prpl_info->get_media_caps(gc, who);
+		return prpl_info->get_media_caps(account, who);
 	}
 #endif
 	return PURPLE_MEDIA_CAPS_NONE;

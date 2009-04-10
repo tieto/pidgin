@@ -201,7 +201,7 @@ const SizedStockIcon sized_stock_icons [] = {
 #ifdef USE_VV
 	{ PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, "toolbar", "audio-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, "toolbar", "video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL, "toolbar", "audio-video-call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL, "toolbar", "audio-video-call.png", FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 #endif
 };
 

@@ -128,7 +128,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 
 	irc_blist_timeout(irc);
 	if (!irc->timer)
-		irc->timer = purple_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)

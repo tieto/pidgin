@@ -362,15 +362,15 @@ void purple_media_codec_list_free(GList *codecs);
 GList *purple_media_get_session_names(PurpleMedia *media);
 
 /**
- * Gets the PurpleConnection this media session is on.
+ * Gets the PurpleAccount this media session is on.
  *
- * @param media The media session to retrieve the connection from.
+ * @param media The media session to retrieve the account from.
  *
- * @return The connection retrieved.
+ * @return The account retrieved.
  *
  * @since 2.6.0
  */
-PurpleConnection *purple_media_get_connection(PurpleMedia *media);
+PurpleAccount *purple_media_get_account(PurpleMedia *media);
 
 /**
  * Gets the prpl data from the media session.
