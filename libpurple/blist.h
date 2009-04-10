@@ -478,6 +478,13 @@ void purple_blist_rename_group(PurpleGroup *group, const char *name);
 PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components);
 
 /**
+ * Destroys a chat
+ *
+ * @param chat       The chat to destroy
+ */
+void purple_chat_destroy(PurpleChat *chat);
+
+/**
  * Adds a new chat to the buddy list.
  *
  * The chat will be inserted right after node or appended to the end
@@ -499,6 +506,13 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
  * @return           A newly allocated buddy
  */
 PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias);
+
+/**
+ * Destroys a buddy
+ *
+ * @param buddy     The buddy to destroy
+ */
+void purple_buddy_destroy(PurpleBuddy *buddy);
 
 /**
  * Sets a buddy's icon.
@@ -611,6 +625,13 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 PurpleGroup *purple_group_new(const char *name);
 
 /**
+ * Destroys a group
+ *
+ * @param group  The group to destroy
+*/
+void purple_group_destroy(PurpleGroup *group);
+
+/**
  * Adds a new group to the buddy list.
  *
  * The new group will be inserted after insert or prepended to the list if
@@ -627,6 +648,13 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node);
  * @return       A new contact struct
  */
 PurpleContact *purple_contact_new(void);
+
+/**
+ * Destroys a contact
+ *
+ * @param contact  The contact to destroy
+ */
+void purple_contact_destroy(PurpleContact *contact);
 
 /**
  * Adds a new contact to the buddy list.

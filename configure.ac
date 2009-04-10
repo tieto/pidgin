@@ -706,9 +706,13 @@ dnl #######################################################################
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.6.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
-
 You must have libxml2 >= 2.6.0 development headers installed to build.
 ])])
+PKG_CHECK_EXISTS([libxml-2.0 >= 2.6.18], , [
+	AC_MSG_WARN([
+Versions of libxml2 < 2.6.18 may contain bugs that could cause XMPP messages to be discarded.
+])])
+
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
@@ -774,7 +778,7 @@ AC_ARG_ENABLE(farsight,
 	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.8], [
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.9], [
 		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
 		AC_SUBST(FARSIGHT_CFLAGS)
 		AC_SUBST(FARSIGHT_LIBS)
@@ -982,7 +986,7 @@ if test "x$gadu_manual_check" = "xno"; then
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
-		AC_MSG_RESULT(no)
+		gadu_includes="no"
 	])
 else
 	if test "$ac_gadu_includes" != "no"; then

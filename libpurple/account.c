@@ -2787,6 +2787,7 @@ purple_accounts_init(void)
 void
 purple_accounts_uninit(void)
 {
+	GList* account;
 	gpointer handle = purple_accounts_get_handle();
 	if (save_timer != 0)
 	{
@@ -2797,4 +2798,10 @@ purple_accounts_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
+
+	account = purple_accounts_get_all();
+	while (account) {
+		purple_account_destroy(account->data);
+		account = g_list_delete_link(account, account);
+	}
 }

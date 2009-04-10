@@ -464,22 +464,22 @@ struct _PurplePluginProtocolInfo
 	/**
 	 * Initiate a media session with the given contact.
 	 *
-	 * @param conn The connection to initiate the media session on.
+	 * @param account The account to initiate the media session on.
 	 * @param who The remote user to initiate the session with.
 	 * @param type The type of media session to initiate.
 	 * @return TRUE if the call succeeded else FALSE. (Doesn't imply the media session or stream will be successfully created)
 	 */
-	gboolean (*initiate_media)(PurpleConnection *gc, const char *who,
+	gboolean (*initiate_media)(PurpleAccount *account, const char *who,
 					PurpleMediaSessionType type);
 
 	/**
 	 * Checks to see if the given contact supports the given type of media session.
 	 *
-	 * @param conn The connection the contact is on.
+	 * @param account The account the contact is on.
 	 * @param who The remote user to check for media capability with.
 	 * @return The media caps the contact supports.
 	 */
-	PurpleMediaCaps (*get_media_caps)(PurpleConnection *gc,
+	PurpleMediaCaps (*get_media_caps)(PurpleAccount *account,
 					  const char *who);
 };
 

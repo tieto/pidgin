@@ -204,8 +204,9 @@ jingle_rtp_get_media(JingleSession *session)
 {
 	JabberStream *js = jingle_session_get_js(session);
 	PurpleMedia *media = NULL;
-	GList *iter = purple_media_manager_get_media_by_connection(
-			purple_media_manager_get(), js->gc);
+	GList *iter = purple_media_manager_get_media_by_account(
+			purple_media_manager_get(),
+			purple_connection_get_account(js->gc));
 
 	for (; iter; iter = g_list_delete_link(iter, iter)) {
 		JingleSession *media_session =
@@ -466,6 +467,9 @@ jingle_rtp_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 {
 	purple_debug_info("jingle-rtp", "stream-info: type %d "
 			"id: %s name: %s\n", type, sid, name);
+
+	g_return_if_fail(JINGLE_IS_SESSION(session));
+
 	if (type == PURPLE_MEDIA_INFO_HANGUP) {
 		jabber_iq_send(jingle_session_terminate_packet(
 				session, "success"));
@@ -518,9 +522,11 @@ jingle_rtp_create_media(JingleContent *content)
 	JabberStream *js = jingle_session_get_js(session);
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
 
-	PurpleMedia *media = purple_media_manager_create_media(purple_media_manager_get(), 
-						  js->gc, "fsrtpconference", remote_jid,
-						  jingle_session_is_initiator(session));
+	PurpleMedia *media = purple_media_manager_create_media(
+			purple_media_manager_get(), 
+			purple_connection_get_account(js->gc),
+			"fsrtpconference", remote_jid,
+			jingle_session_is_initiator(session));
 	g_free(remote_jid);
 
 	if (!media) {

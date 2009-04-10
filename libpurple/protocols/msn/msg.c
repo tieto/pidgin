@@ -984,3 +984,67 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_hash_table_destroy(body);
 }
 
+void
+msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	GHashTable *body;
+	const gchar *guid;
+
+	g_return_if_fail(cmdproc != NULL);
+	g_return_if_fail(msg != NULL);
+
+	body = msn_message_get_hashtable_from_body(msg);
+
+	if (body == NULL) {
+		purple_debug_warning("msn",
+				"Unable to parse invite msg body.\n");
+		return;
+	}
+
+	guid = g_hash_table_lookup(body, "Application-GUID");
+
+	if (guid == NULL) {
+		const gchar *cmd = g_hash_table_lookup(
+				body, "Invitation-Command");
+
+		if (cmd && !strcmp(cmd, "CANCEL")) {
+			const gchar *code = g_hash_table_lookup(
+					body, "Cancel-Code");
+			purple_debug_info("msn",
+					"MSMSGS invitation cancelled: %s.\n",
+					code ? code : "no reason given");
+		} else
+			purple_debug_warning("msn", "Invite msg missing "
+					"Application-GUID.\n");
+	} else if (!strcmp(guid, "{02D3C01F-BF30-4825-A83A-DE7AF41648AA}")) {
+		purple_debug_info("msn", "Computer call\n");
+
+		if (cmdproc->session) {
+			PurpleConversation *conv = NULL;
+			gchar *from = msg->remote_user;
+			gchar *buf = NULL;
+
+			if (from)
+				conv = purple_find_conversation_with_account(
+						PURPLE_CONV_TYPE_IM, from,
+						cmdproc->session->account);
+			if (conv)
+				buf = g_strdup_printf(
+						_("%s sent you a voice chat "
+						"invite, which is not yet "
+						"supported."), from);
+			if (buf) {
+				purple_conversation_write(conv, NULL, buf,
+						PURPLE_MESSAGE_SYSTEM |
+						PURPLE_MESSAGE_NOTIFY,
+						time(NULL));
+				g_free(buf);
+			}
+		}
+	} else
+		purple_debug_warning("msn",
+				"Unhandled invite msg with GUID %s.\n", guid);
+
+	g_hash_table_destroy(body);
+}
+

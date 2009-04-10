@@ -9,6 +9,9 @@ version 2.6.0 (??/??/2009):
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
 
+	libpurple:
+	* Various memory cleanups when unloading libpurple. (Nick Hebner)
+
 	XMPP:
 	* Add voice & video support with Jingle (XEP-0166, 0167, 0176, & 0177),
 	  and voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)

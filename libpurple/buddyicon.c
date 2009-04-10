@@ -1299,6 +1299,7 @@ purple_buddy_icons_uninit()
 	g_hash_table_destroy(icon_file_cache);
 	g_hash_table_destroy(pointer_icon_cache);
 	g_free(old_icons_dir);
+	g_free(cache_dir);
 }
 
 void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int *height)

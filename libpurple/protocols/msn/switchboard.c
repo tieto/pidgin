@@ -1237,10 +1237,8 @@ msn_switchboard_init(void)
 	                       msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
 						   msn_datacast_msg);
-#if 0
-	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
+	msn_table_add_msg_type(cbs_table, "text/x-msmsgsinvite",
 						   msn_invite_msg);
-#endif
 }
 
 void

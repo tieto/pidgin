@@ -220,7 +220,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	init_file();
-	check = purple_timeout_add(5000, (GSourceFunc)check_file, NULL);
+	check = purple_timeout_add_seconds(5, (GSourceFunc)check_file, NULL);
 
 	return TRUE;
 }
