@@ -1249,9 +1249,11 @@ purple_buddy_destroy(PurpleBuddy *buddy)
 	 * can free proto_data
 	 */
 	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info && prpl_info->buddy_free)
-		prpl_info->buddy_free(buddy);
+	if (prpl) {
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		if (prpl_info && prpl_info->buddy_free)
+			prpl_info->buddy_free(buddy);
+	}
 
 	/* Delete the node */
 	purple_buddy_icon_unref(buddy->icon);
