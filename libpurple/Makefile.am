@@ -113,7 +113,6 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
-	marshallers.h \
 	media.h \
 	media-gst.h \
 	mediamanager.h \
@@ -153,7 +152,7 @@ purple_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
-purple_builtheaders = purple.h version.h
+purple_builtheaders = purple.h version.h marshallers.h
 
 marshallers.h: marshallers.list
 	@echo "Generating marshallers.h"
