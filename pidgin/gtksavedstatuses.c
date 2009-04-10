@@ -899,6 +899,12 @@ editor_title_changed_cb(GtkWidget *widget, gpointer user_data)
 
 #if GTK_CHECK_VERSION(2,4,0)
 
+enum {
+	STATUS_MENU_STOCK_ICON,
+	STATUS_MENU_NAME,
+	STATUS_MENU_COUNT
+};
+
 static GtkWidget *
 create_status_type_menu(PurpleStatusPrimitive type)
 {
@@ -908,7 +914,7 @@ create_status_type_menu(PurpleStatusPrimitive type)
 	GtkTreeIter iter;
 	GtkCellRenderer *renderer;
 
-	store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	store = gtk_list_store_new(STATUS_MENU_COUNT, G_TYPE_STRING, G_TYPE_STRING);
 
 	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
 	{
@@ -922,8 +928,8 @@ create_status_type_menu(PurpleStatusPrimitive type)
 		gtk_list_store_append(store, &iter);
 		/* TODO: how's this get the right size (since it seems to work fine)? */
 		gtk_list_store_set(store, &iter,
-		                   0, get_stock_icon_from_primitive(i),
-		                   1, purple_primitive_get_name_from_type(i),
+		                   STATUS_MENU_STOCK_ICON, get_stock_icon_from_primitive(i),
+		                   STATUS_MENU_NAME, purple_primitive_get_name_from_type(i),
 		                   -1);
 	}
 
@@ -932,13 +938,13 @@ create_status_type_menu(PurpleStatusPrimitive type)
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dropdown), renderer, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dropdown), renderer,
-	                               "stock-id", 0,
+	                               "stock-id", STATUS_MENU_STOCK_ICON,
 	                               NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dropdown), renderer, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dropdown), renderer,
-	                               "text", 1,
+	                               "text", STATUS_MENU_NAME,
 	                               NULL);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dropdown),
