@@ -44,8 +44,13 @@ struct _PurpleDiscoList {
 
 	gpointer ui_data; /**< UI private data. */
 	gpointer proto_data; /**< Prpl private data. */
-	PurpleDiscoCloseCallback close_cb; /**< Callback to free the prpl data */
 	guint ref; /**< The reference count. */
+
+	struct {
+		PurpleDiscoCancelFunc cancel_cb;
+		PurpleDiscoCloseFunc close_cb; /**< Callback to free the prpl data */
+		PurpleDiscoRegisterFunc register_cb;
+	} ops;
 };
 
 /**
@@ -106,8 +111,8 @@ static void purple_disco_list_destroy(PurpleDiscoList *list)
 	if (ops && ops->destroy)
 		ops->destroy(list);
 
-	if (list->close_cb)
-		list->close_cb(list);
+	if (list->ops.close_cb)
+		list->ops.close_cb(list);
 
 	for (l = list->services; l; l = l->next) {
 		PurpleDiscoService *s = l->data;
@@ -178,47 +183,28 @@ PurpleDiscoList *purple_disco_get_list(PurpleConnection *pc)
 
 void purple_disco_cancel_get_list(PurpleDiscoList *list)
 {
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc;
-
 	g_return_if_fail(list != NULL);
 
-	gc = purple_account_get_connection(list->account);
-
-	g_return_if_fail(gc != NULL);
-
-	if (gc)
-		prpl = purple_connection_get_prpl(gc);
-
-	if (prpl)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, disco_cancel))
-		prpl_info->disco_cancel(list);
+	if (list->ops.cancel_cb)
+		list->ops.cancel_cb(list);
 
 	purple_disco_list_set_in_progress(list, FALSE);
 }
 
 void purple_disco_service_register(PurpleDiscoService *service)
 {
+	PurpleDiscoList *list;
 	PurpleConnection *pc;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(service != NULL);
-	
-	pc = purple_account_get_connection(service->list->account);
+
+	list = service->list;
+	pc = purple_account_get_connection(list->account);
 
 	g_return_if_fail(pc != NULL);
 
-	prpl = purple_connection_get_prpl(pc);
-
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, disco_service_register))
-		prpl_info->disco_service_register(pc, service);
+	if (list->ops.register_cb)
+		list->ops.register_cb(pc, service);
 }
 
 const gchar *purple_disco_service_get_name(PurpleDiscoService *service)
@@ -314,12 +300,12 @@ gboolean purple_disco_list_get_in_progress(PurpleDiscoList *list)
 
 void purple_disco_list_set_protocol_data(PurpleDiscoList *list,
                                          gpointer proto_data,
-                                         PurpleDiscoCloseCallback cb)
+                                         PurpleDiscoCloseFunc cb)
 {
 	g_return_if_fail(list != NULL);
 
-	list->proto_data = proto_data;
-	list->close_cb   = cb;
+	list->proto_data   = proto_data;
+	list->ops.close_cb = cb;
 }
 
 gpointer purple_disco_list_get_protocol_data(PurpleDiscoList *list)

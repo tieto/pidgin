@@ -487,16 +487,6 @@ struct _PurplePluginProtocolInfo
 	 * Service discovery prpl callbacks
 	 */
 	PurpleDiscoList *(*disco_get_list)(PurpleConnection *gc);
-
-	/**
-	 * Cancel fetching service list
-	 */
-	void (*disco_cancel)(PurpleDiscoList *list);
-
-	/**
-	 * Register service
-	 */
-	int (*disco_service_register)(PurpleConnection *gc, PurpleDiscoService *service);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

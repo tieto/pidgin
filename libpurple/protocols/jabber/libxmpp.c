@@ -124,8 +124,6 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_initiate_media,          /* initiate_media */
 	jabber_get_media_caps,                  /* get_media_caps */
 	jabber_disco_get_list,			/* disco_get_list */
-	jabber_disco_cancel,			/* disco_cancel */
-	jabber_disco_service_register	/* disco_service_register */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

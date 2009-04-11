@@ -33,11 +33,36 @@ typedef struct _PurpleDiscoService PurpleDiscoService;
 typedef struct _PurpleDiscoUiOps PurpleDiscoUiOps;
 
 #include "account.h"
+#include "connection.h"
 
 /**
+ * A prpl callback called to tell the prpl to cancel creating the list.
+ * The prpl must implement this and must not add services to the
+ * PurpleDiscoList after this is called.
+ *
+ * @param list  The disco list.
+ */
+typedef void (*PurpleDiscoCancelFunc)(PurpleDiscoList *list);
+
+/**
+ * A prpl callback called to tell the prpl to tell it to destroy
+ * prpl-specific data relating to this PurpleDiscoList (which will be
+ * destroyed imminently).
+ *
+ * @param list  The disco list.
+ */
+typedef void (*PurpleDiscoCloseFunc)(PurpleDiscoList *list);
+
+/**
+ * A prpl callback called to initiate registration with the specificed
+ * service.
+ *
+ * @param pc       The connection.
+ * @param service  The service to which to register.
  *
  */
-typedef void  (*PurpleDiscoCloseCallback) (PurpleDiscoList *list);
+typedef void (*PurpleDiscoRegisterFunc)(PurpleConnection *pc,
+                                        PurpleDiscoService *service);
 
 /**
  * The types of services.
@@ -310,7 +335,7 @@ gboolean purple_disco_list_get_in_progress(PurpleDiscoList *list);
  * @since TODO
  */
 void purple_disco_list_set_protocol_data(PurpleDiscoList *list, gpointer data,
-                                         PurpleDiscoCloseCallback cb);
+                                         PurpleDiscoCloseFunc cb);
 
 /**
  * Returns the disco list's protocol-specific data.
@@ -324,6 +349,9 @@ void purple_disco_list_set_protocol_data(PurpleDiscoList *list, gpointer data,
  * @since TODO
  */
 gpointer purple_disco_list_get_protocol_data(PurpleDiscoList *list);
+
+void purple_disco_list_set_cancel_func(PurpleDiscoList *list, PurpleDiscoCancelFunc cb);
+void purple_disco_list_set_register_func(PurpleDiscoList *list, PurpleDiscoRegisterFunc cb);
 
 /**
  * Sets the UI operations structure to be used in all purple service discovery.

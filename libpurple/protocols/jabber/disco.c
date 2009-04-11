@@ -957,37 +957,7 @@ static void discolist_ok_cb(struct jabber_disco_list_data *list_data, const char
 	jabber_disco_info_do(js, list_data->server, jabber_disco_server_info_cb, list_data);
 }
 
-PurpleDiscoList *
-jabber_disco_get_list(PurpleConnection *gc)
-{
-	PurpleAccount *account;
-	PurpleDiscoList *list;
-	JabberStream *js;
-	struct jabber_disco_list_data *disco_list_data;
-
-	account = purple_connection_get_account(gc);
-	js = purple_connection_get_protocol_data(gc);
-
-	/* We start with a ref */
-	list = purple_disco_list_new(account);
-
-	disco_list_data = g_new0(struct jabber_disco_list_data, 1);
-	disco_list_data->list = list;
-	disco_list_data->js = js;
-	purple_disco_list_set_protocol_data(list, disco_list_data, disco_proto_data_destroy_cb);
-
-	purple_request_input(gc, _("Server name request"), _("Enter an XMPP Server"),
-			_("Select an XMPP server to query"),
-			js->last_disco_server ? js->last_disco_server : js->user->domain,
-			FALSE, FALSE, NULL,
-			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
-			_("Cancel"), PURPLE_CALLBACK(discolist_cancel_cb),
-			account, NULL, NULL, disco_list_data);
-
-	return list;
-}
-
-void
+static void
 jabber_disco_cancel(PurpleDiscoList *list)
 {
 	struct jabber_disco_list_data *list_data = purple_disco_list_get_protocol_data(list);
@@ -1008,14 +978,45 @@ jabber_disco_cancel(PurpleDiscoList *list)
 	}
 }
 
-int
+static void
 jabber_disco_service_register(PurpleConnection *gc, PurpleDiscoService *service)
 {
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	jabber_register_gateway(js, purple_disco_service_get_name(service));
+}
 
-	return 0;
+
+PurpleDiscoList *
+jabber_disco_get_list(PurpleConnection *gc)
+{
+	PurpleAccount *account;
+	PurpleDiscoList *list;
+	JabberStream *js;
+	struct jabber_disco_list_data *disco_list_data;
+
+	account = purple_connection_get_account(gc);
+	js = purple_connection_get_protocol_data(gc);
+
+	/* We start with a ref */
+	list = purple_disco_list_new(account);
+
+	disco_list_data = g_new0(struct jabber_disco_list_data, 1);
+	disco_list_data->list = list;
+	disco_list_data->js = js;
+	purple_disco_list_set_protocol_data(list, disco_list_data, disco_proto_data_destroy_cb);
+	purple_disco_list_set_cancel_func(list, jabber_disco_cancel);
+	purple_disco_list_set_register_func(list, jabber_disco_service_register);
+
+	purple_request_input(gc, _("Server name request"), _("Enter an XMPP Server"),
+			_("Select an XMPP server to query"),
+			js->last_disco_server ? js->last_disco_server : js->user->domain,
+			FALSE, FALSE, NULL,
+			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
+			_("Cancel"), PURPLE_CALLBACK(discolist_cancel_cb),
+			account, NULL, NULL, disco_list_data);
+
+	return list;
 }
 
 static void
