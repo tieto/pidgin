@@ -559,44 +559,11 @@ generate_send_to_menu(FinchConv *ggc)
 }
 
 static void
-invite_select_cb(FinchConv *fc, PurpleRequestFields *fields)
-{
-	PurpleConversation *conv = fc->active_conv;
-	const char *buddy = purple_request_fields_get_string(fields,  "screenname");
-	const char *message = purple_request_fields_get_string(fields,  "message");
-	serv_chat_invite(purple_conversation_get_gc(conv),
-		purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
-		message, buddy);
-
-}
-
-static void
 invite_cb(GntMenuItem *item, gpointer ggconv)
 {
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-
-	fields = purple_request_fields_new();
-
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_string_new("screenname", _("Name"), NULL, FALSE);
-	purple_request_field_set_type_hint(field, "screenname");
-	purple_request_field_set_required(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-	field = purple_request_field_string_new("message", _("Invite message"), NULL, FALSE);
-	purple_request_field_group_add_field(group, field);
-	purple_request_fields(finch_conv_get_handle(), _("Invite"),
-						NULL,
-						_("Please enter the name of the user "
-						  "you wish to invite,\nalong with an optional invite message."),
-						fields,
-						_("OK"), G_CALLBACK(invite_select_cb),
-						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						ggconv);
+	FinchConv *fc = ggconv;
+	PurpleConversation *conv = fc->active_conv;
+	purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), NULL, NULL, TRUE);
 }
 
 static void

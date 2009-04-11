@@ -4981,11 +4981,17 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	PurpleConversation *conv = gtkconv->active_conv;
 	PidginWindow *win = gtkconv->win;
 	PurpleConversation *c;
+	PurpleAccount *convaccount = purple_conversation_get_account(conv);
+	PurpleConnection *gc = purple_account_get_connection(convaccount);
+	PurplePluginProtocolInfo *prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+
 	if (sd->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
 	{
 		PurpleBlistNode *n = NULL;
 		PurpleBuddy *b;
 		PidginConversation *gtkconv = NULL;
+		PurpleAccount *buddyaccount;
+		const char *buddyname;
 
 		n = *(PurpleBlistNode **)sd->data;
 
@@ -4996,32 +5002,44 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		else
 			return;
 
+		buddyaccount = purple_buddy_get_account(b);
+		buddyname = purple_buddy_get_name(b);
 		/*
-		 * If we already have an open conversation with this buddy, then
-		 * just move the conv to this window.  Otherwise, create a new
-		 * conv and add it to this window.
+		 * If a buddy is dragged to a chat window of the same protocol,
+		 * invite him to the chat.
 		 */
-		c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, b->account);
-		if (c != NULL) {
-			PidginWindow *oldwin;
-			gtkconv = PIDGIN_CONVERSATION(c);
-			oldwin = gtkconv->win;
-			if (oldwin != win) {
-				pidgin_conv_window_remove_gtkconv(oldwin, gtkconv);
-				pidgin_conv_window_add_gtkconv(win, gtkconv);
-			}
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
+				prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_invite) &&
+				strcmp(purple_account_get_protocol_id(convaccount),
+					purple_account_get_protocol_id(buddyaccount)) == 0) {
+		    purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), buddyname, NULL, TRUE);
 		} else {
-			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, b->account, b->name);
-			gtkconv = PIDGIN_CONVERSATION(c);
-			if (gtkconv->win != win)
-			{
-				pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
-				pidgin_conv_window_add_gtkconv(win, gtkconv);
+			/*
+			 * If we already have an open conversation with this buddy, then
+			 * just move the conv to this window.  Otherwise, create a new
+			 * conv and add it to this window.
+			 */
+			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddyname, buddyaccount);
+			if (c != NULL) {
+				PidginWindow *oldwin;
+				gtkconv = PIDGIN_CONVERSATION(c);
+				oldwin = gtkconv->win;
+				if (oldwin != win) {
+					pidgin_conv_window_remove_gtkconv(oldwin, gtkconv);
+					pidgin_conv_window_add_gtkconv(win, gtkconv);
+				}
+			} else {
+				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, buddyaccount, buddyname);
+				gtkconv = PIDGIN_CONVERSATION(c);
+				if (gtkconv->win != win) {
+					pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+					pidgin_conv_window_add_gtkconv(win, gtkconv);
+				}
 			}
-		}
 
-		/* Make this conversation the active conversation */
-		pidgin_conv_window_switch_gtkconv(win, gtkconv);
+			/* Make this conversation the active conversation */
+			pidgin_conv_window_switch_gtkconv(win, gtkconv);
+		}
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
@@ -5040,15 +5058,22 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				purple_notify_error(win, NULL,
 					_("You are not currently signed on with an account that "
 					  "can add that buddy."), NULL);
-			}
-			else
-			{
-				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
-				gtkconv = PIDGIN_CONVERSATION(c);
-				if (gtkconv->win != win)
-				{
-					pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
-					pidgin_conv_window_add_gtkconv(win, gtkconv);
+			} else {
+				/*
+				 * If a buddy is dragged to a chat window of the same protocol,
+				 * invite him to the chat.
+				 */
+				if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
+						prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_invite) &&
+						strcmp(purple_account_get_protocol_id(convaccount), protocol) == 0) {
+					purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), username, NULL, TRUE);
+				} else {
+					c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
+					gtkconv = PIDGIN_CONVERSATION(c);
+					if (gtkconv->win != win) {
+						pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+						pidgin_conv_window_add_gtkconv(win, gtkconv);
+					}
 				}
 			}
 		}
@@ -5060,7 +5085,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	}
 	else if (sd->target == gdk_atom_intern("text/uri-list", FALSE)) {
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-			pidgin_dnd_file_manage(sd, purple_conversation_get_account(conv), purple_conversation_get_name(conv));
+			pidgin_dnd_file_manage(sd, convaccount, purple_conversation_get_name(conv));
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
 	else
@@ -6801,7 +6826,8 @@ static void
 wrote_msg_update_unseen_cb(PurpleAccount *account, const char *who, const char *message,
 		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
 {
-	if (conv == NULL || PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+	PidginConversation *gtkconv = conv ? PIDGIN_CONVERSATION(conv) : NULL;
+	if (conv == NULL || (gtkconv && gtkconv->win != hidden_convwin))
 		return;
 	if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) {
 		PidginUnseenState unseen = PIDGIN_UNSEEN_NONE;
