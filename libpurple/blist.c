@@ -2616,7 +2616,7 @@ static void
 purple_blist_node_destroy(PurpleBlistNode *node)
 {
 	PurpleBlistNode *child, *next_child;
-  
+
 	child = node->child;
 	while (child) {
 		next_child = child->next;
@@ -2936,6 +2936,7 @@ purple_blist_uninit(void)
 		purple_blist_node_destroy(node);
 		node = next_node;
 	}
+	purplebuddylist->root = NULL;
 
 	purple_signals_unregister_by_instance(purple_blist_get_handle());
 }
