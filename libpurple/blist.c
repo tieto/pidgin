@@ -699,10 +699,23 @@ purple_blist_get_root()
 	return purplebuddylist ? purplebuddylist->root : NULL;
 }
 
-GHashTable *
+static void
+append_buddy(gpointer key, gpointer value, gpointer user_data)
+{
+	GSList **list = user_data;
+	*list = g_slist_prepend(*list, value);
+}
+
+GSList *
 purple_blist_get_buddies()
 {
-	return purplebuddylist ? purplebuddylist->buddies : NULL;
+	GSList *buddies = NULL;
+
+	if (!purplebuddylist)
+		return NULL;
+
+	g_hash_table_foreach(purplebuddylist->buddies, append_buddy, &buddies);
+	return buddies;
 }
 
 void *
