@@ -30,8 +30,11 @@
 #include "debug.h"
 #include "marshallers.h"
 #include "media.h"
-#include "media-gst.h"
 #include "mediamanager.h"
+
+#ifdef USE_GSTREAMER
+#include "media-gst.h"
+#endif
 
 #ifdef USE_VV
 
@@ -218,6 +221,7 @@ pipeline_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
 }
 #endif
 
+#ifdef USE_GSTREAMER
 GstElement *
 purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 {
@@ -246,6 +250,7 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 	return NULL;
 #endif
 }
+#endif /* USE_GSTREAMER */
 
 PurpleMedia *
 purple_media_manager_create_media(PurpleMediaManager *manager,
@@ -366,6 +371,7 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 }
 #endif
 
+#ifdef USE_GSTREAMER
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -611,6 +617,7 @@ purple_media_manager_get_active_element(PurpleMediaManager *manager,
 
 	return NULL;
 }
+#endif /* USE_GSTREAMER */
 
 #ifdef USE_VV
 static void
@@ -844,6 +851,7 @@ purple_media_manager_get_ui_caps(PurpleMediaManager *manager)
 #endif
 }
 
+#ifdef USE_GSTREAMER
 
 /*
  * PurpleMediaElementType
@@ -1114,4 +1122,6 @@ purple_media_element_info_call_create(PurpleMediaElementInfo *info,
 #endif
 	return NULL;
 }
+
+#endif /* USE_GSTREAMER */
 
