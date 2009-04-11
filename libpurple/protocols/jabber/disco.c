@@ -640,7 +640,9 @@ jabber_disco_type_from_string(const gchar *str)
 }
 
 static void
-jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data);
+jabber_disco_service_info_cb(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id,
+                             xmlnode *packet, gpointer data);
 
 static void
 jabber_disco_service_items_cb(JabberStream *js, const char *who, const char *node,
@@ -727,7 +729,9 @@ jabber_disco_service_items_cb(JabberStream *js, const char *who, const char *nod
 }
 
 static void
-jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_service_info_cb(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id,
+                             xmlnode *packet, gpointer data)
 {
 	struct _disco_data *disco_data = data;
 	struct jabber_disco_list_data *list_data;
@@ -735,12 +739,10 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	PurpleDiscoService *parent;
 	char *node;
 	xmlnode *query, *ident, *child;
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *result = xmlnode_get_attrib(packet, "type");
 	const char *acat, *atype, *adesc, *anode;
 	char *aname;
 	PurpleDiscoService *s;
-	PurpleDiscoServiceType type;
+	PurpleDiscoServiceType service_type;
 	const char *gateway_type = NULL;
 	PurpleDiscoServiceFlags flags = PURPLE_DISCO_ADD;
 
@@ -761,7 +763,7 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		return;
 	}
 
-	if (!from || !result || strcmp(result, "result") != 0
+	if (!from || type == JABBER_IQ_ERROR
 			|| (!(query = xmlnode_get_child(packet, "query")))
 			|| (!(ident = xmlnode_get_child(query, "identity")))) {
 		if (list_data->fetch_count == 0)
@@ -784,8 +786,8 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		aname = g_strdup(from);
 	}
 
-	type = jabber_disco_category_from_string(acat);
-	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
+	service_type = jabber_disco_category_from_string(acat);
+	if (service_type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
 		gateway_type = jabber_disco_type_from_string(atype);
 
 	for (child = xmlnode_get_child(query, "feature"); child;
@@ -802,17 +804,17 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			flags |= PURPLE_DISCO_BROWSE;
 
 		if (!strcmp(var, "http://jabber.org/protocol/muc"))
-			type = PURPLE_DISCO_SERVICE_TYPE_CHAT;
+			service_type = PURPLE_DISCO_SERVICE_TYPE_CHAT;
 	}
 
 	purple_debug_info("disco", "service %s, category %s (%d), type %s (%s), description %s, flags %04x\n",
 			aname,
-			acat, type,
+			acat, service_type,
 			atype, gateway_type ? gateway_type : "(null)",
 			adesc, flags);
 
-	s = purple_disco_list_service_new(type, aname, adesc, flags);
-	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
+	s = purple_disco_list_service_new(service_type, aname, adesc, flags);
+	if (service_type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
 		purple_disco_service_set_gateway_type(s, gateway_type);
 
 	purple_disco_list_service_add(list, s, parent);
@@ -839,18 +841,15 @@ jabber_disco_service_info_cb(JabberStream *js, xmlnode *packet, gpointer data)
 }
 
 static void
-jabber_disco_server_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_server_items_cb(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id,
+                             xmlnode *packet, gpointer data)
 {
 	struct jabber_disco_list_data *list_data;
 	xmlnode *query, *child;
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
 	gboolean has_items = FALSE;
 
-	if (!from || !type)
-		return;
-
-	if (strcmp(type, "result"))
+	if (!from || type == JABBER_IQ_ERROR)
 		return;
 
 	list_data = data;
@@ -1020,25 +1019,22 @@ jabber_disco_service_register(PurpleConnection *gc, PurpleDiscoService *service)
 }
 
 static void
-jabber_disco_items_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_items_cb(JabberStream *js, const char *from, JabberIqType type,
+                      const char *id, xmlnode *packet, gpointer data)
 {
 	struct _jabber_disco_items_cb_data *jdicd;
 	xmlnode *query, *child;
-	const char *from;
 	const char *node = NULL;
-	const char *type;
 	GSList *items = NULL;
 
 	jdicd = data;
 
-	from = xmlnode_get_attrib(packet, "from");
-	type = xmlnode_get_attrib(packet, "type");
 	query = xmlnode_get_child(packet, "query");
 
 	if (query)
 		node = xmlnode_get_attrib(query, "node");
 
-	if (!from || !strcmp(type, "error") || !query) {
+	if (!from || !query || type == JABBER_IQ_ERROR) {
 		jdicd->callback(js, from, node, NULL, jdicd->data);
 		g_free(jdicd);
 		return;
