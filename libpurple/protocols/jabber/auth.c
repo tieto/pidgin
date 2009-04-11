@@ -30,9 +30,10 @@
 #include "util.h"
 #include "xmlnode.h"
 
-#include "jutil.h"
 #include "auth.h"
+#include "disco.h"
 #include "jabber.h"
+#include "jutil.h"
 #include "iq.h"
 #include "notify.h"
 
@@ -282,7 +283,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	secprops.min_ssf = 0;
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
 
-	if (!js->gsc) {
+	if (!jabber_stream_is_ssl(js)) {
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
 		plaintext = purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
@@ -545,7 +546,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	} else if(plain) {
 		js->auth_type = JABBER_AUTH_PLAIN;
 
-		if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+		if(!jabber_stream_is_ssl(js) && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
 			char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 					js->gc->account->username);
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
@@ -572,7 +573,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
                                xmlnode *packet, gpointer data)
 {
 	if (type == JABBER_IQ_RESULT) {
-		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		jabber_disco_items_server(js);
 	} else {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
@@ -659,7 +660,7 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			jabber_iq_send(iq);
 
 		} else if(xmlnode_get_child(query, "password")) {
-			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
+			if(!jabber_stream_is_ssl(js) && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
 				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 											js->gc->account->username);
