@@ -260,13 +260,14 @@ PurpleBuddyList *purple_get_blist(void);
 PurpleBlistNode *purple_blist_get_root(void);
 
 /**
- * Returns the hash table of every buddy in the list.
+ * Returns a list of every buddy in the list.
  *
- * @return The hash table of every buddy in the list.
+ * @return A list of every buddy in the list. Caller is responsible for
+ *         freeing the list.
  *
  * @since 2.6.0
  */
-GHashTable *purple_blist_get_buddies(void);
+GSList *purple_blist_get_buddies(void);
 
 /**
  * Returns the UI data for the list.
