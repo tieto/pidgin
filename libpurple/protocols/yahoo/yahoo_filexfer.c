@@ -1390,7 +1390,7 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 		                            "Server: Y!/1.0\r\n"
 		                            "MIME-version: 1.0\r\n"
 		                            "Last-modified: %s GMT\r\n"
-		                            "Content-length: %d\r\n\r\n",
+		                            "Content-length: %" G_GSIZE_FORMAT "\r\n\r\n",
 		                            time_str, time_str, xfer->size);
 		xd->txbuflen = strlen(xd->txbuf);
 		xd->txbuf_written = 0;
