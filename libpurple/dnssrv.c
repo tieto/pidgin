@@ -65,6 +65,10 @@ static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
+struct _PurpleTxtResponse {
+    char *content;
+};
+
 struct _PurpleSrvQueryData {
 	union {
 		PurpleSrvCallback srv;
@@ -246,29 +250,30 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 			}
 			cb(res, size, query_data->extradata);
 		} else if (type == T_TXT) {
+			GSList *responses = NULL;
 			PurpleTxtResponse *res;
-			PurpleTxtResponse *tmp;
 			PurpleTxtCallback cb = query_data->cb.txt;
 			if (read(source, &size, sizeof(int)) == sizeof(int)) {
 				ssize_t red;
 				purple_debug_info("dnssrv","found %d TXT entries\n", size);
-				tmp = res = g_new0(PurpleTxtResponse, size);
+				res = g_new0(PurpleTxtResponse, 1);
 				for (i = 0; i < size; i++) {
-					red = read(source, tmp++, sizeof(PurpleTxtResponse));
+					red = read(source, res, sizeof(PurpleTxtResponse));
 					if (red != sizeof(PurpleTxtResponse)) {
 						purple_debug_error("dnssrv","unable to read txt "
 								"response: %s\n", g_strerror(errno));
 						size = 0;
 						g_free(res);
-						res = NULL;
+						g_slist_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
+						g_slist_free(responses);
+						responses = NULL;
+						break;
 					}
 				}
 			} else {
 				purple_debug_info("dnssrv","found 0 TXT entries; errno is %i\n", errno);
-				size = 0;
-				res = NULL;
 			}
-			cb(res, size, query_data->extradata);			
+			cb(responses, query_data->extradata);			
 		} else {
 			purple_debug_info("dnssrv","type unknown of DNS result entry; errno is %i\n", errno);
 		}
@@ -316,22 +321,12 @@ res_main_thread_cb(gpointer data)
 			PurpleTxtResponse *txtres_tmp = NULL;
 			GSList *lst = query_data->results;
 
-			size = g_slist_length(lst);
-
-			if(query_data->cb.txt && size > 0)
-				txtres_tmp = txtres = g_new0(PurpleTxtResponse, size);
-			while (lst) {
-				if(query_data->cb.txt)
-					memcpy(txtres_tmp++, lst->data, sizeof(PurpleTxtResponse));
-				g_free(lst->data);
-				lst = g_slist_remove(lst, lst->data);
-			}
-
-			query_data->results = NULL;
-
-			purple_debug_info("dnssrv", "found %d TXT entries\n", size);
+			purple_debug_info("dnssrv", "found %d TXT entries\n", g_slist_length(lst));
 			
-			if(query_data->cb.txt) query_data->cb.txt(txtres, size, query_data->extradata);
+			if (query_data->cb.txt) {
+				query_data->results = NULL;
+				query_data->cb.txt(lst, query_data->extradata);
+			}
 		} else {
 			purple_debug_error("dnssrv", "unknown query type");
 		}
@@ -557,14 +552,14 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 	if(pipe(in) || pipe(out)) {
 		purple_debug_error("dnssrv", "Could not create pipe\n");
 		g_free(query);
-		cb(NULL, 0, extradata);
+		cb(NULL, extradata);
 		return NULL;
 	}
 
 	pid = fork();
 	if (pid == -1) {
 		purple_debug_error("dnssrv", "Could not create process!\n");
-		cb(NULL, 0, extradata);
+		cb(NULL, extradata);
 		g_free(query);
 		return NULL;
 	}
@@ -625,7 +620,7 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 		}
 	}
 
-	/* The query isn't going to happen, so finish the SRV lookup now.
+	/* The query isn't going to happen, so finish the TXT lookup now.
 	 * Asynchronously call the callback since stuff may not expect
 	 * the callback to be called before this returns */
 	if (query_data->error_message != NULL)
@@ -664,4 +659,20 @@ void
 purple_txt_cancel(PurpleSrvQueryData *query_data)
 {
 	purple_srv_cancel(query_data);
+}
+
+const gchar *
+purple_txt_response_get_content(PurpleTxtResponse *resp)
+{
+	g_return_val_if_fail(resp != NULL, NULL);
+
+	return resp->content;
+}
+
+void purple_txt_response_destroy(PurpleTxtResponse *resp)
+{
+	g_return_if_fail(resp != NULL);
+
+	g_free(resp->content);
+	g_free(resp);
 }

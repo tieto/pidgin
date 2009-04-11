@@ -584,14 +584,13 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 }
 
 static void 
-txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
+txt_resolved_cb(GSList *responses, gpointer data)
 {
 	JabberStream *js = data;
-	int n;
-	
+
 	js->srv_query_data = NULL;
 
-	if (results == 0) {
+	if (responses == NULL) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not find alternative XMPP connection methods after failing to connect directly.\n"));
 		purple_connection_error_reason (js->gc,
@@ -599,10 +598,11 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 		g_free(tmp);
 		return;	
 	}
-	
-	for (n = 0; n < results; n++) {
+
+	while (responses) {
+		PurpleTxtResponse *resp = responses->data;
 		gchar **token;
-		token = g_strsplit(resp[n].content, "=", 2);
+		token = g_strsplit(purple_txt_response_get_content(resp), "=", 2);
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
 			js->bosh = jabber_bosh_connection_init(js, token[1]);
@@ -611,17 +611,20 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 			break;
 		}
 		g_strfreev(token);
+		purple_txt_response_destroy(resp);
+		responses = g_slist_delete_link(responses, responses);
 	}
+
 	if (js->bosh) {
 		jabber_bosh_connection_connect(js->bosh);
 	} else {
 		purple_debug_info("jabber","Didn't find an alternative connection method.\n");
 	}
 
-	for (n = 0; n < results; ++n)
-		g_free(resp[n].content);
-
-	g_free(resp);
+	if (responses) {
+		g_slist_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
+		g_slist_free(responses);
+	}
 }
 
 static void

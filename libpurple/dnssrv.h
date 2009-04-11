@@ -32,6 +32,8 @@ typedef struct _PurpleSrvQueryData PurpleSrvQueryData;
 typedef struct _PurpleSrvResponse PurpleSrvResponse;
 typedef struct _PurpleTxtResponse PurpleTxtResponse;
 
+#include <glib.h>
+
 struct _PurpleSrvResponse {
 	char hostname[256];
 	int port;
@@ -39,12 +41,15 @@ struct _PurpleSrvResponse {
 	int pref;
 };
 
-struct _PurpleTxtResponse {
-    char *content;
-};
-
 typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer data);
-typedef void (*PurpleTxtCallback)(PurpleTxtResponse *resp, int results, gpointer data);
+
+/**
+ * Callback that returns the data retrieved from a DNS TXT lookup.
+ *
+ * @param responses   A GSList of PurpleTxtResponse objects.
+ * @param data        The extra data passed to purple_txt_resolve.
+ */
+typedef void (*PurpleTxtCallback)(GSList *responses, gpointer data);
 
 /**
  * Queries an SRV record.
@@ -71,6 +76,8 @@ void purple_srv_cancel(PurpleSrvQueryData *query_data);
  * @param domain Domain name to query (e.g. "blubb.com")
  * @param cb A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
+ *
+ * @since 2.6.0
  */
 PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
 
@@ -78,8 +85,26 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
  * Cancel an TXT DNS query.
  *
  * @param query_data The request to cancel.
+ * @since 2.6.0
  */
 void purple_txt_cancel(PurpleSrvQueryData *query_data);
+
+/**
+ * Get the value of the current TXT record.
+ *
+ * @param resp  The TXT response record
+ * @returns The value of the current TXT record.
+ * @since 2.6.0
+ */
+const gchar *purple_txt_response_get_content(PurpleTxtResponse *resp);
+
+/**
+ * Destroy a TXT DNS response object.
+ *
+ * @param response The PurpleTxtResponse to destroy.
+ * @since 2.6.0
+ */
+void purple_txt_response_destroy(PurpleTxtResponse *resp);
 
 #ifdef __cplusplus
 }
