@@ -183,7 +183,7 @@ resolve(int in, int out)
 			ret = g_list_insert_sorted(ret, srvres, responsecompare);
 		} else if (query.type == T_TXT) {
 			txtres = g_new0(PurpleTxtResponse, 1);
-			strncpy(txtres->content, (gchar*)(++cp), dlen-1);
+			txtres->content = g_strndup((gchar*)(++cp), dlen-1);
 			ret = g_list_append(ret, txtres);
 			cp += dlen - 1;
 		} else {
@@ -389,7 +389,33 @@ res_thread(gpointer data)
 			MyDnsRecordListFree(dr, DnsFreeRecordList);
 			query_data->results = lst;
 		} else if (type == T_TXT) {
-			#error IMPLEMENTATION MISSING		
+			PDNS_RECORD dr_tmp;
+			GSList *lst = NULL;
+			DNS_TXT_DATA *txt_data;
+			PurpleTxtResponse *txtres;
+
+			for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
+				GString *s;
+				int i;
+
+				/* Discard any incorrect entries. I'm not sure if this is necessary */
+				if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
+					continue;
+				}
+
+				txt_data = &dr_tmp->Data.TXT;
+				txtres = g_new0(PurpleTxtResponse, 1);
+
+				s = g_string_new("");
+				for (i = 0; i < txt_data->dwStringCount; ++i)
+					s = g_string_append(s, txt_data->pStringArray[i]);
+				txtres->content = g_string_free(s, FALSE);
+
+				lst = g_slist_append(lst, txtres);
+			}
+
+			MyDnsRecordListFree(dr, DnsFreeRecordList);
+			query_data->results = lst;
 		} else {
 			
 		}

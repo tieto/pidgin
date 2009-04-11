@@ -617,6 +617,11 @@ txt_resolved_cb(PurpleTxtResponse *resp, int results, gpointer data)
 	} else {
 		purple_debug_info("jabber","Didn't find an alternative connection method.\n");
 	}
+
+	for (n = 0; n < results; ++n)
+		g_free(resp[n].content);
+
+	g_free(resp);
 }
 
 static void

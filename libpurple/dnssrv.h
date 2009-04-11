@@ -40,7 +40,7 @@ struct _PurpleSrvResponse {
 };
 
 struct _PurpleTxtResponse {
-    char content[256];
+    char *content;
 };
 
 typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer data);
