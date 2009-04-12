@@ -36,9 +36,12 @@
 
 #include "debug.h"
 
+#ifdef USE_GSTREAMER
+#include "media-gst.h"
+#endif
+
 #ifdef USE_VV
 
-#include "media-gst.h"
 #include <gst/farsight/fs-conference-iface.h>
 
 /** @copydoc _PurpleMediaSession */
