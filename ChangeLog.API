@@ -78,6 +78,10 @@ version 2.6.0 (??/??/2009):
 		* pidgin_utils_init, pidgin_utils_uninit
 		* pidgin_notify_pounce_add
 
+	libgnt:
+		Added:
+		* GntProgressBar and functions (Saleem Abdulrasool)
+
 	perl:
 		Changed:
 		* Made a bunch of functions act more perl-like. Call the new()
