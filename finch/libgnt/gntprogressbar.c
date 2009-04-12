@@ -55,8 +55,10 @@ gnt_progress_bar_draw (GntWidget *widget)
 	GntProgressBarPrivate *priv = GNT_PROGRESS_BAR_GET_PRIVATE (GNT_PROGRESS_BAR (widget));
 	gchar progress[8];
 	gint start, end, i, pos;
+	int color;
 
 	g_snprintf (progress, sizeof (progress), "%.1f%%", priv->fraction * 100);
+	color = gnt_color_pair(GNT_COLOR_NORMAL);
 
 	switch (priv->orientation) {
 		case GNT_PROGRESS_LEFT_TO_RIGHT:
@@ -66,20 +68,20 @@ gnt_progress_bar_draw (GntWidget *widget)
 
 			/* background */
 			for (i = 0; i < widget->priv.height; i++)
-				mvwhline (widget->window, i, 0, ' ' | gnt_color_pair (GNT_COLOR_HIGHLIGHT) | A_REVERSE, widget->priv.width);
+				mvwhline (widget->window, i, 0, ' ' | color, widget->priv.width);
 
 			/* foreground */
 			for (i = 0; i < widget->priv.height; i++)
-				mvwhline (widget->window, i, start, ' ' | gnt_color_pair (GNT_COLOR_HIGHLIGHT), end);
+				mvwhline (widget->window, i, start, ACS_CKBOARD | color | A_REVERSE, end);
 
 			/* text */
 			if (priv->show_value) {
-				for (i = 0; i < strlen(progress); i++) {
-					pos = widget->priv.width / 2 - strlen (progress) / 2 + i;
-					wattrset (widget->window, gnt_color_pair (GNT_COLOR_HIGHLIGHT) | ((pos >= start && pos <= end) ? A_NORMAL : A_REVERSE));
+				pos = widget->priv.width / 2 - strlen (progress) / 2;
+				for (i = 0; i < progress[i]; i++, pos++) {
+					wattrset (widget->window, color | ((pos < start || pos > end) ? A_NORMAL : A_REVERSE));
 					mvwprintw (widget->window, widget->priv.height / 2, pos, "%c", progress[i]);
 				}
-				wattrset (widget->window, gnt_color_pair (GNT_COLOR_HIGHLIGHT));
+				wattrset (widget->window, color);
 			}
 
 			break;
@@ -90,20 +92,20 @@ gnt_progress_bar_draw (GntWidget *widget)
 
 			/* background */
 			for (i = 0; i < widget->priv.width; i++)
-				mvwvline (widget->window, 0, i, ' ' | gnt_color_pair (GNT_COLOR_HIGHLIGHT) | A_REVERSE, widget->priv.height);
+				mvwvline (widget->window, 0, i, ' ' | color | A_REVERSE, widget->priv.height);
 
 			/* foreground */
 			for (i = 0; i < widget->priv.width; i++)
-				mvwvline (widget->window, start, i, ' ' | gnt_color_pair (GNT_COLOR_HIGHLIGHT), end);
+				mvwvline (widget->window, start, i, ' ' | color, end);
 
 			/* text */
 			if (priv->show_value) {
-				for (i = 0; i < strlen(progress); i++) {
-					pos = widget->priv.height / 2 - strlen (progress) / 2 + i;
-					wattrset (widget->window, gnt_color_pair (GNT_COLOR_HIGHLIGHT) | ((pos >= start && pos <= end) ? A_NORMAL : A_REVERSE));
+				pos = widget->priv.height / 2 - strlen (progress) / 2;
+				for (i = 0; i < progress[i]; i++, pos++) {
+					wattrset (widget->window, color | ((pos >= start && pos <= end) ? A_NORMAL : A_REVERSE));
 					mvwprintw (widget->window, pos, widget->priv.width / 2, "%c\n", progress[i]);
 				}
-				wattrset (widget->window, gnt_color_pair (GNT_COLOR_HIGHLIGHT));
+				wattrset (widget->window, color);
 			}
 
 			break;
