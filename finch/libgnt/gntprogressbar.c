@@ -92,17 +92,17 @@ gnt_progress_bar_draw (GntWidget *widget)
 
 			/* background */
 			for (i = 0; i < widget->priv.width; i++)
-				mvwvline (widget->window, 0, i, ' ' | color | A_REVERSE, widget->priv.height);
+				mvwvline (widget->window, 0, i, ' ' | color, widget->priv.height);
 
 			/* foreground */
 			for (i = 0; i < widget->priv.width; i++)
-				mvwvline (widget->window, start, i, ' ' | color, end);
+				mvwvline (widget->window, start, i, ACS_CKBOARD | color | A_REVERSE, end);
 
 			/* text */
 			if (priv->show_value) {
 				pos = widget->priv.height / 2 - strlen (progress) / 2;
 				for (i = 0; i < progress[i]; i++, pos++) {
-					wattrset (widget->window, color | ((pos >= start && pos <= end) ? A_NORMAL : A_REVERSE));
+					wattrset (widget->window, color | ((pos < start || pos > end) ? A_NORMAL : A_REVERSE));
 					mvwprintw (widget->window, pos, widget->priv.width / 2, "%c\n", progress[i]);
 				}
 				wattrset (widget->window, color);
