@@ -252,7 +252,7 @@ pidgin_blist_theme_finalize(GObject *obj)
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(obj);
 
 	/* Buddy List */
-	g_free(priv->bgcolor);
+	gdk_color_free(priv->bgcolor);
 	g_free(priv->layout);
 
 	/* Group */
