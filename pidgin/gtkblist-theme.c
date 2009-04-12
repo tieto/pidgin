@@ -96,12 +96,19 @@ void
 free_font_and_color(FontColorPair *pair)
 {
 	if (pair != NULL) {
-		if (pair->font)
-			g_free(pair->font);
-		if (pair->color)
-			g_free(pair->color);
+		g_free((gchar *)pair->font);
+		g_free((gchar *)pair->color);
 		g_free(pair);
 	}
+}
+
+static FontColorPair *
+copy_font_and_color(const FontColorPair *pair)
+{
+	FontColorPair *copy = g_new0(FontColorPair, 1);
+	copy->font  = g_strdup(pair->font);
+	copy->color = g_strdup(pair->color);
+	return copy;
 }
 
 /******************************************************************************
@@ -245,17 +252,17 @@ pidgin_blist_theme_finalize(GObject *obj)
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(obj);
 
 	/* Buddy List */
-	g_free(priv->bgcolor);
+	gdk_color_free(priv->bgcolor);
 	g_free(priv->layout);
 
 	/* Group */
-	g_free(priv->expanded_color);
+	gdk_color_free(priv->expanded_color);
 	free_font_and_color(priv->expanded);
-	g_free(priv->collapsed_color);
+	gdk_color_free(priv->collapsed_color);
 	free_font_and_color(priv->collapsed);
 
 	/* Buddy */
-	g_free(priv->contact_color);
+	gdk_color_free(priv->contact_color);
 	free_font_and_color(priv->contact);
 	free_font_and_color(priv->online);
 	free_font_and_color(priv->away);
@@ -586,7 +593,7 @@ pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme)
 
 /* Set Methods */
 void
-pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, GdkColor *color)
+pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkColor *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -594,8 +601,8 @@ pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, GdkColor *color
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
-	g_free(priv->bgcolor);
-	priv->bgcolor = color;
+	gdk_color_free(priv->bgcolor);
+	priv->bgcolor = gdk_color_copy(color);
 }
 
 void
@@ -611,7 +618,7 @@ pidgin_blist_theme_set_opacity(PidginBlistTheme *theme, gdouble opacity)
 }
 
 void
-pidgin_blist_theme_set_layout(PidginBlistTheme *theme, PidginBlistLayout *layout)
+pidgin_blist_theme_set_layout(PidginBlistTheme *theme, const PidginBlistLayout *layout)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -620,11 +627,11 @@ pidgin_blist_theme_set_layout(PidginBlistTheme *theme, PidginBlistLayout *layout
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	g_free(priv->layout);
-	priv->layout = layout;
+	priv->layout = g_memdup(layout, sizeof(PidginBlistLayout));
 }
 
 void
-pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, GdkColor *color)
+pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const GdkColor *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -632,12 +639,12 @@ pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, GdkCol
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
-	g_free(priv->expanded_color);
-	priv->expanded_color = color;
+	gdk_color_free(priv->expanded_color);
+	priv->expanded_color = gdk_color_copy(color);
 }
 
 void
-pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -646,11 +653,11 @@ pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, FontColorPair
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->expanded);
-	priv->expanded = pair;
+	priv->expanded = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, GdkColor *color)
+pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const GdkColor *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -658,12 +665,12 @@ pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, GdkCo
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
-	g_free(priv->collapsed_color);
-	priv->collapsed_color = color;
+	gdk_color_free(priv->collapsed_color);
+	priv->collapsed_color = gdk_color_copy(color);
 }
 
 void
-pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -672,11 +679,11 @@ pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, FontColorPai
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->collapsed);
-	priv->collapsed = pair;
+	priv->collapsed = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, GdkColor *color)
+pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColor *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -684,12 +691,12 @@ pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, GdkColor *color)
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
-	g_free(priv->contact_color);
-	priv->contact_color = color;
+	gdk_color_free(priv->contact_color);
+	priv->contact_color = gdk_color_copy(color);
 }
 
 void
-pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -698,11 +705,11 @@ pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, FontColorPair 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->contact);
-	priv->contact = pair;
+	priv->contact = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -711,11 +718,11 @@ pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, FontColorPair *
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->online);
-	priv->online = pair;
+	priv->online = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -724,11 +731,11 @@ pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, FontColorPair *pa
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->away);
-	priv->away = pair;
+	priv->away = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -737,11 +744,11 @@ pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, FontColorPair 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->offline);
-	priv->offline = pair;
+	priv->offline = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -750,11 +757,11 @@ pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, FontColorPair *pa
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->idle);
-	priv->idle = pair;
+	priv->idle = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -763,11 +770,11 @@ pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, FontCol
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->message);
-	priv->message = pair;
+	priv->message = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -776,11 +783,11 @@ pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *them
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->message_nick_said);
-	priv->message_nick_said = pair;
+	priv->message_nick_said = copy_font_and_color(pair);
 }
 
 void
-pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, FontColorPair *pair)
+pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, const FontColorPair *pair)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -789,5 +796,5 @@ pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, FontColorPair *
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
 	free_font_and_color(priv->status);
-	priv->status = pair;
+	priv->status = copy_font_and_color(pair);
 }

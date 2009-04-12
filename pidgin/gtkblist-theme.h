@@ -61,8 +61,8 @@ struct _PidginBlistThemeClass
 
 typedef struct
 {
-	gchar *font;
-	gchar *color;
+	const gchar *font;
+	const gchar *color;
 
 } FontColorPair;
 
@@ -220,7 +220,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @param color The new background color.
  */
-void pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, GdkColor *color);
+void pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the opacity to be used for this buddy list theme.
@@ -234,84 +234,84 @@ void pidgin_blist_theme_set_opacity(PidginBlistTheme *theme, gdouble opacity);
  *
  * @param layout The new layout.
  */
-void pidgin_blist_theme_set_layout(PidginBlistTheme *theme, PidginBlistLayout *layout);
+void pidgin_blist_theme_set_layout(PidginBlistTheme *theme, const PidginBlistLayout *layout);
 
 /**
  * Sets the background color to be used for expanded groups.
  *
  * @param color The new background color.
  */
-void pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, GdkColor *color);
+void pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the text color and font to be used for expanded groups.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the background color to be used for collapsed groups.
  *
  * @param color The new background color.
  */
-void pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, GdkColor *color);
+void pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the text color and font to be used for expanded groups.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the background color to be used for contacts and chats.
  *
  * @param color The color to use for contacts and chats.
  */
-void pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, GdkColor *color);
+void pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the text color and font to be used for expanded contacts.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for online buddies.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for away and idle buddies.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for offline buddies.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for idle buddies.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for buddies with unread messages.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for a chat with unread messages
@@ -319,14 +319,14 @@ void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, Fo
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 /**
  * Sets the text color and font to be used for buddy status messages.
  *
  * @param pair The new text font at color pair.
  */
-void pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, FontColorPair *pair);
+void pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, const FontColorPair *pair);
 
 G_END_DECLS
 #endif /* PIDGIN_BLIST_THEME_H */

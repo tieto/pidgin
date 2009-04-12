@@ -6197,7 +6197,7 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	PurpleBlistNode *selected_node = NULL;
 	GtkTreeIter iter;
 	FontColorPair *pair;
-	gchar *text_color, *text_font;
+	gchar const *text_color, *text_font;
 	PidginBlistTheme *theme;
 
 	group = (PurpleGroup*)gnode;
