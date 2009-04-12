@@ -260,6 +260,7 @@ pidgin_blist_theme_finalize(GObject *obj)
 	free_font_and_color(priv->online);
 	free_font_and_color(priv->away);
 	free_font_and_color(priv->offline);
+	free_font_and_color(priv->idle);
 	free_font_and_color(priv->message);
 	free_font_and_color(priv->message_nick_said);
 	free_font_and_color(priv->status);
