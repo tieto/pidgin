@@ -1385,7 +1385,13 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 	strcpy(time_str + strlen(time_str) - 1, "\0");
 
 	if (xd->txbuflen == 0)	{
-		xd->txbuf = g_strdup_printf("HTTP/1.0 200 OK\r\nDate: %s GMT\r\nServer: Y!/1.0\r\nMIME-version: 1.0\r\nLast-modified: %s GMT\r\nContent-length: %d\r\n\r\n", time_str, time_str, xfer->size);
+		xd->txbuf = g_strdup_printf("HTTP/1.0 200 OK\r\n"
+		                            "Date: %s GMT\r\n"
+		                            "Server: Y!/1.0\r\n"
+		                            "MIME-version: 1.0\r\n"
+		                            "Last-modified: %s GMT\r\n"
+		                            "Content-length: %" G_GSIZE_FORMAT "\r\n\r\n",
+		                            time_str, time_str, xfer->size);
 		xd->txbuflen = strlen(xd->txbuf);
 		xd->txbuf_written = 0;
 	}

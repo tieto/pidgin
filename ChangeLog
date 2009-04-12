@@ -8,6 +8,8 @@ version 2.6.0 (??/??/2009):
 	  in a group on the buddy list.
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
+	* Dragging a buddy onto a chat pops up a chat-invitation dialog.
+	  (Carlos Bederian)
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)

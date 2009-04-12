@@ -4416,7 +4416,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s; path=/; domain=.yahoo.com;\r\n"
 		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 		"Host: validate.msg.yahoo.com\r\n"
-		"Content-Length: %d\r\n"
+		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 		"Cache-Control: no-cache\r\n\r\n%s",
 		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
 
