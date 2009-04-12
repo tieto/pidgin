@@ -28,11 +28,11 @@
 
 #include "account.h"
 #include "debug.h"
-#include "marshallers.h"
 #include "media.h"
 #include "mediamanager.h"
 
 #ifdef USE_GSTREAMER
+#include "marshallers.h"
 #include "media-gst.h"
 #endif
 
