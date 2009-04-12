@@ -245,17 +245,22 @@ pidgin_blist_theme_finalize(GObject *obj)
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(obj);
 
 	/* Buddy List */
+	g_free(priv->bgcolor);
 	g_free(priv->layout);
 
 	/* Group */
+	g_free(priv->expanded_color);
 	free_font_and_color(priv->expanded);
+	g_free(priv->collapsed_color);
 	free_font_and_color(priv->collapsed);
 
 	/* Buddy */
+	g_free(priv->contact_color);
 	free_font_and_color(priv->contact);
 	free_font_and_color(priv->online);
 	free_font_and_color(priv->away);
 	free_font_and_color(priv->offline);
+	free_font_and_color(priv->idle);
 	free_font_and_color(priv->message);
 	free_font_and_color(priv->message_nick_said);
 	free_font_and_color(priv->status);
@@ -589,6 +594,7 @@ pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, GdkColor *color
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
+	g_free(priv->bgcolor);
 	priv->bgcolor = color;
 }
 
@@ -626,6 +632,7 @@ pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, GdkCol
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
+	g_free(priv->expanded_color);
 	priv->expanded_color = color;
 }
 
@@ -651,6 +658,7 @@ pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, GdkCo
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
+	g_free(priv->collapsed_color);
 	priv->collapsed_color = color;
 }
 
@@ -676,6 +684,7 @@ pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, GdkColor *color)
 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(G_OBJECT(theme));
 
+	g_free(priv->contact_color);
 	priv->contact_color = color;
 }
 

@@ -1156,7 +1156,12 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 		}
 	}
 
-	g_slist_free(hosts);
+	while (hosts != NULL) {
+		hosts = g_slist_delete_link(hosts, hosts);
+		/* Free the address */
+		g_free(hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
+	}
 }
 
 static void

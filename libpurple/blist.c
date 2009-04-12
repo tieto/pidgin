@@ -1582,6 +1582,7 @@ void
 purple_contact_destroy(PurpleContact *contact)
 {
 	g_hash_table_destroy(contact->node.settings);
+	g_free(contact->alias);
 	PURPLE_DBUS_UNREGISTER_POINTER(contact);
 	g_free(contact);
 }

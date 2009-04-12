@@ -825,8 +825,13 @@ purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
 		*ip = g_strdup(dst);
 		purple_debug_info("network", "set IP address: %s\n", *ip);
 	}
-	
-	g_slist_free(hosts);
+
+	while (hosts != NULL) {
+		hosts = g_slist_delete_link(hosts, hosts);
+		/* Free the address */
+		g_free(hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
+	}
 }
 
 void

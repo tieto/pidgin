@@ -172,15 +172,15 @@ pidgin_blist_loader_build(const gchar *dir)
 	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "offline_text")) != NULL))) {
 		offline->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			online->color = g_strdup(temp);
-		else online->color = g_strdup(DEFAULT_TEXT_COLOR);
+			offline->color = g_strdup(temp);
+		else offline->color = g_strdup(DEFAULT_TEXT_COLOR);
 	}
 
 	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "idle_text")) != NULL))) {
 		idle->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
 		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
 			idle->color = g_strdup(temp);
-		else online->color = g_strdup(DEFAULT_TEXT_COLOR);
+		else idle->color = g_strdup(DEFAULT_TEXT_COLOR);
 	}
 
 	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "message_text")) != NULL))) {
