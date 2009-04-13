@@ -633,24 +633,24 @@ jabber_disco_category_from_string(const gchar *str)
 static const gchar *
 jabber_disco_type_from_string(const gchar *str)
 {
-	if (!strcasecmp(str, "xmpp"))
-		return "jabber";
-	else if (!strcasecmp(str, "icq"))
-		return "icq";
-	else if (!strcasecmp(str, "smtp"))
-		return "smtp";
-	else if (!strcasecmp(str, "yahoo"))
-		return "yahoo";
-	else if (!strcasecmp(str, "irc"))
-		return "irc";
+	if (!strcasecmp(str, "aim"))
+		return "aim";
 	else if (!strcasecmp(str, "gadu-gadu"))
 		return "gg";
-	else if (!strcasecmp(str, "aim"))
-		return "aim";
-	else if (!strcasecmp(str, "qq"))
-		return "qq";
+	else if (!strcasecmp(str, "icq"))
+		return "icq";
+	else if (!strcasecmp(str, "irc"))
+		return "irc";
 	else if (!strcasecmp(str, "msn"))
 		return "msn";
+	else if (!strcasecmp(str, "qq"))
+		return "qq";
+	else if (!strcasecmp(str, "smtp"))
+		return "smtp";
+	else if (!strcasecmp(str, "xmpp"))
+		return "jabber";
+	else if (!strcasecmp(str, "yahoo"))
+		return "yahoo";
 
 	/* fallback to the string itself */
 	return str;
@@ -828,7 +828,7 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 
 	purple_disco_list_service_add(list, service, parent);
 
-	/* if (flags & PURPLE_DISCO_FLAG_BROWSE) - not all browsable services has this future */
+	/* if (flags & PURPLE_DISCO_FLAG_BROWSE) - not all browsable services have this feature */
 	{
 		++list_data->fetch_count;
 		purple_disco_list_ref(list);
