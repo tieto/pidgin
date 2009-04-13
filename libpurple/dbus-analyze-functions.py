@@ -31,6 +31,11 @@ excluded = [\
     "purple_account_unregister",
     "purple_connection_new_unregister",
 
+    # Similar to all the above:
+    "purple_disco_list_set_cancel_func",
+    "purple_disco_list_set_protocol_data",
+    "purple_disco_list_set_register_func",
+
     # This is excluded because this script treats PurpleLogReadFlags*
     # as pointer to a struct, instead of a pointer to an enum.  This
     # causes a compilation error. Someone should fix this script.

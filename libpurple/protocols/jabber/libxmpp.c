@@ -34,6 +34,7 @@
 #include "iq.h"
 #include "jabber.h"
 #include "chat.h"
+#include "disco.h"
 #include "message.h"
 #include "roster.h"
 #include "si.h"
@@ -117,10 +118,12 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_unregister_account,		/* unregister_user */
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
+
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL, /* get_account_text_table */
 	jabber_initiate_media,          /* initiate_media */
 	jabber_get_media_caps,                  /* get_media_caps */
+	jabber_disco_get_list,			/* disco_get_list */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
@@ -298,9 +301,6 @@ init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("ibb", XEP_0047_NAMESPACE, NULL);
 
 	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
-#ifdef USE_VV
-	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
-#endif
 }
 
 

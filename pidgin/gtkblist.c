@@ -49,6 +49,7 @@
 #include "gtkconv.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
+#include "gtkdisco.h"
 #include "gtkft.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"
@@ -3380,6 +3381,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_TRANSFER },
+	{ N_("/Tools/Service _Discovery"), NULL, pidgin_disco_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 3, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
@@ -4262,6 +4264,9 @@ update_menu_bar(PidginBuddyList *gtkblist)
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
 	gtk_widget_set_sensitive(widget, pidgin_roomlist_is_showable());
+
+	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Service Discovery"));
+	gtk_widget_set_sensitive(widget, pidgin_disco_is_showable());
 }
 
 static void
