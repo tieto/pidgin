@@ -630,27 +630,28 @@ jabber_disco_category_from_string(const gchar *str)
 	return PURPLE_DISCO_SERVICE_TYPE_OTHER;
 }
 
+static struct {
+	const char *from;
+	const char *to;
+} disco_type_mappings[] = {
+	{ "gadu-gadu", "gg" },
+	{ "sametime",  "meanwhile" },
+	{ "myspaceim", "myspace" },
+	{ "xmpp",      "jabber" },
+	{ NULL,        NULL }
+};
+
 static const gchar *
 jabber_disco_type_from_string(const gchar *str)
 {
-	if (!strcasecmp(str, "aim"))
-		return "aim";
-	else if (!strcasecmp(str, "gadu-gadu"))
-		return "gg";
-	else if (!strcasecmp(str, "icq"))
-		return "icq";
-	else if (!strcasecmp(str, "irc"))
-		return "irc";
-	else if (!strcasecmp(str, "msn"))
-		return "msn";
-	else if (!strcasecmp(str, "qq"))
-		return "qq";
-	else if (!strcasecmp(str, "smtp"))
-		return "smtp";
-	else if (!strcasecmp(str, "xmpp"))
-		return "jabber";
-	else if (!strcasecmp(str, "yahoo"))
-		return "yahoo";
+	int i = 0;
+
+	g_return_val_if_fail(str != NULL, "");
+
+	for ( ; disco_type_mappings[i].from; ++i) {
+		if (!strcasecmp(str, disco_type_mappings[i].from))
+			return disco_type_mappings[i].to;
+	}
 
 	/* fallback to the string itself */
 	return str;
