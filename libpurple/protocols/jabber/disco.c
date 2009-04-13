@@ -750,19 +750,20 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
                              JabberIqType type, const char *id,
                              xmlnode *packet, gpointer data)
 {
-	struct _disco_data *disco_data = data;
+	struct _disco_data *disco_data;
 	struct jabber_disco_list_data *list_data;
 	PurpleDiscoList *list;
 	PurpleDiscoService *parent;
 	char *node;
-	xmlnode *query, *ident, *child;
+	xmlnode *query, *identity, *child;
 	const char *acat, *atype, *adesc, *anode;
 	char *aname;
 	PurpleDiscoService *s;
 	PurpleDiscoServiceType service_type;
 	const char *gateway_type = NULL;
-	PurpleDiscoServiceFlags flags = PURPLE_DISCO_ADD;
+	PurpleDiscoServiceFlags flags;
 
+	disco_data = data;
 	list_data = disco_data->list_data;
 	list = list_data->list;
 	parent = disco_data->parent;
@@ -782,7 +783,7 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 
 	if (!from || type == JABBER_IQ_ERROR
 			|| (!(query = xmlnode_get_child(packet, "query")))
-			|| (!(ident = xmlnode_get_child(query, "identity")))) {
+			|| (!(identity = xmlnode_get_child(query, "identity")))) {
 		if (list_data->fetch_count == 0)
 			purple_disco_list_set_in_progress(list, FALSE);
 
@@ -790,22 +791,22 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 		return;
 	}
 
-	acat = xmlnode_get_attrib(ident, "category");
-	atype = xmlnode_get_attrib(ident, "type");
-	adesc = xmlnode_get_attrib(ident, "name");
+	acat = xmlnode_get_attrib(identity, "category");
+	atype = xmlnode_get_attrib(identity, "type");
+	adesc = xmlnode_get_attrib(identity, "name");
 	anode = xmlnode_get_attrib(query, "node");
 
-	if (anode) {
-		aname = g_new0(char, strlen(from) + strlen(anode) + 1);
-		strcat(aname, from);
-		strcat(aname, anode);
-	} else {
+	if (anode)
+		aname = g_strdup_printf("%s%s", from, anode);
+	else
 		aname = g_strdup(from);
-	}
 
 	service_type = jabber_disco_category_from_string(acat);
 	if (service_type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
 		gateway_type = jabber_disco_type_from_string(atype);
+
+	/* Default to allowing things to be add-able */
+	flags = PURPLE_DISCO_ADD;
 
 	for (child = xmlnode_get_child(query, "feature"); child;
 			child = xmlnode_get_next_twin(child)) {
@@ -814,13 +815,13 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 		if (!(var = xmlnode_get_attrib(child, "var")))
 			continue;
 		
-		if (!strcmp(var, "jabber:iq:register"))
+		if (g_str_equal(var, "jabber:iq:register"))
 			flags |= PURPLE_DISCO_REGISTER;
 		
-		if (!strcmp(var, "http://jabber.org/protocol/disco#items"))
+		if (g_str_equal(var, "http://jabber.org/protocol/disco#items"))
 			flags |= PURPLE_DISCO_BROWSE;
 
-		if (!strcmp(var, "http://jabber.org/protocol/muc"))
+		if (g_str_equal(var, "http://jabber.org/protocol/muc"))
 			service_type = PURPLE_DISCO_SERVICE_TYPE_CHAT;
 	}
 
