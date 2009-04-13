@@ -752,15 +752,13 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 {
 	struct _disco_data *disco_data;
 	struct jabber_disco_list_data *list_data;
-	PurpleDiscoList *list;
-	PurpleDiscoService *parent;
-	char *node;
 	xmlnode *query, *identity, *child;
-	const char *acat, *atype, *adesc, *anode;
-	char *aname;
-	PurpleDiscoService *s;
+	const char *anode;
+	char *aname, *node;
+
+	PurpleDiscoList *list;
+	PurpleDiscoService *parent, *service;
 	PurpleDiscoServiceType service_type;
-	const char *gateway_type = NULL;
 	PurpleDiscoServiceFlags flags;
 
 	disco_data = data;
@@ -791,19 +789,8 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 		return;
 	}
 
-	acat = xmlnode_get_attrib(identity, "category");
-	atype = xmlnode_get_attrib(identity, "type");
-	adesc = xmlnode_get_attrib(identity, "name");
-	anode = xmlnode_get_attrib(query, "node");
-
-	if (anode)
-		aname = g_strdup_printf("%s%s", from, anode);
-	else
-		aname = g_strdup(from);
-
-	service_type = jabber_disco_category_from_string(acat);
-	if (service_type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
-		gateway_type = jabber_disco_type_from_string(atype);
+	service_type = jabber_disco_category_from_string(
+			xmlnode_get_attrib(identity, "category"));
 
 	/* Default to allowing things to be add-able */
 	flags = PURPLE_DISCO_ADD;
@@ -825,17 +812,21 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 			service_type = PURPLE_DISCO_SERVICE_TYPE_CHAT;
 	}
 
-	purple_debug_info("disco", "service %s, category %s (%d), type %s (%s), description %s, flags %04x\n",
-			aname,
-			acat, service_type,
-			atype, gateway_type ? gateway_type : "(null)",
-			adesc, flags);
+	if ((anode = xmlnode_get_attrib(query, "node")))
+		aname = g_strdup_printf("%s%s", from, anode);
+	else
+		aname = g_strdup(from);
 
-	s = purple_disco_list_service_new(service_type, aname, adesc, flags);
+	service = purple_disco_list_service_new(service_type, aname,
+			xmlnode_get_attrib(identity, "name"), flags);
+	g_free(aname);
+
 	if (service_type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
-		purple_disco_service_set_gateway_type(s, gateway_type);
+		purple_disco_service_set_gateway_type(service,
+				jabber_disco_type_from_string(xmlnode_get_attrib(identity,
+				                                                 "type")));
 
-	purple_disco_list_service_add(list, s, parent);
+	purple_disco_list_service_add(list, service, parent);
 
 	/* if (flags & PURPLE_DISCO_FLAG_BROWSE) - not all browsable services has this future */
 	{
@@ -843,7 +834,7 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 		purple_disco_list_ref(list);
 		disco_data = g_new0(struct _disco_data, 1);
 		disco_data->list_data = list_data;
-		disco_data->parent = s;
+		disco_data->parent = service;
 
 		jabber_disco_items_do(js, from, node, jabber_disco_service_items_cb,
 		                      disco_data);
