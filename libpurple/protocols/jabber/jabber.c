@@ -709,8 +709,6 @@ jabber_login(PurpleAccount *account)
 	js->fd = -1;
 	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
-	js->disco_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -1201,8 +1199,6 @@ void jabber_register_account(PurpleAccount *account)
 	js->registration = TRUE;
 	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
-	js->disco_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->old_length = 0;
@@ -1357,8 +1353,6 @@ void jabber_close(PurpleConnection *gc)
 
 	if(js->iq_callbacks)
 		g_hash_table_destroy(js->iq_callbacks);
-	if(js->disco_callbacks)
-		g_hash_table_destroy(js->disco_callbacks);
 	if(js->buddies)
 		g_hash_table_destroy(js->buddies);
 	if(js->chats)

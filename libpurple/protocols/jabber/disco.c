@@ -218,13 +218,42 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		}
 
 		jabber_iq_send(iq);
-	} else if(type == JABBER_IQ_RESULT) {
+	} else if (type == JABBER_IQ_SET) {
+		/* wtf? seriously. wtf‽ */
+		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);
+		xmlnode *error, *bad_request;
+
+		/* Free the <query/> */
+		xmlnode_free(xmlnode_get_child(iq->node, "query"));
+		/* Add an error */
+		error = xmlnode_new_child(iq->node, "error");
+		xmlnode_set_attrib(error, "type", "modify");
+		bad_request = xmlnode_new_child(error, "bad-request");
+		xmlnode_set_namespace(bad_request, "urn:ietf:params:xml:ns:xmpp-stanzas");
+
+		jabber_iq_set_id(iq, id);
+		xmlnode_set_attrib(iq->node, "to", from);
+
+		jabber_iq_send(iq);
+	}
+}
+
+static void jabber_disco_info_cb(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *packet, gpointer data)
+{
+	struct _jabber_disco_info_cb_data *jdicd = data;
+	xmlnode *query;
+
+	query = xmlnode_get_child_with_namespace(packet, "query",
+				"http://jabber.org/protocol/disco#info");
+
+	if (type == JABBER_IQ_RESULT && query) {
 		xmlnode *child;
 		JabberID *jid;
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		JabberCapabilities capabilities = JABBER_CAP_NONE;
-		struct _jabber_disco_info_cb_data *jdicd;
 
 		if((jid = jabber_id_new(from))) {
 			if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
@@ -235,7 +264,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(jbr)
 			capabilities = jbr->capabilities;
 
-		for(child = in_query->child; child; child = child->next) {
+		for(child = query->child; child; child = child->next) {
 			if(child->type != XMLNODE_TYPE_TAG)
 				continue;
 
@@ -304,19 +333,12 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(jbr)
 			jbr->capabilities = capabilities;
 
-		if((jdicd = g_hash_table_lookup(js->disco_callbacks, id))) {
-			jdicd->callback(js, from, capabilities, jdicd->data);
-			g_hash_table_remove(js->disco_callbacks, id);
-		}
-	} else if(type == JABBER_IQ_ERROR) {
+		jdicd->callback(js, from, capabilities, jdicd->data);
+	} else { /* type == JABBER_IQ_ERROR or query == NULL */
 		JabberID *jid;
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		JabberCapabilities capabilities = JABBER_CAP_NONE;
-		struct _jabber_disco_info_cb_data *jdicd;
-
-		if(!(jdicd = g_hash_table_lookup(js->disco_callbacks, id)))
-			return;
 
 		if((jid = jabber_id_new(from))) {
 			if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
@@ -328,7 +350,6 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			capabilities = jbr->capabilities;
 
 		jdicd->callback(js, from, capabilities, jdicd->data);
-		g_hash_table_remove(js->disco_callbacks, id);
 	}
 }
 
@@ -556,7 +577,6 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
 	struct _jabber_disco_info_cb_data *jdicd;
-	char *id;
 	JabberIq *iq;
 
 	if((jid = jabber_id_new(who))) {
@@ -577,10 +597,7 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
 	xmlnode_set_attrib(iq->node, "to", who);
 
-	id = jabber_get_next_id(js);
-	jabber_iq_set_id(iq, id);
-	g_hash_table_insert(js->disco_callbacks, id, jdicd);
-
+	jabber_iq_set_callback(iq, jabber_disco_info_cb, jdicd);
 	jabber_iq_send(iq);
 }
 

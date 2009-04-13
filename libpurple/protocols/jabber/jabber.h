@@ -152,7 +152,6 @@ struct _JabberStream
 	GList *user_directories;
 
 	GHashTable *iq_callbacks;
-	GHashTable *disco_callbacks;
 	int next_id;
 
 	GList *bs_proxies;
