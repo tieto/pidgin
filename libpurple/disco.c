@@ -315,6 +315,20 @@ gpointer purple_disco_list_get_protocol_data(PurpleDiscoList *list)
 	return list->proto_data;
 }
 
+void purple_disco_list_set_cancel_func(PurpleDiscoList *list, PurpleDiscoCancelFunc cb)
+{
+	g_return_if_fail(list != NULL);
+
+	list->ops.cancel_cb = cb;
+}
+
+void purple_disco_list_set_register_func(PurpleDiscoList *list, PurpleDiscoRegisterFunc cb)
+{
+	g_return_if_fail(list != NULL);
+
+	list->ops.register_cb = cb;
+}
+
 void purple_disco_set_ui_ops(PurpleDiscoUiOps *ui_ops)
 {
 	ops = ui_ops;
