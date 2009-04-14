@@ -813,8 +813,10 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 		if (g_str_equal(var, "http://jabber.org/protocol/disco#items"))
 			flags |= PURPLE_DISCO_BROWSE;
 
-		if (g_str_equal(var, "http://jabber.org/protocol/muc"))
+		if (g_str_equal(var, "http://jabber.org/protocol/muc")) {
+			flags |= PURPLE_DISCO_BROWSE;
 			service_type = PURPLE_DISCO_SERVICE_TYPE_CHAT;
+		}
 	}
 
 	if ((anode = xmlnode_get_attrib(query, "node")))
