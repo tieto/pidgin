@@ -32,8 +32,10 @@ excluded = [\
     "purple_connection_new_unregister",
 
     # Similar to all the above:
+    "purple_disco_list_set_service_close_func",
     "purple_disco_list_set_cancel_func",
     "purple_disco_list_set_protocol_data",
+    "purple_disco_list_set_expand_func",
     "purple_disco_list_set_register_func",
 
     # This is excluded because this script treats PurpleLogReadFlags*

@@ -52,6 +52,10 @@ typedef void (*PurpleDiscoCancelFunc)(PurpleDiscoList *list);
  * @param list  The disco list.
  */
 typedef void (*PurpleDiscoCloseFunc)(PurpleDiscoList *list);
+typedef void (*PurpleDiscoServiceCloseFunc)(PurpleDiscoService *service);
+
+typedef void (*PurpleDiscoServiceExpandFunc)(PurpleDiscoList *list,
+                                             PurpleDiscoService *service);
 
 /**
  * A prpl callback called to initiate registration with the specificed
@@ -172,12 +176,26 @@ void purple_disco_cancel_get_list(PurpleDiscoList *list);
 PurpleDiscoService *
 purple_disco_list_service_new(PurpleDiscoServiceType type, const gchar *name,
                               const gchar *description,
-                              PurpleDiscoServiceFlags flags);
+                              PurpleDiscoServiceFlags flags,
+                              gpointer proto_data);
 
 /**
  * Add service to list
  */
 void purple_disco_list_service_add(PurpleDiscoList *list, PurpleDiscoService *service, PurpleDiscoService *parent);
+
+/**
+ * Expand a (browsable) service. The UI should call this in order to
+ * iteratively browse the children of this service. The service must
+ * have the PURPLE_DISCO_BROWSE flag set.
+ *
+ * You probably don't want to call this if the service already has children.
+ *
+ * @param service  The browsable disco service.
+ *
+ * @since TODO
+ */
+void purple_disco_service_expand(PurpleDiscoService *service);
 
 /**
  * Register service
@@ -204,6 +222,18 @@ const gchar *purple_disco_service_get_name(PurpleDiscoService *service);
  * @since TODO
  */
 const gchar* purple_disco_service_get_description(PurpleDiscoService *service);
+
+/**
+ * Returns the service's protocol-specific data.
+ *
+ * This should only be called from the associated prpl.
+ *
+ * @param service The disco service.
+ * @return        The protocol data.
+ *
+ * @since TODO
+ */
+gpointer purple_disco_service_get_protocol_data(PurpleDiscoService *service);
 
 /**
  * Return a service's type.
@@ -350,8 +380,14 @@ void purple_disco_list_set_protocol_data(PurpleDiscoList *list, gpointer data,
  */
 gpointer purple_disco_list_get_protocol_data(PurpleDiscoList *list);
 
-void purple_disco_list_set_cancel_func(PurpleDiscoList *list, PurpleDiscoCancelFunc cb);
-void purple_disco_list_set_register_func(PurpleDiscoList *list, PurpleDiscoRegisterFunc cb);
+void purple_disco_list_set_service_close_func(PurpleDiscoList *list,
+                                              PurpleDiscoServiceCloseFunc cb);
+void purple_disco_list_set_cancel_func(PurpleDiscoList *list,
+                                       PurpleDiscoCancelFunc cb);
+void purple_disco_list_set_expand_func(PurpleDiscoList *list,
+                                       PurpleDiscoServiceExpandFunc cb);
+void purple_disco_list_set_register_func(PurpleDiscoList *list,
+                                         PurpleDiscoRegisterFunc cb);
 
 /**
  * Sets the UI operations structure to be used in all purple service discovery.

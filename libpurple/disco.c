@@ -49,6 +49,10 @@ struct _PurpleDiscoList {
 	struct {
 		PurpleDiscoCancelFunc cancel_cb;
 		PurpleDiscoCloseFunc close_cb; /**< Callback to free the prpl data */
+		PurpleDiscoServiceCloseFunc service_close_cb;
+		PurpleDiscoServiceExpandFunc expand_cb; /**< Expand a service (iteratively
+		                                             look for things that are
+		                                             "sub-elements" in the tree */
 		PurpleDiscoRegisterFunc register_cb;
 	} ops;
 };
@@ -61,8 +65,10 @@ struct _PurpleDiscoService {
 	gchar *name; /**< The name of the service. */
 	gchar *description; /**< The name of the service. */
 
-	PurpleDiscoServiceType type; /**< The type of service. */
+	gpointer proto_data;
+
 	gchar *gateway_type; /**< The type of the gateway service. */
+	PurpleDiscoServiceType type; /**< The type of service. */
 	PurpleDiscoServiceFlags flags;
 };
 
@@ -96,6 +102,9 @@ PurpleDiscoList *purple_disco_list_ref(PurpleDiscoList *list)
 
 static void purple_disco_list_service_destroy(PurpleDiscoList *list, PurpleDiscoService *r)
 {
+	if (list->ops.service_close_cb)
+		list->ops.service_close_cb(r);
+
 	g_free(r->name);
 	g_free(r->description);
 	g_free(r->gateway_type);
@@ -147,8 +156,9 @@ void purple_disco_list_service_add(PurpleDiscoList *list, PurpleDiscoService *se
 		ops->add_service(list, service, parent);
 }
 
-PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceType type, const gchar *name,
-		const gchar *description, PurpleDiscoServiceFlags flags)
+PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceType type,
+		const gchar *name, const gchar *description,
+		PurpleDiscoServiceFlags flags, gpointer proto_data)
 {
 	PurpleDiscoService *s;
 
@@ -160,6 +170,7 @@ PurpleDiscoService *purple_disco_list_service_new(PurpleDiscoServiceType type, c
 	s->type = type;
 	s->description = g_strdup(description);
 	s->flags = flags;
+	s->proto_data = proto_data;
 
 	return s;
 }
@@ -191,6 +202,24 @@ void purple_disco_cancel_get_list(PurpleDiscoList *list)
 	purple_disco_list_set_in_progress(list, FALSE);
 }
 
+void purple_disco_service_expand(PurpleDiscoService *service)
+{
+	PurpleDiscoList *list;
+
+	g_return_if_fail(service != NULL);
+	g_return_if_fail((service->flags & PURPLE_DISCO_BROWSE) == PURPLE_DISCO_BROWSE);
+
+	list = service->list;
+
+	if (list->ops.expand_cb)
+		list->ops.expand_cb(list, service);
+	else
+		purple_debug_warning("disco", "Cannot expand %s for account %s, "
+		                              "protocol did not provide expand op.\n",
+		                     service->name,
+		                     purple_account_get_username(list->account));
+}
+
 void purple_disco_service_register(PurpleDiscoService *service)
 {
 	PurpleDiscoList *list;
@@ -205,6 +234,11 @@ void purple_disco_service_register(PurpleDiscoService *service)
 
 	if (list->ops.register_cb)
 		list->ops.register_cb(pc, service);
+	else
+		purple_debug_warning("disco", "Cannot register to %s for account %s, "
+		                              "protocol did not provide register op.\n",
+		                     service->name,
+		                     purple_account_get_username(list->account));
 }
 
 const gchar *purple_disco_service_get_name(PurpleDiscoService *service)
@@ -219,6 +253,14 @@ const gchar *purple_disco_service_get_description(PurpleDiscoService *service)
 	g_return_val_if_fail(service != NULL, NULL);
 
 	return service->description;
+}
+
+gpointer
+purple_disco_service_get_protocol_data(PurpleDiscoService *service)
+{
+	g_return_val_if_fail(service != NULL, NULL);
+
+	return service->proto_data;
 }
 
 PurpleDiscoServiceType
@@ -315,11 +357,25 @@ gpointer purple_disco_list_get_protocol_data(PurpleDiscoList *list)
 	return list->proto_data;
 }
 
+void purple_disco_list_set_service_close_func(PurpleDiscoList *list,
+                                              PurpleDiscoServiceCloseFunc cb)
+{
+	g_return_if_fail(list != NULL);
+
+	list->ops.service_close_cb = cb;
+}
+
 void purple_disco_list_set_cancel_func(PurpleDiscoList *list, PurpleDiscoCancelFunc cb)
 {
 	g_return_if_fail(list != NULL);
 
 	list->ops.cancel_cb = cb;
+}
+
+void purple_disco_list_set_expand_func(PurpleDiscoList *list, PurpleDiscoServiceExpandFunc cb)
+{
+	g_return_if_fail(list != NULL);
+	list->ops.expand_cb = cb;
 }
 
 void purple_disco_list_set_register_func(PurpleDiscoList *list, PurpleDiscoRegisterFunc cb)
