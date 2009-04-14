@@ -210,6 +210,7 @@ void purple_disco_service_expand(PurpleDiscoService *service)
 	g_return_if_fail((service->flags & PURPLE_DISCO_BROWSE) == PURPLE_DISCO_BROWSE);
 
 	list = service->list;
+	purple_disco_list_set_in_progress(list, TRUE);
 
 	if (list->ops.expand_cb)
 		list->ops.expand_cb(list, service);
