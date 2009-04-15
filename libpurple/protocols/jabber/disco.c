@@ -676,8 +676,8 @@ jabber_disco_service_items_cb(JabberStream *js, const char *who, const char *nod
 	struct jabber_disco_list_data *list_data;
 	PurpleDiscoList *list;	
 	PurpleDiscoService *parent;
+	PurpleDiscoServiceType parent_type;
 	const char *parent_node;
-	gboolean has_items = FALSE;
 
 	disco_data = data;
 	list_data = disco_data->list_data;
@@ -701,42 +701,59 @@ jabber_disco_service_items_cb(JabberStream *js, const char *who, const char *nod
 	}
 
 	parent = disco_data->parent;
+	parent_type = purple_disco_service_get_type(parent);
 	parent_node = disco_data->node;
 
 	for (l = items; l; l = l->next) {
 		JabberDiscoItem *item = l->data;
-		JabberIq *iq;
-		struct _disco_data *req_data;
-		char *full_node;
 
-		if (parent_node) {
-			if (item->node) {
-				full_node = g_strdup_printf("%s/%s", parent_node, item->node);
-			} else {
-				continue;
+		if (parent_type & PURPLE_DISCO_SERVICE_TYPE_CHAT) {
+			/* A chat server's items are chats. I promise. */
+			PurpleDiscoService *service;
+			struct jabber_disco_service_data *service_data;
+			JabberID *jid = jabber_id_new(item->jid);
+
+			if (jid) {
+				service_data = g_new0(struct jabber_disco_service_data, 1);
+				service_data->jid = g_strdup(item->jid);
+
+				service = purple_disco_list_service_new(PURPLE_DISCO_SERVICE_TYPE_CHAT,
+						jid->node, item->name, PURPLE_DISCO_ADD, service_data);
+
+				purple_disco_list_service_add(list, service, parent);
+
+				jabber_id_free(jid);
 			}
 		} else {
-			full_node = g_strdup(item->node);
+			JabberIq *iq;
+			struct _disco_data *req_data;
+			char *full_node;
+
+			if (parent_node && !item->node)
+				continue;
+
+			if (parent_node)
+				full_node = g_strconcat(parent_node, "/", item->node, NULL);
+			else
+				full_node = g_strdup(item->node);
+
+			req_data = g_new0(struct _disco_data, 1);
+			req_data->list_data = list_data;
+			req_data->parent = parent;
+			req_data->node = full_node;
+
+			++list_data->fetch_count;
+			purple_disco_list_ref(list);
+
+			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
+			xmlnode_set_attrib(iq->node, "to", item->jid);
+			if (full_node)
+				xmlnode_set_attrib(xmlnode_get_child(iq->node, "query"),
+				                   "node", full_node);
+			jabber_iq_set_callback(iq, jabber_disco_service_info_cb, req_data);
+
+			jabber_iq_send(iq);
 		}
-
-		req_data = g_new0(struct _disco_data, 1);
-		req_data->list_data = list_data;
-		req_data->parent = parent;
-		req_data->node = full_node;
-
-		has_items = TRUE;
-
-		++list_data->fetch_count;
-		purple_disco_list_ref(list);
-
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
-		xmlnode_set_attrib(iq->node, "to", item->jid);
-		if (full_node)
-			xmlnode_set_attrib(xmlnode_get_child(iq->node, "query"),
-			                   "node", full_node);
-		jabber_iq_set_callback(iq, jabber_disco_service_info_cb, req_data);
-
-		jabber_iq_send(iq);
 	}
 
 	g_slist_foreach(items, (GFunc)jabber_disco_item_free, NULL);
@@ -820,7 +837,7 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 	}
 
 	if ((anode = xmlnode_get_attrib(query, "node")))
-		aname = g_strdup_printf("%s%s", from, anode);
+		aname = g_strconcat(from, anode, NULL);
 	else
 		aname = g_strdup(from);
 
