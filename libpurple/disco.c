@@ -144,7 +144,9 @@ void purple_disco_list_unref(PurpleDiscoList *list)
 		purple_disco_list_destroy(list);
 }
 
-void purple_disco_list_service_add(PurpleDiscoList *list, PurpleDiscoService *service, PurpleDiscoService *parent)
+void purple_disco_list_service_add(PurpleDiscoList *list,
+                                   PurpleDiscoService *service,
+                                   PurpleDiscoService *parent)
 {
 	g_return_if_fail(list != NULL);
 	g_return_if_fail(service != NULL);
@@ -194,7 +196,13 @@ PurpleDiscoList *purple_disco_get_list(PurpleConnection *pc)
 
 void purple_disco_cancel_get_list(PurpleDiscoList *list)
 {
+	PurpleConnection *pc;
+
 	g_return_if_fail(list != NULL);
+
+	pc = purple_account_get_connection(list->account);
+
+	g_return_if_fail(pc != NULL);
 
 	if (list->ops.cancel_cb)
 		list->ops.cancel_cb(list);
@@ -205,11 +213,16 @@ void purple_disco_cancel_get_list(PurpleDiscoList *list)
 void purple_disco_service_expand(PurpleDiscoService *service)
 {
 	PurpleDiscoList *list;
+	PurpleConnection *pc;
 
 	g_return_if_fail(service != NULL);
-	g_return_if_fail((service->flags & PURPLE_DISCO_BROWSE) == PURPLE_DISCO_BROWSE);
+	g_return_if_fail((service->flags & PURPLE_DISCO_BROWSE));
 
 	list = service->list;
+	pc = purple_account_get_connection(list->account);
+	
+	g_return_if_fail(pc != NULL);
+
 	purple_disco_list_set_in_progress(list, TRUE);
 
 	if (list->ops.expand_cb)
@@ -376,6 +389,7 @@ void purple_disco_list_set_cancel_func(PurpleDiscoList *list, PurpleDiscoCancelF
 void purple_disco_list_set_expand_func(PurpleDiscoList *list, PurpleDiscoServiceExpandFunc cb)
 {
 	g_return_if_fail(list != NULL);
+
 	list->ops.expand_cb = cb;
 }
 
