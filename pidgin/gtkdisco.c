@@ -53,7 +53,7 @@ typedef struct _PidginDiscoList {
 	PidginDiscoDialog *dialog;
 	GtkTreeStore *model;
 	GtkWidget *tree;
-	GHashTable *cats; /** Meow. */
+	GHashTable *services;
 } PidginDiscoList;
 
 struct _menu_cb_info {
@@ -374,7 +374,7 @@ pidgin_disco_dialog_new_with_account(PurpleAccount *account)
 	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
 
 	/* list button */
-	dialog->list_button = pidgin_pixbuf_button_from_stock(_("_Get List"), GTK_STOCK_REFRESH,
+	dialog->list_button = pidgin_pixbuf_button_from_stock(_("_Browse"), GTK_STOCK_REFRESH,
 	                                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->list_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->list_button), "clicked",
@@ -429,7 +429,8 @@ pidgin_disco_create(PurpleDiscoList *list)
 
 	purple_disco_list_set_ui_data(list, pdl);
 
-	pdl->cats = g_hash_table_new_full(NULL, NULL, NULL, (GDestroyNotify)gtk_tree_row_reference_free);
+	pdl->services = g_hash_table_new_full(NULL, NULL, NULL,
+			(GDestroyNotify)gtk_tree_row_reference_free);
 }
 
 
@@ -440,7 +441,7 @@ pidgin_disco_destroy(PurpleDiscoList *list)
 
 	pdl = purple_disco_list_get_ui_data(list);
 
-	g_hash_table_destroy(pdl->cats);
+	g_hash_table_destroy(pdl->services);
 	g_free(pdl);
 
 	purple_disco_list_set_ui_data(list, NULL);
@@ -495,7 +496,7 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 		GtkTreeRowReference *rr;
 		GtkTreePath *path;
 
-		rr = g_hash_table_lookup(pdl->cats, parent);
+		rr = g_hash_table_lookup(pdl->services, parent);
 		path = gtk_tree_row_reference_get_path(rr);
 		if (path) {
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(pdl->model), &parent_iter, path);
@@ -525,7 +526,7 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(pdl->model), &iter);
 		rr = gtk_tree_row_reference_new(GTK_TREE_MODEL(pdl->model), path);
-		g_hash_table_insert(pdl->cats, service, rr);
+		g_hash_table_insert(pdl->services, service, rr);
 		gtk_tree_path_free(path);
 	}
 
