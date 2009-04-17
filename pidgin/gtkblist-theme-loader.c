@@ -38,6 +38,22 @@
  * Buddy List Theme Builder
  *****************************************************************************/
 
+static PidginThemeFont *
+pidgin_theme_font_parse(xmlnode *node)
+{
+	const char *font;
+	const char *colordesc;
+	GdkColor color;
+
+	font = xmlnode_get_attrib(node, "font");
+
+	if ((colordesc = xmlnode_get_attrib(node, "color")) == NULL ||
+			!gdk_color_parse(colordesc, &color))
+		gdk_color_parse(DEFAULT_TEXT_COLOR, &color);
+
+	return pidgin_theme_font_new(font, &color);
+}
+
 static PurpleTheme *
 pidgin_blist_loader_build(const gchar *dir)
 {
@@ -46,10 +62,24 @@ pidgin_blist_loader_build(const gchar *dir)
 	const gchar *temp;
 	gboolean success = TRUE;
 	GdkColor bgcolor, expanded_bgcolor, collapsed_bgcolor, contact_color;
-	GdkColor color;
-	FontColorPair expanded, collapsed, contact, online, away, offline, idle, message, message_nick_said, status;
+	PidginThemeFont *expanded, *collapsed, *contact, *online, *away, *offline, *idle, *message, *message_nick_said, *status;
 	PidginBlistLayout layout;
 	PidginBlistTheme *theme;
+	int i;
+	struct {
+		const char *tag;
+		PidginThemeFont **font;
+	} lookups[] = {
+		{"contact_text", &contact},
+		{"online_text", &online},
+		{"away_text", &away},
+		{"offline_text", &offline},
+		{"idle_text", &idle},
+		{"message_text", &message},
+		{"message_nick_said_text", &message_nick_said},
+		{"status_text", &status},
+		{NULL, NULL}
+	};
 
 	/* Find the theme file */
 	g_return_val_if_fail(dir != NULL, NULL);
@@ -76,11 +106,7 @@ pidgin_blist_loader_build(const gchar *dir)
 	if ((success = (success && (sub_node = xmlnode_get_child(root_node, "groups")) != NULL
 		     && (sub_sub_node = xmlnode_get_child(sub_node, "expanded")) != NULL)))
 	{
-		expanded.font = xmlnode_get_attrib(sub_sub_node, "font");
-
-		if ((temp = xmlnode_get_attrib(sub_sub_node, "text_color")) != NULL && gdk_color_parse(temp, &color))
-			expanded.color = temp;
-		else expanded.color = DEFAULT_TEXT_COLOR;
+		expanded = pidgin_theme_font_parse(sub_sub_node);
 
 		if ((temp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(temp, &expanded_bgcolor))
 			gdk_colormap_alloc_color(gdk_colormap_get_system(), &expanded_bgcolor, FALSE, TRUE);
@@ -90,11 +116,7 @@ pidgin_blist_loader_build(const gchar *dir)
 
 	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL)))
 	{
-		collapsed.font = xmlnode_get_attrib(sub_sub_node, "font");
-
-		if((temp = xmlnode_get_attrib(sub_sub_node, "text_color")) != NULL && gdk_color_parse(temp, &color))
-			collapsed.color = temp;
-		else collapsed.color = DEFAULT_TEXT_COLOR;
+		collapsed = pidgin_theme_font_parse(sub_sub_node);
 
 		if ((temp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(temp, &collapsed_bgcolor))
 			gdk_colormap_alloc_color(gdk_colormap_get_system(), &collapsed_bgcolor, FALSE, TRUE);
@@ -121,60 +143,13 @@ pidgin_blist_loader_build(const gchar *dir)
 			memset(&contact_color, 0, sizeof(GdkColor));
 	}
 
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "contact_text")) != NULL))) {
-		contact.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			contact.color = temp;
-		else contact.color = DEFAULT_TEXT_COLOR;
-	}
-
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "online_text")) != NULL))) {
-		online.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			online.color = temp;
-		else online.color = DEFAULT_TEXT_COLOR;
-	}
-
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "away_text")) != NULL))) {
-		away.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			away.color = temp;
-		else away.color = DEFAULT_TEXT_COLOR;
-	}
-
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "offline_text")) != NULL))) {
-		offline.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			offline.color = temp;
-		else offline.color = DEFAULT_TEXT_COLOR;
-	}
-
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "idle_text")) != NULL))) {
-		idle.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			idle.color = temp;
-		else idle.color = DEFAULT_TEXT_COLOR;
-	}
-
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "message_text")) != NULL))) {
-		message.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			message.color = temp;
-		else message.color = DEFAULT_TEXT_COLOR;
-	}
-
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "message_nick_said_text")) != NULL))) {
-		message_nick_said.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			message_nick_said.color = temp;
-		else message_nick_said.color = DEFAULT_TEXT_COLOR;
-	}
-
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "status_text")) != NULL))) {
-		status.font = xmlnode_get_attrib(sub_sub_node, "font");
-		if(gdk_color_parse(temp = xmlnode_get_attrib(sub_sub_node, "color"), &color))
-			status.color = temp;
-		else status.color = DEFAULT_TEXT_COLOR;
+	for (i = 0; success && lookups[i].tag; i++) {
+		if ((success = (sub_node != NULL &&
+						(sub_sub_node = xmlnode_get_child(sub_node, lookups[i].tag)) != NULL))) {
+			*(lookups[i].font) = pidgin_theme_font_parse(sub_sub_node);
+		} else {
+			*(lookups[i].font) = NULL;
+		}
 	}
 
 	/* name is required for theme manager */
@@ -191,19 +166,24 @@ pidgin_blist_loader_build(const gchar *dir)
 			"background-color", &bgcolor,
 			"layout", &layout,
 			"expanded-color", &expanded_bgcolor,
-			"expanded-text", &expanded,
+			"expanded-text", expanded,
 			"collapsed-color", &collapsed_bgcolor,
-			"collapsed-text", &collapsed,
+			"collapsed-text", collapsed,
 			"contact-color", &contact_color,
-			"contact", &contact,
-			"online", &online,
-			"away", &away,
-			"offline", &offline,
-			"idle", &idle,
-			"message", &message,
-			"message_nick_said", &message_nick_said,
-			"status", &status, NULL);
+			"contact", contact,
+			"online", online,
+			"away", away,
+			"offline", offline,
+			"idle", idle,
+			"message", message,
+			"message_nick_said", message_nick_said,
+			"status", status, NULL);
 
+	for (i = 0; lookups[i].tag; i++) {
+		if (*lookups[i].font) {
+			pidgin_theme_font_free(*lookups[i].font);
+		}
+	}
 	xmlnode_free(root_node);
 	g_free(data);
 
