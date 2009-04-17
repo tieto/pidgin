@@ -990,6 +990,24 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 	jabber_iq_send(iq);
 }
 
+static const struct {
+	const char *name;
+	const char *label;
+} registration_fields[] = {
+	{ "email",   N_("Email") },
+	{ "nick",    N_("Nickname") },
+	{ "first",   N_("First name") },
+	{ "last",    N_("Last name") },
+	{ "address", N_("Address") },
+	{ "city",    N_("City") },
+	{ "state",   N_("State") },
+	{ "zip",     N_("Postal code") },
+	{ "phone",   N_("Phone") },
+	{ "url",     N_("URL") },
+	{ "date",    N_("Date") },
+	{ NULL, NULL }
+};
+
 void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type,
                            const char *id, xmlnode *query)
 {
@@ -1001,6 +1019,7 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
+	int i;
 
 	if (type != JABBER_IQ_RESULT)
 		return;
@@ -1075,6 +1094,7 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 		purple_request_field_string_set_masked(field, TRUE);
 		purple_request_field_group_add_field(group, field);
 	}
+
 	if(xmlnode_get_child(query, "name")) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
@@ -1083,50 +1103,16 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 			field = purple_request_field_string_new("name", _("Name"), NULL, FALSE);
 		purple_request_field_group_add_field(group, field);
 	}
-	if(xmlnode_get_child(query, "email")) {
-		field = purple_request_field_string_new("email", _("Email"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
+
+	for (i = 0; registration_fields[i].name != NULL; ++i) {
+		if (xmlnode_get_child(query, registration_fields[i].name)) {
+			field = purple_request_field_string_new(registration_fields[i].name,
+			                                        _(registration_fields[i].label),
+			                                        NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
 	}
-	if(xmlnode_get_child(query, "nick")) {
-		field = purple_request_field_string_new("nick", _("Nickname"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "first")) {
-		field = purple_request_field_string_new("first", _("First name"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "last")) {
-		field = purple_request_field_string_new("last", _("Last name"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "address")) {
-		field = purple_request_field_string_new("address", _("Address"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "city")) {
-		field = purple_request_field_string_new("city", _("City"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "state")) {
-		field = purple_request_field_string_new("state", _("State"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "zip")) {
-		field = purple_request_field_string_new("zip", _("Postal code"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "phone")) {
-		field = purple_request_field_string_new("phone", _("Phone"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "url")) {
-		field = purple_request_field_string_new("url", _("URL"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "date")) {
-		field = purple_request_field_string_new("date", _("Date"), NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
+
 	if(registered) {
 		field = purple_request_field_bool_new("unregister", _("Unregister"), FALSE);
 		purple_request_field_group_add_field(group, field);
