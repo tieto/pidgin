@@ -130,7 +130,7 @@ pidgin_blist_theme_get_property(GObject *obj, guint param_id, GValue *value,
 
 	switch (param_id) {
 		case PROP_BACKGROUND_COLOR:
-			g_value_set_pointer(value, pidgin_blist_theme_get_background_color(theme));
+			g_value_set_boxed(value, pidgin_blist_theme_get_background_color(theme));
 			break;
 		case PROP_OPACITY:
 			g_value_set_double(value, pidgin_blist_theme_get_opacity(theme));
@@ -139,19 +139,19 @@ pidgin_blist_theme_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_pointer(value, pidgin_blist_theme_get_layout(theme));
 			break;
 		case PROP_EXPANDED_COLOR:
-			g_value_set_pointer(value, pidgin_blist_theme_get_expanded_background_color(theme));
+			g_value_set_boxed(value, pidgin_blist_theme_get_expanded_background_color(theme));
 			break;
 		case PROP_EXPANDED_TEXT:
 			g_value_set_pointer(value, pidgin_blist_theme_get_expanded_text_info(theme));
 			break;
 		case PROP_COLLAPSED_COLOR:
-			g_value_set_pointer(value, pidgin_blist_theme_get_collapsed_background_color(theme));
+			g_value_set_boxed(value, pidgin_blist_theme_get_collapsed_background_color(theme));
 			break;
 		case PROP_COLLAPSED_TEXT:
 			g_value_set_pointer(value, pidgin_blist_theme_get_collapsed_text_info(theme));
 			break;
 		case PROP_CONTACT_COLOR:
-			g_value_set_pointer(value, pidgin_blist_theme_get_contact_color(theme));
+			g_value_set_boxed(value, pidgin_blist_theme_get_contact_color(theme));
 			break;
 		case PROP_CONTACT:
 			g_value_set_pointer(value, pidgin_blist_theme_get_contact_text_info(theme));
@@ -191,7 +191,7 @@ pidgin_blist_theme_set_property(GObject *obj, guint param_id, const GValue *valu
 
 	switch (param_id) {
 		case PROP_BACKGROUND_COLOR:
-			pidgin_blist_theme_set_background_color(theme, g_value_get_pointer(value));
+			pidgin_blist_theme_set_background_color(theme, g_value_get_boxed(value));
 			break;
 		case PROP_OPACITY:
 			pidgin_blist_theme_set_opacity(theme, g_value_get_double(value));
@@ -200,19 +200,19 @@ pidgin_blist_theme_set_property(GObject *obj, guint param_id, const GValue *valu
 			pidgin_blist_theme_set_layout(theme, g_value_get_pointer(value));
 			break;
 		case PROP_EXPANDED_COLOR:
-			pidgin_blist_theme_set_expanded_background_color(theme, g_value_get_pointer(value));
+			pidgin_blist_theme_set_expanded_background_color(theme, g_value_get_boxed(value));
 			break;
 		case PROP_EXPANDED_TEXT:
 			pidgin_blist_theme_set_expanded_text_info(theme, g_value_get_pointer(value));
 			break;
 		case PROP_COLLAPSED_COLOR:
-			pidgin_blist_theme_set_collapsed_background_color(theme, g_value_get_pointer(value));
+			pidgin_blist_theme_set_collapsed_background_color(theme, g_value_get_boxed(value));
 			break;
 		case PROP_COLLAPSED_TEXT:
 			pidgin_blist_theme_set_collapsed_text_info(theme, g_value_get_pointer(value));
 			break;
 		case PROP_CONTACT_COLOR:
-			pidgin_blist_theme_set_contact_color(theme, g_value_get_pointer(value));
+			pidgin_blist_theme_set_contact_color(theme, g_value_get_boxed(value));
 			break;
 		case PROP_CONTACT:
 			pidgin_blist_theme_set_contact_text_info(theme, g_value_get_pointer(value));
@@ -290,9 +290,9 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	obj_class->finalize = pidgin_blist_theme_finalize;
 
 	/* Buddy List */
-	pspec = g_param_spec_pointer("background-color", "Background Color",
+	pspec = g_param_spec_boxed("background-color", "Background Color",
 			"The background color for the buddy list",
-			G_PARAM_READWRITE);
+			GDK_TYPE_COLOR, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_BACKGROUND_COLOR, pspec);
 
 	pspec = g_param_spec_pointer("layout", "Layout",
@@ -302,9 +302,9 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	g_object_class_install_property(obj_class, PROP_LAYOUT, pspec);
 
 	/* Group */
-	pspec = g_param_spec_pointer("expanded-color", "Expanded Background Color",
+	pspec = g_param_spec_boxed("expanded-color", "Expanded Background Color",
 			"The background color of an expanded group",
-			G_PARAM_READWRITE);
+			GDK_TYPE_COLOR, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_EXPANDED_COLOR, pspec);
 
 	pspec = g_param_spec_pointer("expanded-text", "Expanded Text",
@@ -312,9 +312,9 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_EXPANDED_TEXT, pspec);
 
-	pspec = g_param_spec_pointer("collapsed-color", "Collapsed Background Color",
+	pspec = g_param_spec_boxed("collapsed-color", "Collapsed Background Color",
 			"The background color of a collapsed group",
-			G_PARAM_READWRITE);
+			GDK_TYPE_COLOR, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_COLLAPSED_COLOR, pspec);
 
 	pspec = g_param_spec_pointer("collapsed-text", "Collapsed Text",
@@ -323,9 +323,9 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	g_object_class_install_property(obj_class, PROP_COLLAPSED_TEXT, pspec);
 
 	/* Buddy */
-	pspec = g_param_spec_pointer("contact-color", "Contact/Chat Background Color",
+	pspec = g_param_spec_boxed("contact-color", "Contact/Chat Background Color",
 			"The background color of a contact or chat",
-			G_PARAM_READWRITE);
+			GDK_TYPE_COLOR, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_CONTACT_COLOR, pspec);
 
 	pspec = g_param_spec_pointer("contact", "Contact Text",
