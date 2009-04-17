@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-28 16:59+0100\n"
-"PO-Revision-Date: 2009-03-28 16:53+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2009-04-16 16:28+0200\n"
+"PO-Revision-Date: 2009-04-16 16:27+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -614,19 +614,6 @@ msgstr ""
 msgid "Send To"
 msgstr "Senden an"
 
-msgid "Invite message"
-msgstr "Einladungsnachricht"
-
-msgid "Invite"
-msgstr "Einladen"
-
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"Bitte geben Sie den Benutzernamen der Person ein, die Sie einladen möchten "
-"zusammen mit einer optionalen Einladungsnachricht."
-
 msgid "Conversation"
 msgstr "Unterhaltung"
 
@@ -889,6 +876,39 @@ msgstr "Alle Unterhaltungen"
 msgid "System Log"
 msgstr "System-Mitschnitt"
 
+msgid "Calling ... "
+msgstr "Anrufen..."
+
+msgid "Hangup"
+msgstr "Auflegen"
+
+#. Number of actions
+msgid "Accept"
+msgstr "Akzeptieren"
+
+msgid "Reject"
+msgstr "Ablehnen"
+
+msgid "Call in progress."
+msgstr "Anruf läuft."
+
+msgid "The call has been terminated."
+msgstr "Der Anruf wurde beendet."
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr "%s möchte eine Audio-Sitzung mit Ihnen starten."
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+
+msgid "You have rejected the call."
+msgstr "Sie haben den Anruf abgelehnt."
+
+msgid "call: Make an audio call."
+msgstr "call: Einen Audio-Anruf tätigen."
+
 msgid "Emails"
 msgstr "E-Mails"
 
@@ -922,6 +942,9 @@ msgstr "Fortfahren"
 
 msgid "IM"
 msgstr "Nachricht"
+
+msgid "Invite"
+msgstr "Einladen"
 
 msgid "(none)"
 msgstr "(kein)"
@@ -1092,7 +1115,7 @@ msgstr "%s hat begonnen Ihnen zu schreiben (%s)"
 
 #, c-format
 msgid "%s has paused while typing to you (%s)"
-msgstr "%s hat beim Schreiben an Sie (%s) angehalten"
+msgstr "%s hat beim Tippen an Sie (%s) angehalten"
 
 #, c-format
 msgid "%s has signed on (%s)"
@@ -1537,6 +1560,27 @@ msgstr "Gnt-Verlauf"
 msgid "Lastlog plugin."
 msgstr "Verlauf-Plugin."
 
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL anpassen"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr ""
+
 msgid "accounts"
 msgstr "Konten"
 
@@ -1637,13 +1681,6 @@ msgstr "Akzeptieren Sie das Zertifikat für %s?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "SSL-Zertifikatsüberprüfung"
-
-#. Number of actions
-msgid "Accept"
-msgstr "Akzeptieren"
-
-msgid "Reject"
-msgstr "Ablehnen"
 
 msgid "_View Certificate..."
 msgstr "Ze_rtifikat ansehen..."
@@ -1791,6 +1828,18 @@ msgstr "%s hat den Raum verlassen."
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s hat den Raum verlassen (%s)."
+
+#, fuzzy
+msgid "Invite to chat"
+msgstr "Zur Konferenz einladen"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+"Bitte geben Sie den Benutzernamen der Person ein, die Sie einladen möchten "
+"zusammen mit einer optionalen Einladungsnachricht."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2631,7 +2680,7 @@ msgid "Do not ask. Always save in pounce."
 msgstr "Nicht nachfragen. Immer als Alarm sichern."
 
 msgid "One Time Password"
-msgstr ""
+msgstr "Einmalpasswort"
 
 #. *< type
 #. *< ui_requirement
@@ -2640,13 +2689,13 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "One Time Password Support"
-msgstr ""
+msgstr "Unterstützung für Einmalpasswörter"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Enforce that passwords are used only once."
-msgstr ""
+msgstr "Erzwinge, dass Passwörter nur einmal verwendet werden."
 
 #. *  description
 msgid ""
@@ -3748,6 +3797,10 @@ msgstr "Client"
 msgid "Operating System"
 msgstr "Betriebssystem"
 
+#, fuzzy
+msgid "Local Time"
+msgstr "Lokale Datei:"
+
 msgid "Last Activity"
 msgstr "Letzte Aktivität"
 
@@ -4493,6 +4546,37 @@ msgstr "Anklopfen"
 msgid "%s has buzzed you!"
 msgstr "%s hat bei Ihnen angeklopft!"
 
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "Kann die Nachricht an %s nicht senden, ungültige JID"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: user is not online"
+msgstr "Kann die Datei nicht an %s senden, Benutzer ist nicht online"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
+msgstr ""
+"Kann die Datei nicht an %s senden, Anwesenheit des Benutzers nicht abonniert"
+
+#, fuzzy
+msgid "Media Initiation Failed"
+msgstr "Registrierung fehlgeschlagen"
+
+#, fuzzy, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr ""
+"Bitte wählen Sie die Ressource von %s, an die Sie eine Datei schicken möchten"
+
+msgid "Select a Resource"
+msgstr "Wählen Sie eine Ressource"
+
+#, fuzzy
+msgid "Initiate Media"
+msgstr "Initiiere _Chat"
+
 msgid "config:  Configure a chat room."
 msgstr "config:  Konfiguriere einen Chatraum."
 
@@ -4686,9 +4770,6 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 "Bitte wählen Sie die Ressource von %s, an die Sie eine Datei schicken möchten"
-
-msgid "Select a Resource"
-msgstr "Wählen Sie eine Ressource"
 
 msgid "Edit User Mood"
 msgstr "Benutzerstimmung ändern"
@@ -7308,9 +7389,8 @@ msgstr "Buddy-Notiz"
 msgid "Change his/her memo as you like"
 msgstr ""
 
-#, fuzzy
 msgid "_Modify"
-msgstr "Bearbeiten"
+msgstr "_Bearbeiten"
 
 #, fuzzy
 msgid "Memo Modify"
@@ -10345,6 +10425,16 @@ msgstr "_Info abrufen"
 msgid "I_M"
 msgstr "I_M"
 
+#, fuzzy
+msgid "_Audio Call"
+msgstr "Chat _hinzufügen"
+
+msgid "Audio/_Video Call"
+msgstr "Audio/_Video-Anruf"
+
+msgid "_Video Call"
+msgstr "_Video-Anruf"
+
 msgid "_Send File..."
 msgstr "_Datei versenden..."
 
@@ -10775,14 +10865,6 @@ msgstr ""
 msgid "Invite Buddy Into Chat Room"
 msgstr "Buddy in einen Chatraum einladen"
 
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
-"Bitte geben Sie den Benutzernamen der Person ein, die Sie einladen möchten "
-"zusammen mit einer optionalen Einladungsnachricht."
-
 msgid "_Buddy:"
 msgstr "_Buddy:"
 
@@ -10857,6 +10939,22 @@ msgstr "/Unterhaltung/S_peichern als..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Unterhaltung/_Leeren"
 
+#, fuzzy
+msgid "/Conversation/M_edia"
+msgstr "/Unterhaltung/Me_hr"
+
+#, fuzzy
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Unterhaltung/Me_hr"
+
+#, fuzzy
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Unterhaltung/Me_hr"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Unterhaltung/Betrachte _Mitschnitt"
+
 msgid "/Conversation/Se_nd File..."
 msgstr "/Unterhaltung/Datei _senden..."
 
@@ -10928,6 +11026,18 @@ msgstr "/Unterhaltung"
 
 msgid "/Conversation/View Log"
 msgstr "/Unterhaltung/Betrachte Mitschnitt"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Unterhaltung/Mehr"
+
+#, fuzzy
+msgid "/Conversation/Media/Video Call"
+msgstr "/Unterhaltung/Betrachte Mitschnitt"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Unterhaltung/Mehr"
 
 msgid "/Conversation/Send File..."
 msgstr "/Unterhaltung/Datei senden ..."
@@ -12073,6 +12183,23 @@ msgstr "Pidgin"
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Wird geschlossen, da bereits ein anderer libpurple-Client läuft\n"
 
+msgid "/_Media"
+msgstr "/_Medien"
+
+msgid "/Media/_Hangup"
+msgstr "/Medien/_Auflegen"
+
+msgid "Calling..."
+msgstr "Anrufen..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr ""
+
 #, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
@@ -12240,43 +12367,33 @@ msgstr "_Wiederkehrend"
 msgid "Pounce Target"
 msgstr "Alarm-Ziel"
 
-#, fuzzy
 msgid "Started typing"
-msgstr "zu tippen beginnt"
+msgstr "Beginnt zu tippen"
 
-#, fuzzy
 msgid "Paused while typing"
-msgstr "beim Tippen anhält"
+msgstr "Hat beim Tippen angehalten"
 
-#, fuzzy
 msgid "Signed on"
-msgstr "sich anmeldet"
+msgstr "Hat sich anmeldet"
 
-#, fuzzy
 msgid "Returned from being idle"
-msgstr "%s ist nicht mehr inaktiv (%s)"
+msgstr "Ist nicht mehr inaktiv"
 
-#, fuzzy
 msgid "Returned from being away"
-msgstr "wieder anwesend ist"
+msgstr "Ist wieder anwesend"
 
-#, fuzzy
 msgid "Stopped typing"
-msgstr "Tippen gestoppt"
+msgstr "Hat das Tippen gestoppt"
 
-#, fuzzy
 msgid "Signed off"
-msgstr "sich abmeldet"
+msgstr "Hat sich abmeldet"
 
-#, fuzzy
 msgid "Became idle"
-msgstr "untätig wird"
+msgstr "Wurde untätig"
 
-#, fuzzy
 msgid "Went away"
-msgstr "Bei Abwesenheit"
+msgstr "Ging hinaus"
 
-#, fuzzy
 msgid "Sent a message"
 msgstr "Eine Nachricht senden"
 
@@ -12420,9 +12537,6 @@ msgstr "Kann das Proxy-Konfigurationsprogramm nicht starten."
 msgid "Cannot start browser configuration program."
 msgstr "Kann das Browser-Konfigurationsprogramm nicht starten."
 
-msgid "ST_UN server:"
-msgstr "ST_UN Server:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Beispiel: stunserver.org</span>"
 
@@ -12446,6 +12560,10 @@ msgstr "_Start-Port:"
 
 msgid "_End port:"
 msgstr "_End-Port:"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr "Relay-Server (TURN)"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy-Server &amp; Browser"
@@ -12477,7 +12595,7 @@ msgstr "Kein Proxy"
 
 #. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
 msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Remote-DNS mit SOCKS4-Proxys benuten"
+msgstr "Remote-DNS mit SOCKS4-Proxys benutzen"
 
 msgid "_User:"
 msgstr "_Benutzer:"
@@ -14003,3 +14121,16 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+#~ msgid "Invite message"
+#~ msgstr "Einladungsnachricht"
+
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "Bitte geben Sie den Benutzernamen der Person ein, die Sie einladen "
+#~ "möchten zusammen mit einer optionalen Einladungsnachricht."
+
+#~ msgid "ST_UN server:"
+#~ msgstr "ST_UN Server:"
