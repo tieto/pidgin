@@ -84,7 +84,15 @@ typedef struct
 /** @name PidginThemeFont API                                               */
 /**************************************************************************/
 
-PidginThemeFont * pidgin_theme_font_new(const char *face, GdkColor *color);
+/**
+ * Create a new PidginThemeFont.
+ *
+ * @param face  The font face
+ * @param color The color of the font
+ *
+ * @return A newly created PidginThemeFont
+ */
+PidginThemeFont * pidgin_theme_font_new(const gchar *face, GdkColor *color);
 
 /**
  * Frees a font and color pair
@@ -93,14 +101,47 @@ PidginThemeFont * pidgin_theme_font_new(const char *face, GdkColor *color);
  */
 void pidgin_theme_font_free(PidginThemeFont *font);
 
+/**
+ * Set the font-face of a PidginThemeFont.
+ *
+ * @param font  The PidginThemeFont
+ * @param face  The font-face
+ */
 void pidgin_theme_font_set_font_face(PidginThemeFont *font, const gchar *face);
 
+/**
+ * Set the color of a PidginThemeFont.
+ *
+ * @param font  The PidginThemeFont
+ * @param color The color
+ */
 void pidgin_theme_font_set_color(PidginThemeFont *font, const GdkColor *color);
 
+/**
+ * Get the font-face of a PidginThemeFont.
+ *
+ * @param font  The PidginThemeFont
+ *
+ * @return The font-face
+ */
 const gchar * pidgin_theme_font_get_font_face(PidginThemeFont *font);
 
+/**
+ * Get the color of a PidginThemeFont as a GdkColor object.
+ *
+ * @param font  The PidginThemeFont
+ *
+ * @return The color
+ */
 const GdkColor * pidgin_theme_font_get_color(PidginThemeFont *font);
 
+/**
+ * Get the color of a PidginThemeFont.
+ *
+ * @param font  The PidginThemeFont
+ *
+ * @return The color
+ */
 const gchar * pidgin_theme_font_get_color_describe(PidginThemeFont *font);
 
 /**************************************************************************/

@@ -101,7 +101,7 @@ enum {
  *****************************************************************************/
 
 PidginThemeFont *
-pidgin_theme_font_new(const char *face, GdkColor *color)
+pidgin_theme_font_new(const gchar *face, GdkColor *color)
 {
 	PidginThemeFont *font = g_new0(PidginThemeFont, 1);
 	font->font = g_strdup(face);
