@@ -1,5 +1,5 @@
 /**
- * @file icon-theme.h  Pidgin Icon Theme  Class API
+ * @file gtkicon-theme.h  Pidgin Icon Theme  Class API
  */
 
 /* pidgin
