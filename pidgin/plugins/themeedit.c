@@ -63,7 +63,13 @@ theme_color_selected(GtkDialog *dialog, gint response, const char *prop)
 		} else {
 			PidginThemeFont *font = NULL;
 			g_object_get(G_OBJECT(theme), prop, &font, NULL);
-			pidgin_theme_font_set_color(font, &color);
+			if (!font) {
+				font = pidgin_theme_font_new(NULL, &color);
+				g_object_set(G_OBJECT(theme), prop, font, NULL);
+				pidgin_theme_font_free(font);
+			} else {
+				pidgin_theme_font_set_color(font, &color);
+			}
 		}
 		pidgin_blist_set_theme(theme);
 	}
@@ -88,13 +94,23 @@ theme_font_select_face(GtkWidget *widget, gpointer prop)
 	GtkWidget *dialog;
 	PidginBlistTheme *theme;
 	PidginThemeFont *font = NULL;
+	const char *face;
 
 	theme = pidgin_blist_get_theme();
 	g_object_get(G_OBJECT(theme), prop, &font, NULL);
 
+	if (!font) {
+		font = pidgin_theme_font_new(NULL, NULL);
+		g_object_set(G_OBJECT(theme), prop, font, NULL);
+		pidgin_theme_font_free(font);
+		g_object_get(G_OBJECT(theme), prop, &font, NULL);
+	}
+
+	face = pidgin_theme_font_get_font_face(font);
 	dialog = gtk_font_selection_dialog_new(_("Select Font"));
-	gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(dialog)->fontsel),
-			pidgin_theme_font_get_font_face(font));
+	if (face && *face)
+		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(dialog)->fontsel),
+				face);
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_font_face_selected),
 			font);
 	gtk_widget_show_all(dialog);
@@ -219,8 +235,12 @@ pidgin_blist_theme_edit(void)
 	box = pidgin_dialog_get_vbox(GTK_DIALOG(dialog));
 
 	theme = pidgin_blist_get_theme();
-	if (!theme)
-		return;
+	if (!theme) {
+		theme = g_object_new(PIDGIN_TYPE_BLIST_THEME, "type", "blist",
+				"author", getlogin(),
+				NULL);
+		pidgin_blist_set_theme(theme);
+	}
 	klass = G_OBJECT_CLASS(PIDGIN_BLIST_THEME_GET_CLASS(theme));
 
 	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
