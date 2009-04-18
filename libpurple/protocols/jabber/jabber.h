@@ -165,6 +165,7 @@ struct _JabberStream
 
 	gboolean registration;
 
+	char *initial_avatar_hash;
 	char *avatar_hash;
 	GSList *pending_avatar_requests;
 
