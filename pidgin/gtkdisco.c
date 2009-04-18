@@ -98,6 +98,9 @@ static void list_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	if (!gc)
 		return;
 
+	gtk_widget_set_sensitive(dialog->add_button, FALSE);
+	gtk_widget_set_sensitive(dialog->register_button, FALSE);
+
 	if (dialog->discolist != NULL) {
 		pdl = purple_disco_list_get_ui_data(dialog->discolist);
 		gtk_widget_destroy(pdl->tree);
@@ -160,7 +163,8 @@ selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 		info->list = dialog->discolist;
 		info->service = service;
 
-		g_object_set_data(G_OBJECT(dialog->add_button), "disco-info", info);
+		g_object_set_data_full(G_OBJECT(dialog->add_button), "disco-info",
+		                       info, g_free);
 		g_object_set_data(G_OBJECT(dialog->register_button), "disco-info", info);
 
 		flags = purple_disco_service_get_flags(service);
