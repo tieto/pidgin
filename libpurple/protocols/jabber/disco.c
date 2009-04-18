@@ -635,7 +635,7 @@ jabber_disco_category_from_string(const gchar *str)
 	return PURPLE_DISCO_SERVICE_TYPE_OTHER;
 }
 
-static struct {
+static const struct {
 	const char *from;
 	const char *to;
 } disco_type_mappings[] = {
