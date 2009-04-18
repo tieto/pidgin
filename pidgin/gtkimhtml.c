@@ -1384,7 +1384,7 @@ gtk_imhtml_finalize (GObject *object)
 		gtk_widget_destroy(imhtml->tip_window);
 	}
 	if(imhtml->tip_timer)
-		gtk_timeout_remove(imhtml->tip_timer);
+		g_source_remove(imhtml->tip_timer);
 
 	for(scalables = imhtml->scalables; scalables; scalables = scalables->next) {
 		struct scalable_data *sd = scalables->data;
