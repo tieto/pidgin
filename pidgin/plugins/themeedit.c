@@ -145,7 +145,7 @@ theme_color_select(GtkWidget *widget, gpointer prop)
 }
 
 static GtkWidget *
-pidgin_theme_create_color_selector(const char *text, const char *prop,
+pidgin_theme_create_color_selector(const char *text, const char *blurb, const char *prop,
 		GtkSizeGroup *sizegroup)
 {
 	GtkWidget *color;
@@ -157,6 +157,9 @@ pidgin_theme_create_color_selector(const char *text, const char *prop,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sizegroup, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(2, 12, 0)
+	gtk_widget_set_tooltip_text(label, blurb);
+#endif
 
 	color = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR,
 			PIDGIN_BUTTON_HORIZONTAL);
@@ -168,7 +171,7 @@ pidgin_theme_create_color_selector(const char *text, const char *prop,
 }
 
 static GtkWidget *
-pidgin_theme_create_font_selector(const char *text, const char *prop,
+pidgin_theme_create_font_selector(const char *text, const char *blurb, const char *prop,
 		GtkSizeGroup *sizegroup)
 {
 	GtkWidget *color, *font;
@@ -180,6 +183,9 @@ pidgin_theme_create_font_selector(const char *text, const char *prop,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sizegroup, label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(2, 12, 0)
+	gtk_widget_set_tooltip_text(label, blurb);
+#endif
 
 	font = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT,
 			PIDGIN_BUTTON_HORIZONTAL);
@@ -254,14 +260,16 @@ pidgin_blist_theme_edit(void)
 		vbox = pidgin_make_frame(box, _(sections[i].header));
 		for (j = 0; sections[i].props[j]; j++) {
 			const char *label;
+			const char *blurb;
 			spec = g_object_class_find_property(klass, sections[i].props[j]);
 			label = g_param_spec_get_nick(spec);
+			blurb = g_param_spec_get_blurb(spec);
 			if (G_IS_PARAM_SPEC_BOXED(spec)) {
-				hbox = pidgin_theme_create_color_selector(label,
+				hbox = pidgin_theme_create_color_selector(label, blurb,
 						sections[i].props[j], group);
 				gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 			} else {
-				hbox = pidgin_theme_create_font_selector(label,
+				hbox = pidgin_theme_create_font_selector(label, blurb,
 						sections[i].props[j], group);
 				gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 			}
