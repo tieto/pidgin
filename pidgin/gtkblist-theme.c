@@ -127,7 +127,8 @@ copy_font_and_color(const PidginThemeFont *pair)
 	PidginThemeFont *copy = g_new0(PidginThemeFont, 1);
 	copy->font  = g_strdup(pair->font);
 	strncpy(copy->color, pair->color, sizeof(copy->color) - 1);
-	copy->gdkcolor = gdk_color_copy(pair->gdkcolor);
+	if (pair->gdkcolor)
+		copy->gdkcolor = gdk_color_copy(pair->gdkcolor);
 	return copy;
 }
 

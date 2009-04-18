@@ -130,12 +130,14 @@ theme_color_select(GtkWidget *widget, gpointer prop)
 	} else {
 		PidginThemeFont *pair = NULL;
 		g_object_get(G_OBJECT(theme), prop, &pair, NULL);
-		color = pidgin_theme_font_get_color(pair);
+		if (pair)
+			color = pidgin_theme_font_get_color(pair);
 	}
 
 	dialog = gtk_color_selection_dialog_new(_("Select Color"));
-	gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dialog)->colorsel),
-			color);
+	if (color)
+		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dialog)->colorsel),
+				color);
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_color_selected),
 			prop);
 
@@ -232,7 +234,7 @@ pidgin_blist_theme_edit(void)
 	};
 
 	dialog = pidgin_create_dialog(_("Pidgin Buddylist Theme Editor"), 0, "theme-editor", FALSE);
-	box = pidgin_dialog_get_vbox(GTK_DIALOG(dialog));
+	box = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog), FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	theme = pidgin_blist_get_theme();
 	if (!theme) {
@@ -266,6 +268,7 @@ pidgin_blist_theme_edit(void)
 		}
 	}
 
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), TRUE);
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, G_CALLBACK(save_blist_theme), dialog);
 	gtk_widget_show_all(dialog);
 
