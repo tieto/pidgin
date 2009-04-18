@@ -173,6 +173,7 @@ purple::connection account gc
 purple::connection displayname gc
 purple::connection handle
 purple::connection list
+purple::connection state
 @endcode
 
   @c purple::connection is a collection of subcommands pertaining to
@@ -191,6 +192,9 @@ purple::connection list
   @c list returns a list of all known connections.  The elements of
   this list are appropriate as @c gc arguments to the other
   @c purple::connection subcommands or other commands requiring a gc.
+
+  @c state returns the PurpleConnectionState of this account as one of
+  the strings "connected", "disconnected", or "connecting".
 
 @code
 purple::conv_send account who text
