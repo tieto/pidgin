@@ -46,7 +46,7 @@ C_SRC =	\
 			adhoccommands.c \
 			auth.c \
 			buddy.c \
-			bosh.c
+			bosh.c \
 			caps.c \
 			chat.c \
 			data.c \
