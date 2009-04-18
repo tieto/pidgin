@@ -1202,7 +1202,7 @@ cache_pixbufs(PidginStatusBox *status_box)
 
 	for (i = 0; i < G_N_ELEMENTS(status_box->connecting_pixbufs); i++) {
 		if (status_box->connecting_pixbufs[i] != NULL)
-			gdk_pixbuf_unref(status_box->connecting_pixbufs[i]);
+			g_object_unref(G_OBJECT(status_box->connecting_pixbufs[i]));
 	}
 
 	status_box->connecting_index = 0;
@@ -1225,7 +1225,7 @@ cache_pixbufs(PidginStatusBox *status_box)
 
 	for (i = 0; i < G_N_ELEMENTS(status_box->typing_pixbufs); i++) {
 		if (status_box->typing_pixbufs[i] != NULL)
-			gdk_pixbuf_unref(status_box->typing_pixbufs[i]);
+			g_object_unref(G_OBJECT(status_box->typing_pixbufs[i]));
 	}
 
 	status_box->typing_index = 0;
