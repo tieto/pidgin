@@ -29,13 +29,16 @@
 #include "internal.h"
 
 #include "account.h"
-#include "marshallers.h"
 #include "media.h"
-#include "media-gst.h"
 #include "mediamanager.h"
 #include "network.h"
 
 #include "debug.h"
+
+#ifdef USE_GSTREAMER
+#include "marshallers.h"
+#include "media-gst.h"
+#endif
 
 #ifdef USE_VV
 
@@ -1908,6 +1911,7 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 }
 #endif
 
+#ifdef USE_GSTREAMER
 GstElement *
 purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
 {
@@ -1920,6 +1924,7 @@ purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
 	return NULL;
 #endif
 }
+#endif /* USE_GSTREAMER */
 
 #ifdef USE_VV
 static PurpleMediaSession *
@@ -3034,6 +3039,7 @@ purple_media_remove_output_windows(PurpleMedia *media)
 #endif
 }
 
+#ifdef USE_GSTREAMER
 GstElement *
 purple_media_get_tee(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
@@ -3056,4 +3062,5 @@ purple_media_get_tee(PurpleMedia *media,
 	return NULL;
 #endif
 }
+#endif /* USE_GSTREAMER */
 

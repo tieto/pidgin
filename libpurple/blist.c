@@ -699,10 +699,23 @@ purple_blist_get_root()
 	return purplebuddylist ? purplebuddylist->root : NULL;
 }
 
-GHashTable *
+static void
+append_buddy(gpointer key, gpointer value, gpointer user_data)
+{
+	GSList **list = user_data;
+	*list = g_slist_prepend(*list, value);
+}
+
+GSList *
 purple_blist_get_buddies()
 {
-	return purplebuddylist ? purplebuddylist->buddies : NULL;
+	GSList *buddies = NULL;
+
+	if (!purplebuddylist)
+		return NULL;
+
+	g_hash_table_foreach(purplebuddylist->buddies, append_buddy, &buddies);
+	return buddies;
 }
 
 void *
@@ -1569,6 +1582,7 @@ void
 purple_contact_destroy(PurpleContact *contact)
 {
 	g_hash_table_destroy(contact->node.settings);
+	g_free(contact->alias);
 	PURPLE_DBUS_UNREGISTER_POINTER(contact);
 	g_free(contact);
 }
@@ -2616,7 +2630,7 @@ static void
 purple_blist_node_destroy(PurpleBlistNode *node)
 {
 	PurpleBlistNode *child, *next_child;
-  
+
 	child = node->child;
 	while (child) {
 		next_child = child->next;
@@ -2936,6 +2950,7 @@ purple_blist_uninit(void)
 		purple_blist_node_destroy(node);
 		node = next_node;
 	}
+	purplebuddylist->root = NULL;
 
 	purple_signals_unregister_by_instance(purple_blist_get_handle());
 }

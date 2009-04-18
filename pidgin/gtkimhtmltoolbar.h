@@ -32,11 +32,11 @@ extern "C" {
 
 #define DEFAULT_FONT_FACE "Helvetica 12"
 
-#define GTK_TYPE_IMHTMLTOOLBAR            (gtk_imhtmltoolbar_get_type ())
-#define GTK_IMHTMLTOOLBAR(obj)            (GTK_CHECK_CAST ((obj), GTK_TYPE_IMHTMLTOOLBAR, GtkIMHtmlToolbar))
-#define GTK_IMHTMLTOOLBAR_CLASS(klass)    (GTK_CHECK_CLASS_CAST ((klass), GTK_TYPE_IMHTMLTOOLBAR, GtkIMHtmlToolbarClass))
-#define GTK_IS_IMHTMLTOOLBAR(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTMLTOOLBAR))
-#define GTK_IS_IMHTMLTOOLBAR_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTMLTOOLBAR))
+#define GTK_TYPE_IMHTMLTOOLBAR            (gtk_imhtmltoolbar_get_type())
+#define GTK_IMHTMLTOOLBAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_IMHTMLTOOLBAR, GtkIMHtmlToolbar))
+#define GTK_IMHTMLTOOLBAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_IMHTMLTOOLBAR, GtkIMHtmlToolbarClass))
+#define GTK_IS_IMHTMLTOOLBAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_IMHTMLTOOLBAR))
+#define GTK_IS_IMHTMLTOOLBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_IMHTMLTOOLBAR))
 
 typedef struct _GtkIMHtmlToolbar		GtkIMHtmlToolbar;
 typedef struct _GtkIMHtmlToolbarClass		GtkIMHtmlToolbarClass;

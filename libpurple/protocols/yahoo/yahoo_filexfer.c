@@ -1029,12 +1029,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 		xd->port = YAHOO_XFER_RELAY_PORT;
 
 	url = g_strdup_printf("%ld.%ld.%ld.%ld", d, c, b, a);
-	if (!purple_url_parse(url, &(xd->host), &(xd->port), &(xd->path), NULL, NULL)) {
-		purple_xfer_cancel_remote(xfer);
-		g_free(url);
-		return;
-	}
-	g_free(url);
+
 	/* Free the address... */
 	g_free(hosts->data);
 	hosts = g_slist_remove(hosts, hosts->data);
@@ -1047,6 +1042,13 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 		g_free(hosts->data);
 		hosts = g_slist_remove(hosts, hosts->data);
 	}
+
+	if (!purple_url_parse(url, &(xd->host), &(xd->port), &(xd->path), NULL, NULL)) {
+		purple_xfer_cancel_remote(xfer);
+		g_free(url);
+		return;
+	}
+	g_free(url);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_INFO_15, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
@@ -1385,7 +1387,13 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 	strcpy(time_str + strlen(time_str) - 1, "\0");
 
 	if (xd->txbuflen == 0)	{
-		xd->txbuf = g_strdup_printf("HTTP/1.0 200 OK\r\nDate: %s GMT\r\nServer: Y!/1.0\r\nMIME-version: 1.0\r\nLast-modified: %s GMT\r\nContent-length: %d\r\n\r\n", time_str, time_str, xfer->size);
+		xd->txbuf = g_strdup_printf("HTTP/1.0 200 OK\r\n"
+		                            "Date: %s GMT\r\n"
+		                            "Server: Y!/1.0\r\n"
+		                            "MIME-version: 1.0\r\n"
+		                            "Last-modified: %s GMT\r\n"
+		                            "Content-length: %" G_GSIZE_FORMAT "\r\n\r\n",
+		                            time_str, time_str, xfer->size);
 		xd->txbuflen = strlen(xd->txbuf);
 		xd->txbuf_written = 0;
 	}

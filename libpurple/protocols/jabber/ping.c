@@ -55,15 +55,10 @@ static void jabber_ping_result_cb(JabberStream *js, const char *from,
                                   JabberIqType type, const char *id,
                                   xmlnode *packet, gpointer data)
 {
-	char *own_bare_jid = g_strdup_printf("%s@%s", js->user->node,
-	                                     js->user->domain);
-
-	if (!from || !strcmp(from, own_bare_jid)) {
-		/* If the pong is from our bare JID, treat it as a return from the
+	if (purple_strequal(from, js->user->domain))
+		/* If the pong is from the server, assume it's a result of the
 		 * keepalive functions */
 		jabber_keepalive_pong_cb(js);
-	}
-	g_free(own_bare_jid);
 
 	if (type == JABBER_IQ_RESULT) {
 		purple_debug_info("jabber", "PONG!\n");

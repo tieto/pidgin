@@ -2973,8 +2973,10 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		/* connect to host */
 		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL)	{
-			yahoo_p2p_disconnect_destroy_data(p2p_data);
 			purple_debug_info("yahoo","p2p: Connection to %s failed\n", host_ip);
+			g_free(p2p_data->host_ip);
+			g_free(p2p_data->host_username);
+			g_free(p2p_data);
 		}
 	}
 }
@@ -4416,7 +4418,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s; path=/; domain=.yahoo.com;\r\n"
 		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 		"Host: validate.msg.yahoo.com\r\n"
-		"Content-Length: %d\r\n"
+		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 		"Cache-Control: no-cache\r\n\r\n%s",
 		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
 

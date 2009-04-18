@@ -536,12 +536,12 @@ pidgin_status_box_finalize(GObject *obj)
 
 	for (i = 0; i < G_N_ELEMENTS(statusbox->connecting_pixbufs); i++) {
 		if (statusbox->connecting_pixbufs[i] != NULL)
-			gdk_pixbuf_unref(statusbox->connecting_pixbufs[i]);
+			g_object_unref(G_OBJECT(statusbox->connecting_pixbufs[i]));
 	}
 
 	for (i = 0; i < G_N_ELEMENTS(statusbox->typing_pixbufs); i++) {
 		if (statusbox->typing_pixbufs[i] != NULL)
-			gdk_pixbuf_unref(statusbox->typing_pixbufs[i]);
+			g_object_unref(G_OBJECT(statusbox->typing_pixbufs[i]));
 	}
 
 	g_object_unref(G_OBJECT(statusbox->store));

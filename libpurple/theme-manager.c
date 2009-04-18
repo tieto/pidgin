@@ -130,6 +130,7 @@ purple_theme_manager_build_dir(const gchar *root)
 				theme_dir = g_build_filename(purple_dir, type, NULL);
 
 				theme = purple_theme_loader_build(loader, theme_dir);
+				g_free(theme_dir);
 
 				if (PURPLE_IS_THEME(theme))
 					purple_theme_manager_add_theme(theme);

@@ -22,6 +22,7 @@ version 2.6.0 (??/??/2009):
 		* purple_connection_get_protocol_data
 		* purple_connection_set_protocol_data
 		* purple_contact_destroy
+		* purple_conv_chat_invite_user
 		* purple_global_proxy_set_info
 		* purple_group_destroy
 		* purple_log_get_activity_score
@@ -76,6 +77,10 @@ version 2.6.0 (??/??/2009):
 		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
 		* pidgin_notify_pounce_add
+
+	libgnt:
+		Added:
+		* GntProgressBar and functions (Saleem Abdulrasool)
 
 	perl:
 		Changed:
