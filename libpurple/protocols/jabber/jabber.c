@@ -1295,30 +1295,51 @@ void jabber_register_account(PurpleAccount *account)
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
+	/* TODO: Just use purple_url_parse? */
+	if (!g_ascii_strncasecmp(connect_server, "http://", 7) || !g_ascii_strncasecmp(connect_server, "https://", 8)) {
+		js->use_bosh = TRUE;
+		js->bosh = jabber_bosh_connection_init(js, connect_server);
+		if (!js->bosh) {
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+				_("Malformed BOSH Connect Server"));
+			return;
+		}
+		jabber_bosh_connection_connect(js->bosh);
+		return;
+	} else {
+		js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
+	}
+
 	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
 		if(purple_ssl_is_supported()) {
 			js->gsc = purple_ssl_connect(account, server,
 					purple_account_get_int(account, "port", 5222),
 					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
+			if (!js->gsc) {
+				purple_connection_error_reason (js->gc,
+					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+					_("Unable to establish SSL connection"));
+			}
 		} else {
 			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
+
+		return;
 	}
 
-	if(!js->gsc) {
-		if (connect_server[0]) {
-			jabber_login_connect(js, js->user->domain, server,
-			                     purple_account_get_int(account,
-			                                          "port", 5222), TRUE);
-		} else {
-			js->srv_query_data = purple_srv_resolve("xmpp-client",
-			                                      "tcp",
-			                                      js->user->domain,
-			                                      srv_resolved_cb,
-			                                      js);
-		}
+	if (connect_server[0]) {
+		jabber_login_connect(js, js->user->domain, server,
+		                     purple_account_get_int(account,
+		                                            "port", 5222), TRUE);
+	} else {
+		js->srv_query_data = purple_srv_resolve("xmpp-client",
+		                                        "tcp",
+		                                        js->user->domain,
+		                                        srv_resolved_cb,
+		                                        js);
 	}
 }
 
