@@ -1015,7 +1015,7 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	xmlnode *x, *y;
+	xmlnode *x, *y, *node;
 	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
@@ -1076,40 +1076,50 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	if(xmlnode_get_child(query, "username")) {
+	if((node = xmlnode_get_child(query, "username"))) {
+		char *data = xmlnode_get_data(node);
 		if(js->registration)
-			field = purple_request_field_string_new("username", _("Username"), js->user->node, FALSE);
+			field = purple_request_field_string_new("username", _("Username"), data ? data : js->user->node, FALSE);
 		else
-			field = purple_request_field_string_new("username", _("Username"), NULL, FALSE);
+			field = purple_request_field_string_new("username", _("Username"), data, FALSE);
 
 		purple_request_field_group_add_field(group, field);
+		g_free(data);
 	}
-	if(xmlnode_get_child(query, "password")) {
+	if((node = xmlnode_get_child(query, "password"))) {
 		if(js->registration)
 			field = purple_request_field_string_new("password", _("Password"),
 										purple_connection_get_password(js->gc), FALSE);
-		else
-			field = purple_request_field_string_new("password", _("Password"), NULL, FALSE);
+		else {
+			char *data = xmlnode_get_data(node);
+			field = purple_request_field_string_new("password", _("Password"), data, FALSE);
+			g_free(data);
+		}
 
 		purple_request_field_string_set_masked(field, TRUE);
 		purple_request_field_group_add_field(group, field);
 	}
 
-	if(xmlnode_get_child(query, "name")) {
+	if((node = xmlnode_get_child(query, "name"))) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
 													purple_account_get_alias(js->gc->account), FALSE);
-		else
-			field = purple_request_field_string_new("name", _("Name"), NULL, FALSE);
+		else {
+			char *data = xmlnode_get_data(node);
+			field = purple_request_field_string_new("name", _("Name"), data, FALSE);
+			g_free(data);
+		}
 		purple_request_field_group_add_field(group, field);
 	}
 
 	for (i = 0; registration_fields[i].name != NULL; ++i) {
-		if (xmlnode_get_child(query, registration_fields[i].name)) {
+		if ((node = xmlnode_get_child(query, registration_fields[i].name))) {
+			char *data = xmlnode_get_data(node);
 			field = purple_request_field_string_new(registration_fields[i].name,
 			                                        _(registration_fields[i].label),
-			                                        NULL, FALSE);
+			                                        data, FALSE);
 			purple_request_field_group_add_field(group, field);
+			g_free(data);
 		}
 	}
 
