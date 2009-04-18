@@ -105,7 +105,8 @@ pidgin_theme_font_new(const gchar *face, GdkColor *color)
 {
 	PidginThemeFont *font = g_new0(PidginThemeFont, 1);
 	font->font = g_strdup(face);
-	pidgin_theme_font_set_color(font, color);
+	if (color)
+		pidgin_theme_font_set_color(font, color);
 	return font;
 }
 
@@ -144,13 +145,16 @@ void
 pidgin_theme_font_set_color(PidginThemeFont *font, const GdkColor *color)
 {
 	g_return_if_fail(font);
-	g_return_if_fail(color);
 
 	if (font->gdkcolor)
 		gdk_color_free(font->gdkcolor);
-	font->gdkcolor = gdk_color_copy(color);
-	g_snprintf(font->color, sizeof(font->color),
-			"#%02x%02x%02x", color->red >> 8, color->green >> 8, color->blue >> 8);
+
+	font->gdkcolor = color ? gdk_color_copy(color) : NULL;
+	if (color)
+		g_snprintf(font->color, sizeof(font->color),
+				"#%02x%02x%02x", color->red >> 8, color->green >> 8, color->blue >> 8);
+	else
+		font->color[0] = '\0';
 }
 
 const gchar *
@@ -171,7 +175,7 @@ const gchar *
 pidgin_theme_font_get_color_describe(PidginThemeFont *font)
 {
 	g_return_val_if_fail(font, NULL);
-	return font->color;
+	return font->color[0] ? font->color : NULL;
 }
 
 /******************************************************************************

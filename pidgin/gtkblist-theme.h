@@ -122,7 +122,7 @@ void pidgin_theme_font_set_color(PidginThemeFont *font, const GdkColor *color);
  *
  * @param font  The PidginThemeFont
  *
- * @return The font-face
+ * @return The font-face, or NULL if none is set.
  */
 const gchar * pidgin_theme_font_get_font_face(PidginThemeFont *font);
 
@@ -131,7 +131,7 @@ const gchar * pidgin_theme_font_get_font_face(PidginThemeFont *font);
  *
  * @param font  The PidginThemeFont
  *
- * @return The color
+ * @return The color, or NULL if none is set.
  */
 const GdkColor * pidgin_theme_font_get_color(PidginThemeFont *font);
 
@@ -140,7 +140,7 @@ const GdkColor * pidgin_theme_font_get_color(PidginThemeFont *font);
  *
  * @param font  The PidginThemeFont
  *
- * @return The color
+ * @return The color, or NULL if none is set.
  */
 const gchar * pidgin_theme_font_get_color_describe(PidginThemeFont *font);
 
