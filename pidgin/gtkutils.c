@@ -358,7 +358,7 @@ GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
 }
 
 GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
-		GtkSignalFunc sf, gpointer data, gboolean checked)
+		GCallback cb, gpointer data, gboolean checked)
 {
 	GtkWidget *menuitem;
 	menuitem = gtk_check_menu_item_new_with_mnemonic(str);
@@ -368,8 +368,8 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), checked);
 
-	if (sf)
-		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+	if (cb)
+		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
 	gtk_widget_show_all(menuitem);
 
@@ -439,7 +439,7 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 }
 
 
-GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GCallback cb, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
 	/*
@@ -456,8 +456,8 @@ GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const ch
 	if (menu)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	if (sf)
-		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+	if (cb)
+		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
 	if (icon != NULL) {
 		image = gtk_image_new_from_stock(icon, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
