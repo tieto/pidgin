@@ -685,6 +685,8 @@ void purple_media_remove_output_windows(PurpleMedia *media);
  * @param transmitter The name of the transmitter.
  *
  * @return TRUE if it is present, FALSE otherwise.
+ *
+ * @since 2.6.0
  */
 gboolean purple_media_transmitter_exists(const gchar *transmitter);
 
