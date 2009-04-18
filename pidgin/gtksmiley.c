@@ -74,7 +74,7 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 	gtk_widget_destroy(smiley->parent);
 	g_free(smiley->filename);
 	if (smiley->custom_pixbuf)
-		gdk_pixbuf_unref(smiley->custom_pixbuf);
+		g_object_unref(G_OBJECT(smiley->custom_pixbuf));
 	g_free(smiley);
 }
 
@@ -460,7 +460,7 @@ pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
 {
 	if (editor->custom_pixbuf)
 		gdk_pixbuf_unref(editor->custom_pixbuf);
-	editor->custom_pixbuf = image ? gdk_pixbuf_ref(image) : NULL;
+	editor->custom_pixbuf = image ? g_object_ref(G_OBJECT(image)) : NULL;
 	if (image)
 		gtk_image_set_from_pixbuf(GTK_IMAGE(editor->smiley_image), image);
 }
