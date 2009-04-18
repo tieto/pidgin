@@ -89,9 +89,11 @@ static guint jabber_caps_hash(gconstpointer data) {
 	const JabberCapsKey *key = data;
 	guint nodehash = g_str_hash(key->node);
 	guint verhash  = g_str_hash(key->ver);
-	/* 'hash' was optional in XEP-0115 v1.4 and I think g_str_hash crashes on
-	 * NULL >:O. Okay, maybe I've played too much Zelda, but that looks like
-	 * a Deku Shrub... */
+	/*
+	 * 'hash' was optional in XEP-0115 v1.4 and g_str_hash crashes on NULL >:O.
+	 * Okay, maybe I've played too much Zelda, but that looks like
+	 * a Deku Shrub...
+	 */
 	guint hashhash = (key->hash ? g_str_hash(key->hash) : 0);
 	return nodehash ^ verhash ^ hashhash;
 }
@@ -99,13 +101,10 @@ static guint jabber_caps_hash(gconstpointer data) {
 static gboolean jabber_caps_compare(gconstpointer v1, gconstpointer v2) {
 	const JabberCapsKey *name1 = v1;
 	const JabberCapsKey *name2 = v2;
-	/* Again, hash might be NULL and I *know* strcmp will crash on NULL. */
-	gboolean hasheq = ((!name1->hash && !name2->hash) ||
-	        (name1->hash && name2->hash && !strcmp(name1->hash, name2->hash)));
 
-	return strcmp(name1->node, name2->node) == 0 &&
-	       strcmp(name1->ver, name2->ver) == 0 &&
-	       hasheq;
+	return g_str_equal(name1->node, name2->node) &&
+	       g_str_equal(name1->ver, name2->ver) &&
+	       purple_strequal(name1->hash, name2->hash);
 }
 
 void jabber_caps_destroy_key(gpointer data) {
