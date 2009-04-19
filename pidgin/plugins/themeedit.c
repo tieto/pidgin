@@ -29,7 +29,9 @@
 #include "gtkutils.h"
 #include "gtkplugin.h"
 
-#define PLUGIN_ID "gtk-blist-theme-editor"
+#define PLUGIN_ID "gtk-theme-editor"
+
+#include "themeedit-icon.h"
 
 static gboolean
 prop_type_is_color(PidginBlistTheme *theme, const char *prop)
@@ -239,7 +241,7 @@ pidgin_blist_theme_edit(void)
 		{ NULL, { } }
 	};
 
-	dialog = pidgin_create_dialog(_("Pidgin Buddylist Theme Editor"), 0, "theme-editor", FALSE);
+	dialog = pidgin_create_dialog(_("Pidgin Buddylist Theme Editor"), 0, "theme-editor-blist", FALSE);
 	box = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog), FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	theme = pidgin_blist_get_theme();
@@ -295,7 +297,9 @@ actions(PurplePlugin *plugin, gpointer context)
 	GList *l = NULL;
 	PurplePluginAction *act = NULL;
 
-	act = purple_plugin_action_new(_("Edit"), pidgin_blist_theme_edit);
+	act = purple_plugin_action_new(_("Edit Buddylist Theme"), pidgin_blist_theme_edit);
+	l = g_list_append(l, act);
+	act = purple_plugin_action_new(_("Edit Status Icon Theme"), pidgin_icon_theme_edit);
 	l = g_list_append(l, act);
 
 	return l;
@@ -313,12 +317,12 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,               /**< priority       */
 
 	PLUGIN_ID,                             /**< id             */
-	N_("Pidgin Buddylist Theme Editor"),   /**< name           */
+	N_("Pidgin Theme Editor"),             /**< name           */
 	DISPLAY_VERSION,                       /**< version        */
 	/**  summary        */
-	N_("Pidgin Buddylist Theme Editor. Enjoy, motherfucker!!"),
+	N_("Pidgin Theme Editor."),
 	/**  description    */
-	N_("Pidgin Buddylist Theme Editor"),
+	N_("Pidgin Theme Editor"),
 	"Sadrul Habib Chowdhury <imadil@gmail.com>",        /**< author         */
 	PURPLE_WEBSITE,                        /**< homepage       */
 
