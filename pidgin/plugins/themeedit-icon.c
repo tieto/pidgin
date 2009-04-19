@@ -39,8 +39,8 @@ static const char *stocksizes [] = {
 	PIDGIN_ICON_SIZE_TANGO_SMALL,
 	PIDGIN_ICON_SIZE_TANGO_MEDIUM,
 	PIDGIN_ICON_SIZE_TANGO_LARGE,
-	PIDGIN_ICON_SIZE_TANGO_HUGE,
-	NULL
+	NULL,
+	PIDGIN_ICON_SIZE_TANGO_HUGE, /* We don't have huge status icons, it seems! */
 };
 
 static const struct {
@@ -67,6 +67,8 @@ create_icon_theme(GtkWidget *window)
 	for (i = 0; statuses[i].stockid; i++) {
 		GtkWidget *image = g_object_get_data(G_OBJECT(window), statuses[i].stockid);
 		GdkPixbuf *pixbuf = g_object_get_data(G_OBJECT(image), "pixbuf");
+		if (!pixbuf)
+			continue;
 		pidgin_icon_theme_set_icon(PIDGIN_ICON_THEME(theme), statuses[i].stockid,
 				statuses[i].stockid);
 		for (j = 0; stocksizes[j]; j++) {
