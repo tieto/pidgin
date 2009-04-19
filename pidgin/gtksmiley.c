@@ -344,7 +344,7 @@ static void do_add_file_cb(const char *filename, gpointer data)
 	pixbuf = gdk_pixbuf_new_from_file_at_scale(filename, 64, 64, FALSE, NULL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(s->smiley_image), pixbuf);
 	if (pixbuf)
-		gdk_pixbuf_unref(pixbuf);
+		g_object_unref(G_OBJECT(pixbuf));
 	gtk_widget_grab_focus(s->smile);
 }
 
@@ -459,7 +459,7 @@ void
 pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
 {
 	if (editor->custom_pixbuf)
-		gdk_pixbuf_unref(editor->custom_pixbuf);
+		g_object_unref(G_OBJECT(editor->custom_pixbuf));
 	editor->custom_pixbuf = image ? g_object_ref(G_OBJECT(image)) : NULL;
 	if (image)
 		gtk_image_set_from_pixbuf(GTK_IMAGE(editor->smiley_image), image);

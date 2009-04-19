@@ -807,7 +807,7 @@ prefs_themes_init()
 	gtk_list_store_set(prefs_status_icon_themes, &iter, 0, pixbuf, 1, "<b>(Default)</b> - None\n<span color='dim grey'>"
 								    "The default Pidgin status icon theme</span>", 2, "", -1);
 
-	gdk_pixbuf_unref(pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
 }
 
 /* builds a theme combo box from a list store with colums: icon preview, markup, theme name */
