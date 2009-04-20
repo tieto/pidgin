@@ -2451,11 +2451,6 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 	dialog->callback = callback;
 	dialog->data = data;
 
-	if (dialog->icon_filesel != NULL) {
-		gtk_window_present(GTK_WINDOW(dialog->icon_filesel));
-		return NULL;
-	}
-
 	current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder");
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 
@@ -3583,7 +3578,9 @@ register_gnome_url_handlers(void)
 	if (tmp == NULL)
 		return FALSE;
 
+	g_free(tmp);
 	tmp = NULL;
+
 	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
 	                               &tmp, &err, NULL, NULL))
 	{
