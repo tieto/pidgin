@@ -49,8 +49,13 @@ static const struct options {
 } statuses[] = {
 	{PIDGIN_STOCK_STATUS_AVAILABLE, N_("Available")},
 	{PIDGIN_STOCK_STATUS_AWAY, N_("Away")},
+	{PIDGIN_STOCK_STATUS_XA, N_("Extended Away")},
 	{PIDGIN_STOCK_STATUS_BUSY, N_("Busy")},
 	{PIDGIN_STOCK_STATUS_OFFLINE, N_("Offline")},
+	{PIDGIN_STOCK_STATUS_LOGIN, N_("Just logged in")},
+	{PIDGIN_STOCK_STATUS_LOGOUT, N_("Just logged out")},
+	{PIDGIN_STOCK_STATUS_PERSON, N_("Icon for Contact/\nIcon for Unknown person")},
+	{PIDGIN_STOCK_STATUS_CHAT, N_("Icon for Chat")},
 	{NULL, NULL}
 }, chatemblems[] = {
 	{PIDGIN_STOCK_STATUS_IGNORED, N_("Ignored")},
@@ -206,15 +211,21 @@ void pidgin_icon_theme_edit(void)
 {
 	GtkWidget *dialog;
 	GtkWidget *box, *vbox;
+	GtkWidget *notebook;
 	GtkSizeGroup *sizegroup;
 	int s, i, j;
 	dialog = pidgin_create_dialog(_("Pidgin Icon Theme Editor"), 0, "theme-editor-icon", FALSE);
 	box = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog), FALSE, PIDGIN_HIG_BOX_SPACE);
 
+	notebook = gtk_notebook_new();
+	gtk_box_pack_start(GTK_BOX(box), notebook, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 	sizegroup = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (s = 0; sections[s].heading; s++) {
 		const char *heading = sections[s].heading;
+
+		box = gtk_vbox_new(FALSE, 0);
+		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, gtk_label_new(heading));
 
 		vbox = pidgin_make_frame(box, heading);
 		g_object_set_data(G_OBJECT(dialog), heading, vbox);
