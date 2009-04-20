@@ -64,6 +64,15 @@ static const struct options {
 	{PIDGIN_STOCK_STATUS_HALFOP, N_("Half Operator")},
 	{PIDGIN_STOCK_STATUS_VOICE, N_("Voice")},
 	{NULL, NULL}
+}, dialogicons[] = {
+	{PIDGIN_STOCK_DIALOG_AUTH, N_("Authorization dialog")},
+	{PIDGIN_STOCK_DIALOG_ERROR, N_("Error dialog")},
+	{PIDGIN_STOCK_DIALOG_INFO, N_("Information dialog")},
+	{PIDGIN_STOCK_DIALOG_MAIL, N_("Mail dialog")},
+	{PIDGIN_STOCK_DIALOG_QUESTION, N_("Question dialog")},
+	{PIDGIN_STOCK_DIALOG_WARNING, N_("Warning dialog")},
+	{NULL, NULL},
+	{PIDGIN_STOCK_DIALOG_COOL, N_("What kind of dialog is this?")},
 };
 
 static const struct {
@@ -71,7 +80,8 @@ static const struct {
 	const struct options *options;
 } sections[] = {
 	{N_("Status Icons"), statuses},
-	{N_("Chatroom Embems"), chatemblems},
+	{N_("Chatroom Emblems"), chatemblems},
+	{N_("Dialog Icons"), dialogicons},
 	{NULL, NULL}
 };
 
@@ -261,7 +271,6 @@ void pidgin_icon_theme_edit(void)
 		}
 	}
 
-	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), TRUE);
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, G_CALLBACK(save_icon_theme), dialog);
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_APPLY, G_CALLBACK(use_icon_theme), dialog);
 	gtk_widget_show_all(dialog);
