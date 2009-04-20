@@ -57,7 +57,9 @@ static GHashTable *smiley_checksum_index = NULL; /* checksum (char *) => smiley 
 
 static guint save_timer = 0;
 static gboolean smileys_loaded = FALSE;
+static char *smileys_dir = NULL;
 
+#define SMILEYS_DEFAULT_FOLDER			"custom_smiley"
 #define SMILEYS_LOG_ID				"smileys"
 
 #define XML_FILE_NAME				"smileys.xml"
@@ -870,7 +872,7 @@ purple_smileys_find_by_checksum(const char *checksum)
 const char *
 purple_smileys_get_storing_dir(void)
 {
-	return "";
+	return smileys_dir;
 }
 
 void
@@ -878,6 +880,8 @@ purple_smileys_init()
 {
 	smiley_shortcut_index = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	smiley_checksum_index = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	smileys_dir = g_build_filename(purple_user_dir(), SMILEYS_DEFAULT_FOLDER, NULL);
 
 	purple_smileys_load();
 }
@@ -893,5 +897,6 @@ purple_smileys_uninit()
 
 	g_hash_table_destroy(smiley_shortcut_index);
 	g_hash_table_destroy(smiley_checksum_index);
+	g_free(smileys_dir);
 }
 
