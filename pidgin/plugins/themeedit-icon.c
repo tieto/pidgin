@@ -33,14 +33,27 @@
 #include "pidginstock.h"
 #include "themeedit-icon.h"
 
+typedef enum
+{
+	FLAG_SIZE_MICROSOPIC = 0,
+	FLAG_SIZE_EXTRA_SMALL,
+	FLAG_SIZE_SMALL,
+	FLAG_SIZE_MEDIUM,
+	FLAG_SIZE_LARGE,
+	FLAG_SIZE_HUGE,
+	FLAG_SIZE_NONE,
+} SectionFlags;
+
+#define SECTION_FLAGS_ALL (0x3f)
+
 static const char *stocksizes [] = {
-	PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC,
-	PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL,
-	PIDGIN_ICON_SIZE_TANGO_SMALL,
-	PIDGIN_ICON_SIZE_TANGO_MEDIUM,
-	PIDGIN_ICON_SIZE_TANGO_LARGE,
-	NULL,
-	PIDGIN_ICON_SIZE_TANGO_HUGE, /* We don't have huge status icons, it seems! */
+	[FLAG_SIZE_MICROSOPIC] = PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC,
+	[FLAG_SIZE_EXTRA_SMALL] = PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL,
+	[FLAG_SIZE_SMALL] = PIDGIN_ICON_SIZE_TANGO_SMALL,
+	[FLAG_SIZE_MEDIUM] = PIDGIN_ICON_SIZE_TANGO_MEDIUM,
+	[FLAG_SIZE_LARGE] = PIDGIN_ICON_SIZE_TANGO_LARGE,
+	[FLAG_SIZE_HUGE] = PIDGIN_ICON_SIZE_TANGO_HUGE,
+	[FLAG_SIZE_NONE] = NULL,
 };
 
 static const struct options {
@@ -78,11 +91,12 @@ static const struct options {
 static const struct {
 	const char *heading;
 	const struct options *options;
+	SectionFlags flags;
 } sections[] = {
-	{N_("Status Icons"), statuses},
-	{N_("Chatroom Emblems"), chatemblems},
-	{N_("Dialog Icons"), dialogicons},
-	{NULL, NULL}
+	{N_("Status Icons"), statuses, SECTION_FLAGS_ALL ^ (1 << FLAG_SIZE_HUGE)},
+	{N_("Chatroom Emblems"), chatemblems, FLAG_SIZE_SMALL},
+	{N_("Dialog Icons"), dialogicons, (1 << FLAG_SIZE_EXTRA_SMALL) | (1 << FLAG_SIZE_HUGE)},
+	{NULL, NULL, 0}
 };
 
 static PidginStatusIconTheme *
@@ -111,6 +125,9 @@ create_icon_theme(GtkWidget *window)
 				char *name;
 				GdkPixbuf *scale;
 				GError *error = NULL;
+
+				if (!(sections[s].flags & (1 << j)))
+					continue;
 
 				iconsize = gtk_icon_size_from_name(stocksizes[j]);
 				gtk_icon_size_lookup(iconsize, &width, &height);
@@ -260,7 +277,12 @@ void pidgin_icon_theme_edit(void)
 			gtk_box_pack_start(GTK_BOX(hbox), ebox, FALSE, FALSE, 0);
 
 			for (j = 0; stocksizes[j]; j++) {
-				GtkWidget *sh = gtk_image_new_from_stock(id, gtk_icon_size_from_name(stocksizes[j]));
+				GtkWidget *sh;
+
+				if (!(sections[s].flags & (1 << j)))
+					continue;
+
+				sh = gtk_image_new_from_stock(id, gtk_icon_size_from_name(stocksizes[j]));
 				gtk_box_pack_start(GTK_BOX(hbox), sh, FALSE, FALSE, 0);
 				g_object_set_data(G_OBJECT(image), stocksizes[j], sh);
 			}
