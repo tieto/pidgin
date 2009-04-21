@@ -73,6 +73,7 @@ struct artist {
 /* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	NULL, NULL},
+	{"Paul 'darkrain42' Aurich",	NULL, NULL },
 	{"John 'rekkanoryo' Bailey",	N_("bug master"), "rekkanoryo@pidgin.im"},
 	{"Ethan 'Paco-Paco' Blanton",	NULL, NULL},
 	{"Hylke Bons",			N_("artist"), "h.bons@student.rug.nl"},
@@ -101,7 +102,6 @@ static const struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
-	{"Paul 'darkrain42' Aurich", NULL, NULL },
 	{"Marcus 'malu' Lundblad", NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
