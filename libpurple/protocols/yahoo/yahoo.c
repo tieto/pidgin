@@ -2973,8 +2973,10 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		/* connect to host */
 		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL)	{
-			yahoo_p2p_disconnect_destroy_data(p2p_data);
 			purple_debug_info("yahoo","p2p: Connection to %s failed\n", host_ip);
+			g_free(p2p_data->host_ip);
+			g_free(p2p_data->host_username);
+			g_free(p2p_data);
 		}
 	}
 }

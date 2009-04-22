@@ -41,7 +41,7 @@ static void gtk_ticker_forall        (GtkContainer     *container,
 		gboolean	       include_internals,
 		GtkCallback       callback,
 		gpointer          callback_data);
-static GtkType gtk_ticker_child_type (GtkContainer     *container);
+static GType gtk_ticker_child_type   (GtkContainer     *container);
 
 
 static GtkContainerClass *parent_class = NULL;
@@ -97,7 +97,7 @@ static void gtk_ticker_class_init (GtkTickerClass *class)
 	widget_class = (GtkWidgetClass*) class;
 	container_class = (GtkContainerClass*) class;
 
-	parent_class = gtk_type_class (GTK_TYPE_CONTAINER);
+	parent_class = g_type_class_ref (GTK_TYPE_CONTAINER);
 
 	gobject_class->finalize = gtk_ticker_finalize;
 
@@ -112,7 +112,7 @@ static void gtk_ticker_class_init (GtkTickerClass *class)
 	container_class->child_type = gtk_ticker_child_type;
 }
 
-static GtkType gtk_ticker_child_type (GtkContainer *container)
+static GType gtk_ticker_child_type (GtkContainer *container)
 {
 	return GTK_TYPE_WIDGET;
 }
