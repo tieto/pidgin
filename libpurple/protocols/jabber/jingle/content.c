@@ -391,7 +391,13 @@ JingleContent *
 jingle_content_parse(xmlnode *content)
 {
 	const gchar *type = xmlnode_get_namespace(xmlnode_get_child(content, "description"));
-	return JINGLE_CONTENT_CLASS(g_type_class_ref(jingle_get_type(type)))->parse(content);
+	GType jingle_type = jingle_get_type(type);
+
+	if (jingle_type != G_TYPE_NONE) {
+		return JINGLE_CONTENT_CLASS(g_type_class_ref(jingle_type))->parse(content);
+	} else {
+		return NULL;
+	}
 }
 
 static xmlnode *
