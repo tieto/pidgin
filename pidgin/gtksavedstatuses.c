@@ -398,23 +398,7 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 static const gchar *
 get_stock_icon_from_primitive(PurpleStatusPrimitive type)
 {
-	switch (type) {
-		case PURPLE_STATUS_AVAILABLE:
-			return PIDGIN_STOCK_STATUS_AVAILABLE;
-		case PURPLE_STATUS_AWAY:
-			return PIDGIN_STOCK_STATUS_AWAY;
-		case PURPLE_STATUS_EXTENDED_AWAY:
-			return PIDGIN_STOCK_STATUS_XA;
-		case PURPLE_STATUS_INVISIBLE:
-			return PIDGIN_STOCK_STATUS_INVISIBLE;
-		case PURPLE_STATUS_OFFLINE:
-			return PIDGIN_STOCK_STATUS_OFFLINE;
-		case PURPLE_STATUS_UNAVAILABLE:
-			return PIDGIN_STOCK_STATUS_BUSY;
-		default:
-			/* this shouldn't happen */
-			return NULL;
-	}
+	return pidgin_stock_id_from_status_primitive(type);
 }
 
 static void

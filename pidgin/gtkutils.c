@@ -1715,27 +1715,11 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 {
 	GtkIconSize icon_size = gtk_icon_size_from_name(size);
 	GdkPixbuf *pixbuf = NULL;
+	const char *stock = pidgin_stock_id_from_status_primitive(prim);
 
-	if (prim == PURPLE_STATUS_UNAVAILABLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_INVISIBLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_OFFLINE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
-				icon_size, "GtkWidget");
-	else
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
-				icon_size, "GtkWidget");
+	pixbuf = gtk_widget_render_icon (w, stock ? stock : PIDGIN_STOCK_STATUS_AVAILABLE,
+			icon_size, "GtkWidget");
 	return pixbuf;
-
 }
 
 const char *

@@ -2145,29 +2145,7 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 			}
 		}
 
-		switch (prim) {
-			case PURPLE_STATUS_UNSET:
-				stock = NULL;
-				break;
-			case PURPLE_STATUS_UNAVAILABLE:
-				stock = PIDGIN_STOCK_STATUS_BUSY;
-				break;
-			case PURPLE_STATUS_AWAY:
-				stock = PIDGIN_STOCK_STATUS_AWAY;
-				break;
-			case PURPLE_STATUS_EXTENDED_AWAY:
-				stock = PIDGIN_STOCK_STATUS_XA;
-				break;
-			case PURPLE_STATUS_INVISIBLE:
-				stock = PIDGIN_STOCK_STATUS_INVISIBLE;
-				break;
-			case PURPLE_STATUS_OFFLINE:
-				stock = PIDGIN_STOCK_STATUS_OFFLINE;
-				break;
-			default:
-				stock = PIDGIN_STOCK_STATUS_AVAILABLE;
-				break;
-		}
+		stock = pidgin_stock_id_from_status_primitive(prim);
 	}
 
 	gtk_list_store_append(status_box->dropdown_store, &iter);
