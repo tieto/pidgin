@@ -602,32 +602,6 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	                               );
 }
 
-static GdkPixbuf *
-pidgin_status_box_get_pixbuf(PidginStatusBox *status_box, PurpleStatusPrimitive prim)
-{
-	GdkPixbuf *pixbuf;
-	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-	if (prim == PURPLE_STATUS_UNAVAILABLE)
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
-						 icon_size, "PidginStatusBox");
-	else if (prim == PURPLE_STATUS_AWAY)
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
-						 icon_size, "PidginStatusBox");
-	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
-						 icon_size, "PidginStatusBox");
-	else if (prim == PURPLE_STATUS_INVISIBLE)
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_INVISIBLE,
-						 icon_size, "PidginStatusBox");
-	else if (prim == PURPLE_STATUS_OFFLINE)
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
-						 icon_size, "PidginStatusBox");
-	else
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AVAILABLE,
-						 icon_size, "PidginStatusBox");
-	return pixbuf;
-}
-
 /**
  * This updates the text displayed on the status box so that it shows
  * the current status.  This is the only function in this file that
@@ -948,7 +922,6 @@ static void
 add_popular_statuses(PidginStatusBox *statusbox)
 {
 	GList *list, *cur;
-	GdkPixbuf *pixbuf;
 
 	list = purple_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -968,8 +941,6 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		/* Get an appropriate status icon */
 		prim = purple_savedstatus_get_type(saved);
 
-
-		pixbuf = pidgin_status_box_get_pixbuf(statusbox, prim);
 
 		if (purple_savedstatus_is_transient(saved))
 		{
@@ -991,11 +962,9 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		}
 
 		pidgin_status_box_add(statusbox, type,
-				pixbuf, purple_savedstatus_get_title(saved), stripped,
+				NULL, purple_savedstatus_get_title(saved), stripped,
 				GINT_TO_POINTER(purple_savedstatus_get_creation_time(saved)));
 		g_free(stripped);
-		if (pixbuf != NULL)
-			g_object_unref(G_OBJECT(pixbuf));
 	}
 
 	g_list_free(list);
@@ -2184,28 +2153,39 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 	}
 
 	if (!pixbuf) {
+		PurpleStatusPrimitive prim = PURPLE_STATUS_UNSET;
 		if (type == PIDGIN_STATUS_BOX_TYPE_PRIMITIVE) {
-			PurpleStatusPrimitive prim = GPOINTER_TO_INT(data);
-			switch (prim) {
-				case PURPLE_STATUS_UNAVAILABLE:
-					stock = PIDGIN_STOCK_STATUS_BUSY;
-					break;
-				case PURPLE_STATUS_AWAY:
-					stock = PIDGIN_STOCK_STATUS_AWAY;
-					break;
-				case PURPLE_STATUS_EXTENDED_AWAY:
-					stock = PIDGIN_STOCK_STATUS_XA;
-					break;
-				case PURPLE_STATUS_INVISIBLE:
-					stock = PIDGIN_STOCK_STATUS_INVISIBLE;
-					break;
-				case PURPLE_STATUS_OFFLINE:
-					stock = PIDGIN_STOCK_STATUS_OFFLINE;
-					break;
-				default:
-					stock = PIDGIN_STOCK_STATUS_AVAILABLE;
-					break;
+			prim = GPOINTER_TO_INT(data);
+		} else if (type == PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR ||
+				type == PIDGIN_STATUS_BOX_TYPE_POPULAR) {
+			PurpleSavedStatus *saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+			if (saved) {
+				prim = purple_savedstatus_get_type(saved);
 			}
+		}
+
+		switch (prim) {
+			case PURPLE_STATUS_UNSET:
+				stock = NULL;
+				break;
+			case PURPLE_STATUS_UNAVAILABLE:
+				stock = PIDGIN_STOCK_STATUS_BUSY;
+				break;
+			case PURPLE_STATUS_AWAY:
+				stock = PIDGIN_STOCK_STATUS_AWAY;
+				break;
+			case PURPLE_STATUS_EXTENDED_AWAY:
+				stock = PIDGIN_STOCK_STATUS_XA;
+				break;
+			case PURPLE_STATUS_INVISIBLE:
+				stock = PIDGIN_STOCK_STATUS_INVISIBLE;
+				break;
+			case PURPLE_STATUS_OFFLINE:
+				stock = PIDGIN_STOCK_STATUS_OFFLINE;
+				break;
+			default:
+				stock = PIDGIN_STOCK_STATUS_AVAILABLE;
+				break;
 		}
 	}
 
