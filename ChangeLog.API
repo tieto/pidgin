@@ -77,6 +77,10 @@ version 2.6.0 (??/??/2009):
 		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
 		* pidgin_notify_pounce_add
+		* PidginBlistTheme, PidginBlistThemeLoader API
+		* PidginIconTheme, PidginStatusIconTheme, PidginIconThemeLoader
+		  API
+		* pidgin_stock_id_from_status_primitive
 
 	libgnt:
 		Added:

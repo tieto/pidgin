@@ -2534,27 +2534,7 @@ pidgin_conv_get_icon_stock(PurpleConversation *conv)
 			PurpleStatus *active = purple_presence_get_active_status(p);
 			PurpleStatusType *type = purple_status_get_type(active);
 			PurpleStatusPrimitive prim = purple_status_type_get_primitive(type);
-
-			switch (prim) {
-				case PURPLE_STATUS_UNAVAILABLE:
-					stock = PIDGIN_STOCK_STATUS_BUSY;
-					break;
-				case PURPLE_STATUS_AWAY:
-					stock = PIDGIN_STOCK_STATUS_AWAY;
-					break;
-				case PURPLE_STATUS_EXTENDED_AWAY:
-					stock = PIDGIN_STOCK_STATUS_XA;
-					break;
-				case PURPLE_STATUS_INVISIBLE:
-					stock = PIDGIN_STOCK_STATUS_INVISIBLE;
-					break;
-				case PURPLE_STATUS_OFFLINE:
-					stock = PIDGIN_STOCK_STATUS_OFFLINE;
-					break;
-				default:
-					stock = PIDGIN_STOCK_STATUS_AVAILABLE;
-					break;
-			}
+			stock = pidgin_stock_id_from_status_primitive(prim);
 		} else {
 			stock = PIDGIN_STOCK_STATUS_PERSON;
 		}

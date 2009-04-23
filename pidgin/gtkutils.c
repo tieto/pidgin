@@ -1464,7 +1464,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 					  str);
 			g_free(str);
 
-			return;
+			break;
 		}
 
 		buddy = purple_find_buddy(data->account, data->who);
@@ -1494,7 +1494,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			g_error_free(err);
 			g_free(str);
 
-			return;
+			break;
 		}
 		id = purple_imgstore_add_with_id(filedata, size, data->filename);
 
@@ -1738,6 +1738,35 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 
 }
 
+const char *
+pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim)
+{
+	const char *stock = NULL;
+	switch (prim) {
+		case PURPLE_STATUS_UNSET:
+			stock = NULL;
+			break;
+		case PURPLE_STATUS_UNAVAILABLE:
+			stock = PIDGIN_STOCK_STATUS_BUSY;
+			break;
+		case PURPLE_STATUS_AWAY:
+			stock = PIDGIN_STOCK_STATUS_AWAY;
+			break;
+		case PURPLE_STATUS_EXTENDED_AWAY:
+			stock = PIDGIN_STOCK_STATUS_XA;
+			break;
+		case PURPLE_STATUS_INVISIBLE:
+			stock = PIDGIN_STOCK_STATUS_INVISIBLE;
+			break;
+		case PURPLE_STATUS_OFFLINE:
+			stock = PIDGIN_STOCK_STATUS_OFFLINE;
+			break;
+		default:
+			stock = PIDGIN_STOCK_STATUS_AVAILABLE;
+			break;
+	}
+	return stock;
+}
 
 GdkPixbuf *
 pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
