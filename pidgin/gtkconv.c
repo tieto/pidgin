@@ -2595,8 +2595,8 @@ update_tab_icon(PurpleConversation *conv)
 	PidginConversation *gtkconv;
 	PidginWindow *win;
 	GList *l;
-	GdkPixbuf *status = NULL;
 	GdkPixbuf *emblem = NULL;
+	const char *status = NULL;
 	const char *infopane_status = NULL;
 
 	g_return_if_fail(conv != NULL);
@@ -2606,8 +2606,7 @@ update_tab_icon(PurpleConversation *conv)
 	if (conv != gtkconv->active_conv)
 		return;
 
-	status = pidgin_conv_get_tab_icon(conv, TRUE);
-	infopane_status = pidgin_conv_get_icon_stock(conv);
+	status = infopane_status = pidgin_conv_get_icon_stock(conv);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleBuddy *b = purple_find_buddy(conv->account, conv->name);
@@ -2617,8 +2616,8 @@ update_tab_icon(PurpleConversation *conv)
 
 	g_return_if_fail(status != NULL);
 
-	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
+	g_object_set(G_OBJECT(gtkconv->icon), "stock", status, NULL);
+	g_object_set(G_OBJECT(gtkconv->menu_icon), "stock", status, NULL);
 
 	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model),
 			&(gtkconv->infopane_iter),
@@ -2645,9 +2644,6 @@ update_tab_icon(PurpleConversation *conv)
 	/* XXX seanegan Why do I have to do this? */
 	gtk_widget_queue_resize(gtkconv->infopane);
 	gtk_widget_queue_draw(gtkconv->infopane);
-
-	if (status != NULL)
-		g_object_unref(status);
 
 	if (pidgin_conv_window_is_active_conversation(conv) &&
 		(purple_conversation_get_type(conv) != PURPLE_CONV_TYPE_IM ||
@@ -3084,15 +3080,12 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs)
 		PurpleConversation *conv = (PurpleConversation*)l->data;
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
-		GtkWidget *icon = gtk_image_new();
-		GdkPixbuf *pbuf = pidgin_conv_get_icon(conv, icon, PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC);
+		GtkWidget *icon = gtk_image_new_from_stock(pidgin_conv_get_icon_stock(conv),
+				gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC));
 		GtkWidget *item;
 		gchar *text = g_strdup_printf("%s (%d)",
 				gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)),
 				gtkconv->unseen_count);
-
-		gtk_image_set_from_pixbuf(GTK_IMAGE(icon), pbuf);
-		g_object_unref(pbuf);
 
 		item = gtk_image_menu_item_new_with_label(text);
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), icon);
@@ -9425,6 +9418,12 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();
 	gtkconv->menu_icon = gtk_image_new();
+	g_object_set(G_OBJECT(gtkconv->icon),
+			"icon-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC),
+			NULL);
+	g_object_set(G_OBJECT(gtkconv->menu_icon),
+			"icon-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC),
+			NULL);
 	gtk_widget_show(gtkconv->icon);
 	update_tab_icon(conv);
 
