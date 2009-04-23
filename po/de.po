@@ -11,10 +11,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-16 16:28+0200\n"
-"PO-Revision-Date: 2009-04-16 16:27+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
-"Language-Team: German <de@li.org>\n"
+"POT-Creation-Date: 2009-04-23 19:04+0200\n"
+"PO-Revision-Date: 2009-04-23 19:02+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -902,6 +902,8 @@ msgstr "%s möchte eine Audio-Sitzung mit Ihnen starten."
 #, c-format
 msgid "%s is trying to start an unsupported media session type with you."
 msgstr ""
+"%s versucht, einen nicht unterstützten Typ von Medien-Sitzung mit Ihnen zu "
+"starten."
 
 msgid "You have rejected the call."
 msgstr "Sie haben den Anruf abgelehnt."
@@ -1564,19 +1566,20 @@ msgid ""
 "\n"
 "Fetching TinyURL..."
 msgstr ""
+"\n"
+"Hole TinyURL..."
 
 msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
+msgstr "TinyURL nur für URLs mit mindestens dieser Länge generieren"
 
 msgid "TinyURL (or other) address prefix"
 msgstr ""
 
-#, fuzzy
 msgid "TinyURL"
-msgstr "URL anpassen"
+msgstr "TinyURL"
 
 msgid "TinyURL plugin"
-msgstr ""
+msgstr "TinyURL-Plugin"
 
 msgid "When receiving a message with URL(s), TinyURL for easier copying"
 msgstr ""
@@ -3451,6 +3454,17 @@ msgstr ""
 "Ihr gewählter Kontoname wurde vom Server abgelehnt.  Er enthält vermutlich "
 "ungültige Zeichen."
 
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "Der Spitzname \"%s\" existiert bereits."
+
+#, fuzzy
+msgid "Nickname in use"
+msgstr "Spitzname"
+
 msgid "Cannot change nick"
 msgstr "Kann den Spitznamen nicht ändern"
 
@@ -3797,9 +3811,8 @@ msgstr "Client"
 msgid "Operating System"
 msgstr "Betriebssystem"
 
-#, fuzzy
 msgid "Local Time"
-msgstr "Lokale Datei:"
+msgstr "Lokale Zeit"
 
 msgid "Last Activity"
 msgstr "Letzte Aktivität"
@@ -4546,29 +4559,33 @@ msgstr "Anklopfen"
 msgid "%s has buzzed you!"
 msgstr "%s hat bei Ihnen angeklopft!"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: invalid JID"
-msgstr "Kann die Nachricht an %s nicht senden, ungültige JID"
+msgstr "Medien-Sitzung mit %s konnte nicht gestartet werden: ungültige JID"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: user is not online"
-msgstr "Kann die Datei nicht an %s senden, Benutzer ist nicht online"
+msgstr ""
+"Medien-Sitzung mit %s konnte nicht gestartet werden: Benutzer ist nicht "
+"online"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
 msgstr ""
-"Kann die Datei nicht an %s senden, Anwesenheit des Benutzers nicht abonniert"
+"Medien-Sitzung mit %s konnte nicht gestartet werden: Anwesenheit des "
+"Benutzers nicht abonniert"
 
 #, fuzzy
 msgid "Media Initiation Failed"
 msgstr "Registrierung fehlgeschlagen"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please select the resource of %s with which you would like to start a media "
 "session."
 msgstr ""
-"Bitte wählen Sie die Ressource von %s, an die Sie eine Datei schicken möchten"
+"Bitte wählen Sie die Ressource von %s, mir der Sie eine Medien-Sitzung "
+"starten möchten"
 
 msgid "Select a Resource"
 msgstr "Wählen Sie eine Ressource"
@@ -12194,11 +12211,11 @@ msgstr "Anrufen..."
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
-msgstr ""
+msgstr "%s möchte eine Audio-/Video-Sitzung mit Ihnen starten."
 
 #, c-format
 msgid "%s wishes to start a video session with you."
-msgstr ""
+msgstr "%s möchte eine Video-Sitzung mit Ihnen starten."
 
 #, c-format
 msgid "%s has %d new message."
