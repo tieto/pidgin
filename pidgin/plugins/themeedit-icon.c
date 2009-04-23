@@ -174,10 +174,18 @@ use_icon_theme(GtkWidget *w, GtkWidget *window)
 	g_object_unref(theme);
 }
 
+#ifdef NOT_SADRUL
 static void
 save_icon_theme(GtkWidget *w, GtkWidget *window)
 {
 	/* TODO: SAVE! */
+	gtk_widget_destroy(window);
+}
+#endif
+
+static void
+close_icon_theme(GtkWidget *w, GtkWidget *window)
+{
 	gtk_widget_destroy(window);
 }
 
@@ -293,8 +301,11 @@ void pidgin_icon_theme_edit(void)
 		}
 	}
 
+#ifdef NOT_SADRUL
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, G_CALLBACK(save_icon_theme), dialog);
+#endif
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_APPLY, G_CALLBACK(use_icon_theme), dialog);
+	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, G_CALLBACK(close_icon_theme), dialog);
 	gtk_widget_show_all(dialog);
 	g_object_unref(sizegroup);
 }

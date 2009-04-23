@@ -42,10 +42,18 @@ prop_type_is_color(PidginBlistTheme *theme, const char *prop)
 	return G_IS_PARAM_SPEC_BOXED(spec);
 }
 
+#ifdef NOT_SADRUL
 static void
 save_blist_theme(GtkWidget *w, GtkWidget *window)
 {
 	/* TODO: SAVE! */
+	gtk_widget_destroy(window);
+}
+#endif
+
+static void
+close_blist_theme(GtkWidget *w, GtkWidget *window)
+{
 	gtk_widget_destroy(window);
 }
 
@@ -279,7 +287,11 @@ pidgin_blist_theme_edit(void)
 	}
 
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), TRUE);
+#ifdef NOT_SADRUL
 	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, G_CALLBACK(save_blist_theme), dialog);
+#endif
+	pidgin_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, G_CALLBACK(close_blist_theme), dialog);
+
 	gtk_widget_show_all(dialog);
 
 	g_object_unref(group);
