@@ -606,21 +606,21 @@ void qq_update_buddy_icon(PurpleAccount *account, const gchar *who, gint face)
 /* after getting info or modify myself, refresh the buddy list accordingly */
 static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 {
-	PurpleBuddy *buddy;
-	qq_data *qd;
-	qq_buddy_data *bd;
+	PurpleBuddy *buddy = NULL;
+	qq_data *qd = NULL;
+	qq_buddy_data *bd = NULL;
 	guint32 uid;
 	gchar *who;
 	gchar *alias_utf8;
-	PurpleAccount *account = purple_connection_get_account(gc);
 
+	PurpleAccount *account = purple_connection_get_account(gc);
 	qd = (qq_data *)purple_connection_get_protocol_data(gc);
 
 	uid = strtoul(segments[QQ_INFO_UID], NULL, 10);
 	who = uid_to_purple_name(uid);
-
 	qq_filter_str(segments[QQ_INFO_NICK]);
 	alias_utf8 = qq_to_utf8(segments[QQ_INFO_NICK], QQ_CHARSET_DEFAULT);
+
 	if (uid == qd->uid) {	/* it is me */
 		purple_debug_info("QQ", "Got my info\n");
 		qd->my_icon = strtol(segments[QQ_INFO_FACE], NULL, 10);
@@ -631,12 +631,14 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 		buddy = qq_buddy_find_or_new(gc, uid);
 	} else {
 		buddy = purple_find_buddy(gc->account, who);
+		/* purple_debug_info("QQ", "buddy=%p\n", (void*)buddy); */
 	}
 
 	/* if the buddy is null, the api will catch it and return null here */
 	bd = purple_buddy_get_protocol_data(buddy);
+	/* purple_debug_info("QQ", "bd=%p\n", (void*)bd); */
 
-	if (buddy == NULL || bd) {
+	if (bd == NULL || buddy == NULL) {
 		g_free(who);
 		g_free(alias_utf8);
 		return;
@@ -646,6 +648,7 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 	bd->age = strtol(segments[QQ_INFO_AGE], NULL, 10);
 	bd->gender = strtol(segments[QQ_INFO_GENDER], NULL, 10);
 	bd->face = strtol(segments[QQ_INFO_FACE], NULL, 10);
+
 	if (alias_utf8 != NULL) {
 		if (bd->nickname) g_free(bd->nickname);
 		bd->nickname = g_strdup(alias_utf8);

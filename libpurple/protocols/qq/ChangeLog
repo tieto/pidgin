@@ -1,3 +1,6 @@
+2009.04.23 - flos <lonicerae(at)gmail.com>
+	* Fixed a bug of updating buddy who is not in user's buddy list
+
 2009.02.25 - flos <lonicerae(at)gmail.com>
 	* Changed text 'ZipCode' to 'Postal Code'
 
