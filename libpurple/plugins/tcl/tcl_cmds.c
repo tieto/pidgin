@@ -683,8 +683,9 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *list, *elem;
-	const char *cmds[] = { "account", "displayname", "handle", "list", NULL };
-	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
+	const char *cmds[] = { "account", "displayname", "handle", "list", "state", NULL };
+	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE,
+	       CMD_CONN_LIST, CMD_CONN_STATE } cmd;
 	int error;
 	GList *cur;
 	PurpleConnection *gc;
@@ -738,6 +739,25 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
 		Tcl_SetObjResult(interp, list);
+		break;
+	case CMD_CONN_STATE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "gc");
+			return TCL_ERROR;
+		}
+		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		switch (purple_connection_get_state(gc)) {
+		case PURPLE_DISCONNECTED:
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("disconnected", -1));
+			break;
+		case PURPLE_CONNECTED:
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("connected", -1));
+			break;
+		case PURPLE_CONNECTING:
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("connecting", -1));
+			break;
+		}
 		break;
 	}
 

@@ -6629,7 +6629,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	purple_signals_disconnect_by_handle(gtkblist);
 
 	if (gtkblist->headline_close)
-		gdk_pixbuf_unref(gtkblist->headline_close);
+		g_object_unref(G_OBJECT(gtkblist->headline_close));
 
 	gtk_widget_destroy(gtkblist->window);
 

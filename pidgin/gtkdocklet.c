@@ -482,7 +482,7 @@ activate_saved_status_cb(GtkMenuItem *menuitem, gpointer user_data)
 }
 
 static GtkWidget *
-new_menu_item_with_status_icon(GtkWidget *menu, const char *str, PurpleStatusPrimitive primitive, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+new_menu_item_with_status_icon(GtkWidget *menu, const char *str, PurpleStatusPrimitive primitive, GCallback cb, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
 	GdkPixbuf *pixbuf;
@@ -493,8 +493,8 @@ new_menu_item_with_status_icon(GtkWidget *menu, const char *str, PurpleStatusPri
 	if (menu)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	if (sf)
-		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+	if (cb)
+		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
 	pixbuf = pidgin_create_status_icon(primitive, menu, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 	image = gtk_image_new_from_pixbuf(pixbuf);

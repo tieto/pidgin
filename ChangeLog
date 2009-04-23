@@ -26,6 +26,8 @@ version 2.6.0 (??/??/2009):
 	IRC:
 	* Correctly handle WHOIS for users who are joined to a large number of
 	  channels.
+	* Notify the user if a /nick command fails, rather than trying
+	  fallback nicks.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -41,6 +43,9 @@ version 2.6.0 (??/??/2009):
 	  new dialog box every time a pounce is triggered. (Jorge Villaseñor) 
 	* The New Account dialog is now broken into three tabs.  Proxy
 	  configuration has been moved from the Advanced tab to the new tab.
+	* The nicks of the persons who leave the chatroom are italicized in the
+	  chat's conversation history. The nicks are un-italicized when they
+	  rejoin.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

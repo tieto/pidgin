@@ -4034,6 +4034,11 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 				"send-name");
 		g_object_get(tag, "foreground-gdk", &color, NULL);
 	} else {
+		GtkTextTag *tag;
+		if ((tag = get_buddy_tag(conv, name, 0, FALSE)))
+			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_NORMAL, NULL);
+		if ((tag = get_buddy_tag(conv, name, PURPLE_MESSAGE_NICK, FALSE)))
+			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_NORMAL, NULL);
 		color = (GdkColor*)get_nick_color(gtkconv, name);
 	}
 
@@ -6063,6 +6068,7 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 	PurpleConvChatBuddy *cbuddy;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
+	GtkTextTag *tag;
 	int f = 1;
 
 	chat    = PURPLE_CONV_CHAT(conv);
@@ -6090,6 +6096,11 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 		g_free(val);
 	}
 
+	if ((tag = get_buddy_tag(conv, old_name, 0, FALSE)))
+		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
+	if ((tag = get_buddy_tag(conv, old_name, PURPLE_MESSAGE_NICK, FALSE)))
+		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
+
 	if (!purple_conv_chat_find_user(chat, old_name))
 		return;
 
@@ -6112,6 +6123,7 @@ pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 	char tmp[BUF_LONG];
 	int num_users;
 	gboolean f;
+	GtkTextTag *tag;
 
 	chat    = PURPLE_CONV_CHAT(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -6144,6 +6156,11 @@ pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 
 			g_free(val);
 		} while (f);
+
+		if ((tag = get_buddy_tag(conv, l->data, 0, FALSE)))
+			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
+		if ((tag = get_buddy_tag(conv, l->data, PURPLE_MESSAGE_NICK, FALSE)))
+			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
 	}
 
 	g_snprintf(tmp, sizeof(tmp),
