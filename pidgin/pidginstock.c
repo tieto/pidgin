@@ -409,6 +409,16 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 	}
 }
 
+static void
+reload_settings(void)
+{
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkSettings *setting = NULL;
+	setting = gtk_settings_get_default();
+	gtk_rc_reset_styles(setting);
+#endif
+}
+
 /*****************************************************************************
  * Public API functions
  *****************************************************************************/
@@ -471,6 +481,7 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
+	reload_settings();
 }
 
 void
@@ -553,6 +564,7 @@ pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme)
 
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
+	reload_settings();
 }
 
 void
