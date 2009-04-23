@@ -2512,13 +2512,69 @@ pidgin_conv_get_tab_icons(PurpleConversation *conv)
 	return get_prpl_icon_list(account);
 }
 
+static const char *
+pidgin_conv_get_icon_stock(PurpleConversation *conv)
+{
+	PurpleAccount *account = NULL;
+	const char *stock = NULL;
+
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	account = purple_conversation_get_account(conv);
+	g_return_val_if_fail(account != NULL, NULL);
+
+	/* Use the buddy icon, if possible */
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		const char *name = NULL;
+		PurpleBuddy *b;
+		name = purple_conversation_get_name(conv);
+		b = purple_find_buddy(account, name);
+		if (b != NULL) {
+			PurplePresence *p = purple_buddy_get_presence(b);
+			PurpleStatus *active = purple_presence_get_active_status(p);
+			PurpleStatusType *type = purple_status_get_type(active);
+			PurpleStatusPrimitive prim = purple_status_type_get_primitive(type);
+
+			switch (prim) {
+				case PURPLE_STATUS_UNAVAILABLE:
+					stock = PIDGIN_STOCK_STATUS_BUSY;
+					break;
+				case PURPLE_STATUS_AWAY:
+					stock = PIDGIN_STOCK_STATUS_AWAY;
+					break;
+				case PURPLE_STATUS_EXTENDED_AWAY:
+					stock = PIDGIN_STOCK_STATUS_XA;
+					break;
+				case PURPLE_STATUS_INVISIBLE:
+					stock = PIDGIN_STOCK_STATUS_INVISIBLE;
+					break;
+				case PURPLE_STATUS_OFFLINE:
+					stock = PIDGIN_STOCK_STATUS_OFFLINE;
+					break;
+				default:
+					stock = PIDGIN_STOCK_STATUS_AVAILABLE;
+					break;
+			}
+		} else {
+			stock = PIDGIN_STOCK_STATUS_PERSON;
+		}
+	} else {
+		stock = PIDGIN_STOCK_STATUS_CHAT;
+	}
+
+	return stock;
+}
+
 static GdkPixbuf *
 pidgin_conv_get_icon(PurpleConversation *conv, GtkWidget *parent, const char *icon_size)
 {
 	PurpleAccount *account = NULL;
 	const char *name = NULL;
+	const char *stock = NULL;
 	GdkPixbuf *status = NULL;
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	GtkIconSize size;
+
 	g_return_val_if_fail(conv != NULL, NULL);
 
 	account = purple_conversation_get_account(conv);
@@ -2531,40 +2587,17 @@ pidgin_conv_get_icon(PurpleConversation *conv, GtkWidget *parent, const char *ic
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleBuddy *b = purple_find_buddy(account, name);
 		if (b != NULL) {
-			PurplePresence *p = purple_buddy_get_presence(b);
 			/* I hate this hack.  It fixes a bug where the pending message icon
 			 * displays in the conv tab even though it shouldn't.
 			 * A better solution would be great. */
 			if (ops && ops->update)
 				ops->update(NULL, (PurpleBlistNode*)b);
-
-			/* XXX Seanegan: We really need a util function to return a pixbuf for a Presence to avoid all this switching */
-			if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AWAY))
-				status = pidgin_create_status_icon(PURPLE_STATUS_AWAY, parent, icon_size);
-			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_EXTENDED_AWAY))
-				status = pidgin_create_status_icon(PURPLE_STATUS_EXTENDED_AWAY, parent, icon_size);
-			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_OFFLINE))
-				status = pidgin_create_status_icon(PURPLE_STATUS_OFFLINE, parent, icon_size);
-			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AVAILABLE))
-				status = pidgin_create_status_icon(PURPLE_STATUS_AVAILABLE, parent, icon_size);
-			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_INVISIBLE))
-				status = pidgin_create_status_icon(PURPLE_STATUS_INVISIBLE, parent, icon_size);
-			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
-				status = pidgin_create_status_icon(PURPLE_STATUS_UNAVAILABLE, parent, icon_size);
 		}
 	}
 
-	/* If they don't have a buddy icon, then use the PRPL icon */
-	if (status == NULL) {
-		GtkIconSize size = gtk_icon_size_from_name(icon_size);
-		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-			status = gtk_widget_render_icon (parent, PIDGIN_STOCK_STATUS_PERSON,
-					size, "GtkWidget");
-		} else {
-			status = gtk_widget_render_icon (parent, PIDGIN_STOCK_STATUS_CHAT,
-					size, "GtkWidget");
-		}
-	}
+	stock = pidgin_conv_get_icon_stock(conv);
+	size = gtk_icon_size_from_name(icon_size);
+	status = gtk_widget_render_icon (parent, stock, size, "GtkWidget");
 	return status;
 }
 
@@ -2583,8 +2616,8 @@ update_tab_icon(PurpleConversation *conv)
 	PidginWindow *win;
 	GList *l;
 	GdkPixbuf *status = NULL;
-	GdkPixbuf *infopane_status = NULL;
 	GdkPixbuf *emblem = NULL;
+	const char *infopane_status = NULL;
 
 	g_return_if_fail(conv != NULL);
 
@@ -2594,7 +2627,7 @@ update_tab_icon(PurpleConversation *conv)
 		return;
 
 	status = pidgin_conv_get_tab_icon(conv, TRUE);
-	infopane_status = pidgin_conv_get_tab_icon(conv, FALSE);
+	infopane_status = pidgin_conv_get_icon_stock(conv);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleBuddy *b = purple_find_buddy(conv->account, conv->name);
@@ -3941,12 +3974,9 @@ generate_send_to_items(PidginWindow *win)
 	update_send_to_selection(win);
 }
 
-static GdkPixbuf *
+static const char *
 get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvChatBuddyFlags flags)
 {
-        PidginConversation *gtkconv = PIDGIN_CONVERSATION(chat->conv);
-	GdkPixbuf *pixbuf, *scale, *scale2;
-	char *filename;
 	const char *image = NULL;
 
 	if (flags & PURPLE_CBFLAGS_FOUNDER) {
@@ -3962,28 +3992,7 @@ get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvCha
 	} else {
 		return NULL;
 	}
-
-	pixbuf = gtk_widget_render_icon (gtkconv->tab_cont, image, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
-				 	 "GtkTreeView");
-
-	if (!pixbuf)
-		return NULL;
-
-	scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-	g_object_unref(pixbuf);
-
-	if (flags && purple_conv_chat_is_user_ignored(chat, name)) {
-/* TODO: the .../status/default directory isn't installed, should it be? */
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "default", "ignored.png", NULL);
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
-		scale2 = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-		g_object_unref(pixbuf);
-		gdk_pixbuf_composite(scale2, scale, 0, 0, 16, 16, 0, 0, 1, 1, GDK_INTERP_BILINEAR, 192);
-		g_object_unref(scale2);
-	}
-
-	return scale;
+	return image;
 }
 
 static void
@@ -3995,7 +4004,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	PurpleConnection *gc;
 	PurplePluginProtocolInfo *prpl_info;
 	GtkListStore *ls;
-	GdkPixbuf *pixbuf;
+	const char *stock;
 	GtkTreeIter iter;
 	gboolean is_me = FALSE;
 	gboolean is_buddy;
@@ -4017,7 +4026,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 
 	ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list)));
 
-	pixbuf = get_chat_buddy_status_icon(chat, name, flags);
+	stock = get_chat_buddy_status_icon(chat, name, flags);
 
 	if (!strcmp(chat->nick, purple_normalize(conv->account, old_name != NULL ? old_name : name)))
 		is_me = TRUE;
@@ -4052,7 +4061,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 * Inserting in the "wrong" location has no visible ill effects. - F.P.
 */
 			-1, /* "row" */
-			CHAT_USERS_ICON_COLUMN,  pixbuf,
+			CHAT_USERS_ICON_STOCK_COLUMN,  stock,
 			CHAT_USERS_ALIAS_COLUMN, alias,
 			CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
 			CHAT_USERS_NAME_COLUMN,  name,
@@ -4063,7 +4072,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 #else
 	gtk_list_store_append(ls, &iter);
 	gtk_list_store_set(ls, &iter,
-			CHAT_USERS_ICON_COLUMN,  pixbuf,
+			CHAT_USERS_ICON_STOCK_COLUMN,  stock,
 			CHAT_USERS_ALIAS_COLUMN, alias,
 			CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
 			CHAT_USERS_NAME_COLUMN,  name,
@@ -4073,8 +4082,6 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 			-1);
 #endif
 
-	if (pixbuf)
-		g_object_unref(pixbuf);
 	if (is_me && color)
 		gdk_color_free(color);
 	g_free(alias_key);
@@ -4721,16 +4728,18 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT,
-							GDK_TYPE_COLOR, G_TYPE_INT);
+							GDK_TYPE_COLOR, G_TYPE_INT, G_TYPE_STRING);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(ls), CHAT_USERS_ALIAS_KEY_COLUMN,
 									sort_chat_users, NULL, NULL);
 
 	list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
 
 	rend = gtk_cell_renderer_pixbuf_new();
-
+	g_object_set(G_OBJECT(rend),
+				 "stock-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
+				 NULL);
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
-												   "pixbuf", CHAT_USERS_ICON_COLUMN, NULL);
+			"stock-id", CHAT_USERS_ICON_STOCK_COLUMN, NULL);
 	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 	ul_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width");
@@ -4757,7 +4766,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 				 "foreground-set", TRUE,
 				 "weight-set", TRUE,
 				 NULL);
-        g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
+	g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
 
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
 	                                               "text", CHAT_USERS_ALIAS_COLUMN,
@@ -4848,7 +4857,7 @@ setup_common_pane(PidginConversation *gtkconv)
 		pidgin_conv_create_tooltip, NULL);
 
 	gtkconv->infopane = gtk_cell_view_new();
-	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF);
+	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF);
 	gtk_cell_view_set_model(GTK_CELL_VIEW(gtkconv->infopane),
 				GTK_TREE_MODEL(gtkconv->infopane_model));
 	g_object_unref(gtkconv->infopane_model);
@@ -4871,8 +4880,10 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "pixbuf", CONV_ICON_COLUMN, NULL);
-	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "stock-id", CONV_ICON_COLUMN, NULL);
+	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0,
+			"stock-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
+			NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, TRUE);
