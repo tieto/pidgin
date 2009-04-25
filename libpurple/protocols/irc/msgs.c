@@ -1019,6 +1019,7 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 				    _("Nickname in use"), buf);
 		g_free(buf);
 		g_free(irc->reqnick);
+		irc->reqnick = NULL;
 		return;
 	}
 
