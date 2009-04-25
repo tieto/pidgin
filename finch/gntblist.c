@@ -935,7 +935,7 @@ get_display_name(PurpleBlistNode *node)
 	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
 		return purple_group_get_name((PurpleGroup*)node);
 
-	snprintf(text, sizeof(text) - 1, "%s %s", status, name);
+	g_snprintf(text, sizeof(text) - 1, "%s %s", status, name);
 
 	return text;
 }
@@ -2642,7 +2642,7 @@ reconstruct_grouping_menu(void)
 		char menuid[128];
 		FinchBlistManager *manager = iter->data;
 		GntMenuItem *item = gnt_menuitem_new(_(manager->name));
-		snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
+		g_snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
 		gnt_menuitem_set_id(GNT_MENU_ITEM(item), menuid);
 		gnt_menu_add_item(GNT_MENU(subsub), item);
 		g_object_set_data_full(G_OBJECT(item), "grouping-id", g_strdup(manager->id), g_free);
