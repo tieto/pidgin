@@ -236,8 +236,7 @@ purple_smileys_find_by_checksum(const char *checksum);
 /**
  * Returns the directory used to store custom smiley cached files.
  *
- * The default directory is PURPLEDIR/custom_smiley, unless otherwise specified
- * by purple_buddy_icons_set_cache_dir().
+ * The default directory is PURPLEDIR/custom_smiley.
  *
  * @return The directory in which to store custom smileys cached files.
  */
