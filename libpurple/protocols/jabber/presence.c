@@ -21,6 +21,7 @@
 #include "internal.h"
 
 #include "account.h"
+#include "cipher.h"
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
@@ -150,7 +151,8 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
 	/* check if there are any differences to the <presence> and send them in that case */
 	if (allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
-		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
+		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash) ||
+		js->old_idle != js->idle) {
 		js->allowBuzz = allowBuzz;
 
 		presence = jabber_presence_create_js(js, state, stripped, priority);
@@ -185,6 +187,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		js->old_avatarhash = g_strdup(js->avatar_hash);
 		js->old_state = state;
 		js->old_priority = priority;
+		js->old_idle = js->idle;
 	}
 	g_free(stripped);
 
@@ -267,6 +270,16 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		g_free(pstr);
 	}
 
+	/* if we are idle and not offline, include idle */
+	if (js->idle && state != JABBER_BUDDY_STATE_UNAVAILABLE) {
+		xmlnode *query = xmlnode_new_child(presence, "query");
+		gchar seconds[10];
+		g_snprintf(seconds, 10, "%d", (int) (time(NULL) - js->idle));
+		
+		xmlnode_set_namespace(query, "jabber:iq:last");
+		xmlnode_set_attrib(query, "seconds", seconds);
+	}
+	
 	/* JEP-0115 */
 	c = xmlnode_new_child(presence, "c");
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
@@ -362,12 +375,19 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
 				(text = xmlnode_get_data(photo)))) {
-			char *hash;
+			unsigned char hashval[20];
+			char hash[41], *p;
+			int i;
 
 			data = purple_base64_decode(text, &size);
-			hash = jabber_calculate_data_sha1sum(data, size);
+
+			purple_cipher_digest_region("sha1", data, size,
+					sizeof(hashval), hashval, NULL);
+			p = hash;
+			for(i=0; i<20; i++, p+=2)
+				snprintf(p, 3, "%02x", hashval[i]);
+
 			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
-			g_free(hash);
 			g_free(text);
 		}
 	}
@@ -433,6 +453,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberBuddyResource *jbr = NULL, *found_jbr = NULL;
 	PurpleConvChatBuddyFlags flags = PURPLE_CBFLAGS_NONE;
 	gboolean delayed = FALSE;
+	const gchar *stamp = NULL; /* from <delayed/> element */
 	PurpleBuddy *b = NULL;
 	char *buddy_name;
 	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
@@ -440,7 +461,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	gboolean muc = FALSE;
 	char *avatar_hash = NULL;
 	xmlnode *caps = NULL;
-
+	int idle = 0;
+	
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
 		return;
 
@@ -516,19 +538,19 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				priority = atoi(p);
 				g_free(p);
 			}
-		} else if(xmlns == NULL) {
-			/* The rest of the cases used to check xmlns individually. */
-			continue;
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
-		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
+			stamp = xmlnode_get_attrib(y, "stamp");
+		} else if(xmlns && !strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
 			caps = y; /* store for later, when creating buddy resource */
 		} else if(!strcmp(y->name, "x")) {
-			if(!strcmp(xmlns, "jabber:x:delay")) {
+			const char *xmlns = xmlnode_get_namespace(y);
+			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
-			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
+				stamp = xmlnode_get_attrib(y, "stamp");
+			} else if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 				xmlnode *z;
 
 				muc = TRUE;
@@ -571,16 +593,33 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 							flags |= PURPLE_CBFLAGS_VOICE;
 					}
 				}
-			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
+			} else if(xmlns && !strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
 					g_free(avatar_hash);
 					avatar_hash = xmlnode_get_data(photo);
 				}
 			}
+		} else if (!strcmp(y->name, "query") && 
+			!strcmp(xmlnode_get_namespace(y), "jabber:iq:last")) {
+			/* resource has specified idle */
+			const gchar *seconds = xmlnode_get_attrib(y, "seconds");
+			if (seconds) {
+				/* we may need to take "delayed" into account here */
+				idle = atoi(seconds);
+			}
 		}
 	}
 
+	if (idle && delayed && stamp) {
+		/* if we have a delayed presence, we need to add the delay to the idle
+		 value */
+		time_t offset = time(NULL) - purple_str_to_time(stamp, TRUE, NULL, NULL,
+			NULL);
+		purple_debug_info("jabber", "got delay %s yielding %ld s offset\n",
+			stamp, offset);
+		idle += offset; 
+	}
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 1;
@@ -755,6 +794,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else {
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
 					state, status);
+			if (idle) {
+				jbr->idle = time(NULL) - idle;
+			} else {
+				jbr->idle = 0;
+			}
+			
 			if(caps) {
 				const char *node = xmlnode_get_attrib(caps,"node");
 				const char *ver = xmlnode_get_attrib(caps,"ver");
@@ -773,6 +818,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
 			jabber_google_presence_incoming(js, buddy_name, found_jbr);
 			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
+			purple_prpl_got_user_idle(js->gc->account, buddy_name, found_jbr->idle, found_jbr->idle);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}

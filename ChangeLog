@@ -28,6 +28,7 @@ version 2.6.0 (??/??/2009):
 	  type 'headline'.
 	* The Ad-Hoc commands associated with our server are now always shown at
 	  login.
+	* Support showing and reporting idle times (XEP-0256)
 
 	IRC:
 	* Correctly handle WHOIS for users who are joined to a large number of

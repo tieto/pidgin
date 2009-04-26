@@ -66,6 +66,7 @@ typedef struct _JabberBuddyResource {
 	int priority;
 	JabberBuddyState state;
 	char *status;
+	time_t idle;
 	JabberCapabilities capabilities;
 	char *thread_id;
 	enum {
