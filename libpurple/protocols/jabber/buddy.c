@@ -98,36 +98,41 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 
 	for(l = jb->resources; l; l = l->next)
 	{
-		if(!jbr && !resource) {
-			jbr = l->data;
-		} else if(!resource) {
-			if(((JabberBuddyResource *)l->data)->priority > jbr->priority)
-				jbr = l->data;
-			else if(((JabberBuddyResource *)l->data)->priority == jbr->priority) {
+		JabberBuddyResource *tmp = (JabberBuddyResource *) l->data;
+		if (!jbr && !resource) {
+			jbr = tmp;
+		} else if (!resource) {
+			if (tmp->priority > jbr->priority)
+				jbr = tmp;
+			else if (tmp->priority == jbr->priority) {
 				/* Determine if this resource is more available than the one we've currently chosen */
-				switch(((JabberBuddyResource *)l->data)->state) {
+				switch(tmp->state) {
 					case JABBER_BUDDY_STATE_ONLINE:
 					case JABBER_BUDDY_STATE_CHAT:
 						/* This resource is online/chatty. Prefer to one which isn't either. */
-						if ((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
-							jbr = l->data;
+						if (((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
+							|| (jbr->idle && !tmp->idle)
+							|| (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
+							jbr = tmp;
 						break;
 					case JABBER_BUDDY_STATE_AWAY:
 					case JABBER_BUDDY_STATE_DND:
 						/* This resource is away/dnd. Prefer to one which is extended away, unavailable, or unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_XA) || (jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) ||
+						if (((jbr->state == JABBER_BUDDY_STATE_XA) || (jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) ||
 							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							jbr = l->data;
+							|| (jbr->idle && !tmp->idle)
+							|| (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
+							jbr = tmp;
 						break;
 					case JABBER_BUDDY_STATE_XA:
 						/* This resource is extended away. That's better than unavailable or unknown. */
 						if ((jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) || (jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							jbr = l->data;
+							jbr = tmp;
 						break;
 					case JABBER_BUDDY_STATE_UNAVAILABLE:
 						/* This resource is unavailable. That's better than unknown. */
 						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							jbr = l->data;
+							jbr = tmp;
 						break;
 					case JABBER_BUDDY_STATE_UNKNOWN:
 					case JABBER_BUDDY_STATE_ERROR:
@@ -135,9 +140,9 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 						break;
 				}
 			}
-		} else if(((JabberBuddyResource *)l->data)->name) {
-			if(!strcmp(((JabberBuddyResource *)l->data)->name, resource)) {
-				jbr = l->data;
+		} else if(tmp->name) {
+			if(!strcmp(tmp->name, resource)) {
+				jbr = tmp;
 				break;
 			}
 		}
@@ -1638,12 +1643,49 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 				if(seconds) {
 					char *end = NULL;
 					long sec = strtol(seconds, &end, 10);
-					if(end != seconds) {
+                    JabberBuddy *jb = NULL;
+                    char *resource = NULL;
+                    char *buddy_name = NULL;
+					JabberBuddyResource *jbr = NULL;
+                    
+                    if(end != seconds) {
 						JabberBuddyInfoResource *jbir = g_hash_table_lookup(jbi->resources, resource_name);
 						if(jbir) {
 							jbir->idle_seconds = sec;
 						}
 					}
+                    /* Update the idle time of the buddy resource, if we got it. 
+                     This will correct the value when a server doesn't mark 
+                     delayed presence and we got the presence when signing on */
+                    jb = jabber_buddy_find(js, from, FALSE);
+                    if (jb) {
+                        resource = jabber_get_resource(from);
+                        buddy_name = jabber_get_bare_jid(from);
+                        /* if the resource already has an idle time set, we
+                         must have gotten it originally from a presence. In
+                         this case we update it. Otherwise don't update it, to
+                         avoid setting an idle and not getting informed about
+                         the resource getting unidle */
+                        if (resource && buddy_name) {
+                            jbr = jabber_buddy_find_resource(jb, resource);
+                            
+                            if (jbr->idle) {
+                                if (sec) {
+                                    jbr->idle = time(NULL) - sec;
+                                } else {
+                                    jbr->idle = 0;
+                                }
+                            
+                                if (jbr == 
+                                    jabber_buddy_find_resource(jb, NULL)) {
+                                    purple_prpl_got_user_idle(js->gc->account, 
+                                        buddy_name, jbr->idle, jbr->idle);
+                                }
+                            }
+                        }
+                        g_free(resource);
+                        g_free(buddy_name);
+                    }
 				}
 			}
 		}
