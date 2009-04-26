@@ -1701,10 +1701,11 @@ char *jabber_status_text(PurpleBuddy *b)
 	} else if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 		ret = g_strdup(jb->error_msg);
 	} else {
+		PurplePresence *presence = purple_buddy_get_presence(b);
+		PurpleStatus *status =purple_presence_get_active_status(presence);
 		char *stripped;
 
-		if(!(stripped = purple_markup_strip_html(jabber_buddy_get_status_msg(jb)))) {
-			PurplePresence *presence = purple_buddy_get_presence(b);
+		if(!(stripped = purple_markup_strip_html(purple_status_get_attr_string(status, "message")))) {
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *status = purple_presence_get_status(presence, "tune");
 				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));

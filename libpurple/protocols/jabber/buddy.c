@@ -202,21 +202,6 @@ void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource)
 	jabber_buddy_resource_free(jbr);
 }
 
-const char *jabber_buddy_get_status_msg(JabberBuddy *jb)
-{
-	JabberBuddyResource *jbr;
-
-	if(!jb)
-		return NULL;
-
-	jbr = jabber_buddy_find_resource(jb, NULL);
-
-	if(!jbr)
-		return NULL;
-
-	return jbr->status;
-}
-
 /*******
  * This is the old vCard stuff taken from the old prpl.  vCards, by definition
  * are a temporary thing until jabber can get its act together and come up
