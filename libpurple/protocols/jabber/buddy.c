@@ -1104,8 +1104,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	}
 
 	/* Republish our vcard if the photo is different than the server's */
-	if ((!vcard_hash && js->initial_avatar_hash) ||
-		 (vcard_hash && (!js->initial_avatar_hash || strcmp(vcard_hash, js->initial_avatar_hash)))) {
+	if (!purple_strequal(vcard_hash, js->initial_avatar_hash)) {
 		PurpleAccount *account = purple_connection_get_account(js->gc);
 		jabber_set_info(js->gc, purple_account_get_user_info(account));
 	} else if (js->initial_avatar_hash) {

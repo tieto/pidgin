@@ -57,7 +57,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 		return;
 
 	if (!img) {
-		if (ns == NULL || !strcmp(ns, NS_AVATAR_0_12_METADATA)) {
+		if (ns == NULL || g_str_equal(ns, NS_AVATAR_0_12_METADATA)) {
 			/* remove the metadata */
 			publish = xmlnode_new("publish");
 			xmlnode_set_attrib(publish, "node", NS_AVATAR_0_12_METADATA);
@@ -71,7 +71,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 			jabber_pep_publish(js, publish);
 		}
 
-		if (ns == NULL || !strcmp(ns, NS_AVATAR_1_1_METADATA)) {
+		if (ns == NULL || g_str_equal(ns, NS_AVATAR_1_1_METADATA)) {
 			/* Now for the XEP-0084 v1.1 namespace, where we publish an empty
 			 * metadata node instead of a <stop/> element */
 			publish = xmlnode_new("publish");
@@ -106,7 +106,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 			} ihdr;
 		} *png = purple_imgstore_get_data(img); /* ATTN: this is in network byte order! */
 
-		/* check if the data is a valid png file (well, at least to some extend) */
+		/* check if the data is a valid png file (well, at least to some extent) */
 		if(png->signature[0] == 0x89 &&
 		   png->signature[1] == 0x50 &&
 		   png->signature[2] == 0x4e &&
@@ -132,7 +132,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 			char *base64avatar = purple_base64_encode(purple_imgstore_get_data(img),
 			                                          purple_imgstore_get_size(img));
 
-			if (ns == NULL || !strcmp(ns, NS_AVATAR_0_12_METADATA)) {
+			if (ns == NULL || g_str_equal(ns, NS_AVATAR_0_12_METADATA)) {
 				publish = xmlnode_new("publish");
 				xmlnode_set_attrib(publish, "node", NS_AVATAR_0_12_DATA);
 
@@ -147,7 +147,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 				jabber_pep_publish(js, publish);
 			}
 
-			if (ns == NULL || !strcmp(ns, NS_AVATAR_1_1_METADATA)) {
+			if (ns == NULL || g_str_equal(ns, NS_AVATAR_1_1_METADATA)) {
 				publish = xmlnode_new("publish");
 				xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_DATA);
 
@@ -169,8 +169,8 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 			widthstring = g_strdup_printf("%u", width);
 			heightstring = g_strdup_printf("%u", height);
 
-			/* next step: publish the metadata to the old namespace */
-			if (ns == NULL || !strcmp(ns, NS_AVATAR_0_12_METADATA)) {
+			if (ns == NULL || g_str_equal(ns, NS_AVATAR_0_12_METADATA)) {
+				/* next step: publish the metadata to the old namespace */
 				publish = xmlnode_new("publish");
 				xmlnode_set_attrib(publish, "node", NS_AVATAR_0_12_METADATA);
 
@@ -190,7 +190,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 				jabber_pep_publish(js, publish);
 			}
 
-			if (ns == NULL || !strcmp(ns, NS_AVATAR_1_1_METADATA)) {
+			if (ns == NULL || g_str_equal(ns, NS_AVATAR_1_1_METADATA)) {
 				/* publish the metadata to the new namespace */
 				publish = xmlnode_new("publish");
 				xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_METADATA);
@@ -243,8 +243,7 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 		return;
 
 	/* Publish ours if it's different than the server's */
-	if ((!server_hash && js->initial_avatar_hash) ||
-		 (server_hash && (!js->initial_avatar_hash || strcmp(server_hash, js->initial_avatar_hash)))) {
+	if (!purple_strequal(server_hash, js->initial_avatar_hash)) {
 		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 		jabber_avatar_set(js, img, ns);
 		purple_imgstore_unref(img);
@@ -309,8 +308,8 @@ do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items)
 
 	ns = xmlnode_get_namespace(data);
 	/* Make sure the namespace is one of the two valid possibilities */
-	if (!ns || (strcmp(ns, NS_AVATAR_0_12_DATA) &&
-	            strcmp(ns, NS_AVATAR_1_1_DATA)))
+	if (!ns || (!g_str_equal(ns, NS_AVATAR_0_12_DATA) &&
+	            !g_str_equal(ns, NS_AVATAR_1_1_DATA)))
 		return;
 
 	checksum = xmlnode_get_attrib(item,"id");
@@ -353,8 +352,8 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 
 	ns = xmlnode_get_namespace(metadata);
 	/* Make sure the namespace is one of the two valid possibilities */
-	if (!ns || (strcmp(ns, NS_AVATAR_0_12_METADATA) &&
-	            strcmp(ns, NS_AVATAR_1_1_METADATA)))
+	if (!ns || (!g_str_equal(ns, NS_AVATAR_0_12_METADATA) &&
+	            !g_str_equal(ns, NS_AVATAR_1_1_METADATA)))
 		return;
 
 	checksum = purple_buddy_icons_get_checksum_for_user(buddy);
@@ -393,7 +392,7 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 			/* the avatar might either be stored in a pep node, or on a HTTP(S) URL */
 			if(!url) {
 				const char *data_ns;
-				data_ns = (strcmp(ns, NS_AVATAR_0_12_METADATA) == 0 ?
+				data_ns = (g_str_equal(ns, NS_AVATAR_0_12_METADATA) ?
 				               NS_AVATAR_0_12_DATA : NS_AVATAR_1_1_DATA);
 				jabber_pep_request_item(js, from, data_ns, id,
 				                        do_buddy_avatar_update_data);
