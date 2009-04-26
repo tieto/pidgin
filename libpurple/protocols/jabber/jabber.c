@@ -2305,7 +2305,25 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
 
-	jabber_chat_change_topic(chat, args ? args[0] : NULL);
+	if (args && args[0] && *args[0])
+		jabber_chat_change_topic(chat, args[0]);
+	else {
+		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+		char *buf, *tmp, *tmp2;
+
+		if (cur) {
+			tmp = g_markup_escape_text(cur, -1);
+			tmp2 = purple_markup_linkify(tmp);
+			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
+			g_free(tmp);
+			g_free(tmp2);
+		} else
+			buf = g_strdup(_("No topic is set"));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "", buf,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+		g_free(buf);
+	}
+
 	return PURPLE_CMD_RET_OK;
 }
 

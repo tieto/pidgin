@@ -597,8 +597,11 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			/* The following tests expect xmlns != NULL */
 			continue;
 		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
-			if(!jm->subject)
+			if(!jm->subject) {
 				jm->subject = xmlnode_get_data(child);
+				if(!jm->subject)
+					jm->subject = g_strdup("");
+			}
 		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
