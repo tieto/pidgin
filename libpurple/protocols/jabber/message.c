@@ -24,6 +24,7 @@
 #include "notify.h"
 #include "server.h"
 #include "util.h"
+#include "adhoccommands.h"
 #include "buddy.h"
 #include "chat.h"
 #include "data.h"
@@ -607,8 +608,11 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			/* The following tests expect xmlns != NULL */
 			continue;
 		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
-			if(!jm->subject)
+			if(!jm->subject) {
 				jm->subject = xmlnode_get_data(child);
+				if(!jm->subject)
+					jm->subject = g_strdup("");
+			}
 		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
@@ -647,7 +651,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 							}
 
 							jabber_id_free(jid);
-						} else {
+						} else if (jm->type == JABBER_MESSAGE_NORMAL ||
+						           jm->type == JABBER_MESSAGE_CHAT) {
 							conv =
 								purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
 									who, account);
@@ -785,6 +790,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				}
 			} else {
 				jm->etc = g_list_append(jm->etc, child);
+			}
+		} else if (g_str_equal(child->name, "query")) {
+			const char *node = xmlnode_get_attrib(child, "node");
+			if (purple_strequal(xmlns, "http://jabber.org/protocol/disco#items")
+					&& purple_strequal(node, "http://jabber.org/protocol/commands")) {
+				jabber_adhoc_got_list(js, jm->from, child);
 			}
 		}
 	}

@@ -79,6 +79,10 @@ static void jabber_stream_init(JabberStream *js)
 						  "xmlns:stream='http://etherx.jabber.org/streams' "
 						  "version='1.0'>",
 						  js->user->domain);
+	if (js->reinit)
+		/* Close down the current stream to keep the XML parser happy */
+		jabber_parser_close_stream(js);
+
 	/* setup the parser fresh for each stream */
 	jabber_parser_setup(js);
 	jabber_send_raw(js, open_stream, -1);
@@ -628,6 +632,9 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 static void tls_init(JabberStream *js)
 {
+	/* Close down the current stream to keep the XML parser happy */
+	jabber_parser_close_stream(js);
+
 	purple_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
@@ -1335,6 +1342,16 @@ void jabber_close(PurpleConnection *gc)
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
 
+	if (!purple_account_get_current_error(purple_connection_get_account(gc))) {
+		/*
+		 * The common case is user-triggered, so we never receive a
+		 * </stream:stream> from the server when disconnecting, so silence the
+		 * parser's warnings. On errors, though, the server terminated the
+		 * connection, so we should have received a real </stream:stream>.
+		 */
+		jabber_parser_close_stream(js);
+	}
+
 	if (js->srv_query_data)
 		purple_srv_cancel(js->srv_query_data);
 
@@ -1684,10 +1701,11 @@ char *jabber_status_text(PurpleBuddy *b)
 	} else if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 		ret = g_strdup(jb->error_msg);
 	} else {
+		PurplePresence *presence = purple_buddy_get_presence(b);
+		PurpleStatus *status =purple_presence_get_active_status(presence);
 		char *stripped;
 
-		if(!(stripped = purple_markup_strip_html(jabber_buddy_get_status_msg(jb)))) {
-			PurplePresence *presence = purple_buddy_get_presence(b);
+		if(!(stripped = purple_markup_strip_html(purple_status_get_attr_string(status, "message")))) {
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *status = purple_presence_get_status(presence, "tune");
 				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));
@@ -2305,7 +2323,25 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
 
-	jabber_chat_change_topic(chat, args ? args[0] : NULL);
+	if (args && args[0] && *args[0])
+		jabber_chat_change_topic(chat, args[0]);
+	else {
+		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+		char *buf, *tmp, *tmp2;
+
+		if (cur) {
+			tmp = g_markup_escape_text(cur, -1);
+			tmp2 = purple_markup_linkify(tmp);
+			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
+			g_free(tmp);
+			g_free(tmp2);
+		} else
+			buf = g_strdup(_("No topic is set"));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "", buf,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+		g_free(buf);
+	}
+
 	return PURPLE_CMD_RET_OK;
 }
 

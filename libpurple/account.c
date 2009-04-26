@@ -2742,6 +2742,10 @@ purple_accounts_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_STATUS));
 
+	purple_signal_register(handle, "account-actions-changed",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+
 	purple_signal_register(handle, "account-alias-changed",
 						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
