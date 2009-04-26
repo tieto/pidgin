@@ -602,6 +602,18 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	                               );
 }
 
+static GdkPixbuf *
+pidgin_status_box_get_pixbuf(PidginStatusBox *status_box, const char *stock)
+{
+	GdkPixbuf *pixbuf;
+	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+
+	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), stock,
+	                                 icon_size, "PidginStatusBox");
+
+	return pixbuf;
+}
+
 /**
  * This updates the text displayed on the status box so that it shows
  * the current status.  This is the only function in this file that
@@ -707,6 +719,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	    }
 
 		stock = pidgin_stock_id_from_status_primitive(prim);
+		pixbuf = pidgin_status_box_get_pixbuf(status_box, stock);
 	}
 
 	if (status_box->account != NULL) {
@@ -921,7 +934,6 @@ add_popular_statuses(PidginStatusBox *statusbox)
 
 		/* Get an appropriate status icon */
 		prim = purple_savedstatus_get_type(saved);
-
 
 		if (purple_savedstatus_is_transient(saved))
 		{
@@ -2146,6 +2158,7 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 		}
 
 		stock = pidgin_stock_id_from_status_primitive(prim);
+		pixbuf = pidgin_status_box_get_pixbuf(status_box, stock);
 	}
 
 	gtk_list_store_append(status_box->dropdown_store, &iter);
