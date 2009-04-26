@@ -23,17 +23,17 @@
 #include "prefs.h"
 #include "debug.h"
 
+#include "adhoccommands.h"
 #include "buddy.h"
+#include "disco.h"
 #include "google.h"
 #include "iq.h"
-#include "disco.h"
 #include "jabber.h"
 #include "jingle/jingle.h"
+#include "pep.h"
 #include "presence.h"
 #include "roster.h"
-#include "pep.h"
-#include "adhoccommands.h"
-
+#include "useravatar.h"
 
 struct _jabber_disco_info_cb_data {
 	gpointer data;
@@ -341,7 +341,15 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 {
 	const char *ft_proxies;
 
+	/*
+	 * This *should* happen only if the server supports vcard-temp, but there
+	 * are apparently some servers that don't advertise it even though they
+	 * support it.
+	 */
 	jabber_vcard_fetch_mine(js);
+
+	if (js->pep)
+		jabber_avatar_fetch_mine(js);
 
 	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER)) {
 		/* If the server supports JABBER_CAP_GOOGLE_ROSTER; we will have already requested it */
