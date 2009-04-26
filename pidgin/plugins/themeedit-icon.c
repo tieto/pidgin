@@ -242,7 +242,7 @@ change_stock_image(GtkWidget *widget, GdkEventButton *event, GtkWidget *image)
 	return TRUE;
 }
 
-void pidgin_icon_theme_edit(void)
+void pidgin_icon_theme_edit(PurplePluginAction *unused)
 {
 	GtkWidget *dialog;
 	GtkWidget *box, *vbox;
