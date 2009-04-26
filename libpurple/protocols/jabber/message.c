@@ -24,6 +24,7 @@
 #include "notify.h"
 #include "server.h"
 #include "util.h"
+#include "adhoccommands.h"
 #include "buddy.h"
 #include "chat.h"
 #include "data.h"
@@ -779,6 +780,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				}
 			} else {
 				jm->etc = g_list_append(jm->etc, child);
+			}
+		} else if (g_str_equal(child->name, "query")) {
+			const char *node = xmlnode_get_attrib(child, "node");
+			if (purple_strequal(xmlns, "http://jabber.org/protocol/disco#items")
+					&& purple_strequal(node, "http://jabber.org/protocol/commands")) {
+				jabber_adhoc_got_list(js, jm->from, child);
 			}
 		}
 	}

@@ -4652,6 +4652,12 @@ static void account_modified(PurpleAccount *account, PidginBuddyList *gtkblist)
 }
 
 static void
+account_actions_changed(PurpleAccount *account, gpointer data)
+{
+	pidgin_blist_update_accounts_menu();
+}
+
+static void
 account_status_changed(PurpleAccount *account, PurpleStatus *old,
 					   PurpleStatus *new, PidginBuddyList *gtkblist)
 {
@@ -5837,6 +5843,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	purple_signal_connect(handle, "account-error-changed", gtkblist,
 	                      PURPLE_CALLBACK(update_account_error_state),
 	                      gtkblist);
+	purple_signal_connect(handle, "account-actions-changed", gtkblist,
+	                      PURPLE_CALLBACK(account_actions_changed), NULL);
 
 	handle = pidgin_account_get_handle();
 	purple_signal_connect(handle, "account-modified", gtkblist,
