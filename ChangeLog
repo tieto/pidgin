@@ -24,6 +24,8 @@ version 2.6.0 (??/??/2009):
 	  client supports it.
 	* The set_chat_topic function can unset the chat topic.
 	* Fix crash on connection with recent gstreamer0.10-plugins-bad.
+	* Don't create a new conversation window for incoming messages of
+	  type 'headline'.
 
 	IRC:
 	* Correctly handle WHOIS for users who are joined to a large number of

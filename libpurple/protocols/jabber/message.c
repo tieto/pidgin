@@ -640,7 +640,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 							}
 
 							jabber_id_free(jid);
-						} else {
+						} else if (jm->type == JABBER_MESSAGE_NORMAL ||
+						           jm->type == JABBER_MESSAGE_CHAT) {
 							conv =
 								purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
 									who, account);
