@@ -91,6 +91,7 @@ static const struct developer developers[] = {
 	{"Bartosz Oler",		NULL, NULL},
 	{"Etan 'deryni' Reisner",       NULL, NULL},
 	{"Tim 'marv' Ringenbach",		NULL, NULL},
+	{"Michael 'Maiku' Ruprecht",	N_("voice and video"), NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Evan Schoenberg",		NULL, NULL},
