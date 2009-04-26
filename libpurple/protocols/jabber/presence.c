@@ -359,8 +359,6 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 	JabberBuddy *jb = NULL;
 	xmlnode *vcard, *photo, *binval;
 	char *text;
-	guchar *data;
-	gsize size;
 
 	if(!from)
 		return;
@@ -375,19 +373,15 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
 				(text = xmlnode_get_data(photo)))) {
-			unsigned char hashval[20];
-			char hash[41], *p;
-			int i;
+			guchar *data;
+			gchar *hash;
+			gsize size;
 
 			data = purple_base64_decode(text, &size);
-
-			purple_cipher_digest_region("sha1", data, size,
-					sizeof(hashval), hashval, NULL);
-			p = hash;
-			for(i=0; i<20; i++, p+=2)
-				snprintf(p, 3, "%02x", hashval[i]);
+			hash = jabber_calculate_data_sha1sum(data, size);
 
 			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
+			g_free(hash);
 			g_free(text);
 		}
 	}
