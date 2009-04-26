@@ -597,37 +597,25 @@ void jabber_chat_register(JabberChat *chat)
 /* merge this with the function below when we get everyone on the same page wrt /commands */
 void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 {
-	if(topic && *topic) {
-		JabberMessage *jm;
-		jm = g_new0(JabberMessage, 1);
-		jm->js = chat->js;
-		jm->type = JABBER_MESSAGE_GROUPCHAT;
+	JabberMessage *jm;
+
+	jm = g_new0(JabberMessage, 1);
+	jm->js = chat->js;
+	jm->type = JABBER_MESSAGE_GROUPCHAT;
+	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
+
+	if (topic && *topic)
 		jm->subject = purple_markup_strip_html(topic);
-		jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
-		jabber_message_send(jm);
-		jabber_message_free(jm);
-	} else {
-		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(chat->conv));
-		char *buf, *tmp, *tmp2;
+	else
+		jm->subject = g_strdup("");
 
-		if(cur) {
-			tmp = g_markup_escape_text(cur, -1);
-			tmp2 = purple_markup_linkify(tmp);
-			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
-			g_free(tmp);
-			g_free(tmp2);
-		} else
-			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf,
-				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
-		g_free(buf);
-	}
-
+	jabber_message_send(jm);
+	jabber_message_free(jm);
 }
 
 void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberChat *chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)

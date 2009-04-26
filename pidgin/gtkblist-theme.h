@@ -341,7 +341,7 @@ void pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, c
  * Sets the text color and font to be used for expanded groups.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -357,7 +357,7 @@ void pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, 
  * Sets the text color and font to be used for expanded groups.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -373,7 +373,7 @@ void pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColo
  * Sets the text color and font to be used for expanded contacts.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -381,7 +381,7 @@ void pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, const Pid
  * Sets the text color and font to be used for online buddies.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -389,7 +389,7 @@ void pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, const Pidg
  * Sets the text color and font to be used for away and idle buddies.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -397,7 +397,7 @@ void pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, const Pidgin
  * Sets the text color and font to be used for offline buddies.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -405,7 +405,7 @@ void pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, const Pid
  * Sets the text color and font to be used for idle buddies.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -413,7 +413,7 @@ void pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, const Pidgin
  * Sets the text color and font to be used for buddies with unread messages.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -422,7 +422,7 @@ void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, co
  * that mention your nick.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -430,7 +430,7 @@ void pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme 
  * Sets the text color and font to be used for buddy status messages.
  *
  * @param theme  The PidginBlist theme.
- * @param pair The new text font at color pair.
+ * @param pair The new text font and color pair.
  */
 void pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
