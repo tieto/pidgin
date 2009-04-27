@@ -152,7 +152,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 				xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_DATA);
 
 				item = xmlnode_new_child(publish, "item");
-				xmlnode_set_attrib(item, "id", "hash");
+				xmlnode_set_attrib(item, "id", hash);
 
 				data = xmlnode_new_child(item, "data");
 				xmlnode_set_namespace(data, NS_AVATAR_1_1_DATA);
