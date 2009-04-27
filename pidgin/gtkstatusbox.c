@@ -167,7 +167,7 @@ static char *connecting_stock_ids[10] = {
 	NULL
 };
 
-GtkContainerClass *parent_class = NULL;
+static GtkContainerClass *parent_class = NULL;
 
 static void pidgin_status_box_class_init (PidginStatusBoxClass *klass);
 static void pidgin_status_box_init (PidginStatusBox *status_box);
