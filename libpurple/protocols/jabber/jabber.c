@@ -28,6 +28,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "dnssrv.h"
+#include "imgstore.h"
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
@@ -709,6 +710,7 @@ jabber_login(PurpleAccount *account)
 			"connect_server", "");
 	JabberStream *js;
 	PurplePresence *presence;
+	PurpleStoredImage *image;
 	JabberBuddy *my_jb = NULL;
 
 	gc->flags |= PURPLE_CONNECTION_HTML |
@@ -735,7 +737,6 @@ jabber_login(PurpleAccount *account)
 	js->stun_port = 0;
 	js->stun_query = NULL;
 
-
 	/* if we are idle, set idle-ness on the stream (this could happen if we get
 		disconnected and the reconnects while being idle. I don't think it makes
 		sense to do this when registering a new account... */
@@ -755,6 +756,17 @@ jabber_login(PurpleAccount *account)
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
+	}
+
+	/*
+	 * Calculate the avatar hash for our current image so we know (when we
+	 * fetch our vCard and PEP avatar) if we should send our avatar to the
+	 * server.
+	 */
+	if ((image = purple_buddy_icons_find_account_icon(account))) {
+		js->initial_avatar_hash = jabber_calculate_data_sha1sum(purple_imgstore_get_data(image),
+					purple_imgstore_get_size(image));
+		purple_imgstore_unref(image);
 	}
 
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
@@ -1416,6 +1428,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
+	g_free(js->initial_avatar_hash);
 	g_free(js->avatar_hash);
 
 	purple_circ_buffer_destroy(js->write_buffer);
@@ -1534,9 +1547,9 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	JabberStream *js = gc->proto_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleStatus *status = purple_account_get_active_status(account);
-	
+
 	js->idle = idle ? time(NULL) - idle : idle;
-	
+
 	/* send out an updated prescence */
 	purple_debug_info("jabber", "sending updated presence for idle\n");
 	jabber_presence_send(account, status);
@@ -1875,8 +1888,8 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 
-		}	
-		
+		}
+
 		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 			purple_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
 		}

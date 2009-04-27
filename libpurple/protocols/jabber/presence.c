@@ -157,11 +157,19 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 
 		presence = jabber_presence_create_js(js, state, stripped, priority);
 
-		if(js->avatar_hash) {
-			x = xmlnode_new_child(presence, "x");
-			xmlnode_set_namespace(x, "vcard-temp:x:update");
+		/* Per XEP-0153 4.1, we must always send the <x> */
+		x = xmlnode_new_child(presence, "x");
+		xmlnode_set_namespace(x, "vcard-temp:x:update");
+		/*
+		 * FIXME: Per XEP-0153 4.3.2 bullet 2, we must not publish our
+		 * image hash if another resource has logged in and updated the
+		 * vcard avatar. Requires changes in jabber_presence_parse.
+		 */
+		if (js->vcard_fetched) {
+			/* Always publish a <photo>; it's empty if we have no image. */
 			photo = xmlnode_new_child(x, "photo");
-			xmlnode_insert_data(photo, js->avatar_hash, -1);
+			if (js->avatar_hash)
+				xmlnode_insert_data(photo, js->avatar_hash, -1);
 		}
 
 		jabber_send(js, presence);
@@ -351,8 +359,6 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 	JabberBuddy *jb = NULL;
 	xmlnode *vcard, *photo, *binval;
 	char *text;
-	guchar *data;
-	gsize size;
 
 	if(!from)
 		return;
@@ -367,19 +373,15 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
 				(text = xmlnode_get_data(photo)))) {
-			unsigned char hashval[20];
-			char hash[41], *p;
-			int i;
+			guchar *data;
+			gchar *hash;
+			gsize size;
 
 			data = purple_base64_decode(text, &size);
-
-			purple_cipher_digest_region("sha1", data, size,
-					sizeof(hashval), hashval, NULL);
-			p = hash;
-			for(i=0; i<20; i++, p+=2)
-				snprintf(p, 3, "%02x", hashval[i]);
+			hash = jabber_calculate_data_sha1sum(data, size);
 
 			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
+			g_free(hash);
 			g_free(text);
 		}
 	}

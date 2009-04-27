@@ -74,6 +74,11 @@ gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const g
 
 void jabber_handle_event(JabberMessage *jm);
 
+/**
+ * Delete the specified PEP node.
+ */
+void jabber_pep_delete_node(JabberStream *js, const gchar *node);
+
 /*
  * Publishes PEP item(s)
  *

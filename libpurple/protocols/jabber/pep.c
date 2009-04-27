@@ -24,6 +24,7 @@
 #include "pep.h"
 #include "iq.h"
 #include <string.h>
+#include "useravatar.h"
 #include "usermood.h"
 #include "usernick.h"
 
@@ -34,6 +35,7 @@ void jabber_pep_init(void) {
 		pep_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 		/* register PEP handlers */
+		jabber_avatar_init();
 		jabber_mood_init();
 		jabber_nick_init();
 	}
@@ -108,6 +110,25 @@ void jabber_handle_event(JabberMessage *jm) {
 
 	/* discard items we don't have a handler for */
 	g_free(jid);
+}
+
+void jabber_pep_delete_node(JabberStream *js, const gchar *node)
+{
+	JabberIq *iq;
+	xmlnode *pubsub, *del;
+
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(js->pep);
+
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+
+	pubsub = xmlnode_new_child(iq->node, "pubsub");
+	xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub#owner");
+
+	del = xmlnode_new_child(pubsub, "delete");
+	xmlnode_set_attrib(del, "node", node);
+
+	jabber_iq_send(iq);
 }
 
 void jabber_pep_publish(JabberStream *js, xmlnode *publish) {
