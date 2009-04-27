@@ -33,10 +33,6 @@ static void update_buddy_metadata(JabberStream *js, const char *from, xmlnode *i
 
 void jabber_avatar_init(void)
 {
-	jabber_add_feature("avatarmeta", NS_AVATAR_0_12_METADATA,
-	                   jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("avatardata", NS_AVATAR_0_12_DATA,
-	                   jabber_pep_namespace_only_when_pep_enabled_cb);
 	jabber_pep_register_handler("avatar", NS_AVATAR_0_12_METADATA,
 	                            update_buddy_metadata);
 
@@ -49,41 +45,32 @@ void jabber_avatar_init(void)
 	                            update_buddy_metadata);
 }
 
-void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
+static void
+remove_avatar_0_12_nodes(JabberStream *js)
+{
+	jabber_pep_delete_node(js, NS_AVATAR_0_12_METADATA);
+	jabber_pep_delete_node(js, NS_AVATAR_0_12_DATA);
+}
+
+void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 {
 	xmlnode *publish, *metadata, *item;
 
 	if (!js->pep)
 		return;
 
+	remove_avatar_0_12_nodes(js);
+
 	if (!img) {
-		if (ns == NULL || g_str_equal(ns, NS_AVATAR_0_12_METADATA)) {
-			/* remove the metadata */
-			publish = xmlnode_new("publish");
-			xmlnode_set_attrib(publish, "node", NS_AVATAR_0_12_METADATA);
+		publish = xmlnode_new("publish");
+		xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_METADATA);
 
-			item = xmlnode_new_child(publish, "item");
-			metadata = xmlnode_new_child(item, "metadata");
-			xmlnode_set_namespace(metadata, NS_AVATAR_0_12_METADATA);
+		item = xmlnode_new_child(publish, "item");
+		metadata = xmlnode_new_child(item, "metadata");
+		xmlnode_set_namespace(metadata, NS_AVATAR_1_1_METADATA);
 
-			xmlnode_new_child(metadata, "stop");
-			/* publish */
-			jabber_pep_publish(js, publish);
-		}
-
-		if (ns == NULL || g_str_equal(ns, NS_AVATAR_1_1_METADATA)) {
-			/* Now for the XEP-0084 v1.1 namespace, where we publish an empty
-			 * metadata node instead of a <stop/> element */
-			publish = xmlnode_new("publish");
-			xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_METADATA);
-
-			item = xmlnode_new_child(publish, "item");
-			metadata = xmlnode_new_child(item, "metadata");
-			xmlnode_set_namespace(metadata, NS_AVATAR_1_1_METADATA);
-
-			/* publish */
-			jabber_pep_publish(js, publish);
-		}
+		/* publish */
+		jabber_pep_publish(js, publish);
 	} else {
 		/*
 		 * TODO: This is pretty gross.  The Jabber PRPL really shouldn't
@@ -132,35 +119,18 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 			char *base64avatar = purple_base64_encode(purple_imgstore_get_data(img),
 			                                          purple_imgstore_get_size(img));
 
-			if (ns == NULL || g_str_equal(ns, NS_AVATAR_0_12_METADATA)) {
-				publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish, "node", NS_AVATAR_0_12_DATA);
+			publish = xmlnode_new("publish");
+			xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_DATA);
 
-				item = xmlnode_new_child(publish, "item");
-				xmlnode_set_attrib(item, "id", hash);
+			item = xmlnode_new_child(publish, "item");
+			xmlnode_set_attrib(item, "id", hash);
 
-				data = xmlnode_new_child(item, "data");
-				xmlnode_set_namespace(data, NS_AVATAR_0_12_DATA);
+			data = xmlnode_new_child(item, "data");
+			xmlnode_set_namespace(data, NS_AVATAR_1_1_DATA);
 
-				xmlnode_insert_data(data, base64avatar, -1);
-				/* publish the avatar itself */
-				jabber_pep_publish(js, publish);
-			}
-
-			if (ns == NULL || g_str_equal(ns, NS_AVATAR_1_1_METADATA)) {
-				publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_DATA);
-
-				item = xmlnode_new_child(publish, "item");
-				xmlnode_set_attrib(item, "id", hash);
-
-				data = xmlnode_new_child(item, "data");
-				xmlnode_set_namespace(data, NS_AVATAR_1_1_DATA);
-
-				xmlnode_insert_data(data, base64avatar, -1);
-				/* publish the avatar itself */
-				jabber_pep_publish(js, publish);
-			}
+			xmlnode_insert_data(data, base64avatar, -1);
+			/* publish the avatar itself */
+			jabber_pep_publish(js, publish);
 
 			g_free(base64avatar);
 
@@ -169,47 +139,24 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img, const char *ns)
 			widthstring = g_strdup_printf("%u", width);
 			heightstring = g_strdup_printf("%u", height);
 
-			if (ns == NULL || g_str_equal(ns, NS_AVATAR_0_12_METADATA)) {
-				/* next step: publish the metadata to the old namespace */
-				publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish, "node", NS_AVATAR_0_12_METADATA);
+			/* publish the metadata */
+			publish = xmlnode_new("publish");
+			xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_METADATA);
 
-				item = xmlnode_new_child(publish, "item");
-				xmlnode_set_attrib(item, "id", hash);
+			item = xmlnode_new_child(publish, "item");
+			xmlnode_set_attrib(item, "id", hash);
 
-				metadata = xmlnode_new_child(item, "metadata");
-				xmlnode_set_namespace(metadata, NS_AVATAR_0_12_METADATA);
+			metadata = xmlnode_new_child(item, "metadata");
+			xmlnode_set_namespace(metadata, NS_AVATAR_1_1_METADATA);
 
-				info = xmlnode_new_child(metadata, "info");
-				xmlnode_set_attrib(info, "id", hash);
-				xmlnode_set_attrib(info, "type", "image/png");
-				xmlnode_set_attrib(info, "bytes", lengthstring);
-				xmlnode_set_attrib(info, "width", widthstring);
-				xmlnode_set_attrib(info, "height", heightstring);
-				/* publish the metadata */
-				jabber_pep_publish(js, publish);
-			}
+			info = xmlnode_new_child(metadata, "info");
+			xmlnode_set_attrib(info, "id", hash);
+			xmlnode_set_attrib(info, "type", "image/png");
+			xmlnode_set_attrib(info, "bytes", lengthstring);
+			xmlnode_set_attrib(info, "width", widthstring);
+			xmlnode_set_attrib(info, "height", heightstring);
 
-			if (ns == NULL || g_str_equal(ns, NS_AVATAR_1_1_METADATA)) {
-				/* publish the metadata to the new namespace */
-				publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_METADATA);
-
-				item = xmlnode_new_child(publish, "item");
-				xmlnode_set_attrib(item, "id", hash);
-
-				metadata = xmlnode_new_child(item, "metadata");
-				xmlnode_set_namespace(metadata, NS_AVATAR_1_1_METADATA);
-
-				info = xmlnode_new_child(metadata, "info");
-				xmlnode_set_attrib(info, "id", hash);
-				xmlnode_set_attrib(info, "type", "image/png");
-				xmlnode_set_attrib(info, "bytes", lengthstring);
-				xmlnode_set_attrib(info, "width", widthstring);
-				xmlnode_set_attrib(info, "height", heightstring);
-
-				jabber_pep_publish(js, publish);
-			}
+			jabber_pep_publish(js, publish);
 
 			g_free(lengthstring);
 			g_free(widthstring);
@@ -242,10 +189,19 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 	if (!ns)
 		return;
 
+	/*
+	 * We no longer publish avatars to the older namespace. If there is one
+	 * there, delete it.
+	 */
+	if (g_str_equal(ns, NS_AVATAR_0_12_METADATA) && server_hash) {
+		remove_avatar_0_12_nodes(js);
+		return;
+	}
+
 	/* Publish ours if it's different than the server's */
 	if (!purple_strequal(server_hash, js->initial_avatar_hash)) {
 		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
-		jabber_avatar_set(js, img, ns);
+		jabber_avatar_set(js, img);
 		purple_imgstore_unref(img);
 	}
 }

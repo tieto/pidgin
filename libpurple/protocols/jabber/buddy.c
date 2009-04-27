@@ -485,10 +485,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	jabber_avatar_set(gc->proto_data, img, NULL);
-	/* vCard avatars do not have an image type requirement so update our
-	 * vCard avatar regardless of image type for those poor older clients
-	 */
+
+	/* Publish the avatar as specified in XEP-0084 */
+	jabber_avatar_set(gc->proto_data, img);
+	/* Set the image in our vCard */
 	jabber_set_info(gc, purple_account_get_user_info(account));
 
 	/* TODO: Fake image to ourselves, since a number of servers do not echo
