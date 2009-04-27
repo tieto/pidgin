@@ -28,6 +28,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "dnssrv.h"
+#include "imgstore.h"
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
@@ -709,6 +710,7 @@ jabber_login(PurpleAccount *account)
 			"connect_server", "");
 	JabberStream *js;
 	PurplePresence *presence;
+	PurpleStoredImage *image;
 	JabberBuddy *my_jb = NULL;
 
 	gc->flags |= PURPLE_CONNECTION_HTML |
@@ -727,14 +729,13 @@ jabber_login(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
-	js->old_length = 0;
+	js->old_length = -1;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
 	js->sessions = NULL;
 	js->stun_ip = NULL;
 	js->stun_port = 0;
 	js->stun_query = NULL;
-
 
 	/* if we are idle, set idle-ness on the stream (this could happen if we get
 		disconnected and the reconnects while being idle. I don't think it makes
@@ -755,6 +756,17 @@ jabber_login(PurpleAccount *account)
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
+	}
+
+	/*
+	 * Calculate the avatar hash for our current image so we know (when we
+	 * fetch our vCard and PEP avatar) if we should send our avatar to the
+	 * server.
+	 */
+	if ((image = purple_buddy_icons_find_account_icon(account))) {
+		js->initial_avatar_hash = jabber_calculate_data_sha1sum(purple_imgstore_get_data(image),
+					purple_imgstore_get_size(image));
+		purple_imgstore_unref(image);
 	}
 
 	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
@@ -1338,6 +1350,11 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 	jabber_unregister_account_cb(js);
 }
 
+/* TODO: As Will pointed out in IRC, after being notified by the core to
+ * shutdown, we should async. wait for the server to send us the stream
+ * termination before destorying everything. That seems like it would require
+ * changing the semantics of prpl->close(), so it's a good idea for 3.0.0.
+ */
 void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
@@ -1351,16 +1368,6 @@ void jabber_close(PurpleConnection *gc)
 	 */
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
-
-	if (!purple_account_get_current_error(purple_connection_get_account(gc))) {
-		/*
-		 * The common case is user-triggered, so we never receive a
-		 * </stream:stream> from the server when disconnecting, so silence the
-		 * parser's warnings. On errors, though, the server terminated the
-		 * connection, so we should have received a real </stream:stream>.
-		 */
-		jabber_parser_close_stream(js);
-	}
 
 	if (js->srv_query_data)
 		purple_srv_cancel(js->srv_query_data);
@@ -1416,6 +1423,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
+	g_free(js->initial_avatar_hash);
 	g_free(js->avatar_hash);
 
 	purple_circ_buffer_destroy(js->write_buffer);
@@ -1534,9 +1542,9 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	JabberStream *js = gc->proto_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleStatus *status = purple_account_get_active_status(account);
-	
+
 	js->idle = idle ? time(NULL) - idle : idle;
-	
+
 	/* send out an updated prescence */
 	purple_debug_info("jabber", "sending updated presence for idle\n");
 	jabber_presence_send(account, status);
@@ -1875,8 +1883,8 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 
-		}	
-		
+		}
+
 		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 			purple_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
 		}
