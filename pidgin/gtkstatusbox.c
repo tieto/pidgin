@@ -719,7 +719,8 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	    }
 
 		stock = pidgin_stock_id_from_status_primitive(prim);
-		pixbuf = pidgin_status_box_get_pixbuf(status_box, stock);
+		if (stock)
+			pixbuf = pidgin_status_box_get_pixbuf(status_box, stock);
 	}
 
 	if (status_box->account != NULL) {
@@ -2158,7 +2159,8 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 		}
 
 		stock = pidgin_stock_id_from_status_primitive(prim);
-		pixbuf = pidgin_status_box_get_pixbuf(status_box, stock);
+		if (stock)
+			pixbuf = pidgin_status_box_get_pixbuf(status_box, stock);
 	}
 
 	gtk_list_store_append(status_box->dropdown_store, &iter);
