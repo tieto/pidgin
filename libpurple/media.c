@@ -43,7 +43,6 @@
 #ifdef USE_VV
 
 #include <gst/farsight/fs-conference-iface.h>
-#include <gst/farsight/fs-transmitter.h>
 
 /** @copydoc _PurpleMediaSession */
 typedef struct _PurpleMediaSession PurpleMediaSession;
@@ -3068,26 +3067,3 @@ purple_media_get_tee(PurpleMedia *media,
 }
 #endif /* USE_GSTREAMER */
 
-gboolean
-purple_media_transmitter_exists(const gchar *transmitter)
-{
-#ifdef USE_VV
-	char **transmitters;
-	int i;
-
-	g_return_val_if_fail(transmitter != NULL, FALSE);
-
-	transmitters = fs_transmitter_list_available();
-	for (i = 0; transmitters[i]; ++i) {
-		if (g_str_equal(transmitter, transmitters[i])) {
-			g_strfreev(transmitters);
-			return TRUE;
-		}
-	}
-
-	g_strfreev(transmitters);
-	return FALSE;
-#else
-	return FALSE;
-#endif
-}

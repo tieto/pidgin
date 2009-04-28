@@ -2863,12 +2863,6 @@ jabber_video_enabled(JabberStream *js, const char *namespace)
 	return (caps & (PURPLE_MEDIA_CAPS_VIDEO | PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION));
 }
 
-static gboolean
-jabber_ice_transmitter_present(JabberStream *js, const char *namespace)
-{
-	return purple_media_transmitter_exists("nice");
-}
-
 typedef struct {
 	PurpleAccount *account;
 	gchar *who;
@@ -3308,7 +3302,7 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", jabber_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, jabber_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
-	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, jabber_ice_transmitter_present);
+	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
 #endif
 
 	/* IPC functions */
