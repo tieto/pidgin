@@ -597,15 +597,6 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
 
-/**
- * Returns whether or not a specific transmitter type is present.
- *
- * @param transmitter The name of the transmitter.
- *
- * @return TRUE if it is present, FALSE otherwise.
- */
-gboolean purple_media_transmitter_exists(const gchar *transmitter);
-
 #ifdef __cplusplus
 }
 #endif
