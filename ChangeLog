@@ -7,6 +7,9 @@ version 2.5.6 (??/??/2009):
 	* Notify the user if a /nick command fails, rather than trying
 	  fallback nicks.
 
+	MSN:
+	* Fix a race condition causing occasional Pidgin crashes.
+
 	Yahoo:
 	* Fix a crash when sending very long messages.
 
