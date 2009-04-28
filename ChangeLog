@@ -13,6 +13,7 @@ version 2.6.0 (??/??/2009):
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
+	* Report idle time 'From last message sent' should work properly.
 
 	XMPP:
 	* Add voice & video support with Jingle (XEP-0166, 0167, 0176, & 0177),
