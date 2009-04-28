@@ -4482,7 +4482,6 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 					" bytes, %ld characters.  Max is %d bytes, %d chars."
 					"  Message is '%s'.\n", lenb, lenc, YAHOO_MAX_MESSAGE_LENGTH_BYTES,
 					YAHOO_MAX_MESSAGE_LENGTH_CHARS, msg2);
-			yahoo_packet_free(pkt);
 			g_free(msg);
 			g_free(msg2);
 			return -E2BIG;
