@@ -1477,11 +1477,11 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 		return;
 
 	if (!(flags & PURPLE_MESSAGE_WHISPER)) {
-		char *str;
+		const char *str;
 
-		str = g_strdup(purple_normalize(account, who));
+		str = purple_normalize(account, who);
 
-		if (purple_strequal(str, purple_normalize(account, chat->nick))) {
+		if (purple_strequal(str, chat->nick)) {
 			flags |= PURPLE_MESSAGE_SEND;
 		} else {
 			flags |= PURPLE_MESSAGE_RECV;
@@ -1489,8 +1489,6 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 			if (purple_utf8_has_word(message, chat->nick))
 				flags |= PURPLE_MESSAGE_NICK;
 		}
-
-		g_free(str);
 	}
 
 	/* Pass this on to either the ops structure or the default write func. */
