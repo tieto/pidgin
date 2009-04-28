@@ -1637,14 +1637,12 @@ char *jabber_get_next_id(JabberStream *js)
 void jabber_idle_set(PurpleConnection *gc, int idle)
 {
 	JabberStream *js = gc->proto_data;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleStatus *status = purple_account_get_active_status(account);
 
 	js->idle = idle ? time(NULL) - idle : idle;
 
 	/* send out an updated prescence */
 	purple_debug_info("jabber", "sending updated presence for idle\n");
-	jabber_presence_send(account, status);
+	jabber_presence_send(js, FALSE);
 }
 
 static void jabber_blocklist_parse(JabberStream *js, const char *from,
