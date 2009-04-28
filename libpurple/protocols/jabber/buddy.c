@@ -1775,7 +1775,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	}
 
 	js->pending_buddy_info_requests = g_slist_prepend(js->pending_buddy_info_requests, jbi);
-	jbi->timeout_handle = purple_timeout_add(30000, jabber_buddy_get_info_timeout, jbi);
+	jbi->timeout_handle = purple_timeout_add_seconds(30, jabber_buddy_get_info_timeout, jbi);
 }
 
 void jabber_buddy_get_info(PurpleConnection *gc, const char *who)

@@ -503,6 +503,11 @@ void purple_plugins_add_search_path(const char *path);
 void purple_plugins_unload_all(void);
 
 /**
+ * Unloads all plugins of a specific type.
+ */
+void purple_plugins_unload(PurplePluginType type);
+
+/**
  * Destroys all registered plugins.
  */
 void purple_plugins_destroy_all(void);
