@@ -18,17 +18,24 @@ version 2.6.0 (??/??/2009):
 	* Add voice & video support with Jingle (XEP-0166, 0167, 0176, & 0177),
 	  and voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
 	* Add support for in-band bytestreams for file transfers (XEP-0047).
-	* Add support for sending and receiving attentions (equivalent to "buzz" 
-	  and "nudge") using the command /buzz (XEP-0224).
+	* Add support for sending and receiving attentions (equivalent to "buzz"
+	  and "nudge") using the command /buzz. (XEP-0224)
 	* A buddy's local time is displayed in the Get Info dialog if the remote
 	  client supports it.
+	* The set_chat_topic function can unset the chat topic.
+	* Fix crash on connection with recent gstreamer0.10-plugins-bad.
+	* Don't create a new conversation window for incoming messages of
+	  type 'headline'.
+	* The Ad-Hoc commands associated with our server are now always shown at
+	  login.
+	* Support showing and reporting idle times in the buddy list. (XEP-0256)
+	* Support most recent version of User Avatar. (XEP-0084 v1.1)
 
 	IRC:
 	* Correctly handle WHOIS for users who are joined to a large number of
 	  channels.
 	* Notify the user if a /nick command fails, rather than trying
 	  fallback nicks.
-	
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -41,9 +48,12 @@ version 2.6.0 (??/??/2009):
 	  the next line.
 	* Created a unified Buddy Pounce notification window for all pounces
 	  where "Pop up a notification" is selected, which avoids having a
-	  new dialog box every time a pounce is triggered. (Jorge Villaseñor) 
+	  new dialog box every time a pounce is triggered. (Jorge Villaseñor)
 	* The New Account dialog is now broken into three tabs.  Proxy
 	  configuration has been moved from the Advanced tab to the new tab.
+	* The nicks of the persons who leave the chatroom are italicized in the
+	  chat's conversation history. The nicks are un-italicized when they
+	  rejoin.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

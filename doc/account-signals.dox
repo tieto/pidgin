@@ -9,6 +9,7 @@
   @signal account-setting-info
   @signal account-set-info
   @signal account-status-changed
+  @signal account-actions-changed
   @signal account-alias-changed
   @signal account-authorization-requested
   @signal account-authorization-denied
@@ -95,6 +96,15 @@ void (*account_status_changed)(PurpleAccount *account, PurpleStatus *old, Purple
   @param account The account that changed status.
   @param old     The status before change.
   @param new     The status after change.
+ @endsignaldef
+
+ @signaldef account-actions-changed
+  @signalproto
+void (*account_actions_changed)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when the account actions are changed after initial connection.
+  @param account The account whose actions changed.
  @endsignaldef
 
  @signaldef account-alias-changed

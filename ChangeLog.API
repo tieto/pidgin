@@ -9,6 +9,7 @@ version 2.6.0 (??/??/2009):
 		* PURPLE_CONTACT
 		* PURPLE_BUDDY
 		* PURPLE_CHAT
+		* account-actions-changed (see account-signals.dox)
 		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
@@ -32,6 +33,7 @@ version 2.6.0 (??/??/2009):
 		* purple_network_get_stun_ip
 		* purple_network_get_turn_ip
 		* purple_prpl_get_media_caps
+		* purple_prpl_got_account_actions
 		* purple_prpl_initiate_media
 		* purple_request_field_get_group
 		* purple_request_field_get_ui_data
@@ -77,6 +79,10 @@ version 2.6.0 (??/??/2009):
 		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
 		* pidgin_notify_pounce_add
+		* PidginBlistTheme, PidginBlistThemeLoader API
+		* PidginIconTheme, PidginStatusIconTheme, PidginIconThemeLoader
+		  API
+		* pidgin_stock_id_from_status_primitive
 
 	libgnt:
 		Added:

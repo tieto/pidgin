@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2007, Andreas Monitzer <andy@monitzer.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +21,23 @@
  *
  */
 
-#ifndef PURPLE_JABBER_ADHOCCOMMANDS_H_
-#define PURPLE_JABBER_ADHOCCOMMANDS_H_
+#ifndef _PURPLE_JABBER_USERAVATAR_H_
+#define _PURPLE_JABBER_USERAVATAR_H_
 
 #include "jabber.h"
+#include "imgstore.h"
 
-/* Implementation of XEP-0050 */
+/* Implementation of XEP-0084 */
 
-void jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
-                                  JabberIqType type, const char *id,
-                                  xmlnode *packet, gpointer data);
+#define NS_AVATAR_0_12_DATA     "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
+#define NS_AVATAR_0_12_METADATA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
 
-void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd);
+#define NS_AVATAR_1_1_DATA      "urn:xmpp:avatar:data"
+#define NS_AVATAR_1_1_METADATA  "urn:xmpp:avatar:metadata"
 
-void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data);
+void jabber_avatar_init(void);
+void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img);
 
-void jabber_adhoc_got_list(JabberStream *js, const char *from, xmlnode *query);
+void jabber_avatar_fetch_mine(JabberStream *js);
 
-void jabber_adhoc_server_get_list(JabberStream *js);
-
-void jabber_adhoc_init_server_commands(JabberStream *js, GList **m);
-
-#endif /* PURPLE_JABBER_ADHOCCOMMANDS_H_ */
+#endif /* _PURPLE_JABBER_USERAVATAR_H_ */

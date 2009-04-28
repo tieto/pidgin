@@ -1,5 +1,5 @@
 /**
- * @file gtkicon-loader.h  Pidgin Icon Theme Loader Class API
+ * @file gtkicon-theme-loader.h  Pidgin Icon Theme Loader Class API
  */
 
 /* purple

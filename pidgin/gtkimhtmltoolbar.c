@@ -1198,7 +1198,7 @@ static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 	GObjectClass   *gobject_class;
 	object_class = (GtkObjectClass*) class;
 	gobject_class = (GObjectClass*) class;
-	parent_class = gtk_type_class(GTK_TYPE_HBOX);
+	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
 	gobject_class->finalize = gtk_imhtmltoolbar_finalize;
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/toolbar");

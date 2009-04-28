@@ -1851,7 +1851,7 @@ purple_media_insert_local_candidate(PurpleMediaSession *session, const gchar *na
 #endif
 
 GList *
-purple_media_get_session_names(PurpleMedia *media)
+purple_media_get_session_ids(PurpleMedia *media)
 {
 #ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
@@ -2664,12 +2664,13 @@ purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id)
 }
 
 GList *
-purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name)
+purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id,
+                                  const gchar *participant)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 	return purple_media_candidate_list_from_fs(stream->local_candidates);
 #else
 	return NULL;
@@ -2678,20 +2679,21 @@ purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, cons
 
 void
 purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
-				   const gchar *name, GList *remote_candidates)
+                                   const gchar *participant,
+                                   GList *remote_candidates)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	GError *err = NULL;
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 
 	if (stream == NULL) {
 		purple_debug_error("media",
 				"purple_media_add_remote_candidates: "
 				"couldn't find stream %s %s.\n",
-				sess_id, name);
+				sess_id, participant);
 		return;
 	}
 
@@ -2717,12 +2719,12 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 
 GList *
 purple_media_get_active_local_candidates(PurpleMedia *media,
-		const gchar *sess_id, const gchar *name)
+		const gchar *sess_id, const gchar *participant)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 	return purple_media_candidate_list_from_fs(
 			stream->active_local_candidates);
 #else
@@ -2732,12 +2734,12 @@ purple_media_get_active_local_candidates(PurpleMedia *media,
 
 GList *
 purple_media_get_active_remote_candidates(PurpleMedia *media,
-		const gchar *sess_id, const gchar *name)
+		const gchar *sess_id, const gchar *participant)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 	return purple_media_candidate_list_from_fs(
 			stream->active_remote_candidates);
 #else
@@ -2747,7 +2749,8 @@ purple_media_get_active_remote_candidates(PurpleMedia *media,
 #endif
 
 gboolean
-purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs)
+purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,
+                               const gchar *participant, GList *codecs)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
@@ -2756,7 +2759,7 @@ purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const g
 	GError *err = NULL;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 
 	if (stream == NULL)
 		return FALSE;
@@ -3030,7 +3033,7 @@ purple_media_remove_output_windows(PurpleMedia *media)
 				stream->session->id, stream->participant);
 	}
 
-	iter = purple_media_get_session_names(media);
+	iter = purple_media_get_session_ids(media);
 	for (; iter; iter = g_list_delete_link(iter, iter)) {
 		gchar *session_name = iter->data;
 		purple_media_manager_remove_output_windows(

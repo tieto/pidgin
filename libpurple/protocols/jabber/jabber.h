@@ -159,6 +159,7 @@ struct _JabberStream
 	GList *file_transfers;
 
 	time_t idle;
+	time_t old_idle;
 
 	JabberID *user;
 	PurpleConnection *gc;
@@ -166,6 +167,7 @@ struct _JabberStream
 
 	gboolean registration;
 
+	char *initial_avatar_hash;
 	char *avatar_hash;
 	GSList *pending_avatar_requests;
 

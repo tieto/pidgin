@@ -358,7 +358,7 @@ GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
 }
 
 GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
-		GtkSignalFunc sf, gpointer data, gboolean checked)
+		GCallback cb, gpointer data, gboolean checked)
 {
 	GtkWidget *menuitem;
 	menuitem = gtk_check_menu_item_new_with_mnemonic(str);
@@ -368,8 +368,8 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), checked);
 
-	if (sf)
-		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+	if (cb)
+		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
 	gtk_widget_show_all(menuitem);
 
@@ -439,7 +439,7 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 }
 
 
-GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GCallback cb, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
 	/*
@@ -456,8 +456,8 @@ GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const ch
 	if (menu)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	if (sf)
-		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+	if (cb)
+		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
 	if (icon != NULL) {
 		image = gtk_image_new_from_stock(icon, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
@@ -1464,7 +1464,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 					  str);
 			g_free(str);
 
-			return;
+			break;
 		}
 
 		buddy = purple_find_buddy(data->account, data->who);
@@ -1494,7 +1494,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			g_error_free(err);
 			g_free(str);
 
-			return;
+			break;
 		}
 		id = purple_imgstore_add_with_id(filedata, size, data->filename);
 
@@ -1627,7 +1627,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
 						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							NULL);
-			gdk_pixbuf_unref(pb);
+			g_object_unref(G_OBJECT(pb));
 			return;
 		}
 
@@ -1715,29 +1715,42 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 {
 	GtkIconSize icon_size = gtk_icon_size_from_name(size);
 	GdkPixbuf *pixbuf = NULL;
+	const char *stock = pidgin_stock_id_from_status_primitive(prim);
 
-	if (prim == PURPLE_STATUS_UNAVAILABLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_INVISIBLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_OFFLINE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
-				icon_size, "GtkWidget");
-	else
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
-				icon_size, "GtkWidget");
+	pixbuf = gtk_widget_render_icon (w, stock ? stock : PIDGIN_STOCK_STATUS_AVAILABLE,
+			icon_size, "GtkWidget");
 	return pixbuf;
-
 }
 
+const char *
+pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim)
+{
+	const char *stock = NULL;
+	switch (prim) {
+		case PURPLE_STATUS_UNSET:
+			stock = NULL;
+			break;
+		case PURPLE_STATUS_UNAVAILABLE:
+			stock = PIDGIN_STOCK_STATUS_BUSY;
+			break;
+		case PURPLE_STATUS_AWAY:
+			stock = PIDGIN_STOCK_STATUS_AWAY;
+			break;
+		case PURPLE_STATUS_EXTENDED_AWAY:
+			stock = PIDGIN_STOCK_STATUS_XA;
+			break;
+		case PURPLE_STATUS_INVISIBLE:
+			stock = PIDGIN_STOCK_STATUS_INVISIBLE;
+			break;
+		case PURPLE_STATUS_OFFLINE:
+			stock = PIDGIN_STOCK_STATUS_OFFLINE;
+			break;
+		default:
+			stock = PIDGIN_STOCK_STATUS_AVAILABLE;
+			break;
+	}
+	return stock;
+}
 
 GdkPixbuf *
 pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
@@ -2943,7 +2956,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 #endif
 }
 
-GSList *minidialogs = NULL;
+static GSList *minidialogs = NULL;
 
 static void *
 pidgin_utils_get_handle(void)

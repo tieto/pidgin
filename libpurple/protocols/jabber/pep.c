@@ -24,6 +24,7 @@
 #include "pep.h"
 #include "iq.h"
 #include <string.h>
+#include "useravatar.h"
 #include "usermood.h"
 #include "usernick.h"
 #include "usertune.h"
@@ -35,6 +36,7 @@ void jabber_pep_init(void) {
 		pep_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 		/* register PEP handlers */
+		jabber_avatar_init();
 		jabber_mood_init();
 		jabber_tune_init();
 		jabber_nick_init();
@@ -104,7 +106,12 @@ void jabber_handle_event(JabberMessage *jm) {
 	/* this may be called even when the own server doesn't support pep! */
 	JabberPEPHandler *jph;
 	GList *itemslist;
-	char *jid = jabber_get_bare_jid(jm->from);
+	char *jid;
+
+	if (jm->type != JABBER_MESSAGE_EVENT)
+		return;
+
+	jid = jabber_get_bare_jid(jm->from);
 
 	for(itemslist = jm->eventitems; itemslist; itemslist = itemslist->next) {
 		xmlnode *items = (xmlnode*)itemslist->data;
@@ -116,6 +123,25 @@ void jabber_handle_event(JabberMessage *jm) {
 
 	/* discard items we don't have a handler for */
 	g_free(jid);
+}
+
+void jabber_pep_delete_node(JabberStream *js, const gchar *node)
+{
+	JabberIq *iq;
+	xmlnode *pubsub, *del;
+
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(js->pep);
+
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+
+	pubsub = xmlnode_new_child(iq->node, "pubsub");
+	xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub#owner");
+
+	del = xmlnode_new_child(pubsub, "delete");
+	xmlnode_set_attrib(del, "node", node);
+
+	jabber_iq_send(iq);
 }
 
 void jabber_pep_publish(JabberStream *js, xmlnode *publish) {

@@ -320,7 +320,7 @@ do_alphashift(GdkPixbuf *dest, GdkPixbuf *src)
 }
 
 static gchar *
-find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon sized_icon, gboolean rtl)
+find_icon_file(PidginIconTheme *theme, const gchar *size, SizedStockIcon sized_icon, gboolean rtl)
 {
 	const gchar *file, *dir;
 	gchar *file_full = NULL;
@@ -352,7 +352,7 @@ find_icon_file(PidginStatusIconTheme *theme, const gchar *size, SizedStockIcon s
 }
 
 static void
-add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginStatusIconTheme *theme,
+add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 		const char *size, SizedStockIcon sized_icon, gboolean translucent)
 {
 	char *filename;
@@ -409,6 +409,16 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginStatusIconTheme *t
 	}
 }
 
+static void
+reload_settings(void)
+{
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkSettings *setting = NULL;
+	setting = gtk_settings_get_default();
+	gtk_rc_reset_styles(setting);
+#endif
+}
+
 /*****************************************************************************
  * Public API functions
  *****************************************************************************/
@@ -447,9 +457,9 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 			translucent = gtk_icon_set_new();
 
 #define ADD_SIZED_ICON(name, size) if (sized_status_icons[i].name) { \
-					add_sized_icon(normal, name, theme, size, sized_status_icons[i], FALSE); \
+					add_sized_icon(normal, name, PIDGIN_ICON_THEME(theme), size, sized_status_icons[i], FALSE); \
 					if (sized_status_icons[i].translucent_name) \
-						add_sized_icon(translucent, name, theme, size, sized_status_icons[i], TRUE); \
+						add_sized_icon(translucent, name, PIDGIN_ICON_THEME(theme), size, sized_status_icons[i], TRUE); \
 				   }
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
@@ -471,52 +481,45 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
+	reload_settings();
 }
 
 void
-pidgin_stock_init(void)
+pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme)
 {
 	GtkIconFactory *icon_factory;
-	size_t i;
+	gint i;
 	GtkWidget *win;
-	PidginIconThemeLoader *loader;
-	const gchar *path = NULL;
 
-	if (stock_initted)
-		return;
+	if (theme != NULL) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/stock/icon-theme",
+				        purple_theme_get_name(PURPLE_THEME(theme)));
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/stock/icon-theme-dir",
+				      purple_theme_get_dir(PURPLE_THEME(theme)));
+	}
+	else {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/stock/icon-theme", "");
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/stock/icon-theme-dir", "");
+	}
 
-	stock_initted = TRUE;
-
-	/* Setup the status icon theme */
-	loader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL);
-	purple_theme_manager_register_type(PURPLE_THEME_LOADER(loader));
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
-
-	/* Setup the icon factory. */
 	icon_factory = gtk_icon_factory_new();
 
 	gtk_icon_factory_add_default(icon_factory);
 
-	/* Er, yeah, a hack, but it works. :) */
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_realize(win);
 
 	/* All non-sized icons */
-	for (i = 0; i < G_N_ELEMENTS(stock_icons); i++)
-	{
+	for (i = 0; i < G_N_ELEMENTS(stock_icons); i++) {
 		GtkIconSource *source;
 		GtkIconSet *iconset;
 		gchar *filename;
 
-		if (stock_icons[i].dir == NULL)
-		{
+		if (stock_icons[i].dir == NULL) {
 			/* GTK+ Stock icon */
 			iconset = gtk_style_lookup_icon_set(gtk_widget_get_style(win),
 					stock_icons[i].filename);
-		}
-		else
-		{
+		} else {
 			filename = find_file(stock_icons[i].dir, stock_icons[i].filename);
 
 			if (filename == NULL)
@@ -540,21 +543,13 @@ pidgin_stock_init(void)
 		gtk_icon_set_unref(iconset);
 	}
 
-	/* register custom icon sizes */
-	microscopic =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC, 11, 11);
-	extra_small =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL, 16, 16);
-	small =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_SMALL, 22, 22);
-	medium =       gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MEDIUM, 32, 32);
-	large =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_LARGE, 48, 48);
-	huge =         gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_HUGE, 64, 64);
-
 	/* All non-status sized icons */
 	for (i = 0; i < G_N_ELEMENTS(sized_stock_icons); i++)
 	{
 		GtkIconSet *iconset = gtk_icon_set_new();
 
 #define ADD_SIZED_ICON(name, size) if (sized_stock_icons[i].name) \
-					add_sized_icon(iconset, name, NULL, size, sized_stock_icons[i], FALSE);
+					add_sized_icon(iconset, name, PIDGIN_ICON_THEME(theme), size, sized_stock_icons[i], FALSE);
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
 		ADD_SIZED_ICON(small, "22");
@@ -569,6 +564,40 @@ pidgin_stock_init(void)
 
 	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
+	reload_settings();
+}
+
+void
+pidgin_stock_init(void)
+{
+	PidginIconThemeLoader *loader, *stockloader;
+	const gchar *path = NULL;
+
+	if (stock_initted)
+		return;
+
+	stock_initted = TRUE;
+
+	/* Setup the status icon theme */
+	loader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL);
+	purple_theme_manager_register_type(PURPLE_THEME_LOADER(loader));
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
+
+	stockloader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "stock-icon", NULL);
+	purple_theme_manager_register_type(PURPLE_THEME_LOADER(stockloader));
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/stock/icon-theme", "");
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/stock/icon-theme-dir", "");
+
+	/* register custom icon sizes */
+	microscopic =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC, 11, 11);
+	extra_small =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL, 16, 16);
+	small =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_SMALL, 22, 22);
+	medium =       gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MEDIUM, 32, 32);
+	large =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_LARGE, 48, 48);
+	huge =         gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_HUGE, 64, 64);
+
+	pidgin_stock_load_stock_icon_theme(NULL);
 
 	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray, theme is destroyed after*/
 	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") &&
@@ -582,4 +611,32 @@ pidgin_stock_init(void)
 
 	/* Register the stock items. */
 	gtk_stock_add_static(stock_items, G_N_ELEMENTS(stock_items));
+}
+
+static void
+pidgin_stock_icon_theme_class_init(PidginStockIconThemeClass *klass)
+{
+}
+
+GType
+pidgin_stock_icon_theme_get_type(void)
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GTypeInfo info = {
+			sizeof (PidginStockIconThemeClass),
+			NULL, /* base_init */
+			NULL, /* base_finalize */
+			(GClassInitFunc)pidgin_stock_icon_theme_class_init, /* class_init */
+			NULL, /* class_finalize */
+			NULL, /* class_data */
+			sizeof (PidginStockIconTheme),
+			0, /* n_preallocs */
+			NULL,
+			NULL, /* value table */
+		};
+		type = g_type_register_static(PIDGIN_TYPE_ICON_THEME,
+				"PidginStockIconTheme", &info, 0);
+	}
+	return type;
 }

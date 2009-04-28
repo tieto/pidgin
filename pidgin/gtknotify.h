@@ -32,8 +32,10 @@
 /**
  * Adds a buddy pounce to the buddy pounce dialog
  *
+ * @param account	The account
+ * @param pounce	The pounce
  * @param alias		The buddy alias
- * @param event 	Event description
+ * @param event		Event description
  * @param message	Pounce message
  * @param date		Pounce date
  */
