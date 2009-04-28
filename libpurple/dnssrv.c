@@ -381,7 +381,7 @@ res_thread(gpointer data)
 
 			MyDnsRecordListFree(dr, DnsFreeRecordList);
 			query_data->results = lst;
-		} else if (type == T_TXT) {
+		} else if (type == DNS_TYPE_TXT) {
 			PDNS_RECORD dr_tmp;
 			GSList *lst = NULL;
 			DNS_TXT_DATA *txt_data;
