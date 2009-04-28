@@ -44,6 +44,8 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	if (snac2->family != SNAC_FAMILY_CHATNAV) {
 		purple_debug_warning("oscar", "chatnav error: received response that maps to corrupt request (fam=%04x)\n", snac2->family);
+		g_free(snac2->data);
+		g_free(snac2);
 		return 0;
 	}
 
@@ -462,6 +464,8 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 
 	if (snac2->family != SNAC_FAMILY_CHATNAV) {
 		purple_debug_misc("oscar", "faim: chatnav_parse_info: received response that maps to corrupt request! (fam=%04x)\n", snac2->family);
+		g_free(snac2->data);
+		g_free(snac2);
 		return 0;
 	}
 
