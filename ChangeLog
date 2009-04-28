@@ -1,5 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.6 (??/??/2009):
+	IRC:
+	* Correctly handle WHOIS for users who are joined to a large number of
+	  channels.
+
 version 2.5.5 (03/01/2009):
 	libpurple:
 	* Fix a crash when removing an account with an unknown protocol id.
