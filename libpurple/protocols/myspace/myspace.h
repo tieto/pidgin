@@ -114,8 +114,8 @@
 #define MSIM_KEEPALIVE_INTERVAL     (3 * 60)
 /*#define MSIM_USE_KEEPALIVE*/
 
-/* Time to check if alive (milliseconds) */
-#define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
+/* Time to check if alive (seconds) */
+#define MSIM_KEEPALIVE_INTERVAL_CHECK   30
 
 /* Time to check for new mail (milliseconds) */
 #define MSIM_MAIL_INTERVAL_CHECK    (60 * 1000)

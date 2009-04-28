@@ -68,7 +68,7 @@ msn_slp_call_new(MsnSlpLink *slplink)
 
 	msn_slplink_add_slpcall(slplink, slpcall);
 
-	slpcall->timer = purple_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
+	slpcall->timer = purple_timeout_add_seconds(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
 
 	return slpcall;
 }
