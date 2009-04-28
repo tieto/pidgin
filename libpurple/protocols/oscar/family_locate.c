@@ -963,11 +963,14 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	if ((snac2->family != SNAC_FAMILY_LOCATE) && (snac2->type != 0x0015)) {
 		purple_debug_misc("oscar", "locate error: received response from invalid request! %d\n", snac2->family);
+		g_free(snac2->data);
+		g_free(snac2);
 		return 0;
 	}
 
 	if (!(bn = snac2->data)) {
 		purple_debug_misc("oscar", "locate error: received response from request without a buddy name!\n");
+		g_free(snac2);
 		return 0;
 	}
 
