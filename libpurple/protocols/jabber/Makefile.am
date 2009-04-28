@@ -9,6 +9,8 @@ JABBERSOURCES = auth.c \
 			  auth.h \
 			  buddy.c \
 			  buddy.h \
+			  bosh.c \
+			  bosh.h \
 			  chat.c \
 			  chat.h \
 			  data.c \
@@ -61,6 +63,8 @@ JABBERSOURCES = auth.c \
 			  adhoccommands.h \
 			  pep.c \
 			  pep.h \
+			  useravatar.c \
+			  useravatar.h \
 			  usermood.c \
 			  usermood.h \
 			  usernick.c \
