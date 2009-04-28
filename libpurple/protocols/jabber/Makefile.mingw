@@ -71,6 +71,7 @@ C_SRC =	\
 			presence.c \
 			roster.c \
 			si.c \
+			useravatar.c \
 			usermood.c \
 			usernick.c \
 			usertune.c \

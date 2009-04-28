@@ -194,7 +194,7 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	 * unlikely we'll send enough packets in one session to overflow the rid.
 	 */
 	conn->rid = ((guint64)g_random_int() << 32) | g_random_int();
-	conn->rid &= 0xFFFFFFFFFFFFF;
+	conn->rid &= 0xFFFFFFFFFFFFFLL;
 
 	conn->pending = purple_circ_buffer_new(0 /* default grow size */);
 

@@ -291,13 +291,12 @@ static gboolean
 res_main_thread_cb(gpointer data)
 {
 	PurpleSrvResponse *srvres = NULL;
-	PurpleTxtResponse *txtres = NULL;
 	int size = 0;
 	PurpleSrvQueryData *query_data = data;
 	if(query_data->error_message != NULL)
 		purple_debug_error("dnssrv", query_data->error_message);
 	else {
-		if (query_data->type == T_SRV) {
+		if (query_data->type == DNS_TYPE_SRV) {
 			PurpleSrvResponse *srvres_tmp = NULL;
 			GSList *lst = query_data->results;
 
@@ -317,8 +316,7 @@ res_main_thread_cb(gpointer data)
 			purple_debug_info("dnssrv", "found %d SRV entries\n", size);
 			
 			if(query_data->cb.srv) query_data->cb.srv(srvres, size, query_data->extradata);
-		} else if (query_data->type == T_TXT) {
-			PurpleTxtResponse *txtres_tmp = NULL;
+		} else if (query_data->type == DNS_TYPE_TXT) {
 			GSList *lst = query_data->results;
 
 			purple_debug_info("dnssrv", "found %d TXT entries\n", g_slist_length(lst));
@@ -431,8 +429,8 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 {
 	char *query;
 	PurpleSrvQueryData *query_data;
-	PurpleSrvInternalQuery internal_query;
 #ifndef _WIN32
+	PurpleSrvInternalQuery internal_query;
 	int in[2], out[2];
 	int pid;
 #else
@@ -536,8 +534,8 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 {
 	char *query;
 	PurpleSrvQueryData *query_data;
-	PurpleSrvInternalQuery internal_query;
 #ifndef _WIN32
+	PurpleSrvInternalQuery internal_query;
 	int in[2], out[2];
 	int pid;
 #else
