@@ -1,7 +1,7 @@
 # Pidgin Finnish translation
 # Copyright (C) 2002 Tero Kuusela <teroajk@subdimension.com>
 # Copyright (C) 2003-2005 Arto Alakulju <arto@alakulju.net>
-# Copyright (C) 2005-2008 Timo Jyrinki <timo.jyrinki@iki.fi>
+# Copyright (C) 2005-2009 Timo Jyrinki <timo.jyrinki@iki.fi>
 #
 # This file is distributed under the same license as the Pidgin package.
 #
@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-07 13:30+0200\n"
-"PO-Revision-Date: 2009-01-23 19:58+0200\n"
+"POT-Creation-Date: 2009-04-28 16:32+0300\n"
+"PO-Revision-Date: 2009-04-28 16:31+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -43,7 +43,7 @@ msgstr ""
 "Käyttö: %s [VALITSIN]...\n"
 "\n"
 "  -c, --config=HAK    käytä hakemistoa HAK asetustiedostoille\n"
-"  -d, --debug         kirjoita virheenjäljitysviestit putkeen stdout\n"
+"  -d, --debug         kirjoita virheenjäljitysviestit putkeen stderr\n"
 "  -h, --help          näytä tämä ohje ja poistu\n"
 "  -n, --nologin       älä kirjaudu automaattisesti\n"
 "  -v, --version       näytä nykyinen versionumero ja poistu\n"
@@ -608,19 +608,6 @@ msgstr ""
 msgid "Send To"
 msgstr "Lähetä käyttäjälle"
 
-msgid "Invite message"
-msgstr "Kutsuviesti"
-
-msgid "Invite"
-msgstr "Kutsu"
-
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"Anna kutsuttavan käyttäjän nimi sekä vapaaehtoinen \n"
-"kutsuviesti."
-
 msgid "Conversation"
 msgstr "Keskustelu"
 
@@ -880,6 +867,40 @@ msgstr "Kaikki keskustelut"
 msgid "System Log"
 msgstr "Järjestelmäloki"
 
+msgid "Calling ... "
+msgstr "Soitetaan..."
+
+msgid "Hangup"
+msgstr "Katkaise"
+
+#. Number of actions
+msgid "Accept"
+msgstr "Hyväksy"
+
+msgid "Reject"
+msgstr "Kieltäydy"
+
+msgid "Call in progress."
+msgstr "Puhelu käynnissä."
+
+msgid "The call has been terminated."
+msgstr "Puhelu on päättynyt."
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr "%s haluaa aloittaa ääni-istunnon kanssasi."
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+"%s yrittää aloittaa kanssasi mediaistuntoa, jonka tyyppi ei ole tuettu."
+
+msgid "You have rejected the call."
+msgstr "Olet hylännyt puhelun."
+
+msgid "call: Make an audio call."
+msgstr "call: Tee äänipuhelu."
+
 msgid "Emails"
 msgstr "Sähköpostit"
 
@@ -913,6 +934,9 @@ msgstr "Jatka"
 
 msgid "IM"
 msgstr "Pikaviesti"
+
+msgid "Invite"
+msgstr "Kutsu"
 
 msgid "(none)"
 msgstr "(ei mitään)"
@@ -1118,7 +1142,6 @@ msgstr "%s on poissa. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s on lähettämässä sinulle viestiä. (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Tuntematon ilmoitinviesti. Raportoi tästä!"
 
@@ -1164,7 +1187,6 @@ msgstr "Minuutteja ennen tilan asetusta"
 msgid "Change status to"
 msgstr "Vaihda tila seuraavaksi"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Keskustelut"
 
@@ -1529,6 +1551,31 @@ msgstr "GntLastLog"
 msgid "Lastlog plugin."
 msgstr "Lastlog-liitännäinen."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"Noudetaan TinyURL-osoitetta..."
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr "Luo TinyURL vain tämän pituisille tai pidemmille osoitteille"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "TinyURL:n (tai muun) osoite-etuliite"
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "TinyURL-liitännäinen"
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr ""
+"Vastaanotettaessa viestiä jossa on URL-osoitteita, käytä TinyURL-palvelua "
+"helpompaa kopiomista varten"
+
 msgid "accounts"
 msgstr "käyttäjätilit"
 
@@ -1628,13 +1675,6 @@ msgstr "Hyväksy varmenne kohteelle %s?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "SSL-varmenteen tarkistus"
-
-#. Number of actions
-msgid "Accept"
-msgstr "Hyväksy"
-
-msgid "Reject"
-msgstr "Kieltäydy"
 
 msgid "_View Certificate..."
 msgstr "_Näytä varmenne..."
@@ -1780,6 +1820,15 @@ msgstr "%s poistui huoneesta."
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s poistui huoneesta (%s)."
+
+msgid "Invite to chat"
+msgstr "Kutsu keskusteluun"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr "Anna kutsuttavan käyttäjän nimi sekä vapaaehtoinen viesti."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2617,6 +2666,31 @@ msgstr "Tallenna yhteydettömät viestit ilmoittimeen"
 msgid "Do not ask. Always save in pounce."
 msgstr "Älä kysy. Tallenna aina ilmoittimeen."
 
+msgid "One Time Password"
+msgstr "Kertasalasana"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr "Kertasalasanan tuki"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr "Pakota käyttöön salasanat, joita käytetään vain kerran."
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
+msgstr ""
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2826,7 +2900,6 @@ msgid ""
 msgstr ""
 "Paikalliseen mDNS-palvelimeen ei voi luoda yhteyttä. Onko se käynnissä?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Etunimi"
 
@@ -2857,6 +2930,10 @@ msgstr "Bonjour-yhteyskäytäntöliitännäinen"
 
 msgid "Purple Person"
 msgstr "Purple-henkilö"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Paikallinen portti"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3014,6 +3091,7 @@ msgstr "Valitse ryhmäkeskustelu tuttavalle: %s"
 msgid "Add to chat..."
 msgstr "Lisää ryhmäkeskusteluun..."
 
+#. Global
 msgid "Available"
 msgstr "Tavoitettavissa"
 
@@ -3360,6 +3438,16 @@ msgstr ""
 "Palvelin hylkäsi valitsemasi tilinimen. Siinä on todennäköisesti kiellettyjä "
 "merkkejä."
 
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "Kutsumanimi ”%s” on jo käytössä."
+
+msgid "Nickname in use"
+msgstr "Kutsumanimi on käytössä"
+
 msgid "Cannot change nick"
 msgstr "Ei kyetty muuttamaan kutsumanimeä"
 
@@ -3694,6 +3782,9 @@ msgstr "Asiakasohjelma"
 
 msgid "Operating System"
 msgstr "Käyttöjärjestelmä"
+
+msgid "Local Time"
+msgstr "Paikallinen aika"
 
 msgid "Last Activity"
 msgstr "Viimeisin aktiivisena olo"
@@ -4139,6 +4230,12 @@ msgstr "Palvelin ei tue estämistä"
 msgid "Not Authorized"
 msgstr "Ei valtuuksia"
 
+msgid "Mood"
+msgstr "Mieliala"
+
+msgid "Now Listening"
+msgstr "Kuuntelee nyt"
+
 msgid "Both"
 msgstr "molemmille"
 
@@ -4159,12 +4256,6 @@ msgstr "Ei mitään"
 
 msgid "Subscription"
 msgstr "Tilailmoitus"
-
-msgid "Mood"
-msgstr "Mieliala"
-
-msgid "Now Listening"
-msgstr "Kuuntelee nyt"
 
 msgid "Mood Text"
 msgstr "Mielialan teksti"
@@ -4404,17 +4495,25 @@ msgid "Unable to ping user %s"
 msgstr "Käyttäjää %s ei voi pingata."
 
 #, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr "Äänimerkkiä ei voi lähettää, koska mitään ei tiedetä käyttäjästä %s."
 
 #, c-format
-msgid "Unable to buzz, because user %s might be offline."
+msgid "Unable to buzz, because %s might be offline."
 msgstr ""
 "Äänimerkkiä ei voi lähettää, koska käyttäjä %s voi olla poissa linjoilta."
 
 #, c-format
-msgid "Unable to buzz, because the user %s does not support it."
-msgstr "Äänimerkkiä ei voi lähettää, koska käyttäjä %s ei tue sitä."
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
+msgstr ""
+"Äänimerkkiä ei voi lähettää, koska käyttäjä %s ei tue sitä tai ei halua "
+"vastaanottaa äänimerkkejä tällä hetkellä."
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "Töötätään tuttavalle %s..."
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
@@ -4426,8 +4525,33 @@ msgid "%s has buzzed you!"
 msgstr "%s on töötännyt sinulle."
 
 #, c-format
-msgid "Buzzing %s..."
-msgstr "Töötätään tuttavalle %s..."
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "Mediaa ei voi alustaa käyttäjän %s kanssa: virheellinen JID."
+
+#, c-format
+msgid "Unable to initiate media with %s: user is not online"
+msgstr "Mediaa ei voi alustaa käyttäjän %s kanssa: käyttäjä ei ole linjoilla"
+
+#, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
+msgstr ""
+"Mediaa ei voi alustaa käyttäjän %s kanssa: käyttäjän läsnäolotilaa ei ole "
+"tilattu"
+
+msgid "Media Initiation Failed"
+msgstr "Median alustus epäonnistui"
+
+#, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr "Valitse käyttäjän %s sijainti jonne haluat aloittaa mediaistunnon."
+
+msgid "Select a Resource"
+msgstr "Valitse sijainti"
+
+msgid "Initiate Media"
+msgstr "Aloita median käyttö"
 
 msgid "config:  Configure a chat room."
 msgstr "config: Konfiguroi ryhmäkeskusteluhuone."
@@ -4582,6 +4706,18 @@ msgstr "Virhe liityttäessä ryhmäkeskusteluun %s"
 msgid "Error in chat %s"
 msgstr "Virhe ryhmäkeskustelussa: %s"
 
+msgid "An error occured on the in-band bytestream transfer\n"
+msgstr "Kaistansisäisessä tavuvirtasiirrossa tapahtui virhe\n"
+
+msgid "Transfer was closed."
+msgstr "Siirto suljettiin."
+
+msgid "Failed to open the file"
+msgstr "Tiedoston avaaminen epäonnistui"
+
+msgid "Failed to open in-band bytestream"
+msgstr "Kaistansisäisen tavuvirran avaaminen epäonnistui"
+
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -4606,9 +4742,6 @@ msgstr ""
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Valitse käyttäjän %s sijainti johon haluat lähettää tiedoston"
-
-msgid "Select a Resource"
-msgstr "Valitse sijainti"
 
 msgid "Edit User Mood"
 msgstr "Muuta käyttäjän mielialaa"
@@ -4643,9 +4776,6 @@ msgstr "Toiminnot"
 
 msgid "Select an action"
 msgstr "Valitse toiminto"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "MSN-osoitekirjaa ei onnistuttu noutamaan"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -6415,7 +6545,7 @@ msgstr ""
 "kirjaimella ja sisältää vain kirjaimia, numeroita ja välilyöntejä, tai "
 "sisältää vain numeroita."
 
-#. Unregistered screen name
+#. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "Epäkelpo käyttäjänimi."
@@ -6431,7 +6561,7 @@ msgstr "Käyttäjätilisi palvelu on parhaillaan keskeytetty."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL-pikaviestipalvelu ei tilapäisesti ole käytössä."
 
-#. screen name connecting too frequently
+#. username connecting too frequently
 #. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6611,7 +6741,7 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 msgstr[1] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Viestiä ei voi lähettää: %s"
@@ -6923,6 +7053,7 @@ msgstr "Y_hdistä"
 msgid "Get AIM Info"
 msgstr "Hae AIM-tiedot"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Muokkaa kommenttia"
 
@@ -7202,6 +7333,34 @@ msgstr "Päivitä"
 
 msgid "Could not change buddy information."
 msgstr "Tuttavan tietojen muuttaminen ei onnistunut."
+
+msgid "Mobile"
+msgstr "Liikkeellä"
+
+msgid "Note"
+msgstr "Huomautus"
+
+#. callback
+msgid "Buddy Memo"
+msgstr "Tuttavamuistio"
+
+msgid "Change his/her memo as you like"
+msgstr "Muuta henkilön muistiota halutulla tavalla"
+
+msgid "_Modify"
+msgstr "_Muokkaa"
+
+msgid "Memo Modify"
+msgstr "Muistion muokkaaminen"
+
+msgid "Server says:"
+msgstr "Palvelin sanoo:"
+
+msgid "Your request was accepted."
+msgstr "Pyyntösi hyväksyttiin."
+
+msgid "Your request was rejected."
+msgstr "Pyyntösi hylättiin."
 
 #, c-format
 msgid "%u requires verification"
@@ -7511,6 +7670,12 @@ msgstr "<p><b>Ihanat päivitysten kirjoittajat</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Tunnustus</b>:<br>\n"
 
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Tunnolliset testaajat</b>:<br>\n"
+
+msgid "and more, please let me know... thank you!))"
+msgstr "ja muuta, kerro minulle... kiitos!))"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>Ja, kaikki pojat takahuoneessa...</i><br>\n"
 
@@ -7535,6 +7700,9 @@ msgstr "Päivitä kaikki QQ Qunit"
 
 msgid "About OpenQ"
 msgstr "Tietoja OpenQ:sta"
+
+msgid "Modify Buddy Memo"
+msgstr "Muokkaa tuttavan muistiota"
 
 #. *< type
 #. *< ui_requirement
@@ -7572,6 +7740,9 @@ msgstr "Näytä palvelinhuomautukset"
 
 msgid "Show server news"
 msgstr "Näytä palvelinuutiset"
+
+msgid "Show chat room when msg comes"
+msgstr "Näytä keskusteluhuone viestin tullessa"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Jatkuvan yhteydenpidon aikaväli (sekunneissa)"
@@ -7640,7 +7811,6 @@ msgstr ""
 "Tuntematon vastauskoosi kirjauduttaessa sisään (0x%02X):\n"
 "%s"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
 msgstr "Yhteyden muodostaminen epäonnistui."
 
@@ -8542,9 +8712,6 @@ msgstr "Organisaatio"
 msgid "Unit"
 msgstr "Yksikkö"
 
-msgid "Note"
-msgstr "Huomautus"
-
 msgid "Join Chat"
 msgstr "Liity ryhmäkeskusteluun"
 
@@ -9232,193 +9399,11 @@ msgid "Auth Domain"
 msgstr "Todennus/verkkoalue"
 
 #, c-format
-msgid "Looking up %s"
-msgstr "Etsitään %s"
-
-#, c-format
-msgid "Connect to %s failed"
-msgstr "%s: yhteyden muodostaminen epäonnistui"
-
-#, c-format
-msgid "Signon: %s"
-msgstr "Kirjautuminen: %s"
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Ei kyetty kirjoittamaan tiedostoa %s."
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Ei kyetty lukemaan tiedostoa %s."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "Viesti on liian pitkä, viimeiset %s tavua katkaistu."
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s ei ole parhaillaan kirjautuneena sisään."
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "%s:n varoittaminen ei ole sallittua."
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Viesti on hylätty, ylität palvelimen nopeusrajan."
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "Ryhmäkeskustelu %s ei ole käytettävissä."
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "Lähetät viestejä %s:lle liian nopeasti."
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "Et saanut %s:n pikaviestiä koska se oli liian suuri."
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr "Et saanut %s:n pikaviestiä koska se lähetettiin liian nopeasti."
-
-#, c-format
-msgid "Failure."
-msgstr "Epäonnistuminen."
-
-#, c-format
-msgid "Too many matches."
-msgstr "Liian monta tulosta."
-
-#, c-format
-msgid "Need more qualifiers."
-msgstr "Tarvitaan lisää määritteitä."
-
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr "Hakemistopalvelu ei tilapäisesti ole käytettävissä."
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr "Sähköpostin katsominen rajoitettu."
-
-#, c-format
-msgid "Keyword ignored."
-msgstr "Avainsanasta ei välitetty."
-
-#, c-format
-msgid "No keywords."
-msgstr "Ei avainsanoja."
-
-#, c-format
-msgid "User has no directory information."
-msgstr "Käyttäjällä ei ole hakemistotietoja."
-
-#, c-format
-msgid "Country not supported."
-msgstr "Maa ei tuettu."
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Tunnistamaton epäonnistuminen: %s."
-
-#, c-format
-msgid "Incorrect username or password."
-msgstr "Virheellinen käyttäjänimi tai salasana."
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr "Palvelu ei tilapäisesti ole käytössä."
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr "Varoitustasosi on parhaillaan liian korkea kirjautuaksesi sisään."
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-"Olet ottanut ja katkaissut yhteyden liian tiheään. Odota kymmenen minuuttia "
-"ja yritä uudestaan. Jos jatkat yrittämistä, joudut odottamaan vielä "
-"pidempään."
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "Tuntematon sisäänkirjautumisvirhe esiintyi: %s."
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Tuntematon virhe, %d, esiintyi. Tiedot: %s"
-
-msgid "Invalid Groupname"
-msgstr "Epäkelpo ryhmän nimi"
-
-msgid "Connection Closed"
-msgstr "Yhteys suljettu"
-
-msgid "Waiting for reply..."
-msgstr "Odotetaan vastausta..."
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC on palannut tauoltaan. Voit lähettää viestejä jälleen."
-
-msgid "Password Change Successful"
-msgstr "Salasanan vaihto onnistui"
-
-msgid "_Group:"
-msgstr "_Ryhmä:"
-
-msgid "Get Dir Info"
-msgstr "Hae hakemistotiedot"
-
-msgid "Set Dir Info"
-msgstr "Aseta hakemistotiedot"
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr "%s:n avaaminen kirjoitusta varten epäonnistui!"
-
-msgid "File transfer failed; other side probably canceled."
-msgstr ""
-"Tiedostonsiirto epäonnistui. Toinen osapuoli luultavasti katkaisi siirron."
-
-msgid "Could not connect for transfer."
-msgstr "Yhteyttä siirtoa varten ei voi muodostaa."
-
-msgid "Could not write file header.  The file will not be transferred."
-msgstr "Tiedosto-otsikkoa ei voi kirjoittaa. Tiedostoa ei siirretä."
-
-msgid "Save As..."
-msgstr "Tallenna nimellä..."
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] "%s pyytää %s hyväksymään %d tiedoston: %s (%.2f %s)%s%s"
-msgstr[1] "%s pyytää %s hyväksymään %d tiedostot: %s (%.2f %s)%s%s"
-
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s pyytää sinua lähettämään hänelle tiedoston"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "TOC Protocol Plugin"
-msgstr "TOC-yhteyskäytäntöliitännäinen"
-
-#, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr "%s on lähettänyt webkamera-kutsun, mikä ei ole vielä tuettuna."
+
+msgid "Your SMS was not delivered"
+msgstr "Tekstiviestiä (SMS) ei välitetty"
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Yahoo!-viestiäsi ei lähetetty."
@@ -10019,9 +10004,6 @@ msgstr "Älä häiritse"
 msgid "Extended away"
 msgstr "Pidennetty poissaolo"
 
-msgid "Mobile"
-msgstr "Liikkeellä"
-
 msgid "Listening to music"
 msgstr "Kuuntelee musiikkia"
 
@@ -10062,18 +10044,6 @@ msgstr "+++ %s on aktiivinen"
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "Virhe luettaessa %s"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
-"%s:n lukemisessa tapahtui virhe. Niitä ei ladattu ja vanha tiedosto on "
-"nimetty uudelleen nimellä %s~."
 
 msgid "Calculating..."
 msgstr "Lasketaan..."
@@ -10150,6 +10120,14 @@ msgid "Unable to connect to %s: %s"
 msgstr "Kohteeseen %s ei voi yhdistää: %s"
 
 #, c-format
+msgid ""
+"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
+"found."
+msgstr ""
+"Palvelimelle %s ei voi yhdistää: palvelin vaatii TSL/SSL-tuen, mutta TLS/SSL-"
+"tukea ei löydy."
+
+#, c-format
 msgid " - %s"
 msgstr " - %s"
 
@@ -10181,6 +10159,18 @@ msgstr "Yhteys torjuttu."
 #, c-format
 msgid "Address already in use."
 msgstr "Osoite on jo käytössä."
+
+#, c-format
+msgid "Error Reading %s"
+msgstr "Virhe luettaessa %s"
+
+#, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+"%s:n lukemisessa tapahtui virhe. Tiedostoa ei ladattu ja vanha tiedosto on "
+"nimetty uudelleen nimelle %s~."
 
 msgid "Internet Messenger"
 msgstr "Pikaviestin"
@@ -10224,10 +10214,8 @@ msgstr "Il_moita uudesta sähköpostista"
 msgid "Use this buddy _icon for this account:"
 msgstr "Käytä tätä tuttavakuvaketta tälle käyttäjät_ilille:"
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "%s-valinnat"
+msgid "_Advanced"
+msgstr "_Lisäasetukset"
 
 msgid "Use GNOME Proxy Settings"
 msgstr "Käytä Gnomen välipalvelinasetuksia"
@@ -10262,9 +10250,6 @@ msgstr "Jos katsot todella tarkkaan"
 msgid "you can see the butterflies mating"
 msgstr "voit nähdä perhosten parittelevan"
 
-msgid "Proxy Options"
-msgstr "Välipalvelinvalinnat"
-
 msgid "Proxy _type:"
 msgstr "Välipalvelimen _tyyppi:"
 
@@ -10292,8 +10277,8 @@ msgstr "_Perus"
 msgid "Create _this new account on the server"
 msgstr "Luo _tämä uusi käyttäjätili palvelimelle"
 
-msgid "_Advanced"
-msgstr "_Lisäasetukset"
+msgid "_Proxy"
+msgstr "_Välipalvelin"
 
 msgid "Enabled"
 msgstr "Käytössä"
@@ -10367,6 +10352,15 @@ msgstr "Hae _tiedot"
 
 msgid "I_M"
 msgstr "_Pikaviesti"
+
+msgid "_Audio Call"
+msgstr "_Äänipuhelu"
+
+msgid "Audio/_Video Call"
+msgstr "Ääni/_videopuhelu"
+
+msgid "_Video Call"
+msgstr "_Videopuhelu"
 
 msgid "_Send File..."
 msgstr "_Lähetä tiedosto..."
@@ -10504,6 +10498,9 @@ msgstr "/Työkalut/Tuttava_ilmoittimet"
 msgid "/Tools/_Certificates"
 msgstr "/Työkalut/_Varmenteet"
 
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Työkalut/Omat h_ymiöt"
+
 msgid "/Tools/Plu_gins"
 msgstr "/Työkalut/_Liitännäiset"
 
@@ -10512,9 +10509,6 @@ msgstr "/Työkalut/A_setukset"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Työkalut/Yks_ityisyys"
-
-msgid "/Tools/Smile_y"
-msgstr "/Työkalut/H_ymiö"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Työkalut/_Tiedostonsiirrot..."
@@ -10633,8 +10627,8 @@ msgstr "Käsin"
 msgid "By status"
 msgstr "Tilan mukaan"
 
-msgid "By log size"
-msgstr "Lokin koon mukaan"
+msgid "By recent log activity"
+msgstr "Viimeisimpien lokikirjauksien mukaan"
 
 #, c-format
 msgid "%s disconnected"
@@ -10649,6 +10643,9 @@ msgstr "Yhdistä uudelleen"
 
 msgid "Re-enable"
 msgstr "Ota uudelleen käyttöön"
+
+msgid "SSL FAQs"
+msgstr "SSL-UKK:t"
 
 msgid "Welcome back!"
 msgstr "Tervetuloa takaisin."
@@ -10740,6 +10737,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "_Lempinimi:"
 
+msgid "_Group:"
+msgstr "_Ryhmä:"
+
 msgid "Auto_join when account becomes online."
 msgstr "Liity automaattisesti kun käyttä_jätili pääsee linjoille."
 
@@ -10791,12 +10791,6 @@ msgstr ""
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "Kutsu tuttava keskusteluhuoneeseen"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr "Anna kutsuttavan käyttäjän nimi sekä vapaaehtoinen viesti."
 
 msgid "_Buddy:"
 msgstr "_Tuttava:"
@@ -10872,6 +10866,18 @@ msgstr "/Keskustelu/_Tallenna nimellä..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Keskustelu/T_yhjennä takaisinvieritys"
 
+msgid "/Conversation/M_edia"
+msgstr "/Keskustelu/M_edia"
+
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Keskustelu/Media/_Äänipuhelu"
+
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Keskustelu/Media/_Videopuhelu"
+
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Keskustelu/Media/Ääni\\/video_puhelu"
+
 msgid "/Conversation/Se_nd File..."
 msgstr "/Keskustelu/_Lähetä tiedosto..."
 
@@ -10943,6 +10949,15 @@ msgstr "/Keskustelu"
 
 msgid "/Conversation/View Log"
 msgstr "/Keskustelu/Näytä loki..."
+
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Keskustelu/Media/Äänipuhelu"
+
+msgid "/Conversation/Media/Video Call"
+msgstr "/Keskustelu/Media/Videopuhelu"
+
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Keskustelu/Media/Ääni\\/videopuhelu"
 
 msgid "/Conversation/Send File..."
 msgstr "/Keskustelu/Lähetä tiedosto..."
@@ -11127,6 +11142,9 @@ msgstr "esittäjä"
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
+msgid "voice and video"
+msgstr "ääni ja video"
+
 msgid "support"
 msgstr "tuki"
 
@@ -11266,6 +11284,9 @@ msgstr "georgia"
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntun georgian kääntäjät"
 
+msgid "Khmer"
+msgstr "khmeeri"
+
 msgid "Kannada"
 msgstr "kannada"
 
@@ -11286,6 +11307,9 @@ msgstr "liettua"
 
 msgid "Macedonian"
 msgstr "makedonia"
+
+msgid "Mongolian"
+msgstr "mongolia"
 
 msgid "Bokmål Norwegian"
 msgstr "kirjanorja"
@@ -11402,9 +11426,32 @@ msgstr ""
 "anna ohjelmalle minkäänlaista takuuta.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> #pidgin palvelimella irc.freenode.net<BR><BR>"
+"<FONT SIZE=\"4\">UKK:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Apua sähköpostitse (engl.):</FONT> <A HREF=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">IRC-kanava:</FONT> #pidgin palvelimella irc.freenode."
+"net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">XMPP-keskustelu:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Nykyiset kehittäjät"
@@ -11704,15 +11751,6 @@ msgstr "Kirjoittamishuomautukseen käytettävä kirjasin"
 msgid "Enable typing notification"
 msgstr "Ota kirjoittamishuomautus käyttöön"
 
-msgid "_Copy Email Address"
-msgstr "_Kopioi sähköpostiosoite"
-
-msgid "_Open Link in Browser"
-msgstr "_Avaa linkki selaimessa"
-
-msgid "_Copy Link Location"
-msgstr "_Kopioi linkin osoite"
-
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -11964,6 +12002,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -11978,6 +12017,7 @@ msgstr ""
 "\n"
 "  -c, --config=HAK    käytä hakemistoa HAK asetustiedostoille\n"
 "  -d, --debug         kirjoita virheenjäljitysviestit putkeen stdout\n"
+"  -f, --force-online  pakota ”tavoitettavissa” riippumatta verkon tilasta\n"
 "  -h, --help          näytä tämä ohje ja poistu\n"
 "  -m, --multiple      älä pitäydy vain yhdessä instanssissa\n"
 "  -n, --nologin       älä kirjaudu automaattisesti\n"
@@ -11994,6 +12034,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12007,6 +12048,7 @@ msgstr ""
 "\n"
 "  -c, --config=HAK    käytä hakemistoa HAK asetustiedostoille\n"
 "  -d, --debug         kirjoita virheenjäljitysviestit putkeen stdout\n"
+"  -f, --force-online  pakota ”tavoitettavissa” riippumatta verkon tilasta\n"
 "  -h, --help          näytä tämä ohje ja poistu\n"
 "  -m, --multiple      älä pitäydy vain yhdessä instanssissa\n"
 "  -n, --nologin       älä kirjaudu automaattisesti\n"
@@ -12048,11 +12090,26 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
-msgid "Open All Messages"
-msgstr "Avaa kaikki viestit"
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Poistutaan, koska toinen libpurple-asiakas on jo käynnissä.\n"
 
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Sinulle on postia!</span>"
+msgid "/_Media"
+msgstr "/_Media"
+
+msgid "/Media/_Hangup"
+msgstr "/Media/_Katkaise"
+
+msgid "Calling..."
+msgstr "Soitetaan..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr "%s haluaa aloittaa ääni/videoistunnon kanssasi."
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr "%s haluaa aloittaa videoistunnon kanssasi."
 
 #, c-format
 msgid "%s has %d new message."
@@ -12080,6 +12137,24 @@ msgstr "Virhe käynnistettäessä \"%s\": %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Oma selainkomento -asetus valittu, mutta komentoa ei ole asetettu."
+
+msgid "Open All Messages"
+msgstr "Avaa kaikki viestit"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Sinulle on postia!</span>"
+
+msgid "New Pounces"
+msgstr "Uusi ilmoituksia"
+
+msgid "Dismiss"
+msgstr "Hylkää"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Uusi ilmoitus</span>"
+
+msgid "No message"
+msgstr "Ei viestiä"
 
 msgid "The following plugins will be unloaded."
 msgstr "Seuraavat liitännäiset otetaan pois käytöstä."
@@ -12128,6 +12203,9 @@ msgstr "<b>Liitännäisen yksityiskohdat</b>"
 
 msgid "Select a file"
 msgstr "Valitse tiedosto"
+
+msgid "Modify Buddy Pounce"
+msgstr "Muokkaa tuttavailmoitinta"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -12199,6 +12277,50 @@ msgstr "_Toistuva"
 msgid "Pounce Target"
 msgstr "Ilmoituksen kohde"
 
+#, c-format
+msgid "Started typing"
+msgstr "alkoi kirjoittaa"
+
+#, c-format
+msgid "Paused while typing"
+msgstr "keskeytti kirjoittamisen"
+
+#, c-format
+msgid "Signed on"
+msgstr "kirjautui sisään"
+
+#, c-format
+msgid "Returned from being idle"
+msgstr "palasi oltuaan jouten"
+
+#, c-format
+msgid "Returned from being away"
+msgstr "palasi oltuaan poissa"
+
+#, c-format
+msgid "Stopped typing"
+msgstr "lopetti kirjoittamisen"
+
+#, c-format
+msgid "Signed off"
+msgstr "kirjautui ulos"
+
+#, c-format
+msgid "Became idle"
+msgstr "muuttui jouten olevaksi"
+
+#, c-format
+msgid "Went away"
+msgstr "muuttui poissa olevaksi"
+
+#, c-format
+msgid "Sent a message"
+msgstr "lähetti viestin"
+
+#, c-format
+msgid "Unknown.... Please report this!"
+msgstr "Tuntematon... Raportoi tästä!"
+
 msgid "Smiley theme failed to unpack."
 msgstr "Hymiöteeman purkaminen epäonnistui."
 
@@ -12221,6 +12343,11 @@ msgstr "Pikanäppäimet"
 msgid "Cl_ose conversations with the Escape key"
 msgstr "S_ulje keskustelut Escape-näppäimellä"
 
+#. Buddy List Themes
+msgid "Buddy List Theme"
+msgstr "Tuttavaluettelon teema"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "Ilmoitusalueen kuvake"
 
@@ -12331,9 +12458,6 @@ msgstr "Välipalvelimen asetusohjelmaa ei voi käynnistää."
 msgid "Cannot start browser configuration program."
 msgstr "Selaimen asetusohjelmaa ei voi käynnistää."
 
-msgid "ST_UN server:"
-msgstr "ST_UN-palvelin:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Esimerkki: stunserver.org</span>"
 
@@ -12357,6 +12481,10 @@ msgstr "_Ensimmäinen portti:"
 
 msgid "_End port:"
 msgstr "Viimeinen _portti:"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr "Edelleenvälityspalvelin (TURN)"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Välipalvelin &amp; selain"
@@ -12385,6 +12513,10 @@ msgstr "Välipalvelin"
 
 msgid "No proxy"
 msgstr "Ei välipalvelinta"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Käytä etä-DNS:ää SOCKS4-välipalvelimien kanssa"
 
 msgid "_User:"
 msgstr "_Käyttäjä:"
@@ -12544,11 +12676,11 @@ msgstr "Poissa ja jouten ollessa"
 msgid "Auto-away"
 msgstr "Automaattinen poissaoloasetus"
 
-msgid "Change status when _idle"
-msgstr "Vaihda tila, kun ollaan _jouten"
-
 msgid "_Minutes before becoming idle:"
 msgstr "_Minuutteja ennen jouten olevaksi asettamista:"
+
+msgid "Change status when _idle"
+msgstr "Vaihda tila, kun ollaan _jouten"
 
 msgid "Change _status to:"
 msgstr "Vaihda tila seuraavaksi:"
@@ -12697,6 +12829,12 @@ msgstr "Tallenna ja _käytä"
 msgid "Status for %s"
 msgstr "%s:n tila"
 
+#.
+#. * TODO: We should enable/disable the add button based on
+#. *       whether the user has entered all required data.  That
+#. *       would eliminate the need for this check and provide a
+#. *       better user experience.
+#.
 msgid "Custom Smiley"
 msgstr "Oma hymiö"
 
@@ -12706,13 +12844,13 @@ msgstr "Lisää tietoja tarvitaan"
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr "Syötä hymiöön liitettävä oikotie."
 
+#, fuzzy, c-format
+msgid ""
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
+msgstr "Valitulle oikotielle on jo oma hymiö. Valitse toisenlainen oikotie."
+
 msgid "Duplicate Shortcut"
 msgstr "Monista oikotie"
-
-msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
-msgstr "Valitulle oikotielle on jo oma hymiö. Valitse toisenlainen oikotie."
 
 msgid "Please select an image for the smiley."
 msgstr "Valitse hymiölle kuva."
@@ -12723,15 +12861,18 @@ msgstr "Muokkaa hymiötä"
 msgid "Add Smiley"
 msgstr "Lisää hymiö"
 
-msgid "Smiley _Image"
-msgstr "Hymiön kuva"
+msgid "_Image:"
+msgstr "Ku_va:"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr "Hymiön _oikotie"
+#. Shortcut text
+msgid "S_hortcut text:"
+msgstr "Oi_kotien teksti:"
 
 msgid "Smiley"
 msgstr "Hymiö"
+
+msgid "Shortcut Text"
+msgstr "Oikotien teksti"
 
 msgid "Custom Smiley Manager"
 msgstr "Omien hymiöiden hallinta"
@@ -12857,6 +12998,15 @@ msgid ""
 msgstr ""
 "Kuvaa \"%s\" ei voi ladata: syy ei ole tiedossa, mahdollisesti vioittunut "
 "kuvatiedosto"
+
+msgid "_Open Link"
+msgstr "_Avaa linkki"
+
+msgid "_Copy Link Location"
+msgstr "_Kopioi linkin osoite"
+
+msgid "_Copy Email Address"
+msgstr "_Kopioi sähköpostiosoite"
 
 msgid "Save File"
 msgstr "Tallenna tiedosto"
@@ -13832,9 +13982,6 @@ msgstr "_Pidä tuttavat-ikkuna päällimmäisenä:"
 msgid "Only when docked"
 msgstr "Vain telakoituna"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Vilkuta ikkunaa ryhmäkeskusteluviestien saapuessa"
-
 msgid "Windows Pidgin Options"
 msgstr "Windows Pidgin -valinnat"
 
@@ -13885,6 +14032,185 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
+
+#~ msgid "Invite message"
+#~ msgstr "Kutsuviesti"
+
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "Anna kutsuttavan käyttäjän nimi sekä vapaaehtoinen \n"
+#~ "kutsuviesti."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "MSN-osoitekirjaa ei onnistuttu noutamaan"
+
+#~ msgid "Looking up %s"
+#~ msgstr "Etsitään %s"
+
+#~ msgid "Connect to %s failed"
+#~ msgstr "%s: yhteyden muodostaminen epäonnistui"
+
+#~ msgid "Signon: %s"
+#~ msgstr "Kirjautuminen: %s"
+
+#~ msgid "Unable to write file %s."
+#~ msgstr "Ei kyetty kirjoittamaan tiedostoa %s."
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "Ei kyetty lukemaan tiedostoa %s."
+
+#~ msgid "Message too long, last %s bytes truncated."
+#~ msgstr "Viesti on liian pitkä, viimeiset %s tavua katkaistu."
+
+#~ msgid "%s not currently logged in."
+#~ msgstr "%s ei ole parhaillaan kirjautuneena sisään."
+
+#~ msgid "Warning of %s not allowed."
+#~ msgstr "%s:n varoittaminen ei ole sallittua."
+
+#~ msgid ""
+#~ "A message has been dropped, you are exceeding the server speed limit."
+#~ msgstr "Viesti on hylätty, ylität palvelimen nopeusrajan."
+
+#~ msgid "Chat in %s is not available."
+#~ msgstr "Ryhmäkeskustelu %s ei ole käytettävissä."
+
+#~ msgid "You are sending messages too fast to %s."
+#~ msgstr "Lähetät viestejä %s:lle liian nopeasti."
+
+#~ msgid "You missed an IM from %s because it was too big."
+#~ msgstr "Et saanut %s:n pikaviestiä koska se oli liian suuri."
+
+#~ msgid "You missed an IM from %s because it was sent too fast."
+#~ msgstr "Et saanut %s:n pikaviestiä koska se lähetettiin liian nopeasti."
+
+#~ msgid "Failure."
+#~ msgstr "Epäonnistuminen."
+
+#~ msgid "Too many matches."
+#~ msgstr "Liian monta tulosta."
+
+#~ msgid "Need more qualifiers."
+#~ msgstr "Tarvitaan lisää määritteitä."
+
+#~ msgid "Dir service temporarily unavailable."
+#~ msgstr "Hakemistopalvelu ei tilapäisesti ole käytettävissä."
+
+#~ msgid "Email lookup restricted."
+#~ msgstr "Sähköpostin katsominen rajoitettu."
+
+#~ msgid "Keyword ignored."
+#~ msgstr "Avainsanasta ei välitetty."
+
+#~ msgid "No keywords."
+#~ msgstr "Ei avainsanoja."
+
+#~ msgid "User has no directory information."
+#~ msgstr "Käyttäjällä ei ole hakemistotietoja."
+
+#~ msgid "Country not supported."
+#~ msgstr "Maa ei tuettu."
+
+#~ msgid "Failure unknown: %s."
+#~ msgstr "Tunnistamaton epäonnistuminen: %s."
+
+#~ msgid "Incorrect username or password."
+#~ msgstr "Virheellinen käyttäjänimi tai salasana."
+
+#~ msgid "The service is temporarily unavailable."
+#~ msgstr "Palvelu ei tilapäisesti ole käytössä."
+
+#~ msgid "Your warning level is currently too high to log in."
+#~ msgstr "Varoitustasosi on parhaillaan liian korkea kirjautuaksesi sisään."
+
+#~ msgid ""
+#~ "You have been connecting and disconnecting too frequently.  Wait ten "
+#~ "minutes and try again.  If you continue to try, you will need to wait "
+#~ "even longer."
+#~ msgstr ""
+#~ "Olet ottanut ja katkaissut yhteyden liian tiheään. Odota kymmenen "
+#~ "minuuttia ja yritä uudestaan. Jos jatkat yrittämistä, joudut odottamaan "
+#~ "vielä pidempään."
+
+#~ msgid "An unknown signon error has occurred: %s."
+#~ msgstr "Tuntematon sisäänkirjautumisvirhe esiintyi: %s."
+
+#~ msgid "An unknown error, %d, has occurred.  Info: %s"
+#~ msgstr "Tuntematon virhe, %d, esiintyi. Tiedot: %s"
+
+#~ msgid "Invalid Groupname"
+#~ msgstr "Epäkelpo ryhmän nimi"
+
+#~ msgid "Connection Closed"
+#~ msgstr "Yhteys suljettu"
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "Odotetaan vastausta..."
+
+#~ msgid "TOC has come back from its pause. You may now send messages again."
+#~ msgstr "TOC on palannut tauoltaan. Voit lähettää viestejä jälleen."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "Salasanan vaihto onnistui"
+
+#~ msgid "Get Dir Info"
+#~ msgstr "Hae hakemistotiedot"
+
+#~ msgid "Set Dir Info"
+#~ msgstr "Aseta hakemistotiedot"
+
+#~ msgid "Could not open %s for writing!"
+#~ msgstr "%s:n avaaminen kirjoitusta varten epäonnistui!"
+
+#~ msgid "File transfer failed; other side probably canceled."
+#~ msgstr ""
+#~ "Tiedostonsiirto epäonnistui. Toinen osapuoli luultavasti katkaisi siirron."
+
+#~ msgid "Could not connect for transfer."
+#~ msgstr "Yhteyttä siirtoa varten ei voi muodostaa."
+
+#~ msgid "Could not write file header.  The file will not be transferred."
+#~ msgstr "Tiedosto-otsikkoa ei voi kirjoittaa. Tiedostoa ei siirretä."
+
+#~ msgid "Save As..."
+#~ msgstr "Tallenna nimellä..."
+
+#~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+#~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+#~ msgstr[0] "%s pyytää %s hyväksymään %d tiedoston: %s (%.2f %s)%s%s"
+#~ msgstr[1] "%s pyytää %s hyväksymään %d tiedostot: %s (%.2f %s)%s%s"
+
+#~ msgid "%s requests you to send them a file"
+#~ msgstr "%s pyytää sinua lähettämään hänelle tiedoston"
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "TOC-yhteyskäytäntöliitännäinen"
+
+#~ msgid "%s Options"
+#~ msgstr "%s-valinnat"
+
+#~ msgid "Proxy Options"
+#~ msgstr "Välipalvelinvalinnat"
+
+#~ msgid "By log size"
+#~ msgstr "Lokin koon mukaan"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "_Avaa linkki selaimessa"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "ST_UN-palvelin:"
+
+#~ msgid "Smiley _Image"
+#~ msgstr "Hymiön kuva"
+
+#~ msgid "Smiley S_hortcut"
+#~ msgstr "Hymiön _oikotie"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Vilkuta ikkunaa ryhmäkeskusteluviestien saapuessa"
 
 #~ msgid ""
 #~ "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -14834,9 +15160,6 @@ msgstr ""
 #~ msgid "minutes."
 #~ msgstr "minuuttia."
 
-#~ msgid "Nickname: %s\n"
-#~ msgstr "Kutsumanimi: %s\n"
-
 #~ msgid ""
 #~ "\n"
 #~ "Idle: %s"
@@ -15350,9 +15673,6 @@ msgstr ""
 #~ msgid "Calling %s"
 #~ msgstr "Soitetaan %s"
 
-#~ msgid "End Call"
-#~ msgstr "Lopeta puhelu"
-
 #~ msgid "Receiving call from %s"
 #~ msgstr "Puhelu tulossa käyttäjältä %s"
 
@@ -15594,9 +15914,6 @@ msgstr ""
 #~ msgid "_Idle"
 #~ msgstr "_on jouten"
 
-#~ msgid "Retur_n from idle"
-#~ msgstr "palaa oltuaan _jouten"
-
 #~ msgid "Bro_wse..."
 #~ msgstr "_Selaa"
 
@@ -15631,9 +15948,6 @@ msgstr ""
 #~ msgid_plural "(%d messages)"
 #~ msgstr[0] "(%d viesti)"
 #~ msgstr[1] "(%d viestiä)"
-
-#~ msgid "(1 message)"
-#~ msgstr "(1 viesti)"
 
 #~ msgid "Hide Disconnect Errors"
 #~ msgstr "Piilota yhteydenkatkaisuvirheilmoitukset"
