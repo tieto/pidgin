@@ -98,7 +98,12 @@ void jabber_handle_event(JabberMessage *jm) {
 	/* this may be called even when the own server doesn't support pep! */
 	JabberPEPHandler *jph;
 	GList *itemslist;
-	char *jid = jabber_get_bare_jid(jm->from);
+	char *jid;
+
+	if (jm->type != JABBER_MESSAGE_EVENT)
+		return;
+
+	jid = jabber_get_bare_jid(jm->from);
 
 	for(itemslist = jm->eventitems; itemslist; itemslist = itemslist->next) {
 		xmlnode *items = (xmlnode*)itemslist->data;
