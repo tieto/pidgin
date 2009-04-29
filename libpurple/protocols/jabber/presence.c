@@ -778,26 +778,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			} else {
 				jbr->idle = 0;
 			}
-
-			if(caps) {
-				/* handle XEP-0115 */
-				const char *node = xmlnode_get_attrib(caps,"node");
-				const char *ver = xmlnode_get_attrib(caps,"ver");
-				const char *hash = xmlnode_get_attrib(caps,"hash");
-				const char *ext = xmlnode_get_attrib(caps,"ext");
-
-				/* v1.3 uses: node, ver, and optionally ext.
-				 * v1.5 uses: node, ver, and hash. */
-				if (node && ver) {
-					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
-					userdata->js = js;
-					userdata->jb = jb;
-					userdata->from = g_strdup(from);
-					jabber_caps_get_info(js, from, node, ver, hash, ext,
-					    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
-					    userdata);
-				}
-			}
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
@@ -809,6 +789,27 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 		g_free(buddy_name);
 	}
+
+	if (caps && (!type || g_str_equal(type, "available"))) {
+		/* handle Entity Capabilities (XEP-0115) */
+		const char *node = xmlnode_get_attrib(caps, "node");
+		const char *ver  = xmlnode_get_attrib(caps, "ver");
+		const char *hash = xmlnode_get_attrib(caps, "hash");
+		const char *ext  = xmlnode_get_attrib(caps, "ext");
+
+		/* v1.3 uses: node, ver, and optionally ext.
+		 * v1.5 uses: node, ver, and hash. */
+		if (node && *node && ver && *ver) {
+			JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
+			userdata->js = js;
+			userdata->jb = jb;
+			userdata->from = g_strdup(from);
+			jabber_caps_get_info(js, from, node, ver, hash, ext,
+			    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
+			    userdata);
+		}
+	}
+
 	g_free(status);
 	jabber_id_free(jid);
 	g_free(avatar_hash);
