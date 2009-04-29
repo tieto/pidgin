@@ -1,8 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.6 (??/??/2009):
-	libpurple
-	* Fix various crashes on exit
+	libpurple:
+	* Improve sleep behavior by aggregation longer timeouts on second
+	  boundaries to allow better power saving.  (Arunan Balasubramaniam)
+	* Fix various crashes on exit.
 
 	IRC:
 	* Correctly handle WHOIS for users who are joined to a large number of
@@ -12,6 +14,8 @@ version 2.5.6 (??/??/2009):
 
 	MSN:
 	* Fix a race condition causing occasional Pidgin crashes.
+	* Fix some errors about the friendly name changing too fast caused
+	  by MSN/Yahoo integration buddies.
 
 	Yahoo:
 	* Fix a crash when sending very long messages.

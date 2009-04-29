@@ -44,6 +44,7 @@
 
 #include "account.h"
 #include "cmds.h"
+#include "core.h"
 #include "debug.h"
 #include "idle.h"
 #include "imgstore.h"
