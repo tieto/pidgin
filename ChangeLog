@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.6 (??/??/2009):
+	libpurple
+	* Fix various crashes on exit
+
 	IRC:
 	* Correctly handle WHOIS for users who are joined to a large number of
 	  channels.
