@@ -83,6 +83,7 @@ version 2.6.0 (??/??/2009):
 		* PidginIconTheme, PidginStatusIconTheme, PidginIconThemeLoader
 		  API
 		* pidgin_stock_id_from_status_primitive
+		* pidgin_stock_id_from_presence
 
 	libgnt:
 		Added:

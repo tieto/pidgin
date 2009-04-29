@@ -581,6 +581,17 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget
 const char *pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim);
 
 /**
+ * Returns an appropriate stock-id for a PurplePresence.
+ *
+ * @param presence   The presence.
+ *
+ * @return The stock-id
+ *
+ * @since 2.6.0
+ */
+const char *pidgin_stock_id_from_presence(PurplePresence *presence);
+
+/**
  * Append a PurpleMenuAction to a menu.
  *
  * @param menu    The menu to append to.
