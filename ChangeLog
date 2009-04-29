@@ -4,12 +4,12 @@ version 2.6.0 (??/??/2009):
 	General:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
+	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
+	  of code project in 2008.
 	* It should no longer be possible to end up with duplicates of buddies
 	  in a group on the buddy list.
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
-	* Dragging a buddy onto a chat pops up a chat-invitation dialog.
-	  (Carlos Bederian)
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
@@ -67,6 +67,8 @@ version 2.6.0 (??/??/2009):
 	  new dialog box every time a pounce is triggered. (Jorge Villaseñor)
 	* The New Account dialog is now broken into three tabs.  Proxy
 	  configuration has been moved from the Advanced tab to the new tab.
+	* Dragging a buddy onto a chat pops up a chat-invitation dialog.
+	  (Carlos Bederian)
 	* The nicks of the persons who leave the chatroom are italicized in the
 	  chat's conversation history. The nicks are un-italicized when they
 	  rejoin.
