@@ -1323,6 +1323,11 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 	jabber_unregister_account_cb(js);
 }
 
+/* TODO: As Will pointed out in IRC, after being notified by the core to
+ * shutdown, we should async. wait for the server to send us the stream
+ * termination before destorying everything. That seems like it would require
+ * changing the semantics of prpl->close(), so it's a good idea for 3.0.0.
+ */
 void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
@@ -1333,16 +1338,6 @@ void jabber_close(PurpleConnection *gc)
 	 */
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
-
-	if (!purple_account_get_current_error(purple_connection_get_account(gc))) {
-		/*
-		 * The common case is user-triggered, so we never receive a
-		 * </stream:stream> from the server when disconnecting, so silence the
-		 * parser's warnings. On errors, though, the server terminated the
-		 * connection, so we should have received a real </stream:stream>.
-		 */
-		jabber_parser_close_stream(js);
-	}
 
 	if (js->srv_query_data)
 		purple_srv_cancel(js->srv_query_data);
