@@ -209,10 +209,15 @@ purple_core_quit(void)
 	/* The SSL plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
 
-	/* Unload all non-loader, non-prpl plugins before shutting down
-	 * subsystems. */
-	purple_debug_info("main", "Unloading normal plugins\n");
-	purple_plugins_unload(PURPLE_PLUGIN_STANDARD);
+	/* Unload all plugins before the UI because UI plugins might call
+	 * UI-specific functions */
+	purple_debug_info("main", "Unloading all plugins\n");
+	purple_plugins_destroy_all();
+
+	/* Shut down the UI before all the subsystems */
+	ops = purple_core_get_ui_ops();
+	if (ops != NULL && ops->quit != NULL)
+		ops->quit();
 
 	/* Save .xml files, remove signals, etc. */
 	purple_smileys_uninit();
@@ -234,16 +239,7 @@ purple_core_quit(void)
 	purple_imgstore_uninit();
 	purple_network_uninit();
 
-	/* Everything after unloading all plugins must not fail if prpls aren't
-	 * around */
-	purple_debug_info("main", "Unloading all plugins\n");
-	purple_plugins_destroy_all();
-
-	ops = purple_core_get_ui_ops();
-	if (ops != NULL && ops->quit != NULL)
-		ops->quit();
-
-	/* Everything after prefs_uninit must not try to read any prefs */
+	/* Everything after this must not try to read any prefs */
 	purple_prefs_uninit();
 	purple_plugins_uninit();
 #ifdef HAVE_DBUS
@@ -251,7 +247,7 @@ purple_core_quit(void)
 #endif
 
 	purple_cmds_uninit();
-	/* Everything after util_uninit cannot try to write things to the confdir */
+	/* Everything after this cannot try to write things to the confdir */
 	purple_util_uninit();
 
 	purple_signals_uninit();
