@@ -22,6 +22,7 @@
 #include "internal.h"
 #include "prefs.h"
 #include "debug.h"
+#include "request.h"
 
 #include "adhoccommands.h"
 #include "buddy.h"
@@ -226,7 +227,6 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		JabberCapabilities capabilities = JABBER_CAP_NONE;
-		struct _jabber_disco_info_cb_data *jdicd;
 
 		if((jid = jabber_id_new(from))) {
 			if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
