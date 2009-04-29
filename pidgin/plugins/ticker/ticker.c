@@ -37,6 +37,7 @@
 #include "gtkblist.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
+#include "pidginstock.h"
 
 #include "gtkticker.h"
 
@@ -108,20 +109,27 @@ static TickerData *buddy_ticker_find_contact(PurpleContact *c) {
 	return NULL;
 }
 
-static void buddy_ticker_set_pixmap(PurpleContact *c) {
+static void buddy_ticker_set_pixmap(PurpleContact *c)
+{
 	TickerData *td = buddy_ticker_find_contact(c);
-	GdkPixbuf *pixbuf;
+	PurpleBuddy *buddy;
+	PurplePresence *presence;
+	const char *stock;
 
 	if(!td)
 		return;
 
-	if(!td->icon)
+	buddy = purple_contact_get_priority_buddy(c);
+	presence = purple_buddy_get_presence(buddy);
+	stock = pidgin_stock_id_from_presence(presence);
+	if(!td->icon) {
 		td->icon = gtk_image_new();
-
-	pixbuf = pidgin_blist_get_status_icon((PurpleBlistNode*)c,
-			PIDGIN_STATUS_ICON_SMALL);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(td->icon), pixbuf);
-	g_object_unref(G_OBJECT(pixbuf));
+		g_object_set(G_OBJECT(td->icon), "stock", stock,
+				"icon-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC),
+				NULL);
+	} else {
+		g_object_set(G_OBJECT(td->icon), "stock", stock, NULL);
+	}
 }
 
 static gboolean buddy_ticker_set_pixmap_cb(gpointer data) {
