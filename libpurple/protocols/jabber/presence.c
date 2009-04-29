@@ -604,7 +604,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 1;
-		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
 		if(state == JABBER_BUDDY_STATE_ERROR) {
 			char *title, *msg = jabber_parse_error(js, packet, NULL);
@@ -626,7 +625,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_chat_destroy(chat);
 			jabber_id_free(jid);
 			g_free(status);
-			g_free(room_jid);
 			g_free(avatar_hash);
 			return;
 		}
@@ -643,7 +641,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					jabber_chat_destroy(chat);
 				jabber_id_free(jid);
 				g_free(status);
-				g_free(room_jid);
 				g_free(avatar_hash);
 				return;
 			}
@@ -699,12 +696,14 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			}
 		} else {
 			if(!chat->conv) {
+				char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 				chat->id = i++;
 				chat->muc = muc;
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
 				purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
 
 				jabber_chat_disco_traffic(chat);
+				g_free(room_jid);
 			}
 
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
@@ -719,7 +718,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 						flags);
 		}
-		g_free(room_jid);
 	} else {
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 									 jid->node ? "@" : "", jid->domain);
