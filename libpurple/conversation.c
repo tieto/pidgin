@@ -1481,7 +1481,7 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 
 		str = purple_normalize(account, who);
 
-		if (purple_strequal(str, chat->nick)) {
+		if (!strcmp(str, chat->nick)) {
 			flags |= PURPLE_MESSAGE_SEND;
 		} else {
 			flags |= PURPLE_MESSAGE_RECV;
