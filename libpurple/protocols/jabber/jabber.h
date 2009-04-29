@@ -44,6 +44,8 @@ typedef enum {
 	JABBER_CAP_ADHOC		  = 1 << 12,
 	JABBER_CAP_BLOCKING       = 1 << 13,
 
+	JABBER_CAP_ITEMS          = 1 << 14,
+
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 
@@ -53,12 +55,12 @@ typedef struct _JabberStream JabberStream;
 #include <glib.h>
 #include "circbuffer.h"
 #include "connection.h"
+#include "dnsquery.h"
 #include "dnssrv.h"
 #include "media.h"
 #include "mediamanager.h"
 #include "roomlist.h"
 #include "sslconn.h"
-#include "dnsquery.h"
 
 #include "iq.h"
 #include "jutil.h"
@@ -151,7 +153,6 @@ struct _JabberStream
 	GList *user_directories;
 
 	GHashTable *iq_callbacks;
-	GHashTable *disco_callbacks;
 	int next_id;
 
 	GList *bs_proxies;
@@ -266,6 +267,12 @@ struct _JabberStream
 	int stun_port;
 	PurpleDnsQueryData *stun_query;
 	/* later add stuff to handle TURN relays... */
+
+	/**
+	 * The last server the user disco'd (or NULL) via the server discovery
+	 * API.
+	 */
+	char *last_disco_server;
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);
