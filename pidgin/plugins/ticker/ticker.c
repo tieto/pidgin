@@ -53,7 +53,7 @@ typedef struct {
 	guint timeout;
 } TickerData;
 
-GList *tickerbuds = NULL;
+static GList *tickerbuds = NULL;
 
 static void buddy_ticker_update_contact(PurpleContact *contact);
 
@@ -91,9 +91,10 @@ static gboolean buddy_click_cb(GtkWidget *widget, GdkEventButton *event, gpointe
 	PurpleContact *contact = user_data;
 	PurpleBuddy *b = purple_contact_get_priority_buddy(contact);
 
-	purple_conversation_new(PURPLE_CONV_TYPE_IM,
-	                        purple_buddy_get_account(b),
-							purple_buddy_get_name(b));
+	PurpleConversation *conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
+	                                purple_buddy_get_account(b),
+	                                purple_buddy_get_name(b));
+	purple_conversation_present(conv);
 	return TRUE;
 }
 
