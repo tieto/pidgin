@@ -727,7 +727,7 @@ jabber_login(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
-	js->old_length = -1;
+	js->old_length = 0;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
 	js->sessions = NULL;
