@@ -2,7 +2,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.6 (??/??/2009):
 	libpurple:
-	* Improve sleep behavior by aggregation longer timeouts on second
+	* Improve sleep behavior by aggregation of longer timeouts on second
 	  boundaries to allow better power saving.  (Arunan Balasubramaniam)
 	* Fix various crashes on exit.
 
