@@ -720,6 +720,8 @@ static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 	info = g_new0(JabberCapsClientInfo, 1);
 
 	for(child = query->child; child; child = child->next) {
+		if (child->type != XMLNODE_TYPE_TAG)
+			continue;
 		if (!strcmp(child->name,"identity")) {
 			/* parse identity */
 			const char *category = xmlnode_get_attrib(child, "category");
