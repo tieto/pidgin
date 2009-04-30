@@ -1002,10 +1002,10 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 		/* We only want to do the following dance if the connection
 		   has not been successfully completed.  If it has, just
 		   notify the user that their /nick command didn't go. */
-		buf = g_strdup_printf(_("The nickname \"%s\" is already being used."),
+		buf = g_strdup_printf("The nickname \"%s\" is already being used.",
 				      irc->reqnick);
-		purple_notify_error(gc, _("Nickname in use"),
-				    _("Nickname in use"), buf);
+		purple_notify_error(gc, "Nickname in use",
+				    "Nickname in use", buf);
 		g_free(buf);
 		g_free(irc->reqnick);
 		irc->reqnick = NULL;
