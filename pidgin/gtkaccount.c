@@ -756,16 +756,16 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		dialog->protocol_frame = NULL;
 	}
 
-	if (dialog->prpl_info == NULL ||
-			dialog->prpl_info->protocol_options == NULL)
-		return;
-
 	while (dialog->protocol_opt_entries != NULL) {
 		ProtocolOptEntry *opt_entry = dialog->protocol_opt_entries->data;
 		g_free(opt_entry->setting);
 		g_free(opt_entry);
 		dialog->protocol_opt_entries = g_list_delete_link(dialog->protocol_opt_entries, dialog->protocol_opt_entries);
 	}
+
+	if (dialog->prpl_info == NULL ||
+			dialog->prpl_info->protocol_options == NULL)
+		return;
 
 	account = dialog->account;
 
