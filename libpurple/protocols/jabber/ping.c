@@ -59,11 +59,11 @@ static void jabber_ping_result_cb(JabberStream *js, const char *from,
 		/* If the pong is from the server, assume it's a result of the
 		 * keepalive functions */
 		jabber_keepalive_pong_cb(js);
-
-	if (type == JABBER_IQ_RESULT) {
-		purple_debug_info("jabber", "PONG!\n");
-	} else {
-		purple_debug_info("jabber", "(not supported)\n");
+	else {
+		if (type == JABBER_IQ_RESULT)
+			purple_debug_info("jabber", "PONG!\n");
+		else
+			purple_debug_info("jabber", "ping not supported\n");
 	}
 }
 
