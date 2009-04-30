@@ -68,7 +68,8 @@ static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
 
 	/* If the fill pointer is wrapped to before the remove
 	 * pointer, we need to shift the data */
-	if (in_offset < out_offset) {
+	if (in_offset < out_offset
+			|| (in_offset == out_offset && buf->bufused > 0)) {
 		int shift_n = MIN(buf->buflen - start_buflen,
 			in_offset);
 		memcpy(buf->buffer + start_buflen, buf->buffer,
