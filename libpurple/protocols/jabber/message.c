@@ -1226,23 +1226,6 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 	return 0;
 }
 
-void jabber_message_conv_closed(JabberStream *js, const char *who)
-{
-	JabberMessage *jm;
-	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
-		return;
-
-	jm  = g_new0(JabberMessage, 1);
-	jm->js = js;
-	jm->type = JABBER_MESSAGE_CHAT;
-	jm->to = g_strdup(who);
-	jm->id = jabber_get_next_id(jm->js);
-	jm->typing_style = JM_TS_JEP_0085;
-	jm->chat_state = JM_STATE_GONE;
-	jabber_message_send(jm);
-	jabber_message_free(jm);
-}
-
 gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace) {
 	return js->allowBuzz;
 }
