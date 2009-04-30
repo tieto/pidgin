@@ -61,7 +61,7 @@
 #include <string.h>
 
 #define PREF_ROOT "/finch/blist"
-#define TYPING_TIMEOUT 4000
+#define TYPING_TIMEOUT_S 4
 
 #define SHOW_EMPTY_GROUP_TIMEOUT  60
 
@@ -2012,7 +2012,7 @@ reset_blist_window(GntWidget *window, gpointer null)
 	}
 
 	if (ggblist->typing)
-		g_source_remove(ggblist->typing);
+		purple_timeout_remove(ggblist->typing);
 	remove_peripherals(ggblist);
 	if (ggblist->tagged)
 		g_list_free(ggblist->tagged);
@@ -2249,7 +2249,7 @@ remove_typing_cb(gpointer null)
 end:
 	g_free(escnewmessage);
 	if (ggblist->typing)
-		g_source_remove(ggblist->typing);
+		purple_timeout_remove(ggblist->typing);
 	ggblist->typing = 0;
 	return FALSE;
 }
@@ -2268,7 +2268,7 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 		/* Move the focus to the entry box */
 		/* XXX: Make sure the selected status can have a message */
 		gnt_box_move_focus(GNT_BOX(ggblist->window), 1);
-		ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
+		ggblist->typing = purple_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
 	}
 	else if (now->type == STATUS_SAVED_ALL)
 	{
@@ -2294,7 +2294,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 		return FALSE;
 
 	if (ggblist->typing)
-		g_source_remove(ggblist->typing);
+		purple_timeout_remove(ggblist->typing);
 	ggblist->typing = 0;
 
 	if (text[0] == '\r' && text[1] == 0)
@@ -2304,7 +2304,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 		return TRUE;
 	}
 
-	ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
+	ggblist->typing = purple_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
 	return FALSE;
 }
 
