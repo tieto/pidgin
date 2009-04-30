@@ -30,8 +30,10 @@
 
 static void jabber_keepalive_pong_cb(JabberStream *js)
 {
-	purple_timeout_remove(js->keepalive_timeout);
-	js->keepalive_timeout = -1;
+	if (js->keepalive_timeout >= 0) {
+		purple_timeout_remove(js->keepalive_timeout);
+		js->keepalive_timeout = -1;
+	}
 }
 
 void

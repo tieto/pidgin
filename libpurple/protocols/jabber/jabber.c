@@ -1302,6 +1302,7 @@ void jabber_register_account(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->old_length = 0;
+	js->keepalive_timeout = -1;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
