@@ -421,9 +421,11 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		id = xmlnode_get_attrib(codec_element, "id");
 		clock_rate = xmlnode_get_attrib(codec_element, "clockrate");
 
-		codec = purple_media_codec_new(atoi(id), encoding_name, PURPLE_MEDIA_AUDIO,
-				     clock_rate ? atoi(clock_rate) : 0);
-		codecs = g_list_append(codecs, codec);
+		if (id) {
+			codec = purple_media_codec_new(atoi(id), encoding_name, PURPLE_MEDIA_AUDIO,
+					     clock_rate ? atoi(clock_rate) : 0);
+			codecs = g_list_append(codecs, codec);
+		}
 	}
 
 	purple_media_set_remote_codecs(session->media, "google-voice", session->remote_jid, codecs);
@@ -459,24 +461,36 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 		
 	for (cand = xmlnode_get_child(sess, "candidate"); cand; cand = xmlnode_get_next_twin(cand)) {
 		PurpleMediaCandidate *info;
-		g_snprintf(n, sizeof(n), "S%d", name++);
-		info = purple_media_candidate_new(n, PURPLE_MEDIA_COMPONENT_RTP,
-				!strcmp(xmlnode_get_attrib(cand, "type"), "local") ?
-					PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
-			     		!strcmp(xmlnode_get_attrib(cand, "type"), "stun") ?
-						PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
-			     			!strcmp(xmlnode_get_attrib(cand, "type"), "relay") ?
-							PURPLE_MEDIA_CANDIDATE_TYPE_RELAY :
-							PURPLE_MEDIA_CANDIDATE_TYPE_HOST,
-						!strcmp(xmlnode_get_attrib(cand, "protocol"),"udp") ?
+		const gchar *type = xmlnode_get_attrib(cand, "type");
+		const gchar *protocol = xmlnode_get_attrib(cand, "protocol");
+		const gchar *address = xmlnode_get_attrib(cand, "address");
+		const gchar *port = xmlnode_get_attrib(cand, "port");
+
+		if (type && address && port) {
+			PurpleMediaCandidateType candidate_type;
+
+			g_snprintf(n, sizeof(n), "S%d", name++);
+
+			if (g_str_equal(type, "local"))
+				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
+			else if (g_str_equal(type, "stun"))
+				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX;
+			else if (g_str_equal(type, "relay"))
+				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_RELAY;
+			else
+				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
+
+			info = purple_media_candidate_new(n, PURPLE_MEDIA_COMPONENT_RTP,
+					candidate_type,
+					purple_strequal(protocol, "udp") ?
 							PURPLE_MEDIA_NETWORK_PROTOCOL_UDP :
 							PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
-					xmlnode_get_attrib(cand, "address"),
-					atoi(xmlnode_get_attrib(cand, "port")));
-		g_object_set(info, "username", xmlnode_get_attrib(cand, "username"),
-				"password", xmlnode_get_attrib(cand, "password"), NULL);
-
-		list = g_list_append(list, info);
+					address,
+					atoi(port));
+			g_object_set(info, "username", xmlnode_get_attrib(cand, "username"),
+					"password", xmlnode_get_attrib(cand, "password"), NULL);
+			list = g_list_append(list, info);
+		}
 	}
 
 	purple_media_add_remote_candidates(session->media, "google-voice", session->remote_jid, list);
@@ -504,10 +518,12 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 		const gchar *clock_rate =
 				xmlnode_get_attrib(codec_element, "clockrate");
 
-		PurpleMediaCodec *codec = purple_media_codec_new(atoi(id),
-				encoding_name, PURPLE_MEDIA_AUDIO,
-				clock_rate ? atoi(clock_rate) : 0);
-		codecs = g_list_append(codecs, codec);
+		if (id && encoding_name) {
+			PurpleMediaCodec *codec = purple_media_codec_new(atoi(id),
+					encoding_name, PURPLE_MEDIA_AUDIO,
+					clock_rate ? atoi(clock_rate) : 0);
+			codecs = g_list_append(codecs, codec);
+		}
 	}
 
 	purple_media_set_remote_codecs(session->media, "google-voice",
