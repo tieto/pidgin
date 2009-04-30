@@ -750,8 +750,8 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 	struct _disco_data *disco_data;
 	struct jabber_disco_list_data *list_data;
 	xmlnode *query, *identity, *child;
-	const char *anode;
-	char *aname, *node;
+	const char *name;
+	char *node;
 
 	PurpleDiscoList *list;
 	PurpleDiscoService *parent, *service;
@@ -810,19 +810,17 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 		}
 	}
 
-	if ((anode = xmlnode_get_attrib(query, "node")))
-		aname = g_strconcat(from, anode, NULL);
+	if (node)
+		name = node;
 	else
-		aname = g_strdup(from);
+		name = from; 
 
 	service_data = g_new0(struct jabber_disco_service_data, 1);
 	service_data->jid = g_strdup(from);
-	if (anode)
-		service_data->node = g_strdup(anode);
+	service_data->node = node;
 
-	service = purple_disco_list_service_new(service_type, aname,
+	service = purple_disco_list_service_new(service_type, name,
 			xmlnode_get_attrib(identity, "name"), flags, service_data);
-	g_free(aname);
 
 	if (service_type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY)
 		purple_disco_service_set_gateway_type(service,
@@ -835,8 +833,6 @@ jabber_disco_service_info_cb(JabberStream *js, const char *from,
 		purple_disco_list_set_in_progress(list, FALSE);
 
 	purple_disco_list_unref(list);
-
-	g_free(node);
 }
 
 static void
