@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-28 16:32+0300\n"
+"POT-Creation-Date: 2009-04-30 10:38-0400\n"
 "PO-Revision-Date: 2009-04-28 16:31+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -3717,6 +3717,41 @@ msgstr "Virheellinen tunnistushaaste palvelimelta"
 msgid "SASL error"
 msgstr "SASL-virhe"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "Syytä ei annettu"
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "Versiota ei tueta"
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr ""
+"Yhteyttä palvelimeen ei voi muodostaa:\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"Yhteyttä palvelimeen ei voi muodostaa:\n"
+"%s"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "Yhteyden luominen epäonnistui"
+
+msgid "Unable to create socket"
+msgstr "Pistokkeen luonti epäonnistui"
+
+msgid "Write error"
+msgstr "Virhe kirjoituksessa"
+
 msgid "Full Name"
 msgstr "Koko nimi"
 
@@ -4114,9 +4149,6 @@ msgstr "Etsi huoneita"
 msgid "You require encryption, but it is not available on this server."
 msgstr "Salausta vaadittu, mutta sitä ei tueta tällä palvelimella."
 
-msgid "Write error"
-msgstr "Virhe kirjoituksessa"
-
 msgid "Ping timeout"
 msgstr "Pingin aikakatkaisu"
 
@@ -4125,20 +4157,19 @@ msgstr "Virhe luettaessa"
 
 #, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"Yhteyttä palvelimeen ei voi muodostaa:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "Pistokkeen luonti epäonnistui"
 
 msgid "Invalid XMPP ID"
 msgstr "Epäkelpo XMPP-ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Epäkelpo XMPP-ID. Verkkoalue pitää olla asetettu."
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Palvelimeen ei saatu yhteyttä."
 
 #, c-format
 msgid "Registration of %s@%s successful"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-01 15:52-0800\n"
+"POT-Creation-Date: 2009-04-30 10:37-0400\n"
 "PO-Revision-Date: 2008-09-30 08:10+0300\n"
 "Last-Translator: Ivar Smolin <okul@linux.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -26,13 +26,13 @@ msgstr "Finch"
 msgid "%s. Try `%s -h' for more information.\n"
 msgstr "%s. Täpsemate andmete saamiseks kasuta `%s -h'.\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -608,20 +608,6 @@ msgstr ""
 msgid "Send To"
 msgstr "Kellele saata"
 
-msgid "Invite message"
-msgstr "Kutse sõnum"
-
-msgid "Invite"
-msgstr "Kutsu"
-
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"Palun sisesta selle kasutaja nimi, keda sa soovid\n"
-"jututuppa kutsuda. Kui sisestad ka sõnumi, siis\n"
-"saadetakse see sõbrale koos kutsumisteatega."
-
 msgid "Conversation"
 msgstr "Vestlus"
 
@@ -873,6 +859,41 @@ msgstr "Kõik vestlused"
 msgid "System Log"
 msgstr "Süsteemne logi"
 
+#, fuzzy
+msgid "Calling ... "
+msgstr "Arvutamine..."
+
+msgid "Hangup"
+msgstr ""
+
+#. Number of actions
+msgid "Accept"
+msgstr "Nõustu"
+
+msgid "Reject"
+msgstr "Lükka tagasi"
+
+msgid "Call in progress."
+msgstr ""
+
+msgid "The call has been terminated."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr ""
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+
+#, fuzzy
+msgid "You have rejected the call."
+msgstr "Sa lahkusid sellest vestlusest."
+
+msgid "call: Make an audio call."
+msgstr ""
+
 msgid "Emails"
 msgstr "E-sõnumid"
 
@@ -906,6 +927,9 @@ msgstr "Jätka"
 
 msgid "IM"
 msgstr "Välksõnum"
+
+msgid "Invite"
+msgstr "Kutsu"
 
 msgid "(none)"
 msgstr "(puudub)"
@@ -1108,7 +1132,6 @@ msgstr "%s eemaldus. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s saatis sulle sõnumi. (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Tundmatu teavitussündmus. Palun anna sellest teada!"
 
@@ -1154,7 +1177,6 @@ msgstr "Mitme minuti möödudes olekut muudetakse"
 msgid "Change status to"
 msgstr "Uueks olekuks saab"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Vestlused"
 
@@ -1475,7 +1497,6 @@ msgstr ""
 "Vestluse avamisel lisab see plugin avatava vestluse aknasse viimase vestluse "
 "logi."
 
-#, c-format
 msgid "Online"
 msgstr "Ühendatud"
 
@@ -1518,6 +1539,28 @@ msgstr "GntViimaneLogi"
 
 msgid "Lastlog plugin."
 msgstr "Viimase logi plugin."
+
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "Loo URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr ""
 
 msgid "accounts"
 msgstr "kontod"
@@ -1618,13 +1661,6 @@ msgstr "Kas nõustuda subjekti \"%s\" sertifikaadiga?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "SSL-sertifikaadi verifitseerimine"
-
-#. Number of actions
-msgid "Accept"
-msgstr "Nõustu"
-
-msgid "Reject"
-msgstr "Lükka tagasi"
 
 msgid "_View Certificate..."
 msgstr "_Vaata sertifikaati..."
@@ -1768,6 +1804,18 @@ msgstr "%s väljus toast."
 msgid "%s left the room (%s)."
 msgstr "%s väljus toast (%s)."
 
+#, fuzzy
+msgid "Invite to chat"
+msgstr "Konverentsile kutsumine"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+"Palun sisesta selle kasutaja nimi, keda sa soovid jututuppa kutsuda. Kui "
+"sisestad ka sõnumi, siis saadetakse see sõbrale koos kutsumisteatega."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Tõrge ühenduse hankimisel: %s"
@@ -1902,7 +1950,6 @@ msgstr "Faili %s ülekandmise alustamine kasutajalt %s"
 msgid "Transfer of file %s complete"
 msgstr "Fail %s täielikult üle kantud"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Fail on täielikult üle kantud"
 
@@ -1910,7 +1957,6 @@ msgstr "Fail on täielikult üle kantud"
 msgid "You canceled the transfer of %s"
 msgstr "Sa katkestasid faili %s ülekandmise"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Faili ülekandmine katkestatud"
 
@@ -2113,7 +2159,6 @@ msgstr "(%s) %s <AUTOMAATVASTUS>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Sul on kasutusel %s kuid selle plugina jaoks on vajalik %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "See plugin pole ID-d defineerinud."
 
@@ -2602,6 +2647,32 @@ msgstr "Võrguvabade sõnumite salvestamine märguannetena"
 msgid "Do not ask. Always save in pounce."
 msgstr "Küsimusi ei esitata, alati salvestatakse märguannetena."
 
+#, fuzzy
+msgid "One Time Password"
+msgstr "Sisesta parool"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr ""
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
+msgstr ""
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2809,7 +2880,6 @@ msgid ""
 msgstr ""
 "Kohaliku mDNS-serveriga pole võimalik ühendust saada.  Kas see üldse töötab?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Eesnimi"
 
@@ -2840,6 +2910,11 @@ msgstr "Bonjour protokolli plugin"
 
 msgid "Purple Person"
 msgstr ""
+
+#. Creating the options for the protocol
+#, fuzzy
+msgid "Local Port"
+msgstr "Paikkond"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -2997,13 +3072,13 @@ msgstr "Sõbra jaoks vestluse valimine: %s"
 msgid "Add to chat..."
 msgstr "Lisa vestlusesse..."
 
+#. Global
 msgid "Available"
 msgstr "Saadaval"
 
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Eemal"
 
@@ -3344,6 +3419,17 @@ msgstr ""
 "Sinu valitud hüüdnimi lükati serveri poolt tagasi, arvatavasti sisaldab nimi "
 "lubamatuid märke."
 
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, fuzzy, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "Selline vestluse nimi on juba kasutusel"
+
+#, fuzzy
+msgid "Nickname in use"
+msgstr "Hüüdnimi"
+
 msgid "Cannot change nick"
 msgstr "Hüüdmine pole võimalik muuta"
 
@@ -3595,6 +3681,41 @@ msgstr ""
 msgid "SASL error"
 msgstr "SASL-i viga"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "Põhjendust pole määratud."
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "Toetamata versioon"
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr ""
+"Selle serveriga pole võimalik ühendust luua:\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"Selle serveriga pole võimalik ühendust luua:\n"
+"%s"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "Ühendust pole võimalik lähtestada"
+
+msgid "Unable to create socket"
+msgstr "Soklit pole võimalik luua"
+
+msgid "Write error"
+msgstr "Kirjutamise viga"
+
 msgid "Full Name"
 msgstr "Täisnimi"
 
@@ -3660,6 +3781,10 @@ msgstr "Klient"
 
 msgid "Operating System"
 msgstr "Operatsioonisüsteem"
+
+#, fuzzy
+msgid "Local Time"
+msgstr "Kohalik fail:"
 
 msgid "Last Activity"
 msgstr "Viimati aktiivne"
@@ -3866,7 +3991,6 @@ msgstr "Lobisev"
 msgid "Extended Away"
 msgstr "Kaua eemal"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Mitte segada"
 
@@ -3988,9 +4112,6 @@ msgstr "Otsi jututube"
 msgid "You require encryption, but it is not available on this server."
 msgstr "Sa nõuad krüptimist aga selles serveris pole see toetatud."
 
-msgid "Write error"
-msgstr "Kirjutamise viga"
-
 msgid "Ping timeout"
 msgstr "Pingimine ületas ajapiirangu"
 
@@ -3999,20 +4120,19 @@ msgstr "Lugemise viga"
 
 #, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"Selle serveriga pole võimalik ühendust luua:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "Soklit pole võimalik luua"
 
 msgid "Invalid XMPP ID"
 msgstr "Vigane XMPP ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Vigane XMPP ID. Domeen peab olema määratud."
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Tõrge serveriga ühendumisel."
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4098,8 +4218,17 @@ msgstr "Autentimine"
 msgid "Re-initializing Stream"
 msgstr "Andmevaa taaslähtestamine"
 
+msgid "Server doesn't support blocking"
+msgstr ""
+
 msgid "Not Authorized"
 msgstr "Autoriseerimata"
+
+msgid "Mood"
+msgstr "Meeleolu"
+
+msgid "Now Listening"
+msgstr "Hetkel kuulab"
 
 msgid "Both"
 msgstr "Mõlemad"
@@ -4121,12 +4250,6 @@ msgstr "Puudub"
 
 msgid "Subscription"
 msgstr "Tellimus"
-
-msgid "Mood"
-msgstr "Meeleolu"
-
-msgid "Now Listening"
-msgstr "Hetkel kuulab"
 
 msgid "Mood Text"
 msgstr "Tujutekst"
@@ -4366,15 +4489,21 @@ msgid "Unable to ping user %s"
 msgstr "Kasutajat %s pole võimalik pingida"
 
 #, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr ""
 
 #, c-format
-msgid "Unable to buzz, because user %s might be offline."
+msgid "Unable to buzz, because %s might be offline."
 msgstr ""
 
 #, c-format
-msgid "Unable to buzz, because the user %s does not support it."
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
+msgstr ""
+
+#, c-format
+msgid "Buzzing %s..."
 msgstr ""
 
 #. Yahoo only supports one attention command: the 'buzz'.
@@ -4386,9 +4515,34 @@ msgstr ""
 msgid "%s has buzzed you!"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "Kasutajale %s pole võimalik faili saata, JID on vigane."
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: user is not online"
+msgstr "Kasutajale %s pole võimalik faili saata, kasutaja pole võrku ühendatud"
+
 #, c-format
-msgid "Buzzing %s..."
+msgid "Unable to initiate media with %s: not subscribed to user presence"
 msgstr ""
+
+#, fuzzy
+msgid "Media Initiation Failed"
+msgstr "Tõrge registreerimisel"
+
+#, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr ""
+
+msgid "Select a Resource"
+msgstr "Vahendi valimine"
+
+#, fuzzy
+msgid "Initiate Media"
+msgstr "Algata _jututuba"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Jututoa seadistamine."
@@ -4542,6 +4696,21 @@ msgstr "Viga vestlusega %s ühinemisel"
 msgid "Error in chat %s"
 msgstr "Viga vestluses %s"
 
+#, fuzzy
+msgid "An error occured on the in-band bytestream transfer\n"
+msgstr "Faili avamisel tekkis viga."
+
+#, fuzzy
+msgid "Transfer was closed."
+msgstr "Tõrge faili ülekandmisel"
+
+#, fuzzy
+msgid "Failed to open the file"
+msgstr "Tõrge faili '%s' avamisel: %s"
+
+msgid "Failed to open in-band bytestream"
+msgstr ""
+
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -4566,9 +4735,6 @@ msgstr ""
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
-
-msgid "Select a Resource"
-msgstr "Vahendi valimine"
 
 msgid "Edit User Mood"
 msgstr "Kasutaja meeleolu määramine"
@@ -4604,8 +4770,19 @@ msgstr "Tegevused"
 msgid "Select an action"
 msgstr "Tegevuse valimine"
 
-msgid "Unable to retrieve MSN Address Book"
-msgstr "MSN-i aadressiraamatut pole võimalik vastu võtta"
+#. only notify the user about problems adding to the friends list
+#. * maybe we should do something else for other lists, but it probably
+#. * won't cause too many problems if we just ignore it
+#, c-format
+msgid "Unable to add \"%s\"."
+msgstr "\"%s\" pole võimalik lisada."
+
+msgid "Buddy Add error"
+msgstr ""
+
+#, fuzzy
+msgid "The username specified does not exist."
+msgstr "Määratud kasutajanimi on vigane."
 
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
@@ -4835,7 +5012,6 @@ msgstr ""
 msgid "Passport account not yet verified"
 msgstr "Passporti kontot pole veel üle vaadatud"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr ""
 
@@ -4926,6 +5102,13 @@ msgstr "Mobiilisõnumi saatmine."
 msgid "Page"
 msgstr ""
 
+msgid "Playing a game"
+msgstr ""
+
+#, fuzzy
+msgid "Working"
+msgstr "Tööl"
+
 msgid "Has you"
 msgstr "Sina tema loendis"
 
@@ -4961,6 +5144,14 @@ msgstr "Esitaja"
 
 msgid "Album"
 msgstr "Album"
+
+#, fuzzy
+msgid "Game Title"
+msgstr "Loo pealkiri"
+
+#, fuzzy
+msgid "Office Title"
+msgstr "Loo pealkiri"
 
 msgid "Set Friendly Name..."
 msgstr "Määra sõbralik nimi..."
@@ -5150,8 +5341,9 @@ msgstr ""
 "Kasutajaprofiili kohta pole võimalik mingeid andmeid leida. Kõige "
 "tõenäolisemalt pole seda kasutajat olemas."
 
-msgid "Profile URL"
-msgstr "Profiili URL"
+#, fuzzy
+msgid "View web profile"
+msgstr "Peida, kui pole võrku ühendatud"
 
 #. *< type
 #. *< ui_requirement
@@ -5391,18 +5583,14 @@ msgstr "Lisa aadressiraamatusse"
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr ""
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "\"%s\" pole võimalik lisada."
-
 msgid "The username specified is invalid."
 msgstr "Määratud kasutajanimi on vigane."
 
 msgid "This Hotmail account may not be active."
 msgstr "See Hotmaili konto võib mitte aktiivne olla."
+
+msgid "Profile URL"
+msgstr "Profiili URL"
 
 #. *< type
 #. *< ui_requirement
@@ -5417,18 +5605,12 @@ msgstr "See Hotmaili konto võib mitte aktiivne olla."
 msgid "MSN Protocol Plugin"
 msgstr "MSN protokolli plugin"
 
-msgid "Missing Cipher"
-msgstr "Šiffer on puudu"
+#, c-format
+msgid "No such user: %s"
+msgstr "Sellist kasutajat pole: %s"
 
-msgid "The RC4 cipher could not be found"
-msgstr "RC4 šifrit pole võimalik leida"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Uuenda oma libpurple teeki nii, et see toetakse RC4u šifrit (>= 2.0.1). "
-"MySpaceIM jäetakse laadimata."
+msgid "User lookup"
+msgstr "Kasutaja otsimine"
 
 msgid "Reading challenge"
 msgstr ""
@@ -5439,11 +5621,21 @@ msgstr ""
 msgid "Logging in"
 msgstr "Sisselogimine"
 
-#, c-format
-msgid "Connection to server lost (no data received within %d second)"
-msgid_plural "Connection to server lost (no data received within %d seconds)"
-msgstr[0] ""
-msgstr[1] ""
+msgid "MySpaceIM - No Username Set"
+msgstr "MySpaceIM - Kasutajanimi on määramata"
+
+msgid "You appear to have no MySpace username."
+msgstr "Sul ei paista MySpace kasutajanime olevat."
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr ""
+"Kas sa soovid praegu ühe määrata? (Märkus: SEDA POLE VÕIMALIK HILJEM MUUTA!)"
+
+#, fuzzy
+msgid "Lost connection with server"
+msgstr ""
+"Ühendus serveriga katkes\n"
+"%s"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 msgid "New mail messages"
@@ -5464,15 +5656,25 @@ msgstr "Uued pildikommentaarid"
 msgid "MySpace"
 msgstr "MySpace"
 
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - Kasutajanimi on määramata"
+msgid "IM Friends"
+msgstr "Välksõnumi-sõbrad"
 
-msgid "You appear to have no MySpace username."
-msgstr "Sul ei paista MySpace kasutajanime olevat."
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
+"Serverist lisati või uuendati %d sõber (kaasa arvatud sõbrad, kes on juba "
+"serveripoolses nimekirjas)"
+msgstr[1] ""
+"Serverist lisati või uuendati %d sõpra (kaasa arvatud sõbrad, kes on juba "
+"serveripoolses nimekirjas)"
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
-"Kas sa soovid praegu ühe määrata? (Märkus: SEDA POLE VÕIMALIK HILJEM MUUTA!)"
+msgid "Add contacts from server"
+msgstr "Serverist kontaktide lisamine"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5495,31 +5697,6 @@ msgstr ""
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM viga"
 
-msgid "Failed to add buddy"
-msgstr "Tõrge sõbra lisamisel"
-
-msgid "'addbuddy' command failed."
-msgstr "Tõrge 'addbuddy' käsu täitmisel."
-
-msgid "persist command failed"
-msgstr ""
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Sellist kasutajat pole: %s"
-
-msgid "User lookup"
-msgstr "Kasutaja otsimine"
-
-msgid "Failed to remove buddy"
-msgstr "Tõrge sõbra eemaldamisel"
-
-msgid "'delbuddy' command failed"
-msgstr "Tõrge 'delbuddy' käsu täitmisel."
-
-msgid "blocklist command failed"
-msgstr ""
-
 msgid "Invalid input condition"
 msgstr ""
 
@@ -5533,25 +5710,36 @@ msgstr "Analüüsimatu sõnum"
 msgid "Couldn't connect to host: %s (%d)"
 msgstr "Hostiga pole võimalik ühenduda: %s (%d)"
 
-msgid "IM Friends"
-msgstr "Välksõnumi-sõbrad"
+msgid "Failed to add buddy"
+msgstr "Tõrge sõbra lisamisel"
 
-#, c-format
+msgid "'addbuddy' command failed."
+msgstr "Tõrge 'addbuddy' käsu täitmisel."
+
+msgid "persist command failed"
+msgstr ""
+
+msgid "Failed to remove buddy"
+msgstr "Tõrge sõbra eemaldamisel"
+
+msgid "'delbuddy' command failed"
+msgstr "Tõrge 'delbuddy' käsu täitmisel."
+
+msgid "blocklist command failed"
+msgstr ""
+
+msgid "Missing Cipher"
+msgstr "Šiffer on puudu"
+
+msgid "The RC4 cipher could not be found"
+msgstr "RC4 šifrit pole võimalik leida"
+
 msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"Serverist lisati või uuendati %d sõber (kaasa arvatud sõbrad, kes on juba "
-"serveripoolses nimekirjas)"
-msgstr[1] ""
-"Serverist lisati või uuendati %d sõpra (kaasa arvatud sõbrad, kes on juba "
-"serveripoolses nimekirjas)"
-
-msgid "Add contacts from server"
-msgstr "Serverist kontaktide lisamine"
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
+"Uuenda oma libpurple teeki nii, et see toetakse RC4u šifrit (>= 2.0.1). "
+"MySpaceIM jäetakse laadimata."
 
 msgid "Add friends from MySpace.com"
 msgstr "Sõprade lisamine MySpace.com'ist"
@@ -5593,9 +5781,6 @@ msgstr "Aluskirjatüübi suurus (punktides)"
 msgid "User"
 msgstr "Kasutaja"
 
-msgid "Profile"
-msgstr "Profiil"
-
 msgid "Headline"
 msgstr ""
 
@@ -5608,17 +5793,6 @@ msgstr "Sõpru kokku"
 msgid "Client Version"
 msgstr "Kliendi versioon"
 
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Kasutajanimi on määramata"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - Palun määra kasutajanimi"
-
-msgid "Please enter a username to check its availability:"
-msgstr ""
-"Palun sisesta kasutajanimi, et kontrollida selle kasutamise võimalikkust:"
-
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Kasutajanimi on saadaval"
 
@@ -5628,11 +5802,22 @@ msgstr "Kasutajanimi on vaba. Kas sa soovid seda pruukida?"
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "KUI SEE ON JUBA MÄÄRATUD, POLE SEDA ENAM VÕIMALIK MUUTA!"
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr "MySpaceIM - Palun määra kasutajanimi"
+
 msgid "This username is unavailable."
 msgstr "See kasutajanimi pole saadaval."
 
 msgid "Please try another username:"
 msgstr "Palun proovi mõnda muud kasutajanime:"
+
+#. Protocol won't log in now without a username set.. Disconnect
+msgid "No username set"
+msgstr "Kasutajanimi on määramata"
+
+msgid "Please enter a username to check its availability:"
+msgstr ""
+"Palun sisesta kasutajanimi, et kontrollida selle kasutamise võimalikkust:"
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -6019,7 +6204,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Viga. SSL-i tugi pole paigaldatud."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "See konverents on suletud. Rohkem sõnumeid pole võimalik saata."
 
@@ -6282,23 +6466,18 @@ msgstr "Kaamera"
 msgid "Screen Sharing"
 msgstr ""
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Vestluseks vaba"
 
-#, c-format
 msgid "Not Available"
 msgstr "Pole saadaval"
 
-#, c-format
 msgid "Occupied"
 msgstr "Hõivatud"
 
-#, c-format
 msgid "Web Aware"
 msgstr ""
 
-#, c-format
 msgid "Invisible"
 msgstr "Nähtamatu"
 
@@ -6344,7 +6523,7 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 
-#. Unregistered screen name
+#. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "Vigane kasutajanimi."
@@ -6360,7 +6539,7 @@ msgstr ""
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL'i välksõnumiserver pole ajutiselt saadaval."
 
-#. screen name connecting too frequently
+#. username connecting too frequently
 #. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6398,9 +6577,7 @@ msgid "_OK"
 msgstr "_Olgu"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
 
 msgid "Unable to get a valid AIM login hash."
@@ -6528,7 +6705,7 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 msgstr[1] ""
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Sõnumit pole võimalik saata: %s"
@@ -6549,6 +6726,9 @@ msgstr "Võrgus alates"
 
 msgid "Member Since"
 msgstr "Liige alates"
+
+msgid "Profile"
+msgstr "Profiil"
 
 msgid "Your AIM connection may be lost."
 msgstr "Sinu AIM-ühendus võib olla katkenud."
@@ -6817,6 +6997,7 @@ msgstr "Ü_hendu"
 msgid "Get AIM Info"
 msgstr "Hangi AIM-andmed"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Redigeeri sõbrakommentaari"
 
@@ -6922,7 +7103,6 @@ msgstr ""
 msgid "Attempting to connect to %s:%hu."
 msgstr ""
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Proovitakse ühenduda proksi serveri kaudu."
 
@@ -7015,7 +7195,7 @@ msgstr "Muu"
 msgid "Visible"
 msgstr "Nähtamatu"
 
-msgid "Firend Only"
+msgid "Friend Only"
 msgstr ""
 
 #, fuzzy
@@ -7106,16 +7286,49 @@ msgstr "Viimane uuendus"
 msgid "Could not change buddy information."
 msgstr "Sõbra andmete muutmine."
 
-#, c-format
-msgid "%d needs Q&A"
+msgid "Mobile"
+msgstr "Mobiilne"
+
+msgid "Note"
+msgstr "Märkus"
+
+#. callback
+#, fuzzy
+msgid "Buddy Memo"
+msgstr "Sõbraikoon"
+
+msgid "Change his/her memo as you like"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy Q&A"
-msgstr "Sõbra lisamine"
+msgid "_Modify"
+msgstr "Muuda"
 
-msgid "Input answer here"
+#, fuzzy
+msgid "Memo Modify"
+msgstr "Muuda"
+
+#, fuzzy
+msgid "Server says:"
+msgstr "Server on hõivatud"
+
+msgid "Your request was accepted."
 msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%u requires verification"
+msgstr "Ühinemine %s'ga on vaja kutset."
+
+#, fuzzy
+msgid "Add buddy question"
+msgstr "Kas lisada sõber sinu nimekirja?"
+
+#, fuzzy
+msgid "Enter answer here"
+msgstr "Kasutajate kataloogi sisestamine"
 
 msgid "Send"
 msgstr ""
@@ -7127,19 +7340,20 @@ msgstr "Vigane kasutajanimi."
 msgid "Authorization denied message:"
 msgstr "Volituste andmisest keeldumise sõnum:"
 
-msgid "Sorry, You are not my style."
+msgid "Sorry, you're not my style."
 msgstr ""
 
-#, c-format
-msgid "%d needs authentication"
+#, fuzzy, c-format
+msgid "%u needs authorization"
 msgstr "%d vajab autentimist"
 
 #, fuzzy
 msgid "Add buddy authorize"
 msgstr "Kas lisada sõber sinu nimekirja?"
 
-msgid "Input request here"
-msgstr ""
+#, fuzzy
+msgid "Enter request here"
+msgstr "Jututoaserveri sisestamine"
 
 msgid "Would you be my friend?"
 msgstr "Kas sa võiks olla minu sõber?"
@@ -7160,7 +7374,7 @@ msgid "Failed sending authorize"
 msgstr "Palun autoriseeri mind!"
 
 #, fuzzy, c-format
-msgid "Failed removing buddy %d"
+msgid "Failed removing buddy %u"
 msgstr "Tõrge sõbra eemaldamisel"
 
 #, fuzzy, c-format
@@ -7204,6 +7418,10 @@ msgid "You can only search for permanent Qun\n"
 msgstr ""
 
 #, fuzzy
+msgid "(Invalid UTF-8 string)"
+msgstr "Vigased proksi sätted"
+
+#, fuzzy
 msgid "Not member"
 msgstr "Ma ei ole liige"
 
@@ -7243,15 +7461,18 @@ msgstr ""
 msgid "Join QQ Qun"
 msgstr ""
 
-#, c-format
-msgid "Successfully joined Qun %s (%d)"
+msgid "Input request here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Successfully joined Qun %s (%u)"
+msgstr "Telefoninumber"
 
 msgid "Successfully joined Qun"
 msgstr ""
 
 #, c-format
-msgid "Qun %d denied to join"
+msgid "Qun %u denied from joining"
 msgstr ""
 
 msgid "QQ Qun Operation"
@@ -7261,7 +7482,7 @@ msgstr ""
 msgid "Failed:"
 msgstr "Nurjunud"
 
-msgid "Join Qun, Unknow Reply"
+msgid "Join Qun, Unknown Reply"
 msgstr ""
 
 #, fuzzy
@@ -7273,11 +7494,11 @@ msgid ""
 "this operation will eventually remove this Qun."
 msgstr ""
 
-msgid "Sorry, you are not our style ..."
+msgid "Sorry, you are not our style"
 msgstr ""
 
 #, fuzzy
-msgid "Successfully changed Qun member"
+msgid "Successfully changed Qun members"
 msgstr "Telefoninumber"
 
 #, fuzzy
@@ -7288,35 +7509,35 @@ msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set detailed information now?"
+msgid "Would you like to set up detailed information now?"
 msgstr "Kas sa soovid seda pilti määrata selle kasutaja sõbraikooniks?"
 
 msgid "Setup"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%d requested to join Qun %d for %s"
+msgid "%u requested to join Qun %u for %s"
 msgstr "Sinu päring grupiga %d liitumiseks lükati halduri %d poolt tagasi"
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr ""
+#, fuzzy, c-format
+msgid "%u request to join Qun %u"
+msgstr "Sinu päring grupiga %d liitumiseks lükati halduri %d poolt tagasi"
 
 #, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
+msgid "Failed to join Qun %u, operated by admin %u"
 msgstr "Tõrge sõbraga jututoas ühinemisel"
 
 #, c-format
-msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "<b>Removed buddy %d.</b>"
+msgid "<b>Removed buddy %u.</b>"
 msgstr "Sõbra eemaldamine"
 
-#, c-format
-msgid "<b>New buddy %d joined.</b>"
-msgstr ""
+#, fuzzy, c-format
+msgid "<b>New buddy %u joined.</b>"
+msgstr "Sõbra eemaldamine"
 
 #, c-format
 msgid "Unknown-%d"
@@ -7429,6 +7650,13 @@ msgstr "<b>Viimane värskendus</b>: %s<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<b>Saadetud</b>: %lu<br>\n"
 
+#, fuzzy
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<b>Viimane värskendus</b>: %s<br>\n"
+
+msgid "and more, please let me know... thank you!))"
+msgstr ""
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
 
@@ -7436,7 +7664,7 @@ msgid "<i>Feel free to join us!</i> :)"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "About OpenQ r%s"
+msgid "About OpenQ %s"
 msgstr "%s - lähem teave"
 
 #, fuzzy
@@ -7455,6 +7683,10 @@ msgstr ""
 #, fuzzy
 msgid "About OpenQ"
 msgstr "%s - lähem teave"
+
+#, fuzzy
+msgid "Modify Buddy Memo"
+msgstr "Koduaadress"
 
 #. *< type
 #. *< ui_requirement
@@ -7487,7 +7719,6 @@ msgstr ""
 msgid "QQ2008"
 msgstr ""
 
-#. #endif
 msgid "Connect by TCP"
 msgstr "Ühendumine TCP abil"
 
@@ -7499,6 +7730,9 @@ msgstr "Serveri port"
 msgid "Show server news"
 msgstr "Serveri aadress"
 
+msgid "Show chat room when msg comes"
+msgstr ""
+
 #, fuzzy
 msgid "Keep alive interval (seconds)"
 msgstr "Ühenduse ülevalhoidmise sagedus(ed)"
@@ -7508,11 +7742,7 @@ msgid "Update interval (seconds)"
 msgstr "Uuenduste sagedus(ed)"
 
 #, fuzzy
-msgid "Can not decrypt server reply"
-msgstr "Sisselogimise vastust pole võimalik lahti krüptida"
-
-#, fuzzy
-msgid "Can not decrypt get server reply"
+msgid "Cannot decrypt server reply"
 msgstr "Sisselogimise vastust pole võimalik lahti krüptida"
 
 #, c-format
@@ -7535,20 +7765,23 @@ msgid "Activation required"
 msgstr "Volituste andmine katkestati"
 
 #, fuzzy, c-format
-msgid "Unknow reply code when login (0x%02X)"
+msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "Vigane tõendi vastusekood, 0x%02X"
 
-msgid "Keep alive error"
-msgstr "Ühenduse ülevalhoidmise viga"
+#, fuzzy
+msgid "Could not decrypt server reply"
+msgstr "Sisselogimise vastust pole võimalik lahti krüptida"
 
-msgid "Requesting captcha ..."
+#, fuzzy
+msgid "Requesting captcha"
+msgstr "Päringudialoog"
+
+msgid "Checking captcha"
 msgstr ""
 
-msgid "Checking code of captcha ..."
-msgstr ""
-
-msgid "Failed captcha verify"
-msgstr ""
+#, fuzzy
+msgid "Failed captcha verification"
+msgstr "Tõrge Yahoo! autentimisel"
 
 #, fuzzy
 msgid "Captcha Image"
@@ -7558,37 +7791,29 @@ msgstr "Pildi salvestamine"
 msgid "Enter code"
 msgstr "Sisesta parool"
 
-msgid "QQ Captcha Verifing"
-msgstr ""
+#, fuzzy
+msgid "QQ Captcha Verification"
+msgstr "SSL-sertifikaadi verifitseerimine"
 
 #, fuzzy
 msgid "Enter the text from the image"
 msgstr "Sisesta grupi nimi"
 
-#, c-format
-msgid "Unknow reply code when checking password (0x%02X)"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unknown reply when checking password (0x%02X)"
+msgstr "Vigane tõendi vastusekood, 0x%02X"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Unknow reply code when login (0x%02X):\n"
+"Unknown reply code when logging in (0x%02X):\n"
 "%s"
-msgstr ""
+msgstr "Vigane tõendi vastusekood, 0x%02X"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
 msgstr "Ühendumine pole võimalik."
 
 msgid "Socket error"
 msgstr "Sokli viga"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%d, %s"
-msgstr ""
-"Ühendus serveriga katkes:\n"
-"%d, %s"
 
 msgid "Unable to read from socket"
 msgstr "Soklist pole võimalik lugeda"
@@ -7600,11 +7825,11 @@ msgid "Connection lost"
 msgstr "Ühendus katkes"
 
 #, fuzzy
-msgid "Get server ..."
+msgid "Getting server"
 msgstr "Määra kasutajateave..."
 
 #, fuzzy
-msgid "Request token"
+msgid "Requesting token"
 msgstr "Päring on keelatud"
 
 msgid "Couldn't resolve host"
@@ -7614,14 +7839,11 @@ msgid "Invalid server or port"
 msgstr "Vigane server või port"
 
 #, fuzzy
-msgid "Connecting server ..."
-msgstr "Ühendumisserver"
+msgid "Connecting to server"
+msgstr "Ühendumine SILC-serverisse"
 
 msgid "QQ Error"
 msgstr "QQ viga"
-
-msgid "Failed to send IM."
-msgstr "Tõrge välksõnumi saatmisel."
 
 #, fuzzy, c-format
 msgid ""
@@ -7630,6 +7852,13 @@ msgid ""
 "%s\n"
 "%s"
 msgstr "QQ serveri uudised"
+
+#, fuzzy, c-format
+msgid "%s:%s"
+msgstr ""
+"%s\n"
+"\n"
+"%s"
 
 #, fuzzy, c-format
 msgid "From %s:"
@@ -7641,32 +7870,30 @@ msgid ""
 "%s"
 msgstr "Serveri juhised: %s"
 
-msgid "Unknow SERVER CMD"
-msgstr ""
+#, fuzzy
+msgid "Unknown SERVER CMD"
+msgstr "Tundmatu põhjus"
 
 #, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
-"Room %d, reply 0x%02X"
+"Room %u, reply 0x%02X"
 msgstr ""
 
 #, fuzzy
 msgid "QQ Qun Command"
 msgstr "Käsk"
 
-#, fuzzy, c-format
-msgid "Not a member of room \"%s\"\n"
-msgstr "Sa pole grupi \"%s\" liige\n"
-
-msgid "Can not decrypt login reply"
+#, fuzzy
+msgid "Could not decrypt login reply"
 msgstr "Sisselogimise vastust pole võimalik lahti krüptida"
 
 #, fuzzy
-msgid "Unknow LOGIN CMD"
+msgid "Unknown LOGIN CMD"
 msgstr "Tundmatu põhjus"
 
 #, fuzzy
-msgid "Unknow CLIENT CMD"
+msgid "Unknown CLIENT CMD"
 msgstr "Tundmatu põhjus"
 
 #, c-format
@@ -8449,9 +8676,6 @@ msgstr "Organisatsioon"
 msgid "Unit"
 msgstr "Üksus"
 
-msgid "Note"
-msgstr "Märkus"
-
 msgid "Join Chat"
 msgstr ""
 
@@ -9082,6 +9306,10 @@ msgstr "Hostinime pole võimalik lahendada"
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-i kasutajanimed ei tohi sisaldada sõnavahe- ja @-märke"
 
+#, fuzzy
+msgid "SIP connect server not specified"
+msgstr "Serveri port"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -9116,189 +9344,11 @@ msgid "Auth Domain"
 msgstr "Autentimisdomeen"
 
 #, c-format
-msgid "Looking up %s"
-msgstr "%s lahendamine"
-
-#, c-format
-msgid "Connect to %s failed"
-msgstr ""
-
-#, c-format
-msgid "Signon: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Faili %s pole võimalik kirjutada."
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Faili %s pole võimalik lugeda."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr ""
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s pole hetkel sisse logitud."
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr ""
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr ""
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr ""
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr ""
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr ""
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr ""
-
-#, c-format
-msgid "Failure."
-msgstr "Tõrge."
-
-#, c-format
-msgid "Too many matches."
-msgstr "Liiga palju vastavusi."
-
-#, c-format
-msgid "Need more qualifiers."
-msgstr ""
-
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr "Kataloogiteenus pole ajutiselt saadaval."
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr ""
-
-#, c-format
-msgid "Keyword ignored."
-msgstr "Võtmesõna eirati."
-
-#, c-format
-msgid "No keywords."
-msgstr "Võtmesõnu ei ole."
-
-#, c-format
-msgid "User has no directory information."
-msgstr "Kasutajal pole kataloogiandmeid."
-
-#, c-format
-msgid "Country not supported."
-msgstr "Riik pole toetatud."
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Tundmatu tõrge: %s."
-
-#, c-format
-msgid "Incorrect username or password."
-msgstr "Vigane kasutajanimi või parool."
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr "See teenus pole ajutiselt saadaval."
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr ""
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr ""
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Tekkis tundmatu viga %d.  Andmed: %s"
-
-msgid "Invalid Groupname"
-msgstr "Vigane grupinimi"
-
-msgid "Connection Closed"
-msgstr "Ühendus sulgeti"
-
-msgid "Waiting for reply..."
-msgstr "Vastuse ootamine..."
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr ""
-
-msgid "Password Change Successful"
-msgstr "Paroolimuutmine õnnestus"
-
-msgid "_Group:"
-msgstr "_Grupp:"
-
-msgid "Get Dir Info"
-msgstr ""
-
-msgid "Set Dir Info"
-msgstr ""
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr ""
-
-msgid "File transfer failed; other side probably canceled."
-msgstr "Tõrge ülekandmisel, ilmselt tühistas teine pool ülekande."
-
-msgid "Could not connect for transfer."
-msgstr "Ülekandmiseks pole võimalik ühendust luua."
-
-msgid "Could not write file header.  The file will not be transferred."
-msgstr "Failipäist pole võimalik kirjutada.  Faili ei kanta üle."
-
-msgid "Save As..."
-msgstr "Salvesta kui..."
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] ""
-msgstr[1] ""
-
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s soovib, et sa saadaksid talle faili"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "TOC Protocol Plugin"
-msgstr "TOC protokolli plugin"
-
-#, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr "%s saatis sulle veebikaamera kutse, mis pole aga veel toetatud."
+
+msgid "Your SMS was not delivered"
+msgstr ""
 
 msgid "Your Yahoo! message did not get sent."
 msgstr ""
@@ -9554,13 +9604,9 @@ msgstr "Lahe viit nr 3"
 msgid "Last Update"
 msgstr "Viimane uuendus"
 
-#, c-format
-msgid "User information for %s unavailable"
-msgstr "Kasutaja %s andmed pole saadaval"
-
+#, fuzzy
 msgid ""
-"Sorry, this profile seems to be in a language or format that is not "
-"supported at this time."
+"This profile is in a language or format that is not supported at this time."
 msgstr ""
 "Vabandust, see profiil paistab olevat hetkel toetamata keeles või vormingus."
 
@@ -9875,9 +9921,6 @@ msgstr "Mitte segada"
 msgid "Extended away"
 msgstr "Kaua eemal"
 
-msgid "Mobile"
-msgstr "Mobiilne"
-
 msgid "Listening to music"
 msgstr "Kuulan muusikat"
 
@@ -9918,16 +9961,6 @@ msgstr "+++ %s naases jõudeolekust"
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "Viga %s lugemisel"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
 
 msgid "Calculating..."
 msgstr "Arvutamine..."
@@ -10001,6 +10034,12 @@ msgstr ""
 msgid "Unable to connect to %s: %s"
 msgstr "Hostiga %s pole võimalik ühenduda: %s"
 
+#, fuzzy, c-format
+msgid ""
+"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
+"found."
+msgstr "Server vajab sisselogimiseks TLS/SSL-i.  TLS/SSL-i tuge ei leitud."
+
 #, c-format
 msgid " - %s"
 msgstr " - %s"
@@ -10033,6 +10072,16 @@ msgstr "Ühendus lükati tagasi."
 #, c-format
 msgid "Address already in use."
 msgstr "Aadress on juba kasutusel."
+
+#, c-format
+msgid "Error Reading %s"
+msgstr "Viga %s lugemisel"
+
+#, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
 
 msgid "Internet Messenger"
 msgstr "Interneti sõnumivahetus"
@@ -10076,10 +10125,8 @@ msgstr "Teavitused e-posti _uute sõnumite kohta"
 msgid "Use this buddy _icon for this account:"
 msgstr "Selle konto jaoks kasutatakse seda sõbra_ikooni:"
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "%s - valikud"
+msgid "_Advanced"
+msgstr "Laien_datud"
 
 msgid "Use GNOME Proxy Settings"
 msgstr "Kasutatakse GNOME proksi sätteid"
@@ -10114,9 +10161,6 @@ msgstr "Kui sa päris lähedalt vaatad, siis"
 msgid "you can see the butterflies mating"
 msgstr "võid sa näha paarituvaid liblikaid"
 
-msgid "Proxy Options"
-msgstr "Proksi valikud"
-
 msgid "Proxy _type:"
 msgstr "_Proksi liik:"
 
@@ -10144,8 +10188,9 @@ msgstr "_Põhiline"
 msgid "Create _this new account on the server"
 msgstr "See on _uus konto ja tuleb serverisse luua"
 
-msgid "_Advanced"
-msgstr "Laien_datud"
+#, fuzzy
+msgid "_Proxy"
+msgstr "Proksi"
 
 msgid "Enabled"
 msgstr "Lubatud"
@@ -10217,6 +10262,17 @@ msgstr "Hangi a_ndmed"
 
 msgid "I_M"
 msgstr "Vä_lksõnum"
+
+#, fuzzy
+msgid "_Audio Call"
+msgstr "_Lisa vestlus"
+
+msgid "Audio/_Video Call"
+msgstr ""
+
+#, fuzzy
+msgid "_Video Call"
+msgstr "Videovestlus"
 
 msgid "_Send File..."
 msgstr "Saada _fail..."
@@ -10354,6 +10410,10 @@ msgstr "/Vahendid/Sõbra_märguanded"
 msgid "/Tools/_Certificates"
 msgstr "/Vahendid/_Sertifikaadid"
 
+#, fuzzy
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Vahendid/_Tujunäod"
+
 msgid "/Tools/Plu_gins"
 msgstr "/Vahendid/Plu_ginad"
 
@@ -10362,9 +10422,6 @@ msgstr "/Vahendid/_Eelistused"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Vahendid/_Privaatsus"
-
-msgid "/Tools/Smile_y"
-msgstr "/Vahendid/_Tujunäod"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Vahendid/_Failiülekanded"
@@ -10481,8 +10538,8 @@ msgstr "Käsitsi"
 msgid "By status"
 msgstr "Oleku järgi"
 
-msgid "By log size"
-msgstr "Logi suuruse järgi"
+msgid "By recent log activity"
+msgstr ""
 
 #, c-format
 msgid "%s disconnected"
@@ -10497,6 +10554,9 @@ msgstr "Ühendu uuesti"
 
 msgid "Re-enable"
 msgstr "Luba uuesti"
+
+msgid "SSL FAQs"
+msgstr ""
 
 msgid "Welcome back!"
 msgstr "Tere tulemast tagasi!"
@@ -10586,6 +10646,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "A_lias:"
 
+msgid "_Group:"
+msgstr "_Grupp:"
+
 msgid "Auto_join when account becomes online."
 msgstr ""
 
@@ -10635,14 +10698,6 @@ msgstr ""
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "Sõbra kutsumine jututuppa"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
-"Palun sisesta selle kasutaja nimi, keda sa soovid jututuppa kutsuda. Kui "
-"sisestad ka sõnumi, siis saadetakse see sõbrale koos kutsumisteatega."
 
 msgid "_Buddy:"
 msgstr "_Sõber:"
@@ -10718,6 +10773,22 @@ msgstr "/Vestlus/Salvesta _kui..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Vestlus/_Puhasta tagasikerimine"
 
+#, fuzzy
+msgid "/Conversation/M_edia"
+msgstr "/Vestlus/_Veel"
+
+#, fuzzy
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Vestlus/_Veel"
+
+#, fuzzy
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Vestlus/_Veel"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Vestlus/Vaata _logi"
+
 msgid "/Conversation/Se_nd File..."
 msgstr "/Vestlus/Saada _fail..."
 
@@ -10789,6 +10860,18 @@ msgstr "/Vestlus"
 
 msgid "/Conversation/View Log"
 msgstr "/Vestlus/Vaata logi"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Vestlus/Veel"
+
+#, fuzzy
+msgid "/Conversation/Media/Video Call"
+msgstr "/Vestlus/Vaata logi"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Vestlus/Veel"
 
 msgid "/Conversation/Send File..."
 msgstr "/Vestlus/Saada fail..."
@@ -10973,6 +11056,9 @@ msgstr "Esitaja"
 msgid "Ka-Hing Cheung"
 msgstr ""
 
+msgid "voice and video"
+msgstr ""
+
 msgid "support"
 msgstr "kasutajatugi"
 
@@ -11113,6 +11199,10 @@ msgstr "Gruusia"
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu Gruusia tõlkijad"
 
+#, fuzzy
+msgid "Khmer"
+msgstr "Muu"
+
 msgid "Kannada"
 msgstr "Kannada"
 
@@ -11132,6 +11222,10 @@ msgid "Lithuanian"
 msgstr "Leedu"
 
 msgid "Macedonian"
+msgstr "Makedoonia"
+
+#, fuzzy
+msgid "Mongolian"
 msgstr "Makedoonia"
 
 msgid "Bokmål Norwegian"
@@ -11250,7 +11344,24 @@ msgstr ""
 "pole mitte mingisugust garantiid.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin serveris irc.freenode.net<BR><BR>"
+
+#, fuzzy, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin serveris irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
@@ -11554,15 +11665,6 @@ msgstr "Tippimismärguande kuvamiseks kasutatav kirjatüüp"
 msgid "Enable typing notification"
 msgstr "Tippimismärguande lubamine"
 
-msgid "_Copy Email Address"
-msgstr "_Kopeeri e-posti aadress"
-
-msgid "_Open Link in Browser"
-msgstr "_Ava viit veebisirvijas"
-
-msgid "_Copy Link Location"
-msgstr "_Kopeeri viida asukoht"
-
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -11799,13 +11901,14 @@ msgstr "_Sirvi logide kausta"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Lähema teabe saamiseks kasuta `%s -h'.\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -11834,13 +11937,14 @@ msgstr ""
 "  -v, --version          käesoleva versiooni kuvamine ja programmi töö\n"
 "                         lõpetamine\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -11888,11 +11992,27 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
-msgid "Open All Messages"
-msgstr "Ava kõik sõnumid"
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr ""
 
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Sulle on e-sõnum!</span>"
+msgid "/_Media"
+msgstr ""
+
+msgid "/Media/_Hangup"
+msgstr ""
+
+#, fuzzy
+msgid "Calling..."
+msgstr "Arvutamine..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -11920,6 +12040,27 @@ msgstr "Viga \"%s\" käivitamisel: %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
+
+msgid "Open All Messages"
+msgstr "Ava kõik sõnumid"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Sulle on e-sõnum!</span>"
+
+#, fuzzy
+msgid "New Pounces"
+msgstr "Uus sõbramärguanne"
+
+msgid "Dismiss"
+msgstr ""
+
+#, fuzzy
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Sulle on e-sõnum!</span>"
+
+#, fuzzy
+msgid "No message"
+msgstr "Tundmatu sõnum"
 
 msgid "The following plugins will be unloaded."
 msgstr "Järgnevad pluginad laaditakse mälust välja."
@@ -11966,6 +12107,10 @@ msgstr "<b>Plugina üksikasjad</b>"
 
 msgid "Select a file"
 msgstr "Faili valimine"
+
+#, fuzzy
+msgid "Modify Buddy Pounce"
+msgstr "Sõbramärguande redigeerimine"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -12037,6 +12182,50 @@ msgstr "_Korduv"
 msgid "Pounce Target"
 msgstr "Kelle kohta"
 
+#, fuzzy, c-format
+msgid "Started typing"
+msgstr "Alustab tippimist"
+
+#, fuzzy, c-format
+msgid "Paused while typing"
+msgstr "Teeb tippimisel pausi"
+
+#, fuzzy, c-format
+msgid "Signed on"
+msgstr "Logib sisse"
+
+#, fuzzy, c-format
+msgid "Returned from being idle"
+msgstr "%s pole enam jõude (%s)"
+
+#, fuzzy, c-format
+msgid "Returned from being away"
+msgstr "Pöördub eemalolekust tagasi"
+
+#, fuzzy, c-format
+msgid "Stopped typing"
+msgstr "Tippimine lõpetatud"
+
+#, fuzzy, c-format
+msgid "Signed off"
+msgstr "Logib välja"
+
+#, fuzzy, c-format
+msgid "Became idle"
+msgstr "Jääb jõude"
+
+#, fuzzy, c-format
+msgid "Went away"
+msgstr "Kui olen eemal"
+
+#, fuzzy, c-format
+msgid "Sent a message"
+msgstr "Saadetakse sõnum"
+
+#, fuzzy, c-format
+msgid "Unknown.... Please report this!"
+msgstr "Tundmatu teavitussündmus. Palun anna sellest teada!"
+
 msgid "Smiley theme failed to unpack."
 msgstr "Tõrge tujunägude teema lahtipakkimisel"
 
@@ -12059,6 +12248,12 @@ msgstr "Kiirklahvid"
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Vestlused suletakse _Escape-klahvi vajutamisega"
 
+#. Buddy List Themes
+#, fuzzy
+msgid "Buddy List Theme"
+msgstr "Sõbranimekiri"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "Süsteemisalve ikoon"
 
@@ -12169,9 +12364,6 @@ msgstr "Proksi seadistusprogrammi pole võimalik käivitada."
 msgid "Cannot start browser configuration program."
 msgstr "Veebisirvija seadistusprogrammi pole võimalik käivitada."
 
-msgid "ST_UN server:"
-msgstr "ST_UN server:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Näide: stunserver.org</span>"
 
@@ -12195,6 +12387,10 @@ msgstr "Al_gusport:"
 
 msgid "_End port:"
 msgstr "_Lõpuport:"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr ""
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proksi server ja veebisirvija"
@@ -12223,6 +12419,10 @@ msgstr "Proksi server"
 
 msgid "No proxy"
 msgstr "Proksi puudub"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr ""
 
 msgid "_User:"
 msgstr "Kasuta_ja:"
@@ -12382,11 +12582,11 @@ msgstr "Kui olen eemal ja jõude"
 msgid "Auto-away"
 msgstr "Automaatne eemaldumine"
 
-msgid "Change status when _idle"
-msgstr "Jõudeoleku puhul määratakse uus _olek"
-
 msgid "_Minutes before becoming idle:"
 msgstr "Mitme _minuti möödudes jõudeolek määratakse:"
+
+msgid "Change status when _idle"
+msgstr "Jõudeoleku puhul määratakse uus _olek"
 
 msgid "Change _status to:"
 msgstr "Uueks o_lekuks saab:"
@@ -12536,6 +12736,12 @@ msgstr "Sal_vesta ja kasuta"
 msgid "Status for %s"
 msgstr ""
 
+#.
+#. * TODO: We should enable/disable the add button based on
+#. *       whether the user has entered all required data.  That
+#. *       would eliminate the need for this check and provide a
+#. *       better user experience.
+#.
 msgid "Custom Smiley"
 msgstr "Kohandatud tujunägu"
 
@@ -12545,13 +12751,13 @@ msgstr ""
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr ""
 
+#, c-format
+msgid ""
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
+msgstr ""
+
 msgid "Duplicate Shortcut"
 msgstr "Dubleeriuv kiirklahv"
-
-msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
-msgstr ""
 
 msgid "Please select an image for the smiley."
 msgstr "Palun vali tujunäo jaoks pilt."
@@ -12562,15 +12768,21 @@ msgstr "Tujunäo muutmine"
 msgid "Add Smiley"
 msgstr "Tujunäo lisamine"
 
-msgid "Smiley _Image"
-msgstr "Tujunäo _pilt"
+#, fuzzy
+msgid "_Image:"
+msgstr "_Pilt"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr "Tujunäo _kiirklahv"
+#. Shortcut text
+#, fuzzy
+msgid "S_hortcut text:"
+msgstr "Kiirklahv"
 
 msgid "Smiley"
 msgstr "Tujunägu"
+
+#, fuzzy
+msgid "Shortcut Text"
+msgstr "Kiirklahv"
 
 msgid "Custom Smiley Manager"
 msgstr "Kohandatud tujunägude haldur"
@@ -12690,6 +12902,16 @@ msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
 "Tõrge pildi '%s' laadimisel: põhjus on teadmata, ilmselt on pildifail rikutud"
+
+#, fuzzy
+msgid "_Open Link"
+msgstr "_Viidad avatakse:"
+
+msgid "_Copy Link Location"
+msgstr "_Kopeeri viida asukoht"
+
+msgid "_Copy Email Address"
+msgstr "_Kopeeri e-posti aadress"
 
 msgid "Save File"
 msgstr "Faili salvestamine"
@@ -13640,9 +13862,6 @@ msgstr "Sõbranimekirja _hoitakse pealmisena:"
 msgid "Only when docked"
 msgstr "Ainult dokitud olekus"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Akna vilgutamine vestlussõnumite vastuvõtmisel"
-
 msgid "Windows Pidgin Options"
 msgstr "Windowsi Pidgini valikud"
 
@@ -13691,6 +13910,151 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "See plugin sobib XMPP serverite ja klientide silumiseks"
+
+#~ msgid "Invite message"
+#~ msgstr "Kutse sõnum"
+
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "Palun sisesta selle kasutaja nimi, keda sa soovid\n"
+#~ "jututuppa kutsuda. Kui sisestad ka sõnumi, siis\n"
+#~ "saadetakse see sõbrale koos kutsumisteatega."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "MSN-i aadressiraamatut pole võimalik vastu võtta"
+
+#, fuzzy
+#~ msgid "Add buddy Q&A"
+#~ msgstr "Sõbra lisamine"
+
+#, fuzzy
+#~ msgid "Can not decrypt get server reply"
+#~ msgstr "Sisselogimise vastust pole võimalik lahti krüptida"
+
+#~ msgid "Keep alive error"
+#~ msgstr "Ühenduse ülevalhoidmise viga"
+
+#~ msgid ""
+#~ "Lost connection with server:\n"
+#~ "%d, %s"
+#~ msgstr ""
+#~ "Ühendus serveriga katkes:\n"
+#~ "%d, %s"
+
+#, fuzzy
+#~ msgid "Connecting server ..."
+#~ msgstr "Ühendumisserver"
+
+#~ msgid "Failed to send IM."
+#~ msgstr "Tõrge välksõnumi saatmisel."
+
+#, fuzzy
+#~ msgid "Not a member of room \"%s\"\n"
+#~ msgstr "Sa pole grupi \"%s\" liige\n"
+
+#~ msgid "Looking up %s"
+#~ msgstr "%s lahendamine"
+
+#~ msgid "Unable to write file %s."
+#~ msgstr "Faili %s pole võimalik kirjutada."
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "Faili %s pole võimalik lugeda."
+
+#~ msgid "%s not currently logged in."
+#~ msgstr "%s pole hetkel sisse logitud."
+
+#~ msgid "Failure."
+#~ msgstr "Tõrge."
+
+#~ msgid "Too many matches."
+#~ msgstr "Liiga palju vastavusi."
+
+#~ msgid "Dir service temporarily unavailable."
+#~ msgstr "Kataloogiteenus pole ajutiselt saadaval."
+
+#~ msgid "Keyword ignored."
+#~ msgstr "Võtmesõna eirati."
+
+#~ msgid "No keywords."
+#~ msgstr "Võtmesõnu ei ole."
+
+#~ msgid "User has no directory information."
+#~ msgstr "Kasutajal pole kataloogiandmeid."
+
+#~ msgid "Country not supported."
+#~ msgstr "Riik pole toetatud."
+
+#~ msgid "Failure unknown: %s."
+#~ msgstr "Tundmatu tõrge: %s."
+
+#~ msgid "Incorrect username or password."
+#~ msgstr "Vigane kasutajanimi või parool."
+
+#~ msgid "The service is temporarily unavailable."
+#~ msgstr "See teenus pole ajutiselt saadaval."
+
+#~ msgid "An unknown error, %d, has occurred.  Info: %s"
+#~ msgstr "Tekkis tundmatu viga %d.  Andmed: %s"
+
+#~ msgid "Invalid Groupname"
+#~ msgstr "Vigane grupinimi"
+
+#~ msgid "Connection Closed"
+#~ msgstr "Ühendus sulgeti"
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "Vastuse ootamine..."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "Paroolimuutmine õnnestus"
+
+#~ msgid "File transfer failed; other side probably canceled."
+#~ msgstr "Tõrge ülekandmisel, ilmselt tühistas teine pool ülekande."
+
+#~ msgid "Could not connect for transfer."
+#~ msgstr "Ülekandmiseks pole võimalik ühendust luua."
+
+#~ msgid "Could not write file header.  The file will not be transferred."
+#~ msgstr "Failipäist pole võimalik kirjutada.  Faili ei kanta üle."
+
+#~ msgid "Save As..."
+#~ msgstr "Salvesta kui..."
+
+#~ msgid "%s requests you to send them a file"
+#~ msgstr "%s soovib, et sa saadaksid talle faili"
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "TOC protokolli plugin"
+
+#~ msgid "User information for %s unavailable"
+#~ msgstr "Kasutaja %s andmed pole saadaval"
+
+#~ msgid "%s Options"
+#~ msgstr "%s - valikud"
+
+#~ msgid "Proxy Options"
+#~ msgstr "Proksi valikud"
+
+#~ msgid "By log size"
+#~ msgstr "Logi suuruse järgi"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "_Ava viit veebisirvijas"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "ST_UN server:"
+
+#~ msgid "Smiley _Image"
+#~ msgstr "Tujunäo _pilt"
+
+#~ msgid "Smiley S_hortcut"
+#~ msgstr "Tujunäo _kiirklahv"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Akna vilgutamine vestlussõnumite vastuvõtmisel"
 
 #~ msgid "A group with the name already exists."
 #~ msgstr "Selle nimega grupp on juba olemas."
@@ -13756,15 +14120,6 @@ msgstr "See plugin sobib XMPP serverite ja klientide silumiseks"
 
 #~ msgid "Do you want to approve the request?"
 #~ msgstr "Kas sa nõustud selle päringuga?"
-
-#~ msgid ""
-#~ "%s\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "%s\n"
-#~ "\n"
-#~ "%s"
 
 #~ msgid "System Message"
 #~ msgstr "Süsteemne sõnum"
