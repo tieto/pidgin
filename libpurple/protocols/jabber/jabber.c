@@ -1807,7 +1807,7 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	ident->type = g_strdup(type);
 	ident->lang = g_strdup(lang);
 	ident->name = g_strdup(name);
-	jabber_identities = g_list_append(jabber_identities, ident);
+	jabber_identities = g_list_prepend(jabber_identities, ident);
 }
 
 static void jabber_identities_destroy(void)

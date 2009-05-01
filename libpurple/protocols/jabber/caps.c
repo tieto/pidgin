@@ -406,9 +406,11 @@ cbplususerdata_unref(jabber_caps_cbplususerdata *data)
 static void
 jabber_caps_get_info_complete(jabber_caps_cbplususerdata *userdata)
 {
-	userdata->cb(userdata->info, userdata->exts, userdata->cb_data);
-	userdata->info = NULL;
-	userdata->exts = NULL;
+	if (userdata->cb) {
+		userdata->cb(userdata->info, userdata->exts, userdata->cb_data);
+		userdata->info = NULL;
+		userdata->exts = NULL;
+	}
 
 	if (userdata->ref != 1)
 		purple_debug_warning("jabber", "Lost a reference to caps cbdata: %d\n",
@@ -562,7 +564,8 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	info = g_hash_table_lookup(capstable, &key);
 	if (info && hash) {
 		/* v1.5 - We already have all the information we care about */
-		cb(info, NULL, user_data);
+		if (cb)
+			cb(info, NULL, user_data);
 		return;
 	}
 
@@ -896,11 +899,12 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	}
 
 	info.features = features;
-	info.identities = jabber_identities;
+	info.identities = g_list_copy(jabber_identities);
 	info.forms = NULL;
 
 	g_free(js->caps_hash);
 	js->caps_hash = jabber_caps_calculate_hash(&info, "sha1");
+	g_list_free(info.identities);
 	g_list_free(features);
 }
 
