@@ -116,16 +116,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(node)
 			xmlnode_set_attrib(query, "node", node);
 
-		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
-			identity = xmlnode_new_child(query, "identity");
-			xmlnode_set_attrib(identity, "category", "client");
-			xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
-														 * handheld, pc, phone,
-														 * web */
-			xmlnode_set_attrib(identity, "name", PACKAGE);
-		}
-
-		if(!node || !strcmp(node, node_uri)) {
+		if(!node || g_str_equal(node, node_uri)) {
 			GList *features, *identities;
 			for(identities = jabber_identities; identities; identities = identities->next) {
 				JabberIdentity *ident = (JabberIdentity*)identities->data;
