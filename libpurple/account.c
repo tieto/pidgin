@@ -954,6 +954,8 @@ purple_account_new(const char *username, const char *protocol_id)
 	/* 0 is not a valid privacy setting */
 	account->perm_deny = PURPLE_PRIVACY_ALLOW_ALL;
 
+	purple_signal_emit(purple_accounts_get_handle(), "account-created", account);
+
 	prpl = purple_find_prpl(protocol_id);
 
 	if (prpl == NULL)
@@ -987,6 +989,7 @@ purple_account_destroy(PurpleAccount *account)
 	g_return_if_fail(account != NULL);
 
 	purple_debug_info("account", "Destroying account %p\n", account);
+	purple_signal_emit(purple_accounts_get_handle(), "account-destroying", account);
 
 	for (l = purple_get_conversations(); l != NULL; l = l->next)
 	{
@@ -2724,6 +2727,14 @@ purple_accounts_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "account-created",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+
+	purple_signal_register(handle, "account-destroying",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
 
 	purple_signal_register(handle, "account-added",
 						 purple_marshal_VOID__POINTER, NULL, 1,
