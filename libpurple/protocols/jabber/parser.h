@@ -19,13 +19,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_PARSER_H_
-#define _PURPLE_JABBER_PARSER_H_
+#ifndef PURPLE_JABBER_PARSER_H_
+#define PURPLE_JABBER_PARSER_H_
 
 #include "jabber.h"
 
 void jabber_parser_setup(JabberStream *js);
+void jabber_parser_close_stream(JabberStream *js);
 void jabber_parser_free(JabberStream *js);
 void jabber_parser_process(JabberStream *js, const char *buf, int len);
 
-#endif /* _PURPLE_JABBER_PARSER_H_ */
+#endif /* PURPLE_JABBER_PARSER_H_ */

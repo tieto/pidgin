@@ -669,8 +669,13 @@ static void
 account_toggled(GntWidget *widget, void *key, gpointer null)
 {
 	PurpleAccount *account = key;
+	gboolean enabled = gnt_tree_get_choice(GNT_TREE(widget), key);
 
-	purple_account_set_enabled(account, FINCH_UI, gnt_tree_get_choice(GNT_TREE(widget), key));
+	if (enabled)
+		purple_savedstatus_activate_for_account(purple_savedstatus_get_current(),
+												account);
+
+	purple_account_set_enabled(account, FINCH_UI, enabled);
 }
 
 static gboolean

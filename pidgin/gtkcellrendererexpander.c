@@ -30,7 +30,6 @@
  */
 
 #include <gtk/gtk.h>
-#include <gtk/gtktreeview.h>
 #include "gtkcellrendererexpander.h"
 
 static void pidgin_cell_renderer_expander_get_property  (GObject                    *object,

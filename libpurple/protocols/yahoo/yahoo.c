@@ -2705,13 +2705,20 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 	}
 
 	/* remove timeout */
-	purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
-	yd->yahoo_p2p_server_timeout_handle = 0;
+	if (yd->yahoo_p2p_server_timeout_handle) {
+		purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
+		yd->yahoo_p2p_server_timeout_handle = 0;
+	}
 
 	/* remove watcher and close p2p server */
-	purple_input_remove(yd->yahoo_p2p_server_watcher);
-	close(yd->yahoo_local_p2p_server_fd);
-	yd->yahoo_local_p2p_server_fd = -1;
+	if (yd->yahoo_p2p_server_watcher) {
+		purple_input_remove(yd->yahoo_p2p_server_watcher);
+		yd->yahoo_p2p_server_watcher = 0;
+	}
+	if (yd->yahoo_local_p2p_server_fd >= 0) {
+		close(yd->yahoo_local_p2p_server_fd);
+		yd->yahoo_local_p2p_server_fd = -1;
+	}
 
 	/* Add an Input Read event to the file descriptor */
 	p2p_data->input_event = purple_input_add(acceptfd, PURPLE_INPUT_READ, yahoo_p2p_read_pkt_cb, data);
@@ -2829,6 +2836,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	p2p_data->host_username = g_strdup(who);
 	p2p_data->val_13 = val_13;
 	p2p_data->connection_type = YAHOO_P2P_WE_ARE_SERVER;
+	p2p_data->source = -1;
 
 	purple_network_listen(YAHOO_PAGER_PORT_P2P, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
 
@@ -2932,10 +2940,9 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	if (base64) {
 		guint32 ip;
-		char *tmp2;
 		YahooFriend *f;
 		char *host_ip;
-		struct yahoo_p2p_data *p2p_data = g_new0(struct yahoo_p2p_data, 1);
+		struct yahoo_p2p_data *p2p_data;
 
 		decoded = purple_base64_decode(base64, &len);
 		if (len) {
@@ -2944,9 +2951,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 			g_free(tmp);
 		}
 
-		tmp2 = g_strndup((const gchar *)decoded, len); /* so its \0 terminated...*/
-		ip = strtol(tmp2, NULL, 10);
-		g_free(tmp2);
+		ip = strtol((gchar *)decoded, NULL, 10);
 		g_free(decoded);
 		host_ip = g_strdup_printf("%u.%u.%u.%u", ip & 0xff, (ip >> 8) & 0xff, (ip >> 16) & 0xff,
 		                       (ip >> 24) & 0xff);
@@ -2964,17 +2969,21 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 				val_11 = f->session_id;
 		}
 
-		p2p_data->host_username = g_strdup(who);	
+		p2p_data = g_new0(struct yahoo_p2p_data, 1);
+		p2p_data->host_username = g_strdup(who);
 		p2p_data->val_13 = val_13;
 		p2p_data->session_id = val_11;
 		p2p_data->host_ip = host_ip;
 		p2p_data->gc = gc;
 		p2p_data->connection_type = YAHOO_P2P_WE_ARE_CLIENT;
+		p2p_data->source = -1;
 
 		/* connect to host */
 		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL)	{
-			yahoo_p2p_disconnect_destroy_data(p2p_data);
 			purple_debug_info("yahoo","p2p: Connection to %s failed\n", host_ip);
+			g_free(p2p_data->host_ip);
+			g_free(p2p_data->host_username);
+			g_free(p2p_data);
 		}
 	}
 }
@@ -3767,13 +3776,20 @@ static void yahoo_close(PurpleConnection *gc) {
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
 	purple_timeout_remove(yd->yahoo_p2p_timer);
-	if(yd->yahoo_p2p_server_timeout_handle != 0)
+	if(yd->yahoo_p2p_server_timeout_handle != 0) {
 		purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
+		yd->yahoo_p2p_server_timeout_handle = 0;
+	}
 
 	/* close p2p server if it is waiting for a peer to connect */
-	purple_input_remove(yd->yahoo_p2p_server_watcher);
-	close(yd->yahoo_local_p2p_server_fd);
-	yd->yahoo_local_p2p_server_fd = -1;
+	if (yd->yahoo_p2p_server_watcher) {
+		purple_input_remove(yd->yahoo_p2p_server_watcher);
+		yd->yahoo_p2p_server_watcher = 0;
+	}
+	if (yd->yahoo_local_p2p_server_fd >= 0) {
+		close(yd->yahoo_local_p2p_server_fd);
+		yd->yahoo_local_p2p_server_fd = -1;
+	}
 
 	g_hash_table_destroy(yd->sms_carrier);
 	g_hash_table_destroy(yd->peers);
@@ -4416,7 +4432,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s; path=/; domain=.yahoo.com;\r\n"
 		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 		"Host: validate.msg.yahoo.com\r\n"
-		"Content-Length: %d\r\n"
+		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 		"Cache-Control: no-cache\r\n\r\n%s",
 		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
 
@@ -4466,7 +4482,6 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 					" bytes, %ld characters.  Max is %d bytes, %d chars."
 					"  Message is '%s'.\n", lenb, lenc, YAHOO_MAX_MESSAGE_LENGTH_BYTES,
 					YAHOO_MAX_MESSAGE_LENGTH_CHARS, msg2);
-			yahoo_packet_free(pkt);
 			g_free(msg);
 			g_free(msg2);
 			return -E2BIG;
@@ -5412,6 +5427,8 @@ static PurplePluginProtocolInfo prpl_info =
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	yahoo_get_account_text_table,    /* get_account_text_table */
+	NULL, /* initiate_media */
+	NULL  /* can_do_media */
 };
 
 static PurplePluginInfo info =

@@ -9,6 +9,8 @@ JABBERSOURCES = auth.c \
 			  auth.h \
 			  buddy.c \
 			  buddy.h \
+			  bosh.c \
+			  bosh.h \
 			  chat.c \
 			  chat.h \
 			  data.c \
@@ -23,6 +25,20 @@ JABBERSOURCES = auth.c \
 			  iq.h \
 			  jabber.c \
 			  jabber.h \
+			  jingle/jingle.c \
+			  jingle/jingle.h \
+			  jingle/content.c \
+			  jingle/content.h \
+			  jingle/iceudp.c \
+			  jingle/iceudp.h \
+			  jingle/rawudp.c \
+			  jingle/rawudp.h \
+			  jingle/rtp.c \
+			  jingle/rtp.h \
+			  jingle/session.c \
+			  jingle/session.h \
+			  jingle/transport.c \
+			  jingle/transport.h \
 			  jutil.c \
 			  jutil.h \
 			  message.c \
@@ -47,6 +63,8 @@ JABBERSOURCES = auth.c \
 			  adhoccommands.h \
 			  pep.c \
 			  pep.h \
+			  useravatar.c \
+			  useravatar.h \
 			  usermood.c \
 			  usermood.h \
 			  usernick.c \

@@ -226,9 +226,9 @@ static void
 account_signon_cb(PurpleConnection *gc, gpointer data)
 {
 	if (mute_login_sounds_timeout != 0)
-		g_source_remove(mute_login_sounds_timeout);
+		purple_timeout_remove(mute_login_sounds_timeout);
 	mute_login_sounds = TRUE;
-	mute_login_sounds_timeout = purple_timeout_add(10000, unmute_login_sounds_cb, NULL);
+	mute_login_sounds_timeout = purple_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
 }
 
 const char *

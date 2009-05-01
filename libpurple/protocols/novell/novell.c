@@ -2547,7 +2547,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -2555,6 +2555,10 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	 * the add_buddy calls. Server side list is the master.
 	 */
 	if (!user->clist_synched)
+		return;
+
+	/* Don't re-add a buddy that is already on our contact list */
+	if (nm_find_user_record(user, purple_buddy_get_name(buddy)) != NULL)
 		return;
 
 	contact = nm_create_contact();
@@ -3520,13 +3524,13 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,						/* whiteboard_prpl_ops */
 	NULL,						/* send_raw */
 	NULL,						/* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
+	NULL,						/* unregister_user */
+	NULL,						/* send_attention */
+	NULL,						/* get_attention_types */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,						/* get_account_text_table */
+	NULL,						/* initiate_media */
+	NULL						/* can_do_media */
 };
 
 static PurplePluginInfo info = {

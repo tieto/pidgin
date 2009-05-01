@@ -1201,6 +1201,11 @@ purple_plugins_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
+
+	while (search_paths) {
+		g_free(search_paths->data);
+		search_paths = g_list_delete_link(search_paths, search_paths);
+	}
 }
 
 /**************************************************************************
@@ -1224,6 +1229,21 @@ purple_plugins_unload_all(void)
 
 	while (loaded_plugins != NULL)
 		purple_plugin_unload(loaded_plugins->data);
+
+#endif /* PURPLE_PLUGINS */
+}
+
+void
+purple_plugins_unload(PurplePluginType type)
+{
+#ifdef PURPLE_PLUGINS
+	GList *l;
+
+	for (l = plugins; l; l = l->next) {
+		PurplePlugin *plugin = l->data;
+		if (plugin->info->type == type && purple_plugin_is_loaded(plugin))
+			purple_plugin_unload(plugin);
+	}
 
 #endif /* PURPLE_PLUGINS */
 }

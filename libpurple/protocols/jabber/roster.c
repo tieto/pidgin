@@ -145,10 +145,10 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 	g_slist_free(buddies);
 }
 
-void jabber_roster_parse(JabberStream *js, xmlnode *packet)
+void jabber_roster_parse(JabberStream *js, const char *from,
+                         JabberIqType type, const char *id, xmlnode *query)
 {
-	xmlnode *query, *item, *group;
-	const char *from = xmlnode_get_attrib(packet, "from");
+	xmlnode *item, *group;
 
 	if(from) {
 		char *from_norm;
@@ -168,10 +168,6 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 		if(invalid)
 			return;
 	}
-
-	query = xmlnode_get_child(packet, "query");
-	if(!query)
-		return;
 
 	js->currently_parsing_roster_push = TRUE;
 
@@ -260,11 +256,12 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 	js->currently_parsing_roster_push = FALSE;
 
 	/* if we're just now parsing the roster for the first time,
-	 * then now would be the time to send our initial presence */
+	 * then now would be the time to declare ourselves connected and
+	 * send our initial presence */
 	if(!js->roster_parsed) {
 		js->roster_parsed = TRUE;
-
-		jabber_presence_send(js->gc->account, NULL);
+		jabber_presence_send(js, TRUE);
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 	}
 }
 

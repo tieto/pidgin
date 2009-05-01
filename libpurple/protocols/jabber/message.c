@@ -24,6 +24,7 @@
 #include "notify.h"
 #include "server.h"
 #include "util.h"
+#include "adhoccommands.h"
 #include "buddy.h"
 #include "chat.h"
 #include "data.h"
@@ -477,7 +478,9 @@ typedef struct {
 } JabberDataRef;
 
 static void
-jabber_message_get_data_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_message_get_data_cb(JabberStream *js, const char *from,
+                           JabberIqType type, const char *id,
+                           xmlnode *packet, gpointer data)
 {
 	JabberDataRef *ref = (JabberDataRef *) data;
 	PurpleConversation *conv = ref->conv;
@@ -595,8 +598,11 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			/* The following tests expect xmlns != NULL */
 			continue;
 		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
-			if(!jm->subject)
+			if(!jm->subject) {
 				jm->subject = xmlnode_get_data(child);
+				if(!jm->subject)
+					jm->subject = g_strdup("");
+			}
 		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
@@ -624,24 +630,28 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					purple_debug_info("jabber", "found %d smileys\n",
 						g_list_length(smiley_refs));
 
-					if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
-						JabberID *jid = jabber_id_new(jm->from);
-						JabberChat *chat = NULL;
+					if (smiley_refs) {		
+						if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
+							JabberID *jid = jabber_id_new(jm->from);
+							JabberChat *chat = NULL;
 
-						if (jid) {
-							chat = jabber_chat_find(js, jid->node, jid->domain);
-							if (chat) conv = chat->conv;
-						}
+							if (jid) {
+								chat = jabber_chat_find(js, jid->node, jid->domain);
+								if (chat) conv = chat->conv;
+							}
 
-						jabber_id_free(jid);
-					} else {
-						conv =
-							purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-								who, account);
-						if (!conv) {
-							/* we need to create the conversation here */
-							conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-								account, who);
+							jabber_id_free(jid);
+						} else if (jm->type == JABBER_MESSAGE_NORMAL ||
+						           jm->type == JABBER_MESSAGE_CHAT) {
+							conv =
+								purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+									who, account);
+							if (!conv) {
+								/* we need to create the conversation here */
+								conv = 
+									purple_conversation_new(PURPLE_CONV_TYPE_IM,
+									account, who);
+							}
 						}
 					}
 
@@ -673,7 +683,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						    TRUE)) {
 						const JabberData *data =
 								jabber_data_find_remote_by_cid(cid);
-						/* if data is already known, we add write it immediatly */
+						/* if data is already known, we write it immediatly */
 						if (data) {
 							purple_debug_info("jabber",
 								"data is already known\n");
@@ -770,6 +780,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				}
 			} else {
 				jm->etc = g_list_append(jm->etc, child);
+			}
+		} else if (g_str_equal(child->name, "query")) {
+			const char *node = xmlnode_get_attrib(child, "node");
+			if (purple_strequal(xmlns, "http://jabber.org/protocol/disco#items")
+					&& purple_strequal(node, "http://jabber.org/protocol/commands")) {
+				jabber_adhoc_got_list(js, jm->from, child);
 			}
 		}
 	}
@@ -1210,29 +1226,11 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 	return 0;
 }
 
-void jabber_message_conv_closed(JabberStream *js, const char *who)
-{
-	JabberMessage *jm;
-	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
-		return;
-
-	jm  = g_new0(JabberMessage, 1);
-	jm->js = js;
-	jm->type = JABBER_MESSAGE_CHAT;
-	jm->to = g_strdup(who);
-	jm->id = jabber_get_next_id(jm->js);
-	jm->typing_style = JM_TS_JEP_0085;
-	jm->chat_state = JM_STATE_GONE;
-	jabber_message_send(jm);
-	jabber_message_free(jm);
-}
-
-gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace) {
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace) {
 	return js->allowBuzz;
 }
 
-gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *shortname,
-										 const gchar *namespace)
+gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *namespace)
 {
 	const PurpleConnection *gc = js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);

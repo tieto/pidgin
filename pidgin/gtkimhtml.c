@@ -45,7 +45,7 @@
 #include "gtksourceundomanager.h"
 #include "gtksourceview-marshal.h"
 #include <gtk/gtk.h>
-#include <glib/gerror.h>
+#include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 #include <ctype.h>
@@ -782,7 +782,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 				   gc,
 				   TRUE,
 				   visible_rect.x, visible_rect.y, visible_rect.width, visible_rect.height);
-		gdk_gc_unref(gc);
+		g_object_unref(G_OBJECT(gc));
 
 		if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
@@ -873,7 +873,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		       !gtk_text_iter_begins_tag(&cur, NULL));
 	}
 
-	gdk_gc_unref(gc);
+	g_object_unref(G_OBJECT(gc));
 
 	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 		return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
@@ -1384,7 +1384,7 @@ gtk_imhtml_finalize (GObject *object)
 		gtk_widget_destroy(imhtml->tip_window);
 	}
 	if(imhtml->tip_timer)
-		gtk_timeout_remove(imhtml->tip_timer);
+		g_source_remove(imhtml->tip_timer);
 
 	for(scalables = imhtml->scalables; scalables; scalables = scalables->next) {
 		struct scalable_data *sd = scalables->data;
@@ -1451,7 +1451,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	GObjectClass   *gobject_class;
 	object_class = (GtkObjectClass*) klass;
 	gobject_class = (GObjectClass*) klass;
-	parent_class = gtk_type_class(GTK_TYPE_TEXT_VIEW);
+	parent_class = g_type_class_ref(GTK_TYPE_TEXT_VIEW);
 	signals[URL_CLICKED] = g_signal_new("url_clicked",
 						G_TYPE_FROM_CLASS(gobject_class),
 						G_SIGNAL_RUN_FIRST,
@@ -3320,7 +3320,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			pos++;
 		} else if ((pos == 0 || wpos == 0 || isspace(*(c - 1))) &&
 		           (len_protocol = gtk_imhtml_is_protocol(c)) > 0 &&
-				   c[len_protocol] && !isspace(c[len_protocol])) {
+				   c[len_protocol] && !isspace(c[len_protocol]) &&
+				   (c[len_protocol] != '<' || !gtk_imhtml_is_tag(c + 1, NULL, NULL, NULL))) {
 			br = FALSE;
 			if (wpos > 0) {
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);

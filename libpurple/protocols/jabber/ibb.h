@@ -14,8 +14,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
 
-#ifndef _PURPLE_JABBER_IBB_H_
-#define _PURPLE_JABBER_IBB_H_
+#ifndef PURPLE_JABBER_IBB_H_
+#define PURPLE_JABBER_IBB_H_
 
 #include "jabber.h"
 #include "iq.h"
@@ -32,7 +32,8 @@ typedef void (JabberIBBClosedCallback)(JabberIBBSession *);
 typedef void (JabberIBBErrorCallback)(JabberIBBSession *);
 typedef void (JabberIBBSentCallback)(JabberIBBSession *);
 
-typedef gboolean (JabberIBBOpenHandler)(JabberStream *js, xmlnode *packet);
+typedef gboolean (JabberIBBOpenHandler)(JabberStream *js, const char *from,
+                                        const char *id, xmlnode *open);
 
 typedef enum {
 	JABBER_IBB_SESSION_NOT_OPENED,
@@ -71,7 +72,7 @@ struct _JabberIBBSession {
 JabberIBBSession *jabber_ibb_session_create(JabberStream *js, const gchar *sid,
 	const gchar *who, gpointer user_data);
 JabberIBBSession *jabber_ibb_session_create_from_xmlnode(JabberStream *js,
-	xmlnode *packet, gpointer user_data);
+	const gchar *from, const gchar *id, xmlnode *open, gpointer user_data);
 
 void jabber_ibb_session_destroy(JabberIBBSession *sess);
 
@@ -107,7 +108,8 @@ void jabber_ibb_session_set_block_size(JabberIBBSession *sess, gsize size);
 gpointer jabber_ibb_session_get_user_data(JabberIBBSession *sess);
 
 /* handle incoming packet */
-void jabber_ibb_parse(JabberStream *js, xmlnode *packet);
+void jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
+                      const char *id, xmlnode *child);
 
 /* add a handler for open session */
 void jabber_ibb_register_open_handler(JabberIBBOpenHandler *cb);
@@ -116,4 +118,4 @@ void jabber_ibb_unregister_open_handler(JabberIBBOpenHandler *cb);
 void jabber_ibb_init(void);
 void jabber_ibb_uninit(void);
 
-#endif /* _PURPLE_JABBER_IBB_H_ */
+#endif /* PURPLE_JABBER_IBB_H_ */

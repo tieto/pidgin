@@ -870,11 +870,11 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 		if (itmsurl) {
 			tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
 								  itmsurl, message);
-			g_free(itmsurl);
 			g_free(message);
 			message = tmp;
 		}
 	}
+	g_free(itmsurl);
 
 	if (is_away && message) {
 		tmp = purple_str_sub_away_formatters(message, purple_account_get_username(account));
@@ -1268,7 +1268,7 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 	aim_ssi_reqdata(od);
 	if (od->getblisttimer > 0)
 		purple_timeout_remove(od->getblisttimer);
-	od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+	od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 
 	aim_locate_reqrights(od);
 	aim_buddylist_reqrights(od, conn);
@@ -4847,6 +4847,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		/* TODO: Combine these two calls! */
 		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, itmsurl);
 		oscar_set_extendedstatus(gc);
+		g_free(status_text);
 	}
 }
 
@@ -4917,17 +4918,24 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		return;
 	}
 
-	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY))) {
-		purple_debug_info("oscar",
-				   "ssi: adding buddy %s to group %s\n", bname, gname);
-		aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
+	if (od->ssi.received_data) {
+		if (!aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY)) {
+			purple_debug_info("oscar",
+					   "ssi: adding buddy %s to group %s\n", bname, gname);
+			aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
 
-		/* Mobile users should always be online */
-		if (bname[0] == '+') {
-			purple_prpl_got_user_status(account,
-					bname, OSCAR_STATUS_ID_AVAILABLE, NULL);
-			purple_prpl_got_user_status(account,
-					bname, OSCAR_STATUS_ID_MOBILE, NULL);
+			/* Mobile users should always be online */
+			if (bname[0] == '+') {
+				purple_prpl_got_user_status(account, bname,
+						OSCAR_STATUS_ID_AVAILABLE, NULL);
+				purple_prpl_got_user_status(account, bname,
+						OSCAR_STATUS_ID_MOBILE, NULL);
+			}
+		} else if (aim_ssi_waitingforauth(od->ssi.local,
+		                                  aim_ssi_itemlist_findparentname(od->ssi.local, bname),
+		                                  bname)) {
+			/* Not authorized -- Re-request authorization */
+			purple_auth_sendrequest(gc, bname);
 		}
 	}
 
@@ -5039,7 +5047,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 					_("The AIM servers were temporarily unable to send "
 					"your buddy list.  Your buddy list is not lost, and "
 					"will probably become available in a few minutes."));
-		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+		od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 		return 1;
 	}
 
@@ -5114,58 +5122,43 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	aim_ssi_cleanlist(od);
 
 	{ /* If not in server list then prune from local list */
-		PurpleBlistNode *gnode, *cnode, *bnode;
-		PurpleBuddyList *blist;
 		GSList *cur, *next;
-
+		GSList *buddies = purple_find_buddies(account, NULL);
+		
 		/* Buddies */
 		cur = NULL;
-		if ((blist = purple_get_blist()) != NULL) {
-			for (gnode = purple_blist_get_root(); gnode;
-					gnode = purple_blist_node_get_sibling_next(gnode)) {
-				const char *gname;
-				if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-					continue;
-				g = (PurpleGroup *)gnode;
-				gname = purple_group_get_name(g);
-				for (cnode = purple_blist_node_get_first_child(gnode);
-						cnode;
-						cnode = purple_blist_node_get_sibling_next(cnode)) {
-					if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-						continue;
-					for (bnode = purple_blist_node_get_first_child(cnode);
-							bnode;
-							bnode = purple_blist_node_get_sibling_next(bnode)) {
-						const char *bname;
-						if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-							continue;
-						b = (PurpleBuddy *)bnode;
-						bname = purple_buddy_get_name(b);
-						if (purple_buddy_get_account(b) == account) {
-							if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
-								/* If the buddy is an ICQ user then load his nickname */
-								const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
-								char *alias;
-								const char *balias;
-								if (servernick)
-									serv_got_alias(gc, bname, servernick);
 
-								/* Store local alias on server */
-								alias = aim_ssi_getalias(od->ssi.local, gname, bname);
-								balias = purple_buddy_get_local_buddy_alias(b);
-								if (!alias && balias && *balias)
-									aim_ssi_aliasbuddy(od, gname, bname, balias);
-								g_free(alias);
-							} else {
-								purple_debug_info("oscar",
-										"ssi: removing buddy %s from local list\n", bname);
-								/* We can't actually remove now because it will screw up our looping */
-								cur = g_slist_prepend(cur, b);
-							}
-						}
-					}
-				}
+		while(buddies) {
+			PurpleGroup *g;
+			const char *gname;
+			const char *bname;
+
+			b = buddies->data;
+			g = purple_buddy_get_group(b);
+			gname = purple_group_get_name(g);
+			bname = purple_buddy_get_name(b);
+
+			if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
+				/* If the buddy is an ICQ user then load his nickname */
+				const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
+				char *alias;
+				const char *balias;
+				if (servernick)
+					serv_got_alias(gc, bname, servernick);
+
+				/* Store local alias on server */
+				alias = aim_ssi_getalias(od->ssi.local, gname, bname);
+				balias = purple_buddy_get_local_buddy_alias(b);
+				if (!alias && balias && *balias)
+					aim_ssi_aliasbuddy(od, gname, bname, balias);
+				g_free(alias);
+			} else {
+				purple_debug_info("oscar",
+						"ssi: removing buddy %s from local list\n", bname);
+				/* We can't actually remove now because it will screw up our looping */
+				cur = g_slist_prepend(cur, b);
 			}
+			buddies = g_slist_delete_link(buddies, buddies);
 		}
 
 		while (cur != NULL) {

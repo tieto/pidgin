@@ -26,9 +26,7 @@
 #define _PIDGINIMHTML_H_
 
 #include <gdk/gdk.h>
-#include <gtk/gtktextview.h>
-#include <gtk/gtktooltips.h>
-#include <gtk/gtkimage.h>
+#include <gtk/gtk.h>
 #include "gtksourceundomanager.h"
 
 #include "connection.h"
@@ -42,13 +40,13 @@ extern "C" {
  **************************************************************************/
 /*@{*/
 
-#define GTK_TYPE_IMHTML            (gtk_imhtml_get_type ())
-#define GTK_IMHTML(obj)            (GTK_CHECK_CAST ((obj), GTK_TYPE_IMHTML, GtkIMHtml))
-#define GTK_IMHTML_CLASS(klass)    (GTK_CHECK_CLASS_CAST ((klass), GTK_TYPE_IMHTML, GtkIMHtmlClass))
-#define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
-#define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
+#define GTK_TYPE_IMHTML            (gtk_imhtml_get_type())
+#define GTK_IMHTML(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_IMHTML, GtkIMHtml))
+#define GTK_IMHTML_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_IMHTML, GtkIMHtmlClass))
+#define GTK_IS_IMHTML(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_IMHTML))
+#define GTK_IS_IMHTML_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_IMHTML))
 #define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
-#define GTK_IMHTML_ANIMATION(obj)   ((GtkIMHtmlAnimation *)obj)
+#define GTK_IMHTML_ANIMATION(obj)  ((GtkIMHtmlAnimation *)obj)
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;

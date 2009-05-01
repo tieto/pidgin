@@ -376,21 +376,19 @@ static void jabber_chat_room_configure_x_data_cb(JabberStream *js, xmlnode *resu
 	jabber_iq_send(iq);
 }
 
-static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_chat_room_configure_cb(JabberStream *js, const char *from,
+                                          JabberIqType type, const char *id,
+                                          xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *x;
-	const char *type = xmlnode_get_attrib(packet, "type");
-	const char *from = xmlnode_get_attrib(packet, "from");
 	char *msg;
 	JabberChat *chat;
 	JabberID *jid;
 
-	if(!type || !from)
+	if (!from)
 		return;
 
-
-
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		jid = jabber_id_new(from);
 
 		if(!jid)
@@ -416,7 +414,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 				return;
 			}
 		}
-	} else if(!strcmp(type, "error")) {
+	} else if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
@@ -486,11 +484,12 @@ void jabber_chat_create_instant_room(JabberChat *chat) {
 	g_free(room_jid);
 }
 
-static void jabber_chat_register_x_data_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void
+jabber_chat_register_x_data_result_cb(JabberStream *js, const char *from,
+                                      JabberIqType type, const char *id,
+                                      xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-
-	if(type && !strcmp(type, "error")) {
+	if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
@@ -521,19 +520,19 @@ static void jabber_chat_register_x_data_cb(JabberStream *js, xmlnode *result, gp
 	jabber_iq_send(iq);
 }
 
-static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_chat_register_cb(JabberStream *js, const char *from,
+                                    JabberIqType type, const char *id,
+                                    xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *x;
-	const char *type = xmlnode_get_attrib(packet, "type");
-	const char *from = xmlnode_get_attrib(packet, "from");
 	char *msg;
 	JabberChat *chat;
 	JabberID *jid;
 
-	if(!type || !from)
+	if (!from)
 		return;
 
-	if(!strcmp(type, "result")) {
+	if (type == JABBER_IQ_RESULT) {
 		jid = jabber_id_new(from);
 
 		if(!jid)
@@ -559,7 +558,7 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 				return;
 			}
 		}
-	} else if(!strcmp(type, "error")) {
+	} else if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
@@ -598,37 +597,25 @@ void jabber_chat_register(JabberChat *chat)
 /* merge this with the function below when we get everyone on the same page wrt /commands */
 void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 {
-	if(topic && *topic) {
-		JabberMessage *jm;
-		jm = g_new0(JabberMessage, 1);
-		jm->js = chat->js;
-		jm->type = JABBER_MESSAGE_GROUPCHAT;
+	JabberMessage *jm;
+
+	jm = g_new0(JabberMessage, 1);
+	jm->js = chat->js;
+	jm->type = JABBER_MESSAGE_GROUPCHAT;
+	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
+
+	if (topic && *topic)
 		jm->subject = purple_markup_strip_html(topic);
-		jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
-		jabber_message_send(jm);
-		jabber_message_free(jm);
-	} else {
-		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(chat->conv));
-		char *buf, *tmp, *tmp2;
+	else
+		jm->subject = g_strdup("");
 
-		if(cur) {
-			tmp = g_markup_escape_text(cur, -1);
-			tmp2 = purple_markup_linkify(tmp);
-			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
-			g_free(tmp);
-			g_free(tmp2);
-		} else
-			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf,
-				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
-		g_free(buf);
-	}
-
+	jabber_message_send(jm);
+	jabber_message_free(jm);
 }
 
 void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberChat *chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)
@@ -690,16 +677,17 @@ void jabber_chat_part(JabberChat *chat, const char *msg)
 	g_free(room_jid);
 }
 
-static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void roomlist_disco_result_cb(JabberStream *js, const char *from,
+                                     JabberIqType type, const char *id,
+                                     xmlnode *packet, gpointer data)
 {
 	xmlnode *query;
 	xmlnode *item;
-	const char *type;
 
 	if(!js->roomlist)
 		return;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
+	if (type == JABBER_IQ_ERROR) {
 		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
@@ -988,13 +976,17 @@ gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *wh
 	return TRUE;
 }
 
-static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_chat_disco_traffic_cb(JabberStream *js, const char *from,
+                                         JabberIqType type, const char *id,
+                                         xmlnode *packet, gpointer data)
 {
 	JabberChat *chat;
-	/*xmlnode *query;*/
-	int id = GPOINTER_TO_INT(data);
+#if 0
+	xmlnode *query, *x;
+#endif
+	int chat_id = GPOINTER_TO_INT(data);
 
-	if(!(chat = jabber_chat_find_by_id(js, id)))
+	if(!(chat = jabber_chat_find_by_id(js, chat_id)))
 		return;
 
 	/* defaults, in case the conference server doesn't
@@ -1002,8 +994,9 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	chat->xhtml = TRUE;
 
 	/* disabling this until more MUC servers support
-	 * announcing this
-	if(xmlnode_get_child(packet, "error")) {
+	 * announcing this */
+#if 0
+	if (type == JABBER_IQ_ERROR) {
 		return;
 	}
 
@@ -1019,7 +1012,7 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 			chat->xhtml = TRUE;
 		}
 	}
-	*/
+#endif
 }
 
 void jabber_chat_disco_traffic(JabberChat *chat)

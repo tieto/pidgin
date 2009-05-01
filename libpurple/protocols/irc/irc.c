@@ -565,7 +565,7 @@ static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
 	struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
 	ib->name = g_strdup(purple_buddy_get_name(buddy));
-	g_hash_table_insert(irc->buddies, ib->name, ib);
+	g_hash_table_replace(irc->buddies, ib->name, ib);
 
 	/* if the timer isn't set, this is during signon, so we don't want to flood
 	 * ourself off with ISON's, so we don't, but after that we want to know when
@@ -912,13 +912,13 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* whiteboard_prpl_ops */
 	irc_send_raw,			/* send_raw */
 	NULL,					/* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,                   /* unregister_user */
+	NULL,                   /* send_attention */
+	NULL,                   /* get_attention_types */
+	sizeof(PurplePluginProtocolInfo),    /* struct_size */
+	NULL,                    /* get_account_text_table */
+	NULL,                    /* initiate_media */
+	NULL					 /* can_do_media */
 };
 
 static gboolean load_plugin (PurplePlugin *plugin) {

@@ -46,7 +46,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	pload = msn_message_gen_payload(msg, &pload_size);
 	if (!purple_util_write_data_to_file_absolute(tmp, pload, pload_size))
 	{
-		purple_debug_error("msn", "could not save debug file");
+		purple_debug_error("msn", "could not save debug file\n");
 	}
 	g_free(tmp);
 }
@@ -682,7 +682,9 @@ gen_context(const char *file_name, const char *file_path)
 		size = st.st_size;
 
 	if(!file_name) {
-		u8 = purple_utf8_try_convert(g_basename(file_path));
+		base = g_path_get_basename(file_path);
+		u8 = purple_utf8_try_convert(base);
+		g_free(base);
 		file_name = u8;
 	}
 

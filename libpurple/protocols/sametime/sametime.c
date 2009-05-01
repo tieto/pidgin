@@ -28,8 +28,6 @@
 
 /* glib includes */
 #include <glib.h>
-#include <glib/ghash.h>
-#include <glib/glist.h>
 
 /* purple includes */
 #include "internal.h"
@@ -810,7 +808,7 @@ static gboolean blist_save_cb(gpointer data) {
 static void blist_schedule(struct mwPurplePluginData *pd) {
   if(pd->save_event) return;
 
-  pd->save_event = purple_timeout_add(BLIST_SAVE_SECONDS * 1000,
+  pd->save_event = purple_timeout_add_seconds(BLIST_SAVE_SECONDS,
 				    blist_save_cb, pd);
 }
 
@@ -5209,7 +5207,8 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   .new_xfer                  = mw_prpl_new_xfer,
   .offline_message           = NULL,
   .whiteboard_prpl_ops       = NULL,
-  .send_raw                  = NULL
+  .send_raw                  = NULL,
+  .struct_size               = sizeof(PurplePluginProtocolInfo)		
 };
 
 

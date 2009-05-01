@@ -33,7 +33,7 @@ typedef struct _MsnSlpCall MsnSlpCall;
 #include "slpsession.h"
 
 /* The official client seems to timeout slp calls after 5 minutes */
-#define MSN_SLPCALL_TIMEOUT 300000
+#define MSN_SLPCALL_TIMEOUT 300
 
 typedef enum
 {

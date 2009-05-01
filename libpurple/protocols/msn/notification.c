@@ -630,7 +630,7 @@ update_contact_network(MsnSession *session, const char *passport, MsnNetwork net
 
 	} else {
 		purple_debug_error("msn",
-		                   "Got FQY update for unkwown user %s on network %d.\n",
+		                   "Got FQY update for unknown user %s on network %d.\n",
 		                   passport, network);
 	}
 }
@@ -686,6 +686,9 @@ msn_notification_dump_contact(MsnSession *session)
 			if (++adl_count % 150 == 0) {
 				payload = xmlnode_to_str(adl_node, &payload_len);
 
+				/* ADL's are returned all-together */
+				session->adl_fqy++;
+
 				msn_notification_post_adl(session->notification->cmdproc,
 					payload, payload_len);
 
@@ -697,6 +700,9 @@ msn_notification_dump_contact(MsnSession *session)
 				xmlnode_set_attrib(adl_node, "l", "1");
 			}
 		} else {
+			/* FQY's are returned one-at-a-time */
+			session->adl_fqy++;
+
 			msn_add_contact_xml(session, fqy_node, user->passport,
 				0, user->networkid);
 
@@ -717,6 +723,9 @@ msn_notification_dump_contact(MsnSession *session)
 	/* Send the rest, or just an empty one to let the server set us online */
 	if (adl_count == 0 || adl_count % 150 != 0) {
 		payload = xmlnode_to_str(adl_node, &payload_len);
+
+		/* ADL's are returned all-together */
+		session->adl_fqy++;
 
 		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
 
@@ -804,7 +813,8 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!strcmp(cmd->params[1], "OK")) {
 		/* ADL ack */
-		msn_session_finish_login(session);
+		if (--session->adl_fqy == 0)
+			msn_session_finish_login(session);
 	} else {
 		cmdproc->last_cmd->payload_cb = adl_cmd_parse;
 		cmd->payload_len = atoi(cmd->params[1]);
@@ -1609,7 +1619,7 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	if ( (root = xmlnode_from_str(cmd->payload, cmd->payload_len)) == NULL)
 	{
-		purple_debug_error("msn", "Unable to parse GCF payload into a XML tree");
+		purple_debug_error("msn", "Unable to parse GCF payload into a XML tree\n");
 		return;
 	}
 
@@ -1682,7 +1692,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) {
 		char *str = g_strndup(payload, len);
-		purple_debug_info("msn", "unknown user %s, payload is %s",
+		purple_debug_info("msn", "unknown user %s, payload is %s\n",
 			passport, str);
 		g_free(str);
 		return;

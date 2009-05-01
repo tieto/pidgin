@@ -109,8 +109,8 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 }
 
 void jabber_tune_init(void) {
-	jabber_add_feature("tune", "http://jabber.org/protocol/tune", jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_pep_register_handler("tunen", "http://jabber.org/protocol/tune", jabber_tune_cb);
+	jabber_add_feature("http://jabber.org/protocol/tune", jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_pep_register_handler("http://jabber.org/protocol/tune", jabber_tune_cb);
 }
 
 void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo) {

@@ -529,7 +529,7 @@ static void run_editor (MMConversation *mmconv)
 	
 	args[1] = "-session_id";
 	session_id = g_string_new("");
-	g_string_sprintfa(session_id, "%d", mmconv_from_conv_loc(mmconv->conv));
+	g_string_append_printf(session_id, "%d", mmconv_from_conv_loc(mmconv->conv));
 	args[2] = session_id->str;
 	
 	args[3] = NULL;

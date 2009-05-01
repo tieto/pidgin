@@ -1112,11 +1112,13 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* whiteboard_prpl_ops */
   NULL,                                /* send_raw */
   NULL,                                /* roomlist_room_serialize */
-  NULL,	                               /* unregister_user */
+  NULL,                                /* unregister_user */
   NULL,                                /* send_attention */
-  NULL,                                /* attention_types */
+  NULL,                                /* get_attention_types */
   sizeof(PurplePluginProtocolInfo),    /* struct_size */
-  NULL,                                /* get_account_text_table */
+  NULL,
+  NULL,                                 /* initiate_media */
+  NULL                                  /* can_do_media */	
 };
 
 static void nullprpl_init(PurplePlugin *plugin)

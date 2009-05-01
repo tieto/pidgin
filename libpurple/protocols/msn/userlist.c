@@ -448,7 +448,7 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 
 		g_return_val_if_fail(user->passport != NULL, NULL);
 
-		if (!g_strcasecmp(passport, user->passport)){
+		if (!g_ascii_strcasecmp(passport, user->passport)){
 			return user;
 		}
 	}
@@ -470,7 +470,7 @@ msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid)
 			continue;
 		}
 
-		if ( !g_strcasecmp(uid, user->uid) ) {
+		if ( !g_ascii_strcasecmp(uid, user->uid) ) {
 			return user;
 		}
 	}
@@ -492,7 +492,7 @@ msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *numb
 			continue;
 		}
 
-		if (!g_strcasecmp(number, user->phone.mobile)) {
+		if (!g_ascii_strcasecmp(number, user->phone.mobile)) {
 			return user;
 		}
 	}
@@ -524,7 +524,7 @@ msn_userlist_find_group_with_id(MsnUserList *userlist, const char * id)
 	{
 		MsnGroup *group = l->data;
 
-		if (!g_strcasecmp(group->id,id))
+		if (!g_ascii_strcasecmp(group->id,id))
 			return group;
 	}
 
@@ -543,7 +543,7 @@ msn_userlist_find_group_with_name(MsnUserList *userlist, const char *name)
 	{
 		MsnGroup *group = l->data;
 
-		if ((group->name != NULL) && !g_strcasecmp(name, group->name))
+		if ((group->name != NULL) && !g_ascii_strcasecmp(name, group->name))
 			return group;
 	}
 
@@ -784,7 +784,7 @@ msn_userlist_add_pending_buddy(MsnSession *session,
 	{
 		user = (MsnUser *)l->data;
 
-		if (!g_strcasecmp(who, user->passport)) {
+		if (!g_ascii_strcasecmp(who, user->passport)) {
 			userlist->pending = g_list_delete_link(userlist->pending, l);
 			break;
 		}
@@ -858,7 +858,7 @@ msn_userlist_add_buddy_to_group(MsnUserList *userlist, const char *who,
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("msn", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!\n", who);
 		return FALSE;
 	}
 
@@ -887,7 +887,7 @@ msn_userlist_rem_buddy_from_group(MsnUserList *userlist, const char *who,
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("msn", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!\n", who);
 		return FALSE;
 	}
 

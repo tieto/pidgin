@@ -200,25 +200,26 @@ jabber_data_associate_remote(JabberData *data)
 }
 
 void
-jabber_data_parse(JabberStream *js, xmlnode *packet)
+jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
+                  const char *id, xmlnode *data_node)
 {
 	JabberIq *result = NULL;
-	const char *who = xmlnode_get_attrib(packet, "from");
-	xmlnode *data_node = xmlnode_get_child(packet, "data");
-	const JabberData *data =
-		jabber_data_find_local_by_cid(xmlnode_get_attrib(data_node, "cid"));
+	const char *cid = xmlnode_get_attrib(data_node, "cid");
+	const JabberData *data = cid ? jabber_data_find_local_by_cid(cid) : NULL;
 
 	if (!data) {
 		xmlnode *item_not_found = xmlnode_new("item-not-found");
 
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
-		xmlnode_set_attrib(result->node, "to", who);
-		xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
+		if (who)
+			xmlnode_set_attrib(result->node, "to", who);
+		xmlnode_set_attrib(result->node, "id", id);
 		xmlnode_insert_child(result->node, item_not_found);
 	} else {
 		result = jabber_iq_new(js, JABBER_IQ_RESULT);
-		xmlnode_set_attrib(result->node, "to", who);
-		xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
+		if (who)
+			xmlnode_set_attrib(result->node, "to", who);
+		xmlnode_set_attrib(result->node, "id", id);
 		xmlnode_insert_child(result->node,
 							 jabber_data_get_xml_definition(data));
 	}
@@ -235,6 +236,8 @@ jabber_data_init(void)
 		g_free, jabber_data_delete);
 	remote_data_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, jabber_data_delete);
+
+	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);	
 }
 
 void
@@ -244,4 +247,5 @@ jabber_data_uninit(void)
 	g_hash_table_destroy(local_data_by_alt);
 	g_hash_table_destroy(local_data_by_cid);
 	g_hash_table_destroy(remote_data_by_cid);
+	local_data_by_alt = local_data_by_cid = remote_data_by_cid = NULL;
 }

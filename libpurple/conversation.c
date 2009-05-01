@@ -33,7 +33,7 @@
 #include "signals.h"
 #include "util.h"
 
-#define SEND_TYPED_TIMEOUT 5000
+#define SEND_TYPED_TIMEOUT_SECONDS 5
 
 static GList *conversations = NULL;
 static GList *ims = NULL;
@@ -1122,8 +1122,9 @@ purple_conv_im_start_send_typed_timeout(PurpleConvIm *im)
 {
 	g_return_if_fail(im != NULL);
 
-	im->send_typed_timeout = purple_timeout_add(SEND_TYPED_TIMEOUT, send_typed_cb,
-											  purple_conv_im_get_conversation(im));
+	im->send_typed_timeout = purple_timeout_add_seconds(SEND_TYPED_TIMEOUT_SECONDS,
+	                                                    send_typed_cb,
+	                                                    purple_conv_im_get_conversation(im));
 }
 
 void
@@ -1476,11 +1477,11 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 		return;
 
 	if (!(flags & PURPLE_MESSAGE_WHISPER)) {
-		char *str;
+		const char *str;
 
-		str = g_strdup(purple_normalize(account, who));
+		str = purple_normalize(account, who);
 
-		if (purple_strequal(str, purple_normalize(account, chat->nick))) {
+		if (purple_strequal(str, chat->nick)) {
 			flags |= PURPLE_MESSAGE_SEND;
 		} else {
 			flags |= PURPLE_MESSAGE_RECV;
@@ -1488,8 +1489,6 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 			if (purple_utf8_has_word(message, chat->nick))
 				flags |= PURPLE_MESSAGE_NICK;
 		}
-
-		g_free(str);
 	}
 
 	/* Pass this on to either the ops structure or the default write func. */
@@ -2002,6 +2001,66 @@ purple_conv_chat_left(PurpleConvChat *chat)
 
 	chat->left = TRUE;
 	purple_conversation_update(chat->conv, PURPLE_CONV_UPDATE_CHATLEFT);
+}
+
+static void
+invite_user_to_chat(gpointer data, PurpleRequestFields *fields)
+{
+	PurpleConversation *conv;
+	PurpleConvChat *chat;
+	const char *user, *message;
+
+	conv = data;
+	chat = PURPLE_CONV_CHAT(conv);
+	user = purple_request_fields_get_string(fields, "screenname");
+	message = purple_request_fields_get_string(fields, "message");
+
+	serv_chat_invite(purple_conversation_get_gc(conv), chat->id, message, user);
+}
+
+void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
+		const char *message, gboolean confirm)
+{
+	PurpleAccount *account;
+	PurpleConversation *conv;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	g_return_if_fail(chat);
+
+	if (!user || !*user || !message || !*message)
+		confirm = TRUE;
+
+	conv = chat->conv;
+	account = conv->account;
+
+	if (!confirm) {
+		serv_chat_invite(purple_account_get_connection(account),
+				purple_conv_chat_get_id(chat), message, user);
+		return;
+	}
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(_("Invite to chat"));
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("screenname", _("Buddy"), user, FALSE);
+	purple_request_field_group_add_field(group, field);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_set_type_hint(field, "screenname");
+
+	field = purple_request_field_string_new("message", _("Message"), message, FALSE);
+	purple_request_field_group_add_field(group, field);
+
+	purple_request_fields(conv, _("Invite to chat"), NULL,
+			_("Please enter the name of the user you wish to invite, "
+				"along with an optional invite message."),
+			fields,
+			_("Invite"), G_CALLBACK(invite_user_to_chat),
+			_("Cancel"), NULL,
+			account, user, conv,
+			conv);
 }
 
 gboolean

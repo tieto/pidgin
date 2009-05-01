@@ -169,7 +169,7 @@ msn_get_currentmedia(char *xml_str, gsize len)
 	}
 	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
 	if (currentmediaNode == NULL) {
-		purple_debug_info("msn", "No CurrentMedia Node");
+		purple_debug_info("msn", "No CurrentMedia Node\n");
 		xmlnode_free(payloadNode);
 		return NULL;
 	}
@@ -195,7 +195,7 @@ msn_get_psm(char *xml_str, gsize len)
 	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL) {
-		purple_debug_info("msn", "No PSM status Node");
+		purple_debug_info("msn", "No PSM status Node\n");
 		xmlnode_free(payloadNode);
 		return NULL;
 	}

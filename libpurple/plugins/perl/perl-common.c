@@ -403,7 +403,7 @@ purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 static SV *
 purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 {
-	const char *stash = NULL;
+	const char *stash = "Purple"; /* ? */
 
 	switch (purple_value_get_subtype(value)) {
 		case PURPLE_SUBTYPE_ACCOUNT:
@@ -442,6 +442,9 @@ purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 		case PURPLE_SUBTYPE_STATUS:
 			stash = "Purple::Status";
 			break;
+		case PURPLE_SUBTYPE_SAVEDSTATUS:
+			stash = "Purple::SavedStatus";
+			break;
 		case PURPLE_SUBTYPE_LOG:
 			stash = "Purple::Log";
 			break;
@@ -451,10 +454,19 @@ purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 		case PURPLE_SUBTYPE_XMLNODE:
 			stash = "Purple::XMLNode";
 			break;
-
-		default:
-			stash = "Purple"; /* ? */
-	}
+ 		case PURPLE_SUBTYPE_USERINFO:
+ 			stash = "Purple::NotifyUserInfo";
+ 			break;
+ 		case PURPLE_SUBTYPE_STORED_IMAGE:
+ 			stash = "Purple::StoredImage";
+ 			break;
+ 		case PURPLE_SUBTYPE_CERTIFICATEPOOL:
+ 			stash = "Purple::Certificate::Pool";
+ 			break;
+ 		case PURPLE_SUBTYPE_UNKNOWN:
+ 			stash = "Purple::Unknown";
+ 			break;
+  	}
 
 	return sv_2mortal(purple_perl_bless_object(arg, stash));
 }

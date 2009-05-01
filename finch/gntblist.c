@@ -61,7 +61,7 @@
 #include <string.h>
 
 #define PREF_ROOT "/finch/blist"
-#define TYPING_TIMEOUT 4000
+#define TYPING_TIMEOUT_S 4
 
 #define SHOW_EMPTY_GROUP_TIMEOUT  60
 
@@ -643,10 +643,14 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 		purple_blist_add_group(grp, NULL);
 	}
 
-	/* XXX: Ask if there's already the same buddy in the same group (#4553) */
+	/* XXX: Ask to merge if there's already a buddy with the same alias in the same group (#4553) */
 
-	buddy = purple_buddy_new(account, username, alias);
-	purple_blist_add_buddy(buddy, NULL, grp, NULL);
+	if ((buddy = purple_find_buddy_in_group(account, username, grp)) == NULL)
+	{
+		buddy = purple_buddy_new(account, username, alias);
+		purple_blist_add_buddy(buddy, NULL, grp, NULL);
+	}
+
 	purple_account_add_buddy(account, buddy);
 }
 
@@ -931,7 +935,7 @@ get_display_name(PurpleBlistNode *node)
 	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
 		return purple_group_get_name((PurpleGroup*)node);
 
-	snprintf(text, sizeof(text) - 1, "%s %s", status, name);
+	g_snprintf(text, sizeof(text) - 1, "%s %s", status, name);
 
 	return text;
 }
@@ -2012,7 +2016,7 @@ reset_blist_window(GntWidget *window, gpointer null)
 	}
 
 	if (ggblist->typing)
-		g_source_remove(ggblist->typing);
+		purple_timeout_remove(ggblist->typing);
 	remove_peripherals(ggblist);
 	if (ggblist->tagged)
 		g_list_free(ggblist->tagged);
@@ -2249,7 +2253,7 @@ remove_typing_cb(gpointer null)
 end:
 	g_free(escnewmessage);
 	if (ggblist->typing)
-		g_source_remove(ggblist->typing);
+		purple_timeout_remove(ggblist->typing);
 	ggblist->typing = 0;
 	return FALSE;
 }
@@ -2268,7 +2272,7 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 		/* Move the focus to the entry box */
 		/* XXX: Make sure the selected status can have a message */
 		gnt_box_move_focus(GNT_BOX(ggblist->window), 1);
-		ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
+		ggblist->typing = purple_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
 	}
 	else if (now->type == STATUS_SAVED_ALL)
 	{
@@ -2294,7 +2298,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 		return FALSE;
 
 	if (ggblist->typing)
-		g_source_remove(ggblist->typing);
+		purple_timeout_remove(ggblist->typing);
 	ggblist->typing = 0;
 
 	if (text[0] == '\r' && text[1] == 0)
@@ -2304,7 +2308,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 		return TRUE;
 	}
 
-	ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
+	ggblist->typing = purple_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
 	return FALSE;
 }
 
@@ -2638,7 +2642,7 @@ reconstruct_grouping_menu(void)
 		char menuid[128];
 		FinchBlistManager *manager = iter->data;
 		GntMenuItem *item = gnt_menuitem_new(_(manager->name));
-		snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
+		g_snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
 		gnt_menuitem_set_id(GNT_MENU_ITEM(item), menuid);
 		gnt_menu_add_item(GNT_MENU(subsub), item);
 		g_object_set_data_full(G_OBJECT(item), "grouping-id", g_strdup(manager->id), g_free);
@@ -3118,6 +3122,8 @@ blist_show(PurpleBuddyList *list)
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", finch_blist_get_handle(),
 				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", finch_blist_get_handle(),
+				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);
+	purple_signal_connect(purple_accounts_get_handle(), "account-actions-changed", finch_blist_get_handle(),
 				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-status-changed", finch_blist_get_handle(),
 				PURPLE_CALLBACK(buddy_status_changed), ggblist);

@@ -233,26 +233,22 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 struct _match_buddies_by_address_t {
 	const char *address;
 	GSList *matched_buddies;
-	BonjourJabber *jdata;
 };
 
 static void
-_match_buddies_by_address(gpointer key, gpointer value, gpointer data)
+_match_buddies_by_address(gpointer value, gpointer data)
 {
 	PurpleBuddy *pb = value;
-	PurpleAccount *account = NULL;
 	BonjourBuddy *bb = NULL;
 	struct _match_buddies_by_address_t *mbba = data;
 
-	account = purple_buddy_get_account(pb);
 	bb = purple_buddy_get_protocol_data(pb);
 
 	/*
-	 * If the current PurpleBuddy's data is not null and the PurpleBuddy's account
-	 * is the same as the account requesting the check then continue to determine
+	 * If the current PurpleBuddy's data is not null, then continue to determine
 	 * whether one of the buddies IPs matches the target IP.
 	 */
-	if (mbba->jdata->account == account && bb != NULL)
+	if (bb != NULL)
 	{
 		const char *ip;
 		GSList *tmp = bb->ips;
@@ -638,6 +634,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	char *address_text = NULL;
 	struct _match_buddies_by_address_t *mbba;
 	BonjourJabberConversation *bconv;
+	GSList *buddies;
 
 	/* Check that it is a read condition */
 	if (condition != PURPLE_INPUT_READ)
@@ -657,12 +654,13 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	purple_debug_info("bonjour", "Received incoming connection from %s.\n", address_text);
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = address_text;
-	mbba->jdata = jdata;
-	g_hash_table_foreach(purple_blist_get_buddies(), _match_buddies_by_address, mbba);
+
+	buddies = purple_find_buddies(jdata->account, NULL);
+	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
+	g_slist_free(buddies);
 
 	if (mbba->matched_buddies == NULL) {
 		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
-		g_slist_free(mbba->matched_buddies);
 		g_free(mbba);
 		close(client_socket);
 		return;
@@ -850,11 +848,14 @@ void
 bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
 	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
 	struct _match_buddies_by_address_t *mbba;
+	GSList *buddies;
 
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = bconv->ip;
-	mbba->jdata = jdata;
-	g_hash_table_foreach(purple_blist_get_buddies(), _match_buddies_by_address, mbba);
+
+	buddies = purple_find_buddies(jdata->account, NULL);
+	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
+	g_slist_free(buddies);
 
 	/* If there is exactly one match, use it */
 	if(mbba->matched_buddies != NULL) {
