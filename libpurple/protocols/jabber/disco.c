@@ -20,6 +20,7 @@
  */
 
 #include "internal.h"
+#include "core.h"
 #include "prefs.h"
 #include "debug.h"
 
@@ -117,11 +118,24 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			xmlnode_set_attrib(query, "node", node);
 
 		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
+			GHashTable *ui_info = purple_core_get_ui_info();
+			const gchar *ui_type = g_hash_table_lookup(ui_info, "client_type");
+			const gchar *type = "pc"; /* default client type, if unknown or
+										unspecified */
+
+			if (ui_type) {
+				if (strcmp(ui_type, "pc") == 0 ||
+					strcmp(ui_type, "console") == 0 ||
+					strcmp(ui_type, "phone") == 0 ||
+					strcmp(ui_type, "handheld") == 0 ||
+					strcmp(ui_type, "web") == 0 ||
+					strcmp(ui_type, "bot") == 0) {
+					type = ui_type;
+				}
+			}
 			identity = xmlnode_new_child(query, "identity");
 			xmlnode_set_attrib(identity, "category", "client");
-			xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
-														 * handheld, pc, phone,
-														 * web */
+			xmlnode_set_attrib(identity, "type",  type);
 			xmlnode_set_attrib(identity, "name", PACKAGE);
 		}
 
