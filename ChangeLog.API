@@ -27,6 +27,7 @@ version 2.6.0 (??/??/2009):
 		* purple_connection_set_protocol_data
 		* purple_contact_destroy
 		* purple_conv_chat_invite_user
+		* purple_escape_html
 		* purple_global_proxy_set_info
 		* purple_group_destroy
 		* purple_log_get_activity_score

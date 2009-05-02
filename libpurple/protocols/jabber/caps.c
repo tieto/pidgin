@@ -286,10 +286,10 @@ jabber_caps_load(void)
 					id->type = g_strdup(type);
 					id->name = g_strdup(name);
 					id->lang = g_strdup(lang);
-					
+
 					value->identities = g_list_append(value->identities,id);
 				} else if(!strcmp(child->name,"x")) {
-					/* FIXME: See #7814 -- this will cause problems if anyone
+					/* TODO: See #7814 -- this might cause problems if anyone
 					 * ever actually specifies forms. In fact, for this to
 					 * work properly, that bug needs to be fixed in
 					 * xmlnode_from_str, not the output version... */
@@ -794,9 +794,11 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 }
 
 static GString*
-jabber_caps_verification_append(GString *verification, const gchar *string)
+jabber_caps_verification_append(GString *verification, const gchar *str)
 {
-	verification = g_string_append(verification, string);
+	char *tmp = purple_escape_html(str);
+	verification = g_string_append(verification, tmp);
+	g_free(tmp);
 	return g_string_append_c(verification, '<');
 }
 
@@ -822,9 +824,18 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	/* concat identities to the verification string */
 	for (node = info->identities; node; node = node->next) {
 		JabberIdentity *id = (JabberIdentity*)node->data;
+		char *category = purple_escape_html(id->category);
+		char *type = purple_escape_html(id->type);
+		char *lang = purple_escape_html(id->lang);
+		char *name = purple_escape_html(id->name);
 
-		g_string_append_printf(verification, "%s/%s/%s/%s<", id->category,
-		        id->type, id->lang ? id->lang : "", id->name);
+		g_string_append_printf(verification, "%s/%s/%s/%s<", category,
+		        type, lang ? lang : "", name ? name : "");
+
+		g_free(category);
+		g_free(type);
+		g_free(lang);
+		g_free(name);
 	}
 
 	/* concat features to the verification string */
