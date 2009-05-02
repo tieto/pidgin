@@ -376,6 +376,11 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			char *data_start, *tag_end = strchr(tag_start, '>');
 			text = g_strdup(data);
 
+			/* Better to print out some wacky debugging than crash
+			 * due to a plugin sending bad xml */
+			if (tag_end == NULL)
+				tag_end = tag_start;
+
 			data_start = text + (tag_end - data) + 1;
 
 			last_part = strchr(data_start, '<');
