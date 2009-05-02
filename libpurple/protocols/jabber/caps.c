@@ -796,7 +796,7 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 static GString*
 jabber_caps_verification_append(GString *verification, const gchar *str)
 {
-	char *tmp = purple_escape_html(str);
+	char *tmp = g_markup_escape_text(str, -1);
 	verification = g_string_append(verification, tmp);
 	g_free(tmp);
 	return g_string_append_c(verification, '<');
@@ -824,10 +824,10 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	/* concat identities to the verification string */
 	for (node = info->identities; node; node = node->next) {
 		JabberIdentity *id = (JabberIdentity*)node->data;
-		char *category = purple_escape_html(id->category);
-		char *type = purple_escape_html(id->type);
-		char *lang = purple_escape_html(id->lang);
-		char *name = purple_escape_html(id->name);
+		char *category = g_markup_escape_text(id->category, -1);
+		char *type = g_markup_escape_text(id->type, -1);
+		char *lang = g_markup_escape_text(id->lang, -1);
+		char *name = g_markup_escape_text(id->name, -1);
 
 		g_string_append_printf(verification, "%s/%s/%s/%s<", category,
 		        type, lang ? lang : "", name ? name : "");

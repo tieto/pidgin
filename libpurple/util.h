@@ -496,21 +496,6 @@ char *purple_markup_strip_html(const char *str);
 char *purple_markup_linkify(const char *str);
 
 /**
- * Escape special HTML characters to their HTML entities.
- * This is almost the reverse of purple_unescape_html except that
- * this does not translate "\n" into "<br>".
- *
- * @param str The string in which to escape special characters.
- *
- * @return The text with the special characters escaped. You must
- *         g_free this string when finished with it.
- *
- * @see purple_unescape_html
- * @since 2.6.0
- */
-char *purple_escape_html(const char *str);
-
-/**
  * Unescapes HTML entities to their literal characters. Also translates
  * "<br>" to "\n".
  * For example "&amp;" is replaced by '&' and so on.

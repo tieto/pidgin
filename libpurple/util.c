@@ -2357,39 +2357,6 @@ purple_markup_linkify(const char *text)
 }
 
 char *
-purple_escape_html(const char *str)
-{
-	GString *ret;
-	const char *in = str;
-
-	if (str == NULL)
-		return NULL;
-
-	ret = g_string_sized_new(strlen(str));
-	for ( ; *in; ++in) {
-		switch (*in) {
-			case '&':
-				ret = g_string_append_len(ret, "&amp;", 5);
-				break;
-			case '"':
-				ret = g_string_append_len(ret, "&quot;", 6);
-				break;
-			case '<':
-				ret = g_string_append_len(ret, "&lt;", 4);
-				break;
-			case '>':
-				ret = g_string_append_len(ret, "&gt;", 4);
-				break;
-			default:
-				ret = g_string_append_c(ret, *in);
-				break;
-		}
-	}
-
-	return g_string_free(ret, FALSE);
-}
-
-char *
 purple_unescape_html(const char *html) {
 	if (html != NULL) {
 		const char *c = html;
