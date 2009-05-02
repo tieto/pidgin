@@ -340,7 +340,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
                           xmlnode *packet, gpointer blah)
 {
 	JabberBuddy *jb = NULL;
-	xmlnode *vcard, *photo, *binval;
+	xmlnode *vcard, *photo, *binval, *fn, *nick;
 	char *text;
 
 	if(!from)
@@ -352,6 +352,29 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
+		/* The logic here regarding the nickname and full name is copied from
+		 * buddy.c:jabber_vcard_parse. */
+		gchar *nickname = NULL;
+		if ((fn = xmlnode_get_child(vcard, "FN")))
+			nickname = xmlnode_get_data(fn);
+
+		if ((nick = xmlnode_get_child(vcard, "NICKNAME"))) {
+			char *tmp = xmlnode_get_data(nick);
+			char *bare_jid = jabber_get_bare_jid(from);
+			if (strstr(bare_jid, tmp) == NULL) {
+				g_free(nickname);
+				nickname = tmp;
+			} else
+				g_free(tmp);
+
+			g_free(bare_jid);
+		}
+
+		if (nickname) {
+			serv_got_alias(js->gc, from, nickname);
+			g_free(nickname);
+		}
+
 		if((photo = xmlnode_get_child(vcard, "PHOTO")) &&
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
