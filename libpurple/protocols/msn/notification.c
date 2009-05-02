@@ -612,8 +612,19 @@ msn_notification_send_fqy(MsnSession *session,
 static void
 update_contact_network(MsnSession *session, const char *passport, MsnNetwork network)
 {
-	MsnUser *user = msn_userlist_find_user(session->userlist, passport);
+	MsnUser *user;
+
+	if (network == MSN_NETWORK_UNKNOWN)
+	{
+		purple_debug_warning("msn",
+		                     "Ignoring user %s about which server knows nothing.\n",
+		                     passport);
+		session->adl_fqy--;
+		return;
+	}
+
 	/* TODO: Also figure out how to update membership lists */
+	user = msn_userlist_find_user(session->userlist, passport);
 	if (user) {
 		xmlnode *adl_node;
 		char *payload;
@@ -914,26 +925,6 @@ adl_241_error_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
-fqy_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
-{
-	purple_debug_warning("msn", "FQY error %d: %s\n",
-	                     GPOINTER_TO_INT(cmd->payload_cbdata), payload);
-}
-
-static void
-fqy_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
-{
-	MsnCommand *cmd = cmdproc->last_cmd;
-
-	purple_debug_error("msn", "FQY error %d\n", error);
-	if (cmd->param_count > 1) {
-		cmd->payload_cb = fqy_error_parse;
-		cmd->payload_len = atoi(cmd->params[1]);
-		cmd->payload_cbdata = GINT_TO_POINTER(error);
-	}
-}
-
-static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
@@ -962,10 +953,10 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 			passport = g_strdup_printf("%s@%s", local, domain);
 
-			if (type != NULL)
+			if (!g_ascii_isdigit(cmd->command[0]) && type != NULL)
 				network = (MsnNetwork)strtoul(type, NULL, 10);
 			else
-				network = MSN_NETWORK_PASSPORT;
+				network = MSN_NETWORK_UNKNOWN;
 
 			purple_debug_info("msn", "FQY response says %s is from network %d\n",
 			                  passport, network);
@@ -977,6 +968,26 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	}
 
 	xmlnode_free(ml);
+}
+
+static void
+fqy_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	MsnCommand *cmd = cmdproc->last_cmd;
+
+	purple_debug_warning("msn", "FQY error %d\n", error);
+	if (cmd->param_count > 1) {
+		cmd->payload_cb = fqy_cmd_post;
+		cmd->payload_len = atoi(cmd->params[1]);
+		cmd->payload_cbdata = GINT_TO_POINTER(error);
+	}
+#if 0
+	/* If the server didn't send us a corresponding email address for this
+	   FQY error, it's probably going to disconnect us. So it isn't necessary
+	   to tell the handler about it. */
+	else if (trans->data)
+		((MsnFqyCb)trans->data)(session, NULL, MSN_NETWORK_UNKNOWN); */
+#endif
 }
 
 static void
