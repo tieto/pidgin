@@ -441,7 +441,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	char *avatar_hash = NULL;
 	xmlnode *caps = NULL;
 	int idle = 0;
-	const gchar *nick = NULL;
+	gchar *nickname = NULL;
 
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
 		return;
@@ -464,6 +464,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		gboolean onlist = FALSE;
 		PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
 		JabberBuddy *jb = NULL;
+		xmlnode *nick;
+
+		nick = xmlnode_get_child_with_namespace(packet, "nick", "http://jabber.org/protocol/nick");
+		if (nick)
+			nickname = xmlnode_get_data(nick);
 
 		if (buddy) {
 			jb = jabber_buddy_find(js, from, TRUE);
@@ -475,8 +480,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->who = g_strdup(from);
 		jap->js = js;
 
-		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, NULL, NULL, onlist,
+		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, nickname, NULL, onlist,
 				authorize_add_cb, deny_add_cb, jap);
+		g_free(nickname);
 		jabber_id_free(jid);
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {
@@ -528,7 +534,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
 			caps = y; /* store for later, when creating buddy resource */
 		} else if (g_str_equal(y->name, "nick") && g_str_equal(xmlns, "http://jabber.org/protocol/nick")) {
-			nick = xmlnode_get_data(y);
+			nickname = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "x")) {
 			if(!strcmp(xmlns, "jabber:x:delay")) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
@@ -629,6 +635,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_id_free(jid);
 			g_free(status);
 			g_free(avatar_hash);
+			g_free(nickname);
 			return;
 		}
 
@@ -645,6 +652,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_id_free(jid);
 				g_free(status);
 				g_free(avatar_hash);
+				g_free(nickname);
 				return;
 			}
 
@@ -731,6 +739,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_id_free(jid);
 				g_free(avatar_hash);
 				g_free(buddy_name);
+				g_free(nickname);
 				g_free(status);
 				return;
 			} else {
@@ -787,8 +796,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_google_presence_incoming(js, buddy_name, found_jbr);
 			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
 			purple_prpl_got_user_idle(js->gc->account, buddy_name, found_jbr->idle, found_jbr->idle);
-			if (nick)
-				serv_got_alias(js->gc, buddy_name, nick);
+			if (nickname)
+				serv_got_alias(js->gc, buddy_name, nickname);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
@@ -815,6 +824,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
+	g_free(nickname);
 	g_free(status);
 	jabber_id_free(jid);
 	g_free(avatar_hash);
