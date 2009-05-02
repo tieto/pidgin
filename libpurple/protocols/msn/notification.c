@@ -914,6 +914,26 @@ adl_241_error_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+fqy_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
+{
+	purple_debug_warning("msn", "FQY error %d: %s\n",
+	                     GPOINTER_TO_INT(cmd->payload_cbdata), payload);
+}
+
+static void
+fqy_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	MsnCommand *cmd = cmdproc->last_cmd;
+
+	purple_debug_error("msn", "FQY error %d\n", error);
+	if (cmd->param_count > 1) {
+		cmd->payload_cb = fqy_error_parse;
+		cmd->payload_len = atoi(cmd->params[1]);
+		cmd->payload_cbdata = GINT_TO_POINTER(error);
+	}
+}
+
+static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
@@ -2153,6 +2173,7 @@ msn_notification_init(void)
 
 	msn_table_add_error(cbs_table, "ADD", add_error);
 	msn_table_add_error(cbs_table, "ADL", adl_error);
+	msn_table_add_error(cbs_table, "FQY", fqy_error);
 	msn_table_add_error(cbs_table, "REG", reg_error);
 	msn_table_add_error(cbs_table, "RMG", rmg_error);
 	msn_table_add_error(cbs_table, "USR", usr_error);
