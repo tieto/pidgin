@@ -35,7 +35,7 @@ static void jabber_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
 	xmlnode *nick;
 	char *nickname = NULL;
 
-	/* ignore the tune of people not on our buddy list */
+	/* ignore the nick of people not on our buddy list */
 	if (!buddy || !item)
 		return;
 

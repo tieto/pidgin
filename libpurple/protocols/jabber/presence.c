@@ -441,6 +441,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	char *avatar_hash = NULL;
 	xmlnode *caps = NULL;
 	int idle = 0;
+	const gchar *nick = NULL;
 
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
 		return;
@@ -526,6 +527,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			stamp = xmlnode_get_attrib(y, "stamp");
 		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
 			caps = y; /* store for later, when creating buddy resource */
+		} else if (g_str_equal(y->name, "nick") && g_str_equal(xmlns, "http://jabber.org/protocol/nick")) {
+			nick = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "x")) {
 			if(!strcmp(xmlns, "jabber:x:delay")) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
@@ -784,6 +787,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_google_presence_incoming(js, buddy_name, found_jbr);
 			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
 			purple_prpl_got_user_idle(js->gc->account, buddy_name, found_jbr->idle, found_jbr->idle);
+			if (nick)
+				serv_got_alias(js->gc, buddy_name, nick);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
