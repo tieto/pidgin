@@ -785,13 +785,17 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		purple_debug_info("msn", "Invalid XML in ADL!\n");
 		return;
 	}
-	for (domain_node = xmlnode_get_child(root, "d"); domain_node; domain_node = xmlnode_get_next_twin(domain_node)) {
+	for (domain_node = xmlnode_get_child(root, "d");
+	     domain_node;
+	     domain_node = xmlnode_get_next_twin(domain_node)) {
 		const gchar * domain = NULL;
 		xmlnode *contact_node = NULL;
 
 		domain = xmlnode_get_attrib(domain_node, "n");
 
-		for (contact_node = xmlnode_get_child(domain_node, "c"); contact_node; contact_node = xmlnode_get_next_twin(contact_node)) {
+		for (contact_node = xmlnode_get_child(domain_node, "c");
+		     contact_node;
+		     contact_node = xmlnode_get_next_twin(contact_node)) {
 			const gchar *list;
 			gint list_op = 0;
 
