@@ -33,9 +33,6 @@ static void update_buddy_metadata(JabberStream *js, const char *from, xmlnode *i
 
 void jabber_avatar_init(void)
 {
-	jabber_pep_register_handler(NS_AVATAR_0_12_METADATA,
-	                            update_buddy_metadata);
-
 	jabber_add_feature(NS_AVATAR_1_1_METADATA,
 	                   jabber_pep_namespace_only_when_pep_enabled_cb);
 	jabber_add_feature(NS_AVATAR_1_1_DATA,
@@ -48,8 +45,32 @@ void jabber_avatar_init(void)
 static void
 remove_avatar_0_12_nodes(JabberStream *js)
 {
+	/* Publish an empty avatar according to the XEP-0084 v0.12 semantics */
+	xmlnode *publish, *item, *metadata;
+	/* publish the metadata */
+	publish = xmlnode_new("publish");
+	xmlnode_set_attrib(publish, "node", NS_AVATAR_0_12_METADATA);
+
+	item = xmlnode_new_child(publish, "item");
+	xmlnode_set_attrib(item, "id", "stop");
+
+	metadata = xmlnode_new_child(item, "metadata");
+	xmlnode_set_namespace(metadata, NS_AVATAR_0_12_METADATA);
+
+	xmlnode_new_child(metadata, "stop");
+
+	/* publish */
+	jabber_pep_publish(js, publish);
+
+	/*
+	 * This causes ejabberd 2.0.0 to RST our connection unceremoniously,
+	 * so disable it for now (we publish a <stop/> to the metadata node
+	 * instead.
+	 */
+#if 0
 	jabber_pep_delete_node(js, NS_AVATAR_0_12_METADATA);
 	jabber_pep_delete_node(js, NS_AVATAR_0_12_DATA);
+#endif
 }
 
 void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
@@ -59,6 +80,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 	if (!js->pep)
 		return;
 
+	/* Hmmm, not sure if this is worth the traffic, but meh */
 	remove_avatar_0_12_nodes(js);
 
 	if (!img) {
@@ -169,34 +191,28 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 }
 
 static void
+do_got_own_avatar_0_12_cb(JabberStream *js, const char *from, xmlnode *items)
+{
+	if (items)
+		/* It wasn't an error (i.e. 'item-not-found') */
+		remove_avatar_0_12_nodes(js);
+}
+
+static void
 do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 {
 	xmlnode *item = NULL, *metadata = NULL, *info = NULL;
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *server_hash = NULL;
-	const char *ns;
 
-	if ((item = xmlnode_get_child(items, "item")) &&
+	if (items && (item = xmlnode_get_child(items, "item")) &&
 	     (metadata = xmlnode_get_child(item, "metadata")) &&
 	     (info = xmlnode_get_child(metadata, "info"))) {
 		server_hash = xmlnode_get_attrib(info, "id");
 	}
 
-	if (!metadata)
+	if (items && !metadata)
 		return;
-
-	ns = xmlnode_get_namespace(metadata);
-	if (!ns)
-		return;
-
-	/*
-	 * We no longer publish avatars to the older namespace. If there is one
-	 * there, delete it.
-	 */
-	if (g_str_equal(ns, NS_AVATAR_0_12_METADATA) && server_hash) {
-		remove_avatar_0_12_nodes(js);
-		return;
-	}
 
 	/* Publish ours if it's different than the server's */
 	if (!purple_strequal(server_hash, js->initial_avatar_hash)) {
@@ -210,7 +226,7 @@ void jabber_avatar_fetch_mine(JabberStream *js)
 {
 	char *jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	jabber_pep_request_item(js, jid, NS_AVATAR_0_12_METADATA, NULL,
-	                        do_got_own_avatar_cb);
+	                        do_got_own_avatar_0_12_cb);
 	jabber_pep_request_item(js, jid, NS_AVATAR_1_1_METADATA, NULL,
 	                        do_got_own_avatar_cb);
 	g_free(jid);
@@ -247,7 +263,7 @@ static void
 do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items)
 {
 	xmlnode *item, *data;
-	const char *checksum, *ns;
+	const char *checksum;
 	char *b64data;
 	void *img;
 	size_t size;
@@ -260,12 +276,6 @@ do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items)
 
 	data = xmlnode_get_child(item, "data");
 	if(!data)
-		return;
-
-	ns = xmlnode_get_namespace(data);
-	/* Make sure the namespace is one of the two valid possibilities */
-	if (!ns || (!g_str_equal(ns, NS_AVATAR_0_12_DATA) &&
-	            !g_str_equal(ns, NS_AVATAR_1_1_DATA)))
 		return;
 
 	checksum = xmlnode_get_attrib(item,"id");
@@ -290,7 +300,7 @@ static void
 update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 {
 	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
-	const char *checksum, *ns;
+	const char *checksum;
 	xmlnode *item, *metadata;
 	if(!buddy)
 		return;
@@ -306,15 +316,9 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 	if(!metadata)
 		return;
 
-	ns = xmlnode_get_namespace(metadata);
-	/* Make sure the namespace is one of the two valid possibilities */
-	if (!ns || (!g_str_equal(ns, NS_AVATAR_0_12_METADATA) &&
-	            !g_str_equal(ns, NS_AVATAR_1_1_METADATA)))
-		return;
-
 	checksum = purple_buddy_icons_get_checksum_for_user(buddy);
 
-	/* check if we have received a stop */
+	/* <stop/> was the pre-v1.1 method of publishing an empty avatar */
 	if(xmlnode_get_child(metadata, "stop")) {
 		purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, NULL, 0, NULL);
 	} else {
@@ -347,10 +351,7 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 
 			/* the avatar might either be stored in a pep node, or on a HTTP(S) URL */
 			if(!url) {
-				const char *data_ns;
-				data_ns = (g_str_equal(ns, NS_AVATAR_0_12_METADATA) ?
-				               NS_AVATAR_0_12_DATA : NS_AVATAR_1_1_DATA);
-				jabber_pep_request_item(js, from, data_ns, id,
+				jabber_pep_request_item(js, from, NS_AVATAR_1_1_DATA, id,
 				                        do_buddy_avatar_update_data);
 			} else {
 				PurpleUtilFetchUrlData *url_data;
