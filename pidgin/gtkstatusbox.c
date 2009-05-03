@@ -1881,7 +1881,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box->imhtml), "key_press_event",
 			 G_CALLBACK(imhtml_remove_focus), status_box);
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
-	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
+
 #ifdef USE_GTKSPELL
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 		pidgin_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
