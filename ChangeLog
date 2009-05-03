@@ -31,6 +31,8 @@ version 2.6.0 (??/??/2009):
 	* Support most recent version of User Avatar. (XEP-0084 v1.1)
 	* Updated Entity Capabilities support. (Tobias Markmann)
 	* Better support for receiving remote users' nicknames.
+	* /affiliate and /role will now list the room members with the specified
+	  affiliation/role if possible. (Andrei Mozzhuhin)
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)
