@@ -145,16 +145,39 @@ buddy_signed_off_cb(PurpleBuddy *buddy, void *data)
 }
 
 static void
-buddy_added_cb(PurpleBuddy *buddy, void *data)
+blist_node_added_cb(PurpleBlistNode *bnode, void *data)
 {
-	purple_debug_misc("signals test", "buddy_added_cb (%s)\n",
-	                  purple_buddy_get_name(buddy));
+	const char *name;
+	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+		name = purple_group_get_name(PURPLE_GROUP(bnode));
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+		/* Close enough */
+		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
+	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
+	else
+		name = "(unknown)";
+
+	purple_debug_misc("signals test", "blist_node_added_cb (%s)\n",
+	                  name ? name : "(null)");
 }
 
 static void
-buddy_removed_cb(PurpleBuddy *buddy, void *data)
+blist_node_removed_cb(PurpleBlistNode *bnode, void *data)
 {
-	purple_debug_misc("signals test", "buddy_removed_cb (%s)\n", purple_buddy_get_name(buddy));
+	const char *name;
+	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+		name = purple_group_get_name(PURPLE_GROUP(bnode));
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+		/* Close enough */
+		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
+	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
+	else
+		name = "(unknown)";
+
+	purple_debug_misc("signals test", "blist_node_removed_cb (%s)\n",
+	                  name ? name : "(null)");
 }
 
 static void
@@ -643,10 +666,10 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(buddy_signed_on_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-signed-off",
 						plugin, PURPLE_CALLBACK(buddy_signed_off_cb), NULL);
-	purple_signal_connect(blist_handle, "buddy-added",
-						plugin, PURPLE_CALLBACK(buddy_added_cb), NULL);
-	purple_signal_connect(blist_handle, "buddy-removed",
-						plugin, PURPLE_CALLBACK(buddy_removed_cb), NULL);
+	purple_signal_connect(blist_handle, "blist-node-added",
+						plugin, PURPLE_CALLBACK(blist_node_added_cb), NULL);
+	purple_signal_connect(blist_handle, "blist-node-removed",
+						plugin, PURPLE_CALLBACK(blist_node_removed_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-icon-changed",
 						plugin, PURPLE_CALLBACK(buddy_icon_changed_cb), NULL);
 	purple_signal_connect(blist_handle, "blist-node-aliased",

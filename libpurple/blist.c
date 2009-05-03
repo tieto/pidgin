@@ -1468,6 +1468,9 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 
 	if (ops && ops->update)
 		ops->update(purplebuddylist, (PurpleBlistNode *)cnode);
+
+	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
+			cnode);
 }
 
 void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node)
@@ -1615,6 +1618,9 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 
 	/* Signal that the buddy has been added */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-added", buddy);
+
+	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
+			PURPLE_BLIST_NODE(buddy));
 }
 
 PurpleContact *purple_contact_new()
@@ -1952,6 +1958,9 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 		for (node = gnode->child; node; node = node->next)
 			ops->update(purplebuddylist, node);
 	}
+
+	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
+			gnode);
 }
 
 void purple_blist_remove_contact(PurpleContact *contact)
@@ -1993,6 +2002,9 @@ void purple_blist_remove_contact(PurpleContact *contact)
 		/* Update the UI */
 		if (ops && ops->remove)
 			ops->remove(purplebuddylist, node);
+
+		purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
+				PURPLE_BLIST_NODE(contact));
 
 		/* Delete the node */
 		purple_contact_destroy(contact);
@@ -2066,6 +2078,9 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	/* Signal that the buddy has been removed before freeing the memory for it */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);
 
+	purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
+			PURPLE_BLIST_NODE(buddy));
+
 	purple_buddy_destroy(buddy);
 
 	/* If the contact is empty then remove it */
@@ -2109,6 +2124,9 @@ void purple_blist_remove_chat(PurpleChat *chat)
 	if (ops && ops->remove)
 		ops->remove(purplebuddylist, node);
 
+	purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
+			PURPLE_BLIST_NODE(chat));
+
 	/* Delete the node */
 	purple_chat_destroy(chat);
 }
@@ -2140,6 +2158,9 @@ void purple_blist_remove_group(PurpleGroup *group)
 	/* Update the UI */
 	if (ops && ops->remove)
 		ops->remove(purplebuddylist, node);
+
+	purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
+			PURPLE_BLIST_NODE(group));
 
 	/* Remove the group from all accounts that are online */
 	for (l = purple_connections_get_all(); l != NULL; l = l->next)
@@ -2972,6 +2993,16 @@ purple_blist_init(void)
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_BLIST_BUDDY));
+
+	purple_signal_register(handle, "blist-node-added",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_BLIST_NODE));
+
+	purple_signal_register(handle, "blist-node-removed",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_BLIST_NODE));
 
 	purple_signal_register(handle, "buddy-added",
 						 purple_marshal_VOID__POINTER, NULL, 1,
