@@ -844,10 +844,10 @@ adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	MsnSession *session;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	/*char *adl = g_strndup(payload, len);*/
-	char *reason = g_strdup_printf(_("Unknown error (%d)"),
-		GPOINTER_TO_INT(cmd->payload_cbdata)/*, adl*/);
-	/*g_free(adl);*/
+	char *adl = g_strndup(payload, len);
+	char *reason = g_strdup_printf(_("Unknown error (%d): %s"),
+		GPOINTER_TO_INT(cmd->payload_cbdata), adl);
+	g_free(adl);
 
 	session = cmdproc->session;
 	account = session->account;
