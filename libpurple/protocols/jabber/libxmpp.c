@@ -161,6 +161,8 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	jabber_caps_uninit();
 	jabber_iq_uninit();
 
+	jabber_unregister_commands();
+
 	/* Stay on target...stay on target... Almost there... */
 	jabber_uninit_plugin();
 
@@ -298,10 +300,6 @@ init_plugin(PurplePlugin *plugin)
 
 	jabber_ibb_init();
 	jabber_si_init();
-
-	jabber_add_feature(XEP_0224_NAMESPACE, jabber_buzz_isenabled);
-	jabber_add_feature(XEP_0231_NAMESPACE, jabber_custom_smileys_isenabled);
-	jabber_add_feature(XEP_0047_NAMESPACE, NULL);
 }
 
 

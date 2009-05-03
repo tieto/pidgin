@@ -44,7 +44,10 @@ void jabber_pep_init(void) {
 }
 
 void jabber_pep_uninit(void) {
-	/* any PEP handlers that need to clean things up go here */
+	/* any PEP handlers that need to clean things up go here. The standard
+	 * cleanup of removing the handler and feature are handled here and by
+	 * jabber_features_destroy() in jabber.c
+	 */
 	g_hash_table_destroy(pep_handlers);
 	pep_handlers = NULL;
 }

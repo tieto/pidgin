@@ -916,6 +916,68 @@ gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who, const cha
 	return TRUE;
 }
 
+static void
+jabber_chat_affiliation_list_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
+{
+	JabberChat *chat;
+	xmlnode *query, *item;
+	int chat_id = GPOINTER_TO_INT(data);
+	GString *buf;
+
+	if(!(chat = jabber_chat_find_by_id(js, chat_id)))
+		return;
+
+	if (type == JABBER_IQ_ERROR)
+		return;
+
+	if(!(query = xmlnode_get_child(packet, "query")))
+		return;
+
+	buf = g_string_new(_("Affiliations:"));
+
+	item = xmlnode_get_child(query, "item");
+	if (item) {
+		for( ; item; item = xmlnode_get_next_twin(item)) {
+			const char *jid = xmlnode_get_attrib(item, "jid");
+			const char *affiliation = xmlnode_get_attrib(item, "affiliation");
+			if (jid && affiliation)
+				g_string_append_printf(buf, "\n%s %s", jid, affiliation);
+		}
+    } else {
+		buf = g_string_append_c(buf, '\n');
+		buf = g_string_append_len(buf, _("No users found"), -1);
+	}
+
+	purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
+    	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+
+	g_string_free(buf, TRUE);
+}
+
+gboolean jabber_chat_affiliation_list(JabberChat *chat, const char *affiliation)
+{
+	JabberIq *iq;
+	char *room_jid;
+	xmlnode *query, *item;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
+			"http://jabber.org/protocol/muc#admin");
+
+	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
+	xmlnode_set_attrib(iq->node, "to", room_jid);
+
+	query = xmlnode_get_child(iq->node, "query");
+	item = xmlnode_new_child(query, "item");
+	xmlnode_set_attrib(item, "affiliation", affiliation);
+
+	jabber_iq_set_callback(iq, jabber_chat_affiliation_list_cb, GINT_TO_POINTER(chat->id));
+	jabber_iq_send(iq);
+
+	return TRUE;
+}
+
 gboolean jabber_chat_role_user(JabberChat *chat, const char *who, const char *role)
 {
 	char *to;
@@ -940,6 +1002,67 @@ gboolean jabber_chat_role_user(JabberChat *chat, const char *who, const char *ro
 	xmlnode_set_attrib(item, "nick", jcm->handle);
 	xmlnode_set_attrib(item, "role", role);
 
+	jabber_iq_send(iq);
+
+	return TRUE;
+}
+
+static void jabber_chat_role_list_cb(JabberStream *js, const char *from,
+                                     JabberIqType type, const char *id,
+                                     xmlnode *packet, gpointer data)
+{
+	JabberChat *chat;
+	xmlnode *query, *item;
+	int chat_id = GPOINTER_TO_INT(data);
+	GString *buf;
+
+	if(!(chat = jabber_chat_find_by_id(js, chat_id)))
+		return;
+
+	if (type == JABBER_IQ_ERROR)
+		return;
+
+	if(!(query = xmlnode_get_child(packet, "query")))
+		return;
+
+	buf = g_string_new(_("Roles:"));
+
+	item = xmlnode_get_child(query, "item");
+	if (item) {
+		for( ; item; item = xmlnode_get_next_twin(item)) {
+			const char *jid  = xmlnode_get_attrib(item, "jid");
+			const char *role = xmlnode_get_attrib(item, "role");
+			if (jid && role)
+				g_string_append_printf(buf, "\n%s %s", jid, role);
+	    }
+	} else {
+		buf = g_string_append_c(buf, '\n');
+		buf = g_string_append_len(buf, _("No users found"), -1);
+	}
+
+	purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
+    	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+
+	g_string_free(buf, TRUE);
+}
+
+gboolean jabber_chat_role_list(JabberChat *chat, const char *role)
+{
+	JabberIq *iq;
+	char *room_jid;
+	xmlnode *query, *item;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
+			"http://jabber.org/protocol/muc#admin");
+
+	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
+	xmlnode_set_attrib(iq->node, "to", room_jid);
+
+	query = xmlnode_get_child(iq->node, "query");
+	item = xmlnode_new_child(query, "item");
+	xmlnode_set_attrib(item, "role", role);
+
+	jabber_iq_set_callback(iq, jabber_chat_role_list_cb, GINT_TO_POINTER(chat->id));
 	jabber_iq_send(iq);
 
 	return TRUE;
