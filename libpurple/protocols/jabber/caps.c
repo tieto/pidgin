@@ -349,7 +349,7 @@ void jabber_caps_uninit(void)
 	}
 	g_hash_table_destroy(capstable);
 	g_hash_table_destroy(nodetable);
-	capstable = NULL;
+	capstable = nodetable = NULL;
 }
 
 typedef struct _jabber_caps_cbplususerdata {
