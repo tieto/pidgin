@@ -67,12 +67,15 @@ do_pep_iq_request_item_callback(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
                                 xmlnode *packet, gpointer data)
 {
-	xmlnode *pubsub = xmlnode_get_child_with_namespace(packet,"pubsub","http://jabber.org/protocol/pubsub");
+	xmlnode *pubsub;
 	xmlnode *items = NULL;
 	JabberPEPHandler *cb = data;
 
-	if(pubsub)
-		items = xmlnode_get_child(pubsub, "items");
+	if (type == JABBER_IQ_RESULT) {
+		pubsub = xmlnode_get_child_with_namespace(packet, "pubsub", "http://jabber.org/protocol/pubsub");
+		if(pubsub)
+			items = xmlnode_get_child(pubsub, "items");
+	}
 
 	cb(js, from, items);
 }
