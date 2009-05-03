@@ -46,7 +46,7 @@ static void
 remove_avatar_0_12_nodes(JabberStream *js)
 {
 #if 0
-	See note below for why this is #if 0'd
+	/* See note below for why this is #if 0'd */
 
 	/* Publish an empty avatar according to the XEP-0084 v0.12 semantics */
 	xmlnode *publish, *item, *metadata;
