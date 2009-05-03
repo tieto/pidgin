@@ -265,6 +265,9 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 			break;
 	}
 
+	gtk_imhtml_set_populate_primary_clipboard(
+		GTK_IMHTML(status_box->imhtml), TRUE);
+
 	if (status_no != -1) {
 		GtkTreePath *path;
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
@@ -1149,6 +1152,8 @@ static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStat
 	{
 		purple_timeout_remove(status_box->typing);
 		status_box->typing = 0;
+		gtk_imhtml_set_populate_primary_clipboard(
+			GTK_IMHTML(status_box->imhtml), TRUE);
 		if (status_box->account != NULL)
 			update_to_reflect_account_status(status_box, status_box->account,
 							purple_account_get_active_status(status_box->account));
@@ -2583,6 +2588,9 @@ static void remove_typing_cb(PidginStatusBox *status_box)
 		return;
 	}
 
+	gtk_imhtml_set_populate_primary_clipboard(
+		GTK_IMHTML(status_box->imhtml), TRUE);
+
 	purple_timeout_remove(status_box->typing);
 	status_box->typing = 0;
 
@@ -2682,6 +2690,10 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			status_box->typing = purple_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 			gtk_widget_grab_focus(status_box->imhtml);
 			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
+
+			gtk_imhtml_set_populate_primary_clipboard(
+				GTK_IMHTML(status_box->imhtml), FALSE);
+
 			gtk_text_buffer_get_bounds(buffer, &start, &end);
 			gtk_text_buffer_move_mark(buffer, gtk_text_buffer_get_mark(buffer, "insert"), &end);
 			gtk_text_buffer_move_mark(buffer, gtk_text_buffer_get_mark(buffer, "selection_bound"), &start);

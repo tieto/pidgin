@@ -957,6 +957,16 @@ gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link);
  */
 void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml);
 
+/**
+ * By default this widget populates the PRIMARY clipboard with any selected
+ * text (as you would expect).  For scenarios (e.g. select-on-focus) where this
+ * would be problematic, this function can disable the PRIMARY population.
+ *
+ * @oaram imhtml The GtkIMHtml to enable/disable populating PRIMARY
+ * @param populate enable/disable PRIMARY population
+ */
+void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate);
+
 /*@}*/
 
 #ifdef __cplusplus

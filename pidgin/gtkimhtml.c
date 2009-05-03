@@ -5884,3 +5884,16 @@ void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "message_send",
 		G_CALLBACK(return_add_newline_cb), NULL);
 }
+
+void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate)
+{
+	if (populate) {
+		g_signal_handlers_unblock_matched(imhtml->text_buffer,
+				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+				mark_set_so_update_selection_cb, NULL);
+	} else {
+		g_signal_handlers_block_matched(imhtml->text_buffer,
+				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+				mark_set_so_update_selection_cb, NULL);
+	}
+}
