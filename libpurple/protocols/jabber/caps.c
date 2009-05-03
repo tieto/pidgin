@@ -826,8 +826,13 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 		JabberIdentity *id = (JabberIdentity*)node->data;
 		char *category = g_markup_escape_text(id->category, -1);
 		char *type = g_markup_escape_text(id->type, -1);
-		char *lang = g_markup_escape_text(id->lang, -1);
-		char *name = g_markup_escape_text(id->name, -1);
+		char *lang = NULL;
+		char *name = NULL;
+		
+		if (id->lang)
+			lang = g_markup_escape_text(id->lang, -1);
+		if (id->name)
+			name = g_markup_escape_text(id->name, -1);
 
 		g_string_append_printf(verification, "%s/%s/%s/%s<", category,
 		        type, lang ? lang : "", name ? name : "");
