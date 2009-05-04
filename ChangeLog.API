@@ -79,6 +79,7 @@ version 2.6.0 (??/??/2009):
 		  gtk_imhtml_link_activate functions to process GtkIMHtmlLink
 		  objects from GtkIMHtml protocol callbacks.
 		* gtk_imhtml_set_return_inserts_newline
+		* gtk_imhtml_set_populate_primary_clipboard
 		* pidgin_blist_set_theme
 		* pidgin_blist_get_theme
 		* pidgin_prefs_labeled_password
