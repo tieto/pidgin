@@ -2720,14 +2720,20 @@ purple_blist_request_add_group(void)
 static void
 purple_blist_node_destroy(PurpleBlistNode *node)
 {
+	PurpleBlistUiOps *ui_ops;
 	PurpleBlistNode *child, *next_child;
 
+	ui_ops = purple_blist_get_ui_ops();
 	child = node->child;
 	while (child) {
 		next_child = child->next;
 		purple_blist_node_destroy(child);
 		child = next_child;
 	}
+
+	/* Allow the UI to free data */
+	if (ui_ops && ui_ops->remove)
+		ui_ops->remove(purplebuddylist, node);
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		purple_buddy_destroy((PurpleBuddy*)node);
@@ -3048,6 +3054,10 @@ void
 purple_blist_uninit(void)
 {
 	PurpleBlistNode *node, *next_node;
+
+	/* This happens if we quit before purple_set_blist is called. */
+	if (purplebuddylist == NULL)
+		return;
 
 	if (save_timer != 0) {
 		purple_timeout_remove(save_timer);
