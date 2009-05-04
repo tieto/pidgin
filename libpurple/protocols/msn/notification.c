@@ -619,7 +619,11 @@ update_contact_network(MsnSession *session, const char *passport, MsnNetwork net
 		purple_debug_warning("msn",
 		                     "Ignoring user %s about which server knows nothing.\n",
 		                     passport);
-		session->adl_fqy--;
+		/* Decrement the count for unknown results so that we'll continue login.
+		   Also, need to finish the login process here as well, because ADL OK
+		   will not be called. */
+		if (--session->adl_fqy == 0)
+			msn_session_finish_login(session);
 		return;
 	}
 
