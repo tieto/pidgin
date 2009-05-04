@@ -2732,6 +2732,10 @@ purple_blist_node_destroy(PurpleBlistNode *node)
 	}
 
 	/* Allow the UI to free data */
+	node->parent = NULL;
+	node->child  = NULL;
+	node->next   = NULL;
+	node->prev   = NULL;
 	if (ui_ops && ui_ops->remove)
 		ui_ops->remove(purplebuddylist, node);
 
