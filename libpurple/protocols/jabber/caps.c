@@ -132,7 +132,11 @@ jabber_caps_client_info_destroy(JabberCapsClientInfo *info)
 	}
 
 	free_string_glist(info->features);
-	free_string_glist(info->forms);
+
+	while (info->forms) {
+		xmlnode_free(info->forms->data);
+		info->forms = g_list_delete_link(info->forms, info->forms);
+	}
 
 	jabber_caps_node_exts_unref(info->exts);
 
