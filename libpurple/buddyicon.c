@@ -753,6 +753,8 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	}
 	unref_filename(old_icon);
 
+	old_img = g_hash_table_lookup(pointer_icon_cache, account);
+
 	if (img)
 		g_hash_table_insert(pointer_icon_cache, account, img);
 	else
@@ -770,7 +772,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 			prpl_info->set_buddy_icon(gc, img);
 	}
 
-	if ((old_img = g_hash_table_lookup(pointer_icon_cache, account)))
+	if (old_img)
 		purple_imgstore_unref(old_img);
 	else if (old_icon)
 	{
