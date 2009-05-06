@@ -33,6 +33,7 @@ version 2.6.0 (??/??/2009):
 	* Better support for receiving remote users' nicknames.
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
+	* Put section breaks between resources to improve readability
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)

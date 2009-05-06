@@ -852,6 +852,13 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 			jbr = resources->data;
 
+			/* put a section break between resources, this is not needed if
+			 we are at the first, because one was already added for the vcard
+			 section */
+			if (resources != jbi->jb->resources) {
+				purple_notify_user_info_prepend_section_break(user_info);
+			}
+
 			if(jbr->client.name) {
 				tmp = g_strdup_printf("%s%s%s", jbr->client.name,
 									  (jbr->client.version ? " " : ""),
