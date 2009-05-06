@@ -252,9 +252,7 @@ init_plugin(PurplePlugin *plugin)
 						  option);
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
-						  "ft_proxies",
-						/* TODO: Is this an acceptable default? */
-						  "proxy.jabber.org");
+						  "ft_proxies", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
