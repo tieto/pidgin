@@ -34,6 +34,8 @@ version 2.6.0 (??/??/2009):
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
 	* Put section breaks between resources in "Get Info" to improve readability.
+	* XHTML markup is only included in outgoing messages when the message
+	  contains formatting.
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)
