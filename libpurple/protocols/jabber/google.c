@@ -761,6 +761,12 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	if (type != JABBER_IQ_SET)
 		return;
 
+	/* Acknowledge the notification */
+	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
+	xmlnode_set_attrib(iq->node, "to", from);
+	xmlnode_set_attrib(iq->node, "id", id);
+	jabber_iq_send(iq);
+
 	purple_debug(PURPLE_DEBUG_MISC, "jabber",
 		   "Got new mail notification. Sending request for more info\n");
 
