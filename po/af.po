@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-27 10:14-0800\n"
+"POT-Creation-Date: 2009-04-30 10:36-0400\n"
 "PO-Revision-Date: 2009-02-23 19:54+0200\n"
 "Last-Translator: F Wolff <friedel@translate.org.za>\n"
 "Language-Team: translate-discuss-af@lists.sourceforge.net\n"
@@ -613,19 +613,6 @@ msgstr ""
 msgid "Send To"
 msgstr "Stuur na"
 
-msgid "Invite message"
-msgstr "Uitnodigingsboodskap"
-
-msgid "Invite"
-msgstr "Nooi uit"
-
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"Tik gerus die naam van die gebruiker om uit te nooi,\n"
-"saam met 'n opsionele uitnodigingsboodskap."
-
 msgid "Conversation"
 msgstr "Gesprek"
 
@@ -882,6 +869,41 @@ msgstr "Alle gesprekke"
 msgid "System Log"
 msgstr "Stelselstaaflêer"
 
+#, fuzzy
+msgid "Calling ... "
+msgstr "Bereken..."
+
+msgid "Hangup"
+msgstr ""
+
+#. Number of actions
+msgid "Accept"
+msgstr "Aanvaar"
+
+msgid "Reject"
+msgstr "Weier"
+
+msgid "Call in progress."
+msgstr ""
+
+msgid "The call has been terminated."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr ""
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+
+#, fuzzy
+msgid "You have rejected the call."
+msgstr "U het die kanaal%s%s verlaat"
+
+msgid "call: Make an audio call."
+msgstr ""
+
 msgid "Emails"
 msgstr "E-posse"
 
@@ -915,6 +937,9 @@ msgstr "Gaan voort"
 
 msgid "IM"
 msgstr "Kitsboodskap"
+
+msgid "Invite"
+msgstr "Nooi uit"
 
 msgid "(none)"
 msgstr "(geen)"
@@ -1119,7 +1144,6 @@ msgstr "%s het weggegaan. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s het u 'n boodskap gestuur. (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Onbekende vriendwag-gebeurtenis. Rapporteer dit, asseblief!"
 
@@ -1530,6 +1554,28 @@ msgstr "GntLastlog"
 msgid "Lastlog plugin."
 msgstr "Laastestaaf-inprop."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "Deuntjie-URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr ""
+
 msgid "accounts"
 msgstr "rekeninge"
 
@@ -1629,13 +1675,6 @@ msgstr "Aanvaar sertifikaat vir %s?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "SSL-sertifikaatverifikasie"
-
-#. Number of actions
-msgid "Accept"
-msgstr "Aanvaar"
-
-msgid "Reject"
-msgstr "Weier"
 
 msgid "_View Certificate..."
 msgstr "_Bekyk sertifikaat..."
@@ -1786,6 +1825,18 @@ msgstr "%s het die kamer verlaat."
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s het die kamer verlaat (%s)."
+
+#, fuzzy
+msgid "Invite to chat"
+msgstr "Nooi na konferensie"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+"Tik gerus die naam van die gebruiker om uit te nooi, saam met 'n opsionele "
+"uitnodigingsboodskap."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2627,6 +2678,32 @@ msgstr "Stoor vanlyn boodskappe in vriendwag"
 msgid "Do not ask. Always save in pounce."
 msgstr "Moenie vra nie. Stoor altyd in vriendwag."
 
+#, fuzzy
+msgid "One Time Password"
+msgstr "Tik wagwoord"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr ""
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
+msgstr ""
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -3028,6 +3105,7 @@ msgstr "Kies 'n geselsie vir vriend: %s"
 msgid "Add to chat..."
 msgstr "Voeg by geselsie..."
 
+#. Global
 msgid "Available"
 msgstr "Beskikbaar"
 
@@ -3374,6 +3452,17 @@ msgstr ""
 "U gekose rekeningnaam is geweier deur die bediener.  Dit bevat waarskynlik "
 "ongeldige karakters."
 
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, fuzzy, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "Hierdie geselsienaam word reeds gebruik"
+
+#, fuzzy
+msgid "Nickname in use"
+msgstr "Bynaam"
+
 msgid "Cannot change nick"
 msgstr "Kan nie bynaam verander nie"
 
@@ -3646,6 +3735,41 @@ msgstr "Ongeldige uitdaging vanaf bediener"
 msgid "SASL error"
 msgstr "SASL-fout"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "Geen rede gegee nie"
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "Niegesteunde weergawe"
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr ""
+"Kon nie 'n verbinding met die bediener bewerkstellig nie:\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"Kon nie 'n verbinding met die bediener bewerkstellig nie:\n"
+"%s"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "Kan nie verbinding inisialiseer nie"
+
+msgid "Unable to create socket"
+msgstr "Kan nie sok skep nie"
+
+msgid "Write error"
+msgstr "Skryffout"
+
 msgid "Full Name"
 msgstr "Volle name"
 
@@ -3711,6 +3835,10 @@ msgstr "Kliënt"
 
 msgid "Operating System"
 msgstr "Bedryfstelsel"
+
+#, fuzzy
+msgid "Local Time"
+msgstr "Plaaslike lêer:"
 
 msgid "Last Activity"
 msgstr "Vorige aktiwiteit"
@@ -4040,9 +4168,6 @@ msgstr "Vind kamers"
 msgid "You require encryption, but it is not available on this server."
 msgstr "U vereis enkripsie, maar dis nie op hierdie bediener beskikbaar nie."
 
-msgid "Write error"
-msgstr "Skryffout"
-
 msgid "Ping timeout"
 msgstr "Pieng-uittelling"
 
@@ -4051,20 +4176,19 @@ msgstr "Leesfout"
 
 #, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"Kon nie 'n verbinding met die bediener bewerkstellig nie:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "Kan nie sok skep nie"
 
 msgid "Invalid XMPP ID"
 msgstr "Ongeldige XMPP-ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Ongeldige XMPP-ID. Domein moet ingestel word."
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Verbind aan bediener het misluk."
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4158,6 +4282,12 @@ msgstr "Bediener ondersteun nie blokkering nie"
 msgid "Not Authorized"
 msgstr "Nie gemagtig nie"
 
+msgid "Mood"
+msgstr "Stemming"
+
+msgid "Now Listening"
+msgstr "Luister tans"
+
 msgid "Both"
 msgstr "Beide"
 
@@ -4178,12 +4308,6 @@ msgstr "Geen"
 
 msgid "Subscription"
 msgstr "Inskrywing"
-
-msgid "Mood"
-msgstr "Stemming"
-
-msgid "Now Listening"
-msgstr "Luister tans"
 
 msgid "Mood Text"
 msgstr "Stemmingteks"
@@ -4422,19 +4546,25 @@ msgstr "Kan nie gebruiker %s skop nie"
 msgid "Unable to ping user %s"
 msgstr "Kan nie gebruiker %s pieng nie"
 
-#, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
+#, fuzzy, c-format
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr ""
 "Kon nie zoempie stuur nie omdat daar niks oor gebruiker %s bekend is nie."
 
-#, c-format
-msgid "Unable to buzz, because user %s might be offline."
+#, fuzzy, c-format
+msgid "Unable to buzz, because %s might be offline."
 msgstr "Kon nie zoempie stuur nie omdat gebruiker %s dalk vanlyn is."
 
-#, c-format
-msgid "Unable to buzz, because the user %s does not support it."
+#, fuzzy, c-format
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
 msgstr ""
 "Kon nie zoempie stuur nie omdat die gebruiker %s dit nie ondersteun nie."
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "Stuur zoempie aan %s..."
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
@@ -4445,9 +4575,35 @@ msgstr "Zoempie"
 msgid "%s has buzzed you!"
 msgstr "%s het u 'n zoempie gestuur!"
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "Stuur zoempie aan %s..."
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "Kan nie lêer aan %s stuur nie, ongeldige JID"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: user is not online"
+msgstr "Kan nie lêer stuur aan %s nie, gebruiker nie aanlyn nie"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
+msgstr ""
+"Kan nie lêer stuur aan %s nie, nie by gebruikerteenwoordigheid ingeteken nie"
+
+#, fuzzy
+msgid "Media Initiation Failed"
+msgstr "Registrasie het misluk"
+
+#, fuzzy, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr "Kies gerus aan watter hulpbron van %s u 'n lêer wil stuur"
+
+msgid "Select a Resource"
+msgstr "Kies 'n hulpbron"
+
+#, fuzzy
+msgid "Initiate Media"
+msgstr "Inisieer _geselsie"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Konfigureer 'n geselsiekamer."
@@ -4604,6 +4760,21 @@ msgstr "Kon nie by geselsie %s aansluit nie"
 msgid "Error in chat %s"
 msgstr "Fout in geselsie %s"
 
+#, fuzzy
+msgid "An error occured on the in-band bytestream transfer\n"
+msgstr "Kon nie die lêer open nie."
+
+#, fuzzy
+msgid "Transfer was closed."
+msgstr "Lêeroordrag het misluk"
+
+#, fuzzy
+msgid "Failed to open the file"
+msgstr "Open van lêer '%s' het misluk: %s"
+
+msgid "Failed to open in-band bytestream"
+msgstr ""
+
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Kan nie lêer stuur aan %s nie: die gebruiker steun nie lêeroordrag nie"
@@ -4627,9 +4798,6 @@ msgstr ""
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Kies gerus aan watter hulpbron van %s u 'n lêer wil stuur"
-
-msgid "Select a Resource"
-msgstr "Kies 'n hulpbron"
 
 msgid "Edit User Mood"
 msgstr "Redigeer gebruikerstemming"
@@ -6433,7 +6601,7 @@ msgstr ""
 "is.  Skermname moet geldige e-posadresse wees, of met 'n letter begin en net "
 "letters, syfers en spasies bevat, of net syfers bevat."
 
-#. Unregistered screen name
+#. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "Ongeldige gebruikernaam."
@@ -6449,7 +6617,7 @@ msgstr "U rekening is tans opgeskort."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Die AOL-kitsboodskapdiens is tydelik nie beskikbaar nie."
 
-#. screen name connecting too frequently
+#. username connecting too frequently
 #. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6637,7 +6805,7 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "U het %hu kitsboodskap vanaf %s gemis vir 'n onbekende rede."
 msgstr[1] "U het %hu kitsboodskappe vanaf %s gemis vir 'n onbekende rede."
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Kan nie boodskap stuur nie: %s"
@@ -7227,6 +7395,38 @@ msgstr "Werk by"
 msgid "Could not change buddy information."
 msgstr "Kon nie vriendinligting verander nie."
 
+msgid "Mobile"
+msgstr "Mobiel"
+
+msgid "Note"
+msgstr "Nota"
+
+#. callback
+#, fuzzy
+msgid "Buddy Memo"
+msgstr "Wysig adres"
+
+msgid "Change his/her memo as you like"
+msgstr ""
+
+#, fuzzy
+msgid "_Modify"
+msgstr "Wysig"
+
+#, fuzzy
+msgid "Memo Modify"
+msgstr "Wysig"
+
+#, fuzzy
+msgid "Server says:"
+msgstr "Bediener besig"
+
+msgid "Your request was accepted."
+msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
+
 #, c-format
 msgid "%u requires verification"
 msgstr "%u vereis magtiging"
@@ -7551,6 +7751,9 @@ msgstr "<b>Gestuur</b>: %lu<br>\n"
 msgid "<p><b>Scrupulous Testers</b>:<br>\n"
 msgstr "<b>Vorige verfrissing</b>: %s<br>\n"
 
+msgid "and more, please let me know... thank you!))"
+msgstr ""
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
 
@@ -7700,7 +7903,6 @@ msgid ""
 "%s"
 msgstr "Ongeldige teken-antwoordkode, 0x%02X"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
 msgstr "Kan nie koppel nie."
 
@@ -8611,9 +8813,6 @@ msgstr "Organisasie"
 msgid "Unit"
 msgstr "Eenheid"
 
-msgid "Note"
-msgstr "Nota"
-
 msgid "Join Chat"
 msgstr "Sluit by geselsie aan"
 
@@ -9307,192 +9506,12 @@ msgid "Auth Domain"
 msgstr "Magtig domein"
 
 #, c-format
-msgid "Looking up %s"
-msgstr "Soek tans %s op"
-
-#, c-format
-msgid "Connect to %s failed"
-msgstr "Verbinding na %s het misluk"
-
-#, c-format
-msgid "Signon: %s"
-msgstr "Aanmelding: %s"
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Kan nie lêer %s skryf nie."
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Kan nie lêer %s lees nie."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "Boodskap te lank, laaste %s grepe afgekap."
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s nie tans aanmeld nie."
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "Waarskuwing indien %s nie toegelaat nie."
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "'n Boodskap is laat val, u oorskry die bediener se spoedlimiet."
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "Geselsie in %s is nie beskikbaar nie."
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "U stuur te vinnig boodskappe aan %s."
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "U het 'n kitsboodskap vanaf %s gemis omdat dit te groot was."
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr "U het 'n kitsboodskap vanaf %s gemis omdat dit te vinnig gestuur is."
-
-#, c-format
-msgid "Failure."
-msgstr "Mislukking."
-
-#, c-format
-msgid "Too many matches."
-msgstr "Te veel wat pas."
-
-#, c-format
-msgid "Need more qualifiers."
-msgstr "Benodig méér kwalifiseerders."
-
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr "Gidsdiens is tydelik nie beskikbaar nie."
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr "E-posopsoek ingeperk."
-
-#, c-format
-msgid "Keyword ignored."
-msgstr "Sleutelwoord geïgnoreer."
-
-#, c-format
-msgid "No keywords."
-msgstr "Geen sleutelwoorde."
-
-#, c-format
-msgid "User has no directory information."
-msgstr "Gebruiker het geen gidsinliging nie."
-
-#, c-format
-msgid "Country not supported."
-msgstr "Land nie ondersteun nie."
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Onbekende mislukking: %s."
-
-#, c-format
-msgid "Incorrect username or password."
-msgstr "Verkeerde gebruikernaam of wagwoord."
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr "Die diens is tydelik nie beskikbaar nie."
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr "U waarskuwingsvlak is tans te hoog om aan te meld."
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-"U het nou te gereeld gekoppel en ontkoppel.  Wag tien minute en probeer "
-"weer.  Indien u voortgaan om te probeer sal u selfs nog langer moet wag."
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "'n Onbekende aanmeldfout het voorgekom: %s."
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "'n Onbekende fout, %d, het voorgekom.  Inligting: %s"
-
-msgid "Invalid Groupname"
-msgstr "Ongeldige groepnaam"
-
-msgid "Connection Closed"
-msgstr "Verbinding gesluit"
-
-msgid "Waiting for reply..."
-msgstr "Wag vir antwoord..."
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC is terug ná sy blaaskans. U kan u weer boodskappe stuur."
-
-msgid "Password Change Successful"
-msgstr "Wagwoord suksesvol verander"
-
-msgid "_Group:"
-msgstr "_Groep:"
-
-msgid "Get Dir Info"
-msgstr "Kry gidsinligting"
-
-msgid "Set Dir Info"
-msgstr "Stel gidsinligting"
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr "Kon nie %s vir skryf open nie!"
-
-msgid "File transfer failed; other side probably canceled."
-msgstr "Lêeroordrag het misluk; ander kant het waarskynlik gekanselleer."
-
-msgid "Could not connect for transfer."
-msgstr "Kon nie vir oordrag koppel nie."
-
-msgid "Could not write file header.  The file will not be transferred."
-msgstr "Kon nie lêerkop skryf nie.  Die lêer sal nie oorgedra word nie."
-
-msgid "Save As..."
-msgstr "Stoor as..."
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] "%s versoek dat %s %d lêer aanvaar: %s (%.2f %s)%s%s"
-msgstr[1] "%s versoek dat %s %d lêers aanvaar: %s (%.2f %s)%s%s"
-
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s vra dat u hulle 'n lêer stuur"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "TOC Protocol Plugin"
-msgstr "TOC-protokolinprop"
-
-#, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
 "%s het u 'n webkamera-uitnodiging gestuur, wat nog nie ondersteun word nie."
+
+msgid "Your SMS was not delivered"
+msgstr ""
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "U Yahoo!-boodskap is nie gestuur nie."
@@ -10094,9 +10113,6 @@ msgstr "Moenie steur nie"
 msgid "Extended away"
 msgstr "Vir lank weg"
 
-msgid "Mobile"
-msgstr "Mobiel"
-
 msgid "Listening to music"
 msgstr "Luister na musiek"
 
@@ -10137,18 +10153,6 @@ msgstr "+++ %s is nie meer ledig nie"
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "Kon nie %s lees nie"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
-"Kon nie volledig u %s lees nie.  Dit is nie gelaai nie, en die ou lêer is "
-"hernoem na %s~."
 
 msgid "Calculating..."
 msgstr "Bereken..."
@@ -10224,6 +10228,13 @@ msgstr "Kon nie %s skryf nie: %s"
 msgid "Unable to connect to %s: %s"
 msgstr "Kan nie koppel aan %s nie: %s"
 
+#, fuzzy, c-format
+msgid ""
+"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
+"found."
+msgstr ""
+"Bediener vereis TLS/SSL vir aanmelding.  Geen TLS/SSL-steun gevind nie."
+
 #, c-format
 msgid " - %s"
 msgstr " - %s"
@@ -10256,6 +10267,18 @@ msgstr "Verbinding geweier."
 #, c-format
 msgid "Address already in use."
 msgstr "Adres word reeds gebruik."
+
+#, c-format
+msgid "Error Reading %s"
+msgstr "Kon nie %s lees nie"
+
+#, fuzzy, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+"Kon nie volledig u %s lees nie.  Dit is nie gelaai nie, en die ou lêer is "
+"hernoem na %s~."
 
 msgid "Internet Messenger"
 msgstr "Internetboodskapper"
@@ -10299,10 +10322,8 @@ msgstr "Kennis_gewings vir nuwe pos"
 msgid "Use this buddy _icon for this account:"
 msgstr "Gebruik hierdie vriend_ikoon vir hierdie rekening:"
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "%s-opsies"
+msgid "_Advanced"
+msgstr "_Gevorderd"
 
 msgid "Use GNOME Proxy Settings"
 msgstr "Gebruik GNOME se instaaninstellings"
@@ -10337,9 +10358,6 @@ msgstr "As mens stip kyk,"
 msgid "you can see the butterflies mating"
 msgstr "kan mens skoenlappers sien paar"
 
-msgid "Proxy Options"
-msgstr "Instaanopsies"
-
 msgid "Proxy _type:"
 msgstr "Instaan_tipes:"
 
@@ -10367,8 +10385,9 @@ msgstr "_Eenvoudig"
 msgid "Create _this new account on the server"
 msgstr "Skep _hierdie nuwe rekening op die bediener"
 
-msgid "_Advanced"
-msgstr "_Gevorderd"
+#, fuzzy
+msgid "_Proxy"
+msgstr "Instaanbediener"
 
 msgid "Enabled"
 msgstr "Geaktiveer"
@@ -10443,6 +10462,17 @@ msgstr "_Inligting"
 
 msgid "I_M"
 msgstr "_Kitsklets"
+
+#, fuzzy
+msgid "_Audio Call"
+msgstr "_Voeg geselsie by"
+
+msgid "Audio/_Video Call"
+msgstr ""
+
+#, fuzzy
+msgid "_Video Call"
+msgstr "Videogeselsies"
 
 msgid "_Send File..."
 msgstr "_Stuur lêer..."
@@ -10578,6 +10608,10 @@ msgstr "Vriend_wagte"
 msgid "/Tools/_Certificates"
 msgstr "_Sertifikate"
 
+#, fuzzy
+msgid "/Tools/Custom Smile_ys"
+msgstr "_Gesiggie"
+
 msgid "/Tools/Plu_gins"
 msgstr "_Inproppe"
 
@@ -10586,9 +10620,6 @@ msgstr "_Voorkeure"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "_Privaatheid"
-
-msgid "/Tools/Smile_y"
-msgstr "_Gesiggie"
 
 msgid "/Tools/_File Transfers"
 msgstr "_Lêeroordragte"
@@ -10707,8 +10738,8 @@ msgstr "Handmatig"
 msgid "By status"
 msgstr "Volgens status"
 
-msgid "By log size"
-msgstr "Volgens staaflêergrootte"
+msgid "By recent log activity"
+msgstr ""
 
 #, c-format
 msgid "%s disconnected"
@@ -10723,6 +10754,9 @@ msgstr "Herkoppel"
 
 msgid "Re-enable"
 msgstr "Heraktiveer"
+
+msgid "SSL FAQs"
+msgstr ""
 
 msgid "Welcome back!"
 msgstr "Welkom terug!"
@@ -10811,6 +10845,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "A_lias:"
 
+msgid "_Group:"
+msgstr "_Groep:"
+
 msgid "Auto_join when account becomes online."
 msgstr "Sluit _outomaties aan waneer rekening aanlyn kom."
 
@@ -10861,14 +10898,6 @@ msgstr ""
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "Nooi vriend na geselsiekamer"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
-"Tik gerus die naam van die gebruiker om uit te nooi, saam met 'n opsionele "
-"uitnodigingsboodskap."
 
 msgid "_Buddy:"
 msgstr "_Vriend:"
@@ -10944,6 +10973,22 @@ msgstr "_Stoor as..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "Maak gesprekvenster skoo_n"
 
+#, fuzzy
+msgid "/Conversation/M_edia"
+msgstr "_Meer"
+
+#, fuzzy
+msgid "/Conversation/Media/_Audio Call"
+msgstr "_Meer"
+
+#, fuzzy
+msgid "/Conversation/Media/_Video Call"
+msgstr "_Meer"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "Bekyk staaf_lêer"
+
 msgid "/Conversation/Se_nd File..."
 msgstr "S_tuur lêer..."
 
@@ -11015,6 +11060,18 @@ msgstr "Gesprek"
 
 msgid "/Conversation/View Log"
 msgstr "Bekyk staaflêer"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio Call"
+msgstr "Meer"
+
+#, fuzzy
+msgid "/Conversation/Media/Video Call"
+msgstr "Bekyk staaflêer"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "Meer"
 
 msgid "/Conversation/Send File..."
 msgstr "Stuur lêer..."
@@ -11198,6 +11255,9 @@ msgstr "kunstenaar"
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
+msgid "voice and video"
+msgstr ""
+
 msgid "support"
 msgstr "steun"
 
@@ -11336,6 +11396,10 @@ msgstr "Georgies"
 
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu- Georgiese vertalers"
+
+#, fuzzy
+msgid "Khmer"
+msgstr "Ander"
 
 msgid "Kannada"
 msgstr "Kannada"
@@ -11807,15 +11871,6 @@ msgstr "Die font vir die tikkennisgewing"
 msgid "Enable typing notification"
 msgstr "Aktiveer tikkennisgewings"
 
-msgid "_Copy Email Address"
-msgstr "_Kopieer e-posadres"
-
-msgid "_Open Link in Browser"
-msgstr "_Open skakel in blaaier"
-
-msgid "_Copy Link Location"
-msgstr "_Kopieer skakelligging"
-
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -12062,13 +12117,14 @@ msgstr "_Blaai deur staaflêervouer"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Probeer `%s -h' vir meer inligting.\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12093,13 +12149,14 @@ msgstr ""
 "  --display=VERTOON   X vertoon om te gebruik\n"
 "  -v, --version       wys die huidige weergawe, en sluit af\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12158,11 +12215,23 @@ msgstr "Pidgin"
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Sluit af omdat 'n ander libpurple-kliënt reeds loop.\n"
 
-msgid "Open All Messages"
-msgstr "Open alle boodskappe"
+msgid "/_Media"
+msgstr ""
 
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">U het pos!</span>"
+msgid "/Media/_Hangup"
+msgstr ""
+
+#, fuzzy
+msgid "Calling..."
+msgstr "Bereken..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -12191,6 +12260,27 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "Die 'Handmatige' blaaier-bevel is gekies, maar geen bevel is gestel nie."
+
+msgid "Open All Messages"
+msgstr "Open alle boodskappe"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">U het pos!</span>"
+
+#, fuzzy
+msgid "New Pounces"
+msgstr "Nuwe vriendwag"
+
+msgid "Dismiss"
+msgstr ""
+
+#, fuzzy
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">U het pos!</span>"
+
+#, fuzzy
+msgid "No message"
+msgstr "Onbekende boodskap"
 
 msgid "The following plugins will be unloaded."
 msgstr "Die volgende inproppe gaan ontlaai word."
@@ -12239,6 +12329,10 @@ msgstr "<b>Inpropdetails</b>"
 
 msgid "Select a file"
 msgstr "Kies 'n lêer"
+
+#, fuzzy
+msgid "Modify Buddy Pounce"
+msgstr "Wysig vriendwag"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -12310,6 +12404,50 @@ msgstr "_Herhalend"
 msgid "Pounce Target"
 msgstr "Dophou-teiken"
 
+#, fuzzy, c-format
+msgid "Started typing"
+msgstr "Begin tik"
+
+#, fuzzy, c-format
+msgid "Paused while typing"
+msgstr "Wag tydens tik"
+
+#, fuzzy, c-format
+msgid "Signed on"
+msgstr "Aanmeld"
+
+#, fuzzy, c-format
+msgid "Returned from being idle"
+msgstr "%s het teruggekeer na ledigheid (%s)"
+
+#, fuzzy, c-format
+msgid "Returned from being away"
+msgstr "Terugkeer"
+
+#, fuzzy, c-format
+msgid "Stopped typing"
+msgstr "Het opgehou tik"
+
+#, fuzzy, c-format
+msgid "Signed off"
+msgstr "Afmeld"
+
+#, fuzzy, c-format
+msgid "Became idle"
+msgstr "Ledig raak"
+
+#, fuzzy, c-format
+msgid "Went away"
+msgstr "Terwyl weg"
+
+#, fuzzy, c-format
+msgid "Sent a message"
+msgstr "Stuur 'n boodskap"
+
+#, fuzzy, c-format
+msgid "Unknown.... Please report this!"
+msgstr "Onbekende vriendwag-gebeurtenis. Rapporteer dit, asseblief!"
+
 msgid "Smiley theme failed to unpack."
 msgstr "Uitpak van gesiggie-tema het misluk."
 
@@ -12332,6 +12470,12 @@ msgstr "Sleutelbordkortpaaie"
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Sl_uit gesprekke met die Escape-sleutel"
 
+#. Buddy List Themes
+#, fuzzy
+msgid "Buddy List Theme"
+msgstr "Vriendelys"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "Stelsellaai-ikoon"
 
@@ -12442,9 +12586,6 @@ msgstr "Kan nie instaanopstellingsprogram begin nie."
 msgid "Cannot start browser configuration program."
 msgstr "Kan nie blaaieropstellingsprogram begin nie."
 
-msgid "ST_UN server:"
-msgstr "ST_UN-bediener:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Voorbeeld: stunserver.org</span>"
 
@@ -12468,6 +12609,10 @@ msgstr "_Beginpoort:"
 
 msgid "_End port:"
 msgstr "_Endpoort:"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr ""
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Instaanbediener en blaaier"
@@ -12659,11 +12804,11 @@ msgstr "Terwyl weg en ledig"
 msgid "Auto-away"
 msgstr "Outoweg"
 
-msgid "Change status when _idle"
-msgstr "Verander status terwyl _ledig"
-
 msgid "_Minutes before becoming idle:"
 msgstr "_Minute voor ledig word:"
+
+msgid "Change status when _idle"
+msgstr "Verander status terwyl _ledig"
 
 msgid "Change _status to:"
 msgstr "Verander _status na:"
@@ -12812,6 +12957,12 @@ msgstr "S_toor en gebruik"
 msgid "Status for %s"
 msgstr "Status vir %s"
 
+#.
+#. * TODO: We should enable/disable the add button based on
+#. *       whether the user has entered all required data.  That
+#. *       would eliminate the need for this check and provide a
+#. *       better user experience.
+#.
 msgid "Custom Smiley"
 msgstr "Eie gesiggie"
 
@@ -12821,15 +12972,15 @@ msgstr "Meer data benodig"
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr "Verskaf gerus 'n kortpad om met die gesiggie te assosieer."
 
-msgid "Duplicate Shortcut"
-msgstr "Duplikaatkortpad"
-
+#, fuzzy, c-format
 msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 "'n Eie gesiggie vir die gekose kortpad bestaan reeds. Gee asseblief 'n ander "
 "kortpad."
+
+msgid "Duplicate Shortcut"
+msgstr "Duplikaatkortpad"
 
 msgid "Please select an image for the smiley."
 msgstr "Kies asseblief 'n prent vir die gesiggie."
@@ -12840,15 +12991,21 @@ msgstr "Wysig gesiggie"
 msgid "Add Smiley"
 msgstr "Voeg gesiggie by"
 
-msgid "Smiley _Image"
-msgstr "Gesiggie_prent"
+#, fuzzy
+msgid "_Image:"
+msgstr "_Prent"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr "Gesiggie_kortpad"
+#. Shortcut text
+#, fuzzy
+msgid "S_hortcut text:"
+msgstr "Kortpad"
 
 msgid "Smiley"
 msgstr "Gesiggie"
+
+#, fuzzy
+msgid "Shortcut Text"
+msgstr "Kortpad"
 
 msgid "Custom Smiley Manager"
 msgstr "Bestuurder van eie gesiggies"
@@ -12973,6 +13130,16 @@ msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
 "Kon nie prent '%s' laai nie: rede onbekend, waarskynlik 'n korrupte prentlêer"
+
+#, fuzzy
+msgid "_Open Link"
+msgstr "_Open skakel in:"
+
+msgid "_Copy Link Location"
+msgstr "_Kopieer skakelligging"
+
+msgid "_Copy Email Address"
+msgstr "_Kopieer e-posadres"
 
 msgid "Save File"
 msgstr "Stoor lêer"
@@ -13988,6 +14155,178 @@ msgstr "Stuur en ontvang rou XMPP-stanzas."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Hierdie inprop is nuttig om XMPP-bedieners of -kliënte te ontfout."
+
+#~ msgid "Invite message"
+#~ msgstr "Uitnodigingsboodskap"
+
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "Tik gerus die naam van die gebruiker om uit te nooi,\n"
+#~ "saam met 'n opsionele uitnodigingsboodskap."
+
+#~ msgid "Looking up %s"
+#~ msgstr "Soek tans %s op"
+
+#~ msgid "Connect to %s failed"
+#~ msgstr "Verbinding na %s het misluk"
+
+#~ msgid "Signon: %s"
+#~ msgstr "Aanmelding: %s"
+
+#~ msgid "Unable to write file %s."
+#~ msgstr "Kan nie lêer %s skryf nie."
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "Kan nie lêer %s lees nie."
+
+#~ msgid "Message too long, last %s bytes truncated."
+#~ msgstr "Boodskap te lank, laaste %s grepe afgekap."
+
+#~ msgid "%s not currently logged in."
+#~ msgstr "%s nie tans aanmeld nie."
+
+#~ msgid "Warning of %s not allowed."
+#~ msgstr "Waarskuwing indien %s nie toegelaat nie."
+
+#~ msgid ""
+#~ "A message has been dropped, you are exceeding the server speed limit."
+#~ msgstr "'n Boodskap is laat val, u oorskry die bediener se spoedlimiet."
+
+#~ msgid "Chat in %s is not available."
+#~ msgstr "Geselsie in %s is nie beskikbaar nie."
+
+#~ msgid "You are sending messages too fast to %s."
+#~ msgstr "U stuur te vinnig boodskappe aan %s."
+
+#~ msgid "You missed an IM from %s because it was too big."
+#~ msgstr "U het 'n kitsboodskap vanaf %s gemis omdat dit te groot was."
+
+#~ msgid "You missed an IM from %s because it was sent too fast."
+#~ msgstr ""
+#~ "U het 'n kitsboodskap vanaf %s gemis omdat dit te vinnig gestuur is."
+
+#~ msgid "Failure."
+#~ msgstr "Mislukking."
+
+#~ msgid "Too many matches."
+#~ msgstr "Te veel wat pas."
+
+#~ msgid "Need more qualifiers."
+#~ msgstr "Benodig méér kwalifiseerders."
+
+#~ msgid "Dir service temporarily unavailable."
+#~ msgstr "Gidsdiens is tydelik nie beskikbaar nie."
+
+#~ msgid "Email lookup restricted."
+#~ msgstr "E-posopsoek ingeperk."
+
+#~ msgid "Keyword ignored."
+#~ msgstr "Sleutelwoord geïgnoreer."
+
+#~ msgid "No keywords."
+#~ msgstr "Geen sleutelwoorde."
+
+#~ msgid "User has no directory information."
+#~ msgstr "Gebruiker het geen gidsinliging nie."
+
+#~ msgid "Country not supported."
+#~ msgstr "Land nie ondersteun nie."
+
+#~ msgid "Failure unknown: %s."
+#~ msgstr "Onbekende mislukking: %s."
+
+#~ msgid "Incorrect username or password."
+#~ msgstr "Verkeerde gebruikernaam of wagwoord."
+
+#~ msgid "The service is temporarily unavailable."
+#~ msgstr "Die diens is tydelik nie beskikbaar nie."
+
+#~ msgid "Your warning level is currently too high to log in."
+#~ msgstr "U waarskuwingsvlak is tans te hoog om aan te meld."
+
+#~ msgid ""
+#~ "You have been connecting and disconnecting too frequently.  Wait ten "
+#~ "minutes and try again.  If you continue to try, you will need to wait "
+#~ "even longer."
+#~ msgstr ""
+#~ "U het nou te gereeld gekoppel en ontkoppel.  Wag tien minute en probeer "
+#~ "weer.  Indien u voortgaan om te probeer sal u selfs nog langer moet wag."
+
+#~ msgid "An unknown signon error has occurred: %s."
+#~ msgstr "'n Onbekende aanmeldfout het voorgekom: %s."
+
+#~ msgid "An unknown error, %d, has occurred.  Info: %s"
+#~ msgstr "'n Onbekende fout, %d, het voorgekom.  Inligting: %s"
+
+#~ msgid "Invalid Groupname"
+#~ msgstr "Ongeldige groepnaam"
+
+#~ msgid "Connection Closed"
+#~ msgstr "Verbinding gesluit"
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "Wag vir antwoord..."
+
+#~ msgid "TOC has come back from its pause. You may now send messages again."
+#~ msgstr "TOC is terug ná sy blaaskans. U kan u weer boodskappe stuur."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "Wagwoord suksesvol verander"
+
+#~ msgid "Get Dir Info"
+#~ msgstr "Kry gidsinligting"
+
+#~ msgid "Set Dir Info"
+#~ msgstr "Stel gidsinligting"
+
+#~ msgid "Could not open %s for writing!"
+#~ msgstr "Kon nie %s vir skryf open nie!"
+
+#~ msgid "File transfer failed; other side probably canceled."
+#~ msgstr "Lêeroordrag het misluk; ander kant het waarskynlik gekanselleer."
+
+#~ msgid "Could not connect for transfer."
+#~ msgstr "Kon nie vir oordrag koppel nie."
+
+#~ msgid "Could not write file header.  The file will not be transferred."
+#~ msgstr "Kon nie lêerkop skryf nie.  Die lêer sal nie oorgedra word nie."
+
+#~ msgid "Save As..."
+#~ msgstr "Stoor as..."
+
+#~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+#~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+#~ msgstr[0] "%s versoek dat %s %d lêer aanvaar: %s (%.2f %s)%s%s"
+#~ msgstr[1] "%s versoek dat %s %d lêers aanvaar: %s (%.2f %s)%s%s"
+
+#~ msgid "%s requests you to send them a file"
+#~ msgstr "%s vra dat u hulle 'n lêer stuur"
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "TOC-protokolinprop"
+
+#~ msgid "%s Options"
+#~ msgstr "%s-opsies"
+
+#~ msgid "Proxy Options"
+#~ msgstr "Instaanopsies"
+
+#~ msgid "By log size"
+#~ msgstr "Volgens staaflêergrootte"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "_Open skakel in blaaier"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "ST_UN-bediener:"
+
+#~ msgid "Smiley _Image"
+#~ msgstr "Gesiggie_prent"
+
+#~ msgid "Smiley S_hortcut"
+#~ msgstr "Gesiggie_kortpad"
 
 #~ msgid "Unable to retrieve MSN Address Book"
 #~ msgstr "Kan nie MSN-adresboek haal nie"

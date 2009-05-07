@@ -510,7 +510,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	MsnSlpMessage *slpmsg;
 	const char *data;
-	gsize offset;
+	guint64 offset;
 	gsize len;
 
 #ifdef MSN_DEBUG_SLP
@@ -581,6 +581,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			if (slpmsg->buffer == NULL)
 			{
 				purple_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
+				msn_slpmsg_destroy(slpmsg);
 				return;
 			}
 		}

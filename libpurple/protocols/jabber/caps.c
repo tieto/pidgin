@@ -132,7 +132,11 @@ jabber_caps_client_info_destroy(JabberCapsClientInfo *info)
 	}
 
 	free_string_glist(info->features);
-	free_string_glist(info->forms);
+
+	while (info->forms) {
+		xmlnode_free(info->forms->data);
+		info->forms = g_list_delete_link(info->forms, info->forms);
+	}
 
 	jabber_caps_node_exts_unref(info->exts);
 
@@ -286,10 +290,10 @@ jabber_caps_load(void)
 					id->type = g_strdup(type);
 					id->name = g_strdup(name);
 					id->lang = g_strdup(lang);
-					
+
 					value->identities = g_list_append(value->identities,id);
 				} else if(!strcmp(child->name,"x")) {
-					/* FIXME: See #7814 -- this will cause problems if anyone
+					/* TODO: See #7814 -- this might cause problems if anyone
 					 * ever actually specifies forms. In fact, for this to
 					 * work properly, that bug needs to be fixed in
 					 * xmlnode_from_str, not the output version... */
@@ -349,7 +353,7 @@ void jabber_caps_uninit(void)
 	}
 	g_hash_table_destroy(capstable);
 	g_hash_table_destroy(nodetable);
-	capstable = NULL;
+	capstable = nodetable = NULL;
 }
 
 typedef struct _jabber_caps_cbplususerdata {
@@ -406,9 +410,11 @@ cbplususerdata_unref(jabber_caps_cbplususerdata *data)
 static void
 jabber_caps_get_info_complete(jabber_caps_cbplususerdata *userdata)
 {
-	userdata->cb(userdata->info, userdata->exts, userdata->cb_data);
-	userdata->info = NULL;
-	userdata->exts = NULL;
+	if (userdata->cb) {
+		userdata->cb(userdata->info, userdata->exts, userdata->cb_data);
+		userdata->info = NULL;
+		userdata->exts = NULL;
+	}
 
 	if (userdata->ref != 1)
 		purple_debug_warning("jabber", "Lost a reference to caps cbdata: %d\n",
@@ -562,7 +568,8 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	info = g_hash_table_lookup(capstable, &key);
 	if (info && hash) {
 		/* v1.5 - We already have all the information we care about */
-		cb(info, NULL, user_data);
+		if (cb)
+			cb(info, NULL, user_data);
 		return;
 	}
 
@@ -791,9 +798,11 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 }
 
 static GString*
-jabber_caps_verification_append(GString *verification, const gchar *string)
+jabber_caps_verification_append(GString *verification, const gchar *str)
 {
-	verification = g_string_append(verification, string);
+	char *tmp = g_markup_escape_text(str, -1);
+	verification = g_string_append(verification, tmp);
+	g_free(tmp);
 	return g_string_append_c(verification, '<');
 }
 
@@ -819,9 +828,23 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	/* concat identities to the verification string */
 	for (node = info->identities; node; node = node->next) {
 		JabberIdentity *id = (JabberIdentity*)node->data;
+		char *category = g_markup_escape_text(id->category, -1);
+		char *type = g_markup_escape_text(id->type, -1);
+		char *lang = NULL;
+		char *name = NULL;
+		
+		if (id->lang)
+			lang = g_markup_escape_text(id->lang, -1);
+		if (id->name)
+			name = g_markup_escape_text(id->name, -1);
 
-		g_string_append_printf(verification, "%s/%s/%s/%s<", id->category,
-		        id->type, id->lang ? id->lang : "", id->name);
+		g_string_append_printf(verification, "%s/%s/%s/%s<", category,
+		        type, lang ? lang : "", name ? name : "");
+
+		g_free(category);
+		g_free(type);
+		g_free(lang);
+		g_free(name);
 	}
 
 	/* concat features to the verification string */
@@ -896,11 +919,12 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	}
 
 	info.features = features;
-	info.identities = jabber_identities;
+	info.identities = g_list_copy(jabber_identities);
 	info.forms = NULL;
 
 	g_free(js->caps_hash);
 	js->caps_hash = jabber_caps_calculate_hash(&info, "sha1");
+	g_list_free(info.identities);
 	g_list_free(features);
 }
 

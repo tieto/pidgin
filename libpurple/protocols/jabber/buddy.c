@@ -50,6 +50,8 @@ typedef struct {
 	int timeout_handle;
 	GSList *vcard_imgids;
 	PurpleNotifyUserInfo *user_info;
+	long last_seconds;
+	gchar *last_message;
 } JabberBuddyInfo;
 
 void jabber_buddy_free(JabberBuddy *jb)
@@ -642,6 +644,7 @@ static void jabber_buddy_info_destroy(JabberBuddyInfo *jbi)
 
 	g_free(jbi->jid);
 	g_hash_table_destroy(jbi->resources);
+	g_free(jbi->last_message);
 	purple_notify_user_info_destroy(jbi->user_info);
 	g_free(jbi);
 }
@@ -852,6 +855,13 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 			jbr = resources->data;
 
+			/* put a section break between resources, this is not needed if
+			 we are at the first, because one was already added for the vcard
+			 section */
+			if (resources != jbi->jb->resources) {
+				purple_notify_user_info_prepend_section_break(user_info);
+			}
+
 			if(jbr->client.name) {
 				tmp = g_strdup_printf("%s%s%s", jbr->client.name,
 									  (jbr->client.version ? " " : ""),
@@ -1030,6 +1040,24 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			}
 #endif
 		}
+	}
+
+	if (!jbi->jb->resources) {
+		/* the buddy is offline */
+		gchar *status = 
+			g_strdup_printf("%s%s%s",	_("Offline"), 
+				jbi->last_message ? ": " : "",
+				jbi->last_message ? jbi->last_message : "");
+		if (jbi->last_seconds > 0) {
+			char *last = purple_str_seconds_to_string(jbi->last_seconds);
+			gchar *message = g_strdup_printf(_("%s ago"), last);
+			purple_notify_user_info_prepend_pair(user_info, 
+				_("Logged off"), message);
+			g_free(last);
+			g_free(message);
+		}
+		purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
+		g_free(status);
 	}
 
 	g_free(resource_name);
@@ -1484,6 +1512,38 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
+static void jabber_last_offline_parse(JabberStream *js, const char *from,
+									  JabberIqType type, const char *id,
+									  xmlnode *packet, gpointer data)
+{
+	JabberBuddyInfo *jbi = data;
+	xmlnode *query;
+	const char *seconds;
+
+	g_return_if_fail(jbi != NULL);
+
+	jabber_buddy_info_remove_id(jbi, id);
+
+	if(!from)
+		return;
+
+	if (type == JABBER_IQ_RESULT) {
+		if((query = xmlnode_get_child(packet, "query"))) {
+			seconds = xmlnode_get_attrib(query, "seconds");
+			if(seconds) {
+				char *end = NULL;
+				long sec = strtol(seconds, &end, 10);
+				if(end != seconds) {
+					jbi->last_seconds = sec;
+				}
+			}
+			jbi->last_message = xmlnode_get_data(query);
+		}
+	}
+
+	jabber_buddy_info_show_if_ready(jbi);
+}
+
 static void jabber_time_parse(JabberStream *js, const char *from,
                               JabberIqType type, const char *id,
                               xmlnode *packet, gpointer data)
@@ -1681,6 +1741,15 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 		g_free(full_jid);
 	}
 
+	if (!jb->resources) {
+		/* user is offline, send a jabber:iq:last to find out last time online */
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+		xmlnode_set_attrib(iq->node, "to", jid);
+		jabber_iq_set_callback(iq, jabber_last_offline_parse, jbi);
+		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+		jabber_iq_send(iq);
+	}
+	
 	js->pending_buddy_info_requests = g_slist_prepend(js->pending_buddy_info_requests, jbi);
 	jbi->timeout_handle = purple_timeout_add_seconds(30, jabber_buddy_get_info_timeout, jbi);
 }

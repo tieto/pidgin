@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-26 12:11+0200\n"
+"POT-Creation-Date: 2009-04-30 10:37-0400\n"
 "PO-Revision-Date: 2009-04-26 12:11+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
@@ -1562,6 +1562,7 @@ msgstr "Gnt-Verlauf"
 msgid "Lastlog plugin."
 msgstr "Verlauf-Plugin."
 
+#, c-format
 msgid ""
 "\n"
 "Fetching TinyURL..."
@@ -1889,6 +1890,7 @@ msgstr ""
 "Fehler beim Lesen vom Auflösungsprozess:\n"
 "%s"
 
+#, c-format
 msgid "Resolver process exited without answering our request"
 msgstr "Auflösungsprozess hat sich beendet ohne die Anfrage zu beantworten"
 
@@ -3747,6 +3749,41 @@ msgstr "Ungültige Challenge vom Server"
 msgid "SASL error"
 msgstr "SASL-Fehler"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "Kein Grund angegeben"
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "Nicht-unterstützte Version"
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr ""
+"Die Verbindung mit dem Server konnte nicht hergestellt werden:\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"Die Verbindung mit dem Server konnte nicht hergestellt werden:\n"
+"%s"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "Kann Verbindung nicht erstellen"
+
+msgid "Unable to create socket"
+msgstr "Kann Socket nicht erstellen"
+
+msgid "Write error"
+msgstr "Schreibfehler"
+
 msgid "Full Name"
 msgstr "Vollständiger Name"
 
@@ -4148,9 +4185,6 @@ msgid "You require encryption, but it is not available on this server."
 msgstr ""
 "Sie fordern Verschlüsselung, aber diese ist auf dem Server nicht verfügbar."
 
-msgid "Write error"
-msgstr "Schreibfehler"
-
 msgid "Ping timeout"
 msgstr "Ping-Zeitüberschreitung"
 
@@ -4159,20 +4193,19 @@ msgstr "Fehler beim Lesen"
 
 #, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"Die Verbindung mit dem Server konnte nicht hergestellt werden:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "Kann Socket nicht erstellen"
 
 msgid "Invalid XMPP ID"
 msgstr "Ungültige XMPP-ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Falsche XMPP-ID. Die Domain muss gesetzt werden."
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Verbindung zum Server nicht möglich."
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4268,6 +4301,12 @@ msgstr "Server unterstützt kein Blockieren"
 msgid "Not Authorized"
 msgstr "Nicht autorisiert"
 
+msgid "Mood"
+msgstr "Stimmung"
+
+msgid "Now Listening"
+msgstr "Hört gerade"
+
 msgid "Both"
 msgstr "Beide"
 
@@ -4288,12 +4327,6 @@ msgstr "Kein"
 
 msgid "Subscription"
 msgstr "Abonnement"
-
-msgid "Mood"
-msgstr "Stimmung"
-
-msgid "Now Listening"
-msgstr "Hört gerade"
 
 msgid "Mood Text"
 msgstr "Stimmungstext"
@@ -4855,166 +4888,219 @@ msgstr ""
 "%s ist auf der lokalen Liste, aber nicht auf der Serverliste. Möchten Sie, "
 "dass der Buddy hinzugefügt wird?"
 
+#, c-format
 msgid "Unable to parse message"
 msgstr "Kann die Nachricht nicht parsen"
 
+#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaxfehler (wahrscheinlich ein Client-Bug)"
 
+#, c-format
 msgid "Invalid email address"
 msgstr "Ungültige E-Mail-Adresse"
 
+#, c-format
 msgid "User does not exist"
 msgstr "Benutzer existiert nicht"
 
+#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Der Fully Qualified Domain Name fehlt"
 
+#, c-format
 msgid "Already logged in"
 msgstr "Schon angemeldet"
 
+#, c-format
 msgid "Invalid username"
 msgstr "Ungültiger Benutzername"
 
+#, c-format
 msgid "Invalid friendly name"
 msgstr "Ungültiger Freundesname"
 
+#, c-format
 msgid "List full"
 msgstr "Liste voll"
 
+#, c-format
 msgid "Already there"
 msgstr "Schon da"
 
+#, c-format
 msgid "Not on list"
 msgstr "Nicht auf der Liste"
 
+#, c-format
 msgid "User is offline"
 msgstr "Benutzer ist offline"
 
+#, c-format
 msgid "Already in the mode"
 msgstr "Bereits in diesem Modus"
 
+#, c-format
 msgid "Already in opposite list"
 msgstr "Bereits in der „Gegenteil-Liste“"
 
+#, c-format
 msgid "Too many groups"
 msgstr "Zu viele Gruppen"
 
+#, c-format
 msgid "Invalid group"
 msgstr "Ungültige Gruppe"
 
+#, c-format
 msgid "User not in group"
 msgstr "Benutzer ist nicht in der Gruppe"
 
+#, c-format
 msgid "Group name too long"
 msgstr "Name der Gruppe ist zu lang"
 
+#, c-format
 msgid "Cannot remove group zero"
 msgstr "Kann die Gruppe „Null“ nicht entfernen"
 
+#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr ""
 "Versuchte einen Benutzer zu einer nichtexistierenden Gruppe hinzuzufügen"
 
+#, c-format
 msgid "Switchboard failed"
 msgstr "Vermittlung gescheitert"
 
+#, c-format
 msgid "Notify transfer failed"
 msgstr "Übertragung der Benachrichtigung gescheitert"
 
+#, c-format
 msgid "Required fields missing"
 msgstr "Notwendige Felder fehlen"
 
+#, c-format
 msgid "Too many hits to a FND"
 msgstr "Zu viele Treffer zu einem FND"
 
+#, c-format
 msgid "Not logged in"
 msgstr "Nicht angemeldet"
 
+#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Dienst momentan nicht verfügbar"
 
+#, c-format
 msgid "Database server error"
 msgstr "Fehler des Datenbank-Servers"
 
+#, c-format
 msgid "Command disabled"
 msgstr "Kommando abgeschaltet"
 
+#, c-format
 msgid "File operation error"
 msgstr "Dateiverarbeitungsfehler"
 
+#, c-format
 msgid "Memory allocation error"
 msgstr "Fehler bei der Speicheranforderung"
 
+#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "Falscher CHL-Wert zum Server gesendet"
 
+#, c-format
 msgid "Server busy"
 msgstr "Server beschäftigt"
 
+#, c-format
 msgid "Server unavailable"
 msgstr "Server unerreichbar"
 
+#, c-format
 msgid "Peer notification server down"
 msgstr "Peer-Benachrichtigungsserver nicht erreichbar"
 
+#, c-format
 msgid "Database connect error"
 msgstr "Datenbank-Verbindungsfehler"
 
+#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Server fährt runter (melden Sie sich ab)"
 
+#, c-format
 msgid "Error creating connection"
 msgstr "Fehler beim Herstellen der Verbindung"
 
+#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "CVR-Parameter sind entweder unbekannt oder nicht erlaubt"
 
+#, c-format
 msgid "Unable to write"
 msgstr "Schreiben nicht möglich"
 
+#, c-format
 msgid "Session overload"
 msgstr "Sitzung überlastet"
 
+#, c-format
 msgid "User is too active"
 msgstr "Benutzer ist zu aktiv"
 
+#, c-format
 msgid "Too many sessions"
 msgstr "Zu viele Sitzungen"
 
+#, c-format
 msgid "Passport not verified"
 msgstr "Passport (MSN Benutzerausweis) wurde nicht überprüft"
 
+#, c-format
 msgid "Bad friend file"
 msgstr "Falsche Friends-Datei"
 
+#, c-format
 msgid "Not expected"
 msgstr "Nicht erwartet"
 
+#, c-format
 msgid "Friendly name changes too rapidly"
 msgstr "Benutzernamen werden zu oft geändert"
 
+#, c-format
 msgid "Server too busy"
 msgstr "Server ist zu beschäftigt"
 
+#, c-format
 msgid "Authentication failed"
 msgstr "Authentifizierung fehlgeschlagen"
 
+#, c-format
 msgid "Not allowed when offline"
 msgstr "Nicht erlaubt im Offline-Modus"
 
+#, c-format
 msgid "Not accepting new users"
 msgstr "Akzeptiert keine neuen Benutzer"
 
+#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Kinder-Passwort ohne die Zustimmung der Eltern"
 
+#, c-format
 msgid "Passport account not yet verified"
 msgstr "Passport-Konto wurde noch nicht überprüft"
 
 msgid "Passport account suspended"
 msgstr "Passport-Konto gesperrt"
 
+#, c-format
 msgid "Bad ticket"
 msgstr "Falsches Ticket"
 
@@ -7734,6 +7820,9 @@ msgstr "<p><b>Bestätigung</b>:<br>\n"
 msgid "<p><b>Scrupulous Testers</b>:<br>\n"
 msgstr "<p><b>Gewissenhafte Tester</b>:<br>\n"
 
+msgid "and more, please let me know... thank you!))"
+msgstr ""
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>Und all die Jungs im Hinterzimmer...</i><br>\n"
 
@@ -8564,6 +8653,7 @@ msgstr "<br><b>Kanal-HMAC:</b> %s"
 msgid "<br><b>Channel Topic:</b><br>%s"
 msgstr "<br><b>Thema des Kanals:</b><br>%s"
 
+#, c-format
 msgid "<br><b>Channel Modes:</b> "
 msgstr "<br><b>Kanal-Modi:</b> "
 
@@ -8588,6 +8678,7 @@ msgstr "Kanal-Passphrase"
 msgid "Channel Public Keys List"
 msgstr "Liste der öffentlichen Schlüssel des Kanals"
 
+#, c-format
 msgid ""
 "Channel authentication is used to secure the channel from unauthorized "
 "access. The authentication may be based on passphrase and digital "
@@ -8989,6 +9080,7 @@ msgstr "Download %s: %s"
 msgid "Your Current Mood"
 msgstr "Ihre momentane Stimmung"
 
+#, c-format
 msgid "Normal"
 msgstr "Normal"
 
@@ -9374,37 +9466,47 @@ msgstr "Whiteboard"
 msgid "No server statistics available"
 msgstr "Keine Serverstatistik verfügbar"
 
+#, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Fehler: Unterschiedliche Version, aktualisieren Sie Ihren Client"
 
+#, c-format
 msgid "Failure: Remote does not trust/support your public key"
 msgstr ""
 "Fehler: Die entfernte Seite vertraut Ihrem öffentlichen Schlüssel nicht"
 
+#, c-format
 msgid "Failure: Remote does not support proposed KE group"
 msgstr ""
 "Fehler: Entferntes Programm unterstützt nicht die vorgeschlagen KE-Gruppe"
 
+#, c-format
 msgid "Failure: Remote does not support proposed cipher"
 msgstr ""
 "Fehler: Entferntes Programm unterstützt die vorgeschlagene Cipher nicht"
 
+#, c-format
 msgid "Failure: Remote does not support proposed PKCS"
 msgstr "Fehler: Entferntes Programm unterstützt die vorgeschlagene PKCS nicht"
 
+#, c-format
 msgid "Failure: Remote does not support proposed hash function"
 msgstr ""
 "Fehler: Entferntes Programm unterstützt die vorgeschlagen Hashfunktion nicht"
 
+#, c-format
 msgid "Failure: Remote does not support proposed HMAC"
 msgstr "Fehler: Entferntes Programm unterstützt das vorgeschlagene HMAC nicht"
 
+#, c-format
 msgid "Failure: Incorrect signature"
 msgstr "Fehler: Falsche Signatur"
 
+#, c-format
 msgid "Failure: Invalid cookie"
 msgstr "Fehler: Ungültiger Cookie"
 
+#, c-format
 msgid "Failure: Authentication failed"
 msgstr "Fehler: Authentifizierung fehlgeschlagen"
 
@@ -10220,24 +10322,29 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
+#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 "Die Verbindung wurde von einer anderen Software auf ihrem Computer "
 "unterbrochen."
 
 #. 10054
+#, c-format
 msgid "Remote host closed connection."
 msgstr "Der entfernte Host hat die Verbindung beendet."
 
 #. 10060
+#, c-format
 msgid "Connection timed out."
 msgstr "Verbindungsabbruch wegen Zeitüberschreitung."
 
 #. 10061
+#, c-format
 msgid "Connection refused."
 msgstr "Verbindung abgelehnt."
 
 #. 10048
+#, c-format
 msgid "Address already in use."
 msgstr "Adresse wird bereits benutzt."
 
@@ -11231,6 +11338,9 @@ msgstr "Künstler"
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
+msgid "voice and video"
+msgstr ""
+
 msgid "support"
 msgstr "Support"
 
@@ -11510,6 +11620,7 @@ msgstr ""
 "geschützt.  Die Datei 'COPYRIGHT' enthält die komplette Liste der "
 "Mitwirkenden.  Wir übernehmen keine Haftung für dieses Programm.<BR><BR>"
 
+#, c-format
 msgid ""
 "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
 "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
@@ -11517,6 +11628,7 @@ msgstr ""
 "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
 "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 
+#, c-format
 msgid ""
 "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
 "\">support@pidgin.im</A><BR/><BR/>"
@@ -11524,11 +11636,13 @@ msgstr ""
 "<FONT SIZE=\"4\">Hilfe per E-Mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
 "\">support@pidgin.im</A><BR/><BR/>"
 
+#, c-format
 msgid ""
 "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
 msgstr ""
 "<FONT SIZE=\"4\">IRC-Kanal:</FONT> #pidgin auf irc.freenode.net<BR><BR>"
 
+#, c-format
 msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 msgstr "<FONT SIZE=\"4\">XMPP-MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
@@ -11887,9 +12001,11 @@ msgstr ""
 msgid "Save Image"
 msgstr "Bild speichern"
 
+#, c-format
 msgid "_Save Image..."
 msgstr "Bild _speichern..."
 
+#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "Benutzerdefinierten Smiley _hinzufügen..."
 
@@ -12189,6 +12305,7 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Wird geschlossen, da bereits ein anderer libpurple-Client läuft\n"
 
@@ -12376,36 +12493,47 @@ msgstr "_Wiederkehrend"
 msgid "Pounce Target"
 msgstr "Alarm-Ziel"
 
+#, c-format
 msgid "Started typing"
 msgstr "Beginnt zu tippen"
 
+#, c-format
 msgid "Paused while typing"
 msgstr "Hat beim Tippen angehalten"
 
+#, c-format
 msgid "Signed on"
 msgstr "Hat sich anmeldet"
 
+#, c-format
 msgid "Returned from being idle"
 msgstr "Ist nicht mehr inaktiv"
 
+#, c-format
 msgid "Returned from being away"
 msgstr "Ist wieder anwesend"
 
+#, c-format
 msgid "Stopped typing"
 msgstr "Hat das Tippen gestoppt"
 
+#, c-format
 msgid "Signed off"
 msgstr "Hat sich abmeldet"
 
+#, c-format
 msgid "Became idle"
 msgstr "Wurde untätig"
 
+#, c-format
 msgid "Went away"
 msgstr "Ging hinaus"
 
+#, c-format
 msgid "Sent a message"
 msgstr "Eine Nachricht senden"
 
+#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "Unbekannt.... Bitte berichten Sie dieses Problem!"
 
@@ -12686,21 +12814,27 @@ msgstr "Schneide alle _Statusveränderungen im System-Mitschnitt mit"
 msgid "Sound Selection"
 msgstr "Klang-Auswahl"
 
+#, c-format
 msgid "Quietest"
 msgstr "Am leisesten"
 
+#, c-format
 msgid "Quieter"
 msgstr "Leiser"
 
+#, c-format
 msgid "Quiet"
 msgstr "Leise"
 
+#, c-format
 msgid "Loud"
 msgstr "Laut"
 
+#, c-format
 msgid "Louder"
 msgstr "Lauter"
 
+#, c-format
 msgid "Loudest"
 msgstr "Am lautesten"
 
@@ -13737,6 +13871,7 @@ msgstr "Benachrichtigungsdialog"
 msgid "Select Color"
 msgstr "Farbe auswählen"
 
+#, c-format
 msgid "Select Interface Font"
 msgstr "Schriftart wählen"
 
@@ -13961,6 +14096,7 @@ msgstr "Zeige alle N Minuten iChat-ähnliche Zeitstempel an."
 msgid "Timestamp Format Options"
 msgstr "Zeitstempelformat-Optionen"
 
+#, c-format
 msgid "_Force 24-hour time format"
 msgstr "_Erzwinge 24-Stunden Zeitformat"
 

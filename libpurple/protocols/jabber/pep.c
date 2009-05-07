@@ -44,7 +44,10 @@ void jabber_pep_init(void) {
 }
 
 void jabber_pep_uninit(void) {
-	/* any PEP handlers that need to clean things up go here */
+	/* any PEP handlers that need to clean things up go here. The standard
+	 * cleanup of removing the handler and feature are handled here and by
+	 * jabber_features_destroy() in jabber.c
+	 */
 	g_hash_table_destroy(pep_handlers);
 	pep_handlers = NULL;
 }
@@ -67,12 +70,15 @@ do_pep_iq_request_item_callback(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
                                 xmlnode *packet, gpointer data)
 {
-	xmlnode *pubsub = xmlnode_get_child_with_namespace(packet,"pubsub","http://jabber.org/protocol/pubsub");
+	xmlnode *pubsub;
 	xmlnode *items = NULL;
 	JabberPEPHandler *cb = data;
 
-	if(pubsub)
-		items = xmlnode_get_child(pubsub, "items");
+	if (type == JABBER_IQ_RESULT) {
+		pubsub = xmlnode_get_child_with_namespace(packet, "pubsub", "http://jabber.org/protocol/pubsub");
+		if(pubsub)
+			items = xmlnode_get_child(pubsub, "items");
+	}
 
 	cb(js, from, items);
 }

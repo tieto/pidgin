@@ -4420,15 +4420,19 @@ void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable)
 	 * people can highlight stuff.
 	 */
 	/* gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), editable); */
-	imhtml->editable = editable;
-	imhtml->format_functions = GTK_IMHTML_ALL;
-
-	if (editable)
-	{
+	if (editable && !imhtml->editable) {
 		g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 				G_CALLBACK(mark_set_cb), imhtml);
 		g_signal_connect(G_OBJECT(imhtml), "backspace", G_CALLBACK(smart_backspace_cb), NULL);
+	} else if (!editable && imhtml->editable) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer),
+			mark_set_cb, imhtml);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(imhtml),
+			smart_backspace_cb, NULL);
 	}
+
+	imhtml->editable = editable;
+	imhtml->format_functions = GTK_IMHTML_ALL;
 }
 
 void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo)
@@ -5879,4 +5883,17 @@ void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml)
 {
 	g_signal_connect(G_OBJECT(imhtml), "message_send",
 		G_CALLBACK(return_add_newline_cb), NULL);
+}
+
+void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate)
+{
+	if (populate) {
+		g_signal_handlers_unblock_matched(imhtml->text_buffer,
+				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+				mark_set_so_update_selection_cb, NULL);
+	} else {
+		g_signal_handlers_block_matched(imhtml->text_buffer,
+				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+				mark_set_so_update_selection_cb, NULL);
+	}
 }
