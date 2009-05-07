@@ -117,6 +117,17 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(node)
 			xmlnode_set_attrib(query, "node", node);
 
+		if(!node || g_str_equal(node, node_uri)) {
+		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
+			identity = xmlnode_new_child(query, "identity");
+			xmlnode_set_attrib(identity, "category", "client");
+			xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
+														 * handheld, pc, phone,
+														 * web */
+			xmlnode_set_attrib(identity, "name", PACKAGE);
+		}
+
+		if(!node || !strcmp(node, node_uri)) {
 		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
 			GHashTable *ui_info = purple_core_get_ui_info();
 			const gchar *ui_type = g_hash_table_lookup(ui_info, "client_type");

@@ -4496,19 +4496,26 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleConversation *conv, gboolean is_buddy)
 }
 
 static void
-buddy_added_cb(PurpleBuddy *buddy, PurpleConversation *conv)
+buddy_added_cb(PurpleBlistNode *node, PurpleConversation *conv)
 {
-	buddy_cb_common(buddy, conv, TRUE);
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+		return;
+
+	buddy_cb_common(PURPLE_BUDDY(node), conv, TRUE);
 }
 
 static void
-buddy_removed_cb(PurpleBuddy *buddy, PurpleConversation *conv)
+buddy_removed_cb(PurpleBlistNode *node, PurpleConversation *conv)
 {
-	/* If there's another buddy for the same "dude" on the list, do nothing. */
-	if (purple_find_buddy(buddy->account, buddy->name) != NULL)
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
 		return;
 
-	buddy_cb_common(buddy, conv, FALSE);
+	/* If there's another buddy for the same "dude" on the list, do nothing. */
+	if (purple_find_buddy(purple_buddy_get_account(PURPLE_BUDDY(node)),
+		                  purple_buddy_get_name(PURPLE_BUDDY(node))) != NULL)
+		return;
+
+	buddy_cb_common(PURPLE_BUDDY(node), conv, FALSE);
 }
 
 static void send_menu_cb(GtkWidget *widget, PidginConversation *gtkconv)
@@ -4747,9 +4754,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	                                               "weight", CHAT_USERS_WEIGHT_COLUMN,
 	                                               NULL);
 
-	purple_signal_connect(blist_handle, "buddy-added",
+	purple_signal_connect(blist_handle, "blist-node-added",
 						gtkchat, PURPLE_CALLBACK(buddy_added_cb), conv);
-	purple_signal_connect(blist_handle, "buddy-removed",
+	purple_signal_connect(blist_handle, "blist-node-removed",
 						gtkchat, PURPLE_CALLBACK(buddy_removed_cb), conv);
 	purple_signal_connect(blist_handle, "blist-node-aliased",
 						gtkchat, PURPLE_CALLBACK(blist_node_aliased_cb), conv);
@@ -5121,7 +5128,8 @@ buddy_update_cb(PurpleBlistNode *bnode, gpointer null)
 	GList *list;
 
 	g_return_if_fail(bnode);
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(bnode));
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		return;
 
 	for (list = pidgin_conv_windows_get_list(); list; list = list->next)
 	{
@@ -8017,9 +8025,9 @@ pidgin_conversations_init(void)
                         handle, PURPLE_CALLBACK(account_status_changed_cb), NULL);
 
 	/* Callbacks to update a conversation */
-	purple_signal_connect(blist_handle, "buddy-added", handle,
+	purple_signal_connect(blist_handle, "blist-node-added", handle,
 						G_CALLBACK(buddy_update_cb), NULL);
-	purple_signal_connect(blist_handle, "buddy-removed", handle,
+	purple_signal_connect(blist_handle, "blist-node-removed", handle,
 						G_CALLBACK(buddy_update_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-signed-on",
 						handle, PURPLE_CALLBACK(update_buddy_sign), "on");

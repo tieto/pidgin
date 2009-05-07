@@ -612,8 +612,23 @@ msn_notification_send_fqy(MsnSession *session,
 static void
 update_contact_network(MsnSession *session, const char *passport, MsnNetwork network)
 {
-	MsnUser *user = msn_userlist_find_user(session->userlist, passport);
+	MsnUser *user;
+
+	if (network == MSN_NETWORK_UNKNOWN)
+	{
+		purple_debug_warning("msn",
+		                     "Ignoring user %s about which server knows nothing.\n",
+		                     passport);
+		/* Decrement the count for unknown results so that we'll continue login.
+		   Also, need to finish the login process here as well, because ADL OK
+		   will not be called. */
+		if (--session->adl_fqy == 0)
+			msn_session_finish_login(session);
+		return;
+	}
+
 	/* TODO: Also figure out how to update membership lists */
+	user = msn_userlist_find_user(session->userlist, passport);
 	if (user) {
 		xmlnode *adl_node;
 		char *payload;
@@ -774,13 +789,17 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		purple_debug_info("msn", "Invalid XML in ADL!\n");
 		return;
 	}
-	for (domain_node = xmlnode_get_child(root, "d"); domain_node; domain_node = xmlnode_get_next_twin(domain_node)) {
+	for (domain_node = xmlnode_get_child(root, "d");
+	     domain_node;
+	     domain_node = xmlnode_get_next_twin(domain_node)) {
 		const gchar * domain = NULL;
 		xmlnode *contact_node = NULL;
 
 		domain = xmlnode_get_attrib(domain_node, "n");
 
-		for (contact_node = xmlnode_get_child(domain_node, "c"); contact_node; contact_node = xmlnode_get_next_twin(contact_node)) {
+		for (contact_node = xmlnode_get_child(domain_node, "c");
+		     contact_node;
+		     contact_node = xmlnode_get_next_twin(contact_node)) {
 			const gchar *list;
 			gint list_op = 0;
 
@@ -829,10 +848,10 @@ adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	MsnSession *session;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	/*char *adl = g_strndup(payload, len);*/
-	char *reason = g_strdup_printf(_("Unknown error (%d)"),
-		GPOINTER_TO_INT(cmd->payload_cbdata)/*, adl*/);
-	/*g_free(adl);*/
+	char *adl = g_strndup(payload, len);
+	char *reason = g_strdup_printf(_("Unknown error (%d): %s"),
+		GPOINTER_TO_INT(cmd->payload_cbdata), adl);
+	g_free(adl);
 
 	session = cmdproc->session;
 	account = session->account;
@@ -942,10 +961,10 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 			passport = g_strdup_printf("%s@%s", local, domain);
 
-			if (type != NULL)
+			if (!g_ascii_isdigit(cmd->command[0]) && type != NULL)
 				network = (MsnNetwork)strtoul(type, NULL, 10);
 			else
-				network = MSN_NETWORK_PASSPORT;
+				network = MSN_NETWORK_UNKNOWN;
 
 			purple_debug_info("msn", "FQY response says %s is from network %d\n",
 			                  passport, network);
@@ -957,6 +976,26 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	}
 
 	xmlnode_free(ml);
+}
+
+static void
+fqy_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	MsnCommand *cmd = cmdproc->last_cmd;
+
+	purple_debug_warning("msn", "FQY error %d\n", error);
+	if (cmd->param_count > 1) {
+		cmd->payload_cb = fqy_cmd_post;
+		cmd->payload_len = atoi(cmd->params[1]);
+		cmd->payload_cbdata = GINT_TO_POINTER(error);
+	}
+#if 0
+	/* If the server didn't send us a corresponding email address for this
+	   FQY error, it's probably going to disconnect us. So it isn't necessary
+	   to tell the handler about it. */
+	else if (trans->data)
+		((MsnFqyCb)trans->data)(session, NULL, MSN_NETWORK_UNKNOWN); */
+#endif
 }
 
 static void
@@ -2153,6 +2192,7 @@ msn_notification_init(void)
 
 	msn_table_add_error(cbs_table, "ADD", add_error);
 	msn_table_add_error(cbs_table, "ADL", adl_error);
+	msn_table_add_error(cbs_table, "FQY", fqy_error);
 	msn_table_add_error(cbs_table, "REG", reg_error);
 	msn_table_add_error(cbs_table, "RMG", rmg_error);
 	msn_table_add_error(cbs_table, "USR", usr_error);

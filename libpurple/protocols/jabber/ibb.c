@@ -503,6 +503,8 @@ jabber_ibb_init(void)
 {
 	jabber_ibb_sessions = g_hash_table_new(g_str_hash, g_str_equal);
 
+	jabber_add_feature(XEP_0047_NAMESPACE, NULL);
+
 	jabber_iq_register_handler("close", XEP_0047_NAMESPACE, jabber_ibb_parse);
 	jabber_iq_register_handler("data", XEP_0047_NAMESPACE, jabber_ibb_parse);
 	jabber_iq_register_handler("open", XEP_0047_NAMESPACE, jabber_ibb_parse);

@@ -1193,7 +1193,7 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 	if (!purple_utf8_strcasecmp(to, purple_connection_get_display_name(gc))) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
-		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, to, irc->account);
+		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, irc_nick_skip_mode(irc, to), irc->account);
 		if (convo)
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else

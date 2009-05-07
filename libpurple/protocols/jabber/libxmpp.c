@@ -161,6 +161,8 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	jabber_caps_uninit();
 	jabber_iq_uninit();
 
+	jabber_unregister_commands();
+
 	/* Stay on target...stay on target... Almost there... */
 	jabber_uninit_plugin();
 
@@ -251,8 +253,9 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
 						  "ft_proxies",
-						/* TODO: Is this an acceptable default? */
-						  "proxy.jabber.org");
+						/* TODO: Is this an acceptable default?
+						 * Also, keep this in sync as they add more servers */
+						  "proxy.eu.jabber.org");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
@@ -298,11 +301,6 @@ init_plugin(PurplePlugin *plugin)
 
 	jabber_ibb_init();
 	jabber_si_init();
-
-	jabber_add_feature("http://www.xmpp.org/extensions/xep-0224.html#ns",
-					   jabber_buzz_isenabled);
-	jabber_add_feature(XEP_0231_NAMESPACE, jabber_custom_smileys_isenabled);
-	jabber_add_feature(XEP_0047_NAMESPACE, NULL);
 }
 
 

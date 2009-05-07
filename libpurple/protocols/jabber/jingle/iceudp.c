@@ -310,19 +310,33 @@ jingle_iceudp_parse_internal(xmlnode *iceudp)
 	const gchar *password = xmlnode_get_attrib(iceudp, "pwd");
 
 	for (; candidate; candidate = xmlnode_get_next_twin(candidate)) {
-		const gchar *relport =
-				xmlnode_get_attrib(candidate, "rel-port");
+		const gchar *relport = xmlnode_get_attrib(candidate, "rel-port");
+		const gchar *component = xmlnode_get_attrib(candidate, "component");
+		const gchar *foundation = xmlnode_get_attrib(candidate, "foundation");
+		const gchar *generation = xmlnode_get_attrib(candidate, "generation");
+		const gchar *id = xmlnode_get_attrib(candidate, "id");
+		const gchar *ip = xmlnode_get_attrib(candidate, "ip");
+		const gchar *network = xmlnode_get_attrib(candidate, "network");
+		const gchar *port = xmlnode_get_attrib(candidate, "port");
+		const gchar *priority = xmlnode_get_attrib(candidate, "priority");
+		const gchar *protocol = xmlnode_get_attrib(candidate, "protocol");
+		const gchar *type = xmlnode_get_attrib(candidate, "type");
+
+		if (!component || !foundation || !generation || !id || !ip ||
+				!network || !port || !priority || !protocol || !type)
+			continue;
+
 		iceudp_candidate = jingle_iceudp_candidate_new(
-				atoi(xmlnode_get_attrib(candidate, "component")),
-				xmlnode_get_attrib(candidate, "foundation"),
-				atoi(xmlnode_get_attrib(candidate, "generation")),
-				xmlnode_get_attrib(candidate, "id"),
-				xmlnode_get_attrib(candidate, "ip"),
-				atoi(xmlnode_get_attrib(candidate, "network")),
-				atoi(xmlnode_get_attrib(candidate, "port")),
-				atoi(xmlnode_get_attrib(candidate, "priority")),
-				xmlnode_get_attrib(candidate, "protocol"),
-				xmlnode_get_attrib(candidate, "type"),
+				atoi(component),
+				foundation,
+				atoi(generation),
+				id,
+				ip,
+				atoi(network),
+				atoi(port),
+				atoi(priority),
+				protocol,
+				type,
 				username, password);
 		iceudp_candidate->reladdr = g_strdup(
 				xmlnode_get_attrib(candidate, "rel-addr"));

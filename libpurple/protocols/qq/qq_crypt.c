@@ -275,7 +275,7 @@ static inline gint decrypt_out(guint8 *dest, gint crypted_len, const guint8* con
 	}
 	
 	count64 = crypted_len / 8;
-	while (count64-- > 0){
+	while (--count64 > 0){
 		c32_prev[0] = crypted32[0]; c32_prev[1] = crypted32[1];
 		crypted_ptr += 8;
 

@@ -35,7 +35,7 @@ static void jabber_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
 	xmlnode *nick;
 	char *nickname = NULL;
 
-	/* ignore the tune of people not on our buddy list */
+	/* ignore the nick of people not on our buddy list */
 	if (!buddy || !item)
 		return;
 
@@ -65,7 +65,10 @@ static void do_nick_set(JabberStream *js, const char *nick) {
 
 static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
 	char *oldnickname = NULL;
-	xmlnode *item = xmlnode_get_child(items,"item");
+	xmlnode *item = NULL;
+	
+	if (items)
+		item = xmlnode_get_child(items,"item");
 
 	if(item) {
 		xmlnode *nick = xmlnode_get_child_with_namespace(item,"nick","http://jabber.org/protocol/nick");
