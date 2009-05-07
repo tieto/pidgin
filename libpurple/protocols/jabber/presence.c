@@ -404,8 +404,10 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
                                  JabberPresenceCapabilities *userdata)
 {
 	JabberBuddyResource *jbr;
-	char *resource = g_utf8_strrchr(userdata->from, -1, '/');
-	resource += 1;
+	char *resource = g_utf8_strchr(userdata->from, -1, '/');
+
+	if (resource)
+		resource += 1;
 
 	jbr = jabber_buddy_find_resource(userdata->jb, resource);
 	if (!jbr) {
