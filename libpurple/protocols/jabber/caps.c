@@ -35,13 +35,7 @@ typedef struct _JabberDataFormField {
 	GList *values;
 } JabberDataFormField;
 
-typedef struct _JabberCapsKey {
-	char *node;
-	char *ver;
-	char *hash;
-} JabberCapsKey;
-
-static GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsClientInfo */
+static GHashTable *capstable = NULL; /* JabberCapsTuple -> JabberCapsClientInfo */
 static GHashTable *nodetable = NULL; /* char *node -> JabberCapsNodeExts */
 static guint       save_timer = 0;
 
@@ -86,7 +80,7 @@ jabber_caps_node_exts_unref(JabberCapsNodeExts *exts)
 }
 
 static guint jabber_caps_hash(gconstpointer data) {
-	const JabberCapsKey *key = data;
+	const JabberCapsTuple *key = data;
 	guint nodehash = g_str_hash(key->node);
 	guint verhash  = g_str_hash(key->ver);
 	/*
@@ -99,20 +93,12 @@ static guint jabber_caps_hash(gconstpointer data) {
 }
 
 static gboolean jabber_caps_compare(gconstpointer v1, gconstpointer v2) {
-	const JabberCapsKey *name1 = v1;
-	const JabberCapsKey *name2 = v2;
+	const JabberCapsTuple *name1 = v1;
+	const JabberCapsTuple *name2 = v2;
 
 	return g_str_equal(name1->node, name2->node) &&
 	       g_str_equal(name1->ver, name2->ver) &&
 	       purple_strequal(name1->hash, name2->hash);
-}
-
-void jabber_caps_destroy_key(gpointer data) {
-	JabberCapsKey *key = data;
-	g_free(key->node);
-	g_free(key->ver);
-	g_free(key->hash);
-	g_free(key);
 }
 
 static void
@@ -139,6 +125,10 @@ jabber_caps_client_info_destroy(JabberCapsClientInfo *info)
 	}
 
 	jabber_caps_node_exts_unref(info->exts);
+
+	g_free((char *)info->tuple.node);
+	g_free((char *)info->tuple.ver);
+	g_free((char *)info->tuple.hash);
 
 	g_free(info);
 }
@@ -176,16 +166,16 @@ exts_to_xmlnode(gconstpointer key, gconstpointer value, gpointer user_data)
 }
 
 static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user_data) {
-	JabberCapsKey *clientinfo = key;
-	JabberCapsClientInfo *props = value;
+	const JabberCapsTuple *tuple = key;
+	const JabberCapsClientInfo *props = value;
 	xmlnode *root = user_data;
 	xmlnode *client = xmlnode_new_child(root, "client");
 	GList *iter;
 
-	xmlnode_set_attrib(client, "node", clientinfo->node);
-	xmlnode_set_attrib(client, "ver", clientinfo->ver);
-	if (clientinfo->hash)
-		xmlnode_set_attrib(client, "hash", clientinfo->hash);
+	xmlnode_set_attrib(client, "node", tuple->node);
+	xmlnode_set_attrib(client, "ver", tuple->ver);
+	if (tuple->hash)
+		xmlnode_set_attrib(client, "hash", tuple->hash);
 	for(iter = props->identities; iter; iter = g_list_next(iter)) {
 		JabberIdentity *id = iter->data;
 		xmlnode *identity = xmlnode_new_child(client, "identity");
@@ -255,8 +245,8 @@ jabber_caps_load(void)
 		if(client->type != XMLNODE_TYPE_TAG)
 			continue;
 		if(!strcmp(client->name, "client")) {
-			JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 			JabberCapsClientInfo *value = g_new0(JabberCapsClientInfo, 1);
+			JabberCapsTuple *key = (JabberCapsTuple*)&value->tuple;
 			xmlnode *child;
 			JabberCapsNodeExts *exts = NULL;
 			key->node = g_strdup(xmlnode_get_attrib(client,"node"));
@@ -340,7 +330,7 @@ jabber_caps_load(void)
 void jabber_caps_init(void)
 {
 	nodetable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)jabber_caps_node_exts_unref); 
-	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, (GDestroyNotify)jabber_caps_client_info_destroy);
+	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, NULL, (GDestroyNotify)jabber_caps_client_info_destroy);
 	jabber_caps_load();
 }
 
@@ -429,7 +419,7 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 		"http://jabber.org/protocol/disco#info");
 	jabber_caps_cbplususerdata *userdata = data;
 	JabberCapsClientInfo *info = NULL, *value;
-	JabberCapsKey key;
+	JabberCapsTuple key;
 
 	if (!query || type == JABBER_IQ_ERROR) {
 		/* Any outstanding exts will be dealt with via ref-counting */
@@ -481,7 +471,7 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 		jabber_caps_client_info_destroy(info);
 		info = value;
 	} else {
-		JabberCapsKey *n_key = g_new(JabberCapsKey, 1);
+		JabberCapsTuple *n_key = (JabberCapsTuple *)&info->tuple;
 		n_key->node = userdata->node;
 		n_key->ver  = userdata->ver;
 		n_key->hash = userdata->hash;
@@ -553,7 +543,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
         jabber_caps_get_info_cb cb, gpointer user_data)
 {
 	JabberCapsClientInfo *info;
-	JabberCapsKey key;
+	JabberCapsTuple key;
 	jabber_caps_cbplususerdata *userdata;
 
 	if (ext && *ext && hash)

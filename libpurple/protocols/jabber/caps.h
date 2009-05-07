@@ -30,11 +30,19 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 typedef struct _JabberCapsNodeExts JabberCapsNodeExts;
 
+typedef struct _JabberCapsTuple {
+	const char *node;
+	const char *ver;
+	const char *hash;
+} JabberCapsTuple;
+
 struct _JabberCapsClientInfo {
 	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
 	GList *forms; /* xmlnode * */
 	JabberCapsNodeExts *exts;
+
+	const JabberCapsTuple tuple;
 };
 
 /*
