@@ -36,6 +36,8 @@ version 2.6.0 (??/??/2009):
 	* Put section breaks between resources in "Get Info" to improve readability.
 	* XHTML markup is only included in outgoing messages when the message
 	  contains formatting.
+	* Show when the user was last logged in when doing "Get Info" on an offline
+	  buddy, provided the server supports it.
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)
