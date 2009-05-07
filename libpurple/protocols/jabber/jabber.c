@@ -23,6 +23,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
+#include "core.h"
 #include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
@@ -3353,9 +3354,24 @@ jabber_ipc_add_feature(const gchar *feature)
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
+	GHashTable *ui_info = purple_core_get_ui_info();
+	const gchar *ui_type = g_hash_table_lookup(ui_info, "client_type");
+	const gchar *type = "pc"; /* default client type, if unknown or 
+								unspecified */
+
+	if (ui_type) {
+		if (strcmp(ui_type, "pc") == 0 ||
+			strcmp(ui_type, "console") == 0 ||
+			strcmp(ui_type, "phone") == 0 ||
+			strcmp(ui_type, "handheld") == 0 ||
+			strcmp(ui_type, "web") == 0 ||
+			strcmp(ui_type, "bot") == 0) {
+			type = ui_type;
+		}
+	}
 	my_protocol = plugin;
 
-	jabber_add_identity("client", "pc", NULL, PACKAGE);
+	jabber_add_identity("client", type, NULL, PACKAGE);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);

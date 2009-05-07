@@ -2525,10 +2525,10 @@ jabber_resource_get_identity_category_type(const JabberBuddyResource *jbr,
 {
 	const GList *iter = NULL;
 	
-	if (jbr->caps) {
-		for (iter = jbr->caps->identities ; iter ; iter = g_list_next(iter)) {
-			const JabberCapsIdentity *identity = 
-				(JabberCapsIdentity *) iter->data;
+	if (jbr->caps.info) {
+		for (iter = jbr->caps.info->identities ; iter ; iter = g_list_next(iter)) {
+			const JabberIdentity *identity = 
+				(JabberIdentity *) iter->data;
 		
 			if (strcmp(identity->category, category) == 0) {
 				return identity->type;
