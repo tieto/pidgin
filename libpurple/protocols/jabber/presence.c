@@ -854,13 +854,26 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		/* v1.3 uses: node, ver, and optionally ext.
 		 * v1.5 uses: node, ver, and hash. */
 		if (node && *node && ver && *ver) {
-			JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
-			userdata->js = js;
-			userdata->jb = jb;
-			userdata->from = g_strdup(from);
-			jabber_caps_get_info(js, from, node, ver, hash, ext,
-			    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
-			    userdata);
+			gchar **exts = ext && *ext ? g_strsplit(ext, " ", -1) : NULL;
+			jbr = jabber_buddy_find_resource(jb, jid->resource);
+
+			/* Look it up if we don't already have all this information */
+			if (!jbr || !jbr->caps.info ||
+					!g_str_equal(node, jbr->caps.info->tuple.node) ||
+					!g_str_equal(ver, jbr->caps.info->tuple.ver) ||
+					!purple_strequal(hash, jbr->caps.info->tuple.hash) ||
+					!jabber_caps_exts_known(jbr->caps.info, (gchar **)exts)) {
+				JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
+				userdata->js = js;
+				userdata->jb = jb;
+				userdata->from = g_strdup(from);
+				jabber_caps_get_info(js, from, node, ver, hash, exts,
+				    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
+				    userdata);
+			} else {
+				if (exts)
+					g_strfreev(exts);
+			}
 		}
 	}
 

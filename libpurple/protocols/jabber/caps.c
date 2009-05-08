@@ -346,6 +346,27 @@ void jabber_caps_uninit(void)
 	capstable = nodetable = NULL;
 }
 
+gboolean jabber_caps_exts_known(const JabberCapsClientInfo *info,
+                                char **exts)
+{
+	int i;
+	g_return_val_if_fail(info != NULL, FALSE);
+
+	if (!exts)
+		return TRUE;
+
+	for (i = 0; exts[i]; ++i) {
+		/* Hack since we advertise the ext but don't have any */
+		if (g_str_equal(exts[i], "voice-v1") && !info->exts)
+			continue;
+		if (!info->exts ||
+				!g_hash_table_lookup(info->exts->exts, exts[i]))
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
 typedef struct _jabber_caps_cbplususerdata {
 	guint ref;
 
@@ -539,16 +560,19 @@ jabber_caps_ext_iqcb(JabberStream *js, const char *from, JabberIqType type,
 }
 
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
-        const char *ver, const char *hash, const char *ext,
+        const char *ver, const char *hash, char **exts,
         jabber_caps_get_info_cb cb, gpointer user_data)
 {
 	JabberCapsClientInfo *info;
 	JabberCapsTuple key;
 	jabber_caps_cbplususerdata *userdata;
 
-	if (ext && *ext && hash)
+	if (exts && hash) {
 		purple_debug_info("jabber", "Ignoring exts in new-style caps from %s\n",
 		                     who);
+		g_strfreev(exts);
+		exts = NULL;
+	}
 
 	/* Using this in a read-only fashion, so the cast is OK */
 	key.node = (char *)node;
@@ -597,9 +621,8 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	}
 
 	/* Are there any exts that we don't recognize? */
-	if (ext && *ext && !hash) {
+	if (exts) {
 		JabberCapsNodeExts *node_exts;
-		gchar **splat = g_strsplit(ext, " ", 0);
 		int i;
 
 		if (info) {
@@ -611,23 +634,23 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 			/* We'll put it in later once we have the client info */
 			node_exts = userdata->node_exts = jabber_caps_find_exts_by_node(node);
 
-		for (i = 0; splat[i]; ++i) {
-			userdata->exts = g_list_prepend(userdata->exts, splat[i]);
+		for (i = 0; exts[i]; ++i) {
+			userdata->exts = g_list_prepend(userdata->exts, exts[i]);
 			/* Look it up if we don't already know what it means */
-			if (!g_hash_table_lookup(node_exts->exts, splat[i])) {
+			if (!g_hash_table_lookup(node_exts->exts, exts[i])) {
 				JabberIq *iq;
 				xmlnode *query;
 				char *nodeext;
 				ext_iq_data *cbdata = g_new(ext_iq_data, 1);
 
-				cbdata->name = splat[i];
+				cbdata->name = exts[i];
 				cbdata->data = cbplususerdata_ref(userdata);
 
 				iq = jabber_iq_new_query(js, JABBER_IQ_GET,
 				            "http://jabber.org/protocol/disco#info");
 				query = xmlnode_get_child_with_namespace(iq->node, "query",
 				            "http://jabber.org/protocol/disco#info");
-				nodeext = g_strdup_printf("%s#%s", node, splat[i]);
+				nodeext = g_strdup_printf("%s#%s", node, exts[i]);
 				xmlnode_set_attrib(query, "node", nodeext);
 				g_free(nodeext);
 				xmlnode_set_attrib(iq->node, "to", who);
@@ -637,11 +660,11 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 
 				++userdata->extOutstanding;	
 			}
-			splat[i] = NULL;
+			exts[i] = NULL;
 		}
 		/* All the strings are now part of the GList, so don't need
 		 * g_strfreev. */
-		g_free(splat);
+		g_free(exts);
 	}
 
 	if (userdata->info && userdata->extOutstanding == 0) {
