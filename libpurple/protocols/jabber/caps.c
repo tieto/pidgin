@@ -356,7 +356,8 @@ gboolean jabber_caps_exts_known(const JabberCapsClientInfo *info,
 		return TRUE;
 
 	for (i = 0; exts[i]; ++i) {
-		/* Hack since we advertise the ext but don't have any */
+		/* Hack since we advertise the ext along with v1.5 caps but don't
+		 * store any exts */
 		if (g_str_equal(exts[i], "voice-v1") && !info->exts)
 			continue;
 		if (!info->exts ||
