@@ -65,6 +65,8 @@ version 2.6.0 (??/??/2009):
 	* The nicks of the persons who leave the chatroom are italicized in the
 	  chat's conversation history. The nicks are un-italicized when they
 	  rejoin.
+	* Always set unseen-count and unseen-state on conversations.
+	  (Joshua Stein)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

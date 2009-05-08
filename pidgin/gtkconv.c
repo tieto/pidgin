@@ -8324,6 +8324,9 @@ gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state)
 			gtkconv->unseen_state = state;
 	}
 
+	purple_conversation_set_data(gtkconv->active_conv, "unseen-count", GINT_TO_POINTER(gtkconv->unseen_count));
+	purple_conversation_set_data(gtkconv->active_conv, "unseen-state", GINT_TO_POINTER(gtkconv->unseen_state));
+
 	purple_conversation_update(gtkconv->active_conv, PURPLE_CONV_UPDATE_UNSEEN);
 }
 
