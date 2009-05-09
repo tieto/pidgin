@@ -74,13 +74,30 @@ void (*blist_node_extended_menu)(PurpleBlistNode *node, GList **menu)
    a GList of PurpleBlistNodeAction's allowing a plugin to add menu items
  @endsignaldef
 
+ @signaldef blist-node-added
+  @signalproto
+void (*blist_node_added)(PurpleBlistNode *node)
+  @endsignalproto
+  @signaldesc
+   Emitted when a new blist node is added to the buddy list.
+ @endsignaldef
+
+ @signaldef blist-node-removed
+  @signalproto
+void (*blist_node_removed)(PurpleBlistNode *node)
+  @endsignalproto
+  @signaldesc
+   Emitted when a blist node is removed from the buddy list.
+ @endsignaldef
+
  @signaldef buddy-added
   @signalproto
 void (*buddy_added)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a new buddy is added to the buddy list.
-  @endsignaldef
+  @deprecated Use blist-node-added instead.
+ @endsignaldef
 
  @signaldef buddy-removed
   @signalproto
@@ -88,7 +105,8 @@ void (*buddy_removed)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a buddy is removed from the buddy list.
-  @endsignaldef
+  @deprecated Use blist-node-removed instead.
+ @endsignaldef
 
  @signaldef buddy-icon-changed
   @signalproto

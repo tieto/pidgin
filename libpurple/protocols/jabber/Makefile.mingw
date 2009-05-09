@@ -46,6 +46,7 @@ C_SRC =	\
 			adhoccommands.c \
 			auth.c \
 			buddy.c \
+			bosh.c \
 			caps.c \
 			chat.c \
 			data.c \
@@ -70,6 +71,7 @@ C_SRC =	\
 			presence.c \
 			roster.c \
 			si.c \
+			useravatar.c \
 			usermood.c \
 			usernick.c \
 			usertune.c \

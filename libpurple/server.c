@@ -940,7 +940,8 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 		return;
 
 	/* Did I send the message? */
-	if (purple_strequal(purple_conv_chat_get_nick(chat), who)) {
+	if (purple_strequal(purple_conv_chat_get_nick(chat),
+				purple_normalize(purple_conversation_get_account(conv), who))) {
 		flags |= PURPLE_MESSAGE_SEND;
 		flags &= ~PURPLE_MESSAGE_RECV; /* Just in case some prpl sets it! */
 	} else {

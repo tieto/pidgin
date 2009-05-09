@@ -185,15 +185,54 @@
 #define PIDGIN_ICON_SIZE_TANGO_HUGE           "pidgin-icon-size-tango-huge"
 
 /**
+ * extends PidginIconTheme (gtkicon-theme.h)
+ * A pidgin stock icon theme.
+ * This object represents a Pidgin stock icon theme.
+ *
+ * PidginStockIconTheme is a PidginIconTheme Object.
+ */
+typedef struct _PidginStockIconTheme        PidginStockIconTheme;
+typedef struct _PidginStockIconThemeClass   PidginStockIconThemeClass;
+
+#define PIDGIN_TYPE_STOCK_ICON_THEME            (pidgin_stock_icon_theme_get_type ())
+#define PIDGIN_STOCK_ICON_THEME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_STOCK_ICON_THEME, PidginStockIconTheme))
+#define PIDGIN_STOCK_ICON_THEME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_STOCK_ICON_THEME, PidginStockIconThemeClass))
+#define PIDGIN_IS_STOCK_ICON_THEME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_STOCK_ICON_THEME))
+#define PIDGIN_IS_STOCK_ICON_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_STOCK_ICON_THEME))
+#define PIDGIN_STOCK_ICON_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_STOCK_ICON_THEME, PidginStockIconThemeClass))
+
+struct _PidginStockIconTheme
+{
+	PidginIconTheme parent;
+};
+
+struct _PidginStockIconThemeClass
+{
+	PidginIconThemeClass parent_class;
+};
+
+G_BEGIN_DECLS
+
+/**
+ * GObject foo.
+ * @internal.
+ */
+GType pidgin_stock_icon_theme_get_type(void);
+
+/**
  * Loades all of the icons from the status icon theme into Pidgin stock
  *
  * @param theme		the theme to load, or null to load all the default icons
  */
 void pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme);
 
+
+void pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme);
+
 /**
  * Sets up the purple stock repository.
  */
 void pidgin_stock_init(void);
 
+G_END_DECLS
 #endif /* _PIDGIN_STOCK_H_ */

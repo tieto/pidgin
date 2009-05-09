@@ -1464,7 +1464,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 					  str);
 			g_free(str);
 
-			return;
+			break;
 		}
 
 		buddy = purple_find_buddy(data->account, data->who);
@@ -1494,7 +1494,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			g_error_free(err);
 			g_free(str);
 
-			return;
+			break;
 		}
 		id = purple_imgstore_add_with_id(filedata, size, data->filename);
 
@@ -1715,29 +1715,67 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 {
 	GtkIconSize icon_size = gtk_icon_size_from_name(size);
 	GdkPixbuf *pixbuf = NULL;
+	const char *stock = pidgin_stock_id_from_status_primitive(prim);
 
-	if (prim == PURPLE_STATUS_UNAVAILABLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_INVISIBLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_OFFLINE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
-				icon_size, "GtkWidget");
-	else
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
-				icon_size, "GtkWidget");
+	pixbuf = gtk_widget_render_icon (w, stock ? stock : PIDGIN_STOCK_STATUS_AVAILABLE,
+			icon_size, "GtkWidget");
 	return pixbuf;
-
 }
 
+static const char *
+stock_id_from_status_primitive_idle(PurpleStatusPrimitive prim, gboolean idle)
+{
+	const char *stock = NULL;
+	switch (prim) {
+		case PURPLE_STATUS_UNSET:
+			stock = NULL;
+			break;
+		case PURPLE_STATUS_UNAVAILABLE:
+			stock = idle ? PIDGIN_STOCK_STATUS_BUSY_I : PIDGIN_STOCK_STATUS_BUSY;
+			break;
+		case PURPLE_STATUS_AWAY:
+			stock = idle ? PIDGIN_STOCK_STATUS_AWAY_I : PIDGIN_STOCK_STATUS_AWAY;
+			break;
+		case PURPLE_STATUS_EXTENDED_AWAY:
+			stock = idle ? PIDGIN_STOCK_STATUS_XA_I : PIDGIN_STOCK_STATUS_XA;
+			break;
+		case PURPLE_STATUS_INVISIBLE:
+			stock = PIDGIN_STOCK_STATUS_INVISIBLE;
+			break;
+		case PURPLE_STATUS_OFFLINE:
+			stock = idle ? PIDGIN_STOCK_STATUS_OFFLINE_I : PIDGIN_STOCK_STATUS_OFFLINE;
+			break;
+		default:
+			stock = idle ? PIDGIN_STOCK_STATUS_AVAILABLE_I : PIDGIN_STOCK_STATUS_AVAILABLE;
+			break;
+	}
+	return stock;
+}
+
+const char *
+pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim)
+{
+	return stock_id_from_status_primitive_idle(prim, FALSE);
+}
+
+const char *
+pidgin_stock_id_from_presence(PurplePresence *presence)
+{
+	PurpleStatus *status;
+	PurpleStatusType *type;
+	PurpleStatusPrimitive prim;
+	gboolean idle;
+
+	g_return_val_if_fail(presence, NULL);
+
+	status = purple_presence_get_active_status(presence);
+	type = purple_status_get_type(status);
+	prim = purple_status_type_get_primitive(type);
+
+	idle = purple_presence_is_idle(presence);
+
+	return stock_id_from_status_primitive_idle(prim, idle);
+}
 
 GdkPixbuf *
 pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
@@ -2943,7 +2981,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 #endif
 }
 
-GSList *minidialogs = NULL;
+static GSList *minidialogs = NULL;
 
 static void *
 pidgin_utils_get_handle(void)

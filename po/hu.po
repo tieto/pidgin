@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-25 03:23+0100\n"
+"POT-Creation-Date: 2009-04-30 10:38-0400\n"
 "PO-Revision-Date: 2009-02-25 03:21+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
@@ -43,7 +43,8 @@ msgstr ""
 "Használat: %s [KAPCSOLÓ]…\n"
 "\n"
 "  -c, --config=KÖNYVTÁR  A KÖNYVTÁR használata a beállítófájlokhoz\n"
-"  -d, --debug         hibakereső üzenetek kiírása a szabványos hibakimenetre\n"
+"  -d, --debug         hibakereső üzenetek kiírása a szabványos "
+"hibakimenetre\n"
 "  -h, --help          ezen súgó megjelenítése és kilépés\n"
 "  -n, --nologin       ne jelentkezzen be automatikusan\n"
 "  -v, --version       az aktuális verzió megjelenítése és kilépés\n"
@@ -609,19 +610,6 @@ msgstr ""
 msgid "Send To"
 msgstr "Küldés ennek"
 
-msgid "Invite message"
-msgstr "Meghívóüzenet"
-
-msgid "Invite"
-msgstr "Meghívás"
-
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"Adja meg a meghívandó partner nevét,\n"
-"egy elhagyható meghívóüzenettel együtt."
-
 msgid "Conversation"
 msgstr "Társalgás"
 
@@ -880,6 +868,41 @@ msgstr "Minden társalgás"
 msgid "System Log"
 msgstr "Rendszernapló"
 
+#, fuzzy
+msgid "Calling ... "
+msgstr "Számítás…"
+
+msgid "Hangup"
+msgstr ""
+
+#. Number of actions
+msgid "Accept"
+msgstr "Elfogadás"
+
+msgid "Reject"
+msgstr "Visszautasítás"
+
+msgid "Call in progress."
+msgstr ""
+
+msgid "The call has been terminated."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr ""
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+
+#, fuzzy
+msgid "You have rejected the call."
+msgstr "Elhagyta a(z) %s%s csatornát"
+
+msgid "call: Make an audio call."
+msgstr ""
+
 msgid "Emails"
 msgstr "E-mailek"
 
@@ -913,6 +936,9 @@ msgstr "Folytatás"
 
 msgid "IM"
 msgstr "Azonnali üzenet"
+
+msgid "Invite"
+msgstr "Meghívás"
 
 msgid "(none)"
 msgstr "(nincs)"
@@ -1117,7 +1143,6 @@ msgstr "%s távol van. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s egy üzenetet küldött. (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Ismeretlen figyelmeztetési esemény. Kérjük jelentse ezt!"
 
@@ -1527,6 +1552,28 @@ msgstr "GntLastlog"
 msgid "Lastlog plugin."
 msgstr "Lastlog bővítmény."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "Dal URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr ""
+
 msgid "accounts"
 msgstr "fiókok"
 
@@ -1626,13 +1673,6 @@ msgstr "Elfogadja a következő tanúsítványát: %s?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr "SSL tanúsítvány-ellenőrzés"
-
-#. Number of actions
-msgid "Accept"
-msgstr "Elfogadás"
-
-msgid "Reject"
-msgstr "Visszautasítás"
 
 msgid "_View Certificate..."
 msgstr "_Tanúsítvány megjelenítése…"
@@ -1781,6 +1821,18 @@ msgstr "%s elhagyta a szobát."
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s elhagyta a szobát (%s)."
+
+#, fuzzy
+msgid "Invite to chat"
+msgstr "Meghívás konferenciára"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+"Adja meg annak a partnernek a nevét, akit meg szeretne hívni, egy "
+"tetszőleges meghívóüzenettel együtt."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2619,6 +2671,32 @@ msgstr "Offline üzenetek mentése figyelmeztetésben"
 msgid "Do not ask. Always save in pounce."
 msgstr "Ne kérdezzen. Mindig mentsen figyelmeztetésben."
 
+#, fuzzy
+msgid "One Time Password"
+msgstr "Adja meg a jelszót"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr ""
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
+msgstr ""
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -3019,6 +3097,7 @@ msgstr "Válasszon egy csevegést a következő partnerhez: %s"
 msgid "Add to chat..."
 msgstr "Felvétel csevegéshez…"
 
+#. Global
 msgid "Available"
 msgstr "Elérhető"
 
@@ -3365,6 +3444,17 @@ msgstr ""
 "Az Ön által választott fióknevet a kiszolgáló visszautasította. Valószínűleg "
 "érvénytelen karaktereket tartalmaz."
 
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, fuzzy, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "Ez a csevegésnév már használatban van"
+
+#, fuzzy
+msgid "Nickname in use"
+msgstr "Becenév"
+
 msgid "Cannot change nick"
 msgstr "A becenév nem változtatható meg"
 
@@ -3644,6 +3734,41 @@ msgstr "Érvénytelen hívás a kiszolgálótól"
 msgid "SASL error"
 msgstr "SASL hiba"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "Nincs ok megadva"
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "Nem támogatott verzió"
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr ""
+"Nem hozható létre kapcsolat a következő kiszolgálóval:\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"Nem hozható létre kapcsolat a következő kiszolgálóval:\n"
+"%s"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "A kapcsolat nem inicializálható"
+
+msgid "Unable to create socket"
+msgstr "Nem lehet létrehozni foglalatot"
+
+msgid "Write error"
+msgstr "Írási hiba"
+
 msgid "Full Name"
 msgstr "Teljes név"
 
@@ -3709,6 +3834,10 @@ msgstr "Kliens"
 
 msgid "Operating System"
 msgstr "Operációs rendszer"
+
+#, fuzzy
+msgid "Local Time"
+msgstr "Helyi fájl:"
 
 # fixme: innentől egy jó darabon xmpp protokollkiegészítések nevei vannak, lásd: http://www.xmpp.org/extensions/
 msgid "Last Activity"
@@ -4042,9 +4171,6 @@ msgstr "Szobák keresése"
 msgid "You require encryption, but it is not available on this server."
 msgstr "Titkosítást igényel, de az nem áll rendelkezésre ezen a kiszolgálón."
 
-msgid "Write error"
-msgstr "Írási hiba"
-
 msgid "Ping timeout"
 msgstr "Ping időtúllépése"
 
@@ -4053,20 +4179,19 @@ msgstr "Olvasási hiba"
 
 #, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"Nem hozható létre kapcsolat a következő kiszolgálóval:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "Nem lehet létrehozni foglalatot"
 
 msgid "Invalid XMPP ID"
 msgstr "Érvénytelen XMPP azonosító"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Érvénytelen XMPP azonosító. A tartományt be kell állítani."
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Nem sikerült a kiszolgálóhoz kapcsolódni."
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4158,6 +4283,12 @@ msgstr "A kiszolgáló nem támogatja a blokkolást"
 msgid "Not Authorized"
 msgstr "Nem engedélyezett"
 
+msgid "Mood"
+msgstr "Hangulat"
+
+msgid "Now Listening"
+msgstr "Most hallgatott"
+
 msgid "Both"
 msgstr "Mindkettő"
 
@@ -4178,12 +4309,6 @@ msgstr "Nincs"
 
 msgid "Subscription"
 msgstr "Feliratkozás"
-
-msgid "Mood"
-msgstr "Hangulat"
-
-msgid "Now Listening"
-msgstr "Most hallgatott"
 
 msgid "Mood Text"
 msgstr "Hangulatszöveg"
@@ -4422,17 +4547,23 @@ msgstr "Nem lehet kirúgni %s felhasználót"
 msgid "Unable to ping user %s"
 msgstr "%s felhasználó nem pingelhető"
 
-#, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
+#, fuzzy, c-format
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr "Nem lehet csörgetni, mivel nem érhető el információ %s felhasználóról."
 
-#, c-format
-msgid "Unable to buzz, because user %s might be offline."
+#, fuzzy, c-format
+msgid "Unable to buzz, because %s might be offline."
 msgstr "Nem lehet csörgetni, mivel %s felhasználó kiléphetett."
 
-#, c-format
-msgid "Unable to buzz, because the user %s does not support it."
+#, fuzzy, c-format
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
 msgstr "Nem lehet csörgetni, mivel %s felhasználó nem támogatja azt."
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "%s csörgetése…"
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
@@ -4443,9 +4574,36 @@ msgstr "Csörgetés"
 msgid "%s has buzzed you!"
 msgstr "%s megcsörgette!"
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "%s csörgetése…"
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "Nem küldhető fájl a következőnek: %s, a JID érvénytelen"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: user is not online"
+msgstr "Nem küldhető fájl a következőnek: %s, a felhasználó nem érhető el"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
+msgstr ""
+"Nem küldhető fájl a következőnek: %s, nincs feliratkozva a felhasználó "
+"jelenlétére"
+
+#, fuzzy
+msgid "Media Initiation Failed"
+msgstr "A regisztráció sikertelen"
+
+#, fuzzy, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr "Válassza ki %s azon erőforrását, ahová fájlt kíván küldeni"
+
+msgid "Select a Resource"
+msgstr "Válasszon erőforrást"
+
+#, fuzzy
+msgid "Initiate Media"
+msgstr "Csevegés ke_zdeményezése"
 
 msgid "config:  Configure a chat room."
 msgstr "config:   Csevegőszoba beállítása."
@@ -4600,6 +4758,21 @@ msgstr "Hiba a(z) %s csevegéshez csatlakozás közben"
 msgid "Error in chat %s"
 msgstr "Hiba a(z) %s csevegésben"
 
+#, fuzzy
+msgid "An error occured on the in-band bytestream transfer\n"
+msgstr "Hiba történt a fájl megnyitása közben."
+
+#, fuzzy
+msgid "Transfer was closed."
+msgstr "A fájlátvitel meghiúsult"
+
+#, fuzzy
+msgid "Failed to open the file"
+msgstr "Nem sikerült megnyitni a(z) „%s” fájlt: %s"
+
+msgid "Failed to open in-band bytestream"
+msgstr ""
+
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -4626,9 +4799,6 @@ msgstr ""
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Válassza ki %s azon erőforrását, ahová fájlt kíván küldeni"
-
-msgid "Select a Resource"
-msgstr "Válasszon erőforrást"
 
 msgid "Edit User Mood"
 msgstr "Felhasználói hangulat szerkesztése"
@@ -6441,7 +6611,7 @@ msgstr ""
 "betűvel kell kezdődniük és betűket, számokat, szóközöket, vagy csak számokat "
 "tartalmazhatnak."
 
-#. Unregistered screen name
+#. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "Érvénytelen felhasználónév."
@@ -6457,7 +6627,7 @@ msgstr "A fiókja jelenleg fel van függesztve."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Az AOL azonnali üzenő szolgáltatás átmenetileg nem érhető el."
 
-#. screen name connecting too frequently
+#. username connecting too frequently
 #. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6660,7 +6830,7 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Nem kapott meg %hu üzenetet a következőtől: %s, ismeretlen okból."
 msgstr[1] "Nem kapott meg %hu üzenetet a következőtől: %s, ismeretlen okból."
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Az üzenetet nem lehet elküldeni: %s"
@@ -7253,6 +7423,38 @@ msgstr "Frissítés"
 msgid "Could not change buddy information."
 msgstr "A partnerinformációk nem módosíthatók."
 
+msgid "Mobile"
+msgstr "Mobil"
+
+msgid "Note"
+msgstr "Megjegyzés"
+
+#. callback
+#, fuzzy
+msgid "Buddy Memo"
+msgstr "Partnerfeljegyzés módosítása"
+
+msgid "Change his/her memo as you like"
+msgstr ""
+
+#, fuzzy
+msgid "_Modify"
+msgstr "Módosítás"
+
+#, fuzzy
+msgid "Memo Modify"
+msgstr "Módosítás"
+
+#, fuzzy
+msgid "Server says:"
+msgstr "A kiszolgáló foglalt"
+
+msgid "Your request was accepted."
+msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
+
 #, c-format
 msgid "%u requires verification"
 msgstr "%u ellenőrzést igényel"
@@ -7564,6 +7766,9 @@ msgstr "<p><b>Köszönetnyilvánítás</b>:<br>\n"
 msgid "<p><b>Scrupulous Testers</b>:<br>\n"
 msgstr "<p><b>Lelkiismeretes tesztelők</b>:<br>\n"
 
+msgid "and more, please let me know... thank you!))"
+msgstr ""
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>és a háttéremberek...</i><br>\n"
 
@@ -7699,7 +7904,6 @@ msgstr ""
 "Ismeretlen válaszkód bejelentkezéskor (0x%02X):\n"
 "%s"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
 msgstr "Nem lehet kapcsolódni."
 
@@ -8610,9 +8814,6 @@ msgstr "Szervezet"
 msgid "Unit"
 msgstr "Egység"
 
-msgid "Note"
-msgstr "Megjegyzés"
-
 msgid "Join Chat"
 msgstr "Csatlakozás csevegéshez"
 
@@ -9320,194 +9521,11 @@ msgid "Auth Domain"
 msgstr "Tartomány hitelesítése"
 
 #, c-format
-msgid "Looking up %s"
-msgstr "%s keresése"
-
-#, c-format
-msgid "Connect to %s failed"
-msgstr "Kapcsolódás sikertelen a következőhöz: %s"
-
-#, c-format
-msgid "Signon: %s"
-msgstr "Bejelentkezés: %s"
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Nem lehet írni a(z) %s fájlba."
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Nem lehet olvasni a(z) %s fájlt."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "Az üzenet túl hosszú, az utolsó %s bájt csonkítva."
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s jelenleg nincs bejelentkezve."
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "%s figyelmeztetése nincs engedélyezve."
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr ""
-"Egy üzenet el lett dobva, Ön túllépte a kiszolgáló átviteli sebességhatárát."
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "Nem lehet csevegni a következőben: %s."
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "Túl gyorsan küld üzeneteket a következőnek: %s."
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "Nem kapott meg egy üzenetet a következőtől: %s, mert az túl nagy volt."
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr ""
-"Nem kapott meg egy üzenetet a következőtől: %s, mert a feladó túl gyorsan "
-"küldte."
-
-#, c-format
-msgid "Failure."
-msgstr "Hiba."
-
-#, c-format
-msgid "Too many matches."
-msgstr "Túl sok találat."
-
-#, c-format
-msgid "Need more qualifiers."
-msgstr "Több feltétel szükséges."
-
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr "Könyvtárszolgáltatás átmenetileg nem érhető el."
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr "E-mail keresés korlátozva."
-
-#, c-format
-msgid "Keyword ignored."
-msgstr "Kulcsszó figyelmen kívül hagyva."
-
-#, c-format
-msgid "No keywords."
-msgstr "Nincsenek kulcsszavak."
-
-#, c-format
-msgid "User has no directory information."
-msgstr "A felhasználó nem rendelkezik címtár-információkkal."
-
-#, c-format
-msgid "Country not supported."
-msgstr "Nem támogatott ország."
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Ismeretlen hiba: %s."
-
-#, c-format
-msgid "Incorrect username or password."
-msgstr "Helytelen felhasználónév vagy jelszó."
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr "A szolgáltatás átmenetileg nem érhető el."
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr "A figyelmeztetési szintje jelenleg túl magas a bejelentkezéshez."
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-"Túl gyakran jelentkezik be/ki. Várjon tíz percet, és próbálja meg újra. Ha "
-"tovább folytatja, akkor még tovább kell majd várnia."
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "Ismeretlen bejelentkezési hiba történt: %s."
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Ismeretlen hiba történt: %d. Információ: %s"
-
-msgid "Invalid Groupname"
-msgstr "Érvénytelen csoportnév"
-
-msgid "Connection Closed"
-msgstr "Kapcsolat lezárva"
-
-msgid "Waiting for reply..."
-msgstr "Várakozás válaszra…"
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "A TOC ismét működőképes. Mostantól újra küldhet üzeneteket."
-
-msgid "Password Change Successful"
-msgstr "Jelszó sikeresen megváltoztatva"
-
-msgid "_Group:"
-msgstr "_Csoport:"
-
-msgid "Get Dir Info"
-msgstr "Könyvtárinformációk lekérése"
-
-msgid "Set Dir Info"
-msgstr "Könyvtárinformációk beállítása"
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr "%s nem nyitható meg írásra!"
-
-msgid "File transfer failed; other side probably canceled."
-msgstr "A fájlátvitel sikertelen; valószínűleg a másik oldal megszakította."
-
-msgid "Could not connect for transfer."
-msgstr "Az átvitelhez nem sikerült a kapcsolatot létrehozni."
-
-msgid "Could not write file header.  The file will not be transferred."
-msgstr "A fájl fejlécét nem sikerült kiírni. A fájl nem lesz elküldve."
-
-msgid "Save As..."
-msgstr "Mentés másként…"
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] "%s kéri %s partnert %d fájl fogadására: %s (%.2f %s)%s%s"
-msgstr[1] "%s kéri %s partnert %d fájl fogadására: %s (%.2f %s)%s%s"
-
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s egy fájl elküldésére kéri"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "TOC Protocol Plugin"
-msgstr "TOC protokollbővítmény"
-
-#, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr "%s webkamera-meghívást küldött, ami még nem támogatott."
+
+msgid "Your SMS was not delivered"
+msgstr ""
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Az Ön Yahoo! üzenete nem lett elküldve."
@@ -10114,9 +10132,6 @@ msgstr "Ne zavarjanak"
 msgid "Extended away"
 msgstr "Bővített távollét"
 
-msgid "Mobile"
-msgstr "Mobil"
-
 msgid "Listening to music"
 msgstr "Zenét hallgat"
 
@@ -10157,18 +10172,6 @@ msgstr "+++ %s már nem inaktív"
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "Hiba %s olvasásakor"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
-"Hiba lépett fel a(z) %s feldolgozása közben. Ezek nem lettek betöltve, a "
-"régi fájl %s~ néven lett elmentve."
 
 msgid "Calculating..."
 msgstr "Számítás…"
@@ -10244,6 +10247,14 @@ msgstr "Hiba %s írása közben: %s"
 msgid "Unable to connect to %s: %s"
 msgstr "Nem lehet a következőhöz kapcsolódni: %s: %s"
 
+#, fuzzy, c-format
+msgid ""
+"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
+"found."
+msgstr ""
+"A kiszolgáló megköveteli a TLS/SSL használatát a bejelentkezéshez, de ezek "
+"támogatása nem található."
+
 #, c-format
 msgid " - %s"
 msgstr " – %s"
@@ -10276,6 +10287,18 @@ msgstr "Kapcsolat visszautasítva."
 #, c-format
 msgid "Address already in use."
 msgstr "A cím már használatban van."
+
+#, c-format
+msgid "Error Reading %s"
+msgstr "Hiba %s olvasásakor"
+
+#, fuzzy, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+"Hiba lépett fel a(z) %s feldolgozása közben. Ezek nem lettek betöltve, a "
+"régi fájl %s~ néven lett elmentve."
 
 msgid "Internet Messenger"
 msgstr "Azonnali üzenetküldés"
@@ -10319,10 +10342,8 @@ msgstr "Értesítések új le_vélre"
 msgid "Use this buddy _icon for this account:"
 msgstr "Ezen _partnerikon használata a fiókhoz:"
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "%s beállításai"
+msgid "_Advanced"
+msgstr "_Haladó"
 
 msgid "Use GNOME Proxy Settings"
 msgstr "GNOME proxybeállítások használata"
@@ -10357,9 +10378,6 @@ msgstr "ha igazán közelről nézi"
 msgid "you can see the butterflies mating"
 msgstr "láthatja a pillangók nászát"
 
-msgid "Proxy Options"
-msgstr "Proxy beállításai"
-
 msgid "Proxy _type:"
 msgstr "Proxy _típusa:"
 
@@ -10387,8 +10405,9 @@ msgstr "_Alap"
 msgid "Create _this new account on the server"
 msgstr "Ezen új fió_k létrehozása a kiszolgálón"
 
-msgid "_Advanced"
-msgstr "_Haladó"
+#, fuzzy
+msgid "_Proxy"
+msgstr "Proxy"
 
 msgid "Enabled"
 msgstr "Engedélyezve"
@@ -10466,6 +10485,17 @@ msgstr "_Info"
 
 msgid "I_M"
 msgstr "Ü_zenet"
+
+#, fuzzy
+msgid "_Audio Call"
+msgstr "Cse_vegés hozzáadása"
+
+msgid "Audio/_Video Call"
+msgstr ""
+
+#, fuzzy
+msgid "_Video Call"
+msgstr "Videócsevegés"
 
 msgid "_Send File..."
 msgstr "_Fájl küldése…"
@@ -10603,6 +10633,10 @@ msgstr "/Eszközök/_Partnerfigyelmeztetések"
 msgid "/Tools/_Certificates"
 msgstr "/Eszközök/_Tanúsítványok"
 
+#, fuzzy
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Eszközök/Mosol_y"
+
 msgid "/Tools/Plu_gins"
 msgstr "/Eszközök/Bő_vítmények"
 
@@ -10611,9 +10645,6 @@ msgstr "/Eszközök/_Beállítások"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Eszközök/Ma_gánszféra"
-
-msgid "/Tools/Smile_y"
-msgstr "/Eszközök/Mosol_y"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Eszközök/_Fájlátvitelek"
@@ -10732,8 +10763,8 @@ msgstr "Kézi"
 msgid "By status"
 msgstr "Állapot szerint"
 
-msgid "By log size"
-msgstr "Napló mérete szerint"
+msgid "By recent log activity"
+msgstr ""
 
 #, c-format
 msgid "%s disconnected"
@@ -10748,6 +10779,9 @@ msgstr "Újracsatlakozás"
 
 msgid "Re-enable"
 msgstr "Újraengedélyezés"
+
+msgid "SSL FAQs"
+msgstr ""
 
 msgid "Welcome back!"
 msgstr "Üdvözöljük újra!"
@@ -10837,6 +10871,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "Ál_név:"
 
+msgid "_Group:"
+msgstr "_Csoport:"
+
 msgid "Auto_join when account becomes online."
 msgstr "Automatikus _csatlakozás a fiók elérhetővé válásakor."
 
@@ -10888,14 +10925,6 @@ msgstr ""
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "Partner meghívása a csevegőszobába"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
-"Adja meg annak a partnernek a nevét, akit meg szeretne hívni, egy "
-"tetszőleges meghívóüzenettel együtt."
 
 msgid "_Buddy:"
 msgstr "_Partner:"
@@ -10971,6 +11000,22 @@ msgstr "/Társalgás/_Mentés másként…"
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Társalgás/Elő_zmények törlése"
 
+#, fuzzy
+msgid "/Conversation/M_edia"
+msgstr "/Társalgás/_Több"
+
+#, fuzzy
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Társalgás/_Több"
+
+#, fuzzy
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Társalgás/_Több"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Társalgás/Nap_ló megtekintése"
+
 msgid "/Conversation/Se_nd File..."
 msgstr "/Társalgás/Fájl kül_dése…"
 
@@ -11042,6 +11087,18 @@ msgstr "/Társalgás"
 
 msgid "/Conversation/View Log"
 msgstr "/Társalgás/Napló megtekintése"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Társalgás/Több"
+
+#, fuzzy
+msgid "/Conversation/Media/Video Call"
+msgstr "/Társalgás/Napló megtekintése"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Társalgás/Több"
 
 msgid "/Conversation/Send File..."
 msgstr "/Társalgás/Fájl küldése…"
@@ -11226,6 +11283,9 @@ msgstr "grafikus"
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
+msgid "voice and video"
+msgstr ""
+
 msgid "support"
 msgstr "támogató"
 
@@ -11364,6 +11424,10 @@ msgstr "grúz"
 
 msgid "Ubuntu Georgian Translators"
 msgstr "Grúz Ubuntu fordítók"
+
+#, fuzzy
+msgid "Khmer"
+msgstr "Egyéb"
 
 msgid "Kannada"
 msgstr "kannada"
@@ -11832,15 +11896,6 @@ msgstr "A gépelésértesítés betűkészlete"
 msgid "Enable typing notification"
 msgstr "Gépelésértesítés engedélyezése"
 
-msgid "_Copy Email Address"
-msgstr "E-mail cím _másolása"
-
-msgid "_Open Link in Browser"
-msgstr "Hivatk_ozás megnyitása böngészőben"
-
-msgid "_Copy Link Location"
-msgstr "_Hivatkozás helyének másolása"
-
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -12087,13 +12142,14 @@ msgstr "A _naplómappa böngészése"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Próbálja a „%s -h” parancsot további információkért.\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12116,13 +12172,14 @@ msgstr ""
 "  --display=KÉPERNYŐ  a használandó X megjelenítő\n"
 "  -v, --version       az aktuális verzió megjelenítése és kilépés\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12180,11 +12237,23 @@ msgstr "Pidgin"
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Kilépés, mert már fut egy másik libpurple kliens.\n"
 
-msgid "Open All Messages"
-msgstr "Összes üzenet megnyitása"
+msgid "/_Media"
+msgstr ""
 
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Levele érkezett!</span>"
+msgid "/Media/_Hangup"
+msgstr ""
+
+#, fuzzy
+msgid "Calling..."
+msgstr "Számítás…"
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -12212,6 +12281,27 @@ msgstr "Hiba „%s” indításakor: %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "A „Kézi” böngészőparancsot választotta, de nem adott meg parancsot."
+
+msgid "Open All Messages"
+msgstr "Összes üzenet megnyitása"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Levele érkezett!</span>"
+
+#, fuzzy
+msgid "New Pounces"
+msgstr "Új partnerfigyelmeztetés"
+
+msgid "Dismiss"
+msgstr ""
+
+#, fuzzy
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Levele érkezett!</span>"
+
+#, fuzzy
+msgid "No message"
+msgstr "Ismeretlen üzenet"
 
 msgid "The following plugins will be unloaded."
 msgstr "A következő bővítmények lesznek eltávolítva."
@@ -12260,6 +12350,10 @@ msgstr "<b>Bővítmény részletei</b>"
 
 msgid "Select a file"
 msgstr "Fájl kiválasztása"
+
+#, fuzzy
+msgid "Modify Buddy Pounce"
+msgstr "Partnerfigyelmeztetés szerkesztése"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -12331,6 +12425,50 @@ msgstr "_Ismétlődő"
 msgid "Pounce Target"
 msgstr "Figyelmeztetés címzettje"
 
+#, fuzzy, c-format
+msgid "Started typing"
+msgstr "Elkezd gépelni"
+
+#, fuzzy, c-format
+msgid "Paused while typing"
+msgstr "Felfüggeszti a gépelést"
+
+#, fuzzy, c-format
+msgid "Signed on"
+msgstr "Bejelentkezik"
+
+#, fuzzy, c-format
+msgid "Returned from being idle"
+msgstr "%s inaktív állapota megszűnt (%s)"
+
+#, fuzzy, c-format
+msgid "Returned from being away"
+msgstr "Visszatér távollétből"
+
+#, fuzzy, c-format
+msgid "Stopped typing"
+msgstr "Abbahagyta a gépelést"
+
+#, fuzzy, c-format
+msgid "Signed off"
+msgstr "Kijelentkezik"
+
+#, fuzzy, c-format
+msgid "Became idle"
+msgstr "Inaktív lesz"
+
+#, fuzzy, c-format
+msgid "Went away"
+msgstr "Ha távol vagyok"
+
+#, fuzzy, c-format
+msgid "Sent a message"
+msgstr "Üzenet küldése"
+
+#, fuzzy, c-format
+msgid "Unknown.... Please report this!"
+msgstr "Ismeretlen figyelmeztetési esemény. Kérjük jelentse ezt!"
+
 msgid "Smiley theme failed to unpack."
 msgstr "A hangulatjel-téma kicsomagolása meghiúsult."
 
@@ -12353,6 +12491,12 @@ msgstr "Gyorsbillentyűk"
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Társalgások bezárása az _Escape billentyűvel"
 
+#. Buddy List Themes
+#, fuzzy
+msgid "Buddy List Theme"
+msgstr "Partnerlista"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "Rendszertálca-ikon"
 
@@ -12463,9 +12607,6 @@ msgstr "Nem indítható a proxykonfigurációs program."
 msgid "Cannot start browser configuration program."
 msgstr "Nem indítható a böngészőkonfigurációs program."
 
-msgid "ST_UN server:"
-msgstr "ST_UN kiszolgáló:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Például: stunserver.org</span>"
 
@@ -12489,6 +12630,10 @@ msgstr "_Első port:"
 
 msgid "_End port:"
 msgstr "_Utolsó port:"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr ""
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy-kiszolgáló és böngésző"
@@ -12680,11 +12825,11 @@ msgstr "Ha távol van és inaktív"
 msgid "Auto-away"
 msgstr "Automatikus távollét"
 
-msgid "Change status when _idle"
-msgstr "Állapot módosítása, _ha inaktív"
-
 msgid "_Minutes before becoming idle:"
 msgstr "Üresjárat ennyi _perc után:"
+
+msgid "Change status when _idle"
+msgstr "Állapot módosítása, _ha inaktív"
 
 msgid "Change _status to:"
 msgstr "Állap_ot módosítása a következőre:"
@@ -12835,6 +12980,12 @@ msgstr "Menté_s és használat"
 msgid "Status for %s"
 msgstr "%s állapota"
 
+#.
+#. * TODO: We should enable/disable the add button based on
+#. *       whether the user has entered all required data.  That
+#. *       would eliminate the need for this check and provide a
+#. *       better user experience.
+#.
 msgid "Custom Smiley"
 msgstr "Egyéni hangulatjel"
 
@@ -12844,15 +12995,15 @@ msgstr "További adatok szükségesek"
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr "Adja meg a hangulatjelhez társítandó billentyűparancsot."
 
-msgid "Duplicate Shortcut"
-msgstr "Kettőzött billentyűparancs"
-
+#, fuzzy, c-format
 msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 "Már létezik egyéni hangulatjel a kiválasztott billentyűparancshoz. Adjon meg "
 "másik billentyűparancsot."
+
+msgid "Duplicate Shortcut"
+msgstr "Kettőzött billentyűparancs"
 
 msgid "Please select an image for the smiley."
 msgstr "Válassza ki a képet a hangulatjelhez."
@@ -12863,15 +13014,21 @@ msgstr "Hangulatjel szerkesztése"
 msgid "Add Smiley"
 msgstr "Hangulatjel hozzáadása"
 
-msgid "Smiley _Image"
-msgstr "Hangulatjel _kép"
+#, fuzzy
+msgid "_Image:"
+msgstr "Ké_p"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr "_Hangulatjel billentyűparancsa"
+#. Shortcut text
+#, fuzzy
+msgid "S_hortcut text:"
+msgstr "Billentyűparancs"
 
 msgid "Smiley"
 msgstr "Hangulatjel"
+
+#, fuzzy
+msgid "Shortcut Text"
+msgstr "Billentyűparancs"
 
 msgid "Custom Smiley Manager"
 msgstr "Egyénihangulatjel-kezelő"
@@ -12998,6 +13155,16 @@ msgid ""
 msgstr ""
 "A(z) „%s” kép betöltése sikertelen: az ok nem ismert, valószínűleg sérült a "
 "képfájl"
+
+#, fuzzy
+msgid "_Open Link"
+msgstr "Hivatk_ozás megnyitása:"
+
+msgid "_Copy Link Location"
+msgstr "_Hivatkozás helyének másolása"
+
+msgid "_Copy Email Address"
+msgstr "E-mail cím _másolása"
 
 msgid "Save File"
 msgstr "Fájl mentése"
@@ -14026,3 +14193,179 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
+
+#~ msgid "Invite message"
+#~ msgstr "Meghívóüzenet"
+
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "Adja meg a meghívandó partner nevét,\n"
+#~ "egy elhagyható meghívóüzenettel együtt."
+
+#~ msgid "Looking up %s"
+#~ msgstr "%s keresése"
+
+#~ msgid "Connect to %s failed"
+#~ msgstr "Kapcsolódás sikertelen a következőhöz: %s"
+
+#~ msgid "Signon: %s"
+#~ msgstr "Bejelentkezés: %s"
+
+#~ msgid "Unable to write file %s."
+#~ msgstr "Nem lehet írni a(z) %s fájlba."
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "Nem lehet olvasni a(z) %s fájlt."
+
+#~ msgid "Message too long, last %s bytes truncated."
+#~ msgstr "Az üzenet túl hosszú, az utolsó %s bájt csonkítva."
+
+#~ msgid "%s not currently logged in."
+#~ msgstr "%s jelenleg nincs bejelentkezve."
+
+#~ msgid "Warning of %s not allowed."
+#~ msgstr "%s figyelmeztetése nincs engedélyezve."
+
+#~ msgid ""
+#~ "A message has been dropped, you are exceeding the server speed limit."
+#~ msgstr ""
+#~ "Egy üzenet el lett dobva, Ön túllépte a kiszolgáló átviteli "
+#~ "sebességhatárát."
+
+#~ msgid "Chat in %s is not available."
+#~ msgstr "Nem lehet csevegni a következőben: %s."
+
+#~ msgid "You are sending messages too fast to %s."
+#~ msgstr "Túl gyorsan küld üzeneteket a következőnek: %s."
+
+#~ msgid "You missed an IM from %s because it was too big."
+#~ msgstr ""
+#~ "Nem kapott meg egy üzenetet a következőtől: %s, mert az túl nagy volt."
+
+#~ msgid "You missed an IM from %s because it was sent too fast."
+#~ msgstr ""
+#~ "Nem kapott meg egy üzenetet a következőtől: %s, mert a feladó túl gyorsan "
+#~ "küldte."
+
+#~ msgid "Failure."
+#~ msgstr "Hiba."
+
+#~ msgid "Too many matches."
+#~ msgstr "Túl sok találat."
+
+#~ msgid "Need more qualifiers."
+#~ msgstr "Több feltétel szükséges."
+
+#~ msgid "Dir service temporarily unavailable."
+#~ msgstr "Könyvtárszolgáltatás átmenetileg nem érhető el."
+
+#~ msgid "Email lookup restricted."
+#~ msgstr "E-mail keresés korlátozva."
+
+#~ msgid "Keyword ignored."
+#~ msgstr "Kulcsszó figyelmen kívül hagyva."
+
+#~ msgid "No keywords."
+#~ msgstr "Nincsenek kulcsszavak."
+
+#~ msgid "User has no directory information."
+#~ msgstr "A felhasználó nem rendelkezik címtár-információkkal."
+
+#~ msgid "Country not supported."
+#~ msgstr "Nem támogatott ország."
+
+#~ msgid "Failure unknown: %s."
+#~ msgstr "Ismeretlen hiba: %s."
+
+#~ msgid "Incorrect username or password."
+#~ msgstr "Helytelen felhasználónév vagy jelszó."
+
+#~ msgid "The service is temporarily unavailable."
+#~ msgstr "A szolgáltatás átmenetileg nem érhető el."
+
+#~ msgid "Your warning level is currently too high to log in."
+#~ msgstr "A figyelmeztetési szintje jelenleg túl magas a bejelentkezéshez."
+
+#~ msgid ""
+#~ "You have been connecting and disconnecting too frequently.  Wait ten "
+#~ "minutes and try again.  If you continue to try, you will need to wait "
+#~ "even longer."
+#~ msgstr ""
+#~ "Túl gyakran jelentkezik be/ki. Várjon tíz percet, és próbálja meg újra. "
+#~ "Ha tovább folytatja, akkor még tovább kell majd várnia."
+
+#~ msgid "An unknown signon error has occurred: %s."
+#~ msgstr "Ismeretlen bejelentkezési hiba történt: %s."
+
+#~ msgid "An unknown error, %d, has occurred.  Info: %s"
+#~ msgstr "Ismeretlen hiba történt: %d. Információ: %s"
+
+#~ msgid "Invalid Groupname"
+#~ msgstr "Érvénytelen csoportnév"
+
+#~ msgid "Connection Closed"
+#~ msgstr "Kapcsolat lezárva"
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "Várakozás válaszra…"
+
+#~ msgid "TOC has come back from its pause. You may now send messages again."
+#~ msgstr "A TOC ismét működőképes. Mostantól újra küldhet üzeneteket."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "Jelszó sikeresen megváltoztatva"
+
+#~ msgid "Get Dir Info"
+#~ msgstr "Könyvtárinformációk lekérése"
+
+#~ msgid "Set Dir Info"
+#~ msgstr "Könyvtárinformációk beállítása"
+
+#~ msgid "Could not open %s for writing!"
+#~ msgstr "%s nem nyitható meg írásra!"
+
+#~ msgid "File transfer failed; other side probably canceled."
+#~ msgstr "A fájlátvitel sikertelen; valószínűleg a másik oldal megszakította."
+
+#~ msgid "Could not connect for transfer."
+#~ msgstr "Az átvitelhez nem sikerült a kapcsolatot létrehozni."
+
+#~ msgid "Could not write file header.  The file will not be transferred."
+#~ msgstr "A fájl fejlécét nem sikerült kiírni. A fájl nem lesz elküldve."
+
+#~ msgid "Save As..."
+#~ msgstr "Mentés másként…"
+
+#~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+#~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+#~ msgstr[0] "%s kéri %s partnert %d fájl fogadására: %s (%.2f %s)%s%s"
+#~ msgstr[1] "%s kéri %s partnert %d fájl fogadására: %s (%.2f %s)%s%s"
+
+#~ msgid "%s requests you to send them a file"
+#~ msgstr "%s egy fájl elküldésére kéri"
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "TOC protokollbővítmény"
+
+#~ msgid "%s Options"
+#~ msgstr "%s beállításai"
+
+#~ msgid "Proxy Options"
+#~ msgstr "Proxy beállításai"
+
+#~ msgid "By log size"
+#~ msgstr "Napló mérete szerint"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "Hivatk_ozás megnyitása böngészőben"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "ST_UN kiszolgáló:"
+
+#~ msgid "Smiley _Image"
+#~ msgstr "Hangulatjel _kép"
+
+#~ msgid "Smiley S_hortcut"
+#~ msgstr "_Hangulatjel billentyűparancsa"

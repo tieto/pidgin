@@ -187,9 +187,8 @@ check_idleness(void)
 		purple_savedstatus_set_idleaway(TRUE);
 		no_away = FALSE;
 	}
-	else if (!no_away && time_idle < away_seconds)
+	else if (purple_savedstatus_is_idleaway() && time_idle < away_seconds)
 	{
-		no_away = TRUE;
 		purple_savedstatus_set_idleaway(FALSE);
 		if (time_until_next_idle_event == 0 || (away_seconds - time_idle) < time_until_next_idle_event)
 			time_until_next_idle_event = away_seconds - time_idle;

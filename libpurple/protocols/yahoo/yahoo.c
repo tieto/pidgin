@@ -2705,13 +2705,20 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 	}
 
 	/* remove timeout */
-	purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
-	yd->yahoo_p2p_server_timeout_handle = 0;
+	if (yd->yahoo_p2p_server_timeout_handle) {
+		purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
+		yd->yahoo_p2p_server_timeout_handle = 0;
+	}
 
 	/* remove watcher and close p2p server */
-	purple_input_remove(yd->yahoo_p2p_server_watcher);
-	close(yd->yahoo_local_p2p_server_fd);
-	yd->yahoo_local_p2p_server_fd = -1;
+	if (yd->yahoo_p2p_server_watcher) {
+		purple_input_remove(yd->yahoo_p2p_server_watcher);
+		yd->yahoo_p2p_server_watcher = 0;
+	}
+	if (yd->yahoo_local_p2p_server_fd >= 0) {
+		close(yd->yahoo_local_p2p_server_fd);
+		yd->yahoo_local_p2p_server_fd = -1;
+	}
 
 	/* Add an Input Read event to the file descriptor */
 	p2p_data->input_event = purple_input_add(acceptfd, PURPLE_INPUT_READ, yahoo_p2p_read_pkt_cb, data);
@@ -3769,13 +3776,20 @@ static void yahoo_close(PurpleConnection *gc) {
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
 	purple_timeout_remove(yd->yahoo_p2p_timer);
-	if(yd->yahoo_p2p_server_timeout_handle != 0)
+	if(yd->yahoo_p2p_server_timeout_handle != 0) {
 		purple_timeout_remove(yd->yahoo_p2p_server_timeout_handle);
+		yd->yahoo_p2p_server_timeout_handle = 0;
+	}
 
 	/* close p2p server if it is waiting for a peer to connect */
-	purple_input_remove(yd->yahoo_p2p_server_watcher);
-	close(yd->yahoo_local_p2p_server_fd);
-	yd->yahoo_local_p2p_server_fd = -1;
+	if (yd->yahoo_p2p_server_watcher) {
+		purple_input_remove(yd->yahoo_p2p_server_watcher);
+		yd->yahoo_p2p_server_watcher = 0;
+	}
+	if (yd->yahoo_local_p2p_server_fd >= 0) {
+		close(yd->yahoo_local_p2p_server_fd);
+		yd->yahoo_local_p2p_server_fd = -1;
+	}
 
 	g_hash_table_destroy(yd->sms_carrier);
 	g_hash_table_destroy(yd->peers);
@@ -4468,7 +4482,6 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 					" bytes, %ld characters.  Max is %d bytes, %d chars."
 					"  Message is '%s'.\n", lenb, lenc, YAHOO_MAX_MESSAGE_LENGTH_BYTES,
 					YAHOO_MAX_MESSAGE_LENGTH_CHARS, msg2);
-			yahoo_packet_free(pkt);
 			g_free(msg);
 			g_free(msg2);
 			return -E2BIG;

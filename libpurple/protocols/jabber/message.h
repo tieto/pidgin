@@ -78,11 +78,9 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 int jabber_message_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
 
 unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state);
-void jabber_message_conv_closed(JabberStream *js, const char *who);
 
-gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace);
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace);
 
-gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *shortname,
-										 const gchar *namespace);
+gboolean jabber_custom_smileys_isenabled(JabberStream *js, const const gchar *namespace);
 
 #endif /* PURPLE_JABBER_MESSAGE_H_ */
