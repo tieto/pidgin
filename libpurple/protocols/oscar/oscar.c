@@ -3560,8 +3560,10 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 		gchar *to = g_strdup_printf("%s%s%s", purple_account_get_username(purple_connection_get_account(gc)),
 									emailinfo->domain ? "@" : "",
 									emailinfo->domain ? emailinfo->domain : "");
+		const char *tos[2] = { to };
+		const char *urls[2] = {emailinfo->url }; 
 		if (emailinfo->unread && havenewmail)
-			purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
+			purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, tos, urls, NULL, NULL);
 		g_free(to);
 	}
 

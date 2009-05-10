@@ -1333,10 +1333,10 @@ static void yahoo_process_mail(PurpleConnection *gc, struct yahoo_packet *pkt)
 		g_free(dec_subj);
 		g_free(from);
 	} else if (count > 0) {
-		const char *to = purple_account_get_username(account);
-		const char *url = yahoo_mail_url;
+		const char *tos[2] = { purple_account_get_username(account) };
+		const char *urls[2] = { yahoo_mail_url };
 
-		purple_notify_emails(gc, count, FALSE, NULL, NULL, &to, &url,
+		purple_notify_emails(gc, count, FALSE, NULL, NULL, tos, urls,
 						   NULL, NULL);
 	}
 }
