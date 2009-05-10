@@ -763,7 +763,8 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 
 	/* Acknowledge the notification */
 	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
-	xmlnode_set_attrib(iq->node, "to", from);
+	if (from)
+		xmlnode_set_attrib(iq->node, "to", from);
 	xmlnode_set_attrib(iq->node, "id", id);
 	jabber_iq_send(iq);
 
