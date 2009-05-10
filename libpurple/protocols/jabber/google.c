@@ -735,7 +735,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	g_free(to_name);
 	g_free(tos);
 	g_free(froms);
-	for (i = 0; i < count; i++)
+	for (i = 0; i < returned_count; i++)
 		g_free(subjects[i]);
 	g_free(subjects);
 	g_free(urls);
