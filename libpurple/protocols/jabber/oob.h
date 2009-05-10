@@ -1,5 +1,5 @@
 /**
- * @file jutil.h utility functions
+ * @file oob.h out-of-band transfer functions
  *
  * purple
  *

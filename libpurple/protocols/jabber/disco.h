@@ -1,5 +1,5 @@
 /**
- * @file iq.h JabberID handlers
+ * @file disco.h service discovery handlers
  *
  * purple
  *
