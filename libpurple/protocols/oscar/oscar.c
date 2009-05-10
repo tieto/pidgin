@@ -3571,8 +3571,10 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 				purple_account_get_username(account),
 				emailinfo->domain ? "@" : "",
 				emailinfo->domain ? emailinfo->domain : "");
+		const char *tos[2] = { to };
+		const char *urls[2] = { emailinfo->url };
 		purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL,
-				(const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
+				tos, urls, NULL, NULL);
 		g_free(to);
 	}
 
