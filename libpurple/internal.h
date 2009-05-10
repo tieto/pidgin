@@ -256,10 +256,6 @@ type_name##_get_type (void) \
 
 #endif
 
-#ifndef ARRAY_LENGTH
-#define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof(*arr))
-#endif
-
 /* Safer ways to work with static buffers. When using non-static
  * buffers, either use g_strdup_* functions (preferred) or use
  * g_strlcpy/g_strlcpy directly. */

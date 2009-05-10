@@ -861,10 +861,10 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 		{ "FriendRequest", MSIM_INBOX_FRIEND_REQUEST, "http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests", NULL },
 		{ "PictureComment", MSIM_INBOX_PICTURE_COMMENT, "http://home.myspace.com/index.cfm?fuseaction=user", NULL }
 	};
-	const gchar *froms[ARRAY_LENGTH(message_types) + 1] = { "" },
-		*tos[ARRAY_LENGTH(message_types) + 1] = { "" },
-		*urls[ARRAY_LENGTH(message_types) + 1] = { "" },
-		*subjects[ARRAY_LENGTH(message_types) + 1] = { "" };
+	const gchar *froms[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*tos[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*urls[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*subjects[G_N_ELEMENTS(message_types) + 1] = { "" };
 
 	g_return_if_fail(reply != NULL);
 
@@ -886,7 +886,7 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 
 	n = 0;
 
-	for (i = 0; i < sizeof(message_types) / sizeof(message_types[0]); ++i) {
+	for (i = 0; i < G_N_ELEMENTS(message_types); ++i) {
 		const gchar *key;
 		guint bit;
 
