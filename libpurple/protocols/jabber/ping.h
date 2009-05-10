@@ -1,5 +1,5 @@
 /**
- * @file ping.h utility functions
+ * @file ping.h ping functions
  *
  * purple
  *
