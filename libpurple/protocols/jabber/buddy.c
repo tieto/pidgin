@@ -1741,7 +1741,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 		g_free(full_jid);
 	}
 
-	if (!jb->resources) {
+	if (!jb->resources && strchr(jid, '/') == NULL) {
 		/* user is offline, send a jabber:iq:last to find out last time online */
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
 		xmlnode_set_attrib(iq->node, "to", jid);
