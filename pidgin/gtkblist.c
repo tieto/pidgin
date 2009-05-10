@@ -5276,11 +5276,28 @@ static void
 headline_style_set (GtkWidget *widget,
 		    GtkStyle  *prev_style)
 {
+	GtkStyle *style;
 #if GTK_CHECK_VERSION(2,12,0)
-	/* TODO: Need to figure out how to do this in 2.12+ */
+	GtkWidget *window;
+
+	if (gtkblist->changing_style)
+		return;
+
+	/* This is a hack needed to use the tooltip background colour */
+	window = gtk_window_new(GTK_WINDOW_POPUP);
+	gtk_widget_set_name(window, "gtk-tooltip");
+	gtk_widget_ensure_style(window);
+	style = gtk_widget_get_style(window);
+
+	gtkblist->changing_style = TRUE;
+	gtk_widget_set_style(gtkblist->headline_hbox, style);
+	gtkblist->changing_style = FALSE;
+
+	gtk_widget_destroy(window);
+
+	gtk_widget_queue_draw(gtkblist->headline_hbox);
 #else
 	GtkTooltips *tooltips;
-	GtkStyle *style;
 
 	if (gtkblist->changing_style)
 		return;
