@@ -683,9 +683,9 @@ gen_context(const char *file_name, const char *file_path)
 		size = st.st_size;
 
 	if(!file_name) {
-		base = g_path_get_basename(file_path);
-		u8 = purple_utf8_try_convert(base);
-		g_free(base);
+		gchar *basename = g_path_get_basename(file_path);
+		u8 = purple_utf8_try_convert(basename);
+		g_free(basename);
 		file_name = u8;
 	}
 
