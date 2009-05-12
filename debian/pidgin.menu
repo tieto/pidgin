@@ -1,4 +1,4 @@
-?package(pidgin):needs="X11" section="Apps/Net" \
+?package(pidgin):needs="X11" section="Applications/Network/Communication" \
   title="Pidgin" command="/usr/bin/pidgin" \
   longtitle="Multi-protocol Instant Messaging Client" \
   icon="/usr/share/pixmaps/pidgin-menu.xpm"
