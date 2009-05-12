@@ -1776,7 +1776,14 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 		}
 		else	{
 			/* OK to login, correct information provided */
-			char *url = g_strdup_printf("https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s",token);
+			char *url = NULL;
+			gboolean yahoojp = purple_account_get_bool(purple_connection_get_account(gc),
+				"yahoojp", 0);
+
+			url = g_strdup_printf(yahoojp ?
+					"https://login.yahoo.co.jp/config/pwtoken_login?src=ymsgr&ts=&token=%s" : 
+					"https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s",
+					token);
 			url_data2 = purple_util_fetch_url_request(url, TRUE, "Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, NULL, FALSE, yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
@@ -1786,9 +1793,10 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 
 static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 {
-	PurpleUtilFetchUrlData *url_data;
+	PurpleUtilFetchUrlData *url_data = NULL;
 	struct yahoo_auth_data *auth_data = NULL;
 	char *url = NULL;
+	gboolean yahoojp;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage1\n");
 
@@ -1797,11 +1805,17 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 		return;
 	}
 
+	yahoojp =  purple_account_get_bool(purple_connection_get_account(gc),
+			"yahoojp", 0);
 	auth_data = g_new0(struct yahoo_auth_data, 1);
 	auth_data->gc = gc;
 	auth_data->seed = g_strdup(seed);
 
-	url = g_strdup_printf("https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s",purple_account_get_username(purple_connection_get_account(gc)), purple_connection_get_password(gc), seed);
+	url = g_strdup_printf(yahoojp ?
+			"https://login.yahoo.co.jp/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s" :
+			"https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s",
+			purple_account_get_username(purple_connection_get_account(gc)),
+			purple_connection_get_password(gc), seed);
 
 	url_data = purple_util_fetch_url_request(url, TRUE, "Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, NULL, FALSE, yahoo_auth16_stage1_cb, auth_data);
 	g_free(url);
