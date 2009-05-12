@@ -446,8 +446,8 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *from;
+	const char *type;
 	const char *real_jid = NULL;
 	const char *affiliation = NULL;
 	const char *role = NULL;
@@ -469,8 +469,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *caps = NULL;
 	int idle = 0;
 	gchar *nickname = NULL;
+	gboolean signal_return;
+
+	from = xmlnode_get_attrib(packet, "from");
+	type = xmlnode_get_attrib(packet, "type");
 
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
+		return;
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-presence", js->gc, type, from, packet));
+	if (signal_return)
 		return;
 
 	if(!(jid = jabber_id_new(from)))

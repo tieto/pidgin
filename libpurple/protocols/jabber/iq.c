@@ -42,7 +42,7 @@
 #endif
 
 GHashTable *iq_handlers = NULL;
-
+GHashTable *signal_iq_handlers = NULL;
 
 JabberIq *jabber_iq_new(JabberStream *js, JabberIqType type)
 {
@@ -289,6 +289,16 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	const char *xmlns;
 	const char *iq_type, *id, *from;
 	JabberIqType type = JABBER_IQ_NONE;
+	gboolean signal_return;
+
+	from = xmlnode_get_attrib(packet, "from");
+	id = xmlnode_get_attrib(packet, "id");
+	iq_type = xmlnode_get_attrib(packet, "type");
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-iq", js->gc, iq_type, id, from, packet));
+	if (signal_return)
+		return;
 
 	/*
 	 * child will be either the first tag child or NULL if there is no child.
@@ -300,10 +310,6 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		if (child->type == XMLNODE_TYPE_TAG)
 			break;
 	}
-
-	iq_type = xmlnode_get_attrib(packet, "type");
-	from = xmlnode_get_attrib(packet, "from");
-	id = xmlnode_get_attrib(packet, "id");
 
 	if (iq_type) {
 		if (!strcmp(iq_type, "get"))
@@ -361,11 +367,22 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	/* Apparently not, so lets see if we have a pre-defined handler */
+	/*
+	 * Apparently not, so let's see if we have a pre-defined handler
+	 * or if an outside plugin is interested.
+	 */
 	if(child && (xmlns = xmlnode_get_namespace(child))) {
 		char *key = g_strdup_printf("%s %s", child->name, xmlns);
 		JabberIqHandler *jih = g_hash_table_lookup(iq_handlers, key);
+		int signal_ref = GPOINTER_TO_INT(g_hash_table_lookup(signal_iq_handlers, key));
 		g_free(key);
+
+		if (signal_ref > 0) {
+			signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin, "jabber-watched-iq",
+					js->gc, iq_type, id, from, child));
+			if (signal_return)
+				return;
+		}
 
 		if(jih) {
 			jih(js, from, type, id, child);
@@ -408,9 +425,48 @@ void jabber_iq_register_handler(const char *node, const char *xmlns, JabberIqHan
 	g_hash_table_replace(iq_handlers, key, handlerfunc);
 }
 
+void jabber_iq_signal_register(const gchar *node, const gchar *xmlns)
+{
+	gchar *key;
+	int ref;
+
+	g_return_if_fail(node != NULL && *node != '\0');
+	g_return_if_fail(xmlns != NULL && *xmlns != '\0');
+
+	key = g_strdup_printf("%s %s", node, xmlns);
+	ref = GPOINTER_TO_INT(g_hash_table_lookup(signal_iq_handlers, key));
+	if (ref == 0) {
+		g_hash_table_insert(signal_iq_handlers, key, GINT_TO_POINTER(1));
+	} else {
+		g_hash_table_insert(signal_iq_handlers, key, GINT_TO_POINTER(ref + 1));
+		g_free(key);
+	}
+}
+
+void jabber_iq_signal_unregister(const gchar *node, const gchar *xmlns)
+{
+	gchar *key;
+	int ref;
+
+	g_return_if_fail(node != NULL && *node != '\0');
+	g_return_if_fail(xmlns != NULL && *xmlns != '\0');
+
+	key = g_strdup_printf("%s %s", node, xmlns);
+	ref = GPOINTER_TO_INT(g_hash_table_lookup(signal_iq_handlers, key));
+
+	if (ref == 1) {
+		g_hash_table_remove(signal_iq_handlers, key);
+	} else if (ref > 1) {
+		g_hash_table_insert(signal_iq_handlers, key, GINT_TO_POINTER(ref - 1));
+	}
+
+	g_free(key);
+}
+
 void jabber_iq_init(void)
 {
 	iq_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	signal_iq_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
 	jabber_iq_register_handler("mailbox", "google:mail:notify",
@@ -446,5 +502,6 @@ void jabber_iq_init(void)
 void jabber_iq_uninit(void)
 {
 	g_hash_table_destroy(iq_handlers);
-	iq_handlers = NULL;
+	g_hash_table_destroy(signal_iq_handlers);
+	iq_handlers = signal_iq_handlers = NULL;
 }

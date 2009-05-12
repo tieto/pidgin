@@ -532,15 +532,24 @@ jabber_message_send_data_request(JabberStream *js, PurpleConversation *conv,
 void jabber_message_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberMessage *jm;
-	const char *type;
+	const char *id, *from, *to, *type;
 	xmlnode *child;
+	gboolean signal_return;
+
+	from = xmlnode_get_attrib(packet, "from");
+	id   = xmlnode_get_attrib(packet, "id");
+	to   = xmlnode_get_attrib(packet, "to");
+	type = xmlnode_get_attrib(packet, "type");
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-message", js->gc, type, id, from, to, packet));
+	if (signal_return)
+		return;
 
 	jm = g_new0(JabberMessage, 1);
 	jm->js = js;
 	jm->sent = time(NULL);
 	jm->delayed = FALSE;
-
-	type = xmlnode_get_attrib(packet, "type");
 
 	if(type) {
 		if(!strcmp(type, "normal"))
@@ -559,9 +568,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		jm->type = JABBER_MESSAGE_NORMAL;
 	}
 
-	jm->from = g_strdup(xmlnode_get_attrib(packet, "from"));
-	jm->to = g_strdup(xmlnode_get_attrib(packet, "to"));
-	jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jm->from = g_strdup(from);
+	jm->to   = g_strdup(to);
+	jm->id   = g_strdup(id);
 
 	for(child = packet->child; child; child = child->next) {
 		const char *xmlns = xmlnode_get_namespace(child);

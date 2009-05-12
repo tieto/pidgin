@@ -46,6 +46,8 @@
 #include "data.h"
 #include "ibb.h"
 
+PurplePlugin *jabber_plugin = NULL;
+
 static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
@@ -125,6 +127,8 @@ static PurplePluginProtocolInfo prpl_info =
 
 static gboolean load_plugin(PurplePlugin *plugin)
 {
+	jabber_plugin = plugin;
+
 	purple_signal_register(plugin, "jabber-receiving-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
@@ -140,16 +144,65 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
 
+	purple_signal_register(plugin, "jabber-receiving-message",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 6,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* id */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_STRING), /* to */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+
+	purple_signal_register(plugin, "jabber-receiving-iq",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* id */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+
+	purple_signal_register(plugin, "jabber-watched-iq",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* id */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE)); /* child */
+
+	purple_signal_register(plugin, "jabber-register-namespace-watcher",
+			purple_marshal_VOID__POINTER_POINTER_POINTER,
+			NULL, 2,
+			purple_value_new(PURPLE_TYPE_STRING),  /* node */
+			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+
+	purple_signal_register(plugin, "jabber-unregister-namespace-watcher",
+			purple_marshal_VOID__POINTER_POINTER_POINTER,
+			NULL, 2,
+			purple_value_new(PURPLE_TYPE_STRING),  /* node */
+			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+
+	purple_signal_connect(plugin, "jabber-register-namespace-watcher",
+			plugin, PURPLE_CALLBACK(jabber_iq_signal_register), NULL);
+	purple_signal_connect(plugin, "jabber-unregister-namespace-watcher",
+			plugin, PURPLE_CALLBACK(jabber_iq_signal_unregister), NULL);
+
+	purple_signal_register(plugin, "jabber-receiving-presence",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 4,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+
 	return TRUE;
 }
 
 static gboolean unload_plugin(PurplePlugin *plugin)
 {
-	purple_signal_unregister(plugin, "jabber-receiving-xmlnode");
-
-	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
-
-	purple_signal_unregister(plugin, "jabber-sending-text");
+	purple_signals_unregister_by_instance(plugin);
 
 	/* reverse order of init_plugin */
 	jabber_bosh_uninit();
@@ -165,6 +218,8 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 
 	/* Stay on target...stay on target... Almost there... */
 	jabber_uninit_plugin();
+
+	jabber_plugin = NULL;
 
 	return TRUE;
 }

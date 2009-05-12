@@ -15,6 +15,7 @@ version 2.6.0 (??/??/2009):
 			* account-destroying
 		* blist-node-added and blist-node-removed signals (see
 		  blist-signals.dox)
+		* Jabber plugin signals (see jabber-signals.dox)
 		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
