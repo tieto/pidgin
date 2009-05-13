@@ -921,11 +921,12 @@ jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
 
 static gboolean
 jabber_conv_support_custom_smileys(const PurpleConnection *gc,
-								   const PurpleConversation *conv,
+								   PurpleConversation *conv,
 								   const gchar *who)
 {
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
+	JabberChat *chat;
 
 	if (!js) {
 		purple_debug_error("jabber",
@@ -934,11 +935,22 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 	}
 
 	switch (purple_conversation_get_type(conv)) {
-		/* for the time being, we will not support custom smileys in MUCs */
 		case PURPLE_CONV_TYPE_IM:
 			jb = jabber_buddy_find(js, who, FALSE);
 			if (jb) {
 				return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+			} else {
+				return FALSE;
+			}
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			chat = jabber_chat_find_by_conv(conv);
+			if (chat) {
+				/* do not attempt to send custom smileys in a MUC with more than
+				 10 people, to avoid getting too many BoB requests */
+				return jabber_chat_get_num_participants(chat) <= 10 &&
+					jabber_chat_all_participants_have_capability(chat, 
+						XEP_0231_NAMESPACE);
 			} else {
 				return FALSE;
 			}
@@ -1203,6 +1215,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	JabberMessage *jm;
 	JabberStream *js;
 	char *xhtml;
+	char *tmp;
 
 	if(!msg || !gc)
 		return 0;
@@ -1220,6 +1233,11 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->id = jabber_get_next_id(jm->js);
 
 	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
+	if (tmp) {
+		g_free(xhtml);
+		xhtml = tmp;
+	}
 
 	if (chat->xhtml && !jabber_xhtml_plain_equal(xhtml, jm->body))
 		jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
