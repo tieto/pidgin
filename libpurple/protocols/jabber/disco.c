@@ -116,7 +116,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(node)
 			xmlnode_set_attrib(query, "node", node);
 
-		if(!node || g_str_equal(node, node_uri)) {
+		if(!node || !strcmp(node, node_uri)) {
 			GList *features, *identities;
 			for(identities = jabber_identities; identities; identities = identities->next) {
 				JabberIdentity *ident = (JabberIdentity*)identities->data;
