@@ -1564,7 +1564,7 @@ static void to_y64(char *out, const unsigned char *in, gsize inlen)
 	*out = '\0';
 }
 
-static void yahoo_auth16_stage3(PurpleConnection *gc, char *crypt)
+static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -1612,25 +1612,24 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, char *crypt)
 	yahoo_packet_send_and_free(pkt, yd);
 
 	purple_cipher_context_destroy(md5_ctx);
-	g_free(crypt);	
 }
 
-static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data2, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
+static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
 {
 	struct yahoo_auth_data *auth_data = user_data;
 	PurpleConnection *gc = auth_data->gc;
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	gchar **split_data = NULL;
-	int totalelements;
-	int response_no;
-	char *crumb = NULL;
-	char *error_reason = NULL;
-	char *crypt = NULL;
+	struct yahoo_data *yd;
 	gboolean try_login_on_error = FALSE;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
+		g_free(auth_data->seed);
+		g_free(auth_data);
+		g_return_if_reached();
+	}
+
+	yd = (struct yahoo_data *)gc->proto_data;
 
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
@@ -1640,26 +1639,30 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data2, gpointer user
 		return;
 	}
 	else if (len > 0 && ret_data && *ret_data) {
-		split_data = g_strsplit(ret_data, "\r\n", -1);
-		totalelements = g_strv_length(split_data);
+		gchar **split_data = g_strsplit(ret_data, "\r\n", -1);
+		int totalelements = g_strv_length(split_data);
+		int response_no = -1;
+		char *crumb = NULL;
+		char *crypt = NULL;
+
 		if (totalelements >= 5) {
 			response_no = strtol(split_data[1], NULL, 10);
-			crumb = g_strdup(split_data[2] + 6);
-			yd->cookie_y = g_strdup(split_data[3] + 2);
-			yd->cookie_t = g_strdup(split_data[4] + 2);
+			crumb = g_strdup(split_data[2] + strlen("crumb="));
+			yd->cookie_y = g_strdup(split_data[3] + strlen("Y="));
+			yd->cookie_t = g_strdup(split_data[4] + strlen("T="));
 		}
-		else
-			response_no = -1;
 
 		g_strfreev(split_data);
 
 		if(response_no != 0) {
 			/* Some error in the login process */
 			PurpleConnectionError error;
+			char *error_reason = NULL;
+
 			switch(response_no) {
 				case -1:
 					/* Some error in the received stream */
-					error_reason = g_strdup(_("Error in the received data"));
+					error_reason = g_strdup(_("Received invalid data"));
 					error = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 					break;
 				case 100:
@@ -1678,35 +1681,37 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data2, gpointer user
 					break;
 			}
 			if(error_reason) {
-				purple_debug_error("yahoo","Authentication error: %s", error_reason);
+				purple_debug_error("yahoo", "Authentication error: %s\n",
+				                   error_reason);
 				purple_connection_error_reason(gc, error, error_reason);
 				g_free(error_reason);
+				g_free(auth_data->seed);
+				g_free(auth_data);
+				return;
 			}
 		}
-		if((response_no == 0) || try_login_on_error) {
-			crypt = g_strconcat(crumb, auth_data->seed, NULL);
-			yahoo_auth16_stage3(gc, crypt);
-			g_free(crumb);
-		}
+
+		crypt = g_strconcat(crumb, auth_data->seed, NULL);
+		yahoo_auth16_stage3(gc, crypt);
+		g_free(crypt);
+		g_free(crumb);
 	}
 	g_free(auth_data->seed);
 	g_free(auth_data);
 }
 
-static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
+static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
 {
 	struct yahoo_auth_data *auth_data = user_data;
 	PurpleConnection *gc = auth_data->gc;
-	gchar **split_data = NULL;
-	int response_no;
-	int totalelements;
-	char *error_reason = NULL;
-	PurpleUtilFetchUrlData *url_data2 = NULL;
-	char *token = NULL;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage1_cb\n");
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
+		g_free(auth_data->seed);
+		g_free(auth_data);
+		g_return_if_reached();
+	}
 
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve login url: %s\n", error_message);
@@ -1716,25 +1721,27 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 		return;
 	}
 	else if (len > 0 && ret_data && *ret_data) {
-		split_data = g_strsplit(ret_data, "\r\n", -1);
-		totalelements = g_strv_length(split_data);
-		
+		gchar **split_data = g_strsplit(ret_data, "\r\n", -1);
+		int totalelements = g_strv_length(split_data);
+		int response_no = -1;
+		char *token = NULL;
+
 		if(totalelements >= 5) {
 			response_no = strtol(split_data[1], NULL, 10);
-			token = g_strdup(split_data[2] + 6);
+			token = g_strdup(split_data[2] + strlen("ymsgr="));
 		}
-		else
-			response_no = -1;
 
 		g_strfreev(split_data);
 
 		if(response_no != 0) {
 			/* Some error in the login process */
 			PurpleConnectionError error;
+			char *error_reason;
+
 			switch(response_no) {
 				case -1:
 					/* Some error in the received stream */
-					error_reason = g_strdup(_("Error in the received data"));
+					error_reason = g_strdup(_("Received invalid data"));
 					error = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 					break;
 				case 1212:
@@ -1744,7 +1751,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 					break;
 				case 1213:
 					/* security lock from too many failed login attempts */
-					error_reason = g_strdup(_("Login locked: Too many failed login attempts"));
+					error_reason = g_strdup(_("Account locked: Too many failed login attempts"));
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 				case 1235:
@@ -1754,7 +1761,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 					break;
 				case 1236:
 					/* indicates a lock of some description */
-					error_reason = g_strdup(_("Login locked: See the debug log"));
+					error_reason = g_strdup(_("Account locked: See the debug log"));
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 				case 100:
@@ -1764,24 +1771,26 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 					break;
 				default:
 					/* Unknown error! */
-					error_reason = g_strdup(_("Unkown error"));
+					error_reason = g_strdup(_("Unknown error"));
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 			}
-			purple_debug_error("yahoo","Authentication error: %s", error_reason);
+			purple_debug_error("yahoo", "Authentication error: %s\n",
+			                   error_reason);
 			purple_connection_error_reason(gc, error, error_reason);
 			g_free(error_reason);
 			g_free(auth_data->seed);
 			g_free(auth_data);
 		}
-		else	{
+		else {
 			/* OK to login, correct information provided */
+			PurpleUtilFetchUrlData *url_data = NULL;
 			char *url = NULL;
 			gboolean yahoojp = purple_account_get_bool(purple_connection_get_account(gc),
 				"yahoojp", 0);
 
 			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
-			url_data2 = purple_util_fetch_url_request(url, TRUE, "Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, NULL, FALSE, yahoo_auth16_stage2, auth_data);
+			url_data = purple_util_fetch_url_request(url, TRUE, YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
 		}
@@ -1797,10 +1806,10 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	char *encoded_password;
 	gboolean yahoojp;
 
-	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage1\n");
+	purple_debug_info("yahoo", "Authentication: In yahoo_auth16_stage1\n");
 
 	if(!purple_ssl_is_supported()) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT, _("Server requires TLS/SSL for login.  No TLS/SSL support found."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT, _("SSL support unavailable"));
 		return;
 	}
 
@@ -1817,7 +1826,7 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	g_free(encoded_password);
 	g_free(encoded_username);
 
-	url_data = purple_util_fetch_url_request(url, TRUE, "Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, NULL, FALSE, yahoo_auth16_stage1_cb, auth_data);
+	url_data = purple_util_fetch_url_request(url, TRUE, YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, yahoo_auth16_stage1_cb, auth_data);
 	g_free(url);
 }
 
@@ -3933,14 +3942,14 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 	gchar *request = g_strdup_printf(
 		"POST %s/config/cookie_token HTTP/1.0\r\n"
 		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
-		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 		"Host: login.yahoo.com\r\n"
 		"Content-Length: 0\r\n\r\n",
 		use_whole_url ? base_url : "",
 		yd->cookie_t, yd->cookie_y);
 
 	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
-			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
+			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE,
 			yahoo_get_inbox_token_cb, gc);
 
 	g_free(request);
@@ -4091,7 +4100,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	request = g_strdup_printf(
 		"POST /mobileno?intl=us&version=%s HTTP/1.1\r\n"
 		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s; path=/; domain=.yahoo.com;\r\n"
-		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 		"Host: validate.msg.yahoo.com\r\n"
 		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 		"Cache-Control: no-cache\r\n\r\n%s",
@@ -4102,7 +4111,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request(YAHOO_SMS_CARRIER_URL, use_whole_url,
-			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
+			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE,
 			yahoo_get_sms_carrier_cb, data);
 
 	g_free(request);

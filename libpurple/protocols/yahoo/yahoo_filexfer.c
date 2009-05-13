@@ -1249,7 +1249,11 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 			if(xd->info_val_249 == 2)
 				{
 				/* sending file via p2p, we are connected as client */
-				xd->txbuf = g_strdup_printf("POST /%s HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: %ld\r\nCache-Control: no-cache\r\n\r\n",
+				xd->txbuf = g_strdup_printf("POST /%s HTTP/1.1\r\n"
+						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+						"Host: %s\r\n"
+						"Content-Length: %ld\r\n"
+						"Cache-Control: no-cache\r\n\r\n",
 										xd->path,
 										xd->host,
 										(long int)xfer->size);	/* to do, add Referer */
@@ -1257,7 +1261,12 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 			else
 				{
 				/* sending file via relaying */
-				xd->txbuf = g_strdup_printf("POST /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: %ld\r\nCache-Control: no-cache\r\n\r\n",
+				xd->txbuf = g_strdup_printf("POST /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\n"
+						"Cookie:%s\r\n"
+						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+						"Host: %s\r\n"
+						"Content-Length: %ld\r\n"
+						"Cache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
 										xfer->who,
@@ -1271,12 +1280,24 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 			if(xd->info_val_249 == 1)
 				{
 				/* receiving file via p2p, connected as client */
-				xd->txbuf = g_strdup_printf("HEAD /%s HTTP/1.1\r\nAccept:*/*\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",xd->path,xd->host);
+				xd->txbuf = g_strdup_printf("HEAD /%s HTTP/1.1\r\n"
+						"Accept: */*\r\n"
+						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+						"Host: %s\r\n"
+						"Content-Length: 0\r\n"
+						"Cache-Control: no-cache\r\n\r\n",
+						xd->path,xd->host);
 			}
 			else
 				{
 				/* receiving file via relaying */
-				xd->txbuf = g_strdup_printf("HEAD /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nAccept:*/*\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",
+				xd->txbuf = g_strdup_printf("HEAD /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\n"
+						"Accept: */*\r\n"
+						"Cookie: %s\r\n"
+						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+						"Host: %s\r\n"
+						"Content-Length: 0\r\n"
+						"Cache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
 										xfer->who,
@@ -1289,12 +1310,20 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 			if(xd->info_val_249 == 1)
 				{
 				/* receiving file via p2p, connected as client */
-				xd->txbuf = g_strdup_printf("GET /%s HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nConnection: Keep-Alive\r\n\r\n",xd->path,xd->host);
+				xd->txbuf = g_strdup_printf("GET /%s HTTP/1.1\r\n"
+						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+						"Host: %s\r\n"
+						"Connection: Keep-Alive\r\n\r\n",
+						xd->path, xd->host);
 			}
 			else
 				{
 				/* receiving file via relaying */
-				xd->txbuf = g_strdup_printf("GET /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nConnection: Keep-Alive\r\n\r\n",
+				xd->txbuf = g_strdup_printf("GET /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\n"
+						"Cookie: %s\r\n"
+						"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+						"Host: %s\r\n"
+						"Connection: Keep-Alive\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
 										xfer->who,

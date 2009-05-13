@@ -135,7 +135,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->who = g_strdup(who);
 		data->checksum = checksum;
 		url_data = purple_util_fetch_url(url, use_whole_url,
-				"Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
+				YAHOO_CLIENT_USERAGENT, FALSE,
 				yahoo_fetch_picture_cb, data);
 		if (url_data != NULL) {
 			yd = gc->proto_data;
@@ -499,7 +499,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	port = purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
 	tmp = g_strdup_printf("%s:%d", host, port);
 	header = g_strdup_printf("POST %s%s/notifyft HTTP/1.1\r\n"
-		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 		"Cookie: T=%s; Y=%s\r\n"
 		"Host: %s\r\n"
 		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
