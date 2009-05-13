@@ -33,6 +33,11 @@ version 2.6.0 (??/??/2009):
 	* Better support for receiving remote users' nicknames.
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
+	* Put section breaks between resources in "Get Info" to improve readability.
+	* XHTML markup is only included in outgoing messages when the message
+	  contains formatting.
+	* Show when the user was last logged in when doing "Get Info" on an offline
+	  buddy, provided the server supports it.
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)
@@ -60,6 +65,8 @@ version 2.6.0 (??/??/2009):
 	* The nicks of the persons who leave the chatroom are italicized in the
 	  chat's conversation history. The nicks are un-italicized when they
 	  rejoin.
+	* Always set unseen-count and unseen-state on conversations.
+	  (Joshua Stein)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

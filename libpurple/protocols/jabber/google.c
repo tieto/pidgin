@@ -638,7 +638,6 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	const char *to, *url;
 	const char *in_str;
 	char *to_name;
-	char *default_tos[1];
 
 	int i, count = 1, returned_count;
 
@@ -658,14 +657,20 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 
 	/* If Gmail doesn't tell us who the mail is to, let's use our JID */
 	to = xmlnode_get_attrib(packet, "to");
-	default_tos[0] = jabber_get_bare_jid(to);
 
 	message = xmlnode_get_child(child, "mail-thread-info");
 
 	if (count == 0 || !message) {
-		if (count > 0)
-			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
-		g_free(default_tos[0]);
+		if (count > 0) {
+			char *bare_jid = jabber_get_bare_jid(to);
+			const char *default_tos[2] = { bare_jid };
+
+			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+			g_free(bare_jid);
+		} else {
+			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, NULL, NULL, NULL, NULL);
+		}
+
 		return;
 	}
 
@@ -673,10 +678,10 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	 * accordingly */
 	for (returned_count = 0; message; returned_count++, message=xmlnode_get_next_twin(message));
 
-	froms    = g_new0(const char* , returned_count);
-	tos      = g_new0(const char* , returned_count);
-	subjects = g_new0(char* , returned_count);
-	urls     = g_new0(const char* , returned_count);
+	froms    = g_new0(const char* , returned_count + 1);
+	tos      = g_new0(const char* , returned_count + 1);
+	subjects = g_new0(char* , returned_count + 1);
+	urls     = g_new0(const char* , returned_count + 1);
 
 	to = xmlnode_get_attrib(packet, "to");
 	to_name = jabber_get_bare_jid(to);
@@ -726,16 +731,12 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	if (i>0)
 		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
-	else
-		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
-
 
 	g_free(to_name);
 	g_free(tos);
-	g_free(default_tos[0]);
 	g_free(froms);
-	for (; i > 0; i--)
-		g_free(subjects[i - 1]);
+	for (i = 0; i < returned_count; i++)
+		g_free(subjects[i]);
 	g_free(subjects);
 	g_free(urls);
 
@@ -760,6 +761,13 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	/* Is this an initial incoming mail notification? If so, send a request for more info */
 	if (type != JABBER_IQ_SET)
 		return;
+
+	/* Acknowledge the notification */
+	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
+	if (from)
+		xmlnode_set_attrib(iq->node, "to", from);
+	xmlnode_set_attrib(iq->node, "id", id);
+	jabber_iq_send(iq);
 
 	purple_debug(PURPLE_DEBUG_MISC, "jabber",
 		   "Got new mail notification. Sending request for more info\n");

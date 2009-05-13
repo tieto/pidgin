@@ -930,7 +930,7 @@ static void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotify
 	PurpleGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
-	const char *bname, *gname = NULL;
+	const char *bname = NULL, *gname = NULL;
 
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
@@ -938,14 +938,14 @@ static void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotify
 	if ((user_info == NULL) || ((b == NULL) && (userinfo == NULL)))
 		return;
 
-	bname = purple_buddy_get_name(b);
 	if (userinfo == NULL)
-		userinfo = aim_locate_finduserinfo(od, bname);
+		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
 	if (b == NULL)
 		b = purple_find_buddy(account, userinfo->bn);
 
 	if (b != NULL) {
+		bname = purple_buddy_get_name(b);
 		g = purple_buddy_get_group(b);
 		gname = purple_group_get_name(g);
 		presence = purple_buddy_get_presence(b);
@@ -3571,8 +3571,10 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 				purple_account_get_username(account),
 				emailinfo->domain ? "@" : "",
 				emailinfo->domain ? emailinfo->domain : "");
+		const char *tos[2] = { to };
+		const char *urls[2] = { emailinfo->url };
 		purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL,
-				(const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
+				tos, urls, NULL, NULL);
 		g_free(to);
 	}
 

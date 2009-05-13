@@ -404,8 +404,10 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
                                  JabberPresenceCapabilities *userdata)
 {
 	JabberBuddyResource *jbr;
-	char *resource = g_utf8_strrchr(userdata->from, -1, '/');
-	resource += 1;
+	char *resource = g_utf8_strchr(userdata->from, -1, '/');
+
+	if (resource)
+		resource += 1;
 
 	jbr = jabber_buddy_find_resource(userdata->jb, resource);
 	if (!jbr) {
@@ -427,13 +429,15 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 	jbr->caps.info = info;
 	jbr->caps.exts = exts;
 
-	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
+	if (!jbr->commands_fetched && jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
 		JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
 		xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", "http://jabber.org/protocol/disco#items");
 		xmlnode_set_attrib(iq->node, "to", userdata->from);
 		xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/commands");
 		jabber_iq_set_callback(iq, jabber_adhoc_disco_result_cb, NULL);
 		jabber_iq_send(iq);
+
+		jbr->commands_fetched = TRUE;
 	}
 
 	g_free(userdata->from);
@@ -442,8 +446,8 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *from;
+	const char *type;
 	const char *real_jid = NULL;
 	const char *affiliation = NULL;
 	const char *role = NULL;
@@ -465,8 +469,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *caps = NULL;
 	int idle = 0;
 	gchar *nickname = NULL;
+	gboolean signal_return;
+
+	from = xmlnode_get_attrib(packet, "from");
+	type = xmlnode_get_attrib(packet, "type");
 
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
+		return;
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-presence", js->gc, type, from, packet));
+	if (signal_return)
 		return;
 
 	if(!(jid = jabber_id_new(from)))
@@ -852,13 +865,26 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		/* v1.3 uses: node, ver, and optionally ext.
 		 * v1.5 uses: node, ver, and hash. */
 		if (node && *node && ver && *ver) {
-			JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
-			userdata->js = js;
-			userdata->jb = jb;
-			userdata->from = g_strdup(from);
-			jabber_caps_get_info(js, from, node, ver, hash, ext,
-			    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
-			    userdata);
+			gchar **exts = ext && *ext ? g_strsplit(ext, " ", -1) : NULL;
+			jbr = jabber_buddy_find_resource(jb, jid->resource);
+
+			/* Look it up if we don't already have all this information */
+			if (!jbr || !jbr->caps.info ||
+					!g_str_equal(node, jbr->caps.info->tuple.node) ||
+					!g_str_equal(ver, jbr->caps.info->tuple.ver) ||
+					!purple_strequal(hash, jbr->caps.info->tuple.hash) ||
+					!jabber_caps_exts_known(jbr->caps.info, (gchar **)exts)) {
+				JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
+				userdata->js = js;
+				userdata->jb = jb;
+				userdata->from = g_strdup(from);
+				jabber_caps_get_info(js, from, node, ver, hash, exts,
+				    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
+				    userdata);
+			} else {
+				if (exts)
+					g_strfreev(exts);
+			}
 		}
 	}
 

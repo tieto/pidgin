@@ -532,15 +532,24 @@ jabber_message_send_data_request(JabberStream *js, PurpleConversation *conv,
 void jabber_message_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberMessage *jm;
-	const char *type;
+	const char *id, *from, *to, *type;
 	xmlnode *child;
+	gboolean signal_return;
+
+	from = xmlnode_get_attrib(packet, "from");
+	id   = xmlnode_get_attrib(packet, "id");
+	to   = xmlnode_get_attrib(packet, "to");
+	type = xmlnode_get_attrib(packet, "type");
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-message", js->gc, type, id, from, to, packet));
+	if (signal_return)
+		return;
 
 	jm = g_new0(JabberMessage, 1);
 	jm->js = js;
 	jm->sent = time(NULL);
 	jm->delayed = FALSE;
-
-	type = xmlnode_get_attrib(packet, "type");
 
 	if(type) {
 		if(!strcmp(type, "normal"))
@@ -559,9 +568,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		jm->type = JABBER_MESSAGE_NORMAL;
 	}
 
-	jm->from = g_strdup(xmlnode_get_attrib(packet, "from"));
-	jm->to = g_strdup(xmlnode_get_attrib(packet, "to"));
-	jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jm->from = g_strdup(from);
+	jm->to   = g_strdup(to);
+	jm->id   = g_strdup(id);
 
 	for(child = packet->child; child; child = child->next) {
 		const char *xmlns = xmlnode_get_namespace(child);
@@ -940,6 +949,58 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 	}
 }
 
+static char *
+jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
+{
+	PurpleAccount *account = purple_connection_get_account(jm->js->gc);
+	PurpleConversation *conv =
+		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
+			account);
+
+	if (jabber_conv_support_custom_smileys(jm->js->gc, conv, jm->to)) {
+		GList *found_smileys = jabber_message_xhtml_find_smileys(xhtml);
+
+		if (found_smileys) {
+			gchar *smileyfied_xhtml = NULL;
+			const GList *iterator;
+
+			for (iterator = found_smileys; iterator ;
+				iterator = g_list_next(iterator)) {
+				const PurpleSmiley *smiley =
+						(PurpleSmiley *) iterator->data;
+				const gchar *shortcut = purple_smiley_get_shortcut(smiley);
+				const JabberData *data =
+					jabber_data_find_local_by_alt(shortcut);
+
+				/* the object has not been sent before */
+				if (!data) {
+					PurpleStoredImage *image =
+							purple_smiley_get_stored_image(smiley);
+					const gchar *ext = purple_imgstore_get_extension(image);
+					JabberStream *js = jm->js;
+
+					JabberData *new_data =
+						jabber_data_create_from_data(purple_imgstore_get_data(image),
+							purple_imgstore_get_size(image),
+							jabber_message_get_mimetype_from_ext(ext), js);
+					purple_debug_info("jabber",
+						"cache local smiley alt = %s, cid = %s\n",
+						shortcut, jabber_data_get_cid(new_data));
+					jabber_data_associate_local(new_data, shortcut);
+				}
+			}
+
+			smileyfied_xhtml =
+				jabber_message_get_smileyfied_xhtml(xhtml, found_smileys);
+			g_list_free(found_smileys);
+
+			return smileyfied_xhtml;
+		}
+	}
+
+	return NULL;
+}
+
 void jabber_message_send(JabberMessage *jm)
 {
 	xmlnode *message, *child;
@@ -1025,56 +1086,7 @@ void jabber_message_send(JabberMessage *jm)
 	}
 
 	if(jm->xhtml) {
-		PurpleAccount *account = purple_connection_get_account(jm->js->gc);
-		PurpleConversation *conv =
-			purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
-				account);
-
-		if (jabber_conv_support_custom_smileys(jm->js->gc, conv, jm->to)) {
-			GList *found_smileys = jabber_message_xhtml_find_smileys(jm->xhtml);
-
-			if (found_smileys) {
-				gchar *smileyfied_xhtml = NULL;
-				const GList *iterator;
-
-				for (iterator = found_smileys; iterator ;
-					iterator = g_list_next(iterator)) {
-					const PurpleSmiley *smiley =
-							(PurpleSmiley *) iterator->data;
-					const gchar *shortcut = purple_smiley_get_shortcut(smiley);
-					const JabberData *data =
-						jabber_data_find_local_by_alt(shortcut);
-
-					/* the object has not been sent before */
-					if (!data) {
-						PurpleStoredImage *image =
-								purple_smiley_get_stored_image(smiley);
-						const gchar *ext = purple_imgstore_get_extension(image);
-						JabberStream *js = jm->js;
-
-						JabberData *new_data =
-							jabber_data_create_from_data(purple_imgstore_get_data(image),
-								purple_imgstore_get_size(image),
-								jabber_message_get_mimetype_from_ext(ext), js);
-						purple_debug_info("jabber",
-							"cache local smiley alt = %s, cid = %s\n",
-							shortcut, jabber_data_get_cid(new_data));
-						jabber_data_associate_local(new_data, shortcut);
-					}
-				}
-
-				smileyfied_xhtml =
-					jabber_message_get_smileyfied_xhtml(jm->xhtml, found_smileys);
-				child = xmlnode_from_str(smileyfied_xhtml, -1);
-				g_free(smileyfied_xhtml);
-				g_list_free(found_smileys);
-			} else {
-				child = xmlnode_from_str(jm->xhtml, -1);
-			}
-		} else {
-			child = xmlnode_from_str(jm->xhtml, -1);
-		}
-		if(child) {
+		if ((child = xmlnode_from_str(jm->xhtml, -1))) {
 			xmlnode_insert_child(message, child);
 		} else {
 			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
@@ -1088,14 +1100,51 @@ void jabber_message_send(JabberMessage *jm)
 	xmlnode_free(message);
 }
 
+/*
+ * Compare the XHTML and plain strings passed in for "equality". Any HTML markup
+ * other than <br/> (matches a newline) in the XHTML will cause this to return
+ * FALSE.
+ */
+static gboolean
+jabber_xhtml_plain_equal(const char *xhtml_escaped,
+                         const char *plain)
+{
+	int i = 0;
+	int j = 0;
+	gboolean ret;
+	char *xhtml = purple_unescape_html(xhtml_escaped);
+
+	while (xhtml[i] && plain[j]) {
+		if (xhtml[i] == plain[j]) {
+			i += 1;
+			j += 1;
+			continue;
+		}
+
+		if (plain[j] == '\n' && !strncmp(xhtml+i, "<br/>", 5)) {
+			i += 5;
+			j += 1;
+			continue;
+		}
+
+		g_free(xhtml);
+		return FALSE;
+	}
+
+	/* Are we at the end of both strings? */
+	ret = (xhtml[i] == plain[j]) && (xhtml[i] == '\0');
+	g_free(xhtml);
+	return ret;
+}
+
 int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *msg,
 		PurpleMessageFlags flags)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *buf;
 	char *xhtml;
+	char *tmp;
 	char *resource;
 
 	if(!who || !msg)
@@ -1130,15 +1179,18 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 			jm->typing_style |= JM_TS_JEP_0022;
 	}
 
-	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
-
-	purple_markup_html_to_xhtml(buf, &xhtml, &jm->body);
-	g_free(buf);
-
-	if(!jbr || jbr->capabilities & JABBER_CAP_XHTML)
-		jm->xhtml = xhtml;
-	else
+	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
+	if (tmp) {
 		g_free(xhtml);
+		xhtml = tmp;
+	}
+
+	if ((!jbr || jbr->capabilities & JABBER_CAP_XHTML) &&
+			!jabber_xhtml_plain_equal(xhtml, jm->body))
+		jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+
+	g_free(xhtml);
 
 	jabber_message_send(jm);
 	jabber_message_free(jm);
@@ -1150,7 +1202,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	JabberChat *chat;
 	JabberMessage *jm;
 	JabberStream *js;
-	char *buf;
+	char *xhtml;
 
 	if(!msg || !gc)
 		return 0;
@@ -1167,14 +1219,12 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);
 
-	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
-	purple_markup_html_to_xhtml(buf, &jm->xhtml, &jm->body);
-	g_free(buf);
+	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
 
-	if(!chat->xhtml) {
-		g_free(jm->xhtml);
-		jm->xhtml = NULL;
-	}
+	if (chat->xhtml && !jabber_xhtml_plain_equal(xhtml, jm->body))
+		jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+
+	g_free(xhtml);
 
 	jabber_message_send(jm);
 	jabber_message_free(jm);

@@ -1891,14 +1891,11 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		if (count > 0)
 		{
-			const char *passport;
-			const char *url;
-
-			passport = msn_user_get_passport(session->user);
-			url = session->passport_info.mail_url;
+			const char *passports[2] = { msn_user_get_passport(session->user) };
+			const char *urls[2] = { session->passport_info.mail_url };
 
 			purple_notify_emails(gc, count, FALSE, NULL, NULL,
-							   &passport, &url, NULL, NULL);
+							   passports, urls, NULL, NULL);
 		}
 	}
 
@@ -1960,14 +1957,11 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		if (count > 0)
 		{
-			const char *passport;
-			const char *url;
-
-			passport = msn_user_get_passport(session->user);
-			url = session->passport_info.mail_url;
+			const char *passports[2] = { msn_user_get_passport(session->user) };
+			const char *urls[2] = { session->passport_info.mail_url };
 
 			purple_notify_emails(gc, count, FALSE, NULL, NULL,
-							   &passport, &url, NULL, NULL);
+							   passports, urls, NULL, NULL);
 		}
 	}
 
