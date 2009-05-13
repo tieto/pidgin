@@ -279,7 +279,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 					f->status = YAHOO_STATUS_OFFLINE;
 				if (name) {
 					purple_prpl_got_user_status(account, name, "offline", NULL);
-			                purple_prpl_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
+					purple_prpl_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
 				}
 				break;
 			}
@@ -354,7 +354,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				f->version_id = strtol(pair->value, NULL, 10);
 			break;
 		case 241: /* protocol buddy belongs to */
-			if(strtol(pair->value, NULL, 10) == 2)	{
+			if(strtol(pair->value, NULL, 10) == 2) {
 				msn_name = g_strconcat("msn/", name, NULL);
 				name = msn_name;
 			}
@@ -510,7 +510,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 			break;
 		case 301: /* This is 319 before all s/n's in a group after the first. It is followed by an identical 300. */
-			if(temp != NULL)	{
+			if(temp != NULL) {
 				if(protocol == 2)
 					norm_bud = g_strconcat("msn/", temp, NULL);
 				else
@@ -528,7 +528,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					purple_blist_add_buddy(b, NULL, g, NULL);
 				}
 				yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
-				if(protocol != 0)	{
+				if(protocol != 0) {
 					f->protocol = protocol;
 					purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
 				}
@@ -536,7 +536,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
 
 				/* set p2p status not connected and no p2p packet sent */
-				if(protocol == 0)	{
+				if(protocol == 0) {
 					yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
 					f->p2p_packet_sent = 0;
 				} else
@@ -776,7 +776,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
 		&& (purple_privacy_check(account, from)))
 	{
-		if(msn)	{
+		if(msn) {
 			if (*stat == '1')
 				serv_got_typing(gc, msn_from, 0, PURPLE_TYPING);
 			else
@@ -841,7 +841,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 
 	while (l != NULL) {
 		struct yahoo_pair *pair = l->data;
-		if (pair->key == 4)	{
+		if (pair->key == 4) {
 			sms = g_new0(struct _yahoo_im, 1);
 			sms->from = g_strdup_printf("+%s", pair->value);
 			sms->time = time(NULL);
@@ -859,8 +859,8 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 		l = l->next;
 	}
 
-	if( (pkt->status == -1) || (pkt->status == YAHOO_STATUS_DISCONNECTED) )	{
-		if (server_msg)	{
+	if( (pkt->status == -1) || (pkt->status == YAHOO_STATUS_DISCONNECTED) ) {
+		if (server_msg) {
 			PurpleConversation *c;
 			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms->from, account);
 			if (c == NULL)
@@ -927,7 +927,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				if (im)
 					im->msg = pair->value;
 			}
-			if (pair->key == 241)	{
+			if (pair->key == 241) {
 				if(strtol(pair->value, NULL, 10) == 2)
 					msn = TRUE;
 			}
@@ -1025,7 +1025,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		if (!strcmp(m, "<ding>")) {
 			char *username;
 
-			if(c == NULL)	{
+			if(c == NULL) {
 				if(msn)
 					c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, msn_from);
 				else
@@ -1055,7 +1055,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		g_free(m2);
 
 		/* laters : implement buddy icon for msn friends */ 
-		if(!msn)	{
+		if(!msn) {
 			if ((f = yahoo_friend_find(gc, im->from)) && im->buddy_icon == 2) {
 				if (yahoo_friend_get_buddy_icon_need_request(f)) {
 					yahoo_send_picture_request(gc, im->from);
@@ -1579,8 +1579,8 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, char *crypt)
 
 	md5_cipher = purple_ciphers_find_cipher("md5");
 	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
-	purple_cipher_context_append(md5_ctx,(guchar *)crypt, strlen(crypt));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),md5_digest, NULL);
+	purple_cipher_context_append(md5_ctx, (guchar *)crypt, strlen(crypt));
+	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest), md5_digest, NULL);
 
 	to_y64(base64_string, md5_digest, 16);
 
@@ -1632,7 +1632,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data2, gpointer user
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	if (error_message != NULL)	{
+	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
 		g_free(auth_data->seed);
@@ -1642,21 +1642,21 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data2, gpointer user
 	else if (len > 0 && ret_data && *ret_data) {
 		split_data = g_strsplit(ret_data, "\r\n", -1);
 		totalelements = g_strv_length(split_data);
-		if(totalelements >= 5)	{
-			response_no = strtol(*(split_data+1), NULL, 10);
-			crumb = g_strdup(*(split_data+2)+6);
-			yd->cookie_y = g_strdup(*(split_data+3)+2);
-			yd->cookie_t = g_strdup(*(split_data+4)+2);
+		if (totalelements >= 5) {
+			response_no = strtol(split_data[1], NULL, 10);
+			crumb = g_strdup(split_data[2] + 6);
+			yd->cookie_y = g_strdup(split_data[3] + 2);
+			yd->cookie_t = g_strdup(split_data[4] + 2);
 		}
 		else
 			response_no = -1;
 
 		g_strfreev(split_data);
 
-		if(response_no != 0)	{
+		if(response_no != 0) {
 			/* Some error in the login process */
 			PurpleConnectionError error;
-			switch(response_no)	{
+			switch(response_no) {
 				case -1:
 					/* Some error in the received stream */
 					error_reason = g_strdup(_("Error in the received data"));
@@ -1669,7 +1669,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data2, gpointer user
 					break;
 				default:
 					/* if we have everything we need, why not try to login irrespective of response */
-					if((crumb != NULL) && (yd->cookie_y != NULL) && (yd->cookie_t != NULL))	{
+					if((crumb != NULL) && (yd->cookie_y != NULL) && (yd->cookie_t != NULL)) {
 						try_login_on_error = TRUE;
 						break;
 					}
@@ -1677,13 +1677,13 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data2, gpointer user
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 			}
-			if(error_reason)	{
+			if(error_reason) {
 				purple_debug_error("yahoo","Authentication error: %s", error_reason);
 				purple_connection_error_reason(gc, error, error_reason);
 				g_free(error_reason);
 			}
 		}
-		if((response_no == 0) || try_login_on_error)	{
+		if((response_no == 0) || try_login_on_error) {
 			crypt = g_strconcat(crumb, auth_data->seed, NULL);
 			yahoo_auth16_stage3(gc, crypt);
 			g_free(crumb);
@@ -1708,7 +1708,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	if (error_message != NULL)	{
+	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve login url: %s\n", error_message);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
 		g_free(auth_data->seed);
@@ -1719,19 +1719,19 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 		split_data = g_strsplit(ret_data, "\r\n", -1);
 		totalelements = g_strv_length(split_data);
 		
-		if(totalelements >= 5)	{
-			response_no = strtol(*(split_data+1), NULL, 10);
-			token = g_strdup(*(split_data+2)+6);
+		if(totalelements >= 5) {
+			response_no = strtol(split_data[1], NULL, 10);
+			token = g_strdup(split_data[2] + 6);
 		}
 		else
 			response_no = -1;
 
 		g_strfreev(split_data);
 
-		if(response_no != 0)	{
+		if(response_no != 0) {
 			/* Some error in the login process */
 			PurpleConnectionError error;
-			switch(response_no)	{
+			switch(response_no) {
 				case -1:
 					/* Some error in the received stream */
 					error_reason = g_strdup(_("Error in the received data"));
@@ -1780,10 +1780,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 			gboolean yahoojp = purple_account_get_bool(purple_connection_get_account(gc),
 				"yahoojp", 0);
 
-			url = g_strdup_printf(yahoojp ?
-					"https://login.yahoo.co.jp/config/pwtoken_login?src=ymsgr&ts=&token=%s" : 
-					"https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s",
-					token);
+			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
 			url_data2 = purple_util_fetch_url_request(url, TRUE, "Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, NULL, FALSE, yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
@@ -1796,6 +1793,8 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	PurpleUtilFetchUrlData *url_data = NULL;
 	struct yahoo_auth_data *auth_data = NULL;
 	char *url = NULL;
+	char *encoded_username;
+	char *encoded_password;
 	gboolean yahoojp;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage1\n");
@@ -1811,11 +1810,12 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	auth_data->gc = gc;
 	auth_data->seed = g_strdup(seed);
 
-	url = g_strdup_printf(yahoojp ?
-			"https://login.yahoo.co.jp/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s" :
-			"https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s",
-			purple_account_get_username(purple_connection_get_account(gc)),
-			purple_connection_get_password(gc), seed);
+	encoded_username = g_strdup(purple_url_encode(purple_account_get_username(purple_connection_get_account(gc))));
+	encoded_password = g_strdup(purple_url_encode(purple_connection_get_password(gc)));
+	url = g_strdup_printf(yahoojp ? YAHOOJP_TOKEN_URL : YAHOO_TOKEN_URL,
+			encoded_username, encoded_password, purple_url_encode(seed));
+	g_free(encoded_password);
+	g_free(encoded_username);
 
 	url_data = purple_util_fetch_url_request(url, TRUE, "Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, NULL, FALSE, yahoo_auth16_stage1_cb, auth_data);
 	g_free(url);
@@ -2087,10 +2087,10 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 		if(protocol)
 			f->protocol = protocol;
 
-		if( !g_hash_table_lookup(yd->peers, who) )	{
+		if( !g_hash_table_lookup(yd->peers, who) ) {
 			/* we are not connected as client, so set friend to not connected */
 			if(msn)
-				yahoo_friend_set_p2p_status(f,YAHOO_P2PSTATUS_DO_NOT_CONNECT);
+				yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_DO_NOT_CONNECT);
 			else	{
 				yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
 				f->p2p_packet_sent = 0;
@@ -2226,7 +2226,7 @@ static void yahoo_p2p_process_p2pfilexfer(gpointer data, gint source, struct yah
 	 * WHEN WE ARE SERVER: we send val_13 = 0 to yahoo server, peer sends us val_13 = 1, we send val_13 = 5,
 	 * receive val_13 = 6, send val_13 = 7, receive val_13 = 7. HALT. Keep sending val_13 = 7 as keep alive. */
 
-	switch(p2p_data->val_13)	{
+	switch(p2p_data->val_13) {
 		case 1 : val_13_to_send = 5; break;
 		case 5 : val_13_to_send = 6; break;
 		case 6 : val_13_to_send = 7; break;
@@ -2251,12 +2251,12 @@ static void yahoo_p2p_process_p2pfilexfer(gpointer data, gint source, struct yah
 	yahoo_packet_free(pkt_to_send);
 
 	if( val_13_to_send == 7 )
-		if( !g_hash_table_lookup(yd->peers, p2p_data->host_username) )	{
+		if( !g_hash_table_lookup(yd->peers, p2p_data->host_username) ) {
 			g_hash_table_insert(yd->peers, g_strdup(p2p_data->host_username), p2p_data);
 			/* If the peer is a friend, set him connected */
 			f = yahoo_friend_find(p2p_data->gc, p2p_data->host_username);
-			if (f)	{
-				if(p2p_data->connection_type == YAHOO_P2P_WE_ARE_SERVER)	{
+			if (f) {
+				if(p2p_data->connection_type == YAHOO_P2P_WE_ARE_SERVER) {
 					p2p_data->session_id = f->session_id;
 					yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_WE_ARE_SERVER);
 				}
@@ -2329,7 +2329,7 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 	yahoo_packet_read(pkt, buf + pos, pktlen);
 
 	/* packet processing */
-	switch(pkt->service)	{
+	switch(pkt->service) {
 		case YAHOO_SERVICE_P2PFILEXFER:
 			yahoo_p2p_process_p2pfilexfer(data, source, pkt);
 			break;
@@ -2415,7 +2415,7 @@ static void yahoo_p2p_server_listen_cb(int listenfd, gpointer data)
 	if(!(p2p_data = data))
 		return ;
 
-	if(listenfd == -1)	{
+	if(listenfd == -1) {
 		purple_debug_warning("yahoo","p2p: error starting p2p server\n");
 		yahoo_p2p_disconnect_destroy_data(data);
 		return;
@@ -2516,7 +2516,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 		return ;
 	yd = p2p_data->gc->proto_data;
 
-	if(error_message != NULL)	{
+	if(error_message != NULL) {
 		purple_debug_warning("yahoo","p2p: %s\n",error_message);
 		yahoo_send_p2p_pkt(p2p_data->gc, p2p_data->host_username, 2);/* send p2p init packet with val_13=2 */
 		
@@ -2623,7 +2623,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		account = purple_connection_get_account(gc);
 
-		if(val_11==0)	{
+		if(val_11==0) {
 			if(!f)
 				return;
 			else
@@ -2640,7 +2640,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 		p2p_data->source = -1;
 
 		/* connect to host */
-		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL)	{
+		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL) {
 			purple_debug_info("yahoo","p2p: Connection to %s failed\n", host_ip);
 			g_free(p2p_data->host_ip);
 			g_free(p2p_data->host_username);
@@ -3072,7 +3072,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 		i += strlen("Set-Cookie: ");
 		for (;*i != ';' && *i != '\0'; i++)
 			g_string_append_c(s, *i);
-        
+
 		g_string_append(s, "; ");
 		/* Should these cookies be included too when trying for xfer?
 		 * It seems to work without these
@@ -4019,7 +4019,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 
-	if (error_message != NULL)	{
+	if (error_message != NULL) {
 		purple_conversation_write(conv, NULL, "Cant send SMS, Unable to obtain mobile carrier", PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 		g_free(sms_cb_data->who);
@@ -4041,7 +4041,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 
 		purple_debug_info("yahoo","SMS validate data: Mobile:%s, Status:%s, Carrier:%s\n", mobile_no, status, carrier);
 
-		if( strcmp(status, "Valid") == 0)	{
+		if( strcmp(status, "Valid") == 0) {
 			g_hash_table_insert(yd->sms_carrier, g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
 			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who, sms_cb_data->what, PURPLE_MESSAGE_SEND);
 		}
@@ -4108,7 +4108,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	g_free(request);
 	g_free(validate_request_str);
 
-	if (!url_data)	{
+	if (!url_data) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 		purple_conversation_write(conv, NULL, "Cant send SMS, Unable to obtain mobile carrier", PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -4151,7 +4151,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 
 	msn = g_str_has_prefix(who, "msn/") || g_str_has_prefix(who, "MSN/");
 
-	if( strncmp(who, "+", 1) == 0 )	{
+	if( strncmp(who, "+", 1) == 0 ) {
 		/* we have an sms to be sent */
 		gchar *carrier = NULL;
 		const char *alias = NULL;
@@ -4159,7 +4159,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
 
 		carrier = g_hash_table_lookup(yd->sms_carrier, who);
-		if (!carrier)	{
+		if (!carrier) {
 			struct yahoo_sms_carrier_cb_data *sms_cb_data;
 			sms_cb_data = g_malloc(sizeof(struct yahoo_sms_carrier_cb_data));
 			sms_cb_data->gc = gc;
@@ -4201,7 +4201,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
-	if(msn)	{
+	if(msn) {
 		yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, who+4);
 		yahoo_packet_hash_int(pkt, 241, 2);
 	}
@@ -4248,9 +4248,9 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 		yahoo_packet_hash_str(pkt, 206, "2");
 
 	/* We may need to not send any packets over 2000 bytes, but I'm not sure yet. */
-	if ((YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt)) <= 2000)	{
+	if ((YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt)) <= 2000) {
 		/* if p2p link exists, send through it. To-do: key 15, time value to be sent in case of p2p */
-		if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !msn )	{
+		if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !msn ) {
 			yahoo_packet_hash_int(pkt, 11, p2p_data->session_id);
 			yahoo_p2p_write_pkt(p2p_data->source, pkt);
 		}
@@ -4285,7 +4285,7 @@ static unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, Pur
 	pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
 
 	/* check to see if p2p link exists, send through it */
-	if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !msn )	{
+	if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !msn ) {
 		yahoo_packet_hash(pkt, "sssssis", 49, "TYPING", 1, purple_connection_get_display_name(gc),
 	                  14, " ", 13, state == PURPLE_TYPING ? "1" : "0",
 	                  5, who, 11, p2p_data->session_id, 1002, "1");	/* To-do: key 15 to be sent in case of p2p */	
@@ -4556,7 +4556,7 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	if(msn)	{
+	if(msn) {
 		yahoo_packet_hash(pkt, "sssssssssss",
 			14, "",
 			65, group2,
@@ -4719,7 +4719,7 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 	if (!f)
 		return;
 
-	if(f->protocol == 2)	{
+	if(f->protocol == 2) {
 		msn = TRUE;
 		temp = who+4;
 	} else
