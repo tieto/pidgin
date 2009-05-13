@@ -3820,8 +3820,10 @@ static void yahoo_set_idle(PurpleConnection *gc, int idle)
 			status = purple_presence_get_active_status(purple_account_get_presence(purple_connection_get_account(gc)));
 		tmp = purple_status_get_attr_string(status, "message");
 		if (tmp != NULL) {
-			msg = yahoo_string_encode(gc, tmp, NULL);
+			gboolean utf8 = TRUE;
+			msg = yahoo_string_encode(gc, tmp, &utf8);
 			msg2 = purple_markup_strip_html(msg);
+			yahoo_packet_hash_str(pkt, 97, utf8 ? "1" : 0);
 			yahoo_packet_hash_str(pkt, 19, msg2);
 		} else {
 			/* get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
