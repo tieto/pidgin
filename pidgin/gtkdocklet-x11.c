@@ -5,7 +5,7 @@
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
  * Inspired by a similar plugin by:
  *  John (J5) Palmieri <johnp@martianrock.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -15,7 +15,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -59,7 +59,7 @@ static void
 docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 {
 	purple_debug(PURPLE_DEBUG_INFO, "docklet", "embedded\n");
-	
+
 	g_source_remove(embed_timeout);
 	embed_timeout = 0;
 	pidgin_docklet_embedded();
@@ -211,9 +211,9 @@ docklet_x11_destroy(void)
 
 	if (embed_timeout)
 		g_source_remove(embed_timeout);
-	
+
 	pidgin_docklet_remove();
-	
+
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_x11_destroyed_cb), NULL);
 	gtk_widget_destroy(GTK_WIDGET(docklet));
 
@@ -239,7 +239,7 @@ docklet_x11_embed_timeout_cb(gpointer data)
 	 */
 	purple_debug_info("docklet", "failed to embed within timeout\n");
 	pidgin_docklet_remove();
-	
+
 	return FALSE;
 }
 

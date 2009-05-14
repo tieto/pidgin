@@ -1300,6 +1300,22 @@ PurpleConversation *purple_find_chat(const PurpleConnection *gc, int id);
 void purple_conv_chat_left(PurpleConvChat *chat);
 
 /**
+ * Invite a user to a chat.
+ * The user will be prompted to enter the user's name or a message if one is
+ * not given.
+ *
+ * @param chat     The chat.
+ * @param user     The user to invite to the chat.
+ * @param message  The message to send with the invitation.
+ * @param confirm  Prompt before sending the invitation. The user is always
+ *                 prompted if either #user or #message is @c NULL.
+ *
+ * @since 2.6.0
+ */
+void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
+		const char *message, gboolean confirm);
+
+/**
  * Returns true if we're no longer in this chat,
  * and just left the window open.
  *
@@ -1350,7 +1366,7 @@ void purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb);
  * Retrieves the extended menu items for the conversation.
  *
  * @param conv The conversation.
- * 
+ *
  * @return  A list of PurpleMenuAction items, harvested by the
  *          chat-extended-menu signal. The list and the menuaction
  *          items should be freed by the caller.

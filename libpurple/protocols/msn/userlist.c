@@ -448,7 +448,7 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 
 		g_return_val_if_fail(user->passport != NULL, NULL);
 
-		if (!g_strcasecmp(passport, user->passport)){
+		if (!g_ascii_strcasecmp(passport, user->passport)){
 			return user;
 		}
 	}
@@ -470,7 +470,7 @@ msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid)
 			continue;
 		}
 
-		if ( !g_strcasecmp(uid, user->uid) ) {
+		if ( !g_ascii_strcasecmp(uid, user->uid) ) {
 			return user;
 		}
 	}
@@ -492,7 +492,7 @@ msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *numb
 			continue;
 		}
 
-		if (!g_strcasecmp(number, user->phone.mobile)) {
+		if (!g_ascii_strcasecmp(number, user->phone.mobile)) {
 			return user;
 		}
 	}
@@ -524,7 +524,7 @@ msn_userlist_find_group_with_id(MsnUserList *userlist, const char * id)
 	{
 		MsnGroup *group = l->data;
 
-		if (!g_strcasecmp(group->id,id))
+		if (!g_ascii_strcasecmp(group->id,id))
 			return group;
 	}
 
@@ -543,7 +543,7 @@ msn_userlist_find_group_with_name(MsnUserList *userlist, const char *name)
 	{
 		MsnGroup *group = l->data;
 
-		if ((group->name != NULL) && !g_strcasecmp(name, group->name))
+		if ((group->name != NULL) && !g_ascii_strcasecmp(name, group->name))
 			return group;
 	}
 
@@ -784,7 +784,7 @@ msn_userlist_add_pending_buddy(MsnSession *session,
 	{
 		user = (MsnUser *)l->data;
 
-		if (!g_strcasecmp(who, user->passport)) {
+		if (!g_ascii_strcasecmp(who, user->passport)) {
 			userlist->pending = g_list_delete_link(userlist->pending, l);
 			break;
 		}
@@ -858,7 +858,7 @@ msn_userlist_add_buddy_to_group(MsnUserList *userlist, const char *who,
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("msn", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!\n", who);
 		return FALSE;
 	}
 
@@ -887,7 +887,7 @@ msn_userlist_rem_buddy_from_group(MsnUserList *userlist, const char *who,
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("msn", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!\n", who);
 		return FALSE;
 	}
 
@@ -931,31 +931,37 @@ void
 msn_userlist_load(MsnSession *session)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleConnection *gc = purple_account_get_connection(session->account);
+	PurpleAccount *account = session->account;
+	PurpleConnection *gc = purple_account_get_connection(account);
 	GSList *l;
 	MsnUser * user;
 
 	g_return_if_fail(gc != NULL);
 
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next)
+	for (gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode))
 	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next)
+		for (cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode))
 		{
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next)
+			for (bnode = purple_blist_node_get_first_child(cnode);
+					bnode;
+					bnode = purple_blist_node_get_sibling_next(bnode))
 			{
 				PurpleBuddy *b;
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *)bnode;
-				if (b->account == gc->account)
+				if (purple_buddy_get_account(b) == account)
 				{
 					user = msn_userlist_find_add_user(session->userlist,
-						b->name,NULL);
-					b->proto_data = user;
+						purple_buddy_get_name(b), NULL);
+					purple_buddy_set_protocol_data(b, user);
 					msn_user_set_op(user, MSN_LIST_FL_OP);
 				}
 			}

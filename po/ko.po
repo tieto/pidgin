@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-01 15:52-0800\n"
+"POT-Creation-Date: 2009-04-30 10:39-0400\n"
 "PO-Revision-Date: 2007-10-01 16:15+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
@@ -31,13 +31,13 @@ msgstr "프랑스어"
 msgid "%s. Try `%s -h' for more information.\n"
 msgstr "%s 상세 정보는 `%s -h' 를 입력해 주십시오.\n"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -623,20 +623,6 @@ msgid "Send To"
 msgstr "받을 사람(_S)"
 
 #, fuzzy
-msgid "Invite message"
-msgstr "메시지 안에 삽입"
-
-msgid "Invite"
-msgstr "초대"
-
-#, fuzzy
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"초대하고자 하는 상대의 이름과 초대 메시지(선택 사항)을 입력해 주십시오."
-
-#, fuzzy
 msgid "Conversation"
 msgstr "대화 창"
 
@@ -899,6 +885,42 @@ msgstr "대화 창"
 msgid "System Log"
 msgstr "시스템 로그"
 
+#, fuzzy
+msgid "Calling ... "
+msgstr "계산 중..."
+
+msgid "Hangup"
+msgstr ""
+
+#. Number of actions
+#, fuzzy
+msgid "Accept"
+msgstr "허가(_A)"
+
+msgid "Reject"
+msgstr "거부"
+
+msgid "Call in progress."
+msgstr ""
+
+msgid "The call has been terminated."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr ""
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+
+#, fuzzy
+msgid "You have rejected the call."
+msgstr "채널 %s%s (으)로부터 이탈했습니다."
+
+msgid "call: Make an audio call."
+msgstr ""
+
 msgid "Emails"
 msgstr "이메일"
 
@@ -932,6 +954,9 @@ msgstr "계속"
 
 msgid "IM"
 msgstr "인스턴트 메시지"
+
+msgid "Invite"
+msgstr "초대"
 
 msgid "(none)"
 msgstr "(없음)"
@@ -1157,7 +1182,6 @@ msgstr "%s 님이 자리 비움 상태로 되었습니다. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s 님이 나에게 메시지를 보냈습니다. (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "알 수 없는 \"알림\" 이벤트입니다. 꼭 보고해 주십시오!"
 
@@ -1208,7 +1232,6 @@ msgstr "상태를 변경할 때까지의 시간(분)(_M):"
 msgid "Change status to"
 msgstr "다음 상태로 변경(_S):"
 
-#. Conversations
 msgid "Conversations"
 msgstr "대화 창"
 
@@ -1542,7 +1565,6 @@ msgid ""
 msgstr ""
 "새로운 대화가 시작되면 이전 대화의 맨 마지막 메시지를 앞 부분에 추가합니다."
 
-#, c-format
 msgid "Online"
 msgstr "온라인"
 
@@ -1591,6 +1613,28 @@ msgstr "GntLastlog"
 #, fuzzy
 msgid "Lastlog plugin."
 msgstr "Lastlog 플러그인입니다."
+
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr ""
 
 msgid "accounts"
 msgstr "계정"
@@ -1692,14 +1736,6 @@ msgstr "%s 인증"
 #, fuzzy
 msgid "SSL Certificate Verification"
 msgstr "SSL 호스트 인증"
-
-#. Number of actions
-#, fuzzy
-msgid "Accept"
-msgstr "허가(_A)"
-
-msgid "Reject"
-msgstr "거부"
 
 #, fuzzy
 msgid "_View Certificate..."
@@ -1838,6 +1874,17 @@ msgstr "%s 님이 대화실을 나갔습니다."
 msgid "%s left the room (%s)."
 msgstr "%s 님이 대화실 (%s) (으)로부터 나갔습니다."
 
+#, fuzzy
+msgid "Invite to chat"
+msgstr "회의에 초대"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+"초대하고자 하는 상대의 이름과 초대 메시지(선택 사항)을 입력해 주십시오."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "새 접속을 열 수 없습니다: %s"
@@ -1972,7 +2019,6 @@ msgstr "%s 을(를) %s (으)로부터 전송을 시작하고 있습니다."
 msgid "Transfer of file %s complete"
 msgstr "파일 %s 의 전송이 완료되었습니다."
 
-#, c-format
 msgid "File transfer complete"
 msgstr "파일 전송이 완료되었습니다."
 
@@ -1980,7 +2026,6 @@ msgstr "파일 전송이 완료되었습니다."
 msgid "You canceled the transfer of %s"
 msgstr "%s 의 전송이 취소되었습니다."
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "파일 전송이 취소되었습니다."
 
@@ -2182,7 +2227,6 @@ msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "%s 을(를) 사용하고 있으나, 이 플러그인은 %s 이(가) 필요합니다."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr ""
 
@@ -2669,6 +2713,32 @@ msgstr "오프라인 시의 메시지 저장"
 msgid "Do not ask. Always save in pounce."
 msgstr "항상 저장"
 
+#, fuzzy
+msgid "One Time Password"
+msgstr "비밀번호 입력"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr ""
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
+msgstr ""
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2876,7 +2946,6 @@ msgstr ""
 "로컬 mDNS 서버를 사용한 접속을 확립할 수 없었습니다. 서버가 올바르게 작동되"
 "고 있습니까?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "이름"
 
@@ -2909,6 +2978,11 @@ msgstr "Bonjour 프로토콜 플러그인"
 #, fuzzy
 msgid "Purple Person"
 msgstr "새 친구"
+
+#. Creating the options for the protocol
+#, fuzzy
+msgid "Local Port"
+msgstr "시/도"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3066,13 +3140,13 @@ msgstr "대화 선택: %s"
 msgid "Add to chat..."
 msgstr "대화 추가..."
 
+#. Global
 msgid "Available"
 msgstr "사용 가능"
 
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "자리 비움"
 
@@ -3414,6 +3488,17 @@ msgstr ""
 "지정한 계정명이 서버로부터 거부되었습니다. 잘못된 문자가 포함되어 있을 수 있"
 "습니다."
 
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, fuzzy, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "이 대화명은 이미 사용 중입니다."
+
+#, fuzzy
+msgid "Nickname in use"
+msgstr "별명"
+
 msgid "Cannot change nick"
 msgstr "별명을 변경할 수 없습니다."
 
@@ -3689,6 +3774,41 @@ msgstr "서버로부터의 잘못된 challenge 입니다."
 msgid "SASL error"
 msgstr "SASL 오류"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "이유를 알 수 없습니다."
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "지원되지 않는 버전"
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr ""
+"서버와의 접속을 확립하지 못했습니다:\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"서버와의 접속을 확립하지 못했습니다:\n"
+"%s"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "새로운 접속을 열 수 없습니다."
+
+msgid "Unable to create socket"
+msgstr "소켓을 생성할 수 없습니다."
+
+msgid "Write error"
+msgstr "쓰기 오류"
+
 msgid "Full Name"
 msgstr "전체 이름"
 
@@ -3753,6 +3873,10 @@ msgstr "클라이언트"
 
 msgid "Operating System"
 msgstr "운영 체제"
+
+#, fuzzy
+msgid "Local Time"
+msgstr "로컬 파일:"
 
 msgid "Last Activity"
 msgstr ""
@@ -3990,7 +4114,6 @@ msgstr "Chatty"
 msgid "Extended Away"
 msgstr "장기 자리 비움"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "다른 용무 중"
 
@@ -4116,9 +4239,6 @@ msgstr "대화실 찾기"
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 
-msgid "Write error"
-msgstr "쓰기 오류"
-
 #, fuzzy
 msgid "Ping timeout"
 msgstr "일반 문자열"
@@ -4128,14 +4248,9 @@ msgstr "읽기 오류"
 
 #, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"서버와의 접속을 확립하지 못했습니다:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "소켓을 생성할 수 없습니다."
 
 #, fuzzy
 msgid "Invalid XMPP ID"
@@ -4143,6 +4258,10 @@ msgstr "잘못된 ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "서버 접속에 실패했습니다."
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4237,8 +4356,17 @@ msgstr "인증 중"
 msgid "Re-initializing Stream"
 msgstr "스트림 재초기화 중"
 
+msgid "Server doesn't support blocking"
+msgstr ""
+
 msgid "Not Authorized"
 msgstr "인증되어 있지 않습니다."
+
+msgid "Mood"
+msgstr "기분"
+
+msgid "Now Listening"
+msgstr ""
 
 msgid "Both"
 msgstr "둘 다"
@@ -4260,12 +4388,6 @@ msgstr "없음"
 
 msgid "Subscription"
 msgstr "구독"
-
-msgid "Mood"
-msgstr "기분"
-
-msgid "Now Listening"
-msgstr ""
 
 #, fuzzy
 msgid "Mood Text"
@@ -4510,18 +4632,26 @@ msgstr "사용자 %s 님을 차단할 수 없습니다."
 msgid "Unable to ping user %s"
 msgstr "사용자 %s 님을 차단할 수 없습니다."
 
-#, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
-msgstr ""
-
-#, c-format
-msgid "Unable to buzz, because user %s might be offline."
-msgstr ""
-
 #, fuzzy, c-format
-msgid "Unable to buzz, because the user %s does not support it."
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr ""
 "%s 님에게 파일을 전송하지 못했습니다. 사용자는 파일 전송을 지원하지 않습니다."
+
+#, fuzzy, c-format
+msgid "Unable to buzz, because %s might be offline."
+msgstr ""
+"%s 님에게 파일을 전송하지 못했습니다. 사용자는 파일 전송을 지원하지 않습니다."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
+msgstr ""
+"%s 님에게 파일을 전송하지 못했습니다. 사용자는 파일 전송을 지원하지 않습니다."
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr ""
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
@@ -4533,9 +4663,37 @@ msgstr "버저!!"
 msgid "%s has buzzed you!"
 msgstr "%s 님이 나 [%s] 을(를) 추가했습니다."
 
-#, c-format
-msgid "Buzzing %s..."
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "%s 님에게 메시지를 보낼 수 없습니다."
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: user is not online"
 msgstr ""
+"%s 님에게 파일을 전송하지 못했습니다. 사용자는 파일 전송을 지원하지 않습니다."
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
+msgstr ""
+"%s 님에게 파일을 전송하지 못했습니다. 사용자는 파일 전송을 지원하지 않습니다."
+
+#, fuzzy
+msgid "Media Initiation Failed"
+msgstr "등록 실패"
+
+#, fuzzy, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr "정보를 표시할 상대의 아이디 또는 별칭을 입력해 주십시오."
+
+#, fuzzy
+msgid "Select a Resource"
+msgstr "파일 선택"
+
+#, fuzzy
+msgid "Initiate Media"
+msgstr "대화 시작(_C)"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  대화실을 설정합니다."
@@ -4698,6 +4856,21 @@ msgstr "대화 %s 에 참가하는 중 오류"
 msgid "Error in chat %s"
 msgstr "대화 %s 에서 오류"
 
+#, fuzzy
+msgid "An error occured on the in-band bytestream transfer\n"
+msgstr "파일을 여는 중 오류가 발생했습니다."
+
+#, fuzzy
+msgid "Transfer was closed."
+msgstr "파일 전송이 실패했습니다."
+
+#, fuzzy
+msgid "Failed to open the file"
+msgstr "파일 '%s' 을(를) 열 수 없었습니다: %s"
+
+msgid "Failed to open in-band bytestream"
+msgstr ""
+
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -4723,10 +4896,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "정보를 표시할 상대의 아이디 또는 별칭을 입력해 주십시오."
-
-#, fuzzy
-msgid "Select a Resource"
-msgstr "파일 선택"
 
 #, fuzzy
 msgid "Edit User Mood"
@@ -4768,9 +4937,19 @@ msgstr "알림을 받은 후 동작"
 msgid "Select an action"
 msgstr "파일 선택"
 
+#. only notify the user about problems adding to the friends list
+#. * maybe we should do something else for other lists, but it probably
+#. * won't cause too many problems if we just ignore it
+#, c-format
+msgid "Unable to add \"%s\"."
+msgstr "\"%s\" 님을 추가할 수 없습니다."
+
+msgid "Buddy Add error"
+msgstr ""
+
 #, fuzzy
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Notes 주소록 선택"
+msgid "The username specified does not exist."
+msgstr "지정한 아이디가 잘못되었습니다."
 
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
@@ -5001,7 +5180,7 @@ msgstr "부모의 승인이 없는 어린이 패스포트입니다."
 msgid "Passport account not yet verified"
 msgstr "아직 패스포트 계정은 확인되지 않았습니다."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Passport account suspended"
 msgstr "아직 패스포트 계정은 확인되지 않았습니다."
 
@@ -5098,6 +5277,13 @@ msgstr "모바일 메시지를 전송합니다."
 msgid "Page"
 msgstr "호출"
 
+msgid "Playing a game"
+msgstr ""
+
+#, fuzzy
+msgid "Working"
+msgstr "직종"
+
 msgid "Has you"
 msgstr "내가 등록됨"
 
@@ -5138,6 +5324,14 @@ msgstr "양치기자리"
 #, fuzzy
 msgid "Album"
 msgstr "Adium"
+
+#, fuzzy
+msgid "Game Title"
+msgstr "제목"
+
+#, fuzzy
+msgid "Office Title"
+msgstr "제목"
 
 msgid "Set Friendly Name..."
 msgstr "공개명 설정..."
@@ -5330,8 +5524,9 @@ msgstr ""
 "사용자 프로파일로부터 정보를 가져오지 못했습니다. 그 사용자는 존재하지 않는 "
 "것 같습니다."
 
-msgid "Profile URL"
-msgstr "프로파일 URL"
+#, fuzzy
+msgid "View web profile"
+msgstr "오프라인일 때에는 허가되지 않았습니다."
 
 #. *< type
 #. *< ui_requirement
@@ -5582,19 +5777,15 @@ msgstr "주소록에 추가"
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr "이 상대를 친구 목록에 추가하시겠습니까?"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "\"%s\" 님을 추가할 수 없습니다."
-
 #, fuzzy
 msgid "The username specified is invalid."
 msgstr "지정한 아이디가 잘못되었습니다."
 
 msgid "This Hotmail account may not be active."
 msgstr "이 Hotmail 계정은 사용 불가능한 것 같습니다."
+
+msgid "Profile URL"
+msgstr "프로파일 URL"
 
 #. *< type
 #. *< ui_requirement
@@ -5609,17 +5800,13 @@ msgstr "이 Hotmail 계정은 사용 불가능한 것 같습니다."
 msgid "MSN Protocol Plugin"
 msgstr "MSN 프로토콜 플러그인"
 
+#, c-format
+msgid "No such user: %s"
+msgstr ""
+
 #, fuzzy
-msgid "Missing Cipher"
-msgstr "암호"
-
-msgid "The RC4 cipher could not be found"
-msgstr ""
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
+msgid "User lookup"
+msgstr "사용자실"
 
 #, fuzzy
 msgid "Reading challenge"
@@ -5633,10 +5820,20 @@ msgstr "서버로부터의 잘못된 challenge 입니다."
 msgid "Logging in"
 msgstr "로그 기록"
 
-#, c-format
-msgid "Connection to server lost (no data received within %d second)"
-msgid_plural "Connection to server lost (no data received within %d seconds)"
-msgstr[0] ""
+msgid "MySpaceIM - No Username Set"
+msgstr ""
+
+msgid "You appear to have no MySpace username."
+msgstr ""
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr ""
+
+#, fuzzy
+msgid "Lost connection with server"
+msgstr ""
+"서버와의 접속이 끊어졌습니다.\n"
+"%s"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 #, fuzzy
@@ -5658,14 +5855,22 @@ msgstr ""
 msgid "MySpace"
 msgstr ""
 
-msgid "MySpaceIM - No Username Set"
-msgstr ""
+#, fuzzy
+msgid "IM Friends"
+msgstr "메시지 창(_I)"
 
-msgid "You appear to have no MySpace username."
-msgstr ""
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
+#, fuzzy
+msgid "Add contacts from server"
+msgstr "서버로부터의 응답이 잘못되었습니다."
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5689,37 +5894,6 @@ msgid "MySpaceIM Error"
 msgstr ""
 
 #, fuzzy
-msgid "Failed to add buddy"
-msgstr "대화 중인 친구에게 참가할 수 없습니다."
-
-#, fuzzy
-msgid "'addbuddy' command failed."
-msgstr "친구 목록 가져오기..."
-
-#, fuzzy
-msgid "persist command failed"
-msgstr "Switchboard 에 실패했습니다."
-
-#, c-format
-msgid "No such user: %s"
-msgstr ""
-
-#, fuzzy
-msgid "User lookup"
-msgstr "사용자실"
-
-#, fuzzy
-msgid "Failed to remove buddy"
-msgstr "대화 중인 친구에게 참가할 수 없습니다."
-
-msgid "'delbuddy' command failed"
-msgstr ""
-
-#, fuzzy
-msgid "blocklist command failed"
-msgstr "Switchboard 에 실패했습니다."
-
-#, fuzzy
 msgid "Invalid input condition"
 msgstr "최종 접속 조정 중"
 
@@ -5735,21 +5909,39 @@ msgid "Couldn't connect to host: %s (%d)"
 msgstr "호스트에 접속하지 못했습니다."
 
 #, fuzzy
-msgid "IM Friends"
-msgstr "메시지 창(_I)"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
+msgid "Failed to add buddy"
+msgstr "대화 중인 친구에게 참가할 수 없습니다."
 
 #, fuzzy
-msgid "Add contacts from server"
-msgstr "서버로부터의 응답이 잘못되었습니다."
+msgid "'addbuddy' command failed."
+msgstr "친구 목록 가져오기..."
+
+#, fuzzy
+msgid "persist command failed"
+msgstr "Switchboard 에 실패했습니다."
+
+#, fuzzy
+msgid "Failed to remove buddy"
+msgstr "대화 중인 친구에게 참가할 수 없습니다."
+
+msgid "'delbuddy' command failed"
+msgstr ""
+
+#, fuzzy
+msgid "blocklist command failed"
+msgstr "Switchboard 에 실패했습니다."
+
+#, fuzzy
+msgid "Missing Cipher"
+msgstr "암호"
+
+msgid "The RC4 cipher could not be found"
+msgstr ""
+
+msgid ""
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
 
 msgid "Add friends from MySpace.com"
 msgstr ""
@@ -5795,9 +5987,6 @@ msgstr ""
 msgid "User"
 msgstr "사용자"
 
-msgid "Profile"
-msgstr "프로파일"
-
 #, fuzzy
 msgid "Headline"
 msgstr "핸들(_H):"
@@ -5813,17 +6002,6 @@ msgstr ""
 msgid "Client Version"
 msgstr "대화 창을 닫습니다."
 
-#. Protocol won't log in now without a username set.. Disconnect
-#, fuzzy
-msgid "No username set"
-msgstr "이름 없음"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr ""
-
-msgid "Please enter a username to check its availability:"
-msgstr ""
-
 #, fuzzy
 msgid "MySpaceIM - Username Available"
 msgstr "서비스를 이용할 수 없습니다."
@@ -5836,6 +6014,9 @@ msgstr ""
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr ""
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr ""
+
 #, fuzzy
 msgid "This username is unavailable."
 msgstr "이 테마에는 이용 가능한 이모티콘이 없습니다."
@@ -5843,6 +6024,14 @@ msgstr "이 테마에는 이용 가능한 이모티콘이 없습니다."
 #, fuzzy
 msgid "Please try another username:"
 msgstr "%s 님의 새 이름을 입력해 주십시오."
+
+#. Protocol won't log in now without a username set.. Disconnect
+#, fuzzy
+msgid "No username set"
+msgstr "이름 없음"
+
+msgid "Please enter a username to check its availability:"
+msgstr ""
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -6232,7 +6421,6 @@ msgstr "서버에 접속할 수 없습니다. 접속할 서버의 주소를 입�
 msgid "Error. SSL support is not installed."
 msgstr "오류입니다. SSL 지원이 설치되어 있지 않습니다."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "이 회의는 폐회되었습니다. 메시지를 전송할 수 없습니다."
 
@@ -6496,23 +6684,18 @@ msgstr "카메라"
 msgid "Screen Sharing"
 msgstr "아이디"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "대화할 수 있습니다."
 
-#, c-format
 msgid "Not Available"
 msgstr "사용 불가"
 
-#, c-format
 msgid "Occupied"
 msgstr "사용 중입니다."
 
-#, c-format
 msgid "Web Aware"
 msgstr "Web Aware"
 
-#, c-format
 msgid "Invisible"
 msgstr "숨김 상태"
 
@@ -6561,7 +6744,7 @@ msgstr ""
 "로그인 할 수 없습니다: 아이디가 틀렸기 때문에 %s (으)로서 접속할 수 없었습니"
 "다. 아이디의 앞 부분은 문자, 문자와 숫자와 공백 또는 숫자만이 가능합니다."
 
-#. Unregistered screen name
+#. Unregistered username
 #. uid is not exist
 #, fuzzy
 msgid "Invalid username."
@@ -6578,7 +6761,7 @@ msgstr "사용 중인 계정은 현재 정지 중입니다."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL 인스턴트 메신저 서비스는 일시적으로 이용할 수 없습니다."
 
-#. screen name connecting too frequently
+#. username connecting too frequently
 #. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6612,13 +6795,9 @@ msgstr "디지털 표시 방식으로 6자리의 숫자를 입력해 주십시�
 msgid "_OK"
 msgstr "확인(_O)"
 
-#, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
-msgstr ""
-"곧 접속이 끊깁니다. 이것이 수정되면 TOC 를 사용합니다. 갱신을 위해 %s 을(를) "
-"선택하십시오."
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "곧 접속이 끊깁니다. 갱신을 위해 %s 을(를) 선택하십시오."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "올바른 AIM 로그인 hash를 가져올 수 없습니다."
@@ -6761,7 +6940,7 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 "원인은 알 수 없지만, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "메시지를 보낼 수 없습니다: %s"
@@ -6782,6 +6961,9 @@ msgstr "접속한 일시"
 
 msgid "Member Since"
 msgstr "멤버가 된 일시"
+
+msgid "Profile"
+msgstr "프로파일"
 
 msgid "Your AIM connection may be lost."
 msgstr "AIM 으로의 접속이 끊어진 것 같습니다."
@@ -7058,6 +7240,7 @@ msgstr "접속(_O)"
 msgid "Get AIM Info"
 msgstr "AIM 정보 가져오기"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "친구 코멘트 편집"
 
@@ -7169,7 +7352,6 @@ msgstr "Direct IM 으로 %s 은(는) %s:%hu 에게 질의가 들어와 있습니
 msgid "Attempting to connect to %s:%hu."
 msgstr "%s:%hu (으)로 연락처를 시험하고 있습니다."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "프록시 서버를 통해 연락처를 시험하고 있습니다."
 
@@ -7265,7 +7447,7 @@ msgstr "기타"
 msgid "Visible"
 msgstr "숨김 상태"
 
-msgid "Firend Only"
+msgid "Friend Only"
 msgstr ""
 
 #, fuzzy
@@ -7356,16 +7538,48 @@ msgstr "최종 갱신일"
 msgid "Could not change buddy information."
 msgstr "친구의 정보를 입력해 주십시오."
 
-#, c-format
-msgid "%d needs Q&A"
+msgid "Mobile"
+msgstr "휴대 기기"
+
+msgid "Note"
+msgstr "비고"
+
+#. callback
+#, fuzzy
+msgid "Buddy Memo"
+msgstr "친구 아이콘"
+
+msgid "Change his/her memo as you like"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy Q&A"
-msgstr "친구 추가"
+msgid "_Modify"
+msgstr "변경"
 
 #, fuzzy
-msgid "Input answer here"
+msgid "Memo Modify"
+msgstr "변경"
+
+#, fuzzy
+msgid "Server says:"
+msgstr "서버 바쁨"
+
+msgid "Your request was accepted."
+msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%u requires verification"
+msgstr "승인이 필요합니다."
+
+#, fuzzy
+msgid "Add buddy question"
+msgstr "친구 목록에 추가하시겠습니까?"
+
+#, fuzzy
+msgid "Enter answer here"
 msgstr "이곳에 요청 사항을 입력하십시오."
 
 msgid "Send"
@@ -7379,18 +7593,19 @@ msgid "Authorization denied message:"
 msgstr "인증 거부 메시지:"
 
 #, fuzzy
-msgid "Sorry, You are not my style."
+msgid "Sorry, you're not my style."
 msgstr "죄송합니다, 제 스타일이 아닙니다..."
 
 #, fuzzy, c-format
-msgid "%d needs authentication"
+msgid "%u needs authorization"
 msgstr "사용자 %d 님은 인증이 필요합니다."
 
 #, fuzzy
 msgid "Add buddy authorize"
 msgstr "친구 목록에 추가하시겠습니까?"
 
-msgid "Input request here"
+#, fuzzy
+msgid "Enter request here"
 msgstr "이곳에 요청 사항을 입력하십시오."
 
 msgid "Would you be my friend?"
@@ -7413,7 +7628,7 @@ msgid "Failed sending authorize"
 msgstr "저를 승인해 주세요!"
 
 #, fuzzy, c-format
-msgid "Failed removing buddy %d"
+msgid "Failed removing buddy %u"
 msgstr "대화 중인 친구에게 참가할 수 없습니다."
 
 #, fuzzy, c-format
@@ -7458,6 +7673,10 @@ msgid "You can only search for permanent Qun\n"
 msgstr "영구적으로 사용 가능한 QQ 그룹만을 검색할 수 있습니다.\n"
 
 #, fuzzy
+msgid "(Invalid UTF-8 string)"
+msgstr "잘못된 프록시 설정"
+
+#, fuzzy
 msgid "Not member"
 msgstr "저는 멤버가 아닙니다."
 
@@ -7500,16 +7719,19 @@ msgstr "이 그룹에서는 다른 사람들의 참가를 허가하지 않고 �
 msgid "Join QQ Qun"
 msgstr "대화에 참가"
 
-#, c-format
-msgid "Successfully joined Qun %s (%d)"
-msgstr ""
+msgid "Input request here"
+msgstr "이곳에 요청 사항을 입력하십시오."
+
+#, fuzzy, c-format
+msgid "Successfully joined Qun %s (%u)"
+msgstr "Qun 생성이 성공적으로 완료했습니다."
 
 #, fuzzy
 msgid "Successfully joined Qun"
 msgstr "Qun 생성이 성공적으로 완료했습니다."
 
 #, c-format
-msgid "Qun %d denied to join"
+msgid "Qun %u denied from joining"
 msgstr ""
 
 msgid "QQ Qun Operation"
@@ -7519,7 +7741,7 @@ msgstr "QQ Qun 조작"
 msgid "Failed:"
 msgstr "실패했습니다."
 
-msgid "Join Qun, Unknow Reply"
+msgid "Join Qun, Unknown Reply"
 msgstr ""
 
 #, fuzzy
@@ -7534,11 +7756,11 @@ msgstr ""
 "이 조작에 의해 최종적으로 Qun 이 완전히 삭제됩니다."
 
 #, fuzzy
-msgid "Sorry, you are not our style ..."
+msgid "Sorry, you are not our style"
 msgstr "죄송합니다, 제 스타일이 아닙니다..."
 
 #, fuzzy
-msgid "Successfully changed Qun member"
+msgid "Successfully changed Qun members"
 msgstr "Qun 멤버 변경이 성공적으로 완료되었습니다."
 
 #, fuzzy
@@ -7549,35 +7771,35 @@ msgid "You have successfully created a Qun"
 msgstr "Qun 생성이 성공적으로 완료했습니다."
 
 #, fuzzy
-msgid "Would you like to set detailed information now?"
+msgid "Would you like to set up detailed information now?"
 msgstr "지금 바로 Qun 의 상세 정보를 입력하시겠습니까?"
 
 msgid "Setup"
 msgstr "입력"
 
 #, fuzzy, c-format
-msgid "%d requested to join Qun %d for %s"
+msgid "%u requested to join Qun %u for %s"
 msgstr "그룹 %d 에의 내 참가 요구가 관리자 %d 에 의해 거부되었습니다."
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr ""
+#, fuzzy, c-format
+msgid "%u request to join Qun %u"
+msgstr "그룹 %d 에의 내 참가 요구가 관리자 %d 에 의해 거부되었습니다."
 
 #, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
+msgid "Failed to join Qun %u, operated by admin %u"
 msgstr "대화 중인 친구에게 참가할 수 없습니다."
 
 #, c-format
-msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "<b>Removed buddy %d.</b>"
+msgid "<b>Removed buddy %u.</b>"
 msgstr "친구 삭제"
 
-#, c-format
-msgid "<b>New buddy %d joined.</b>"
-msgstr ""
+#, fuzzy, c-format
+msgid "<b>New buddy %u joined.</b>"
+msgstr "친구 삭제"
 
 #, c-format
 msgid "Unknown-%d"
@@ -7694,6 +7916,13 @@ msgstr "<b>마지막 갱신</b>: %s<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<b>현재의 온라인</b>: %d<br>\n"
 
+#, fuzzy
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<b>마지막 갱신</b>: %s<br>\n"
+
+msgid "and more, please let me know... thank you!))"
+msgstr ""
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
 
@@ -7701,7 +7930,7 @@ msgid "<i>Feel free to join us!</i> :)"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "About OpenQ r%s"
+msgid "About OpenQ %s"
 msgstr "%s 정보"
 
 #, fuzzy
@@ -7721,6 +7950,10 @@ msgstr ""
 #, fuzzy
 msgid "About OpenQ"
 msgstr "%s 정보"
+
+#, fuzzy
+msgid "Modify Buddy Memo"
+msgstr "자택 주소"
 
 #. *< type
 #. *< ui_requirement
@@ -7753,7 +7986,6 @@ msgstr ""
 msgid "QQ2008"
 msgstr ""
 
-#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "접속"
@@ -7766,6 +7998,9 @@ msgstr "서버 포트"
 msgid "Show server news"
 msgstr "서버 주소"
 
+msgid "Show chat room when msg comes"
+msgstr ""
+
 #, fuzzy
 msgid "Keep alive interval (seconds)"
 msgstr "읽는 중 오류"
@@ -7775,11 +8010,7 @@ msgid "Update interval (seconds)"
 msgstr "정보 갱신"
 
 #, fuzzy
-msgid "Can not decrypt server reply"
-msgstr "서버 정보를 가져올 수 없습니다."
-
-#, fuzzy
-msgid "Can not decrypt get server reply"
+msgid "Cannot decrypt server reply"
 msgstr "서버 정보를 가져올 수 없습니다."
 
 #, c-format
@@ -7802,21 +8033,23 @@ msgid "Activation required"
 msgstr "등록이 필요합니다."
 
 #, c-format
-msgid "Unknow reply code when login (0x%02X)"
+msgid "Unknown reply code when logging in (0x%02X)"
 msgstr ""
 
 #, fuzzy
-msgid "Keep alive error"
-msgstr "읽는 중 오류"
+msgid "Could not decrypt server reply"
+msgstr "서버 정보를 가져올 수 없습니다."
 
-msgid "Requesting captcha ..."
+#, fuzzy
+msgid "Requesting captcha"
+msgstr "질문 창의 글꼴"
+
+msgid "Checking captcha"
 msgstr ""
 
-msgid "Checking code of captcha ..."
-msgstr ""
-
-msgid "Failed captcha verify"
-msgstr ""
+#, fuzzy
+msgid "Failed captcha verification"
+msgstr "Yahoo! 인증 실패"
 
 #, fuzzy
 msgid "Captcha Image"
@@ -7826,37 +8059,29 @@ msgstr "이미지 저장"
 msgid "Enter code"
 msgstr "비밀번호 입력"
 
-msgid "QQ Captcha Verifing"
-msgstr ""
+#, fuzzy
+msgid "QQ Captcha Verification"
+msgstr "SSL 호스트 인증"
 
 #, fuzzy
 msgid "Enter the text from the image"
 msgstr "추가할 그룹의 이름을 입력해 주십시오."
 
 #, c-format
-msgid "Unknow reply code when checking password (0x%02X)"
+msgid "Unknown reply when checking password (0x%02X)"
 msgstr ""
 
 #, c-format
 msgid ""
-"Unknow reply code when login (0x%02X):\n"
+"Unknown reply code when logging in (0x%02X):\n"
 "%s"
 msgstr ""
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
 msgstr "접속할 수 없습니다."
 
 msgid "Socket error"
 msgstr "소켓 오류"
-
-#, fuzzy, c-format
-msgid ""
-"Lost connection with server:\n"
-"%d, %s"
-msgstr ""
-"서버와의 접속에 실패했습니다:\n"
-"%s"
 
 msgid "Unable to read from socket"
 msgstr "소켓으로부터 읽을 수 없습니다."
@@ -7868,11 +8093,11 @@ msgid "Connection lost"
 msgstr "접속을 닫았습니다."
 
 #, fuzzy
-msgid "Get server ..."
+msgid "Getting server"
 msgstr "사용자 정보 설정..."
 
 #, fuzzy
-msgid "Request token"
+msgid "Requesting token"
 msgstr "요청이 거부되었습니다."
 
 msgid "Couldn't resolve host"
@@ -7883,16 +8108,12 @@ msgid "Invalid server or port"
 msgstr "잘못된 오류"
 
 #, fuzzy
-msgid "Connecting server ..."
-msgstr "서버에 접속"
+msgid "Connecting to server"
+msgstr "SILC 서버에 접속 중"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "QQid 오류"
-
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "이름 가져오기에 실패했습니다: %s"
 
 #, fuzzy, c-format
 msgid ""
@@ -7901,6 +8122,10 @@ msgid ""
 "%s\n"
 "%s"
 msgstr "ICQ 서버 중계"
+
+#, fuzzy, c-format
+msgid "%s:%s"
+msgstr "%s (%s)"
 
 #, fuzzy, c-format
 msgid "From %s:"
@@ -7912,32 +8137,30 @@ msgid ""
 "%s"
 msgstr "서버 정보: %s"
 
-msgid "Unknow SERVER CMD"
-msgstr ""
+#, fuzzy
+msgid "Unknown SERVER CMD"
+msgstr "이유를 알 수 없습니다."
 
 #, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
-"Room %d, reply 0x%02X"
+"Room %u, reply 0x%02X"
 msgstr ""
 
 #, fuzzy
 msgid "QQ Qun Command"
 msgstr "명령 지정"
 
-#, c-format
-msgid "Not a member of room \"%s\"\n"
-msgstr ""
-
-msgid "Can not decrypt login reply"
-msgstr ""
+#, fuzzy
+msgid "Could not decrypt login reply"
+msgstr "서버 정보를 가져올 수 없습니다."
 
 #, fuzzy
-msgid "Unknow LOGIN CMD"
+msgid "Unknown LOGIN CMD"
 msgstr "이유를 알 수 없습니다."
 
 #, fuzzy
-msgid "Unknow CLIENT CMD"
+msgid "Unknown CLIENT CMD"
 msgstr "이유를 알 수 없습니다."
 
 #, c-format
@@ -8755,9 +8978,6 @@ msgstr "조직"
 msgid "Unit"
 msgstr "그룹"
 
-msgid "Note"
-msgstr "비고"
-
 msgid "Join Chat"
 msgstr "대화에 참가"
 
@@ -9423,6 +9643,10 @@ msgstr "호스트명을 해석할 수 없었습니다."
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP 의 아이디에 공백 또는 @ 기호가 포함되어 있지 않은 것 같습니다."
 
+#, fuzzy
+msgid "SIP connect server not specified"
+msgstr "서버 포트"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -9457,190 +9681,10 @@ msgid "Auth Domain"
 msgstr "도메인 인증"
 
 #, c-format
-msgid "Looking up %s"
-msgstr "%s 검색 중"
-
-#, c-format
-msgid "Connect to %s failed"
-msgstr "%s (으)로의 접속에 실패했습니다."
-
-#, c-format
-msgid "Signon: %s"
-msgstr "접속: %s"
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr "파일 %s 을(를) 쓸 수 없습니다."
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "파일 %s 을(를) 읽을 수 없습니다."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "메시지가 너무 길어 마지막 %s 바이트가 잘렸습니다."
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s 님은 현재 로그인 되어 있지 않습니다."
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "%s 경고는 허가되어 있지 않습니다."
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "사용자 속도 제한을 초과하였기 때문에, 메시지가 유실되었습니다."
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "%s 에서의 대화는 가능하지 않습니다."
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "너무 빨라 %s 메시지를 전송할 수 없습니다."
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "너무 커서 %s (으)로부터의 IM 을 무시했습니다."
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr "너무 빨라 %s 님으로부터의 IM 을 무시했습니다."
-
-#, c-format
-msgid "Failure."
-msgstr "실패했습니다."
-
-#, c-format
-msgid "Too many matches."
-msgstr "너무 많이 일치합니다."
-
-#, c-format
-msgid "Need more qualifiers."
-msgstr "더 많은 수식어가 필요합니다."
-
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr "일시적으로 디렉토리 서비스를 이용할 수 없습니다."
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr "이메일 검색이 거부되었습니다."
-
-#, c-format
-msgid "Keyword ignored."
-msgstr "검색어가 무시되었습니다."
-
-#, c-format
-msgid "No keywords."
-msgstr "검색어가 없습니다."
-
-#, c-format
-msgid "User has no directory information."
-msgstr "디렉토리 정보가 없습니다."
-
-#, c-format
-msgid "Country not supported."
-msgstr "지원되지 않는 국가입니다."
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "원인을 알 수 없는 실패: %s"
-
-#, fuzzy, c-format
-msgid "Incorrect username or password."
-msgstr "아이디 또는 비밀번호가 틀립니다."
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr "일시적으로 서비스를 이용할 수 없습니다."
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr "로그인 경고 수준이 너무 높습니다."
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-"접속과 해제를 반복 수행했습니다. 10분 정도 후에 재시도 하십시오. 이대로 계속"
-"하면 더 많이 시간을 기다려야 합니다."
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "원인을 알 수 없는 접속 오류가 발생했습니다: %s"
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "알 수 없는 오류 %d 이(가) 발생했습니다 (정보: %s)."
-
-msgid "Invalid Groupname"
-msgstr "그룹명이 잘못되었습니다."
-
-msgid "Connection Closed"
-msgstr "접속을 닫았습니다."
-
-msgid "Waiting for reply..."
-msgstr "응답을 기다리는 중입니다..."
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC 가 일시정지 상태에서 복귀했습니다. 메시지를 다시 보낼 수 있습니다."
-
-msgid "Password Change Successful"
-msgstr "비밀번호 변경이 성공적으로 완료되었습니다."
-
-msgid "_Group:"
-msgstr "그룹(_G):"
-
-msgid "Get Dir Info"
-msgstr "폴더 정보 가져오기"
-
-msgid "Set Dir Info"
-msgstr "폴더 정보 설정"
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr "쓰기 모드에서 %s 을(를) 열 수 없습니다!"
-
-msgid "File transfer failed; other side probably canceled."
-msgstr "파일 전송에 실패했습니다. 아마도 상대측에서 취소한 것 같습니다."
-
-msgid "Could not connect for transfer."
-msgstr "전송할 수 없었습니다."
-
-msgid "Could not write file header.  The file will not be transferred."
-msgstr "파일 헤더를 기록할 수 없습니다. 파일은 전송되지 않습니다."
-
-msgid "Save As..."
-msgstr "다른 이름으로 저장..."
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] "%s 님으로부터 %s 님에게 %d 개의 파일 요청: %s (%.2f %s)%s%s"
-
-# msgstr[1] "%s 님으로부터 %s 님에게 %d 개의 파일 요청: %s (%.2f %s)%s%s"
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s 님이 파일을 보내도록 요청하고 있습니다."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "TOC Protocol Plugin"
-msgstr "TOC 프로토콜 플러그인"
-
-#, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+
+msgid "Your SMS was not delivered"
 msgstr ""
 
 msgid "Your Yahoo! message did not get sent."
@@ -9917,13 +9961,9 @@ msgstr "추천 링크 3"
 msgid "Last Update"
 msgstr "최종 갱신일"
 
-#, c-format
-msgid "User information for %s unavailable"
-msgstr "%s 의 사용자 정보는 사용할 수 없습니다."
-
+#, fuzzy
 msgid ""
-"Sorry, this profile seems to be in a language or format that is not "
-"supported at this time."
+"This profile is in a language or format that is not supported at this time."
 msgstr ""
 "죄송합니다. 이 프로파일은 이 버전에서는 지원하지 않는 서식 혹은 언어입니다."
 
@@ -10256,9 +10296,6 @@ msgstr "다른 용무 중"
 msgid "Extended away"
 msgstr "장기 자리 비움"
 
-msgid "Mobile"
-msgstr "휴대 기기"
-
 msgid "Listening to music"
 msgstr ""
 
@@ -10299,18 +10336,6 @@ msgstr "+++ %s 님이 대기 중으로부터 복귀했습니다."
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "%s 을(를) 읽는 중 오류"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
-"%s 을(를) 읽는 중 오류가 발생했습니다. 이 정보는 읽을 수 없습니다. 또한, 오래"
-"된 파일 이름을 \"%s~\" (으)로 변경했습니다."
 
 msgid "Calculating..."
 msgstr "계산 중..."
@@ -10386,6 +10411,14 @@ msgstr "%s (으)로 쓰는 중 오류: %s"
 msgid "Unable to connect to %s: %s"
 msgstr "%s (으)로 접속할 수 없습니다: %s"
 
+#, fuzzy, c-format
+msgid ""
+"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
+"found."
+msgstr ""
+"로그인하기 위해 서버가 TLS/SSL 을 요구해 왔지만, TLS/SSL 은 지원되지 않습니"
+"다."
+
 #, c-format
 msgid " - %s"
 msgstr ""
@@ -10418,6 +10451,18 @@ msgstr "접속이 거부되었습니다."
 #, fuzzy, c-format
 msgid "Address already in use."
 msgstr "이 대화명은 이미 사용 중입니다."
+
+#, c-format
+msgid "Error Reading %s"
+msgstr "%s 을(를) 읽는 중 오류"
+
+#, fuzzy, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+"%s 을(를) 읽는 중 오류가 발생했습니다. 이 정보는 읽을 수 없습니다. 또한, 오래"
+"된 파일 이름을 \"%s~\" (으)로 변경했습니다."
 
 msgid "Internet Messenger"
 msgstr "인터넷 메신저"
@@ -10461,10 +10506,8 @@ msgstr "새 메일 알림"
 msgid "Use this buddy _icon for this account:"
 msgstr "다음 아이콘 사용:"
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "%s 설정"
+msgid "_Advanced"
+msgstr "고급 설정(_A)"
 
 msgid "Use GNOME Proxy Settings"
 msgstr "GNOME 프록시 설정 사용"
@@ -10499,9 +10542,6 @@ msgstr "가까이 잘 보면"
 msgid "you can see the butterflies mating"
 msgstr "나비가 친구가 되어 있는 것을 알 수 있습니다."
 
-msgid "Proxy Options"
-msgstr "프록시 설정"
-
 msgid "Proxy _type:"
 msgstr "프록시 형식(_T):"
 
@@ -10530,8 +10570,9 @@ msgstr "기본 설정(_B)"
 msgid "Create _this new account on the server"
 msgstr ""
 
-msgid "_Advanced"
-msgstr "고급 설정(_A)"
+#, fuzzy
+msgid "_Proxy"
+msgstr "프록시"
 
 msgid "Enabled"
 msgstr "사용"
@@ -10603,6 +10644,17 @@ msgstr "정보 가져오기(_I)"
 
 msgid "I_M"
 msgstr "인스턴트 메시지(_M)"
+
+#, fuzzy
+msgid "_Audio Call"
+msgstr "대화 추가(_A)"
+
+msgid "Audio/_Video Call"
+msgstr ""
+
+#, fuzzy
+msgid "_Video Call"
+msgstr "영상 대화"
 
 #, fuzzy
 msgid "_Send File..."
@@ -10749,6 +10801,10 @@ msgstr "/도구/친구 알림(_P)"
 msgid "/Tools/_Certificates"
 msgstr "/도구/인증(_C)"
 
+#, fuzzy
+msgid "/Tools/Custom Smile_ys"
+msgstr "/도구/개인 정보"
+
 msgid "/Tools/Plu_gins"
 msgstr "/도구/플러그인(_G)"
 
@@ -10757,10 +10813,6 @@ msgstr "/도구/설정(_E)"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/도구/개인 정보(_I)"
-
-#, fuzzy
-msgid "/Tools/Smile_y"
-msgstr "/도구/개인 정보"
 
 msgid "/Tools/_File Transfers"
 msgstr "/도구/파일 전송(_F)"
@@ -10883,8 +10935,8 @@ msgstr "수동 정렬"
 msgid "By status"
 msgstr "상태순"
 
-msgid "By log size"
-msgstr "로그 크기순"
+msgid "By recent log activity"
+msgstr ""
 
 #, c-format
 msgid "%s disconnected"
@@ -10901,6 +10953,9 @@ msgstr "접속"
 #, fuzzy
 msgid "Re-enable"
 msgstr "계정 재사용"
+
+msgid "SSL FAQs"
+msgstr ""
 
 msgid "Welcome back!"
 msgstr ""
@@ -10995,6 +11050,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "별칭:"
 
+msgid "_Group:"
+msgstr "그룹(_G):"
+
 msgid "Auto_join when account becomes online."
 msgstr ""
 
@@ -11047,13 +11105,6 @@ msgstr "지금 그 친구를 초대 가능한 계정으로 접속되어 있지 �
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "친구를 대화실로 초대"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
-"초대하고자 하는 상대의 이름과 초대 메시지(선택 사항)을 입력해 주십시오."
 
 msgid "_Buddy:"
 msgstr "친구(_B):"
@@ -11130,6 +11181,22 @@ msgstr "/대화/다른 이름으로 저장(_S)..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/대화/화면 비우기(_R)"
 
+#, fuzzy
+msgid "/Conversation/M_edia"
+msgstr "/대화/자세히(_O)"
+
+#, fuzzy
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/대화/자세히(_O)"
+
+#, fuzzy
+msgid "/Conversation/Media/_Video Call"
+msgstr "/대화/자세히(_O)"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/대화/로그 보기(_L)"
+
 msgid "/Conversation/Se_nd File..."
 msgstr "/대화/파일 전송(_N)..."
 
@@ -11203,6 +11270,18 @@ msgstr "/대화"
 
 msgid "/Conversation/View Log"
 msgstr "/대화/로그 보기"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio Call"
+msgstr "/대화/자세히(_O)"
+
+#, fuzzy
+msgid "/Conversation/Media/Video Call"
+msgstr "/대화/로그 보기"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/대화/자세히(_O)"
 
 msgid "/Conversation/Send File..."
 msgstr "/대화/파일 전송..."
@@ -11388,6 +11467,9 @@ msgstr "양치기자리"
 msgid "Ka-Hing Cheung"
 msgstr ""
 
+msgid "voice and video"
+msgstr ""
+
 msgid "support"
 msgstr "지원"
 
@@ -11533,6 +11615,10 @@ msgid "Ubuntu Georgian Translators"
 msgstr "현재 번역자"
 
 #, fuzzy
+msgid "Khmer"
+msgstr "기타"
+
+#, fuzzy
 msgid "Kannada"
 msgstr "차단되었습니다."
 
@@ -11553,6 +11639,10 @@ msgid "Lithuanian"
 msgstr "리투아니아어"
 
 msgid "Macedonian"
+msgstr "마케도니아어"
+
+#, fuzzy
+msgid "Mongolian"
 msgstr "마케도니아어"
 
 #, fuzzy
@@ -11671,7 +11761,24 @@ msgstr ""
 "를 참조해 주십시오. 본 프로그램은 어떠한 보증도 하지 않습니다.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net의 #pidgin 채널<BR><BR>"
+
+#, fuzzy, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net의 #pidgin 채널<BR><BR>"
 
 msgid "Current Developers"
@@ -11988,15 +12095,6 @@ msgstr ""
 msgid "Enable typing notification"
 msgstr "새 메일 알림"
 
-msgid "_Copy Email Address"
-msgstr "이메일 주소 복사(_C)"
-
-msgid "_Open Link in Browser"
-msgstr "링크를 브라우저로 열기(_O)"
-
-msgid "_Copy Link Location"
-msgstr "링크 주소 복사(_C)"
-
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -12245,6 +12343,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12272,6 +12371,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12332,12 +12432,27 @@ msgstr ""
 msgid "Pidgin"
 msgstr "해(돼지)"
 
-msgid "Open All Messages"
-msgstr "모든 메시지 열기"
-
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">새로운 메일이 도착했습니다!</span>"
+
+msgid "/_Media"
+msgstr ""
+
+msgid "/Media/_Hangup"
+msgstr ""
+
+#, fuzzy
+msgid "Calling..."
+msgstr "계산 중..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -12365,6 +12480,29 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "브라우저 명령이 '수동설정'으로 되어 있지만, 명령이 지정되어 있지 않습니다."
+
+msgid "Open All Messages"
+msgstr "모든 메시지 열기"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">새로운 메일이 도착했습니다!</span>"
+
+#, fuzzy
+msgid "New Pounces"
+msgstr "새 친구 알림"
+
+msgid "Dismiss"
+msgstr ""
+
+#, fuzzy
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">새로운 메일이 도착했습니다!</span>"
+
+#, fuzzy
+msgid "No message"
+msgstr "알 수 없는 메시지"
 
 msgid "The following plugins will be unloaded."
 msgstr "다음의 플러그인을 해제합니다."
@@ -12417,6 +12555,10 @@ msgstr "<b>플러그인 상세</b>"
 
 msgid "Select a file"
 msgstr "파일 선택"
+
+#, fuzzy
+msgid "Modify Buddy Pounce"
+msgstr "친구 알림 편집"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -12489,6 +12631,50 @@ msgstr "반복(_R)"
 msgid "Pounce Target"
 msgstr "알림 받을 상대"
 
+#, fuzzy, c-format
+msgid "Started typing"
+msgstr "입력 시작했을 때(_T)"
+
+#, fuzzy, c-format
+msgid "Paused while typing"
+msgstr "입력을 일시 중지했을 때(_A)"
+
+#, fuzzy, c-format
+msgid "Signed on"
+msgstr "접속했을 때(_G)"
+
+#, fuzzy, c-format
+msgid "Returned from being idle"
+msgstr "%s 대기로부터 복귀했습니다. (%s)"
+
+#, fuzzy, c-format
+msgid "Returned from being away"
+msgstr "자리 비움으로부터 복귀했을 때(_U)"
+
+#, fuzzy, c-format
+msgid "Stopped typing"
+msgstr "입력을 중지했습니다."
+
+#, fuzzy, c-format
+msgid "Signed off"
+msgstr "접속을 해제했을 때(_F)"
+
+#, fuzzy, c-format
+msgid "Became idle"
+msgstr "대기 상태가 되었을 때(_I)"
+
+#, fuzzy, c-format
+msgid "Went away"
+msgstr "자리 비움일 때만"
+
+#, fuzzy, c-format
+msgid "Sent a message"
+msgstr "메시지 보내기(_M)"
+
+#, fuzzy, c-format
+msgid "Unknown.... Please report this!"
+msgstr "알 수 없는 \"알림\" 이벤트입니다. 꼭 보고해 주십시오!"
+
 msgid "Smiley theme failed to unpack."
 msgstr "이모티콘 테마를 풀 수 없습니다."
 
@@ -12512,6 +12698,12 @@ msgstr ""
 msgid "Cl_ose conversations with the Escape key"
 msgstr "%s 님과의 대화"
 
+#. Buddy List Themes
+#, fuzzy
+msgid "Buddy List Theme"
+msgstr "친구 목록"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "시스템 트레이 아이콘"
 
@@ -12623,9 +12815,6 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr "사용자 정보를 가져오지 못했습니다."
 
-msgid "ST_UN server:"
-msgstr "STUN 서버(_U):"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">예: stunserver.org</span>"
 
@@ -12649,6 +12838,10 @@ msgstr "시작 포트 번호(_S):"
 
 msgid "_End port:"
 msgstr "종료 포트 번호(_E):"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr ""
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -12678,6 +12871,10 @@ msgstr "프록시 서버"
 
 msgid "No proxy"
 msgstr "프록시 없음"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr ""
 
 msgid "_User:"
 msgstr "사용자명(_U):"
@@ -12843,11 +13040,11 @@ msgstr "자리 비움으로 대기 상태일 때"
 msgid "Auto-away"
 msgstr "자동 자리 비움"
 
-msgid "Change status when _idle"
-msgstr "대기 상태가 되면 상태 변경(_I)"
-
 msgid "_Minutes before becoming idle:"
 msgstr "대기 시간 간격(분)(_M)"
+
+msgid "Change status when _idle"
+msgstr "대기 상태가 되면 상태 변경(_I)"
 
 msgid "Change _status to:"
 msgstr "다음 상태로 변경(_S):"
@@ -12997,6 +13194,12 @@ msgstr "저장 후 사용(_V)"
 msgid "Status for %s"
 msgstr "%s 의 상태"
 
+#.
+#. * TODO: We should enable/disable the add button based on
+#. *       whether the user has entered all required data.  That
+#. *       would eliminate the need for this check and provide a
+#. *       better user experience.
+#.
 #, fuzzy
 msgid "Custom Smiley"
 msgstr "이모티콘을 삽입합니다."
@@ -13007,14 +13210,14 @@ msgstr ""
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr ""
 
+#, c-format
+msgid ""
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
+msgstr ""
+
 #, fuzzy
 msgid "Duplicate Shortcut"
 msgstr "문자열이 중복되고 있습니다."
-
-msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
-msgstr ""
 
 #, fuzzy
 msgid "Please select an image for the smiley."
@@ -13029,16 +13232,20 @@ msgid "Add Smiley"
 msgstr "이모티콘(_S)"
 
 #, fuzzy
-msgid "Smiley _Image"
-msgstr "이미지 저장"
+msgid "_Image:"
+msgstr "이미지(_I)"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
+#. Shortcut text
+msgid "S_hortcut text:"
 msgstr ""
 
 #, fuzzy
 msgid "Smiley"
 msgstr "이모티콘(_S)"
+
+#, fuzzy
+msgid "Shortcut Text"
+msgstr "상태 문자"
 
 #, fuzzy
 msgid "Custom Smiley Manager"
@@ -13172,6 +13379,16 @@ msgid ""
 msgstr ""
 "이미지 '%s' 의 불러오기에 실패했습니다: 원인은 알 수 없으나, 아마도 잘못된 이"
 "미지 파일인 것 같습니다."
+
+#, fuzzy
+msgid "_Open Link"
+msgstr "링크를 여는 방식(_O):"
+
+msgid "_Copy Link Location"
+msgstr "링크 주소 복사(_C)"
+
+msgid "_Copy Email Address"
+msgstr "이메일 주소 복사(_C)"
 
 msgid "Save File"
 msgstr "파일 저장"
@@ -14145,9 +14362,6 @@ msgstr "친구 목록을 맨 위로 배치한 상태 유지(_K):"
 msgid "Only when docked"
 msgstr "결합했을 때만"
 
-msgid "_Flash window when chat messages are received"
-msgstr "대화에서 메시지를 받으면 창을 깜박거림(_F)"
-
 msgid "Windows Pidgin Options"
 msgstr "Windows Pidgin 설정"
 
@@ -14195,6 +14409,223 @@ msgstr "낮은 수준의 XMPP stanza 를 전송 또는 수신합니다."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "이것은 XMPP 서버 또는 클라이언트를 디버그 할 때에 편리한 플러그인입니다."
+
+#, fuzzy
+#~ msgid "Invite message"
+#~ msgstr "메시지 안에 삽입"
+
+#, fuzzy
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "초대하고자 하는 상대의 이름과 초대 메시지(선택 사항)을 입력해 주십시오."
+
+#, fuzzy
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Notes 주소록 선택"
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "곧 접속이 끊깁니다. 이것이 수정되면 TOC 를 사용합니다. 갱신을 위해 %s 을"
+#~ "(를) 선택하십시오."
+
+#, fuzzy
+#~ msgid "Add buddy Q&A"
+#~ msgstr "친구 추가"
+
+#, fuzzy
+#~ msgid "Can not decrypt get server reply"
+#~ msgstr "서버 정보를 가져올 수 없습니다."
+
+#, fuzzy
+#~ msgid "Keep alive error"
+#~ msgstr "읽는 중 오류"
+
+#, fuzzy
+#~ msgid ""
+#~ "Lost connection with server:\n"
+#~ "%d, %s"
+#~ msgstr ""
+#~ "서버와의 접속에 실패했습니다:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Connecting server ..."
+#~ msgstr "서버에 접속"
+
+#, fuzzy
+#~ msgid "Failed to send IM."
+#~ msgstr "이름 가져오기에 실패했습니다: %s"
+
+#~ msgid "Looking up %s"
+#~ msgstr "%s 검색 중"
+
+#~ msgid "Connect to %s failed"
+#~ msgstr "%s (으)로의 접속에 실패했습니다."
+
+#~ msgid "Signon: %s"
+#~ msgstr "접속: %s"
+
+#~ msgid "Unable to write file %s."
+#~ msgstr "파일 %s 을(를) 쓸 수 없습니다."
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "파일 %s 을(를) 읽을 수 없습니다."
+
+#~ msgid "Message too long, last %s bytes truncated."
+#~ msgstr "메시지가 너무 길어 마지막 %s 바이트가 잘렸습니다."
+
+#~ msgid "%s not currently logged in."
+#~ msgstr "%s 님은 현재 로그인 되어 있지 않습니다."
+
+#~ msgid "Warning of %s not allowed."
+#~ msgstr "%s 경고는 허가되어 있지 않습니다."
+
+#~ msgid ""
+#~ "A message has been dropped, you are exceeding the server speed limit."
+#~ msgstr "사용자 속도 제한을 초과하였기 때문에, 메시지가 유실되었습니다."
+
+#~ msgid "Chat in %s is not available."
+#~ msgstr "%s 에서의 대화는 가능하지 않습니다."
+
+#~ msgid "You are sending messages too fast to %s."
+#~ msgstr "너무 빨라 %s 메시지를 전송할 수 없습니다."
+
+#~ msgid "You missed an IM from %s because it was too big."
+#~ msgstr "너무 커서 %s (으)로부터의 IM 을 무시했습니다."
+
+#~ msgid "You missed an IM from %s because it was sent too fast."
+#~ msgstr "너무 빨라 %s 님으로부터의 IM 을 무시했습니다."
+
+#~ msgid "Failure."
+#~ msgstr "실패했습니다."
+
+#~ msgid "Too many matches."
+#~ msgstr "너무 많이 일치합니다."
+
+#~ msgid "Need more qualifiers."
+#~ msgstr "더 많은 수식어가 필요합니다."
+
+#~ msgid "Dir service temporarily unavailable."
+#~ msgstr "일시적으로 디렉토리 서비스를 이용할 수 없습니다."
+
+#~ msgid "Email lookup restricted."
+#~ msgstr "이메일 검색이 거부되었습니다."
+
+#~ msgid "Keyword ignored."
+#~ msgstr "검색어가 무시되었습니다."
+
+#~ msgid "No keywords."
+#~ msgstr "검색어가 없습니다."
+
+#~ msgid "User has no directory information."
+#~ msgstr "디렉토리 정보가 없습니다."
+
+#~ msgid "Country not supported."
+#~ msgstr "지원되지 않는 국가입니다."
+
+#~ msgid "Failure unknown: %s."
+#~ msgstr "원인을 알 수 없는 실패: %s"
+
+#, fuzzy
+#~ msgid "Incorrect username or password."
+#~ msgstr "아이디 또는 비밀번호가 틀립니다."
+
+#~ msgid "The service is temporarily unavailable."
+#~ msgstr "일시적으로 서비스를 이용할 수 없습니다."
+
+#~ msgid "Your warning level is currently too high to log in."
+#~ msgstr "로그인 경고 수준이 너무 높습니다."
+
+#~ msgid ""
+#~ "You have been connecting and disconnecting too frequently.  Wait ten "
+#~ "minutes and try again.  If you continue to try, you will need to wait "
+#~ "even longer."
+#~ msgstr ""
+#~ "접속과 해제를 반복 수행했습니다. 10분 정도 후에 재시도 하십시오. 이대로 계"
+#~ "속하면 더 많이 시간을 기다려야 합니다."
+
+#~ msgid "An unknown signon error has occurred: %s."
+#~ msgstr "원인을 알 수 없는 접속 오류가 발생했습니다: %s"
+
+#~ msgid "An unknown error, %d, has occurred.  Info: %s"
+#~ msgstr "알 수 없는 오류 %d 이(가) 발생했습니다 (정보: %s)."
+
+#~ msgid "Invalid Groupname"
+#~ msgstr "그룹명이 잘못되었습니다."
+
+#~ msgid "Connection Closed"
+#~ msgstr "접속을 닫았습니다."
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "응답을 기다리는 중입니다..."
+
+#~ msgid "TOC has come back from its pause. You may now send messages again."
+#~ msgstr ""
+#~ "TOC 가 일시정지 상태에서 복귀했습니다. 메시지를 다시 보낼 수 있습니다."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "비밀번호 변경이 성공적으로 완료되었습니다."
+
+#~ msgid "Get Dir Info"
+#~ msgstr "폴더 정보 가져오기"
+
+#~ msgid "Set Dir Info"
+#~ msgstr "폴더 정보 설정"
+
+#~ msgid "Could not open %s for writing!"
+#~ msgstr "쓰기 모드에서 %s 을(를) 열 수 없습니다!"
+
+#~ msgid "File transfer failed; other side probably canceled."
+#~ msgstr "파일 전송에 실패했습니다. 아마도 상대측에서 취소한 것 같습니다."
+
+#~ msgid "Could not connect for transfer."
+#~ msgstr "전송할 수 없었습니다."
+
+#~ msgid "Could not write file header.  The file will not be transferred."
+#~ msgstr "파일 헤더를 기록할 수 없습니다. 파일은 전송되지 않습니다."
+
+#~ msgid "Save As..."
+#~ msgstr "다른 이름으로 저장..."
+
+#~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+#~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+#~ msgstr[0] "%s 님으로부터 %s 님에게 %d 개의 파일 요청: %s (%.2f %s)%s%s"
+
+# msgstr[1] "%s 님으로부터 %s 님에게 %d 개의 파일 요청: %s (%.2f %s)%s%s"
+#~ msgid "%s requests you to send them a file"
+#~ msgstr "%s 님이 파일을 보내도록 요청하고 있습니다."
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "TOC 프로토콜 플러그인"
+
+#~ msgid "User information for %s unavailable"
+#~ msgstr "%s 의 사용자 정보는 사용할 수 없습니다."
+
+#~ msgid "%s Options"
+#~ msgstr "%s 설정"
+
+#~ msgid "Proxy Options"
+#~ msgstr "프록시 설정"
+
+#~ msgid "By log size"
+#~ msgstr "로그 크기순"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "링크를 브라우저로 열기(_O)"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "STUN 서버(_U):"
+
+#, fuzzy
+#~ msgid "Smiley _Image"
+#~ msgstr "이미지 저장"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "대화에서 메시지를 받으면 창을 깜박거림(_F)"
 
 #~ msgid "A group with the name already exists."
 #~ msgstr "같은 이름의 그룹이 이미 존재합니다."
@@ -14286,13 +14717,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Change Qun information"
 #~ msgstr "채널 정보"
-
-#, fuzzy
-#~ msgid ""
-#~ "%s\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr "%s (%s)"
 
 #~ msgid "System Message"
 #~ msgstr "시스템 메시지"
@@ -14896,8 +15320,8 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Pidgin will prevent anything from going through. "
-#~ "This is only temporary, please be patient."
+#~ "off if you send a message. Pidgin will prevent anything from going "
+#~ "through. This is only temporary, please be patient."
 #~ msgstr ""
 #~ "이것이 발생한 경우, TOC 는 메시지 송신을 무시하기 때문에 메시지를 보낼 수 "
 #~ "없습니다. Pidgin은 모든 송신 데이터를 차단합니다. 일시적인 현상이므로 잠시"
@@ -14909,8 +15333,8 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
-#~ "will result in reduced functionality and features."
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, "
+#~ "which will result in reduced functionality and features."
 #~ msgstr ""
 #~ "표준 인증 방식으로 실패했습니다. 이것은 사용 중인 비밀번호가 틀리거나 혹"
 #~ "은 Yahoo! 의 인증 절차가 변경된 경우입니다. Pidgin은 웹 메신저 인증 방식"

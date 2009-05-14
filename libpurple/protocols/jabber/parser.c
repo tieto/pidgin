@@ -86,6 +86,8 @@ jabber_parser_element_start_libxml(void *user_data,
 			}
 		}
 		for(i=0; i < nb_attributes * 5; i+=5) {
+			const char *name = (const char *)attributes[i];
+			const char *prefix = (const char *)attributes[i+1];
 			const char *attrib_ns = (const char *)attributes[i+2];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
@@ -97,7 +99,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = purple_unescape_html(txt);
 			g_free(txt);
-			xmlnode_set_attrib_with_namespace(node, (const char*) attributes[i], attrib_ns, attrib);
+			xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
 			g_free(attrib);
 		}
 
@@ -205,6 +207,12 @@ jabber_parser_setup(JabberStream *js)
 	jabber_parser_free(js);
 }
 
+void
+jabber_parser_close_stream(JabberStream *js)
+{
+	xmlParseChunk(js->context, "</stream:stream>", 16 /* length */, 0);
+}
+
 void jabber_parser_free(JabberStream *js) {
 	if (js->context) {
 		xmlParseChunk(js->context, NULL,0,1);
@@ -224,8 +232,17 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		xmlParseChunk(js->context, "", 0, 0);
 	} else if ((ret = xmlParseChunk(js->context, buf, len, 0)) != XML_ERR_OK) {
 		xmlError *err = xmlCtxtGetLastError(js->context);
+		/*
+		 * libxml2 uses a global setting to determine whether or not to store
+		 * warnings.  Other libraries may set this, which causes err to be
+		 * NULL. See #8136 for details.
+		 */
+		xmlErrorLevel level = XML_ERR_WARNING;
 
-		switch (err->level) {
+		if (err)
+			level = err->level;
+
+		switch (level) {
 			case XML_ERR_NONE:
 				purple_debug_info("jabber", "xmlParseChunk returned info %i\n", ret);
 				break;

@@ -41,37 +41,46 @@ void ggp_buddylist_send(PurpleConnection *gc)
 	GGPInfo *info = gc->proto_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
-	PurpleBuddyList *blist;
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleBuddy *buddy;
 	uin_t *userlist = NULL;
 	gchar *types = NULL;
 	int size = 0, ret = 0;
 
-	if ((blist = purple_get_blist()) == NULL)
-	    return;
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root();
+	     gnode != NULL;
+	     gnode = purple_blist_node_get_sibling_next(gnode))
+	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
+		for (cnode = purple_blist_node_get_first_child(gnode);
+		     cnode != NULL;
+		     cnode = purple_blist_node_get_sibling_next(cnode))
+		{
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
+			for (bnode = purple_blist_node_get_first_child(cnode);
+			     bnode != NULL;
+			     bnode = purple_blist_node_get_sibling_next(bnode))
+			{
+				const gchar *name = NULL;
+
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 
 				buddy = (PurpleBuddy *)bnode;
 
-				if (buddy->account != account)
+				if (purple_buddy_get_account(buddy) != account)
 					continue;
+
+				name = purple_buddy_get_name(buddy);
 
 				size++;
 				userlist = (uin_t *) g_renew(uin_t, userlist, size);
 				types    = (gchar *) g_renew(gchar, types, size);
-				userlist[size - 1] = ggp_str_to_uin(buddy->name);
+				userlist[size - 1] = ggp_str_to_uin(name);
 				types[size - 1]    = GG_USER_NORMAL;
 				purple_debug_info("gg", "ggp_buddylist_send: adding %d\n",
 						userlist[size - 1]);
@@ -173,36 +182,45 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 void ggp_buddylist_offline(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddyList *blist;
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleBuddy *buddy;
 
-	if ((blist = purple_get_blist()) == NULL)
-		return;
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root();
+	     gnode != NULL;
+	     gnode = purple_blist_node_get_sibling_next(gnode))
+	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
+		for (cnode = purple_blist_node_get_first_child(gnode);
+		     cnode != NULL;
+		     cnode = purple_blist_node_get_sibling_next(cnode))
+		{
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
+			for (bnode = purple_blist_node_get_first_child(cnode);
+			     bnode != NULL;
+			     bnode = purple_blist_node_get_sibling_next(bnode))
+			{
+				const gchar *name = NULL;
+
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 
 				buddy = (PurpleBuddy *)bnode;
+				
+				name = purple_buddy_get_name(buddy);
 
-				if (buddy->account != account)
+				if (purple_buddy_get_account(buddy) != account)
 					continue;
 
 				purple_prpl_got_user_status(
-					account, buddy->name, "offline", NULL);
+					account, name, "offline", NULL);
 
 				purple_debug_info("gg",
 					"ggp_buddylist_offline: gone: %s\n",
-					buddy->name);
+					name);
 			}
 		}
 	}
@@ -212,41 +230,46 @@ void ggp_buddylist_offline(PurpleConnection *gc)
 /* char *ggp_buddylist_dump(PurpleAccount *account) {{{ */
 char *ggp_buddylist_dump(PurpleAccount *account)
 {
-	PurpleBuddyList *blist;
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
-	GString *buddylist;
+	GString *buddylist = g_string_sized_new(1024);
 	char *ptr;
 
-	if ((blist = purple_get_blist()) == NULL)
-		return NULL;
-
-	buddylist = g_string_sized_new(1024);
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+	for (gnode = purple_blist_get_root();
+	     gnode != NULL;
+	     gnode = purple_blist_node_get_sibling_next(gnode))
+	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
 		group = (PurpleGroup *)gnode;
 
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
+		for (cnode = purple_blist_node_get_first_child(gnode);
+		     cnode != NULL;
+		     cnode = purple_blist_node_get_sibling_next(cnode))
+		{
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				gchar *name, *alias, *gname;
+			for (bnode = purple_blist_node_get_first_child(cnode);
+			     bnode != NULL;
+			     bnode = purple_blist_node_get_sibling_next(bnode))
+			{
+				const gchar *name, *alias, *gname;
 
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 
 				buddy = (PurpleBuddy *)bnode;
-				if (buddy->account != account)
+				if (purple_buddy_get_account(buddy) != account)
 					continue;
 
-				name = buddy->name;
-				alias = buddy->alias ? buddy->alias : buddy->name;
-				gname = group->name;
+				name = purple_buddy_get_name(buddy);
+				alias = purple_buddy_get_alias(buddy);
+				if(alias == NULL)
+					alias = name;
+				gname = purple_group_get_name(group);
 
 				g_string_append_printf(buddylist,
 						"%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",

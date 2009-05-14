@@ -341,6 +341,12 @@ static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
 	}
 
 	if (!purple_network_listen_range(12108, 12208, SOCK_DGRAM, hbn_listen_cb, hosts)) {
+		while(hosts) {
+			hosts = g_slist_remove(hosts, hosts->data);
+			g_free(hosts->data);
+			hosts = g_slist_remove(hosts, hosts->data);
+		}
+
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
 		do_callbacks();
@@ -388,9 +394,7 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 		/** Deal with the server name having changed since we did the
 		    lookup */
 		if (servername && strlen(servername) > 1
-				&& ((nattype.servername
-					&& strcmp(servername, nattype.servername))
-				|| !nattype.servername)) {
+				&& !purple_strequal(servername, nattype.servername)) {
 			use_cached_result = FALSE;
 		}
 

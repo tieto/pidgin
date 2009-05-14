@@ -461,7 +461,7 @@ parse_status(xmlnode *status)
 	ret = g_new0(PurpleSavedStatus, 1);
 
 	attrib = xmlnode_get_attrib(status, "transient");
-	if ((attrib == NULL) || (strcmp(attrib, "true")))
+	if (!purple_strequal(attrib, "true"))
 	{
 		/* Read the title */
 		attrib = xmlnode_get_attrib(status, "name");
@@ -870,14 +870,14 @@ purple_savedstatus_set_idleaway(gboolean idleaway)
 		/* Don't need to do anything */
 		return;
 
-	/* Changing our status makes us un-idle */
-	if (!idleaway)
-		purple_idle_touch();
-
 	old = purple_savedstatus_get_current();
 	saved_status = idleaway ? purple_savedstatus_get_idleaway()
 			: purple_savedstatus_get_default();
 	purple_prefs_set_bool("/purple/savedstatus/isidleaway", idleaway);
+
+	/* Changing our status makes us un-idle */
+	if (!idleaway)
+		purple_idle_touch();
 
 	if (idleaway && (purple_savedstatus_get_type(old) != PURPLE_STATUS_AVAILABLE))
 		/* Our global status is already "away," so don't change anything */
@@ -940,7 +940,7 @@ purple_savedstatus_find(const char *title)
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
 		status = (PurpleSavedStatus *)iter->data;
-		if ((status->title != NULL) && !strcmp(status->title, title))
+		if (purple_strequal(status->title, title))
 			return status;
 	}
 
@@ -975,8 +975,7 @@ purple_savedstatus_find_transient_by_type_and_message(PurpleStatusPrimitive type
 		status = (PurpleSavedStatus *)iter->data;
 		if ((status->type == type) && purple_savedstatus_is_transient(status) &&
 			!purple_savedstatus_has_substatuses(status) &&
-			(((status->message == NULL) && (message == NULL)) ||
-			((status->message != NULL) && (message != NULL) && !strcmp(status->message, message))))
+			purple_strequal(status->message, message))
 		{
 			return status;
 		}

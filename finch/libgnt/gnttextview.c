@@ -177,7 +177,7 @@ gnt_text_view_draw(GntWidget *widget)
 					gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 	}
 
-	GNTDEBUG;
+	wmove(widget->window, 0, 0);
 }
 
 static void
@@ -799,6 +799,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 				break;
 		}
 	}
+	gnt_widget_draw(GNT_WIDGET(view));
 	return count;
 }
 

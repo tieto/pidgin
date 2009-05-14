@@ -102,7 +102,7 @@
 #include <gmodule.h>
 
 #ifdef PURPLE_PLUGINS
-# ifdef HAVE_DLFCN_H 
+# ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
 # endif
 #endif
@@ -220,6 +220,40 @@
 #	else
 #		define G_GNUC_NULL_TERMINATED
 #	endif
+#endif
+
+#include <glib-object.h>
+
+#ifndef G_DEFINE_TYPE
+#define G_DEFINE_TYPE(TypeName, type_name, TYPE_PARENT) \
+\
+static void     type_name##_init              (TypeName        *self); \
+static void     type_name##_class_init        (TypeName##Class *klass); \
+static gpointer type_name##_parent_class = NULL; \
+static void     type_name##_class_intern_init (gpointer klass) \
+{ \
+  type_name##_parent_class = g_type_class_peek_parent (klass); \
+  type_name##_class_init ((TypeName##Class*) klass); \
+} \
+\
+GType \
+type_name##_get_type (void) \
+{ \
+  static GType g_define_type_id = 0; \
+  if (G_UNLIKELY (g_define_type_id == 0)) \
+    { \
+      g_define_type_id = \
+        g_type_register_static_simple (TYPE_PARENT, \
+                                       g_intern_static_string (#TypeName), \
+                                       sizeof (TypeName##Class), \
+                                       (GClassInitFunc)type_name##_class_intern_init, \
+                                       sizeof (TypeName), \
+                                       (GInstanceInitFunc)type_name##_init, \
+                                       (GTypeFlags) 0); \
+    }					\
+  return g_define_type_id;		\
+} /* closes type_name##_get_type() */
+
 #endif
 
 /* Safer ways to work with static buffers. When using non-static

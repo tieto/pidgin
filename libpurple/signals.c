@@ -487,7 +487,7 @@ purple_signal_emit_vargs(void *instance, const char *signal, va_list args)
 	}
 
 #ifdef HAVE_DBUS
-	purple_dbus_signal_emit_purple(signal, signal_data->num_values, 
+	purple_dbus_signal_emit_purple(signal, signal_data->num_values,
 				   signal_data->values, args);
 #endif	/* HAVE_DBUS */
 
@@ -539,7 +539,7 @@ purple_signal_emit_vargs_return_1(void *instance, const char *signal,
 
 #ifdef HAVE_DBUS
 	G_VA_COPY(tmp, args);
-	purple_dbus_signal_emit_purple(signal, signal_data->num_values, 
+	purple_dbus_signal_emit_purple(signal, signal_data->num_values,
 				   signal_data->values, tmp);
 	va_end(tmp);
 #endif	/* HAVE_DBUS */

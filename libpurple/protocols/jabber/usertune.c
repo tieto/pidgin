@@ -109,19 +109,19 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 }
 
 void jabber_tune_init(void) {
-	jabber_add_feature("tune", "http://jabber.org/protocol/tune", jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_pep_register_handler("tunen", "http://jabber.org/protocol/tune", jabber_tune_cb);
+	jabber_add_feature("http://jabber.org/protocol/tune", jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_pep_register_handler("http://jabber.org/protocol/tune", jabber_tune_cb);
 }
 
 void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo) {
 	xmlnode *publish, *tunenode;
 	JabberStream *js = gc->proto_data;
-	
+
 	publish = xmlnode_new("publish");
 	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/tune");
 	tunenode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "tune");
 	xmlnode_set_namespace(tunenode, "http://jabber.org/protocol/tune");
-	
+
 	if(tuneinfo) {
 		if(tuneinfo->artist && tuneinfo->artist[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "artist"),tuneinfo->artist,-1);
@@ -139,7 +139,7 @@ void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo)
 		if(tuneinfo->track && tuneinfo->track[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "track"),tuneinfo->track,-1);
 	}
-	
+
 	jabber_pep_publish(js, publish);
 	/* publish is freed by jabber_pep_publish -> jabber_iq_send -> jabber_iq_free
 	   (yay for well-defined memory management rules) */

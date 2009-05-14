@@ -174,7 +174,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 		gchar *faultcode_str = xmlnode_get_data(faultcode);
 
 		if (faultcode_str && g_str_equal(faultcode_str, "q0:BadContextToken")) {
-			purple_debug_warning("msn", "OIM Request Error, Updating token now.");
+			purple_debug_warning("msn", "OIM Request Error, Updating token now.\n");
 			msn_nexus_update_token(data->oim->session->nexus,
 				data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
 				(GSourceFunc)msn_oim_request_helper, data);
@@ -183,7 +183,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 		} else if (faultcode_str && g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
 			if (xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL) {
-				purple_debug_warning("msn", "OIM Request Error, Updating token now.");
+				purple_debug_warning("msn", "OIM Request Error, Updating token now.\n");
 				msn_nexus_update_token(data->oim->session->nexus,
 					data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
 					(GSourceFunc)msn_oim_request_helper, data);
@@ -770,14 +770,14 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 	if (iu_node != NULL && purple_account_get_check_mail(session->account))
 	{
 		char *unread = xmlnode_get_data(iu_node);
-		const char *passport = msn_user_get_passport(session->user);
-		const char *url = session->passport_info.mail_url;
+		const char *passports[2] = { msn_user_get_passport(session->user) };
+		const char *urls[2] = { session->passport_info.mail_url };
 		int count = atoi(unread);
 
 		/* XXX/khc: pretty sure this is wrong */
 		if (count > 0)
 			purple_notify_emails(session->account->gc, count, FALSE, NULL,
-				NULL, &passport, &url, NULL, NULL);
+				NULL, passports, urls, NULL, NULL);
 		g_free(unread);
 	}
 

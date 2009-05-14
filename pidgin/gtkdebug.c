@@ -94,7 +94,7 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 	if(debug_win->timer != 0) {
 		const gchar *text;
 
-		g_source_remove(debug_win->timer);
+		purple_timeout_remove(debug_win->timer);
 
 		text = gtk_entry_get_text(GTK_ENTRY(debug_win->expression));
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/debug/regex", text);
@@ -552,7 +552,7 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 	}
 
 	if(win->timer == 0)
-		win->timer = purple_timeout_add(5000, (GSourceFunc)regex_timer_cb, win);
+		win->timer = purple_timeout_add_seconds(5, (GSourceFunc)regex_timer_cb, win);
 
 	regex_compile(win);
 }
@@ -769,7 +769,7 @@ debug_window_new(void)
 		win->filter =
 			gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 									   GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-									   NULL, _("Filter"), _("Filter"), 
+									   NULL, _("Filter"), _("Filter"),
 									   NULL, NULL,
 									   G_CALLBACK(regex_filter_toggled_cb),
 									   win);
@@ -821,7 +821,7 @@ debug_window_new(void)
 		                           GTK_TOOLBAR_CHILD_WIDGET, gtk_label_new(_("Level ")),
 		                           NULL, _("Select the debug filter level."),
 		                           NULL, NULL, NULL, NULL);
-		
+
 		win->filterlevel = gtk_combo_box_new_text();
 		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                           GTK_TOOLBAR_CHILD_WIDGET, win->filterlevel,

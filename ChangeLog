@@ -1,5 +1,81 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.0 (??/??/2009):
+	General:
+	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
+	  project.  With some minor additions and clean ups from Paul Aurich.
+	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
+	  of code project in 2008.
+	* It should no longer be possible to end up with duplicates of buddies
+	  in a group on the buddy list.
+	* Removed the unmaintained and unneeded toc protocol plugin.
+	* Fixed NTLM authentication on big-endian systems.
+
+	libpurple:
+	* Various memory cleanups when unloading libpurple. (Nick Hebner)
+	* Report idle time 'From last message sent' should work properly.
+
+	XMPP:
+	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), and
+	  voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
+	* Support for in-band bytestreams for file transfers (XEP-0047).
+	* Support for sending and receiving attentions (equivalent to "buzz"
+	  and "nudge") using the command /buzz. (XEP-0224)
+	* Support for connecting using BOSH. (Tobias Markmann)
+	* A buddy's local time is displayed in the Get Info dialog if the remote
+	  client supports it.
+	* The set_chat_topic function can unset the chat topic.
+	* The Ad-Hoc commands associated with our server are now always shown at
+	  login.
+	* Support showing and reporting idle times in the buddy list. (XEP-0256)
+	* Support most recent version of User Avatar. (XEP-0084 v1.1)
+	* Updated Entity Capabilities support. (Tobias Markmann)
+	* Better support for receiving remote users' nicknames.
+	* /affiliate and /role will now list the room members with the specified
+	  affiliation/role if possible. (Andrei Mozzhuhin)
+	* Put section breaks between resources in "Get Info" to improve readability.
+	* XHTML markup is only included in outgoing messages when the message
+	  contains formatting.
+	* Show when the user was last logged in when doing "Get Info" on an offline
+	  buddy, provided the server supports it.
+	* Support custom smileys in MUCs (only when all participants supports the
+	  "Bits of Binary" extension, and a maximum of 10 participants are in the
+	  chat (to avoid getting too many fetch requests).
+
+	Yahoo:
+	* P2P file transfers. (Sulabh Mahajan)
+	* MSN Interoperability by adding MSN buddies as 'msn/user@example.com'.
+	  (Sulabh Mahajan)
+	* Sending text messages (address to +<countrycode><phone number>).
+	  (Sulabh Mahajan)
+
+	Pidgin:
+	* Added -f command line option to tell Pidgin to ignore NetworkManager
+	  and assume it has a valid network connection.
+	* Allow plugins to specify custom link types to the GtkIMHtml widget.
+	* The status message input box at the bottom of the buddy list expands
+	  correctly when starting a new line of text.
+	* Pressing the Enter key in the message entry box of the New Status
+	  dialog and various other dialogs now causes the cursor to move to
+	  the next line.
+	* Created a unified Buddy Pounce notification window for all pounces
+	  where "Pop up a notification" is selected, which avoids having a
+	  new dialog box every time a pounce is triggered. (Jorge Villaseñor)
+	* The New Account dialog is now broken into three tabs.  Proxy
+	  configuration has been moved from the Advanced tab to the new tab.
+	* Dragging a buddy onto a chat pops up a chat-invitation dialog.
+	  (Carlos Bederian)
+	* The nicks of the persons who leave the chatroom are italicized in the
+	  chat's conversation history. The nicks are un-italicized when they
+	  rejoin.
+	* Always set unseen-count and unseen-state on conversations.
+	  (Joshua Stein)
+
+	Finch:
+	* The hardware cursor is updated correctly. This will be useful
+	  especially for users of braille terminals, screen readers etc.
+	* Added a TinyURL plugin, which aids copying longer URLs.
+
 version 2.5.5 (03/01/2009):
 	libpurple:
 	* Fix a crash when removing an account with an unknown protocol id.
@@ -669,13 +745,13 @@ version 2.2.1 (09/29/2007):
 version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
-	Libpurple:
+	libpurple:
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
 	* XMPP enhancements. See
-	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas
 	  Monitzer, Google Summer of Code for Adium)
-	* Certificate management. Libpurple will validate certificates on
+	* Certificate management. libpurple will validate certificates on
 	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
 	* Some adjustments were made to fix sending messages when using
 	  the MSN HTTP method. (Laszlo Pandy)

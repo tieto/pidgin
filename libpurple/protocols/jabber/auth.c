@@ -30,14 +30,16 @@
 #include "util.h"
 #include "xmlnode.h"
 
-#include "jutil.h"
 #include "auth.h"
+#include "disco.h"
 #include "jabber.h"
+#include "jutil.h"
 #include "iq.h"
 #include "notify.h"
 
-static void auth_old_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data);
+static void auth_old_result_cb(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data);
 
 gboolean
 jabber_process_starttls(JabberStream *js, xmlnode *packet)
@@ -281,7 +283,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	secprops.min_ssf = 0;
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
 
-	if (!js->gsc) {
+	if (!jabber_stream_is_ssl(js)) {
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
 		plaintext = purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
@@ -384,7 +386,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					}
 					/* Remove space which separated this mech from the next */
 					if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
-						g_string_erase(js->sasl_mechs, 0, 1);	
+						g_string_erase(js->sasl_mechs, 0, 1);
 					}
 					again = TRUE;
 				}
@@ -397,7 +399,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
-		
+
 		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
 		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
 
@@ -544,7 +546,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	} else if(plain) {
 		js->auth_type = JABBER_AUTH_PLAIN;
 
-		if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+		if(!jabber_stream_is_ssl(js) && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
 			char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 					js->gc->account->username);
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
@@ -566,12 +568,12 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 #endif
 }
 
-static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void auth_old_result_cb(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-
-	if(type && !strcmp(type, "result")) {
-		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+	if (type == JABBER_IQ_RESULT) {
+		jabber_disco_items_server(js);
 	} else {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
@@ -593,24 +595,20 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 }
 
-static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void auth_old_cb(JabberStream *js, const char *from,
+                        JabberIqType type, const char *id,
+                        xmlnode *packet, gpointer data)
 {
 	JabberIq *iq;
 	xmlnode *query, *x;
-	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *pw = purple_connection_get_password(js->gc);
 
-	if(!type) {
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Invalid response from server."));
-		return;
-	} else if(!strcmp(type, "error")) {
+	if (type == JABBER_IQ_ERROR) {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
 		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
-	} else if(!strcmp(type, "result")) {
+	} else if (type == JABBER_IQ_RESULT) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
 			char *s, *hash;
@@ -662,7 +660,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			jabber_iq_send(iq);
 
 		} else if(xmlnode_get_child(query, "password")) {
-			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
+			if(!jabber_stream_is_ssl(js) && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
 				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 											js->gc->account->username);
@@ -1057,13 +1055,13 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 			}
 			/* Remove space which separated this mech from the next */
 			if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
-				g_string_erase(js->sasl_mechs, 0, 1);	
-			}			
+				g_string_erase(js->sasl_mechs, 0, 1);
+			}
 		}
 		if (strlen(js->sasl_mechs->str)) {
 			/* If we have remaining mechs to try, do so */
 			sasl_dispose(&js->sasl);
-			
+
 			jabber_auth_start_cyrus(js);
 			return;
 		}

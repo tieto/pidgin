@@ -4,8 +4,8 @@
  * This file is part of GtkSourceView
  *
  * Copyright (C) 1998, 1999 Alex Roberts, Evan Lawrence
- * Copyright (C) 2000, 2001 Chema Celorio, Paolo Maggi 
- * Copyright (C) 2002, 2003 Paolo Maggi 
+ * Copyright (C) 2000, 2001 Chema Celorio, Paolo Maggi
+ * Copyright (C) 2002, 2003 Paolo Maggi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +19,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02111-1301, USA. * *
  */
- 
+
 #ifndef __GTK_SOURCE_UNDO_MANAGER_H__
 #define __GTK_SOURCE_UNDO_MANAGER_H__
 
-#include <gtk/gtktextbuffer.h>
+#include <gtk/gtk.h>
 
-#define GTK_SOURCE_TYPE_UNDO_MANAGER             	(gtk_source_undo_manager_get_type ())
-#define GTK_SOURCE_UNDO_MANAGER(obj)			(GTK_CHECK_CAST ((obj), GTK_SOURCE_TYPE_UNDO_MANAGER, GtkSourceUndoManager))
-#define GTK_SOURCE_UNDO_MANAGER_CLASS(klass)		(GTK_CHECK_CLASS_CAST ((klass), GTK_SOURCE_TYPE_UNDO_MANAGER, GtkSourceUndoManagerClass))
-#define GTK_SOURCE_IS_UNDO_MANAGER(obj)			(GTK_CHECK_TYPE ((obj), GTK_SOURCE_TYPE_UNDO_MANAGER))
-#define GTK_SOURCE_IS_UNDO_MANAGER_CLASS(klass)  	(GTK_CHECK_CLASS_TYPE ((klass), GTK_SOURCE_TYPE_UNDO_MANAGER))
-#define GTK_SOURCE_UNDO_MANAGER_GET_CLASS(obj)  	(GTK_CHECK_GET_CLASS ((obj), GTK_SOURCE_TYPE_UNDO_MANAGER, GtkSourceUndoManagerClass))
+#define GTK_SOURCE_TYPE_UNDO_MANAGER            (gtk_source_undo_manager_get_type())
+#define GTK_SOURCE_UNDO_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_SOURCE_TYPE_UNDO_MANAGER, GtkSourceUndoManager))
+#define GTK_SOURCE_UNDO_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_SOURCE_TYPE_UNDO_MANAGER, GtkSourceUndoManagerClass))
+#define GTK_SOURCE_IS_UNDO_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_SOURCE_TYPE_UNDO_MANAGER))
+#define GTK_SOURCE_IS_UNDO_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_SOURCE_TYPE_UNDO_MANAGER))
+#define GTK_SOURCE_UNDO_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_SOURCE_TYPE_UNDO_MANAGER, GtkSourceUndoManagerClass))
 
 
 typedef struct _GtkSourceUndoManager        	GtkSourceUndoManager;
@@ -44,7 +44,7 @@ typedef struct _GtkSourceUndoManagerPrivate 	GtkSourceUndoManagerPrivate;
 struct _GtkSourceUndoManager
 {
 	GObject base;
-	
+
 	GtkSourceUndoManagerPrivate *priv;
 };
 
@@ -67,14 +67,14 @@ gboolean		gtk_source_undo_manager_can_redo 	(const GtkSourceUndoManager *um);
 void			gtk_source_undo_manager_undo 		(GtkSourceUndoManager 	*um);
 void			gtk_source_undo_manager_redo 		(GtkSourceUndoManager 	*um);
 
-void			gtk_source_undo_manager_begin_not_undoable_action 
+void			gtk_source_undo_manager_begin_not_undoable_action
 								(GtkSourceUndoManager	*um);
-void			gtk_source_undo_manager_end_not_undoable_action 
+void			gtk_source_undo_manager_end_not_undoable_action
 								(GtkSourceUndoManager	*um);
 
-gint			gtk_source_undo_manager_get_max_undo_levels 
+gint			gtk_source_undo_manager_get_max_undo_levels
 								(GtkSourceUndoManager 	*um);
-void			gtk_source_undo_manager_set_max_undo_levels 
+void			gtk_source_undo_manager_set_max_undo_levels
 								(GtkSourceUndoManager 	*um,
 				  	     			 gint		 	 undo_levels);
 

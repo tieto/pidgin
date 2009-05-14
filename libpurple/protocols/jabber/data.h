@@ -3,19 +3,19 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
- 
-#ifndef JABBER_DATA_H
-#define JABBER_DATA_H
+
+#ifndef PURPLE_JABBER_DATA_H
+#define PURPLE_JABBER_DATA_H
 
 #include "xmlnode.h"
 #include "jabber.h"
@@ -65,9 +65,10 @@ void jabber_data_associate_local(JabberData *data, const gchar *alt);
 void jabber_data_associate_remote(JabberData *data);
 
 /* handles iq requests */
-void jabber_data_parse(JabberStream *js, xmlnode *packet);
+void jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
+                       const char *id, xmlnode *data_node);
 
 void jabber_data_init(void);
 void jabber_data_uninit(void);
 
-#endif /* JABBER_DATA_H */
+#endif /* PURPLE_JABBER_DATA_H */

@@ -19,12 +19,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_MESSAGE_H_
-#define _PURPLE_JABBER_MESSAGE_H_
+#ifndef PURPLE_JABBER_MESSAGE_H_
+#define PURPLE_JABBER_MESSAGE_H_
 
 #include "buddy.h"
 #include "jabber.h"
 #include "xmlnode.h"
+
+#define XEP_0224_NAMESPACE "urn:xmpp:attention:0"
 
 typedef struct _JabberMessage {
 	JabberStream *js;
@@ -76,11 +78,9 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 int jabber_message_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
 
 unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state);
-void jabber_message_conv_closed(JabberStream *js, const char *who);
 
-gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace);
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace);
 
-gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *shortname,
-										 const gchar *namespace);
+gboolean jabber_custom_smileys_isenabled(JabberStream *js, const const gchar *namespace);
 
-#endif /* _PURPLE_JABBER_MESSAGE_H_ */
+#endif /* PURPLE_JABBER_MESSAGE_H_ */

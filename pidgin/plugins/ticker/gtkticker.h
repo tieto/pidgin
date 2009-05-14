@@ -26,19 +26,18 @@
 
 
 #include <gdk/gdk.h>
-#include <gtk/gtkcontainer.h>
-#include <gtk/gtkmain.h>
+#include <gtk/gtk.h>
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#define GTK_TYPE_TICKER                  (gtk_ticker_get_type ())
-#define GTK_TICKER(obj)                  (GTK_CHECK_CAST ((obj), GTK_TYPE_TICKER, GtkTicker))
-#define GTK_TICKER_CLASS(klass)          (GTK_CHECK_CLASS_CAST ((klass), GTK_TYPE_TICKER, GtkTickerClass))
-#define GTK_IS_TICKER(obj)               (GTK_CHECK_TYPE ((obj), GTK_TYPE_TICKER))
-#define GTK_IS_TICKER_CLASS(klass)       (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_TICKER))
+#define GTK_TYPE_TICKER            (gtk_ticker_get_type())
+#define GTK_TICKER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_TICKER, GtkTicker))
+#define GTK_TICKER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_TICKER, GtkTickerClass))
+#define GTK_IS_TICKER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_TICKER))
+#define GTK_IS_TICKER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_TICKER))
 
 
 typedef struct _GtkTicker        GtkTicker;
@@ -73,7 +72,7 @@ struct _GtkTickerChild
 };
 
 
-GtkType    gtk_ticker_get_type          (void);
+GType      gtk_ticker_get_type          (void);
 GtkWidget* gtk_ticker_new               (void);
 void       gtk_ticker_add               (GtkTicker       *ticker,
                                         GtkWidget      *widget);

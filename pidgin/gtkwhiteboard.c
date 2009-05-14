@@ -624,7 +624,7 @@ static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int 
 							   update_rect.x, update_rect.y,
 							   update_rect.width, update_rect.height);
 
-	gdk_gc_unref(gfx_con);
+	g_object_unref(G_OBJECT(gfx_con));
 }
 
 /* Uses Bresenham's algorithm (as provided by Wikipedia) */
@@ -857,7 +857,7 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
 	GtkColorSelectionDialog *dialog;
-	
+
 	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new(_("Select color"));
 
 	g_signal_connect(G_OBJECT(dialog->colorsel), "color-changed",

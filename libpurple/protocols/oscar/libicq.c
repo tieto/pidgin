@@ -107,6 +107,8 @@ static PurplePluginProtocolInfo prpl_info =
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	icq_get_account_text_table, /* get_account_text_table */
+	NULL,					/* initiate_media */
+	NULL					/* can_do_media */
 };
 
 static PurplePluginInfo info =

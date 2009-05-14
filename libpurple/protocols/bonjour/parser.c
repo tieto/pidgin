@@ -91,14 +91,12 @@ bonjour_parser_element_start_libxml(void *user_data,
 		xmlnode_set_namespace(node, (const char*) namespace);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
+			const char *name = (const char *)attributes[i];
+			const char *prefix = (const char *)attributes[i+1];
+			const char *attrib_ns = (const char *)attributes[i+2];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
-			char *attrib_ns = NULL;
-
-			if (attributes[i+2]) {
-				attrib_ns = g_strdup((char*)attributes[i+2]);
-			}
 
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
@@ -106,9 +104,8 @@ bonjour_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = purple_unescape_html(txt);
 			g_free(txt);
-			xmlnode_set_attrib_with_namespace(node, (const char*) attributes[i], attrib_ns, attrib);
+			xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
 			g_free(attrib);
-			g_free(attrib_ns);
 		}
 
 		bconv->current = node;
@@ -156,6 +153,18 @@ bonjour_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 	xmlnode_insert_data(bconv->current, (const char*) text, text_len);
 }
 
+static void
+bonjour_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
+{
+	BonjourJabberConversation *bconv = user_data;
+
+	purple_debug_error("jabber", "XML parser error for BonjourJabberConversation %p: "
+	                             "Domain %i, code %i, level %i: %s",
+	                   bconv,
+	                   error->domain, error->code, error->level,
+	                   (error->message ? error->message : "(null)\n"));
+}
+
 static xmlSAXHandler bonjour_parser_libxml = {
 	NULL,									/*internalSubset*/
 	NULL,									/*isStandalone*/
@@ -188,7 +197,7 @@ static xmlSAXHandler bonjour_parser_libxml = {
 	NULL,									/*_private*/
 	bonjour_parser_element_start_libxml,	/*startElementNs*/
 	bonjour_parser_element_end_libxml,		/*endElementNs*/
-	NULL									/*serror*/
+	bonjour_parser_structured_error_handler /*serror*/
 };
 
 void

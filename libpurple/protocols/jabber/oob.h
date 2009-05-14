@@ -1,5 +1,5 @@
 /**
- * @file jutil.h utility functions
+ * @file oob.h out-of-band transfer functions
  *
  * purple
  *
@@ -19,9 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_OOB_H_
-#define _PURPLE_JABBER_OOB_H_
+#ifndef PURPLE_JABBER_OOB_H_
+#define PURPLE_JABBER_OOB_H_
 
-void jabber_oob_parse(JabberStream *js, xmlnode *packet);
+#include "jabber.h"
 
-#endif /* _PURPLE_JABBER_OOB_H_ */
+void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
+                      const char *id, xmlnode *querynode);
+
+#endif /* PURPLE_JABBER_OOB_H_ */

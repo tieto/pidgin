@@ -130,7 +130,7 @@ typedef struct {
 	guint tima;	/* purple_timeout_add handle */
 	int fd;
 	struct sockaddr_in server;
-	gchar service_type[25];
+	gchar service_type[20];
 	int retry_count;
 	gchar *full_url;
 } UPnPDiscoveryData;
@@ -1049,7 +1049,7 @@ static void*
 purple_upnp_get_handle(void)
 {
 	static int handle;
-	
+
 	return &handle;
 }
 

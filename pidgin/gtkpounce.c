@@ -30,7 +30,6 @@
 #include "account.h"
 #include "conversation.h"
 #include "debug.h"
-#include "notify.h"
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
@@ -41,6 +40,7 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkpounce.h"
+#include "gtknotify.h"
 #include "pidginstock.h"
 #include "gtkutils.h"
 
@@ -535,7 +535,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	/* Create the window. */
 	dialog->window = window = gtk_dialog_new();
-	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
+	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("Add Buddy Pounce") : _("Modify Buddy Pounce")));
 	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
 	gtk_container_set_border_width(GTK_CONTAINER(dialog->window), PIDGIN_HIG_BORDER);
 
@@ -637,19 +637,19 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->signoff,      0, 1, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away,         0, 1, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->away,         1, 2, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  0, 1, 4, 5,
+	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  1, 2, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  1, 2, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  2, 3, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typing,       1, 2, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->typing,       2, 3, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typed,        1, 2, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->typed,        2, 3, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  1, 2, 4, 5,
+	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  3, 4, 0, 1,
 					 GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->signon);
@@ -1275,7 +1275,6 @@ create_pounces_list(PouncesManager *dialog)
 	/* Handle double-clicking */
 	g_signal_connect(G_OBJECT(treeview), "button_press_event",
 					 G_CALLBACK(pounce_double_click_cb), dialog);
-
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);
 
@@ -1458,27 +1457,27 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 		 */
 		tmp = g_strdup_printf(
 				   (events & PURPLE_POUNCE_TYPING) ?
-				   _("%s has started typing to you (%s)") :
+				   _("Started typing") :
 				   (events & PURPLE_POUNCE_TYPED) ?
-				   _("%s has paused while typing to you (%s)") :
+				   _("Paused while typing") :
 				   (events & PURPLE_POUNCE_SIGNON) ?
-				   _("%s has signed on (%s)") :
+				   _("Signed on") :
 				   (events & PURPLE_POUNCE_IDLE_RETURN) ?
-				   _("%s has returned from being idle (%s)") :
+				   _("Returned from being idle") :
 				   (events & PURPLE_POUNCE_AWAY_RETURN) ?
-				   _("%s has returned from being away (%s)") :
+				   _("Returned from being away") :
 				   (events & PURPLE_POUNCE_TYPING_STOPPED) ?
-				   _("%s has stopped typing to you (%s)") :
+				   _("Stopped typing") :
 				   (events & PURPLE_POUNCE_SIGNOFF) ?
-				   _("%s has signed off (%s)") :
+				   _("Signed off") :
 				   (events & PURPLE_POUNCE_IDLE) ?
-				   _("%s has become idle (%s)") :
+				   _("Became idle") :
 				   (events & PURPLE_POUNCE_AWAY) ?
-				   _("%s has gone away. (%s)") :
+				   _("Went away") :
 				   (events & PURPLE_POUNCE_MESSAGE_RECEIVED) ?
-				   _("%s has sent you a message. (%s)") :
-				   _("Unknown pounce event. Please report this!"),
-				   alias, purple_account_get_protocol_name(account));
+				   _("Sent a message") :
+				   _("Unknown.... Please report this!")
+				   );
 
 		/*
 		 * Ok here is where I change the second argument, title, from
@@ -1488,16 +1487,9 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 		if ((name_shown = purple_account_get_alias(account)) == NULL)
 			name_shown = purple_account_get_username(account);
 
-		if (reason == NULL)
-		{
-			purple_notify_info(NULL, name_shown, tmp, purple_date_format_full(NULL));
-		}
-		else
-		{
-			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, purple_date_format_full(NULL));
-			purple_notify_info(NULL, name_shown, tmp, tmp2);
-			g_free(tmp2);
-		}
+		pidgin_notify_pounce_add(account, pounce, alias, tmp, reason,
+				purple_date_format_full(NULL));
+
 		g_free(tmp);
 	}
 

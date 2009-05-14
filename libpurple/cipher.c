@@ -512,7 +512,7 @@ md4_reset(PurpleCipherContext *context, gpointer extra) {
 }
 
 static void
-md4_append(PurpleCipherContext *context, const guchar *data, size_t len) 
+md4_append(PurpleCipherContext *context, const guchar *data, size_t len)
 {
 	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
 	const guint32 avail = sizeof(mctx->block) - (mctx->byte_count & 0x3f);
@@ -551,7 +551,7 @@ md4_digest(PurpleCipherContext *context, size_t in_len, guchar *out,
 	char *p = (char *)mctx->block + offset;
 	int padding = 56 - (offset + 1);
 
-	
+
 	if(in_len<16) return FALSE;
 	if(out_len) *out_len = 16;
 	*p++ = 0x80;
@@ -659,7 +659,7 @@ hmac_set_opt(PurpleCipherContext *context, const gchar *name, void *value)
 
 	hctx = purple_cipher_context_get_data(context);
 
-	if (!strcmp(name, "hash")) {
+	if (purple_strequal(name, "hash")) {
 		g_free(hctx->name);
 		if (hctx->hash)
 			purple_cipher_context_destroy(hctx->hash);
@@ -676,7 +676,7 @@ hmac_get_opt(PurpleCipherContext *context, const gchar *name)
 
 	hctx = purple_cipher_context_get_data(context);
 
-	if (!strcmp(name, "hash")) {
+	if (purple_strequal(name, "hash")) {
 		return hctx->name;
 	}
 
@@ -684,7 +684,7 @@ hmac_get_opt(PurpleCipherContext *context, const gchar *name)
 }
 
 static void
-hmac_append(PurpleCipherContext *context, const guchar *data, size_t len) 
+hmac_append(PurpleCipherContext *context, const guchar *data, size_t len)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
 
@@ -778,7 +778,7 @@ hmac_set_key(PurpleCipherContext *context, const guchar * key)
 	hmac_set_key_with_len(context, key, strlen((char *)key));
 }
 
-static size_t 
+static size_t
 hmac_get_block_size(PurpleCipherContext *context)
 {
 	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
@@ -1022,11 +1022,11 @@ data[6] = (right >> 8) &0xff; data[7] = right &0xff;
  *			  16 encryption rounds.
  *			  To calculate subkeys for decryption the caller
  *    			  have to reorder the generated subkeys.
- *     
+ *
  *        rawkey:	    8 Bytes of key data
  *        subkey:	    Array of at least 32 guint32s. Will be filled
  *    		    with calculated subkeys.
- *     
+ *
  **/
 static void
 des_key_schedule (const guint8 * rawkey, guint32 * subkey)
@@ -1186,7 +1186,7 @@ des_encrypt(PurpleCipherContext *context, const guchar data[],
 				buf,
 				output+offset,
 				0);
-	}	
+	}
 	return 0;
 }
 
@@ -1216,7 +1216,7 @@ des_decrypt(PurpleCipherContext *context, const guchar data[],
 				buf,
 				output+offset,
 				1);
-	}	
+	}
 	return 0;
 }
 
@@ -1692,11 +1692,11 @@ sha1_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "sizeHi")) {
+	if(purple_strequal(name, "sizeHi")) {
 		ctx->sizeHi = GPOINTER_TO_INT(value);
-	} else if(!strcmp(name, "sizeLo")) {
+	} else if(purple_strequal(name, "sizeLo")) {
 		ctx->sizeLo = GPOINTER_TO_INT(value);
-	} else if(!strcmp(name, "lenW")) {
+	} else if(purple_strequal(name, "lenW")) {
 		ctx->lenW = GPOINTER_TO_INT(value);
 	}
 }
@@ -1707,11 +1707,11 @@ sha1_get_opt(PurpleCipherContext *context, const gchar *name) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "sizeHi")) {
+	if(purple_strequal(name, "sizeHi")) {
 		return GINT_TO_POINTER(ctx->sizeHi);
-	} else if(!strcmp(name, "sizeLo")) {
+	} else if(purple_strequal(name, "sizeLo")) {
 		return GINT_TO_POINTER(ctx->sizeLo);
-	} else if(!strcmp(name, "lenW")) {
+	} else if(purple_strequal(name, "lenW")) {
 		return GINT_TO_POINTER(ctx->lenW);
 	}
 
@@ -1942,12 +1942,12 @@ rc4_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "key_len")) {
+	if(purple_strequal(name, "key_len")) {
 		ctx->key_len = GPOINTER_TO_INT(value);
 	}
 }
 
-static size_t 
+static size_t
 rc4_get_key_size (PurpleCipherContext *context)
 {
 	struct RC4Context *ctx;
@@ -1967,7 +1967,7 @@ rc4_get_opt(PurpleCipherContext *context, const gchar *name) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "key_len")) {
+	if(purple_strequal(name, "key_len")) {
 		return GINT_TO_POINTER(ctx->key_len);
 	}
 

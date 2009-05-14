@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- 
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *  gtksourceiter.h
  *
  *  Pidgin is the legal property of its developers, whose names are too numerous
@@ -7,7 +7,7 @@
  *
  *  The following copyright notice applies to this file:
  *
- *  Copyright (C) 2000 - 2005 Paolo Maggi 
+ *  Copyright (C) 2000 - 2005 Paolo Maggi
  *  Copyright (C) 2002, 2003 Jeroen Zwartepoorte
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 #ifndef _PIDGINSOURCEITER_H_
 #define _PIDGINSOURCEITER_H_
 
-#include <gtk/gtktextiter.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

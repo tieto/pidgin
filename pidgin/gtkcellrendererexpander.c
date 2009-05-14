@@ -18,19 +18,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
-/* This is taken largely from GtkCellRenderer[Text|Pixbuf|Toggle] by 
+/* This is taken largely from GtkCellRenderer[Text|Pixbuf|Toggle] by
  * Jonathon Blandford <jrb@redhat.com> for RedHat, Inc.
  */
 
 #include <gtk/gtk.h>
-#include <gtk/gtktreeview.h>
 #include "gtkcellrendererexpander.h"
 
 static void pidgin_cell_renderer_expander_get_property  (GObject                    *object,
@@ -74,14 +73,14 @@ enum {
 	PROP_0,
 	PROP_IS_EXPANDER
 };
-     
+
 static gpointer parent_class;
 /* static guint expander_cell_renderer_signals [LAST_SIGNAL]; */
 
 GType  pidgin_cell_renderer_expander_get_type (void)
 {
 	static GType cell_expander_type = 0;
-	
+
 	if (!cell_expander_type)
 		{
 			static const GTypeInfo cell_expander_info =
@@ -97,13 +96,13 @@ GType  pidgin_cell_renderer_expander_get_type (void)
 					(GInstanceInitFunc) pidgin_cell_renderer_expander_init,
 					NULL		/* value_table */
 				};
-			
+
 			cell_expander_type =
 				g_type_register_static (GTK_TYPE_CELL_RENDERER,
 										"PidginCellRendererExpander",
 										&cell_expander_info, 0);
 		}
-	
+
 	return cell_expander_type;
 }
 
@@ -118,17 +117,17 @@ static void pidgin_cell_renderer_expander_class_init (PidginCellRendererExpander
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(class);
 	GtkCellRendererClass *cell_class = GTK_CELL_RENDERER_CLASS(class);
-	
+
 	parent_class = g_type_class_peek_parent (class);
 	object_class->finalize = pidgin_cell_renderer_expander_finalize;
 
 	object_class->get_property = pidgin_cell_renderer_expander_get_property;
 	object_class->set_property = pidgin_cell_renderer_expander_set_property;
-	
+
 	cell_class->get_size = pidgin_cell_renderer_expander_get_size;
 	cell_class->render   = pidgin_cell_renderer_expander_render;
 	cell_class->activate = pidgin_cell_renderer_expander_activate;
-	
+
 	g_object_class_install_property (object_class,
 					 PROP_IS_EXPANDER,
 					 g_param_spec_boolean ("expander-visible",
@@ -162,7 +161,7 @@ static void pidgin_cell_renderer_expander_get_property (GObject    *object,
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, psec);
 			break;
-			
+
 		}
 }
 
@@ -199,19 +198,19 @@ static void pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,
 {
 	gint calc_width;
 	gint calc_height;
-	gint expander_size; 
-	
+	gint expander_size;
+
 	gtk_widget_style_get(widget, "expander-size", &expander_size, NULL);
-	
+
 	calc_width = (gint) cell->xpad * 2 + expander_size;
 	calc_height = (gint) cell->ypad * 2 + expander_size;
-	
+
 	if (width)
 		*width = calc_width;
-	
+
 	if (height)
 		*height = calc_height;
-	
+
 	if (cell_area)
 		{
 			if (x_offset)
@@ -228,7 +227,7 @@ static void pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,
 }
 
 
-static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
+static void pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 					       GdkWindow       *window,
 					       GtkWidget       *widget,
 					       GdkRectangle    *background_area,
@@ -237,7 +236,7 @@ static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
 					       guint            flags)
 {
 	PidginCellRendererExpander *cellexpander = (PidginCellRendererExpander *) cell;
-	
+	gboolean set;
 	gint width, height;
 	GtkStateType state;
 
@@ -246,7 +245,7 @@ static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
 
 	width = cell_area->width;
 	height = cell_area->height;
-	
+
 #if GTK_CHECK_VERSION(2,6,0)
 	if (!cell->sensitive)
 		state = GTK_STATE_INSENSITIVE;
@@ -270,8 +269,11 @@ static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
 			    cell_area->x + cell->xpad + (width / 2),
 			    cell_area->y + cell->ypad + (height / 2),
 			    cell->is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
-	if (cell->is_expanded)
-		gtk_paint_hline (widget->style, window, state, NULL, widget, NULL, 0, 
+
+	/* only draw the line if the color isn't set - this prevents a bug where the hline appears only under the expander */
+	g_object_get(cellexpander, "cell-background-set", &set, NULL);
+	if (cell->is_expanded && !set)
+		gtk_paint_hline (widget->style, window, state, NULL, widget, NULL, 0,
 				 widget->allocation.width, cell_area->y + cell_area->height);
 }
 

@@ -56,6 +56,9 @@
 #include "signals.h"
 #include "util.h"
 
+#include "gtkaccount.h"
+#include "gtkprefs.h"
+
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
@@ -71,6 +74,7 @@ typedef struct {
 } AopMenu;
 
 static guint accels_save_timer = 0;
+static GList *gnome_url_handlers = NULL;
 
 static gboolean
 url_clicked_idle_cb(gpointer data)
@@ -80,10 +84,12 @@ url_clicked_idle_cb(gpointer data)
 	return FALSE;
 }
 
-static void
-url_clicked_cb(GtkWidget *w, const char *uri)
+static gboolean
+url_clicked_cb(GtkIMHtml *unused, GtkIMHtmlLink *link)
 {
+	const char *uri = gtk_imhtml_link_get_url(link);
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
+	return TRUE;
 }
 
 static GtkIMHtmlFuncs gtkimhtml_cbs = {
@@ -101,9 +107,6 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	PangoFontDescription *desc = NULL;
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-
-	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
-					 G_CALLBACK(url_clicked_cb), NULL);
 
 	pidgin_themes_smiley_themeize(imhtml);
 
@@ -355,7 +358,7 @@ GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
 }
 
 GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
-		GtkSignalFunc sf, gpointer data, gboolean checked)
+		GCallback cb, gpointer data, gboolean checked)
 {
 	GtkWidget *menuitem;
 	menuitem = gtk_check_menu_item_new_with_mnemonic(str);
@@ -365,8 +368,8 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), checked);
 
-	if (sf)
-		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+	if (cb)
+		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
 	gtk_widget_show_all(menuitem);
 
@@ -436,7 +439,7 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 }
 
 
-GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GCallback cb, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
 	/*
@@ -453,8 +456,8 @@ GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const ch
 	if (menu)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	if (sf)
-		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+	if (cb)
+		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
 	if (icon != NULL) {
 		image = gtk_image_new_from_stock(icon, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
@@ -567,7 +570,7 @@ aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer
 	gtk_widget_show (label);
 	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	
+
 	gtk_container_add(GTK_CONTAINER(item), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
@@ -947,7 +950,7 @@ pidgin_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
 	           "accel changed, scheduling save.\n");
 
 	if (!accels_save_timer)
-		accels_save_timer = g_timeout_add(5000, pidgin_save_accels,
+		accels_save_timer = purple_timeout_add_seconds(5, pidgin_save_accels,
 		                                  NULL);
 }
 
@@ -1461,7 +1464,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 					  str);
 			g_free(str);
 
-			return;
+			break;
 		}
 
 		buddy = purple_find_buddy(data->account, data->who);
@@ -1491,7 +1494,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			g_error_free(err);
 			g_free(str);
 
-			return;
+			break;
 		}
 		id = purple_imgstore_add_with_id(filedata, size, data->filename);
 
@@ -1624,7 +1627,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
 						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							NULL);
-			gdk_pixbuf_unref(pb);
+			g_object_unref(G_OBJECT(pb));
 			return;
 		}
 
@@ -1712,29 +1715,67 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 {
 	GtkIconSize icon_size = gtk_icon_size_from_name(size);
 	GdkPixbuf *pixbuf = NULL;
+	const char *stock = pidgin_stock_id_from_status_primitive(prim);
 
-	if (prim == PURPLE_STATUS_UNAVAILABLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_INVISIBLE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
-				icon_size, "GtkWidget");
-	else if (prim == PURPLE_STATUS_OFFLINE)
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
-				icon_size, "GtkWidget");
-	else
-		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
-				icon_size, "GtkWidget");
+	pixbuf = gtk_widget_render_icon (w, stock ? stock : PIDGIN_STOCK_STATUS_AVAILABLE,
+			icon_size, "GtkWidget");
 	return pixbuf;
-
 }
 
+static const char *
+stock_id_from_status_primitive_idle(PurpleStatusPrimitive prim, gboolean idle)
+{
+	const char *stock = NULL;
+	switch (prim) {
+		case PURPLE_STATUS_UNSET:
+			stock = NULL;
+			break;
+		case PURPLE_STATUS_UNAVAILABLE:
+			stock = idle ? PIDGIN_STOCK_STATUS_BUSY_I : PIDGIN_STOCK_STATUS_BUSY;
+			break;
+		case PURPLE_STATUS_AWAY:
+			stock = idle ? PIDGIN_STOCK_STATUS_AWAY_I : PIDGIN_STOCK_STATUS_AWAY;
+			break;
+		case PURPLE_STATUS_EXTENDED_AWAY:
+			stock = idle ? PIDGIN_STOCK_STATUS_XA_I : PIDGIN_STOCK_STATUS_XA;
+			break;
+		case PURPLE_STATUS_INVISIBLE:
+			stock = PIDGIN_STOCK_STATUS_INVISIBLE;
+			break;
+		case PURPLE_STATUS_OFFLINE:
+			stock = idle ? PIDGIN_STOCK_STATUS_OFFLINE_I : PIDGIN_STOCK_STATUS_OFFLINE;
+			break;
+		default:
+			stock = idle ? PIDGIN_STOCK_STATUS_AVAILABLE_I : PIDGIN_STOCK_STATUS_AVAILABLE;
+			break;
+	}
+	return stock;
+}
+
+const char *
+pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim)
+{
+	return stock_id_from_status_primitive_idle(prim, FALSE);
+}
+
+const char *
+pidgin_stock_id_from_presence(PurplePresence *presence)
+{
+	PurpleStatus *status;
+	PurpleStatusType *type;
+	PurpleStatusPrimitive prim;
+	gboolean idle;
+
+	g_return_val_if_fail(presence, NULL);
+
+	status = purple_presence_get_active_status(presence);
+	type = purple_status_get_type(status);
+	prim = purple_status_type_get_primitive(type);
+
+	idle = purple_presence_is_idle(presence);
+
+	return stock_id_from_status_primitive_idle(prim, idle);
+}
 
 GdkPixbuf *
 pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
@@ -1924,7 +1965,7 @@ destroy_completion_data(GtkWidget *w, PidginCompletionData *data)
 #endif /* !NEW_STYLE_COMPLETION */
 
 #ifdef NEW_STYLE_COMPLETION
-static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
+static gboolean buddyname_completion_match_func(GtkEntryCompletion *completion,
 		const gchar *key, GtkTreeIter *iter, gpointer user_data)
 {
 	GtkTreeModel *model;
@@ -1957,7 +1998,7 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 	return FALSE;
 }
 
-static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *completion,
+static gboolean buddyname_completion_match_selected_cb(GtkEntryCompletion *completion,
 		GtkTreeModel *model, GtkTreeIter *iter, PidginCompletionData *data)
 {
 	GValue val;
@@ -1983,22 +2024,22 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 }
 
 static void
-add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, const char *contact_alias,
-								  const PurpleAccount *account, const char *screenname)
+add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, const char *contact_alias,
+								  const PurpleAccount *account, const char *buddyname)
 {
 	GtkTreeIter iter;
 	gboolean completion_added = FALSE;
-	gchar *normalized_screenname;
+	gchar *normalized_buddyname;
 	gchar *tmp;
 
-	tmp = g_utf8_normalize(screenname, -1, G_NORMALIZE_DEFAULT);
-	normalized_screenname = g_utf8_casefold(tmp, -1);
+	tmp = g_utf8_normalize(buddyname, -1, G_NORMALIZE_DEFAULT);
+	normalized_buddyname = g_utf8_casefold(tmp, -1);
 	g_free(tmp);
 
 	/* There's no sense listing things like: 'xxx "xxx"'
-	   when the screenname and buddy alias match. */
-	if (buddy_alias && strcmp(buddy_alias, screenname)) {
-		char *completion_entry = g_strdup_printf("%s \"%s\"", screenname, buddy_alias);
+	   when the name and buddy alias match. */
+	if (buddy_alias && strcmp(buddy_alias, buddyname)) {
+		char *completion_entry = g_strdup_printf("%s \"%s\"", buddyname, buddy_alias);
 		char *tmp2 = g_utf8_normalize(buddy_alias, -1, G_NORMALIZE_DEFAULT);
 
 		tmp = g_utf8_casefold(tmp2, -1);
@@ -2007,8 +2048,8 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
 				0, completion_entry,
-				1, screenname,
-				2, normalized_screenname,
+				1, buddyname,
+				2, normalized_buddyname,
 				3, tmp,
 				4, account,
 				-1);
@@ -2018,12 +2059,12 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 	}
 
 	/* There's no sense listing things like: 'xxx "xxx"'
-	   when the screenname and contact alias match. */
-	if (contact_alias && strcmp(contact_alias, screenname)) {
+	   when the name and contact alias match. */
+	if (contact_alias && strcmp(contact_alias, buddyname)) {
 		/* We don't want duplicates when the contact and buddy alias match. */
 		if (!buddy_alias || strcmp(contact_alias, buddy_alias)) {
 			char *completion_entry = g_strdup_printf("%s \"%s\"",
-							screenname, contact_alias);
+							buddyname, contact_alias);
 			char *tmp2 = g_utf8_normalize(contact_alias, -1, G_NORMALIZE_DEFAULT);
 
 			tmp = g_utf8_casefold(tmp2, -1);
@@ -2032,8 +2073,8 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 			gtk_list_store_append(store, &iter);
 			gtk_list_store_set(store, &iter,
 					0, completion_entry,
-					1, screenname,
-					2, normalized_screenname,
+					1, buddyname,
+					2, normalized_buddyname,
 					3, tmp,
 					4, account,
 					-1);
@@ -2044,18 +2085,18 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 	}
 
 	if (completion_added == FALSE) {
-		/* Add the buddy's screenname. */
+		/* Add the buddy's name. */
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
-				0, screenname,
-				1, screenname,
-				2, normalized_screenname,
+				0, buddyname,
+				1, buddyname,
+				2, normalized_buddyname,
 				3, NULL,
 				4, account,
 				-1);
 	}
 
-	g_free(normalized_screenname);
+	g_free(normalized_buddyname);
 }
 #endif /* NEW_STYLE_COMPLETION */
 
@@ -2064,8 +2105,8 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 	PidginFilterBuddyCompletionEntryFunc filter_func = data->filter_func;
 	gpointer user_data = data->filter_func_user_data;
 
- 	/* 1. Don't show buddies because we will have gotten them already.
- 	 * 2. The boxes that use this autocomplete code handle only IMs. */
+	/* 1. Don't show buddies because we will have gotten them already.
+	 * 2. The boxes that use this autocomplete code handle only IMs. */
 	if (!set->buddy && set->type == PURPLE_LOG_IM) {
 		PidginBuddyCompletionEntry entry;
 		entry.is_buddy = FALSE;
@@ -2073,7 +2114,7 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 
 		if (filter_func(&entry, user_data)) {
 #ifdef NEW_STYLE_COMPLETION
-			add_screenname_autocomplete_entry(data->store,
+			add_buddyname_autocomplete_entry(data->store,
 												NULL, NULL, set->account, set->name);
 #else
 			/* Steal the name for the GCompletion. */
@@ -2119,7 +2160,7 @@ add_completion_list(PidginCompletionData *data)
 
 				if (filter_func(&entry, user_data)) {
 #ifdef NEW_STYLE_COMPLETION
-					add_screenname_autocomplete_entry(data->store,
+					add_buddyname_autocomplete_entry(data->store,
 														((PurpleContact *)cnode)->alias,
 														purple_buddy_get_contact_alias(entry.entry.buddy),
 														entry.entry.buddy->account,
@@ -2150,7 +2191,7 @@ add_completion_list(PidginCompletionData *data)
 }
 
 static void
-screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
+buddyname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
 {
 	g_free(data);
 	purple_signals_disconnect_by_handle(widget);
@@ -2162,15 +2203,17 @@ repopulate_autocomplete(gpointer something, gpointer data)
 	add_completion_list(data);
 }
 
-
 void
 pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
 {
 	PidginCompletionData *data;
 
 #ifdef NEW_STYLE_COMPLETION
-	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
-	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
+	/*
+	 * Store the displayed completion value, the buddy name, the UTF-8
+	 * normalized & casefolded buddy name, the UTF-8 normalized &
+	 * casefolded value for comparison, and the account.
+	 */
 	GtkListStore *store;
 
 	GtkEntryCompletion *completion;
@@ -2191,15 +2234,15 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 
 	add_completion_list(data);
 
-	/* Sort the completion list by screenname. */
+	/* Sort the completion list by buddy name */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
 	                                     1, GTK_SORT_ASCENDING);
 
 	completion = gtk_entry_completion_new();
-	gtk_entry_completion_set_match_func(completion, screenname_completion_match_func, NULL, NULL);
+	gtk_entry_completion_set_match_func(completion, buddyname_completion_match_func, NULL, NULL);
 
 	g_signal_connect(G_OBJECT(completion), "match-selected",
-		G_CALLBACK(screenname_completion_match_selected_cb), data);
+		G_CALLBACK(buddyname_completion_match_selected_cb), data);
 
 	gtk_entry_set_completion(GTK_ENTRY(entry), completion);
 	g_object_unref(completion);
@@ -2246,7 +2289,7 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
 
-	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
+	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(buddyname_autocomplete_destroyed_cb), data);
 }
 
 gboolean
@@ -2445,11 +2488,6 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 
 	dialog->callback = callback;
 	dialog->data = data;
-
-	if (dialog->icon_filesel != NULL) {
-		gtk_window_present(GTK_WINDOW(dialog->icon_filesel));
-		return NULL;
-	}
 
 	current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder");
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
@@ -2943,7 +2981,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 #endif
 }
 
-GSList *minidialogs = NULL;
+static GSList *minidialogs = NULL;
 
 static void *
 pidgin_utils_get_handle(void)
@@ -3240,7 +3278,7 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
  	style = gtk_widget_get_style(widget);
 	if (!style)
 		return "dim grey";
-	
+
 	snprintf(dim_grey_string, sizeof(dim_grey_string), "#%02x%02x%02x",
 	style->text_aa[GTK_STATE_NORMAL].red >> 8,
 	style->text_aa[GTK_STATE_NORMAL].green >> 8,
@@ -3478,5 +3516,202 @@ GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
 		g_object_ref(pixbuf);
 	g_object_unref(loader);
 	return pixbuf;
+}
+
+static void url_copy(GtkWidget *w, gchar *url)
+{
+	GtkClipboard *clipboard;
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_PRIMARY);
+	gtk_clipboard_set_text(clipboard, url, -1);
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text(clipboard, url, -1);
+}
+
+static gboolean
+link_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *url;
+
+	url = gtk_imhtml_link_get_url(link);
+
+	/* Open Link */
+	img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Open Link"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	/* Copy Link Location */
+	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Link Location"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), (gpointer)url);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
+static gboolean
+copy_email_address(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *text;
+	char *address;
+#define MAILTOSIZE  (sizeof("mailto:") - 1)
+
+	text = gtk_imhtml_link_get_url(link);
+	g_return_val_if_fail(text && strlen(text) > MAILTOSIZE, FALSE);
+	address = (char*)text + MAILTOSIZE;
+
+	/* Copy Email Address */
+	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Email Address"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy), address);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
+/* XXX: The following two functions are for demonstration purposes only! */
+static gboolean
+open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
+{
+	const char *url;
+	const char *str;
+
+	url = gtk_imhtml_link_get_url(link);
+	if (!url || strlen(url) < sizeof("open://"))
+		return FALSE;
+
+	str = url + sizeof("open://") - 1;
+
+	if (strcmp(str, "accounts") == 0)
+		pidgin_accounts_window_show();
+	else if (strcmp(str, "prefs") == 0)
+		pidgin_prefs_show();
+	else
+		return FALSE;
+	return TRUE;
+}
+
+static gboolean
+dummy(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	return TRUE;
+}
+
+static gboolean
+register_gnome_url_handlers(void)
+{
+	char *tmp;
+	char *err;
+	char *c;
+	char *start;
+
+	tmp = g_find_program_in_path("gconftool-2");
+	if (tmp == NULL)
+		return FALSE;
+
+	g_free(tmp);
+	tmp = NULL;
+
+	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
+	                               &tmp, &err, NULL, NULL))
+	{
+		g_free(tmp);
+		g_free(err);
+		g_return_val_if_reached(FALSE);
+	}
+	g_free(err);
+	err = NULL;
+
+	for (c = start = tmp ; *c ; c++)
+	{
+		/* Skip leading spaces. */
+		if (c == start && *c == ' ')
+			start = c + 1;
+		else if (*c == '\n')
+		{
+			*c = '\0';
+			if (g_str_has_prefix(start, "/desktop/gnome/url-handlers/"))
+			{
+				char *cmd;
+				char *tmp2 = NULL;
+				char *protocol;
+
+				/* If there is an enabled boolean, honor it. */
+				cmd = g_strdup_printf("gconftool-2 -g %s/enabled", start);
+				if (g_spawn_command_line_sync(cmd, &tmp2, &err, NULL, NULL))
+				{
+					g_free(err);
+					err = NULL;
+					if (!strcmp(tmp2, "false\n"))
+					{
+						g_free(tmp2);
+						g_free(cmd);
+						start = c + 1;
+						continue;
+					}
+				}
+				g_free(cmd);
+				g_free(tmp2);
+
+				start += sizeof("/desktop/gnome/url-handlers/") - 1;
+
+				protocol = g_strdup_printf("%s:", start);
+				gnome_url_handlers = g_list_prepend(gnome_url_handlers, protocol);
+				gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+			}
+			start = c + 1;
+		}
+	}
+	g_free(tmp);
+
+	return (gnome_url_handlers != NULL);
+}
+
+void pidgin_utils_init(void)
+{
+	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("https://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
+	gtk_imhtml_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
+
+	/* Example custom URL handler. */
+	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
+
+	/* If we're under GNOME, try registering the system URL handlers. */
+	if (purple_running_gnome())
+		register_gnome_url_handlers();
+}
+
+void pidgin_utils_uninit(void)
+{
+	gtk_imhtml_class_register_protocol("open://", NULL, NULL);
+
+	/* If we have GNOME handlers registered, unregister them. */
+	if (gnome_url_handlers)
+	{
+		GList *l;
+		for (l = gnome_url_handlers ; l ; l = l->next)
+		{
+			gtk_imhtml_class_register_protocol((char *)l->data, NULL, NULL);
+			g_free(l->data);
+		}
+		g_list_free(gnome_url_handlers);
+		gnome_url_handlers = NULL;
+		return;
+	}
+
+	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("https://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("ftp://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("mailto:", NULL, NULL);
+	gtk_imhtml_class_register_protocol("gopher://", NULL, NULL);
 }
 

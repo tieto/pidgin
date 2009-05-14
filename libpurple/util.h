@@ -31,23 +31,26 @@
 
 #include <stdio.h>
 
+typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
+typedef struct _PurpleMenuAction PurpleMenuAction;
+typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
+
 #include "account.h"
 #include "xmlnode.h"
 #include "notify.h"
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
-
-typedef struct _PurpleMenuAction
+struct _PurpleMenuAction
 {
 	char *label;
 	PurpleCallback callback;
 	gpointer data;
 	GList *children;
-} PurpleMenuAction;
+};
 
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
 
@@ -57,12 +60,12 @@ typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
  * This is used by, among other things, purple_gtk_combo* functions to pass in a
  * list of key-value pairs so it can display a user-friendly value.
  */
-typedef struct _PurpleKeyValuePair
+struct _PurpleKeyValuePair
 {
 	gchar *key;
 	void *value;
 
-} PurpleKeyValuePair;
+};
 
 /**
  * Creates a new PurpleMenuAction.
@@ -493,7 +496,8 @@ char *purple_markup_strip_html(const char *str);
 char *purple_markup_linkify(const char *str);
 
 /**
- * Unescapes HTML entities to their literal characters.
+ * Unescapes HTML entities to their literal characters. Also translates
+ * "<br>" to "\n".
  * For example "&amp;" is replaced by '&' and so on.
  * Actually only "&amp;", "&quot;", "&lt;" and "&gt;" are currently
  * supported.
@@ -502,6 +506,8 @@ char *purple_markup_linkify(const char *str);
  *
  * @return The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
+ *
+ * @see purple_escape_html
  */
 char *purple_unescape_html(const char *html);
 
@@ -773,6 +779,21 @@ char *purple_fd_get_ip(int fd);
 /** @name String Functions                                                */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Tests two strings for equality.
+ *
+ * Unlike strcmp(), this function will not crash if one or both of the
+ * strings are @c NULL.
+ *
+ * @param left	A string
+ * @param right A string to compare with left
+ *
+ * @return @c TRUE if the strings are the same, else @c FALSE.
+ *
+ * @since 2.6.0
+ */
+gboolean purple_strequal(const gchar *left, const gchar *right);
 
 /**
  * Normalizes a string, so that it is suitable for comparison.
