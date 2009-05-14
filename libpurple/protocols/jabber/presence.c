@@ -674,7 +674,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			if (!jid->resource) {
 				jabber_id_free(jid);
 				g_free(avatar_hash);
-				g_free(nickname);
 				g_free(status);
 				return;
 			}
