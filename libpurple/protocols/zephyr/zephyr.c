@@ -1857,7 +1857,7 @@ static void zephyr_login(PurpleAccount * account)
 	} else if (use_tzc(zephyr)) {
 		zephyr->nottimer = purple_timeout_add(100, check_notify_tzc, gc);
 	} 
-	zephyr->loctimer = purple_timeout_add(20000, check_loc, gc); 
+	zephyr->loctimer = purple_timeout_add_seconds(20, check_loc, gc); 
 
 }
 

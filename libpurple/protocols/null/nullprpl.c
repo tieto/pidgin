@@ -927,7 +927,8 @@ static const char *nullprpl_normalize(const PurpleAccount *acct,
 static void nullprpl_set_buddy_icon(PurpleConnection *gc,
                                     PurpleStoredImage *img) {
  purple_debug_info("nullprpl", "setting %s's buddy icon to %s\n",
-                   gc->account->username, purple_imgstore_get_filename(img));
+                   gc->account->username,
+                   img ? purple_imgstore_get_filename(img) : "(null)");
 }
 
 static void nullprpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {

@@ -633,24 +633,28 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					purple_debug_info("jabber", "found %d smileys\n",
 						g_list_length(smiley_refs));
 					
-					if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
-						JabberID *jid = jabber_id_new(jm->from);
-						JabberChat *chat = NULL;
+					if (smiley_refs) {		
+						if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
+							JabberID *jid = jabber_id_new(jm->from);
+							JabberChat *chat = NULL;
 
-						if (jid) {
-							chat = jabber_chat_find(js, jid->node, jid->domain);
-							if (chat) conv = chat->conv;
-						}
+							if (jid) {
+								chat = jabber_chat_find(js, jid->node, jid->domain);
+								if (chat) conv = chat->conv;
+							}
 
-						jabber_id_free(jid);
-					} else {
-						conv =
-							purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-								who, account);
-						if (!conv) {
-							/* we need to create the conversation here */
-							conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-								account, who);
+							jabber_id_free(jid);
+						} else if (jm->type == JABBER_MESSAGE_NORMAL ||
+						           jm->type == JABBER_MESSAGE_CHAT) {
+							conv =
+								purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+									who, account);
+							if (!conv) {
+								/* we need to create the conversation here */
+								conv = 
+									purple_conversation_new(PURPLE_CONV_TYPE_IM,
+									account, who);
+							}
 						}
 					}
 
@@ -682,7 +686,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						    TRUE)) {
 						const JabberData *data =
 								jabber_data_find_remote_by_cid(cid);
-						/* if data is already known, we add write it immediatly */
+						/* if data is already known, we write it immediatly */
 						if (data) {
 							purple_debug_info("jabber", 
 								"data is already known\n"); 

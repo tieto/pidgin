@@ -113,7 +113,7 @@ static void
 fields_loadline(struct mime_fields *mf, const char *line, gsize len)
 {
 	/* split the line into key: value */
-	char *key, *val;
+	char *key, *newkey, *val;
 	char **tokens;
 
 	/* feh, need it to be NUL terminated */
@@ -129,17 +129,18 @@ fields_loadline(struct mime_fields *mf, const char *line, gsize len)
 
 	/* normalize whitespace (sorta) and trim on key and value */
 	tokens = g_strsplit(key, "\t\r\n", 0);
-	key = g_strjoinv("", tokens);
-	key = g_strstrip(key);
+	newkey = g_strjoinv("", tokens);
+	g_strstrip(newkey);
 	g_strfreev(tokens);
 
 	tokens = g_strsplit(val, "\t\r\n", 0);
 	val = g_strjoinv("", tokens);
-	val = g_strstrip(val);
+	g_strstrip(val);
 	g_strfreev(tokens);
 
-	fields_set(mf, key, val);
+	fields_set(mf, newkey, val);
 
+	g_free(newkey);
 	g_free(key);
 	g_free(val);
 }
@@ -439,6 +440,8 @@ doc_parts_load(PurpleMimeDocument *doc, const char *boundary, const char *buf, g
 
 		b = tail;
 	}
+
+	g_free(bnd);
 }
 
 

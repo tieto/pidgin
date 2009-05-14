@@ -665,7 +665,8 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
+		printf("%s %s (libpurple %s)\n", PIDGIN_NAME, DISPLAY_VERSION,
+		                                 purple_core_get_version());
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
@@ -780,7 +781,7 @@ int main(int argc, char *argv[])
 		DBusMessage *message = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE,
 				DBUS_INTERFACE_PURPLE, "PurpleBlistSetVisible");
 		gboolean tr = TRUE;
-		dbus_message_append_args(message, DBUS_TYPE_UINT32, &tr, DBUS_TYPE_INVALID);
+		dbus_message_append_args(message, DBUS_TYPE_INT32, &tr, DBUS_TYPE_INVALID);
 		dbus_connection_send_with_reply_and_block(conn, message, -1, NULL);
 		dbus_message_unref(message);
 #endif
