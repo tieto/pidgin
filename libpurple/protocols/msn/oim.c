@@ -668,9 +668,15 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		if (tokens[1] != NULL)
 			from = (const char *)tokens[1];
 
-		start = strchr(from, '<') + 1;
-		end = strchr(from, '>');
-		passport = g_strndup(start, end - start);
+		start = strchr(from, '<');
+		if (start != NULL) {
+			start++;
+			end = strchr(from, '>');
+			if (end != NULL)
+				passport = g_strndup(start, end - start);
+		}
+		if (passport == NULL)
+			passport = g_strdup(_("Unknown"));
 
 		g_strfreev(tokens);
 	}

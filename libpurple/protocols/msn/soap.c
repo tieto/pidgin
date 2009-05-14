@@ -434,7 +434,7 @@ msn_soap_process(MsnSoapConnection *conn)
 					g_free(line);
 					return;
 				} else if (strcmp(key, "Content-Length") == 0) {
-					conn->body_len = atoi(value);
+					sscanf(value, "%" G_GSIZE_FORMAT, &(conn->body_len));
 				} else if (strcmp(key, "Connection") == 0) {
 					if (strcmp(value, "close") == 0) {
 						conn->close_when_done = TRUE;

@@ -151,7 +151,7 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 
 	memset(&csi, 0, sizeof(csi));
 	csi.exchange = exchange;
-	strncpy(csi.name, roomname, sizeof(csi.name));
+	g_strlcpy(csi.name, roomname, sizeof(csi.name));
 	csi.instance = instance;
 
 	/*
