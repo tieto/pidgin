@@ -1163,7 +1163,6 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	jm->chat_state = JM_STATE_ACTIVE;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
-	jm->chat_state = JM_STATE_ACTIVE;
 
 	if(jbr) {
 		if(jbr->thread_id)
