@@ -3714,6 +3714,7 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 		   it's a png */
 		if (!type){
 			char *basename, *tmp;
+			char *dirname;
 #if GTK_CHECK_VERSION(2,4,0)
 			GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 							_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
@@ -3726,11 +3727,13 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 			gtk_widget_show(dialog);
 
 			type = g_strdup("png");
+			dirname = g_path_get_dirname(filename);
 			basename = g_path_get_basename(filename);
 			tmp = strrchr(basename, '.');
 			if (tmp != NULL)
 				tmp[0] = '\0';
-			newfilename = g_strdup_printf("%s.png", basename);
+			newfilename = g_strdup_printf("%s" G_DIR_SEPARATOR_S  "%s.png", dirname, basename);
+			g_free(dirname);
 			g_free(basename);
 		} else {
 			/*
