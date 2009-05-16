@@ -318,7 +318,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 
 		box->icon_box_menu = gtk_menu_new();
 
-		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Select Buddy Icon"), NULL,
+		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Select Buddy Icon"), GTK_STOCK_ADD,
 						     G_CALLBACK(choose_buddy_icon_cb),
 						     box, 0, 0, NULL);
 
