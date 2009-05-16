@@ -129,7 +129,7 @@ purple_base16_encode(const guchar *data, gsize len)
 	ascii = g_malloc(len * 2 + 1);
 
 	for (i = 0; i < len; i++)
-		snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
+		g_snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
 
 	return ascii;
 }

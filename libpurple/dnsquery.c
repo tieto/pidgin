@@ -325,7 +325,7 @@ cope_with_gdb_brokenness(void)
 		return;
 	already_done = TRUE;
 	ppid = getppid();
-	snprintf(s, sizeof(s), "/proc/%d/exe", ppid);
+	g_snprintf(s, sizeof(s), "/proc/%d/exe", ppid);
 	n = readlink(s, e, sizeof(e));
 	if(n < 0)
 		return;

@@ -125,7 +125,7 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	const char *name;
 	PurpleValue *value;
 	xmlnode *node, *child;
-	char buf[20];
+	char buf[21];
 
 	name    = (const char *)key;
 	value   = (PurpleValue *)hvalue;
@@ -138,7 +138,7 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 
 	if (purple_value_get_type(value) == PURPLE_TYPE_INT) {
 		xmlnode_set_attrib(child, "type", "int");
-		snprintf(buf, sizeof(buf), "%d", purple_value_get_int(value));
+		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_int(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
 	else if (purple_value_get_type(value) == PURPLE_TYPE_STRING) {
@@ -147,7 +147,7 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	}
 	else if (purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN) {
 		xmlnode_set_attrib(child, "type", "bool");
-		snprintf(buf, sizeof(buf), "%d", purple_value_get_boolean(value));
+		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_boolean(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
 }
@@ -303,7 +303,7 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 	node = xmlnode_new("account");
 	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
 	xmlnode_set_attrib(node, "name", purple_account_get_username(account));
-	snprintf(buf, sizeof(buf), "%d", account->perm_deny);
+	g_snprintf(buf, sizeof(buf), "%d", account->perm_deny);
 	xmlnode_set_attrib(node, "mode", buf);
 
 	for (cur = account->permit; cur; cur = cur->next)
