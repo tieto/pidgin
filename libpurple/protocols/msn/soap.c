@@ -667,7 +667,8 @@ msn_soap_connection_run(gpointer data)
 			conn->handled_len = 0;
 			conn->current_request = req;
 
-			purple_input_remove(conn->event_handle);
+			if (conn->event_handle)
+				purple_input_remove(conn->event_handle);
 			conn->event_handle = purple_input_add(conn->ssl->fd,
 				PURPLE_INPUT_WRITE, msn_soap_write_cb, conn);
 			if (!msn_soap_write_cb_internal(conn, conn->ssl->fd, PURPLE_INPUT_WRITE, TRUE)) {
