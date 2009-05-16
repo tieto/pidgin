@@ -5887,13 +5887,25 @@ void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml)
 
 void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate)
 {
+	gulong signal_id;
+	signal_id = g_signal_handler_find(imhtml->text_buffer,
+			G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_UNBLOCKED, 0, 0, NULL,
+			mark_set_so_update_selection_cb, NULL);
 	if (populate) {
-		g_signal_handlers_unblock_matched(imhtml->text_buffer,
-				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-				mark_set_so_update_selection_cb, NULL);
+		if (!signal_id) {
+			/* We didn't find an unblocked signal handler, which means there
+			   is a blocked handler. Now unblock it.
+			   This is necessary to avoid a mutex-lock when the debug message
+			   saying 'no handler is blocked' is printed in the debug window.
+				-- sad
+			 */
+			g_signal_handlers_unblock_matched(imhtml->text_buffer,
+					G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+					mark_set_so_update_selection_cb, NULL);
+		}
 	} else {
-		g_signal_handlers_block_matched(imhtml->text_buffer,
-				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-				mark_set_so_update_selection_cb, NULL);
+		/* Block only if we found an unblocked handler */
+		if (signal_id)
+			g_signal_handler_block(imhtml->text_buffer, signal_id);
 	}
 }
