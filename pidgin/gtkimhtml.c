@@ -3867,12 +3867,11 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 	if (event->type == GDK_BUTTON_RELEASE) {
 		if(event_button->button == 3) {
 			GtkWidget *img, *item, *menu;
-			gchar *text = g_strdup_printf(_("_Save Image..."));
 			menu = gtk_menu_new();
 
 			/* buttons and such */
 			img = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU);
-			item = gtk_image_menu_item_new_with_mnemonic(text);
+			item = gtk_image_menu_item_new_with_mnemonic(_("_Save Image..."));
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_image_save), image);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -3881,9 +3880,8 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 			/* we only add the menu if the image is of "custom smiley size"
 			  <= 96x96 pixels */
 			if (image->width <= 96 && image->height <= 96) {
-				text = g_strdup_printf(_("_Add Custom Smiley..."));
 				img = gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_MENU);
-				item = gtk_image_menu_item_new_with_mnemonic(text);
+				item = gtk_image_menu_item_new_with_mnemonic(_("_Add Custom Smiley..."));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 				g_signal_connect(G_OBJECT(item), "activate",
 								 G_CALLBACK(gtk_imhtml_custom_smiley_save), image);
@@ -3894,7 +3892,6 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 							event_button->button, event_button->time);
 
-			g_free(text);
 			return TRUE;
 		}
 	}
