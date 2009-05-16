@@ -6309,6 +6309,10 @@ pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 	if (!smiley)
 		return;
 
+	smiley->data = g_realloc(smiley->data, smiley->datasize + size);
+	g_memmove(smiley->data + smiley->datasize, data, size);
+	smiley->datasize += size;
+
 	loader = smiley->loader;
 	if (!loader)
 		return;

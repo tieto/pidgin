@@ -82,6 +82,11 @@ struct scalable_data {
 	GtkTextMark *mark;
 };
 
+typedef struct {
+	GtkIMHtmlScalable *image;
+	gpointer data;
+	gsize datasize;
+} GtkIMHtmlImageSave;
 
 struct im_image_data {
 	int id;
@@ -3641,95 +3646,105 @@ void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 }
 
 static void
-image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
+image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 {
-	gchar *type = NULL;
 	GError *error = NULL;
-#if GTK_CHECK_VERSION(2,2,0)
-	GSList *formats = gdk_pixbuf_get_formats();
-#else
-	char *basename = g_path_get_basename(filename);
-	char *ext = strrchr(basename, '.');
-#endif
-	char *newfilename;
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
 
 	gtk_widget_destroy(image->filesel);
 	image->filesel = NULL;
 
+	if (save->data && save->datasize) {
+#if GLIB_CHECK_VERSION(2,8,0)
+		g_file_set_contents(filename, save->data, save->datasize, &error);
+#else
+		purple_util_write_data_to_file_absolute(filename, save->data, save->datasize);
+#endif
+	} else {
+		gchar *type = NULL;
 #if GTK_CHECK_VERSION(2,2,0)
-	while (formats) {
-		GdkPixbufFormat *format = formats->data;
-		gchar **extensions = gdk_pixbuf_format_get_extensions(format);
-		gpointer p = extensions;
+		GSList *formats = gdk_pixbuf_get_formats();
+#else
+		char *basename = g_path_get_basename(filename);
+		char *ext = strrchr(basename, '.');
+#endif
+		char *newfilename;
 
-		while(gdk_pixbuf_format_is_writable(format) && extensions && extensions[0]){
-			gchar *fmt_ext = extensions[0];
-			const gchar* file_ext = filename + strlen(filename) - strlen(fmt_ext);
+#if GTK_CHECK_VERSION(2,2,0)
+		while (formats) {
+			GdkPixbufFormat *format = formats->data;
+			gchar **extensions = gdk_pixbuf_format_get_extensions(format);
+			gpointer p = extensions;
 
-			if(!g_ascii_strcasecmp(fmt_ext, file_ext)){
-				type = gdk_pixbuf_format_get_name(format);
-				break;
+			while(gdk_pixbuf_format_is_writable(format) && extensions && extensions[0]){
+				gchar *fmt_ext = extensions[0];
+				const gchar* file_ext = filename + strlen(filename) - strlen(fmt_ext);
+
+				if(!g_ascii_strcasecmp(fmt_ext, file_ext)){
+					type = gdk_pixbuf_format_get_name(format);
+					break;
+				}
+
+				extensions++;
 			}
 
-			extensions++;
+			g_strfreev(p);
+
+			if (type)
+				break;
+
+			formats = formats->next;
 		}
 
-		g_strfreev(p);
-
-		if (type)
-			break;
-
-		formats = formats->next;
-	}
-
-	g_slist_free(formats);
+		g_slist_free(formats);
 #else
-	/* this is really ugly code, but I think it will work */
-	if (ext) {
-		ext++;
-		if (!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
-			type = g_strdup("jpeg");
-		else if (!g_ascii_strcasecmp(ext, "png"))
-			type = g_strdup("png");
-	}
+		/* this is really ugly code, but I think it will work */
+		if (ext) {
+			ext++;
+			if (!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
+				type = g_strdup("jpeg");
+			else if (!g_ascii_strcasecmp(ext, "png"))
+				type = g_strdup("png");
+		}
 
-	g_free(basename);
-#endif
-
-	/* If I can't find a valid type, I will just tell the user about it and then assume
-	   it's a png */
-	if (!type){
-		char *basename, *tmp;
-#if GTK_CHECK_VERSION(2,4,0)
-		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
-#else
-		GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Unrecognized file type\n\nDefaulting to PNG."));
-#endif
-
-		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
-		gtk_widget_show(dialog);
-
-		type = g_strdup("png");
-		basename = g_path_get_basename(filename);
-		tmp = strrchr(basename, '.');
-		if (tmp != NULL)
-			tmp[0] = '\0';
-		newfilename = g_strdup_printf("%s.png", basename);
 		g_free(basename);
-	} else {
-		/*
-		 * We're able to save the file in it's original format, so we
-		 * can use the original file name.
-		 */
-		newfilename = g_strdup(filename);
+#endif
+
+		/* If I can't find a valid type, I will just tell the user about it and then assume
+		   it's a png */
+		if (!type){
+			char *basename, *tmp;
+#if GTK_CHECK_VERSION(2,4,0)
+			GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+							_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
+#else
+			GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+							_("Unrecognized file type\n\nDefaulting to PNG."));
+#endif
+
+			g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
+			gtk_widget_show(dialog);
+
+			type = g_strdup("png");
+			basename = g_path_get_basename(filename);
+			tmp = strrchr(basename, '.');
+			if (tmp != NULL)
+				tmp[0] = '\0';
+			newfilename = g_strdup_printf("%s.png", basename);
+			g_free(basename);
+		} else {
+			/*
+			 * We're able to save the file in it's original format, so we
+			 * can use the original file name.
+			 */
+			newfilename = g_strdup(filename);
+		}
+
+		gdk_pixbuf_save(image->pixbuf, newfilename, type, &error, NULL);
+
+		g_free(newfilename);
+		g_free(type);
 	}
-
-	gdk_pixbuf_save(image->pixbuf, newfilename, type, &error, NULL);
-
-	g_free(newfilename);
-	g_free(type);
 
 	if (error){
 #if GTK_CHECK_VERSION(2,4,0)
@@ -3747,9 +3762,10 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImage *image)
+image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSave *save)
 {
 	gchar *filename;
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
 
 	if (response != GTK_RESPONSE_ACCEPT) {
 		gtk_widget_destroy(widget);
@@ -3760,9 +3776,10 @@ image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImage *
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
 #else /* FILECHOOSER */
 static void
-image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImage *image)
+image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImageSave *save)
 {
 	gchar *filename;
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
 
 	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(image->filesel)));
 
@@ -3795,7 +3812,7 @@ image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImage *image)
 		image_save_yes_cb(image, filename);
 	*/
 
-	image_save_yes_cb(image, filename);
+	image_save_yes_cb(save, filename);
 
 	g_free(filename);
 }
@@ -3810,8 +3827,10 @@ image_save_cancel_cb(GtkIMHtmlImage *image)
 #endif /* FILECHOOSER */
 
 static void
-gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
+gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
+
 	if (image->filesel != NULL) {
 		gtk_window_present(GTK_WINDOW(image->filesel));
 		return;
@@ -3828,7 +3847,7 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
 	if (image->filename != NULL)
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(image->filesel), image->filename);
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(image->filesel)), "response",
-					 G_CALLBACK(image_save_check_if_exists_cb), image);
+					 G_CALLBACK(image_save_check_if_exists_cb), save);
 #else /* FILECHOOSER */
 	image->filesel = gtk_file_selection_new(_("Save Image"));
 	if (image->filename != NULL)
@@ -3838,7 +3857,7 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
 	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->cancel_button),
 							 "clicked", G_CALLBACK(image_save_cancel_cb), image);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
-					 G_CALLBACK(image_save_check_if_exists_cb), image);
+					 G_CALLBACK(image_save_check_if_exists_cb), save);
 #endif /* FILECHOOSER */
 
 	gtk_widget_show(image->filesel);
@@ -3860,30 +3879,29 @@ gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImage *image)
  * embedded in the conversation.  Someone should make the Purple core handle
  * all of that.
  */
-static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlImage *image)
+static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlImageSave *save)
 {
 	GdkEventButton *event_button = (GdkEventButton *) event;
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
 
 	if (event->type == GDK_BUTTON_RELEASE) {
 		if(event_button->button == 3) {
 			GtkWidget *img, *item, *menu;
-			gchar *text = g_strdup_printf(_("_Save Image..."));
 			menu = gtk_menu_new();
 
 			/* buttons and such */
 			img = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU);
-			item = gtk_image_menu_item_new_with_mnemonic(text);
+			item = gtk_image_menu_item_new_with_mnemonic(_("_Save Image..."));
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_image_save), image);
+			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_image_save), save);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 			/* Add menu item for adding custom smiley to local smileys */
 			/* we only add the menu if the image is of "custom smiley size"
 			  <= 96x96 pixels */
 			if (image->width <= 96 && image->height <= 96) {
-				text = g_strdup_printf(_("_Add Custom Smiley..."));
 				img = gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_MENU);
-				item = gtk_image_menu_item_new_with_mnemonic(text);
+				item = gtk_image_menu_item_new_with_mnemonic(_("_Add Custom Smiley..."));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 				g_signal_connect(G_OBJECT(item), "activate",
 								 G_CALLBACK(gtk_imhtml_custom_smiley_save), image);
@@ -3894,7 +3912,6 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 							event_button->button, event_button->time);
 
-			g_free(text);
 			return TRUE;
 		}
 	}
@@ -3909,7 +3926,7 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlSmiley *smiley)
 {
 	GdkPixbufAnimation *anim = NULL;
-	GtkIMHtmlScalable *image = NULL;
+	GtkIMHtmlImageSave *save = NULL;
 	gboolean ret;
 
 	if (event->type != GDK_BUTTON_RELEASE || ((GdkEventButton*)event)->button != 3)
@@ -3919,9 +3936,14 @@ static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHt
 	if (!anim)
 		return FALSE;
 
-	image = gtk_imhtml_animation_new(anim, smiley->smile, 0);
-	ret = gtk_imhtml_image_clicked(w, event, (GtkIMHtmlImage*)image);
-	g_object_set_data_full(G_OBJECT(w), "image-data", image, (GDestroyNotify)gtk_imhtml_animation_free);
+	save = g_new0(GtkIMHtmlImageSave, 1);
+	save->image = (GtkIMHtmlScalable *)gtk_imhtml_animation_new(anim, smiley->smile, 0);
+	save->data = smiley->data;        /* Do not need to memdup here, since the smiley is not
+	                                     destroyed before this GtkIMHtmlImageSave */
+	save->datasize = smiley->datasize;
+	ret = gtk_imhtml_image_clicked(w, event, save);
+	g_object_set_data_full(G_OBJECT(w), "image-data", save->image, (GDestroyNotify)gtk_imhtml_animation_free);
+	g_object_set_data_full(G_OBJECT(w), "image-save-data", save, (GDestroyNotify)g_free);
 	return ret;
 }
 
@@ -3955,6 +3977,7 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
 	GtkWidget *box = gtk_event_box_new();
 	char *tag;
 	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
+	GtkIMHtmlImageSave *save;
 
 	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(image->image));
 
@@ -3969,7 +3992,11 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
 	g_object_set_data(G_OBJECT(anchor), "gtkimhtml_plaintext", "[Image]");
 
 	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), box, anchor);
-	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gtk_imhtml_image_clicked), image);
+
+	save = g_new0(GtkIMHtmlImageSave, 1);
+	save->image = scale;
+	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gtk_imhtml_image_clicked), save);
+	g_object_set_data_full(G_OBJECT(box), "image-save-data", save, (GDestroyNotify)g_free);
 }
 
 GtkIMHtmlScalable *gtk_imhtml_hr_new()
@@ -5773,6 +5800,7 @@ void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley)
 		g_object_unref(smiley->icon);
 	if (smiley->loader)
 		g_object_unref(smiley->loader);
+	g_free(smiley->data);
 	g_free(smiley);
 }
 
