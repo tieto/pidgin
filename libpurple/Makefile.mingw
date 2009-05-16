@@ -41,6 +41,7 @@ C_SRC =	\
 			conversation.c \
 			core.c \
 			debug.c \
+			disco.c \
 			dnsquery.c \
 			dnssrv.c \
 			eventloop.c \
