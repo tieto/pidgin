@@ -34,7 +34,7 @@
 #define YAHOO_P2P_KEEPALIVE_SECS 300
 #define YAHOO_P2P_SERVER_TIMEOUT 10
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
-#define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
+#define YAHOO_MAIL_URL "http://rd.yahoo.com/messenger/client/?http://mail.yahoo.com/"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
 #define YAHOO_XFER_PORT 80
 #define YAHOO_XFER_RELAY_HOST "relay.msg.yahoo.com"
