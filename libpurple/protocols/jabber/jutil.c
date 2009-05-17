@@ -105,6 +105,8 @@ jabber_id_new(const char *str)
 {
 	char *at;
 	char *slash;
+	char *node = NULL;
+	char *domain;
 	JabberID *jid;
 
 	if(!str || !g_utf8_validate(str, -1, NULL))
@@ -116,22 +118,31 @@ jabber_id_new(const char *str)
 	slash = g_utf8_strchr(str, -1, '/');
 
 	if(at) {
-		jid->node = g_utf8_normalize(str, at-str, G_NORMALIZE_NFKC);
+		node = g_utf8_normalize(str, at-str, G_NORMALIZE_NFKC);
 		if(slash) {
-			jid->domain = g_utf8_normalize(at+1, slash-(at+1), G_NORMALIZE_NFKC);
+			domain = g_utf8_normalize(at+1, slash-(at+1), G_NORMALIZE_NFKC);
 			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			jid->domain = g_utf8_normalize(at+1, -1, G_NORMALIZE_NFKC);
+			domain = g_utf8_normalize(at+1, -1, G_NORMALIZE_NFKC);
 		}
 	} else {
 		if(slash) {
-			jid->domain = g_utf8_normalize(str, slash-str, G_NORMALIZE_NFKC);
+			domain = g_utf8_normalize(str, slash-str, G_NORMALIZE_NFKC);
 			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			jid->domain = g_utf8_normalize(str, -1, G_NORMALIZE_NFKC);
+			domain = g_utf8_normalize(str, -1, G_NORMALIZE_NFKC);
 		}
 	}
 
+	if (node) {
+		jid->node = g_utf8_strdown(node, -1);
+		g_free(node);
+	}
+
+	if (domain) {
+		jid->domain = g_utf8_strdown(domain, -1);
+		g_free(domain);
+	}
 
 	if(!jabber_nodeprep_validate(jid->node) ||
 			!jabber_nameprep_validate(jid->domain) ||
@@ -193,28 +204,21 @@ const char *jabber_normalize(const PurpleAccount *account, const char *in)
 	JabberStream *js = gc ? gc->proto_data : NULL;
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;
-	char *node, *domain;
 
 	jid = jabber_id_new(in);
 
 	if(!jid)
 		return NULL;
 
-	node = jid->node ? g_utf8_strdown(jid->node, -1) : NULL;
-	domain = g_utf8_strdown(jid->domain, -1);
-
-
-	if(js && node && jid->resource &&
-			jabber_chat_find(js, node, domain))
-		g_snprintf(buf, sizeof(buf), "%s@%s/%s", node, domain,
+	if(js && jid->node && jid->resource &&
+			jabber_chat_find(js, jid->node, jid->domain))
+		g_snprintf(buf, sizeof(buf), "%s@%s/%s", jid->node, jid->domain,
 				jid->resource);
 	else
-		g_snprintf(buf, sizeof(buf), "%s%s%s", node ? node : "",
-				node ? "@" : "", domain);
+		g_snprintf(buf, sizeof(buf), "%s%s%s", jid->node ? jid->node : "",
+				jid->node ? "@" : "", jid->domain);
 
 	jabber_id_free(jid);
-	g_free(node);
-	g_free(domain);
 
 	return buf;
 }
