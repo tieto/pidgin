@@ -93,6 +93,7 @@ static void pidgin_status_box_popdown(PidginStatusBox *box);
 static void do_colorshift (GdkPixbuf *dest, GdkPixbuf *src, int shift);
 static void icon_choose_cb(const char *filename, gpointer data);
 static void remove_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box);
+static void choose_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box);
 
 enum {
 	/** A PidginStatusBoxItemType */
@@ -317,6 +318,10 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 
 		box->icon_box_menu = gtk_menu_new();
 
+		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Select Buddy Icon"), GTK_STOCK_ADD,
+						     G_CALLBACK(choose_buddy_icon_cb),
+						     box, 0, 0, NULL);
+
 		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
 						     G_CALLBACK(remove_buddy_icon_cb),
 						     box, 0, 0, NULL);
@@ -327,13 +332,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 			       event->button, event->time);
 
 	} else {
-		if (box->buddy_icon_sel) {
-			gtk_window_present(GTK_WINDOW(box->buddy_icon_sel));
-			return FALSE;
-		}
-
-		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(GTK_WINDOW(gtk_widget_get_toplevel(widget)), icon_choose_cb, box);
-		gtk_widget_show_all(box->buddy_icon_sel);
+		choose_buddy_icon_cb(widget, box);
 	}
 	return FALSE;
 }
@@ -1526,6 +1525,17 @@ remove_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box)
 
 	gtk_widget_destroy(box->icon_box_menu);
 	box->icon_box_menu = NULL;
+}
+
+static void
+choose_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box)
+{
+	if (box->buddy_icon_sel) {
+		gtk_window_present(GTK_WINDOW(box->buddy_icon_sel));
+	} else {
+		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(GTK_WINDOW(gtk_widget_get_toplevel(w)), icon_choose_cb, box);
+		gtk_widget_show_all(box->buddy_icon_sel);
+	}
 }
 
 static void

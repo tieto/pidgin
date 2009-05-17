@@ -285,13 +285,13 @@ status_to_xmlnode(PurpleSavedStatus *status)
 		xmlnode_set_attrib(node, "transient", "true");
 	}
 
-	snprintf(buf, sizeof(buf), "%lu", status->creation_time);
+	g_snprintf(buf, sizeof(buf), "%lu", status->creation_time);
 	xmlnode_set_attrib(node, "created", buf);
 
-	snprintf(buf, sizeof(buf), "%lu", status->lastused);
+	g_snprintf(buf, sizeof(buf), "%lu", status->lastused);
 	xmlnode_set_attrib(node, "lastused", buf);
 
-	snprintf(buf, sizeof(buf), "%u", status->usage_count);
+	g_snprintf(buf, sizeof(buf), "%u", status->usage_count);
 	xmlnode_set_attrib(node, "usage_count", buf);
 
 	child = xmlnode_new_child(node, "state");

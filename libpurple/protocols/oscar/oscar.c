@@ -714,9 +714,6 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 			case OSCAR_CAPABILITY_ICHATAV:
 				tmp = _("iChat AV");
 				break;
-			case OSCAR_CAPABILITY_LIVEVIDEO:
-				tmp = _("Live Video");
-				break;
 			case OSCAR_CAPABILITY_CAMERA:
 				tmp = _("Camera");
 				break;

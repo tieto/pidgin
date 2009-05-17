@@ -188,6 +188,8 @@ struct _GtkIMHtmlSmiley {
 	GSList *anchors;
 	GtkIMHtmlSmileyFlags flags;
 	GtkIMHtml *imhtml;
+	gpointer data;       /** @Since 2.6.0 */
+	gsize datasize;      /** @Since 2.6.0 */
 };
 
 struct _GtkIMHtmlScalable {
