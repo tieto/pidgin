@@ -80,7 +80,7 @@ msn_soap_connection_new(MsnSession *session, const char *host)
 	conn->session = session;
 	conn->host = g_strdup(host);
 	conn->queue = g_queue_new();
-	conn->unsafe_debug = g_getenv("PURPLE_MSN_UNSAFE_DEBUG") != NULL;
+	conn->unsafe_debug = g_getenv("PURPLE_UNSAFE_DEBUG") != NULL;
 	return conn;
 }
 
