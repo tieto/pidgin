@@ -1162,5 +1162,59 @@ void jabber_chat_disco_traffic(JabberChat *chat)
 	g_free(room_jid);
 }
 
+typedef struct {
+	const gchar *cap;
+	gboolean *all_support;
+	JabberBuddy *jb;
+} JabberChatCapsData;
 
+static void
+jabber_chat_all_participants_have_capability_foreach(gpointer key,
+                                                     gpointer value,
+                                                     gpointer user_data)
+{
+	const gchar *cap = ((JabberChatCapsData *) user_data)->cap;
+	gboolean *all_support = ((JabberChatCapsData *) user_data)->all_support;
+	JabberBuddy *jb = ((JabberChatCapsData *) user_data)->jb;
+	JabberChatMember *member = (JabberChatMember *) value;
+	const gchar *resource = member->handle;
+	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
 
+	if (jbr) {
+		*all_support &= jabber_resource_has_capability(jbr, cap);
+	} else {
+		*all_support = FALSE;
+	}
+}
+
+gboolean
+jabber_chat_all_participants_have_capability(const JabberChat *chat,
+	const gchar *cap)
+{
+	gchar *chat_jid = NULL;
+	JabberBuddy *jb = NULL;
+	gboolean all_support = TRUE;
+	JabberChatCapsData data;
+
+	chat_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
+	jb = jabber_buddy_find(chat->js, chat_jid, FALSE);
+
+	if (jb) {
+		data.cap = cap;
+		data.all_support = &all_support;
+		data.jb = jb;
+
+		g_hash_table_foreach(chat->members, 
+			jabber_chat_all_participants_have_capability_foreach, &data);
+	} else {
+		all_support = FALSE;
+	}
+	g_free(chat_jid);
+	return all_support;
+}
+
+guint
+jabber_chat_get_num_participants(const JabberChat *chat)
+{
+	return g_hash_table_size(chat->members);
+}

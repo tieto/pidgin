@@ -118,7 +118,7 @@ pref_to_xmlnode(xmlnode *parent, struct purple_pref *pref)
 {
 	xmlnode *node, *childnode;
 	struct purple_pref *child;
-	char buf[20];
+	char buf[21];
 	GList *cur;
 
 	/* Create a new node */
@@ -128,7 +128,7 @@ pref_to_xmlnode(xmlnode *parent, struct purple_pref *pref)
 	/* Set the type of this node (if type == PURPLE_PREF_NONE then do nothing) */
 	if (pref->type == PURPLE_PREF_INT) {
 		xmlnode_set_attrib(node, "type", "int");
-		snprintf(buf, sizeof(buf), "%d", pref->value.integer);
+		g_snprintf(buf, sizeof(buf), "%d", pref->value.integer);
 		xmlnode_set_attrib(node, "value", buf);
 	}
 	else if (pref->type == PURPLE_PREF_STRING) {
@@ -161,7 +161,7 @@ pref_to_xmlnode(xmlnode *parent, struct purple_pref *pref)
 	}
 	else if (pref->type == PURPLE_PREF_BOOLEAN) {
 		xmlnode_set_attrib(node, "type", "bool");
-		snprintf(buf, sizeof(buf), "%d", pref->value.boolean);
+		g_snprintf(buf, sizeof(buf), "%d", pref->value.boolean);
 		xmlnode_set_attrib(node, "value", buf);
 	}
 

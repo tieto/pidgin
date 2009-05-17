@@ -38,6 +38,9 @@ version 2.6.0 (??/??/2009):
 	  contains formatting.
 	* Show when the user was last logged in when doing "Get Info" on an offline
 	  buddy, provided the server supports it.
+	* Support custom smileys in MUCs (only when all participants supports the
+	  "Bits of Binary" extension, and a maximum of 10 participants are in the
+	  chat (to avoid getting too many fetch requests).
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)

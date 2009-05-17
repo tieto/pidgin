@@ -3359,7 +3359,7 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(XEP_0224_NAMESPACE, jabber_buzz_isenabled);
 
 	/* Bits Of Binary */
-	jabber_add_feature(XEP_0231_NAMESPACE, jabber_custom_smileys_isenabled);
+	jabber_add_feature(XEP_0231_NAMESPACE, 0);
 
 	/* Jingle features! */
 	jabber_add_feature(JINGLE, 0);

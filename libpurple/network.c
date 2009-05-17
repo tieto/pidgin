@@ -303,7 +303,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	/*
 	 * Get a list of addresses on this machine.
 	 */
-	snprintf(serv, sizeof(serv), "%hu", port);
+	g_snprintf(serv, sizeof(serv), "%hu", port);
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;

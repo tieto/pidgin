@@ -129,7 +129,7 @@ purple_base16_encode(const guchar *data, gsize len)
 	ascii = g_malloc(len * 2 + 1);
 
 	for (i = 0; i < len; i++)
-		snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
+		g_snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
 
 	return ascii;
 }
@@ -1623,7 +1623,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "a";
 					tags = g_list_prepend(tags, pt);
 					if(xhtml)
-						g_string_append_printf(xhtml, "<a href='%s'>", url ? g_strstrip(url->str) : "");
+						g_string_append_printf(xhtml, "<a href=\"%s\">", url ? g_strstrip(url->str) : "");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -2017,7 +2017,6 @@ badchar(char c)
 	case '<':
 	case '>':
 	case '"':
-	case '\'':
 		return TRUE;
 	default:
 		return FALSE;

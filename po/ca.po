@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-06 19:49+0200\n"
-"PO-Revision-Date: 2009-05-06 23:20+0200\n"
+"POT-Creation-Date: 2009-05-17 14:59+0200\n"
+"PO-Revision-Date: 2009-05-17 15:05+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -1595,7 +1595,7 @@ msgid ""
 "Fetching TinyURL..."
 msgstr ""
 "\n"
-"S'està aconseguint una TinyURL..."
+"S'està aconseguint un TinyURL..."
 
 msgid "Only create TinyURL for urls of this length or greater"
 msgstr "Crea TinyURL per a URL així de llargues o més"
@@ -1816,6 +1816,8 @@ msgstr "+++ %s s'ha connectat"
 msgid "+++ %s signed off"
 msgstr "+++ %s se n'ha anat"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "Error desconegut"
 
@@ -2717,7 +2719,7 @@ msgstr "Contrasenya d'un sol ús"
 #. *< priority
 #. *< id
 msgid "One Time Password Support"
-msgstr "Contrasenyes d'un sol us"
+msgstr "Contrasenyes d'un sol ús"
 
 #. *< name
 #. *< version
@@ -2731,7 +2733,7 @@ msgid ""
 "are only used in a single successful connection.\n"
 "Note: The account password must not be saved for this to work."
 msgstr ""
-"Us permet forçar que les contrasenyes siguin d'un sol us per a comptes dels "
+"Us permet forçar que les contrasenyes siguin d'un sol ús per a comptes dels "
 "quals no es desin les contrasenyes.\n"
 "Nota: per poder fer servir això, cal que no es desi la contrasenya del "
 "compte."
@@ -3777,14 +3779,14 @@ msgid "Unsupported version of BOSH protocol"
 msgstr "Aquesta versió del protocol BOSH no està implementada"
 
 msgid "Unable to establish a connection with the server"
-msgstr "No s'ha pogut establir una connexió amb al servidor"
+msgstr "No s'ha pogut establir una connexió amb el servidor"
 
 #, c-format
 msgid ""
 "Could not establish a connection with the server:\n"
 "%s"
 msgstr ""
-"No s'ha pogut establir una connexió amb al servidor:\n"
+"No s'ha pogut establir una connexió amb el servidor:\n"
 "%s"
 
 msgid "Unable to establish SSL connection"
@@ -4036,6 +4038,13 @@ msgstr "Prioritat"
 
 msgid "Resource"
 msgstr "Recurs"
+
+#, c-format
+msgid "%s ago"
+msgstr "fa %s"
+
+msgid "Logged off"
+msgstr "Desconnectat"
 
 # Segons la viquipèdia
 msgid "Middle Name"
@@ -4812,9 +4821,8 @@ msgstr "S'ha produït un error en entrar al xat %s"
 msgid "Error in chat %s"
 msgstr "S'ha produït un error en el xat %s"
 
-#, fuzzy
 msgid "An error occured on the in-band bytestream transfer\n"
-msgstr "S'ha produït un error en obrir el fitxer."
+msgstr ""
 
 msgid "Transfer was closed."
 msgstr "La transferència s'ha tancat."
@@ -5774,6 +5782,8 @@ msgid "Lost connection with server"
 msgstr "S'ha perdut la connexió amb el servidor"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "Missatges de correu nous"
 
@@ -5971,15 +5981,15 @@ msgstr "Entreu un nom d'usuari per a comprovar-ne la disponibilitat:"
 #. * connotation, for example, "he was zapped by electricity when
 #. * he put a fork in the toaster."
 msgid "Zap"
-msgstr ""
+msgstr "Enrampar"
 
 #, c-format
 msgid "%s has zapped you!"
-msgstr ""
+msgstr "%s us ha enrampat!"
 
 #, c-format
 msgid "Zapping %s..."
-msgstr ""
+msgstr "S'està enrampant %s..."
 
 #. Whack means "to hit or strike someone with a sharp blow"
 msgid "Whack"
@@ -6618,9 +6628,6 @@ msgstr "Xat de vídeo"
 
 msgid "iChat AV"
 msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Vídeo en directe"
 
 msgid "Camera"
 msgstr "Càmera"
@@ -9603,6 +9610,30 @@ msgstr ""
 msgid "Add buddy rejected"
 msgstr "S'ha rebutjat afegir l'amic"
 
+#. Some error in the received stream
+msgid "Received invalid data"
+msgstr "S'han rebut dades invàlides"
+
+#. Password incorrect
+msgid "Incorrect Password"
+msgstr "La contrasenya no és correcta"
+
+#. security lock from too many failed login attempts
+msgid "Account locked: Too many failed login attempts"
+msgstr "S'ha blocat el compte: s'ha intentat entrar massa vegades"
+
+#. the username does not exist
+msgid "Username does not exist"
+msgstr "L'usuari no existeix"
+
+#. indicates a lock of some description
+msgid "Account locked: See the debug log"
+msgstr "El compte està blocat: vegeu el registre de depuració"
+
+#. username or password missing
+msgid "Username or password missing"
+msgstr "Manquen el nom d'uruari o la contrasenya"
+
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -10518,8 +10549,8 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "Actualitzeu els camps necessaris."
 
-msgid "Room _List"
-msgstr "_Llista de sales"
+msgid "A_ccount"
+msgstr "_Compte"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10527,8 +10558,8 @@ msgid ""
 msgstr ""
 "Introduïu la informació necessària sobre el xat al qual vulgueu entrar.\n"
 
-msgid "_Account:"
-msgstr "C_ompte:"
+msgid "Room _List"
+msgstr "_Llista de sales"
 
 msgid "_Block"
 msgstr "_Bloca"
@@ -12003,11 +12034,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "Desa imatge"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_Desa la imatge..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "_Afegeix una emoticona personalitzada..."
 
@@ -12442,6 +12471,9 @@ msgstr "Modifica l'avís per a l'amic"
 msgid "Pounce on Whom"
 msgstr "Avisa dels Whom"
 
+msgid "_Account:"
+msgstr "C_ompte:"
+
 msgid "_Buddy name:"
 msgstr "_Nom de l'amic:"
 
@@ -12721,7 +12753,7 @@ msgstr "Port _final:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
-msgstr ""
+msgstr "Servidor repetidor (TURN)"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Servidor intermediari i navegador"
@@ -13117,6 +13149,9 @@ msgstr "Drecera"
 
 msgid "Custom Smiley Manager"
 msgstr "Gestor d'emoticones personalitzades"
+
+msgid "Select Buddy Icon"
+msgstr "Seleccioneu una icona per a l'amic"
 
 msgid "Click to change your buddyicon for this account."
 msgstr "Feu clic per canviar la icona d'amic d'aquest compte."
@@ -14284,6 +14319,9 @@ msgstr "Envia i rep blocs XMPP en brut."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 
+#~ msgid "Live Video"
+#~ msgstr "Vídeo en directe"
+
 #~ msgid "Invite message"
 #~ msgstr "Missatge d'invitació"
 
@@ -14762,9 +14800,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ "Introduïu el nom d'usuari de la persona que vulgueu afegir a la vostra "
 #~ "llista d'amics. Opcionalment podeu entrar un àlies, o sobrenom, per a "
 #~ "l'amic. El sobrenom substituirà el nom d'usuari allà on sigui possible.\n"
-
-#~ msgid "A_ccount:"
-#~ msgstr "_Compte:"
 
 #~ msgid "User has typed something and stopped"
 #~ msgstr "L'usuari ha escrit alguna cosa i s'ha aturat"

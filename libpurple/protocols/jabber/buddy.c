@@ -74,7 +74,7 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 	if (js->buddies == NULL)
 		return NULL;
 
-	if(!(realname = jabber_normalize(js->gc->account, name)))
+	if(!(realname = jabber_get_bare_jid(name)))
 		return NULL;
 
 	jb = g_hash_table_lookup(js->buddies, realname);
