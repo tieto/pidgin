@@ -4637,6 +4637,7 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 		gtkchat->topic_text = gtk_entry_new();
+		gtk_widget_set_size_request(gtkchat->topic_text, -1, BUDDYICON_SIZE_MIN);
 
 		if(prpl_info->set_chat_topic == NULL) {
 			gtk_editable_set_editable(GTK_EDITABLE(gtkchat->topic_text), FALSE);
@@ -4855,7 +4856,19 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(gtkconv->infopane), path);
 	gtk_tree_path_free(path);
 
-	if (!chat) {
+	if (chat) {
+		/* This empty widget is used to ensure that the infopane is consistently
+		   sized for chat windows. The correct fix is to put an icon in the chat
+		   window as well, because that would make "Set Custom Icon" consistent
+		   for both the buddy list and the chat window, but PidginConversation
+		   is pretty much stuck until 3.0. */
+		GtkWidget *sizing_vbox;
+		sizing_vbox = gtk_vbox_new(FALSE, 0);
+		gtk_widget_set_size_request(sizing_vbox, -1, BUDDYICON_SIZE_MIN);
+		gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), sizing_vbox, FALSE, FALSE, 0);
+		gtk_widget_show(sizing_vbox);
+	}
+	else {
 		gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
 
 		if ((buddy = purple_find_buddy(purple_conversation_get_account(conv),
