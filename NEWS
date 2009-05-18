@@ -2,7 +2,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
-2.5.6 (05/15/2009):
+2.5.6 (05/18/2009):
 	Ka-Hing: Many much bugfixes. Hooray. (Paul told me to say that)
 	Oh, no one has met Paul yet? He's awesome, he backported my fixes
 	to the release branch so I didn't have to checkout a
@@ -11,6 +11,11 @@ Our development blog is available at: http://planet.pidgin.im
 	which is user visible though. This basically applies to the rest
 	of the release as well, nothing exciting, but you definitely want
 	it.
+
+	Daniel: This should fix a number of annoying issues that some users
+	have encountered.  We also would like to thank Veracode
+	(http://www.veracode.com) who performed a code analysis and found some
+	bugs that were addressed in this release.
 
 2.5.5 (03/01/2009):
 	John: Well, yet another release with bug fixing and patches.  Hopefully
