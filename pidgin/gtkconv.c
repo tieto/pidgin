@@ -2700,7 +2700,7 @@ redraw_icon(gpointer data)
 	scale_width = gdk_pixbuf_get_width(buf);
 	scale_height = gdk_pixbuf_get_height(buf);
 
-	gtk_widget_get_size_request(gtkconv->infopane_hbox, NULL, &size);
+	gtk_widget_get_size_request(gtkconv->u.im->icon_container, NULL, &size);
 	size = MIN(size, MIN(scale_width, scale_height));
 	size = CLAMP(size, BUDDYICON_SIZE_MIN, BUDDYICON_SIZE_MAX);
 
@@ -2758,13 +2758,22 @@ start_anim(GtkObject *obj, PidginConversation *gtkconv)
 static void
 remove_icon(GtkWidget *widget, PidginConversation *gtkconv)
 {
+	GList *children;
+	GtkWidget *event;
 	PurpleConversation *conv = gtkconv->active_conv;
 	PidginWindow *gtkwin;
 
 	g_return_if_fail(conv != NULL);
 
-	if (gtkconv->u.im->icon_container != NULL)
-		gtk_widget_destroy(gtkconv->u.im->icon_container);
+	gtk_widget_set_size_request(gtkconv->u.im->icon_container, -1, BUDDYICON_SIZE_MIN);
+	children = gtk_container_get_children(GTK_CONTAINER(gtkconv->u.im->icon_container));
+	if (children) {
+		/* We know there's only one child here. It'd be nice to shortcut to the
+		   event box, but we can't change the PidginConversation until 3.0 */
+		event = (GtkWidget *)children->data;
+		gtk_container_remove(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
+		g_list_free(children);
+	}
 
 	if (gtkconv->u.im->anim != NULL)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
@@ -2779,7 +2788,6 @@ remove_icon(GtkWidget *widget, PidginConversation *gtkconv)
 	gtkconv->u.im->icon = NULL;
 	gtkconv->u.im->anim = NULL;
 	gtkconv->u.im->iter = NULL;
-	gtkconv->u.im->icon_container = NULL;
 	gtkconv->u.im->show_icon = FALSE;
 
 	gtkwin = gtkconv->win;
@@ -2840,7 +2848,7 @@ change_size_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 	GSList *buddies;
 
-	gtk_widget_get_size_request(gtkconv->infopane_hbox, NULL, &size);
+	gtk_widget_get_size_request(gtkconv->u.im->icon_container, NULL, &size);
 
 	if (size == BUDDYICON_SIZE_MAX) {
 		size = BUDDYICON_SIZE_MIN;
@@ -2848,7 +2856,7 @@ change_size_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		size = BUDDYICON_SIZE_MAX;
 	}
 
-	gtk_widget_set_size_request(gtkconv->infopane_hbox, -1, size);
+	gtk_widget_set_size_request(gtkconv->u.im->icon_container, -1, size);
 	pidgin_conv_update_buddy_icon(conv);
 
 	buddies = purple_find_buddies(purple_conversation_get_account(conv),
@@ -4847,15 +4855,25 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(gtkconv->infopane), path);
 	gtk_tree_path_free(path);
 
-	if ((buddy = purple_find_buddy(purple_conversation_get_account(conv),
-					purple_conversation_get_name(conv))) != NULL) {
-		PurpleContact *contact = purple_buddy_get_contact(buddy);
-		if (contact) {
-			buddyicon_size = purple_blist_node_get_int((PurpleBlistNode*)contact, "pidgin-infopane-iconsize");
+	if (!chat) {
+		gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
+
+		if ((buddy = purple_find_buddy(purple_conversation_get_account(conv),
+						purple_conversation_get_name(conv))) != NULL) {
+			PurpleContact *contact = purple_buddy_get_contact(buddy);
+			if (contact) {
+				buddyicon_size = purple_blist_node_get_int((PurpleBlistNode*)contact, "pidgin-infopane-iconsize");
+			}
 		}
+		buddyicon_size = CLAMP(buddyicon_size, BUDDYICON_SIZE_MIN, BUDDYICON_SIZE_MAX);
+		gtk_widget_set_size_request(gtkconv->u.im->icon_container, -1, buddyicon_size);
+
+		gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox),
+				   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
+
+		gtk_widget_show(gtkconv->u.im->icon_container);
 	}
-	buddyicon_size = CLAMP(buddyicon_size, BUDDYICON_SIZE_MIN, BUDDYICON_SIZE_MAX);
-	gtk_widget_set_size_request(gtkconv->infopane_hbox, -1, buddyicon_size);
+
 	gtk_widget_show(gtkconv->infopane);
 
 	rend = gtk_cell_renderer_pixbuf_new();
@@ -6905,6 +6923,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	GdkPixbuf *buf;
 
+	GList *children;
 	GtkWidget *event;
 	GdkPixbuf *scale;
 	int scale_width, scale_height;
@@ -6932,9 +6951,14 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 	/* Remove the current icon stuff */
-	if (gtkconv->u.im->icon_container != NULL)
-		gtk_widget_destroy(gtkconv->u.im->icon_container);
-	gtkconv->u.im->icon_container = NULL;
+	children = gtk_container_get_children(GTK_CONTAINER(gtkconv->u.im->icon_container));
+	if (children) {
+		/* We know there's only one child here. It'd be nice to shortcut to the
+		   event box, but we can't change the PidginConversation until 3.0 */
+		event = (GtkWidget *)children->data;
+		gtk_container_remove(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
+		g_list_free(children);
+	}
 
 	if (gtkconv->u.im->anim != NULL)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
@@ -7022,7 +7046,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	scale_width = gdk_pixbuf_get_width(buf);
 	scale_height = gdk_pixbuf_get_height(buf);
 
-	gtk_widget_get_size_request(gtkconv->infopane_hbox, NULL, &size);
+	gtk_widget_get_size_request(gtkconv->u.im->icon_container, NULL, &size);
 	size = MIN(size, MIN(scale_width, scale_height));
 
 	/* Some sanity checks */
@@ -7041,7 +7065,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	g_object_unref(buf);
 	if (pidgin_gdk_pixbuf_is_opaque(scale))
 		pidgin_gdk_pixbuf_make_round(scale);
-	gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
@@ -7061,11 +7084,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	gtk_widget_show(gtkconv->u.im->icon);
 
 	g_object_unref(G_OBJECT(scale));
-
-	gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox),
-			   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
-
-	gtk_widget_show(gtkconv->u.im->icon_container);
 
 	/* The buddy icon code needs badly to be fixed. */
 	if(pidgin_conv_window_is_active_conversation(conv))
