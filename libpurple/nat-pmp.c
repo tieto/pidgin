@@ -81,6 +81,8 @@ typedef struct {
 struct _PurplePmpMapResponse {
 	guint8		version;
 	guint8		opcode;
+	guint16		resultcode;
+	guint32		epoch;
 	guint16		privateport;
 	guint16		publicport;
 	guint32		lifetime;

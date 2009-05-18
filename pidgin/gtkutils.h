@@ -233,14 +233,14 @@ GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str);
  *
  * @param menu     The menu to which to append the check menu item.
  * @param str      The title to use for the newly created menu item.
- * @param sf       A function to call when the menu item is activated.
+ * @param cb       A function to call when the menu item is activated.
  * @param data     Data to pass to the signal function.
  * @param checked  The initial state of the check item
  *
  * @return The newly created menu item.
  */
 GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
-		GtkSignalFunc sf, gpointer data, gboolean checked);
+		GCallback cb, gpointer data, gboolean checked);
 
 /**
  * Creates a menu item.
@@ -249,7 +249,7 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
  * @param str        The title for the menu item.
  * @param icon       An icon to place to the left of the menu item,
  *                   or @c NULL for no icon.
- * @param sf         A function to call when the menu item is activated.
+ * @param cb         A function to call when the menu item is activated.
  * @param data       Data to pass to the signal function.
  * @param accel_key  Something.
  * @param accel_mods Something.
@@ -258,7 +258,7 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
  * @return The newly created menu item.
  */
 GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str,
-									const char *icon, GtkSignalFunc sf,
+									const char *icon, GCallback cb,
 									gpointer data, guint accel_key,
 									guint accel_mods, char *mod);
 
@@ -569,6 +569,27 @@ GdkPixbuf *pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize si
  */
 GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget *w, const char *size);
 
+/**
+ * Returns an appropriate stock-id for a status primitive.
+ *
+ * @param prim   The status primitive
+ *
+ * @return The stock-id
+ *
+ * @since 2.6.0
+ */
+const char *pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim);
+
+/**
+ * Returns an appropriate stock-id for a PurplePresence.
+ *
+ * @param presence   The presence.
+ *
+ * @return The stock-id
+ *
+ * @since 2.6.0
+ */
+const char *pidgin_stock_id_from_presence(PurplePresence *presence);
 
 /**
  * Append a PurpleMenuAction to a menu.

@@ -1104,6 +1104,9 @@ pidgin_close_notify(PurpleNotifyType type, void *ui_handle)
 	{
 		PidginNotifyMailData *data = (PidginNotifyMailData *)ui_handle;
 
+		/* Close the notification dialog */
+		pidgin_notify_emails(purple_account_get_connection(data->account),
+		                     0, FALSE, NULL, NULL, NULL, NULL);
 		if (data) {
 			g_free(data->url);
 			g_free(data);

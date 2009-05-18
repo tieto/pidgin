@@ -194,7 +194,7 @@ static gboolean plugin_load(PurplePlugin *plugin)
 	                    PURPLE_CALLBACK(received_chat_msg_cb), users);
 
 	/* Cleanup every 5 minutes */
-	id = purple_timeout_add(1000 * 60 * 5, (GSourceFunc)clean_users_hash, users);
+	id = purple_timeout_add_seconds(60 * 5, (GSourceFunc)clean_users_hash, users);
 
 	data = g_new(gpointer, 2);
 	data[0] = users;

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-01 15:52-0800\n"
+"POT-Creation-Date: 2009-04-30 10:38-0400\n"
 "PO-Revision-Date: 2006-05-25 23:48+0200\n"
 "Last-Translator: tamax\n"
 "Language-Team:  <en@li.org>\n"
@@ -33,7 +33,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -577,8 +577,8 @@ msgid ""
 "and re-enable the account."
 msgstr ""
 "%s deskonektatua izan da errorea baten ondorioz: %s\n"
-" Pidgin ez da saiatuko kontua berriz konektatzen errorea konpondu  eta kontua "
-"ahalbidetu arte."
+" Pidgin ez da saiatuko kontua berriz konektatzen errorea konpondu  eta "
+"kontua ahalbidetu arte."
 
 msgid "Re-enable Account"
 msgstr "Ber ahalbidetu kontua"
@@ -643,21 +643,6 @@ msgstr ""
 #, fuzzy
 msgid "Send To"
 msgstr "_Bidali honi:"
-
-#, fuzzy
-msgid "Invite message"
-msgstr "Txertatu irudia mezuan"
-
-msgid "Invite"
-msgstr "Gonbidatu"
-
-#, fuzzy
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"Idatzi gonbidatu nahi duzun erabiltzailearen izena, gonbit-mezu batekin nahi "
-"baduzu."
 
 #, fuzzy
 msgid "Conversation"
@@ -927,6 +912,43 @@ msgid "System Log"
 msgstr "Sistemaren egunkaria"
 
 #, fuzzy
+msgid "Calling ... "
+msgstr "Kalkulatzen..."
+
+msgid "Hangup"
+msgstr ""
+
+#. Number of actions
+#, fuzzy
+msgid "Accept"
+msgstr "_Onartu"
+
+#, fuzzy
+msgid "Reject"
+msgstr "Berrezarri"
+
+msgid "Call in progress."
+msgstr ""
+
+msgid "The call has been terminated."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr ""
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+
+#, fuzzy
+msgid "You have rejected the call."
+msgstr "%s%s kanaletik irten zara"
+
+msgid "call: Make an audio call."
+msgstr ""
+
+#, fuzzy
 msgid "Emails"
 msgstr "Helbide elektronikoa"
 
@@ -962,6 +984,9 @@ msgstr "Konektatu"
 
 msgid "IM"
 msgstr "BM"
+
+msgid "Invite"
+msgstr "Gonbidatu"
 
 #, fuzzy
 msgid "(none)"
@@ -1189,7 +1214,6 @@ msgstr "%s joan egin da (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s bidali mezu bat bidali dizu  (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Alerta emateko gertaera ezezaguna. Eman honen berri!"
 
@@ -1246,7 +1270,6 @@ msgstr "_Egoera aldatu aurreko minutuak:"
 msgid "Change status to"
 msgstr "_Egoera  aldatu hona:"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Solasaldiak"
 
@@ -1603,7 +1626,6 @@ msgstr ""
 "Solasaldi berri bat irekitzean, plugin honek azken solasaldia uneko "
 "solasaldian sartuko du."
 
-#, c-format
 msgid "Online"
 msgstr "Linean"
 
@@ -1650,6 +1672,28 @@ msgid "GntLastlog"
 msgstr ""
 
 msgid "Lastlog plugin."
+msgstr ""
+
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URLa"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
 msgstr ""
 
 msgid "accounts"
@@ -1749,15 +1793,6 @@ msgstr "Berriketarako gonbita onartu nahi duzu?"
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
 msgstr ""
-
-#. Number of actions
-#, fuzzy
-msgid "Accept"
-msgstr "_Onartu"
-
-#, fuzzy
-msgid "Reject"
-msgstr "Berrezarri"
 
 msgid "_View Certificate..."
 msgstr ""
@@ -1897,6 +1932,18 @@ msgstr "%s gelatik irten da."
 msgid "%s left the room (%s)."
 msgstr "%s gelatik irten da (%s)."
 
+#, fuzzy
+msgid "Invite to chat"
+msgstr "Konferentziara gonbidatu"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+"Idatzi gonbidatu nahi duzun erabiltzailearen izena, gonbit-mezu batekin nahi "
+"baduzu."
+
 #, fuzzy, c-format
 msgid "Failed to get connection: %s"
 msgstr "Ezin da konexio sortu."
@@ -2034,7 +2081,6 @@ msgstr "Transferentzia hasten hemendik %s hona %s"
 msgid "Transfer of file %s complete"
 msgstr "%s fitxategiaren transferentzia osatu da"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Fitxategi-transferentzien osatuta"
 
@@ -2042,7 +2088,6 @@ msgstr "Fitxategi-transferentzien osatuta"
 msgid "You canceled the transfer of %s"
 msgstr "%s(r)en transferentzia bertan behera utzi duzu"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Fitxategi-transferentzia bertan behera utzi da"
 
@@ -2232,7 +2277,6 @@ msgstr "(%s) %s <ERANTZUN AUTOMATIKOA>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr ""
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr ""
 
@@ -2728,6 +2772,32 @@ msgstr ""
 msgid "Do not ask. Always save in pounce."
 msgstr ""
 
+#, fuzzy
+msgid "One Time Password"
+msgstr "Sartu Pasahitza"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr ""
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
+msgstr ""
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2935,7 +3005,6 @@ msgstr ""
 "Ezinezkoa izan da konexioa ezatzea mDNS zerbitzari lokalarekin , martxan al "
 "dago ?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Izena"
 
@@ -2969,6 +3038,11 @@ msgstr "Bonjour protokoloaren plugin-a"
 #, fuzzy
 msgid "Purple Person"
 msgstr "Pertsona berria"
+
+#. Creating the options for the protocol
+#, fuzzy
+msgid "Local Port"
+msgstr "Herria"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3134,13 +3208,13 @@ msgstr "Aukeratu berriketak lagun batentzat:%s "
 msgid "Add to chat..."
 msgstr "Gehitu berriketara ..."
 
+#. Global
 msgid "Available"
 msgstr "Erabilgarri"
 
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Kanpoan"
 
@@ -3487,6 +3561,17 @@ msgstr ""
 "Zerbitzariak hautatu dituzun kontu-izenak ezetsi ditu. Baliteke karaktere "
 "baliogabeak edukitzea."
 
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, fuzzy, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "Berriketa honen izena dagoeneko erabiltzen ari da"
+
+#, fuzzy
+msgid "Nickname in use"
+msgstr "Goitizena"
+
 msgid "Cannot change nick"
 msgstr "Ezin da goitizena aldatu"
 
@@ -3766,6 +3851,41 @@ msgstr "Erronka baliogabea zerbitzaritik"
 msgid "SASL error"
 msgstr "SASL error"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "Ez da arrazoirik eman."
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "Bertsioa ez da onartzen"
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr ""
+"Ezinezkoa izan da konexioa ezatzea mDNS zerbitzari lokalarekin , martxan al "
+"dago ?"
+
+#, fuzzy, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"Ezinezkoa izan da konexioa ezatzea mDNS zerbitzari lokalarekin , martxan al "
+"dago ?"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "Ezin da konexio sortu."
+
+msgid "Unable to create socket"
+msgstr "Ezin da socket-a sortu"
+
+msgid "Write error"
+msgstr "Idazketa-errorea"
+
 msgid "Full Name"
 msgstr "Izen-deiturak"
 
@@ -3833,6 +3953,10 @@ msgstr "Herria"
 
 msgid "Operating System"
 msgstr ""
+
+#, fuzzy
+msgid "Local Time"
+msgstr "Fitxagei lokala:"
 
 msgid "Last Activity"
 msgstr ""
@@ -4070,7 +4194,6 @@ msgstr "Berritsu"
 msgid "Extended Away"
 msgstr "Kanpoan luzarorako"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Ez molestatu"
 
@@ -4198,9 +4321,6 @@ msgstr "Bilatu gelak"
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 
-msgid "Write error"
-msgstr "Idazketa-errorea"
-
 #, fuzzy
 msgid "Ping timeout"
 msgstr "Testu arrunta"
@@ -4208,16 +4328,11 @@ msgstr "Testu arrunta"
 msgid "Read Error"
 msgstr "Irakurketa-errorea"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"Ezinezkoa izan da konexioa ezatzea mDNS zerbitzari lokalarekin , martxan al "
-"dago ?"
-
-msgid "Unable to create socket"
-msgstr "Ezin da socket-a sortu"
 
 #, fuzzy
 msgid "Invalid XMPP ID"
@@ -4225,6 +4340,10 @@ msgstr "IDa ez da baliozkoa"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Huts egin du zerbitzariarekin konektatzean."
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4318,8 +4437,17 @@ msgstr "Autentifikatzen"
 msgid "Re-initializing Stream"
 msgstr "Korrontea berrasieratzen"
 
+msgid "Server doesn't support blocking"
+msgstr ""
+
 msgid "Not Authorized"
 msgstr "Baimenik ez"
+
+msgid "Mood"
+msgstr "Umorea"
+
+msgid "Now Listening"
+msgstr ""
 
 msgid "Both"
 msgstr "Biak"
@@ -4341,12 +4469,6 @@ msgstr "Bat ere ez"
 
 msgid "Subscription"
 msgstr "Harpidetza"
-
-msgid "Mood"
-msgstr "Umorea"
-
-msgid "Now Listening"
-msgstr ""
 
 #, fuzzy
 msgid "Mood Text"
@@ -4591,17 +4713,23 @@ msgstr "Ezin da %s erabiltzailea jaurti"
 msgid "Unable to ping user %s"
 msgstr "Ezin da %s erabiltzailea kanporatu"
 
-#, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
-msgstr ""
-
-#, c-format
-msgid "Unable to buzz, because user %s might be offline."
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to buzz, because there is nothing known about %s."
+msgstr "Ezin da soinua jo, aukeratutako fitxategia (%s) ez dagoelako."
 
 #, fuzzy, c-format
-msgid "Unable to buzz, because the user %s does not support it."
+msgid "Unable to buzz, because %s might be offline."
 msgstr "Ezin da soinua jo, aukeratutako fitxategia (%s) ez dagoelako."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
+msgstr "Ezin da soinua jo, aukeratutako fitxategia (%s) ez dagoelako."
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr ""
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
@@ -4613,9 +4741,40 @@ msgstr "Buzz!!"
 msgid "%s has buzzed you!"
 msgstr "%s konektatu da bertan."
 
-#, c-format
-msgid "Buzzing %s..."
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "Ezin zaio mezua bidali %s(r)i."
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: user is not online"
 msgstr ""
+"Ezin zaio fitxategia bidali %s erabiltzaileari, ez duelako fitxategi-"
+"transferentziarik onartzen"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
+msgstr ""
+"Ezin zaio fitxategia bidali %s erabiltzaileari, ez duelako fitxategi-"
+"transferentziarik onartzen"
+
+#, fuzzy
+msgid "Media Initiation Failed"
+msgstr "Erregistratzeak huts egin du"
+
+#, fuzzy, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr ""
+"Idatzi informazioa ikusi nahi duzun pertsonaren pantaila-izena edo ezizena."
+
+#, fuzzy
+msgid "Select a Resource"
+msgstr "Hautatu fitxategia"
+
+#, fuzzy
+msgid "Initiate Media"
+msgstr "Hasi _berriketa"
 
 msgid "config:  Configure a chat room."
 msgstr "konfig.: konfiguratu berriketa-gela bat."
@@ -4782,6 +4941,21 @@ msgstr "Errorea %s berriketan sartzean"
 msgid "Error in chat %s"
 msgstr "Errorea %s berriketan"
 
+#, fuzzy
+msgid "An error occured on the in-band bytestream transfer\n"
+msgstr "Errore bat gertatu da fitxategia irekitzean."
+
+#, fuzzy
+msgid "Transfer was closed."
+msgstr "Fitxategi-transferentzia huts egin du"
+
+#, fuzzy
+msgid "Failed to open the file"
+msgstr "Huts egin du irudia gordetzean: %s\n"
+
+msgid "Failed to open in-band bytestream"
+msgstr ""
+
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -4811,10 +4985,6 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 "Idatzi informazioa ikusi nahi duzun pertsonaren pantaila-izena edo ezizena."
-
-#, fuzzy
-msgid "Select a Resource"
-msgstr "Hautatu fitxategia"
 
 #, fuzzy
 msgid "Edit User Mood"
@@ -4855,9 +5025,19 @@ msgstr "Akzioa"
 msgid "Select an action"
 msgstr "Hautatu fitxategia"
 
+#. only notify the user about problems adding to the friends list
+#. * maybe we should do something else for other lists, but it probably
+#. * won't cause too many problems if we just ignore it
+#, c-format
+msgid "Unable to add \"%s\"."
+msgstr "Ezin da gehitu \"%s\"."
+
+msgid "Buddy Add error"
+msgstr ""
+
 #, fuzzy
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Gehitu helbide-liburuan oharretan"
+msgid "The username specified does not exist."
+msgstr "Zehastu duzun Pantaila-izena ez baliogarria."
 
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
@@ -5087,7 +5267,7 @@ msgstr "Ume-pasaportea gurasoen baimenik gabe"
 msgid "Passport account not yet verified"
 msgstr "Pasaporte-kontua ez da egiaztatu oraindik"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Passport account suspended"
 msgstr "Pasaporte-kontua ez da egiaztatu oraindik"
 
@@ -5182,6 +5362,13 @@ msgstr "Bidali mezu bat mugikor batera."
 msgid "Page"
 msgstr "Orria"
 
+msgid "Playing a game"
+msgstr ""
+
+#, fuzzy
+msgid "Working"
+msgstr "Laneko IM"
+
 msgid "Has you"
 msgstr "Atzeman zaitu"
 
@@ -5221,6 +5408,14 @@ msgstr "Helbidea"
 
 msgid "Album"
 msgstr ""
+
+#, fuzzy
+msgid "Game Title"
+msgstr "Lanpostua"
+
+#, fuzzy
+msgid "Office Title"
+msgstr "Lanpostua"
 
 msgid "Set Friendly Name..."
 msgstr "Ezarri lagunarteko izena..."
@@ -5422,8 +5617,9 @@ msgstr ""
 "Pidgin-ek ezin izan du erabiltzailearen profilean informaziorik aurkitu. "
 "Erabiltzailea ez dela existitzen dirudi."
 
-msgid "Profile URL"
-msgstr "Profilaren URLa"
+#, fuzzy
+msgid "View web profile"
+msgstr "Ez da onartzen lineaz kanpo"
 
 #. *< type
 #. *< ui_requirement
@@ -5680,19 +5876,15 @@ msgstr "Gehitu helbide-liburuan"
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr "Lagun hori zure lagunen zerrendan gehitu nahi duzu?"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "Ezin da gehitu \"%s\"."
-
 #, fuzzy
 msgid "The username specified is invalid."
 msgstr "Zehastu duzun Pantaila-izena ez baliogarria."
 
 msgid "This Hotmail account may not be active."
 msgstr "Hotmail kontu hau behar bada ez dago aktibatua."
+
+msgid "Profile URL"
+msgstr "Profilaren URLa"
 
 #. *< type
 #. *< ui_requirement
@@ -5708,17 +5900,13 @@ msgstr "Hotmail kontu hau behar bada ez dago aktibatua."
 msgid "MSN Protocol Plugin"
 msgstr "AIM/ICQ protokoloaren plugin-a"
 
+#, c-format
+msgid "No such user: %s"
+msgstr ""
+
 #, fuzzy
-msgid "Missing Cipher"
-msgstr "Zifra"
-
-msgid "The RC4 cipher could not be found"
-msgstr ""
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
+msgid "User lookup"
+msgstr "Erabiltzaile-gelak"
 
 #, fuzzy
 msgid "Reading challenge"
@@ -5732,11 +5920,19 @@ msgstr "Erronka baliogabea zerbitzaritik"
 msgid "Logging in"
 msgstr "Egunkaria"
 
-#, c-format
-msgid "Connection to server lost (no data received within %d second)"
-msgid_plural "Connection to server lost (no data received within %d seconds)"
-msgstr[0] ""
-msgstr[1] ""
+#, fuzzy
+msgid "MySpaceIM - No Username Set"
+msgstr "Ez dago izenik"
+
+msgid "You appear to have no MySpace username."
+msgstr ""
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr ""
+
+#, fuzzy
+msgid "Lost connection with server"
+msgstr "Zerbitzaritik deskonektatuta zaude."
 
 #. Can't write _()'d strings in array initializers. Workaround.
 #, fuzzy
@@ -5759,14 +5955,22 @@ msgid "MySpace"
 msgstr ""
 
 #, fuzzy
-msgid "MySpaceIM - No Username Set"
-msgstr "Ez dago izenik"
+msgid "IM Friends"
+msgstr "_BM leihoak"
 
-msgid "You appear to have no MySpace username."
-msgstr ""
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
+msgstr[1] ""
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
+#, fuzzy
+msgid "Add contacts from server"
+msgstr "Erantzun baliogabea zerbitzaritik."
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5790,37 +5994,6 @@ msgid "MySpaceIM Error"
 msgstr ""
 
 #, fuzzy
-msgid "Failed to add buddy"
-msgstr "Huts egin du berriketako lagunarekin elkartzean"
-
-#, fuzzy
-msgid "'addbuddy' command failed."
-msgstr "Kargatu lagunen-zerrenda fitxategi batetik..."
-
-#, fuzzy
-msgid "persist command failed"
-msgstr "Switchboard hutsegitea"
-
-#, c-format
-msgid "No such user: %s"
-msgstr ""
-
-#, fuzzy
-msgid "User lookup"
-msgstr "Erabiltzaile-gelak"
-
-#, fuzzy
-msgid "Failed to remove buddy"
-msgstr "Huts egin du berriketako lagunarekin elkartzean"
-
-msgid "'delbuddy' command failed"
-msgstr ""
-
-#, fuzzy
-msgid "blocklist command failed"
-msgstr "Switchboard hutsegitea"
-
-#, fuzzy
 msgid "Invalid input condition"
 msgstr "Konexioa amaitzen"
 
@@ -5837,22 +6010,39 @@ msgid "Couldn't connect to host: %s (%d)"
 msgstr "Ezin izan da ostalariarekin konektatu"
 
 #, fuzzy
-msgid "IM Friends"
-msgstr "_BM leihoak"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-msgstr[1] ""
+msgid "Failed to add buddy"
+msgstr "Huts egin du berriketako lagunarekin elkartzean"
 
 #, fuzzy
-msgid "Add contacts from server"
-msgstr "Erantzun baliogabea zerbitzaritik."
+msgid "'addbuddy' command failed."
+msgstr "Kargatu lagunen-zerrenda fitxategi batetik..."
+
+#, fuzzy
+msgid "persist command failed"
+msgstr "Switchboard hutsegitea"
+
+#, fuzzy
+msgid "Failed to remove buddy"
+msgstr "Huts egin du berriketako lagunarekin elkartzean"
+
+msgid "'delbuddy' command failed"
+msgstr ""
+
+#, fuzzy
+msgid "blocklist command failed"
+msgstr "Switchboard hutsegitea"
+
+#, fuzzy
+msgid "Missing Cipher"
+msgstr "Zifra"
+
+msgid "The RC4 cipher could not be found"
+msgstr ""
+
+msgid ""
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
 
 msgid "Add friends from MySpace.com"
 msgstr ""
@@ -5901,10 +6091,6 @@ msgid "User"
 msgstr "Erabiltzaileak"
 
 #, fuzzy
-msgid "Profile"
-msgstr "MSN profila"
-
-#, fuzzy
 msgid "Headline"
 msgstr "_Heldulekua:"
 
@@ -5918,17 +6104,6 @@ msgstr ""
 #, fuzzy
 msgid "Client Version"
 msgstr "Itxi solasaldia"
-
-#. Protocol won't log in now without a username set.. Disconnect
-#, fuzzy
-msgid "No username set"
-msgstr "Ez dago izenik"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr ""
-
-msgid "Please enter a username to check its availability:"
-msgstr ""
 
 #, fuzzy
 msgid "MySpaceIM - Username Available"
@@ -5944,6 +6119,9 @@ msgstr ""
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr ""
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr ""
+
 #, fuzzy
 msgid "This username is unavailable."
 msgstr "Gai honek ez du aurpegiera erabilgarririk"
@@ -5951,6 +6129,14 @@ msgstr "Gai honek ez du aurpegiera erabilgarririk"
 #, fuzzy
 msgid "Please try another username:"
 msgstr "Idatzi pasahitz berria"
+
+#. Protocol won't log in now without a username set.. Disconnect
+#, fuzzy
+msgid "No username set"
+msgstr "Ez dago izenik"
+
+msgid "Please enter a username to check its availability:"
+msgstr ""
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -6348,7 +6534,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Errorea. SSL euskarria ez dago instalatuta."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Konferentzia hau itxi egin da, eta ezin da mezu gehiago bidali."
 
@@ -6617,23 +6802,18 @@ msgstr "Kamera"
 msgid "Screen Sharing"
 msgstr "Pantaila-izena"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Berriketarako libre"
 
-#, c-format
 msgid "Not Available"
 msgstr "Ez erabilgarri"
 
-#, c-format
 msgid "Occupied"
 msgstr "Okupatuta"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Web-ean"
 
-#, c-format
 msgid "Invisible"
 msgstr "Ikusezin"
 
@@ -6680,7 +6860,7 @@ msgstr ""
 "zenbakiak eta zuriuneak bakarrik eduki, edo bestela zenbakiak bakarrik eduki "
 "behar dituzte."
 
-#. Unregistered screen name
+#. Unregistered username
 #. uid is not exist
 #, fuzzy
 msgid "Invalid username."
@@ -6697,7 +6877,7 @@ msgstr "Zure kontua esekita dago une honetan."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL berehalako mezularitza-zerbitzua ez dago erabilgarri une honetan."
 
-#. screen name connecting too frequently
+#. username connecting too frequently
 #. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6733,10 +6913,8 @@ msgstr "Sartu pantailan agertzsen den 6 digitodun zenbakia "
 msgid "_OK"
 msgstr "Ados"
 
-#, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
 "Laster deskonektatuta greatzeko arriskua duzu. TOC erabil dezakezu arazoa "
 "konpondu arte. Bilatu eguneratzeak %s gunean."
@@ -6901,7 +7079,7 @@ msgstr[0] ""
 msgstr[1] ""
 "%2$s erabiltzailearen %1$hu mezu ez zaizkizu heldu. Arrazoia ez da ezaguna."
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Ezin da mezua bidali: %s"
@@ -6922,6 +7100,10 @@ msgstr "Noiztik linean"
 
 msgid "Member Since"
 msgstr "Noiztik kidea"
+
+#, fuzzy
+msgid "Profile"
+msgstr "MSN profila"
 
 msgid "Your AIM connection may be lost."
 msgstr "Beharbada AIM konexioa galdu egingo zen."
@@ -7077,9 +7259,11 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Profilaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek trunkatu egin du."
+"Profilaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek trunkatu egin "
+"du."
 msgstr[1] ""
-"Profilaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek trunkatu egin du."
+"Profilaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek trunkatu egin "
+"du."
 
 msgid "Profile too long."
 msgstr "Profila luzeegia da."
@@ -7092,11 +7276,11 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek "
-"trunkatu egin du."
+"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Pidgin-"
+"ek trunkatu egin du."
 msgstr[1] ""
-"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Pidgin-ek "
-"trunkatu egin du."
+"Kanpoan zaudeneko mezuaren gehienezko luzera (%d byte) gainditu da. Pidgin-"
+"ek trunkatu egin du."
 
 msgid "Away message too long."
 msgstr "Kanpoan zaudeneko mezua luzeegia da."
@@ -7217,6 +7401,7 @@ msgstr "Konektatu"
 msgid "Get AIM Info"
 msgstr "Hartu informazioa"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Editatu lagunaren iruzkina"
 
@@ -7332,7 +7517,7 @@ msgstr "%s(r)i galdetzen gurekin %s(e)n konektatzeko: %hu BM Zuzenerako."
 msgid "Attempting to connect to %s:%hu."
 msgstr "%s(e)ra (%s) konektatzen saiatzen: %hu BM Zuzenerako."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Attempting to connect via proxy server."
 msgstr "Konexioa berbideratzen zailatzen..."
 
@@ -7442,7 +7627,7 @@ msgstr "Opera"
 msgid "Visible"
 msgstr "Ikusezin"
 
-msgid "Firend Only"
+msgid "Friend Only"
 msgstr ""
 
 #, fuzzy
@@ -7538,16 +7723,49 @@ msgstr "Azken eguneratzea "
 msgid "Could not change buddy information."
 msgstr "Adierazi lagun bat alerta emateko."
 
-#, c-format
-msgid "%d needs Q&A"
+msgid "Mobile"
+msgstr "Mugikorra"
+
+msgid "Note"
+msgstr "Oharra"
+
+#. callback
+#, fuzzy
+msgid "Buddy Memo"
+msgstr "Lagunaren ikonoa"
+
+msgid "Change his/her memo as you like"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy Q&A"
-msgstr "Gehitu laguna"
+msgid "_Modify"
+msgstr "_Aldatu"
 
-msgid "Input answer here"
+#, fuzzy
+msgid "Memo Modify"
+msgstr "_Aldatu"
+
+#, fuzzy
+msgid "Server says:"
+msgstr "Zerbitzaria okupatuta dago"
+
+msgid "Your request was accepted."
 msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%u requires verification"
+msgstr "Baimena beharrezkoa"
+
+#, fuzzy
+msgid "Add buddy question"
+msgstr "Laguna zerrendan gehitu nahi duzu?"
+
+#, fuzzy
+msgid "Enter answer here"
+msgstr "Sartu erabiltzailearen direktorioa"
 
 #, fuzzy
 msgid "Send"
@@ -7561,19 +7779,20 @@ msgstr "Pasahitz baliogabea"
 msgid "Authorization denied message:"
 msgstr "Baimena ezesteko mezua:"
 
-msgid "Sorry, You are not my style."
+msgid "Sorry, you're not my style."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%d needs authentication"
+msgid "%u needs authorization"
 msgstr "Autentifikazioa haiseratzen"
 
 #, fuzzy
 msgid "Add buddy authorize"
 msgstr "Laguna zerrendan gehitu nahi duzu?"
 
-msgid "Input request here"
-msgstr ""
+#, fuzzy
+msgid "Enter request here"
+msgstr "Sartu konferentzia-zerbitzari bat"
 
 #, fuzzy
 msgid "Would you be my friend?"
@@ -7596,7 +7815,7 @@ msgid "Failed sending authorize"
 msgstr "Emadazu baimena!"
 
 #, fuzzy, c-format
-msgid "Failed removing buddy %d"
+msgid "Failed removing buddy %u"
 msgstr "Huts egin du berriketako lagunarekin elkartzean"
 
 #, fuzzy, c-format
@@ -7640,6 +7859,10 @@ msgstr "Idatzi pasahitz berria"
 
 msgid "You can only search for permanent Qun\n"
 msgstr ""
+
+#, fuzzy
+msgid "(Invalid UTF-8 string)"
+msgstr "Proxy-ezarpenak ez dira baliozkoak"
 
 #, fuzzy
 msgid "Not member"
@@ -7686,15 +7909,18 @@ msgstr ""
 msgid "Join QQ Qun"
 msgstr "Sartu berriketa batean"
 
-#, c-format
-msgid "Successfully joined Qun %s (%d)"
+msgid "Input request here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Successfully joined Qun %s (%u)"
+msgstr "Telefono zenbakia"
 
 msgid "Successfully joined Qun"
 msgstr ""
 
 #, c-format
-msgid "Qun %d denied to join"
+msgid "Qun %u denied from joining"
 msgstr ""
 
 #, fuzzy
@@ -7705,7 +7931,7 @@ msgstr "Soinu-aukerak"
 msgid "Failed:"
 msgstr "Huts egin du"
 
-msgid "Join Qun, Unknow Reply"
+msgid "Join Qun, Unknown Reply"
 msgstr ""
 
 #, fuzzy
@@ -7717,11 +7943,11 @@ msgid ""
 "this operation will eventually remove this Qun."
 msgstr ""
 
-msgid "Sorry, you are not our style ..."
+msgid "Sorry, you are not our style"
 msgstr ""
 
 #, fuzzy
-msgid "Successfully changed Qun member"
+msgid "Successfully changed Qun members"
 msgstr "Telefono zenbakia"
 
 #, fuzzy
@@ -7732,7 +7958,7 @@ msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set detailed information now?"
+msgid "Would you like to set up detailed information now?"
 msgstr "Ikono hau lagunaren ikono bezela ezartzea gustatuko litzaizuke ?"
 
 #, fuzzy
@@ -7740,28 +7966,28 @@ msgid "Setup"
 msgstr "_Ezarri"
 
 #, c-format
-msgid "%d requested to join Qun %d for %s"
+msgid "%u requested to join Qun %u for %s"
 msgstr ""
 
 #, c-format
-msgid "%d request to join Qun %d"
+msgid "%u request to join Qun %u"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
+msgid "Failed to join Qun %u, operated by admin %u"
 msgstr "Huts egin du berriketako lagunarekin elkartzean"
 
 #, c-format
-msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "<b>Removed buddy %d.</b>"
+msgid "<b>Removed buddy %u.</b>"
 msgstr "Kendu laguna"
 
-#, c-format
-msgid "<b>New buddy %d joined.</b>"
-msgstr ""
+#, fuzzy, c-format
+msgid "<b>New buddy %u joined.</b>"
+msgstr "Kendu laguna"
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7882,6 +8108,13 @@ msgstr "<b>Erabiltzailea:</b> %s<br>"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<b>Taldearen titulua:</b> %s<br>"
 
+#, fuzzy
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<b>Kanpoko Erabiltzailea:</b><br>"
+
+msgid "and more, please let me know... thank you!))"
+msgstr ""
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
 
@@ -7889,7 +8122,7 @@ msgid "<i>Feel free to join us!</i> :)"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "About OpenQ r%s"
+msgid "About OpenQ %s"
 msgstr "Pidgin-i buruz"
 
 #, fuzzy
@@ -7909,6 +8142,10 @@ msgstr ""
 #, fuzzy
 msgid "About OpenQ"
 msgstr "Pidgin-i buruz"
+
+#, fuzzy
+msgid "Modify Buddy Memo"
+msgstr "Etxeko helbidea"
 
 #. *< type
 #. *< ui_requirement
@@ -7941,7 +8178,6 @@ msgstr ""
 msgid "QQ2008"
 msgstr ""
 
-#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "Konektatzen"
@@ -7954,6 +8190,9 @@ msgstr "Zerbitzariaren ataka"
 msgid "Show server news"
 msgstr "Zerbitzariaren helbidea"
 
+msgid "Show chat room when msg comes"
+msgstr ""
+
 #, fuzzy
 msgid "Keep alive interval (seconds)"
 msgstr "Irakurketa-errorea"
@@ -7963,11 +8202,7 @@ msgid "Update interval (seconds)"
 msgstr "Irakurketa-errorea"
 
 #, fuzzy
-msgid "Can not decrypt server reply"
-msgstr "Ezin da zerbitzariaren informazioa hartu"
-
-#, fuzzy
-msgid "Can not decrypt get server reply"
+msgid "Cannot decrypt server reply"
 msgstr "Ezin da zerbitzariaren informazioa hartu"
 
 #, c-format
@@ -7990,21 +8225,23 @@ msgid "Activation required"
 msgstr "Erregistratu egin behar da"
 
 #, c-format
-msgid "Unknow reply code when login (0x%02X)"
+msgid "Unknown reply code when logging in (0x%02X)"
 msgstr ""
 
 #, fuzzy
-msgid "Keep alive error"
-msgstr "Irakurketa-errorea"
+msgid "Could not decrypt server reply"
+msgstr "Ezin da zerbitzariaren informazioa hartu"
 
-msgid "Requesting captcha ..."
+#, fuzzy
+msgid "Requesting captcha"
+msgstr "Eskaera Elkarrizketa"
+
+msgid "Checking captcha"
 msgstr ""
 
-msgid "Checking code of captcha ..."
-msgstr ""
-
-msgid "Failed captcha verify"
-msgstr ""
+#, fuzzy
+msgid "Failed captcha verification"
+msgstr "Huts egin du Yahoo! autentifikazioak"
 
 #, fuzzy
 msgid "Captcha Image"
@@ -8014,7 +8251,7 @@ msgstr "Gorde irudia"
 msgid "Enter code"
 msgstr "Sartu Pasahitza"
 
-msgid "QQ Captcha Verifing"
+msgid "QQ Captcha Verification"
 msgstr ""
 
 #, fuzzy
@@ -8022,28 +8259,21 @@ msgid "Enter the text from the image"
 msgstr "Idatzi gehitu nahi duzun taldearen izena."
 
 #, c-format
-msgid "Unknow reply code when checking password (0x%02X)"
+msgid "Unknown reply when checking password (0x%02X)"
 msgstr ""
 
 #, c-format
 msgid ""
-"Unknow reply code when login (0x%02X):\n"
+"Unknown reply code when logging in (0x%02X):\n"
 "%s"
 msgstr ""
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
 msgstr "Ezin da konektatu."
 
 #, fuzzy
 msgid "Socket error"
 msgstr "Testigu errorea"
-
-#, fuzzy, c-format
-msgid ""
-"Lost connection with server:\n"
-"%d, %s"
-msgstr "Zerbitzaritik deskonektatuta zaude."
 
 #, fuzzy
 msgid "Unable to read from socket"
@@ -8057,11 +8287,11 @@ msgid "Connection lost"
 msgstr "Konexioa itxi da"
 
 #, fuzzy
-msgid "Get server ..."
+msgid "Getting server"
 msgstr "Ezarri erabiltzailearen datuak..."
 
 #, fuzzy
-msgid "Request token"
+msgid "Requesting token"
 msgstr "Eskaera ukatu da"
 
 # ,fuzzy
@@ -8073,16 +8303,12 @@ msgid "Invalid server or port"
 msgstr "Erabiltzaile-izena edo pasahitza ez da baliozkoa."
 
 #, fuzzy
-msgid "Connecting server ..."
-msgstr "Konektatu zerbitzariarekin"
+msgid "Connecting to server"
+msgstr "SILC zerbitzariarekin konektatzen"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "Irakurketa-errorea"
-
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "Huts egin du berriketan sartzean"
 
 #, fuzzy, c-format
 msgid ""
@@ -8091,6 +8317,10 @@ msgid ""
 "%s\n"
 "%s"
 msgstr "ICQ zerbitzariaren errelea"
+
+#, fuzzy, c-format
+msgid "%s:%s"
+msgstr "%s: %s (%s)"
 
 #, fuzzy, c-format
 msgid "From %s:"
@@ -8102,32 +8332,30 @@ msgid ""
 "%s"
 msgstr "Zerbitzariaren aginduak:%s"
 
-msgid "Unknow SERVER CMD"
-msgstr ""
+#, fuzzy
+msgid "Unknown SERVER CMD"
+msgstr "Arrazoi ezezaguna."
 
 #, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
-"Room %d, reply 0x%02X"
+"Room %u, reply 0x%02X"
 msgstr ""
 
 #, fuzzy
 msgid "QQ Qun Command"
 msgstr "Komandoa"
 
-#, c-format
-msgid "Not a member of room \"%s\"\n"
-msgstr ""
-
-msgid "Can not decrypt login reply"
-msgstr ""
+#, fuzzy
+msgid "Could not decrypt login reply"
+msgstr "Ezin da zerbitzariaren informazioa hartu"
 
 #, fuzzy
-msgid "Unknow LOGIN CMD"
+msgid "Unknown LOGIN CMD"
 msgstr "Arrazoi ezezaguna."
 
 #, fuzzy
-msgid "Unknow CLIENT CMD"
+msgid "Unknown CLIENT CMD"
 msgstr "Arrazoi ezezaguna."
 
 #, fuzzy, c-format
@@ -8967,9 +9195,6 @@ msgstr "Erakundea"
 msgid "Unit"
 msgstr "Saila"
 
-msgid "Note"
-msgstr "Oharra"
-
 msgid "Join Chat"
 msgstr "Sartu berriketa batean"
 
@@ -9643,6 +9868,10 @@ msgstr "Ezin izan da ostalaria"
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP goitizenek ezin dute zurigunerik izan edo @ ikurra"
 
+#, fuzzy
+msgid "SIP connect server not specified"
+msgstr "Zerbitzariaren ataka"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -9679,199 +9908,10 @@ msgid "Auth Domain"
 msgstr "Automatikoa"
 
 #, c-format
-msgid "Looking up %s"
-msgstr "%s bilatzen"
-
-#, c-format
-msgid "Connect to %s failed"
-msgstr "Huts egin du %s konexioak"
-
-#, c-format
-msgid "Signon: %s"
-msgstr "Konektatuta: %s"
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Ezin da %s fitxategian idatzi"
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Ezin da %s fitxategia irakurri."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "Mezua luzeegia, azken %s byteak trunkatu egin dira."
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s ez dago une honetan konektatuta."
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "%s erabiltzailearen abisua ez da onartzen."
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Mezu bat jaregin da, zerbitzariaren abiadura-muga gainditu duzu."
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "%s(e)ko berriketa ez dago erabilgarri."
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "Mezuak bizkorregi bidaltzen ari zara -> %s."
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "%s erabiltzailearen BM bat ez zaizu heldu, handiegia delako."
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr "%s erabiltzailearen BM bat ez zaizu heldu, bizkorregi bidali delako."
-
-#, c-format
-msgid "Failure."
-msgstr "Huts egin du."
-
-#, c-format
-msgid "Too many matches."
-msgstr "Emaitza gehiegi."
-
-#, c-format
-msgid "Need more qualifiers."
-msgstr "Identifikatzaile gehiago behar dira."
-
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr "Dir zerbitzua ez dago erabilgarri une honetan."
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr "Helbide elektronikoaren bilaketa murriztu da. "
-
-#, c-format
-msgid "Keyword ignored."
-msgstr "Gako-hitza ez ikusi egin da."
-
-#, c-format
-msgid "No keywords."
-msgstr "Gako-hitzik ez."
-
-#, c-format
-msgid "User has no directory information."
-msgstr "Erabiltzaileak ez du direktorio-informaziorik."
-
-#, c-format
-msgid "Country not supported."
-msgstr "Estatua ez da onartzen."
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Hutsegite ezezaguna: %s."
-
-#, fuzzy, c-format
-msgid "Incorrect username or password."
-msgstr "Goitizen edo pasahitz okerra."
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr "Zerbitzua ez dago erabilgarri une honetan."
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr "Zure abisu-maila altuegia da konektatu ahal izateko."
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-"Maizegi konektatzen eta deskonektatzen aritu zara. Itxaron hamar minutu eta "
-"saiatu berriro. Saiatzen jarraituz gero, agian gehiago ere itxaron beharko "
-"duzu."
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "Sartzeko errore ezezagun bat gertatu da: %s."
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Errore ezezagun bat (%d) gertatu da. Informazioa: %s."
-
-msgid "Invalid Groupname"
-msgstr "Talde-izena ez da baliozkoa"
-
-msgid "Connection Closed"
-msgstr "Konexioa itxi da"
-
-msgid "Waiting for reply..."
-msgstr "Erantzunaren zain..."
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC itzuli da pausalditik. Mezuak bidal diezazkiokezu."
-
-msgid "Password Change Successful"
-msgstr "Pasahitza ondo aldatu da"
-
-msgid "_Group:"
-msgstr "_Taldea:"
-
-msgid "Get Dir Info"
-msgstr "Hartu Dir informazioa"
-
-msgid "Set Dir Info"
-msgstr "Ezarri Dir informazioa"
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr "Ezin izan da %s ireki idazteko!"
-
-msgid "File transfer failed; other side probably canceled."
-msgstr ""
-"Fitxategi-transferentziak huts egin du; beste aldekoak beharbada bertan "
-"behera utziko zuen."
-
-msgid "Could not connect for transfer."
-msgstr "Ezin izan da konektatu transferentzia egiteko."
-
-msgid "Could not write file header.  The file will not be transferred."
-msgstr ""
-"Ezin izan da idatzi fitxategi-goiburua. Fitxategia ez da transferituko."
-
-#, fuzzy
-msgid "Save As..."
-msgstr "Gorde ikonoa honela..."
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] ""
-"%1$s(e)k fitxategi %3$d onartzea eskatu dio %2$s(r)i: %4$s (%5$.2f %6$s)%7$s%"
-"8$s"
-msgstr[1] ""
-"%1$s(e)k %3$d fitxategi onartzea eskatu dio %2$s(r)i: %4$s (%5$.2f %6$s)%7$s%"
-"8$s"
-
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s erabiltzaileak fitxategi bat bidaltzea eskatu dizu"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "TOC Protocol Plugin"
-msgstr "TOC protokoloaren plugin-a"
-
-#, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+
+msgid "Your SMS was not delivered"
 msgstr ""
 
 msgid "Your Yahoo! message did not get sent."
@@ -9905,8 +9945,8 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "Yahoo zerbitzariak autentifikatzeko metodo ezezagun bat erabiltzea eskatu "
-"du. Pidgin-en bertsio hau ez da gai izango Yahoo-n ondo sartzeko. Eguneratzeak "
-"lortzeko, begiratu %s gunean."
+"du. Pidgin-en bertsio hau ez da gai izango Yahoo-n ondo sartzeko. "
+"Eguneratzeak lortzeko, begiratu %s gunean."
 
 msgid "Failed Yahoo! Authentication"
 msgstr "Huts egin du Yahoo! autentifikazioak"
@@ -10150,13 +10190,9 @@ msgstr "Esteka bikaina 3"
 msgid "Last Update"
 msgstr "Azken eguneratzea "
 
-#, c-format
-msgid "User information for %s unavailable"
-msgstr "%s erabiltzailearen datuak ez daude erabilgarri"
-
+#, fuzzy
 msgid ""
-"Sorry, this profile seems to be in a language or format that is not "
-"supported at this time."
+"This profile is in a language or format that is not supported at this time."
 msgstr ""
 "Badirudi profila hau oraingoz onartzen ez den hizkuntza edo formatuan batean "
 "dagoela dirudi."
@@ -10498,9 +10534,6 @@ msgstr "Ez molestatu"
 msgid "Extended away"
 msgstr "Kanpoan luzarorako"
 
-msgid "Mobile"
-msgstr "Mugikorra"
-
 msgid "Listening to music"
 msgstr ""
 
@@ -10541,18 +10574,6 @@ msgstr "+++ %s aktibo dago berriro"
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "Errorea %s irakurtzean"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
-"Errore bat aurkitu da %s zerrenda analizatzean, eta ez da kargatu.Fitxategi "
-"zaharra %s~ izenarekin gorde da."
 
 msgid "Calculating..."
 msgstr "Kalkulatzen..."
@@ -10628,6 +10649,13 @@ msgstr ""
 msgid "Unable to connect to %s: %s"
 msgstr "Ezin da ostalariarekin konektatu"
 
+#, fuzzy, c-format
+msgid ""
+"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
+"found."
+msgstr ""
+"Zerbitzariak TLS/SSL behar du konektatzeko. Ez da TLS/SSL euskarririk aurkitu"
+
 #, c-format
 msgid " - %s"
 msgstr ""
@@ -10660,6 +10688,18 @@ msgstr "Konexioa berabierazten "
 #, fuzzy, c-format
 msgid "Address already in use."
 msgstr "Berriketa honen izena dagoeneko erabiltzen ari da"
+
+#, c-format
+msgid "Error Reading %s"
+msgstr "Errorea %s irakurtzean"
+
+#, fuzzy, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+"Errore bat aurkitu da %s zerrenda analizatzean, eta ez da kargatu.Fitxategi "
+"zaharra %s~ izenarekin gorde da."
 
 msgid "Internet Messenger"
 msgstr "Interneteko mezularitza"
@@ -10708,10 +10748,8 @@ msgstr "Mezu berrien jakinarazpenak"
 msgid "Use this buddy _icon for this account:"
 msgstr ""
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "%s - Aukerak"
+msgid "_Advanced"
+msgstr "_Aurreratua"
 
 #, fuzzy
 msgid "Use GNOME Proxy Settings"
@@ -10747,9 +10785,6 @@ msgstr "oso bertatik begiratzen baduzu"
 msgid "you can see the butterflies mating"
 msgstr "tximeletak elkarrenganatzen ikusiko dituzu"
 
-msgid "Proxy Options"
-msgstr "Proxy aukerak"
-
 msgid "Proxy _type:"
 msgstr "_Proxy-mota:"
 
@@ -10778,8 +10813,9 @@ msgstr "_OInarrizkoa"
 msgid "Create _this new account on the server"
 msgstr ""
 
-msgid "_Advanced"
-msgstr "_Aurreratua"
+#, fuzzy
+msgid "_Proxy"
+msgstr "Proxy-a"
 
 msgid "Enabled"
 msgstr "Ahalbidetua"
@@ -10843,6 +10879,17 @@ msgstr "_Inf."
 
 msgid "I_M"
 msgstr "_BM"
+
+#, fuzzy
+msgid "_Audio Call"
+msgstr "_Gehitu berriketa"
+
+msgid "Audio/_Video Call"
+msgstr ""
+
+#, fuzzy
+msgid "_Video Call"
+msgstr "Bideo-berriketa"
 
 #, fuzzy
 msgid "_Send File..."
@@ -10997,6 +11044,10 @@ msgstr "/Tresnak/Gehitu lagun-_alerta"
 msgid "/Tools/_Certificates"
 msgstr "/Tresnak/_Hobespenak"
 
+#, fuzzy
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Tresnak/Pribatutasuna"
+
 msgid "/Tools/Plu_gins"
 msgstr "/Tresnak/Plu_gin-ak"
 
@@ -11005,10 +11056,6 @@ msgstr "/Tresnak/_Hobespenak"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Tresnak/P_ribatutasuna"
-
-#, fuzzy
-msgid "/Tools/Smile_y"
-msgstr "/Tresnak/Pribatutasuna"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Tresnak/_Fitxategi-transferentziak"
@@ -11134,8 +11181,8 @@ msgstr "Eskuz "
 msgid "By status"
 msgstr "Egoeraren arabera"
 
-msgid "By log size"
-msgstr "Egunkari-tamainaren arabera"
+msgid "By recent log activity"
+msgstr ""
 
 #, c-format
 msgid "%s disconnected"
@@ -11152,6 +11199,9 @@ msgstr "Konektatu"
 #, fuzzy
 msgid "Re-enable"
 msgstr "Ber ahalbidetu kontua"
+
+msgid "SSL FAQs"
+msgstr ""
 
 msgid "Welcome back!"
 msgstr ""
@@ -11246,6 +11296,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "Aliasa:"
 
+msgid "_Group:"
+msgstr "_Taldea:"
+
 msgid "Auto_join when account becomes online."
 msgstr ""
 
@@ -11297,14 +11350,6 @@ msgstr "Ez duzu sinatu kontu batekin lagun hori gonbidatzeko."
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "Gonbidatu laguna berriketa-gelara"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
-"Idatzi gonbidatu nahi duzun erabiltzailearen izena, gonbit-mezu batekin nahi "
-"baduzu."
 
 msgid "_Buddy:"
 msgstr "_Laguna:"
@@ -11382,6 +11427,22 @@ msgstr "/Solasaldia/_Gorde honela..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Solasaldia/Garb_itu Scrollback"
 
+#, fuzzy
+msgid "/Conversation/M_edia"
+msgstr "/Solasaldia/It_xi"
+
+#, fuzzy
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Solasaldia/It_xi"
+
+#, fuzzy
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Solasaldia/It_xi"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Solasaldia/Ikusi _egunkaria"
+
 msgid "/Conversation/Se_nd File..."
 msgstr "/Solasaldia/B_idali fitxategia..."
 
@@ -11458,6 +11519,18 @@ msgstr "/_Solasaldia"
 
 msgid "/Conversation/View Log"
 msgstr "/Solasaldia/Ikusi egunkaria"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Solasaldia/It_xi"
+
+#, fuzzy
+msgid "/Conversation/Media/Video Call"
+msgstr "/Solasaldia/Ikusi egunkaria"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Solasaldia/It_xi"
 
 msgid "/Conversation/Send File..."
 msgstr "/Solasaldia/Bidali fitxategia..."
@@ -11649,6 +11722,9 @@ msgstr "Helbidea"
 msgid "Ka-Hing Cheung"
 msgstr ""
 
+msgid "voice and video"
+msgstr ""
+
 msgid "support"
 msgstr "euskarria"
 
@@ -11797,6 +11873,10 @@ msgid "Ubuntu Georgian Translators"
 msgstr "Itzultzaileak"
 
 #, fuzzy
+msgid "Khmer"
+msgstr "Opera"
+
+#, fuzzy
 msgid "Kannada"
 msgstr "Debekatuta"
 
@@ -11816,6 +11896,10 @@ msgid "Lithuanian"
 msgstr "Lituaniera"
 
 msgid "Macedonian"
+msgstr "Mazedoniera"
+
+#, fuzzy
+msgid "Mongolian"
 msgstr "Mazedoniera"
 
 #, fuzzy
@@ -11937,8 +12021,25 @@ msgstr ""
 "laguntzaileen eskutik. Ikusi ezazy COPYRIGHT fitxategia laguntzaileen "
 "zerrenda osoa ikusteko. Ez dugu programa honen bermea zihurtatzen.<BR><BR>"
 
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+
 #, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin irc.freenode.net-en<BR><BR>"
+
+#, fuzzy, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin irc.freenode.net-en<BR><BR>"
 
 msgid "Current Developers"
@@ -12264,15 +12365,6 @@ msgstr ""
 msgid "Enable typing notification"
 msgstr "Mezu berrien jakinarazpenak"
 
-msgid "_Copy Email Address"
-msgstr "_Kopiatu helbide elektronikoa"
-
-msgid "_Open Link in Browser"
-msgstr "Ire_ki esteka arakatzailean"
-
-msgid "_Copy Link Location"
-msgstr "_Kopiatu estekaren helbidea"
-
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -12547,6 +12639,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12575,6 +12668,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12617,11 +12711,27 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Markatzea"
 
-msgid "Open All Messages"
-msgstr "Ireki mezu guztiak"
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr ""
 
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Posta-mezua daukazu!</span>"
+msgid "/_Media"
+msgstr ""
+
+msgid "/Media/_Hangup"
+msgstr ""
+
+#, fuzzy
+msgid "Calling..."
+msgstr "Kalkulatzen..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr ""
 
 #, c-format
 msgid "%s has %d new message."
@@ -12651,6 +12761,27 @@ msgid ""
 msgstr ""
 "Arakatzailearen 'eskuzko' komandoa aukeratu da, baina ez da komandorik "
 "ezarri."
+
+msgid "Open All Messages"
+msgstr "Ireki mezu guztiak"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Posta-mezua daukazu!</span>"
+
+#, fuzzy
+msgid "New Pounces"
+msgstr "Lagun-alerta berria"
+
+msgid "Dismiss"
+msgstr ""
+
+#, fuzzy
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Posta-mezua daukazu!</span>"
+
+#, fuzzy
+msgid "No message"
+msgstr "Mezu ezezaguna"
 
 msgid "The following plugins will be unloaded."
 msgstr "Ondorengo plugin-ak  memoriatik deskargatuko  dira."
@@ -12703,6 +12834,10 @@ msgstr "<b>Plugin ezaugarriak</b>"
 
 msgid "Select a file"
 msgstr "Hautatu fitxategia"
+
+#, fuzzy
+msgid "Modify Buddy Pounce"
+msgstr "Editatu lagun-alerta"
 
 #. Create the "Pounce on Whom" frame.
 #, fuzzy
@@ -12778,6 +12913,50 @@ msgstr "_Errepikatzean"
 msgid "Pounce Target"
 msgstr "Alerta noiz"
 
+#, fuzzy, c-format
+msgid "Started typing"
+msgstr "_Idazten hastean"
+
+#, fuzzy, c-format
+msgid "Paused while typing"
+msgstr "Erabiltzailea idazten ari da..."
+
+#, fuzzy, c-format
+msgid "Signed on"
+msgstr "_Konektatzean "
+
+#, fuzzy, c-format
+msgid "Returned from being idle"
+msgstr "%s inaktibo egotetik itzuli da (%s)"
+
+#, fuzzy, c-format
+msgid "Returned from being away"
+msgstr "J_oanda egoeratik itzuli"
+
+#, fuzzy, c-format
+msgid "Stopped typing"
+msgstr "Gelditu idazteari"
+
+#, fuzzy, c-format
+msgid "Signed off"
+msgstr "_Deskonektzean "
+
+#, fuzzy, c-format
+msgid "Became idle"
+msgstr "Bihurtu ez-aktibo"
+
+#, fuzzy, c-format
+msgid "Went away"
+msgstr "Kanpora joatean"
+
+#, fuzzy, c-format
+msgid "Sent a message"
+msgstr "Bidali _mezua"
+
+#, fuzzy, c-format
+msgid "Unknown.... Please report this!"
+msgstr "Alerta emateko gertaera ezezaguna. Eman honen berri!"
+
 msgid "Smiley theme failed to unpack."
 msgstr "desenpetatzerakoan huts egin du."
 
@@ -12801,6 +12980,12 @@ msgstr ""
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Solasaldiak %s(r)ekin"
 
+#. Buddy List Themes
+#, fuzzy
+msgid "Buddy List Theme"
+msgstr "Lagunen zerrenda"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "Sistema-erretiluaren ikonoa"
 
@@ -12923,9 +13108,6 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr "Ezin da erabiltzailearen informazioa lortu"
 
-msgid "ST_UN server:"
-msgstr "ST_UN Zerbitzaria:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr ""
 
@@ -12949,6 +13131,10 @@ msgstr "_Hasierako ataka: "
 
 msgid "_End port:"
 msgstr "_Amaierako ataka: "
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr ""
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -12978,6 +13164,10 @@ msgstr "Proxy zerbitzaria"
 
 msgid "No proxy"
 msgstr "Proxy-rik ez"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr ""
 
 msgid "_User:"
 msgstr "_Erabiltzailea:"
@@ -13143,12 +13333,12 @@ msgstr "Bai Kanpoan eta inaktibo dagoenean"
 msgid "Auto-away"
 msgstr "Kanpoan automatikoki ezartzea"
 
-msgid "Change status when _idle"
-msgstr "Egoera aldatu _ez-aktibo dagoenean"
-
 #, fuzzy
 msgid "_Minutes before becoming idle:"
 msgstr "_Egoera aldatu aurreko minutuak:"
+
+msgid "Change status when _idle"
+msgstr "Egoera aldatu _ez-aktibo dagoenean"
 
 msgid "Change _status to:"
 msgstr "_Egoera  aldatu hona:"
@@ -13303,6 +13493,12 @@ msgstr "G_orde eta erabili"
 msgid "Status for %s"
 msgstr "Egoera : %s rako."
 
+#.
+#. * TODO: We should enable/disable the add button based on
+#. *       whether the user has entered all required data.  That
+#. *       would eliminate the need for this check and provide a
+#. *       better user experience.
+#.
 #, fuzzy
 msgid "Custom Smiley"
 msgstr "Txertatu aurpegiera"
@@ -13313,14 +13509,14 @@ msgstr ""
 msgid "Please provide a shortcut to associate with the smiley."
 msgstr ""
 
+#, c-format
+msgid ""
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
+msgstr ""
+
 #, fuzzy
 msgid "Duplicate Shortcut"
 msgstr "Bikoiztutako zuzenketa"
-
-msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
-msgstr ""
 
 #, fuzzy
 msgid "Please select an image for the smiley."
@@ -13335,16 +13531,21 @@ msgid "Add Smiley"
 msgstr "Irri egin!"
 
 #, fuzzy
-msgid "Smiley _Image"
+msgid "_Image:"
 msgstr "Gorde irudia"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr ""
+#. Shortcut text
+#, fuzzy
+msgid "S_hortcut text:"
+msgstr "Ataka"
 
 #, fuzzy
 msgid "Smiley"
 msgstr "Irri egin!"
+
+#, fuzzy
+msgid "Shortcut Text"
+msgstr "Ataka"
 
 msgid "Custom Smiley Manager"
 msgstr ""
@@ -13475,6 +13676,16 @@ msgstr "Huts egin du irudia gordetzean: %s\n"
 msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
+
+#, fuzzy
+msgid "_Open Link"
+msgstr "_Ireki esteka:"
+
+msgid "_Copy Link Location"
+msgstr "_Kopiatu estekaren helbidea"
+
+msgid "_Copy Email Address"
+msgstr "_Kopiatu helbide elektronikoa"
 
 msgid "Save File"
 msgstr "Gorde fitxategia"
@@ -14485,10 +14696,6 @@ msgid "Only when docked"
 msgstr "Bakarrik geldiunean"
 
 #, fuzzy
-msgid "_Flash window when chat messages are received"
-msgstr "_Erakutsi leihoa keinuka mezuak jasotzean"
-
-#, fuzzy
 msgid "Windows Pidgin Options"
 msgstr "Saioa hasteko aukerak"
 
@@ -14500,8 +14707,8 @@ msgstr "Windows Pidgin-i bakarrik dagozkion aukerak."
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
 msgstr ""
-"Pidgin Windows-en ezarpenak zehazteko aukera eskeintzen du, hala nola lagunen-"
-"zerrenda gelditzea eta elkarrizketa kinuak."
+"Pidgin Windows-en ezarpenak zehazteko aukera eskeintzen du, hala nola "
+"lagunen-zerrenda gelditzea eta elkarrizketa kinuak."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr ""
@@ -14541,6 +14748,232 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Invite message"
+#~ msgstr "Txertatu irudia mezuan"
+
+#, fuzzy
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "Idatzi gonbidatu nahi duzun erabiltzailearen izena, gonbit-mezu batekin "
+#~ "nahi baduzu."
+
+#, fuzzy
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Gehitu helbide-liburuan oharretan"
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "Laster deskonektatuta greatzeko arriskua duzu. TOC erabil dezakezu arazoa "
+#~ "konpondu arte. Bilatu eguneratzeak %s gunean."
+
+#, fuzzy
+#~ msgid "Add buddy Q&A"
+#~ msgstr "Gehitu laguna"
+
+#, fuzzy
+#~ msgid "Can not decrypt get server reply"
+#~ msgstr "Ezin da zerbitzariaren informazioa hartu"
+
+#, fuzzy
+#~ msgid "Keep alive error"
+#~ msgstr "Irakurketa-errorea"
+
+#, fuzzy
+#~ msgid ""
+#~ "Lost connection with server:\n"
+#~ "%d, %s"
+#~ msgstr "Zerbitzaritik deskonektatuta zaude."
+
+#, fuzzy
+#~ msgid "Connecting server ..."
+#~ msgstr "Konektatu zerbitzariarekin"
+
+#, fuzzy
+#~ msgid "Failed to send IM."
+#~ msgstr "Huts egin du berriketan sartzean"
+
+#~ msgid "Looking up %s"
+#~ msgstr "%s bilatzen"
+
+#~ msgid "Connect to %s failed"
+#~ msgstr "Huts egin du %s konexioak"
+
+#~ msgid "Signon: %s"
+#~ msgstr "Konektatuta: %s"
+
+#~ msgid "Unable to write file %s."
+#~ msgstr "Ezin da %s fitxategian idatzi"
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "Ezin da %s fitxategia irakurri."
+
+#~ msgid "Message too long, last %s bytes truncated."
+#~ msgstr "Mezua luzeegia, azken %s byteak trunkatu egin dira."
+
+#~ msgid "%s not currently logged in."
+#~ msgstr "%s ez dago une honetan konektatuta."
+
+#~ msgid "Warning of %s not allowed."
+#~ msgstr "%s erabiltzailearen abisua ez da onartzen."
+
+#~ msgid ""
+#~ "A message has been dropped, you are exceeding the server speed limit."
+#~ msgstr "Mezu bat jaregin da, zerbitzariaren abiadura-muga gainditu duzu."
+
+#~ msgid "Chat in %s is not available."
+#~ msgstr "%s(e)ko berriketa ez dago erabilgarri."
+
+#~ msgid "You are sending messages too fast to %s."
+#~ msgstr "Mezuak bizkorregi bidaltzen ari zara -> %s."
+
+#~ msgid "You missed an IM from %s because it was too big."
+#~ msgstr "%s erabiltzailearen BM bat ez zaizu heldu, handiegia delako."
+
+#~ msgid "You missed an IM from %s because it was sent too fast."
+#~ msgstr ""
+#~ "%s erabiltzailearen BM bat ez zaizu heldu, bizkorregi bidali delako."
+
+#~ msgid "Failure."
+#~ msgstr "Huts egin du."
+
+#~ msgid "Too many matches."
+#~ msgstr "Emaitza gehiegi."
+
+#~ msgid "Need more qualifiers."
+#~ msgstr "Identifikatzaile gehiago behar dira."
+
+#~ msgid "Dir service temporarily unavailable."
+#~ msgstr "Dir zerbitzua ez dago erabilgarri une honetan."
+
+#~ msgid "Email lookup restricted."
+#~ msgstr "Helbide elektronikoaren bilaketa murriztu da. "
+
+#~ msgid "Keyword ignored."
+#~ msgstr "Gako-hitza ez ikusi egin da."
+
+#~ msgid "No keywords."
+#~ msgstr "Gako-hitzik ez."
+
+#~ msgid "User has no directory information."
+#~ msgstr "Erabiltzaileak ez du direktorio-informaziorik."
+
+#~ msgid "Country not supported."
+#~ msgstr "Estatua ez da onartzen."
+
+#~ msgid "Failure unknown: %s."
+#~ msgstr "Hutsegite ezezaguna: %s."
+
+#, fuzzy
+#~ msgid "Incorrect username or password."
+#~ msgstr "Goitizen edo pasahitz okerra."
+
+#~ msgid "The service is temporarily unavailable."
+#~ msgstr "Zerbitzua ez dago erabilgarri une honetan."
+
+#~ msgid "Your warning level is currently too high to log in."
+#~ msgstr "Zure abisu-maila altuegia da konektatu ahal izateko."
+
+#~ msgid ""
+#~ "You have been connecting and disconnecting too frequently.  Wait ten "
+#~ "minutes and try again.  If you continue to try, you will need to wait "
+#~ "even longer."
+#~ msgstr ""
+#~ "Maizegi konektatzen eta deskonektatzen aritu zara. Itxaron hamar minutu "
+#~ "eta saiatu berriro. Saiatzen jarraituz gero, agian gehiago ere itxaron "
+#~ "beharko duzu."
+
+#~ msgid "An unknown signon error has occurred: %s."
+#~ msgstr "Sartzeko errore ezezagun bat gertatu da: %s."
+
+#~ msgid "An unknown error, %d, has occurred.  Info: %s"
+#~ msgstr "Errore ezezagun bat (%d) gertatu da. Informazioa: %s."
+
+#~ msgid "Invalid Groupname"
+#~ msgstr "Talde-izena ez da baliozkoa"
+
+#~ msgid "Connection Closed"
+#~ msgstr "Konexioa itxi da"
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "Erantzunaren zain..."
+
+#~ msgid "TOC has come back from its pause. You may now send messages again."
+#~ msgstr "TOC itzuli da pausalditik. Mezuak bidal diezazkiokezu."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "Pasahitza ondo aldatu da"
+
+#~ msgid "Get Dir Info"
+#~ msgstr "Hartu Dir informazioa"
+
+#~ msgid "Set Dir Info"
+#~ msgstr "Ezarri Dir informazioa"
+
+#~ msgid "Could not open %s for writing!"
+#~ msgstr "Ezin izan da %s ireki idazteko!"
+
+#~ msgid "File transfer failed; other side probably canceled."
+#~ msgstr ""
+#~ "Fitxategi-transferentziak huts egin du; beste aldekoak beharbada bertan "
+#~ "behera utziko zuen."
+
+#~ msgid "Could not connect for transfer."
+#~ msgstr "Ezin izan da konektatu transferentzia egiteko."
+
+#~ msgid "Could not write file header.  The file will not be transferred."
+#~ msgstr ""
+#~ "Ezin izan da idatzi fitxategi-goiburua. Fitxategia ez da transferituko."
+
+#, fuzzy
+#~ msgid "Save As..."
+#~ msgstr "Gorde ikonoa honela..."
+
+#~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+#~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+#~ msgstr[0] ""
+#~ "%1$s(e)k fitxategi %3$d onartzea eskatu dio %2$s(r)i: %4$s (%5$.2f %6$s)%7"
+#~ "$s%8$s"
+#~ msgstr[1] ""
+#~ "%1$s(e)k %3$d fitxategi onartzea eskatu dio %2$s(r)i: %4$s (%5$.2f %6$s)%7"
+#~ "$s%8$s"
+
+#~ msgid "%s requests you to send them a file"
+#~ msgstr "%s erabiltzaileak fitxategi bat bidaltzea eskatu dizu"
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "TOC protokoloaren plugin-a"
+
+#~ msgid "User information for %s unavailable"
+#~ msgstr "%s erabiltzailearen datuak ez daude erabilgarri"
+
+#~ msgid "%s Options"
+#~ msgstr "%s - Aukerak"
+
+#~ msgid "Proxy Options"
+#~ msgstr "Proxy aukerak"
+
+#~ msgid "By log size"
+#~ msgstr "Egunkari-tamainaren arabera"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "Ire_ki esteka arakatzailean"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "ST_UN Zerbitzaria:"
+
+#, fuzzy
+#~ msgid "Smiley _Image"
+#~ msgstr "Gorde irudia"
+
+#, fuzzy
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Erakutsi leihoa keinuka mezuak jasotzean"
 
 #, fuzzy
 #~ msgid "A group with the name already exists."
@@ -14605,13 +15038,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Are you sure you want to leave this Qun?"
 #~ msgstr "Ziur zaude %s ezabatu nahi duzula?"
-
-#, fuzzy
-#~ msgid ""
-#~ "%s\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr "%s: %s (%s)"
 
 #, fuzzy
 #~ msgid "System Message"
@@ -14690,7 +15116,8 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "Pidgin-en %s bertsioa erabiltzen ari zara. Azken bertsioa %s da.<hr>"
+#~ msgstr ""
+#~ "Pidgin-en %s bertsioa erabiltzen ari zara. Azken bertsioa %s da.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -15005,8 +15432,8 @@ msgstr ""
 #~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
 #~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "%s bertsioa lortzeko:<br><a href=\"http://Pidgin.sourceforge.net/\">http://"
-#~ "Pidgin.sourceforge.net</a>."
+#~ "%s bertsioa lortzeko:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "Atzerapena"
@@ -15423,12 +15850,13 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Pidgin will prevent anything from going through. "
-#~ "This is only temporary, please be patient."
+#~ "off if you send a message. Pidgin will prevent anything from going "
+#~ "through. This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Hori gertatzen denean, TOCek ez ikusi egiten die, bidalitako mezu guztiei "
-#~ "eta beharbada kanporatu egingo zaitu mezurik bidaliz gero. Pidgin-ek bidali "
-#~ "edo jasotzea eragotziko du. Aldi baterako bakarrik izango da, itxaron."
+#~ "eta beharbada kanporatu egingo zaitu mezurik bidaliz gero. Pidgin-ek "
+#~ "bidali edo jasotzea eragotziko du. Aldi baterako bakarrik izango da, "
+#~ "itxaron."
 
 #~ msgid "Pidgin - Save As..."
 #~ msgstr "Pidgin - Gorde honela..."
@@ -15442,13 +15870,13 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
-#~ "will result in reduced functionality and features."
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, "
+#~ "which will result in reduced functionality and features."
 #~ msgstr ""
 #~ "Autentifikazio metodo normalak huts egin du. Zure pasahitza okerra izan "
-#~ "daiteke, edo Yahoo-ren autentifikazio eskema aldatu egin da. Pidgin-ek Web "
-#~ "Messenger erabiliz konektatzen saiatuko da, funtzionalitate eta ezaugarri "
-#~ "murrituagoak dituelarik."
+#~ "daiteke, edo Yahoo-ren autentifikazio eskema aldatu egin da. Pidgin-ek "
+#~ "Web Messenger erabiliz konektatzen saiatuko da, funtzionalitate eta "
+#~ "ezaugarri murrituagoak dituelarik."
 
 #~ msgid "Unable to read"
 #~ msgstr "Ezin da irakurri"

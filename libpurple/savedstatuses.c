@@ -285,13 +285,13 @@ status_to_xmlnode(PurpleSavedStatus *status)
 		xmlnode_set_attrib(node, "transient", "true");
 	}
 
-	snprintf(buf, sizeof(buf), "%lu", status->creation_time);
+	g_snprintf(buf, sizeof(buf), "%lu", status->creation_time);
 	xmlnode_set_attrib(node, "created", buf);
 
-	snprintf(buf, sizeof(buf), "%lu", status->lastused);
+	g_snprintf(buf, sizeof(buf), "%lu", status->lastused);
 	xmlnode_set_attrib(node, "lastused", buf);
 
-	snprintf(buf, sizeof(buf), "%u", status->usage_count);
+	g_snprintf(buf, sizeof(buf), "%u", status->usage_count);
 	xmlnode_set_attrib(node, "usage_count", buf);
 
 	child = xmlnode_new_child(node, "state");
@@ -870,14 +870,14 @@ purple_savedstatus_set_idleaway(gboolean idleaway)
 		/* Don't need to do anything */
 		return;
 
-	/* Changing our status makes us un-idle */
-	if (!idleaway)
-		purple_idle_touch();
-
 	old = purple_savedstatus_get_current();
 	saved_status = idleaway ? purple_savedstatus_get_idleaway()
 			: purple_savedstatus_get_default();
 	purple_prefs_set_bool("/purple/savedstatus/isidleaway", idleaway);
+
+	/* Changing our status makes us un-idle */
+	if (!idleaway)
+		purple_idle_touch();
 
 	if (idleaway && (purple_savedstatus_get_type(old) != PURPLE_STATUS_AVAILABLE))
 		/* Our global status is already "away," so don't change anything */

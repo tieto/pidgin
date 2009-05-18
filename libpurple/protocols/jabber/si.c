@@ -311,20 +311,18 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 	}
 }
 
-void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet)
+void jabber_bytestreams_parse(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id, xmlnode *query)
 {
 	PurpleXfer *xfer;
 	JabberSIXfer *jsx;
-	xmlnode *query, *streamhost;
-	const char *sid, *from, *type;
+	xmlnode *streamhost;
+	const char *sid;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "set"))
+	if(type != JABBER_IQ_SET)
 		return;
 
-	if(!(from = xmlnode_get_attrib(packet, "from")))
-		return;
-
-	if(!(query = xmlnode_get_child(packet, "query")))
+	if(!from)
 		return;
 
 	if(!(sid = xmlnode_get_attrib(query, "sid")))
@@ -340,7 +338,7 @@ void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet)
 
 	if(jsx->iq_id)
 		g_free(jsx->iq_id);
-	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jsx->iq_id = g_strdup(id);
 
 	for(streamhost = xmlnode_get_child(query, "streamhost"); streamhost;
 			streamhost = xmlnode_get_next_twin(streamhost)) {
@@ -409,7 +407,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 {
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx = xfer->data;
-	char buffer[256];
+	char buffer[42]; /* 40 for DST.ADDR + 2 bytes for port number*/
 	int len;
 	char *dstaddr, *hash;
 	const char *host;
@@ -433,16 +431,19 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		jsx->rxlen += len;
 		return;
 	} else if(jsx->rxqueue[0] != 0x05 || jsx->rxqueue[1] != 0x01 ||
-			jsx->rxqueue[3] != 0x03) {
-		purple_debug_info("jabber", "invalid socks5 stuff\n");
+			jsx->rxqueue[3] != 0x03 || jsx->rxqueue[4] != 40) {
+		purple_debug_info("jabber", "Invalid socks5 conn req. header[0x%x,0x%x,0x%x,0x%x,0x%x]\n",
+				  jsx->rxqueue[0], jsx->rxqueue[1], jsx->rxqueue[2],
+				  jsx->rxqueue[3], jsx->rxqueue[4]);
 		purple_input_remove(xfer->watcher);
 		xfer->watcher = 0;
 		close(source);
 		purple_xfer_cancel_remote(xfer);
 		return;
 	} else if(jsx->rxlen - 5 <  jsx->rxqueue[4] + 2) {
-		purple_debug_info("jabber", "reading umpteen more bytes\n");
-		len = read(source, buffer, jsx->rxqueue[4] + 5 + 2 - jsx->rxlen);
+		purple_debug_info("jabber", "reading %u bytes for DST.ADDR + port num (trying to read %u now)\n",
+				  jsx->rxqueue[4] + 2, jsx->rxqueue[4] + 2 - (jsx->rxlen - 5));
+		len = read(source, buffer, jsx->rxqueue[4] + 2 - (jsx->rxlen - 5));
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
@@ -457,6 +458,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		jsx->rxlen += len;
 	}
 
+	/* Have we not read all of DST.ADDR and the following 2-byte port number? */
 	if(jsx->rxlen - 5 < jsx->rxqueue[4] + 2)
 		return;
 
@@ -470,9 +472,16 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
 	hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
 
-	if(jsx->rxqueue[4] != 40 || strncmp(hash, jsx->rxqueue+5, 40) ||
+	if(strncmp(hash, jsx->rxqueue + 5, 40) ||
 			jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00) {
-		purple_debug_error("jabber", "someone connected with the wrong info!\n");
+		if (jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00)
+			purple_debug_error("jabber", "Got SOCKS5 BS conn with the wrong DST.PORT"
+						     " (must be 0 - got[0x%x,0x%x]).\n",
+						     jsx->rxqueue[45], jsx->rxqueue[46]);
+		else
+			purple_debug_error("jabber", "Got SOCKS5 BS conn with the wrong DST.ADDR"
+						     " (expected '%s' - got '%.40s').\n",
+						     hash, jsx->rxqueue + 5);
 		close(source);
 		purple_xfer_cancel_remote(xfer);
 		g_free(hash);
@@ -533,11 +542,13 @@ jabber_si_xfer_bytestreams_send_read_response_cb(gpointer data, gint source,
 	purple_input_remove(xfer->watcher);
 	xfer->watcher = 0;
 
+	/* If we sent a "Success", wait for a response, otherwise give up and cancel */
 	if (jsx->rxqueue[1] == 0x00) {
 		xfer->watcher = purple_input_add(source, PURPLE_INPUT_READ,
 			jabber_si_xfer_bytestreams_send_read_again_cb, xfer);
 		g_free(jsx->rxqueue);
 		jsx->rxqueue = NULL;
+		jsx->rxlen = 0;
 	} else {
 		close(source);
 		purple_xfer_cancel_remote(xfer);
@@ -558,6 +569,7 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 
 	xfer->fd = source;
 
+	/** Try to read the SOCKS5 header */
 	if(jsx->rxlen < 2) {
 		purple_debug_info("jabber", "reading those first two bytes\n");
 		len = read(source, buffer, 2 - jsx->rxlen);
@@ -575,8 +587,9 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		jsx->rxlen += len;
 		return;
 	} else if(jsx->rxlen - 2 <  jsx->rxqueue[1]) {
-		purple_debug_info("jabber", "reading the next umpteen bytes\n");
-		len = read(source, buffer, jsx->rxqueue[1] + 2 - jsx->rxlen);
+		purple_debug_info("jabber", "reading %u bytes for auth methods (trying to read %u now)\n",
+				  jsx->rxqueue[1], jsx->rxqueue[1] - (jsx->rxlen - 2));
+		len = read(source, buffer, jsx->rxqueue[1] - (jsx->rxlen - 2));
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
@@ -591,6 +604,7 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		jsx->rxlen += len;
 	}
 
+	/* Have we not read all the auth. method bytes? */
 	if(jsx->rxlen -2 < jsx->rxqueue[1])
 		return;
 
@@ -685,13 +699,14 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 }
 
 static void
-jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
+                           JabberIqType type, const char *id,
+                           xmlnode *packet, gpointer data)
 {
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx;
 	xmlnode *query, *streamhost_used;
-	const char *from, *type, *jid;
+	const char *jid;
 	GList *matched;
 
 	/* TODO: This need to send errors if we don't see what we're looking for */
@@ -708,37 +723,34 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 
 	jsx = xfer->data;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
-	  purple_debug_info("jabber",
-			    "jabber_si_xfer_connect_proxy_cb: type = %s\n",
-			    type);
-		if (type && !strcmp(type, "error")) {
-			/* if IBB is available, open IBB session */
-			purple_debug_info("jabber",
-				"jabber_si_xfer_connect_proxy_cb: got error, method: %d\n",
-				jsx->stream_method);
-			if (jsx->stream_method & STREAM_METHOD_IBB) {
-				purple_debug_info("jabber", "IBB is possible, try it\n");
-				/* if we are the sender and haven't already opened an IBB
-				  session, do so now (we might already have failed to open
-				  the bytestream proxy ourselves when receiving this <iq/> */
-				if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND
-					&& !jsx->ibb_session) {
-					jabber_si_xfer_ibb_send_init(js, xfer);
-				} else {
-					jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
-						jabber_si_bytestreams_ibb_timeout_cb, xfer);
-				}
-				/* if we are receiver, just wait for IBB open stanza, callback
-				  is already set up */
+	if(type != JABBER_IQ_RESULT) {
+		purple_debug_info("jabber",
+			    "jabber_si_xfer_connect_proxy_cb: type = error\n");
+		/* if IBB is available, open IBB session */
+		purple_debug_info("jabber",
+			"jabber_si_xfer_connect_proxy_cb: got error, method: %d\n",
+			jsx->stream_method);
+		if (jsx->stream_method & STREAM_METHOD_IBB) {
+			purple_debug_info("jabber", "IBB is possible, try it\n");
+			/* if we are the sender and haven't already opened an IBB
+			  session, do so now (we might already have failed to open
+			  the bytestream proxy ourselves when receiving this <iq/> */
+			if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND
+				&& !jsx->ibb_session) {
+				jabber_si_xfer_ibb_send_init(js, xfer);
 			} else {
-				purple_xfer_cancel_remote(xfer);
+				jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
+					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
+			/* if we are receiver, just wait for IBB open stanza, callback
+			  is already set up */
+		} else {
+			purple_xfer_cancel_remote(xfer);
 		}
 		return;
 	}
 
-	if(!(from = xmlnode_get_attrib(packet, "from")))
+	if (!from)
 		return;
 
 	if(!(query = xmlnode_get_child(packet, "query")))
@@ -1019,16 +1031,15 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 }
 
 static gboolean
-jabber_si_xfer_ibb_open_cb(JabberStream *js, xmlnode *packet)
+jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
+                           xmlnode *open)
 {
-	const gchar *who = xmlnode_get_attrib(packet, "from");
-	xmlnode *open = xmlnode_get_child(packet, "open");
 	const gchar *sid = xmlnode_get_attrib(open, "sid");
 	PurpleXfer *xfer = jabber_si_xfer_find(js, sid, who);
 	if (xfer) {
 		JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 		JabberIBBSession *sess =
-			jabber_ibb_session_create_from_xmlnode(js, packet, xfer);
+			jabber_ibb_session_create_from_xmlnode(js, who, id, open, xfer);
 		const char *filename;
 
 		jabber_si_bytestreams_ibb_timeout_remove(jsx);
@@ -1183,8 +1194,9 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 	}
 }
 
-static void jabber_si_xfer_send_method_cb(JabberStream *js, xmlnode *packet,
-		gpointer data)
+static void jabber_si_xfer_send_method_cb(JabberStream *js, const char *from,
+                                          JabberIqType type, const char *id,
+                                          xmlnode *packet, gpointer data)
 {
 	PurpleXfer *xfer = data;
 	xmlnode *si, *feature, *x, *field, *value;
@@ -1585,16 +1597,14 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 		purple_xfer_request(xfer);
 }
 
-void jabber_si_parse(JabberStream *js, xmlnode *packet)
+void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
+                     const char *id, xmlnode *si)
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *si, *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *filename, *filesize_c, *profile, *from;
+	xmlnode *file, *feature, *x, *field, *option, *value;
+	const char *stream_id, *filename, *filesize_c, *profile;
 	size_t filesize = 0;
-
-	if(!(si = xmlnode_get_child(packet, "si")))
-		return;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
 			strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer"))
@@ -1618,7 +1628,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	if(!(x = xmlnode_get_child_with_namespace(feature, "x", "jabber:x:data")))
 		return;
 
-	if(!(from = xmlnode_get_attrib(packet, "from")))
+	if(!from)
 		return;
 
 	/* if they've already sent us this file transfer with the same damn id
@@ -1659,7 +1669,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 
 	jsx->js = js;
 	jsx->stream_id = g_strdup(stream_id);
-	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jsx->iq_id = g_strdup(id);
 
 	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
 	g_return_if_fail(xfer != NULL);
@@ -1683,6 +1693,8 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 void
 jabber_si_init(void)
 {
+	jabber_iq_register_handler("si", "http://jabber.org/protocol/si", jabber_si_parse);	
+	
 	jabber_ibb_register_open_handler(jabber_si_xfer_ibb_open_cb);
 }
 

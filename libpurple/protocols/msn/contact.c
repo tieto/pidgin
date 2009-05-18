@@ -697,25 +697,28 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				/*TODO:  need to support the Mobile type*/
 				continue;
 			}
-			for (contactEmailNode = xmlnode_get_child(emailsNode, "ContactEmail"); contactEmailNode;
-					contactEmailNode = xmlnode_get_next_twin(contactEmailNode)) {
-				if (!(messengerEnabledNode = xmlnode_get_child(contactEmailNode, "isMessengerEnabled")))
-					continue;
+			for (contactEmailNode = xmlnode_get_child(emailsNode, "ContactEmail");
+			     contactEmailNode;
+			     contactEmailNode = xmlnode_get_next_twin(contactEmailNode)) {
+				if ((messengerEnabledNode = xmlnode_get_child(contactEmailNode, "isMessengerEnabled"))) {
 
-				msnEnabled = xmlnode_get_data(messengerEnabledNode);
+					msnEnabled = xmlnode_get_data(messengerEnabledNode);
 
-				if (msnEnabled && !strcmp(msnEnabled, "true")) {
-					if ((emailNode = xmlnode_get_child(contactEmailNode, "email")))
-						passport = xmlnode_get_data(emailNode);
+					if (msnEnabled && !strcmp(msnEnabled, "true")) {
+						if ((emailNode = xmlnode_get_child(contactEmailNode, "email")))
+							passport = xmlnode_get_data(emailNode);
 
-					/*Messenger enabled, Get the Passport*/
-					purple_debug_info("msn", "AB Yahoo/Federated User %s\n", passport ? passport : "(null)");
+						/* Messenger enabled, Get the Passport*/
+						purple_debug_info("msn", "AB Yahoo/Federated User %s\n", passport ? passport : "(null)");
+						g_free(msnEnabled);
+						break;
+					}
+
 					g_free(msnEnabled);
-					break;
 				}
-
-				g_free(msnEnabled);
 			}
+			if (passport == NULL) /* Couldn't find anything */
+				continue;
 		} else {
 			xmlnode *messenger_user;
 			/* ignore non-messenger contacts */

@@ -753,6 +753,8 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	}
 	unref_filename(old_icon);
 
+	old_img = g_hash_table_lookup(pointer_icon_cache, account);
+
 	if (img)
 		g_hash_table_insert(pointer_icon_cache, account, img);
 	else
@@ -770,7 +772,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 			prpl_info->set_buddy_icon(gc, img);
 	}
 
-	if ((old_img = g_hash_table_lookup(pointer_icon_cache, account)))
+	if (old_img)
 		purple_imgstore_unref(old_img);
 	else if (old_icon)
 	{
@@ -1299,6 +1301,7 @@ purple_buddy_icons_uninit()
 	g_hash_table_destroy(icon_file_cache);
 	g_hash_table_destroy(pointer_icon_cache);
 	g_free(old_icons_dir);
+	g_free(cache_dir);
 }
 
 void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int *height)

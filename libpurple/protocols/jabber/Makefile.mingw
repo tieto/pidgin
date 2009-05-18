@@ -46,6 +46,7 @@ C_SRC =	\
 			adhoccommands.c \
 			auth.c \
 			buddy.c \
+			bosh.c \
 			caps.c \
 			chat.c \
 			data.c \
@@ -54,6 +55,13 @@ C_SRC =	\
 			ibb.c \
 			iq.c \
 			jabber.c \
+			jingle/jingle.c \
+			jingle/content.c \
+			jingle/iceudp.c \
+			jingle/rawudp.c \
+			jingle/rtp.c \
+			jingle/session.c \
+			jingle/transport.c \
 			jutil.c \
 			message.c \
 			oob.c \
@@ -63,6 +71,7 @@ C_SRC =	\
 			presence.c \
 			roster.c \
 			si.c \
+			useravatar.c \
 			usermood.c \
 			usernick.c \
 			usertune.c \
@@ -79,6 +88,7 @@ XMPP_OBJECTS = $(XMPP_C_SRC:%.c=%.o)
 ##
 LIBS = \
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lxml2 \
 			-lws2_32 \
 			-lintl \

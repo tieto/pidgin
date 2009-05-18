@@ -145,6 +145,26 @@ pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
 	return pidgin_add_widget_to_vbox(GTK_BOX(page), title, sg, entry, TRUE, NULL);
 }
 
+GtkWidget *
+pidgin_prefs_labeled_password(GtkWidget *page, const gchar *title,
+							 const char *key, GtkSizeGroup *sg)
+{
+	GtkWidget *entry;
+	const gchar *value;
+
+	value = purple_prefs_get_string(key);
+
+	entry = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_entry_set_text(GTK_ENTRY(entry), value);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(entry_set), (char*)key);
+	gtk_widget_show(entry);
+
+	return pidgin_add_widget_to_vbox(GTK_BOX(page), title, sg, entry, TRUE, NULL);
+}
+
+
 static void
 dropdown_set(GObject *w, const char *key)
 {
@@ -618,7 +638,7 @@ prefs_themes_sort(PurpleTheme *theme)
 		gtk_list_store_set(prefs_sound_themes, &iter, 0, pixbuf, 2, purple_theme_get_name(theme), -1);
 
 		if (pixbuf != NULL)
-			gdk_pixbuf_unref(pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
 
 	} else if (PIDGIN_IS_BLIST_THEME(theme) || PIDGIN_IS_STATUS_ICON_THEME(theme)){
 		GtkListStore *store;
@@ -645,7 +665,7 @@ prefs_themes_sort(PurpleTheme *theme)
 
 		g_free(markup);
 		if (pixbuf != NULL)
-			gdk_pixbuf_unref(pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
 	}
 
 }
@@ -682,7 +702,7 @@ prefs_themes_init()
 	gtk_list_store_set(prefs_status_icon_themes, &iter, 0, pixbuf, 1, "<b>(Default)</b> - None\n<span color='dim grey'>"
 								    "The default Pidgin status icon theme</span>", 2, "", -1);
 
-	gdk_pixbuf_unref(pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
 }
 
 /* builds a theme combo box from a list store with colums: icon preview, markup, theme name */
@@ -1406,6 +1426,28 @@ static void network_ip_changed(GtkEntry *entry, gpointer data)
 	purple_network_set_public_ip(gtk_entry_get_text(entry));
 }
 
+static gboolean network_stun_server_changed_cb(GtkWidget *widget, 
+	GdkEventFocus *event, gpointer data)
+{
+	GtkEntry *entry = GTK_ENTRY(widget);
+	purple_prefs_set_string("/purple/network/stun_server",
+		gtk_entry_get_text(entry));
+	purple_network_set_stun_server(gtk_entry_get_text(entry));
+	
+	return FALSE;
+}
+
+static gboolean network_turn_server_changed_cb(GtkWidget *widget, 
+	GdkEventFocus *event, gpointer data)
+{
+	GtkEntry *entry = GTK_ENTRY(widget);
+	purple_prefs_set_string("/purple/network/turn_server",
+		gtk_entry_get_text(entry));
+	purple_network_set_turn_server(gtk_entry_get_text(entry));
+	
+	return FALSE;
+}
+
 static void
 proxy_changed_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
@@ -1471,8 +1513,16 @@ network_page(void)
 
 	vbox = pidgin_make_frame (ret, _("IP Address"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	pidgin_prefs_labeled_entry(vbox,_("ST_UN server:"),
-			"/purple/network/stun_server", sg);
+
+	entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(
+			"/purple/network/stun_server"));
+	g_signal_connect(G_OBJECT(entry), "focus-out-event",
+			G_CALLBACK(network_stun_server_changed_cb), NULL);
+	gtk_widget_show(entry);
+
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), "ST_UN server:",
+			sg, entry, TRUE, NULL);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -1549,6 +1599,29 @@ network_page(void)
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
+
+	g_object_unref(sg);
+
+	/* TURN server */
+	vbox = pidgin_make_frame(ret, _("Relay Server (TURN)"));
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(
+			"/purple/network/turn_server"));
+	g_signal_connect(G_OBJECT(entry), "focus-out-event",
+			G_CALLBACK(network_turn_server_changed_cb), NULL);
+	gtk_widget_show(entry);
+
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), "_TURN server:",
+			sg, entry, TRUE, NULL);
+
+	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
+		"/purple/network/turn_port", 0, 65535, NULL);
+	hbox = pidgin_prefs_labeled_entry(vbox, "_Username:", 
+		"/purple/network/turn_username", sg);
+	pidgin_prefs_labeled_password(hbox, "_Password:",
+		"/purple/network/turn_password", NULL);
 
 	if (purple_running_gnome()) {
 		vbox = pidgin_make_frame(ret, _("Proxy Server &amp; Browser"));

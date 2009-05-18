@@ -377,6 +377,50 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			purple_xfer_request(xfer);
 		}
+	} else if (!strcmp(euf_guid, MSN_CAM_REQUEST_GUID)) {
+		purple_debug_info("msn", "Cam request.\n");
+		if (slpcall && slpcall->slplink &&
+				slpcall->slplink->session) {
+			PurpleConversation *conv;
+			gchar *from = slpcall->slplink->remote_user;
+			conv = purple_find_conversation_with_account(
+					PURPLE_CONV_TYPE_IM, from,
+					slpcall->slplink->session->account);
+			if (conv) {
+				char *buf;
+				buf = g_strdup_printf(
+						_("%s requests to view your "
+						"webcam, but this request is "
+						"not yet supported."), from);
+				purple_conversation_write(conv, NULL, buf,
+						PURPLE_MESSAGE_SYSTEM |
+						PURPLE_MESSAGE_NOTIFY,
+						time(NULL));
+				g_free(buf);
+			}
+		}
+	} else if (!strcmp(euf_guid, MSN_CAM_GUID)) {
+		purple_debug_info("msn", "Cam invite.\n");
+		if (slpcall && slpcall->slplink &&
+				slpcall->slplink->session) {
+			PurpleConversation *conv;
+			gchar *from = slpcall->slplink->remote_user;
+			conv = purple_find_conversation_with_account(
+					PURPLE_CONV_TYPE_IM, from,
+					slpcall->slplink->session->account);
+			if (conv) {
+				char *buf;
+				buf = g_strdup_printf(
+						_("%s has sent you a webcam "
+						"invite, which is not yet "
+						"supported."), from);
+				purple_conversation_write(conv, NULL, buf,
+						PURPLE_MESSAGE_SYSTEM |
+						PURPLE_MESSAGE_NOTIFY,
+						time(NULL));
+				g_free(buf);
+			}
+		}
 	} else
 		purple_debug_warning("msn", "SLP SessionReq with unknown EUF-GUID: %s\n", euf_guid);
 }

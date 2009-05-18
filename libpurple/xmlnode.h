@@ -268,6 +268,17 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix);
 const char *xmlnode_get_prefix(const xmlnode *node);
 
 /**
+ * Gets the parent node.
+ *
+ * @param child The child node.
+ *
+ * @return The parent or NULL.
+ *
+ * @since 2.6.0
+ */
+xmlnode *xmlnode_get_parent(const xmlnode *child);
+
+/**
  * Returns the node in a string of xml.
  *
  * @param node The starting node to output.
@@ -324,11 +335,14 @@ void xmlnode_free(xmlnode *node);
  * root node of an XML document will parse the entire document
  * into a tree of nodes, and return the xmlnode of the root.
  *
- * @param str  The string of xml.
- * @param description  The description of the file being parsed
- * @process  The utility that is calling xmlnode_from_file
+ * @param dir  The directory where the file is located
+ * @param filename  The filename
+ * @param description  A description of the file being parsed. Displayed to
+ * 			the user if the file cannot be read.
+ * @param process  The subsystem that is calling xmlnode_from_file. Used as
+ * 			the category for debugging.
  *
- * @return The new node.
+ * @return The new node or NULL if an error occurred.
  *
  * @since 2.6.0
  */

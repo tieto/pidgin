@@ -324,6 +324,9 @@ I can find them.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
+AC_SUBST(GLIB_GENMARSHAL)
+
 AC_ARG_WITH([extraversion],
 			AC_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
@@ -703,9 +706,13 @@ dnl #######################################################################
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.6.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
-
 You must have libxml2 >= 2.6.0 development headers installed to build.
 ])])
+PKG_CHECK_EXISTS([libxml-2.0 >= 2.6.18], , [
+	AC_MSG_WARN([
+Versions of libxml2 < 2.6.18 may contain bugs that could cause XMPP messages to be discarded.
+])])
+
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
@@ -742,6 +749,63 @@ GStreamer development headers not found.
 Use --disable-gstreamer if you do not need GStreamer (sound) support.
 ])
 		fi])
+fi
+
+dnl #######################################################################
+dnl # Check for GStreamer Interfaces
+dnl #######################################################################
+if test "x$enable_gst" != "xno"; then
+	AC_ARG_ENABLE(gstreamer-interfaces,
+		[AC_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer interface support])],
+			enable_gstinterfaces="$enableval", enable_gstinterfaces="yes")
+	if test "x$enable_gstinterfaces" != "xno"; then
+		PKG_CHECK_MODULES(GSTINTERFACES, [gstreamer-interfaces-0.10], [
+			AC_DEFINE(USE_GSTINTERFACES, 1, [Use GStreamer interfaces for X overlay support])
+			AC_SUBST(GSTINTERFACES_CFLAGS)
+			AC_SUBST(GSTINTERFACES_LIBS)
+		], [
+			enable_gstinterfaces="no"
+		])
+	fi
+else
+	enable_gstinterfaces="no"
+fi
+
+dnl #######################################################################
+dnl # Check for Farsight
+dnl #######################################################################
+AC_ARG_ENABLE(farsight,
+	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
+	enable_farsight="$enableval", enable_farsight="yes")
+if test "x$enable_farsight" != "xno"; then
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.9], [
+		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
+		AC_SUBST(FARSIGHT_CFLAGS)
+		AC_SUBST(FARSIGHT_LIBS)
+	], [
+		enable_farsight="no"
+	])
+fi
+
+dnl #######################################################################
+dnl # Check for Voice and Video support
+dnl #######################################################################
+AC_ARG_ENABLE(vv,
+	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
+	[enable_vv="$enableval" force_vv=$enableval], [enable_vv="yes" force_vv=no])
+if test "x$enable_vv" != "xno"; then
+	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno"; then
+		AC_DEFINE(USE_VV, 1, [Use voice and video])
+	else
+		enable_vv="no"
+		if test "x$force_vv" = "xyes"; then
+			AC_MSG_ERROR([
+Dependencies for voice/video were not met.
+Install the necessary gstreamer and farsight packages first.
+Or use --disable-vv if you do not need voice/video support.
+			])
+		fi
+	fi
 fi
 
 dnl #######################################################################
@@ -922,7 +986,7 @@ if test "x$gadu_manual_check" = "xno"; then
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
-		AC_MSG_RESULT(no)
+		gadu_includes="no"
 	])
 else
 	if test "$ac_gadu_includes" != "no"; then
@@ -1599,7 +1663,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None. MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
+msg_ssl="None. MSN, Novell Groupwise, Yahoo! and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 looked_for_gnutls="no"
 dnl #
 dnl # Check for GnuTLS if it's specified.
@@ -2478,6 +2542,7 @@ echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
 echo Build with D-Bus support...... : $enable_dbus
+echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi

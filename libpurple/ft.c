@@ -458,7 +458,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 {
 	PurpleXferType type;
 	struct stat st;
-	char *msg, *utf8;
+	char *msg, *utf8, *base;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 
@@ -505,7 +505,9 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 		purple_xfer_set_local_filename(xfer, filename);
 		purple_xfer_set_size(xfer, st.st_size);
 
-		utf8 = g_filename_to_utf8(g_basename(filename), -1, NULL, NULL, NULL);
+		base = g_path_get_basename(filename);
+		utf8 = g_filename_to_utf8(base, -1, NULL, NULL, NULL);
+		g_free(base);
 		purple_xfer_set_filename(xfer, utf8);
 
 		msg = g_strdup_printf(_("Offering to send %s to %s"),

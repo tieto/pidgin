@@ -21,7 +21,7 @@
 #ifndef _PIDGINCELLRENDEREREXPANDER_H_
 #define _PIDGINCELLRENDEREREXPANDER_H_
 
-#include <gtk/gtkcellrenderer.h>
+#include <gtk/gtk.h>
 
 #ifdef __cplusplus
 extern "C" {
