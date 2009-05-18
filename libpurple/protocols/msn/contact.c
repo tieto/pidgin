@@ -717,8 +717,6 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 					g_free(msnEnabled);
 				}
 			}
-			if (passport == NULL) /* Couldn't find anything */
-				continue;
 		} else {
 			xmlnode *messenger_user;
 			/* ignore non-messenger contacts */
@@ -736,6 +734,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			passport = xmlnode_get_data(passportName);
 		}
 
+		/* Couldn't find anything */
 		if (passport == NULL)
 			continue;
 
