@@ -17,6 +17,12 @@ Our development blog is available at: http://planet.pidgin.im
 	(http://www.veracode.com) who performed a code analysis and found some
 	bugs that were addressed in this release.
 
+	Elliott: I feel like I'm repeating myself, but there are some more MSN
+	fixes that should make things better behaved at login as well, and
+	maybe you'll stop getting some of those annoying errors (though not all
+	are fixed yet).  Some other bugfixes, plus the craziness that is the
+	libxml "structured error handler" make up the rest of this release.
+
 2.5.5 (03/01/2009):
 	John: Well, yet another release with bug fixing and patches.  Hopefully
 	one of the fixed bugs is one that irritated you.  Also, thank Dimmuxx
