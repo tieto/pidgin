@@ -75,7 +75,7 @@ typedef struct _JabberStream JabberStream;
 /* Index into attention_types list */
 #define JABBER_BUZZ 0
 
-PurplePlugin *jabber_plugin;
+extern PurplePlugin *jabber_plugin;
 
 typedef enum {
 	JABBER_STREAM_OFFLINE,
