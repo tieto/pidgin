@@ -1485,18 +1485,19 @@ static void jabber_last_parse(JabberStream *js, const char *from,
                          the resource getting unidle */
                         if (resource && buddy_name) {
                             jbr = jabber_buddy_find_resource(jb, resource);
-                            
-                            if (jbr->idle) {
-                                if (sec) {
-                                    jbr->idle = time(NULL) - sec;
-                                } else {
-                                    jbr->idle = 0;
-                                }
-                            
-                                if (jbr == 
-                                    jabber_buddy_find_resource(jb, NULL)) {
-                                    purple_prpl_got_user_idle(js->gc->account, 
-                                        buddy_name, jbr->idle, jbr->idle);
+                            if (jbr) {
+                                if (jbr->idle) {
+                                    if (sec) {
+                                        jbr->idle = time(NULL) - sec;
+                                    } else {
+                                        jbr->idle = 0;
+                                    }
+
+                                    if (jbr == 
+                                        jabber_buddy_find_resource(jb, NULL)) {
+                                        purple_prpl_got_user_idle(js->gc->account, 
+                                            buddy_name, jbr->idle, jbr->idle);
+                                    }
                                 }
                             }
                         }
