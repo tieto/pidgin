@@ -86,7 +86,7 @@ msn_cancel_add_cb(gpointer data)
 }
 
 static void
-got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
+got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly, const char *message)
 {
 	PurpleAccount *acct;
 	MsnPermitAdd *pa;
@@ -97,7 +97,7 @@ got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
 	pa->gc = gc;
 
 	acct = purple_connection_get_account(gc);
-	purple_account_request_authorization(acct, passport, NULL, friendly, NULL,
+	purple_account_request_authorization(acct, passport, NULL, friendly, message,
 										 purple_find_buddy(acct, passport) != NULL,
 										 msn_accept_add_cb, msn_cancel_add_cb, pa);
 
@@ -150,12 +150,14 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	PurpleAccount *account;
 	const char *passport;
 	const char *store;
+	const char *message;
 
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
 	passport = msn_user_get_passport(user);
 	store = msn_user_get_friendly_name(user);
+	message = msn_user_get_invite_message(user);
 
 	msn_user_set_op(user, list_op);
 
@@ -199,13 +201,13 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
 		{
-/*			got_new_entry(gc, passport, store); */
+/*			got_new_entry(gc, passport, store, NULL); */
 		}
 	}
 
 	if (list_op & MSN_LIST_PL_OP)
 	{
-		got_new_entry(gc, passport, store);
+		got_new_entry(gc, passport, store, message);
 	}
 }
 
