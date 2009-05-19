@@ -149,48 +149,6 @@ msn_notification_disconnect(MsnNotification *notification)
 }
 
 /**************************************************************************
- * Util
- **************************************************************************/
-
-static void
-group_error_helper(MsnSession *session, const char *msg, const char *group_id, int error)
-{
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	char *reason = NULL;
-	char *title = NULL;
-
-	account = session->account;
-	gc = purple_account_get_connection(account);
-
-	if (error == 224)
-	{
-		if (group_id == 0)
-		{
-			return;
-		}
-		else
-		{
-			const char *group_name;
-			group_name = msn_userlist_find_group_name(session->userlist,group_id);
-			reason = g_strdup_printf(_("%s is not a valid group."),
-									 group_name ? group_name : "");
-		}
-	}
-	else
-	{
-		reason = g_strdup(_("Unknown error."));
-	}
-
-	title = g_strdup_printf(_("%s on %s (%s)"), msg,
-						  purple_account_get_username(account),
-						  purple_account_get_protocol_name(account));
-	purple_notify_error(gc, NULL, title, reason);
-	g_free(title);
-	g_free(reason);
-}
-
-/**************************************************************************
  * Login
  **************************************************************************/
 
@@ -1102,38 +1060,6 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 }
 
 static void
-adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSession *session;
-	gint group_id;
-	const char *group_name;
-
-	session = cmdproc->session;
-
-	group_id = atoi(cmd->params[3]);
-
-	group_name = purple_url_decode(cmd->params[2]);
-
-	msn_group_new(session->userlist, cmd->params[3], group_name);
-
-	/* There is a user that must be moved to this group */
-	if (cmd->trans->data)
-	{
-		/* msn_userlist_move_buddy(); */
-		MsnUserList *userlist = cmdproc->session->userlist;
-		MsnCallbackState *data = cmd->trans->data;
-
-		if (data->old_group_name != NULL)
-		{
-			msn_userlist_move_buddy(userlist, data->who, data->old_group_name, group_name);
-			g_free(data->old_group_name);
-		} else {
-			/* msn_add_contact_to_group(userlist, data, data->who, group_name); */
-		}
-	}
-}
-
-static void
 qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	/* TODO: Call PNG after the timeout specified. */
@@ -1466,61 +1392,6 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			}
 		}
 	}
-}
-
-static void
-reg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSession *session;
-	const char *group_id, *group_name;
-
-	session = cmdproc->session;
-	group_id = cmd->params[2];
-	group_name = purple_url_decode(cmd->params[3]);
-
-	msn_userlist_rename_group_id(session->userlist, group_id, group_name);
-}
-
-static void
-reg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
-{
-	const char * group_id;
-	char **params;
-
-	params = g_strsplit(trans->params, " ", 0);
-
-	group_id = params[0];
-
-	group_error_helper(cmdproc->session, _("Unable to rename group"), group_id, error);
-
-	g_strfreev(params);
-}
-
-static void
-rmg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSession *session;
-	const char *group_id;
-
-	session = cmdproc->session;
-	group_id = cmd->params[2];
-
-	msn_userlist_remove_group_id(session->userlist, group_id);
-}
-
-static void
-rmg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
-{
-	const char *group_id;
-	char **params;
-
-	params = g_strsplit(trans->params, " ", 0);
-
-	group_id = params[0];
-
-	group_error_helper(cmdproc->session, _("Unable to delete group"), group_id, error);
-
-	g_strfreev(params);
 }
 
 /**************************************************************************
@@ -2149,9 +2020,6 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "VER", "VER", ver_cmd);
 	msn_table_add_cmd(cbs_table, "PRP", "PRP", prp_cmd);
 	msn_table_add_cmd(cbs_table, "BLP", "BLP", blp_cmd);
-	msn_table_add_cmd(cbs_table, "REG", "REG", reg_cmd);
-	msn_table_add_cmd(cbs_table, "ADG", "ADG", adg_cmd);
-	msn_table_add_cmd(cbs_table, "RMG", "RMG", rmg_cmd);
 	msn_table_add_cmd(cbs_table, "XFR", "XFR", xfr_cmd);
 
 	/* Asynchronous */
@@ -2187,8 +2055,6 @@ msn_notification_init(void)
 	msn_table_add_error(cbs_table, "ADD", add_error);
 	msn_table_add_error(cbs_table, "ADL", adl_error);
 	msn_table_add_error(cbs_table, "FQY", fqy_error);
-	msn_table_add_error(cbs_table, "REG", reg_error);
-	msn_table_add_error(cbs_table, "RMG", rmg_error);
 	msn_table_add_error(cbs_table, "USR", usr_error);
 
 	msn_table_add_msg_type(cbs_table,
