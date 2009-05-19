@@ -441,9 +441,11 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		purple_xfer_cancel_remote(xfer);
 		return;
 	} else if(jsx->rxlen - 5 <  jsx->rxqueue[4] + 2) {
-		purple_debug_info("jabber", "reading %u bytes for DST.ADDR + port num (trying to read %u now)\n",
-				  jsx->rxqueue[4] + 2, jsx->rxqueue[4] + 2 - (jsx->rxlen - 5));
-		len = read(source, buffer, jsx->rxqueue[4] + 2 - (jsx->rxlen - 5));
+		/* Upper-bound of 257 (jsx->rxlen = 5, jsx->rxqueue[4] = 0xFF) */
+		unsigned short to_read = jsx->rxqueue[4] + 2 - (jsx->rxlen - 5);
+		purple_debug_info("jabber", "reading %u bytes for DST.ADDR + port num (trying to read %hu now)\n",
+				  jsx->rxqueue[4] + 2, to_read);
+		len = read(source, buffer, to_read);
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
@@ -586,10 +588,12 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		memcpy(jsx->rxqueue + jsx->rxlen, buffer, len);
 		jsx->rxlen += len;
 		return;
-	} else if(jsx->rxlen - 2 <  jsx->rxqueue[1]) {
-		purple_debug_info("jabber", "reading %u bytes for auth methods (trying to read %u now)\n",
-				  jsx->rxqueue[1], jsx->rxqueue[1] - (jsx->rxlen - 2));
-		len = read(source, buffer, jsx->rxqueue[1] - (jsx->rxlen - 2));
+	} else if(jsx->rxlen - 2 < jsx->rxqueue[1]) {
+		/* Has a maximum value of 255 (jsx->rxlen = 2, jsx->rxqueue[1] = 0xFF) */
+		unsigned short to_read = jsx->rxqueue[1] - (jsx->rxlen - 2);
+		purple_debug_info("jabber", "reading %u bytes for auth methods (trying to read %hu now)\n",
+				  jsx->rxqueue[1], to_read);
+		len = read(source, buffer, to_read);
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
