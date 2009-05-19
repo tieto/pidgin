@@ -14,6 +14,8 @@ version 2.6.0 (??/??/2009):
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), and
