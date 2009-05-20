@@ -256,6 +256,9 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		 * library.
 		 */
 		hints.ai_socktype = SOCK_STREAM;
+#ifdef AI_ADDRCONFIG
+		hints.ai_flags |= AI_ADDRCONFIG;
+#endif /* AI_ADDRCONFIG */
 		rc = getaddrinfo(dns_params.hostname, servname, &hints, &res);
 		write_to_parent(child_out, &rc, sizeof(rc));
 		if (rc != 0) {
@@ -706,6 +709,9 @@ dns_thread(gpointer data)
 	 * library.
 	 */
 	hints.ai_socktype = SOCK_STREAM;
+#ifdef AI_ADDRCONFIG
+	hints.ai_flags |= AI_ADDRCONFIG;
+#endif /* AI_ADDRCONFIG */
 	if ((rc = getaddrinfo(query_data->hostname, servname, &hints, &res)) == 0) {
 		tmp = res;
 		while(res) {
