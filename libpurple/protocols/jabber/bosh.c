@@ -301,7 +301,7 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 		return;
 	}
 
-	packet = g_string_new("");
+	packet = g_string_new(NULL);
 
 	g_string_printf(packet, "<body "
 	                "rid='%" G_GUINT64_FORMAT "' "
@@ -488,7 +488,7 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 }
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
-	GString *buf = g_string_new("");
+	GString *buf = g_string_new(NULL);
 
 	g_string_printf(buf, "<body content='text/xml; charset=utf-8' "
 	                "secure='true' "
@@ -686,7 +686,7 @@ http_connection_read(PurpleHTTPConnection *conn)
 	int cnt, count = 0;
 
 	if (!conn->buf)
-		conn->buf = g_string_new("");
+		conn->buf = g_string_new(NULL);
 
 	/* Read once to prime cnt before the loop */
 	if (conn->psc)
@@ -705,7 +705,8 @@ http_connection_read(PurpleHTTPConnection *conn)
 
 	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
 		if (cnt < 0)
-			purple_debug_info("jabber", "bosh read=%d, errno=%d\n", cnt, errno);
+			purple_debug_info("jabber", "bosh read=%d, errno=%d, error=%s\n",
+			                  cnt, errno, g_strerror(errno));
 		else
 			purple_debug_info("jabber", "bosh server closed the connection\n");
 
@@ -718,8 +719,8 @@ http_connection_read(PurpleHTTPConnection *conn)
 		/* Process what we do have */
 	}
 
-
-	jabber_bosh_http_connection_process(conn);
+	if (conn->buf->len > 0)
+		jabber_bosh_http_connection_process(conn);
 }
 
 static void
