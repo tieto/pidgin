@@ -25,6 +25,7 @@
 #include "jabber.h"
 
 void jabber_parser_setup(JabberStream *js);
+void jabber_parser_close_stream(JabberStream *js);
 void jabber_parser_free(JabberStream *js);
 void jabber_parser_process(JabberStream *js, const char *buf, int len);
 

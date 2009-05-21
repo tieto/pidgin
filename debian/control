@@ -2,7 +2,7 @@ Source: pidgin
 Section: net
 Priority: optional
 Maintainer: Ari Pollak <ari@debian.org>
-Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0), intltool
+Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0), intltool,
  libgtk2.0-dev, libxss-dev, libmeanwhile-dev, libgadu-dev (>= 1:1.6+20060215-1),
  libnss3-dev (>= 3.11.7-1), tcl8.4-dev, tk8.4-dev, libgstreamer0.10-dev,
  libgtkspell-dev, libltdl3-dev, libperl-dev,
@@ -27,9 +27,10 @@ Suggests: ${shlibs:Suggests}
 Description: multi-protocol instant messaging library
  libpurple is a library intended to be used by programmers seeking
  to write an IM client that connects to many IM networks.
- Currently supported are: AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr,
- Gadu-Gadu, Bonjour, Groupwise, Sametime, SILC, and SIMPLE.
- . 
+ Currently supported are:
+ AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu, Bonjour,
+ Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM. 
+ .
  Some extra packages are suggested to use increased functionality:
   * tcl8.4, tk8.4:
     - Support for writing plugins with Tcl/Tk
@@ -43,8 +44,8 @@ Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
 Suggests: gnome-panel (>= 2.1) | kdebase-workspace-bin | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
 Description: graphical multi-protocol instant messaging client for X
  Pidgin is a graphical, modular Instant Messaging client capable of using
- AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
- Groupwise, Sametime, SILC, and SIMPLE all at once.
+ AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu, Bonjour,
+ Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM all at once.
  .
  Some extra packages are recommended to use the core functionality present
  in most pidgin installations:
@@ -85,6 +86,7 @@ Description: multi-protocol instant messaging client - development files
 
 Package: pidgin-dbg
 Priority: extra
+Section: debug
 Architecture: any
 Depends: pidgin (= ${binary:Version}) | finch (= ${binary:Version}) | libpurple0 (= ${binary:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
 Conflicts: gaim-dbg (<< 1:2.0.0+beta6-3)
@@ -98,13 +100,11 @@ Package: finch
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
-Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
-Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
 Suggests:  ${shlibs:Suggests}
 Description: text-based multi-protocol instant messaging client
  Finch is a text/console-based, modular instant messaging client capable of
- using AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
- Groupwise, Sametime, SILC, and SIMPLE all at once.
+ using AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu,
+ Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM all at once.
  .
  Some extra packages are recommended to use the core functionality present
  in most finch installations:
@@ -119,8 +119,6 @@ Package: finch-dev
 Section: devel
 Architecture: all
 Depends: finch (>= ${source:Version}), pkg-config, libpurple-dev, libglib2.0-dev, libncursesw5-dev
-Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-dev (<< 2.1.1-2)
-Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin-dev (<< 2.1.1-2)
 Description: text-based multi-protocol instant messaging client - development
  This package contains the headers and other development files not included in
  the main finch package. Install this if you wish to compile your own plugins,
@@ -130,8 +128,6 @@ Package: libpurple-dev
 Section: libdevel
 Architecture: all
 Depends: libpurple0 (>= ${source:Version}), pkg-config, libglib2.0-dev, libdbus-glib-1-dev, ${misc:Depends}
-Replaces: pidgin-dev (<< 2.1.1-2)
-Conflicts: pidgin-dev (<< 2.1.1-2)
 Description: multi-protocol instant messaging library - development files
  This package contains the headers and other development files not included in
  the main libpurple0 package. Install this if you wish to compile your own

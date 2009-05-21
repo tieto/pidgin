@@ -840,8 +840,6 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 	MsimMessage *body;
 	guint old_inbox_status;
 	guint i, n;
-	const gchar *froms[5], *tos[5], *urls[5], *subjects[5];
-
 	/* Information for each new inbox message type. */
 	static struct
 	{
@@ -856,15 +854,21 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 		{ "FriendRequest", MSIM_INBOX_FRIEND_REQUEST, "http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests", NULL },
 		{ "PictureComment", MSIM_INBOX_PICTURE_COMMENT, "http://home.myspace.com/index.cfm?fuseaction=user", NULL }
 	};
+	const gchar *froms[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*tos[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*urls[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*subjects[G_N_ELEMENTS(message_types) + 1] = { "" };
+
+	g_return_if_fail(reply != NULL);
 
 	/* Can't write _()'d strings in array initializers. Workaround. */
+	/* khc: then use N_() in the array initializer and use _() when they are
+	   used */
 	message_types[0].text = _("New mail messages");
 	message_types[1].text = _("New blog comments");
 	message_types[2].text = _("New profile comments");
 	message_types[3].text = _("New friend requests!");
 	message_types[4].text = _("New picture comments");
-
-	g_return_if_fail(reply != NULL);
 
 	body = msim_msg_get_dictionary(reply, "body");
 
@@ -875,7 +879,7 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 
 	n = 0;
 
-	for (i = 0; i < sizeof(message_types) / sizeof(message_types[0]); ++i) {
+	for (i = 0; i < G_N_ELEMENTS(message_types); ++i) {
 		const gchar *key;
 		guint bit;
 
@@ -1238,7 +1242,7 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 
 	/* Disable due to problems with timeouts. TODO: fix. */
 #ifdef MSIM_USE_KEEPALIVE
-	purple_timeout_add(MSIM_KEEPALIVE_INTERVAL_CHECK,
+	purple_timeout_add_seconds(MSIM_KEEPALIVE_INTERVAL_CHECK,
 			(GSourceFunc)msim_check_alive, session);
 #endif
 

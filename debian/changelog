@@ -1,9 +1,13 @@
-pidgin (2.5.5-1.1~bpo50+1) lenny-backports; urgency=low
+pidgin (2.5.6-1) unstable; urgency=high
 
-  * Non-maintainer upload for Lenny backports to fix #518988
-    where the ICQ support seized to work.
+  * New upstream version
+    - Fixes a bunch of security bugs: CVE-2009-1373, CVE-2009-1374,
+      CVE-2009-1375, and CVE-2009-1376
+    - Fixes a crash in XMPP due to some XML parsing interactions
+      (Closes: #519112)
+  * Fix a missing comma in build-depends (Closes: #520888)
 
- -- Christoph Haas <haas@debian.org>  Mon, 09 Mar 2009 22:06:54 +0000
+ -- Ari Pollak <ari@debian.org>  Thu, 21 May 2009 10:22:23 -0400
 
 pidgin (2.5.5-1) unstable; urgency=low
 

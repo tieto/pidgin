@@ -813,6 +813,7 @@ Section Uninstall
 
     ; Shortcuts..
     Delete "$DESKTOP\Pidgin.lnk"
+    Delete "$SMPROGRAMS\Pidgin.lnk"
 
     Goto done
 

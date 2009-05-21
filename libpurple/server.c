@@ -583,6 +583,11 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	account  = purple_connection_get_account(gc);
 
+	/*
+	 * XXX: Should we be setting this here, or relying on prpls to set it?
+	 */
+	flags |= PURPLE_MESSAGE_RECV;
+
 	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
 		if (!purple_privacy_check(account, who)) {
@@ -625,11 +630,6 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	/* search for conversation again in case it was created by received-im-msg handler */
 	if (conv == NULL)
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
-
-	/*
-	 * XXX: Should we be setting this here, or relying on prpls to set it?
-	 */
-	flags |= PURPLE_MESSAGE_RECV;
 
 	if (conv == NULL)
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
@@ -934,6 +934,15 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 	if (!conv)
 		return;
+
+	/* Did I send the message? */
+	if (!strcmp(purple_conv_chat_get_nick(chat),
+				purple_normalize(purple_conversation_get_account(conv), who))) {
+		flags |= PURPLE_MESSAGE_SEND;
+		flags &= ~PURPLE_MESSAGE_RECV; /* Just in case some prpl sets it! */
+	} else {
+		flags |= PURPLE_MESSAGE_RECV;
+	}
 
 	/*
 	 * Make copies of the message and the sender in case plugins want
