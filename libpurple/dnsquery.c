@@ -32,6 +32,10 @@
 #include "prefs.h"
 #include "util.h"
 
+#ifndef _WIN32
+#include <resolv.h>
+#endif
+
 #if (defined(__APPLE__) || defined (__unix__)) && !defined(__osf__)
 #define PURPLE_DNSQUERY_USE_FORK
 #endif
@@ -571,8 +575,10 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 		g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
 				query_data->hostname, err);
 #endif
-		purple_dnsquery_failed(query_data, message);
+		/* Re-read resolv.conf and friends in case DNS servers have changed */
+		res_init();
 
+		purple_dnsquery_failed(query_data, message);
 	} else if (rc > 0) {
 		/* Success! */
 		while (rc > 0) {

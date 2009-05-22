@@ -16,6 +16,8 @@ version 2.6.0 (??/??/2009):
 	* Report idle time 'From last message sent' should work properly.
 	* Show the invite message for buddies that requested authorization
 	  from you on MSN.
+	* DNS servers are re-read when DNS queries fail in case the system has
+	  moved to a new network and the old servers are not accessible.
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), and
