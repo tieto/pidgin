@@ -448,10 +448,13 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 	if (version) {
 		const char *dot = strstr(version, ".");
-		int major = atoi(version);
-		int minor = atoi(dot + 1);
+		int major, minor = 0;
 
 		purple_debug_info("jabber", "BOSH connection manager version %s\n", version);
+
+		major = atoi(version);
+		if (dot)
+			minor = atoi(dot + 1);
 
 		if (major != 1 || minor < 6) {
 			purple_connection_error_reason(conn->js->gc,
@@ -627,12 +630,23 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	if (!conn->headers_done) {
 		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length");
-		const char *end_of_headers = purple_strcasestr(cursor, "\r\n\r\n");
+		const char *end_of_headers = strstr(cursor, "\r\n\r\n");
 
 		/* Make sure Content-Length is in headers, not body */
-		if (content_length && content_length < end_of_headers) {
-			char *sep = strstr(content_length, ": ");
-			int len = atoi(sep + 2);
+		if (content_length && (!end_of_headers || content_length < end_of_headers)) {
+			const char *sep;
+			const char *eol;
+			int len;
+
+			if ((sep = strstr(content_length, ": ")) == NULL ||
+					(eol = strstr(sep, "\r\n")) == NULL)
+				/*
+				 * The packet ends in the middle of the Content-Length line.
+				 * We'll try again later when we have more.
+				 */
+				return;
+
+			len = atoi(sep + 2);
 			if (len == 0) 
 				purple_debug_warning("jabber", "Found mangled Content-Length header.\n");
 
@@ -688,20 +702,17 @@ http_connection_read(PurpleHTTPConnection *conn)
 	if (!conn->buf)
 		conn->buf = g_string_new(NULL);
 
-	/* Read once to prime cnt before the loop */
-	if (conn->psc)
-		cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
-	else
-		cnt = read(conn->fd, buffer, sizeof(buffer));
-	while (cnt > 0) {
-		count += cnt;
-		g_string_append_len(conn->buf, buffer, cnt);
-
+	do {
 		if (conn->psc)
 			cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
 		else
 			cnt = read(conn->fd, buffer, sizeof(buffer));
-	}
+
+		if (cnt > 0) {
+			count += cnt;
+			g_string_append_len(conn->buf, buffer, cnt);
+		}
+	} while (cnt > 0);
 
 	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
 		if (cnt < 0)
