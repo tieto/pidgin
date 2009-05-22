@@ -361,10 +361,10 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 		if ((nick = xmlnode_get_child(vcard, "NICKNAME"))) {
 			char *tmp = xmlnode_get_data(nick);
 			char *bare_jid = jabber_get_bare_jid(from);
-			if (strstr(bare_jid, tmp) == NULL) {
+			if (tmp && strstr(bare_jid, tmp) == NULL) {
 				g_free(nickname);
 				nickname = tmp;
-			} else
+			} else if (tmp)
 				g_free(tmp);
 
 			g_free(bare_jid);
