@@ -46,8 +46,6 @@
 #include "data.h"
 #include "ibb.h"
 
-PurplePlugin *jabber_plugin = NULL;
-
 static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
@@ -127,8 +125,6 @@ static PurplePluginProtocolInfo prpl_info =
 
 static gboolean load_plugin(PurplePlugin *plugin)
 {
-	jabber_plugin = plugin;
-
 	purple_signal_register(plugin, "jabber-receiving-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
@@ -218,8 +214,6 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 
 	/* Stay on target...stay on target... Almost there... */
 	jabber_uninit_plugin();
-
-	jabber_plugin = NULL;
 
 	return TRUE;
 }

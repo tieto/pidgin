@@ -67,7 +67,7 @@
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
-static PurplePlugin *my_protocol = NULL;
+PurplePlugin *jabber_plugin = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 GSList *jabber_cmds = NULL;
@@ -252,7 +252,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 {
 	const char *xmlns;
 
-	purple_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, packet);
+	purple_signal_emit(jabber_plugin, "jabber-receiving-xmlnode", js->gc, packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == *packet)
@@ -406,7 +406,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
 
-	purple_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
+	purple_signal_emit(jabber_plugin, "jabber-sending-text", js->gc, &data);
 	if (data == NULL)
 		return;
 
@@ -458,7 +458,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	char *txt;
 	int len;
 
-	purple_signal_emit(my_protocol, "jabber-sending-xmlnode", js->gc, &packet);
+	purple_signal_emit(jabber_plugin, "jabber-sending-xmlnode", js->gc, &packet);
 
 	/* if we get NULL back, we're done processing */
 	if(NULL == packet)
@@ -3331,7 +3331,7 @@ jabber_ipc_add_feature(const gchar *feature)
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
-	my_protocol = plugin;
+	jabber_plugin = plugin;
 
 	jabber_add_identity("client", "pc", NULL, PACKAGE);
 
