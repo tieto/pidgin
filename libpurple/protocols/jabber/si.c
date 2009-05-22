@@ -1697,8 +1697,8 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 void
 jabber_si_init(void)
 {
-	jabber_iq_register_handler("si", "http://jabber.org/protocol/si", jabber_si_parse);	
-	
+	jabber_iq_register_handler("si", "http://jabber.org/protocol/si", jabber_si_parse);
+
 	jabber_ibb_register_open_handler(jabber_si_xfer_ibb_open_cb);
 }
 

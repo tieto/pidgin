@@ -57,7 +57,7 @@ struct _PurpleBOSHConnection {
 	/* decoded URL */
 	char *host;
 	int port;
-	char *path; 
+	char *path;
 
 	/* Must be big enough to hold 2^53 - 1 */
 	guint64 rid;
@@ -281,7 +281,7 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 		 * connection.
 		 */
 		chosen = conn->connections[0];
-	
+
 		if (!chosen->ready)
 			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
 					"things may happen.\n");
@@ -296,7 +296,7 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 		 */
 		if (data) {
 			int len = data ? strlen(data) : 0;
-			purple_circ_buffer_append(conn->pending, data, len); 
+			purple_circ_buffer_append(conn->pending, data, len);
 		}
 		return;
 	}
@@ -349,7 +349,7 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 	const char *type;
 
 	type = xmlnode_get_attrib(node, "type");
-	
+
 	if (type != NULL && !strcmp(type, "terminate")) {
 		conn->ready = FALSE;
 		purple_connection_error_reason (conn->js->gc,
@@ -418,7 +418,7 @@ static void auth_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 			jabber_process_packet(js, &child);
 		}
 	} else {
-		purple_debug_warning("jabber", "Received unexepcted empty BOSH packet.\n");	
+		purple_debug_warning("jabber", "Received unexepcted empty BOSH packet.\n");
 	}
 }
 
@@ -487,7 +487,7 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	packet = xmlnode_get_child(node, "features");
 	conn->js->use_bosh = TRUE;
 	conn->receive_cb = auth_response_cb;
-	jabber_stream_features_parse(conn->js, packet);		
+	jabber_stream_features_parse(conn->js, packet);
 }
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
@@ -647,7 +647,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 				return;
 
 			len = atoi(sep + 2);
-			if (len == 0) 
+			if (len == 0)
 				purple_debug_warning("jabber", "Found mangled Content-Length header.\n");
 
 			conn->body_len = len;
