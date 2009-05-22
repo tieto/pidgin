@@ -630,8 +630,8 @@ static gboolean
 jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
                    const char *from, xmlnode *iq)
 {
-	purple_debug_misc("signals test", "received IQ (type=%s, id=%s, from=%s) %p\n",
-	                  type, id, from, iq);
+	purple_debug_misc("signals test", "jabber IQ (type=%s, id=%s, from=%s) %p\n",
+	                  type, id, from ? from : "(null)", iq);
 
 	/* We don't want the plugin to stop processing */
 	return FALSE;
@@ -641,9 +641,10 @@ static gboolean
 jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
                         const char *from, const char *to, xmlnode *message)
 {
-	purple_debug_misc("signals test", "received message (type=%s, id=%s, "
+	purple_debug_misc("signals test", "jabber message (type=%s, id=%s, "
 	                  "from=%s to=%s) %p\n",
-	                  type, id, from, to, message);
+	                  type ? type : "(null)", id ? id : "(null)",
+	                  from ? from : "(null)", to ? to : "(null)", message);
 
 	/* We don't want the plugin to stop processing */
 	return FALSE;
@@ -653,8 +654,8 @@ static gboolean
 jabber_presence_received(PurpleConnection *pc, const char *type,
                          const char *from, xmlnode *presence)
 {
-	purple_debug_misc("signals test", "received presence (type=%s, from=%s) %p\n",
-	                  type, from, presence);
+	purple_debug_misc("signals test", "jabber presence (type=%s, from=%s) %p\n",
+	                  type ? type : "(null)", from ? from : "(null)", presence);
 
 	/* We don't want the plugin to stop processing */
 	return FALSE;
