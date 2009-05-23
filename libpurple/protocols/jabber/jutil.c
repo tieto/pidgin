@@ -223,6 +223,50 @@ const char *jabber_normalize(const PurpleAccount *account, const char *in)
 	return buf;
 }
 
+gboolean
+jabber_is_own_server(JabberStream *js, const char *str)
+{
+	JabberID *jid;
+	gboolean equal;
+
+	if (str == NULL)
+		return FALSE;
+
+	g_return_val_if_fail(*str != '\0', FALSE);
+
+	jid = jabber_id_new(str);
+	if (!jid)
+		return FALSE;
+
+	equal = (jid->node == NULL &&
+	         g_str_equal(jid->domain, js->user->domain) &&
+	         jid->resource == NULL);
+	jabber_id_free(jid);
+	return equal;
+}
+
+gboolean
+jabber_is_own_account(JabberStream *js, const char *str)
+{
+	JabberID *jid;
+	gboolean equal;
+
+	if (str == NULL)
+		return TRUE;
+
+	g_return_val_if_fail(*str != '\0', FALSE);
+
+	jid = jabber_id_new(str);
+	if (!jid)
+		return FALSE;
+
+	equal = (g_str_equal(jid->node, js->user->node) &&
+	         g_str_equal(jid->domain, js->user->domain) &&
+	         jid->resource == NULL);
+	jabber_id_free(jid);
+	return equal;
+}
+
 PurpleConversation *
 jabber_find_unnormalized_conv(const char *name, PurpleAccount *account)
 {
