@@ -48,6 +48,7 @@
 #include "gtkconv.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
+#include "gtkdisco.h"
 #include "gtkdocklet.h"
 #include "gtkeventloop.h"
 #include "gtkft.h"
@@ -308,6 +309,7 @@ pidgin_ui_init(void)
 	pidgin_privacy_init();
 	pidgin_xfers_init();
 	pidgin_roomlist_init();
+	pidgin_disco_init();
 	pidgin_log_init();
 	pidgin_docklet_init();
 	pidgin_smileys_init();
