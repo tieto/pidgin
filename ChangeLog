@@ -46,6 +46,8 @@ version 2.6.0 (??/??/2009):
 	* Support custom smileys in MUCs (only when all participants support the
 	  "Bits of Binary" extension, and a maximum of 10 participants are in the
 	  chat to avoid getting too many fetch requests).
+	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
+	  to require SSL not being respected.
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)
