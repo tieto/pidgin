@@ -141,7 +141,14 @@ resolve(int in, int out)
 	}
 
 	size = res_query( query.query, C_IN, query.type, (u_char*)&answer, sizeof( answer));
-	
+	if (size == -1) {
+		write(out, &(query.type), sizeof(query.type));
+		write(out, &size, sizeof(int));
+		close(out);
+		close(in);
+		_exit(0);
+	}
+
 	qdcount = ntohs(answer.hdr.qdcount);
 	ancount = ntohs(answer.hdr.ancount);
 	cp = (guchar*)&answer + sizeof(HEADER);
@@ -223,59 +230,73 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 	PurpleSrvQueryData *query_data = (PurpleSrvQueryData*)data;
 	int i;
 	int status;
-	
+
 	if (read(source, &type, sizeof(type)) == sizeof(type)) {
-		if (type == T_SRV) {
-			PurpleSrvResponse *res;
-			PurpleSrvResponse *tmp;
-			PurpleSrvCallback cb = query_data->cb.srv;
-			if (read(source, &size, sizeof(int)) == sizeof(int)) {
-				ssize_t red;
-				purple_debug_info("dnssrv","found %d SRV entries\n", size);
-				tmp = res = g_new0(PurpleSrvResponse, size);
-				for (i = 0; i < size; i++) {
-					red = read(source, tmp++, sizeof(PurpleSrvResponse));
-					if (red != sizeof(PurpleSrvResponse)) {
-						purple_debug_error("dnssrv","unable to read srv "
-								"response: %s\n", g_strerror(errno));
-						size = 0;
-						g_free(res);
-						res = NULL;
-					}
+		if (read(source, &size, sizeof(size)) == sizeof(size)) {
+			if (size == -1 || size == 0) {
+				if (size == -1) {
+					purple_debug_warning("dnssrv", "res_query returned an error\n");
+					/* Re-read resolv.conf and friends in case DNS servers have changed */
+					res_init();
+				} else
+					purple_debug_info("dnssrv", "Found 0 entries, errno is %i\n", errno);
+
+				if (type == T_SRV) {
+					PurpleSrvCallback cb = query_data->cb.srv;
+					cb(NULL, 0, query_data->extradata);
+				} else if (type == T_TXT) {
+					PurpleTxtCallback cb = query_data->cb.txt;
+					cb(NULL, query_data->extradata);
+				} else {
+					purple_debug_error("dnssrv", "type unknown of DNS result entry; errno is %i\n", errno);
 				}
-			} else {
-				purple_debug_info("dnssrv","found 0 SRV entries; errno is %i\n", errno);
-				size = 0;
-				res = NULL;
-			}
-			cb(res, size, query_data->extradata);
-		} else if (type == T_TXT) {
-			GSList *responses = NULL;
-			PurpleTxtResponse *res;
-			PurpleTxtCallback cb = query_data->cb.txt;
-			if (read(source, &size, sizeof(int)) == sizeof(int)) {
-				ssize_t red;
-				purple_debug_info("dnssrv","found %d TXT entries\n", size);
-				res = g_new0(PurpleTxtResponse, 1);
-				for (i = 0; i < size; i++) {
-					red = read(source, res, sizeof(PurpleTxtResponse));
-					if (red != sizeof(PurpleTxtResponse)) {
-						purple_debug_error("dnssrv","unable to read txt "
-								"response: %s\n", g_strerror(errno));
-						size = 0;
-						g_free(res);
-						g_slist_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
-						g_slist_free(responses);
-						responses = NULL;
-						break;
+
+			} else if (size) {
+				if (type == T_SRV) {
+					PurpleSrvResponse *res;
+					PurpleSrvResponse *tmp;
+					PurpleSrvCallback cb = query_data->cb.srv;
+					ssize_t red;
+					purple_debug_info("dnssrv","found %d SRV entries\n", size);
+					tmp = res = g_new0(PurpleSrvResponse, size);
+					for (i = 0; i < size; i++) {
+						red = read(source, tmp++, sizeof(PurpleSrvResponse));
+						if (red != sizeof(PurpleSrvResponse)) {
+							purple_debug_error("dnssrv","unable to read srv "
+									"response: %s\n", g_strerror(errno));
+							size = 0;
+							g_free(res);
+							res = NULL;
+						}
 					}
+
+					cb(res, size, query_data->extradata);
+				} else if (type == T_TXT) {
+					GSList *responses = NULL;
+					PurpleTxtResponse *res;
+					PurpleTxtCallback cb = query_data->cb.txt;
+					ssize_t red;
+					purple_debug_info("dnssrv","found %d TXT entries\n", size);
+					res = g_new0(PurpleTxtResponse, 1);
+					for (i = 0; i < size; i++) {
+						red = read(source, res, sizeof(PurpleTxtResponse));
+						if (red != sizeof(PurpleTxtResponse)) {
+							purple_debug_error("dnssrv","unable to read txt "
+									"response: %s\n", g_strerror(errno));
+							size = 0;
+							g_free(res);
+							g_slist_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
+							g_slist_free(responses);
+							responses = NULL;
+							break;
+						}
+					}
+
+					cb(responses, query_data->extradata);
+				} else {
+					purple_debug_error("dnssrv", "type unknown of DNS result entry; errno is %i\n", errno);
 				}
-			} else {
-				purple_debug_info("dnssrv","found 0 TXT entries; errno is %i\n", errno);
 			}
-			cb(responses, query_data->extradata);			
-		} else {
-			purple_debug_info("dnssrv","type unknown of DNS result entry; errno is %i\n", errno);
 		}
 	}
 

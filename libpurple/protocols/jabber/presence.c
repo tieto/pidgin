@@ -100,7 +100,7 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	if (!purple_account_is_connected(account))
 		return;
-	
+
 	if (!purple_status_is_active(status))
 		return;
 
@@ -277,7 +277,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		xmlnode *query = xmlnode_new_child(presence, "query");
 		gchar seconds[10];
 		g_snprintf(seconds, 10, "%d", (int) (time(NULL) - js->idle));
-		
+
 		xmlnode_set_namespace(query, "jabber:iq:last");
 		xmlnode_set_attrib(query, "seconds", seconds);
 	}
@@ -361,10 +361,10 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 		if ((nick = xmlnode_get_child(vcard, "NICKNAME"))) {
 			char *tmp = xmlnode_get_data(nick);
 			char *bare_jid = jabber_get_bare_jid(from);
-			if (strstr(bare_jid, tmp) == NULL) {
+			if (tmp && strstr(bare_jid, tmp) == NULL) {
 				g_free(nickname);
 				nickname = tmp;
-			} else
+			} else if (tmp)
 				g_free(tmp);
 
 			g_free(bare_jid);
@@ -626,7 +626,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					avatar_hash = xmlnode_get_data(photo);
 				}
 			}
-		} else if (!strcmp(y->name, "query") && 
+		} else if (!strcmp(y->name, "query") &&
 			!strcmp(xmlnode_get_namespace(y), "jabber:iq:last")) {
 			/* resource has specified idle */
 			const gchar *seconds = xmlnode_get_attrib(y, "seconds");
@@ -644,7 +644,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			NULL);
 		purple_debug_info("jabber", "got delay %s yielding %ld s offset\n",
 			stamp, offset);
-		idle += offset; 
+		idle += offset;
 	}
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {

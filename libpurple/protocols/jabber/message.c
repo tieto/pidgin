@@ -649,7 +649,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					purple_debug_info("jabber", "found %d smileys\n",
 						g_list_length(smiley_refs));
 
-					if (smiley_refs) {		
+					if (smiley_refs) {
 						if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
 							JabberID *jid = jabber_id_new(jm->from);
 							JabberChat *chat = NULL;
@@ -667,7 +667,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 									who, account);
 							if (!conv) {
 								/* we need to create the conversation here */
-								conv = 
+								conv =
 									purple_conversation_new(PURPLE_CONV_TYPE_IM,
 									account, who);
 							}
@@ -959,7 +959,7 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 				/* do not attempt to send custom smileys in a MUC with more than
 				 10 people, to avoid getting too many BoB requests */
 				return jabber_chat_get_num_participants(chat) <= 10 &&
-					jabber_chat_all_participants_have_capability(chat, 
+					jabber_chat_all_participants_have_capability(chat,
 						XEP_0231_NAMESPACE);
 			} else {
 				return FALSE;
@@ -1185,7 +1185,6 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	jm->chat_state = JM_STATE_ACTIVE;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
-	jm->chat_state = JM_STATE_ACTIVE;
 
 	if(jbr) {
 		if(jbr->thread_id)

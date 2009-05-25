@@ -74,6 +74,7 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->media.title);
 	g_free(user->media.album);
 	g_free(user->statusline);
+	g_free(user->invite_message);
 
 	g_free(user);
 }
@@ -426,6 +427,15 @@ msn_user_set_client_caps(MsnUser *user, GHashTable *info)
 	user->clientcaps = info;
 }
 
+void
+msn_user_set_invite_message(MsnUser *user, const char *message)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->invite_message);
+	user->invite_message = g_strdup(message);
+}
+
 const char *
 msn_user_get_passport(const MsnUser *user)
 {
@@ -489,3 +499,12 @@ msn_user_get_client_caps(const MsnUser *user)
 
 	return user->clientcaps;
 }
+
+const char *
+msn_user_get_invite_message(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	return user->invite_message;
+}
+

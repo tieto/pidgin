@@ -67,7 +67,7 @@
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
-static PurplePlugin *my_protocol = NULL;
+PurplePlugin *jabber_plugin = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 GSList *jabber_cmds = NULL;
@@ -252,7 +252,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 {
 	const char *xmlns;
 
-	purple_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, packet);
+	purple_signal_emit(jabber_plugin, "jabber-receiving-xmlnode", js->gc, packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == *packet)
@@ -406,7 +406,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
 
-	purple_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
+	purple_signal_emit(jabber_plugin, "jabber-sending-text", js->gc, &data);
 	if (data == NULL)
 		return;
 
@@ -458,7 +458,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	char *txt;
 	int len;
 
-	purple_signal_emit(my_protocol, "jabber-sending-xmlnode", js->gc, &packet);
+	purple_signal_emit(jabber_plugin, "jabber-sending-xmlnode", js->gc, &packet);
 
 	/* if we get NULL back, we're done processing */
 	if(NULL == packet)
@@ -483,7 +483,7 @@ void jabber_keepalive(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 
 	if (js->keepalive_timeout == -1) {
-		jabber_ping_jid(js, js->user->domain);
+		jabber_keepalive_ping(js);
 		js->keepalive_timeout = purple_timeout_add_seconds(120,
 				(GSourceFunc)(jabber_keepalive_timeout), gc);
 	}
@@ -595,7 +595,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 }
 
-static void 
+static void
 txt_resolved_cb(GSList *responses, gpointer data)
 {
 	JabberStream *js = data;
@@ -608,7 +608,7 @@ txt_resolved_cb(GSList *responses, gpointer data)
 		purple_connection_error_reason (js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
-		return;	
+		return;
 	}
 
 	while (responses) {
@@ -1577,7 +1577,7 @@ void jabber_close(PurpleConnection *gc)
 		purple_dnsquery_destroy(js->stun_query);
 		js->stun_query = NULL;
 	}
-		
+
 	g_free(js);
 
 	gc->proto_data = NULL;
@@ -1798,14 +1798,14 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	/* both required according to XEP-0030 */
 	g_return_if_fail(category != NULL);
 	g_return_if_fail(type != NULL);
-	
+
 	for(identity = jabber_identities; identity; identity = identity->next) {
 		JabberIdentity *ident = (JabberIdentity*)identity->data;
 		if (!strcmp(ident->category, category) &&
 		    !strcmp(ident->type, type) &&
 		    ((!ident->lang && !lang) || (ident->lang && lang && !strcmp(ident->lang, lang)))) {
 			return;
-		}	
+		}
 	}
 
 	ident = g_new0(JabberIdentity, 1);
@@ -1897,7 +1897,7 @@ char *jabber_status_text(PurpleBuddy *b)
 }
 
 static void
-jabber_tooltip_add_resource_text(JabberBuddyResource *jbr, 
+jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 	PurpleNotifyUserInfo *user_info, gboolean multiple_resources)
 {
 	char *text = NULL;
@@ -1930,13 +1930,13 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 	g_free(label);
 	g_free(value);
 	g_free(text);
-	
+
 	/* if the resource is idle, show that */
 	/* only show it if there is more than one resource available for
 	the buddy, since the "general" idleness will be shown anyway,
 	this way we can see see the idleness of lower-priority resources */
 	if (jbr->idle && multiple_resources) {
-		gchar *idle_str = 
+		gchar *idle_str =
 			purple_str_seconds_to_string(time(NULL) - jbr->idle);
 		label = g_strdup_printf("%s%s", _("Idle"), (res ? res : ""));
 		purple_notify_user_info_add_pair(user_info, label, idle_str);
@@ -1969,13 +1969,13 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		const char *sub;
 		GList *l;
 		const char *mood;
-		gboolean multiple_resources = 
+		gboolean multiple_resources =
 			jb->resources && g_list_next(jb->resources);
 		JabberBuddyResource *top_jbr = jabber_buddy_find_resource(jb, NULL);
 
 		/* resource-specific info for the top resource */
 		if (top_jbr) {
-			jabber_tooltip_add_resource_text(top_jbr, user_info, 
+			jabber_tooltip_add_resource_text(top_jbr, user_info,
 				multiple_resources);
 		}
 
@@ -1987,7 +1987,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					multiple_resources);
 			}
 		}
-		
+
 		if (full) {
 			PurpleStatus *status;
 
@@ -2889,7 +2889,7 @@ typedef struct {
 	PurpleAccount *account;
 	gchar *who;
 	PurpleMediaSessionType type;
-	
+
 } JabberMediaRequest;
 
 static void
@@ -2918,7 +2918,7 @@ jabber_media_ok_cb(JabberMediaRequest *request, PurpleRequestFields *fields)
 #endif
 
 gboolean
-jabber_initiate_media(PurpleAccount *account, const char *who, 
+jabber_initiate_media(PurpleAccount *account, const char *who,
 		      PurpleMediaSessionType type)
 {
 #ifdef USE_VV
@@ -3302,7 +3302,7 @@ jabber_ipc_contact_has_feature(PurpleAccount *account, const gchar *jid,
 		return FALSE;
 	js = gc->proto_data;
 
-	if (!(resource = jabber_get_resource(jid)) || 
+	if (!(resource = jabber_get_resource(jid)) ||
 	    !(jb = jabber_buddy_find(js, jid, FALSE)) ||
 	    !(jbr = jabber_buddy_find_resource(jb, resource))) {
 		g_free(resource);
@@ -3328,7 +3328,7 @@ jabber_ipc_add_feature(const gchar *feature)
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
-	my_protocol = plugin;
+	jabber_plugin = plugin;
 
 	jabber_add_identity("client", "pc", NULL, PACKAGE);
 

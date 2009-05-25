@@ -714,6 +714,9 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 			case OSCAR_CAPABILITY_ICHATAV:
 				tmp = _("iChat AV");
 				break;
+			case OSCAR_CAPABILITY_LIVEVIDEO:
+				tmp = _("Live Video");
+				break;
 			case OSCAR_CAPABILITY_CAMERA:
 				tmp = _("Camera");
 				break;
@@ -3563,7 +3566,8 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 	alerturl  = va_arg(ap, char *);
 	va_end(ap);
 
-	if (account != NULL && emailinfo != NULL && emailinfo->unread && havenewmail) {
+	if (account != NULL && emailinfo != NULL && purple_account_get_check_mail(account) &&
+			emailinfo->unread && havenewmail) {
 		gchar *to = g_strdup_printf("%s%s%s",
 				purple_account_get_username(account),
 				emailinfo->domain ? "@" : "",

@@ -7,18 +7,23 @@ version 2.6.0 (??/??/2009):
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
 	  of code project in 2008.
 	* It should no longer be possible to end up with duplicates of buddies
-	  in a group on the buddy list.
+	  in a group on the buddy list. (Paul Aurich)
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
+	* DNS servers are re-read when DNS queries fail in case the system has
+	  moved to a new network and the old servers are not accessible.
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), and
 	  voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
-	* Support for in-band bytestreams for file transfers (XEP-0047).
+	* Support for in-band bytestreams for file transfers (XEP-0047). (Marcus
+	  Lundblad)
 	* Support for sending and receiving attentions (equivalent to "buzz"
 	  and "nudge") using the command /buzz. (XEP-0224)
 	* Support for connecting using BOSH. (Tobias Markmann)
@@ -38,9 +43,11 @@ version 2.6.0 (??/??/2009):
 	  contains formatting.
 	* Show when the user was last logged in when doing "Get Info" on an offline
 	  buddy, provided the server supports it.
-	* Support custom smileys in MUCs (only when all participants supports the
+	* Support custom smileys in MUCs (only when all participants support the
 	  "Bits of Binary" extension, and a maximum of 10 participants are in the
-	  chat (to avoid getting too many fetch requests).
+	  chat to avoid getting too many fetch requests).
+	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
+	  to require SSL not being respected.
 
 	Yahoo:
 	* P2P file transfers. (Sulabh Mahajan)
@@ -48,6 +55,11 @@ version 2.6.0 (??/??/2009):
 	  (Sulabh Mahajan)
 	* Sending text messages (address to +<countrycode><phone number>).
 	  (Sulabh Mahajan)
+	* Addition of MSN buddies to Yahoo accounts by adding them as
+	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
+	* Yahoo Protocol 16 support, including new HTTPS login method; this should
+	  fix a number of login problems that have recently cropped up.  (Sulabh
+	  Mahajan, Mike "Maiku" Ruprecht)
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
