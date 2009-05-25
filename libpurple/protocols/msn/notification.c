@@ -919,10 +919,10 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 			passport = g_strdup_printf("%s@%s", local, domain);
 
-			if (!g_ascii_isdigit(cmd->command[0]) && type != NULL)
-				network = (MsnNetwork)strtoul(type, NULL, 10);
-			else
+			if (g_ascii_isdigit(cmd->command[0]))
 				network = MSN_NETWORK_UNKNOWN;
+			else if (type != NULL)
+				network = (MsnNetwork)strtoul(type, NULL, 10);
 
 			purple_debug_info("msn", "FQY response says %s is from network %d\n",
 			                  passport, network);
