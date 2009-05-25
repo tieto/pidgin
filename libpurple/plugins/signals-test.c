@@ -624,6 +624,44 @@ notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint c
 }
 
 /**************************************************************************
+ * Jabber signals callbacks
+ **************************************************************************/
+static gboolean
+jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
+                   const char *from, xmlnode *iq)
+{
+	purple_debug_misc("signals test", "jabber IQ (type=%s, id=%s, from=%s) %p\n",
+	                  type, id, from ? from : "(null)", iq);
+
+	/* We don't want the plugin to stop processing */
+	return FALSE;
+}
+
+static gboolean
+jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
+                        const char *from, const char *to, xmlnode *message)
+{
+	purple_debug_misc("signals test", "jabber message (type=%s, id=%s, "
+	                  "from=%s to=%s) %p\n",
+	                  type ? type : "(null)", id ? id : "(null)",
+	                  from ? from : "(null)", to ? to : "(null)", message);
+
+	/* We don't want the plugin to stop processing */
+	return FALSE;
+}
+
+static gboolean
+jabber_presence_received(PurpleConnection *pc, const char *type,
+                         const char *from, xmlnode *presence)
+{
+	purple_debug_misc("signals test", "jabber presence (type=%s, from=%s) %p\n",
+	                  type ? type : "(null)", from ? from : "(null)", presence);
+
+	/* We don't want the plugin to stop processing */
+	return FALSE;
+}
+
+/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
@@ -638,6 +676,7 @@ plugin_load(PurplePlugin *plugin)
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
+	void *jabber_handle   = purple_plugins_find_with_id("prpl-jabber");
 
 	/* Accounts subsystem signals */
 	purple_signal_connect(accounts_handle, "account-connecting",
@@ -783,6 +822,24 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(notify_handle, "displaying-emails-notification",
 						plugin, PURPLE_CALLBACK(notify_emails_cb), NULL);
 
+	/* Jabber signals */
+	if (jabber_handle) {
+		purple_signal_connect(jabber_handle, "jabber-receiving-iq", plugin,
+		                      PURPLE_CALLBACK(jabber_iq_received), NULL);
+		purple_signal_connect(jabber_handle, "jabber-receiving-message", plugin,
+		                      PURPLE_CALLBACK(jabber_message_received), NULL);
+		purple_signal_connect(jabber_handle, "jabber-receiving-presence", plugin,
+		                      PURPLE_CALLBACK(jabber_presence_received), NULL);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin)
+{
+	purple_signals_disconnect_by_handle(plugin);
+
 	return TRUE;
 }
 
@@ -808,7 +865,7 @@ static PurplePluginInfo info =
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
+	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

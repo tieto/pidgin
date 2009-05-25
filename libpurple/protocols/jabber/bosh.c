@@ -57,7 +57,7 @@ struct _PurpleBOSHConnection {
 	/* decoded URL */
 	char *host;
 	int port;
-	char *path; 
+	char *path;
 
 	/* Must be big enough to hold 2^53 - 1 */
 	guint64 rid;
@@ -281,7 +281,7 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 		 * connection.
 		 */
 		chosen = conn->connections[0];
-	
+
 		if (!chosen->ready)
 			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
 					"things may happen.\n");
@@ -296,12 +296,12 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 		 */
 		if (data) {
 			int len = data ? strlen(data) : 0;
-			purple_circ_buffer_append(conn->pending, data, len); 
+			purple_circ_buffer_append(conn->pending, data, len);
 		}
 		return;
 	}
 
-	packet = g_string_new("");
+	packet = g_string_new(NULL);
 
 	g_string_printf(packet, "<body "
 	                "rid='%" G_GUINT64_FORMAT "' "
@@ -349,7 +349,7 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 	const char *type;
 
 	type = xmlnode_get_attrib(node, "type");
-	
+
 	if (type != NULL && !strcmp(type, "terminate")) {
 		conn->ready = FALSE;
 		purple_connection_error_reason (conn->js->gc,
@@ -418,7 +418,7 @@ static void auth_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 			jabber_process_packet(js, &child);
 		}
 	} else {
-		purple_debug_warning("jabber", "Received unexepcted empty BOSH packet.\n");	
+		purple_debug_warning("jabber", "Received unexepcted empty BOSH packet.\n");
 	}
 }
 
@@ -448,10 +448,13 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 	if (version) {
 		const char *dot = strstr(version, ".");
-		int major = atoi(version);
-		int minor = atoi(dot + 1);
+		int major, minor = 0;
 
 		purple_debug_info("jabber", "BOSH connection manager version %s\n", version);
+
+		major = atoi(version);
+		if (dot)
+			minor = atoi(dot + 1);
 
 		if (major != 1 || minor < 6) {
 			purple_connection_error_reason(conn->js->gc,
@@ -484,11 +487,11 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	packet = xmlnode_get_child(node, "features");
 	conn->js->use_bosh = TRUE;
 	conn->receive_cb = auth_response_cb;
-	jabber_stream_features_parse(conn->js, packet);		
+	jabber_stream_features_parse(conn->js, packet);
 }
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
-	GString *buf = g_string_new("");
+	GString *buf = g_string_new(NULL);
 
 	g_string_printf(buf, "<body content='text/xml; charset=utf-8' "
 	                "secure='true' "
@@ -627,13 +630,24 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	if (!conn->headers_done) {
 		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length");
-		const char *end_of_headers = purple_strcasestr(cursor, "\r\n\r\n");
+		const char *end_of_headers = strstr(cursor, "\r\n\r\n");
 
 		/* Make sure Content-Length is in headers, not body */
-		if (content_length && content_length < end_of_headers) {
-			char *sep = strstr(content_length, ": ");
-			int len = atoi(sep + 2);
-			if (len == 0) 
+		if (content_length && (!end_of_headers || content_length < end_of_headers)) {
+			const char *sep;
+			const char *eol;
+			int len;
+
+			if ((sep = strstr(content_length, ": ")) == NULL ||
+					(eol = strstr(sep, "\r\n")) == NULL)
+				/*
+				 * The packet ends in the middle of the Content-Length line.
+				 * We'll try again later when we have more.
+				 */
+				return;
+
+			len = atoi(sep + 2);
+			if (len == 0)
 				purple_debug_warning("jabber", "Found mangled Content-Length header.\n");
 
 			conn->body_len = len;
@@ -686,26 +700,24 @@ http_connection_read(PurpleHTTPConnection *conn)
 	int cnt, count = 0;
 
 	if (!conn->buf)
-		conn->buf = g_string_new("");
+		conn->buf = g_string_new(NULL);
 
-	/* Read once to prime cnt before the loop */
-	if (conn->psc)
-		cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
-	else
-		cnt = read(conn->fd, buffer, sizeof(buffer));
-	while (cnt > 0) {
-		count += cnt;
-		g_string_append_len(conn->buf, buffer, cnt);
-
+	do {
 		if (conn->psc)
 			cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
 		else
 			cnt = read(conn->fd, buffer, sizeof(buffer));
-	}
+
+		if (cnt > 0) {
+			count += cnt;
+			g_string_append_len(conn->buf, buffer, cnt);
+		}
+	} while (cnt > 0);
 
 	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
 		if (cnt < 0)
-			purple_debug_info("jabber", "bosh read=%d, errno=%d\n", cnt, errno);
+			purple_debug_info("jabber", "bosh read=%d, errno=%d, error=%s\n",
+			                  cnt, errno, g_strerror(errno));
 		else
 			purple_debug_info("jabber", "bosh server closed the connection\n");
 
@@ -718,8 +730,8 @@ http_connection_read(PurpleHTTPConnection *conn)
 		/* Process what we do have */
 	}
 
-
-	jabber_bosh_http_connection_process(conn);
+	if (conn->buf->len > 0)
+		jabber_bosh_http_connection_process(conn);
 }
 
 static void

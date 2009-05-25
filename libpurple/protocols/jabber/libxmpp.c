@@ -46,8 +46,6 @@
 #include "data.h"
 #include "ibb.h"
 
-PurplePlugin *jabber_plugin = NULL;
-
 static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
@@ -127,8 +125,6 @@ static PurplePluginProtocolInfo prpl_info =
 
 static gboolean load_plugin(PurplePlugin *plugin)
 {
-	jabber_plugin = plugin;
-
 	purple_signal_register(plugin, "jabber-receiving-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
@@ -145,7 +141,7 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
 
 	purple_signal_register(plugin, "jabber-receiving-message",
-			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER,
 			purple_value_new(PURPLE_TYPE_BOOLEAN), 6,
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			purple_value_new(PURPLE_TYPE_STRING), /* type */
@@ -173,13 +169,13 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE)); /* child */
 
 	purple_signal_register(plugin, "jabber-register-namespace-watcher",
-			purple_marshal_VOID__POINTER_POINTER_POINTER,
+			purple_marshal_VOID__POINTER_POINTER,
 			NULL, 2,
 			purple_value_new(PURPLE_TYPE_STRING),  /* node */
 			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
 
 	purple_signal_register(plugin, "jabber-unregister-namespace-watcher",
-			purple_marshal_VOID__POINTER_POINTER_POINTER,
+			purple_marshal_VOID__POINTER_POINTER,
 			NULL, 2,
 			purple_value_new(PURPLE_TYPE_STRING),  /* node */
 			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
@@ -218,8 +214,6 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 
 	/* Stay on target...stay on target... Almost there... */
 	jabber_uninit_plugin();
-
-	jabber_plugin = NULL;
 
 	return TRUE;
 }

@@ -1044,14 +1044,14 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	if (!jbi->jb->resources) {
 		/* the buddy is offline */
-		gchar *status = 
-			g_strdup_printf("%s%s%s",	_("Offline"), 
+		gchar *status =
+			g_strdup_printf("%s%s%s",	_("Offline"),
 				jbi->last_message ? ": " : "",
 				jbi->last_message ? jbi->last_message : "");
 		if (jbi->last_seconds > 0) {
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
 			gchar *message = g_strdup_printf(_("%s ago"), last);
-			purple_notify_user_info_prepend_pair(user_info, 
+			purple_notify_user_info_prepend_pair(user_info,
 				_("Logged off"), message);
 			g_free(last);
 			g_free(message);
@@ -1460,49 +1460,50 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 				if(seconds) {
 					char *end = NULL;
 					long sec = strtol(seconds, &end, 10);
-                    JabberBuddy *jb = NULL;
-                    char *resource = NULL;
-                    char *buddy_name = NULL;
+					JabberBuddy *jb = NULL;
+					char *resource = NULL;
+					char *buddy_name = NULL;
 					JabberBuddyResource *jbr = NULL;
 
-                    if(end != seconds) {
+					if(end != seconds) {
 						JabberBuddyInfoResource *jbir = g_hash_table_lookup(jbi->resources, resource_name);
 						if(jbir) {
 							jbir->idle_seconds = sec;
 						}
 					}
-                    /* Update the idle time of the buddy resource, if we got it. 
-                     This will correct the value when a server doesn't mark 
-                     delayed presence and we got the presence when signing on */
-                    jb = jabber_buddy_find(js, from, FALSE);
-                    if (jb) {
-                        resource = jabber_get_resource(from);
-                        buddy_name = jabber_get_bare_jid(from);
-                        /* if the resource already has an idle time set, we
-                         must have gotten it originally from a presence. In
-                         this case we update it. Otherwise don't update it, to
-                         avoid setting an idle and not getting informed about
-                         the resource getting unidle */
-                        if (resource && buddy_name) {
-                            jbr = jabber_buddy_find_resource(jb, resource);
-                            
-                            if (jbr->idle) {
-                                if (sec) {
-                                    jbr->idle = time(NULL) - sec;
-                                } else {
-                                    jbr->idle = 0;
-                                }
-                            
-                                if (jbr == 
-                                    jabber_buddy_find_resource(jb, NULL)) {
-                                    purple_prpl_got_user_idle(js->gc->account, 
-                                        buddy_name, jbr->idle, jbr->idle);
-                                }
-                            }
-                        }
-                        g_free(resource);
-                        g_free(buddy_name);
-                    }
+					/* Update the idle time of the buddy resource, if we got it.
+					 This will correct the value when a server doesn't mark
+					 delayed presence and we got the presence when signing on */
+					jb = jabber_buddy_find(js, from, FALSE);
+					if (jb) {
+						resource = jabber_get_resource(from);
+						buddy_name = jabber_get_bare_jid(from);
+						/* if the resource already has an idle time set, we
+						 must have gotten it originally from a presence. In
+						 this case we update it. Otherwise don't update it, to
+						 avoid setting an idle and not getting informed about
+						 the resource getting unidle */
+						if (resource && buddy_name) {
+							jbr = jabber_buddy_find_resource(jb, resource);
+							if (jbr) {
+								if (jbr->idle) {
+									if (sec) {
+										jbr->idle = time(NULL) - sec;
+									} else {
+										jbr->idle = 0;
+									}
+
+									if (jbr ==
+										jabber_buddy_find_resource(jb, NULL)) {
+										purple_prpl_got_user_idle(js->gc->account,
+											buddy_name, jbr->idle, jbr->idle);
+									}
+								}
+							}
+						}
+						g_free(resource);
+						g_free(buddy_name);
+					}
 				}
 			}
 		}
@@ -1749,7 +1750,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
 		jabber_iq_send(iq);
 	}
-	
+
 	js->pending_buddy_info_requests = g_slist_prepend(js->pending_buddy_info_requests, jbi);
 	jbi->timeout_handle = purple_timeout_add_seconds(30, jabber_buddy_get_info_timeout, jbi);
 }
@@ -2500,7 +2501,7 @@ jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 	if (node)
 		purple_debug_info("jabber", "Found cap: %s\n", cap);
 	else
-		purple_debug_info("jabber", "Cap %s not found\n", cap); 
+		purple_debug_info("jabber", "Cap %s not found\n", cap);
 
 	return (node != NULL);
 }

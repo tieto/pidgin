@@ -41,7 +41,7 @@ static guint       save_timer = 0;
 
 /**
  *	Processes a query-node and returns a JabberCapsClientInfo object with all relevant info.
- *	
+ *
  *	@param 	query 	A query object.
  *	@return 		A JabberCapsClientInfo object.
  */
@@ -192,7 +192,7 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 		xmlnode *feature = xmlnode_new_child(client, "feature");
 		xmlnode_set_attrib(feature, "var", feat);
 	}
-	
+
 	for(iter = props->forms; iter; iter = g_list_next(iter)) {
 		/* FIXME: See #7814 */
 		xmlnode *xdata = iter->data;
@@ -329,7 +329,7 @@ jabber_caps_load(void)
 
 void jabber_caps_init(void)
 {
-	nodetable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)jabber_caps_node_exts_unref); 
+	nodetable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)jabber_caps_node_exts_unref);
 	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, NULL, (GDestroyNotify)jabber_caps_client_info_destroy);
 	jabber_caps_load();
 }
@@ -589,7 +589,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	}
 
 	userdata = g_new0(jabber_caps_cbplususerdata, 1);
-	/* This ref is given to fetching the basic node#ver info if we need it 
+	/* This ref is given to fetching the basic node#ver info if we need it
 	 * or unrefed at the bottom of this function */
 	cbplususerdata_ref(userdata);
 	userdata->cb = cb;
@@ -659,7 +659,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 				jabber_iq_set_callback(iq, jabber_caps_ext_iqcb, cbdata);
 				jabber_iq_send(iq);
 
-				++userdata->extOutstanding;	
+				++userdata->extOutstanding;
 			}
 			exts[i] = NULL;
 		}
@@ -681,7 +681,7 @@ jabber_identity_compare(gconstpointer a, gconstpointer b)
 	const JabberIdentity *bc;
 	gint cat_cmp;
 	gint typ_cmp;
-	
+
 	ac = a;
 	bc = b;
 
@@ -723,7 +723,7 @@ jabber_xdata_compare(gconstpointer a, gconstpointer b)
 
 	aformtype = jabber_caps_get_formtype(aformtypefield);
 	bformtype = jabber_caps_get_formtype(bformtypefield);
-	
+
 	result = strcmp(aformtype, bformtype);
 	g_free(aformtype);
 	g_free(bformtype);
@@ -737,7 +737,7 @@ static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 
 	if (!query || strcmp(query->xmlns, "http://jabber.org/protocol/disco#info"))
 		return 0;
-	
+
 	info = g_new0(JabberCapsClientInfo, 1);
 
 	for(child = query->child; child; child = child->next) {
@@ -846,7 +846,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 		char *type = g_markup_escape_text(id->type, -1);
 		char *lang = NULL;
 		char *name = NULL;
-		
+
 		if (id->lang)
 			lang = g_markup_escape_text(id->lang, -1);
 		if (id->name)
@@ -878,7 +878,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 
 		while (fields) {
 			GList *value;
-			JabberDataFormField *field = (JabberDataFormField*)fields->data; 
+			JabberDataFormField *field = (JabberDataFormField*)fields->data;
 
 			if (strcmp(field->var, "FORM_TYPE")) {
 				/* Append the "var" attribute */

@@ -140,8 +140,6 @@ pidgin_headers = \
 	gtkcellrendererprogress.h \
 	gtkcellview.h \
 	gtkcellviewmenuitem.h \
-	gtkcellview.h \
-	gtkcellviewmenuitem.h \
 	gtkcertmgr.h \
 	pidgincombobox.h \
 	gtkconn.h \
