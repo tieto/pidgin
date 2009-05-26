@@ -1,9 +1,31 @@
+pidgin (2.4.3-4lenny2~bpo40+1) etch-backports; urgency=medium
+
+  * Security rebuild for etch-backports to fix CVE-2009-1373 (buffer overflow),
+    CVE-2009-1375 (memory corruption), and CVE-2009-1376 (integer overflow).
+  * Make pidgin.menu etch-style (use Apps/Net)
+  * Do not require a specific version for libnss3-dev (the one in etch works)
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Tue, 26 May 2009 16:00:28 +0200
+
+pidgin (2.4.3-4lenny2) stable-security; urgency=low
+
+  * debian/patches/30_CVE-2009-1373.patch:
+    - fix a buffer overflow in XMPP when initiating file transfer with a
+      client and it sends back malformed response
+  * debian/patches/31_CVE-2009-1375.patch:
+    - fix a memory corruption that can sometimes happen if an internal
+      buffer is full when more bytes are available from the network
+  * debian/patches/32_CVE-2009-1376.patch:
+    - fix a buffer overflow in MSN SLP handling
+
+ -- Ari Pollak <ari@debian.org>  Tue, 12 May 2009 18:54:42 -0400
+
 pidgin (2.4.3-4lenny1) stable; urgency=low
 
   * debian/patches/29_icq-version.patch:  
-   - Apply stripped-down patch to change client version in ICQ; this 
-     should fix ICQ servers rejecting this purple version for now.
-     (Closes: #518988)
+    - Apply stripped-down patch to change client version in ICQ; this 
+      should fix ICQ servers rejecting this purple version for now.
+      (Closes: #518988)
 
  -- Ari Pollak <ari@debian.org>  Tue, 10 Mar 2009 20:19:38 -0400
 
