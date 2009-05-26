@@ -65,7 +65,6 @@ PIDGIN_C_SRC =	\
 			gtkconv.c \
 			gtkdebug.c \
 			gtkdialogs.c \
-			gtkdisco.c \
 			gtkdnd-hints.c \
 			gtkdocklet.c \
 			gtkeventloop.c \

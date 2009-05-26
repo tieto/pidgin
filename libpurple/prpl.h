@@ -70,7 +70,6 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "proxy.h"
 #include "plugin.h"
 #include "roomlist.h"
-#include "disco.h"
 #include "status.h"
 #include "whiteboard.h"
 
@@ -482,11 +481,6 @@ struct _PurplePluginProtocolInfo
 	 */
 	PurpleMediaCaps (*get_media_caps)(PurpleAccount *account,
 					  const char *who);
-
-	/**
-	 * Service discovery prpl callbacks
-	 */
-	PurpleDiscoList *(*disco_get_list)(PurpleConnection *gc);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

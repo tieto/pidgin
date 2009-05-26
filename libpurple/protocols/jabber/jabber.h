@@ -269,12 +269,6 @@ struct _JabberStream
 	int stun_port;
 	PurpleDnsQueryData *stun_query;
 	/* later add stuff to handle TURN relays... */
-
-	/**
-	 * The last server the user disco'd (or NULL) via the server discovery
-	 * API.
-	 */
-	char *last_disco_server;
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);

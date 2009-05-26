@@ -31,13 +31,6 @@ excluded = [\
     "purple_account_unregister",
     "purple_connection_new_unregister",
 
-    # Similar to all the above:
-    "purple_disco_list_set_service_close_func",
-    "purple_disco_list_set_cancel_func",
-    "purple_disco_list_set_protocol_data",
-    "purple_disco_list_set_expand_func",
-    "purple_disco_list_set_register_func",
-
     # These functions are excluded because they involve setting arbitrary
     # data via pointers for protocols and UIs.  This just won't work.
     "purple_blist_get_ui_data",

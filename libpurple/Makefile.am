@@ -47,7 +47,6 @@ purple_coresources = \
 	core.c \
 	debug.c \
 	desktopitem.c \
-	disco.c \
 	eventloop.c \
 	ft.c \
 	idle.c \
@@ -108,7 +107,6 @@ purple_coreheaders = \
 	dbus-maybe.h \
 	debug.h \
 	desktopitem.h \
-	disco.h \
 	eventloop.h \
 	ft.h \
 	gaim-compat.h \
@@ -185,7 +183,7 @@ dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
-                connection.h conversation.h core.h disco.h ft.h log.h notify.h prefs.h roomlist.h \
+                connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
                 savedstatuses.h smiley.h status.h server.h util.h xmlnode.h prpl.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \

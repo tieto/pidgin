@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap gestures gevolution musicmessaging perl ticker
+DIST_SUBDIRS = cap disco gestures gevolution musicmessaging perl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -26,6 +26,7 @@ SUBDIRS = \
 	$(GEVOLUTION_DIR) \
 	$(MUSICMESSAGING_DIR) \
 	$(PERL_DIR) \
+	disco \
 	ticker
 
 plugindir = $(libdir)/pidgin

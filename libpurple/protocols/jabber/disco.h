@@ -46,10 +46,4 @@ void jabber_disco_items_server(JabberStream *js);
 void jabber_disco_info_do(JabberStream *js, const char *who,
 		JabberDiscoInfoCallback *callback, gpointer data);
 
-PurpleDiscoList *jabber_disco_get_list(PurpleConnection *gc);
-
-void jabber_disco_items_do(JabberStream *js, const char *jid, const char *node,
-		JabberDiscoItemsCallback *callback, gpointer data);
-void jabber_disco_item_free(JabberDiscoItem *);
-
 #endif /* PURPLE_JABBER_DISCO_H_ */

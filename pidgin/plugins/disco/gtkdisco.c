@@ -25,40 +25,19 @@
  */
 
 #include "internal.h"
-#include "pidgin.h"
-#include "gtkutils.h"
 #include "debug.h"
-#include "disco.h"
+#include "gtkutils.h"
+#include "pidgin.h"
+#include "request.h"
 
 #include "gtkdisco.h"
+#include "xmppdisco.h"
 
-typedef struct _PidginDiscoDialog {
-	GtkWidget *window;
-	GtkWidget *account_widget;
-	
-	GtkWidget *sw;
-	GtkWidget *progress;
-
-	GtkWidget *stop_button;
-	GtkWidget *list_button;
-	GtkWidget *register_button;
-	GtkWidget *add_button;
-	GtkWidget *close_button;
-
-	PurpleAccount *account;
-	PurpleDiscoList *discolist;
-} PidginDiscoDialog;
-
-typedef struct _PidginDiscoList {
-	PidginDiscoDialog *dialog;
-	GtkTreeStore *model;
-	GtkWidget *tree;
-	GHashTable *services;
-} PidginDiscoList;
+GList *dialogs = NULL;
 
 struct _menu_cb_info {
-	PurpleDiscoList *list;
-	PurpleDiscoService *service;
+	PidginDiscoList *list;
+	XmppDiscoService *service;
 };
 
 enum {
@@ -69,57 +48,147 @@ enum {
 	NUM_OF_COLUMNS
 };
 
+static void
+pidgin_disco_list_destroy(PidginDiscoList *list)
+{
+	g_hash_table_destroy(list->services);
+	if (list->dialog && list->dialog->discolist == list)
+		list->dialog->discolist = NULL;
+
+	if (list->tree) {
+		gtk_widget_destroy(list->tree);
+		list->tree = NULL;
+	}
+
+	g_free((gchar*)list->server);
+	g_free(list);
+}
+
+PidginDiscoList *pidgin_disco_list_ref(PidginDiscoList *list)
+{
+	g_return_val_if_fail(list != NULL, NULL);
+
+	++list->ref;
+    purple_debug_misc("xmppdisco", "reffing list, ref count now %d\n", list->ref);
+
+	return list;
+}
+
+void pidgin_disco_list_unref(PidginDiscoList *list)
+{
+	g_return_if_fail(list != NULL);
+
+	--list->ref;
+
+	purple_debug_misc("xmppdisco", "unreffing list, ref count now %d\n", list->ref);
+	if (list->ref == 0)
+		pidgin_disco_list_destroy(list);
+}
+
+void pidgin_disco_list_set_in_progress(PidginDiscoList *list, gboolean in_progress)
+{
+	PidginDiscoDialog *dialog = list->dialog;
+
+	if (!dialog)
+		return;
+
+	list->in_progress = in_progress;
+
+	if (in_progress) {
+		gtk_widget_set_sensitive(dialog->account_widget, FALSE);
+		gtk_widget_set_sensitive(dialog->stop_button, TRUE);
+		gtk_widget_set_sensitive(dialog->browse_button, FALSE);
+	} else {
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(dialog->progress), 0.0);
+
+		gtk_widget_set_sensitive(dialog->account_widget, TRUE);
+
+		gtk_widget_set_sensitive(dialog->stop_button, FALSE);
+		gtk_widget_set_sensitive(dialog->browse_button, TRUE);
+/*
+		gtk_widget_set_sensitive(dialog->register_button, FALSE);
+		gtk_widget_set_sensitive(dialog->add_button, FALSE);
+*/
+	}
+}
+
 static void pidgin_disco_create_tree(PidginDiscoList *pdl);
 
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 				     PidginDiscoDialog *dialog)
 {
 	dialog->account = account;
+	gtk_widget_set_sensitive(dialog->browse_button, account != NULL);
 }
 
 static void register_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
-	PurpleAccount *account;
-	PurpleConnection *gc;
 
-	account = purple_disco_list_get_account(info->list);
-	gc = purple_account_get_connection(account);
-
-	purple_disco_service_register(info->service);
+	xmpp_disco_service_register(info->service);
 }
 
-static void list_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
+static void discolist_cancel_cb(PidginDiscoList *pdl, const char *server)
 {
-	PurpleConnection *gc;
+	pidgin_disco_list_set_in_progress(pdl, FALSE);
+	pidgin_disco_list_unref(pdl);
+}
+
+static void discolist_ok_cb(PidginDiscoList *pdl, const char *server)
+{
+	gtk_widget_set_sensitive(pdl->dialog->browse_button, TRUE);
+
+	if (!server || !*server) {
+		purple_notify_error(my_plugin, _("Invalid Server"), _("Invalid Server"),
+		                    NULL);
+
+		pidgin_disco_list_set_in_progress(pdl, FALSE);
+		pidgin_disco_list_unref(pdl);
+		return;
+	}
+
+	pdl->server = g_strdup(server);
+	pidgin_disco_list_set_in_progress(pdl, TRUE);
+	xmpp_disco_start(pdl);
+}
+
+static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
+{
+	PurpleConnection *pc;
 	PidginDiscoList *pdl;
 
-	gc = purple_account_get_connection(dialog->account);
-	if (!gc)
+	pc = purple_account_get_connection(dialog->account);
+	if (!pc)
 		return;
 
+	gtk_widget_set_sensitive(dialog->browse_button, FALSE);
 	gtk_widget_set_sensitive(dialog->add_button, FALSE);
 	gtk_widget_set_sensitive(dialog->register_button, FALSE);
 
 	if (dialog->discolist != NULL) {
-		pdl = purple_disco_list_get_ui_data(dialog->discolist);
-		gtk_widget_destroy(pdl->tree);
-		purple_disco_list_unref(dialog->discolist);
+		gtk_widget_destroy(dialog->discolist->tree);
+		pidgin_disco_list_unref(dialog->discolist);
 	}
 
-	dialog->discolist = purple_disco_get_list(gc);
-	if (!dialog->discolist)
-		return;
+	pdl = dialog->discolist = g_new0(PidginDiscoList, 1);
+	pdl->services = g_hash_table_new_full(NULL, NULL, NULL,
+			(GDestroyNotify)gtk_tree_row_reference_free);
+	pdl->pc = pc;
 	/* We keep a copy... */
-	purple_disco_list_ref(dialog->discolist);
+	pidgin_disco_list_ref(pdl);
 
-	pdl = purple_disco_list_get_ui_data(dialog->discolist);
 	pdl->dialog = dialog;
-
 	pidgin_disco_create_tree(pdl);
 
 	if (dialog->account_widget)
 		gtk_widget_set_sensitive(dialog->account_widget, FALSE);
+
+	purple_request_input(my_plugin, _("Server name request"), _("Enter an XMPP Server"),
+			_("Select an XMPP server to query"),
+			"jabber.org" /* FIXME */, FALSE, FALSE, NULL,
+			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
+			_("Cancel"), PURPLE_CALLBACK(discolist_cancel_cb),
+			purple_connection_get_account(pc), NULL, NULL, pdl);
 }
 
 static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
@@ -130,10 +199,10 @@ static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 
 	g_return_if_fail(info != NULL);
 
-	account = purple_disco_list_get_account(info->list);
-	name = purple_disco_service_get_name(info->service);
+	account = purple_connection_get_account(info->list->pc);
+	name = info->service->name;
 
-	if (purple_disco_service_get_type(info->service) == PURPLE_DISCO_SERVICE_TYPE_CHAT)
+	if (info->service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
 		purple_blist_request_add_chat(account, NULL, NULL, name);
 	else
 		purple_blist_request_add_buddy(account, name, NULL, NULL);
@@ -142,8 +211,7 @@ static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 static void
 selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 {
-	PurpleDiscoService *service;
-	PurpleDiscoServiceFlags flags;
+	XmppDiscoService *service;
 	GtkTreeIter iter;
 	GValue val;
 	static struct _menu_cb_info *info;
@@ -167,10 +235,8 @@ selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 		                       info, g_free);
 		g_object_set_data(G_OBJECT(dialog->register_button), "disco-info", info);
 
-		flags = purple_disco_service_get_flags(service);
-
-		gtk_widget_set_sensitive(dialog->add_button, flags & PURPLE_DISCO_ADD);
-		gtk_widget_set_sensitive(dialog->register_button, flags & PURPLE_DISCO_REGISTER);
+		gtk_widget_set_sensitive(dialog->add_button, service->flags & XMPP_DISCO_ADD);
+		gtk_widget_set_sensitive(dialog->register_button, service->flags & XMPP_DISCO_REGISTER);
 	} else {
 		gtk_widget_set_sensitive(dialog->add_button, FALSE);
 		gtk_widget_set_sensitive(dialog->register_button, FALSE);
@@ -182,7 +248,7 @@ row_expanded_cb(GtkTreeView *tree, GtkTreeIter *arg1, GtkTreePath *rg2,
                 gpointer user_data)
 {
 	PidginDiscoList *pdl;
-	PurpleDiscoService *service;
+	XmppDiscoService *service;
 	GValue val;
 
 	pdl = user_data;
@@ -191,75 +257,43 @@ row_expanded_cb(GtkTreeView *tree, GtkTreeIter *arg1, GtkTreePath *rg2,
 	gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), arg1, SERVICE_COLUMN,
 	                         &val);
 	service = g_value_get_pointer(&val);
-	purple_disco_service_expand(service);
+	xmpp_disco_service_expand(service);
 }
 
-static gint
-delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
+static void
+destroy_win_cb(GtkWidget *window, gpointer d)
 {
 	PidginDiscoDialog *dialog = d;
+	PidginDiscoList *list = dialog->discolist;
 
-	if (dialog->discolist && purple_disco_list_get_in_progress(dialog->discolist))
-		purple_disco_cancel_get_list(dialog->discolist);
+	if (list) {
+		list->dialog = NULL;
 
-	if (dialog->discolist) {
-		PidginDiscoList *pdl = purple_disco_list_get_ui_data(dialog->discolist);
+		if (list->in_progress)
+			list->in_progress = FALSE;
 
-		if (pdl)
-			pdl->dialog = NULL;
-		purple_disco_list_unref(dialog->discolist);
+		pidgin_disco_list_unref(list);
 	}
 
+	dialogs = g_list_remove(dialogs, d);
 	g_free(dialog);
-
-	return FALSE;
 }
 
 static void stop_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
-	purple_disco_cancel_get_list(dialog->discolist);
-
-	if (dialog->account_widget)
-		gtk_widget_set_sensitive(dialog->account_widget, TRUE);
-
-	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
-	gtk_widget_set_sensitive(dialog->list_button, TRUE);
-	gtk_widget_set_sensitive(dialog->add_button, FALSE);
+	pidgin_disco_list_set_in_progress(dialog->discolist, FALSE);
 }
 
 static void close_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	GtkWidget *window = dialog->window;
 
-	delete_win_cb(NULL, NULL, dialog);
 	gtk_widget_destroy(window);
 }
 
 static gboolean account_filter_func(PurpleAccount *account)
 {
-	PurpleConnection *conn = purple_account_get_connection(account);
-	PurplePluginProtocolInfo *prpl_info = NULL;
-
-	if (conn)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
-
-	return (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, disco_get_list));
-}
-
-gboolean
-pidgin_disco_is_showable()
-{
-	GList *c;
-	PurpleConnection *gc;
-
-	for (c = purple_connections_get_all(); c != NULL; c = c->next) {
-		gc = c->data;
-
-		if (account_filter_func(purple_connection_get_account(gc)))
-			return TRUE;
-	}
-
-	return FALSE;
+	return purple_strequal(purple_account_get_protocol_id(account), XMPP_PLUGIN_ID);
 }
 
 static void pidgin_disco_create_tree(PidginDiscoList *pdl)
@@ -289,7 +323,7 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 
 	text_renderer = gtk_cell_renderer_text_new();
 	pixbuf_renderer = gtk_cell_renderer_pixbuf_new();
-	
+
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Name"));
 
@@ -320,20 +354,58 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 	g_signal_connect(G_OBJECT(pdl->tree), "row-expanded", G_CALLBACK(row_expanded_cb), pdl);
 }
 
-static PidginDiscoDialog*
-pidgin_disco_dialog_new_with_account(PurpleAccount *account)
+void pidgin_disco_signed_off_cb(PurpleConnection *pc)
+{
+	GList *node;
+
+	for (node = dialogs; node; node = node->next) {
+		PidginDiscoDialog *dialog = node->data;
+		PidginDiscoList *list = dialog->discolist;
+
+		if (list && list->pc == pc) {
+			if (list->in_progress)
+				pidgin_disco_list_set_in_progress(list, FALSE);
+
+			if (list->tree) {
+				gtk_widget_destroy(list->tree);
+				list->tree = NULL;
+			}
+
+			pidgin_disco_list_unref(list);
+			dialog->discolist = NULL;
+
+			gtk_widget_set_sensitive(dialog->browse_button,
+					pidgin_account_option_menu_get_selected(dialog->account_widget) != NULL);
+
+			gtk_widget_set_sensitive(dialog->register_button, FALSE);
+			gtk_widget_set_sensitive(dialog->add_button, FALSE);
+		}
+	}
+}
+
+void pidgin_disco_dialogs_destroy_all(void)
+{
+	while (dialogs) {
+		PidginDiscoDialog *dialog = dialogs->data;
+
+		gtk_widget_destroy(dialog->window);
+		/* destroy_win_cb removes the dialog from the list */
+	}
+}
+
+PidginDiscoDialog *pidgin_disco_dialog_new(void)
 {
 	PidginDiscoDialog *dialog;
 	GtkWidget *window, *vbox, *vbox2, *bbox;
 
 	dialog = g_new0(PidginDiscoDialog, 1);
-	dialog->account = account;
+	dialogs = g_list_prepend(dialogs, dialog);
 
 	/* Create the window. */
 	dialog->window = window = pidgin_create_dialog(_("Service Discovery"), PIDGIN_HIG_BORDER, "service discovery", TRUE);
 
-	g_signal_connect(G_OBJECT(window), "delete_event",
-					 G_CALLBACK(delete_win_cb), dialog);
+	g_signal_connect(G_OBJECT(window), "destroy",
+					 G_CALLBACK(destroy_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
 	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(window), FALSE, PIDGIN_HIG_BORDER);
@@ -343,10 +415,9 @@ pidgin_disco_dialog_new_with_account(PurpleAccount *account)
 	gtk_widget_show(vbox2);
 
 	/* accounts dropdown list */
-	dialog->account_widget = pidgin_account_option_menu_new(dialog->account, FALSE,
+	dialog->account_widget = pidgin_account_option_menu_new(NULL, FALSE,
 	                         G_CALLBACK(dialog_select_account_cb), account_filter_func, dialog);
-	if (!dialog->account) /* this is normally null, and we normally don't care what the first selected item is */
-		dialog->account = pidgin_account_option_menu_get_selected(dialog->account_widget);
+	dialog->account = pidgin_account_option_menu_get_selected(dialog->account_widget);
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox2), _("_Account:"), NULL, dialog->account_widget, TRUE, NULL);
 
 	/* scrolled window */
@@ -366,7 +437,6 @@ pidgin_disco_dialog_new_with_account(PurpleAccount *account)
 	gtk_box_pack_start(GTK_BOX(vbox2), dialog->progress, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->progress);
 
-
 	/* button box */
 	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(window));
 	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
@@ -377,13 +447,14 @@ pidgin_disco_dialog_new_with_account(PurpleAccount *account)
 	                 G_CALLBACK(stop_button_cb), dialog);
 	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
 
-	/* list button */
-	dialog->list_button = pidgin_pixbuf_button_from_stock(_("_Browse"), GTK_STOCK_REFRESH,
+	/* browse button */
+	dialog->browse_button = pidgin_pixbuf_button_from_stock(_("_Browse"), GTK_STOCK_REFRESH,
 	                                                    PIDGIN_BUTTON_HORIZONTAL);
-	gtk_box_pack_start(GTK_BOX(bbox), dialog->list_button, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(dialog->list_button), "clicked",
-	                 G_CALLBACK(list_button_cb), dialog);
-	gtk_widget_show(dialog->list_button);
+	gtk_box_pack_start(GTK_BOX(bbox), dialog->browse_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(dialog->browse_button), "clicked",
+	                 G_CALLBACK(browse_button_cb), dialog);
+	gtk_widget_set_sensitive(dialog->browse_button, dialog->account != NULL);
+	gtk_widget_show(dialog->browse_button);
 
 	/* register button */
 	dialog->register_button = pidgin_dialog_add_button(GTK_DIALOG(dialog->window), _("Register"),
@@ -409,90 +480,18 @@ pidgin_disco_dialog_new_with_account(PurpleAccount *account)
 	return dialog;
 }
 
-void
-pidgin_disco_dialog_show(void)
+void pidgin_disco_add_service(PidginDiscoList *pdl, XmppDiscoService *service, XmppDiscoService *parent)
 {
-	pidgin_disco_dialog_new_with_account(NULL);
-}
-
-void
-pidgin_disco_dialog_show_with_account(PurpleAccount* account)
-{
-	PidginDiscoDialog *dialog = pidgin_disco_dialog_new_with_account(account);
-
-	if (!dialog)
-		return;
-
-	list_button_cb(GTK_BUTTON(dialog->list_button), dialog);
-}
-
-static void
-pidgin_disco_create(PurpleDiscoList *list)
-{
-	PidginDiscoList *pdl = g_new0(PidginDiscoList, 1);
-
-	purple_disco_list_set_ui_data(list, pdl);
-
-	pdl->services = g_hash_table_new_full(NULL, NULL, NULL,
-			(GDestroyNotify)gtk_tree_row_reference_free);
-}
-
-
-static void
-pidgin_disco_destroy(PurpleDiscoList *list)
-{
-	PidginDiscoList *pdl;
-
-	pdl = purple_disco_list_get_ui_data(list);
-
-	g_hash_table_destroy(pdl->services);
-	g_free(pdl);
-
-	purple_disco_list_set_ui_data(list, NULL);
-}
-
-static void pidgin_disco_in_progress(PurpleDiscoList *list, gboolean in_progress)
-{
-	PidginDiscoList *pdl;
 	PidginDiscoDialog *dialog;
-	
-	pdl = purple_disco_list_get_ui_data(list);
-	if (!pdl)
-		return;
-
-	dialog = pdl->dialog;
-	if (!dialog)
-		return;
-
-	if (in_progress) {
-		if (dialog->account_widget)
-			gtk_widget_set_sensitive(dialog->account_widget, FALSE);
-		gtk_widget_set_sensitive(dialog->stop_button, TRUE);
-		gtk_widget_set_sensitive(dialog->list_button, FALSE);
-	} else {
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(dialog->progress), 0.0);
-		if (dialog->account_widget)
-			gtk_widget_set_sensitive(dialog->account_widget, TRUE);
-		gtk_widget_set_sensitive(dialog->stop_button, FALSE);
-		gtk_widget_set_sensitive(dialog->list_button, TRUE);
-	}
-}
-
-static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *service, PurpleDiscoService *parent)
-{
-	PidginDiscoList *pdl;
-	PidginDiscoDialog *dialog;
-	PurpleDiscoServiceType type;
-	const char *gateway_type;
 	GtkTreeIter iter, parent_iter, child;
 	char *filename = NULL;
 	GdkPixbuf *pixbuf = NULL;
 	gboolean append = TRUE;
 
-	pdl = purple_disco_list_get_ui_data(list);
 	dialog = pdl->dialog;
+	g_return_if_fail(dialog != NULL);
 
-	purple_debug_info("disco", "Add_service \"%s\"\n", purple_disco_service_get_name(service));
+	purple_debug_info("xmppdisco", "Adding service \"%s\"\n", service->name);
 
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(dialog->progress));
 
@@ -508,7 +507,7 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 
 			if (gtk_tree_model_iter_children(GTK_TREE_MODEL(pdl->model), &child,
 			                                 &parent_iter)) {
-				PurpleDiscoList *tmp;
+				PidginDiscoList *tmp;
 				gtk_tree_model_get(GTK_TREE_MODEL(pdl->model), &child,
 				                   SERVICE_COLUMN, &tmp, -1);
 				if (!tmp)
@@ -522,7 +521,7 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 	else
 		iter = child;
 
-	if (purple_disco_service_get_flags(service) & PURPLE_DISCO_BROWSE) {
+	if (service->flags & XMPP_DISCO_BROWSE) {
 		GtkTreeRowReference *rr;
 		GtkTreePath *path;
 
@@ -534,18 +533,15 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 		gtk_tree_path_free(path);
 	}
 
-	type = purple_disco_service_get_type(service);
-	gateway_type = purple_disco_service_get_gateway_type(service);
-
-	if (type == PURPLE_DISCO_SERVICE_TYPE_GATEWAY && gateway_type) {
-		char *tmp = g_strconcat(gateway_type, ".png", NULL);
+	if (service->type == XMPP_DISCO_SERVICE_TYPE_GATEWAY && service->gateway_type) {
+		char *tmp = g_strconcat(service->gateway_type, ".png", NULL);
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", tmp, NULL);
 		g_free(tmp);
 #if 0
-	} else if (type == PURPLE_DISCO_SERVICE_TYPE_USER) {
+	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_USER) {
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "person.png", NULL);
 #endif
-	} else if (type == PURPLE_DISCO_SERVICE_TYPE_CHAT)
+	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "chat.png", NULL);
 
 	if (filename) {
@@ -555,8 +551,8 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 
 	gtk_tree_store_set(pdl->model, &iter,
 			PIXBUF_COLUMN, pixbuf,
-			NAME_COLUMN, purple_disco_service_get_name(service),
-			DESCRIPTION_COLUMN, purple_disco_service_get_description(service),
+			NAME_COLUMN, service->name,
+			DESCRIPTION_COLUMN, service->description,
 			SERVICE_COLUMN, service,
 			-1);
 
@@ -564,19 +560,3 @@ static void pidgin_disco_add_service(PurpleDiscoList *list, PurpleDiscoService *
 		g_object_unref(pixbuf);
 }
 
-static PurpleDiscoUiOps ops = {
-	pidgin_disco_dialog_show_with_account,
-	pidgin_disco_create,
-	pidgin_disco_destroy,
-	pidgin_disco_add_service,
-	pidgin_disco_in_progress,
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-void pidgin_disco_init() {
-	purple_disco_set_ui_ops(&ops);
-}

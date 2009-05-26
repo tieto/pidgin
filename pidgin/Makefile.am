@@ -90,7 +90,6 @@ pidgin_SOURCES = \
 	gtkconv.c \
 	gtkdebug.c \
 	gtkdialogs.c \
-	gtkdisco.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
 	gtkdocklet-x11.c \
@@ -148,7 +147,6 @@ pidgin_headers = \
 	gtkconvwin.h \
 	gtkdebug.h \
 	gtkdialogs.h \
-	gtkdisco.h \
 	gtkdnd-hints.h \
 	gtkdocklet.h \
 	gtkeventloop.h \
