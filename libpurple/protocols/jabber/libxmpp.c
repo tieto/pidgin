@@ -34,6 +34,7 @@
 #include "iq.h"
 #include "jabber.h"
 #include "chat.h"
+#include "disco.h"
 #include "message.h"
 #include "roster.h"
 #include "si.h"
@@ -117,6 +118,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_unregister_account,		/* unregister_user */
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
+
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL, /* get_account_text_table */
 	jabber_initiate_media,          /* initiate_media */
