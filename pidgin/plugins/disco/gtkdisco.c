@@ -156,6 +156,9 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	PurpleConnection *pc;
 	PidginDiscoList *pdl;
+	const char *username;
+	const char *at, *slash;
+	char *server = NULL;
 
 	pc = purple_account_get_connection(dialog->account);
 	if (!pc)
@@ -166,7 +169,10 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	gtk_widget_set_sensitive(dialog->register_button, FALSE);
 
 	if (dialog->discolist != NULL) {
-		gtk_widget_destroy(dialog->discolist->tree);
+		if (dialog->discolist->tree) {
+			gtk_widget_destroy(dialog->discolist->tree);
+			dialog->discolist->tree = NULL;
+		}
 		pidgin_disco_list_unref(dialog->discolist);
 	}
 
@@ -183,12 +189,27 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	if (dialog->account_widget)
 		gtk_widget_set_sensitive(dialog->account_widget, FALSE);
 
+	username = purple_account_get_username(dialog->account);
+	at = g_utf8_strchr(username, -1, '@');
+	slash = g_utf8_strchr(username, -1, '/');
+	if (at && !slash) {
+		server = g_strdup_printf("%s", at + 1);
+	} else if (at && slash && at + 1 < slash) {
+		server = g_strdup_printf("%.*s", (int)(slash - (at + 1)), at + 1);
+	}
+
+	if (server == NULL)
+		/* This shouldn't ever happen since the account is connected */
+		server = g_strdup("jabber.org");
+
 	purple_request_input(my_plugin, _("Server name request"), _("Enter an XMPP Server"),
 			_("Select an XMPP server to query"),
-			"jabber.org" /* FIXME */, FALSE, FALSE, NULL,
+			server, FALSE, FALSE, NULL,
 			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
 			_("Cancel"), PURPLE_CALLBACK(discolist_cancel_cb),
 			purple_connection_get_account(pc), NULL, NULL, pdl);
+
+	g_free(server);
 }
 
 static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
