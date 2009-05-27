@@ -1665,6 +1665,8 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 		xmlnode *error, *x;
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
 		xmlnode_set_attrib(result->node, "id", id);
+		if (from)
+			xmlnode_set_attrib(result->node, "to", from);
 
 		error = xmlnode_new_child(result->node, "error");
 		xmlnode_set_attrib(error, "type", "cancel");
