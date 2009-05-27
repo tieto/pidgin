@@ -142,10 +142,10 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 		if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_CHAT)
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),
 			                 purple_connection_get_display_name(gc),
-			                 0, action, time(NULL));
+			                 PURPLE_MESSAGE_SEND, action, time(NULL));
 		else
 			purple_conv_im_write(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
-			                     action, 0, time(NULL));
+			                     action, PURPLE_MESSAGE_SEND, time(NULL));
 		g_free(action);
 	}
 
