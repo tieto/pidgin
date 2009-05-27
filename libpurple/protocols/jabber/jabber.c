@@ -1716,21 +1716,23 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 			"blocklist", "urn:xmpp:blocking");
 	account = purple_connection_get_account(js->gc);
 
-	if (blocklist == NULL)
+	if (type == JABBER_IQ_ERROR || blocklist == NULL)
 		return;
 
 	/* This is the only privacy method supported by XEP-0191 */
-	if (account->perm_deny != PUPRLE_PRIVACY_DENY_USERS)
+	if (account->perm_deny != PURPLE_PRIVACY_DENY_USERS)
 		account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
 
 	/*
-	 * FIXME: We should probably completely override the local list with
-	 * the contents of the server list instead of merging them.
+	 * TODO: When account->deny is something more than a hash table, this can
+	 * be re-written to find the set intersection and difference.
 	 */
+	while (account->deny)
+		purple_privacy_deny_remove(account, account->deny->data, TRUE);
+
 	item = xmlnode_get_child(blocklist, "item");
 	while (item != NULL) {
 		const char *jid = xmlnode_get_attrib(item, "jid");
-
 		purple_privacy_deny_add(account, jid, TRUE);
 		item = xmlnode_get_next_twin(item);
 	}
