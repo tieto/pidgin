@@ -1665,7 +1665,6 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 		xmlnode *error, *x;
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
 		xmlnode_set_attrib(result->node, "id", id);
-		xmlnode_set_attrib(result->node, "to", from);
 
 		error = xmlnode_new_child(result->node, "error");
 		xmlnode_set_attrib(error, "type", "cancel");
@@ -1687,6 +1686,19 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 		while (account->deny != NULL) {
 			purple_privacy_deny_remove(account, account->deny->data, TRUE);
 		}
+	} else if (item == NULL) {
+		/* An empty <block/> is bogus */
+		xmlnode *error, *x;
+		result = jabber_iq_new(js, JABBER_IQ_ERROR);
+		xmlnode_set_attrib(result->node, "id", id);
+
+		error = xmlnode_new_child(result->node, "error");
+		xmlnode_set_attrib(error, "type", "modify");
+		x = xmlnode_new_child(error, "bad-request");
+		xmlnode_set_namespace(x, "urn:ietf:params:xml:ns:xmpp-stanzas");
+
+		jabber_iq_send(result);
+		return;
 	} else {
 		for ( ; item; item = xmlnode_get_next_twin(item)) {
 			const char *jid = xmlnode_get_attrib(item, "jid");
