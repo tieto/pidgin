@@ -1652,6 +1652,73 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	jabber_presence_send(js, FALSE);
 }
 
+void jabber_blocklist_parse_push(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *child)
+{
+	JabberIq *result;
+	xmlnode *item;
+	PurpleAccount *account;
+	gboolean is_block;
+
+	if (!jabber_is_own_account(js, from)) {
+		xmlnode *error, *x;
+		result = jabber_iq_new(js, JABBER_IQ_ERROR);
+		xmlnode_set_attrib(result->node, "id", id);
+		if (from)
+			xmlnode_set_attrib(result->node, "to", from);
+
+		error = xmlnode_new_child(result->node, "error");
+		xmlnode_set_attrib(error, "type", "cancel");
+		x = xmlnode_new_child(error, "not-allowed");
+		xmlnode_set_namespace(x, "urn:ietf:params:xml:ns:xmpp-stanzas");
+
+		jabber_iq_send(result);
+		return;
+	}
+
+	account = purple_connection_get_account(js->gc);
+	is_block = g_str_equal(child->name, "block");
+
+	item = xmlnode_get_child(child, "item");
+	if (!is_block && item == NULL) {
+		/* Unblock everyone */
+		purple_debug_info("jabber", "Received unblock push. Unblocking everyone.\n");
+
+		while (account->deny != NULL) {
+			purple_privacy_deny_remove(account, account->deny->data, TRUE);
+		}
+	} else if (item == NULL) {
+		/* An empty <block/> is bogus */
+		xmlnode *error, *x;
+		result = jabber_iq_new(js, JABBER_IQ_ERROR);
+		xmlnode_set_attrib(result->node, "id", id);
+
+		error = xmlnode_new_child(result->node, "error");
+		xmlnode_set_attrib(error, "type", "modify");
+		x = xmlnode_new_child(error, "bad-request");
+		xmlnode_set_namespace(x, "urn:ietf:params:xml:ns:xmpp-stanzas");
+
+		jabber_iq_send(result);
+		return;
+	} else {
+		for ( ; item; item = xmlnode_get_next_twin(item)) {
+			const char *jid = xmlnode_get_attrib(item, "jid");
+			if (jid == NULL || *jid == '\0')
+				continue;
+
+			if (is_block)
+				purple_privacy_deny_add(account, jid, TRUE);
+			else
+				purple_privacy_deny_remove(account, jid, TRUE);
+		}
+	}
+
+	result = jabber_iq_new(js, JABBER_IQ_RESULT);
+	xmlnode_set_attrib(result->node, "id", id);
+	jabber_iq_send(result);
+}
+
 static void jabber_blocklist_parse(JabberStream *js, const char *from,
                                    JabberIqType type, const char *id,
                                    xmlnode *packet, gpointer data)
@@ -1663,13 +1730,23 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 			"blocklist", "urn:xmpp:blocking");
 	account = purple_connection_get_account(js->gc);
 
-	if (blocklist == NULL)
+	if (type == JABBER_IQ_ERROR || blocklist == NULL)
 		return;
+
+	/* This is the only privacy method supported by XEP-0191 */
+	if (account->perm_deny != PURPLE_PRIVACY_DENY_USERS)
+		account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+
+	/*
+	 * TODO: When account->deny is something more than a hash table, this can
+	 * be re-written to find the set intersection and difference.
+	 */
+	while (account->deny)
+		purple_privacy_deny_remove(account, account->deny->data, TRUE);
 
 	item = xmlnode_get_child(blocklist, "item");
 	while (item != NULL) {
 		const char *jid = xmlnode_get_attrib(item, "jid");
-
 		purple_privacy_deny_add(account, jid, TRUE);
 		item = xmlnode_get_next_twin(item);
 	}

@@ -46,11 +46,11 @@ version 2.6.0 (??/??/2009):
 	* Support custom smileys in MUCs (only when all participants support the
 	  "Bits of Binary" extension, and a maximum of 10 participants are in the
 	  chat to avoid getting too many fetch requests).
+	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
+	  to require SSL not being respected.
 
 	Yahoo:
-	* P2P file transfers. (Sulabh Mahajan)
-	* MSN Interoperability by adding MSN buddies as 'msn/user@example.com'.
-	  (Sulabh Mahajan)
+	* P2P file transfers.  (Sulabh Mahajan)
 	* Sending text messages (address to +<countrycode><phone number>).
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
@@ -85,6 +85,35 @@ version 2.6.0 (??/??/2009):
 	* The hardware cursor is updated correctly. This will be useful
 	  especially for users of braille terminals, screen readers etc.
 	* Added a TinyURL plugin, which aids copying longer URLs.
+
+version 2.5.6 (05/19/2009):
+	libpurple:
+	* Improve sleep behavior by aggregation of longer timeouts on second
+	  boundaries to allow better power saving.  (Arunan Balasubramaniam)
+	* Fix various crashes on exit.
+	* Make XML parsing more resilient to interactions with other libraries.
+	  This, along with the fix for libxml2 bug 564217, fixes the crashes
+	  on connect in XMPP with recent gst-plugins-bad (see #8830 for details).
+	* Many security related fixes.
+
+	IRC:
+	* Correctly handle WHOIS for users who are joined to a large number of
+	  channels.
+	* Notify the user if a /nick command fails, rather than trying
+	  fallback nicks.
+
+	MSN:
+	* Fix a race condition causing occasional Pidgin crashes.
+	* Fix some errors about the friendly name changing too fast caused
+	  by MSN/Yahoo integration buddies.
+
+	XMPP:
+	* Less likely to pop up a new conversation window in disregard of
+	  the "Hide new IM conversations" preference.
+
+	Yahoo:
+	* Fix a crash when sending very long messages.
+	* Fix a bug where UTF-8 status messages get garbled when going idle.
 
 version 2.5.5 (03/01/2009):
 	libpurple:

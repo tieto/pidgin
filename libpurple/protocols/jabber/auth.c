@@ -689,6 +689,18 @@ void jabber_auth_start_old(JabberStream *js)
 	JabberIq *iq;
 	xmlnode *query, *username;
 
+	/* We can end up here without encryption if the server doesn't support
+	 * <stream:features/> and we're not using old-style SSL.  If the user
+	 * is requiring SSL/TLS, we need to enforce it.
+	 */
+	if (!jabber_stream_is_ssl(js) &&
+			purple_account_get_bool(purple_connection_get_account(js->gc), "require_tls", FALSE)) {
+		purple_connection_error_reason (js->gc,
+			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
+			_("You require encryption, but it is not available on this server."));
+		return;
+	}
+
 #ifdef HAVE_CYRUS_SASL
 	/* If we have Cyrus SASL, then passwords will have been set
 	 * to OPTIONAL for this protocol. So, we need to do our own

@@ -1,30 +1,30 @@
-# translation of lo.po to Lao
+# translation of am.po to Armenian
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
+# David Avsharyan <avsharyan@gmail.com>, 2009.
 #
-# Anousak Souphavanh <anousak@gmail.com>, 2007, 2009.
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: lo\n"
+"Project-Id-Version: am\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-26 22:29-0700\n"
-"PO-Revision-Date: 2009-04-29 09:28+0700\n"
-"Last-Translator: Anousak Souphavanh <anousak@gmail.com>\n"
-"Language-Team: Lao <lo@li.org>\n"
+"POT-Creation-Date: 2009-05-26 20:21-0700\n"
+"PO-Revision-Date: 2009-05-20 17:37+0400\n"
+"Last-Translator: David Avsharyan <avsharyan@gmail.com>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-# "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr "ຟີນຊ໌"
+msgstr "Սերինոս"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "%s. ລອງ `%s -h' ເພື່ອຫາຂໍ້ມູນເພີ້ມ.\n"
+msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավագեք `%s -h'.\n"
 
 #, c-format
 msgid ""
@@ -37,6 +37,15 @@ msgid ""
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
+"%s\n"
+"Կիրառում: %s [OPTION]...\n"
+"\n"
+"  -c, --config=DIR    օգտագործել DIR կոնֆիգուրացիոն ֆայլերի համար\n"
+"  -d, --debug         կարգաբերվող հաղորդագրությունները տպել դեպի ստանդարտ "
+"սխալների հոսք\n"
+"  -h, --help          ցույց տալ այս օգնությունը և դուրս գալ\n"
+"  -n, --nologin       ոչ ինքնաբերաբար մուտք\n"
+"  -v, --version       ցույց տալ ընթացիկ տարբերակը և դուրս գալ\n"
 
 #, c-format
 msgid ""
@@ -45,83 +54,84 @@ msgid ""
 "http://developer.pidgin.im"
 msgstr ""
 
+#, fuzzy
 msgid "Error"
-msgstr "ຜິດພາດ"
+msgstr "Սխալներզ"
 
 msgid "Account was not added"
-msgstr "ບໍ່ໃດ້ເພີ້ມບັນຊີ "
-
-msgid "Username of an account must be non-empty."
-msgstr "ລະຫັດຜູ້ໃຊ້ຕ້ອງໃຫ້ມີຂໍ້ມູນ"
-
-msgid "New mail notifications"
-msgstr "ອີເເມວລ໌ໃຫ່ມເຕືອນ"
-
-msgid "Remember password"
-msgstr "ຈື່ລະຫັດພານ"
-
-msgid "There are no protocol plugins installed."
 msgstr ""
 
+msgid "Username of an account must be non-empty."
+msgstr "Օգտագործողի անունը  ..."
+
+msgid "New mail notifications"
+msgstr "Նոր նամակի ծանուցումներ"
+
+msgid "Remember password"
+msgstr "Հիշել գաղտնաբառը"
+
+msgid "There are no protocol plugins installed."
+msgstr "Այնտեղ տեղադրված չէ պրոտոկոլի ավելացումներ․"
+
 msgid "(You probably forgot to 'make install'.)"
-msgstr "ຄິດວ່າທ່ານລືມຂຽນ 'make install'"
+msgstr "(Հավանաբար դուք  մոռացել եք անեք 'make install'.)"
 
 msgid "Modify Account"
-msgstr "ປັບບັນຊີ"
+msgstr "Ձևափոխել Հաշիվը"
 
 msgid "New Account"
-msgstr "ບັນຊີໃຫມ່"
+msgstr "Նոր Հաշիվ"
 
 msgid "Protocol:"
-msgstr "ໂປໂຕໂກນ:"
+msgstr "Արձանագրություն։"
 
 msgid "Username:"
-msgstr "ຊື່ຜູ້ໃຊ້:"
+msgstr "Օգտագործողի անունը։"
 
 msgid "Password:"
-msgstr "ລະຫັດພ່ານ:"
+msgstr "Գաղտնաբառ։"
 
 msgid "Alias:"
-msgstr "ຊື່ຫລີ້ນ:"
+msgstr "Փոխանուն։"
 
 #. Register checkbox
 msgid "Create this account on the server"
-msgstr ""
+msgstr "Ստեղծել այս հաշիվը սերվերի վրա"
 
 #. Cancel button
 #. Cancel
 msgid "Cancel"
-msgstr "ຍົກເລີອກ"
+msgstr "Չեղյալ համարել"
 
 #. Save button
 #. Save
 msgid "Save"
-msgstr "ບັນທຶກ"
+msgstr "Պահպանել"
 
 #, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr "ເເນ່ທີ່ຈະລຶບ %s?"
+msgstr "Դուք համոզված եք, որ ցանկանում եք ջնջել %s?"
 
 msgid "Delete Account"
-msgstr "ລຶບບັນຊີ"
+msgstr "Ջնջել Հաշիվը"
 
 #. Delete button
 msgid "Delete"
-msgstr "ລຶບ"
+msgstr "Ջնջել"
 
 msgid "Accounts"
-msgstr "ບັນຊີທົວໄປ"
+msgstr "Հաշիվներ"
 
 msgid "You can enable/disable accounts from the following list."
-msgstr ""
+msgstr "Դուք կարող եք միացնել/անջատել հաշիվները հետևյալ ցանկից․"
 
 #. Add button
 msgid "Add"
-msgstr "ເພີ້ມ"
+msgstr "Ավելացնել"
 
 #. Modify button
 msgid "Modify"
-msgstr "ປັບ"
+msgstr "Փոփոխել"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
@@ -138,28 +148,30 @@ msgid "Authorize buddy?"
 msgstr ""
 
 msgid "Authorize"
-msgstr "ອະນຸມັດ"
+msgstr "Լիազորում"
 
 msgid "Deny"
-msgstr "ປະຕິເສດ"
+msgstr "Մերժել"
 
 #, c-format
 msgid ""
 "Online: %d\n"
 "Total: %d"
 msgstr ""
-"ອອນລາຍ: %d\n"
-"ຈໍານວນລວມ: %d"
+"Կապի մեջ: %d\n"
+"Ընդհանուր: %d"
 
 #, c-format
 msgid "Account: %s (%s)"
-msgstr "ບັນຊີ: %s (%s)"
+msgstr "Հաշիվ: %s (%s"
 
 #, c-format
 msgid ""
 "\n"
 "Last Seen: %s ago"
 msgstr ""
+"\n"
+"Last Seen: %s ago"
 
 msgid "Default"
 msgstr ""
@@ -346,7 +358,7 @@ msgstr ""
 #. Not masked?
 #. No hints?
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "New Instant Message"
 msgstr ""
@@ -355,16 +367,16 @@ msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
 
 msgid "Channel"
-msgstr ""
+msgstr "Ալիք"
 
 msgid "Join a Chat"
-msgstr ""
+msgstr "Միանալ զրույցին"
 
 msgid "Please enter the name of the chat you want to join."
 msgstr ""
 
 msgid "Join"
-msgstr ""
+msgstr "Միանալ"
 
 msgid ""
 "Please enter the username or alias of the person whose log you would like to "
@@ -379,31 +391,31 @@ msgid "Send IM..."
 msgstr ""
 
 msgid "Block/Unblock..."
-msgstr ""
+msgstr "Փակել/Բացել"
 
 msgid "Join Chat..."
-msgstr ""
+msgstr "Միանալ զրույցին ... "
 
 msgid "View Log..."
-msgstr ""
+msgstr "Նայել գրառումները․․․"
 
 msgid "View All Logs"
-msgstr ""
+msgstr "Նայել մատյանի բոլոր գրառումները"
 
 msgid "Show"
-msgstr ""
+msgstr "Ցույց տալ"
 
 msgid "Empty groups"
-msgstr ""
+msgstr "Դատարկ խմբեր"
 
 msgid "Offline buddies"
 msgstr ""
 
 msgid "Sort"
-msgstr ""
+msgstr "Դասակարգել"
 
 msgid "By Status"
-msgstr ""
+msgstr "Ըստ "
 
 msgid "Alphabetically"
 msgstr ""
@@ -415,7 +427,7 @@ msgid "Buddy"
 msgstr ""
 
 msgid "Chat"
-msgstr ""
+msgstr "Զրույց"
 
 msgid "Grouping"
 msgstr ""
@@ -3918,9 +3930,8 @@ msgstr ""
 msgid "Find Rooms"
 msgstr ""
 
-#, fuzzy
 msgid "Affiliations:"
-msgstr "ຊື່ຫລີ້ນ:"
+msgstr ""
 
 msgid "No users found"
 msgstr ""
@@ -7481,9 +7492,8 @@ msgstr ""
 msgid "Connecting to server"
 msgstr ""
 
-#, fuzzy
 msgid "QQ Error"
-msgstr "ຜິດພາດ"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -9827,9 +9837,8 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr ""
 
-#, fuzzy
 msgid "A_ccount"
-msgstr "ບັນຊີທົວໄປ"
+msgstr ""
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10034,9 +10043,9 @@ msgstr ""
 msgid "/Help/_About"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Account:</b> %s"
-msgstr "ບັນຊີ:"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -11055,9 +11064,8 @@ msgstr ""
 msgid "New _Message..."
 msgstr ""
 
-#, fuzzy
 msgid "_Accounts"
-msgstr "ບັນຊີ:"
+msgstr ""
 
 msgid "Plu_gins"
 msgstr ""
@@ -13252,7 +13260,7 @@ msgid "Remove IM window transparency on focus"
 msgstr ""
 
 msgid "Always on top"
-msgstr "ຢູ່ຂ້າງເທີງ ເລຶ້ອຍ ຯ "
+msgstr ""
 
 #. Buddy List trans options
 msgid "Buddy List Window"
@@ -13310,7 +13318,7 @@ msgid "Only when docked"
 msgstr ""
 
 msgid "Windows Pidgin Options"
-msgstr "ຈໍ ພິດຈິນ ໂຕເລືກ "
+msgstr ""
 
 msgid "Options specific to Pidgin for Windows."
 msgstr ""
@@ -13329,10 +13337,10 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "XMPP Console"
-msgstr "ຈໍ XMPP "
+msgstr ""
 
 msgid "Account: "
-msgstr "ບັນຊີ:"
+msgstr ""
 
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr ""
