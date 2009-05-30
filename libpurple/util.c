@@ -4008,7 +4008,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *request, gboolean include_headers,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
-	return purple_util_fetch_url_request_len(url, full,
+	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
 					     user_agent, http11,
 					     request, include_headers, -1,
 					     callback, user_data);
@@ -4017,6 +4017,17 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 PurpleUtilFetchUrlData *
 purple_util_fetch_url_request_len(const char *url, gboolean full,
 		const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data)
+{
+	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
+			user_agent, http11, request, include_headers, max_len, callback,
+			user_data);
+}
+
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+		const char *url, gboolean full,	const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
@@ -4057,11 +4068,11 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 		}
 
 		gfud->is_ssl = TRUE;
-		gfud->ssl_connection = purple_ssl_connect(NULL,
+		gfud->ssl_connection = purple_ssl_connect(account,
 				gfud->website.address, gfud->website.port,
 				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
 	} else {
-		gfud->connect_data = purple_proxy_connect(NULL, NULL,
+		gfud->connect_data = purple_proxy_connect(NULL, account,
 				gfud->website.address, gfud->website.port,
 				url_fetch_connect_cb, gfud);
 	}
