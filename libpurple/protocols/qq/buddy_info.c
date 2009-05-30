@@ -191,7 +191,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 		}
 		switch (field_infos[index].type) {
 			case QQ_FIELD_BOOL:
-				purple_notify_user_info_add_pair(user_info, field_infos[index].text,
+				purple_notify_user_info_add_pair(user_info, _(field_infos[index].text),
 					strtol(segments[index], NULL, 10) ? _("True") : _("False"));
 				break;
 			case QQ_FIELD_CHOICE:
@@ -200,7 +200,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 					choice_num = 0;
 				}
 
-				purple_notify_user_info_add_pair(user_info, field_infos[index].text, field_infos[index].choice[choice_num]);
+				purple_notify_user_info_add_pair(user_info, _(field_infos[index].text), field_infos[index].choice[choice_num]);
 				break;
 			case QQ_FIELD_LABEL:
 			case QQ_FIELD_STRING:
@@ -208,7 +208,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 			default:
 				if (strlen(segments[index]) != 0) {
 					utf8_value = qq_to_utf8(segments[index], QQ_CHARSET_DEFAULT);
-					purple_notify_user_info_add_pair(user_info, field_infos[index].text, utf8_value);
+					purple_notify_user_info_add_pair(user_info, _(field_infos[index].text), utf8_value);
 					g_free(utf8_value);
 				}
 				break;
@@ -348,18 +348,18 @@ static void field_request_new(PurpleRequestFieldGroup *group, gint index, gchar 
 			utf8_value = qq_to_utf8(segments[index], QQ_CHARSET_DEFAULT);
 			if (field_infos[index].type == QQ_FIELD_STRING) {
 				field = purple_request_field_string_new(
-						field_infos[index].id, field_infos[index].text, utf8_value, FALSE);
+					field_infos[index].id, _(field_infos[index].text), utf8_value, FALSE);
 			} else {
 				field = purple_request_field_string_new(
-						field_infos[index].id, field_infos[index].text, utf8_value, TRUE);
+					field_infos[index].id, _(field_infos[index].text), utf8_value, TRUE);
 			}
 			purple_request_field_group_add_field(group, field);
 			g_free(utf8_value);
 			break;
 		case QQ_FIELD_BOOL:
 			field = purple_request_field_bool_new(
-					field_infos[index].id, field_infos[index].text,
-					strtol(segments[index], NULL, 10) ? TRUE : FALSE);
+				field_infos[index].id, _(field_infos[index].text),
+				strtol(segments[index], NULL, 10) ? TRUE : FALSE);
 			purple_request_field_group_add_field(group, field);
 			break;
 		case QQ_FIELD_CHOICE:
@@ -374,7 +374,7 @@ static void field_request_new(PurpleRequestFieldGroup *group, gint index, gchar 
 				}
 			}
 			field = purple_request_field_choice_new(
-					field_infos[index].id, field_infos[index].text, choice_num);
+				field_infos[index].id, _(field_infos[index].text), choice_num);
 			for (i = 0; i < field_infos[index].choice_size; i++) {
 				purple_request_field_choice_add(field, field_infos[index].choice[i]);
 			}

@@ -228,12 +228,15 @@ static gboolean receiving_msg(PurpleAccount *account, char **sender, char **mess
 	if (!(*flags & PURPLE_MESSAGE_RECV) || *flags & PURPLE_MESSAGE_INVISIBLE)
 		return FALSE;
 
-	t = g_string_new(*message);
 	urls = purple_conversation_get_data(conv, "TinyURLs");
 	if (urls != NULL) /* message was cancelled somewhere? Reset. */
 		g_list_foreach(urls, free_urls, NULL);
 	g_list_free(urls);
-	urls = extract_urls(t->str);
+	urls = extract_urls(*message);
+	if (!urls)
+		return FALSE;
+
+	t = g_string_new(*message);
 	g_free(*message);
 	for (iter = urls; iter; iter = iter->next) {
 		if (g_utf8_strlen((char *)iter->data, -1) >= purple_prefs_get_int(PREF_LENGTH)) {

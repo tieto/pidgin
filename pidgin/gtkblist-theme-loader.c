@@ -81,6 +81,17 @@ pidgin_blist_loader_build(const gchar *dir)
 		{NULL, NULL}
 	};
 
+	expanded          = NULL;
+	collapsed         = NULL;
+	contact           = NULL;
+	online            = NULL;
+	away              = NULL;
+	offline           = NULL;
+	idle              = NULL;
+	message           = NULL;
+	message_nick_said = NULL;
+	status            = NULL;
+
 	/* Find the theme file */
 	g_return_val_if_fail(dir != NULL, NULL);
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
@@ -184,6 +195,10 @@ pidgin_blist_loader_build(const gchar *dir)
 			pidgin_theme_font_free(*lookups[i].font);
 		}
 	}
+
+	pidgin_theme_font_free(expanded);
+	pidgin_theme_font_free(collapsed);
+
 	xmlnode_free(root_node);
 	g_free(data);
 

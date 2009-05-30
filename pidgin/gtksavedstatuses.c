@@ -390,7 +390,7 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 
 	gtk_widget_set_sensitive(dialog->use_button, (num_selected == 1) && can_use);
 	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
-	gtk_widget_set_sensitive(dialog->delete_button, can_delete);
+	gtk_widget_set_sensitive(dialog->delete_button, num_selected > 0 && can_delete);
 
     g_list_free(sel_paths);
 }
@@ -648,6 +648,7 @@ pidgin_status_window_show(void)
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_MODIFY,
 			G_CALLBACK(status_window_modify_cb), dialog);
 	dialog->modify_button = button;
+	gtk_widget_set_sensitive(button, FALSE);
 
 	/* Delete button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_DELETE,

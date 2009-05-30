@@ -674,8 +674,8 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "wd<br>\n");
 	g_string_append(info, "x6719620<br>\n");
 	g_string_append(info, "netelk<br>\n");
-	g_string_append(info, "and more, please let me know... thank you!<br>\n");
-	g_string_append(info, "<br>\n");
+	g_string_append(info, _("and more, please let me know... thank you!))"));
+	g_string_append(info, "<br>\n<br>\n");
 	g_string_append(info, _("<p><i>And, all the boys in the backroom...</i><br>\n"));
 	g_string_append(info, _("<i>Feel free to join us!</i> :)"));
 	g_string_append(info, "</body></html>");

@@ -166,7 +166,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	url = yd->jp ? YAHOOJP_ALIAS_FETCH_URL : YAHOO_ALIAS_FETCH_URL;
 	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
 	request = g_strdup_printf("GET %s%s/%s HTTP/1.1\r\n"
-				 "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+				 "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 				 "Cookie: T=%s; Y=%s\r\n"
 				 "Host: %s\r\n"
 				 "Cache-Control: no-cache\r\n\r\n",
@@ -334,7 +334,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 
 	request = g_strdup_printf("POST %s%s/%s HTTP/1.1\r\n"
-				  "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 				  "Cookie: T=%s; Y=%s\r\n"
 				  "Host: %s\r\n"
 				  "Content-Length: %" G_GSIZE_FORMAT "\r\n"

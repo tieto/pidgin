@@ -52,6 +52,7 @@ libpurple/dbus-types.c
 libpurple/dbus-types.h
 libpurple/example/nullclient
 libpurple/gconf/purple.schemas$
+libpurple/marshallers.[ch]
 libpurple/plugins/dbus-example-bindings.c
 libpurple/plugins/perl/common/Makefile.PL$
 libpurple/plugins/perl/common/Makefile.old

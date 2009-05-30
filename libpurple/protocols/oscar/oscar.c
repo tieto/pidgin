@@ -930,7 +930,7 @@ static void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotify
 	PurpleGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
-	const char *bname, *gname = NULL;
+	const char *bname = NULL, *gname = NULL;
 
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
@@ -938,14 +938,14 @@ static void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotify
 	if ((user_info == NULL) || ((b == NULL) && (userinfo == NULL)))
 		return;
 
-	bname = purple_buddy_get_name(b);
 	if (userinfo == NULL)
-		userinfo = aim_locate_finduserinfo(od, bname);
+		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
 	if (b == NULL)
 		b = purple_find_buddy(account, userinfo->bn);
 
 	if (b != NULL) {
+		bname = purple_buddy_get_name(b);
 		g = purple_buddy_get_group(b);
 		gname = purple_group_get_name(g);
 		presence = purple_buddy_get_presence(b);
@@ -3566,13 +3566,16 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 	alerturl  = va_arg(ap, char *);
 	va_end(ap);
 
-	if (account != NULL && emailinfo != NULL && emailinfo->unread && havenewmail) {
+	if (account != NULL && emailinfo != NULL && purple_account_get_check_mail(account) &&
+			emailinfo->unread && havenewmail) {
 		gchar *to = g_strdup_printf("%s%s%s",
 				purple_account_get_username(account),
 				emailinfo->domain ? "@" : "",
 				emailinfo->domain ? emailinfo->domain : "");
+		const char *tos[2] = { to };
+		const char *urls[2] = { emailinfo->url };
 		purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL,
-				(const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
+				tos, urls, NULL, NULL);
 		g_free(to);
 	}
 
@@ -5122,58 +5125,43 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	aim_ssi_cleanlist(od);
 
 	{ /* If not in server list then prune from local list */
-		PurpleBlistNode *gnode, *cnode, *bnode;
-		PurpleBuddyList *blist;
 		GSList *cur, *next;
-
+		GSList *buddies = purple_find_buddies(account, NULL);
+		
 		/* Buddies */
 		cur = NULL;
-		if ((blist = purple_get_blist()) != NULL) {
-			for (gnode = purple_blist_get_root(); gnode;
-					gnode = purple_blist_node_get_sibling_next(gnode)) {
-				const char *gname;
-				if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-					continue;
-				g = (PurpleGroup *)gnode;
-				gname = purple_group_get_name(g);
-				for (cnode = purple_blist_node_get_first_child(gnode);
-						cnode;
-						cnode = purple_blist_node_get_sibling_next(cnode)) {
-					if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-						continue;
-					for (bnode = purple_blist_node_get_first_child(cnode);
-							bnode;
-							bnode = purple_blist_node_get_sibling_next(bnode)) {
-						const char *bname;
-						if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-							continue;
-						b = (PurpleBuddy *)bnode;
-						bname = purple_buddy_get_name(b);
-						if (purple_buddy_get_account(b) == account) {
-							if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
-								/* If the buddy is an ICQ user then load his nickname */
-								const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
-								char *alias;
-								const char *balias;
-								if (servernick)
-									serv_got_alias(gc, bname, servernick);
 
-								/* Store local alias on server */
-								alias = aim_ssi_getalias(od->ssi.local, gname, bname);
-								balias = purple_buddy_get_local_buddy_alias(b);
-								if (!alias && balias && *balias)
-									aim_ssi_aliasbuddy(od, gname, bname, balias);
-								g_free(alias);
-							} else {
-								purple_debug_info("oscar",
-										"ssi: removing buddy %s from local list\n", bname);
-								/* We can't actually remove now because it will screw up our looping */
-								cur = g_slist_prepend(cur, b);
-							}
-						}
-					}
-				}
+		while(buddies) {
+			PurpleGroup *g;
+			const char *gname;
+			const char *bname;
+
+			b = buddies->data;
+			g = purple_buddy_get_group(b);
+			gname = purple_group_get_name(g);
+			bname = purple_buddy_get_name(b);
+
+			if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
+				/* If the buddy is an ICQ user then load his nickname */
+				const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
+				char *alias;
+				const char *balias;
+				if (servernick)
+					serv_got_alias(gc, bname, servernick);
+
+				/* Store local alias on server */
+				alias = aim_ssi_getalias(od->ssi.local, gname, bname);
+				balias = purple_buddy_get_local_buddy_alias(b);
+				if (!alias && balias && *balias)
+					aim_ssi_aliasbuddy(od, gname, bname, balias);
+				g_free(alias);
+			} else {
+				purple_debug_info("oscar",
+						"ssi: removing buddy %s from local list\n", bname);
+				/* We can't actually remove now because it will screw up our looping */
+				cur = g_slist_prepend(cur, b);
 			}
+			buddies = g_slist_delete_link(buddies, buddies);
 		}
 
 		while (cur != NULL) {

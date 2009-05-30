@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-23 19:04+0200\n"
-"PO-Revision-Date: 2009-04-23 19:02+0200\n"
+"POT-Creation-Date: 2009-05-15 19:56+0200\n"
+"PO-Revision-Date: 2009-05-15 19:56+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1583,6 +1583,8 @@ msgstr "TinyURL-Plugin"
 
 msgid "When receiving a message with URL(s), TinyURL for easier copying"
 msgstr ""
+"URLs aus erhaltenen Nachrichten zum einfacheren Kopieren in TinyURLs "
+"umwandeln"
 
 msgid "accounts"
 msgstr "Konten"
@@ -1832,9 +1834,8 @@ msgstr "%s hat den Raum verlassen."
 msgid "%s left the room (%s)."
 msgstr "%s hat den Raum verlassen (%s)."
 
-#, fuzzy
 msgid "Invite to chat"
-msgstr "Zur Konferenz einladen"
+msgstr "Zum Chat einladen"
 
 #. Put our happy label in it.
 msgid ""
@@ -3108,6 +3109,7 @@ msgstr "Wählen sie einen Chat für den Benutzer: %s"
 msgid "Add to chat..."
 msgstr "Zum Chat hinzufügen..."
 
+#. Global
 msgid "Available"
 msgstr "Verfügbar"
 
@@ -3745,6 +3747,37 @@ msgstr "Ungültige Challenge vom Server"
 msgid "SASL error"
 msgstr "SASL-Fehler"
 
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "Kein Grund angegeben"
+
+#, fuzzy
+msgid "Unsupported version of BOSH protocol"
+msgstr "Nicht-unterstützte Version"
+
+msgid "Unable to establish a connection with the server"
+msgstr "Die Verbindung mit dem Server konnte nicht hergestellt werden"
+
+#, c-format
+msgid ""
+"Could not establish a connection with the server:\n"
+"%s"
+msgstr ""
+"Die Verbindung mit dem Server konnte nicht hergestellt werden:\n"
+"%s"
+
+msgid "Unable to establish SSL connection"
+msgstr "Kann SSL-Verbindung nicht erstellen"
+
+msgid "Unable to create socket"
+msgstr "Kann Socket nicht erstellen"
+
+msgid "Write error"
+msgstr "Schreibfehler"
+
 msgid "Full Name"
 msgstr "Vollständiger Name"
 
@@ -3973,6 +4006,14 @@ msgstr "Priorität"
 msgid "Resource"
 msgstr "Ressource"
 
+#, fuzzy, c-format
+msgid "%s ago"
+msgstr "vor %s"
+
+#, fuzzy
+msgid "Logged off"
+msgstr "Abgemeldet"
+
 msgid "Middle Name"
 msgstr "Zweiter Name"
 
@@ -4142,12 +4183,20 @@ msgstr "Wählen Sie einen Konferenz-Server zur Abfrage"
 msgid "Find Rooms"
 msgstr "Finde Räume"
 
+#, fuzzy
+msgid "Affiliations:"
+msgstr "Alias:"
+
+msgid "No users found"
+msgstr "Keine Benutzer gefunden"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "Funktion"
+
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 "Sie fordern Verschlüsselung, aber diese ist auf dem Server nicht verfügbar."
-
-msgid "Write error"
-msgstr "Schreibfehler"
 
 msgid "Ping timeout"
 msgstr "Ping-Zeitüberschreitung"
@@ -4155,22 +4204,20 @@ msgstr "Ping-Zeitüberschreitung"
 msgid "Read Error"
 msgstr "Fehler beim Lesen"
 
-#, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Could not find alternative XMPP connection methods after failing to connect "
+"directly.\n"
 msgstr ""
-"Die Verbindung mit dem Server konnte nicht hergestellt werden:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "Kann Socket nicht erstellen"
 
 msgid "Invalid XMPP ID"
 msgstr "Ungültige XMPP-ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Falsche XMPP-ID. Die Domain muss gesetzt werden."
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Verbindung zum Server nicht möglich."
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4266,6 +4313,12 @@ msgstr "Server unterstützt kein Blockieren"
 msgid "Not Authorized"
 msgstr "Nicht autorisiert"
 
+msgid "Mood"
+msgstr "Stimmung"
+
+msgid "Now Listening"
+msgstr "Hört gerade"
+
 msgid "Both"
 msgstr "Beide"
 
@@ -4286,12 +4339,6 @@ msgstr "Kein"
 
 msgid "Subscription"
 msgstr "Abonnement"
-
-msgid "Mood"
-msgstr "Stimmung"
-
-msgid "Now Listening"
-msgstr "Hört gerade"
 
 msgid "Mood Text"
 msgstr "Stimmungstext"
@@ -4575,9 +4622,8 @@ msgstr ""
 "Medien-Sitzung mit %s konnte nicht gestartet werden: Anwesenheit des "
 "Benutzers nicht abonniert"
 
-#, fuzzy
 msgid "Media Initiation Failed"
-msgstr "Registrierung fehlgeschlagen"
+msgstr "Medien-Initiierung fehlgeschlagen"
 
 #, c-format
 msgid ""
@@ -4590,9 +4636,8 @@ msgstr ""
 msgid "Select a Resource"
 msgstr "Wählen Sie eine Ressource"
 
-#, fuzzy
 msgid "Initiate Media"
-msgstr "Initiiere _Chat"
+msgstr "Initiiere Medien"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Konfiguriere einen Chatraum."
@@ -4612,16 +4657,18 @@ msgstr "topic [neues Thema]:  Thema ändern oder anzeigen."
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;Benutzer&gt; [Grund]:  Verbanne einen Benutzer aus dem Raum."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;Benutzer&gt; &lt;owner|admin|member|outcast|none&gt;: Setze "
 "eine Benutzerzugehörigkeit für den Raum."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;Benutzer&gt; &lt;moderator|participant|visitor|none&gt;: Setze eine "
 "Rolle für den Benutzer im Raum."
@@ -5391,13 +5438,16 @@ msgstr "%s auf %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s hat Sie gerade angestoßen!"
 
-#. char *adl = g_strndup(payload, len);
 #, c-format
-msgid "Unknown error (%d)"
-msgstr "Unbekannter Fehler (%d)"
+msgid "Unknown error (%d): %s"
+msgstr "Unbekannter Fehler (%d): %s"
 
 msgid "Unable to add user"
 msgstr "Kann den Benutzer nicht hinzufügen"
+
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "Unbekannter Fehler (%d)"
 
 msgid "The following users are missing from your addressbook"
 msgstr "Die folgenden Benutzer fehlen in Ihrem Adressbuch"
@@ -5663,6 +5713,8 @@ msgid "Lost connection with server"
 msgstr "Verbindung zum Server verloren"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "Neue Mail-Nachrichten"
 
@@ -6504,9 +6556,6 @@ msgstr "Video-Chat"
 
 msgid "iChat AV"
 msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Live-Video"
 
 msgid "Camera"
 msgstr "Kamera"
@@ -7409,9 +7458,8 @@ msgstr ""
 msgid "_Modify"
 msgstr "_Bearbeiten"
 
-#, fuzzy
 msgid "Memo Modify"
-msgstr "Bearbeiten"
+msgstr "Memo bearbeiten"
 
 msgid "Server says:"
 msgstr "Server meldet:"
@@ -7734,6 +7782,9 @@ msgstr "<p><b>Bestätigung</b>:<br>\n"
 
 msgid "<p><b>Scrupulous Testers</b>:<br>\n"
 msgstr "<p><b>Gewissenhafte Tester</b>:<br>\n"
+
+msgid "and more, please let me know... thank you!))"
+msgstr ""
 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>Und all die Jungs im Hinterzimmer...</i><br>\n"
@@ -10956,21 +11007,17 @@ msgstr "/Unterhaltung/S_peichern als..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Unterhaltung/_Leeren"
 
-#, fuzzy
 msgid "/Conversation/M_edia"
-msgstr "/Unterhaltung/Me_hr"
+msgstr "/Unterhaltung/M_edien"
 
-#, fuzzy
 msgid "/Conversation/Media/_Audio Call"
-msgstr "/Unterhaltung/Me_hr"
+msgstr "/Unterhaltung/Medien/_Audio-Anruf"
 
-#, fuzzy
 msgid "/Conversation/Media/_Video Call"
-msgstr "/Unterhaltung/Me_hr"
+msgstr "/Unterhaltung/Medien/_Video-Anruf"
 
-#, fuzzy
 msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr "/Unterhaltung/Betrachte _Mitschnitt"
+msgstr "/Unterhaltung/Medien/A_udio-\\/Video-Anruf"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Unterhaltung/Datei _senden..."
@@ -11044,17 +11091,14 @@ msgstr "/Unterhaltung"
 msgid "/Conversation/View Log"
 msgstr "/Unterhaltung/Betrachte Mitschnitt"
 
-#, fuzzy
 msgid "/Conversation/Media/Audio Call"
-msgstr "/Unterhaltung/Mehr"
+msgstr "/Unterhaltung/Medien/Audio-Anruf"
 
-#, fuzzy
 msgid "/Conversation/Media/Video Call"
-msgstr "/Unterhaltung/Betrachte Mitschnitt"
+msgstr "/Unterhaltung/Medien/Video-Anruf"
 
-#, fuzzy
 msgid "/Conversation/Media/Audio\\/Video Call"
-msgstr "/Unterhaltung/Mehr"
+msgstr "/Unterhaltung/Medien/Audio-\\/Video-Anruf"
 
 msgid "/Conversation/Send File..."
 msgstr "/Unterhaltung/Datei senden ..."
@@ -11238,6 +11282,9 @@ msgstr "Künstler"
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
+
+msgid "voice and video"
+msgstr ""
 
 msgid "support"
 msgstr "Support"
@@ -12966,16 +13013,14 @@ msgid "_Image:"
 msgstr "_Bild:"
 
 #. Shortcut text
-#, fuzzy
 msgid "S_hortcut text:"
-msgstr "Tastenkombination"
+msgstr "_Verknüpfter Text:"
 
 msgid "Smiley"
 msgstr "Smiley"
 
-#, fuzzy
 msgid "Shortcut Text"
-msgstr "Tastenkombination"
+msgstr "Verknüpfter Text"
 
 msgid "Custom Smiley Manager"
 msgstr "Verwaltung für benutzerdefinierte Smileys"
@@ -14138,6 +14183,9 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+#~ msgid "Live Video"
+#~ msgstr "Live-Video"
 
 #~ msgid "Invite message"
 #~ msgstr "Einladungsnachricht"

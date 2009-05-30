@@ -129,7 +129,7 @@ purple_base16_encode(const guchar *data, gsize len)
 	ascii = g_malloc(len * 2 + 1);
 
 	for (i = 0; i < len; i++)
-		snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
+		g_snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
 
 	return ascii;
 }
@@ -1623,7 +1623,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "a";
 					tags = g_list_prepend(tags, pt);
 					if(xhtml)
-						g_string_append_printf(xhtml, "<a href='%s'>", url ? g_strstrip(url->str) : "");
+						g_string_append_printf(xhtml, "<a href=\"%s\">", url ? g_strstrip(url->str) : "");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -2017,7 +2017,6 @@ badchar(char c)
 	case '<':
 	case '>':
 	case '"':
-	case '\'':
 		return TRUE;
 	default:
 		return FALSE;
@@ -3920,7 +3919,10 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		}
 	}
 
-	purple_debug_misc("util", "Request: '%s'\n", gfud->request);
+	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+		purple_debug_misc("util", "Request: '%s'\n", gfud->request);
+	else
+		purple_debug_misc("util", "request constructed\n");
 
 	total_len = strlen(gfud->request);
 
@@ -4023,9 +4025,12 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 	g_return_val_if_fail(url      != NULL, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	purple_debug_info("util",
-			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
-			 url, full, user_agent?user_agent:"(null)", http11);
+	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+		purple_debug_info("util",
+				 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
+				 url, full, user_agent?user_agent:"(null)", http11);
+	else
+		purple_debug_info("util", "requesting to fetch a URL\n");
 
 	gfud = g_new0(PurpleUtilFetchUrlData, 1);
 

@@ -70,7 +70,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	jabber_presence_send,			/* set_status */
+	jabber_set_status,				/* set_status */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */
@@ -140,20 +140,80 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
 
+	purple_signal_register(plugin, "jabber-receiving-message",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 6,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* id */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_STRING), /* to */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+
+	purple_signal_register(plugin, "jabber-receiving-iq",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* id */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+
+	purple_signal_register(plugin, "jabber-watched-iq",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* id */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE)); /* child */
+
+	purple_signal_register(plugin, "jabber-register-namespace-watcher",
+			purple_marshal_VOID__POINTER_POINTER,
+			NULL, 2,
+			purple_value_new(PURPLE_TYPE_STRING),  /* node */
+			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+
+	purple_signal_register(plugin, "jabber-unregister-namespace-watcher",
+			purple_marshal_VOID__POINTER_POINTER,
+			NULL, 2,
+			purple_value_new(PURPLE_TYPE_STRING),  /* node */
+			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+
+	purple_signal_connect(plugin, "jabber-register-namespace-watcher",
+			plugin, PURPLE_CALLBACK(jabber_iq_signal_register), NULL);
+	purple_signal_connect(plugin, "jabber-unregister-namespace-watcher",
+			plugin, PURPLE_CALLBACK(jabber_iq_signal_unregister), NULL);
+
+	purple_signal_register(plugin, "jabber-receiving-presence",
+			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER,
+			purple_value_new(PURPLE_TYPE_BOOLEAN), 4,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new(PURPLE_TYPE_STRING), /* type */
+			purple_value_new(PURPLE_TYPE_STRING), /* from */
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+
 	return TRUE;
 }
 
 static gboolean unload_plugin(PurplePlugin *plugin)
 {
-	purple_signal_unregister(plugin, "jabber-receiving-xmlnode");
+	purple_signals_unregister_by_instance(plugin);
 
-	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
-
-	purple_signal_unregister(plugin, "jabber-sending-text");
-
+	/* reverse order of init_plugin */
+	jabber_bosh_uninit();
 	jabber_data_uninit();
 	jabber_si_uninit();
 	jabber_ibb_uninit();
+	/* PEP things should be uninit via jabber_pep_uninit, not here */
+	jabber_pep_uninit();
+	jabber_caps_uninit();
+	jabber_iq_uninit();
+
+	jabber_unregister_commands();
+
+	/* Stay on target...stay on target... Almost there... */
+	jabber_uninit_plugin();
 
 	return TRUE;
 }
@@ -242,8 +302,9 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
 						  "ft_proxies",
-						/* TODO: Is this an acceptable default? */
-						  "proxy.jabber.org");
+						/* TODO: Is this an acceptable default?
+						 * Also, keep this in sync as they add more servers */
+						  "proxy.eu.jabber.org");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
@@ -277,30 +338,18 @@ init_plugin(PurplePlugin *plugin)
 #endif
 	jabber_register_commands();
 
+	/* reverse order of unload_plugin */
 	jabber_iq_init();
-	jabber_pep_init();
-
-	jabber_tune_init();
 	jabber_caps_init();
-
+	/* PEP things should be init via jabber_pep_init, not here */
+	jabber_pep_init();
 	jabber_data_init();
+	jabber_bosh_init();
 
+	#warning implement adding and retrieving own features via IPC API
 
 	jabber_ibb_init();
 	jabber_si_init();
-
-	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("buzz", XEP_0224_NAMESPACE,
-					   jabber_buzz_isenabled);
-	jabber_add_feature("bob", XEP_0231_NAMESPACE,
-					   jabber_custom_smileys_isenabled);
-	jabber_add_feature("ibb", XEP_0047_NAMESPACE, NULL);
-
-	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
-#ifdef USE_VV
-	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
-#endif
 }
 
 

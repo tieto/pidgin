@@ -99,7 +99,7 @@ setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	const char *name;
 	PurpleAccountSetting *setting;
 	xmlnode *node, *child;
-	char buf[20];
+	char buf[21];
 
 	name    = (const char *)key;
 	setting = (PurpleAccountSetting *)value;
@@ -110,7 +110,7 @@ setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 
 	if (setting->type == PURPLE_PREF_INT) {
 		xmlnode_set_attrib(child, "type", "int");
-		snprintf(buf, sizeof(buf), "%d", setting->value.integer);
+		g_snprintf(buf, sizeof(buf), "%d", setting->value.integer);
 		xmlnode_insert_data(child, buf, -1);
 	}
 	else if (setting->type == PURPLE_PREF_STRING && setting->value.string != NULL) {
@@ -119,7 +119,7 @@ setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	}
 	else if (setting->type == PURPLE_PREF_BOOLEAN) {
 		xmlnode_set_attrib(child, "type", "bool");
-		snprintf(buf, sizeof(buf), "%d", setting->value.boolean);
+		g_snprintf(buf, sizeof(buf), "%d", setting->value.boolean);
 		xmlnode_insert_data(child, buf, -1);
 	}
 }
@@ -281,7 +281,7 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 	PurpleProxyType proxy_type;
 	const char *value;
 	int int_value;
-	char buf[20];
+	char buf[21];
 
 	proxy_type = purple_proxy_info_get_type(proxy_info);
 
@@ -304,7 +304,7 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 
 	if ((int_value = purple_proxy_info_get_port(proxy_info)) != 0)
 	{
-		snprintf(buf, sizeof(buf), "%d", int_value);
+		g_snprintf(buf, sizeof(buf), "%d", int_value);
 		child = xmlnode_new_child(node, "port");
 		xmlnode_insert_data(child, buf, -1);
 	}
@@ -342,7 +342,7 @@ current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
 		return node;
 
 	child = xmlnode_new_child(node, "type");
-	snprintf(type_str, sizeof(type_str), "%u", err->type);
+	g_snprintf(type_str, sizeof(type_str), "%u", err->type);
 	xmlnode_insert_data(child, type_str, -1);
 
 	child = xmlnode_new_child(node, "description");
@@ -954,6 +954,8 @@ purple_account_new(const char *username, const char *protocol_id)
 	/* 0 is not a valid privacy setting */
 	account->perm_deny = PURPLE_PRIVACY_ALLOW_ALL;
 
+	purple_signal_emit(purple_accounts_get_handle(), "account-created", account);
+
 	prpl = purple_find_prpl(protocol_id);
 
 	if (prpl == NULL)
@@ -987,6 +989,7 @@ purple_account_destroy(PurpleAccount *account)
 	g_return_if_fail(account != NULL);
 
 	purple_debug_info("account", "Destroying account %p\n", account);
+	purple_signal_emit(purple_accounts_get_handle(), "account-destroying", account);
 
 	for (l = purple_get_conversations(); l != NULL; l = l->next)
 	{
@@ -2725,6 +2728,14 @@ purple_accounts_init(void)
 										PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(handle, "account-created",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+
+	purple_signal_register(handle, "account-destroying",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
+
 	purple_signal_register(handle, "account-added",
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
@@ -2741,6 +2752,10 @@ purple_accounts_init(void)
 										PURPLE_SUBTYPE_STATUS),
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_STATUS));
+
+	purple_signal_register(handle, "account-actions-changed",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
 
 	purple_signal_register(handle, "account-alias-changed",
 						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,

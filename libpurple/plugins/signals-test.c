@@ -145,16 +145,39 @@ buddy_signed_off_cb(PurpleBuddy *buddy, void *data)
 }
 
 static void
-buddy_added_cb(PurpleBuddy *buddy, void *data)
+blist_node_added_cb(PurpleBlistNode *bnode, void *data)
 {
-	purple_debug_misc("signals test", "buddy_added_cb (%s)\n",
-	                  purple_buddy_get_name(buddy));
+	const char *name;
+	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+		name = purple_group_get_name(PURPLE_GROUP(bnode));
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+		/* Close enough */
+		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
+	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
+	else
+		name = "(unknown)";
+
+	purple_debug_misc("signals test", "blist_node_added_cb (%s)\n",
+	                  name ? name : "(null)");
 }
 
 static void
-buddy_removed_cb(PurpleBuddy *buddy, void *data)
+blist_node_removed_cb(PurpleBlistNode *bnode, void *data)
 {
-	purple_debug_misc("signals test", "buddy_removed_cb (%s)\n", purple_buddy_get_name(buddy));
+	const char *name;
+	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+		name = purple_group_get_name(PURPLE_GROUP(bnode));
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+		/* Close enough */
+		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
+	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
+	else
+		name = "(unknown)";
+
+	purple_debug_misc("signals test", "blist_node_removed_cb (%s)\n",
+	                  name ? name : "(null)");
 }
 
 static void
@@ -601,6 +624,44 @@ notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint c
 }
 
 /**************************************************************************
+ * Jabber signals callbacks
+ **************************************************************************/
+static gboolean
+jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
+                   const char *from, xmlnode *iq)
+{
+	purple_debug_misc("signals test", "jabber IQ (type=%s, id=%s, from=%s) %p\n",
+	                  type, id, from ? from : "(null)", iq);
+
+	/* We don't want the plugin to stop processing */
+	return FALSE;
+}
+
+static gboolean
+jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
+                        const char *from, const char *to, xmlnode *message)
+{
+	purple_debug_misc("signals test", "jabber message (type=%s, id=%s, "
+	                  "from=%s to=%s) %p\n",
+	                  type ? type : "(null)", id ? id : "(null)",
+	                  from ? from : "(null)", to ? to : "(null)", message);
+
+	/* We don't want the plugin to stop processing */
+	return FALSE;
+}
+
+static gboolean
+jabber_presence_received(PurpleConnection *pc, const char *type,
+                         const char *from, xmlnode *presence)
+{
+	purple_debug_misc("signals test", "jabber presence (type=%s, from=%s) %p\n",
+	                  type ? type : "(null)", from ? from : "(null)", presence);
+
+	/* We don't want the plugin to stop processing */
+	return FALSE;
+}
+
+/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
@@ -615,6 +676,7 @@ plugin_load(PurplePlugin *plugin)
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
+	void *jabber_handle   = purple_plugins_find_with_id("prpl-jabber");
 
 	/* Accounts subsystem signals */
 	purple_signal_connect(accounts_handle, "account-connecting",
@@ -643,10 +705,10 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(buddy_signed_on_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-signed-off",
 						plugin, PURPLE_CALLBACK(buddy_signed_off_cb), NULL);
-	purple_signal_connect(blist_handle, "buddy-added",
-						plugin, PURPLE_CALLBACK(buddy_added_cb), NULL);
-	purple_signal_connect(blist_handle, "buddy-removed",
-						plugin, PURPLE_CALLBACK(buddy_removed_cb), NULL);
+	purple_signal_connect(blist_handle, "blist-node-added",
+						plugin, PURPLE_CALLBACK(blist_node_added_cb), NULL);
+	purple_signal_connect(blist_handle, "blist-node-removed",
+						plugin, PURPLE_CALLBACK(blist_node_removed_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-icon-changed",
 						plugin, PURPLE_CALLBACK(buddy_icon_changed_cb), NULL);
 	purple_signal_connect(blist_handle, "blist-node-aliased",
@@ -760,6 +822,24 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(notify_handle, "displaying-emails-notification",
 						plugin, PURPLE_CALLBACK(notify_emails_cb), NULL);
 
+	/* Jabber signals */
+	if (jabber_handle) {
+		purple_signal_connect(jabber_handle, "jabber-receiving-iq", plugin,
+		                      PURPLE_CALLBACK(jabber_iq_received), NULL);
+		purple_signal_connect(jabber_handle, "jabber-receiving-message", plugin,
+		                      PURPLE_CALLBACK(jabber_message_received), NULL);
+		purple_signal_connect(jabber_handle, "jabber-receiving-presence", plugin,
+		                      PURPLE_CALLBACK(jabber_presence_received), NULL);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin)
+{
+	purple_signals_disconnect_by_handle(plugin);
+
 	return TRUE;
 }
 
@@ -785,7 +865,7 @@ static PurplePluginInfo info =
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
+	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

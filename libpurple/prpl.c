@@ -182,6 +182,17 @@ purple_prpl_got_account_status(PurpleAccount *account, const char *status_id, ..
 }
 
 void
+purple_prpl_got_account_actions(PurpleAccount *account)
+{
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(purple_account_is_connected(account));
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-actions-changed",
+	                   account);
+}
+
+void
 purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
 		gboolean idle, time_t idle_time)
 {

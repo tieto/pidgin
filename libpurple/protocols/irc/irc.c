@@ -306,7 +306,7 @@ static void irc_login(PurpleAccount *account)
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("IRC nicks may not contain whitespace"));
+			_("IRC nick and server may not contain whitespace"));
 		return;
 	}
 

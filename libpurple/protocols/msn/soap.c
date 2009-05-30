@@ -80,7 +80,7 @@ msn_soap_connection_new(MsnSession *session, const char *host)
 	conn->session = session;
 	conn->host = g_strdup(host);
 	conn->queue = g_queue_new();
-	conn->unsafe_debug = g_getenv("PURPLE_MSN_UNSAFE_DEBUG") != NULL;
+	conn->unsafe_debug = g_getenv("PURPLE_UNSAFE_DEBUG") != NULL;
 	return conn;
 }
 
@@ -434,7 +434,7 @@ msn_soap_process(MsnSoapConnection *conn)
 					g_free(line);
 					return;
 				} else if (strcmp(key, "Content-Length") == 0) {
-					conn->body_len = atoi(value);
+					sscanf(value, "%" G_GSIZE_FORMAT, &(conn->body_len));
 				} else if (strcmp(key, "Connection") == 0) {
 					if (strcmp(value, "close") == 0) {
 						conn->close_when_done = TRUE;
@@ -667,7 +667,8 @@ msn_soap_connection_run(gpointer data)
 			conn->handled_len = 0;
 			conn->current_request = req;
 
-			purple_input_remove(conn->event_handle);
+			if (conn->event_handle)
+				purple_input_remove(conn->event_handle);
 			conn->event_handle = purple_input_add(conn->ssl->fd,
 				PURPLE_INPUT_WRITE, msn_soap_write_cb, conn);
 			if (!msn_soap_write_cb_internal(conn, conn->ssl->fd, PURPLE_INPUT_WRITE, TRUE)) {

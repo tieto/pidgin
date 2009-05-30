@@ -213,7 +213,7 @@ pidgin_theme_create_font_selector(const char *text, const char *blurb, const cha
 }
 
 static void
-pidgin_blist_theme_edit(void)
+pidgin_blist_theme_edit(PurplePluginAction *unused)
 {
 	GtkWidget *dialog;
 	GtkWidget *box;
