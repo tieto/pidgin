@@ -175,9 +175,9 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 				  webaddress);
 
 	/* We have a URL and some header information, let's connect and get some aliases  */
-	url_data = purple_util_fetch_url_request(url, use_whole_url, NULL, TRUE,
-						 request, FALSE,
-						 yahoo_fetch_aliases_cb, cb);
+	url_data = purple_util_fetch_url_request_len_with_account(purple_connection_get_account(gc),
+				url, use_whole_url, NULL, TRUE, request, FALSE, -1,
+				yahoo_fetch_aliases_cb, cb);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
@@ -347,7 +347,9 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 				  content);
 
 	/* We have a URL and some header information, let's connect and update the alias  */
-	url_data = purple_util_fetch_url_request(url, use_whole_url, NULL, TRUE, request, FALSE, yahoo_update_alias_cb, cb);
+	url_data = purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc), url, use_whole_url, NULL, TRUE,
+			request, FALSE, -1, yahoo_update_alias_cb, cb);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
