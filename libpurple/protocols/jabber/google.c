@@ -667,6 +667,8 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 
 			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
 			g_free(bare_jid);
+		} else {
+			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, NULL, NULL, NULL, NULL);
 		}
 
 		return;

@@ -5062,6 +5062,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 			gtk_widget_show(img);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
 			g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
 	} else {
