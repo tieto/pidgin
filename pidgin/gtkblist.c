@@ -5556,9 +5556,12 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist = PIDGIN_BLIST(list);
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
+	if (priv->current_theme)
+		g_object_unref(priv->current_theme);
+
 	theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme");
 	if (theme_name && *theme_name)
-		priv->current_theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(theme_name, "blist"));
+		priv->current_theme = g_object_ref(PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(theme_name, "blist")));
 	else
 		priv->current_theme = NULL;
 
@@ -6691,6 +6694,8 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	gtkblist->arrow_cursor = NULL;
 
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	if (priv->current_theme)
+		g_object_unref(priv->current_theme);
 	g_free(priv);
 
 	g_free(gtkblist);
@@ -7261,7 +7266,10 @@ pidgin_blist_set_theme(PidginBlistTheme *theme)
 	else
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
 
-	priv->current_theme = theme;
+	if (priv->current_theme)
+		g_object_unref(priv->current_theme);
+
+	priv->current_theme = theme ? g_object_ref(theme) : NULL;
 
 	pidgin_blist_build_layout(list);
 
