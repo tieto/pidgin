@@ -1926,8 +1926,7 @@ static void write_zsubs(zephyr_account *zephyr)
 
 static void write_anyone(PurpleConnection *gc)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddy *b;
+	GSList *buddies;
 	char *fname;
 	FILE *fd;
 	PurpleAccount *account;
@@ -1940,29 +1939,12 @@ static void write_anyone(PurpleConnection *gc)
 	}
 
 	account = purple_connection_get_account(gc);
-	for (gnode = purple_blist_get_root();
-			gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for (cnode = purple_blist_node_get_first_child(gnode);
-				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = purple_blist_node_get_first_child(cnode);
-					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode)) {
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *) bnode;
-				if (purple_buddy_get_account(b) == account) {
-					gchar *stripped_user = zephyr_strip_local_realm(zephyr, purple_buddy_get_name(b));
-					fprintf(fd, "%s\n", stripped_user);
-					g_free(stripped_user);
-				}
-			}
-		}
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *b = buddies->data;
+		gchar *stripped_user = zephyr_strip_local_realm(zephyr, purple_buddy_get_name(b));
+		fprintf(fd, "%s\n", stripped_user);
+		g_free(stripped_user);
 	}
 
 	fclose(fd);

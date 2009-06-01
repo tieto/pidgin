@@ -783,7 +783,6 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 void
 msn_userlist_load(MsnSession *session)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleAccount *account = session->account;
 	PurpleConnection *gc = purple_account_get_connection(account);
 	GSList *l;
@@ -791,34 +790,14 @@ msn_userlist_load(MsnSession *session)
 
 	g_return_if_fail(gc != NULL);
 
-	for (gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode))
-	{
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for (cnode = purple_blist_node_get_first_child(gnode);
-				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode))
-		{
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = purple_blist_node_get_first_child(cnode);
-					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode))
-			{
-				PurpleBuddy *b;
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *)bnode;
-				if (purple_buddy_get_account(b) == account)
-				{
-					user = msn_userlist_find_add_user(session->userlist,
-						purple_buddy_get_name(b), NULL);
-					purple_buddy_set_protocol_data(b, user);
-					msn_user_set_op(user, MSN_LIST_FL_OP);
-				}
-			}
-		}
+	for (l = purple_find_buddies(account, NULL); l != NULL;
+			l = g_slist_delete_link(l, l)) {
+		PurpleBuddy *buddy = l->data;
+
+		user = msn_userlist_find_add_user(session->userlist,
+			purple_buddy_get_name(buddy), NULL);
+		purple_buddy_set_protocol_data(buddy, user);
+		msn_user_set_op(user, MSN_LIST_FL_OP);
 	}
 	for (l = session->account->permit; l != NULL; l = l->next)
 	{

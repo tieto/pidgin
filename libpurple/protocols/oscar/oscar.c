@@ -6541,47 +6541,35 @@ static void oscar_show_awaitingauth(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	OscarData *od = purple_connection_get_protocol_data(gc);
-	gchar *nombre, *text, *tmp;
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	gchar *text, *tmp;
+	GSList *buddies;
 	PurpleAccount *account;
 	int num=0;
 
 	text = g_strdup("");
 	account = purple_connection_get_account(gc);
 
-	for (gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		PurpleGroup *group = (PurpleGroup *)gnode;
-		const char *gname;
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		gname = purple_group_get_name(group);
-		for (cnode = purple_blist_node_get_first_child(gnode);
-				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = purple_blist_node_get_first_child(cnode);
-					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode)) {
-				PurpleBuddy *buddy = (PurpleBuddy *)bnode;
-				const char *bname;
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				bname = purple_buddy_get_name(buddy);
-				if (purple_buddy_get_account(buddy) == account && aim_ssi_waitingforauth(od->ssi.local, gname, bname)) {
-					if (purple_buddy_get_alias_only(buddy))
-						nombre = g_strdup_printf(" %s (%s)", bname, purple_buddy_get_alias_only(buddy));
-					else
-						nombre = g_strdup_printf(" %s", bname);
-					tmp = g_strdup_printf("%s%s<br>", text, nombre);
-					g_free(text);
-					text = tmp;
-					g_free(nombre);
-					num++;
-				}
-			}
+	buddies = purple_find_buddies(account, NULL);
+	while (buddies) {
+		PurpleBuddy *buddy;
+		const gchar *bname, *gname;
+
+		buddy = buddies->data;
+		bname = purple_buddy_get_name(buddy);
+		gname = purple_group_get_name(purple_buddy_get_group(buddy));
+		if (aim_ssi_waitingforauth(od->ssi.local, gname, bname)) {
+			const gchar *alias = purple_buddy_get_alias_only(buddy);
+			if (alias)
+				tmp = g_strdup_printf("%s %s (%s)<br>", text, bname, alias);
+			else
+				tmp = g_strdup_printf("%s %s<br>", text, bname);
+			g_free(text);
+			text = tmp;
+
+			num++;
 		}
+
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
 	if (!num) {
