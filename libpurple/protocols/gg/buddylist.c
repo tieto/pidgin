@@ -178,55 +178,6 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 }
 /* }}} */
 
-/* void ggp_buddylist_offline(PurpleConnection *gc) {{{ */
-void ggp_buddylist_offline(PurpleConnection *gc)
-{
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddy *buddy;
-
-	for (gnode = purple_blist_get_root();
-	     gnode != NULL;
-	     gnode = purple_blist_node_get_sibling_next(gnode))
-	{
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-
-		for (cnode = purple_blist_node_get_first_child(gnode);
-		     cnode != NULL;
-		     cnode = purple_blist_node_get_sibling_next(cnode))
-		{
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-
-			for (bnode = purple_blist_node_get_first_child(cnode);
-			     bnode != NULL;
-			     bnode = purple_blist_node_get_sibling_next(bnode))
-			{
-				const gchar *name = NULL;
-
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-
-				buddy = (PurpleBuddy *)bnode;
-				
-				name = purple_buddy_get_name(buddy);
-
-				if (purple_buddy_get_account(buddy) != account)
-					continue;
-
-				purple_prpl_got_user_status(
-					account, name, "offline", NULL);
-
-				purple_debug_info("gg",
-					"ggp_buddylist_offline: gone: %s\n",
-					name);
-			}
-		}
-	}
-}
-/* }}} */
-
 /* char *ggp_buddylist_dump(PurpleAccount *account) {{{ */
 char *ggp_buddylist_dump(PurpleAccount *account)
 {

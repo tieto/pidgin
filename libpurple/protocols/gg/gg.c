@@ -1837,8 +1837,6 @@ static void ggp_close(PurpleConnection *gc)
 	if (gc->inpa > 0)
 		purple_input_remove(gc->inpa);
 
-	ggp_buddylist_offline(gc);
-
 	purple_debug_info("gg", "Connection closed.\n");
 }
 
