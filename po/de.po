@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-15 19:56+0200\n"
-"PO-Revision-Date: 2009-05-15 19:56+0200\n"
+"POT-Creation-Date: 2009-06-01 12:31+0200\n"
+"PO-Revision-Date: 2009-06-01 12:31+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1788,6 +1788,8 @@ msgstr "+++ %s hat sich angemeldet"
 msgid "+++ %s signed off"
 msgstr "+++ %s hat sich abgemeldet"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
@@ -3257,8 +3259,8 @@ msgstr "_Kanal:"
 msgid "_Password:"
 msgstr "_Passwort:"
 
-msgid "IRC nicks may not contain whitespace"
-msgstr "IRC-Nicknamen dürfen keine Leerzeichen enthalten"
+msgid "IRC nick and server may not contain whitespace"
+msgstr "IRC- Server und -Nicknamen dürfen keine Leerzeichen enthalten"
 
 #. 1. connect to server
 #. connect to the server
@@ -3741,6 +3743,10 @@ msgstr "Ungültige Serverantwort."
 msgid "Server does not use any supported authentication method"
 msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+"Sie fordern Verschlüsselung, aber diese ist auf dem Server nicht verfügbar."
+
 msgid "Invalid challenge from server"
 msgstr "Ungültige Challenge vom Server"
 
@@ -3748,15 +3754,13 @@ msgid "SASL error"
 msgstr "SASL-Fehler"
 
 msgid "The BOSH connection manager terminated your session."
-msgstr ""
+msgstr "Der BOSH-Verbindungsmanager hat Ihre Sitzung beendet."
 
-#, fuzzy
 msgid "No session ID given"
-msgstr "Kein Grund angegeben"
+msgstr "Keine Sitzungs-ID angegeben"
 
-#, fuzzy
 msgid "Unsupported version of BOSH protocol"
-msgstr "Nicht-unterstützte Version"
+msgstr "Nicht-unterstützte Version des BOSH-Protokolls"
 
 msgid "Unable to establish a connection with the server"
 msgstr "Die Verbindung mit dem Server konnte nicht hergestellt werden"
@@ -4006,7 +4010,7 @@ msgstr "Priorität"
 msgid "Resource"
 msgstr "Ressource"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s ago"
 msgstr "vor %s"
 
@@ -4193,10 +4197,6 @@ msgstr "Keine Benutzer gefunden"
 #, fuzzy
 msgid "Roles:"
 msgstr "Funktion"
-
-msgid "You require encryption, but it is not available on this server."
-msgstr ""
-"Sie fordern Verschlüsselung, aber diese ist auf dem Server nicht verfügbar."
 
 msgid "Ping timeout"
 msgstr "Ping-Zeitüberschreitung"
@@ -5424,17 +5424,6 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows Live ID-Authentifikation:Ungültige Antwort"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s ist keine gültige Gruppe."
-
-msgid "Unknown error."
-msgstr "Unbekannter Fehler."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s auf %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s hat Sie gerade angestoßen!"
 
@@ -5475,14 +5464,11 @@ msgstr "%s ist kein gültiges Passport-Konto."
 msgid "Service Temporarily Unavailable."
 msgstr "Dienst momentan nicht verfügbar."
 
+msgid "Unknown error."
+msgstr "Unbekannter Fehler."
+
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobile Nachricht wurde nicht gesendet, da sie zu lang war."
-
-msgid "Unable to rename group"
-msgstr "Kann die Gruppe nicht umbenennen"
-
-msgid "Unable to delete group"
-msgstr "Kann die Gruppe nicht löschen"
 
 #, c-format
 msgid ""
@@ -5647,14 +5633,6 @@ msgstr ""
 "Nachricht konnte nicht gesendet werden, da ein unbekannter Fehler "
 "aufgetreten ist:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "Der Benutzer %s hat Sie zu seiner Buddy-Liste hinzugefügt."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "Der Benutzer %s hat Sie von seiner Buddy-Liste gelöscht."
-
 msgid "Delete Buddy from Address Book?"
 msgstr "Buddy aus dem Adressbuch löschen?"
 
@@ -5682,6 +5660,28 @@ msgstr "URL des Profils"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "MSN-Protokoll-Plugin"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s ist keine gültige Gruppe."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s auf %s (%s)"
+
+msgid "Unable to rename group"
+msgstr "Kann die Gruppe nicht umbenennen"
+
+msgid "Unable to delete group"
+msgstr "Kann die Gruppe nicht löschen"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "Der Benutzer %s hat Sie zu seiner Buddy-Liste hinzugefügt."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "Der Benutzer %s hat Sie von seiner Buddy-Liste gelöscht."
 
 #, c-format
 msgid "No such user: %s"
@@ -6556,6 +6556,9 @@ msgstr "Video-Chat"
 
 msgid "iChat AV"
 msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Live-Video"
 
 msgid "Camera"
 msgstr "Kamera"
@@ -9556,6 +9559,30 @@ msgstr ""
 msgid "Add buddy rejected"
 msgstr "Hinzufügen des Buddys zurückgewiesen"
 
+#. Some error in the received stream
+msgid "Received invalid data"
+msgstr "Ungültige Daten empfangen"
+
+#. Password incorrect
+msgid "Incorrect Password"
+msgstr "Falsches Passwort"
+
+#. security lock from too many failed login attempts
+msgid "Account locked: Too many failed login attempts"
+msgstr "Konto gesperrt: Zu viele erfolglose Login-Versuche"
+
+#. the username does not exist
+msgid "Username does not exist"
+msgstr "Benutzername existiert nicht"
+
+#. indicates a lock of some description
+msgid "Account locked: See the debug log"
+msgstr "Konto gesperrt: Sehen Sie in den Debug-Mitschnitt"
+
+#. username or password missing
+msgid "Username or password missing"
+msgstr "Benutzername oder Passwort fehlt"
+
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -10465,8 +10492,9 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "Bitte aktualisieren Sie die erforderlichen Felder."
 
-msgid "Room _List"
-msgstr "Ra_umliste"
+#, fuzzy
+msgid "A_ccount"
+msgstr "Konto"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10475,8 +10503,8 @@ msgstr ""
 "Bitte geben Sie geeignete Informationen über den Chat ein, den Sie betreten "
 "wollen.\n"
 
-msgid "_Account:"
-msgstr "_Konto:"
+msgid "Room _List"
+msgstr "Ra_umliste"
 
 msgid "_Block"
 msgstr "_Sperren"
@@ -11410,6 +11438,9 @@ msgstr "Hindi"
 msgid "Hungarian"
 msgstr "Ungarisch"
 
+msgid "Armenian"
+msgstr "Armenisch"
+
 msgid "Indonesian"
 msgstr "Indonesisch"
 
@@ -11505,6 +11536,9 @@ msgstr "Singhalesisch"
 
 msgid "Swedish"
 msgstr "Schwedisch"
+
+msgid "Swahili"
+msgstr "Swahili"
 
 msgid "Tamil"
 msgstr "Tamilisch"
@@ -12365,6 +12399,9 @@ msgstr "Buddy-Alarm bearbeiten"
 msgid "Pounce on Whom"
 msgstr "Bei wem alarmieren"
 
+msgid "_Account:"
+msgstr "_Konto:"
+
 msgid "_Buddy name:"
 msgstr "_Buddy-Name:"
 
@@ -13024,6 +13061,9 @@ msgstr "Verknüpfter Text"
 
 msgid "Custom Smiley Manager"
 msgstr "Verwaltung für benutzerdefinierte Smileys"
+
+msgid "Select Buddy Icon"
+msgstr "Buddy-Icon auswählen"
 
 msgid "Click to change your buddyicon for this account."
 msgstr "Klicken Sie hier, um Ihr Buddy-Icon für dieses Konto zu ändern."
@@ -14183,19 +14223,3 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
-
-#~ msgid "Live Video"
-#~ msgstr "Live-Video"
-
-#~ msgid "Invite message"
-#~ msgstr "Einladungsnachricht"
-
-#~ msgid ""
-#~ "Please enter the name of the user you wish to invite,\n"
-#~ "along with an optional invite message."
-#~ msgstr ""
-#~ "Bitte geben Sie den Benutzernamen der Person ein, die Sie einladen "
-#~ "möchten zusammen mit einer optionalen Einladungsnachricht."
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN Server:"
