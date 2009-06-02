@@ -263,7 +263,14 @@ google_session_ready(GoogleSession *session)
 			if (session->video)
 				xmlnode_set_namespace(payload, NS_GOOGLE_PHONE);
 			xmlnode_set_attrib(payload, "id", id);
-			xmlnode_set_attrib(payload, "name", encoding_name);
+			/*
+			 * Hack to make Gmail accept speex as the codec.
+			 * It shouldn't have to be case sensitive.
+			 */
+			if (purple_strequal(encoding_name, "SPEEX"))
+				xmlnode_set_attrib(payload, "name", "speex");
+			else
+				xmlnode_set_attrib(payload, "name", encoding_name);
 			xmlnode_set_attrib(payload, "clockrate", clock_rate);
 			g_free(clock_rate);
 			g_free(encoding_name);
