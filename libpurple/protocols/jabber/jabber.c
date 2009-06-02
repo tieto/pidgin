@@ -2949,7 +2949,7 @@ jabber_audio_enabled(JabberStream *js, const char *namespace)
 	return (caps & (PURPLE_MEDIA_CAPS_AUDIO | PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION));
 }
 
-static gboolean
+gboolean
 jabber_video_enabled(JabberStream *js, const char *namespace)
 {
 	PurpleMediaManager *manager = purple_media_manager_get();
@@ -3189,8 +3189,12 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 				caps |= PURPLE_MEDIA_CAPS_MODIFY_SESSION |
 						PURPLE_MEDIA_CAPS_CHANGE_DIRECTION;
 		}
-		if (jabber_resource_has_capability(jbr, GOOGLE_VOICE_CAP))
+		if (jabber_resource_has_capability(jbr, GOOGLE_VOICE_CAP)) {
 			caps |= PURPLE_MEDIA_CAPS_AUDIO;
+			if (jabber_resource_has_capability(jbr,
+					GOOGLE_VIDEO_CAP))
+				caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
+		}
 		return caps;
 	}
 

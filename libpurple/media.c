@@ -43,6 +43,7 @@
 #ifdef USE_VV
 
 #include <gst/farsight/fs-conference-iface.h>
+#include <gst/farsight/fs-element-added-notifier.h>
 
 /** @copydoc _PurpleMediaSession */
 typedef struct _PurpleMediaSession PurpleMediaSession;
@@ -2380,6 +2381,18 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	stream->connected_cb_id = purple_timeout_add(0,
 			(GSourceFunc)purple_media_connected_cb, stream);
 }
+
+static void
+purple_media_element_added_cb(FsElementAddedNotifier *self,
+		GstBin *bin, GstElement *element, gpointer user_data)
+{
+	/*
+	 * Hack to make H264 work with Gmail video.
+	 */
+	if (!strncmp(GST_ELEMENT_NAME(element), "x264", 4)) {
+		g_object_set(GST_OBJECT(element), "cabac", FALSE, NULL);
+	}
+}
 #endif  /* USE_VV */
 
 gboolean
@@ -2455,6 +2468,19 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		if (is_nice || !strcmp(transmitter, "rawudp"))
 			g_object_set(G_OBJECT(session->session),
 					"no-rtcp-timeout", 0, NULL);
+
+		/*
+		 * Hack to make x264 work with Gmail video.
+		 */
+		if (is_nice && !strcmp(sess_id, "google-video")) {
+			FsElementAddedNotifier *notifier =
+					fs_element_added_notifier_new();
+			g_signal_connect(G_OBJECT(notifier), "element-added",
+					G_CALLBACK(purple_media_element_added_cb),
+					stream);
+			fs_element_added_notifier_add(notifier,
+					GST_BIN(media->priv->conference));
+		}
 
 		fs_codec_list_destroy(codec_conf);
 
@@ -2670,7 +2696,8 @@ purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id,
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 	stream = purple_media_get_stream(media, sess_id, participant);
-	return purple_media_candidate_list_from_fs(stream->local_candidates);
+	return stream ? purple_media_candidate_list_from_fs(
+			stream->local_candidates) : NULL;
 #else
 	return NULL;
 #endif
