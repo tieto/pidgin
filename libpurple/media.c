@@ -2416,7 +2416,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 
 	if (!session) {
 		GError *err = NULL;
-		GList *codec_conf = NULL;
+		GList *codec_conf = NULL, *iter = NULL;
 		gchar *filename = NULL;
 		PurpleMediaSessionType session_type;
 		GstElement *src = NULL;
@@ -2433,15 +2433,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 			return FALSE;
 		}
 
-	/* XXX: SPEEX has a latency of 5 or 6 seconds for me */
-#if 0
-	/* SPEEX is added through the configuration */
-		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_ANY,
-				"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
-		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_ANY,
-				"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
-#endif
-
 		filename = g_build_filename(purple_user_dir(), "fs-codec.conf", NULL);
 		codec_conf = fs_codec_list_from_keyfile(filename, &err);
 		g_free(filename);
@@ -2456,6 +2447,25 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 						"fs-codec.conf: %s\n",
 						err->message);
 			g_error_free(err);
+		}
+
+		/*
+		 * Add SPEEX if the configuration file doesn't exist or
+		 * there isn't a speex entry.
+		 */
+		for (iter = codec_conf; iter; iter = g_list_next(iter)) {
+			FsCodec *codec = iter->data;
+			if (!g_ascii_strcasecmp(codec->encoding_name, "speex"))
+				break;
+		}
+
+		if (iter == NULL) {
+			codec_conf = g_list_prepend(codec_conf,
+					fs_codec_new(FS_CODEC_ID_ANY,
+					"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
+			codec_conf = g_list_prepend(codec_conf,
+					fs_codec_new(FS_CODEC_ID_ANY,
+					"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
 		}
 
 		fs_session_set_codec_preferences(session->session, codec_conf, NULL);
