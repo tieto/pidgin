@@ -20,8 +20,9 @@ version 2.6.0 (??/??/2009):
 	  moved to a new network and the old servers are not accessible.
 
 	XMPP:
-	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), and
-	  voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
+	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
+	  support with GTalk and voice and video support with the GMail web
+	  client. (Mike "Maiku" Ruprecht)
 	* Support for in-band bytestreams for file transfers (XEP-0047). (Marcus
 	  Lundblad)
 	* Support for sending and receiving attentions (equivalent to "buzz"
