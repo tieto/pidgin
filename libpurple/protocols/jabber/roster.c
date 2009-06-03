@@ -283,6 +283,11 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	if(grps) {
 		groups = grps;
+		for (l = groups; l; l = l->next) {
+			purple_debug_info("jabber", "jabber_roster_update(%s): [Source: grps]: groups contains %s",
+							  name, (const char *)l->data);
+		}
+
 	} else {
 		GSList *buddies = purple_find_buddies(js->gc->account, name);
 		if(!buddies)
@@ -292,6 +297,10 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 			g = purple_buddy_get_group(b);
 			groups = g_slist_append(groups, (char *)purple_group_get_name(g));
 			buddies = g_slist_remove(buddies, b);
+		}
+		for (l = groups; l; l = l->next) {
+			purple_debug_info("jabber", "jabber_roster_update(%s): [Source: local blist]: groups contains %s",
+							  name, (const char *)l->data);
 		}
 	}
 
@@ -369,6 +378,9 @@ void jabber_roster_alias_change(PurpleConnection *gc, const char *name, const ch
 	if(b != NULL) {
 		purple_blist_alias_buddy(b, alias);
 
+		purple_debug_info("jabber", "jabber_roster_alias_change(): Aliased %s to %s",
+				name, alias);
+
 		jabber_roster_update(gc->proto_data, name, NULL);
 	}
 }
@@ -395,6 +407,10 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 			groups = g_slist_append(groups, (char*)gname);
 		buddies = g_slist_remove(buddies, b);
 	}
+
+	purple_debug_info("jabber", "jabber_roster_group_change(): Moving %s from %s to %s",
+				name, old_group, new_group);
+
 	jabber_roster_update(gc->proto_data, name, groups);
 	g_slist_free(groups);
 }
@@ -427,6 +443,9 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 			groups = g_slist_append(groups, (char *)purple_group_get_name(tmpgroup));
 			buddies = g_slist_remove(buddies, tmpbuddy);
 		}
+
+		purple_debug_info("jabber", "jabber_roster_remove_buddy(): Removing %s",
+				buddy->name);
 
 		jabber_roster_update(gc->proto_data, name, groups);
 		g_slist_free(groups);
