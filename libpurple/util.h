@@ -506,8 +506,6 @@ char *purple_markup_linkify(const char *str);
  *
  * @return The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
- *
- * @see purple_escape_html
  */
 char *purple_unescape_html(const char *html);
 
