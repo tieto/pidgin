@@ -164,6 +164,8 @@ xmpp_disco_info_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	prpl_info->send_raw(pc, str, -1);
 	g_free(str);
+	xmlnode_free(iq);
+	g_free(id);
 }
 
 static void
@@ -193,6 +195,8 @@ xmpp_disco_items_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	prpl_info->send_raw(pc, str, -1);
 	g_free(str);
+	xmlnode_free(iq);
+	g_free(id);
 }
 
 static XmppDiscoServiceType
@@ -548,6 +552,7 @@ void xmpp_disco_service_register(XmppDiscoService *service)
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	prpl_info->send_raw(service->list->pc, str, -1);
 	g_free(str);
+	xmlnode_free(iq);
 	g_free(id);
 }
 

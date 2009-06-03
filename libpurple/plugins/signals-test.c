@@ -686,6 +686,7 @@ jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 		prpl_info->send_raw(pc, str, -1);
 		g_free(str);
+		xmlnode_free(iq);
 	}
 
 	/* Cookie monster eats IQ stanzas; the prpl shouldn't keep processing */
