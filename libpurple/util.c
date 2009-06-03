@@ -4424,6 +4424,34 @@ purple_utf8_salvage(const char *str)
 	return g_string_free(workstr, FALSE);
 }
 
+gchar *
+purple_utf8_strip_unprintables(const gchar *str)
+{
+	gchar *workstr, *iter;
+
+	g_return_val_if_fail(str != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
+
+	workstr = iter = g_new(gchar, strlen(str) + 1);
+	while (*str) {
+		gunichar c = g_utf8_get_char(str);
+		const gchar *next = g_utf8_next_char(str);
+		size_t len = next - str;
+
+		if (g_unichar_isprint(c)) {
+			memcpy(iter, str, len);
+			iter += len;
+		}
+
+		str = next;
+	}
+
+	/* nul-terminate the new string */
+	*iter = '\0';
+
+	return workstr;
+}
+
 /*
  * This function is copied from g_strerror() but changed to use
  * gai_strerror().

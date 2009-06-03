@@ -49,6 +49,7 @@ version 2.6.0 (??/??/2009):
 		* purple_request_field_get_ui_data
 		* purple_request_field_set_ui_data
 		* purple_strequal
+		* purple_utf8_strip_unprintables
 		* xmlnode_from_file
 		* xmlnode_get_parent
 		* xmlnode_set_attrib_full
