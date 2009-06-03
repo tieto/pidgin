@@ -4429,7 +4429,10 @@ purple_utf8_strip_unprintables(const gchar *str)
 {
 	gchar *workstr, *iter;
 
-	g_return_val_if_fail(str != NULL, NULL);
+	if (str == NULL)
+		/* Act like g_strdup */
+		return NULL;
+
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
 
 	workstr = iter = g_new(gchar, strlen(str) + 1);
