@@ -50,6 +50,8 @@ version 2.6.0 (??/??/2009):
 	  chat to avoid getting too many fetch requests).
 	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
 	  to require SSL not being respected.
+	* When using non-Cyrus SASL DIGEST-MD5 authentication, only specify the
+	  charset as UTF-8 if the username/password weren't converted to ISO-8859-1.
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)

@@ -784,22 +784,29 @@ static GHashTable* parse_challenge(const char *challenge)
 
 static char *
 generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
-		const char *cnonce, const char *a2, const char *realm)
+		const char *cnonce, const char *a2, const char *realm,
+		gboolean *converted)
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
 	guchar result[16];
 	size_t a1len;
-
 	gchar *a1, *convnode=NULL, *convpasswd = NULL, *ha1, *ha2, *kd, *x, *z;
+
+	if (converted)
+		*converted = TRUE;
 
 	if((convnode = g_convert(jid->node, -1, "iso-8859-1", "utf-8",
 					NULL, NULL, NULL)) == NULL) {
 		convnode = g_strdup(jid->node);
+		if (converted)
+			*converted = FALSE;
 	}
 	if(passwd && ((convpasswd = g_convert(passwd, -1, "iso-8859-1",
 						"utf-8", NULL, NULL, NULL)) == NULL)) {
 		convpasswd = g_strdup(passwd);
+		if (converted)
+			*converted = FALSE;
 	}
 
 	cipher = purple_ciphers_find_cipher("md5");
@@ -914,18 +921,19 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 				char *auth_resp;
 				char *buf;
 				char *cnonce;
+				gboolean converted_to_iso8859;
 
 				cnonce = g_strdup_printf("%x%u%x", g_random_int(), (int)time(NULL),
 						g_random_int());
 
 				a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
 				auth_resp = generate_response_value(js->user,
-						purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
+						purple_connection_get_password(js->gc), nonce, cnonce, a2, realm, &converted_to_iso8859);
 				g_free(a2);
 
 				a2 = g_strdup_printf(":xmpp/%s", realm);
 				js->expected_rspauth = generate_response_value(js->user,
-						purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
+						purple_connection_get_password(js->gc), nonce, cnonce, a2, realm, &converted_to_iso8859);
 				g_free(a2);
 
 				g_string_append_printf(response, "username=\"%s\"", js->user->node);
@@ -936,7 +944,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 				g_string_append_printf(response, ",qop=auth");
 				g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
 				g_string_append_printf(response, ",response=%s", auth_resp);
-				g_string_append_printf(response, ",charset=utf-8");
+				if (!converted_to_iso8859)
+					g_string_append_printf(response, ",charset=utf-8");
 
 				g_free(auth_resp);
 				g_free(cnonce);
