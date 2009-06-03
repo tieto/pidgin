@@ -141,11 +141,8 @@ static void
 xmpp_disco_info_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
                    const char *node, XmppIqCallback cb)
 {
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
 	xmlnode *iq, *query;
 	char *id = generate_next_id();
-	char *str;
 
 	iq = xmlnode_new("iq");
 	xmlnode_set_attrib(iq, "type", "get");
@@ -157,26 +154,21 @@ xmpp_disco_info_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	if (node)
 		xmlnode_set_attrib(query, "node", node);
 
+	/* Steals id */
 	xmpp_iq_register_callback(pc, id, cbdata, cb);
 
-	str = xmlnode_to_str(iq, NULL);
-	prpl = purple_connection_get_prpl(pc);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	prpl_info->send_raw(pc, str, -1);
-	g_free(str);
-	xmlnode_free(iq);
-	g_free(id);
+	purple_signal_emit(purple_connection_get_prpl(pc), "jabber-sending-xmlnode",
+	                   pc, &iq);
+	if (iq != NULL)
+		xmlnode_free(iq);
 }
 
 static void
 xmpp_disco_items_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
                     const char *node, XmppIqCallback cb)
 {
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
 	xmlnode *iq, *query;
 	char *id = generate_next_id();
-	char *str;
 
 	iq = xmlnode_new("iq");
 	xmlnode_set_attrib(iq, "type", "get");
@@ -188,15 +180,13 @@ xmpp_disco_items_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	if (node)
 		xmlnode_set_attrib(query, "node", node);
 
+	/* Steals id */
 	xmpp_iq_register_callback(pc, id, cbdata, cb);
 
-	str = xmlnode_to_str(iq, NULL);
-	prpl = purple_connection_get_prpl(pc);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	prpl_info->send_raw(pc, str, -1);
-	g_free(str);
-	xmlnode_free(iq);
-	g_free(id);
+	purple_signal_emit(purple_connection_get_prpl(pc), "jabber-sending-xmlnode",
+	                   pc, &iq);
+	if (iq != NULL)
+		xmlnode_free(iq);
 }
 
 static XmppDiscoServiceType
@@ -533,11 +523,8 @@ void xmpp_disco_service_expand(XmppDiscoService *service)
 
 void xmpp_disco_service_register(XmppDiscoService *service)
 {
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
 	xmlnode *iq, *query;
 	char *id = generate_next_id();
-	char *str;
 
 	iq = xmlnode_new("iq");
 	xmlnode_set_attrib(iq, "type", "get");
@@ -547,12 +534,10 @@ void xmpp_disco_service_register(XmppDiscoService *service)
 	query = xmlnode_new_child(iq, "query");
 	xmlnode_set_namespace(query, NS_REGISTER);
 
-	str = xmlnode_to_str(iq, NULL);
-	prpl = purple_connection_get_prpl(service->list->pc);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	prpl_info->send_raw(service->list->pc, str, -1);
-	g_free(str);
-	xmlnode_free(iq);
+	purple_signal_emit(purple_connection_get_prpl(service->list->pc),
+			"jabber-sending-xmlnode", service->list->pc, &iq);
+	if (iq != NULL)
+		xmlnode_free(iq);
 	g_free(id);
 }
 

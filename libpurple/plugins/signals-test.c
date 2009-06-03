@@ -671,22 +671,16 @@ jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
 	                  xmlnode_get_namespace(child));
 
 	if (g_str_equal(type, "get") || g_str_equal(type, "set")) {
-		PurplePlugin *prpl;
-		PurplePluginProtocolInfo *prpl_info;
-		char *str;
-
 		/* Send the requisite reply */
 		xmlnode *iq = xmlnode_new("iq");
 		xmlnode_set_attrib(iq, "to", from);
 		xmlnode_set_attrib(iq, "id", id);
 		xmlnode_set_attrib(iq, "type", "result");
 
-		str = xmlnode_to_str(iq, NULL);
-		prpl = purple_connection_get_prpl(pc);
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-		prpl_info->send_raw(pc, str, -1);
-		g_free(str);
-		xmlnode_free(iq);
+		purple_signal_emit(purple_connection_get_prpl(pc),
+		                   "jabber-sending-xmlnode", pc, &iq);
+		if (iq != NULL)
+			xmlnode_free(iq);
 	}
 
 	/* Cookie monster eats IQ stanzas; the prpl shouldn't keep processing */
