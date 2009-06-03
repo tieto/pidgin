@@ -1124,10 +1124,6 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 	if (type != JABBER_IQ_RESULT)
 		return;
 
-	if (!from)
-		from = js->serverFQDN;
-	g_return_if_fail(from != NULL);
-
 	if(js->registration) {
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
