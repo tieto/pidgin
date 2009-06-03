@@ -170,6 +170,7 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			purple_value_new(PURPLE_TYPE_STRING), /* from */
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE)); /* child */
 
+	/* Modifying these? Look at jabber_init_plugin for the ipc versions */
 	purple_signal_register(plugin, "jabber-register-namespace-watcher",
 			purple_marshal_VOID__POINTER_POINTER,
 			NULL, 2,

@@ -3451,6 +3451,21 @@ jabber_init_plugin(PurplePlugin *plugin)
 							 purple_marshal_VOID__POINTER,
 							 NULL, 1,
 							 purple_value_new(PURPLE_TYPE_STRING));
+
+	/* Modifying these? Look at libxmpp.c:load_plugin for the signal versions */
+	purple_plugin_ipc_register(plugin, "register_namespace_watcher",
+	                           PURPLE_CALLBACK(jabber_iq_signal_register),
+	                           purple_marshal_VOID__POINTER_POINTER,
+	                           NULL, 2,
+	                           purple_value_new(PURPLE_TYPE_STRING),  /* node */
+	                           purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+
+	purple_plugin_ipc_register(plugin, "unregister_namespace_watcher",
+	                           PURPLE_CALLBACK(jabber_iq_signal_unregister),
+	                           purple_marshal_VOID__POINTER_POINTER,
+	                           NULL, 2,
+	                           purple_value_new(PURPLE_TYPE_STRING),  /* node */
+	                           purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
 }
 
 void
