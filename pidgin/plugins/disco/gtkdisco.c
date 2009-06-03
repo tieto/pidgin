@@ -512,7 +512,10 @@ void pidgin_disco_add_service(PidginDiscoList *pdl, XmppDiscoService *service, X
 	dialog = pdl->dialog;
 	g_return_if_fail(dialog != NULL);
 
-	purple_debug_info("xmppdisco", "Adding service \"%s\"\n", service->name);
+	if (service != NULL)
+		purple_debug_info("xmppdisco", "Adding service \"%s\"\n", service->name);
+	else
+		purple_debug_info("xmppdisco", "Service \"%s\" has no childrens\n", parent->name);
 
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(dialog->progress));
 
@@ -535,6 +538,12 @@ void pidgin_disco_add_service(PidginDiscoList *pdl, XmppDiscoService *service, X
 					append = FALSE;
 			}
 		}
+	}
+
+	if (service == NULL) {
+		if (parent != NULL && !append)
+			gtk_tree_store_remove(pdl->model, &child);
+		return;
 	}
 
 	if (append)

@@ -348,6 +348,7 @@ got_items_cb(PurpleConnection *pc, const char *type, const char *id,
 	struct item_data *item_data = data;
 	PidginDiscoList *list = item_data->list;
 	xmlnode *query;
+	gboolean has_items = FALSE;
 
 	--list->fetch_count;
 
@@ -363,6 +364,8 @@ got_items_cb(PurpleConnection *pc, const char *type, const char *id,
 			const char *jid = xmlnode_get_attrib(item, "jid");
 			const char *name = xmlnode_get_attrib(item, "name");
 			const char *node = xmlnode_get_attrib(item, "node");
+
+			has_items = TRUE;
 
 			if (item_data->parent->type == XMPP_DISCO_SERVICE_TYPE_CHAT) {
 				/* This is a hacky first-order approximation. Any MUC
@@ -396,6 +399,9 @@ got_items_cb(PurpleConnection *pc, const char *type, const char *id,
 			}
 		}
 	}
+
+	if (!has_items)
+		pidgin_disco_add_service(list, NULL, item_data->parent);
 
 out:
 	if (list->fetch_count == 0)
