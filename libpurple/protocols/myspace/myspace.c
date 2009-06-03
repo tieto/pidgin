@@ -1118,10 +1118,6 @@ msim_got_contact_list(MsimSession *session, const MsimMessage *reply, gpointer u
 	guint buddy_count;
 
 	body = msim_msg_get_dictionary(reply, "body");
-	if (!body) {
-		/* No friends. Not an error. */
-		return;
-	}
 
 	buddy_count = 0;
 
