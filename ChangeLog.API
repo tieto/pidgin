@@ -16,6 +16,9 @@ version 2.6.0 (??/??/2009):
 		* blist-node-added and blist-node-removed signals (see
 		  blist-signals.dox)
 		* Jabber plugin signals (see jabber-signals.dox)
+		* Plugins may now emit the jabber-sending-xmlnode signal in order
+		  to send stanzas; this method is preferred to the prpl send_raw
+		  function as other plugins listening to the signal see them.
 		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data

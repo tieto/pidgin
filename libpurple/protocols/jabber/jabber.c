@@ -449,20 +449,23 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 	return len;
 }
 
-void jabber_send(JabberStream *js, xmlnode *packet)
+void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
+                           gpointer unused)
 {
 	char *txt;
 	int len;
 
-	purple_signal_emit(jabber_plugin, "jabber-sending-xmlnode", js->gc, &packet);
-
-	/* if we get NULL back, we're done processing */
-	if(NULL == packet)
+	if (NULL == packet)
 		return;
 
-	txt = xmlnode_to_str(packet, &len);
-	jabber_send_raw(js, txt, len);
+	txt = xmlnode_to_str(*packet, &len);
+	jabber_send_raw(purple_connection_get_protocol_data(pc), txt, len);
 	g_free(txt);
+}
+
+void jabber_send(JabberStream *js, xmlnode *packet)
+{
+	purple_signal_emit(jabber_plugin, "jabber-sending-xmlnode", js->gc, &packet);
 }
 
 static gboolean jabber_keepalive_timeout(PurpleConnection *gc)

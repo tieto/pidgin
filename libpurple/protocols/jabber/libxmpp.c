@@ -137,6 +137,14 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
 
+	/*
+	 * Do not remove this or the plugin will fail. Completely. You have been
+	 * warned!
+	 */
+	purple_signal_connect_priority(plugin, "jabber-sending-xmlnode",
+			plugin, PURPLE_CALLBACK(jabber_send_signal_cb),
+			NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
+
 	purple_signal_register(plugin, "jabber-sending-text",
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
