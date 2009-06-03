@@ -396,7 +396,7 @@ void jabber_roster_alias_change(PurpleConnection *gc, const char *name, const ch
 		purple_blist_alias_buddy(b, alias);
 
 		purple_debug_info("jabber", "jabber_roster_alias_change(): Aliased %s to %s\n",
-				name, alias);
+				name, alias ? alias : "(null)");
 
 		jabber_roster_update(gc->proto_data, name, NULL);
 	}
