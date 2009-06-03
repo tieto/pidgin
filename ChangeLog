@@ -23,6 +23,7 @@ version 2.6.0 (??/??/2009):
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
 	  support with GTalk and voice and video support with the GMail web
 	  client. (Mike "Maiku" Ruprecht)
+	* Added a Service Discovery Browser plugin for Pidgin. (Andrei Mozzhuhin)
 	* Support for in-band bytestreams for file transfers (XEP-0047). (Marcus
 	  Lundblad)
 	* Support for sending and receiving attentions (equivalent to "buzz"
