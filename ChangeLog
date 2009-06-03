@@ -41,6 +41,8 @@ version 2.6.0 (??/??/2009):
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
 	* Put section breaks between resources in "Get Info" to improve readability.
+	* Silently remove invalid XML 1.0 entities (e.g. ASCII control characters)
+	  from sent messages.
 	* XHTML markup is only included in outgoing messages when the message
 	  contains formatting.
 	* Show when the user was last logged in when doing "Get Info" on an offline
@@ -82,6 +84,7 @@ version 2.6.0 (??/??/2009):
 	  rejoin.
 	* Always set unseen-count and unseen-state on conversations.
 	  (Joshua Stein)
+	* Fix a bug in 'Conversation Colors' plugin for RTL messages.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

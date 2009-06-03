@@ -36,6 +36,7 @@ version 2.6.0 (??/??/2009):
 		* purple_global_proxy_set_info
 		* purple_group_destroy
 		* purple_log_get_activity_score
+		* purple_markup_is_rtl
 		* purple_network_force_online
 		* purple_network_set_stun_server
 		* purple_network_set_turn_server
@@ -48,6 +49,7 @@ version 2.6.0 (??/??/2009):
 		* purple_request_field_get_ui_data
 		* purple_request_field_set_ui_data
 		* purple_strequal
+		* purple_utf8_strip_unprintables
 		* xmlnode_from_file
 		* xmlnode_get_parent
 		* xmlnode_set_attrib_full

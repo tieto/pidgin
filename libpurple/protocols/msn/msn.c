@@ -1281,7 +1281,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			imdata->gc = gc;
 			imdata->who = who;
 			imdata->msg = body_str;
-			imdata->flags = flags;
+			imdata->flags = flags & ~PURPLE_MESSAGE_SEND;
 			imdata->when = time(NULL);
 			purple_timeout_add(0, msn_send_me_im, imdata);
 		}

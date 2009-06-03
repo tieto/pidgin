@@ -1041,6 +1041,35 @@ purple_markup_get_css_property(const gchar *style,
 	return ret;
 }
 
+gboolean purple_markup_is_rtl(const char *html)
+{
+	GData *attributes;
+	const gchar *start, *end;
+	gboolean res = FALSE;
+
+	if (purple_markup_find_tag("span", html, &start, &end, &attributes))
+	{
+		/* tmp is a member of attributes and is free with g_datalist_clear call */
+		const char *tmp = g_datalist_get_data(&attributes, "dir");
+		if (tmp && !g_ascii_strcasecmp(tmp, "RTL"))
+			res = TRUE;
+		if (!res)
+		{
+			tmp = g_datalist_get_data(&attributes, "style");
+			if (tmp)
+			{
+				char *tmp2 = purple_markup_get_css_property(tmp, "direction");
+				if (tmp2 && !g_ascii_strcasecmp(tmp2, "RTL"))
+					res = TRUE;
+				g_free(tmp2);
+			}
+
+		}
+		g_datalist_clear(&attributes);
+	}
+	return res;
+}
+
 gboolean
 purple_markup_find_tag(const char *needle, const char *haystack,
 					 const char **start, const char **end, GData **attributes)
@@ -4393,6 +4422,34 @@ purple_utf8_salvage(const char *str)
 	} while (*str != '\0');
 
 	return g_string_free(workstr, FALSE);
+}
+
+gchar *
+purple_utf8_strip_unprintables(const gchar *str)
+{
+	gchar *workstr, *iter;
+
+	g_return_val_if_fail(str != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
+
+	workstr = iter = g_new(gchar, strlen(str) + 1);
+	while (*str) {
+		gunichar c = g_utf8_get_char(str);
+		const gchar *next = g_utf8_next_char(str);
+		size_t len = next - str;
+
+		if (g_unichar_isprint(c)) {
+			memcpy(iter, str, len);
+			iter += len;
+		}
+
+		str = next;
+	}
+
+	/* nul-terminate the new string */
+	*iter = '\0';
+
+	return workstr;
 }
 
 /*
