@@ -579,6 +579,16 @@ const char * purple_markup_unescape_entity(const char *text, int *length);
  */
 char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
 
+/**
+ * Check if the given HTML contains RTL text.
+ *
+ * @param html  The HTML text.
+ *
+ * @return  TRUE if the text contains RTL text, FALSE otherwise.
+ *
+ * @since 2.6.0
+ */
+gboolean purple_markup_is_rtl(const char *html);
 
 /*@}*/
 

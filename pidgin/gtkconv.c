@@ -5629,38 +5629,6 @@ str_embed_direction_chars(char **str)
 #endif
 }
 
-/* Returns true if the given HTML contains RTL text */
-static gboolean
-html_is_rtl(const char *html)
-{
-	GData *attributes;
-	const gchar *start, *end;
-	gboolean res = FALSE;
-
-	if (purple_markup_find_tag("span", html, &start, &end, &attributes))
-	{
-		/* tmp is a member of attributes and is free with g_datalist_clear call */
-		const char *tmp = g_datalist_get_data(&attributes, "dir");
-		if (tmp && !g_ascii_strcasecmp(tmp, "RTL"))
-			res = TRUE;
-		if (!res)
-		{
-			tmp = g_datalist_get_data(&attributes, "style");
-			if (tmp)
-			{
-				char *tmp2 = purple_markup_get_css_property(tmp, "direction");
-				if (tmp2 && !g_ascii_strcasecmp(tmp2, "RTL"))
-					res = TRUE;
-				g_free(tmp2);
-			}
-
-		}
-		g_datalist_clear(&attributes);
-	}
-	return res;
-}
-
-
 static void
 pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *alias,
 						const char *message, PurpleMessageFlags flags,
@@ -5822,7 +5790,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	}
 
 	/* Bi-Directional support - set timestamp direction using unicode characters */
-	is_rtl_message = html_is_rtl(message);
+	is_rtl_message = purple_markup_is_rtl(message);
 	/* Enforce direction only if message is RTL - doesn't effect LTR users */
 	if (is_rtl_message)
 		str_embed_direction_chars(&mdate);
