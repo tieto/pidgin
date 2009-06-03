@@ -84,6 +84,7 @@ version 2.6.0 (??/??/2009):
 	  rejoin.
 	* Always set unseen-count and unseen-state on conversations.
 	  (Joshua Stein)
+	* Fix a bug in 'Conversation Colors' plugin for RTL messages.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
