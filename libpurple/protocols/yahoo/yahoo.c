@@ -147,7 +147,6 @@ static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFri
 static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	YahooFriend *f = NULL;
 	char *name = NULL;
@@ -168,29 +167,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		switch (pair->key) {
 		case 0: /* we won't actually do anything with this */
-			break;
-		case 1: /* we don't get the full buddy list here. */
-			if (!yd->logged_in) {
-				purple_connection_set_display_name(gc, pair->value);
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
-				yd->logged_in = TRUE;
-				if (yd->picture_upload_todo) {
-					yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
-					yd->picture_upload_todo = NULL;
-				}
-				yahoo_set_status(account, purple_account_get_active_status(account));
-
-				/* this requests the list. i have a feeling that this is very evil
-				 *
-				 * scs.yahoo.com sends you the list before this packet without  it being
-				 * requested
-				 *
-				 * do_import(gc, NULL);
-				 * newpkt = yahoo_packet_new(YAHOO_SERVICE_LIST, YAHOO_STATUS_OFFLINE, 0);
-				 * yahoo_packet_send_and_free(newpkt, yd);
-				 */
-
-				}
+		case 1: /* we won't actually do anything with this */
 			break;
 		case 8: /* how many online buddies we have */
 			break;
@@ -577,6 +554,18 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	}
 
 	g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
+	
+	/* Now that we have processed the buddy list, we can say yahoo has connected */
+	purple_connection_set_display_name(gc, purple_normalize(account, purple_account_get_username(account)));
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	yd->logged_in = TRUE;
+	if (yd->picture_upload_todo) {
+		yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
+		yd->picture_upload_todo = NULL;
+	}
+	yahoo_set_status(account, purple_account_get_active_status(account));
+	purple_debug_info("yahoo","Authentication: Connection established\n");
+
 	g_hash_table_destroy(ht);
 	g_free(norm_bud);
 	g_free(temp);
