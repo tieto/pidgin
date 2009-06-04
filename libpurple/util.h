@@ -1257,6 +1257,7 @@ gchar *purple_utf8_salvage(const char *str);
  * @param str A valid UTF-8 string.
  *
  * @return A newly allocated UTF-8 string without the unprintable characters.
+ * @since 2.6.0
  *
  * @see g_unichar_isprint
  */
