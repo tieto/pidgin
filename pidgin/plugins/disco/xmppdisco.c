@@ -17,6 +17,23 @@
  *
  */
 
+/* TODO list (a little bit of a brain dump):
+     * Support more actions than "register" and "add" based on context.
+	    - Subscribe to pubsub nodes (just...because?)
+		- Execute ad-hoc commands
+		- Change 'Register' to 'Unregister' if we're registered?
+		- Administer MUCs
+     * See if we can better handle the ad-hoc commands that ejabberd returns
+	   when disco'ing a server as an administrator:
+from disco#items:
+	<item jid='darkrain42.org' node='announce' name='Announcements'/>
+disco#info:
+	<iq from='darkrain42.org' type='result'>
+		<query xmlns='http://jabber.org/protocol/disco#info' node='announce'/>
+	</iq>
+	* For services that are a JID w/o a node, handle fetching ad-hoc commands?
+*/
+
 #include "internal.h"
 #include "pidgin.h"
 
@@ -423,6 +440,8 @@ server_items_cb(PurpleConnection *pc, const char *type, const char *id,
 		for (item = xmlnode_get_child(query, "item"); item;
 				item = xmlnode_get_next_twin(item)) {
 			const char *jid = xmlnode_get_attrib(item, "jid");
+			const char *name = xmlnode_get_attrib(item, "name");
+			const char *node = xmlnode_get_attrib(item, "node");
 			struct item_data *item_data;
 
 			if (!jid)
@@ -430,10 +449,12 @@ server_items_cb(PurpleConnection *pc, const char *type, const char *id,
 
 			item_data = g_new0(struct item_data, 1);
 			item_data->list = list;
+			item_data->name = g_strdup(name);
+			item_data->node = g_strdup(node);
 
 			++list->fetch_count;
 			pidgin_disco_list_ref(list);
-			xmpp_disco_info_do(pc, item_data, jid, NULL, got_info_cb);
+			xmpp_disco_info_do(pc, item_data, jid, node, got_info_cb);
 		}
 	}
 
