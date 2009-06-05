@@ -85,6 +85,8 @@ version 2.6.0 (??/??/2009):
 	* Always set unseen-count and unseen-state on conversations.
 	  (Joshua Stein)
 	* Fix a bug in 'Conversation Colors' plugin for RTL messages.
+	* Pressing the Left and Right arrow keys in the buddy list will expand and
+	  collapse buddy groups or contacts. (Peter Ruibal)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
