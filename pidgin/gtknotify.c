@@ -120,7 +120,7 @@ typedef enum
 {
 	PIDGIN_NOTIFY_MAIL,
 	PIDGIN_NOTIFY_POUNCE,
-        PIDGIN_NOTIFY_TYPES
+	PIDGIN_NOTIFY_TYPES
 } PidginNotifyType;
 
 static PidginNotifyDialog *mail_dialog = NULL;
@@ -1379,7 +1379,6 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 
 	spec_dialog = g_new0(PidginNotifyDialog, 1);
 	spec_dialog->dialog = dialog;
-	spec_dialog->open_button = button;
 
 	spec_dialog->treemodel = treemodel;
 	spec_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(spec_dialog->treemodel));
@@ -1399,6 +1398,7 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 
 		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
 						 PIDGIN_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
+		spec_dialog->open_button = button;
 
 		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(spec_dialog->treeview), FALSE);
 
@@ -1496,7 +1496,7 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 		mail_dialog = spec_dialog;
 	else if (type == PIDGIN_NOTIFY_POUNCE) {
 		pounce_dialog = spec_dialog;
-        }
+	}
 
 	return spec_dialog->dialog;
 
