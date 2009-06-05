@@ -16,9 +16,6 @@ version 2.6.0 (??/??/2009):
 		* blist-node-added and blist-node-removed signals (see
 		  blist-signals.dox)
 		* Jabber plugin signals (see jabber-signals.dox)
-		* Plugins may now emit the jabber-sending-xmlnode signal in order
-		  to send stanzas; this method is preferred to the prpl send_raw
-		  function as other plugins listening to the signal see them.
 		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
@@ -61,6 +58,13 @@ version 2.6.0 (??/??/2009):
 		  which was completely non-deterministic.  If you want to remove
 		  the attribute with no namespace, then use NULL with
 		  xmlnode_remove_with_namespace.
+		* Plugins may now emit the jabber-sending-xmlnode signal in order
+		  to send stanzas; this method is preferred to the prpl send_raw
+		  function as other plugins listening to the signal see them.
+		* The conversation-updated signal with a PURPLE_CONV_UPDATE_TYPING
+		  update type is emitted when receiving an IM.  Previously, the
+		  typing state was modified (and the buddy-typing-stopped signal
+		  emitted), but this signal was not emitted.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
