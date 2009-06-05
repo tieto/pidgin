@@ -1759,6 +1759,7 @@ static void ggp_login(PurpleAccount *account)
 	PurpleStatus *status;
 	struct gg_login_params *glp;
 	GGPInfo *info;
+	const char *address;
 
 	if (ggp_setup_proxy(account) == -1)
 		return;
@@ -1788,6 +1789,26 @@ static void ggp_login(PurpleAccount *account)
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
 	glp->tls = 0;
+
+	address = purple_account_get_string(account, "gg_server", "");
+	if (address && *address) {
+		struct in_addr *addr = gg_gethostbyname(address);
+
+		purple_debug_info("gg", "Using gg server given by user (%s)\n", address);
+
+		if (addr == NULL) {
+			purple_debug_error("gg", "gg_gethostbyname returned error (%d): %s\n",
+			                   errno, g_strerror(errno));
+			purple_connection_error_reason(gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, /* should this be a settings error? */
+				_("Unable to resolve server"));
+			return;
+		}
+
+		glp->server_addr = inet_addr(inet_ntoa(*addr));
+		glp->server_port = 8074;
+	} else
+		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
 
 	info->session = gg_login(glp);
 	if (info->session == NULL) {
@@ -2366,6 +2387,11 @@ static void init_plugin(PurplePlugin *plugin)
 			"nick", _("Gadu-Gadu User"));
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
+
+	option = purple_account_option_string_new(_("GG server"),
+			"gg_server", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+			option);
 
 	my_protocol = plugin;
 
