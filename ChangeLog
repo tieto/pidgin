@@ -52,6 +52,9 @@ version 2.6.0 (??/??/2009):
 	  chat to avoid getting too many fetch requests).
 	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
 	  to require SSL not being respected.
+	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
+	  the username, password, or realm (the JID domain) contain characters
+	  not in ISO-8859-1.
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)
