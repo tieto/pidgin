@@ -47,6 +47,7 @@ struct _PurpleProxyConnectData {
 	gchar *host;
 	int port;
 	int fd;
+	int socket_type;
 	guint inpa;
 	PurpleProxyInfo *gpi;
 	PurpleDnsQueryData *query_data;
@@ -673,6 +674,68 @@ clean_connect(gpointer data)
 	purple_proxy_connect_data_connected(data);
 
 	return FALSE;
+}
+
+static void
+proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+{
+	int flags;
+
+	purple_debug_info("proxy", "UDP Connecting to %s:%d with no proxy\n",
+			connect_data->host, connect_data->port);
+
+	connect_data->fd = socket(addr->sa_family, SOCK_DGRAM, 0);
+	if (connect_data->fd < 0)
+	{
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Unable to create socket:\n%s"), g_strerror(errno));
+		return;
+	}
+
+	flags = fcntl(connect_data->fd, F_GETFL);
+	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
+#endif
+
+	if (connect(connect_data->fd, addr, addrlen) != 0)
+	{
+		if ((errno == EINPROGRESS) || (errno == EINTR))
+		{
+			purple_debug_info("proxy", "UDP Connection in progress\n");
+			connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, socket_ready_cb, connect_data);
+		}
+		else
+		{
+			purple_proxy_connect_data_disconnect(connect_data, g_strerror(errno));
+		}
+	}
+	else
+	{
+		/*
+		 * The connection happened IMMEDIATELY... strange, but whatever.
+		 */
+		int error = ETIMEDOUT;
+		int ret;
+
+		purple_debug_info("proxy", "UDP Connected immediately.\n");
+
+		ret = purple_input_get_error(connect_data->fd, &error);
+		if ((ret != 0) || (error != 0))
+		{
+			if (ret != 0)
+				error = errno;
+			purple_proxy_connect_data_disconnect(connect_data, g_strerror(error));
+			return;
+		}
+
+		/*
+		 * We want to call the "connected" callback eventually, but we
+		 * don't want to call it before we return, just in case.
+		 */
+		purple_timeout_add(10, clean_connect, connect_data);
+	}
 }
 
 static void
@@ -2042,6 +2105,12 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 #endif
 	purple_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
 
+	if (connect_data->socket_type == SOCK_DGRAM) {
+		proxy_connect_udp_none(connect_data, addr, addrlen);
+		g_free(addr);
+		return;
+	}
+
 	switch (purple_proxy_info_get_type(connect_data->gpi)) {
 		case PURPLE_PROXY_NONE:
 			proxy_connect_none(connect_data, addr, addrlen);
@@ -2193,6 +2262,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 
 	connect_data = g_new0(PurpleProxyConnectData, 1);
 	connect_data->fd = -1;
+	connect_data->socket_type = SOCK_STREAM;
 	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
 	connect_data->data = data;
@@ -2243,6 +2313,71 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 	return connect_data;
 }
 
+PurpleProxyConnectData *
+purple_proxy_connect_udp(void *handle, PurpleAccount *account,
+				   const char *host, int port,
+				   PurpleProxyConnectFunction connect_cb, gpointer data)
+{
+	const char *connecthost = host;
+	int connectport = port;
+	PurpleProxyConnectData *connect_data;
+
+	g_return_val_if_fail(host       != NULL, NULL);
+	g_return_val_if_fail(port       >  0,    NULL);
+	g_return_val_if_fail(connect_cb != NULL, NULL);
+
+	connect_data = g_new0(PurpleProxyConnectData, 1);
+	connect_data->fd = -1;
+	connect_data->socket_type = SOCK_DGRAM;
+	connect_data->handle = handle;
+	connect_data->connect_cb = connect_cb;
+	connect_data->data = data;
+	connect_data->host = g_strdup(host);
+	connect_data->port = port;
+	connect_data->gpi = purple_proxy_get_setup(account);
+
+	if ((purple_proxy_info_get_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
+		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
+		 purple_proxy_info_get_port(connect_data->gpi) <= 0)) {
+
+		purple_notify_error(NULL, NULL, _("Invalid proxy settings"), _("Either the host name or port number specified for your given proxy type is invalid."));
+		purple_proxy_connect_data_destroy(connect_data);
+		return NULL;
+	}
+
+	switch (purple_proxy_info_get_type(connect_data->gpi))
+	{
+		case PURPLE_PROXY_NONE:
+			break;
+
+		case PURPLE_PROXY_HTTP:
+		case PURPLE_PROXY_SOCKS4:
+		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_USE_ENVVAR:
+			purple_debug_info("proxy", "Ignoring Proxy type (%d) for UDP.\n",
+			                  purple_proxy_info_get_type(connect_data->gpi));
+			break;
+
+		default:
+			purple_debug_error("proxy", "Invalid Proxy type (%d) specified.\n",
+			                   purple_proxy_info_get_type(connect_data->gpi));
+			purple_proxy_connect_data_destroy(connect_data);
+			return NULL;
+	}
+
+	connect_data->query_data = purple_dnsquery_a(connecthost,
+			connectport, connection_host_resolved, connect_data);
+	if (connect_data->query_data == NULL)
+	{
+		purple_proxy_connect_data_destroy(connect_data);
+		return NULL;
+	}
+
+	handles = g_slist_prepend(handles, connect_data);
+
+	return connect_data;
+}
+
 /*
  * Combine some of this code with purple_proxy_connect()
  */
@@ -2260,6 +2395,7 @@ purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
 
 	connect_data = g_new0(PurpleProxyConnectData, 1);
 	connect_data->fd = -1;
+	connect_data->socket_type = SOCK_STREAM;
 	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
 	connect_data->data = data;
