@@ -1611,8 +1611,9 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 {
 	PurpleBlistNode *node;
 	GValue val;
-	GtkTreeIter iter;
+	GtkTreeIter iter, parent;
 	GtkTreeSelection *sel;
+	GtkTreePath *path;
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
@@ -1636,8 +1637,62 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 		}
 		if(buddy)
 			pidgin_retrieve_user_info(buddy->account->gc, buddy->name);
-	} else if (event->keyval == GDK_F2) {
-		gtk_blist_menu_alias_cb(tv, node);
+	} else {
+		switch (event->keyval) {
+			case GDK_F2:
+				gtk_blist_menu_alias_cb(tv, node);
+				break;
+
+			case GDK_Left:
+				path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+				if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(tv), path)) {
+					/* Collapse the Group */
+					gtk_tree_view_collapse_row(GTK_TREE_VIEW(tv), path);
+					gtk_tree_path_free(path);
+					return TRUE;
+				} else {
+					/* Select the Parent */
+					if (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path)) {
+						if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(gtkblist->treemodel), &parent, &iter)) {
+							gtk_tree_path_free(path);
+							path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &parent);
+							gtk_tree_view_set_cursor(GTK_TREE_VIEW(tv), path, NULL, FALSE);
+							gtk_tree_path_free(path);
+							return TRUE;
+						}
+					}
+				}
+				gtk_tree_path_free(path);
+				break;
+
+			case GDK_Right:
+				path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+				if (!gtk_tree_view_row_expanded(GTK_TREE_VIEW(tv), path)) {
+					/* Expand the Group */
+					if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+						pidgin_blist_expand_contact_cb(NULL, node);
+						gtk_tree_path_free(path);
+						return TRUE;
+					} else if (!PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+						gtk_tree_view_expand_row(GTK_TREE_VIEW(tv), path, FALSE);
+						gtk_tree_path_free(path);
+						return TRUE;
+					}
+				} else {
+					/* Select the First Child */
+					if (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &parent, path)) {
+						if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent, 0)) {
+							gtk_tree_path_free(path);
+							path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+							gtk_tree_view_set_cursor(GTK_TREE_VIEW(tv), path, NULL, FALSE);
+							gtk_tree_path_free(path);
+							return TRUE;
+						}
+					}
+				}
+				gtk_tree_path_free(path);
+				break;
+		}
 	}
 
 	return FALSE;
