@@ -999,7 +999,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 					enc_out = purple_base64_encode((unsigned char*)c_out, clen);
 				else {
 					char *tmp = g_strdup_printf("%s,charset=utf-8", c_out);
-					enc_out = purple_base64_encode((unsigned char*)c_out, clen + 14);
+					enc_out = purple_base64_encode((unsigned char*)tmp, clen + 14);
 					g_free(tmp);
 				}
 
