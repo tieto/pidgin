@@ -87,6 +87,8 @@ version 2.6.0 (??/??/2009):
 	* Fix a bug in 'Conversation Colors' plugin for RTL messages.
 	* Pressing the Left and Right arrow keys in the buddy list will expand and
 	  collapse buddy groups or contacts. (Peter Ruibal)
+	* Support saving animated custom smileys as animated images or animated
+	  custom smileys. (Andrea Piccinelli)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

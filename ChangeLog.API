@@ -94,6 +94,7 @@ version 2.6.0 (??/??/2009):
 		* pidgin_blist_set_theme
 		* pidgin_blist_get_theme
 		* pidgin_prefs_labeled_password
+		* pidgin_smiley_editor_set_data
 		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
 		* pidgin_notify_pounce_add
