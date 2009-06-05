@@ -18,13 +18,15 @@
  */
 
 /* TODO list (a little bit of a brain dump):
-     * Support more actions than "register" and "add" based on context.
-	    - Subscribe to pubsub nodes (just...because?)
+	* Support more actions than "register" and "add" based on context.
+		- Subscribe to pubsub nodes (just...because?)
 		- Execute ad-hoc commands
 		- Change 'Register' to 'Unregister' if we're registered?
 		- Administer MUCs
-     * See if we can better handle the ad-hoc commands that ejabberd returns
-	   when disco'ing a server as an administrator:
+	* Enumerate pubsub node contents.
+		- PEP too? (useful development tool at times)
+	* See if we can better handle the ad-hoc commands that ejabberd returns
+	  when disco'ing a server as an administrator:
 from disco#items:
 	<item jid='darkrain42.org' node='announce' name='Announcements'/>
 disco#info:
