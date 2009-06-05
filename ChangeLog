@@ -18,6 +18,8 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
+	* Gadu-Gadu accounts can specify a server to which to connect.
+	  (Krzysztof "kreez" Tobola)
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -53,8 +55,8 @@ version 2.6.0 (??/??/2009):
 	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
 	  to require SSL not being respected.
 	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
-	  the username, password, or realm (the JID domain) contain characters
-	  not in ISO-8859-1.
+	  the username, password, or realm (the JID domain) contain non-ASCII
+	  characters.
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)
