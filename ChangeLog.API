@@ -48,6 +48,7 @@ version 2.6.0 (??/??/2009):
 		* purple_request_field_set_ui_data
 		* purple_strequal
 		* purple_utf8_strip_unprintables
+		* purple_util_fetch_url_request_len_with_account
 		* xmlnode_from_file
 		* xmlnode_get_parent
 		* xmlnode_set_attrib_full
@@ -80,6 +81,7 @@ version 2.6.0 (??/??/2009):
 		* purple_status_set_attr_string
 		* purple_presence_add_status
 		* purple_presence_add_list
+		* purple_util_fetch_url_request_len
 		* xmlnode_set_attrib_with_namespace
 		* xmlnode_set_attrib_with_prefix
 
