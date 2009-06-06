@@ -294,7 +294,7 @@ msn_change_status(MsnSession *session)
 	const char *state_text;
 	GHashTable *ui_info = purple_core_get_ui_info();
 	MsnClientCaps caps = MSN_CLIENT_ID;
-	
+
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
 
@@ -314,7 +314,7 @@ msn_change_status(MsnSession *session)
 			 What, they have no ncurses UI? :-) */
 		}
 	}
-	
+
 	account = session->account;
 	cmdproc = session->notification->cmdproc;
 	user = session->user;

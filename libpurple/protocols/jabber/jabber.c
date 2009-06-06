@@ -1907,7 +1907,7 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 	JabberStream *js;
 	JabberBuddy *jb = NULL;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(b));
-	
+
 	if(!gc)
 		return NULL;
 
@@ -1920,7 +1920,7 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 					!(jb->subscription & JABBER_SUB_TO)))
 			return "not-authorized";
 	}
-	
+
 	if (jb) {
 		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
 		if (jbr) {
