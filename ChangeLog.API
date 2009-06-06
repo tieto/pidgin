@@ -66,6 +66,8 @@ version 2.6.0 (??/??/2009):
 		  update type is emitted when receiving an IM.  Previously, the
 		  typing state was modified (and the buddy-typing-stopped signal
 		  emitted), but this signal was not emitted.
+		* Added a client_type field in the get_ui_info core UI op. See
+		  core.h for details.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
