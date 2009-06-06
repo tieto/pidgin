@@ -100,6 +100,13 @@ version 2.6.0 (??/??/2009):
 	  especially for users of braille terminals, screen readers etc.
 	* Added a TinyURL plugin, which aids copying longer URLs.
 
+	Pidgin GTK+ Theme Control Plugin:
+	* Removed mouse cursor color preferences.
+	* Added "Typing Notification Color" preference.
+	* Added "Disable Typing Notification Text" preference.
+	* Preferences have been reorganized into three tabs for Colors, Fonts, and
+	  Miscellaneous categories.
+
 version 2.5.6 (05/19/2009):
 	libpurple:
 	* Improve sleep behavior by aggregation of longer timeouts on second
