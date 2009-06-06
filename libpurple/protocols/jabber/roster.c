@@ -149,27 +149,17 @@ void jabber_roster_parse(JabberStream *js, const char *from,
                          JabberIqType type, const char *id, xmlnode *query)
 {
 	xmlnode *item, *group;
+	gchar *own_jid;
 
-	if(from) {
-		char *from_norm;
-		gboolean invalid;
-
-		from_norm = g_strdup(jabber_normalize(js->gc->account, from));
-
-		if(!from_norm)
-			return;
-
-		invalid = g_utf8_collate(from_norm,
-				jabber_normalize(js->gc->account,
-					purple_account_get_username(js->gc->account)));
-
-		g_free(from_norm);
-
-		if(invalid)
-			return;
+	if (!jabber_is_own_account(js, from)) {
+		purple_debug_warning("jabber", "Received bogon roster push from %s\n",
+		                     from);
+		return;
 	}
 
 	js->currently_parsing_roster_push = TRUE;
+
+	own_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 
 	for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item))
 	{
@@ -188,18 +178,11 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 			continue;
 
 		if(subscription) {
-			gint me = -1;
-			char *jid_norm;
-			const char *username;
+			gboolean me = FALSE;
 
-			jid_norm = g_strdup(jabber_normalize(js->gc->account, jid));
-			username = purple_account_get_username(js->gc->account);
-			me = g_utf8_collate(jid_norm,
-			                    jabber_normalize(js->gc->account,
-			                                     username));
-			g_free(jid_norm);
+			me = g_str_equal(own_jid, jabber_normalize(js->gc->account, jid));
 
-			if(me == 0)
+			if(me)
 				jb->subscription = JABBER_SUB_BOTH;
 			else if(!strcmp(subscription, "none"))
 				jb->subscription = JABBER_SUB_NONE;
@@ -253,6 +236,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		}
 	}
 
+	g_free(own_jid);
 	js->currently_parsing_roster_push = FALSE;
 
 	/* if we're just now parsing the roster for the first time,
