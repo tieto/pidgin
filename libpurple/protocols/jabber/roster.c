@@ -194,20 +194,9 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 				jb->subscription = JABBER_SUB_BOTH;
 			else if(!strcmp(subscription, "remove"))
 				jb->subscription = JABBER_SUB_REMOVE;
-			/* XXX: if subscription is now "from" or "none" we need to
-			 * fake a signoff, since we won't get any presence from them
-			 * anymore */
-			/* YYY: I was going to use this, but I'm not sure it's necessary
-			 * anymore, but it's here in case it is. */
-			/*
-			if ((jb->subscription & JABBER_SUB_FROM) ||
-					(jb->subscription & JABBER_SUB_NONE)) {
-				purple_prpl_got_user_status(js->gc->account, jid, "offline", NULL);
-			}
-			*/
 		}
 
-		if(ask && !strcmp(ask, "subscribe"))
+		if(purple_strequal(ask, "subscribe"))
 			jb->subscription |= JABBER_SUB_PENDING;
 		else
 			jb->subscription &= ~JABBER_SUB_PENDING;
