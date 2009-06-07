@@ -69,7 +69,7 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 		gboolean create)
 {
 	JabberBuddy *jb;
-	const char *realname;
+	char *realname;
 
 	if (js->buddies == NULL)
 		return NULL;
@@ -81,8 +81,9 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 
 	if(!jb && create) {
 		jb = g_new0(JabberBuddy, 1);
-		g_hash_table_insert(js->buddies, g_strdup(realname), jb);
-	}
+		g_hash_table_insert(js->buddies, realname, jb);
+	} else
+		g_free(realname);
 
 	return jb;
 }
