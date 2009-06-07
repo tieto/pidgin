@@ -474,7 +474,7 @@ static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timeout"));
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 	return FALSE;
 }
 
@@ -482,7 +482,7 @@ void jabber_keepalive(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-	if (js->keepalive_timeout == -1) {
+	if (js->keepalive_timeout == 0) {
 		jabber_keepalive_ping(js);
 		js->keepalive_timeout = purple_timeout_add_seconds(120,
 				(GSourceFunc)(jabber_keepalive_timeout), gc);
@@ -778,7 +778,7 @@ jabber_login(PurpleAccount *account)
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 	/* Set the default protocol version to 1.0. Overridden in parser.c. */
 	js->protocol_version = JABBER_PROTO_1_0;
 	js->sessions = NULL;
@@ -1295,7 +1295,7 @@ void jabber_register_account(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->old_length = 0;
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1548,7 +1548,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_track);
 	g_free(js->expected_rspauth);
 
-	if (js->keepalive_timeout != -1)
+	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
 
 	g_free(js->srv_rec);

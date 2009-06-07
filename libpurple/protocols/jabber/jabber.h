@@ -245,7 +245,7 @@ struct _JabberStream
 	char *certificate_CN;
 
 	/* A purple timeout tag for the keepalive */
-	int keepalive_timeout;
+	guint keepalive_timeout;
 
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;

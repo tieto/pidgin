@@ -32,9 +32,9 @@ static void jabber_keepalive_pong_cb(JabberStream *js, const char *from,
                                      JabberIqType type, const char *id,
                                      xmlnode *packet, gpointer data)
 {
-	if (js->keepalive_timeout >= 0) {
+	if (js->keepalive_timeout != 0) {
 		purple_timeout_remove(js->keepalive_timeout);
-		js->keepalive_timeout = -1;
+		js->keepalive_timeout = 0;
 	}
 }
 
