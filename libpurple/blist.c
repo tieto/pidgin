@@ -2354,16 +2354,14 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	hb.account = account;
-	hb.name = g_strdup(purple_normalize(account, name));
+	hb.name = purple_normalize(account, name);
 
 	for (group = purplebuddylist->root; group; group = group->next) {
 		hb.group = group;
 		if ((buddy = g_hash_table_lookup(purplebuddylist->buddies, &hb))) {
-			g_free(hb.name);
 			return buddy;
 		}
 	}
-	g_free(hb.name);
 
 	return NULL;
 }
