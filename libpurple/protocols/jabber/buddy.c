@@ -47,7 +47,7 @@ typedef struct {
 	char *jid;
 	GSList *ids;
 	GHashTable *resources;
-	int timeout_handle;
+	guint timeout_handle;
 	GSList *vcard_imgids;
 	PurpleNotifyUserInfo *user_info;
 	long last_seconds;
