@@ -1008,85 +1008,6 @@ rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
-add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
-{
-	MsnSession *session;
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	const char *list, *passport;
-	char *reason = NULL;
-	char *msg = NULL;
-	char **params;
-
-	session = cmdproc->session;
-	account = session->account;
-	gc = purple_account_get_connection(account);
-	params = g_strsplit(trans->params, " ", 0);
-
-	list     = params[0];
-	passport = params[1];
-
-	if (!strcmp(list, "FL"))
-		msg = g_strdup_printf(_("Unable to add user on %s (%s)"),
-							  purple_account_get_username(account),
-							  purple_account_get_protocol_name(account));
-	else if (!strcmp(list, "BL"))
-		msg = g_strdup_printf(_("Unable to block user on %s (%s)"),
-							  purple_account_get_username(account),
-							  purple_account_get_protocol_name(account));
-	else if (!strcmp(list, "AL"))
-		msg = g_strdup_printf(_("Unable to permit user on %s (%s)"),
-							  purple_account_get_username(account),
-							  purple_account_get_protocol_name(account));
-
-	if (!strcmp(list, "FL"))
-	{
-		if (error == 210)
-		{
-			reason = g_strdup_printf(_("%s could not be added because "
-									   "your buddy list is full."), passport);
-		}
-	}
-
-	if (reason == NULL)
-	{
-		if (error == 208)
-		{
-			reason = g_strdup_printf(_("%s is not a valid passport account."),
-									 passport);
-		}
-		else if (error == 500)
-		{
-			reason = g_strdup(_("Service Temporarily Unavailable."));
-		}
-		else
-		{
-			reason = g_strdup(_("Unknown error."));
-		}
-	}
-
-	if (msg != NULL)
-	{
-		purple_notify_error(gc, NULL, msg, reason);
-		g_free(msg);
-	}
-
-	if (!strcmp(list, "FL"))
-	{
-		PurpleBuddy *buddy;
-
-		buddy = purple_find_buddy(account, passport);
-
-		if (buddy != NULL)
-			purple_blist_remove_buddy(buddy);
-	}
-
-	g_free(reason);
-
-	g_strfreev(params);
-}
-
-static void
 qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	/* TODO: Call PNG after the timeout specified. */
@@ -2145,7 +2066,6 @@ msn_notification_init(void)
 
 	msn_table_add_cmd(cbs_table, NULL, "241", adl_241_error_cmd);
 
-	msn_table_add_error(cbs_table, "ADD", add_error);
 	msn_table_add_error(cbs_table, "ADL", adl_error);
 	msn_table_add_error(cbs_table, "FQY", fqy_error);
 	msn_table_add_error(cbs_table, "USR", usr_error);
