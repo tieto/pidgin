@@ -305,9 +305,9 @@ msn_change_status(MsnSession *session)
 			if (strcmp(client_type, "phone") == 0 ||
 				strcmp(client_type, "handheld") == 0) {
 				caps |= MSN_CLIENT_CAP_WIN_MOBILE;
-			} else if (strcmp(client_type, "web")) {
+			} else if (strcmp(client_type, "web") == 0) {
 				caps |= MSN_CLIENT_CAP_WEBMSGR;
-			} else if (strcmp(client_type, "bot")) {
+			} else if (strcmp(client_type, "bot") == 0) {
 				caps |= MSN_CLIENT_CAP_BOT;
 			}
 			/* MSN doesn't a "console" type... 
