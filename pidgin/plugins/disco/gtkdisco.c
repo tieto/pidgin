@@ -282,6 +282,36 @@ row_expanded_cb(GtkTreeView *tree, GtkTreeIter *arg1, GtkTreePath *rg2,
 }
 
 static void
+row_activated_cb(GtkTreeView       *tree_view,
+                 GtkTreePath       *path,
+                 GtkTreeViewColumn *column,
+                 gpointer           user_data)
+{
+	PidginDiscoList *pdl = user_data;
+	GtkTreeIter iter;
+	XmppDiscoService *service;
+	GValue val;
+
+	if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(pdl->model), &iter, path))
+		return;
+
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN,
+	                         &val);
+	service = g_value_get_pointer(&val);
+
+	if (service->flags & XMPP_DISCO_BROWSE)
+		if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pdl->tree), path))
+			gtk_tree_view_collapse_row(GTK_TREE_VIEW(pdl->tree), path);
+		else
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(pdl->tree), path, FALSE);
+	else if (service->flags & XMPP_DISCO_ADD)
+		add_room_to_blist_cb(GTK_BUTTON(pdl->dialog->add_button), pdl->dialog);
+	else if (service->flags & XMPP_DISCO_REGISTER)
+		register_button_cb(GTK_BUTTON(pdl->dialog->register_button), pdl->dialog);
+}
+
+static void
 destroy_win_cb(GtkWidget *window, gpointer d)
 {
 	PidginDiscoDialog *dialog = d;
@@ -373,6 +403,7 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(pdl->tree), column);
 
 	g_signal_connect(G_OBJECT(pdl->tree), "row-expanded", G_CALLBACK(row_expanded_cb), pdl);
+	g_signal_connect(G_OBJECT(pdl->tree), "row-activated", G_CALLBACK(row_activated_cb), pdl);
 }
 
 void pidgin_disco_signed_off_cb(PurpleConnection *pc)
