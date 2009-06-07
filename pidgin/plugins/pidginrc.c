@@ -34,7 +34,7 @@ static const gchar *color_prefs[] = {
 	"/plugins/gtk/purplerc/color/GtkIMHtml::receive-name-color",
 	"/plugins/gtk/purplerc/color/GtkIMHtml::highlight-name-color",
 	"/plugins/gtk/purplerc/color/GtkIMHtml::action-name-color",
-	"/plugins/gtk/purplerc/color/GtkIMHtml::typing-ntofication-color"
+	"/plugins/gtk/purplerc/color/GtkIMHtml::typing-notification-color"
 };
 static const gchar *color_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/color/GtkIMHtml::hyperlink-color",
