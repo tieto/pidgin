@@ -20,6 +20,9 @@ version 2.6.0 (??/??/2009):
 	  moved to a new network and the old servers are not accessible.
 	* Gadu-Gadu accounts can specify a server to which to connect.
 	  (Krzysztof "kreez" Tobola)
+	* Modifying the MSN privacy list for buddies not added by you (i.e.
+	  spammers and other generally unwanted users) should no longer cause
+	  a 240 error and disconnection.
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice

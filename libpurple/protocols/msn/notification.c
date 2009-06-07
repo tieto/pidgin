@@ -1973,10 +1973,54 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_hash_table_destroy(table);
 }
 
+/**************************************************************************
+ * Dispatch server list management 
+ **************************************************************************/
+typedef struct MsnAddRemoveListData {
+	MsnCmdProc *cmdproc;
+	MsnUser *user;
+	MsnListOp list_op;
+	gboolean add;
+} MsnAddRemoveListData;
+
+static void
+modify_unknown_buddy_on_list(MsnSession *session, const char *passport,
+                             MsnNetwork network, gpointer data)
+{
+	MsnAddRemoveListData *addrem = data;
+	MsnCmdProc *cmdproc;
+	xmlnode *node;
+	char *payload;
+	int payload_len;
+
+	cmdproc = addrem->cmdproc;
+
+	/* Update user first */
+	msn_user_set_network(addrem->user, network);
+
+	node = xmlnode_new("ml");
+	node->child = NULL;
+
+	msn_add_contact_xml(session, node, passport,
+	                    addrem->list_op, network);
+
+	payload = xmlnode_to_str(node, &payload_len);
+	xmlnode_free(node);
+
+	if (addrem->add)
+		msn_notification_post_adl(cmdproc, payload, payload_len);
+	else
+		msn_notification_post_rml(cmdproc, payload, payload_len);
+
+	g_free(payload);
+	g_free(addrem);
+}
+
 void
 msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list_id,
 							  MsnUser *user)
 {
+	MsnAddRemoveListData *addrem;
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
 	xmlnode *adl_node;
@@ -1994,7 +2038,20 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	payload = xmlnode_to_str(adl_node, &payload_len);
 	xmlnode_free(adl_node);
 
-	msn_notification_post_adl(cmdproc, payload, payload_len);
+	if (user->networkid != MSN_NETWORK_UNKNOWN) {
+		msn_notification_post_adl(cmdproc, payload, payload_len);
+
+	} else {
+		addrem = g_new(MsnAddRemoveListData, 1);
+		addrem->cmdproc = cmdproc;
+		addrem->user = user;
+		addrem->list_op = list_op;
+		addrem->add = TRUE;
+
+		msn_notification_send_fqy(notification->session, payload, payload_len,
+		                          modify_unknown_buddy_on_list, addrem);
+	}
+
 	g_free(payload);
 }
 
@@ -2002,6 +2059,7 @@ void
 msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId list_id,
 						   MsnUser *user)
 {
+	MsnAddRemoveListData *addrem;
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
 	xmlnode *rml_node;
@@ -2019,7 +2077,19 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
 
-	msn_notification_post_rml(cmdproc, payload, payload_len);
+	if (user->networkid != MSN_NETWORK_UNKNOWN) {
+		msn_notification_post_rml(cmdproc, payload, payload_len);
+
+	} else {
+		addrem = g_new(MsnAddRemoveListData, 1);
+		addrem->cmdproc = cmdproc;
+		addrem->user = user;
+		addrem->list_op = list_op;
+		addrem->add = FALSE;
+
+		msn_notification_send_fqy(notification->session, payload, payload_len,
+		                          modify_unknown_buddy_on_list, addrem);
+	}
 
 	g_free(payload);
 }
