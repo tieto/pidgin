@@ -479,6 +479,12 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Buddy Lists
  **************************************************************************/
+
+typedef struct MsnFqyCbData {
+	MsnFqyCb cb;
+	gpointer data;
+} MsnFqyCbData;
+
 /* add contact to xmlnode */
 static void
 msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnNetwork networkId)
@@ -554,21 +560,27 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 void
 msn_notification_send_fqy(MsnSession *session,
                           const char *payload, int payload_len,
-                          MsnFqyCb cb)
+                          MsnFqyCb cb,
+                          gpointer cb_data)
 {
 	MsnTransaction *trans;
 	MsnCmdProc *cmdproc;
+	MsnFqyCbData *data;
 
 	cmdproc = session->notification->cmdproc;
 
+	data = g_new(MsnFqyCbData, 1);
+	data->cb = cb;
+	data->data = cb_data;
+
 	trans = msn_transaction_new(cmdproc, "FQY", "%d", payload_len);
 	msn_transaction_set_payload(trans, payload, payload_len);
-	msn_transaction_set_data(trans, cb);
+	msn_transaction_set_data(trans, data);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
-update_contact_network(MsnSession *session, const char *passport, MsnNetwork network)
+update_contact_network(MsnSession *session, const char *passport, MsnNetwork network, gpointer unused)
 {
 	MsnUser *user;
 
@@ -684,7 +696,7 @@ msn_notification_dump_contact(MsnSession *session)
 				payload = xmlnode_to_str(fqy_node, &payload_len);
 
 				msn_notification_send_fqy(session, payload, payload_len,
-				                          update_contact_network);
+				                          update_contact_network, NULL);
 
 				g_free(payload);
 				xmlnode_free(fqy_node);
@@ -709,7 +721,7 @@ msn_notification_dump_contact(MsnSession *session)
 		payload = xmlnode_to_str(fqy_node, &payload_len);
 
 		msn_notification_send_fqy(session, payload, payload_len,
-		                          update_contact_network);
+		                          update_contact_network, NULL);
 
 		g_free(payload);
 	}
@@ -926,8 +938,13 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 			purple_debug_info("msn", "FQY response says %s is from network %d\n",
 			                  passport, network);
-			if (cmd->trans->data)
-				((MsnFqyCb)cmd->trans->data)(session, passport, network);
+			if (cmd->trans->data) {
+				MsnFqyCbData *fqy_data = cmd->trans->data;
+				fqy_data->cb(session, passport, network, fqy_data->data);
+				/* TODO: This leaks, but the server responds to FQY multiple times, so we
+				         can't free it yet. We need to figure out somewhere else to do so.
+				g_free(fqy_data); */
+			}
 
 			g_free(passport);
 		}
@@ -952,7 +969,7 @@ fqy_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	   FQY error, it's probably going to disconnect us. So it isn't necessary
 	   to tell the handler about it. */
 	else if (trans->data)
-		((MsnFqyCb)trans->data)(session, NULL, MSN_NETWORK_UNKNOWN); */
+		((MsnFqyCb)trans->data)(session, NULL, MSN_NETWORK_UNKNOWN, NULL);
 #endif
 }
 

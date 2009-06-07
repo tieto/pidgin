@@ -1380,6 +1380,37 @@ msn_set_idle(PurpleConnection *gc, int idle)
 	msn_change_status(session);
 }
 
+/*
+ * Actually adds a buddy once we have the response from FQY
+ */
+static void
+add_pending_buddy(MsnSession *session,
+                  const char *who,
+                  MsnNetwork network,
+                  MsnUser *user)
+{
+	MsnUserList *userlist = session->userlist;
+	MsnUser *user2;
+	char *group;
+
+	g_return_if_fail(user != NULL);
+
+	group = msn_user_remove_pending_group(user);
+
+	user2 = msn_userlist_find_user(userlist, who);
+	if (user2 != NULL) {
+		/* User already in userlist, so just update it. */
+		msn_user_destroy(user);
+		user = user2;
+	} else {
+		msn_userlist_add_user(userlist, user);
+	}
+
+	msn_user_set_network(user, network);
+	msn_userlist_add_buddy(userlist, who, group);
+	g_free(group);
+}
+
 static void
 msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
@@ -1413,13 +1444,15 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		char **tokens;
 		char *fqy;
 		/* We need to check the network for this buddy first */
-		msn_userlist_save_pending_buddy(userlist, who, gname);
+		user = msn_user_new(userlist, who, NULL);
+		msn_user_set_pending_group(user, gname);
+		msn_user_set_network(user, MSN_NETWORK_UNKNOWN);
 		tokens = g_strsplit(who, "@", 2);
 		fqy = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",
 		                      tokens[1],
 		                      tokens[0]);
 		msn_notification_send_fqy(session, fqy, strlen(fqy),
-		                          (MsnFqyCb)msn_userlist_add_pending_buddy);
+		                          (MsnFqyCb)add_pending_buddy, user);
 		g_free(fqy);
 		g_strfreev(tokens);
 	}
