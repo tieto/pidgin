@@ -557,6 +557,16 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
+static void
+msn_notification_post_rml(MsnCmdProc *cmdproc, const char *payload, int payload_len)
+{
+	MsnTransaction *trans;
+	purple_debug_info("msn", "Sending RML with payload: %s\n", payload);
+	trans = msn_transaction_new(cmdproc, "RML", "%i", payload_len);
+	msn_transaction_set_payload(trans, payload, payload_len);
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
 void
 msn_notification_send_fqy(MsnSession *session,
                           const char *payload, int payload_len,
@@ -1981,11 +1991,10 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	msn_add_contact_xml(notification->session, adl_node, user->passport,
 	                    list_op, user->networkid);
 
-	payload = xmlnode_to_str(adl_node,&payload_len);
+	payload = xmlnode_to_str(adl_node, &payload_len);
 	xmlnode_free(adl_node);
 
-	msn_notification_post_adl(notification->servconn->cmdproc,
-						payload,payload_len);
+	msn_notification_post_adl(cmdproc, payload, payload_len);
 	g_free(payload);
 }
 
@@ -1994,7 +2003,6 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 						   MsnUser *user)
 {
 	MsnCmdProc *cmdproc;
-	MsnTransaction *trans;
 	MsnListOp list_op = 1 << list_id;
 	xmlnode *rml_node;
 	char *payload;
@@ -2011,10 +2019,8 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
 
-	purple_debug_info("msn", "Send RML with payload:\n%s\n", payload);
-	trans = msn_transaction_new(cmdproc, "RML","%" G_GSIZE_FORMAT, strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
-	msn_cmdproc_send_trans(cmdproc, trans);
+	msn_notification_post_rml(cmdproc, payload, payload_len);
+
 	g_free(payload);
 }
 
