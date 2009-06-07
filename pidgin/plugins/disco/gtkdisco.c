@@ -69,7 +69,7 @@ PidginDiscoList *pidgin_disco_list_ref(PidginDiscoList *list)
 	g_return_val_if_fail(list != NULL, NULL);
 
 	++list->ref;
-    purple_debug_misc("xmppdisco", "reffing list, ref count now %d\n", list->ref);
+	purple_debug_misc("xmppdisco", "reffing list, ref count now %d\n", list->ref);
 
 	return list;
 }
@@ -115,7 +115,7 @@ void pidgin_disco_list_set_in_progress(PidginDiscoList *list, gboolean in_progre
 static void pidgin_disco_create_tree(PidginDiscoList *pdl);
 
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
-				     PidginDiscoDialog *dialog)
+                                     PidginDiscoDialog *dialog)
 {
 	dialog->account = account;
 	gtk_widget_set_sensitive(dialog->browse_button, account != NULL);
@@ -348,7 +348,7 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Name"));
 
-	gtk_tree_view_column_pack_start(column,  pixbuf_renderer, FALSE);
+	gtk_tree_view_column_pack_start(column, pixbuf_renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, pixbuf_renderer,
 			"pixbuf", PIXBUF_COLUMN, NULL);
 
@@ -464,13 +464,15 @@ PidginDiscoDialog *pidgin_disco_dialog_new(void)
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 
 	/* stop button */
-	dialog->stop_button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_STOP,
-	                 G_CALLBACK(stop_button_cb), dialog);
+	dialog->stop_button =
+		pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_STOP,
+		                         G_CALLBACK(stop_button_cb), dialog);
 	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
 
 	/* browse button */
-	dialog->browse_button = pidgin_pixbuf_button_from_stock(_("_Browse"), GTK_STOCK_REFRESH,
-	                                                    PIDGIN_BUTTON_HORIZONTAL);
+	dialog->browse_button =
+		pidgin_pixbuf_button_from_stock(_("_Browse"), GTK_STOCK_REFRESH,
+		                                PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->browse_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->browse_button), "clicked",
 	                 G_CALLBACK(browse_button_cb), dialog);
@@ -478,13 +480,15 @@ PidginDiscoDialog *pidgin_disco_dialog_new(void)
 	gtk_widget_show(dialog->browse_button);
 
 	/* register button */
-	dialog->register_button = pidgin_dialog_add_button(GTK_DIALOG(dialog->window), _("Register"),
-	                 G_CALLBACK(register_button_cb), dialog);
+	dialog->register_button =
+		pidgin_dialog_add_button(GTK_DIALOG(dialog->window), _("Register"),
+		                         G_CALLBACK(register_button_cb), dialog);
 	gtk_widget_set_sensitive(dialog->register_button, FALSE);
 
 	/* add button */
-	dialog->add_button = pidgin_pixbuf_button_from_stock(_("_Add"), GTK_STOCK_ADD,
-	                                                    PIDGIN_BUTTON_HORIZONTAL);
+	dialog->add_button =
+		pidgin_pixbuf_button_from_stock(_("_Add"), GTK_STOCK_ADD,
+	                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->add_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->add_button), "clicked",
 	                 G_CALLBACK(add_room_to_blist_cb), dialog);
@@ -492,8 +496,9 @@ PidginDiscoDialog *pidgin_disco_dialog_new(void)
 	gtk_widget_show(dialog->add_button);
 
 	/* close button */
-	dialog->close_button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE,
-					 G_CALLBACK(close_button_cb), dialog);
+	dialog->close_button =
+		pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE,
+		                         G_CALLBACK(close_button_cb), dialog);
 
 	/* show the dialog window and return the dialog */
 	gtk_widget_show(dialog->window);
