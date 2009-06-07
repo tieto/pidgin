@@ -52,21 +52,23 @@ static void remove_purple_buddies(JabberStream *js, const char *jid)
 	g_slist_free(buddies);
 }
 
-static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
+static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
-	GSList *buddies, *g2, *l;
+	GSList *buddies, *l;
 	gchar *my_bare_jid;
 	GList *pool = NULL;
 
 	buddies = purple_find_buddies(js->gc->account, jid);
 
-	g2 = groups;
-
 	if(!groups) {
 		if(!buddies)
-			g2 = g_slist_append(g2, g_strdup(_("Buddies")));
+			groups = g_slist_append(groups, g_strdup(_("Buddies")));
 		else {
+			/* TODO: What should we do here? Removing the local buddies
+			 * is wrong, but so is letting the group state get out of sync with
+			 * the server.
+			 */
 			g_slist_free(buddies);
 			return;
 		}
@@ -78,9 +80,15 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		PurpleBuddy *b = buddies->data;
 		PurpleGroup *g = purple_buddy_get_group(b);
 
-		buddies = g_slist_remove(buddies, b);
+		buddies = g_slist_delete_link(buddies, buddies);
 
-		if((l = g_slist_find_custom(g2, purple_group_get_name(g), (GCompareFunc)strcmp))) {
+		/* XMPP groups are case-sensitive, but libpurple groups are
+		 * case-insensitive. We treat a buddy in both "Friends" and "friends"
+		 * as only being in one group, so if we push changes about the buddy
+		 * to the server, the buddy will be dropped from one of the groups.
+		 */
+		if((l = g_slist_find_custom(groups, purple_group_get_name(g), (GCompareFunc)purple_utf8_strcasecmp))) {
+			/* The buddy is already on the local list. Update info. */
 			const char *servernick, *balias;
 
 			/* Previously stored serverside / buddy-supplied alias */
@@ -89,19 +97,23 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 
 			/* Alias from our roster retrieval */
 			balias = purple_buddy_get_local_buddy_alias(b);
-			if(alias && (!balias || strcmp(balias, alias)))
+			if(alias && !purple_strequal(alias, balias))
 				purple_serv_got_private_alias(js->gc, jid, alias);
 			g_free(l->data);
-			g2 = g_slist_delete_link(g2, l);
+			groups = g_slist_delete_link(groups, l);
 		} else {
+			/* This buddy isn't in the group on the server anymore */
 			pool = g_list_prepend(pool, b);
 		}
 	}
 
-	while(g2) {
-		PurpleGroup *g = purple_find_group(g2->data);
+	while(groups) {
+		PurpleGroup *g = purple_find_group(groups->data);
 		PurpleBuddy *b = NULL;
 
+		/* If there are buddies we would otherwise delete, move them to
+		 * the new group (instead of deleting them below)
+		 */
 		if (pool) {
 			b = pool->data;
 			pool = g_list_delete_link(pool, pool);
@@ -110,7 +122,7 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		}
 
 		if(!g) {
-			g = purple_group_new(g2->data);
+			g = purple_group_new(groups->data);
 			purple_blist_add_group(g, NULL);
 		}
 
@@ -131,10 +143,12 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 			jabber_presence_fake_to_self(js, status);
 		}
 
-		g_free(g2->data);
-		g2 = g_slist_delete_link(g2, g2);
+		g_free(groups->data);
+		groups = g_slist_delete_link(groups, groups);
 	}
 
+	/* Remove this person from all the groups they're no longer in on the
+	 * server */
 	while (pool) {
 		PurpleBuddy *b = pool->data;
 		purple_blist_remove_buddy(b);
@@ -205,23 +219,24 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 			remove_purple_buddies(js, jid);
 		} else {
 			GSList *groups = NULL;
+			gboolean seen_empty = FALSE;
 
 			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 				if (!jabber_google_roster_incoming(js, item))
 					continue;
 
 			for(group = xmlnode_get_child(item, "group"); group; group = xmlnode_get_next_twin(group)) {
-				char *group_name;
+				char *group_name = xmlnode_get_data(group);
 
-				if(!(group_name = xmlnode_get_data(group)))
+				if (!group_name && !seen_empty) {
 					group_name = g_strdup("");
+					seen_empty = TRUE;
+				}
 
-				if (g_slist_find_custom(groups, group_name, (GCompareFunc)purple_utf8_strcasecmp) == NULL)
-					groups = g_slist_append(groups, group_name);
-				else
-					g_free(group_name);
+				groups = g_slist_prepend(groups, group_name);
 			}
-			add_purple_buddies_to_groups(js, jid, name, groups);
+
+			add_purple_buddy_to_groups(js, jid, name, groups);
 		}
 	}
 

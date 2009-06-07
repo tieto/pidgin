@@ -987,7 +987,6 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	gboolean on_block_list = FALSE;
 
@@ -1005,18 +1004,20 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
  	jid_norm = g_strdup(jabber_normalize(account, jid));
 
-	while (list) {
-		if (!strcmp(jid_norm, (char*)list->data)) {
-			on_block_list = TRUE;
-			break;
-		}
-		list = list->next;
-	}
+	on_block_list = NULL != g_slist_find_custom(account->deny, jid_norm,
+	                                            (GCompareFunc)strcmp);
 
 	if (grt && (*grt == 'H' || *grt == 'h')) {
-		PurpleBuddy *buddy = purple_find_buddy(account, jid_norm);
-		if (buddy)
-			purple_blist_remove_buddy(buddy);
+		/* Hidden; don't show this buddy. */
+		GSList *buddies = purple_find_buddies(account, jid_norm);
+		if (buddies)
+			purple_debug_info("jabber", "Removing %s from local buddy list\n",
+			                  jid_norm);
+
+		for ( ; buddies; buddies = g_slist_delete_link(buddies, buddies)) {
+			purple_blist_remove_buddy(buddies->data);
+		}
+
 		g_free(jid_norm);
 		return FALSE;
 	}
