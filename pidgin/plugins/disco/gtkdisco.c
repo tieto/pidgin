@@ -565,14 +565,14 @@ void pidgin_disco_add_service(PidginDiscoList *pdl, XmppDiscoService *service, X
 
 	if (service->type == XMPP_DISCO_SERVICE_TYPE_GATEWAY && service->gateway_type) {
 		char *tmp = g_strconcat(service->gateway_type, ".png", NULL);
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", tmp, NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", tmp, NULL);
 		g_free(tmp);
 #if 0
 	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_USER) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "person.png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "16", "person.png", NULL);
 #endif
 	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "chat.png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "16", "chat.png", NULL);
 
 	if (filename) {
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
