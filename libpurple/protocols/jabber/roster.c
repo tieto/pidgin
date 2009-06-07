@@ -132,16 +132,8 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		/* If we just learned about ourself, then fake our status,
 		 * because we won't be receiving a normal presence message
 		 * about ourself. */
-		if(!strcmp(purple_buddy_get_name(b), my_bare_jid)) {
-			PurplePresence *gpresence;
-			PurpleStatus *status;
-			PurpleAccount *account;
-
-			account = purple_connection_get_account(js->gc);
-			gpresence = purple_account_get_presence(account);
-			status = purple_presence_get_active_status(gpresence);
-			jabber_presence_fake_to_self(js, status);
-		}
+		if(!strcmp(purple_buddy_get_name(b), my_bare_jid))
+			jabber_presence_fake_to_self(js, NULL);
 
 		g_free(groups->data);
 		groups = g_slist_delete_link(groups, groups);
@@ -356,12 +348,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
 	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	if(!strcmp(who, my_bare_jid)) {
-		PurplePresence *gpresence;
-		PurpleStatus *status;
-
-		gpresence = purple_account_get_presence(js->gc->account);
-		status = purple_presence_get_active_status(gpresence);
-		jabber_presence_fake_to_self(js, status);
+		jabber_presence_fake_to_self(js, NULL);
 	} else if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
 		jabber_presence_subscription_set(js, who, "subscribe");
 	} else if((jbr =jabber_buddy_find_resource(jb, NULL))) {

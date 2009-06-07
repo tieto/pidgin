@@ -59,38 +59,44 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	g_free(chat_full_jid);
 }
 
-void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *gstatus) {
-	char *my_base_jid;
+void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
+{
+	PurpleAccount *account;
+	const char *username;
 
-	if(!js->user)
-		return;
+	g_return_if_fail(js->user != NULL);
 
-	my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(purple_find_buddy(js->gc->account, my_base_jid)) {
-		JabberBuddy *jb;
+	account = purple_connection_get_account(js->gc);
+	username = purple_account_get_username(account);
+	if (status == NULL)
+		status = purple_account_get_active_status(account);
+
+	if (purple_find_buddy(account, username)) {
+		JabberBuddy *jb = jabber_buddy_find(js, username, TRUE);
 		JabberBuddyResource *jbr;
-		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
-			JabberBuddyState state;
-			char *msg;
-			int priority;
+		JabberBuddyState state;
+		char *msg;
+		int priority;
 
-			purple_status_to_jabber(gstatus, &state, &msg, &priority);
+		g_return_if_fail(jb != NULL);
 
-			if (state == JABBER_BUDDY_STATE_UNAVAILABLE || state == JABBER_BUDDY_STATE_UNKNOWN) {
-				jabber_buddy_remove_resource(jb, js->user->resource);
-			} else {
-				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
-			}
-			if((jbr = jabber_buddy_find_resource(jb, NULL))) {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
-			} else {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
-			}
+		purple_status_to_jabber(status, &state, &msg, &priority);
 
-			g_free(msg);
+		if (state == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				state == JABBER_BUDDY_STATE_UNKNOWN) {
+			jabber_buddy_remove_resource(jb, js->user->resource);
+		} else {
+			jabber_buddy_track_resource(jb, js->user->resource, priority,
+			                            state, msg);
 		}
+
+		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
+			purple_prpl_got_user_status(js->gc->account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+		} else {
+			purple_prpl_got_user_status(js->gc->account, username, "offline", msg ? "message" : NULL, msg, NULL);
+		}
+		g_free(msg);
 	}
-	g_free(my_base_jid);
 }
 
 void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
