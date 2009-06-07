@@ -60,6 +60,8 @@ version 2.6.0 (??/??/2009):
 	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
 	  the username, password, or realm (the JID domain) contain non-ASCII
 	  characters.
+	* Show emblem for mobile, handheld, and web clients and bots (if the other
+	  client supports it).
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)
