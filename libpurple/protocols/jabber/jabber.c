@@ -1613,7 +1613,8 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 			break;
 		case JABBER_STREAM_CONNECTED:
-			/* now we can alert the core that we're ready to send status */
+			/* Send initial presence */
+			jabber_presence_send(js, TRUE);
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			break;
 	}

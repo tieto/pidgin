@@ -244,13 +244,10 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 	js->currently_parsing_roster_push = FALSE;
 
 	/* if we're just now parsing the roster for the first time,
-	 * then now would be the time to declare ourselves connected and
-	 * send our initial presence */
-	if(!js->roster_parsed) {
-		js->roster_parsed = TRUE;
-		jabber_presence_send(js, TRUE);
+	 * then now would be the time to declare ourselves connected.
+	 */
+	if (js->state != JABBER_STREAM_CONNECTED)
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
-	}
 }
 
 static void jabber_roster_update(JabberStream *js, const char *name,
@@ -342,7 +339,8 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	char *my_bare_jid;
 	const char *name;
 
-	if(!js->roster_parsed)
+	/* If we haven't received the roster yet, ignore any adds */
+	if (js->state != JABBER_STREAM_CONNECTED)
 		return;
 
 	name = purple_buddy_get_name(buddy);

@@ -116,7 +116,6 @@ struct _JabberStream
 	char *expected_rspauth;
 
 	GHashTable *buddies;
-	gboolean roster_parsed;
 
 	/*
 	 * This boolean was added to eliminate a heinous bug where we would
