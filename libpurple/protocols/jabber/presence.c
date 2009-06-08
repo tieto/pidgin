@@ -245,6 +245,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 {
 	xmlnode *show, *status, *presence, *pri, *c;
 	const char *show_string = NULL;
+	gboolean audio_enabled, video_enabled;
 
 	presence = xmlnode_new("presence");
 
@@ -300,9 +301,18 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	 * just assume that if we specify a 'voice-v1' ext (ignoring that
 	 * these are to be assigned no semantic value), we support receiving voice
 	 * calls.
+	 *
+	 * Ditto for 'video-v1'.
 	 */
-	if (jabber_audio_enabled(js, NULL /* unused */))
+	audio_enabled = jabber_audio_enabled(js, NULL /* unused */);
+	video_enabled = jabber_video_enabled(js, NULL /* unused */);
+
+	if (audio_enabled && video_enabled)
+		xmlnode_set_attrib(c, "ext", "voice-v1 video-v1");
+	else if (audio_enabled)
 		xmlnode_set_attrib(c, "ext", "voice-v1");
+	else if (video_enabled)
+		xmlnode_set_attrib(c, "ext", "video-v1");
 #endif
 
 	return presence;

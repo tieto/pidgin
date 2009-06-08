@@ -661,6 +661,32 @@ jabber_presence_received(PurpleConnection *pc, const char *type,
 	return FALSE;
 }
 
+static gboolean
+jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
+                  const char *from, xmlnode *child)
+{
+	purple_debug_misc("signals test", "jabber watched IQ (type=%s, id=%s, from=%s)\n"
+	                  "child %p name=%s, namespace=%s\n",
+	                  type, id, from, child, child->name,
+	                  xmlnode_get_namespace(child));
+
+	if (g_str_equal(type, "get") || g_str_equal(type, "set")) {
+		/* Send the requisite reply */
+		xmlnode *iq = xmlnode_new("iq");
+		xmlnode_set_attrib(iq, "to", from);
+		xmlnode_set_attrib(iq, "id", id);
+		xmlnode_set_attrib(iq, "type", "result");
+
+		purple_signal_emit(purple_connection_get_prpl(pc),
+		                   "jabber-sending-xmlnode", pc, &iq);
+		if (iq != NULL)
+			xmlnode_free(iq);
+	}
+
+	/* Cookie monster eats IQ stanzas; the prpl shouldn't keep processing */
+	return TRUE;
+}
+
 /**************************************************************************
  * Plugin stuff
  **************************************************************************/
@@ -830,6 +856,16 @@ plugin_load(PurplePlugin *plugin)
 		                      PURPLE_CALLBACK(jabber_message_received), NULL);
 		purple_signal_connect(jabber_handle, "jabber-receiving-presence", plugin,
 		                      PURPLE_CALLBACK(jabber_presence_received), NULL);
+
+		/* IQ namespace signals */
+		purple_signal_emit(jabber_handle, "jabber-register-namespace-watcher",
+		                   "bogus_node", "super-duper-namespace");
+		/* The above is equivalent to doing:
+			int result = GPOINTER_TO_INT(purple_plugin_ipc_call(jabber_handle, "register_namespace_watcher", &ok, "bogus_node", "super-duper-namespace"));
+		 */
+
+		purple_signal_connect(jabber_handle, "jabber-watched-iq", plugin,
+		                      PURPLE_CALLBACK(jabber_watched_iq), NULL);
 	}
 
 	return TRUE;
@@ -838,7 +874,18 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
+	void *jabber_handle = purple_plugins_find_with_id("prpl-jabber");
+
 	purple_signals_disconnect_by_handle(plugin);
+
+	if (jabber_handle) {
+		/* Unregister watched namespaces */
+		purple_signal_emit(jabber_handle, "jabber-unregister-namespace-watcher",
+		                   "bogus_node", "super-duper-namespace");
+		/* The above is equivalent to doing:
+		   int result = GPOINTER_TO_INT(purple_plugin_ipc_call(jabber_handle, "unregister_namespace_watcher", &ok, "bogus_node", "super-duper-namespace"));
+		 */
+	}
 
 	return TRUE;
 }

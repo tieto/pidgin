@@ -74,6 +74,7 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
 			      time(NULL));
     }
 
+    /* Necessary because we may be creating a new conversation window. */
     purple_conv_im_set_typing_state(PURPLE_CONV_IM(gconv), PURPLE_TYPING);
   }
 }

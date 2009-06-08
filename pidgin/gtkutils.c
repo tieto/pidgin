@@ -525,7 +525,7 @@ aop_option_menu_get_selected(GtkWidget *optmenu, GtkWidget **p_item)
 	GtkWidget *item = gtk_menu_get_active(GTK_MENU(menu));
 	if (p_item)
 		(*p_item) = item;
-	return g_object_get_data(G_OBJECT(item), "aop_per_item_data");
+	return item ? g_object_get_data(G_OBJECT(item), "aop_per_item_data") : NULL;
 }
 
 static void

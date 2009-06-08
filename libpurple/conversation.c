@@ -55,7 +55,6 @@ reset_typing_cb(gpointer data)
 	im = PURPLE_CONV_IM(c);
 
 	purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
-	purple_conv_im_update_typing(im);
 	purple_conv_im_stop_typing_timeout(im);
 
 	return FALSE;
@@ -1060,6 +1059,8 @@ purple_conv_im_set_typing_state(PurpleConvIm *im, PurpleTypingState state)
 								   "buddy-typing-stopped", im->conv->account, im->conv->name);
 				break;
 		}
+
+		purple_conv_im_update_typing(im);
 	}
 }
 

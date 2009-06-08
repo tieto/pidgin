@@ -34,6 +34,7 @@
 #include "iq.h"
 #include "jabber.h"
 #include "chat.h"
+#include "disco.h"
 #include "message.h"
 #include "roster.h"
 #include "si.h"
@@ -117,6 +118,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_unregister_account,		/* unregister_user */
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
+
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL, /* get_account_text_table */
 	jabber_initiate_media,          /* initiate_media */
@@ -134,6 +136,14 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
 			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+
+	/*
+	 * Do not remove this or the plugin will fail. Completely. You have been
+	 * warned!
+	 */
+	purple_signal_connect_priority(plugin, "jabber-sending-xmlnode",
+			plugin, PURPLE_CALLBACK(jabber_send_signal_cb),
+			NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
 
 	purple_signal_register(plugin, "jabber-sending-text",
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
@@ -168,6 +178,7 @@ static gboolean load_plugin(PurplePlugin *plugin)
 			purple_value_new(PURPLE_TYPE_STRING), /* from */
 			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE)); /* child */
 
+	/* Modifying these? Look at jabber_init_plugin for the ipc versions */
 	purple_signal_register(plugin, "jabber-register-namespace-watcher",
 			purple_marshal_VOID__POINTER_POINTER,
 			NULL, 2,

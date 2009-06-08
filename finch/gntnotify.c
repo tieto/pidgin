@@ -208,6 +208,9 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	void *ret;
 	static int key = 0;
 
+	if (count == 0)
+		return NULL;
+
 	if (!detailed)
 	{
 		g_string_append_printf(message,

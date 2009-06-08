@@ -260,9 +260,10 @@ jabber_is_own_account(JabberStream *js, const char *str)
 	if (!jid)
 		return FALSE;
 
-	equal = (g_str_equal(jid->node, js->user->node) &&
+	equal = (purple_strequal(jid->node, js->user->node) &&
 	         g_str_equal(jid->domain, js->user->domain) &&
-	         jid->resource == NULL);
+	         (jid->resource == NULL ||
+	             g_str_equal(jid->resource, js->user->resource)));
 	jabber_id_free(jid);
 	return equal;
 }

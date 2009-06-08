@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-17 14:59+0200\n"
-"PO-Revision-Date: 2009-05-17 15:05+0200\n"
+"POT-Creation-Date: 2009-06-06 22:44+0200\n"
+"PO-Revision-Date: 2009-06-06 22:51+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -3198,6 +3198,10 @@ msgstr "Afegeix al xat"
 msgid "Chat _name:"
 msgstr "_Nom del xat:"
 
+#. should this be a settings error?
+msgid "Unable to resolve server"
+msgstr "No s'ha pogut resoldre el nom del servidor"
+
 msgid "Chat error"
 msgstr "Error en el xat"
 
@@ -3246,6 +3250,9 @@ msgstr "Popular MI polonesa"
 msgid "Gadu-Gadu User"
 msgstr "Usuari Gadu-Gadu"
 
+msgid "GG server"
+msgstr "Servidor GG"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Ordre desconeguda: %s"
@@ -3288,8 +3295,9 @@ msgstr "_Canal:"
 msgid "_Password:"
 msgstr "_Contrasenya:"
 
-msgid "IRC nicks may not contain whitespace"
-msgstr "Els sobrenoms d'IRC no poden contenir espais en blanc"
+msgid "IRC nick and server may not contain whitespace"
+msgstr ""
+"Els sobrenoms i els noms de servidor d'IRC no poden contenir espais en blanc"
 
 #. 1. connect to server
 #. connect to the server
@@ -3763,6 +3771,9 @@ msgstr "La resposta del servidor no és vàlida."
 msgid "Server does not use any supported authentication method"
 msgstr "No hi ha cap mètode d'autenticació compatible amb aquest servidor"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr "Requeriu xifratge, però no està disponible en aquest servidor."
+
 msgid "Invalid challenge from server"
 msgstr "Repte del servidor invàlid"
 
@@ -4223,9 +4234,6 @@ msgstr "No s'ha trobat cap usuari"
 msgid "Roles:"
 msgstr "Rols:"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "Requeriu xifratge, però no està disponible en aquest servidor."
-
 msgid "Ping timeout"
 msgstr "Temps d'espera del ping"
 
@@ -4273,9 +4281,6 @@ msgstr "S'ha cancel·lat el registre amb èxit"
 msgid "Unregistration Failed"
 msgstr "No s'ha pogut cancel·lar el registre"
 
-msgid "Already Registered"
-msgstr "Ja esteu registrat"
-
 msgid "State"
 msgstr "Estat"
 
@@ -4287,6 +4292,9 @@ msgstr "Telèfon"
 
 msgid "Date"
 msgstr "Data"
+
+msgid "Already Registered"
+msgstr "Ja esteu registrat"
 
 msgid "Unregister"
 msgstr "Cancel·la el registre"
@@ -5499,17 +5507,6 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "Autenticació amb el Windows Live ID: la resposta no és vàlida"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s no és un nom de grup vàlid"
-
-msgid "Unknown error."
-msgstr "Error desconegut."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s a %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s us ha donat un cop de colze!"
 
@@ -5550,14 +5547,11 @@ msgstr "%s no és un compte de passaport vàlid."
 msgid "Service Temporarily Unavailable."
 msgstr "El servei no està disponible temporalment."
 
+msgid "Unknown error."
+msgstr "Error desconegut."
+
 msgid "Mobile message was not sent because it was too long."
 msgstr "No s'ha enviat el missatge al mòbil perquè era massa llarg."
-
-msgid "Unable to rename group"
-msgstr "No s'ha pogut canviar el nom del grup"
-
-msgid "Unable to delete group"
-msgstr "No s'ha pogut suprimir el grup"
 
 #, c-format
 msgid ""
@@ -5716,14 +5710,6 @@ msgid "Message may have not been sent because an unknown error occurred:"
 msgstr ""
 "No s'ha pogut enviar el missatge perquè s'ha produït un error desconegut:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s us ha afegit a la seva llista d'amics."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s us ha suprimit de la seva llista d'amics."
-
 msgid "Delete Buddy from Address Book?"
 msgstr "Voleu suprimir l'amic de la llibreta d'adreces?"
 
@@ -5751,6 +5737,28 @@ msgstr "URL del perfil"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "Connector per al protocol MSN"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s no és un nom de grup vàlid"
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s a %s (%s)"
+
+msgid "Unable to rename group"
+msgstr "No s'ha pogut canviar el nom del grup"
+
+msgid "Unable to delete group"
+msgstr "No s'ha pogut suprimir el grup"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s us ha afegit a la seva llista d'amics."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s us ha suprimit de la seva llista d'amics."
 
 #, c-format
 msgid "No such user: %s"
@@ -6628,6 +6636,9 @@ msgstr "Xat de vídeo"
 
 msgid "iChat AV"
 msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Vídeo en directe"
 
 msgid "Camera"
 msgstr "Càmera"
@@ -9619,16 +9630,24 @@ msgid "Incorrect Password"
 msgstr "La contrasenya no és correcta"
 
 #. security lock from too many failed login attempts
-msgid "Account locked: Too many failed login attempts"
-msgstr "S'ha blocat el compte: s'ha intentat entrar massa vegades"
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"El compte està blocat perquè s'ha intentat entrar massa cops.\n"
+"Això es pot solucionar entrant al web de Yahoo!"
 
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "L'usuari no existeix"
 
 #. indicates a lock of some description
-msgid "Account locked: See the debug log"
-msgstr "El compte està blocat: vegeu el registre de depuració"
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"El compte està blocat, però no se'n coneix el motiu.\n"
+"Això es pot solucionar entrant al web de Yahoo!"
 
 #. username or password missing
 msgid "Username or password missing"
@@ -11495,6 +11514,9 @@ msgstr "Hindi"
 msgid "Hungarian"
 msgstr "Hongarès"
 
+msgid "Armenian"
+msgstr "Armeni"
+
 msgid "Indonesian"
 msgstr "Indonesi"
 
@@ -11591,6 +11613,9 @@ msgstr "Sinhala"
 
 msgid "Swedish"
 msgstr "Suec"
+
+msgid "Swahili"
+msgstr " Suahili"
 
 msgid "Tamil"
 msgstr "Tàmil"
@@ -13891,12 +13916,6 @@ msgstr ""
 "- escriu a l'inrevés tots els missatges rebuts\n"
 "- envia un missatge a tots els amics immediatament després que es connectin"
 
-msgid "Cursor Color"
-msgstr "Color del cursor"
-
-msgid "Secondary Cursor Color"
-msgstr "Color secundari del cursor"
-
 msgid "Hyperlink Color"
 msgstr "Color dels hiperenllaços"
 
@@ -13905,6 +13924,9 @@ msgstr "Color dels enllaços visitats"
 
 msgid "Highlighted Message Name Color"
 msgstr "Nom del color per als missatges ressaltats"
+
+msgid "Typing Notification Color"
+msgstr "Color per a les notificacions de quan s'escriu"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "Separació horitzontal del GtkTreeView"
@@ -13935,34 +13957,20 @@ msgstr "Tipus de lletra de la interfície GTK+"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "Tema de la drecera de text de GTK+"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "Colors de la interfície"
+msgid "Disable Typing Notification Text"
+msgstr "Inhabilita les notificacions de que s'està escrivint"
 
-msgid "Widget Sizes"
-msgstr "Mides del giny"
+msgid "GTK+ Theme Control Settings"
+msgstr "Configuració dels temes GTK+"
+
+msgid "Colors"
+msgstr "Colors"
 
 msgid "Fonts"
 msgstr "Tipus de lletra"
+
+msgid "Miscellaneous"
+msgstr "Miscel·lània"
 
 msgid "Gtkrc File Tools"
 msgstr "Eines de fitxer Gtkrc"
@@ -14319,8 +14327,23 @@ msgstr "Envia i rep blocs XMPP en brut."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 
-#~ msgid "Live Video"
-#~ msgstr "Vídeo en directe"
+#~ msgid "Account locked: Too many failed login attempts"
+#~ msgstr "S'ha blocat el compte: s'ha intentat entrar massa vegades"
+
+#~ msgid "Account locked: See the debug log"
+#~ msgstr "El compte està blocat: vegeu el registre de depuració"
+
+#~ msgid "Cursor Color"
+#~ msgstr "Color del cursor"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "Color secundari del cursor"
+
+#~ msgid "Interface colors"
+#~ msgstr "Colors de la interfície"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "Mides del giny"
 
 #~ msgid "Invite message"
 #~ msgstr "Missatge d'invitació"
@@ -16345,9 +16368,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "Invisible for friends only"
 #~ msgstr "Només invisible per als amics"
 
-#~ msgid "Unable to resolve hostname."
-#~ msgstr "No s'ha pogut resoldre el nom de l'ordinador."
-
 #~ msgid "Error while writing to socket."
 #~ msgstr "S'ha produït un error en escriure al sòcol."
 
@@ -16556,9 +16576,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 
 #~ msgid "/Buddies/Log Out"
 #~ msgstr "/Amics/Desconnecta"
-
-#~ msgid "Miscellaneous error"
-#~ msgstr "Error miscel·lani"
 
 #~ msgid "Unknown error when attempting to authorize with MSN login server."
 #~ msgstr ""

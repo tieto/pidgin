@@ -1,5 +1,5 @@
 /**
- * @file disco.h service discovery handlers
+ * @file disco.h Jabber Service Discovery
  *
  * purple
  *
@@ -24,8 +24,17 @@
 
 #include "jabber.h"
 
+typedef struct _JabberDiscoItem {
+	const char *jid;  /* MUST */
+	const char *node; /* SHOULD */
+	const char *name; /* MAY */
+} JabberDiscoItem;
+
 typedef void (JabberDiscoInfoCallback)(JabberStream *js, const char *who,
 		JabberCapabilities capabilities, gpointer data);
+
+typedef void (JabberDiscoItemsCallback)(JabberStream *js, const char *jid,
+		const char *node, GSList *items, gpointer data);
 
 void jabber_disco_info_parse(JabberStream *js, const char *from,
                              JabberIqType type, const char *id, xmlnode *in_query);

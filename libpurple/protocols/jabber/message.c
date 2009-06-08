@@ -1200,7 +1200,9 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 			jm->typing_style |= JM_TS_JEP_0022;
 	}
 
-	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	tmp = purple_utf8_strip_unprintables(msg);
+	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
+	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);
@@ -1241,7 +1243,9 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);
 
+	tmp = purple_utf8_strip_unprintables(msg);
 	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);

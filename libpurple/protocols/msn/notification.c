@@ -479,6 +479,12 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Buddy Lists
  **************************************************************************/
+
+typedef struct MsnFqyCbData {
+	MsnFqyCb cb;
+	gpointer data;
+} MsnFqyCbData;
+
 /* add contact to xmlnode */
 static void
 msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnNetwork networkId)
@@ -551,24 +557,40 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
+static void
+msn_notification_post_rml(MsnCmdProc *cmdproc, const char *payload, int payload_len)
+{
+	MsnTransaction *trans;
+	purple_debug_info("msn", "Sending RML with payload: %s\n", payload);
+	trans = msn_transaction_new(cmdproc, "RML", "%i", payload_len);
+	msn_transaction_set_payload(trans, payload, payload_len);
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
 void
 msn_notification_send_fqy(MsnSession *session,
                           const char *payload, int payload_len,
-                          MsnFqyCb cb)
+                          MsnFqyCb cb,
+                          gpointer cb_data)
 {
 	MsnTransaction *trans;
 	MsnCmdProc *cmdproc;
+	MsnFqyCbData *data;
 
 	cmdproc = session->notification->cmdproc;
 
+	data = g_new(MsnFqyCbData, 1);
+	data->cb = cb;
+	data->data = cb_data;
+
 	trans = msn_transaction_new(cmdproc, "FQY", "%d", payload_len);
 	msn_transaction_set_payload(trans, payload, payload_len);
-	msn_transaction_set_data(trans, cb);
+	msn_transaction_set_data(trans, data);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
-update_contact_network(MsnSession *session, const char *passport, MsnNetwork network)
+update_contact_network(MsnSession *session, const char *passport, MsnNetwork network, gpointer unused)
 {
 	MsnUser *user;
 
@@ -684,7 +706,7 @@ msn_notification_dump_contact(MsnSession *session)
 				payload = xmlnode_to_str(fqy_node, &payload_len);
 
 				msn_notification_send_fqy(session, payload, payload_len,
-				                          update_contact_network);
+				                          update_contact_network, NULL);
 
 				g_free(payload);
 				xmlnode_free(fqy_node);
@@ -709,7 +731,7 @@ msn_notification_dump_contact(MsnSession *session)
 		payload = xmlnode_to_str(fqy_node, &payload_len);
 
 		msn_notification_send_fqy(session, payload, payload_len,
-		                          update_contact_network);
+		                          update_contact_network, NULL);
 
 		g_free(payload);
 	}
@@ -926,8 +948,13 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 			purple_debug_info("msn", "FQY response says %s is from network %d\n",
 			                  passport, network);
-			if (cmd->trans->data)
-				((MsnFqyCb)cmd->trans->data)(session, passport, network);
+			if (cmd->trans->data) {
+				MsnFqyCbData *fqy_data = cmd->trans->data;
+				fqy_data->cb(session, passport, network, fqy_data->data);
+				/* TODO: This leaks, but the server responds to FQY multiple times, so we
+				         can't free it yet. We need to figure out somewhere else to do so.
+				g_free(fqy_data); */
+			}
 
 			g_free(passport);
 		}
@@ -952,7 +979,7 @@ fqy_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	   FQY error, it's probably going to disconnect us. So it isn't necessary
 	   to tell the handler about it. */
 	else if (trans->data)
-		((MsnFqyCb)trans->data)(session, NULL, MSN_NETWORK_UNKNOWN); */
+		((MsnFqyCb)trans->data)(session, NULL, MSN_NETWORK_UNKNOWN, NULL);
 #endif
 }
 
@@ -978,85 +1005,6 @@ rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	purple_debug_info("msn", "Process RML\n");
 	cmd->payload_len = atoi(cmd->params[1]);
 	cmdproc->last_cmd->payload_cb = rml_cmd_post;
-}
-
-static void
-add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
-{
-	MsnSession *session;
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	const char *list, *passport;
-	char *reason = NULL;
-	char *msg = NULL;
-	char **params;
-
-	session = cmdproc->session;
-	account = session->account;
-	gc = purple_account_get_connection(account);
-	params = g_strsplit(trans->params, " ", 0);
-
-	list     = params[0];
-	passport = params[1];
-
-	if (!strcmp(list, "FL"))
-		msg = g_strdup_printf(_("Unable to add user on %s (%s)"),
-							  purple_account_get_username(account),
-							  purple_account_get_protocol_name(account));
-	else if (!strcmp(list, "BL"))
-		msg = g_strdup_printf(_("Unable to block user on %s (%s)"),
-							  purple_account_get_username(account),
-							  purple_account_get_protocol_name(account));
-	else if (!strcmp(list, "AL"))
-		msg = g_strdup_printf(_("Unable to permit user on %s (%s)"),
-							  purple_account_get_username(account),
-							  purple_account_get_protocol_name(account));
-
-	if (!strcmp(list, "FL"))
-	{
-		if (error == 210)
-		{
-			reason = g_strdup_printf(_("%s could not be added because "
-									   "your buddy list is full."), passport);
-		}
-	}
-
-	if (reason == NULL)
-	{
-		if (error == 208)
-		{
-			reason = g_strdup_printf(_("%s is not a valid passport account."),
-									 passport);
-		}
-		else if (error == 500)
-		{
-			reason = g_strdup(_("Service Temporarily Unavailable."));
-		}
-		else
-		{
-			reason = g_strdup(_("Unknown error."));
-		}
-	}
-
-	if (msg != NULL)
-	{
-		purple_notify_error(gc, NULL, msg, reason);
-		g_free(msg);
-	}
-
-	if (!strcmp(list, "FL"))
-	{
-		PurpleBuddy *buddy;
-
-		buddy = purple_find_buddy(account, passport);
-
-		if (buddy != NULL)
-			purple_blist_remove_buddy(buddy);
-	}
-
-	g_free(reason);
-
-	g_strfreev(params);
 }
 
 static void
@@ -1946,10 +1894,54 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_hash_table_destroy(table);
 }
 
+/**************************************************************************
+ * Dispatch server list management 
+ **************************************************************************/
+typedef struct MsnAddRemoveListData {
+	MsnCmdProc *cmdproc;
+	MsnUser *user;
+	MsnListOp list_op;
+	gboolean add;
+} MsnAddRemoveListData;
+
+static void
+modify_unknown_buddy_on_list(MsnSession *session, const char *passport,
+                             MsnNetwork network, gpointer data)
+{
+	MsnAddRemoveListData *addrem = data;
+	MsnCmdProc *cmdproc;
+	xmlnode *node;
+	char *payload;
+	int payload_len;
+
+	cmdproc = addrem->cmdproc;
+
+	/* Update user first */
+	msn_user_set_network(addrem->user, network);
+
+	node = xmlnode_new("ml");
+	node->child = NULL;
+
+	msn_add_contact_xml(session, node, passport,
+	                    addrem->list_op, network);
+
+	payload = xmlnode_to_str(node, &payload_len);
+	xmlnode_free(node);
+
+	if (addrem->add)
+		msn_notification_post_adl(cmdproc, payload, payload_len);
+	else
+		msn_notification_post_rml(cmdproc, payload, payload_len);
+
+	g_free(payload);
+	g_free(addrem);
+}
+
 void
 msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list_id,
 							  MsnUser *user)
 {
+	MsnAddRemoveListData *addrem;
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
 	xmlnode *adl_node;
@@ -1964,11 +1956,23 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	msn_add_contact_xml(notification->session, adl_node, user->passport,
 	                    list_op, user->networkid);
 
-	payload = xmlnode_to_str(adl_node,&payload_len);
+	payload = xmlnode_to_str(adl_node, &payload_len);
 	xmlnode_free(adl_node);
 
-	msn_notification_post_adl(notification->servconn->cmdproc,
-						payload,payload_len);
+	if (user->networkid != MSN_NETWORK_UNKNOWN) {
+		msn_notification_post_adl(cmdproc, payload, payload_len);
+
+	} else {
+		addrem = g_new(MsnAddRemoveListData, 1);
+		addrem->cmdproc = cmdproc;
+		addrem->user = user;
+		addrem->list_op = list_op;
+		addrem->add = TRUE;
+
+		msn_notification_send_fqy(notification->session, payload, payload_len,
+		                          modify_unknown_buddy_on_list, addrem);
+	}
+
 	g_free(payload);
 }
 
@@ -1976,8 +1980,8 @@ void
 msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId list_id,
 						   MsnUser *user)
 {
+	MsnAddRemoveListData *addrem;
 	MsnCmdProc *cmdproc;
-	MsnTransaction *trans;
 	MsnListOp list_op = 1 << list_id;
 	xmlnode *rml_node;
 	char *payload;
@@ -1994,10 +1998,20 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
 
-	purple_debug_info("msn", "Send RML with payload:\n%s\n", payload);
-	trans = msn_transaction_new(cmdproc, "RML","%" G_GSIZE_FORMAT, strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
-	msn_cmdproc_send_trans(cmdproc, trans);
+	if (user->networkid != MSN_NETWORK_UNKNOWN) {
+		msn_notification_post_rml(cmdproc, payload, payload_len);
+
+	} else {
+		addrem = g_new(MsnAddRemoveListData, 1);
+		addrem->cmdproc = cmdproc;
+		addrem->user = user;
+		addrem->list_op = list_op;
+		addrem->add = FALSE;
+
+		msn_notification_send_fqy(notification->session, payload, payload_len,
+		                          modify_unknown_buddy_on_list, addrem);
+	}
+
 	g_free(payload);
 }
 
@@ -2052,7 +2066,6 @@ msn_notification_init(void)
 
 	msn_table_add_cmd(cbs_table, NULL, "241", adl_241_error_cmd);
 
-	msn_table_add_error(cbs_table, "ADD", add_error);
 	msn_table_add_error(cbs_table, "ADL", adl_error);
 	msn_table_add_error(cbs_table, "FQY", fqy_error);
 	msn_table_add_error(cbs_table, "USR", usr_error);
