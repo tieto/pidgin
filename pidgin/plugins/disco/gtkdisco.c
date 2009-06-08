@@ -295,7 +295,7 @@ row_activated_cb(GtkTreeView       *tree_view,
 		else
 			gtk_tree_view_expand_row(GTK_TREE_VIEW(pdl->tree), path, FALSE);
 	else if (service->flags & XMPP_DISCO_ADD)
-		add_room_to_blist_cb(GTK_BUTTON(pdl->dialog->add_button), pdl->dialog);
+		add_to_blist_cb(GTK_BUTTON(pdl->dialog->add_button), pdl->dialog);
 	else if (service->flags & XMPP_DISCO_REGISTER)
 		register_button_cb(GTK_BUTTON(pdl->dialog->register_button), pdl->dialog);
 }
