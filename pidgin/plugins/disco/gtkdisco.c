@@ -35,11 +35,6 @@
 
 GList *dialogs = NULL;
 
-struct _menu_cb_info {
-	PidginDiscoList *list;
-	XmppDiscoService *service;
-};
-
 enum {
 	PIXBUF_COLUMN = 0,
 	NAME_COLUMN,
@@ -123,9 +118,8 @@ static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 
 static void register_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
-	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
-
-	xmpp_disco_service_register(info->service);
+	XmppDiscoService *service = g_object_get_data(G_OBJECT(button), "service");
+	xmpp_disco_service_register(service);
 }
 
 static void discolist_cancel_cb(PidginDiscoList *pdl, const char *server)
@@ -214,19 +208,17 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 
 static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
-	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
+	XmppDiscoService *service = g_object_get_data(G_OBJECT(button), "service");
 	PurpleAccount *account;
-	const char *name;
 
-	g_return_if_fail(info != NULL);
+	g_return_if_fail(service != NULL);
 
-	account = purple_connection_get_account(info->list->pc);
-	name = info->service->name;
+	account = purple_connection_get_account(service->list->pc);
 
-	if (info->service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		purple_blist_request_add_chat(account, NULL, NULL, name);
+	if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
+		purple_blist_request_add_chat(account, NULL, NULL, service->name);
 	else
-		purple_blist_request_add_buddy(account, name, NULL, NULL);
+		purple_blist_request_add_buddy(account, service->name, NULL, NULL);
 }
 
 static void
@@ -235,7 +227,6 @@ selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 	XmppDiscoService *service;
 	GtkTreeIter iter;
 	GValue val;
-	static struct _menu_cb_info *info;
 	PidginDiscoDialog *dialog = pdl->dialog;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
@@ -248,13 +239,8 @@ selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 			return;
 		}
 
-		info = g_new0(struct _menu_cb_info, 1);
-		info->list = dialog->discolist;
-		info->service = service;
-
-		g_object_set_data_full(G_OBJECT(dialog->add_button), "disco-info",
-		                       info, g_free);
-		g_object_set_data(G_OBJECT(dialog->register_button), "disco-info", info);
+		g_object_set_data(G_OBJECT(dialog->add_button), "service", service);
+		g_object_set_data(G_OBJECT(dialog->register_button), "service", service);
 
 		gtk_widget_set_sensitive(dialog->add_button, service->flags & XMPP_DISCO_ADD);
 		gtk_widget_set_sensitive(dialog->register_button, service->flags & XMPP_DISCO_REGISTER);
