@@ -117,7 +117,7 @@ static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 	gtk_widget_set_sensitive(dialog->browse_button, account != NULL);
 }
 
-static void register_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
+static void register_button_cb(GtkWidget *unused, PidginDiscoDialog *dialog)
 {
 	xmpp_disco_service_register(dialog->selected);
 }
@@ -146,7 +146,7 @@ static void discolist_ok_cb(PidginDiscoList *pdl, const char *server)
 	xmpp_disco_start(pdl);
 }
 
-static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
+static void browse_button_cb(GtkWidget *button, PidginDiscoDialog *dialog)
 {
 	PurpleConnection *pc;
 	PidginDiscoList *pdl;
@@ -206,7 +206,7 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	g_free(server);
 }
 
-static void add_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
+static void add_to_blist_cb(GtkWidget *unused, PidginDiscoDialog *dialog)
 {
 	XmppDiscoService *service = dialog->selected;
 	PurpleAccount *account;
@@ -221,6 +221,55 @@ static void add_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 		purple_blist_request_add_chat(account, NULL, NULL, jid);
 	else
 		purple_blist_request_add_buddy(account, jid, NULL, NULL);
+}
+
+static gboolean
+service_click_cb(GtkTreeView *tree, GdkEventButton *event, gpointer user_data)
+{
+	PidginDiscoList *pdl;
+	XmppDiscoService *service;
+	GtkWidget *menu;
+
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	GValue val;
+
+	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
+	pdl = user_data;
+
+	/* Figure out what was clicked */
+	if (!gtk_tree_view_get_path_at_pos(tree, event->x, event->y, &path,
+		                               NULL, NULL, NULL))
+		return FALSE;
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(pdl->model), &iter, path);
+	gtk_tree_path_free(path);
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN,
+	                         &val);
+	service = g_value_get_pointer(&val);
+
+	if (!service)
+		return FALSE;
+
+	menu = gtk_menu_new();
+
+	if (service->flags & XMPP_DISCO_ADD)
+		pidgin_new_item_from_stock(menu, _("Add to Buddy List"), GTK_STOCK_ADD,
+		                           G_CALLBACK(add_to_blist_cb), pdl->dialog,
+		                           0, 0, NULL);
+
+	if (service->flags & XMPP_DISCO_REGISTER) {
+		GtkWidget *item = pidgin_new_item(menu, _("Register"));
+		g_signal_connect(G_OBJECT(item), "activate",
+		                 G_CALLBACK(register_button_cb), pdl->dialog);
+	}
+
+	gtk_widget_show_all(menu);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button,
+	               event->time);
+	return FALSE;
 }
 
 static void
@@ -289,10 +338,10 @@ row_activated_cb(GtkTreeView       *tree_view,
 			gtk_tree_view_collapse_row(GTK_TREE_VIEW(pdl->tree), path);
 		else
 			gtk_tree_view_expand_row(GTK_TREE_VIEW(pdl->tree), path, FALSE);
-	else if (service->flags & XMPP_DISCO_ADD)
-		add_to_blist_cb(GTK_BUTTON(pdl->dialog->add_button), pdl->dialog);
 	else if (service->flags & XMPP_DISCO_REGISTER)
-		register_button_cb(GTK_BUTTON(pdl->dialog->register_button), pdl->dialog);
+		register_button_cb(NULL, pdl->dialog);
+	else if (service->flags & XMPP_DISCO_ADD)
+		add_to_blist_cb(NULL, pdl->dialog);
 }
 
 static void
@@ -474,6 +523,7 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 	gtk_tree_view_column_set_reorderable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(pdl->tree), column);
 
+	g_signal_connect(G_OBJECT(pdl->tree), "button-press-event", G_CALLBACK(service_click_cb), pdl);
 	g_signal_connect(G_OBJECT(pdl->tree), "row-expanded", G_CALLBACK(row_expanded_cb), pdl);
 	g_signal_connect(G_OBJECT(pdl->tree), "row-activated", G_CALLBACK(row_activated_cb), pdl);
 
