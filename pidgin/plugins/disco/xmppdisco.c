@@ -294,7 +294,7 @@ got_info_cb(PurpleConnection *pc, const char *type, const char *id,
 		service->list = item_data->list;
 		purple_debug_info("xmppdisco", "parent for %s is %p\n", from, item_data->parent);
 		service->parent = item_data->parent;
-		service->flags = XMPP_DISCO_ADD;
+		service->flags = 0;
 		service->type = disco_service_type_from_identity(identity);
 
 		if (item_data->node) {
@@ -311,6 +311,10 @@ got_info_cb(PurpleConnection *pc, const char *type, const char *id,
 				service->flags |= XMPP_DISCO_BROWSE;
 		} else
 			service->name = g_strdup(from);
+
+		if (!service->node)
+			/* Only support adding JIDs, not JID+node combos */
+			service->flags |= XMPP_DISCO_ADD;
 
 		if (item_data->name) {
 			service->description = item_data->name;
