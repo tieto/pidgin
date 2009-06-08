@@ -206,7 +206,7 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	g_free(server);
 }
 
-static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
+static void add_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	XmppDiscoService *service = g_object_get_data(G_OBJECT(button), "service");
 	PurpleAccount *account;
@@ -216,7 +216,7 @@ static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	account = purple_connection_get_account(service->list->pc);
 
 	if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		purple_blist_request_add_chat(account, NULL, NULL, service->name);
+		purple_blist_request_add_chat(account, NULL, NULL, service->jid);
 	else
 		purple_blist_request_add_buddy(account, service->name, NULL, NULL);
 }
@@ -473,7 +473,7 @@ PidginDiscoDialog *pidgin_disco_dialog_new(void)
 	                                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->add_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->add_button), "clicked",
-	                 G_CALLBACK(add_room_to_blist_cb), dialog);
+	                 G_CALLBACK(add_to_blist_cb), dialog);
 	gtk_widget_set_sensitive(dialog->add_button, FALSE);
 	gtk_widget_show(dialog->add_button);
 
