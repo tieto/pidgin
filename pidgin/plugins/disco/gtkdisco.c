@@ -29,6 +29,7 @@
 #include "gtkutils.h"
 #include "pidgin.h"
 #include "request.h"
+#include "pidgintooltip.h"
 
 #include "gtkdisco.h"
 #include "xmppdisco.h"
@@ -347,6 +348,94 @@ static gboolean account_filter_func(PurpleAccount *account)
 	return purple_strequal(purple_account_get_protocol_id(account), XMPP_PLUGIN_ID);
 }
 
+static gboolean
+disco_paint_tooltip(GtkWidget *tipwindow, gpointer data)
+{
+	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
+	gtk_paint_layout(tipwindow->style, tipwindow->window, GTK_STATE_NORMAL, FALSE,
+			NULL, tipwindow, "tooltip",
+			6, 6, layout);
+	return TRUE;
+}
+
+static gboolean
+disco_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
+		gpointer data, int *w, int *h)
+{
+	PidginDiscoList *pdl = data;
+	GtkTreeIter iter;
+	PangoLayout *layout;
+	int width, height;
+	XmppDiscoService *service;
+	GValue val;
+	const char *type = NULL;
+	char *markup, *jid, *name, *desc = NULL;
+
+	if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(pdl->model), &iter, path))
+		return FALSE;
+
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN,
+	                         &val);
+	service = g_value_get_pointer(&val);
+
+	switch (service->type) {
+		case XMPP_DISCO_SERVICE_TYPE_UNSET:
+			type = _("Unknown");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_GATEWAY:
+			type = _("Gateway");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_DIRECTORY:
+			type = _("Directory");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_CHAT:
+			type = _("Chat");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_PUBSUB_COLLECTION:
+			type = _("PubSub Collection");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_PUBSUB_LEAF:
+			type = _("PubSub Leaf");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_OTHER:
+			type = _("Other");
+			break;
+	}
+
+	markup = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>\n<b>%s:</b> %s%s%s",
+	                         name = g_markup_escape_text(service->name, -1),
+	                         type,
+	                         jid = g_markup_escape_text(service->jid, -1),
+	                         service->description ? _("\n<b>Description:</b> ") : "",
+	                         service->description ? desc = g_markup_escape_text(service->description, -1) : "");
+
+	layout = gtk_widget_create_pango_layout(tipwindow, NULL);
+	pango_layout_set_markup(layout, markup, -1);
+	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(layout, 500000);
+	pango_layout_get_size(layout, &width, &height);
+	g_object_set_data_full(G_OBJECT(tipwindow), "tooltip-plugin", layout, g_object_unref);
+
+	if (w)
+		*w = PANGO_PIXELS(width) + 12;
+	if (h)
+		*h = PANGO_PIXELS(height) + 12;
+
+	g_free(markup);
+	g_free(jid);
+	g_free(name);
+	g_free(desc);
+
+	return TRUE;
+}
+
 static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 {
 	GtkCellRenderer *text_renderer, *pixbuf_renderer;
@@ -404,6 +493,10 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 
 	g_signal_connect(G_OBJECT(pdl->tree), "row-expanded", G_CALLBACK(row_expanded_cb), pdl);
 	g_signal_connect(G_OBJECT(pdl->tree), "row-activated", G_CALLBACK(row_activated_cb), pdl);
+
+	pidgin_tooltip_setup_for_treeview(pdl->tree, pdl,
+	                                  disco_create_tooltip,
+	                                  disco_paint_tooltip);
 }
 
 void pidgin_disco_signed_off_cb(PurpleConnection *pc)
