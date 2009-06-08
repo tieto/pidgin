@@ -39,6 +39,7 @@ struct _PidginDiscoDialog {
 	GtkWidget *register_button;
 	GtkWidget *add_button;
 	GtkWidget *close_button;
+	XmppDiscoService *selected;
 
 	PurpleAccount *account;
 	PidginDiscoList *discolist;

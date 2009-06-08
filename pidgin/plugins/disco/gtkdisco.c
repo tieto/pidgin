@@ -119,8 +119,7 @@ static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 
 static void register_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
-	XmppDiscoService *service = g_object_get_data(G_OBJECT(button), "service");
-	xmpp_disco_service_register(service);
+	xmpp_disco_service_register(dialog->selected);
 }
 
 static void discolist_cancel_cb(PidginDiscoList *pdl, const char *server)
@@ -209,7 +208,7 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 
 static void add_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
-	XmppDiscoService *service = g_object_get_data(G_OBJECT(button), "service");
+	XmppDiscoService *service = dialog->selected;
 	PurpleAccount *account;
 	const char *jid;
 
@@ -227,7 +226,6 @@ static void add_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 static void
 selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 {
-	XmppDiscoService *service;
 	GtkTreeIter iter;
 	GValue val;
 	PidginDiscoDialog *dialog = pdl->dialog;
@@ -235,18 +233,15 @@ selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN, &val);
-		service = g_value_get_pointer(&val);
-		if (!service) {
+		dialog->selected = g_value_get_pointer(&val);
+		if (!dialog->selected) {
 			gtk_widget_set_sensitive(dialog->add_button, FALSE);
 			gtk_widget_set_sensitive(dialog->register_button, FALSE);
 			return;
 		}
 
-		g_object_set_data(G_OBJECT(dialog->add_button), "service", service);
-		g_object_set_data(G_OBJECT(dialog->register_button), "service", service);
-
-		gtk_widget_set_sensitive(dialog->add_button, service->flags & XMPP_DISCO_ADD);
-		gtk_widget_set_sensitive(dialog->register_button, service->flags & XMPP_DISCO_REGISTER);
+		gtk_widget_set_sensitive(dialog->add_button, dialog->selected->flags & XMPP_DISCO_ADD);
+		gtk_widget_set_sensitive(dialog->register_button, dialog->selected->flags & XMPP_DISCO_REGISTER);
 	} else {
 		gtk_widget_set_sensitive(dialog->add_button, FALSE);
 		gtk_widget_set_sensitive(dialog->register_button, FALSE);
