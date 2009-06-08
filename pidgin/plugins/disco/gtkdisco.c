@@ -216,17 +216,17 @@ static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
 	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
 	PurpleAccount *account;
-	const char *name;
+	const char *jid;
 
 	g_return_if_fail(info != NULL);
 
 	account = purple_connection_get_account(info->list->pc);
-	name = info->service->name;
+	jid = info->service->jid;
 
 	if (info->service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		purple_blist_request_add_chat(account, NULL, NULL, name);
+		purple_blist_request_add_chat(account, NULL, NULL, jid);
 	else
-		purple_blist_request_add_buddy(account, name, NULL, NULL);
+		purple_blist_request_add_buddy(account, jid, NULL, NULL);
 }
 
 static void
