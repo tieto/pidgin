@@ -3867,12 +3867,15 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 }
 
 static void
-gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImage *image)
+gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
+	
 	/* Create an add dialog */
 	PidginSmiley *editor = pidgin_smiley_edit(NULL, NULL);
 	pidgin_smiley_editor_set_shortcut(editor, image->filename);
 	pidgin_smiley_editor_set_image(editor, image->pixbuf);
+	pidgin_smiley_editor_set_data(editor, save->data, save->datasize);
 }
 
 /*
@@ -3907,7 +3910,7 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 				item = gtk_image_menu_item_new_with_mnemonic(_("_Add Custom Smiley..."));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 				g_signal_connect(G_OBJECT(item), "activate",
-								 G_CALLBACK(gtk_imhtml_custom_smiley_save), image);
+								 G_CALLBACK(gtk_imhtml_custom_smiley_save), save);
 				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 			}
 
@@ -5062,6 +5065,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 			gtk_widget_show(img);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
 			g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
 	} else {

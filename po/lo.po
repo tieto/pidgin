@@ -1,25 +1,26 @@
-# SOME DESCRIPTIVE TITLE.
+# translation of lo.po to Lao
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Anousak Souphavanh <anousak@gmail.com>, 2007, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: lo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:39-0400\n"
-"PO-Revision-Date: 2007-09-28 09:52+0700\n"
+"POT-Creation-Date: 2009-05-26 22:29-0700\n"
+"PO-Revision-Date: 2009-04-29 09:28+0700\n"
 "Last-Translator: Anousak Souphavanh <anousak@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: Lao <lo@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
 
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr ""
+msgstr "ຟີນຊ໌"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
@@ -48,40 +49,40 @@ msgid "Error"
 msgstr "ຜິດພາດ"
 
 msgid "Account was not added"
-msgstr ""
+msgstr "ບໍ່ໃດ້ເພີ້ມບັນຊີ "
 
 msgid "Username of an account must be non-empty."
-msgstr ""
+msgstr "ລະຫັດຜູ້ໃຊ້ຕ້ອງໃຫ້ມີຂໍ້ມູນ"
 
 msgid "New mail notifications"
-msgstr ""
+msgstr "ອີເເມວລ໌ໃຫ່ມເຕືອນ"
 
 msgid "Remember password"
-msgstr ""
+msgstr "ຈື່ລະຫັດພານ"
 
 msgid "There are no protocol plugins installed."
 msgstr ""
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr ""
+msgstr "ຄິດວ່າທ່ານລືມຂຽນ 'make install'"
 
 msgid "Modify Account"
-msgstr ""
+msgstr "ປັບບັນຊີ"
 
 msgid "New Account"
-msgstr ""
+msgstr "ບັນຊີໃຫມ່"
 
 msgid "Protocol:"
-msgstr ""
+msgstr "ໂປໂຕໂກນ:"
 
 msgid "Username:"
-msgstr ""
+msgstr "ຊື່ຜູ້ໃຊ້:"
 
 msgid "Password:"
-msgstr ""
+msgstr "ລະຫັດພ່ານ:"
 
 msgid "Alias:"
-msgstr ""
+msgstr "ຊື່ຫລີ້ນ:"
 
 #. Register checkbox
 msgid "Create this account on the server"
@@ -90,37 +91,37 @@ msgstr ""
 #. Cancel button
 #. Cancel
 msgid "Cancel"
-msgstr ""
+msgstr "ຍົກເລີອກ"
 
 #. Save button
 #. Save
 msgid "Save"
-msgstr ""
+msgstr "ບັນທຶກ"
 
 #, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr ""
+msgstr "ເເນ່ທີ່ຈະລຶບ %s?"
 
 msgid "Delete Account"
-msgstr ""
+msgstr "ລຶບບັນຊີ"
 
 #. Delete button
 msgid "Delete"
-msgstr ""
+msgstr "ລຶບ"
 
 msgid "Accounts"
-msgstr ""
+msgstr "ບັນຊີທົວໄປ"
 
 msgid "You can enable/disable accounts from the following list."
 msgstr ""
 
 #. Add button
 msgid "Add"
-msgstr ""
+msgstr "ເພີ້ມ"
 
 #. Modify button
 msgid "Modify"
-msgstr ""
+msgstr "ປັບ"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
@@ -137,20 +138,22 @@ msgid "Authorize buddy?"
 msgstr ""
 
 msgid "Authorize"
-msgstr ""
+msgstr "ອະນຸມັດ"
 
 msgid "Deny"
-msgstr ""
+msgstr "ປະຕິເສດ"
 
 #, c-format
 msgid ""
 "Online: %d\n"
 "Total: %d"
 msgstr ""
+"ອອນລາຍ: %d\n"
+"ຈໍານວນລວມ: %d"
 
 #, c-format
 msgid "Account: %s (%s)"
-msgstr ""
+msgstr "ບັນຊີ: %s (%s)"
 
 #, c-format
 msgid ""
@@ -1669,6 +1672,8 @@ msgstr ""
 msgid "+++ %s signed off"
 msgstr ""
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr ""
 
@@ -3480,6 +3485,9 @@ msgstr ""
 msgid "Server does not use any supported authentication method"
 msgstr ""
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+
 msgid "Invalid challenge from server"
 msgstr ""
 
@@ -3739,6 +3747,13 @@ msgstr ""
 msgid "Resource"
 msgstr ""
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+msgid "Logged off"
+msgstr ""
+
 msgid "Middle Name"
 msgstr ""
 
@@ -3903,7 +3918,14 @@ msgstr ""
 msgid "Find Rooms"
 msgstr ""
 
-msgid "You require encryption, but it is not available on this server."
+#, fuzzy
+msgid "Affiliations:"
+msgstr "ຊື່ຫລີ້ນ:"
+
+msgid "No users found"
+msgstr ""
+
+msgid "Roles:"
 msgstr ""
 
 msgid "Ping timeout"
@@ -4354,13 +4376,13 @@ msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr ""
 
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -5140,26 +5162,18 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr ""
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr ""
-
-msgid "Unknown error."
-msgstr ""
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr ""
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr ""
 
-#. char *adl = g_strndup(payload, len);
 #, c-format
-msgid "Unknown error (%d)"
+msgid "Unknown error (%d): %s"
 msgstr ""
 
 msgid "Unable to add user"
+msgstr ""
+
+#, c-format
+msgid "Unknown error (%d)"
 msgstr ""
 
 msgid "The following users are missing from your addressbook"
@@ -5188,13 +5202,10 @@ msgstr ""
 msgid "Service Temporarily Unavailable."
 msgstr ""
 
+msgid "Unknown error."
+msgstr ""
+
 msgid "Mobile message was not sent because it was too long."
-msgstr ""
-
-msgid "Unable to rename group"
-msgstr ""
-
-msgid "Unable to delete group"
 msgstr ""
 
 #, c-format
@@ -5321,14 +5332,6 @@ msgstr ""
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr ""
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr ""
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr ""
-
 msgid "Delete Buddy from Address Book?"
 msgstr ""
 
@@ -5355,6 +5358,28 @@ msgstr ""
 #. *  summary
 #. *  description
 msgid "MSN Protocol Plugin"
+msgstr ""
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr ""
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr ""
+
+msgid "Unable to rename group"
+msgstr ""
+
+msgid "Unable to delete group"
+msgstr ""
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr ""
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
 msgstr ""
 
 #, c-format
@@ -5386,6 +5411,8 @@ msgid "Lost connection with server"
 msgstr ""
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr ""
 
@@ -8939,6 +8966,30 @@ msgstr ""
 msgid "Add buddy rejected"
 msgstr ""
 
+#. Some error in the received stream
+msgid "Received invalid data"
+msgstr ""
+
+#. Password incorrect
+msgid "Incorrect Password"
+msgstr ""
+
+#. security lock from too many failed login attempts
+msgid "Account locked: Too many failed login attempts"
+msgstr ""
+
+#. the username does not exist
+msgid "Username does not exist"
+msgstr ""
+
+#. indicates a lock of some description
+msgid "Account locked: See the debug log"
+msgstr ""
+
+#. username or password missing
+msgid "Username or password missing"
+msgstr ""
+
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -9776,15 +9827,16 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr ""
 
-msgid "Room _List"
-msgstr ""
+#, fuzzy
+msgid "A_ccount"
+msgstr "ບັນຊີທົວໄປ"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr ""
 
-msgid "_Account:"
+msgid "Room _List"
 msgstr ""
 
 msgid "_Block"
@@ -10695,6 +10747,9 @@ msgstr ""
 msgid "Hungarian"
 msgstr ""
 
+msgid "Armenian"
+msgstr ""
+
 msgid "Indonesian"
 msgstr ""
 
@@ -10789,6 +10844,9 @@ msgid "Sinhala"
 msgstr ""
 
 msgid "Swedish"
+msgstr ""
+
+msgid "Swahili"
 msgstr ""
 
 msgid "Tamil"
@@ -11183,11 +11241,9 @@ msgstr ""
 msgid "Save Image"
 msgstr ""
 
-#, c-format
 msgid "_Save Image..."
 msgstr ""
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr ""
 
@@ -11549,6 +11605,9 @@ msgstr ""
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
+msgstr ""
+
+msgid "_Account:"
 msgstr ""
 
 msgid "_Buddy name:"
@@ -12205,6 +12264,9 @@ msgid "Shortcut Text"
 msgstr ""
 
 msgid "Custom Smiley Manager"
+msgstr ""
+
+msgid "Select Buddy Icon"
 msgstr ""
 
 msgid "Click to change your buddyicon for this account."

@@ -639,7 +639,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					purple_debug_info("jabber", "found %d smileys\n",
 						g_list_length(smiley_refs));
 
-					if (smiley_refs) {		
+					if (smiley_refs) {
 						if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
 							JabberID *jid = jabber_id_new(jm->from);
 							JabberChat *chat = NULL;
@@ -657,7 +657,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 									who, account);
 							if (!conv) {
 								/* we need to create the conversation here */
-								conv = 
+								conv =
 									purple_conversation_new(PURPLE_CONV_TYPE_IM,
 									account, who);
 							}
@@ -949,7 +949,7 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 				/* do not attempt to send custom smileys in a MUC with more than
 				 10 people, to avoid getting too many BoB requests */
 				return jabber_chat_get_num_participants(chat) <= 10 &&
-					jabber_chat_all_participants_have_capability(chat, 
+					jabber_chat_all_participants_have_capability(chat,
 						XEP_0231_NAMESPACE);
 			} else {
 				return FALSE;
@@ -1190,7 +1190,9 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 			jm->typing_style |= JM_TS_JEP_0022;
 	}
 
-	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	tmp = purple_utf8_strip_unprintables(msg);
+	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
+	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);
@@ -1231,7 +1233,9 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);
 
+	tmp = purple_utf8_strip_unprintables(msg);
 	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);

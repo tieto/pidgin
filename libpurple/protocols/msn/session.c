@@ -261,9 +261,9 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 static void
 msn_session_sync_users(MsnSession *session)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleConnection *gc = purple_account_get_connection(session->account);
 	GList *to_remove = NULL;
+	GSList *buddies;
 
 	g_return_if_fail(gc != NULL);
 
@@ -271,60 +271,36 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues.
 	 */
-	for (gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		PurpleGroup *group = (PurpleGroup *)gnode;
-		const char *group_name;
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		group_name = purple_group_get_name(group);
-		for(cnode = purple_blist_node_get_first_child(gnode);
-				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for(bnode = purple_blist_node_get_first_child(cnode);
-					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode)) {
-				PurpleBuddy *b;
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *)bnode;
-				if(purple_buddy_get_account(b) == purple_connection_get_account(gc)) {
-					MsnUser *remote_user;
-					gboolean found = FALSE;
+	for (buddies = purple_find_buddies(session->account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *buddy = buddies->data;
+		const gchar *buddy_name = purple_buddy_get_name(buddy);
+		const gchar *group_name = purple_group_get_name(purple_buddy_get_group(buddy));
+		MsnUser *remote_user;
+		gboolean found = FALSE;
 
-					remote_user = msn_userlist_find_user(session->userlist, purple_buddy_get_name(b));
+		remote_user = msn_userlist_find_user(session->userlist, buddy_name);
+		if (remote_user && remote_user->list_op & MSN_LIST_FL_OP) {
+			GList *l;
+			for (l = remote_user->group_ids; l; l = l->next) {
+				const char *name = msn_userlist_find_group_name(remote_user->userlist, l->data);
+				if (name && !g_ascii_strcasecmp(group_name, name)) {
+					found = TRUE;
+					break;
+				}
+			}
 
-					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
-					{
-						GList *l;
-
-						for (l = remote_user->group_ids; l != NULL; l = l->next)
-						{
-							const char *name = msn_userlist_find_group_name(remote_user->userlist, l->data);
-							if (name && !g_ascii_strcasecmp(group_name, name))
-							{
-								found = TRUE;
-								break;
-							}
-						}
-					}
-
-					/* We don't care if they're in a different group, as long as they're on the
-					 * list somewhere. If we check for the group, we cause pain, agony and
-					 * suffering for people who decide to re-arrange their buddy list elsewhere.
-					 */
-					if (!found)
-					{
-						if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
-							/* The user is not on the server list */
-							msn_show_sync_issue(session, purple_buddy_get_name(b), group_name);
-						} else {
-							/* The user is not in that group on the server list */
-							to_remove = g_list_prepend(to_remove, b);
-						}
-					}
+			/* We don't care if they're in a different group, as long as they're on the
+			 * list somewhere. If we check for the group, we cause pain, agony and
+			 * suffering for people who decide to re-arrange their buddy list elsewhere.
+			 */
+			if (!found) {
+				if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
+					/* The user is not on the server list */
+					msn_show_sync_issue(session, buddy_name, group_name);
+				} else {
+					/* The user is not in that group on the server list */
+					to_remove = g_list_prepend(to_remove, buddy);
 				}
 			}
 		}

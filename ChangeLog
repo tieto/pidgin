@@ -16,10 +16,19 @@ version 2.6.0 (??/??/2009):
 	* Report idle time 'From last message sent' should work properly.
 	* Show the invite message for buddies that requested authorization
 	  from you on MSN.
+	* DNS servers are re-read when DNS queries fail in case the system has
+	  moved to a new network and the old servers are not accessible.
+	* Gadu-Gadu accounts can specify a server to which to connect.
+	  (Krzysztof "kreez" Tobola)
+	* Modifying the MSN privacy list for buddies not added by you (i.e.
+	  spammers and other generally unwanted users) should no longer cause
+	  a 240 error and disconnection.
 
 	XMPP:
-	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), and
-	  voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
+	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
+	  support with GTalk and voice and video support with the GMail web
+	  client. (Mike "Maiku" Ruprecht)
+	* Added a Service Discovery Browser plugin for Pidgin. (Andrei Mozzhuhin)
 	* Support for in-band bytestreams for file transfers (XEP-0047). (Marcus
 	  Lundblad)
 	* Support for sending and receiving attentions (equivalent to "buzz"
@@ -37,6 +46,8 @@ version 2.6.0 (??/??/2009):
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
 	* Put section breaks between resources in "Get Info" to improve readability.
+	* Silently remove invalid XML 1.0 entities (e.g. ASCII control characters)
+	  from sent messages.
 	* XHTML markup is only included in outgoing messages when the message
 	  contains formatting.
 	* Show when the user was last logged in when doing "Get Info" on an offline
@@ -44,11 +55,16 @@ version 2.6.0 (??/??/2009):
 	* Support custom smileys in MUCs (only when all participants support the
 	  "Bits of Binary" extension, and a maximum of 10 participants are in the
 	  chat to avoid getting too many fetch requests).
+	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
+	  to require SSL not being respected.
+	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
+	  the username, password, or realm (the JID domain) contain non-ASCII
+	  characters.
+	* Show emblem for mobile, handheld, and web clients and bots (if the other
+	  client supports it).
 
 	Yahoo:
-	* P2P file transfers. (Sulabh Mahajan)
-	* MSN Interoperability by adding MSN buddies as 'msn/user@example.com'.
-	  (Sulabh Mahajan)
+	* P2P file transfers.  (Sulabh Mahajan)
 	* Sending text messages (address to +<countrycode><phone number>).
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
@@ -78,11 +94,52 @@ version 2.6.0 (??/??/2009):
 	  rejoin.
 	* Always set unseen-count and unseen-state on conversations.
 	  (Joshua Stein)
+	* Fix a bug in 'Conversation Colors' plugin for RTL messages.
+	* Pressing the Left and Right arrow keys in the buddy list will expand and
+	  collapse buddy groups or contacts. (Peter Ruibal)
+	* Support saving animated custom smileys as animated images or animated
+	  custom smileys. (Andrea Piccinelli)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
 	  especially for users of braille terminals, screen readers etc.
 	* Added a TinyURL plugin, which aids copying longer URLs.
+
+	Pidgin GTK+ Theme Control Plugin:
+	* Removed mouse cursor color preferences.
+	* Added "Typing Notification Color" preference.
+	* Added "Disable Typing Notification Text" preference.
+	* Preferences have been reorganized into three tabs for Colors, Fonts, and
+	  Miscellaneous categories.
+
+version 2.5.6 (05/19/2009):
+	libpurple:
+	* Improve sleep behavior by aggregation of longer timeouts on second
+	  boundaries to allow better power saving.  (Arunan Balasubramaniam)
+	* Fix various crashes on exit.
+	* Make XML parsing more resilient to interactions with other libraries.
+	  This, along with the fix for libxml2 bug 564217, fixes the crashes
+	  on connect in XMPP with recent gst-plugins-bad (see #8830 for details).
+	* Many security related fixes.
+
+	IRC:
+	* Correctly handle WHOIS for users who are joined to a large number of
+	  channels.
+	* Notify the user if a /nick command fails, rather than trying
+	  fallback nicks.
+
+	MSN:
+	* Fix a race condition causing occasional Pidgin crashes.
+	* Fix some errors about the friendly name changing too fast caused
+	  by MSN/Yahoo integration buddies.
+
+	XMPP:
+	* Less likely to pop up a new conversation window in disregard of
+	  the "Hide new IM conversations" preference.
+
+	Yahoo:
+	* Fix a crash when sending very long messages.
+	* Fix a bug where UTF-8 status messages get garbled when going idle.
 
 version 2.5.5 (03/01/2009):
 	libpurple:

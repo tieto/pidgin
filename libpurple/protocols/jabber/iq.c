@@ -495,6 +495,8 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("session", "http://www.google.com/session",
 		jabber_google_session_parse);
 #endif
+	jabber_iq_register_handler("block", "urn:xmpp:blocking", jabber_blocklist_parse_push);
+	jabber_iq_register_handler("unblock", "urn:xmpp:blocking", jabber_blocklist_parse_push);
 	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
 
 }

@@ -147,7 +147,6 @@ static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFri
 static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	YahooFriend *f = NULL;
 	char *name = NULL;
@@ -168,29 +167,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		switch (pair->key) {
 		case 0: /* we won't actually do anything with this */
-			break;
-		case 1: /* we don't get the full buddy list here. */
-			if (!yd->logged_in) {
-				purple_connection_set_display_name(gc, pair->value);
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
-				yd->logged_in = TRUE;
-				if (yd->picture_upload_todo) {
-					yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
-					yd->picture_upload_todo = NULL;
-				}
-				yahoo_set_status(account, purple_account_get_active_status(account));
-
-				/* this requests the list. i have a feeling that this is very evil
-				 *
-				 * scs.yahoo.com sends you the list before this packet without  it being
-				 * requested
-				 *
-				 * do_import(gc, NULL);
-				 * newpkt = yahoo_packet_new(YAHOO_SERVICE_LIST, YAHOO_STATUS_OFFLINE, 0);
-				 * yahoo_packet_send_and_free(newpkt, yd);
-				 */
-
-				}
+		case 1: /* we won't actually do anything with this */
 			break;
 		case 8: /* how many online buddies we have */
 			break;
@@ -577,6 +554,18 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	}
 
 	g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
+	
+	/* Now that we have processed the buddy list, we can say yahoo has connected */
+	purple_connection_set_display_name(gc, purple_normalize(account, purple_account_get_username(account)));
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	yd->logged_in = TRUE;
+	if (yd->picture_upload_todo) {
+		yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
+		yd->picture_upload_todo = NULL;
+	}
+	yahoo_set_status(account, purple_account_get_active_status(account));
+	purple_debug_info("yahoo","Authentication: Connection established\n");
+
 	g_hash_table_destroy(ht);
 	g_free(norm_bud);
 	g_free(temp);
@@ -1584,7 +1573,8 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 
 	to_y64(base64_string, md5_digest, 16);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, YAHOO_STATUS_WEBLOGIN, yd->session_id);
+	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, yd->current_status, yd->session_id);
 	if(yd->jp) {
 		yahoo_packet_hash(pkt, "ssssssss",
 					1, name,
@@ -1751,7 +1741,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					break;
 				case 1213:
 					/* security lock from too many failed login attempts */
-					error_reason = g_strdup(_("Account locked: Too many failed login attempts"));
+					error_reason = g_strdup(_("Account locked: Too many failed login attempts.\nLogging into the Yahoo! website may fix this."));
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 				case 1235:
@@ -1759,9 +1749,10 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					error_reason = g_strdup(_("Username does not exist"));
 					error = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 					break;
+				case 1214:
 				case 1236:
 					/* indicates a lock of some description */
-					error_reason = g_strdup(_("Account locked: See the debug log"));
+					error_reason = g_strdup(_("Account locked: Unknown reason.\nLogging into the Yahoo! website may fix this."));
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 				case 100:
@@ -1790,7 +1781,10 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 				"yahoojp", 0);
 
 			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
-			url_data = purple_util_fetch_url_request(url, TRUE, YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, yahoo_auth16_stage2, auth_data);
+			url_data = purple_util_fetch_url_request_len_with_account(
+					purple_connection_get_account(gc), url, TRUE,
+					YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
+					yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
 		}
@@ -1826,7 +1820,11 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	g_free(encoded_password);
 	g_free(encoded_username);
 
-	url_data = purple_util_fetch_url_request(url, TRUE, YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, yahoo_auth16_stage1_cb, auth_data);
+	url_data = purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc), url, TRUE,
+			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
+			yahoo_auth16_stage1_cb, auth_data);
+
 	g_free(url);
 }
 
@@ -3948,8 +3946,9 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 		use_whole_url ? base_url : "",
 		yd->cookie_t, yd->cookie_y);
 
-	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
-			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE,
+	url_data = purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc), base_url, use_whole_url,
+			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
 			yahoo_get_inbox_token_cb, gc);
 
 	g_free(request);
@@ -4110,8 +4109,9 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
-	url_data = purple_util_fetch_url_request(YAHOO_SMS_CARRIER_URL, use_whole_url,
-			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE,
+	url_data = purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc), YAHOO_SMS_CARRIER_URL, use_whole_url,
+			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
 			yahoo_get_sms_carrier_cb, data);
 
 	g_free(request);

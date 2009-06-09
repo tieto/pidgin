@@ -1163,14 +1163,15 @@ keyboard_shortcuts(GtkWidget *page)
 static void
 prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 {
-	PidginBlistTheme *theme;
+	PidginBlistTheme *theme = NULL;
 	GtkTreeIter iter;
 	gchar *name = NULL;
 
 	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &iter));
 	gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
 
-	theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
+	if (name && *name)
+		theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
 	g_free(name);
 
 	pidgin_blist_set_theme(theme);

@@ -47,7 +47,7 @@ typedef struct {
 	char *jid;
 	GSList *ids;
 	GHashTable *resources;
-	int timeout_handle;
+	guint timeout_handle;
 	GSList *vcard_imgids;
 	PurpleNotifyUserInfo *user_info;
 	long last_seconds;
@@ -69,7 +69,7 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 		gboolean create)
 {
 	JabberBuddy *jb;
-	const char *realname;
+	char *realname;
 
 	if (js->buddies == NULL)
 		return NULL;
@@ -81,8 +81,9 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 
 	if(!jb && create) {
 		jb = g_new0(JabberBuddy, 1);
-		g_hash_table_insert(js->buddies, g_strdup(realname), jb);
-	}
+		g_hash_table_insert(js->buddies, realname, jb);
+	} else
+		g_free(realname);
 
 	return jb;
 }
@@ -1044,14 +1045,14 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	if (!jbi->jb->resources) {
 		/* the buddy is offline */
-		gchar *status = 
-			g_strdup_printf("%s%s%s",	_("Offline"), 
+		gchar *status =
+			g_strdup_printf("%s%s%s",	_("Offline"),
 				jbi->last_message ? ": " : "",
 				jbi->last_message ? jbi->last_message : "");
 		if (jbi->last_seconds > 0) {
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
 			gchar *message = g_strdup_printf(_("%s ago"), last);
-			purple_notify_user_info_prepend_pair(user_info, 
+			purple_notify_user_info_prepend_pair(user_info,
 				_("Logged off"), message);
 			g_free(last);
 			g_free(message);
@@ -1471,8 +1472,8 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 							jbir->idle_seconds = sec;
 						}
 					}
-					/* Update the idle time of the buddy resource, if we got it. 
-					 This will correct the value when a server doesn't mark 
+					/* Update the idle time of the buddy resource, if we got it.
+					 This will correct the value when a server doesn't mark
 					 delayed presence and we got the presence when signing on */
 					jb = jabber_buddy_find(js, from, FALSE);
 					if (jb) {
@@ -1493,9 +1494,9 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 										jbr->idle = 0;
 									}
 
-									if (jbr == 
+									if (jbr ==
 										jabber_buddy_find_resource(jb, NULL)) {
-										purple_prpl_got_user_idle(js->gc->account, 
+										purple_prpl_got_user_idle(js->gc->account,
 											buddy_name, jbr->idle, jbr->idle);
 									}
 								}
@@ -1750,7 +1751,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
 		jabber_iq_send(iq);
 	}
-	
+
 	js->pending_buddy_info_requests = g_slist_prepend(js->pending_buddy_info_requests, jbi);
 	jbi->timeout_handle = purple_timeout_add_seconds(30, jabber_buddy_get_info_timeout, jbi);
 }
@@ -2501,7 +2502,7 @@ jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 	if (node)
 		purple_debug_info("jabber", "Found cap: %s\n", cap);
 	else
-		purple_debug_info("jabber", "Cap %s not found\n", cap); 
+		purple_debug_info("jabber", "Cap %s not found\n", cap);
 
 	return (node != NULL);
 }
@@ -2520,3 +2521,22 @@ jabber_buddy_has_capability(const JabberBuddy *jb, const gchar *cap)
 	return jabber_resource_has_capability(jbr, cap);
 }
 
+const gchar *
+jabber_resource_get_identity_category_type(const JabberBuddyResource *jbr,
+	const gchar *category)
+{
+	const GList *iter = NULL;
+	
+	if (jbr->caps.info) {
+		for (iter = jbr->caps.info->identities ; iter ; iter = g_list_next(iter)) {
+			const JabberIdentity *identity = 
+				(JabberIdentity *) iter->data;
+		
+			if (strcmp(identity->category, category) == 0) {
+				return identity->type;
+			}
+		}
+	}
+		
+	return NULL;
+}
