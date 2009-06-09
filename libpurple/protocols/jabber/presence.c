@@ -245,7 +245,9 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 {
 	xmlnode *show, *status, *presence, *pri, *c;
 	const char *show_string = NULL;
+#ifdef USE_VV
 	gboolean audio_enabled, video_enabled;
+#endif
 
 	presence = xmlnode_new("presence");
 
