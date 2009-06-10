@@ -265,12 +265,13 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 }
 
+/* jabber_roster_update frees the GSList* passed in */
 static void jabber_roster_update(JabberStream *js, const char *name,
-		GSList *grps)
+		GSList *groups)
 {
 	PurpleBuddy *b;
 	PurpleGroup *g;
-	GSList *groups = NULL, *l;
+	GSList *l;
 	JabberIq *iq;
 	xmlnode *query, *item, *group;
 	const char *balias;
@@ -281,12 +282,11 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	if(!(b = purple_find_buddy(js->gc->account, name)))
 		return;
 
-	if(grps) {
+	if (groups) {
 		char *tmp = roster_groups_join(groups);
-		groups = grps;
 
-		purple_debug_info("jabber", "jabber_roster_update(%s): [Source: grps]: groups: %s\n",
-		                  name, tmp);
+		purple_debug_info("jabber", "jabber_roster_update(%s): [Source: "
+		                  "groups]: groups: %s\n", name, tmp);
 		g_free(tmp);
 	} else {
 		GSList *buddies = purple_find_buddies(js->gc->account, name);
@@ -322,8 +322,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 		xmlnode_insert_data(group, l->data, -1);
 	}
 
-	if(!grps)
-		g_slist_free(groups);
+	g_slist_free(groups);
 
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
 		jabber_google_roster_outgoing(js, query, item);
@@ -414,7 +413,6 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	                  name, old_group, new_group);
 
 	jabber_roster_update(gc->proto_data, name, groups);
-	g_slist_free(groups);
 }
 
 void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
@@ -450,7 +448,6 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		                  purple_buddy_get_name(buddy), purple_group_get_name(group));
 
 		jabber_roster_update(gc->proto_data, name, groups);
-		g_slist_free(groups);
 	} else {
 		JabberIq *iq = jabber_iq_new_query(gc->proto_data, JABBER_IQ_SET,
 				"jabber:iq:roster");
