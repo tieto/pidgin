@@ -705,12 +705,12 @@ make_info_table(PidginXferDialog *dialog)
 	};
 
 	/* Setup the initial table */
-	dialog->table = table = gtk_table_new(9, 2, FALSE);
+	dialog->table = table = gtk_table_new(G_N_ELEMENTS(labels), 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
 	/* Setup the labels */
-	for (i = 0; i < sizeof(labels) / sizeof(*labels); i++) {
+	for (i = 0; i < G_N_ELEMENTS(labels); i++) {
 		GtkWidget *label;
 		char buf[256];
 
@@ -734,7 +734,9 @@ make_info_table(PidginXferDialog *dialog)
 
 	/* Setup the progress bar */
 	dialog->progress = gtk_progress_bar_new();
-	gtk_table_attach(GTK_TABLE(table), dialog->progress, 0, 2, 8, 9,
+	gtk_table_attach(GTK_TABLE(table), dialog->progress,
+					 0, 2,
+					 G_N_ELEMENTS(labels), G_N_ELEMENTS(labels) + 1,
 					 GTK_FILL, GTK_FILL, 0, 0);
 	gtk_widget_show(dialog->progress);
 
