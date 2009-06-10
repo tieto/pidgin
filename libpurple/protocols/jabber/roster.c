@@ -31,6 +31,19 @@
 
 #include <string.h>
 
+/* Take a list of strings and join them with a ", " separator */
+static gchar *roster_groups_join(GSList *list)
+{
+	GString *out = g_string_new(NULL);
+	for ( ; list; list = list->next) {
+		out = g_string_append(out, (const char *)list->data);
+		if (list->next)
+			out = g_string_append(out, ", ");
+	}
+
+	return g_string_free(out, FALSE);
+}
+
 void jabber_roster_request(JabberStream *js)
 {
 	JabberIq *iq;
@@ -56,7 +69,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups, const char *own_jid)
 {
 	GSList *buddies, *l;
-	GList *pool = NULL;
+	GSList *pool = NULL;
 
 	buddies = purple_find_buddies(js->gc->account, jid);
 
@@ -100,8 +113,22 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 			groups = g_slist_delete_link(groups, l);
 		} else {
 			/* This buddy isn't in the group on the server anymore */
-			pool = g_list_prepend(pool, b);
+			pool = g_slist_prepend(pool, b);
 		}
+	}
+
+	if (pool) {
+		char *tmp = roster_groups_join(pool);
+		purple_debug_info("jabber", "jabber_roster_parse(): Removing %s from "
+		                  "groups: %s\n", jid, tmp);
+		g_free(tmp);
+	}
+
+	if (groups) {
+		char *tmp = roster_groups_join(groups);
+		purple_debug_info("jabber", "jabber_roster_parse(): Adding %s to "
+		                  "groups: %s\n", jid, tmp);
+		g_free(tmp);
 	}
 
 	while(groups) {
@@ -113,7 +140,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		 */
 		if (pool) {
 			b = pool->data;
-			pool = g_list_delete_link(pool, pool);
+			pool = g_slist_delete_link(pool, pool);
 		} else {
 			b = purple_buddy_new(js->gc->account, jid, alias);
 		}
@@ -141,7 +168,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 	while (pool) {
 		PurpleBuddy *b = pool->data;
 		purple_blist_remove_buddy(b);
-		pool = g_list_delete_link(pool, pool);
+		pool = g_slist_delete_link(pool, pool);
 	}
 
 	g_slist_free(buddies);
@@ -255,22 +282,15 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 		return;
 
 	if(grps) {
-		GString *out = g_string_new(NULL);
+		char *tmp = roster_groups_join(groups);
 		groups = grps;
 
-		for (l = groups; l; l = l->next) {
-			out = g_string_append(out, (const char *)l->data);
-			if (l->next)
-				out = g_string_append(out, ", ");
-		}
-
 		purple_debug_info("jabber", "jabber_roster_update(%s): [Source: grps]: groups: %s\n",
-		                  name, out->str);
-		g_string_free(out, TRUE);
-
+		                  name, tmp);
+		g_free(tmp);
 	} else {
 		GSList *buddies = purple_find_buddies(js->gc->account, name);
-		GString *out = g_string_new(NULL);
+		char *tmp;
 
 		if(!buddies)
 			return;
@@ -280,15 +300,11 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 			groups = g_slist_append(groups, (char *)purple_group_get_name(g));
 			buddies = g_slist_remove(buddies, b);
 		}
-		for (l = groups; l; l = l->next) {
-			out = g_string_append(out, (const char *)l->data);
-			if (l->next)
-				out = g_string_append(out, ", ");
-		}
 
+		tmp = roster_groups_join(groups);
 		purple_debug_info("jabber", "jabber_roster_update(%s): [Source: local blist]: groups: %s\n",
-		                  name, out->str);
-		g_string_free(out, TRUE);
+		                  name, tmp);
+		g_free(tmp);
 	}
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
