@@ -7022,6 +7022,16 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	/* Preferences */
 	purple_prefs_add_none("/plugins/prpl/oscar");
 	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
+
+	/*
+	 * These two preferences will normally not be changed.  UIs can optionally
+	 * use them to override these two version fields which are sent to the
+	 * server when logging in.  AOL requested this change to allow clients to
+	 * use custom values.
+	 */
+	purple_prefs_add_string("/plugins/prpl/oscar/clientstring", NULL);
+	purple_prefs_add_int("/plugins/prpl/oscar/distid", -1);
+
 	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
 	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 
