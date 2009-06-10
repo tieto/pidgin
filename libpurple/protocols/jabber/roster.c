@@ -53,10 +53,9 @@ static void remove_purple_buddies(JabberStream *js, const char *jid)
 }
 
 static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
-		const char *alias, GSList *groups)
+		const char *alias, GSList *groups, const char *own_jid)
 {
 	GSList *buddies, *l;
-	gchar *my_bare_jid;
 	GList *pool = NULL;
 
 	buddies = purple_find_buddies(js->gc->account, jid);
@@ -73,8 +72,6 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 			return;
 		}
 	}
-
-	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 
 	while(buddies) {
 		PurpleBuddy *b = buddies->data;
@@ -132,7 +129,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		/* If we just learned about ourself, then fake our status,
 		 * because we won't be receiving a normal presence message
 		 * about ourself. */
-		if(!strcmp(purple_buddy_get_name(b), my_bare_jid))
+		if(!strcmp(purple_buddy_get_name(b), own_jid))
 			jabber_presence_fake_to_self(js, NULL);
 
 		g_free(groups->data);
@@ -147,7 +144,6 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		pool = g_list_delete_link(pool, pool);
 	}
 
-	g_free(my_bare_jid);
 	g_slist_free(buddies);
 }
 
@@ -228,7 +224,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 				groups = g_slist_prepend(groups, group_name);
 			}
 
-			add_purple_buddy_to_groups(js, jid, name, groups);
+			add_purple_buddy_to_groups(js, jid, name, groups, own_jid);
 		}
 	}
 
@@ -328,7 +324,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	char *who;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *my_bare_jid;
+	char *own_jid;
 	const char *name;
 
 	/* If we haven't received the roster yet, ignore any adds */
@@ -346,8 +342,8 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
 	jabber_roster_update(js, who, NULL);
 
-	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(!strcmp(who, my_bare_jid)) {
+	own_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+	if (g_str_equal(who, own_jid)) {
 		jabber_presence_fake_to_self(js, NULL);
 	} else if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
 		jabber_presence_subscription_set(js, who, "subscribe");
@@ -357,7 +353,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 				"priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
 	}
 
-	g_free(my_bare_jid);
+	g_free(own_jid);
 	g_free(who);
 }
 
