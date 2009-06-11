@@ -705,7 +705,7 @@ make_info_table(PidginXferDialog *dialog)
 	};
 
 	/* Setup the initial table */
-	dialog->table = table = gtk_table_new(G_N_ELEMENTS(labels), 2, FALSE);
+	dialog->table = table = gtk_table_new(G_N_ELEMENTS(labels) + 1, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
