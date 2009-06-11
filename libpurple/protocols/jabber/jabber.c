@@ -3443,7 +3443,6 @@ jabber_init_plugin(PurplePlugin *plugin)
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
 	jabber_add_feature("jabber:iq:oob", 0);
-	jabber_add_feature("jabber:iq:time", 0);
 	jabber_add_feature("urn:xmpp:time", 0);
 	jabber_add_feature("jabber:iq:version", 0);
 	jabber_add_feature("jabber:x:conference", 0);
