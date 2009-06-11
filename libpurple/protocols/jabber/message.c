@@ -1036,29 +1036,30 @@ void jabber_message_send(JabberMessage *jm)
 		xmlnode_insert_data(child, jm->thread_id, -1);
 	}
 
-	if (jm->chat_state != JM_STATE_NONE) {
-		child = NULL;
-		switch(jm->chat_state)
-		{
-			case JM_STATE_ACTIVE:
-				child = xmlnode_new_child(message, "active");
-				break;
-			case JM_STATE_COMPOSING:
-				child = xmlnode_new_child(message, "composing");
-				break;
-			case JM_STATE_PAUSED:
-				child = xmlnode_new_child(message, "paused");
-				break;
-			case JM_STATE_INACTIVE:
-				child = xmlnode_new_child(message, "inactive");
-				break;
-			case JM_STATE_GONE:
-				child = xmlnode_new_child(message, "gone");
-				break;
-		}
-		if(child)
-			xmlnode_set_namespace(child, "http://jabber.org/protocol/chatstates");
+	child = NULL;
+	switch(jm->chat_state)
+	{
+		case JM_STATE_ACTIVE:
+			child = xmlnode_new_child(message, "active");
+			break;
+		case JM_STATE_COMPOSING:
+			child = xmlnode_new_child(message, "composing");
+			break;
+		case JM_STATE_PAUSED:
+			child = xmlnode_new_child(message, "paused");
+			break;
+		case JM_STATE_INACTIVE:
+			child = xmlnode_new_child(message, "inactive");
+			break;
+		case JM_STATE_GONE:
+			child = xmlnode_new_child(message, "gone");
+			break;
+		case JM_STATE_NONE:
+			/* yep, nothing */
+			break;
 	}
+	if(child)
+		xmlnode_set_namespace(child, "http://jabber.org/protocol/chatstates");
 
 	if(jm->subject) {
 		child = xmlnode_new_child(message, "subject");
