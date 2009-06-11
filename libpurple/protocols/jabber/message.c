@@ -125,15 +125,10 @@ static void handle_chat(JabberMessage *jm)
 		}
 	} else {
 		if(jbr) {
-			if(JM_TS_JEP_0085 == (jm->typing_style & JM_TS_JEP_0085)) {
+			if (jm->chat_state != JM_STATE_NONE)
 				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
-			} else {
+			else
 				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
-			}
-
-			if(JM_TS_JEP_0022 == (jm->typing_style & JM_TS_JEP_0022)) {
-				jbr->capabilities |= JABBER_CAP_COMPOSING;
-			}
 
 			if(jbr->thread_id)
 				g_free(jbr->thread_id);
@@ -550,6 +545,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jm->js = js;
 	jm->sent = time(NULL);
 	jm->delayed = FALSE;
+	jm->chat_state = JM_STATE_NONE;
 
 	if(type) {
 		if(!strcmp(type, "normal"))
@@ -723,19 +719,14 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			}
 		} else if(!strcmp(child->name, "active") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_ACTIVE;
-			jm->typing_style |= JM_TS_JEP_0085;
 		} else if(!strcmp(child->name, "composing") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_COMPOSING;
-			jm->typing_style |= JM_TS_JEP_0085;
 		} else if(!strcmp(child->name, "paused") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_PAUSED;
-			jm->typing_style |= JM_TS_JEP_0085;
 		} else if(!strcmp(child->name, "inactive") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_INACTIVE;
-			jm->typing_style |= JM_TS_JEP_0085;
 		} else if(!strcmp(child->name, "gone") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_GONE;
-			jm->typing_style |= JM_TS_JEP_0085;
 		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
 			xmlnode *items;
 			jm->type = JABBER_MESSAGE_EVENT;
@@ -749,13 +740,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			if(timestamp)
 				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
-			if(!strcmp(xmlns, "jabber:x:event")) {
-				if(xmlnode_get_child(child, "composing")) {
-					if(jm->chat_state == JM_STATE_ACTIVE)
-						jm->chat_state = JM_STATE_COMPOSING;
-					jm->typing_style |= JM_TS_JEP_0022;
-				}
-			} else if(!strcmp(xmlns, "jabber:x:delay")) {
+			if(!strcmp(xmlns, "jabber:x:delay")) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
@@ -1056,14 +1041,7 @@ void jabber_message_send(JabberMessage *jm)
 		xmlnode_insert_data(child, jm->thread_id, -1);
 	}
 
-	if(JM_TS_JEP_0022 == (jm->typing_style & JM_TS_JEP_0022)) {
-		child = xmlnode_new_child(message, "x");
-		xmlnode_set_namespace(child, "jabber:x:event");
-		if(jm->chat_state == JM_STATE_COMPOSING || jm->body)
-			xmlnode_new_child(child, "composing");
-	}
-
-	if(JM_TS_JEP_0085 == (jm->typing_style & JM_TS_JEP_0085)) {
+	if (jm->chat_state != JM_STATE_NONE) {
 		child = NULL;
 		switch(jm->chat_state)
 		{
@@ -1180,14 +1158,12 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 		if(jbr->thread_id)
 			jm->thread_id = jbr->thread_id;
 
-		if(jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED) {
-			jm->typing_style |= JM_TS_JEP_0085;
+		if (jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED)
+			jm->chat_state = JM_STATE_NONE;
+		else {
 			/* if(JABBER_CHAT_STATES_UNKNOWN == jbr->chat_states)
 			   jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED; */
 		}
-
-		if(jbr->chat_states != JABBER_CHAT_STATES_SUPPORTED)
-			jm->typing_style |= JM_TS_JEP_0022;
 	}
 
 	tmp = purple_utf8_strip_unprintables(msg);
@@ -1265,7 +1241,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	g_free(resource);
 
-	if(!jbr || !((jbr->capabilities & JABBER_CAP_COMPOSING) || (jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED)))
+	if (!jbr || (jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED))
 		return 0;
 
 	/* TODO: figure out threading */
@@ -1282,14 +1258,8 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 	else
 		jm->chat_state = JM_STATE_ACTIVE;
 
-	if(jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED) {
-		jm->typing_style |= JM_TS_JEP_0085;
-		/* if(JABBER_CHAT_STATES_UNKNOWN == jbr->chat_states)
-			jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED; */
-	}
-
-	if(jbr->chat_states != JABBER_CHAT_STATES_SUPPORTED)
-		jm->typing_style |= JM_TS_JEP_0022;
+	/* if(JABBER_CHAT_STATES_UNKNOWN == jbr->chat_states)
+		jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED; */
 
 	jabber_message_send(jm);
 	jabber_message_free(jm);
