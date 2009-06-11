@@ -25,7 +25,7 @@
 typedef enum {
 	JABBER_CAP_NONE           = 0,
 	JABBER_CAP_XHTML          = 1 << 0,
-	JABBER_CAP_COMPOSING      = 1 << 1,
+/*	JABBER_CAP_COMPOSING      = 1 << 1, */
 	JABBER_CAP_SI             = 1 << 2,
 	JABBER_CAP_SI_FILE_XFER   = 1 << 3,
 	JABBER_CAP_BYTESTREAMS    = 1 << 4,
