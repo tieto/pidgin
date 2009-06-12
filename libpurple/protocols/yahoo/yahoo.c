@@ -4172,10 +4172,8 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 			struct yahoo_sms_carrier_cb_data *sms_cb_data;
 			sms_cb_data = g_malloc(sizeof(struct yahoo_sms_carrier_cb_data));
 			sms_cb_data->gc = gc;
-			sms_cb_data->who = g_malloc(strlen(who));
-			sms_cb_data->what = g_malloc(strlen(what));
-			strcpy(sms_cb_data->who, who);
-			strcpy(sms_cb_data->what, what);
+			sms_cb_data->who = g_strdup(who);
+			sms_cb_data->what = g_strdup(what);
 
 			purple_conversation_write(conv, NULL, "Getting mobile carrier to send the sms", PURPLE_MESSAGE_SYSTEM, time(NULL));
 			
