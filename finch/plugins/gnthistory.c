@@ -31,6 +31,7 @@
 #include "util.h"
 #include "version.h"
 
+#include "gntconv.h"
 #include "gntplugin.h"
 #include "gntrequest.h"
 
@@ -54,6 +55,9 @@ static void historize(PurpleConversation *c)
 	if (convtype == PURPLE_CONV_TYPE_IM) {
 		GSList *buddies;
 		GSList *cur;
+		FinchConv *fc = FINCH_CONV(c);
+		if (fc->list && fc->list->next) /* We were already in the middle of a conversation. */
+			return;
 
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
