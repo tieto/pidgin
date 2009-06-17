@@ -283,8 +283,15 @@ static gboolean
 purple_network_finish_pmp_map_cb(gpointer data)
 {
 	PurpleNetworkListenData *listen_data;
+	gint *key = g_new(gint, 1);
+	gint *value = g_new(gint, 1);
 
 	listen_data = data;
+
+	/* add port mapping to hash table */
+	*key = purple_network_get_port_from_fd(listen_data->listenfd);
+	*value = listen_data->socket_type;
+	g_hash_table_insert(nat_pmp_port_mappings, key, value);
 
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
@@ -925,6 +932,7 @@ purple_network_upnp_mapping_remove(gpointer key, gpointer value,
 	purple_upnp_remove_port_mapping(port, 
 		protocol == SOCK_STREAM ? "TCP" : "UDP", 
 		purple_network_upnp_mapping_remove_cb, NULL);
+	g_hash_table_remove(upnp_port_mappings, key);
 }
 
 static void
@@ -938,6 +946,7 @@ purple_network_nat_pmp_mapping_remove(gpointer key, gpointer value,
 	purple_pmp_destroy_map(
 		protocol == SOCK_STREAM ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP, 
 		port);
+	g_hash_table_remove(nat_pmp_port_mappings, key);
 }
 
 void
