@@ -2647,7 +2647,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 		p2p_data->source = -1;
 
 		/* connect to host */
-		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL) {
+		if((purple_proxy_connect(gc, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL) {
 			purple_debug_info("yahoo","p2p: Connection to %s failed\n", host_ip);
 			g_free(p2p_data->host_ip);
 			g_free(p2p_data->host_username);
