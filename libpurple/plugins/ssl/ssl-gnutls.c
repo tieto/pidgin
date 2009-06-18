@@ -576,7 +576,6 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 							  out_buf, out_size);
 
 	g_free(out_buf);
-	g_return_val_if_fail(success, FALSE);
 	return success;
 }
 

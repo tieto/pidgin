@@ -225,7 +225,7 @@ static void ycht_packet_dump(const guchar *data, int len)
 	}
 
 	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-#endif
+#endif /* YAHOO_YCHT_DEBUG */
 }
 
 static YchtPkt *ycht_packet_new(guint version, guint service, int status)

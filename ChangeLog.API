@@ -39,6 +39,7 @@ version 2.6.0 (??/??/2009):
 		* purple_network_set_turn_server
 		* purple_network_get_stun_ip
 		* purple_network_get_turn_ip
+		* purple_network_remove_port_mapping
 		* purple_plugins_get_search_paths
 		* purple_proxy_connect_udp
 		* purple_prpl_get_media_caps

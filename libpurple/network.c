@@ -105,6 +105,10 @@ static gboolean force_online;
 static gchar *stun_ip = NULL;
 static gchar *turn_ip = NULL;
 
+/* Keep track of port mappings done with UPnP and NAT-PMP */
+static GHashTable *upnp_port_mappings = NULL;
+static GHashTable *nat_pmp_port_mappings = NULL;
+
 const unsigned char *
 purple_network_ip_atoi(const char *ip)
 {
@@ -257,6 +261,15 @@ purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 		return;
 	}
 
+	if (success) {
+		/* add port mapping to hash table */
+		gint *key = g_new(gint, 1);
+		gint *value = g_new(gint, 1);
+		*key = purple_network_get_port_from_fd(listen_data->listenfd);
+		*value = listen_data->socket_type;
+		g_hash_table_insert(upnp_port_mappings, key, value);
+	}
+
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
 
@@ -270,8 +283,15 @@ static gboolean
 purple_network_finish_pmp_map_cb(gpointer data)
 {
 	PurpleNetworkListenData *listen_data;
+	gint *key = g_new(gint, 1);
+	gint *value = g_new(gint, 1);
 
 	listen_data = data;
+
+	/* add port mapping to hash table */
+	*key = purple_network_get_port_from_fd(listen_data->listenfd);
+	*value = listen_data->socket_type;
+	g_hash_table_insert(nat_pmp_port_mappings, key, value);
 
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
@@ -892,6 +912,61 @@ purple_network_get_handle(void)
 	return &handle;
 }
 
+static void
+purple_network_upnp_mapping_remove_cb(gboolean sucess, gpointer data)
+{
+	purple_debug_info("network", "done removing UPnP port mapping\n");
+}
+
+/* the reason for these functions to have these signatures is to be able to
+ use them for g_hash_table_foreach to clean remaining port mappings, which is
+ not yet done */
+static void
+purple_network_upnp_mapping_remove(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	gint port = (gint) *((gint *) key);
+	gint protocol = (gint) *((gint *) value);
+	purple_debug_info("network", "removing UPnP port mapping for port %d\n",
+		port);
+	purple_upnp_remove_port_mapping(port, 
+		protocol == SOCK_STREAM ? "TCP" : "UDP", 
+		purple_network_upnp_mapping_remove_cb, NULL);
+	g_hash_table_remove(upnp_port_mappings, key);
+}
+
+static void
+purple_network_nat_pmp_mapping_remove(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	gint port = (gint) *((gint *) key);
+	gint protocol = (gint) *((gint *) value);
+	purple_debug_info("network", "removing NAT-PMP port mapping for port %d\n",
+		port);
+	purple_pmp_destroy_map(
+		protocol == SOCK_STREAM ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP, 
+		port);
+	g_hash_table_remove(nat_pmp_port_mappings, key);
+}
+
+void
+purple_network_remove_port_mapping(gint fd)
+{
+	int port = purple_network_get_port_from_fd(fd);
+	gint *protocol = g_hash_table_lookup(upnp_port_mappings, &port);
+
+	if (protocol) {
+		purple_network_upnp_mapping_remove(&port, protocol, NULL);
+		g_hash_table_remove(upnp_port_mappings, protocol);
+	} else {
+		protocol = g_hash_table_lookup(nat_pmp_port_mappings, &port);
+		if (protocol) {
+			purple_network_nat_pmp_mapping_remove(&port, protocol, NULL);
+			g_hash_table_remove(nat_pmp_port_mappings, protocol);
+		}
+	}
+}
+	
 void
 purple_network_init(void)
 {
@@ -964,7 +1039,14 @@ purple_network_init(void)
 		purple_prefs_get_string("/purple/network/stun_server"));
 	purple_network_set_turn_server(
 		purple_prefs_get_string("/purple/network/turn_server"));
+
+	upnp_port_mappings = 
+		g_hash_table_new_full(g_int_hash, g_int_equal, g_free, g_free);
+	nat_pmp_port_mappings =
+		g_hash_table_new_full(g_int_hash, g_int_equal, g_free, g_free);
 }
+
+
 
 void
 purple_network_uninit(void)
@@ -1008,4 +1090,10 @@ purple_network_uninit(void)
 	
 	if (stun_ip)
 		g_free(stun_ip);
+
+	g_hash_table_destroy(upnp_port_mappings);
+	g_hash_table_destroy(nat_pmp_port_mappings);
+
+	/* TODO: clean up remaining port mappings, note calling 
+	 purple_upnp_remove_port_mapping from here doesn't quite work... */
 }
