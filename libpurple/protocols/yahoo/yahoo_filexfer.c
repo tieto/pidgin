@@ -320,7 +320,7 @@ static void yahoo_xfer_init(PurpleXfer *xfer)
 
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 		if (yd->jp) {
-			if (purple_proxy_connect(NULL, account, purple_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
+			if (purple_proxy_connect(gc, account, purple_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
 			                       purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 			                       yahoo_sendfile_connected, xfer) == NULL)
 			{
@@ -329,7 +329,7 @@ static void yahoo_xfer_init(PurpleXfer *xfer)
 				purple_xfer_cancel_remote(xfer);
 			}
 		} else {
-			if (purple_proxy_connect(NULL, account, purple_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
+			if (purple_proxy_connect(gc, account, purple_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
 			                       purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 			                       yahoo_sendfile_connected, xfer) == NULL)
 			{
@@ -340,7 +340,7 @@ static void yahoo_xfer_init(PurpleXfer *xfer)
 		}
 	} else {
 		xfer->fd = -1;
-		if (purple_proxy_connect(NULL, account, xfer_data->host, xfer_data->port,
+		if (purple_proxy_connect(gc, account, xfer_data->host, xfer_data->port,
 		                              yahoo_receivefile_connected, xfer) == NULL) {
 			purple_notify_error(gc, NULL, _("File Transfer Failed"),
 			             _("Unable to establish file descriptor."));
@@ -1120,7 +1120,8 @@ static void yahoo_xfer_recv_cb_15(gpointer data, gint source, PurpleInputConditi
 	}
 	g_free(buf);
 
-	if (did < 0 && errno == EAGAIN) return;
+	if (did < 0 && errno == EAGAIN)
+		return;
 	else if (did < 0) {
 		purple_debug_error("yahoo", "Unable to write in order to start ft errno = %d\n", errno);
 		purple_xfer_cancel_remote(xfer);
@@ -1136,7 +1137,7 @@ static void yahoo_xfer_recv_cb_15(gpointer data, gint source, PurpleInputConditi
 		close(source);/* Is this required? */
 		g_free(xd->txbuf);
 		xd->txbuf = NULL;
-		if (purple_proxy_connect(NULL, account, xd->host, xd->port, yahoo_xfer_connected_15, xfer) == NULL)
+		if (purple_proxy_connect(gc, account, xd->host, xd->port, yahoo_xfer_connected_15, xfer) == NULL)
 		{
 			purple_notify_error(gc, NULL, _("File Transfer Failed"),
 				_("Unable to establish file descriptor."));
@@ -1841,7 +1842,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 
 		yahoo_packet_send_and_free(pkt_to_send, yd);
 
-		if (purple_proxy_connect(NULL, account, xfer_data->host, xfer_data->port,
+		if (purple_proxy_connect(gc, account, xfer_data->host, xfer_data->port,
 			yahoo_xfer_connected_15, xfer) == NULL) {
 			purple_notify_error(gc, NULL, _("File Transfer Failed"),
 				_("Unable to establish file descriptor."));
@@ -1921,7 +1922,7 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 	xfer_data->status_15 = ACCEPTED;
 	account = purple_connection_get_account(gc);
 
-	if (purple_proxy_connect(NULL, account, xfer_data->host, xfer_data->port,
+	if (purple_proxy_connect(gc, account, xfer_data->host, xfer_data->port,
 		yahoo_xfer_connected_15, xfer) == NULL)
 	{
 		purple_notify_error(gc, NULL, _("File Transfer Failed"),_("Unable to connect"));
