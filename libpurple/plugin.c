@@ -1222,6 +1222,12 @@ purple_plugins_add_search_path(const char *path)
 	search_paths = g_list_append(search_paths, g_strdup(path));
 }
 
+GList *
+purple_plugins_get_search_paths()
+{
+	return search_paths;
+}
+
 void
 purple_plugins_unload_all(void)
 {
