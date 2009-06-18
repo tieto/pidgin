@@ -8,7 +8,9 @@ plugin_LTLIBRARIES = xmppdisco.la
 
 xmppdisco_la_SOURCES = \
 	gtkdisco.c \
-	xmppdisco.c
+	xmppdisco.c \
+	gtkdisco.h \
+	xmppdisco.h
 
 xmppdisco_la_LIBADD = $(GTK_LIBS)
 
