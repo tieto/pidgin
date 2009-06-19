@@ -271,4 +271,9 @@ gchar* yahoo_get_cookies(PurpleConnection *gc);
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
 GList *yahoo_attention_types(PurpleAccount *account);
 
+/* This is a hack for 2.5.7 to get the y16 login to work properly with http proxies */
+PurpleUtilFetchUrlData * purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+		const char *url, gboolean full, const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data);
 #endif /* _YAHOO_H_ */
