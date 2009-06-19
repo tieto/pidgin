@@ -30,6 +30,8 @@
 
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
+#define YAHOO_LOGIN_URL "https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s"
+#define YAHOO_TOKEN_URL "https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
@@ -41,6 +43,8 @@
 /* really we should get the list of servers from
  http://update.messenger.yahoo.co.jp/servers.html */
 #define YAHOOJP_PAGER_HOST "cs.yahoo.co.jp"
+#define YAHOOJP_TOKEN_URL "https://login.yahoo.co.jp/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
+#define YAHOOJP_LOGIN_URL "https://login.yahoo.co.jp/config/pwtoken_login?src=ymsgr&ts=&token=%s"
 #define YAHOOJP_PROFILE_URL "http://profiles.yahoo.co.jp/"
 #define YAHOOJP_MAIL_URL "http://mail.yahoo.co.jp/"
 #define YAHOOJP_XFER_HOST "filetransfer.msg.yahoo.co.jp"
