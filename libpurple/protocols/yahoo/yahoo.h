@@ -28,7 +28,7 @@
 #include "circbuffer.h"
 #include "prpl.h"
 
-#define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
+#define YAHOO_PAGER_HOST "scsa.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_LOGIN_URL "https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s"
 #define YAHOO_TOKEN_URL "https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
