@@ -2311,13 +2311,11 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 		purple_debug_warning("yahoo","p2p: Got something other than YMSG packet\n");
 
 		start = memchr(buf + 1, 'Y', len - 1);
-		if(start) {
-			g_memmove(buf, start, len - (start - buf));
-			len -= start - buf;
-		} else {
-			g_free(buf);
+		if (start == NULL)
 			return;
-		}
+
+		g_memmove(buf, start, len - (start - buf));
+		len -= start - buf;
 	}
 
 	pos += 4;	/* YMSG */
