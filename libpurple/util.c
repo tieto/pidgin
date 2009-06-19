@@ -3966,7 +3966,10 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		}
 	}
 
-	purple_debug_misc("util", "Request: '%s'\n", gfud->request);
+	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+		purple_debug_misc("util", "Request: '%s'\n", gfud->request);
+	else
+		purple_debug_misc("util", "request constructed\n");
 
 	total_len = strlen(gfud->request);
 
@@ -4069,9 +4072,12 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 	g_return_val_if_fail(url      != NULL, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	purple_debug_info("util",
-			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
-			 url, full, user_agent?user_agent:"(null)", http11);
+	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+		purple_debug_info("util",
+				 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
+				 url, full, user_agent?user_agent:"(null)", http11);
+	else
+		purple_debug_info("util", "requesting to fetch a URL\n");
 
 	gfud = g_new0(PurpleUtilFetchUrlData, 1);
 
