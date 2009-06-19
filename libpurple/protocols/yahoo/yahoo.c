@@ -813,6 +813,7 @@ struct _yahoo_im {
 	int time;
 	int utf8;
 	int buddy_icon;
+	char *id;
 	char *msg;
 };
 
@@ -930,6 +931,9 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			{
 				imv = pair->value;
 			}
+			if (pair->key == 429)
+				if (im)
+					im->id = pair->value;
 			l = l->next;
 		}
 	} else if (pkt->status == 2) {
@@ -995,6 +999,28 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		if (!purple_privacy_check(account, im->from)) {
 			purple_debug_info("yahoo", "Message from %s dropped.\n", im->from);
 			return;
+		}
+
+		/*
+		 * TODO: Is there anything else we should check when determining whether
+		 *       we should send an acknowledgement?
+		 */
+		if (im->id != NULL) {
+			/* Send acknowledgement.  If we don't do this then the official
+			 * Yahoo Messenger client for Windows will send us the same
+			 * message 7 seconds later as an offline message.  This is true
+			 * for at least version 9.0.0.2162 on Windows XP. */
+			struct yahoo_packet *pkt2;
+			pkt2 = yahoo_packet_new(YAHOO_SERVICE_MESSAGE_ACK,
+					YAHOO_STATUS_AVAILABLE, pkt->id);
+			yahoo_packet_hash(pkt2, "ssisii",
+					1, purple_connection_get_display_name(gc),
+					5, im->from,
+					302, 430,
+					430, im->id,
+					303, 430,
+					450, 0);
+			yahoo_packet_send_and_free(pkt2, yd);
 		}
 
 		m = yahoo_string_decode(gc, im->msg, im->utf8);
