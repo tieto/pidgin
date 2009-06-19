@@ -1397,7 +1397,8 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 
 	to_y64(base64_string, md5_digest, 16);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, YAHOO_STATUS_WEBLOGIN, yd->session_id);
+	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, yd->current_status, yd->session_id);
 	if(yd->jp) {
 		yahoo_packet_hash(pkt, "ssssssss",
 					1, name,
