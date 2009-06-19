@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.7 (06/18/2009):
+version 2.5.7 (06/19/2009):
 	* Yahoo Protocol 16 support, including new HTTPS login method; this should
 	  fix a number of login problems that have recently cropped up.  (Sulabh
 	  Mahajan, Mike "Maiku" Ruprecht)
