@@ -2963,11 +2963,6 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
-		close(source);
-		return;
-	}
-
 	if (source < 0) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
