@@ -1834,6 +1834,9 @@ msim_error(MsimSession *session, MsimMessage *msg)
 					/* Replace full_errmsg. */
 					g_free(full_errmsg);
 					full_errmsg = suggestion;
+				} else {
+					g_free(full_errmsg);
+					full_errmsg = g_strdup(_("Incorrect username or password"));
 				}
 #endif
 				break;
