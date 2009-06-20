@@ -6,6 +6,9 @@ version 2.5.7 (06/19/2009):
 	  Mahajan, Mike "Maiku" Ruprecht)
 	* Only display the AIM "Unable to Retrieve Buddy List" message once per
 	  connection.  (Rob Taft)
+	* Blocking MSN users not on your buddy list no longer disconnects you.
+	* When performing operations on MSN, assume users are on the MSN/Passport
+	  network if we don't get network ID's for them.
 
 version 2.5.6 (05/19/2009):
 	libpurple:
