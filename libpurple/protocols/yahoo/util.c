@@ -22,7 +22,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+#endif /* HAVE_CONFIG_H */
 
 #include "debug.h"
 #include "internal.h"
@@ -42,7 +42,7 @@ yahoo_account_use_http_proxy(PurpleConnection *conn)
 /*
  * Returns cookies formatted as a null terminated string for the given connection.
  * Must g_free return value.
- * 
+ *
  * TODO:will work, but must test for strict correctness
  */
 gchar* yahoo_get_cookies(PurpleConnection *gc)
@@ -191,7 +191,7 @@ char *yahoo_convert_to_numeric(const char *str)
 /*
  * I found these on some website but i don't know that they actually
  * work (or are supposed to work). I didn't implement them yet.
- * 
+ *
      * [0;30m ---black
      * [1;37m ---white
      * [0;37m ---tan

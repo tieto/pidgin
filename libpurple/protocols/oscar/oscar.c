@@ -1833,13 +1833,6 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	gchar *buf;
 	gssize result;
 
-	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
-	{
-		g_free(pos->modname);
-		g_free(pos);
-		return;
-	}
-
 	pos->fd = source;
 
 	if (source < 0) {
@@ -1937,8 +1930,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->len = len;
 	pos->modname = g_strdup(modname);
 
-	/* TODO: Keep track of this return value. */
-	if (purple_proxy_connect(NULL, pos->gc->account, "pidgin.im", 80,
+	if (purple_proxy_connect(pos->gc, pos->gc->account, "pidgin.im", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];

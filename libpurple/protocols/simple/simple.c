@@ -446,13 +446,6 @@ static void send_later_cb(gpointer data, gint source, const gchar *error) {
 	struct simple_account_data *sip;
 	struct sip_connection *conn;
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
-	{
-		if (source >= 0)
-			close(source);
-		return;
-	}
-
 	if(source < 0) {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -1734,13 +1727,6 @@ static void login_cb(gpointer data, gint source, const gchar *error_message) {
 	PurpleConnection *gc = data;
 	struct simple_account_data *sip;
 	struct sip_connection *conn;
-
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
-	{
-		if (source >= 0)
-			close(source);
-		return;
-	}
 
 	if(source < 0) {
 		purple_connection_error_reason(gc,
