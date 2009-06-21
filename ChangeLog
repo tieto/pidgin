@@ -20,9 +20,6 @@ version 2.6.0 (??/??/2009):
 	  moved to a new network and the old servers are not accessible.
 	* Gadu-Gadu accounts can specify a server to which to connect.
 	  (Krzysztof "kreez" Tobola)
-	* Modifying the MSN privacy list for buddies not added by you (i.e.
-	  spammers and other generally unwanted users) should no longer cause
-	  a 240 error and disconnection.
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -69,9 +66,6 @@ version 2.6.0 (??/??/2009):
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
 	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
-	* Yahoo Protocol 16 support, including new HTTPS login method; this should
-	  fix a number of login problems that have recently cropped up.  (Sulabh
-	  Mahajan, Mike "Maiku" Ruprecht)
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -112,6 +106,16 @@ version 2.6.0 (??/??/2009):
 	* Added "Disable Typing Notification Text" preference.
 	* Preferences have been reorganized into three tabs for Colors, Fonts, and
 	  Miscellaneous categories.
+
+version 2.5.7 (06/20/2009):
+	* Yahoo Protocol 16 support, including new HTTPS login method; this should
+	  fix a number of login problems that have recently cropped up.  (Sulabh
+	  Mahajan, Mike "Maiku" Ruprecht)
+	* Only display the AIM "Unable to Retrieve Buddy List" message once per
+	  connection.  (Rob Taft)
+	* Blocking MSN users not on your buddy list no longer disconnects you.
+	* When performing operations on MSN, assume users are on the MSN/Passport
+	  network if we don't get network ID's for them.
 
 version 2.5.6 (05/19/2009):
 	libpurple:
