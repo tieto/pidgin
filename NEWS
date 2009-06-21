@@ -2,26 +2,32 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.5.7 (06/20/2009):
+	John:  This release is really just a rushed fix for the broken Yahoo
+	protocol plugin.  I spent way more time on this release than I care
+	to admit, so I hope that time is well spent and this fixes the issues
+	people have been having.
+
 2.5.6 (05/19/2009):
-    Ka-Hing: Many much bugfixes. Hooray. (Paul told me to say that)
-    Oh, no one has met Paul yet? He's awesome, he backported my fixes
-    to the release branch so I didn't have to checkout a
-    workspace... except I just did to NEWS to tell you all about
-    that. Oh and I actually did do something for this release, none of
-    which is user visible though. This basically applies to the rest
-    of the release as well, nothing exciting, but you definitely want
-    it.
+	Ka-Hing: Many much bugfixes. Hooray. (Paul told me to say that)
+	Oh, no one has met Paul yet? He's awesome, he backported my fixes
+	to the release branch so I didn't have to checkout a
+	workspace... except I just did to NEWS to tell you all about
+	that. Oh and I actually did do something for this release, none of
+	which is user visible though. This basically applies to the rest
+	of the release as well, nothing exciting, but you definitely want
+	it.
 
-    Daniel: This should fix a number of annoying issues that some users
-    have encountered.  We also would like to thank Veracode
-    (http://www.veracode.com) who performed a code analysis and found some
-    bugs that were addressed in this release.
+	Daniel: This should fix a number of annoying issues that some users
+	have encountered.  We also would like to thank Veracode
+	(http://www.veracode.com) who performed a code analysis and found some
+	bugs that were addressed in this release.
 
-    Elliott: I feel like I'm repeating myself, but there are some more MSN
-    fixes that should make things better behaved at login as well, and
-    maybe you'll stop getting some of those annoying errors (though not all
-    are fixed yet).  Some other bugfixes, plus the craziness that is the
-    libxml "structured error handler" make up the rest of this release.
+	Elliott: I feel like I'm repeating myself, but there are some more MSN
+	fixes that should make things better behaved at login as well, and
+	maybe you'll stop getting some of those annoying errors (though not all
+	are fixed yet).  Some other bugfixes, plus the craziness that is the
+	libxml "structured error handler" make up the rest of this release.
 
 2.5.5 (03/01/2009):
 	John: Well, yet another release with bug fixing and patches.  Hopefully
