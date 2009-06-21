@@ -94,6 +94,8 @@ version 2.6.0 (??/??/2009):
 	* Support saving animated custom smileys as animated images or animated
 	  custom smileys. (Andrea Piccinelli)
 	* Support for keyboard navigation on the status icon. (Li Yuan)
+	* IMG tags without 'id' attributes are turned into links to the image URL.
+	  (Dmitry Petroff)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
