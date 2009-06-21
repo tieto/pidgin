@@ -11,7 +11,7 @@ Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0), intltool,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
  xsltproc, doxygen, libsilc-1.1-2-dev | libsilc-dev (>= 1.1.1),
- libsqlite3-dev (>= 3.3), ca-certificates, quilt
+ libsqlite3-dev (>= 3.3), ca-certificates
 Standards-Version: 3.7.2
 XS-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/pidgin/
 XS-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/pidgin/

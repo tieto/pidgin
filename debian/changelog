@@ -1,8 +1,9 @@
-pidgin (2.5.6-1+hurdfr1) unreleased; urgency=low
+pidgin (2.5.7-1) unstable; urgency=low
 
-  * Added 'posixness_fix' patch to correct a POSIX incompatibility.
+  * New upstream version
+    - Fixes connecting to Yahoo (Closes: #533729)
 
- -- Marc Dequènes (Duck) <duck@hurdfr.org>  Thu, 28 May 2009 14:26:29 +0200
+ -- Ari Pollak <ari@debian.org>  Sat, 20 Jun 2009 23:27:48 -0400
 
 pidgin (2.5.6-1) unstable; urgency=high
 

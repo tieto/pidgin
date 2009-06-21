@@ -46,7 +46,6 @@
 #include "yahoo_friend.h"
 #include "yahoochat.h"
 #include "ycht.h"
-#include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
 
