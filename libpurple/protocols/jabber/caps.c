@@ -692,11 +692,11 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	}
 
 	if (userdata->info && userdata->extOutstanding == 0) {
+		/* Start with 1 ref so the below functions are happy */
+		userdata->ref = 1;
+
 		/* We have everything we need right now */
 		jabber_caps_get_info_complete(userdata);
-
-		/* We need to destroy the structure, but it has 0 refs, so fake it. */
-		userdata->ref = 1;
 		cbplususerdata_unref(userdata);
 	}
 }
