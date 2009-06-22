@@ -589,9 +589,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	}
 
 	userdata = g_new0(jabber_caps_cbplususerdata, 1);
-	/* This ref is given to fetching the basic node#ver info if we need it
-	 * or unrefed at the bottom of this function */
-	cbplususerdata_ref(userdata);
+	/* We start out with 0 references. Every query takes one */
 	userdata->cb = cb;
 	userdata->cb_data = user_data;
 	userdata->who = g_strdup(who);
@@ -616,6 +614,8 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 		xmlnode_set_attrib(query, "node", nodever);
 		g_free(nodever);
 		xmlnode_set_attrib(iq->node, "to", who);
+
+		cbplususerdata_ref(userdata);
 
 		jabber_iq_set_callback(iq, jabber_caps_client_iqcb, userdata);
 		jabber_iq_send(iq);
@@ -669,7 +669,11 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	}
 
 	if (userdata->info && userdata->extOutstanding == 0) {
+		/* We have everything we need right now */
 		jabber_caps_get_info_complete(userdata);
+
+		/* We need to destroy the structure, but it has 0 refs, so fake it. */
+		userdata->ref = 1;
 		cbplususerdata_unref(userdata);
 	}
 }
