@@ -96,6 +96,9 @@ version 2.6.0 (??/??/2009):
 	* Support for keyboard navigation on the status icon. (Li Yuan)
 	* IMG tags without 'id' attributes are turned into links to the image URL.
 	  (Dmitry Petroff)
+	* Draw the user's buddy icon at the bottom of the Buddy List with rounded
+	  corners for visual consistency with the actual icons in the Buddy List.
+	  (kostaa)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
