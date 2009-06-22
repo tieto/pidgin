@@ -257,6 +257,8 @@ do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data,
                                gsize len, const gchar *error_message)
 {
 	JabberBuddyAvatarUpdateURLInfo *info = user_data;
+	gpointer icon_data;
+
 	if(!url_text) {
 		purple_debug(PURPLE_DEBUG_ERROR, "jabber",
 		             "do_buddy_avatar_update_fromurl got error \"%s\"",
@@ -264,7 +266,8 @@ do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data,
 		goto out;
 	}
 
-	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, (void*)url_text, len, info->id);
+	icon_data = g_memdup(url_text, len);
+	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, icon_data, len, info->id);
 
 out:
 	g_free(info->from);

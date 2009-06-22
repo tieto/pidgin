@@ -2996,10 +2996,21 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							break;
 
 						id = gtk_imhtml_get_html_opt(tag, "ID=");
-						if (!id)
-							break;
-						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
-						g_free(id);
+						if (id) {
+							gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
+							g_free(id);
+						} else {
+							char *src, *alt;
+							src = gtk_imhtml_get_html_opt(tag, "SRC=");
+							alt = gtk_imhtml_get_html_opt(tag, "ALT=");
+							if (src) {
+								gtk_imhtml_toggle_link(imhtml, src);
+								gtk_text_buffer_insert(imhtml->text_buffer, iter, alt ? alt : src, -1);
+								gtk_imhtml_toggle_link(imhtml, NULL);
+							}
+							g_free (src);
+							g_free (alt);
+						}
 						break;
 					}
 				case 47:	/* P (opt) */
