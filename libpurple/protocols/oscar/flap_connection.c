@@ -46,7 +46,7 @@ flap_connection_send_version(OscarData *od, FlapConnection *conn)
 	FlapFrame *frame;
 
 	frame = flap_frame_new(od, 0x01, 4);
-	byte_stream_put32(&frame->data, 0x00000001);
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	flap_connection_send(conn, frame);
 }
 
@@ -64,7 +64,7 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 	GSList *tlvlist = NULL;
 
 	frame = flap_frame_new(od, 0x01, 4 + 2 + 2 + length);
-	byte_stream_put32(&frame->data, 0x00000001);
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
 	aim_tlvlist_write(&frame->data, &tlvlist);
 	aim_tlvlist_free(tlvlist);
