@@ -931,12 +931,15 @@ static const char *ggp_status_by_id(unsigned int id)
 	purple_debug_info("gg", "ggp_status_by_id: %d\n", id);
 	switch (id) {
 		case GG_STATUS_NOT_AVAIL:
+		case GG_STATUS_NOT_AVAIL_DESCR:
 			st = _("Offline");
 			break;
 		case GG_STATUS_AVAIL:
+		case GG_STATUS_AVAIL_DESCR:
 			st = _("Available");
 			break;
 		case GG_STATUS_BUSY:
+		case GG_STATUS_BUSY_DESCR:
 			st = _("Away");
 			break;
 		default:
