@@ -2045,17 +2045,11 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
 
 	if (status_box->icon_box)
 	{
-		GtkTextDirection dir = gtk_widget_get_direction(widget);
 		parent_alc.width -= (parent_alc.height + border_width);
 		icon_alc = parent_alc;
 		icon_alc.height = MAX(1, icon_alc.height) - 2;
 		icon_alc.width = icon_alc.height;
-		if (dir == GTK_TEXT_DIR_RTL) {
-			icon_alc.x = parent_alc.x;
-			parent_alc.x += icon_alc.width + border_width;
-		} else {
-			icon_alc.x = allocation->width - (icon_alc.width + border_width + 1);
-		}
+		icon_alc.x = allocation->width - (icon_alc.width + border_width + 1);
 		icon_alc.y += 1;
 
 		if (status_box->icon_size != icon_alc.height)
