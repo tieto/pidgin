@@ -41,7 +41,7 @@ pidgin_icon_loader_build(const gchar *dir)
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
 	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
-		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-theme-loader");
+		root_node = xmlnode_from_file(dir, "theme.xml", "icon themes", "icon-theme-loader");
 
 	g_free(filename_full);
 	g_return_val_if_fail(root_node != NULL, NULL);

@@ -1833,13 +1833,6 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	gchar *buf;
 	gssize result;
 
-	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
-	{
-		g_free(pos->modname);
-		g_free(pos);
-		return;
-	}
-
 	pos->fd = source;
 
 	if (source < 0) {
@@ -1879,7 +1872,8 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 /* size of icbmui.ocm, the largest module in AIM 3.5 */
 #define AIM_MAX_FILE_SIZE 98304
 
-int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
+static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
+{
 	va_list ap;
 	struct pieceofcrap *pos;
 	guint32 offset, len;
@@ -1937,8 +1931,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->len = len;
 	pos->modname = g_strdup(modname);
 
-	/* TODO: Keep track of this return value. */
-	if (purple_proxy_connect(NULL, pos->gc->account, "pidgin.im", 80,
+	if (purple_proxy_connect(pos->gc, pos->gc->account, "pidgin.im", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
@@ -7022,6 +7015,16 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	/* Preferences */
 	purple_prefs_add_none("/plugins/prpl/oscar");
 	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
+
+	/*
+	 * These two preferences will normally not be changed.  UIs can optionally
+	 * use them to override these two version fields which are sent to the
+	 * server when logging in.  AOL requested this change to allow clients to
+	 * use custom values.
+	 */
+	purple_prefs_add_string("/plugins/prpl/oscar/clientstring", NULL);
+	purple_prefs_add_int("/plugins/prpl/oscar/distid", -1);
+
 	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
 	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 

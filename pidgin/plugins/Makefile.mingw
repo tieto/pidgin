@@ -7,6 +7,7 @@
 PIDGIN_TREE_TOP := ../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
+DISCO_PLUGIN := ./disco
 GTKPERL_PLUGIN := ./perl
 TICKER_PLUGIN := ./ticker
 TRANSPARENCY_PLUGIN := ./win32/transparency
@@ -58,12 +59,14 @@ LIBS =			-lgtk-win32-2.0 \
 .PHONY: all clean plugins install
 
 all: plugins
+	$(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE)
 
 install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
+	$(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) install
@@ -95,6 +98,7 @@ plugins: \
 ##
 clean:
 	rm -f *.o *.dll
+	$(MAKE) -C $(DISCO_PLUGIN) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) clean

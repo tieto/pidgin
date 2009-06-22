@@ -400,9 +400,35 @@ egg_tray_icon_manager_window_destroyed (EggTrayIcon *icon)
 static gboolean
 transparent_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
-	gdk_window_clear_area (widget->window, event->area.x, event->area.y,
-	                      event->area.width, event->area.height);
-	return FALSE;
+  GtkWidget *focus_child = NULL;
+  gint border_width, x, y, width, height;
+  gboolean retval = FALSE;
+
+  gdk_window_clear_area (widget->window, event->area.x, event->area.y,
+                         event->area.width, event->area.height);
+
+  if (GTK_WIDGET_CLASS (parent_class)->expose_event)
+    retval = GTK_WIDGET_CLASS (parent_class)->expose_event (widget, event);
+
+  if (GTK_CONTAINER (widget)->focus_child)
+    focus_child = GTK_CONTAINER (GTK_CONTAINER (widget)->focus_child)->focus_child;
+  if (focus_child && GTK_WIDGET_HAS_FOCUS (focus_child))
+    {
+      border_width = GTK_CONTAINER (widget)->border_width;
+
+      x = widget->allocation.x + border_width;
+      y = widget->allocation.y + border_width;
+
+      width  = widget->allocation.width  - 2 * border_width;
+      height = widget->allocation.height - 2 * border_width;
+
+      gtk_paint_focus (widget->style, widget->window,
+                       GTK_WIDGET_STATE (widget),
+                       &event->area, widget, "tray_icon",
+                       x, y, width, height);
+    }
+
+  return retval;
 }
 
 static void

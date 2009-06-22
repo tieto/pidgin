@@ -129,6 +129,8 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	GSList *tlvlist = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
+	const char *clientstring;
+	guint32 distrib;
 
 	passwdlen = strlen(password);
 	password_encoded = (guint8 *)g_malloc(passwdlen+1);
@@ -139,18 +141,25 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_encode_password(password, password_encoded);
 
+	clientstring = purple_prefs_get_string("/plugins/prpl/oscar/clientstring");
+	if (clientstring == NULL)
+		clientstring = ci->clientstring;
+	distrib = purple_prefs_get_int("/plugins/prpl/oscar/distid");
+	if ((gint32)distrib == -1)
+		distrib = ci->distrib;
+
 	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 	aim_tlvlist_add_raw(&tlvlist, 0x0002, passwdlen, password_encoded);
 
-	if (ci->clientstring)
-		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	if (clientstring)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib); /* distribution chan */
+	aim_tlvlist_add_32(&tlvlist, 0x0014, distrib); /* distribution chan */
 	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 
@@ -210,6 +219,8 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	guint8 digest[16];
 	aim_snacid_t snacid;
 	size_t password_len;
+	const char *clientstring;
+	guint32 distrib;
 
 	if (!ci || !sn || !password)
 		return -EINVAL;
@@ -236,20 +247,27 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	aim_encode_password_md5(password, password_len, key, digest);
 
+	clientstring = purple_prefs_get_string("/plugins/prpl/oscar/clientstring");
+	if (clientstring == NULL)
+		clientstring = ci->clientstring;
+	distrib = purple_prefs_get_int("/plugins/prpl/oscar/distid");
+	if ((gint32)distrib == -1)
+		distrib = ci->distrib;
+
 	aim_tlvlist_add_raw(&tlvlist, 0x0025, 16, digest);
 
 #ifndef USE_OLD_MD5
 	aim_tlvlist_add_noval(&tlvlist, 0x004c);
 #endif
 
-	if (ci->clientstring)
-		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	if (clientstring)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib);
+	aim_tlvlist_add_32(&tlvlist, 0x0014, distrib);
 	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 

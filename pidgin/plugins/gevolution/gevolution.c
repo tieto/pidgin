@@ -39,6 +39,7 @@
 #include <libedata-book/Evolution-DataServer-Addressbook.h>
 
 #include <libedata-book/e-data-book-factory.h>
+/* TODO: bonobo is going away eventually, we'll need to find an alternative */
 #include <bonobo/bonobo-main.h>
 
 #include <glib.h>

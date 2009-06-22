@@ -1321,6 +1321,11 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			jabber_iq_remove_callback_by_id(js, jsx->iq_id);
 		if (jsx->local_streamhost_fd >= 0)
 			close(jsx->local_streamhost_fd);
+		if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND &&
+			xfer->fd >= 0) {
+			purple_debug_info("jabber", "remove port mapping\n");
+			purple_network_remove_port_mapping(xfer->fd);
+		}
 		if (jsx->connect_timeout > 0)
 			purple_timeout_remove(jsx->connect_timeout);
 		if (jsx->ibb_timeout_handle > 0)
