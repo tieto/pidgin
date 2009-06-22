@@ -98,7 +98,7 @@ version 2.6.0 (??/??/2009):
 	  (Dmitry Petroff)
 	* Draw the user's buddy icon at the bottom of the Buddy List with rounded
 	  corners for visual consistency with the actual icons in the Buddy List.
-	  (kostaa)
+	  (Kosta Arvanitis)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
