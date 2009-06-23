@@ -58,6 +58,7 @@ msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
+		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
 		purple_buddy_set_protocol_data(buddy, user);
 	}
 
@@ -109,7 +110,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 {
 	PurplePresence *presence;
 	gchar *str;
-	guint uid;
 	guint cv;
 
 	/* Useful to identify the account the tooltip refers to.
@@ -117,8 +117,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	if (user->username) {
 		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
 	}
-
-	uid = purple_blist_node_get_int((PurpleBlistNode *)user->buddy, "UserID");
 
 	/* a/s/l...the vitals */
 	if (user->age) {
