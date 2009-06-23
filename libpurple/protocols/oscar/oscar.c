@@ -3913,19 +3913,8 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 			purple_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE));
 	}
 
+	aim_srv_requestnew(od, SNAC_FAMILY_ALERT);
 	aim_srv_requestnew(od, SNAC_FAMILY_CHATNAV);
-
-	/*
-	 * The "if" statement here is a pathetic attempt to not attempt to
-	 * connect to the alerts servce (aka email notification) if this
-	 * username does not support it.  I think mail notification
-	 * works for @mac.com accounts but does not work for the newer
-	 * @anythingelse.com accounts.  If that's true then this change
-	 * breaks mail notification for @mac.com accounts, but it gets rid
-	 * of an annoying error at signon for @anythingelse.com accounts.
-	 */
-	if (od->authinfo->email != NULL && strchr(username, '@') == NULL)
-		aim_srv_requestnew(od, SNAC_FAMILY_ALERT);
 
 	return 1;
 }
