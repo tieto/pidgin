@@ -18,8 +18,13 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
-	* Gadu-Gadu accounts can specify a server to which to connect.
+
+	Gadu-Gadu:
+	* Accounts can specify a server to which to connect.
 	  (Krzysztof "kreez" Tobola)
+	* Correctly show tooltip status for contacts with status messages.
+	  (Krzysztof "kkszysiu" Klinikowski)
+	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
