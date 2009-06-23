@@ -145,9 +145,12 @@ static const char * const msgerrreason[] = {
 static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
 
 /* All the libfaim->purple callback functions */
+
+/* Only used when connecting with the old-style BUCP login */
 static int purple_parse_auth_resp  (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_login      (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_auth_securid_request(OscarData *, FlapConnection *, FlapFrame *, ...);
+
 static int purple_handle_redirect  (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_info_change      (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_account_confirm  (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -204,7 +207,6 @@ static void purple_icons_fetch(PurpleConnection *gc);
 void oscar_set_info(PurpleConnection *gc, const char *info);
 static void oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, PurpleStatus *status);
 static void oscar_set_extendedstatus(PurpleConnection *gc);
-static void oscar_format_username(PurpleConnection *gc, const char *nick);
 static gboolean purple_ssi_rerequestdata(gpointer data);
 
 static void oscar_free_name_data(struct name_data *data) {
@@ -1107,6 +1109,7 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
+		/* This only happens when connecting with the old-style BUCP login */
 		gchar *msg;
 		msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
 				error_message);
@@ -1152,14 +1155,26 @@ connection_common_established_cb(FlapConnection *conn)
 		flap_connection_send_version(od, conn);
 	else
 	{
-		flap_connection_send_version_with_cookie(od, conn,
-				conn->cookielen, conn->cookie);
+		if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN))
+		{
+			ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
+			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
+			flap_connection_send_version_with_cookie_and_clientinfo(od,
+					conn, conn->cookielen, conn->cookie,
+					od->icq ? &icqinfo : &aiminfo);
+		} else {
+			flap_connection_send_version_with_cookie(od, conn,
+					conn->cookielen, conn->cookie);
+		}
+
+
 		g_free(conn->cookie);
 		conn->cookie = NULL;
 	}
 
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
+		/* This only happens when connecting with the old-style BUCP login */
 		aim_request_login(od, conn, purple_account_get_username(account));
 		purple_debug_info("oscar", "Username sent, waiting for response\n");
 		purple_connection_update_progress(gc, _("Username sent"), 1, OSCAR_CONNECT_STEPS);
@@ -1430,7 +1445,6 @@ oscar_login(PurpleAccount *account)
 {
 	PurpleConnection *gc;
 	OscarData *od;
-	FlapConnection *newconn;
 
 	gc = purple_account_get_connection(account);
 	od = oscar_data_new();
@@ -1445,9 +1459,12 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_ADMIN, 0x0007, purple_account_confirm, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ALERT, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ALERT, SNAC_SUBTYPE_ALERT_MAILSTATUS, purple_email_parseupdate, 0);
+
+	/* These are only needed when connecting with the old-style BUCP login */
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, 0x0003, purple_parse_auth_resp, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, 0x0007, purple_parse_login, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_REQUEST, purple_parse_auth_securid_request, 0);
+
 	oscar_data_addhandler(od, SNAC_FAMILY_BART, SNAC_SUBTYPE_BART_RESPONSE, purple_icon_parseicon, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_BOS, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_BOS, 0x0003, purple_bosrights, 0);
@@ -1523,10 +1540,34 @@ oscar_login(PurpleAccount *account)
 	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
 	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
-	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
-	if (od->use_ssl) {
-		if (purple_ssl_is_supported()) {
-			const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+	/*
+	 * On 2008-03-05 AOL released some documentation on the OSCAR protocol
+	 * which includes a new login method called clientLogin.  It is similar
+	 * (though not the same?) as what the AIM 6.0 series uses to
+	 * authenticate.
+	 *
+	 * AIM 5.9 and lower use an MD5-based login procedure called "BUCP".
+	 * Note that some people were unable to log in to ICQ using the MD5
+	 * method, and so ICQ, when not using clientLogin, is still using a
+	 * very insecure XOR-based login scheme.
+	 */
+	if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN)) {
+		send_client_login(od, purple_account_get_username(account));
+	} else {
+		FlapConnection *newconn;
+		const char *server;
+
+		newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
+
+		if (od->use_ssl) {
+			if (!purple_ssl_is_supported()) {
+				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+						_("SSL support unavailable"));
+				return;
+			}
+
+			server = purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+
 			/*
 			 * If the account's server is what the oscar prpl has offered as
 			 * the default login server through the vast eons (all two of
@@ -1544,32 +1585,29 @@ oscar_login(PurpleAccount *account)
 					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 					ssl_connection_established_cb, ssl_connection_error_cb, newconn);
 		} else {
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-					_("SSL support unavailable"));
+			server = purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+
+			/*
+			 * See the comment above. We do the reverse here. If they don't want
+			 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
+			 * set it back to the default.
+			 */
+			if (!strcmp(server, OSCAR_DEFAULT_SSL_LOGIN_SERVER)) {
+				purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
+				purple_account_set_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+				server = OSCAR_DEFAULT_LOGIN_SERVER;
+			}
+
+			newconn->connect_data = purple_proxy_connect(NULL, account, server,
+					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
+					connection_established_cb, newconn);
 		}
-	} else {
-		const char *server = purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
 
-		/*
-		 * See the comment above. We do the reverse here. If they don't want
-		 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
-		 * set it back to the default.
-		 */
-		if (!strcmp(server, OSCAR_DEFAULT_SSL_LOGIN_SERVER)) {
-			purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
-			purple_account_set_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
-			server = OSCAR_DEFAULT_LOGIN_SERVER;
+		if (newconn->gsc == NULL && newconn->connect_data == NULL) {
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					_("Couldn't connect to host"));
+			return;
 		}
-
-		newconn->connect_data = purple_proxy_connect(NULL, account, server,
-				purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
-				connection_established_cb, newconn);
-	}
-
-	if (newconn->gsc == NULL && newconn->connect_data == NULL) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Couldn't connect to host"));
-		return;
 	}
 
 	purple_connection_update_progress(gc, _("Connecting"), 0, OSCAR_CONNECT_STEPS);
@@ -1602,165 +1640,6 @@ oscar_close(PurpleConnection *gc)
 	purple_prefs_disconnect_by_handle(gc);
 
 	purple_debug_info("oscar", "Signed off.\n");
-}
-
-static int
-purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
-{
-	PurpleConnection *gc = od->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	char *host; int port;
-	int i;
-	FlapConnection *newconn;
-	va_list ap;
-	struct aim_authresp_info *info;
-
-	port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
-
-	va_start(ap, fr);
-	info = va_arg(ap, struct aim_authresp_info *);
-	va_end(ap);
-
-	purple_debug_info("oscar",
-			   "inside auth_resp (Username: %s)\n", info->bn);
-
-	if (info->errorcode || !info->bosip || !info->cookielen || !info->cookie) {
-		char buf[256];
-		switch (info->errorcode) {
-		case 0x01:
-			/* Unregistered username */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Invalid username."));
-			break;
-		case 0x05:
-			/* Incorrect password */
-			if (!purple_account_get_remember_password(account))
-				purple_account_set_password(account, NULL);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
-			break;
-		case 0x11:
-			/* Suspended account */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended."));
-			break;
-		case 0x02:
-		case 0x14:
-			/* service temporarily unavailable */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
-			break;
-		case 0x18:
-			/* username connecting too frequently */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
-			break;
-		case 0x1c:
-		{
-			/* client too old */
-			GHashTable *ui_info = purple_core_get_ui_info();
-			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"),
-					   ((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
-			break;
-		}
-		case 0x1d:
-			/* IP address connecting too frequently */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
-			break;
-		default:
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Authentication failed"));
-			break;
-		}
-		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
-		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl ? info->errorurl : "");
-		return 1;
-	}
-
-	purple_debug_misc("oscar", "Reg status: %hu\n"
-							   "Email: %s\n"
-							   "BOSIP: %s\n",
-							   info->regstatus,
-							   info->email ? info->email : "null",
-							   info->bosip ? info->bosip : "null");
-	purple_debug_info("oscar", "Closing auth connection...\n");
-	flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_DONE, NULL);
-
-	for (i = 0; i < strlen(info->bosip); i++) {
-		if (info->bosip[i] == ':') {
-			port = atoi(&(info->bosip[i+1]));
-			break;
-		}
-	}
-	host = g_strndup(info->bosip, i);
-	newconn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
-	newconn->cookielen = info->cookielen;
-	newconn->cookie = g_memdup(info->cookie, info->cookielen);
-
-	if (od->use_ssl)
-	{
-		/*
-		 * This shouldn't be hardcoded except that the server isn't sending
-		 * us a name to use for comparing the certificate common name.
-		 */
-		newconn->ssl_cert_cn = g_strdup("bos.oscar.aol.com");
-		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-				ssl_proxy_conn_established_cb, newconn);
-	}
-	else
-	{
-		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-				connection_established_cb, newconn);
-	}
-
-	g_free(host);
-	if (newconn->connect_data == NULL)
-	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
-		return 0;
-	}
-
-	purple_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
-	ck[3] = 0x64;
-
-	return 1;
-}
-
-static void
-purple_parse_auth_securid_request_yes_cb(gpointer user_data, const char *msg)
-{
-	PurpleConnection *gc = user_data;
-	OscarData *od = purple_connection_get_protocol_data(gc);
-
-	aim_auth_securid_send(od, msg);
-}
-
-static void
-purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
-{
-	PurpleConnection *gc = user_data;
-
-	/* Disconnect */
-	purple_connection_error_reason(gc,
-		PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-		_("The SecurID key entered is invalid."));
-}
-
-static int
-purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
-{
-	PurpleConnection *gc = od->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	gchar *primary;
-
-	purple_debug_info("oscar", "Got SecurID request\n");
-
-	primary = g_strdup_printf("Enter the SecurID key for %s.", purple_account_get_username(account));
-	purple_request_input(gc, NULL, _("Enter SecurID"), primary,
-					   _("Enter the 6 digit number from the digital display."),
-					   FALSE, FALSE, NULL,
-					   _("_OK"), G_CALLBACK(purple_parse_auth_securid_request_yes_cb),
-					   _("_Cancel"), G_CALLBACK(purple_parse_auth_securid_request_no_cb),
-					   account, NULL, NULL,
-					   gc);
-	g_free(primary);
-
-	return 1;
 }
 
 /* XXX - Should use purple_util_fetch_url for the below stuff */
@@ -1950,6 +1829,204 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	return 1;
 }
 
+int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen)
+{
+	FlapConnection *conn;
+
+	conn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
+	conn->cookielen = cookielen;
+	conn->cookie = g_memdup(cookie, cookielen);
+	conn->connect_data = purple_proxy_connect(NULL,
+			purple_connection_get_account(gc), host, port,
+			connection_established_cb, conn);
+	if (conn->connect_data == NULL)
+	{
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
+		return 0;
+	}
+
+	od->default_port = port;
+
+	purple_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
+	ck[3] = 0x64;
+
+	return 1;
+}
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
+static int
+purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
+{
+	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	char *host; int port;
+	int i;
+	FlapConnection *newconn;
+	va_list ap;
+	struct aim_authresp_info *info;
+
+	port = purple_account_get_int(account, "port", od->default_port);
+
+	va_start(ap, fr);
+	info = va_arg(ap, struct aim_authresp_info *);
+	va_end(ap);
+
+	purple_debug_info("oscar",
+			   "inside auth_resp (Username: %s)\n", info->bn);
+
+	if (info->errorcode || !info->bosip || !info->cookielen || !info->cookie) {
+		char buf[256];
+		switch (info->errorcode) {
+		case 0x01:
+			/* Unregistered username */
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Invalid username."));
+			break;
+		case 0x05:
+			/* Incorrect password */
+			if (!purple_account_get_remember_password(account))
+				purple_account_set_password(account, NULL);
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
+			break;
+		case 0x11:
+			/* Suspended account */
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended."));
+			break;
+		case 0x02:
+		case 0x14:
+			/* service temporarily unavailable */
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
+			break;
+		case 0x18:
+			/* username connecting too frequently */
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			break;
+		case 0x1c:
+		{
+			/* client too old */
+			GHashTable *ui_info = purple_core_get_ui_info();
+			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"),
+					   ((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
+			break;
+		}
+		case 0x1d:
+			/* IP address connecting too frequently */
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait a minute and try again. If you continue to try, you will need to wait even longer."));
+			break;
+		default:
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Authentication failed"));
+			break;
+		}
+		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
+		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl ? info->errorurl : "");
+		return 1;
+	}
+
+	purple_debug_misc("oscar", "Reg status: %hu\n"
+							   "Email: %s\n"
+							   "BOSIP: %s\n",
+							   info->regstatus,
+							   info->email ? info->email : "null",
+							   info->bosip ? info->bosip : "null");
+	purple_debug_info("oscar", "Closing auth connection...\n");
+	flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_DONE, NULL);
+
+	for (i = 0; i < strlen(info->bosip); i++) {
+		if (info->bosip[i] == ':') {
+			port = atoi(&(info->bosip[i+1]));
+			break;
+		}
+	}
+	host = g_strndup(info->bosip, i);
+	newconn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
+	newconn->cookielen = info->cookielen;
+	newconn->cookie = g_memdup(info->cookie, info->cookielen);
+
+	if (od->use_ssl)
+	{
+		/*
+		 * This shouldn't be hardcoded except that the server isn't sending
+		 * us a name to use for comparing the certificate common name.
+		 */
+		newconn->ssl_cert_cn = g_strdup("bos.oscar.aol.com");
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				ssl_proxy_conn_established_cb, newconn);
+	}
+	else
+	{
+		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
+				connection_established_cb, newconn);
+	}
+
+	g_free(host);
+	if (newconn->connect_data == NULL)
+	{
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
+		return 0;
+	}
+
+	purple_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
+	ck[3] = 0x64;
+
+	return 1;
+}
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
+static void
+purple_parse_auth_securid_request_yes_cb(gpointer user_data, const char *msg)
+{
+	PurpleConnection *gc = user_data;
+	OscarData *od = purple_connection_get_protocol_data(gc);
+
+	aim_auth_securid_send(od, msg);
+}
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
+static void
+purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
+{
+	PurpleConnection *gc = user_data;
+
+	/* Disconnect */
+	purple_connection_error_reason(gc,
+		PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
+		_("The SecurID key entered is invalid."));
+}
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
+static int
+purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
+{
+	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	gchar *primary;
+
+	purple_debug_info("oscar", "Got SecurID request\n");
+
+	primary = g_strdup_printf("Enter the SecurID key for %s.", purple_account_get_username(account));
+	purple_request_input(gc, NULL, _("Enter SecurID"), primary,
+					   _("Enter the 6 digit number from the digital display."),
+					   FALSE, FALSE, NULL,
+					   _("_OK"), G_CALLBACK(purple_parse_auth_securid_request_yes_cb),
+					   _("_Cancel"), G_CALLBACK(purple_parse_auth_securid_request_no_cb),
+					   account, NULL, NULL,
+					   gc);
+	g_free(primary);
+
+	return 1;
+}
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
 static int
 purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
@@ -1995,7 +2072,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	redir = va_arg(ap, struct aim_redirect_data *);
 	va_end(ap);
 
-	port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
+	port = od->default_port;
 	separator = strchr(redir->ip, ':');
 	if (separator != NULL)
 	{
@@ -4418,7 +4495,8 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	}
 	g_string_free(data, TRUE);
 
-	peer_odc_send_im(conn, msg->str, msg->len, charset, (imflags & PURPLE_MESSAGE_AUTO_RESP));
+	peer_odc_send_im(conn, msg->str, msg->len, charset,
+			imflags & PURPLE_MESSAGE_AUTO_RESP);
 	g_string_free(msg, TRUE);
 }
 
@@ -6366,6 +6444,10 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 
 	if (od->ssi.received_data && purple_buddy_get_group(buddy) != NULL)
 	{
+		/*
+		 * We only do this if the user is in our buddy list and we're
+		 * waiting for authorization.
+		 */
 		char *gname;
 		gname = aim_ssi_itemlist_findparentname(od->ssi.local, bname);
 		if (gname && aim_ssi_waitingforauth(od->ssi.local, gname, bname))
@@ -6445,7 +6527,7 @@ oscar_show_icq_privacy_opts(PurplePluginAction *action)
 						gc);
 }
 
-static void oscar_format_username(PurpleConnection *gc, const char *nick) {
+void oscar_format_username(PurpleConnection *gc, const char *nick) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	if (!oscar_util_name_compare(purple_account_get_username(purple_connection_get_account(gc)), nick)) {
 		if (!flap_connection_getbytype(od, SNAC_FAMILY_ADMIN)) {
@@ -6606,6 +6688,9 @@ static void oscar_change_pass(PurplePluginAction *action)
 	purple_account_request_change_password(purple_connection_get_account(gc));
 }
 
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
 static void oscar_show_chpassurl(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
@@ -6746,12 +6831,16 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 			oscar_change_pass);
 	menu = g_list_prepend(menu, act);
 
-	if (od->authinfo->chpassurl != NULL)
+	if (od->authinfo != NULL && od->authinfo->chpassurl != NULL)
 	{
+		/* This only happens when connecting with the old-style BUCP login */
 		act = purple_plugin_action_new(_("Change Password (web)"),
 				oscar_show_chpassurl);
 		menu = g_list_prepend(menu, act);
+	}
 
+	if (!od->icq)
+	{
 		act = purple_plugin_action_new(_("Configure IM Forwarding (web)"),
 				oscar_show_imforwardingurl);
 		menu = g_list_prepend(menu, act);
@@ -6986,6 +7075,10 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 
 	option = purple_account_option_bool_new(_("Use SSL"), "use_ssl",
 			OSCAR_DEFAULT_USE_SSL);
+	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
+			OSCAR_DEFAULT_USE_CLIENTLOGIN);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(

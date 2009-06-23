@@ -72,6 +72,32 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 	flap_connection_send(conn, frame);
 }
 
+void
+flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci)
+{
+	FlapFrame *frame;
+	GSList *tlvlist = NULL;
+
+	frame = flap_frame_new(od, 0x01, 1152 + length);
+
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
+	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
+
+	if (ci->clientstring)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
+	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
+	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
+	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
+
+	aim_tlvlist_write(&frame->data, &tlvlist);
+
+	aim_tlvlist_free(tlvlist);
+
+	flap_connection_send(conn, frame);
+}
+
 static struct rateclass *
 flap_connection_get_rateclass(FlapConnection *conn, guint16 family, guint16 subtype)
 {
