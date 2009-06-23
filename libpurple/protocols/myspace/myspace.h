@@ -127,9 +127,9 @@
 #define MSIM_FINAL_STRING           "\\final\\" /**< Message end marker */
 
 /* Messages */
-#define MSIM_BM_DELAYABLE_ACTION_OR_IM  1
+#define MSIM_BM_ACTION_OR_IM_DELAYABLE  1
 #define MSIM_BM_STATUS                  100
-#define MSIM_BM_INSTANT_ACTION_OR_IM    121
+#define MSIM_BM_ACTION_OR_IM_INSTANT    121
 #define MSIM_BM_MEDIA                   122
 #define MSIM_BM_PROFILE                 124
 #define MSIM_BM_UNOFFICIAL_CLIENT       200

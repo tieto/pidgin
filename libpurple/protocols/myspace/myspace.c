@@ -1661,8 +1661,8 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 	switch (bm) {
 		case MSIM_BM_STATUS:
 			return msim_incoming_status(session, msg);
-		case MSIM_BM_INSTANT_ACTION_OR_IM:
-		case MSIM_BM_DELAYABLE_ACTION_OR_IM:
+		case MSIM_BM_ACTION_OR_IM_DELAYABLE:
+		case MSIM_BM_ACTION_OR_IM_INSTANT:
 			return msim_incoming_action_or_im(session, msg);
 		case MSIM_BM_MEDIA:
 			return msim_incoming_media(session, msg);
@@ -2287,7 +2287,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 
 	message_msim = html_to_msim_markup(session, message);
 
-	if (msim_send_bm(session, who, message_msim, MSIM_BM_DELAYABLE_ACTION_OR_IM)) {
+	if (msim_send_bm(session, who, message_msim, MSIM_BM_ACTION_OR_IM_DELAYABLE)) {
 		/* Return 1 to have Purple show this IM as being sent, 0 to not. I always
 		 * return 1 even if the message could not be sent, since I don't know if
 		 * it has failed yet--because the IM is only sent after the userid is
@@ -2340,7 +2340,7 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 	}
 
 	purple_debug_info("msim", "msim_send_typing(%s): %d (%s)\n", name, state, typing_str);
-	msim_send_bm(session, name, typing_str, MSIM_BM_INSTANT_ACTION_OR_IM);
+	msim_send_bm(session, name, typing_str, MSIM_BM_ACTION_OR_IM_INSTANT);
 	return 0;
 }
 
