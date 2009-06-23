@@ -519,6 +519,18 @@ msim_status_types(PurpleAccount *acct)
 	return types;
 }
 
+/*
+ * TODO: This define is stolen from oscar.h.
+ *       It's also in yahoo.h.
+ *       It should be in libpurple/util.c
+ */
+#define msim_put32(buf, data) ( \
+		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
+		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
+		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+3) = (unsigned char)(data)&0xff), \
+		4)
+
 /**
  * Compute the base64'd login challenge response based on username, password, nonce, and IPs.
  *
@@ -619,15 +631,27 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
 	purple_cipher_context_set_key(rc4, key);
 
-	/* TODO: obtain IPs of network interfaces */
-
 	/* rc4 encrypt:
 	 * nonce1+email+IP list */
 
 	data = g_string_new(NULL);
 	g_string_append_len(data, nonce, NONCE_SIZE);
-	g_string_append(data, email);
+
+	/* Include the null terminator */
+	g_string_append_len(data, email, strlen(email) + 1);
+
+	while (data->len % 4 != 0)
+		g_string_append_c(data, 0xfb);
+
+#ifdef SEND_OUR_IP_ADDRESSES
+	/* TODO: Obtain IPs of network interfaces instead of using this hardcoded value */
+	g_string_set_size(data, data->len + 4);
+	msim_put32(data->str + data->len - 4, MSIM_LOGIN_IP_LIST_LEN);
 	g_string_append_len(data, MSIM_LOGIN_IP_LIST, MSIM_LOGIN_IP_LIST_LEN);
+#else
+	g_string_set_size(data, data->len + 4);
+	msim_put32(data->str + data->len - 4, 0);
+#endif /* !SEND_OUR_IP_ADDRESSES */
 
 	data_out = g_new0(guchar, data->len);
 
