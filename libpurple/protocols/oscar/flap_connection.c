@@ -355,23 +355,9 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		}
 	}
 
-	if (conn->fd >= 0)
-	{
-		if (conn->type == SNAC_FAMILY_LOCATE)
-			flap_connection_send_close(od, conn);
-
-		close(conn->fd);
-		conn->fd = -1;
-	}
-
-	if (conn->gsc != NULL)
-	{
-		if (conn->type == SNAC_FAMILY_LOCATE)
-			flap_connection_send_close(od, conn);
-
-		purple_ssl_close(conn->gsc);
-		conn->gsc = NULL;
-	}
+	if ((conn->fd >= 0 || conn->gsc != NULL)
+			&& conn->type == SNAC_FAMILY_LOCATE)
+		flap_connection_send_close(od, conn);
 
 	if (conn->watcher_incoming != 0)
 	{
@@ -383,6 +369,18 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 	{
 		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
+	}
+
+	if (conn->fd >= 0)
+	{
+		close(conn->fd);
+		conn->fd = -1;
+	}
+
+	if (conn->gsc != NULL)
+	{
+		purple_ssl_close(conn->gsc);
+		conn->gsc = NULL;
 	}
 
 	g_free(conn->buffer_incoming.data.data);
