@@ -58,6 +58,7 @@ msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
+		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
 		purple_buddy_set_protocol_data(buddy, user);
 	}
 
