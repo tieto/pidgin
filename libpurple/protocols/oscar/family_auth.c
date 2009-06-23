@@ -26,11 +26,11 @@
  *
  */
 
-#include "oscar.h"
+#include <ctype.h>
 
 #include "cipher.h"
 
-#include <ctype.h>
+#include "oscar.h"
 
 /* #define USE_XOR_FOR_ICQ */
 
