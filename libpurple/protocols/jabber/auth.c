@@ -990,12 +990,16 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			xmlnode_set_namespace(response, "urn:ietf:params:xml:ns:xmpp-sasl");
 			if (clen > 0) {
 				/* Cyrus SASL 2.1.22 appears to contain code to add the charset
-				 * to the response but there is no possibility it will be executed.
+				 * to the response for DIGEST-MD5 but there is no possibility
+				 * it will be executed.
+				 *
 				 * My reading of the digestmd5 plugin indicates the username and
 				 * realm are always encoded in UTF-8 (they seem to be the values
 				 * we pass in), so we need to ensure charset=utf-8 is set.
 				 */
-				if (strstr(c_out, ",charset="))
+				if (!js->current_mech || !g_str_equal(js->current_mech, "DIGEST-MD5") ||
+						strstr(c_out, ",charset="))
+					/* If we're not using DIGEST-MD5 or Cyrus SASL is fixed */
 					enc_out = purple_base64_encode((unsigned char*)c_out, clen);
 				else {
 					char *tmp = g_strdup_printf("%s,charset=utf-8", c_out);
