@@ -332,6 +332,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 241: /* protocol buddy belongs to */
 			if(strtol(pair->value, NULL, 10) == 2) {
+				g_free(msn_name);
 				msn_name = g_strconcat("msn/", name, NULL);
 				name = msn_name;
 			}
@@ -350,6 +351,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	if (name && f) /* update the last buddy */
 		yahoo_update_status(gc, name, f);
+	g_free(msn_name);
 }
 
 static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const char *name, const char *group)
@@ -500,24 +502,24 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 						if (!(g = purple_find_group(yd->current_list15_grp))) {
 							g = purple_group_new(yd->current_list15_grp);
 							purple_blist_add_group(g, NULL);
+						}
+						b = purple_buddy_new(account, norm_bud, NULL);
+						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
-					b = purple_buddy_new(account, norm_bud, NULL);
-					purple_blist_add_buddy(b, NULL, g, NULL);
-				}
-				yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
-				if(protocol != 0) {
-					f->protocol = protocol;
-					purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
-				}
-				if(stealth == 2)
-					f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
+					yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
+					if(protocol != 0) {
+						f->protocol = protocol;
+						purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
+					}
+					if(stealth == 2)
+						f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
 
-				/* set p2p status not connected and no p2p packet sent */
-				if(protocol == 0) {
-					yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
-					f->p2p_packet_sent = 0;
-				} else
-					yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_DO_NOT_CONNECT);
+					/* set p2p status not connected and no p2p packet sent */
+					if(protocol == 0) {
+						yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
+						f->p2p_packet_sent = 0;
+					} else
+						yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_DO_NOT_CONNECT);
 				} else {
 					/* This buddy is on the ignore list (and therefore in no group) */
 					purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found\n",account->username, norm_bud);
