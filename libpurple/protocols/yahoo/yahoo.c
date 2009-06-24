@@ -182,8 +182,28 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			name = message = NULL;
 			f = NULL;
 			if (pair->value && g_utf8_validate(pair->value, -1, NULL)) {
+				GSList *tmplist;
+				int protocol = 0;
+
 				name = pair->value;
+
+				/* Look ahead to see if we have the protocol info about the buddy */
+				for (tmplist = l->next; tmplist; tmplist = tmplist->next) {
+					struct yahoo_pair *p = tmplist->data;
+					if (p->key == 7)
+						break;
+					if (p->key == 241) {
+						if(strtol(p->value, NULL, 10) == 2) {
+							g_free(msn_name);
+							msn_name = g_strconcat("msn/", name, NULL);
+							name = msn_name;
+							protocol = 2;
+						}
+						break;
+					}
+				}
 				f = yahoo_friend_find_or_new(gc, name);
+				f->protocol = protocol;
 			}
 			break;
 		case 10: /* state */
@@ -331,12 +351,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				f->version_id = strtol(pair->value, NULL, 10);
 			break;
 		case 241: /* protocol buddy belongs to */
-			if(strtol(pair->value, NULL, 10) == 2) {
-				g_free(msn_name);
-				msn_name = g_strconcat("msn/", name, NULL);
-				name = msn_name;
-			}
-			break;
+			break;  /* We process this when get '7' */
 		default:
 			purple_debug_warning("yahoo",
 					   "Unknown status key %d\n", pair->key);
