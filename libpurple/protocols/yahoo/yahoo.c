@@ -1125,11 +1125,15 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 	struct yahoo_add_request *add_req = data;
 	struct yahoo_packet *pkt;
 	struct yahoo_data *yd = add_req->gc->proto_data;
+	const char *who = add_req->who;
+
+	if (add_req->protocol == 2)
+		who += 4;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "ssiii",
 					  1, add_req->id,
-					  5, add_req->who,
+					  5, who,
 					  241, add_req->protocol,
 					  13, 1,
 					  334, 0);
