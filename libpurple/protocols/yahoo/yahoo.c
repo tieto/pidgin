@@ -74,12 +74,10 @@ static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFri
 	if (!gc || !name || !f || !purple_find_buddy(purple_connection_get_account(gc), name))
 		return;
 
-	if (f->status == YAHOO_STATUS_OFFLINE)
-	{
-		return;
-	}
-
 	switch (f->status) {
+	case YAHOO_STATUS_OFFLINE:
+		status = YAHOO_STATUS_TYPE_OFFLINE;
+		break;
 	case YAHOO_STATUS_AVAILABLE:
 		status = YAHOO_STATUS_TYPE_AVAILABLE;
 		break;
@@ -361,11 +359,15 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if (message && f)
-		yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
+	if (f) {
+		if (pkt->service == YAHOO_SERVICE_LOGOFF)
+			f->status = YAHOO_STATUS_OFFLINE;
+		if (message)
+			yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
 
-	if (name && f) /* update the last buddy */
-		yahoo_update_status(gc, name, f);
+		if (name) /* update the last buddy */
+			yahoo_update_status(gc, name, f);
+	}
 	g_free(msn_name);
 }
 
