@@ -185,7 +185,8 @@ jabber_data_associate_local(JabberData *data, const gchar *alt)
 {
 	purple_debug_info("jabber", "associating local smiley\n alt = %s, cid = %s\n",
 		alt, jabber_data_get_cid(data));
-	g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
+	if (alt)
+		g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
 	g_hash_table_insert(local_data_by_cid, g_strdup(jabber_data_get_cid(data)),
 		data);
 }
