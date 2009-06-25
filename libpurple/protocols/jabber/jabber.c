@@ -758,6 +758,8 @@ jabber_login(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	const char *connect_server = purple_account_get_string(account,
 			"connect_server", "");
+	const char *bosh_url = purple_account_get_string(account,
+			"bosh_url", "");
 	JabberStream *js;
 	PurplePresence *presence;
 	PurpleStoredImage *image;
@@ -824,20 +826,24 @@ jabber_login(PurpleAccount *account)
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
 	/* TODO: Just use purple_url_parse? */
-	if (!g_ascii_strncasecmp(connect_server, "http://", 7) || !g_ascii_strncasecmp(connect_server, "https://", 8)) {
+	/* If both BOSH and a Connect Server are specified, we prefer BOSH. I'm not
+	 * attached to that choice, though.
+	 */
+	if (*bosh_url) {
 		js->use_bosh = TRUE;
-		js->bosh = jabber_bosh_connection_init(js, connect_server);
-		if (!js->bosh) {
+		js->bosh = jabber_bosh_connection_init(js, bosh_url);
+		if (js->bosh)
+			jabber_bosh_connection_connect(js->bosh);
+		else {
 			purple_connection_error_reason (js->gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Malformed BOSH Connect Server"));
-			return;
+				_("Malformed BOSH URL"));
 		}
-		jabber_bosh_connection_connect(js->bosh);
+
 		return;
-	} else {
-		js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 	}
+
+	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
 	if(purple_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
