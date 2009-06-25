@@ -6300,7 +6300,7 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	selected = (gnode == selected_node);
 
 	if (!expanded) {
-		g_snprintf(group_count, sizeof(group_count), " (%d/%d)",
+		g_snprintf(group_count, sizeof(group_count), "%d/%d",
 		           purple_blist_get_group_online_count(group),
 		           purple_blist_get_group_size(group, FALSE));
 	}
@@ -6319,11 +6319,18 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 
 	esc = g_markup_escape_text(group->name, -1);
 	if (text_color) {
-		mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s</span>",
-							text_color, text_font, esc ? esc : "", group_count);
+		mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s%s%s</span>",
+		                       text_color, text_font,
+		                       esc ? esc : "",
+		                       !expanded ? " <span font_weight='light'>(</span>" : "",
+		                       group_count,
+		                       !expanded ? "<span font_weight='light'>)</span>" : "");
 	} else {
-		mark = g_strdup_printf("<span font_desc='%s'><b>%s</b>%s</span>",
-							text_font, esc ? esc : "", group_count);
+		mark = g_strdup_printf("<span font_desc='%s'><b>%s</b>%s%s%s</span>",
+		                       text_font, esc ? esc : "",
+		                       !expanded ? " <span font_weight='light'>(</span>" : "",
+		                       group_count,
+		                       !expanded ? "<span font_weight='light'>)</span>" : "");
 	}
 
 	g_free(esc);
