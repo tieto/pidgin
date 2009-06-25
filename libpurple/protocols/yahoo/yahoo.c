@@ -3346,7 +3346,8 @@ static void yahoo_server_check(PurpleAccount *account)
 
 	server = purple_account_get_string(account, "server", YAHOO_PAGER_HOST);
 
-	if (strcmp(server, "scs.yahoo.com") == 0)
+	if (*server == '\0' || g_str_equal(server, "scs.yahoo.com") ||
+			g_str_equal(server, "scs.msg.yahoo.com"))
 		purple_account_set_string(account, "server", YAHOO_PAGER_HOST);
 }
 
