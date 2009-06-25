@@ -92,6 +92,12 @@ jabber_data_delete(gpointer cbdata)
 	g_free(data);
 }
 
+void
+jabber_data_destroy(JabberData *data)
+{
+	jabber_data_delete(data);
+}
+
 const char *
 jabber_data_get_cid(const JabberData *data)
 {
