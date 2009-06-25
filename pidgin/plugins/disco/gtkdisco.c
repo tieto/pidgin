@@ -108,6 +108,34 @@ void pidgin_disco_list_set_in_progress(PidginDiscoList *list, gboolean in_progre
 	}
 }
 
+static GdkPixbuf *
+pidgin_disco_load_icon(XmppDiscoService *service, const char *size)
+{
+	GdkPixbuf *pixbuf = NULL;
+	char *filename;
+
+	g_return_val_if_fail(service != NULL, NULL);
+	g_return_val_if_fail(size != NULL, NULL);
+
+	if (service->type == XMPP_DISCO_SERVICE_TYPE_GATEWAY && service->gateway_type) {
+		char *tmp = g_strconcat(service->gateway_type, ".png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", size, tmp, NULL);
+		g_free(tmp);
+#if 0
+	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_USER) {
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", size, "person.png", NULL);
+#endif
+	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", size, "chat.png", NULL);
+
+	if (filename) {
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
+	}
+
+	return pixbuf;
+}
+
 static void pidgin_disco_create_tree(PidginDiscoList *pdl);
 
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
@@ -667,7 +695,6 @@ void pidgin_disco_add_service(PidginDiscoList *pdl, XmppDiscoService *service, X
 {
 	PidginDiscoDialog *dialog;
 	GtkTreeIter iter, parent_iter, child;
-	char *filename = NULL;
 	GdkPixbuf *pixbuf = NULL;
 	gboolean append = TRUE;
 
@@ -725,21 +752,7 @@ void pidgin_disco_add_service(PidginDiscoList *pdl, XmppDiscoService *service, X
 		gtk_tree_path_free(path);
 	}
 
-	if (service->type == XMPP_DISCO_SERVICE_TYPE_GATEWAY && service->gateway_type) {
-		char *tmp = g_strconcat(service->gateway_type, ".png", NULL);
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", tmp, NULL);
-		g_free(tmp);
-#if 0
-	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_USER) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "16", "person.png", NULL);
-#endif
-	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "16", "chat.png", NULL);
-
-	if (filename) {
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
-	}
+	pixbuf = pidgin_disco_load_icon(service, "16");
 
 	gtk_tree_store_set(pdl->model, &iter,
 			PIXBUF_COLUMN, pixbuf,
