@@ -1260,7 +1260,8 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	char buf[32];
 
 	xfer->filename = g_path_get_basename(xfer->local_filename);
-
+	purple_xfer_prepare_thumbnail(xfer);
+	
 	iq = jabber_iq_new(jsx->js, JABBER_IQ_SET);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	si = xmlnode_new_child(iq->node, "si");
