@@ -110,6 +110,9 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
+	if (!who)
+		return;
+
 	if (!purple_privacy_check(purple_connection_get_account(gc), who)) {
 		purple_debug_info("yahoo", "Picture packet from %s dropped.\n", who);
 		return;
