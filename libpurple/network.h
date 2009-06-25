@@ -249,7 +249,7 @@ const gchar *purple_network_get_stun_ip(void);
  * @param stun_server The host name of the STUN server to set
  * @since 2.6.0
  */
-void purple_network_set_turn_server(const gchar *stun_server);
+void purple_network_set_turn_server(const gchar *turn_server);
 	
 /**
  * Get the IP address of the STUN server as a string representation
