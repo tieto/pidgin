@@ -109,7 +109,7 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 	/* Construct and send the actual zap command. */
 	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
 
-	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION)) {
+	if (!msim_send_bm(session, username, zap_string, MSIM_BM_INSTANT_ACTION_OR_IM)) {
 		purple_debug_info("msim_send_zap",
 				"msim_send_bm failed: zapping %s with %s\n",
 				username, zap_string);
