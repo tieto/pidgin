@@ -18,6 +18,10 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
+	* GnuTLS logging (disabled by default) can be controlled through the
+	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
+	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
+	  information.
 
 	Gadu-Gadu:
 	* Accounts can specify a server to which to connect.
