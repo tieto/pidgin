@@ -1770,7 +1770,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 			g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	button = pidgin_new_item_from_stock(menu, _("Last said"), GTK_STOCK_INDEX,
+	button = pidgin_new_item_from_stock(menu, _("Last Said"), GTK_STOCK_INDEX,
 						G_CALLBACK(menu_last_said_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	if (!get_mark_for_user(PIDGIN_CONVERSATION(conv), who))
