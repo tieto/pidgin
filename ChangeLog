@@ -11,6 +11,9 @@ version 2.5.8 (06/26/2009):
 	* Fixed the crashes some users were seeing with cn.scs.msg.yahoo.com in
 	  2.5.7.
 	* Fixed compiling on systems with glib 2.4.x or older.
+	* The pager server will automatically update to scsa.msg.yahoo.com if the
+	  user empties the field or if it is scs.msg.yahoo.com.  This should ease
+	  the pain of transition to the new login method.
 
 	XMPP:
 	* Fix an incompatibility betweeen Prosody and libpurple clients.
