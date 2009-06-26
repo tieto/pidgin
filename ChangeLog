@@ -4,6 +4,10 @@ version 2.5.8 (06/26/2009):
 	ICQ:
 	* Fix misparsing a web message as an SMS message. (Yuriy Kaminskiy)
 
+	MSN:
+	* Increase NS command history size to prevent crashes on buddy lists that
+	  have a lot of buddies on other networks like Yahoo!.
+
 	MySpace:
 	* Accounts with empty buddy lists are now properly marked as connected.
 	* Fix receiving messages from users of MySpace IM's web client.
