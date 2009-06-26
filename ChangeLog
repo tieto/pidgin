@@ -1,6 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.7 (06/19/2009):
+version 2.5.8 (06/26/2009):
+	* Fixed phantom online Yahoo! buddies.  They should now properly disappear
+	  when signing out.
+	* Fixed the crashes some users were seeing with cn.scs.msg.yahoo.com in
+	  2.5.7.
+
+version 2.5.7 (06/20/2009):
 	* Yahoo Protocol 16 support, including new HTTPS login method; this should
 	  fix a number of login problems that have recently cropped up.  (Sulabh
 	  Mahajan, Mike "Maiku" Ruprecht)
