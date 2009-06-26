@@ -2829,9 +2829,15 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			/* From libicq2000-0.3.2/src/ICQ.cpp */
 			byte_stream_init(&qbs, (guint8 *)args->msg, args->msglen);
 			byte_stream_advance(&qbs, 21);
+			/* expected:	01 00 00 20 00 0e 28 f6 00 11 e7 d3 11 bc f3 00 04 ac 96 9d c2 | 00 00 | 06 00 00 00 | 49 43 51 53 43 53 ...*/
+			/* unexpected:	00 00 26 00 81 1a 18 bc 0e 6c 18 47 a5 91 6f 18 dc c7 6f 1a | 00 00 | 0d 00 00 00 | 49 43 51 57 65 62 4d 65 73 73 61 67 65 ... */
 			smstype = byte_stream_getle16(&qbs);
+			if (smstype != 0)
+				break;
 			taglen = byte_stream_getle32(&qbs);
 			tagstr = byte_stream_getstr(&qbs, taglen);
+			if (tagstr == NULL)
+				break;
 			byte_stream_advance(&qbs, 3);
 			byte_stream_advance(&qbs, 4);
 			smslen = byte_stream_getle32(&qbs);

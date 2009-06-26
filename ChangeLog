@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.8 (06/26/2009):
+	ICQ:
+	* Fix misparsing a web message as an SMS message.
+
 	MySpace:
 	* Accounts with empty buddy lists are now properly marked as connected.
 	* Fix receiving messages from users of MySpace IM's web client.
