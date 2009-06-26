@@ -10,6 +10,8 @@ version 2.6.0 (??/??/2009):
 	  in a group on the buddy list. (Paul Aurich)
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
+	* The Pidgin and Purple perl modules are no longer installed into @INC,
+	  this should hopefulll prevent some minor confusion.
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
