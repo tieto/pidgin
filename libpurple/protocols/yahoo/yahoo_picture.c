@@ -139,7 +139,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->checksum = checksum;
 		/* TODO: Does this need to be MSIE 5.0? */
 		url_data = purple_util_fetch_url(url, use_whole_url,
-				"Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
+				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE,
 				yahoo_fetch_picture_cb, data);
 		if (url_data != NULL) {
 			yd = gc->proto_data;
@@ -573,7 +573,7 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 		checksum &= ~g;
 	}
 
-	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d", checksum);
+	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d"\n, checksum);
 
 	return checksum;
 } 
