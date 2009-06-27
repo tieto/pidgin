@@ -518,7 +518,7 @@ void send_client_login(OscarData *od, const char *username)
 
 	/* Tack on the body */
 	g_string_append_printf(request, "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n");
-	g_string_append_printf(request, "Content-Length: %lu\r\n\r\n", body->len);
+	g_string_append_printf(request, "Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n", body->len);
 	g_string_append_len(request, body->str, body->len);
 	g_string_free(body, TRUE);
 
