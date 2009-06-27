@@ -1102,7 +1102,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	char *txt, *vcard_hash = NULL;
 
 	if (type == JABBER_IQ_ERROR) {
-		purple_debug_warning("jabber", "Server returned error while retrieving vCard");
+		purple_debug_warning("jabber", "Server returned error while retrieving vCard\n");
 		return;
 	}
 
