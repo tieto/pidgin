@@ -745,7 +745,6 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 	gint val_11 = 0;
 	struct yahoo_data *yd = gc->proto_data;
 	gboolean msn = FALSE;
-	char *msn_from = NULL;
 
 	account = purple_connection_get_account(gc);
 
@@ -778,17 +777,16 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		return;
 	}
 
-	if(msn)
-		msn_from = g_strconcat("msn/", from, NULL);
-
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
 		&& (purple_privacy_check(account, from)))
 	{
 		if(msn) {
+			char *msn_from = g_strconcat("msn/", from, NULL);
 			if (*stat == '1')
 				serv_got_typing(gc, msn_from, 0, PURPLE_TYPING);
 			else
 				serv_got_typing_stopped(gc, msn_from);
+			g_free(msn_from);
 		}
 		else	{
 			if (*stat == '1')
@@ -822,8 +820,6 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 		g_free(buf);
 	}
-
-	g_free(msn_from);
 }
 
 
