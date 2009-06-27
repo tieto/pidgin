@@ -8196,15 +8196,11 @@ do_close(GtkWidget *w, int resp, PidginWindow *win)
 static void
 build_warn_close_dialog(PidginWindow *gtkwin)
 {
-	GtkWidget *label;
-	GtkWidget *vbox, *hbox;
-	GtkWidget *img;
+	GtkWidget *label, *vbox, *hbox, *img;
 
 	g_return_if_fail(warn_close_dialog == NULL);
 
-
-	warn_close_dialog = gtk_dialog_new_with_buttons(
-							_("Confirm close"),
+	warn_close_dialog = gtk_dialog_new_with_buttons(_("Confirm close"),
 							GTK_WINDOW(gtkwin->window), GTK_DIALOG_MODAL,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
