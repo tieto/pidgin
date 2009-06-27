@@ -825,6 +825,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 
 struct _yahoo_im {
 	char *from;
+	char *active_id;
 	int time;
 	int utf8;
 	int buddy_icon;
@@ -919,6 +920,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				im->time = time(NULL);
 				im->utf8 = TRUE;
 			}
+			if (im && pair->key == 5)
+				im->active_id = pair->value;
 			if (pair->key == 97)
 				if (im)
 					im->utf8 = strtol(pair->value, NULL, 10);
@@ -1029,7 +1032,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			pkt2 = yahoo_packet_new(YAHOO_SERVICE_MESSAGE_ACK,
 					YAHOO_STATUS_AVAILABLE, pkt->id);
 			yahoo_packet_hash(pkt2, "ssisii",
-					1, purple_connection_get_display_name(gc),
+					1, im->active_id,  /* May not always be the connection's display name */
 					5, im->from,
 					302, 430,
 					430, im->id,
