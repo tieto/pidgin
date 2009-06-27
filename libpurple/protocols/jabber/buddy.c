@@ -1102,8 +1102,12 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	char *txt, *vcard_hash = NULL;
 
 	if (type == JABBER_IQ_ERROR) {
+		xmlnode *error;
 		purple_debug_warning("jabber", "Server returned error while retrieving vCard\n");
-		return;
+
+		error = xmlnode_get_child(packet, "error");
+		if (!error || !xmlnode_get_child(error, "item-not-found"))
+			return;
 	}
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
