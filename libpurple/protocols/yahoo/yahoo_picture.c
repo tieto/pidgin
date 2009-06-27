@@ -327,7 +327,7 @@ void yahoo_send_picture_request(PurpleConnection *gc, const char *who)
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash_str(pkt, 4, purple_connection_get_display_name(gc)); /* me */
+	yahoo_packet_hash_str(pkt, 1, purple_connection_get_display_name(gc)); /* me */
 	yahoo_packet_hash_str(pkt, 5, who); /* the other guy */
 	yahoo_packet_hash_str(pkt, 13, "1"); /* 1 = request, 2 = reply */
 	yahoo_packet_send_and_free(pkt, yd);
