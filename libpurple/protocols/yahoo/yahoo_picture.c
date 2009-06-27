@@ -315,8 +315,8 @@ void yahoo_send_picture_info(PurpleConnection *gc, const char *who)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sssssi", 1, purple_connection_get_display_name(gc),
-	                  4, purple_connection_get_display_name(gc), 5, who,
+	yahoo_packet_hash(pkt, "ssssi", 1, purple_connection_get_display_name(gc),
+	                  5, who,
 	                  13, "2", 20, yd->picture_url, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
 }
