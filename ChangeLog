@@ -121,6 +121,33 @@ version 2.6.0 (??/??/2009):
 	* Preferences have been reorganized into three tabs for Colors, Fonts, and
 	  Miscellaneous categories.
 
+version 2.5.8 (06/27/2009):
+	ICQ:
+	* Fix misparsing a web message as an SMS message. (Yuriy Kaminskiy)
+
+	MSN:
+	* Increase NS command history size to prevent crashes on buddy lists that
+	  have a lot of buddies on other networks like Yahoo!.
+
+	MySpace:
+	* Accounts with empty buddy lists are now properly marked as connected.
+	* Fix receiving messages from users of MySpace IM's web client.
+
+	Yahoo:
+	* Fixed phantom online buddies.  They should now properly disappear when
+	  signing out.
+	* Fixed the crashes some users were seeing with cn.scs.msg.yahoo.com in
+	  2.5.7.
+	* Fixed compiling on systems with glib 2.4.x or older.
+	* Fixed an issue with file transfers.  This may not resolve all issues,
+	  but it should resolve at least some of the most common ones.
+	* The pager server will automatically update to scsa.msg.yahoo.com if the
+	  user empties the field or if it is scs.msg.yahoo.com.  This should ease
+	  the pain of transition to the new login method.
+
+	XMPP:
+	* Fix an incompatibility betweeen Prosody and libpurple clients.
+
 version 2.5.7 (06/20/2009):
 	* Yahoo Protocol 16 support, including new HTTPS login method; this should
 	  fix a number of login problems that have recently cropped up.  (Sulabh

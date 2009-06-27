@@ -128,6 +128,9 @@ version 2.6.0 (??/??/2009):
 			* Purple::Request::Field::string_new
 			* Purple::Request::Field::group_new
 
+version 2.5.8 (06/27/2009):
+	No changes
+
 version 2.5.7 (06/20/2009):
 	No changes
 
