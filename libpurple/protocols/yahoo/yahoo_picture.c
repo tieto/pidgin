@@ -573,7 +573,7 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 		checksum &= ~g;
 	}
 
-	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d"\n, checksum);
+	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d\n", checksum);
 
 	return checksum;
 } 
