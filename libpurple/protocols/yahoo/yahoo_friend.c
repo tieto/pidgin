@@ -172,15 +172,15 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if(msn)
-		who = g_strconcat("msn/", temp, NULL);
-	else
-		who = g_strdup(temp);
-
 	if (value != 1 && value != 2) {
 		purple_debug_error("yahoo", "Received unknown value for presence key: %d\n", value);
 		return;
 	}
+
+	if(msn)
+		who = g_strconcat("msn/", temp, NULL);
+	else
+		who = g_strdup(temp);
 
 	g_return_if_fail(who != NULL);
 

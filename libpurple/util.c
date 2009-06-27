@@ -3898,7 +3898,7 @@ static void ssl_url_fetch_recv_cb(gpointer data, PurpleSslConnection *ssl_connec
 	url_fetch_recv_cb(data, -1, cond);
 }
 
-/*
+/**
  * This function is called when the socket is available to be written
  * to.
  *

@@ -39,6 +39,7 @@ version 2.6.0 (??/??/2009):
 		* purple_network_set_turn_server
 		* purple_network_get_stun_ip
 		* purple_network_get_turn_ip
+		* purple_network_remove_port_mapping
 		* purple_proxy_connect_udp
 		* purple_prpl_get_media_caps
 		* purple_prpl_got_account_actions
@@ -126,6 +127,12 @@ version 2.6.0 (??/??/2009):
 			* Purple::Request::Field::list_new
 			* Purple::Request::Field::string_new
 			* Purple::Request::Field::group_new
+
+version 2.5.7 (06/20/2009):
+	No changes
+
+version 2.5.6 (05/19/2009):
+	No changes
 
 version 2.5.5 (03/01/2009):
 	libpurple:

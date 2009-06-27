@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-01 12:31+0200\n"
-"PO-Revision-Date: 2009-06-01 12:31+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2009-06-11 12:42+0200\n"
+"PO-Revision-Date: 2009-06-11 12:40+0200\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -877,7 +877,7 @@ msgid "System Log"
 msgstr "System-Mitschnitt"
 
 msgid "Calling ... "
-msgstr "Anrufen..."
+msgstr "Anrufen ... "
 
 msgid "Hangup"
 msgstr "Auflegen"
@@ -3169,6 +3169,10 @@ msgstr "Zum Chat hinzufügen"
 msgid "Chat _name:"
 msgstr "Chat_name:"
 
+#. should this be a settings error?
+msgid "Unable to resolve server"
+msgstr "Verbindung zum Server nicht möglich"
+
 msgid "Chat error"
 msgstr "Chatfehler"
 
@@ -3216,6 +3220,10 @@ msgstr "Beliebter polnischer IM-Dienst"
 
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu-Benutzer"
+
+#, fuzzy
+msgid "GG server"
+msgstr "Hole server"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3463,7 +3471,7 @@ msgstr ""
 #. notify the user that their /nick command didn't go.
 #, c-format
 msgid "The nickname \"%s\" is already being used."
-msgstr "Der Spitzname \"%s\" existiert bereits."
+msgstr "Der Spitzname „%s“ existiert bereits."
 
 #, fuzzy
 msgid "Nickname in use"
@@ -4215,9 +4223,8 @@ msgstr "Ungültige XMPP-ID"
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Falsche XMPP-ID. Die Domain muss gesetzt werden."
 
-#, fuzzy
 msgid "Malformed BOSH Connect Server"
-msgstr "Verbindung zum Server nicht möglich."
+msgstr ""
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4243,9 +4250,6 @@ msgstr "Aufheben der Registrierung erfolgreich"
 msgid "Unregistration Failed"
 msgstr "Aufheben der Registrierung gescheitert"
 
-msgid "Already Registered"
-msgstr "Schon registriert"
-
 msgid "State"
 msgstr "Provinz/Bundesland"
 
@@ -4257,6 +4261,9 @@ msgstr "Telefon"
 
 msgid "Date"
 msgstr "Datum"
+
+msgid "Already Registered"
+msgstr "Schon registriert"
 
 msgid "Unregister"
 msgstr "Aufheben der Registrierung"
@@ -4631,7 +4638,7 @@ msgid ""
 "session."
 msgstr ""
 "Bitte wählen Sie die Ressource von %s, mir der Sie eine Medien-Sitzung "
-"starten möchten"
+"starten möchten."
 
 msgid "Select a Resource"
 msgstr "Wählen Sie eine Ressource"
@@ -4795,12 +4802,11 @@ msgstr "Fehler beim Betreten des Chats %s"
 msgid "Error in chat %s"
 msgstr "Fehler im Chat %s"
 
-#, fuzzy
 msgid "An error occured on the in-band bytestream transfer\n"
-msgstr "Beim Öffnen der Datei trat ein Fehler auf."
+msgstr "Beim Übertragen der Datei trat ein Fehler auf\n"
 
 msgid "Transfer was closed."
-msgstr "Übertragung wurde geschlossen"
+msgstr "Übertragung wurde geschlossen."
 
 msgid "Failed to open the file"
 msgstr "Öffnen der Datei fehlgeschlagen"
@@ -5441,32 +5447,6 @@ msgstr "Unbekannter Fehler (%d)"
 msgid "The following users are missing from your addressbook"
 msgstr "Die folgenden Benutzer fehlen in Ihrem Adressbuch"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Kann den Benutzer nicht zu %s (%s) hinzufügen"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Kann den Benutzer nicht für %s (%s) blockieren"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Kann den Benutzer nicht für %s (%s) erlauben"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s konnte nicht hinzugefügt werden, da Ihre Buddy-Liste voll ist."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s ist kein gültiges Passport-Konto."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Dienst momentan nicht verfügbar."
-
-msgid "Unknown error."
-msgstr "Unbekannter Fehler."
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobile Nachricht wurde nicht gesendet, da sie zu lang war."
 
@@ -5565,6 +5545,9 @@ msgid ""
 msgstr ""
 "Ihre MSN-Buddy-Liste ist temporär nicht verfügbar. Bitte warten Sie und "
 "versuchen Sie es später nochmal."
+
+msgid "Unknown error."
+msgstr "Unbekannter Fehler."
 
 msgid "Handshaking"
 msgstr "Abgleich"
@@ -5668,6 +5651,29 @@ msgstr "%s ist keine gültige Gruppe."
 #, c-format
 msgid "%s on %s (%s)"
 msgstr "%s auf %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "Kann den Benutzer nicht zu %s (%s) hinzufügen"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "Kann den Benutzer nicht für %s (%s) blockieren"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "Kann den Benutzer nicht für %s (%s) erlauben"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s konnte nicht hinzugefügt werden, da Ihre Buddy-Liste voll ist."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s ist kein gültiges Passport-Konto."
+
+msgid "Service Temporarily Unavailable."
+msgstr "Dienst momentan nicht verfügbar."
 
 msgid "Unable to rename group"
 msgstr "Kann die Gruppe nicht umbenennen"
@@ -6783,7 +6789,7 @@ msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Möchten Sie diesen Buddy zu Ihrer Buddy-Liste hinzufügen?"
 
 msgid "_Add"
-msgstr "_Hinzufügen"
+msgstr "Hinzu_fügen"
 
 msgid "_Decline"
 msgstr "_Ablehnen"
@@ -9568,16 +9574,26 @@ msgid "Incorrect Password"
 msgstr "Falsches Passwort"
 
 #. security lock from too many failed login attempts
-msgid "Account locked: Too many failed login attempts"
-msgstr "Konto gesperrt: Zu viele erfolglose Login-Versuche"
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Unbekannte Fehlernummer %d. Vielleicht kann dies repariert werden, wenn Sie "
+"sich auf der Yahoo! Webseite anmelden."
 
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "Benutzername existiert nicht"
 
 #. indicates a lock of some description
-msgid "Account locked: See the debug log"
-msgstr "Konto gesperrt: Sehen Sie in den Debug-Mitschnitt"
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Unbekannte Fehlernummer %d. Vielleicht kann dies repariert werden, wenn Sie "
+"sich auf der Yahoo! Webseite anmelden."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10492,9 +10508,8 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "Bitte aktualisieren Sie die erforderlichen Felder."
 
-#, fuzzy
 msgid "A_ccount"
-msgstr "Konto"
+msgstr "K_onto"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -11646,7 +11661,7 @@ msgid "_Name"
 msgstr "_Name"
 
 msgid "_Account"
-msgstr "_Konto"
+msgstr "K_onto"
 
 msgid "Get User Info"
 msgstr "Benutzer-Info abrufen"
@@ -12400,19 +12415,19 @@ msgid "Pounce on Whom"
 msgstr "Bei wem alarmieren"
 
 msgid "_Account:"
-msgstr "_Konto:"
+msgstr "K_onto:"
 
 msgid "_Buddy name:"
-msgstr "_Buddy-Name:"
+msgstr "Budd_y-Name:"
 
 msgid "Si_gns on"
-msgstr "_sich anmeldet"
+msgstr "si_ch anmeldet"
 
 msgid "Signs o_ff"
 msgstr "sich abmel_det"
 
 msgid "Goes a_way"
-msgstr "_hinausgeht"
+msgstr "hinausgeh_t"
 
 msgid "Ret_urns from away"
 msgstr "wi_eder anwesend ist"
@@ -12421,22 +12436,22 @@ msgid "Becomes _idle"
 msgstr "_untätig wird"
 
 msgid "Is no longer i_dle"
-msgstr "nicht meh_r untätig ist"
+msgstr "nicht _mehr untätig ist"
 
 msgid "Starts _typing"
-msgstr "zu _tippen beginnt"
+msgstr "zu tippen _beginnt"
 
 msgid "P_auses while typing"
-msgstr "beim Tippen an_hält"
+msgstr "beim Tippen anh_ält"
 
 msgid "Stops t_yping"
 msgstr "aufhört _zu tippen"
 
 msgid "Sends a _message"
-msgstr "eine _Nachricht sendet"
+msgstr "eine Nachr_icht sendet"
 
 msgid "Ope_n an IM window"
-msgstr "Gesprächsfenster ö_ffnen"
+msgstr "_Gesprächsfenster öffnen"
 
 msgid "_Pop up a notification"
 msgstr "_Popup-Benachrichtigung"
@@ -12445,22 +12460,22 @@ msgid "Send a _message"
 msgstr "_Nachricht senden"
 
 msgid "E_xecute a command"
-msgstr "Befeh_l ausführen"
+msgstr "Befehl ausfüh_ren"
 
 msgid "P_lay a sound"
-msgstr "einen _Klang abspielen"
+msgstr "Einen _Klang abspielen"
 
 msgid "Brows_e..."
-msgstr "Aus_wählen..."
+msgstr "Au_swählen..."
 
 msgid "Br_owse..."
-msgstr "Aus_wählen..."
+msgstr "Auswäh_len..."
 
 msgid "Pre_view"
 msgstr "_Vorschau"
 
 msgid "P_ounce only when my status is not Available"
-msgstr "Nur _alarmieren, wenn ich nicht verfügbar bin"
+msgstr "Nur alarmieren, wenn ich nicht ver_fügbar bin"
 
 msgid "_Recurring"
 msgstr "_Wiederkehrend"
@@ -13802,12 +13817,6 @@ msgstr ""
 "- Es sendet eine Nachricht zu Leuten in Ihrer Buddy Liste, direkt wenn Sie "
 "sich angemeldet haben"
 
-msgid "Cursor Color"
-msgstr "Cursor-Farbe"
-
-msgid "Secondary Cursor Color"
-msgstr "Sekundäre Cursor-Farbe"
-
 msgid "Hyperlink Color"
 msgstr "Hyperlink-Farbe"
 
@@ -13816,6 +13825,10 @@ msgstr "Farbe für besuchte Hyperlinks"
 
 msgid "Highlighted Message Name Color"
 msgstr "Farbe des Absendernamens für hervorgehobene Nachrichten"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "Farbe der Tipp-Benachrichtigung"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeview horizontaler Abstand"
@@ -13845,34 +13858,23 @@ msgstr "GTK+ Schrift"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "GTK+ Text Shortcut-Thema"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "UI-Farben"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "Tipp-Benachrichtigung aktivieren"
 
-msgid "Widget Sizes"
-msgstr "Widget-Größen"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "Pidgin GTK+ Themenkontrolle"
+
+#, fuzzy
+msgid "Colors"
+msgstr "Schließen"
 
 msgid "Fonts"
 msgstr "Schrift"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Gtkrc-Datei-Werkzeuge"

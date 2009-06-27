@@ -319,6 +319,11 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
+	option = purple_account_option_string_new(_("BOSH URL"),
+						  "bosh_url", NULL);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+						  option);
+
 	/* this should probably be part of global smiley theme settings later on,
 	  shared with MSN */
 	option = purple_account_option_bool_new(_("Show Custom Smileys"),

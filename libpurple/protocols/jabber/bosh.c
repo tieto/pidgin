@@ -243,7 +243,7 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
 	 * one TCP connection! */
 	if (conn->pipelining)
-		return conn->connections[0];
+		return conn->connections[0]->ready ? conn->connections[0] : NULL;
 
 	/* First loop, look for a connection that's ready */
 	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
@@ -267,8 +267,8 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 }
 
 static void
-jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
-                            const char *data)
+jabber_bosh_connection_send(PurpleBOSHConnection *conn,
+                            PurpleBOSHPacketType type, const char *data)
 {
 	PurpleHTTPConnection *chosen;
 	GString *packet = NULL;
@@ -277,14 +277,16 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 
 	if (type != PACKET_NORMAL && !chosen) {
 		/*
-		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the first
-		 * connection.
+		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the
+		 * first connection.
 		 */
 		chosen = conn->connections[0];
 
-		if (!chosen->ready)
-			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
-					"things may happen.\n");
+		if (!chosen->ready) {
+			purple_debug_info("jabber", "Unable to find a ready BOSH "
+					"connection. Ignoring send of type 0x%02x.\n", type);
+			return;
+		}
 	}
 
 	if (type == PACKET_NORMAL && (!chosen ||

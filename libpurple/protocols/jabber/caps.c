@@ -534,6 +534,31 @@ jabber_caps_ext_iqcb(JabberStream *js, const char *from, JabberIqType type,
 		return;
 	}
 
+	node_exts = (userdata->data->info ? userdata->data->info->exts :
+	                                    userdata->data->node_exts);
+
+	/* TODO: I don't see how this can actually happen, but it crashed khc. */
+	if (!node_exts) {
+		purple_debug_error("jabber", "Couldn't find JabberCapsNodeExts. If you "
+				"see this, please tell darkrain42 and save your debug log.\n"
+				"JabberCapsClientInfo = %p\n", userdata->data->info);
+
+
+		/* Try once more to find the exts and then fail */
+		node_exts = jabber_caps_find_exts_by_node(userdata->data->node);
+		if (node_exts) {
+			purple_debug_info("jabber", "Found the exts on the second try.\n");
+			if (userdata->data->info)
+				userdata->data->info->exts = node_exts;
+			else
+				userdata->data->node_exts = node_exts;
+		} else {
+			cbplususerdata_unref(userdata->data);
+			g_free(userdata);
+			g_return_if_reached();
+		}
+	}
+
 	/* So, we decrement this after checking for an error, which means that
 	 * if there *is* an error, we'll never call the callback passed to
 	 * jabber_caps_get_info. We will still free all of our data, though.
@@ -547,8 +572,6 @@ jabber_caps_ext_iqcb(JabberStream *js, const char *from, JabberIqType type,
 			features = g_list_prepend(features, g_strdup(var));
 	}
 
-	node_exts = (userdata->data->info ? userdata->data->info->exts :
-	                                    userdata->data->node_exts);
 	g_hash_table_insert(node_exts->exts, g_strdup(userdata->name), features);
 	schedule_caps_save();
 
@@ -589,9 +612,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	}
 
 	userdata = g_new0(jabber_caps_cbplususerdata, 1);
-	/* This ref is given to fetching the basic node#ver info if we need it
-	 * or unrefed at the bottom of this function */
-	cbplususerdata_ref(userdata);
+	/* We start out with 0 references. Every query takes one */
 	userdata->cb = cb;
 	userdata->cb_data = user_data;
 	userdata->who = g_strdup(who);
@@ -616,6 +637,8 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 		xmlnode_set_attrib(query, "node", nodever);
 		g_free(nodever);
 		xmlnode_set_attrib(iq->node, "to", who);
+
+		cbplususerdata_ref(userdata);
 
 		jabber_iq_set_callback(iq, jabber_caps_client_iqcb, userdata);
 		jabber_iq_send(iq);
@@ -669,6 +692,10 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	}
 
 	if (userdata->info && userdata->extOutstanding == 0) {
+		/* Start with 1 ref so the below functions are happy */
+		userdata->ref = 1;
+
+		/* We have everything we need right now */
 		jabber_caps_get_info_complete(userdata);
 		cbplususerdata_unref(userdata);
 	}

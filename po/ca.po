@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-06 22:44+0200\n"
-"PO-Revision-Date: 2009-06-06 22:51+0200\n"
+"POT-Creation-Date: 2009-06-25 21:33+0200\n"
+"PO-Revision-Date: 2009-06-25 21:44+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -4254,8 +4254,9 @@ msgstr "ID de l'XMPP invàlid"
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "L'ID de l'XMPP no és vàlid. Cal especificar un domini."
 
-msgid "Malformed BOSH Connect Server"
-msgstr ""
+# FIX
+msgid "Malformed BOSH URL"
+msgstr "L'URL BOSH està malmès"
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4322,6 +4323,9 @@ msgstr "Registra un compte nou a %s"
 
 msgid "Change Registration"
 msgstr "Canvia el registre"
+
+msgid "Malformed BOSH Connect Server"
+msgstr "La connexió al servidor BOSH està malmesa"
 
 msgid "Error unregistering account"
 msgstr "S'ha produït un error en cancel·lar el registre"
@@ -4460,7 +4464,7 @@ msgstr "No s'ha trobat l'element"
 
 # FIX
 msgid "Malformed XMPP ID"
-msgstr "l'ID de l'XMPP està malmès"
+msgstr "L'ID de l'XMPP està malmès"
 
 msgid "Not Acceptable"
 msgstr "No és acceptable"
@@ -4766,6 +4770,9 @@ msgstr "Servidor al qual connectar-se"
 
 msgid "File transfer proxies"
 msgstr "Servidors intermediari per a la transferència de fitxers"
+
+msgid "BOSH URL"
+msgstr "URL BOSH"
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5524,32 +5531,6 @@ msgstr "Error desconegut (%d)"
 msgid "The following users are missing from your addressbook"
 msgstr "Manquen aquests usuaris a la vostra llista d'amics"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "No s'ha pogut afegir l'usuari a %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "No s'ha pogut blocar l'usuari %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "No s'ha pogut permetre l'usuari %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "No s'ha pogut afegir %s perquè la llista és plena."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s no és un compte de passaport vàlid."
-
-msgid "Service Temporarily Unavailable."
-msgstr "El servei no està disponible temporalment."
-
-msgid "Unknown error."
-msgstr "Error desconegut."
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "No s'ha enviat el missatge al mòbil perquè era massa llarg."
 
@@ -5644,6 +5625,9 @@ msgid ""
 msgstr ""
 "La llista d'amics MSN està temporalment no disponible. Espereu i proveu-ho "
 "més tard."
+
+msgid "Unknown error."
+msgstr "Error desconegut."
 
 msgid "Handshaking"
 msgstr "S'està comprovant la conformitat de connexió"
@@ -5746,6 +5730,29 @@ msgstr "%s no és un nom de grup vàlid"
 msgid "%s on %s (%s)"
 msgstr "%s a %s (%s)"
 
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "No s'ha pogut afegir l'usuari a %s (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "No s'ha pogut blocar l'usuari %s (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "No s'ha pogut permetre l'usuari %s (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "No s'ha pogut afegir %s perquè la llista és plena."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s no és un compte de passaport vàlid."
+
+msgid "Service Temporarily Unavailable."
+msgstr "El servei no està disponible temporalment."
+
 msgid "Unable to rename group"
 msgstr "No s'ha pogut canviar el nom del grup"
 
@@ -5843,14 +5850,16 @@ msgstr "S'ha produït un error en el protocol amb codi %d: %s"
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
-"%s La vostra contrasenya conté %d caràcters, més del màxim de %d que permet "
-"MySpaceIM. Escolliu una contrasenya més curta a http://profileedit.myspace."
-"com/index.cfm?fuseaction=accountSettings.changePassword i proveu-ho de nou."
+"%s La vostra contrasenya conté %zu caràcters, més %d que és el màxim permès. "
+"Escolliu una contrasenya més curta a http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword i proveu-ho de nou."
+
+msgid "Incorrect username or password"
+msgstr "El sobrenom o la contrasenya no són correctes"
 
 msgid "MySpaceIM Error"
 msgstr "S'ha produït un error en el MySpaceIM"
@@ -6173,9 +6182,6 @@ msgstr "No es pot afegir a un mateix"
 
 msgid "Master archive is misconfigured"
 msgstr "L'arxiu mestre està desconfigurat"
-
-msgid "Incorrect username or password"
-msgstr "El sobrenom o la contrasenya no són correctes"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "No s'ha pogut reconèixer l'ordinador del nom d'usuari que heu entrat"
@@ -6707,58 +6713,6 @@ msgstr ""
 "començar amb una lletra i contenir només lletres, nombres o espais, o només "
 "nombres."
 
-#. Unregistered username
-#. uid is not exist
-msgid "Invalid username."
-msgstr "El nom d'usuari no és vàlid"
-
-msgid "Incorrect password."
-msgstr "La contrasenya no és correcta."
-
-#. Suspended account
-msgid "Your account is currently suspended."
-msgstr "El vostre compte està actualment suspès."
-
-#. service temporarily unavailable
-msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr ""
-"El servei de missatges instantanis d'AOL no està disponible temporalment."
-
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"Heu estat connectant-vos i desconnectat-vos amb massa freqüència. Espereu "
-"deu minuts i intenteu-ho de nou. Si continueu intentant-ho, haureu d'esperar "
-"encara més temps."
-
-#, c-format
-msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "La versió del client que useu és massa antiga, actualitzeu-la a %s"
-
-msgid "Could Not Connect"
-msgstr "No s'ha pogut connectar"
-
-msgid "Received authorization"
-msgstr "S'ha rebut l'autorització"
-
-msgid "The SecurID key entered is invalid."
-msgstr "La clau SecurID que heu entrat no és vàlida."
-
-msgid "Enter SecurID"
-msgstr "Introduïu el SecureID"
-
-msgid "Enter the 6 digit number from the digital display."
-msgstr "Introduïu el nombre de 6 dígits de la pantalla digital."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_D'acord"
-
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -6777,6 +6731,66 @@ msgstr ""
 
 msgid "Unable to get a valid login hash."
 msgstr "No s'ha pogut obtenir un hash d'entrada vàlid."
+
+msgid "Could Not Connect"
+msgstr "No s'ha pogut connectar"
+
+msgid "Received authorization"
+msgstr "S'ha rebut l'autorització"
+
+#. Unregistered username
+#. uid is not exist
+msgid "Invalid username."
+msgstr "El nom d'usuari no és vàlid"
+
+msgid "Incorrect password."
+msgstr "La contrasenya no és correcta."
+
+#. Suspended account
+msgid "Your account is currently suspended."
+msgstr "El vostre compte està actualment suspès."
+
+#. service temporarily unavailable
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr ""
+"El servei de missatges instantanis d'AOL no està disponible temporalment."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Heu estat connectant-vos i desconnectat-vos amb massa freqüència. Espereu "
+"deu minuts i intenteu-ho de nou. Si continueu intentant-ho, haureu d'esperar "
+"encara més temps."
+
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr "La versió del client que useu és massa antiga, actualitzeu-la a %s"
+
+#. IP address connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Heu estat connectant-vos i desconnectat-vos amb massa freqüència. Espereu un "
+"minut i intenteu-ho de nou. Si continueu intentant-ho, haureu d'esperar "
+"encara més temps."
+
+msgid "The SecurID key entered is invalid."
+msgstr "La clau SecurID que heu entrat no és vàlida."
+
+msgid "Enter SecurID"
+msgstr "Introduïu el SecureID"
+
+msgid "Enter the 6 digit number from the digital display."
+msgstr "Introduïu el nombre de 6 dígits de la pantalla digital."
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_D'acord"
 
 msgid "Password sent"
 msgstr "S'ha enviat la contrasenya"
@@ -7282,6 +7296,7 @@ msgstr "C_erca"
 msgid "Set User Info (web)..."
 msgstr "Estableix informació d'usuari (web)..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "Canvia la contrasenya (web)"
 
@@ -7310,6 +7325,9 @@ msgstr "Cerca un amic per l'adreça de correu..."
 
 msgid "Search for Buddy by Information"
 msgstr "Cerca un amic per la informació"
+
+msgid "Use clientLogin"
+msgstr "Empra clientLogin"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"

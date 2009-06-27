@@ -557,7 +557,10 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 						gtk_tree_store_remove(treemodel, &iter);
 						advanced = (iter.stamp == 0) ? FALSE : TRUE;
 #endif
-						purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
+						if (data->purple_has_handle)
+							purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
+						else
+							pidgin_close_notify(PURPLE_NOTIFY_EMAILS, data);
 						/* We're completely done if we've processed all entries */
 						if (!advanced)
 							return NULL;
@@ -612,7 +615,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	char *notification;
 	PurpleAccount *account;
 	PidginNotifyMailData *data = NULL, *data2;
-	gboolean new_data;
+	gboolean new_data = FALSE;
 
 	/* Don't bother updating if there aren't new emails and we don't have any displayed currently */
 	if (count == 0 && mail_dialog == NULL)
@@ -660,7 +663,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 
 			/* If we don't keep track of this, will leak "data" for each of the notifications except the last */
 			data2 = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0, FALSE, &new_data);
-			if (new_data) {
+			if (data2 && new_data) {
 				if (data)
 					data->purple_has_handle = FALSE;
 				data = data2;
@@ -677,7 +680,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 							   (int)count),
 							   *tos, (int)count);
 			data2 = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count, FALSE, &new_data);
-			if (new_data) {
+			if (data2 && new_data) {
 				if (data)
 					data->purple_has_handle = FALSE;
 				data = data2;
