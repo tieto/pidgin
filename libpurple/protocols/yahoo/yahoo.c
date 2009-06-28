@@ -834,6 +834,7 @@ struct _yahoo_im {
 	int buddy_icon;
 	char *id;
 	char *msg;
+	gboolean msn;
 };
 
 static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -907,8 +908,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	struct _yahoo_im *im = NULL;
 	const char *imv = NULL;
 	gint val_11 = 0;
-	gboolean msn = FALSE;
-	char *msn_from = NULL;
 
 	account = purple_connection_get_account(gc);
 
@@ -938,9 +937,9 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				if (im)
 					im->msg = pair->value;
 			}
-			if (pair->key == 241) {
+			if (im && pair->key == 241) {
 				if(strtol(pair->value, NULL, 10) == 2)
-					msn = TRUE;
+					im->msn = TRUE;
 			}
 			/* peer session id */
 			if (pair->key == 11) {
@@ -961,9 +960,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_notify_error(gc, NULL,
 		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
-
-	if(msn)
-		msn_from = g_strconcat("msn/", im->from, NULL);
 
 	/* disconnect the peer if connected through p2p and sends wrong value for session id */
 	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
@@ -1009,6 +1005,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	for (l = list; l; l = l->next) {
 		YahooFriend *f;
 		char *m, *m2;
+		char *msn_from = NULL;
+		const char *from;
 		PurpleConversation *c;
 		im = l->data;
 
@@ -1054,24 +1052,22 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		m = m2;
 		purple_util_chrreplace(m, '\r', '\n');
 
-		c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->from, account);
-		if ((c == NULL) && msn)
-			c=purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, msn_from, account);
+		if (im->msn) {
+			msn_from = g_strconcat("msn/", im->from, NULL);
+			from = msn_from;
+		} else {
+			from = im->from;
+		}
+
+		c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, account);
 
 		if (!strcmp(m, "<ding>")) {
 			char *username;
 
-			if(c == NULL) {
-				if(msn)
-					c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, msn_from);
-				else
-					c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
+			if (c == NULL) {
+				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, from);
 			}
-			if(msn)
-				username = g_markup_escape_text(msn_from, -1);
-			else
-				username = g_markup_escape_text(im->from, -1);
-
+			username = g_markup_escape_text(from, -1);
 			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
@@ -1083,15 +1079,11 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		m2 = yahoo_codes_to_html(m);
 		g_free(m);
 
-		if(msn)
-			serv_got_im(gc, msn_from, m2, 0, im->time);
-		else
-			serv_got_im(gc, im->from, m2, 0, im->time);
-
+		serv_got_im(gc, from, m2, 0, im->time);
 		g_free(m2);
 
 		/* laters : implement buddy icon for msn friends */
-		if(!msn) {
+		if (!im->msn) {
 			if ((f = yahoo_friend_find(gc, im->from)) && im->buddy_icon == 2) {
 				if (yahoo_friend_get_buddy_icon_need_request(f)) {
 					yahoo_send_picture_request(gc, im->from);
