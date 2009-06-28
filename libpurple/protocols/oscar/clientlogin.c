@@ -138,7 +138,7 @@ static gchar *generate_signature(const char *method, const char *url, const char
 static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const gchar *response, gsize response_len, char **host, unsigned short *port, char **cookie)
 {
 	xmlnode *response_node, *tmp_node, *data_node;
-	xmlnode *host_node, *port_node, *cookie_node;
+	xmlnode *host_node = NULL, *port_node = NULL, *cookie_node = NULL;
 	char *tmp;
 
 	/* Parse the response as XML */
@@ -321,7 +321,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *response, gsize response_len, char **token, char **secret, time_t *hosttime)
 {
 	xmlnode *response_node, *tmp_node, *data_node;
-	xmlnode *secret_node, *hosttime_node, *token_node, *tokena_node;
+	xmlnode *secret_node = NULL, *hosttime_node = NULL, *token_node = NULL, *tokena_node = NULL;
 	char *tmp;
 
 	/* Parse the response as XML */
