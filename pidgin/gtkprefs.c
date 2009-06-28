@@ -650,8 +650,10 @@ purple_theme_file_copy(const gchar *source, const gchar *destination)
 
     if(!(src = g_fopen(source, "rb")))
         return FALSE;
-    if(!(dest = g_fopen(destination, "wb")))
+    if(!(dest = g_fopen(destination, "wb"))) {
+		fclose(src);
         return FALSE;
+	}
 
     while((chr = fgetc(src)) != EOF) {
         fputc(chr, dest);
