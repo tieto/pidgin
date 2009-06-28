@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-11 12:42+0200\n"
-"PO-Revision-Date: 2009-06-11 12:40+0200\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2009-06-28 11:42+0200\n"
+"PO-Revision-Date: 2009-06-28 11:42+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3221,9 +3221,8 @@ msgstr "Beliebter polnischer IM-Dienst"
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu-Benutzer"
 
-#, fuzzy
 msgid "GG server"
-msgstr "Hole server"
+msgstr "GG-Server"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3473,9 +3472,8 @@ msgstr ""
 msgid "The nickname \"%s\" is already being used."
 msgstr "Der Spitzname „%s“ existiert bereits."
 
-#, fuzzy
 msgid "Nickname in use"
-msgstr "Spitzname"
+msgstr "Spitzname wird benutzt"
 
 msgid "Cannot change nick"
 msgstr "Kann den Spitznamen nicht ändern"
@@ -4022,7 +4020,6 @@ msgstr "Ressource"
 msgid "%s ago"
 msgstr "vor %s"
 
-#, fuzzy
 msgid "Logged off"
 msgstr "Abgemeldet"
 
@@ -4223,8 +4220,8 @@ msgstr "Ungültige XMPP-ID"
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Falsche XMPP-ID. Die Domain muss gesetzt werden."
 
-msgid "Malformed BOSH Connect Server"
-msgstr ""
+msgid "Malformed BOSH URL"
+msgstr "Fehlerhafte BOSH-URL"
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4295,6 +4292,9 @@ msgstr "Registrierung eines neuen Kontos von %s"
 
 msgid "Change Registration"
 msgstr "Ändere Registrierung"
+
+msgid "Malformed BOSH Connect Server"
+msgstr "Fehlerhafter BOSH-Verbindungsserver"
 
 msgid "Error unregistering account"
 msgstr "Fehler beim Aufheben der Kontenregistrierung"
@@ -4739,6 +4739,9 @@ msgstr "Verbindungsserver"
 
 msgid "File transfer proxies"
 msgstr "Proxys für Dateiübertragungen"
+
+msgid "BOSH URL"
+msgstr "BOSH-URL"
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5771,15 +5774,17 @@ msgstr "Protokollfehler, Code %d: %s"
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
-"%s Ihr Passwort hat %d Buchstaben, mehr als die erwartete maximale Länge von "
-"%d für MySpaceIM. Bitte kürzen Sie ihr Passwort unter http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword und "
-"versuchen Sie es erneut."
+"%s Ihr Passwort hat %zu Buchstaben, mehr als die erwartete maximale Länge "
+"von %d.  Bitte kürzen Sie ihr Passwort unter http://profileedit.myspace.com/"
+"index.cfm?fuseaction=accountSettings.changePassword und versuchen Sie es "
+"erneut."
+
+msgid "Incorrect username or password"
+msgstr "Ungültiger Benutzername oder Passwort"
 
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM-Fehler"
@@ -6099,9 +6104,6 @@ msgstr "Kann Sie nicht selbst hinzufügen"
 
 msgid "Master archive is misconfigured"
 msgstr "Master-Archiv ist falsch konfiguriert"
-
-msgid "Incorrect username or password"
-msgstr "Ungültiger Benutzername oder Passwort"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr ""
@@ -6633,6 +6635,29 @@ msgstr ""
 "sein oder mit einem Buchstaben beginnen und nur Buchstaben, Ziffern und "
 "Leerzeichen enthalten oder nur aus Ziffern bestehen."
 
+#, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr ""
+"Sie werden eventuell gleich abgemeldet. In diesem Fall, überprüfen Sie %s "
+"auf Updates."
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "Konnte keinen gültigen AIM Login-Hash bekommen."
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr ""
+"Sie wurden in kurzer Zeit abgemeldet.  Überprüfen Sie %s wegen Updates."
+
+msgid "Unable to get a valid login hash."
+msgstr "Konnte keinen gültigen Login-Hash bekommen."
+
+msgid "Could Not Connect"
+msgstr "Verbinden nicht möglich"
+
+msgid "Received authorization"
+msgstr "Autorisierung empfangen"
+
 #. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
@@ -6650,7 +6675,6 @@ msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Der AOL-Sofortnachrichtendienst ist zur Zeit nicht erreichbar."
 
 #. username connecting too frequently
-#. IP address connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6664,11 +6688,14 @@ msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 "Die Client-Version, die Sie nutzen ist zu alt. Bitte updaten Sie unter %s"
 
-msgid "Could Not Connect"
-msgstr "Verbinden nicht möglich"
-
-msgid "Received authorization"
-msgstr "Autorisierung empfangen"
+#. IP address connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Sie haben sich zu schnell an- und abgemeldet. Warten Sie eine Minute und "
+"versuchen Sie es noch einmal. Wenn Sie es weiterversuchen, müssen Sie sogar "
+"noch länger warten."
 
 msgid "The SecurID key entered is invalid."
 msgstr "Der eingegebene SecurID-Schlüssel ist falsch."
@@ -6684,23 +6711,6 @@ msgstr "Geben Sie die 6-stellige Nummer vom Digital-Display ein."
 #.
 msgid "_OK"
 msgstr "_OK"
-
-#, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr ""
-"Sie werden eventuell gleich abgemeldet. In diesem Fall, überprüfen Sie %s "
-"auf Updates."
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "Konnte keinen gültigen AIM Login-Hash bekommen."
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-"Sie wurden in kurzer Zeit abgemeldet.  Überprüfen Sie %s wegen Updates."
-
-msgid "Unable to get a valid login hash."
-msgstr "Konnte keinen gültigen Login-Hash bekommen."
 
 msgid "Password sent"
 msgstr "Passwort gesendet"
@@ -7233,6 +7243,7 @@ msgstr "_Suchen"
 msgid "Set User Info (web)..."
 msgstr "Benutzer-Info (Web) setzen..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "Ändere Passwort (Web)"
 
@@ -7261,6 +7272,9 @@ msgstr "Suche Buddys nach E-Mail-Adresse..."
 
 msgid "Search for Buddy by Information"
 msgstr "Suche Buddy nach Information"
+
+msgid "Use clientLogin"
+msgstr "clientLogin benutzen"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9574,26 +9588,26 @@ msgid "Incorrect Password"
 msgstr "Falsches Passwort"
 
 #. security lock from too many failed login attempts
-#, fuzzy
 msgid ""
 "Account locked: Too many failed login attempts.\n"
 "Logging into the Yahoo! website may fix this."
 msgstr ""
-"Unbekannte Fehlernummer %d. Vielleicht kann dies repariert werden, wenn Sie "
-"sich auf der Yahoo! Webseite anmelden."
+"Konto gesperrt: Zu viele fehlgeschlagene Login-Versuche\n"
+"Eventuell können Sie dies beheben, wenn Sie sich auf der Yahoo!-Webseite "
+"anmelden."
 
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "Benutzername existiert nicht"
 
 #. indicates a lock of some description
-#, fuzzy
 msgid ""
 "Account locked: Unknown reason.\n"
 "Logging into the Yahoo! website may fix this."
 msgstr ""
-"Unbekannte Fehlernummer %d. Vielleicht kann dies repariert werden, wenn Sie "
-"sich auf der Yahoo! Webseite anmelden."
+"Konto gesperrt: Unbekannter Grund\n"
+" Eventuell können Sie dies beheben, wenn Sie sich auf der Yahoo!-Webseite "
+"anmelden."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -9713,8 +9727,8 @@ msgstr "Anwesenheitseinstellungen"
 msgid "Start Doodling"
 msgstr "Anfangen zu malen"
 
-msgid "Activate which ID?"
-msgstr "Welche ID aktivieren?"
+msgid "Select the ID you want to activate"
+msgstr "Wählen Sie die ID die Sie aktivieren möchten"
 
 msgid "Join whom in chat?"
 msgstr "Wen wollen Sie zum Chat einladen?"
@@ -12516,8 +12530,11 @@ msgstr "Eine Nachricht senden"
 msgid "Unknown.... Please report this!"
 msgstr "Unbekannt.... Bitte berichten Sie dieses Problem!"
 
-msgid "Smiley theme failed to unpack."
-msgstr "Smiley-Thema konnte nicht entpackt werden."
+msgid "Theme failed to unpack."
+msgstr "Thema konnte nicht entpackt werden."
+
+msgid "Theme failed to load."
+msgstr "Thema konnte nicht geladen werden."
 
 msgid "Install Theme"
 msgstr "Thema installieren"
@@ -13826,7 +13843,6 @@ msgstr "Farbe für besuchte Hyperlinks"
 msgid "Highlighted Message Name Color"
 msgstr "Farbe des Absendernamens für hervorgehobene Nachrichten"
 
-#, fuzzy
 msgid "Typing Notification Color"
 msgstr "Farbe der Tipp-Benachrichtigung"
 
@@ -13862,19 +13878,17 @@ msgstr "GTK+ Text Shortcut-Thema"
 msgid "Disable Typing Notification Text"
 msgstr "Tipp-Benachrichtigung aktivieren"
 
-#, fuzzy
 msgid "GTK+ Theme Control Settings"
-msgstr "Pidgin GTK+ Themenkontrolle"
+msgstr "Themenkontroll-Einstellungen für GTK+"
 
-#, fuzzy
 msgid "Colors"
-msgstr "Schließen"
+msgstr "Farben"
 
 msgid "Fonts"
 msgstr "Schrift"
 
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 msgid "Gtkrc File Tools"
 msgstr "Gtkrc-Datei-Werkzeuge"
