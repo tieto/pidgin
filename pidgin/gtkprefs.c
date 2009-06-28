@@ -641,6 +641,28 @@ prefs_theme_find_theme(const gchar *path, const gchar *type)
 	return theme;
 }
 
+/* Eww. Seriously ewww. But thanks, grim! This is taken from guifications2 */
+static gboolean
+purple_theme_file_copy(const gchar *source, const gchar *destination)
+{
+    FILE *src, *dest;
+    gint chr = EOF;
+
+    if(!(src = g_fopen(source, "rb")))
+        return FALSE;
+    if(!(dest = g_fopen(destination, "wb")))
+        return FALSE;
+
+    while((chr = fgetc(src)) != EOF) {
+        fputc(chr, dest);
+    }
+
+    fclose(dest);
+    fclose(src);
+
+    return TRUE;
+}
+
 /* installs a theme, info is freed by function */
 static void
 theme_install_theme(char *path, struct theme_info *info) {
@@ -687,7 +709,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 		gchar *destdir_escaped = g_shell_quote(destdir);
 
 		if (!g_file_test(destdir, G_FILE_TEST_IS_DIR))
-			g_mkdir_with_parents(destdir, 0700);
+			purple_build_dir(destdir, S_IRUSR | S_IWUSR | S_IXUSR);
 
 		command = g_strdup_printf("tar > /dev/null xzf %s -C %s", path_escaped, destdir_escaped);
 		g_free(path_escaped);
@@ -735,7 +757,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 						 "purple", type, NULL);
 
 			if (!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
-				g_mkdir_with_parents(theme_dest, 0700);
+				purple_build_dir(theme_dest, S_IRUSR | S_IWUSR | S_IXUSR);
 
 			g_free(theme_dest);
 			theme_dest = g_build_filename(purple_user_dir(), "themes",
@@ -758,10 +780,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 		}
 
 	} else { /* just a single file so copy it to a new temp directory and attempt to load it*/
-		GFile *source, *destination;
 		gchar *temp_path, *temp_file;
-
-		source = g_file_new_for_path(path);
 
 		temp_path = g_build_filename(purple_user_dir(), "themes", "temp", "sub_folder", NULL);
 
@@ -770,51 +789,38 @@ theme_install_theme(char *path, struct theme_info *info) {
 			temp_file = g_build_filename(temp_path, original_name, NULL);
 
 		} else {
-			/* find the file name and name the new file the same thing */
-			GFileInfo* file_info = g_file_query_info (source,
-	                               		G_FILE_ATTRIBUTE_STANDARD_NAME,
-	                               		G_FILE_QUERY_INFO_NONE,
-	                               		NULL,
-	                               		NULL);
-
-			const gchar *source_name = g_file_info_get_content_type(file_info);
-
+			gchar *source_name = g_path_get_basename(path);
 			temp_file = g_build_filename(temp_path, source_name, NULL);
-
-			g_object_unref(file_info);
+			g_free(source_name);
 		}
 
-		destination = g_file_new_for_path(temp_file);
-
 		if (!g_file_test(temp_path, G_FILE_TEST_IS_DIR))
-			g_mkdir_with_parents(temp_path, 0700);
+			purple_build_dir(temp_path, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		g_file_copy(source, destination, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, NULL);
+		if (purple_theme_file_copy(path, temp_file)) {
+			/* find the theme, could be in subfolder */
+			theme = prefs_theme_find_theme(temp_path, type);
 
-		g_object_unref(source);
-		g_object_unref(destination);
+			if (PURPLE_IS_THEME(theme)) {
+				gchar *theme_dest = g_build_filename(purple_user_dir(), "themes",
+							 purple_theme_get_name(theme),
+							 "purple", type, NULL);
 
-		/* find the theme, could be in subfolder */
-		theme = prefs_theme_find_theme(temp_path, type);
+				if(!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
+					purple_build_dir(theme_dest, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		if (PURPLE_IS_THEME(theme)) {
-			gchar *theme_dest = g_build_filename(purple_user_dir(), "themes",
-						 purple_theme_get_name(theme),
-						 "purple", type, NULL);
+				g_rename(purple_theme_get_dir(theme), theme_dest);
 
-			if(!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
-				g_mkdir_with_parents(theme_dest, 0700);
+				g_free(theme_dest);
+				g_object_unref(theme);
 
-			g_rename(purple_theme_get_dir(theme), theme_dest);
-
-			g_free(theme_dest);
-			g_object_unref(theme);
-
-			prefs_themes_refresh();
-
+				prefs_themes_refresh();
+			} else {
+				g_remove(temp_path);
+				purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL);
+			}
 		} else {
-			g_remove(temp_path);
-			purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL);
+			purple_notify_error(NULL, NULL, _("Theme failed to copy."), NULL);
 		}
 
 		g_free(temp_file);
