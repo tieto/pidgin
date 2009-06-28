@@ -1129,7 +1129,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 				/* set->buddy is always set below */
 				set->normalized_name = g_strdup(purple_normalize(account, name));
 
-				/* Chat for .chat or .system at the end of the name to determine the type. */
+				/* Check for .chat or .system at the end of the name to determine the type. */
 				if (len >= 7) {
 					gchar *tmp = &name[len - 7];
 					if (purple_strequal(tmp, ".system")) {

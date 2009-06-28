@@ -1563,30 +1563,6 @@ if test "$enable_perl" = yes ; then
 			AC_MSG_RESULT(no)
 		fi
 
-		if test "x$prefix" != "xNONE"; then
-			prefix=`eval echo $prefix`
-			PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$prefix"
-		fi
-
-		AC_ARG_WITH(perl-lib,
-		[AC_HELP_STRING([--with-perl-lib=[site|vendor|DIR]],
-			[specify where to install the Perl libraries for pidgin. Default is site.])],
-		[
-			if test "x$withval" = xsite; then
-				PERL_MM_PARAMS=""
-			elif test "x$withval" = xvendor; then
-				if test -z "`$perlpath -v | grep '5\.0'`"; then
-					PERL_MM_PARAMS="INSTALLDIRS=vendor"
-				else
-					PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
-				fi
-			else
-				PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$withval"
-			fi
-		])
-
-		AC_SUBST(PERL_MM_PARAMS)
-
 		AC_MSG_CHECKING(for DynaLoader.a)
 		DYNALOADER_A=`echo $PERL_LDFLAGS | $perlpath -pe 's/^(.* )*([[^ ]]*DynaLoader\.a).*/\2/'`
 
