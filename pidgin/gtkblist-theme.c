@@ -124,6 +124,9 @@ pidgin_theme_font_free(PidginThemeFont *pair)
 static PidginThemeFont *
 copy_font_and_color(const PidginThemeFont *pair)
 {
+	if (pair == NULL)
+		return NULL;
+
 	PidginThemeFont *copy = g_new0(PidginThemeFont, 1);
 	copy->font  = g_strdup(pair->font);
 	strncpy(copy->color, pair->color, sizeof(copy->color) - 1);

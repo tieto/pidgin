@@ -24,6 +24,8 @@
 #include <string.h>
 
 #include "xmlnode.h"
+#include "debug.h"
+#include "util.h"
 
 #include "gtkblist-theme-loader.h"
 #include "gtkblist-theme.h"
@@ -58,8 +60,8 @@ static PurpleTheme *
 pidgin_blist_loader_build(const gchar *dir)
 {
 	xmlnode *root_node = NULL, *sub_node, *sub_sub_node;
-	gchar *filename_full, *data;
-	const gchar *temp;
+	gchar *filename_full, *data = NULL;
+	const gchar *temp, *name;
 	gboolean success = TRUE;
 	GdkColor bgcolor, expanded_bgcolor, collapsed_bgcolor, contact_color;
 	PidginThemeFont *expanded, *collapsed, *contact, *online, *away, *offline, *idle, *message, *message_nick_said, *status;
@@ -100,58 +102,81 @@ pidgin_blist_loader_build(const gchar *dir)
 		root_node = xmlnode_from_file(dir, "theme.xml", "buddy list themes", "blist-loader");
 
 	g_free(filename_full);
-	g_return_val_if_fail(root_node != NULL, NULL);
+	if (root_node == NULL)
+		return NULL;
 
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
 
+	name = xmlnode_get_attrib(root_node, "name");
+
 	/* <blist> */
-	if ((success = (sub_node = xmlnode_get_child(root_node, "blist")) != NULL)) {
-		if ((temp = xmlnode_get_attrib(sub_node, "color")) != NULL && gdk_color_parse(temp, &bgcolor))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), &bgcolor, FALSE, TRUE);
-		else
-			memset(&bgcolor, 0, sizeof(GdkColor));
+	success = name && purple_strequal(xmlnode_get_attrib(root_node, "type"), "pidgin buddy list");
+
+	if (!success)
+		purple_debug_warning("gtkblist-theme-loader", "Missing attribute or problem with the root element\n");
+
+	if (success) {
+		if ((success = (sub_node = xmlnode_get_child(root_node, "blist")) != NULL)) {
+
+			if ((temp = xmlnode_get_attrib(sub_node, "color")) != NULL && gdk_color_parse(temp, &bgcolor))
+				gdk_colormap_alloc_color(gdk_colormap_get_system(), &bgcolor, FALSE, TRUE);
+			else
+				memset(&bgcolor, 0, sizeof(GdkColor));
+
+		} else purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <blist>.\n");
 	}
 
 	/* <groups> */
-	if ((success = (success && (sub_node = xmlnode_get_child(root_node, "groups")) != NULL
-		     && (sub_sub_node = xmlnode_get_child(sub_node, "expanded")) != NULL)))
-	{
-		expanded = pidgin_theme_font_parse(sub_sub_node);
+	if (success) {
+		if ((success = (sub_node = xmlnode_get_child(root_node, "groups")) != NULL
+			     && (sub_sub_node = xmlnode_get_child(sub_node, "expanded")) != NULL)) {
+			expanded = pidgin_theme_font_parse(sub_sub_node);
 
-		if ((temp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(temp, &expanded_bgcolor))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), &expanded_bgcolor, FALSE, TRUE);
-		else
-			memset(&expanded_bgcolor, 0, sizeof(GdkColor));
+			if ((temp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(temp, &expanded_bgcolor))
+				gdk_colormap_alloc_color(gdk_colormap_get_system(), &expanded_bgcolor, FALSE, TRUE);
+			else
+				memset(&expanded_bgcolor, 0, sizeof(GdkColor));
+
+		} else purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <groups> <expanded>.\n");
 	}
 
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL)))
-	{
-		collapsed = pidgin_theme_font_parse(sub_sub_node);
+	if (success) {
+		if ((success = sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL)) {
 
-		if ((temp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(temp, &collapsed_bgcolor))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), &collapsed_bgcolor, FALSE, TRUE);
-		else
-			memset(&collapsed_bgcolor, 0, sizeof(GdkColor));
+			collapsed = pidgin_theme_font_parse(sub_sub_node);
+
+			if ((temp = xmlnode_get_attrib(sub_sub_node, "background")) != NULL && gdk_color_parse(temp, &collapsed_bgcolor))
+				gdk_colormap_alloc_color(gdk_colormap_get_system(), &collapsed_bgcolor, FALSE, TRUE);
+			else
+				memset(&collapsed_bgcolor, 0, sizeof(GdkColor));
+
+		} else purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <groups> <collapsed>.\n");
 	}
 
 	/* <buddys> */
-	if ((success = (success && (sub_node = xmlnode_get_child(root_node, "buddys")) != NULL &&
-		     (sub_sub_node = xmlnode_get_child(sub_node, "placement")) != NULL)))
-	{
-		layout.status_icon = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) : 0;
-		layout.text = (temp = xmlnode_get_attrib(sub_sub_node, "name")) != NULL ? atoi(temp) : 1;
-		layout.emblem = (temp = xmlnode_get_attrib(sub_sub_node, "emblem")) != NULL ? atoi(temp) : 2;
-		layout.protocol_icon = (temp = xmlnode_get_attrib(sub_sub_node, "protocol_icon")) != NULL ? atoi(temp) : 3;
-		layout.buddy_icon = (temp = xmlnode_get_attrib(sub_sub_node, "buddy_icon")) != NULL ? atoi(temp) : 4;
-		layout.show_status = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) != 0 : 1;
+	if (success) {
+		if ((success = (sub_node = xmlnode_get_child(root_node, "buddys")) != NULL &&
+			     (sub_sub_node = xmlnode_get_child(sub_node, "placement")) != NULL)) {
+
+			layout.status_icon = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) : 0;
+			layout.text = (temp = xmlnode_get_attrib(sub_sub_node, "name")) != NULL ? atoi(temp) : 1;
+			layout.emblem = (temp = xmlnode_get_attrib(sub_sub_node, "emblem")) != NULL ? atoi(temp) : 2;
+			layout.protocol_icon = (temp = xmlnode_get_attrib(sub_sub_node, "protocol_icon")) != NULL ? atoi(temp) : 3;
+			layout.buddy_icon = (temp = xmlnode_get_attrib(sub_sub_node, "buddy_icon")) != NULL ? atoi(temp) : 4;
+			layout.show_status = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) != 0 : 1;
+
+		} else purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <buddys> <placement>.\n");
 	}
 
-	if ((success = (success && sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "background")) != NULL))) {
-		if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), &contact_color))
-			gdk_colormap_alloc_color(gdk_colormap_get_system(), &contact_color, FALSE, TRUE);
-		else
-			memset(&contact_color, 0, sizeof(GdkColor));
+	if (success) {
+		if ((success = (sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "background")) != NULL))) {
+			if(gdk_color_parse(xmlnode_get_attrib(sub_sub_node, "color"), &contact_color))
+				gdk_colormap_alloc_color(gdk_colormap_get_system(), &contact_color, FALSE, TRUE);
+			else
+				memset(&contact_color, 0, sizeof(GdkColor));
+
+		} purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <buddys> <background>.\n");
 	}
 
 	for (i = 0; success && lookups[i].tag; i++) {
@@ -169,7 +194,7 @@ pidgin_blist_loader_build(const gchar *dir)
 	/* the new theme */
 	theme = g_object_new(PIDGIN_TYPE_BLIST_THEME,
 			"type", "blist",
-			"name", xmlnode_get_attrib(root_node, "name"),
+			"name", name,
 			"author", xmlnode_get_attrib(root_node, "author"),
 			"image", xmlnode_get_attrib(root_node, "image"),
 			"directory", dir,
