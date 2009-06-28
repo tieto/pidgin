@@ -614,14 +614,14 @@ static void
 prefs_themes_init()
 {
 	prefs_sound_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
-	
+
 	prefs_blist_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
 	prefs_status_icon_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 }
 
 static PurpleTheme *
-prefs_theme_find_theme(const gchar *path, const gchar *type) 
+prefs_theme_find_theme(const gchar *path, const gchar *type)
 {
 	PurpleTheme *theme = purple_theme_manager_load_theme(path, type);
 	GDir *dir = g_dir_open(path, 0, NULL);
@@ -642,17 +642,17 @@ prefs_theme_find_theme(const gchar *path, const gchar *type)
 }
 
 /* installs a theme, info is freed by function */
-static void 
+static void
 theme_install_theme(char *path, struct theme_info *info) {
 #ifndef _WIN32
 	gchar *command;
 #endif
 	gchar *destdir, *tail, *type, *original_name;
-	GtkTreeRowReference *theme_rowref;	
+	GtkTreeRowReference *theme_rowref;
 	gboolean is_smiley_theme, is_archive;
 	PurpleTheme *theme = NULL;
 
-	if (info == NULL) 
+	if (info == NULL)
 		return;
 
 	original_name = info->original_name;
@@ -706,11 +706,11 @@ theme_install_theme(char *path, struct theme_info *info) {
 		if(!winpidgin_gz_untar(path, destdir)) {
 			g_free(destdir);
 			g_free(type);
-			g_free(original_name);			
+			g_free(original_name);
 			return;
 		}
 #endif
-	} 
+	}
 
 	if (is_smiley_theme) {
 		/* just extract the folder to the smiley directory */
@@ -730,7 +730,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 
 		if (PURPLE_IS_THEME(theme)) {
 			/* create the location for the theme */
-			gchar *theme_dest = g_build_filename(purple_user_dir(), "themes", 
+			gchar *theme_dest = g_build_filename(purple_user_dir(), "themes",
 						 purple_theme_get_name(theme),
 						 "purple", type, NULL);
 
@@ -738,7 +738,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 				g_mkdir_with_parents(theme_dest, 0700);
 
 			g_free(theme_dest);
-			theme_dest = g_build_filename(purple_user_dir(), "themes", 
+			theme_dest = g_build_filename(purple_user_dir(), "themes",
 						 purple_theme_get_name(theme),
 						 "purple", type, NULL);
 
@@ -760,7 +760,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 	} else { /* just a single file so copy it to a new temp directory and attempt to load it*/
 		GFile *source, *destination;
 		gchar *temp_path, *temp_file;
-		
+
 		source = g_file_new_for_path(path);
 
 		temp_path = g_build_filename(purple_user_dir(), "themes", "temp", "sub_folder", NULL);
@@ -782,7 +782,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 			temp_file = g_build_filename(temp_path, source_name, NULL);
 
 			g_object_unref(file_info);
-		}		
+		}
 
 		destination = g_file_new_for_path(temp_file);
 
@@ -793,17 +793,17 @@ theme_install_theme(char *path, struct theme_info *info) {
 
 		g_object_unref(source);
 		g_object_unref(destination);
-							
+
 		/* find the theme, could be in subfolder */
 		theme = prefs_theme_find_theme(temp_path, type);
 
 		if (PURPLE_IS_THEME(theme)) {
-			gchar *theme_dest = g_build_filename(purple_user_dir(), "themes", 
+			gchar *theme_dest = g_build_filename(purple_user_dir(), "themes",
 						 purple_theme_get_name(theme),
 						 "purple", type, NULL);
-				
+
 			if(!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
-				g_mkdir_with_parents(theme_dest, 0700);		
+				g_mkdir_with_parents(theme_dest, 0700);
 
 			g_rename(purple_theme_get_dir(theme), theme_dest);
 
@@ -821,7 +821,7 @@ theme_install_theme(char *path, struct theme_info *info) {
 		g_free(temp_path);
 	}
 
-	g_free(type);	
+	g_free(type);
 	g_free(original_name);
 	g_free(destdir);
 }
@@ -866,8 +866,8 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		gchar *temp;
 		struct theme_info *info =  g_new0(struct theme_info, 1);
 		info->type = g_strdup((gchar *)user_data);
-		info->extension = g_strdup(g_strrstr(name,".")); 	
-		temp = g_strrstr(name, "/"); 
+		info->extension = g_strdup(g_strrstr(name,"."));
+		temp = g_strrstr(name, "/");
 		info->original_name = temp ? g_strdup(++temp) : NULL;
 
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
@@ -903,7 +903,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);
 	}
-	
+
 	gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
@@ -1014,7 +1014,7 @@ request_theme_file_name_cb(gpointer data, char *theme_file_name)
 	info->type = g_strdup("smiley");
 	info->extension = NULL;
 	info->original_name = NULL;
-	
+
 	theme_install_theme(theme_file_name, info) ;
 
 	g_free(info);
@@ -1366,10 +1366,10 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	if(gtk_combo_box_get_active_iter(combo_box, &iter)) {
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
-		
+
 		if(!name || !g_str_equal(name, ""))
 			theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
-		
+
 		g_free(name);
 
 		pidgin_blist_set_theme(theme);
@@ -1390,7 +1390,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 		if(!name || !g_str_equal(name, ""))
 			theme = PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(name, "status-icon"));
-		
+
 		g_free(name);
 
 		pidgin_stock_load_status_icon_theme(theme);
@@ -1415,7 +1415,7 @@ interface_page(void)
 	/* Buddy List Themes */
 	vbox = pidgin_make_frame(ret, _("Buddy List Theme"));
 
-	prefs_blist_themes_combo_box = prefs_build_theme_combo_box(prefs_blist_themes, 
+	prefs_blist_themes_combo_box = prefs_build_theme_combo_box(prefs_blist_themes,
 						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"),
 						"blist");
 
@@ -1423,8 +1423,8 @@ interface_page(void)
 	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed", (GCallback)prefs_set_blist_theme_cb, NULL);
 
 	/* Status Icon Themes */
-	prefs_status_themes_combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes, 
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"), 
+	prefs_status_themes_combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes,
+						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"),
 						"icon");
 
 	gtk_box_pack_start(GTK_BOX (vbox), prefs_status_themes_combo_box, FALSE, FALSE, 0);
@@ -1635,25 +1635,25 @@ static void network_ip_changed(GtkEntry *entry, gpointer data)
 	purple_network_set_public_ip(gtk_entry_get_text(entry));
 }
 
-static gboolean network_stun_server_changed_cb(GtkWidget *widget, 
+static gboolean network_stun_server_changed_cb(GtkWidget *widget,
 	GdkEventFocus *event, gpointer data)
 {
 	GtkEntry *entry = GTK_ENTRY(widget);
 	purple_prefs_set_string("/purple/network/stun_server",
 		gtk_entry_get_text(entry));
 	purple_network_set_stun_server(gtk_entry_get_text(entry));
-	
+
 	return FALSE;
 }
 
-static gboolean network_turn_server_changed_cb(GtkWidget *widget, 
+static gboolean network_turn_server_changed_cb(GtkWidget *widget,
 	GdkEventFocus *event, gpointer data)
 {
 	GtkEntry *entry = GTK_ENTRY(widget);
 	purple_prefs_set_string("/purple/network/turn_server",
 		gtk_entry_get_text(entry));
 	purple_network_set_turn_server(gtk_entry_get_text(entry));
-	
+
 	return FALSE;
 }
 
@@ -1827,7 +1827,7 @@ network_page(void)
 
 	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
-	hbox = pidgin_prefs_labeled_entry(vbox, "_Username:", 
+	hbox = pidgin_prefs_labeled_entry(vbox, "_Username:",
 		"/purple/network/turn_username", sg);
 	pidgin_prefs_labeled_password(hbox, "_Password:",
 		"/purple/network/turn_password", NULL);
@@ -2516,7 +2516,7 @@ sound_page(void)
 			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
 
 	/* SOUND THEMES */
-	prefs_sound_themes_combo_box = prefs_build_theme_combo_box(prefs_sound_themes, 
+	prefs_sound_themes_combo_box = prefs_build_theme_combo_box(prefs_sound_themes,
 						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"),
 						"sound");
 
