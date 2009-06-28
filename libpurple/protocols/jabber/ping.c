@@ -28,11 +28,13 @@
 #include "ping.h"
 #include "iq.h"
 
-static void jabber_keepalive_pong_cb(JabberStream *js)
+static void jabber_keepalive_pong_cb(JabberStream *js, const char *from,
+                                     JabberIqType type, const char *id,
+                                     xmlnode *packet, gpointer data)
 {
-	if (js->keepalive_timeout >= 0) {
+	if (js->keepalive_timeout != 0) {
 		purple_timeout_remove(js->keepalive_timeout);
-		js->keepalive_timeout = -1;
+		js->keepalive_timeout = 0;
 	}
 }
 
@@ -57,16 +59,23 @@ static void jabber_ping_result_cb(JabberStream *js, const char *from,
                                   JabberIqType type, const char *id,
                                   xmlnode *packet, gpointer data)
 {
-	if (purple_strequal(from, js->user->domain))
-		/* If the pong is from the server, assume it's a result of the
-		 * keepalive functions */
-		jabber_keepalive_pong_cb(js);
-	else {
-		if (type == JABBER_IQ_RESULT)
-			purple_debug_info("jabber", "PONG!\n");
-		else
-			purple_debug_info("jabber", "ping not supported\n");
-	}
+	if (type == JABBER_IQ_RESULT)
+		purple_debug_info("jabber", "PONG!\n");
+	else
+		purple_debug_info("jabber", "ping not supported\n");
+}
+
+void jabber_keepalive_ping(JabberStream *js)
+{
+	JabberIq *iq;
+	xmlnode *ping;
+
+	iq = jabber_iq_new(js, JABBER_IQ_GET);
+	ping = xmlnode_new_child(iq->node, "ping");
+	xmlnode_set_namespace(ping, "urn:xmpp:ping");
+
+	jabber_iq_set_callback(iq, jabber_keepalive_pong_cb, NULL);
+	jabber_iq_send(iq);
 }
 
 gboolean jabber_ping_jid(JabberStream *js, const char *jid)

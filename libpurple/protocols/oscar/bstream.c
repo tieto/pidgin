@@ -161,15 +161,19 @@ guint32 byte_stream_getle32(ByteStream *bs)
 	return aimutil_getle32(bs->data + bs->offset - 4);
 }
 
+static void byte_stream_getrawbuf_nocheck(ByteStream *bs, guint8 *buf, int len)
+{
+	memcpy(buf, bs->data + bs->offset, len);
+	bs->offset += len;
+}
+
 int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len)
 {
 
 	if (byte_stream_empty(bs) < len)
 		return 0;
 
-	memcpy(buf, bs->data + bs->offset, len);
-	bs->offset += len;
-
+	byte_stream_getrawbuf_nocheck(bs, buf, len);
 	return len;
 }
 
@@ -177,12 +181,12 @@ guint8 *byte_stream_getraw(ByteStream *bs, int len)
 {
 	guint8 *ob;
 
+	if (byte_stream_empty(bs) < len)
+		return NULL;
+
 	ob = g_malloc(len);
 
-	if (byte_stream_getrawbuf(bs, ob, len) < len) {
-		g_free(ob);
-		return NULL;
-	}
+	byte_stream_getrawbuf_nocheck(bs, ob, len);
 
 	return ob;
 }
@@ -191,12 +195,12 @@ char *byte_stream_getstr(ByteStream *bs, int len)
 {
 	char *ob;
 
+	if (byte_stream_empty(bs) < len)
+		return NULL;
+
 	ob = g_malloc(len + 1);
 
-	if (byte_stream_getrawbuf(bs, (guint8 *)ob, len) < len) {
-		g_free(ob);
-		return NULL;
-	}
+	byte_stream_getrawbuf_nocheck(bs, (guint8 *)ob, len);
 
 	ob[len] = '\0';
 

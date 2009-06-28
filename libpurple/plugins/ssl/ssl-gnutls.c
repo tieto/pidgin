@@ -43,8 +43,17 @@ typedef struct
 static gnutls_certificate_client_credentials xcred;
 
 static void
+ssl_gnutls_log(int level, const char *str)
+{
+	/* GnuTLS log messages include the '\n' */
+	purple_debug_misc("gnutls", "lvl %d: %s", level, str);
+}
+
+static void
 ssl_gnutls_init_gnutls(void)
 {
+	const char *debug_level;
+
 	/* Configure GnuTLS to use glib memory management */
 	/* I expect that this isn't really necessary, but it may prevent
 	   some bugs */
@@ -58,6 +67,20 @@ ssl_gnutls_init_gnutls(void)
 		(gnutls_realloc_function) g_realloc, /* realloc */
 		(gnutls_free_function)    g_free     /* free */
 		);
+
+	debug_level = g_getenv("PURPLE_GNUTLS_DEBUG");
+	if (debug_level) {
+		int level = atoi(debug_level);
+		if (level < 0) {
+			purple_debug_warning("gnutls", "Assuming log level 0 instead of %d\n",
+			                     level);
+			level = 0;
+		}
+
+		/* "The level is an integer between 0 and 9. Higher values mean more verbosity." */
+		gnutls_global_set_log_level(level);
+		gnutls_global_set_log_function(ssl_gnutls_log);
+	}
 
 	gnutls_global_init();
 
@@ -576,7 +599,6 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 							  out_buf, out_size);
 
 	g_free(out_buf);
-	g_return_val_if_fail(success, FALSE);
 	return success;
 }
 

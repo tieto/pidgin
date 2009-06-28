@@ -7,18 +7,36 @@ version 2.6.0 (??/??/2009):
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
 	  of code project in 2008.
 	* It should no longer be possible to end up with duplicates of buddies
-	  in a group on the buddy list.
+	  in a group on the buddy list. (Paul Aurich)
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
+	* DNS servers are re-read when DNS queries fail in case the system has
+	  moved to a new network and the old servers are not accessible.
+	* GnuTLS logging (disabled by default) can be controlled through the
+	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
+	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
+	  information.
+
+	Gadu-Gadu:
+	* Accounts can specify a server to which to connect.
+	  (Krzysztof "kreez" Tobola)
+	* Correctly show tooltip status for contacts with status messages.
+	  (Krzysztof "kkszysiu" Klinikowski)
+	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
 
 	XMPP:
-	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), and
-	  voice support with GTalk and GMail. (Mike "Maiku" Ruprecht)
-	* Support for in-band bytestreams for file transfers (XEP-0047).
+	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
+	  support with GTalk and voice and video support with the GMail web
+	  client. (Mike "Maiku" Ruprecht)
+	* Added a Service Discovery Browser plugin for Pidgin. (Andrei Mozzhuhin)
+	* Support for in-band bytestreams for file transfers (XEP-0047). (Marcus
+	  Lundblad)
 	* Support for sending and receiving attentions (equivalent to "buzz"
 	  and "nudge") using the command /buzz. (XEP-0224)
 	* Support for connecting using BOSH. (Tobias Markmann)
@@ -34,17 +52,29 @@ version 2.6.0 (??/??/2009):
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
 	* Put section breaks between resources in "Get Info" to improve readability.
+	* Silently remove invalid XML 1.0 entities (e.g. ASCII control characters)
+	  from sent messages.
 	* XHTML markup is only included in outgoing messages when the message
 	  contains formatting.
 	* Show when the user was last logged in when doing "Get Info" on an offline
 	  buddy, provided the server supports it.
+	* Support custom smileys in MUCs (only when all participants support the
+	  "Bits of Binary" extension, and a maximum of 10 participants are in the
+	  chat to avoid getting too many fetch requests).
+	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
+	  to require SSL not being respected.
+	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
+	  the username, password, or realm (the JID domain) contain non-ASCII
+	  characters.
+	* Show emblem for mobile, handheld, and web clients and bots (if the other
+	  client supports it).
 
 	Yahoo:
-	* P2P file transfers. (Sulabh Mahajan)
-	* MSN Interoperability by adding MSN buddies as 'msn/user@example.com'.
-	  (Sulabh Mahajan)
+	* P2P file transfers.  (Sulabh Mahajan)
 	* Sending text messages (address to +<countrycode><phone number>).
 	  (Sulabh Mahajan)
+	* Addition of MSN buddies to Yahoo accounts by adding them as
+	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -67,11 +97,95 @@ version 2.6.0 (??/??/2009):
 	  rejoin.
 	* Always set unseen-count and unseen-state on conversations.
 	  (Joshua Stein)
+	* Fix a bug in 'Conversation Colors' plugin for RTL messages.
+	* Pressing the Left and Right arrow keys in the buddy list will expand and
+	  collapse buddy groups or contacts. (Peter Ruibal)
+	* Support saving animated custom smileys as animated images or animated
+	  custom smileys. (Andrea Piccinelli)
+	* Support for keyboard navigation on the status icon. (Li Yuan)
+	* IMG tags without 'id' attributes are turned into links to the image URL.
+	  (Dmitry Petroff)
+	* Draw the user's buddy icon at the bottom of the Buddy List with rounded
+	  corners for visual consistency with the actual icons in the Buddy List.
+	  (Kosta Arvanitis)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
 	  especially for users of braille terminals, screen readers etc.
 	* Added a TinyURL plugin, which aids copying longer URLs.
+
+	Pidgin GTK+ Theme Control Plugin:
+	* Removed mouse cursor color preferences.
+	* Added "Typing Notification Color" preference.
+	* Added "Disable Typing Notification Text" preference.
+	* Preferences have been reorganized into three tabs for Colors, Fonts, and
+	  Miscellaneous categories.
+
+version 2.5.8 (06/27/2009):
+	ICQ:
+	* Fix misparsing a web message as an SMS message. (Yuriy Kaminskiy)
+
+	MSN:
+	* Increase NS command history size to prevent crashes on buddy lists that
+	  have a lot of buddies on other networks like Yahoo!.
+
+	MySpace:
+	* Accounts with empty buddy lists are now properly marked as connected.
+	* Fix receiving messages from users of MySpace IM's web client.
+
+	Yahoo:
+	* Fixed phantom online buddies.  They should now properly disappear when
+	  signing out.
+	* Fixed the crashes some users were seeing with cn.scs.msg.yahoo.com in
+	  2.5.7.
+	* Fixed compiling on systems with glib 2.4.x or older.
+	* Fixed an issue with file transfers.  This may not resolve all issues,
+	  but it should resolve at least some of the most common ones.
+	* The pager server will automatically update to scsa.msg.yahoo.com if the
+	  user empties the field or if it is scs.msg.yahoo.com.  This should ease
+	  the pain of transition to the new login method.
+
+	XMPP:
+	* Fix an incompatibility betweeen Prosody and libpurple clients.
+
+version 2.5.7 (06/20/2009):
+	* Yahoo Protocol 16 support, including new HTTPS login method; this should
+	  fix a number of login problems that have recently cropped up.  (Sulabh
+	  Mahajan, Mike "Maiku" Ruprecht)
+	* Only display the AIM "Unable to Retrieve Buddy List" message once per
+	  connection.  (Rob Taft)
+	* Blocking MSN users not on your buddy list no longer disconnects you.
+	* When performing operations on MSN, assume users are on the MSN/Passport
+	  network if we don't get network ID's for them.
+
+version 2.5.6 (05/19/2009):
+	libpurple:
+	* Improve sleep behavior by aggregation of longer timeouts on second
+	  boundaries to allow better power saving.  (Arunan Balasubramaniam)
+	* Fix various crashes on exit.
+	* Make XML parsing more resilient to interactions with other libraries.
+	  This, along with the fix for libxml2 bug 564217, fixes the crashes
+	  on connect in XMPP with recent gst-plugins-bad (see #8830 for details).
+	* Many security related fixes.
+
+	IRC:
+	* Correctly handle WHOIS for users who are joined to a large number of
+	  channels.
+	* Notify the user if a /nick command fails, rather than trying
+	  fallback nicks.
+
+	MSN:
+	* Fix a race condition causing occasional Pidgin crashes.
+	* Fix some errors about the friendly name changing too fast caused
+	  by MSN/Yahoo integration buddies.
+
+	XMPP:
+	* Less likely to pop up a new conversation window in disregard of
+	  the "Hide new IM conversations" preference.
+
+	Yahoo:
+	* Fix a crash when sending very long messages.
+	* Fix a bug where UTF-8 status messages get garbled when going idle.
 
 version 2.5.5 (03/01/2009):
 	libpurple:

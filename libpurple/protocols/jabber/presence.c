@@ -100,7 +100,7 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	if (!purple_account_is_connected(account))
 		return;
-	
+
 	if (!purple_status_is_active(status))
 		return;
 
@@ -245,6 +245,9 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 {
 	xmlnode *show, *status, *presence, *pri, *c;
 	const char *show_string = NULL;
+#ifdef USE_VV
+	gboolean audio_enabled, video_enabled;
+#endif
 
 	presence = xmlnode_new("presence");
 
@@ -277,7 +280,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		xmlnode *query = xmlnode_new_child(presence, "query");
 		gchar seconds[10];
 		g_snprintf(seconds, 10, "%d", (int) (time(NULL) - js->idle));
-		
+
 		xmlnode_set_namespace(query, "jabber:iq:last");
 		xmlnode_set_attrib(query, "seconds", seconds);
 	}
@@ -300,9 +303,18 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	 * just assume that if we specify a 'voice-v1' ext (ignoring that
 	 * these are to be assigned no semantic value), we support receiving voice
 	 * calls.
+	 *
+	 * Ditto for 'video-v1'.
 	 */
-	if (jabber_audio_enabled(js, NULL /* unused */))
+	audio_enabled = jabber_audio_enabled(js, NULL /* unused */);
+	video_enabled = jabber_video_enabled(js, NULL /* unused */);
+
+	if (audio_enabled && video_enabled)
+		xmlnode_set_attrib(c, "ext", "voice-v1 video-v1");
+	else if (audio_enabled)
 		xmlnode_set_attrib(c, "ext", "voice-v1");
+	else if (video_enabled)
+		xmlnode_set_attrib(c, "ext", "video-v1");
 #endif
 
 	return presence;
@@ -361,10 +373,10 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 		if ((nick = xmlnode_get_child(vcard, "NICKNAME"))) {
 			char *tmp = xmlnode_get_data(nick);
 			char *bare_jid = jabber_get_bare_jid(from);
-			if (strstr(bare_jid, tmp) == NULL) {
+			if (tmp && strstr(bare_jid, tmp) == NULL) {
 				g_free(nickname);
 				nickname = tmp;
-			} else
+			} else if (tmp)
 				g_free(tmp);
 
 			g_free(bare_jid);
@@ -446,8 +458,8 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *from;
+	const char *type;
 	const char *real_jid = NULL;
 	const char *affiliation = NULL;
 	const char *role = NULL;
@@ -469,8 +481,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *caps = NULL;
 	int idle = 0;
 	gchar *nickname = NULL;
+	gboolean signal_return;
+
+	from = xmlnode_get_attrib(packet, "from");
+	type = xmlnode_get_attrib(packet, "type");
 
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
+		return;
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-presence", js->gc, type, from, packet));
+	if (signal_return)
 		return;
 
 	if(!(jid = jabber_id_new(from)))
@@ -617,7 +638,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					avatar_hash = xmlnode_get_data(photo);
 				}
 			}
-		} else if (!strcmp(y->name, "query") && 
+		} else if (!strcmp(y->name, "query") &&
 			!strcmp(xmlnode_get_namespace(y), "jabber:iq:last")) {
 			/* resource has specified idle */
 			const gchar *seconds = xmlnode_get_attrib(y, "seconds");
@@ -635,7 +656,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			NULL);
 		purple_debug_info("jabber", "got delay %s yielding %ld s offset\n",
 			stamp, offset);
-		idle += offset; 
+		idle += offset;
 	}
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {

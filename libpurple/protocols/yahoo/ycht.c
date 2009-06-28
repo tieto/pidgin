@@ -225,7 +225,7 @@ static void ycht_packet_dump(const guchar *data, int len)
 	}
 
 	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-#endif
+#endif /* YAHOO_YCHT_DEBUG */
 }
 
 static YchtPkt *ycht_packet_new(guint version, guint service, int status)
@@ -578,7 +578,7 @@ void ycht_connection_open(PurpleConnection *gc)
 
 	yd->ycht = ycht;
 
-	if (purple_proxy_connect(NULL, account,
+	if (purple_proxy_connect(gc, account,
 	                       purple_account_get_string(account, "ycht-server",  YAHOO_YCHT_HOST),
 	                       purple_account_get_int(account, "ycht-port", YAHOO_YCHT_PORT),
 	                       ycht_got_connected, ycht) == NULL)

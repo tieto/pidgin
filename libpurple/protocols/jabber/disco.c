@@ -1,5 +1,5 @@
 /*
- * purple - Jabber Protocol Plugin
+ * purple - Jabber Service Discovery
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -22,6 +22,7 @@
 #include "internal.h"
 #include "prefs.h"
 #include "debug.h"
+#include "request.h"
 
 #include "adhoccommands.h"
 #include "buddy.h"
@@ -38,6 +39,11 @@
 struct _jabber_disco_info_cb_data {
 	gpointer data;
 	JabberDiscoInfoCallback *callback;
+};
+
+struct _jabber_disco_items_cb_data {
+	gpointer data;
+	JabberDiscoItemsCallback *callback;
 };
 
 #define SUPPORT_FEATURE(x) { \
@@ -148,14 +154,26 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
 			xmlnode_set_attrib(feature, "var", "http://www.google.com/xmpp/protocol/voice/v1");
+		} else if (g_str_equal(node, CAPS0115_NODE "#" "video-v1")) {
+			/*
+			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
+			 * where we add <c/> to the <presence/>) for the Google Talk
+			 * clients that don't actually check disco#info features.
+			 *
+			 * This specific feature is redundant but is what
+			 * node='http://mail.google.com/xmpp/client/caps', ver='1.1'
+			 * advertises as 'video-v1'.
+			 */
+			xmlnode *feature = xmlnode_new_child(query, "feature");
+			xmlnode_set_attrib(feature, "var", "http://www.google.com/xmpp/protocol/video/v1");
 #endif
 		} else {
 			xmlnode *error, *inf;
-				
+
 			/* XXX: gross hack, implement jabber_iq_set_type or something */
 			xmlnode_set_attrib(iq->node, "type", "error");
 			iq->type = JABBER_IQ_ERROR;
-			
+
 			error = xmlnode_new_child(query, "error");
 			xmlnode_set_attrib(error, "code", "404");
 			xmlnode_set_attrib(error, "type", "cancel");
@@ -164,13 +182,42 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		}
 		g_free(node_uri);
 		jabber_iq_send(iq);
-	} else if(type == JABBER_IQ_RESULT) {
+	} else if (type == JABBER_IQ_SET) {
+		/* wtf? seriously. wtf‽ */
+		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);
+		xmlnode *error, *bad_request;
+
+		/* Free the <query/> */
+		xmlnode_free(xmlnode_get_child(iq->node, "query"));
+		/* Add an error */
+		error = xmlnode_new_child(iq->node, "error");
+		xmlnode_set_attrib(error, "type", "modify");
+		bad_request = xmlnode_new_child(error, "bad-request");
+		xmlnode_set_namespace(bad_request, "urn:ietf:params:xml:ns:xmpp-stanzas");
+
+		jabber_iq_set_id(iq, id);
+		xmlnode_set_attrib(iq->node, "to", from);
+
+		jabber_iq_send(iq);
+	}
+}
+
+static void jabber_disco_info_cb(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *packet, gpointer data)
+{
+	struct _jabber_disco_info_cb_data *jdicd = data;
+	xmlnode *query;
+
+	query = xmlnode_get_child_with_namespace(packet, "query",
+				"http://jabber.org/protocol/disco#info");
+
+	if (type == JABBER_IQ_RESULT && query) {
 		xmlnode *child;
 		JabberID *jid;
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		JabberCapabilities capabilities = JABBER_CAP_NONE;
-		struct _jabber_disco_info_cb_data *jdicd;
 
 		if((jid = jabber_id_new(from))) {
 			if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
@@ -181,7 +228,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(jbr)
 			capabilities = jbr->capabilities;
 
-		for(child = in_query->child; child; child = child->next) {
+		for(child = query->child; child; child = child->next) {
 			if(child->type != XMLNODE_TYPE_TAG)
 				continue;
 
@@ -233,6 +280,8 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 					capabilities |= JABBER_CAP_IQ_REGISTER;
 				else if(!strcmp(var, "urn:xmpp:ping"))
 					capabilities |= JABBER_CAP_PING;
+				else if(!strcmp(var, "http://jabber.org/protocol/disco#items"))
+					capabilities |= JABBER_CAP_ITEMS;
 				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
 					capabilities |= JABBER_CAP_ADHOC;
 				}
@@ -248,19 +297,12 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(jbr)
 			jbr->capabilities = capabilities;
 
-		if((jdicd = g_hash_table_lookup(js->disco_callbacks, from))) {
-			jdicd->callback(js, from, capabilities, jdicd->data);
-			g_hash_table_remove(js->disco_callbacks, from);
-		}
-	} else if(type == JABBER_IQ_ERROR) {
+		jdicd->callback(js, from, capabilities, jdicd->data);
+	} else { /* type == JABBER_IQ_ERROR or query == NULL */
 		JabberID *jid;
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		JabberCapabilities capabilities = JABBER_CAP_NONE;
-		struct _jabber_disco_info_cb_data *jdicd;
-
-		if(!(jdicd = g_hash_table_lookup(js->disco_callbacks, from)))
-			return;
 
 		if((jid = jabber_id_new(from))) {
 			if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
@@ -272,7 +314,6 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			capabilities = jbr->capabilities;
 
 		jdicd->callback(js, from, capabilities, jdicd->data);
-		g_hash_table_remove(js->disco_callbacks, from);
 	}
 }
 
@@ -517,10 +558,10 @@ void jabber_disco_info_do(JabberStream *js, const char *who, JabberDiscoInfoCall
 	jdicd->data = data;
 	jdicd->callback = callback;
 
-	g_hash_table_insert(js->disco_callbacks, g_strdup(who), jdicd);
-
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
 	xmlnode_set_attrib(iq->node, "to", who);
 
+	jabber_iq_set_callback(iq, jabber_disco_info_cb, jdicd);
 	jabber_iq_send(iq);
 }
+

@@ -125,7 +125,7 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	const char *name;
 	PurpleValue *value;
 	xmlnode *node, *child;
-	char buf[20];
+	char buf[21];
 
 	name    = (const char *)key;
 	value   = (PurpleValue *)hvalue;
@@ -138,7 +138,7 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 
 	if (purple_value_get_type(value) == PURPLE_TYPE_INT) {
 		xmlnode_set_attrib(child, "type", "int");
-		snprintf(buf, sizeof(buf), "%d", purple_value_get_int(value));
+		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_int(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
 	else if (purple_value_get_type(value) == PURPLE_TYPE_STRING) {
@@ -147,7 +147,7 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	}
 	else if (purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN) {
 		xmlnode_set_attrib(child, "type", "bool");
-		snprintf(buf, sizeof(buf), "%d", purple_value_get_boolean(value));
+		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_boolean(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
 }
@@ -303,7 +303,7 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 	node = xmlnode_new("account");
 	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
 	xmlnode_set_attrib(node, "name", purple_account_get_username(account));
-	snprintf(buf, sizeof(buf), "%d", account->perm_deny);
+	g_snprintf(buf, sizeof(buf), "%d", account->perm_deny);
 	xmlnode_set_attrib(node, "mode", buf);
 
 	for (cur = account->permit; cur; cur = cur->next)
@@ -977,18 +977,26 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	PurpleConversation *conv;
 	PurpleBlistNode *bnode;
 	char *old_alias;
+	char *new_alias = NULL;
 
 	g_return_if_fail(contact != NULL);
 
-	if (!purple_strings_are_different(contact->alias, alias))
+	if ((alias != NULL) && (*alias != '\0'))
+		new_alias = purple_utf8_strip_unprintables(alias);
+
+	if (!purple_strings_are_different(contact->alias, new_alias)) {
+		g_free(new_alias);
 		return;
+	}
 
 	old_alias = contact->alias;
 
-	if ((alias != NULL) && (*alias != '\0'))
-		contact->alias = g_strdup(alias);
-	else
+	if ((new_alias != NULL) && (*new_alias != '\0'))
+		contact->alias = new_alias;
+	else {
 		contact->alias = NULL;
+		g_free(new_alias); /* could be "\0" */
+	}
 
 	purple_blist_schedule_save();
 
@@ -1014,18 +1022,26 @@ void purple_blist_alias_chat(PurpleChat *chat, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	char *old_alias;
+	char *new_alias = NULL;
 
 	g_return_if_fail(chat != NULL);
 
-	if (!purple_strings_are_different(chat->alias, alias))
+	if ((alias != NULL) && (*alias != '\0'))
+		new_alias = purple_utf8_strip_unprintables(alias);
+
+	if (!purple_strings_are_different(chat->alias, new_alias)) {
+		g_free(new_alias);
 		return;
+	}
 
 	old_alias = chat->alias;
 
-	if ((alias != NULL) && (*alias != '\0'))
-		chat->alias = g_strdup(alias);
-	else
+	if ((new_alias != NULL) && (*new_alias != '\0'))
+		chat->alias = new_alias;
+	else {
 		chat->alias = NULL;
+		g_free(new_alias); /* could be "\0" */
+	}
 
 	purple_blist_schedule_save();
 
@@ -1042,18 +1058,26 @@ void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleConversation *conv;
 	char *old_alias;
+	char *new_alias = NULL;
 
 	g_return_if_fail(buddy != NULL);
 
-	if (!purple_strings_are_different(buddy->alias, alias))
+	if ((alias != NULL) && (*alias != '\0'))
+		new_alias = purple_utf8_strip_unprintables(alias);
+
+	if (!purple_strings_are_different(buddy->alias, new_alias)) {
+		g_free(new_alias);
 		return;
+	}
 
 	old_alias = buddy->alias;
 
-	if ((alias != NULL) && (*alias != '\0'))
+	if ((new_alias != NULL) && (*new_alias != '\0'))
 		buddy->alias = g_strdup(alias);
-	else
+	else {
 		buddy->alias = NULL;
+		g_free(new_alias); /* could be "\0" */
+	}
 
 	purple_blist_schedule_save();
 
@@ -1075,18 +1099,26 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleConversation *conv;
 	char *old_alias;
+	char *new_alias = NULL;
 
 	g_return_if_fail(buddy != NULL);
 
-	if (!purple_strings_are_different(buddy->server_alias, alias))
+	if ((alias != NULL) && (*alias != '\0') && g_utf8_validate(alias, -1, NULL))
+		new_alias = purple_utf8_strip_unprintables(alias);
+
+	if (!purple_strings_are_different(buddy->server_alias, new_alias)) {
+		g_free(new_alias);
 		return;
+	}
 
 	old_alias = buddy->server_alias;
 
-	if ((alias != NULL) && (*alias != '\0') && g_utf8_validate(alias, -1, NULL))
-		buddy->server_alias = g_strdup(alias);
-	else
+	if ((new_alias != NULL) && (*new_alias != '\0'))
+		buddy->server_alias = new_alias;
+	else {
 		buddy->server_alias = NULL;
+		g_free(new_alias); /* could be "\0"; */
+	}
 
 	purple_blist_schedule_save();
 
@@ -1106,19 +1138,24 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 /*
  * TODO: If merging, prompt the user if they want to merge.
  */
-void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
+void purple_blist_rename_group(PurpleGroup *source, const char *name)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleGroup *dest;
 	gchar *old_name;
+	gchar *new_name;
 	GList *moved_buddies = NULL;
 	GSList *accts;
 
 	g_return_if_fail(source != NULL);
-	g_return_if_fail(new_name != NULL);
+	g_return_if_fail(name != NULL);
 
-	if (*new_name == '\0' || purple_strequal(new_name, source->name))
+	new_name = purple_utf8_strip_unprintables(name);
+
+	if (*new_name == '\0' || purple_strequal(new_name, source->name)) {
+		g_free(new_name);
 		return;
+	}
 
 	dest = purple_find_group(new_name);
 	if (dest != NULL && purple_utf8_strcasecmp(source->name, dest->name) != 0) {
@@ -1160,6 +1197,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 		old_name = g_strdup(source->name);
 		purple_blist_remove_group(source);
 		source = dest;
+		g_free(new_name);
 	} else {
 		/* A simple rename */
 		PurpleBlistNode *cnode, *bnode;
@@ -1172,7 +1210,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 		}
 
 		old_name = source->name;
-		source->name = g_strdup(new_name);
+		source->name = new_name;
 	}
 
 	/* Save our changes */
@@ -1184,7 +1222,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 
 	/* Notify all PRPLs */
 	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
-	if(old_name && purple_strequal(source->name, old_name)) {
+	if(old_name && !purple_strequal(source->name, old_name)) {
 		for (accts = purple_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
 			PurpleAccount *account = accts->data;
 			PurpleConnection *gc = NULL;
@@ -1246,7 +1284,7 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 	chat = g_new0(PurpleChat, 1);
 	chat->account = account;
 	if ((alias != NULL) && (*alias != '\0'))
-		chat->alias = g_strdup(alias);
+		chat->alias = purple_utf8_strip_unprintables(alias);
 	chat->components = components;
 	purple_blist_node_initialize_settings((PurpleBlistNode *)chat);
 	((PurpleBlistNode *)chat)->type = PURPLE_BLIST_CHAT_NODE;
@@ -1273,13 +1311,13 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBuddy *buddy;
 
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(name != NULL, FALSE);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
 
 	buddy = g_new0(PurpleBuddy, 1);
 	buddy->account  = account;
-	buddy->name     = g_strdup(name);
-	buddy->alias    = g_strdup(alias);
+	buddy->name     = purple_utf8_strip_unprintables(name);
+	buddy->alias    = purple_utf8_strip_unprintables(alias);
 	buddy->presence = purple_presence_new_for_buddy(buddy);
 	((PurpleBlistNode *)buddy)->type = PURPLE_BLIST_BUDDY_NODE;
 
@@ -1705,7 +1743,7 @@ PurpleGroup *purple_group_new(const char *name)
 		return group;
 
 	group = g_new0(PurpleGroup, 1);
-	group->name = g_strdup(name);
+	group->name = purple_utf8_strip_unprintables(name);
 	group->totalsize = 0;
 	group->currentsize = 0;
 	group->online = 0;

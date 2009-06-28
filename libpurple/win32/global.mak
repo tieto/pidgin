@@ -103,6 +103,7 @@ ifeq "$(origin CC)" "default"
 endif
 GMSGFMT ?= $(GTK_BIN)/msgfmt
 MAKENSIS ?= makensis.exe
+MAKENSISOPT ?= /
 PERL ?= /cygdrive/c/perl/bin/perl
 WINDRES ?= windres
 STRIP ?= strip

@@ -44,6 +44,8 @@ typedef enum {
 	JABBER_CAP_ADHOC		  = 1 << 12,
 	JABBER_CAP_BLOCKING       = 1 << 13,
 
+	JABBER_CAP_ITEMS          = 1 << 14,
+
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 
@@ -53,12 +55,12 @@ typedef struct _JabberStream JabberStream;
 #include <glib.h>
 #include "circbuffer.h"
 #include "connection.h"
+#include "dnsquery.h"
 #include "dnssrv.h"
 #include "media.h"
 #include "mediamanager.h"
 #include "roomlist.h"
 #include "sslconn.h"
-#include "dnsquery.h"
 
 #include "iq.h"
 #include "jutil.h"
@@ -74,6 +76,8 @@ typedef struct _JabberStream JabberStream;
 
 /* Index into attention_types list */
 #define JABBER_BUZZ 0
+
+extern PurplePlugin *jabber_plugin;
 
 typedef enum {
 	JABBER_STREAM_OFFLINE,
@@ -151,7 +155,6 @@ struct _JabberStream
 	GList *user_directories;
 
 	GHashTable *iq_callbacks;
-	GHashTable *disco_callbacks;
 	int next_id;
 
 	GList *bs_proxies;
@@ -242,8 +245,8 @@ struct _JabberStream
 	char *certificate_CN;
 
 	/* A purple timeout tag for the keepalive */
-	int keepalive_timeout;
-	
+	guint keepalive_timeout;
+
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
 	guint max_srv_rec_idx;
@@ -299,6 +302,8 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
 void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
 void jabber_send_raw(JabberStream *js, const char *data, int len);
+void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
+                           gpointer unused);
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state);
 
@@ -320,8 +325,8 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleConnectionErro
 void jabber_add_feature(const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
 void jabber_remove_feature(const gchar *namespace);
 
-/** Adds an identitiy to this jabber library instance. For list of valid values vistit the 
- *	webiste of the XMPP Registrar ( http://www.xmpp.org/registrar/disco-categories.html#client ).
+/** Adds an identity to this jabber library instance. For list of valid values visit the
+ *	website of the XMPP Registrar ( http://www.xmpp.org/registrar/disco-categories.html#client ).
  *  @param category the category of the identity.
  *  @param type the type of the identity.
  *  @param language the language localization of the name. Can be NULL.
@@ -345,6 +350,9 @@ GList *jabber_status_types(PurpleAccount *account);
 void jabber_login(PurpleAccount *account);
 void jabber_close(PurpleConnection *gc);
 void jabber_idle_set(PurpleConnection *gc, int idle);
+void jabber_blocklist_parse_push(JabberStream *js, const char *from,
+                                 JabberIqType type, const char *id,
+                                 xmlnode *child);
 void jabber_request_block_list(JabberStream *js);
 void jabber_add_deny(PurpleConnection *gc, const char *who);
 void jabber_rem_deny(PurpleConnection *gc, const char *who);
@@ -361,6 +369,7 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 
 gboolean jabber_audio_enabled(JabberStream *js, const char *unused);
+gboolean jabber_video_enabled(JabberStream *js, const char *unused);
 gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 		PurpleMediaSessionType type);
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);

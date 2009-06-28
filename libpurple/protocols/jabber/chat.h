@@ -95,5 +95,8 @@ void jabber_chat_disco_traffic(JabberChat *chat);
 
 char *jabber_roomlist_room_serialize(PurpleRoomlistRoom *room);
 
+gboolean jabber_chat_all_participants_have_capability(const JabberChat *chat,
+	const gchar *cap);
+guint jabber_chat_get_num_participants(const JabberChat *chat);
 
 #endif /* PURPLE_JABBER_CHAT_H_ */

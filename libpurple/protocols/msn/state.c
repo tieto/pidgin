@@ -21,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+#include "core.h"
+
 #include "msn.h"
 #include "state.h"
 
@@ -288,9 +292,28 @@ msn_change_status(MsnSession *session)
 	MsnUser *user;
 	MsnObject *msnobj;
 	const char *state_text;
+	GHashTable *ui_info = purple_core_get_ui_info();
+	MsnClientCaps caps = MSN_CLIENT_ID;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
+
+	/* set client caps based on what the UI tells us it is... */
+	if (ui_info) {
+		const gchar *client_type = g_hash_table_lookup(ui_info, "client_type");
+		if (client_type) {
+			if (strcmp(client_type, "phone") == 0 ||
+				strcmp(client_type, "handheld") == 0) {
+				caps |= MSN_CLIENT_CAP_WIN_MOBILE;
+			} else if (strcmp(client_type, "web") == 0) {
+				caps |= MSN_CLIENT_CAP_WEBMSGR;
+			} else if (strcmp(client_type, "bot") == 0) {
+				caps |= MSN_CLIENT_CAP_BOT;
+			}
+			/* MSN doesn't a "console" type... 
+			 What, they have no ncurses UI? :-) */
+		}
+	}
 
 	account = session->account;
 	cmdproc = session->notification->cmdproc;
@@ -307,8 +330,7 @@ msn_change_status(MsnSession *session)
 
 	if (msnobj == NULL)
 	{
-		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text,
-						 MSN_CLIENT_ID);
+		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text, caps);
 	}
 	else
 	{
@@ -317,7 +339,7 @@ msn_change_status(MsnSession *session)
 		msnobj_str = msn_object_to_string(msnobj);
 
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
-						 MSN_CLIENT_ID, purple_url_encode(msnobj_str));
+						 caps, purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
 	}

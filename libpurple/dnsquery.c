@@ -32,6 +32,10 @@
 #include "prefs.h"
 #include "util.h"
 
+#ifndef _WIN32
+#include <resolv.h>
+#endif
+
 #if (defined(__APPLE__) || defined (__unix__)) && !defined(__osf__)
 #define PURPLE_DNSQUERY_USE_FORK
 #endif
@@ -256,6 +260,9 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		 * library.
 		 */
 		hints.ai_socktype = SOCK_STREAM;
+#ifdef AI_ADDRCONFIG
+		hints.ai_flags |= AI_ADDRCONFIG;
+#endif /* AI_ADDRCONFIG */
 		rc = getaddrinfo(dns_params.hostname, servname, &hints, &res);
 		write_to_parent(child_out, &rc, sizeof(rc));
 		if (rc != 0) {
@@ -325,7 +332,7 @@ cope_with_gdb_brokenness(void)
 		return;
 	already_done = TRUE;
 	ppid = getppid();
-	snprintf(s, sizeof(s), "/proc/%d/exe", ppid);
+	g_snprintf(s, sizeof(s), "/proc/%d/exe", ppid);
 	n = readlink(s, e, sizeof(e));
 	if(n < 0)
 		return;
@@ -568,8 +575,10 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 		g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
 				query_data->hostname, err);
 #endif
-		purple_dnsquery_failed(query_data, message);
+		/* Re-read resolv.conf and friends in case DNS servers have changed */
+		res_init();
 
+		purple_dnsquery_failed(query_data, message);
 	} else if (rc > 0) {
 		/* Success! */
 		while (rc > 0) {
@@ -706,6 +715,9 @@ dns_thread(gpointer data)
 	 * library.
 	 */
 	hints.ai_socktype = SOCK_STREAM;
+#ifdef AI_ADDRCONFIG
+	hints.ai_flags |= AI_ADDRCONFIG;
+#endif /* AI_ADDRCONFIG */
 	if ((rc = getaddrinfo(query_data->hostname, servname, &hints, &res)) == 0) {
 		tmp = res;
 		while(res) {

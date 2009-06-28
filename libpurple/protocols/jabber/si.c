@@ -407,7 +407,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 {
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx = xfer->data;
-	char buffer[256];
+	char buffer[42]; /* 40 for DST.ADDR + 2 bytes for port number*/
 	int len;
 	char *dstaddr, *hash;
 	const char *host;
@@ -431,16 +431,21 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		jsx->rxlen += len;
 		return;
 	} else if(jsx->rxqueue[0] != 0x05 || jsx->rxqueue[1] != 0x01 ||
-			jsx->rxqueue[3] != 0x03) {
-		purple_debug_info("jabber", "invalid socks5 stuff\n");
+			jsx->rxqueue[3] != 0x03 || jsx->rxqueue[4] != 40) {
+		purple_debug_info("jabber", "Invalid socks5 conn req. header[0x%x,0x%x,0x%x,0x%x,0x%x]\n",
+				  jsx->rxqueue[0], jsx->rxqueue[1], jsx->rxqueue[2],
+				  jsx->rxqueue[3], jsx->rxqueue[4]);
 		purple_input_remove(xfer->watcher);
 		xfer->watcher = 0;
 		close(source);
 		purple_xfer_cancel_remote(xfer);
 		return;
 	} else if(jsx->rxlen - 5 <  jsx->rxqueue[4] + 2) {
-		purple_debug_info("jabber", "reading umpteen more bytes\n");
-		len = read(source, buffer, jsx->rxqueue[4] + 5 + 2 - jsx->rxlen);
+		/* Upper-bound of 257 (jsx->rxlen = 5, jsx->rxqueue[4] = 0xFF) */
+		unsigned short to_read = jsx->rxqueue[4] + 2 - (jsx->rxlen - 5);
+		purple_debug_info("jabber", "reading %u bytes for DST.ADDR + port num (trying to read %hu now)\n",
+				  jsx->rxqueue[4] + 2, to_read);
+		len = read(source, buffer, to_read);
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
@@ -455,6 +460,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		jsx->rxlen += len;
 	}
 
+	/* Have we not read all of DST.ADDR and the following 2-byte port number? */
 	if(jsx->rxlen - 5 < jsx->rxqueue[4] + 2)
 		return;
 
@@ -468,9 +474,16 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
 	hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
 
-	if(jsx->rxqueue[4] != 40 || strncmp(hash, jsx->rxqueue+5, 40) ||
+	if(strncmp(hash, jsx->rxqueue + 5, 40) ||
 			jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00) {
-		purple_debug_error("jabber", "someone connected with the wrong info!\n");
+		if (jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00)
+			purple_debug_error("jabber", "Got SOCKS5 BS conn with the wrong DST.PORT"
+						     " (must be 0 - got[0x%x,0x%x]).\n",
+						     jsx->rxqueue[45], jsx->rxqueue[46]);
+		else
+			purple_debug_error("jabber", "Got SOCKS5 BS conn with the wrong DST.ADDR"
+						     " (expected '%s' - got '%.40s').\n",
+						     hash, jsx->rxqueue + 5);
 		close(source);
 		purple_xfer_cancel_remote(xfer);
 		g_free(hash);
@@ -531,11 +544,13 @@ jabber_si_xfer_bytestreams_send_read_response_cb(gpointer data, gint source,
 	purple_input_remove(xfer->watcher);
 	xfer->watcher = 0;
 
+	/* If we sent a "Success", wait for a response, otherwise give up and cancel */
 	if (jsx->rxqueue[1] == 0x00) {
 		xfer->watcher = purple_input_add(source, PURPLE_INPUT_READ,
 			jabber_si_xfer_bytestreams_send_read_again_cb, xfer);
 		g_free(jsx->rxqueue);
 		jsx->rxqueue = NULL;
+		jsx->rxlen = 0;
 	} else {
 		close(source);
 		purple_xfer_cancel_remote(xfer);
@@ -556,6 +571,7 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 
 	xfer->fd = source;
 
+	/** Try to read the SOCKS5 header */
 	if(jsx->rxlen < 2) {
 		purple_debug_info("jabber", "reading those first two bytes\n");
 		len = read(source, buffer, 2 - jsx->rxlen);
@@ -572,9 +588,12 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		memcpy(jsx->rxqueue + jsx->rxlen, buffer, len);
 		jsx->rxlen += len;
 		return;
-	} else if(jsx->rxlen - 2 <  jsx->rxqueue[1]) {
-		purple_debug_info("jabber", "reading the next umpteen bytes\n");
-		len = read(source, buffer, jsx->rxqueue[1] + 2 - jsx->rxlen);
+	} else if(jsx->rxlen - 2 < jsx->rxqueue[1]) {
+		/* Has a maximum value of 255 (jsx->rxlen = 2, jsx->rxqueue[1] = 0xFF) */
+		unsigned short to_read = jsx->rxqueue[1] - (jsx->rxlen - 2);
+		purple_debug_info("jabber", "reading %u bytes for auth methods (trying to read %hu now)\n",
+				  jsx->rxqueue[1], to_read);
+		len = read(source, buffer, to_read);
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
@@ -589,6 +608,7 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		jsx->rxlen += len;
 	}
 
+	/* Have we not read all the auth. method bytes? */
 	if(jsx->rxlen -2 < jsx->rxqueue[1])
 		return;
 
@@ -1301,6 +1321,11 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			jabber_iq_remove_callback_by_id(js, jsx->iq_id);
 		if (jsx->local_streamhost_fd >= 0)
 			close(jsx->local_streamhost_fd);
+		if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND &&
+			xfer->fd >= 0) {
+			purple_debug_info("jabber", "remove port mapping\n");
+			purple_network_remove_port_mapping(xfer->fd);
+		}
 		if (jsx->connect_timeout > 0)
 			purple_timeout_remove(jsx->connect_timeout);
 		if (jsx->ibb_timeout_handle > 0)
@@ -1677,8 +1702,8 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 void
 jabber_si_init(void)
 {
-	jabber_iq_register_handler("si", "http://jabber.org/protocol/si", jabber_si_parse);	
-	
+	jabber_iq_register_handler("si", "http://jabber.org/protocol/si", jabber_si_parse);
+
 	jabber_ibb_register_open_handler(jabber_si_xfer_ibb_open_cb);
 }
 

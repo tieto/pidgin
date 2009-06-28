@@ -532,15 +532,24 @@ jabber_message_send_data_request(JabberStream *js, PurpleConversation *conv,
 void jabber_message_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberMessage *jm;
-	const char *type;
+	const char *id, *from, *to, *type;
 	xmlnode *child;
+	gboolean signal_return;
+
+	from = xmlnode_get_attrib(packet, "from");
+	id   = xmlnode_get_attrib(packet, "id");
+	to   = xmlnode_get_attrib(packet, "to");
+	type = xmlnode_get_attrib(packet, "type");
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-message", js->gc, type, id, from, to, packet));
+	if (signal_return)
+		return;
 
 	jm = g_new0(JabberMessage, 1);
 	jm->js = js;
 	jm->sent = time(NULL);
 	jm->delayed = FALSE;
-
-	type = xmlnode_get_attrib(packet, "type");
 
 	if(type) {
 		if(!strcmp(type, "normal"))
@@ -559,9 +568,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		jm->type = JABBER_MESSAGE_NORMAL;
 	}
 
-	jm->from = g_strdup(xmlnode_get_attrib(packet, "from"));
-	jm->to = g_strdup(xmlnode_get_attrib(packet, "to"));
-	jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jm->from = g_strdup(from);
+	jm->to   = g_strdup(to);
+	jm->id   = g_strdup(id);
 
 	for(child = packet->child; child; child = child->next) {
 		const char *xmlns = xmlnode_get_namespace(child);
@@ -630,7 +639,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					purple_debug_info("jabber", "found %d smileys\n",
 						g_list_length(smiley_refs));
 
-					if (smiley_refs) {		
+					if (smiley_refs) {
 						if (jm->type == JABBER_MESSAGE_GROUPCHAT) {
 							JabberID *jid = jabber_id_new(jm->from);
 							JabberChat *chat = NULL;
@@ -648,7 +657,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 									who, account);
 							if (!conv) {
 								/* we need to create the conversation here */
-								conv = 
+								conv =
 									purple_conversation_new(PURPLE_CONV_TYPE_IM,
 									account, who);
 							}
@@ -912,11 +921,12 @@ jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
 
 static gboolean
 jabber_conv_support_custom_smileys(const PurpleConnection *gc,
-								   const PurpleConversation *conv,
+								   PurpleConversation *conv,
 								   const gchar *who)
 {
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
+	JabberChat *chat;
 
 	if (!js) {
 		purple_debug_error("jabber",
@@ -925,11 +935,22 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 	}
 
 	switch (purple_conversation_get_type(conv)) {
-		/* for the time being, we will not support custom smileys in MUCs */
 		case PURPLE_CONV_TYPE_IM:
 			jb = jabber_buddy_find(js, who, FALSE);
 			if (jb) {
 				return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+			} else {
+				return FALSE;
+			}
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			chat = jabber_chat_find_by_conv(conv);
+			if (chat) {
+				/* do not attempt to send custom smileys in a MUC with more than
+				 10 people, to avoid getting too many BoB requests */
+				return jabber_chat_get_num_participants(chat) <= 10 &&
+					jabber_chat_all_participants_have_capability(chat,
+						XEP_0231_NAMESPACE);
 			} else {
 				return FALSE;
 			}
@@ -1154,7 +1175,6 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	jm->chat_state = JM_STATE_ACTIVE;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
-	jm->chat_state = JM_STATE_ACTIVE;
 
 	if(jbr) {
 		if(jbr->thread_id)
@@ -1170,7 +1190,9 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 			jm->typing_style |= JM_TS_JEP_0022;
 	}
 
-	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	tmp = purple_utf8_strip_unprintables(msg);
+	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
+	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);
@@ -1194,6 +1216,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	JabberMessage *jm;
 	JabberStream *js;
 	char *xhtml;
+	char *tmp;
 
 	if(!msg || !gc)
 		return 0;
@@ -1210,7 +1233,14 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);
 
+	tmp = purple_utf8_strip_unprintables(msg);
 	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	g_free(tmp);
+	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
+	if (tmp) {
+		g_free(xhtml);
+		xhtml = tmp;
+	}
 
 	if (chat->xhtml && !jabber_xhtml_plain_equal(xhtml, jm->body))
 		jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);

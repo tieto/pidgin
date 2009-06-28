@@ -129,7 +129,7 @@ purple_base16_encode(const guchar *data, gsize len)
 	ascii = g_malloc(len * 2 + 1);
 
 	for (i = 0; i < len; i++)
-		snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
+		g_snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
 
 	return ascii;
 }
@@ -1041,6 +1041,35 @@ purple_markup_get_css_property(const gchar *style,
 	return ret;
 }
 
+gboolean purple_markup_is_rtl(const char *html)
+{
+	GData *attributes;
+	const gchar *start, *end;
+	gboolean res = FALSE;
+
+	if (purple_markup_find_tag("span", html, &start, &end, &attributes))
+	{
+		/* tmp is a member of attributes and is free with g_datalist_clear call */
+		const char *tmp = g_datalist_get_data(&attributes, "dir");
+		if (tmp && !g_ascii_strcasecmp(tmp, "RTL"))
+			res = TRUE;
+		if (!res)
+		{
+			tmp = g_datalist_get_data(&attributes, "style");
+			if (tmp)
+			{
+				char *tmp2 = purple_markup_get_css_property(tmp, "direction");
+				if (tmp2 && !g_ascii_strcasecmp(tmp2, "RTL"))
+					res = TRUE;
+				g_free(tmp2);
+			}
+
+		}
+		g_datalist_clear(&attributes);
+	}
+	return res;
+}
+
 gboolean
 purple_markup_find_tag(const char *needle, const char *haystack,
 					 const char **start, const char **end, GData **attributes)
@@ -1623,7 +1652,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "a";
 					tags = g_list_prepend(tags, pt);
 					if(xhtml)
-						g_string_append_printf(xhtml, "<a href='%s'>", url ? g_strstrip(url->str) : "");
+						g_string_append_printf(xhtml, "<a href=\"%s\">", url ? g_strstrip(url->str) : "");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -2017,7 +2046,6 @@ badchar(char c)
 	case '<':
 	case '>':
 	case '"':
-	case '\'':
 		return TRUE;
 	default:
 		return FALSE;
@@ -3870,7 +3898,7 @@ static void ssl_url_fetch_recv_cb(gpointer data, PurpleSslConnection *ssl_connec
 	url_fetch_recv_cb(data, -1, cond);
 }
 
-/*
+/**
  * This function is called when the socket is available to be written
  * to.
  *
@@ -3920,7 +3948,10 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		}
 	}
 
-	purple_debug_misc("util", "Request: '%s'\n", gfud->request);
+	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+		purple_debug_misc("util", "Request: '%s'\n", gfud->request);
+	else
+		purple_debug_misc("util", "request constructed\n");
 
 	total_len = strlen(gfud->request);
 
@@ -4006,7 +4037,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *request, gboolean include_headers,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
-	return purple_util_fetch_url_request_len(url, full,
+	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
 					     user_agent, http11,
 					     request, include_headers, -1,
 					     callback, user_data);
@@ -4018,14 +4049,28 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
+	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
+			user_agent, http11, request, include_headers, max_len, callback,
+			user_data);
+}
+
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+		const char *url, gboolean full,	const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data)
+{
 	PurpleUtilFetchUrlData *gfud;
 
 	g_return_val_if_fail(url      != NULL, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	purple_debug_info("util",
-			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
-			 url, full, user_agent?user_agent:"(null)", http11);
+	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+		purple_debug_info("util",
+				 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
+				 url, full, user_agent?user_agent:"(null)", http11);
+	else
+		purple_debug_info("util", "requesting to fetch a URL\n");
 
 	gfud = g_new0(PurpleUtilFetchUrlData, 1);
 
@@ -4052,11 +4097,11 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 		}
 
 		gfud->is_ssl = TRUE;
-		gfud->ssl_connection = purple_ssl_connect(NULL,
+		gfud->ssl_connection = purple_ssl_connect(account,
 				gfud->website.address, gfud->website.port,
 				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
 	} else {
-		gfud->connect_data = purple_proxy_connect(NULL, NULL,
+		gfud->connect_data = purple_proxy_connect(NULL, account,
 				gfud->website.address, gfud->website.port,
 				url_fetch_connect_cb, gfud);
 	}
@@ -4377,6 +4422,37 @@ purple_utf8_salvage(const char *str)
 	} while (*str != '\0');
 
 	return g_string_free(workstr, FALSE);
+}
+
+gchar *
+purple_utf8_strip_unprintables(const gchar *str)
+{
+	gchar *workstr, *iter;
+
+	if (str == NULL)
+		/* Act like g_strdup */
+		return NULL;
+
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
+
+	workstr = iter = g_new(gchar, strlen(str) + 1);
+	while (*str) {
+		gunichar c = g_utf8_get_char(str);
+		const gchar *next = g_utf8_next_char(str);
+		size_t len = next - str;
+
+		if (g_unichar_isprint(c)) {
+			memcpy(iter, str, len);
+			iter += len;
+		}
+
+		str = next;
+	}
+
+	/* nul-terminate the new string */
+	*iter = '\0';
+
+	return workstr;
 }
 
 /*

@@ -213,27 +213,18 @@ static void simple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 }
 
 static void simple_get_buddies(PurpleConnection *gc) {
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	GSList *buddies;
 	PurpleAccount *account;
 
 	purple_debug_info("simple", "simple_get_buddies\n");
 
 	account = purple_connection_get_account(gc);
-	for(gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode)) continue;
-		for(cnode = purple_blist_node_get_first_child(gnode);
-				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode)) continue;
-			for(bnode = purple_blist_node_get_first_child(cnode);
-					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode)) {
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode)) continue;
-				if(purple_buddy_get_account((PurpleBuddy*)bnode) == account)
-					simple_add_buddy(gc, (PurpleBuddy*)bnode, (PurpleGroup *)gnode);
-			}
-		}
+	buddies = purple_find_buddies(account, NULL);
+	while (buddies) {
+		PurpleBuddy *buddy = buddies->data;
+		simple_add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
 }
 
@@ -454,13 +445,6 @@ static void send_later_cb(gpointer data, gint source, const gchar *error) {
 	PurpleConnection *gc = data;
 	struct simple_account_data *sip;
 	struct sip_connection *conn;
-
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
-	{
-		if (source >= 0)
-			close(source);
-		return;
-	}
 
 	if(source < 0) {
 		purple_connection_error_reason(gc,
@@ -1743,13 +1727,6 @@ static void login_cb(gpointer data, gint source, const gchar *error_message) {
 	PurpleConnection *gc = data;
 	struct simple_account_data *sip;
 	struct sip_connection *conn;
-
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
-	{
-		if (source >= 0)
-			close(source);
-		return;
-	}
 
 	if(source < 0) {
 		purple_connection_error_reason(gc,

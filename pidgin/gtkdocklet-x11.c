@@ -32,6 +32,7 @@
 
 #include "eggtrayicon.h"
 #include "gtkdocklet.h"
+#include <gdk/gdkkeysyms.h>
 
 #define SHORT_EMBED_TIMEOUT 5000
 #define LONG_EMBED_TIMEOUT 15000
@@ -89,6 +90,33 @@ docklet_x11_clicked_cb(GtkWidget *button, GdkEventButton *event, void *data)
 
 	pidgin_docklet_clicked(event->button);
 	return TRUE;
+}
+
+static gboolean
+docklet_x11_pressed_cb(GtkWidget *button, GdkEventKey *event)
+{
+	guint state, keyval;
+
+	state = event->state & gtk_accelerator_get_default_mod_mask();
+	keyval = event->keyval;
+	if (state == 0 &&
+	    (keyval == GDK_Return ||
+	     keyval == GDK_KP_Enter ||
+	     keyval == GDK_ISO_Enter ||
+	     keyval == GDK_space ||
+	     keyval == GDK_KP_Space))
+	{
+		pidgin_docklet_clicked(1);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+docklet_x11_popup_cb(GtkWidget *button)
+{
+	pidgin_docklet_clicked(3);
 }
 
 static void
@@ -269,11 +297,14 @@ docklet_x11_create(gboolean recreate)
 	docklet = egg_tray_icon_new(PIDGIN_NAME);
 	box = gtk_event_box_new();
 	image = gtk_image_new();
+	GTK_WIDGET_SET_FLAGS (image, GTK_CAN_FOCUS);
 
 	g_signal_connect(G_OBJECT(docklet), "embedded", G_CALLBACK(docklet_x11_embedded_cb), NULL);
 	g_signal_connect(G_OBJECT(docklet), "destroy", G_CALLBACK(docklet_x11_destroyed_cb), NULL);
 	g_signal_connect(G_OBJECT(docklet), "size-allocate", G_CALLBACK(docklet_x11_resize_icon), NULL);
 	g_signal_connect(G_OBJECT(box), "button-press-event", G_CALLBACK(docklet_x11_clicked_cb), NULL);
+	g_signal_connect(G_OBJECT(box), "key-press-event", G_CALLBACK(docklet_x11_pressed_cb), NULL);
+	g_signal_connect(G_OBJECT(box), "popup-menu", G_CALLBACK(docklet_x11_popup_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(box), image);
 	gtk_container_add(GTK_CONTAINER(docklet), box);
 

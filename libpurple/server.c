@@ -728,7 +728,6 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		im = PURPLE_CONV_IM(conv);
 
 		purple_conv_im_set_typing_state(im, state);
-		purple_conv_im_update_typing(im);
 	} else {
 		switch (state)
 		{
@@ -766,7 +765,6 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 		purple_conv_im_stop_typing_timeout(im);
 		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
-		purple_conv_im_update_typing(im);
 	}
 	else
 	{
