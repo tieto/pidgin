@@ -861,6 +861,7 @@ purple_plugin_destroy(PurplePlugin *plugin)
 				}
 
 				g_list_free(loader_info->exts);
+				loader_info->exts = NULL;
 			}
 
 			plugin_loaders = g_list_remove(plugin_loaders, plugin);
