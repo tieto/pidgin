@@ -176,7 +176,7 @@ pidgin_blist_loader_build(const gchar *dir)
 			else
 				memset(&contact_color, 0, sizeof(GdkColor));
 
-		} purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <buddys> <background>.\n");
+		} else purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <buddys> <background>.\n");
 	}
 
 	for (i = 0; success && lookups[i].tag; i++) {
