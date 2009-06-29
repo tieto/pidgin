@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-25 21:33+0200\n"
-"PO-Revision-Date: 2009-06-25 21:44+0200\n"
+"POT-Creation-Date: 2009-06-29 08:35+0200\n"
+"PO-Revision-Date: 2009-06-29 08:37+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -9784,8 +9784,8 @@ msgstr "Paràmetres de la presència"
 msgid "Start Doodling"
 msgstr "Comença a dibuixar"
 
-msgid "Activate which ID?"
-msgstr "Quin ID voleu activar?"
+msgid "Select the ID you want to activate"
+msgstr "Seleccioneu l'ID que vulgueu activar"
 
 msgid "Join whom in chat?"
 msgstr "A qui us voleu unir al xat?"
@@ -12631,8 +12631,14 @@ msgstr "Envia un missatge"
 msgid "Unknown.... Please report this!"
 msgstr "Esdeveniment d'avís desconegut, informeu-nos-en."
 
-msgid "Smiley theme failed to unpack."
-msgstr "No s'ha pogut desempaquetar el tema d'emoticones."
+msgid "Theme failed to unpack."
+msgstr "No s'ha pogut desempaquetar el tema."
+
+msgid "Theme failed to load."
+msgstr "No s'ha pogut carregar el tema."
+
+msgid "Theme failed to copy."
+msgstr "No s'ha pogut copiar el tema."
 
 msgid "Install Theme"
 msgstr "Instal·la el tema"
@@ -14344,6 +14350,9 @@ msgstr "Envia i rep blocs XMPP en brut."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
+
+#~ msgid "Activate which ID?"
+#~ msgstr "Quin ID voleu activar?"
 
 #~ msgid "Account locked: Too many failed login attempts"
 #~ msgstr "S'ha blocat el compte: s'ha intentat entrar massa vegades"
