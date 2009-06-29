@@ -4222,7 +4222,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 		}
 	}
 
-	msn = g_str_has_prefix(who, "msn/") || g_str_has_prefix(who, "MSN/");
+	msn = !g_strncasecmp(who, "msn/", 4);
 
 	if( strncmp(who, "+", 1) == 0 ) {
 		/* we have an sms to be sent */
@@ -4346,7 +4346,7 @@ static unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, Pur
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
-	gboolean msn = (g_str_has_prefix(who, "msn/") || g_str_has_prefix(who, "MSN/"));
+	gboolean msn = !g_strncasecmp(who, "msn/", 4);
 	struct yahoo_packet *pkt = NULL;
 
 	/* Don't do anything if sms is being typed */
@@ -4619,7 +4619,7 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 		return;
 
 	f = yahoo_friend_find(gc, bname);
-	msn = g_str_has_prefix(bname, "msn/") || g_str_has_prefix(bname, "MSN/");
+	msn = !g_strncasecmp(bname, "msn/", 4);
 
 	g = purple_buddy_get_group(buddy);
 	if (g)
