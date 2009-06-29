@@ -66,7 +66,7 @@ static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 #endif
 
 struct _PurpleTxtResponse {
-    char *content;
+	char *content;
 };
 
 struct _PurpleSrvQueryData {
@@ -335,13 +335,13 @@ res_main_thread_cb(gpointer data)
 			query_data->results = NULL;
 
 			purple_debug_info("dnssrv", "found %d SRV entries\n", size);
-			
+
 			if(query_data->cb.srv) query_data->cb.srv(srvres, size, query_data->extradata);
 		} else if (query_data->type == DNS_TYPE_TXT) {
 			GSList *lst = query_data->results;
 
 			purple_debug_info("dnssrv", "found %d TXT entries\n", g_slist_length(lst));
-			
+
 			if (query_data->cb.txt) {
 				query_data->results = NULL;
 				query_data->cb.txt(lst, query_data->extradata);
@@ -382,7 +382,7 @@ res_thread(gpointer data)
 			GSList *lst = NULL;
 			DNS_SRV_DATA *srv_data;
 			PurpleSrvResponse *srvres;
-			
+
 			for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
 				/* Discard any incorrect entries. I'm not sure if this is necessary */
 				if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
@@ -396,7 +396,7 @@ res_thread(gpointer data)
 				srvres->pref = srv_data->wPriority;
 				srvres->port = srv_data->wPort;
 				srvres->weight = srv_data->wWeight;
-				
+
 				lst = g_slist_insert_sorted(lst, srvres, responsecompare);
 			}
 
@@ -431,7 +431,7 @@ res_thread(gpointer data)
 			MyDnsRecordListFree(dr, DnsFreeRecordList);
 			query_data->results = lst;
 		} else {
-			
+
 		}
 	}
 
@@ -500,10 +500,9 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 
 	internal_query.type = T_SRV;
 	strncpy(internal_query.query, query, 255);
-	
+
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to SRV resolver\n");
-	
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
 	query_data->type = T_SRV;
@@ -596,10 +595,10 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 
 	close(out[1]);
 	close(in[0]);
-	
+
 	internal_query.type = T_TXT;
 	strncpy(internal_query.query, query, 255);
-	
+
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to TXT resolver\n");
 
