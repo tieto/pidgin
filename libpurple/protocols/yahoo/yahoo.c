@@ -2158,6 +2158,7 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 		}
 		else	/* we are already connected. set friend to YAHOO_P2PSTATUS_WE_ARE_CLIENT */
 			yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_WE_ARE_CLIENT);
+		g_free(who);
 		return;
 	}
 
