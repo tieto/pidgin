@@ -31,7 +31,7 @@ static GHashTable *remote_data_by_cid = NULL;
 
 JabberData *
 jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type,
-	JabberStream *js)
+	gboolean ephemeral, JabberStream *js)
 {
 	JabberData *data = g_new0(JabberData, 1);
 	gchar *checksum = purple_util_get_image_checksum(rawdata, size);
@@ -43,6 +43,7 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 	data->cid = g_strdup(cid);
 	data->type = g_strdup(type);
 	data->size = size;
+	data->ephemeral = ephemeral;
 
 	data->data = g_memdup(rawdata, size);
 
@@ -229,6 +230,12 @@ jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
 		xmlnode_set_attrib(result->node, "id", id);
 		xmlnode_insert_child(result->node,
 							 jabber_data_get_xml_definition(data));
+		/* if the data object is temporary, destroy it and remove the references
+		 to it */
+		if (data->ephemeral) {
+			g_hash_table_remove(local_data_by_cid, cid);
+			jabber_data_destroy(data);
+		}
 	}
 	jabber_iq_send(result);
 }
