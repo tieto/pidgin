@@ -131,7 +131,7 @@ version 2.5.8 (06/27/2009):
 
 	MySpace:
 	* Accounts with empty buddy lists are now properly marked as connected.
-	* Fix receiving messages from users of MySpace IM's web client.
+	* Fix receiving messages from users of MySpace's web IM client.
 
 	Yahoo:
 	* Fixed phantom online buddies.  They should now properly disappear when
