@@ -68,6 +68,7 @@ struct _PurpleUtilFetchUrlData
 	unsigned long len;
 	unsigned long data_len;
 	gssize max_len;
+	gboolean chunked;
 };
 
 static char *custom_user_dir = NULL;
@@ -3728,41 +3729,43 @@ parse_redirect(const char *data, size_t data_len,
 	return TRUE;
 }
 
+static const char *
+find_header_content(const char *data, size_t data_len, const char *header, size_t header_len)
+{
+	const char *p = NULL;
+
+	if (header_len <= 0)
+		header_len = strlen(header);
+
+	/* Note: data is _not_ nul-terminated.  */
+	if (data_len > header_len) {
+		if (header[0] == '\n')
+			p = (g_strncasecmp(data, header + 1, header_len - 1) == 0) ? data : NULL;
+		if (!p)
+			p = purple_strcasestr(data, header);
+		if (p)
+			p += header_len;
+	}
+
+	/* If we can find the header at all, try to sscanf it.
+	 * Response headers should end with at least \r\n, so sscanf is safe,
+	 * if we make sure that there is indeed a \n in our header.
+	 */
+	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
+		return p;
+	}
+
+	return NULL;
+}
+
 static size_t
 parse_content_len(const char *data, size_t data_len)
 {
 	size_t content_len = 0;
 	const char *p = NULL;
 
-	/* This is still technically wrong, since headers are case-insensitive
-	 * [RFC 2616, section 4.2], though this ought to catch the normal case.
-	 * Note: data is _not_ nul-terminated.
-	 */
-	if(data_len > 16) {
-		p = (strncmp(data, "Content-Length: ", 16) == 0) ? data : NULL;
-		if(!p)
-			p = (strncmp(data, "CONTENT-LENGTH: ", 16) == 0)
-				? data : NULL;
-		if(!p) {
-			p = g_strstr_len(data, data_len, "\nContent-Length: ");
-			if (p)
-				p++;
-		}
-		if(!p) {
-			p = g_strstr_len(data, data_len, "\nCONTENT-LENGTH: ");
-			if (p)
-				p++;
-		}
-
-		if(p)
-			p += 16;
-	}
-
-	/* If we can find a Content-Length header at all, try to sscanf it.
-	 * Response headers should end with at least \r\n, so sscanf is safe,
-	 * if we make sure that there is indeed a \n in our header.
-	 */
-	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
+	p = find_header_content(data, data_len, "\nContent-Length: ", sizeof("\nContent-Length: ") - 1);
+	if (p) {
 		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
 		purple_debug_misc("util", "parsed %" G_GSIZE_FORMAT "\n", content_len);
 	}
@@ -3770,6 +3773,49 @@ parse_content_len(const char *data, size_t data_len)
 	return content_len;
 }
 
+static gboolean
+content_is_chunked(const char *data, size_t data_len)
+{
+	gboolean chunked = FALSE;
+	const char *p = find_header_content(data, data_len, "\nTransfer-Encoding: ", sizeof("\nTransfer-Encoding: ") - 1);
+	if (p && g_strncasecmp(p, "chunked", 7) == 0)
+		chunked = TRUE;
+
+	return chunked;
+}
+
+/* Process in-place */
+static void
+process_chunked_data(char *data, gssize *len)
+{
+	gssize sz;
+	gssize nlen = 0;
+	char *p = data;
+	char *s = data;
+
+	while (*s) {
+		if (sscanf(s, "%x\r\n", &sz) != 1) {
+			purple_debug_error("util", "Error processing chunked data. Expected data length, found: %s\n", s);
+			break;
+		}
+		if (sz == 0)
+			break;
+		s = strstr(s, "\r\n") + 2;
+		g_memmove(p, s, sz);
+		p += sz;
+		s += sz;
+		nlen += sz;
+		if (*s != '\r' && *(s + 1) != '\n') {
+			purple_debug_error("util", "Error processing chunked data. Expected \\r\\n, found: %s\n", s);
+			break;
+		}
+		s += 2;
+	}
+	*p = 0;
+
+	if (len)
+		*len = nlen;
+}
 
 static void
 url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
@@ -3830,6 +3876,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 
 				/* No redirect. See if we can find a content length. */
 				content_len = parse_content_len(gfud->webdata, header_len);
+				gfud->chunked = content_is_chunked(gfud->webdata, header_len);
 
 				if(content_len == 0) {
 					/* We'll stick with an initial 8192 */
@@ -3901,6 +3948,11 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	if((len == 0) || got_eof) {
 		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
 		gfud->webdata[gfud->len] = '\0';
+
+		if (!gfud->include_headers && gfud->chunked) {
+			/* Process only if we don't want the headers. */
+			process_chunked_data(gfud->webdata, &gfud->len);
+		}
 
 		gfud->callback(gfud, gfud->user_data, gfud->webdata, gfud->len, NULL);
 		purple_util_fetch_url_cancel(gfud);
