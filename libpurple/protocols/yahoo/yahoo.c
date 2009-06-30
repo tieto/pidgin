@@ -1683,11 +1683,11 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 #else
 		while (split_data[++totalelements] != NULL);	
 #endif
-		if (totalelements >= 5) {
-			response_no = strtol(split_data[1], NULL, 10);
-			crumb = g_strdup(split_data[2] + strlen("crumb="));
-			yd->cookie_y = g_strdup(split_data[3] + strlen("Y="));
-			yd->cookie_t = g_strdup(split_data[4] + strlen("T="));
+		if (totalelements >= 4) {
+			response_no = strtol(split_data[0], NULL, 10);
+			crumb = g_strdup(split_data[1] + strlen("crumb="));
+			yd->cookie_y = g_strdup(split_data[2] + strlen("Y="));
+			yd->cookie_t = g_strdup(split_data[3] + strlen("T="));
 		}
 
 		g_strfreev(split_data);
@@ -1769,9 +1769,9 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 #else
 		while (split_data[++totalelements] != NULL);	
 #endif
-		if(totalelements >= 5) {
-			response_no = strtol(split_data[1], NULL, 10);
-			token = g_strdup(split_data[2] + strlen("ymsgr="));
+		if(totalelements >= 2) {
+			response_no = strtol(split_data[0], NULL, 10);
+			token = g_strdup(split_data[1] + strlen("ymsgr="));
 		}
 
 		g_strfreev(split_data);
