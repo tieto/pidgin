@@ -30,6 +30,7 @@
 #include "notify.h"
 
 #include "buddy.h"
+#include "data.h"
 #include "disco.h"
 #include "jabber.h"
 #include "ibb.h"
@@ -1279,6 +1280,21 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	xmlnode_set_attrib(file, "size", buf);
 	/* maybe later we'll do hash and date attribs */
 
+	/* add thumbnail, if appropriate */
+	if (purple_xfer_get_thumbnail_data(xfer)) {
+		JabberData *thumbnail_data = 
+			jabber_data_create_from_data(purple_xfer_get_thumbnail_data(xfer),
+				purple_xfer_get_thumbnail_size(xfer), "image/jpeg", TRUE,
+				jsx->js);
+		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
+		xmlnode_set_namespace(thumbnail, "urn:xmpp:thumbs:0");
+		xmlnode_set_attrib(thumbnail, "cid", 
+			jabber_data_get_cid(thumbnail_data));
+		xmlnode_set_attrib(thumbnail, "mime-type", "image/jpeg");
+		/* cache data */
+		jabber_data_associate_local(thumbnail_data, NULL);
+	}
+						  
 	feature = xmlnode_new_child(si, "feature");
 	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 	x = xmlnode_new_child(feature, "x");
