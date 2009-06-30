@@ -219,6 +219,9 @@ static const char xdigits[] =
 gchar *
 purple_base64_encode(const guchar *data, gsize len)
 {
+#if GLIB_CHECK_VERSION(2,12,0)
+	return g_base64_encode(data, len);
+#else
 	char *out, *rv;
 
 	g_return_val_if_fail(data != NULL, NULL);
@@ -253,11 +256,21 @@ purple_base64_encode(const guchar *data, gsize len)
 	*out = '\0';
 
 	return rv;
+#endif /* GLIB < 2.12.0 */
 }
 
 guchar *
 purple_base64_decode(const char *str, gsize *ret_len)
 {
+#if GLIB_CHECK_VERSION(2,12,0)
+	/*
+	 * We want to allow ret_len to be NULL for backward compatibility,
+	 * but g_base64_decode() requires a valid length variable.  So if
+	 * ret_len is NULL then pass in a dummy variable.
+	 */
+	gsize unused;
+	return g_base64_decode(str, ret_len != NULL ? ret_len : &unused);
+#else
 	guchar *out = NULL;
 	char tmp = 0;
 	const char *c;
@@ -319,6 +332,7 @@ purple_base64_decode(const char *str, gsize *ret_len)
 		*ret_len = len;
 
 	return out;
+#endif /* GLIB < 2.12.0 */
 }
 
 /**************************************************************************
