@@ -234,7 +234,6 @@ jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
 		 to it */
 		if (data->ephemeral) {
 			g_hash_table_remove(local_data_by_cid, cid);
-			jabber_data_destroy(data);
 		}
 	}
 	jabber_iq_send(result);

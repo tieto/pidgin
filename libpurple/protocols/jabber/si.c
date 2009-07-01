@@ -1623,12 +1623,37 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 		purple_xfer_request(xfer);
 }
 
+static void
+jabber_si_thumbnail_cb(JabberStream *js, const char *from, JabberIqType type, 
+	const char *id, xmlnode *packet, gpointer data)
+{
+	PurpleXfer *xfer = (PurpleXfer *) data;
+	xmlnode *data_element = xmlnode_get_child(packet, "data");
+	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
+
+	if (data_element) {
+		JabberData *data = jabber_data_create_from_xml(data_element);
+
+		if (data) {
+			purple_xfer_set_thumbnail(xfer, jabber_data_get_data(data),
+				jabber_data_get_size(data));
+			jabber_data_destroy(data);
+		}
+	} else if (item_not_found) {
+		purple_debug_info("jabber",
+			"Responder didn't recognize requested data\n");
+	} else {
+		purple_debug_error("jabber", "Unknown response to data request\n");
+	}
+	purple_xfer_request(xfer);
+}
+
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
                      const char *id, xmlnode *si)
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *file, *feature, *x, *field, *option, *value;
+	xmlnode *file, *feature, *x, *field, *option, *value, *thumbnail;
 	const char *stream_id, *filename, *filesize_c, *profile;
 	size_t filesize = 0;
 
@@ -1710,10 +1735,29 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
 	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-
+				   
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
-	purple_xfer_request(xfer);
+	/* if there is a thumbnail, we should request it... */
+	if ((thumbnail = xmlnode_get_child(file, "thumbnail"))) {
+		const char *cid = xmlnode_get_attrib(thumbnail, "cid");
+		if (cid) {
+			JabberIq *request = 
+				jabber_iq_new(jsx->js, JABBER_IQ_GET);
+
+			purple_debug_info("jabber", "got file thumbnail, request it\n");
+			xmlnode_insert_child(request->node, 
+				jabber_data_get_xml_request(cid));
+			xmlnode_set_attrib(request->node, "to", 
+				purple_xfer_get_remote_user(xfer));
+			jabber_iq_set_callback(request, jabber_si_thumbnail_cb, xfer);
+			jabber_iq_send(request);
+		} else {
+			purple_xfer_request(xfer);
+		}
+	} else {
+		purple_xfer_request(xfer);
+	}
 }
 
 void
