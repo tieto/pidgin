@@ -2877,15 +2877,13 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_PICTURE:
 		yahoo_process_picture(gc, pkt);
 		break;
-	case YAHOO_SERVICE_PICTURE_UPDATE:
-		yahoo_process_picture_update(gc, pkt);
-		break;
 	case YAHOO_SERVICE_PICTURE_CHECKSUM:
 		yahoo_process_picture_checksum(gc, pkt);
 		break;
 	case YAHOO_SERVICE_PICTURE_UPLOAD:
 		yahoo_process_picture_upload(gc, pkt);
 		break;
+	case YAHOO_SERVICE_PICTURE_UPDATE:
 	case YAHOO_SERVICE_AVATAR_UPDATE:
 		yahoo_process_avatar_update(gc, pkt);
 		break;
