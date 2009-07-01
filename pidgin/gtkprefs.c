@@ -129,7 +129,8 @@ pidgin_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 }
 
 static void
-entry_set(GtkEntry *entry, gpointer data) {
+entry_set(GtkEntry *entry, gpointer data)
+{
 	const char *key = (const char*)data;
 
 	purple_prefs_set_string(key, gtk_entry_get_text(entry));
@@ -341,7 +342,9 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 }
 
-static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
+static void
+smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model)
+{
 	GtkTreeIter  iter;
 	const char *themename;
 	char *description;
@@ -392,7 +395,8 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_path_free(path);
 }
 
-static GtkTreeRowReference *theme_refresh_theme_list(void)
+static GtkTreeRowReference *
+theme_refresh_theme_list(void)
 {
 	GdkPixbuf *pixbuf;
 	GSList *themes;
@@ -452,7 +456,7 @@ static GtkTreeRowReference *theme_refresh_theme_list(void)
 
 /* Rebuild the markup for the sound theme selection for "(Custom)" themes */
 static void
-pref_sound_generate_markup()
+pref_sound_generate_markup(void)
 {
 	gboolean print_custom, customized;
 	const gchar *name, *author, *description, *current_theme;
@@ -567,7 +571,7 @@ prefs_set_active_theme_combo(GtkWidget *combo_box, GtkListStore *store, const gc
 }
 
 static void
-prefs_themes_refresh()
+prefs_themes_refresh(void)
 {
 	GdkPixbuf *pixbuf = NULL;
 	gchar *filename;
@@ -611,7 +615,7 @@ prefs_themes_refresh()
 
 /* init all the theme variables so that the themes can be sorted later and used by pref pages */
 static void
-prefs_themes_init()
+prefs_themes_init(void)
 {
 	prefs_sound_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
@@ -645,29 +649,30 @@ prefs_theme_find_theme(const gchar *path, const gchar *type)
 static gboolean
 purple_theme_file_copy(const gchar *source, const gchar *destination)
 {
-    FILE *src, *dest;
-    gint chr = EOF;
+	FILE *src, *dest;
+	gint chr = EOF;
 
-    if(!(src = g_fopen(source, "rb")))
-        return FALSE;
-    if(!(dest = g_fopen(destination, "wb"))) {
+	if(!(src = g_fopen(source, "rb")))
+		return FALSE;
+	if(!(dest = g_fopen(destination, "wb"))) {
 		fclose(src);
-        return FALSE;
+		return FALSE;
 	}
 
-    while((chr = fgetc(src)) != EOF) {
-        fputc(chr, dest);
-    }
+	while((chr = fgetc(src)) != EOF) {
+		fputc(chr, dest);
+	}
 
-    fclose(dest);
-    fclose(src);
+	fclose(dest);
+	fclose(src);
 
-    return TRUE;
+	return TRUE;
 }
 
 /* installs a theme, info is freed by function */
 static void
-theme_install_theme(char *path, struct theme_info *info) {
+theme_install_theme(char *path, struct theme_info *info)
+{
 #ifndef _WIN32
 	gchar *command;
 #endif
@@ -1023,7 +1028,7 @@ request_theme_file_name_cb(gpointer data, char *theme_file_name)
 	info->extension = NULL;
 	info->original_name = NULL;
 
-	theme_install_theme(theme_file_name, info) ;
+	theme_install_theme(theme_file_name, info);
 
 	g_free(info);
 }
@@ -1031,7 +1036,7 @@ request_theme_file_name_cb(gpointer data, char *theme_file_name)
 static void
 add_theme_button_clicked_cb(GtkWidget *widget, gpointer user_data)
 {
-	purple_request_file(NULL, _("Install Theme"), NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
+	purple_request_file(NULL, _("Install Theme"), NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL);
 }
 
 static void
@@ -1447,7 +1452,7 @@ interface_page(void)
 					_("Never"), "never",
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 	vbox = pidgin_make_frame(ret, _("Conversation Window Hiding"));
 	label = pidgin_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
@@ -1457,7 +1462,7 @@ interface_page(void)
 					_("Always"), "always",
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 
 	/* All the tab options! */
@@ -1475,7 +1480,7 @@ interface_page(void)
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/conversations/tabs",
 	                            conversation_usetabs_cb, vbox2);
 	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"))
-	  gtk_widget_set_sensitive(vbox2, FALSE);
+		gtk_widget_set_sensitive(vbox2, FALSE);
 
 	pidgin_prefs_checkbox(_("Show close b_utton on tabs"),
 				PIDGIN_PREFS_ROOT "/conversations/close_on_tabs", vbox2);
@@ -1492,7 +1497,7 @@ interface_page(void)
 #endif
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 	names = pidgin_conv_placement_get_options();
 	label = pidgin_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
@@ -1503,9 +1508,7 @@ interface_page(void)
 
 	g_list_free(names);
 
-
 	keyboard_shortcuts(ret);
-
 
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
@@ -1633,7 +1636,8 @@ conv_page(void)
 	return ret;
 }
 
-static void network_ip_changed(GtkEntry *entry, gpointer data)
+static void
+network_ip_changed(GtkEntry *entry, gpointer data)
 {
 	/*
 	 * TODO: It would be nice if we could validate this and show a
@@ -1643,8 +1647,9 @@ static void network_ip_changed(GtkEntry *entry, gpointer data)
 	purple_network_set_public_ip(gtk_entry_get_text(entry));
 }
 
-static gboolean network_stun_server_changed_cb(GtkWidget *widget,
-	GdkEventFocus *event, gpointer data)
+static gboolean
+network_stun_server_changed_cb(GtkWidget *widget,
+                               GdkEventFocus *event, gpointer data)
 {
 	GtkEntry *entry = GTK_ENTRY(widget);
 	purple_prefs_set_string("/purple/network/stun_server",
@@ -1654,8 +1659,9 @@ static gboolean network_stun_server_changed_cb(GtkWidget *widget,
 	return FALSE;
 }
 
-static gboolean network_turn_server_changed_cb(GtkWidget *widget,
-	GdkEventFocus *event, gpointer data)
+static gboolean
+network_turn_server_changed_cb(GtkWidget *widget,
+                               GdkEventFocus *event, gpointer data)
 {
 	GtkEntry *entry = GTK_ENTRY(widget);
 	purple_prefs_set_string("/purple/network/turn_server",
@@ -1678,7 +1684,8 @@ proxy_changed_cb(const char *name, PurplePrefType type,
 		gtk_widget_hide(frame);
 }
 
-static void proxy_print_option(GtkEntry *entry, int entrynum)
+static void
+proxy_print_option(GtkEntry *entry, int entrynum)
 {
 	if (entrynum == PROXYHOST)
 		purple_prefs_set_string("/purple/proxy/host", gtk_entry_get_text(entry));
@@ -2017,7 +2024,9 @@ network_page(void)
 }
 
 #ifndef _WIN32
-static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
+static gboolean
+manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data)
+{
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
 	purple_prefs_set_path(PIDGIN_PREFS_ROOT "/browsers/command", program);
@@ -2026,7 +2035,8 @@ static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpoin
 	return FALSE;
 }
 
-static GList *get_available_browsers(void)
+static GList *
+get_available_browsers(void)
 {
 	struct browser {
 		char *name;
@@ -2193,7 +2203,8 @@ logging_page(void)
 }
 
 #ifndef _WIN32
-static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
+static gint
+sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
 	purple_prefs_set_path(PIDGIN_PREFS_ROOT "/sound/command",
 			gtk_entry_get_text(GTK_ENTRY(entry)));
@@ -2325,7 +2336,8 @@ sound_chosen_cb(void *user_data, const char *filename)
 	pref_sound_generate_markup();
 }
 
-static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
+static void
+select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 {
 	gchar *pref;
 	const char *filename;
@@ -2345,7 +2357,8 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 }
 
 #ifdef USE_GSTREAMER
-static gchar* prefs_sound_volume_format(GtkScale *scale, gdouble val)
+static gchar *
+prefs_sound_volume_format(GtkScale *scale, gdouble val)
 {
 	if(val < 15) {
 		return g_strdup_printf(_("Quietest"));
@@ -2364,14 +2377,17 @@ static gchar* prefs_sound_volume_format(GtkScale *scale, gdouble val)
 	}
 }
 
-static void prefs_sound_volume_changed(GtkRange *range)
+static void
+prefs_sound_volume_changed(GtkRange *range)
 {
 	int val = (int)gtk_range_get_value(GTK_RANGE(range));
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/sound/volume", val);
 }
 #endif
 
-static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
+static void
+prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model)
+{
 	GtkTreeIter  iter;
 	GValue val;
 	const char *file;
@@ -2725,9 +2741,9 @@ away_page(void)
 
 static int
 prefs_notebook_add_page(const char *text,
-  		        GtkWidget *page,
-			int ind) {
-
+  		                GtkWidget *page,
+                        int ind)
+{
 #if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
 #else
@@ -2736,7 +2752,9 @@ prefs_notebook_add_page(const char *text,
 #endif
 }
 
-static void prefs_notebook_init(void) {
+static void
+prefs_notebook_init(void)
+{
 	prefs_notebook_add_page(_("Interface"), interface_page(), notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), conv_page(), notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), theme_page(), notebook_page++);
@@ -2753,7 +2771,8 @@ static void prefs_notebook_init(void) {
 	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);
 }
 
-void pidgin_prefs_show(void)
+void
+pidgin_prefs_show(void)
 {
 	GtkWidget *vbox;
 	GtkWidget *notebook;
@@ -2875,7 +2894,8 @@ pidgin_prefs_init(void)
 	pidgin_prefs_update_old();
 }
 
-void pidgin_prefs_update_old()
+void
+pidgin_prefs_update_old(void)
 {
 	const char *str;
 
