@@ -549,7 +549,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 				advanced = FALSE;
 				gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
 						PIDGIN_MAIL_DATA, &data, -1);
-				if (data->account == account) {
+				if (data && data->account == account) {
 					if (clear) {
 #if GTK_CHECK_VERSION(2,2,0)
 						advanced = gtk_tree_store_remove(treemodel, &iter);
