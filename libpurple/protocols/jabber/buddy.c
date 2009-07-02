@@ -1725,6 +1725,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	GList *resources;
 	JabberBuddy *jb;
 	JabberBuddyInfo *jbi;
+	const char *slash;
 	gboolean is_bare_jid;
 
 	jb = jabber_buddy_find(js, jid, TRUE);
@@ -1733,7 +1734,8 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	if(!jb)
 		return;
 
-	is_bare_jid = (strchr(jid, '/') == NULL);
+	slash = strchr(jid, '/');
+	is_bare_jid = (slash == NULL);
 
 	jbi = g_new0(JabberBuddyInfo, 1);
 	jbi->jid = g_strdup(jid);
@@ -1753,10 +1755,19 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 
 	jabber_iq_send(iq);
 
-	for(resources = jb->resources; resources; resources = resources->next)
-	{
-		JabberBuddyResource *jbr = resources->data;
-		dispatch_queries_for_resource(js, jbi, is_bare_jid, jid, jbr);
+	if (is_bare_jid) {
+		for(resources = jb->resources; resources; resources = resources->next) {
+			JabberBuddyResource *jbr = resources->data;
+			dispatch_queries_for_resource(js, jbi, is_bare_jid, jid, jbr);
+		}
+	} else {
+		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, slash + 1);
+		if (jbr)
+			dispatch_queries_for_resource(js, jbi, is_bare_jid, jid, jbr);
+		else
+			purple_debug_warning("jabber", "jabber_buddy_get_info_for_jid() "
+					"was passed JID %s, but there is no corresponding "
+					"JabberBuddyResource!\n", jid);
 	}
 
 	if (!jb->resources && is_bare_jid) {
