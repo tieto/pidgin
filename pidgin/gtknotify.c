@@ -301,6 +301,7 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 
 	if (id == GTK_RESPONSE_YES)
 	{
+		/* A single row activated. Remove that row. */
 		GtkTreeSelection *selection;
 
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
@@ -325,6 +326,7 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 	}
 	else
 	{
+		/* Remove all the rows */
 		while (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter))
 		{
 			gtk_tree_model_get(GTK_TREE_MODEL(dialog->treemodel), &iter,
@@ -1107,9 +1109,6 @@ pidgin_close_notify(PurpleNotifyType type, void *ui_handle)
 	{
 		PidginNotifyMailData *data = (PidginNotifyMailData *)ui_handle;
 
-		/* Close the notification dialog */
-		pidgin_notify_emails(purple_account_get_connection(data->account),
-		                     0, FALSE, NULL, NULL, NULL, NULL);
 		if (data) {
 			g_free(data->url);
 			g_free(data);
@@ -1565,6 +1564,33 @@ pidgin_get_notification_dialog(PidginNotifyType type)
 	}
 
 	return pidgin_get_dialog(type, model);
+}
+
+static void
+signed_off_cb(PurpleConnection *gc, gpointer unused)
+{
+	/* Clear any pending emails for this account */
+	pidgin_notify_emails(gc, 0, FALSE, NULL, NULL, NULL, NULL);
+}
+
+static void*
+pidgin_notify_get_handle(void)
+{
+	static int handle;
+	return &handle;
+}
+
+void pidgin_notify_init(void)
+{
+	void *handle = pidgin_notify_get_handle();
+
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+			handle, PURPLE_CALLBACK(signed_off_cb), NULL);
+}
+
+void pidgin_notify_uninit(void)
+{
+	purple_signals_disconnect_by_handle(pidgin_notify_get_handle());
 }
 
 static PurpleNotifyUiOps ops =
