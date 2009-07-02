@@ -3786,15 +3786,15 @@ content_is_chunked(const char *data, size_t data_len)
 
 /* Process in-place */
 static void
-process_chunked_data(char *data, gssize *len)
+process_chunked_data(char *data, gsize *len)
 {
-	gssize sz;
-	gssize nlen = 0;
+	gsize sz;
+	gsize nlen = 0;
 	char *p = data;
 	char *s = data;
 
 	while (*s) {
-		if (sscanf(s, "%x\r\n", &sz) != 1) {
+		if (sscanf(s, "%" G_GSIZE_MODIFIER "x\r\n", &sz) != 1) {
 			purple_debug_error("util", "Error processing chunked data. Expected data length, found: %s\n", s);
 			break;
 		}
