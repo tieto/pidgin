@@ -1534,6 +1534,7 @@ oscar_login(PurpleAccount *account)
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
 
+	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 	od->use_ssl = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
 
 	/* Connect to core Purple signals */
