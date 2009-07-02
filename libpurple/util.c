@@ -3776,12 +3776,11 @@ parse_content_len(const char *data, size_t data_len)
 static gboolean
 content_is_chunked(const char *data, size_t data_len)
 {
-	gboolean chunked = FALSE;
 	const char *p = find_header_content(data, data_len, "\nTransfer-Encoding: ", sizeof("\nTransfer-Encoding: ") - 1);
 	if (p && g_strncasecmp(p, "chunked", 7) == 0)
-		chunked = TRUE;
+		return TRUE;
 
-	return chunked;
+	return FALSE;
 }
 
 /* Process in-place */
