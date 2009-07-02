@@ -1660,6 +1660,64 @@ static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
 	return FALSE;
 }
 
+static void
+dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
+                              gboolean is_bare_jid, const char *jid,
+                              JabberBuddyResource *jbr)
+{
+	JabberIq *iq;
+	JabberBuddyInfoResource *jbir;
+	char *full_jid = NULL;
+	const char *to;
+
+	g_return_if_fail(jbr->name != NULL);
+
+	if (is_bare_jid) {
+		full_jid = g_strdup_printf("%s/%s", jid, jbr->name);
+		to = full_jid;
+	} else
+		to = jid;
+
+	jbir = g_new0(JabberBuddyInfoResource, 1);
+	g_hash_table_insert(jbi->resources, g_strdup(jbr->name), jbir);
+
+	if(!jbr->client.name) {
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:version");
+		xmlnode_set_attrib(iq->node, "to", to);
+		jabber_iq_set_callback(iq, jabber_version_parse, jbi);
+		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+		jabber_iq_send(iq);
+	}
+
+	/* this is to fix the feeling of irritation I get when trying
+	 * to get info on a friend running Trillian, which doesn't
+	 * respond (with an error or otherwise) to jabber:iq:last
+	 * requests.  There are a number of Trillian users in my
+	 * office. */
+	if(!_client_is_blacklisted(jbr, "jabber:iq:last")) {
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+		xmlnode_set_attrib(iq->node, "to", to);
+		jabber_iq_set_callback(iq, jabber_last_parse, jbi);
+		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+		jabber_iq_send(iq);
+	}
+
+	if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
+			(!jbr->caps.info ||
+			 	jabber_resource_has_capability(jbr, "urn:xmpp:time"))) {
+		xmlnode *child;
+		iq = jabber_iq_new(js, JABBER_IQ_GET);
+		xmlnode_set_attrib(iq->node, "to", to);
+		child = xmlnode_new_child(iq->node, "time");
+		xmlnode_set_namespace(child, "urn:xmpp:time");
+		jabber_iq_set_callback(iq, jabber_time_parse, jbi);
+		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+		jabber_iq_send(iq);
+	}
+
+	g_free(full_jid);
+}
+
 static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 {
 	JabberIq *iq;
@@ -1667,12 +1725,15 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	GList *resources;
 	JabberBuddy *jb;
 	JabberBuddyInfo *jbi;
+	gboolean is_bare_jid;
 
 	jb = jabber_buddy_find(js, jid, TRUE);
 
 	/* invalid JID */
 	if(!jb)
 		return;
+
+	is_bare_jid = (strchr(jid, '/') == NULL);
 
 	jbi = g_new0(JabberBuddyInfo, 1);
 	jbi->jid = g_strdup(jid);
@@ -1695,59 +1756,10 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	for(resources = jb->resources; resources; resources = resources->next)
 	{
 		JabberBuddyResource *jbr = resources->data;
-		JabberBuddyInfoResource *jbir;
-		char *full_jid;
-
-		if ((strchr(jid, '/') == NULL) && (jbr->name != NULL)) {
-			full_jid = g_strdup_printf("%s/%s", jid, jbr->name);
-		} else {
-			full_jid = g_strdup(jid);
-		}
-
-		if (jbr->name != NULL)
-		{
-			jbir = g_new0(JabberBuddyInfoResource, 1);
-			g_hash_table_insert(jbi->resources, g_strdup(jbr->name), jbir);
-		}
-
-		if(!jbr->client.name) {
-			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:version");
-			xmlnode_set_attrib(iq->node, "to", full_jid);
-			jabber_iq_set_callback(iq, jabber_version_parse, jbi);
-			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
-			jabber_iq_send(iq);
-		}
-
-		/* this is to fix the feeling of irritation I get when trying
-		 * to get info on a friend running Trillian, which doesn't
-		 * respond (with an error or otherwise) to jabber:iq:last
-		 * requests.  There are a number of Trillian users in my
-		 * office. */
-		if(!_client_is_blacklisted(jbr, "jabber:iq:last")) {
-			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
-			xmlnode_set_attrib(iq->node, "to", full_jid);
-			jabber_iq_set_callback(iq, jabber_last_parse, jbi);
-			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
-			jabber_iq_send(iq);
-		}
-
-		if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
-				(!jbr->caps.info ||
-				 	jabber_resource_has_capability(jbr, "urn:xmpp:time"))) {
-			xmlnode *child;
-			iq = jabber_iq_new(js, JABBER_IQ_GET);
-			xmlnode_set_attrib(iq->node, "to", full_jid);
-			child = xmlnode_new_child(iq->node, "time");
-			xmlnode_set_namespace(child, "urn:xmpp:time");
-			jabber_iq_set_callback(iq, jabber_time_parse, jbi);
-			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
-			jabber_iq_send(iq);
-		}
-
-		g_free(full_jid);
+		dispatch_queries_for_resource(js, jbi, is_bare_jid, jid, jbr);
 	}
 
-	if (!jb->resources && strchr(jid, '/') == NULL) {
+	if (!jb->resources && is_bare_jid) {
 		/* user is offline, send a jabber:iq:last to find out last time online */
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
 		xmlnode_set_attrib(iq->node, "to", jid);
