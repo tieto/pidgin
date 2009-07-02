@@ -222,7 +222,7 @@ purple_plugin_probe(const char *filename)
 			return plugin;
 		else if (!purple_plugin_is_unloadable(plugin))
 		{
-			purple_debug_info("plugins", "Not loading %s. "
+			purple_debug_warning("plugins", "Not loading %s. "
 							"Another plugin with the same name (%s) has already been loaded.\n",
 							filename, plugin->path);
 			return plugin;
