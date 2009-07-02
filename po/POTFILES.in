@@ -50,6 +50,7 @@ libpurple/dnsquery.c
 libpurple/ft.c
 libpurple/gconf/purple.schemas.in
 libpurple/log.c
+libpurple/mediamanager.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c
 libpurple/plugins/buddynote.c
@@ -103,12 +104,14 @@ libpurple/protocols/msn/contact.c
 libpurple/protocols/msn/dialog.c
 libpurple/protocols/msn/error.c
 libpurple/protocols/msn/group.h
+libpurple/protocols/msn/msg.c
 libpurple/protocols/msn/msn.c
 libpurple/protocols/msn/nexus.c
 libpurple/protocols/msn/notification.c
 libpurple/protocols/msn/oim.c
 libpurple/protocols/msn/servconn.c
 libpurple/protocols/msn/session.c
+libpurple/protocols/msn/slp.c
 libpurple/protocols/msn/state.c
 libpurple/protocols/msn/switchboard.c
 libpurple/protocols/msn/userlist.c
@@ -127,6 +130,7 @@ libpurple/protocols/myspace/user.c
 libpurple/protocols/myspace/zap.c
 libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
+libpurple/protocols/oscar/clientlogin.c
 libpurple/protocols/oscar/family_chatnav.c
 libpurple/protocols/oscar/flap_connection.c
 libpurple/protocols/oscar/libaim.c
@@ -192,6 +196,7 @@ pidgin.desktop.in
 pidgin/eggtrayicon.c
 pidgin/gtkaccount.c
 pidgin/gtkblist.c
+pidgin/gtkblist-theme.c
 pidgin/gtkcellview.c
 pidgin/gtkcertmgr.c
 pidgin/gtkconn.c
@@ -227,6 +232,8 @@ pidgin/pixmaps/emotes/default/24/default.theme.in
 pidgin/pixmaps/emotes/none/none.theme.in
 pidgin/pixmaps/emotes/small/16/small.theme.in
 pidgin/plugins/cap/cap.c
+pidgin/plugins/disco/gtkdisco.c
+pidgin/plugins/disco/xmppdisco.c
 pidgin/plugins/contact_priority.c
 pidgin/plugins/convcolors.c
 pidgin/plugins/extplacement.c
@@ -251,6 +258,8 @@ pidgin/plugins/raw.c
 pidgin/plugins/relnot.c
 pidgin/plugins/sendbutton.c
 pidgin/plugins/spellchk.c
+pidgin/plugins/themeedit-icon.c
+pidgin/plugins/themeedit.c
 pidgin/plugins/ticker/ticker.c
 pidgin/plugins/timestamp.c
 pidgin/plugins/timestamp_format.c
