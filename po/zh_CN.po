@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:41-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2007-05-20 20:22+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
@@ -1744,6 +1744,8 @@ msgstr "+++ %s 已登入"
 msgid "+++ %s signed off"
 msgstr "+++ %s 已登出"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "未知错误"
 
@@ -2124,6 +2126,10 @@ msgstr "<font color=\"red\"><b>无法读取文件: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <自动回复>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "创建连接出错"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3068,6 +3074,11 @@ msgstr "添加到聊天"
 msgid "Chat _name:"
 msgstr "聊天名(_N)："
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "无法连接到服务器。"
+
 msgid "Chat error"
 msgstr "聊天错误"
 
@@ -3116,6 +3127,10 @@ msgstr "波兰流行的即时通讯软件"
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu 用户"
 
+#, fuzzy
+msgid "GG server"
+msgstr "设置用户信息..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "未知的错误代码: %s"
@@ -3158,7 +3173,8 @@ msgstr "频道(_C)："
 msgid "_Password:"
 msgstr "密码(_P)："
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC 昵称不能包含空格"
 
 #. 1. connect to server
@@ -3603,6 +3619,9 @@ msgstr "服务器的响应无效。"
 msgid "Server does not use any supported authentication method"
 msgstr "服务器未使用任何支持的身份验证方法"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+
 msgid "Invalid challenge from server"
 msgstr "服务器的挑战无效"
 
@@ -3895,6 +3914,14 @@ msgstr "优先级"
 msgid "Resource"
 msgstr "资源"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "已登入"
+
 msgid "Middle Name"
 msgstr "中名"
 
@@ -4065,8 +4092,17 @@ msgstr "选择要查询的会议服务器"
 msgid "Find Rooms"
 msgstr "查找房间"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr ""
+#, fuzzy
+msgid "Affiliations:"
+msgstr "别名："
+
+#, fuzzy
+msgid "No users found"
+msgstr "未找到匹配的用户"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "职务"
 
 #, fuzzy
 msgid "Ping timeout"
@@ -4088,7 +4124,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "连接到服务器失败。"
 
 #, c-format
@@ -4117,9 +4153,6 @@ msgstr "注册成功"
 msgid "Unregistration Failed"
 msgstr "注册失败"
 
-msgid "Already Registered"
-msgstr "已注册"
-
 msgid "State"
 msgstr "州/省"
 
@@ -4131,6 +4164,9 @@ msgstr "电话"
 
 msgid "Date"
 msgstr "日期"
+
+msgid "Already Registered"
+msgstr "已注册"
 
 msgid "Unregister"
 msgstr "取消注册"
@@ -4161,6 +4197,10 @@ msgstr "注册新的 Jabber 账户"
 #, fuzzy
 msgid "Change Registration"
 msgstr "注册错误"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "连接到服务器失败。"
 
 #, fuzzy
 msgid "Error unregistering account"
@@ -4537,13 +4577,14 @@ msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;用户&gt; [房间]: 在房间中屏蔽一个用户。"
 
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: 设置用户在房间"
 "中的角色。"
@@ -4609,6 +4650,9 @@ msgstr "连接服务器"
 #, fuzzy
 msgid "File transfer proxies"
 msgstr "文件传送端口"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5013,6 +5057,10 @@ msgstr "首选联系人"
 msgid "Non-IM Contacts"
 msgstr "删除联系人"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr "%s 向您发送了摄像头邀请，但尚不支持。"
+
 msgid "Nudge"
 msgstr ""
 
@@ -5367,64 +5415,27 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "失败: 身份验证失败"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s 不是有效的组名。"
-
-msgid "Unknown error."
-msgstr "未知错误。"
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%2$s(%3$s) 上的 %1$s"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s 刚刚给您发送了闪屏振动！"
 
-#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
-msgid "Unknown error (%d)"
+msgid "Unknown error (%d): %s"
 msgstr "未知错误"
 
 msgid "Unable to add user"
 msgstr "无法添加用户"
 
+#, fuzzy, c-format
+msgid "Unknown error (%d)"
+msgstr "未知错误"
+
 #, fuzzy
 msgid "The following users are missing from your addressbook"
 msgstr "下面是您搜索的结果"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "无法在 %s(%s) 上添加用户"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "无法在 %s(%s) 上屏蔽用户"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "无法允许 %s(%s) 上的拥护"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "无法添加 %s，原因是您的好友列表已满。"
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s 不是有效的通行证账户。"
-
-msgid "Service Temporarily Unavailable."
-msgstr "服务暂时不可用。"
-
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
 msgstr "消息未发出，因为您尚未登入。"
-
-msgid "Unable to rename group"
-msgstr "无法重命名组"
-
-msgid "Unable to delete group"
-msgstr "无法删除组"
 
 #, c-format
 msgid ""
@@ -5504,6 +5515,9 @@ msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr "您的 MSN 好友列表临时不可用。请稍候再试一次。"
 
+msgid "Unknown error."
+msgstr "未知错误。"
+
 msgid "Handshaking"
 msgstr "握手"
 
@@ -5521,6 +5535,14 @@ msgstr "发送 cookie"
 
 msgid "Retrieving buddy list"
 msgstr "正在获取好友列表"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr "%s 向您发送了摄像头邀请，但尚不支持。"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s 向您发送了摄像头邀请，但尚不支持。"
 
 msgid "Away From Computer"
 msgstr "远离电脑"
@@ -5558,14 +5580,6 @@ msgstr "消息未发出，因为切换板发生了错误："
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "消息未发出，因为发生了未知错误："
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s 已将您添加为好友。"
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s 已经将您从好友名单中删除。"
-
 #, fuzzy
 msgid "Delete Buddy from Address Book?"
 msgstr "添加到地址簿"
@@ -5597,6 +5611,51 @@ msgstr "配置文件 URL"
 #, fuzzy
 msgid "MSN Protocol Plugin"
 msgstr "AIM 协议插件"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s 不是有效的组名。"
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%2$s(%3$s) 上的 %1$s"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "无法在 %s(%s) 上添加用户"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "无法在 %s(%s) 上屏蔽用户"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "无法允许 %s(%s) 上的拥护"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "无法添加 %s，原因是您的好友列表已满。"
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s 不是有效的通行证账户。"
+
+msgid "Service Temporarily Unavailable."
+msgstr "服务暂时不可用。"
+
+msgid "Unable to rename group"
+msgstr "无法重命名组"
+
+msgid "Unable to delete group"
+msgstr "无法删除组"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s 已将您添加为好友。"
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s 已经将您从好友名单中删除。"
 
 #, c-format
 msgid "No such user: %s"
@@ -5634,6 +5693,8 @@ msgstr ""
 "%s"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 #, fuzzy
 msgid "New mail messages"
 msgstr "发送消息"
@@ -5682,11 +5743,14 @@ msgstr "进程返回了错误代码 %d"
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
+
+#, fuzzy
+msgid "Incorrect username or password"
+msgstr "昵称或密码不对"
 
 msgid "MySpaceIM Error"
 msgstr ""
@@ -6023,10 +6087,6 @@ msgid "Master archive is misconfigured"
 msgstr "主存档配置错误"
 
 #, fuzzy
-msgid "Incorrect username or password"
-msgstr "昵称或密码不对"
-
-#, fuzzy
 msgid "Could not recognize the host of the username you entered"
 msgstr "无法识别您输入用户名的主机"
 
@@ -6229,6 +6289,28 @@ msgstr "服务器地址"
 
 msgid "Server port"
 msgstr "服务器端口"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "从服务器收到了意外的 HTTP 响应。"
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"您连接和断开得太频繁。请等十分钟，然后再试一次。如果您继续重试，您等的时间可"
+"能会更长。"
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "请求登录令牌出错"
+
+msgid "Incorrect password."
+msgstr "密码不对。"
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -6526,14 +6608,31 @@ msgstr ""
 "无法登入: 无法以 %s 登入，原因是用户名无效。用户名必须是有效的电子邮件地址，"
 "或者以字母开头，且只能包含字母、数字和空格，或者只包含数字。"
 
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "您即将被断开。请检查 %s 上的更新。"
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "无法获取有效的 AIM 登录码。"
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr "您即将被断开。请检查 %s 上的更新。"
+
+msgid "Unable to get a valid login hash."
+msgstr "无法获取有效的登录码。"
+
+msgid "Could Not Connect"
+msgstr "无法连接"
+
+msgid "Received authorization"
+msgstr "收到的认证"
+
 #. Unregistered username
 #. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "名称无效"
-
-msgid "Incorrect password."
-msgstr "密码不对。"
 
 #. Suspended account
 msgid "Your account is currently suspended."
@@ -6543,24 +6642,18 @@ msgstr "您的账户被停用。"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL 即时通讯服务暂时不可用。"
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"您连接和断开得太频繁。请等十分钟，然后再试一次。如果您继续重试，您等的时间可"
-"能会更长。"
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "您使用的客户版本太老。请在 %s 升级"
 
-msgid "Could Not Connect"
-msgstr "无法连接"
-
-msgid "Received authorization"
-msgstr "收到的认证"
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"您连接和断开得太频繁。请等十分钟，然后再试一次。如果您继续重试，您等的时间可"
+"能会更长。"
 
 msgid "The SecurID key entered is invalid."
 msgstr "输入的 SecurID 密钥无效。"
@@ -6576,20 +6669,6 @@ msgstr "输入所显示的六位数字。"
 #.
 msgid "_OK"
 msgstr "确定(_O)"
-
-#, fuzzy, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr "您即将被断开。请检查 %s 上的更新。"
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "无法获取有效的 AIM 登录码。"
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "您即将被断开。请检查 %s 上的更新。"
-
-msgid "Unable to get a valid login hash."
-msgstr "无法获取有效的登录码。"
 
 msgid "Password sent"
 msgstr "密码已送出"
@@ -7055,6 +7134,7 @@ msgstr "搜索(_S)"
 msgid "Set User Info (web)..."
 msgstr "设置用户信息(URL)..."
 
+#. This only happens when connecting with the old-style BUCP login
 #, fuzzy
 msgid "Change Password (web)"
 msgstr "更改密码(URL)"
@@ -7085,6 +7165,10 @@ msgstr "按电子邮件搜索好友..."
 
 msgid "Search for Buddy by Information"
 msgstr "按信息搜索好友"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "用户未登入"
 
 #, fuzzy
 msgid ""
@@ -9377,10 +9461,6 @@ msgstr "认证用户"
 msgid "Auth Domain"
 msgstr "认证域"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s 向您发送了摄像头邀请，但尚不支持。"
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9403,6 +9483,40 @@ msgstr "%s 拒绝您将他/她加入好友。"
 
 msgid "Add buddy rejected"
 msgstr "添加拒绝的好友"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "在与服务器的连接中收到了无效的数据。"
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "密码不对"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "用户不存在"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "昵称或密码不对"
 
 #, c-format
 msgid ""
@@ -9513,8 +9627,8 @@ msgstr "使用环境设置"
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
-msgstr "激活哪个 ID？"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "将谁加入聊天？"
@@ -10275,16 +10389,17 @@ msgid "Please update the necessary fields."
 msgstr "请更新必要的字段。"
 
 #, fuzzy
-msgid "Room _List"
-msgstr "房间列表"
+msgid "A_ccount"
+msgstr "账户(_C)："
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "请输入您想要加入的聊天的对应信息。\n"
 
-msgid "_Account:"
-msgstr "账户(_A)："
+#, fuzzy
+msgid "Room _List"
+msgstr "房间列表"
 
 msgid "_Block"
 msgstr "屏蔽(_B)"
@@ -10727,6 +10842,112 @@ msgstr "/工具(T)"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/好友(B)/好友排序(S)"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "背景颜色"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "您已经将此群添加到好友"
+
+#, fuzzy
+msgid "Layout"
+msgstr "狮子座"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "背景颜色"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "展开(_E)"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "选择背景颜色"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "折叠(_C)"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "选择背景颜色"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "排序"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "在线"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "离开"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "离线"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "血型"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "消息已送出"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "更改 %s 的用户信息"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11230,6 +11451,10 @@ msgstr "印地语"
 msgid "Hungarian"
 msgstr "匈牙利语"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "罗马尼亚语"
+
 msgid "Indonesian"
 msgstr "印度尼西亚语"
 
@@ -11333,6 +11558,9 @@ msgstr "社会"
 
 msgid "Swedish"
 msgstr "瑞典语"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "泰米尔语"
@@ -11756,11 +11984,10 @@ msgstr ""
 msgid "Save Image"
 msgstr "保存图像"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "保存图像(_S)..."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Add Custom Smiley..."
 msgstr "显示自定义如下："
 
@@ -11845,9 +12072,6 @@ msgstr "减少字体大小"
 
 msgid "Font Face"
 msgstr "字体"
-
-msgid "Background Color"
-msgstr "背景颜色"
 
 msgid "Foreground Color"
 msgstr "前景颜色"
@@ -12157,6 +12381,9 @@ msgstr "编辑好友千里眼"
 msgid "Pounce on Whom"
 msgstr "监视对象"
 
+msgid "_Account:"
+msgstr "账户(_A)："
+
 msgid "_Buddy name:"
 msgstr "好友名称(_B)："
 
@@ -12267,7 +12494,16 @@ msgstr "发送消息"
 msgid "Unknown.... Please report this!"
 msgstr "未知的千里眼。请报告此错误！"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "表情主题解包失败。"
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "表情主题解包失败。"
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "表情主题解包失败。"
 
 msgid "Install Theme"
@@ -12840,6 +13076,10 @@ msgid "Custom Smiley Manager"
 msgstr ""
 
 #, fuzzy
+msgid "Select Buddy Icon"
+msgstr "选择好友"
+
+#, fuzzy
 msgid "Click to change your buddyicon for this account."
 msgstr "此账户使用此好友图标(_I)："
 
@@ -13061,6 +13301,77 @@ msgstr "联系人状态预测插件。"
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
+
+#, fuzzy
+msgid "Server name request"
+msgstr "服务器地址"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "进入会议服务器"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "选择要查询的会议服务器"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "在线服务"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "发送好友列表"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "离开"
+
+#, fuzzy
+msgid "Directory"
+msgstr "日志目录"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "声音选择"
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "描述"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "服务目录信息"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "浏览器(_B)："
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "用户不存在"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "服务器未使用任何支持的身份验证方法"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "服务目录信息"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
 msgid "Buddy is idle"
 msgstr "好友正发呆"
@@ -13554,12 +13865,6 @@ msgstr ""
 "- 颠倒所有收到的文本\n"
 "- 当您的好友登入后立即给他们发送信息"
 
-msgid "Cursor Color"
-msgstr "光标颜色"
-
-msgid "Secondary Cursor Color"
-msgstr "次要光标颜色"
-
 msgid "Hyperlink Color"
 msgstr "超级链接颜色"
 
@@ -13570,6 +13875,10 @@ msgstr "超级链接颜色"
 #, fuzzy
 msgid "Highlighted Message Name Color"
 msgstr "突出显示的消息"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "通知删除"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView 水平分隔"
@@ -13600,34 +13909,23 @@ msgstr "GTK+ 界面字体"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "GTK+ 文字快捷方式主题"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "界面颜色"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "新邮件通知"
 
-msgid "Widget Sizes"
-msgstr "部件大小"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "Pidgin GTK+ 主题控制"
+
+#, fuzzy
+msgid "Colors"
+msgstr "关闭"
 
 msgid "Fonts"
 msgstr "字体"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Gtkrc 文件工具"
@@ -13766,6 +14064,113 @@ msgstr "文本替换"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "根据用户自定义的规则替换寄出消息中的文字。"
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "未登入"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "未登入"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "加入聊天"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "忽略"
+
+#, fuzzy
+msgid "Founder"
+msgstr "较大"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "给出的认证"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "错误 "
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "信息"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "请求对话框"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "警告级别"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "%s 的状态"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "聊天房间语系"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "保存图标"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "Pidgin GTK+ 主题控制"
+
+#, fuzzy
+msgid "Contact"
+msgstr "联系信息"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "好友列表"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "好友列表"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Pidgin GTK+ 主题控制"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "Pidgin GTK+ 主题控制"
 
 #. *< type
 #. *< ui_requirement
@@ -13971,6 +14376,21 @@ msgstr "发送和接受原始 XMPP 节。"
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "此插件用于调试 XMPP 服务器或客户端。"
+
+#~ msgid "Activate which ID?"
+#~ msgstr "激活哪个 ID？"
+
+#~ msgid "Cursor Color"
+#~ msgstr "光标颜色"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "次要光标颜色"
+
+#~ msgid "Interface colors"
+#~ msgstr "界面颜色"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "部件大小"
 
 #, fuzzy
 #~ msgid "Invite message"
@@ -14475,9 +14895,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 #~ msgid "Your request to join group %d has been approved by admin %d"
 #~ msgstr "您加入 %d 群的请求已经被管理员 %d 批准"
 
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "您已经将此群添加到好友"
-
 #~ msgid "I am applying to join"
 #~ msgstr "我请求加入"
 
@@ -14498,9 +14915,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
 #~ msgid "Enter your reason:"
 #~ msgstr "输入您的原因："
-
-#~ msgid "Error requesting login token"
-#~ msgstr "请求登录令牌出错"
 
 #~ msgid "Unable to login, check debug log"
 #~ msgstr "无法登录，请检查调试日志"
@@ -14553,9 +14967,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 #~ msgstr ""
 #~ "您想要将谁加为好友？请输入他/她的用户名。您还可为好友输入别名和昵称。只要"
 #~ "可能的话，别名将会替代用户名显示。\n"
-
-#~ msgid "A_ccount:"
-#~ msgstr "账户(_C)："
 
 #~ msgid "_Screen name:"
 #~ msgstr "用户名(_S)："

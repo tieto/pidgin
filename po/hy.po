@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: am\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-26 20:21-0700\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2009-05-20 17:37+0400\n"
 "Last-Translator: David Avsharyan <avsharyan@gmail.com>\n"
 "Language-Team: \n"
@@ -2049,6 +2049,9 @@ msgstr ""
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr ""
 
+msgid "Error creating conference."
+msgstr ""
+
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
 msgstr ""
@@ -2980,6 +2983,10 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
+#. should this be a settings error?
+msgid "Unable to resolve server"
+msgstr ""
+
 msgid "Chat error"
 msgstr ""
 
@@ -3028,6 +3035,9 @@ msgstr ""
 msgid "Gadu-Gadu User"
 msgstr ""
 
+msgid "GG server"
+msgstr ""
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr ""
@@ -3070,7 +3080,7 @@ msgstr ""
 msgid "_Password:"
 msgstr ""
 
-msgid "IRC nicks may not contain whitespace"
+msgid "IRC nick and server may not contain whitespace"
 msgstr ""
 
 #. 1. connect to server
@@ -3957,7 +3967,7 @@ msgstr ""
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
 
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr ""
 
 #, c-format
@@ -3984,9 +3994,6 @@ msgstr ""
 msgid "Unregistration Failed"
 msgstr ""
 
-msgid "Already Registered"
-msgstr ""
-
 msgid "State"
 msgstr ""
 
@@ -3997,6 +4004,9 @@ msgid "Phone"
 msgstr ""
 
 msgid "Date"
+msgstr ""
+
+msgid "Already Registered"
 msgstr ""
 
 msgid "Unregister"
@@ -4024,6 +4034,9 @@ msgid "Register New Account at %s"
 msgstr ""
 
 msgid "Change Registration"
+msgstr ""
+
+msgid "Malformed BOSH Connect Server"
 msgstr ""
 
 msgid "Error unregistering account"
@@ -4453,6 +4466,9 @@ msgstr ""
 msgid "File transfer proxies"
 msgstr ""
 
+msgid "BOSH URL"
+msgstr ""
+
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
 msgid "Show Custom Smileys"
@@ -4838,6 +4854,10 @@ msgstr ""
 msgid "Non-IM Contacts"
 msgstr ""
 
+#, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+
 msgid "Nudge"
 msgstr ""
 
@@ -5190,32 +5210,6 @@ msgstr ""
 msgid "The following users are missing from your addressbook"
 msgstr ""
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr ""
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr ""
-
-msgid "Service Temporarily Unavailable."
-msgstr ""
-
-msgid "Unknown error."
-msgstr ""
-
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
 
@@ -5289,6 +5283,9 @@ msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 
+msgid "Unknown error."
+msgstr ""
+
 msgid "Handshaking"
 msgstr ""
 
@@ -5305,6 +5302,14 @@ msgid "Sending cookie"
 msgstr ""
 
 msgid "Retrieving buddy list"
+msgstr ""
+
+#, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
 
 msgid "Away From Computer"
@@ -5377,6 +5382,29 @@ msgstr ""
 
 #, c-format
 msgid "%s on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr ""
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr ""
+
+msgid "Service Temporarily Unavailable."
 msgstr ""
 
 msgid "Unable to rename group"
@@ -5470,10 +5498,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
+msgstr ""
+
+msgid "Incorrect username or password"
 msgstr ""
 
 msgid "MySpaceIM Error"
@@ -5789,9 +5819,6 @@ msgstr ""
 msgid "Master archive is misconfigured"
 msgstr ""
 
-msgid "Incorrect username or password"
-msgstr ""
-
 msgid "Could not recognize the host of the username you entered"
 msgstr ""
 
@@ -5989,6 +6016,25 @@ msgid "Server address"
 msgstr ""
 
 msgid "Server port"
+msgstr ""
+
+msgid "Received unexpected response from "
+msgstr ""
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+
+#, c-format
+msgid "Error requesting "
+msgstr ""
+
+msgid "Incorrect password."
+msgstr ""
+
+msgid "AOL does not allow your screen name to authenticate via this site."
 msgstr ""
 
 msgid "Could not join chat room"
@@ -6275,12 +6321,29 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 
+#, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr ""
+
+msgid "Unable to get a valid AIM login hash."
+msgstr ""
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr ""
+
+msgid "Unable to get a valid login hash."
+msgstr ""
+
+msgid "Could Not Connect"
+msgstr ""
+
+msgid "Received authorization"
+msgstr ""
+
 #. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
-msgstr ""
-
-msgid "Incorrect password."
 msgstr ""
 
 #. Suspended account
@@ -6291,21 +6354,14 @@ msgstr ""
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 
-msgid "Could Not Connect"
-msgstr ""
-
-msgid "Received authorization"
+#. IP address connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
 msgstr ""
 
 msgid "The SecurID key entered is invalid."
@@ -6321,20 +6377,6 @@ msgstr ""
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
 #.
 msgid "_OK"
-msgstr ""
-
-#, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr ""
-
-msgid "Unable to get a valid AIM login hash."
-msgstr ""
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-
-msgid "Unable to get a valid login hash."
 msgstr ""
 
 msgid "Password sent"
@@ -6777,6 +6819,7 @@ msgstr ""
 msgid "Set User Info (web)..."
 msgstr ""
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr ""
 
@@ -6804,6 +6847,9 @@ msgid "Search for Buddy by Email Address..."
 msgstr ""
 
 msgid "Search for Buddy by Information"
+msgstr ""
+
+msgid "Use clientLogin"
 msgstr ""
 
 msgid ""
@@ -8949,10 +8995,6 @@ msgstr ""
 msgid "Auth Domain"
 msgstr ""
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -8985,7 +9027,9 @@ msgid "Incorrect Password"
 msgstr ""
 
 #. security lock from too many failed login attempts
-msgid "Account locked: Too many failed login attempts"
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
 msgstr ""
 
 #. the username does not exist
@@ -8993,7 +9037,9 @@ msgid "Username does not exist"
 msgstr ""
 
 #. indicates a lock of some description
-msgid "Account locked: See the debug log"
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
 msgstr ""
 
 #. username or password missing
@@ -9100,7 +9146,7 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
+msgid "Select the ID you want to activate"
 msgstr ""
 
 msgid "Join whom in chat?"
@@ -10265,6 +10311,98 @@ msgstr ""
 msgid "/Buddies/Sort Buddies"
 msgstr ""
 
+#. Buddy List
+msgid "Background Color"
+msgstr ""
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+msgid "Layout"
+msgstr ""
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+msgid "Expanded Background Color"
+msgstr ""
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+msgid "Expanded Text"
+msgstr ""
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+msgid "Collapsed Background Color"
+msgstr ""
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+msgid "Collapsed Text"
+msgstr ""
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+msgid "Contact/Chat Background Color"
+msgstr ""
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+msgid "Contact Text"
+msgstr ""
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+msgid "On-line Text"
+msgstr ""
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+msgid "Away Text"
+msgstr ""
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+msgid "Off-line Text"
+msgstr ""
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+msgid "Idle Text"
+msgstr ""
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+msgid "Message Text"
+msgstr ""
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+msgid "The text information for a buddy's status"
+msgstr ""
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr ""
@@ -11336,9 +11474,6 @@ msgstr ""
 msgid "Font Face"
 msgstr ""
 
-msgid "Background Color"
-msgstr ""
-
 msgid "Foreground Color"
 msgstr ""
 
@@ -11728,7 +11863,13 @@ msgstr ""
 msgid "Unknown.... Please report this!"
 msgstr ""
 
-msgid "Smiley theme failed to unpack."
+msgid "Theme failed to unpack."
+msgstr ""
+
+msgid "Theme failed to load."
+msgstr ""
+
+msgid "Theme failed to copy."
 msgstr ""
 
 msgid "Install Theme"
@@ -12483,6 +12624,62 @@ msgstr ""
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
 
+msgid "Server name request"
+msgstr ""
+
+msgid "Enter an XMPP Server"
+msgstr ""
+
+msgid "Select an XMPP server to query"
+msgstr ""
+
+msgid "Find Services"
+msgstr ""
+
+msgid "Add to Buddy List"
+msgstr ""
+
+msgid "Gateway"
+msgstr ""
+
+msgid "Directory"
+msgstr ""
+
+msgid "PubSub Collection"
+msgstr ""
+
+msgid "PubSub Leaf"
+msgstr ""
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr ""
+
+msgid "_Browse"
+msgstr ""
+
+msgid "Server does not exist"
+msgstr ""
+
+msgid "Server does not support service discovery"
+msgstr ""
+
+msgid "XMPP Service Discovery"
+msgstr ""
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+
 msgid "Buddy is idle"
 msgstr ""
 
@@ -12957,12 +13154,6 @@ msgid ""
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
 
-msgid "Cursor Color"
-msgstr ""
-
-msgid "Secondary Cursor Color"
-msgstr ""
-
 msgid "Hyperlink Color"
 msgstr ""
 
@@ -12970,6 +13161,9 @@ msgid "Visited Hyperlink Color"
 msgstr ""
 
 msgid "Highlighted Message Name Color"
+msgstr ""
+
+msgid "Typing Notification Color"
 msgstr ""
 
 msgid "GtkTreeView Horizontal Separation"
@@ -13001,33 +13195,19 @@ msgstr ""
 msgid "GTK+ Text Shortcut Theme"
 msgstr ""
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
+msgid "Disable Typing Notification Text"
 msgstr ""
 
-msgid "Widget Sizes"
+msgid "GTK+ Theme Control Settings"
+msgstr ""
+
+msgid "Colors"
 msgstr ""
 
 msgid "Fonts"
+msgstr ""
+
+msgid "Miscellaneous"
 msgstr ""
 
 msgid "Gtkrc File Tools"
@@ -13160,6 +13340,94 @@ msgid "Text replacement"
 msgstr ""
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
+msgstr ""
+
+msgid "Just logged in"
+msgstr ""
+
+msgid "Just logged out"
+msgstr ""
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "Միանալ զրույցին"
+
+msgid "Ignored"
+msgstr ""
+
+msgid "Founder"
+msgstr ""
+
+msgid "Operator"
+msgstr ""
+
+msgid "Half Operator"
+msgstr ""
+
+msgid "Authorization dialog"
+msgstr ""
+
+msgid "Error dialog"
+msgstr ""
+
+msgid "Information dialog"
+msgstr ""
+
+msgid "Mail dialog"
+msgstr ""
+
+msgid "Question dialog"
+msgstr ""
+
+msgid "Warning dialog"
+msgstr ""
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+msgid "Status Icons"
+msgstr ""
+
+msgid "Chatroom Emblems"
+msgstr ""
+
+msgid "Dialog Icons"
+msgstr ""
+
+msgid "Pidgin Icon Theme Editor"
+msgstr ""
+
+msgid "Contact"
+msgstr ""
+
+msgid "Pidgin Buddylist Theme Editor"
+msgstr ""
+
+msgid "Edit Buddylist Theme"
+msgstr ""
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+msgid "Pidgin Theme Editor"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Pidgin Theme Editor."
 msgstr ""
 
 #. *< type

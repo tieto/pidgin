@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-29 08:35+0200\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2009-06-29 08:37+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
@@ -2214,6 +2214,10 @@ msgstr "<font color=\"red\"><b>No s'ha pogut llegir el fitxer: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <RESPOSTA-AUTOMÀTICA>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "S'ha produït un error en crear la connexió"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -5171,6 +5175,12 @@ msgstr "Altres contactes"
 msgid "Non-IM Contacts"
 msgstr "Contactes que no són de MI"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+"%s us ha enviat una invitació a la seva càmera web, però això encara no està "
+"implementat."
+
 msgid "Nudge"
 msgstr "Donar un cop de colze"
 
@@ -5646,6 +5656,18 @@ msgstr "S'està enviant la galeta"
 
 msgid "Retrieving buddy list"
 msgstr "S'està recuperant la llista d'amics"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+"%s us ha enviat una invitació a la seva càmera web, però això encara no està "
+"implementat."
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+"%s us ha enviat una invitació a la seva càmera web, però això encara no està "
+"implementat."
 
 msgid "Away From Computer"
 msgstr "Lluny de l'ordinador"
@@ -6408,6 +6430,29 @@ msgstr "Adreça del servidor"
 msgid "Server port"
 msgstr "Port en el servidor"
 
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "S'ha rebut una resposta HTTP inesperada del servidor."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Heu estat connectant-vos i desconnectat-vos amb massa freqüència. Espereu "
+"deu minuts i intenteu-ho de nou. Si continueu intentant-ho, haureu d'esperar "
+"encara més temps."
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "S'ha produït un error en resoldre %s"
+
+msgid "Incorrect password."
+msgstr "La contrasenya no és correcta."
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
+
 msgid "Could not join chat room"
 msgstr "No s'ha pogut entrar a la sala de xat"
 
@@ -6743,9 +6788,6 @@ msgstr "S'ha rebut l'autorització"
 msgid "Invalid username."
 msgstr "El nom d'usuari no és vàlid"
 
-msgid "Incorrect password."
-msgstr "La contrasenya no és correcta."
-
 #. Suspended account
 msgid "Your account is currently suspended."
 msgstr "El vostre compte està actualment suspès."
@@ -6754,15 +6796,6 @@ msgstr "El vostre compte està actualment suspès."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 "El servei de missatges instantanis d'AOL no està disponible temporalment."
-
-#. username connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"Heu estat connectant-vos i desconnectat-vos amb massa freqüència. Espereu "
-"deu minuts i intenteu-ho de nou. Si continueu intentant-ho, haureu d'esperar "
-"encara més temps."
 
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -9606,12 +9639,6 @@ msgstr "Usuari Auth"
 msgid "Auth Domain"
 msgstr "Domini Auth"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-"%s us ha enviat una invitació a la seva càmera web, però això encara no està "
-"implementat."
-
 msgid "Your SMS was not delivered"
 msgstr "No s'ha enviat l'SMS"
 
@@ -11031,6 +11058,118 @@ msgstr "/Eines"
 msgid "/Buddies/Sort Buddies"
 msgstr "/Amics/Ordena els amics"
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Color de fons"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "Lasià"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Color de fons"
+
+#, fuzzy
+msgid "The background color of an expanded group"
+msgstr "Nom del color de fons"
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "Mida de l'expansor"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Selecciona el color de fons"
+
+#, fuzzy
+msgid "The background color of a collapsed group"
+msgstr "El color de fons com a GdkColor"
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Redueix"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Selecciona el color de fons"
+
+#, fuzzy
+msgid "The background color of a contact or chat"
+msgstr "El color de fons com a GdkColor"
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "Drecera"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "En línia"
+
+#, fuzzy
+msgid "The text information for when a buddy is online"
+msgstr "Aconsegueix dades sobre l'amic seleccionat"
+
+#, fuzzy
+msgid "Away Text"
+msgstr "Absent"
+
+#, fuzzy
+msgid "The text information for when a buddy is away"
+msgstr "Aconsegueix dades sobre l'amic seleccionat"
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "Fora de línia"
+
+#, fuzzy
+msgid "The text information for when a buddy is off-line"
+msgstr "Aconsegueix dades sobre l'amic seleccionat"
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "Text sobre l'estat d'ànim"
+
+#, fuzzy
+msgid "The text information for when a buddy is idle"
+msgstr "Aconsegueix dades sobre l'amic seleccionat"
+
+msgid "Message Text"
+msgstr "Text del missatge"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#, fuzzy
+msgid "Message (Nick Said) Text"
+msgstr "Text del missatge"
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Canvia la informació d'usuari de %s"
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Servidors SSL"
@@ -12169,9 +12308,6 @@ msgstr "Disminueix la mida de la lletra"
 # FIXME?
 msgid "Font Face"
 msgstr "Tipus de lletra"
-
-msgid "Background Color"
-msgstr "Color de fons"
 
 msgid "Foreground Color"
 msgstr "Color del text"
@@ -13429,6 +13565,80 @@ msgid "Displays statistical information about your buddies' availability"
 msgstr ""
 "Mostra informació estadística sobre la disponibilitat dels vostres amics"
 
+#, fuzzy
+msgid "Server name request"
+msgstr "Adreça del servidor"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Introduïu un servidor de conferències"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Seleccioneu a quin servidor de conferències consultar"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Serveis en línia"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Envia la llista d'amics"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Passi a absent"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Directori dels registres"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Selecció de sons"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "Servei PubSub"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Descripció:</b> Xerraire"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Informació del servei de descoberta"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Navegador:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "L'usuari no existeix."
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "El servidor no permet blocar"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Informació del servei de descoberta"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
+
 msgid "Buddy is idle"
 msgstr "L'amic està inactiu"
 
@@ -14137,6 +14347,115 @@ msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "Substitueix el text dels missatges que s'envien emprant les regles que hàgiu "
 "establert."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "No està connectat"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "%s ha sortit."
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "Entra a un xat"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "Ignora"
+
+#, fuzzy
+msgid "Founder"
+msgstr "Més alt"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "S'ha donat l'autorització"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "Error"
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "Informació"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "Diàleg de sol·licitud"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "Nivell d'avís"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "Estat per a %s"
+
+# FIXME: no poso localització perquè l'usuari ho podria
+#        confondre amb "ubicació" (josep)
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "Característiques locals de la sala de xat"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "Canvia la icona"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "Control de temes GTK+ del Pidgin"
+
+#, fuzzy
+msgid "Contact"
+msgstr "Informació del contacte"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "Tema de la llista d'amics"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "Tema de la llista d'amics"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Control de temes GTK+ del Pidgin"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "Control de temes GTK+ del Pidgin"
 
 # FIXME (josep)
 #. *< type
@@ -15292,13 +15611,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 
 #~ msgid ""
 #~ "\n"
-#~ "<b>Description:</b> Spooky"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Descripció:</b> Xerraire"
-
-#~ msgid ""
-#~ "\n"
 #~ "<b>Status:</b> Awesome"
 #~ msgstr ""
 #~ "\n"
@@ -15620,20 +15932,11 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "YCHT port"
 #~ msgstr "Port YCHT"
 
-#~ msgid "%s logged out."
-#~ msgstr "%s ha sortit."
-
 #~ msgid "Screen Name:"
 #~ msgstr "Nom d'usuari:"
 
-#~ msgid "Background color name"
-#~ msgstr "Nom del color de fons"
-
 #~ msgid "Background color as a string"
 #~ msgstr "El color de fons com a una cadena"
-
-#~ msgid "Background color as a GdkColor"
-#~ msgstr "El color de fons com a GdkColor"
 
 #~ msgid "Background set"
 #~ msgstr "Estableix el color de fons"
@@ -15970,9 +16273,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "Show transfer details"
 #~ msgstr "Mostra els detalls de la transferència"
 
-#~ msgid "Expander Size"
-#~ msgstr "Mida de l'expansor"
-
 #~ msgid "Size of the expander arrow"
 #~ msgstr "Mida de la fletxa d'expansió"
 
@@ -16195,9 +16495,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "Send a message to the selected buddy"
 #~ msgstr "Envia un missatge a l'amic seleccionat"
 
-#~ msgid "Get information on the selected buddy"
-#~ msgstr "Aconsegueix dades sobre l'amic seleccionat"
-
 #~ msgid "_Chat"
 #~ msgstr "_Xat"
 
@@ -16361,9 +16658,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 
 #~ msgid "New conversation _placement:"
 #~ msgstr "_Posicionament d'una nova conversa:"
-
-#~ msgid "Message Text"
-#~ msgstr "Text del missatge"
 
 #~ msgid "Away Messages"
 #~ msgstr "Missatges d'absència"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:40-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2006-11-28 22:37+0530\n"
 "Last-Translator: drtvasudevan <agnihot3@gmail.com>\n"
 "Language-Team: tamil <Ubuntu-l10n-tam@lists.ubuntu.com>\n"
@@ -1883,6 +1883,8 @@ msgstr "+++ %s நுழைந்துள்ளார்"
 msgid "+++ %s signed off"
 msgstr "+++ %s வெளியேறிவிட்டார்"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "தெரியாத பிழை"
 
@@ -2271,6 +2273,10 @@ msgstr "<font color=\"red\"><b>கோப்பை படிக்க முட�
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "இணைப்பை உருவாக்குவதில் பிழை"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3256,6 +3262,11 @@ msgstr "அரட்டையில் சேர்க்க"
 msgid "Chat _name:"
 msgstr "_ப அரட்டை பெயர்:"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "சேவையகத்துடன் இணைக்க முடியவில்லை."
+
 msgid "Chat error"
 msgstr "அரட்டை பிழை"
 
@@ -3304,6 +3315,10 @@ msgstr "பிரபலமான போலிஷ் ஐஎம்"
 msgid "Gadu-Gadu User"
 msgstr "காடு-காடு பயனாளர்"
 
+#, fuzzy
+msgid "GG server"
+msgstr "பயனாளர் தகவலை அமை..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "தெரியாத கட்டளை: %s"
@@ -3347,7 +3362,8 @@ msgstr "_வாய்க்கால்:"
 msgid "_Password:"
 msgstr "_கடவுச்சொல்:"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "ஐஆர்சி புனைப்பெயரில் வெற்றிடமிருக்கக் கூடாது"
 
 #. 1. connect to server
@@ -3830,6 +3846,9 @@ msgstr "சேவையகத்திலிருந்து செல்ல�
 msgid "Server does not use any supported authentication method"
 msgstr "சேவையகம் எந்த ஆதரவுள்ள உறுதிபடுத்தல் முறையையும் பயன்படுத்தவில்லை."
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+
 msgid "Invalid challenge from server"
 msgstr "சேவையகத்திலிருந்து செல்லாத கூவல்"
 
@@ -4125,6 +4144,14 @@ msgstr "முன்னுரிமை"
 msgid "Resource"
 msgstr "வளம்"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "ஏற்கனவே நுழையப்பட்டிருக்கிறது"
+
 msgid "Middle Name"
 msgstr "நடுப் பெயர்"
 
@@ -4295,8 +4322,17 @@ msgstr "விசாரிப்பதற்காக ஒரு கலந்த�
 msgid "Find Rooms"
 msgstr "அறைகளை கண்டுபிடி"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr ""
+#, fuzzy
+msgid "Affiliations:"
+msgstr "புனைப்பெயர்:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "ஒத்துப் போகும் பயனர் யாரையும்  கண்டுபிடிக்கமுடியவில்லை"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "பங்கு"
 
 #, fuzzy
 msgid "Ping timeout"
@@ -4319,7 +4355,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "சேவையகத்துடன் இணைக்க தவறியது."
 
 #, c-format
@@ -4348,9 +4384,6 @@ msgstr "வெற்றிகரமான பதிவாக்கம்"
 msgid "Unregistration Failed"
 msgstr "பதிவாக்கம் தவறியது"
 
-msgid "Already Registered"
-msgstr "ஏற்கனவே பதியப்பட்டது"
-
 msgid "State"
 msgstr "மாநிலம்"
 
@@ -4362,6 +4395,9 @@ msgstr "தொலைபேசி"
 
 msgid "Date"
 msgstr "நாள்"
+
+msgid "Already Registered"
+msgstr "ஏற்கனவே பதியப்பட்டது"
 
 #, fuzzy
 msgid "Unregister"
@@ -4393,6 +4429,10 @@ msgstr "புதிய ஜாப்பர் கணக்கை பதிவு
 #, fuzzy
 msgid "Change Registration"
 msgstr "பதிவுப் பிழை"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "சேவையகத்துடன் இணைக்க தவறியது."
 
 #, fuzzy
 msgid "Error unregistering account"
@@ -4767,16 +4807,18 @@ msgstr "தலைப்பு [புதிய தலைப்பு]: தலை
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "தடுக்கவும் &lt;பயனாளர்&gt; [அறை]: பயனாளரை அறையிலிருந்து தடுக்கவும்."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "நிறுவனம் &lt;பயனாளர்&gt; &lt;சொந்தக்காரர்|ஆளுநர்|உறுப்பினர்|வெளியேற்றப் பட்டவர்|"
 "ஒன்றுமில்லை&gt;: பயனாளருக்கு அறையுடன் சார்புரிமை அமைக்கிறது."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "பாத்திரம் &lt;பயனர்&gt;&lt;நடுவர்|பங்கெடுப்பவர்|விருந்தாளி|யாரும்_இல்லை&gt;: அறையில் "
 "பயனர் பாத்திரத்தை அமைக்கவும்."
@@ -4844,6 +4886,9 @@ msgstr "சேவையகத்தை இணை"
 #, fuzzy
 msgid "File transfer proxies"
 msgstr "கோப்பு அனுப்பும் தளம்"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5251,6 +5296,10 @@ msgstr "விருப்பப்பட்ட தொடர்பு"
 msgid "Non-IM Contacts"
 msgstr "தொடர்பை நீக்குக..."
 
+#, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+
 msgid "Nudge"
 msgstr ""
 
@@ -5613,64 +5662,27 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "சாதாரண அனுமதி தவறியது!"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s என்பது செல்லாத குழு."
-
-msgid "Unknown error."
-msgstr "தெரியாத பிழை."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s - இதன் மீது %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s உங்களுக்கு ஒரு சீண்டல் அனுப்பியுள்ளார்!"
 
-#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
-msgid "Unknown error (%d)"
+msgid "Unknown error (%d): %s"
 msgstr "தெரியாத பிழை"
 
 msgid "Unable to add user"
 msgstr "பயனரை சேர்க்க முடியவில்லை"
 
+#, fuzzy, c-format
+msgid "Unknown error (%d)"
+msgstr "தெரியாத பிழை"
+
 #, fuzzy
 msgid "The following users are missing from your addressbook"
 msgstr "உங்களது தேடல் முடிவுகள் கீழே"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "%s மீது பயனாளரை சேர்க்க இயலவில்லை (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%s  மீது பயனாளரை தடுக்க இயலவில்லை (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s  மீது பயனாளரை அனுமதிக்க இயலவில்லை (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s சேர்க்க முடியாது ஏனென்றால் உங்களது நண்பர் பட்டியல் நிரம்பியுள்ளது."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s என்பது செல்லாத பாஸ்போர்ட் கணக்கு."
-
-msgid "Service Temporarily Unavailable."
-msgstr "தற்காலிகமாக சேவை இல்லை."
-
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
 msgstr "செய்தியை அனுப்ப இயலவில்லை. ஏனெனில் நாம் மிக விரைவாக அனுப்புகிறோம்."
-
-msgid "Unable to rename group"
-msgstr "குழுப்பெயரை மாற்ற இயலவில்லை."
-
-msgid "Unable to delete group"
-msgstr "குழவை நீக்க இயலவில்லை"
 
 #, c-format
 msgid ""
@@ -5759,6 +5771,9 @@ msgstr ""
 "எம்எஸ்என் நண்பர் பட்டியல் தற்காலிகமாக கிடைக்கவில்லை. தயவுசெய்து காத்திருந்து மீண்டும் "
 "முயற்சிக்கவும்."
 
+msgid "Unknown error."
+msgstr "தெரியாத பிழை."
+
 msgid "Handshaking"
 msgstr "கைகுலுக்கல்"
 
@@ -5776,6 +5791,14 @@ msgstr "குக்கீயை அனுப்புகிறது"
 
 msgid "Retrieving buddy list"
 msgstr "நண்பர் பட்டியலை மீட்டுகிறது"
+
+#, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
 
 msgid "Away From Computer"
 msgstr "கணினியை விட்டு தொலைவில்"
@@ -5813,14 +5836,6 @@ msgstr "சுவிட்சுபோர்டில் பிழை உள்�
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "தெரியாத பிழை நேர்ந்ததால் தகவல் அனுப்பப்படாமல் இருக்கலாம்:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s அவரது நண்பர் பட்டியலில் இருந்து உங்களை நீக்கியுள்ளார்."
-
 #, fuzzy
 msgid "Delete Buddy from Address Book?"
 msgstr "முகவரி புத்தகத்தில் சேர்க்கவும்"
@@ -5852,6 +5867,51 @@ msgstr "குறுந்தொகுப்பு யுஆர்எல் "
 #, fuzzy
 msgid "MSN Protocol Plugin"
 msgstr "ஏஐஎம்/ஐசிக்யூ நெறிமுறை சொருகுபொருள்"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s என்பது செல்லாத குழு."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s - இதன் மீது %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "%s மீது பயனாளரை சேர்க்க இயலவில்லை (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "%s  மீது பயனாளரை தடுக்க இயலவில்லை (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "%s  மீது பயனாளரை அனுமதிக்க இயலவில்லை (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s சேர்க்க முடியாது ஏனென்றால் உங்களது நண்பர் பட்டியல் நிரம்பியுள்ளது."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s என்பது செல்லாத பாஸ்போர்ட் கணக்கு."
+
+msgid "Service Temporarily Unavailable."
+msgstr "தற்காலிகமாக சேவை இல்லை."
+
+msgid "Unable to rename group"
+msgstr "குழுப்பெயரை மாற்ற இயலவில்லை."
+
+msgid "Unable to delete group"
+msgstr "குழவை நீக்க இயலவில்லை"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s அவரது நண்பர் பட்டியலில் இருந்து உங்களை நீக்கியுள்ளார்."
 
 #, c-format
 msgid "No such user: %s"
@@ -5888,6 +5948,8 @@ msgid "Lost connection with server"
 msgstr "சேவையகத்துடன் இணைக்கப்படவில்லை."
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 #, fuzzy
 msgid "New mail messages"
 msgstr "_தகவல் அனுப்பு"
@@ -5937,11 +5999,14 @@ msgstr "இயக்கம் பிழை எண் %d யை கொடுத�
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
+
+#, fuzzy
+msgid "Incorrect username or password"
+msgstr "தவறான செல்லப்பெயர் (அ) தவறான கடவுச்சொல்."
 
 msgid "MySpaceIM Error"
 msgstr ""
@@ -6284,10 +6349,6 @@ msgid "Master archive is misconfigured"
 msgstr "முதன்மைப் பெட்டகம் தவறாக வரையறுக்கப்பட்டுள்ளது"
 
 #, fuzzy
-msgid "Incorrect username or password"
-msgstr "தவறான செல்லப்பெயர் (அ) தவறான கடவுச்சொல்."
-
-#, fuzzy
 msgid "Could not recognize the host of the username you entered"
 msgstr "நீங்கள் உள்ளிட்ட பயனர் பெயருக்கான புரவலனை அடையாளம் காண முடியவில்லை."
 
@@ -6501,6 +6562,28 @@ msgstr "சேவையகம் முகவரி"
 
 msgid "Server port"
 msgstr "சேவையகம் தளம்"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "சேவையகத்திலிருந்து செல்லாத பதில்."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"நீங்கள் அடிக்கடி இணைப்பை பெற்று மற்றும் துண்டித்துள்ளீர்கள். பத்து நிமிடங்கள் பொறுத்து மீண்டும் "
+"தொடங்கவும். தொடர்ந்து முயன்றால் மேலும் அதிக நேரம் காக்க வேண்டியிருக்கும்."
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "இணைப்பை உருவாக்குவதில் பிழை"
+
+msgid "Incorrect password."
+msgstr "கடவுச்சொல் தவறு."
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -6803,60 +6886,6 @@ msgstr ""
 "ஆகாதது. திரைப் பெயர்கள் ஒரு எழுத்தில்தான் ஆரம்பிக்க வேண்டும்.பின் வெறும் எண்களோ அல்லது "
 "எழுத்துக்கள், எண்கள் வெற்று இடங்களோ இருக்கலாம்."
 
-#. Unregistered username
-#. uid is not exist
-#, fuzzy
-msgid "Invalid username."
-msgstr "செல்லுபடியாகாத செல்லப் பெயர்"
-
-msgid "Incorrect password."
-msgstr "கடவுச்சொல் தவறு."
-
-#. Suspended account
-msgid "Your account is currently suspended."
-msgstr "உங்கள் கணக்கு இப்போது தற்காலிகமாக நிறுத்தி வைக்கப் பட்டது."
-
-#. service temporarily unavailable
-msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr "ஏஓஎல் விரைவு தூதன் சேவை தற்காலிகமாக இல்லை."
-
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"நீங்கள் அடிக்கடி இணைப்பை பெற்று மற்றும் துண்டித்துள்ளீர்கள். பத்து நிமிடங்கள் பொறுத்து மீண்டும் "
-"தொடங்கவும். தொடர்ந்து முயன்றால் மேலும் அதிக நேரம் காக்க வேண்டியிருக்கும்."
-
-#, c-format
-msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr ""
-"நீங்கள் பயன் படுத்தும் சேவைப் பயனாளி நிரலின் வடிவ நிலை மிகப்பழையது. இவ்விடத்தில் மேம் "
-"படுத்தவும்.%s"
-
-msgid "Could Not Connect"
-msgstr "இணைக்க முடியவில்லை"
-
-msgid "Received authorization"
-msgstr "அதிகாரம் வழங்கப் பட்டது"
-
-msgid "The SecurID key entered is invalid."
-msgstr "உள்ளிடப் பட்ட SecurID விசை செல்லுபடி ஆகாது."
-
-msgid "Enter SecurID"
-msgstr "(SecurID) எண்ணை கொடுக்கவும்"
-
-msgid "Enter the 6 digit number from the digital display."
-msgstr "காண்பிக்கப்படும் ஆறு இலக்க எண்ணை உள்ளிடவும்."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-#, fuzzy
-msgid "_OK"
-msgstr "சரி"
-
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -6876,6 +6905,57 @@ msgstr ""
 #, fuzzy
 msgid "Unable to get a valid login hash."
 msgstr "செல்லுபடியாகும் நுழைவு hash ஐ பெற கெய்மால் இயலவில்லை."
+
+msgid "Could Not Connect"
+msgstr "இணைக்க முடியவில்லை"
+
+msgid "Received authorization"
+msgstr "அதிகாரம் வழங்கப் பட்டது"
+
+#. Unregistered username
+#. uid is not exist
+#, fuzzy
+msgid "Invalid username."
+msgstr "செல்லுபடியாகாத செல்லப் பெயர்"
+
+#. Suspended account
+msgid "Your account is currently suspended."
+msgstr "உங்கள் கணக்கு இப்போது தற்காலிகமாக நிறுத்தி வைக்கப் பட்டது."
+
+#. service temporarily unavailable
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr "ஏஓஎல் விரைவு தூதன் சேவை தற்காலிகமாக இல்லை."
+
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr ""
+"நீங்கள் பயன் படுத்தும் சேவைப் பயனாளி நிரலின் வடிவ நிலை மிகப்பழையது. இவ்விடத்தில் மேம் "
+"படுத்தவும்.%s"
+
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"நீங்கள் அடிக்கடி இணைப்பை பெற்று மற்றும் துண்டித்துள்ளீர்கள். பத்து நிமிடங்கள் பொறுத்து மீண்டும் "
+"தொடங்கவும். தொடர்ந்து முயன்றால் மேலும் அதிக நேரம் காக்க வேண்டியிருக்கும்."
+
+msgid "The SecurID key entered is invalid."
+msgstr "உள்ளிடப் பட்ட SecurID விசை செல்லுபடி ஆகாது."
+
+msgid "Enter SecurID"
+msgstr "(SecurID) எண்ணை கொடுக்கவும்"
+
+msgid "Enter the 6 digit number from the digital display."
+msgstr "காண்பிக்கப்படும் ஆறு இலக்க எண்ணை உள்ளிடவும்."
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+#, fuzzy
+msgid "_OK"
+msgstr "சரி"
 
 msgid "Password sent"
 msgstr "கடவுச்சொல் அனுப்பப்பட்டது"
@@ -7383,6 +7463,7 @@ msgstr "தேடுக"
 msgid "Set User Info (web)..."
 msgstr "பயனாளர் தகவலை அமை (யுஆர்எல் )..."
 
+#. This only happens when connecting with the old-style BUCP login
 #, fuzzy
 msgid "Change Password (web)"
 msgstr "கடவுச்சொல்லை மாற்று (யுஆர்எல் )"
@@ -7416,6 +7497,10 @@ msgstr "தோழரை மின்னஞ்சல் மூலம் தேட
 
 msgid "Search for Buddy by Information"
 msgstr "தோழரை தகவல் மூலம் தேடுக"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "பயனாளர் நுழைந்திருக்கவில்லை"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9793,10 +9878,6 @@ msgstr "ஆத் பயனர்"
 msgid "Auth Domain"
 msgstr "ஆத் களப்பெயர்"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9822,6 +9903,40 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr "நண்பர் இணைப்பு மறுக்கப்பட்டது"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "சேவையகத்துடன் எஸ்எஸ்எல். இணைப்பை உருவாக்க இயலவில்லை."
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "கடவுச்சொல் தவறு."
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "தெரியாத பிழை எண் %d. யாகூ! வலைத்தளத்தில் நுழைவதன் மூலம் இதை சரி செய்யலாம்."
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "பயனாளர் இல்லை"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "தெரியாத பிழை எண் %d. யாகூ! வலைத்தளத்தில் நுழைவதன் மூலம் இதை சரி செய்யலாம்."
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "தவறான செல்லப்பெயர் (அ) தவறான கடவுச்சொல்."
 
 #, fuzzy, c-format
 msgid ""
@@ -9928,9 +10043,8 @@ msgstr "இருப்பு அமைப்புகள்"
 msgid "Start Doodling"
 msgstr "கிறுக்கலை ஆரம்பிக்க"
 
-#, fuzzy
-msgid "Activate which ID?"
-msgstr "எந்த முகப்பை செயல்படுத்த?"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "எந்த அரட்டையில் இருப்பவருடன் சேர ?"
@@ -10724,8 +10838,8 @@ msgid "Please update the necessary fields."
 msgstr ""
 
 #, fuzzy
-msgid "Room _List"
-msgstr "அறை பட்டியல்"
+msgid "A_ccount"
+msgstr "கணக்கு:"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10733,8 +10847,9 @@ msgid ""
 msgstr ""
 "நீங்கள் இணைய விரும்பும் அரட்டை பற்றிய சரியான குறிப்புகளை தயவுசெய்து கொடுக்கவும்.\n"
 
-msgid "_Account:"
-msgstr "_கணக்கு:"
+#, fuzzy
+msgid "Room _List"
+msgstr "அறை பட்டியல்"
 
 msgid "_Block"
 msgstr "_தடுக்கவும்"
@@ -11202,6 +11317,113 @@ msgstr "/கருவிகள்"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/நண்பர்கள்/நண்பர்களை வரிசைப்படுத்து"
+
+#. Buddy List
+#, fuzzy
+msgid "Background Color"
+msgstr "பிண்ணனி நிறம்"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
+
+#, fuzzy
+msgid "Layout"
+msgstr "நுழையும் விருப்பங்கள்"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "பிண்ணனி நிறம்"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_வ விரிவு"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "பின்னணி நிறத்தை தேர்வுசெய்"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_ச சுருக்கு"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "பின்னணி நிறத்தை தேர்வுசெய்"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "தளம்"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "இணைப்புடன்"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "வெளியே"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "இணைப்பு விலகி"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "மன நிலை"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "தகவல் அனுப்பப்பட்டது"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "இதற்கான பயனாளர் தகவல்களை மாற்று %s "
 
 #. Widget creation function
 #, fuzzy
@@ -11726,6 +11948,10 @@ msgid "Hungarian"
 msgstr "ஹங்கேரியன்"
 
 #, fuzzy
+msgid "Armenian"
+msgstr "ரோமானியன்"
+
+#, fuzzy
 msgid "Indonesian"
 msgstr "மெர்ஸிடோனியன்"
 
@@ -11830,6 +12056,9 @@ msgstr ""
 
 msgid "Swedish"
 msgstr "ஸ்வேதிஷ்"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "தமிழ்"
@@ -12272,11 +12501,10 @@ msgstr ""
 msgid "Save Image"
 msgstr "படத்தை சேமி"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "படத்தை _ச சேமி..."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Add Custom Smiley..."
 msgstr "தனிப்பயன் குறு நகையிகளை காட்டுக"
 
@@ -12365,10 +12593,6 @@ msgstr ""
 
 msgid "Font Face"
 msgstr "எழுத்துரு முகம்"
-
-#, fuzzy
-msgid "Background Color"
-msgstr "பிண்ணனி நிறம்"
 
 #, fuzzy
 msgid "Foreground Color"
@@ -12721,6 +12945,9 @@ msgstr "நண்பர் நிமித்தச் செயலை தொக
 msgid "Pounce on Whom"
 msgstr "யார் மீது நிமித்தச் செயலாக்க வேண்டும்"
 
+msgid "_Account:"
+msgstr "_கணக்கு:"
+
 msgid "_Buddy name:"
 msgstr "_நண்பர் பெயர்:"
 
@@ -12832,7 +13059,16 @@ msgstr "_தகவல் அனுப்பு"
 msgid "Unknown.... Please report this!"
 msgstr "தெரியாத நிமித்தச் செயலாக்கல் நிகழ்வு. இதை அறிவியுங்கள்!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "முகபாவனை உறைபொருளை கட்டுப்பிரிக்க தவறியது."
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "முகபாவனை உறைபொருளை கட்டுப்பிரிக்க தவறியது."
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "முகபாவனை உறைபொருளை கட்டுப்பிரிக்க தவறியது."
 
 msgid "Install Theme"
@@ -13424,6 +13660,10 @@ msgstr "தளம்"
 msgid "Custom Smiley Manager"
 msgstr ""
 
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "நண்பரை தேர்வுசெய்க"
+
 msgid "Click to change your buddyicon for this account."
 msgstr ""
 
@@ -13655,6 +13895,78 @@ msgstr ""
 
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
+msgstr ""
+
+#, fuzzy
+msgid "Server name request"
+msgstr "சேவையகம் முகவரி"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "கலந்துரையாடல் சேவையகத்தை கொடுக்கவும்"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "விசாரிப்பதற்காக ஒரு கலந்துரையாடல் சேவையகத்தை தேர்வு செய்க"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "இணைப்புடன் சேவைகள்"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "நண்பர் பட்டியலை அனுப்பு"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "வெளியே _ச செல்கிறார்"
+
+#, fuzzy
+msgid "Directory"
+msgstr "அடைவை தேடு"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "ஒலித் தேர்வு"
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>விரிவாக:</b> சொல்லமுடியாத"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "அடைவு தகவல்களை அமை"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_உலாவி:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "பயனாளர் இல்லை"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "சேவையகம் எந்த ஆதரவுள்ள உறுதிபடுத்தல் முறையையும் பயன்படுத்தவில்லை."
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "அடைவு தகவல்களை அமை"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
 msgstr ""
 
 msgid "Buddy is idle"
@@ -14175,12 +14487,6 @@ msgstr ""
 "- அனைத்து உள்வரும் எழுத்துக்களை திசைமாற்றி அமைக்கிறது\n"
 "- உங்கள் அட்டவணையில் உள்ள மக்கள் உள்ளே நுழைந்தவுடன் அவர்களுக்கு தகவலை அனுப்புகிறது"
 
-msgid "Cursor Color"
-msgstr "நிலைக் காட்டியின் நிறம்"
-
-msgid "Secondary Cursor Color"
-msgstr "இரண்டாம்நிலை நிலைக் காட்டியின் நிறம்"
-
 msgid "Hyperlink Color"
 msgstr "மீதொடர்பின் நிறம்"
 
@@ -14191,6 +14497,10 @@ msgstr "மீதொடர்பின் நிறம்"
 #, fuzzy
 msgid "Highlighted Message Name Color"
 msgstr "பொருத்தங்களை சிறப்பு சுட்டுக"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "அறிவிப்பு நீக்கல்"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "ஜிடிகே கிளை காட்சி படுக்கைவாட்டு பிரிப்பு"
@@ -14221,34 +14531,23 @@ msgstr "ஜிடிகே+ இடைமுக எழுத்துரு"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "ஜிடிகே+ உரை குறுக்குவழி உறைபொருள்"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "இடைமுகம் நிறங்கள்"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "புதிய அஞ்சல் அறவிப்புகள்"
 
-msgid "Widget Sizes"
-msgstr "சிறு சாளர அளவுகள்"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "கெய்ம் ஜிடிகே+ உறைபொருள் கட்டுப்பாடு"
+
+#, fuzzy
+msgid "Colors"
+msgstr "மூடுக"
 
 msgid "Fonts"
 msgstr "எழுத்துருக்கள்"
+
+msgid "Miscellaneous"
+msgstr ""
 
 #, fuzzy
 msgid "Gtkrc File Tools"
@@ -14395,6 +14694,113 @@ msgstr "வார்த்தை மாற்றல்கள்"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "பயனாளர் விதித்த முறைப்படி வெளிச்செல்லும் தகவல்களில் வார்த்தையை மாற்றுகிறது."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "நுழைந்திருக்கவில்லை"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "நுழைந்திருக்கவில்லை"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "ஒரு அரட்டையில் இணை"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "தவிர்"
+
+#, fuzzy
+msgid "Founder"
+msgstr "மிக சத்தமான"
+
+#, fuzzy
+msgid "Operator"
+msgstr "ஒபேரா"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "அனுமதிக்கப்பட்ட பெயர்"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "பிழை"
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "வேலை பற்றிய தகவல்"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "உரையாடலை வேண்டுக"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "எச்சரிக்கை நிலை"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "%s ற்கான நிலை"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "அரட்டை அறை மொழி அமைப்புகள்"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "குறும்படத்தை சேமி"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "கெய்ம் ஜிடிகே+ உறைபொருள் கட்டுப்பாடு"
+
+#, fuzzy
+msgid "Contact"
+msgstr "கணக்குத் தகவல்"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "நண்பர் பட்டியல்"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "நண்பர் பட்டியல்"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "கெய்ம் ஜிடிகே+ உறைபொருள் கட்டுப்பாடு"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "கெய்ம் ஜிடிகே+ உறைபொருள் கட்டுப்பாடு"
 
 #. *< type
 #. *< ui_requirement
@@ -14613,6 +15019,22 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Activate which ID?"
+#~ msgstr "எந்த முகப்பை செயல்படுத்த?"
+
+#~ msgid "Cursor Color"
+#~ msgstr "நிலைக் காட்டியின் நிறம்"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "இரண்டாம்நிலை நிலைக் காட்டியின் நிறம்"
+
+#~ msgid "Interface colors"
+#~ msgstr "இடைமுகம் நிறங்கள்"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "சிறு சாளர அளவுகள்"
 
 #, fuzzy
 #~ msgid "Invite message"
@@ -15097,20 +15519,12 @@ msgstr ""
 #~ msgstr "%s ல் உள்ள பயனாளர்கள்: %s"
 
 #, fuzzy
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
-
-#, fuzzy
 #~ msgid "Group Operation Error"
 #~ msgstr "கோப்பு இயக்கம் பிழை"
 
 #, fuzzy
 #~ msgid "Enter your reason:"
 #~ msgstr "தற்போதைய டோக்கனை உள்ளிவும்"
-
-#, fuzzy
-#~ msgid "Error requesting login token"
-#~ msgstr "இணைப்பை உருவாக்குவதில் பிழை"
 
 #, fuzzy
 #~ msgid "Unable to login, check debug log"
@@ -15233,10 +15647,6 @@ msgstr ""
 #~ msgid "_Merge"
 #~ msgstr "_தகவல்:"
 
-#, fuzzy
-#~ msgid "A_ccount:"
-#~ msgstr "கணக்கு:"
-
 #~ msgid "DBus"
 #~ msgstr "டிபஸ் (DBus)"
 
@@ -15342,13 +15752,6 @@ msgstr ""
 #~ msgstr ""
 #~ "\n"
 #~ "<b>நிலை:</b> வலை இணைப்பற்ற"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Description:</b> Spooky"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>விரிவாக:</b> சொல்லமுடியாத"
 
 #~ msgid ""
 #~ "\n"
