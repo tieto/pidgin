@@ -1791,6 +1791,8 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					break;
 				case 1212:
 					/* Password incorrect */
+					/* Set password to NULL. Avoids account locking. Brings dialog to enter password if clicked on Re-enable account */
+					purple_account_set_password(purple_connection_get_account(gc), NULL);
 					error_reason = g_strdup(_("Incorrect Password"));
 					error = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 					break;
