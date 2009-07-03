@@ -1561,8 +1561,15 @@ pidgin_get_notification_dialog(PidginNotifyType type)
 static void
 signed_off_cb(PurpleConnection *gc, gpointer unused)
 {
+	GtkTreeIter iter;
+
 	/* Clear any pending emails for this account */
 	pidgin_notify_emails(gc, 0, FALSE, NULL, NULL, NULL, NULL);
+
+	if (mail_dialog != NULL &&
+			!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter)) {
+		reset_mail_dialog(NULL);
+	}
 }
 
 static void*
