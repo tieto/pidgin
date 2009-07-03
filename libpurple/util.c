@@ -3776,45 +3776,68 @@ parse_content_len(const char *data, size_t data_len)
 static gboolean
 content_is_chunked(const char *data, size_t data_len)
 {
-	gboolean chunked = FALSE;
 	const char *p = find_header_content(data, data_len, "\nTransfer-Encoding: ", sizeof("\nTransfer-Encoding: ") - 1);
 	if (p && g_strncasecmp(p, "chunked", 7) == 0)
-		chunked = TRUE;
+		return TRUE;
 
-	return chunked;
+	return FALSE;
 }
 
 /* Process in-place */
 static void
-process_chunked_data(char *data, gssize *len)
+process_chunked_data(char *data, gsize *len)
 {
-	gssize sz;
-	gssize nlen = 0;
+	gsize sz;
+	gsize newlen = 0;
 	char *p = data;
 	char *s = data;
 
 	while (*s) {
-		if (sscanf(s, "%x\r\n", &sz) != 1) {
-			purple_debug_error("util", "Error processing chunked data. Expected data length, found: %s\n", s);
+		/* Read the size of this chunk */
+		if (sscanf(s, "%" G_GSIZE_MODIFIER "x\r\n", &sz) != 1 &&
+			sscanf(s, "%" G_GSIZE_MODIFIER "x;", &sz) != 1)
+		{
+			purple_debug_error("util", "Error processing chunked data: "
+					"Expected data length, found: %s\n", s);
 			break;
 		}
-		if (sz == 0)
+		if (sz == 0) {
+			/* We've reached the last chunk */
+			/*
+			 * TODO: The spec allows "footers" to follow the last chunk.
+			 *       If there is more data after this line then we should
+			 *       treat it like a header.
+			 */
 			break;
+		}
+
+		/* Advance to the start of the data */
 		s = strstr(s, "\r\n") + 2;
+
+		if (s + sz > data + *len) {
+			purple_debug_error("util", "Error processing chunked data: "
+					"Chunk size %" G_GSIZE_FORMAT " bytes was longer "
+					"than the data remaining in the buffer (%"
+					G_GSIZE_FORMAT " bytes)\n", sz, data + *len - s);
+		}
+
+		/* Move all data overtop of the chunk length that we read in earlier */
 		g_memmove(p, s, sz);
 		p += sz;
 		s += sz;
-		nlen += sz;
+		newlen += sz;
 		if (*s != '\r' && *(s + 1) != '\n') {
-			purple_debug_error("util", "Error processing chunked data. Expected \\r\\n, found: %s\n", s);
+			purple_debug_error("util", "Error processing chunked data: "
+					"Expected \\r\\n, found: %s\n", s);
 			break;
 		}
 		s += 2;
 	}
+
+	/* NULL terminate the data */
 	*p = 0;
 
-	if (len)
-		*len = nlen;
+	*len = newlen;
 }
 
 static void

@@ -28,6 +28,8 @@ typedef struct _JabberID {
 	char *resource;
 } JabberID;
 
+#include "jabber.h"
+
 JabberID* jabber_id_new(const char *str);
 void jabber_id_free(JabberID *jid);
 

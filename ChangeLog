@@ -70,6 +70,8 @@ version 2.6.0 (??/??/2009):
 	  characters.
 	* Show emblem for mobile, handheld, and web clients and bots (if the other
 	  client supports it).
+	* Google Talk mail notifications should now work for people for whom they
+	  inexplicably did not.  (Thanks to yukam for determining the reason)
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)

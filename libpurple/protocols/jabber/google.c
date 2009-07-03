@@ -939,9 +939,24 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 
 void jabber_gmail_init(JabberStream *js) {
 	JabberIq *iq;
+	xmlnode *usersetting, *mailnotifications;
 
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_connection_get_account(js->gc)))
 		return;
+
+	/*
+	 * Quoting http://code.google.com/apis/talk/jep_extensions/usersettings.html:
+	 * To ensure better compatibility with other clients, rather than
+	 * setting this value to "false" to turn off notifications, it is
+	 * recommended that a client set this to "true" and filter incoming
+	 * email notifications itself.
+	 */
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+	usersetting = xmlnode_new_child(iq->node, "usersetting");
+	xmlnode_set_namespace(usersetting, "google:setting");
+	mailnotifications = xmlnode_new_child(usersetting, "mailnotifications");
+	xmlnode_set_attrib(mailnotifications, "value", "true");
+	jabber_iq_send(iq);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
 	jabber_iq_set_callback(iq, jabber_gmail_parse, NULL);
