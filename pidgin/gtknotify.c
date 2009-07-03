@@ -100,11 +100,13 @@ enum
 	PIDGIN_POUNCE_COLUMNS
 };
 
-typedef struct _PidginNotifyDialog PidginNotifyDialog;
-typedef PidginNotifyDialog PidginMailDialog;
 
-struct _PidginNotifyDialog
+typedef struct _PidginNotifyDialog
 {
+	/*
+	 * This must be first so PidginNotifyDialog can masquerade as the
+	 * dialog widget.
+	 */
 	GtkWidget *dialog;
 	GtkWidget *treeview;
 	GtkTreeStore *treemodel;
@@ -114,7 +116,7 @@ struct _PidginNotifyDialog
 	GtkWidget *edit_button;
 	int total_count;
 	gboolean in_use;
-};
+} PidginNotifyDialog;
 
 typedef enum
 {
@@ -126,7 +128,7 @@ typedef enum
 static PidginNotifyDialog *mail_dialog = NULL;
 static PidginNotifyDialog *pounce_dialog = NULL;
 
-static GtkWidget *pidgin_get_notification_dialog(PidginNotifyType type);
+static PidginNotifyDialog *pidgin_get_notification_dialog(PidginNotifyType type);
 static void *pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 									const char **subjects,
 									const char **froms, const char **tos,
@@ -217,7 +219,7 @@ pounce_response_edit_cb(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->treemodel), iter,
 			PIDGIN_POUNCE_DATA, &pounce_data,
 			-1);
-	
+
 	for (; list != NULL; list = list->next) {
 		pounce = list->data;
 		if (pounce == pounce_data->pounce) {
@@ -283,7 +285,7 @@ pounce_row_selected_cb(GtkTreeView *tv, GtkTreePath *path,
 				break;
 			}
 		}
-	
+
 		gtk_widget_set_sensitive(pounce_dialog->dismiss_button, TRUE);
 	} else {
 		gtk_widget_set_sensitive(pounce_dialog->edit_button, FALSE);
@@ -294,7 +296,17 @@ pounce_row_selected_cb(GtkTreeView *tv, GtkTreePath *path,
 }
 
 static void
-email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
+reset_mail_dialog(GtkDialog *unused)
+{
+	if (mail_dialog->in_use)
+		return;
+	gtk_widget_destroy(mail_dialog->dialog);
+	g_free(mail_dialog);
+	mail_dialog = NULL;
+}
+
+static void
+email_response_cb(GtkDialog *dlg, gint id, PidginNotifyDialog *dialog)
 {
 	PidginNotifyMailData *data = NULL;
 	GtkTreeIter iter;
@@ -342,23 +354,12 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 				pidgin_close_notify(PURPLE_NOTIFY_EMAILS, data);
 		}
 	}
-	gtk_widget_destroy(dialog->dialog);
-	g_free(dialog);
-	mail_dialog = NULL;
+
+	reset_mail_dialog(NULL);
 }
 
 static void email_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
 	email_response_cb(GTK_DIALOG(mail_dialog->dialog), GTK_RESPONSE_YES, mail_dialog);
-}
-
-static void
-reset_mail_dialog(GtkDialog *dialog)
-{
-	if (mail_dialog->in_use)
-		return;
-	gtk_widget_destroy(mail_dialog->dialog);
-	g_free(mail_dialog);
-	mail_dialog = NULL;
 }
 
 static gboolean
@@ -489,7 +490,7 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 }
 
 static void
-selection_changed_cb(GtkTreeSelection *sel, PidginMailDialog *dialog)
+selection_changed_cb(GtkTreeSelection *sel, PidginNotifyDialog *dialog)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -526,12 +527,6 @@ mail_window_focus_cb(GtkWidget *widget, GdkEventFocus *focus, gpointer null)
 	return 0;
 }
 
-static GtkWidget *
-pidgin_get_mail_dialog(void)
-{
-	return pidgin_get_notification_dialog(PIDGIN_NOTIFY_MAIL);
-}
-
 /* count == 0 means this is a detailed mail notification.
  * count > 0 mean non-detailed.
  */
@@ -559,6 +554,8 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 						gtk_tree_store_remove(treemodel, &iter);
 						advanced = (iter.stamp == 0) ? FALSE : TRUE;
 #endif
+						mail_dialog->total_count -= data->count;
+
 						if (data->purple_has_handle)
 							purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
 						else
@@ -598,7 +595,8 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 								PIDGIN_MAIL_DATA, data,
 								-1);
 	data->account = account;
-	data->count = count;
+	/* count == 0 indicates we're adding a single detailed e-mail */
+	data->count = count > 0 ? count : 1;
 
 	if (icon)
 		g_object_unref(icon);
@@ -613,7 +611,8 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 					   const char **subjects, const char **froms,
 					   const char **tos, const char **urls)
 {
-	GtkWidget *dialog = NULL;
+	PidginNotifyDialog *notification_dialog;
+	GtkWidget *dialog;
 	char *notification;
 	PurpleAccount *account;
 	PidginNotifyMailData *data = NULL, *data2;
@@ -624,11 +623,13 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		return NULL;
 
 	account = purple_connection_get_account(gc);
-	dialog = pidgin_get_mail_dialog();  /* This creates mail_dialog if necessary */
+	/* This creates the mail dialog (mail_dialog) if necessary */
+	notification_dialog = pidgin_get_notification_dialog(PIDGIN_NOTIFY_MAIL);
+	dialog = notification_dialog->dialog;
 
 	mail_dialog->total_count += count;
 	if (detailed) {
-		while (count--) {
+		for ( ; count; --count) {
 			char *to_text = NULL;
 			char *from_text = NULL;
 			char *subject_text = NULL;
@@ -689,14 +690,14 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 			}
 			g_free(notification);
 		} else {
-			GtkTreeIter iter;
-
 			/* Clear out all mails for the account */
 			pidgin_notify_add_mail(mail_dialog->treemodel, account, NULL, NULL, 0, TRUE, NULL);
 
-			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter)) {
-				/* There is no API to clear the headline specifically */
-				/* This will trigger reset_mail_dialog() */
+			if (mail_dialog->total_count == 0) {
+				/*
+				 * There is no API to clear the headline specifically
+				 * This will trigger reset_mail_dialog()
+				 */
 				pidgin_blist_set_headline(NULL, NULL, NULL, NULL, NULL);
 				return NULL;
 			}
@@ -1344,9 +1345,49 @@ pidgin_notify_uri(const char *uri)
 	return NULL;
 }
 
-static GtkWidget *
-pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
+void
+pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
+		const char *alias, const char *event, const char *message, const char *date)
 {
+	PidginNotifyDialog *notification_dialog;
+	GtkWidget *dialog;
+	GdkPixbuf *icon;
+	GtkTreeIter iter;
+	PidginNotifyPounceData *pounce_data;
+
+	notification_dialog = pidgin_get_notification_dialog(PIDGIN_NOTIFY_POUNCE);
+	dialog = notification_dialog->dialog;
+
+	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+
+	pounce_data = g_new(PidginNotifyPounceData, 1);
+
+	pounce_data->account = account;
+	pounce_data->pounce = pounce;
+
+	gtk_tree_store_append(pounce_dialog->treemodel, &iter, NULL);
+
+	gtk_tree_store_set(pounce_dialog->treemodel, &iter,
+			PIDGIN_POUNCE_ICON, icon,
+			PIDGIN_POUNCE_ALIAS, alias,
+			PIDGIN_POUNCE_EVENT, event,
+			PIDGIN_POUNCE_TEXT, (message != NULL)? message : _("No message"),
+			PIDGIN_POUNCE_DATE, date,
+			PIDGIN_POUNCE_DATA, pounce_data,
+			-1);
+
+	if (icon)
+		g_object_unref(icon);
+
+	gtk_widget_show_all(dialog);
+
+	return;
+}
+
+static PidginNotifyDialog *
+pidgin_get_notification_dialog(PidginNotifyType type)
+{
+	GtkTreeStore *model = NULL;
 	GtkWidget *dialog = NULL;
 	GtkWidget *label = NULL;
 	GtkWidget *sw;
@@ -1356,9 +1397,26 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 	GtkWidget *vbox = NULL;
 	GtkTreeSelection *sel;
 	PidginNotifyDialog *spec_dialog = NULL;
-	
+
 	g_return_val_if_fail(type < PIDGIN_NOTIFY_TYPES, NULL);
-	
+
+	if (type == PIDGIN_NOTIFY_MAIL) {
+		if (mail_dialog != NULL)
+			return mail_dialog;
+
+		model = gtk_tree_store_new(COLUMNS_PIDGIN_MAIL,
+						GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
+
+	} else if (type == PIDGIN_NOTIFY_POUNCE) {
+
+		if (pounce_dialog != NULL)
+			return pounce_dialog;
+
+		model = gtk_tree_store_new(PIDGIN_POUNCE_COLUMNS,
+				GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				G_TYPE_STRING, G_TYPE_POINTER);
+	}
+
 	dialog = gtk_dialog_new_with_buttons(NULL, NULL, 0,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 			NULL);
@@ -1382,10 +1440,10 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 	spec_dialog = g_new0(PidginNotifyDialog, 1);
 	spec_dialog->dialog = dialog;
 
-	spec_dialog->treemodel = treemodel;
-	spec_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(spec_dialog->treemodel));
-	g_object_unref(G_OBJECT(spec_dialog->treemodel));
-	
+	spec_dialog->treemodel = model;
+	spec_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
+	g_object_unref(G_OBJECT(model));
+
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(spec_dialog->treeview), TRUE);
 	gtk_container_add(GTK_CONTAINER(sw), spec_dialog->treeview);
 
@@ -1500,70 +1558,7 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 		pounce_dialog = spec_dialog;
 	}
 
-	return spec_dialog->dialog;
-
-}
-
-void
-pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
-		const char *alias, const char *event, const char *message, const char *date)
-{
-	GtkWidget *dialog;
-	GdkPixbuf *icon;
-	GtkTreeIter iter;
-	PidginNotifyPounceData *pounce_data;
-
-	dialog = pidgin_get_notification_dialog(PIDGIN_NOTIFY_POUNCE);
-
-	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-
-	pounce_data = g_new(PidginNotifyPounceData, 1);
-
-	pounce_data->account = account;
-	pounce_data->pounce = pounce;
-
-	gtk_tree_store_append(pounce_dialog->treemodel, &iter, NULL);
-
-	gtk_tree_store_set(pounce_dialog->treemodel, &iter,
-			PIDGIN_POUNCE_ICON, icon,
-			PIDGIN_POUNCE_ALIAS, alias,
-			PIDGIN_POUNCE_EVENT, event,
-			PIDGIN_POUNCE_TEXT, (message != NULL)? message : _("No message"),
-			PIDGIN_POUNCE_DATE, date,
-			PIDGIN_POUNCE_DATA, pounce_data,
-			-1);
-
-	if (icon)
-		g_object_unref(icon);
-
-	gtk_widget_show_all(dialog);
-
-	return;
-}
-
-static GtkWidget *
-pidgin_get_notification_dialog(PidginNotifyType type)
-{
-	GtkTreeStore *model = NULL;
-
-	if (type == PIDGIN_NOTIFY_MAIL) {
-		if (mail_dialog != NULL)
-			return mail_dialog->dialog;
-
-		model = gtk_tree_store_new(COLUMNS_PIDGIN_MAIL,
-						GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
-
-	} else if (type == PIDGIN_NOTIFY_POUNCE) {
-
-		if (pounce_dialog != NULL)
-			return pounce_dialog->dialog;
-
-		model = gtk_tree_store_new(PIDGIN_POUNCE_COLUMNS,
-				GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-				G_TYPE_STRING, G_TYPE_POINTER);
-	}
-
-	return pidgin_get_dialog(type, model);
+	return spec_dialog;
 }
 
 static void
@@ -1571,6 +1566,9 @@ signed_off_cb(PurpleConnection *gc, gpointer unused)
 {
 	/* Clear any pending emails for this account */
 	pidgin_notify_emails(gc, 0, FALSE, NULL, NULL, NULL, NULL);
+
+	if (mail_dialog != NULL && mail_dialog->total_count == 0)
+		reset_mail_dialog(NULL);
 }
 
 static void*

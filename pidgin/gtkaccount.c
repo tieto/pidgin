@@ -1990,7 +1990,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 				/* This is for when set_account() is called for a single account */
 				const char *path;
 				path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
-				if (path != NULL)
+				if (path != NULL && *path != '\0')
 					img = purple_imgstore_new_from_file(path);
 			}
 		} else {
