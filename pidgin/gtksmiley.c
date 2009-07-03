@@ -405,6 +405,7 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
+	gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
 	g_signal_connect(window, "response", G_CALLBACK(do_add_select_cb), s);
 
 	/* The vbox */
@@ -462,7 +463,6 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	else
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT, FALSE);
 
-	g_signal_connect(s->smile, "activate", G_CALLBACK(do_add), s);
 	/* gtk_entry_get_text_length is 2.14+, so we'll just keep track ourselves */
 	g_signal_connect(G_OBJECT(s->smile), "insert-text", G_CALLBACK(smiley_name_insert_cb), s);
 	g_signal_connect(G_OBJECT(s->smile), "delete-text", G_CALLBACK(smiley_name_delete_cb), s);
