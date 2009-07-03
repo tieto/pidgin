@@ -1681,7 +1681,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 #if GLIB_CHECK_VERSION(2,6,0)
 		totalelements = g_strv_length(split_data);
 #else
-		while (split_data[++totalelements] != NULL);	
+		while (split_data[++totalelements] != NULL);
 #endif
 		if (totalelements >= 4) {
 			response_no = strtol(split_data[0], NULL, 10);
@@ -1767,11 +1767,11 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 #if GLIB_CHECK_VERSION(2,6,0)
 		totalelements = g_strv_length(split_data);
 #else
-		while (split_data[++totalelements] != NULL);	
+		while (split_data[++totalelements] != NULL);
 #endif
 		if(totalelements == 1)
 			response_no = strtol(split_data[0], NULL, 10);
-		if(totalelements >= 2) {
+		else if(totalelements >= 2) {
 			response_no = strtol(split_data[0], NULL, 10);
 			token = g_strdup(split_data[1] + strlen("ymsgr="));
 		}
