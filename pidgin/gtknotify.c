@@ -100,10 +100,8 @@ enum
 	PIDGIN_POUNCE_COLUMNS
 };
 
-typedef struct _PidginNotifyDialog PidginNotifyDialog;
-typedef PidginNotifyDialog PidginMailDialog;
 
-struct _PidginNotifyDialog
+typedef struct _PidginNotifyDialog
 {
 	/*
 	 * This must be first so PidginNotifyDialog can masquerade as the
@@ -118,7 +116,7 @@ struct _PidginNotifyDialog
 	GtkWidget *edit_button;
 	int total_count;
 	gboolean in_use;
-};
+} PidginNotifyDialog;
 
 typedef enum
 {
@@ -308,7 +306,7 @@ reset_mail_dialog(GtkDialog *unused)
 }
 
 static void
-email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
+email_response_cb(GtkDialog *dlg, gint id, PidginNotifyDialog *dialog)
 {
 	PidginNotifyMailData *data = NULL;
 	GtkTreeIter iter;
@@ -492,7 +490,7 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 }
 
 static void
-selection_changed_cb(GtkTreeSelection *sel, PidginMailDialog *dialog)
+selection_changed_cb(GtkTreeSelection *sel, PidginNotifyDialog *dialog)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
