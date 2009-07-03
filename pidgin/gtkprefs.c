@@ -1636,15 +1636,82 @@ conv_page(void)
 	return ret;
 }
 
+/* This isn't a very strict check, but should give the user a clue. */
+static gboolean
+verify_ip_address(const gchar *text)
+{
+	char *tmp;
+	long octet;
+
+	if (!text && !isdigit(*text))
+		return FALSE;
+
+	tmp = NULL;
+	octet = strtol(text, &tmp, 10);
+	if (octet < 0 || octet > 255)
+		return FALSE;
+
+	if (!tmp || *tmp != '.')
+		return FALSE;
+
+	text = tmp + 1;
+	if (!isdigit(*text))
+		return FALSE;
+
+	tmp = NULL;
+	octet = strtol(text, &tmp, 10);
+	if (octet < 0 || octet > 255)
+		return FALSE;
+
+	if (!tmp || *tmp != '.')
+		return FALSE;
+
+	text = tmp + 1;
+	if (!isdigit(*text))
+		return FALSE;
+
+	tmp = NULL;
+	octet = strtol(text, &tmp, 10);
+	if (octet < 0 || octet > 255)
+		return FALSE;
+
+	text = tmp + 1;
+	if (!isdigit(*text))
+		return FALSE;
+
+	tmp = NULL;
+	octet = strtol(text, &tmp, 10);
+	if (octet < 0 || octet > 255)
+		return FALSE;
+
+	if (!tmp || *tmp != '\0')
+		return FALSE;
+
+	return TRUE;
+}
+
 static void
 network_ip_changed(GtkEntry *entry, gpointer data)
 {
-	/*
-	 * TODO: It would be nice if we could validate this and show a
-	 *       red background in the box when the IP address is invalid
-	 *       and a green background when the IP address is valid.
-	 */
-	purple_network_set_public_ip(gtk_entry_get_text(entry));
+	const gchar *text = gtk_entry_get_text(entry);
+	GdkColor color;
+
+	if (verify_ip_address(text))
+	{
+		color.red = 0xAFFF;
+		color.green = 0xFFFF;
+		color.blue = 0xAFFF;
+
+		purple_network_set_public_ip(text);
+	}
+	else
+	{
+		color.red = 0xFFFF;
+		color.green = 0xAFFF;
+		color.blue = 0xAFFF;
+	}
+
+	gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &color);
 }
 
 static gboolean
