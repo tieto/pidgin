@@ -217,7 +217,7 @@ pounce_response_edit_cb(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->treemodel), iter,
 			PIDGIN_POUNCE_DATA, &pounce_data,
 			-1);
-	
+
 	for (; list != NULL; list = list->next) {
 		pounce = list->data;
 		if (pounce == pounce_data->pounce) {
@@ -283,7 +283,7 @@ pounce_row_selected_cb(GtkTreeView *tv, GtkTreePath *path,
 				break;
 			}
 		}
-	
+
 		gtk_widget_set_sensitive(pounce_dialog->dismiss_button, TRUE);
 	} else {
 		gtk_widget_set_sensitive(pounce_dialog->edit_button, FALSE);
@@ -1356,9 +1356,9 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 	GtkWidget *vbox = NULL;
 	GtkTreeSelection *sel;
 	PidginNotifyDialog *spec_dialog = NULL;
-	
+
 	g_return_val_if_fail(type < PIDGIN_NOTIFY_TYPES, NULL);
-	
+
 	dialog = gtk_dialog_new_with_buttons(NULL, NULL, 0,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 			NULL);
@@ -1385,7 +1385,7 @@ pidgin_get_dialog(PidginNotifyType type, GtkTreeStore *treemodel)
 	spec_dialog->treemodel = treemodel;
 	spec_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(spec_dialog->treemodel));
 	g_object_unref(G_OBJECT(spec_dialog->treemodel));
-	
+
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(spec_dialog->treeview), TRUE);
 	gtk_container_add(GTK_CONTAINER(sw), spec_dialog->treeview);
 
