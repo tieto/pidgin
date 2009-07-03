@@ -839,7 +839,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	to_name = jabber_get_bare_jid(to);
 	default_url = xmlnode_get_attrib(child, "url");
 	if (default_url == NULL || *default_url == '\0')
-		default_url = "https://mail.google.com/mail";
+		default_url = "http://mail.google.com/mail";
 
 	message= xmlnode_get_child(child, "mail-thread-info");
 	for (i=0; message; message = xmlnode_get_next_twin(message), i++) {
