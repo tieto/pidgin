@@ -554,6 +554,8 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 						gtk_tree_store_remove(treemodel, &iter);
 						advanced = (iter.stamp == 0) ? FALSE : TRUE;
 #endif
+						mail_dialog->total_count -= data->count;
+
 						if (data->purple_has_handle)
 							purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
 						else
@@ -593,7 +595,8 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 								PIDGIN_MAIL_DATA, data,
 								-1);
 	data->account = account;
-	data->count = count;
+	/* count == 0 indicates we're adding a single detailed e-mail */
+	data->count = count > 0 ? count : 1;
 
 	if (icon)
 		g_object_unref(icon);
@@ -626,7 +629,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 
 	mail_dialog->total_count += count;
 	if (detailed) {
-		while (count--) {
+		for ( ; count; --count) {
 			char *to_text = NULL;
 			char *from_text = NULL;
 			char *subject_text = NULL;
@@ -687,14 +690,14 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 			}
 			g_free(notification);
 		} else {
-			GtkTreeIter iter;
-
 			/* Clear out all mails for the account */
 			pidgin_notify_add_mail(mail_dialog->treemodel, account, NULL, NULL, 0, TRUE, NULL);
 
-			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter)) {
-				/* There is no API to clear the headline specifically */
-				/* This will trigger reset_mail_dialog() */
+			if (mail_dialog->total_count == 0) {
+				/*
+				 * There is no API to clear the headline specifically
+				 * This will trigger reset_mail_dialog()
+				 */
 				pidgin_blist_set_headline(NULL, NULL, NULL, NULL, NULL);
 				return NULL;
 			}
@@ -1561,15 +1564,11 @@ pidgin_get_notification_dialog(PidginNotifyType type)
 static void
 signed_off_cb(PurpleConnection *gc, gpointer unused)
 {
-	GtkTreeIter iter;
-
 	/* Clear any pending emails for this account */
 	pidgin_notify_emails(gc, 0, FALSE, NULL, NULL, NULL, NULL);
 
-	if (mail_dialog != NULL &&
-			!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter)) {
+	if (mail_dialog != NULL && mail_dialog->total_count == 0)
 		reset_mail_dialog(NULL);
-	}
 }
 
 static void*
