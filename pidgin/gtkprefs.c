@@ -28,6 +28,7 @@
 #include "pidgin.h"
 
 #include "debug.h"
+#include "nat-pmp.h"
 #include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
@@ -36,7 +37,9 @@
 #include "savedstatuses.h"
 #include "sound.h"
 #include "sound-theme.h"
+#include "stun.h"
 #include "theme-manager.h"
+#include "upnp.h"
 #include "util.h"
 #include "network.h"
 
@@ -114,7 +117,7 @@ pidgin_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 
 	val = purple_prefs_get_int(key);
 
-	adjust = gtk_adjustment_new(val, min, max, 1, 1, 1);
+	adjust = gtk_adjustment_new(val, min, max, 1, 1, 0);
 	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
 	g_object_set_data(G_OBJECT(spin), "val", (char *)key);
 	if (max < 10000)
@@ -1642,22 +1645,25 @@ network_ip_changed(GtkEntry *entry, gpointer data)
 	const gchar *text = gtk_entry_get_text(entry);
 	GdkColor color;
 
-	if (purple_ip_address_is_valid(text))
-	{
-		color.red = 0xAFFF;
-		color.green = 0xFFFF;
-		color.blue = 0xAFFF;
+	if (text && *text) {
+		if (purple_ip_address_is_valid(text)) {
+			color.red = 0xAFFF;
+			color.green = 0xFFFF;
+			color.blue = 0xAFFF;
 
-		purple_network_set_public_ip(text);
-	}
-	else
-	{
-		color.red = 0xFFFF;
-		color.green = 0xAFFF;
-		color.blue = 0xAFFF;
-	}
+			purple_network_set_public_ip(text);
+		} else {
+			color.red = 0xFFFF;
+			color.green = 0xAFFF;
+			color.blue = 0xAFFF;
+		}
 
-	gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &color);
+		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &color);
+
+	} else {
+		purple_network_set_public_ip("");
+		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, NULL);
+	}
 }
 
 static gboolean
@@ -1744,6 +1750,9 @@ network_page(void)
 	GtkWidget *proxy_button = NULL, *browser_button = NULL;
 	GtkSizeGroup *sg;
 	PurpleProxyInfo *proxy_info = NULL;
+	const char *ip;
+	PurpleStunNatDiscovery *stun;
+	char *auto_ip_text;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -1774,8 +1783,30 @@ network_page(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	gtk_container_add(GTK_CONTAINER(hbox), label);
 
-	auto_ip_checkbox = pidgin_prefs_checkbox(_("_Autodetect IP address"),
-			"/purple/network/auto_ip", vbox);
+	/* purple_network_get_my_ip will return the IP that was set by the user with
+	   purple_network_set_public_ip, so make a lookup for the auto-detected IP
+	   ourselves. */
+
+	/* Check if STUN discovery was already done */
+	stun = purple_stun_discover(NULL);
+	if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED)) {
+		ip = stun->publicip;
+	} else {
+		/* Attempt to get the IP from a NAT device using UPnP */
+		ip = purple_upnp_get_public_ip();
+		if (ip == NULL) {
+			/* Attempt to get the IP from a NAT device using NAT-PMP */
+			ip = purple_pmp_get_public_ip();
+			if (ip == NULL) {
+				/* Just fetch the IP of the local system */
+				ip = purple_network_get_local_system_ip(-1);
+			}
+		}
+	}
+
+	auto_ip_text = g_strdup_printf(_("Use _automatically detected IP address: %s"), ip);
+	auto_ip_checkbox = pidgin_prefs_checkbox(auto_ip_text, "/purple/network/auto_ip", vbox);
+	g_free(auto_ip_text);
 
 	table = gtk_table_new(2, 2, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
@@ -1794,16 +1825,9 @@ network_page(void)
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
-	/*
-	 * TODO: This could be better by showing the autodeteced
-	 * IP separately from the user-specified IP.
-	 */
-	if (purple_network_get_my_ip(-1) != NULL)
-		gtk_entry_set_text(GTK_ENTRY(entry),
-		                   purple_network_get_my_ip(-1));
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_network_get_public_ip());
 
-	pidgin_set_accessible_label (entry, label);
-
+	pidgin_set_accessible_label(entry, label);
 
 	if (purple_prefs_get_bool("/purple/network/auto_ip")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(table), FALSE);
