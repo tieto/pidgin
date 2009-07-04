@@ -41,6 +41,12 @@ struct _PurpleSrvResponse {
 	int pref;
 };
 
+/**
+ * @param resp An array of PurpleSrvResponse of size results.  The array
+ *        is sorted based on the order described in the DNS SRV RFC.
+ *        Users of this API should try each record in resp in order,
+ *        starting at the beginning.
+ */
 typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer data);
 
 /**

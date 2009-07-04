@@ -403,7 +403,7 @@ purple_win32_proxy_get_info(void)
 		MyWinHttpGetIEProxyConfig = (LPFNWINHTTPGETIEPROXYCONFIG)
 			wpurple_find_and_loadproc("winhttp.dll", "WinHttpGetIEProxyConfigForCurrentUser");
 		if (!MyWinHttpGetIEProxyConfig)
-			purple_debug_info("proxy", "Unable to read Windows Proxy Settings.\n");
+			purple_debug_warning("proxy", "Unable to read Windows Proxy Settings.\n");
 	}
 
 	if (!MyWinHttpGetIEProxyConfig)
@@ -572,7 +572,7 @@ purple_proxy_connect_data_disconnect(PurpleProxyConnectData *connect_data, const
 
 	if (error_message != NULL)
 	{
-		purple_debug_info("proxy", "Connection attempt failed: %s\n",
+		purple_debug_error("proxy", "Connection attempt failed: %s\n",
 				error_message);
 		if (connect_data->hosts != NULL)
 			try_connect(connect_data);
@@ -658,7 +658,7 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (ret != 0 || error != 0) {
 		if (ret != 0)
 			error = errno;
-		purple_debug_info("proxy", "Error connecting to %s:%d (%s).\n",
+		purple_debug_error("proxy", "Error connecting to %s:%d (%s).\n",
 						connect_data->host, connect_data->port, g_strerror(error));
 
 		purple_proxy_connect_data_disconnect(connect_data, g_strerror(error));

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:38-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2008-08-27 16:26-0800\n"
 "Last-Translator: Aaron Kearns <ajkearns6@gmail.com>\n"
 "Language-Team: \n"
@@ -1701,6 +1701,8 @@ msgstr ""
 msgid "+++ %s signed off"
 msgstr ""
 
+#. Unknown error
+#. Unknown error!
 #, fuzzy
 msgid "Unknown error"
 msgstr "Earraidh gan aithne"
@@ -2068,6 +2070,9 @@ msgstr ""
 
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
+msgstr ""
+
+msgid "Error creating conference."
 msgstr ""
 
 #, c-format
@@ -3004,6 +3009,11 @@ msgstr "Cuir le comhrá"
 msgid "Chat _name:"
 msgstr ""
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "Ní féidir an comhad a oscailt."
+
 msgid "Chat error"
 msgstr ""
 
@@ -3053,6 +3063,10 @@ msgstr ""
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu Úsáideoir"
 
+#, fuzzy
+msgid "GG server"
+msgstr "Nasc diúltaithe"
+
 #, fuzzy, c-format
 msgid "Unknown command: %s"
 msgstr "ordú anaithnid: `%c'"
@@ -3096,7 +3110,7 @@ msgstr "Bealach"
 msgid "_Password:"
 msgstr "_Pasfhocal:"
 
-msgid "IRC nicks may not contain whitespace"
+msgid "IRC nick and server may not contain whitespace"
 msgstr ""
 
 #. 1. connect to server
@@ -3527,6 +3541,9 @@ msgstr ""
 msgid "Server does not use any supported authentication method"
 msgstr ""
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+
 msgid "Invalid challenge from server"
 msgstr ""
 
@@ -3796,6 +3813,14 @@ msgstr "Tosaíocht"
 msgid "Resource"
 msgstr ""
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "Logáilte isteach!\n"
+
 msgid "Middle Name"
 msgstr ""
 
@@ -3965,8 +3990,17 @@ msgstr ""
 msgid "Find Rooms"
 msgstr ""
 
-msgid "You require encryption, but it is not available on this server."
-msgstr ""
+#, fuzzy
+msgid "Affiliations:"
+msgstr "Ailias:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "Níl fuaim"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "Post"
 
 msgid "Ping timeout"
 msgstr ""
@@ -3987,7 +4021,7 @@ msgstr "XMPP ID Neamhbhailí "
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
 
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr ""
 
 #, c-format
@@ -4014,9 +4048,6 @@ msgstr ""
 msgid "Unregistration Failed"
 msgstr ""
 
-msgid "Already Registered"
-msgstr ""
-
 #, fuzzy
 msgid "State"
 msgstr "Stát"
@@ -4030,6 +4061,9 @@ msgstr "Guthán"
 
 msgid "Date"
 msgstr "Dáta"
+
+msgid "Already Registered"
+msgstr ""
 
 msgid "Unregister"
 msgstr ""
@@ -4056,6 +4090,9 @@ msgid "Register New Account at %s"
 msgstr ""
 
 msgid "Change Registration"
+msgstr ""
+
+msgid "Malformed BOSH Connect Server"
 msgstr ""
 
 msgid "Error unregistering account"
@@ -4425,13 +4462,13 @@ msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr ""
 
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -4489,6 +4526,9 @@ msgid "Connect server"
 msgstr ""
 
 msgid "File transfer proxies"
+msgstr ""
+
+msgid "BOSH URL"
 msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
@@ -4879,6 +4919,10 @@ msgstr ""
 msgid "Non-IM Contacts"
 msgstr ""
 
+#, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+
 msgid "Nudge"
 msgstr ""
 
@@ -5224,62 +5268,24 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr ""
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr ""
-
-#, fuzzy
-msgid "Unknown error."
-msgstr "Earráid anaithnid=(%d)\n"
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s ar %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr ""
 
-#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
-msgid "Unknown error (%d)"
+msgid "Unknown error (%d): %s"
 msgstr "Earráid anaithnid=(%d)\n"
 
 msgid "Unable to add user"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Unknown error (%d)"
+msgstr "Earráid anaithnid=(%d)\n"
+
 msgid "The following users are missing from your addressbook"
 msgstr ""
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr ""
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr ""
-
-msgid "Service Temporarily Unavailable."
-msgstr ""
-
 msgid "Mobile message was not sent because it was too long."
-msgstr ""
-
-msgid "Unable to rename group"
-msgstr ""
-
-msgid "Unable to delete group"
 msgstr ""
 
 #, c-format
@@ -5353,6 +5359,10 @@ msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 
+#, fuzzy
+msgid "Unknown error."
+msgstr "Earráid anaithnid=(%d)\n"
+
 msgid "Handshaking"
 msgstr ""
 
@@ -5369,6 +5379,14 @@ msgid "Sending cookie"
 msgstr ""
 
 msgid "Retrieving buddy list"
+msgstr ""
+
+#, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
 
 msgid "Away From Computer"
@@ -5407,14 +5425,6 @@ msgstr ""
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr ""
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr ""
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr ""
-
 msgid "Delete Buddy from Address Book?"
 msgstr ""
 
@@ -5442,6 +5452,51 @@ msgstr ""
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "MSN Prótacal Breiseán"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr ""
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s ar %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr ""
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr ""
+
+msgid "Service Temporarily Unavailable."
+msgstr ""
+
+msgid "Unable to rename group"
+msgstr ""
+
+msgid "Unable to delete group"
+msgstr ""
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr ""
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "No such user: %s"
@@ -5473,6 +5528,8 @@ msgid "Lost connection with server"
 msgstr "Cailleadh an nasc le \"%s\"."
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr ""
 
@@ -5519,10 +5576,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
+msgstr ""
+
+msgid "Incorrect username or password"
 msgstr ""
 
 msgid "MySpaceIM Error"
@@ -5839,9 +5898,6 @@ msgstr ""
 msgid "Master archive is misconfigured"
 msgstr ""
 
-msgid "Incorrect username or password"
-msgstr ""
-
 msgid "Could not recognize the host of the username you entered"
 msgstr ""
 
@@ -6039,6 +6095,26 @@ msgid "Server address"
 msgstr ""
 
 msgid "Server port"
+msgstr ""
+
+msgid "Received unexpected response from "
+msgstr ""
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "earráid agus ag léamh %s"
+
+#, fuzzy
+msgid "Incorrect password."
+msgstr "pasfhocal mícheart"
+
+msgid "AOL does not allow your screen name to authenticate via this site."
 msgstr ""
 
 msgid "Could not join chat room"
@@ -6328,14 +6404,30 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 
+#, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr ""
+
+msgid "Unable to get a valid AIM login hash."
+msgstr ""
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr ""
+
+msgid "Unable to get a valid login hash."
+msgstr ""
+
+msgid "Could Not Connect"
+msgstr ""
+
+msgid "Received authorization"
+msgstr ""
+
 #. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr ""
-
-#, fuzzy
-msgid "Incorrect password."
-msgstr "pasfhocal mícheart"
 
 #. Suspended account
 msgid "Your account is currently suspended."
@@ -6345,21 +6437,14 @@ msgstr ""
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 
-msgid "Could Not Connect"
-msgstr ""
-
-msgid "Received authorization"
+#. IP address connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
 msgstr ""
 
 msgid "The SecurID key entered is invalid."
@@ -6376,20 +6461,6 @@ msgstr ""
 #.
 msgid "_OK"
 msgstr "_Ceart go Leor"
-
-#, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr ""
-
-msgid "Unable to get a valid AIM login hash."
-msgstr ""
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-
-msgid "Unable to get a valid login hash."
-msgstr ""
 
 msgid "Password sent"
 msgstr ""
@@ -6836,6 +6907,7 @@ msgstr "Cuardaigh ("
 msgid "Set User Info (web)..."
 msgstr ""
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr ""
 
@@ -6863,6 +6935,9 @@ msgid "Search for Buddy by Email Address..."
 msgstr ""
 
 msgid "Search for Buddy by Information"
+msgstr ""
+
+msgid "Use clientLogin"
 msgstr ""
 
 msgid ""
@@ -9079,10 +9154,6 @@ msgstr ""
 msgid "Auth Domain"
 msgstr ""
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9105,6 +9176,37 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr ""
+
+#. Some error in the received stream
+msgid "Received invalid data"
+msgstr ""
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "pasfhocal mícheart"
+
+#. security lock from too many failed login attempts
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "Níl úsáideoir '%s' ar bith ann."
+
+#. indicates a lock of some description
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "earráid agus ag léamh %s"
 
 #, c-format
 msgid ""
@@ -9206,7 +9308,7 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
+msgid "Select the ID you want to activate"
 msgstr ""
 
 msgid "Join whom in chat?"
@@ -9952,16 +10054,17 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr ""
 
-msgid "Room _List"
-msgstr ""
+#, fuzzy
+msgid "A_ccount"
+msgstr "Cuntas"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr ""
 
-msgid "_Account:"
-msgstr "_Cuntas:"
+msgid "Room _List"
+msgstr ""
 
 msgid "_Block"
 msgstr "_Cuireann bac"
@@ -10382,6 +10485,108 @@ msgid "/Tools"
 msgstr "/Uirlísí"
 
 msgid "/Buddies/Sort Buddies"
+msgstr ""
+
+#. Buddy List
+#, fuzzy
+msgid "Background Color"
+msgstr "Dath Cúlra"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "Láóis"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Dath Cúlra"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+msgid "Expanded Text"
+msgstr ""
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Cuir dath cúlra"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+msgid "Collapsed Text"
+msgstr ""
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Cuir dath cúlra"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+msgid "Contact Text"
+msgstr ""
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "Gnáth-Théacs"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "Shiúl"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "Gnáth-Théacs"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "Díomhaoin"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "Scéal"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+msgid "The text information for a buddy's status"
 msgstr ""
 
 #. Widget creation function
@@ -10899,6 +11104,10 @@ msgstr "Hiondis"
 msgid "Hungarian"
 msgstr "Ungáiris"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "Rómáinis"
+
 msgid "Indonesian"
 msgstr "Indinéisis"
 
@@ -10996,6 +11205,9 @@ msgstr "Siolóinis"
 
 msgid "Swedish"
 msgstr "Sualainnis"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "Tamailis"
@@ -11389,11 +11601,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "Sábháil an Íomha"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_Sábháil Íomhá..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr ""
 
@@ -11480,10 +11690,6 @@ msgstr ""
 
 msgid "Font Face"
 msgstr "Clófhoireann"
-
-#, fuzzy
-msgid "Background Color"
-msgstr "Dath Cúlra"
 
 msgid "Foreground Color"
 msgstr "Dath an Tulra"
@@ -11785,6 +11991,9 @@ msgstr "Eolais Logann"
 msgid "Pounce on Whom"
 msgstr ""
 
+msgid "_Account:"
+msgstr "_Cuntas:"
+
 msgid "_Buddy name:"
 msgstr ""
 
@@ -11895,7 +12104,13 @@ msgstr ""
 msgid "Unknown.... Please report this!"
 msgstr ""
 
-msgid "Smiley theme failed to unpack."
+msgid "Theme failed to unpack."
+msgstr ""
+
+msgid "Theme failed to load."
+msgstr ""
+
+msgid "Theme failed to copy."
 msgstr ""
 
 msgid "Install Theme"
@@ -12453,6 +12668,10 @@ msgstr ""
 msgid "Custom Smiley Manager"
 msgstr ""
 
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "Roghnaigh Cló..."
+
 msgid "Click to change your buddyicon for this account."
 msgstr ""
 
@@ -12662,6 +12881,68 @@ msgstr ""
 
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
+msgstr ""
+
+msgid "Server name request"
+msgstr ""
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Íontráil Pasfhocal"
+
+msgid "Select an XMPP server to query"
+msgstr ""
+
+msgid "Find Services"
+msgstr ""
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Liosta Cara"
+
+msgid "Gateway"
+msgstr ""
+
+#, fuzzy
+msgid "Directory"
+msgstr "cruthaitheoir"
+
+msgid "PubSub Collection"
+msgstr ""
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Tuarascail"
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr ""
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Brabhsálaí:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Níl úsáideoir '%s' ar bith ann."
+
+msgid "Server does not support service discovery"
+msgstr ""
+
+msgid "XMPP Service Discovery"
+msgstr ""
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
 msgstr ""
 
 msgid "Buddy is idle"
@@ -13139,12 +13420,6 @@ msgid ""
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
 
-msgid "Cursor Color"
-msgstr ""
-
-msgid "Secondary Cursor Color"
-msgstr ""
-
 msgid "Hyperlink Color"
 msgstr ""
 
@@ -13152,6 +13427,9 @@ msgid "Visited Hyperlink Color"
 msgstr ""
 
 msgid "Highlighted Message Name Color"
+msgstr ""
+
+msgid "Typing Notification Color"
 msgstr ""
 
 msgid "GtkTreeView Horizontal Separation"
@@ -13184,34 +13462,21 @@ msgstr ""
 msgid "GTK+ Text Shortcut Theme"
 msgstr ""
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
+msgid "Disable Typing Notification Text"
 msgstr ""
 
-msgid "Widget Sizes"
+msgid "GTK+ Theme Control Settings"
 msgstr ""
+
+#, fuzzy
+msgid "Colors"
+msgstr "Dún"
 
 msgid "Fonts"
 msgstr "Clófhoireann"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr ""
@@ -13346,6 +13611,106 @@ msgid "Text replacement"
 msgstr ""
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
+msgstr ""
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "Logáilte isteach!\n"
+
+msgid "Just logged out"
+msgstr ""
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+msgid "Icon for Chat"
+msgstr ""
+
+#, fuzzy
+msgid "Ignored"
+msgstr "Déan neamhshuim"
+
+#, fuzzy
+msgid "Founder"
+msgstr "Níos Airde"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "Údaraigh cara?"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "Earraidh"
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "Eolas"
+
+msgid "Mail dialog"
+msgstr ""
+
+msgid "Question dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "Rabhadh"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "Stádas le %s"
+
+msgid "Chatroom Emblems"
+msgstr ""
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "Athraigh focal faire"
+
+msgid "Pidgin Icon Theme Editor"
+msgstr ""
+
+#, fuzzy
+msgid "Contact"
+msgstr "Ceangal"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "Liosta Cara"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "Liosta Cara"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+msgid "Pidgin Theme Editor"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Pidgin Theme Editor."
 msgstr ""
 
 #. *< type
@@ -13574,10 +13939,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Successed:"
 #~ msgstr "Luas:"
-
-#, fuzzy
-#~ msgid "Error password: %s"
-#~ msgstr "earráid agus ag léamh %s"
 
 #, fuzzy
 #~ msgid "QQ Budy"

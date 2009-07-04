@@ -249,7 +249,7 @@ create_media_string(PurplePresence *presence)
 void
 msn_set_psm(MsnSession *session)
 {
-	PurpleAccount *account = session->account;
+	PurpleAccount *account;
 	PurplePresence *presence;
 	PurpleStatus *status;
 	MsnCmdProc *cmdproc;
@@ -261,6 +261,7 @@ msn_set_psm(MsnSession *session)
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
 
+	account = session->account;
 	cmdproc = session->notification->cmdproc;
 
 	/* Get the PSM string from Purple's Status Line */

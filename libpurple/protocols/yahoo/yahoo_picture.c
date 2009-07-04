@@ -153,45 +153,6 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-void yahoo_process_picture_update(PurpleConnection *gc, struct yahoo_packet *pkt)
-{
-	GSList *l = pkt->hash;
-	char *who = NULL;
-	int icon = 0;
-
-	while (l) {
-		struct yahoo_pair *pair = l->data;
-
-		switch (pair->key) {
-		case 4:
-			who = pair->value;
-			break;
-		case 5:
-			/* us */
-			break;
-		/* NOTE: currently the server seems to only send 213; 206 was used
-		 * in older versions. Check whether it's still needed. */
-		case 206:
-		case 213:
-			icon = strtol(pair->value, NULL, 10);
-			break;
-		}
-		l = l->next;
-	}
-
-	if (who) {
-		if (icon == 2)
-			yahoo_send_picture_request(gc, who);
-		else if ((icon == 0) || (icon == 1)) {
-			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
-			if ((f = yahoo_friend_find(gc, who)))
-				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
-			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
-		}
-	}
-}
-
 void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
@@ -279,7 +240,8 @@ void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 5:
 			/* us */
 			break;
-		case 206:
+		case 206:   /* Older versions. Still needed? */
+		case 213:   /* Newer versions */
 			/*
 			 * 0 - No icon or avatar
 			 * 1 - Using an avatar
@@ -349,8 +311,8 @@ void yahoo_send_picture_update_to_user(PurpleConnection *gc, const char *who, in
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssi", 1, purple_connection_get_display_name(gc), 5, who, 206, type);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AVATAR_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, "si", 3, who, 213, type);
 	yahoo_packet_send_and_free(pkt, yd);
 }
 

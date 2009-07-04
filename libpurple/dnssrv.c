@@ -66,7 +66,7 @@ static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 #endif
 
 struct _PurpleTxtResponse {
-    char *content;
+	char *content;
 };
 
 struct _PurpleSrvQueryData {
@@ -94,6 +94,17 @@ typedef struct _PurpleSrvInternalQuery {
 	char query[256];
 } PurpleSrvInternalQuery;
 
+typedef struct _PurpleSrvResponseContainer {
+	PurpleSrvResponse *response;
+	int sum;
+} PurpleSrvResponseContainer;
+
+/**
+ * Sort by priority, then by weight.  Strictly numerically--no
+ * randomness.  Technically we only need to sort by pref and then
+ * make sure any records with weight 0 are at the beginning of
+ * their group, but it's just as easy to sort by weight.
+ */
 static gint
 responsecompare(gconstpointer ar, gconstpointer br)
 {
@@ -110,6 +121,129 @@ responsecompare(gconstpointer ar, gconstpointer br)
 	if(a->pref < b->pref)
 		return -1;
 	return 1;
+}
+
+/**
+ * Iterate over a list of PurpleSrvResponseContainer making the sum
+ * the running total of the sums.  Select a random integer in the range
+ * (1, sum+1), then find the first element greater than or equal to the
+ * number selected.  From RFC 2782.
+ *
+ * @param list The list of PurpleSrvResponseContainer.  This function
+ *        removes a node from this list and returns the new list.
+ * @param container_ptr The PurpleSrvResponseContainer that was chosen
+ *        will be returned here.
+ */
+static GList *select_random_response(GList *list,
+		PurpleSrvResponseContainer **container_ptr)
+{
+	GList *cur;
+	size_t runningtotal;
+	int r;
+
+	runningtotal = 0;
+	cur = list;
+
+	while (cur) {
+		PurpleSrvResponseContainer *container = cur->data;
+		runningtotal += container->response->weight;
+		container->sum = runningtotal;
+		cur = cur->next;
+	}
+
+	/*
+	 * If the running total is greater than 0, pick a number between
+	 * 1 and the runningtotal inclusive. (This is not precisely what
+	 * the RFC algorithm describes, but we wish to deal with integers
+	 * and avoid floats.  This is functionally equivalent.)
+	 * If running total is 0, then choose r = 0.
+	 */
+	r = runningtotal ? g_random_int_range(1, runningtotal + 1) : 0;
+	cur = list;
+	while (r > ((PurpleSrvResponseContainer *)cur->data)->sum) {
+		cur = cur->next;
+	}
+
+	/* Set the return parameter and remove cur from the list */
+	*container_ptr =  cur->data;
+	return g_list_delete_link(list, cur);
+}
+
+/**
+ * Reorder a GList of PurpleSrvResponses that have the same priority
+ * (aka "pref").
+ */
+static void srv_reorder(GList *list, int num)
+{
+	int i;
+	GList *cur;
+	GList *container_list = NULL;
+	PurpleSrvResponseContainer *container;
+
+	if (num < 2)
+		/* Nothing to sort */
+		return;
+
+	/* First build a list of container structs */
+	for (i = 0, cur = list; i < num; i++, cur = cur->next) {
+		container = g_new(PurpleSrvResponseContainer, 1);
+		container->response = cur->data;
+		container_list = g_list_prepend(container_list, container);
+	}
+	container_list = g_list_reverse(container_list);
+
+	/*
+	 * Re-order the list that was passed in as a parameter.  We leave
+	 * the list nodes in place, but replace their data pointers.
+	 */
+	cur = list;
+	while (container_list) {
+		container_list = select_random_response(container_list, &container);
+		cur->data = container->response;
+		g_free(container);
+		cur = cur->next;
+	}
+}
+
+/**
+ * Sorts a GList of PurpleSrvResponse's according to the
+ * algorithm described in RFC 2782.
+ *
+ * @param response GList of PurpleSrvResponse's
+ * @param The original list, resorted
+ */
+static GList *purple_srv_sort(GList *list)
+{
+	GList *cur, *start;
+	int count;
+	int pref;
+
+	if (!list || !list->next)
+		/* Nothing to sort */
+		return list;
+
+	list = g_list_sort(list, responsecompare);
+
+	start = cur = list;
+	count = 1;
+	while (cur) {
+		PurpleSrvResponse *next_response;
+		pref = ((PurpleSrvResponse *)cur->data)->pref;
+		next_response = cur->next ? cur->next->data : NULL;
+		if (!next_response || next_response->pref != pref) {
+			/*
+			 * The 'count' records starting at 'start' all have the same
+			 * priority.  Sort them by weight.
+			 */
+			srv_reorder(start, count);
+			start = cur->next;
+			count = 0;
+		}
+		count++;
+		cur = cur->next;
+	}
+
+	return list;
 }
 
 #ifndef _WIN32
@@ -191,7 +325,7 @@ resolve(int in, int out)
 			srvres->port = port;
 			srvres->weight = weight;
 
-			ret = g_list_insert_sorted(ret, srvres, responsecompare);
+			ret = g_list_prepend(ret, srvres);
 		} else if (query.type == T_TXT) {
 			txtres = g_new0(PurpleTxtResponse, 1);
 			txtres->content = g_strndup((gchar*)(++cp), dlen-1);
@@ -204,6 +338,10 @@ resolve(int in, int out)
 
 end:
 	size = g_list_length(ret);
+
+	if (query.type == T_SRV)
+		ret = purple_srv_sort(ret);
+
 	/* TODO: Check return value */
 	write(out, &(query.type), sizeof(query.type));
 	write(out, &size, sizeof(size));
@@ -335,13 +473,13 @@ res_main_thread_cb(gpointer data)
 			query_data->results = NULL;
 
 			purple_debug_info("dnssrv", "found %d SRV entries\n", size);
-			
+
 			if(query_data->cb.srv) query_data->cb.srv(srvres, size, query_data->extradata);
 		} else if (query_data->type == DNS_TYPE_TXT) {
 			GSList *lst = query_data->results;
 
 			purple_debug_info("dnssrv", "found %d TXT entries\n", g_slist_length(lst));
-			
+
 			if (query_data->cb.txt) {
 				query_data->results = NULL;
 				query_data->cb.txt(lst, query_data->extradata);
@@ -382,7 +520,7 @@ res_thread(gpointer data)
 			GSList *lst = NULL;
 			DNS_SRV_DATA *srv_data;
 			PurpleSrvResponse *srvres;
-			
+
 			for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
 				/* Discard any incorrect entries. I'm not sure if this is necessary */
 				if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
@@ -396,12 +534,12 @@ res_thread(gpointer data)
 				srvres->pref = srv_data->wPriority;
 				srvres->port = srv_data->wPort;
 				srvres->weight = srv_data->wWeight;
-				
-				lst = g_slist_insert_sorted(lst, srvres, responsecompare);
+
+				lst = g_slist_prepend(lst, srvres);
 			}
 
 			MyDnsRecordListFree(dr, DnsFreeRecordList);
-			query_data->results = lst;
+			query_data->results = purple_srv_sort(lst);
 		} else if (type == DNS_TYPE_TXT) {
 			PDNS_RECORD dr_tmp;
 			GSList *lst = NULL;
@@ -431,7 +569,7 @@ res_thread(gpointer data)
 			MyDnsRecordListFree(dr, DnsFreeRecordList);
 			query_data->results = lst;
 		} else {
-			
+
 		}
 	}
 
@@ -500,10 +638,9 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 
 	internal_query.type = T_SRV;
 	strncpy(internal_query.query, query, 255);
-	
+
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to SRV resolver\n");
-	
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
 	query_data->type = T_SRV;
@@ -596,10 +733,10 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 
 	close(out[1]);
 	close(in[0]);
-	
+
 	internal_query.type = T_TXT;
 	strncpy(internal_query.query, query, 255);
-	
+
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to TXT resolver\n");
 

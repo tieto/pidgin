@@ -2379,7 +2379,7 @@ purple_cipher_digest_region(const gchar *name, const guchar *data,
 	g_return_val_if_fail(cipher, FALSE);
 
 	if(!cipher->ops->append || !cipher->ops->digest) {
-		purple_debug_info("cipher", "purple_cipher_region failed: "
+		purple_debug_warning("cipher", "purple_cipher_region failed: "
 						"the %s cipher does not support appending and or "
 						"digesting.", cipher->name);
 		return FALSE;
@@ -2527,7 +2527,7 @@ purple_cipher_context_set_option(PurpleCipherContext *context, const gchar *name
 	if(cipher->ops && cipher->ops->set_option)
 		cipher->ops->set_option(context, name, value);
 	else
-		purple_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"set_option operation\n", cipher->name);
 }
 
@@ -2544,7 +2544,7 @@ purple_cipher_context_get_option(PurpleCipherContext *context, const gchar *name
 	if(cipher->ops && cipher->ops->get_option)
 		return cipher->ops->get_option(context, name);
 	else {
-		purple_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"get_option operation\n", cipher->name);
 
 		return NULL;
@@ -2627,7 +2627,7 @@ purple_cipher_context_set_iv(PurpleCipherContext *context, guchar *iv, size_t le
 	if(cipher->ops && cipher->ops->set_iv)
 		cipher->ops->set_iv(context, iv, len);
 	else
-		purple_debug_info("cipher", "the %s cipher does not support the set"
+		purple_debug_warning("cipher", "the %s cipher does not support the set"
 						"initialization vector operation\n", cipher->name);
 }
 
@@ -2645,7 +2645,7 @@ purple_cipher_context_append(PurpleCipherContext *context, const guchar *data,
 	if(cipher->ops && cipher->ops->append)
 		cipher->ops->append(context, data, len);
 	else
-		purple_debug_info("cipher", "the %s cipher does not support the append "
+		purple_debug_warning("cipher", "the %s cipher does not support the append "
 						"operation\n", cipher->name);
 }
 
@@ -2662,7 +2662,7 @@ purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len,
 	if(cipher->ops && cipher->ops->digest)
 		return cipher->ops->digest(context, in_len, digest, out_len);
 	else {
-		purple_debug_info("cipher", "the %s cipher does not support the digest "
+		purple_debug_warning("cipher", "the %s cipher does not support the digest "
 						"operation\n", cipher->name);
 		return FALSE;
 	}
@@ -2712,7 +2712,7 @@ purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar data[],
 	if(cipher->ops && cipher->ops->encrypt)
 		return cipher->ops->encrypt(context, data, len, output, outlen);
 	else {
-		purple_debug_info("cipher", "the %s cipher does not support the encrypt"
+		purple_debug_warning("cipher", "the %s cipher does not support the encrypt"
 						"operation\n", cipher->name);
 
 		if(outlen)
@@ -2736,7 +2736,7 @@ purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar data[],
 	if(cipher->ops && cipher->ops->decrypt)
 		return cipher->ops->decrypt(context, data, len, output, outlen);
 	else {
-		purple_debug_info("cipher", "the %s cipher does not support the decrypt"
+		purple_debug_warning("cipher", "the %s cipher does not support the decrypt"
 						"operation\n", cipher->name);
 
 		if(outlen)
@@ -2758,7 +2758,7 @@ purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt) {
 	if(cipher->ops && cipher->ops->set_salt)
 		cipher->ops->set_salt(context, salt);
 	else
-		purple_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"set_salt operation\n", cipher->name);
 }
 
@@ -2774,7 +2774,7 @@ purple_cipher_context_get_salt_size(PurpleCipherContext *context) {
 	if(cipher->ops && cipher->ops->get_salt_size)
 		return cipher->ops->get_salt_size(context);
 	else {
-		purple_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"get_salt_size operation\n", cipher->name);
 
 		return -1;
@@ -2793,7 +2793,7 @@ purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key) {
 	if(cipher->ops && cipher->ops->set_key)
 		cipher->ops->set_key(context, key);
 	else
-		purple_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"set_key operation\n", cipher->name);
 }
 
@@ -2809,7 +2809,7 @@ purple_cipher_context_get_key_size(PurpleCipherContext *context) {
 	if(cipher->ops && cipher->ops->get_key_size)
 		return cipher->ops->get_key_size(context);
 	else {
-		purple_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_warning("cipher", "the %s cipher does not support the "
 						"get_key_size operation\n", cipher->name);
 
 		return -1;
@@ -2830,7 +2830,7 @@ purple_cipher_context_set_batch_mode(PurpleCipherContext *context,
 	if(cipher->ops && cipher->ops->set_batch_mode)
 		cipher->ops->set_batch_mode(context, mode);
 	else
-		purple_debug_info("cipher", "The %s cipher does not support the "
+		purple_debug_warning("cipher", "The %s cipher does not support the "
 		                            "set_batch_mode operation\n", cipher->name);
 }
 
@@ -2847,7 +2847,7 @@ purple_cipher_context_get_batch_mode(PurpleCipherContext *context)
 	if(cipher->ops && cipher->ops->get_batch_mode)
 		return cipher->ops->get_batch_mode(context);
 	else {
-		purple_debug_info("cipher", "The %s cipher does not support the "
+		purple_debug_warning("cipher", "The %s cipher does not support the "
 		                            "get_batch_mode operation\n", cipher->name);
 		return -1;
 	}
@@ -2866,7 +2866,7 @@ purple_cipher_context_get_block_size(PurpleCipherContext *context)
 	if(cipher->ops && cipher->ops->get_block_size)
 		return cipher->ops->get_block_size(context);
 	else {
-		purple_debug_info("cipher", "The %s cipher does not support the "
+		purple_debug_warning("cipher", "The %s cipher does not support the "
 		                            "get_block_size operation\n", cipher->name);
 		return -1;
 	}
@@ -2886,7 +2886,7 @@ purple_cipher_context_set_key_with_len(PurpleCipherContext *context,
 	if(cipher->ops && cipher->ops->set_key_with_len)
 		cipher->ops->set_key_with_len(context, key, len);
 	else
-		purple_debug_info("cipher", "The %s cipher does not support the "
+		purple_debug_warning("cipher", "The %s cipher does not support the "
 		                            "set_key_with_len operation\n", cipher->name);
 }
 

@@ -7875,8 +7875,10 @@ pidgin_blist_update_accounts_menu(void)
 		}
 	}
 
-	if (!enabled_accounts)
+	if (!enabled_accounts) {
+		gtk_widget_show_all(accountmenu);
 		return;
+	}
 
 	pidgin_separator(accountmenu);
 	accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));

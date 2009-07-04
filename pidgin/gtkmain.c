@@ -313,6 +313,7 @@ pidgin_ui_init(void)
 	pidgin_smileys_init();
 	pidgin_utils_init();
 	pidgin_medias_init();
+	pidgin_notify_init();
 }
 
 static GHashTable *ui_info = NULL;
@@ -327,6 +328,7 @@ pidgin_quit(void)
 
 	/* Uninit */
 	pidgin_utils_uninit();
+	pidgin_notify_uninit();
 	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();

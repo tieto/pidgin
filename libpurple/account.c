@@ -2663,7 +2663,7 @@ purple_accounts_restore_current_statuses()
 	/* If we're not connected to the Internet right now, we bail on this */
 	if (!purple_network_is_available())
 	{
-		purple_debug_info("account", "Network not connected; skipping reconnect\n");
+		purple_debug_warning("account", "Network not connected; skipping reconnect\n");
 		return;
 	}
 

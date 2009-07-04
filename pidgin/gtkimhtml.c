@@ -1549,7 +1549,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-visited-color",
 	                                        _("Hyperlink visited color"),
-	                                        _("Color to draw hyperlinks after it has been visited (or activated)."),
+	                                        _("Color to draw hyperlink after it has been visited (or activated)."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
 	                                        _("Hyperlink prelight color"),
@@ -1573,11 +1573,11 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-action-name-color",
 	                                        _("Action Message Name Color for Whispered Message"),
-	                                        _("Color to draw the name of an action message."),
+	                                        _("Color to draw the name of a whispered action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-name-color",
 	                                        _("Whisper Message Name Color"),
-	                                        _("Color to draw the name of an action message."),
+	                                        _("Color to draw the name of a whispered message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
 	/* Customizable typing notification ... sort of. Example:
@@ -1587,7 +1587,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	 */
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
 	                                        _("Typing notification color"),
-	                                        _("The color to use for the typing notification font"),
+	                                        _("The color to use for the typing notification"),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
 	                                        _("Typing notification font"),

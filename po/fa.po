@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 1.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:38-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2007-04-10 20:37+0330\n"
 "Last-Translator: Elnaz Sarbar <elnaz@farsiweb.info>\n"
 "Language-Team: Persian\n"
@@ -1802,6 +1802,8 @@ msgstr "+++ ‏%s وارد سیستم شد"
 msgid "+++ %s signed off"
 msgstr "+++ %s از سیستم خارج شد"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "خطای نامعلوم"
 
@@ -2185,6 +2187,10 @@ msgstr "<font color=\"red\"><b>خواندن پرونده ممکن نیست: %s</
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <پاسخ خودکار>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "خطای هنگام ایجاد اتصال"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3158,6 +3164,11 @@ msgstr "اضافه کردن به گپ"
 msgid "Chat _name:"
 msgstr "_نام گپ:"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "تحویل نام میزبان ممکن نیست."
+
 msgid "Chat error"
 msgstr "خطای گپ"
 
@@ -3206,6 +3217,10 @@ msgstr "پیغام اینترنتی مشهور لهستانی"
 msgid "Gadu-Gadu User"
 msgstr "کاربر Gadu-Gadu"
 
+#, fuzzy
+msgid "GG server"
+msgstr "تنظیم اطلاعات کاربر..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "فرمان نامعلوم: %s"
@@ -3248,7 +3263,8 @@ msgstr "_کانال:"
 msgid "_Password:"
 msgstr "_گذرواژه:"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "لقب‌های IRC نمی‌توانند حاوی فاصله باشند"
 
 #. 1. connect to server
@@ -3726,6 +3742,9 @@ msgstr "پاسخ نامعتبر از کارگزار."
 msgid "Server does not use any supported authentication method"
 msgstr "کارگزار از هیچ روش تأیید هویت پشتیبانی شده‌ای استفاده نمی‌کند"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+
 msgid "Invalid challenge from server"
 msgstr "تقاضای نامعتبر از سوی کارگزار"
 
@@ -4024,6 +4043,14 @@ msgstr "اولویت"
 msgid "Resource"
 msgstr "منابع"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "وارد سیستم شد"
+
 msgid "Middle Name"
 msgstr "نام وسط"
 
@@ -4196,8 +4223,17 @@ msgstr "کارگزار کنفرانسی برای پرس‌وجو انتخاب ک
 msgid "Find Rooms"
 msgstr "پیدا کردن اتاق‌ها"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr ""
+#, fuzzy
+msgid "Affiliations:"
+msgstr "اسم مستعار:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "کاربری با این مشخصات پیدا نشد"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "نقش"
 
 #, fuzzy
 msgid "Ping timeout"
@@ -4220,7 +4256,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "اتصال به کارگزار شکست خورد."
 
 #, c-format
@@ -4249,9 +4285,6 @@ msgstr "ثبت نام موفقیت‌آمیز"
 msgid "Unregistration Failed"
 msgstr "ثبت نام شکست خورد"
 
-msgid "Already Registered"
-msgstr "قبلاً ثبت نام شده است"
-
 msgid "State"
 msgstr "استان"
 
@@ -4263,6 +4296,9 @@ msgstr "تلفن"
 
 msgid "Date"
 msgstr "تاریخ"
+
+msgid "Already Registered"
+msgstr "قبلاً ثبت نام شده است"
 
 #, fuzzy
 msgid "Unregister"
@@ -4294,6 +4330,10 @@ msgstr "ثبت حساب Jabber جدید"
 #, fuzzy
 msgid "Change Registration"
 msgstr "خطای ثبت"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "اتصال به کارگزار شکست خورد."
 
 #, fuzzy
 msgid "Error unregistering account"
@@ -4670,16 +4710,18 @@ msgstr "‏topic [new topic]‎: نمایش یا تغییر موضوع."
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "‏ban &lt;user&gt; [room]‎: محروم کردن کاربری از اتاق."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: تنظیم نوع "
 "رابطهٔ کاربر با اتاق."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: تنظیم نقش "
 "کاربر در اتاق."
@@ -4746,6 +4788,9 @@ msgstr "اتصال کارگزار"
 #, fuzzy
 msgid "File transfer proxies"
 msgstr "درگاه انتقال پرونده"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5156,6 +5201,10 @@ msgstr "آشنای مرجح "
 msgid "Non-IM Contacts"
 msgstr "حذف اطلاعات تماس"
 
+#, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+
 msgid "Nudge"
 msgstr ""
 
@@ -5513,64 +5562,27 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "تأیید هویت عادی شکست خورد!"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "‏%s گروه معتبری نیست."
-
-msgid "Unknown error."
-msgstr "خطای نامعلوم."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "‏%s در %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "‏%s برای شما سقلمه‌ای فرستاد"
 
-#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
-msgid "Unknown error (%d)"
+msgid "Unknown error (%d): %s"
 msgstr "خطای نامعلوم"
 
 msgid "Unable to add user"
 msgstr "نمی‌توان کاربر را اضافه کرد"
 
+#, fuzzy, c-format
+msgid "Unknown error (%d)"
+msgstr "خطای نامعلوم"
+
 #, fuzzy
 msgid "The following users are missing from your addressbook"
 msgstr "نتایج جستجوی شما در زیر آمده است"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "نمی‌توان کاربر را در %s اضافه کرد (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "نمی‌توان با کاربر در %s قطع رابطه کرد (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "نمی‌توان به کاربر اجازهٔ ورود به %s را داد (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "اضافه کردن %s ممکن نیست چون فهرست رفقای شما پر شده است."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "‏%s حساب passport معتبری نیست."
-
-msgid "Service Temporarily Unavailable."
-msgstr "سرویس موقتاً موجود نیست."
-
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
 msgstr "نمی‌توان پیغام را فرستاد چون سرعت ارسال پیغام‌ها خیلی زیاد است:"
-
-msgid "Unable to rename group"
-msgstr "تغییر نام گروه ممکن نیست"
-
-msgid "Unable to delete group"
-msgstr "حذف گروه ممکن نیست"
 
 #, c-format
 msgid ""
@@ -5655,6 +5667,9 @@ msgstr ""
 "فهرست رفقای MSN شما موقتاً قابل دسترسی نیست. لطفاً پس از کمی صبر دوباره امتحان "
 "کنید."
 
+msgid "Unknown error."
+msgstr "خطای نامعلوم."
+
 msgid "Handshaking"
 msgstr "در حال دست دادن"
 
@@ -5672,6 +5687,14 @@ msgstr "در حال فرستادن کوکی"
 
 msgid "Retrieving buddy list"
 msgstr "در حال بازیابی فهرست رفقا"
+
+#, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
 
 msgid "Away From Computer"
 msgstr "از کنار کامپیوتر رفته است"
@@ -5709,14 +5732,6 @@ msgstr "نمی‌توان پیغام را فرستاد چون در جعبه تق
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "ممکن است پیغام فرستاده نشده باشد چون خطایی نامعلوم رخ داد:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "‏%s شما را به فهرست رفقایش اضافه کرد."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "‏%s شما را از فهرست رفقایش حذف کرد."
-
 #, fuzzy
 msgid "Delete Buddy from Address Book?"
 msgstr "اضافه کردن به دفترچهٔ نشانی"
@@ -5748,6 +5763,51 @@ msgstr "نشانی اینترنتی شرح حال"
 #, fuzzy
 msgid "MSN Protocol Plugin"
 msgstr "متصل شوندهٔ قرارداد AIM"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "‏%s گروه معتبری نیست."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "‏%s در %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "نمی‌توان کاربر را در %s اضافه کرد (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "نمی‌توان با کاربر در %s قطع رابطه کرد (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "نمی‌توان به کاربر اجازهٔ ورود به %s را داد (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "اضافه کردن %s ممکن نیست چون فهرست رفقای شما پر شده است."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "‏%s حساب passport معتبری نیست."
+
+msgid "Service Temporarily Unavailable."
+msgstr "سرویس موقتاً موجود نیست."
+
+msgid "Unable to rename group"
+msgstr "تغییر نام گروه ممکن نیست"
+
+msgid "Unable to delete group"
+msgstr "حذف گروه ممکن نیست"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "‏%s شما را به فهرست رفقایش اضافه کرد."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "‏%s شما را از فهرست رفقایش حذف کرد."
 
 #, c-format
 msgid "No such user: %s"
@@ -5786,6 +5846,8 @@ msgstr ""
 "‏%s"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 #, fuzzy
 msgid "New mail messages"
 msgstr "پیغام رفتن جدید"
@@ -5834,11 +5896,14 @@ msgstr "فراروند کُد خطای %d را بازگرداند"
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
+
+#, fuzzy
+msgid "Incorrect username or password"
+msgstr "لقب یا گذرواژهٔ نادرست"
 
 msgid "MySpaceIM Error"
 msgstr ""
@@ -6179,10 +6244,6 @@ msgid "Master archive is misconfigured"
 msgstr "آرشیو اصلی درست پیکربندی نشده است"
 
 #, fuzzy
-msgid "Incorrect username or password"
-msgstr "لقب یا گذرواژهٔ نادرست"
-
-#, fuzzy
 msgid "Could not recognize the host of the username you entered"
 msgstr "شناسایی میزبانِ نام کاربری‌ای که وارد کرده‌اید ممکن نشد"
 
@@ -6394,6 +6455,29 @@ msgstr "نشانی کارگزار"
 
 msgid "Server port"
 msgstr "درگاه کارگزار"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "پاسخ‌های HTTP نامعتبر از کارگزار دریافت شد."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"شما دفعات خیلی زیادی متصل شده و دوباره اتصالتان را قطع کرده‌اید. ده دقیقه صبر "
+"کنید و بعد دوباره امتحان کنید. اگر الان به تلاشتان ادامه دهید شاید مجبور "
+"شوید بیشتر منتظر بمانید."
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "خطای هنگام ایجاد اتصال"
+
+msgid "Incorrect password."
+msgstr "گذرواژهٔ نادرست"
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -6699,58 +6783,6 @@ msgstr ""
 "است. نام کاربری باید یا با حرف شروع شود و شامل حروف، ارقام، و فاصله باشد یا "
 "فقط از ارقام تشکیل شده باشد."
 
-#. Unregistered username
-#. uid is not exist
-#, fuzzy
-msgid "Invalid username."
-msgstr "نام نامعتبر"
-
-msgid "Incorrect password."
-msgstr "گذرواژهٔ نادرست"
-
-#. Suspended account
-msgid "Your account is currently suspended."
-msgstr "حساب شما در حال حاضر به حالت تعلیق در آمده است."
-
-#. service temporarily unavailable
-msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr "پیغام‌رسان اینترنتی AOL موقتاً قابل دسترسی نیست."
-
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"شما دفعات خیلی زیادی متصل شده و دوباره اتصالتان را قطع کرده‌اید. ده دقیقه صبر "
-"کنید و بعد دوباره امتحان کنید. اگر الان به تلاشتان ادامه دهید شاید مجبور "
-"شوید بیشتر منتظر بمانید."
-
-#, c-format
-msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "نسخهٔ کارگیری که استفاده می‌کنید خیلی قدیمی است. لطفاً در %s ارتقا دهید"
-
-msgid "Could Not Connect"
-msgstr "نمی‌توان متصل شد"
-
-msgid "Received authorization"
-msgstr "اجازه دریافت شد"
-
-msgid "The SecurID key entered is invalid."
-msgstr "کلید SecurID وارد شده نامعتبر است."
-
-msgid "Enter SecurID"
-msgstr "‏SecurID را وارد کنید"
-
-msgid "Enter the 6 digit number from the digital display."
-msgstr "عدد ۶ رقمی را از نمایش دیجیتالی وارد کنید."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_تأیید"
-
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -6768,6 +6800,55 @@ msgstr ""
 #, fuzzy
 msgid "Unable to get a valid login hash."
 msgstr "خواندن پروندهٔ %s ممکن نیست."
+
+msgid "Could Not Connect"
+msgstr "نمی‌توان متصل شد"
+
+msgid "Received authorization"
+msgstr "اجازه دریافت شد"
+
+#. Unregistered username
+#. uid is not exist
+#, fuzzy
+msgid "Invalid username."
+msgstr "نام نامعتبر"
+
+#. Suspended account
+msgid "Your account is currently suspended."
+msgstr "حساب شما در حال حاضر به حالت تعلیق در آمده است."
+
+#. service temporarily unavailable
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr "پیغام‌رسان اینترنتی AOL موقتاً قابل دسترسی نیست."
+
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr "نسخهٔ کارگیری که استفاده می‌کنید خیلی قدیمی است. لطفاً در %s ارتقا دهید"
+
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"شما دفعات خیلی زیادی متصل شده و دوباره اتصالتان را قطع کرده‌اید. ده دقیقه صبر "
+"کنید و بعد دوباره امتحان کنید. اگر الان به تلاشتان ادامه دهید شاید مجبور "
+"شوید بیشتر منتظر بمانید."
+
+msgid "The SecurID key entered is invalid."
+msgstr "کلید SecurID وارد شده نامعتبر است."
+
+msgid "Enter SecurID"
+msgstr "‏SecurID را وارد کنید"
+
+msgid "Enter the 6 digit number from the digital display."
+msgstr "عدد ۶ رقمی را از نمایش دیجیتالی وارد کنید."
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_تأیید"
 
 msgid "Password sent"
 msgstr "گذرواژه فرستاده شد"
@@ -7260,6 +7341,7 @@ msgstr "_جستجو"
 msgid "Set User Info (web)..."
 msgstr "تنظیم اطلاعات کاربر (نشانی اینترنتی)..."
 
+#. This only happens when connecting with the old-style BUCP login
 #, fuzzy
 msgid "Change Password (web)"
 msgstr "تغییر گذرواژه (نشانی اینترنتی)"
@@ -7290,6 +7372,10 @@ msgstr "جستجو به دنبال رفیق از روی پست الکترونی�
 
 msgid "Search for Buddy by Information"
 msgstr "جستجو به دنبال رفیق از روی اطلاعات"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "کاربر وارد سیستم نشده است"
 
 #, fuzzy
 msgid ""
@@ -9629,10 +9715,6 @@ msgstr "تأیید هویت کاربر"
 msgid "Auth Domain"
 msgstr "تأیید هویت دامنه"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9658,6 +9740,44 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr "اضافه کردن رفیق رد شد"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "داده‌های نامعتبری از اتصال کارگزار دریافت شد.."
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "گذرواژهٔ نادرست"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"خطای نامعلوم با شمارهٔ %d. ورود به وب‌گاه Yahoo!‎ ممکن است این مشکل را برطرف "
+"کند."
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "کاربر وجود ندارد"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"خطای نامعلوم با شمارهٔ %d. ورود به وب‌گاه Yahoo!‎ ممکن است این مشکل را برطرف "
+"کند."
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "لقب یا گذرواژهٔ نادرست"
 
 #, fuzzy, c-format
 msgid ""
@@ -9770,9 +9890,8 @@ msgstr "تنظیمات حضور"
 msgid "Start Doodling"
 msgstr ""
 
-#, fuzzy
-msgid "Activate which ID?"
-msgstr "فعال‌سازی کدام شناسه؟"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "پیوستن به کی در گپ؟"
@@ -10545,8 +10664,8 @@ msgid "Please update the necessary fields."
 msgstr "لطفاً فیلدهای لازم را به‌هنگام کنید."
 
 #, fuzzy
-msgid "Room _List"
-msgstr "فهرست اتاق"
+msgid "A_ccount"
+msgstr "حساب:"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10554,8 +10673,9 @@ msgid ""
 msgstr ""
 "لطفاً اطلاعات مناسب را دربارهٔ گفتگویی که مایلید به آن بپیوندید وارد کنید.\n"
 
-msgid "_Account:"
-msgstr "_حساب:"
+#, fuzzy
+msgid "Room _List"
+msgstr "فهرست اتاق"
 
 msgid "_Block"
 msgstr "_قطع رابطه"
@@ -11016,6 +11136,120 @@ msgstr "/ابزارها"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/رفقا/مرتب کردن رفقا"
+
+#. Buddy List
+#, fuzzy
+msgid "Background Color"
+msgstr "رنگ پس‌زمینه"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "‏این گروه به فهرست رفقای شما اضافه شد."
+
+#, fuzzy
+msgid "Layout"
+msgstr "اسد"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "رنگ پس‌زمینه"
+
+#, fuzzy
+msgid "The background color of an expanded group"
+msgstr "رنگ پس‌زمینه"
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_باز کردن"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "انتخاب رنگ پس‌زمینه"
+
+#, fuzzy
+msgid "The background color of a collapsed group"
+msgstr "رنگ پس‌زمینه"
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_جمع کردن"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "انتخاب رنگ پس‌زمینه"
+
+#, fuzzy
+msgid "The background color of a contact or chat"
+msgstr "رنگ پس‌زمینه"
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "میانبرها"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "برخط"
+
+#, fuzzy
+msgid "The text information for when a buddy is online"
+msgstr "گرفتن اطلاعات دربارهٔ رفیق انتخاب شده"
+
+#, fuzzy
+msgid "Away Text"
+msgstr "رفته"
+
+#, fuzzy
+msgid "The text information for when a buddy is away"
+msgstr "گرفتن اطلاعات دربارهٔ رفیق انتخاب شده"
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "برون‌خط"
+
+#, fuzzy
+msgid "The text information for when a buddy is off-line"
+msgstr "گرفتن اطلاعات دربارهٔ رفیق انتخاب شده"
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "گروه خون"
+
+#, fuzzy
+msgid "The text information for when a buddy is idle"
+msgstr "گرفتن اطلاعات دربارهٔ رفیق انتخاب شده"
+
+msgid "Message Text"
+msgstr "متن پیغام"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#, fuzzy
+msgid "Message (Nick Said) Text"
+msgstr "متن پیغام"
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "تغییر اطلاعات کاربر %s"
 
 #. Widget creation function
 #, fuzzy
@@ -11525,6 +11759,10 @@ msgstr "هندی"
 msgid "Hungarian"
 msgstr "مجاری"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "رومانیایی"
+
 msgid "Indonesian"
 msgstr "اندونزیایی"
 
@@ -11626,6 +11864,9 @@ msgstr ""
 
 msgid "Swedish"
 msgstr "سوئدی"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "تامیلی"
@@ -12066,11 +12307,10 @@ msgstr ""
 msgid "Save Image"
 msgstr "ذخیرهٔ تصویر"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_ذخیرهٔ تصویر..."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Add Custom Smiley..."
 msgstr "نمایش صورتک‌های سفارشی"
 
@@ -12161,10 +12401,6 @@ msgstr ""
 #, fuzzy
 msgid "Font Face"
 msgstr "شکل قلم"
-
-#, fuzzy
-msgid "Background Color"
-msgstr "رنگ پس‌زمینه"
 
 #, fuzzy
 msgid "Foreground Color"
@@ -12515,6 +12751,9 @@ msgstr "ویرایش کمینِ رفیق"
 msgid "Pounce on Whom"
 msgstr "کمین برای"
 
+msgid "_Account:"
+msgstr "_حساب:"
+
 msgid "_Buddy name:"
 msgstr "_نام رفیق:"
 
@@ -12626,7 +12865,16 @@ msgstr "فرستادن پیغام"
 msgid "Unknown.... Please report this!"
 msgstr "رویداد کمین نامعلوم. لطفاً این را گزارش کنید!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "درآوردن تم صورتک‌ها از بسته شکست خورد."
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "درآوردن تم صورتک‌ها از بسته شکست خورد."
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "درآوردن تم صورتک‌ها از بسته شکست خورد."
 
 msgid "Install Theme"
@@ -13212,6 +13460,10 @@ msgstr "میانبرها"
 msgid "Custom Smiley Manager"
 msgstr ""
 
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "انتخاب رفیق"
+
 msgid "Click to change your buddyicon for this account."
 msgstr ""
 
@@ -13442,6 +13694,79 @@ msgstr ""
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
+
+#, fuzzy
+msgid "Server name request"
+msgstr "نشانی کارگزار"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "کارگزار کنفرانس را وارد کنید"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "کارگزار کنفرانسی برای پرس‌وجو انتخاب کنید"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "سرویس‌های برخط"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "فرستادن فهرست رفقا"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "می‌رود"
+
+#, fuzzy
+msgid "Directory"
+msgstr "شاخهٔ ثبت وقایع"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "انتخاب صدا"
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>شرح:</b> عصبی"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "تنظیم اطلاعات دفترچهٔ راهنمای کاربران"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_مرورگر:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "کاربر وجود ندارد"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "کارگزار از هیچ روش تأیید هویت پشتیبانی شده‌ای استفاده نمی‌کند"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "تنظیم اطلاعات دفترچهٔ راهنمای کاربران"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کارگیرها یا کارگزارهای XMPP مفید است."
 
 msgid "Buddy is idle"
 msgstr "رفیقتان بی‌کار است"
@@ -13953,12 +14278,6 @@ msgstr ""
 "‐ به محض این که هر یک از رفقای موجود در فهرست شما وارد سیستم شدند پیغامی "
 "برایشان می‌فرستد"
 
-msgid "Cursor Color"
-msgstr "رنگ مکان‌نما"
-
-msgid "Secondary Cursor Color"
-msgstr "رنگ مکان‌نمای فرعی"
-
 msgid "Hyperlink Color"
 msgstr "رنگ پیوند اینترنتی"
 
@@ -13969,6 +14288,10 @@ msgstr "رنگ پیوند اینترنتی"
 #, fuzzy
 msgid "Highlighted Message Name Color"
 msgstr "پر رنگ کردن پیغام‌ها"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "حذف اطلاع"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "جداسازی افقی نمای درختی GTK"
@@ -13999,34 +14322,23 @@ msgstr "قلم واسط GTK+"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "تم میان‌بر متنی GTK+"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "رنگ‌های واسط"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "اطلاع‌های نامهٔ جدید"
 
-msgid "Widget Sizes"
-msgstr "اندازهٔ ویجت‌ها"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "کنترل تم GTK+ پیجین"
+
+#, fuzzy
+msgid "Colors"
+msgstr "بستن"
 
 msgid "Fonts"
 msgstr "قلم‌ها"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr ""
@@ -14172,6 +14484,113 @@ msgstr "جای‌گزینی متن"
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "جای‌گزینی متن در پیغام‌های ارسالی با توجه به قوانین تعریف شده توسط کاربر."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "وارد سیستم نشده است"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "%s از سیستم خارج شد."
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "پیوستن به گپ"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "نادیده گرفتن"
+
+#, fuzzy
+msgid "Founder"
+msgstr "بلندتر"
+
+#, fuzzy
+msgid "Operator"
+msgstr "اُپرا"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "اجازه داده شد"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "خطا"
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "اطلاعات"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "محاورهٔ درخواست"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "سطح اخطار"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "وضعیت %s"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "شرایط محلی اتاق گپ"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "ذخیرهٔ شمایل"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "کنترل تم GTK+ پیجین"
+
+#, fuzzy
+msgid "Contact"
+msgstr "اطلاعات حساب"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "فهرست رفقا"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "فهرست رفقا"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "کنترل تم GTK+ پیجین"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "کنترل تم GTK+ پیجین"
 
 #. *< type
 #. *< ui_requirement
@@ -14382,6 +14801,22 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کارگیرها یا کارگزارهای XMPP مفید است."
+
+#, fuzzy
+#~ msgid "Activate which ID?"
+#~ msgstr "فعال‌سازی کدام شناسه؟"
+
+#~ msgid "Cursor Color"
+#~ msgstr "رنگ مکان‌نما"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "رنگ مکان‌نمای فرعی"
+
+#~ msgid "Interface colors"
+#~ msgstr "رنگ‌های واسط"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "اندازهٔ ویجت‌ها"
 
 #, fuzzy
 #~ msgid "Invite message"
@@ -14907,9 +15342,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Your request to join group %d has been approved by admin %d"
 #~ msgstr "مدیر %Id درخواست شما را برای پیوستن به گروه %Id تأیید کرده است"
 
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "‏این گروه به فهرست رفقای شما اضافه شد."
-
 #~ msgid "I am applying to join"
 #~ msgstr "من برای پیوستن درخواست داده‌ام"
 
@@ -14933,10 +15365,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #, fuzzy
 #~ msgid "Enter your reason:"
 #~ msgstr "دلیل‌تان را وارد کنید:"
-
-#, fuzzy
-#~ msgid "Error requesting login token"
-#~ msgstr "خطای هنگام ایجاد اتصال"
 
 #~ msgid "Unable to login, check debug log"
 #~ msgstr "نمی‌توان وارد سیستم شد، تاریخچهٔ اشکال‌زدایی را بررسی کنید"
@@ -15060,10 +15488,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #, fuzzy
 #~ msgid "_Merge"
 #~ msgstr "_پیغام:"
-
-#, fuzzy
-#~ msgid "A_ccount:"
-#~ msgstr "حساب:"
 
 #~ msgid "Toggle offline buddies"
 #~ msgstr "ضامن رفقای برون‌خط"
@@ -15390,13 +15814,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 
 #~ msgid ""
 #~ "\n"
-#~ "<b>Description:</b> Spooky"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>شرح:</b> عصبی"
-
-#~ msgid ""
-#~ "\n"
 #~ "<b>Status:</b> Awesome"
 #~ msgstr ""
 #~ "\n"
@@ -15625,22 +16042,11 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "g003: Error opening connection.\n"
 #~ msgstr "‏g003: خطای آغاز کردن اتصال.\n"
 
-#~ msgid "%s logged out."
-#~ msgstr "%s از سیستم خارج شد."
-
 #~ msgid "Screen Name:"
 #~ msgstr "نام کاربری:"
 
 #, fuzzy
-#~ msgid "Background color name"
-#~ msgstr "رنگ پس‌زمینه"
-
-#, fuzzy
 #~ msgid "Background color as a string"
-#~ msgstr "رنگ پس‌زمینه"
-
-#, fuzzy
-#~ msgid "Background color as a GdkColor"
 #~ msgstr "رنگ پس‌زمینه"
 
 #, fuzzy
@@ -16001,9 +16407,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Send a message to the selected buddy"
 #~ msgstr "فرستادن پیغام به رفیق انتخاب شده"
 
-#~ msgid "Get information on the selected buddy"
-#~ msgstr "گرفتن اطلاعات دربارهٔ رفیق انتخاب شده"
-
 #~ msgid "_Chat"
 #~ msgstr "_گپ"
 
@@ -16270,9 +16673,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 #~ msgid "Summary"
 #~ msgstr "خلاصه"
 
-#~ msgid "Message Text"
-#~ msgstr "متن پیغام"
-
 #~ msgid "Please create an account."
 #~ msgstr "لطفاً یک حساب ایجاد کنید."
 
@@ -16347,9 +16747,6 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 
 #~ msgid "Invisible for friends only"
 #~ msgstr "نامرئی فقط برای دوستان"
-
-#~ msgid "Unable to resolve hostname."
-#~ msgstr "تحویل نام میزبان ممکن نیست."
 
 #~ msgid "Error while writing to socket."
 #~ msgstr "خطا هنگام نوشتن در سوکت."

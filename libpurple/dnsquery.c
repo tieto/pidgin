@@ -127,7 +127,7 @@ purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 static void
 purple_dnsquery_failed(PurpleDnsQueryData *query_data, const gchar *error_message)
 {
-	purple_debug_info("dnsquery", "%s\n", error_message);
+	purple_debug_error("dnsquery", "%s\n", error_message);
 	if (query_data->callback != NULL)
 		query_data->callback(NULL, query_data->data, error_message);
 	purple_dnsquery_destroy(query_data);

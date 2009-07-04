@@ -20,6 +20,8 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
+	* DNS SRV records with equal priority are sorted with respect to their
+	  weight as specified in RFC 2782.  (Vijay Raghunathan)
 	* GnuTLS logging (disabled by default) can be controlled through the
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
@@ -70,6 +72,8 @@ version 2.6.0 (??/??/2009):
 	  characters.
 	* Show emblem for mobile, handheld, and web clients and bots (if the other
 	  client supports it).
+	* Google Talk mail notifications should now work for people for whom they
+	  inexplicably did not.  (Thanks to yukam for determining the reason)
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)
@@ -77,6 +81,7 @@ version 2.6.0 (??/??/2009):
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
 	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
+	* Further fixes for buddy pictures, aliases etc.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -133,7 +138,7 @@ version 2.5.8 (06/27/2009):
 
 	MySpace:
 	* Accounts with empty buddy lists are now properly marked as connected.
-	* Fix receiving messages from users of MySpace IM's web client.
+	* Fix receiving messages from users of MySpace's web IM client.
 
 	Yahoo:
 	* Fixed phantom online buddies.  They should now properly disappear when

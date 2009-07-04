@@ -326,7 +326,7 @@ static HKEY _reg_open_key(HKEY rootkey, const char *subkey, REGSAM access) {
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
-		purple_debug_info("wpurple", "Could not open reg key '%s' subkey '%s'.\nMessage: (%ld) %s\n",
+		purple_debug_error("wpurple", "Could not open reg key '%s' subkey '%s'.\nMessage: (%ld) %s\n",
 					((rootkey == HKEY_LOCAL_MACHINE) ? "HKLM" :
 					 (rootkey == HKEY_CURRENT_USER) ? "HKCU" :
 					  (rootkey == HKEY_CLASSES_ROOT) ? "HKCR" : "???"),
@@ -356,7 +356,7 @@ static gboolean _reg_read(HKEY reg_key, const char *valname, LPDWORD type, LPBYT
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
-		purple_debug_info("wpurple", "Could not read from reg key value '%s'.\nMessage: (%ld) %s\n",
+		purple_debug_error("wpurple", "Could not read from reg key value '%s'.\nMessage: (%ld) %s\n",
 					valname, rv, errmsg);
 		g_free(errmsg);
 	}
