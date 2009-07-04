@@ -350,7 +350,7 @@ static PurplePluginInfo info =
 	N_("Windows Pidgin Options"),
 	DISPLAY_VERSION,
 	N_("Options specific to Pidgin for Windows."),
-	N_("Provides options specific to Pidgin for Windows , such as buddy list docking."),
+	N_("Provides options specific to Pidgin for Windows, such as buddy list docking."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	PURPLE_WEBSITE,
 	plugin_load,

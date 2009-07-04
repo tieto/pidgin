@@ -187,7 +187,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 		purple_request_input(tpm_dat,
 				     _("Certificate Import"),
 				     _("Specify a hostname"),
-				     _("Type the host name this certificate is for."),
+				     _("Type the host name for this certificate."),
 				     default_hostname,
 				     FALSE, /* Not multiline */
 				     FALSE, /* Not masked? */

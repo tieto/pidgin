@@ -907,7 +907,7 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 
 	if (type == JABBER_IQ_RESULT) {
 		if(js->registration) {
-		buf = g_strdup_printf(_("Registration of %s@%s successful"),
+			buf = g_strdup_printf(_("Registration of %s@%s successful"),
 				js->user->node, js->user->domain);
 			if(account->registration_cb)
 				(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
