@@ -187,15 +187,13 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			pos = x;
 			pkt->hash = g_slist_prepend(pkt->hash, pair);
 
-#ifdef DEBUG
-			{
+			if (purple_debug_is_verbose()) {
 				char *esc;
 				esc = g_strescape(pair->value, NULL);
 				purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 						   "Key: %d  \tValue: %s\n", pair->key, esc);
 				g_free(esc);
 			}
-#endif /* DEBUG */
 		} else {
 			g_free(pair);
 		}
