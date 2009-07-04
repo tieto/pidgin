@@ -979,8 +979,8 @@ purple_markup_unescape_entity(const char *text, int *length)
 		buf[buflen] = '\0';
 		pln = buf;
 
-		len = 2;
-		while(isdigit((gint) text[len])) len++;
+		len = (*(text+2) == 'x' ? 3 : 2);
+		while(isxdigit((gint) text[len])) len++;
 		if(text[len] == ';') len++;
 	}
 	else
