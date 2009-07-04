@@ -3814,7 +3814,10 @@ process_chunked_data(char *data, gsize *len)
 		}
 
 		/* Advance to the start of the data */
-		s = strstr(s, "\r\n") + 2;
+		s = strstr(s, "\r\n");
+		if (s == NULL)
+			break;
+		s += 2;
 
 		if (s + sz > data + *len) {
 			purple_debug_error("util", "Error processing chunked data: "
