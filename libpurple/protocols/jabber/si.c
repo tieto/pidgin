@@ -976,10 +976,10 @@ jabber_si_xfer_ibb_error_cb(JabberIBBSession *sess)
 	PurpleConnection *gc = js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
-	purple_debug_error("jabber", "an error occured during IBB file transfer\n");
+	purple_debug_error("jabber", "an error occurred during IBB file transfer\n");
 	purple_xfer_error(purple_xfer_get_type(xfer), account,
 		jabber_ibb_session_get_who(sess),
-			_("An error occured on the in-band bytestream transfer\n"));
+			_("An error occurred on the in-band bytestream transfer\n"));
 	purple_xfer_cancel_remote(xfer);
 }
 

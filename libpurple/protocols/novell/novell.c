@@ -2187,7 +2187,7 @@ novell_login(PurpleAccount * account)
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Unable to connect to server. Please enter the "
-			  "address of the server you wish to connect to."));
+			  "address of the server to which you wish to connect."));
 		return;
 	}
 
