@@ -361,13 +361,20 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 			serv_got_im(purple_account_get_connection(xfer->account),
 								 xfer->who, xfer->message, 0, time(NULL));
 
-		purple_request_accept_cancel(xfer, NULL, buf, NULL,
-								  PURPLE_DEFAULT_ACTION_NONE,
-								  xfer->account, xfer->who, NULL,
-								  xfer,
-								  G_CALLBACK(purple_xfer_choose_file),
-								  G_CALLBACK(cancel_recv_cb));
-
+		if (purple_xfer_get_thumbnail_data(xfer)) {
+			purple_request_accept_cancel_with_icon(xfer, NULL, buf, NULL,
+				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
+				purple_xfer_get_thumbnail_data(xfer),
+				purple_xfer_get_thumbnail_size(xfer), xfer, 
+				G_CALLBACK(purple_xfer_choose_file),
+				G_CALLBACK(cancel_recv_cb));
+		} else {
+			purple_request_accept_cancel(xfer, NULL, buf, NULL,
+				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
+				xfer, G_CALLBACK(purple_xfer_choose_file),
+				G_CALLBACK(cancel_recv_cb));
+		}
+			
 		g_free(buf);
 	} else
 		purple_xfer_choose_file(xfer);
