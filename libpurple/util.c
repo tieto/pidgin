@@ -4042,7 +4042,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		}
 	}
 
-	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+	if(purple_debug_is_unsafe())
 		purple_debug_misc("util", "Request: '%s'\n", gfud->request);
 	else
 		purple_debug_misc("util", "request constructed\n");
@@ -4159,7 +4159,7 @@ purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
 	g_return_val_if_fail(url      != NULL, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+	if(purple_debug_is_unsafe())
 		purple_debug_info("util",
 				 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
 				 url, full, user_agent?user_agent:"(null)", http11);
