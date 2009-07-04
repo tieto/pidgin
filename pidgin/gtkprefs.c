@@ -1642,22 +1642,25 @@ network_ip_changed(GtkEntry *entry, gpointer data)
 	const gchar *text = gtk_entry_get_text(entry);
 	GdkColor color;
 
-	if (purple_ip_address_is_valid(text))
-	{
-		color.red = 0xAFFF;
-		color.green = 0xFFFF;
-		color.blue = 0xAFFF;
+	if (text && *text) {
+		if (purple_ip_address_is_valid(text)) {
+			color.red = 0xAFFF;
+			color.green = 0xFFFF;
+			color.blue = 0xAFFF;
 
-		purple_network_set_public_ip(text);
-	}
-	else
-	{
-		color.red = 0xFFFF;
-		color.green = 0xAFFF;
-		color.blue = 0xAFFF;
-	}
+			purple_network_set_public_ip(text);
+		} else {
+			color.red = 0xFFFF;
+			color.green = 0xAFFF;
+			color.blue = 0xAFFF;
+		}
 
-	gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &color);
+		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &color);
+
+	} else {
+		purple_network_set_public_ip("");
+		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, NULL);
+	}
 }
 
 static gboolean
