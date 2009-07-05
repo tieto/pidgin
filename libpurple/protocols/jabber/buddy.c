@@ -772,7 +772,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
 			gchar *message = g_strdup_printf(_("%s ago"), last);
 			purple_notify_user_info_prepend_pair(user_info,
-				_("Logged off"), message);
+				_("Logged Off"), message);
 			g_free(last);
 			g_free(message);
 		}
