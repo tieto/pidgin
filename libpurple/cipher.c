@@ -108,21 +108,13 @@ purple_g_checksum_append(PurpleCipherContext *context, const guchar *data,
 	checksum = purple_cipher_context_get_data(context);
 	g_return_if_fail(checksum != NULL);
 
-	if (len > (gsize)G_MAXSSIZE) {
-		/*
-		 * g_checksum_update takes a gssize, whereas we handle gsizes. To
-		 * be pedantically correct, we need to handle this case. In real life,
-		 * I think this couldn't actually occur.
-		 */
-		const guchar *buf = data;
-		gssize chunk_size;
-		while (len > 0) {
-			chunk_size = MIN(G_MAXSSIZE, len);
-			g_checksum_update(checksum, buf, chunk_size);
-			len -= chunk_size;
-			buf += chunk_size;
-		}
-	} else
+	while (len >= G_MAXSSIZE) {
+		g_checksum_update(checksum, data, G_MAXSSIZE);
+		len -= G_MAXSSIZE;
+		data += G_MAXSSIZE;
+	}
+
+	if (len)
 		g_checksum_update(checksum, data, len);
 }
 
