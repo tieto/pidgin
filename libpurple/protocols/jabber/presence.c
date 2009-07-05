@@ -690,6 +690,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if(type && !strcmp(type, "unavailable")) {
 			gboolean nick_change = FALSE;
+			gboolean kick = FALSE;
+			gboolean is_our_resource = FALSE; /* Is the presence about us? */
 
 			/* If the chat nick is invalid, we haven't yet joined, or we've
 			 * already left (it was probably us leaving after we closed the
@@ -706,6 +708,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				return;
 			}
 
+			is_our_resource = (0 == g_utf8_collate(jid->resource, chat->handle));
+
 			jabber_buddy_remove_resource(jb, jid->resource);
 			if(chat->muc) {
 				xmlnode *x;
@@ -719,10 +723,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						continue;
 					if(!(code = xmlnode_get_attrib(stat, "code")))
 						continue;
+
+					item = xmlnode_get_child(x, "item");
+
 					if(!strcmp(code, "301")) {
 						/* XXX: we got banned */
 					} else if(!strcmp(code, "303")) {
-						if(!(item = xmlnode_get_child(x, "item")))
+						if (!item)
 							continue;
 						if(!(nick = xmlnode_get_attrib(item, "nick")))
 							continue;
@@ -735,7 +742,46 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						jabber_chat_remove_handle(chat, jid->resource);
 						break;
 					} else if(!strcmp(code, "307")) {
-						/* XXX: we got kicked */
+						/* Someone was kicked from the room */
+						xmlnode *reason = NULL, *actor = NULL;
+						const char *actor_name = NULL;
+						char *reason_text = NULL;
+						char *tmp;
+
+						kick = TRUE;
+
+						if (item) {
+							reason = xmlnode_get_child(item, "reason");
+							actor = xmlnode_get_child(item, "actor");
+
+							if (reason != NULL)
+								reason_text = xmlnode_get_data(reason);
+							if (actor != NULL)
+								actor_name = xmlnode_get_attrib(actor, "jid");
+						}
+
+						if (reason_text == NULL)
+							reason_text = g_strdup(_("No reason"));
+
+						if (is_our_resource) {
+							if (actor_name != NULL)
+								tmp = g_strdup_printf(_("You have been kicked by %s: (%s)"),
+										actor_name, reason_text);
+							else
+								tmp = g_strdup_printf(_("You have been kicked: (%s)"),
+										reason_text);
+						} else {
+							if (actor_name != NULL)
+								tmp = g_strdup_printf(_("Kicked by %s (%s)"),
+										actor_name, reason_text);
+							else
+								tmp = g_strdup_printf(_("Kicked (%s)"),
+										reason_text);
+						}
+
+						g_free(reason_text);
+						g_free(status);
+						status = tmp;
 					} else if(!strcmp(code, "321")) {
 						/* XXX: removed due to an affiliation change */
 					} else if(!strcmp(code, "322")) {
@@ -746,7 +792,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				}
 			}
 			if(!nick_change) {
-				if(!g_utf8_collate(jid->resource, chat->handle)) {
+				if (is_our_resource) {
+					if (kick)
+						purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), jid->resource,
+								status, PURPLE_MESSAGE_SYSTEM, time(NULL));
+
 					serv_got_chat_left(js->gc, chat->id);
 					jabber_chat_destroy(chat);
 				} else {
