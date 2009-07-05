@@ -1548,9 +1548,8 @@ oscar_login(PurpleAccount *account)
 	 * authenticate.
 	 *
 	 * AIM 5.9 and lower use an MD5-based login procedure called "BUCP".
-	 * Note that some people were unable to log in to ICQ using the MD5
-	 * method, and so ICQ, when not using clientLogin, is still using a
-	 * very insecure XOR-based login scheme.
+	 * This authentication method is used for both ICQ and AIM when
+	 * clientLogin is not enabled.
 	 */
 	if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN)) {
 		send_client_login(od, purple_account_get_username(account));
