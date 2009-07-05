@@ -594,7 +594,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				muc = TRUE;
 				if((z = xmlnode_get_child(y, "status"))) {
 					const char *code = xmlnode_get_attrib(z, "code");
-					if(code && !strcmp(code, "201")) {
+					if (purple_strequal(code, "201")) {
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
 							chat->config_dialog_handle =
@@ -610,7 +610,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}
-					} else if(code && !strcmp(code, "210")) {
+					} else if (purple_strequal(code, "210")) {
 						/*  server rewrote room-nick */
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							g_free(chat->handle);
