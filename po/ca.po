@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-04 10:23+0200\n"
-"PO-Revision-Date: 2009-07-04 10:30+0200\n"
+"POT-Creation-Date: 2009-07-06 00:17+0200\n"
+"PO-Revision-Date: 2009-07-06 00:19+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -3881,172 +3881,6 @@ msgstr "Sistema operatiu"
 msgid "Local Time"
 msgstr "Hora local"
 
-msgid "Last Activity"
-msgstr "Darrera activitat"
-
-msgid "Service Discovery Info"
-msgstr "Informació del servei de descoberta"
-
-msgid "Service Discovery Items"
-msgstr "Elements del servei de descoberta"
-
-# http://xmpp.org/extensions/xep-0033.html
-msgid "Extended Stanza Addressing"
-msgstr "Bloc d'adreçament estès"
-
-msgid "Multi-User Chat"
-msgstr "Xat multi-usuari"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "Informació de presència estesa per a xats multi-usuari"
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-msgid "Ad-Hoc Commands"
-msgstr "Ordres Ad-Hoc"
-
-msgid "PubSub Service"
-msgstr "Servei PubSub"
-
-msgid "SOCKS5 Bytestreams"
-msgstr "Flux de bits SOCK5"
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-msgid "In-Band Registration"
-msgstr ""
-
-msgid "User Location"
-msgstr "Ubicació de l'usuari"
-
-msgid "User Avatar"
-msgstr "Avatar de l'usuari"
-
-msgid "Chat State Notifications"
-msgstr "Notificacions de l'estat del xat"
-
-msgid "Software Version"
-msgstr "Versió del programari"
-
-msgid "Stream Initiation"
-msgstr "Iniciació del flux"
-
-msgid "File Transfer"
-msgstr "Transferència de fitxers"
-
-msgid "User Mood"
-msgstr "Estat d'ànim de l'usuari"
-
-msgid "User Activity"
-msgstr "Activitat de l'usuari"
-
-msgid "Entity Capabilities"
-msgstr "Capacitats de l'entitat"
-
-msgid "Encrypted Session Negotiations"
-msgstr "Negociacions de la sessió xifrada"
-
-# Pot ser també música, cançó... (josep)
-# Vegeu: http://xmpp.org/extensions/xep-0118.html
-msgid "User Tune"
-msgstr "Melodia de l'usuari"
-
-# Nota: "Roster" en XMPP és la llista de contactes (josep)
-msgid "Roster Item Exchange"
-msgstr "Intercanvi d'element de la llista de contactes"
-
-# Vegeu: http://xmpp.org/extensions/xep-0152.html (josep)
-# Nota: codi mort
-msgid "Reachability Address"
-msgstr "Adreça de localització"
-
-msgid "User Profile"
-msgstr "Perfil de l'usuari"
-
-# Nota: Jingle és una extensió d'XMPP i ho considerem nom propi (josep)
-# http://www.xmpp.org/extensions/xep-0166.html
-msgid "Jingle"
-msgstr "Jingle"
-
-# FIXME
-msgid "Jingle Audio"
-msgstr "Àudio amb Jingle"
-
-msgid "User Nickname"
-msgstr "Sobrenom de l'usuari"
-
-msgid "Jingle ICE UDP"
-msgstr "Jingle ICE UDP"
-
-msgid "Jingle ICE TCP"
-msgstr "Jingle ICE TCP"
-
-msgid "Jingle Raw UDP"
-msgstr "Jingle Raw UDP"
-
-msgid "Jingle Video"
-msgstr "Vídeo amb Jingle"
-
-msgid "Jingle DTMF"
-msgstr "Jingle DTMF"
-
-msgid "Message Receipts"
-msgstr "Recepció de missatges"
-
-msgid "Public Key Publishing"
-msgstr "Publicació de claus públiques"
-
-msgid "User Chatting"
-msgstr "Converses d'usuari"
-
-msgid "User Browsing"
-msgstr "Navegació d'usuaris"
-
-msgid "User Gaming"
-msgstr "Jocs d'usuari"
-
-msgid "User Viewing"
-msgstr "Visualització d'usuaris"
-
-msgid "Ping"
-msgstr "Ping"
-
-# Vegeu: http://xmpp.org/extensions/xep-0200.html
-# Nota: Això es refereix a les capabilitats de l'altre interlocutor
-# No apareix a l'aplicació final, és codi mort dins un #if 0 ... #endif (josep)
-msgid "Stanza Encryption"
-msgstr "Blocs xifrats"
-
-msgid "Entity Time"
-msgstr "Hora de l'entitat"
-
-msgid "Delayed Delivery"
-msgstr "Lliurament endarrerit"
-
-msgid "Collaborative Data Objects"
-msgstr "Objectes de dades col·laboratius"
-
-msgid "File Repository and Sharing"
-msgstr "Dipòsit de fitxers i compartició"
-
-msgid "STUN Service Discovery for Jingle"
-msgstr "Servei de descoberta STUN per al Jingle"
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr "Negociació simple del xifratge de la sessió"
-
-# Mireu l'RFC (josep)
-msgid "Hop Check"
-msgstr "Comprovació dels salts"
-
-msgid "Capabilities"
-msgstr "Capacitats"
-
 msgid "Priority"
 msgstr "Prioritat"
 
@@ -4057,7 +3891,7 @@ msgstr "Recurs"
 msgid "%s ago"
 msgstr "fa %s"
 
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "Desconnectat"
 
 # Segons la viquipèdia
@@ -6979,6 +6813,9 @@ msgstr "En línia des de"
 msgid "Member Since"
 msgstr "Membre des de"
 
+msgid "Capabilities"
+msgstr "Capacitats"
+
 msgid "Profile"
 msgstr "Perfil"
 
@@ -8228,6 +8065,9 @@ msgstr "Altaveus"
 msgid "Video Camera"
 msgstr "Càmera de vídeo"
 
+msgid "File Transfer"
+msgstr "Transferència de fitxers"
+
 msgid "Supports"
 msgstr "Permet"
 
@@ -9045,6 +8885,9 @@ msgstr ""
 
 msgid "Network Statistics"
 msgstr "Estadístiques de xarxa"
+
+msgid "Ping"
+msgstr "Ping"
 
 msgid "Ping failed"
 msgstr "Ha fallat el ping"
@@ -10657,8 +10500,11 @@ msgstr "Afegeix un a_vís per a l'amic..."
 msgid "View _Log"
 msgstr "_Visualitza el registre"
 
-msgid "Hide when offline"
+msgid "Hide When Offline"
 msgstr "Amaga quan estigui fora de línia"
+
+msgid "Show When Offline"
+msgstr "Mostra quan estigui fora de línia"
 
 msgid "_Alias..."
 msgstr "À_lies..."
@@ -11199,7 +11045,7 @@ msgstr "Ignora"
 msgid "Get Away Message"
 msgstr "Aconsegueix el missatge d'absència"
 
-msgid "Last said"
+msgid "Last Said"
 msgstr "El darrer que es digué"
 
 msgid "Unable to save icon file to disk."
@@ -12799,15 +12645,17 @@ msgstr "_Mostra la icona d'estat:"
 msgid "On unread messages"
 msgstr "Si hi ha missatges sense llegir"
 
-# REVIEW
-msgid "Conversation Window Hiding"
-msgstr "Ocultació de les finestres"
+msgid "Conversation Window"
+msgstr "Finestra de conversa"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Amaga noves converses de MI:"
 
 msgid "When away"
 msgstr "En estar absent"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "_Minimitza les finestres de conversa noves"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12866,9 +12714,6 @@ msgstr "Empra el desplaçament suau"
 
 msgid "F_lash window when IMs are received"
 msgstr "_Fes que la finestra faci un flaix quan hi arribin missatges"
-
-msgid "Minimi_ze new conversation windows"
-msgstr "_Minimitza les finestres de conversa noves"
 
 msgid "Minimum input area height in lines:"
 msgstr "Alçada mínima en línies de l'àrea d'entrada:"
@@ -14613,6 +14458,158 @@ msgstr "Envia i rep blocs XMPP en brut."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
+
+#~ msgid "Last Activity"
+#~ msgstr "Darrera activitat"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "Informació del servei de descoberta"
+
+#~ msgid "Service Discovery Items"
+#~ msgstr "Elements del servei de descoberta"
+
+# http://xmpp.org/extensions/xep-0033.html
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "Bloc d'adreçament estès"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "Xat multi-usuari"
+
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "Informació de presència estesa per a xats multi-usuari"
+
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "Ordres Ad-Hoc"
+
+#~ msgid "PubSub Service"
+#~ msgstr "Servei PubSub"
+
+#~ msgid "SOCKS5 Bytestreams"
+#~ msgstr "Flux de bits SOCK5"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#~ msgid "User Location"
+#~ msgstr "Ubicació de l'usuari"
+
+#~ msgid "User Avatar"
+#~ msgstr "Avatar de l'usuari"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "Notificacions de l'estat del xat"
+
+#~ msgid "Software Version"
+#~ msgstr "Versió del programari"
+
+#~ msgid "Stream Initiation"
+#~ msgstr "Iniciació del flux"
+
+#~ msgid "User Mood"
+#~ msgstr "Estat d'ànim de l'usuari"
+
+#~ msgid "User Activity"
+#~ msgstr "Activitat de l'usuari"
+
+#~ msgid "Entity Capabilities"
+#~ msgstr "Capacitats de l'entitat"
+
+#~ msgid "Encrypted Session Negotiations"
+#~ msgstr "Negociacions de la sessió xifrada"
+
+# Pot ser també música, cançó... (josep)
+# Vegeu: http://xmpp.org/extensions/xep-0118.html
+#~ msgid "User Tune"
+#~ msgstr "Melodia de l'usuari"
+
+# Nota: "Roster" en XMPP és la llista de contactes (josep)
+#~ msgid "Roster Item Exchange"
+#~ msgstr "Intercanvi d'element de la llista de contactes"
+
+# Vegeu: http://xmpp.org/extensions/xep-0152.html (josep)
+# Nota: codi mort
+#~ msgid "Reachability Address"
+#~ msgstr "Adreça de localització"
+
+#~ msgid "User Profile"
+#~ msgstr "Perfil de l'usuari"
+
+# Nota: Jingle és una extensió d'XMPP i ho considerem nom propi (josep)
+# http://www.xmpp.org/extensions/xep-0166.html
+#~ msgid "Jingle"
+#~ msgstr "Jingle"
+
+# FIXME
+#~ msgid "Jingle Audio"
+#~ msgstr "Àudio amb Jingle"
+
+#~ msgid "User Nickname"
+#~ msgstr "Sobrenom de l'usuari"
+
+#~ msgid "Jingle ICE UDP"
+#~ msgstr "Jingle ICE UDP"
+
+#~ msgid "Jingle ICE TCP"
+#~ msgstr "Jingle ICE TCP"
+
+#~ msgid "Jingle Raw UDP"
+#~ msgstr "Jingle Raw UDP"
+
+#~ msgid "Jingle Video"
+#~ msgstr "Vídeo amb Jingle"
+
+#~ msgid "Jingle DTMF"
+#~ msgstr "Jingle DTMF"
+
+#~ msgid "Message Receipts"
+#~ msgstr "Recepció de missatges"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "Publicació de claus públiques"
+
+#~ msgid "User Chatting"
+#~ msgstr "Converses d'usuari"
+
+#~ msgid "User Browsing"
+#~ msgstr "Navegació d'usuaris"
+
+#~ msgid "User Gaming"
+#~ msgstr "Jocs d'usuari"
+
+#~ msgid "User Viewing"
+#~ msgstr "Visualització d'usuaris"
+
+# Vegeu: http://xmpp.org/extensions/xep-0200.html
+# Nota: Això es refereix a les capabilitats de l'altre interlocutor
+# No apareix a l'aplicació final, és codi mort dins un #if 0 ... #endif (josep)
+#~ msgid "Stanza Encryption"
+#~ msgstr "Blocs xifrats"
+
+#~ msgid "Entity Time"
+#~ msgstr "Hora de l'entitat"
+
+#~ msgid "Delayed Delivery"
+#~ msgstr "Lliurament endarrerit"
+
+#~ msgid "Collaborative Data Objects"
+#~ msgstr "Objectes de dades col·laboratius"
+
+#~ msgid "File Repository and Sharing"
+#~ msgstr "Dipòsit de fitxers i compartició"
+
+#~ msgid "STUN Service Discovery for Jingle"
+#~ msgstr "Servei de descoberta STUN per al Jingle"
+
+#~ msgid "Simplified Encrypted Session Negotiation"
+#~ msgstr "Negociació simple del xifratge de la sessió"
+
+# Mireu l'RFC (josep)
+#~ msgid "Hop Check"
+#~ msgstr "Comprovació dels salts"
+
+# REVIEW
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "Ocultació de les finestres"
 
 #~ msgid "More Data needed"
 #~ msgstr "Calen més dades"
