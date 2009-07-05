@@ -648,7 +648,7 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (!msg) {
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo", "Got a message packet with no message.\nThis probably means something important, but we're ignoring it.\n");
+		purple_debug_misc("yahoo", "Got a message packet with no message.\nThis probably means something important, but we're ignoring it.\n");
 		return;
 	}
 	msg2 = yahoo_string_decode(gc, msg, utf8);
