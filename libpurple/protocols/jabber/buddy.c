@@ -650,11 +650,80 @@ static void jabber_buddy_info_destroy(JabberBuddyInfo *jbi)
 	g_free(jbi);
 }
 
+static void
+add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
+             JabberBuddyResource *jbr)
+{
+	JabberBuddyInfoResource *jbir;
+	PurpleNotifyUserInfo *user_info;
+
+	jbir = g_hash_table_lookup(jbi->resources, resource);
+	user_info = jbi->user_info;
+
+	if (jbr && jbr->client.name) {
+		char *tmp = g_strdup_printf("%s%s%s", jbr->client.name,
+							  (jbr->client.version ? " " : ""),
+							  (jbr->client.version ? jbr->client.version : ""));
+		purple_notify_user_info_prepend_pair(user_info, _("Client"), tmp);
+		g_free(tmp);
+
+		if (jbr->client.os) {
+			purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
+		}
+	}
+
+	if (jbr && jbr->tz_off != PURPLE_NO_TZ_OFF) {
+		time_t now_t;
+		struct tm *now;
+		char *timestamp;
+		time(&now_t);
+		now_t += jbr->tz_off;
+		now = gmtime(&now_t);
+
+		timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
+		                            jbr->tz_off < 0 ? '-' : '+',
+		                            abs(jbr->tz_off / (60*60)),
+		                            abs((jbr->tz_off % (60*60)) / 60));
+		purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
+		g_free(timestamp);
+	}
+
+	if (jbir && jbir->idle_seconds > 0) {
+		char *idle = purple_str_seconds_to_string(jbir->idle_seconds);
+		purple_notify_user_info_prepend_pair(user_info, _("Idle"), idle);
+		g_free(idle);
+	}
+
+	if (jbr) {
+		char *purdy = NULL;
+		char *tmp;
+		char priority[12];
+		const char *status_name = jabber_buddy_state_get_name(jbr->state);
+
+		if (jbr->status)
+			purdy = purple_strdup_withhtml(jbr->status);
+		if (status_name && purdy && !strcmp(status_name, purdy))
+			status_name = NULL;
+
+		tmp = g_strdup_printf("%s%s%s", (status_name ? status_name : ""),
+						((status_name && purdy) ? ": " : ""),
+						(purdy ? purdy : ""));
+		purple_notify_user_info_prepend_pair(user_info, _("Status"), tmp);
+
+		g_snprintf(priority, sizeof(priority), "%d", jbr->priority);
+		purple_notify_user_info_prepend_pair(user_info, _("Priority"), priority);
+
+		g_free(tmp);
+		g_free(purdy);
+	} else {
+		purple_notify_user_info_prepend_pair(user_info, _("Status"), _("Unknown"));
+	}
+}
+
 static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 {
-	char *resource_name, *tmp;
+	char *resource_name;
 	JabberBuddyResource *jbr;
-	JabberBuddyInfoResource *jbir = NULL;
 	GList *resources;
 	PurpleNotifyUserInfo *user_info;
 
@@ -672,64 +741,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 	/* Prepend the primary buddy info to user_info so that it goes before the vcard. */
 	if(resource_name) {
 		jbr = jabber_buddy_find_resource(jbi->jb, resource_name);
-		jbir = g_hash_table_lookup(jbi->resources, resource_name);
-		if(jbr && jbr->client.name) {
-			tmp = g_strdup_printf("%s%s%s", jbr->client.name,
-								  (jbr->client.version ? " " : ""),
-								  (jbr->client.version ? jbr->client.version : ""));
-			purple_notify_user_info_add_pair(user_info, _("Client"), tmp);
-			g_free(tmp);
-
-			if(jbr->client.os) {
-				purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
-			}
-		}
-		if (jbr && jbr->tz_off != PURPLE_NO_TZ_OFF) {
-			time_t now_t;
-			struct tm *now;
-			char *timestamp;
-			time(&now_t);
-			now_t += jbr->tz_off;
-			now = gmtime(&now_t);
-
-			timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
-			                            jbr->tz_off < 0 ? '-' : '+',
-			                            abs(jbr->tz_off / (60*60)),
-			                            abs((jbr->tz_off % (60*60)) / 60));
-			purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
-			g_free(timestamp);
-		}
-		if(jbir) {
-			if(jbir->idle_seconds > 0) {
-				char *idle = purple_str_seconds_to_string(jbir->idle_seconds);
-				purple_notify_user_info_prepend_pair(user_info, _("Idle"), idle);
-				g_free(idle);
-			}
-		}
-		if(jbr) {
-			char *purdy = NULL;
-			const char *status_name = jabber_buddy_state_get_name(jbr->state);
-			if(jbr->status)
-				purdy = purple_strdup_withhtml(jbr->status);
-			if(status_name && purdy && !strcmp(status_name, purdy))
-				status_name = NULL;
-
-			tmp = g_strdup_printf("%s%s%s", (status_name ? status_name : ""),
-							((status_name && purdy) ? ": " : ""),
-							(purdy ? purdy : ""));
-			purple_notify_user_info_prepend_pair(user_info, _("Status"), tmp);
-			g_free(tmp);
-			g_free(purdy);
-		} else {
-			purple_notify_user_info_prepend_pair(user_info, _("Status"), _("Unknown"));
-		}
+		add_jbr_info(jbi, resource_name, jbr);
 	} else {
-		gboolean multiple_resources = jbi->jb->resources && jbi->jb->resources->next;
-
-		for(resources = jbi->jb->resources; resources; resources = resources->next) {
-			char *purdy = NULL;
-			const char *status_name = NULL;
-
+		for (resources = jbi->jb->resources; resources; resources = resources->next) {
 			jbr = resources->data;
 
 			/* put a section break between resources, this is not needed if
@@ -739,61 +753,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				purple_notify_user_info_prepend_section_break(user_info);
 			}
 
-			if(jbr->client.name) {
-				tmp = g_strdup_printf("%s%s%s", jbr->client.name,
-									  (jbr->client.version ? " " : ""),
-									  (jbr->client.version ? jbr->client.version : ""));
-				purple_notify_user_info_prepend_pair(user_info,
-												 _("Client"), tmp);
-				g_free(tmp);
-
-				if(jbr->client.os) {
-					purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
-				}
-			}
-
-			if (jbr->tz_off != PURPLE_NO_TZ_OFF) {
-				time_t now_t;
-				struct tm *now;
-				char *timestamp;
-				time(&now_t);
-				now_t += jbr->tz_off;
-				now = gmtime(&now_t);
-
-				timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
-				                            jbr->tz_off < 0 ? '-' : '+',
-				                            abs(jbr->tz_off / (60*60)),
-				                            abs((jbr->tz_off % (60*60)) / 60));
-				purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
-				g_free(timestamp);
-			}
-
-			if(jbr->name && (jbir = g_hash_table_lookup(jbi->resources, jbr->name))) {
-				if(jbir->idle_seconds > 0) {
-					char *idle = purple_str_seconds_to_string(jbir->idle_seconds);
-					purple_notify_user_info_prepend_pair(user_info, _("Idle"), idle);
-					g_free(idle);
-				}
-			}
-
-			status_name = jabber_buddy_state_get_name(jbr->state);
-			if(jbr->status)
-				purdy = purple_strdup_withhtml(jbr->status);
-			if(status_name && purdy && !strcmp(status_name, purdy))
-				status_name = NULL;
-
-			tmp = g_strdup_printf("%s%s%s", (status_name ? status_name : ""),
-								  ((status_name && purdy) ? ": " : ""),
-								  (purdy ? purdy : ""));
-			purple_notify_user_info_prepend_pair(user_info, _("Status"), tmp);
-			g_free(tmp);
-			g_free(purdy);
-
-			if(multiple_resources) {
-				tmp = g_strdup_printf("%d", jbr->priority);
-				purple_notify_user_info_prepend_pair(user_info, _("Priority"), tmp);
-				g_free(tmp);
-			}
+			add_jbr_info(jbi, jbr->name, jbr);
 
 			if(jbr->name)
 				purple_notify_user_info_prepend_pair(user_info, _("Resource"), jbr->name);
