@@ -69,6 +69,7 @@ version 2.6.0 (??/??/2009):
 		  emitted), but this signal was not emitted.
 		* Added a client_type field in the get_ui_info core UI op. See
 		  core.h for details.
+		* Added introspection of signals exposed via the D-Bus API.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
