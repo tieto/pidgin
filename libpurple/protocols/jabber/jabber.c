@@ -596,7 +596,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 }
 
 static void
-txt_resolved_cb(GSList *responses, gpointer data)
+txt_resolved_cb(GList *responses, gpointer data)
 {
 	JabberStream *js = data;
 
@@ -624,7 +624,7 @@ txt_resolved_cb(GSList *responses, gpointer data)
 		}
 		g_strfreev(token);
 		purple_txt_response_destroy(resp);
-		responses = g_slist_delete_link(responses, responses);
+		responses = g_list_delete_link(responses, responses);
 	}
 
 	if (js->bosh) {
@@ -634,8 +634,8 @@ txt_resolved_cb(GSList *responses, gpointer data)
 	}
 
 	if (responses) {
-		g_slist_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
-		g_slist_free(responses);
+		g_list_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
+		g_list_free(responses);
 	}
 }
 
