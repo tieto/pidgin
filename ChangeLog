@@ -80,6 +80,7 @@ version 2.6.0 (??/??/2009):
 	  client supports it).
 	* Google Talk mail notifications should now work for people for whom they
 	  inexplicably did not.  (Thanks to yukam for determining the reason)
+	* New XMPP and Google Talk accounts require SSL by default.
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)
