@@ -661,15 +661,15 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 	user_info = jbi->user_info;
 
 	if (jbr && jbr->client.name) {
-		char *tmp = g_strdup_printf("%s%s%s", jbr->client.name,
-							  (jbr->client.version ? " " : ""),
-							  (jbr->client.version ? jbr->client.version : ""));
+		char *tmp =
+			g_strdup_printf("%s%s%s", jbr->client.name,
+		                    (jbr->client.version ? " " : ""),
+		                    (jbr->client.version ? jbr->client.version : ""));
 		purple_notify_user_info_prepend_pair(user_info, _("Client"), tmp);
 		g_free(tmp);
 
-		if (jbr->client.os) {
+		if (jbr->client.os)
 			purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
-		}
 	}
 
 	if (jbr && jbr->tz_off != PURPLE_NO_TZ_OFF) {
@@ -680,10 +680,11 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		now_t += jbr->tz_off;
 		now = gmtime(&now_t);
 
-		timestamp = g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
-		                            jbr->tz_off < 0 ? '-' : '+',
-		                            abs(jbr->tz_off / (60*60)),
-		                            abs((jbr->tz_off % (60*60)) / 60));
+		timestamp =
+			g_strdup_printf("%s %c%02d%02d", purple_time_format(now),
+		                    jbr->tz_off < 0 ? '-' : '+',
+		                    abs(jbr->tz_off / (60*60)),
+		                    abs((jbr->tz_off % (60*60)) / 60));
 		purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
 		g_free(timestamp);
 	}
@@ -700,10 +701,12 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		char priority[12];
 		const char *status_name = jabber_buddy_state_get_name(jbr->state);
 
-		if (jbr->status)
+		if (jbr->status) {
 			purdy = purple_strdup_withhtml(jbr->status);
-		if (status_name && purdy && !strcmp(status_name, purdy))
-			status_name = NULL;
+
+			if (purple_strequal(status_name, purdy))
+				status_name = NULL;
+		}
 
 		tmp = g_strdup_printf("%s%s%s", (status_name ? status_name : ""),
 						((status_name && purdy) ? ": " : ""),
@@ -728,7 +731,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 	PurpleNotifyUserInfo *user_info;
 
 	/* not yet */
-	if(jbi->ids)
+	if (jbi->ids)
 		return;
 
 	user_info = jbi->user_info;
@@ -738,8 +741,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 	if (purple_notify_user_info_get_entries(user_info))
 		purple_notify_user_info_prepend_section_break(user_info);
 
-	/* Prepend the primary buddy info to user_info so that it goes before the vcard. */
-	if(resource_name) {
+	/* Add the information about the user's resource(s) */
+	if (resource_name) {
 		jbr = jabber_buddy_find_resource(jbi->jb, resource_name);
 		add_jbr_info(jbi, resource_name, jbr);
 	} else {
@@ -749,13 +752,12 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			/* put a section break between resources, this is not needed if
 			 we are at the first, because one was already added for the vcard
 			 section */
-			if (resources != jbi->jb->resources) {
+			if (resources != jbi->jb->resources)
 				purple_notify_user_info_prepend_section_break(user_info);
-			}
 
 			add_jbr_info(jbi, jbr->name, jbr);
 
-			if(jbr->name)
+			if (jbr->name)
 				purple_notify_user_info_prepend_pair(user_info, _("Resource"), jbr->name);
 		}
 	}
@@ -764,8 +766,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		/* the buddy is offline */
 		gchar *status =
 			g_strdup_printf("%s%s%s",	_("Offline"),
-				jbi->last_message ? ": " : "",
-				jbi->last_message ? jbi->last_message : "");
+			                jbi->last_message ? ": " : "",
+			                jbi->last_message ? jbi->last_message : "");
 		if (jbi->last_seconds > 0) {
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
 			gchar *message = g_strdup_printf(_("%s ago"), last);
@@ -782,7 +784,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	purple_notify_userinfo(jbi->js->gc, jbi->jid, user_info, NULL, NULL);
 
-	while(jbi->vcard_imgids) {
+	while (jbi->vcard_imgids) {
 		purple_imgstore_unref_by_id(GPOINTER_TO_INT(jbi->vcard_imgids->data));
 		jbi->vcard_imgids = g_slist_delete_link(jbi->vcard_imgids, jbi->vcard_imgids);
 	}
