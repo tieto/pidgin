@@ -3428,10 +3428,10 @@ static void yahoo_login(PurpleAccount *account) {
 	yahoo_server_check(account);
 	yahoo_picture_check(account);
 
-	if (purple_account_get_bool(account, "yahoojp", FALSE)) {
+	if (purple_strequal(purple_account_get_protocol_id(account), "yahoojp")) {
 		yd->jp = TRUE;
 		if (purple_proxy_connect(gc, account,
-		                       purple_account_get_string(account, "serverjp",  YAHOOJP_PAGER_HOST),
+		                       purple_account_get_string(account, "server",  YAHOOJP_PAGER_HOST),
 		                       purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
 		                       yahoo_got_connected, gc) == NULL)
 		{
