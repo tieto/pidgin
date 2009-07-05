@@ -21,6 +21,15 @@
  *
  */
 
+static GHashTable *
+yahoojp_get_account_text_table(PurpleAccount *account)
+{
+	GHashTable *table;
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo JAPAN ID..."));
+	return table;
+}
+
 static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 {
 	yahoo_doodle_start,
@@ -109,7 +118,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_attention_types,
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	yahoo_get_account_text_table,    /* get_account_text_table */
+	yahoojp_get_account_text_table,    /* get_account_text_table */
 	NULL, /* initiate_media */
 	NULL  /* can_do_media */
 };
