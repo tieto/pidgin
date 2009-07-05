@@ -390,7 +390,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 		b = i->data;
 		g = purple_buddy_get_group(b);
 		if (!purple_utf8_strcasecmp(group, purple_group_get_name(g))) {
-			purple_debug(PURPLE_DEBUG_MISC, "yahoo",
+			purple_debug_misc("yahoo",
 				"Oh good, %s is in the right group (%s).\n", name, group);
 			list = g_slist_delete_link(list, i);
 			onlist = 1;
@@ -399,7 +399,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	}
 
 	if (!onlist) {
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
+		purple_debug_misc("yahoo",
 			"Uhoh, %s isn't on the list (or not in this group), adding him to group %s.\n", name, group);
 		if (!(g = purple_find_group(group))) {
 			g = purple_group_new(group);
@@ -427,7 +427,7 @@ static void yahoo_do_group_cleanup(gpointer key, gpointer value, gpointer user_d
 	for (i = list; i; i = i->next) {
 		b = i->data;
 		g = purple_buddy_get_group(b);
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo", "Deleting Buddy %s from group %s.\n", name,
+		purple_debug_misc("yahoo", "Deleting Buddy %s from group %s.\n", name,
 				purple_group_get_name(g));
 		purple_blist_remove_buddy(b);
 	}
@@ -801,9 +801,8 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		PurpleBuddy *bud = purple_find_buddy(account, from);
 
 		if (!bud) {
-			purple_debug(PURPLE_DEBUG_WARNING, "yahoo",
-					   "%s is playing a game, and doesn't want "
-					   "you to know.\n", from);
+			purple_debug_warning("yahoo",
+					   "%s is playing a game, and doesn't want you to know.\n", from);
 		}
 
 		f = yahoo_friend_find(gc, from);
@@ -1943,8 +1942,7 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 	name = g_strdup(purple_buddy_get_name(buddy));
 	account = purple_buddy_get_account(buddy);
 
-	purple_debug(PURPLE_DEBUG_INFO, "blist",
-		"Removing '%s' from buddy list.\n", name);
+	purple_debug_info("yahoo", "blist: Removing '%s' from buddy list.\n", name);
 	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
@@ -2382,14 +2380,14 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 	pos += 2;
 
 	pktlen = yahoo_get16(buf + pos); pos += 2;
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "p2p: %d bytes to read\n", len);
+	purple_debug_misc("yahoo", "p2p: %d bytes to read\n", len);
 
 	pkt = yahoo_packet_new(0, 0, 0);
 	pkt->service = yahoo_get16(buf + pos); pos += 2;
 	pkt->status = yahoo_get32(buf + pos); pos += 4;
 	pkt->id = yahoo_get32(buf + pos); pos += 4;
 
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "p2p: Yahoo Service: 0x%02x Status: %d\n",pkt->service, pkt->status);
+	purple_debug_misc("yahoo", "p2p: Yahoo Service: 0x%02x Status: %d\n",pkt->service, pkt->status);
 	yahoo_packet_read(pkt, buf + pos, pktlen);
 
 	/* packet processing */
@@ -2909,8 +2907,7 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 		break;
 
 	default:
-		purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
-				   "Unhandled service 0x%02x\n", pkt->service);
+		purple_debug_error("yahoo", "Unhandled service 0x%02x\n", pkt->service);
 		break;
 	}
 }
@@ -2979,8 +2976,7 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 		pos += 2;
 
 		pktlen = yahoo_get16(yd->rxqueue + pos); pos += 2;
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
-				   "%d bytes to read, rxlen is %d\n", pktlen, yd->rxlen);
+		purple_debug_misc("yahoo", "%d bytes to read, rxlen is %d\n", pktlen, yd->rxlen);
 
 		if (yd->rxlen < (YAHOO_PACKET_HDRLEN + pktlen))
 			return;
@@ -2991,8 +2987,7 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 
 		pkt->service = yahoo_get16(yd->rxqueue + pos); pos += 2;
 		pkt->status = yahoo_get32(yd->rxqueue + pos); pos += 4;
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
-				   "Yahoo Service: 0x%02x Status: %d\n",
+		purple_debug_misc("yahoo", "Yahoo Service: 0x%02x Status: %d\n",
 				   pkt->service, pkt->status);
 		pkt->id = yahoo_get32(yd->rxqueue + pos); pos += 4;
 
@@ -4882,8 +4877,7 @@ yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
 	gc = purple_conversation_get_gc(conv);
 	yd = gc->proto_data;
 	id = yd->conf_id;
-	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
-	           "Trying to join %s \n", args[0]);
+	purple_debug_info("yahoo", "Trying to join %s \n", args[0]);
 
 	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	g_hash_table_replace(comp, g_strdup("room"), g_ascii_strdown(args[0], -1));
@@ -4920,8 +4914,8 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 
 	g_return_val_if_fail(c != NULL, FALSE);
 
-	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
-	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
+	purple_debug_info("yahoo", "Sending <ding> on account %s to buddy %s.\n",
+			username, c->name);
 	purple_conv_im_send_with_flags(PURPLE_CONV_IM(c), "<ding>", PURPLE_MESSAGE_INVISIBLE);
 
 	return TRUE;
