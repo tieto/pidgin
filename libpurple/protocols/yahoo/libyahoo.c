@@ -24,7 +24,139 @@
 #include "internal.h"
 
 #include <account.h>
-#include <prpl.h>
+#include <core.h>
+
+#include "libymsg.h"
+#include "yahoochat.h"
+#include "yahoo_aliases.h"
+#include "yahoo_doodle.h"
+#include "yahoo_filexfer.h"
+#include "yahoo_picture.h"
+
+static PurplePlugin *my_protocol = NULL;
+
+static void yahoo_register_commands(void)
+{
+	purple_cmd_register("join", "s", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoopurple_cmd_chat_join,
+	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
+	purple_cmd_register("list", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoopurple_cmd_chat_list,
+	                  _("list: List rooms on the Yahoo network"), NULL);
+	purple_cmd_register("buzz", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoopurple_cmd_buzz,
+	                  _("buzz: Buzz a user to get their attention"), NULL);
+	purple_cmd_register("doodle", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoo_doodle_purple_cmd_start,
+	                 _("doodle: Request user to start a Doodle session"), NULL);
+}
+
+static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
+{
+	PurpleAccount *acct = NULL;
+
+	/* If we have a specific acct, use it */
+	if (acct_id) {
+		acct = purple_accounts_find(acct_id, prpl);
+		if (acct && !purple_account_is_connected(acct))
+			acct = NULL;
+	} else { /* Otherwise find an active account for the protocol */
+		GList *l = purple_accounts_get_all();
+		while (l) {
+			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+					&& purple_account_is_connected(l->data)) {
+				acct = l->data;
+				break;
+			}
+			l = l->next;
+		}
+	}
+
+	return acct;
+}
+
+/* This may not be the best way to do this, but we find the first key w/o a value
+ * and assume it is the buddy name */
+static void yahoo_find_uri_novalue_param(gpointer key, gpointer value, gpointer user_data)
+{
+	char **retval = user_data;
+
+	if (value == NULL && *retval == NULL) {
+		*retval = key;
+	}
+}
+
+static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable *params)
+{
+	char *acct_id = g_hash_table_lookup(params, "account");
+	PurpleAccount *acct;
+
+	if (g_ascii_strcasecmp(proto, "ymsgr"))
+		return FALSE;
+
+	acct = find_acct(purple_plugin_get_id(my_protocol), acct_id);
+
+	if (!acct)
+		return FALSE;
+
+	/* ymsgr:SendIM?screename&m=The+Message */
+	if (!g_ascii_strcasecmp(cmd, "SendIM")) {
+		char *sname = NULL;
+		g_hash_table_foreach(params, yahoo_find_uri_novalue_param, &sname);
+		if (sname) {
+			char *message = g_hash_table_lookup(params, "m");
+
+			PurpleConversation *conv = purple_find_conversation_with_account(
+				PURPLE_CONV_TYPE_IM, sname, acct);
+			if (conv == NULL)
+				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, sname);
+			purple_conversation_present(conv);
+
+			if (message) {
+				/* Spaces are encoded as '+' */
+				g_strdelimit(message, "+", ' ');
+				purple_conv_send_confirm(conv, message);
+			}
+		}
+		/* else
+			**If pidgindialogs_im() was in the core, we could use it here.
+			 * It is all purple_request_* based, but I'm not sure it really belongs in the core
+			pidgindialogs_im(); */
+
+		return TRUE;
+	}
+	/* ymsgr:Chat?roomname */
+	else if (!g_ascii_strcasecmp(cmd, "Chat")) {
+		char *rname = NULL;
+		g_hash_table_foreach(params, yahoo_find_uri_novalue_param, &rname);
+		if (rname) {
+			/* This is somewhat hacky, but the params aren't useful after this command */
+			g_hash_table_insert(params, g_strdup("room"), g_strdup(rname));
+			g_hash_table_insert(params, g_strdup("type"), g_strdup("Chat"));
+			serv_join_chat(purple_account_get_connection(acct), params);
+		}
+		/* else
+			** Same as above (except that this would have to be re-written using purple_request_*)
+			pidgin_blist_joinchat_show(); */
+
+		return TRUE;
+	}
+	/* ymsgr:AddFriend?name */
+	else if (!g_ascii_strcasecmp(cmd, "AddFriend")) {
+		char *name = NULL;
+		g_hash_table_foreach(params, yahoo_find_uri_novalue_param, &name);
+		purple_blist_request_add_buddy(acct, name, NULL, NULL);
+		return TRUE;
+	}
+
+	return FALSE;
+}
 
 static GHashTable *
 yahoo_get_account_text_table(PurpleAccount *account)
@@ -33,6 +165,13 @@ yahoo_get_account_text_table(PurpleAccount *account)
 	table = g_hash_table_new(g_str_hash, g_str_equal);
 	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo ID..."));
 	return table;
+}
+
+static gboolean yahoo_unload_plugin(PurplePlugin *plugin)
+{
+	yahoo_dest_colorht();
+
+	return TRUE;
 }
 
 static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
@@ -201,7 +340,7 @@ init_plugin(PurplePlugin *plugin)
 #endif
 
 	my_protocol = plugin;
-	yahoopurple_register_commands();
+	yahoo_register_commands();
 	yahoo_init_colorht();
 
 	purple_signal_connect(purple_get_core(), "uri-handler", plugin,

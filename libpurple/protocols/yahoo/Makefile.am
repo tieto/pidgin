@@ -29,7 +29,6 @@ AM_CFLAGS = $(st)
 
 libyahoo_la_LDFLAGS = -module -avoid-version
 libyahoojp_la_LDFLAGS = -module -avoid-version
-libymsg_la_LDFLAGS = -module -avoid-version
 
 if STATIC_YAHOO
 

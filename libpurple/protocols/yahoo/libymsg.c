@@ -41,7 +41,7 @@
 #include "version.h"
 #include "xmlnode.h"
 
-#include "ymsg.h"
+#include "libymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
 #include "yahoo_doodle.h"
@@ -61,11 +61,9 @@
 /* One minute */
 #define KEEPALIVE_TIMEOUT 60
 
-static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *, PurpleGroup *);
 #ifdef TRY_WEBMESSENGER_LOGIN
 static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
 #endif /* TRY_WEBMESSENGER_LOGIN */
-static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
 
 static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFriend *f)
 {
@@ -3398,7 +3396,7 @@ static int get_yahoo_status_from_purple_status(PurpleStatus *status)
 	}
 }
 
-static void yahoo_login(PurpleAccount *account) {
+void yahoo_login(PurpleAccount *account) {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
@@ -3453,7 +3451,7 @@ static void yahoo_login(PurpleAccount *account) {
 	}
 }
 
-static void yahoo_close(PurpleConnection *gc) {
+void yahoo_close(PurpleConnection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	GSList *l;
 
@@ -3541,12 +3539,12 @@ static void yahoo_close(PurpleConnection *gc) {
 	gc->proto_data = NULL;
 }
 
-static const char *yahoo_list_icon(PurpleAccount *a, PurpleBuddy *b)
+const char *yahoo_list_icon(PurpleAccount *a, PurpleBuddy *b)
 {
 	return "yahoo";
 }
 
-static const char *yahoo_list_emblem(PurpleBuddy *b)
+const char *yahoo_list_emblem(PurpleBuddy *b)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
@@ -3680,7 +3678,7 @@ static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 	g_free(game2);
 }
 
-static char *yahoo_status_text(PurpleBuddy *b)
+char *yahoo_status_text(PurpleBuddy *b)
 {
 	YahooFriend *f = NULL;
 	const char *msg;
@@ -3910,7 +3908,7 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 	return m;
 }
 
-static GList *yahoo_blist_node_menu(PurpleBlistNode *node)
+GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 {
 	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		return yahoo_buddy_menu((PurpleBuddy *) node);
@@ -4049,7 +4047,7 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 					   gc);
 }
 
-static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
+GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	GList *m = NULL;
 	PurplePluginAction *act;
 
@@ -4074,8 +4072,6 @@ struct yahoo_sms_carrier_cb_data	{
 	char *who;
 	char *what;
 };
-
-static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags);
 
 static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		const gchar *webdata, size_t len, const gchar *error_message)
@@ -4189,7 +4185,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	}
 }
 
-static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
+int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
@@ -4340,7 +4336,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	return ret;
 }
 
-static unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
+unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
@@ -4383,7 +4379,7 @@ static void yahoo_session_presence_remove(gpointer key, gpointer value, gpointer
 		f->presence = YAHOO_PRESENCE_DEFAULT;
 }
 
-static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
+void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
 	PurplePresence *presence;
@@ -4460,7 +4456,7 @@ static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	}
 }
 
-static void yahoo_set_idle(PurpleConnection *gc, int idle)
+void yahoo_set_idle(PurpleConnection *gc, int idle)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
@@ -4508,7 +4504,7 @@ static void yahoo_set_idle(PurpleConnection *gc, int idle)
 	g_free(msg2);
 }
 
-static GList *yahoo_status_types(PurpleAccount *account)
+GList *yahoo_status_types(PurpleAccount *account)
 {
 	PurpleStatusType *type;
 	GList *types = NULL;
@@ -4565,7 +4561,7 @@ static GList *yahoo_status_types(PurpleAccount *account)
 	return types;
 }
 
-static void yahoo_keepalive(PurpleConnection *gc)
+void yahoo_keepalive(PurpleConnection *gc)
 {
 	struct yahoo_packet *pkt;
 	struct yahoo_data *yd = gc->proto_data;
@@ -4599,7 +4595,7 @@ static void yahoo_keepalive(PurpleConnection *gc)
 
 }
 
-static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
+void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -4663,7 +4659,7 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	g_free(group2);
 }
 
-static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -4712,7 +4708,7 @@ static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleG
 	g_free(cg);
 }
 
-static void yahoo_add_deny(PurpleConnection *gc, const char *who) {
+void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
@@ -4728,7 +4724,7 @@ static void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-static void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
+void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
@@ -4743,7 +4739,7 @@ static void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-static void yahoo_set_permit_deny(PurpleConnection *gc)
+void yahoo_set_permit_deny(PurpleConnection *gc)
 {
 	PurpleAccount *account;
 	GSList *deny;
@@ -4767,14 +4763,7 @@ static void yahoo_set_permit_deny(PurpleConnection *gc)
 	}
 }
 
-static gboolean yahoo_unload_plugin(PurplePlugin *plugin)
-{
-	yahoo_dest_colorht();
-
-	return TRUE;
-}
-
-static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
+void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 				   const char *old_group, const char *new_group)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -4823,7 +4812,7 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 	g_free(gpo);
 }
 
-static void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
+void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 							   PurpleGroup *group, GList *moved_buddies)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -4848,7 +4837,7 @@ static void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 
 /********************************* Commands **********************************/
 
-static PurpleCmdRet
+PurpleCmdRet
 yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data) {
 	PurpleAccount *account = purple_conversation_get_account(c);
 
@@ -4860,9 +4849,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	return PURPLE_CMD_RET_OK;
 }
 
-static PurplePlugin *my_protocol = NULL;
-
-static PurpleCmdRet
+PurpleCmdRet
 yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
                         char **args, char **error, void *data)
 {
@@ -4889,7 +4876,7 @@ yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
 	return PURPLE_CMD_RET_OK;
 }
 
-static PurpleCmdRet
+PurpleCmdRet
 yahoopurple_cmd_chat_list(PurpleConversation *conv, const char *cmd,
                         char **args, char **error, void *data)
 {
@@ -4900,7 +4887,7 @@ yahoopurple_cmd_chat_list(PurpleConversation *conv, const char *cmd,
 	return PURPLE_CMD_RET_OK;
 }
 
-static gboolean yahoo_offline_message(const PurpleBuddy *buddy)
+gboolean yahoo_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
@@ -4933,130 +4920,5 @@ GList *yahoo_attention_types(PurpleAccount *account)
 	}
 
 	return list;
-}
-
-/************************** Plugin Initialization ****************************/
-static void
-yahoopurple_register_commands(void)
-{
-	purple_cmd_register("join", "s", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
-	                  PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoopurple_cmd_chat_join,
-	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
-	purple_cmd_register("list", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
-	                  PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoopurple_cmd_chat_list,
-	                  _("list: List rooms on the Yahoo network"), NULL);
-	purple_cmd_register("buzz", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoopurple_cmd_buzz,
-	                  _("buzz: Buzz a user to get their attention"), NULL);
-	purple_cmd_register("doodle", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoo_doodle_purple_cmd_start,
-	                 _("doodle: Request user to start a Doodle session"), NULL);
-}
-
-static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
-{
-	PurpleAccount *acct = NULL;
-
-	/* If we have a specific acct, use it */
-	if (acct_id) {
-		acct = purple_accounts_find(acct_id, prpl);
-		if (acct && !purple_account_is_connected(acct))
-			acct = NULL;
-	} else { /* Otherwise find an active account for the protocol */
-		GList *l = purple_accounts_get_all();
-		while (l) {
-			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
-					&& purple_account_is_connected(l->data)) {
-				acct = l->data;
-				break;
-			}
-			l = l->next;
-		}
-	}
-
-	return acct;
-}
-
-/* This may not be the best way to do this, but we find the first key w/o a value
- * and assume it is the buddy name */
-static void yahoo_find_uri_novalue_param(gpointer key, gpointer value, gpointer user_data)
-{
-	char **retval = user_data;
-
-	if (value == NULL && *retval == NULL) {
-		*retval = key;
-	}
-}
-
-static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable *params)
-{
-	char *acct_id = g_hash_table_lookup(params, "account");
-	PurpleAccount *acct;
-
-	if (g_ascii_strcasecmp(proto, "ymsgr"))
-		return FALSE;
-
-	acct = find_acct(purple_plugin_get_id(my_protocol), acct_id);
-
-	if (!acct)
-		return FALSE;
-
-	/* ymsgr:SendIM?screename&m=The+Message */
-	if (!g_ascii_strcasecmp(cmd, "SendIM")) {
-		char *sname = NULL;
-		g_hash_table_foreach(params, yahoo_find_uri_novalue_param, &sname);
-		if (sname) {
-			char *message = g_hash_table_lookup(params, "m");
-
-			PurpleConversation *conv = purple_find_conversation_with_account(
-				PURPLE_CONV_TYPE_IM, sname, acct);
-			if (conv == NULL)
-				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, sname);
-			purple_conversation_present(conv);
-
-			if (message) {
-				/* Spaces are encoded as '+' */
-				g_strdelimit(message, "+", ' ');
-				purple_conv_send_confirm(conv, message);
-			}
-		}
-		/* else
-			**If pidgindialogs_im() was in the core, we could use it here.
-			 * It is all purple_request_* based, but I'm not sure it really belongs in the core
-			pidgindialogs_im(); */
-
-		return TRUE;
-	}
-	/* ymsgr:Chat?roomname */
-	else if (!g_ascii_strcasecmp(cmd, "Chat")) {
-		char *rname = NULL;
-		g_hash_table_foreach(params, yahoo_find_uri_novalue_param, &rname);
-		if (rname) {
-			/* This is somewhat hacky, but the params aren't useful after this command */
-			g_hash_table_insert(params, g_strdup("room"), g_strdup(rname));
-			g_hash_table_insert(params, g_strdup("type"), g_strdup("Chat"));
-			serv_join_chat(purple_account_get_connection(acct), params);
-		}
-		/* else
-			** Same as above (except that this would have to be re-written using purple_request_*)
-			pidgin_blist_joinchat_show(); */
-
-		return TRUE;
-	}
-	/* ymsgr:AddFriend?name */
-	else if (!g_ascii_strcasecmp(cmd, "AddFriend")) {
-		char *name = NULL;
-		g_hash_table_foreach(params, yahoo_find_uri_novalue_param, &name);
-		purple_blist_request_add_buddy(acct, name, NULL, NULL);
-		return TRUE;
-	}
-
-	return FALSE;
 }
 

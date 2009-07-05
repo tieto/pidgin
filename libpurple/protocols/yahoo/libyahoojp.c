@@ -24,7 +24,35 @@
 #include "internal.h"
 
 #include <account.h>
-#include <prpl.h>
+
+#include "libymsg.h"
+#include "yahoochat.h"
+#include "yahoo_aliases.h"
+#include "yahoo_doodle.h"
+#include "yahoo_filexfer.h"
+#include "yahoo_picture.h"
+
+static void yahoojp_register_commands(void)
+{
+	purple_cmd_register("join", "s", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoojp", yahoopurple_cmd_chat_join,
+	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
+	purple_cmd_register("list", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoojp", yahoopurple_cmd_chat_list,
+	                  _("list: List rooms on the Yahoo network"), NULL);
+	purple_cmd_register("buzz", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoojp", yahoopurple_cmd_buzz,
+	                  _("buzz: Buzz a user to get their attention"), NULL);
+	purple_cmd_register("doodle", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoojp", yahoo_doodle_purple_cmd_start,
+	                 _("doodle: Request user to start a Doodle session"), NULL);
+}
 
 static GHashTable *
 yahoojp_get_account_text_table(PurpleAccount *account)
@@ -33,6 +61,13 @@ yahoojp_get_account_text_table(PurpleAccount *account)
 	table = g_hash_table_new(g_str_hash, g_str_equal);
 	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo JAPAN ID..."));
 	return table;
+}
+
+static gboolean yahoojp_unload_plugin(PurplePlugin *plugin)
+{
+	yahoo_dest_colorht();
+
+	return TRUE;
 }
 
 static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
@@ -148,7 +183,7 @@ static PurplePluginInfo info =
 	NULL,                                             /**< author         */
 	PURPLE_WEBSITE,                                     /**< homepage       */
 	NULL,                                             /**< load           */
-	yahoo_unload_plugin,                              /**< unload         */
+	yahoojp_unload_plugin,                              /**< unload         */
 	NULL,                                             /**< destroy        */
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
@@ -200,8 +235,7 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 
-	my_protocol = plugin;
-	yahoopurple_register_commands();
+	yahoojp_register_commands();
 	yahoo_init_colorht();
 }
 
