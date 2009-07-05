@@ -21,6 +21,11 @@
  *
  */
 
+#include "internal.h"
+
+#include <account.h>
+#include <prpl.h>
+
 static GHashTable *
 yahoo_get_account_text_table(PurpleAccount *account)
 {
