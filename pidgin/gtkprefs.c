@@ -1593,7 +1593,11 @@ conv_page(void)
 		fontpref = pidgin_prefs_checkbox(_("Use font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
 
 	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-	font_button = gtk_font_button_new_with_font(font_name ? font_name : NULL);
+	if ((font_name == NULL) || (*font_name == '\0')) {
+		font_button = gtk_font_button_new();
+	} else {
+		font_button = gtk_font_button_new_with_font(font_name);
+	}
 
 	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Conversation _font:"), NULL, font_button, FALSE, NULL);
