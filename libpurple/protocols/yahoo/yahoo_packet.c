@@ -24,7 +24,7 @@
 #include "internal.h"
 #include "debug.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)

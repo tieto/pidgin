@@ -36,7 +36,7 @@
 #include "conversation.h"
 #include "util.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 #include "ycht.h"
 #include "yahoochat.h"

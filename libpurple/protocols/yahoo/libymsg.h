@@ -1,5 +1,5 @@
 /**
- * @file yahoo.h The Yahoo! protocol plugin
+ * @file libymsg.h The Yahoo! and Yahoo! JAPAN Protocol Plugins
  *
  * purple
  *

@@ -32,7 +32,7 @@
 #include "proxy.h"
 #include "util.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 #include "yahoo_friend.h"
 #include "yahoo_picture.h"

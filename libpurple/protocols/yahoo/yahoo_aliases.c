@@ -30,7 +30,7 @@
 #include "debug.h"
 #include "util.h"
 #include "version.h"
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_aliases.h"
 #include "yahoo_friend.h"
 #include "yahoo_packet.h"

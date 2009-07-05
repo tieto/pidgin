@@ -28,7 +28,7 @@
 #include "internal.h"
 #include "prpl.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 
 #include <string.h>
 
