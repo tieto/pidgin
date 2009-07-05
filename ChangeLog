@@ -12,6 +12,8 @@ version 2.6.0 (??/??/2009):
 	* Fixed NTLM authentication on big-endian systems.
 	* The Pidgin and Purple perl modules are no longer installed into @INC,
 	  this should hopefulll prevent some minor confusion.
+	* Use GLib's implementations of SHA1, SHA256, and MD5 when available.
+	  (GLib 2.14 or higher)
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
@@ -26,6 +28,10 @@ version 2.6.0 (??/??/2009):
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
 	  information.
+	* PURPLE_VERBOSE_DEBUG environment variable.  Currently this is an "on" or
+	  "off" variable.  Set it to any value to turn it on and unset it to turn
+	  it off.  This will optionally be used to only show less useful debug
+	  information on an as-needed basis.
 
 	Gadu-Gadu:
 	* Accounts can specify a server to which to connect.

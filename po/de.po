@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-04 12:30+0200\n"
-"PO-Revision-Date: 2009-07-04 12:30+0200\n"
+"POT-Creation-Date: 2009-07-05 13:02+0200\n"
+"PO-Revision-Date: 2009-07-05 13:02+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2191,9 +2191,8 @@ msgstr "<font color=\"red\"><b>Kann folgende Datei nicht lesen: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
-#, fuzzy
 msgid "Error creating conference."
-msgstr "Fehler beim Herstellen der Verbindung"
+msgstr "Fehler beim Erstellen der Konferenz"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2600,7 +2599,6 @@ msgstr ""
 "Mitschnittsbetrachter an."
 
 #. * description
-#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
 "Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
@@ -2609,8 +2607,8 @@ msgid ""
 "at your own risk!"
 msgstr ""
 "Dieses Plugin zeigt auch die Mitschnitte anderer Sofortnachrichtenprogramme "
-"im Mitschnittsbetrachter an. Momentan sind das Adium, MSN Messenger und "
-"Trillian.\n"
+"im Mitschnittsbetrachter an. Momentan sind das Adium, MSN Messenger, aMSN "
+"und Trillian.\n"
 "WARNUNG: Dieses Plugin ist immer noch im Alpha-Stadium und kann oft "
 "abstürzen. Benutzung auf eigene Gefahr!"
 
@@ -2657,12 +2655,11 @@ msgstr "Offline-Nachrichten-Emulation"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Sichert Nachrichten an einen Offline-Benutzer als Alarm."
 
-#, fuzzy
 msgid ""
 "The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
-"Die folgenden Nachrichten werden als Alarm gesichert. Sie können den Alarm "
+"Die folgenden Nachrichten werden als Alarme gesichert. Sie können den Alarm "
 "im `Buddy-Alarm'-Dialog ändern oder löschen."
 
 #, c-format
@@ -3863,159 +3860,6 @@ msgstr "Betriebssystem"
 msgid "Local Time"
 msgstr "Lokale Zeit"
 
-msgid "Last Activity"
-msgstr "Letzte Aktivität"
-
-msgid "Service Discovery Info"
-msgstr "Information zur Dienstsuche"
-
-msgid "Service Discovery Items"
-msgstr "Elemente der Dienstsuche"
-
-msgid "Extended Stanza Addressing"
-msgstr "Erweiterte Blockadressierung"
-
-msgid "Multi-User Chat"
-msgstr "Mehrbenutzer-Chat"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "Erweiterte Anwesenheitsinformation im Mehrbenutzer-Chat"
-
-msgid "In-Band Bytestreams"
-msgstr "Bandinterner Bytestrom("
-
-msgid "Ad-Hoc Commands"
-msgstr "Ad Hoc-Kommando"
-
-msgid "PubSub Service"
-msgstr "PubSub-Dienst"
-
-msgid "SOCKS5 Bytestreams"
-msgstr "SOCKS5-Bytestrom"
-
-msgid "Out of Band Data"
-msgstr "Bandexterne Daten"
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-msgid "In-Band Registration"
-msgstr "Bandinterne Registrierung"
-
-msgid "User Location"
-msgstr "Benutzerort"
-
-msgid "User Avatar"
-msgstr "Benutzer-Avatar"
-
-msgid "Chat State Notifications"
-msgstr "Chat-Status-Benachrichtigung"
-
-msgid "Software Version"
-msgstr "Software-Version"
-
-msgid "Stream Initiation"
-msgstr "Strom-Initialisierung"
-
-msgid "File Transfer"
-msgstr "Dateiübertragung"
-
-msgid "User Mood"
-msgstr "Benutzerstimmung"
-
-msgid "User Activity"
-msgstr "Benutzeraktivität"
-
-msgid "Entity Capabilities"
-msgstr "Instanz-Fähigkeiten"
-
-msgid "Encrypted Session Negotiations"
-msgstr "Aushandlung einer verschlüsselten Sitzung"
-
-msgid "User Tune"
-msgstr "Benutzer anpassen"
-
-msgid "Roster Item Exchange"
-msgstr "Mitgliedsverzeichnis-Eintragsaustausch"
-
-msgid "Reachability Address"
-msgstr "Erreichbare Adresse"
-
-msgid "User Profile"
-msgstr "Benutzerprofil"
-
-msgid "Jingle"
-msgstr "Jingle"
-
-msgid "Jingle Audio"
-msgstr "Jingle-Klang"
-
-msgid "User Nickname"
-msgstr "Benutzer-Spitzname"
-
-msgid "Jingle ICE UDP"
-msgstr "Jingle ICE UDP"
-
-msgid "Jingle ICE TCP"
-msgstr "Jingle ICE TCP"
-
-msgid "Jingle Raw UDP"
-msgstr "Jingle Raw UDP"
-
-msgid "Jingle Video"
-msgstr "Jingle-Video"
-
-msgid "Jingle DTMF"
-msgstr "Jingle DTMF"
-
-msgid "Message Receipts"
-msgstr "Nachrichtempfänge"
-
-msgid "Public Key Publishing"
-msgstr "Öffentliche Schlüssel-Veröffentlichung"
-
-msgid "User Chatting"
-msgstr "Benutzer, die chatten"
-
-msgid "User Browsing"
-msgstr "Benutzer, die im Web surfen"
-
-msgid "User Gaming"
-msgstr "Benutzer, die spielen"
-
-msgid "User Viewing"
-msgstr "Benutzer, die schauen"
-
-msgid "Ping"
-msgstr "Ping"
-
-msgid "Stanza Encryption"
-msgstr "Blockverschlüsselung"
-
-msgid "Entity Time"
-msgstr "Instanzzeit"
-
-msgid "Delayed Delivery"
-msgstr "Verzögerte Lieferung"
-
-msgid "Collaborative Data Objects"
-msgstr "Kooperative Datenobjekte"
-
-msgid "File Repository and Sharing"
-msgstr "Speicherbereich und gemeinsame Benutzung von Dateien"
-
-msgid "STUN Service Discovery for Jingle"
-msgstr "STUN-Dienstsuche für Jingle"
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr "Vereinfachte Aushandlung der verschlüsselten Sitzung"
-
-msgid "Hop Check"
-msgstr "Hop-Überprüfung"
-
-msgid "Capabilities"
-msgstr "Fähigkeiten"
-
 msgid "Priority"
 msgstr "Priorität"
 
@@ -4026,7 +3870,7 @@ msgstr "Ressource"
 msgid "%s ago"
 msgstr "vor %s"
 
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "Abgemeldet"
 
 msgid "Middle Name"
@@ -5095,10 +4939,11 @@ msgstr "Andere Kontakte"
 msgid "Non-IM Contacts"
 msgstr "Nicht-IM-Kontakte"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
 msgstr ""
-"%s hat Ihnen eine Webcam-Einladung gesendet, die noch nicht unterstützt wird."
+"%s hat Ihnen eine Audiochat-Einladung gesendet, die noch nicht unterstützt "
+"wird."
 
 msgid "Nudge"
 msgstr "Anstoßen"
@@ -6317,7 +6162,6 @@ msgstr ""
 "%s scheint offline zu sein und hat die Nachricht, die Sie gerade gesendet "
 "haben, nicht empfangen."
 
-#, fuzzy
 msgid ""
 "Unable to connect to server. Please enter the address of the server to which "
 "you wish to connect."
@@ -6352,9 +6196,8 @@ msgstr "Server-Adresse"
 msgid "Server port"
 msgstr "Server-Port"
 
-#, fuzzy
 msgid "Received unexpected response from "
-msgstr "Ungültige HTTP-Antwort vom Server empfangen."
+msgstr "Unerwartete Antwort erhalten von"
 
 #. username connecting too frequently
 msgid ""
@@ -6915,6 +6758,9 @@ msgstr "Online seit"
 
 msgid "Member Since"
 msgstr "Mitglied seit"
+
+msgid "Capabilities"
+msgstr "Fähigkeiten"
 
 msgid "Profile"
 msgstr "Profil"
@@ -8167,6 +8013,9 @@ msgstr "Lautsprecher"
 msgid "Video Camera"
 msgstr "Videokamera"
 
+msgid "File Transfer"
+msgstr "Dateiübertragung"
+
 msgid "Supports"
 msgstr "Unterstützt"
 
@@ -8991,6 +8840,9 @@ msgstr ""
 
 msgid "Network Statistics"
 msgstr "Netzwerkstatistik"
+
+msgid "Ping"
+msgstr "Ping"
 
 msgid "Ping failed"
 msgstr "Ping fehlgeschlagen"
@@ -11004,7 +10856,7 @@ msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
 msgid "The background color for the buddy list"
-msgstr ""
+msgstr "Die Hintergrundfarbe für die Buddy-Liste"
 
 #, fuzzy
 msgid "Layout"
@@ -11019,28 +10871,28 @@ msgid "Expanded Background Color"
 msgstr "Hintergrundfarbe"
 
 msgid "The background color of an expanded group"
-msgstr ""
+msgstr "Die Hintergrundfarbe für eine ausgeklappte Gruppe"
 
 #, fuzzy
 msgid "Expanded Text"
 msgstr "A_usklappen"
 
 msgid "The text information for when a group is expanded"
-msgstr ""
+msgstr "Die Textinformation für eine ausgeklappte Gruppe"
 
 #, fuzzy
 msgid "Collapsed Background Color"
 msgstr "Hintergrundfarbe auswählen"
 
 msgid "The background color of a collapsed group"
-msgstr ""
+msgstr "Die Hintergrundfarbe für eine zusammengeklappte Gruppe"
 
 #, fuzzy
 msgid "Collapsed Text"
 msgstr "_Zusammenklappen"
 
 msgid "The text information for when a group is collapsed"
-msgstr ""
+msgstr "Die Textinformation für eine zusammengeklappte Gruppe"
 
 #. Buddy
 #, fuzzy
@@ -11055,41 +10907,41 @@ msgid "Contact Text"
 msgstr "Verknüpfter Text"
 
 msgid "The text information for when a contact is expanded"
-msgstr ""
+msgstr "Die Textinformation für einen ausgeklappten Kontakt"
 
 #, fuzzy
 msgid "On-line Text"
 msgstr "Online"
 
 msgid "The text information for when a buddy is online"
-msgstr ""
+msgstr "Die Textinformation für einen Online-Buddy"
 
 #, fuzzy
 msgid "Away Text"
 msgstr "Abwesend"
 
 msgid "The text information for when a buddy is away"
-msgstr ""
+msgstr "Die Textinformation für einen abwesenden Buddy"
 
 #, fuzzy
 msgid "Off-line Text"
 msgstr "Offline"
 
 msgid "The text information for when a buddy is off-line"
-msgstr ""
+msgstr "Die Textinformation für einen Offline-Buddy"
 
 #, fuzzy
 msgid "Idle Text"
 msgstr "Stimmungstext"
 
 msgid "The text information for when a buddy is idle"
-msgstr ""
+msgstr "Die Textinformation für einen untätigen Buddy"
 
 msgid "Message Text"
 msgstr "Nachrichtentext"
 
 msgid "The text information for when a buddy has an unread message"
-msgstr ""
+msgstr "Die Textinformation für einen Buddy mit ungelesenen Nachrichten"
 
 msgid "Message (Nick Said) Text"
 msgstr ""
@@ -11098,10 +10950,11 @@ msgid ""
 "The text information for when a chat has an unread message that mentions "
 "your nick"
 msgstr ""
+"Die Textinformation für einen Chat mit einer ungelesenen Nachricht, in der "
+"Ihr Nickname vorkommt"
 
-#, fuzzy
 msgid "The text information for a buddy's status"
-msgstr "Ändere die Benutzerinformation für %s"
+msgstr "Die Textinformation für den Status eines Buddys"
 
 msgid "Type the host name for this certificate."
 msgstr "Geben Sie einen Hostnamen für dieses Zertifikat an."
@@ -12093,7 +11946,6 @@ msgstr ""
 msgid "Typing notification color"
 msgstr "Farbe der Tipp-Benachrichtigung"
 
-#, fuzzy
 msgid "The color to use for the typing notification"
 msgstr ""
 "Die Farbe, die für die Tipp-Benachrichtigungsmeldung benutzt werden soll"
@@ -13907,7 +13759,6 @@ msgid "Music Messaging Plugin for collaborative composition."
 msgstr "Musik-Nachrichten-Plugin zum gemeinschaftlichen Komponieren."
 
 #. *  summary
-#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
 "on a piece of music by editing a common score in real-time."
@@ -14067,9 +13918,8 @@ msgstr "GTK+ Schrift"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "GTK+ Text Shortcut-Thema"
 
-#, fuzzy
 msgid "Disable Typing Notification Text"
-msgstr "Tipp-Benachrichtigung aktivieren"
+msgstr "Tipp-Benachrichtigungstext deaktivieren"
 
 msgid "GTK+ Theme Control Settings"
 msgstr "Themenkontroll-Einstellungen für GTK+"
@@ -14166,7 +14016,6 @@ msgid "Conversation Window Send Button."
 msgstr "Senden-Knopf für das Gesprächsfenster."
 
 #. *< summary
-#, fuzzy
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
 "for use when no physical keyboard is present."
@@ -14225,13 +14074,11 @@ msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "Ersetzt Text in ausgehenden Nachrichten durch benutzerdefinierte Regeln."
 
-#, fuzzy
 msgid "Just logged in"
-msgstr "Nicht angemeldet"
+msgstr "Gerade angemeldet"
 
-#, fuzzy
 msgid "Just logged out"
-msgstr "Nicht angemeldet"
+msgstr "Gerade abgemeldet"
 
 msgid ""
 "Icon for Contact/\n"
@@ -14242,9 +14089,8 @@ msgstr ""
 msgid "Icon for Chat"
 msgstr "Chat betreten"
 
-#, fuzzy
 msgid "Ignored"
-msgstr "Ignorieren"
+msgstr "Ignoriert"
 
 #, fuzzy
 msgid "Founder"
@@ -14257,63 +14103,52 @@ msgstr "Opera"
 msgid "Half Operator"
 msgstr ""
 
-#, fuzzy
 msgid "Authorization dialog"
-msgstr "Autorisierung wurde gegeben"
+msgstr "Autorisierungsdialog"
 
-#, fuzzy
 msgid "Error dialog"
-msgstr "Fehler "
+msgstr "Fehlerdialog"
 
-#, fuzzy
 msgid "Information dialog"
-msgstr "Information"
+msgstr "Informationsdialog"
 
 msgid "Mail dialog"
-msgstr ""
+msgstr "Mail-Dialog"
 
 #, fuzzy
 msgid "Question dialog"
 msgstr "Anfrage-Dialog"
 
-#, fuzzy
 msgid "Warning dialog"
-msgstr "Warnstufe"
+msgstr "Warnungdialog"
 
 msgid "What kind of dialog is this?"
-msgstr ""
+msgstr "Welche Art von Dialog ist dies?"
 
-#
-#, fuzzy
 msgid "Status Icons"
-msgstr "Status für %s"
+msgstr "Status-Icons"
 
 #, fuzzy
 msgid "Chatroom Emblems"
 msgstr "Chatraum-Gebiet"
 
-#, fuzzy
 msgid "Dialog Icons"
-msgstr "Icon ändern"
+msgstr "Dialog-Icons"
 
-#, fuzzy
 msgid "Pidgin Icon Theme Editor"
-msgstr "Pidgin GTK+ Themenkontrolle"
+msgstr "Pidgin Icon-Themen-Editor"
 
-#, fuzzy
 msgid "Contact"
-msgstr "Kontakt-Info"
+msgstr "Kontakt"
 
-#, fuzzy
 msgid "Pidgin Buddylist Theme Editor"
-msgstr "Buddy-Listen-Thema"
+msgstr "Pidgin Buddy-Listen-Thema-Editor"
 
-#, fuzzy
 msgid "Edit Buddylist Theme"
-msgstr "Buddy-Listen-Thema"
+msgstr "Buddy-Listen-Thema bearbeiten"
 
 msgid "Edit Icon Theme"
-msgstr ""
+msgstr "Icon-Thema bearbeiten"
 
 #. *< type
 #. *< ui_requirement
@@ -14322,16 +14157,14 @@ msgstr ""
 #. *< priority
 #. *< id
 #. *  description
-#, fuzzy
 msgid "Pidgin Theme Editor"
-msgstr "Pidgin GTK+ Themenkontrolle"
+msgstr "Pidgin Themen-Editor"
 
 #. *< name
 #. *< version
 #. *  summary
-#, fuzzy
 msgid "Pidgin Theme Editor."
-msgstr "Pidgin GTK+ Themenkontrolle"
+msgstr "Pidgin Themen-Editor"
 
 #. *< type
 #. *< ui_requirement
@@ -14499,7 +14332,6 @@ msgstr "Windows-Pidgin-Optionen"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Optionen für Pidgin unter Windows."
 
-#, fuzzy
 msgid ""
 "Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""

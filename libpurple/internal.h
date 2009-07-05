@@ -148,6 +148,14 @@
 #	endif
 #endif
 
+#ifndef G_MAXSSIZE
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_MAXSSIZE ((gssize) 0x7fffffffffffffff)
+#	else
+#		define G_MAXSSIZE ((gssize) 0x7fffffff)
+#	endif
+#endif
+
 #if GLIB_CHECK_VERSION(2,6,0)
 #	include <glib/gstdio.h>
 #endif
