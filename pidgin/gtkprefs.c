@@ -2781,9 +2781,7 @@ away_page(void)
 }
 
 static int
-prefs_notebook_add_page(const char *text,
-  		                GtkWidget *page,
-                        int ind)
+prefs_notebook_add_page(const char *text, GtkWidget *page, int ind)
 {
 #if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
