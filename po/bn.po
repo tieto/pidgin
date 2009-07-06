@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2008-11-13 17:07+0600\n"
 "Last-Translator: Israt Jahan <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <core@bengalinux.org>\n"
@@ -2696,9 +2696,10 @@ msgid "Includes other IM clients' logs in the log viewer."
 msgstr "লগ প্রদর্শকে অন্যান্য আইএম ক্লায়েন্টদের লগসমূহ অন্তর্ভুক্ত করে।"
 
 #. * description
+#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2758,8 +2759,9 @@ msgid "Save messages sent to an offline user as pounce."
 msgstr "অফলাইন ব্যবহারকারীকে পাঠানো বার্তা পাউন্স হিসেবে সংরক্ষণ করুন।"
 
 # tithi
+#, fuzzy
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "অবশিষ্ট বার্তাগুলো পাউন্স হিসেবে সংরক্ষিত হবে। আপনি 'বন্ধু পাউন্স' সংলাপ হতে পাউন্স "
@@ -3019,14 +3021,16 @@ msgstr ""
 "http://www.activestate.com থেকে সক্রিয় TCL সংস্থাপন করুন\n"
 
 # tithi
+#, fuzzy
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 "উইন্ডোজ টুলকিটের জন্য অ্যাপল বোনজুর খুঁজে পাওয়া যায়নি, আরও তথ্যের জন্য http://d."
 "pidgin.im/BonjourWindows এর FAQ দেখুন।"
 
-msgid "Unable to listen for incoming IM connections\n"
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
 msgstr "আগত আইএম সংযোগসূমহের জন্য শুনতে অক্ষম\n"
 
 msgid ""
@@ -3079,14 +3083,21 @@ msgstr "%s কথোপকথন বন্ধ করে দিয়েছে।
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "বার্তা পাঠাতে অক্ষম, কথোপকথন শুরু হতে পারে নি।"
 
-msgid "Cannot open socket"
-msgstr "সকেট খোলা যাচ্ছে না"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"সকেট তৈরী করতে ব্যর্থ:\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "পোর্টের সাথে সকেটকে সংযুক্ত করা যায়নি"
 
-msgid "Could not listen on socket"
-msgstr "সকেট এ শোনা যাচ্ছে না"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"সকেট তৈরী করতে ব্যর্থ:\n"
+"%s"
 
 # tithi
 msgid "Error communicating with local mDNSResponder."
@@ -3134,13 +3145,16 @@ msgstr "বন্ধু-তালিকা সংরক্ষণ করুন...
 msgid "Load buddylist from file..."
 msgstr "ফাইল থেকে বন্ধু-তালিকা লোড করুন..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "নিবন্ধন ক্ষেত্রে পূরণ করুন।"
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "গুপ্তসংকেত মিলে না।"
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "নতুন একাউন্ট নিবন্ধন করতে ব্যর্থ। ত্রুটি দেখা দিয়েছে।\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -3152,14 +3166,16 @@ msgstr "নিবন্ধন সফলভাবে শেষ হয়েছে
 msgid "Password"
 msgstr "গুপ্তসংকেত"
 
-msgid "Password (retype)"
-msgstr "গুপ্তসংকেত (পুনরায় টাইপ করুন)"
+msgid "Password (again)"
+msgstr "গুপ্তসংকেত (আবার)"
 
-msgid "Enter current token"
-msgstr "বর্তমান টোকেন প্রবেশ করান"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "বর্তমান টোকেন"
+# fix me tithi
+#, fuzzy
+msgid "Captcha"
+msgstr "Captcha চিত্র"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "নতুন গাদু-গাদু একাউন্ট নিবন্ধন করুন"
@@ -3212,6 +3228,15 @@ msgstr "গুপ্তসংকেত সফলভাবে পরিবর্�
 msgid "Current password"
 msgstr "বর্তমান গুপ্তসংকেত"
 
+msgid "Password (retype)"
+msgstr "গুপ্তসংকেত (পুনরায় টাইপ করুন)"
+
+msgid "Enter current token"
+msgstr "বর্তমান টোকেন প্রবেশ করান"
+
+msgid "Current token"
+msgstr "বর্তমান টোকেন"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr ""
 "অনুগ্রহ করে, UIN-এর জন্য আপনার বর্তমান গুপ্তসংকেত এবং আপনার নতুন গুপ্তসংকেত প্রবেশ "
@@ -3261,8 +3286,8 @@ msgstr "কোনো সমন্বয়কারী ব্যবহারকা�
 msgid "There are no users matching your search criteria."
 msgstr "আপনার অনুসন্ধানের শর্তাবলী সাথে মেলে এমন কোনো ব্যবহারকারী নেই।"
 
-msgid "Unable to read socket"
-msgstr "সকেট পড়তে ব্যর্থ"
+msgid "Unable to read from socket"
+msgstr "সকেট থেকে পাঠ করতে ব্যর্থ"
 
 msgid "Buddy list downloaded"
 msgstr "বন্ধু তালিকা ডাউনলোড করা হয়েছে"
@@ -3276,8 +3301,14 @@ msgstr "বন্ধু তালিকা আপলোড করা হয়�
 msgid "Your buddy list was stored on the server."
 msgstr "আপনার বন্ধু তালিকাটি সার্ভারে সংরক্ষণ করা হয়েছিল।"
 
-msgid "Connection failed."
-msgstr "সংযোগ ব্যর্থ।"
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "সংযুক্ত"
+
+msgid "Connection failed"
+msgstr "সংযোগ ব্যর্থ হয়েছে"
 
 msgid "Add to chat"
 msgstr "আড্ডার যোগ দিন"
@@ -3285,10 +3316,14 @@ msgstr "আড্ডার যোগ দিন"
 msgid "Chat _name:"
 msgstr "আড্ডার নাম (_n):"
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "সার্ভারের সাথে সংযোগ স্থাপনে অসমর্থ।"
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "সংযোগ করছে"
 
 msgid "Chat error"
 msgstr "আড্ডা ত্রুটি"
@@ -3296,7 +3331,8 @@ msgstr "আড্ডা ত্রুটি"
 msgid "This chat name is already in use"
 msgstr "এই আড্ডা নামটি ইতোমধ্যে ব্যবহৃত হচ্ছে"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "সার্ভারের সাথে সংযুক্ত নয়।"
 
 msgid "Find buddies..."
@@ -3356,7 +3392,8 @@ msgstr "কোনো বিষয় নির্ধারণ করা হয�
 msgid "File Transfer Failed"
 msgstr "ফাইল বিনিময় ব্যর্থ"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "শোনার কোনো পোর্ট খুলতে পারছে না।"
 
 msgid "Error displaying MOTD"
@@ -3372,8 +3409,18 @@ msgstr "এই সংযোগের সাথে সম্পর্কিত �
 msgid "MOTD for %s"
 msgstr "%s এর জন্য MOTD"
 
-msgid "Server has disconnected"
-msgstr "সার্ভার বিচ্ছিন্ন হয়েছে"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"সার্ভারের সাথে সংযুক্ত হারিয়েছে:\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "MOTD প্রদর্শন করুন"
@@ -3389,22 +3436,20 @@ msgstr "গুপ্তসংকেত (_P):"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC এর ডাকনামসমূহ ফাঁকা স্থান ধারণ নাও করতে পারে"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "সংযোগ করছে"
-
 msgid "SSL support unavailable"
 msgstr "এসএসএল সমর্থন অপ্রাপ্য"
 
-msgid "Couldn't create socket"
-msgstr "সকেট তৈরী করা যাচ্ছে না"
+msgid "Unable to connect"
+msgstr "সংযোগ করতে সমর্থ নয়"
 
-msgid "Couldn't connect to host"
-msgstr "হোস্টের সাথে সংযুক্ত করা যাচ্ছে না"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "%s এ সংযোগ দিতে ব্যর্থ হয়েছে"
 
-msgid "Read error"
-msgstr "পড়ায় ত্রুটি"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "সার্ভার সংযোগটি বন্ধ করে দিয়েছে।"
 
 msgid "Users"
 msgstr "ব্যবহারকারীরা"
@@ -3863,12 +3908,14 @@ msgid "execute"
 msgstr "কার্যকর করুন"
 
 # tithi
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr ""
 "সার্ভারের লগইন করার জন্য TSL/SSL আবশ্যক,  কোনো TLS/SSL সমর্থন খুঁজে পাওয়া যায়নি।"
 
 # tithi
-msgid "You require encryption, but no TLS/SSL support found."
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr "আপনার এনক্রিপশন প্রয়োজন, কিন্তু কোনো TLS/SSL সমর্থন খুঁজে পাওয়া যায়নি।"
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -3885,7 +3932,13 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "সরল-পাঠ প্রমাণীকরণ"
 
-msgid "Invalid response from server."
+# tithi
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "প্রমাণীকরণ ব্যর্থ"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "সার্ভার থেকে অবৈধ সাড়া।"
 
 msgid "Server does not use any supported authentication method"
@@ -3898,7 +3951,8 @@ msgstr "আপনার সঙ্কেতায়ন প্রয়োজন, �
 msgid "Invalid challenge from server"
 msgstr "সার্ভার থেকে অবৈধ চ্যালেঞ্জ"
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SASL ত্রুটি"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3919,10 +3973,8 @@ msgstr ""
 "সার্ভারের সাথে সংযোগ স্থাপন করতে পারে না:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 "সার্ভারের সাথে সংযোগ স্থাপন করতে পারে না:\n"
 "%s"
@@ -3930,12 +3982,6 @@ msgstr ""
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "সংযোগ প্রস্তুত করতে ব্যর্থ"
-
-msgid "Unable to create socket"
-msgstr "সকেট তৈরী করতে অক্ষম"
-
-msgid "Write error"
-msgstr "লিখন ত্রুটি"
 
 msgid "Full Name"
 msgstr "পুরো নাম"
@@ -4008,185 +4054,6 @@ msgstr "অপারেটিং সিস্টেম"
 msgid "Local Time"
 msgstr "স্থানীয় ফাইল:"
 
-# tithi
-msgid "Last Activity"
-msgstr "শেষ সক্রিয়তা"
-
-msgid "Service Discovery Info"
-msgstr "সেবা আবিষ্কারের তথ্য"
-
-# tithi
-msgid "Service Discovery Items"
-msgstr "সেবা আবিষ্কারের বিষয়োপকরনসমূহ"
-
-msgid "Extended Stanza Addressing"
-msgstr "বর্ধিত স্ট্যানজা উদ্দেশ করছে"
-
-msgid "Multi-User Chat"
-msgstr "একাধিক-ব্যবহারকারী সম্বলিত আড্ডা"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "একাধিক-ব্যবহারকারীর বর্ধিত উপস্থিতি তথ্য"
-
-# tithi
-msgid "In-Band Bytestreams"
-msgstr "In-Band বাইট-প্রবাহ"
-
-msgid "Ad-Hoc Commands"
-msgstr "Ad-Hoc নির্দেশসমূহ"
-
-# tithi
-msgid "PubSub Service"
-msgstr "PubSub সেবা"
-
-# tithi
-msgid "SOCKS5 Bytestreams"
-msgstr "SOCKS5 বাইট-প্রবাহ"
-
-# tithi
-msgid "Out of Band Data"
-msgstr "ব্যান্ড তথ্যের বাইরে"
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-msgid "In-Band Registration"
-msgstr "ইন ব্যান্ড নিবন্ধন"
-
-msgid "User Location"
-msgstr "ব্যবহারকারীর অবস্থান"
-
-# fix me tithi
-msgid "User Avatar"
-msgstr "ব্যবহারকারী অ্যাভাটার"
-
-msgid "Chat State Notifications"
-msgstr "আড্ডার অবস্থার প্রজ্ঞাপন"
-
-msgid "Software Version"
-msgstr "সফটওয়্যায় সংস্করণ"
-
-# fix me tithi
-msgid "Stream Initiation"
-msgstr "প্রবাহ শুরু করুন"
-
-msgid "File Transfer"
-msgstr "ফাইল স্থানান্তর করুন"
-
-msgid "User Mood"
-msgstr "ব্যবহাকারীরর পরিমন্ডল"
-
-msgid "User Activity"
-msgstr "ব্যবহারকারীর কাজকর্ম"
-
-# tithi
-msgid "Entity Capabilities"
-msgstr "সত্তার সক্ষমতা"
-
-# tithi
-msgid "Encrypted Session Negotiations"
-msgstr "সঙ্কেতায়িত অধিবেশনের আলোচনা"
-
-msgid "User Tune"
-msgstr "ব্যবহারকারীর সুর"
-
-# tithi
-msgid "Roster Item Exchange"
-msgstr "রোস্টার বিষয়োপকরণ পরিবর্তন করুন"
-
-msgid "Reachability Address"
-msgstr "পৌঁছানোর মতো ঠিকানা"
-
-msgid "User Profile"
-msgstr "ব্যবহারকারীর প্রোফাইল"
-
-msgid "Jingle"
-msgstr "ছন্দ"
-
-# tithi
-msgid "Jingle Audio"
-msgstr "ছন্দময় অডিও"
-
-msgid "User Nickname"
-msgstr "ব্যবহারকারীর ডাকনাম"
-
-# tithi
-msgid "Jingle ICE UDP"
-msgstr "ছন্দময় ICE UDP"
-
-# tithi
-msgid "Jingle ICE TCP"
-msgstr "ছন্দময়  ICE TCP"
-
-# tithi
-msgid "Jingle Raw UDP"
-msgstr "ছন্দময় Raw UDP"
-
-# tithi
-msgid "Jingle Video"
-msgstr "ছন্দময় ভিডিও"
-
-# tithi
-msgid "Jingle DTMF"
-msgstr "ছন্দময় DTMF"
-
-msgid "Message Receipts"
-msgstr "বার্তা গ্রহণ করা হয়েছে"
-
-msgid "Public Key Publishing"
-msgstr "সর্বসাধারণের কী প্রকাশ করা হচ্ছে"
-
-msgid "User Chatting"
-msgstr "ব্যবহারকারী আড্ডা দিচ্ছে"
-
-msgid "User Browsing"
-msgstr "ব্যবহাকারী ব্রাউজ করছে"
-
-msgid "User Gaming"
-msgstr "ব্যবহারকারীরা খেলছে"
-
-msgid "User Viewing"
-msgstr "ব্যবহারকারীরা দেখছে"
-
-msgid "Ping"
-msgstr "পিঙ্গ করুন"
-
-# tithi
-msgid "Stanza Encryption"
-msgstr "স্ট্যানজা সঙ্কেতায়ন"
-
-# tithi
-msgid "Entity Time"
-msgstr "সত্ত্বার সময়"
-
-# tithi
-msgid "Delayed Delivery"
-msgstr "বিলম্বিত সরবরাহ"
-
-# tithi
-msgid "Collaborative Data Objects"
-msgstr "সহযোগি উপাত্ত অবজেক্ট"
-
-# tithi
-msgid "File Repository and Sharing"
-msgstr "ফাইল ভান্ডার এবং শেয়ার করছে"
-
-# tithi
-msgid "STUN Service Discovery for Jingle"
-msgstr "ছন্দময়তার জন্য STUN সেবা আবিষ্কার"
-
-# tithi
-msgid "Simplified Encrypted Session Negotiation"
-msgstr "সহজবোধ্য সঙ্কেতায়িত অধিবেশনের আলোচনা"
-
-# tithi
-msgid "Hop Check"
-msgstr "হপ পরীক্ষা করুন"
-
-# tithi
-msgid "Capabilities"
-msgstr "সক্ষমতা"
-
 msgid "Priority"
 msgstr "অগ্রাধিকার"
 
@@ -4198,7 +4065,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "লগইন করেছে"
 
 msgid "Middle Name"
@@ -4388,16 +4255,13 @@ msgstr "কোনো সমন্বয়কারী ব্যবহারকা�
 msgid "Roles:"
 msgstr "ভূমিকা"
 
-msgid "Ping timeout"
+#, fuzzy
+msgid "Ping timed out"
 msgstr "পিঙ্গ সময়-উত্তীর্ণ হয়েছে"
 
-msgid "Read Error"
-msgstr "পাঠ ত্রুটি"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4588,9 +4452,6 @@ msgstr "আপনার গুপ্তসংকেত পরিবর্তি�
 
 msgid "Error changing password"
 msgstr "গুপ্তসংকেত পরিবর্তনে ত্রুটি"
-
-msgid "Password (again)"
-msgstr "গুপ্তসংকেত (আবার)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP গুপ্তসংকেত পরিবর্তন করুন"
@@ -5027,6 +4888,14 @@ msgstr "XML পার্স ত্রুটি"
 msgid "Unknown Error in presence"
 msgstr "বর্তমানে অজানা ত্রুটি"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "%s আড্ডায় অংশগ্রহনের ত্রুটি"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "%s আড্ডায় ত্রুটি"
+
 msgid "Create New Room"
 msgstr "নতুন কক্ষ তৈরী করুন"
 
@@ -5044,16 +4913,20 @@ msgstr "কক্ষ বিন্যাস করুন (_C)"
 msgid "_Accept Defaults"
 msgstr "পূর্বনির্ধারিত গ্রহণ (_A)"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "%s আড্ডায় অংশগ্রহনের ত্রুটি"
+#, fuzzy
+msgid "No reason"
+msgstr "কোনো কারন দর্শানো হয়নি"
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "%s আড্ডায় ত্রুটি"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "%1s দ্বারা আপনাকে বের করে দেয়া হয়েছে: (%2s)"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "%1s (%2s) দ্বারা বহিষ্কৃত"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "ফাইলটি খোলার সময়ে একটি ত্রুটি ঘটেছে।"
 
 #, fuzzy
@@ -5593,9 +5466,6 @@ msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "MSN এর জন্য SSL সমর্থন প্রয়োজন। অনুগ্রহ করে একটি সমর্থিত SSL লাইব্রেরী সংস্থাপন করুন।"
 
-msgid "Failed to connect to server."
-msgstr "সার্ভারে সংযোগ দিতে ব্যর্থ হয়েছে।"
-
 # tithi
 msgid "Error retrieving profile"
 msgstr "বৃত্তান্ত উদ্ধারে ত্রুটি"
@@ -5860,9 +5730,6 @@ msgstr "অজানা সঙ্কেতায়ন ত্রুটি সংঘ
 msgid "Message was not sent because an unknown error occurred."
 msgstr "অজানা ত্রুটি সংঘটিত হওয়ার কারণে বার্তা পাঠানো যায়নি।"
 
-msgid "Unable to connect"
-msgstr "সংযোগ করতে সমর্থ নয়"
-
 # tithi
 msgid "Writing error"
 msgstr "লিখন ত্রুটি"
@@ -5879,13 +5746,16 @@ msgstr ""
 "%1s সার্ভার হতে সংযোগের ত্রুটি:\n"
 "%2s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "আমাদের প্রটোকল সার্ভার সমর্থন করে না।"
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "HTTP পার্স করতে ত্রুটি।"
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "আপনি অন্য স্থান থেকে সাইন অন করেছেন।"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
@@ -5894,7 +5764,8 @@ msgstr ""
 "চেষ্টা করুন"
 
 # tithi
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "MSN সার্ভার সাময়িকভাবে নিস্ক্রিয় হচ্ছে।"
 
 #, c-format
@@ -5906,9 +5777,6 @@ msgid ""
 msgstr ""
 "সাময়িকভাবে আপনার এমএসএন বন্ধু-তালিকা পাওয়া যাচ্ছে না। অনুগ্রহ করে অপেক্ষা করুন এবং "
 "পুনরায় চেষ্টা করুন।"
-
-msgid "Unknown error."
-msgstr "অজানা ত্রুটি।"
 
 # tithi
 msgid "Handshaking"
@@ -6014,6 +5882,9 @@ msgstr "MSN প্রোটোকল প্লাগইন"
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s কোনো বৈধ গ্রুপ নয়।"
+
+msgid "Unknown error."
+msgstr "অজানা ত্রুটি।"
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -6135,12 +6006,6 @@ msgstr[1] ""
 msgid "Add contacts from server"
 msgstr "সার্ভার থেকে যোগাযোগগুলো যোগ করুন"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "সংযুক্ত"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "প্রোটকল ত্রুটি, কোড %1d: %2s"
@@ -6165,17 +6030,6 @@ msgstr "MySpaceIM ত্রুটি"
 
 msgid "Invalid input condition"
 msgstr "অবৈধ ইনপুট শর্ত"
-
-# tithi
-msgid "Read buffer full (2)"
-msgstr "পাঠ বাফার পূর্ণ (২)"
-
-msgid "Unparseable message"
-msgstr "পার্স অযোগ্য বার্তা"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "হোস্টের সাথে সংযুক্ত করা যায়নি: %1s (%2d)"
 
 msgid "Failed to add buddy"
 msgstr "বন্ধু যোগ করতে ব্যর্থ"
@@ -6272,6 +6126,12 @@ msgstr "সব বন্ধু"
 
 msgid "Client Version"
 msgstr "ক্লায়েন্ট সংস্করণ"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM -ব্যবহারকারীর নাম সহজলভ্য"
@@ -6562,9 +6422,9 @@ msgstr "এই ব্যবহারকারী হয় অফলাইনে �
 msgid "Unknown error: 0x%X"
 msgstr "অজানা ত্রুটি: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "লগইন ব্যর্থ হয়েছে (%s)।"
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "%s ব্যবহারকারীকে পিঙ্গ করতে অক্ষম"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6672,9 +6532,6 @@ msgstr "GroupWise অধিবেশন %d"
 msgid "Authenticating..."
 msgstr "প্রমাণীকরণ..."
 
-msgid "Unable to connect to server."
-msgstr "সার্ভারের সাথে সংযোগ স্থাপনে অসমর্থ।"
-
 msgid "Waiting for response..."
 msgstr "উত্তরের জন্য অপেক্ষা করছে..."
 
@@ -6700,25 +6557,18 @@ msgid "Would you like to join the conversation?"
 msgstr "আপনি কি কথোপকথনে অংশগ্রহন করতে ইচ্ছুক?"
 
 # tithi
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "আপনাকে প্রস্থান করছেন কারণ আপনি অন্য একটি ওয়ার্ক-ষ্টেশনে সংযুক্ত হয়েছেন।"
-
-# tithi
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "%s অফলাইনে উপস্থিত এবং আপনার প্রেরিত বার্তাটি গ্রহণ করেনি।"
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 "সার্ভারে সংযোগ দিতে অসমর্থ। অনুগ্রহ করে আপনি যে সার্ভারে সংযোগ দিতে চান সেই "
 "ঠিকানা প্রবেশ করান।"
-
-# tithi
-msgid "Error. SSL support is not installed."
-msgstr "ত্রুটি। SSL সমর্থন সংস্থাপিত নয়।"
 
 # tithi
 msgid "This conference has been closed. No more messages can be sent."
@@ -6762,10 +6612,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "%s স্থিরকরণে ত্রুটি"
 
-msgid "Incorrect password."
-msgstr "ভুল গুপ্তসংকেত।"
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 msgid "Could not join chat room"
@@ -6774,18 +6621,8 @@ msgstr "আড্ডার রুমে যুক্ত হতে পারে�
 msgid "Invalid chat room name"
 msgstr "অবৈধ আড্ডার রুমের নাম"
 
-msgid "Server closed the connection."
-msgstr "সার্ভার সংযোগটি বন্ধ করে দিয়েছে।"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"সার্ভারের সাথে সংযুক্ত হারিয়েছে:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "সার্ভারের সাথে সংযুক্ত অবস্থায় অবৈধ উপাত্ত গ্রহণ করেছে।"
 
 #. *< type
@@ -6837,7 +6674,8 @@ msgstr "দূরবর্তী ব্যবহারকারীর সঙ্�
 msgid "Received invalid data on connection with remote user."
 msgstr "দূরবর্তী ব্যবহারকারীর সাথে সংযুক্ত অবস্থায় অবৈধ উপাত্ত গ্রহণ করেছে।"
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "দূরবর্তী ব্য়বহারকারীর সাথে সংযোগ স্থাপন করতে পারেনি।"
 
 msgid "Direct IM established"
@@ -7075,21 +6913,15 @@ msgid "Buddy Comment"
 msgstr "বন্ধুর মন্তব্য"
 
 # fix me tithi
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "প্রমাণীকরণ সাথে সংযুক্ত করা যায়নি:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"BOS সার্ভারের সাথে সংযুক্ত করা যায়নি:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "সার্ভারের সাথে সংযোগ স্থাপনে অসমর্থ।"
 
 msgid "Username sent"
 msgstr "ব্যবহারকারীর-নাম পাঠানো হয়েছে"
@@ -7104,11 +6936,11 @@ msgid "Finalizing connection"
 msgstr "সংযোগ চূড়ান্ত করা হচ্ছে"
 
 # tithi
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "লগইন করতে অক্ষম: ব্যবহারকারীর-নাম অবৈধ থাকার কারণে %s হিসেবে যুক্ত হতে পারেন না। "
 "ব্যবহারকারীর অবশ্যই একটি বৈধ ই-মেইল ঠিকানা থাকতে হবে, বা একটি বর্ণ দ্বারা শুরু হবে "
@@ -7121,15 +6953,8 @@ msgstr "আপনি সাময়িকভাবে বিচ্ছিন্ন 
 msgid "Unable to get a valid AIM login hash."
 msgstr "একটি বৈধ AIM লগইন হ্যাশ পেতে ব্যর্থ।"
 
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "আপনি সাময়িকভাবে বিচ্ছিন্ন থাকতে পারেন।  হালনাগাদের জন্য %s পরীক্ষা করুন।"
-
 msgid "Unable to get a valid login hash."
 msgstr "একটি বৈধ লগইন হ্যাশ পেতে ব্যর্থ।"
-
-msgid "Could Not Connect"
-msgstr "সংযোগ দিতে পারে না"
 
 # tithi
 msgid "Received authorization"
@@ -7137,12 +6962,15 @@ msgstr "গৃহীত অনুমোদন প্রাপ্ত"
 
 #. Unregistered username
 #. uid is not exist
-msgid "Invalid username."
-msgstr "অবৈধ ব্যবহারকারীর নাম।"
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "ব্যবহারকারী বিদ্যমান নয়"
 
 # tithi
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "আপনার একাউন্টটি বর্তমানে স্থগিত।"
 
 # tithi
@@ -7167,7 +6995,8 @@ msgstr ""
 "করতে হবে।"
 
 # tithi
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "অবৈধ নিরাপদ-আইডি কী প্রবেশ করা হয়েছে।"
 
 # tithi
@@ -7354,6 +7183,10 @@ msgstr "যখন থেকে অনলাইনে"
 # tithi
 msgid "Member Since"
 msgstr "যখন থেকে সদস্য"
+
+# tithi
+msgid "Capabilities"
+msgstr "সক্ষমতা"
 
 msgid "Profile"
 msgstr "প্রোফাইল"
@@ -7556,9 +7389,9 @@ msgid "Away message too long."
 msgstr "দূরের বার্তাটি খুব দীর্ঘ।"
 
 # tithi
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7585,9 +7418,9 @@ msgid "Orphans"
 msgstr "অনাথ"
 
 # tithi
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "আপনার বন্ধু তালিকাতে খুব বেশি বন্ধু থাকার কারণে %s বন্ধু যোগ করতে পারে না। অনুগ্রহ "
@@ -7597,8 +7430,8 @@ msgstr ""
 msgid "(no name)"
 msgstr "(কোনো নাম নেই)"
 
-#, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+#, fuzzy, c-format
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "একটি অজানা কারণে %s বন্ধুকে যুক্ত করা যায়নি।"
 
 #, c-format
@@ -8463,7 +8296,8 @@ msgid "Update interval (seconds)"
 msgstr "বিরতি হালনাগাদ করুন (সেকেন্ড)"
 
 # fix me tithi
-msgid "Cannot decrypt server reply"
+#, fuzzy
+msgid "Unable to decrypt server reply"
 msgstr "সার্ভার জবাব অসঙ্কেতায়ন করে না"
 
 # tithi
@@ -8490,10 +8324,6 @@ msgstr "সক্রিয়করণ আবশ্যক"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "(0x%02X) এ লগইন করার সময় অজানা উত্তর কোড"
-
-# fix me tithi
-msgid "Could not decrypt server reply"
-msgstr "সার্ভার জবাব অসঙ্কেতায়ন করতে পারেনি"
 
 # tithi
 msgid "Requesting captcha"
@@ -8535,20 +8365,8 @@ msgstr ""
 "(0x%02X) এ লগইন করার সময় অজানা উত্তর কোড:\n"
 "%s"
 
-msgid "Unable to connect."
-msgstr "সংযুক্ত করতে ব্যর্থ।"
-
 msgid "Socket error"
 msgstr "সকেট ত্রুটি"
-
-msgid "Unable to read from socket"
-msgstr "সকেট থেকে পাঠ করতে ব্যর্থ"
-
-msgid "Write Error"
-msgstr "লিখন ত্রুটি"
-
-msgid "Connection lost"
-msgstr "সংযোগ হারিয়ে গেছে"
 
 msgid "Getting server"
 msgstr "সার্ভার পাচ্ছে"
@@ -8556,8 +8374,9 @@ msgstr "সার্ভার পাচ্ছে"
 msgid "Requesting token"
 msgstr "টোকেন অনুরোধ করছে"
 
-msgid "Couldn't resolve host"
-msgstr "হোস্ট সমাধান করা সম্ভব হয়নি"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "সার্ভারের সাথে সংযোগ স্থাপনে অসমর্থ।"
 
 msgid "Invalid server or port"
 msgstr "অবৈধ সার্ভার বা পোর্ট"
@@ -8614,7 +8433,8 @@ msgid "QQ Qun Command"
 msgstr "QQ Qun নির্দেশ"
 
 # tithi
-msgid "Could not decrypt login reply"
+#, fuzzy
+msgid "Unable to decrypt login reply"
 msgstr "লগইন উত্তর অসঙ্কেতায়ন করতে পারে না"
 
 # fix me tithi
@@ -8634,9 +8454,6 @@ msgstr "ফাইল প্রেরণ করা হয়েছে"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%1d %2s-এর স্থানান্তর বাতিল করেছেন"
-
-msgid "Connection closed (writing)"
-msgstr "সংযোগ বন্ধ করা হয়েছে (লিখছে)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8703,17 +8520,6 @@ msgstr "একটি এককালীন প্রশাসক %s সার্
 msgid "Sametime Administrator Announcement"
 msgstr "এককালীন প্রশাসকের ঘোষণা"
 
-msgid "Connection reset"
-msgstr "সংযোগ পুনরায় বিন্যাস করুন"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "সকেট থেকে পড়ায় ত্রুটি: %s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "হোস্টের সাথে সংযোগে ব্যর্থ"
-
 # tithi
 #, c-format
 msgid "Announcement from %s"
@@ -8740,6 +8546,9 @@ msgstr "স্পিকারসমূহ"
 # tithi
 msgid "Video Camera"
 msgstr "ভিডিও ক্যামেরা"
+
+msgid "File Transfer"
+msgstr "ফাইল স্থানান্তর করুন"
 
 msgid "Supports"
 msgstr "সমর্থনসমূহ"
@@ -9677,6 +9486,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "নেটওয়ার্ক পরিসংখ্যান"
 
+msgid "Ping"
+msgstr "পিঙ্গ করুন"
+
 msgid "Ping failed"
 msgstr "পিঙ্গ ব্যর্থ"
 
@@ -9751,7 +9563,8 @@ msgid "Disconnected by server"
 msgstr "সার্ভার দ্বারা বিচ্ছিন্ন"
 
 # tithi
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "SILC সার্ভারে সংযোগের সময় ত্রুটি"
 
 # tithi
@@ -9765,18 +9578,13 @@ msgstr ""
 "বিচ্ছিন্ন অধিবেশনটি পুনরায় শুরু করতে ব্যর্থ হয়েছে। অনুগ্রহ করে নতুন সংযোগ তৈরী করতে "
 "'পুনরায় সংযোগ' চাপুন।"
 
-msgid "Connection failed"
-msgstr "সংযোগ ব্যর্থ হয়েছে"
-
 # tithi
 msgid "Performing key exchange"
 msgstr "কী বিনিময় সম্পাদন করছে"
 
-msgid "Unable to create connection"
-msgstr "সংযোগ তৈরী করতে ব্যর্থ হয়েছে"
-
 # tithi
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "SILC কী যুগল লোড করতে পারেনি"
 
 # tithi
@@ -9784,11 +9592,17 @@ msgstr "SILC কী যুগল লোড করতে পারেনি"
 msgid "Connecting to SILC Server"
 msgstr "SILC সার্ভারে সংযোগ করছে"
 
+# tithi
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "SILC কী যুগল লোড করতে পারেনি"
+
 msgid "Out of memory"
 msgstr "মেমোরীর বাইরে"
 
 # tithi
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "SILC প্রটোকল চালু করতে পারে না"
 
 # tithi
@@ -10137,7 +9951,8 @@ msgstr "সকল বার্তা ডিজিটাল স্বাক্ষ
 msgid "Creating SILC key pair..."
 msgstr "SILC কী যুগল তৈরি করছে..."
 
-msgid "Cannot create SILC key pair\n"
+#, fuzzy
+msgid "Unable to create SILC key pair"
 msgstr "SILC কী যুগল তৈরী করতে পারে না\n"
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -10238,6 +10053,10 @@ msgid "No server statistics available"
 msgstr "কোনো সার্ভার পরিসংখ্যান সহজলভ্য নয়"
 
 # tithi
+msgid "Error during connecting to SILC Server"
+msgstr "SILC সার্ভারে সংযোগের সময় ত্রুটি"
+
+# tithi
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "ব্যর্থতা: সংস্করণ অমিল, আপনার ক্লায়েন্ট উন্নততর করুন"
@@ -10287,7 +10106,8 @@ msgid "Failure: Authentication failed"
 msgstr "ব্যর্থতা: প্রমাণীকরণ ব্যর্থ হয়েছে"
 
 # tithi
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "SILC ক্লায়েন্ট সংযোগ প্রাথমিকভাবে প্রস্তুত করতে পারে না"
 
 # fix me tithi
@@ -10295,25 +10115,20 @@ msgid "John Noname"
 msgstr "জন নোনেম"
 
 # tithi
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "SILC কী যুগল লোড করতে পারেনি: %s"
 
-msgid "Could not write"
-msgstr "লিখতে পারেনি"
+msgid "Unable to create connection"
+msgstr "সংযোগ তৈরী করতে ব্যর্থ হয়েছে"
 
-msgid "Could not connect"
-msgstr "সংযোগ দিতে পারেনি"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "অজানা সার্ভার উত্তর।"
 
-# tithi
-msgid "Could not create listen socket"
-msgstr "শ্রবণ সকেট তৈরি করতে পারেনি"
-
-msgid "Could not resolve hostname"
-msgstr "হোস্ট-নাম স্থির করা হয়নি"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "সকেট তৈরী করতে অক্ষম"
 
 # tihi
 msgid "SIP usernames may not contain whitespaces or @ symbols"
@@ -10358,6 +10173,78 @@ msgstr "স্বীকৃত ব্যবহারকারী"
 msgid "Auth Domain"
 msgstr "স্বীকৃত ডোমেইন"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "যোগ দিন &1lt;রুম&2gt;:  ইয়াহু নেটওয়ার্কের একটি আড্ডার রুমে যোগ দিন"
+
+msgid "list: List rooms on the Yahoo network"
+msgstr "তালিকা: ইয়াহু নেটওয়ার্কে রুমের তালিকা করুন"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr "হিজিবিজি: ব্যবহারকারীকে একটি হিজিবিজি অধিবেশন শুরু করতে অনুরোধ করুন"
+
+msgid "Yahoo ID..."
+msgstr "ইয়াহু আইডি..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "ইয়াহু প্রটোকল প্লাগইন"
+
+msgid "Pager server"
+msgstr "পেজার সার্ভার"
+
+msgid "Pager port"
+msgstr "পেজার পোর্ট"
+
+msgid "File transfer server"
+msgstr "ফাইল স্থানান্তর সার্ভার"
+
+msgid "File transfer port"
+msgstr "ফাইল স্থানান্তর পোর্ট"
+
+msgid "Chat room locale"
+msgstr "আড্ডা রুমের অবস্থা"
+
+# tithi
+msgid "Ignore conference and chatroom invitations"
+msgstr "আলোচনা সভা এবং আড্ডার-রুমের আমন্ত্রন অগ্রাহ্য করুন"
+
+msgid "Chat room list URL"
+msgstr "আড্ডার রুম তালিকার ইউআরএল"
+
+msgid "Yahoo Chat server"
+msgstr "ইয়াহু আড্ডা সার্ভার"
+
+msgid "Yahoo Chat port"
+msgstr "ইয়াহু আড্ডার পোর্ট"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "ইয়াহু আইডি..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "ইয়াহু প্রটোকল প্লাগইন"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -10391,30 +10278,20 @@ msgstr "বন্ধু যোগ প্রত্যাখ্যান করে
 msgid "Received invalid data"
 msgstr "সার্ভারের সাথে সংযুক্ত অবস্থায় অবৈধ উপাত্ত গ্রহণ করেছে।"
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "ভুল গুপ্তসঙ্কেতে"
-
 # tithi
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr "অজানা ত্রুটি নাম্বার %d। ইয়াহু! ওয়েব সাইটে লগইন করলে হয়ত এটি ঠিক হতে পারে।"
-
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "ব্যবহারকারী বিদ্যমান নয়"
 
 # tithi
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr "অজানা ত্রুটি নাম্বার %d। ইয়াহু! ওয়েব সাইটে লগইন করলে হয়ত এটি ঠিক হতে পারে।"
 
 #. username or password missing
@@ -10457,12 +10334,13 @@ msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "অজানা ত্রুটি নাম্বার %d। ইয়াহু! ওয়েব সাইটে লগইন করলে হয়ত এটি ঠিক হতে পারে।"
 
 # tithi
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr "%3s একাউন্টের সার্ভার তালিকায় %2s গ্রুপে %1s বন্ধুকে যোগ করতে পারেনি।"
 
 # tithi
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "সার্ভার তালিকায় বন্ধু যোগ করতে পারেনি।"
 
 # tithi
@@ -10470,27 +10348,21 @@ msgstr "সার্ভার তালিকায় বন্ধু যোগ �
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ শ্রবণযোগ্য %1s/%2s/%3s.swf ] %4s"
 
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "সার্ভার থেকে অপ্রত্যাশিত এইচটিটিপি সাড়া পেয়েছে।"
 
-msgid "Connection problem"
-msgstr "সংযোগ সমস্যা"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "%1s এর সাথে সংযোগ হারিয়েছে:\n"
 "%2s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
 msgstr ""
-"%1s এর সাথে সংযোগ স্থাপন করতে পারেনি:\n"
-"%2s"
+"সার্ভারের সাথে সংযোগ স্থাপন করতে পারে না:\n"
+"%s"
 
 msgid "Not at Home"
 msgstr "বাসায় নেই"
@@ -10557,73 +10429,14 @@ msgstr "ব্যবহারকারীকে আড্ডায় যোগ 
 msgid "Open Inbox"
 msgstr "ইনবক্স খুলুন"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "যোগ দিন &1lt;রুম&2gt;:  ইয়াহু নেটওয়ার্কের একটি আড্ডার রুমে যোগ দিন"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "তালিকা: ইয়াহু নেটওয়ার্কে রুমের তালিকা করুন"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "হিজিবিজি: ব্যবহারকারীকে একটি হিজিবিজি অধিবেশন শুরু করতে অনুরোধ করুন"
-
-msgid "Yahoo ID..."
-msgstr "ইয়াহু আইডি..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "ইয়াহু প্রটোকল প্লাগইন"
-
-msgid "Yahoo Japan"
-msgstr "ইয়াহু জাপান"
-
-msgid "Pager server"
-msgstr "পেজার সার্ভার"
-
-msgid "Japan Pager server"
-msgstr "জাপানী পেজার সার্ভার"
-
-msgid "Pager port"
-msgstr "পেজার পোর্ট"
-
-msgid "File transfer server"
-msgstr "ফাইল স্থানান্তর সার্ভার"
-
-msgid "Japan file transfer server"
-msgstr "জাপান ফাইল স্থানান্তর সার্ভার"
-
-msgid "File transfer port"
-msgstr "ফাইল স্থানান্তর পোর্ট"
-
-msgid "Chat room locale"
-msgstr "আড্ডা রুমের অবস্থা"
-
-# tithi
-msgid "Ignore conference and chatroom invitations"
-msgstr "আলোচনা সভা এবং আড্ডার-রুমের আমন্ত্রন অগ্রাহ্য করুন"
-
-msgid "Chat room list URL"
-msgstr "আড্ডার রুম তালিকার ইউআরএল"
-
-msgid "Yahoo Chat server"
-msgstr "ইয়াহু আড্ডা সার্ভার"
-
-msgid "Yahoo Chat port"
-msgstr "ইয়াহু আড্ডার পোর্ট"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr "হিজিবিজি অনুরোধ পাঠানো হয়েছে"
+
+msgid "Unable to connect."
+msgstr "সংযুক্ত করতে ব্যর্থ।"
 
 msgid "Unable to establish file descriptor."
 msgstr "ফাইল বর্ণনাকারী স্থাপন করতে অক্ষম।"
@@ -10631,6 +10444,9 @@ msgstr "ফাইল বর্ণনাকারী স্থাপন করত
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s আপনাকে %d ফাইলের একটি গ্রুপ পাঠানোর চেষ্টা করছে।\n"
+
+msgid "Write Error"
+msgstr "লিখন ত্রুটি"
 
 msgid "Yahoo! Japan Profile"
 msgstr "ইয়াহু! জাপান প্রোফাইল"
@@ -10754,6 +10570,9 @@ msgstr "কন্ঠস্বরসমূহ"
 msgid "Webcams"
 msgstr "ওয়েবক্যামসমূহ"
 
+msgid "Connection problem"
+msgstr "সংযোগ সমস্যা"
+
 msgid "Unable to fetch room list."
 msgstr "রুমের তালিকা খুঁজতে অক্ষম।"
 
@@ -10761,16 +10580,9 @@ msgid "User Rooms"
 msgstr "ব্যবহারকারীর রুম"
 
 # tithi
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "YCHT সার্ভারের সাথে সংযোগে সমস্যা।"
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"সার্ভারের সাথে সংযোগ হারিয়েছে\n"
-"%s"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10917,16 +10729,8 @@ msgstr "এলাকা"
 msgid "Exposure"
 msgstr "অনাবৃতকরণ"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"সকেট তৈরী করতে ব্যর্থ:\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "HTTP প্রক্সি থেকে সাড়া গ্রহণ করতে অক্ষম: %s\n"
 
 #, c-format
@@ -10934,16 +10738,13 @@ msgid "HTTP proxy connection error %d"
 msgstr "এইচটিটিপি প্রক্সি সংযোগের %d ত্রুটি"
 
 # tithi
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "অনুমতি বাতিল: HTTP প্রক্সি সার্ভার %d পোর্ট টানেলকরণে বাধা দেয়।"
 
 #, c-format
 msgid "Error resolving %s"
 msgstr "%s স্থিরকরণে ত্রুটি"
-
-msgid "Could not resolve host name"
-msgstr "হোস্টের নাম স্থির করা হয়নি"
 
 # tithi
 #, c-format
@@ -11153,14 +10954,6 @@ msgstr "%1s এ লেখায় ত্রুটি: %2s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "%1s এর সাথে সংযোগে ব্যর্থ: %2s"
-
-# tithi
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr ""
-"সার্ভারের লগইন করার জন্য TSL/SSL আবশ্যক,  কোনো TLS/SSL সমর্থন খুঁজে পাওয়া যায়নি।"
 
 # tithi
 #, c-format
@@ -11425,8 +11218,13 @@ msgstr "বন্ধু পাউন্স যোগ করুন... (_P)"
 msgid "View _Log"
 msgstr "লগ প্রদর্শন করুন (_L)"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "অফলাইনে থাকলে লুকিয়ে রাখুন"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "অফলাইনে থাকলে প্রদর্শন করুন"
 
 msgid "_Alias..."
 msgstr "উপনাম... (_A)"
@@ -11937,6 +11735,11 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "%s এর জন্য ব্যবহাকারীর তথ্য পরিবর্তন করুন"
 
+# tithi
+#, fuzzy
+msgid "Type the host name for this certificate."
+msgstr "এই প্রত্যয়ণপত্রের হোস্ট নাম টাইপ করুন।"
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL সার্ভারসমূহ"
@@ -11982,7 +11785,8 @@ msgstr "অগ্রাহ্য করুন"
 msgid "Get Away Message"
 msgstr "অনুপস্থিতি বার্তা গ্রহণ করুন"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "সর্বশেষ বলা হয়েছে"
 
 msgid "Unable to save icon file to disk."
@@ -12899,7 +12703,8 @@ msgstr "হাইপারলিঙ্ক আঁকার রং।"
 msgid "Hyperlink visited color"
 msgstr "হাইপারলিঙ্কের পরিদর্শিত রং"
 
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+#, fuzzy
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "হাইপারলিঙ্ক পরিদর্শন (বা সক্রিয়) করার পর এটা আকাঁর রং।"
 
 msgid "Hyperlink prelight color"
@@ -12942,15 +12747,26 @@ msgstr "একটি কর্ম বার্তার নাম আকার �
 msgid "Action Message Name Color for Whispered Message"
 msgstr "গোপনীয় বার্তার জন্য কার্য বার্তার নামের রং"
 
+# tithi
+#, fuzzy
+msgid "Color to draw the name of a whispered action message."
+msgstr "একটি কর্ম বার্তার নাম আকার রং।"
+
 # fix- me tithi
 msgid "Whisper Message Name Color"
 msgstr "গোপনীয় বার্তার নামের রং"
+
+# tithi
+#, fuzzy
+msgid "Color to draw the name of a whispered message."
+msgstr "একটি কর্ম বার্তার নাম আকার রং।"
 
 msgid "Typing notification color"
 msgstr "প্রজ্ঞাপন রং টাইপ করছে"
 
 # tithi
-msgid "The color to use for the typing notification font"
+#, fuzzy
+msgid "The color to use for the typing notification"
 msgstr "টাইপকরণ প্রজ্ঞাপন ফন্টের জন্য ব্যবহারের রং"
 
 msgid "Typing notification font"
@@ -13363,6 +13179,10 @@ msgstr ""
 "'হস্তচালিতভাবে' ব্রাউজার নির্দেশ পছন্দ করা হয়েছে, কিন্তু কোনো নির্দেশ নির্ধারণ করা "
 "হয়নি।"
 
+#, fuzzy
+msgid "No message"
+msgstr "অজানা বার্তা"
+
 msgid "Open All Messages"
 msgstr "সকল বার্তা খুলুন"
 
@@ -13379,10 +13199,6 @@ msgstr ""
 #, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">আপনার মেইল আছে!</span>"
-
-#, fuzzy
-msgid "No message"
-msgstr "অজানা বার্তা"
 
 # tithi
 msgid "The following plugins will be unloaded."
@@ -13606,14 +13422,18 @@ msgstr "সিস্টেম ট্রে এর আইকন প্রদর�
 msgid "On unread messages"
 msgstr "অপঠিত বার্তাসমূহে"
 
-msgid "Conversation Window Hiding"
-msgstr "কথোপকথন উইন্ডো লুকিয়ে ফেলছে"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "তাৎক্ষণিক বার্তার কথোপকথন উইন্ডোজ"
 
 msgid "_Hide new IM conversations:"
 msgstr "নতুন কথোপকথন IM লুকিয়ে রাখুন (_H):"
 
 msgid "When away"
 msgstr "যখন অনুপস্থিত"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "নতুন কথোপকথন উইন্ডো নূন্যতম করুন (_z)"
 
 #. All the tab options!
 msgid "Tabs"
@@ -13675,9 +13495,6 @@ msgstr "মসৃন-স্ক্রলিং ব্যবহার করুন
 msgid "F_lash window when IMs are received"
 msgstr "আইএম গ্রহণ করলে উইন্ডো ফ্ল্যাশ দিন (_l)"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "নতুন কথোপকথন উইন্ডো নূন্যতম করুন (_z)"
-
 # tithi
 msgid "Minimum input area height in lines:"
 msgstr "লাইনের ন্যুনতম ইনপুট এলাকার উচ্চতা:"
@@ -13717,7 +13534,8 @@ msgstr "ব্রাউজারের বিন্যাসন প্রোগ�
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">উদাহরণ: স্ট্যানসার্ভার.অর্গ</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "স্বয়ং-শনাক্ত আইপি ঠিকানা (_A)"
 
 msgid "Public _IP:"
@@ -14097,23 +13915,6 @@ msgstr "সংরক্ষণ এবং ব্যবহার করুন (_v)"
 msgid "Status for %s"
 msgstr "%s-এর জন্য অবস্থা"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-msgid "Custom Smiley"
-msgstr "পছন্দসই স্মাইলী"
-
-# tithi
-msgid "More Data needed"
-msgstr "আরও তথ্য প্রয়োজন"
-
-# tithi
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "অনুগ্রহ করে স্মাইলীর সাথে সম্পর্কিত করতে একটি শর্টকাট প্রদান করুন।"
-
 # tithi
 #, fuzzy, c-format
 msgid ""
@@ -14122,11 +13923,11 @@ msgstr ""
 "নির্বাচিত শর্টকাটটির জন্য পছন্দসই স্মাইলী ইতোমধ্যে বিদ্যমান। অনুগ্রহ করে একটি ভিন্ন "
 "শর্টকাট উল্লেখ করুন।"
 
+msgid "Custom Smiley"
+msgstr "পছন্দসই স্মাইলী"
+
 msgid "Duplicate Shortcut"
 msgstr "অনুরুপ শর্টকাট"
-
-msgid "Please select an image for the smiley."
-msgstr "অনুগ্রহ করে স্মাইলীটির জন্য একটি চিত্র নির্বাচন করুন।"
 
 msgid "Edit Smiley"
 msgstr "স্মাইলী সম্পাদনা করুন"
@@ -14244,9 +14045,10 @@ msgstr ""
 msgid "Cannot send launcher"
 msgstr "প্রকাশক পাঠাতে পারে না"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "আপনি একটি ডেস্কটপ প্রকাশক টেনে এনেছেন। এই প্রকাশকটি নিজেকে নির্দেশ করার পরিবর্তে "
 "আর যেখানে নির্দেশ করে সেখানে সম্ভবত আপনি পাঠাতে চান।"
@@ -14871,9 +14673,10 @@ msgstr "সমন্নিত রচনার জন্য সংগীত ব�
 
 # fix me tithi
 #. *  summary
+#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "সংগীত বার্তাকরণ প্লাগইন কিছু সংখ্যক ব্যবহারকারী বাস্তব-সময়ের একটি সাধারন স্কোর "
 "সম্পাদনার মাধ্যমে যুগপৎভাবে এক খন্ড সংগীতের উপর কাজ করে।"
@@ -15131,9 +14934,10 @@ msgid "Conversation Window Send Button."
 msgstr "কথোপকথন উইন্ডোর প্রেরণ বোতাম"
 
 #. *< summary
+#, fuzzy
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 "কথোপকথন উইন্ডোর এন্ট্রি এলাকায় একটি প্রেরণ বোতাম যোগ করুন। যখন কোনো কীবোর্ড বর্তমান "
 "নেই এমন উদ্দেশ্যে।"
@@ -15474,8 +15278,9 @@ msgid "Options specific to Pidgin for Windows."
 msgstr "উইন্ডোজের জন্য পিজিনে উল্লেখিত পছন্দসমূহ।"
 
 # fix me
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
 "উইন্ডোজের জন্য পিজিনে উল্লেখিত পছন্দগুলো প্রদান করে , যেমন বন্ধু তালিকা দেখানো।"
 
@@ -15519,6 +15324,343 @@ msgstr "নতুন XMPP পংক্তিগুলো পাঠান এব�
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "এই প্লাগিনটি XMPP সার্ভার বা ক্লায়েন্ট ডিবাগ করার জন্য কার্যকর।"
+
+#~ msgid "Cannot open socket"
+#~ msgstr "সকেট খোলা যাচ্ছে না"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "সকেট এ শোনা যাচ্ছে না"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "সকেট পড়তে ব্যর্থ"
+
+#~ msgid "Connection failed."
+#~ msgstr "সংযোগ ব্যর্থ।"
+
+#~ msgid "Server has disconnected"
+#~ msgstr "সার্ভার বিচ্ছিন্ন হয়েছে"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "সকেট তৈরী করা যাচ্ছে না"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "হোস্টের সাথে সংযুক্ত করা যাচ্ছে না"
+
+#~ msgid "Read error"
+#~ msgstr "পড়ায় ত্রুটি"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "সার্ভারের সাথে সংযোগ স্থাপন করতে পারে না:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "লিখন ত্রুটি"
+
+# tithi
+#~ msgid "Last Activity"
+#~ msgstr "শেষ সক্রিয়তা"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "সেবা আবিষ্কারের তথ্য"
+
+# tithi
+#~ msgid "Service Discovery Items"
+#~ msgstr "সেবা আবিষ্কারের বিষয়োপকরনসমূহ"
+
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "বর্ধিত স্ট্যানজা উদ্দেশ করছে"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "একাধিক-ব্যবহারকারী সম্বলিত আড্ডা"
+
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "একাধিক-ব্যবহারকারীর বর্ধিত উপস্থিতি তথ্য"
+
+# tithi
+#~ msgid "In-Band Bytestreams"
+#~ msgstr "In-Band বাইট-প্রবাহ"
+
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "Ad-Hoc নির্দেশসমূহ"
+
+# tithi
+#~ msgid "PubSub Service"
+#~ msgstr "PubSub সেবা"
+
+# tithi
+#~ msgid "SOCKS5 Bytestreams"
+#~ msgstr "SOCKS5 বাইট-প্রবাহ"
+
+# tithi
+#~ msgid "Out of Band Data"
+#~ msgstr "ব্যান্ড তথ্যের বাইরে"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#~ msgid "In-Band Registration"
+#~ msgstr "ইন ব্যান্ড নিবন্ধন"
+
+#~ msgid "User Location"
+#~ msgstr "ব্যবহারকারীর অবস্থান"
+
+# fix me tithi
+#~ msgid "User Avatar"
+#~ msgstr "ব্যবহারকারী অ্যাভাটার"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "আড্ডার অবস্থার প্রজ্ঞাপন"
+
+#~ msgid "Software Version"
+#~ msgstr "সফটওয়্যায় সংস্করণ"
+
+# fix me tithi
+#~ msgid "Stream Initiation"
+#~ msgstr "প্রবাহ শুরু করুন"
+
+#~ msgid "User Mood"
+#~ msgstr "ব্যবহাকারীরর পরিমন্ডল"
+
+#~ msgid "User Activity"
+#~ msgstr "ব্যবহারকারীর কাজকর্ম"
+
+# tithi
+#~ msgid "Entity Capabilities"
+#~ msgstr "সত্তার সক্ষমতা"
+
+# tithi
+#~ msgid "Encrypted Session Negotiations"
+#~ msgstr "সঙ্কেতায়িত অধিবেশনের আলোচনা"
+
+#~ msgid "User Tune"
+#~ msgstr "ব্যবহারকারীর সুর"
+
+# tithi
+#~ msgid "Roster Item Exchange"
+#~ msgstr "রোস্টার বিষয়োপকরণ পরিবর্তন করুন"
+
+#~ msgid "Reachability Address"
+#~ msgstr "পৌঁছানোর মতো ঠিকানা"
+
+#~ msgid "User Profile"
+#~ msgstr "ব্যবহারকারীর প্রোফাইল"
+
+#~ msgid "Jingle"
+#~ msgstr "ছন্দ"
+
+# tithi
+#~ msgid "Jingle Audio"
+#~ msgstr "ছন্দময় অডিও"
+
+#~ msgid "User Nickname"
+#~ msgstr "ব্যবহারকারীর ডাকনাম"
+
+# tithi
+#~ msgid "Jingle ICE UDP"
+#~ msgstr "ছন্দময় ICE UDP"
+
+# tithi
+#~ msgid "Jingle ICE TCP"
+#~ msgstr "ছন্দময়  ICE TCP"
+
+# tithi
+#~ msgid "Jingle Raw UDP"
+#~ msgstr "ছন্দময় Raw UDP"
+
+# tithi
+#~ msgid "Jingle Video"
+#~ msgstr "ছন্দময় ভিডিও"
+
+# tithi
+#~ msgid "Jingle DTMF"
+#~ msgstr "ছন্দময় DTMF"
+
+#~ msgid "Message Receipts"
+#~ msgstr "বার্তা গ্রহণ করা হয়েছে"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "সর্বসাধারণের কী প্রকাশ করা হচ্ছে"
+
+#~ msgid "User Chatting"
+#~ msgstr "ব্যবহারকারী আড্ডা দিচ্ছে"
+
+#~ msgid "User Browsing"
+#~ msgstr "ব্যবহাকারী ব্রাউজ করছে"
+
+#~ msgid "User Gaming"
+#~ msgstr "ব্যবহারকারীরা খেলছে"
+
+#~ msgid "User Viewing"
+#~ msgstr "ব্যবহারকারীরা দেখছে"
+
+# tithi
+#~ msgid "Stanza Encryption"
+#~ msgstr "স্ট্যানজা সঙ্কেতায়ন"
+
+# tithi
+#~ msgid "Entity Time"
+#~ msgstr "সত্ত্বার সময়"
+
+# tithi
+#~ msgid "Delayed Delivery"
+#~ msgstr "বিলম্বিত সরবরাহ"
+
+# tithi
+#~ msgid "Collaborative Data Objects"
+#~ msgstr "সহযোগি উপাত্ত অবজেক্ট"
+
+# tithi
+#~ msgid "File Repository and Sharing"
+#~ msgstr "ফাইল ভান্ডার এবং শেয়ার করছে"
+
+# tithi
+#~ msgid "STUN Service Discovery for Jingle"
+#~ msgstr "ছন্দময়তার জন্য STUN সেবা আবিষ্কার"
+
+# tithi
+#~ msgid "Simplified Encrypted Session Negotiation"
+#~ msgstr "সহজবোধ্য সঙ্কেতায়িত অধিবেশনের আলোচনা"
+
+# tithi
+#~ msgid "Hop Check"
+#~ msgstr "হপ পরীক্ষা করুন"
+
+#~ msgid "Read Error"
+#~ msgstr "পাঠ ত্রুটি"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "সার্ভারে সংযোগ দিতে ব্যর্থ হয়েছে।"
+
+# tithi
+#~ msgid "Read buffer full (2)"
+#~ msgstr "পাঠ বাফার পূর্ণ (২)"
+
+#~ msgid "Unparseable message"
+#~ msgstr "পার্স অযোগ্য বার্তা"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "হোস্টের সাথে সংযুক্ত করা যায়নি: %1s (%2d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "লগইন ব্যর্থ হয়েছে (%s)।"
+
+# tithi
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "আপনাকে প্রস্থান করছেন কারণ আপনি অন্য একটি ওয়ার্ক-ষ্টেশনে সংযুক্ত হয়েছেন।"
+
+# tithi
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "ত্রুটি। SSL সমর্থন সংস্থাপিত নয়।"
+
+#~ msgid "Incorrect password."
+#~ msgstr "ভুল গুপ্তসংকেত।"
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "BOS সার্ভারের সাথে সংযুক্ত করা যায়নি:\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "আপনি সাময়িকভাবে বিচ্ছিন্ন থাকতে পারেন।  হালনাগাদের জন্য %s পরীক্ষা করুন।"
+
+#~ msgid "Could Not Connect"
+#~ msgstr "সংযোগ দিতে পারে না"
+
+#~ msgid "Invalid username."
+#~ msgstr "অবৈধ ব্যবহারকারীর নাম।"
+
+# fix me tithi
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "সার্ভার জবাব অসঙ্কেতায়ন করতে পারেনি"
+
+#~ msgid "Connection lost"
+#~ msgstr "সংযোগ হারিয়ে গেছে"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "হোস্ট সমাধান করা সম্ভব হয়নি"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "সংযোগ বন্ধ করা হয়েছে (লিখছে)"
+
+#~ msgid "Connection reset"
+#~ msgstr "সংযোগ পুনরায় বিন্যাস করুন"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "সকেট থেকে পড়ায় ত্রুটি: %s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "হোস্টের সাথে সংযোগে ব্যর্থ"
+
+#~ msgid "Could not write"
+#~ msgstr "লিখতে পারেনি"
+
+#~ msgid "Could not connect"
+#~ msgstr "সংযোগ দিতে পারেনি"
+
+# tithi
+#~ msgid "Could not create listen socket"
+#~ msgstr "শ্রবণ সকেট তৈরি করতে পারেনি"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "হোস্ট-নাম স্থির করা হয়নি"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "ভুল গুপ্তসঙ্কেতে"
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "%1s এর সাথে সংযোগ স্থাপন করতে পারেনি:\n"
+#~ "%2s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "ইয়াহু জাপান"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "জাপানী পেজার সার্ভার"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "জাপান ফাইল স্থানান্তর সার্ভার"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "সার্ভারের সাথে সংযোগ হারিয়েছে\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "হোস্টের নাম স্থির করা হয়নি"
+
+# tithi
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr ""
+#~ "সার্ভারের লগইন করার জন্য TSL/SSL আবশ্যক,  কোনো TLS/SSL সমর্থন খুঁজে পাওয়া যায়নি।"
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "কথোপকথন উইন্ডো লুকিয়ে ফেলছে"
+
+# tithi
+#~ msgid "More Data needed"
+#~ msgstr "আরও তথ্য প্রয়োজন"
+
+# tithi
+#~ msgid "Please provide a shortcut to associate with the smiley."
+#~ msgstr "অনুগ্রহ করে স্মাইলীর সাথে সম্পর্কিত করতে একটি শর্টকাট প্রদান করুন।"
+
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "অনুগ্রহ করে স্মাইলীটির জন্য একটি চিত্র নির্বাচন করুন।"
 
 #~ msgid "Activate which ID?"
 #~ msgstr "কোন আইডি সক্রিয় করা হবে?"

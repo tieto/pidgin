@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-04 15:17-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2009-04-23 00:32+0800\n"
 "Last-Translator: Aron Xu <aronmalache@163.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -2774,11 +2774,12 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 
-msgid "Unable to listen for incoming IM connections\n"
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
 msgstr "无法监听连入的 IM 连接\n"
 
 msgid ""
@@ -2830,14 +2831,21 @@ msgstr "%s 已经关闭了对话。"
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "无法发送消息，无法开始对话。"
 
-msgid "Cannot open socket"
-msgstr "无法打开套接字"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"无法创建套接字：\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "无法将套接字绑定到端口"
 
-msgid "Could not listen on socket"
-msgstr "无法在套接字上监听"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"无法创建套接字：\n"
+"%s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "与本地 DNS 服务通讯出错"
@@ -2884,13 +2892,16 @@ msgstr "保存好友列表..."
 msgid "Load buddylist from file..."
 msgstr "从文件装入好友列表..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "填入注册字段。"
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "密码不匹配。"
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "无法创建新账户。发生了错误。\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -2902,14 +2913,15 @@ msgstr "注册成功！"
 msgid "Password"
 msgstr "密码"
 
-msgid "Password (retype)"
-msgstr "密码(重新输入)"
+msgid "Password (again)"
+msgstr "再次输入新密码"
 
-msgid "Enter current token"
-msgstr "输入当前令牌"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "当前令牌"
+#, fuzzy
+msgid "Captcha"
+msgstr "保存图像"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "注册新的 Gadu-Gadu 账户"
@@ -2962,6 +2974,15 @@ msgstr "密码成功更改！"
 msgid "Current password"
 msgstr "当前密码"
 
+msgid "Password (retype)"
+msgstr "密码(重新输入)"
+
+msgid "Enter current token"
+msgstr "输入当前令牌"
+
+msgid "Current token"
+msgstr "当前令牌"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "请输入您目前 UIN 的密码和新密码："
 
@@ -3009,7 +3030,7 @@ msgstr "未找到匹配的用户"
 msgid "There are no users matching your search criteria."
 msgstr "没有与您的搜索条件匹配的用户。"
 
-msgid "Unable to read socket"
+msgid "Unable to read from socket"
 msgstr "无法读取套接字"
 
 msgid "Buddy list downloaded"
@@ -3024,8 +3045,14 @@ msgstr "好友列表已上传"
 msgid "Your buddy list was stored on the server."
 msgstr "您的好友列表存储于服务器上。"
 
-msgid "Connection failed."
-msgstr "连接失败。"
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "已连接"
+
+msgid "Connection failed"
+msgstr "连接失败"
 
 msgid "Add to chat"
 msgstr "添加到聊天"
@@ -3033,10 +3060,14 @@ msgstr "添加到聊天"
 msgid "Chat _name:"
 msgstr "聊天名(_N)："
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "无法连接到服务器。"
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "正连接"
 
 msgid "Chat error"
 msgstr "聊天错误"
@@ -3044,7 +3075,8 @@ msgstr "聊天错误"
 msgid "This chat name is already in use"
 msgstr "此聊天名已经在使用中"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "未连接到服务器。"
 
 msgid "Find buddies..."
@@ -3104,7 +3136,8 @@ msgstr "未设定话题"
 msgid "File Transfer Failed"
 msgstr "文件传送失败"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "无法打开监听端口。"
 
 msgid "Error displaying MOTD"
@@ -3120,8 +3153,18 @@ msgstr "没有与此连接关联的 MOTD"
 msgid "MOTD for %s"
 msgstr "%s 的 MOTD"
 
-msgid "Server has disconnected"
-msgstr "服务器已断开连接"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"失去与服务器的连接：\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "查看 MOTD"
@@ -3136,22 +3179,20 @@ msgstr "密码(_P)："
 msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC 昵称不能包含空格"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "正连接"
-
 msgid "SSL support unavailable"
 msgstr "SSL 支持不可用"
 
-msgid "Couldn't create socket"
-msgstr "无法创建套接字"
+msgid "Unable to connect"
+msgstr "无法连接"
 
-msgid "Couldn't connect to host"
-msgstr "无法连接到主机"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "无法连接到 %s"
 
-msgid "Read error"
-msgstr "读取错误"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "服务器关闭了连接。"
 
 msgid "Users"
 msgstr "用户"
@@ -3551,10 +3592,12 @@ msgstr "命令已禁用"
 msgid "execute"
 msgstr "未期待"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr "服务器需要 TLS/SSL 才能登录。没有找到 TLS/SSL 支持。"
 
-msgid "You require encryption, but no TLS/SSL support found."
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr "您要求 TLS/SSL 登录，但没有找到 TLS/SSL 支持。"
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -3569,7 +3612,12 @@ msgstr "服务器需要在不加密流上使用纯文本验证。允许这么做
 msgid "Plaintext Authentication"
 msgstr "纯文本认证"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "认证失败"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "服务器的响应无效。"
 
 msgid "Server does not use any supported authentication method"
@@ -3581,7 +3629,8 @@ msgstr ""
 msgid "Invalid challenge from server"
 msgstr "服务器的挑战无效"
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SASL 错误"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3596,22 +3645,12 @@ msgstr "不支持 BOSH 协议的版本"
 msgid "Unable to establish a connection with the server"
 msgstr "无法与服务器建立连接"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
-msgstr ""
-"无法建立与服务器：\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
+msgstr "无法与服务器建立连接"
 
 msgid "Unable to establish SSL connection"
 msgstr "无法建立 SSL 连接"
-
-msgid "Unable to create socket"
-msgstr "无法创建套接字"
-
-msgid "Write error"
-msgstr "写错误"
 
 msgid "Full Name"
 msgstr "全名"
@@ -3680,178 +3719,6 @@ msgstr "操作系统"
 msgid "Local Time"
 msgstr "本地时间"
 
-msgid "Last Activity"
-msgstr "最近活动"
-
-msgid "Service Discovery Info"
-msgstr "服务目录信息"
-
-msgid "Service Discovery Items"
-msgstr ""
-
-#, fuzzy
-msgid "Extended Stanza Addressing"
-msgstr "额外地址"
-
-msgid "Multi-User Chat"
-msgstr "多用户聊天"
-
-#, fuzzy
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "用户没有目录信息。"
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-#, fuzzy
-msgid "Ad-Hoc Commands"
-msgstr "命令"
-
-msgid "PubSub Service"
-msgstr ""
-
-msgid "SOCKS5 Bytestreams"
-msgstr ""
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-#, fuzzy
-msgid "In-Band Registration"
-msgstr "注册错误"
-
-msgid "User Location"
-msgstr "用户位置"
-
-#, fuzzy
-msgid "User Avatar"
-msgstr "用户搜索"
-
-msgid "Chat State Notifications"
-msgstr "聊天状态通知"
-
-msgid "Software Version"
-msgstr "软件版本"
-
-#, fuzzy
-msgid "Stream Initiation"
-msgstr "方向"
-
-msgid "File Transfer"
-msgstr "文件传送"
-
-msgid "User Mood"
-msgstr "用户心情"
-
-msgid "User Activity"
-msgstr "用户活动"
-
-#, fuzzy
-msgid "Entity Capabilities"
-msgstr "能力"
-
-msgid "Encrypted Session Negotiations"
-msgstr ""
-
-#, fuzzy
-msgid "User Tune"
-msgstr "用户名"
-
-#, fuzzy
-msgid "Roster Item Exchange"
-msgstr "带密钥交换开聊"
-
-#, fuzzy
-msgid "Reachability Address"
-msgstr "电子邮件地址"
-
-msgid "User Profile"
-msgstr "用户资料"
-
-#, fuzzy
-msgid "Jingle"
-msgstr "加入"
-
-msgid "Jingle Audio"
-msgstr ""
-
-msgid "User Nickname"
-msgstr "用户昵称"
-
-msgid "Jingle ICE UDP"
-msgstr ""
-
-msgid "Jingle ICE TCP"
-msgstr ""
-
-msgid "Jingle Raw UDP"
-msgstr ""
-
-#, fuzzy
-msgid "Jingle Video"
-msgstr "实时视频"
-
-msgid "Jingle DTMF"
-msgstr ""
-
-#, fuzzy
-msgid "Message Receipts"
-msgstr "消息已收到"
-
-#, fuzzy
-msgid "Public Key Publishing"
-msgstr "公钥漏印"
-
-#, fuzzy
-msgid "User Chatting"
-msgstr "用户选项"
-
-#, fuzzy
-msgid "User Browsing"
-msgstr "用户模式"
-
-#, fuzzy
-msgid "User Gaming"
-msgstr "用户名"
-
-#, fuzzy
-msgid "User Viewing"
-msgstr "允许限制"
-
-msgid "Ping"
-msgstr "Ping"
-
-#, fuzzy
-msgid "Stanza Encryption"
-msgstr "Trillian 加密"
-
-msgid "Entity Time"
-msgstr ""
-
-msgid "Delayed Delivery"
-msgstr ""
-
-msgid "Collaborative Data Objects"
-msgstr ""
-
-msgid "File Repository and Sharing"
-msgstr ""
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
-
-msgid "Hop Check"
-msgstr ""
-
-msgid "Capabilities"
-msgstr "能力"
-
 msgid "Priority"
 msgstr "优先级"
 
@@ -3863,7 +3730,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "已登入"
 
 msgid "Middle Name"
@@ -4043,16 +3910,13 @@ msgstr "未找到匹配的用户"
 msgid "Roles:"
 msgstr "角色："
 
-msgid "Ping timeout"
+#, fuzzy
+msgid "Ping timed out"
 msgstr "Ping 超时"
 
-msgid "Read Error"
-msgstr "读取错误"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4233,9 +4097,6 @@ msgstr "您的密码已更改。"
 
 msgid "Error changing password"
 msgstr "更改密码出错"
-
-msgid "Password (again)"
-msgstr "再次输入新密码"
 
 msgid "Change XMPP Password"
 msgstr "更改 XMPP 密码"
@@ -4619,6 +4480,14 @@ msgstr "XML 分析错误"
 msgid "Unknown Error in presence"
 msgstr "出现未知错误"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "加入聊天 %s 出错"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "聊天 %s 出错"
+
 msgid "Create New Room"
 msgstr "创建新房间"
 
@@ -4633,13 +4502,17 @@ msgstr "配置房间(_C)"
 msgid "_Accept Defaults"
 msgstr "接受默认值(_A)"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "加入聊天 %s 出错"
+#, fuzzy
+msgid "No reason"
+msgstr "没有给出理由。"
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "聊天 %s 出错"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "您被 %s: %s 踢出了"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "被 %s (%s) 踢出"
 
 #, fuzzy
 msgid "An error occurred on the in-band bytestream transfer\n"
@@ -5147,9 +5020,6 @@ msgstr "发起聊天(_C)"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSN 需要 SSL 支持。请安装本软件支持的 SSL 库。"
 
-msgid "Failed to connect to server."
-msgstr "连接到服务器失败。"
-
 msgid "Error retrieving profile"
 msgstr "获取配置文件出错"
 
@@ -5405,9 +5275,6 @@ msgstr "消息未发出，因为发生了未知错误："
 msgid "Message was not sent because an unknown error occurred."
 msgstr "消息未发出，因为发生了未知错误："
 
-msgid "Unable to connect"
-msgstr "无法连接"
-
 msgid "Writing error"
 msgstr "写入错误"
 
@@ -5422,19 +5289,23 @@ msgstr ""
 "%s 服务器的连接错误：\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "服务器不支持此协议。"
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "分析 HTTP 出错。"
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "您在其它位置用此用户名登入了。"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr "MSN 服务器临时不可用。请稍候再试一次。"
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "MSN 服务器目前维护中。"
 
 #, c-format
@@ -5444,9 +5315,6 @@ msgstr "无法通过身份验证: %s"
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr "您的 MSN 好友列表临时不可用。请稍候再试一次。"
-
-msgid "Unknown error."
-msgstr "未知错误。"
 
 msgid "Handshaking"
 msgstr "握手"
@@ -5545,6 +5413,9 @@ msgstr "AIM 协议插件"
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s 不是有效的组名。"
+
+msgid "Unknown error."
+msgstr "未知错误。"
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -5661,12 +5532,6 @@ msgstr[0] ""
 msgid "Add contacts from server"
 msgstr "服务器的响应无效。"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "已连接"
-
 #, fuzzy, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "进程返回了错误代码 %d"
@@ -5688,18 +5553,6 @@ msgstr ""
 #, fuzzy
 msgid "Invalid input condition"
 msgstr "完成连接"
-
-#, fuzzy
-msgid "Read buffer full (2)"
-msgstr "队列满"
-
-#, fuzzy
-msgid "Unparseable message"
-msgstr "无法处理消息"
-
-#, fuzzy, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "无法连接到主机"
 
 #, fuzzy
 msgid "Failed to add buddy"
@@ -5792,6 +5645,12 @@ msgstr ""
 #, fuzzy
 msgid "Client Version"
 msgstr "关闭对话"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 #, fuzzy
 msgid "MySpaceIM - Username Available"
@@ -6056,9 +5915,9 @@ msgstr "用户或者离线，或者已经屏蔽了您"
 msgid "Unknown error: 0x%X"
 msgstr "未知错误: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "登录失败(%s)。"
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "无法 ping 用户 %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6156,9 +6015,6 @@ msgstr "GroupWise 会议 %d"
 msgid "Authenticating..."
 msgstr "正在认证..."
 
-msgid "Unable to connect to server."
-msgstr "无法连接到服务器。"
-
 msgid "Waiting for response..."
 msgstr "正在等候响应..."
 
@@ -6182,9 +6038,6 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "您是否想要加入对话？"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "您已被注销，因为您已从其它计算机上登录。"
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -6195,9 +6048,6 @@ msgid ""
 "Unable to connect to server. Please enter the address of the server to which "
 "you wish to connect."
 msgstr "无法连接到服务器。请输入您想要连接的服务器的地址。"
-
-msgid "Error. SSL support is not installed."
-msgstr "出错。SSL 支持未安装。"
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "此会议已关筹。不会再送出消息。"
@@ -6237,10 +6087,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "请求登录令牌出错"
 
-msgid "Incorrect password."
-msgstr "密码不对。"
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 #, fuzzy
@@ -6251,18 +6098,8 @@ msgstr "无法连接"
 msgid "Invalid chat room name"
 msgstr "无效的房间名"
 
-msgid "Server closed the connection."
-msgstr "服务器关闭了连接。"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"失去与服务器的连接：\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "在与服务器的连接中收到了无效的数据。"
 
 #. *< type
@@ -6310,7 +6147,8 @@ msgstr "失去与远程用户的连接：<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr ""
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "无法建立与远程用户的连接。"
 
 msgid "Direct IM established"
@@ -6503,21 +6341,15 @@ msgstr "警告级别"
 msgid "Buddy Comment"
 msgstr "好友注释"
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "无法连接到身份验证服务器：\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"无法连接到 BOS 服务器：\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "无法连接到服务器。"
 
 #, fuzzy
 msgid "Username sent"
@@ -6532,9 +6364,9 @@ msgstr "完成连接"
 
 #, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "无法登入: 无法以 %s 登入，原因是用户名无效。用户名必须是有效的电子邮件地址，"
 "或者以字母开头，且只能包含字母、数字和空格，或者只包含数字。"
@@ -6546,27 +6378,22 @@ msgstr "您即将被断开。请检查 %s 上的更新。"
 msgid "Unable to get a valid AIM login hash."
 msgstr "无法获取有效的 AIM 登录码。"
 
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "您即将被断开。请检查 %s 上的更新。"
-
 msgid "Unable to get a valid login hash."
 msgstr "无法获取有效的登录码。"
-
-msgid "Could Not Connect"
-msgstr "无法连接"
 
 msgid "Received authorization"
 msgstr "收到的认证"
 
 #. Unregistered username
+#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
 msgstr "用户不存在"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "您的账户被停用。"
 
 #. service temporarily unavailable
@@ -6586,7 +6413,8 @@ msgstr ""
 "您连接和断开得太频繁。请等十分钟，然后再试一次。如果您继续重试，您等的时间可"
 "能会更长。"
 
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "输入的 SecurID 密钥无效。"
 
 msgid "Enter SecurID"
@@ -6751,6 +6579,9 @@ msgstr "上线时间"
 msgid "Member Since"
 msgstr "注册时间"
 
+msgid "Capabilities"
+msgstr "能力"
+
 msgid "Profile"
 msgstr "个人资料"
 
@@ -6910,7 +6741,7 @@ msgstr "离开消息太长。"
 
 #, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -6936,9 +6767,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "孤儿"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "无法将 %s 加为好友，原因是您的好友太多。请删除其中一个好友，然后再试一次。"
@@ -6947,7 +6778,7 @@ msgid "(no name)"
 msgstr "(无名称)"
 
 #, fuzzy, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "您的命令失败，原因未知。"
 
 #, fuzzy, c-format
@@ -7786,7 +7617,7 @@ msgid "Update interval (seconds)"
 msgstr "保持在线错误"
 
 #, fuzzy
-msgid "Cannot decrypt server reply"
+msgid "Unable to decrypt server reply"
 msgstr "无法获取服务器信息"
 
 #, c-format
@@ -7811,10 +7642,6 @@ msgstr "需要注册"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr ""
-
-#, fuzzy
-msgid "Could not decrypt server reply"
-msgstr "无法获取服务器信息"
 
 #, fuzzy
 msgid "Requesting captcha"
@@ -7843,11 +7670,6 @@ msgstr ""
 msgid "Enter the text from the image"
 msgstr "请输入组名称"
 
-#. uid is not exist
-#, fuzzy
-msgid "Invalid username."
-msgstr "名称无效"
-
 #, c-format
 msgid "Unknown reply when checking password (0x%02X)"
 msgstr ""
@@ -7858,20 +7680,8 @@ msgid ""
 "%s"
 msgstr ""
 
-msgid "Unable to connect."
-msgstr "无法连接。"
-
 msgid "Socket error"
 msgstr "套接字错误"
-
-msgid "Unable to read from socket"
-msgstr "无法读取套接字"
-
-msgid "Write Error"
-msgstr "写错误"
-
-msgid "Connection lost"
-msgstr "连接丢失"
 
 #, fuzzy
 msgid "Getting server"
@@ -7881,8 +7691,9 @@ msgstr "设置用户信息..."
 msgid "Requesting token"
 msgstr "请求被禁止"
 
-msgid "Couldn't resolve host"
-msgstr "无法解析主机"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "无法连接到服务器。"
 
 #, fuzzy
 msgid "Invalid server or port"
@@ -7933,7 +7744,7 @@ msgid "QQ Qun Command"
 msgstr "命令"
 
 #, fuzzy
-msgid "Could not decrypt login reply"
+msgid "Unable to decrypt login reply"
 msgstr "无法获取服务器信息"
 
 #, fuzzy
@@ -7954,9 +7765,6 @@ msgstr "发送文件"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d 取消了 %s 的传送"
-
-msgid "Connection closed (writing)"
-msgstr "连接已关闭(写入)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8011,17 +7819,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr "Sametime 管理员通知"
 
-msgid "Connection reset"
-msgstr "连接重置"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "从套接字读取时出错：%s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "无法连接到主机"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "来自 %s 的通知"
@@ -8044,6 +7841,9 @@ msgstr "扬声器"
 
 msgid "Video Camera"
 msgstr "摄像头"
+
+msgid "File Transfer"
+msgstr "文件传送"
 
 msgid "Supports"
 msgstr "支持"
@@ -8829,6 +8629,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "网络统计"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr "Ping 失败"
 
@@ -8890,7 +8693,8 @@ msgstr "不支持的公钥类型"
 msgid "Disconnected by server"
 msgstr "服务器断开连接"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "连接到 SILC 服务器时出错"
 
 msgid "Key Exchange failed"
@@ -8900,26 +8704,26 @@ msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr "恢复脱离的会话失败。请按[重新连接]以创建新连接。"
 
-msgid "Connection failed"
-msgstr "连接失败"
-
 msgid "Performing key exchange"
 msgstr "执行密钥交换"
 
-msgid "Unable to create connection"
-msgstr "无法创建连接"
-
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "无法装入 SILC 密钥对"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "连接到 SILC 服务器"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "无法装入 SILC 密钥对"
+
 msgid "Out of memory"
 msgstr "内存溢出"
 
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "无法初始化 SILC 协议"
 
 msgid "Error loading SILC key pair"
@@ -9205,7 +9009,7 @@ msgid "Creating SILC key pair..."
 msgstr "创建 SILC 密钥对..."
 
 #, fuzzy
-msgid "Cannot create SILC key pair\n"
+msgid "Unable to create SILC key pair"
 msgstr "创建 SILC 密钥对..."
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -9299,6 +9103,9 @@ msgstr "白板"
 msgid "No server statistics available"
 msgstr "没有可用的服务器统计"
 
+msgid "Error during connecting to SILC Server"
+msgstr "连接到 SILC 服务器时出错"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "失败: 版本不匹配，请升级您的客户端"
@@ -9339,30 +9146,27 @@ msgstr "失败: 无效的 cookie"
 msgid "Failure: Authentication failed"
 msgstr "失败: 身份验证失败"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "无法初始化 SILC 客户连接"
 
 msgid "John Noname"
 msgstr "张三"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "无法装入 SILC 密钥对: %s"
 
-msgid "Could not write"
-msgstr "无法写入"
+msgid "Unable to create connection"
+msgstr "无法创建连接"
 
-msgid "Could not connect"
-msgstr "无法连接"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "未知的服务器响应。"
 
-msgid "Could not create listen socket"
-msgstr "无法创建监听套接字"
-
-msgid "Could not resolve hostname"
-msgstr "无法解析主机名"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "无法创建套接字"
 
 #, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
@@ -9405,6 +9209,78 @@ msgstr "认证用户"
 msgid "Auth Domain"
 msgstr "认证域"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "join: &lt;房间&gt;: 加入 Yahoo 网络上的聊天室"
+
+msgid "list: List rooms on the Yahoo network"
+msgstr "list: 列出 Yahoo 网络上的房间"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr ""
+
+#, fuzzy
+msgid "Yahoo ID..."
+msgstr "Yahoo! ID"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Yahoo 协议插件"
+
+msgid "Pager server"
+msgstr "寻呼服务器"
+
+msgid "Pager port"
+msgstr "寻呼端口"
+
+msgid "File transfer server"
+msgstr "文件传送服务器"
+
+msgid "File transfer port"
+msgstr "文件传送端口"
+
+msgid "Chat room locale"
+msgstr "聊天房间语系"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "忽略会议和聊天室邀请"
+
+msgid "Chat room list URL"
+msgstr "聊天房间列表 URL"
+
+msgid "Yahoo Chat server"
+msgstr "Yahoo 聊天服务器"
+
+msgid "Yahoo Chat port"
+msgstr "Yahoo 聊天端口"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "Yahoo! ID"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Yahoo 协议插件"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9433,22 +9309,18 @@ msgstr "添加拒绝的好友"
 msgid "Received invalid data"
 msgstr "在与服务器的连接中收到了无效的数据。"
 
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "密码不对"
-
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
 
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
 
 #. username or password missing
@@ -9485,38 +9357,31 @@ msgstr "您的账户已锁定，请登录到 Yahoo! 网站。"
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr "无法将好友 %s 添加到账户 %s 位于服务器列表上的组 %s。"
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "无法将好友添加到服务器列表"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr ""
 
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "从服务器收到了意外的 HTTP 响应。"
 
-msgid "Connection problem"
-msgstr "连接问题"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "失去与 %s 的连接：\n"
 "%s"
 
 #, fuzzy, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
-msgstr ""
-"无法建立与服务器：\n"
-"%s"
+msgid "Unable to establish a connection with %s: %s"
+msgstr "无法与服务器建立连接"
 
 msgid "Not at Home"
 msgstr "不在家"
@@ -9580,73 +9445,14 @@ msgstr "在聊天中加入用户..."
 msgid "Open Inbox"
 msgstr "打开收件箱"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join: &lt;房间&gt;: 加入 Yahoo 网络上的聊天室"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list: 列出 Yahoo 网络上的房间"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo ID..."
-msgstr "Yahoo! ID"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Yahoo 协议插件"
-
-msgid "Yahoo Japan"
-msgstr "Yahoo 日本"
-
-msgid "Pager server"
-msgstr "寻呼服务器"
-
-msgid "Japan Pager server"
-msgstr "日本寻呼服务器"
-
-msgid "Pager port"
-msgstr "寻呼端口"
-
-msgid "File transfer server"
-msgstr "文件传送服务器"
-
-msgid "Japan file transfer server"
-msgstr "日本文件传送服务器"
-
-msgid "File transfer port"
-msgstr "文件传送端口"
-
-msgid "Chat room locale"
-msgstr "聊天房间语系"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "忽略会议和聊天室邀请"
-
-msgid "Chat room list URL"
-msgstr "聊天房间列表 URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo 聊天服务器"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo 聊天端口"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr ""
+
+msgid "Unable to connect."
+msgstr "无法连接。"
 
 msgid "Unable to establish file descriptor."
 msgstr "无法建立文件描述符。"
@@ -9654,6 +9460,9 @@ msgstr "无法建立文件描述符。"
 #, fuzzy, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s 正在发送文件 %s"
+
+msgid "Write Error"
+msgstr "写错误"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo 日本资料"
@@ -9762,22 +9571,18 @@ msgstr "语音"
 msgid "Webcams"
 msgstr "摄像头"
 
+msgid "Connection problem"
+msgstr "连接问题"
+
 msgid "Unable to fetch room list."
 msgstr "无法获取房间列表。"
 
 msgid "User Rooms"
 msgstr "用户房间"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "YCHT 服务器连接出现问题。"
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"丢失与服务器的连接\n"
-"%s"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -9899,32 +9704,21 @@ msgstr "域"
 msgid "Exposure"
 msgstr "暴露"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"无法创建套接字：\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "无法从 HTTP 代理分析响应：%s\n"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "HTTP 代理服务器连接错误 %d"
 
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "访问被禁止: HTTP 代理服务器禁止端口 %d 流过。"
 
 #, c-format
 msgid "Error resolving %s"
 msgstr "解析 %s 出错"
-
-msgid "Could not resolve host name"
-msgstr "无法解析主机名"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10127,12 +9921,6 @@ msgstr "写入 %s 出错：%s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "无法连接到 %s: %s"
-
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr "服务器需要 TLS/SSL 才能登录。没有找到 TLS/SSL 支持。"
 
 #, c-format
 msgid " - %s"
@@ -10379,8 +10167,13 @@ msgstr "添加好友千里眼(_P)..."
 msgid "View _Log"
 msgstr "查看日志(_L)"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "离线时隐藏"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "离线时显示"
 
 msgid "_Alias..."
 msgstr "别名(_A)..."
@@ -10942,7 +10735,8 @@ msgstr "忽略"
 msgid "Get Away Message"
 msgstr "获得离开消息"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "上次说道"
 
 msgid "Unable to save icon file to disk."
@@ -12500,14 +12294,18 @@ msgstr "显示系统托盘图标(_S):"
 msgid "On unread messages"
 msgstr "有未读消息时"
 
-msgid "Conversation Window Hiding"
-msgstr "对话窗口隐藏"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "即时消息对话窗口"
 
 msgid "_Hide new IM conversations:"
 msgstr "隐藏新的 IM 对话(_H):"
 
 msgid "When away"
 msgstr "离开时"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "最小化对话窗口(_Z)"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12566,9 +12364,6 @@ msgstr "使用平滑滚动"
 
 msgid "F_lash window when IMs are received"
 msgstr "收到信息时闪烁窗口(_L)"
-
-msgid "Minimi_ze new conversation windows"
-msgstr "最小化对话窗口(_Z)"
 
 msgid "Minimum input area height in lines:"
 msgstr ""
@@ -14297,6 +14092,274 @@ msgstr "发送和接受原始 XMPP 节。"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
+#~ msgid "Cannot open socket"
+#~ msgstr "无法打开套接字"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "无法在套接字上监听"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "无法读取套接字"
+
+#~ msgid "Connection failed."
+#~ msgstr "连接失败。"
+
+#~ msgid "Server has disconnected"
+#~ msgstr "服务器已断开连接"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "无法创建套接字"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "无法连接到主机"
+
+#~ msgid "Read error"
+#~ msgstr "读取错误"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "无法建立与服务器：\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "写错误"
+
+#~ msgid "Last Activity"
+#~ msgstr "最近活动"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "服务目录信息"
+
+#, fuzzy
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "额外地址"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "多用户聊天"
+
+#, fuzzy
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "用户没有目录信息。"
+
+#, fuzzy
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "命令"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#, fuzzy
+#~ msgid "In-Band Registration"
+#~ msgstr "注册错误"
+
+#~ msgid "User Location"
+#~ msgstr "用户位置"
+
+#, fuzzy
+#~ msgid "User Avatar"
+#~ msgstr "用户搜索"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "聊天状态通知"
+
+#~ msgid "Software Version"
+#~ msgstr "软件版本"
+
+#, fuzzy
+#~ msgid "Stream Initiation"
+#~ msgstr "方向"
+
+#~ msgid "User Mood"
+#~ msgstr "用户心情"
+
+#~ msgid "User Activity"
+#~ msgstr "用户活动"
+
+#, fuzzy
+#~ msgid "Entity Capabilities"
+#~ msgstr "能力"
+
+#, fuzzy
+#~ msgid "User Tune"
+#~ msgstr "用户名"
+
+#, fuzzy
+#~ msgid "Roster Item Exchange"
+#~ msgstr "带密钥交换开聊"
+
+#, fuzzy
+#~ msgid "Reachability Address"
+#~ msgstr "电子邮件地址"
+
+#~ msgid "User Profile"
+#~ msgstr "用户资料"
+
+#, fuzzy
+#~ msgid "Jingle"
+#~ msgstr "加入"
+
+#~ msgid "User Nickname"
+#~ msgstr "用户昵称"
+
+#, fuzzy
+#~ msgid "Jingle Video"
+#~ msgstr "实时视频"
+
+#, fuzzy
+#~ msgid "Message Receipts"
+#~ msgstr "消息已收到"
+
+#, fuzzy
+#~ msgid "Public Key Publishing"
+#~ msgstr "公钥漏印"
+
+#, fuzzy
+#~ msgid "User Chatting"
+#~ msgstr "用户选项"
+
+#, fuzzy
+#~ msgid "User Browsing"
+#~ msgstr "用户模式"
+
+#, fuzzy
+#~ msgid "User Gaming"
+#~ msgstr "用户名"
+
+#, fuzzy
+#~ msgid "User Viewing"
+#~ msgstr "允许限制"
+
+#, fuzzy
+#~ msgid "Stanza Encryption"
+#~ msgstr "Trillian 加密"
+
+#~ msgid "Read Error"
+#~ msgstr "读取错误"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "连接到服务器失败。"
+
+#, fuzzy
+#~ msgid "Read buffer full (2)"
+#~ msgstr "队列满"
+
+#, fuzzy
+#~ msgid "Unparseable message"
+#~ msgstr "无法处理消息"
+
+#, fuzzy
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "无法连接到主机"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "登录失败(%s)。"
+
+#~ msgid "Unable to connect to server."
+#~ msgstr "无法连接到服务器。"
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "您已被注销，因为您已从其它计算机上登录。"
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "出错。SSL 支持未安装。"
+
+#~ msgid "Incorrect password."
+#~ msgstr "密码不对。"
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "无法连接到 BOS 服务器：\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "您即将被断开。请检查 %s 上的更新。"
+
+#~ msgid "Could Not Connect"
+#~ msgstr "无法连接"
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "无法获取服务器信息"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "名称无效"
+
+#~ msgid "Connection lost"
+#~ msgstr "连接丢失"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "无法解析主机"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "连接已关闭(写入)"
+
+#~ msgid "Connection reset"
+#~ msgstr "连接重置"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "从套接字读取时出错：%s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "无法连接到主机"
+
+#~ msgid "Could not write"
+#~ msgstr "无法写入"
+
+#~ msgid "Could not connect"
+#~ msgstr "无法连接"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr "无法创建监听套接字"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "无法解析主机名"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "密码不对"
+
+#, fuzzy
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "无法建立与服务器：\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Yahoo 日本"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "日本寻呼服务器"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "日本文件传送服务器"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "丢失与服务器的连接\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "无法解析主机名"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr "服务器需要 TLS/SSL 才能登录。没有找到 TLS/SSL 支持。"
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "对话窗口隐藏"
+
 #~ msgid "Activate which ID?"
 #~ msgstr "激活哪个 ID？"
 
@@ -14753,10 +14816,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 #, fuzzy
 #~ msgid "Windows Live ID authentication Failed"
 #~ msgstr "失败: 身份验证失败"
-
-#, fuzzy
-#~ msgid "Unable to connect to OIM server"
-#~ msgstr "无法连接到服务器。"
 
 #~ msgid "Unable to make SSL connection to server."
 #~ msgstr "无法通过 SSL 连接到服务器。"

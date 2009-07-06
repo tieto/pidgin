@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2009-04-16 22:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@lists.kde.org>\n"
@@ -2532,7 +2532,7 @@ msgstr ""
 #. * description
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2581,7 +2581,7 @@ msgid "Save messages sent to an offline user as pounce."
 msgstr ""
 
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 
@@ -2825,12 +2825,13 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 
-msgid "Unable to listen for incoming IM connections\n"
-msgstr ""
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
+msgstr "Haikuweza kuunganishwa"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
@@ -2883,15 +2884,17 @@ msgstr "Mwenzi SSL imefunga uunganisho huu"
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr ""
 
-#, fuzzy
-msgid "Cannot open socket"
-msgstr "Haiwezi kufungua %S"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr "Haikuweza kuunganishwa"
 
-msgid "Could not bind socket to port"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
+msgstr "Haikuweza kuunganishwa"
 
-msgid "Could not listen on socket"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr "Haikuweza kuunganishwa"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr ""
@@ -2939,13 +2942,14 @@ msgstr ""
 msgid "Load buddylist from file..."
 msgstr ""
 
-msgid "Fill in the registration fields."
+msgid "You must fill in all registration fields"
 msgstr ""
 
-msgid "Passwords do not match."
-msgstr ""
+#, fuzzy
+msgid "Passwords do not match"
+msgstr "Nywila"
 
-msgid "Unable to register new account. Error occurred.\n"
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr ""
 
 msgid "New Gadu-Gadu Account Registered"
@@ -2958,14 +2962,16 @@ msgstr "Sakinisho limemaliza kikamilifu"
 msgid "Password"
 msgstr "Nywila"
 
-msgid "Password (retype)"
+#, fuzzy
+msgid "Password (again)"
+msgstr "Nywila mpya (tena):"
+
+msgid "Enter captcha text"
 msgstr ""
 
-msgid "Enter current token"
-msgstr ""
-
-msgid "Current token"
-msgstr ""
+#, fuzzy
+msgid "Captcha"
+msgstr "Naki&li Picha"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr ""
@@ -3023,6 +3029,15 @@ msgstr ""
 msgid "Current password"
 msgstr "Nywila ya sasa hivi:"
 
+msgid "Password (retype)"
+msgstr ""
+
+msgid "Enter current token"
+msgstr ""
+
+msgid "Current token"
+msgstr ""
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr ""
 
@@ -3075,9 +3090,8 @@ msgstr "Hamna uwiyano sawa na CRL uliopatikana."
 msgid "There are no users matching your search criteria."
 msgstr ""
 
-#, fuzzy
-msgid "Unable to read socket"
-msgstr "Haiwezi kuongeza moduli"
+msgid "Unable to read from socket"
+msgstr ""
 
 msgid "Buddy list downloaded"
 msgstr ""
@@ -3091,8 +3105,15 @@ msgstr ""
 msgid "Your buddy list was stored on the server."
 msgstr ""
 
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
 #, fuzzy
-msgid "Connection failed."
+msgid "Connected"
+msgstr "Unganisho"
+
+#, fuzzy
+msgid "Connection failed"
 msgstr "Unganisho Limeshindikana"
 
 msgid "Add to chat"
@@ -3101,10 +3122,15 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "Imeshindwa kuipata seva wakala"
+
+#. 1. connect to server
+#. connect to the server
+#, fuzzy
+msgid "Connecting"
+msgstr "Inaunganisha…"
 
 #, fuzzy
 msgid "Chat error"
@@ -3113,8 +3139,9 @@ msgstr "Kichamorro"
 msgid "This chat name is already in use"
 msgstr ""
 
-msgid "Not connected to the server."
-msgstr ""
+#, fuzzy
+msgid "Not connected to the server"
+msgstr "Imeshindwa kuipata seva wakala"
 
 msgid "Find buddies..."
 msgstr ""
@@ -3175,8 +3202,9 @@ msgstr "Hakuna sifa zilizowekwa."
 msgid "File Transfer Failed"
 msgstr ""
 
-msgid "Could not open a listening port."
-msgstr ""
+#, fuzzy
+msgid "Unable to open a listening port."
+msgstr "Nimeshindwa Kusasisha"
 
 msgid "Error displaying MOTD"
 msgstr ""
@@ -3192,8 +3220,16 @@ msgstr ""
 msgid "MOTD for %s"
 msgstr ""
 
-msgid "Server has disconnected"
-msgstr ""
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 msgid "View MOTD"
 msgstr ""
@@ -3208,23 +3244,20 @@ msgstr "Nywila:"
 msgid "IRC nick and server may not contain whitespace"
 msgstr ""
 
-#. 1. connect to server
-#. connect to the server
-#, fuzzy
-msgid "Connecting"
-msgstr "Inaunganisha…"
-
 msgid "SSL support unavailable"
 msgstr ""
 
-msgid "Couldn't create socket"
-msgstr ""
+msgid "Unable to connect"
+msgstr "Haikuweza kuunganishwa"
 
-msgid "Couldn't connect to host"
-msgstr ""
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "Haikuweza kuunganishwa"
 
-msgid "Read error"
-msgstr ""
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
 msgid "Users"
 msgstr ""
@@ -3617,10 +3650,10 @@ msgstr ""
 msgid "execute"
 msgstr ""
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr ""
 
-msgid "You require encryption, but no TLS/SSL support found."
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -3637,7 +3670,11 @@ msgid "Plaintext Authentication"
 msgstr "Ishara ya Uthibitisho Inayoulindwa"
 
 #, fuzzy
-msgid "Invalid response from server."
+msgid "SASL authentication failed"
+msgstr "Uthibitisho unatakiwa"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
 msgid "Server does not use any supported authentication method"
@@ -3649,8 +3686,8 @@ msgstr ""
 msgid "Invalid challenge from server"
 msgstr ""
 
-#, fuzzy
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SSL Seva"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3668,22 +3705,12 @@ msgid "Unable to establish a connection with the server"
 msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 #, fuzzy, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+msgid "Unable to establish a connection with the server: %s"
 msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "Haikuweza kuunganishwa"
-
-#, fuzzy
-msgid "Unable to create socket"
-msgstr "Haikuweza kuunganishwa"
-
-#, fuzzy
-msgid "Write error"
-msgstr "Hitilafu ya Printa"
 
 #, fuzzy
 msgid "Full Name"
@@ -3759,167 +3786,6 @@ msgstr ""
 msgid "Local Time"
 msgstr "faili la kikweti"
 
-msgid "Last Activity"
-msgstr ""
-
-msgid "Service Discovery Info"
-msgstr ""
-
-msgid "Service Discovery Items"
-msgstr ""
-
-msgid "Extended Stanza Addressing"
-msgstr ""
-
-msgid "Multi-User Chat"
-msgstr ""
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr ""
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-msgid "Ad-Hoc Commands"
-msgstr ""
-
-msgid "PubSub Service"
-msgstr ""
-
-msgid "SOCKS5 Bytestreams"
-msgstr ""
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr ""
-
-msgid "In-Band Registration"
-msgstr ""
-
-#, fuzzy
-msgid "User Location"
-msgstr "Mapali pa &Tawanyiko:"
-
-msgid "User Avatar"
-msgstr ""
-
-msgid "Chat State Notifications"
-msgstr ""
-
-msgid "Software Version"
-msgstr ""
-
-msgid "Stream Initiation"
-msgstr ""
-
-msgid "File Transfer"
-msgstr ""
-
-msgid "User Mood"
-msgstr ""
-
-msgid "User Activity"
-msgstr ""
-
-msgid "Entity Capabilities"
-msgstr ""
-
-msgid "Encrypted Session Negotiations"
-msgstr ""
-
-#, fuzzy
-msgid "User Tune"
-msgstr "Jina la Mtumiaji:"
-
-msgid "Roster Item Exchange"
-msgstr ""
-
-msgid "Reachability Address"
-msgstr ""
-
-#, fuzzy
-msgid "User Profile"
-msgstr "Notisi za Mtumiaji"
-
-msgid "Jingle"
-msgstr ""
-
-msgid "Jingle Audio"
-msgstr ""
-
-#, fuzzy
-msgid "User Nickname"
-msgstr "Jina la mtumiaji"
-
-msgid "Jingle ICE UDP"
-msgstr ""
-
-msgid "Jingle ICE TCP"
-msgstr ""
-
-msgid "Jingle Raw UDP"
-msgstr ""
-
-msgid "Jingle Video"
-msgstr ""
-
-msgid "Jingle DTMF"
-msgstr ""
-
-msgid "Message Receipts"
-msgstr ""
-
-msgid "Public Key Publishing"
-msgstr ""
-
-msgid "User Chatting"
-msgstr ""
-
-#, fuzzy
-msgid "User Browsing"
-msgstr "Kuvinjari kwa kareti"
-
-#, fuzzy
-msgid "User Gaming"
-msgstr "Jina la Mtumiaji:"
-
-msgid "User Viewing"
-msgstr ""
-
-#, fuzzy
-msgid "Ping"
-msgstr "Chapisha"
-
-msgid "Stanza Encryption"
-msgstr ""
-
-msgid "Entity Time"
-msgstr ""
-
-msgid "Delayed Delivery"
-msgstr ""
-
-msgid "Collaborative Data Objects"
-msgstr ""
-
-msgid "File Repository and Sharing"
-msgstr ""
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
-
-#, fuzzy
-msgid "Hop Check"
-msgstr "Usikague"
-
-msgid "Capabilities"
-msgstr ""
-
 msgid "Priority"
 msgstr ""
 
@@ -3932,7 +3798,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "Ingia"
 
 #, fuzzy
@@ -4127,17 +3993,13 @@ msgstr "Hamna uwiyano sawa na CRL uliopatikana."
 msgid "Roles:"
 msgstr ""
 
-msgid "Ping timeout"
-msgstr ""
-
 #, fuzzy
-msgid "Read Error"
-msgstr "Hitilafu ya Faili"
+msgid "Ping timed out"
+msgstr "Muunganiko umepita muda"
 
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 #, fuzzy
@@ -4325,10 +4187,6 @@ msgstr "Nywila yako imesetiwa upya."
 
 msgid "Error changing password"
 msgstr ""
-
-#, fuzzy
-msgid "Password (again)"
-msgstr "Nywila mpya (tena):"
 
 #, fuzzy
 msgid "Change XMPP Password"
@@ -4727,6 +4585,14 @@ msgstr ""
 msgid "Unknown Error in presence"
 msgstr ""
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr ""
+
+#, c-format
+msgid "Error in chat %s"
+msgstr ""
+
 msgid "Create New Room"
 msgstr ""
 
@@ -4742,15 +4608,19 @@ msgstr ""
 msgid "_Accept Defaults"
 msgstr "Misingi ya mfumo"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr ""
+#, fuzzy
+msgid "No reason"
+msgstr "Hitilafu isiyojulikana"
 
 #, c-format
-msgid "Error in chat %s"
+msgid "You have been kicked: (%s)"
 msgstr ""
 
-msgid "An error occured on the in-band bytestream transfer\n"
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "(%S)"
+
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr ""
 
 msgid "Transfer was closed."
@@ -5235,9 +5105,6 @@ msgstr ""
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 
-msgid "Failed to connect to server."
-msgstr ""
-
 msgid "Error retrieving profile"
 msgstr ""
 
@@ -5486,9 +5353,6 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
 
-msgid "Unable to connect"
-msgstr "Haikuweza kuunganishwa"
-
 msgid "Writing error"
 msgstr ""
 
@@ -5501,19 +5365,20 @@ msgid ""
 "%s"
 msgstr ""
 
-msgid "Our protocol is not supported by the server."
+msgid "Our protocol is not supported by the server"
 msgstr ""
 
-msgid "Error parsing HTTP."
-msgstr ""
+#, fuzzy
+msgid "Error parsing HTTP"
+msgstr "Hitilafu katika kuhifadhi %S"
 
-msgid "You have signed on from another location."
+msgid "You have signed on from another location"
 msgstr ""
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 
-msgid "The MSN servers are going down temporarily."
+msgid "The MSN servers are going down temporarily"
 msgstr ""
 
 #, c-format
@@ -5523,10 +5388,6 @@ msgstr ""
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
-
-#, fuzzy
-msgid "Unknown error."
-msgstr "Hitilafu isiyojulikana"
 
 msgid "Handshaking"
 msgstr ""
@@ -5625,6 +5486,10 @@ msgstr ""
 #, c-format
 msgid "%s is not a valid group."
 msgstr ""
+
+#, fuzzy
+msgid "Unknown error."
+msgstr "Hitilafu isiyojulikana"
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -5737,13 +5602,6 @@ msgstr[1] ""
 msgid "Add contacts from server"
 msgstr ""
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-#, fuzzy
-msgid "Connected"
-msgstr "Unganisho"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr ""
@@ -5762,16 +5620,6 @@ msgid "MySpaceIM Error"
 msgstr ""
 
 msgid "Invalid input condition"
-msgstr ""
-
-msgid "Read buffer full (2)"
-msgstr ""
-
-msgid "Unparseable message"
-msgstr ""
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
 msgstr ""
 
 msgid "Failed to add buddy"
@@ -5857,6 +5705,12 @@ msgstr ""
 #, fuzzy
 msgid "Client Version"
 msgstr "Toleo Jipya"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 msgid "MySpaceIM - Username Available"
 msgstr ""
@@ -6123,9 +5977,9 @@ msgstr ""
 msgid "Unknown error: 0x%X"
 msgstr "Hitilafu isiyojulikana"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "Haikuweza kuunganishwa"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6224,10 +6078,6 @@ msgstr ""
 msgid "Authenticating..."
 msgstr ""
 
-#, fuzzy
-msgid "Unable to connect to server."
-msgstr "Imeshindwa kuipata seva wakala"
-
 msgid "Waiting for response..."
 msgstr ""
 
@@ -6249,20 +6099,14 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Ungependa kuhifadhi faili hili?"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr ""
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr ""
 
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
-msgstr ""
-
-msgid "Error. SSL support is not installed."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 
 msgid "This conference has been closed. No more messages can be sent."
@@ -6301,11 +6145,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "Hitilafu katika kuhifadhi %S"
 
-#, fuzzy
-msgid "Incorrect password."
-msgstr "Nywila ya sasa hivi:"
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 msgid "Could not join chat room"
@@ -6315,17 +6155,8 @@ msgid "Invalid chat room name"
 msgstr ""
 
 #, fuzzy
-msgid "Server closed the connection."
-msgstr "Mwenzi SSL imefunga uunganisho huu"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-
-msgid "Received invalid data on connection with server."
-msgstr ""
+msgid "Received invalid data on connection with server"
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 #. *< type
 #. *< ui_requirement
@@ -6374,8 +6205,9 @@ msgstr ""
 msgid "Received invalid data on connection with remote user."
 msgstr ""
 
-msgid "Could not establish a connection with the remote user."
-msgstr ""
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 msgid "Direct IM established"
 msgstr ""
@@ -6578,17 +6410,13 @@ msgstr "Jumbe za tahadhari"
 msgid "Buddy Comment"
 msgstr ""
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
+msgstr "Imeshindwa kuipata seva wakala"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "Imeshindwa kuipata seva wakala"
 
 #, fuzzy
 msgid "Username sent"
@@ -6603,9 +6431,9 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 
 #, c-format
@@ -6615,28 +6443,21 @@ msgstr ""
 msgid "Unable to get a valid AIM login hash."
 msgstr ""
 
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-
 msgid "Unable to get a valid login hash."
 msgstr ""
-
-#, fuzzy
-msgid "Could Not Connect"
-msgstr "Imeshindwa kuunganisha"
 
 msgid "Received authorization"
 msgstr ""
 
 #. Unregistered username
 #. uid is not exist
+#. the username does not exist
 #, fuzzy
-msgid "Invalid username."
-msgstr "Jina batili la moduli."
+msgid "Username does not exist"
+msgstr "Faili %S halipo"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+msgid "Your account is currently suspended"
 msgstr ""
 
 #. service temporarily unavailable
@@ -6654,7 +6475,7 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "The SecurID key entered is invalid."
+msgid "The SecurID key entered is invalid"
 msgstr "Nambari mstari iliyoingizwa ni batili."
 
 msgid "Enter SecurID"
@@ -6807,6 +6628,9 @@ msgid "Online Since"
 msgstr ""
 
 msgid "Member Since"
+msgstr ""
+
+msgid "Capabilities"
 msgstr ""
 
 msgid "Profile"
@@ -6968,7 +6792,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -6990,7 +6814,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 
@@ -6999,7 +6823,7 @@ msgid "(no name)"
 msgstr "(hakuna lakabu)"
 
 #, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr ""
 
 #, c-format
@@ -7800,8 +7624,9 @@ msgstr ""
 msgid "Update interval (seconds)"
 msgstr ""
 
-msgid "Cannot decrypt server reply"
-msgstr ""
+#, fuzzy
+msgid "Unable to decrypt server reply"
+msgstr "Imeshindwa kuipata seva wakala"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
@@ -7824,9 +7649,6 @@ msgstr "Uthibitisho unatakiwa"
 
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
-msgstr ""
-
-msgid "Could not decrypt server reply"
 msgstr ""
 
 msgid "Requesting captcha"
@@ -7862,23 +7684,8 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Unable to connect."
-msgstr "Haikuweza kuunganishwa"
-
-#, fuzzy
 msgid "Socket error"
 msgstr "Hitilafu ya hati"
-
-msgid "Unable to read from socket"
-msgstr ""
-
-#, fuzzy
-msgid "Write Error"
-msgstr "Hitilafu ya Printa"
-
-#, fuzzy
-msgid "Connection lost"
-msgstr "Unganisho"
 
 #, fuzzy
 msgid "Getting server"
@@ -7887,8 +7694,9 @@ msgstr "Anza"
 msgid "Requesting token"
 msgstr ""
 
-msgid "Couldn't resolve host"
-msgstr ""
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Imeshindwa kuipata seva wakala"
 
 msgid "Invalid server or port"
 msgstr ""
@@ -7935,8 +7743,9 @@ msgstr ""
 msgid "QQ Qun Command"
 msgstr ""
 
-msgid "Could not decrypt login reply"
-msgstr ""
+#, fuzzy
+msgid "Unable to decrypt login reply"
+msgstr "Haiwezi kufuta moduli"
 
 msgid "Unknown LOGIN CMD"
 msgstr ""
@@ -7953,9 +7762,6 @@ msgstr ""
 
 #, c-format
 msgid "%d canceled the transfer of %s"
-msgstr ""
-
-msgid "Connection closed (writing)"
 msgstr ""
 
 #, c-format
@@ -8011,19 +7817,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr ""
 
-#, fuzzy
-msgid "Connection reset"
-msgstr "Muunganisho ulikataliwa"
-
-#, fuzzy, c-format
-msgid "Error reading from socket: %s"
-msgstr "Hitilafu ya upakiaji lahamtindo: %S"
-
-#. this is a regular connect, error out
-#, fuzzy
-msgid "Unable to connect to host"
-msgstr "Haikuweza kuunganishwa"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr ""
@@ -8047,6 +7840,9 @@ msgstr "Seva"
 #, fuzzy
 msgid "Video Camera"
 msgstr "Kicheza Video"
+
+msgid "File Transfer"
+msgstr ""
 
 msgid "Supports"
 msgstr ""
@@ -8841,6 +8637,10 @@ msgid "Network Statistics"
 msgstr ""
 
 #, fuzzy
+msgid "Ping"
+msgstr "Chapisha"
+
+#, fuzzy
 msgid "Ping failed"
 msgstr "Imeshindwa kunakili"
 
@@ -8902,8 +8702,9 @@ msgstr "Aina ya faili isiyo stahimiliwa."
 msgid "Disconnected by server"
 msgstr ""
 
-msgid "Error during connecting to SILC Server"
-msgstr ""
+#, fuzzy
+msgid "Error connecting to SILC Server"
+msgstr "Inaunganisha kwenye seva ya sasisho…"
 
 msgid "Key Exchange failed"
 msgstr ""
@@ -8912,30 +8713,28 @@ msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
 
-#, fuzzy
-msgid "Connection failed"
-msgstr "Unganisho Limeshindikana"
-
 msgid "Performing key exchange"
 msgstr ""
 
 #, fuzzy
-msgid "Unable to create connection"
-msgstr "Haikuweza kuunganishwa"
-
-msgid "Could not load SILC key pair"
-msgstr ""
+msgid "Unable to load SILC key pair"
+msgstr "Haiwezi kuongeza moduli"
 
 #. Progress
 #, fuzzy
 msgid "Connecting to SILC Server"
 msgstr "Inaunganisha kwenye seva ya sasisho…"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "Haiwezi kufuta moduli"
+
 msgid "Out of memory"
 msgstr "Nje ya kumbukumbu"
 
-msgid "Cannot initialize SILC protocol"
-msgstr ""
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
+msgstr "Haikuweza kuunganishwa"
 
 msgid "Error loading SILC key pair"
 msgstr ""
@@ -9214,8 +9013,9 @@ msgstr ""
 msgid "Creating SILC key pair..."
 msgstr ""
 
-msgid "Cannot create SILC key pair\n"
-msgstr ""
+#, fuzzy
+msgid "Unable to create SILC key pair"
+msgstr "Haikuweza kuunganishwa"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -9306,6 +9106,9 @@ msgstr ""
 msgid "No server statistics available"
 msgstr ""
 
+msgid "Error during connecting to SILC Server"
+msgstr ""
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr ""
@@ -9346,31 +9149,28 @@ msgstr ""
 msgid "Failure: Authentication failed"
 msgstr ""
 
-msgid "Cannot initialize SILC Client connection"
-msgstr ""
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
+msgstr "Haikuweza kuunganishwa"
 
 msgid "John Noname"
 msgstr ""
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
-msgstr ""
-
-msgid "Could not write"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
+msgstr "Haiwezi kuongeza moduli"
 
 #, fuzzy
-msgid "Could not connect"
-msgstr "\"Haikuweza kupakia: \""
+msgid "Unable to create connection"
+msgstr "Haikuweza kuunganishwa"
 
-msgid "Unknown server response."
-msgstr ""
+#, fuzzy
+msgid "Unknown server response"
+msgstr "Hitilafu isiyojulikana"
 
-msgid "Could not create listen socket"
-msgstr ""
-
-msgid "Could not resolve hostname"
-msgstr ""
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "Haikuweza kuunganishwa"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
@@ -9411,6 +9211,77 @@ msgstr ""
 msgid "Auth Domain"
 msgstr ""
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr ""
+
+msgid "list: List rooms on the Yahoo network"
+msgstr ""
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr ""
+
+msgid "Yahoo ID..."
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Yahoo! Barua"
+
+msgid "Pager server"
+msgstr ""
+
+#, fuzzy
+msgid "Pager port"
+msgstr "Page Down"
+
+msgid "File transfer server"
+msgstr ""
+
+msgid "File transfer port"
+msgstr ""
+
+msgid "Chat room locale"
+msgstr ""
+
+msgid "Ignore conference and chatroom invitations"
+msgstr ""
+
+msgid "Chat room list URL"
+msgstr ""
+
+msgid "Yahoo Chat server"
+msgstr ""
+
+msgid "Yahoo Chat port"
+msgstr ""
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "Yahoo! Barua"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr ""
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9438,26 +9309,16 @@ msgstr ""
 msgid "Received invalid data"
 msgstr ""
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "Nywila ya sasa hivi:"
-
 #. security lock from too many failed login attempts
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr ""
-
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "Faili %S halipo"
 
 #. indicates a lock of some description
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr ""
 
 #. username or password missing
@@ -9491,35 +9352,28 @@ msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
 
 #, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
 
-msgid "Could not add buddy to server list"
-msgstr ""
+#, fuzzy
+msgid "Unable to add buddy to server list"
+msgstr "Haiwezi kuongeza moduli"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr ""
 
 #, fuzzy
-msgid "Received unexpected HTTP response from server."
+msgid "Received unexpected HTTP response from server"
 msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
-#, fuzzy
-msgid "Connection problem"
-msgstr "Unganisho Limeshindikana"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
+msgstr "Haikuweza kuunganishwa"
 
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
-msgstr ""
-
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 msgid "Not at Home"
 msgstr ""
@@ -9585,73 +9439,15 @@ msgstr ""
 msgid "Open Inbox"
 msgstr "Fungua katika:"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr ""
-
-msgid "list: List rooms on the Yahoo network"
-msgstr ""
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-msgid "Yahoo ID..."
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr ""
-
-msgid "Yahoo Japan"
-msgstr ""
-
-msgid "Pager server"
-msgstr ""
-
-msgid "Japan Pager server"
-msgstr ""
-
-#, fuzzy
-msgid "Pager port"
-msgstr "Page Down"
-
-msgid "File transfer server"
-msgstr ""
-
-msgid "Japan file transfer server"
-msgstr ""
-
-msgid "File transfer port"
-msgstr ""
-
-msgid "Chat room locale"
-msgstr ""
-
-msgid "Ignore conference and chatroom invitations"
-msgstr ""
-
-msgid "Chat room list URL"
-msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-msgid "Yahoo Chat port"
-msgstr ""
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr ""
+
+#, fuzzy
+msgid "Unable to connect."
+msgstr "Haikuweza kuunganishwa"
 
 msgid "Unable to establish file descriptor."
 msgstr ""
@@ -9659,6 +9455,10 @@ msgstr ""
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr ""
+
+#, fuzzy
+msgid "Write Error"
+msgstr "Hitilafu ya Printa"
 
 msgid "Yahoo! Japan Profile"
 msgstr ""
@@ -9769,20 +9569,19 @@ msgstr ""
 msgid "Webcams"
 msgstr ""
 
+#, fuzzy
+msgid "Connection problem"
+msgstr "Unganisho Limeshindikana"
+
 msgid "Unable to fetch room list."
 msgstr ""
 
 msgid "User Rooms"
 msgstr ""
 
-msgid "Connection problem with the YCHT server."
-msgstr ""
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
+#, fuzzy
+msgid "Connection problem with the YCHT server"
+msgstr "Unganisho Limeshindikana"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -9903,13 +9702,7 @@ msgid "Exposure"
 msgstr ""
 
 #, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr ""
 
 #, c-format
@@ -9917,15 +9710,12 @@ msgid "HTTP proxy connection error %d"
 msgstr ""
 
 #, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Error resolving %s"
 msgstr "Hitilafu katika kuhifadhi %S"
-
-msgid "Could not resolve host name"
-msgstr ""
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10130,12 +9920,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "Haikuweza kuunganishwa"
-
-#, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr ""
 
 #, c-format
 msgid " - %s"
@@ -10387,7 +10171,10 @@ msgstr ""
 msgid "View _Log"
 msgstr ""
 
-msgid "Hide when offline"
+msgid "Hide When Offline"
+msgstr ""
+
+msgid "Show When Offline"
 msgstr ""
 
 msgid "_Alias..."
@@ -10893,6 +10680,9 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr ""
 
+msgid "Type the host name for this certificate."
+msgstr ""
+
 #. Widget creation function
 #, fuzzy
 msgid "SSL Servers"
@@ -10941,7 +10731,7 @@ msgid "Get Away Message"
 msgstr ""
 
 #, fuzzy
-msgid "Last said"
+msgid "Last Said"
 msgstr "Ukurasa wa mwisho"
 
 msgid "Unable to save icon file to disk."
@@ -11832,7 +11622,7 @@ msgstr ""
 msgid "Hyperlink visited color"
 msgstr ""
 
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr ""
 
 msgid "Hyperlink prelight color"
@@ -11868,13 +11658,19 @@ msgstr ""
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+msgid "Color to draw the name of a whispered action message."
+msgstr ""
+
 msgid "Whisper Message Name Color"
+msgstr ""
+
+msgid "Color to draw the name of a whispered message."
 msgstr ""
 
 msgid "Typing notification color"
 msgstr ""
 
-msgid "The color to use for the typing notification font"
+msgid "The color to use for the typing notification"
 msgstr ""
 
 msgid "Typing notification font"
@@ -12226,6 +12022,10 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "No message"
+msgstr "Ujumbe"
+
+#, fuzzy
 msgid "Open All Messages"
 msgstr "Fungua kwenye Tabo zote"
 
@@ -12240,10 +12040,6 @@ msgstr ""
 
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr ""
-
-#, fuzzy
-msgid "No message"
-msgstr "Ujumbe"
 
 #, fuzzy
 msgid "The following plugins will be unloaded."
@@ -12459,13 +12255,17 @@ msgstr ""
 msgid "On unread messages"
 msgstr ""
 
-msgid "Conversation Window Hiding"
-msgstr ""
+#, fuzzy
+msgid "Conversation Window"
+msgstr "Unganisho"
 
 msgid "_Hide new IM conversations:"
 msgstr ""
 
 msgid "When away"
+msgstr ""
+
+msgid "Minimi_ze new conversation windows"
 msgstr ""
 
 #. All the tab options!
@@ -12529,9 +12329,6 @@ msgstr "Tu&mia ubiringizaji taratibu"
 msgid "F_lash window when IMs are received"
 msgstr ""
 
-msgid "Minimi_ze new conversation windows"
-msgstr ""
-
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -12565,7 +12362,8 @@ msgstr ""
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr ""
 
-msgid "_Autodetect IP address"
+#, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr ""
 
 msgid "Public _IP:"
@@ -12952,33 +12750,18 @@ msgstr ""
 msgid "Status for %s"
 msgstr ""
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-#, fuzzy
-msgid "Custom Smiley"
-msgstr "Kipimo cha kaida..."
-
-msgid "More Data needed"
-msgstr ""
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr ""
-
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
 #, fuzzy
+msgid "Custom Smiley"
+msgstr "Kipimo cha kaida..."
+
+#, fuzzy
 msgid "Duplicate Shortcut"
 msgstr "sifa rudufu"
-
-msgid "Please select an image for the smiley."
-msgstr ""
 
 msgid "Edit Smiley"
 msgstr ""
@@ -13086,8 +12869,8 @@ msgid "Cannot send launcher"
 msgstr ""
 
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 
 #, c-format
@@ -13673,7 +13456,7 @@ msgstr ""
 #. *  summary
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 
 #. ---------- "Notify For" ----------
@@ -13924,7 +13707,7 @@ msgstr ""
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 
 msgid "Duplicate Correction"
@@ -14240,7 +14023,7 @@ msgid "Options specific to Pidgin for Windows."
 msgstr ""
 
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
@@ -14280,3 +14063,87 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Cannot open socket"
+#~ msgstr "Haiwezi kufungua %S"
+
+#, fuzzy
+#~ msgid "Unable to read socket"
+#~ msgstr "Haiwezi kuongeza moduli"
+
+#, fuzzy
+#~ msgid "Connection failed."
+#~ msgstr "Unganisho Limeshindikana"
+
+#, fuzzy
+#~ msgid "Write error"
+#~ msgstr "Hitilafu ya Printa"
+
+#, fuzzy
+#~ msgid "User Location"
+#~ msgstr "Mapali pa &Tawanyiko:"
+
+#, fuzzy
+#~ msgid "User Tune"
+#~ msgstr "Jina la Mtumiaji:"
+
+#, fuzzy
+#~ msgid "User Profile"
+#~ msgstr "Notisi za Mtumiaji"
+
+#, fuzzy
+#~ msgid "User Nickname"
+#~ msgstr "Jina la mtumiaji"
+
+#, fuzzy
+#~ msgid "User Browsing"
+#~ msgstr "Kuvinjari kwa kareti"
+
+#, fuzzy
+#~ msgid "User Gaming"
+#~ msgstr "Jina la Mtumiaji:"
+
+#, fuzzy
+#~ msgid "Hop Check"
+#~ msgstr "Usikague"
+
+#, fuzzy
+#~ msgid "Read Error"
+#~ msgstr "Hitilafu ya Faili"
+
+#, fuzzy
+#~ msgid "Incorrect password."
+#~ msgstr "Nywila ya sasa hivi:"
+
+#, fuzzy
+#~ msgid "Could Not Connect"
+#~ msgstr "Imeshindwa kuunganisha"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "Jina batili la moduli."
+
+#, fuzzy
+#~ msgid "Connection lost"
+#~ msgstr "Unganisho"
+
+#, fuzzy
+#~ msgid "Connection reset"
+#~ msgstr "Muunganisho ulikataliwa"
+
+#, fuzzy
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "Hitilafu ya upakiaji lahamtindo: %S"
+
+#, fuzzy
+#~ msgid "Unable to connect to host"
+#~ msgstr "Haikuweza kuunganishwa"
+
+#, fuzzy
+#~ msgid "Could not connect"
+#~ msgstr "\"Haikuweza kupakia: \""
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "Nywila ya sasa hivi:"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -2616,9 +2616,10 @@ msgid "Includes other IM clients' logs in the log viewer."
 msgstr "Menyertakan log klien PI lainnya dalam penglihat log."
 
 #. * description
+#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2674,8 +2675,9 @@ msgstr "Pesan Emulasi Offline"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Simpan pesan-pesan yang dikrim ke pengguan offline sebagai tos."
 
+#, fuzzy
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Pesan-pesan selebihnya akan disimpan sebagai tos. Anda dapat merubah/"
@@ -2926,11 +2928,12 @@ msgstr ""
 "plugin TCL, instal ActiveTCL dari http://www.activestate.com\n"
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 
-msgid "Unable to listen for incoming IM connections\n"
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
 msgstr "Tidak dapat mendengarkan sambungan masuk PI\n"
 
 msgid ""
@@ -2983,14 +2986,21 @@ msgstr "%s telah menutup percakapan."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Tidak dapat mengirim pesan: percakapan tidak dapat dimulai."
 
-msgid "Cannot open socket"
-msgstr "Tidak dapat membuka soket"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"Tidak dapat membuat soket:\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "Tidak dapat mengikat soket ke port"
 
-msgid "Could not listen on socket"
-msgstr "Tidak dapat mendengar pada soket"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"Tidak dapat membuat soket:\n"
+"%s"
 
 #, fuzzy
 msgid "Error communicating with local mDNSResponder."
@@ -3040,13 +3050,16 @@ msgstr "Simpan daftar teman..."
 msgid "Load buddylist from file..."
 msgstr "Muat daftar teman dari file..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "Isi bagian-dalam dalam pendaftaran."
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "Kata sandi tidak sama."
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "Tidak dapat mendaftarkan akun baru. Kesalahan terjadi.\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -3058,14 +3071,15 @@ msgstr "Pendaftaran selesai dengan sukses!"
 msgid "Password"
 msgstr "Kata sandi"
 
-msgid "Password (retype)"
-msgstr "Kata sandi (ketik ulang)"
+msgid "Password (again)"
+msgstr "Kata Sandi (lagi)"
 
-msgid "Enter current token"
-msgstr "Masukkan token sekarang"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "Token sekarang"
+#, fuzzy
+msgid "Captcha"
+msgstr "Simpan Gambar"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Daftarkan Akun Gadu-Gadu Baru"
@@ -3118,6 +3132,15 @@ msgstr "Kata sandi diganti dengan sukses!"
 msgid "Current password"
 msgstr "Kata sandi sekarang"
 
+msgid "Password (retype)"
+msgstr "Kata sandi (ketik ulang)"
+
+msgid "Enter current token"
+msgstr "Masukkan token sekarang"
+
+msgid "Current token"
+msgstr "Token sekarang"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr ""
 "Mohon masukkan kata sandi anda sekarang dan kata sandi baru untuk UIN: "
@@ -3166,8 +3189,8 @@ msgstr "Pengguna yang sesuai tidak ditemukan"
 msgid "There are no users matching your search criteria."
 msgstr "Tidak terdapat pengguna yang sesuai dengan kriteria pencarian anda."
 
-msgid "Unable to read socket"
-msgstr "Tidak dapat membaca soket"
+msgid "Unable to read from socket"
+msgstr "Tidak dapat membaca dari soket"
 
 msgid "Buddy list downloaded"
 msgstr "Daftar teman terdownload"
@@ -3181,8 +3204,14 @@ msgstr "Daftar teman diupload"
 msgid "Your buddy list was stored on the server."
 msgstr "Daftar teman anda telah disimpan pada server."
 
-msgid "Connection failed."
-msgstr "Sambungan gagal."
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "Tersambung"
+
+msgid "Connection failed"
+msgstr "Sambungan gagal"
 
 msgid "Add to chat"
 msgstr "Tambahkan ke percakapan"
@@ -3190,10 +3219,14 @@ msgstr "Tambahkan ke percakapan"
 msgid "Chat _name:"
 msgstr "_Nama percakapan:"
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "Tidak dapat menyambung ke server."
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "Menyambungkan"
 
 msgid "Chat error"
 msgstr "Kesalahan percakapan"
@@ -3201,7 +3234,8 @@ msgstr "Kesalahan percakapan"
 msgid "This chat name is already in use"
 msgstr "Nama percakapan ini telah digunakan"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "Tidak tersambung ke server."
 
 msgid "Find buddies..."
@@ -3261,7 +3295,8 @@ msgstr "Tidak ada topik terpasang"
 msgid "File Transfer Failed"
 msgstr "Transfer File Gagal"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "Tidak dapat membuka port pendengar."
 
 msgid "Error displaying MOTD"
@@ -3277,8 +3312,18 @@ msgstr "Tidak terdapat MOTD yang berasosiasi dengan sambungan ini."
 msgid "MOTD for %s"
 msgstr "MOTD untuk %s"
 
-msgid "Server has disconnected"
-msgstr "Server telah memutuskan sambungan"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"Kehilangan sambungan dengan server:\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "Lihat MOTD"
@@ -3293,22 +3338,20 @@ msgstr "_Kata sandi:"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "Nama panggilan IRC tidak dapat mengandung sepasi"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "Menyambungkan"
-
 msgid "SSL support unavailable"
 msgstr "Dukungan SSL tidak tersedia"
 
-msgid "Couldn't create socket"
-msgstr "Tidak dapat menciptakan soket"
+msgid "Unable to connect"
+msgstr "Tidak dapat tersambung"
 
-msgid "Couldn't connect to host"
-msgstr "Tidak dapat tersambung ke host"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "Tidak dapat menyambung ke %s"
 
-msgid "Read error"
-msgstr "Kesalahan baca"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "Server menutup sambungan."
 
 msgid "Users"
 msgstr "Pengguna"
@@ -3744,12 +3787,13 @@ msgstr "Perintah Ad-Hoc Gagal"
 msgid "execute"
 msgstr "laksanakan"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr ""
 "Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
 
 #, fuzzy
-msgid "You require encryption, but no TLS/SSL support found."
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 "Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
 
@@ -3769,7 +3813,12 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Otentifikasi Teks biasa"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Otentikasi gagal"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "Respon tidak valid dari server"
 
 msgid "Server does not use any supported authentication method"
@@ -3781,7 +3830,8 @@ msgstr "Anda memerlukan enkripsi, tetapi tidak tersedia pada server ini."
 msgid "Invalid challenge from server"
 msgstr "Tantangan tidak valid dari server"
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "kesalahan SASL"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3801,10 +3851,8 @@ msgstr ""
 "Tidak dapat membuat sambungan dengan server:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 "Tidak dapat membuat sambungan dengan server:\n"
 "%s"
@@ -3812,12 +3860,6 @@ msgstr ""
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "Tidak dapat menginisialisasi sambungan"
-
-msgid "Unable to create socket"
-msgstr "Tidak dapat menciptakan soket"
-
-msgid "Write error"
-msgstr "Kesalahan penulisan"
 
 msgid "Full Name"
 msgstr "Nama Lengkap"
@@ -3889,159 +3931,6 @@ msgstr "Sistem Operasi"
 msgid "Local Time"
 msgstr "File Lokal:"
 
-msgid "Last Activity"
-msgstr "Aktifitas Terakhir"
-
-msgid "Service Discovery Info"
-msgstr "Layani Info Temuan"
-
-msgid "Service Discovery Items"
-msgstr "Layani Item Temuan"
-
-msgid "Extended Stanza Addressing"
-msgstr "Alamat Stanza Lengkap"
-
-msgid "Multi-User Chat"
-msgstr "Percakapan Banyak-Pengguna"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "Informasi Lengkap Kehadiran Percakpan Banyak-Pengguna"
-
-msgid "In-Band Bytestreams"
-msgstr "Arus byte Dalam-Pita"
-
-msgid "Ad-Hoc Commands"
-msgstr "Perintah Ad-Hoc"
-
-msgid "PubSub Service"
-msgstr "Layanan PubSub"
-
-msgid "SOCKS5 Bytestreams"
-msgstr "Arus byte SOCKS5"
-
-msgid "Out of Band Data"
-msgstr "Kehabisan Pita Data"
-
-msgid "XHTML-IM"
-msgstr "PI-XHTML"
-
-msgid "In-Band Registration"
-msgstr "Pendaftaran Dalam-Pita"
-
-msgid "User Location"
-msgstr "Lokasi Pengguna"
-
-msgid "User Avatar"
-msgstr "Avatar Pengguna"
-
-msgid "Chat State Notifications"
-msgstr "Pemberitahuan Keadaan Percakapan"
-
-msgid "Software Version"
-msgstr "Versi Piranti Lunak"
-
-msgid "Stream Initiation"
-msgstr "Inisasi Arus"
-
-msgid "File Transfer"
-msgstr "Transfer File"
-
-msgid "User Mood"
-msgstr "Mood Pengguna"
-
-msgid "User Activity"
-msgstr "Aktifitas Pengguna"
-
-msgid "Entity Capabilities"
-msgstr "Kemampuan Entitas"
-
-msgid "Encrypted Session Negotiations"
-msgstr "Sesi Negosiasi Terenkripsi"
-
-msgid "User Tune"
-msgstr "Musik Pengguna"
-
-msgid "Roster Item Exchange"
-msgstr "Daftar Item Pertukaran"
-
-msgid "Reachability Address"
-msgstr "Alamat Tetap"
-
-msgid "User Profile"
-msgstr "Profil Pengguna"
-
-msgid "Jingle"
-msgstr "Jingle"
-
-msgid "Jingle Audio"
-msgstr "Audio Jingle"
-
-msgid "User Nickname"
-msgstr "Nama Panggilan Pengguna"
-
-msgid "Jingle ICE UDP"
-msgstr "ICE UDP Jingle"
-
-msgid "Jingle ICE TCP"
-msgstr "ICE TCP Jingle"
-
-msgid "Jingle Raw UDP"
-msgstr "Raw UDP Jingle"
-
-msgid "Jingle Video"
-msgstr "Video Jingle"
-
-msgid "Jingle DTMF"
-msgstr "DTMF Jingle"
-
-msgid "Message Receipts"
-msgstr "Tanda Terima Pesan"
-
-msgid "Public Key Publishing"
-msgstr "Penerbitan Kunci Publik"
-
-msgid "User Chatting"
-msgstr "Percakapan Pengguna"
-
-msgid "User Browsing"
-msgstr "Browsing Pengguna"
-
-msgid "User Gaming"
-msgstr "Permainan Pengguna"
-
-msgid "User Viewing"
-msgstr "Pandangan Pengguna"
-
-msgid "Ping"
-msgstr "Ping"
-
-msgid "Stanza Encryption"
-msgstr "Enkripsi Stanza"
-
-msgid "Entity Time"
-msgstr "Waktu Entitas"
-
-msgid "Delayed Delivery"
-msgstr "Pengiriman Tertunda"
-
-msgid "Collaborative Data Objects"
-msgstr "Obyek Data Kolaboratif"
-
-msgid "File Repository and Sharing"
-msgstr "Repoistory dan Sharing File"
-
-msgid "STUN Service Discovery for Jingle"
-msgstr "Temuan Layanan STUN untuk Jingle"
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr "Negosiasi Sesi Enkripsi yang Disederhanakan"
-
-msgid "Hop Check"
-msgstr "Pemeriksaan Hop"
-
-msgid "Capabilities"
-msgstr "Kemampuan"
-
 msgid "Priority"
 msgstr "Prioritas"
 
@@ -4053,7 +3942,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "Terlogin"
 
 msgid "Middle Name"
@@ -4237,16 +4126,12 @@ msgid "Roles:"
 msgstr "Peranan"
 
 #, fuzzy
-msgid "Ping timeout"
+msgid "Ping timed out"
 msgstr "Teks biasa"
 
-msgid "Read Error"
-msgstr "Kesalahan Baca"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4423,9 +4308,6 @@ msgstr "Kata sandi anda telah diganti."
 
 msgid "Error changing password"
 msgstr "Kesalahan penggantian kata sandi"
-
-msgid "Password (again)"
-msgstr "Kata Sandi (lagi)"
 
 msgid "Change XMPP Password"
 msgstr "Rubah Kata Sandi XMPP"
@@ -4814,6 +4696,14 @@ msgstr "Kesalahan Parse XML"
 msgid "Unknown Error in presence"
 msgstr "Kesalahan tidak dikenal hadir"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "Kesalahan bergabung percakapan %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "Kesalahan dalam percakapan %s"
+
 msgid "Create New Room"
 msgstr "Buat Kamar Baru"
 
@@ -4830,16 +4720,20 @@ msgstr "_Konfigurasi Kamar"
 msgid "_Accept Defaults"
 msgstr "_Terima Standar"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "Kesalahan bergabung percakapan %s"
+#, fuzzy
+msgid "No reason"
+msgstr "Tidak diberikan alasan."
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "Kesalahan dalam percakapan %s"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "Anda telah ditendang oleh %s: (%s)"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "Ditendang oleh %s (%s)"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Kesalahan terjadi ketika membuka file."
 
 #, fuzzy
@@ -5345,9 +5239,6 @@ msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Dukungan SSL diperlukan untuk MSN. Mohon instal pustaka SSL yang didukung. "
 
-msgid "Failed to connect to server."
-msgstr "Gagal tersambung ke server."
-
 msgid "Error retrieving profile"
 msgstr "Kesalahan pemanggilan profil"
 
@@ -5605,9 +5496,6 @@ msgstr "Pesan mungkin tidak terkirim karena kesalahan tidak dikenal terjadi:"
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Pesan mungkin tidak terkirim karena kesalahan tidak dikenal terjadi:"
 
-msgid "Unable to connect"
-msgstr "Tidak dapat tersambung"
-
 msgid "Writing error"
 msgstr "Kesalahan penulisan"
 
@@ -5622,20 +5510,24 @@ msgstr ""
 "Kesalahan sambungan dari server %s:\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "Protokol kami tidak didukung oleh server."
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "Kesalahan parsing HTTP."
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "Anda telah bergabung dari lokasi yang berbeda."
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 "Server-server MSN sementara tidak tersedia. Mohon tunggu dan coba lagi."
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "Server-server MSN akan sementara mati."
 
 #, c-format
@@ -5646,9 +5538,6 @@ msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 "Daftar teman MSN anda sementara tidak tersedia. Mohon tunggu dan coba lagi."
-
-msgid "Unknown error."
-msgstr "Kesalahan tidak dikenal."
 
 msgid "Handshaking"
 msgstr "Jabat Tangan"
@@ -5749,6 +5638,9 @@ msgstr "Plugin Protokol AIM"
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s bukan kelompok yang valid."
+
+msgid "Unknown error."
+msgstr "Kesalahan tidak dikenal."
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -5864,12 +5756,6 @@ msgstr[1] ""
 msgid "Add contacts from server"
 msgstr "Tambahkan kontak dari server"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "Tersambung"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "Kesalahan protokol, kode %d: %s"
@@ -5890,17 +5776,6 @@ msgstr "Kesalahan MySpaceIM"
 
 msgid "Invalid input condition"
 msgstr "Kondisi input tidak valid"
-
-#, fuzzy
-msgid "Read buffer full (2)"
-msgstr "Buffer baca penuh"
-
-msgid "Unparseable message"
-msgstr "Pesan yang tidak dapat dipecah"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "Tidak dapat tersambung ke host: %s (%d)"
 
 msgid "Failed to add buddy"
 msgstr "Gagal menambahkan teman"
@@ -5984,6 +5859,15 @@ msgstr "Total Teman"
 
 msgid "Client Version"
 msgstr "Versi Klien"
+
+#, fuzzy
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
+"Mohon kunjungi http://editprofile.myspace.com/index.cfm?fuseaction=profile."
+"nama pengguna dan pilih nama pengguna dan coba login kembali."
 
 #, fuzzy
 msgid "MySpaceIM - Username Available"
@@ -6249,9 +6133,9 @@ msgstr "Pengguna sedang offline atau anda diblokir"
 msgid "Unknown error: 0x%X"
 msgstr "Kesalahan tidak dikenal: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "Login gagal (%s)."
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "Tidak dapat mem-ping pengguna %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6356,9 +6240,6 @@ msgstr "Konferensi GroupWise %d"
 msgid "Authenticating..."
 msgstr "Mengotentikasi..."
 
-msgid "Unable to connect to server."
-msgstr "Tidak dapat menyambung ke server."
-
 msgid "Waiting for response..."
 msgstr "Menunggu tanggapan..."
 
@@ -6382,24 +6263,19 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Apakah anda ingin bergabung ke percakapan?"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "Anda telah terlogout karena anda login pada komputer yang lain."
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr ""
 "%s tampaknya offline dan tidak menerima pesan yang baru saja anda kirim."
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 "Tidak dapat menyambung ke server. Mohon masukkan alamat server ke mana anda "
 "ingin menyambung."
-
-msgid "Error. SSL support is not installed."
-msgstr "Kesalahan: dukungan SSL tidak terinstal."
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Konferensi ini ditutup. Tidak ada pesan yang dapat dikirim."
@@ -6440,10 +6316,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "Kesalahan dalam memohon token login"
 
-msgid "Incorrect password."
-msgstr "Kata sandi salah."
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 #, fuzzy
@@ -6454,18 +6327,8 @@ msgstr "Tidak dapat menyambung"
 msgid "Invalid chat room name"
 msgstr "Nama Kamar Tidak Valid"
 
-msgid "Server closed the connection."
-msgstr "Server menutup sambungan."
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"Kehilangan sambungan dengan server:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "Menerima data tidak valid pada sambungan dengan server."
 
 #. *< type
@@ -6513,7 +6376,8 @@ msgstr "Kehilangan sambungan dengan pengguna terpisah:<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr "Menerima data tidak valid pada sambungan dengan pengguna terpisah."
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "Tidak dapat melakukan sambungan dengan pengguna terpisah."
 
 msgid "Direct IM established"
@@ -6712,21 +6576,15 @@ msgstr "Tingkat Peringatan"
 msgid "Buddy Comment"
 msgstr "Komentar Teman"
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "Tidak dapat tersambung ke server otentikasi:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"Tidak dapat tersambung ke server BOS:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "Tidak dapat menyambung ke server OIM"
 
 #, fuzzy
 msgid "Username sent"
@@ -6741,9 +6599,9 @@ msgstr "Memfinalkan sambungan"
 
 #, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "Tidak dapat login: Tidak dapat gabung sebagai %s karena nama layar tidak "
 "valid.  Nama layar harus merupakan email yang valid, atau dimulai dengan "
@@ -6757,27 +6615,22 @@ msgstr "Anda dapat terputus sebentar lagi.  Periksa %s untuk pembaharuan."
 msgid "Unable to get a valid AIM login hash."
 msgstr "Tidak berhasil mendapatkan hash login AIM yang valid."
 
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "Anda dapat terputus sebentar lagi.  Periksa %s untuk pembaharuan."
-
 msgid "Unable to get a valid login hash."
 msgstr "Tidak berhasil mendapatkan hash login yang valid."
-
-msgid "Could Not Connect"
-msgstr "Tidak Dapat Menyambung"
 
 msgid "Received authorization"
 msgstr "Menerima Otorisasi"
 
 #. Unregistered username
 #. uid is not exist
+#. the username does not exist
 #, fuzzy
-msgid "Invalid username."
-msgstr "Nama tidak valid"
+msgid "Username does not exist"
+msgstr "Pengguna tidak pernah ada"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "Akun anda sementara ditahan."
 
 #. service temporarily unavailable
@@ -6799,7 +6652,8 @@ msgstr ""
 "dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
 "lebih lama"
 
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "Kunci SecurID yang dimasukkan tidak valid."
 
 msgid "Enter SecurID"
@@ -6970,6 +6824,9 @@ msgstr "Online Sejak"
 
 msgid "Member Since"
 msgstr "Anggota Sejak"
+
+msgid "Capabilities"
+msgstr "Kemampuan"
 
 msgid "Profile"
 msgstr "Profil"
@@ -7154,7 +7011,7 @@ msgstr "Pesan menjauh terlalu panjang."
 
 #, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7181,9 +7038,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "Yatim Piatu"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "Tidak dapat menambahkan teman %s karena anda memiliki terlalu banyak teman "
@@ -7192,8 +7049,8 @@ msgstr ""
 msgid "(no name)"
 msgstr "(tanpa nama)"
 
-#, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+#, fuzzy, c-format
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "Tidak dapat menambahkan teman %s karena alasan yang tidak jelas."
 
 #, fuzzy, c-format
@@ -8041,7 +7898,7 @@ msgid "Update interval (seconds)"
 msgstr "Pertahankan kesalahan"
 
 #, fuzzy
-msgid "Cannot decrypt server reply"
+msgid "Unable to decrypt server reply"
 msgstr "Tidak bisa mendapatkan informasi server"
 
 #, c-format
@@ -8066,10 +7923,6 @@ msgstr "Disyaratkan Pendaftaran"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr ""
-
-#, fuzzy
-msgid "Could not decrypt server reply"
-msgstr "Tidak bisa mendapatkan informasi server"
 
 #, fuzzy
 msgid "Requesting captcha"
@@ -8109,20 +7962,8 @@ msgid ""
 "%s"
 msgstr ""
 
-msgid "Unable to connect."
-msgstr "Tidak dapat menyambung."
-
 msgid "Socket error"
 msgstr "Kesalahan Soket"
-
-msgid "Unable to read from socket"
-msgstr "Tidak dapat membaca dari soket"
-
-msgid "Write Error"
-msgstr "Kesalahan Penulisan"
-
-msgid "Connection lost"
-msgstr "Sambungan putus"
 
 #, fuzzy
 msgid "Getting server"
@@ -8132,8 +7973,9 @@ msgstr "Atur Info Pengguna..."
 msgid "Requesting token"
 msgstr "Permintaan ditolak"
 
-msgid "Couldn't resolve host"
-msgstr "Tidak dapat me-resolve host"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Tidak dapat menyambung ke server."
 
 #, fuzzy
 msgid "Invalid server or port"
@@ -8184,7 +8026,7 @@ msgid "QQ Qun Command"
 msgstr "Perintah"
 
 #, fuzzy
-msgid "Could not decrypt login reply"
+msgid "Unable to decrypt login reply"
 msgstr "Tidak bisa mendapatkan informasi server"
 
 #, fuzzy
@@ -8205,9 +8047,6 @@ msgstr "File Terkirim"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d membatalkan trasnfer dari %s"
-
-msgid "Connection closed (writing)"
-msgstr "Sambugan tertutup (menulis)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8263,17 +8102,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr "Pemberitahuan Administrator Sametime"
 
-msgid "Connection reset"
-msgstr "Sambungan di-reset"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "Kesalahan membaca dari soket: %s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "Tidak dapat menyambung ke host"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "Pengumuman dari %s"
@@ -8295,6 +8123,9 @@ msgstr "Pengeras Suara"
 
 msgid "Video Camera"
 msgstr "Kamera Video"
+
+msgid "File Transfer"
+msgstr "Transfer File"
 
 msgid "Supports"
 msgstr "Dukungan-dukungan"
@@ -9115,6 +8946,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "Statistik Jaringan"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr "Ping gagal"
 
@@ -9178,7 +9012,8 @@ msgstr "Jenis kunci publik tidak didukung"
 msgid "Disconnected by server"
 msgstr "Diputuskan oleh server"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "Kesalahan selama menyambung ke Server SILC"
 
 msgid "Key Exchange failed"
@@ -9190,26 +9025,26 @@ msgstr ""
 "Meneruskan melepas sesi gagal. Tekan Sambung Kembali untuk membuat sambugan "
 "baru"
 
-msgid "Connection failed"
-msgstr "Sambungan gagal"
-
 msgid "Performing key exchange"
 msgstr "Melakukan pertukaran kunci"
 
-msgid "Unable to create connection"
-msgstr "Tidak dapat membuat sambungan"
-
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "Tidak dapat memuat pasangan kunci SILC"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "Menyambung ke Server SILC"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "Tidak dapat memuat pasangan kunci SILC"
+
 msgid "Out of memory"
 msgstr "Kehabisan memori"
 
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "Tidak dapat menginisialisasi protokol SILC"
 
 msgid "Error loading SILC key pair"
@@ -9502,7 +9337,8 @@ msgstr "Verifikasi dan tanda tangani semua pesan secara digital"
 msgid "Creating SILC key pair..."
 msgstr "Membuat pasangan kunci SILC..."
 
-msgid "Cannot create SILC key pair\n"
+#, fuzzy
+msgid "Unable to create SILC key pair"
 msgstr "Tidak dapat membuat pasangan kunci SILC\n"
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -9598,6 +9434,9 @@ msgstr "Papan tulis"
 msgid "No server statistics available"
 msgstr "Statistik server tidak tersedia"
 
+msgid "Error during connecting to SILC Server"
+msgstr "Kesalahan selama menyambung ke Server SILC"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Kegagalan: Versi tidak cocok, perbaharui klien anda"
@@ -9639,30 +9478,27 @@ msgstr "Kegagalan: Cookie tidak valid"
 msgid "Failure: Authentication failed"
 msgstr "Kegagalan: Otentikasi gagal"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "Tidak dapat menginisialisasi sambungan Klien SILC"
 
 msgid "John Noname"
 msgstr "John Tanpa nama"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "Tidak dapat memuat pasangan kunci SILC: %s"
 
-msgid "Could not write"
-msgstr "Tidak dapat menulis"
+msgid "Unable to create connection"
+msgstr "Tidak dapat membuat sambungan"
 
-msgid "Could not connect"
-msgstr "Tidak dapat menyambung"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "Respon server tidak dikenal."
 
-msgid "Could not create listen socket"
-msgstr "Tidak dapat membuat soket pendengar"
-
-msgid "Could not resolve hostname"
-msgstr "Tidak dapat me-resolve nama host"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "Tidak dapat menciptakan soket"
 
 #, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
@@ -9705,6 +9541,78 @@ msgstr "Otorisasi Pengguna"
 msgid "Auth Domain"
 msgstr "Otorisasi Domain"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "join &lt;room&gt;:  Gabung kamar percakapan pada jaringan Yahoo"
+
+msgid "list: List rooms on the Yahoo network"
+msgstr "daftar:  Daftar kamar pada jaringan Yahoo"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr "doodle: Minta pengguna untuk memulasi sesi Doodle"
+
+#, fuzzy
+msgid "Yahoo ID..."
+msgstr "ID Yahoo!"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Protokol Plugin Yahoo"
+
+msgid "Pager server"
+msgstr "Server Penyeranta"
+
+msgid "Pager port"
+msgstr "Port Penyeranta"
+
+msgid "File transfer server"
+msgstr "Server transfer file"
+
+msgid "File transfer port"
+msgstr "Port Transfer File"
+
+msgid "Chat room locale"
+msgstr "Kamar Pengguna Lokal"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "Abaikan undangan konferensi dan kamar percakapan"
+
+msgid "Chat room list URL"
+msgstr "Daftar URL kamar percakapan"
+
+msgid "Yahoo Chat server"
+msgstr "Server Percakapan Yahoo"
+
+msgid "Yahoo Chat port"
+msgstr "Port Percakapan Yahoo"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "ID Yahoo!"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Protokol Plugin Yahoo"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9737,30 +9645,20 @@ msgstr "Penambahan teman ditolak"
 msgid "Received invalid data"
 msgstr "Menerima data tidak valid pada sambungan dengan server."
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "Kata sandi salah"
-
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr ""
 "Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
 "ini."
 
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "Pengguna tidak pernah ada"
-
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr ""
 "Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
 "ini."
@@ -9803,39 +9701,34 @@ msgstr ""
 "Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
 "ini."
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
 "Tidak dapat menambahkan teman %s ke kelompok %s pada daftar server atas akun "
 "%s."
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "Tidak dapat menambahkan teman ke daftar server"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ %s/%s/%s.swf dengan suara ] %s"
 
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "Menerima respon HTTP tidak terduga dari server."
 
-msgid "Connection problem"
-msgstr "Masalah sambungan"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "Kehilangan sambungan dengan %s:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
 msgstr ""
-"Tidak dapat membuat sambungan dengan %s:\n"
+"Tidak dapat membuat sambungan dengan server:\n"
 "%s"
 
 msgid "Not at Home"
@@ -9898,73 +9791,14 @@ msgstr "Gabung Pengguna dalam Percakapan..."
 msgid "Open Inbox"
 msgstr "Buka Inbox"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;room&gt;:  Gabung kamar percakapan pada jaringan Yahoo"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "daftar:  Daftar kamar pada jaringan Yahoo"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: Minta pengguna untuk memulasi sesi Doodle"
-
-#, fuzzy
-msgid "Yahoo ID..."
-msgstr "ID Yahoo!"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Protokol Plugin Yahoo"
-
-msgid "Yahoo Japan"
-msgstr "Yahoo Jepang"
-
-msgid "Pager server"
-msgstr "Server Penyeranta"
-
-msgid "Japan Pager server"
-msgstr "Server Penyeranta Jepang"
-
-msgid "Pager port"
-msgstr "Port Penyeranta"
-
-msgid "File transfer server"
-msgstr "Server transfer file"
-
-msgid "Japan file transfer server"
-msgstr "Server Transfer File Jepang"
-
-msgid "File transfer port"
-msgstr "Port Transfer File"
-
-msgid "Chat room locale"
-msgstr "Kamar Pengguna Lokal"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Abaikan undangan konferensi dan kamar percakapan"
-
-msgid "Chat room list URL"
-msgstr "Daftar URL kamar percakapan"
-
-msgid "Yahoo Chat server"
-msgstr "Server Percakapan Yahoo"
-
-msgid "Yahoo Chat port"
-msgstr "Port Percakapan Yahoo"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr "Mengirim permohonan Doodle."
+
+msgid "Unable to connect."
+msgstr "Tidak dapat menyambung."
 
 msgid "Unable to establish file descriptor."
 msgstr "Gagal menetapkan deskriptor file."
@@ -9972,6 +9806,9 @@ msgstr "Gagal menetapkan deskriptor file."
 #, fuzzy, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s menawarkan untuk mengirim file %s"
+
+msgid "Write Error"
+msgstr "Kesalahan Penulisan"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Profil Yahoo! Jepang"
@@ -10091,22 +9928,18 @@ msgstr "Suara-suara"
 msgid "Webcams"
 msgstr "Webcam"
 
+msgid "Connection problem"
+msgstr "Masalah sambungan"
+
 msgid "Unable to fetch room list."
 msgstr "Tidak dapat memanggil daftar kamar."
 
 msgid "User Rooms"
 msgstr "Kamar Pengguna"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "Masalah sambungan dengan sever YCNT."
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"Kehilangan sambungan dengan sever\n"
-"%s"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10232,32 +10065,21 @@ msgstr "Area"
 msgid "Exposure"
 msgstr "Tingkat Ekspos"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"Tidak dapat membuat soket:\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Tidak dapat mem-parse tanggapan dari proxy HTTP: %s\n"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "Kesalahan sambungan HTTP proxy %d"
 
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "Akses ditolak: Sever procy HTTP melarang penerowongan port %d."
 
 #, c-format
 msgid "Error resolving %s"
 msgstr "Kesalahan dalam me-resolve %s"
-
-msgid "Could not resolve host name"
-msgstr "Tidak dapat resolve nama host"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10462,13 +10284,6 @@ msgstr "Kesalahan menulis ke %s: %s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "Tidak dapat menyambung ke %s: %s"
-
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr ""
-"Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
 
 #, c-format
 msgid " - %s"
@@ -10727,8 +10542,13 @@ msgstr "Tambahkan _Tos Teman..."
 msgid "View _Log"
 msgstr "Lihat _Log"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "Sembunyikan saat tidak tersambung"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "Tampilkan saat tidak tersambung"
 
 msgid "_Alias..."
 msgstr "_Alias..."
@@ -11250,6 +11070,10 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "Rubah informasi pengguna untuk %s"
 
+#, fuzzy
+msgid "Type the host name for this certificate."
+msgstr "Ketik nama host sesuai sertifikat ini"
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Server SSL"
@@ -11297,7 +11121,8 @@ msgstr "Acuhkan"
 msgid "Get Away Message"
 msgstr "Pesan Sedang Tidak di Tempat"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "Terakhir dikatakan"
 
 msgid "Unable to save icon file to disk."
@@ -12205,7 +12030,7 @@ msgid "Hyperlink visited color"
 msgstr "Warna Hyperlink"
 
 #, fuzzy
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "Warna untuk menggambar hyperlink saat mouse berada di atasnya."
 
 msgid "Hyperlink prelight color"
@@ -12243,15 +12068,22 @@ msgstr ""
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+msgid "Color to draw the name of a whispered action message."
+msgstr ""
+
 msgid "Whisper Message Name Color"
+msgstr ""
+
+msgid "Color to draw the name of a whispered message."
 msgstr ""
 
 #, fuzzy
 msgid "Typing notification color"
 msgstr "Penghilangan Pemberitahuan"
 
-msgid "The color to use for the typing notification font"
-msgstr ""
+#, fuzzy
+msgid "The color to use for the typing notification"
+msgstr "Pemberitahuan email baru"
 
 #, fuzzy
 msgid "Typing notification font"
@@ -12653,6 +12485,10 @@ msgstr ""
 "Perintah 'Manual' browser telah dipilih, tapi tidak ada perintah yang "
 "dipasang."
 
+#, fuzzy
+msgid "No message"
+msgstr "Pesan tidak dikenal"
+
 msgid "Open All Messages"
 msgstr "Buka Semua Pesan"
 
@@ -12669,10 +12505,6 @@ msgstr ""
 #, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Anda memiliki email!</span>"
-
-#, fuzzy
-msgid "No message"
-msgstr "Pesan tidak dikenal"
 
 msgid "The following plugins will be unloaded."
 msgstr "Plugin-plugin ini akan dilepaskan."
@@ -12894,14 +12726,18 @@ msgstr "_Tampikan ikon baki sistem:"
 msgid "On unread messages"
 msgstr "Pada pesan-pesan yang tidak dibaca"
 
-msgid "Conversation Window Hiding"
-msgstr "Persembunyian Jendela Percakapan"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "Jendela Percakapan PI"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Sembunyikan pecakapan PI baru:"
 
 msgid "When away"
 msgstr "Ketika menjauh"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "Kecil_kan jendela-jendela percakapan baru"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12961,9 +12797,6 @@ msgstr "Gunakan scrolling-halus"
 msgid "F_lash window when IMs are received"
 msgstr "K_edipkan jendela saat PI diterima"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "Kecil_kan jendela-jendela percakapan baru"
-
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -12999,7 +12832,8 @@ msgstr "Tidak dapat memperoleh informasi pengguna"
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Contoh: stunserver.org</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "_Deteksi otomatis alamat IP"
 
 msgid "Public _IP:"
@@ -13375,34 +13209,18 @@ msgstr "Si_mpan & Gunakan"
 msgid "Status for %s"
 msgstr "Status untuk %s"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-#, fuzzy
-msgid "Custom Smiley"
-msgstr "Masukkan Senyuman"
-
-msgid "More Data needed"
-msgstr ""
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr ""
-
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
 #, fuzzy
-msgid "Duplicate Shortcut"
-msgstr "Gandakan Perbaikan"
+msgid "Custom Smiley"
+msgstr "Masukkan Senyuman"
 
 #, fuzzy
-msgid "Please select an image for the smiley."
-msgstr "Mohon pilih mood anda dari daftar."
+msgid "Duplicate Shortcut"
+msgstr "Gandakan Perbaikan"
 
 #, fuzzy
 msgid "Edit Smiley"
@@ -13526,9 +13344,10 @@ msgstr ""
 msgid "Cannot send launcher"
 msgstr "Tidak dapat mengirim peluncur"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "Anda menarik peluncur desktop. Besar kemungkinan anda ingin mengirim apapun "
 "yang ditunjuk peluncur ini daripada peluncurnya itu sendiri."
@@ -14136,9 +13955,10 @@ msgid "Music Messaging Plugin for collaborative composition."
 msgstr "Plugin Pesan Musik untuk komposisi kolaboratif."
 
 #. *  summary
+#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "Plugin Pesan Musik memungkinkan sejumlah pengguna untuk bekerja secara "
 "simultan pada sebuah musik dengan mengedit gubahan (musik) umum secara real-"
@@ -14407,7 +14227,7 @@ msgstr "Persembunyian Jendela Percakapan"
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 
 msgid "Duplicate Correction"
@@ -14735,8 +14555,9 @@ msgstr "Pilihan-pilihan Pidgin Windows"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Pilihan khusus untuk Pidgin Windows."
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
 "Menyediakan pilihan khusus untuk Pidgin Windows , seperti labuhan daftar "
 "teman."
@@ -14777,6 +14598,311 @@ msgstr "Kirim dan terima bait-bait XMPP mentah."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
+
+#~ msgid "Cannot open socket"
+#~ msgstr "Tidak dapat membuka soket"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "Tidak dapat mendengar pada soket"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "Tidak dapat membaca soket"
+
+#~ msgid "Connection failed."
+#~ msgstr "Sambungan gagal."
+
+#~ msgid "Server has disconnected"
+#~ msgstr "Server telah memutuskan sambungan"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "Tidak dapat menciptakan soket"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "Tidak dapat tersambung ke host"
+
+#~ msgid "Read error"
+#~ msgstr "Kesalahan baca"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Tidak dapat membuat sambungan dengan server:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "Kesalahan penulisan"
+
+#~ msgid "Last Activity"
+#~ msgstr "Aktifitas Terakhir"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "Layani Info Temuan"
+
+#~ msgid "Service Discovery Items"
+#~ msgstr "Layani Item Temuan"
+
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "Alamat Stanza Lengkap"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "Percakapan Banyak-Pengguna"
+
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "Informasi Lengkap Kehadiran Percakpan Banyak-Pengguna"
+
+#~ msgid "In-Band Bytestreams"
+#~ msgstr "Arus byte Dalam-Pita"
+
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "Perintah Ad-Hoc"
+
+#~ msgid "PubSub Service"
+#~ msgstr "Layanan PubSub"
+
+#~ msgid "SOCKS5 Bytestreams"
+#~ msgstr "Arus byte SOCKS5"
+
+#~ msgid "Out of Band Data"
+#~ msgstr "Kehabisan Pita Data"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "PI-XHTML"
+
+#~ msgid "In-Band Registration"
+#~ msgstr "Pendaftaran Dalam-Pita"
+
+#~ msgid "User Location"
+#~ msgstr "Lokasi Pengguna"
+
+#~ msgid "User Avatar"
+#~ msgstr "Avatar Pengguna"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "Pemberitahuan Keadaan Percakapan"
+
+#~ msgid "Software Version"
+#~ msgstr "Versi Piranti Lunak"
+
+#~ msgid "Stream Initiation"
+#~ msgstr "Inisasi Arus"
+
+#~ msgid "User Mood"
+#~ msgstr "Mood Pengguna"
+
+#~ msgid "User Activity"
+#~ msgstr "Aktifitas Pengguna"
+
+#~ msgid "Entity Capabilities"
+#~ msgstr "Kemampuan Entitas"
+
+#~ msgid "Encrypted Session Negotiations"
+#~ msgstr "Sesi Negosiasi Terenkripsi"
+
+#~ msgid "User Tune"
+#~ msgstr "Musik Pengguna"
+
+#~ msgid "Roster Item Exchange"
+#~ msgstr "Daftar Item Pertukaran"
+
+#~ msgid "Reachability Address"
+#~ msgstr "Alamat Tetap"
+
+#~ msgid "User Profile"
+#~ msgstr "Profil Pengguna"
+
+#~ msgid "Jingle"
+#~ msgstr "Jingle"
+
+#~ msgid "Jingle Audio"
+#~ msgstr "Audio Jingle"
+
+#~ msgid "User Nickname"
+#~ msgstr "Nama Panggilan Pengguna"
+
+#~ msgid "Jingle ICE UDP"
+#~ msgstr "ICE UDP Jingle"
+
+#~ msgid "Jingle ICE TCP"
+#~ msgstr "ICE TCP Jingle"
+
+#~ msgid "Jingle Raw UDP"
+#~ msgstr "Raw UDP Jingle"
+
+#~ msgid "Jingle Video"
+#~ msgstr "Video Jingle"
+
+#~ msgid "Jingle DTMF"
+#~ msgstr "DTMF Jingle"
+
+#~ msgid "Message Receipts"
+#~ msgstr "Tanda Terima Pesan"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "Penerbitan Kunci Publik"
+
+#~ msgid "User Chatting"
+#~ msgstr "Percakapan Pengguna"
+
+#~ msgid "User Browsing"
+#~ msgstr "Browsing Pengguna"
+
+#~ msgid "User Gaming"
+#~ msgstr "Permainan Pengguna"
+
+#~ msgid "User Viewing"
+#~ msgstr "Pandangan Pengguna"
+
+#~ msgid "Stanza Encryption"
+#~ msgstr "Enkripsi Stanza"
+
+#~ msgid "Entity Time"
+#~ msgstr "Waktu Entitas"
+
+#~ msgid "Delayed Delivery"
+#~ msgstr "Pengiriman Tertunda"
+
+#~ msgid "Collaborative Data Objects"
+#~ msgstr "Obyek Data Kolaboratif"
+
+#~ msgid "File Repository and Sharing"
+#~ msgstr "Repoistory dan Sharing File"
+
+#~ msgid "STUN Service Discovery for Jingle"
+#~ msgstr "Temuan Layanan STUN untuk Jingle"
+
+#~ msgid "Simplified Encrypted Session Negotiation"
+#~ msgstr "Negosiasi Sesi Enkripsi yang Disederhanakan"
+
+#~ msgid "Hop Check"
+#~ msgstr "Pemeriksaan Hop"
+
+#~ msgid "Read Error"
+#~ msgstr "Kesalahan Baca"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "Gagal tersambung ke server."
+
+#, fuzzy
+#~ msgid "Read buffer full (2)"
+#~ msgstr "Buffer baca penuh"
+
+#~ msgid "Unparseable message"
+#~ msgstr "Pesan yang tidak dapat dipecah"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "Tidak dapat tersambung ke host: %s (%d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "Login gagal (%s)."
+
+#~ msgid "Unable to connect to server."
+#~ msgstr "Tidak dapat menyambung ke server."
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "Anda telah terlogout karena anda login pada komputer yang lain."
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "Kesalahan: dukungan SSL tidak terinstal."
+
+#~ msgid "Incorrect password."
+#~ msgstr "Kata sandi salah."
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Tidak dapat tersambung ke server BOS:\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "Anda dapat terputus sebentar lagi.  Periksa %s untuk pembaharuan."
+
+#~ msgid "Could Not Connect"
+#~ msgstr "Tidak Dapat Menyambung"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "Nama tidak valid"
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "Tidak bisa mendapatkan informasi server"
+
+#~ msgid "Connection lost"
+#~ msgstr "Sambungan putus"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "Tidak dapat me-resolve host"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "Sambugan tertutup (menulis)"
+
+#~ msgid "Connection reset"
+#~ msgstr "Sambungan di-reset"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "Kesalahan membaca dari soket: %s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "Tidak dapat menyambung ke host"
+
+#~ msgid "Could not write"
+#~ msgstr "Tidak dapat menulis"
+
+#~ msgid "Could not connect"
+#~ msgstr "Tidak dapat menyambung"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr "Tidak dapat membuat soket pendengar"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "Tidak dapat me-resolve nama host"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "Kata sandi salah"
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Tidak dapat membuat sambungan dengan %s:\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Yahoo Jepang"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "Server Penyeranta Jepang"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "Server Transfer File Jepang"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Kehilangan sambungan dengan sever\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "Tidak dapat resolve nama host"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr ""
+#~ "Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "Persembunyian Jendela Percakapan"
+
+#, fuzzy
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "Mohon pilih mood anda dari daftar."
 
 #~ msgid "Activate which ID?"
 #~ msgstr "Aktifkan ID yang mana?"
@@ -15247,23 +15373,12 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgid "Windows Live ID authentication Failed"
 #~ msgstr "Otentikasi Windows Live ID gagal"
 
-#~ msgid "Unable to connect to OIM server"
-#~ msgstr "Tidak dapat menyambung ke server OIM"
-
 #~ msgid ""
 #~ "Sorry, passwords over %d characters in length (yours is %d) are not "
 #~ "supported by MySpace."
 #~ msgstr ""
 #~ "Maaf, kata sandi melebihi %d karakter (milik anda %d) tidak didukung oleh "
 #~ "MySpace."
-
-#~ msgid ""
-#~ "Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-#~ "username and choose a username and try to login again."
-#~ msgstr ""
-#~ "Mohon kunjungi http://editprofile.myspace.com/index.cfm?"
-#~ "fuseaction=profile.nama pengguna dan pilih nama pengguna dan coba login "
-#~ "kembali."
 
 #~ msgid "Unable to make SSL connection to server."
 #~ msgstr "Tidak dapat membuat sambungan SSL ke server."
