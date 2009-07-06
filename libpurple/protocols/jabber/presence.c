@@ -460,9 +460,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from;
 	const char *type;
-	const char *real_jid = NULL;
-	const char *affiliation = NULL;
-	const char *role = NULL;
 	char *status = NULL;
 	int priority = 0;
 	JabberID *jid;
@@ -476,7 +473,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	char *buddy_name;
 	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
 	xmlnode *y;
-	gboolean muc = FALSE;
 	char *avatar_hash = NULL;
 	xmlnode *caps = NULL;
 	int idle = 0;
@@ -609,49 +605,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
 				stamp = xmlnode_get_attrib(y, "stamp");
-			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
-				xmlnode *z;
-
-				muc = TRUE;
-				if((z = xmlnode_get_child(y, "status"))) {
-					const char *code = xmlnode_get_attrib(z, "code");
-					if (purple_strequal(code, "201")) {
-						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
-							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
-							chat->config_dialog_handle =
-								purple_request_action(js->gc,
-										_("Create New Room"),
-										_("Create New Room"),
-										_("You are creating a new room.  Would"
-											" you like to configure it, or"
-											" accept the default settings?"),
-										/* Default Action */ 1,
-										purple_connection_get_account(js->gc), NULL, chat->conv,
-										chat, 2,
-										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
-										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
-						}
-					} else if (purple_strequal(code, "210")) {
-						/*  server rewrote room-nick */
-						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
-							g_free(chat->handle);
-							chat->handle = g_strdup(jid->resource);
-						}
-					}
-				}
-				if((z = xmlnode_get_child(y, "item"))) {
-					real_jid = xmlnode_get_attrib(z, "jid");
-					affiliation = xmlnode_get_attrib(z, "affiliation");
-					role = xmlnode_get_attrib(z, "role");
-					if(affiliation != NULL && !strcmp(affiliation, "owner"))
-						flags |= PURPLE_CBFLAGS_FOUNDER;
-					if (role != NULL) {
-						if (!strcmp(role, "moderator"))
-							flags |= PURPLE_CBFLAGS_OP;
-						else if (!strcmp(role, "participant"))
-							flags |= PURPLE_CBFLAGS_VOICE;
-					}
-				}
 			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
@@ -709,6 +662,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if (type == NULL) {
+			xmlnode *x;
+			const char *real_jid = NULL;
+			const char *affiliation = NULL;
+			const char *role = NULL;
+
 			/*
 			 * XEP-0045 mandates the presence to include a resource (which is
 			 * treated as the chat nick). Some non-compliant servers allow
@@ -722,10 +680,61 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				return;
 			}
 
+			x = xmlnode_get_child_with_namespace(packet, "x",
+					"http://jabber.org/protocol/muc#user");
+			if (x) {
+				xmlnode *status_node;
+				xmlnode *item_node;
+
+				status_node = xmlnode_get_child(x, "status");
+				if (status_node) {
+					const char *code = xmlnode_get_attrib(status_node, "code");
+					if (purple_strequal(code, "201")) {
+						if ((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
+							chat->config_dialog_handle =
+								purple_request_action(js->gc,
+										_("Create New Room"),
+										_("Create New Room"),
+										_("You are creating a new room.  Would"
+											" you like to configure it, or"
+											" accept the default settings?"),
+										/* Default Action */ 1,
+										purple_connection_get_account(js->gc), NULL, chat->conv,
+										chat, 2,
+										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
+										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
+						}
+					} else if (purple_strequal(code, "210")) {
+						/* server rewrote room-nick */
+						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+							g_free(chat->handle);
+							chat->handle = g_strdup(jid->resource);
+						}
+					}
+				}
+
+				item_node = xmlnode_get_child(x, "item");
+				if (item_node) {
+					real_jid    = xmlnode_get_attrib(item_node, "jid");
+					affiliation = xmlnode_get_attrib(item_node, "affiliation");
+					role        = xmlnode_get_attrib(item_node, "role");
+
+					if (purple_strequal(affiliation, "owner"))
+						flags |= PURPLE_CBFLAGS_FOUNDER;
+					if (role) {
+						if (g_str_equal(role, "moderator"))
+							flags |= PURPLE_CBFLAGS_OP;
+						else if (g_str_equal(role, "participant"))
+							flags |= PURPLE_CBFLAGS_VOICE;
+					}
+				}
+			}
+
 			if(!chat->conv) {
 				char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 				chat->id = i++;
-				chat->muc = muc;
+				chat->muc = (x != NULL);
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
 				purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
 
