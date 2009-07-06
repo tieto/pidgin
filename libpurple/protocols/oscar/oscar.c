@@ -3931,6 +3931,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	PurpleStatus *status;
+	gboolean is_available;
 	PurplePresence *presence;
 	const char *username, *message, *itmsurl;
 	char *tmp;
@@ -3971,13 +3972,14 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	/* Set our available message based on the current status */
 	status = purple_account_get_active_status(account);
-	if (purple_status_is_available(status))
+	is_available = purple_status_is_available(status);
+	if (is_available)
 		message = purple_status_get_attr_string(status, "message");
 	else
 		message = NULL;
 	tmp = purple_markup_strip_html(message);
 	itmsurl = purple_status_get_attr_string(status, "itmsurl");
-	aim_srv_setextrainfo(od, FALSE, 0, tmp != NULL, tmp, itmsurl);
+	aim_srv_setextrainfo(od, FALSE, 0, is_available, tmp, itmsurl);
 	g_free(tmp);
 
 	presence = purple_status_get_presence(status);
