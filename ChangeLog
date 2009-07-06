@@ -79,13 +79,16 @@ version 2.6.0 (??/??/2009):
 	* Google Talk mail notifications should now work for people for whom they
 	  inexplicably did not.  (Thanks to yukam for determining the reason)
 
-	Yahoo:
+	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
 	* Sending text messages (address to +<countrycode><phone number>).
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
 	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
 	* Further fixes for buddy pictures, aliases etc.
+	* Yahoo! and Yahoo! JAPAN are now two separate protocol plugins that share
+	  common protocol code.  You can now have the same account on both
+	  networks.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
