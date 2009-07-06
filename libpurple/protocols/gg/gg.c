@@ -1715,9 +1715,10 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 				gc->inpa = purple_input_add(info->session->fd,
 							  PURPLE_INPUT_READ,
 							  ggp_callback_recv, gc);
-
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
+				
 				ggp_buddylist_send(gc);
+				purple_connection_update_progress(gc, _("Connected"), 2, 2);
+				purple_connection_set_state(gc, PURPLE_CONNECTED);
 			}
 			break;
 		case GG_EVENT_CONN_FAILED:
@@ -1956,6 +1957,7 @@ static void ggp_login(PurpleAccount *account)
 		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
 
 	info->session = gg_login(glp);
+	purple_connection_update_progress(gc, _("Connecting"), 1, 2); 			
 	if (info->session == NULL) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
