@@ -1048,3 +1048,14 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_hash_table_destroy(body);
 }
 
+/* Only called from chats. Handwritten messages for IMs come as a SLP message */
+void
+msn_handwritten_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	const char *body;
+	size_t body_len;
+
+	body = msn_message_get_bin_data(msg, &body_len);
+	msn_switchboard_show_ink(cmdproc->data, msg->remote_user, body);
+}
+

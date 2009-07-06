@@ -24,6 +24,7 @@ version 2.6.0 (??/??/2009):
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
 	  information.
+	* Add support for receiving handwritten (ink) messages on MSN.
 
 	Gadu-Gadu:
 	* Accounts can specify a server to which to connect.
