@@ -566,6 +566,14 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		 * acknowledging this (and the others) at some point. */
 		jabber_id_free(jid);
 		return;
+	} else if (g_str_equal(type, "probe")) {
+		purple_debug_warning("jabber", "Ignoring presence probe\n");
+		jabber_id_free(jid);
+		return;
+	} else if (g_str_equal(type, "unavailable")) {
+		state = JABBER_BUDDY_STATE_UNAVAILABLE;
+	} else if (g_str_equal(type, "unsubscribed")) {
+		state = JABBER_BUDDY_STATE_UNKNOWN;
 	} else {
 		purple_debug_warning("jabber", "Ignoring presence with invalid type "
 		                     "'%s'\n", type);
