@@ -173,7 +173,9 @@ libpurple/protocols/silc10/silc.c
 libpurple/protocols/silc10/util.c
 libpurple/protocols/silc10/wb.c
 libpurple/protocols/simple/simple.c
-libpurple/protocols/yahoo/yahoo.c
+libpurple/protocols/yahoo/libyahoo.c
+libpurple/protocols/yahoo/libyahoojp.c
+libpurple/protocols/yahoo/libymsg.c
 libpurple/protocols/yahoo/yahoo_doodle.c
 libpurple/protocols/yahoo/yahoo_filexfer.c
 libpurple/protocols/yahoo/yahoo_packet.c
