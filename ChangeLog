@@ -1,7 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.0 (??/??/2009):
-	General:
+	libpurple:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
@@ -10,8 +10,6 @@ version 2.6.0 (??/??/2009):
 	  in a group on the buddy list. (Paul Aurich)
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
-
-	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
 	* Show the invite message for buddies that requested authorization
@@ -36,6 +34,8 @@ version 2.6.0 (??/??/2009):
 	* Correctly show tooltip status for contacts with status messages.
 	  (Krzysztof "kkszysiu" Klinikowski)
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
+	* Support connection progress steps in Gadu-Gadu (Krzysztof "kkszysiu"
+	  Klinikowski)
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
