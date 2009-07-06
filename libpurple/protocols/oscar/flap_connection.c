@@ -480,7 +480,7 @@ flap_connection_destroy_cb(gpointer data)
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
 			tmp = g_strdup(_("Received invalid data on connection with server"));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-			tmp = g_strdup_printf(_("Could not establish a connection with the server: %s"),
+			tmp = g_strdup_printf(_("Unable to connect: %s"),
 					conn->error_message);
 		else
 			/*

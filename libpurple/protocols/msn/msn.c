@@ -1028,7 +1028,7 @@ msn_login(PurpleAccount *account)
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Failed to connect to server."));
+			_("Unable to connect"));
 }
 
 static void

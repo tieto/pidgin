@@ -1870,7 +1870,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 					purple_account_set_password(session->account, NULL);
 				break;
 		}
-		purple_connection_error_reason (session->gc, reason, full_errmsg);
+		purple_connection_error_reason(session->gc, reason, full_errmsg);
 	} else {
 		purple_notify_error(session->account, _("MySpaceIM Error"), full_errmsg, NULL);
 	}
@@ -2069,21 +2069,23 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		 session->rxbuf + session->rxoff,
 		 session->rxsize - session->rxoff - 1, 0);
 
-	if (n < 0 && errno == EAGAIN) {
-		return;
-	} else if (n < 0) {
-		purple_debug_error("msim", "msim_input_cb: read error, ret=%d, "
-			"error=%s, source=%d, fd=%d (%X))\n",
-			n, g_strerror(errno), source, session->fd, session->fd);
-		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Read error"));
+	if (n < 0) {
+		gchar *tmp;
+
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
+		purple_connection_error_reason(gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 		return;
 	} else if (n == 0) {
-		purple_debug_info("msim", "msim_input_cb: server disconnected\n");
-		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Server has disconnected"));
+		purple_connection_error_reason(gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Server closed the connection"));
 		return;
 	}
 
@@ -2126,7 +2128,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 			purple_debug_info("msim", "msim_input_cb: couldn't parse rxbuf\n");
 			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unparseable message"));
+				_("Unable to parse message"));
 			break;
 		} else {
 			/* Process message and then free it (processing function should
@@ -2167,11 +2169,11 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 	session = (MsimSession *)gc->proto_data;
 
 	if (source < 0) {
+		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
+				error_message);
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			g_strdup_printf(_("Couldn't connect to host: %s (%d)"),
-					error_message ? error_message : "no message given",
-					source));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+			g_free(tmp);
 		return;
 	}
 
@@ -2228,7 +2230,7 @@ msim_login(PurpleAccount *acct)
 		 * working port and try that first next time. */
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Couldn't create socket"));
+			_("Unable to connect"));
 		return;
 	}
 }

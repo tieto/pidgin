@@ -2156,7 +2156,7 @@ connection_host_resolved(GSList *hosts, gpointer data,
 
 	if (hosts == NULL)
 	{
-		purple_proxy_connect_data_disconnect(connect_data, _("Could not resolve host name"));
+		purple_proxy_connect_data_disconnect(connect_data, _("Unable to resolve hostname"));
 		return;
 	}
 

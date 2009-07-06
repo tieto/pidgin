@@ -354,7 +354,7 @@ static void irc_login(PurpleAccount *account)
 		{
 			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to create socket"));
+				_("Unable to connect"));
 			return;
 		}
 	}
