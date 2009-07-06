@@ -503,6 +503,7 @@ migrate_yahoo_japan(PurpleAccount *account)
 		}
 
 		/* these should always be nuked */
+		purple_account_remove_setting(account, "yahoojp");
 		purple_account_remove_setting(account, "serverjp");
 		purple_account_remove_setting(account, "xferjp_host");
 
