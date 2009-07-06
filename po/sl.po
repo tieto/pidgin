@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-04 15:07-0700\n"
 "PO-Revision-Date: 2009-05-02 16:54+0100\n"
 "Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
@@ -2611,9 +2611,10 @@ msgstr ""
 "dnevnika."
 
 #. * description
+#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2667,8 +2668,9 @@ msgstr "Emulacija nepovezovalnega sporočila"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Shrani sporočila, poslana neprijavljenemu uporabniku, kot opozorilo."
 
+#, fuzzy
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Preostanek sporočila bo shranjen kot opozorilo. Opozorilo lahko uredite/"
@@ -4809,7 +4811,8 @@ msgstr "Napaka pri pridruževanju pomenku %s"
 msgid "Error in chat %s"
 msgstr "Napaka v pomenku %s"
 
-msgid "An error occured on the in-band bytestream transfer\n"
+#, fuzzy
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "V notranje pasovnem zlogovnem pretoku je prišlo do napake\n"
 
 msgid "Transfer was closed."
@@ -6347,9 +6350,10 @@ msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "%s ni na zvezi in ni sprejel sporočila, ki ste ga pravkar poslali."
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 "Ni se mogoče povezati na strežnik. Vnesite naslov strežnika, na katerega se "
 "želite povezati."
@@ -6727,9 +6731,10 @@ msgid "Received authorization"
 msgstr "Ponovno zahtevaj pooblastitev"
 
 #. Unregistered username
-#. uid is not exist
-msgid "Invalid username."
-msgstr "Neveljavno uporabniško ime."
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "Uporabnik ne obstaja"
 
 #. Suspended account
 msgid "Your account is currently suspended."
@@ -7997,6 +8002,10 @@ msgstr "Preverjanje napisa s slike QQ"
 
 msgid "Enter the text from the image"
 msgstr "Vnesite besedilo s slike"
+
+#. uid is not exist
+msgid "Invalid username."
+msgstr "Neveljavno uporabniško ime."
 
 #, c-format
 msgid "Unknown reply when checking password (0x%02X)"
@@ -9625,7 +9634,6 @@ msgstr "Dodajanje prijatelja zavrnjeno"
 msgid "Received invalid data"
 msgstr "Na povezavi s strežnikom prejeti neveljavni podatki."
 
-#. Password incorrect
 #, fuzzy
 msgid "Incorrect Password"
 msgstr "Neveljavno geslo"
@@ -9638,11 +9646,6 @@ msgid ""
 msgstr ""
 "Neznana številka napake %d. Prijavljanje v spletno stran Yahoo! lahko to "
 "odpravi."
-
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "Uporabnik ne obstaja"
 
 #. indicates a lock of some description
 #, fuzzy
@@ -11132,6 +11135,10 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "Spremeni podatke za uporabika %s"
 
+#, fuzzy
+msgid "Type the host name for this certificate."
+msgstr "Vnesite ime gostitelja, kateremu je namenjeno to digitalno potrdilo."
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Strežniki SSL"
@@ -12067,7 +12074,8 @@ msgstr "Barva za risanje povezav."
 msgid "Hyperlink visited color"
 msgstr "Barva obiskane povezave"
 
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+#, fuzzy
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "Barva za izpis hiperpovezav, ki ste jih že obiskali (ali aktivirali)."
 
 msgid "Hyperlink prelight color"
@@ -12104,13 +12112,22 @@ msgstr "Barva izrisa imena na sporočilo dejanja."
 msgid "Action Message Name Color for Whispered Message"
 msgstr "Ime barve sporočila dejanja za šepetano sporočilo"
 
+#, fuzzy
+msgid "Color to draw the name of a whispered action message."
+msgstr "Barva izrisa imena na sporočilo dejanja."
+
 msgid "Whisper Message Name Color"
 msgstr "Barva imena šepetanega sporočila"
+
+#, fuzzy
+msgid "Color to draw the name of a whispered message."
+msgstr "Barva izrisa imena na sporočilo dejanja."
 
 msgid "Typing notification color"
 msgstr "Barva obvestila o tipkanju"
 
-msgid "The color to use for the typing notification font"
+#, fuzzy
+msgid "The color to use for the typing notification"
 msgstr "Barva pisave za obvestilo o tipkanju"
 
 msgid "Typing notification font"
@@ -12510,6 +12527,9 @@ msgstr ""
 "Vašega brskalnika ni bilo mogoče zagnati, ker ste v nastavitvah izbrali "
 "poljuben brskalnik, a niste nastavili ukaza."
 
+msgid "No message"
+msgstr "Ni sporočil"
+
 msgid "Open All Messages"
 msgstr "Odpri vsa sporočila"
 
@@ -12525,9 +12545,6 @@ msgstr "Opusti"
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr ""
 "<span weight=\"bold\" size=\"larger\">Dobili ste opozorilo prijatelja!</span>"
-
-msgid "No message"
-msgstr "Ni sporočil"
 
 msgid "The following plugins will be unloaded."
 msgstr "Odloženi bodo naslednji vtičniki."
@@ -12846,7 +12863,8 @@ msgstr "Konfiguracijskega programa brskalnika ni mogoče zagnati."
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Primer: stunserver.org</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "_Samozaznaj naslov IP"
 
 msgid "Public _IP:"
@@ -13216,31 +13234,16 @@ msgstr "Shra_ni in uporabi"
 msgid "Status for %s"
 msgstr "Stanje za %s"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-msgid "Custom Smiley"
-msgstr "Smejček po meri"
-
-msgid "More Data needed"
-msgstr "Potrebnih je več podatkov"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Podajte tipke za bližnjico, ki bodo povezane s smejčkom."
-
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr "Smejček po meri za '%s' že obstaja. Navedite druge tipke za bližnjico."
 
+msgid "Custom Smiley"
+msgstr "Smejček po meri"
+
 msgid "Duplicate Shortcut"
 msgstr "Podvojena tipka za bližnjico"
-
-msgid "Please select an image for the smiley."
-msgstr "Izberite sliko smejčka."
 
 msgid "Edit Smiley"
 msgstr "Uredi smejčka"
@@ -13350,9 +13353,10 @@ msgstr ""
 msgid "Cannot send launcher"
 msgstr "Ni mogoče poslati zaganjalnika"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "Povlekli ste namizni zaganjalnik. Najverjetneje ste želeli namesto samega "
 "zaganjalnika poslati tisto, na kar ta zaganjalnik kaže."
@@ -13947,9 +13951,10 @@ msgid "Music Messaging Plugin for collaborative composition."
 msgstr "Vtičnik za glasbeno sporočanje - za skupinsko skladanje."
 
 #. *  summary
+#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "Vtičnik za glasbeno sporočanje omogoča več uporabnikom hkratno sodelovanju "
 "pri glasbenem ustvarjanju kompozicije v resničnem času."
@@ -14212,9 +14217,10 @@ msgid "Conversation Window Send Button."
 msgstr "Gumb Pošlji okna pogovora"
 
 #. *< summary
+#, fuzzy
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 "Doda gumb Pošlji v vnosno območje pogovornega okna. Namenjeno za primere, ko "
 "fizična tipkovnica ni prisotna."
@@ -14544,8 +14550,9 @@ msgstr "Možnosti Pidgin za okolje Windows"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Nastavitve, specifične za %s v okolju Windows."
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
 "Ponuja nastavitve, specifične za %s v okolju Windows, kot je sidranje "
 "seznama prijateljev."
@@ -14590,6 +14597,15 @@ msgstr ""
 
 #~ msgid "Activate which ID?"
 #~ msgstr "Kateri ID naj bo aktiviran?"
+
+#~ msgid "More Data needed"
+#~ msgstr "Potrebnih je več podatkov"
+
+#~ msgid "Please provide a shortcut to associate with the smiley."
+#~ msgstr "Podajte tipke za bližnjico, ki bodo povezane s smejčkom."
+
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "Izberite sliko smejčka."
 
 #~ msgid "Cursor Color"
 #~ msgstr "Barva kazalke"

@@ -61,10 +61,143 @@
 #include "signals.h"
 #include "value.h"
 
+#if GLIB_CHECK_VERSION(2,16,0)
+static void
+purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type)
+{
+	GChecksum *checksum;
+
+	checksum = g_checksum_new(type);
+	purple_cipher_context_set_data(context, checksum);
+}
+
+static void
+purple_g_checksum_reset(PurpleCipherContext *context, GChecksumType type)
+{
+	GChecksum *checksum;
+
+	checksum = purple_cipher_context_get_data(context);
+	g_return_if_fail(checksum != NULL);
+
+#if GLIB_CHECK_VERSION(2,18,0)
+	g_checksum_reset(checksum);
+#else
+	g_checksum_free(checksum);
+	checksum = g_checksum_new(type);
+	purple_cipher_context_set_data(context, checksum);
+#endif
+}
+
+static void
+purple_g_checksum_uninit(PurpleCipherContext *context)
+{
+	GChecksum *checksum;
+
+	checksum = purple_cipher_context_get_data(context);
+	g_return_if_fail(checksum != NULL);
+
+	g_checksum_free(checksum);
+}
+
+static void
+purple_g_checksum_append(PurpleCipherContext *context, const guchar *data,
+                         gsize len)
+{
+	GChecksum *checksum;
+
+	checksum = purple_cipher_context_get_data(context);
+	g_return_if_fail(checksum != NULL);
+
+	while (len >= G_MAXSSIZE) {
+		g_checksum_update(checksum, data, G_MAXSSIZE);
+		len -= G_MAXSSIZE;
+		data += G_MAXSSIZE;
+	}
+
+	if (len)
+		g_checksum_update(checksum, data, len);
+}
+
+static gboolean
+purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
+                         gsize len, guchar *digest, gsize *out_len)
+{
+	GChecksum *checksum;
+	const gssize required_length = g_checksum_type_get_length(type);
+
+	checksum = purple_cipher_context_get_data(context);
+
+	g_return_val_if_fail(len >= required_length, FALSE);
+	g_return_val_if_fail(checksum != NULL, FALSE);
+
+	g_checksum_get_digest(checksum, digest, &len);
+
+	purple_cipher_context_reset(context, NULL);
+
+	if (out_len)
+		*out_len = len;
+
+	return TRUE;
+}
+#endif
+
+
 /*******************************************************************************
  * MD5
  ******************************************************************************/
 #define MD5_HMAC_BLOCK_SIZE	64
+
+static size_t
+md5_get_block_size(PurpleCipherContext *context)
+{
+	/* This does not change (in this case) */
+	return MD5_HMAC_BLOCK_SIZE;
+}
+
+#if GLIB_CHECK_VERSION(2,16,0)
+
+static void
+md5_init(PurpleCipherContext *context, void *extra)
+{
+	purple_g_checksum_init(context, G_CHECKSUM_MD5);
+}
+
+static void
+md5_reset(PurpleCipherContext *context, void *extra)
+{
+	purple_g_checksum_reset(context, G_CHECKSUM_MD5);
+}
+
+static gboolean
+md5_digest(PurpleCipherContext *context, gsize in_len, guchar digest[16],
+           size_t *out_len)
+{
+	return purple_g_checksum_digest(context, G_CHECKSUM_MD5, in_len,
+	                                digest, out_len);
+}
+
+static PurpleCipherOps MD5Ops = {
+	NULL,			/* Set Option		*/
+	NULL,			/* Get Option		*/
+	md5_init,		/* init				*/
+	md5_reset,		/* reset			*/
+	purple_g_checksum_uninit,	/* uninit			*/
+	NULL,			/* set iv			*/
+	purple_g_checksum_append,	/* append			*/
+	md5_digest,		/* digest			*/
+	NULL,			/* encrypt			*/
+	NULL,			/* decrypt			*/
+	NULL,			/* set salt			*/
+	NULL,			/* get salt size	*/
+	NULL,			/* set key			*/
+	NULL,			/* get key size		*/
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
+	md5_get_block_size,	/* get block size */
+	NULL			/* set key with len */
+};
+
+#else /* GLIB_CHECK_VERSION(2,16,0) */
 
 struct MD5Context {
 	guint32 total[2];
@@ -327,13 +460,6 @@ md5_digest(PurpleCipherContext *context, size_t in_len, guchar digest[16],
 	return TRUE;
 }
 
-static size_t
-md5_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return MD5_HMAC_BLOCK_SIZE;
-}
-
 static PurpleCipherOps MD5Ops = {
 	NULL,			/* Set option */
 	NULL,			/* Get option */
@@ -354,6 +480,8 @@ static PurpleCipherOps MD5Ops = {
 	md5_get_block_size,	/* get block size */
 	NULL			/* set key with len */
 };
+
+#endif /* GLIB_CHECK_VERSION(2,16,0) */
 
 /*******************************************************************************
  * MD4
@@ -1613,6 +1741,61 @@ static PurpleCipherOps DES3Ops = {
  * SHA-1
  ******************************************************************************/
 #define SHA1_HMAC_BLOCK_SIZE	64
+
+static size_t
+sha1_get_block_size(PurpleCipherContext *context)
+{
+	/* This does not change (in this case) */
+	return SHA1_HMAC_BLOCK_SIZE;
+}
+
+
+#if GLIB_CHECK_VERSION(2,16,0)
+
+static void
+sha1_init(PurpleCipherContext *context, void *extra)
+{
+	purple_g_checksum_init(context, G_CHECKSUM_SHA1);
+}
+
+static void
+sha1_reset(PurpleCipherContext *context, void *extra)
+{
+	purple_g_checksum_reset(context, G_CHECKSUM_SHA1);
+}
+
+static gboolean
+sha1_digest(PurpleCipherContext *context, gsize in_len, guchar digest[20],
+            gsize *out_len)
+{
+	return purple_g_checksum_digest(context, G_CHECKSUM_SHA1, in_len,
+	                                digest, out_len);
+}
+
+static PurpleCipherOps SHA1Ops = {
+	NULL,			/* Set Option		*/
+	NULL,			/* Get Option		*/
+	sha1_init,		/* init				*/
+	sha1_reset,		/* reset			*/
+	purple_g_checksum_uninit,	/* uninit			*/
+	NULL,			/* set iv			*/
+	purple_g_checksum_append,	/* append			*/
+	sha1_digest,	/* digest			*/
+	NULL,			/* encrypt			*/
+	NULL,			/* decrypt			*/
+	NULL,			/* set salt			*/
+	NULL,			/* get salt size	*/
+	NULL,			/* set key			*/
+	NULL,			/* get key size		*/
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
+	sha1_get_block_size,	/* get block size */
+	NULL			/* set key with len */
+};
+
+#else /* GLIB_CHECK_VERSION(2,16,0) */
+
+#define SHA1_HMAC_BLOCK_SIZE	64
 #define SHA1_ROTL(X,n) ((((X) << (n)) | ((X) >> (32-(n)))) & 0xFFFFFFFF)
 
 struct SHA1Context {
@@ -1833,13 +2016,6 @@ sha1_digest(PurpleCipherContext *context, size_t in_len, guchar digest[20],
 	return TRUE;
 }
 
-static size_t
-sha1_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return SHA1_HMAC_BLOCK_SIZE;
-}
-
 static PurpleCipherOps SHA1Ops = {
 	sha1_set_opt,	/* Set Option		*/
 	sha1_get_opt,	/* Get Option		*/
@@ -1861,10 +2037,65 @@ static PurpleCipherOps SHA1Ops = {
 	NULL			/* set key with len */
 };
 
+#endif /* GLIB_CHECK_VERSION(2,16,0) */
+
 /*******************************************************************************
  * SHA-256
  ******************************************************************************/
 #define SHA256_HMAC_BLOCK_SIZE	64
+
+static size_t
+sha256_get_block_size(PurpleCipherContext *context)
+{
+	/* This does not change (in this case) */
+	return SHA256_HMAC_BLOCK_SIZE;
+}
+
+#if GLIB_CHECK_VERSION(2,16,0)
+
+static void
+sha256_init(PurpleCipherContext *context, void *extra)
+{
+	purple_g_checksum_init(context, G_CHECKSUM_SHA256);
+}
+
+static void
+sha256_reset(PurpleCipherContext *context, void *extra)
+{
+	purple_g_checksum_reset(context, G_CHECKSUM_SHA256);
+}
+
+static gboolean
+sha256_digest(PurpleCipherContext *context, gsize in_len, guchar digest[20],
+            gsize *out_len)
+{
+	return purple_g_checksum_digest(context, G_CHECKSUM_SHA256, in_len,
+	                                digest, out_len);
+}
+
+static PurpleCipherOps SHA256Ops = {
+	NULL,			/* Set Option		*/
+	NULL,			/* Get Option		*/
+	sha256_init,	/* init				*/
+	sha256_reset,	/* reset			*/
+	purple_g_checksum_uninit,	/* uninit			*/
+	NULL,			/* set iv			*/
+	purple_g_checksum_append,	/* append			*/
+	sha256_digest,	/* digest			*/
+	NULL,			/* encrypt			*/
+	NULL,			/* decrypt			*/
+	NULL,			/* set salt			*/
+	NULL,			/* get salt size	*/
+	NULL,			/* set key			*/
+	NULL,			/* get key size		*/
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
+	sha256_get_block_size,	/* get block size */
+	NULL			/* set key with len */
+};
+
+#else /* GLIB_CHECK_VERSION(2,16,0) */
+
 #define SHA256_ROTR(X,n) ((((X) >> (n)) | ((X) << (32-(n)))) & 0xFFFFFFFF)
 
 static const guint32 sha256_K[64] =
@@ -2088,13 +2319,6 @@ sha256_digest(PurpleCipherContext *context, size_t in_len, guchar digest[32],
 	return TRUE;
 }
 
-static size_t
-sha256_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return SHA256_HMAC_BLOCK_SIZE;
-}
-
 static PurpleCipherOps SHA256Ops = {
 	sha256_set_opt,	/* Set Option		*/
 	sha256_get_opt,	/* Get Option		*/
@@ -2115,6 +2339,8 @@ static PurpleCipherOps SHA256Ops = {
 	sha256_get_block_size,	/* get block size */
 	NULL			/* set key with len */
 };
+
+#endif /* GLIB_CHECK_VERSION(2,16,0) */
 
 /*******************************************************************************
  * RC4

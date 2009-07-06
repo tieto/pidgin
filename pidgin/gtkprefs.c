@@ -1457,7 +1457,7 @@ interface_page(void)
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
-	vbox = pidgin_make_frame(ret, _("Conversation Window Hiding"));
+	vbox = pidgin_make_frame(ret, _("Conversation Window"));
 	label = pidgin_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
 					PURPLE_PREF_STRING, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
 					_("Never"), "never",
@@ -1467,6 +1467,9 @@ interface_page(void)
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
+#ifdef _WIN32
+	pidgin_prefs_checkbox(_("Minimi_ze new conversation windows"), PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", vbox);
+#endif
 
 	/* All the tab options! */
 	vbox = pidgin_make_frame(ret, _("Tabs"));
@@ -1575,15 +1578,12 @@ conv_page(void)
 
 #ifdef _WIN32
 	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
-
-	pidgin_prefs_checkbox(_("Minimi_ze new conversation windows"), PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", vbox);
 #endif
 
 	pidgin_prefs_labeled_spin_button(vbox,
 		_("Minimum input area height in lines:"),
 		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
 		1, 8, NULL);
-
 
 #if GTK_CHECK_VERSION(2,4,0)
 	vbox = pidgin_make_frame(ret, _("Font"));
@@ -1593,7 +1593,11 @@ conv_page(void)
 		fontpref = pidgin_prefs_checkbox(_("Use font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
 
 	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-	font_button = gtk_font_button_new_with_font(font_name ? font_name : NULL);
+	if ((font_name == NULL) || (*font_name == '\0')) {
+		font_button = gtk_font_button_new();
+	} else {
+		font_button = gtk_font_button_new_with_font(font_name);
+	}
 
 	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Conversation _font:"), NULL, font_button, FALSE, NULL);
@@ -2777,9 +2781,7 @@ away_page(void)
 }
 
 static int
-prefs_notebook_add_page(const char *text,
-  		                GtkWidget *page,
-                        int ind)
+prefs_notebook_add_page(const char *text, GtkWidget *page, int ind)
 {
 #if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));

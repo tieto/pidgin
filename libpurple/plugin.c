@@ -861,6 +861,7 @@ purple_plugin_destroy(PurplePlugin *plugin)
 				}
 
 				g_list_free(loader_info->exts);
+				loader_info->exts = NULL;
 			}
 
 			plugin_loaders = g_list_remove(plugin_loaders, plugin);
@@ -1220,6 +1221,12 @@ purple_plugins_add_search_path(const char *path)
 		return;
 
 	search_paths = g_list_append(search_paths, g_strdup(path));
+}
+
+GList *
+purple_plugins_get_search_paths()
+{
+	return search_paths;
 }
 
 void
