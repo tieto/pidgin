@@ -417,7 +417,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	} else {
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
-			"SASL authentication failed\n");
+			_("SASL authentication failed"));
 	}
 }
 
