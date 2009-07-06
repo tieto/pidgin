@@ -65,6 +65,11 @@
 static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
 #endif /* TRY_WEBMESSENGER_LOGIN */
 
+static gboolean yahoo_is_japan(PurpleAccount *account)
+{
+	return purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoojp");
+}
+
 static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFriend *f)
 {
 	char *status = NULL;
@@ -1831,14 +1836,13 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 		else {
 			/* OK to login, correct information provided */
 			PurpleUtilFetchUrlData *url_data = NULL;
+			PurpleAccount *account = purple_connection_get_account(gc);
 			char *url = NULL;
-			gboolean yahoojp = purple_account_get_bool(purple_connection_get_account(gc),
-				"yahoojp", 0);
+			gboolean yahoojp = yahoo_is_japan(account);
 
 			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
-			url_data = purple_util_fetch_url_request_len_with_account(
-					purple_connection_get_account(gc), url, TRUE,
-					YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
+			url_data = purple_util_fetch_url_request_len_with_account(account, url,
+					TRUE, YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
 					yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
@@ -1862,8 +1866,7 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 		return;
 	}
 
-	yahoojp =  purple_account_get_bool(purple_connection_get_account(gc),
-			"yahoojp", 0);
+	yahoojp = yahoo_is_japan(purple_connection_get_account(gc));
 	auth_data = g_new0(struct yahoo_auth_data, 1);
 	auth_data->gc = gc;
 	auth_data->seed = g_strdup(seed);
@@ -3426,7 +3429,7 @@ void yahoo_login(PurpleAccount *account) {
 	yahoo_server_check(account);
 	yahoo_picture_check(account);
 
-	if (purple_strequal(purple_account_get_protocol_id(account), "yahoojp")) {
+	if (yahoo_is_japan(account)) {
 		yd->jp = TRUE;
 		if (purple_proxy_connect(gc, account,
 		                       purple_account_get_string(account, "server",  YAHOOJP_PAGER_HOST),
